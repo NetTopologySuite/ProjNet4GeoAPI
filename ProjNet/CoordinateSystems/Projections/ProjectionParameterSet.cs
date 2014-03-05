@@ -14,7 +14,7 @@ namespace ProjNet.CoordinateSystems.Projections
     {
         private readonly Dictionary<string, string> _originalNames = new Dictionary<string, string>();
         private readonly Dictionary<int, string>  _originalIndex = new Dictionary<int, string>();
-#if !SILVERLIGHT
+#if !PCL
         /// <summary>
         /// Needed for serialzation
         /// </summary>

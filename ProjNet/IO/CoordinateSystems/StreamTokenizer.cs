@@ -178,7 +178,7 @@ namespace ProjNet.Converters.WellKnownText.IO
 			bool isNumber=false;
 			bool isWord=false;
 			byte[] ba=null;
-#if SILVERLIGHT
+#if PCL
 			Encoding AE = System.Text.Encoding.Unicode;
 #else
 			ASCIIEncoding AE = new ASCIIEncoding();
