@@ -14,7 +14,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: System.CLSCompliant(true)]
+#if !PCL
 [assembly: ComVisible(false)]
 [assembly: Guid("e16f3ac5-214b-4ef3-9809-740a13cf0ec7")]
+#endif
 [assembly: AssemblyVersion("1.3.0.3")]
 [assembly: AssemblyFileVersion("1.3.0.3")]

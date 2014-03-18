@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using GeoAPI.CoordinateSystems;
-using GeoAPI.CoordinateSystems.Transformations;
 
 namespace ProjNet.CoordinateSystems
 {
