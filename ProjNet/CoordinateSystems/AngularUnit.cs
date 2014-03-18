@@ -24,9 +24,11 @@ namespace ProjNet.CoordinateSystems
 {
 	/// <summary>
 	/// Definition of angular units.
-	/// </summary>
-	[Serializable]
-	public class AngularUnit : Info, IAngularUnit
+    /// </summary>
+#if !PCL 
+    [Serializable] 
+#endif
+    public class AngularUnit : Info, IAngularUnit
 	{
 		/// <summary>
 		/// Initializes a new instance of a angular unit

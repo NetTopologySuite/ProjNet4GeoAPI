@@ -23,9 +23,11 @@ namespace ProjNet.CoordinateSystems
 {
 	/// <summary>
 	/// A named parameter value.
-	/// </summary>
-	[Serializable]
-	public class Parameter
+    /// </summary>
+#if !PCL 
+    [Serializable] 
+#endif
+    public class Parameter
 	{
 		/// <summary>
 		/// Creates an instance of a parameter

@@ -40,9 +40,11 @@ namespace ProjNet.CoordinateSystems.Transformations
 	/// the units of the ellipsoid axes (a and b). As it is conventional for X, Y and Z to be in metres,
 	/// if the ellipsoid axis dimensions are given in another linear unit they should first be converted
 	/// to metres.</para>
-	/// </remarks>
-	[Serializable]
-	internal class GeocentricTransform : MathTransform
+    /// </remarks>
+#if !PCL 
+    [Serializable] 
+#endif
+    internal class GeocentricTransform : MathTransform
 	{
 		private const double COS_67P5 = 0.38268343236508977;    /* cosine of 67.5 degrees */
 		private const double AD_C = 1.0026000;                  /* Toms region 1 constant */

@@ -24,8 +24,10 @@ namespace ProjNet.CoordinateSystems
 {
 	/// <summary>
 	/// Class for defining units
-	/// </summary>
-	[Serializable]
+    /// </summary>
+#if !PCL 
+    [Serializable] 
+#endif
     public class Unit : Info, IUnit
     {
 		/// <summary>

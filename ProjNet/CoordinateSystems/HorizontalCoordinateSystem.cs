@@ -23,9 +23,11 @@ namespace ProjNet.CoordinateSystems
 {
 	/// <summary>
 	/// A 2D coordinate system suitable for positions on the Earth's surface.
-	/// </summary>
-	[Serializable]
-	public abstract class HorizontalCoordinateSystem : CoordinateSystem, IHorizontalCoordinateSystem
+    /// </summary>
+#if !PCL 
+    [Serializable] 
+#endif
+    public abstract class HorizontalCoordinateSystem : CoordinateSystem, IHorizontalCoordinateSystem
 	{
 		/// <summary>
 		/// Creates an instance of HorizontalCoordinateSystem

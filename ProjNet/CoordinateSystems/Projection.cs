@@ -30,9 +30,11 @@ namespace ProjNet.CoordinateSystems
 	/// geographic coordinate system. It is expected that each coordinate transformation of
 	/// interest, e.g., Transverse Mercator, Lambert, will be implemented as a class of
 	/// type Projection, supporting the IProjection interface.
-	/// </summary>
-	[Serializable]
-	public class Projection : Info, IProjection
+    /// </summary>
+#if !PCL 
+    [Serializable] 
+#endif
+    public class Projection : Info, IProjection
 	{
 		internal Projection(string className, List<ProjectionParameter> parameters,
 			string name, string authority, long code, string alias, 

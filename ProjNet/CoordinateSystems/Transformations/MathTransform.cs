@@ -30,9 +30,11 @@ namespace ProjNet.CoordinateSystems.Transformations
 	/// systems of a transformation, then it should keep hold of the 
 	/// <see cref="ICoordinateTransformation"/> interface, and use the contained 
 	/// math transform object whenever it wishes to perform a transform.
-	/// </remarks>
-	[Serializable]
-	public abstract class MathTransform : IMathTransform
+    /// </remarks>
+#if !PCL 
+    [Serializable] 
+#endif
+    public abstract class MathTransform : IMathTransform
 	{
 		#region IMathTransform Members
 

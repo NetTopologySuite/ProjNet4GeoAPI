@@ -26,9 +26,11 @@ namespace ProjNet.CoordinateSystems.Transformations
 	/// <summary>
 	/// The GeographicTransform class is implemented on geographic transformation objects and
 	/// implements datum transformations between geographic coordinate systems.
-	/// </summary>
-	[Serializable]
-	public class GeographicTransform : MathTransform
+    /// </summary>
+#if !PCL 
+    [Serializable] 
+#endif
+    public class GeographicTransform : MathTransform
 	{
 		internal GeographicTransform(IGeographicCoordinateSystem sourceGCS, IGeographicCoordinateSystem targetGCS)
 		{

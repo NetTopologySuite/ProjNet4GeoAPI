@@ -56,9 +56,11 @@ namespace ProjNet.CoordinateSystems.Projections
 	/// 
 	/// <para>Reference: John P. Snyder (Map Projections - A Working Manual,
 	///            U.S. Geological Survey Professional Paper 1395, 1987)</para>
-	/// </remarks>
-	[Serializable]
-	internal class TransverseMercator : MapProjection
+    /// </remarks>
+#if !PCL 
+    [Serializable] 
+#endif
+    internal class TransverseMercator : MapProjection
 	{
     /**
      * Maximum number of iterations for iterative computations.

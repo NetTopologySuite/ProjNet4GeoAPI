@@ -52,9 +52,11 @@ namespace ProjNet.CoordinateSystems.Projections
 	/// of the cone is normal to the ellipsoid at a defined location and its extension 
 	/// cuts the minor axis at a defined angle. This projection is used in the Czech Republic 
 	/// and Slovakia under the name "Krovak" projection.</para>
-	/// </remarks>
-	[Serializable]
-	internal class KrovakProjection : MapProjection
+    /// </remarks>
+#if !PCL 
+    [Serializable] 
+#endif
+    internal class KrovakProjection : MapProjection
 	{
 		/**
 		 * Maximum number of iterations for iterative computations.

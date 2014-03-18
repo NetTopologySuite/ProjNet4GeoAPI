@@ -5,7 +5,9 @@ using GeoAPI.CoordinateSystems.Transformations;
 
 namespace ProjNet.CoordinateSystems.Projections
 {
-    [Serializable]
+#if !PCL 
+    [Serializable] 
+#endif
     internal class ObliqueMercatorProjection : HotineObliqueMercatorProjection
     {
         public ObliqueMercatorProjection(IEnumerable<ProjectionParameter> parameters)
@@ -28,7 +30,9 @@ namespace ProjNet.CoordinateSystems.Projections
         }
     }
 
-    [Serializable]
+#if !PCL 
+    [Serializable] 
+#endif
     internal class HotineObliqueMercatorProjection : MapProjection
     {
         private readonly double _azimuth;

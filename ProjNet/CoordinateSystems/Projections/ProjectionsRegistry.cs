@@ -67,7 +67,7 @@ namespace ProjNet.CoordinateSystems.Projections
             if (ci == 0)
                 throw new ArgumentException("The provided type is lacking a suitable constructor", "type");
 
-            var key = name.ToLower(CultureInfo.InvariantCulture).Replace(' ', '_');
+            var key = name.ToLowerInvariant().Replace(' ', '_');
             lock (RegistryLock)
             {
                 if (TypeRegistry.ContainsKey(key))
@@ -103,7 +103,7 @@ namespace ProjNet.CoordinateSystems.Projections
 
         internal static IMathTransform CreateProjection(string className, IEnumerable<ProjectionParameter> parameters)
         {
-            var key = className.ToLower(CultureInfo.InvariantCulture).Replace(' ', '_');
+            var key = className.ToLowerInvariant().Replace(' ', '_');
 
             Type projectionType;
             int ci;

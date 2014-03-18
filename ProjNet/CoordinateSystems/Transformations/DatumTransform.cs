@@ -25,9 +25,11 @@ namespace ProjNet.CoordinateSystems.Transformations
 {
 	/// <summary>
 	/// Transformation for applying 
-	/// </summary>
-	[Serializable]
-	internal class DatumTransform : MathTransform
+    /// </summary>
+#if !PCL 
+    [Serializable] 
+#endif
+    internal class DatumTransform : MathTransform
 	{
 		protected IMathTransform _inverse;
 		private readonly Wgs84ConversionInfo _toWgs94;

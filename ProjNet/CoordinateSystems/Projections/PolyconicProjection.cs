@@ -12,7 +12,9 @@ namespace ProjNet.CoordinateSystems.Projections
     /// <summary>
     /// 
     /// </summary>
-    [Serializable]
+#if !PCL 
+    [Serializable] 
+#endif
     internal class PolyconicProjection : MapProjection
     {
         /// <summary>
