@@ -125,7 +125,7 @@ namespace ProjNet.CoordinateSystems.Projections
 
         public override IMathTransform Inverse()
         {
-            if (_inverse != null)
+            if (_inverse == null)
             {
                 _inverse = new HotineObliqueMercatorProjection(_Parameters.ToProjectionParameter(), this);
             }
