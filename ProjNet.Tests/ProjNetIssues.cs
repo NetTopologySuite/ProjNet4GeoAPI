@@ -1,5 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
+using GeoAPI.CoordinateSystems;
+using GeoAPI.CoordinateSystems.Transformations;
 using NUnit.Framework;
+using ProjNet.CoordinateSystems;
+using ProjNet.CoordinateSystems.Transformations;
 
 namespace ProjNet.UnitTests
 {
@@ -152,5 +157,40 @@ namespace ProjNet.UnitTests
             Test("WGS84_UTM(18,N) -> WGS84", csSource, csTarget, new[] { 307821.867, 4219306.387 }, new[] { -77.191769, 38.101147 }, 1e-6);
         }
 
+        /// <summary>
+        /// Wrong <c>null</c> check in ObliqueMercatorProjection.Inverse() method
+        /// </summary>
+        /// <seealso href="https://code.google.com/p/nettopologysuite/issues/detail?id=191"/>
+        [Test, Description("ObliqueMercatorProjection.Inverse() wrong null check")]
+        public void TestNtsIssue191()
+        {
+            List<ProjectionParameter> parameters = new List<ProjectionParameter>();
+            parameters.Add(new ProjectionParameter("latitude_of_center", 45.30916666666666));
+            parameters.Add(new ProjectionParameter("longitude_of_center", -86));
+            parameters.Add(new ProjectionParameter("azimuth", 337.25556));
+            parameters.Add(new ProjectionParameter("rectified_grid_angle", 337.25556));
+            parameters.Add(new ProjectionParameter("scale_factor", 0.9996));
+            parameters.Add(new ProjectionParameter("false_easting", 2546731.496));
+            parameters.Add(new ProjectionParameter("false_northing", -4354009.816));
+
+            CoordinateSystemFactory factory = new CoordinateSystemFactory();
+            IProjection projection = factory.CreateProjection("Test Oblique", "oblique_mercator", parameters);
+            Assert.That(projection, Is.Not.Null);
+
+            IGeographicCoordinateSystem wgs84 = GeographicCoordinateSystem.WGS84;
+            IProjectedCoordinateSystem dummy = factory.CreateProjectedCoordinateSystem("dummy pcs", 
+                wgs84, projection, LinearUnit.Metre, 
+                new AxisInfo("X", AxisOrientationEnum.East), 
+                new AxisInfo("Y", AxisOrientationEnum.North));
+            Assert.That(dummy, Is.Not.Null);
+
+            CoordinateTransformationFactory transformationFactory = new CoordinateTransformationFactory();
+            ICoordinateTransformation transform = transformationFactory.CreateFromCoordinateSystems(wgs84, dummy);
+            Assert.That(transform, Is.Not.Null);
+
+            IMathTransform mathTransform = transform.MathTransform;
+            IMathTransform inverse = mathTransform.Inverse();
+            Assert.That(inverse, Is.Not.Null);
+        }
     }
 }

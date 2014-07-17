@@ -24,7 +24,7 @@ namespace ProjNet.CoordinateSystems.Projections
 
         public override IMathTransform Inverse()
         {
-            if (_inverse != null)
+            if (_inverse == null)
                 _inverse = new ObliqueMercatorProjection(_Parameters.ToProjectionParameter(), this);
             return _inverse;
         }
