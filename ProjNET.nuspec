@@ -29,6 +29,6 @@ Proj.NET performs point-to-point coordinate conversions between geodetic coordin
 		
 		<file src="..\Release\v4.5\AnyCPU\ProjNET.dll" target="lib\net45-client" />
 
-    <file src="..\Release\PCL\AnyCPU\ProjNET.dll" target="lib\portable-net403+sl5+win8+wp8" />
+    <file src="..\Release\PCL\AnyCPU\ProjNET.dll" target="lib\portable-net403+sl5+win8+wp8+MonoAndroid+MonoTouch" />
   </files>
 </package>
