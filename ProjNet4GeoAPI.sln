@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjNET", "ProjNet\ProjNET.csproj", "{E028BDD2-55E1-4E5F-BE31-35FAEC8D6428}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GeoAPI", "GeoAPI\GeoAPI\GeoAPI.csproj", "{FFB69466-79DE-466A-ADA7-5C47C5C5CA3A}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{AC62B826-FD1B-43B9-9E20-696588E560E7}"
 	ProjectSection(SolutionItems) = preProject
 		ProjNET.nuspec = ProjNET.nuspec
@@ -20,7 +18,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{4C834F
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjNET.Pcl", "ProjNET.Pcl\ProjNET.Pcl.csproj", "{1A851740-12C4-4A2A-9C78-AD69FD1420F5}"
+EndProject
 Global
+	GlobalSection(SubversionScc) = preSolution
+		Svn-Managed = True
+		Manager = AnkhSVN - Subversion Support for Visual Studio
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -30,20 +34,16 @@ Global
 		{E028BDD2-55E1-4E5F-BE31-35FAEC8D6428}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E028BDD2-55E1-4E5F-BE31-35FAEC8D6428}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E028BDD2-55E1-4E5F-BE31-35FAEC8D6428}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FFB69466-79DE-466A-ADA7-5C47C5C5CA3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FFB69466-79DE-466A-ADA7-5C47C5C5CA3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FFB69466-79DE-466A-ADA7-5C47C5C5CA3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FFB69466-79DE-466A-ADA7-5C47C5C5CA3A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{67E8C952-1F48-4DFB-9507-BD44DB6784FD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{67E8C952-1F48-4DFB-9507-BD44DB6784FD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{67E8C952-1F48-4DFB-9507-BD44DB6784FD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{67E8C952-1F48-4DFB-9507-BD44DB6784FD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A851740-12C4-4A2A-9C78-AD69FD1420F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A851740-12C4-4A2A-9C78-AD69FD1420F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A851740-12C4-4A2A-9C78-AD69FD1420F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A851740-12C4-4A2A-9C78-AD69FD1420F5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(SubversionScc) = preSolution
-		Svn-Managed = True
-		Manager = AnkhSVN - Subversion Support for Visual Studio
 	EndGlobalSection
 EndGlobal
