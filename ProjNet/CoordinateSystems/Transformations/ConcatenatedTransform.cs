@@ -47,32 +47,32 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <param name="transformlist"></param>
 		public ConcatenatedTransform(List<ICoordinateTransformation> transformlist)
 		{
-			_CoordinateTransformationList = transformlist;
+			_coordinateTransformationList = transformlist;
 		}
 
-		private List<ICoordinateTransformation> _CoordinateTransformationList;
+		private List<ICoordinateTransformation> _coordinateTransformationList;
 
         /// <summary>
         /// 
         /// </summary>
 		public List<ICoordinateTransformation> CoordinateTransformationList
 		{
-			get { return _CoordinateTransformationList; }
+			get { return _coordinateTransformationList; }
 			set
 			{
-				_CoordinateTransformationList = value;
+				_coordinateTransformationList = value;
 				_inverse = null;
 			}
 		}
 
         public override int DimSource
         {
-            get { return _CoordinateTransformationList[0].SourceCS.Dimension; }
+            get { return _coordinateTransformationList[0].SourceCS.Dimension; }
         }
 
         public override int DimTarget
         {
-            get { return _CoordinateTransformationList[_CoordinateTransformationList.Count-1].TargetCS.Dimension; }
+            get { return _coordinateTransformationList[_coordinateTransformationList.Count-1].TargetCS.Dimension; }
         }
 
         /// <summary>
@@ -82,7 +82,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <returns></returns>
         public override double[] Transform(double[] point)
 		{
-            foreach (ICoordinateTransformation ct in _CoordinateTransformationList)
+            foreach (ICoordinateTransformation ct in _coordinateTransformationList)
 				point = ct.MathTransform.Transform(point);            
 			return point;			
 		}
@@ -94,25 +94,35 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <returns></returns>
         public override IList<double[]> TransformList(IList<double[]> points)
 		{
-			var pnts = new List<double[]>(points.Count);
-			pnts.AddRange(points);
-			foreach (var ct in _CoordinateTransformationList)
+			IList<double[]> pnts = new List<double[]>(points);
+			foreach (var ct in _coordinateTransformationList)
 			{
-			    ct.MathTransform.TransformList(pnts);
+			    pnts = ct.MathTransform.TransformList(pnts);
 			}
 			return pnts;
 		}
 
         public override IList<Coordinate> TransformList(IList<Coordinate> points)
         {
-            var pnts = new List<Coordinate>(points);
-            foreach (var ct in _CoordinateTransformationList)
+            IList<Coordinate> pnts = new List<Coordinate>(points);
+            foreach (var ct in _coordinateTransformationList)
             {
-                ct.MathTransform.TransformList(pnts);
+                pnts = ct.MathTransform.TransformList(pnts);
             }
             return pnts;
         }
-		/// <summary>
+
+        public override ICoordinateSequence Transform(ICoordinateSequence coordinateSequence)
+        {
+            var res = (ICoordinateSequence)coordinateSequence.Clone();
+            foreach (var ct in _coordinateTransformationList)
+            {
+                res = ct.MathTransform.Transform(res);
+            }
+            return res;
+        }
+
+        /// <summary>
 		/// Returns the inverse of this conversion.
 		/// </summary>
 		/// <returns>IMathTransform that is the reverse of the current conversion.</returns>
@@ -131,15 +141,15 @@ namespace ProjNet.CoordinateSystems.Transformations
 		/// </summary>
 		public override void Invert()
 		{
-			_CoordinateTransformationList.Reverse();
-			foreach (ICoordinateTransformation ic in _CoordinateTransformationList)
+			_coordinateTransformationList.Reverse();
+			foreach (ICoordinateTransformation ic in _coordinateTransformationList)
 				ic.MathTransform.Invert();
 		}
 
 		public ConcatenatedTransform Clone()
 		{
-			List<ICoordinateTransformation> clonedList = new List<ICoordinateTransformation>(_CoordinateTransformationList.Count);
-			foreach (ICoordinateTransformation ct in _CoordinateTransformationList)
+			var clonedList = new List<ICoordinateTransformation>(_coordinateTransformationList.Count);
+			foreach (ICoordinateTransformation ct in _coordinateTransformationList)
 				clonedList.Add(ct);
 			return new ConcatenatedTransform(clonedList);
 		}

@@ -1,6 +1,10 @@
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using GeoAPI.CoordinateSystems;
 using GeoAPI.CoordinateSystems.Transformations;
+using GeoAPI.Geometries;
 using NUnit.Framework;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
@@ -13,6 +17,95 @@ namespace ProjNet.UnitTests
         public CoordinateTransformTests()
         {
             Verbose = true;
+        }
+
+        [Test]
+        public void TestTransformListOfCoordinates()
+        {
+            var csFact = new CoordinateSystemFactory();
+            var ctFact = new CoordinateTransformationFactory();
+
+            var utm35ETRS = csFact.CreateFromWkt(
+                    "PROJCS[\"ETRS89 / ETRS-TM35\",GEOGCS[\"ETRS89\",DATUM[\"D_ETRS_1989\",SPHEROID[\"GRS_1980\",6378137,298.257222101]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",27],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"Meter\",1]]");
+
+            var utm33 = ProjectedCoordinateSystem.WGS84_UTM(33, true);
+
+            var trans = ctFact.CreateFromCoordinateSystems(utm35ETRS, utm33);
+
+            var points = new Coordinate[]
+            {
+                new Coordinate(290586.087, 6714000), new Coordinate(290586.392, 6713996.224),
+                new Coordinate(290590.133, 6713973.772), new Coordinate(290594.111, 6713957.416),
+                new Coordinate(290596.615, 6713943.567), new Coordinate(290596.701, 6713939.485)
+            };
+
+            var tpoints = trans.MathTransform.TransformList(points).ToArray();
+            for (var i = 0; i < points.Length; i++)
+                Assert.That(tpoints[i].Equals(trans.MathTransform.Transform(points[i])));
+        }
+
+        [Test]
+        public void TestTransformListOfDoubleArray()
+        {
+            var csFact = new CoordinateSystemFactory();
+            var ctFact = new CoordinateTransformationFactory();
+
+            var utm35ETRS = csFact.CreateFromWkt(
+                    "PROJCS[\"ETRS89 / ETRS-TM35\",GEOGCS[\"ETRS89\",DATUM[\"D_ETRS_1989\",SPHEROID[\"GRS_1980\",6378137,298.257222101]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",27],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"Meter\",1]]");
+
+            var utm33 = ProjectedCoordinateSystem.WGS84_UTM(33, true);
+
+            var trans = ctFact.CreateFromCoordinateSystems(utm35ETRS, utm33);
+
+            var points = new List<double[]>
+            {
+                new[] {290586.087, 6714000 }, new[] {90586.392, 6713996.224},
+                new[] {290590.133, 6713973.772}, new[] {290594.111, 6713957.416},
+                new[] {290596.615, 6713943.567}, new[] {290596.701, 6713939.485}
+            };
+
+            var tpoints = trans.MathTransform.TransformList(points).ToArray();
+            for (var i = 0; i < points.Count; i++)
+                Assert.IsTrue(Equal(tpoints[i], trans.MathTransform.Transform(points[i])));
+        }
+
+        private static bool Equal(IList<double> a1, IList<double> a2)
+        {
+            if (a2.Count != a1.Count)
+                return false;
+
+            for (var i = 0; i < a1.Count; i++)
+            {
+                if (!a1[i].Equals(a2[i]))
+                    return false;
+            }
+            return true;
+        }
+
+        [Test]
+        public void TestTransformSequence()
+        {
+            var csFact = new CoordinateSystemFactory();
+            var ctFact = new CoordinateTransformationFactory();
+
+            var utm35ETRS = csFact.CreateFromWkt(
+                    "PROJCS[\"ETRS89 / ETRS-TM35\",GEOGCS[\"ETRS89\",DATUM[\"D_ETRS_1989\",SPHEROID[\"GRS_1980\",6378137,298.257222101]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",27],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"Meter\",1]]");
+
+            var utm33 = ProjectedCoordinateSystem.WGS84_UTM(33, true);
+
+            var trans = ctFact.CreateFromCoordinateSystems(utm35ETRS, utm33);
+
+            var points = new NetTopologySuite.Geometries.Implementation.CoordinateArraySequence(
+                new []
+            {
+                new Coordinate(290586.087, 6714000), new Coordinate(290586.392, 6713996.224),
+                new Coordinate(290590.133, 6713973.772), new Coordinate(290594.111, 6713957.416),
+                new Coordinate(290596.615, 6713943.567), new Coordinate(290596.701, 6713939.485)
+            });               
+
+            var tpoints = trans.MathTransform.Transform(points);
+            for (var i = 0; i < points.Count; i++)
+                Assert.AreEqual(trans.MathTransform.Transform(points.GetCoordinate(i)), tpoints.GetCoordinate(i));
         }
 
         [Test]
