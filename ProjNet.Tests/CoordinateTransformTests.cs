@@ -19,6 +19,7 @@ namespace ProjNet.UnitTests
             Verbose = true;
         }
 
+       
         [Test]
         public void TestTransformListOfCoordinates()
         {
@@ -553,6 +554,48 @@ namespace ProjNet.UnitTests
                  new[] { -149.883333, 61.216667 },
                  new[] { 4136805.826, -4424019.786 }, 0.01, 1.0E-5);
 
+        }
+
+        [Test]
+        public void TestTransformListOnConcatenatedDoTransform()
+        {
+              ICoordinateSystem utm35ETRS =
+                CoordinateSystemFactory.CreateFromWkt(
+                    "PROJCS[\"ETRS89 / ETRS-TM35\",GEOGCS[\"ETRS89\",DATUM[\"D_ETRS_1989\",SPHEROID[\"GRS_1980\",6378137,298.257222101]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",27],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"Meter\",1]]");
+
+            ICoordinateSystem utm33 = ProjectedCoordinateSystem.WGS84_UTM(33, true);
+            ICoordinateTransformation trans = CoordinateTransformationFactory.CreateFromCoordinateSystems(utm35ETRS, utm33);
+
+            var coords = new List<Coordinate>{
+                new Coordinate(290586.087, 6714000),
+                new Coordinate(290586.392, 6713996.224),
+                new Coordinate(290590.133, 6713973.772)
+            };
+
+            var transformedCoords = trans.MathTransform.TransformList(coords);
+            Assert.AreNotEqual(290586.087, transformedCoords[0].X);
+            Assert.AreNotEqual(6714000, transformedCoords[0].Y);
+        }
+
+        [Test]
+        public void TestTransformListOnConcatenatedDoTransformDoubleArr()
+        {
+            ICoordinateSystem utm35ETRS =
+              CoordinateSystemFactory.CreateFromWkt(
+                  "PROJCS[\"ETRS89 / ETRS-TM35\",GEOGCS[\"ETRS89\",DATUM[\"D_ETRS_1989\",SPHEROID[\"GRS_1980\",6378137,298.257222101]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",27],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"Meter\",1]]");
+
+            ICoordinateSystem utm33 = ProjectedCoordinateSystem.WGS84_UTM(33, true);
+            ICoordinateTransformation trans = CoordinateTransformationFactory.CreateFromCoordinateSystems(utm35ETRS, utm33);
+
+            var coords = new List<double[]>{
+                new double[]{290586.087, 6714000},
+                new double[]{290586.392, 6713996.224},
+                new double[]{290590.133, 6713973.772}
+            };
+
+            var transformedCoords = trans.MathTransform.TransformList(coords);
+            Assert.AreNotEqual(290586.087, transformedCoords[0][0]);
+            Assert.AreNotEqual(6714000, transformedCoords[0][1]);
         }
     }
 }

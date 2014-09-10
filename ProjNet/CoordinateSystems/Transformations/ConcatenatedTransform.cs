@@ -122,7 +122,7 @@ namespace ProjNet.CoordinateSystems.Transformations
             return res;
         }
 
-        /// <summary>
+		/// <summary>
 		/// Returns the inverse of this conversion.
 		/// </summary>
 		/// <returns>IMathTransform that is the reverse of the current conversion.</returns>
