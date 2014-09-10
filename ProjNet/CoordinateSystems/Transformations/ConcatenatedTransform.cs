@@ -94,21 +94,20 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <returns></returns>
         public override IList<double[]> TransformList(IList<double[]> points)
 		{
-			var pnts = new List<double[]>(points.Count);
-			pnts.AddRange(points);
+			IList<double[]> pnts = new List<double[]>(points);
 			foreach (var ct in _CoordinateTransformationList)
 			{
-			    ct.MathTransform.TransformList(pnts);
+			    pnts = ct.MathTransform.TransformList(pnts);
 			}
 			return pnts;
 		}
 
         public override IList<Coordinate> TransformList(IList<Coordinate> points)
         {
-            var pnts = new List<Coordinate>(points);
+            IList<Coordinate> pnts = new List<Coordinate>(points);
             foreach (var ct in _CoordinateTransformationList)
             {
-                ct.MathTransform.TransformList(pnts);
+                pnts= ct.MathTransform.TransformList(pnts);
             }
             return pnts;
         }
@@ -138,7 +137,7 @@ namespace ProjNet.CoordinateSystems.Transformations
 
 		public ConcatenatedTransform Clone()
 		{
-			List<ICoordinateTransformation> clonedList = new List<ICoordinateTransformation>(_CoordinateTransformationList.Count);
+			var clonedList = new List<ICoordinateTransformation>(_CoordinateTransformationList.Count);
 			foreach (ICoordinateTransformation ct in _CoordinateTransformationList)
 				clonedList.Add(ct);
 			return new ConcatenatedTransform(clonedList);
