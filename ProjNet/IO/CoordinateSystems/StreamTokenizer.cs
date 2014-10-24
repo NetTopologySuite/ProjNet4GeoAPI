@@ -191,7 +191,17 @@ namespace ProjNet.Converters.WellKnownText.IO
 				// convert int to char
 				ba = new Byte[]{(byte)_reader.Peek()};
 				
-				 ascii = AE.GetChars(ba);
+				// ascii = AE.GetChars(ba);
+
+                if (AE.GetByteCount("a") == 2)
+                {
+                    // handle unicode appropriately
+                    ascii = AE.GetChars(new byte[2] { ba[0], 0 });
+                }
+                else
+                {
+                    ascii = AE.GetChars(ba);
+                }
 
 				currentCharacter = chars[0];
 				nextCharacter = ascii[0];
