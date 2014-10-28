@@ -44,13 +44,6 @@
     <AssemblyOriginatorKeyFile>..\scskey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <!-- A reference to the entire .NET Framework is automatically included -->
-    <ProjectReference Include="..\..\GeoAPI\GeoAPI.Pcl\GeoAPI.Pcl.csproj">
-      <Project>{92B3B84B-50F1-4147-8B97-D93B90FA5514}</Project>
-      <Name>GeoAPI.Pcl</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="..\ProjNet\CoordinateSystems\AngularUnit.cs">
       <Link>CoordinateSystems\AngularUnit.cs</Link>
     </Compile>
@@ -192,8 +185,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
   </Target>
-  <Import Project="$(SolutionDir)GeoAPI.props" Condition="Exists('$(SolutionDir)GeoAPI.props')"/>
-
+  <Import Project="$(SolutionDir)GeoAPI.props" Condition="Exists('$(SolutionDir)GeoAPI.props')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
