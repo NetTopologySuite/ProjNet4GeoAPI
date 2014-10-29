@@ -53,30 +53,25 @@ namespace ProjNet.Converters.WellKnownText.IO
         private readonly NumberFormatInfo _nfi = CultureInfo.InvariantCulture.NumberFormat;
 
         private TokenType _currentTokenType;
-        private readonly TextReader _reader;
+        private readonly StreamReader _reader;
         private string _currentToken;
 
         private int _lineNumber = 1;
         private int _colNumber = 1;
-        private readonly bool _ignoreWhitespace;
-        private readonly Encoding _encoding;
+        private readonly bool _ignoreWhitespace;        
 
         /// <summary>
         /// Initializes a new instance of the StreamTokenizer class.
         /// </summary>
         /// <param name="reader">A TextReader with some text to read.</param>
-        /// <param name="ignoreWhitespace">Flag indicating whether whitespace should be ignored.</param>
-        /// <param name="encoding">the encoding to use.</param>
-        public StreamTokenizer(TextReader reader, bool ignoreWhitespace, Encoding encoding)
+        /// <param name="ignoreWhitespace">Flag indicating whether whitespace should be ignored.</param>        
+        public StreamTokenizer(StreamReader reader, bool ignoreWhitespace)
         {
             if (reader == null)
                 throw new ArgumentNullException("reader");
-            if (encoding == null)
-                throw new ArgumentNullException("encoding");
 
             _reader = reader;
             _ignoreWhitespace = ignoreWhitespace;
-            _encoding = encoding;
         }
 
         /// <summary>
@@ -98,11 +93,6 @@ namespace ProjNet.Converters.WellKnownText.IO
         public bool IgnoreWhitespace
         {
             get { return _ignoreWhitespace; }
-        }
-
-        public Encoding Encoding
-        {
-            get { return _encoding; }
         }
 
         /// <summary>
@@ -173,7 +163,8 @@ namespace ProjNet.Converters.WellKnownText.IO
                 // convert int to char
                 byte[] ba = { (byte)_reader.Peek() };
 
-                char[] ascii = Encoding.GetChars(ba);
+                Encoding encoding = _reader.CurrentEncoding;
+                char[] ascii = encoding.GetChars(ba);
 
                 Char currentCharacter = chars[0];
                 Char nextCharacter = ascii[0];

@@ -58,40 +58,40 @@ namespace ProjNet.Converters.WellKnownText
         /// <exception cref="System.ArgumentException">If a token is not recognised.</exception>
         public static IInfo Parse(string wkt, Encoding encoding)
         {
-            IInfo returnObject = null;
-            StringReader reader = new StringReader(wkt);
-            WktStreamTokenizer tokenizer = new WktStreamTokenizer(reader, encoding);
-            tokenizer.NextToken();
-            string objectName = tokenizer.GetStringValue();
-            switch (objectName)
-            {
-                case "UNIT":
-                    returnObject = ReadUnit(tokenizer);
-                    break;
-                case "SPHEROID":
-                    returnObject = ReadEllipsoid(tokenizer);
-                    break;
-                case "DATUM":
-                    returnObject = ReadHorizontalDatum(tokenizer);
-                    break;
-                case "PRIMEM":
-                    returnObject = ReadPrimeMeridian(tokenizer);
-                    break;
-                case "VERT_CS":
-                case "GEOGCS":
-                case "PROJCS":
-                case "COMPD_CS":
-                case "GEOCCS":
-                case "FITTED_CS":
-                case "LOCAL_CS":
-                    returnObject = ReadCoordinateSystem(wkt, tokenizer);
-                    break;
-                default:
-                    throw new ArgumentException(String.Format("'{0}' is not recognized.", objectName));
+            if (String.IsNullOrEmpty(wkt))
+                throw new ArgumentNullException("wkt");
+            if (encoding == null)
+                throw new ArgumentNullException("encoding");
 
+            byte[] arr = encoding.GetBytes(wkt);
+            using (Stream stream = new MemoryStream(arr))
+            using (StreamReader reader = new StreamReader(stream, encoding))
+            {
+                WktStreamTokenizer tokenizer = new WktStreamTokenizer(reader);
+                tokenizer.NextToken();
+                string objectName = tokenizer.GetStringValue();
+                switch (objectName)
+                {
+                    case "UNIT":
+                        return ReadUnit(tokenizer);
+                    case "SPHEROID":
+                        return ReadEllipsoid(tokenizer);
+                    case "DATUM":
+                        return ReadHorizontalDatum(tokenizer);
+                    case "PRIMEM":
+                        return ReadPrimeMeridian(tokenizer);
+                    case "VERT_CS":
+                    case "GEOGCS":
+                    case "PROJCS":
+                    case "COMPD_CS":
+                    case "GEOCCS":
+                    case "FITTED_CS":
+                    case "LOCAL_CS":
+                        return ReadCoordinateSystem(wkt, tokenizer);
+                    default:
+                        throw new ArgumentException(String.Format("'{0}' is not recognized.", objectName));
+                }
             }
-            reader.Dispose();
-            return returnObject;
         }
 
         /// <summary>
@@ -250,7 +250,7 @@ namespace ProjNet.Converters.WellKnownText
                 tokenizer.ReadToken("]");
             return info;
         }
-        
+
         private static IEllipsoid ReadEllipsoid(WktStreamTokenizer tokenizer)
         {
             //SPHEROID["Airy 1830",6377563.396,299.3249646,AUTHORITY["EPSG","7001"]]
@@ -356,7 +356,7 @@ namespace ProjNet.Converters.WellKnownText
                         projection = ReadProjection(tokenizer);
                         ct = tokenizer.GetTokenType();
                         continue;
-                        //break;
+                    //break;
                     case "UNIT":
                         unit = ReadLinearUnit(tokenizer);
                         break;

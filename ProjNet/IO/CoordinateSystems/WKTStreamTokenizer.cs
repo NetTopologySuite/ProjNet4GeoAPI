@@ -38,7 +38,6 @@
 using System;
 using System.Globalization;
 using System.IO;
-using System.Text;
 using ProjNet.Converters.WellKnownText.IO;
 
 namespace ProjNet.Converters.WellKnownText
@@ -55,8 +54,7 @@ namespace ProjNet.Converters.WellKnownText
         /// </summary>
         /// <remarks>The WktStreamTokenizer class ais in reading WKT streams.</remarks>
         /// <param name="reader">A TextReader that contains </param>
-        /// <param name="encoding">the encoding to use.</param>
-        public WktStreamTokenizer(TextReader reader, Encoding encoding) : base(reader, true, encoding) { }
+        public WktStreamTokenizer(StreamReader reader) : base(reader, true) { }
 
         /// <summary>
         /// Reads a token and checks it is what is expected.
