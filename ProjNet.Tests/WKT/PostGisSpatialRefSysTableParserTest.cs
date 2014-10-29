@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Data;
-using NUnit.Framework;
 using Npgsql;
+using NUnit.Framework;
+using ProjNet.Converters.WellKnownText;
+using ProjNet.CoordinateSystems;
 
 namespace ProjNet.UnitTests.Converters.WKT
 {
@@ -10,39 +12,39 @@ namespace ProjNet.UnitTests.Converters.WKT
     {
         private const string ConnectionString =
             "Host=localhost;Port=5432;Database=postgis2;uid=postgres;pwd=1.Kennwort";
-        
+
         [Test, Ignore("Run only if you have a PostGis server and have corrected the ConnectionString")]
         public void Test()
         {
-            
-            using (var cn = new NpgsqlConnection(ConnectionString))
+
+            using (NpgsqlConnection cn = new NpgsqlConnection(ConnectionString))
             {
                 cn.Open();
-                var cmd = cn.CreateCommand();
+                NpgsqlCommand cmd = cn.CreateCommand();
                 cmd.CommandText = "SELECT \"srid\", \"srtext\" FROM \"public\".\"spatial_ref_sys\" ORDER BY \"srid\";";
 
-                var counted = 0;
-                var failed = 0;
-                var tested = 0;
-                using (var r = cmd.ExecuteReader(CommandBehavior.CloseConnection))
+                int counted = 0;
+                int failed = 0;
+                int tested = 0;
+                using (NpgsqlDataReader r = cmd.ExecuteReader(CommandBehavior.CloseConnection))
                 {
                     if (r != null)
                     {
                         while (r.Read())
                         {
                             counted++;
-                            var srtext = r.GetString(1);
+                            string srtext = r.GetString(1);
                             if (!string.IsNullOrEmpty(srtext))
                             {
                                 tested++;
-                                if (!TestParse(r.GetInt32(0), srtext))failed++;
+                                if (!TestParse(r.GetInt32(0), srtext)) failed++;
                             }
                         }
                     }
                 }
 
                 Console.WriteLine("\n\nTotal number of Tests {0}, failed {1}", tested, failed);
-                Assert.IsTrue(failed==0);
+                Assert.IsTrue(failed == 0);
             }
 
         }
@@ -51,7 +53,9 @@ namespace ProjNet.UnitTests.Converters.WKT
         {
             try
             {
-                ProjNet.Converters.WellKnownText.CoordinateSystemWktReader.Parse(srtext);
+                CoordinateSystemFactory factory = new CoordinateSystemFactory();
+                factory.CreateFromWkt(srtext);
+                //CoordinateSystemWktReader.Parse(srtext);
                 return true;
             }
             catch (Exception ex)
@@ -72,21 +76,21 @@ namespace ProjNet.UnitTests.Converters.WKT
         public void TestProjNetIssues()
         {
             Assert.IsTrue(TestParse(1,
-                    "PROJCS[\"International_Terrestrial_Reference_Frame_1992Lambert_Conformal_Conic_2SP\","+
-                    "GEOGCS[\"GCS_International_Terrestrial_Reference_Frame_1992\","+
-                    "DATUM[\"International_Terrestrial_Reference_Frame_1992\","+
-                    "SPHEROID[\"GRS_1980\",6378137,298.257222101],"+
-                    "TOWGS84[0,0,0,0,0,0,0]],"+
-                    "PRIMEM[\"Greenwich\",0],"+
-                    "UNIT[\"Degree\",0.0174532925199433]],"+
-                    "PROJECTION[\"Lambert_Conformal_Conic_2SP\",AUTHORITY[\"EPSG\",\"9802\"]],"+
-                    "PARAMETER[\"Central_Meridian\",-102],"+
-                    "PARAMETER[\"Latitude_Of_Origin\",12],"+
-                    "PARAMETER[\"False_Easting\",2500000],"+
-                    "PARAMETER[\"False_Northing\",0],"+
-                    "PARAMETER[\"Standard_Parallel_1\",17.5],"+
-                    "PARAMETER[\"Standard_Parallel_2\",29.5],"+
-                    "PARAMETER[\"Scale_Factor\",1],"+
+                    "PROJCS[\"International_Terrestrial_Reference_Frame_1992Lambert_Conformal_Conic_2SP\"," +
+                    "GEOGCS[\"GCS_International_Terrestrial_Reference_Frame_1992\"," +
+                    "DATUM[\"International_Terrestrial_Reference_Frame_1992\"," +
+                    "SPHEROID[\"GRS_1980\",6378137,298.257222101]," +
+                    "TOWGS84[0,0,0,0,0,0,0]]," +
+                    "PRIMEM[\"Greenwich\",0]," +
+                    "UNIT[\"Degree\",0.0174532925199433]]," +
+                    "PROJECTION[\"Lambert_Conformal_Conic_2SP\",AUTHORITY[\"EPSG\",\"9802\"]]," +
+                    "PARAMETER[\"Central_Meridian\",-102]," +
+                    "PARAMETER[\"Latitude_Of_Origin\",12]," +
+                    "PARAMETER[\"False_Easting\",2500000]," +
+                    "PARAMETER[\"False_Northing\",0]," +
+                    "PARAMETER[\"Standard_Parallel_1\",17.5]," +
+                    "PARAMETER[\"Standard_Parallel_2\",29.5]," +
+                    "PARAMETER[\"Scale_Factor\",1]," +
                     "UNIT[\"Meter\",1,AUTHORITY[\"EPSG\",\"9001\"]]]"));
 
             Assert.IsTrue(TestParse(2,

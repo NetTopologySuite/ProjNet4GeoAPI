@@ -38,92 +38,75 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.Text;
 using ProjNet.Converters.WellKnownText.IO;
 
 namespace ProjNet.Converters.WellKnownText
 {
-	/// <summary>
-	/// Reads a stream of Well Known Text (wkt) string and returns a stream of tokens.
-	/// </summary>
-	internal class WktStreamTokenizer : StreamTokenizer
-	{
+    /// <summary>
+    /// Reads a stream of Well Known Text (wkt) string and returns a stream of tokens.
+    /// </summary>
+    internal class WktStreamTokenizer : StreamTokenizer
+    {
+        private readonly NumberFormatInfo _nfi = CultureInfo.InvariantCulture.NumberFormat;
 
-		#region Constructors
+        /// <summary>
+        /// Initializes a new instance of the WktStreamTokenizer class.
+        /// </summary>
+        /// <remarks>The WktStreamTokenizer class ais in reading WKT streams.</remarks>
+        /// <param name="reader">A TextReader that contains </param>
+        /// <param name="encoding">the encoding to use.</param>
+        public WktStreamTokenizer(TextReader reader, Encoding encoding) : base(reader, true, encoding) { }
 
-		/// <summary>
-		/// Initializes a new instance of the WktStreamTokenizer class.
-		/// </summary>
-		/// <remarks>The WktStreamTokenizer class ais in reading WKT streams.</remarks>
-		/// <param name="reader">A TextReader that contains </param>
-		public WktStreamTokenizer(TextReader reader) : base(reader, true)
-		{
-			if (reader==null)
-			{
-				throw new ArgumentNullException("reader");
-			}
-		}
-		#endregion
+        /// <summary>
+        /// Reads a token and checks it is what is expected.
+        /// </summary>
+        /// <param name="expectedToken">The expected token.</param>
+        internal void ReadToken(string expectedToken)
+        {
+            NextToken();
+            if (GetStringValue() != expectedToken)
+            {
+                string s = String.Format(_nfi, "Expecting ('{3}') but got a '{0}' at line {1} column {2}.", GetStringValue(), LineNumber, Column, expectedToken);
+                throw new ArgumentException(s);
+            }
+        }
 
-		#region Methods
+        /// <summary>
+        /// Reads a string inside double quotes.
+        /// </summary>
+        /// <remarks>
+        /// White space inside quotes is preserved.
+        /// </remarks>
+        /// <returns>The string inside the double quotes.</returns>
+        public string ReadDoubleQuotedWord()
+        {
+            string word = "";
+            ReadToken("\"");
+            NextToken(false);
+            while (GetStringValue() != "\"")
+            {
+                word = word + GetStringValue();
+                NextToken(false);
+            }
+            return word;
+        }
 
-		/// <summary>
-		/// Reads a token and checks it is what is expected.
-		/// </summary>
-		/// <param name="expectedToken">The expected token.</param>
-		internal void ReadToken(string expectedToken)
-		{
-			this.NextToken();
-			if (this.GetStringValue()!=expectedToken)
-			{
-                throw new ArgumentException(String.Format(CultureInfo.InvariantCulture.NumberFormat, "Expecting ('{3}') but got a '{0}' at line {1} column {2}.", this.GetStringValue(), this.LineNumber, this.Column, expectedToken));
-			}
-		}
-		
-		/// <summary>
-		/// Reads a string inside double quotes.
-		/// </summary>
-		/// <remarks>
-		/// White space inside quotes is preserved.
-		/// </remarks>
-		/// <returns>The string inside the double quotes.</returns>
-		public string ReadDoubleQuotedWord()
-		{
-			string word="";
-			ReadToken("\"");	
-			NextToken(false);
-			while (GetStringValue()!="\"")
-			{
-				word = word+ this.GetStringValue();
-				NextToken(false);
-			} 
-			return word;
-		}
-
-		/// <summary>
-		/// Reads the authority and authority code.
-		/// </summary>
-		/// <param name="authority">String to place the authority in.</param>
-		/// <param name="authorityCode">String to place the authority code in.</param>
-		public void ReadAuthority(ref string authority,ref long authorityCode)
-		{
-			//AUTHORITY["EPGS","9102"]]
-			if(GetStringValue() != "AUTHORITY")
-				ReadToken("AUTHORITY");
-			ReadToken("[");
-			authority = this.ReadDoubleQuotedWord();
-			ReadToken(",");
-#if(!Silverlight)
-			long.TryParse(this.ReadDoubleQuotedWord(), 
-				NumberStyles.Any,
-				CultureInfo.InvariantCulture.NumberFormat,
-				out authorityCode);
-#else
-			try { authorityCode = long.Parse(this.ReadDoubleQuotedWord(), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture.NumberFormat); }
-			catch { }
-#endif
-			ReadToken("]");
-		}
-		#endregion
-
-	}
+        /// <summary>
+        /// Reads the authority and authority code.
+        /// </summary>
+        /// <param name="authority">String to place the authority in.</param>
+        /// <param name="authorityCode">String to place the authority code in.</param>
+        public void ReadAuthority(ref string authority, ref long authorityCode)
+        {
+            //AUTHORITY["EPGS","9102"]]
+            if (GetStringValue() != "AUTHORITY")
+                ReadToken("AUTHORITY");
+            ReadToken("[");
+            authority = ReadDoubleQuotedWord();
+            ReadToken(",");
+            long.TryParse(ReadDoubleQuotedWord(), NumberStyles.Any, _nfi, out authorityCode);
+            ReadToken("]");
+        }
+    }
 }

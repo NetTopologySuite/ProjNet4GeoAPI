@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.IO;
 using GeoAPI.CoordinateSystems;
 using ProjNet.Converters.WellKnownText;
+using ProjNet.CoordinateSystems;
 
 namespace ProjNet.UnitTests
 {
@@ -53,13 +54,10 @@ namespace ProjNet.UnitTests
         /// <returns>Coordinate system, or null if SRID was not found.</returns>
         public static ICoordinateSystem GetCSbyID(int id)
         {
+            ICoordinateSystemFactory factory = new CoordinateSystemFactory();
             foreach (var wkt in GetSrids())
-            {
                 if (wkt.WktId == id)
-                {
-                    return CoordinateSystemWktReader.Parse(wkt.Wkt) as ICoordinateSystem;
-                }
-            }
+                    return factory.CreateFromWkt(wkt.Wkt);
             return null;
         }
     }
