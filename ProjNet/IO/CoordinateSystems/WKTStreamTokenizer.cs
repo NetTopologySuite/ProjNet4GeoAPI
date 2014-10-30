@@ -54,7 +54,7 @@ namespace ProjNet.Converters.WellKnownText
         /// </summary>
         /// <remarks>The WktStreamTokenizer class ais in reading WKT streams.</remarks>
         /// <param name="reader">A TextReader that contains </param>
-        public WktStreamTokenizer(StreamReader reader) : base(reader, true) { }
+        public WktStreamTokenizer(TextReader reader) : base(reader, true) { }
 
         /// <summary>
         /// Reads a token and checks it is what is expected.

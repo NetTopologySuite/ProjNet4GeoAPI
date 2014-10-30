@@ -53,7 +53,7 @@ namespace ProjNet.Converters.WellKnownText.IO
         private readonly NumberFormatInfo _nfi = CultureInfo.InvariantCulture.NumberFormat;
 
         private TokenType _currentTokenType;
-        private readonly StreamReader _reader;
+        private readonly TextReader _reader;
         private string _currentToken;
 
         private int _lineNumber = 1;
@@ -65,7 +65,7 @@ namespace ProjNet.Converters.WellKnownText.IO
         /// </summary>
         /// <param name="reader">A TextReader with some text to read.</param>
         /// <param name="ignoreWhitespace">Flag indicating whether whitespace should be ignored.</param>        
-        public StreamTokenizer(StreamReader reader, bool ignoreWhitespace)
+        public StreamTokenizer(TextReader reader, bool ignoreWhitespace)
         {
             if (reader == null)
                 throw new ArgumentNullException("reader");
@@ -150,24 +150,17 @@ namespace ProjNet.Converters.WellKnownText.IO
 
         private TokenType NextTokenAny()
         {
-            char[] chars = new char[1];
             _currentToken = "";
             _currentTokenType = TokenType.Eof;
-            int finished = _reader.Read(chars, 0, 1);
+            int finished = _reader.Read();
 
             bool isNumber = false;
             bool isWord = false;
 
-            while (finished != 0)
+            while (finished != -1)
             {
-                // convert int to char
-                byte[] ba = { (byte)_reader.Peek() };
-
-                Encoding encoding = _reader.CurrentEncoding;
-                char[] ascii = encoding.GetChars(ba);
-
-                Char currentCharacter = chars[0];
-                Char nextCharacter = ascii[0];
+                char currentCharacter = (char) finished;
+                char nextCharacter = (char) _reader.Peek();
                 _currentTokenType = GetType(currentCharacter);
                 TokenType nextTokenType = GetType(nextCharacter);
 
@@ -196,9 +189,7 @@ namespace ProjNet.Converters.WellKnownText.IO
                 {
                     _currentTokenType = TokenType.Number;
                     nextTokenType = TokenType.Number;
-                    //isNumber = true;
                 }
-
 
                 // this handles numbers with a decimal point
                 if (isNumber && nextTokenType == TokenType.Number && currentCharacter == '.')
@@ -218,10 +209,10 @@ namespace ProjNet.Converters.WellKnownText.IO
 
                 _currentToken = _currentToken + currentCharacter;
                 if (_currentTokenType != nextTokenType)
-                    finished = 0;
+                    finished = -1;
                 else if (_currentTokenType == TokenType.Symbol && currentCharacter != '-')
-                    finished = 0;
-                else finished = _reader.Read(chars, 0, 1);
+                    finished = -1;
+                else finished = _reader.Read();
             }
             return _currentTokenType;
         }

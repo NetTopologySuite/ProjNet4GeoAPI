@@ -65,7 +65,7 @@ namespace ProjNet.Converters.WellKnownText
 
             byte[] arr = encoding.GetBytes(wkt);
             using (Stream stream = new MemoryStream(arr))
-            using (StreamReader reader = new StreamReader(stream, encoding))
+            using (TextReader reader = new StreamReader(stream, encoding))
             {
                 WktStreamTokenizer tokenizer = new WktStreamTokenizer(reader);
                 tokenizer.NextToken();
