@@ -50,7 +50,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>$(OutputPath)ProjNet.XML</DocumentationFile>
+    <DocumentationFile>..\Release\v4.0\AnyCPU\ProjNet.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="CoordinateSystems\AngularUnit.cs" />
