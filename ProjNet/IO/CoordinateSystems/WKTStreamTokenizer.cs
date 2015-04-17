@@ -80,7 +80,9 @@ namespace ProjNet.Converters.WellKnownText
         public string ReadDoubleQuotedWord()
         {
             string word = "";
-            ReadToken("\"");
+
+            if (GetStringValue()!="\"")
+                ReadToken("\"");
             NextToken(false);
             while (GetStringValue() != "\"")
             {
@@ -103,7 +105,11 @@ namespace ProjNet.Converters.WellKnownText
             ReadToken("[");
             authority = ReadDoubleQuotedWord();
             ReadToken(",");
-            long.TryParse(ReadDoubleQuotedWord(), NumberStyles.Any, _nfi, out authorityCode);
+            NextToken();
+            if (GetTokenType() == TokenType.Number)
+                authorityCode = (long) GetNumericValue();
+            else
+                long.TryParse(ReadDoubleQuotedWord(), NumberStyles.Any, _nfi, out authorityCode);
             ReadToken("]");
         }
     }
