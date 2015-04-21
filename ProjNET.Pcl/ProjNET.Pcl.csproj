@@ -86,6 +86,9 @@
     <Compile Include="..\ProjNet\CoordinateSystems\PrimeMeridian.cs">
       <Link>CoordinateSystems\PrimeMeridian.cs</Link>
     </Compile>
+    <Compile Include="..\ProjNet\CoordinateSystems\FittedCoordinateSystem.cs">
+      <Link>CoordinateSystems\FittedCoordinateSystem.cs</Link>
+    </Compile>
     <Compile Include="..\ProjNet\CoordinateSystems\ProjectedCoordinateSystem.cs">
       <Link>CoordinateSystems\ProjectedCoordinateSystem.cs</Link>
     </Compile>

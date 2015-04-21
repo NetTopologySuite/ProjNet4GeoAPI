@@ -64,7 +64,11 @@ namespace ProjNet.CoordinateSystems.Transformations
 
             else if (sourceCS is IGeographicCoordinateSystem && targetCS is IGeographicCoordinateSystem) //Geographic -> Geographic
 				trans = CreateGeog2Geog(sourceCS as IGeographicCoordinateSystem, targetCS as IGeographicCoordinateSystem);
-			else
+			else if (sourceCS is IFittedCoordinateSystem) //Fitted -> Any
+                trans = Fitt2Any ((IFittedCoordinateSystem)sourceCS, targetCS);
+            else if (targetCS is IFittedCoordinateSystem) //Any -> Fitted 
+                trans = Any2Fitt (sourceCS, (IFittedCoordinateSystem)targetCS);
+            else
 				throw new NotSupportedException("No support for transforming between the two specified coordinate systems");
 			
 			//if (trans.MathTransform is ConcatenatedTransform) {
@@ -245,6 +249,91 @@ namespace ProjNet.CoordinateSystems.Transformations
 		    
             return new CoordinateTransformation(source, target, TransformType.ConversionAndTransformation, ct, "", "", -1, "", "");
 		}
+
+        /// <summary>
+        /// Creates transformation from fitted coordinate system to the target one
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        private static ICoordinateTransformation Fitt2Any (IFittedCoordinateSystem source, ICoordinateSystem target)
+        {
+            //transform from fitted to base system of fitted (which is equal to target)
+            IMathTransform mt = CreateFittedTransform (source);
+
+            //case when target system is equal to base system of the fitted
+            if (source.BaseCoordinateSystem.EqualParams (target))
+            {
+                //Transform form base system of fitted to target coordinate system
+                return CreateTransform (source, target, TransformType.Transformation, mt);
+            }
+
+            //Transform form base system of fitted to target coordinate system
+            ConcatenatedTransform ct = new ConcatenatedTransform ();
+            ct.CoordinateTransformationList.Add (CreateTransform (source, source.BaseCoordinateSystem, TransformType.Transformation, mt));
+
+            //Transform form base system of fitted to target coordinate system
+            CoordinateTransformationFactory ctFac = new CoordinateTransformationFactory ();
+            ct.CoordinateTransformationList.Add (ctFac.CreateFromCoordinateSystems (source.BaseCoordinateSystem, target));
+
+            return CreateTransform (source, target, TransformType.Transformation, ct);
+        }
+
+        /// <summary>
+        /// Creates transformation from source coordinate system to specified target system which is the fitted one
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="target"></param>
+        /// <returns></returns>
+        private static ICoordinateTransformation Any2Fitt (ICoordinateSystem source, IFittedCoordinateSystem target)
+        {
+            //Transform form base system of fitted to target coordinate system - use invered math transform
+            IMathTransform invMt = CreateFittedTransform (target).Inverse ();
+
+            //case when source system is equal to base system of the fitted
+            if (target.BaseCoordinateSystem.EqualParams (source))
+            {
+                //Transform form base system of fitted to target coordinate system
+                return CreateTransform (source, target, TransformType.Transformation, invMt);
+            }
+
+            ConcatenatedTransform ct = new ConcatenatedTransform ();
+            //First transform from source to base system of fitted
+            CoordinateTransformationFactory ctFac = new CoordinateTransformationFactory ();
+            ct.CoordinateTransformationList.Add (ctFac.CreateFromCoordinateSystems (source, target.BaseCoordinateSystem));
+
+            //Transform form base system of fitted to target coordinate system - use invered math transform
+            ct.CoordinateTransformationList.Add (CreateTransform (target.BaseCoordinateSystem, target, TransformType.Transformation, invMt));
+
+            return CreateTransform (source, target, TransformType.Transformation, ct);
+        }
+
+        private static IMathTransform CreateFittedTransform (IFittedCoordinateSystem fittedSystem)
+        {
+            //create transform From fitted to base and inverts it
+            if (fittedSystem is FittedCoordinateSystem)
+            {
+                return ((FittedCoordinateSystem)fittedSystem).ToBaseTransform;
+            }
+
+            //MathTransformFactory mtFac = new MathTransformFactory ();
+            ////create transform From fitted to base and inverts it
+            //return mtFac.CreateFromWKT (fittedSystem.ToBase ());
+
+            throw new NotImplementedException ();
+        }
+
+        /// <summary>
+        /// Creates an instance of CoordinateTransformation as an anonymous transformation without neither autohority nor code defined.
+        /// </summary>
+        /// <param name="sourceCS">Source coordinate system</param>
+        /// <param name="targetCS">Target coordinate system</param>
+        /// <param name="transformType">Transformation type</param>
+        /// <param name="mathTransform">Math transform</param>
+        private static CoordinateTransformation CreateTransform (ICoordinateSystem sourceCS, ICoordinateSystem targetCS, TransformType transformType, IMathTransform mathTransform)
+        {
+            return new CoordinateTransformation (sourceCS, targetCS, transformType, mathTransform, string.Empty, string.Empty, -1, string.Empty, string.Empty);
+        }
 		#endregion
 
 		private static IMathTransform CreateCoordinateOperation(IGeocentricCoordinateSystem geo)

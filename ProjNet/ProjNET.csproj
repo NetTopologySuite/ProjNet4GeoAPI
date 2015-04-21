@@ -58,6 +58,7 @@
     <Compile Include="CoordinateSystems\CoordinateSystemFactory.cs" />
     <Compile Include="CoordinateSystems\Datum.cs" />
     <Compile Include="CoordinateSystems\Ellipsoid.cs" />
+    <Compile Include="CoordinateSystems\FittedCoordinateSystem.cs" />
     <Compile Include="CoordinateSystems\GeocentricCoordinateSystem.cs" />
     <Compile Include="CoordinateSystems\GeographicCoordinateSystem.cs" />
     <Compile Include="CoordinateSystems\GeographicTransform.cs" />
