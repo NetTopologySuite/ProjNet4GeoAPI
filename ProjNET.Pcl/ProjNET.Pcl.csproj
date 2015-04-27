@@ -11,8 +11,8 @@
     <ProjectGuid>{1A851740-12C4-4A2A-9C78-AD69FD1420F5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ProjNET</RootNamespace>
-    <AssemblyName>ProjNET</AssemblyName>
+    <RootNamespace>ProjNet</RootNamespace>
+    <AssemblyName>ProjNet</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Profile147</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
@@ -35,7 +35,7 @@
     <DefineConstants>TRACE;PCL</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\Release\PCL\AnyCPU\ProjNET.xml</DocumentationFile>
+    <DocumentationFile>..\Release\PCL\AnyCPU\ProjNet.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup>
     <SignAssembly>true</SignAssembly>
@@ -85,6 +85,9 @@
     </Compile>
     <Compile Include="..\ProjNet\CoordinateSystems\PrimeMeridian.cs">
       <Link>CoordinateSystems\PrimeMeridian.cs</Link>
+    </Compile>
+    <Compile Include="..\ProjNet\CoordinateSystems\FittedCoordinateSystem.cs">
+      <Link>CoordinateSystems\FittedCoordinateSystem.cs</Link>
     </Compile>
     <Compile Include="..\ProjNet\CoordinateSystems\ProjectedCoordinateSystem.cs">
       <Link>CoordinateSystems\ProjectedCoordinateSystem.cs</Link>
