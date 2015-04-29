@@ -40,6 +40,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using GeoAPI.CoordinateSystems;
+using GeoAPI.CoordinateSystems.Transformations;
 using ProjNet.CoordinateSystems;
 
 namespace ProjNet.Converters.WellKnownText
@@ -198,10 +199,11 @@ namespace ProjNet.Converters.WellKnownText
                     return ReadGeographicCoordinateSystem(tokenizer);
                 case "PROJCS":
                     return ReadProjectedCoordinateSystem(tokenizer);
+                case "FITTED_CS":
+                    return ReadFittedCoordinateSystem (tokenizer);
                 case "COMPD_CS":
                 case "VERT_CS":
                 case "GEOCCS":
-                case "FITTED_CS":
                 case "LOCAL_CS":
                     throw new NotSupportedException(String.Format("{0} coordinate system is not supported.", coordinateSystem));
                 default:
@@ -490,6 +492,59 @@ namespace ProjNet.Converters.WellKnownText
             IPrimeMeridian primeMeridian = new PrimeMeridian(longitude, AngularUnit.Degrees, name, authority, authorityCode, String.Empty, String.Empty, String.Empty);
 
             return primeMeridian;
+        }
+
+        private static IFittedCoordinateSystem ReadFittedCoordinateSystem (WktStreamTokenizer tokenizer)
+        {
+            /*
+             FITTED_CS[
+                 "Local coordinate system MNAU (based on Gauss-Krueger)",
+                 PARAM_MT[
+                    "Affine",
+                    PARAMETER["num_row",3],
+                    PARAMETER["num_col",3],
+                    PARAMETER["elt_0_0", 0.883485346527455],
+                    PARAMETER["elt_0_1", -0.468458794848877],
+                    PARAMETER["elt_0_2", 3455869.17937689],
+                    PARAMETER["elt_1_0", 0.468458794848877],
+                    PARAMETER["elt_1_1", 0.883485346527455],
+                    PARAMETER["elt_1_2", 5478710.88035753],
+                    PARAMETER["elt_2_2", 1],
+                 ],
+                 PROJCS["DHDN / Gauss-Kruger zone 3", GEOGCS["DHDN", DATUM["Deutsches_Hauptdreiecksnetz", SPHEROID["Bessel 1841", 6377397.155, 299.1528128, AUTHORITY["EPSG", "7004"]], TOWGS84[612.4, 77, 440.2, -0.054, 0.057, -2.797, 0.525975255930096], AUTHORITY["EPSG", "6314"]], PRIMEM["Greenwich", 0, AUTHORITY["EPSG", "8901"]], UNIT["degree", 0.0174532925199433, AUTHORITY["EPSG", "9122"]], AUTHORITY["EPSG", "4314"]], UNIT["metre", 1, AUTHORITY["EPSG", "9001"]], PROJECTION["Transverse_Mercator"], PARAMETER["latitude_of_origin", 0], PARAMETER["central_meridian", 9], PARAMETER["scale_factor", 1], PARAMETER["false_easting", 3500000], PARAMETER["false_northing", 0], AUTHORITY["EPSG", "31467"]]
+                 AUTHORITY["CUSTOM","12345"]
+             ]
+            */
+            tokenizer.ReadToken ("[");
+            string name = tokenizer.ReadDoubleQuotedWord ();
+            tokenizer.ReadToken (",");
+            tokenizer.ReadToken ("PARAM_MT");
+            IMathTransform toBaseTransform = MathTransformWktReader.ReadMathTransform (tokenizer);
+            tokenizer.ReadToken (",");
+            tokenizer.NextToken ();
+            ICoordinateSystem baseCS = ReadCoordinateSystem (null, tokenizer);
+
+            string authority = String.Empty;
+            long authorityCode = -1;
+
+            TokenType ct = tokenizer.NextToken ();
+            while (ct != TokenType.Eol && ct != TokenType.Eof)
+            {
+                switch (tokenizer.GetStringValue ())
+                {
+                    case ",":
+                    case "]":
+                        break;
+                    case "AUTHORITY":
+                        tokenizer.ReadAuthority (ref authority, ref authorityCode);
+                        //tokenizer.ReadToken("]");
+                        break;
+                }
+                ct = tokenizer.NextToken ();
+            }
+
+            IFittedCoordinateSystem fittedCS = new FittedCoordinateSystem (baseCS, toBaseTransform, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+            return fittedCS;
         }
     }
 }
