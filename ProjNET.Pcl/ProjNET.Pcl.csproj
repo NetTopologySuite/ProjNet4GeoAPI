@@ -74,6 +74,9 @@
     <Compile Include="..\ProjNet\CoordinateSystems\HorizontalDatum.cs">
       <Link>CoordinateSystems\HorizontalDatum.cs</Link>
     </Compile>
+    <Compile Include="..\ProjNet\CoordinateSystems\ParameterInfo.cs">
+      <Link>CoordinateSystems\ParameterInfo.cs</Link>
+    </Compile>
     <Compile Include="..\ProjNet\CoordinateSystems\Info.cs">
       <Link>CoordinateSystems\Info.cs</Link>
     </Compile>
@@ -128,6 +131,9 @@
     <Compile Include="..\ProjNet\CoordinateSystems\Projections\TransverseMercator.cs">
       <Link>CoordinateSystems\Projections\TransverseMercator.cs</Link>
     </Compile>
+    <Compile Include="..\ProjNet\CoordinateSystems\Transformations\AffineTransform.cs">
+      <Link>CoordinateSystems\Transformations\AffineTransform.cs</Link>
+    </Compile>
     <Compile Include="..\ProjNet\CoordinateSystems\Transformations\ConcatenatedTransform.cs">
       <Link>CoordinateSystems\Transformations\ConcatenatedTransform.cs</Link>
     </Compile>
@@ -157,6 +163,9 @@
     </Compile>
     <Compile Include="..\ProjNet\IO\CoordinateSystems\CoordinateSystemWktReader.cs">
       <Link>IO\CoordinateSystems\CoordinateSystemWktReader.cs</Link>
+    </Compile>
+    <Compile Include="..\ProjNet\IO\CoordinateSystems\MathTransformWktReader.cs">
+      <Link>IO\CoordinateSystems\MathTransformWktReader.cs</Link>
     </Compile>
     <Compile Include="..\ProjNet\IO\CoordinateSystems\StreamTokenizer.cs">
       <Link>IO\CoordinateSystems\StreamTokenizer.cs</Link>

@@ -18,8 +18,6 @@
 using GeoAPI.CoordinateSystems;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace ProjNet.CoordinateSystems
 {
@@ -50,7 +48,7 @@ namespace ProjNet.CoordinateSystems
         /// <summary>
         /// Gets or sets the parameters set for this projection.
         /// </summary>
-        public List<Parameter> Parameters
+        public List<GeoAPI.CoordinateSystems.Parameter> Parameters
         { 
             get;
             set;
@@ -60,9 +58,9 @@ namespace ProjNet.CoordinateSystems
         /// Returns the default parameters for this projection.
         /// </summary>
         /// <returns></returns>
-        public Parameter[] DefaultParameters ()
+        public GeoAPI.CoordinateSystems.Parameter[] DefaultParameters ()
         {
-            return new Parameter[0];
+            return new GeoAPI.CoordinateSystems.Parameter[0];
         }
 
         /// <summary>
@@ -70,12 +68,12 @@ namespace ProjNet.CoordinateSystems
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public Parameter GetParameterByName (string name)
+        public GeoAPI.CoordinateSystems.Parameter GetParameterByName (string name)
         {
             if (this.Parameters != null)
             {
                 //search parameter collection by name 
-                foreach (Parameter param in this.Parameters)
+                foreach (GeoAPI.CoordinateSystems.Parameter param in this.Parameters)
                 {
                     if (param != null && param.Name == name)
                     {

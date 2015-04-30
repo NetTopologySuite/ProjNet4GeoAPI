@@ -203,9 +203,9 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <param name="pi"></param>
         /// <param name="b"></param>
         /// <returns></returns>
-        private static double[] LUPSolve (double[][] LU, int[] pi, double[] b)
+        private static double[] LUPSolve (double[,] LU, int[] pi, double[] b)
         {
-            int n = LU.Length - 1;
+            int n = LU.GetLength (0) - 1;
             double[] x = new double[n + 1];
             double[] y = new double[n + 1];
             double suml = 0;
@@ -231,7 +231,7 @@ namespace ProjNet.CoordinateSystems.Transformations
                     }
                     else
                     {
-                        lij = LU[i][j];
+                        lij = LU[i, j];
                     }
                     suml = suml + (lij * y[j]);
                 }
@@ -243,22 +243,12 @@ namespace ProjNet.CoordinateSystems.Transformations
                 sumu = 0;
                 for (int j = i + 1; j <= n; j++)
                 {
-                    sumu = sumu + (LU[i][j] * x[j]);
+                    sumu = sumu + (LU[i, j] * x[j]);
                 }
-                x[i] = (y[i] - sumu) / LU[i][i];
+                x[i] = (y[i] - sumu) / LU[i, i];
             }
             return x;
         }
-
-        /*
-        * Perform LUP decomposition on a matrix A.
-        * Return L and U as a single matrix(double[][]) and P as an array of ints.
-        * We implement the code to compute LU "in place" in the matrix A.
-        * In order to make some of the calculations more straight forward and to 
-        * match Cormen's et al. pseudocode the matrix A should have its first row and first columns
-        * to be all 0.
-        * */
-
 
         /// <summary>
         /// Perform LUP decomposition on a matrix A.
@@ -271,9 +261,9 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <seealso href="http://www.rkinteractive.com/blogs/SoftwareDevelopment/post/2013/05/07/Algorithms-In-C-LUP-Decomposition.aspx"/>
         /// <param name="A"></param>
         /// <returns></returns>
-        private static Tuple<double[][], int[]> LUPDecomposition (double[][] A)
+        private static Tuple<double[,], int[]> LUPDecomposition (double[,] A)
         {
-            int n = A.Length - 1;
+            int n = A.GetLength (0) - 1;
             /*
             * pi represents the permutation matrix.  We implement it as an array
             * whose value indicates which column the 1 would appear.  We use it to avoid 
@@ -306,9 +296,9 @@ namespace ProjNet.CoordinateSystems.Transformations
                 p = 0;
                 for (int i = k; i <= n; i++)
                 {
-                    if (Math.Abs (A[i][k]) > p)
+                    if (Math.Abs (A[i, k]) > p)
                     {
-                        p = Math.Abs (A[i][k]);
+                        p = Math.Abs (A[i, k]);
                         kp = i;
                     }
                 }
@@ -330,10 +320,10 @@ namespace ProjNet.CoordinateSystems.Transformations
                 * */
                 for (int i = 0; i <= n; i++)
                 {
-                    aki = A[k][i];
-                    akpi = A[kp][i];
-                    A[k][i] = akpi;
-                    A[kp][i] = aki;
+                    aki = A[k, i];
+                    akpi = A[kp, i];
+                    A[k, i] = akpi;
+                    A[kp, i] = aki;
                 }
 
                 /*
@@ -341,10 +331,10 @@ namespace ProjNet.CoordinateSystems.Transformations
                     * */
                 for (int i = k + 1; i <= n; i++)
                 {
-                    A[i][k] = A[i][k] / A[k][k];
+                    A[i, k] = A[i, k] / A[k, k];
                     for (int j = k + 1; j <= n; j++)
                     {
-                        A[i][j] = A[i][j] - (A[i][k] * A[k][j]);
+                        A[i, j] = A[i, j] - (A[i, k] * A[k, j]);
                     }
                 }
             }
@@ -358,17 +348,14 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <seealso href="http://www.rkinteractive.com/blogs/SoftwareDevelopment/post/2013/05/21/Algorithms-In-C-Finding-The-Inverse-Of-A-Matrix.aspx"/>
         /// <param name="A"></param>
         /// <returns></returns>
-        private static double[][] InvertMatrix (double[][] A)
+        private static double[,] InvertMatrix (double[,] A)
         {
-            int n = A.Length;
-            //e will represent each column in the identity matrix
-            double[] e;
+            int n = A.GetLength (0);
+            int m = A.GetLength (1);
+
             //x will hold the inverse matrix to be returned
-            double[][] x = new double[n][];
-            for (int i = 0; i < n; i++)
-            {
-                x[i] = new double[A[i].Length];
-            }
+            double[,] x = new double[n, m];
+
             /*
             * solve will contain the vector solution for the LUP decomposition as we solve
             * for each vector of x.  We will combine the solutions into the double[][] array x.
@@ -376,9 +363,9 @@ namespace ProjNet.CoordinateSystems.Transformations
             double[] solve;
 
             //Get the LU matrix and P matrix (as an array)
-            Tuple<double[][], int[]> results = LUPDecomposition (A);
+            Tuple<double[,], int[]> results = LUPDecomposition (A);
 
-            double[][] LU = results.Item1;
+            double[,] LU = results.Item1;
             int[] P = results.Item2;
 
             /*
@@ -386,12 +373,13 @@ namespace ProjNet.CoordinateSystems.Transformations
             * */
             for (int i = 0; i < n; i++)
             {
-                e = new double[A[i].Length];
+                //e will represent each column in the identity matrix
+                double[] e = new double[m];
                 e[i] = 1;
                 solve = LUPSolve (LU, P, e);
                 for (int j = 0; j < solve.Length; j++)
                 {
-                    x[j][i] = solve[j];
+                    x[j, i] = solve[j];
                 }
             }
             return x;
@@ -407,28 +395,10 @@ namespace ProjNet.CoordinateSystems.Transformations
         {
             if (_inverse == null)
             {
-                //if input dimension is M, and output dimension is N, then the matrix will have size [N+1][M+1].
-                double[][] srcMatrix = new double[dimTarget + 1][];
-                for (int row = 0; row <= dimTarget; row++)
-                {
-                    srcMatrix[row] = new double[dimSource + 1];
-                    for (int col = 0; col <= dimSource; col++)
-                    {
-                        srcMatrix[row][col] = transformMatrix[row, col];
-                    }
-                }
-                var invMatrix = InvertMatrix (srcMatrix);
-                //fill instance of inverted matrix for affine transform
-                double[,] matrix = new double[dimSource + 1, dimTarget + 1];
-                for (int i = 0; i <= dimSource; i++)
-                {
-                    for (int j = 0; j <= dimTarget; j++)
-                    {
-                        matrix[i, j] = invMatrix[i][j];
-                    }
-                }
-
-                _inverse = new AffineTransform (matrix);
+                //find the inverse transformation matrix
+                //remarks about dimensionality: if input dimension is M, and output dimension is N, then the matrix will have size [N+1][M+1].
+                var invMatrix = InvertMatrix (transformMatrix);
+                _inverse = new AffineTransform (invMatrix);
             }
 
             return _inverse;

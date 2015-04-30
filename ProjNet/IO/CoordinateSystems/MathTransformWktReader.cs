@@ -106,7 +106,7 @@ namespace ProjNet.Converters.WellKnownText
 
         private static IParameterInfo ReadParameters (WktStreamTokenizer tokenizer)
         {
-            List<Parameter> paramList = new List<Parameter> ();
+            List<GeoAPI.CoordinateSystems.Parameter> paramList = new List<GeoAPI.CoordinateSystems.Parameter> ();
             while (tokenizer.GetStringValue () == "PARAMETER")
             {
                 tokenizer.ReadToken ("[");
@@ -115,9 +115,11 @@ namespace ProjNet.Converters.WellKnownText
                 tokenizer.NextToken ();
                 double paramValue = tokenizer.GetNumericValue ();
                 tokenizer.ReadToken ("]");
-                tokenizer.ReadToken (",");
-                paramList.Add (new Parameter (paramName, paramValue));
+                //test, whether next parameter is delimited by comma
                 tokenizer.NextToken ();
+                if (tokenizer.GetStringValue () != "]")
+                    tokenizer.NextToken ();
+                paramList.Add (new GeoAPI.CoordinateSystems.Parameter (paramName, paramValue));
             }
             IParameterInfo info = new ParameterInfo () { Parameters = paramList };
             return info;
@@ -145,8 +147,8 @@ namespace ProjNet.Converters.WellKnownText
 
             IParameterInfo paramInfo = ReadParameters (tokenizer);
             //manage required parameters - row, col
-            Parameter rowParam = paramInfo.GetParameterByName ("num_row");
-            Parameter colParam = paramInfo.GetParameterByName ("num_col");
+            var rowParam = paramInfo.GetParameterByName ("num_row");
+            var colParam = paramInfo.GetParameterByName ("num_col");
 
             if (rowParam == null)
             {
@@ -173,7 +175,7 @@ namespace ProjNet.Converters.WellKnownText
             double[,] matrix = new double[rowVal, colVal];
 
             //simply process matrix values - no elt_ROW_COL parsing
-            foreach (Parameter param in paramInfo.Parameters)
+            foreach (var param in paramInfo.Parameters)
             {
                 if (param == null || param.Name == null)
                 {

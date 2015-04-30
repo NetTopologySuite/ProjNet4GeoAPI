@@ -269,5 +269,56 @@ namespace ProjNet.UnitTests.Converters.WKT
             Assert.AreEqual(wkt, newWkt);
 
         }
+
+        /// <summary>
+        /// Test parsing of IFittedCoordinate system from WKT
+        /// </summary>
+        [Test]
+        public void ParseFittedCoordinateSystemWkt ()
+        {
+            CoordinateSystemFactory fac = new CoordinateSystemFactory ();
+            IFittedCoordinateSystem fcs = null;
+            string wkt = "FITTED_CS[\"Local coordinate system MNAU (based on Gauss-Krueger)\"," + 
+                                "PARAM_MT[\"Affine\"," + 
+                                   "PARAMETER[\"num_row\",3],PARAMETER[\"num_col\",3],PARAMETER[\"elt_0_0\", 0.883485346527455],PARAMETER[\"elt_0_1\", -0.468458794848877],PARAMETER[\"elt_0_2\", 3455869.17937689],PARAMETER[\"elt_1_0\", 0.468458794848877],PARAMETER[\"elt_1_1\", 0.883485346527455],PARAMETER[\"elt_1_2\", 5478710.88035753],PARAMETER[\"elt_2_2\", 1]]," + 
+                                "PROJCS[\"DHDN / Gauss-Kruger zone 3\"," +
+                                   "GEOGCS[\"DHDN\"," + 
+                                      "DATUM[\"Deutsches_Hauptdreiecksnetz\"," + 
+                                         "SPHEROID[\"Bessel 1841\", 6377397.155, 299.1528128, AUTHORITY[\"EPSG\", \"7004\"]]," + 
+                                         "TOWGS84[612.4, 77, 440.2, -0.054, 0.057, -2.797, 0.525975255930096]," + 
+                                         "AUTHORITY[\"EPSG\", \"6314\"]]," + 
+                                       "PRIMEM[\"Greenwich\", 0, AUTHORITY[\"EPSG\", \"8901\"]]," + 
+                                       "UNIT[\"degree\", 0.0174532925199433, AUTHORITY[\"EPSG\", \"9122\"]]," + 
+                                       "AUTHORITY[\"EPSG\", \"4314\"]]," + 
+                                   "UNIT[\"metre\", 1, AUTHORITY[\"EPSG\", \"9001\"]]," + 
+                                   "PROJECTION[\"Transverse_Mercator\"]," + 
+                                   "PARAMETER[\"latitude_of_origin\", 0]," + 
+                                   "PARAMETER[\"central_meridian\", 9]," + 
+                                   "PARAMETER[\"scale_factor\", 1]," + 
+                                   "PARAMETER[\"false_easting\", 3500000]," +
+                                   "PARAMETER[\"false_northing\", 0]," + 
+                                   "AUTHORITY[\"EPSG\", \"31467\"]]" + 
+                        "]";
+
+            try
+            { 
+                fcs = fac.CreateFromWkt (wkt) as IFittedCoordinateSystem;
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail ("Could not create fitted coordinate system from:\r\n" + wkt + "\r\n" + ex.Message);
+            }
+
+            Assert.IsNotNull (fcs);
+            Assert.IsNotNullOrEmpty (fcs.ToBase ());
+            Assert.IsNotNull (fcs.BaseCoordinateSystem);
+
+            Assert.AreEqual ("Local coordinate system MNAU (based on Gauss-Krueger)", fcs.Name);
+            //Assert.AreEqual ("CUSTOM", fcs.Authority);
+            //Assert.AreEqual (123456, fcs.AuthorityCode);
+
+            Assert.AreEqual ("EPSG", fcs.BaseCoordinateSystem.Authority);
+            Assert.AreEqual (31467, fcs.BaseCoordinateSystem.AuthorityCode);
+        }
     }
 }
