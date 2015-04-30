@@ -192,5 +192,38 @@ namespace ProjNet.UnitTests
             IMathTransform inverse = mathTransform.Inverse();
             Assert.That(inverse, Is.Not.Null);
         }
+
+        /// <summary>
+        /// Wrong AngularUnits.EqualParams implementation
+        /// </summary>
+        [Test]
+        public void TestAngularUnitsEqualParamsIssue()
+        {
+            //string sourceWkt = " UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]";
+
+            string wkt = "PROJCS[\"DHDN / Gauss-Kruger zone 3\",GEOGCS[\"DHDN\",DATUM[\"Deutsches_Hauptdreiecksnetz\",SPHEROID[\"Bessel 1841\",6377397.155,299.1528128,AUTHORITY[\"EPSG\",\"7004\"]],AUTHORITY[\"EPSG\",\"6314\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4314\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",9],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",3500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AUTHORITY[\"EPSG\",\"31467\"]]";
+
+            CoordinateSystemFactory csf = new CoordinateSystems.CoordinateSystemFactory ();
+
+            IProjectedCoordinateSystem pcs1 = csf.CreateFromWkt (wkt) as IProjectedCoordinateSystem;
+
+            Assert.NotNull (pcs1);
+            Assert.NotNull (pcs1.GeographicCoordinateSystem);
+            Assert.NotNull (pcs1.GeographicCoordinateSystem.AngularUnit);
+
+            string savedWkt = pcs1.WKT;
+            IProjectedCoordinateSystem pcs2 = csf.CreateFromWkt (savedWkt) as IProjectedCoordinateSystem;
+
+            //test AngularUnit parsing via ProjectedCoordinateSystem
+            Assert.NotNull (pcs2);
+            Assert.NotNull (pcs2.GeographicCoordinateSystem);
+            Assert.NotNull (pcs2.GeographicCoordinateSystem.AngularUnit);
+
+            //check equality of angular units via RadiansPerUnit
+            Assert.AreEqual (pcs1.GeographicCoordinateSystem.AngularUnit.RadiansPerUnit, pcs2.GeographicCoordinateSystem.AngularUnit.RadiansPerUnit, 0.0000000000001);
+            //check equality of angular units
+            Assert.AreEqual (true, pcs1.GeographicCoordinateSystem.AngularUnit.EqualParams (pcs2.GeographicCoordinateSystem.AngularUnit));
+        }
+      
     }
 }
