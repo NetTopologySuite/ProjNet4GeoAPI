@@ -595,5 +595,131 @@ namespace ProjNet.UnitTests
             Assert.AreNotEqual(290586.087, transformedCoords[0][0]);
             Assert.AreNotEqual(6714000, transformedCoords[0][1]);
         }
+
+        /// <summary>
+        /// Test transformation for affine transformation
+        /// </summary>
+        [Test]
+        public void AffineTransformationTest ()
+        {
+            //Local coordinate system MNAU (Kraftwerk Mäuserich) (based on Gauß-Krüger using affine transformation)
+            // affine transform
+            // 1) Offset: X=-3454886,640m Y=-5479481,278m;
+            // 2)Rotation: 332,0657, Rotation point  X=3456926,640m Y=5481071,278m;
+            // 3) Scale: 1.0
+
+            //TODO MathTransformFactory fac = new MathTransformFactory ();
+            double[,] matrix = new double[,] {{0.883485346527455, -0.468458794848877, 3455869.17937689}, 
+                                              {0.468458794848877, 0.883485346527455, 5478710.88035753},
+                                              {0.0 , 0.0, 1},};
+            IMathTransform mt = new AffineTransform (matrix);
+
+            Assert.IsNotNull (mt);
+
+            Assert.AreEqual (2, mt.DimSource);
+            Assert.AreEqual (2, mt.DimTarget);
+
+            //Transformation example (MNAU -> GK)
+            // Start point (MNAU) X=2040,000m Y=1590,000m]
+            // Target point (GK): X=3456926,640m Y=5481071,278m;
+
+            double[] outPt = mt.Transform (new double[] { 2040.0, 1590.0 });
+
+            Assert.AreEqual (2, outPt.Length);
+            Assert.AreEqual (3456926.640, outPt[0], 0.00000001);
+            Assert.AreEqual (5481071.278, outPt[1], 0.00000001);
+        }
+
+        /// <summary>
+        /// Test inverse transformation for affine transformation
+        /// </summary>
+        [Test]
+        public void InverseAffineTransformationTest ()
+        {
+            //Local coordinate system MNAU (Kraftwerk Mäuserich) (based on Gauß-Krüger using affine transformation)
+            // affine transform
+            // 1) Offset: X=-3454886,640m Y=-5479481,278m;
+            // 2)Rotation: 332,0657, Rotation point  X=3456926,640m Y=5481071,278m;
+            // 3) Scale: 1.0
+
+            //TODO MathTransformFactory fac = new MathTransformFactory ();
+            double[,] matrix = new double[,] {{0.883485346527455, -0.468458794848877, 3455869.17937689}, 
+                                              {0.468458794848877, 0.883485346527455, 5478710.88035753},
+                                              {0.0 , 0.0, 1},};
+            IMathTransform mt = new AffineTransform (matrix);
+
+            Assert.IsNotNull (mt);
+
+            Assert.AreEqual (2, mt.DimSource);
+            Assert.AreEqual (2, mt.DimTarget);
+
+            //Transformation example (MNAU -> GK)
+            // Start point (MNAU) X=2040,000m Y=1590,000m]
+            // Target point (GK): X=3456926,640m Y=5481071,278m;
+
+            IMathTransform invMt = mt.Inverse ();
+
+            double[] inPt = invMt.Transform (new double[] { 3456926.640, 5481071.278 });
+
+            Assert.AreEqual (2, inPt.Length);
+            Assert.AreEqual (2040.0, inPt[0], 0.00000001);
+            Assert.AreEqual (1590.0, inPt[1], 0.00000001);
+        }
+
+        /// <summary>
+        /// Coordinate transformation test for fitted coordinate system - test CS - local coordinate system MNAU
+        /// </summary>
+        [Test]
+        public void TestTransformOnFittedCoordinateSystem ()
+        {
+
+            //Local coordinate system MNAU (Kraftwerk Mäuserich) (based on Gauß-Krüger using affine transformation)
+            // affine transform
+            // 1) Offset: X=-3454886,640m Y=-5479481,278m;
+            // 2)Rotation: 332,0657, Rotation point  X=3456926,640m Y=5481071,278m;
+            // 3) Scale: 1.0
+
+            string ft_wkt = "FITTED_CS[\"Local coordinate system MNAU (based on Gauss-Krueger)\"," +
+                                "PARAM_MT[\"Affine\"," +
+                                   "PARAMETER[\"num_row\",3],PARAMETER[\"num_col\",3],PARAMETER[\"elt_0_0\", 0.883485346527455],PARAMETER[\"elt_0_1\", -0.468458794848877],PARAMETER[\"elt_0_2\", 3455869.17937689],PARAMETER[\"elt_1_0\", 0.468458794848877],PARAMETER[\"elt_1_1\", 0.883485346527455],PARAMETER[\"elt_1_2\", 5478710.88035753],PARAMETER[\"elt_2_2\", 1]]," +
+                                "PROJCS[\"DHDN / Gauss-Kruger zone 3\"," +
+                                   "GEOGCS[\"DHDN\"," +
+                                      "DATUM[\"Deutsches_Hauptdreiecksnetz\"," +
+                                         "SPHEROID[\"Bessel 1841\", 6377397.155, 299.1528128, AUTHORITY[\"EPSG\", \"7004\"]]," +
+                                         "TOWGS84[612.4, 77, 440.2, -0.054, 0.057, -2.797, 0.525975255930096]," +
+                                         "AUTHORITY[\"EPSG\", \"6314\"]]," +
+                                       "PRIMEM[\"Greenwich\", 0, AUTHORITY[\"EPSG\", \"8901\"]]," +
+                                       "UNIT[\"degree\", 0.0174532925199433, AUTHORITY[\"EPSG\", \"9122\"]]," +
+                                       "AUTHORITY[\"EPSG\", \"4314\"]]," +
+                                   "UNIT[\"metre\", 1, AUTHORITY[\"EPSG\", \"9001\"]]," +
+                                   "PROJECTION[\"Transverse_Mercator\"]," +
+                                   "PARAMETER[\"latitude_of_origin\", 0]," +
+                                   "PARAMETER[\"central_meridian\", 9]," +
+                                   "PARAMETER[\"scale_factor\", 1]," +
+                                   "PARAMETER[\"false_easting\", 3500000]," +
+                                   "PARAMETER[\"false_northing\", 0]," +
+                                   "AUTHORITY[\"EPSG\", \"31467\"]]" +
+                        "]";
+
+            //string gk_wkt = "PROJCS[\"DHDN / Gauss-Kruger zone 3\",GEOGCS[\"DHDN\",DATUM[\"Deutsches_Hauptdreiecksnetz\",SPHEROID[\"Bessel 1841\",6377397.155,299.1528128,AUTHORITY[\"EPSG\",\"7004\"]],AUTHORITY[\"EPSG\",\"6314\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4314\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",9],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",3500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AUTHORITY[\"EPSG\",\"31467\"]]";
+
+            CoordinateSystemFactory fac = new CoordinateSystemFactory ();
+            IFittedCoordinateSystem fcs = fac.CreateFromWkt (ft_wkt) as IFittedCoordinateSystem;
+            //ICoordinateSystem gkcs = fac.CreateFromWkt (gk_wkt);
+
+            //Transformation example (MNAU -> GK)
+            // Start point (MNAU) X=2040,000m Y=1590,000m]
+            // Target point (GK): X=3456926,640m Y=5481071,278m;
+
+            ICoordinateTransformation trans = CoordinateTransformationFactory.CreateFromCoordinateSystems (fcs, fcs.BaseCoordinateSystem);
+
+            List<double[]> coords = new List<double[]>{
+                new double[]{2040.0, 1590.0},
+            };
+
+            IList<double[]> transformedCoords = trans.MathTransform.TransformList (coords);
+            Assert.AreEqual (3456926.640, transformedCoords[0][0], 0.00000001);
+            Assert.AreEqual (5481071.278, transformedCoords[0][1], 0.00000001);
+        }
     }
 }

@@ -64,6 +64,7 @@
     <Compile Include="CoordinateSystems\GeographicTransform.cs" />
     <Compile Include="CoordinateSystems\HorizontalCoordinateSystem.cs" />
     <Compile Include="CoordinateSystems\HorizontalDatum.cs" />
+    <Compile Include="CoordinateSystems\ParameterInfo.cs" />
     <Compile Include="CoordinateSystems\Projections\CassiniSoldnerProjection.cs" />
     <Compile Include="CoordinateSystems\Projections\HotineObliqueMercatorProjection.cs" />
     <Compile Include="CoordinateSystems\Projections\PolyconicProjection.cs" />
@@ -79,6 +80,7 @@
     <Compile Include="CoordinateSystems\Projections\Mercator.cs" />
     <Compile Include="CoordinateSystems\Projections\ProjectionParameterSet.cs" />
     <Compile Include="CoordinateSystems\Projections\TransverseMercator.cs" />
+    <Compile Include="CoordinateSystems\Transformations\AffineTransform.cs" />
     <Compile Include="CoordinateSystems\Transformations\ConcatenatedTransform.cs" />
     <Compile Include="CoordinateSystems\Transformations\CoordinateTransformation.cs" />
     <Compile Include="CoordinateSystems\Transformations\CoordinateTransformationFactory.cs" />
@@ -89,6 +91,7 @@
     <Compile Include="CoordinateSystems\Projections\ProjectionsRegistry.cs" />
     <Compile Include="CoordinateSystems\Unit.cs" />
     <Compile Include="IO\CoordinateSystems\CoordinateSystemWktReader.cs" />
+    <Compile Include="IO\CoordinateSystems\MathTransformWktReader.cs" />
     <Compile Include="IO\CoordinateSystems\StreamTokenizer.cs" />
     <Compile Include="IO\CoordinateSystems\TokenType.cs" />
     <Compile Include="IO\CoordinateSystems\WKTStreamTokenizer.cs" />
@@ -104,6 +107,7 @@
     <Reference Include="GeoAPI">
       <HintPath>..\packages\GeoAPI.$(GeoAPIPackageVersion)\lib\$(fwVersion)\GeoAPI.dll</HintPath>
     </Reference>
+    <Reference Include="System" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)GeoAPI.props" />
