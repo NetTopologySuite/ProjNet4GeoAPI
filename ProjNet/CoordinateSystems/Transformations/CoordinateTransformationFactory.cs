@@ -95,17 +95,37 @@ namespace ProjNet.CoordinateSystems.Transformations
 
 		#region Methods for converting between specific systems
 
-		private static ICoordinateTransformation Geog2Geoc(IGeographicCoordinateSystem source, IGeocentricCoordinateSystem target)
-		{
-			IMathTransform geocMathTransform = CreateCoordinateOperation(target);
-			return new CoordinateTransformation(source, target, TransformType.Conversion, geocMathTransform, String.Empty, String.Empty, -1, String.Empty, String.Empty);
-		}
+        private static ICoordinateTransformation Geog2Geoc(IGeographicCoordinateSystem source, IGeocentricCoordinateSystem target)
+        {
+            IMathTransform geocMathTransform = CreateCoordinateOperation(target);
+            if (source.PrimeMeridian.EqualParams(target.PrimeMeridian))
+            {
+                return new CoordinateTransformation(source, target, TransformType.Conversion, geocMathTransform, String.Empty, String.Empty, -1, String.Empty, String.Empty);
+            }
+            else
+            {
+                var ct = new ConcatenatedTransform();
+                ct.CoordinateTransformationList.Add(new CoordinateTransformation(source, target, TransformType.Transformation, new PrimeMeridianTransform(source.PrimeMeridian, target.PrimeMeridian), String.Empty, String.Empty, -1, String.Empty, String.Empty));
+                ct.CoordinateTransformationList.Add(new CoordinateTransformation(source, target, TransformType.Conversion, geocMathTransform, String.Empty, String.Empty, -1, String.Empty, String.Empty));
+                return new CoordinateTransformation(source, target, TransformType.Conversion, ct, String.Empty, String.Empty, -1, String.Empty, String.Empty);
+            }
+        }
 
-		private static ICoordinateTransformation Geoc2Geog(IGeocentricCoordinateSystem source, IGeographicCoordinateSystem target)
-		{
-			IMathTransform geocMathTransform = CreateCoordinateOperation(source).Inverse();
-			return new CoordinateTransformation(source, target, TransformType.Conversion, geocMathTransform, String.Empty, String.Empty, -1, String.Empty, String.Empty);
-		}
+        private static ICoordinateTransformation Geoc2Geog(IGeocentricCoordinateSystem source, IGeographicCoordinateSystem target)
+        {
+            IMathTransform geocMathTransform = CreateCoordinateOperation(source).Inverse();
+            if (source.PrimeMeridian.EqualParams(target.PrimeMeridian))
+            {
+                return new CoordinateTransformation(source, target, TransformType.Conversion, geocMathTransform, String.Empty, String.Empty, -1, String.Empty, String.Empty);
+            }
+            else
+            {
+                var ct = new ConcatenatedTransform();
+                ct.CoordinateTransformationList.Add(new CoordinateTransformation(source, target, TransformType.Conversion, geocMathTransform, String.Empty, String.Empty, -1, String.Empty, String.Empty));
+                ct.CoordinateTransformationList.Add(new CoordinateTransformation(source, target, TransformType.Transformation, new PrimeMeridianTransform(source.PrimeMeridian, target.PrimeMeridian), String.Empty, String.Empty, -1, String.Empty, String.Empty));
+                return new CoordinateTransformation(source, target, TransformType.Conversion, ct, String.Empty, String.Empty, -1, String.Empty, String.Empty);
+            }
+        }
 		
 		private static ICoordinateTransformation Proj2Proj(IProjectedCoordinateSystem source, IProjectedCoordinateSystem target)
 		{

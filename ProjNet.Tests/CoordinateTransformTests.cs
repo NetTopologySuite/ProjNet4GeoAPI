@@ -721,5 +721,39 @@ namespace ProjNet.UnitTests
             Assert.AreEqual (3456926.640, transformedCoords[0][0], 0.00000001);
             Assert.AreEqual (5481071.278, transformedCoords[0][1], 0.00000001);
         }
+
+        /// <summary>
+        /// test for epsg 21780 projection (different prime meridian)
+        /// </summary>
+        [Test]
+        public void Test_EPSG_21780_PrimeMeredianTransformation()
+        {
+            string wkt4326 = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]]";
+            string wkt21780 = "PROJCS[\"Bern 1898 (Bern) / LV03C\",GEOGCS[\"Bern 1898 (Bern)\",DATUM[\"CH1903_Bern\",SPHEROID[\"Bessel 1841\",6377397.155,299.1528128,AUTHORITY[\"EPSG\",\"7004\"]],AUTHORITY[\"EPSG\",\"6801\"]],PRIMEM[\"Bern\",7.439583333333333,AUTHORITY[\"EPSG\",\"8907\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4801\"]],PROJECTION[\"Hotine_Oblique_Mercator\"],PARAMETER[\"latitude_of_center\",46.95240555555556],PARAMETER[\"longitude_of_center\",0],PARAMETER[\"azimuth\",90],PARAMETER[\"rectified_grid_angle\",90],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AUTHORITY[\"EPSG\",\"21780\"]]";
+
+            //test data from http://spatialreference.org/ref/epsg/21780/
+            double[] sourceCoord = new double[] { 160443.329034, 23582.55586 };
+            double[] expectedTargetCoord = new double[] { 9.5553588867188, 47.145080566406 };
+
+            ICoordinateSystem cs1 = ProjNet.Converters.WellKnownText.CoordinateSystemWktReader.Parse(wkt21780, System.Text.Encoding.Default) as ICoordinateSystem;
+            ICoordinateSystem cs2 = ProjNet.Converters.WellKnownText.CoordinateSystemWktReader.Parse(wkt4326, System.Text.Encoding.Default) as ICoordinateSystem;
+            CoordinateTransformationFactory ctf = new CoordinateTransformationFactory();
+            var ict = ctf.CreateFromCoordinateSystems(cs1, cs2);
+
+            double[] transformedCoord = ict.MathTransform.Transform(sourceCoord);
+
+            Assert.IsTrue(transformedCoord.Length >= 2);
+            Assert.AreEqual(expectedTargetCoord[0], transformedCoord[0], 0.001);
+            Assert.AreEqual(expectedTargetCoord[1], transformedCoord[1], 0.001);
+
+            //and back
+            var ictb = ctf.CreateFromCoordinateSystems(cs2, cs1);
+            transformedCoord = ictb.MathTransform.Transform(transformedCoord);
+
+            Assert.IsTrue(transformedCoord.Length >= 2);
+            Assert.AreEqual(sourceCoord[0], transformedCoord[0], 0.1);
+            Assert.AreEqual(sourceCoord[1], transformedCoord[1], 0.1);
+
+        }
     }
 }
