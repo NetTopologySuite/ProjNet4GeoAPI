@@ -113,7 +113,7 @@ namespace ProjNet.CoordinateSystems
 		/// </summary>
 		public static PrimeMeridian Ferro
 		{
-			get { return new PrimeMeridian(-17.4, CoordinateSystems.AngularUnit.Degrees, "Ferro", "EPSG", 8909, String.Empty, String.Empty, "Used in Austria and former Czechoslovakia."); }
+            get { return new PrimeMeridian(-17.66666666666667, CoordinateSystems.AngularUnit.Degrees, "Ferro", "EPSG", 8909, String.Empty, String.Empty, "Used in Austria and former Czechoslovakia."); }
 		}
 		/// <summary>
 		/// Brussels prime meridian

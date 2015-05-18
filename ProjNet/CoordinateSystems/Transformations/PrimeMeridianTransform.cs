@@ -34,6 +34,7 @@ namespace ProjNet.CoordinateSystems.Transformations
     internal class PrimeMeridianTransform : MathTransform
     {
         #region class variables
+        private bool _isInverted = false;
         private IPrimeMeridian _source;
         private IPrimeMeridian _target;
         #endregion class variables
@@ -105,8 +106,11 @@ namespace ProjNet.CoordinateSystems.Transformations
         public override double[] Transform(double[] point)
         {
             double[] transformed = new double[point.Length];
-
-            transformed[0] = point[0] + _source.Longitude - _target.Longitude;
+            
+            if (!_isInverted)
+                transformed[0] = point[0] + _source.Longitude - _target.Longitude;
+            else
+                transformed[0] = point[0] + _target.Longitude - _source.Longitude;
             transformed[1] = point[1];
             if (point.Length > 2)
                 transformed[2] = point[2];
@@ -118,7 +122,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// </summary>
         public override void Invert()
         {
-            throw new NotImplementedException("The method or operation is not implemented.");
+            this._isInverted = !this._isInverted;
         }
 
         #endregion public methods
