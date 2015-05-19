@@ -91,21 +91,34 @@ namespace ProjNet.CoordinateSystems.Transformations
 			return _inverse;
 		}
 
+        /// <summary>
+        /// Transforms a coordinate point.
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        /// <seealso href="http://en.wikipedia.org/wiki/Helmert_transformation"/>
         private double[] Apply(double[] p)
-		{
+        {
             return new double[] {
-				v[0] * p[0] - v[3] * p[1] + v[2] * p[2] + v[4],
-				v[3] * p[0] + v[0] * p[1] - v[1] * p[2] + v[5],
-			   -v[2] * p[0] + v[1] * p[1] + v[0] * p[2] + v[6], };			
-		}
+				v[0] * (p[0] - v[3] * p[1] + v[2] * p[2]) + v[4],
+				v[0] * (v[3] * p[0] + p[1] - v[1] * p[2]) + v[5],
+			    v[0] * (-v[2] * p[0] + v[1] * p[1] + p[2]) + v[6], };
+        }
 
+        /// <summary>
+        /// For the reverse transformation, each element is multiplied by -1.
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        /// <seealso href="http://en.wikipedia.org/wiki/Helmert_transformation"/>
         private double[] ApplyInverted(double[] p)
-		{
+        {
+
             return new double[] {
-				v[0] * p[0] + v[3] * p[1] - v[2] * p[2] - v[4],
-			   -v[3] * p[0] + v[0] * p[1] + v[1] * p[2] - v[5],
-			    v[2] * p[0] - v[1] * p[1] + v[0] * p[2] - v[6], };
-		}
+				(1-(v[0]-1)) * (p[0] + v[3] * p[1] - v[2] * p[2]) - v[4],
+			    (1-(v[0]-1)) * (-v[3] * p[0] + p[1] + v[1] * p[2]) - v[5],
+			    (1-(v[0]-1)) * ( v[2] * p[0] - v[1] * p[1] + p[2]) - v[6], };
+        }
 
         /// <summary>
         /// Transforms a coordinate point. The passed parameter point should not be modified.

@@ -410,17 +410,30 @@ namespace ProjNet.UnitTests
 			//Point3D pGeoCenWGS84 = wgs72.Wgs84Parameters.Apply(pGeoCenWGS72);
 		    double[] pExpected = new[] {3657660.78, 255778.43, 5201387.75};
             Assert.IsTrue(ToleranceLessThan(pExpected, pGeoCenWGS84, 0.01), TransformationError("Datum WGS72->WGS84", pExpected, pGeoCenWGS84));
+            //and inverse
+            double[] pGeoCenWGS72calc = geocen_ed50_2_Wgs84.MathTransform.Inverse().Transform(pGeoCenWGS84);
+            Assert.IsTrue(ToleranceLessThan(pGeoCenWGS72, pGeoCenWGS72calc, 0.001), TransformationError("Datum WGS84->WGS72", pGeoCenWGS72, pGeoCenWGS72calc));
 
 			ICoordinateTransformation utm_ed50_2_Wgs84 = CoordinateTransformationFactory.CreateFromCoordinateSystems(utmED50, utmWGS84);
 			double[] pUTMED50 = new double[] {600000, 6100000};
 			double[] pUTMWGS84 = utm_ed50_2_Wgs84.MathTransform.Transform(pUTMED50);
             pExpected = new[] { 599928.6, 6099790.2};
             Assert.IsTrue(ToleranceLessThan(pExpected, pUTMWGS84, 0.1), TransformationError("Datum ED50->WGS84", pExpected, pUTMWGS84));
+            //and inverse
+            double[] pUTMED50calc = utm_ed50_2_Wgs84.MathTransform.Inverse().Transform(pUTMWGS84);
+            Assert.IsTrue(ToleranceLessThan(pUTMED50, pUTMED50calc, 0.01), TransformationError("Datum WGS84->ED50", pUTMED50, pUTMED50calc));
+
+
 			//Perform reverse
 			ICoordinateTransformation utm_Wgs84_2_Ed50 = CoordinateTransformationFactory.CreateFromCoordinateSystems(utmWGS84, utmED50);
 			pUTMED50 = utm_Wgs84_2_Ed50.MathTransform.Transform(pUTMWGS84);
 		    pExpected = new double[] {600000, 6100000};
             Assert.IsTrue(ToleranceLessThan(pExpected, pUTMED50, 0.1), TransformationError("Datum", pExpected, pUTMED50));
+            //and inverse
+            double[] pUTMWGS84calc = utm_Wgs84_2_Ed50.MathTransform.Inverse().Transform(pUTMED50);
+            Assert.IsTrue(ToleranceLessThan(pUTMWGS84, pUTMWGS84calc, 0.1), TransformationError("Datum", pUTMWGS84, pUTMWGS84calc));
+
+
 			//Assert.IsTrue(Math.Abs((pUTMWGS84 as Point3D).Z - 36.35) < 0.5);
 			//Point pExpected = Point.FromDMS(2, 7, 46.38, 53, 48, 33.82);
 			//ED50_to_WGS84_Denmark: datum.Wgs84Parameters = new Wgs84ConversionInfo(-89.5, -93.8, 127.6, 0, 0, 4.5, 1.2);
