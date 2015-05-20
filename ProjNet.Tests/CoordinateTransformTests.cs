@@ -738,6 +738,13 @@ namespace ProjNet.UnitTests
             // Start point (MNAU) X=2040,000m Y=1590,000m]
             // Target point (GK): X=3456926,640m Y=5481071,278m;
 
+            //check source transform
+            double[] outPt = mt.Transform (new double[] { 2040.0, 1590.0 });
+
+            Assert.AreEqual (2, outPt.Length);
+            Assert.AreEqual (3456926.640, outPt[0], 0.00000001);
+            Assert.AreEqual (5481071.278, outPt[1], 0.00000001);
+
             IMathTransform invMt = mt.Inverse ();
 
             double[] inPt = invMt.Transform (new double[] { 3456926.640, 5481071.278 });
@@ -745,6 +752,13 @@ namespace ProjNet.UnitTests
             Assert.AreEqual (2, inPt.Length);
             Assert.AreEqual (2040.0, inPt[0], 0.00000001);
             Assert.AreEqual (1590.0, inPt[1], 0.00000001);
+
+            //check source transform - once more
+            double[] outPt2 = mt.Transform (new double[] { 2040.0, 1590.0 });
+
+            Assert.AreEqual (2, outPt2.Length);
+            Assert.AreEqual (3456926.640, outPt2[0], 0.00000001);
+            Assert.AreEqual (5481071.278, outPt2[1], 0.00000001);
         }
 
         /// <summary>

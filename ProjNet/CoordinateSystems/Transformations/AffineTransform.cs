@@ -395,9 +395,9 @@ namespace ProjNet.CoordinateSystems.Transformations
         {
             if (_inverse == null)
             {
-                //find the inverse transformation matrix
+                //find the inverse transformation matrix - use cloned matrix array
                 //remarks about dimensionality: if input dimension is M, and output dimension is N, then the matrix will have size [N+1][M+1].
-                var invMatrix = InvertMatrix (transformMatrix);
+                var invMatrix = InvertMatrix ((double[,])transformMatrix.Clone ());
                 _inverse = new AffineTransform (invMatrix);
             }
 
