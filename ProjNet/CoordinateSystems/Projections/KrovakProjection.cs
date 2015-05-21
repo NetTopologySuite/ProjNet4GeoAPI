@@ -157,8 +157,6 @@ namespace ProjNet.CoordinateSystems.Projections
 			//Check for missing parameters
             _azimuth = Degrees2Radians(_Parameters.GetParameterValue("azimuth"));
 			_pseudoStandardParallel = Degrees2Radians(_Parameters.GetParameterValue("pseudo_standard_parallel_1"));
-
-            central_meridian = Degrees2Radians(24 + (50.0 / 60));// par_longitude_of_center.Value);
             
             // Calculates useful constants.
 			_sinAzim = Math.Sin(_azimuth);

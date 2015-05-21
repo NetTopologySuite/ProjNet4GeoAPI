@@ -54,5 +54,32 @@ namespace ProjNet.UnitTests.Converters.WKT
             Assert.AreEqual (3455869.17937689, outPt[0], 0.00000001);
             Assert.AreEqual (5478710.88035753, outPt[1], 0.00000001);
         }
+
+        /// <summary>
+        /// MathTransformWktReader parses real number with exponent incorrectly
+        /// </summary>
+        [Test]
+        public void TestMathTransformWktReaderExponencialNumberParsingIssue ()
+        {
+            string wkt = "PARAM_MT[\"Affine\",PARAMETER[\"num_row\", 3],PARAMETER[\"num_col\", 3],PARAMETER[\"elt_0_0\", 6.12303176911189E-17]]";
+            IMathTransform mt = null;
+
+            try
+            {
+                //TODO replace with MathTransformFactory implementation
+                mt = MathTransformWktReader.Parse (wkt, System.Text.Encoding.Unicode);
+            }
+            catch (ArgumentException ex)
+            {
+                Assert.Fail ("Failed to parse WKT of affine math transformation from:\r\n" + wkt + "\r\n" + ex.Message);
+            }
+            catch (Exception e)
+            {
+                Assert.Fail ("Could not create affine math transformation from:\r\n" + wkt + "\r\n" + e.Message);
+            }
+
+            Assert.IsNotNull (mt);
+            Assert.IsNotNull (mt as AffineTransform);
+        }
     }
 }

@@ -410,17 +410,30 @@ namespace ProjNet.UnitTests
 			//Point3D pGeoCenWGS84 = wgs72.Wgs84Parameters.Apply(pGeoCenWGS72);
 		    double[] pExpected = new[] {3657660.78, 255778.43, 5201387.75};
             Assert.IsTrue(ToleranceLessThan(pExpected, pGeoCenWGS84, 0.01), TransformationError("Datum WGS72->WGS84", pExpected, pGeoCenWGS84));
+            //and inverse
+            double[] pGeoCenWGS72calc = geocen_ed50_2_Wgs84.MathTransform.Inverse().Transform(pGeoCenWGS84);
+            Assert.IsTrue(ToleranceLessThan(pGeoCenWGS72, pGeoCenWGS72calc, 0.001), TransformationError("Datum WGS84->WGS72", pGeoCenWGS72, pGeoCenWGS72calc));
 
 			ICoordinateTransformation utm_ed50_2_Wgs84 = CoordinateTransformationFactory.CreateFromCoordinateSystems(utmED50, utmWGS84);
 			double[] pUTMED50 = new double[] {600000, 6100000};
 			double[] pUTMWGS84 = utm_ed50_2_Wgs84.MathTransform.Transform(pUTMED50);
             pExpected = new[] { 599928.6, 6099790.2};
             Assert.IsTrue(ToleranceLessThan(pExpected, pUTMWGS84, 0.1), TransformationError("Datum ED50->WGS84", pExpected, pUTMWGS84));
+            //and inverse
+            double[] pUTMED50calc = utm_ed50_2_Wgs84.MathTransform.Inverse().Transform(pUTMWGS84);
+            Assert.IsTrue(ToleranceLessThan(pUTMED50, pUTMED50calc, 0.01), TransformationError("Datum WGS84->ED50", pUTMED50, pUTMED50calc));
+
+
 			//Perform reverse
 			ICoordinateTransformation utm_Wgs84_2_Ed50 = CoordinateTransformationFactory.CreateFromCoordinateSystems(utmWGS84, utmED50);
 			pUTMED50 = utm_Wgs84_2_Ed50.MathTransform.Transform(pUTMWGS84);
 		    pExpected = new double[] {600000, 6100000};
             Assert.IsTrue(ToleranceLessThan(pExpected, pUTMED50, 0.1), TransformationError("Datum", pExpected, pUTMED50));
+            //and inverse
+            double[] pUTMWGS84calc = utm_Wgs84_2_Ed50.MathTransform.Inverse().Transform(pUTMED50);
+            Assert.IsTrue(ToleranceLessThan(pUTMWGS84, pUTMWGS84calc, 0.1), TransformationError("Datum", pUTMWGS84, pUTMWGS84calc));
+
+
 			//Assert.IsTrue(Math.Abs((pUTMWGS84 as Point3D).Z - 36.35) < 0.5);
 			//Point pExpected = Point.FromDMS(2, 7, 46.38, 53, 48, 33.82);
 			//ED50_to_WGS84_Denmark: datum.Wgs84Parameters = new Wgs84ConversionInfo(-89.5, -93.8, 127.6, 0, 0, 4.5, 1.2);
@@ -428,15 +441,81 @@ namespace ProjNet.UnitTests
 		}
 
 		[Test]
-		public void TestKrovak_Projection()
+        public void TestKrovak_Greenwich_Projection()
 		{
+            //test case for epsg 5514 (102067)
+
+            IGeographicCoordinateSystem gcsWGS84 = CoordinateSystemFactory.CreateGeographicCoordinateSystem("WGS84 Geographic", AngularUnit.Degrees, HorizontalDatum.WGS84, PrimeMeridian.Greenwich,
+                 new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
+
+
 			IEllipsoid ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Bessel 1840", 6377397.155, 299.15281, LinearUnit.Metre);
 
 			IHorizontalDatum datum = CoordinateSystemFactory.CreateHorizontalDatum("Bessel 1840", DatumType.HD_Geocentric, ellipsoid, null);
-			IGeographicCoordinateSystem gcs = CoordinateSystemFactory.CreateGeographicCoordinateSystem("Bessel 1840", AngularUnit.Degrees, datum,
+            datum.Wgs84Parameters = new Wgs84ConversionInfo(570.8, 85.7, 462.8, 4.998, 1.587, 5.261, 3.56);
+
+			IGeographicCoordinateSystem gcsKrovak = CoordinateSystemFactory.CreateGeographicCoordinateSystem("Bessel 1840", AngularUnit.Degrees, datum,
 				PrimeMeridian.Greenwich, new AxisInfo("Lon", AxisOrientationEnum.East),
 				new AxisInfo("Lat", AxisOrientationEnum.North));
+            
 			List<ProjectionParameter> parameters = new List<ProjectionParameter>(5)
+			                     {
+			                         new ProjectionParameter("latitude_of_center", 49.5),
+			                         new ProjectionParameter("longitude_of_center", 24.83333333333333),
+			                         new ProjectionParameter("azimuth", 30.28813972222222),
+			                         new ProjectionParameter("pseudo_standard_parallel_1", 78.5),
+			                         new ProjectionParameter("scale_factor", 0.9999),
+			                         new ProjectionParameter("false_easting", 0),
+			                         new ProjectionParameter("false_northing", 0)
+			                     };
+		    IProjection projection = CoordinateSystemFactory.CreateProjection("Krovak", "Krovak", parameters);
+
+			IProjectedCoordinateSystem coordsys = CoordinateSystemFactory.CreateProjectedCoordinateSystem("Krovak", gcsKrovak, projection, LinearUnit.Metre, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
+
+            ICoordinateTransformation trans = new CoordinateTransformationFactory().CreateFromCoordinateSystems(gcsWGS84, coordsys);
+            ICoordinateTransformation trans2 = new CoordinateTransformationFactory().CreateFromCoordinateSystems(gcsWGS84, coordsys);
+
+			// test case 1
+			double[] pGeo = new[] { 12d, 48d };
+            double[] expected = new[] { -953116.2548718402, -1245513.5788112187 };
+
+			double[] pUtm = trans.MathTransform.Transform(pGeo);
+            //can't inverse trans - Inverse() of ConcateratedTransform makes shallow copy and call Invert on each ICoordinateTransformation.MathTransform - this changes original transformation!
+			double[] pGeo2 = trans2.MathTransform.Inverse().Transform(pUtm);
+
+		    Assert.IsTrue(ToleranceLessThan(pUtm, expected, 0.2), TransformationError("Krovak", expected, pUtm));
+            Assert.IsTrue(ToleranceLessThan(pGeo, pGeo2, 0.001), TransformationError("Krovak", pGeo, pGeo2, true));
+
+			// test case 2
+			pGeo = new double[] { 18, 49 };
+            expected = new double[] { -499143.4909304862, -1192340.009253714 };
+
+			pUtm = trans.MathTransform.Transform(pGeo);
+		    pGeo2 = trans2.MathTransform.Inverse().Transform(pUtm);
+
+            Assert.IsTrue(ToleranceLessThan(pUtm, expected, 0.2), TransformationError("Krovak", expected, pUtm));
+			Assert.IsTrue(ToleranceLessThan(pGeo, pGeo2, 0.001), TransformationError("Krovak", pGeo, pGeo2));
+		}
+
+        [Test]
+        public void TestKrovak_Ferro_Projection()
+        {
+            //test case for epsg 2065 (prime meridian at Ferro)
+            IGeographicCoordinateSystem gcsWGS84 = CoordinateSystemFactory.CreateGeographicCoordinateSystem("WGS84 Geographic", AngularUnit.Degrees, HorizontalDatum.WGS84, PrimeMeridian.Greenwich,
+                new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
+
+
+            IEllipsoid ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Bessel 1840", 6377397.155, 299.15281, LinearUnit.Metre);
+
+            IHorizontalDatum datum = CoordinateSystemFactory.CreateHorizontalDatum("Bessel 1840", DatumType.HD_Geocentric, ellipsoid, null);
+            datum.Wgs84Parameters = new Wgs84ConversionInfo(570.8, 85.7, 462.8, 4.998, 1.587, 5.261, 3.56);
+
+            IGeographicCoordinateSystem gcsKrovak = CoordinateSystemFactory.CreateGeographicCoordinateSystem("Bessel 1840", AngularUnit.Degrees, datum,
+                PrimeMeridian.Greenwich, new AxisInfo("Lon", AxisOrientationEnum.East),
+                new AxisInfo("Lat", AxisOrientationEnum.North));
+            gcsKrovak.PrimeMeridian = PrimeMeridian.Ferro;
+
+            List<ProjectionParameter> parameters = new List<ProjectionParameter>(5)
 			                     {
 			                         new ProjectionParameter("latitude_of_center", 49.5),
 			                         new ProjectionParameter("longitude_of_center", 42.5),
@@ -446,32 +525,34 @@ namespace ProjNet.UnitTests
 			                         new ProjectionParameter("false_easting", 0),
 			                         new ProjectionParameter("false_northing", 0)
 			                     };
-		    IProjection projection = CoordinateSystemFactory.CreateProjection("Krovak", "Krovak", parameters);
+            IProjection projection = CoordinateSystemFactory.CreateProjection("Krovak", "Krovak", parameters);
 
-			IProjectedCoordinateSystem coordsys = CoordinateSystemFactory.CreateProjectedCoordinateSystem("WGS 84", gcs, projection, LinearUnit.Metre, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
+            IProjectedCoordinateSystem coordsys = CoordinateSystemFactory.CreateProjectedCoordinateSystem("Krovak", gcsKrovak, projection, LinearUnit.Metre, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
 
-			ICoordinateTransformation trans = new CoordinateTransformationFactory().CreateFromCoordinateSystems(gcs, coordsys);
+            ICoordinateTransformation trans = new CoordinateTransformationFactory().CreateFromCoordinateSystems(gcsWGS84, coordsys);
+            ICoordinateTransformation trans2 = new CoordinateTransformationFactory().CreateFromCoordinateSystems(gcsWGS84, coordsys);
 
-			// test case 1
-			double[] pGeo = new[] { 12d, 48d };
-			double[] expected = new[] { -953172.26, -1245573.32 };
+            // test case 1
+            double[] pGeo = new[] { 12d, 48d };
+            double[] expected = new[] { -953116.2548718402, -1245513.5788112187 };
 
-			double[] pUtm = trans.MathTransform.Transform(pGeo);
-			double[] pGeo2 = trans.MathTransform.Inverse().Transform(pUtm);
+            double[] pUtm = trans.MathTransform.Transform(pGeo);
+            //can't inverse trans - Inverse() of ConcateratedTransform makes shallow copy and call Invert on each ICoordinateTransformation.MathTransform - this changes original transformation!
+            double[] pGeo2 = trans2.MathTransform.Inverse().Transform(pUtm);
 
-		    Assert.IsTrue(ToleranceLessThan(pUtm, expected, 0.02), TransformationError("Krovak", expected, pUtm));
-            Assert.IsTrue(ToleranceLessThan(pGeo, pGeo2, 0.0000001), TransformationError("Krovak", pGeo, pGeo2, true));
+            Assert.IsTrue(ToleranceLessThan(pUtm, expected, 0.2), TransformationError("Krovak", expected, pUtm));
+            Assert.IsTrue(ToleranceLessThan(pGeo, pGeo2, 0.001), TransformationError("Krovak", pGeo, pGeo2, true));
 
-			// test case 2
-			pGeo = new double[] { 18, 49 };
-			expected = new double[] { -499258.06, -1192389.16 };
+            // test case 2
+            pGeo = new double[] { 18, 49 };
+            expected = new double[] { -499143.4909304862, -1192340.009253714 };
 
-			pUtm = trans.MathTransform.Transform(pGeo);
-			pGeo2 = trans.MathTransform.Inverse().Transform(pUtm);
+            pUtm = trans.MathTransform.Transform(pGeo);
+            pGeo2 = trans2.MathTransform.Inverse().Transform(pUtm);
 
-            Assert.IsTrue(ToleranceLessThan(pUtm, expected, 0.02), TransformationError("Krovak", expected, pUtm));
-			Assert.IsTrue(ToleranceLessThan(pGeo, pGeo2, 0.0000001), TransformationError("Krovak", pGeo, pGeo2));
-		} 
+            Assert.IsTrue(ToleranceLessThan(pUtm, expected, 0.2), TransformationError("Krovak", expected, pUtm));
+            Assert.IsTrue(ToleranceLessThan(pGeo, pGeo2, 0.001), TransformationError("Krovak", pGeo, pGeo2));
+        }
 
 	    [Test]
         public void TestUnitTransforms()
@@ -657,6 +738,13 @@ namespace ProjNet.UnitTests
             // Start point (MNAU) X=2040,000m Y=1590,000m]
             // Target point (GK): X=3456926,640m Y=5481071,278m;
 
+            //check source transform
+            double[] outPt = mt.Transform (new double[] { 2040.0, 1590.0 });
+
+            Assert.AreEqual (2, outPt.Length);
+            Assert.AreEqual (3456926.640, outPt[0], 0.00000001);
+            Assert.AreEqual (5481071.278, outPt[1], 0.00000001);
+
             IMathTransform invMt = mt.Inverse ();
 
             double[] inPt = invMt.Transform (new double[] { 3456926.640, 5481071.278 });
@@ -664,6 +752,13 @@ namespace ProjNet.UnitTests
             Assert.AreEqual (2, inPt.Length);
             Assert.AreEqual (2040.0, inPt[0], 0.00000001);
             Assert.AreEqual (1590.0, inPt[1], 0.00000001);
+
+            //check source transform - once more
+            double[] outPt2 = mt.Transform (new double[] { 2040.0, 1590.0 });
+
+            Assert.AreEqual (2, outPt2.Length);
+            Assert.AreEqual (3456926.640, outPt2[0], 0.00000001);
+            Assert.AreEqual (5481071.278, outPt2[1], 0.00000001);
         }
 
         /// <summary>
@@ -720,6 +815,40 @@ namespace ProjNet.UnitTests
             IList<double[]> transformedCoords = trans.MathTransform.TransformList (coords);
             Assert.AreEqual (3456926.640, transformedCoords[0][0], 0.00000001);
             Assert.AreEqual (5481071.278, transformedCoords[0][1], 0.00000001);
+        }
+
+        /// <summary>
+        /// test for epsg 21780 projection (different prime meridian)
+        /// </summary>
+        [Test]
+        public void Test_EPSG_21780_PrimeMeredianTransformation()
+        {
+            string wkt4326 = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]]";
+            string wkt21780 = "PROJCS[\"Bern 1898 (Bern) / LV03C\",GEOGCS[\"Bern 1898 (Bern)\",DATUM[\"CH1903_Bern\",SPHEROID[\"Bessel 1841\",6377397.155,299.1528128,AUTHORITY[\"EPSG\",\"7004\"]],AUTHORITY[\"EPSG\",\"6801\"]],PRIMEM[\"Bern\",7.439583333333333,AUTHORITY[\"EPSG\",\"8907\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4801\"]],PROJECTION[\"Hotine_Oblique_Mercator\"],PARAMETER[\"latitude_of_center\",46.95240555555556],PARAMETER[\"longitude_of_center\",0],PARAMETER[\"azimuth\",90],PARAMETER[\"rectified_grid_angle\",90],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AUTHORITY[\"EPSG\",\"21780\"]]";
+
+            //test data from http://spatialreference.org/ref/epsg/21780/
+            double[] sourceCoord = new double[] { 160443.329034, 23582.55586 };
+            double[] expectedTargetCoord = new double[] { 9.5553588867188, 47.145080566406 };
+
+            ICoordinateSystem cs1 = ProjNet.Converters.WellKnownText.CoordinateSystemWktReader.Parse(wkt21780, System.Text.Encoding.Default) as ICoordinateSystem;
+            ICoordinateSystem cs2 = ProjNet.Converters.WellKnownText.CoordinateSystemWktReader.Parse(wkt4326, System.Text.Encoding.Default) as ICoordinateSystem;
+            CoordinateTransformationFactory ctf = new CoordinateTransformationFactory();
+            var ict = ctf.CreateFromCoordinateSystems(cs1, cs2);
+
+            double[] transformedCoord = ict.MathTransform.Transform(sourceCoord);
+
+            Assert.IsTrue(transformedCoord.Length >= 2);
+            Assert.AreEqual(expectedTargetCoord[0], transformedCoord[0], 0.001);
+            Assert.AreEqual(expectedTargetCoord[1], transformedCoord[1], 0.001);
+
+            //and back
+            var ictb = ctf.CreateFromCoordinateSystems(cs2, cs1);
+            transformedCoord = ictb.MathTransform.Transform(transformedCoord);
+
+            Assert.IsTrue(transformedCoord.Length >= 2);
+            Assert.AreEqual(sourceCoord[0], transformedCoord[0], 0.1);
+            Assert.AreEqual(sourceCoord[1], transformedCoord[1], 0.1);
+
         }
     }
 }
