@@ -58,10 +58,11 @@ namespace ProjNet.UnitTests.Converters.WKT
         /// <summary>
         /// MathTransformWktReader parses real number with exponent incorrectly
         /// </summary>
-        [Test]
-        public void TestMathTransformWktReaderExponencialNumberParsingIssue ()
+        [TestCase("PARAM_MT[\"Affine\",PARAMETER[\"num_row\", 3],PARAMETER[\"num_col\", 3],PARAMETER[\"elt_0_0\", 6.12303176911189E-17]]")]
+        [TestCase("PARAM_MT[\"Affine\",PARAMETER[\"num_row\", 3],PARAMETER[\"num_col\", 3],PARAMETER[\"elt_0_0\", 5.235E4]]")]
+        public void TestMathTransformWktReaderExponencialNumberParsingIssue(string wkt)
         {
-            string wkt = "PARAM_MT[\"Affine\",PARAMETER[\"num_row\", 3],PARAMETER[\"num_col\", 3],PARAMETER[\"elt_0_0\", 6.12303176911189E-17]]";
+            //string wkt = "PARAM_MT[\"Affine\",PARAMETER[\"num_row\", 3],PARAMETER[\"num_col\", 3],PARAMETER[\"elt_0_0\", 6.12303176911189E-17]]";
             IMathTransform mt = null;
 
             try

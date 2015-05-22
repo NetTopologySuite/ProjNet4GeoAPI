@@ -162,10 +162,10 @@ namespace ProjNet.UnitTests.Converters.WKT
                             //Skip not supported projections
                             case "Oblique_Stereographic":
                             case "Transverse_Mercator_South_Orientated":
-                            case "Hotine_Oblique_Mercator":
+                            //case "Hotine_Oblique_Mercator":
                             case "Lambert_Conformal_Conic_1SP":
-                            case "Krovak":
-                            case "Cassini_Soldner":
+                            //case "Krovak":
+                            //case "Cassini_Soldner":
                             case "Lambert_Azimuthal_Equal_Area":
                             case "Tunisia_Mining_Grid":
                             case "New_Zealand_Map_Grid":
@@ -191,7 +191,7 @@ namespace ProjNet.UnitTests.Converters.WKT
                 }
             }
             sr.Close();
-            Assert.AreEqual(parsecount, 2536, "Not all WKT was processed");
+            Assert.GreaterOrEqual(parsecount, 2556, "Not all WKT was processed");
         }
         [Test]
         public void TestUnitBeforeProjection()

@@ -30,7 +30,12 @@ namespace ProjNet.CoordinateSystems
 #endif
     public class AngularUnit : Info, IAngularUnit
 	{
-		/// <summary>
+	    /// <summary>
+	    /// Equality tolerance value. Values with a difference less than this are considered equal.
+	    /// </summary>
+        private const double EqualityTolerance = 2.0e-17;
+        
+        /// <summary>
 		/// Initializes a new instance of a angular unit
 		/// </summary>
 		/// <param name="radiansPerUnit">Radians per unit</param>
@@ -146,7 +151,7 @@ namespace ProjNet.CoordinateSystems
 		{
 			if (!(obj is AngularUnit))
 				return false;
-			return (obj as AngularUnit).RadiansPerUnit == this.RadiansPerUnit;
+            return Math.Abs(((AngularUnit)obj).RadiansPerUnit - this.RadiansPerUnit) < EqualityTolerance;
 		}
 	}
 }

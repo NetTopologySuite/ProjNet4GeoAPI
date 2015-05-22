@@ -154,8 +154,8 @@ namespace ProjNet.Converters.WellKnownText.IO
             _currentTokenType = TokenType.Eof;
             int finished = _reader.Read();
 
-            bool isNumber = false;
-            bool isWord = false;
+            var isNumber = false;
+            var isWord = false;
 
             while (finished != -1)
             {
@@ -171,17 +171,20 @@ namespace ProjNet.Converters.WellKnownText.IO
                 if (isWord && _currentTokenType == TokenType.Number)
                     _currentTokenType = TokenType.Word;
 
-                if (_currentTokenType == TokenType.Word && nextCharacter == '_')
+                if (!isNumber)
                 {
-                    //enable words with _ inbetween
-                    nextTokenType = TokenType.Word;
-                    isWord = true;
-                }
-                if (_currentTokenType == TokenType.Word && nextTokenType == TokenType.Number)
-                {
-                    //enable words ending with numbers
-                    nextTokenType = TokenType.Word;
-                    isWord = true;
+                    if (_currentTokenType == TokenType.Word && nextCharacter == '_')
+                    {
+                        //enable words with _ inbetween
+                        nextTokenType = TokenType.Word;
+                        isWord = true;
+                    }
+                    if (_currentTokenType == TokenType.Word && nextTokenType == TokenType.Number)
+                    {
+                        //enable words ending with numbers
+                        nextTokenType = TokenType.Word;
+                        isWord = true;
+                    }
                 }
 
                 // handle negative numbers
@@ -199,6 +202,25 @@ namespace ProjNet.Converters.WellKnownText.IO
                     nextTokenType = TokenType.Number;
                     isNumber = true;
                 }
+
+                // this handles numbers with a scientific notation
+                if (isNumber)
+                {
+                    if (_currentTokenType == TokenType.Number && nextCharacter == 'E')
+                    {
+                        nextTokenType = TokenType.Number;
+                    }
+                    if (currentCharacter == 'E' && nextCharacter == '-')
+                    {
+                        _currentTokenType = TokenType.Number;
+                        nextTokenType = TokenType.Number;
+                    }
+                    if ((currentCharacter == 'E' || currentCharacter == '-') && nextTokenType == TokenType.Number)
+                    {
+                        _currentTokenType = TokenType.Number;
+                    }
+                }
+
 
                 _colNumber++;
                 if (_currentTokenType == TokenType.Eol)
