@@ -179,6 +179,9 @@
     <Compile Include="..\ProjNet\IO\CoordinateSystems\WKTStreamTokenizer.cs">
       <Link>IO\CoordinateSystems\WKTStreamTokenizer.cs</Link>
     </Compile>
+    <Compile Include="..\ProjNet\ProjNetCoordinateSystemServices.cs">
+      <Link>ProjNetCoordinateSystemServices.cs</Link>
+    </Compile>
     <Compile Include="CoordinateSystems\Extensions.cs" />
     <Compile Include="..\ProjNet\Properties\AssemblyInfo.cs">
       <Link>Properties\AssemblyInfo.cs</Link>
