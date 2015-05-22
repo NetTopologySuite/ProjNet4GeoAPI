@@ -96,6 +96,7 @@
     <Compile Include="IO\CoordinateSystems\StreamTokenizer.cs" />
     <Compile Include="IO\CoordinateSystems\TokenType.cs" />
     <Compile Include="IO\CoordinateSystems\WKTStreamTokenizer.cs" />
+    <Compile Include="ProjNetCoordinateSystemServices.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -105,8 +106,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="GeoAPI">
-      <HintPath>..\packages\GeoAPI.$(GeoAPIPackageVersion)\lib\$(fwVersion)\GeoAPI.dll</HintPath>
+    <Reference Include="GeoAPI, Version=1.7.4.0, Culture=neutral, PublicKeyToken=a1a0da7def465678, processorArchitecture=MSIL">
+      <HintPath>..\packages\GeoAPI.1.7.4-pre\lib\net40-client\GeoAPI.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
   </ItemGroup>
