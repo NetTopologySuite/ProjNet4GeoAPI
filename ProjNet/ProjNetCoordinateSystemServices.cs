@@ -1,12 +1,10 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Globalization;
 using System.IO;
-using System.Linq;
+using System.Net;
 using System.Threading;
-using System.Xml.Linq;
 using GeoAPI;
 using GeoAPI.CoordinateSystems;
 using GeoAPI.CoordinateSystems.Transformations;
@@ -73,46 +71,69 @@ namespace ProjNet
         #endregion
 
         public CoordinateSystemServices(ICoordinateSystemFactory coordinateSystemFactory,
-            ICoordinateTransformationFactory coordinateTransformationFactory, System.Threading.WaitCallback inititalization = null, object arguments = null)
+            ICoordinateTransformationFactory coordinateTransformationFactory)
         {
             if (coordinateSystemFactory == null)
                 throw new ArgumentNullException("coordinateSystemFactory");
+            _coordinateSystemFactory = coordinateSystemFactory;
 
             if (coordinateTransformationFactory == null)
                 throw new ArgumentNullException("coordinateTransformationFactory");
+            _ctFactory = coordinateTransformationFactory;
 
             _csBySrid = new Dictionary<int, ICoordinateSystem>();
             _sridByCs = new Dictionary<IInfo, int>(new CsEqualityComparer());
 
-            inititalization = inititalization ?? DefaultInitialization;
-
-            _coordinateSystemFactory = coordinateSystemFactory;
-            _ctFactory = coordinateTransformationFactory;
-
-            ThreadPool.QueueUserWorkItem(inititalization, CreateArguments(arguments));
+            FromEnumeration(new object[] { this, DefaultInitialization() });
         }
 
-        private object[] CreateArguments(object arguments)
+        public Func<string, long, string> GetDefinition { get; set; }
+
+        public static string GetFromSpatialReferenceOrg(string authority, long code)
         {
-            var res = new List<object>();
-            res.Add(this);
-
-            if (arguments != null)
+            var url = string.Format("http://spatialreference.org/ref/{0}/{1}/ogcwkt/", 
+                authority.ToLowerInvariant(),
+                code);
+            var req = (HttpWebRequest) WebRequest.Create(url);
+            using (var resp = req.GetResponse())
             {
-                var argumentArray = arguments as IEnumerable<object>;
-                if (argumentArray != null)
-                    res.AddRange(argumentArray);
-                else
-                    res.Add(arguments);
+                using (var resps = resp.GetResponseStream())
+                {
+                    if (resps != null)
+                    {
+                        using (var sr = new StreamReader(resps))
+                            return sr.ReadToEnd();
+                    }
+                }
             }
-            return res.ToArray();
+            return null;
         }
 
-        private ICoordinateSystem CreateCoordinateSystem(string wkt)
+        public CoordinateSystemServices(ICoordinateSystemFactory coordinateSystemFactory,
+            ICoordinateTransformationFactory coordinateTransformationFactory,
+            IEnumerable<KeyValuePair<int, string>> enumeration)
+            :this(coordinateSystemFactory, coordinateTransformationFactory)
+        {
+            var enumObj = (object)enumeration ?? DefaultInitialization();
+            _initialization = new ManualResetEvent(false);
+            ThreadPool.QueueUserWorkItem(FromEnumeration, new[] { this, enumObj });
+        }
+
+        //private CoordinateSystemServices(ICoordinateSystemFactory coordinateSystemFactory,
+        //    ICoordinateTransformationFactory coordinateTransformationFactory,
+        //    IEnumerable<KeyValuePair<int, ICoordinateSystem>> enumeration)
+        //    : this(coordinateSystemFactory, coordinateTransformationFactory)
+        //{
+        //    var enumObj = (object)enumeration ?? DefaultInitialization();
+        //    _initialization = new ManualResetEvent(false);
+        //    ThreadPool.QueueUserWorkItem(FromEnumeration, new[] { this, enumObj });
+        //}
+
+        private static ICoordinateSystem CreateCoordinateSystem(ICoordinateSystemFactory coordinateSystemFactory, string wkt)
         {
             try
             {
-                return _coordinateSystemFactory.CreateFromWkt(wkt.Replace("ELLIPSOID", "SPHEROID"));
+                return coordinateSystemFactory.CreateFromWkt(wkt.Replace("ELLIPSOID", "SPHEROID"));
             }
             catch (Exception)
             {
@@ -121,54 +142,49 @@ namespace ProjNet
             }
         }
 
-        public static void DefaultInitialization(object parameter)
+        private static IEnumerable<KeyValuePair<int, ICoordinateSystem>> DefaultInitialization()
         {
-            var paras = (object[])parameter;
-            var css = (CoordinateSystemServices)paras[0];
-
-            css.AddCoordinateSystem(4326, GeographicCoordinateSystem.WGS84);
-            css.AddCoordinateSystem(3857, ProjectedCoordinateSystem.WebMercator);
-
-            css._initialization.Set();
+            yield return new KeyValuePair<int, ICoordinateSystem>(4326, GeographicCoordinateSystem.WGS84);
+            yield return new KeyValuePair<int, ICoordinateSystem>(3857, ProjectedCoordinateSystem.WebMercator);
         }
 
-        public static void LoadXml(object parameter)
+        private static void FromEnumeration(CoordinateSystemServices css,
+            IEnumerable<KeyValuePair<int, ICoordinateSystem>> enumeration)
         {
-            var paras = (object[])parameter;
-            var css = (CoordinateSystemServices)paras[0];
-
-#if !PCL && DEBUG
-            Console.WriteLine("Reading SpatialRefSys.xml");
-            var sw = new Stopwatch();
-            sw.Start();
-#endif
-
-            var document = XDocument.Load((Stream) paras[1]);
-
-            var rs = from tmp in document.Elements("SpatialReference").Elements("ReferenceSystem") select tmp;
-
-            foreach (var node in rs)
+            foreach (var sridCs in enumeration)
             {
-                var sridElement = node.Element("SRID");
-                if (sridElement != null)
-                {
-                    var srid = int.Parse(sridElement.Value);
-                    var cs = css.CreateCoordinateSystem(node.LastNode.ToString());
-
-                    if (cs != null)
-                    {
-                        css.AddCoordinateSystem(srid, cs);
-                    }
-                    else
-                    {
-                        Debug.WriteLine("SRID {0} not supported", srid);
-                    }
-                }
+                css.AddCoordinateSystem(sridCs.Key, sridCs.Value);
             }
-#if !PCL && DEBUG
-            sw.Stop();
-            Console.WriteLine("Read SpatialRefSys.xml in {0:N0}ms", sw.ElapsedMilliseconds);
-#endif
+        }
+
+        private static IEnumerable<KeyValuePair<int, ICoordinateSystem>> CreateCoordinateSystems(
+            ICoordinateSystemFactory factory,
+            IEnumerable<KeyValuePair<int, string>> enumeration)
+        {
+            foreach (var sridWkt in enumeration)
+            {
+                var cs = CreateCoordinateSystem(factory, sridWkt.Value);
+                if (cs != null)
+                    yield return new KeyValuePair<int, ICoordinateSystem>(sridWkt.Key, cs);
+            }
+        }
+
+        private static void FromEnumeration(CoordinateSystemServices css,
+            IEnumerable<KeyValuePair<int, string>> enumeration)
+        {
+            FromEnumeration(css, CreateCoordinateSystems(css._coordinateSystemFactory, enumeration));
+        }
+
+        private static void FromEnumeration(object parameter)
+        {
+            var paras = (object[]) parameter;
+            var css = (CoordinateSystemServices) paras[0];
+
+            if (paras[1]is IEnumerable<KeyValuePair<int, string>>)
+                FromEnumeration(css, (IEnumerable<KeyValuePair<int, string>>) paras[1]);
+            else
+                FromEnumeration(css, (IEnumerable<KeyValuePair<int, ICoordinateSystem>>)paras[1]);
+
             css._initialization.Set();
         }
 

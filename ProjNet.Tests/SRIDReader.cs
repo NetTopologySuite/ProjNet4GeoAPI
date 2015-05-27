@@ -25,9 +25,12 @@ namespace ProjNet.UnitTests
         /// Enumerates all SRID's in the SRID.csv file.
         /// </summary>
         /// <returns>Enumerator</returns>
-        public static IEnumerable<WktString> GetSrids()
+        public static IEnumerable<WktString> GetSrids(string filename = null)
         {
-            using (var sr = File.OpenText(Filename))
+            if (string.IsNullOrWhiteSpace(filename))
+                filename = Filename;
+
+            using (var sr = File.OpenText(filename))
             {
                 while (!sr.EndOfStream)
                 {
@@ -55,7 +58,7 @@ namespace ProjNet.UnitTests
         public static ICoordinateSystem GetCSbyID(int id)
         {
             ICoordinateSystemFactory factory = new CoordinateSystemFactory();
-            foreach (var wkt in GetSrids())
+            foreach (var wkt in GetSrids(null))
                 if (wkt.WktId == id)
                     return factory.CreateFromWkt(wkt.Wkt);
             return null;
