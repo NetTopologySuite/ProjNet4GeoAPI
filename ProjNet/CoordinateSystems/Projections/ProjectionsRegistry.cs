@@ -44,7 +44,7 @@ namespace ProjNet.CoordinateSystems.Projections
             Register("cassini_soldner", typeof(CassiniSoldnerProjection));
             Register("hotine_oblique_mercator", typeof(HotineObliqueMercatorProjection));
             Register("oblique_mercator", typeof(ObliqueMercatorProjection));
-
+            Register("oblique_stereographic", typeof(ObliqueStereographicProjection));
         }
 
         /// <summary>

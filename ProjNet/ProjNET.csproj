@@ -67,6 +67,7 @@
     <Compile Include="CoordinateSystems\ParameterInfo.cs" />
     <Compile Include="CoordinateSystems\Projections\CassiniSoldnerProjection.cs" />
     <Compile Include="CoordinateSystems\Projections\HotineObliqueMercatorProjection.cs" />
+    <Compile Include="CoordinateSystems\Projections\ObliqueStereographicProjection.cs" />
     <Compile Include="CoordinateSystems\Projections\PolyconicProjection.cs" />
     <Compile Include="CoordinateSystems\Info.cs" />
     <Compile Include="CoordinateSystems\LinearUnit.cs" />

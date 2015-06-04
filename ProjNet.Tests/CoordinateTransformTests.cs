@@ -554,6 +554,37 @@ namespace ProjNet.UnitTests
             Assert.IsTrue(ToleranceLessThan(pGeo, pGeo2, 0.001), TransformationError("Krovak", pGeo, pGeo2));
         }
 
+        [Test]
+        public void TestObliqueStereographicProjection()
+        {
+            //test data from http://www.spatialreference.org/ref/epsg/2171/
+            double[] Coord2171 = new double[] { 4615496.325851, 5605702.221723 };
+            double[] Coord4326 = new double[] { 20.78002815042, 50.25299100927 };
+
+
+            string wkt4326 = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]]";
+            string wkt2171 = "PROJCS[\"Pulkovo 1942(58) / Poland zone I\",GEOGCS[\"Pulkovo 1942(58)\",DATUM[\"Pulkovo_1942_58\",SPHEROID[\"Krassowsky 1940\",6378245,298.3,AUTHORITY[\"EPSG\",\"7024\"]],TOWGS84[33.4,-146.6,-76.3,-0.359,-0.053,0.844,-0.84],AUTHORITY[\"EPSG\",\"6179\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4179\"]],PROJECTION[\"Oblique_Stereographic\"],PARAMETER[\"latitude_of_origin\",50.625],PARAMETER[\"central_meridian\",21.08333333333333],PARAMETER[\"scale_factor\",0.9998],PARAMETER[\"false_easting\",4637000],PARAMETER[\"false_northing\",5647000],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AUTHORITY[\"EPSG\",\"2171\"]]";
+
+            ICoordinateSystem cs1 = CoordinateSystemFactory.CreateFromWkt(wkt4326);
+            ICoordinateSystem cs2 = CoordinateSystemFactory.CreateFromWkt(wkt2171);
+
+            CoordinateTransformationFactory ctf = new CoordinateTransformationFactory();
+            var ict = ctf.CreateFromCoordinateSystems(cs2, cs1);
+
+            double[] transformedCoord4326 = ict.MathTransform.Transform(Coord2171);
+
+
+            Assert.AreEqual(Coord4326[0], transformedCoord4326[0], 0.01);
+            Assert.AreEqual(Coord4326[1], transformedCoord4326[1], 0.01);
+
+
+            var ict2 = ctf.CreateFromCoordinateSystems(cs1, cs2);
+            double[] transformedCoord2171 = ict2.MathTransform.Transform(Coord4326);
+
+            Assert.AreEqual(Coord2171[0], transformedCoord2171[0], 1);
+            Assert.AreEqual(Coord2171[1], transformedCoord2171[1], 1);
+        }
+
 	    [Test]
         public void TestUnitTransforms()
         {

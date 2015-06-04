@@ -110,6 +110,9 @@
     <Compile Include="..\ProjNet\CoordinateSystems\Projections\KrovakProjection.cs">
       <Link>CoordinateSystems\Projections\KrovakProjection.cs</Link>
     </Compile>
+    <Compile Include="..\ProjNet\CoordinateSystems\Projections\ObliqueStereographicProjection.cs">
+      <Link>CoordinateSystems\Projections\ObliqueStereographicProjection.cs</Link>
+    </Compile>
     <Compile Include="..\ProjNet\CoordinateSystems\Projections\LambertConformalConic.cs">
       <Link>CoordinateSystems\Projections\LambertConformalConic.cs</Link>
     </Compile>
