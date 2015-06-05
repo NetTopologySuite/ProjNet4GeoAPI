@@ -1,9 +1,24 @@
-﻿using System;
+﻿// Copyright 2015 - Spartaco Giubbolini, Felix Obermaier (www.ivv-aachen.de)
+//
+// This file is part of ProjNet.
+// ProjNet is free software; you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+// 
+// ProjNet is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with SharpMap; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
+    
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
-using System.IO;
-using System.Net;
 using System.Threading;
 using GeoAPI;
 using GeoAPI.CoordinateSystems;
@@ -12,6 +27,9 @@ using ProjNet.CoordinateSystems;
 
 namespace ProjNet
 {
+    /// <summary>
+    /// A coordinate system services class
+    /// </summary>
     public class CoordinateSystemServices : ICoordinateSystemServices
     {
         private readonly Dictionary<int, ICoordinateSystem> _csBySrid;
@@ -87,8 +105,9 @@ namespace ProjNet
             FromEnumeration(new object[] { this, DefaultInitialization() });
         }
 
-        public Func<string, long, string> GetDefinition { get; set; }
+        //public Func<string, long, string> GetDefinition { get; set; }
 
+        /*
         public static string GetFromSpatialReferenceOrg(string authority, long code)
         {
             var url = string.Format("http://spatialreference.org/ref/{0}/{1}/ogcwkt/", 
@@ -108,6 +127,7 @@ namespace ProjNet
             }
             return null;
         }
+         */
 
         public CoordinateSystemServices(ICoordinateSystemFactory coordinateSystemFactory,
             ICoordinateTransformationFactory coordinateTransformationFactory,
