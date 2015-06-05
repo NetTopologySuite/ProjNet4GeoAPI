@@ -210,12 +210,12 @@ namespace ProjNet.Converters.WellKnownText.IO
                     {
                         nextTokenType = TokenType.Number;
                     }
-                    if (currentCharacter == 'E' && nextCharacter == '-')
+                    if (currentCharacter == 'E' && (nextCharacter == '-' || nextCharacter == '+'))
                     {
                         _currentTokenType = TokenType.Number;
                         nextTokenType = TokenType.Number;
                     }
-                    if ((currentCharacter == 'E' || currentCharacter == '-') && nextTokenType == TokenType.Number)
+                    if ((currentCharacter == 'E' || currentCharacter == '-' || currentCharacter == '+') && nextTokenType == TokenType.Number)
                     {
                         _currentTokenType = TokenType.Number;
                     }
