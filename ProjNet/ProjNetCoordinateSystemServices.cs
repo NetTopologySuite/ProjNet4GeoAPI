@@ -200,7 +200,7 @@ namespace ProjNet
             var paras = (object[]) parameter;
             var css = (CoordinateSystemServices) paras[0];
 
-            if (paras[1]is IEnumerable<KeyValuePair<int, string>>)
+            if (paras[1] is IEnumerable<KeyValuePair<int, string>>)
                 FromEnumeration(css, (IEnumerable<KeyValuePair<int, string>>) paras[1]);
             else
                 FromEnumeration(css, (IEnumerable<KeyValuePair<int, ICoordinateSystem>>)paras[1]);
@@ -243,27 +243,6 @@ namespace ProjNet
         public ICoordinateTransformation CreateTransformation(ICoordinateSystem src, ICoordinateSystem tgt)
         {
             return _ctFactory.CreateFromCoordinateSystems(src, tgt);
-        }
-
-        [Obsolete]
-        public string GetCoordinateSystemInitializationString(int srid)
-        {
-            ICoordinateSystem cs;
-            if (_csBySrid.TryGetValue(srid, out cs))
-                return cs.WKT;
-            throw new ArgumentOutOfRangeException("srid");
-        }
-
-        [Obsolete]
-        public ICoordinateSystemFactory CoordinateSystemFactory
-        {
-            get { return _coordinateSystemFactory; }
-        }
-
-        [Obsolete]
-        public ICoordinateTransformationFactory CoordinateTransformationFactory
-        {
-            get { return _ctFactory; }
         }
 
         protected void AddCoordinateSystem(int srid, ICoordinateSystem coordinateSystem)
