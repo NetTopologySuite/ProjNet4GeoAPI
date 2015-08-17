@@ -22,8 +22,32 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
+#if !NET40
+
+namespace ProjNet.FrameworkReplacements
+{
+    internal class Tuple
+    {
+        public static Tuple<T1, T2> Create<T1, T2>(T1 item1, T2 item2 )
+        {
+            return new Tuple<T1, T2> { Item1 = item1, Item2 = item2 };
+        }
+    }
+
+    internal class Tuple<T1, T2>
+    {
+        public T1 Item1 { get; set; }
+        public T2 Item2 { get; set; }
+    }
+
+}
+#endif
+
 namespace ProjNet.CoordinateSystems.Transformations
 {
+#if !NET40
+using ProjNet.FrameworkReplacements;
+#endif
 
     /// <summary>
     /// Represents affine math transform which ttransform input coordinates to target using affine transformation matrix. Dimensionality might change.

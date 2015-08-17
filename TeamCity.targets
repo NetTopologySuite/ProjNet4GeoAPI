@@ -2,8 +2,8 @@
 	<PropertyGroup>
 		<SolutionFile>ProjNet4GeoAPI.sln</SolutionFile>
 		<SolutionDir>$(MSBuildProjectDirectory)</SolutionDir>
-		<GeoAPIPackageVersion Condition=" '$(GeoAPIPackageVersion)' == '' ">1.7.3.1</GeoAPIPackageVersion>
-		<ProjNETVersion Condition=" '$(ProjNETVersion)' == '' ">1.3.0.4</ProjNETVersion>
+		<GeoAPIPackageVersion Condition=" '$(GeoAPIPackageVersion)' == '' ">1.7.4-pre3</GeoAPIPackageVersion>
+		<ProjNETVersion Condition=" '$(ProjNETVersion)' == '' ">1.3.2</ProjNETVersion>
 		<AsmFileVersion Condition=" '$(AsmFileVersion)' == '' ">$(ProjNETVersion)</AsmFileVersion>		
 		<NuGetOutDir>"$(MSBuildProjectDirectory)\Release"</NuGetOutDir>	
 		<NuGetVersion Condition=" '$(NuGetVersion)' == '' ">$(AsmFileVersion)</NuGetVersion>
@@ -20,7 +20,7 @@
              Targets="ProjNET" 
              Properties="fwVersion=$(fwVersion);Configuration=Release;TargetFrameworkVersion=v2.0;TargetFrameworkProfile=;DefineConstants=TRACE;NET20;BaseIntermediateOutputPath=$(MSBuildProjectDirectory)\obj\v2.0\" 
              RunEachTargetSeparately="true" 
-             ContinueOnError="true"/>
+             />
 		<Message Text="GeoAPI framework version: $(fwVersion)" />
 	</Target>
 	<Target Name="BuildRelease35">
@@ -32,7 +32,6 @@
              Targets="ProjNET" 
              Properties="fwVersion=$(fwVersion);Configuration=Release;TargetFrameworkVersion=v3.5;TargetFrameworkProfile=Client;DefineConstants=TRACE;NET20;NET35;BaseIntermediateOutputPath=$(MSBuildProjectDirectory)\obj\v3.5\" 
              RunEachTargetSeparately="true" 
-             ContinueOnError="true" 
              />
 	</Target>
 	<Target Name="BuildRelease40">
@@ -44,7 +43,6 @@
              Targets="ProjNET" 
              Properties="fwVersion=$(fwVersion);Configuration=Release;TargetFrameworkVersion=v4.0;TargetFrameworkProfile=Client;DefineConstants=TRACE;NET20;NET35;NET40;BaseIntermediateOutputPath=$(MSBuildProjectDirectory)\obj\v4.0\" 
              RunEachTargetSeparately="true" 
-             ContinueOnError="true" 
              />
 	</Target>
 
@@ -57,7 +55,6 @@
              Targets="ProjNET" 
              Properties="fwVersion=$(fwVersion);Configuration=Release;TargetFrameworkVersion=v4.0.3;TargetFrameworkProfile=Client;DefineConstants=TRACE;NET20;NET35;NET40;BaseIntermediateOutputPath=$(MSBuildProjectDirectory)\obj\v4.0.3\" 
              RunEachTargetSeparately="true" 
-             ContinueOnError="true" 
              />
 	</Target>
 
@@ -70,20 +67,18 @@
              Targets="ProjNET" 
              Properties="fwVersion=$(fwVersion);Configuration=Release;TargetFrameworkVersion=v4.5;TargetFrameworkProfile=;DefineConstants=TRACE;NET20;NET35;NET40;BaseIntermediateOutputPath=$(MSBuildProjectDirectory)\obj\v4.5\" 
              RunEachTargetSeparately="true" 
-             ContinueOnError="true" 
              />
 	</Target>
 
 	<Target Name="BuildReleasePCL">
 		<PropertyGroup>
-			<fwVersion>portable-net403+sl5+win8+wp8+MonoAndroid+MonoTouch</fwVersion>
+			<fwVersion>portable-net403+sl5+netcore45+wpa81+wp8+MonoAndroid10+XamariniOS10+MonoTouch10</fwVersion>
 		</PropertyGroup>
 		<RemoveDir Directories="BaseIntermediateOutputPath=$(MSBuildProjectDirectory)\obj\PCL" ContinueOnError="true"/>
 		<MSBuild Projects="$(SolutionFile)" 
              Targets="ProjNET_Pcl" 
-             Properties="fwVersion=$(fwVersion);Configuration=Release;TargetFrameworkVersion=v4.0;TargetFrameworkProfile=profile147;DefineConstants=TRACE;PCL;BaseIntermediateOutputPath=$(MSBuildProjectDirectory)\obj\PCL\" 
+             Properties="fwVersion=$(fwVersion);Configuration=Release;TargetFrameworkVersion=v4.0;TargetFrameworkProfile=Profile336;DefineConstants=TRACE;PCL;BaseIntermediateOutputPath=$(MSBuildProjectDirectory)\obj\PCL\" 
              RunEachTargetSeparately="true" 
-             ContinueOnError="true" 
              />
 	</Target>
 
