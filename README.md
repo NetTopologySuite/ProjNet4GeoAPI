@@ -5,13 +5,23 @@ Proj.NET performs point-to-point coordinate conversions between geodetic coordin
 * Read the [FAQ](http://projnet.codeplex.com/wikipage?title=FAQ&referringTitle=Home) for common questions.
 * Popular [Well-Known Text](http://projnet.codeplex.com/wikipage?title=CommonWellKnownText&referringTitle=Home) representations for Spatial Reference Systems
 
-Supports:
+### Get it from NuGet
+`PM> Install-Package ProjNet4GeoAPI`
+
+More information on [NuGet](https://www.nuget.org/packages/ProjNet4GeoAPI)
+
+### Projects using ProjNet4GeoAPI
+* [SharpMap](https://sharpmap.codeplex.com)
+
+(If your project is missing, there is an edit button up-right)
+
+### Supports:
 * Datum transformations
 * Geographic, Geocentric, and Projected coordinate systems
 * Compatible with Microsoft .NET 2.0, Mono, .NET Compact Framework & Silverlight
 * Converts coordinate systems to/from Well-Known Text (WKT) and to XML
 
-Projection types currently supported:
+### Projection types currently supported:
 * Albers
 * Cassini Soldner
 * Hotine Oblique Mercator
