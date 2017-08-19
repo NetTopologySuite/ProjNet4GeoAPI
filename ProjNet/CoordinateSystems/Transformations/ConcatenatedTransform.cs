@@ -25,7 +25,7 @@ namespace ProjNet.CoordinateSystems.Transformations
     /// <summary>
     /// 
     /// </summary>
-#if !PCL 
+#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
 #endif
     internal class ConcatenatedTransform : MathTransform

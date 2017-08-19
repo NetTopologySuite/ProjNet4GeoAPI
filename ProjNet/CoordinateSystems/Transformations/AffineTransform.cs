@@ -22,33 +22,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 
-#if !NET40
-
-namespace ProjNet.FrameworkReplacements
-{
-    internal class Tuple
-    {
-        public static Tuple<T1, T2> Create<T1, T2>(T1 item1, T2 item2 )
-        {
-            return new Tuple<T1, T2> { Item1 = item1, Item2 = item2 };
-        }
-    }
-
-    internal class Tuple<T1, T2>
-    {
-        public T1 Item1 { get; set; }
-        public T2 Item2 { get; set; }
-    }
-
-}
-#endif
-
 namespace ProjNet.CoordinateSystems.Transformations
 {
-#if !NET40
-using ProjNet.FrameworkReplacements;
-#endif
-
     /// <summary>
     /// Represents affine math transform which ttransform input coordinates to target using affine transformation matrix. Dimensionality might change.
     /// </summary>
@@ -57,7 +32,7 @@ using ProjNet.FrameworkReplacements;
     ///The [M][j] element of the matrix will be the j'th ordinate of the moved origin.
     ///The [i][N] element of the matrix will be 0 for i less than M, and 1 for i equals M.</remarks>
     /// <seealso href="http://en.wikipedia.org/wiki/Affine_transformation"/>
-#if !PCL
+#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable]
 #endif
     public class AffineTransform : MathTransform
@@ -276,8 +251,7 @@ using ProjNet.FrameworkReplacements;
 
         /// <summary>
         /// Perform LUP decomposition on a matrix A.
-        /// Return L and U as a single matrix(double[][]) and P as an array of ints.
-        /// We implement the code to compute LU "in place" in the matrix A.
+        /// Return P as an array of ints and L and U are just in A, "in place".
         /// In order to make some of the calculations more straight forward and to 
         /// match Cormen's et al. pseudocode the matrix A should have its first row and first columns
         /// to be all 0.
@@ -285,7 +259,7 @@ using ProjNet.FrameworkReplacements;
         /// <seealso href="http://www.rkinteractive.com/blogs/SoftwareDevelopment/post/2013/05/07/Algorithms-In-C-LUP-Decomposition.aspx"/>
         /// <param name="A"></param>
         /// <returns></returns>
-        private static Tuple<double[,], int[]> LUPDecomposition (double[,] A)
+        private static int[] LUPDecomposition (double[,] A)
         {
             int n = A.GetLength (0) - 1;
             /*
@@ -362,7 +336,7 @@ using ProjNet.FrameworkReplacements;
                     }
                 }
             }
-            return Tuple.Create (A, pi);
+            return pi;
         }
 
 
@@ -387,10 +361,8 @@ using ProjNet.FrameworkReplacements;
             double[] solve;
 
             //Get the LU matrix and P matrix (as an array)
-            Tuple<double[,], int[]> results = LUPDecomposition (A);
-
-            double[,] LU = results.Item1;
-            int[] P = results.Item2;
+            int[] P = LUPDecomposition (A);
+            double[,] LU = A;
 
             /*
             * Solve AX = e for each column ei of the identity matrix using LUP decomposition

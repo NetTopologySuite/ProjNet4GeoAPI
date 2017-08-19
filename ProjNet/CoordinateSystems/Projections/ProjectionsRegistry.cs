@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Reflection;
 using GeoAPI.CoordinateSystems;
 using GeoAPI.CoordinateSystems.Transformations;
 
@@ -12,7 +12,7 @@ namespace ProjNet.CoordinateSystems.Projections
     public class ProjectionsRegistry
     {
         private static readonly Dictionary<string, Type> TypeRegistry = new Dictionary<string, Type>();
-        private static readonly Dictionary<string, int> ConstructorRegistry = new Dictionary<string, int>();
+        private static readonly Dictionary<string, Type> ConstructorRegistry = new Dictionary<string, Type>();
 
         private static readonly object RegistryLock = new object();
 
@@ -64,7 +64,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 throw new ArgumentException("The provided type does not implement 'GeoAPI.CoordinateSystems.Transformations.IMathTransform'!", "type");
 
             var ci = CheckConstructor(type);
-            if (ci == 0)
+            if (ci == null)
                 throw new ArgumentException("The provided type is lacking a suitable constructor", "type");
 
             var key = name.ToLowerInvariant().Replace(' ', '_');
@@ -83,22 +83,22 @@ namespace ProjNet.CoordinateSystems.Projections
             }
         }
 
-        private static int CheckConstructor(Type type)
+        private static Type CheckConstructor(Type type)
         {
-            var c = type.GetConstructor(new[] { typeof(IEnumerable<ProjectionParameter>) });
-            if (c != null)
-                return 1;
+            // find a constructor that accepts exactly one parameter that's an
+            // instance of List<ProjectionParameter>, and then return the exact
+            // parameter type so that we can create instances of this type with
+            // minimal copying in the future, when possible.
+            foreach (ConstructorInfo c in type.GetConstructors())
+            {
+                System.Reflection.ParameterInfo[] parameters = c.GetParameters();
+                if (parameters.Length == 1 && parameters[0].ParameterType.IsAssignableFrom(typeof(List<ProjectionParameter>)))
+                {
+                    return parameters[0].ParameterType;
+                }
+            }
 
-            c = type.GetConstructor(new[] { typeof(List<ProjectionParameter>) });
-            if (c != null)
-                return 2;
-
-            c = type.GetConstructor(new[] { typeof(IList<ProjectionParameter>) });
-            if (c != null)
-                return 3;
-            
-            c = type.GetConstructor(new[] { typeof(ICollection<ProjectionParameter>) });
-            return c != null ? 4 : 0;
+            return null;
         }
 
         internal static IMathTransform CreateProjection(string className, IEnumerable<ProjectionParameter> parameters)
@@ -106,7 +106,7 @@ namespace ProjNet.CoordinateSystems.Projections
             var key = className.ToLowerInvariant().Replace(' ', '_');
 
             Type projectionType;
-            int ci;
+            Type ci;
 
             lock (RegistryLock)
             {
@@ -115,22 +115,12 @@ namespace ProjNet.CoordinateSystems.Projections
                 ci = ConstructorRegistry[key];
             }
 
-            switch (ci)
+            if (!ci.IsAssignableFrom(parameters.GetType()))
             {
-                case 1:
-                    return (IMathTransform) Activator.CreateInstance(projectionType, parameters);
-                case 2:
-                    var l = parameters as List<ProjectionParameter> ?? new List<ProjectionParameter>(parameters);
-                    return (IMathTransform)Activator.CreateInstance(projectionType, l);
-                case 3:
-                    var il = parameters as IList<ProjectionParameter> ?? new List<ProjectionParameter>(parameters);
-                    return (IMathTransform)Activator.CreateInstance(projectionType, il);
-                case 4:
-                    var ic = parameters as ICollection<ProjectionParameter> ?? new List<ProjectionParameter>(parameters);
-                    return (IMathTransform)Activator.CreateInstance(projectionType, ic);
+                parameters = new List<ProjectionParameter>(parameters);
             }
 
-            throw new NotSupportedException("Should never reach here!");
+            return (IMathTransform) Activator.CreateInstance(projectionType, parameters);
         }
     }
 }

@@ -42,7 +42,7 @@ using GeoAPI.CoordinateSystems.Transformations;
 
 namespace ProjNet.CoordinateSystems.Projections
 {
-#if !PCL 
+#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
 #endif
     internal class PseudoMercator : Mercator
@@ -91,7 +91,7 @@ namespace ProjNet.CoordinateSystems.Projections
 	/// greater than that of the continent of South America; in actual area, Greenland is smaller than the Arabian Peninsula.
 	/// </para>
     /// </remarks>
-#if !PCL 
+#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
 #endif
     internal class Mercator : MapProjection

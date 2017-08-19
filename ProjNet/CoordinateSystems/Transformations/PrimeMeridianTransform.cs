@@ -28,7 +28,7 @@ namespace ProjNet.CoordinateSystems.Transformations
     /// <summary>
     /// Adjusts target Prime Meridian
     /// </summary>
-#if !PCL
+#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable]
 #endif
     internal class PrimeMeridianTransform : MathTransform

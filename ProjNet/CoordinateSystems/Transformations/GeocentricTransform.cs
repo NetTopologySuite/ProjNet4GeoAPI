@@ -41,7 +41,7 @@ namespace ProjNet.CoordinateSystems.Transformations
 	/// if the ellipsoid axis dimensions are given in another linear unit they should first be converted
 	/// to metres.</para>
     /// </remarks>
-#if !PCL 
+#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
 #endif
     internal class GeocentricTransform : MathTransform

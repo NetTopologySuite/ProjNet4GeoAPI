@@ -1,134 +1,68 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <SolutionDir Condition=" '$(SolutionDir)' == '' ">..\</SolutionDir>
-    <fwVersion Condition=" '$(fwVersion)' == '' ">net40-client</fwVersion>
-    <ProductVersion>9.0.30729</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{E028BDD2-55E1-4E5F-BE31-35FAEC8D6428}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(ProjectDir)..\</SolutionDir>
     <RootNamespace>ProjNet</RootNamespace>
-    <AssemblyName>ProjNet</AssemblyName>
+    <TargetFrameworks>net35-client;net40-client;net403-client;net45;netstandard1.0</TargetFrameworks>
+    <OutputPath>$(SolutionDir)$(Configuration)\$(Platform)</OutputPath>
+    <DocumentationFile>$(OutputPath)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GeoAPIPackageReferenceVersion>1.7.5-pre2</GeoAPIPackageReferenceVersion>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>..\scskey.snk</AssemblyOriginatorKeyFile>
-    <SccProjectName>
-    </SccProjectName>
-    <SccLocalPath>
-    </SccLocalPath>
-    <SccAuxPath>
-    </SccAuxPath>
-    <SccProvider>
-    </SccProvider>
-    <FileUpgradeFlags>
-    </FileUpgradeFlags>
-    <OldToolsVersion>3.5</OldToolsVersion>
-    <UpgradeBackupLocation>
-    </UpgradeBackupLocation>
-    <IsWebBootstrapper>true</IsWebBootstrapper>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <AssemblyOriginatorKeyFile>$(SolutionDir)scskey.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
+
+  <!-- Client Profile frameworks don't have built-in shortcuts, so we need to specify these. -->
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net35-client' ">
+    <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
-    <RestorePackages>true</RestorePackages>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net40-client' ">
+    <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net403-client' ">
+    <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <TargetFrameworkVersion>v4.0.3</TargetFrameworkVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net35-client' Or '$(TargetFramework)' == 'net40-client' Or '$(TargetFramework)' == 'net403-client' Or '$(TargetFramework)' == 'net45' ">
+    <RequiresFrameworkAssemblyReferences>true</RequiresFrameworkAssemblyReferences>
     <DebugType>full</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>$(SolutionDir)$(Configuration)\$(TargetFrameworkIdentifier)$(TargetFrameworkVersion)\$(Platform)\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NET20;NET35</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>
-    </DocumentationFile>
+
+    <DefineConstants>$(DefineConstants);FEATURE_DESERIALIZATION_CONSTRUCTOR</DefineConstants>
+    <DefineConstants>$(DefineConstants);HAS_SYSTEM_RUNTIME_INTEROPSERVICES_COMVISIBLEATTRIBUTE</DefineConstants>
+    <DefineConstants>$(DefineConstants);HAS_SYSTEM_RUNTIME_INTEROPSERVICES_GUIDATTRIBUTE</DefineConstants>
+    <DefineConstants>$(DefineConstants);HAS_SYSTEM_SERIALIZABLEATTRIBUTE</DefineConstants>
+    <DefineConstants>$(DefineConstants);HAS_SYSTEM_THREADING_THREADPOOL</DefineConstants>
+    <DefineConstants>$(DefineConstants);HAS_SYSTEM_TYPE_GETCONSTRUCTORS</DefineConstants>
+    <DefineConstants>$(DefineConstants);HAS_SYSTEM_TYPE_ISASSIGNABLEFROM</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>$(SolutionDir)$(Configuration)\$(TargetFrameworkIdentifier)$(TargetFrameworkVersion)\$(Platform)\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\Release\v4.0\AnyCPU\ProjNet.xml</DocumentationFile>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45' ">
+    <DefineConstants>$(DefineConstants);HAS_SYSTEM_REFLECTION_TYPEINFO</DefineConstants>
+    <DefineConstants>$(DefineConstants);HAS_SYSTEM_THREADING_TASKS_TASK_RUN</DefineConstants>
   </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.0' ">
+    <DisableImplicitFrameworkReferences>true</DisableImplicitFrameworkReferences>
+
+    <DefineConstants>$(DefineConstants);HAS_SYSTEM_REFLECTION_TYPEINFO</DefineConstants>
+    <DefineConstants>$(DefineConstants);HAS_SYSTEM_THREADING_TASKS_TASK_RUN</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="CoordinateSystems\AngularUnit.cs" />
-    <Compile Include="CoordinateSystems\CoordinateSystem.cs" />
-    <Compile Include="CoordinateSystems\CoordinateSystemFactory.cs" />
-    <Compile Include="CoordinateSystems\Datum.cs" />
-    <Compile Include="CoordinateSystems\Ellipsoid.cs" />
-    <Compile Include="CoordinateSystems\FittedCoordinateSystem.cs" />
-    <Compile Include="CoordinateSystems\GeocentricCoordinateSystem.cs" />
-    <Compile Include="CoordinateSystems\GeographicCoordinateSystem.cs" />
-    <Compile Include="CoordinateSystems\GeographicTransform.cs" />
-    <Compile Include="CoordinateSystems\HorizontalCoordinateSystem.cs" />
-    <Compile Include="CoordinateSystems\HorizontalDatum.cs" />
-    <Compile Include="CoordinateSystems\ParameterInfo.cs" />
-    <Compile Include="CoordinateSystems\Projections\CassiniSoldnerProjection.cs" />
-    <Compile Include="CoordinateSystems\Projections\HotineObliqueMercatorProjection.cs" />
-    <Compile Include="CoordinateSystems\Projections\ObliqueStereographicProjection.cs" />
-    <Compile Include="CoordinateSystems\Projections\PolyconicProjection.cs" />
-    <Compile Include="CoordinateSystems\Info.cs" />
-    <Compile Include="CoordinateSystems\LinearUnit.cs" />
-    <Compile Include="CoordinateSystems\PrimeMeridian.cs" />
-    <Compile Include="CoordinateSystems\ProjectedCoordinateSystem.cs" />
-    <Compile Include="CoordinateSystems\Projection.cs" />
-    <Compile Include="CoordinateSystems\Projections\AlbersProjection.cs" />
-    <Compile Include="CoordinateSystems\Projections\KrovakProjection.cs" />
-    <Compile Include="CoordinateSystems\Projections\LambertConformalConic.cs" />
-    <Compile Include="CoordinateSystems\Projections\MapProjection.cs" />
-    <Compile Include="CoordinateSystems\Projections\Mercator.cs" />
-    <Compile Include="CoordinateSystems\Projections\ProjectionParameterSet.cs" />
-    <Compile Include="CoordinateSystems\Projections\TransverseMercator.cs" />
-    <Compile Include="CoordinateSystems\Transformations\AffineTransform.cs" />
-    <Compile Include="CoordinateSystems\Transformations\ConcatenatedTransform.cs" />
-    <Compile Include="CoordinateSystems\Transformations\CoordinateTransformation.cs" />
-    <Compile Include="CoordinateSystems\Transformations\CoordinateTransformationFactory.cs" />
-    <Compile Include="CoordinateSystems\Transformations\DatumTransform.cs" />
-    <Compile Include="CoordinateSystems\Transformations\GeocentricTransform.cs" />
-    <Compile Include="CoordinateSystems\Transformations\GeographicTransform.cs" />
-    <Compile Include="CoordinateSystems\Transformations\MathTransform.cs" />
-    <Compile Include="CoordinateSystems\Projections\ProjectionsRegistry.cs" />
-    <Compile Include="CoordinateSystems\Transformations\PrimeMeridianTransform.cs" />
-    <Compile Include="CoordinateSystems\Unit.cs" />
-    <Compile Include="IO\CoordinateSystems\CoordinateSystemWktReader.cs" />
-    <Compile Include="IO\CoordinateSystems\MathTransformWktReader.cs" />
-    <Compile Include="IO\CoordinateSystems\StreamTokenizer.cs" />
-    <Compile Include="IO\CoordinateSystems\TokenType.cs" />
-    <Compile Include="IO\CoordinateSystems\WKTStreamTokenizer.cs" />
-    <Compile Include="ProjNetCoordinateSystemServices.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <PackageReference Include="GeoAPI" Version="$(GeoAPIPackageReferenceVersion)" />
   </ItemGroup>
+
   <ItemGroup>
-    <None Include="..\scskey.snk">
-      <Link>scskey.snk</Link>
-    </None>
-    <None Include="packages.config" />
+    <None Include="$(SolutionDir)scskey.snk" />
   </ItemGroup>
-  <ItemGroup>
-    <Reference Include="GeoAPI, Version=1.7.4.0, Culture=neutral, PublicKeyToken=a1a0da7def465678, processorArchitecture=MSIL">
-      <HintPath>..\packages\GeoAPI.1.7.4\lib\net40-client\GeoAPI.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
-  </ItemGroup>
-  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)GeoAPI.props" />
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>Dieses Projekt verweist auf mindestens ein NuGet-Paket, das auf diesem Computer fehlt. Aktivieren Sie die Wiederherstellung von NuGet-Paketen, um die fehlende Datei herunterzuladen. Weitere Informationen finden Sie unter "http://go.microsoft.com/fwlink/?LinkID=322105". Die fehlende Datei ist "{0}".</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('$(SolutionDir)\.nuget\NuGet.targets')" Text="$([System.String]::Format('$(ErrorText)', '$(SolutionDir)\.nuget\NuGet.targets'))" />
-  </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>

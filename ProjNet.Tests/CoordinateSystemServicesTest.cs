@@ -1,13 +1,10 @@
-﻿//#define LINQ
-
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using System.Xml;
 using System.Xml.Linq;
 using NUnit.Framework;
 using ProjNet.CoordinateSystems;
@@ -82,23 +79,6 @@ namespace ProjNet
             var sw = new Stopwatch();
             sw.Start();
 
-#if !LINQ
-            var document = new XmlDocument();
-            document.Load(XmlReader.Create(stream));
-            var nodes = document.SelectNodes("/SpatialReference/ReferenceSystem");
-            if (nodes == null) yield break;
-            var rs = nodes.Cast<XmlElement>();
-
-            foreach (var node in rs)
-            {
-                var sridElement = node["SRID"];
-                if (sridElement != null)
-                {
-                    var srid = int.Parse(sridElement.InnerText);
-                    yield return new KeyValuePair<int, string>(srid, node.ChildNodes[2].InnerText);
-                }
-            }
-#else
             var document = XDocument.Load(stream);
 
             var rs = from tmp in document.Elements("SpatialReference").Elements("ReferenceSystem") select tmp;
@@ -112,7 +92,6 @@ namespace ProjNet
                     yield return new KeyValuePair<int, string>(srid, node.LastNode.ToString());
                 }
             }
-#endif
 
             sw.Stop();
             Console.WriteLine("Read '{1}' in {0:N0}ms", sw.ElapsedMilliseconds, xmlPath);

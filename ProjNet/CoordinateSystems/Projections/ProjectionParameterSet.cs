@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using System.Text;
 using GeoAPI.CoordinateSystems;
 
@@ -9,18 +8,18 @@ namespace ProjNet.CoordinateSystems.Projections
     /// <summary>
     /// A set of projection parameters
     /// </summary>
-#if !PCL 
+#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
 #endif
     public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<ProjectionParameterSet>
     {
         private readonly Dictionary<string, string> _originalNames = new Dictionary<string, string>();
         private readonly Dictionary<int, string>  _originalIndex = new Dictionary<int, string>();
-#if !PCL
+#if FEATURE_DESERIALIZATION_CONSTRUCTOR
         /// <summary>
         /// Needed for serialzation
         /// </summary>
-        public ProjectionParameterSet(SerializationInfo info,  StreamingContext context)
+        public ProjectionParameterSet(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
             :base(info, context)
         {}
 #endif

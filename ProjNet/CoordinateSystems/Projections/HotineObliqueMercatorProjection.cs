@@ -5,7 +5,7 @@ using GeoAPI.CoordinateSystems.Transformations;
 
 namespace ProjNet.CoordinateSystems.Projections
 {
-#if !PCL 
+#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
 #endif
     internal class ObliqueMercatorProjection : HotineObliqueMercatorProjection
@@ -30,7 +30,7 @@ namespace ProjNet.CoordinateSystems.Projections
         }
     }
 
-#if !PCL 
+#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
 #endif
     internal class HotineObliqueMercatorProjection : MapProjection
