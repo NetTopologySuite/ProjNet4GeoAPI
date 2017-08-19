@@ -19,6 +19,11 @@ Proj.NET performs point-to-point coordinate conversions between geodetic coordin
 		</dependencies>
 	</metadata>
 	<files>
-		<file src="Release\AnyCPU\**\*.*" target="lib" exclude="**\GeoAPI.dll" />
+		<file src="Release\AnyCPU\**\ProjNET.deps.json" target="lib" />
+		<file src="Release\AnyCPU\**\ProjNET.dll" target="lib" />
+		<file src="Release\AnyCPU\**\ProjNET.pdb" target="lib" />
+		<file src="Release\AnyCPU\**\ProjNET.xml" target="lib" />
+
+		<file src="ProjNet\**\*.cs" exclude="**\obj\**\*.*" target="src" />
 	</files>
 </package>
