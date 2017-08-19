@@ -8,7 +8,7 @@
     <OutputPath>$(SolutionDir)$(Configuration)\$(Platform)</OutputPath>
     <DocumentationFile>$(OutputPath)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <GeoAPIPackageReferenceVersion>1.7.5-pre2</GeoAPIPackageReferenceVersion>
+    <GeoAPIPackageReferenceVersion>1.7.5-pre4</GeoAPIPackageReferenceVersion>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(SolutionDir)scskey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
