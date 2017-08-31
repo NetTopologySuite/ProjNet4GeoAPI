@@ -1,9 +1,9 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using GeoAPI.CoordinateSystems;
 using GeoAPI.CoordinateSystems.Transformations;
 using GeoAPI.Geometries;
-using NetTopologySuite.Geometries.Implementation;
 using NUnit.Framework;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
@@ -880,6 +880,90 @@ namespace ProjNet.UnitTests
             Assert.AreEqual(sourceCoord[0], transformedCoord[0], 0.1);
             Assert.AreEqual(sourceCoord[1], transformedCoord[1], 0.1);
 
+        }
+
+        private sealed class CoordinateArraySequence : ICoordinateSequence
+        {
+            private readonly Coordinate[] coordinates;
+
+            internal CoordinateArraySequence(Coordinate[] coordinates) => this.coordinates = coordinates ?? throw new ArgumentNullException(nameof(coordinates));
+
+            public int Dimension => 3;
+            public Ordinates Ordinates => Ordinates.XYZ;
+            public int Count => this.coordinates.Length;
+
+            public double GetX(int index) => this.coordinates[index].X;
+            public double GetY(int index) => this.coordinates[index].Y;
+            public Coordinate GetCoordinateCopy(int i) => new Coordinate(this.coordinates[i]);
+            public Coordinate GetCoordinate(int i) => this.coordinates[i];
+            object ICloneable.Clone() => this.Clone();
+            public CoordinateArraySequence Clone() => new CoordinateArraySequence(Array.ConvertAll(this.coordinates, c => new Coordinate(c)));
+            public Coordinate[] ToCoordinateArray() => this.coordinates;
+
+            public ICoordinateSequence Reversed()
+            {
+                CoordinateArraySequence seq = this.Clone();
+                Array.Reverse(seq.coordinates);
+                return seq;
+            }
+
+            public Envelope ExpandEnvelope(Envelope env)
+            {
+                foreach (Coordinate coordinate in this.coordinates)
+                {
+                    env.ExpandToInclude(coordinate);
+                }
+
+                return env;
+            }
+
+            public void GetCoordinate(int index, Coordinate coord)
+            {
+                coord.X = this.coordinates[index].X;
+                coord.Y = this.coordinates[index].Y;
+                coord.Z = this.coordinates[index].Z;
+            }
+
+            public double GetOrdinate(int index, Ordinate ordinate)
+            {
+                Coordinate coordinate = this.coordinates[index];
+                switch (ordinate)
+                {
+                    case Ordinate.X:
+                        return coordinate.X;
+
+                    case Ordinate.Y:
+                        return coordinate.Y;
+
+                    case Ordinate.Z:
+                        return coordinate.Z;
+
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
+
+            public void SetOrdinate(int index, Ordinate ordinate, double value)
+            {
+                Coordinate coordinate = this.coordinates[index];
+                switch (ordinate)
+                {
+                    case Ordinate.X:
+                        coordinate.X = value;
+                        break;
+
+                    case Ordinate.Y:
+                        coordinate.Y = value;
+                        break;
+
+                    case Ordinate.Z:
+                        coordinate.Z = value;
+                        break;
+
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
+            }
         }
     }
 }

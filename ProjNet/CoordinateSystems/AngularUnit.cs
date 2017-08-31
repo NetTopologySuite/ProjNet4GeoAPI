@@ -22,10 +22,10 @@ using GeoAPI.CoordinateSystems;
 
 namespace ProjNet.CoordinateSystems
 {
-	/// <summary>
-	/// Definition of angular units.
+    /// <summary>
+    /// Definition of angular units.
     /// </summary>
-#if !PCL 
+#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
 #endif
     public class AngularUnit : Info, IAngularUnit

@@ -33,7 +33,7 @@ namespace ProjNet.CoordinateSystems
 	/// of the datum may also include the temporal behavior (such as the rate of change of
 	/// the orientation of the coordinate axes).
     /// </remarks>
-#if !PCL 
+#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
 #endif
     public abstract class Datum : Info, IDatum

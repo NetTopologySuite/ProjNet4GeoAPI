@@ -26,7 +26,7 @@ namespace ProjNet.CoordinateSystems.Transformations
 	/// <summary>
 	/// Transformation for applying 
     /// </summary>
-#if !PCL 
+#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
 #endif
     internal class DatumTransform : MathTransform

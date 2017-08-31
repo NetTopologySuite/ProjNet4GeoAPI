@@ -46,11 +46,7 @@ namespace ProjNet
             public override bool Equals(IInfo x, IInfo y)
             {
                 return x.AuthorityCode == y.AuthorityCode &&
-#if PCL
-                    string.Compare(x.Authority, y.Authority, CultureInfo.InvariantCulture, CompareOptions.OrdinalIgnoreCase) == 0;
-#else
-                    string.Compare(x.Authority, y.Authority, true, CultureInfo.InvariantCulture) == 0;
-#endif
+                    string.Compare(x.Authority, y.Authority, StringComparison.OrdinalIgnoreCase) == 0;
             }
 
             public override int GetHashCode(IInfo obj)
@@ -136,7 +132,13 @@ namespace ProjNet
         {
             var enumObj = (object)enumeration ?? DefaultInitialization();
             _initialization = new ManualResetEvent(false);
-            ThreadPool.QueueUserWorkItem(FromEnumeration, new[] { this, enumObj });
+#if HAS_SYSTEM_THREADING_TASKS_TASK_RUN
+            System.Threading.Tasks.Task.Run(() => FromEnumeration((new[] { this, enumObj })));
+#elif HAS_SYSTEM_THREADING_THREADPOOL
+            System.Threading.ThreadPool.QueueUserWorkItem(FromEnumeration, new[] { this, enumObj });
+#else
+#error Must have one or the other
+#endif
         }
 
         //private CoordinateSystemServices(ICoordinateSystemFactory coordinateSystemFactory,

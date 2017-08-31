@@ -1,15 +1,14 @@
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
+using System.Text;
 using GeoAPI.CoordinateSystems;
-using ProjNet.Converters.WellKnownText;
 using ProjNet.CoordinateSystems;
 
 namespace ProjNet.UnitTests
 {
     internal class SRIDReader
     {
-        private const string Filename = @"..\..\SRID.csv";
-
         public struct WktString {
             /// <summary>
             /// Well-known ID
@@ -27,10 +26,11 @@ namespace ProjNet.UnitTests
         /// <returns>Enumerator</returns>
         public static IEnumerable<WktString> GetSrids(string filename = null)
         {
-            if (string.IsNullOrWhiteSpace(filename))
-                filename = Filename;
+            Stream stream = string.IsNullOrWhiteSpace(filename)
+                ? Assembly.GetExecutingAssembly().GetManifestResourceStream("ProjNET.Tests.SRID.csv")
+                : File.OpenRead(filename);
 
-            using (var sr = File.OpenText(filename))
+            using (var sr = new StreamReader(stream, Encoding.UTF8))
             {
                 while (!sr.EndOfStream)
                 {
@@ -41,13 +41,12 @@ namespace ProjNet.UnitTests
                     if (split <= -1) continue;
 
                     var wkt = new WktString
-                                  { 
-                                      WktId = int.Parse(line.Substring(0, split)), 
-                                      Wkt = line.Substring(split + 1)
-                                  };
+                    {
+                        WktId = int.Parse(line.Substring(0, split)),
+                        Wkt = line.Substring(split + 1)
+                    };
                     yield return wkt;
                 }
-                sr.Close();
             }
         }
         /// <summary>

@@ -26,7 +26,7 @@ namespace ProjNet.CoordinateSystems
 	/// <summary>
 	/// A 3D coordinate system, with its origin at the center of the Earth.
     /// </summary>
-#if !PCL 
+#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
 #endif
     public class GeocentricCoordinateSystem : CoordinateSystem, IGeocentricCoordinateSystem

@@ -25,7 +25,7 @@ namespace ProjNet.CoordinateSystems
 	/// <summary>
 	/// Definition of linear units.
     /// </summary>
-#if !PCL 
+#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
 #endif
     public class LinearUnit : Info, ILinearUnit
