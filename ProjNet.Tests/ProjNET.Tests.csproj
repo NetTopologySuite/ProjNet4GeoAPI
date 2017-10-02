@@ -4,7 +4,7 @@
     <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(ProjectDir)..\</SolutionDir>
     <TargetFramework>net45</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <GeoAPIPackageReferenceVersion>1.7.5-pre2</GeoAPIPackageReferenceVersion>
+    <GeoAPIPackageReferenceVersion>1.7.5-pre4</GeoAPIPackageReferenceVersion>
 
     <!-- The NUnit 2 test adapter doesn't support portable PDBs. -->
     <DebugType>full</DebugType>
