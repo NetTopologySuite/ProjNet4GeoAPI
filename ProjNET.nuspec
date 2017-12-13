@@ -15,7 +15,7 @@ Proj.NET performs point-to-point coordinate conversions between geodetic coordin
 		<copyright>Copyright 2006-2015</copyright>
 		<tags>OGC SFS Projection</tags>
 		<dependencies>
-			<dependency id="GeoAPI" version="[1.7.4,1.8)" />
+			<dependency id="GeoAPI" version="[1.7.5-pre009, )" />
 		</dependencies>
 	</metadata>
 	<files>
