@@ -10,6 +10,10 @@ Proj.NET performs point-to-point coordinate conversions between geodetic coordin
 
 More information on [NuGet](https://www.nuget.org/packages/ProjNet4GeoAPI)
 
+### Talk...
+Join the [![Gitter](https://img.shields.io/gitter/room/TechnologyAdvice/Stardust.svg)](https://gitter.im/NetTopologySuite/ProjNet4GeoAPI) on ProjNet (for GeoAPI).
+
+
 ### Projects using ProjNet4GeoAPI
 * [SharpMap](https://sharpmap.codeplex.com)
 
