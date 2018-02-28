@@ -897,7 +897,13 @@ namespace ProjNet.UnitTests
             public Coordinate GetCoordinateCopy(int i) => new Coordinate(this.coordinates[i]);
             public Coordinate GetCoordinate(int i) => this.coordinates[i];
             object ICloneable.Clone() => this.Clone();
-            public CoordinateArraySequence Clone() => new CoordinateArraySequence(Array.ConvertAll(this.coordinates, c => new Coordinate(c)));
+            public CoordinateArraySequence Clone() => (CoordinateArraySequence) Copy();
+
+            public ICoordinateSequence Copy()
+            {
+                return new CoordinateArraySequence(Array.ConvertAll(this.coordinates, c => new Coordinate(c)));
+            }
+
             public Coordinate[] ToCoordinateArray() => this.coordinates;
 
             public ICoordinateSequence Reversed()

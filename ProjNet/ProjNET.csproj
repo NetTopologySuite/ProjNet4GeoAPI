@@ -5,13 +5,11 @@
     <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(ProjectDir)..\</SolutionDir>
     <RootNamespace>ProjNet</RootNamespace>
     <TargetFrameworks>net35-client;net40-client;net403-client;net45;netstandard1.0;netstandard2.0</TargetFrameworks>
-    <OutputPath>$(SolutionDir)$(Configuration)\$(Platform)</OutputPath>
-    <DocumentationFile>$(OutputPath)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <GeoAPIPackageReferenceVersion>1.7.5-pre009</GeoAPIPackageReferenceVersion>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(SolutionDir)scskey.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+
+  <Import Project="$(SolutionDir)ProjNet.Common.props" />
 
   <!-- Client Profile frameworks don't have built-in shortcuts, so we need to specify these. -->
   <PropertyGroup Condition=" '$(TargetFramework)' == 'net35-client' ">
@@ -68,7 +66,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="GeoAPI" Version="$(GeoAPIPackageReferenceVersion)" />
+    <PackageReference Include="GeoAPI.CoordinateSystems" Version="$(GeoAPIPackageReferenceVersion)" />
   </ItemGroup>
 
   <ItemGroup>

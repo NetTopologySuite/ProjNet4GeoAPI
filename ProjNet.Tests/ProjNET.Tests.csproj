@@ -4,11 +4,11 @@
     <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(ProjectDir)..\</SolutionDir>
     <TargetFramework>net45</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <GeoAPIPackageReferenceVersion>1.7.5-pre4</GeoAPIPackageReferenceVersion>
-
     <!-- The NUnit 2 test adapter doesn't support portable PDBs. -->
     <DebugType>full</DebugType>
   </PropertyGroup>
+
+  <Import Project="$(SolutionDir)ProjNet.Common.props" />
 
   <ItemGroup>
     <Reference Include="System" />
@@ -16,7 +16,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
 
-    <PackageReference Include="GeoAPI" Version="$(GeoAPIPackageReferenceVersion)" />
+    <PackageReference Include="GeoAPI.CoordinateSystems" Version="$(GeoAPIPackageReferenceVersion)" />
     <PackageReference Include="NUnit" Version="2.6.4" />
     <PackageReference Include="Npgsql" Version="2.2.7" />
 

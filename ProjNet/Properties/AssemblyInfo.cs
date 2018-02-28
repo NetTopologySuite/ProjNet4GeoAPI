@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 #endif
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Proj.NET")]
-[assembly: AssemblyCopyright("Copyright © 2009 - 2015 Morten Nielsen, NetTopologySuite - Team")]
+[assembly: AssemblyCopyright("Copyright © 2009 - 2018 Morten Nielsen, NetTopologySuite - Team")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: System.CLSCompliant(true)]
@@ -20,5 +20,5 @@ using System.Runtime.InteropServices;
 #if HAS_SYSTEM_RUNTIME_INTEROPSERVICES_GUIDATTRIBUTE
 [assembly: Guid("e16f3ac5-214b-4ef3-9809-740a13cf0ec7")]
 #endif
-[assembly: AssemblyVersion("1.3.2.0")]
-[assembly: AssemblyFileVersion("1.3.2.0")]
+[assembly: AssemblyVersion("1.4.0.0")]
+[assembly: AssemblyFileVersion("1.4.0.0")]
