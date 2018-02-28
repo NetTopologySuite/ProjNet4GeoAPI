@@ -224,6 +224,26 @@ namespace ProjNet.UnitTests
             //check equality of angular units
             Assert.AreEqual (true, pcs1.GeographicCoordinateSystem.AngularUnit.EqualParams (pcs2.GeographicCoordinateSystem.AngularUnit));
         }
-      
+
+        [Test, Description("transformation somehow is wrong"), Category("Question")]
+        public static void TestGitHubIssue53()
+        {
+            // arrange
+            CoordinateSystemFactory csFact = new CoordinateSystemFactory();
+            CoordinateTransformationFactory ctFact = new CoordinateTransformationFactory();
+            ICoordinateSystem csWgs84 = GeographicCoordinateSystem.WGS84;
+            IProjectedCoordinateSystem csUtm35N = ProjectedCoordinateSystem.WGS84_UTM(35, true);
+            ICoordinateTransformation csTrans = ctFact.CreateFromCoordinateSystems(csWgs84, csUtm35N);
+            ICoordinateTransformation csTransBack = ctFact.CreateFromCoordinateSystems(csUtm35N, csWgs84);
+
+            // act
+            double[] point = new[] { 42.5, 24.5 };
+            var r = csTrans.MathTransform.Transform(point);
+            var rBack = csTransBack.MathTransform.Transform(r);
+
+            // assert
+            Assert.AreEqual(point[0], rBack[0], 1e-5);
+            Assert.AreEqual(point[1], rBack[1], 1e-5);
+        }
     }
 }
