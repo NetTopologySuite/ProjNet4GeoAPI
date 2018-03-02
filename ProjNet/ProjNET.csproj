@@ -7,6 +7,7 @@
     <TargetFrameworks>net35-client;net40-client;net403-client;net45;netstandard1.0;netstandard2.0</TargetFrameworks>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(SolutionDir)scskey.snk</AssemblyOriginatorKeyFile>
+    <TargetFramework>net35</TargetFramework>
   </PropertyGroup>
 
   <Import Project="$(SolutionDir)ProjNet.Common.props" />
@@ -73,4 +74,9 @@
     <None Include="$(SolutionDir)scskey.snk" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="..\SharedAssemblyVersion.cs">
+      <Link>Properties\SharedAssemblyVersion.cs</Link>
+    </Compile>
+  </ItemGroup>
 </Project>
