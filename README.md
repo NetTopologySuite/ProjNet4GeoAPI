@@ -2,8 +2,8 @@
 This library is an extended port of [ProjNet](http://projnet.codeplex.com)
 ## .NET Spatial Reference and Projection Engine
 Proj.NET performs point-to-point coordinate conversions between geodetic coordinate systems for use in fx. Geographic Information Systems (GIS) or GPS applications. The spatial reference model used adheres to the Simple Features specification.
-* Read the [FAQ](http://projnet.codeplex.com/wikipage?title=FAQ&referringTitle=Home) for common questions.
-* Popular [Well-Known Text](http://projnet.codeplex.com/wikipage?title=CommonWellKnownText&referringTitle=Home) representations for Spatial Reference Systems
+* Read the [Frequently Asked Questions](https://github.com/NetTopologySuite/ProjNet4GeoAPI/wiki/Frequently-Asked-Questions) for common questions.
+* Popular [Well-Known Text](https://github.com/NetTopologySuite/ProjNet4GeoAPI/wiki/Popular-Well-Known-Text-representations-of-Spatial-Reference-Systems) representations for Spatial Reference Systems
 
 ### Get it from NuGet
 `PM> Install-Package ProjNet4GeoAPI`
@@ -15,7 +15,7 @@ Join the [![Gitter](https://img.shields.io/gitter/room/TechnologyAdvice/Stardust
 
 
 ### Projects using ProjNet4GeoAPI
-* [SharpMap](https://sharpmap.codeplex.com)
+* [SharpMap](https://github.com/SharpMap/SharpMap)
 
 (If your project is missing, there is an edit button up-right)
 
