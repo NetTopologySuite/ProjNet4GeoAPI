@@ -5,9 +5,9 @@
 		<version>$version$</version>
 		<authors>Morton Nielsen, NetTopologySuite - Team</authors>
 		<owners>NetTopologySuite - Team</owners>
-		<licenseUrl>http://projnet.codeplex.com/license</licenseUrl>
+		<licenseUrl>https://raw.githubusercontent.com/NetTopologySuite/ProjNet4GeoAPI/master/LICENSE</licenseUrl>
 		<projectUrl>https://github.com/NetTopologySuite/ProjNet4GeoAPI</projectUrl>
-		<!--<iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>-->
+		<iconUrl>https://raw.githubusercontent.com/NetTopologySuite/ProjNet4GeoAPI/master/icon.png</iconUrl>
 		<requireLicenseAcceptance>false</requireLicenseAcceptance>
 		<description>.NET Spatial Reference and Projection Engine.
 Proj.NET performs point-to-point coordinate conversions between geodetic coordinate systems for use in fx. Geographic Information Systems (GIS) or GPS applications. The spatial reference model used adheres to the Simple Features specification.
@@ -15,7 +15,7 @@ Proj.NET performs point-to-point coordinate conversions between geodetic coordin
 		<copyright>Copyright 2006-2015</copyright>
 		<tags>OGC SFS Projection</tags>
 		<dependencies>
-			<dependency id="GeoAPI.CoordinateSystems" version="[1.7.5-pre018, )" />
+			<dependency id="GeoAPI.CoordinateSystems" version="[$geoapiversion$, )" />
 		</dependencies>
 	</metadata>
 	<files>

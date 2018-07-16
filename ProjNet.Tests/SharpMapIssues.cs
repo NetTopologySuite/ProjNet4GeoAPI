@@ -2,6 +2,7 @@
 using GeoAPI.CoordinateSystems;
 using GeoAPI.CoordinateSystems.Transformations;
 using NUnit.Framework;
+using ProjNet.CoordinateSystems;
 
 namespace ProjNet.UnitTests
 {
@@ -66,5 +67,31 @@ namespace ProjNet.UnitTests
             //Assert.AreEqual(cs1, cs2);
             Assert.IsTrue(cs1.EqualParams(cs2));
         }
+
+        [Test]
+        public void Test25832To3857()
+        {
+
+            const string wkt1 = //"PROJCS[\"ETRS89 / UTM zone 32N\",GEOGCS[\"ETRS89\",DATUM[\"European_Terrestrial_Reference_System_1989\",SPHEROID[\"GRS 1980\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"7019\"]],AUTHORITY[\"EPSG\",\"6258\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4258\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",9],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AUTHORITY[\"EPSG\",\"25832\"]]";
+                "PROJCS[\"ETRS89 / UTM zone 32N\",GEOGCS[\"ETRS89\",DATUM[\"European_Terrestrial_Reference_System_1989\",SPHEROID[\"GRS 1980\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"7019\"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY[\"EPSG\",\"6258\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4258\"]],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",9],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],AUTHORITY[\"EPSG\",\"25832\"],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH]]";
+
+            ICoordinateSystem cs1 = null, cs2 = null;
+            Assert.DoesNotThrow(() => cs1 = CoordinateSystemFactory.CreateFromWkt(wkt1));
+            Assert.IsNotNull(cs1);
+            const string wkt2 = "PROJCS[\"WGS 84 / Pseudo-Mercator\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",                  SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],PROJECTION[\"Mercator_1SP\"],PARAMETER[\"latitude_of_origin\", 0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],EXTENSION[\"PROJ4\",\"+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs\"],AUTHORITY[\"EPSG\",\"3857\"],AXIS[\"X\",EAST],AXIS[\"Y\",NORTH]]";
+            Assert.DoesNotThrow(() => cs2 = CoordinateSystemFactory.CreateFromWkt(wkt2));
+            Assert.IsNotNull(cs2);
+
+            ICoordinateTransformation ct = null;
+            Assert.DoesNotThrow(() => ct = CoordinateTransformationFactory.CreateFromCoordinateSystems(cs1, cs2));
+            Assert.IsNotNull(ct);
+            Assert.DoesNotThrow(() => ct = CoordinateTransformationFactory.CreateFromCoordinateSystems(cs2, cs1));
+            Assert.IsNotNull(ct);
+            Assert.DoesNotThrow(() => ct = CoordinateTransformationFactory.CreateFromCoordinateSystems(cs1, ProjectedCoordinateSystem.WebMercator));
+            Assert.IsNotNull(ct);
+            Assert.DoesNotThrow(() => ct = CoordinateTransformationFactory.CreateFromCoordinateSystems(ProjectedCoordinateSystem.WebMercator, cs1));
+            Assert.IsNotNull(ct);
+        }
+
     }
 }
