@@ -40,15 +40,14 @@ namespace ProjNet.CoordinateSystems
     /// </remarks>
     public class CoordinateSystemFactory : ICoordinateSystemFactory
     {
+        [Obsolete("The encoding is no longer used and will be removed in a future release.")]
         public Encoding Encoding { get; private set; }
 
-        public CoordinateSystemFactory() : this(Encoding.UTF8) { }
+        public CoordinateSystemFactory() { }
 
+        [Obsolete("The encoding is no longer used and will be removed in a future release.")]
         public CoordinateSystemFactory(Encoding encoding)
         {
-            if (encoding == null) 
-                throw new ArgumentNullException("encoding");
-
             Encoding = encoding;
         }
 
@@ -71,7 +70,7 @@ namespace ProjNet.CoordinateSystems
         /// <returns>The resulting spatial reference object</returns>
         public ICoordinateSystem CreateFromWkt(string WKT)
         {
-            IInfo info = CoordinateSystemWktReader.Parse(WKT, Encoding);
+            IInfo info = CoordinateSystemWktReader.Parse(WKT);
             return info as ICoordinateSystem;
         }
 

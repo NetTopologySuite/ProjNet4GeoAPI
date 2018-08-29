@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Xml.Linq;
 using NUnit.Framework;
@@ -17,7 +16,7 @@ namespace ProjNet
         [Test]
         public void TestConstructor()
         {
-            var css = new CoordinateSystemServices(new CoordinateSystemFactory(Encoding.UTF8),
+            var css = new CoordinateSystemServices(new CoordinateSystemFactory(),
                 new CoordinateTransformationFactory());
 
             Assert.IsNotNull(css.GetCoordinateSystem(4326));
@@ -30,7 +29,7 @@ namespace ProjNet
             if (!File.Exists(xmlPath))
                 throw new IgnoreException("Specified file not found");
 
-            var css = new CoordinateSystemServices(new CoordinateSystemFactory(Encoding.UTF8),
+            var css = new CoordinateSystemServices(new CoordinateSystemFactory(),
                 new CoordinateTransformationFactory(), LoadXml(xmlPath));
 
             Assert.IsNotNull(css.GetCoordinateSystem(4326));
@@ -46,7 +45,7 @@ namespace ProjNet
                 if (!File.Exists(csvPath))
                     throw new IgnoreException("Specified file not found");
 
-            var css = new CoordinateSystemServices(new CoordinateSystemFactory(Encoding.UTF8),
+            var css = new CoordinateSystemServices(new CoordinateSystemFactory(),
                 new CoordinateTransformationFactory(), LoadCsv(csvPath));
 
             Assert.IsNotNull(css.GetCoordinateSystem(4326));

@@ -34,7 +34,7 @@ namespace ProjNet.UnitTests.Converters.WKT
             try
             {
                 //TODO replace with MathTransformFactory implementation
-                mt = MathTransformWktReader.Parse (wkt, System.Text.Encoding.Unicode);
+                mt = MathTransformWktReader.Parse (wkt);
             }
             catch (Exception ex)
             {
@@ -69,7 +69,7 @@ namespace ProjNet.UnitTests.Converters.WKT
             try
             {
                 //TODO replace with MathTransformFactory implementation
-                mt = MathTransformWktReader.Parse (wkt, System.Text.Encoding.Unicode);
+                mt = MathTransformWktReader.Parse (wkt);
             }
             catch (ArgumentException ex)
             {

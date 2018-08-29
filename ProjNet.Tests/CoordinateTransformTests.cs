@@ -861,8 +861,8 @@ namespace ProjNet.UnitTests
             double[] sourceCoord = new double[] { 160443.329034, 23582.55586 };
             double[] expectedTargetCoord = new double[] { 9.5553588867188, 47.145080566406 };
 
-            ICoordinateSystem cs1 = ProjNet.Converters.WellKnownText.CoordinateSystemWktReader.Parse(wkt21780, System.Text.Encoding.Default) as ICoordinateSystem;
-            ICoordinateSystem cs2 = ProjNet.Converters.WellKnownText.CoordinateSystemWktReader.Parse(wkt4326, System.Text.Encoding.Default) as ICoordinateSystem;
+            ICoordinateSystem cs1 = ProjNet.Converters.WellKnownText.CoordinateSystemWktReader.Parse(wkt21780) as ICoordinateSystem;
+            ICoordinateSystem cs2 = ProjNet.Converters.WellKnownText.CoordinateSystemWktReader.Parse(wkt4326) as ICoordinateSystem;
             CoordinateTransformationFactory ctf = new CoordinateTransformationFactory();
             var ict = ctf.CreateFromCoordinateSystems(cs1, cs2);
 

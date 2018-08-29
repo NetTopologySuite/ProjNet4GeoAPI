@@ -55,19 +55,24 @@ namespace ProjNet.Converters.WellKnownText
         /// Reads and parses a WKT-formatted projection string.
         /// </summary>
         /// <param name="wkt">String containing WKT.</param>
-        /// <param name="encoding">The encoding to use.</param>
+        /// <param name="encoding">The parameter is not used.</param>
         /// <returns>Object representation of the WKT.</returns>
         /// <exception cref="System.ArgumentException">If a token is not recognised.</exception>
-        public static IMathTransform Parse (string wkt, Encoding encoding)
+        [Obsolete("The encoding is no longer used and will be removed in a future release.")]
+        public static IMathTransform Parse (string wkt, Encoding encoding) => Parse(wkt);
+
+        /// <summary>
+        /// Reads and parses a WKT-formatted projection string.
+        /// </summary>
+        /// <param name="wkt">String containing WKT.</param>
+        /// <returns>Object representation of the WKT.</returns>
+        /// <exception cref="System.ArgumentException">If a token is not recognised.</exception>
+        public static IMathTransform Parse (string wkt)
         {
             if (String.IsNullOrEmpty (wkt))
                 throw new ArgumentNullException ("wkt");
-            if (encoding == null)
-                throw new ArgumentNullException ("encoding");
 
-            byte[] arr = encoding.GetBytes (wkt);
-            using (Stream stream = new MemoryStream (arr))
-            using (TextReader reader = new StreamReader (stream, encoding))
+            using (TextReader reader = new StringReader (wkt))
             {
                 WktStreamTokenizer tokenizer = new WktStreamTokenizer (reader);
                 tokenizer.NextToken ();
