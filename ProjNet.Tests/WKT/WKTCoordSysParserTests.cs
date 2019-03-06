@@ -312,9 +312,9 @@ namespace ProjNet.UnitTests.Converters.WKT
                 Assert.Fail ("Could not create fitted coordinate system from:\r\n" + wkt + "\r\n" + ex.Message);
             }
 
-            Assert.IsNotNull (fcs);
-            Assert.IsNotNullOrEmpty (fcs.ToBase ());
-            Assert.IsNotNull (fcs.BaseCoordinateSystem);
+            Assert.That(fcs, Is.Not.Null);
+            Assert.That(fcs.ToBase(), Is.Not.Null.Or.Empty);
+            Assert.That(fcs.BaseCoordinateSystem, Is.Not.Null);
 
             Assert.AreEqual ("Local coordinate system MNAU (based on Gauss-Krueger)", fcs.Name);
             //Assert.AreEqual ("CUSTOM", fcs.Authority);

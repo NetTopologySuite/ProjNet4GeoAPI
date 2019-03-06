@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(ProjectDir)..\</SolutionDir>
-    <TargetFramework>net471</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <!-- The NUnit 2 test adapter doesn't support portable PDBs. -->
     <DebugType>full</DebugType>
@@ -17,8 +17,11 @@
     <Reference Include="System.Xml.Linq" />
 
     <PackageReference Include="GeoAPI.CoordinateSystems" Version="$(GeoAPIPackageReferenceVersion)" />
-    <PackageReference Include="NUnit" Version="2.6.4" />
-    <PackageReference Include="Npgsql" Version="2.2.7" />
+
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
+    <PackageReference Include="NUnit" Version="3.10.1" />
+    <PackageReference Include="Npgsql" Version="4.0.5" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
 
     <ProjectReference Include="$(SolutionDir)ProjNet\ProjNET.csproj" />
   </ItemGroup>
