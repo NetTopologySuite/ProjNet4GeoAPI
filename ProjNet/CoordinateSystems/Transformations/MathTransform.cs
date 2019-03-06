@@ -36,12 +36,12 @@ namespace ProjNet.CoordinateSystems.Transformations
 #endif
     public abstract class MathTransform : IMathTransform
 	{
-		#region IMathTransform Members
+        #region IMathTransform Members
 
-	    /// <summary>
-	    /// Gets the dimension of input points.
-	    /// </summary>
-	    public abstract int DimSource { get; }
+        /// <summary>
+        /// Gets the dimension of input points.
+        /// </summary>
+        public abstract int DimSource { get; }
 
 	    /// <summary>
 	    /// Gets the dimension of output points.
@@ -180,18 +180,6 @@ namespace ProjNet.CoordinateSystems.Transformations
             return result;
         }
 
-        [Obsolete]
-	    public ICoordinate Transform(ICoordinate coordinate)
-	    {
-	        var ret = Transform(new[] { coordinate.X, coordinate.Y, coordinate.Z });
-	        
-            coordinate.X = ret[0];
-	        coordinate.Y = ret[1];
-            if (DimTarget > 2) coordinate.Z = ret[2];
-	        
-            return coordinate;
-	    }
-
         public Coordinate Transform(Coordinate coordinate)
         {
             var ordinates = DimSource == 2
@@ -202,22 +190,27 @@ namespace ProjNet.CoordinateSystems.Transformations
 
             return (DimTarget == 2)
                 ? new Coordinate(ret[0], ret[1])
-                : new Coordinate(ret[0], ret[1], ret[2]);
+                : new CoordinateZ(ret[0], ret[1], ret[2]);
         }
 
 	    public virtual ICoordinateSequence Transform(ICoordinateSequence coordinateSequence)
 	    {
-            var clone = new Coordinate();
-            for (var i = 0; i < coordinateSequence.Count; i++)
+            Coordinate clone = new CoordinateZ();
+            var res = coordinateSequence;
+            if (!coordinateSequence.HasZ && DimTarget > 2)
+                res = ProjNet.CoordinateSystemServices.CoordinateSequenceFactory.Create(coordinateSequence.Count, Ordinates.XYZ);
+
+
+            for (int i = 0; i < coordinateSequence.Count; i++)
             {
                 clone.CoordinateValue = coordinateSequence.GetCoordinate(i);
                 clone = Transform(clone);
-                coordinateSequence.SetOrdinate(i, Ordinate.X, clone.X);
-                coordinateSequence.SetOrdinate(i, Ordinate.Y, clone.Y);
+                res.SetOrdinate(i, Ordinate.X, clone.X);
+                res.SetOrdinate(i, Ordinate.Y, clone.Y);
                 if (DimTarget > 2)
-                    coordinateSequence.SetOrdinate(i, Ordinate.Z, clone.Z);
+                    res.SetOrdinate(i, Ordinate.Z, clone.Z);
             }
-	        return coordinateSequence;
+	        return res;
 	    }
 
         /// <summary>

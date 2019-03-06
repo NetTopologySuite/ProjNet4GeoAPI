@@ -92,19 +92,18 @@ namespace ProjNet.UnitTests
 
             IProjectedCoordinateSystem utm33 = ProjectedCoordinateSystem.WGS84_UTM(33, true);
 
-            ICoordinateTransformation trans = ctFact.CreateFromCoordinateSystems(utm35ETRS, utm33);
+            ICoordinateTransformation trans1 = ctFact.CreateFromCoordinateSystems(utm35ETRS, utm33);
 
-            CoordinateArraySequence points = new CoordinateArraySequence(
-                new []
-            {
-                new Coordinate(290586.087, 6714000), new Coordinate(290586.392, 6713996.224),
-                new Coordinate(290590.133, 6713973.772), new Coordinate(290594.111, 6713957.416),
-                new Coordinate(290596.615, 6713943.567), new Coordinate(290596.701, 6713939.485)
-            });               
-
-            ICoordinateSequence tpoints = trans.MathTransform.Transform(points);
-            for (int i = 0; i < points.Count; i++)
-                Assert.AreEqual(trans.MathTransform.Transform(points.GetCoordinate(i)), tpoints.GetCoordinate(i));
+            var points = new Coordinate[]
+                {
+                    new Coordinate(290586.087, 6714000), new Coordinate(290586.392, 6713996.224),
+                    new Coordinate(290590.133, 6713973.772), new Coordinate(290594.111, 6713957.416),
+                    new Coordinate(290596.615, 6713943.567), new Coordinate(290596.701, 6713939.485)
+                };
+            var seq = CoordinateSystemServices.CoordinateSequenceFactory.Create(points);
+            ICoordinateSequence tpoints = trans1.MathTransform.Transform(seq);
+            for (int i = 0; i < seq.Count; i++)
+                Assert.AreEqual(trans1.MathTransform.Transform(seq.GetCoordinate(i)), tpoints.GetCoordinate(i));
         }
 
         [Test]
@@ -139,11 +138,12 @@ namespace ProjNet.UnitTests
 
 			IProjectedCoordinateSystem coordsys = CoordinateSystemFactory.CreateProjectedCoordinateSystem("Albers Conical Equal Area", gcs, projection, LinearUnit.Metre, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
 
-			ICoordinateTransformation trans = new CoordinateTransformationFactory().CreateFromCoordinateSystems(gcs, coordsys);
+			ICoordinateTransformation trans1 = new CoordinateTransformationFactory().CreateFromCoordinateSystems(gcs, coordsys);
+            ICoordinateTransformation trans2 = new CoordinateTransformationFactory().CreateFromCoordinateSystems(coordsys, gcs);
 
-			double[] pGeo = new double[] { -75, 35 };
-			double[] pUtm = trans.MathTransform.Transform(pGeo);
-			double[] pGeo2 = trans.MathTransform.Inverse().Transform(pUtm);
+            double[] pGeo = new double[] { -75, 35 };
+			double[] pUtm = trans1.MathTransform.Transform(pGeo);
+            double[] pGeo2 = trans2.MathTransform.Transform(pUtm);
 
 			double[] expected = new[] { 1885472.7, 1535925 };
             Assert.IsTrue(ToleranceLessThan(pUtm, expected, 0.05), TransformationError("Albers", expected, pUtm, false));
@@ -880,96 +880,6 @@ namespace ProjNet.UnitTests
             Assert.AreEqual(sourceCoord[0], transformedCoord[0], 0.1);
             Assert.AreEqual(sourceCoord[1], transformedCoord[1], 0.1);
 
-        }
-
-        private sealed class CoordinateArraySequence : ICoordinateSequence
-        {
-            private readonly Coordinate[] coordinates;
-
-            internal CoordinateArraySequence(Coordinate[] coordinates) => this.coordinates = coordinates ?? throw new ArgumentNullException(nameof(coordinates));
-
-            public int Dimension => 3;
-            public Ordinates Ordinates => Ordinates.XYZ;
-            public int Count => this.coordinates.Length;
-
-            public double GetX(int index) => this.coordinates[index].X;
-            public double GetY(int index) => this.coordinates[index].Y;
-            public Coordinate GetCoordinateCopy(int i) => new Coordinate(this.coordinates[i]);
-            public Coordinate GetCoordinate(int i) => this.coordinates[i];
-            object ICloneable.Clone() => this.Clone();
-            public CoordinateArraySequence Clone() => (CoordinateArraySequence) Copy();
-
-            public ICoordinateSequence Copy()
-            {
-                return new CoordinateArraySequence(Array.ConvertAll(this.coordinates, c => new Coordinate(c)));
-            }
-
-            public Coordinate[] ToCoordinateArray() => this.coordinates;
-
-            public ICoordinateSequence Reversed()
-            {
-                CoordinateArraySequence seq = this.Clone();
-                Array.Reverse(seq.coordinates);
-                return seq;
-            }
-
-            public Envelope ExpandEnvelope(Envelope env)
-            {
-                foreach (Coordinate coordinate in this.coordinates)
-                {
-                    env.ExpandToInclude(coordinate);
-                }
-
-                return env;
-            }
-
-            public void GetCoordinate(int index, Coordinate coord)
-            {
-                coord.X = this.coordinates[index].X;
-                coord.Y = this.coordinates[index].Y;
-                coord.Z = this.coordinates[index].Z;
-            }
-
-            public double GetOrdinate(int index, Ordinate ordinate)
-            {
-                Coordinate coordinate = this.coordinates[index];
-                switch (ordinate)
-                {
-                    case Ordinate.X:
-                        return coordinate.X;
-
-                    case Ordinate.Y:
-                        return coordinate.Y;
-
-                    case Ordinate.Z:
-                        return coordinate.Z;
-
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
-
-            public void SetOrdinate(int index, Ordinate ordinate, double value)
-            {
-                Coordinate coordinate = this.coordinates[index];
-                switch (ordinate)
-                {
-                    case Ordinate.X:
-                        coordinate.X = value;
-                        break;
-
-                    case Ordinate.Y:
-                        coordinate.Y = value;
-                        break;
-
-                    case Ordinate.Z:
-                        coordinate.Z = value;
-                        break;
-
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
-            }
         }
     }
 }

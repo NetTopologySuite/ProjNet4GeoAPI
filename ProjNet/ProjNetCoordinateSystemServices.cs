@@ -23,7 +23,9 @@ using System.Threading;
 using GeoAPI;
 using GeoAPI.CoordinateSystems;
 using GeoAPI.CoordinateSystems.Transformations;
+using GeoAPI.Geometries;
 using ProjNet.CoordinateSystems;
+using ProjNet.Geometry.Implementation;
 
 namespace ProjNet
 {
@@ -32,6 +34,17 @@ namespace ProjNet
     /// </summary>
     public class CoordinateSystemServices : ICoordinateSystemServices
     {
+        private static ICoordinateSequenceFactory _coordinateSequenceFactory;
+
+        /// <summary>
+        /// Gets or sets a default coordinate sequence factory
+        /// </summary>
+        public static ICoordinateSequenceFactory CoordinateSequenceFactory
+        {
+            get { return _coordinateSequenceFactory ?? new CoordinateArraySequenceFactory(); }
+            set { _coordinateSequenceFactory = value; }
+        }
+
         private readonly Dictionary<int, ICoordinateSystem> _csBySrid;
         private readonly Dictionary<IInfo, int> _sridByCs;
 

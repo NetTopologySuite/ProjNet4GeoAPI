@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(ProjectDir)..\</SolutionDir>
-    <TargetFramework>net45</TargetFramework>
+    <TargetFramework>net471</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <!-- The NUnit 2 test adapter doesn't support portable PDBs. -->
     <DebugType>full</DebugType>

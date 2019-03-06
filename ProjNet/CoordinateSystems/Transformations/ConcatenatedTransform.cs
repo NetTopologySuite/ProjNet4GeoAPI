@@ -114,7 +114,7 @@ namespace ProjNet.CoordinateSystems.Transformations
 
         public override ICoordinateSequence Transform(ICoordinateSequence coordinateSequence)
         {
-            var res = (ICoordinateSequence)coordinateSequence.Clone();
+            var res = coordinateSequence.Copy();
             foreach (var ct in _coordinateTransformationList)
             {
                 res = ct.MathTransform.Transform(res);
