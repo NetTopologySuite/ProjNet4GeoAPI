@@ -25,9 +25,7 @@ namespace ProjNet.CoordinateSystems
 	/// <summary>
 	/// The IEllipsoid interface defines the standard information stored with ellipsoid objects.
     /// </summary>
-#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
-#endif
     public class Ellipsoid : Info, IEllipsoid
 	{
 		/// <summary>

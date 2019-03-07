@@ -44,9 +44,7 @@ namespace ProjNet.CoordinateSystems.Projections
     /// <summary>
     /// Implemetns the Oblique Stereographic Projection.
     /// </summary>
-#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable]
-#endif
     internal class ObliqueStereographicProjection : MapProjection
     {
         private double globalScale;

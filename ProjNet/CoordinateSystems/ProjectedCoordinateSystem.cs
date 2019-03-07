@@ -27,9 +27,7 @@ namespace ProjNet.CoordinateSystems
 	/// <summary>
 	/// A 2D cartographic coordinate system.
     /// </summary>
-#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
-#endif
     public class ProjectedCoordinateSystem : HorizontalCoordinateSystem,  IProjectedCoordinateSystem
 	{
 		/// <summary>

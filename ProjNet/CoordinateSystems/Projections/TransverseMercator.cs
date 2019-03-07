@@ -57,9 +57,7 @@ namespace ProjNet.CoordinateSystems.Projections
 	/// <para>Reference: John P. Snyder (Map Projections - A Working Manual,
 	///            U.S. Geological Survey Professional Paper 1395, 1987)</para>
     /// </remarks>
-#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
-#endif
     internal class TransverseMercator : MapProjection
 	{
     /**

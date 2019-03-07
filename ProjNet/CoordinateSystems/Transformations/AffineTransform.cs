@@ -32,9 +32,7 @@ namespace ProjNet.CoordinateSystems.Transformations
     ///The [M][j] element of the matrix will be the j'th ordinate of the moved origin.
     ///The [i][N] element of the matrix will be 0 for i less than M, and 1 for i equals M.</remarks>
     /// <seealso href="http://en.wikipedia.org/wiki/Affine_transformation"/>
-#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable]
-#endif
     public class AffineTransform : MathTransform
     {
         #region class variables

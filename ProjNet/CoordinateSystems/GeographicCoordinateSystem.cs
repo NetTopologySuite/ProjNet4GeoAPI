@@ -32,9 +32,7 @@ namespace ProjNet.CoordinateSystems
 	/// check the angular units, since not all geographic coordinate systems 
 	/// use degrees.
     /// </remarks>
-#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
-#endif
     public class GeographicCoordinateSystem : HorizontalCoordinateSystem, IGeographicCoordinateSystem
 	{
 

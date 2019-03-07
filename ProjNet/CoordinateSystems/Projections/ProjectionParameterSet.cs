@@ -8,21 +8,18 @@ namespace ProjNet.CoordinateSystems.Projections
     /// <summary>
     /// A set of projection parameters
     /// </summary>
-#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
-#endif
     public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<ProjectionParameterSet>
     {
         private readonly Dictionary<string, string> _originalNames = new Dictionary<string, string>();
         private readonly Dictionary<int, string>  _originalIndex = new Dictionary<int, string>();
-#if FEATURE_DESERIALIZATION_CONSTRUCTOR
         /// <summary>
         /// Needed for serialzation
         /// </summary>
         public ProjectionParameterSet(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
             :base(info, context)
         {}
-#endif
+
         /// <summary>
         /// Creates an instance of this class
         /// </summary>

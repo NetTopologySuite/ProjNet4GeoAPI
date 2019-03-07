@@ -29,9 +29,7 @@ namespace ProjNet.CoordinateSystems
     /// coordinate system can be rotated and shifted, or use any other math transform
     /// to inject itself into the base coordinate system.
     /// </summary>
-#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable]
-#endif
     public class FittedCoordinateSystem : CoordinateSystem, IFittedCoordinateSystem
     {
 		/// <summary>

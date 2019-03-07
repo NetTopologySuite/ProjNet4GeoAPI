@@ -31,9 +31,7 @@ namespace ProjNet.CoordinateSystems
 	/// interest, e.g., Transverse Mercator, Lambert, will be implemented as a class of
 	/// type Projection, supporting the IProjection interface.
     /// </summary>
-#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
-#endif
     public class Projection : Info, IProjection
 	{
 		internal Projection(string className, List<ProjectionParameter> parameters,

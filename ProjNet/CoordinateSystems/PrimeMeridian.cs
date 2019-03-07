@@ -25,9 +25,7 @@ namespace ProjNet.CoordinateSystems
 	/// <summary>
 	/// A meridian used to take longitude measurements from.
     /// </summary>
-#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
-#endif
     public class PrimeMeridian : Info, IPrimeMeridian
 	{
 		/// <summary>

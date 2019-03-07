@@ -32,9 +32,7 @@ namespace ProjNet.CoordinateSystems.Transformations
 	/// <see cref="ICoordinateTransformation"/> interface, and use the contained 
 	/// math transform object whenever it wishes to perform a transform.
     /// </remarks>
-#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
-#endif
     public abstract class MathTransform : IMathTransform
 	{
         private ISequenceToSpanConverter _sequenceToSpanConverter;

@@ -25,9 +25,7 @@ namespace ProjNet.CoordinateSystems
 	/// <summary>
 	/// Horizontal datum defining the standard datum information.
     /// </summary>
-#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
-#endif
     public class HorizontalDatum : Datum, IHorizontalDatum
 	{
 		/// <summary>
