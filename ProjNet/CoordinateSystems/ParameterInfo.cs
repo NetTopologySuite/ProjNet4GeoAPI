@@ -25,9 +25,7 @@ namespace ProjNet.CoordinateSystems
     /// Simple class that implements the IParameterInfo interface for providing general set of the parameters.
     /// It allows discovering the names, and for setting and getting parameter values.
     /// </summary>
-#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable]
-#endif
     internal class ParameterInfo : IParameterInfo
     {
         /// <summary>

@@ -12,18 +12,9 @@
 
   <Import Project="$(SolutionDir)ProjNet.Common.props" />
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <DefineConstants>$(DefineConstants);HAS_SYSTEM_REFLECTION_TYPEINFO</DefineConstants>
-    <DefineConstants>$(DefineConstants);HAS_SYSTEM_THREADING_TASKS_TASK_RUN</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_DESERIALIZATION_CONSTRUCTOR</DefineConstants>
-    <DefineConstants>$(DefineConstants);HAS_SYSTEM_SERIALIZABLEATTRIBUTE</DefineConstants>
-    <DefineConstants>$(DefineConstants);HAS_SYSTEM_THREADING_THREADPOOL</DefineConstants>
-    <DefineConstants>$(DefineConstants);HAS_SYSTEM_TYPE_GETCONSTRUCTORS</DefineConstants>
-    <DefineConstants>$(DefineConstants);HAS_SYSTEM_TYPE_ISASSIGNABLEFROM</DefineConstants>
-  </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="GeoAPI.CoordinateSystems" Version="$(GeoAPIPackageReferenceVersion)" />
+    <PackageReference Include="System.Memory" Version="4.5.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -34,11 +25,5 @@
     <Compile Include="..\SharedAssemblyVersion.cs">
       <Link>Properties\SharedAssemblyVersion.cs</Link>
     </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Reference Include="System.Memory">
-      <HintPath>C:\Users\obe\.nuget\packages\system.memory\4.5.2\lib\netstandard2.0\System.Memory.dll</HintPath>
-    </Reference>
   </ItemGroup>
 </Project>

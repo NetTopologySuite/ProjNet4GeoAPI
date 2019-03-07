@@ -14,9 +14,5 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: System.CLSCompliant(true)]
-#if HAS_SYSTEM_RUNTIME_INTEROPSERVICES_COMVISIBLEATTRIBUTE
 [assembly: ComVisible(false)]
-#endif
-#if HAS_SYSTEM_RUNTIME_INTEROPSERVICES_GUIDATTRIBUTE
 [assembly: Guid("e16f3ac5-214b-4ef3-9809-740a13cf0ec7")]
-#endif

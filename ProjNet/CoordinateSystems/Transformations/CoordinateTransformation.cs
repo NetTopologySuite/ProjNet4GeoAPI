@@ -26,9 +26,7 @@ namespace ProjNet.CoordinateSystems.Transformations
 	/// coordinate transformation, it does not actually perform the transform 
 	/// operation on points. To transform points you must use a <see cref="MathTransform"/>.
     /// </summary>
-#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
-#endif
     public class CoordinateTransformation : ICoordinateTransformation
 	{
 		/// <summary>

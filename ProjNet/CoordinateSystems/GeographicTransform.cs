@@ -25,9 +25,7 @@ namespace ProjNet.CoordinateSystems
 	/// The GeographicTransform class is implemented on geographic transformation objects and
 	/// implements datum transformations between geographic coordinate systems.
     /// </summary>
-#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
-#endif
     public class GeographicTransform : Info, IGeographicTransform
 	{
 		internal GeographicTransform(

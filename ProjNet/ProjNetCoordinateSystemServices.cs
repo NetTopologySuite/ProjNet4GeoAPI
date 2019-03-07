@@ -145,13 +145,7 @@ namespace ProjNet
         {
             var enumObj = (object)enumeration ?? DefaultInitialization();
             _initialization = new ManualResetEvent(false);
-#if HAS_SYSTEM_THREADING_TASKS_TASK_RUN
             System.Threading.Tasks.Task.Run(() => FromEnumeration((new[] { this, enumObj })));
-#elif HAS_SYSTEM_THREADING_THREADPOOL
-            System.Threading.ThreadPool.QueueUserWorkItem(FromEnumeration, new[] { this, enumObj });
-#else
-#error Must have one or the other
-#endif
         }
 
         //private CoordinateSystemServices(ICoordinateSystemFactory coordinateSystemFactory,

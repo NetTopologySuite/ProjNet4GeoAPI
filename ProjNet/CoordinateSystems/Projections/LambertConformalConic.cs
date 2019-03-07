@@ -53,9 +53,7 @@ namespace ProjNet.CoordinateSystems.Projections
 	/// which are perpendicular to one another on the earth's surface, are also perpendicular
 	/// to one another in the projected domain.</para>
     /// </remarks>
-#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
-#endif
     internal class LambertConformalConic2SP : MapProjection
 	{
 	

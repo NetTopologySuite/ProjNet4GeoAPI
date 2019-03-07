@@ -25,9 +25,7 @@ namespace ProjNet.CoordinateSystems
 	/// <summary>
 	/// Class for defining units
     /// </summary>
-#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
-#endif
     public class Unit : Info, IUnit
     {
 		/// <summary>
