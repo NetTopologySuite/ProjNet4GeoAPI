@@ -5,6 +5,7 @@ using System.Text;
 using GeoAPI.CoordinateSystems;
 using GeoAPI.CoordinateSystems.Transformations;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 
@@ -322,6 +323,88 @@ namespace ProjNet.UnitTests.Converters.WKT
 
             Assert.AreEqual ("EPSG", fcs.BaseCoordinateSystem.Authority);
             Assert.AreEqual (31467, fcs.BaseCoordinateSystem.AuthorityCode);
+        }
+
+        [Test]
+        public void TestGeocentricCoordinateSystem()
+        {
+            var fac = new CoordinateSystemFactory();
+            IGeocentricCoordinateSystem fcs = null;
+
+            string wkt = "GEOCCS[\"TUREF\", " +
+                            "DATUM[\"Turkish_National_Reference_Frame\", SPHEROID[\"GRS 1980\", 6378137, 298.257222101, AUTHORITY[\"EPSG\", \"7019\"]], AUTHORITY[\"EPSG\", \"1057\"]], " +
+                            "PRIMEM[\"Greenwich\", 0, AUTHORITY[\"EPSG\", \"8901\"]], " +
+                            "UNIT[\"metre\", 1, AUTHORITY[\"EPSG\", \"9001\"]], " +
+                            "AXIS[\"Geocentric X\", OTHER], AXIS[\"Geocentric Y\", OTHER], AXIS[\"Geocentric Z\", NORTH], " +
+                            "AUTHORITY[\"EPSG\", \"5250\"]]";
+
+            try
+            {
+                fcs = fac.CreateFromWkt(wkt) as IGeocentricCoordinateSystem;
+            }
+            catch (Exception ex)
+            {
+                Assert.Fail("Could not create fitted coordinate system from:\r\n" + wkt + "\r\n" + ex.Message);
+            }
+
+            Assert.That(fcs, Is.Not.Null);
+            Assert.That(CheckInfo(fcs, "TUREF", "EPSG", 5250L));
+            Assert.That(CheckHorizontalDatum(fcs.HorizontalDatum, "Turkish_National_Reference_Frame", "EPSG", 1057L), Is.True);
+            Assert.That(CheckEllipsoid(fcs.HorizontalDatum.Ellipsoid, "GRS 1980", 6378137, 298.257222101, "EPSG", 7019), Is.True);
+            Assert.That(CheckPrimem(fcs.PrimeMeridian, "Greenwich", 0, "EPSG", 8901L), Is.True);
+            Assert.That(CheckUnit(fcs.PrimeMeridian.AngularUnit, "degree", null, null, null), Is.True);
+            Assert.That(CheckUnit(fcs.LinearUnit, "metre", 1, "EPSG", 9001L), Is.True);
+
+            Assert.That(fcs.Authority, Is.EqualTo("EPSG"));
+            Assert.That(fcs.AuthorityCode, Is.EqualTo(5250L));
+        }
+
+        private bool CheckPrimem(IPrimeMeridian primeMeridian, string name, double? longitude, string authority, long? code)
+        {
+            Assert.That(primeMeridian, Is.Not.Null);
+            Assert.That(CheckInfo(primeMeridian, name, authority, code));
+            Assert.That(primeMeridian.Longitude, Is.EqualTo(longitude));
+            return true;
+        }
+
+        private static bool CheckUnit(IUnit unit, string name, double? value, string authority, long? code)
+        {
+            Assert.That(unit, Is.Not.Null);
+            Assert.That(CheckInfo(unit, name, authority, code));
+            if (!value.HasValue) return true;
+            if (unit is ILinearUnit lunit)
+                Assert.That(lunit.MetersPerUnit, Is.EqualTo(value));
+            else if (unit is IAngularUnit aunit)
+                Assert.That(aunit.RadiansPerUnit, Is.EqualTo(value));
+            return true;
+        }
+
+        private static bool CheckEllipsoid(IEllipsoid ellipsoid, string name, double? semiMajor, double? inverseFlattening, string authority, long? code)
+        {
+            Assert.That(ellipsoid, Is.Not.Null);
+            Assert.That(CheckInfo(ellipsoid, name, authority, code));
+            if (semiMajor.HasValue) Assert.That(ellipsoid.SemiMajorAxis, Is.EqualTo(semiMajor));
+            if (inverseFlattening.HasValue) Assert.That(ellipsoid.InverseFlattening, Is.EqualTo(inverseFlattening));
+
+            return true;
+        }
+
+        private static bool CheckHorizontalDatum(IHorizontalDatum datum, string name, string authority, long? code)
+        {
+            Assert.That(datum, Is.Not.Null);
+            Assert.That(CheckInfo(datum, name,authority, code), Is.True);
+
+            return true;
+        }
+
+        private static bool CheckInfo(IInfo info, string name, string authority, long? code)
+        {
+            Assert.That(info, Is.Not.Null);
+            if (!string.IsNullOrEmpty(name)) Assert.That(info.Name, Is.EqualTo(name));
+            if (!string.IsNullOrEmpty(authority)) Assert.That(info.Authority, Is.EqualTo(authority));
+            if (code.HasValue)  Assert.That(info.AuthorityCode, Is.EqualTo(code));
+
+            return true;
         }
     }
 }

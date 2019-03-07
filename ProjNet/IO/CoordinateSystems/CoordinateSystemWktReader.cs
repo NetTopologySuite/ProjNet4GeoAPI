@@ -206,9 +206,10 @@ namespace ProjNet.Converters.WellKnownText
                     return ReadProjectedCoordinateSystem(tokenizer);
                 case "FITTED_CS":
                     return ReadFittedCoordinateSystem (tokenizer);
+                case "GEOCCS":
+                    return ReadGeocentricCoordinateSystem(tokenizer);
                 case "COMPD_CS":
                 case "VERT_CS":
-                case "GEOCCS":
                 case "LOCAL_CS":
                     throw new NotSupportedException(String.Format("{0} coordinate system is not supported.", coordinateSystem));
                 default:
@@ -389,6 +390,58 @@ namespace ProjNet.Converters.WellKnownText
             return projectedCS;
         }
 
+        private static IGeocentricCoordinateSystem ReadGeocentricCoordinateSystem(WktStreamTokenizer tokenizer)
+        {
+            /*
+             * GEOCCS["<name>", <datum>, <prime meridian>, <linear unit> {,<axis>, <axis>, <axis>} {,<authority>}]
+             */
+
+            tokenizer.ReadToken("[");
+            string name = tokenizer.ReadDoubleQuotedWord();
+            tokenizer.ReadToken(",");
+            tokenizer.ReadToken("DATUM");
+            var horizontalDatum = ReadHorizontalDatum(tokenizer);
+            tokenizer.ReadToken(",");
+            tokenizer.ReadToken("PRIMEM");
+            var primeMeridian = ReadPrimeMeridian(tokenizer);
+            tokenizer.ReadToken(",");
+            tokenizer.ReadToken("UNIT");
+            var linearUnit = ReadLinearUnit(tokenizer);
+
+            string authority = String.Empty;
+            long authorityCode = -1;
+            tokenizer.NextToken();
+
+            var info = new List<AxisInfo>(3);
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                while (tokenizer.GetStringValue() == "AXIS")
+                {
+                    info.Add(ReadAxis(tokenizer));
+                    tokenizer.NextToken();
+                    if (tokenizer.GetStringValue() == ",") tokenizer.NextToken();
+                }
+                if (tokenizer.GetStringValue() == ",") tokenizer.NextToken();
+                if (tokenizer.GetStringValue() == "AUTHORITY")
+                {
+                    tokenizer.ReadAuthority(ref authority, ref authorityCode);
+                    tokenizer.ReadToken("]");
+                }
+            }
+
+            //This is default axis values if not specified.
+            if (info.Count == 0)
+            {
+                info.Add(new AxisInfo("Geocentric X", AxisOrientationEnum.Other));
+                info.Add(new AxisInfo("Geocentric Y", AxisOrientationEnum.Other));
+                info.Add(new AxisInfo("Geocentric Z", AxisOrientationEnum.North));
+            }
+
+            return new GeocentricCoordinateSystem(horizontalDatum, linearUnit, primeMeridian, info, name, authority, authorityCode,
+                string.Empty, string.Empty, string.Empty);
+        }
+
         private static IGeographicCoordinateSystem ReadGeographicCoordinateSystem(WktStreamTokenizer tokenizer)
         {
             /*
@@ -432,6 +485,7 @@ namespace ProjNet.Converters.WellKnownText
                     tokenizer.ReadToken("]");
                 }
             }
+
             //This is default axis values if not specified.
             if (info.Count == 0)
             {
