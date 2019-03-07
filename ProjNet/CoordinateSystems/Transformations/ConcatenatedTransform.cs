@@ -87,40 +87,46 @@ namespace ProjNet.CoordinateSystems.Transformations
 			return point;			
 		}
 
-        /// <summary>
-		/// Transforms a list point
-        /// </summary>
-        /// <param name="points"></param>
-        /// <returns></returns>
-        public override IList<double[]> TransformList(IList<double[]> points)
-		{
-			IList<double[]> pnts = new List<double[]>(points);
-			foreach (var ct in _coordinateTransformationList)
-			{
-			    pnts = ct.MathTransform.TransformList(pnts);
-			}
-			return pnts;
-		}
-
-        public override IList<Coordinate> TransformList(IList<Coordinate> points)
+        protected internal override void Transform(ref Span<double> points, ref Span<double> altitudes)
         {
-            IList<Coordinate> pnts = new List<Coordinate>(points);
-            foreach (var ct in _coordinateTransformationList)
-            {
-                pnts = ct.MathTransform.TransformList(pnts);
-            }
-            return pnts;
+            foreach (ICoordinateTransformation ct in _coordinateTransformationList)
+                ((MathTransform)ct.MathTransform).Transform(ref points, ref altitudes);
         }
 
-        public override ICoordinateSequence Transform(ICoordinateSequence coordinateSequence)
-        {
-            var res = coordinateSequence.Copy();
-            foreach (var ct in _coordinateTransformationList)
-            {
-                res = ct.MathTransform.Transform(res);
-            }
-            return res;
-        }
+  //      /// <summary>
+		///// Transforms a list point
+  //      /// </summary>
+  //      /// <param name="points"></param>
+  //      /// <returns></returns>
+  //      public override IList<double[]> TransformList(IList<double[]> points)
+		//{
+		//	IList<double[]> pnts = new List<double[]>(points);
+		//	foreach (var ct in _coordinateTransformationList)
+		//	{
+		//	    pnts = ct.MathTransform.TransformList(pnts);
+		//	}
+		//	return pnts;
+		//}
+
+  //      public override IList<Coordinate> TransformList(IList<Coordinate> points)
+  //      {
+  //          IList<Coordinate> pnts = new List<Coordinate>(points);
+  //          foreach (var ct in _coordinateTransformationList)
+  //          {
+  //              pnts = ct.MathTransform.TransformList(pnts);
+  //          }
+  //          return pnts;
+  //      }
+
+  //      public override ICoordinateSequence Transform(ICoordinateSequence coordinateSequence)
+  //      {
+  //          var res = coordinateSequence.Copy();
+  //          foreach (var ct in _coordinateTransformationList)
+  //          {
+  //              res = ct.MathTransform.Transform(res);
+  //          }
+  //          return res;
+  //      }
 
 		/// <summary>
 		/// Returns the inverse of this conversion.

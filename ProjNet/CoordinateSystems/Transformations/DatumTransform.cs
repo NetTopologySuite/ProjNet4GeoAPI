@@ -121,6 +121,48 @@ namespace ProjNet.CoordinateSystems.Transformations
         }
 
         /// <summary>
+        /// Transforms a coordinate point.
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        /// <seealso href="http://en.wikipedia.org/wiki/Helmert_transformation"/>
+        private void Apply(ref Span<double> p, ref Span<double> altitudes)
+        {
+            int size = p.Length / 2;
+            for (int i = 0, j = 0, k = 1; i < size; i++, j+=2, k+=2)
+            {
+                double p0 = v[0] * (p[j] - v[3] * p[k] + v[2] * altitudes[i]) + v[4];
+                double p1 = v[0] * (v[3] * p[j] + p[k] - v[1] * altitudes[i]) + v[5];
+                double p2 = v[0] * (-v[2] * p[j] + v[1] * p[k] + altitudes[i]) + v[6];
+
+                p[j] = p0;
+                p[k] = p1;
+                altitudes[i] = p2;
+            }
+        }
+
+        /// <summary>
+        /// For the reverse transformation, each element is multiplied by -1.
+        /// </summary>
+        /// <param name="p"></param>
+        /// <returns></returns>
+        /// <seealso href="http://en.wikipedia.org/wiki/Helmert_transformation"/>
+        private void ApplyInverted(ref Span<double> p, ref Span<double> altitudes)
+        {
+            int size = p.Length / 2;
+            for (int i = 0, j = 0, k = 1; i < size; i++, j += 2, k += 2)
+            {
+                double p0 = (1 - (v[0] - 1)) * (p[j] + v[3] * p[k] - v[2] * altitudes[i]) - v[4];
+                double p1 = (1 - (v[0] - 1)) * (-v[3] * p[j] + p[k] + v[1] * altitudes[i]) - v[5];
+                double p2 = (1 - (v[0] - 1)) * (v[2] * p[j] - v[1] * p[k] + altitudes[i]) - v[6];
+
+                p[j] = p0;
+                p[k] = p1;
+                altitudes[i] = p2;
+            }
+        }
+
+        /// <summary>
         /// Transforms a coordinate point. The passed parameter point should not be modified.
         /// </summary>
         /// <param name="point"></param>
@@ -132,6 +174,13 @@ namespace ProjNet.CoordinateSystems.Transformations
             else return ApplyInverted(point);
 		}
 
+        protected internal override void Transform(ref Span<double> points, ref Span<double> altitudes)
+        {
+            if (_isInverse)
+                ApplyInverted(ref points, ref altitudes);
+            else
+                Apply(ref points, ref altitudes);
+        }
         /// <summary>
         /// Transforms a list of coordinate point ordinal values.
         /// </summary>

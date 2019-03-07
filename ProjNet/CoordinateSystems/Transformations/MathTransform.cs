@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using GeoAPI.CoordinateSystems.Transformations;
 using GeoAPI.Geometries;
 
@@ -36,6 +37,8 @@ namespace ProjNet.CoordinateSystems.Transformations
 #endif
     public abstract class MathTransform : IMathTransform
 	{
+        private ISequenceToSpanConverter _sequenceToSpanConverter;
+
         #region IMathTransform Members
 
         /// <summary>
@@ -137,12 +140,30 @@ namespace ProjNet.CoordinateSystems.Transformations
 		/// <returns></returns>
 		public abstract IMathTransform Inverse();
 
-		/// <summary>
-		/// Transforms a coordinate point. The passed parameter point should not be modified.
-		/// </summary>
-		/// <param name="point"></param>
-		/// <returns></returns>
-        public abstract double[] Transform(double[] point);
+        protected internal abstract void Transform(ref Span<double> points, ref Span<double> altitudes);
+
+        /// <summary>
+        /// Transforms a coordinate point. The passed parameter point should not be modified.
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public virtual double[] Transform(double[] point)
+        {
+            var points = new Span<double>(new []{point[0], point[1]});
+            Span<double> altitudes = null;
+            if (DimSource == 3 || point.Length > 2)
+            {
+                altitudes = new Span<double>(new double[1]);
+                if (point.Length > 2) altitudes[0] = point[2];
+            }
+
+            Transform(ref points, ref altitudes);
+
+            if (DimTarget == 2)
+                return points.ToArray();
+
+            return new[] {points[0], points[1], altitudes[0]};
+        }
 
 		/// <summary>
 		/// Transforms a list of coordinate point ordinal values.
@@ -193,25 +214,95 @@ namespace ProjNet.CoordinateSystems.Transformations
                 : new CoordinateZ(ret[0], ret[1], ret[2]);
         }
 
-	    public virtual ICoordinateSequence Transform(ICoordinateSequence coordinateSequence)
-	    {
-            Coordinate clone = new CoordinateZ();
-            var res = coordinateSequence;
+        public virtual ICoordinateSequence Transform(ICoordinateSequence coordinateSequence)
+        {
+            return Transform(coordinateSequence, true);
+        }
+
+        public virtual ICoordinateSequence Transform(ICoordinateSequence coordinateSequence, bool inPlace)
+        {
+            // shortcout, no matter what
+            if (coordinateSequence == null || coordinateSequence.Count == 0)
+                return coordinateSequence;
+
+            ICoordinateSequence res = null;
             if (!coordinateSequence.HasZ && DimTarget > 2)
-                res = ProjNet.CoordinateSystemServices.CoordinateSequenceFactory.Create(coordinateSequence.Count, Ordinates.XYZ);
-
-
-            for (int i = 0; i < coordinateSequence.Count; i++)
             {
-                clone.CoordinateValue = coordinateSequence.GetCoordinate(i);
-                clone = Transform(clone);
-                res.SetOrdinate(i, Ordinate.X, clone.X);
-                res.SetOrdinate(i, Ordinate.Y, clone.Y);
-                if (DimTarget > 2)
-                    res.SetOrdinate(i, Ordinate.Z, clone.Z);
+                res = ProjNet.CoordinateSystemServices.CoordinateSequenceFactory.Create(coordinateSequence.Count, Ordinates.XYZ);
+                for (int i = 0; i < coordinateSequence.Count; i++){
+                    res.SetOrdinate(i, Ordinate.X, coordinateSequence.GetX(i));
+                    res.SetOrdinate(i, Ordinate.Y, coordinateSequence.GetY(i));
+                }
             }
-	        return res;
+
+            // make a copy if required
+            if (res == null)
+                res = inPlace ? coordinateSequence : coordinateSequence.Copy();
+
+            SequenceToSpanConverter.Convert(ref res, out var points, out var altitudes);
+            Transform(ref points, ref altitudes);
+            SequenceToSpanConverter.Convert(ref points, ref altitudes, ref res);
+
+            return res;
 	    }
+
+        public ISequenceToSpanConverter SequenceToSpanConverter
+        {
+            get => _sequenceToSpanConverter ?? new DefaultSequenceSpanConverter();
+            set => _sequenceToSpanConverter = value;
+        }
+
+        public interface ISequenceToSpanConverter
+        {
+            void Convert(ref ICoordinateSequence sequence, out Span<double> pointData, out Span<double> altitudes);
+            void Convert(ref Span<double> pointData, ref Span<double> altitudes, ref ICoordinateSequence sequence);
+        }
+
+        private class DefaultSequenceSpanConverter : ISequenceToSpanConverter
+        {
+
+            public void Convert(ref ICoordinateSequence sequence, out Span<double> pointData, out Span<double> altitudes)
+            {
+                altitudes = null;
+                if (sequence == null || sequence.Count == 0)
+                {
+                    pointData = new Span<double>(new double[0]);
+                    if (sequence != null && sequence.HasZ)
+                        altitudes = new Span<double>(new double[0]);
+                    return;
+                }
+
+                pointData = new Span<double>(new double[2* sequence.Count]);
+                for (int i = 0, j = 0; i < sequence.Count; i++) {
+                    pointData[j++] = sequence.GetX(i);
+                    pointData[j++] = sequence.GetY(i);
+                }
+
+                if (!sequence.HasZ) return;
+
+                altitudes = new Span<double>(new double[sequence.Count]);
+                for (int i = 0, j = 0; i < sequence.Count; i++)
+                    altitudes[i] = sequence.GetZ(i);
+            }
+
+            public void Convert(ref Span<double> pointData, ref Span<double> altitudes, ref ICoordinateSequence sequence)
+            {
+                for (int i = 0, j = 0; i < sequence.Count; i++)
+                {
+                    sequence.SetOrdinate(i, Ordinate.X, pointData[j++]);
+                    sequence.SetOrdinate(i, Ordinate.Y, pointData[j++]);
+                }
+
+                if (altitudes != null && altitudes.Length == sequence.Count)
+                {
+                    for (int i = 0; i < sequence.Count; i++)
+                        sequence.SetOrdinate(i, Ordinate.Z, altitudes[i]);
+
+                }
+            }
+        }
+
+
 
         /// <summary>
         /// Reverses the transformation
@@ -226,6 +317,13 @@ namespace ProjNet.CoordinateSystems.Transformations
 			return (D2R * deg);
 
 		}
+
+        protected static void DegreesToRadians(ref Span<double> degrees)
+        {
+            for (int i = 0; i < degrees.Length; i++)
+                degrees[i] *= D2R;
+        }
+
 		/// <summary>
 		/// R2D
 		/// </summary>
@@ -246,6 +344,12 @@ namespace ProjNet.CoordinateSystems.Transformations
 			return (R2D * rad);
 		}
 
-		#endregion
-	}
+        protected static void RadiansToDegrees(ref Span<double> rad)
+        {
+            if (rad == null) return;
+            for (int i = 0; i < rad.Length; i++)
+                rad[i] *= R2D;
+        }
+        #endregion
+    }
 }

@@ -111,94 +111,183 @@ namespace ProjNet.CoordinateSystems.Projections
             K = Math.Tan(0.5 * phic0 + Math.PI / 4) / (Math.Pow(Math.Tan(0.5 * lat_origin + Math.PI / 4), C) * srat(_e * sphi, ratexp));
         }
 
+        ///// <summary>
+        ///// Converts coordinates in projected meters to decimal degrees.
+        ///// </summary>
+        ///// <param name="p">Point in meters</param>
+        ///// <returns>Transformed point in decimal degrees</returns>
+        //protected override double[] MetersToRadians(double[] p)
+        //{
+        //    double x = p[0] / this.globalScale;
+        //    double y = p[1] / this.globalScale;
+
+        //    double rho = Math.Sqrt((x * x) + (y * y));
+        //    if (Math.Abs(rho) < EPSILON)
+        //    {
+        //        x = 0.0;
+        //        y = phic0;
+        //    }
+        //    else
+        //    {
+        //        double ce = 2.0 * Math.Atan2(rho, R2);
+        //        double sinc = Math.Sin(ce);
+        //        double cosc = Math.Cos(ce);
+        //        x = Math.Atan2(x * sinc, rho * cosc0 * cosc - y * sinc0
+        //               * sinc);
+        //        y = (cosc * sinc0) + (y * sinc * cosc0 / rho);
+
+        //        if (Math.Abs(y) >= 1.0)
+        //        {
+        //            y = (y < 0.0) ? -Math.PI / 2.0 : Math.PI / 2.0;
+        //        }
+        //        else
+        //        {
+        //            y = Math.Asin(y);
+        //        }
+        //    }
+
+        //    x /= C;
+        //    double num = Math.Pow(Math.Tan(0.5 * y + Math.PI / 4.0) / K, 1.0 / C);
+        //    for (int i = MAXIMUM_ITERATIONS; ; )
+        //    {
+        //        double phi = 2.0 * Math.Atan(num * srat(_e * Math.Sin(y), -0.5 * _e)) - Math.PI / 2.0;
+        //        if (Math.Abs(phi - y) < ITERATION_TOLERANCE)
+        //        {
+        //            break;
+        //        }
+        //        y = phi;
+        //        if (--i < 0)
+        //        {
+        //            throw new Exception("Oblique Stereographics doesn't converge");
+        //        }
+        //    }
+
+        //    x += central_meridian;
+
+        //    if (p.Length == 2)
+        //        return new double[] { x, y };
+        //    else
+        //        return new double[] { x, y, p[2] };
+        //}
+
         /// <summary>
         /// Converts coordinates in projected meters to decimal degrees.
         /// </summary>
         /// <param name="p">Point in meters</param>
         /// <returns>Transformed point in decimal degrees</returns>
-        protected override double[] MetersToRadians(double[] p)
+        protected override void MetersToRadians(ref Span<double> p, ref Span<double> altitudes)
         {
-            double x = p[0] / this.globalScale;
-            double y = p[1] / this.globalScale;
-
-            double rho = Math.Sqrt((x * x) + (y * y));
-            if (Math.Abs(rho) < EPSILON)
+            int size = p.Length / 2;
+            for (int i = 0, j = 0, k = 1; i < size; i++, j += 2, k += 2)
             {
-                x = 0.0;
-                y = phic0;
-            }
-            else
-            {
-                double ce = 2.0 * Math.Atan2(rho, R2);
-                double sinc = Math.Sin(ce);
-                double cosc = Math.Cos(ce);
-                x = Math.Atan2(x * sinc, rho * cosc0 * cosc - y * sinc0
-                       * sinc);
-                y = (cosc * sinc0) + (y * sinc * cosc0 / rho);
+                double x = p[j] / this.globalScale;
+                double y = p[k] / this.globalScale;
 
-                if (Math.Abs(y) >= 1.0)
+                double rho = Math.Sqrt((x * x) + (y * y));
+                if (Math.Abs(rho) < EPSILON)
                 {
-                    y = (y < 0.0) ? -Math.PI / 2.0 : Math.PI / 2.0;
+                    x = 0.0;
+                    y = phic0;
                 }
                 else
                 {
-                    y = Math.Asin(y);
-                }
-            }
+                    double ce = 2.0 * Math.Atan2(rho, R2);
+                    double sinc = Math.Sin(ce);
+                    double cosc = Math.Cos(ce);
+                    x = Math.Atan2(x * sinc, rho * cosc0 * cosc - y * sinc0
+                                                                    * sinc);
+                    y = (cosc * sinc0) + (y * sinc * cosc0 / rho);
 
-            x /= C;
-            double num = Math.Pow(Math.Tan(0.5 * y + Math.PI / 4.0) / K, 1.0 / C);
-            for (int i = MAXIMUM_ITERATIONS; ; )
-            {
-                double phi = 2.0 * Math.Atan(num * srat(_e * Math.Sin(y), -0.5 * _e)) - Math.PI / 2.0;
-                if (Math.Abs(phi - y) < ITERATION_TOLERANCE)
+                    if (Math.Abs(y) >= 1.0)
+                    {
+                        y = (y < 0.0) ? -Math.PI / 2.0 : Math.PI / 2.0;
+                    }
+                    else
+                    {
+                        y = Math.Asin(y);
+                    }
+                }
+
+                x /= C;
+                double num = Math.Pow(Math.Tan(0.5 * y + Math.PI / 4.0) / K, 1.0 / C);
+                for (int iter = MAXIMUM_ITERATIONS;;)
                 {
-                    break;
+                    double phi = 2.0 * Math.Atan(num * srat(_e * Math.Sin(y), -0.5 * _e)) - Math.PI / 2.0;
+                    if (Math.Abs(phi - y) < ITERATION_TOLERANCE)
+                    {
+                        break;
+                    }
+
+                    y = phi;
+                    if (--iter < 0)
+                    {
+                        throw new Exception("Oblique Stereographics doesn't converge");
+                    }
                 }
-                y = phi;
-                if (--i < 0)
-                {
-                    throw new Exception("Oblique Stereographics doesn't converge");
-                }
+
+                p[j] = x + central_meridian;
+                p[k] = y;
             }
-
-            x += central_meridian;
-
-            if (p.Length == 2)
-                return new double[] { x, y };
-            else
-                return new double[] { x, y, p[2] };
         }
+
+        ///// <summary>
+        ///// Converts coordinates in decimal degrees to projected meters.
+        ///// </summary>
+        ///// <param name="lonlat">The point in decimal degrees.</param>
+        ///// <returns>Point in projected meters</returns>
+        //protected override double[] RadiansToMeters(double[] lonlat)
+        //{
+        //    double x = lonlat[0] - this.central_meridian;
+        //    double y = lonlat[1];
+
+
+        //    y = 2.0 * Math.Atan(K * Math.Pow(Math.Tan(0.5 * y + Math.PI / 4), C)
+        //                  * srat(_e * Math.Sin(y), ratexp))
+        //           - Math.PI / 2;
+        //    x *= C;
+        //    double sinc = Math.Sin(y);
+        //    double cosc = Math.Cos(y);
+        //    double cosl = Math.Cos(x);
+        //    double k = R2 / (1.0 + sinc0 * sinc + cosc0 * cosc * cosl);
+        //    x = k * cosc * Math.Sin(x);
+        //    y = k * (cosc0 * sinc - sinc0 * cosc * cosl);
+
+
+        //    if (lonlat.Length == 2)
+
+        //        return new double[] { x * this.globalScale, y * this.globalScale };
+        //    else
+        //        return new double[] { x * this.globalScale, y * this.globalScale, lonlat[2] };
+        //}
 
         /// <summary>
         /// Converts coordinates in decimal degrees to projected meters.
         /// </summary>
         /// <param name="lonlat">The point in decimal degrees.</param>
         /// <returns>Point in projected meters</returns>
-        protected override double[] RadiansToMeters(double[] lonlat)
+        protected override void RadiansToMeters(ref Span<double> lonlat, ref Span<double> altitudes)
         {
-            double x = lonlat[0] - this.central_meridian;
-            double y = lonlat[1];
+            int size = lonlat.Length / 2;
+            for (int i = 0, j = 0, k = 1; i < size; i++, j += 2, k += 2)
+            {
+                double x = lonlat[j] - this.central_meridian;
+                double y = lonlat[k];
 
 
-            y = 2.0 * Math.Atan(K * Math.Pow(Math.Tan(0.5 * y + Math.PI / 4), C)
-                          * srat(_e * Math.Sin(y), ratexp))
-                   - Math.PI / 2;
-            x *= C;
-            double sinc = Math.Sin(y);
-            double cosc = Math.Cos(y);
-            double cosl = Math.Cos(x);
-            double k = R2 / (1.0 + sinc0 * sinc + cosc0 * cosc * cosl);
-            x = k * cosc * Math.Sin(x);
-            y = k * (cosc0 * sinc - sinc0 * cosc * cosl);
+                y = 2.0 * Math.Atan(K * Math.Pow(Math.Tan(0.5 * y + Math.PI / 4), C)
+                                      * srat(_e * Math.Sin(y), ratexp))
+                    - Math.PI / 2;
+                x *= C;
+                double sinc = Math.Sin(y);
+                double cosc = Math.Cos(y);
+                double cosl = Math.Cos(x);
+                double k_ = R2 / (1.0 + sinc0 * sinc + cosc0 * cosc * cosl);
+                lonlat[j] = k_ * cosc * Math.Sin(x) * globalScale;
+                lonlat[k] = k_ * (cosc0 * sinc - sinc0 * cosc * cosl) * globalScale;
 
-
-            if (lonlat.Length == 2)
-
-                return new double[] { x * this.globalScale, y * this.globalScale };
-            else
-                return new double[] { x * this.globalScale, y * this.globalScale, lonlat[2] };
+            }
         }
+
 
         /// <summary>
         /// Returns the inverse of this projection.

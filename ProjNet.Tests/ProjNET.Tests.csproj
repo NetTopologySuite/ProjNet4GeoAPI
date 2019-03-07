@@ -6,6 +6,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <!-- The NUnit 2 test adapter doesn't support portable PDBs. -->
     <DebugType>full</DebugType>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
 
   <Import Project="$(SolutionDir)ProjNet.Common.props" />

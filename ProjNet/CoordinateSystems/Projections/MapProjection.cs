@@ -280,6 +280,126 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         /// <param name="p">The ordinates of the point</param>
         /// <returns>The transformed ordinates</returns>
+        protected void SourceToDegrees(ref Span<double> points, ref Span<double> altitudes)
+        {
+            if (points == null)
+                return;
+
+            if (points.Length % 2 != 0)
+                throw new ArgumentNullException(nameof(points), "Coordinate array is not integral");
+
+            int size = points.Length / 2;
+            if (DimSource == 3 && altitudes == null)
+                altitudes = new double[size];
+
+            if (altitudes != null)
+            {
+                if (altitudes.Length != size)
+                    throw new ArgumentException(nameof(altitudes), "Altitudes array does not match points array");
+                for (int i = 0; i < size; i++)
+                    altitudes[i] *= _metersPerUnit;
+            }
+
+            SourceToMeters(ref points);
+            MetersToRadians(ref points, ref altitudes);
+            RadiansToDegrees(ref points);
+
+            if (DimTarget > 2)
+                RadiansToDegrees(ref altitudes);
+            else
+                altitudes = null;
+
+
+            /*
+            var tmp = p.Length == 2
+                ? new[] { p[0] * _metersPerUnit - false_easting, p[1] * _metersPerUnit - false_northing }
+                : new[]
+                {
+                    p[0]*_metersPerUnit - false_easting, p[1]*_metersPerUnit - false_northing,
+                    p[2]*_metersPerUnit
+                };
+
+            var res = MetersToRadians(tmp);
+
+            res[0] = Radians2Degrees(res[0]);
+            res[1] = Radians2Degrees(res[1]);
+            if (DimTarget == 3) res[2] = Radians2Degrees(res[2]);
+
+            return res;
+            */
+        }
+
+        /// <summary>
+        /// Function to transform from degrees to meters
+        /// </summary>
+        /// <param name="points">The ordinates of the point</param>
+        /// <returns>The transformed ordinates</returns>
+        protected void DegreesToTarget(ref Span<double> points, ref Span<double> altitudes)
+        {
+            if (points == null)
+                return;
+
+            if (points.Length % 2 != 0)
+                throw new ArgumentNullException(nameof(points), "Coordinate array is not integral");
+
+            int size = points.Length / 2;
+            if (DimSource == 3 && altitudes == null)
+                altitudes = new double[size];
+
+            if (altitudes != null)
+            {
+                if (altitudes.Length != size)
+                    throw new ArgumentException(nameof(altitudes), "Altitudes array does not match points array");
+                DegreesToRadians(ref altitudes);
+            }
+
+            DegreesToRadians(ref points);
+            RadiansToMeters(ref points, ref altitudes);
+            MetersToTarget(ref points);
+
+            if (DimTarget == 2) altitudes = null;
+
+            /*
+            // Convert to radians
+            var tmp = lonlat.Length == 2
+                ? new[] { Degrees2Radians(lonlat[0]), Degrees2Radians(lonlat[1]) }
+                : new[] { Degrees2Radians(lonlat[0]), Degrees2Radians(lonlat[1]), Degrees2Radians(lonlat[2]) };
+
+            // Convert to meters
+            var res = RadiansToMeters(tmp);
+
+            // Add false easting and northing, convert to unit
+            res[0] = (res[0] + false_easting) / _metersPerUnit;
+            res[1] = (res[1] + false_northing) / _metersPerUnit;
+            if (res.Length == 3) res[2] = res[2] / _metersPerUnit;
+
+            return res;
+            */
+        }
+
+        private void MetersToTarget(ref Span<double> xy)
+        {
+            for (int i = 0, j = 1; i < xy.Length; i += 2, j+=2)
+            {
+                xy[i] = (xy[i] + false_easting) / _metersPerUnit;
+                xy[j] = (xy[j] + false_northing) / _metersPerUnit;
+            }
+        }
+
+        private void SourceToMeters(ref Span<double> xy)
+        {
+            for (int i = 0, j = 1; i < xy.Length; i += 2, j += 2)
+            {
+                xy[i] = _metersPerUnit * xy[i] - false_easting;
+                xy[j] = _metersPerUnit * xy[j] - false_northing;
+            }
+        }
+        /// <summary>
+        /// Function to transform from meters to degrees
+        /// </summary>
+        /// <param name="p">The ordinates of the point</param>
+        /// <returns>The transformed ordinates</returns>
+        [Obsolete]
         public double[] MetersToDegrees(double[] p)
         {
             var tmp = p.Length == 2
@@ -304,6 +424,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         /// <param name="lonlat">The ordinates of the point</param>
         /// <returns>The transformed ordinates</returns>
+        [Obsolete]
         public double[] DegreesToMeters(double[] lonlat)
         {
             // Convert to radians
@@ -322,8 +443,37 @@ namespace ProjNet.CoordinateSystems.Projections
             return res;
         }
 
-        protected abstract double[] RadiansToMeters(double[] lonlat);
-        protected abstract double[] MetersToRadians(double[] p);
+        protected abstract void RadiansToMeters(ref Span<double> points, ref Span<double> altitudes);
+
+        protected abstract void MetersToRadians(ref Span<double> points, ref Span<double> altitudes);
+
+        //protected abstract double[] RadiansToMeters(double[] lonlat);
+        [Obsolete]
+        protected virtual double[] RadiansToMeters(double[] lonlat)
+        {
+            var lonlats = new Span<double>(new []{lonlat[0], lonlat[1]});
+            var alt = new Span<double>(new[] { DimSource == 3 ? lonlat[2] : 0d});
+
+            RadiansToMeters(ref lonlats, ref alt);
+            if (DimTarget == 2)
+                return lonlats.ToArray();
+
+            return new[] {lonlats[0], lonlats[1], alt[0]};
+        }
+
+        //protected abstract double[] MetersToRadians(double[] p);
+        [Obsolete]
+        protected virtual double[] MetersToRadians(double[] p)
+        {
+            var xy = new Span<double>(new[] { p[0], p[1]});
+            var z = new Span<double>(new[] { DimSource == 3 ? p[2] : 0d});
+
+            MetersToRadians(ref xy, ref z);
+
+            if (DimTarget == 2)
+                return xy.ToArray();
+            return new[] {xy[0], xy[1], z[0]};
+        }
 
         /// <summary>
         /// Reverses the transformation
@@ -353,14 +503,15 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <summary>
         /// Transforms the specified cp.
         /// </summary>
-        /// <param name="cp">The cp.</param>
-        /// <returns></returns>
-        public override double[] Transform(double[] cp)
+        /// <param name="points">The coordinates</param>
+        /// <param name="altitudes">The altitudes</param>
+        protected internal override void Transform(ref Span<double> points, ref Span<double> altitudes)
         {
             //var projectedPoint = new double[] { 0, 0, 0, };
-            return !_isInverse
-                       ? DegreesToMeters(cp)
-                       : MetersToDegrees(cp);
+            if (!_isInverse)
+                DegreesToTarget(ref points, ref altitudes);
+            else
+                SourceToDegrees(ref points, ref altitudes);
         }
 
         /// <summary>

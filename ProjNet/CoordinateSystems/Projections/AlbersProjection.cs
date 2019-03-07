@@ -37,6 +37,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using GeoAPI.CoordinateSystems;
 using GeoAPI.CoordinateSystems.Transformations;
 
@@ -156,56 +157,118 @@ namespace ProjNet.CoordinateSystems.Projections
 
 		#region Public methods
 		
+  //      /// <summary>
+		///// Converts coordinates in decimal degrees to projected meters.
+		///// </summary>
+		///// <param name="lonlat">The point in decimal degrees.</param>
+		///// <returns>Point in projected meters</returns>
+  //      protected override double[] RadiansToMeters(double[] lonlat)
+        
+		//{
+		//	var dLongitude = lonlat[0];
+		//	var dLatitude = lonlat[1];
+
+		//	var a = alpha(dLatitude);
+		//	var ro = Ro(a);
+  //          var theta = _n * (dLongitude - central_meridian);
+		//	dLongitude = /*_falseEasting +*/ ro * Math.Sin(theta);
+		//	dLatitude = /*_falseNorthing +*/ _ro0 - (ro * Math.Cos(theta));
+
+  //          return lonlat.Length == 2 
+  //              ? new [] { dLongitude, dLatitude } 
+  //              : new [] { dLongitude , dLatitude, lonlat[2] };
+		//}
+
         /// <summary>
-		/// Converts coordinates in decimal degrees to projected meters.
-		/// </summary>
-		/// <param name="lonlat">The point in decimal degrees.</param>
-		/// <returns>Point in projected meters</returns>
-        protected override double[] RadiansToMeters(double[] lonlat)
-		{
-			var dLongitude = lonlat[0];
-			var dLatitude = lonlat[1];
+        /// Converts coordinates in decimal degrees to projected meters.
+        /// </summary>
+        /// <param name="lonlat">The point in radians.</param>
+        /// <param name="altitudes">The altitudes in radians</param>
+        /// <returns>Point in projected meters</returns>
+        protected override void RadiansToMeters(ref Span<double> lonlat, ref Span<double> altitudes)
+        {
+            int size = lonlat.Length / 2;
+            for (int i = 0, j = 0, k = 1; i < size; i++, j+=2, k+=2)
+            {
+                double dLongitude = lonlat[j];
+                double dLatitude = lonlat[k];
 
-			var a = alpha(dLatitude);
-			var ro = Ro(a);
-            var theta = _n * (dLongitude - central_meridian);
-			dLongitude = /*_falseEasting +*/ ro * Math.Sin(theta);
-			dLatitude = /*_falseNorthing +*/ _ro0 - (ro * Math.Cos(theta));
+                double a = alpha(dLatitude);
+                double ro = Ro(a);
+                double theta = _n * (dLongitude - central_meridian);
 
-            return lonlat.Length == 2 
-                ? new [] { dLongitude, dLatitude } 
-                : new [] { dLongitude , dLatitude, lonlat[2] };
-		}
+                lonlat[j] = ro * Math.Sin(theta);
+                lonlat[k] = _ro0 - (ro * Math.Cos(theta));
+            }
+        }
 
-		/// <summary>
-		/// Converts coordinates in projected meters to decimal degrees.
-		/// </summary>
-		/// <param name="p">Point in meters</param>
-		/// <returns>Transformed point in decimal degrees</returns>
-        protected override double[] MetersToRadians(double[] p) 
-		{
-			var theta = Math.Atan((p[0] /** _metersPerUnit - _falseEasting*/) / (_ro0 - (p[1] /* * _metersPerUnit - _falseNorthing*/)));
-            var ro = Math.Sqrt(Math.Pow(p[0] /** _metersPerUnit - _falseEasting*/, 2) + Math.Pow(_ro0 - (p[1] /* * _metersPerUnit - _falseNorthing*/), 2));
-			var q = (_c - Math.Pow(ro, 2) * Math.Pow(_n, 2) / Math.Pow(this._semiMajor, 2)) / _n;
-			var b = Math.Sin(q / (1 - ((1 - _es) / (2 * _e)) * Math.Log((1 - _e) / (1 + _e))));
+        ///// <summary>
+        ///// Converts coordinates in projected meters to decimal degrees.
+        ///// </summary>
+        ///// <param name="p">Point in meters</param>
+        ///// <returns>Transformed point in decimal degrees</returns>
+        //protected override double[] MetersToRadians(double[] p)
+        //{
+        //    var theta = Math.Atan((p[0] /** _metersPerUnit - _falseEasting*/) / (_ro0 - (p[1] /* * _metersPerUnit - _falseNorthing*/)));
+        //    var ro = Math.Sqrt(Math.Pow(p[0] /** _metersPerUnit - _falseEasting*/, 2) + Math.Pow(_ro0 - (p[1] /* * _metersPerUnit - _falseNorthing*/), 2));
+        //    var q = (_c - Math.Pow(ro, 2) * Math.Pow(_n, 2) / Math.Pow(this._semiMajor, 2)) / _n;
+        //    var b = Math.Sin(q / (1 - ((1 - _es) / (2 * _e)) * Math.Log((1 - _e) / (1 + _e))));
 
-			double lat = Math.Asin(q * 0.5);
-			double preLat = double.MaxValue;
-			int iterationCounter = 0;
-			while (Math.Abs(lat - preLat) > 0.000001)
-			{
-				preLat = lat;
-				double sin = Math.Sin(lat);
-				double e2sin2 = _es * Math.Pow(sin, 2);
-				lat += (Math.Pow(1 - e2sin2, 2) / (2 * Math.Cos(lat))) * ((q / (1 - _es)) - sin / (1 - e2sin2) + 1 / (2 * _e) * Math.Log((1 - _e * sin) / (1 + _e * sin)));
-				iterationCounter++;
-				if (iterationCounter > 25)
-					throw new ArgumentException("Transformation failed to converge in Albers backwards transformation");
-			}
-            double lon = central_meridian + (theta / _n);
-			if (p.Length == 2)
-				return new double[] { lon, lat /*Radians2Degrees(lon), Radians2Degrees(lat)*/ };
-		    return new double[] { lon, lat /*Radians2Degrees(lon), Radians2Degrees(lat)*/, p[2] };
+        //    double lat = Math.Asin(q * 0.5);
+        //    double preLat = double.MaxValue;
+        //    int iterationCounter = 0;
+        //    while (Math.Abs(lat - preLat) > 0.000001)
+        //    {
+        //        preLat = lat;
+        //        double sin = Math.Sin(lat);
+        //        double e2sin2 = _es * Math.Pow(sin, 2);
+        //        lat += (Math.Pow(1 - e2sin2, 2) / (2 * Math.Cos(lat))) * ((q / (1 - _es)) - sin / (1 - e2sin2) + 1 / (2 * _e) * Math.Log((1 - _e * sin) / (1 + _e * sin)));
+        //        iterationCounter++;
+        //        if (iterationCounter > 25)
+        //            throw new ArgumentException("Transformation failed to converge in Albers backwards transformation");
+        //    }
+        //    double lon = central_meridian + (theta / _n);
+        //    if (p.Length == 2)
+        //        return new double[] { lon, lat /*Radians2Degrees(lon), Radians2Degrees(lat)*/ };
+        //    return new double[] { lon, lat /*Radians2Degrees(lon), Radians2Degrees(lat)*/, p[2] };
+        //}
+
+        /// <summary>
+        /// Converts coordinates in projected meters to decimal degrees.
+        /// </summary>
+        /// <param name="p">Point in meters</param>
+        /// <returns>Transformed point in decimal degrees</returns>
+        protected override void MetersToRadians(ref Span<double> p, ref Span<double> altitudes)
+        {
+            int size = p.Length / 2;
+
+            for (int i = 0, j = 0, k = 1; i < size; i++, j += 2, k+=2)
+            {
+                double theta = Math.Atan(p[j] / (_ro0 - p[k]));
+                double ro = Math.Sqrt(Math.Pow(p[j], 2) + Math.Pow(_ro0 - p[k], 2));
+                double q = (_c - Math.Pow(ro, 2) * Math.Pow(_n, 2) / Math.Pow(this._semiMajor, 2)) / _n;
+                double b = Math.Sin(q / (1 - ((1 - _es) / (2 * _e)) * Math.Log((1 - _e) / (1 + _e))));
+
+                double lat = Math.Asin(q * 0.5);
+                double preLat = double.MaxValue;
+                int iterationCounter = 0;
+                while (Math.Abs(lat - preLat) > 0.000001)
+                {
+                    preLat = lat;
+                    double sin = Math.Sin(lat);
+                    double e2sin2 = _es * Math.Pow(sin, 2);
+                    lat += (Math.Pow(1 - e2sin2, 2) / (2 * Math.Cos(lat))) *
+                           ((q / (1 - _es)) - sin / (1 - e2sin2) +
+                            1 / (2 * _e) * Math.Log((1 - _e * sin) / (1 + _e * sin)));
+                    iterationCounter++;
+                    if (iterationCounter > 25)
+                        throw new ArgumentException(
+                            "Transformation failed to converge in Albers backwards transformation");
+                }
+
+                p[j] = central_meridian + (theta / _n);
+                p[k] = lat;
+            }
 		}
 
 		/// <summary>

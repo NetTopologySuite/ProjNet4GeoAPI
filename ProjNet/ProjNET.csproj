@@ -7,6 +7,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(SolutionDir)scskey.snk</AssemblyOriginatorKeyFile>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
 
   <Import Project="$(SolutionDir)ProjNet.Common.props" />
@@ -33,5 +34,11 @@
     <Compile Include="..\SharedAssemblyVersion.cs">
       <Link>Properties\SharedAssemblyVersion.cs</Link>
     </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Memory">
+      <HintPath>C:\Users\obe\.nuget\packages\system.memory\4.5.2\lib\netstandard2.0\System.Memory.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>
