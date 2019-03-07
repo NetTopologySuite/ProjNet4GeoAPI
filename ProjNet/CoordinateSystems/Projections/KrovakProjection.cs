@@ -181,83 +181,162 @@ namespace ProjNet.CoordinateSystems.Projections
 			_ro0 = scale_factor * radius / Math.Tan(_pseudoStandardParallel);
 			_rop = _ro0 * Math.Pow(_tanS2, _n);
 		}
-		#endregion
+        #endregion
 
-		/// <summary>
-		/// Converts coordinates in decimal degrees to projected meters.
-		/// </summary>
-		/// <param name="lonlat">The point in decimal degrees.</param>
-		/// <returns>Point in projected meters</returns>
-        protected override double[] RadiansToMeters(double[] lonlat)
+        ///// <summary>
+        ///// Converts coordinates in decimal degrees to projected meters.
+        ///// </summary>
+        ///// <param name="lonlat">The point in decimal degrees.</param>
+        ///// <returns>Point in projected meters</returns>
+        //protected override double[] RadiansToMeters(double[] lonlat)
+        //{
+        //    var lambda = lonlat[0] - central_meridian;
+        //    var phi = lonlat[1];
+
+        //    var esp = _e * Math.Sin(phi);
+        //    var gfi = Math.Pow(((1.0 - esp) / (1.0 + esp)), _hae);
+        //    var u = 2 * (Math.Atan(Math.Pow(Math.Tan(phi / 2 + S45), _alfa) / _k1 * gfi) - S45);
+        //    var deltav = -lambda * _alfa;
+        //    var cosU = Math.Cos(u);
+        //    var s = Math.Asin((_cosAzim * Math.Sin(u)) + (_sinAzim * cosU * Math.Cos(deltav)));
+        //    var d = Math.Asin(cosU * Math.Sin(deltav) / Math.Cos(s));
+        //    var eps = _n * d;
+        //    var ro = _rop / Math.Pow(Math.Tan(s / 2 + S45), _n);
+
+        //    /* x and y are reverted  */
+        //    var y = -(ro * Math.Cos(eps)) * _semiMajor;
+        //    var x = -(ro * Math.Sin(eps)) * _semiMajor;
+
+        //    return new[] { x, y };
+        //}
+        /// <summary>
+        /// Converts coordinates in decimal degrees to projected meters.
+        /// </summary>
+        /// <param name="lonlat">The point in decimal degrees.</param>
+        /// <returns>Point in projected meters</returns>
+        protected override void RadiansToMeters(ref Span<double> lonlat, ref Span<double> altitude)
 		{
-            var lambda = lonlat[0] - central_meridian;
-            var phi = lonlat[1];
-            
-            var esp = _e * Math.Sin(phi);
-            var gfi = Math.Pow(((1.0 - esp) / (1.0 + esp)), _hae);
-            var u   = 2 * (Math.Atan(Math.Pow(Math.Tan(phi/2 + S45), _alfa) / _k1 * gfi) - S45);
-            var deltav = -lambda * _alfa;
-            var cosU = Math.Cos(u);
-            var s = Math.Asin((_cosAzim * Math.Sin(u)) + (_sinAzim * cosU * Math.Cos(deltav)));
-            var d = Math.Asin(cosU * Math.Sin(deltav) / Math.Cos(s));
-            var eps = _n * d;
-            var ro = _rop / Math.Pow(Math.Tan(s/2 + S45), _n);
+            int size = lonlat.Length / 2;
+            for (int i = 0, j = 0; i < size; i++, j += 2)
+            {
+                int k = j + 1;
+                double lambda = lonlat[j] - central_meridian;
+                double phi = lonlat[k];
 
-            /* x and y are reverted  */
-            var y = -(ro * Math.Cos(eps)) * _semiMajor;
-            var x = -(ro * Math.Sin(eps)) * _semiMajor;            
+                double esp = _e * Math.Sin(phi);
+                double gfi = Math.Pow(((1.0 - esp) / (1.0 + esp)), _hae);
+                double u = 2 * (Math.Atan(Math.Pow(Math.Tan(phi / 2 + S45), _alfa) / _k1 * gfi) - S45);
+                double deltav = -lambda * _alfa;
+                double cosU = Math.Cos(u);
+                double s = Math.Asin((_cosAzim * Math.Sin(u)) + (_sinAzim * cosU * Math.Cos(deltav)));
+                double d = Math.Asin(cosU * Math.Sin(deltav) / Math.Cos(s));
+                double eps = _n * d;
+                double ro = _rop / Math.Pow(Math.Tan(s / 2 + S45), _n);
 
-			return new [] { x, y };
+                /* x and y are reverted  */
+                lonlat[k] = -(ro * Math.Cos(eps)) * _semiMajor;
+                lonlat[j] = -(ro * Math.Sin(eps)) * _semiMajor;
+            }
 		}
 
-		/// <summary>
-		/// Converts coordinates in projected meters to decimal degrees.
-		/// </summary>
-		/// <param name="p">Point in meters</param>
-		/// <returns>Transformed point in decimal degrees</returns>
-        protected override double[] MetersToRadians(double[] p)
-		{
-            var x = p[0] / _semiMajor;
-            var y = p[1] / _semiMajor;
+		///// <summary>
+		///// Converts coordinates in projected meters to decimal degrees.
+		///// </summary>
+		///// <param name="p">Point in meters</param>
+		///// <returns>Transformed point in decimal degrees</returns>
+  //      protected override double[] MetersToRadians(double[] p)
+		//{
+  //          var x = p[0] / _semiMajor;
+  //          var y = p[1] / _semiMajor;
 
-			// x -> southing, y -> westing
-			var ro = Math.Sqrt(x * x + y * y);
-			var eps = Math.Atan2(-x, -y);
-			var d   = eps / _n;
-			var s   = 2 * (Math.Atan(Math.Pow(_ro0/ro, 1/_n) * _tanS2) - S45);
-			var cs  = Math.Cos(s);
-			var u   = Math.Asin((_cosAzim * Math.Sin(s)) - (_sinAzim * cs * Math.Cos(d)));
-			var kau = _ka * Math.Pow(Math.Tan((u / 2.0) + S45), 1 / _alfa);
-			var deltav = Math.Asin((cs * Math.Sin(d)) / Math.Cos(u));
-			var lambda = -deltav / _alfa;
-			var phi = 0d;
+		//	// x -> southing, y -> westing
+		//	var ro = Math.Sqrt(x * x + y * y);
+		//	var eps = Math.Atan2(-x, -y);
+		//	var d   = eps / _n;
+		//	var s   = 2 * (Math.Atan(Math.Pow(_ro0/ro, 1/_n) * _tanS2) - S45);
+		//	var cs  = Math.Cos(s);
+		//	var u   = Math.Asin((_cosAzim * Math.Sin(s)) - (_sinAzim * cs * Math.Cos(d)));
+		//	var kau = _ka * Math.Pow(Math.Tan((u / 2.0) + S45), 1 / _alfa);
+		//	var deltav = Math.Asin((cs * Math.Sin(d)) / Math.Cos(u));
+		//	var lambda = -deltav / _alfa;
+		//	var phi = 0d;
 
-			// iteration calculation
-			for (var i=MaximumIterations;;) 
-			{
-				var fi1 = phi;
-				var esf = _e * Math.Sin(fi1);
-				phi = 2.0 * (Math.Atan(kau * Math.Pow((1.0 + esf) / (1.0 - esf), _e /2.0)) - S45);
-				if (Math.Abs(fi1 - phi) <= IterationTolerance) 
-				{
-					break;
-				}
+		//	// iteration calculation
+		//	for (var i=MaximumIterations;;) 
+		//	{
+		//		var fi1 = phi;
+		//		var esf = _e * Math.Sin(fi1);
+		//		phi = 2.0 * (Math.Atan(kau * Math.Pow((1.0 + esf) / (1.0 - esf), _e /2.0)) - S45);
+		//		if (Math.Abs(fi1 - phi) <= IterationTolerance) 
+		//		{
+		//			break;
+		//		}
 
-				if (--i < 0) 
-				{
-                    break;
-					//throw new ProjectionException(Errors.format(ErrorKeys.NO_CONVERGENCE));
-				}
-			}
+		//		if (--i < 0) 
+		//		{
+  //                  break;
+		//			//throw new ProjectionException(Errors.format(ErrorKeys.NO_CONVERGENCE));
+		//		}
+		//	}
 
-			return new[] { lambda + central_meridian, phi };
-		}
+		//	return new[] { lambda + central_meridian, phi };
+		//}
 
-		/// <summary>
-		/// Returns the inverse of this projection.
-		/// </summary>
-		/// <returns>IMathTransform that is the reverse of the current projection.</returns>
-		public override IMathTransform Inverse()
+        /// <summary>
+        /// Converts coordinates in projected meters to decimal degrees.
+        /// </summary>
+        /// <param name="p">Point in meters</param>
+        /// <returns>Transformed point in decimal degrees</returns>
+        protected override void MetersToRadians(ref Span<double> p, ref Span<double> altitudes)
+        {
+            int size = p.Length / 2;
+            for (int i = 0, j = 0; i < size; i++, j += 2)
+            {
+                int k = j + 1;
+                double x = p[j] / _semiMajor;
+                double y = p[k] / _semiMajor;
+
+                // x -> southing, y -> westing
+                double ro = Math.Sqrt(x * x + y * y);
+                double eps = Math.Atan2(-x, -y);
+                double d = eps / _n;
+                double s = 2 * (Math.Atan(Math.Pow(_ro0 / ro, 1 / _n) * _tanS2) - S45);
+                double cs = Math.Cos(s);
+                double u = Math.Asin((_cosAzim * Math.Sin(s)) - (_sinAzim * cs * Math.Cos(d)));
+                double kau = _ka * Math.Pow(Math.Tan((u / 2.0) + S45), 1 / _alfa);
+                double deltav = Math.Asin((cs * Math.Sin(d)) / Math.Cos(u));
+                double lambda = -deltav / _alfa;
+                double phi = 0d;
+
+                // iteration calculation
+                for (int iter = MaximumIterations;;)
+                {
+                    double fi1 = phi;
+                    double esf = _e * Math.Sin(fi1);
+                    phi = 2.0 * (Math.Atan(kau * Math.Pow((1.0 + esf) / (1.0 - esf), _e / 2.0)) - S45);
+                    if (Math.Abs(fi1 - phi) <= IterationTolerance)
+                    {
+                        break;
+                    }
+
+                    if (--iter < 0)
+                    {
+                        break;
+                        //throw new ProjectionException(Errors.format(ErrorKeys.NO_CONVERGENCE));
+                    }
+                }
+
+                p[j] = lambda + central_meridian;
+                p[k] = phi;
+            }
+
+        }
+
+        /// <summary>
+        /// Returns the inverse of this projection.
+        /// </summary>
+        /// <returns>IMathTransform that is the reverse of the current projection.</returns>
+        public override IMathTransform Inverse()
 		{
 			if (_inverse == null)
 			{

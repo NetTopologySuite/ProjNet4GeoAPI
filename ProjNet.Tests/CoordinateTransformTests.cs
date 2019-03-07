@@ -102,7 +102,7 @@ namespace ProjNet.UnitTests
                     new Coordinate(290596.615, 6713943.567), new Coordinate(290596.701, 6713939.485)
                 };
             var seq = CoordinateSystemServices.CoordinateSequenceFactory.Create(points);
-            ICoordinateSequence tpoints = trans1.MathTransform.Transform(seq);
+            ICoordinateSequence tpoints = ((MathTransform)trans1.MathTransform).Transform(seq, false);
             for (int i = 0; i < seq.Count; i++)
                 Assert.AreEqual(trans1.MathTransform.Transform(seq.GetCoordinate(i)), tpoints.GetCoordinate(i));
         }

@@ -9,6 +9,7 @@
     <AssemblyOriginatorKeyFile>$(SolutionDir)scskey.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
     <DelaySign>false</DelaySign>
+    <LangVersion>7.2</LangVersion>
   </PropertyGroup>
 
   <Import Project="$(SolutionDir)ProjNet.Common.props" />

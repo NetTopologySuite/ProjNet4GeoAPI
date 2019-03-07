@@ -157,101 +157,191 @@ namespace ProjNet.CoordinateSystems.Projections
 			f0 = ms1 / (ns * Math.Pow(ts1,ns));
 			rh = _semiMajor * f0 * Math.Pow(ts0,ns);
 		}
-		#endregion
+        #endregion
 
-		/// <summary>
-		/// Converts coordinates in decimal degrees to projected meters.
-		/// </summary>
-		/// <param name="lonlat">The point in decimal degrees.</param>
-		/// <returns>Point in projected meters</returns>
-        protected override double[] RadiansToMeters(double[] lonlat)
-		{
-			double dLongitude = lonlat[0];
-			double dLatitude = lonlat[1];
+        ///// <summary>
+        ///// Converts coordinates in decimal degrees to projected meters.
+        ///// </summary>
+        ///// <param name="lonlat">The point in decimal degrees.</param>
+        ///// <returns>Point in projected meters</returns>
+        //      protected override double[] RadiansToMeters(double[] lonlat)
+        //{
+        //	double dLongitude = lonlat[0];
+        //	double dLatitude = lonlat[1];
 
-			double con;                     /* temporary angle variable             */
-			double rh1;                     /* height above ellipsoid               */
-			double sinphi;                  /* sin value                            */
-			double theta;                   /* angle                                */
-			double ts;                      /* small value t                        */
+        //	double con;                     /* temporary angle variable             */
+        //	double rh1;                     /* height above ellipsoid               */
+        //	double sinphi;                  /* sin value                            */
+        //	double theta;                   /* angle                                */
+        //	double ts;                      /* small value t                        */
 
 
-			con  = Math.Abs( Math.Abs(dLatitude) - HALF_PI);
-			if (con > EPSLN)
-			{
-				sinphi = Math.Sin(dLatitude);
-				ts = tsfnz(_e,dLatitude,sinphi);
-				rh1 = _semiMajor * f0 * Math.Pow(ts,ns);
-			}
-			else
-			{
-				con = dLatitude * ns;
-				if (con <= 0)
-					throw new ArgumentException();
-				rh1 = 0;
-			}
-			theta = ns * adjust_lon(dLongitude - central_meridian);
-			dLongitude = rh1 * Math.Sin(theta);
-			dLatitude = rh - rh1 * Math.Cos(theta);
-			
-            return lonlat.Length == 2 
-                ? new [] { dLongitude, dLatitude } 
-                : new [] { dLongitude, dLatitude , lonlat[2] };
-		}
+        //	con  = Math.Abs( Math.Abs(dLatitude) - HALF_PI);
+        //	if (con > EPSLN)
+        //	{
+        //		sinphi = Math.Sin(dLatitude);
+        //		ts = tsfnz(_e,dLatitude,sinphi);
+        //		rh1 = _semiMajor * f0 * Math.Pow(ts,ns);
+        //	}
+        //	else
+        //	{
+        //		con = dLatitude * ns;
+        //		if (con <= 0)
+        //			throw new ArgumentException();
+        //		rh1 = 0;
+        //	}
+        //	theta = ns * adjust_lon(dLongitude - central_meridian);
+        //	dLongitude = rh1 * Math.Sin(theta);
+        //	dLatitude = rh - rh1 * Math.Cos(theta);
 
-		/// <summary>
-		/// Converts coordinates in projected meters to decimal degrees.
-		/// </summary>
-		/// <param name="p">Point in meters</param>
-		/// <returns>Transformed point in decimal degrees</returns>
-        protected override double[] MetersToRadians(double[] p)
-		{
-			double dLongitude = Double.NaN;
-			double dLatitude = Double.NaN;
+        //          return lonlat.Length == 2 
+        //              ? new [] { dLongitude, dLatitude } 
+        //              : new [] { dLongitude, dLatitude , lonlat[2] };
+        //}
 
-			double rh1;			/* height above ellipsoid	*/
-			double con;			/* sign variable		*/
-			double ts;			/* small t			*/
-			double theta;			/* angle			*/
-			long   flag;			/* error flag			*/
+        /// <summary>
+        /// Converts coordinates in decimal degrees to projected meters.
+        /// </summary>
+        /// <param name="lonlat">The point in decimal degrees.</param>
+        /// <returns>Point in projected meters</returns>
+        protected override void RadiansToMeters(ref Span<double> lonlat, ref Span<double> altitudes)
+        {
+            int size = lonlat.Length / 2;
+            for (int i = 0, j = 0, k = 1; i < size; i++, j += 2, k += 2)
+            {
+                double dLongitude = lonlat[j];
+                double dLatitude = lonlat[k];
 
-			flag = 0;
-			double dX = p[0];
-			double dY = rh - p[1];
-			if (ns > 0)
-			{
-				rh1 = Math.Sqrt(dX * dX + dY * dY);
-				con = 1.0;
-			}
-			else
-			{
-				rh1 = -Math.Sqrt(dX * dX + dY * dY);
-				con = -1.0;
-			}
-			theta = 0.0;
-			if (rh1 != 0)
-				theta = Math.Atan2((con * dX),(con * dY));
-			if ((rh1 != 0) || (ns > 0.0))
-			{
-				con = 1.0/ns;
-				ts = Math.Pow((rh1/(_semiMajor * f0)),con);
-				dLatitude = phi2z(_e,ts,out flag);
-				if (flag != 0)
-					throw new ArgumentException();				
-			}
-			else dLatitude = -HALF_PI;
-			
-			dLongitude = adjust_lon(theta/ns + central_meridian);
-			return p.Length==2 
-                ? new [] { dLongitude, dLatitude } 
-                : new [] { dLongitude, dLatitude, p[2]};
-		}
+                double con; /* temporary angle variable             */
+                double rh1; /* height above ellipsoid               */
+                double sinphi; /* sin value                            */
+                double theta; /* angle                                */
+                double ts; /* small value t                        */
 
-		/// <summary>
-		/// Returns the inverse of this projection.
-		/// </summary>
-		/// <returns>IMathTransform that is the reverse of the current projection.</returns>
-		public override IMathTransform Inverse()
+
+                con = Math.Abs(Math.Abs(dLatitude) - HALF_PI);
+                if (con > EPSLN)
+                {
+                    sinphi = Math.Sin(dLatitude);
+                    ts = tsfnz(_e, dLatitude, sinphi);
+                    rh1 = _semiMajor * f0 * Math.Pow(ts, ns);
+                }
+                else
+                {
+                    con = dLatitude * ns;
+                    if (con <= 0)
+                        throw new ArgumentException();
+                    rh1 = 0;
+                }
+
+                theta = ns * adjust_lon(dLongitude - central_meridian);
+                lonlat[j] = rh1 * Math.Sin(theta);
+                lonlat[k] = rh - rh1 * Math.Cos(theta);
+            }
+        }
+
+        ///// <summary>
+        ///// Converts coordinates in projected meters to decimal degrees.
+        ///// </summary>
+        ///// <param name="p">Point in meters</param>
+        ///// <returns>Transformed point in decimal degrees</returns>
+        //      protected override double[] MetersToRadians(double[] p)
+        //{
+        //	double dLongitude = Double.NaN;
+        //	double dLatitude = Double.NaN;
+
+        //	double rh1;			/* height above ellipsoid	*/
+        //	double con;			/* sign variable		*/
+        //	double ts;			/* small t			*/
+        //	double theta;			/* angle			*/
+        //	long   flag;			/* error flag			*/
+
+        //	flag = 0;
+        //	double dX = p[0];
+        //	double dY = rh - p[1];
+        //	if (ns > 0)
+        //	{
+        //		rh1 = Math.Sqrt(dX * dX + dY * dY);
+        //		con = 1.0;
+        //	}
+        //	else
+        //	{
+        //		rh1 = -Math.Sqrt(dX * dX + dY * dY);
+        //		con = -1.0;
+        //	}
+        //	theta = 0.0;
+        //	if (rh1 != 0)
+        //		theta = Math.Atan2((con * dX),(con * dY));
+        //	if ((rh1 != 0) || (ns > 0.0))
+        //	{
+        //		con = 1.0/ns;
+        //		ts = Math.Pow((rh1/(_semiMajor * f0)),con);
+        //		dLatitude = phi2z(_e,ts,out flag);
+        //		if (flag != 0)
+        //			throw new ArgumentException();				
+        //	}
+        //	else dLatitude = -HALF_PI;
+
+        //	dLongitude = adjust_lon(theta/ns + central_meridian);
+        //	return p.Length==2 
+        //              ? new [] { dLongitude, dLatitude } 
+        //              : new [] { dLongitude, dLatitude, p[2]};
+        //}
+
+        /// <summary>
+        /// Converts coordinates in projected meters to decimal degrees.
+        /// </summary>
+        /// <param name="p">Point in meters</param>
+        /// <returns>Transformed point in decimal degrees</returns>
+        protected override void MetersToRadians(ref Span<double> p, ref Span<double> altitudes)
+        {
+            int size = p.Length / 2;
+            for (int i = 0, j = 0, k = 1; i < size; i++, j += 2, k += 2)
+            {
+                //double dLongitude = Double.NaN;
+                //double dLatitude = Double.NaN;
+
+                double rh1; /* height above ellipsoid	*/
+                double con; /* sign variable		*/
+                double ts; /* small t			*/
+                double theta; /* angle			*/
+                //long flag; /* error flag			*/
+
+                double dX = p[j];
+                double dY = rh - p[k];
+                if (ns > 0)
+                {
+                    rh1 = Math.Sqrt(dX * dX + dY * dY);
+                    con = 1.0;
+                }
+                else
+                {
+                    rh1 = -Math.Sqrt(dX * dX + dY * dY);
+                    con = -1.0;
+                }
+
+                theta = 0.0;
+                if (rh1 != 0)
+                    theta = Math.Atan2((con * dX), (con * dY));
+                if ((rh1 != 0) || (ns > 0.0))
+                {
+                    con = 1.0 / ns;
+                    ts = Math.Pow((rh1 / (_semiMajor * f0)), con);
+                    p[k] = phi2z(_e, ts, out long flag);
+                    if (flag != 0)
+                        throw new ArgumentException();
+                }
+                else p[k] = -HALF_PI;
+
+                p[j] = adjust_lon(theta / ns + central_meridian);
+            }
+        }
+
+        /// <summary>
+        /// Returns the inverse of this projection.
+        /// </summary>
+        /// <returns>IMathTransform that is the reverse of the current projection.</returns>
+        public override IMathTransform Inverse()
 		{
 			if (_inverse == null)
 			{

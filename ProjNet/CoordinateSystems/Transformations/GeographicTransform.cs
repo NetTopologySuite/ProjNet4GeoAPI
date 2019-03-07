@@ -107,7 +107,20 @@ namespace ProjNet.CoordinateSystems.Transformations
 			throw new NotImplementedException();
 		}
 
-		/// <summary>
+        protected internal override void Transform(ref Span<double> points, ref Span<double> altitudes)
+        {
+            int size = points.Length / 2;
+            for (int i = 0, j = 0; i < size; i++, j += 2)
+            {
+                points[j] /= SourceGCS.AngularUnit.RadiansPerUnit;
+                points[j] -= SourceGCS.PrimeMeridian.Longitude / SourceGCS.PrimeMeridian.AngularUnit.RadiansPerUnit;
+                points[j] += TargetGCS.PrimeMeridian.Longitude / TargetGCS.PrimeMeridian.AngularUnit.RadiansPerUnit;
+                points[j] *= SourceGCS.AngularUnit.RadiansPerUnit;
+            }
+        }
+
+        /*
+        /// <summary>
 		/// Transforms a coordinate point. The passed parameter point should not be modified.
 		/// </summary>
 		/// <param name="point"></param>
@@ -156,7 +169,7 @@ namespace ProjNet.CoordinateSystems.Transformations
 	        }
 	        return trans;
 	    }
-
+        */
 	    /// <summary>
 		/// Reverses the transformation
 		/// </summary>

@@ -103,20 +103,39 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// </summary>
         /// <param name="point"></param>
         /// <returns></returns>
-        public override double[] Transform(double[] point)
+        protected internal override void Transform(ref Span<double> points, ref Span<double> altitudes)
         {
-            double[] transformed = new double[point.Length];
-            
+            int size = points.Length / 2;
             if (!_isInverted)
-                transformed[0] = point[0] + _source.Longitude - _target.Longitude;
+            {
+                for (int i = 0, j = 0; i < size; i++, j+=2)
+                    points[j] = points[j] + _source.Longitude - _target.Longitude;
+            }
             else
-                transformed[0] = point[0] + _target.Longitude - _source.Longitude;
-            transformed[1] = point[1];
-            if (point.Length > 2)
-                transformed[2] = point[2];
-            return transformed;
+            {
+                for (int i = 0, j = 0; i < size; i++, j += 2)
+                    points[j] = points[j] + _target.Longitude - _source.Longitude;
+            }
         }
 
+        ///// <summary>
+        ///// Transforms a coordinate point. The passed parameter point should not be modified.
+        ///// </summary>
+        ///// <param name="point"></param>
+        ///// <returns></returns>
+        //public override double[] Transform(double[] point)
+        //{
+        //    double[] transformed = new double[point.Length];
+
+        //    if (!_isInverted)
+        //        transformed[0] = point[0] + _source.Longitude - _target.Longitude;
+        //    else
+        //        transformed[0] = point[0] + _target.Longitude - _source.Longitude;
+        //    transformed[1] = point[1];
+        //    if (point.Length > 2)
+        //        transformed[2] = point[2];
+        //    return transformed;
+        //}
         /// <summary>
         /// Reverses the transformation
         /// </summary>

@@ -25,7 +25,7 @@ using System.Text;
 namespace ProjNet.CoordinateSystems.Transformations
 {
     /// <summary>
-    /// Represents affine math transform which ttransform input coordinates to target using affine transformation matrix. Dimensionality might change.
+    /// Represents affine math transform which transforms input coordinates to target using affine transformation matrix. Dimensionality might change.
     /// </summary>
     ///<remarks>If the transform's input dimension is M, and output dimension is N, then the matrix will have size [N+1][M+1].
     ///The +1 in the matrix dimensions allows the matrix to do a shift, as well as a rotation.
@@ -400,6 +400,35 @@ namespace ProjNet.CoordinateSystems.Transformations
             return _inverse;
         }
 
+        protected internal override void Transform(ref Span<double> points, ref Span<double> altitudes)
+        {
+            if (DimTarget > 3 || DimSource > 3)
+                throw new NotSupportedException();
+
+            int size = points.Length / 2;
+            for (int i = 0, j = 0, k = 1; i < size; i++, j += 2, k += 2)
+            {
+                var point = new [] { points[j], points[k], (altitudes != null ? altitudes[i] : 0d)};
+                var transformed = new double[3];
+                //count each target dimension using the apropriate row
+                for (int row = 0; row < dimTarget; row++)
+                {
+                    //start with the last value which is in fact multiplied by 1
+                    double dimVal = transformMatrix[row, dimSource];
+                    for (int col = 0; col < dimSource; col++)
+                    {
+                        dimVal += transformMatrix[row, col] * point[col];
+                    }
+                    transformed[row] = dimVal;
+                }
+
+                points[j] = transformed[0];
+                points[k] = transformed[1];
+                if (altitudes != null)
+                    altitudes[i] = transformed[3];
+            }
+        }
+
         /// <summary>
         /// Transforms a coordinate point. The passed parameter point should not be modified.
         /// </summary>
@@ -407,7 +436,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <returns></returns>
         public override double[] Transform (double[] point)
         {
-            //check source dimensionality - alow coordinate clipping, if source dimensionality is greater then expected source dimensionality of affine transformation
+            //check source dimensionality - allow coordinate clipping, if source dimensionality is greater then expected source dimensionality of affine transformation
             if (point.Length >= dimSource)
             {
                 //use transformation matrix to create output points that has dimTarget dimensionality
@@ -436,7 +465,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// </summary>
         public override void Invert ()
         {
-            throw new NotImplementedException ("The method or operation is not implemented.");
+            throw new NotSupportedException ("The method or operation is not supported.");
         }
 
 
