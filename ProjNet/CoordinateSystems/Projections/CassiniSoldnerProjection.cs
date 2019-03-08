@@ -67,30 +67,28 @@ namespace ProjNet.CoordinateSystems.Projections
         //               : new[] {_semiMajor*x, _semiMajor*y, lonlat[2]};
         //}
 
-        protected override void RadiansToMeters(ref Span<double> lonlat, ref Span<double> altitudes)
+        protected override (double x, double y, double z) RadiansToMeters(double lon, double lat, double z)
         {
-            int size = lonlat.Length / 2;
-            for (int i = 0, j = 0, k = 1; i < size; i++, j += 2, k+=2)
-            {
-                double lambda = lonlat[j] - central_meridian;
-                double phi = lonlat[k];
+            double lambda = lon - central_meridian;
+            double phi = lat;
 
-                double sinPhi, cosPhi; // sin and cos value
-                sincos(phi, out sinPhi, out cosPhi);
+            double sinPhi, cosPhi; // sin and cos value
+            sincos(phi, out sinPhi, out cosPhi);
 
-                double y = mlfn(phi, sinPhi, cosPhi);
-                double n = 1.0d / Math.Sqrt(1 - _es * sinPhi * sinPhi);
-                double tn = Math.Tan(phi);
-                double t = tn * tn;
-                double a1 = lambda * cosPhi;
-                double a2 = a1 * a1;
-                double c = _cFactor * Math.Pow(cosPhi, 2.0d);
+            double y = mlfn(phi, sinPhi, cosPhi);
+            double n = 1.0d / Math.Sqrt(1 - _es * sinPhi * sinPhi);
+            double tn = Math.Tan(phi);
+            double t = tn * tn;
+            double a1 = lambda * cosPhi;
+            double a2 = a1 * a1;
+            double c = _cFactor * Math.Pow(cosPhi, 2.0d);
 
-                double x = n * a1 * (1.0d - a2 * t * (One6th - (8.0d - t + 8.0d * c) * a2 * One120th));
-                y -= _m0 - n * tn * a2 * (0.5d + (5.0d - t + 6.0d * c) * a2 * One24th);
-                lonlat[j] = x * _semiMajor;
-                lonlat[k] = y * _semiMajor;
-            }
+            double x = n * a1 * (1.0d - a2 * t * (One6th - (8.0d - t + 8.0d * c) * a2 * One120th));
+            y -= _m0 - n * tn * a2 * (0.5d + (5.0d - t + 6.0d * c) * a2 * One24th);
+            return (
+                x: x * _semiMajor,
+                y: y * _semiMajor,
+                z);
         }
         //protected override double[] MetersToRadians(double[] p)
         //{
@@ -116,28 +114,26 @@ namespace ProjNet.CoordinateSystems.Projections
         //               ? new[] {lambda, phi}
         //               : new[] {lambda, phi, p[2]};
         //}
-        protected override void MetersToRadians(ref Span<double> p, ref Span<double> altitudes)
+        protected override (double lon, double lat, double z) MetersToRadians(double x, double y, double z)
         {
-            int size = p.Length / 2;
-            for (int i = 0, j = 0, k = 1; i < size; i++, j+=2, k+=2)
-            {
-                double x = p[j] * _reciprocalSemiMajor;
-                double y = p[k] * _reciprocalSemiMajor;
-                double phi1 = Phi1(_m0 + y);
+            x *= _reciprocalSemiMajor;
+            y *= _reciprocalSemiMajor;
+            double phi1 = Phi1(_m0 + y);
 
-                double tn = Math.Tan(phi1);
-                double t = tn * tn;
-                double n = Math.Sin(phi1);
-                double r = 1.0d / (1.0d - _es * n * n);
-                n = Math.Sqrt(r);
-                r *= (1.0d - _es) * n;
-                double dd = x / n;
-                double d2 = dd * dd;
+            double tn = Math.Tan(phi1);
+            double t = tn * tn;
+            double n = Math.Sin(phi1);
+            double r = 1.0d / (1.0d - _es * n * n);
+            n = Math.Sqrt(r);
+            r *= (1.0d - _es) * n;
+            double dd = x / n;
+            double d2 = dd * dd;
 
-                p[k] = phi1 - (n * tn / r) * d2 * (.5 - (1.0 + 3.0 * t) * d2 * One24th);
-                double lambda = dd * (1.0 + t * d2 * (-One3rd + (1.0 + 3.0 * t) * d2 * One15th)) / Math.Cos(phi1);
-                p[j] = adjust_lon(lambda + central_meridian);
-            }
+            y = phi1 - (n * tn / r) * d2 * (.5 - (1.0 + 3.0 * t) * d2 * One24th);
+            double lambda = dd * (1.0 + t * d2 * (-One3rd + (1.0 + 3.0 * t) * d2 * One15th)) / Math.Cos(phi1);
+            x = adjust_lon(lambda + central_meridian);
+
+            return (x, y, z);
         }
 
         private double Phi1(double arg)

@@ -202,40 +202,38 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         /// <param name="lonlat">The point in decimal degrees.</param>
         /// <returns>Point in projected meters</returns>
-        protected override void RadiansToMeters(ref Span<double> lonlat, ref Span<double> altitudes)
+        protected override (double x, double y, double z) RadiansToMeters(double lon, double lat, double z)
         {
-            int size = lonlat.Length / 2;
-            for (int i = 0, j = 0, k = 1; i < size; i++, j += 2, k += 2)
+            double dLongitude = lon;
+            double dLatitude = lat;
+
+            double con; /* temporary angle variable             */
+            double rh1; /* height above ellipsoid               */
+            double sinphi; /* sin value                            */
+            double theta; /* angle                                */
+            double ts; /* small value t                        */
+
+
+            con = Math.Abs(Math.Abs(dLatitude) - HALF_PI);
+            if (con > EPSLN)
             {
-                double dLongitude = lonlat[j];
-                double dLatitude = lonlat[k];
-
-                double con; /* temporary angle variable             */
-                double rh1; /* height above ellipsoid               */
-                double sinphi; /* sin value                            */
-                double theta; /* angle                                */
-                double ts; /* small value t                        */
-
-
-                con = Math.Abs(Math.Abs(dLatitude) - HALF_PI);
-                if (con > EPSLN)
-                {
-                    sinphi = Math.Sin(dLatitude);
-                    ts = tsfnz(_e, dLatitude, sinphi);
-                    rh1 = _semiMajor * f0 * Math.Pow(ts, ns);
-                }
-                else
-                {
-                    con = dLatitude * ns;
-                    if (con <= 0)
-                        throw new ArgumentException();
-                    rh1 = 0;
-                }
-
-                theta = ns * adjust_lon(dLongitude - central_meridian);
-                lonlat[j] = rh1 * Math.Sin(theta);
-                lonlat[k] = rh - rh1 * Math.Cos(theta);
+                sinphi = Math.Sin(dLatitude);
+                ts = tsfnz(_e, dLatitude, sinphi);
+                rh1 = _semiMajor * f0 * Math.Pow(ts, ns);
             }
+            else
+            {
+                con = dLatitude * ns;
+                if (con <= 0)
+                    throw new ArgumentException();
+                rh1 = 0;
+            }
+
+            theta = ns * adjust_lon(dLongitude - central_meridian);
+            return (
+                x: rh1 * Math.Sin(theta),
+                y: rh - rh1 * Math.Cos(theta),
+                z);
         }
 
         ///// <summary>
@@ -291,48 +289,42 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         /// <param name="p">Point in meters</param>
         /// <returns>Transformed point in decimal degrees</returns>
-        protected override void MetersToRadians(ref Span<double> p, ref Span<double> altitudes)
+        protected override (double lon, double lat, double z) MetersToRadians(double x, double y, double z)
         {
-            int size = p.Length / 2;
-            for (int i = 0, j = 0, k = 1; i < size; i++, j += 2, k += 2)
+            double rh1; /* height above ellipsoid	*/
+            double con; /* sign variable		*/
+            double ts; /* small t			*/
+            double theta; /* angle			*/
+            //long flag; /* error flag			*/
+
+            double dX = x;
+            double dY = rh - y;
+            if (ns > 0)
             {
-                //double dLongitude = Double.NaN;
-                //double dLatitude = Double.NaN;
-
-                double rh1; /* height above ellipsoid	*/
-                double con; /* sign variable		*/
-                double ts; /* small t			*/
-                double theta; /* angle			*/
-                //long flag; /* error flag			*/
-
-                double dX = p[j];
-                double dY = rh - p[k];
-                if (ns > 0)
-                {
-                    rh1 = Math.Sqrt(dX * dX + dY * dY);
-                    con = 1.0;
-                }
-                else
-                {
-                    rh1 = -Math.Sqrt(dX * dX + dY * dY);
-                    con = -1.0;
-                }
-
-                theta = 0.0;
-                if (rh1 != 0)
-                    theta = Math.Atan2((con * dX), (con * dY));
-                if ((rh1 != 0) || (ns > 0.0))
-                {
-                    con = 1.0 / ns;
-                    ts = Math.Pow((rh1 / (_semiMajor * f0)), con);
-                    p[k] = phi2z(_e, ts, out long flag);
-                    if (flag != 0)
-                        throw new ArgumentException();
-                }
-                else p[k] = -HALF_PI;
-
-                p[j] = adjust_lon(theta / ns + central_meridian);
+                rh1 = Math.Sqrt(dX * dX + dY * dY);
+                con = 1.0;
             }
+            else
+            {
+                rh1 = -Math.Sqrt(dX * dX + dY * dY);
+                con = -1.0;
+            }
+
+            theta = 0.0;
+            if (rh1 != 0)
+                theta = Math.Atan2((con * dX), (con * dY));
+            if ((rh1 != 0) || (ns > 0.0))
+            {
+                con = 1.0 / ns;
+                ts = Math.Pow((rh1 / (_semiMajor * f0)), con);
+                y = phi2z(_e, ts, out long flag);
+                if (flag != 0)
+                    throw new ArgumentException();
+            }
+            else y = -HALF_PI;
+
+            x = adjust_lon(theta / ns + central_meridian);
+            return (x, y, z);
         }
 
         /// <summary>

@@ -73,22 +73,31 @@ namespace ProjNet.CoordinateSystems.Transformations
             get { return _coordinateTransformationList[_coordinateTransformationList.Count-1].TargetCS.Dimension; }
         }
 
-        /// <summary>
-        /// Transforms a point
-        /// </summary>
-        /// <param name="point"></param>
-        /// <returns></returns>
-        public override double[] Transform(double[] point)
-		{
-            foreach (ICoordinateTransformation ct in _coordinateTransformationList)
-				point = ct.MathTransform.Transform(point);            
-			return point;			
-		}
-
-        protected internal override void Transform(ref Span<double> points, ref Span<double> altitudes)
+        public override (double x, double y, double z) Transform(double x, double y, double z)
         {
+            double[] xyzArr = null;
             foreach (ICoordinateTransformation ct in _coordinateTransformationList)
-                ((MathTransform)ct.MathTransform).Transform(ref points, ref altitudes);
+            {
+                if (ct.MathTransform is MathTransform ours)
+                {
+                    (x, y, z) = ours.Transform(x, y, z);
+                }
+                else
+                {
+                    if (xyzArr == null)
+                    {
+                        xyzArr = new double[3];
+                    }
+
+                    (xyzArr[0], xyzArr[1], xyzArr[2]) = (x, y, z);
+                    var transformed = ct.MathTransform.Transform(xyzArr);
+                    x = transformed?.Length > 0 ? transformed[0] : 0;
+                    y = transformed?.Length > 1 ? transformed[1] : 0;
+                    z = transformed?.Length > 2 ? transformed[2] : 0;
+                }
+            }
+
+            return (x, y, z);
         }
 
   //      /// <summary>

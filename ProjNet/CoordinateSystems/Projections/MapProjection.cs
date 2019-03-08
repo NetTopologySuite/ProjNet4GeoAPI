@@ -40,6 +40,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using GeoAPI.CoordinateSystems;
+using GeoAPI.Geometries;
 using ProjNet.CoordinateSystems.Transformations;
 
 namespace ProjNet.CoordinateSystems.Projections
@@ -56,6 +57,7 @@ namespace ProjNet.CoordinateSystems.Projections
         protected readonly double _semiMajor;
         protected readonly double _semiMinor;
         protected readonly double _metersPerUnit;
+        protected readonly double _reciprocalMetersPerUnit;
 
         protected readonly double scale_factor; /* scale factor				*/
         protected double central_meridian; /* Center longitude (projection center) */
@@ -110,6 +112,7 @@ namespace ProjNet.CoordinateSystems.Projections
             lat_origin = Degrees2Radians(_Parameters.GetParameterValue("latitude_of_origin", "latitude_of_center"));
 
             _metersPerUnit = _Parameters.GetParameterValue("unit");
+            _reciprocalMetersPerUnit = 1 / _metersPerUnit;
 
             false_easting = _Parameters.GetOptionalParameterValue("false_easting", 0)*_metersPerUnit;
             false_northing = _Parameters.GetOptionalParameterValue("false_northing", 0)*_metersPerUnit;
@@ -273,205 +276,263 @@ namespace ProjNet.CoordinateSystems.Projections
             get { return 2; }
         }
 
-        /// <summary>
-        /// Function to transform from meters to degrees
-        /// </summary>
-        /// <param name="p">The ordinates of the point</param>
-        /// <returns>The transformed ordinates</returns>
-        protected void SourceToDegrees(ref Span<double> points, ref Span<double> altitudes)
+        #region Transform overrides
+
+        public sealed override (double x, double y, double z) Transform(double x, double y, double z)
         {
-            if (points == null)
-                return;
-
-            if (points.Length % 2 != 0)
-                throw new ArgumentNullException(nameof(points), "Coordinate array is not integral");
-
-            int size = points.Length / 2;
-            if (DimSource == 3 && altitudes == null)
-                altitudes = new double[size];
-
-            if (altitudes != null)
+            if (_isInverse)
             {
-                if (altitudes.Length != size)
-                    throw new ArgumentException(nameof(altitudes), "Altitudes array does not match points array");
-                for (int i = 0; i < size; i++)
-                    altitudes[i] *= _metersPerUnit;
+                return SourceToDegrees(x, y, z);
             }
-
-            SourceToMeters(ref points);
-            MetersToRadians(ref points, ref altitudes);
-            RadiansToDegrees(ref points);
-
-            if (DimTarget > 2)
-                RadiansToDegrees(ref altitudes);
             else
-                altitudes = null;
+            {
+                return DegreesToTarget(x, y, z);
+            }
+        }
 
+        protected sealed override void TransformCore(ReadOnlySpan<double> xs, ReadOnlySpan<double> ys, ReadOnlySpan<double> zs, Span<double> outXs, Span<double> outYs, Span<double> outZs)
+        {
+            if (_isInverse)
+            {
+                SourceToDegrees(xs, ys, zs, outXs, outYs, outZs);
+            }
+            else
+            {
+                DegreesToTarget(xs, ys, zs, outXs, outYs, outZs);
+            }
+        }
 
-            /*
-            var tmp = p.Length == 2
-                ? new[] { p[0] * _metersPerUnit - false_easting, p[1] * _metersPerUnit - false_northing }
-                : new[]
+        protected sealed override void TransformCore(ReadOnlySpan<XY> xys, ReadOnlySpan<double> zs, Span<XY> outXys, Span<double> outZs)
+        {
+            if (_isInverse)
+            {
+                SourceToDegrees(xys, zs, outXys, outZs);
+            }
+            else
+            {
+                DegreesToTarget(xys, zs, outXys, outZs);
+            }
+        }
+
+        protected sealed override void TransformCore(ReadOnlySpan<XYZ> xyzs, Span<XYZ> outXyzs)
+        {
+            if (_isInverse)
+            {
+                SourceToDegrees(xyzs, outXyzs);
+            }
+            else
+            {
+                DegreesToTarget(xyzs, outXyzs);
+            }
+        }
+
+        #endregion
+
+        #region Forward methods
+
+        protected abstract (double x, double y, double z) RadiansToMeters(double lon, double lat, double z);
+
+        protected virtual (double x, double y, double z) DegreesToTarget(double x, double y, double z)
+        {
+            x = Degrees2Radians(x);
+            y = Degrees2Radians(y);
+            (x, y, z) = RadiansToMeters(x, y, z);
+            (x, y) = MetersToTarget(x, y);
+            return (x, y, z);
+        }
+
+        protected virtual void DegreesToTarget(ReadOnlySpan<double> xs, ReadOnlySpan<double> ys, ReadOnlySpan<double> zs, Span<double> outXs, Span<double> outYs, Span<double> outZs)
+        {
+            DegreesToRadians(xs, outXs);
+            DegreesToRadians(ys, outYs);
+
+            bool readZ = DimSource > 2;
+            bool writeZ = DimTarget > 2;
+            for (int i = 0; i < outXs.Length; i++)
+            {
+                double z = readZ ? zs[i] : 0;
+                (outXs[i], outYs[i], z) = RadiansToMeters(outXs[i], outYs[i], z);
+                if (writeZ)
                 {
-                    p[0]*_metersPerUnit - false_easting, p[1]*_metersPerUnit - false_northing,
-                    p[2]*_metersPerUnit
-                };
-
-            var res = MetersToRadians(tmp);
-
-            res[0] = Radians2Degrees(res[0]);
-            res[1] = Radians2Degrees(res[1]);
-            if (DimTarget == 3) res[2] = Radians2Degrees(res[2]);
-
-            return res;
-            */
-        }
-
-        /// <summary>
-        /// Function to transform from degrees to meters
-        /// </summary>
-        /// <param name="points">The ordinates of the point</param>
-        /// <returns>The transformed ordinates</returns>
-        protected void DegreesToTarget(ref Span<double> points, ref Span<double> altitudes)
-        {
-            if (points == null)
-                return;
-
-            if (points.Length % 2 != 0)
-                throw new ArgumentNullException(nameof(points), "Coordinate array is not integral");
-
-            int size = points.Length / 2;
-            if (DimSource == 3 && altitudes == null)
-                altitudes = new double[size];
-
-            if (altitudes != null)
-            {
-                if (altitudes.Length != size)
-                    throw new ArgumentException(nameof(altitudes), "Altitudes array does not match points array");
-                DegreesToRadians(ref altitudes);
+                    outZs[i] = z;
+                }
             }
 
-            DegreesToRadians(ref points);
-            RadiansToMeters(ref points, ref altitudes);
-            MetersToTarget(ref points);
-
-            if (DimTarget == 2) altitudes = null;
-
-            /*
-            // Convert to radians
-            var tmp = lonlat.Length == 2
-                ? new[] { Degrees2Radians(lonlat[0]), Degrees2Radians(lonlat[1]) }
-                : new[] { Degrees2Radians(lonlat[0]), Degrees2Radians(lonlat[1]), Degrees2Radians(lonlat[2]) };
-
-            // Convert to meters
-            var res = RadiansToMeters(tmp);
-
-            // Add false easting and northing, convert to unit
-            res[0] = (res[0] + false_easting) / _metersPerUnit;
-            res[1] = (res[1] + false_northing) / _metersPerUnit;
-            if (res.Length == 3) res[2] = res[2] / _metersPerUnit;
-
-            return res;
-            */
+            MetersToTarget(outXs, outYs, outXs, outYs);
         }
 
-        private void MetersToTarget(ref Span<double> xy)
+        protected virtual void DegreesToTarget(ReadOnlySpan<XY> xys, ReadOnlySpan<double> zs, Span<XY> outXys, Span<double> outZs)
         {
-            for (int i = 0, j = 1; i < xy.Length; i += 2, j+=2)
+            DegreesToRadians(xys, outXys);
+
+            bool readZ = DimSource > 2;
+            bool writeZ = DimTarget > 2;
+            for (int i = 0; i < outXys.Length; i++)
             {
-                xy[i] = (xy[i] + false_easting) / _metersPerUnit;
-                xy[j] = (xy[j] + false_northing) / _metersPerUnit;
+                double z = readZ ? zs[i] : 0;
+                (outXys[i].X, outXys[i].Y, z) = RadiansToMeters(outXys[i].X, outXys[i].Y, z);
+                if (writeZ)
+                {
+                    outZs[i] = z;
+                }
+            }
+
+            MetersToTarget(outXys, outXys);
+        }
+
+        protected virtual void DegreesToTarget(ReadOnlySpan<XYZ> xyzs, Span<XYZ> outXyzs)
+        {
+            DegreesToRadians(xyzs, outXyzs);
+
+            for (int i = 0; i < outXyzs.Length; i++)
+            {
+                (outXyzs[i].X, outXyzs[i].Y, outXyzs[i].Z) = RadiansToMeters(outXyzs[i].X, outXyzs[i].Y, outXyzs[i].Z);
+            }
+
+            MetersToTarget(outXyzs, outXyzs);
+        }
+
+        protected (double x, double y) MetersToTarget(double x, double y)
+        {
+            return (x: (x + false_easting) * _reciprocalMetersPerUnit,
+                    y: (y + false_northing) * _reciprocalMetersPerUnit);
+        }
+
+        protected void MetersToTarget(ReadOnlySpan<double> xs, ReadOnlySpan<double> ys, Span<double> outXs, Span<double> outYs)
+        {
+            for (int i = 0; i < xs.Length; i++)
+            {
+                outXs[i] = (xs[i] + false_easting) * _reciprocalMetersPerUnit;
+            }
+
+            for (int i = 0; i < ys.Length; i++)
+            {
+                outYs[i] = (ys[i] + false_northing) * _reciprocalMetersPerUnit;
             }
         }
 
-        private void SourceToMeters(ref Span<double> xy)
+        protected void MetersToTarget(ReadOnlySpan<XY> xys, Span<XY> outXys)
         {
-            for (int i = 0, j = 1; i < xy.Length; i += 2, j += 2)
+            for (int i = 0; i < xys.Length; i++)
             {
-                xy[i] = _metersPerUnit * xy[i] - false_easting;
-                xy[j] = _metersPerUnit * xy[j] - false_northing;
+                outXys[i].X = (xys[i].X + false_easting) * _reciprocalMetersPerUnit;
+                outXys[i].Y = (xys[i].Y + false_northing) * _reciprocalMetersPerUnit;
             }
         }
-        /// <summary>
-        /// Function to transform from meters to degrees
-        /// </summary>
-        /// <param name="p">The ordinates of the point</param>
-        /// <returns>The transformed ordinates</returns>
-        [Obsolete]
-        public double[] MetersToDegrees(double[] p)
+
+        protected void MetersToTarget(ReadOnlySpan<XYZ> xyzs, Span<XYZ> outXyzs)
         {
-            var tmp = p.Length == 2
-                          ? new[] {p[0]*_metersPerUnit - false_easting, p[1]*_metersPerUnit - false_northing}
-                          : new[]
-                              {
-                                  p[0]*_metersPerUnit - false_easting, p[1]*_metersPerUnit - false_northing,
-                                  p[2]*_metersPerUnit
-                              };
-
-            var res = MetersToRadians(tmp);
-
-            res[0] = Radians2Degrees(res[0]);
-            res[1] = Radians2Degrees(res[1]);
-            if (DimTarget == 3) res[2] = Radians2Degrees(res[2]);
-
-            return res;
+            for (int i = 0; i < xyzs.Length; i++)
+            {
+                outXyzs[i].X = (xyzs[i].X + false_easting) * _reciprocalMetersPerUnit;
+                outXyzs[i].Y = (xyzs[i].Y + false_northing) * _reciprocalMetersPerUnit;
+            }
         }
 
-        /// <summary>
-        /// Function to transform from degrees to meters
-        /// </summary>
-        /// <param name="lonlat">The ordinates of the point</param>
-        /// <returns>The transformed ordinates</returns>
-        [Obsolete]
-        public double[] DegreesToMeters(double[] lonlat)
+        #endregion
+
+        #region Reverse methods
+
+        protected abstract (double lon, double lat, double z) MetersToRadians(double x, double y, double z);
+
+        protected virtual (double x, double y, double z) SourceToDegrees(double x, double y, double z)
         {
-            // Convert to radians
-            var tmp = lonlat.Length == 2
-                          ? new[] {Degrees2Radians(lonlat[0]), Degrees2Radians(lonlat[1])}
-                          : new[] {Degrees2Radians(lonlat[0]), Degrees2Radians(lonlat[1]), Degrees2Radians(lonlat[2])};
-
-            // Convert to meters
-            var res = RadiansToMeters(tmp);
-
-            // Add false easting and northing, convert to unit
-            res[0] = (res[0] + false_easting)/_metersPerUnit;
-            res[1] = (res[1] + false_northing)/_metersPerUnit;
-            if (res.Length == 3) res[2] = res[2]/_metersPerUnit;
-
-            return res;
+            (x, y) = SourceToMeters(x, y);
+            (x, y, z) = MetersToRadians(x, y, z);
+            x = Radians2Degrees(x);
+            y = Radians2Degrees(y);
+            return (x, y, z);
         }
 
-        protected abstract void RadiansToMeters(ref Span<double> points, ref Span<double> altitudes);
-
-        protected abstract void MetersToRadians(ref Span<double> points, ref Span<double> altitudes);
-
-        //protected abstract double[] RadiansToMeters(double[] lonlat);
-        [Obsolete]
-        protected virtual double[] RadiansToMeters(double[] lonlat)
+        protected virtual void SourceToDegrees(ReadOnlySpan<double> xs, ReadOnlySpan<double> ys, ReadOnlySpan<double> zs, Span<double> outXs, Span<double> outYs, Span<double> outZs)
         {
-            var lonlats = new Span<double>(new []{lonlat[0], lonlat[1]});
-            var alt = new Span<double>(new[] { DimSource == 3 ? lonlat[2] : 0d});
+            SourceToMeters(xs, ys, outXs, outYs);
 
-            RadiansToMeters(ref lonlats, ref alt);
-            if (DimTarget == 2)
-                return lonlats.ToArray();
+            bool readZ = DimSource > 2;
+            bool writeZ = DimTarget > 2;
+            for (int i = 0; i < outXs.Length; i++)
+            {
+                double z = readZ ? zs[i] : 0;
+                (outXs[i], outYs[i], z) = MetersToRadians(outXs[i], outYs[i], z);
+                if (writeZ)
+                {
+                    outZs[i] = z;
+                }
+            }
 
-            return new[] {lonlats[0], lonlats[1], alt[0]};
+            RadiansToDegrees(outXs, outXs);
+            RadiansToDegrees(outYs, outYs);
         }
 
-        //protected abstract double[] MetersToRadians(double[] p);
-        [Obsolete]
-        protected virtual double[] MetersToRadians(double[] p)
+        protected virtual void SourceToDegrees(ReadOnlySpan<XY> xys, ReadOnlySpan<double> zs, Span<XY> outXys, Span<double> outZs)
         {
-            var xy = new Span<double>(new[] { p[0], p[1]});
-            var z = new Span<double>(new[] { DimSource == 3 ? p[2] : 0d});
+            SourceToMeters(xys, outXys);
 
-            MetersToRadians(ref xy, ref z);
+            bool readZ = DimSource > 2;
+            bool writeZ = DimTarget > 2;
+            for (int i = 0; i < outXys.Length; i++)
+            {
+                double z = readZ ? zs[i] : 0;
+                (outXys[i].X, outXys[i].Y, z) = MetersToRadians(outXys[i].X, outXys[i].Y, z);
+                if (writeZ)
+                {
+                    outZs[i] = z;
+                }
+            }
 
-            if (DimTarget == 2)
-                return xy.ToArray();
-            return new[] {xy[0], xy[1], z[0]};
+            RadiansToDegrees(outXys, outXys);
         }
+
+        protected virtual void SourceToDegrees(ReadOnlySpan<XYZ> xyzs, Span<XYZ> outXyzs)
+        {
+            SourceToMeters(xyzs, outXyzs);
+
+            for (int i = 0; i < outXyzs.Length; i++)
+            {
+                (outXyzs[i].X, outXyzs[i].Y, outXyzs[i].Z) = MetersToRadians(outXyzs[i].X, outXyzs[i].Y, outXyzs[i].Z);
+            }
+
+            RadiansToDegrees(outXyzs, outXyzs);
+        }
+
+        protected void SourceToMeters(ReadOnlySpan<double> xs, ReadOnlySpan<double> ys, Span<double> outXs, Span<double> outYs)
+        {
+            for (int i = 0; i < xs.Length; i++)
+            {
+                outXs[i] = xs[i] * _metersPerUnit - false_easting;
+            }
+
+            for (int i = 0; i < ys.Length; i++)
+            {
+                outYs[i] = ys[i] * _metersPerUnit - false_northing;
+            }
+        }
+
+        protected (double x, double y) SourceToMeters(double x, double y)
+        {
+            return (x: x * _metersPerUnit - false_easting,
+                    y: y * _metersPerUnit - false_northing);
+        }
+
+        protected void SourceToMeters(ReadOnlySpan<XY> xys, Span<XY> outXys)
+        {
+            for (int i = 0; i < xys.Length; i++)
+            {
+                outXys[i].X = xys[i].X * _metersPerUnit - false_easting;
+                outXys[i].Y = xys[i].Y * _metersPerUnit - false_northing;
+            }
+        }
+
+        protected void SourceToMeters(ReadOnlySpan<XYZ> xyzs, Span<XYZ> outXyzs)
+        {
+            for (int i = 0; i < xyzs.Length; i++)
+            {
+                outXyzs[i].X = xyzs[i].X * _metersPerUnit - false_easting;
+                outXyzs[i].Y = xyzs[i].Y * _metersPerUnit - false_northing;
+            }
+        }
+
+        #endregion
 
         /// <summary>
         /// Reverses the transformation
@@ -496,20 +557,6 @@ namespace ProjNet.CoordinateSystems.Projections
         protected internal bool IsInverse
         {
             get { return _isInverse; }
-        }
-
-        /// <summary>
-        /// Transforms the specified cp.
-        /// </summary>
-        /// <param name="points">The coordinates</param>
-        /// <param name="altitudes">The altitudes</param>
-        protected internal override void Transform(ref Span<double> points, ref Span<double> altitudes)
-        {
-            //var projectedPoint = new double[] { 0, 0, 0, };
-            if (!_isInverse)
-                DegreesToTarget(ref points, ref altitudes);
-            else
-                SourceToDegrees(ref points, ref altitudes);
         }
 
         /// <summary>

@@ -17,26 +17,40 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Runtime.InteropServices;
 using GeoAPI.CoordinateSystems.Transformations;
 using GeoAPI.Geometries;
 
 namespace ProjNet.CoordinateSystems.Transformations
 {
-	/// <summary>
-	/// Abstract class for creating multi-dimensional coordinate points transformations.
-	/// </summary>
-	/// <remarks>
-	/// If a client application wishes to query the source and target coordinate 
-	/// systems of a transformation, then it should keep hold of the 
-	/// <see cref="ICoordinateTransformation"/> interface, and use the contained 
-	/// math transform object whenever it wishes to perform a transform.
+    public struct XY
+    {
+        public double X;
+
+        public double Y;
+    }
+
+    public struct XYZ
+    {
+        public double X;
+
+        public double Y;
+
+        public double Z;
+    }
+
+    /// <summary>
+    /// Abstract class for creating multi-dimensional coordinate points transformations.
+    /// </summary>
+    /// <remarks>
+    /// If a client application wishes to query the source and target coordinate 
+    /// systems of a transformation, then it should keep hold of the 
+    /// <see cref="ICoordinateTransformation"/> interface, and use the contained 
+    /// math transform object whenever it wishes to perform a transform.
     /// </remarks>
     [Serializable] 
     public abstract class MathTransform : IMathTransform
 	{
-        private ISequenceToSpanConverter _sequenceToSpanConverter;
-
         #region IMathTransform Members
 
         /// <summary>
@@ -138,29 +152,98 @@ namespace ProjNet.CoordinateSystems.Transformations
 		/// <returns></returns>
 		public abstract IMathTransform Inverse();
 
-        protected internal abstract void Transform(ref Span<double> points, ref Span<double> altitudes);
+        public abstract (double x, double y, double z) Transform(double x, double y, double z);
+
+        public void Transform(ReadOnlySpan<double> xs, ReadOnlySpan<double> ys, ReadOnlySpan<double> zs, Span<double> outXs, Span<double> outYs, Span<double> outZs)
+        {
+            if (xs.Length != ys.Length ||
+                xs.Length != outXs.Length ||
+                xs.Length != outYs.Length ||
+                (DimSource > 2 && xs.Length != zs.Length) ||
+                (DimTarget > 2 && xs.Length != outZs.Length))
+            {
+                throw new ArgumentException("Observed spans must be the same length.");
+            }
+
+            TransformCore(xs, ys, zs, outXs, outYs, outZs);
+        }
+
+        protected virtual void TransformCore(ReadOnlySpan<double> xs, ReadOnlySpan<double> ys, ReadOnlySpan<double> zs, Span<double> outXs, Span<double> outYs, Span<double> outZs)
+        {
+            bool readZ = DimSource > 2;
+            bool writeZ = DimTarget > 2;
+            for (int i = 0; i < xs.Length; i++)
+            {
+                double z = readZ ? zs[i] : 0;
+                (outXs[i], outYs[i], z) = Transform(xs[i], ys[i], z);
+                if (writeZ)
+                {
+                    outZs[i] = z;
+                }
+            }
+        }
+
+        public void Transform(ReadOnlySpan<XY> xys, ReadOnlySpan<double> zs, Span<XY> outXys, Span<double> outZs)
+        {
+            if (xys.Length != outXys.Length ||
+                (DimSource > 2 && xys.Length != zs.Length) ||
+                (DimTarget > 2 && xys.Length != outZs.Length))
+            {
+                throw new ArgumentException("Observed spans must be the same length.");
+            }
+
+            TransformCore(xys, zs, outXys, outZs);
+        }
+
+        protected virtual void TransformCore(ReadOnlySpan<XY> xys, ReadOnlySpan<double> zs, Span<XY> outXys, Span<double> outZs)
+        {
+            bool readZ = DimSource > 2;
+            bool writeZ = DimTarget > 2;
+            for (int i = 0; i < xys.Length; i++)
+            {
+                double z = readZ ? zs[i] : 0;
+                (outXys[i].X, outXys[i].Y, z) = this.Transform(xys[i].X, xys[i].Y, z);
+                if (writeZ)
+                {
+                    outZs[i] = z;
+                }
+            }
+        }
+
+        public void Transform(ReadOnlySpan<XYZ> xyzs, Span<XYZ> outXyzs)
+        {
+            if (xyzs.Length != outXyzs.Length)
+            {
+                throw new ArgumentException("Observed spans must be the same length.");
+            }
+
+            TransformCore(xyzs, outXyzs);
+        }
+
+        protected virtual void TransformCore(ReadOnlySpan<XYZ> xyzs, Span<XYZ> outXyzs)
+        {
+            for (int i = 0; i < xyzs.Length; i++)
+            {
+                (outXyzs[i].X, outXyzs[i].Y, outXyzs[i].Z) = this.Transform(xyzs[i].X, xyzs[i].Y, xyzs[i].Z);
+            }
+        }
 
         /// <summary>
         /// Transforms a coordinate point. The passed parameter point should not be modified.
         /// </summary>
         /// <param name="point"></param>
         /// <returns></returns>
-        public virtual double[] Transform(double[] point)
+        double[] IMathTransform.Transform(double[] point)
         {
-            var points = new Span<double>(new []{point[0], point[1]});
-            Span<double> altitudes = null;
-            if (DimSource == 3 || point.Length > 2)
-            {
-                altitudes = new Span<double>(new double[1]);
-                if (point.Length > 2) altitudes[0] = point[2];
-            }
+            double x = point[0];
+            double y = point[1];
+            double z = point.Length < 3 ? 0 : point[2];
 
-            Transform(ref points, ref altitudes);
+            (x, y, z) = Transform(x, y, z);
 
-            if (DimTarget == 2)
-                return points.ToArray();
-
-            return new[] {points[0], points[1], altitudes[0]};
+            return DimTarget == 2
+                ? new[] { x, y }
+                : new[] { x, y, z };
         }
 
 		/// <summary>
@@ -180,127 +263,165 @@ namespace ProjNet.CoordinateSystems.Transformations
 		/// </remarks>
 		/// <param name="points"></param>
 		/// <returns></returns>
-		public virtual IList<double[]> TransformList(IList<double[]> points)
+		IList<double[]> IMathTransform.TransformList(IList<double[]> points)
 		{
             var result = new List<double[]>(points.Count);
+            foreach (double[] point in points)
+            {
+                double x = point[0];
+                double y = point[1];
+                double z = point.Length < 3 ? 0 : point[2];
+                (x, y, z) = Transform(x, y, z);
 
-            foreach (var c in points)
-                result.Add(Transform(c));
-            
+                result.Add(DimTarget == 2
+                    ? new[] { x, y }
+                    : new[] { x, y, z });
+            }
+
             return result;
         }
 
-	    public virtual IList<Coordinate> TransformList(IList<Coordinate> points)
+	    IList<Coordinate> IMathTransform.TransformList(IList<Coordinate> points)
 	    {
             var result = new List<Coordinate>(points.Count);
 
-            foreach (var c in points)
-                result.Add(Transform(c));
+            foreach (var point in points)
+            {
+                double x = point.X;
+                double y = point.Y;
+                double z = point.Z;
+                (x, y, z) = Transform(x, y, z);
+                result.Add(DimTarget == 2
+                    ? new Coordinate(x, y)
+                    : new CoordinateZ(x, y, z));
+            }
+
             return result;
         }
 
-        public Coordinate Transform(Coordinate coordinate)
+        Coordinate IMathTransform.Transform(Coordinate coordinate)
         {
-            var ordinates = DimSource == 2
-                                     ? new[] {coordinate.X, coordinate.Y}
-                                     : new[] {coordinate.X, coordinate.Y, coordinate.Z};
-
-                var ret = Transform(ordinates);
-
-            return (DimTarget == 2)
-                ? new Coordinate(ret[0], ret[1])
-                : new CoordinateZ(ret[0], ret[1], ret[2]);
+            double x = coordinate.X;
+            double y = coordinate.Y;
+            double z = coordinate.Z;
+            (x, y, z) = Transform(x, y, z);
+            return DimTarget == 2
+                ? new Coordinate(x, y)
+                : new CoordinateZ(x, y, z);
         }
 
-        public virtual ICoordinateSequence Transform(ICoordinateSequence coordinateSequence)
-        {
-            return Transform(coordinateSequence, true);
-        }
+        ICoordinateSequence IMathTransform.Transform(ICoordinateSequence coordinateSequence) => TransformCopy(coordinateSequence);
 
-        public virtual ICoordinateSequence Transform(ICoordinateSequence coordinateSequence, bool inPlace)
+        public virtual void TransformInPlace(ICoordinateSequence coordinateSequence)
         {
             // shortcout, no matter what
             if (coordinateSequence == null || coordinateSequence.Count == 0)
-                return coordinateSequence;
-
-            ICoordinateSequence res = null;
-            if (!coordinateSequence.HasZ && DimTarget > 2)
             {
-                res = ProjNet.CoordinateSystemServices.CoordinateSequenceFactory.Create(coordinateSequence.Count, Ordinates.XYZ);
-                for (int i = 0; i < coordinateSequence.Count; i++){
-                    res.SetOrdinate(i, Ordinate.X, coordinateSequence.GetX(i));
-                    res.SetOrdinate(i, Ordinate.Y, coordinateSequence.GetY(i));
-                }
+                return;
             }
 
-            // make a copy if required
-            if (res == null)
-                res = inPlace ? coordinateSequence : coordinateSequence.Copy();
-
-            SequenceToSpanConverter.Convert(ref res, out var points, out var altitudes);
-            Transform(ref points, ref altitudes);
-            SequenceToSpanConverter.Convert(ref points, ref altitudes, ref res);
-
-            return res;
-	    }
-
-        public ISequenceToSpanConverter SequenceToSpanConverter
-        {
-            get => _sequenceToSpanConverter ?? new DefaultSequenceSpanConverter();
-            set => _sequenceToSpanConverter = value;
+            var converter = this.SequenceCoordinateConverter;
+            converter.ExtractRawCoordinatesFromSequence(coordinateSequence, out var xys, out var zs);
+            Transform(xys, zs, xys, zs);
+            converter.CopyRawCoordinatesToSequence(xys, zs, coordinateSequence, 0);
         }
 
-        public interface ISequenceToSpanConverter
+        public virtual ICoordinateSequence TransformCopy(ICoordinateSequence coordinateSequence)
         {
-            void Convert(ref ICoordinateSequence sequence, out Span<double> pointData, out Span<double> altitudes);
-            void Convert(ref Span<double> pointData, ref Span<double> altitudes, ref ICoordinateSequence sequence);
-        }
-
-        private class DefaultSequenceSpanConverter : ISequenceToSpanConverter
-        {
-
-            public void Convert(ref ICoordinateSequence sequence, out Span<double> pointData, out Span<double> altitudes)
+            // shortcout, no matter what
+            if (coordinateSequence == null || coordinateSequence.Count == 0)
             {
-                altitudes = null;
-                if (sequence == null || sequence.Count == 0)
+                return coordinateSequence;
+            }
+
+            coordinateSequence = coordinateSequence.Copy();
+            TransformInPlace(coordinateSequence);
+            return coordinateSequence;
+        }
+
+        public SequenceCoordinateConverterBase SequenceCoordinateConverter { get; set; } = new SequenceCoordinateConverterBase();
+
+        public class SequenceCoordinateConverterBase
+        {
+            public virtual void ExtractRawCoordinatesFromSequence(ICoordinateSequence sequence, out Span<XY> xys, out Span<double> zs)
+            {
+                if (sequence == null || sequence.Count < 1)
                 {
-                    pointData = new Span<double>(new double[0]);
-                    if (sequence != null && sequence.HasZ)
-                        altitudes = new Span<double>(new double[0]);
+                    xys = default;
+                    zs = default;
                     return;
                 }
 
-                pointData = new Span<double>(new double[2* sequence.Count]);
-                for (int i = 0, j = 0; i < sequence.Count; i++) {
-                    pointData[j++] = sequence.GetX(i);
-                    pointData[j++] = sequence.GetY(i);
+                var xysArray = new XY[sequence.Count];
+                var zsArray = new double[xysArray.Length];
+
+                xys = xysArray;
+                zs = zsArray;
+
+                bool hasZ = sequence.HasZ;
+                for (int i = 0; i < xys.Length; i++)
+                {
+                    xys[i].X = sequence.GetX(i);
+                    xys[i].Y = sequence.GetY(i);
+                    zs[i] = sequence.GetZ(i);
                 }
-
-                if (!sequence.HasZ) return;
-
-                altitudes = new Span<double>(new double[sequence.Count]);
-                for (int i = 0, j = 0; i < sequence.Count; i++)
-                    altitudes[i] = sequence.GetZ(i);
             }
 
-            public void Convert(ref Span<double> pointData, ref Span<double> altitudes, ref ICoordinateSequence sequence)
+            public void CopyRawCoordinatesToSequence(Span<XY> xys, Span<double> zs, ICoordinateSequence sequence, int offset)
             {
-                for (int i = 0, j = 0; i < sequence.Count; i++)
+                if (offset < 0)
                 {
-                    sequence.SetOrdinate(i, Ordinate.X, pointData[j++]);
-                    sequence.SetOrdinate(i, Ordinate.Y, pointData[j++]);
+                    throw new ArgumentOutOfRangeException(nameof(offset), offset, "must be non-negative");
                 }
 
-                if (altitudes != null && altitudes.Length == sequence.Count)
+                if (sequence == null || sequence.Count < 1)
                 {
-                    for (int i = 0; i < sequence.Count; i++)
-                        sequence.SetOrdinate(i, Ordinate.Z, altitudes[i]);
+                    return;
+                }
 
+                if (sequence.Count - offset < xys.Length)
+                {
+                    throw new ArgumentException("Not enough room in the sequence for the coordinates.");
+                }
+
+                if (xys.Length == 0)
+                {
+                    return;
+                }
+
+                if (zs.Length == 0)
+                {
+                    if (sequence.HasZ)
+                    {
+                        throw new ArgumentException("can only be empty when sequence does not have Z", nameof(zs));
+                    }
+                }
+                else if (xys.Length != zs.Length)
+                {
+                    throw new ArgumentException("spans must be the same length.");
+                }
+
+                CopyRawCoordinatesToSequenceCore(xys, zs, sequence, offset);
+            }
+
+            protected virtual void CopyRawCoordinatesToSequenceCore(Span<XY> xys, Span<double> zs, ICoordinateSequence sequence, int offset)
+            {
+                bool hasZ = sequence.HasZ;
+                for (int i = 0; i < xys.Length; i++)
+                {
+                    sequence.SetOrdinate(i + offset, Ordinate.X, xys[i].X);
+                    sequence.SetOrdinate(i + offset, Ordinate.Y, xys[i].Y);
+
+                    // documentation says that the sequence MUST NOT throw if it doesn't support Z
+                    // and that it SHOULD ignore the call... PackedCoordinateSequence instances will
+                    // overwrite other values, so we do need to skip.
+                    if (hasZ)
+                    {
+                        sequence.SetOrdinate(i + offset, Ordinate.Z, zs[i]);
+                    }
                 }
             }
         }
-
-
 
         /// <summary>
         /// Reverses the transformation
@@ -316,16 +437,32 @@ namespace ProjNet.CoordinateSystems.Transformations
 
 		}
 
-        protected static void DegreesToRadians(ref Span<double> degrees)
+        protected void DegreesToRadians(ReadOnlySpan<XY> inputs, Span<XY> outputs)
         {
-            for (int i = 0; i < degrees.Length; i++)
-                degrees[i] *= D2R;
+            DegreesToRadians(MemoryMarshal.Cast<XY, double>(inputs), MemoryMarshal.Cast<XY, double>(outputs));
         }
 
-		/// <summary>
-		/// R2D
-		/// </summary>
-		protected const double R2D = 180 / Math.PI;
+        protected static void DegreesToRadians(ReadOnlySpan<double> degrees, Span<double> radians)
+        {
+            for (int i = 0; i < degrees.Length; i++)
+            {
+                radians[i] = degrees[i] * D2R;
+            }
+        }
+
+        protected void DegreesToRadians(ReadOnlySpan<XYZ> inputs, Span<XYZ> outputs)
+        {
+            for (int i = 0; i < inputs.Length; i++)
+            {
+                outputs[i].X = D2R * inputs[i].X;
+                outputs[i].Y = D2R * inputs[i].Y;
+            }
+        }
+
+        /// <summary>
+        /// R2D
+        /// </summary>
+        protected const double R2D = 180 / Math.PI;
 
 		/// <summary>
 		/// D2R
@@ -342,12 +479,28 @@ namespace ProjNet.CoordinateSystems.Transformations
 			return (R2D * rad);
 		}
 
-        protected static void RadiansToDegrees(ref Span<double> rad)
+        protected void RadiansToDegrees(ReadOnlySpan<XY> inputs, Span<XY> outputs)
         {
-            if (rad == null) return;
-            for (int i = 0; i < rad.Length; i++)
-                rad[i] *= R2D;
+            RadiansToDegrees(MemoryMarshal.Cast<XY, double>(inputs), MemoryMarshal.Cast<XY, double>(outputs));
         }
+
+        protected static void RadiansToDegrees(ReadOnlySpan<double> radians, Span<double> degrees)
+        {
+            for (int i = 0; i < radians.Length; i++)
+            {
+                degrees[i] = radians[i] * R2D;
+            }
+        }
+
+        protected void RadiansToDegrees(ReadOnlySpan<XYZ> inputs, Span<XYZ> outputs)
+        {
+            for (int i = 0; i < inputs.Length; i++)
+            {
+                outputs[i].X = D2R * inputs[i].X;
+                outputs[i].Y = D2R * inputs[i].Y;
+            }
+        }
+
         #endregion
     }
 }

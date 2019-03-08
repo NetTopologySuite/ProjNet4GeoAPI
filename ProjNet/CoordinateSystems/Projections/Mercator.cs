@@ -195,92 +195,85 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </remarks>
         /// <param name="lonlat">The point in decimal degrees.</param>
         /// <returns>Point in projected meters</returns>
-        protected override void RadiansToMeters(ref Span<double> lonlat, ref Span<double> altitudes)
+        protected override (double x, double y, double z) RadiansToMeters(double lon, double lat, double z)
         {
-            int size = lonlat.Length / 2;
-            for (int i = 0, j = 0, k = 1; i < size; i++, j += 2, k += 2)
+            if (double.IsNaN(lon) || double.IsNaN(lat))
             {
-                if (double.IsNaN(lonlat[j]) || double.IsNaN(lonlat[k]))
-                {
-                    lonlat[j] = double.NaN;
-                    lonlat[k] = double.NaN;
-                    continue;
-                }
-
-                double dLongitude = lonlat[j];
-                double dLatitude = lonlat[k];
-
-                /* Forward equations */
-                if (Math.Abs(Math.Abs(dLatitude) - HALF_PI) <= EPSLN)
-                    throw new ArgumentException("Transformation cannot be computed at the poles.");
-
-                double esinphi = _e * Math.Sin(dLatitude);
-                lonlat[j]  = _semiMajor * _k0 * (dLongitude - central_meridian);
-                lonlat[k] = _semiMajor * _k0 * Math.Log(Math.Tan(PI * 0.25 + dLatitude * 0.5) *
-                                                    Math.Pow((1 - esinphi) / (1 + esinphi), _e * 0.5));
+                return (double.NaN, double.NaN, z);
             }
+
+            double dLongitude = lon;
+            double dLatitude = lat;
+
+            /* Forward equations */
+            if (Math.Abs(Math.Abs(dLatitude) - HALF_PI) <= EPSLN)
+                throw new ArgumentException("Transformation cannot be computed at the poles.");
+
+            double esinphi = _e * Math.Sin(dLatitude);
+            lon = _semiMajor * _k0 * (dLongitude - central_meridian);
+            lat = _semiMajor * _k0 * Math.Log(Math.Tan(PI * 0.25 + dLatitude * 0.5) *
+                                              Math.Pow((1 - esinphi) / (1 + esinphi), _e * 0.5));
+            return (lon, lat, z);
         }
 
-     //   /// <summary>
-     //   /// Converts coordinates in projected meters to decimal degrees.
-     //   /// </summary>
-     //   /// <param name="p">Point in meters</param>
-     //   /// <returns>Transformed point in decimal degrees</returns>
-     //   protected override double[] MetersToRadians(double[] p)
-     //   {
-     //       double dLongitude = Double.NaN;
-     //       double dLatitude = Double.NaN;
+        //   /// <summary>
+        //   /// Converts coordinates in projected meters to decimal degrees.
+        //   /// </summary>
+        //   /// <param name="p">Point in meters</param>
+        //   /// <returns>Transformed point in decimal degrees</returns>
+        //   protected override double[] MetersToRadians(double[] p)
+        //   {
+        //       double dLongitude = Double.NaN;
+        //       double dLatitude = Double.NaN;
 
-     //       /* Inverse equations
-			  //-----------------*/
-     //       double dX = p[0]; //* _metersPerUnit - this._falseEasting;
-     //       double dY = p[1];// * _metersPerUnit - this._falseNorthing;
-     //       double ts = Math.Exp(-dY / (this._semiMajor * _k0)); //t
+        //       /* Inverse equations
+        //-----------------*/
+        //       double dX = p[0]; //* _metersPerUnit - this._falseEasting;
+        //       double dY = p[1];// * _metersPerUnit - this._falseNorthing;
+        //       double ts = Math.Exp(-dY / (this._semiMajor * _k0)); //t
 
-     //       double chi = HALF_PI - 2 * Math.Atan(ts);
-     //       double e4 = Math.Pow(_e, 4);
-     //       double e6 = Math.Pow(_e, 6);
-     //       double e8 = Math.Pow(_e, 8);
+        //       double chi = HALF_PI - 2 * Math.Atan(ts);
+        //       double e4 = Math.Pow(_e, 4);
+        //       double e6 = Math.Pow(_e, 6);
+        //       double e8 = Math.Pow(_e, 8);
 
-     //       dLatitude = chi + (_es * 0.5 + 5 * e4 / 24 + e6 / 12 + 13 * e8 / 360) * Math.Sin(2 * chi)
-     //                       + (7 * e4 / 48 + 29 * e6 / 240 + 811 * e8 / 11520) * Math.Sin(4 * chi) +
-     //                       +(7 * e6 / 120 + 81 * e8 / 1120) * Math.Sin(6 * chi) +
-     //                       +(4279 * e8 / 161280) * Math.Sin(8 * chi);
+        //       dLatitude = chi + (_es * 0.5 + 5 * e4 / 24 + e6 / 12 + 13 * e8 / 360) * Math.Sin(2 * chi)
+        //                       + (7 * e4 / 48 + 29 * e6 / 240 + 811 * e8 / 11520) * Math.Sin(4 * chi) +
+        //                       +(7 * e6 / 120 + 81 * e8 / 1120) * Math.Sin(6 * chi) +
+        //                       +(4279 * e8 / 161280) * Math.Sin(8 * chi);
 
-     //       dLongitude = dX / (_semiMajor * _k0) + central_meridian;
-     //       return p.Length < 3
-     //           ? new[] { dLongitude, dLatitude }
-     //           : new[] { dLongitude, dLatitude, p[2] };
-     //   }
+        //       dLongitude = dX / (_semiMajor * _k0) + central_meridian;
+        //       return p.Length < 3
+        //           ? new[] { dLongitude, dLatitude }
+        //           : new[] { dLongitude, dLatitude, p[2] };
+        //   }
 
         /// <summary>
         /// Converts coordinates in projected meters to decimal degrees.
         /// </summary>
         /// <param name="p">Point in meters</param>
         /// <returns>Transformed point in decimal degrees</returns>
-        protected override void MetersToRadians(ref Span<double> p, ref Span<double> altitudes)
+        protected override (double lon, double lat, double z) MetersToRadians(double x, double y, double z)
 		{
-            int size = p.Length / 2;
-            for (int i = 0, j = 0, k = 1; i < size; i++, j += 2, k += 2)
-            {
-                /* Inverse equations
-                  -----------------*/
-                double dX = p[j]; //* _metersPerUnit - this._falseEasting;
-                double dY = p[k]; // * _metersPerUnit - this._falseNorthing;
-                double ts = Math.Exp(-dY / (this._semiMajor * _k0)); //t
+            /* Inverse equations
+              -----------------*/
+            double dX = x; //* _metersPerUnit - this._falseEasting;
+            double dY = y; // * _metersPerUnit - this._falseNorthing;
+            double ts = Math.Exp(-dY / (this._semiMajor * _k0)); //t
 
-                double chi = HALF_PI - 2 * Math.Atan(ts);
-                double e4 = Math.Pow(_e, 4);
-                double e6 = Math.Pow(_e, 6);
-                double e8 = Math.Pow(_e, 8);
+            double chi = HALF_PI - 2 * Math.Atan(ts);
+            double e4 = Math.Pow(_e, 4);
+            double e6 = Math.Pow(_e, 6);
+            double e8 = Math.Pow(_e, 8);
 
-                p[k] = chi + (_es * 0.5 + 5 * e4 / 24 + e6 / 12 + 13 * e8 / 360) * Math.Sin(2 * chi)
-                           + (7 * e4 / 48 + 29 * e6 / 240 + 811 * e8 / 11520) * Math.Sin(4 * chi) +
-                           +(7 * e6 / 120 + 81 * e8 / 1120) * Math.Sin(6 * chi) +
-                           +(4279 * e8 / 161280) * Math.Sin(8 * chi);
+            y = chi + (_es * 0.5 + 5 * e4 / 24 + e6 / 12 + 13 * e8 / 360) * Math.Sin(2 * chi)
+                    + (7 * e4 / 48 + 29 * e6 / 240 + 811 * e8 / 11520) * Math.Sin(4 * chi) +
+                    +(7 * e6 / 120 + 81 * e8 / 1120) * Math.Sin(6 * chi) +
+                    +(4279 * e8 / 161280) * Math.Sin(8 * chi);
 
-                p[j] = dX / (_semiMajor * _k0) + central_meridian;
-            }
+            x = dX / (_semiMajor * _k0) + central_meridian;
+
+            return (x, y, z);
 		}
 		
 		/// <summary>
