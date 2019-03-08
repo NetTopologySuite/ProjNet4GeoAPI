@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -5,10 +6,13 @@ using System.Text;
 using GeoAPI.CoordinateSystems;
 using ProjNet.CoordinateSystems;
 
-namespace ProjNet.UnitTests
+namespace ProjNET.Tests
 {
     internal class SRIDReader
     {
+        private static readonly Lazy<ICoordinateSystemFactory> CoordinateSystemFactory = 
+            new Lazy<ICoordinateSystemFactory>(() => new CoordinateSystemFactory());
+
         public struct WktString {
             /// <summary>
             /// Well-known ID
@@ -26,7 +30,7 @@ namespace ProjNet.UnitTests
         /// <returns>Enumerator</returns>
         public static IEnumerable<WktString> GetSrids(string filename = null)
         {
-            Stream stream = string.IsNullOrWhiteSpace(filename)
+            var stream = string.IsNullOrWhiteSpace(filename)
                 ? Assembly.GetExecutingAssembly().GetManifestResourceStream("ProjNET.Tests.SRID.csv")
                 : File.OpenRead(filename);
 
@@ -49,17 +53,19 @@ namespace ProjNet.UnitTests
                 }
             }
         }
+
         /// <summary>
         /// Gets a coordinate system from the SRID.csv file
         /// </summary>
         /// <param name="id">EPSG ID</param>
-        /// <returns>Coordinate system, or null if SRID was not found.</returns>
-        public static ICoordinateSystem GetCSbyID(int id)
+        /// <param name="file">(optional) path to CSV File with WKT definitions.</param>
+        /// <returns>Coordinate system, or <value>null</value> if no entry with <paramref name="id"/> was not found.</returns>
+        public static ICoordinateSystem GetCSbyID(int id, string file = null)
         {
-            ICoordinateSystemFactory factory = new CoordinateSystemFactory();
-            foreach (var wkt in GetSrids(null))
+            //ICoordinateSystemFactory factory = new CoordinateSystemFactory();
+            foreach (var wkt in GetSrids(file))
                 if (wkt.WktId == id)
-                    return factory.CreateFromWkt(wkt.Wkt);
+                    return CoordinateSystemFactory.Value.CreateFromWkt(wkt.Wkt);
             return null;
         }
     }

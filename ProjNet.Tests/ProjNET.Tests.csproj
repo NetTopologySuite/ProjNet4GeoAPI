@@ -19,6 +19,8 @@
     <PackageReference Include="GeoAPI.CoordinateSystems" Version="$(GeoAPIPackageReferenceVersion)" />
 
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
+
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="NUnit" Version="3.10.1" />
     <PackageReference Include="Npgsql" Version="4.0.5" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />

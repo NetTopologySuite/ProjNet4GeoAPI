@@ -1,21 +1,23 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
 using GeoAPI.CoordinateSystems;
-using GeoAPI.CoordinateSystems.Transformations;
 using NUnit.Framework;
-using NUnit.Framework.Constraints;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
+using ProjNET.Tests;
 
 namespace ProjNet.UnitTests.Converters.WKT
 {
     [TestFixture]
     public class WKTCoordSysParserTests
     {
+        private readonly ICoordinateSystemFactory _coordinateSystemFactory = new CoordinateSystemFactory();
+
         /// <summary>
-        /// Parses a coordinate system WKTs
+        /// Parses a coordinate system WKT
         /// </summary>
         /// <remarks><code>
         /// PROJCS["NAD83(HARN) / Texas Central (ftUS)",
@@ -60,63 +62,54 @@ namespace ProjNet.UnitTests.Converters.WKT
         /// ]
         /// </code></remarks>
         [Test]
-        public void ParseCoordSys()
+        public void TestProjectedCoordinateSystem_EPSG_2918()
         {
-            string wkt = "PROJCS[\"NAD83(HARN) / Texas Central (ftUS)\", GEOGCS[\"NAD83(HARN)\", DATUM[\"NAD83_High_Accuracy_Regional_Network\", SPHEROID[\"GRS 1980\", 6378137, 298.257222101, AUTHORITY[\"EPSG\", \"7019\"]], TOWGS84[725, 685, 536, 0, 0, 0, 0], AUTHORITY[\"EPSG\", \"6152\"]], PRIMEM[\"Greenwich\", 0, AUTHORITY[\"EPSG\", \"8901\"]], UNIT[\"degree\", 0.0174532925199433, AUTHORITY[\"EPSG\", \"9122\"]], AUTHORITY[\"EPSG\", \"4152\"]], UNIT[\"US survey foot\", 0.304800609601219, AUTHORITY[\"EPSG\", \"9003\"]], PROJECTION[\"Lambert_Conformal_Conic_2SP\"], PARAMETER[\"standard_parallel_1\", 31.883333333333], PARAMETER[\"standard_parallel_2\", 30.1166666667], PARAMETER[\"latitude_of_origin\", 29.6666666667], PARAMETER[\"central_meridian\", -100.333333333333], PARAMETER[\"false_easting\", 2296583.333], PARAMETER[\"false_northing\", 9842500], AUTHORITY[\"EPSG\", \"2918\"]]";
-            CoordinateSystemFactory fac = new CoordinateSystemFactory();
-            ProjectedCoordinateSystem pcs = fac.CreateFromWkt(wkt) as ProjectedCoordinateSystem;
-            Assert.IsNotNull(pcs, "Could not parse WKT: " + wkt);
+            const string wkt = "PROJCS[\"NAD83(HARN) / Texas Central (ftUS)\", "+
+                                        "GEOGCS[\"NAD83(HARN)\", " +
+                                                 "DATUM[\"NAD83_High_Accuracy_Regional_Network\", "+
+                                                         "SPHEROID[\"GRS 1980\", 6378137, 298.257222101, AUTHORITY[\"EPSG\", \"7019\"]], "+
+                                                         "TOWGS84[725, 685, 536, 0, 0, 0, 0], " +
+                                                         "AUTHORITY[\"EPSG\", \"6152\"]], "+
+                                                 "PRIMEM[\"Greenwich\", 0, AUTHORITY[\"EPSG\", \"8901\"]], "+
+                                                 "UNIT[\"degree\", 0.0174532925199433, AUTHORITY[\"EPSG\", \"9122\"]], "+
+                                                 "AUTHORITY[\"EPSG\", \"4152\"]], "+
+                                        "UNIT[\"US survey foot\", 0.304800609601219, AUTHORITY[\"EPSG\", \"9003\"]], "+
+                                        "PROJECTION[\"Lambert_Conformal_Conic_2SP\"], " +
+                                        "PARAMETER[\"standard_parallel_1\", 31.883333333333], " +
+                                        "PARAMETER[\"standard_parallel_2\", 30.1166666667], " +
+                                        "PARAMETER[\"latitude_of_origin\", 29.6666666667], " +
+                                        "PARAMETER[\"central_meridian\", -100.333333333333], " +
+                                        "PARAMETER[\"false_easting\", 2296583.333], " +
+                                        "PARAMETER[\"false_northing\", 9842500], " +
+                                        "AUTHORITY[\"EPSG\", \"2918\"]]";
 
-            Assert.AreEqual("NAD83(HARN) / Texas Central (ftUS)", pcs.Name);
-            Assert.AreEqual("NAD83(HARN)", pcs.GeographicCoordinateSystem.Name);
-            Assert.AreEqual("NAD83_High_Accuracy_Regional_Network", pcs.GeographicCoordinateSystem.HorizontalDatum.Name);
-            Assert.AreEqual("GRS 1980", pcs.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid.Name);
-            Assert.AreEqual(6378137, pcs.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid.SemiMajorAxis);
-            Assert.AreEqual(298.257222101, pcs.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid.InverseFlattening);
-            Assert.AreEqual("EPSG", pcs.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid.Authority);
-            Assert.AreEqual(7019, pcs.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid.AuthorityCode);
-            Assert.AreEqual("EPSG", pcs.GeographicCoordinateSystem.HorizontalDatum.Authority);
-            Assert.AreEqual(6152, pcs.GeographicCoordinateSystem.HorizontalDatum.AuthorityCode);
+            IProjectedCoordinateSystem pcs = null;
+            Assert.That(() => pcs = _coordinateSystemFactory.CreateFromWkt(wkt) as IProjectedCoordinateSystem, Throws.Nothing);
+
+            Assert.That(pcs, Is.Not.Null, "Could not parse WKT: " + wkt);
+            CheckInfo(pcs, "NAD83(HARN) / Texas Central (ftUS)", "EPSG", 2918);
+
+            var gcs = pcs.GeographicCoordinateSystem;
+            CheckInfo(gcs, "NAD83(HARN)", "EPSG", 4152);
+            CheckDatum(gcs.HorizontalDatum, "NAD83_High_Accuracy_Regional_Network", "EPSG", 6152);
+            CheckEllipsoid(gcs.HorizontalDatum.Ellipsoid, "GRS 1980", 6378137, 298.257222101, "EPSG", 7019);
             Assert.AreEqual(new Wgs84ConversionInfo(725, 685, 536, 0, 0, 0, 0), pcs.GeographicCoordinateSystem.HorizontalDatum.Wgs84Parameters);
-            Assert.AreEqual("Greenwich", pcs.GeographicCoordinateSystem.PrimeMeridian.Name);
-            Assert.AreEqual(0, pcs.GeographicCoordinateSystem.PrimeMeridian.Longitude);
-            Assert.AreEqual("EPSG", pcs.GeographicCoordinateSystem.PrimeMeridian.Authority);
-            Assert.AreEqual(8901, pcs.GeographicCoordinateSystem.PrimeMeridian.AuthorityCode, 8901);
-            Assert.AreEqual("degree", pcs.GeographicCoordinateSystem.AngularUnit.Name);
-            Assert.AreEqual(0.0174532925199433, pcs.GeographicCoordinateSystem.AngularUnit.RadiansPerUnit);
-            Assert.AreEqual("EPSG", pcs.GeographicCoordinateSystem.AngularUnit.Authority);
-            Assert.AreEqual(9122, pcs.GeographicCoordinateSystem.AngularUnit.AuthorityCode);
-            Assert.AreEqual("EPSG", pcs.GeographicCoordinateSystem.Authority);
-            Assert.AreEqual(4152, pcs.GeographicCoordinateSystem.AuthorityCode, 4152);
-            Assert.AreEqual("Lambert_Conformal_Conic_2SP", pcs.Projection.ClassName, "Projection Classname");
+            CheckPrimem(gcs.PrimeMeridian, "Greenwich", 0, "EPSG", 8901);
+            CheckUnit(gcs.AngularUnit, "degree", 0.0174532925199433, "EPSG", 9122);
 
-            ProjectionParameter latitude_of_origin = pcs.Projection.GetParameter("latitude_of_origin");
-            Assert.IsNotNull(latitude_of_origin);
-            Assert.AreEqual(29.6666666667, latitude_of_origin.Value);
-            ProjectionParameter central_meridian = pcs.Projection.GetParameter("central_meridian");
-            Assert.IsNotNull(central_meridian);
-            Assert.AreEqual(-100.333333333333, central_meridian.Value);
-            ProjectionParameter standard_parallel_1 = pcs.Projection.GetParameter("standard_parallel_1");
-            Assert.IsNotNull(standard_parallel_1);
-            Assert.AreEqual(31.883333333333, standard_parallel_1.Value);
-            ProjectionParameter standard_parallel_2 = pcs.Projection.GetParameter("standard_parallel_2");
-            Assert.IsNotNull(standard_parallel_2);
-            Assert.AreEqual(30.1166666667, standard_parallel_2.Value);
-            ProjectionParameter false_easting = pcs.Projection.GetParameter("false_easting");
-            Assert.IsNotNull(false_easting);
-            Assert.AreEqual(2296583.333, false_easting.Value);
-            ProjectionParameter false_northing = pcs.Projection.GetParameter("false_northing");
-            Assert.IsNotNull(false_northing);
-            Assert.AreEqual(9842500, false_northing.Value);
+            CheckProjection(pcs.Projection, "Lambert_Conformal_Conic_2SP", new[]
+            {
+                Tuple.Create("standard_parallel_1", 31.883333333333),
+                Tuple.Create("standard_parallel_2", 30.1166666667),
+                Tuple.Create("latitude_of_origin", 29.6666666667), 
+                Tuple.Create("central_meridian", -100.333333333333),
+                Tuple.Create("false_easting", 2296583.333),
+                Tuple.Create("false_northing", 9842500d)
+            });
 
-            Assert.AreEqual("US survey foot", pcs.LinearUnit.Name);
-            Assert.AreEqual(0.304800609601219, pcs.LinearUnit.MetersPerUnit);
-            Assert.AreEqual("EPSG", pcs.LinearUnit.Authority);
-            Assert.AreEqual(9003, pcs.LinearUnit.AuthorityCode);
-            Assert.AreEqual("EPSG", pcs.Authority);
-            Assert.AreEqual(2918, pcs.AuthorityCode);
-            Assert.AreEqual(wkt, pcs.WKT);
+            CheckUnit(pcs.LinearUnit, "US survey foot", 0.304800609601219, "EPSG", 9003);
         }
+
         /// <summary>
         /// This test reads in a file with 2671 pre-defined coordinate systems and projections,
         /// and tries to parse them.
@@ -124,15 +117,14 @@ namespace ProjNet.UnitTests.Converters.WKT
         [Test]
         public void ParseAllWKTs()
         {
-            CoordinateSystemFactory fac = new CoordinateSystemFactory();
-            int parsecount = 0;
+            int parseCount = 0;
             foreach (SRIDReader.WktString wkt in SRIDReader.GetSrids())
             {
-                ICoordinateSystem cs = fac.CreateFromWkt(wkt.Wkt);
+                ICoordinateSystem cs = _coordinateSystemFactory.CreateFromWkt(wkt.Wkt);
                 Assert.IsNotNull(cs, "Could not parse WKT: " + wkt);
-                parsecount++;
+                parseCount++;
             }
-            Assert.AreEqual(parsecount, 2671, "Not all WKT was parsed");
+            Assert.That(parseCount, Is.GreaterThan(2671), "Not all WKT was parsed");
         }
 
         /// <summary>
@@ -140,75 +132,109 @@ namespace ProjNet.UnitTests.Converters.WKT
         /// and tries to create a transformation with them.
         /// </summary>
         [Test]
-        public void TestTransformAllWKTs()
+        public void TestCreateCoordinateTransformationForWktInCsv()
         {
             //GeographicCoordinateSystem.WGS84
-            CoordinateTransformationFactory fact = new CoordinateTransformationFactory();
             CoordinateSystemFactory fac = new CoordinateSystemFactory();
-            int parsecount = 0;
-            var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("ProjNET.Tests.SRID.csv");
-            using (var sr = new StreamReader(stream, Encoding.UTF8))
+            int parseCount = 0;
+            int failedCss = 0;
+            var failedProjections = new HashSet<string>();
+            using (var stream = Assembly.GetExecutingAssembly().GetManifestResourceStream("ProjNET.Tests.SRID.csv"))
             {
-                while (!sr.EndOfStream)
+                using (var sr = new StreamReader(stream, Encoding.UTF8))
                 {
-                    string line = sr.ReadLine();
-                    int split = line.IndexOf(';');
-                    if (split > -1)
+                    var ctFactory = new CoordinateTransformationFactory();
+                    while (!sr.EndOfStream)
                     {
-                        string srid = line.Substring(0, split);
-                        string wkt = line.Substring(split + 1);
-                        ICoordinateSystem cs = fac.CreateFromWkt(wkt);
-                        if (cs == null) continue; //We check this in another test.
-                        if (cs is IProjectedCoordinateSystem)
+                        string line = sr.ReadLine();
+                        if (string.IsNullOrWhiteSpace(line)) continue;
+
+                        int split = line.IndexOf(';');
+                        if (split > -1)
                         {
-                            switch ((cs as IProjectedCoordinateSystem).Projection.ClassName)
-                            {
-                                //Skip not supported projections
-                                case "Oblique_Stereographic":
-                                case "Transverse_Mercator_South_Orientated":
-                                //case "Hotine_Oblique_Mercator":
-                                case "Lambert_Conformal_Conic_1SP":
-                                //case "Krovak":
-                                //case "Cassini_Soldner":
-                                case "Lambert_Azimuthal_Equal_Area":
-                                case "Tunisia_Mining_Grid":
-                                case "New_Zealand_Map_Grid":
-                                case "Polyconic":
-                                case "Lambert_Conformal_Conic_2SP_Belgium":
-                                case "Polar_Stereographic":
-                                    continue;
-                                default: break;
-                            }
-                        }
-                        try
-                        {
-                            ICoordinateTransformation trans = fact.CreateFromCoordinateSystems(GeographicCoordinateSystem.WGS84, cs);
-                        }
-                        catch (Exception ex)
-                        {
+                            string wkt = line.Substring(split + 1);
+                            ICoordinateSystem cs = fac.CreateFromWkt(wkt);
+                            if (cs == null) continue; //We check this in another test.
                             if (cs is IProjectedCoordinateSystem)
-                                Assert.Fail("Could not create transformation from:\r\n" + wkt + "\r\n" + ex.Message + "\r\nClass name:" + (cs as IProjectedCoordinateSystem).Projection.ClassName);
-                            else
-                                Assert.Fail("Could not create transformation from:\r\n" + wkt + "\r\n" + ex.Message);
+                            {
+                                switch ((cs as IProjectedCoordinateSystem).Projection.ClassName)
+                                {
+                                    //Skip not supported projections
+                                    case "Oblique_Stereographic":
+                                    case "Transverse_Mercator_South_Orientated":
+                                    case "Lambert_Conformal_Conic_1SP":
+                                    case "Lambert_Azimuthal_Equal_Area":
+                                    case "Tunisia_Mining_Grid":
+                                    case "New_Zealand_Map_Grid":
+                                    case "Polyconic":
+                                    case "Lambert_Conformal_Conic_2SP_Belgium":
+                                    case "Polar_Stereographic":
+                                    case "Hotine_Oblique_Mercator_Azimuth_Center":
+                                    case "Mercator_1SP":
+                                    case "Mercator_2SP":
+                                    case "Cylindrical_Equal_Area":
+                                    case "Equirectangular":
+                                    case "Laborde_Oblique_Mercator":
+                                        continue;
+                                }
+                            }
+
+                            try
+                            {
+                                ctFactory.CreateFromCoordinateSystems(GeographicCoordinateSystem.WGS84, cs);
+                            }
+                            catch (Exception)
+                            {
+                                if (cs is IProjectedCoordinateSystem ics)
+                                {
+                                    if (!failedProjections.Contains(ics.Projection.ClassName))
+                                        failedProjections.Add(ics.Projection.ClassName);
+                                }
+                                else
+                                {
+                                    Assert.That(false);
+                                }
+
+                                failedCss += 1;
+                                //    Assert.Fail(
+                                //        $"Could not create transformation from:\r\n{wkt}\r\n{ex.Message}\r\nClass name:{ics.Projection.ClassName}");
+                                //else
+                                //    Assert.Fail($"Could not create transformation from:\r\n{wkt}\r\n{ex.Message}");
+                            }
+
+                            parseCount++;
                         }
-                        parsecount++;
                     }
                 }
             }
-            Assert.GreaterOrEqual(parsecount, 2556, "Not all WKT was processed");
+
+            Assert.GreaterOrEqual(parseCount, 2556, "Not all WKT was processed");
+            if (failedCss > 0)
+            {
+                Console.WriteLine($"Failed to create transfroms for {failedCss} coordinate systems");
+                foreach (var fp in failedProjections)
+                {
+                    Console.WriteLine($"case \"{fp}\":");
+                    
+                }
+            }
+
         }
+
+        /// <summary>
+        /// Test parsing of a <see cref="IProjectedCoordinateSystem"/> from WKT
+        /// </summary>
         [Test]
-        public void TestUnitBeforeProjection()
+        public void TestProjectedCoordinateSystem_EPSG27700_UnitBeforeProjection()
         {
-            CoordinateSystemFactory fac = new CoordinateSystemFactory();
-            string wkt = "PROJCS[\"OSGB 1936 / British National Grid\"," +
+            const string wkt = "PROJCS[\"OSGB 1936 / British National Grid\"," +
                  "GEOGCS[\"OSGB 1936\"," +
-                 "DATUM[\"OSGB_1936\"," +
-                     "SPHEROID[\"Airy 1830\",6377563.396,299.3249646,AUTHORITY[\"EPSG\",\"7001\"]]," +
-                     "AUTHORITY[\"EPSG\",\"6277\"]]," +
-                     "PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]]," +
-                     "UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]]," +
-                     "AUTHORITY[\"EPSG\",\"4277\"]]," +
+                          "DATUM[\"OSGB_1936\"," +
+                                  "SPHEROID[\"Airy 1830\",6377563.396,299.3249646,AUTHORITY[\"EPSG\",\"7001\"]]," +
+                                  "AUTHORITY[\"EPSG\",\"6277\"]]," +
+                          "PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]]," +
+                          "UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]]," +
+                          "AUTHORITY[\"EPSG\",\"4277\"]]," +
                  "UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]]," +
                  "PROJECTION[\"Transverse_Mercator\"]," +
                  "PARAMETER[\"latitude_of_origin\",49]," +
@@ -219,66 +245,97 @@ namespace ProjNet.UnitTests.Converters.WKT
                  "AUTHORITY[\"EPSG\",\"27700\"]," +
                  "AXIS[\"Easting\",EAST]," +
                  "AXIS[\"Northing\",NORTH]]";
-            ProjectedCoordinateSystem pcs = fac.CreateFromWkt(wkt) as ProjectedCoordinateSystem;
 
-            Assert.IsNotNull(pcs);
+            IProjectedCoordinateSystem pcs = null;
 
-            Assert.AreEqual("OSGB 1936 / British National Grid", pcs.Name);
-            Assert.AreEqual("OSGB 1936", pcs.GeographicCoordinateSystem.Name);
-            Assert.AreEqual("OSGB_1936", pcs.GeographicCoordinateSystem.HorizontalDatum.Name);
-            Assert.AreEqual("Airy 1830", pcs.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid.Name);
-            Assert.AreEqual(6377563.396, pcs.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid.SemiMajorAxis);
-            Assert.AreEqual(299.3249646, pcs.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid.InverseFlattening);
-            Assert.AreEqual("EPSG", pcs.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid.Authority);
-            Assert.AreEqual(7001, pcs.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid.AuthorityCode);
-            Assert.AreEqual("EPSG", pcs.GeographicCoordinateSystem.HorizontalDatum.Authority);
-            Assert.AreEqual(6277, pcs.GeographicCoordinateSystem.HorizontalDatum.AuthorityCode);
-            Assert.AreEqual("Greenwich", pcs.GeographicCoordinateSystem.PrimeMeridian.Name);
-            Assert.AreEqual(0, pcs.GeographicCoordinateSystem.PrimeMeridian.Longitude);
-            Assert.AreEqual("EPSG", pcs.GeographicCoordinateSystem.PrimeMeridian.Authority);
-            Assert.AreEqual(8901, pcs.GeographicCoordinateSystem.PrimeMeridian.AuthorityCode, 8901);
-            Assert.AreEqual("degree", pcs.GeographicCoordinateSystem.AngularUnit.Name);
-            Assert.AreEqual(0.0174532925199433, pcs.GeographicCoordinateSystem.AngularUnit.RadiansPerUnit);
-            Assert.AreEqual("EPSG", pcs.GeographicCoordinateSystem.AngularUnit.Authority);
-            Assert.AreEqual(9122, pcs.GeographicCoordinateSystem.AngularUnit.AuthorityCode);
-            Assert.AreEqual("EPSG", pcs.GeographicCoordinateSystem.Authority);
-            Assert.AreEqual(4277, pcs.GeographicCoordinateSystem.AuthorityCode, 4277);
+            Assert.That(() => pcs = _coordinateSystemFactory.CreateFromWkt(wkt) as ProjectedCoordinateSystem, Throws.Nothing);
+
+            CheckInfo(pcs, "OSGB 1936 / British National Grid", "EPSG", 27700);
+
+            var gcs = pcs.GeographicCoordinateSystem;
+            CheckInfo(gcs, "OSGB 1936", "EPSG", 4277);
+            CheckDatum(gcs.HorizontalDatum, "OSGB_1936", "EPSG", 6277);
+            CheckEllipsoid(gcs.HorizontalDatum.Ellipsoid, "Airy 1830", 6377563.396, 299.3249646, "EPSG", 7001);
+            CheckPrimem(gcs.PrimeMeridian, "Greenwich", 0, "EPSG", 8901);
+            CheckUnit(gcs.AngularUnit, "degree", 0.0174532925199433, "EPSG", 9122);
 
             Assert.AreEqual("Transverse_Mercator", pcs.Projection.ClassName, "Projection Classname");
+            CheckProjection(pcs.Projection, "Transverse_Mercator", new []
+            {
+                Tuple.Create("latitude_of_origin", 49d),
+                Tuple.Create("central_meridian",-2d),
+                Tuple.Create("scale_factor",0.9996012717),
+                Tuple.Create("false_easting",400000d),
+                Tuple.Create("false_northing",-100000d)
+            });
 
-            ProjectionParameter latitude_of_origin = pcs.Projection.GetParameter("latitude_of_origin");
-            Assert.IsNotNull(latitude_of_origin);
-            Assert.AreEqual(49, latitude_of_origin.Value);
-            ProjectionParameter central_meridian = pcs.Projection.GetParameter("central_meridian");
-            Assert.IsNotNull(central_meridian);
-            Assert.AreEqual(-2, central_meridian.Value);
-            ProjectionParameter scale_factor = pcs.Projection.GetParameter("scale_factor");
-            Assert.IsNotNull(scale_factor);
-            Assert.AreEqual(0.9996012717, scale_factor.Value);
-            ProjectionParameter false_easting = pcs.Projection.GetParameter("false_easting");
-            Assert.IsNotNull(false_easting);
-            Assert.AreEqual(400000, false_easting.Value);
-            ProjectionParameter false_northing = pcs.Projection.GetParameter("false_northing");
-            Assert.IsNotNull(false_northing);
-            Assert.AreEqual(-100000, false_northing.Value);
-
-            Assert.AreEqual("metre", pcs.LinearUnit.Name);
-            Assert.AreEqual(1, pcs.LinearUnit.MetersPerUnit);
-            Assert.AreEqual("EPSG", pcs.LinearUnit.Authority);
-            Assert.AreEqual(9001, pcs.LinearUnit.AuthorityCode);
-            Assert.AreEqual("EPSG", pcs.Authority);
-            Assert.AreEqual(27700, pcs.AuthorityCode);
+            CheckUnit(pcs.LinearUnit, "metre", 1d, "EPSG", 9001);
 
             string newWkt = pcs.WKT.Replace(", ", ",");
             Assert.AreEqual(wkt, newWkt);
 
         }
 
+        [Test]
+        public void TestParseSrOrg()
+        {
+            Assert.That(() => _coordinateSystemFactory.CreateFromWkt(
+                "PROJCS[\"WGS 84 / Pseudo-Mercator\",GEOGCS[\"Popular Visualisation CRS\"," +
+                "DATUM[\"Popular_Visualisation_Datum\",SPHEROID[\"Popular Visualisation Sphere\"," +
+                "6378137,0,AUTHORITY[\"EPSG\",\"7059\"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY[\"EPSG\"," +
+                "\"6055\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\"," +
+                "0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4055\"]]," +
+                "UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],PROJECTION[\"Mercator_1SP\"]," +
+                "PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[" +
+                "\"false_easting\",0],PARAMETER[\"false_northing\",0],AUTHORITY[\"EPSG\",\"3785\"]" +
+                ",AXIS[\"X\",EAST],AXIS[\"Y\",NORTH]]"), Throws.Nothing);
+        }
+
+        [Test]
+        public void TestProjNetIssues()
+        {
+            Assert.That(() => _coordinateSystemFactory.CreateFromWkt(
+                "PROJCS[\"International_Terrestrial_Reference_Frame_1992Lambert_Conformal_Conic_2SP\"," +
+                "GEOGCS[\"GCS_International_Terrestrial_Reference_Frame_1992\"," +
+                "DATUM[\"International_Terrestrial_Reference_Frame_1992\"," +
+                "SPHEROID[\"GRS_1980\",6378137,298.257222101]," +
+                "TOWGS84[0,0,0,0,0,0,0]]," +
+                "PRIMEM[\"Greenwich\",0]," +
+                "UNIT[\"Degree\",0.0174532925199433]]," +
+                "PROJECTION[\"Lambert_Conformal_Conic_2SP\",AUTHORITY[\"EPSG\",\"9802\"]]," +
+                "PARAMETER[\"Central_Meridian\",-102]," +
+                "PARAMETER[\"Latitude_Of_Origin\",12]," +
+                "PARAMETER[\"False_Easting\",2500000]," +
+                "PARAMETER[\"False_Northing\",0]," +
+                "PARAMETER[\"Standard_Parallel_1\",17.5]," +
+                "PARAMETER[\"Standard_Parallel_2\",29.5]," +
+                "PARAMETER[\"Scale_Factor\",1]," +
+                "UNIT[\"Meter\",1,AUTHORITY[\"EPSG\",\"9001\"]]]"), Throws.Nothing);
+
+            Assert.That(() => _coordinateSystemFactory.CreateFromWkt(
+                "PROJCS[\"Google Maps Global Mercator\"," +
+                "GEOGCS[\"WGS 84\"," +
+                "DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]]," +
+                "AUTHORITY[\"EPSG\",\"6326\"]]," +
+                "PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]]," +
+                "UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]]," +
+                "AUTHORITY[\"EPSG\",\"4326\"]]," +
+                "PROJECTION[\"Mercator_2SP\"]," +
+                "PARAMETER[\"standard_parallel_1\",0]," +
+                "PARAMETER[\"latitude_of_origin\",0]," +
+                "PARAMETER[\"central_meridian\",0]," +
+                "PARAMETER[\"false_easting\",0]," +
+                "PARAMETER[\"false_northing\",0]," +
+                "UNIT[\"Meter\",1]," +
+                "EXTENSION[\"PROJ4\",\"+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs\"]," +
+                "AUTHORITY[\"EPSG\",\"900913\"]]"), Throws.Nothing);
+        }
+
         /// <summary>
-        /// Test parsing of IFittedCoordinate system from WKT
+        /// Test parsing of a <see cref="IFittedCoordinateSystem"/> from WKT
         /// </summary>
         [Test]
-        public void ParseFittedCoordinateSystemWkt ()
+        public void TestFittedCoordinateSystemWkt ()
         {
             CoordinateSystemFactory fac = new CoordinateSystemFactory ();
             IFittedCoordinateSystem fcs = null;
@@ -325,14 +382,19 @@ namespace ProjNet.UnitTests.Converters.WKT
             Assert.AreEqual (31467, fcs.BaseCoordinateSystem.AuthorityCode);
         }
 
+        /// <summary>
+        /// Test parsing of a <see cref="IGeocentricCoordinateSystem"/> from WKT
+        /// </summary>
         [Test]
         public void TestGeocentricCoordinateSystem()
         {
             var fac = new CoordinateSystemFactory();
             IGeocentricCoordinateSystem fcs = null;
 
-            string wkt = "GEOCCS[\"TUREF\", " +
-                            "DATUM[\"Turkish_National_Reference_Frame\", SPHEROID[\"GRS 1980\", 6378137, 298.257222101, AUTHORITY[\"EPSG\", \"7019\"]], AUTHORITY[\"EPSG\", \"1057\"]], " +
+            const string wkt = "GEOCCS[\"TUREF\", " +
+                            "DATUM[\"Turkish_National_Reference_Frame\", " +
+                                    "SPHEROID[\"GRS 1980\", 6378137, 298.257222101, AUTHORITY[\"EPSG\", \"7019\"]], " +
+                                    "AUTHORITY[\"EPSG\", \"1057\"]], " +
                             "PRIMEM[\"Greenwich\", 0, AUTHORITY[\"EPSG\", \"8901\"]], " +
                             "UNIT[\"metre\", 1, AUTHORITY[\"EPSG\", \"9001\"]], " +
                             "AXIS[\"Geocentric X\", OTHER], AXIS[\"Geocentric Y\", OTHER], AXIS[\"Geocentric Z\", NORTH], " +
@@ -344,12 +406,12 @@ namespace ProjNet.UnitTests.Converters.WKT
             }
             catch (Exception ex)
             {
-                Assert.Fail("Could not create fitted coordinate system from:\r\n" + wkt + "\r\n" + ex.Message);
+                Assert.Fail("Could not create geocentric coordinate system from:\r\n" + wkt + "\r\n" + ex.Message);
             }
 
             Assert.That(fcs, Is.Not.Null);
             Assert.That(CheckInfo(fcs, "TUREF", "EPSG", 5250L));
-            Assert.That(CheckHorizontalDatum(fcs.HorizontalDatum, "Turkish_National_Reference_Frame", "EPSG", 1057L), Is.True);
+            Assert.That(CheckDatum(fcs.HorizontalDatum, "Turkish_National_Reference_Frame", "EPSG", 1057L), Is.True);
             Assert.That(CheckEllipsoid(fcs.HorizontalDatum.Ellipsoid, "GRS 1980", 6378137, 298.257222101, "EPSG", 7019), Is.True);
             Assert.That(CheckPrimem(fcs.PrimeMeridian, "Greenwich", 0, "EPSG", 8901L), Is.True);
             Assert.That(CheckUnit(fcs.PrimeMeridian.AngularUnit, "degree", null, null, null), Is.True);
@@ -358,6 +420,8 @@ namespace ProjNet.UnitTests.Converters.WKT
             Assert.That(fcs.Authority, Is.EqualTo("EPSG"));
             Assert.That(fcs.AuthorityCode, Is.EqualTo(5250L));
         }
+
+        #region Utility
 
         private bool CheckPrimem(IPrimeMeridian primeMeridian, string name, double? longitude, string authority, long? code)
         {
@@ -371,6 +435,8 @@ namespace ProjNet.UnitTests.Converters.WKT
         {
             Assert.That(unit, Is.Not.Null);
             Assert.That(CheckInfo(unit, name, authority, code));
+            Assert.That(unit, Is.InstanceOf<ILinearUnit>().Or.InstanceOf<IAngularUnit>());
+
             if (!value.HasValue) return true;
             if (unit is ILinearUnit lunit)
                 Assert.That(lunit.MetersPerUnit, Is.EqualTo(value));
@@ -389,15 +455,17 @@ namespace ProjNet.UnitTests.Converters.WKT
             return true;
         }
 
-        private static bool CheckHorizontalDatum(IHorizontalDatum datum, string name, string authority, long? code)
+        private static bool CheckDatum(IDatum datum, string name, string authority, long? code)
         {
             Assert.That(datum, Is.Not.Null);
+            Assert.That(datum, Is.InstanceOf<IHorizontalDatum>().Or.InstanceOf<IVerticalDatum>());
+
             Assert.That(CheckInfo(datum, name,authority, code), Is.True);
 
             return true;
         }
 
-        private static bool CheckInfo(IInfo info, string name, string authority, long? code)
+        private static bool CheckInfo(IInfo info, string name, string authority = null, long? code = null)
         {
             Assert.That(info, Is.Not.Null);
             if (!string.IsNullOrEmpty(name)) Assert.That(info.Name, Is.EqualTo(name));
@@ -406,5 +474,27 @@ namespace ProjNet.UnitTests.Converters.WKT
 
             return true;
         }
+
+        private static void CheckProjection(IProjection projection, string name, IList<Tuple<string, double>> pp = null, string authority = null, long? code = null)
+        {
+            Assert.That(projection, Is.Not.Null, "Projection not null");
+            Assert.That(projection.ClassName, Is.EqualTo(name), "Projection class name");
+            CheckInfo(projection, name, authority, code);
+
+            if (pp == null) return;
+
+            Assert.That(projection.NumParameters, Is.EqualTo(pp.Count), "Number of projection parameters");
+
+            for (int i = 0; i < pp.Count; i++)
+            {
+                ProjectionParameter par = null;
+                Assert.That(() => par = projection.GetParameter(pp[i].Item1), Throws.Nothing, $"Getting projection parameter '{pp[i].Item1}' throws.");
+                Assert.That(par, Is.Not.Null, $"Projection parameter '{pp[i].Item1}' is null");
+                Assert.That(par.Name, Is.EqualTo(pp[i].Item1), $"Projection parameter '{par.Name}' name is not '{pp[i].Item1}'.");
+                Assert.That(par.Value, Is.EqualTo(pp[i].Item2), $"Projection parameter value for '{par.Name}' name ({par.Value:R}) is not '{pp[i].Item2:R}'.");
+            }
+        }
+
+        #endregion
     }
 }

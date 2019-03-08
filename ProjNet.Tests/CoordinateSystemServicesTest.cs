@@ -8,6 +8,7 @@ using System.Xml.Linq;
 using NUnit.Framework;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
+using ProjNET.Tests;
 
 namespace ProjNet
 {
@@ -59,15 +60,15 @@ namespace ProjNet
         private static IEnumerable<KeyValuePair<int, string>> LoadCsv(string csvPath)
         {
 
-            Console.WriteLine("Reading '{0}'.", csvPath);
+            Console.WriteLine("Reading '{0}'.", csvPath ?? "SRID.csv from resources stream");
             var sw = new Stopwatch();
             sw.Start();
 
-            foreach (var sridWkt in UnitTests.SRIDReader.GetSrids())
+            foreach (var sridWkt in SRIDReader.GetSrids())
                 yield return new KeyValuePair<int, string>(sridWkt.WktId, sridWkt.Wkt);
 
             sw.Stop();
-            Console.WriteLine("Read '{1}' in {0:N0}ms", sw.ElapsedMilliseconds, csvPath);
+            Console.WriteLine("Read '{1}' in {0:N0}ms", sw.ElapsedMilliseconds, csvPath ?? "SRID.csv from resources stream");
         }
 
         private static IEnumerable<KeyValuePair<int, string>> LoadXml(string xmlPath)

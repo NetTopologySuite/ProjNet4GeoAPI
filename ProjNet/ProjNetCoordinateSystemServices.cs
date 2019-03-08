@@ -99,19 +99,8 @@ namespace ProjNet
 
         public CoordinateSystemServices(ICoordinateSystemFactory coordinateSystemFactory,
             ICoordinateTransformationFactory coordinateTransformationFactory)
+            :this(coordinateSystemFactory, coordinateTransformationFactory, null)
         {
-            if (coordinateSystemFactory == null)
-                throw new ArgumentNullException("coordinateSystemFactory");
-            _coordinateSystemFactory = coordinateSystemFactory;
-
-            if (coordinateTransformationFactory == null)
-                throw new ArgumentNullException("coordinateTransformationFactory");
-            _ctFactory = coordinateTransformationFactory;
-
-            _csBySrid = new Dictionary<int, ICoordinateSystem>();
-            _sridByCs = new Dictionary<IInfo, int>(new CsEqualityComparer());
-
-            FromEnumeration(new object[] { this, DefaultInitialization() });
         }
 
         //public Func<string, long, string> GetDefinition { get; set; }
@@ -141,8 +130,18 @@ namespace ProjNet
         public CoordinateSystemServices(ICoordinateSystemFactory coordinateSystemFactory,
             ICoordinateTransformationFactory coordinateTransformationFactory,
             IEnumerable<KeyValuePair<int, string>> enumeration)
-            :this(coordinateSystemFactory, coordinateTransformationFactory)
         {
+            if (coordinateSystemFactory == null)
+                throw new ArgumentNullException("coordinateSystemFactory");
+            _coordinateSystemFactory = coordinateSystemFactory;
+
+            if (coordinateTransformationFactory == null)
+                throw new ArgumentNullException("coordinateTransformationFactory");
+            _ctFactory = coordinateTransformationFactory;
+
+            _csBySrid = new Dictionary<int, ICoordinateSystem>();
+            _sridByCs = new Dictionary<IInfo, int>(new CsEqualityComparer());
+
             var enumObj = (object)enumeration ?? DefaultInitialization();
             _initialization = new ManualResetEvent(false);
 #if HAS_SYSTEM_THREADING_TASKS_TASK_RUN
@@ -266,6 +265,9 @@ namespace ProjNet
             {
                 lock (((IDictionary) _sridByCs).SyncRoot)
                 {
+                    if (_sridByCs.ContainsKey(coordinateSystem))
+                        return;
+
                     if (_csBySrid.ContainsKey(srid))
                     {
                         if (ReferenceEquals(coordinateSystem, _csBySrid[srid]))
