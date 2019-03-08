@@ -361,9 +361,9 @@ namespace ProjNet.CoordinateSystems.Transformations
                 bool hasZ = sequence.HasZ;
                 for (int i = 0; i < xys.Length; i++)
                 {
-                    xys[i].X = sequence.GetX(i);
-                    xys[i].Y = sequence.GetY(i);
-                    zs[i] = sequence.GetZ(i);
+                    xysArray[i].X = sequence.GetX(i);
+                    xysArray[i].Y = sequence.GetY(i);
+                    zsArray[i] = sequence.GetZ(i);
                 }
             }
 
