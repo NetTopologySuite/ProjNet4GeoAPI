@@ -109,7 +109,7 @@ namespace ProjNet.CoordinateSystems.Projections
             scale_factor = _Parameters.GetOptionalParameterValue("scale_factor", 1);
 
             central_meridian = Degrees2Radians(_Parameters.GetParameterValue("central_meridian", "longitude_of_center"));
-            lat_origin = Degrees2Radians(_Parameters.GetParameterValue("latitude_of_origin", "latitude_of_center"));
+            lat_origin = Degrees2Radians(_Parameters.GetOptionalParameterValue("latitude_of_origin",0d, "latitude_of_center"));
 
             _metersPerUnit = _Parameters.GetParameterValue("unit");
 

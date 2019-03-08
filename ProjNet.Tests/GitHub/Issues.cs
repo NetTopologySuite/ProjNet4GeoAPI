@@ -71,5 +71,31 @@ namespace ProjNET.Tests.GitHub
             Assert.That(pt2a, Is.EqualTo(pt2b));
 
         }
+
+        [Test]
+        public void TestIssuesWith3857To25832()
+        {
+            var epsg_3857 = (ICoordinateSystem)ProjectedCoordinateSystem.WebMercator;
+            Console.WriteLine(((IProjectedCoordinateSystem)epsg_3857).Projection.ClassName);
+            Console.WriteLine(epsg_3857.WKT);
+
+            var epsg25832 = _css.GetCoordinateSystem(25832);
+
+            var mt1 = _css.CreateTransformation(epsg25832, epsg_3857).MathTransform;
+            var pt25832 = new Coordinate(702575, 6153153);
+            var pt_3857ex = new Coordinate(1358761.89, 7456070.47);
+
+            var pt_3857 = mt1.Transform(pt25832);
+            Assert.That(pt_3857.Distance(pt_3857ex), Is.LessThan(0.015));
+
+
+            epsg_3857 = _css.GetCoordinateSystem(3857);
+            Console.WriteLine(((IProjectedCoordinateSystem)epsg_3857).Projection.ClassName);
+            Console.WriteLine(epsg_3857.WKT);
+
+            var mt2 = _css.CreateTransformation(epsg25832, epsg_3857).MathTransform;
+            pt_3857 = mt2.Transform(pt25832);
+            Assert.That(pt_3857.Distance(pt_3857ex), Is.LessThan(0.015));
+        }
     }
 }
