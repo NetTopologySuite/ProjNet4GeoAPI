@@ -57,14 +57,14 @@ namespace ProjNet
         }
 
 
-        private static IEnumerable<KeyValuePair<int, string>> LoadCsv(string csvPath)
+        internal static IEnumerable<KeyValuePair<int, string>> LoadCsv(string csvPath = null)
         {
 
             Console.WriteLine("Reading '{0}'.", csvPath ?? "SRID.csv from resources stream");
             var sw = new Stopwatch();
             sw.Start();
 
-            foreach (var sridWkt in SRIDReader.GetSrids())
+            foreach (var sridWkt in SRIDReader.GetSrids(csvPath))
                 yield return new KeyValuePair<int, string>(sridWkt.WktId, sridWkt.Wkt);
 
             sw.Stop();

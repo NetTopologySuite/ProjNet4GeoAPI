@@ -25,6 +25,7 @@ using GeoAPI.CoordinateSystems;
 using GeoAPI.CoordinateSystems.Transformations;
 using GeoAPI.Geometries;
 using ProjNet.CoordinateSystems;
+using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.Geometry.Implementation;
 
 namespace ProjNet
@@ -103,6 +104,15 @@ namespace ProjNet
         {
         }
 
+        public CoordinateSystemServices(IEnumerable<KeyValuePair<int, string>> definitions)
+            : this(new CoordinateSystemFactory(), new CoordinateTransformationFactory(), definitions)
+        {
+        }
+
+        public CoordinateSystemServices()
+            : this(new CoordinateSystemFactory(), new CoordinateTransformationFactory(), null)
+        {
+        }
         //public Func<string, long, string> GetDefinition { get; set; }
 
         /*

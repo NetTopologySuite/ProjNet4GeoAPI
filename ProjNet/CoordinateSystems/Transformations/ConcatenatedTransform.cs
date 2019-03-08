@@ -150,9 +150,15 @@ namespace ProjNet.CoordinateSystems.Transformations
 		{
 			var clonedList = new List<ICoordinateTransformation>(_coordinateTransformationList.Count);
 			foreach (ICoordinateTransformation ct in _coordinateTransformationList)
-				clonedList.Add(ct);
+				clonedList.Add(CloneCoordinateTransformation(ct));
 			return new ConcatenatedTransform(clonedList);
 		}
+
+        private static ICoordinateTransformation CloneCoordinateTransformation(ICoordinateTransformation ict)
+        {
+            var ctFactory = new CoordinateTransformationFactory();
+            return ctFactory.CreateFromCoordinateSystems(ict.SourceCS, ict.TargetCS);
+        }
 
         /// <summary>
         /// Gets a Well-Known text representation of this object.
