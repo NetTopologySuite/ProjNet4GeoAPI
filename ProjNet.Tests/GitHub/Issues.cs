@@ -7,6 +7,7 @@ using NUnit.Framework;
 using ProjNet;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
+using ProjNet.Geometry.Implementation;
 
 namespace ProjNET.Tests.GitHub
 {
@@ -96,6 +97,44 @@ namespace ProjNET.Tests.GitHub
             var mt2 = _css.CreateTransformation(epsg25832, epsg_3857).MathTransform;
             pt_3857 = mt2.Transform(pt25832);
             Assert.That(pt_3857.Distance(pt_3857ex), Is.LessThan(0.015));
+        }
+
+        [Test, Ignore("Investigate failure"), Description("Convert latitude/longitude to Canada grid NAD83 (epsg:26910)")]
+        public void TestConvertWgs84ToEPSG26910()
+        {
+            var epsg26910 = _css.GetCoordinateSystem("EPSG", 26910);
+            var epsg_4326 = _css.GetCoordinateSystem("EPSG", 4326);
+
+            var ptI = new double[] { 3523562.711189, 6246615.391161 };
+
+
+            var ct = _css.CreateTransformation(epsg26910, epsg_4326);
+            var pt1a = ct.MathTransform.Transform(ptI);
+            Assert.That(pt1a[0], Is.EqualTo(-82.0479097).Within(0.01), "Longitude");
+            Assert.That(pt1a[1], Is.EqualTo(48.4185597).Within(0.01), "Latitude");
+
+            var pt1b = ct.MathTransform.Inverse().Transform(pt1a);
+            Assert.That(pt1b[0], Is.EqualTo(3523562.711189).Within(0.01), "Easting");
+            Assert.That(pt1b[1], Is.EqualTo(6246615.391161).Within(0.01), "Northing");
+        }
+
+        [Test, Description("MathTransform.Transform modifies the original ICoordinateSequence")]
+        public void TestMathTransformOnSequence()
+        {
+            var epsg4326 = _css.GetCoordinateSystem(4326);
+            var epsg3857 = _css.GetCoordinateSystem(3857);
+
+            var ct = _css.CreateTransformation(epsg4326, epsg3857);
+            var seqIn = new CoordinateArraySequence(new [] {new Coordinate(7.47, 53.48),});
+            var seqOut = ct.MathTransform.Transform(seqIn);
+
+            Assert.That(seqOut, Is.Not.Null, "Output sequence null");
+            Assert.That(ReferenceEquals(seqIn, seqOut), Is.False, "In- and output sequence same object.");
+            Assert.That(seqOut.Count, Is.EqualTo(seqIn.Count), "In- and output sequence have same size");
+
+            for (int i = 0; i < seqIn.Count; i++)
+                Assert.That(ReferenceEquals(seqIn.GetCoordinate(i), seqOut.GetCoordinate(i)), Is.False, 
+                    "In- and output sequence contain same coordinate objects");
         }
     }
 }

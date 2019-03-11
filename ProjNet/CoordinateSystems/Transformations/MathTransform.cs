@@ -195,20 +195,15 @@ namespace ProjNet.CoordinateSystems.Transformations
 
 	    public virtual ICoordinateSequence Transform(ICoordinateSequence coordinateSequence)
 	    {
-            Coordinate clone = new CoordinateZ();
-            var res = coordinateSequence;
-            if (!coordinateSequence.HasZ && DimTarget > 2)
-                res = ProjNet.CoordinateSystemServices.CoordinateSequenceFactory.Create(coordinateSequence.Count, Ordinates.XYZ);
-
+            var res = CoordinateSystemServices.CoordinateSequenceFactory.Create(coordinateSequence.Count, DimTarget);
 
             for (int i = 0; i < coordinateSequence.Count; i++)
             {
-                clone.CoordinateValue = coordinateSequence.GetCoordinate(i);
-                clone = Transform(clone);
-                res.SetOrdinate(i, Ordinate.X, clone.X);
-                res.SetOrdinate(i, Ordinate.Y, clone.Y);
+                var transformed = Transform(coordinateSequence.GetCoordinate(i));
+                res.SetOrdinate(i, Ordinate.X, transformed.X);
+                res.SetOrdinate(i, Ordinate.Y, transformed.Y);
                 if (DimTarget > 2)
-                    res.SetOrdinate(i, Ordinate.Z, clone.Z);
+                    res.SetOrdinate(i, Ordinate.Z, transformed.Z);
             }
 	        return res;
 	    }
