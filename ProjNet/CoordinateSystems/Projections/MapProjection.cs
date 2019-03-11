@@ -831,9 +831,9 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         /// <param name="lon">The longitudinal value (in Degrees!)</param>
         /// <returns>The UTM zone number</returns>
-        protected static long CalcUtmZone(double lon)
+        public static long CalcUtmZone(double lon)
         {
-            return ((long) (((lon + 180.0)/6.0) + 1.0));
+            return (long) ((lon + 180.0)/6.0 + 1.0);
         }
 
         #endregion
