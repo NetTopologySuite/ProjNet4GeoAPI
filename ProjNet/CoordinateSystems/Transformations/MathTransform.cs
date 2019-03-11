@@ -35,7 +35,7 @@ namespace ProjNet.CoordinateSystems.Transformations
     [Serializable] 
     public abstract class MathTransform : IMathTransform
 	{
-        private ISequenceToSpanConverter _sequenceToSpanConverter;
+        private static ISequenceToSpanConverter _defaultSequenceToSpanConverter;
 
         #region IMathTransform Members
 
@@ -244,10 +244,10 @@ namespace ProjNet.CoordinateSystems.Transformations
             return res;
 	    }
 
-        public ISequenceToSpanConverter SequenceToSpanConverter
+        public static ISequenceToSpanConverter SequenceToSpanConverter
         {
-            get => _sequenceToSpanConverter ?? new DefaultSequenceSpanConverter();
-            set => _sequenceToSpanConverter = value;
+            get => _defaultSequenceToSpanConverter ?? new DefaultSequenceSpanConverter();
+            set => _defaultSequenceToSpanConverter = value;
         }
 
         public interface ISequenceToSpanConverter
