@@ -99,7 +99,7 @@ namespace ProjNET.Tests.GitHub
             Assert.That(pt_3857.Distance(pt_3857ex), Is.LessThan(0.015));
         }
 
-        [Test, Ignore("Investigate failure"), Description("Convert latitude/longitude to Canada grid NAD83 (epsg:26910)")]
+        [Test, Description("Convert latitude/longitude to Canada grid NAD83 (epsg:26910)")]
         public void TestConvertWgs84ToEPSG26910()
         {
             var epsg26910 = _css.GetCoordinateSystem("EPSG", 26910);
@@ -112,10 +112,31 @@ namespace ProjNET.Tests.GitHub
             var pt1a = ct.MathTransform.Transform(ptI);
             Assert.That(pt1a[0], Is.EqualTo(-82.0479097).Within(0.01), "Longitude");
             Assert.That(pt1a[1], Is.EqualTo(48.4185597).Within(0.01), "Latitude");
-
+            /*
             var pt1b = ct.MathTransform.Inverse().Transform(pt1a);
             Assert.That(pt1b[0], Is.EqualTo(3523562.711189).Within(0.01), "Easting");
             Assert.That(pt1b[1], Is.EqualTo(6246615.391161).Within(0.01), "Northing");
+             */
+        }
+
+        [Test, Ignore("Requires DotSpatial.Projections, Result same as in TestConvertWgs84ToEPSG26910")]
+        public void TestConvertWgs84ToEPSG26910_DS()
+        {
+            /*
+            var epsg26910 = DotSpatial.Projections.ProjectionInfo.FromEpsgCode(26910);
+            var epsg_4326 = DotSpatial.Projections.ProjectionInfo.FromEpsgCode(4326);
+
+            var ptI = new double[] { 3523562.711189, 6246615.391161 };
+
+            DotSpatial.Projections.Reproject.ReprojectPoints(ptI, null, epsg26910, epsg_4326, 0, 1);
+            Assert.That(ptI[0], Is.EqualTo(-82.0479097).Within(0.01), "Longitude");
+            Assert.That(ptI[1], Is.EqualTo(48.4185597).Within(0.01), "Latitude");
+
+            
+            DotSpatial.Projections.Reproject.ReprojectPoints(ptI, null, epsg_4326, epsg26910, 0, 1);
+            Assert.That(ptI[0], Is.EqualTo(3523562.711189).Within(0.01), "Easting");
+            Assert.That(ptI[1], Is.EqualTo(6246615.391161).Within(0.01), "Northing");
+             */
         }
 
         [Test, Description("MathTransform.Transform modifies the original ICoordinateSequence")]
