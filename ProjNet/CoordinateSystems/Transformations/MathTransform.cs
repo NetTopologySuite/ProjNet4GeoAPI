@@ -50,7 +50,7 @@ namespace ProjNet.CoordinateSystems.Transformations
     /// </remarks>
     [Serializable] 
     public abstract class MathTransform : IMathTransform
-	{
+	  {
         #region IMathTransform Members
 
         /// <summary>
@@ -320,7 +320,7 @@ namespace ProjNet.CoordinateSystems.Transformations
                 return;
             }
 
-            var converter = this.SequenceCoordinateConverter;
+            var converter = SequenceCoordinateConverter;
             converter.ExtractRawCoordinatesFromSequence(coordinateSequence, out var xys, out var zs);
             Transform(xys, zs, xys, zs);
             converter.CopyRawCoordinatesToSequence(xys, zs, coordinateSequence, 0);
@@ -339,7 +339,11 @@ namespace ProjNet.CoordinateSystems.Transformations
             return coordinateSequence;
         }
 
-        public SequenceCoordinateConverterBase SequenceCoordinateConverter { get; set; } = new SequenceCoordinateConverterBase();
+        private static SequenceCoordinateConverterBase _sequenceCoordinateConverter;
+        public static SequenceCoordinateConverterBase SequenceCoordinateConverter { 
+            get { return _sequenceCoordinateConverter ?? = new SequenceCoordinateConverterBase(); }
+            set { _sequenceCoordinateConverter = value;} 
+        }
 
         public class SequenceCoordinateConverterBase
         {
