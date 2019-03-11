@@ -152,82 +152,6 @@ namespace ProjNet.CoordinateSystems.Transformations
 		/// <returns></returns>
 		public abstract IMathTransform Inverse();
 
-        public abstract (double x, double y, double z) Transform(double x, double y, double z);
-
-        public void Transform(ReadOnlySpan<double> xs, ReadOnlySpan<double> ys, ReadOnlySpan<double> zs, Span<double> outXs, Span<double> outYs, Span<double> outZs)
-        {
-            if (xs.Length != ys.Length ||
-                xs.Length != outXs.Length ||
-                xs.Length != outYs.Length ||
-                (DimSource > 2 && xs.Length != zs.Length) ||
-                (DimTarget > 2 && xs.Length != outZs.Length))
-            {
-                throw new ArgumentException("Observed spans must be the same length.");
-            }
-
-            TransformCore(xs, ys, zs, outXs, outYs, outZs);
-        }
-
-        protected virtual void TransformCore(ReadOnlySpan<double> xs, ReadOnlySpan<double> ys, ReadOnlySpan<double> zs, Span<double> outXs, Span<double> outYs, Span<double> outZs)
-        {
-            bool readZ = DimSource > 2;
-            bool writeZ = DimTarget > 2;
-            for (int i = 0; i < xs.Length; i++)
-            {
-                double z = readZ ? zs[i] : 0;
-                (outXs[i], outYs[i], z) = Transform(xs[i], ys[i], z);
-                if (writeZ)
-                {
-                    outZs[i] = z;
-                }
-            }
-        }
-
-        public void Transform(ReadOnlySpan<XY> xys, ReadOnlySpan<double> zs, Span<XY> outXys, Span<double> outZs)
-        {
-            if (xys.Length != outXys.Length ||
-                (DimSource > 2 && xys.Length != zs.Length) ||
-                (DimTarget > 2 && xys.Length != outZs.Length))
-            {
-                throw new ArgumentException("Observed spans must be the same length.");
-            }
-
-            TransformCore(xys, zs, outXys, outZs);
-        }
-
-        protected virtual void TransformCore(ReadOnlySpan<XY> xys, ReadOnlySpan<double> zs, Span<XY> outXys, Span<double> outZs)
-        {
-            bool readZ = DimSource > 2;
-            bool writeZ = DimTarget > 2;
-            for (int i = 0; i < xys.Length; i++)
-            {
-                double z = readZ ? zs[i] : 0;
-                (outXys[i].X, outXys[i].Y, z) = this.Transform(xys[i].X, xys[i].Y, z);
-                if (writeZ)
-                {
-                    outZs[i] = z;
-                }
-            }
-        }
-
-        public void Transform(ReadOnlySpan<XYZ> xyzs, Span<XYZ> outXyzs)
-        {
-            if (xyzs.Length != outXyzs.Length)
-            {
-                throw new ArgumentException("Observed spans must be the same length.");
-            }
-
-            TransformCore(xyzs, outXyzs);
-        }
-
-        protected virtual void TransformCore(ReadOnlySpan<XYZ> xyzs, Span<XYZ> outXyzs)
-        {
-            for (int i = 0; i < xyzs.Length; i++)
-            {
-                (outXyzs[i].X, outXyzs[i].Y, outXyzs[i].Z) = this.Transform(xyzs[i].X, xyzs[i].Y, xyzs[i].Z);
-            }
-        }
-
         /// <summary>
         /// Transforms a coordinate point. The passed parameter point should not be modified.
         /// </summary>
@@ -320,10 +244,18 @@ namespace ProjNet.CoordinateSystems.Transformations
                 return;
             }
 
+#if true
+
+            new SequenceTransformerBase().Transform(this, coordinateSequence);
+#else
+            
             var converter = SequenceCoordinateConverter;
+
             converter.ExtractRawCoordinatesFromSequence(coordinateSequence, out var xys, out var zs);
             Transform(xys, zs, xys, zs);
             converter.CopyRawCoordinatesToSequence(xys, zs, coordinateSequence, 0);
+            
+#endif
         }
 
         public virtual ICoordinateSequence TransformCopy(ICoordinateSequence coordinateSequence)
@@ -339,10 +271,194 @@ namespace ProjNet.CoordinateSystems.Transformations
             return coordinateSequence;
         }
 
+
+        /// <summary>
+        /// Reverses the transformation
+        /// </summary>
+        public abstract void Invert();
+
+	    /// <summary>
+		/// To convert degrees to radians, multiply degrees by pi/180. 
+		/// </summary>
+		protected static double Degrees2Radians(double deg)
+		{
+			return (D2R * deg);
+
+		}
+
+        protected void DegreesToRadians(ReadOnlySpan<XY> inputs, Span<XY> outputs)
+        {
+            DegreesToRadians(MemoryMarshal.Cast<XY, double>(inputs), MemoryMarshal.Cast<XY, double>(outputs));
+        }
+
+        protected static void DegreesToRadians(ReadOnlySpan<double> degrees, Span<double> radians)
+        {
+            for (int i = 0; i < degrees.Length; i++)
+            {
+                radians[i] = degrees[i] * D2R;
+            }
+        }
+
+        protected void DegreesToRadians(ReadOnlySpan<XYZ> inputs, Span<XYZ> outputs)
+        {
+            for (int i = 0; i < inputs.Length; i++)
+            {
+                outputs[i].X = D2R * inputs[i].X;
+                outputs[i].Y = D2R * inputs[i].Y;
+            }
+        }
+
+        /// <summary>
+        /// R2D
+        /// </summary>
+        protected const double R2D = 180 / Math.PI;
+
+		/// <summary>
+		/// D2R
+		/// </summary>
+		protected const double D2R = Math.PI / 180;
+
+		/// <summary>
+		/// 
+		/// </summary>
+		/// <param name="rad"></param>
+		/// <returns></returns>
+		protected static double Radians2Degrees(double rad)
+		{
+			return (R2D * rad);
+		}
+
+        protected void RadiansToDegrees(ReadOnlySpan<XY> inputs, Span<XY> outputs)
+        {
+            RadiansToDegrees(MemoryMarshal.Cast<XY, double>(inputs), MemoryMarshal.Cast<XY, double>(outputs));
+        }
+
+        protected static void RadiansToDegrees(ReadOnlySpan<double> radians, Span<double> degrees)
+        {
+            for (int i = 0; i < radians.Length; i++)
+            {
+                degrees[i] = radians[i] * R2D;
+            }
+        }
+
+        protected void RadiansToDegrees(ReadOnlySpan<XYZ> inputs, Span<XYZ> outputs)
+        {
+            for (int i = 0; i < inputs.Length; i++)
+            {
+                outputs[i].X = D2R * inputs[i].X;
+                outputs[i].Y = D2R * inputs[i].Y;
+            }
+        }
+
+#endregion
+
+#region (Readonly)Span<double>
+
+        public abstract (double x, double y, double z) Transform(double x, double y, double z);
+
+        public void Transform(ReadOnlySpan<double> xs, ReadOnlySpan<double> ys, ReadOnlySpan<double> zs, Span<double> outXs, Span<double> outYs, Span<double> outZs)
+        {
+            if (xs.Length != ys.Length ||
+                xs.Length != outXs.Length ||
+                xs.Length != outYs.Length ||
+                (DimSource > 2 && xs.Length != zs.Length) ||
+                (DimTarget > 2 && xs.Length != outZs.Length))
+            {
+                throw new ArgumentException("Observed spans must be the same length.");
+            }
+
+            TransformCore(xs, ys, zs, outXs, outYs, outZs);
+        }
+
+        protected virtual void TransformCore(ReadOnlySpan<double> xs, ReadOnlySpan<double> ys, ReadOnlySpan<double> zs, Span<double> outXs, Span<double> outYs, Span<double> outZs)
+        {
+            bool readZ = DimSource > 2;
+            bool writeZ = DimTarget > 2;
+            for (int i = 0; i < xs.Length; i++)
+            {
+                double z = readZ ? zs[i] : 0;
+                (outXs[i], outYs[i], z) = Transform(xs[i], ys[i], z);
+                if (writeZ)
+                {
+                    outZs[i] = z;
+                }
+            }
+        }
+
+        public void Transform(ReadOnlySpan<XY> xys, ReadOnlySpan<double> zs, Span<XY> outXys, Span<double> outZs)
+        {
+            if (xys.Length != outXys.Length ||
+                (DimSource > 2 && xys.Length != zs.Length) ||
+                (DimTarget > 2 && xys.Length != outZs.Length))
+            {
+                throw new ArgumentException("Observed spans must be the same length.");
+            }
+
+            TransformCore(xys, zs, outXys, outZs);
+        }
+
+        protected virtual void TransformCore(ReadOnlySpan<XY> xys, ReadOnlySpan<double> zs, Span<XY> outXys, Span<double> outZs)
+        {
+            bool readZ = DimSource > 2;
+            bool writeZ = DimTarget > 2;
+            for (int i = 0; i < xys.Length; i++)
+            {
+                double z = readZ ? zs[i] : 0;
+                (outXys[i].X, outXys[i].Y, z) = this.Transform(xys[i].X, xys[i].Y, z);
+                if (writeZ)
+                {
+                    outZs[i] = z;
+                }
+            }
+        }
+
+        public void Transform(ReadOnlySpan<XYZ> xyzs, Span<XYZ> outXyzs)
+        {
+            if (xyzs.Length != outXyzs.Length)
+            {
+                throw new ArgumentException("Observed spans must be the same length.");
+            }
+
+            TransformCore(xyzs, outXyzs);
+        }
+
+        protected virtual void TransformCore(ReadOnlySpan<XYZ> xyzs, Span<XYZ> outXyzs)
+        {
+            for (int i = 0; i < xyzs.Length; i++)
+            {
+                (outXyzs[i].X, outXyzs[i].Y, outXyzs[i].Z) = this.Transform(xyzs[i].X, xyzs[i].Y, xyzs[i].Z);
+            }
+        }
+
+#endregion
+
+#region CoordinateSequenceTransformer
+
+        public class SequenceTransformerBase
+        {
+            public void Transform(MathTransform transform, ICoordinateSequence sequence)
+            {
+                bool readZ = sequence.HasZ && transform.DimSource > 2;
+                bool writeZ = sequence.HasZ && transform.DimTarget > 2;
+                for (int i = 0; i < sequence.Count; i++)
+                {
+                    double x = sequence.GetX(i);
+                    double y = sequence.GetY(i);
+                    double z = readZ ? sequence.GetZ(i) : 0d;
+                    (x, y, z) = transform.Transform(x, y, z);
+                    sequence.SetOrdinate(i, Ordinate.X, x);
+                    sequence.SetOrdinate(i, Ordinate.X, x);
+
+                    if (writeZ) sequence.SetOrdinate(i, Ordinate.X, x);
+                }
+            }
+        } 
+
         private static SequenceCoordinateConverterBase _sequenceCoordinateConverter;
-        public static SequenceCoordinateConverterBase SequenceCoordinateConverter { 
+        public static SequenceCoordinateConverterBase SequenceCoordinateConverter
+        {
             get { return _sequenceCoordinateConverter ?? new SequenceCoordinateConverterBase(); }
-            set { _sequenceCoordinateConverter = value;} 
+            set { _sequenceCoordinateConverter = value; }
         }
 
         public class SequenceCoordinateConverterBase
@@ -426,85 +542,6 @@ namespace ProjNet.CoordinateSystems.Transformations
                 }
             }
         }
-
-        /// <summary>
-        /// Reverses the transformation
-        /// </summary>
-        public abstract void Invert();
-
-	    /// <summary>
-		/// To convert degrees to radians, multiply degrees by pi/180. 
-		/// </summary>
-		protected static double Degrees2Radians(double deg)
-		{
-			return (D2R * deg);
-
-		}
-
-        protected void DegreesToRadians(ReadOnlySpan<XY> inputs, Span<XY> outputs)
-        {
-            DegreesToRadians(MemoryMarshal.Cast<XY, double>(inputs), MemoryMarshal.Cast<XY, double>(outputs));
-        }
-
-        protected static void DegreesToRadians(ReadOnlySpan<double> degrees, Span<double> radians)
-        {
-            for (int i = 0; i < degrees.Length; i++)
-            {
-                radians[i] = degrees[i] * D2R;
-            }
-        }
-
-        protected void DegreesToRadians(ReadOnlySpan<XYZ> inputs, Span<XYZ> outputs)
-        {
-            for (int i = 0; i < inputs.Length; i++)
-            {
-                outputs[i].X = D2R * inputs[i].X;
-                outputs[i].Y = D2R * inputs[i].Y;
-            }
-        }
-
-        /// <summary>
-        /// R2D
-        /// </summary>
-        protected const double R2D = 180 / Math.PI;
-
-		/// <summary>
-		/// D2R
-		/// </summary>
-		protected const double D2R = Math.PI / 180;
-
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="rad"></param>
-		/// <returns></returns>
-		protected static double Radians2Degrees(double rad)
-		{
-			return (R2D * rad);
-		}
-
-        protected void RadiansToDegrees(ReadOnlySpan<XY> inputs, Span<XY> outputs)
-        {
-            RadiansToDegrees(MemoryMarshal.Cast<XY, double>(inputs), MemoryMarshal.Cast<XY, double>(outputs));
-        }
-
-        protected static void RadiansToDegrees(ReadOnlySpan<double> radians, Span<double> degrees)
-        {
-            for (int i = 0; i < radians.Length; i++)
-            {
-                degrees[i] = radians[i] * R2D;
-            }
-        }
-
-        protected void RadiansToDegrees(ReadOnlySpan<XYZ> inputs, Span<XYZ> outputs)
-        {
-            for (int i = 0; i < inputs.Length; i++)
-            {
-                outputs[i].X = D2R * inputs[i].X;
-                outputs[i].Y = D2R * inputs[i].Y;
-            }
-        }
-
-        #endregion
+#endregion
     }
 }
