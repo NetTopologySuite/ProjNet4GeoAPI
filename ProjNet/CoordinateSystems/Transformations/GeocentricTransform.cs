@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using GeoAPI.CoordinateSystems;
 using GeoAPI.CoordinateSystems.Transformations;
-using GeoAPI.Geometries;
 
 namespace ProjNet.CoordinateSystems.Transformations
 {
@@ -161,25 +160,18 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// </summary>
         /// <param name="lonlat">The point in decimal degrees.</param>
         /// <returns>Point in projected meters</returns>
-        private void DegreesToMeters(ref Span<double> lonlat, ref Span<double> altitudes)
+        private (double x, double y, double z) DegreesToMeters(double lon, double lat, double z)
         {
-            int size = lonlat.Length / 2;
-            DegreesToRadians(ref lonlat);
-            if (altitudes == null)
-                altitudes = new Span<double>(new double[size]);
+            lon = Degrees2Radians(lon);
+            lat = Degrees2Radians(lat);
+            z = double.IsNaN(z) ? 0 : z;
 
-            for (int i = 0, j = 0, k = 1; i < size; i++, j += 2, k += 2)
-            {
-                double h = altitudes[i];
-                double v = semiMajor / Math.Sqrt(1 - es * Math.Pow(Math.Sin(lonlat[k]), 2));
-                double x = (v + h) * Math.Cos(lonlat[k]) * Math.Cos(lonlat[j]);
-                double y = (v + h) * Math.Cos(lonlat[k]) * Math.Sin(lonlat[j]);
-                double z = ((1 - es) * v + h) * Math.Sin(lonlat[k]);
+            double v = semiMajor / Math.Sqrt(1 - es * Math.Pow(Math.Sin(lat), 2));
+            double x = (v + z) * Math.Cos(lat) * Math.Cos(lon);
+            double y = (v + z) * Math.Cos(lat) * Math.Sin(lon);
+            z = ((1 - es) * v + z) * Math.Sin(lat);
 
-                lonlat[j] = x;
-                lonlat[k] = y;
-                altitudes[i] = z;
-            }
+            return (x, y, z);
         }
 
         //      /// <summary>
@@ -249,81 +241,67 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// </summary>
         /// <param name="pnt">Point in meters</param>
         /// <returns>Transformed point in decimal degrees</returns>		
-        private void MetersToDegrees(ref Span<double> pnt, ref Span<double> altitudes)
+        private (double lon, double lat, double z) MetersToDegrees(double x, double y, double z)
         {
-            int size = pnt.Length / 2;
-            if (altitudes == null)
-                altitudes = new Span<double>(new double[size]);
+            bool At_Pole = false; // indicates whether location is in polar region */
 
-            for (int i = 0, j = 0, k = 1; i < size; i++, j += 2, k += 2)
+            double lon = 0;
+            double lat = 0;
+            double Height = 0;
+            if (x != 0.0)
+                lon = Math.Atan2(y, x);
+            else
             {
-                bool At_Pole = false; // indicates whether location is in polar region */
-                double Z = altitudes[i];
-
-                double lon = 0;
-                double lat = 0;
-                double Height = 0;
-                if (pnt[j] != 0.0)
-                    lon = Math.Atan2(pnt[k], pnt[j]);
+                if (y > 0)
+                    lon = Math.PI / 2;
+                else if (y < 0)
+                    lon = -Math.PI * 0.5;
                 else
                 {
-                    if (pnt[k] > 0)
-                        lon = Math.PI / 2;
-                    else if (pnt[k] < 0)
-                        lon = -Math.PI * 0.5;
+                    At_Pole = true;
+                    lon = 0.0;
+                    if (z > 0.0)
+                    {
+                        /* north pole */
+                        lat = Math.PI * 0.5;
+                    }
+                    else if (z < 0.0)
+                    {
+                        /* south pole */
+                        lat = -Math.PI * 0.5;
+                    }
                     else
                     {
-                        At_Pole = true;
-                        lon = 0.0;
-                        if (Z > 0.0)
-                        {
-                            /* north pole */
-                            lat = Math.PI * 0.5;
-                        }
-                        else if (Z < 0.0)
-                        {
-                            /* south pole */
-                            lat = -Math.PI * 0.5;
-                        }
-                        else
-                        {
-                            /* center of earth */
-                            pnt[j] = lon;
-                            pnt[k] = Math.PI * 0.5;
-                            altitudes[i] = -semiMinor;
-                            continue;
-                        }
+                        /* center of earth */
+                        lon = Radians2Degrees(lon);
+                        lat = Radians2Degrees(Math.PI * 0.5);
+                        return (lon, lat, -semiMinor);
                     }
                 }
-
-                double W2 = pnt[j] * pnt[j] + pnt[k] * pnt[k]; // Square of distance from Z axis
-                double W = Math.Sqrt(W2); // distance from Z axis
-                double T0 = Z * AD_C; // initial estimate of vertical component
-                double S0 = Math.Sqrt(T0 * T0 + W2); //initial estimate of horizontal component
-                double Sin_B0 = T0 / S0; //sin(B0), B0 is estimate of Bowring aux variable
-                double Cos_B0 = W / S0; //cos(B0)
-                double Sin3_B0 = Math.Pow(Sin_B0, 3);
-                double T1 = Z + semiMinor * ses * Sin3_B0; //corrected estimate of vertical component
-                double Sum = W - semiMajor * es * Cos_B0 * Cos_B0 * Cos_B0; //numerator of cos(phi1)
-                double S1 = Math.Sqrt(T1 * T1 + Sum * Sum); //corrected estimate of horizontal component
-                double Sin_p1 = T1 / S1; //sin(phi1), phi1 is estimated latitude
-                double Cos_p1 = Sum / S1; //cos(phi1)
-                double Rn = semiMajor / Math.Sqrt(1.0 - es * Sin_p1 * Sin_p1); //Earth radius at location
-                if (Cos_p1 >= COS_67P5)
-                    Height = W / Cos_p1 - Rn;
-                else if (Cos_p1 <= -COS_67P5)
-                    Height = W / -Cos_p1 - Rn;
-                else Height = Z / Sin_p1 + Rn * (es - 1.0);
-                if (!At_Pole)
-                    lat = Math.Atan(Sin_p1 / Cos_p1);
-
-                pnt[j] = lon;
-                pnt[k] = lat;
-                altitudes[i] = Height;
             }
 
-            RadiansToDegrees(ref pnt);
-            //RadiansToDegrees(ref altitudes);
+            double W2 = x * x + y * y; // Square of distance from Z axis
+            double W = Math.Sqrt(W2); // distance from Z axis
+            double T0 = z * AD_C; // initial estimate of vertical component
+            double S0 = Math.Sqrt(T0 * T0 + W2); //initial estimate of horizontal component
+            double Sin_B0 = T0 / S0; //sin(B0), B0 is estimate of Bowring aux variable
+            double Cos_B0 = W / S0; //cos(B0)
+            double Sin3_B0 = Math.Pow(Sin_B0, 3);
+            double T1 = z + semiMinor * ses * Sin3_B0; //corrected estimate of vertical component
+            double Sum = W - semiMajor * es * Cos_B0 * Cos_B0 * Cos_B0; //numerator of cos(phi1)
+            double S1 = Math.Sqrt(T1 * T1 + Sum * Sum); //corrected estimate of horizontal component
+            double Sin_p1 = T1 / S1; //sin(phi1), phi1 is estimated latitude
+            double Cos_p1 = Sum / S1; //cos(phi1)
+            double Rn = semiMajor / Math.Sqrt(1.0 - es * Sin_p1 * Sin_p1); //Earth radius at location
+            if (Cos_p1 >= COS_67P5)
+                Height = W / Cos_p1 - Rn;
+            else if (Cos_p1 <= -COS_67P5)
+                Height = W / -Cos_p1 - Rn;
+            else Height = z / Sin_p1 + Rn * (es - 1.0);
+            if (!At_Pole)
+                lat = Math.Atan(Sin_p1 / Cos_p1);
+
+            return (Radians2Degrees(lon), Radians2Degrees(lat), Height);
         }
 
 
@@ -338,53 +316,17 @@ namespace ProjNet.CoordinateSystems.Transformations
         //return DegreesToMeters(point);
         //       return MetersToDegrees(point);
         //   }
-
-        protected internal override void Transform(ref Span<double> points, ref Span<double> altitudes)
+        public override (double x, double y, double z) Transform(double x, double y, double z)
         {
             if (_isInverse)
-                MetersToDegrees(ref points, ref altitudes);
+            {
+                return MetersToDegrees(x, y, z);
+            }
             else
-                DegreesToMeters(ref points, ref altitudes);
-
+            {
+                return DegreesToMeters(x, y, z);
+            }
         }
-
-	    /// <summary>
-        /// Transforms a list of coordinate point ordinal values.
-        /// </summary>
-        /// <param name="points"></param>
-        /// <returns></returns>
-        /// <remarks>
-        /// This method is provided for efficiently transforming many points. The supplied array
-        /// of ordinal values will contain packed ordinal values. For example, if the source
-        /// dimension is 3, then the ordinals will be packed in this order (x0,y0,z0,x1,y1,z1 ...).
-        /// The size of the passed array must be an integer multiple of DimSource. The returned
-        /// ordinal values are packed in a similar way. In some DCPs. the ordinals may be
-        /// transformed in-place, and the returned array may be the same as the passed array.
-        /// So any client code should not attempt to reuse the passed ordinal values (although
-        /// they can certainly reuse the passed array). If there is any problem then the server
-        /// implementation will throw an exception. If this happens then the client should not
-        /// make any assumptions about the state of the ordinal values.
-        /// </remarks>
-        public override IList<double[]> TransformList(IList<double[]> points)
-		{
-            var result = new List<double[]>(points.Count);
-			for (var i = 0; i < points.Count; i++)
-			{
-                var point = points[i];
-				result.Add(Transform(point));
-			}
-			return result;
-		}
-
-	    public override IList<Coordinate> TransformList(IList<Coordinate> points)
-	    {
-	        var result = new List<Coordinate>(points.Count);
-	        foreach (var coordinate in points)
-	        {
-	            result.Add(Transform(coordinate));
-	        }
-	        return result;
-	    }
 
 	    /// <summary>
 		/// Reverses the transformation

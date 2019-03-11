@@ -89,127 +89,32 @@ namespace ProjNet.CoordinateSystems.Transformations
 			return _inverse;
 		}
 
-        /// <summary>
-        /// Transforms a coordinate point.
-        /// </summary>
-        /// <param name="p"></param>
-        /// <returns></returns>
-        /// <seealso href="http://en.wikipedia.org/wiki/Helmert_transformation"/>
-        private double[] Apply(double[] p)
-        {
-            return new double[] {
-				v[0] * (p[0] - v[3] * p[1] + v[2] * p[2]) + v[4],
-				v[0] * (v[3] * p[0] + p[1] - v[1] * p[2]) + v[5],
-			    v[0] * (-v[2] * p[0] + v[1] * p[1] + p[2]) + v[6], };
-        }
-
-        /// <summary>
-        /// For the reverse transformation, each element is multiplied by -1.
-        /// </summary>
-        /// <param name="p"></param>
-        /// <returns></returns>
-        /// <seealso href="http://en.wikipedia.org/wiki/Helmert_transformation"/>
-        private double[] ApplyInverted(double[] p)
-        {
-
-            return new double[] {
-				(1-(v[0]-1)) * (p[0] + v[3] * p[1] - v[2] * p[2]) - v[4],
-			    (1-(v[0]-1)) * (-v[3] * p[0] + p[1] + v[1] * p[2]) - v[5],
-			    (1-(v[0]-1)) * ( v[2] * p[0] - v[1] * p[1] + p[2]) - v[6], };
-        }
-
-        /// <summary>
-        /// Transforms a coordinate point.
-        /// </summary>
-        /// <param name="p"></param>
-        /// <returns></returns>
-        /// <seealso href="http://en.wikipedia.org/wiki/Helmert_transformation"/>
-        private void Apply(ref Span<double> p, ref Span<double> altitudes)
-        {
-            int size = p.Length / 2;
-            for (int i = 0, j = 0, k = 1; i < size; i++, j+=2, k+=2)
-            {
-                double p0 = v[0] * (p[j] - v[3] * p[k] + v[2] * altitudes[i]) + v[4];
-                double p1 = v[0] * (v[3] * p[j] + p[k] - v[1] * altitudes[i]) + v[5];
-                double p2 = v[0] * (-v[2] * p[j] + v[1] * p[k] + altitudes[i]) + v[6];
-
-                p[j] = p0;
-                p[k] = p1;
-                altitudes[i] = p2;
-            }
-        }
-
-        /// <summary>
-        /// For the reverse transformation, each element is multiplied by -1.
-        /// </summary>
-        /// <param name="p"></param>
-        /// <returns></returns>
-        /// <seealso href="http://en.wikipedia.org/wiki/Helmert_transformation"/>
-        private void ApplyInverted(ref Span<double> p, ref Span<double> altitudes)
-        {
-            int size = p.Length / 2;
-            for (int i = 0, j = 0, k = 1; i < size; i++, j += 2, k += 2)
-            {
-                double p0 = (1 - (v[0] - 1)) * (p[j] + v[3] * p[k] - v[2] * altitudes[i]) - v[4];
-                double p1 = (1 - (v[0] - 1)) * (-v[3] * p[j] + p[k] + v[1] * altitudes[i]) - v[5];
-                double p2 = (1 - (v[0] - 1)) * (v[2] * p[j] - v[1] * p[k] + altitudes[i]) - v[6];
-
-                p[j] = p0;
-                p[k] = p1;
-                altitudes[i] = p2;
-            }
-        }
-
-        /// <summary>
-        /// Transforms a coordinate point. The passed parameter point should not be modified.
-        /// </summary>
-        /// <param name="point"></param>
-        /// <returns></returns>
-        public override double[] Transform(double[] point)
-		{
-            if (!_isInverse)
-                 return Apply(point);
-            else return ApplyInverted(point);
-		}
-
-        protected internal override void Transform(ref Span<double> points, ref Span<double> altitudes)
+        public override (double x, double y, double z) Transform(double x, double y, double z)
         {
             if (_isInverse)
-                ApplyInverted(ref points, ref altitudes);
+            {
+                return ApplyInverted(x, y, z);
+            }
             else
-                Apply(ref points, ref altitudes);
+            {
+                return Apply(x, y, z);
+            }
         }
-        /// <summary>
-        /// Transforms a list of coordinate point ordinal values.
-        /// </summary>
-        /// <param name="points"></param>
-        /// <returns></returns>
-        /// <remarks>
-        /// This method is provided for efficiently transforming many points. The supplied array
-        /// of ordinal values will contain packed ordinal values. For example, if the source
-        /// dimension is 3, then the ordinals will be packed in this order (x0,y0,z0,x1,y1,z1 ...).
-        /// The size of the passed array must be an integer multiple of DimSource. The returned
-        /// ordinal values are packed in a similar way. In some DCPs. the ordinals may be
-        /// transformed in-place, and the returned array may be the same as the passed array.
-        /// So any client code should not attempt to reuse the passed ordinal values (although
-        /// they can certainly reuse the passed array). If there is any problem then the server
-        /// implementation will throw an exception. If this happens then the client should not
-        /// make any assumptions about the state of the ordinal values.
-        /// </remarks>
-        public override IList<double[]> TransformList(IList<double[]> points)
-		{
-            var pnts = new List<double[]>(points.Count);
-            foreach (var p in points)
-				pnts.Add(Transform(p));
-			return pnts;
-		}
 
-        public override IList<Coordinate> TransformList(IList<Coordinate> points)
+        private (double x, double y, double z) Apply(double x, double y, double z)
         {
-            var pnts = new List<Coordinate>(points.Count);
-            foreach (var p in points)
-                pnts.Add(Transform(p));
-            return pnts;
+            return (
+                x: v[0] * (x - v[3] * y + v[2] * z) + v[4],
+                y: v[0] * (v[3] * x + y - v[1] * z) + v[5],
+                z: v[0] * (-v[2] * x + v[1] * y + z) + v[6]);
+        }
+
+        private (double x, double y, double z) ApplyInverted(double x, double y, double z)
+        {
+            return (
+                x: (1 - (v[0] - 1)) * (x + v[3] * y - v[2] * z) - v[4],
+                y: (1 - (v[0] - 1)) * (-v[3] * x + y + v[1] * z) - v[5],
+                z: (1 - (v[0] - 1)) * (v[2] * x - v[1] * y + z) - v[6]);
         }
 
         /// <summary>

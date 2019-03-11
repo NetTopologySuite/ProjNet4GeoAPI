@@ -101,18 +101,21 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// </summary>
         /// <param name="point"></param>
         /// <returns></returns>
-        protected internal override void Transform(ref Span<double> points, ref Span<double> altitudes)
+        public override (double x, double y, double z) Transform(double x, double y, double z)
         {
-            int size = points.Length / 2;
             if (!_isInverted)
             {
-                for (int i = 0, j = 0; i < size; i++, j+=2)
-                    points[j] = points[j] + _source.Longitude - _target.Longitude;
+                return (
+                    x: x + _source.Longitude - _target.Longitude,
+                    y,
+                    z);
             }
             else
             {
-                for (int i = 0, j = 0; i < size; i++, j += 2)
-                    points[j] = points[j] + _target.Longitude - _source.Longitude;
+                return (
+                    x: x + _target.Longitude - _source.Longitude,
+                    y,
+                    z);
             }
         }
 

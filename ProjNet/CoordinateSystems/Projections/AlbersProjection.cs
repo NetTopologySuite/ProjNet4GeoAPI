@@ -183,21 +183,16 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <param name="lonlat">The point in radians.</param>
         /// <param name="altitudes">The altitudes in radians</param>
         /// <returns>Point in projected meters</returns>
-        protected override void RadiansToMeters(ref Span<double> lonlat, ref Span<double> altitudes)
+        protected override (double x, double y, double z) RadiansToMeters(double lon, double lat, double z)
         {
-            int size = lonlat.Length / 2;
-            for (int i = 0, j = 0, k = 1; i < size; i++, j+=2, k+=2)
-            {
-                double dLongitude = lonlat[j];
-                double dLatitude = lonlat[k];
+            double a = alpha(lat);
+            double ro = Ro(a);
+            double theta = _n * (lon - central_meridian);
 
-                double a = alpha(dLatitude);
-                double ro = Ro(a);
-                double theta = _n * (dLongitude - central_meridian);
-
-                lonlat[j] = ro * Math.Sin(theta);
-                lonlat[k] = _ro0 - (ro * Math.Cos(theta));
-            }
+            return (
+                x: ro * Math.Sin(theta),
+                y: _ro0 - (ro * Math.Cos(theta)),
+                z);
         }
 
         ///// <summary>
@@ -236,38 +231,32 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         /// <param name="p">Point in meters</param>
         /// <returns>Transformed point in decimal degrees</returns>
-        protected override void MetersToRadians(ref Span<double> p, ref Span<double> altitudes)
+        protected override (double lon, double lat, double z) MetersToRadians(double x, double y, double z)
         {
-            int size = p.Length / 2;
+            double theta = Math.Atan(x / (_ro0 - y));
+            double ro = Math.Sqrt(Math.Pow(x, 2) + Math.Pow(_ro0 - y, 2));
+            double q = (_c - Math.Pow(ro, 2) * Math.Pow(_n, 2) / Math.Pow(this._semiMajor, 2)) / _n;
+            double b = Math.Sin(q / (1 - ((1 - _es) / (2 * _e)) * Math.Log((1 - _e) / (1 + _e))));
 
-            for (int i = 0, j = 0, k = 1; i < size; i++, j += 2, k+=2)
+            double lat = Math.Asin(q * 0.5);
+            double preLat = double.MaxValue;
+            int iterationCounter = 0;
+            while (Math.Abs(lat - preLat) > 0.000001)
             {
-                double theta = Math.Atan(p[j] / (_ro0 - p[k]));
-                double ro = Math.Sqrt(Math.Pow(p[j], 2) + Math.Pow(_ro0 - p[k], 2));
-                double q = (_c - Math.Pow(ro, 2) * Math.Pow(_n, 2) / Math.Pow(this._semiMajor, 2)) / _n;
-                double b = Math.Sin(q / (1 - ((1 - _es) / (2 * _e)) * Math.Log((1 - _e) / (1 + _e))));
-
-                double lat = Math.Asin(q * 0.5);
-                double preLat = double.MaxValue;
-                int iterationCounter = 0;
-                while (Math.Abs(lat - preLat) > 0.000001)
-                {
-                    preLat = lat;
-                    double sin = Math.Sin(lat);
-                    double e2sin2 = _es * Math.Pow(sin, 2);
-                    lat += (Math.Pow(1 - e2sin2, 2) / (2 * Math.Cos(lat))) *
-                           ((q / (1 - _es)) - sin / (1 - e2sin2) +
-                            1 / (2 * _e) * Math.Log((1 - _e * sin) / (1 + _e * sin)));
-                    iterationCounter++;
-                    if (iterationCounter > 25)
-                        throw new ArgumentException(
-                            "Transformation failed to converge in Albers backwards transformation");
-                }
-
-                p[j] = central_meridian + (theta / _n);
-                p[k] = lat;
+                preLat = lat;
+                double sin = Math.Sin(lat);
+                double e2sin2 = _es * Math.Pow(sin, 2);
+                lat += (Math.Pow(1 - e2sin2, 2) / (2 * Math.Cos(lat))) *
+                       ((q / (1 - _es)) - sin / (1 - e2sin2) +
+                        1 / (2 * _e) * Math.Log((1 - _e * sin) / (1 + _e * sin)));
+                iterationCounter++;
+                if (iterationCounter > 25)
+                    throw new ArgumentException(
+                        "Transformation failed to converge in Albers backwards transformation");
             }
-		}
+
+            return (central_meridian + (theta / _n), lat, z);
+        }
 
 		/// <summary>
 		/// Returns the inverse of this projection.

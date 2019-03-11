@@ -94,6 +94,8 @@ namespace ProjNet.CoordinateSystems.Projections
      */
     private readonly double _ml0;
 
+    private readonly double _reciprocSemiMajor;
+
     /**
      * Contants used for the forward and inverse transform for the eliptical
      * case of the Transverse Mercator.
@@ -155,19 +157,21 @@ namespace ProjNet.CoordinateSystems.Projections
 		    ml0 = _semiMajor*mlfn(lat_origin, Math.Sin(lat_origin), Math.Cos(lat_origin));
 			esp = _es / (1.0 - _es);
              */
-		}
-		
-		/// <summary>
-		/// Converts coordinates in decimal degrees to projected meters.
-		/// </summary>
-		/// <param name="lonlat">The point in decimal degrees.</param>
-		/// <returns>Point in projected meters</returns>
-        protected override double[] RadiansToMeters(double[] lonlat)
+
+            _reciprocSemiMajor = 1 / _semiMajor;
+        }
+
+        /// <summary>
+        /// Converts coordinates in decimal degrees to projected meters.
+        /// </summary>
+        /// <param name="lonlat">The point in decimal degrees.</param>
+        /// <returns>Point in projected meters</returns>
+        protected override (double x, double y, double z) RadiansToMeters(double lon, double lat, double z)
 		{
-		    var x = lonlat[0];
+            var x = lon;
 		    x = adjust_lon(x - central_meridian);
 
-            var y = lonlat[1];
+            var y = lat;
             var sinphi = Math.Sin(y);
             var cosphi = Math.Cos(y);
 
@@ -193,9 +197,7 @@ namespace ProjNet.CoordinateSystems.Projections
 		    x = scale_factor*_semiMajor*x;
 		    y = scale_factor*_semiMajor*y;
 
-            return lonlat.Length == 2 
-                ? new [] { x, y }
-                : new [] { x, y, lonlat[2] };
+            return (x, y, z);
 
 
 		    //double lon = Degrees2Radians(lonlat[0]);
@@ -232,47 +234,6 @@ namespace ProjNet.CoordinateSystems.Projections
 		    //else
 		    //    return new double[] { x / _metersPerUnit, y / _metersPerUnit, lonlat[2] };
 		}
-
-        /// <summary>
-        /// Converts coordinates in decimal degrees to projected meters.
-        /// </summary>
-        /// <param name="lonlat">The point in decimal degrees.</param>
-        /// <returns>Point in projected meters</returns>
-        protected override void RadiansToMeters(ref Span<double> lonlat, ref Span<double> altitudes)
-        {
-            int size = lonlat.Length / 2;
-            for (int i = 0, j = 0, k = 1; i < size; i++, j += 2, k += 2)
-            {
-                double x = lonlat[j];
-                x = adjust_lon(x - central_meridian);
-
-                double y = lonlat[k];
-                double sinphi = Math.Sin(y);
-                double cosphi = Math.Cos(y);
-
-                double t = (Math.Abs(cosphi) > EPSILON) ? sinphi / cosphi : 0;
-                t *= t;
-                double al = cosphi * x;
-                double als = al * al;
-                al /= Math.Sqrt(1.0 - _es * sinphi * sinphi);
-                double n = _esp * cosphi * cosphi;
-
-                /* NOTE: meridinal distance at latitudeOfOrigin is always 0 */
-                y = (mlfn(y, sinphi, cosphi) - _ml0 +
-                    sinphi * al * x *
-                    FC2 * (1.0 +
-                    FC4 * als * (5.0 - t + n * (9.0 + 4.0 * n) +
-                    FC6 * als * (61.0 + t * (t - 58.0) + n * (270.0 - 330.0 * t) +
-                    FC8 * als * (1385.0 + t * (t * (543.0 - t) - 3111.0))))));
-
-                x = al * (FC1 + FC3 * als * (1.0 - t + n +
-                    FC5 * als * (5.0 + t * (t - 18.0) + n * (14.0 - 58.0 * t) +
-                    FC7 * als * (61.0 + t * (t * (179.0 - t) - 479.0)))));
-
-                lonlat[j] = scale_factor * _semiMajor * x;
-                lonlat[k] = scale_factor * _semiMajor * y;
-            }
-        }
 
         ///// <summary>
         ///// Converts coordinates in projected meters to decimal degrees.
@@ -381,47 +342,42 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         /// <param name="p">Point in meters</param>
         /// <returns>Transformed point in decimal degrees</returns>
-        protected override void MetersToRadians(ref Span<double> p, ref Span<double> altitudes)
+        protected override (double lon, double lat, double z) MetersToRadians(double x, double y, double z)
         {
-            int size = p.Length / 2;
-            for (int i = 0, j = 0, k = 1; i < size; i++, j += 2, k += 2)
+            x *= _reciprocSemiMajor;
+            y *= _reciprocSemiMajor;
+
+            double phi = inv_mlfn(_ml0 + y / scale_factor);
+
+            if (Math.Abs(phi) >= PI / 2)
             {
-                double x = p[j] / (/*scale_factor* */_semiMajor);
-                double y = p[k] / (/*scale_factor* */_semiMajor);
-
-                double phi = inv_mlfn(_ml0 + y / scale_factor);
-
-                if (Math.Abs(phi) >= PI / 2)
-                {
-                    y = y < 0.0 ? -(PI / 2) : (PI / 2);
-                    x = 0.0;
-                }
-                else
-                {
-                    double sinphi = Math.Sin(phi);
-                    double cosphi = Math.Cos(phi);
-                    double t = (Math.Abs(cosphi) > EPSILON) ? sinphi / cosphi : 0.0;
-                    double n = _esp * cosphi * cosphi;
-                    double con = 1.0 - _es * sinphi * sinphi;
-                    double d = x * Math.Sqrt(con) / scale_factor;
-                    con *= t;
-                    t *= t;
-                    double ds = d * d;
-
-                    y = phi - (con * ds / (1.0 - _es)) *
-                        FC2 * (1.0 - ds *
-                        FC4 * (5.0 + t * (3.0 - 9.0 * n) + n * (1.0 - 4 * n) - ds *
-                        FC6 * (61.0 + t * (90.0 - 252.0 * n + 45.0 * t) + 46.0 * n - ds *
-                        FC8 * (1385.0 + t * (3633.0 + t * (4095.0 + 1574.0 * t))))));
-
-                    x = adjust_lon(central_meridian + d * (FC1 - ds * FC3 * (1.0 + 2.0 * t + n -
-                        ds * FC5 * (5.0 + t * (28.0 + 24 * t + 8.0 * n) + 6.0 * n -
-                        ds * FC7 * (61.0 + t * (662.0 + t * (1320.0 + 720.0 * t)))))) / cosphi);
-                }
-
-                p[j] = x;
-                p[k] = y;
+                y = y < 0.0 ? -(PI / 2) : (PI / 2);
+                x = 0.0;
             }
+            else
+            {
+                double sinphi = Math.Sin(phi);
+                double cosphi = Math.Cos(phi);
+                double t = (Math.Abs(cosphi) > EPSILON) ? sinphi / cosphi : 0.0;
+                double n = _esp * cosphi * cosphi;
+                double con = 1.0 - _es * sinphi * sinphi;
+                double d = x * Math.Sqrt(con) / scale_factor;
+                con *= t;
+                t *= t;
+                double ds = d * d;
+
+                y = phi - (con * ds / (1.0 - _es)) *
+                    FC2 * (1.0 - ds *
+                    FC4 * (5.0 + t * (3.0 - 9.0 * n) + n * (1.0 - 4 * n) - ds *
+                    FC6 * (61.0 + t * (90.0 - 252.0 * n + 45.0 * t) + 46.0 * n - ds *
+                    FC8 * (1385.0 + t * (3633.0 + t * (4095.0 + 1574.0 * t))))));
+
+                x = adjust_lon(central_meridian + d * (FC1 - ds * FC3 * (1.0 + 2.0 * t + n -
+                    ds * FC5 * (5.0 + t * (28.0 + 24 * t + 8.0 * n) + 6.0 * n -
+                    ds * FC7 * (61.0 + t * (662.0 + t * (1320.0 + 720.0 * t)))))) / cosphi);
+            }
+
+            return (x, y, z);
         }
 
         /// <summary>

@@ -36,6 +36,8 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         private readonly double _ml0;
 
+        private readonly double _reciprocSemiMajorTimesScaleFactor;
+
         ///<summary>
         /// Constructs a new map projection from the supplied parameters.
         ///</summary>
@@ -53,6 +55,7 @@ namespace ProjNet.CoordinateSystems.Projections
             : base(parameters, inverse)
         {
             _ml0 = mlfn(lat_origin, Math.Sin(lat_origin), Math.Cos(lat_origin));
+            _reciprocSemiMajorTimesScaleFactor = 1 / (_semiMajor * scale_factor);
         }
 
         //protected override double[] RadiansToMeters(double[] lonlat)
@@ -85,38 +88,35 @@ namespace ProjNet.CoordinateSystems.Projections
 
         //    return new[] { x, y };
         //}
-        protected override void RadiansToMeters(ref Span<double> lonlat, ref Span<double> altitudes)
+        protected override (double x, double y, double z) RadiansToMeters(double lon, double lat, double z)
         {
-            int size = lonlat.Length / 2;
-            for (int i = 0, j = 0, k = 1; i < size; i++, j += 2, k += 2)
+            double lam = lon;
+            double phi = lat;
+
+            double delta_lam = adjust_lon(lam - central_meridian);
+
+            double x, y;
+
+            if (Math.Abs(phi) <= Epsilon)
             {
-
-                double lam = lonlat[j];
-                double phi = lonlat[k];
-
-                double delta_lam = adjust_lon(lam - central_meridian);
-
-                double x, y;
-
-                if (Math.Abs(phi) <= Epsilon)
-                {
-                    x = delta_lam; //lam;
-                    y = -_ml0;
-                }
-                else
-                {
-                    double sp = Math.Sin(phi);
-                    double cp;
-                    double ms = Math.Abs(cp = Math.Cos(phi)) > Epsilon ? msfn(sp, cp) / sp : 0.0;
-                    /*lam =*/
-                    delta_lam *= sp;
-                    x = ms * Math.Sin( /*lam*/delta_lam);
-                    y = (mlfn(phi, sp, cp) - _ml0) + ms * (1.0 - Math.Cos( /*lam*/delta_lam));
-                }
-
-                lonlat[0] = scale_factor * _semiMajor * x; // + false_easting;
-                lonlat[1] = scale_factor * _semiMajor * y; // + false_northing;
+                x = delta_lam; //lam;
+                y = -_ml0;
             }
+            else
+            {
+                double sp = Math.Sin(phi);
+                double cp;
+                double ms = Math.Abs(cp = Math.Cos(phi)) > Epsilon ? msfn(sp, cp) / sp : 0.0;
+                /*lam =*/
+                delta_lam *= sp;
+                x = ms * Math.Sin( /*lam*/delta_lam);
+                y = (mlfn(phi, sp, cp) - _ml0) + ms * (1.0 - Math.Cos( /*lam*/delta_lam));
+            }
+
+            return (
+                x: scale_factor * _semiMajor * x, // + false_easting,
+                y: scale_factor * _semiMajor * y, // + false_northing,
+                z);
         }
 
         //protected override double[] MetersToRadians(double[] p)
@@ -167,60 +167,56 @@ namespace ProjNet.CoordinateSystems.Projections
 
         //    return new[] { adjust_lon(lam+central_meridian), phi };
         //}
-
-        protected override void MetersToRadians(ref Span<double> p, ref Span<double> altitudes)
+        protected override (double lon, double lat, double z) MetersToRadians(double x, double y, double z)
         {
-            int size = p.Length / 2;
-            for (int i = 0, j = 0, k = 1; i < size; i++, j += 2, k += 2)
+            x *= _reciprocSemiMajorTimesScaleFactor;
+            y *= _reciprocSemiMajorTimesScaleFactor;
+
+            double lam, phi;
+
+            y += _ml0;
+            if (Math.Abs(y) <= Epsilon)
             {
-
-                double x = p[j] / (_semiMajor * scale_factor);
-                double y = p[k] / (_semiMajor * scale_factor);
-
-                double lam, phi;
-
-                y += _ml0;
-                if (Math.Abs(y) <= Epsilon)
-                {
-                    lam = x;
-                    phi = 0.0;
-                }
-                else
-                {
-                    double r = y * y + x * x;
-                    phi = y;
-                    int iter = 0;
-                    for (; iter <= MaximumIterations; iter++)
-                    {
-                        double sp = Math.Sin(phi);
-                        double cp = Math.Cos(phi);
-                        if (Math.Abs(cp) < IterationTolerance)
-                            throw new Exception("No Convergence");
-
-                        double s2ph = sp * cp;
-                        double mlp = Math.Sqrt(1.0 - _es * sp * sp);
-                        double c = sp * mlp / cp;
-                        double ml = mlfn(phi, sp, cp);
-                        var mlb = ml * ml + r;
-                        mlp = (1.0 - _es) / (mlp * mlp * mlp);
-                        double dPhi = (ml + ml + c * mlb - 2.0 * y * (c * ml + 1.0)) / (
-                                       _es * s2ph * (mlb - 2.0 * y * ml) / c +
-                                       2.0 * (y - ml) * (c * mlp - 1.0 / s2ph) - mlp - mlp);
-                        if (Math.Abs(dPhi) <= IterationTolerance)
-                            break;
-
-                        phi += dPhi;
-                    }
-
-                    if (iter > MaximumIterations)
-                        throw new Exception("No Convergence");
-                    double c2 = Math.Sin(phi);
-                    lam = Math.Asin(x * Math.Tan(phi) * Math.Sqrt(1.0 - _es * c2 * c2)) / Math.Sin(phi);
-                }
-
-                p[j] = adjust_lon(lam + central_meridian);
-                p[k] = phi;
+                lam = x;
+                phi = 0.0;
             }
+            else
+            {
+                double r = y * y + x * x;
+                phi = y;
+                int iter = 0;
+                for (; iter <= MaximumIterations; iter++)
+                {
+                    double sp = Math.Sin(phi);
+                    double cp = Math.Cos(phi);
+                    if (Math.Abs(cp) < IterationTolerance)
+                        throw new Exception("No Convergence");
+
+                    double s2ph = sp * cp;
+                    double mlp = Math.Sqrt(1.0 - _es * sp * sp);
+                    double c = sp * mlp / cp;
+                    double ml = mlfn(phi, sp, cp);
+                    var mlb = ml * ml + r;
+                    mlp = (1.0 - _es) / (mlp * mlp * mlp);
+                    double dPhi = (ml + ml + c * mlb - 2.0 * y * (c * ml + 1.0)) / (
+                                   _es * s2ph * (mlb - 2.0 * y * ml) / c +
+                                   2.0 * (y - ml) * (c * mlp - 1.0 / s2ph) - mlp - mlp);
+                    if (Math.Abs(dPhi) <= IterationTolerance)
+                        break;
+
+                    phi += dPhi;
+                }
+
+                if (iter > MaximumIterations)
+                    throw new Exception("No Convergence");
+                double c2 = Math.Sin(phi);
+                lam = Math.Asin(x * Math.Tan(phi) * Math.Sqrt(1.0 - _es * c2 * c2)) / Math.Sin(phi);
+            }
+
+            return (
+                lon: adjust_lon(lam + central_meridian),
+                lat: phi,
+                z);
         }
 
         /// <summary>

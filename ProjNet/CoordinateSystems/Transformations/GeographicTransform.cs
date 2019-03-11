@@ -105,16 +105,13 @@ namespace ProjNet.CoordinateSystems.Transformations
 			throw new NotImplementedException();
 		}
 
-        protected internal override void Transform(ref Span<double> points, ref Span<double> altitudes)
+        public override (double x, double y, double z) Transform(double x, double y, double z)
         {
-            int size = points.Length / 2;
-            for (int i = 0, j = 0; i < size; i++, j += 2)
-            {
-                points[j] /= SourceGCS.AngularUnit.RadiansPerUnit;
-                points[j] -= SourceGCS.PrimeMeridian.Longitude / SourceGCS.PrimeMeridian.AngularUnit.RadiansPerUnit;
-                points[j] += TargetGCS.PrimeMeridian.Longitude / TargetGCS.PrimeMeridian.AngularUnit.RadiansPerUnit;
-                points[j] *= SourceGCS.AngularUnit.RadiansPerUnit;
-            }
+            x /= SourceGCS.AngularUnit.RadiansPerUnit;
+            x -= SourceGCS.PrimeMeridian.Longitude / SourceGCS.PrimeMeridian.AngularUnit.RadiansPerUnit;
+            x += TargetGCS.PrimeMeridian.Longitude / TargetGCS.PrimeMeridian.AngularUnit.RadiansPerUnit;
+            x *= SourceGCS.AngularUnit.RadiansPerUnit;
+            return (x, y, z);
         }
 
         /*

@@ -398,64 +398,74 @@ namespace ProjNet.CoordinateSystems.Transformations
             return _inverse;
         }
 
-        protected internal override void Transform(ref Span<double> points, ref Span<double> altitudes)
-        {
-            if (DimTarget > 3 || DimSource > 3)
-                throw new NotSupportedException();
-
-            int size = points.Length / 2;
-            for (int i = 0, j = 0, k = 1; i < size; i++, j += 2, k += 2)
-            {
-                var point = new [] { points[j], points[k], (altitudes != null ? altitudes[i] : 0d)};
-                var transformed = new double[3];
-                //count each target dimension using the apropriate row
-                for (int row = 0; row < dimTarget; row++)
-                {
-                    //start with the last value which is in fact multiplied by 1
-                    double dimVal = transformMatrix[row, dimSource];
-                    for (int col = 0; col < dimSource; col++)
-                    {
-                        dimVal += transformMatrix[row, col] * point[col];
-                    }
-                    transformed[row] = dimVal;
-                }
-
-                points[j] = transformed[0];
-                points[k] = transformed[1];
-                if (altitudes != null)
-                    altitudes[i] = transformed[3];
-            }
-        }
-
         /// <summary>
         /// Transforms a coordinate point. The passed parameter point should not be modified.
         /// </summary>
         /// <param name="point"></param>
         /// <returns></returns>
-        public override double[] Transform (double[] point)
+        public override (double x, double y, double z) Transform(double x, double y, double z)
         {
             //check source dimensionality - allow coordinate clipping, if source dimensionality is greater then expected source dimensionality of affine transformation
-            if (point.Length >= dimSource)
+            Span<double> point = stackalloc double[0];
+            switch (dimSource)
             {
-                //use transformation matrix to create output points that has dimTarget dimensionality
-                double[] transformed = new double[dimTarget];
+                case 0:
+                    point = default;
+                    break;
 
-                //count each target dimension using the apropriate row
-                for (int row = 0; row < dimTarget; row++)
-                {
-                    //start with the last value which is in fact multiplied by 1
-                    double dimVal = transformMatrix[row, dimSource];
-                    for (int col = 0; col < dimSource; col++)
-                    {
-                        dimVal += transformMatrix[row, col] * point[col];
-                    }
-                    transformed[row] = dimVal;
-                }
-                return transformed;
+                case 1:
+                    point = stackalloc double[] { x };
+                    break;
+
+                case 2:
+                    point = stackalloc double[] { x, y };
+                    break;
+
+                case 3:
+                    point = stackalloc double[] { x, y, z };
+                    break;
+
+                default:
+                    throw new NotSupportedException();
             }
 
-            //nepodporovane
-            throw new NotSupportedException ("Dimensionality of point is not supported!");
+            if (dimTarget > 3)
+            {
+                throw new NotSupportedException();
+            }
+
+            //use transformation matrix to create output points that has dimTarget dimensionality
+            Span<double> transformed = stackalloc double[dimTarget];
+
+            //count each target dimension using the apropriate row
+            for (int row = 0; row < dimTarget; row++)
+            {
+                //start with the last value which is in fact multiplied by 1
+                double dimVal = transformMatrix[row, dimSource];
+                for (int col = 0; col < dimSource; col++)
+                {
+                    dimVal += transformMatrix[row, col] * point[col];
+                }
+                transformed[row] = dimVal;
+            }
+
+            (double x, double y, double z) ret = default;
+            if (transformed.Length > 2)
+            {
+                ret.z = transformed[2];
+            }
+
+            if (transformed.Length > 1)
+            {
+                ret.y = transformed[1];
+            }
+
+            if (transformed.Length > 0)
+            {
+                ret.x = transformed[0];
+            }
+
+            return ret;
         }
 
         /// <summary>

@@ -47,7 +47,8 @@ namespace ProjNet.CoordinateSystems.Projections
     [Serializable]
     internal class ObliqueStereographicProjection : MapProjection
     {
-        private double globalScale;
+        private readonly double globalScale;
+        private readonly double reciprocGlobalScale;
 
         private static double ITERATION_TOLERANCE = 1E-14;
         private static int MAXIMUM_ITERATIONS = 15;
@@ -96,6 +97,7 @@ namespace ProjNet.CoordinateSystems.Projections
             : base(parameters, inverse)
         {
             globalScale = scale_factor * this._semiMajor;
+            reciprocGlobalScale = 1 / globalScale;
 
             double sphi = Math.Sin(lat_origin);
             double cphi = Math.Cos(lat_origin);
@@ -173,59 +175,54 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         /// <param name="p">Point in meters</param>
         /// <returns>Transformed point in decimal degrees</returns>
-        protected override void MetersToRadians(ref Span<double> p, ref Span<double> altitudes)
+        protected override (double lon, double lat, double z) MetersToRadians(double x, double y, double z)
         {
-            int size = p.Length / 2;
-            for (int i = 0, j = 0, k = 1; i < size; i++, j += 2, k += 2)
-            {
-                double x = p[j] / this.globalScale;
-                double y = p[k] / this.globalScale;
+            x *= this.reciprocGlobalScale;
+            y *= this.reciprocGlobalScale;
 
-                double rho = Math.Sqrt((x * x) + (y * y));
-                if (Math.Abs(rho) < EPSILON)
+            double rho = Math.Sqrt((x * x) + (y * y));
+            if (Math.Abs(rho) < EPSILON)
+            {
+                x = 0.0;
+                y = phic0;
+            }
+            else
+            {
+                double ce = 2.0 * Math.Atan2(rho, R2);
+                double sinc = Math.Sin(ce);
+                double cosc = Math.Cos(ce);
+                x = Math.Atan2(x * sinc, rho * cosc0 * cosc - y * sinc0
+                                                                * sinc);
+                y = (cosc * sinc0) + (y * sinc * cosc0 / rho);
+
+                if (Math.Abs(y) >= 1.0)
                 {
-                    x = 0.0;
-                    y = phic0;
+                    y = (y < 0.0) ? -Math.PI / 2.0 : Math.PI / 2.0;
                 }
                 else
                 {
-                    double ce = 2.0 * Math.Atan2(rho, R2);
-                    double sinc = Math.Sin(ce);
-                    double cosc = Math.Cos(ce);
-                    x = Math.Atan2(x * sinc, rho * cosc0 * cosc - y * sinc0
-                                                                    * sinc);
-                    y = (cosc * sinc0) + (y * sinc * cosc0 / rho);
-
-                    if (Math.Abs(y) >= 1.0)
-                    {
-                        y = (y < 0.0) ? -Math.PI / 2.0 : Math.PI / 2.0;
-                    }
-                    else
-                    {
-                        y = Math.Asin(y);
-                    }
+                    y = Math.Asin(y);
                 }
-
-                x /= C;
-                double num = Math.Pow(Math.Tan(0.5 * y + Math.PI / 4.0) / K, 1.0 / C);
-                for (int iter = MAXIMUM_ITERATIONS;;)
-                {
-                    double phi = 2.0 * Math.Atan(num * srat(_e * Math.Sin(y), -0.5 * _e)) - Math.PI / 2.0;
-                    if (Math.Abs(phi - y) < ITERATION_TOLERANCE)
-                    {
-                        break;
-                    }
-
-                    y = phi;
-                    if (--iter < 0)
-                    {
-                        throw new Exception("Oblique Stereographics doesn't converge");
-                    }
-                }
-
-                p[j] = x + central_meridian;
-                p[k] = y;
             }
+
+            x /= C;
+            double num = Math.Pow(Math.Tan(0.5 * y + Math.PI / 4.0) / K, 1.0 / C);
+            for (int iter = MAXIMUM_ITERATIONS;;)
+            {
+                double phi = 2.0 * Math.Atan(num * srat(_e * Math.Sin(y), -0.5 * _e)) - Math.PI / 2.0;
+                if (Math.Abs(phi - y) < ITERATION_TOLERANCE)
+                {
+                    break;
+                }
+
+                y = phi;
+                if (--iter < 0)
+                {
+                    throw new Exception("Oblique Stereographics doesn't converge");
+                }
+            }
+
+            return (x + central_meridian, y, z);
         }
 
         ///// <summary>
@@ -263,27 +260,24 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         /// <param name="lonlat">The point in decimal degrees.</param>
         /// <returns>Point in projected meters</returns>
-        protected override void RadiansToMeters(ref Span<double> lonlat, ref Span<double> altitudes)
+        protected override (double x, double y, double z) RadiansToMeters(double lon, double lat, double z)
         {
-            int size = lonlat.Length / 2;
-            for (int i = 0, j = 0, k = 1; i < size; i++, j += 2, k += 2)
-            {
-                double x = lonlat[j] - this.central_meridian;
-                double y = lonlat[k];
+            double x = lon - this.central_meridian;
+            double y = lat;
 
+            y = 2.0 * Math.Atan(K * Math.Pow(Math.Tan(0.5 * y + Math.PI / 4), C)
+                                  * srat(_e * Math.Sin(y), ratexp))
+                - Math.PI / 2;
+            x *= C;
+            double sinc = Math.Sin(y);
+            double cosc = Math.Cos(y);
+            double cosl = Math.Cos(x);
+            double k_ = R2 / (1.0 + sinc0 * sinc + cosc0 * cosc * cosl);
 
-                y = 2.0 * Math.Atan(K * Math.Pow(Math.Tan(0.5 * y + Math.PI / 4), C)
-                                      * srat(_e * Math.Sin(y), ratexp))
-                    - Math.PI / 2;
-                x *= C;
-                double sinc = Math.Sin(y);
-                double cosc = Math.Cos(y);
-                double cosl = Math.Cos(x);
-                double k_ = R2 / (1.0 + sinc0 * sinc + cosc0 * cosc * cosl);
-                lonlat[j] = k_ * cosc * Math.Sin(x) * globalScale;
-                lonlat[k] = k_ * (cosc0 * sinc - sinc0 * cosc * cosl) * globalScale;
-
-            }
+            return (
+                x: k_ * cosc * Math.Sin(x) * globalScale,
+                y: k_ * (cosc0 * sinc - sinc0 * cosc * cosl) * globalScale,
+                z);
         }
 
 
