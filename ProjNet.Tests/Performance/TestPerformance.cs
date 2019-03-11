@@ -21,19 +21,22 @@ namespace ProjNET.Tests.Performance
         [TestCase(@"D:\Development\Source\Repos\NetTopologySuite\NetTopologySuite.Tests.NUnit\TestData\world.wkt")]
         public void TestPerformance(string pathToWktFile)
         {
+            if (!System.IO.File.Exists(pathToWktFile))
+                throw new IgnoreException($"File '{pathToWktFile}' not found.");
+
             Console.WriteLine(pathToWktFile);
-            MathTransform.SequenceToSpanConverter = null;
+            MathTransform.SequenceCoordinateConverter = null;
             
             DoTestPerformance(CoordinateArraySequenceFactory.Instance, pathToWktFile);
             DoTestPerformance(PackedCoordinateSequenceFactory.DoubleFactory, pathToWktFile);
-            DoTestPerformance(DotSpatialAffineCoordinateSequenceFactory.Instance, pathToWktFile, new DotSpatialSequenceToSpanConverter());
+            DoTestPerformance(DotSpatialAffineCoordinateSequenceFactory.Instance, pathToWktFile);
         }
 
-        private void DoTestPerformance(ICoordinateSequenceFactory factory, string pathToWktFile, MathTransform.ISequenceToSpanConverter c = null)
+        private void DoTestPerformance(ICoordinateSequenceFactory factory, string pathToWktFile, MathTransform.SequenceCoordinateConverterBase c = null)
         {
             var gf = new GeometryFactory(new PrecisionModel(PrecisionModels.Floating), 4326, factory);
             var wktFileReader = new WKTFileReader(pathToWktFile, new WKTReader(gf));
-            if (c != null) MathTransform.SequenceToSpanConverter = c;
+            if (c != null) MathTransform.SequenceCoordinateConverter = c;
 
             var geometries = wktFileReader.Read();
             var stopwatch = new Stopwatch();
@@ -88,23 +91,6 @@ namespace ProjNET.Tests.Performance
             }
 
             throw new NotSupportedException();
-        }
-
-        private class DotSpatialSequenceToSpanConverter : MathTransform.ISequenceToSpanConverter {
-            public void Convert(ref ICoordinateSequence sequence, out Span<double> pointData, out Span<double> altitudes)
-            {
-                var dsSeq = (DotSpatialAffineCoordinateSequence) sequence;
-                pointData = dsSeq.XY;
-                altitudes = dsSeq.Z;
-            }
-
-            public void Convert(ref Span<double> pointData, ref Span<double> altitudes, ref ICoordinateSequence sequence)
-            {
-                var dsSeq = (DotSpatialAffineCoordinateSequence)sequence;
-                Buffer.BlockCopy(pointData.ToArray(), 0, dsSeq.XY, 0, 8 * pointData.Length);
-                if (sequence.HasZ)
-                    Buffer.BlockCopy(altitudes.ToArray(), 0, dsSeq.Z, 0, 8 * altitudes.Length);
-            }
         }
     }
 }

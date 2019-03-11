@@ -341,7 +341,7 @@ namespace ProjNet.CoordinateSystems.Transformations
 
         private static SequenceCoordinateConverterBase _sequenceCoordinateConverter;
         public static SequenceCoordinateConverterBase SequenceCoordinateConverter { 
-            get { return _sequenceCoordinateConverter ?? = new SequenceCoordinateConverterBase(); }
+            get { return _sequenceCoordinateConverter ?? new SequenceCoordinateConverterBase(); }
             set { _sequenceCoordinateConverter = value;} 
         }
 
