@@ -6,5 +6,6 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GeoAPIPackageReferenceVersion>2.0.0-nuget005</GeoAPIPackageReferenceVersion>
     <RestoreAdditionalProjectSources>$(RestoreAdditionalProjectSources);https://www.myget.org/F/nettopologysuite/api/v3/index.json</RestoreAdditionalProjectSources>
+    <DefineConstants>$(DefineConstants);WithSpans</DefineConstants>
   </PropertyGroup>
 </Project>
