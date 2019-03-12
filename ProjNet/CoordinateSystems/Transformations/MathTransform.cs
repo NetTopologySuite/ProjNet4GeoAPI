@@ -23,6 +23,9 @@ using GeoAPI.Geometries;
 
 namespace ProjNet.CoordinateSystems.Transformations
 {
+#if WithSpans
+    
+
     public struct XY
     {
         public double X;
@@ -38,6 +41,7 @@ namespace ProjNet.CoordinateSystems.Transformations
 
         public double Z;
     }
+#endif
 
     /// <summary>
     /// Abstract class for creating multi-dimensional coordinate points transformations.
@@ -237,14 +241,15 @@ namespace ProjNet.CoordinateSystems.Transformations
         ICoordinateSequence IMathTransform.Transform(ICoordinateSequence coordinateSequence) =>
             TransformCopy(coordinateSequence);
 
-        public virtual void TransformInPlace(ICoordinateSequence coordinateSequence)
+
+        public void TransformInPlace(ICoordinateSequence coordinateSequence)
         {
             // shortcout, no matter what
             if (coordinateSequence == null || coordinateSequence.Count == 0)
             {
                 return;
             }
-
+#if WithSpans
 #if SequenceCoordinateConverter
             var converter = SequenceCoordinateConverter;
 
@@ -255,9 +260,24 @@ namespace ProjNet.CoordinateSystems.Transformations
             var st = SequenceTransformer;
             st.Transform(this, coordinateSequence);
 #endif
+#else
+            bool readZ = coordinateSequence.HasZ && DimSource > 2;
+            bool writeZ = coordinateSequence.HasZ && DimTarget > 2;
+            for (int i = 0; i < coordinateSequence.Count; i++)
+            {
+                double x = coordinateSequence.GetX(i);
+                double y = coordinateSequence.GetY(i);
+                double z = readZ ? coordinateSequence.GetZ(i) : 0d;
+                (x, y, z) = Transform(x, y, z);
+                coordinateSequence.SetOrdinate(i, Ordinate.X, x);
+                coordinateSequence.SetOrdinate(i, Ordinate.X, x);
+
+                if (writeZ) coordinateSequence.SetOrdinate(i, Ordinate.X, x);
+            }
+#endif
         }
 
-        public virtual ICoordinateSequence TransformCopy(ICoordinateSequence coordinateSequence)
+        public ICoordinateSequence TransformCopy(ICoordinateSequence coordinateSequence)
         {
             // shortcout, no matter what
             if (coordinateSequence == null || coordinateSequence.Count == 0)
@@ -285,6 +305,7 @@ namespace ProjNet.CoordinateSystems.Transformations
 
         }
 
+#if WithSpans
         protected void DegreesToRadians(ReadOnlySpan<XY> inputs, Span<XY> outputs)
         {
             DegreesToRadians(MemoryMarshal.Cast<XY, double>(inputs), MemoryMarshal.Cast<XY, double>(outputs));
@@ -306,6 +327,7 @@ namespace ProjNet.CoordinateSystems.Transformations
                 outputs[i].Y = D2R * inputs[i].Y;
             }
         }
+#endif
 
         /// <summary>
         /// R2D
@@ -327,6 +349,7 @@ namespace ProjNet.CoordinateSystems.Transformations
             return (R2D * rad);
         }
 
+#if WithSpans
         protected void RadiansToDegrees(ReadOnlySpan<XY> inputs, Span<XY> outputs)
         {
             RadiansToDegrees(MemoryMarshal.Cast<XY, double>(inputs), MemoryMarshal.Cast<XY, double>(outputs));
@@ -348,13 +371,15 @@ namespace ProjNet.CoordinateSystems.Transformations
                 outputs[i].Y = D2R * inputs[i].Y;
             }
         }
+#endif
 
-        #endregion
+#endregion
 
-        #region (Readonly)Span<>
+#region (Readonly)Span<>
 
         public abstract (double x, double y, double z) Transform(double x, double y, double z);
 
+#if WithSpans
         public void Transform(ReadOnlySpan<double> xs, ReadOnlySpan<double> ys, ReadOnlySpan<double> zs,
             Span<double> outXs, Span<double> outYs, Span<double> outZs)
         {
@@ -432,8 +457,11 @@ namespace ProjNet.CoordinateSystems.Transformations
             }
         }
 
+#endif
+
         #endregion
 
+#if WithSpans
 #if SequenceCoordinateConverter
         private static SequenceCoordinateConverterBase _sequenceCoordinateConverter;
         public static SequenceCoordinateConverterBase SequenceCoordinateConverter
@@ -449,9 +477,10 @@ namespace ProjNet.CoordinateSystems.Transformations
             set { _sequenceTransformer = value; }
         }
 #endif
-
+#endif
     }
 
+#if WithSpans
 #if SequenceCoordinateConverter
 
     #region SequenceCoordinateConverter
@@ -563,8 +592,10 @@ namespace ProjNet.CoordinateSystems.Transformations
         }
     }
 
-    #endregion
+        #endregion
 #endif
-}
+
+#endif
+    }
 
 

@@ -32,6 +32,7 @@ namespace ProjNET.Tests.Performance
                 throw new IgnoreException($"File '{pathToWktFile}' not found.");
 
             Console.WriteLine(pathToWktFile);
+#if WithSpans
 #if SequenceCoordinateConverter
             MathTransform.SequenceCoordinateConverter = null;
             DoTestPerformance(CoordinateArraySequenceFactory.Instance, pathToWktFile);
@@ -45,23 +46,34 @@ namespace ProjNET.Tests.Performance
             DoTestPerformance(DotSpatialAffineCoordinateSequenceFactory.Instance, pathToWktFile);
             DoTestPerformance(DotSpatialAffineCoordinateSequenceFactory.Instance, pathToWktFile, new DotSpatialSequenceTransformer());
 #endif
+#else
+            DoTestPerformance(CoordinateArraySequenceFactory.Instance, pathToWktFile);
+            DoTestPerformance(PackedCoordinateSequenceFactory.DoubleFactory, pathToWktFile);
+            DoTestPerformance(DotSpatialAffineCoordinateSequenceFactory.Instance, pathToWktFile);
+#endif
         }
 
-        private void DoTestPerformance(ICoordinateSequenceFactory factory, string pathToWktFile,
+        private void DoTestPerformance(ICoordinateSequenceFactory factory, string pathToWktFile
+#if WithSpans
 #if SequenceCoordinateConverter
-            SequenceCoordinateConverterBase c = null)
+            , SequenceCoordinateConverterBase c = null)
 #else
-            SequenceTransformerBase c = null)
+            , SequenceTransformerBase c = null)
+#endif
+#else
+        )
 #endif
         {
             const int numIterations = 50;
             var gf = new GeometryFactory(new PrecisionModel(PrecisionModels.Floating), 4326, factory);
             var wktFileReader = new WKTFileReader(pathToWktFile, new WKTReader(gf));
 
+#if WithSpans
 #if SequenceCoordinateConverter
             MathTransform.SequenceCoordinateConverter = c;
 #else
             MathTransform.SequenceTransformer = c;
+#endif
 #endif
             var geometries = wktFileReader.Read();
             var stopwatch = new Stopwatch();
@@ -84,12 +96,17 @@ namespace ProjNET.Tests.Performance
                 elapsedMs += stopwatch.ElapsedMilliseconds;
             }
 
+#if (WithSpans)
 #if SequenceCoordinateConverter
             string util = MathTransform.SequenceCoordinateConverter.GetType().Name;
 #else
             string util = MathTransform.SequenceTransformer.GetType().Name;
 #endif
+#else
+            string util = "no span";
+#endif
             Console.WriteLine($"Transformation of {geometries.Count} geometries using {gf.CoordinateSequenceFactory.GetType().Name} with {util} took ~{elapsedMs / numIterations} ms");
+
 
         }
 
@@ -129,6 +146,7 @@ namespace ProjNET.Tests.Performance
             throw new NotSupportedException();
         }
     }
+#if WithSpans
 #if !SequenceCoordinateConverter
 
     public class CoordinateArraySequenceTransformer : SequenceTransformerBase
@@ -227,6 +245,6 @@ namespace ProjNET.Tests.Performance
                 base.Transform(transform, sequence);
         }
     }
-
+#endif
 #endif
 }
