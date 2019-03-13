@@ -20,6 +20,13 @@ namespace ProjNET.Tests.Performance
     {
         private readonly CoordinateSystemServices _css = new CoordinateSystemServices(new CoordinateSystemFactory(), new CoordinateTransformationFactory());
 
+        [SetUp]
+        public void TestSetup()
+        {
+            Console.WriteLine($"| Factory | Utility | Geometries | Coordinates | Avg. elapsed  Time |");
+            Console.WriteLine($"|---------|---------|-----------:|------------:|-------------------:|");
+        }
+
         [TestCase(@"TestData\africa.wkt")]
         [TestCase(@"TestData\europe.wkt")]
         [TestCase(@"TestData\world.wkt")]
@@ -31,7 +38,7 @@ namespace ProjNET.Tests.Performance
             if (!File.Exists(pathToWktFile))
                 throw new IgnoreException($"File '{pathToWktFile}' not found.");
 
-            Console.WriteLine(pathToWktFile);
+            //Console.WriteLine(pathToWktFile);
 #if WithSpans
 #if SequenceCoordinateConverter
             MathTransform.SequenceCoordinateConverter = null;
@@ -82,6 +89,7 @@ namespace ProjNET.Tests.Performance
             var gf2 = new GeometryFactory(new PrecisionModel(PrecisionModels.Floating), 3857, gf.CoordinateSequenceFactory);
 
             long elapsedMs = 0;
+            long numCoordinates = 0;
             for (int i = 0; i <= numIterations; i++)
             {
                 var transformed = new List<IGeometry>(geometries.Count);
@@ -90,6 +98,7 @@ namespace ProjNET.Tests.Performance
                 foreach (var geometry in geometries)
                 {
                     transformed.Add(Transform(geometry, mt, gf2));
+                    if (i == 0) numCoordinates += geometry.NumPoints;
                 }
                 stopwatch.Stop();
 
@@ -105,8 +114,7 @@ namespace ProjNET.Tests.Performance
 #else
             string util = "no span";
 #endif
-            Console.WriteLine($"Transformation of {geometries.Count} geometries using {gf.CoordinateSequenceFactory.GetType().Name} with {util} took ~{elapsedMs / numIterations} ms");
-
+            Console.WriteLine($"| {gf.CoordinateSequenceFactory.GetType().Name} | {util} | {geometries.Count} | {numCoordinates} |  ~{elapsedMs / numIterations} ms |");
 
         }
 
