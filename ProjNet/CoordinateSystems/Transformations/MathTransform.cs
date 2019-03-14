@@ -16,6 +16,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using GeoAPI.CoordinateSystems.Transformations;
@@ -23,9 +24,6 @@ using GeoAPI.Geometries;
 
 namespace ProjNet.CoordinateSystems.Transformations
 {
-#if WithSpans
-    
-
     public struct XY
     {
         public double X;
@@ -41,7 +39,6 @@ namespace ProjNet.CoordinateSystems.Transformations
 
         public double Z;
     }
-#endif
 
     /// <summary>
     /// Abstract class for creating multi-dimensional coordinate points transformations.
@@ -170,8 +167,8 @@ namespace ProjNet.CoordinateSystems.Transformations
             (x, y, z) = Transform(x, y, z);
 
             return DimTarget == 2
-                ? new[] {x, y}
-                : new[] {x, y, z};
+                ? new[] { x, y }
+                : new[] { x, y, z };
         }
 
         /// <summary>
@@ -202,8 +199,8 @@ namespace ProjNet.CoordinateSystems.Transformations
                 (x, y, z) = Transform(x, y, z);
 
                 result.Add(DimTarget == 2
-                    ? new[] {x, y}
-                    : new[] {x, y, z});
+                    ? new[] { x, y }
+                    : new[] { x, y, z });
             }
 
             return result;
@@ -249,32 +246,26 @@ namespace ProjNet.CoordinateSystems.Transformations
             {
                 return;
             }
-#if WithSpans
-#if SequenceCoordinateConverter
-            var converter = SequenceCoordinateConverter;
 
-            converter.ExtractRawCoordinatesFromSequence(coordinateSequence, out var xys, out var zs);
-            Transform(xys, zs, xys, zs);
-            converter.CopyRawCoordinatesToSequence(xys, zs, coordinateSequence, 0);
-#else
-            var st = SequenceTransformer;
-            st.Transform(this, coordinateSequence);
-#endif
-#else
-            bool readZ = coordinateSequence.HasZ && DimSource > 2;
-            bool writeZ = coordinateSequence.HasZ && DimTarget > 2;
-            for (int i = 0; i < coordinateSequence.Count; i++)
+            var converter = _sequenceCoordinateConverter;
+            if (converter != null)
             {
-                double x = coordinateSequence.GetX(i);
-                double y = coordinateSequence.GetY(i);
-                double z = readZ ? coordinateSequence.GetZ(i) : 0d;
-                (x, y, z) = Transform(x, y, z);
-                coordinateSequence.SetOrdinate(i, Ordinate.X, x);
-                coordinateSequence.SetOrdinate(i, Ordinate.X, x);
-
-                if (writeZ) coordinateSequence.SetOrdinate(i, Ordinate.X, x);
+                var cleanup = converter.ExtractRawCoordinatesFromSequence(coordinateSequence, out var xys, out var zs);
+                try
+                {
+                    Transform(xys, zs, xys, zs);
+                    converter.CopyRawCoordinatesToSequence(xys, zs, coordinateSequence);
+                }
+                finally
+                {
+                    cleanup();
+                }
             }
-#endif
+            else
+            {
+                var st = SequenceTransformer;
+                st.Transform(this, coordinateSequence);
+            }
         }
 
         public ICoordinateSequence TransformCopy(ICoordinateSequence coordinateSequence)
@@ -305,7 +296,6 @@ namespace ProjNet.CoordinateSystems.Transformations
 
         }
 
-#if WithSpans
         protected void DegreesToRadians(ReadOnlySpan<XY> inputs, Span<XY> outputs)
         {
             DegreesToRadians(MemoryMarshal.Cast<XY, double>(inputs), MemoryMarshal.Cast<XY, double>(outputs));
@@ -327,7 +317,6 @@ namespace ProjNet.CoordinateSystems.Transformations
                 outputs[i].Y = D2R * inputs[i].Y;
             }
         }
-#endif
 
         /// <summary>
         /// R2D
@@ -349,7 +338,6 @@ namespace ProjNet.CoordinateSystems.Transformations
             return (R2D * rad);
         }
 
-#if WithSpans
         protected void RadiansToDegrees(ReadOnlySpan<XY> inputs, Span<XY> outputs)
         {
             RadiansToDegrees(MemoryMarshal.Cast<XY, double>(inputs), MemoryMarshal.Cast<XY, double>(outputs));
@@ -371,25 +359,19 @@ namespace ProjNet.CoordinateSystems.Transformations
                 outputs[i].Y = D2R * inputs[i].Y;
             }
         }
-#endif
-
-#endregion
-
-#region (Readonly)Span<>
 
         public abstract (double x, double y, double z) Transform(double x, double y, double z);
 
-#if WithSpans
         public void Transform(ReadOnlySpan<double> xs, ReadOnlySpan<double> ys, ReadOnlySpan<double> zs,
             Span<double> outXs, Span<double> outYs, Span<double> outZs)
         {
             if (xs.Length != ys.Length ||
                 xs.Length != outXs.Length ||
                 xs.Length != outYs.Length ||
-                (DimSource > 2 && xs.Length != zs.Length) ||
-                (DimTarget > 2 && xs.Length != outZs.Length))
+                (zs.Length != 0 && xs.Length != zs.Length) ||
+                (outZs.Length != 0 && xs.Length != outZs.Length))
             {
-                throw new ArgumentException("Observed spans must be the same length.");
+                throw new ArgumentException("Provided spans must be the same length.");
             }
 
             TransformCore(xs, ys, zs, outXs, outYs, outZs);
@@ -398,13 +380,11 @@ namespace ProjNet.CoordinateSystems.Transformations
         protected virtual void TransformCore(ReadOnlySpan<double> xs, ReadOnlySpan<double> ys, ReadOnlySpan<double> zs,
             Span<double> outXs, Span<double> outYs, Span<double> outZs)
         {
-            bool readZ = DimSource > 2;
-            bool writeZ = DimTarget > 2;
             for (int i = 0; i < xs.Length; i++)
             {
-                double z = readZ ? zs[i] : 0;
+                double z = zs.Length != 0 ? zs[i] : 0;
                 (outXs[i], outYs[i], z) = Transform(xs[i], ys[i], z);
-                if (writeZ)
+                if (outZs.Length != 0)
                 {
                     outZs[i] = z;
                 }
@@ -414,10 +394,10 @@ namespace ProjNet.CoordinateSystems.Transformations
         public void Transform(ReadOnlySpan<XY> xys, ReadOnlySpan<double> zs, Span<XY> outXys, Span<double> outZs)
         {
             if (xys.Length != outXys.Length ||
-                (DimSource > 2 && xys.Length != zs.Length) ||
-                (DimTarget > 2 && xys.Length != outZs.Length))
+                (zs.Length != 0 && xys.Length != zs.Length) ||
+                (outZs.Length != 0 && xys.Length != outZs.Length))
             {
-                throw new ArgumentException("Observed spans must be the same length.");
+                throw new ArgumentException("Provided spans must be the same length.");
             }
 
             TransformCore(xys, zs, outXys, outZs);
@@ -426,13 +406,11 @@ namespace ProjNet.CoordinateSystems.Transformations
         protected virtual void TransformCore(ReadOnlySpan<XY> xys, ReadOnlySpan<double> zs, Span<XY> outXys,
             Span<double> outZs)
         {
-            bool readZ = DimSource > 2;
-            bool writeZ = DimTarget > 2;
             for (int i = 0; i < xys.Length; i++)
             {
-                double z = readZ ? zs[i] : 0;
+                double z = zs.Length != 0 ? zs[i] : 0;
                 (outXys[i].X, outXys[i].Y, z) = this.Transform(xys[i].X, xys[i].Y, z);
-                if (writeZ)
+                if (outZs.Length != 0)
                 {
                     outZs[i] = z;
                 }
@@ -457,73 +435,94 @@ namespace ProjNet.CoordinateSystems.Transformations
             }
         }
 
-#endif
-
         #endregion
 
-#if WithSpans
-#if SequenceCoordinateConverter
         private static SequenceCoordinateConverterBase _sequenceCoordinateConverter;
         public static SequenceCoordinateConverterBase SequenceCoordinateConverter
         {
             get { return _sequenceCoordinateConverter ?? (_sequenceCoordinateConverter = new SequenceCoordinateConverterBase()); }
             set { _sequenceCoordinateConverter = value; }
         }
-#else
+
         private static SequenceTransformerBase _sequenceTransformer;
         public static SequenceTransformerBase SequenceTransformer
         {
             get { return _sequenceTransformer ?? (_sequenceTransformer = new SequenceTransformerBase()); }
             set { _sequenceTransformer = value; }
         }
-#endif
-#endif
     }
-
-#if WithSpans
-#if SequenceCoordinateConverter
-
-    #region SequenceCoordinateConverter
 
     public class SequenceCoordinateConverterBase
     {
-        public virtual void ExtractRawCoordinatesFromSequence(ICoordinateSequence sequence, out Span<XY> xys, out Span<double> zs)
+        protected static readonly Action Nop = () => { };
+
+        public MemoryPool<XY> MemoryPoolForXys { get; set; } = MemoryPool<XY>.Shared;
+
+        public MemoryPool<double> MemoryPoolForZs { get; set; } = MemoryPool<double>.Shared;
+
+        public virtual Action ExtractRawCoordinatesFromSequence(ICoordinateSequence sequence, out Span<XY> xys, out Span<double> zs)
         {
             if (sequence == null || sequence.Count < 1)
             {
                 xys = default;
                 zs = default;
-                return;
+                return Nop;
             }
 
-            var xysArray = new XY[sequence.Count];
-            var zsArray = new double[xysArray.Length];
+            IMemoryOwner<XY> xysOwner = null;
+            IMemoryOwner<double> zsOwner = null;
 
-            xys = xysArray;
-            zs = zsArray;
-
-            bool hasZ = sequence.HasZ;
-            for (int i = 0; i < xys.Length; i++)
+            try
             {
-                xysArray[i].X = sequence.GetX(i);
-                xysArray[i].Y = sequence.GetY(i);
-                zsArray[i] = sequence.GetZ(i);
+                int count = sequence.Count;
+                xysOwner = MemoryPoolForXys.Rent(count);
+                xys = xysOwner.Memory.Span.Slice(0, count);
+
+                bool hasZ = sequence.HasZ;
+                if (hasZ)
+                {
+                    zsOwner = MemoryPoolForZs.Rent(count);
+                    zs = zsOwner.Memory.Span.Slice(0, count);
+                }
+                else
+                {
+                    zs = default;
+                }
+
+                for (int i = 0; i < xys.Length; i++)
+                {
+                    xys[i].X = sequence.GetX(i);
+                    xys[i].Y = sequence.GetY(i);
+                    if (zs.Length != 0)
+                    {
+                        zs[i] = sequence.GetZ(i);
+                    }
+                }
+
+                return () =>
+                {
+                    using (zsOwner)
+                    {
+                        xysOwner.Dispose();
+                    }
+                };
+            }
+            catch
+            {
+                zsOwner?.Dispose();
+                xysOwner?.Dispose();
+                throw;
             }
         }
 
-        public void CopyRawCoordinatesToSequence(Span<XY> xys, Span<double> zs, ICoordinateSequence sequence, int offset)
+        public void CopyRawCoordinatesToSequence(Span<XY> xys, Span<double> zs, ICoordinateSequence sequence)
         {
-            if (offset < 0)
-            {
-                throw new ArgumentOutOfRangeException(nameof(offset), offset, "must be non-negative");
-            }
-
             if (sequence == null || sequence.Count < 1)
             {
                 return;
             }
 
-            if (sequence.Count - offset < xys.Length)
+            if (sequence.Count < xys.Length)
             {
                 throw new ArgumentException("Not enough room in the sequence for the coordinates.");
             }
@@ -545,32 +544,27 @@ namespace ProjNet.CoordinateSystems.Transformations
                 throw new ArgumentException("spans must be the same length.");
             }
 
-            CopyRawCoordinatesToSequenceCore(xys, zs, sequence, offset);
+            CopyRawCoordinatesToSequenceCore(xys, zs, sequence);
         }
 
-        protected virtual void CopyRawCoordinatesToSequenceCore(Span<XY> xys, Span<double> zs, ICoordinateSequence sequence, int offset)
+        protected virtual void CopyRawCoordinatesToSequenceCore(ReadOnlySpan<XY> xys, ReadOnlySpan<double> zs, ICoordinateSequence sequence)
         {
             bool hasZ = sequence.HasZ;
             for (int i = 0; i < xys.Length; i++)
             {
-                sequence.SetOrdinate(i + offset, Ordinate.X, xys[i].X);
-                sequence.SetOrdinate(i + offset, Ordinate.Y, xys[i].Y);
+                sequence.SetOrdinate(i, Ordinate.X, xys[i].X);
+                sequence.SetOrdinate(i, Ordinate.Y, xys[i].Y);
 
                 // documentation says that the sequence MUST NOT throw if it doesn't support Z
                 // and that it SHOULD ignore the call... PackedCoordinateSequence instances will
                 // overwrite other values, so we do need to skip.
                 if (hasZ)
                 {
-                    sequence.SetOrdinate(i + offset, Ordinate.Z, zs[i]);
+                    sequence.SetOrdinate(i, Ordinate.Z, zs.Length == 0 ? 0 : zs[i]);
                 }
             }
         }
     }
-
-    #endregion
-#else
-
-    #region CoordinateSequenceTransformer
 
     public class SequenceTransformerBase
     {
@@ -585,17 +579,12 @@ namespace ProjNet.CoordinateSystems.Transformations
                 double z = readZ ? sequence.GetZ(i) : 0d;
                 (x, y, z) = transform.Transform(x, y, z);
                 sequence.SetOrdinate(i, Ordinate.X, x);
-                sequence.SetOrdinate(i, Ordinate.X, x);
+                sequence.SetOrdinate(i, Ordinate.Y, y);
 
-                if (writeZ) sequence.SetOrdinate(i, Ordinate.X, x);
+                if (writeZ) sequence.SetOrdinate(i, Ordinate.Z, z);
             }
         }
     }
-
-        #endregion
-#endif
-
-#endif
-    }
+}
 
 

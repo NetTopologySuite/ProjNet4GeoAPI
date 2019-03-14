@@ -1,16 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+using System.Buffers;
 using System.IO;
-using System.Reflection;
+using System.Linq;
 using System.Runtime.InteropServices;
 using BenchmarkDotNet.Attributes;
-using GeoAPI.CoordinateSystems.Transformations;
 using GeoAPI.Geometries;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.Geometries.Implementation;
 using NetTopologySuite.IO;
-using NetTopologySuite.Triangulate;
 using ProjNet;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
@@ -19,139 +16,227 @@ namespace ProjNET.Tests.Performance
 {
     public class PerformanceTests
     {
-        private readonly CoordinateSystemServices _css = new CoordinateSystemServices(new CoordinateSystemFactory(), new CoordinateTransformationFactory());
+        private MathTransform _mathTransform;
+
+        private IGeometry[] _geoms;
+
+        private SequenceTransformerBase _optimizedSequenceTransformer;
+
+        public PerformanceTests() { }
+
+        public PerformanceTests(bool verify)
+        {
+            IGeometry[][] results =
+            {
+                Run(true, nameof(CoordinateArraySequenceFactory), "SequenceCoordinateConverter"),
+                Run(true, nameof(CoordinateArraySequenceFactory), "SequenceTransformer"),
+                Run(true, nameof(PackedCoordinateSequenceFactory), "SequenceCoordinateConverter"),
+                Run(true, nameof(PackedCoordinateSequenceFactory), "SequenceTransformer"),
+                Run(true, nameof(DotSpatialAffineCoordinateSequenceFactory), "SequenceCoordinateConverter"),
+                Run(true, nameof(DotSpatialAffineCoordinateSequenceFactory), "SequenceTransformer"),
+                Run(false, nameof(CoordinateArraySequenceFactory), "SequenceCoordinateConverter"),
+                Run(false, nameof(CoordinateArraySequenceFactory), "SequenceTransformer"),
+                Run(false, nameof(PackedCoordinateSequenceFactory), "SequenceCoordinateConverter"),
+                Run(false, nameof(PackedCoordinateSequenceFactory), "SequenceTransformer"),
+                Run(false, nameof(DotSpatialAffineCoordinateSequenceFactory), "SequenceCoordinateConverter"),
+                Run(false, nameof(DotSpatialAffineCoordinateSequenceFactory), "SequenceTransformer"),
+            };
+
+            var expected = results[0];
+
+            for (int i = 1; i < results.Length; i++)
+            {
+                var actual = results[i];
+                if (actual.Length != expected.Length)
+                {
+                    throw new Exception($"i: {i}{Environment.NewLine}expect: {expected.Length}{Environment.NewLine}actual: {actual.Length}");
+                }
+
+                for (int j = 0; j < expected.Length; j++)
+                {
+                    if (!expected[j].EqualsExact(actual[j]))
+                    {
+                        throw new Exception($"i: {i}{Environment.NewLine}j: {j}{Environment.NewLine}expect: {expected[j]}{Environment.NewLine}actual: {actual[j]}");
+                    }
+                }
+            }
+
+            IGeometry[] Run(bool runWithDefault, string sequenceFactory, string implementation)
+            {
+                SequenceFactory = sequenceFactory;
+                Implementation = implementation;
+                Initialize();
+                if (runWithDefault)
+                {
+                    RunDefault();
+                }
+                else
+                {
+                    RunWithSequenceAwareOptimizations();
+                }
+
+                return _geoms;
+            }
+        }
+
+        [Params(nameof(CoordinateArraySequenceFactory), nameof(PackedCoordinateSequenceFactory), nameof(DotSpatialAffineCoordinateSequenceFactory))]
+        public string SequenceFactory;
+
+        [Params("SequenceCoordinateConverter", "SequenceTransformer")]
+        public string Implementation;
+
+        [GlobalSetup]
+        public void Initialize()
+        {
+            var css = new CoordinateSystemServices(new CoordinateSystemFactory(), new CoordinateTransformationFactory());
+            _mathTransform = (MathTransform)css.CreateTransformation(GeographicCoordinateSystem.WGS84, ProjectedCoordinateSystem.WebMercator).MathTransform;
+
+            ICoordinateSequenceFactory sequenceFactory;
+            switch (SequenceFactory)
+            {
+                case nameof(CoordinateArraySequenceFactory):
+                    sequenceFactory = CoordinateArraySequenceFactory.Instance;
+                    _optimizedSequenceTransformer = new CoordinateArraySequenceTransformer();
+                    break;
+
+                case nameof(PackedCoordinateSequenceFactory):
+                    sequenceFactory = PackedCoordinateSequenceFactory.DoubleFactory;
+                    _optimizedSequenceTransformer = new PackedDoubleSequenceTransformer();
+                    break;
+
+                case nameof(DotSpatialAffineCoordinateSequenceFactory):
+                    sequenceFactory = DotSpatialAffineCoordinateSequenceFactory.Instance;
+                    _optimizedSequenceTransformer = new DotSpatialSequenceTransformer();
+                    break;
+
+                default:
+                    throw new Exception("update this block when you update the params");
+            }
+
+            var gf = new GeometryFactory(new PrecisionModel(PrecisionModels.Floating), 4326, sequenceFactory);
+            var wktReader = new WKTReader(gf) { IsOldNtsCoordinateSyntaxAllowed = false };
+            _geoms = Directory.EnumerateFiles("TestData", "*.wkt")
+                              .SelectMany(file => new WKTFileReader(file, wktReader).Read())
+                              .ToArray();
+        }
 
         [Benchmark(Baseline = true)]
-        public void TestCoordinateArraySequence()
+        public void RunDefault()
         {
-            DoTestPerformance(CoordinateArraySequenceFactory.Instance, @"TestData\world.wkt");
-        }
-
-#if WithSpans && !SequenceCoordinateConverter
-        [Benchmark]
-        public void TestCoordinateArraySequenceOpt()
-        {
-            DoTestPerformance(CoordinateArraySequenceFactory.Instance, @"TestData\world.wkt", new CoordinateArraySequenceTransformer());
-        }
-        [Benchmark]
-        public void TestPackedDoubleSequenceOpt()
-        {
-            DoTestPerformance(PackedCoordinateSequenceFactory.DoubleFactory, @"TestData\world.wkt", new PackedDoubleSequenceTransformer());
-        }
-        [Benchmark]
-        public void TestDotSpatialAffineSequenceOpt()
-        {
-            DoTestPerformance(DotSpatialAffineCoordinateSequenceFactory.Instance, @"TestData\world.wkt", new DotSpatialSequenceTransformer());
-        }
-#endif
-
-        [Benchmark()]
-        public void TestPackedDoubleSequence()
-        {
-            DoTestPerformance(PackedCoordinateSequenceFactory.DoubleFactory, @"TestData\world.wkt");
-        }
-
-        [Benchmark()]
-        public void TestDotSpatialAffineSequence()
-        {
-            DoTestPerformance(DotSpatialAffineCoordinateSequenceFactory.Instance, @"TestData\world.wkt");
-        }
-
-        private void DoTestPerformance(ICoordinateSequenceFactory factory, string pathToWktFile
-#if WithSpans
-#if SequenceCoordinateConverter
-            , SequenceCoordinateConverterBase c = null)
-#else
-            , SequenceTransformerBase c = null)
-#endif
-#else
-        )
-#endif
-        {
-            const int numIterations = 50;
-            var gf = new GeometryFactory(new PrecisionModel(PrecisionModels.Floating), 4326, factory);
-            var wktFileReader = new WKTFileReader(pathToWktFile, new WKTReader(gf));
-
-#if WithSpans
-#if SequenceCoordinateConverter
-            MathTransform.SequenceCoordinateConverter = c;
-#else
-            MathTransform.SequenceTransformer = c;
-#endif
-#endif
-            var geometries = wktFileReader.Read();
-            var stopwatch = new Stopwatch();
-
-            var mt = _css.CreateTransformation(GeographicCoordinateSystem.WGS84, ProjectedCoordinateSystem.WebMercator).MathTransform; 
-            var gf2 = new GeometryFactory(new PrecisionModel(PrecisionModels.Floating), 3857, gf.CoordinateSequenceFactory);
-
-            long elapsedMs = 0;
-            for (int i = 0; i <= numIterations; i++)
+            if (Implementation == "SequenceCoordinateConverter")
             {
-                var transformed = new List<IGeometry>(geometries.Count);
-
-                stopwatch.Restart();
-                foreach (var geometry in geometries)
-                {
-                    transformed.Add(Transform(geometry, mt, gf2));
-                }
-                stopwatch.Stop();
-
-                elapsedMs += stopwatch.ElapsedMilliseconds;
+                MathTransform.SequenceCoordinateConverter = new SequenceCoordinateConverterBase();
+                MathTransform.SequenceTransformer = null;
+            }
+            else
+            {
+                MathTransform.SequenceCoordinateConverter = null;
+                MathTransform.SequenceTransformer = new SequenceTransformerBase();
             }
 
-#if (WithSpans)
-#if SequenceCoordinateConverter
-            string util = MathTransform.SequenceCoordinateConverter.GetType().Name;
-#else
-            string util = MathTransform.SequenceTransformer.GetType().Name;
-#endif
-#else
-            string util = "no span";
-#endif
-            Console.WriteLine($"Transformation of {geometries.Count} geometries using {gf.CoordinateSequenceFactory.GetType().Name} with {util} took ~{elapsedMs / numIterations} ms");
-
-
+            Run();
         }
 
-        public static IGeometry Transform(IGeometry geometry, IMathTransform transfrom, IGeometryFactory factory)
+        [Benchmark]
+        public void RunWithSequenceAwareOptimizations()
         {
-            if (geometry is IGeometryCollection)
+            if (Implementation == "SequenceCoordinateConverter")
             {
-                var res = new IGeometry[geometry.NumGeometries];
-                for (int i = 0; i < geometry.NumGeometries; i++)
-                    res[i] = Transform(geometry.GetGeometryN(i), transfrom, factory);
-                return factory.BuildGeometry(res);
+                MathTransform.SequenceCoordinateConverter = new OptimizedCoordinateSequenceConverter();
+                MathTransform.SequenceTransformer = null;
+            }
+            else
+            {
+                MathTransform.SequenceCoordinateConverter = null;
+                MathTransform.SequenceTransformer = _optimizedSequenceTransformer;
             }
 
-            if (geometry is IPoint p)
-                return factory.CreatePoint(transfrom.Transform(p.CoordinateSequence));
+            Run();
+        }
 
-            if (geometry is ILineString l)
-                return factory.CreateLineString(transfrom.Transform(l.CoordinateSequence));
-
-            if (geometry is IPolygon po)
+        private void Run()
+        {
+            foreach (var geometry in _geoms)
             {
-                var holes = new ILinearRing[po.NumInteriorRings];
-                for (int i = 0; i < po.NumInteriorRings; i++)
-                {
-                    var ring = CoordinateSequences.EnsureValidRing(factory.CoordinateSequenceFactory, transfrom.Transform(po.InteriorRings[i].CoordinateSequence));
-                    holes[i] = factory.CreateLinearRing(ring);
-                }
-
-                var shell = CoordinateSequences.EnsureValidRing(
-                    factory.CoordinateSequenceFactory, transfrom.Transform(po.ExteriorRing.CoordinateSequence));
-
-                return CoordinateSequences.IsRing(shell)
-                    ? factory.CreatePolygon(factory.CreateLinearRing(shell), holes)
-                    : null;
+                Transform(geometry, _mathTransform);
             }
+        }
 
-            throw new NotSupportedException();
+        public static void Transform(IGeometry geometry, MathTransform transform)
+        {
+            switch (geometry)
+            {
+                case IGeometryCollection _:
+                    for (int i = 0; i < geometry.NumGeometries; i++)
+                    {
+                        Transform(geometry.GetGeometryN(i), transform);
+                    }
+
+                    break;
+
+                case IPoint p:
+                    transform.TransformInPlace(p.CoordinateSequence);
+                    break;
+
+                case ILineString l:
+                    transform.TransformInPlace(l.CoordinateSequence);
+                    break;
+
+                case IPolygon po:
+                    transform.TransformInPlace(po.ExteriorRing.CoordinateSequence);
+                    foreach (var hole in po.InteriorRings)
+                    {
+                        transform.TransformInPlace(hole.CoordinateSequence);
+                    }
+
+                    break;
+
+                default:
+                    throw new NotSupportedException();
+            }
         }
     }
-#if WithSpans
-#if !SequenceCoordinateConverter
+
+    public class OptimizedCoordinateSequenceConverter : SequenceCoordinateConverterBase
+    {
+        public override Action ExtractRawCoordinatesFromSequence(ICoordinateSequence sequence, out Span<XY> xys, out Span<double> zs)
+        {
+            switch (sequence)
+            {
+                case PackedDoubleCoordinateSequence packedSeq when packedSeq.Dimension == 2:
+                    xys = MemoryMarshal.Cast<double, XY>(packedSeq.GetRawCoordinates());
+                    zs = default;
+                    return Nop;
+
+                case DotSpatialAffineCoordinateSequence dotSpatialSeq:
+                    xys = MemoryMarshal.Cast<double, XY>(dotSpatialSeq.XY);
+                    zs = dotSpatialSeq.Z;
+                    return Nop;
+
+                default:
+                    return base.ExtractRawCoordinatesFromSequence(sequence, out xys, out zs);
+            }
+        }
+
+        protected override void CopyRawCoordinatesToSequenceCore(ReadOnlySpan<XY> xys, ReadOnlySpan<double> zs, ICoordinateSequence sequence)
+        {
+            switch (sequence)
+            {
+                case PackedDoubleCoordinateSequence packedSeq when packedSeq.Dimension == 2:
+                    xys.CopyTo(MemoryMarshal.Cast<double, XY>(packedSeq.GetRawCoordinates()));
+                    break;
+
+                case DotSpatialAffineCoordinateSequence dotSpatialSeq:
+                    xys.CopyTo(MemoryMarshal.Cast<double, XY>(dotSpatialSeq.XY));
+                    zs.CopyTo(dotSpatialSeq.Z);
+                    break;
+
+                default:
+                    base.CopyRawCoordinatesToSequenceCore(xys, zs, sequence);
+                    break;
+            }
+        }
+    }
 
     public class CoordinateArraySequenceTransformer : SequenceTransformerBase
     {
@@ -160,35 +245,39 @@ namespace ProjNET.Tests.Performance
             var s = (CoordinateArraySequence) sequence;
             var ca = s.ToCoordinateArray();
 
-            var xy = new double[2 * ca.Length];
-            var z = new double[ca.Length];
-            for (int i = 0, j = 0; i < ca.Length; i++)
+            using (var xyOwner = MemoryPool<XY>.Shared.Rent(ca.Length))
+            using (var zOwner = s.HasZ ? MemoryPool<double>.Shared.Rent(ca.Length) : null)
             {
-                xy[j++] = ca[i].X;
-                xy[j++] = ca[i].Y;
-            }
-            if (s.HasZ & transform.DimSource > 2)
-            {
+                var xy = xyOwner.Memory.Span.Slice(0, ca.Length);
+                Span<double> z = default;
+                if (zOwner != null && transform.DimSource > 2)
+                {
+                    z = zOwner.Memory.Span.Slice(0, ca.Length);
+                }
+
                 for (int i = 0; i < ca.Length; i++)
-                    z[i] = ca[i].Z;
-            }
+                {
+                    var c = ca[i];
+                    xy[i].X = c.X;
+                    xy[i].Y = c.Y;
+                    if (z.Length != 0)
+                    {
+                        z[i] = c.Z;
+                    }
+                }
 
-            var xyIn = MemoryMarshal.Cast<double, XY>(new ReadOnlySpan<double>(xy));
-            var zIn = new ReadOnlySpan<double>(z);
-            var xyOut = MemoryMarshal.Cast<double, XY>(new Span<double>(xy));
-            var zOut = new Span<double>(z);
+                transform.Transform(xy, z, xy, z);
 
-            transform.Transform(xyIn, zIn, xyOut, zOut);
-
-            for (int i = 0, j = 0; i < ca.Length; i++)
-            {
-                ca[i].X = xy[j++];
-                ca[i].Y = xy[j++];
-            }
-            if (s.HasZ & transform.DimTarget > 2)
-            {
                 for (int i = 0; i < ca.Length; i++)
-                    ca[i].Z = z[i];
+                {
+                    var c = ca[i];
+                    c.X = xy[i].X;
+                    c.Y = xy[i].Y;
+                    if (z.Length != 0)
+                    {
+                        c.Z = z[i];
+                    }
+                }
             }
         }
     }
@@ -201,23 +290,18 @@ namespace ProjNET.Tests.Performance
             var raw = s.GetRawCoordinates();
             if (s.Dimension == 2)
             {
-                var xyIn = MemoryMarshal.Cast<double, XY>(new ReadOnlySpan<double>(raw));
-                var xyOut = MemoryMarshal.Cast<double, XY>(new Span<double>(raw));
-                var zArr = new double[sequence.Count];
-                var zOut = new Span<double>(zArr);
-                var zIn = new ReadOnlySpan<double>(zArr);
-
-                transform.Transform(xyIn, zIn, xyOut, zOut);
+                var xy = MemoryMarshal.Cast<double, XY>(raw);
+                transform.Transform(xy, default, xy, default);
             }
             else if (s.Dimension == 3 && s.HasZ)
             {
-                var xyzIn = MemoryMarshal.Cast<double, XYZ>(new ReadOnlySpan<double>(raw));
-                var xyzOut = MemoryMarshal.Cast<double, XYZ>(raw);
-
-                transform.Transform(xyzIn, xyzOut);
+                var xyz = MemoryMarshal.Cast<double, XYZ>(raw);
+                transform.Transform(xyz, xyz);
             }
             else
+            {
                 base.Transform(transform, sequence);
+            }
         }
     }
 
@@ -226,29 +310,8 @@ namespace ProjNET.Tests.Performance
         public override void Transform(MathTransform transform, ICoordinateSequence sequence)
         {
             var s = (DotSpatialAffineCoordinateSequence)sequence;
-            if (s.Dimension == 2 || (s.Dimension > 2 && !s.HasZ))
-            {
-                var xyIn = MemoryMarshal.Cast<double, XY>(new ReadOnlySpan<double>(s.XY));
-                var xyOut = MemoryMarshal.Cast<double, XY>(s.XY);
-                var zArr = new double[s.Count];
-                var zOut = new Span<double>(zArr);
-                var zIn = new ReadOnlySpan<double>(zArr);
-
-                transform.Transform(xyIn, zIn, xyOut, zOut);
-            }
-            else if (s.Dimension > 2 && s.HasZ)
-            {
-                var xyIn = MemoryMarshal.Cast<double, XY>(new ReadOnlySpan<double>(s.XY));
-                var xyOut = MemoryMarshal.Cast<double, XY>(s.XY);
-                var zOut = new Span<double>(s.Z);
-                var zIn = new ReadOnlySpan<double>(s.Z);
-
-                transform.Transform(xyIn, zIn, xyOut, zOut);
-            }
-            else
-                base.Transform(transform, sequence);
+            var xy = MemoryMarshal.Cast<double, XY>(s.XY);
+            transform.Transform(xy, s.Z, xy, s.Z);
         }
     }
-#endif
-#endif
 }

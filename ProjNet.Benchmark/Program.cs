@@ -12,16 +12,16 @@ namespace ProjNet.Benchmark
     {
         static void Main(string[] args)
         {
+            // make sure that the benchmark is correct
+            new PerformanceTests(true);
+            return;
 
-#if false
-            BenchmarkRunner.Run<PerformanceTests>();
-#else
             BenchmarkRunner.Run<PerformanceTests>(
                 ManualConfig.Create(DefaultConfig.Instance)
                     .With(Job.Default
                         .WithGcServer(true))
                     .With(MemoryDiagnoser.Default));
-#endif
+
             Console.WriteLine("Press Spacebar");
             while (Console.ReadKey().Key != ConsoleKey.Spacebar)
                 Thread.Sleep(500);

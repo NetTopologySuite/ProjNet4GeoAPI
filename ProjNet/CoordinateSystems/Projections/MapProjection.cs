@@ -289,7 +289,6 @@ namespace ProjNet.CoordinateSystems.Projections
                 return DegreesToTarget(x, y, z);
             }
         }
-#if WithSpans
 
         protected sealed override void TransformCore(ReadOnlySpan<double> xs, ReadOnlySpan<double> ys, ReadOnlySpan<double> zs, Span<double> outXs, Span<double> outYs, Span<double> outZs)
         {
@@ -326,7 +325,6 @@ namespace ProjNet.CoordinateSystems.Projections
                 DegreesToTarget(xyzs, outXyzs);
             }
         }
-#endif
 
 #endregion
 
@@ -342,7 +340,7 @@ namespace ProjNet.CoordinateSystems.Projections
             (x, y) = MetersToTarget(x, y);
             return (x, y, z);
         }
-#if WithSpans
+
         protected virtual void DegreesToTarget(ReadOnlySpan<double> xs, ReadOnlySpan<double> ys, ReadOnlySpan<double> zs, Span<double> outXs, Span<double> outYs, Span<double> outZs)
         {
             DegreesToRadians(xs, outXs);
@@ -393,13 +391,13 @@ namespace ProjNet.CoordinateSystems.Projections
 
             MetersToTarget(outXyzs, outXyzs);
         }
-#endif
+
         protected (double x, double y) MetersToTarget(double x, double y)
         {
             return (x: (x + false_easting) * _reciprocalMetersPerUnit,
                     y: (y + false_northing) * _reciprocalMetersPerUnit);
         }
-#if WithSpans
+
         protected void MetersToTarget(ReadOnlySpan<double> xs, ReadOnlySpan<double> ys, Span<double> outXs, Span<double> outYs)
         {
             for (int i = 0; i < xs.Length; i++)
@@ -430,7 +428,6 @@ namespace ProjNet.CoordinateSystems.Projections
                 outXyzs[i].Y = (xyzs[i].Y + false_northing) * _reciprocalMetersPerUnit;
             }
         }
-#endif
 
 #endregion
 
@@ -446,7 +443,7 @@ namespace ProjNet.CoordinateSystems.Projections
             y = Radians2Degrees(y);
             return (x, y, z);
         }
-#if WithSpans
+
         protected virtual void SourceToDegrees(ReadOnlySpan<double> xs, ReadOnlySpan<double> ys, ReadOnlySpan<double> zs, Span<double> outXs, Span<double> outYs, Span<double> outZs)
         {
             SourceToMeters(xs, ys, outXs, outYs);
@@ -510,13 +507,13 @@ namespace ProjNet.CoordinateSystems.Projections
                 outYs[i] = ys[i] * _metersPerUnit - false_northing;
             }
         }
-#endif
+
         protected (double x, double y) SourceToMeters(double x, double y)
         {
             return (x: x * _metersPerUnit - false_easting,
                     y: y * _metersPerUnit - false_northing);
         }
-#if WithSpans
+
         protected void SourceToMeters(ReadOnlySpan<XY> xys, Span<XY> outXys)
         {
             for (int i = 0; i < xys.Length; i++)
@@ -534,7 +531,6 @@ namespace ProjNet.CoordinateSystems.Projections
                 outXyzs[i].Y = xyzs[i].Y * _metersPerUnit - false_northing;
             }
         }
-#endif
 
 #endregion
 
