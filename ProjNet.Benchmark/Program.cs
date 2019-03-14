@@ -14,7 +14,6 @@ namespace ProjNet.Benchmark
         {
             // make sure that the benchmark is correct
             new PerformanceTests(true);
-            return;
 
             BenchmarkRunner.Run<PerformanceTests>(
                 ManualConfig.Create(DefaultConfig.Instance)
