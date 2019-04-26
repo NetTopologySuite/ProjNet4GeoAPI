@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -13,6 +13,8 @@ using NUnit.Framework;
 using ProjNet;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
+using ProjNet.Geometries;
+using ProjNET.Tests.Geometries.Implementation;
 
 namespace ProjNET.Tests.Performance
 {
@@ -52,6 +54,8 @@ namespace ProjNET.Tests.Performance
             DoTestPerformance(PackedCoordinateSequenceFactory.DoubleFactory, pathToWktFile, new PackedDoubleSequenceTransformer());
             DoTestPerformance(DotSpatialAffineCoordinateSequenceFactory.Instance, pathToWktFile);
             DoTestPerformance(DotSpatialAffineCoordinateSequenceFactory.Instance, pathToWktFile, new DotSpatialSequenceTransformer());
+            DoTestPerformance(SpanCoordinateSequenceFactory.Instance, pathToWktFile, null);
+            DoTestPerformance(SpanCoordinateSequenceFactory.Instance, pathToWktFile, new SpanCoordinateSequenceTransformer());
 #endif
 #else
             DoTestPerformance(CoordinateArraySequenceFactory.Instance, pathToWktFile);
@@ -71,7 +75,7 @@ namespace ProjNET.Tests.Performance
         )
 #endif
         {
-            const int numIterations = 50;
+            const int numIterations = 25;
             var gf = new GeometryFactory(new PrecisionModel(PrecisionModels.Floating), 4326, factory);
             var wktFileReader = new WKTFileReader(pathToWktFile, new WKTReader(gf));
 
@@ -157,7 +161,7 @@ namespace ProjNET.Tests.Performance
 #if WithSpans
 #if !SequenceCoordinateConverter
 
-    public class CoordinateArraySequenceTransformer : SequenceTransformerBase
+    internal class CoordinateArraySequenceTransformer : SequenceTransformerBase
     {
         public override void Transform(MathTransform transform, ICoordinateSequence sequence)
         {
@@ -197,7 +201,7 @@ namespace ProjNET.Tests.Performance
         }
     }
 
-    public class PackedDoubleSequenceTransformer : SequenceTransformerBase
+    internal class PackedDoubleSequenceTransformer : SequenceTransformerBase
     {
         public override void Transform(MathTransform transform, ICoordinateSequence sequence)
         {
@@ -205,54 +209,75 @@ namespace ProjNET.Tests.Performance
             var raw = s.GetRawCoordinates();
             if (s.Dimension == 2)
             {
-                var xyIn = MemoryMarshal.Cast<double, XY>(new ReadOnlySpan<double>(raw));
-                var xyOut = MemoryMarshal.Cast<double, XY>(new Span<double>(raw));
-                var zArr = new double[sequence.Count];
-                var zOut = new Span<double>(zArr);
-                var zIn = new ReadOnlySpan<double>(zArr);
-
-                transform.Transform(xyIn, zIn, xyOut, zOut);
+                var xIn = new ReadOnlySpan<double>(raw).Slice(0, raw.Length - 1);
+                var yIn = new ReadOnlySpan<double>(raw).Slice(1, raw.Length - 1);
+                var xOut = new Span<double>(raw).Slice(0, raw.Length - 1);
+                var yOut = new Span<double>(raw).Slice(1, raw.Length - 1);
+                transform.Transform(xIn, yIn, xOut, yOut, 2, 2);
             }
             else if (s.Dimension == 3 && s.HasZ)
             {
-                var xyzIn = MemoryMarshal.Cast<double, XYZ>(new ReadOnlySpan<double>(raw));
-                var xyzOut = MemoryMarshal.Cast<double, XYZ>(raw);
+                var xIn = new ReadOnlySpan<double>(raw).Slice(0, raw.Length - 2);
+                var yIn = new ReadOnlySpan<double>(raw).Slice(1, raw.Length - 2);
+                var zIn = new ReadOnlySpan<double>(raw).Slice(2, raw.Length - 2);
+                var xOut = new Span<double>(raw).Slice(0, raw.Length - 2);
+                var yOut = new Span<double>(raw).Slice(1, raw.Length - 2);
+                var zOut = new Span<double>(raw).Slice(2, raw.Length - 2);
 
-                transform.Transform(xyzIn, xyzOut);
+                transform.Transform(xIn, yIn, zIn, xOut, yOut, zOut, 3, 3, 3);
             }
             else
                 base.Transform(transform, sequence);
         }
     }
 
-    public class DotSpatialSequenceTransformer : SequenceTransformerBase
+    internal class DotSpatialSequenceTransformer : SequenceTransformerBase
     {
         public override void Transform(MathTransform transform, ICoordinateSequence sequence)
         {
             var s = (DotSpatialAffineCoordinateSequence)sequence;
+            int length = 2 * s.Count - 1;
             if (s.Dimension == 2 || (s.Dimension > 2 && !s.HasZ))
             {
-                var xyIn = MemoryMarshal.Cast<double, XY>(new ReadOnlySpan<double>(s.XY));
-                var xyOut = MemoryMarshal.Cast<double, XY>(s.XY);
-                var zArr = new double[s.Count];
-                var zOut = new Span<double>(zArr);
-                var zIn = new ReadOnlySpan<double>(zArr);
+                var xIn = new ReadOnlySpan<double>(s.XY).Slice(0, length);
+                var yIn = new ReadOnlySpan<double>(s.XY).Slice(1, length);
+                var xOut = new Span<double>(s.XY).Slice(0, length);
+                var yOut = new Span<double>(s.XY).Slice(1, length);
 
-                transform.Transform(xyIn, zIn, xyOut, zOut);
+                transform.Transform(xIn, yIn, xOut, yOut, 2, 2);
             }
             else if (s.Dimension > 2 && s.HasZ)
             {
-                var xyIn = MemoryMarshal.Cast<double, XY>(new ReadOnlySpan<double>(s.XY));
-                var xyOut = MemoryMarshal.Cast<double, XY>(s.XY);
-                var zOut = new Span<double>(s.Z);
+                var xIn = new ReadOnlySpan<double>(s.XY).Slice(0, length);
+                var yIn = new ReadOnlySpan<double>(s.XY).Slice(1, length);
                 var zIn = new ReadOnlySpan<double>(s.Z);
+                var xOut = new Span<double>(s.XY).Slice(0, length);
+                var yOut = new Span<double>(s.XY).Slice(1, length);
+                var zOut = new Span<double>(s.Z);
 
-                transform.Transform(xyIn, zIn, xyOut, zOut);
+                transform.Transform(xIn, yIn, zIn, xOut, yOut, zOut, 2, 2);
             }
             else
                 base.Transform(transform, sequence);
         }
     }
+
+    internal class SpanCoordinateSequenceTransformer : SequenceTransformerBase
+    {
+        public override void Transform(MathTransform transform, ICoordinateSequence sequence)
+        {
+            var scs = (SpanCoordinateSequence)sequence;
+            var inZs = scs.ZsAsSpan();
+            if (inZs.Length > 0)
+                transform.Transform(scs.XsAsSpan(), scs.YsAsSpan(), inZs,
+                    scs.XsAsSpan(), scs.YsAsSpan(), inZs);
+            else
+                transform.Transform(scs.XsAsSpan(), scs.YsAsSpan(),
+                    scs.XsAsSpan(), scs.YsAsSpan());
+
+        }
+    }
+
 #endif
 #endif
 }

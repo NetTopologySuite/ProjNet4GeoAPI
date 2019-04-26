@@ -20,7 +20,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using GeoAPI.CoordinateSystems;
-using ProjNet.CoordinateSystems.Transformations;
 
 namespace ProjNet.CoordinateSystems
 {
@@ -50,9 +49,9 @@ namespace ProjNet.CoordinateSystems
 			string remarks, string abbreviation)
 			: base(datum, axisInfo, name, authority, code, alias, abbreviation, remarks)
 		{
-			_GeographicCoordinateSystem = geographicCoordinateSystem;
-			_LinearUnit = linearUnit;
-			_Projection = projection;
+			GeographicCoordinateSystem = geographicCoordinateSystem;
+			LinearUnit = linearUnit;
+			Projection = projection;
 		}
 
 		#region Predefined projected coordinate systems
@@ -119,63 +118,41 @@ namespace ProjNet.CoordinateSystems
                     "WGS 84 / Pseudo-Mercator", "EPSG", 3857, "WGS 84 / Popular Visualisation Pseudo-Mercator", 
                     "Certain Web mapping and visualisation applications." +
                     "Uses spherical development of ellipsoidal coordinates. Relative to an ellipsoidal development errors of up to 800 metres in position and 0.7 percent in scale may arise. It is not a recognised geodetic system: see WGS 84 / World Mercator (CRS code 3395).",
-                    "WebMercator") { };
+                    "WebMercator");
             }
 	    }
 
-	    #endregion
+        /// <summary>
+        /// Gets or sets the GeographicCoordinateSystem.
+        /// </summary>
+        public IGeographicCoordinateSystem GeographicCoordinateSystem { get; set; }
 
-		#region IProjectedCoordinateSystem Members
+        /// <summary>
+        /// Gets or sets the <see cref="LinearUnit">LinearUnits</see>. The linear unit must be the same as the <see cref="CoordinateSystem"/> units.
+        /// </summary>
+        public ILinearUnit LinearUnit { get; set; }
 
-		private IGeographicCoordinateSystem _GeographicCoordinateSystem;
-
-		/// <summary>
-		/// Gets or sets the GeographicCoordinateSystem.
-		/// </summary>
-		public IGeographicCoordinateSystem GeographicCoordinateSystem
+        /// <summary>
+        /// Gets units for dimension within coordinate system. Each dimension in 
+        /// the coordinate system has corresponding units.
+        /// </summary>
+        /// <param name="dimension">Dimension</param>
+        /// <returns>Unit</returns>
+        public override IUnit GetUnits(int dimension)
 		{
-			get { return _GeographicCoordinateSystem; }
-			set { _GeographicCoordinateSystem = value; }
+			return LinearUnit;
 		}
 
-		private ILinearUnit _LinearUnit;
+        /// <summary>
+        /// Gets or sets the projection
+        /// </summary>
+        public IProjection Projection { get; set; }
 
-		/// <summary>
-		/// Gets or sets the <see cref="LinearUnit">LinearUnits</see>. The linear unit must be the same as the <see cref="CoordinateSystem"/> units.
-		/// </summary>
-		public ILinearUnit LinearUnit
-		{
-			get { return _LinearUnit; }
-			set { _LinearUnit = value; }
-		}
-
-		/// <summary>
-		/// Gets units for dimension within coordinate system. Each dimension in 
-		/// the coordinate system has corresponding units.
-		/// </summary>
-		/// <param name="dimension">Dimension</param>
-		/// <returns>Unit</returns>
-		public override IUnit GetUnits(int dimension)
-		{
-			return _LinearUnit;
-		}
-
-		private IProjection _Projection;
-
-		/// <summary>
-		/// Gets or sets the projection
-		/// </summary>
-		public IProjection Projection
-		{
-			get { return _Projection; }
-			set { _Projection = value; }
-		}
-
-		/// <summary>
-		/// Returns the Well-known text for this object
-		/// as defined in the simple features specification.
-		/// </summary>
-		public override string WKT
+        /// <summary>
+        /// Returns the Well-known text for this object
+        /// as defined in the simple features specification.
+        /// </summary>
+        public override string WKT
 		{
 			get
 			{
@@ -210,8 +187,8 @@ namespace ProjNet.CoordinateSystems
 				StringBuilder sb = new StringBuilder();
 				sb.AppendFormat(CultureInfo.InvariantCulture.NumberFormat,
 					"<CS_CoordinateSystem Dimension=\"{0}\"><CS_ProjectedCoordinateSystem>{1}",
-					this.Dimension, InfoXml);
-				foreach (AxisInfo ai in this.AxisInfo)
+					Dimension, InfoXml);
+				foreach (AxisInfo ai in AxisInfo)
 					sb.Append(ai.XML);
 
 				sb.AppendFormat("{0}{1}{2}</CS_ProjectedCoordinateSystem></CS_CoordinateSystem>",
@@ -229,23 +206,23 @@ namespace ProjNet.CoordinateSystems
 		/// <returns>True if equal</returns>
 		public override bool EqualParams(object obj)
 		{
-			if (!(obj is ProjectedCoordinateSystem))
+			if (!(obj is ProjectedCoordinateSystem pcs))
 				return false;
-			ProjectedCoordinateSystem pcs = obj as ProjectedCoordinateSystem;
-			if(pcs.Dimension != this.Dimension)
+
+            if (pcs.Dimension != Dimension)
 				return false;
 			for (int i = 0; i < pcs.Dimension; i++)
 			{
-				if(pcs.GetAxis(i).Orientation != this.GetAxis(i).Orientation)
+				if(pcs.GetAxis(i).Orientation != GetAxis(i).Orientation)
 					return false;
-				if (!pcs.GetUnits(i).EqualParams(this.GetUnits(i)))
+				if (!pcs.GetUnits(i).EqualParams(GetUnits(i)))
 					return false;
 			}
 
-			return	pcs.GeographicCoordinateSystem.EqualParams(this.GeographicCoordinateSystem) && 
-					pcs.HorizontalDatum.EqualParams(this.HorizontalDatum) &&
-					pcs.LinearUnit.EqualParams(this.LinearUnit) &&
-					pcs.Projection.EqualParams(this.Projection);
+			return	pcs.GeographicCoordinateSystem.EqualParams(GeographicCoordinateSystem) && 
+					pcs.HorizontalDatum.EqualParams(HorizontalDatum) &&
+					pcs.LinearUnit.EqualParams(LinearUnit) &&
+					pcs.Projection.EqualParams(Projection);
 		}
 
 		#endregion

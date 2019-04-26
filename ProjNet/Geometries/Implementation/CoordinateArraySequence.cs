@@ -1,7 +1,7 @@
 ﻿using System;
 using GeoAPI.Geometries;
 
-namespace ProjNet.Geometry.Implementation
+namespace ProjNet.Geometries.Implementation
 {
     internal sealed class CoordinateArraySequence : ICoordinateSequence
     {

@@ -47,11 +47,11 @@ namespace ProjNet.CoordinateSystems.Projections
 	/// </summary>
 	/// <remarks>
 	/// <para>Universal (UTM) and Modified (MTM) Transverses Mercator projections. This
-	/// is a cylindrical projection, in which the cylinder has been rotated 90�.
+	/// is a cylindrical projection, in which the cylinder has been rotated 90°.
 	/// Instead of being tangent to the equator (or to an other standard latitude),
 	/// it is tangent to a central meridian. Deformation are more important as we
-	/// are going futher from the central meridian. The Transverse Mercator
-	/// projection is appropriate for region wich have a greater extent north-south
+	/// are going further from the central meridian. The Transverse Mercator
+	/// projection is appropriate for region witch have a greater extent north-south
 	/// than east-west.</para>
 	/// 
 	/// <para>Reference: John P. Snyder (Map Projections - A Working Manual,
@@ -82,8 +82,8 @@ namespace ProjNet.CoordinateSystems.Projections
     private const double EPSILON_LATITUDE = 1E-10;
 
     /**
-     * A derived quantity of excentricity, computed by <code>e'² = (a²-b²)/b² = es/(1-es)</code>
-     * where <var>a</var> is the semi-major axis length and <var>b</bar> is the semi-minor axis
+     * A derived quantity of eccentricity, computed by <code>e'Â² = (aÂ²-bÂ²)/bÂ² = es/(1-es)</code>
+     * where <c>a</c> is the semi-major axis length and <c>b</c> is the semi-minor axis
      * length.
      */
     private readonly double _esp;
@@ -97,7 +97,7 @@ namespace ProjNet.CoordinateSystems.Projections
     private readonly double _reciprocSemiMajor;
 
     /**
-     * Contants used for the forward and inverse transform for the eliptical
+     * Constants used for the forward and inverse transform for the elliptical
      * case of the Transverse Mercator.
      */
     private const double FC1= 1.00000000000000000000000,  // 1/1

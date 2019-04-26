@@ -1,4 +1,4 @@
-﻿// Copyright 2015
+// Copyright 2015
 //
 // This file is part of ProjNet.
 // ProjNet is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@ using GeoAPI.CoordinateSystems.Transformations;
 namespace ProjNet.CoordinateSystems.Projections
 {
     /// <summary>
-    /// Implemetns the Oblique Stereographic Projection.
+    /// Implements the Oblique Stereographic Projection.
     /// </summary>
     [Serializable]
     internal class ObliqueStereographicProjection : MapProjection

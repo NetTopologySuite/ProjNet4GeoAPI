@@ -187,3 +187,4 @@ UpgradeLog*.htm
 FakesAssemblies/
 /packages
 **/BenchmarkDotNet*/
+/ProjNet/CoordinateSystems/Transformations/MathTransformFactory.cs

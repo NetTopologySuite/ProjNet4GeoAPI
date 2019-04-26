@@ -42,39 +42,6 @@ using GeoAPI.CoordinateSystems.Transformations;
 
 namespace ProjNet.CoordinateSystems.Projections
 {
-    [Serializable] 
-    internal class PseudoMercator : Mercator
-    {
-        public PseudoMercator(IEnumerable<ProjectionParameter> parameters)
-            :this(parameters, null)
-        {
-            
-        }
-        protected PseudoMercator(IEnumerable<ProjectionParameter> parameters, Mercator inverse)
-            :base(VerifyParameters(parameters), inverse)
-        {
-            Name = "Pseudo-Mercator";
-            Authority = "EPSG";
-            AuthorityCode = 3856;
-        }
-
-        private static IEnumerable<ProjectionParameter> VerifyParameters(IEnumerable<ProjectionParameter> parameters)
-        {
-            var p = new ProjectionParameterSet(parameters);
-            var semi_major = p.GetParameterValue("semi_major");
-            p.SetParameterValue("semi_minor", semi_major);
-            p.SetParameterValue("scale_factor", 1);
-
-            return p.ToProjectionParameter();
-        }
-
-        public override IMathTransform Inverse()
-        {
-            if (_inverse == null)
-                _inverse = new PseudoMercator(_Parameters.ToProjectionParameter(), this);
-            return _inverse;
-        }
-    }
     /// <summary>
 	/// Implements the Mercator projection.
 	/// </summary>
@@ -124,13 +91,13 @@ namespace ProjNet.CoordinateSystems.Projections
 		/// <item><term>false_northing</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Northing, FN, is the northing value assigned to the ordinate.</description></item>
 		/// </list>
 		/// </remarks>
-        protected Mercator(IEnumerable<ProjectionParameter> parameters, Mercator inverse)
-			: base(parameters, inverse)
+        protected Mercator(IEnumerable<ProjectionParameter> parameters, Mercator isInverse)
+			: base(parameters, isInverse)
 		{
 			Authority = "EPSG";
-			var scale_factor = GetParameter("scale_factor");
+			var scaleFactor = GetParameter("scale_factor");
 			
-			if (scale_factor == null) //This is a two standard parallel Mercator projection (2SP)
+			if (scaleFactor == null) //This is a two standard parallel Mercator projection (2SP)
 			{
 				_k0 = Math.Cos(lat_origin) / Math.Sqrt(1.0 - _es * Math.Sin(lat_origin) * Math.Sin(lat_origin));
 				AuthorityCode = 9805;
@@ -138,62 +105,17 @@ namespace ProjNet.CoordinateSystems.Projections
 			}
 			else //This is a one standard parallel Mercator projection (1SP)
 			{
-				_k0 = scale_factor.Value;
+				_k0 = scaleFactor.Value;
 				Name = "Mercator_1SP";
 			}
 		}
 
-        ///// <summary>
-        ///// Converts coordinates in decimal degrees to projected meters.
-        ///// </summary>
-        ///// <remarks>
-        ///// <para>The parameters this projection expects are listed below.</para>
-        ///// <list type="table">
-        ///// <listheader><term>Items</term><description>Descriptions</description></listheader>
-        ///// <item><term>longitude_of_natural_origin</term><description>The longitude of the point from which the values of both the geographical coordinates on the ellipsoid and the grid coordinates on the projection are deemed to increment or decrement for computational purposes. Alternatively it may be considered as the longitude of the point which in the absence of application of false coordinates has grid coordinates of (0,0).  Sometimes known as ""central meridian""."</description></item>
-        ///// <item><term>latitude_of_natural_origin</term><description>The latitude of the point from which the values of both the geographical coordinates on the ellipsoid and the grid coordinates on the projection are deemed to increment or decrement for computational purposes. Alternatively it may be considered as the latitude of the point which in the absence of application of false coordinates has grid coordinates of (0,0).</description></item>
-        ///// <item><term>scale_factor_at_natural_origin</term><description>The factor by which the map grid is reduced or enlarged during the projection process, defined by its value at the natural origin.</description></item>
-        ///// <item><term>false_easting</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Easting, FE, is the easting value assigned to the abscissa (east).</description></item>
-        ///// <item><term>false_northing</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Northing, FN, is the northing value assigned to the ordinate .</description></item>
-        ///// </list>
-        ///// </remarks>
-        ///// <param name="lonlat">The point in decimal degrees.</param>
-        ///// <returns>Point in projected meters</returns>
-        //      protected override double[] RadiansToMeters(double[] lonlat)
-        //{
-        //	if (double.IsNaN(lonlat[0]) || double.IsNaN(lonlat[1]))
-        //              return new [] { Double.NaN, Double.NaN, };
-
-        //          var dLongitude = lonlat[0];
-        //	var dLatitude = lonlat[1];
-
-        //	/* Forward equations */
-        //	if (Math.Abs(Math.Abs(dLatitude) - HALF_PI)  <= EPSLN)
-        //		throw new ArgumentException("Transformation cannot be computed at the poles.");
-
-        //          var esinphi = _e*Math.Sin(dLatitude);
-        //    var x = _semiMajor * _k0 * (dLongitude - central_meridian);
-        //    var y = _semiMajor * _k0 * Math.Log(Math.Tan(PI * 0.25 + dLatitude * 0.5) * Math.Pow((1 - esinphi) / (1 + esinphi), _e * 0.5));
-        //    return lonlat.Length < 3 
-        //               ? new [] { x, y }
-        //               : new [] { x, y, lonlat[2] };
-        //}
-
         /// <summary>
         /// Converts coordinates in decimal degrees to projected meters.
         /// </summary>
-        /// <remarks>
-        /// <para>The parameters this projection expects are listed below.</para>
-        /// <list type="table">
-        /// <listheader><term>Items</term><description>Descriptions</description></listheader>
-        /// <item><term>longitude_of_natural_origin</term><description>The longitude of the point from which the values of both the geographical coordinates on the ellipsoid and the grid coordinates on the projection are deemed to increment or decrement for computational purposes. Alternatively it may be considered as the longitude of the point which in the absence of application of false coordinates has grid coordinates of (0,0).  Sometimes known as ""central meridian""."</description></item>
-        /// <item><term>latitude_of_natural_origin</term><description>The latitude of the point from which the values of both the geographical coordinates on the ellipsoid and the grid coordinates on the projection are deemed to increment or decrement for computational purposes. Alternatively it may be considered as the latitude of the point which in the absence of application of false coordinates has grid coordinates of (0,0).</description></item>
-        /// <item><term>scale_factor_at_natural_origin</term><description>The factor by which the map grid is reduced or enlarged during the projection process, defined by its value at the natural origin.</description></item>
-        /// <item><term>false_easting</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Easting, FE, is the easting value assigned to the abscissa (east).</description></item>
-        /// <item><term>false_northing</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Northing, FN, is the northing value assigned to the ordinate .</description></item>
-        /// </list>
-        /// </remarks>
-        /// <param name="lonlat">The point in decimal degrees.</param>
+        /// <param name="lon">The longitude of the point in decimal degrees.</param>
+        /// <param name="lat">The latitude of the point in decimal degrees.</param>
+        /// <param name="z">The altitude of the point</param>
         /// <returns>Point in projected meters</returns>
         protected override (double x, double y, double z) RadiansToMeters(double lon, double lat, double z)
         {
@@ -216,42 +138,12 @@ namespace ProjNet.CoordinateSystems.Projections
             return (lon, lat, z);
         }
 
-        //   /// <summary>
-        //   /// Converts coordinates in projected meters to decimal degrees.
-        //   /// </summary>
-        //   /// <param name="p">Point in meters</param>
-        //   /// <returns>Transformed point in decimal degrees</returns>
-        //   protected override double[] MetersToRadians(double[] p)
-        //   {
-        //       double dLongitude = Double.NaN;
-        //       double dLatitude = Double.NaN;
-
-        //       /* Inverse equations
-        //-----------------*/
-        //       double dX = p[0]; //* _metersPerUnit - this._falseEasting;
-        //       double dY = p[1];// * _metersPerUnit - this._falseNorthing;
-        //       double ts = Math.Exp(-dY / (this._semiMajor * _k0)); //t
-
-        //       double chi = HALF_PI - 2 * Math.Atan(ts);
-        //       double e4 = Math.Pow(_e, 4);
-        //       double e6 = Math.Pow(_e, 6);
-        //       double e8 = Math.Pow(_e, 8);
-
-        //       dLatitude = chi + (_es * 0.5 + 5 * e4 / 24 + e6 / 12 + 13 * e8 / 360) * Math.Sin(2 * chi)
-        //                       + (7 * e4 / 48 + 29 * e6 / 240 + 811 * e8 / 11520) * Math.Sin(4 * chi) +
-        //                       +(7 * e6 / 120 + 81 * e8 / 1120) * Math.Sin(6 * chi) +
-        //                       +(4279 * e8 / 161280) * Math.Sin(8 * chi);
-
-        //       dLongitude = dX / (_semiMajor * _k0) + central_meridian;
-        //       return p.Length < 3
-        //           ? new[] { dLongitude, dLatitude }
-        //           : new[] { dLongitude, dLatitude, p[2] };
-        //   }
-
         /// <summary>
         /// Converts coordinates in projected meters to decimal degrees.
         /// </summary>
-        /// <param name="p">Point in meters</param>
+        /// <param name="x">The x-ordinate in projected meters</param>
+        /// <param name="y">The y-ordinate in projected meters</param>
+        /// <param name="z">The z-ordinate</param>
         /// <returns>Transformed point in decimal degrees</returns>
         protected override (double lon, double lat, double z) MetersToRadians(double x, double y, double z)
 		{
@@ -259,7 +151,7 @@ namespace ProjNet.CoordinateSystems.Projections
               -----------------*/
             double dX = x; //* _metersPerUnit - this._falseEasting;
             double dY = y; // * _metersPerUnit - this._falseNorthing;
-            double ts = Math.Exp(-dY / (this._semiMajor * _k0)); //t
+            double ts = Math.Exp(-dY / (_semiMajor * _k0)); //t
 
             double chi = HALF_PI - 2 * Math.Atan(ts);
             double e4 = Math.Pow(_e, 4);
