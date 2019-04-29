@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using GeoAPI.Geometries;
 
 namespace ProjNET.Tests.Geometries.Implementation
@@ -53,13 +53,13 @@ namespace ProjNET.Tests.Geometries.Implementation
 
         public ICoordinateSequence Create(int size, int dimension)
         {
-            return Create(size, dimension, Math.Max(dimension - 3, 0));
+            return Create(size, dimension, 0);
         }
 
         public ICoordinateSequence Create(int size, int dimension, int measures)
         {
-            double[] ordianteValues = new double[dimension * size];
-            return new SpanCoordinateSequence(dimension, measures, ordianteValues);
+            double[] ordinateValues = new double[dimension * size];
+            return new SpanCoordinateSequence(dimension, measures, ordinateValues);
         }
 
         public ICoordinateSequence Create(int size, Ordinates ordinates)

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using GeoAPI.Geometries;
 
 namespace ProjNET.Tests.Geometries.Implementation
@@ -132,21 +132,20 @@ namespace ProjNET.Tests.Geometries.Implementation
 
         public double GetZ(int i)
         {
-            return HasZ ? _ordinateValues[_ordinateIndirection[(int)Ordinate.Z] + i] : _createCoordinateTemplate.M;
-
+            return HasZ ? _ordinateValues[_ordinateIndirection[(int)Ordinate.Z] + i] : _createCoordinateTemplate.Z;
         }
 
         public double GetM(int i)
         {
-            return HasZ ? _ordinateValues[_ordinateIndirection[(int)Ordinate.Z] + i] : _createCoordinateTemplate.M;
+            return HasM ? _ordinateValues[_ordinateIndirection[(int)Ordinate.M] + i] : _createCoordinateTemplate.M;
         }
 
         public double GetOrdinate(int index, Ordinate ordinate)
         {
-            if (index > Count)
+            if (unchecked((uint)index >= (uint)Count))
                 throw new ArgumentOutOfRangeException(nameof(index));
 
-            if ((int) ordinate >= _ordinateIndirection.Length)
+            if (unchecked((uint)ordinate >= (uint)_ordinateIndirection.Length))
                 throw new ArgumentOutOfRangeException(nameof(ordinate));
 
             if (_ordinateIndirection[(int) ordinate] < 0)
@@ -157,10 +156,10 @@ namespace ProjNET.Tests.Geometries.Implementation
 
         public void SetOrdinate(int index, Ordinate ordinate, double value)
         {
-            if (index > Count)
+            if (unchecked((uint)index >= (uint)Count))
                 throw new ArgumentOutOfRangeException(nameof(index));
 
-            if ((int)ordinate >= _ordinateIndirection.Length)
+            if (unchecked((uint)ordinate >= (uint)_ordinateIndirection.Length))
                 throw new ArgumentOutOfRangeException(nameof(ordinate));
 
             if (_ordinateIndirection[(int)ordinate] < 0)
