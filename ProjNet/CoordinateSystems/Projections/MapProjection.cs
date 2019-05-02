@@ -93,7 +93,6 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <summary>
         /// Substitute for <see cref="central_meridian"/>
         /// </summary>
-        [Obsolete("")]
         protected double lon_origin { get { return central_meridian; } set { central_meridian = value; } }
 
         /// <summary>
@@ -320,45 +319,42 @@ namespace ProjNet.CoordinateSystems.Projections
         #region IMathTransform
 
         /// <inheritdoc/>
-        public override int DimSource
+        public sealed override int DimSource
         {
             get { return 2; }
         }
 
         /// <inheritdoc/>
-        public override int DimTarget
+        public sealed override int DimTarget
         {
             get { return 2; }
         }
 
         #region Transform overrides
 
-        /// <inheritdoc cref="MathTransform.Transform(double,double, double)"/>>
-        public sealed override (double x, double y, double z) Transform(double x, double y, double z)
+        /// <inheritdoc />
+        public sealed override void Transform(ref double x, ref double y, ref double z)
         {
             if (IsInverse)
             {
-                return SourceToDegrees(x, y, z);
+                SourceToDegrees(ref x, ref y);
             }
             else
             {
-                return DegreesToTarget(x, y, z);
+                DegreesToTarget(ref x, ref y);
             }
+
+            if (DimTarget == 2) z = 0;
         }
 
-        /// <inheritdoc cref="MathTransform.Transform(ReadOnlySpan{double},ReadOnlySpan{double},ReadOnlySpan{double},Span{double},Span{double},Span{double},int,int,int)"/>>
-        protected sealed override void TransformCore(ReadOnlySpan<double> xs, ReadOnlySpan<double> ys, ReadOnlySpan<double> zs, 
-            Span<double> outXs, Span<double> outYs, Span<double> outZs,
-            int strideX, int strideY, int strideZ)
+
+        /// <inheritdoc />
+        protected override void TransformCore(Span<double> xs, Span<double> ys, Span<double> zs, int strideX, int strideY, int strideZ)
         {
             if (IsInverse)
-            {
-                SourceToDegrees(xs, ys, zs, outXs, outYs, outZs, strideX, strideY, strideZ);
-            }
+                SourceToDegrees(xs, ys, strideX, strideY);
             else
-            {
-                DegreesToTarget(xs, ys, zs, outXs, outYs, outZs, strideX, strideY, strideZ);
-            }
+                DegreesToTarget(xs, ys, strideX, strideY);
         }
 
         #endregion
@@ -366,24 +362,52 @@ namespace ProjNet.CoordinateSystems.Projections
         #region Forward methods
 
         /// <summary>
-        /// Abstract method to convert a point (lon, lat, z) in radians to (x, y, z) in meters
+        /// Abstract method to convert a point (lon, lat) in radians to (x, y) in meters
         /// </summary>
-        /// <param name="lon">The longitude in radians</param>
-        /// <param name="lat">The latitude in radians</param>
-        /// <param name="z">The z-ordinate</param>
-        /// <returns>Converted point.</returns>
-        protected abstract (double x, double y, double z) RadiansToMeters(double lon, double lat, double z);
+        /// <param name="lon">The longitude of the point in radians when entering, its x-ordinate in meters after exit.</param>
+        /// <param name="lat">The latitude of the point in radians when entering, its y-ordinate in meters after exit.</param>
+        protected abstract void RadiansToMeters(ref double lon, ref double lat);
+
+
+        /// <summary>
+        /// Method to convert a series of points defined by (lon, lat) in radians to (x, y) in meters
+        /// </summary>
+        /// <param name="lons">The longitudes of the points in radians when entering, their x-ordinates in meters after exit.</param>
+        /// <param name="lats">The latitudes of the points in radians when entering, their y-ordinates in meters after exit.</param>
+        /// <param name="strideX">A stride value for longitude-ordinates</param>
+        /// <param name="strideY">A stride value for latitude-ordinates</param>
+        protected virtual void RadiansToMeters(Span<double> lons, Span<double> lats, int strideX, int strideY)
+        {
+            for (int i = 0, j = 0; i < lons.Length; i += strideX, j += strideY)
+            {
+                RadiansToMeters(ref lons[i], ref lats[j]);
+            }
+        }
+
+        /// <summary>
+        /// Converts a point (lon, lat) in degrees to (x, y) in meters
+        /// </summary>
+        /// <param name="lon">The longitude in degree</param>
+        /// <param name="lat">The latitude in degree</param>
+        protected void DegreesToMeters(ref double lon, ref double lat)
+        {
+            lon = Degrees2Radians(lon);
+            lat = Degrees2Radians(lat);
+            RadiansToMeters(ref lon, ref lat);
+        }
 
         /// <summary>
         /// Converts a point (lon, lat, z) in degrees to (x, y, z) in meters
         /// </summary>
-        /// <param name="lon">The longitude in degree</param>
-        /// <param name="lat">The latitude in degree</param>
-        /// <param name="z">The z-ordinate</param>
-        /// <returns>Converted point.</returns>
-        protected (double x, double y, double z) DegreesToMeters(double lon, double lat, double z)
+        /// <param name="lons">The longitudes of the points in degree when entering, their x-ordinates in meters after exit.</param>
+        /// <param name="lats">The latitudes of the points in degree when entering, their y-ordinates in meters after exit.</param>
+        /// <param name="strideX">A stride value for longitude-ordinates</param>
+        /// <param name="strideY">A stride value for latitude-ordinates</param>
+        protected void DegreesToMeters(Span<double> lons, Span<double> lats, int strideX, int strideY)
         {
-            return RadiansToMeters(Degrees2Radians(lon), Degrees2Radians(lat), z);
+            DegreesToRadians(lons, strideX);
+            DegreesToRadians(lats, strideY);
+            RadiansToMeters(lons, lats, strideX, strideY);
         }
 
         /// <summary>
@@ -391,46 +415,24 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         /// <param name="lon">The longitude in degree</param>
         /// <param name="lat">The latitude in degree</param>
-        /// <param name="z">The z-ordinate</param>
-        /// <returns>Converted point.</returns>
-        protected virtual (double x, double y, double z) DegreesToTarget(double lon, double lat, double z)
+        protected void DegreesToTarget(ref double lon, ref double lat)
         {
-            //x = Degrees2Radians(x);
-            //y = Degrees2Radians(y);
-            double x, y;
-            (x, y, z) = DegreesToMeters(lon, lat, z);
-            (x, y) = MetersToTarget(x, y);
-            return (x, y, z);
+            DegreesToMeters(ref lon, ref lat);
+            MetersToTarget(ref lon, ref lat);
         }
 
         /// <summary>
-        /// Converts a series of points from degrees to target units
+        /// Converts a series of points from degrees to target units to degrees
         /// </summary>
-        /// <param name="inLons">A series of longitudes in degree</param>
-        /// <param name="inLats">A series of latitudes in degree</param>
-        /// <param name="inZs">A series of z-ordinate values</param>
-        /// <param name="outXs">A buffer for x-ordinate values</param>
-        /// <param name="outYs">A buffer for y-ordinate values</param>
-        /// <param name="outZs">A buffer for z-ordinate values</param>
+        /// <param name="xs">A series of x-ordinate values</param>
+        /// <param name="ys">A series of y-ordinate values</param>
         /// <param name="strideX">A stride value for x-ordinates</param>
         /// <param name="strideY">A stride value for y-ordinates</param>
-        /// <param name="strideZ">A stride value for z-ordinates</param>
-        protected virtual void DegreesToTarget(ReadOnlySpan<double> inLons, ReadOnlySpan<double> inLats, ReadOnlySpan<double> inZs, 
-            Span<double> outXs, Span<double> outYs, Span<double> outZs,
-            int strideX = 1, int strideY = 1, int strideZ = 1)
+        protected void DegreesToTarget(Span<double> xs, Span<double> ys,
+            int strideX, int strideY)
         {
-            //DegreesToRadians(inXs, outXs, strideX);
-            //DegreesToRadians(inYs, outYs, strideY);
-
-            //for (int i = 0, j = 0, k = 0; i < outXs.Length; i+=strideX, j += strideY, k+= strideZ)
-            //{
-            //    (outXs[i], outYs[j], outZs[k]) = RadiansToMeters(outXs[i], outYs[j], outZs[k]);
-            //}
-
-            for (int i = 0, j = 0, k = 0; i < outXs.Length; i += strideX, j += strideY, k += strideZ)
-                (outXs[i], outYs[j], outZs[k]) = DegreesToMeters(inLons[i], inLats[j], inZs[k]);
-
-            MetersToTarget(outXs, outYs, outXs, outYs, strideX, strideY);
+            DegreesToMeters(xs, ys, strideX, strideY);
+            MetersToTarget(xs, ys, strideX, strideY);
         }
 
         /// <summary>
@@ -441,56 +443,67 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <param name="x">A x-ordinate</param>
         /// <param name="y">A y-ordinate</param>
         /// <returns>A point.</returns>
-        protected (double x, double y) MetersToTarget(double x, double y)
+        protected void MetersToTarget(ref double x, ref double y)
         {
-            return (x: (x + false_easting) * _reciprocalMetersPerUnit,
-                    y: (y + false_northing) * _reciprocalMetersPerUnit);
+            x = (x + false_easting) * _reciprocalMetersPerUnit;
+            y = (y + false_northing) * _reciprocalMetersPerUnit;
         }
 
         /// <summary>
-        /// Transforms a series of points from meters to unit of output coordinate. This is done by
+        /// Transforms point from meters to unit of output coordinate. This is done by
         /// adding <see cref="false_easting"/> or <see cref="false_northing"/> and
         /// multiplying with <see cref="_reciprocalMetersPerUnit"/>
         /// </summary>
-        /// <param name="inXs">A series of x-ordinates</param>
-        /// <param name="inYs">A series of y-ordinates</param>
-        /// <param name="outXs">A buffer for x-ordinates</param>
-        /// <param name="outYs">A buffer for y-ordinates</param>
+        /// <param name="xs">A x-ordinates</param>
+        /// <param name="ys">A y-ordinates</param>
         /// <param name="strideX">A stride value for x-ordinates</param>
         /// <param name="strideY">A stride value for y-ordinates</param>
-        protected void MetersToTarget(ReadOnlySpan<double> inXs, ReadOnlySpan<double> inYs, Span<double> outXs, Span<double> outYs, int strideX, int strideY)
+        /// <returns>A point.</returns>
+        protected void MetersToTarget(Span<double> xs, Span<double> ys, int strideX, int strideY)
         {
-            for (int i = 0, j = 0; i < inXs.Length; i+=strideX, j += strideY)
+            for (int i = 0, j = 0; i < xs.Length; i+=strideX, j+=strideY)
             {
-                outXs[i] = (inXs[i] + false_easting) * _reciprocalMetersPerUnit;
-                outYs[j] = (inYs[j] + false_northing) * _reciprocalMetersPerUnit;
+                xs[i] = (xs[i] + false_easting) * _reciprocalMetersPerUnit;
+                ys[j] = (ys[j] + false_northing) * _reciprocalMetersPerUnit;
             }
         }
+        #endregion
 
-#endregion
-
-#region Reverse methods
-
-        /// <summary>
-        /// Abstract method to convert a point (x, y, z) in meters to (lon, lat, z) in radians
-        /// </summary>
-        /// <param name="x">The x-ordinate</param>
-        /// <param name="y">The y-ordinate</param>
-        /// <param name="z">The z-ordinate</param>
-        /// <returns>Converted point.</returns>
-        protected abstract (double lon, double lat, double z) MetersToRadians(double x, double y, double z);
+        #region Reverse methods
 
         /// <summary>
         /// Abstract method to convert a point from meters to radians
         /// </summary>
-        /// <param name="x">The x-ordinate</param>
-        /// <param name="y">The y-ordinate</param>
-        /// <param name="z">The z-ordinate</param>
-        /// <returns>Converted point.</returns>
-        protected (double lon, double lat, double z) MetersToDegrees(double x, double y, double z)
+        /// <param name="x">The x-ordinate when entering, the longitude value upon exit.</param>
+        /// <param name="y">The y-ordinate when entering, the latitude value upon exit.</param>
+        protected abstract void MetersToRadians(ref double x, ref double y);
+
+        /// <summary>
+        /// Method to convert a point from meters to degrees
+        /// </summary>
+        /// <param name="x">The x-ordinate when entering, the longitude value upon exit.</param>
+        /// <param name="y">The y-ordinate when entering, the latitude value upon exit.</param>
+        protected void MetersToDegrees(ref double x, ref double y)
         {
-            (double lon, double lat, double _) = MetersToRadians(x, y, z);
-            return (Radians2Degrees(lon), Radians2Degrees(lat), z);
+            MetersToRadians(ref x, ref y);
+            x = Radians2Degrees(x);
+            y = Radians2Degrees(y);
+        }
+
+        /// <summary>
+        /// Method to convert a point from meters to degrees
+        /// </summary>
+        /// <param name="xs"></param>
+        /// <param name="ys"></param>
+        /// <param name="strideX"></param>
+        /// <param name="strideY"></param>
+        /// <param name="x">The x-ordinate when entering, the longitude value upon exit.</param>
+        /// <param name="y">The y-ordinate when entering, the latitude value upon exit.</param>
+        /// <param name="z">The z-ordinate</param>
+        protected void MetersToDegrees(Span<double> xs, Span<double> ys, int strideX, int strideY)
+        {
+            for (int i = 0, j = 0; i < xs.Length; i += strideX, j += strideY)
+                MetersToDegrees(ref xs[i], ref xs[j]);
         }
 
         /// <summary>
@@ -498,45 +511,25 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         /// <param name="x">The x-ordinate</param>
         /// <param name="y">The y-ordinate</param>
-        /// <param name="z">The z-ordinate</param>
         /// <returns>Converted point.</returns>
-        protected virtual (double lon, double lat, double z) SourceToDegrees(double x, double y, double z)
+        protected void SourceToDegrees(ref double x, ref double y)
         {
-            (x, y) = SourceToMeters(x, y);
-            return MetersToDegrees(x, y, z);
-
-            //(x, y, z) = MetersToRadians(x, y, z);
-            //x = Radians2Degrees(x);
-            //y = Radians2Degrees(y);
-            //return (x, y, z);
+            SourceToMeters(ref x, ref y);
+            MetersToDegrees(ref x, ref y);
         }
 
         /// <summary>
         /// Converts a series of points from source units to degrees
         /// </summary>
-        /// <param name="inXs">A series of x-ordinate values</param>
-        /// <param name="inYs">A series of x-ordinate values</param>
-        /// <param name="inZs">A series of z-ordinate values</param>
-        /// <param name="outLons">A buffer for lon-ordinate values</param>
-        /// <param name="outLats">A buffer for lat-ordinate values</param>
-        /// <param name="outZs">A buffer for z-ordinate values</param>
+        /// <param name="xs">A series of x-ordinate values</param>
+        /// <param name="ys">A series of y-ordinate values</param>
         /// <param name="strideX">A stride value for x-ordinates</param>
         /// <param name="strideY">A stride value for y-ordinates</param>
-        /// <param name="strideZ">A stride value for z-ordinates</param>
-        protected virtual void SourceToDegrees(ReadOnlySpan<double> inXs, ReadOnlySpan<double> inYs, ReadOnlySpan<double> inZs,
-            Span<double> outLons, Span<double> outLats, Span<double> outZs, int strideX, int strideY, int strideZ)
+        protected void SourceToDegrees(Span<double> xs, Span<double> ys,
+            int strideX, int strideY)
         {
-            SourceToMeters(inXs, inYs, outLons, outLats, strideX, strideY);
-            for (int i = 0, j = 0, k = 0; i < outLons.Length; i += strideX, j += strideY, k += strideZ)
-                (outLons[i], outLats[j], outZs[k]) = MetersToDegrees(outLons[i], outLats[j], outZs[k]);
-
-            //for (int i = 0, j = 0, k = 0; i < outLons.Length; i+=strideX, j+=strideY, k+=strideZ)
-            //{
-            //    (outLons[i], outLats[j], outZs[k]) = MetersToRadians(outLons[i], outLats[j], outZs[k]);
-            //}
-
-            //RadiansToDegrees(outLons, outLons);
-            //RadiansToDegrees(outLats, outLats);
+            SourceToMeters(xs, ys, strideX, strideY);
+            MetersToDegrees(xs, ys, strideX, strideY);
         }
 
         /// <summary>
@@ -544,18 +537,16 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <see cref="_metersPerUnit"/> and subtracting <see cref="false_easting"/>
         /// or <see cref="false_northing"/>
         /// </summary>
-        /// <param name="inXs">A series of x-ordinates</param>
-        /// <param name="inYs">A series of y-ordinates</param>
-        /// <param name="outXs">A buffer for x-ordinates</param>
-        /// <param name="outYs">A buffer for y-ordinates</param>
+        /// <param name="xs">A series of x-ordinates</param>
+        /// <param name="ys">A series of y-ordinates</param>
         /// <param name="strideX">A stride value for x-ordinates</param>
         /// <param name="strideY">A stride value for y-ordinates</param>
-        protected void SourceToMeters(ReadOnlySpan<double> inXs, ReadOnlySpan<double> inYs, Span<double> outXs, Span<double> outYs, int strideX, int strideY)
+        protected void SourceToMeters(Span<double> xs, Span<double> ys, int strideX, int strideY)
         {
-            for (int i = 0, j = 0; i < inXs.Length; i+=strideX, j+=strideY)
+            for (int i = 0, j = 0; i < xs.Length; i += strideX, j += strideY)
             {
-                outXs[i] = inXs[i] * _metersPerUnit - false_easting;
-                outYs[j] = inYs[j] * _metersPerUnit - false_northing;
+                xs[i] = ys[i] * _metersPerUnit - false_easting;
+                xs[j] = ys[j] * _metersPerUnit - false_northing;
             }
         }
 
@@ -567,13 +558,13 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <param name="x">A x-ordinate</param>
         /// <param name="y">A y-ordinate</param>
         /// <returns>A point.</returns>
-        protected (double x, double y) SourceToMeters(double x, double y)
+        protected void SourceToMeters(ref double x, ref double y)
         {
-            return (x: x * _metersPerUnit - false_easting,
-                    y: y * _metersPerUnit - false_northing);
+            x = x * _metersPerUnit - false_easting;
+            y = y * _metersPerUnit - false_northing;
         }
 
-#endregion
+        #endregion
 
         /// <summary>
         /// Reverses the transformation
@@ -1078,7 +1069,7 @@ namespace ProjNet.CoordinateSystems.Projections
 
 #endregion
 
-#region Static Methods;
+        #region Static Methods;
 
         /// <summary>
         /// Converts a longitude value in degrees to radians.
@@ -1110,6 +1101,6 @@ namespace ProjNet.CoordinateSystems.Projections
                                                   " not a valid latitude in degrees.");
         }
 
-#endregion
+        #endregion
     }
 }

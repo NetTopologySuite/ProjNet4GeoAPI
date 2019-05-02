@@ -226,7 +226,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// Transforms <paramref name="coordinateSequence"/>
         /// </summary>
         /// <param name="coordinateSequence">A coordinate sequence</param>
-        public void TransformInPlace(ICoordinateSequence coordinateSequence)
+        public void Transform(ICoordinateSequence coordinateSequence)
         {
             // shortcout, no matter what
             if (coordinateSequence == null || coordinateSequence.Count == 0)
@@ -237,11 +237,11 @@ namespace ProjNet.CoordinateSystems.Transformations
             var converter = _sequenceCoordinateConverter;
             if (converter != null)
             {
-                var cleanup = converter.ExtractRawCoordinatesFromSequence(coordinateSequence, out var xys, out var zs);
+                var cleanup = converter.ExtractRawCoordinatesFromSequence(coordinateSequence, out var xs, out int strideX, out var ys, out int strideY, out var zs, out var strideZ);
                 try
                 {
-                    Transform(xys, zs, xys, zs);
-                    converter.CopyRawCoordinatesToSequence(xys, zs, coordinateSequence);
+                    Transform(xs, ys, zs, strideX, strideY, strideZ);
+                    converter.CopyRawCoordinatesToSequence(xs, strideX, ys, strideY, zs, strideZ, coordinateSequence);
                 }
                 finally
                 {
@@ -269,7 +269,7 @@ namespace ProjNet.CoordinateSystems.Transformations
             }
 
             coordinateSequence = coordinateSequence.Copy();
-            TransformInPlace(coordinateSequence);
+            Transform(coordinateSequence);
             return coordinateSequence;
         }
 
@@ -297,13 +297,12 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// Converts a series of degree-values (<paramref name="degrees"/>) to a radian-values by multiplying them with <c><see cref="Math.PI"/> / 180.0</c> 
         /// </summary>
         /// <param name="degrees">A series of degree-values</param>
-        /// <param name="radians">A buffer for the radian-values</param>
         /// <param name="stride">A stride value</param>
-        protected static void DegreesToRadians(ReadOnlySpan<double> degrees, Span<double> radians, int stride)
+        protected static void DegreesToRadians(Span<double> degrees, int stride)
         {
             for (int i = 0; i < degrees.Length; i += stride)
             {
-                radians[i] = degrees[i] * D2R;
+                degrees[i] *= D2R;
             }
         }
 
@@ -325,173 +324,172 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Converts a series of radian-values (<paramref name="degrees"/>) to a degrees-values by multiplying them with <c>180.0 / <see cref="Math.PI"/></c> 
         /// </summary>
-        /// <param name="radians">A series of redian-values</param>
-        /// <param name="degrees">A buffer for the degree-values</param>
-        protected static void RadiansToDegrees(ReadOnlySpan<double> radians, Span<double> degrees)
+        /// <param name="radians">A series of radian-values</param>
+        /// <param name="stride">A stride value</param>
+        protected static void RadiansToDegrees(Span<double> radians, int stride)
         {
-            for (int i = 0; i < radians.Length; i++)
+            for (int i = 0; i < radians.Length; i+=stride)
             {
-                degrees[i] = radians[i] * R2D;
+                radians[i] *= R2D;
             }
         }
 
         /// <summary>
-        /// Abstract transformation method for a single point
+        /// Transforms a single 2-dimensional point
         /// </summary>
-        /// <param name="x">The x-ordinate</param>
-        /// <param name="y">The y-ordinate</param>
-        /// <param name="z">The z-ordinate</param>
+        /// <param name="x">The ordinate value on the first axis, either x or longitude.</param>
+        /// <param name="y">The ordinate value on the second axis, either y or latitude.</param>
+        /// <returns>The transformed x- and y-ordinate values</returns>
+        public (double x, double y) Transform(double x, double y)
+        {
+            double z = 0;
+            Transform(ref x, ref y, ref z);
+            return (x, y);
+        }
+
+        /// <summary>
+        /// Transforms a single 3-dimensional point
+        /// </summary>
+        /// <param name="x">The ordinate value on the first axis, either x or longitude.</param>
+        /// <param name="y">The ordinate value on the second axis, either y or latitude.</param>
+        /// <param name="z">The ordinate value on the third axis, either z, height or altitude</param>
         /// <returns>The transformed x-, y- and z-ordinate values</returns>
-        public abstract (double x, double y, double z) Transform(double x, double y, double z);
-
+        public (double o1, double o2, double o3) Transform(double x, double y, double z)
+        {
+            Transform(ref x, ref y, ref z);
+            return (x, y, z);
+        }
 
         /// <summary>
-        /// Core method to transform a series of points defined by their ordinates
+        /// Transforms a single 2-dimensional point in-place
         /// </summary>
-        /// <param name="inXs">A series of x-ordinate values</param>
-        /// <param name="inYs">A series of y-ordinate values</param>
-        /// <param name="inZs">A series of z-ordinate values</param>
-        /// <param name="outXs">A buffer for x-ordinate values</param>
-        /// <param name="outYs">A buffer for y-ordinate values</param>
-        /// <param name="outZs">A buffer for z-ordinate values</param>
+        /// <param name="x">The ordinate value on the first axis, either x or longitude.</param>
+        /// <param name="y">The ordinate value on the second axis, either y or latitude.</param>
+        public void Transform(ref double x, ref double y)
+        {
+            double z = 0d;
+            Transform(ref x, ref y, ref z);
+        }
+
+        /// <summary>
+        /// Transforms a single 3-dimensional point in-place
+        /// </summary>
+        /// <param name="x">The ordinate value on the first axis, either x or longitude.</param>
+        /// <param name="y">The ordinate value on the second axis, either y or latitude.</param>
+        /// <param name="z">The ordinate value on the third axis, either z, height or altitude</param>
+        public abstract void Transform(ref double x, ref double y, ref double z);
+
+        /// <summary>
+        /// Core method to transform a series of points defined by their ordinates.
+        /// The transformation is performed in-place.
+        /// </summary>
+        /// <param name="xs">A series of x-ordinate values</param>
+        /// <param name="ys">A series of y-ordinate values</param>
+        /// <param name="zs">A series of z-ordinate values</param>
         /// <param name="strideX">A stride value for the x-ordinate series</param>
         /// <param name="strideY">A stride value for the y-ordinate series</param>
         /// <param name="strideZ">A stride value for the z-ordinate series</param>
-        /// <remarks>The stride values apply to both input series and output buffers!</remarks>
-        protected virtual void TransformCore(ReadOnlySpan<double> inXs, ReadOnlySpan<double> inYs, ReadOnlySpan<double> inZs,
-            Span<double> outXs, Span<double> outYs, Span<double> outZs, int strideX, int strideY, int strideZ)
+        protected virtual void TransformCore(Span<double> xs, Span<double> ys, Span<double> zs,
+            int strideX, int strideY, int strideZ)
         {
-            for (int i = 0, j = 0, k = 0; i < inXs.Length; i += strideX, j += strideY, k += strideZ)
+            for (int i = 0, j = 0, k = 0; i < xs.Length; i += strideX, j += strideY, k += strideZ)
             {
-                (outXs[i], outYs[j], outZs[k]) = Transform(inXs[i], inYs[i], inZs[k]);
+                Transform(ref xs[i], ref ys[j], ref zs[k]);
             }
         }
 
-        private readonly double[] _inZs = {0d};
-        private readonly double[] _outZs = {0d};
+        private readonly double[] _dummyZ = new double[1];
 
         /// <summary>
-        /// Transforms a series of 2-dimensional points defined by their ordinates
+        /// Core method to transform a series of points defined by their ordinates.
+        /// The transformation is performed in-place.
         /// </summary>
-        /// <param name="inXs">A series of x-ordinate values</param>
-        /// <param name="inYs">A series of y-ordinate values</param>
-        /// <param name="outXs">A buffer for x-ordinate values</param>
-        /// <param name="outYs">A buffer for y-ordinate values</param>
+        /// <param name="xs">A series of x-ordinate values</param>
+        /// <param name="ys">A series of y-ordinate values</param>
         /// <param name="strideX">A stride value for the x-ordinate series</param>
         /// <param name="strideY">A stride value for the y-ordinate series</param>
-        /// <remarks>All series and buffers must not be <value>null</value></remarks>
-        /// <exception cref="ArgumentException">If the <paramref name="strideX"/> or <paramref name="strideY"/> values are <c>&lt;= 0</c></exception>
-        public void Transform(ReadOnlySpan<double> inXs, ReadOnlySpan<double> inYs, 
-            Span<double> outXs, Span<double> outYs, int strideX = 1, int strideY = 1)
+        /// <exception cref="ArgumentException">If the provided span and stride values don't result in matching number of ordinates.</exception>
+        public void Transform(Span<double> xs, Span<double> ys, int strideX = 1, int strideY = 1)
         {
-            if (strideX <= 0 || strideY <= 0)
-                throw new ArgumentException("Strides for x- and y- ordinates must be positive");
+            int elementsX = xs.Length / strideX + xs.Length % strideX != 0 ? 1 : 0;
+            int elementsY = ys.Length / strideY + ys.Length % strideY != 0 ? 1 : 0;
 
-            TransformCore(inXs, inYs, _inZs, outXs, outYs, _outZs, strideX, strideY, 0);
+            if (elementsX != elementsY)
+                throw new ArgumentException("Spans of ordinate values don't match in size.");
+
+            TransformCore(xs, ys, _dummyZ, strideX, strideY, 0);
         }
 
         /// <summary>
-        /// Transforms a series of 2-dimensional points defined by their ordinates
+        /// Core method to transform a series of points defined by their ordinates.
+        /// The transformation is performed in-place.
         /// </summary>
-        /// <param name="inXs">A series of x-ordinate values</param>
-        /// <param name="inYs">A series of y-ordinate values</param>
-        /// <param name="inZs">A series of z-ordinate values</param>
-        /// <param name="outXs">A buffer for x-ordinate values</param>
-        /// <param name="outYs">A buffer for y-ordinate values</param>
-        /// <param name="outZs">A buffer for y-ordinate values</param>
+        /// <param name="xs">A series of x-ordinate values</param>
+        /// <param name="ys">A series of y-ordinate values</param>
+        /// <param name="zs">A series of z-ordinate values</param>
         /// <param name="strideX">A stride value for the x-ordinate series</param>
         /// <param name="strideY">A stride value for the y-ordinate series</param>
         /// <param name="strideZ">A stride value for the z-ordinate series</param>
-        /// <remarks>All series and buffers must not be <value>null</value></remarks>
-        /// <exception cref="ArgumentException">If the <paramref name="strideX"/> or <paramref name="strideY"/> values are <c>&lt;= 0</c></exception>
-        public void Transform(ReadOnlySpan<double> inXs, ReadOnlySpan<double> inYs, ReadOnlySpan<double> inZs,
-            Span<double> outXs, Span<double> outYs, Span<double> outZs, int strideX = 1, int strideY = 1, int strideZ = 1)
+        /// <exception cref="ArgumentException">If the provided span and stride values don't result in matching number of ordinates.</exception>
+        public void Transform(Span<double> xs, Span<double> ys, Span<double> zs,
+            int strideX = 1, int strideY = 1, int strideZ = 1)
         {
-            if (strideX <= 0 || strideY <= 0)
-                throw new ArgumentException("Strides for x- and y- ordinates must be positive");
+            int elementsX = xs.Length / strideX + xs.Length % strideX != 0 ? 1 : 0;
+            int elementsY = ys.Length / strideY + ys.Length % strideY != 0 ? 1 : 0;
+            if (elementsX != elementsY)
+                throw new ArgumentException("Spans of ordinate values don't match in size.");
 
-            // check span sizes
-            int inXElements = inXs.Length / strideX;
-            if (strideX > 1) inXElements += 1;
-            int inYElements = inYs.Length / strideY;
-            if (strideY > 1) inYElements += 1;
-
-            if (inXElements != inYElements ||
-                inXs.Length != outXs.Length ||
-                inYs.Length != outYs.Length)
+            if (zs == default)
             {
-                throw new ArgumentException("Provided x- and y-spans must be of the same length.");
+                TransformCore(xs, ys, _dummyZ, strideX, strideY, 0);
+                return;
             }
 
-            // If a stride value for z is positive we must check this, too
-            if (strideZ > 0 && inZs.Length > 0)
-            {
-                int inZElements = inZs.Length / strideZ;
-                if (strideZ > 1) inZElements += 1;
-                if (inXElements != inZElements || inZs.Length != outZs.Length)
-                {
-                    throw new ArgumentException("Provided z-spans are not of the same length.");
-                }
-            }
+            int elementsZ = zs.Length / strideZ + zs.Length % strideZ != 0 ? 1 : 0;
+            if (elementsZ != elementsX)
+                throw new ArgumentException("Spans of ordinate values don't match in size.");
 
-            TransformCore(inXs, inYs, inZs, outXs, outYs, outZs, strideX, strideY, strideZ);
+            TransformCore(xs, ys, zs, strideX, strideY, strideZ);
         }
 
-
         /// <summary>
-        /// Transforms a series of 2-dimensional <see cref="XY"/>-points and and a series of z-ordinate values.
+        /// Transforms a series of 2-dimensional <see cref="XY"/>-points and (optionally) a series of z-ordinate values.
         /// </summary>
-        /// <param name="inXys">A series of <see cref="XY"/> points</param>
-        /// <param name="inZs">A series of z-ordinate values.</param>
-        /// <param name="outXys">A buffer for <see cref="XY"/> points</param>
-        /// <param name="outZs">A buffer for z-ordinate values</param>
+        /// <param name="xys">A series of <see cref="XY"/> points</param>
+        /// <param name="zs">A series of z-ordinate values.</param>
+        /// <param name="strideZ">A stride value for z-ordinates</param>
         /// <exception cref="ArgumentException">If the provided series' and buffers don't match in size.</exception>
-        public void Transform(ReadOnlySpan<XY> inXys, ReadOnlySpan<double> inZs, Span<XY> outXys, Span<double> outZs)
+        public void Transform(Span<XY> xys, Span<double> zs = default, int strideZ = 0)
         {
-            if (inXys.Length != outXys.Length ||
-                (inZs.Length != 0 && inXys.Length != outZs.Length) ||
-                (outZs.Length != 0 && inXys.Length != outZs.Length))
+            if (zs.Length > 0)
             {
-                throw new ArgumentException("Provided spans must be the same length.");
+                if (strideZ <= 0) strideZ = 1;
+                if (xys.Length != ((zs.Length / strideZ + (zs.Length % strideZ != 0 ? 1 : 0))))
+                    throw new ArgumentException("Provided spans don't match in size.");
             }
-            var read = MemoryMarshal.Cast<XY, double>(inXys);
+
+            var read = MemoryMarshal.Cast<XY, double>(xys);
             var inXs = read.Slice(0, read.Length - 1);
             var inYs = read.Slice(1, read.Length - 1);
 
-            var write = MemoryMarshal.Cast<XY, double>(outXys);
-            var outXs = write.Slice(0, write.Length - 1);
-            var outYs = write.Slice(1, write.Length - 1);
-
-            if (inZs.Length == 0)
-                TransformCore(inXs, inYs, _inZs, outXs, outYs, _outZs, 2,2, 0);
+            if (zs.Length == 0)
+                TransformCore(inXs, inYs, _dummyZ, 2, 2, 0);
             else
-                TransformCore(inXs, inYs, inZs, outXs, outYs, outZs, 2, 2, 1);
+                TransformCore(inXs, inYs, zs, 2, 2, strideZ);
         }
 
         /// <summary>
         /// Transforms a series of 3-dimensional <see cref="XYZ"/>-points.
         /// </summary>
-        /// <param name="inXyzs">A series of <see cref="XYZ"/> points</param>
-        /// <param name="outXyzs">A buffer for <see cref="XYZ"/> points</param>
-        /// <exception cref="ArgumentException">If the provided series and buffer don't match in size.</exception>
-        public void Transform(ReadOnlySpan<XYZ> inXyzs, Span<XYZ> outXyzs)
+        /// <param name="xyzs">A series of <see cref="XYZ"/> points</param>
+        public void Transform(Span<XYZ> xyzs)
         {
-            if (inXyzs.Length != outXyzs.Length)
-            {
-                throw new ArgumentException("Observed spans must be the same length.");
-            }
+            var read = MemoryMarshal.Cast<XYZ, double>(xyzs);
+            var inXs = read.Slice(0);//, read.Length - 2);
+            var inYs = read.Slice(1);//, read.Length - 2);
+            var inZs = read.Slice(2);//, read.Length - 2);
 
-            var read = MemoryMarshal.Cast<XYZ, double>(inXyzs);
-            var inXs = read.Slice(0, read.Length - 2);
-            var inYs = read.Slice(1, read.Length - 2);
-            var inZs = read.Slice(2, read.Length - 2);
-
-            var write = MemoryMarshal.Cast<XYZ, double>(outXyzs);
-            var outXs = write.Slice(0, write.Length - 2);
-            var outYs = write.Slice(1, write.Length - 2);
-            var outZs = write.Slice(2, write.Length - 2);
-
-            TransformCore(inXs, inYs, inZs, outXs, outYs, outZs,3,3,3);
+            TransformCore(inXs, inYs, inZs, 3,3,3);
         }
 
         #endregion

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -82,6 +82,7 @@ namespace ProjNET.Benchmark.Performance
             }
         }
 
+        [TestCase(true, nameof(DotSpatialAffineCoordinateSequenceFactory), "Converter")]
         [TestCase(false, nameof(CoordinateArraySequenceFactory), "Converter")]
         [TestCase(true, nameof(CoordinateArraySequenceFactory), "Converter")]
         [TestCase(false, nameof(CoordinateArraySequenceFactory), "Transformer")]
@@ -201,18 +202,18 @@ namespace ProjNET.Benchmark.Performance
                     break;
 
                 case IPoint p:
-                    transform.TransformInPlace(p.CoordinateSequence);
+                    transform.Transform(p.CoordinateSequence);
                     break;
 
                 case ILineString l:
-                    transform.TransformInPlace(l.CoordinateSequence);
+                    transform.Transform(l.CoordinateSequence);
                     break;
 
                 case IPolygon po:
-                    transform.TransformInPlace(po.ExteriorRing.CoordinateSequence);
+                    transform.Transform(po.ExteriorRing.CoordinateSequence);
                     foreach (var hole in po.InteriorRings)
                     {
-                        transform.TransformInPlace(hole.CoordinateSequence);
+                        transform.Transform(hole.CoordinateSequence);
                     }
 
                     break;

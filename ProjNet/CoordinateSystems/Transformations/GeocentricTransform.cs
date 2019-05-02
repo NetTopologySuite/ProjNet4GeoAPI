@@ -138,29 +138,12 @@ namespace ProjNet.CoordinateSystems.Transformations
 			return _inverse;
 		}
 
-        ///// <summary>
-        ///// Converts coordinates in decimal degrees to projected meters.
-        ///// </summary>
-        ///// <param name="lonlat">The point in decimal degrees.</param>
-        ///// <returns>Point in projected meters</returns>
-        //      private double[] DegreesToMeters(double[] lonlat)
-        //{
-        //	double lon = Degrees2Radians(lonlat[0]);
-        //          double lat = Degrees2Radians(lonlat[1]);
-        //	double h = lonlat.Length < 3 ? 0 : lonlat[2].Equals(Double.NaN) ? 0 : lonlat[2];
-        //	double v = semiMajor / Math.Sqrt(1 - es * Math.Pow(Math.Sin(lat), 2));
-        //	double x = (v + h) * Math.Cos(lat) * Math.Cos(lon);
-        //	double y = (v + h) * Math.Cos(lat) * Math.Sin(lon);
-        //	double z = ((1 - es) * v + h) * Math.Sin(lat);
-        //          return new double[] { x, y, z, };
-        //}
-
         /// <summary>
         /// Converts coordinates in decimal degrees to projected meters.
         /// </summary>
         /// <param name="lonlat">The point in decimal degrees.</param>
         /// <returns>Point in projected meters</returns>
-        private (double x, double y, double z) DegreesToMeters(double lon, double lat, double z)
+        private void DegreesToMeters(ref double lon, ref double lat, ref double z)
         {
             lon = Degrees2Radians(lon);
             lat = Degrees2Radians(lat);
@@ -171,77 +154,16 @@ namespace ProjNet.CoordinateSystems.Transformations
             double y = (v + z) * Math.Cos(lat) * Math.Sin(lon);
             z = ((1 - es) * v + z) * Math.Sin(lat);
 
-            return (x, y, z);
+            lon = x;
+            lat = y;
         }
-
-        //      /// <summary>
-        //      /// Converts coordinates in projected meters to decimal degrees.
-        //      /// </summary>
-        //      /// <param name="pnt">Point in meters</param>
-        //      /// <returns>Transformed point in decimal degrees</returns>		
-        //      private double[] MetersToDegrees(double[] pnt)
-        //{
-        //	bool At_Pole = false; // indicates whether location is in polar region */
-        //	double Z = pnt.Length < 3 ? 0 : pnt[2].Equals(Double.NaN) ? 0 : pnt[2];
-
-        //	double lon = 0;
-        //	double lat = 0;
-        //	double Height = 0;
-        //	if (pnt[0] != 0.0)
-        //		lon = Math.Atan2(pnt[1], pnt[0]);
-        //	else
-        //	{
-        //		if (pnt[1] > 0)
-        //			lon = Math.PI/2;
-        //              else if (pnt[1] < 0)
-        //			lon = -Math.PI * 0.5;
-        //		else
-        //		{
-        //			At_Pole = true;
-        //			lon = 0.0;
-        //			if (Z > 0.0)
-        //			{   /* north pole */
-        //				lat = Math.PI * 0.5;
-        //			}
-        //			else if (Z < 0.0)
-        //			{   /* south pole */
-        //				lat = -Math.PI * 0.5;
-        //			}
-        //			else
-        //			{   /* center of earth */
-        //                      return new double[] { Radians2Degrees(lon), Radians2Degrees(Math.PI * 0.5), -semiMinor, };
-        //			}
-        //		}
-        //	}
-        //	double W2 = pnt[0] * pnt[0] + pnt[1] * pnt[1]; // Square of distance from Z axis
-        //	double W = Math.Sqrt(W2); // distance from Z axis
-        //	double T0 = Z * AD_C; // initial estimate of vertical component
-        //	double S0 = Math.Sqrt(T0 * T0 + W2); //initial estimate of horizontal component
-        //	double Sin_B0 = T0 / S0; //sin(B0), B0 is estimate of Bowring aux variable
-        //	double Cos_B0 = W / S0; //cos(B0)
-        //	double Sin3_B0 = Math.Pow(Sin_B0, 3);
-        //	double T1 = Z + semiMinor * ses * Sin3_B0; //corrected estimate of vertical component
-        //	double Sum = W - semiMajor * es * Cos_B0 * Cos_B0 * Cos_B0; //numerator of cos(phi1)
-        //	double S1 = Math.Sqrt(T1 * T1 + Sum * Sum); //corrected estimate of horizontal component
-        //	double Sin_p1 = T1 / S1; //sin(phi1), phi1 is estimated latitude
-        //	double Cos_p1 = Sum / S1; //cos(phi1)
-        //	double Rn = semiMajor / Math.Sqrt(1.0 - es * Sin_p1 * Sin_p1); //Earth radius at location
-        //	if (Cos_p1 >= COS_67P5)
-        //		Height = W / Cos_p1 - Rn;
-        //	else if (Cos_p1 <= -COS_67P5)
-        //		 Height = W / -Cos_p1 - Rn;
-        //	else Height = Z / Sin_p1 + Rn * (es - 1.0);
-        //	if(!At_Pole)
-        //		lat = Math.Atan(Sin_p1 / Cos_p1);
-        //          return new double[] { Radians2Degrees(lon), Radians2Degrees(lat), Height, };
-        //}
 
         /// <summary>
         /// Converts coordinates in projected meters to decimal degrees.
         /// </summary>
         /// <param name="pnt">Point in meters</param>
         /// <returns>Transformed point in decimal degrees</returns>		
-        private (double lon, double lat, double z) MetersToDegrees(double x, double y, double z)
+        private void MetersToDegrees(ref double x, ref double y, ref double z)
         {
             bool At_Pole = false; // indicates whether location is in polar region */
 
@@ -275,7 +197,10 @@ namespace ProjNet.CoordinateSystems.Transformations
                         /* center of earth */
                         lon = Radians2Degrees(lon);
                         lat = Radians2Degrees(Math.PI * 0.5);
-                        return (lon, lat, -semiMinor);
+                        x = lon;
+                        y = lat;
+                        z = -semiMinor;
+                        return;
                     }
                 }
             }
@@ -301,34 +226,20 @@ namespace ProjNet.CoordinateSystems.Transformations
             if (!At_Pole)
                 lat = Math.Atan(Sin_p1 / Cos_p1);
 
-            return (Radians2Degrees(lon), Radians2Degrees(lat), Height);
+            x = Radians2Degrees(lon);
+            y = Radians2Degrees(lat);
+            z = Height;
         }
 
-
-        //   /// <summary>
-        //   /// Transforms a coordinate point. The passed parameter point should not be modified.
-        //   /// </summary>
-        //   /// <param name="point"></param>
-        //   /// <returns></returns>
-        //   public override double[] Transform(double[] point)
-        //   {
-        //       if (!_isInverse)
-        //return DegreesToMeters(point);
-        //       return MetersToDegrees(point);
-        //   }
-        public override (double x, double y, double z) Transform(double x, double y, double z)
+        public sealed override void Transform(ref double x, ref double y, ref double z)
         {
             if (_isInverse)
-            {
-                return MetersToDegrees(x, y, z);
-            }
+                MetersToDegrees(ref x, ref y, ref z);
             else
-            {
-                return DegreesToMeters(x, y, z);
-            }
+                DegreesToMeters(ref x, ref y, ref z);
         }
 
-	    /// <summary>
+        /// <summary>
 		/// Reverses the transformation
 		/// </summary>
 		public override void Invert()

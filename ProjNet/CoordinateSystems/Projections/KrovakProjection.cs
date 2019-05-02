@@ -86,7 +86,7 @@ namespace ProjNet.CoordinateSystems.Projections
         private readonly double _reciprocSemiMajor;
 
 		/**
-		 * Useful constant - 45° in radians.
+		 * Useful constant - 45Â° in radians.
 		 */
 		private const double S45 = 0.785398163397448;
 
@@ -185,38 +185,14 @@ namespace ProjNet.CoordinateSystems.Projections
         }
         #endregion
 
-        ///// <summary>
-        ///// Converts coordinates in decimal degrees to projected meters.
-        ///// </summary>
-        ///// <param name="lonlat">The point in decimal degrees.</param>
-        ///// <returns>Point in projected meters</returns>
-        //protected override double[] RadiansToMeters(double[] lonlat)
-        //{
-        //    var lambda = lonlat[0] - central_meridian;
-        //    var phi = lonlat[1];
-
-        //    var esp = _e * Math.Sin(phi);
-        //    var gfi = Math.Pow(((1.0 - esp) / (1.0 + esp)), _hae);
-        //    var u = 2 * (Math.Atan(Math.Pow(Math.Tan(phi / 2 + S45), _alfa) / _k1 * gfi) - S45);
-        //    var deltav = -lambda * _alfa;
-        //    var cosU = Math.Cos(u);
-        //    var s = Math.Asin((_cosAzim * Math.Sin(u)) + (_sinAzim * cosU * Math.Cos(deltav)));
-        //    var d = Math.Asin(cosU * Math.Sin(deltav) / Math.Cos(s));
-        //    var eps = _n * d;
-        //    var ro = _rop / Math.Pow(Math.Tan(s / 2 + S45), _n);
-
-        //    /* x and y are reverted  */
-        //    var y = -(ro * Math.Cos(eps)) * _semiMajor;
-        //    var x = -(ro * Math.Sin(eps)) * _semiMajor;
-
-        //    return new[] { x, y };
-        //}
         /// <summary>
         /// Converts coordinates in decimal degrees to projected meters.
         /// </summary>
+        /// <param name="lon"></param>
+        /// <param name="lat"></param>
         /// <param name="lonlat">The point in decimal degrees.</param>
         /// <returns>Point in projected meters</returns>
-        protected override (double x, double y, double z) RadiansToMeters(double lon, double lat, double z)
+        protected override void RadiansToMeters(ref double lon, ref double lat)
 		{
             double lambda = lon - central_meridian;
             double phi = lat;
@@ -232,60 +208,18 @@ namespace ProjNet.CoordinateSystems.Projections
             double ro = _rop / Math.Pow(Math.Tan(s / 2 + S45), _n);
 
             /* x and y are reverted  */
-            double y = -(ro * Math.Cos(eps)) * _semiMajor;
-            double x = -(ro * Math.Sin(eps)) * _semiMajor;
-            return (x, y, z);
+            lat = -(ro * Math.Cos(eps)) * _semiMajor;
+            lon = -(ro * Math.Sin(eps)) * _semiMajor;
 		}
-
-        ///// <summary>
-        ///// Converts coordinates in projected meters to decimal degrees.
-        ///// </summary>
-        ///// <param name="p">Point in meters</param>
-        ///// <returns>Transformed point in decimal degrees</returns>
-        //      protected override double[] MetersToRadians(double[] p)
-        //{
-        //          var x = p[0] / _semiMajor;
-        //          var y = p[1] / _semiMajor;
-
-        //	// x -> southing, y -> westing
-        //	var ro = Math.Sqrt(x * x + y * y);
-        //	var eps = Math.Atan2(-x, -y);
-        //	var d   = eps / _n;
-        //	var s   = 2 * (Math.Atan(Math.Pow(_ro0/ro, 1/_n) * _tanS2) - S45);
-        //	var cs  = Math.Cos(s);
-        //	var u   = Math.Asin((_cosAzim * Math.Sin(s)) - (_sinAzim * cs * Math.Cos(d)));
-        //	var kau = _ka * Math.Pow(Math.Tan((u / 2.0) + S45), 1 / _alfa);
-        //	var deltav = Math.Asin((cs * Math.Sin(d)) / Math.Cos(u));
-        //	var lambda = -deltav / _alfa;
-        //	var phi = 0d;
-
-        //	// iteration calculation
-        //	for (var i=MaximumIterations;;) 
-        //	{
-        //		var fi1 = phi;
-        //		var esf = _e * Math.Sin(fi1);
-        //		phi = 2.0 * (Math.Atan(kau * Math.Pow((1.0 + esf) / (1.0 - esf), _e /2.0)) - S45);
-        //		if (Math.Abs(fi1 - phi) <= IterationTolerance) 
-        //		{
-        //			break;
-        //		}
-
-        //		if (--i < 0) 
-        //		{
-        //                  break;
-        //			//throw new ProjectionException(Errors.format(ErrorKeys.NO_CONVERGENCE));
-        //		}
-        //	}
-
-        //	return new[] { lambda + central_meridian, phi };
-        //}
 
         /// <summary>
         /// Converts coordinates in projected meters to decimal degrees.
         /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
         /// <param name="p">Point in meters</param>
         /// <returns>Transformed point in decimal degrees</returns>
-        protected override (double lon, double lat, double z) MetersToRadians(double x, double y, double z)
+        protected override void MetersToRadians(ref double x, ref double y)
         {
             x *= _reciprocSemiMajor;
             y *= _reciprocSemiMajor;
@@ -320,10 +254,8 @@ namespace ProjNet.CoordinateSystems.Projections
                 }
             }
 
-            return (
-                lon: lambda + central_meridian,
-                lat: phi,
-                z);
+            x = lambda + central_meridian;
+            y = phi;
         }
 
         /// <summary>

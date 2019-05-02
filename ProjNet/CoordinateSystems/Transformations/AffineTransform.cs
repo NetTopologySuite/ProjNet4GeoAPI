@@ -1,4 +1,4 @@
-﻿// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
+// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
 //
 // This file is part of ProjNet.
 // ProjNet is free software; you can redistribute it and/or modify
@@ -403,7 +403,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// </summary>
         /// <param name="point"></param>
         /// <returns></returns>
-        public override (double x, double y, double z) Transform(double x, double y, double z)
+        private (double x, double y, double z) Transform(double x, double y, double z)
         {
             //check source dimensionality - allow coordinate clipping, if source dimensionality is greater then expected source dimensionality of affine transformation
             Span<double> point = stackalloc double[0];
@@ -466,6 +466,11 @@ namespace ProjNet.CoordinateSystems.Transformations
             }
 
             return ret;
+        }
+
+        public override void Transform(ref double x, ref double y, ref double z)
+        {
+            (x, y, z) = Transform(x, y, z);
         }
 
         /// <summary>

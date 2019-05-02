@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using GeoAPI.CoordinateSystems;
@@ -67,7 +67,7 @@ namespace ProjNet.CoordinateSystems.Projections
         //               : new[] {_semiMajor*x, _semiMajor*y, lonlat[2]};
         //}
 
-        protected override (double x, double y, double z) RadiansToMeters(double lon, double lat, double z)
+        protected override void RadiansToMeters(ref double lon, ref double lat)
         {
             double lambda = lon - central_meridian;
             double phi = lat;
@@ -85,10 +85,9 @@ namespace ProjNet.CoordinateSystems.Projections
 
             double x = n * a1 * (1.0d - a2 * t * (One6th - (8.0d - t + 8.0d * c) * a2 * One120th));
             y -= _m0 - n * tn * a2 * (0.5d + (5.0d - t + 6.0d * c) * a2 * One24th);
-            return (
-                x: x * _semiMajor,
-                y: y * _semiMajor,
-                z);
+
+            lon = x * _semiMajor;
+            lat = y * _semiMajor;
         }
         //protected override double[] MetersToRadians(double[] p)
         //{
@@ -114,7 +113,7 @@ namespace ProjNet.CoordinateSystems.Projections
         //               ? new[] {lambda, phi}
         //               : new[] {lambda, phi, p[2]};
         //}
-        protected override (double lon, double lat, double z) MetersToRadians(double x, double y, double z)
+        protected override void MetersToRadians(ref double x, ref double y)
         {
             x *= _reciprocalSemiMajor;
             y *= _reciprocalSemiMajor;
@@ -132,8 +131,6 @@ namespace ProjNet.CoordinateSystems.Projections
             y = phi1 - (n * tn / r) * d2 * (.5 - (1.0 + 3.0 * t) * d2 * One24th);
             double lambda = dd * (1.0 + t * d2 * (-One3rd + (1.0 + 3.0 * t) * d2 * One15th)) / Math.Cos(phi1);
             x = adjust_lon(lambda + central_meridian);
-
-            return (x, y, z);
         }
 
         private double Phi1(double arg)

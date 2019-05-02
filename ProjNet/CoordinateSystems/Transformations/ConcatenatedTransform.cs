@@ -73,14 +73,16 @@ namespace ProjNet.CoordinateSystems.Transformations
             get { return _coordinateTransformationList[_coordinateTransformationList.Count-1].TargetCS.Dimension; }
         }
 
-        public override (double x, double y, double z) Transform(double x, double y, double z)
+
+        /// <inheritdoc />
+        public override void Transform(ref double x, ref double y, ref double z)
         {
             double[] xyzArr = null;
             foreach (ICoordinateTransformation ct in _coordinateTransformationList)
             {
                 if (ct.MathTransform is MathTransform ours)
                 {
-                    (x, y, z) = ours.Transform(x, y, z);
+                    ours.Transform(ref x, ref y, ref z);
                 }
                 else
                 {
@@ -96,44 +98,7 @@ namespace ProjNet.CoordinateSystems.Transformations
                     z = transformed?.Length > 2 ? transformed[2] : 0;
                 }
             }
-
-            return (x, y, z);
         }
-
-  //      /// <summary>
-		///// Transforms a list point
-  //      /// </summary>
-  //      /// <param name="points"></param>
-  //      /// <returns></returns>
-  //      public override IList<double[]> TransformList(IList<double[]> points)
-		//{
-		//	IList<double[]> pnts = new List<double[]>(points);
-		//	foreach (var ct in _coordinateTransformationList)
-		//	{
-		//	    pnts = ct.MathTransform.TransformList(pnts);
-		//	}
-		//	return pnts;
-		//}
-
-  //      public override IList<Coordinate> TransformList(IList<Coordinate> points)
-  //      {
-  //          IList<Coordinate> pnts = new List<Coordinate>(points);
-  //          foreach (var ct in _coordinateTransformationList)
-  //          {
-  //              pnts = ct.MathTransform.TransformList(pnts);
-  //          }
-  //          return pnts;
-  //      }
-
-  //      public override ICoordinateSequence Transform(ICoordinateSequence coordinateSequence)
-  //      {
-  //          var res = coordinateSequence.Copy();
-  //          foreach (var ct in _coordinateTransformationList)
-  //          {
-  //              res = ct.MathTransform.Transform(res);
-  //          }
-  //          return res;
-  //      }
 
 		/// <summary>
 		/// Returns the inverse of this conversion.

@@ -115,13 +115,14 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         /// <param name="lon">The longitude of the point in decimal degrees.</param>
         /// <param name="lat">The latitude of the point in decimal degrees.</param>
-        /// <param name="z">The altitude of the point</param>
         /// <returns>Point in projected meters</returns>
-        protected override (double x, double y, double z) RadiansToMeters(double lon, double lat, double z)
+        protected override void RadiansToMeters(ref double lon, ref double lat)
         {
             if (double.IsNaN(lon) || double.IsNaN(lat))
             {
-                return (double.NaN, double.NaN, z);
+                lon = double.NaN;
+                lat = double.NaN;
+                return;
             }
 
             double dLongitude = lon;
@@ -135,7 +136,6 @@ namespace ProjNet.CoordinateSystems.Projections
             lon = _semiMajor * _k0 * (dLongitude - central_meridian);
             lat = _semiMajor * _k0 * Math.Log(Math.Tan(PI * 0.25 + dLatitude * 0.5) *
                                               Math.Pow((1 - esinphi) / (1 + esinphi), _e * 0.5));
-            return (lon, lat, z);
         }
 
         /// <summary>
@@ -143,13 +143,12 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         /// <param name="x">The x-ordinate in projected meters</param>
         /// <param name="y">The y-ordinate in projected meters</param>
-        /// <param name="z">The z-ordinate</param>
         /// <returns>Transformed point in decimal degrees</returns>
-        protected override (double lon, double lat, double z) MetersToRadians(double x, double y, double z)
+        protected override void MetersToRadians(ref double x, ref double y)
 		{
             /* Inverse equations
               -----------------*/
-            double dX = x; //* _metersPerUnit - this._falseEasting;
+            double dX = x; // * _metersPerUnit - this._falseEasting;
             double dY = y; // * _metersPerUnit - this._falseNorthing;
             double ts = Math.Exp(-dY / (_semiMajor * _k0)); //t
 
@@ -165,7 +164,7 @@ namespace ProjNet.CoordinateSystems.Projections
 
             x = dX / (_semiMajor * _k0) + central_meridian;
 
-            return (x, y, z);
+            //return (x, y, z);
 		}
 		
 		/// <summary>

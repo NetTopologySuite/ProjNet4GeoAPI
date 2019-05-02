@@ -89,15 +89,15 @@ namespace ProjNet.CoordinateSystems.Transformations
 			return _inverse;
 		}
 
-        public override (double x, double y, double z) Transform(double x, double y, double z)
+        public sealed override void Transform(ref double x, ref double y, ref double z)
         {
             if (_isInverse)
             {
-                return ApplyInverted(x, y, z);
+                (x, y, z) = ApplyInverted(x, y, z);
             }
             else
             {
-                return Apply(x, y, z);
+                (x, y, z) = Apply(x, y, z);
             }
         }
 

@@ -181,12 +181,10 @@ namespace ProjNET.Tests.Performance
                     z[i] = ca[i].Z;
             }
 
-            var xyIn = MemoryMarshal.Cast<double, XY>(new ReadOnlySpan<double>(xy));
-            var zIn = new ReadOnlySpan<double>(z);
-            var xyOut = MemoryMarshal.Cast<double, XY>(new Span<double>(xy));
-            var zOut = new Span<double>(z);
+            var xys = MemoryMarshal.Cast<double, XY>(new Span<double>(xy));
+            var zs = new Span<double>(z);
 
-            transform.Transform(xyIn, zIn, xyOut, zOut);
+            transform.Transform(xys, zs);
 
             for (int i = 0, j = 0; i < ca.Length; i++)
             {
@@ -209,22 +207,16 @@ namespace ProjNET.Tests.Performance
             var raw = s.GetRawCoordinates();
             if (s.Dimension == 2)
             {
-                var xIn = new ReadOnlySpan<double>(raw).Slice(0, raw.Length - 1);
-                var yIn = new ReadOnlySpan<double>(raw).Slice(1, raw.Length - 1);
-                var xOut = new Span<double>(raw).Slice(0, raw.Length - 1);
-                var yOut = new Span<double>(raw).Slice(1, raw.Length - 1);
-                transform.Transform(xIn, yIn, xOut, yOut, 2, 2);
+                var xs = new Span<double>(raw).Slice(0, raw.Length - 1);
+                var ys = new Span<double>(raw).Slice(1, raw.Length - 1);
+                transform.Transform(xs, ys, 2, 2);
             }
             else if (s.Dimension == 3 && s.HasZ)
             {
-                var xIn = new ReadOnlySpan<double>(raw).Slice(0, raw.Length - 2);
-                var yIn = new ReadOnlySpan<double>(raw).Slice(1, raw.Length - 2);
-                var zIn = new ReadOnlySpan<double>(raw).Slice(2, raw.Length - 2);
-                var xOut = new Span<double>(raw).Slice(0, raw.Length - 2);
-                var yOut = new Span<double>(raw).Slice(1, raw.Length - 2);
-                var zOut = new Span<double>(raw).Slice(2, raw.Length - 2);
-
-                transform.Transform(xIn, yIn, zIn, xOut, yOut, zOut, 3, 3, 3);
+                var xs = new Span<double>(raw).Slice(0, raw.Length - 2);
+                var ys = new Span<double>(raw).Slice(1, raw.Length - 2);
+                var zs = new Span<double>(raw).Slice(1, raw.Length - 2);
+                transform.Transform(xs, ys, zs, 3, 3);
             }
             else
                 base.Transform(transform, sequence);
@@ -239,23 +231,18 @@ namespace ProjNET.Tests.Performance
             int length = 2 * s.Count - 1;
             if (s.Dimension == 2 || (s.Dimension > 2 && !s.HasZ))
             {
-                var xIn = new ReadOnlySpan<double>(s.XY).Slice(0, length);
-                var yIn = new ReadOnlySpan<double>(s.XY).Slice(1, length);
-                var xOut = new Span<double>(s.XY).Slice(0, length);
-                var yOut = new Span<double>(s.XY).Slice(1, length);
+                var xs = new Span<double>(s.XY).Slice(0, length);
+                var ys = new Span<double>(s.XY).Slice(1, length);
 
-                transform.Transform(xIn, yIn, xOut, yOut, 2, 2);
+                transform.Transform(xs, ys, 2, 2);
             }
             else if (s.Dimension > 2 && s.HasZ)
             {
-                var xIn = new ReadOnlySpan<double>(s.XY).Slice(0, length);
-                var yIn = new ReadOnlySpan<double>(s.XY).Slice(1, length);
-                var zIn = new ReadOnlySpan<double>(s.Z);
-                var xOut = new Span<double>(s.XY).Slice(0, length);
-                var yOut = new Span<double>(s.XY).Slice(1, length);
-                var zOut = new Span<double>(s.Z);
+                var xIn = new Span<double>(s.XY).Slice(0, length);
+                var yIn = new Span<double>(s.XY).Slice(1, length);
+                var zIn = new Span<double>(s.Z);
 
-                transform.Transform(xIn, yIn, zIn, xOut, yOut, zOut, 2, 2);
+                transform.Transform(xIn, yIn, zIn, 2, 2);
             }
             else
                 base.Transform(transform, sequence);
@@ -269,11 +256,9 @@ namespace ProjNET.Tests.Performance
             var scs = (SpanCoordinateSequence)sequence;
             var inZs = scs.ZsAsSpan();
             if (inZs.Length > 0)
-                transform.Transform(scs.XsAsSpan(), scs.YsAsSpan(), inZs,
-                    scs.XsAsSpan(), scs.YsAsSpan(), inZs);
+                transform.Transform(scs.XsAsSpan(), scs.YsAsSpan(), inZs);
             else
-                transform.Transform(scs.XsAsSpan(), scs.YsAsSpan(),
-                    scs.XsAsSpan(), scs.YsAsSpan());
+                transform.Transform(scs.XsAsSpan(), scs.YsAsSpan());
 
         }
     }

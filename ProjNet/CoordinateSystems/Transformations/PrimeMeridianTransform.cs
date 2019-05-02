@@ -1,4 +1,4 @@
-﻿// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
+// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
 //
 // This file is part of ProjNet.
 // ProjNet is free software; you can redistribute it and/or modify
@@ -18,9 +18,6 @@
 using GeoAPI.CoordinateSystems;
 using GeoAPI.CoordinateSystems.Transformations;
 using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
 
 namespace ProjNet.CoordinateSystems.Transformations
 {
@@ -32,9 +29,10 @@ namespace ProjNet.CoordinateSystems.Transformations
     internal class PrimeMeridianTransform : MathTransform
     {
         #region class variables
-        private bool _isInverted = false;
-        private IPrimeMeridian _source;
-        private IPrimeMeridian _target;
+
+        private bool _isInverted;
+        private readonly IPrimeMeridian _source;
+        private readonly IPrimeMeridian _target;
         #endregion class variables
 
         #region constructors & finalizers
@@ -44,7 +42,6 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <param name="source"></param>
         /// <param name="target"></param>
         public PrimeMeridianTransform(IPrimeMeridian source, IPrimeMeridian target)
-            : base()
         {
             if (!source.AngularUnit.EqualParams(target.AngularUnit))
             {
@@ -87,62 +84,34 @@ namespace ProjNet.CoordinateSystems.Transformations
         #endregion public properties
 
         #region public methods
-        /// <summary>
-        /// Returns the inverse of this affine transformation.
-        /// </summary>
-        /// <returns>IMathTransform that is the reverse of the current affine transformation.</returns>
+
+        /// <inheritdoc />
         public override IMathTransform Inverse()
         {
             return new PrimeMeridianTransform(_target, _source);
         }
 
-        /// <summary>
-        /// Transforms a coordinate point. The passed parameter point should not be modified.
-        /// </summary>
-        /// <param name="point"></param>
-        /// <returns></returns>
-        public override (double x, double y, double z) Transform(double x, double y, double z)
+        /// <inheritdoc />
+        public sealed override void Transform(ref double x, ref double y, ref double z)
         {
-            if (!_isInverted)
-            {
-                return (
-                    x: x + _source.Longitude - _target.Longitude,
-                    y,
-                    z);
-            }
+            if (_isInverted)
+                x += _target.Longitude - _source.Longitude;
             else
-            {
-                return (
-                    x: x + _target.Longitude - _source.Longitude,
-                    y,
-                    z);
-            }
+                x += _source.Longitude - _target.Longitude;
         }
 
-        ///// <summary>
-        ///// Transforms a coordinate point. The passed parameter point should not be modified.
-        ///// </summary>
-        ///// <param name="point"></param>
-        ///// <returns></returns>
-        //public override double[] Transform(double[] point)
-        //{
-        //    double[] transformed = new double[point.Length];
-
-        //    if (!_isInverted)
-        //        transformed[0] = point[0] + _source.Longitude - _target.Longitude;
-        //    else
-        //        transformed[0] = point[0] + _target.Longitude - _source.Longitude;
-        //    transformed[1] = point[1];
-        //    if (point.Length > 2)
-        //        transformed[2] = point[2];
-        //    return transformed;
-        //}
-        /// <summary>
-        /// Reverses the transformation
-        /// </summary>
+        protected override void TransformCore(Span<double> xs, Span<double> ys, Span<double> zs,
+            int strideX, int strideY, int strideZ)
+        {
+            for (int i = 0, j = 0, k = 0; i < xs.Length; i += strideX, j += strideY, k += strideZ)
+            {
+                Transform(ref xs[i], ref ys[j], ref zs[k]);
+            }
+        }
+        /// <inheritdoc />
         public override void Invert()
         {
-            this._isInverted = !this._isInverted;
+            _isInverted = !_isInverted;
         }
 
         #endregion public methods
