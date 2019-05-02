@@ -343,8 +343,6 @@ namespace ProjNet.CoordinateSystems.Projections
             {
                 DegreesToTarget(ref x, ref y);
             }
-
-            if (DimTarget == 2) z = 0;
         }
 
 
