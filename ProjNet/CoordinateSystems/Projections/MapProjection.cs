@@ -395,7 +395,7 @@ namespace ProjNet.CoordinateSystems.Projections
         }
 
         /// <summary>
-        /// Converts a point (lon, lat, z) in degrees to (x, y, z) in meters
+        /// Converts points (lon, lat) in degrees to (x, y) in meters
         /// </summary>
         /// <param name="lons">The longitudes of the points in degree when entering, their x-ordinates in meters after exit.</param>
         /// <param name="lats">The latitudes of the points in degree when entering, their y-ordinates in meters after exit.</param>
@@ -422,15 +422,15 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <summary>
         /// Converts a series of points from degrees to target units to degrees
         /// </summary>
-        /// <param name="xs">A series of x-ordinate values</param>
-        /// <param name="ys">A series of y-ordinate values</param>
+        /// <param name="lons">A series of x-ordinate values</param>
+        /// <param name="lats">A series of y-ordinate values</param>
         /// <param name="strideX">A stride value for x-ordinates</param>
         /// <param name="strideY">A stride value for y-ordinates</param>
-        protected void DegreesToTarget(Span<double> xs, Span<double> ys,
+        protected void DegreesToTarget(Span<double> lons, Span<double> lats,
             int strideX, int strideY)
         {
-            DegreesToMeters(xs, ys, strideX, strideY);
-            MetersToTarget(xs, ys, strideX, strideY);
+            DegreesToMeters(lons, lats, strideX, strideY);
+            MetersToTarget(lons, lats, strideX, strideY);
         }
 
         /// <summary>
@@ -501,7 +501,7 @@ namespace ProjNet.CoordinateSystems.Projections
         protected void MetersToDegrees(Span<double> xs, Span<double> ys, int strideX, int strideY)
         {
             for (int i = 0, j = 0; i < xs.Length; i += strideX, j += strideY)
-                MetersToDegrees(ref xs[i], ref xs[j]);
+                MetersToDegrees(ref xs[i], ref ys[j]);
         }
 
         /// <summary>
@@ -543,8 +543,8 @@ namespace ProjNet.CoordinateSystems.Projections
         {
             for (int i = 0, j = 0; i < xs.Length; i += strideX, j += strideY)
             {
-                xs[i] = ys[i] * _metersPerUnit - false_easting;
-                xs[j] = ys[j] * _metersPerUnit - false_northing;
+                xs[i] = xs[i] * _metersPerUnit - false_easting;
+                ys[j] = ys[j] * _metersPerUnit - false_northing;
             }
         }
 
