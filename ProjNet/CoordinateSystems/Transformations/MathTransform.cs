@@ -439,7 +439,7 @@ namespace ProjNet.CoordinateSystems.Transformations
             if (elementsX != elementsY)
                 throw new ArgumentException("Spans of ordinate values don't match in size.");
 
-            if (zs == default)
+            if (zs.IsEmpty)
             {
                 TransformCore(xs, ys, _dummyZ, strideX, strideY, 0);
                 return;
@@ -469,10 +469,10 @@ namespace ProjNet.CoordinateSystems.Transformations
             }
 
             var read = MemoryMarshal.Cast<XY, double>(xys);
-            var inXs = read.Slice(0, read.Length - 1);
-            var inYs = read.Slice(1, read.Length - 1);
+            var inXs = read.Slice(0);
+            var inYs = read.Slice(1);
 
-            if (zs.Length == 0)
+            if (zs.IsEmpty)
                 TransformCore(inXs, inYs, _dummyZ, 2, 2, 0);
             else
                 TransformCore(inXs, inYs, zs, 2, 2, strideZ);

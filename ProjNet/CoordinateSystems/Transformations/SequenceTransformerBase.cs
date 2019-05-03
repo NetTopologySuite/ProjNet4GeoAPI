@@ -2,8 +2,16 @@ using GeoAPI.Geometries;
 
 namespace ProjNet.CoordinateSystems.Transformations
 {
+    /// <summary>
+    /// A utility class that applies a <see cref="MathTransform"/> to a <see cref="ICoordinateSequence"/>.
+    /// </summary>
     public class SequenceTransformerBase
     {
+        /// <summary>
+        /// Method to apply a <see cref="MathTransform"/> to a <see cref="ICoordinateSequence"/>.
+        /// </summary>
+        /// <param name="transform">The <see cref="MathTransform"/></param>
+        /// <param name="sequence">The <see cref="ICoordinateSequence"/></param>
         public virtual void Transform(MathTransform transform, ICoordinateSequence sequence)
         {
             bool readZ = sequence.HasZ && transform.DimSource > 2;

@@ -30,39 +30,25 @@ namespace ProjNet.CoordinateSystems.Transformations
 	{
 		internal GeographicTransform(IGeographicCoordinateSystem sourceGCS, IGeographicCoordinateSystem targetGCS)
 		{
-			_SourceGCS = sourceGCS;
-			_TargetGCS = targetGCS;
+			SourceGCS = sourceGCS;
+			TargetGCS = targetGCS;
 		}
 
-		#region IGeographicTransform Members
+        /// <summary>
+        /// Gets or sets the source geographic coordinate system for the transformation.
+        /// </summary>
+        public IGeographicCoordinateSystem SourceGCS { get; set; }
 
-		private IGeographicCoordinateSystem _SourceGCS;
+        /// <summary>
+        /// Gets or sets the target geographic coordinate system for the transformation.
+        /// </summary>
+        public IGeographicCoordinateSystem TargetGCS { get; set; }
 
-		/// <summary>
-		/// Gets or sets the source geographic coordinate system for the transformation.
-		/// </summary>
-		public IGeographicCoordinateSystem SourceGCS
-		{
-			get { return _SourceGCS; }
-			set { _SourceGCS = value; }
-		}
-
-		private IGeographicCoordinateSystem _TargetGCS;
-
-		/// <summary>
-		/// Gets or sets the target geographic coordinate system for the transformation.
-		/// </summary>
-		public IGeographicCoordinateSystem TargetGCS
-		{
-			get { return _TargetGCS; }
-			set { _TargetGCS = value; }
-		}
-
-		/// <summary>
-		/// Returns the Well-known text for this object
-		/// as defined in the simple features specification. [NOT IMPLEMENTED].
-		/// </summary>
-		public override string WKT
+        /// <summary>
+        /// Returns the Well-known text for this object
+        /// as defined in the simple features specification. [NOT IMPLEMENTED].
+        /// </summary>
+        public override string WKT
 		{
 			get
 			{
@@ -81,16 +67,14 @@ namespace ProjNet.CoordinateSystems.Transformations
 			}
 		}
 
-		#endregion
-
         public override int DimSource
         {
-            get { return _SourceGCS.Dimension; }
+            get { return SourceGCS.Dimension; }
         }
 
         public override int DimTarget
         {
-            get { return _TargetGCS.Dimension; }
+            get { return TargetGCS.Dimension; }
         }
         
         /// <summary>
@@ -103,6 +87,7 @@ namespace ProjNet.CoordinateSystems.Transformations
 			throw new NotImplementedException();
 		}
 
+        /// <inheritdoc />
         public sealed override void Transform(ref double x, ref double y, ref double z)
         {
             x /= SourceGCS.AngularUnit.RadiansPerUnit;

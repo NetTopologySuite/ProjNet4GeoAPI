@@ -1,22 +1,32 @@
 using System;
 using System.Buffers;
-using System.Globalization;
 using GeoAPI.Geometries;
-using ProjNet.Geometries;
 
 namespace ProjNet.CoordinateSystems.Transformations
 {
     /// <summary>
-    /// 
+    /// Default converter for <see cref="ICoordinateSequence"/>s.
     /// </summary>
     public class SequenceCoordinateConverterBase
     {
+        /// <summary>
+        /// Gets a no-Operation <see cref="Action"/>.
+        /// </summary>
         protected static readonly Action Nop = () => { };
 
-        protected internal MemoryPool<XY> MemoryPoolForXys { get; set; } = MemoryPool<XY>.Shared;
+        private MemoryPool<double> MemoryPoolForDoubles { get; } = MemoryPool<double>.Shared;
 
-        protected internal MemoryPool<double> MemoryPoolForDoubles { get; set; } = MemoryPool<double>.Shared;
-
+        /// <summary>
+        /// Method to extract ordinate values from a <see cref="ICoordinateSequence"/>.
+        /// </summary>
+        /// <param name="sequence">The sequence from which to extract ordinate values</param>
+        /// <param name="xs">A span of x-ordinate values.</param>
+        /// <param name="strideX">The stride for <paramref name="xs"/>.</param>
+        /// <param name="ys">A span of y-ordinate values</param>
+        /// <param name="strideY">The stride for <paramref name="ys"/>.</param>
+        /// <param name="zs">A span of z-ordinate values. May be an empty span, but in this case <paramref name="strideZ"/> has to be <value>0</value>.</param>
+        /// <param name="strideZ">The stride for <paramref name="zs"/>.</param>
+        /// <returns>An action that cleans up all temporary objects.</returns>
         public virtual Action ExtractRawCoordinatesFromSequence(ICoordinateSequence sequence,
             out Span<double> xs, out int strideX,
             out Span<double> ys, out int strideY,
@@ -62,6 +72,7 @@ namespace ProjNet.CoordinateSystems.Transformations
                     }
                 }
 
+                // local copy to prevent access to disposed closure
                 var xsOwnerTmp = xsOwner;
                 var ysOwnerTmp = ysOwner;
                 var zsOwnerTmp = zsOwner;
@@ -84,6 +95,16 @@ namespace ProjNet.CoordinateSystems.Transformations
 
         }
 
+        /// <summary>
+        /// Method to copy transformed values back to the initial <see cref="ICoordinateSequence"/>
+        /// </summary>
+        /// <param name="xs">A span of x-ordinate values.</param>
+        /// <param name="strideX">The stride for <paramref name="xs"/>.</param>
+        /// <param name="ys">A span of y-ordinate values</param>
+        /// <param name="strideY">The stride for <paramref name="ys"/>.</param>
+        /// <param name="zs">A span of z-ordinate values. May be an empty span, but in this case <paramref name="strideZ"/> has to be <value>0</value>.</param>
+        /// <param name="strideZ">The stride for <paramref name="zs"/>.</param>
+        /// <param name="sequence">The sequence from which to extract ordinate values</param>
         public void CopyRawCoordinatesToSequence(Span<double> xs, int strideX, Span<double> ys, int strideY, Span<double> zs, int strideZ, ICoordinateSequence sequence)
         {
             if (sequence == null || sequence.Count < 1)
@@ -126,6 +147,19 @@ namespace ProjNet.CoordinateSystems.Transformations
             CopyRawCoordinatesToSequenceCore(xs, strideX, ys, strideY, zs, strideZ, sequence);
         }
 
+        /// <summary>
+        /// Method to copy transformed values back to the initial <see cref="ICoordinateSequence"/>
+        /// </summary>
+        /// <remarks>
+        /// This internal method assumes all provided values are valid!
+        /// </remarks>
+        /// <param name="xs">A span of x-ordinate values.</param>
+        /// <param name="strideX">The stride for <paramref name="xs"/>.</param>
+        /// <param name="ys">A span of y-ordinate values</param>
+        /// <param name="strideY">The stride for <paramref name="ys"/>.</param>
+        /// <param name="zs">A span of z-ordinate values. May be an empty span, but in this case <paramref name="strideZ"/> has to be <value>0</value>.</param>
+        /// <param name="strideZ">The stride for <paramref name="zs"/>.</param>
+        /// <param name="sequence">The sequence from which to extract ordinate values</param>
         protected virtual void CopyRawCoordinatesToSequenceCore(Span<double> xs, int strideX, Span<double> ys, int strideY, Span<double> zs, int strideZ, ICoordinateSequence sequence)
         {
             bool hasZ = sequence.HasZ;

@@ -44,7 +44,7 @@ namespace ProjNet.CoordinateSystems.Projections
 {
 
 	/// <summary>
-	/// Implemetns the Lambert Conformal Conic 2SP Projection.
+	/// Implements the Lambert Conformal Conic 2SP Projection.
 	/// </summary>
 	/// <remarks>
 	/// <para>The Lambert Conformal Conic projection is a standard projection for presenting maps
@@ -56,17 +56,17 @@ namespace ProjNet.CoordinateSystems.Projections
     [Serializable] 
     internal class LambertConformalConic2SP : MapProjection
 	{
-	
-		//double _falseEasting;
-		//double _falseNorthing;
-	
-		//private double es=0;              /* eccentricity squared         */
-		//private double e=0;               /* eccentricity                 */
-		//private double center_lon=0;      /* center longituted            */
-		//private double center_lat=0;      /* cetner latitude              */
-		private readonly double ns=0;              /* ratio of angle between meridian*/
-		private readonly double f0=0;              /* flattening of ellipsoid      */
-		private readonly double rh=0;              /* height above ellipsoid       */
+
+        //private double readonly _falseEasting;
+        //private double readonly _falseNorthing;
+
+        //private readonly double es;            /* eccentricity squared            */
+        //private readonly double e;             /* eccentricity                    */
+        //private readonly double center_lon;    /* center longitude                */
+        //private readonly double center_lat;    /* center latitude                 */
+        private readonly double ns;                /* ratio of angle between meridian */
+		private readonly double f0;                /* flattening of ellipsoid         */
+		private readonly double rh;                /* height above ellipsoid          */
 
 		#region Constructors
 
@@ -157,23 +157,22 @@ namespace ProjNet.CoordinateSystems.Projections
 		}
         #endregion
 
+
         /// <summary>
-        /// Converts coordinates in decimal degrees to projected meters.
+        /// Method to convert a point (lon, lat) in radians to (x, y) in meters
         /// </summary>
-        /// <param name="lon"></param>
-        /// <param name="lat"></param>
-        /// <param name="lonlat">The point in decimal degrees.</param>
-        /// <returns>Point in projected meters</returns>
+        /// <param name="lon">The longitude of the point in radians when entering, its x-ordinate in meters after exit.</param>
+        /// <param name="lat">The latitude of the point in radians when entering, its y-ordinate in meters after exit.</param>
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
             double dLongitude = lon;
             double dLatitude = lat;
 
-            double con; /* temporary angle variable             */
-            double rh1; /* height above ellipsoid               */
+            double con;    /* temporary angle variable             */
+            double rh1;    /* height above ellipsoid               */
             double sinphi; /* sin value                            */
-            double theta; /* angle                                */
-            double ts; /* small value t                        */
+            double theta;  /* angle                                */
+            double ts;     /* small value t                        */
 
 
             con = Math.Abs(Math.Abs(dLatitude) - HALF_PI);
@@ -198,12 +197,10 @@ namespace ProjNet.CoordinateSystems.Projections
         }
 
         /// <summary>
-        /// Converts coordinates in projected meters to decimal degrees.
+        /// Method to convert a point from meters to radians
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <param name="p">Point in meters</param>
-        /// <returns>Transformed point in decimal degrees</returns>
+        /// <param name="x">The x-ordinate when entering, the longitude value upon exit.</param>
+        /// <param name="y">The y-ordinate when entering, the latitude value upon exit.</param>
         protected override void MetersToRadians(ref double x, ref double y)
         {
             double rh1; /* height above ellipsoid	*/

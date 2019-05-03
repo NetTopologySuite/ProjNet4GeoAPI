@@ -491,13 +491,10 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <summary>
         /// Method to convert a point from meters to degrees
         /// </summary>
-        /// <param name="xs"></param>
-        /// <param name="ys"></param>
+        /// <param name="xs">The x-ordinate values when entering, the longitude values upon exit</param>
+        /// <param name="ys">The y-ordinate values when entering, the latitude values upon exit</param>
         /// <param name="strideX"></param>
         /// <param name="strideY"></param>
-        /// <param name="x">The x-ordinate when entering, the longitude value upon exit.</param>
-        /// <param name="y">The y-ordinate when entering, the latitude value upon exit.</param>
-        /// <param name="z">The z-ordinate</param>
         protected void MetersToDegrees(Span<double> xs, Span<double> ys, int strideX, int strideY)
         {
             for (int i = 0, j = 0; i < xs.Length; i += strideX, j += strideY)

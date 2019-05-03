@@ -60,22 +60,16 @@ namespace ProjNET.Benchmark.Performance
 
         protected override void CopyRawCoordinatesToSequenceCore(Span<double> xs, int strideX, Span<double> ys, int strideY, Span<double> zs, int strideZ, ICoordinateSequence sequence)
         {
-            switch (sequence)
-            {
-                case PackedDoubleCoordinateSequence packedSeq when packedSeq.Dimension == 2:
-                    //xs.CopyTo(packedSeq.GetRawCoordinates());
-                    break;
+            if (sequence is PackedCoordinateSequence && sequence.Dimension == 2)
+                return;
 
-                case DotSpatialAffineCoordinateSequence dotSpatialSeq:
-                    break;
+            if (sequence is DotSpatialAffineCoordinateSequence)
+                return;
 
-                case SpanCoordinateSequence spanSeq:
-                    break;
+            if (sequence is SpanCoordinateSequence)
+                return;
 
-                default:
-                    base.CopyRawCoordinatesToSequenceCore(xs, strideX, ys, strideY,zs, strideZ, sequence);
-                    break;
-            }
+            base.CopyRawCoordinatesToSequenceCore(xs, strideX, ys, strideY,zs, strideZ, sequence);
         }
     }
 

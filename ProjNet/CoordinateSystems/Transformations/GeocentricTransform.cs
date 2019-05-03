@@ -139,10 +139,11 @@ namespace ProjNet.CoordinateSystems.Transformations
 		}
 
         /// <summary>
-        /// Converts coordinates in decimal degrees to projected meters.
+        /// Converts a point (lon, lat, z) in degrees to (x, y, z) in meters
         /// </summary>
-        /// <param name="lonlat">The point in decimal degrees.</param>
-        /// <returns>Point in projected meters</returns>
+        /// <param name="lon">The longitude in degree</param>
+        /// <param name="lat">The latitude in degree</param>
+        /// <param name="z">The z-ordinate value</param>
         private void DegreesToMeters(ref double lon, ref double lat, ref double z)
         {
             lon = Degrees2Radians(lon);
@@ -161,8 +162,9 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Converts coordinates in projected meters to decimal degrees.
         /// </summary>
-        /// <param name="pnt">Point in meters</param>
-        /// <returns>Transformed point in decimal degrees</returns>		
+        /// <param name="x">The x-ordinate when entering, the longitude value upon exit.</param>
+        /// <param name="y">The y-ordinate when entering, the latitude value upon exit.</param>
+        /// <param name="z">The z-ordinate value</param>
         private void MetersToDegrees(ref double x, ref double y, ref double z)
         {
             bool At_Pole = false; // indicates whether location is in polar region */

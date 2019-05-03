@@ -60,35 +60,35 @@ namespace ProjNet.CoordinateSystems.Projections
     [Serializable] 
     internal class TransverseMercator : MapProjection
 	{
-    /**
-     * Maximum number of iterations for iterative computations.
-     */
-    private const int MAXIMUM_ITERATIONS = 15;
+    // /* 
+    //  * Maximum number of iterations for iterative computations.
+    //  */
+    // private const int MAXIMUM_ITERATIONS = 15;
 
-    /**
-     * Relative iteration precision used in the {@code mlfn} method.
-     * This overrides the value in the {@link MapProjection} class.
-     */
-    private const double ITERATION_TOLERANCE = 1E-11;
+    // /*
+    //  * Relative iteration precision used in the {@code mlfn} method.
+    //  * This overrides the value in the {@link MapProjection} class.
+    //  */
+    // private const double ITERATION_TOLERANCE = 1E-11;
 
-    /**
+    /*
      * Maximum difference allowed when comparing real numbers.
      */
     private const double EPSILON = 1E-6;
 
-    /**
-     * Maximum difference allowed when comparing latitudes.
-     */
-    private const double EPSILON_LATITUDE = 1E-10;
+    // /*
+    //  * Maximum difference allowed when comparing latitudes.
+    //  */
+    // private const double EPSILON_LATITUDE = 1E-10;
 
-    /**
+    /*
      * A derived quantity of eccentricity, computed by <code>e'Â² = (aÂ²-bÂ²)/bÂ² = es/(1-es)</code>
      * where <c>a</c> is the semi-major axis length and <c>b</c> is the semi-minor axis
      * length.
      */
     private readonly double _esp;
 
-    /**
+    /*
      * Meridian distance at the {@code latitudeOfOrigin}.
      * Used for calculations for the ellipsoid.
      */
@@ -96,7 +96,7 @@ namespace ProjNet.CoordinateSystems.Projections
 
     private readonly double _reciprocSemiMajor;
 
-    /**
+    /* 
      * Constants used for the forward and inverse transform for the elliptical
      * case of the Transverse Mercator.
      */
@@ -111,10 +111,10 @@ namespace ProjNet.CoordinateSystems.Projections
 
 
 
-        ///* Variables common to all subroutines in this code file
-        //   -----------------------------------------------------*/
-        //private double esp;		/* eccentricity constants       */
-        //private double ml0;		/* small value m			    */
+        // // Variables common to all subroutines in this code file
+        // // -----------------------------------------------------
+        // private double esp;		/* eccentricity constants       */
+        // private double ml0;		/* small value m			    */
 
 		/// <summary>
 		/// Creates an instance of an TransverseMercatorProjection projection object.
@@ -162,10 +162,10 @@ namespace ProjNet.CoordinateSystems.Projections
         }
 
         /// <summary>
-        /// Converts coordinates in decimal degrees to projected meters.
+        /// Converts coordinates in radians to projected meters.
         /// </summary>
-        /// <param name="lon">The longitude of the point in decimal degrees.</param>
-        /// <param name="lat">The latitude of the point in decimal degrees.</param>
+        /// <param name="lon">The longitude of the point in radians.</param>
+        /// <param name="lat">The latitude of the point in radians.</param>
         /// <returns>Point in projected meters</returns>
         protected override void RadiansToMeters(ref double lon, ref double lat)
 		{
@@ -200,10 +200,10 @@ namespace ProjNet.CoordinateSystems.Projections
 		}
 
         /// <summary>
-        /// Converts coordinates in projected meters to decimal degrees.
+        /// Converts coordinates in projected meters to radians.
         /// </summary>
-        /// <param name="x">Point in meters</param>
-        /// <param name="y"></param>
+        /// <param name="x">The x-ordinate of the point</param>
+        /// <param name="y">The y-ordinate of the point</param>
         /// <returns>Transformed point in decimal degrees</returns>
         protected override void MetersToRadians(ref double x, ref double y)
         {

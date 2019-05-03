@@ -401,9 +401,11 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Transforms a coordinate point. The passed parameter point should not be modified.
         /// </summary>
-        /// <param name="point"></param>
-        /// <returns></returns>
-        private (double x, double y, double z) Transform(double x, double y, double z)
+        /// <param name="x">The x-ordinate value</param>
+        /// <param name="y">The y-ordinate value</param>
+        /// <param name="z">The z-ordinate value</param>
+        /// <returns>The converted x-, y- and z-ordinate tuple</returns>
+        private (double x, double y, double z) TransformAffine(double x, double y, double z)
         {
             //check source dimensionality - allow coordinate clipping, if source dimensionality is greater then expected source dimensionality of affine transformation
             Span<double> point = stackalloc double[0];
@@ -468,9 +470,11 @@ namespace ProjNet.CoordinateSystems.Transformations
             return ret;
         }
 
+
+        /// <inheritdoc />
         public override void Transform(ref double x, ref double y, ref double z)
         {
-            (x, y, z) = Transform(x, y, z);
+            (x, y, z) = TransformAffine(x, y, z);
         }
 
         /// <summary>

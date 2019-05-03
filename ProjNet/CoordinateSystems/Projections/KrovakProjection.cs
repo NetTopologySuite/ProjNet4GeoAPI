@@ -114,7 +114,7 @@ namespace ProjNet.CoordinateSystems.Projections
 		}
 	
 		/// <summary>
-		/// Creates an instance of an Albers projection object.
+		/// Creates an instance of an Krovak projection object.
 		/// </summary>
 		/// <remarks>
 		/// <para>The parameters this projection expects are listed below.</para>
@@ -186,12 +186,10 @@ namespace ProjNet.CoordinateSystems.Projections
         #endregion
 
         /// <summary>
-        /// Converts coordinates in decimal degrees to projected meters.
+        /// Converts coordinates in radians to projected meters.
         /// </summary>
         /// <param name="lon"></param>
         /// <param name="lat"></param>
-        /// <param name="lonlat">The point in decimal degrees.</param>
-        /// <returns>Point in projected meters</returns>
         protected override void RadiansToMeters(ref double lon, ref double lat)
 		{
             double lambda = lon - central_meridian;
@@ -213,12 +211,10 @@ namespace ProjNet.CoordinateSystems.Projections
 		}
 
         /// <summary>
-        /// Converts coordinates in projected meters to decimal degrees.
+        /// Converts coordinates in projected meters to radians.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        /// <param name="p">Point in meters</param>
-        /// <returns>Transformed point in decimal degrees</returns>
         protected override void MetersToRadians(ref double x, ref double y)
         {
             x *= _reciprocSemiMajor;

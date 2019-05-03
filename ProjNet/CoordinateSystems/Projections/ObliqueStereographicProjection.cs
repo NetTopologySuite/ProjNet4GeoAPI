@@ -112,12 +112,10 @@ namespace ProjNet.CoordinateSystems.Projections
         }
 
         /// <summary>
-        /// Converts coordinates in projected meters to decimal degrees.
+        /// Converts coordinates in projected meters to radians.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
-        /// <param name="p">Point in meters</param>
-        /// <returns>Transformed point in decimal degrees</returns>
         protected override void MetersToRadians(ref double x, ref double y)
         {
             x *= this.reciprocGlobalScale;
@@ -168,6 +166,11 @@ namespace ProjNet.CoordinateSystems.Projections
             x += central_meridian;
         }
 
+        /// <summary>
+        /// Method to convert a point (lon, lat) in radians to (x, y) in meters
+        /// </summary>
+        /// <param name="lon">The longitude of the point in radians when entering, its x-ordinate in meters after exit.</param>
+        /// <param name="lat">The latitude of the point in radians when entering, its y-ordinate in meters after exit.</param>
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
             double x = lon - central_meridian;

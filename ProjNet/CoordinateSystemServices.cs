@@ -1,4 +1,4 @@
-﻿// Copyright 2015 - Spartaco Giubbolini, Felix Obermaier (www.ivv-aachen.de)
+// Copyright 2015 - Spartaco Giubbolini, Felix Obermaier (www.ivv-aachen.de)
 //
 // This file is part of ProjNet.
 // ProjNet is free software; you can redistribute it and/or modify
@@ -98,17 +98,29 @@ namespace ProjNet
 
         #endregion
 
+        /// <summary>
+        /// Creates an instance of this class
+        /// </summary>
+        /// <param name="coordinateSystemFactory">The coordinate sequence factory to use.</param>
+        /// <param name="coordinateTransformationFactory">The coordinate transformation factory to use</param>
         public CoordinateSystemServices(ICoordinateSystemFactory coordinateSystemFactory,
             ICoordinateTransformationFactory coordinateTransformationFactory)
-            :this(coordinateSystemFactory, coordinateTransformationFactory, null)
+            : this(coordinateSystemFactory, coordinateTransformationFactory, null)
         {
         }
 
+        /// <summary>
+        /// Creates an instance of this class.
+        /// </summary>
+        /// <param name="definitions">An enumeration of coordinate system definitions (WKT)</param>
         public CoordinateSystemServices(IEnumerable<KeyValuePair<int, string>> definitions)
             : this(new CoordinateSystemFactory(), new CoordinateTransformationFactory(), definitions)
         {
         }
 
+        /// <summary>
+        /// Creates an instance of this class
+        /// </summary>
         public CoordinateSystemServices()
             : this(new CoordinateSystemFactory(), new CoordinateTransformationFactory(), null)
         {
@@ -137,6 +149,12 @@ namespace ProjNet
         }
          */
 
+        /// <summary>
+        /// Creates an instance of this class
+        /// </summary>
+        /// <param name="coordinateSystemFactory">The coordinate sequence factory to use.</param>
+        /// <param name="coordinateTransformationFactory">The coordinate transformation factory to use</param>
+        /// <param name="enumeration">An enumeration of coordinate system definitions (WKT)</param>
         public CoordinateSystemServices(ICoordinateSystemFactory coordinateSystemFactory,
             ICoordinateTransformationFactory coordinateTransformationFactory,
             IEnumerable<KeyValuePair<int, string>> enumeration)
@@ -226,6 +244,12 @@ namespace ProjNet
             css._initialization.Set();
         }
 
+
+        /// <summary>
+        /// Returns the coordinate system by <paramref name="srid" /> identifier
+        /// </summary>
+        /// <param name="srid">The initialization for the coordinate system</param>
+        /// <returns>The coordinate system.</returns>
         public ICoordinateSystem GetCoordinateSystem(int srid)
         {
             ICoordinateSystem cs;
@@ -233,6 +257,12 @@ namespace ProjNet
             return _csBySrid.TryGetValue(srid, out cs) ? cs : null;
         }
 
+        /// <summary>
+        /// Returns the coordinate system by <paramref name="authority" /> and <paramref name="code" />.
+        /// </summary>
+        /// <param name="authority">The authority for the coordinate system</param>
+        /// <param name="code">The code assigned to the coordinate system by <paramref name="authority" />.</param>
+        /// <returns>The coordinate system.</returns>
         public ICoordinateSystem GetCoordinateSystem(string authority, long code)
         {
             var srid = GetSRID(authority, code);
@@ -241,6 +271,12 @@ namespace ProjNet
             return null;
         }
 
+        /// <summary>
+        /// Method to get the identifier, by which this coordinate system can be accessed.
+        /// </summary>
+        /// <param name="authority">The authority name</param>
+        /// <param name="authorityCode">The code assigned by <paramref name="authority" /></param>
+        /// <returns>The identifier or <value>null</value></returns>
         public int? GetSRID(string authority, long authorityCode)
         {
             var key = new CoordinateSystemKey(authority, authorityCode);
@@ -252,15 +288,28 @@ namespace ProjNet
             return null;
         }
 
+        /// <summary>
+        /// Method to create a coordinate transformation between two spatial reference systems, defined by their identifiers
+        /// </summary>
+        /// <remarks>This is a convenience function for <see cref="M:GeoAPI.ICoordinateSystemServices.CreateTransformation(GeoAPI.CoordinateSystems.ICoordinateSystem,GeoAPI.CoordinateSystems.ICoordinateSystem)" />.</remarks>
+        /// <param name="sourceSrid">The identifier for the source spatial reference system.</param>
+        /// <param name="targetSrid">The identifier for the target spatial reference system.</param>
+        /// <returns>A coordinate transformation, <value>null</value> if no transformation could be created.</returns>
         public ICoordinateTransformation CreateTransformation(int sourceSrid, int targetSrid)
         {
             return CreateTransformation(GetCoordinateSystem(sourceSrid),
                 GetCoordinateSystem(targetSrid));
         }
 
-        public ICoordinateTransformation CreateTransformation(ICoordinateSystem src, ICoordinateSystem tgt)
+        /// <summary>
+        /// Method to create a coordinate transformation between two spatial reference systems
+        /// </summary>
+        /// <param name="source">The source spatial reference system.</param>
+        /// <param name="target">The target spatial reference system.</param>
+        /// <returns>A coordinate transformation, <value>null</value> if no transformation could be created.</returns>
+        public ICoordinateTransformation CreateTransformation(ICoordinateSystem source, ICoordinateSystem target)
         {
-            return _ctFactory.CreateFromCoordinateSystems(src, tgt);
+            return _ctFactory.CreateFromCoordinateSystems(source, target);
         }
 
         protected void AddCoordinateSystem(int srid, ICoordinateSystem coordinateSystem)

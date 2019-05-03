@@ -49,7 +49,9 @@ namespace ProjNet.CoordinateSystems.Projections
         /// Function to get the value of a mandatory projection parameter
         /// </summary>
         /// <returns>The value of the parameter</returns>
-        /// <exception cref="ArgumentException">Thrown if <param name="parameterName"> or any of <paramref name="alternateNames"/> is not defined.</param></exception>
+        /// <param name="parameterName">The name of the parameter</param>
+        /// <param name="alternateNames">Possible alternate names for <paramref name="parameterName"/></param>
+        /// <exception cref="ArgumentException">Thrown if <paramref name="parameterName"> or any of <paramref name="alternateNames"/> is not defined.</paramref></exception>
         public double GetParameterValue(string parameterName, params string[] alternateNames)
         {
             var name = parameterName.ToLowerInvariant();
@@ -117,11 +119,17 @@ namespace ProjNet.CoordinateSystems.Projections
         public ProjectionParameter GetAtIndex(int index)
         {
             if (index < 0 || index >= Count)
-                throw new ArgumentOutOfRangeException("index");
+                throw new ArgumentOutOfRangeException(nameof(index));
+
             var name = _originalIndex[index];
             return new ProjectionParameter(_originalNames[name], this[name]);
         }
 
+        /// <summary>
+        /// Checks this projection parameter set with <paramref name="other"/>-
+        /// </summary>
+        /// <param name="other">The other projection parameter set.</param>
+        /// <returns><value>true</value> if both sets are equal.</returns>
         public bool Equals(ProjectionParameterSet other)
         {
             if (other == null)

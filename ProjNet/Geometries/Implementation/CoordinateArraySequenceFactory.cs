@@ -1,4 +1,4 @@
-﻿using GeoAPI.Geometries;
+using GeoAPI.Geometries;
 
 namespace ProjNet.Geometries.Implementation
 {
@@ -6,7 +6,7 @@ namespace ProjNet.Geometries.Implementation
     {
         public ICoordinateSequence Create(Coordinate[] coordinates)
         {
-            if (coordinates == null || coordinates.Length == null)
+            if (coordinates == null || coordinates.Length == 0)
                 return new CoordinateArraySequence(new Coordinate[0]);
             return new CoordinateArraySequence(coordinates);
         }

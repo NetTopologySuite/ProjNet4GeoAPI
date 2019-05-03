@@ -89,6 +89,8 @@ namespace ProjNet.CoordinateSystems.Transformations
 			return _inverse;
 		}
 
+
+        /// <inheritdoc />
         public sealed override void Transform(ref double x, ref double y, ref double z)
         {
             if (_isInverse)
