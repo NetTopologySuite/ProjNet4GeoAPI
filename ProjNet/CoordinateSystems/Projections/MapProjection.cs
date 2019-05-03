@@ -50,6 +50,12 @@ namespace ProjNet.CoordinateSystems.Projections
     [Serializable] 
     public abstract class MapProjection : MathTransform, IProjection
     {
+        protected const double EPS10 = 1e-10;
+
+        protected const double EPS7 = 1e-7;
+
+        protected const double HUGE_VAL = double.NaN;
+
         // ReSharper disable InconsistentNaming
         /// <summary>
         /// Eccentricity
@@ -94,6 +100,10 @@ namespace ProjNet.CoordinateSystems.Projections
         /// Substitute for <see cref="central_meridian"/>
         /// </summary>
         protected double lon_origin { get { return central_meridian; } set { central_meridian = value; } }
+
+        protected double central_parallel { get { return lat_origin; } }
+
+        protected double phi0 { get { return lat_origin; } }
 
         /// <summary>
         /// Center latitude
@@ -631,6 +641,11 @@ namespace ProjNet.CoordinateSystems.Projections
         protected const double PI = Math.PI;
 
         /// <summary>
+        /// A fourth of <see cref="Math.PI"/>
+        /// </summary>
+        protected const double FORT_PI = (PI * 0.25);
+
+        /// <summary>
         /// Half of PI
         /// </summary>
         protected const double HALF_PI = (PI*0.5);
@@ -643,7 +658,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <summary>
         /// EPSLN
         /// </summary>
-        protected const double EPSLN = 1.0e-10;
+        protected const double EPSLN = EPS10;
 
         /// <summary>
         /// S2R
@@ -778,20 +793,40 @@ namespace ProjNet.CoordinateSystems.Projections
         /// Function to compute constant small q which is the radius of a 
         /// parallel of latitude, phi, divided by the semimajor axis. 
         /// </summary>
-        protected static double qsfnz(double eccent, double sinphi)
+        protected static double qsfnz(double sinphi, double eccent)
         {
-            double con;
-
             if (eccent > 1.0e-7)
             {
-                con = eccent*sinphi;
+                double con = eccent*sinphi;
                 return ((1.0 - eccent*eccent)*(sinphi/(1.0 - con*con) - (.5/eccent)*
                                                Math.Log((1.0 - con)/(1.0 + con))));
             }
-            else
-                return 2.0*sinphi;
+
+            return 2.0*sinphi;
         }
 
+        /// <summary>
+        /// Function to compute constant small q which is the radius of a 
+        /// parallel of latitude, phi, divided by the semimajor axis. 
+        /// </summary>
+        protected static double qsfn(double sinphi, double eccent, double one_es)
+        {
+            if (eccent >= EPS7)
+            {
+                double con = eccent * sinphi;
+                double div1 = 1.0 - con * con;
+                double div2 = 1.0 + con;
+
+                /* avoid zero division, fail gracefully */
+                if (div1 == 0.0 || div2 == 0.0)
+                    return HUGE_VAL;
+
+                return (one_es * (sinphi / div1 - (.5 / eccent) * Math.Log((1.0 - con) / div2)));
+            }
+            else
+                return (sinphi + sinphi);
+
+        }
         /// <summary>
         /// Function to calculate the sine and cosine in one call.  Some computer
         /// systems have implemented this function, resulting in a faster implementation
@@ -1096,6 +1131,45 @@ namespace ProjNet.CoordinateSystems.Projections
                                                   " not a valid latitude in degrees.");
         }
 
+        private const double P00 = 0.33333333333333333333; /*   1 /     3 */
+        private const double P01 = 0.17222222222222222222; /*  31 /   180 */
+        private const double P02 = 0.10257936507936507937; /* 517 /  5040 */
+        private const double P10 = 0.06388888888888888888; /*  23 /   360 */
+        private const double P11 = 0.06640211640211640212; /* 251 /  3780 */
+        private const double P20 = 0.01677689594356261023; /* 761 / 45360 */
+
+
+        protected static double[] authset(double es)
+        {
+            double[] APA = new double[3];
+            APA[0] = es * P00;
+            double t = es * es;
+            APA[0] += t * P01;
+            APA[1] = t * P10;
+            t *= es;
+            APA[0] += t * P02;
+            APA[1] += t * P11;
+            APA[2] = t * P20;
+
+            return APA;
+        }
+
+        protected static double authlat(double beta, double[] APA)
+        {
+            double t = beta + beta;
+            return (beta + APA[0] * Math.Sin(t) + APA[1] * Math.Sin(t + t) + APA[2] * Math.Sin(t + t + t));
+        }
+
+        /// <summary>
+        /// Calculates the hypotenuse of a triangle: Sqrt(x*x + y*y);
+        /// </summary>
+        /// <param name="x">The length of one orthogonal leg of the triangle</param>
+        /// <param name="y">The length of the other orthogonal leg of the triangle</param>
+        /// <returns>The length of the diagonal.</returns>
+        protected static double hypot(double x, double y)
+        {
+            return Math.Sqrt(x * x + y * y);
+        }
         #endregion
     }
 }

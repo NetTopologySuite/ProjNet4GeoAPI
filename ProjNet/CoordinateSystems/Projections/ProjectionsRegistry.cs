@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using GeoAPI.CoordinateSystems;
@@ -40,6 +40,8 @@ namespace ProjNet.CoordinateSystems.Projections
             Register("lambert_conformal_conic", typeof(LambertConformalConic2SP));
 			Register("lambert_conformal_conic_2sp", typeof(LambertConformalConic2SP));
 			Register("lambert_conic_conformal_(2sp)", typeof(LambertConformalConic2SP));
+
+            Register("lambert_azimuthal_equal_area", typeof(LambertAzimuthalEqualAreaProjection));
 
             Register("cassini_soldner", typeof(CassiniSoldnerProjection));
             Register("hotine_oblique_mercator", typeof(HotineObliqueMercatorProjection));
