@@ -39,9 +39,7 @@ namespace ProjNet.CoordinateSystems
 	/// position (lat, long) corresponds to a location on the surface of the Earth. This 
 	/// mapping from the mathematical space into real-world locations is called a Datum.</para>
     /// </remarks>
-#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
-#endif
     public abstract class CoordinateSystem : Info, ICoordinateSystem
 	{
 		/// <summary>

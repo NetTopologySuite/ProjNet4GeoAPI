@@ -7,7 +7,7 @@ using NUnit.Framework;
 using ProjNet;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
-using ProjNet.Geometry.Implementation;
+using ProjNet.Geometries.Implementation;
 
 namespace ProjNET.Tests.GitHub
 {

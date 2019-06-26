@@ -1,38 +1,12 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Resources;
 using GeoAPI.CoordinateSystems;
 using GeoAPI.CoordinateSystems.Transformations;
 
 namespace ProjNet.CoordinateSystems.Projections
 {
-#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
-#endif
-    internal class ObliqueMercatorProjection : HotineObliqueMercatorProjection
-    {
-        public ObliqueMercatorProjection(IEnumerable<ProjectionParameter> parameters)
-            : this(parameters, null)
-        {
-        }
-
-        public ObliqueMercatorProjection(IEnumerable<ProjectionParameter> parameters, ObliqueMercatorProjection inverse)
-            : base(parameters, inverse)
-        {
-            AuthorityCode = 9815;
-            Name = "Oblique_Mercator";
-        }
-
-        public override IMathTransform Inverse()
-        {
-            if (_inverse == null)
-                _inverse = new ObliqueMercatorProjection(_Parameters.ToProjectionParameter(), this);
-            return _inverse;
-        }
-    }
-
-#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
-    [Serializable] 
-#endif
     internal class HotineObliqueMercatorProjection : MapProjection
     {
         private readonly double _azimuth;
@@ -133,12 +107,63 @@ namespace ProjNet.CoordinateSystems.Projections
 
         }
 
-        protected override double[] RadiansToMeters(double[] lonlat)
-        {
-            var lon = lonlat[0];
-            var lat = lonlat[1];
+        //protected override double[] RadiansToMeters(double[] lonlat)
+        //{
+        //    var lon = lonlat[0];
+        //    var lat = lonlat[1];
 
-            Double us, ul;
+        //    Double us, ul;
+
+        //    // Forward equations
+        //    // -----------------
+        //    var sin_phi = Math.Sin(lat);
+        //    var dlon = adjust_lon(lon - lon_origin);
+        //    var vl = Math.Sin(_bl * dlon);
+        //    if (Math.Abs(Math.Abs(lat) - HALF_PI) > EPSLN)
+        //    {
+        //        var ts1 = tsfnz(_e, lat, sin_phi);
+        //        var q = _el / (Math.Pow(ts1, _bl));
+        //        var s = .5 * (q - 1.0 / q);
+        //        var t = .5 * (q + 1.0 / q);
+        //        ul = (s * _singam - vl * _cosgam) / t;
+        //        var con = Math.Cos(_bl * dlon);
+        //        if (Math.Abs(con) < .0000001)
+        //        {
+        //            us = _al * _bl * dlon;
+        //        }
+        //        else
+        //        {
+        //            us = _al * Math.Atan((s * _cosgam + vl * _singam) / con) / _bl;
+        //            if (con < 0)
+        //                us = us + PI * _al / _bl;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        if (lat >= 0)
+        //            ul = _singam;
+        //        else
+        //            ul = -_singam;
+        //        us = _al * lat / _bl;
+        //    }
+        //    if (Math.Abs(Math.Abs(ul) - 1.0) <= EPSLN)
+        //    {
+        //        throw new Exception("Point projects into infinity");
+        //    }
+
+        //    var vs = .5 * _al * Math.Log((1.0 - ul) / (1.0 + ul)) / _bl;
+        //    if (!NaturalOriginOffsets) us = us - _u;
+        //    var x = vs * _cosgrid + us * _singrid;
+        //    var y = us * _cosgrid - vs * _singrid;
+
+        //    return lonlat.Length == 2
+        //        ? new [] {x, y} :
+        //          new [] {x, y, lonlat[2]};
+        //}
+
+        protected override void RadiansToMeters(ref double lon, ref double lat)
+        {
+            double us, ul;
 
             // Forward equations
             // -----------------
@@ -147,12 +172,12 @@ namespace ProjNet.CoordinateSystems.Projections
             var vl = Math.Sin(_bl * dlon);
             if (Math.Abs(Math.Abs(lat) - HALF_PI) > EPSLN)
             {
-                var ts1 = tsfnz(_e, lat, sin_phi);
-                var q = _el / (Math.Pow(ts1, _bl));
-                var s = .5 * (q - 1.0 / q);
-                var t = .5 * (q + 1.0 / q);
+                double ts1 = tsfnz(_e, lat, sin_phi);
+                double q = _el / (Math.Pow(ts1, _bl));
+                double s = .5 * (q - 1.0 / q);
+                double t = .5 * (q + 1.0 / q);
                 ul = (s * _singam - vl * _cosgam) / t;
-                var con = Math.Cos(_bl * dlon);
+                double con = Math.Cos(_bl * dlon);
                 if (Math.Abs(con) < .0000001)
                 {
                     us = _al * _bl * dlon;
@@ -172,54 +197,44 @@ namespace ProjNet.CoordinateSystems.Projections
                     ul = -_singam;
                 us = _al * lat / _bl;
             }
+
             if (Math.Abs(Math.Abs(ul) - 1.0) <= EPSLN)
-            {
                 throw new Exception("Point projects into infinity");
-            }
 
-            var vs = .5 * _al * Math.Log((1.0 - ul) / (1.0 + ul)) / _bl;
+            double vs = .5 * _al * Math.Log((1.0 - ul) / (1.0 + ul)) / _bl;
             if (!NaturalOriginOffsets) us = us - _u;
-            var x = vs * _cosgrid + us * _singrid;
-            var y = us * _cosgrid - vs * _singrid;
 
-            return lonlat.Length == 2
-                ? new [] {x, y} :
-                  new [] {x, y, lonlat[2]};
+            lon = vs * _cosgrid + us * _singrid;
+            lat = us * _cosgrid - vs * _singrid;
         }
 
-        protected override double[] MetersToRadians(double[] p)
+        protected override void MetersToRadians(ref double x, ref double y)
         {
             // Inverse equations
             // -----------------
-            var x = p[0];
-            var y = p[1];
-            var vs = x * _cosgrid - y * _singrid;
-            var us = y * _cosgrid + x * _singrid;
+            double vs = x * _cosgrid - y * _singrid;
+            double us = y * _cosgrid + x * _singrid;
             if (!NaturalOriginOffsets) us = us + _u;
-            var q = Math.Exp(-_bl * vs / _al);
-            var s = .5 * (q - 1.0 / q);
-            var t = .5 * (q + 1.0 / q);
-            var vl = Math.Sin(_bl * us / _al);
-            var ul = (vl * _cosgam + s * _singam) / t;
-            double lon, lat;
+            double q = Math.Exp(-_bl * vs / _al);
+            double s = .5 * (q - 1.0 / q);
+            double t = .5 * (q + 1.0 / q);
+            double vl = Math.Sin(_bl * us / _al);
+            double ul = (vl * _cosgam + s * _singam) / t;
             if (Math.Abs(Math.Abs(ul) - 1.0) <= EPSLN)
             {
-                lon = lon_origin;
-                lat = sign(ul)*HALF_PI;
+                x = lon_origin;
+                y = sign(ul) * HALF_PI;
             }
             else
             {
-                var con = 1.0/_bl;
-                var ts1 = Math.Pow((_el/Math.Sqrt((1.0 + ul)/(1.0 - ul))), con);
+                double con = 1.0 / _bl;
+                double ts1 = Math.Pow((_el / Math.Sqrt((1.0 + ul) / (1.0 - ul))), con);
                 long flag;
-                lat = phi2z(_e, ts1, out flag);
-                con = Math.Cos(_bl*us/_al);
-                var theta = lon_origin - Math.Atan2((s*_cosgam - vl*_singam), con)/_bl;
-                lon = adjust_lon(theta);
+                y = phi2z(_e, ts1, out flag);
+                con = Math.Cos(_bl * us / _al);
+                double theta = lon_origin - Math.Atan2((s * _cosgam - vl * _singam), con) / _bl;
+                x = adjust_lon(theta);
             }
-
-            return p.Length == 2
-                ? new[] { lon, lat } : new[] { lon, lat, p[2] };
         }
     }
 }

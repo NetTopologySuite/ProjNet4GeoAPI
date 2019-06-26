@@ -1,4 +1,4 @@
-﻿// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
+// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
 //
 // This file is part of ProjNet.
 // ProjNet is free software; you can redistribute it and/or modify
@@ -25,16 +25,14 @@ using System.Text;
 namespace ProjNet.CoordinateSystems.Transformations
 {
     /// <summary>
-    /// Represents affine math transform which ttransform input coordinates to target using affine transformation matrix. Dimensionality might change.
+    /// Represents affine math transform which transforms input coordinates to target using affine transformation matrix. Dimensionality might change.
     /// </summary>
     ///<remarks>If the transform's input dimension is M, and output dimension is N, then the matrix will have size [N+1][M+1].
     ///The +1 in the matrix dimensions allows the matrix to do a shift, as well as a rotation.
     ///The [M][j] element of the matrix will be the j'th ordinate of the moved origin.
     ///The [i][N] element of the matrix will be 0 for i less than M, and 1 for i equals M.</remarks>
     /// <seealso href="http://en.wikipedia.org/wiki/Affine_transformation"/>
-#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable]
-#endif
     public class AffineTransform : MathTransform
     {
         #region class variables
@@ -403,32 +401,80 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Transforms a coordinate point. The passed parameter point should not be modified.
         /// </summary>
-        /// <param name="point"></param>
-        /// <returns></returns>
-        public override double[] Transform (double[] point)
+        /// <param name="x">The x-ordinate value</param>
+        /// <param name="y">The y-ordinate value</param>
+        /// <param name="z">The z-ordinate value</param>
+        /// <returns>The converted x-, y- and z-ordinate tuple</returns>
+        private (double x, double y, double z) TransformAffine(double x, double y, double z)
         {
-            //check source dimensionality - alow coordinate clipping, if source dimensionality is greater then expected source dimensionality of affine transformation
-            if (point.Length >= dimSource)
+            //check source dimensionality - allow coordinate clipping, if source dimensionality is greater then expected source dimensionality of affine transformation
+            Span<double> point = stackalloc double[0];
+            switch (dimSource)
             {
-                //use transformation matrix to create output points that has dimTarget dimensionality
-                double[] transformed = new double[dimTarget];
+                case 0:
+                    point = default;
+                    break;
 
-                //count each target dimension using the apropriate row
-                for (int row = 0; row < dimTarget; row++)
-                {
-                    //start with the last value which is in fact multiplied by 1
-                    double dimVal = transformMatrix[row, dimSource];
-                    for (int col = 0; col < dimSource; col++)
-                    {
-                        dimVal += transformMatrix[row, col] * point[col];
-                    }
-                    transformed[row] = dimVal;
-                }
-                return transformed;
+                case 1:
+                    point = stackalloc double[] { x };
+                    break;
+
+                case 2:
+                    point = stackalloc double[] { x, y };
+                    break;
+
+                case 3:
+                    point = stackalloc double[] { x, y, z };
+                    break;
+
+                default:
+                    throw new NotSupportedException();
             }
 
-            //nepodporovane
-            throw new NotSupportedException ("Dimensionality of point is not supported!");
+            if (dimTarget > 3)
+            {
+                throw new NotSupportedException();
+            }
+
+            //use transformation matrix to create output points that has dimTarget dimensionality
+            Span<double> transformed = stackalloc double[dimTarget];
+
+            //count each target dimension using the apropriate row
+            for (int row = 0; row < dimTarget; row++)
+            {
+                //start with the last value which is in fact multiplied by 1
+                double dimVal = transformMatrix[row, dimSource];
+                for (int col = 0; col < dimSource; col++)
+                {
+                    dimVal += transformMatrix[row, col] * point[col];
+                }
+                transformed[row] = dimVal;
+            }
+
+            (double x, double y, double z) ret = default;
+            if (transformed.Length > 2)
+            {
+                ret.z = transformed[2];
+            }
+
+            if (transformed.Length > 1)
+            {
+                ret.y = transformed[1];
+            }
+
+            if (transformed.Length > 0)
+            {
+                ret.x = transformed[0];
+            }
+
+            return ret;
+        }
+
+
+        /// <inheritdoc />
+        public override void Transform(ref double x, ref double y, ref double z)
+        {
+            (x, y, z) = TransformAffine(x, y, z);
         }
 
         /// <summary>
@@ -436,7 +482,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// </summary>
         public override void Invert ()
         {
-            throw new NotImplementedException ("The method or operation is not implemented.");
+            throw new NotSupportedException ("The method or operation is not supported.");
         }
 
 

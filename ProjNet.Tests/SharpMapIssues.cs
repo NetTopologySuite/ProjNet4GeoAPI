@@ -1,8 +1,9 @@
-﻿using System.Reflection;
+using System.Reflection;
 using GeoAPI.CoordinateSystems;
 using GeoAPI.CoordinateSystems.Transformations;
 using NUnit.Framework;
 using ProjNet.CoordinateSystems;
+using ProjNet.CoordinateSystems.Transformations;
 
 namespace ProjNet.UnitTests
 {
@@ -91,6 +92,27 @@ namespace ProjNet.UnitTests
             Assert.IsNotNull(ct);
             Assert.DoesNotThrow(() => ct = CoordinateTransformationFactory.CreateFromCoordinateSystems(ProjectedCoordinateSystem.WebMercator, cs1));
             Assert.IsNotNull(ct);
+        }
+
+        [Test]
+        public void TestLaea()
+        {
+            const string Epsg3035 =
+                @"PROJCS[""ETRS89 / ETRS-LAEA"",GEOGCS[""ETRS89"",DATUM[""European_Terrestrial_Reference_System_1989"",SPHEROID[""GRS 1980"",6378137,298.257222101,AUTHORITY[""EPSG"",""7019""]],AUTHORITY[""EPSG"",""6258""]],PRIMEM[""Greenwich"",0,AUTHORITY[""EPSG"",""8901""]],UNIT[""degree"",0.01745329251994328,AUTHORITY[""EPSG"",""9122""]],AUTHORITY[""EPSG"",""4258""]],UNIT[""metre"",1,AUTHORITY[""EPSG"",""9001""]],PROJECTION[""Lambert_Azimuthal_Equal_Area""],PARAMETER[""latitude_of_center"",52],PARAMETER[""longitude_of_center"",10],PARAMETER[""false_easting"",4321000],PARAMETER[""false_northing"",3210000],AUTHORITY[""EPSG"",""3035""],AXIS[""X"",EAST],AXIS[""Y"",NORTH]]";
+
+            var csSrc = GeographicCoordinateSystem.WGS84;
+            var csTgt = CoordinateSystemFactory.CreateFromWkt(Epsg3035);
+
+            var ct = CoordinateTransformationFactory.CreateFromCoordinateSystems(csSrc, csTgt);
+
+            (double resX, double resY) = ((MathTransform) ct.MathTransform).Transform(16.4, 48.2);
+            Assert.That(resX, Is.EqualTo(4796297.431434812).Within(1e-2));
+            Assert.That(resY, Is.EqualTo(2807999.1539475969).Within(1e-2));
+
+            (double origX, double origY) = ((MathTransform) ct.MathTransform.Inverse()).Transform(resX, resY);
+            Assert.That(origX, Is.EqualTo(16.4).Within(1e-2));
+            Assert.That(origY, Is.EqualTo(48.2).Within(1e-2));
+
         }
 
     }

@@ -25,9 +25,7 @@ namespace ProjNet.CoordinateSystems.Transformations
     /// <summary>
     /// 
     /// </summary>
-#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
-#endif
     internal class ConcatenatedTransform : MathTransform
 	{
         /// <summary>
@@ -75,51 +73,31 @@ namespace ProjNet.CoordinateSystems.Transformations
             get { return _coordinateTransformationList[_coordinateTransformationList.Count-1].TargetCS.Dimension; }
         }
 
-        /// <summary>
-        /// Transforms a point
-        /// </summary>
-        /// <param name="point"></param>
-        /// <returns></returns>
-        public override double[] Transform(double[] point)
-		{
+
+        /// <inheritdoc />
+        public override void Transform(ref double x, ref double y, ref double z)
+        {
+            double[] xyzArr = null;
             foreach (ICoordinateTransformation ct in _coordinateTransformationList)
-				point = ct.MathTransform.Transform(point);            
-			return point;			
-		}
-
-        /// <summary>
-		/// Transforms a list point
-        /// </summary>
-        /// <param name="points"></param>
-        /// <returns></returns>
-        public override IList<double[]> TransformList(IList<double[]> points)
-		{
-			IList<double[]> pnts = new List<double[]>(points);
-			foreach (var ct in _coordinateTransformationList)
-			{
-			    pnts = ct.MathTransform.TransformList(pnts);
-			}
-			return pnts;
-		}
-
-        public override IList<Coordinate> TransformList(IList<Coordinate> points)
-        {
-            IList<Coordinate> pnts = new List<Coordinate>(points);
-            foreach (var ct in _coordinateTransformationList)
             {
-                pnts = ct.MathTransform.TransformList(pnts);
-            }
-            return pnts;
-        }
+                if (ct.MathTransform is MathTransform ours)
+                {
+                    ours.Transform(ref x, ref y, ref z);
+                }
+                else
+                {
+                    if (xyzArr == null)
+                    {
+                        xyzArr = new double[3];
+                    }
 
-        public override ICoordinateSequence Transform(ICoordinateSequence coordinateSequence)
-        {
-            var res = coordinateSequence.Copy();
-            foreach (var ct in _coordinateTransformationList)
-            {
-                res = ct.MathTransform.Transform(res);
+                    (xyzArr[0], xyzArr[1], xyzArr[2]) = (x, y, z);
+                    var transformed = ct.MathTransform.Transform(xyzArr);
+                    x = transformed?.Length > 0 ? transformed[0] : 0;
+                    y = transformed?.Length > 1 ? transformed[1] : 0;
+                    z = transformed?.Length > 2 ? transformed[2] : 0;
+                }
             }
-            return res;
         }
 
 		/// <summary>

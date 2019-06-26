@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
@@ -7,22 +7,22 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <SignAssembly>true</SignAssembly>
     <AssemblyOriginatorKeyFile>$(SolutionDir)scskey.snk</AssemblyOriginatorKeyFile>
+    <LangVersion>7.3</LangVersion>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>TRACE;WithSpans</DefineConstants>
   </PropertyGroup>
 
   <Import Project="$(SolutionDir)ProjNet.Common.props" />
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <DefineConstants>$(DefineConstants);HAS_SYSTEM_REFLECTION_TYPEINFO</DefineConstants>
-    <DefineConstants>$(DefineConstants);HAS_SYSTEM_THREADING_TASKS_TASK_RUN</DefineConstants>
-    <DefineConstants>$(DefineConstants);FEATURE_DESERIALIZATION_CONSTRUCTOR</DefineConstants>
-    <DefineConstants>$(DefineConstants);HAS_SYSTEM_SERIALIZABLEATTRIBUTE</DefineConstants>
-    <DefineConstants>$(DefineConstants);HAS_SYSTEM_THREADING_THREADPOOL</DefineConstants>
-    <DefineConstants>$(DefineConstants);HAS_SYSTEM_TYPE_GETCONSTRUCTORS</DefineConstants>
-    <DefineConstants>$(DefineConstants);HAS_SYSTEM_TYPE_ISASSIGNABLEFROM</DefineConstants>
-  </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="CoordinateSystems\Transformations\MathTransformFactory.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="GeoAPI.CoordinateSystems" Version="$(GeoAPIPackageReferenceVersion)" />
+    <PackageReference Include="System.Memory" Version="4.5.2" />
   </ItemGroup>
 
   <ItemGroup>

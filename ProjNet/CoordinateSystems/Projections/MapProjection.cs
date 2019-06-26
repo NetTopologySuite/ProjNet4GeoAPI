@@ -47,31 +47,93 @@ namespace ProjNet.CoordinateSystems.Projections
     /// <summary>
     /// Projections inherit from this abstract class to get access to useful mathematical functions.
     /// </summary>
-#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
-#endif
     public abstract class MapProjection : MathTransform, IProjection
     {
-// ReSharper disable InconsistentNaming
+        protected const double EPS10 = 1e-10;
+
+        protected const double EPS7 = 1e-7;
+
+        protected const double HUGE_VAL = double.NaN;
+
+        // ReSharper disable InconsistentNaming
+        /// <summary>
+        /// Eccentricity
+        /// </summary>
         protected readonly double _e;
+        /// <summary>
+        /// Eccentricity squared <c>_e * _e</c>
+        /// </summary>
         protected readonly double _es;
+
+        /// <summary>
+        /// Length of semi major axis of ellipse
+        /// </summary>
         protected readonly double _semiMajor;
+
+        /// <summary>
+        /// Length of semi minor axis  of ellipse
+        /// </summary>
         protected readonly double _semiMinor;
+
+        /// <summary>
+        /// Meters per unit
+        /// </summary>
         protected readonly double _metersPerUnit;
 
+        /// <summary>
+        /// Reciprocal meters per unit <c>1.0 / <see cref="_metersPerUnit"/></c>
+        /// </summary>
+        protected readonly double _reciprocalMetersPerUnit;
+
+        /// <summary>
+        /// Scale factor
+        /// </summary>
         protected readonly double scale_factor; /* scale factor				*/
+
+        /// <summary>
+        /// Center longitude (projection center)
+        /// </summary>
         protected double central_meridian; /* Center longitude (projection center) */
+
+        /// <summary>
+        /// Substitute for <see cref="central_meridian"/>
+        /// </summary>
         protected double lon_origin { get { return central_meridian; } set { central_meridian = value; } }
+
+        protected double central_parallel { get { return lat_origin; } }
+
+        protected double phi0 { get { return lat_origin; } }
+
+        /// <summary>
+        /// Center latitude
+        /// </summary>
         protected readonly double lat_origin; /* center latitude			*/
+
+        /// <summary>
+        /// Y offset in meters
+        /// </summary>
         protected readonly double false_northing; /* y offset in meters			*/
+
+        /// <summary>
+        /// X offset in meters
+        /// </summary>
         protected readonly double false_easting; /* x offset in meters			*/
 
+        /// <summary>
+        /// Constants for <see cref="mlfn(double,double,double,double,double)"/>
+        /// </summary>
         protected readonly double en0, en1, en2, en3, en4;
 
+        /// <summary>
+        /// A set of projection parameters for this projection
+        /// </summary>
         protected ProjectionParameterSet _Parameters;
 
+        /// <summary>
+        /// The inverse <see cref="MathTransform"/>
+        /// </summary>
         protected MathTransform _inverse;
-        private bool _isInverse;
 
         // ReSharper restore InconsistentNaming
 
@@ -87,7 +149,7 @@ namespace ProjNet.CoordinateSystems.Projections
             if (_inverse != null)
             {
                 inverse._inverse = this;
-                _isInverse = !inverse._isInverse;
+                IsInverse = !inverse.IsInverse;
             }
         }
 
@@ -112,6 +174,7 @@ namespace ProjNet.CoordinateSystems.Projections
             lat_origin = Degrees2Radians(_Parameters.GetOptionalParameterValue("latitude_of_origin",0d, "latitude_of_center"));
 
             _metersPerUnit = _Parameters.GetParameterValue("unit");
+            _reciprocalMetersPerUnit = 1 / _metersPerUnit;
 
             false_easting = _Parameters.GetOptionalParameterValue("false_easting", 0)*_metersPerUnit;
             false_northing = _Parameters.GetOptionalParameterValue("false_northing", 0)*_metersPerUnit;
@@ -226,7 +289,7 @@ namespace ProjNet.CoordinateSystems.Projections
             get
             {
                 var sb = new StringBuilder();
-                if (_isInverse)
+                if (IsInverse)
                     sb.Append("INVERSE_MT[");
                 sb.AppendFormat("PARAM_MT[\"{0}\"", Name);
                 for (int i = 0; i < NumParameters; i++)
@@ -234,7 +297,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 //if (!String.IsNullOrEmpty(Authority) && AuthorityCode > 0)
                 //	sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
                 sb.Append("]");
-                if (_isInverse)
+                if (IsInverse)
                     sb.Append("]");
                 return sb.ToString();
             }
@@ -250,12 +313,12 @@ namespace ProjNet.CoordinateSystems.Projections
                 var sb = new StringBuilder();
                 sb.Append("<CT_MathTransform>");
                 sb.AppendFormat(
-                    _isInverse
+                    IsInverse
                         ? "<CT_InverseTransform Name=\"{0}\">"
                         : "<CT_ParameterizedMathTransform Name=\"{0}\">", ClassName);
                 for (int i = 0; i < NumParameters; i++)
                     sb.AppendFormat(GetParameter(i).XML);
-                sb.Append(_isInverse ? "</CT_InverseTransform>" : "</CT_ParameterizedMathTransform>");
+                sb.Append(IsInverse ? "</CT_InverseTransform>" : "</CT_ParameterizedMathTransform>");
                 sb.Append("</CT_MathTransform>");
                 return sb.ToString();
             }
@@ -265,78 +328,265 @@ namespace ProjNet.CoordinateSystems.Projections
 
         #region IMathTransform
 
-        public override int DimSource
+        /// <inheritdoc/>
+        public sealed override int DimSource
         {
             get { return 2; }
         }
 
-        public override int DimTarget
+        /// <inheritdoc/>
+        public sealed override int DimTarget
         {
             get { return 2; }
         }
 
-        /// <summary>
-        /// Function to transform from meters to degrees
-        /// </summary>
-        /// <param name="p">The ordinates of the point</param>
-        /// <returns>The transformed ordinates</returns>
-        public double[] MetersToDegrees(double[] p)
+        #region Transform overrides
+
+        /// <inheritdoc />
+        public sealed override void Transform(ref double x, ref double y, ref double z)
         {
-            var tmp = p.Length == 2
-                          ? new[] {p[0]*_metersPerUnit - false_easting, p[1]*_metersPerUnit - false_northing}
-                          : new[]
-                              {
-                                  p[0]*_metersPerUnit - false_easting, p[1]*_metersPerUnit - false_northing,
-                                  p[2]*_metersPerUnit
-                              };
+            if (IsInverse)
+            {
+                SourceToDegrees(ref x, ref y);
+            }
+            else
+            {
+                DegreesToTarget(ref x, ref y);
+            }
+        }
 
-            var res = MetersToRadians(tmp);
 
-            res[0] = Radians2Degrees(res[0]);
-            res[1] = Radians2Degrees(res[1]);
-            if (DimTarget == 3) res[2] = Radians2Degrees(res[2]);
+        /// <inheritdoc />
+        protected override void TransformCore(Span<double> xs, Span<double> ys, Span<double> zs, int strideX, int strideY, int strideZ)
+        {
+            if (IsInverse)
+                SourceToDegrees(xs, ys, strideX, strideY);
+            else
+                DegreesToTarget(xs, ys, strideX, strideY);
+        }
 
-            return res;
+        #endregion
+
+        #region Forward methods
+
+        /// <summary>
+        /// Abstract method to convert a point (lon, lat) in radians to (x, y) in meters
+        /// </summary>
+        /// <param name="lon">The longitude of the point in radians when entering, its x-ordinate in meters after exit.</param>
+        /// <param name="lat">The latitude of the point in radians when entering, its y-ordinate in meters after exit.</param>
+        protected abstract void RadiansToMeters(ref double lon, ref double lat);
+
+
+        /// <summary>
+        /// Method to convert a series of points defined by (lon, lat) in radians to (x, y) in meters
+        /// </summary>
+        /// <param name="lons">The longitudes of the points in radians when entering, their x-ordinates in meters after exit.</param>
+        /// <param name="lats">The latitudes of the points in radians when entering, their y-ordinates in meters after exit.</param>
+        /// <param name="strideX">A stride value for longitude-ordinates</param>
+        /// <param name="strideY">A stride value for latitude-ordinates</param>
+        protected virtual void RadiansToMeters(Span<double> lons, Span<double> lats, int strideX, int strideY)
+        {
+            for (int i = 0, j = 0; i < lons.Length; i += strideX, j += strideY)
+            {
+                RadiansToMeters(ref lons[i], ref lats[j]);
+            }
         }
 
         /// <summary>
-        /// Function to transform from degrees to meters
+        /// Converts a point (lon, lat) in degrees to (x, y) in meters
         /// </summary>
-        /// <param name="lonlat">The ordinates of the point</param>
-        /// <returns>The transformed ordinates</returns>
-        public double[] DegreesToMeters(double[] lonlat)
+        /// <param name="lon">The longitude in degree</param>
+        /// <param name="lat">The latitude in degree</param>
+        protected void DegreesToMeters(ref double lon, ref double lat)
         {
-            // Convert to radians
-            var tmp = lonlat.Length == 2
-                          ? new[] {Degrees2Radians(lonlat[0]), Degrees2Radians(lonlat[1])}
-                          : new[] {Degrees2Radians(lonlat[0]), Degrees2Radians(lonlat[1]), Degrees2Radians(lonlat[2])};
-
-            // Convert to meters
-            var res = RadiansToMeters(tmp);
-
-            // Add false easting and northing, convert to unit
-            res[0] = (res[0] + false_easting)/_metersPerUnit;
-            res[1] = (res[1] + false_northing)/_metersPerUnit;
-            if (res.Length == 3) res[2] = res[2]/_metersPerUnit;
-
-            return res;
+            lon = Degrees2Radians(lon);
+            lat = Degrees2Radians(lat);
+            RadiansToMeters(ref lon, ref lat);
         }
 
-        protected abstract double[] RadiansToMeters(double[] lonlat);
-        protected abstract double[] MetersToRadians(double[] p);
+        /// <summary>
+        /// Converts points (lon, lat) in degrees to (x, y) in meters
+        /// </summary>
+        /// <param name="lons">The longitudes of the points in degree when entering, their x-ordinates in meters after exit.</param>
+        /// <param name="lats">The latitudes of the points in degree when entering, their y-ordinates in meters after exit.</param>
+        /// <param name="strideX">A stride value for longitude-ordinates</param>
+        /// <param name="strideY">A stride value for latitude-ordinates</param>
+        protected void DegreesToMeters(Span<double> lons, Span<double> lats, int strideX, int strideY)
+        {
+            DegreesToRadians(lons, strideX);
+            DegreesToRadians(lats, strideY);
+            RadiansToMeters(lons, lats, strideX, strideY);
+        }
+
+        /// <summary>
+        /// Converts a point from degrees to target units
+        /// </summary>
+        /// <param name="lon">The longitude in degree</param>
+        /// <param name="lat">The latitude in degree</param>
+        protected void DegreesToTarget(ref double lon, ref double lat)
+        {
+            DegreesToMeters(ref lon, ref lat);
+            MetersToTarget(ref lon, ref lat);
+        }
+
+        /// <summary>
+        /// Converts a series of points from degrees to target units to degrees
+        /// </summary>
+        /// <param name="lons">A series of x-ordinate values</param>
+        /// <param name="lats">A series of y-ordinate values</param>
+        /// <param name="strideX">A stride value for x-ordinates</param>
+        /// <param name="strideY">A stride value for y-ordinates</param>
+        protected void DegreesToTarget(Span<double> lons, Span<double> lats,
+            int strideX, int strideY)
+        {
+            DegreesToMeters(lons, lats, strideX, strideY);
+            MetersToTarget(lons, lats, strideX, strideY);
+        }
+
+        /// <summary>
+        /// Transforms point from meters to unit of output coordinate. This is done by
+        /// adding <see cref="false_easting"/> or <see cref="false_northing"/> and
+        /// multiplying with <see cref="_reciprocalMetersPerUnit"/>
+        /// </summary>
+        /// <param name="x">A x-ordinate</param>
+        /// <param name="y">A y-ordinate</param>
+        /// <returns>A point.</returns>
+        protected void MetersToTarget(ref double x, ref double y)
+        {
+            x = (x + false_easting) * _reciprocalMetersPerUnit;
+            y = (y + false_northing) * _reciprocalMetersPerUnit;
+        }
+
+        /// <summary>
+        /// Transforms point from meters to unit of output coordinate. This is done by
+        /// adding <see cref="false_easting"/> or <see cref="false_northing"/> and
+        /// multiplying with <see cref="_reciprocalMetersPerUnit"/>
+        /// </summary>
+        /// <param name="xs">A x-ordinates</param>
+        /// <param name="ys">A y-ordinates</param>
+        /// <param name="strideX">A stride value for x-ordinates</param>
+        /// <param name="strideY">A stride value for y-ordinates</param>
+        /// <returns>A point.</returns>
+        protected void MetersToTarget(Span<double> xs, Span<double> ys, int strideX, int strideY)
+        {
+            for (int i = 0, j = 0; i < xs.Length; i+=strideX, j+=strideY)
+            {
+                xs[i] = (xs[i] + false_easting) * _reciprocalMetersPerUnit;
+                ys[j] = (ys[j] + false_northing) * _reciprocalMetersPerUnit;
+            }
+        }
+        #endregion
+
+        #region Reverse methods
+
+        /// <summary>
+        /// Abstract method to convert a point from meters to radians
+        /// </summary>
+        /// <param name="x">The x-ordinate when entering, the longitude value upon exit.</param>
+        /// <param name="y">The y-ordinate when entering, the latitude value upon exit.</param>
+        protected abstract void MetersToRadians(ref double x, ref double y);
+
+        /// <summary>
+        /// Method to convert a point from meters to degrees
+        /// </summary>
+        /// <param name="x">The x-ordinate when entering, the longitude value upon exit.</param>
+        /// <param name="y">The y-ordinate when entering, the latitude value upon exit.</param>
+        protected void MetersToDegrees(ref double x, ref double y)
+        {
+            MetersToRadians(ref x, ref y);
+            x = Radians2Degrees(x);
+            y = Radians2Degrees(y);
+        }
+
+        /// <summary>
+        /// Method to convert a point from meters to degrees
+        /// </summary>
+        /// <param name="xs">The x-ordinate values when entering, the longitude values upon exit</param>
+        /// <param name="ys">The y-ordinate values when entering, the latitude values upon exit</param>
+        /// <param name="strideX"></param>
+        /// <param name="strideY"></param>
+        protected void MetersToDegrees(Span<double> xs, Span<double> ys, int strideX, int strideY)
+        {
+            for (int i = 0, j = 0; i < xs.Length; i += strideX, j += strideY)
+                MetersToDegrees(ref xs[i], ref ys[j]);
+        }
+
+        /// <summary>
+        /// Converts a point from source units to degrees
+        /// </summary>
+        /// <param name="x">The x-ordinate</param>
+        /// <param name="y">The y-ordinate</param>
+        /// <returns>Converted point.</returns>
+        protected void SourceToDegrees(ref double x, ref double y)
+        {
+            SourceToMeters(ref x, ref y);
+            MetersToDegrees(ref x, ref y);
+        }
+
+        /// <summary>
+        /// Converts a series of points from source units to degrees
+        /// </summary>
+        /// <param name="xs">A series of x-ordinate values</param>
+        /// <param name="ys">A series of y-ordinate values</param>
+        /// <param name="strideX">A stride value for x-ordinates</param>
+        /// <param name="strideY">A stride value for y-ordinates</param>
+        protected void SourceToDegrees(Span<double> xs, Span<double> ys,
+            int strideX, int strideY)
+        {
+            SourceToMeters(xs, ys, strideX, strideY);
+            MetersToDegrees(xs, ys, strideX, strideY);
+        }
+
+        /// <summary>
+        /// Transforms unit of input coordinates to meters. This is done by multiplying with
+        /// <see cref="_metersPerUnit"/> and subtracting <see cref="false_easting"/>
+        /// or <see cref="false_northing"/>
+        /// </summary>
+        /// <param name="xs">A series of x-ordinates</param>
+        /// <param name="ys">A series of y-ordinates</param>
+        /// <param name="strideX">A stride value for x-ordinates</param>
+        /// <param name="strideY">A stride value for y-ordinates</param>
+        protected void SourceToMeters(Span<double> xs, Span<double> ys, int strideX, int strideY)
+        {
+            for (int i = 0, j = 0; i < xs.Length; i += strideX, j += strideY)
+            {
+                xs[i] = xs[i] * _metersPerUnit - false_easting;
+                ys[j] = ys[j] * _metersPerUnit - false_northing;
+            }
+        }
+
+        /// <summary>
+        /// Transforms unit of input coordinate to meters. This is done by multiplying with
+        /// <see cref="_metersPerUnit"/> and subtracting <see cref="false_easting"/>
+        /// or <see cref="false_northing"/>
+        /// </summary>
+        /// <param name="x">A x-ordinate</param>
+        /// <param name="y">A y-ordinate</param>
+        /// <returns>A point.</returns>
+        protected void SourceToMeters(ref double x, ref double y)
+        {
+            x = x * _metersPerUnit - false_easting;
+            y = y * _metersPerUnit - false_northing;
+        }
+
+        #endregion
 
         /// <summary>
         /// Reverses the transformation
         /// </summary>
         public override void Invert()
         {
-            _isInverse = !_isInverse;
+            IsInverse = !IsInverse;
             if (_inverse != null) ((MapProjection) _inverse).Invert(false);
         }
 
+        /// <summary>
+        /// Reverses this transformation
+        /// </summary>
+        /// <param name="invertInverse">A flag indicating to reverse the <see cref="_inverse"/>"/> projection as well.</param>
         protected void Invert(bool invertInverse)
         {
-            _isInverse = !_isInverse;
+            IsInverse = !IsInverse;
             if (invertInverse && _inverse != null) ((MapProjection) _inverse).Invert(false);
         }
 
@@ -345,23 +595,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// Most map projections define forward projection as "from geographic to projection", and backwards
         /// as "from projection to geographic". If this projection is inverted, this will be the other way around.
         /// </summary>
-        protected internal bool IsInverse
-        {
-            get { return _isInverse; }
-        }
-
-        /// <summary>
-        /// Transforms the specified cp.
-        /// </summary>
-        /// <param name="cp">The cp.</param>
-        /// <returns></returns>
-        public override double[] Transform(double[] cp)
-        {
-            //var projectedPoint = new double[] { 0, 0, 0, };
-            return !_isInverse
-                       ? DegreesToMeters(cp)
-                       : MetersToDegrees(cp);
-        }
+        protected internal bool IsInverse { get; private set; }
 
         /// <summary>
         /// Checks whether the values of this instance is equal to the values of another instance.
@@ -398,11 +632,18 @@ namespace ProjNet.CoordinateSystems.Projections
 
         #region Helper mathmatical functions
 
-        // defines some usefull constants that are used in the projection routines
+        // defines some useful constants that are used in the projection routines
+        // ReSharper disable InconsistentNaming
+
         /// <summary>
         /// PI
         /// </summary>
         protected const double PI = Math.PI;
+
+        /// <summary>
+        /// A fourth of <see cref="Math.PI"/>
+        /// </summary>
+        protected const double FORT_PI = (PI * 0.25);
 
         /// <summary>
         /// Half of PI
@@ -417,7 +658,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <summary>
         /// EPSLN
         /// </summary>
-        protected const double EPSLN = 1.0e-10;
+        protected const double EPSLN = EPS10;
 
         /// <summary>
         /// S2R
@@ -552,20 +793,40 @@ namespace ProjNet.CoordinateSystems.Projections
         /// Function to compute constant small q which is the radius of a 
         /// parallel of latitude, phi, divided by the semimajor axis. 
         /// </summary>
-        protected static double qsfnz(double eccent, double sinphi)
+        protected static double qsfnz(double sinphi, double eccent)
         {
-            double con;
-
             if (eccent > 1.0e-7)
             {
-                con = eccent*sinphi;
+                double con = eccent*sinphi;
                 return ((1.0 - eccent*eccent)*(sinphi/(1.0 - con*con) - (.5/eccent)*
                                                Math.Log((1.0 - con)/(1.0 + con))));
             }
-            else
-                return 2.0*sinphi;
+
+            return 2.0*sinphi;
         }
 
+        /// <summary>
+        /// Function to compute constant small q which is the radius of a 
+        /// parallel of latitude, phi, divided by the semimajor axis. 
+        /// </summary>
+        protected static double qsfn(double sinphi, double eccent, double one_es)
+        {
+            if (eccent >= EPS7)
+            {
+                double con = eccent * sinphi;
+                double div1 = 1.0 - con * con;
+                double div2 = 1.0 + con;
+
+                /* avoid zero division, fail gracefully */
+                if (div1 == 0.0 || div2 == 0.0)
+                    return HUGE_VAL;
+
+                return (one_es * (sinphi / div1 - (.5 / eccent) * Math.Log((1.0 - con) / div2)));
+            }
+            else
+                return (sinphi + sinphi);
+
+        }
         /// <summary>
         /// Function to calculate the sine and cosine in one call.  Some computer
         /// systems have implemented this function, resulting in a faster implementation
@@ -784,7 +1045,7 @@ namespace ProjNet.CoordinateSystems.Projections
             double s, t, phi, k = 1.0/(1.0 - _es);
             int i;
             phi = arg;
-            for (i = MAXIMUM_ITERATIONS; true;)
+            for (i = MAXIMUM_ITERATIONS; /*true*/;)
             {
                 // rarely goes over 5 iterations
                 if (--i < 0)
@@ -836,7 +1097,7 @@ namespace ProjNet.CoordinateSystems.Projections
             return (long) ((lon + 180.0)/6.0 + 1.0);
         }
 
-        #endregion
+#endregion
 
         #region Static Methods;
 
@@ -870,6 +1131,45 @@ namespace ProjNet.CoordinateSystems.Projections
                                                   " not a valid latitude in degrees.");
         }
 
+        private const double P00 = 0.33333333333333333333; /*   1 /     3 */
+        private const double P01 = 0.17222222222222222222; /*  31 /   180 */
+        private const double P02 = 0.10257936507936507937; /* 517 /  5040 */
+        private const double P10 = 0.06388888888888888888; /*  23 /   360 */
+        private const double P11 = 0.06640211640211640212; /* 251 /  3780 */
+        private const double P20 = 0.01677689594356261023; /* 761 / 45360 */
+
+
+        protected static double[] authset(double es)
+        {
+            double[] APA = new double[3];
+            APA[0] = es * P00;
+            double t = es * es;
+            APA[0] += t * P01;
+            APA[1] = t * P10;
+            t *= es;
+            APA[0] += t * P02;
+            APA[1] += t * P11;
+            APA[2] = t * P20;
+
+            return APA;
+        }
+
+        protected static double authlat(double beta, double[] APA)
+        {
+            double t = beta + beta;
+            return (beta + APA[0] * Math.Sin(t) + APA[1] * Math.Sin(t + t) + APA[2] * Math.Sin(t + t + t));
+        }
+
+        /// <summary>
+        /// Calculates the hypotenuse of a triangle: Sqrt(x*x + y*y);
+        /// </summary>
+        /// <param name="x">The length of one orthogonal leg of the triangle</param>
+        /// <param name="y">The length of the other orthogonal leg of the triangle</param>
+        /// <returns>The length of the diagonal.</returns>
+        protected static double hypot(double x, double y)
+        {
+            return Math.Sqrt(x * x + y * y);
+        }
         #endregion
     }
 }

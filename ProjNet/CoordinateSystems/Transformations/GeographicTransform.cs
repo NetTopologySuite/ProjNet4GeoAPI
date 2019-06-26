@@ -16,10 +16,8 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
 using System;
-using System.Collections.Generic;
 using GeoAPI.CoordinateSystems;
 using GeoAPI.CoordinateSystems.Transformations;
-using GeoAPI.Geometries;
 
 namespace ProjNet.CoordinateSystems.Transformations
 {
@@ -27,46 +25,30 @@ namespace ProjNet.CoordinateSystems.Transformations
 	/// The GeographicTransform class is implemented on geographic transformation objects and
 	/// implements datum transformations between geographic coordinate systems.
     /// </summary>
-#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
-#endif
     public class GeographicTransform : MathTransform
 	{
 		internal GeographicTransform(IGeographicCoordinateSystem sourceGCS, IGeographicCoordinateSystem targetGCS)
 		{
-			_SourceGCS = sourceGCS;
-			_TargetGCS = targetGCS;
+			SourceGCS = sourceGCS;
+			TargetGCS = targetGCS;
 		}
 
-		#region IGeographicTransform Members
+        /// <summary>
+        /// Gets or sets the source geographic coordinate system for the transformation.
+        /// </summary>
+        public IGeographicCoordinateSystem SourceGCS { get; set; }
 
-		private IGeographicCoordinateSystem _SourceGCS;
+        /// <summary>
+        /// Gets or sets the target geographic coordinate system for the transformation.
+        /// </summary>
+        public IGeographicCoordinateSystem TargetGCS { get; set; }
 
-		/// <summary>
-		/// Gets or sets the source geographic coordinate system for the transformation.
-		/// </summary>
-		public IGeographicCoordinateSystem SourceGCS
-		{
-			get { return _SourceGCS; }
-			set { _SourceGCS = value; }
-		}
-
-		private IGeographicCoordinateSystem _TargetGCS;
-
-		/// <summary>
-		/// Gets or sets the target geographic coordinate system for the transformation.
-		/// </summary>
-		public IGeographicCoordinateSystem TargetGCS
-		{
-			get { return _TargetGCS; }
-			set { _TargetGCS = value; }
-		}
-
-		/// <summary>
-		/// Returns the Well-known text for this object
-		/// as defined in the simple features specification. [NOT IMPLEMENTED].
-		/// </summary>
-		public override string WKT
+        /// <summary>
+        /// Returns the Well-known text for this object
+        /// as defined in the simple features specification. [NOT IMPLEMENTED].
+        /// </summary>
+        public override string WKT
 		{
 			get
 			{
@@ -85,16 +67,14 @@ namespace ProjNet.CoordinateSystems.Transformations
 			}
 		}
 
-		#endregion
-
         public override int DimSource
         {
-            get { return _SourceGCS.Dimension; }
+            get { return SourceGCS.Dimension; }
         }
 
         public override int DimTarget
         {
-            get { return _TargetGCS.Dimension; }
+            get { return TargetGCS.Dimension; }
         }
         
         /// <summary>
@@ -107,60 +87,19 @@ namespace ProjNet.CoordinateSystems.Transformations
 			throw new NotImplementedException();
 		}
 
-		/// <summary>
-		/// Transforms a coordinate point. The passed parameter point should not be modified.
-		/// </summary>
-		/// <param name="point"></param>
-		/// <returns></returns>
-        public override double[] Transform(double[] point)
-		{
-            double[] pOut = (double[]) point.Clone();
-            pOut[0] /= SourceGCS.AngularUnit.RadiansPerUnit;
-            pOut[0] -= SourceGCS.PrimeMeridian.Longitude / SourceGCS.PrimeMeridian.AngularUnit.RadiansPerUnit;
-            pOut[0] += TargetGCS.PrimeMeridian.Longitude / TargetGCS.PrimeMeridian.AngularUnit.RadiansPerUnit;
-            pOut[0] *= SourceGCS.AngularUnit.RadiansPerUnit;
-			return pOut;
-		}
+        /// <inheritdoc />
+        public sealed override void Transform(ref double x, ref double y, ref double z)
+        {
+            x /= SourceGCS.AngularUnit.RadiansPerUnit;
+            x -= SourceGCS.PrimeMeridian.Longitude / SourceGCS.PrimeMeridian.AngularUnit.RadiansPerUnit;
+            x += TargetGCS.PrimeMeridian.Longitude / TargetGCS.PrimeMeridian.AngularUnit.RadiansPerUnit;
+            x *= SourceGCS.AngularUnit.RadiansPerUnit;
+        }
 
-		/// <summary>
-		/// Transforms a list of coordinate point ordinal values.
-		/// </summary>
-		/// <remarks>
-		/// This method is provided for efficiently transforming many points. The supplied array 
-		/// of ordinal values will contain packed ordinal values. For example, if the source 
-		/// dimension is 3, then the ordinals will be packed in this order (x0,y0,z0,x1,y1,z1 ...).
-		/// The size of the passed array must be an integer multiple of DimSource. The returned 
-		/// ordinal values are packed in a similar way. In some DCPs. the ordinals may be 
-		/// transformed in-place, and the returned array may be the same as the passed array.
-		/// So any client code should not attempt to reuse the passed ordinal values (although
-		/// they can certainly reuse the passed array). If there is any problem then the server
-		/// implementation will throw an exception. If this happens then the client should not
-		/// make any assumptions about the state of the ordinal values.
-		/// </remarks>
-		/// <param name="points"></param>
-		/// <returns></returns>
-        public override IList<double[]> TransformList(IList<double[]> points)
-		{
-            var trans = new List<double[]>(points.Count);
-            foreach (var p in points)
-				trans.Add(Transform(p));
-			return trans;
-		}
-
-	    public override IList<Coordinate> TransformList(IList<Coordinate> points)
-	    {
-	        var trans = new List<Coordinate>(points.Count);
-            foreach (var coordinate in points)
-	        {
-	            trans.Add(Transform(coordinate));
-	        }
-	        return trans;
-	    }
-
-	    /// <summary>
-		/// Reverses the transformation
-		/// </summary>
-		public override void Invert()
+        /// <summary>
+        /// Reverses the transformation
+        /// </summary>
+        public override void Invert()
 		{
 			throw new NotImplementedException();
 		}

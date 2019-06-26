@@ -17,25 +17,25 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using GeoAPI.CoordinateSystems.Transformations;
 using GeoAPI.Geometries;
+using ProjNet.Geometries;
 
 namespace ProjNet.CoordinateSystems.Transformations
 {
-	/// <summary>
-	/// Abstract class for creating multi-dimensional coordinate points transformations.
-	/// </summary>
-	/// <remarks>
-	/// If a client application wishes to query the source and target coordinate 
-	/// systems of a transformation, then it should keep hold of the 
-	/// <see cref="ICoordinateTransformation"/> interface, and use the contained 
-	/// math transform object whenever it wishes to perform a transform.
+    /// <summary>
+    /// Abstract class for creating multi-dimensional coordinate points transformations.
+    /// </summary>
+    /// <remarks>
+    /// If a client application wishes to query the source and target coordinate 
+    /// systems of a transformation, then it should keep hold of the 
+    /// <see cref="ICoordinateTransformation"/> interface, and use the contained 
+    /// math transform object whenever it wishes to perform a transform.
     /// </remarks>
-#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
-    [Serializable] 
-#endif
+    [Serializable]
     public abstract class MathTransform : IMathTransform
-	{
+    {
         #region IMathTransform Members
 
         /// <summary>
@@ -43,204 +43,479 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// </summary>
         public abstract int DimSource { get; }
 
-	    /// <summary>
-	    /// Gets the dimension of output points.
-	    /// </summary>
-	    public abstract int DimTarget { get; }
+        /// <summary>
+        /// Gets the dimension of output points.
+        /// </summary>
+        public abstract int DimTarget { get; }
 
-		/// <summary>
-		/// Tests whether this transform does not move any points.
-		/// </summary>
-		/// <returns></returns>
-		public virtual bool Identity() 
-		{
-			throw new NotImplementedException();
-		}
+        /// <summary>
+        /// Tests whether this transform does not move any points.
+        /// </summary>
+        /// <returns></returns>
+        public virtual bool Identity()
+        {
+            throw new NotImplementedException();
+        }
 
-		/// <summary>
-		/// Gets a Well-Known text representation of this object.
-		/// </summary>
-		public abstract string WKT { get; }
+        /// <summary>
+        /// Gets a Well-Known text representation of this object.
+        /// </summary>
+        public abstract string WKT { get; }
 
-		/// <summary>
-		/// Gets an XML representation of this object.
-		/// </summary>
-		public abstract string XML { get; }
+        /// <summary>
+        /// Gets an XML representation of this object.
+        /// </summary>
+        public abstract string XML { get; }
 
-		/// <summary>
-		/// Gets the derivative of this transform at a point. If the transform does 
-		/// not have a well-defined derivative at the point, then this function should 
-		/// fail in the usual way for the DCP. The derivative is the matrix of the 
-		/// non-translating portion of the approximate affine map at the point. The
-		/// matrix will have dimensions corresponding to the source and target 
-		/// coordinate systems. If the input dimension is M, and the output dimension 
-		/// is N, then the matrix will have size [M][N]. The elements of the matrix 
-		/// {elt[n][m] : n=0..(N-1)} form a vector in the output space which is 
-		/// parallel to the displacement caused by a small change in the m'th ordinate 
-		/// in the input space.
-		/// </summary>
-		/// <param name="point"></param>
-		/// <returns></returns>
-		public virtual double[,] Derivative(double[] point)
-		{
-			throw new NotImplementedException();
-		}
+        /// <summary>
+        /// Gets the derivative of this transform at a point. If the transform does 
+        /// not have a well-defined derivative at the point, then this function should 
+        /// fail in the usual way for the DCP. The derivative is the matrix of the 
+        /// non-translating portion of the approximate affine map at the point. The
+        /// matrix will have dimensions corresponding to the source and target 
+        /// coordinate systems. If the input dimension is M, and the output dimension 
+        /// is N, then the matrix will have size [M][N]. The elements of the matrix 
+        /// {elt[n][m] : n=0..(N-1)} form a vector in the output space which is 
+        /// parallel to the displacement caused by a small change in the m'th ordinate 
+        /// in the input space.
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public virtual double[,] Derivative(double[] point)
+        {
+            throw new NotImplementedException();
+        }
 
-		/// <summary>
-		/// Gets transformed convex hull.
-		/// </summary>
-		/// <remarks>
-		/// <para>The supplied ordinates are interpreted as a sequence of points, which generates a convex
-		/// hull in the source space. The returned sequence of ordinates represents a convex hull in the 
-		/// output space. The number of output points will often be different from the number of input 
-		/// points. Each of the input points should be inside the valid domain (this can be checked by 
-		/// testing the points' domain flags individually). However, the convex hull of the input points
-		/// may go outside the valid domain. The returned convex hull should contain the transformed image
-		/// of the intersection of the source convex hull and the source domain.</para>
-		/// <para>A convex hull is a shape in a coordinate system, where if two positions A and B are 
-		/// inside the shape, then all positions in the straight line between A and B are also inside 
-		/// the shape. So in 3D a cube and a sphere are both convex hulls. Other less obvious examples 
-		/// of convex hulls are straight lines, and single points. (A single point is a convex hull, 
-		/// because the positions A and B must both be the same - i.e. the point itself. So the straight
-		/// line between A and B has zero length.)</para>
-		/// <para>Some examples of shapes that are NOT convex hulls are donuts, and horseshoes.</para>
-		/// </remarks>
-		/// <param name="points"></param>
-		/// <returns></returns>
-		public virtual List<double> GetCodomainConvexHull(List<double> points)
-		{
-			throw new NotImplementedException();
-		}
+        /// <summary>
+        /// Gets transformed convex hull.
+        /// </summary>
+        /// <remarks>
+        /// <para>The supplied ordinates are interpreted as a sequence of points, which generates a convex
+        /// hull in the source space. The returned sequence of ordinates represents a convex hull in the 
+        /// output space. The number of output points will often be different from the number of input 
+        /// points. Each of the input points should be inside the valid domain (this can be checked by 
+        /// testing the points' domain flags individually). However, the convex hull of the input points
+        /// may go outside the valid domain. The returned convex hull should contain the transformed image
+        /// of the intersection of the source convex hull and the source domain.</para>
+        /// <para>A convex hull is a shape in a coordinate system, where if two positions A and B are 
+        /// inside the shape, then all positions in the straight line between A and B are also inside 
+        /// the shape. So in 3D a cube and a sphere are both convex hulls. Other less obvious examples 
+        /// of convex hulls are straight lines, and single points. (A single point is a convex hull, 
+        /// because the positions A and B must both be the same - i.e. the point itself. So the straight
+        /// line between A and B has zero length.)</para>
+        /// <para>Some examples of shapes that are NOT convex hulls are donuts, and horseshoes.</para>
+        /// </remarks>
+        /// <param name="points"></param>
+        /// <returns></returns>
+        public virtual List<double> GetCodomainConvexHull(List<double> points)
+        {
+            throw new NotImplementedException();
+        }
 
-		/// <summary>
-		/// Gets flags classifying domain points within a convex hull.
-		/// </summary>
-		/// <remarks>
-		/// The supplied ordinates are interpreted as a sequence of points, which 
-		/// generates a convex hull in the source space. Conceptually, each of the 
-		/// (usually infinite) points inside the convex hull is then tested against
-		/// the source domain. The flags of all these tests are then combined. In 
-		/// practice, implementations of different transforms will use different 
-		/// short-cuts to avoid doing an infinite number of tests.
-		/// </remarks>
-		/// <param name="points"></param>
-		/// <returns></returns>
-		public virtual DomainFlags GetDomainFlags(List<double> points)
-		{
-			throw new NotImplementedException();
-		}
+        /// <summary>
+        /// Gets flags classifying domain points within a convex hull.
+        /// </summary>
+        /// <remarks>
+        /// The supplied ordinates are interpreted as a sequence of points, which 
+        /// generates a convex hull in the source space. Conceptually, each of the 
+        /// (usually infinite) points inside the convex hull is then tested against
+        /// the source domain. The flags of all these tests are then combined. In 
+        /// practice, implementations of different transforms will use different 
+        /// short-cuts to avoid doing an infinite number of tests.
+        /// </remarks>
+        /// <param name="points"></param>
+        /// <returns></returns>
+        public virtual DomainFlags GetDomainFlags(List<double> points)
+        {
+            throw new NotImplementedException();
+        }
 
-		/// <summary>
-		/// Creates the inverse transform of this object.
-		/// </summary>
-		/// <remarks>This method may fail if the transform is not one to one. However, all cartographic projections should succeed.</remarks>
-		/// <returns></returns>
-		public abstract IMathTransform Inverse();
+        /// <summary>
+        /// Creates the inverse transform of this object.
+        /// </summary>
+        /// <remarks>This method may fail if the transform is not one to one. However, all cartographic projections should succeed.</remarks>
+        /// <returns></returns>
+        public abstract IMathTransform Inverse();
 
-		/// <summary>
-		/// Transforms a coordinate point. The passed parameter point should not be modified.
-		/// </summary>
-		/// <param name="point"></param>
-		/// <returns></returns>
-        public abstract double[] Transform(double[] point);
+        /// <summary>
+        /// Transforms a coordinate point. The passed parameter point should not be modified.
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        double[] IMathTransform.Transform(double[] point)
+        {
+            double x = point[0];
+            double y = point[1];
+            double z = point.Length < 3 ? 0 : point[2];
 
-		/// <summary>
-		/// Transforms a list of coordinate point ordinal values.
-		/// </summary>
-		/// <remarks>
-		/// This method is provided for efficiently transforming many points. The supplied array 
-		/// of ordinal values will contain packed ordinal values. For example, if the source 
-		/// dimension is 3, then the ordinals will be packed in this order (x0,y0,z0,x1,y1,z1 ...).
-		/// The size of the passed array must be an integer multiple of DimSource. The returned 
-		/// ordinal values are packed in a similar way. In some DCPs. the ordinals may be 
-		/// transformed in-place, and the returned array may be the same as the passed array.
-		/// So any client code should not attempt to reuse the passed ordinal values (although
-		/// they can certainly reuse the passed array). If there is any problem then the server
-		/// implementation will throw an exception. If this happens then the client should not
-		/// make any assumptions about the state of the ordinal values.
-		/// </remarks>
-		/// <param name="points"></param>
-		/// <returns></returns>
-		public virtual IList<double[]> TransformList(IList<double[]> points)
-		{
+            (x, y, z) = Transform(x, y, z);
+
+            return DimTarget == 2
+                ? new[] { x, y }
+                : new[] { x, y, z };
+        }
+
+        /// <summary>
+        /// Transforms a list of coordinate point ordinal values.
+        /// </summary>
+        /// <remarks>
+        /// This method is provided for efficiently transforming many points. The supplied array 
+        /// of ordinal values will contain packed ordinal values. For example, if the source 
+        /// dimension is 3, then the ordinals will be packed in this order (x0,y0,z0,x1,y1,z1 ...).
+        /// The size of the passed array must be an integer multiple of DimSource. The returned 
+        /// ordinal values are packed in a similar way. In some DCPs. the ordinals may be 
+        /// transformed in-place, and the returned array may be the same as the passed array.
+        /// So any client code should not attempt to reuse the passed ordinal values (although
+        /// they can certainly reuse the passed array). If there is any problem then the server
+        /// implementation will throw an exception. If this happens then the client should not
+        /// make any assumptions about the state of the ordinal values.
+        /// </remarks>
+        /// <param name="points"></param>
+        /// <returns></returns>
+        IList<double[]> IMathTransform.TransformList(IList<double[]> points)
+        {
             var result = new List<double[]>(points.Count);
+            foreach (double[] point in points)
+            {
+                double x = point[0];
+                double y = point[1];
+                double z = point.Length < 3 ? 0 : point[2];
+                (x, y, z) = Transform(x, y, z);
 
-            foreach (var c in points)
-                result.Add(Transform(c));
-            
+                result.Add(DimTarget == 2
+                    ? new[] { x, y }
+                    : new[] { x, y, z });
+            }
+
             return result;
         }
 
-	    public virtual IList<Coordinate> TransformList(IList<Coordinate> points)
-	    {
+        IList<Coordinate> IMathTransform.TransformList(IList<Coordinate> points)
+        {
             var result = new List<Coordinate>(points.Count);
 
-            foreach (var c in points)
-                result.Add(Transform(c));
+            foreach (var point in points)
+            {
+                double x = point.X;
+                double y = point.Y;
+                double z = point.Z;
+                (x, y, z) = Transform(x, y, z);
+                result.Add(DimTarget == 2
+                    ? new Coordinate(x, y)
+                    : new CoordinateZ(x, y, z));
+            }
+
             return result;
         }
 
-        public Coordinate Transform(Coordinate coordinate)
+        Coordinate IMathTransform.Transform(Coordinate coordinate)
         {
-            var ordinates = DimSource == 2
-                                     ? new[] {coordinate.X, coordinate.Y}
-                                     : new[] {coordinate.X, coordinate.Y, coordinate.Z};
-
-                var ret = Transform(ordinates);
-
-            return (DimTarget == 2)
-                ? new Coordinate(ret[0], ret[1])
-                : new CoordinateZ(ret[0], ret[1], ret[2]);
+            double x = coordinate.X;
+            double y = coordinate.Y;
+            double z = coordinate.Z;
+            (x, y, z) = Transform(x, y, z);
+            return DimTarget == 2
+                ? new Coordinate(x, y)
+                : new CoordinateZ(x, y, z);
         }
 
-	    public virtual ICoordinateSequence Transform(ICoordinateSequence coordinateSequence)
-	    {
-            var res = CoordinateSystemServices.CoordinateSequenceFactory.Create(coordinateSequence.Count, DimTarget);
+        ICoordinateSequence IMathTransform.Transform(ICoordinateSequence coordinateSequence) =>
+            TransformCopy(coordinateSequence);
 
-            for (int i = 0; i < coordinateSequence.Count; i++)
+        /// <summary>
+        /// Transforms <paramref name="coordinateSequence"/>
+        /// </summary>
+        /// <param name="coordinateSequence">A coordinate sequence</param>
+        public void Transform(ICoordinateSequence coordinateSequence)
+        {
+            // shortcout, no matter what
+            if (coordinateSequence == null || coordinateSequence.Count == 0)
             {
-                var transformed = Transform(coordinateSequence.GetCoordinate(i));
-                res.SetOrdinate(i, Ordinate.X, transformed.X);
-                res.SetOrdinate(i, Ordinate.Y, transformed.Y);
-                if (DimTarget > 2)
-                    res.SetOrdinate(i, Ordinate.Z, transformed.Z);
+                return;
             }
-	        return res;
-	    }
+
+            var converter = _sequenceCoordinateConverter;
+            if (converter != null)
+            {
+                var cleanup = converter.ExtractRawCoordinatesFromSequence(coordinateSequence, out var xs, out int strideX, out var ys, out int strideY, out var zs, out var strideZ);
+                try
+                {
+                    Transform(xs, ys, zs, strideX, strideY, strideZ);
+                    converter.CopyRawCoordinatesToSequence(xs, strideX, ys, strideY, zs, strideZ, coordinateSequence);
+                }
+                finally
+                {
+                    cleanup();
+                }
+            }
+            else
+            {
+                var st = SequenceTransformer;
+                st.Transform(this, coordinateSequence);
+            }
+        }
+
+        /// <summary>
+        /// Copies <paramref name="coordinateSequence"> and returns the transformed copy</paramref>
+        /// </summary>
+        /// <param name="coordinateSequence">A coordinate sequence</param>
+        /// <returns>A transformed sequence</returns>
+        public ICoordinateSequence TransformCopy(ICoordinateSequence coordinateSequence)
+        {
+            // shortcout, no matter what
+            if (coordinateSequence == null || coordinateSequence.Count == 0)
+            {
+                return coordinateSequence;
+            }
+
+            coordinateSequence = coordinateSequence.Copy();
+            Transform(coordinateSequence);
+            return coordinateSequence;
+        }
+
 
         /// <summary>
         /// Reverses the transformation
         /// </summary>
         public abstract void Invert();
 
-	    /// <summary>
-		/// To convert degrees to radians, multiply degrees by pi/180. 
-		/// </summary>
-		protected static double Degrees2Radians(double deg)
-		{
-			return (D2R * deg);
+        /// <summary>
+        /// Constant for converting Degrees to Radians
+        /// </summary>
+        protected const double D2R = Math.PI / 180;
 
-		}
-		/// <summary>
-		/// R2D
-		/// </summary>
-		protected const double R2D = 180 / Math.PI;
+        /// <summary>
+        /// Converts a degree-value (<paramref name="deg"/>) to a radian-value by multiplying it with <c><see cref="Math.PI"/> / 180.0</c> 
+        /// </summary>
+        protected static double Degrees2Radians(double deg)
+        {
+            return D2R * deg;
 
-		/// <summary>
-		/// D2R
-		/// </summary>
-		protected const double D2R = Math.PI / 180;
+        }
 
-		/// <summary>
-		/// 
-		/// </summary>
-		/// <param name="rad"></param>
-		/// <returns></returns>
-		protected static double Radians2Degrees(double rad)
-		{
-			return (R2D * rad);
-		}
+        /// <summary>
+        /// Converts a series of degree-values (<paramref name="degrees"/>) to a radian-values by multiplying them with <c><see cref="Math.PI"/> / 180.0</c> 
+        /// </summary>
+        /// <param name="degrees">A series of degree-values</param>
+        /// <param name="stride">A stride value</param>
+        protected static void DegreesToRadians(Span<double> degrees, int stride)
+        {
+            for (int i = 0; i < degrees.Length; i += stride)
+            {
+                degrees[i] *= D2R;
+            }
+        }
 
-		#endregion
-	}
+        /// <summary>
+        /// Constant for converting Radians to Degrees
+        /// </summary>
+        protected const double R2D = 180 / Math.PI;
+
+        /// <summary>
+        /// Converts a radian-value (<paramref name="rad"/>) to a degree-value by multiplying it with <c>180.0 / <see cref="Math.PI"/></c> 
+        /// </summary>
+        /// <param name="rad"></param>
+        /// <returns></returns>
+        protected static double Radians2Degrees(double rad)
+        {
+            return R2D * rad;
+        }
+
+        /// <summary>
+        /// Converts a series of radian-values (<paramref name="degrees"/>) to a degrees-values by multiplying them with <c>180.0 / <see cref="Math.PI"/></c> 
+        /// </summary>
+        /// <param name="radians">A series of radian-values</param>
+        /// <param name="stride">A stride value</param>
+        protected static void RadiansToDegrees(Span<double> radians, int stride)
+        {
+            for (int i = 0; i < radians.Length; i+=stride)
+            {
+                radians[i] *= R2D;
+            }
+        }
+
+        /// <summary>
+        /// Transforms a single 2-dimensional point
+        /// </summary>
+        /// <param name="x">The ordinate value on the first axis, either x or longitude.</param>
+        /// <param name="y">The ordinate value on the second axis, either y or latitude.</param>
+        /// <returns>The transformed x- and y-ordinate values</returns>
+        public (double x, double y) Transform(double x, double y)
+        {
+            double z = 0;
+            Transform(ref x, ref y, ref z);
+            return (x, y);
+        }
+
+        /// <summary>
+        /// Transforms a single 3-dimensional point
+        /// </summary>
+        /// <param name="x">The ordinate value on the first axis, either x or longitude.</param>
+        /// <param name="y">The ordinate value on the second axis, either y or latitude.</param>
+        /// <param name="z">The ordinate value on the third axis, either z, height or altitude</param>
+        /// <returns>The transformed x-, y- and z-ordinate values</returns>
+        public (double o1, double o2, double o3) Transform(double x, double y, double z)
+        {
+            Transform(ref x, ref y, ref z);
+            return (x, y, z);
+        }
+
+        /// <summary>
+        /// Transforms a single 2-dimensional point in-place
+        /// </summary>
+        /// <param name="x">The ordinate value on the first axis, either x or longitude.</param>
+        /// <param name="y">The ordinate value on the second axis, either y or latitude.</param>
+        public void Transform(ref double x, ref double y)
+        {
+            double z = 0d;
+            Transform(ref x, ref y, ref z);
+        }
+
+        /// <summary>
+        /// Transforms a single 3-dimensional point in-place
+        /// </summary>
+        /// <param name="x">The ordinate value on the first axis, either x or longitude.</param>
+        /// <param name="y">The ordinate value on the second axis, either y or latitude.</param>
+        /// <param name="z">The ordinate value on the third axis, either z, height or altitude</param>
+        public abstract void Transform(ref double x, ref double y, ref double z);
+
+        /// <summary>
+        /// Core method to transform a series of points defined by their ordinates.
+        /// The transformation is performed in-place.
+        /// </summary>
+        /// <param name="xs">A series of x-ordinate values</param>
+        /// <param name="ys">A series of y-ordinate values</param>
+        /// <param name="zs">A series of z-ordinate values</param>
+        /// <param name="strideX">A stride value for the x-ordinate series</param>
+        /// <param name="strideY">A stride value for the y-ordinate series</param>
+        /// <param name="strideZ">A stride value for the z-ordinate series</param>
+        protected virtual void TransformCore(Span<double> xs, Span<double> ys, Span<double> zs,
+            int strideX, int strideY, int strideZ)
+        {
+            for (int i = 0, j = 0, k = 0; i < xs.Length; i += strideX, j += strideY, k += strideZ)
+            {
+                Transform(ref xs[i], ref ys[j], ref zs[k]);
+            }
+        }
+
+        private readonly double[] _dummyZ = new double[1];
+
+        /// <summary>
+        /// Core method to transform a series of points defined by their ordinates.
+        /// The transformation is performed in-place.
+        /// </summary>
+        /// <param name="xs">A series of x-ordinate values</param>
+        /// <param name="ys">A series of y-ordinate values</param>
+        /// <param name="strideX">A stride value for the x-ordinate series</param>
+        /// <param name="strideY">A stride value for the y-ordinate series</param>
+        /// <exception cref="ArgumentException">If the provided span and stride values don't result in matching number of ordinates.</exception>
+        public void Transform(Span<double> xs, Span<double> ys, int strideX = 1, int strideY = 1)
+        {
+            int elementsX = xs.Length / strideX + xs.Length % strideX != 0 ? 1 : 0;
+            int elementsY = ys.Length / strideY + ys.Length % strideY != 0 ? 1 : 0;
+
+            if (elementsX != elementsY)
+                throw new ArgumentException("Spans of ordinate values don't match in size.");
+
+            TransformCore(xs, ys, _dummyZ, strideX, strideY, 0);
+        }
+
+        /// <summary>
+        /// Core method to transform a series of points defined by their ordinates.
+        /// The transformation is performed in-place.
+        /// </summary>
+        /// <param name="xs">A series of x-ordinate values</param>
+        /// <param name="ys">A series of y-ordinate values</param>
+        /// <param name="zs">A series of z-ordinate values</param>
+        /// <param name="strideX">A stride value for the x-ordinate series</param>
+        /// <param name="strideY">A stride value for the y-ordinate series</param>
+        /// <param name="strideZ">A stride value for the z-ordinate series</param>
+        /// <exception cref="ArgumentException">If the provided span and stride values don't result in matching number of ordinates.</exception>
+        public void Transform(Span<double> xs, Span<double> ys, Span<double> zs,
+            int strideX = 1, int strideY = 1, int strideZ = 1)
+        {
+            int elementsX = xs.Length / strideX + xs.Length % strideX != 0 ? 1 : 0;
+            int elementsY = ys.Length / strideY + ys.Length % strideY != 0 ? 1 : 0;
+            if (elementsX != elementsY)
+                throw new ArgumentException("Spans of ordinate values don't match in size.");
+
+            if (zs.IsEmpty)
+            {
+                TransformCore(xs, ys, _dummyZ, strideX, strideY, 0);
+                return;
+            }
+
+            int elementsZ = zs.Length / strideZ + zs.Length % strideZ != 0 ? 1 : 0;
+            if (elementsZ != elementsX)
+                throw new ArgumentException("Spans of ordinate values don't match in size.");
+
+            TransformCore(xs, ys, zs, strideX, strideY, strideZ);
+        }
+
+        /// <summary>
+        /// Transforms a series of 2-dimensional <see cref="XY"/>-points and (optionally) a series of z-ordinate values.
+        /// </summary>
+        /// <param name="xys">A series of <see cref="XY"/> points</param>
+        /// <param name="zs">A series of z-ordinate values.</param>
+        /// <param name="strideZ">A stride value for z-ordinates</param>
+        /// <exception cref="ArgumentException">If the provided series' and buffers don't match in size.</exception>
+        public void Transform(Span<XY> xys, Span<double> zs = default, int strideZ = 0)
+        {
+            if (zs.Length > 0)
+            {
+                if (strideZ <= 0) strideZ = 1;
+                if (xys.Length != ((zs.Length / strideZ + (zs.Length % strideZ != 0 ? 1 : 0))))
+                    throw new ArgumentException("Provided spans don't match in size.");
+            }
+
+            var read = MemoryMarshal.Cast<XY, double>(xys);
+            var inXs = read.Slice(0);
+            var inYs = read.Slice(1);
+
+            if (zs.IsEmpty)
+                TransformCore(inXs, inYs, _dummyZ, 2, 2, 0);
+            else
+                TransformCore(inXs, inYs, zs, 2, 2, strideZ);
+        }
+
+        /// <summary>
+        /// Transforms a series of 3-dimensional <see cref="XYZ"/>-points.
+        /// </summary>
+        /// <param name="xyzs">A series of <see cref="XYZ"/> points</param>
+        public void Transform(Span<XYZ> xyzs)
+        {
+            var read = MemoryMarshal.Cast<XYZ, double>(xyzs);
+            var inXs = read.Slice(0);//, read.Length - 2);
+            var inYs = read.Slice(1);//, read.Length - 2);
+            var inZs = read.Slice(2);//, read.Length - 2);
+
+            TransformCore(inXs, inYs, inZs, 3,3,3);
+        }
+
+        #endregion
+
+        private static SequenceCoordinateConverterBase _sequenceCoordinateConverter;
+
+        /// <summary>
+        /// Gets or sets a converter to extract coordinates from a sequence, transform them and copy the transformed to the sequence.
+        /// </summary>
+        public static SequenceCoordinateConverterBase SequenceCoordinateConverter
+        {
+            get { return _sequenceCoordinateConverter ?? (_sequenceCoordinateConverter = new SequenceCoordinateConverterBase()); }
+            set { _sequenceCoordinateConverter = value; }
+        }
+
+        private static SequenceTransformerBase _sequenceTransformer;
+
+        /// <summary>
+        /// Gets or sets a transformer that transforms all coordinates in a sequence.
+        /// </summary>
+        public static SequenceTransformerBase SequenceTransformer
+        {
+            get { return _sequenceTransformer ?? (_sequenceTransformer = new SequenceTransformerBase()); }
+            set { _sequenceTransformer = value; }
+        }
+    }
 }
+
+

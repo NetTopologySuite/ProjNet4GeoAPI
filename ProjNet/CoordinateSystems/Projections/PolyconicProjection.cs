@@ -12,9 +12,7 @@ namespace ProjNet.CoordinateSystems.Projections
     /// <summary>
     /// 
     /// </summary>
-#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable] 
-#endif
     internal class PolyconicProjection : MapProjection
     {
         /// <summary>
@@ -38,6 +36,8 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         private readonly double _ml0;
 
+        private readonly double _reciprocSemiMajorTimesScaleFactor;
+
         ///<summary>
         /// Constructs a new map projection from the supplied parameters.
         ///</summary>
@@ -55,15 +55,15 @@ namespace ProjNet.CoordinateSystems.Projections
             : base(parameters, inverse)
         {
             _ml0 = mlfn(lat_origin, Math.Sin(lat_origin), Math.Cos(lat_origin));
+            _reciprocSemiMajorTimesScaleFactor = 1 / (_semiMajor * scale_factor);
         }
 
-        protected override double[] RadiansToMeters(double[] lonlat)
+        protected override void RadiansToMeters(ref double lon, ref double lat)
         {
+            double lam = lon;
+            double phi = lat;
 
-            var lam = lonlat[0];
-            var phi = lonlat[1];
-
-            var delta_lam = adjust_lon(lam - central_meridian);
+            double delta_lam = adjust_lon(lam - central_meridian);
 
             double x, y;
 
@@ -74,25 +74,23 @@ namespace ProjNet.CoordinateSystems.Projections
             }
             else
             {
-                var sp = Math.Sin(phi);
+                double sp = Math.Sin(phi);
                 double cp;
-                var ms = Math.Abs(cp = Math.Cos(phi)) > Epsilon ? msfn(sp, cp) / sp : 0.0;
-                /*lam =*/ delta_lam *= sp;
-                x = ms * Math.Sin(/*lam*/delta_lam);
-                y = (mlfn(phi, sp, cp) - _ml0) + ms * (1.0 - Math.Cos(/*lam*/delta_lam));
+                double ms = Math.Abs(cp = Math.Cos(phi)) > Epsilon ? msfn(sp, cp) / sp : 0.0;
+                /*lam =*/
+                delta_lam *= sp;
+                x = ms * Math.Sin( /*lam*/delta_lam);
+                y = (mlfn(phi, sp, cp) - _ml0) + ms * (1.0 - Math.Cos( /*lam*/delta_lam));
             }
 
-            x = scale_factor*_semiMajor*x; // + false_easting;
-            y = scale_factor*_semiMajor*y;// +false_northing;
-
-            return new[] { x, y };
+            lon = scale_factor * _semiMajor * x;
+            lat = scale_factor * _semiMajor * y;
         }
 
-        protected override double[] MetersToRadians(double[] p)
+        protected override void MetersToRadians(ref double x, ref double y)
         {
-            
-            var x = (p[0]) / (_semiMajor * scale_factor);
-            var y = (p[1]) / (_semiMajor * scale_factor);
+            x *= _reciprocSemiMajorTimesScaleFactor;
+            y *= _reciprocSemiMajorTimesScaleFactor;
 
             double lam, phi;
 
@@ -104,38 +102,41 @@ namespace ProjNet.CoordinateSystems.Projections
             }
             else
             {
-                var r = y * y + x * x;
+                double r = y * y + x * x;
                 phi = y;
-                var i = 0;
-                for (; i <= MaximumIterations; i++)
+                int iter = 0;
+                for (; iter <= MaximumIterations; iter++)
                 {
-                    var sp = Math.Sin(phi);
-                    var cp = Math.Cos(phi);
+                    double sp = Math.Sin(phi);
+                    double cp = Math.Cos(phi);
                     if (Math.Abs(cp) < IterationTolerance)
                         throw new Exception("No Convergence");
 
-                    var s2ph = sp * cp;
-                    var mlp = Math.Sqrt(1.0 - _es * sp * sp);
-                    var c = sp * mlp / cp;
-                    var ml = mlfn(phi, sp, cp);
+                    double s2ph = sp * cp;
+                    double mlp = Math.Sqrt(1.0 - _es * sp * sp);
+                    double c = sp * mlp / cp;
+                    double ml = mlfn(phi, sp, cp);
                     var mlb = ml * ml + r;
                     mlp = (1.0 - _es) / (mlp * mlp * mlp);
-                    var dPhi = (ml + ml + c * mlb - 2.0 * y * (c * ml + 1.0)) / (
-                                _es * s2ph * (mlb - 2.0 * y * ml) / c +
-                                2.0 * (y - ml) * (c * mlp - 1.0 / s2ph) - mlp - mlp);
+                    double dPhi = (ml + ml + c * mlb - 2.0 * y * (c * ml + 1.0)) / (
+                                   _es * s2ph * (mlb - 2.0 * y * ml) / c +
+                                   2.0 * (y - ml) * (c * mlp - 1.0 / s2ph) - mlp - mlp);
                     if (Math.Abs(dPhi) <= IterationTolerance)
                         break;
 
                     phi += dPhi;
                 }
-                if (i > MaximumIterations)
+
+                if (iter > MaximumIterations)
                     throw new Exception("No Convergence");
-                var c2 = Math.Sin(phi);
+                double c2 = Math.Sin(phi);
                 lam = Math.Asin(x * Math.Tan(phi) * Math.Sqrt(1.0 - _es * c2 * c2)) / Math.Sin(phi);
             }
 
-            return new[] { adjust_lon(lam+central_meridian), phi };
+            x = adjust_lon(lam + central_meridian);
+            y = phi;
         }
+
         /// <summary>
         /// Returns the inverse of this projection.
         /// </summary>
@@ -149,9 +150,9 @@ namespace ProjNet.CoordinateSystems.Projections
 
         #region Private helpers
         ///<summary>
-         /// Computes function <code>f(s,c,e²) = c/sqrt(1 - s²*e²)</code> needed for the true scale
+         /// Computes function <code>f(s,c,eÂ²) = c/sqrt(1 - sÂ²*eÂ²)</code> needed for the true scale
          /// latitude (Snyder 14-15), where <var>s</var> and <var>c</var> are the sine and cosine of
-         /// the true scale latitude, and <var>e²</var> is the eccentricity squared.
+         /// the true scale latitude, and <var>eÂ²</var> is the eccentricity squared.
         ///</summary>
         double msfn(double s, double c)
         {

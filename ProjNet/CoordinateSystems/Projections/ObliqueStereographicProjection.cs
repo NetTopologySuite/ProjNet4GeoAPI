@@ -1,4 +1,4 @@
-﻿// Copyright 2015
+// Copyright 2015
 //
 // This file is part of ProjNet.
 // ProjNet is free software; you can redistribute it and/or modify
@@ -42,14 +42,13 @@ using GeoAPI.CoordinateSystems.Transformations;
 namespace ProjNet.CoordinateSystems.Projections
 {
     /// <summary>
-    /// Implemetns the Oblique Stereographic Projection.
+    /// Implements the Oblique Stereographic Projection.
     /// </summary>
-#if HAS_SYSTEM_SERIALIZABLEATTRIBUTE
     [Serializable]
-#endif
     internal class ObliqueStereographicProjection : MapProjection
     {
-        private double globalScale;
+        private readonly double globalScale;
+        private readonly double reciprocGlobalScale;
 
         private static double ITERATION_TOLERANCE = 1E-14;
         private static int MAXIMUM_ITERATIONS = 15;
@@ -98,6 +97,7 @@ namespace ProjNet.CoordinateSystems.Projections
             : base(parameters, inverse)
         {
             globalScale = scale_factor * this._semiMajor;
+            reciprocGlobalScale = 1 / globalScale;
 
             double sphi = Math.Sin(lat_origin);
             double cphi = Math.Cos(lat_origin);
@@ -112,14 +112,14 @@ namespace ProjNet.CoordinateSystems.Projections
         }
 
         /// <summary>
-        /// Converts coordinates in projected meters to decimal degrees.
+        /// Converts coordinates in projected meters to radians.
         /// </summary>
-        /// <param name="p">Point in meters</param>
-        /// <returns>Transformed point in decimal degrees</returns>
-        protected override double[] MetersToRadians(double[] p)
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        protected override void MetersToRadians(ref double x, ref double y)
         {
-            double x = p[0] / this.globalScale;
-            double y = p[1] / this.globalScale;
+            x *= this.reciprocGlobalScale;
+            y *= this.reciprocGlobalScale;
 
             double rho = Math.Sqrt((x * x) + (y * y));
             if (Math.Abs(rho) < EPSILON)
@@ -133,7 +133,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 double sinc = Math.Sin(ce);
                 double cosc = Math.Cos(ce);
                 x = Math.Atan2(x * sinc, rho * cosc0 * cosc - y * sinc0
-                       * sinc);
+                                                                * sinc);
                 y = (cosc * sinc0) + (y * sinc * cosc0 / rho);
 
                 if (Math.Abs(y) >= 1.0)
@@ -148,57 +148,47 @@ namespace ProjNet.CoordinateSystems.Projections
 
             x /= C;
             double num = Math.Pow(Math.Tan(0.5 * y + Math.PI / 4.0) / K, 1.0 / C);
-            for (int i = MAXIMUM_ITERATIONS; ; )
+            for (int iter = MAXIMUM_ITERATIONS;;)
             {
                 double phi = 2.0 * Math.Atan(num * srat(_e * Math.Sin(y), -0.5 * _e)) - Math.PI / 2.0;
                 if (Math.Abs(phi - y) < ITERATION_TOLERANCE)
                 {
                     break;
                 }
+
                 y = phi;
-                if (--i < 0)
+                if (--iter < 0)
                 {
                     throw new Exception("Oblique Stereographics doesn't converge");
                 }
             }
 
             x += central_meridian;
-
-            if (p.Length == 2)
-                return new double[] { x, y };
-            else
-                return new double[] { x, y, p[2] };
         }
 
         /// <summary>
-        /// Converts coordinates in decimal degrees to projected meters.
+        /// Method to convert a point (lon, lat) in radians to (x, y) in meters
         /// </summary>
-        /// <param name="lonlat">The point in decimal degrees.</param>
-        /// <returns>Point in projected meters</returns>
-        protected override double[] RadiansToMeters(double[] lonlat)
+        /// <param name="lon">The longitude of the point in radians when entering, its x-ordinate in meters after exit.</param>
+        /// <param name="lat">The latitude of the point in radians when entering, its y-ordinate in meters after exit.</param>
+        protected override void RadiansToMeters(ref double lon, ref double lat)
         {
-            double x = lonlat[0] - this.central_meridian;
-            double y = lonlat[1];
-
+            double x = lon - central_meridian;
+            double y = lat;
 
             y = 2.0 * Math.Atan(K * Math.Pow(Math.Tan(0.5 * y + Math.PI / 4), C)
-                          * srat(_e * Math.Sin(y), ratexp))
-                   - Math.PI / 2;
+                                  * srat(_e * Math.Sin(y), ratexp))
+                - Math.PI / 2;
             x *= C;
             double sinc = Math.Sin(y);
             double cosc = Math.Cos(y);
             double cosl = Math.Cos(x);
-            double k = R2 / (1.0 + sinc0 * sinc + cosc0 * cosc * cosl);
-            x = k * cosc * Math.Sin(x);
-            y = k * (cosc0 * sinc - sinc0 * cosc * cosl);
+            double k_ = R2 / (1.0 + sinc0 * sinc + cosc0 * cosc * cosl);
 
-
-            if (lonlat.Length == 2)
-
-                return new double[] { x * this.globalScale, y * this.globalScale };
-            else
-                return new double[] { x * this.globalScale, y * this.globalScale, lonlat[2] };
+            lon = k_ * cosc * Math.Sin(x) * globalScale;
+            lat = k_ * (cosc0 * sinc - sinc0 * cosc * cosl) * globalScale;
         }
+
 
         /// <summary>
         /// Returns the inverse of this projection.

@@ -40,11 +40,21 @@ namespace ProjNet.CoordinateSystems
     /// </remarks>
     public class CoordinateSystemFactory : ICoordinateSystemFactory
     {
+        /// <summary>
+        /// Gets an encoding
+        /// </summary>
         [Obsolete("The encoding is no longer used and will be removed in a future release.")]
-        public Encoding Encoding { get; private set; }
+        public Encoding Encoding { get; }
 
+        /// <summary>
+        /// Creates an instance of this class
+        /// </summary>
         public CoordinateSystemFactory() { }
 
+        /// <summary>
+        /// Creates an instance of this class
+        /// </summary>
+        /// <param name="encoding">An encoding</param>
         [Obsolete("The encoding is no longer used and will be removed in a future release.")]
         public CoordinateSystemFactory(Encoding encoding)
         {
