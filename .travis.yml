@@ -1,0 +1,48 @@
+language: csharp
+mono: none
+sudo: false
+dotnet: 2.2
+dist: xenial
+
+
+script:
+  - dotnet build -c Release
+  - dotnet test  -c Release --no-build
+  - dotnet pack  -c Release --no-build -p:NoWarn=NU5105
+
+
+deploy:
+
+
+  - on:
+      branch: master
+    provider: script
+    script:
+      - dotnet nuget push ./Release/AnyCPU/*.nupkg -s https://api.nuget.org/v3/index.json -k $NUGET_API_KEY
+    skip_cleanup: true
+
+
+  - on:
+      branch: develop
+    provider: script
+    script:
+      - dotnet nuget push ./Release/AnyCPU/*.nupkg -s https://www.myget.org/F/nettopologysuite/api/v2/package -k $MYGET_API_KEY
+    skip_cleanup: true
+
+
+  - on:
+      tags: true
+    provider: releases
+    file:
+      - "./Release/AnyCPU/*.nupkg"
+      - "./Release/AnyCPU/*.snupkg"
+    draft: true
+    api_key:
+      secure: "ZwZwz20dUb8U060PLeKIJ3/qmcQF53VukzOoetkfxFVfs4CUfuDNPSk5ZvHpVCQUJpKKj4F4/MIFBuCQ9r1hy7HDv9I1mbB08B19gZQhiAtxf2/KKbNVWZFubBIX1RMbfFyTBvKkm07/SCyiY59r4GvXr4t8iSpo5ih3lThacj4="
+    skip_cleanup: true
+
+
+env:
+  global:
+  - secure: R3jnoaemk34d9bcYHgYskQ+etCtaG8rqyvqi3BM9aLJYTj76/eqXnfnIlAXr/xwe6ayd5BCWY4VP7yw24ltjEC8WDHBrso/bRQw6bpvE1xMjfSfcUwP7H5b0f0EsgvxambpYp68srUlOoNF9d8GRSIOh9BHtv5ZWlPEWiHShnTs=
+  - secure: Ifei2LBeUI7hlWc/9W93pK/C4HeCykMA8k+NahjFbQYgLh8m2ex5WRh18Lh6hEyZASLtyUobmIdpq1U65RTwnJ8/LdJnavQ12YOWi7ROGCA/HQDar5uK7GoM6QNjVILjCiCz0cOCgj2haK8+TGmpKo2oa/DY47pfho6oZBo3nv8=

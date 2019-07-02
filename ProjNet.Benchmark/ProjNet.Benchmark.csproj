@@ -1,18 +1,13 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(ProjectDir)..\</SolutionDir>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.2</TargetFramework>
-    <LangVersion>7.1</LangVersion>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)'=='Release'">
-    <DefineConstants>TRACE;$(DefineConstants)</DefineConstants>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <NoWarn>1701;1702;1591</NoWarn>
+
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <Import Project="$(SolutionDir)ProjNet.Common.props" />
@@ -24,20 +19,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ProjNet.Tests\ProjNET.Tests.csproj" />
-    <ProjectReference Include="..\ProjNet\ProjNET.csproj" />
+    <ProjectReference Include="$(SolutionDir)ProjNet.Tests\ProjNET.Tests.csproj" />
+    <ProjectReference Include="$(SolutionDir)ProjNet\ProjNET.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="TestData\africa.wkt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestData\europe.wkt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="TestData\world.wkt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
+    <None Update="TestData\*.wkt" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

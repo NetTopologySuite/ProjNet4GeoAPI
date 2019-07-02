@@ -175,8 +175,6 @@ namespace ProjNET.Tests.Performance
         }
 
     }
-#if WithSpans
-#if !SequenceCoordinateConverter
 
     internal class CoordinateArraySequenceTransformer : SequenceTransformerBase
     {
@@ -279,7 +277,4 @@ namespace ProjNET.Tests.Performance
 
         }
     }
-
-#endif
-#endif
 }
