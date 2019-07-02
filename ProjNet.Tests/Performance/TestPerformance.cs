@@ -27,31 +27,34 @@ namespace ProjNET.Tests.Performance
             Console.WriteLine($"|---------|---------|-----------:|------------:|-------------------:|");
         }
 
-        [TestCase(@"TestData\africa.wkt")]
-        [TestCase(@"TestData\europe.wkt")]
-        [TestCase(@"TestData\world.wkt")]
-        public void TestPerformance(string pathToWktFile)
+        [TestCase("africa.wkt")]
+        [TestCase("europe.wkt")]
+        [TestCase("world.wkt")]
+        public void TestPerformance(string wktFileName)
         {
-            if (!Path.IsPathRooted(pathToWktFile))
-                pathToWktFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), pathToWktFile);
+            string fullPathToWktFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                                                    "TestData",
+                                                    wktFileName);
 
-            if (!File.Exists(pathToWktFile))
-                throw new IgnoreException($"File '{pathToWktFile}' not found.");
+            if (!File.Exists(fullPathToWktFile))
+            {
+                Assert.Ignore($"File '{wktFileName}' not found.");
+            }
 
             //Console.WriteLine(pathToWktFile);
-            DoTestPerformance(CoordinateArraySequenceFactory.Instance, pathToWktFile, new SequenceCoordinateConverterBase());
-            DoTestPerformance(PackedCoordinateSequenceFactory.DoubleFactory, pathToWktFile, new SequenceCoordinateConverterBase());
-            DoTestPerformance(DotSpatialAffineCoordinateSequenceFactory.Instance, pathToWktFile, new SequenceCoordinateConverterBase());
-            DoTestPerformance(SpanCoordinateSequenceFactory.Instance, pathToWktFile, new SequenceCoordinateConverterBase());
+            DoTestPerformance(CoordinateArraySequenceFactory.Instance, fullPathToWktFile, new SequenceCoordinateConverterBase());
+            DoTestPerformance(PackedCoordinateSequenceFactory.DoubleFactory, fullPathToWktFile, new SequenceCoordinateConverterBase());
+            DoTestPerformance(DotSpatialAffineCoordinateSequenceFactory.Instance, fullPathToWktFile, new SequenceCoordinateConverterBase());
+            DoTestPerformance(SpanCoordinateSequenceFactory.Instance, fullPathToWktFile, new SequenceCoordinateConverterBase());
 
-            DoTestPerformance(CoordinateArraySequenceFactory.Instance, pathToWktFile, new SequenceTransformerBase());
-            DoTestPerformance(CoordinateArraySequenceFactory.Instance, pathToWktFile, new CoordinateArraySequenceTransformer());
-            DoTestPerformance(PackedCoordinateSequenceFactory.DoubleFactory, pathToWktFile, new SequenceTransformerBase());
-            DoTestPerformance(PackedCoordinateSequenceFactory.DoubleFactory, pathToWktFile, new PackedDoubleSequenceTransformer());
-            DoTestPerformance(DotSpatialAffineCoordinateSequenceFactory.Instance, pathToWktFile, new SequenceTransformerBase());
-            DoTestPerformance(DotSpatialAffineCoordinateSequenceFactory.Instance, pathToWktFile, new DotSpatialSequenceTransformer());
-            DoTestPerformance(SpanCoordinateSequenceFactory.Instance, pathToWktFile, new SequenceTransformerBase());
-            DoTestPerformance(SpanCoordinateSequenceFactory.Instance, pathToWktFile, new SpanCoordinateSequenceTransformer());
+            DoTestPerformance(CoordinateArraySequenceFactory.Instance, fullPathToWktFile, new SequenceTransformerBase());
+            DoTestPerformance(CoordinateArraySequenceFactory.Instance, fullPathToWktFile, new CoordinateArraySequenceTransformer());
+            DoTestPerformance(PackedCoordinateSequenceFactory.DoubleFactory, fullPathToWktFile, new SequenceTransformerBase());
+            DoTestPerformance(PackedCoordinateSequenceFactory.DoubleFactory, fullPathToWktFile, new PackedDoubleSequenceTransformer());
+            DoTestPerformance(DotSpatialAffineCoordinateSequenceFactory.Instance, fullPathToWktFile, new SequenceTransformerBase());
+            DoTestPerformance(DotSpatialAffineCoordinateSequenceFactory.Instance, fullPathToWktFile, new DotSpatialSequenceTransformer());
+            DoTestPerformance(SpanCoordinateSequenceFactory.Instance, fullPathToWktFile, new SequenceTransformerBase());
+            DoTestPerformance(SpanCoordinateSequenceFactory.Instance, fullPathToWktFile, new SpanCoordinateSequenceTransformer());
         }
 
         private void DoTestPerformance(CoordinateSequenceFactory factory, string pathToWktFile, object transformUtility)
