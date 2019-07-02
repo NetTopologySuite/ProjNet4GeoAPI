@@ -15,8 +15,6 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
-using GeoAPI.CoordinateSystems;
-using GeoAPI.CoordinateSystems.Transformations;
 using System;
 
 namespace ProjNet.CoordinateSystems.Transformations
@@ -31,8 +29,8 @@ namespace ProjNet.CoordinateSystems.Transformations
         #region class variables
 
         private bool _isInverted;
-        private readonly IPrimeMeridian _source;
-        private readonly IPrimeMeridian _target;
+        private readonly PrimeMeridian _source;
+        private readonly PrimeMeridian _target;
         #endregion class variables
 
         #region constructors & finalizers
@@ -41,7 +39,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// </summary>
         /// <param name="source"></param>
         /// <param name="target"></param>
-        public PrimeMeridianTransform(IPrimeMeridian source, IPrimeMeridian target)
+        public PrimeMeridianTransform(PrimeMeridian source, PrimeMeridian target)
         {
             if (!source.AngularUnit.EqualParams(target.AngularUnit))
             {
@@ -86,7 +84,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         #region public methods
 
         /// <inheritdoc />
-        public override IMathTransform Inverse()
+        public override MathTransform Inverse()
         {
             return new PrimeMeridianTransform(_target, _source);
         }

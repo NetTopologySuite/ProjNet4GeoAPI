@@ -1,17 +1,15 @@
 using System;
 using System.Buffers;
-using System.Runtime.InteropServices;
-using GeoAPI.Geometries;
+using NetTopologySuite.Geometries;
 using NetTopologySuite.Geometries.Implementation;
 using ProjNet.CoordinateSystems.Transformations;
-using ProjNet.Geometries;
 using ProjNET.Tests.Geometries.Implementation;
 
-namespace ProjNET.Benchmark.Performance
+namespace ProjNet.Benchmark.Performance
 {
     internal class OptimizedCoordinateSequenceConverter : SequenceCoordinateConverterBase
     {
-        public override Action ExtractRawCoordinatesFromSequence(ICoordinateSequence sequence, out Span<double> xs, out int strideX, out Span<double> ys, out int strideY, out Span<double> zs, out int strideZ)
+        public override Action ExtractRawCoordinatesFromSequence(CoordinateSequence sequence, out Span<double> xs, out int strideX, out Span<double> ys, out int strideY, out Span<double> zs, out int strideZ)
         {
             Span<double> xys = null;
             switch (sequence)
@@ -58,7 +56,7 @@ namespace ProjNET.Benchmark.Performance
             }
         }
 
-        protected override void CopyRawCoordinatesToSequenceCore(Span<double> xs, int strideX, Span<double> ys, int strideY, Span<double> zs, int strideZ, ICoordinateSequence sequence)
+        protected override void CopyRawCoordinatesToSequenceCore(Span<double> xs, int strideX, Span<double> ys, int strideY, Span<double> zs, int strideZ, CoordinateSequence sequence)
         {
             if (sequence is PackedCoordinateSequence && sequence.Dimension == 2)
                 return;
@@ -75,7 +73,7 @@ namespace ProjNET.Benchmark.Performance
 
     internal class CoordinateArraySequenceTransformer : SequenceTransformerBase
     {
-        public override void Transform(MathTransform transform, ICoordinateSequence sequence)
+        public override void Transform(MathTransform transform, CoordinateSequence sequence)
         {
             var s = (CoordinateArraySequence) sequence;
 
@@ -142,13 +140,13 @@ namespace ProjNET.Benchmark.Performance
 
     internal class PackedDoubleSequenceTransformer : SequenceTransformerBase
     {
-        public override void Transform(MathTransform transform, ICoordinateSequence sequence)
+        public override void Transform(MathTransform transform, CoordinateSequence sequence)
         {
             var s = (PackedDoubleCoordinateSequence) sequence;
             var raw = new Span<double>(s.GetRawCoordinates());
             var xs = raw.Slice(0);
             var ys = raw.Slice(1);
-            var dimension = s.Dimension;
+            int dimension = s.Dimension;
             if (!s.HasZ)
             {
                 transform.Transform(xs, ys, dimension, dimension);
@@ -163,7 +161,7 @@ namespace ProjNET.Benchmark.Performance
 
     internal class DotSpatialSequenceTransformer : SequenceTransformerBase
     {
-        public override void Transform(MathTransform transform, ICoordinateSequence sequence)
+        public override void Transform(MathTransform transform, CoordinateSequence sequence)
         {
             var s = (DotSpatialAffineCoordinateSequence)sequence;
             var xy = new Span<double>(s.XY);
@@ -175,7 +173,7 @@ namespace ProjNET.Benchmark.Performance
 
     internal class SpanCoordinateSequenceTransformer : SequenceTransformerBase
     {
-        public override void Transform(MathTransform transform, ICoordinateSequence sequence)
+        public override void Transform(MathTransform transform, CoordinateSequence sequence)
         {
             var scs = (SpanCoordinateSequence)sequence;
             var zAsSpan = scs.ZsAsSpan();

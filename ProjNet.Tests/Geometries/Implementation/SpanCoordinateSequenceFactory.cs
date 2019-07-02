@@ -1,13 +1,16 @@
 using System;
-using GeoAPI.Geometries;
+using NetTopologySuite.Geometries;
 
 namespace ProjNET.Tests.Geometries.Implementation
 {
-    public class SpanCoordinateSequenceFactory : ICoordinateSequenceFactory
+    public class SpanCoordinateSequenceFactory : CoordinateSequenceFactory
     {
-        public static ICoordinateSequenceFactory Instance { get; private set; } = new SpanCoordinateSequenceFactory();
+        public static CoordinateSequenceFactory Instance { get; } = new SpanCoordinateSequenceFactory();
 
-        public ICoordinateSequence Create(Coordinate[] coordinates)
+        private SpanCoordinateSequenceFactory() : base(Ordinates.AllOrdinates)
+        {}
+
+        public override CoordinateSequence Create(Coordinate[] coordinates)
         {
             if (coordinates == null)
                 return new SpanCoordinateSequence(2, 0, new double[0]);
@@ -33,7 +36,7 @@ namespace ProjNET.Tests.Geometries.Implementation
             return res;
         }
 
-        public ICoordinateSequence Create(ICoordinateSequence coordSeq)
+        public override CoordinateSequence Create(CoordinateSequence coordSeq)
         {
             if (coordSeq is SpanCoordinateSequence scs)
                 return scs.Copy();
@@ -51,27 +54,17 @@ namespace ProjNET.Tests.Geometries.Implementation
             return res;
         }
 
-        public ICoordinateSequence Create(int size, int dimension)
-        {
-            return Create(size, dimension, 0);
-        }
-
-        public ICoordinateSequence Create(int size, int dimension, int measures)
+        public override CoordinateSequence Create(int size, int dimension, int measures)
         {
             double[] ordinateValues = new double[dimension * size];
             return new SpanCoordinateSequence(dimension, measures, ordinateValues);
         }
 
-        public ICoordinateSequence Create(int size, Ordinates ordinates)
+        public override CoordinateSequence Create(int size, Ordinates ordinates)
         {
             int dimension = OrdinatesUtility.OrdinatesToDimension(ordinates);
             return Create(size, dimension);
 
-        }
-
-        public Ordinates Ordinates
-        {
-            get { return (GeoAPI.Geometries.Ordinates) 0x7fffffff; }
         }
     }
 }

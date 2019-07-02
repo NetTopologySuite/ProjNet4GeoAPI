@@ -27,13 +27,11 @@
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
 
-    <PackageReference Include="GeoAPI.CoordinateSystems" Version="$(GeoAPIPackageReferenceVersion)" />
-
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
 
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
+    <PackageReference Include="NetTopologySuite" Version="2.0.0-pre001" />
 
-    <PackageReference Include="NetTopologySuite.Core" Version="2.0.0-pre038" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="NUnit" Version="3.10.1" />
     <PackageReference Include="Npgsql" Version="4.0.5" />
     <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />

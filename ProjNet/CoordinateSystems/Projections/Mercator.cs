@@ -37,8 +37,7 @@
 
 using System;
 using System.Collections.Generic;
-using GeoAPI.CoordinateSystems;
-using GeoAPI.CoordinateSystems.Transformations;
+using ProjNet.CoordinateSystems.Transformations;
 
 namespace ProjNet.CoordinateSystems.Projections
 {
@@ -56,59 +55,59 @@ namespace ProjNet.CoordinateSystems.Projections
 	/// greater than that of the continent of South America; in actual area, Greenland is smaller than the Arabian Peninsula.
 	/// </para>
     /// </remarks>
-    [Serializable] 
+    [Serializable]
     internal class Mercator : MapProjection
-	{
-		//double lon_center;		//Center longitude (projection center)
-		//double lat_origin;		//center latitude
-		//double e,e2;			//eccentricity constants
-		private readonly double _k0;				//small value m
+    {
+        //double lon_center;		//Center longitude (projection center)
+        //double lat_origin;		//center latitude
+        //double e,e2;			//eccentricity constants
+        private readonly double _k0;                //small value m
 
-		/// <summary>
-		/// Initializes the MercatorProjection object with the specified parameters to project points. 
-		/// </summary>
-		/// <param name="parameters">ParameterList with the required parameters.</param>
-		/// <remarks>
-		/// </remarks>
-		public Mercator(IEnumerable<ProjectionParameter> parameters)
-			: this(parameters, null)
-		{
-		}
+        /// <summary>
+        /// Initializes the MercatorProjection object with the specified parameters to project points. 
+        /// </summary>
+        /// <param name="parameters">ParameterList with the required parameters.</param>
+        /// <remarks>
+        /// </remarks>
+        public Mercator(IEnumerable<ProjectionParameter> parameters)
+            : this(parameters, null)
+        {
+        }
 
-		/// <summary>
-		/// Initializes the MercatorProjection object with the specified parameters.
-		/// </summary>
-		/// <param name="parameters">List of parameters to initialize the projection.</param>
-		/// <param name="isInverse">Indicates whether the projection forward (meters to degrees or degrees to meters).</param>
-		/// <remarks>
-		/// <para>The parameters this projection expects are listed below.</para>
-		/// <list type="table">
-		/// <listheader><term>Items</term><description>Descriptions</description></listheader>
-		/// <item><term>central_meridian</term><description>The longitude of the point from which the values of both the geographical coordinates on the ellipsoid and the grid coordinates on the projection are deemed to increment or decrement for computational purposes. Alternatively it may be considered as the longitude of the point which in the absence of application of false coordinates has grid coordinates of (0,0).</description></item>
-		/// <item><term>latitude_of_origin</term><description>The latitude of the point from which the values of both the geographical coordinates on the ellipsoid and the grid coordinates on the projection are deemed to increment or decrement for computational purposes. Alternatively it may be considered as the latitude of the point which in the absence of application of false coordinates has grid coordinates of (0,0).</description></item>
-		/// <item><term>scale_factor</term><description>The factor by which the map grid is reduced or enlarged during the projection process, defined by its value at the natural origin.</description></item>
-		/// <item><term>false_easting</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Easting, FE, is the easting value assigned to the abscissa (east).</description></item>
-		/// <item><term>false_northing</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Northing, FN, is the northing value assigned to the ordinate.</description></item>
-		/// </list>
-		/// </remarks>
+        /// <summary>
+        /// Initializes the MercatorProjection object with the specified parameters.
+        /// </summary>
+        /// <param name="parameters">List of parameters to initialize the projection.</param>
+        /// <param name="isInverse">Indicates whether the projection forward (meters to degrees or degrees to meters).</param>
+        /// <remarks>
+        /// <para>The parameters this projection expects are listed below.</para>
+        /// <list type="table">
+        /// <listheader><term>Items</term><description>Descriptions</description></listheader>
+        /// <item><term>central_meridian</term><description>The longitude of the point from which the values of both the geographical coordinates on the ellipsoid and the grid coordinates on the projection are deemed to increment or decrement for computational purposes. Alternatively it may be considered as the longitude of the point which in the absence of application of false coordinates has grid coordinates of (0,0).</description></item>
+        /// <item><term>latitude_of_origin</term><description>The latitude of the point from which the values of both the geographical coordinates on the ellipsoid and the grid coordinates on the projection are deemed to increment or decrement for computational purposes. Alternatively it may be considered as the latitude of the point which in the absence of application of false coordinates has grid coordinates of (0,0).</description></item>
+        /// <item><term>scale_factor</term><description>The factor by which the map grid is reduced or enlarged during the projection process, defined by its value at the natural origin.</description></item>
+        /// <item><term>false_easting</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Easting, FE, is the easting value assigned to the abscissa (east).</description></item>
+        /// <item><term>false_northing</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Northing, FN, is the northing value assigned to the ordinate.</description></item>
+        /// </list>
+        /// </remarks>
         protected Mercator(IEnumerable<ProjectionParameter> parameters, Mercator isInverse)
-			: base(parameters, isInverse)
-		{
-			Authority = "EPSG";
-			var scaleFactor = GetParameter("scale_factor");
-			
-			if (scaleFactor == null) //This is a two standard parallel Mercator projection (2SP)
-			{
-				_k0 = Math.Cos(lat_origin) / Math.Sqrt(1.0 - _es * Math.Sin(lat_origin) * Math.Sin(lat_origin));
-				AuthorityCode = 9805;
-				Name = "Mercator_2SP";
-			}
-			else //This is a one standard parallel Mercator projection (1SP)
-			{
-				_k0 = scaleFactor.Value;
-				Name = "Mercator_1SP";
-			}
-		}
+            : base(parameters, isInverse)
+        {
+            Authority = "EPSG";
+            var scaleFactor = GetParameter("scale_factor");
+
+            if (scaleFactor == null) //This is a two standard parallel Mercator projection (2SP)
+            {
+                _k0 = Math.Cos(lat_origin) / Math.Sqrt(1.0 - _es * Math.Sin(lat_origin) * Math.Sin(lat_origin));
+                AuthorityCode = 9805;
+                Name = "Mercator_2SP";
+            }
+            else //This is a one standard parallel Mercator projection (1SP)
+            {
+                _k0 = scaleFactor.Value;
+                Name = "Mercator_1SP";
+            }
+        }
 
         /// <summary>
         /// Converts coordinates in decimal degrees to projected meters.
@@ -145,7 +144,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <param name="y">The y-ordinate in projected meters</param>
         /// <returns>Transformed point in decimal degrees</returns>
         protected override void MetersToRadians(ref double x, ref double y)
-		{
+        {
             /* Inverse equations
               -----------------*/
             double dX = x; // * _metersPerUnit - this._falseEasting;
@@ -165,17 +164,17 @@ namespace ProjNet.CoordinateSystems.Projections
             x = dX / (_semiMajor * _k0) + central_meridian;
 
             //return (x, y, z);
-		}
-		
-		/// <summary>
-		/// Returns the inverse of this projection.
-		/// </summary>
-		/// <returns>IMathTransform that is the reverse of the current projection.</returns>
-		public override IMathTransform Inverse()
-		{
-			if (_inverse == null)
-				_inverse = new Mercator(_Parameters.ToProjectionParameter(), this);			
-			return _inverse;
-		}
-	}
+        }
+
+        /// <summary>
+        /// Returns the inverse of this projection.
+        /// </summary>
+        /// <returns>IMathTransform that is the reverse of the current projection.</returns>
+        public override MathTransform Inverse()
+        {
+            if (_inverse == null)
+                _inverse = new Mercator(_Parameters.ToProjectionParameter(), this);
+            return _inverse;
+        }
+    }
 }

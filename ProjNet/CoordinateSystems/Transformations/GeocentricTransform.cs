@@ -17,8 +17,6 @@
 
 using System;
 using System.Collections.Generic;
-using GeoAPI.CoordinateSystems;
-using GeoAPI.CoordinateSystems.Transformations;
 
 namespace ProjNet.CoordinateSystems.Transformations
 {
@@ -49,24 +47,37 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// 
         /// </summary>
-		protected bool _isInverse = false;
+        private bool _isInverse;
+        /// <summary>
+        /// 
+        /// </summary>
+        private MathTransform _inverse;
 
-        private double es;              // Eccentricity squared : (a^2 - b^2)/a^2
-		private double semiMajor;		// major axis
-		private double semiMinor;		// minor axis
-		private double ab;				// Semi_major / semi_minor
+        /// <summary>
+        /// Eccentricity squared : (a^2 - b^2)/a^2
+        /// </summary>
+        private readonly double _es;
+
+        /// <summary>
+        /// major axis
+        /// </summary>
+		private readonly double _semiMajor;
+
+        /// <summary>
+        /// Minor axis
+        /// </summary>
+		private readonly double _semiMinor;
+        /*
+        private double ab;				// Semi_major / semi_minor
 		private double ba;				// Semi_minor / semi_major
-        private double ses;             // Second eccentricity squared : (a^2 - b^2)/b^2    
+         */
+        private readonly double _ses;             // Second eccentricity squared : (a^2 - b^2)/b^2    
 
         /// <summary>
         /// 
         /// </summary>
-		protected List<ProjectionParameter> _Parameters;
+        private List<ProjectionParameter> _parameters;
 
-        /// <summary>
-        /// 
-        /// </summary>
-		protected MathTransform _inverse;
 
 		/// <summary>
 		/// Initializes a geocentric projection object
@@ -84,8 +95,8 @@ namespace ProjNet.CoordinateSystems.Transformations
 		/// <param name="parameters">List of parameters to initialize the projection.</param>
 		internal GeocentricTransform(List<ProjectionParameter> parameters)
 		{
-			_Parameters = parameters;
-			semiMajor = _Parameters.Find(delegate(ProjectionParameter par)
+			_parameters = parameters;
+			_semiMajor = _parameters.Find(delegate(ProjectionParameter par)
 			{
 				// Do not remove the following lines containing "_Parameters = _Parameters;"
 				// There is an issue deploying code with anonymous delegates to 
@@ -97,24 +108,24 @@ namespace ProjNet.CoordinateSystems.Transformations
 				// that is used as the delegate.
 				// For details, see http://www.hedgate.net/articles/2006/01/27/troubles-with-shared-state-and-anonymous-delegates-in-sqlclr
 #pragma warning disable 1717
-				_Parameters = _Parameters;
+				_parameters = _parameters;
 #pragma warning restore 1717
 
 				return par.Name.Equals("semi_major", StringComparison.OrdinalIgnoreCase);
 			}).Value;
 
-			semiMinor = _Parameters.Find(delegate(ProjectionParameter par)
+			_semiMinor = _parameters.Find(delegate(ProjectionParameter par)
 			{
 #pragma warning disable 1717
-				_Parameters = _Parameters; // See explanation above.
+				_parameters = _parameters; // See explanation above.
 #pragma warning restore 1717
 				return par.Name.Equals("semi_minor", StringComparison.OrdinalIgnoreCase);
 			}).Value;
 
-			es = 1.0 - (semiMinor * semiMinor) / (semiMajor * semiMajor); //e^2
-			ses = (Math.Pow(semiMajor, 2) - Math.Pow(semiMinor, 2)) / Math.Pow(semiMinor, 2);
-			ba = semiMinor / semiMajor;
-			ab = semiMajor / semiMinor;
+			_es = 1.0 - (_semiMinor * _semiMinor) / (_semiMajor * _semiMajor); //e^2
+			_ses = (Math.Pow(_semiMajor, 2) - Math.Pow(_semiMinor, 2)) / Math.Pow(_semiMinor, 2);
+			//ba = _semiMinor / _semiMajor;
+			//ab = _semiMajor / _semiMinor;
 		}
 
         public override int DimSource
@@ -131,10 +142,10 @@ namespace ProjNet.CoordinateSystems.Transformations
 		/// Returns the inverse of this conversion.
 		/// </summary>
 		/// <returns>IMathTransform that is the reverse of the current conversion.</returns>
-		public override IMathTransform Inverse()
+		public override MathTransform Inverse()
 		{
 			if (_inverse == null)
-				_inverse = new GeocentricTransform(this._Parameters, !_isInverse);
+				_inverse = new GeocentricTransform(this._parameters, !_isInverse);
 			return _inverse;
 		}
 
@@ -150,10 +161,10 @@ namespace ProjNet.CoordinateSystems.Transformations
             lat = Degrees2Radians(lat);
             z = double.IsNaN(z) ? 0 : z;
 
-            double v = semiMajor / Math.Sqrt(1 - es * Math.Pow(Math.Sin(lat), 2));
+            double v = _semiMajor / Math.Sqrt(1 - _es * Math.Pow(Math.Sin(lat), 2));
             double x = (v + z) * Math.Cos(lat) * Math.Cos(lon);
             double y = (v + z) * Math.Cos(lat) * Math.Sin(lon);
-            z = ((1 - es) * v + z) * Math.Sin(lat);
+            z = ((1 - _es) * v + z) * Math.Sin(lat);
 
             lon = x;
             lat = y;
@@ -169,9 +180,9 @@ namespace ProjNet.CoordinateSystems.Transformations
         {
             bool At_Pole = false; // indicates whether location is in polar region */
 
-            double lon = 0;
+            double lon;
             double lat = 0;
-            double Height = 0;
+            double Height;
             if (x != 0.0)
                 lon = Math.Atan2(y, x);
             else
@@ -201,7 +212,7 @@ namespace ProjNet.CoordinateSystems.Transformations
                         lat = Radians2Degrees(Math.PI * 0.5);
                         x = lon;
                         y = lat;
-                        z = -semiMinor;
+                        z = -_semiMinor;
                         return;
                     }
                 }
@@ -214,17 +225,17 @@ namespace ProjNet.CoordinateSystems.Transformations
             double Sin_B0 = T0 / S0; //sin(B0), B0 is estimate of Bowring aux variable
             double Cos_B0 = W / S0; //cos(B0)
             double Sin3_B0 = Math.Pow(Sin_B0, 3);
-            double T1 = z + semiMinor * ses * Sin3_B0; //corrected estimate of vertical component
-            double Sum = W - semiMajor * es * Cos_B0 * Cos_B0 * Cos_B0; //numerator of cos(phi1)
+            double T1 = z + _semiMinor * _ses * Sin3_B0; //corrected estimate of vertical component
+            double Sum = W - _semiMajor * _es * Cos_B0 * Cos_B0 * Cos_B0; //numerator of cos(phi1)
             double S1 = Math.Sqrt(T1 * T1 + Sum * Sum); //corrected estimate of horizontal component
             double Sin_p1 = T1 / S1; //sin(phi1), phi1 is estimated latitude
             double Cos_p1 = Sum / S1; //cos(phi1)
-            double Rn = semiMajor / Math.Sqrt(1.0 - es * Sin_p1 * Sin_p1); //Earth radius at location
+            double Rn = _semiMajor / Math.Sqrt(1.0 - _es * Sin_p1 * Sin_p1); //Earth radius at location
             if (Cos_p1 >= COS_67P5)
                 Height = W / Cos_p1 - Rn;
             else if (Cos_p1 <= -COS_67P5)
                 Height = W / -Cos_p1 - Rn;
-            else Height = z / Sin_p1 + Rn * (es - 1.0);
+            else Height = z / Sin_p1 + Rn * (_es - 1.0);
             if (!At_Pole)
                 lat = Math.Atan(Sin_p1 / Cos_p1);
 

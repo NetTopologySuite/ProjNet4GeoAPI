@@ -3,18 +3,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using GeoAPI.CoordinateSystems;
 using NUnit.Framework;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
-using ProjNET.Tests;
 
-namespace ProjNet.UnitTests.Converters.WKT
+namespace ProjNET.Tests.WKT
 {
     [TestFixture]
     public class WKTCoordSysParserTests
     {
-        private readonly ICoordinateSystemFactory _coordinateSystemFactory = new CoordinateSystemFactory();
+        private readonly CoordinateSystemFactory _coordinateSystemFactory = new CoordinateSystemFactory();
 
         /// <summary>
         /// Parses a coordinate system WKT
@@ -83,8 +81,8 @@ namespace ProjNet.UnitTests.Converters.WKT
                                         "PARAMETER[\"false_northing\", 9842500], " +
                                         "AUTHORITY[\"EPSG\", \"2918\"]]";
 
-            IProjectedCoordinateSystem pcs = null;
-            Assert.That(() => pcs = _coordinateSystemFactory.CreateFromWkt(wkt) as IProjectedCoordinateSystem, Throws.Nothing);
+            ProjectedCoordinateSystem pcs = null;
+            Assert.That(() => pcs = _coordinateSystemFactory.CreateFromWkt(wkt) as ProjectedCoordinateSystem, Throws.Nothing);
 
             Assert.That(pcs, Is.Not.Null, "Could not parse WKT: " + wkt);
             CheckInfo(pcs, "NAD83(HARN) / Texas Central (ftUS)", "EPSG", 2918);
@@ -118,9 +116,9 @@ namespace ProjNet.UnitTests.Converters.WKT
         public void ParseAllWKTs()
         {
             int parseCount = 0;
-            foreach (SRIDReader.WktString wkt in SRIDReader.GetSrids())
+            foreach (var wkt in SRIDReader.GetSrids())
             {
-                ICoordinateSystem cs = _coordinateSystemFactory.CreateFromWkt(wkt.Wkt);
+                var cs = _coordinateSystemFactory.CreateFromWkt(wkt.Wkt);
                 Assert.IsNotNull(cs, "Could not parse WKT: " + wkt);
                 parseCount++;
             }
@@ -135,7 +133,7 @@ namespace ProjNet.UnitTests.Converters.WKT
         public void TestCreateCoordinateTransformationForWktInCsv()
         {
             //GeographicCoordinateSystem.WGS84
-            CoordinateSystemFactory fac = new CoordinateSystemFactory();
+            var fac = new CoordinateSystemFactory();
             int parseCount = 0;
             int failedCss = 0;
             var failedProjections = new HashSet<string>();
@@ -153,11 +151,11 @@ namespace ProjNet.UnitTests.Converters.WKT
                         if (split > -1)
                         {
                             string wkt = line.Substring(split + 1);
-                            ICoordinateSystem cs = fac.CreateFromWkt(wkt);
+                            var cs = fac.CreateFromWkt(wkt);
                             if (cs == null) continue; //We check this in another test.
-                            if (cs is IProjectedCoordinateSystem)
+                            if (cs is ProjectedCoordinateSystem pcs)
                             {
-                                switch ((cs as IProjectedCoordinateSystem).Projection.ClassName)
+                                switch (pcs.Projection.ClassName)
                                 {
                                     //Skip not supported projections
                                     case "Oblique_Stereographic":
@@ -185,7 +183,7 @@ namespace ProjNet.UnitTests.Converters.WKT
                             }
                             catch (Exception)
                             {
-                                if (cs is IProjectedCoordinateSystem ics)
+                                if (cs is ProjectedCoordinateSystem ics)
                                 {
                                     if (!failedProjections.Contains(ics.Projection.ClassName))
                                         failedProjections.Add(ics.Projection.ClassName);
@@ -212,7 +210,7 @@ namespace ProjNet.UnitTests.Converters.WKT
             if (failedCss > 0)
             {
                 Console.WriteLine($"Failed to create transfroms for {failedCss} coordinate systems");
-                foreach (var fp in failedProjections)
+                foreach (string fp in failedProjections)
                 {
                     Console.WriteLine($"case \"{fp}\":");
                     
@@ -222,7 +220,7 @@ namespace ProjNet.UnitTests.Converters.WKT
         }
 
         /// <summary>
-        /// Test parsing of a <see cref="IProjectedCoordinateSystem"/> from WKT
+        /// Test parsing of a <see cref="ProjectedCoordinateSystem"/> from WKT
         /// </summary>
         [Test]
         public void TestProjectedCoordinateSystem_EPSG27700_UnitBeforeProjection()
@@ -246,7 +244,7 @@ namespace ProjNet.UnitTests.Converters.WKT
                  "AXIS[\"Easting\",EAST]," +
                  "AXIS[\"Northing\",NORTH]]";
 
-            IProjectedCoordinateSystem pcs = null;
+            ProjectedCoordinateSystem pcs = null;
 
             Assert.That(() => pcs = _coordinateSystemFactory.CreateFromWkt(wkt) as ProjectedCoordinateSystem, Throws.Nothing);
 
@@ -332,13 +330,13 @@ namespace ProjNet.UnitTests.Converters.WKT
         }
 
         /// <summary>
-        /// Test parsing of a <see cref="IFittedCoordinateSystem"/> from WKT
+        /// Test parsing of a <see cref="FittedCoordinateSystem"/> from WKT
         /// </summary>
         [Test]
         public void TestFittedCoordinateSystemWkt ()
         {
-            CoordinateSystemFactory fac = new CoordinateSystemFactory ();
-            IFittedCoordinateSystem fcs = null;
+            var fac = new CoordinateSystemFactory ();
+            FittedCoordinateSystem fcs = null;
             string wkt = "FITTED_CS[\"Local coordinate system MNAU (based on Gauss-Krueger)\"," + 
                                 "PARAM_MT[\"Affine\"," + 
                                    "PARAMETER[\"num_row\",3],PARAMETER[\"num_col\",3],PARAMETER[\"elt_0_0\", 0.883485346527455],PARAMETER[\"elt_0_1\", -0.468458794848877],PARAMETER[\"elt_0_2\", 3455869.17937689],PARAMETER[\"elt_1_0\", 0.468458794848877],PARAMETER[\"elt_1_1\", 0.883485346527455],PARAMETER[\"elt_1_2\", 5478710.88035753],PARAMETER[\"elt_2_2\", 1]]," + 
@@ -363,7 +361,7 @@ namespace ProjNet.UnitTests.Converters.WKT
 
             try
             { 
-                fcs = fac.CreateFromWkt (wkt) as IFittedCoordinateSystem;
+                fcs = fac.CreateFromWkt (wkt) as FittedCoordinateSystem;
             }
             catch (Exception ex)
             {
@@ -383,13 +381,13 @@ namespace ProjNet.UnitTests.Converters.WKT
         }
 
         /// <summary>
-        /// Test parsing of a <see cref="IGeocentricCoordinateSystem"/> from WKT
+        /// Test parsing of a <see cref="GeocentricCoordinateSystem"/> from WKT
         /// </summary>
         [Test]
         public void TestGeocentricCoordinateSystem()
         {
             var fac = new CoordinateSystemFactory();
-            IGeocentricCoordinateSystem fcs = null;
+            GeocentricCoordinateSystem fcs = null;
 
             const string wkt = "GEOCCS[\"TUREF\", " +
                             "DATUM[\"Turkish_National_Reference_Frame\", " +
@@ -402,7 +400,7 @@ namespace ProjNet.UnitTests.Converters.WKT
 
             try
             {
-                fcs = fac.CreateFromWkt(wkt) as IGeocentricCoordinateSystem;
+                fcs = fac.CreateFromWkt(wkt) as GeocentricCoordinateSystem;
             }
             catch (Exception ex)
             {
@@ -423,7 +421,7 @@ namespace ProjNet.UnitTests.Converters.WKT
 
         #region Utility
 
-        private bool CheckPrimem(IPrimeMeridian primeMeridian, string name, double? longitude, string authority, long? code)
+        private bool CheckPrimem(PrimeMeridian primeMeridian, string name, double? longitude, string authority, long? code)
         {
             Assert.That(primeMeridian, Is.Not.Null);
             Assert.That(CheckInfo(primeMeridian, name, authority, code));
@@ -435,17 +433,17 @@ namespace ProjNet.UnitTests.Converters.WKT
         {
             Assert.That(unit, Is.Not.Null);
             Assert.That(CheckInfo(unit, name, authority, code));
-            Assert.That(unit, Is.InstanceOf<ILinearUnit>().Or.InstanceOf<IAngularUnit>());
+            Assert.That(unit, Is.InstanceOf<LinearUnit>().Or.InstanceOf<AngularUnit>());
 
             if (!value.HasValue) return true;
-            if (unit is ILinearUnit lunit)
+            if (unit is LinearUnit lunit)
                 Assert.That(lunit.MetersPerUnit, Is.EqualTo(value));
-            else if (unit is IAngularUnit aunit)
+            else if (unit is AngularUnit aunit)
                 Assert.That(aunit.RadiansPerUnit, Is.EqualTo(value));
             return true;
         }
 
-        private static bool CheckEllipsoid(IEllipsoid ellipsoid, string name, double? semiMajor, double? inverseFlattening, string authority, long? code)
+        private static bool CheckEllipsoid(Ellipsoid ellipsoid, string name, double? semiMajor, double? inverseFlattening, string authority, long? code)
         {
             Assert.That(ellipsoid, Is.Not.Null);
             Assert.That(CheckInfo(ellipsoid, name, authority, code));
@@ -455,10 +453,10 @@ namespace ProjNet.UnitTests.Converters.WKT
             return true;
         }
 
-        private static bool CheckDatum(IDatum datum, string name, string authority, long? code)
+        private static bool CheckDatum(Datum datum, string name, string authority, long? code)
         {
             Assert.That(datum, Is.Not.Null);
-            Assert.That(datum, Is.InstanceOf<IHorizontalDatum>().Or.InstanceOf<IVerticalDatum>());
+            Assert.That(datum, Is.InstanceOf<HorizontalDatum>()/*.Or.InstanceOf<IVerticalDatum>()*/);
 
             Assert.That(CheckInfo(datum, name,authority, code), Is.True);
 
@@ -468,8 +466,8 @@ namespace ProjNet.UnitTests.Converters.WKT
         private static bool CheckInfo(IInfo info, string name, string authority = null, long? code = null)
         {
             Assert.That(info, Is.Not.Null);
-            if (!string.IsNullOrEmpty(name)) Assert.That(info.Name, Is.EqualTo(name));
-            if (!string.IsNullOrEmpty(authority)) Assert.That(info.Authority, Is.EqualTo(authority));
+            if (!string.IsNullOrWhiteSpace(name)) Assert.That(info.Name, Is.EqualTo(name));
+            if (!string.IsNullOrWhiteSpace(authority)) Assert.That(info.Authority, Is.EqualTo(authority));
             if (code.HasValue)  Assert.That(info.AuthorityCode, Is.EqualTo(code));
 
             return true;

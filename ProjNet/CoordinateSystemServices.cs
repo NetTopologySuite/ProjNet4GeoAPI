@@ -18,39 +18,33 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Threading;
-using GeoAPI;
-using GeoAPI.CoordinateSystems;
-using GeoAPI.CoordinateSystems.Transformations;
-using GeoAPI.Geometries;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
-using ProjNet.Geometries.Implementation;
 
 namespace ProjNet
 {
     /// <summary>
     /// A coordinate system services class
     /// </summary>
-    public class CoordinateSystemServices : ICoordinateSystemServices
+    public class CoordinateSystemServices // : ICoordinateSystemServices
     {
-        private static ICoordinateSequenceFactory _coordinateSequenceFactory;
+        //private static ICoordinateSequenceFactory _coordinateSequenceFactory;
 
-        /// <summary>
-        /// Gets or sets a default coordinate sequence factory
-        /// </summary>
-        public static ICoordinateSequenceFactory CoordinateSequenceFactory
-        {
-            get { return _coordinateSequenceFactory ?? new CoordinateArraySequenceFactory(); }
-            set { _coordinateSequenceFactory = value; }
-        }
+        ///// <summary>
+        ///// Gets or sets a default coordinate sequence factory
+        ///// </summary>
+        //public static ICoordinateSequenceFactory CoordinateSequenceFactory
+        //{
+        //    get { return _coordinateSequenceFactory ?? new CoordinateArraySequenceFactory(); }
+        //    set { _coordinateSequenceFactory = value; }
+        //}
 
-        private readonly Dictionary<int, ICoordinateSystem> _csBySrid;
+        private readonly Dictionary<int, CoordinateSystem> _csBySrid;
         private readonly Dictionary<IInfo, int> _sridByCs;
 
-        private readonly ICoordinateSystemFactory _coordinateSystemFactory;
-        private readonly ICoordinateTransformationFactory _ctFactory;
+        private readonly CoordinateSystemFactory _coordinateSystemFactory;
+        private readonly CoordinateTransformationFactory _ctFactory;
         
         private readonly ManualResetEvent _initialization = new ManualResetEvent(false);
 
@@ -103,8 +97,8 @@ namespace ProjNet
         /// </summary>
         /// <param name="coordinateSystemFactory">The coordinate sequence factory to use.</param>
         /// <param name="coordinateTransformationFactory">The coordinate transformation factory to use</param>
-        public CoordinateSystemServices(ICoordinateSystemFactory coordinateSystemFactory,
-            ICoordinateTransformationFactory coordinateTransformationFactory)
+        public CoordinateSystemServices(CoordinateSystemFactory coordinateSystemFactory,
+            CoordinateTransformationFactory coordinateTransformationFactory)
             : this(coordinateSystemFactory, coordinateTransformationFactory, null)
         {
         }
@@ -155,22 +149,22 @@ namespace ProjNet
         /// <param name="coordinateSystemFactory">The coordinate sequence factory to use.</param>
         /// <param name="coordinateTransformationFactory">The coordinate transformation factory to use</param>
         /// <param name="enumeration">An enumeration of coordinate system definitions (WKT)</param>
-        public CoordinateSystemServices(ICoordinateSystemFactory coordinateSystemFactory,
-            ICoordinateTransformationFactory coordinateTransformationFactory,
+        public CoordinateSystemServices(CoordinateSystemFactory coordinateSystemFactory,
+            CoordinateTransformationFactory coordinateTransformationFactory,
             IEnumerable<KeyValuePair<int, string>> enumeration)
         {
             if (coordinateSystemFactory == null)
-                throw new ArgumentNullException("coordinateSystemFactory");
+                throw new ArgumentNullException(nameof(coordinateSystemFactory));
             _coordinateSystemFactory = coordinateSystemFactory;
 
             if (coordinateTransformationFactory == null)
-                throw new ArgumentNullException("coordinateTransformationFactory");
+                throw new ArgumentNullException(nameof(coordinateTransformationFactory));
             _ctFactory = coordinateTransformationFactory;
 
-            _csBySrid = new Dictionary<int, ICoordinateSystem>();
+            _csBySrid = new Dictionary<int, CoordinateSystem>();
             _sridByCs = new Dictionary<IInfo, int>(new CsEqualityComparer());
 
-            var enumObj = (object)enumeration ?? DefaultInitialization();
+            object enumObj = (object)enumeration ?? DefaultInitialization();
             _initialization = new ManualResetEvent(false);
             System.Threading.Tasks.Task.Run(() => FromEnumeration((new[] { this, enumObj })));
         }
@@ -185,7 +179,7 @@ namespace ProjNet
         //    ThreadPool.QueueUserWorkItem(FromEnumeration, new[] { this, enumObj });
         //}
 
-        private static ICoordinateSystem CreateCoordinateSystem(ICoordinateSystemFactory coordinateSystemFactory, string wkt)
+        private static CoordinateSystem CreateCoordinateSystem(CoordinateSystemFactory coordinateSystemFactory, string wkt)
         {
             try
             {
@@ -198,14 +192,14 @@ namespace ProjNet
             }
         }
 
-        private static IEnumerable<KeyValuePair<int, ICoordinateSystem>> DefaultInitialization()
+        private static IEnumerable<KeyValuePair<int, CoordinateSystem>> DefaultInitialization()
         {
-            yield return new KeyValuePair<int, ICoordinateSystem>(4326, GeographicCoordinateSystem.WGS84);
-            yield return new KeyValuePair<int, ICoordinateSystem>(3857, ProjectedCoordinateSystem.WebMercator);
+            yield return new KeyValuePair<int, CoordinateSystem>(4326, GeographicCoordinateSystem.WGS84);
+            yield return new KeyValuePair<int, CoordinateSystem>(3857, ProjectedCoordinateSystem.WebMercator);
         }
 
         private static void FromEnumeration(CoordinateSystemServices css,
-            IEnumerable<KeyValuePair<int, ICoordinateSystem>> enumeration)
+            IEnumerable<KeyValuePair<int, CoordinateSystem>> enumeration)
         {
             foreach (var sridCs in enumeration)
             {
@@ -213,15 +207,15 @@ namespace ProjNet
             }
         }
 
-        private static IEnumerable<KeyValuePair<int, ICoordinateSystem>> CreateCoordinateSystems(
-            ICoordinateSystemFactory factory,
+        private static IEnumerable<KeyValuePair<int, CoordinateSystem>> CreateCoordinateSystems(
+            CoordinateSystemFactory factory,
             IEnumerable<KeyValuePair<int, string>> enumeration)
         {
             foreach (var sridWkt in enumeration)
             {
                 var cs = CreateCoordinateSystem(factory, sridWkt.Value);
                 if (cs != null)
-                    yield return new KeyValuePair<int, ICoordinateSystem>(sridWkt.Key, cs);
+                    yield return new KeyValuePair<int, CoordinateSystem>(sridWkt.Key, cs);
             }
         }
 
@@ -233,13 +227,13 @@ namespace ProjNet
 
         private static void FromEnumeration(object parameter)
         {
-            var paras = (object[]) parameter;
+            object[] paras = (object[]) parameter;
             var css = (CoordinateSystemServices) paras[0];
 
             if (paras[1] is IEnumerable<KeyValuePair<int, string>>)
                 FromEnumeration(css, (IEnumerable<KeyValuePair<int, string>>) paras[1]);
             else
-                FromEnumeration(css, (IEnumerable<KeyValuePair<int, ICoordinateSystem>>)paras[1]);
+                FromEnumeration(css, (IEnumerable<KeyValuePair<int, CoordinateSystem>>)paras[1]);
 
             css._initialization.Set();
         }
@@ -250,11 +244,10 @@ namespace ProjNet
         /// </summary>
         /// <param name="srid">The initialization for the coordinate system</param>
         /// <returns>The coordinate system.</returns>
-        public ICoordinateSystem GetCoordinateSystem(int srid)
+        public CoordinateSystem GetCoordinateSystem(int srid)
         {
-            ICoordinateSystem cs;
             _initialization.WaitOne();
-            return _csBySrid.TryGetValue(srid, out cs) ? cs : null;
+            return _csBySrid.TryGetValue(srid, out var cs) ? cs : null;
         }
 
         /// <summary>
@@ -263,9 +256,9 @@ namespace ProjNet
         /// <param name="authority">The authority for the coordinate system</param>
         /// <param name="code">The code assigned to the coordinate system by <paramref name="authority" />.</param>
         /// <returns>The coordinate system.</returns>
-        public ICoordinateSystem GetCoordinateSystem(string authority, long code)
+        public CoordinateSystem GetCoordinateSystem(string authority, long code)
         {
-            var srid = GetSRID(authority, code);
+            int? srid = GetSRID(authority, code);
             if (srid.HasValue)
                 return GetCoordinateSystem(srid.Value);
             return null;
@@ -307,12 +300,12 @@ namespace ProjNet
         /// <param name="source">The source spatial reference system.</param>
         /// <param name="target">The target spatial reference system.</param>
         /// <returns>A coordinate transformation, <value>null</value> if no transformation could be created.</returns>
-        public ICoordinateTransformation CreateTransformation(ICoordinateSystem source, ICoordinateSystem target)
+        public ICoordinateTransformation CreateTransformation(CoordinateSystem source, CoordinateSystem target)
         {
             return _ctFactory.CreateFromCoordinateSystems(source, target);
         }
 
-        protected void AddCoordinateSystem(int srid, ICoordinateSystem coordinateSystem)
+        protected void AddCoordinateSystem(int srid, CoordinateSystem coordinateSystem)
         {
             lock (((IDictionary) _csBySrid).SyncRoot)
             {
@@ -339,9 +332,9 @@ namespace ProjNet
             }
         }
 
-        protected virtual int AddCoordinateSystem(ICoordinateSystem coordinateSystem)
+        protected virtual int AddCoordinateSystem(CoordinateSystem coordinateSystem)
         {
-            var srid = (int) coordinateSystem.AuthorityCode;
+            int srid = (int) coordinateSystem.AuthorityCode;
             AddCoordinateSystem(srid, coordinateSystem);
 
             return srid;
@@ -366,7 +359,7 @@ namespace ProjNet
             throw new NotSupportedException();
         }
 
-        public IEnumerator<KeyValuePair<int, ICoordinateSystem>> GetEnumerator()
+        public IEnumerator<KeyValuePair<int, CoordinateSystem>> GetEnumerator()
         {
             _initialization.WaitOne();
             return _csBySrid.GetEnumerator();

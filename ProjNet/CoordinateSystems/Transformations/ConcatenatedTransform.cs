@@ -17,8 +17,7 @@
 
 using System;
 using System.Collections.Generic;
-using GeoAPI.CoordinateSystems.Transformations;
-using GeoAPI.Geometries;
+using System.Linq;
 
 namespace ProjNet.CoordinateSystems.Transformations
 {
@@ -26,46 +25,51 @@ namespace ProjNet.CoordinateSystems.Transformations
     /// 
     /// </summary>
     [Serializable] 
-    internal class ConcatenatedTransform : MathTransform
+    internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationCore
 	{
         /// <summary>
         /// 
         /// </summary>
-		protected IMathTransform _inverse;
+        private MathTransform _inverse;
+        private readonly List<ICoordinateTransformationCore> _coordinateTransformationList;
 
         /// <summary>
         /// 
         /// </summary>
-		public ConcatenatedTransform() : 
-            this(new List<ICoordinateTransformation>()) { }
+		public ConcatenatedTransform()  
+            {  _coordinateTransformationList = new List<ICoordinateTransformationCore>();}
 
         /// <summary>
         /// 
         /// </summary>
-        /// <param name="transformlist"></param>
-		public ConcatenatedTransform(List<ICoordinateTransformation> transformlist)
+        /// <param name="transformList"></param>
+        public ConcatenatedTransform(IEnumerable<ICoordinateTransformationCore> transformList)
+            : this()
 		{
-			_coordinateTransformationList = transformlist;
+			_coordinateTransformationList.AddRange(transformList);
 		}
 
-		private List<ICoordinateTransformation> _coordinateTransformationList;
 
         /// <summary>
         /// 
         /// </summary>
-		public List<ICoordinateTransformation> CoordinateTransformationList
+		public IList<ICoordinateTransformationCore> CoordinateTransformationList
 		{
 			get { return _coordinateTransformationList; }
-			set
+            /*
+            set
 			{
 				_coordinateTransformationList = value;
 				_inverse = null;
 			}
+             */
 		}
+
+
 
         public override int DimSource
         {
-            get { return _coordinateTransformationList[0].SourceCS.Dimension; }
+            get { return (_coordinateTransformationList[0]).SourceCS.Dimension; }
         }
 
         public override int DimTarget
@@ -77,26 +81,12 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <inheritdoc />
         public override void Transform(ref double x, ref double y, ref double z)
         {
-            double[] xyzArr = null;
-            foreach (ICoordinateTransformation ct in _coordinateTransformationList)
+            foreach (var ctc in _coordinateTransformationList)
             {
-                if (ct.MathTransform is MathTransform ours)
-                {
-                    ours.Transform(ref x, ref y, ref z);
-                }
-                else
-                {
-                    if (xyzArr == null)
-                    {
-                        xyzArr = new double[3];
-                    }
-
-                    (xyzArr[0], xyzArr[1], xyzArr[2]) = (x, y, z);
-                    var transformed = ct.MathTransform.Transform(xyzArr);
-                    x = transformed?.Length > 0 ? transformed[0] : 0;
-                    y = transformed?.Length > 1 ? transformed[1] : 0;
-                    z = transformed?.Length > 2 ? transformed[2] : 0;
-                }
+                if (ctc is CoordinateTransformation ct)
+                    ct.MathTransform.Transform(ref x, ref y, ref z);
+                else if (ctc is ConcatenatedTransform cct)
+                    cct.Transform(ref x, ref y, ref z);
             }
         }
 
@@ -104,7 +94,7 @@ namespace ProjNet.CoordinateSystems.Transformations
 		/// Returns the inverse of this conversion.
 		/// </summary>
 		/// <returns>IMathTransform that is the reverse of the current conversion.</returns>
-		public override IMathTransform Inverse()
+		public override MathTransform Inverse()
 		{
 			if (_inverse == null)
 			{
@@ -120,22 +110,29 @@ namespace ProjNet.CoordinateSystems.Transformations
 		public override void Invert()
 		{
 			_coordinateTransformationList.Reverse();
-			foreach (ICoordinateTransformation ic in _coordinateTransformationList)
-				ic.MathTransform.Invert();
+            foreach (var ic in _coordinateTransformationList)
+            {
+                if (ic is CoordinateTransformation ct)
+                    ct.MathTransform.Invert();
+                else if (ic is ConcatenatedTransform cct)
+                    cct.Invert();
+            }
 		}
 
 		public ConcatenatedTransform Clone()
 		{
-			var clonedList = new List<ICoordinateTransformation>(_coordinateTransformationList.Count);
-			foreach (ICoordinateTransformation ct in _coordinateTransformationList)
+			var clonedList = new List<ICoordinateTransformationCore>(_coordinateTransformationList.Count);
+			foreach (var ct in _coordinateTransformationList)
 				clonedList.Add(CloneCoordinateTransformation(ct));
 			return new ConcatenatedTransform(clonedList);
 		}
 
-        private static ICoordinateTransformation CloneCoordinateTransformation(ICoordinateTransformation ict)
+        private static readonly CoordinateTransformationFactory CoordinateTransformationFactory =
+                new CoordinateTransformationFactory();
+
+        private static ICoordinateTransformationCore CloneCoordinateTransformation(ICoordinateTransformationCore ict)
         {
-            var ctFactory = new CoordinateTransformationFactory();
-            return ctFactory.CreateFromCoordinateSystems(ict.SourceCS, ict.TargetCS);
+            return CoordinateTransformationFactory.CreateFromCoordinateSystems(ict.SourceCS, ict.TargetCS);
         }
 
         /// <summary>
@@ -155,5 +152,9 @@ namespace ProjNet.CoordinateSystems.Transformations
 		{
 			get { throw new NotImplementedException(); }
 		}
-	}
+
+        public CoordinateSystem SourceCS { get => CoordinateTransformationList[0].SourceCS; }
+
+        public CoordinateSystem TargetCS { get => CoordinateTransformationList[CoordinateTransformationList.Count-1].TargetCS; }
+    }
 }

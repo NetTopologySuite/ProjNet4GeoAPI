@@ -38,9 +38,8 @@
 using System;
 using System.Globalization;
 using System.IO;
-using System.Text;
 
-namespace ProjNet.Converters.WellKnownText.IO
+namespace ProjNet.IO.CoordinateSystems
 {
     ///<summary>
     ///The StreamTokenizer class takes an input stream and parses it into "tokens", allowing the tokens to be read one at a time. The parsing process is controlled by a table and a number of flags that can be set to various states. The stream tokenizer can recognize identifiers, numbers, quoted strings, and various comment style
@@ -107,7 +106,7 @@ namespace ProjNet.Converters.WellKnownText.IO
             string number = GetStringValue();
             if (GetTokenType() == TokenType.Number)
                 return double.Parse(number, _nfi);
-            string s = String.Format(_nfi, "The token '{0}' is not a number at line {1} column {2}.",
+            string s = string.Format(_nfi, "The token '{0}' is not a number at line {1} column {2}.",
                 number, LineNumber, Column);
             throw new ArgumentException(s);
         }
@@ -154,15 +153,15 @@ namespace ProjNet.Converters.WellKnownText.IO
             _currentTokenType = TokenType.Eof;
             int finished = _reader.Read();
 
-            var isNumber = false;
-            var isWord = false;
+            bool isNumber = false;
+            bool isWord = false;
 
             while (finished != -1)
             {
                 char currentCharacter = (char) finished;
                 char nextCharacter = (char) _reader.Peek();
                 _currentTokenType = GetType(currentCharacter);
-                TokenType nextTokenType = GetType(nextCharacter);
+                var nextTokenType = GetType(nextCharacter);
 
                 // handling of words with _
                 if (isWord && currentCharacter == '_')
@@ -246,13 +245,13 @@ namespace ProjNet.Converters.WellKnownText.IO
         /// <returns>The TokenType the character is.</returns>
         private static TokenType GetType(char character)
         {
-            if (Char.IsDigit(character))
+            if (char.IsDigit(character))
                 return TokenType.Number;
-            if (Char.IsLetter(character))
+            if (char.IsLetter(character))
                 return TokenType.Word;
             if (character == '\n')
                 return TokenType.Eol;
-            if (Char.IsWhiteSpace(character) || Char.IsControl(character))
+            if (char.IsWhiteSpace(character) || char.IsControl(character))
                 return TokenType.Whitespace;
             return TokenType.Symbol;
         }
@@ -264,10 +263,10 @@ namespace ProjNet.Converters.WellKnownText.IO
         private TokenType NextNonWhitespaceToken()
         {
 
-            TokenType tokentype = NextTokenAny();
-            while (tokentype == TokenType.Whitespace || tokentype == TokenType.Eol)
-                tokentype = NextTokenAny();
-            return tokentype;
+            var tokenType = NextTokenAny();
+            while (tokenType == TokenType.Whitespace || tokenType == TokenType.Eol)
+                tokenType = NextTokenAny();
+            return tokenType;
         }
     }
 }

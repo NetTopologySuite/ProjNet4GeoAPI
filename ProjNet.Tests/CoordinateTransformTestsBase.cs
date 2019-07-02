@@ -1,26 +1,46 @@
 using System;
 using System.Globalization;
-using GeoAPI.CoordinateSystems;
+using NetTopologySuite.Geometries;
+using NetTopologySuite.Geometries.Implementation;
 using NUnit.Framework;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
+using ProjNET.Tests.Geometries.Implementation;
 
-namespace ProjNet.UnitTests
+namespace ProjNET.Tests
 {
     public class CoordinateTransformTestsBase
     {
         protected readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
         protected readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
+        public CoordinateSequence CreateSequence(string sequenceTypeName, Coordinate[] coordinates)
+        {
+            switch (sequenceTypeName)
+            {
+                case "CoordinateArraySequence":
+                    return CoordinateArraySequenceFactory.Instance.Create(coordinates);
+                case "PackedDoubleCoordinateSequence":
+                    return PackedCoordinateSequenceFactory.DoubleFactory.Create(coordinates); 
+                case "PackedFloatCoordinateSequence":
+                    return PackedCoordinateSequenceFactory.FloatFactory.Create(coordinates);
+                case "DotSpatialAffineCoordinateSequence":
+                    return DotSpatialAffineCoordinateSequenceFactory.Instance.Create(coordinates);
+                case "SpanCoordinateSequence":
+                    return SpanCoordinateSequenceFactory.Instance.Create(coordinates);
+            }
+            throw new NotSupportedException($"Creation of {sequenceTypeName} not supported");
+        }
+
         protected bool Verbose { get; set; }
 
         protected bool ToleranceLessThan(double[] p1, double[] p2, double tolerance)
         {
-            var d0 = Math.Abs(p1[0] - p2[0]);
-            var d1 = Math.Abs(p1[1] - p2[1]);
+            double d0 = Math.Abs(p1[0] - p2[0]);
+            double d1 = Math.Abs(p1[1] - p2[1]);
             if (p1.Length > 2 && p2.Length > 2)
             {
-                var d2 = Math.Abs(p1[2] - p2[2]);
+                double d2 = Math.Abs(p1[2] - p2[2]);
                 if (Verbose)
                     Console.WriteLine("Allowed Tolerance {3}; got dx: {0}, dy: {1}, dz {2}", d0, d1, d2, tolerance);
                 return d0 < tolerance && d1 < tolerance && d2 < tolerance;
@@ -33,7 +53,7 @@ namespace ProjNet.UnitTests
 
         protected string TransformationError(string projection, double[] pExpected, double[] pResult, bool reverse = false)
         {
-            return String.Format(CultureInfo.InvariantCulture,
+            return string.Format(CultureInfo.InvariantCulture,
                                  "{6} {7} transformation outside tolerance!\n\tExpected [{0}, {1}],\n\tgot      [{2}, {3}],\n\tdelta    [{4}, {5}]",
                                  pExpected[0], pExpected[1], 
                                  pResult[0], pResult[1], 
@@ -41,20 +61,20 @@ namespace ProjNet.UnitTests
                                  projection, reverse ? "reverse" : "forward");
         }
 
-        public void Test(string title, ICoordinateSystem source, ICoordinateSystem target, 
+        public void Test(string title, CoordinateSystem source, CoordinateSystem target, 
                          double[] testPoint, double[] expectedPoint,
                          double tolerance, double reverseTolerance = double.NaN)
         {
             var ct = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
 
-            var forwardResult = ct.MathTransform.Transform(testPoint);
-            var reverseResult = Double.IsNaN(reverseTolerance)
+            double[] forwardResult = ct.MathTransform.Transform(testPoint);
+            double[] reverseResult = double.IsNaN(reverseTolerance)
                                     ? testPoint
                                     : ct.MathTransform.Inverse().Transform(forwardResult);
 
-            var forward = ToleranceLessThan(forwardResult, expectedPoint, tolerance);
+            bool forward = ToleranceLessThan(forwardResult, expectedPoint, tolerance);
 
-            var reverse = Double.IsNaN(reverseTolerance) || 
+            bool reverse = double.IsNaN(reverseTolerance) || 
                           ToleranceLessThan(reverseResult, testPoint, reverseTolerance);
 
             if (!forward)

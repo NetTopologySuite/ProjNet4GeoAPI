@@ -17,7 +17,6 @@
 
 using System;
 using System.Text;
-using GeoAPI.CoordinateSystems;
 
 namespace ProjNet.CoordinateSystems
 {
@@ -162,12 +161,12 @@ namespace ProjNet.CoordinateSystems
 		{
 			get
 			{
-				StringBuilder sb = new StringBuilder();
+				var sb = new StringBuilder();
 				sb.AppendFormat("<CS_Info");
 				if(AuthorityCode>0) sb.AppendFormat(" AuthorityCode=\"{0}\"",AuthorityCode);
-				if (!String.IsNullOrEmpty(Abbreviation)) sb.AppendFormat(" Abbreviation=\"{0}\"", Abbreviation);
-				if (!String.IsNullOrEmpty(Authority)) sb.AppendFormat(" Authority=\"{0}\"", Authority);
-				if (!String.IsNullOrEmpty(Name)) sb.AppendFormat(" Name=\"{0}\"", Name);
+				if (!string.IsNullOrWhiteSpace(Abbreviation)) sb.AppendFormat(" Abbreviation=\"{0}\"", Abbreviation);
+				if (!string.IsNullOrWhiteSpace(Authority)) sb.AppendFormat(" Authority=\"{0}\"", Authority);
+				if (!string.IsNullOrWhiteSpace(Name)) sb.AppendFormat(" Name=\"{0}\"", Name);
 				sb.Append("/>");
 				return sb.ToString();
 			}

@@ -41,7 +41,7 @@
 
 #endregion
 
-namespace ProjNet.Converters.WellKnownText
+namespace ProjNet.IO.CoordinateSystems
 {
 	/// <summary>
 	/// Represents the type of token created by the StreamTokenizer class.

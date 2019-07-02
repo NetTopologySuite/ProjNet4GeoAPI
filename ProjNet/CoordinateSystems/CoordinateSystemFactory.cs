@@ -18,8 +18,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using GeoAPI.CoordinateSystems;
-using ProjNet.Converters.WellKnownText;
+using ProjNet.IO.CoordinateSystems;
 
 namespace ProjNet.CoordinateSystems
 {
@@ -38,54 +37,39 @@ namespace ProjNet.CoordinateSystems
     /// have codes for NAD83 state plane coordinate systems that use feet units. This factory
     /// lets an application create such a hybrid coordinate system.</para>
     /// </remarks>
-    public class CoordinateSystemFactory : ICoordinateSystemFactory
+    public class CoordinateSystemFactory 
     {
-        /// <summary>
-        /// Gets an encoding
-        /// </summary>
-        [Obsolete("The encoding is no longer used and will be removed in a future release.")]
-        public Encoding Encoding { get; }
-
         /// <summary>
         /// Creates an instance of this class
         /// </summary>
         public CoordinateSystemFactory() { }
 
         /// <summary>
-        /// Creates an instance of this class
-        /// </summary>
-        /// <param name="encoding">An encoding</param>
-        [Obsolete("The encoding is no longer used and will be removed in a future release.")]
-        public CoordinateSystemFactory(Encoding encoding)
-        {
-            Encoding = encoding;
-        }
-
-        /// <summary>
         /// Creates a coordinate system object from an XML string.
         /// </summary>
         /// <param name="xml">XML representation for the spatial reference</param>
         /// <returns>The resulting spatial reference object</returns>
-        public ICoordinateSystem CreateFromXml(string xml)
+        public CoordinateSystem CreateFromXml(string xml)
         {
             throw new NotImplementedException();
         }
 
         /// <summary>
         /// Creates a spatial reference object given its Well-known text representation.
-        /// The output object may be either a <see cref="IGeographicCoordinateSystem"/> or
-        /// a <see cref="IProjectedCoordinateSystem"/>.
+        /// The output object may be either a <see cref="GeographicCoordinateSystem"/> or
+        /// a <see cref="ProjectedCoordinateSystem"/>.
         /// </summary>
         /// <param name="WKT">The Well-known text representation for the spatial reference</param>
         /// <returns>The resulting spatial reference object</returns>
-        public ICoordinateSystem CreateFromWkt(string WKT)
+        public CoordinateSystem CreateFromWkt(string WKT)
         {
-            IInfo info = CoordinateSystemWktReader.Parse(WKT);
-            return info as ICoordinateSystem;
+            var info = CoordinateSystemWktReader.Parse(WKT);
+            return info as CoordinateSystem;
         }
 
+        /*
         /// <summary>
-        /// Creates a <see cref="ICompoundCoordinateSystem"/> [NOT IMPLEMENTED].
+        /// Creates a <see cref="CompoundCoordinateSystem"/> [NOT IMPLEMENTED].
         /// </summary>
         /// <param name="name">Name of compound coordinate system.</param>
         /// <param name="head">Head coordinate system</param>
@@ -95,9 +79,9 @@ namespace ProjNet.CoordinateSystems
         {
             throw new NotImplementedException();
         }
-
+         */
         /// <summary>
-        /// Creates a <see cref="IFittedCoordinateSystem"/>.
+        /// Creates a <see cref="FittedCoordinateSystem"/>.
         /// </summary>
         /// <remarks>The units of the axes in the fitted coordinate system will be 
         /// inferred from the units of the base coordinate system. If the affine map
@@ -110,11 +94,12 @@ namespace ProjNet.CoordinateSystems
         /// <param name="toBaseWkt"></param>
         /// <param name="arAxes"></param>
         /// <returns>Fitted coordinate system</returns>
-        public IFittedCoordinateSystem CreateFittedCoordinateSystem(string name, ICoordinateSystem baseCoordinateSystem, string toBaseWkt, List<AxisInfo> arAxes)
+        public FittedCoordinateSystem CreateFittedCoordinateSystem(string name, CoordinateSystem baseCoordinateSystem, string toBaseWkt, List<AxisInfo> arAxes)
         {
             throw new NotImplementedException();
         }
 
+        /*
         /// <summary>
         /// Creates a <see cref="ILocalCoordinateSystem">local coordinate system</see>.
         /// </summary>
@@ -133,7 +118,7 @@ namespace ProjNet.CoordinateSystems
         {
             throw new NotImplementedException();
         }
-
+        */
         /// <summary>
         /// Creates an <see cref="Ellipsoid"/> from radius values.
         /// </summary>
@@ -143,12 +128,12 @@ namespace ProjNet.CoordinateSystems
         /// <param name="semiMinorAxis"></param>
         /// <param name="linearUnit"></param>
         /// <returns>Ellipsoid</returns>
-        public IEllipsoid CreateEllipsoid(string name, double semiMajorAxis, double semiMinorAxis, ILinearUnit linearUnit)
+        public Ellipsoid CreateEllipsoid(string name, double semiMajorAxis, double semiMinorAxis, LinearUnit linearUnit)
         {
             double ivf = 0;
             if (semiMajorAxis != semiMinorAxis)
                 ivf = semiMajorAxis / (semiMajorAxis - semiMinorAxis);
-            return new Ellipsoid(semiMajorAxis, semiMinorAxis, ivf, false, linearUnit, name, String.Empty, -1, String.Empty, string.Empty, string.Empty);
+            return new Ellipsoid(semiMajorAxis, semiMinorAxis, ivf, false, linearUnit, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
         }
 
         /// <summary>
@@ -160,12 +145,12 @@ namespace ProjNet.CoordinateSystems
         /// <param name="inverseFlattening">Inverse flattening</param>
         /// <param name="linearUnit">Linear unit</param>
         /// <returns>Ellipsoid</returns>
-        public IEllipsoid CreateFlattenedSphere(string name, double semiMajorAxis, double inverseFlattening, ILinearUnit linearUnit)
+        public Ellipsoid CreateFlattenedSphere(string name, double semiMajorAxis, double inverseFlattening, LinearUnit linearUnit)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Invalid name");
 
-            return new Ellipsoid(semiMajorAxis, -1, inverseFlattening, true, linearUnit, name, String.Empty, -1, String.Empty, String.Empty, String.Empty);
+            return new Ellipsoid(semiMajorAxis, -1, inverseFlattening, true, linearUnit, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
         }
 
         /// <summary>
@@ -178,21 +163,21 @@ namespace ProjNet.CoordinateSystems
         /// <param name="axis0">Primary axis</param>
         /// <param name="axis1">Secondary axis</param>
         /// <returns>Projected coordinate system</returns>
-        public IProjectedCoordinateSystem CreateProjectedCoordinateSystem(string name, IGeographicCoordinateSystem gcs, IProjection projection, ILinearUnit linearUnit, AxisInfo axis0, AxisInfo axis1)
+        public ProjectedCoordinateSystem CreateProjectedCoordinateSystem(string name, GeographicCoordinateSystem gcs, IProjection projection, LinearUnit linearUnit, AxisInfo axis0, AxisInfo axis1)
         {
-            if (String.IsNullOrEmpty(name))
-                throw new ArgumentException("Invalid name");
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Invalid name", nameof(name));
             if (gcs == null)
-                throw new ArgumentException("Geographic coordinate system was null");
+                throw new ArgumentException("Geographic coordinate system was null", nameof(gcs));
             if (projection == null)
-                throw new ArgumentException("Projection was null");
+                throw new ArgumentException("Projection was null", nameof(projection));
             if (linearUnit == null)
                 throw new ArgumentException("Linear unit was null");
 
-            List<AxisInfo> info = new List<AxisInfo>(2);
+            var info = new List<AxisInfo>(2);
             info.Add(axis0);
             info.Add(axis1);
-            return new ProjectedCoordinateSystem(null, gcs, linearUnit, projection, info, name, String.Empty, -1, String.Empty, String.Empty, String.Empty);
+            return new ProjectedCoordinateSystem(null, gcs, linearUnit, projection, info, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
         }
 
         /// <summary>
@@ -204,12 +189,12 @@ namespace ProjNet.CoordinateSystems
         /// <returns>Projection</returns>
         public IProjection CreateProjection(string name, string wktProjectionClass, List<ProjectionParameter> parameters)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Invalid name");
             if (parameters == null || parameters.Count == 0)
                 throw new ArgumentException("Invalid projection parameters");
 
-            return new Projection(wktProjectionClass, parameters, name, String.Empty, -1, String.Empty, String.Empty, String.Empty);
+            return new Projection(wktProjectionClass, parameters, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
         }
 
         /// <summary>
@@ -226,14 +211,14 @@ namespace ProjNet.CoordinateSystems
         /// <param name="ellipsoid">Ellipsoid</param>
         /// <param name="toWgs84">Wgs84 conversion parameters</param>
         /// <returns>Horizontal datum</returns>
-        public IHorizontalDatum CreateHorizontalDatum(string name, DatumType datumType, IEllipsoid ellipsoid, Wgs84ConversionInfo toWgs84)
+        public HorizontalDatum CreateHorizontalDatum(string name, DatumType datumType, Ellipsoid ellipsoid, Wgs84ConversionInfo toWgs84)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Invalid name");
             if (ellipsoid == null)
                 throw new ArgumentException("Ellipsoid was null");
 
-            return new HorizontalDatum(ellipsoid, toWgs84, datumType, name, String.Empty, -1, String.Empty, String.Empty, String.Empty);
+            return new HorizontalDatum(ellipsoid, toWgs84, datumType, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
         }
 
         /// <summary>
@@ -243,12 +228,12 @@ namespace ProjNet.CoordinateSystems
         /// <param name="angularUnit">Angular unit</param>
         /// <param name="longitude">Longitude</param>
         /// <returns>Prime meridian</returns>
-        public IPrimeMeridian CreatePrimeMeridian(string name, IAngularUnit angularUnit, double longitude)
+        public PrimeMeridian CreatePrimeMeridian(string name, AngularUnit angularUnit, double longitude)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Invalid name");
 
-            return new PrimeMeridian(longitude, angularUnit, name, String.Empty, -1, String.Empty, String.Empty, String.Empty);
+            return new PrimeMeridian(longitude, angularUnit, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
         }
 
         /// <summary>
@@ -261,17 +246,18 @@ namespace ProjNet.CoordinateSystems
         /// <param name="axis0">First axis</param>
         /// <param name="axis1">Second axis</param>
         /// <returns>Geographic coordinate system</returns>
-        public IGeographicCoordinateSystem CreateGeographicCoordinateSystem(string name, IAngularUnit angularUnit, IHorizontalDatum datum, IPrimeMeridian primeMeridian, AxisInfo axis0, AxisInfo axis1)
+        public GeographicCoordinateSystem CreateGeographicCoordinateSystem(string name, AngularUnit angularUnit, HorizontalDatum datum, PrimeMeridian primeMeridian, AxisInfo axis0, AxisInfo axis1)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Invalid name");
 
-            List<AxisInfo> info = new List<AxisInfo>(2);
+            var info = new List<AxisInfo>(2);
             info.Add(axis0);
             info.Add(axis1);
-            return new GeographicCoordinateSystem(angularUnit, datum, primeMeridian, info, name, String.Empty, -1, String.Empty, String.Empty, String.Empty);
+            return new GeographicCoordinateSystem(angularUnit, datum, primeMeridian, info, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
         }
 
+        /*
         /// <summary>
         /// Creates a <see cref="ILocalDatum"/>.
         /// </summary>
@@ -282,7 +268,9 @@ namespace ProjNet.CoordinateSystems
         {
             throw new NotImplementedException();
         }
+        */
 
+        /*
         /// <summary>
         /// Creates a <see cref="IVerticalDatum"/> from an enumerated type value.
         /// </summary>
@@ -293,7 +281,9 @@ namespace ProjNet.CoordinateSystems
         {
             throw new NotImplementedException();
         }
+        */
 
+        /*
         /// <summary>
         /// Creates a <see cref="IVerticalCoordinateSystem"/> from a <see cref="IVerticalDatum">datum</see> and <see cref="LinearUnit">linear units</see>.
         /// </summary>
@@ -306,26 +296,26 @@ namespace ProjNet.CoordinateSystems
         {
             throw new NotImplementedException();
         }
-
+         */
         /// <summary>
-        /// Creates a <see cref="CreateGeocentricCoordinateSystem"/> from a <see cref="IHorizontalDatum">datum</see>, 
-        /// <see cref="ILinearUnit">linear unit</see> and <see cref="IPrimeMeridian"/>.
+        /// Creates a <see cref="CreateGeocentricCoordinateSystem"/> from a <see cref="HorizontalDatum">datum</see>, 
+        /// <see cref="LinearUnit">linear unit</see> and <see cref="PrimeMeridian"/>.
         /// </summary>
         /// <param name="name">Name of geocentric coordinate system</param>
         /// <param name="datum">Horizontal datum</param>
         /// <param name="linearUnit">Linear unit</param>
         /// <param name="primeMeridian">Prime meridian</param>
         /// <returns>Geocentric Coordinate System</returns>
-        public IGeocentricCoordinateSystem CreateGeocentricCoordinateSystem(string name, IHorizontalDatum datum, ILinearUnit linearUnit, IPrimeMeridian primeMeridian)
+        public GeocentricCoordinateSystem CreateGeocentricCoordinateSystem(string name, HorizontalDatum datum, LinearUnit linearUnit, PrimeMeridian primeMeridian)
         {
-            if (String.IsNullOrEmpty(name))
+            if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Invalid name");
 
-            List<AxisInfo> info = new List<AxisInfo>(3);
+            var info = new List<AxisInfo>(3);
             info.Add(new AxisInfo("X", AxisOrientationEnum.Other));
             info.Add(new AxisInfo("Y", AxisOrientationEnum.Other));
             info.Add(new AxisInfo("Z", AxisOrientationEnum.Other));
-            return new GeocentricCoordinateSystem(datum, linearUnit, primeMeridian, info, name, String.Empty, -1, String.Empty, String.Empty, String.Empty);
+            return new GeocentricCoordinateSystem(datum, linearUnit, primeMeridian, info, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
         }
     }
 }

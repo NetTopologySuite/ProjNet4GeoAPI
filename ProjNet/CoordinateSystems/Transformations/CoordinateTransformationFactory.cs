@@ -17,9 +17,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using GeoAPI.CoordinateSystems;
-using GeoAPI.CoordinateSystems.Transformations;
+using System.Runtime.CompilerServices;
 using ProjNet.CoordinateSystems.Projections;
 
 namespace ProjNet.CoordinateSystems.Transformations
@@ -27,7 +25,7 @@ namespace ProjNet.CoordinateSystems.Transformations
 	/// <summary>
 	/// Creates coordinate transformations.
 	/// </summary>
-	public class CoordinateTransformationFactory : ICoordinateTransformationFactory
+	public class CoordinateTransformationFactory
 	{
 		#region ICoordinateTransformationFactory Members
 
@@ -42,32 +40,32 @@ namespace ProjNet.CoordinateSystems.Transformations
 		/// <param name="sourceCS">Source coordinate system</param>
 		/// <param name="targetCS">Target coordinate system</param>
 		/// <returns></returns>		
-		public ICoordinateTransformation CreateFromCoordinateSystems(ICoordinateSystem sourceCS, ICoordinateSystem targetCS)
+		public ICoordinateTransformation CreateFromCoordinateSystems(CoordinateSystem sourceCS, CoordinateSystem targetCS)
 		{
-			ICoordinateTransformation trans;
-            if (sourceCS is IProjectedCoordinateSystem && targetCS is IGeographicCoordinateSystem) //Projected -> Geographic
-                trans = Proj2Geog((IProjectedCoordinateSystem)sourceCS, (IGeographicCoordinateSystem)targetCS);            
-            else if (sourceCS is IGeographicCoordinateSystem && targetCS is IProjectedCoordinateSystem) //Geographic -> Projected
-				trans = Geog2Proj((IGeographicCoordinateSystem)sourceCS, (IProjectedCoordinateSystem)targetCS);
+            ICoordinateTransformation trans;
+            if (sourceCS is ProjectedCoordinateSystem && targetCS is GeographicCoordinateSystem) //Projected -> Geographic
+                trans = Proj2Geog((ProjectedCoordinateSystem)sourceCS, (GeographicCoordinateSystem)targetCS);            
+            else if (sourceCS is GeographicCoordinateSystem && targetCS is ProjectedCoordinateSystem) //Geographic -> Projected
+				trans = Geog2Proj((GeographicCoordinateSystem)sourceCS, (ProjectedCoordinateSystem)targetCS);
 
-            else if (sourceCS is IGeographicCoordinateSystem && targetCS is IGeocentricCoordinateSystem) //Geocentric -> Geographic
-				trans = Geog2Geoc((IGeographicCoordinateSystem)sourceCS, (IGeocentricCoordinateSystem)targetCS);
+            else if (sourceCS is GeographicCoordinateSystem && targetCS is GeocentricCoordinateSystem) //Geocentric -> Geographic
+				trans = Geog2Geoc((GeographicCoordinateSystem)sourceCS, (GeocentricCoordinateSystem)targetCS);
 
-            else if (sourceCS is IGeocentricCoordinateSystem && targetCS is IGeographicCoordinateSystem) //Geocentric -> Geographic
-				trans = Geoc2Geog((IGeocentricCoordinateSystem)sourceCS, (IGeographicCoordinateSystem)targetCS);
+            else if (sourceCS is GeocentricCoordinateSystem && targetCS is GeographicCoordinateSystem) //Geocentric -> Geographic
+				trans = Geoc2Geog((GeocentricCoordinateSystem)sourceCS, (GeographicCoordinateSystem)targetCS);
 
-            else if (sourceCS is IProjectedCoordinateSystem && targetCS is IProjectedCoordinateSystem) //Projected -> Projected
-				trans = Proj2Proj((sourceCS as IProjectedCoordinateSystem), (targetCS as IProjectedCoordinateSystem));
+            else if (sourceCS is ProjectedCoordinateSystem && targetCS is ProjectedCoordinateSystem) //Projected -> Projected
+				trans = Proj2Proj((sourceCS as ProjectedCoordinateSystem), (targetCS as ProjectedCoordinateSystem));
 
-            else if (sourceCS is IGeocentricCoordinateSystem && targetCS is IGeocentricCoordinateSystem) //Geocentric -> Geocentric
-				trans = CreateGeoc2Geoc((IGeocentricCoordinateSystem)sourceCS, (IGeocentricCoordinateSystem)targetCS);
+            else if (sourceCS is GeocentricCoordinateSystem && targetCS is GeocentricCoordinateSystem) //Geocentric -> Geocentric
+				trans = CreateGeoc2Geoc((GeocentricCoordinateSystem)sourceCS, (GeocentricCoordinateSystem)targetCS);
 
-            else if (sourceCS is IGeographicCoordinateSystem && targetCS is IGeographicCoordinateSystem) //Geographic -> Geographic
-				trans = CreateGeog2Geog(sourceCS as IGeographicCoordinateSystem, targetCS as IGeographicCoordinateSystem);
-			else if (sourceCS is IFittedCoordinateSystem) //Fitted -> Any
-                trans = Fitt2Any ((IFittedCoordinateSystem)sourceCS, targetCS);
-            else if (targetCS is IFittedCoordinateSystem) //Any -> Fitted 
-                trans = Any2Fitt (sourceCS, (IFittedCoordinateSystem)targetCS);
+            else if (sourceCS is GeographicCoordinateSystem && targetCS is GeographicCoordinateSystem) //Geographic -> Geographic
+				trans = CreateGeog2Geog(sourceCS as GeographicCoordinateSystem, targetCS as GeographicCoordinateSystem);
+			else if (sourceCS is FittedCoordinateSystem) //Fitted -> Any
+                trans = Fitt2Any ((FittedCoordinateSystem)sourceCS, targetCS);
+            else if (targetCS is FittedCoordinateSystem) //Any -> Fitted 
+                trans = Any2Fitt (sourceCS, (FittedCoordinateSystem)targetCS);
             else
 				throw new NotSupportedException("No support for transforming between the two specified coordinate systems");
 			
@@ -76,18 +74,18 @@ namespace ProjNet.CoordinateSystems.Transformations
 			//    SimplifyTrans(trans.MathTransform as ConcatenatedTransform, ref MTs);
 			//    return new CoordinateTransformation(sourceCS,
 			//        targetCS, TransformType.Transformation, new ConcatenatedTransform(MTs),
-			//        String.Empty, String.Empty, -1, String.Empty, String.Empty);
+			//        string.Empty, string.Empty, -1, string.Empty, string.Empty);
 			//}
 			return trans;
 		}
 		#endregion
 
-		private static void SimplifyTrans(ConcatenatedTransform mtrans, ref List<ICoordinateTransformation> MTs)
+		private static void SimplifyTrans(ConcatenatedTransform mtrans, ref List<ICoordinateTransformationCore> MTs)
 		{
-			foreach(ICoordinateTransformation t in mtrans.CoordinateTransformationList)
+			foreach(var t in mtrans.CoordinateTransformationList)
 			{
-				if(t is ConcatenatedTransform)
-					SimplifyTrans(t as ConcatenatedTransform, ref MTs);
+				if(t is ConcatenatedTransform ct)
+					SimplifyTrans(ct, ref MTs);
 				else
 					MTs.Add(t);
 			}			
@@ -95,39 +93,35 @@ namespace ProjNet.CoordinateSystems.Transformations
 
 		#region Methods for converting between specific systems
 
-        private static ICoordinateTransformation Geog2Geoc(IGeographicCoordinateSystem source, IGeocentricCoordinateSystem target)
+        private static CoordinateTransformation Geog2Geoc(GeographicCoordinateSystem source, GeocentricCoordinateSystem target)
         {
-            IMathTransform geocMathTransform = CreateCoordinateOperation(target);
+            var geocMathTransform = CreateCoordinateOperation(target);
             if (source.PrimeMeridian.EqualParams(target.PrimeMeridian))
             {
-                return new CoordinateTransformation(source, target, TransformType.Conversion, geocMathTransform, String.Empty, String.Empty, -1, String.Empty, String.Empty);
+                return new CoordinateTransformation(source, target, TransformType.Conversion, geocMathTransform, string.Empty, string.Empty, -1, string.Empty, string.Empty);
             }
-            else
-            {
-                var ct = new ConcatenatedTransform();
-                ct.CoordinateTransformationList.Add(new CoordinateTransformation(source, target, TransformType.Transformation, new PrimeMeridianTransform(source.PrimeMeridian, target.PrimeMeridian), String.Empty, String.Empty, -1, String.Empty, String.Empty));
-                ct.CoordinateTransformationList.Add(new CoordinateTransformation(source, target, TransformType.Conversion, geocMathTransform, String.Empty, String.Empty, -1, String.Empty, String.Empty));
-                return new CoordinateTransformation(source, target, TransformType.Conversion, ct, String.Empty, String.Empty, -1, String.Empty, String.Empty);
-            }
+
+            var ct = new ConcatenatedTransform();
+            ct.CoordinateTransformationList.Add(new CoordinateTransformation(source, target, TransformType.Transformation, new PrimeMeridianTransform(source.PrimeMeridian, target.PrimeMeridian), string.Empty, string.Empty, -1, string.Empty, string.Empty));
+            ct.CoordinateTransformationList.Add(new CoordinateTransformation(source, target, TransformType.Conversion, geocMathTransform, string.Empty, string.Empty, -1, string.Empty, string.Empty));
+            return new CoordinateTransformation(source, target, TransformType.Conversion, ct, string.Empty, string.Empty, -1, string.Empty, string.Empty);
         }
 
-        private static ICoordinateTransformation Geoc2Geog(IGeocentricCoordinateSystem source, IGeographicCoordinateSystem target)
+        private static CoordinateTransformation Geoc2Geog(GeocentricCoordinateSystem source, GeographicCoordinateSystem target)
         {
-            IMathTransform geocMathTransform = CreateCoordinateOperation(source).Inverse();
+            var geocMathTransform = CreateCoordinateOperation(source).Inverse();
             if (source.PrimeMeridian.EqualParams(target.PrimeMeridian))
             {
-                return new CoordinateTransformation(source, target, TransformType.Conversion, geocMathTransform, String.Empty, String.Empty, -1, String.Empty, String.Empty);
+                return new CoordinateTransformation(source, target, TransformType.Conversion, geocMathTransform, string.Empty, string.Empty, -1, string.Empty, string.Empty);
             }
-            else
-            {
-                var ct = new ConcatenatedTransform();
-                ct.CoordinateTransformationList.Add(new CoordinateTransformation(source, target, TransformType.Conversion, geocMathTransform, String.Empty, String.Empty, -1, String.Empty, String.Empty));
-                ct.CoordinateTransformationList.Add(new CoordinateTransformation(source, target, TransformType.Transformation, new PrimeMeridianTransform(source.PrimeMeridian, target.PrimeMeridian), String.Empty, String.Empty, -1, String.Empty, String.Empty));
-                return new CoordinateTransformation(source, target, TransformType.Conversion, ct, String.Empty, String.Empty, -1, String.Empty, String.Empty);
-            }
+
+            var ct = new ConcatenatedTransform();
+            ct.CoordinateTransformationList.Add(new CoordinateTransformation(source, target, TransformType.Conversion, geocMathTransform, string.Empty, string.Empty, -1, string.Empty, string.Empty));
+            ct.CoordinateTransformationList.Add(new CoordinateTransformation(source, target, TransformType.Transformation, new PrimeMeridianTransform(source.PrimeMeridian, target.PrimeMeridian), string.Empty, string.Empty, -1, string.Empty, string.Empty));
+            return new CoordinateTransformation(source, target, TransformType.Conversion, ct, string.Empty, string.Empty, -1, string.Empty, string.Empty);
         }
 		
-		private static ICoordinateTransformation Proj2Proj(IProjectedCoordinateSystem source, IProjectedCoordinateSystem target)
+		private static CoordinateTransformation Proj2Proj(ProjectedCoordinateSystem source, ProjectedCoordinateSystem target)
 		{
 			var ct = new ConcatenatedTransform();
 			var ctFac = new CoordinateTransformationFactory();
@@ -143,88 +137,84 @@ namespace ProjNet.CoordinateSystems.Transformations
 
 			return new CoordinateTransformation(source,
 				target, TransformType.Transformation, ct,
-				String.Empty, String.Empty, -1, String.Empty, String.Empty);
+				string.Empty, string.Empty, -1, string.Empty, string.Empty);
 		}		
 
-        private static ICoordinateTransformation Geog2Proj(IGeographicCoordinateSystem source, IProjectedCoordinateSystem target)
+        private static CoordinateTransformation Geog2Proj(GeographicCoordinateSystem source, ProjectedCoordinateSystem target)
         {
 	        if (source.EqualParams(target.GeographicCoordinateSystem))
 	        {
-				IMathTransform mathTransform = CreateCoordinateOperation(target.Projection, 
+				var mathTransform = CreateCoordinateOperation(target.Projection, 
                     target.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid, target.LinearUnit);
 		        return new CoordinateTransformation(source, target, TransformType.Transformation, mathTransform,
-			        String.Empty, String.Empty, -1, String.Empty, String.Empty);
+			        string.Empty, string.Empty, -1, string.Empty, string.Empty);
 	        }
-	        else
-	        {
-	        	// Geographic coordinatesystems differ - Create concatenated transform
-		        ConcatenatedTransform ct = new ConcatenatedTransform();
-		        CoordinateTransformationFactory ctFac = new CoordinateTransformationFactory();
-		        ct.CoordinateTransformationList.Add(ctFac.CreateFromCoordinateSystems(source,target.GeographicCoordinateSystem));
-		        ct.CoordinateTransformationList.Add(ctFac.CreateFromCoordinateSystems(target.GeographicCoordinateSystem, target));
-		        return new CoordinateTransformation(source,
-			        target, TransformType.Transformation, ct,
-			        String.Empty, String.Empty, -1, String.Empty, String.Empty);
-	        }
+
+            // Geographic coordinatesystems differ - Create concatenated transform
+            var ct = new ConcatenatedTransform();
+            var ctFac = new CoordinateTransformationFactory();
+            ct.CoordinateTransformationList.Add(ctFac.CreateFromCoordinateSystems(source,target.GeographicCoordinateSystem));
+            ct.CoordinateTransformationList.Add(ctFac.CreateFromCoordinateSystems(target.GeographicCoordinateSystem, target));
+            return new CoordinateTransformation(source,
+                target, TransformType.Transformation, ct,
+                string.Empty, string.Empty, -1, string.Empty, string.Empty);
         }
 
-        private static ICoordinateTransformation Proj2Geog(IProjectedCoordinateSystem source, IGeographicCoordinateSystem target)
+        private static CoordinateTransformation Proj2Geog(ProjectedCoordinateSystem source, GeographicCoordinateSystem target)
         {
             if (source.GeographicCoordinateSystem.EqualParams(target))
             {
-                IMathTransform mathTransform = CreateCoordinateOperation(source.Projection, source.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid, source.LinearUnit).Inverse();
+                var mathTransform = CreateCoordinateOperation(source.Projection, source.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid, source.LinearUnit).Inverse();
                 return new CoordinateTransformation(source, target, TransformType.Transformation, mathTransform,
-                    String.Empty, String.Empty, -1, String.Empty, String.Empty);
+                    string.Empty, string.Empty, -1, string.Empty, string.Empty);
             }
             else
             {	// Geographic coordinatesystems differ - Create concatenated transform
-                ConcatenatedTransform ct = new ConcatenatedTransform();
-                CoordinateTransformationFactory ctFac = new CoordinateTransformationFactory();
+                var ct = new ConcatenatedTransform();
+                var ctFac = new CoordinateTransformationFactory();
                 ct.CoordinateTransformationList.Add(ctFac.CreateFromCoordinateSystems(source, source.GeographicCoordinateSystem));
                 ct.CoordinateTransformationList.Add(ctFac.CreateFromCoordinateSystems(source.GeographicCoordinateSystem, target));
                 return new CoordinateTransformation(source,
                     target, TransformType.Transformation, ct,
-                    String.Empty, String.Empty, -1, String.Empty, String.Empty);
+                    string.Empty, string.Empty, -1, string.Empty, string.Empty);
             }
         }
 		
 		/// <summary>
 		/// Geographic to geographic transformation
 		/// </summary>
-		/// <remarks>Adds a datum shift if nessesary</remarks>
+		/// <remarks>Adds a datum shift if necessary</remarks>
 		/// <param name="source"></param>
 		/// <param name="target"></param>
 		/// <returns></returns>
-		private static ICoordinateTransformation CreateGeog2Geog(IGeographicCoordinateSystem source, IGeographicCoordinateSystem target)
+		private static ICoordinateTransformation CreateGeog2Geog(GeographicCoordinateSystem source, GeographicCoordinateSystem target)
 		{
 			if (source.HorizontalDatum.EqualParams(target.HorizontalDatum))
 			{
 				//No datum shift needed
 				return new CoordinateTransformation(source,
 					target, TransformType.Conversion, new GeographicTransform(source, target),
-					String.Empty, String.Empty, -1, String.Empty, String.Empty);
+					string.Empty, string.Empty, -1, string.Empty, string.Empty);
 			}
-			else
-			{
-				//Create datum shift
-				//Convert to geocentric, perform shift and return to geographic
-				CoordinateTransformationFactory ctFac = new CoordinateTransformationFactory();
-				CoordinateSystemFactory cFac = new CoordinateSystemFactory();
-				IGeocentricCoordinateSystem sourceCentric = cFac.CreateGeocentricCoordinateSystem(source.HorizontalDatum.Name + " Geocentric",
-					source.HorizontalDatum, LinearUnit.Metre, source.PrimeMeridian);
-				IGeocentricCoordinateSystem targetCentric = cFac.CreateGeocentricCoordinateSystem(target.HorizontalDatum.Name + " Geocentric", 
-					target.HorizontalDatum, LinearUnit.Metre, source.PrimeMeridian);
-				var ct = new ConcatenatedTransform();
-				AddIfNotNull(ct, ctFac.CreateFromCoordinateSystems(source, sourceCentric));
-                AddIfNotNull(ct, ctFac.CreateFromCoordinateSystems(sourceCentric, targetCentric));
-                AddIfNotNull(ct, ctFac.CreateFromCoordinateSystems(targetCentric, target));
+
+            //Create datum shift
+            //Convert to geocentric, perform shift and return to geographic
+            var ctFac = new CoordinateTransformationFactory();
+            var cFac = new CoordinateSystemFactory();
+            var sourceCentric = cFac.CreateGeocentricCoordinateSystem(source.HorizontalDatum.Name + " Geocentric",
+                source.HorizontalDatum, LinearUnit.Metre, source.PrimeMeridian);
+            var targetCentric = cFac.CreateGeocentricCoordinateSystem(target.HorizontalDatum.Name + " Geocentric", 
+                target.HorizontalDatum, LinearUnit.Metre, source.PrimeMeridian);
+            var ct = new ConcatenatedTransform();
+            AddIfNotNull(ct, ctFac.CreateFromCoordinateSystems(source, sourceCentric));
+            AddIfNotNull(ct, ctFac.CreateFromCoordinateSystems(sourceCentric, targetCentric));
+            AddIfNotNull(ct, ctFac.CreateFromCoordinateSystems(targetCentric, target));
 				
                 
-                return new CoordinateTransformation(source,
-					target, TransformType.Transformation, ct,
-					String.Empty, String.Empty, -1, String.Empty, String.Empty);
-			}
-		}
+            return new CoordinateTransformation(source,
+                target, TransformType.Transformation, ct,
+                string.Empty, string.Empty, -1, string.Empty, string.Empty);
+        }
 
         private static void AddIfNotNull(ConcatenatedTransform concatTrans, ICoordinateTransformation trans)
         {
@@ -237,7 +227,7 @@ namespace ProjNet.CoordinateSystems.Transformations
 		/// <param name="source"></param>
 		/// <param name="target"></param>
 		/// <returns></returns>
-		private static ICoordinateTransformation CreateGeoc2Geoc(IGeocentricCoordinateSystem source, IGeocentricCoordinateSystem target)
+		private static CoordinateTransformation CreateGeoc2Geoc(GeocentricCoordinateSystem source, GeocentricCoordinateSystem target)
 		{
 			var ct = new ConcatenatedTransform();
 
@@ -265,7 +255,7 @@ namespace ProjNet.CoordinateSystems.Transformations
 		        return null;
             //If we only have one shift, lets just return the datumshift from/to wgs84
             if (ct.CoordinateTransformationList.Count == 1)
-				return new CoordinateTransformation(source, target, TransformType.ConversionAndTransformation, ct.CoordinateTransformationList[0].MathTransform, "", "", -1, "", "");
+				return new CoordinateTransformation(source, target, TransformType.ConversionAndTransformation, ((ICoordinateTransformation)ct.CoordinateTransformationList[0]).MathTransform, "", "", -1, "", "");
 		    
             return new CoordinateTransformation(source, target, TransformType.ConversionAndTransformation, ct, "", "", -1, "", "");
 		}
@@ -276,10 +266,10 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <param name="source"></param>
         /// <param name="target"></param>
         /// <returns></returns>
-        private static ICoordinateTransformation Fitt2Any (IFittedCoordinateSystem source, ICoordinateSystem target)
+        private static CoordinateTransformation Fitt2Any (FittedCoordinateSystem source, CoordinateSystem target)
         {
             //transform from fitted to base system of fitted (which is equal to target)
-            IMathTransform mt = CreateFittedTransform (source);
+            var mt = CreateFittedTransform (source);
 
             //case when target system is equal to base system of the fitted
             if (source.BaseCoordinateSystem.EqualParams (target))
@@ -289,11 +279,11 @@ namespace ProjNet.CoordinateSystems.Transformations
             }
 
             //Transform form base system of fitted to target coordinate system
-            ConcatenatedTransform ct = new ConcatenatedTransform ();
+            var ct = new ConcatenatedTransform ();
             ct.CoordinateTransformationList.Add (CreateTransform (source, source.BaseCoordinateSystem, TransformType.Transformation, mt));
 
             //Transform form base system of fitted to target coordinate system
-            CoordinateTransformationFactory ctFac = new CoordinateTransformationFactory ();
+            var ctFac = new CoordinateTransformationFactory ();
             ct.CoordinateTransformationList.Add (ctFac.CreateFromCoordinateSystems (source.BaseCoordinateSystem, target));
 
             return CreateTransform (source, target, TransformType.Transformation, ct);
@@ -305,10 +295,10 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <param name="source"></param>
         /// <param name="target"></param>
         /// <returns></returns>
-        private static ICoordinateTransformation Any2Fitt (ICoordinateSystem source, IFittedCoordinateSystem target)
+        private static CoordinateTransformation Any2Fitt (CoordinateSystem source, FittedCoordinateSystem target)
         {
             //Transform form base system of fitted to target coordinate system - use invered math transform
-            IMathTransform invMt = CreateFittedTransform (target).Inverse ();
+            var invMt = CreateFittedTransform (target).Inverse ();
 
             //case when source system is equal to base system of the fitted
             if (target.BaseCoordinateSystem.EqualParams (source))
@@ -317,9 +307,9 @@ namespace ProjNet.CoordinateSystems.Transformations
                 return CreateTransform (source, target, TransformType.Transformation, invMt);
             }
 
-            ConcatenatedTransform ct = new ConcatenatedTransform ();
+            var ct = new ConcatenatedTransform ();
             //First transform from source to base system of fitted
-            CoordinateTransformationFactory ctFac = new CoordinateTransformationFactory ();
+            var ctFac = new CoordinateTransformationFactory ();
             ct.CoordinateTransformationList.Add (ctFac.CreateFromCoordinateSystems (source, target.BaseCoordinateSystem));
 
             //Transform form base system of fitted to target coordinate system - use invered math transform
@@ -328,13 +318,10 @@ namespace ProjNet.CoordinateSystems.Transformations
             return CreateTransform (source, target, TransformType.Transformation, ct);
         }
 
-        private static IMathTransform CreateFittedTransform (IFittedCoordinateSystem fittedSystem)
+        private static MathTransform CreateFittedTransform (FittedCoordinateSystem fittedSystem)
         {
             //create transform From fitted to base and inverts it
-            if (fittedSystem is FittedCoordinateSystem)
-            {
-                return ((FittedCoordinateSystem)fittedSystem).ToBaseTransform;
-            }
+            return fittedSystem.ToBaseTransform;
 
             //MathTransformFactory mtFac = new MathTransformFactory ();
             ////create transform From fitted to base and inverts it
@@ -350,13 +337,13 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <param name="targetCS">Target coordinate system</param>
         /// <param name="transformType">Transformation type</param>
         /// <param name="mathTransform">Math transform</param>
-        private static CoordinateTransformation CreateTransform (ICoordinateSystem sourceCS, ICoordinateSystem targetCS, TransformType transformType, IMathTransform mathTransform)
+        private static CoordinateTransformation CreateTransform (CoordinateSystem sourceCS, CoordinateSystem targetCS, TransformType transformType, MathTransform mathTransform)
         {
             return new CoordinateTransformation (sourceCS, targetCS, transformType, mathTransform, string.Empty, string.Empty, -1, string.Empty, string.Empty);
         }
 		#endregion
 
-		private static IMathTransform CreateCoordinateOperation(IGeocentricCoordinateSystem geo)
+		private static MathTransform CreateCoordinateOperation(GeocentricCoordinateSystem geo)
 		{
 			var parameterList = new List<ProjectionParameter>(2);
 
@@ -369,10 +356,10 @@ namespace ProjNet.CoordinateSystems.Transformations
 
             return new GeocentricTransform(parameterList);
 		}
-		private static IMathTransform CreateCoordinateOperation(IProjection projection, IEllipsoid ellipsoid, ILinearUnit unit)
+		private static MathTransform CreateCoordinateOperation(IProjection projection, Ellipsoid ellipsoid, LinearUnit unit)
 		{
 			var parameterList = new List<ProjectionParameter>(projection.NumParameters);
-			for (var i = 0; i < projection.NumParameters; i++)
+			for (int i = 0; i < projection.NumParameters; i++)
 				parameterList.Add(projection.GetParameter(i));
 
 		    //var toMeter = 1d/ellipsoid.AxisUnit.MetersPerUnit;

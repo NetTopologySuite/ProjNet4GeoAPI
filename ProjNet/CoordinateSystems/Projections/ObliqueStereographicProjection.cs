@@ -36,8 +36,7 @@
 
 using System;
 using System.Collections.Generic;
-using GeoAPI.CoordinateSystems;
-using GeoAPI.CoordinateSystems.Transformations;
+using ProjNet.CoordinateSystems.Transformations;
 
 namespace ProjNet.CoordinateSystems.Projections
 {
@@ -47,8 +46,8 @@ namespace ProjNet.CoordinateSystems.Projections
     [Serializable]
     internal class ObliqueStereographicProjection : MapProjection
     {
-        private readonly double globalScale;
-        private readonly double reciprocGlobalScale;
+        private readonly double _globalScale;
+        private readonly double _reciprocGlobalScale;
 
         private static double ITERATION_TOLERANCE = 1E-14;
         private static int MAXIMUM_ITERATIONS = 15;
@@ -96,8 +95,8 @@ namespace ProjNet.CoordinateSystems.Projections
         public ObliqueStereographicProjection(IEnumerable<ProjectionParameter> parameters, ObliqueStereographicProjection inverse)
             : base(parameters, inverse)
         {
-            globalScale = scale_factor * this._semiMajor;
-            reciprocGlobalScale = 1 / globalScale;
+            _globalScale = scale_factor * _semiMajor;
+            _reciprocGlobalScale = 1 / _globalScale;
 
             double sphi = Math.Sin(lat_origin);
             double cphi = Math.Cos(lat_origin);
@@ -118,8 +117,8 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <param name="y"></param>
         protected override void MetersToRadians(ref double x, ref double y)
         {
-            x *= this.reciprocGlobalScale;
-            y *= this.reciprocGlobalScale;
+            x *= _reciprocGlobalScale;
+            y *= _reciprocGlobalScale;
 
             double rho = Math.Sqrt((x * x) + (y * y));
             if (Math.Abs(rho) < EPSILON)
@@ -148,7 +147,7 @@ namespace ProjNet.CoordinateSystems.Projections
 
             x /= C;
             double num = Math.Pow(Math.Tan(0.5 * y + Math.PI / 4.0) / K, 1.0 / C);
-            for (int iter = MAXIMUM_ITERATIONS;;)
+            for (int iter = MAXIMUM_ITERATIONS; ;)
             {
                 double phi = 2.0 * Math.Atan(num * srat(_e * Math.Sin(y), -0.5 * _e)) - Math.PI / 2.0;
                 if (Math.Abs(phi - y) < ITERATION_TOLERANCE)
@@ -185,8 +184,8 @@ namespace ProjNet.CoordinateSystems.Projections
             double cosl = Math.Cos(x);
             double k_ = R2 / (1.0 + sinc0 * sinc + cosc0 * cosc * cosl);
 
-            lon = k_ * cosc * Math.Sin(x) * globalScale;
-            lat = k_ * (cosc0 * sinc - sinc0 * cosc * cosl) * globalScale;
+            lon = k_ * cosc * Math.Sin(x) * _globalScale;
+            lat = k_ * (cosc0 * sinc - sinc0 * cosc * cosl) * _globalScale;
         }
 
 
@@ -194,7 +193,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// Returns the inverse of this projection.
         /// </summary>
         /// <returns>IMathTransform that is the reverse of the current projection.</returns>
-        public override IMathTransform Inverse()
+        public override MathTransform Inverse()
         {
             if (_inverse == null)
             {

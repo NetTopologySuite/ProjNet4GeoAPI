@@ -19,8 +19,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-using GeoAPI.CoordinateSystems;
-using GeoAPI.CoordinateSystems.Transformations;
+using ProjNet.CoordinateSystems.Transformations;
 
 namespace ProjNet.CoordinateSystems
 {
@@ -30,7 +29,7 @@ namespace ProjNet.CoordinateSystems
     /// to inject itself into the base coordinate system.
     /// </summary>
     [Serializable]
-    public class FittedCoordinateSystem : CoordinateSystem, IFittedCoordinateSystem
+    public class FittedCoordinateSystem : CoordinateSystem //, IFittedCoordinateSystem
     {
 		/// <summary>
 		/// Creates an instance of FittedCoordinateSystem using the specified parameters
@@ -43,12 +42,12 @@ namespace ProjNet.CoordinateSystems
 		/// <param name="alias">Alias</param>
 		/// <param name="abbreviation">Abbreviation</param>
 		/// <param name="remarks">Provider-supplied remarks</param>
-        protected internal FittedCoordinateSystem (ICoordinateSystem baseSystem, IMathTransform transform,
+        protected internal FittedCoordinateSystem (CoordinateSystem baseSystem, MathTransform transform,
             string name, string authority, long code, string alias, string remarks, string abbreviation)
 			: base(name, authority, code, alias, abbreviation, remarks)
 		{
-            _BaseCoordinateSystem = baseSystem;
-            _ToBaseTransform = transform;
+            BaseCoordinateSystem = baseSystem;
+            ToBaseTransform = transform;
             //get axis infos from the source
             base.AxisInfo = new List<AxisInfo> (baseSystem.Dimension);
             for (int dim = 0; dim < baseSystem.Dimension; dim++)
@@ -59,28 +58,19 @@ namespace ProjNet.CoordinateSystems
 
         #region public properties
 
-        private IMathTransform _ToBaseTransform;
 
         /// <summary>
         /// Represents math transform that injects itself into the base coordinate system.
         /// </summary>
-        public IMathTransform ToBaseTransform
-        {
-            get { return _ToBaseTransform; }
-        }
+        public MathTransform ToBaseTransform { get; }
         #endregion public properties
 
-        #region IFittedCoordinateSystem Members
-
-        private ICoordinateSystem _BaseCoordinateSystem;
+        #region FittedCoordinateSystem Members
 
         /// <summary>
         /// Gets underlying coordinate system.
         /// </summary>
-        public ICoordinateSystem BaseCoordinateSystem
-        {
-            get { return _BaseCoordinateSystem; }
-        }
+        public CoordinateSystem BaseCoordinateSystem { get; }
 
         /// <summary>
         /// Gets Well-Known Text of a math transform to the base coordinate system. 
@@ -92,9 +82,10 @@ namespace ProjNet.CoordinateSystems
         /// <returns></returns>
         public string ToBase ()
         {
-            return _ToBaseTransform.WKT;
+            return ToBaseTransform.WKT;
         }
-        #endregion IFittedCoordinateSystem Members
+
+        #endregion 
 
         #region ICoordinateSystem Members
 
@@ -107,8 +98,8 @@ namespace ProjNet.CoordinateSystems
             {
                 //<fitted cs>          = FITTED_CS["<name>", <to base>, <base cs>]
 
-				StringBuilder sb = new StringBuilder();
-                sb.AppendFormat ("FITTED_CS[\"{0}\", {1}, {2}]", Name, this._ToBaseTransform.WKT, this._BaseCoordinateSystem.WKT);
+				var sb = new StringBuilder();
+                sb.AppendFormat ("FITTED_CS[\"{0}\", {1}, {2}]", Name, this.ToBaseTransform.WKT, this.BaseCoordinateSystem.WKT);
 				return sb.ToString();
             }
         }
@@ -133,7 +124,7 @@ namespace ProjNet.CoordinateSystems
         /// <returns>True if equal</returns>
         public override bool EqualParams (object obj)
         {
-            IFittedCoordinateSystem fcs = obj as IFittedCoordinateSystem;
+            var fcs = obj as FittedCoordinateSystem;
             if (fcs != null)
             {
                 if (fcs.BaseCoordinateSystem.EqualParams (this.BaseCoordinateSystem))
@@ -153,9 +144,9 @@ namespace ProjNet.CoordinateSystems
         /// Gets the units for the dimension within coordinate system. 
         /// Each dimension in the coordinate system has corresponding units.
         /// </summary>
-        public override IUnit GetUnits (int dimension)
+        public override IUnit GetUnits(int dimension)
         {
-            return _BaseCoordinateSystem.GetUnits (dimension);
+            return BaseCoordinateSystem.GetUnits (dimension);
         }
 
         #endregion

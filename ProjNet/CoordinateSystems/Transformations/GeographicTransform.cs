@@ -16,8 +16,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
 using System;
-using GeoAPI.CoordinateSystems;
-using GeoAPI.CoordinateSystems.Transformations;
 
 namespace ProjNet.CoordinateSystems.Transformations
 {
@@ -28,7 +26,7 @@ namespace ProjNet.CoordinateSystems.Transformations
     [Serializable] 
     public class GeographicTransform : MathTransform
 	{
-		internal GeographicTransform(IGeographicCoordinateSystem sourceGCS, IGeographicCoordinateSystem targetGCS)
+		internal GeographicTransform(GeographicCoordinateSystem sourceGCS, GeographicCoordinateSystem targetGCS)
 		{
 			SourceGCS = sourceGCS;
 			TargetGCS = targetGCS;
@@ -37,12 +35,12 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Gets or sets the source geographic coordinate system for the transformation.
         /// </summary>
-        public IGeographicCoordinateSystem SourceGCS { get; set; }
+        public GeographicCoordinateSystem SourceGCS { get; set; }
 
         /// <summary>
         /// Gets or sets the target geographic coordinate system for the transformation.
         /// </summary>
-        public IGeographicCoordinateSystem TargetGCS { get; set; }
+        public GeographicCoordinateSystem TargetGCS { get; set; }
 
         /// <summary>
         /// Returns the Well-known text for this object
@@ -82,7 +80,7 @@ namespace ProjNet.CoordinateSystems.Transformations
 		/// </summary>
 		/// <remarks>This method may fail if the transform is not one to one. However, all cartographic projections should succeed.</remarks>
 		/// <returns></returns>
-		public override IMathTransform Inverse()
+		public override MathTransform Inverse()
 		{
 			throw new NotImplementedException();
 		}

@@ -21,7 +21,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="GeoAPI.CoordinateSystems" Version="$(GeoAPIPackageReferenceVersion)" />
     <PackageReference Include="System.Memory" Version="4.5.2" />
   </ItemGroup>
 

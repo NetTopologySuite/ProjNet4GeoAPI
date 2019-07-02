@@ -18,7 +18,6 @@
 using System;
 using System.Globalization;
 using System.Text;
-using GeoAPI.CoordinateSystems;
 
 namespace ProjNet.CoordinateSystems
 {
@@ -26,7 +25,7 @@ namespace ProjNet.CoordinateSystems
     /// Definition of angular units.
     /// </summary>
     [Serializable] 
-    public class AngularUnit : Info, IAngularUnit
+    public class AngularUnit : Info, IUnit
 	{
 	    /// <summary>
 	    /// Equality tolerance value. Values with a difference less than this are considered equal.
@@ -39,7 +38,7 @@ namespace ProjNet.CoordinateSystems
 		/// <param name="radiansPerUnit">Radians per unit</param>
 		public AngularUnit(double radiansPerUnit)
 			: this(
-			radiansPerUnit,String.Empty,String.Empty,-1,String.Empty,String.Empty,String.Empty)
+			radiansPerUnit,string.Empty,string.Empty,-1,string.Empty,string.Empty,string.Empty)
 		{
 		}
 
@@ -67,7 +66,7 @@ namespace ProjNet.CoordinateSystems
 		/// </summary>
 		public static AngularUnit Degrees
 		{
-			get { return new AngularUnit(0.017453292519943295769236907684886, "degree", "EPSG", 9102, "deg", String.Empty, "=pi/180 radians"); }
+			get { return new AngularUnit(0.017453292519943295769236907684886, "degree", "EPSG", 9102, "deg", string.Empty, "=pi/180 radians"); }
 		}
 
 		/// <summary>
@@ -75,7 +74,7 @@ namespace ProjNet.CoordinateSystems
 		/// </summary>
 		public static AngularUnit Radian
 		{
-			get { return new AngularUnit(1, "radian", "EPSG", 9101, "rad", String.Empty, "SI standard unit."); }
+			get { return new AngularUnit(1, "radian", "EPSG", 9101, "rad", string.Empty, "SI standard unit."); }
 		}
 
 		/// <summary>
@@ -83,7 +82,7 @@ namespace ProjNet.CoordinateSystems
 		/// </summary>
 		public static AngularUnit Grad
 		{
-			get { return new AngularUnit(0.015707963267948966192313216916398, "grad", "EPSG", 9105, "gr", String.Empty, "=pi/200 radians."); }
+			get { return new AngularUnit(0.015707963267948966192313216916398, "grad", "EPSG", 9105, "gr", string.Empty, "=pi/200 radians."); }
 		}
 
 		/// <summary>
@@ -91,7 +90,7 @@ namespace ProjNet.CoordinateSystems
 		/// </summary>		
 		public static AngularUnit Gon
 		{
-			get { return new AngularUnit(0.015707963267948966192313216916398, "gon", "EPSG", 9106, "g", String.Empty, "=pi/200 radians."); }
+			get { return new AngularUnit(0.015707963267948966192313216916398, "gon", "EPSG", 9106, "g", string.Empty, "=pi/200 radians."); }
 		}
 		#endregion
 
@@ -116,9 +115,9 @@ namespace ProjNet.CoordinateSystems
 		{
 			get
 			{
-				StringBuilder sb = new StringBuilder();
+				var sb = new StringBuilder();
 				sb.AppendFormat(CultureInfo.InvariantCulture.NumberFormat,"UNIT[\"{0}\", {1}", Name, RadiansPerUnit);
-				if (!String.IsNullOrEmpty(Authority) && AuthorityCode > 0)
+				if (!string.IsNullOrWhiteSpace(Authority) && AuthorityCode > 0)
 					sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
 				sb.Append("]");
 				return sb.ToString();				
@@ -132,7 +131,7 @@ namespace ProjNet.CoordinateSystems
 		{
 			get
 			{
-                return String.Format(CultureInfo.InvariantCulture.NumberFormat, "<CS_AngularUnit RadiansPerUnit=\"{0}\">{1}</CS_AngularUnit>", RadiansPerUnit, InfoXml);
+                return string.Format(CultureInfo.InvariantCulture.NumberFormat, "<CS_AngularUnit RadiansPerUnit=\"{0}\">{1}</CS_AngularUnit>", RadiansPerUnit, InfoXml);
 			}
 		}
 

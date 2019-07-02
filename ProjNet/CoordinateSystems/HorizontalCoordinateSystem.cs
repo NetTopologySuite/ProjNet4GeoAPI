@@ -17,7 +17,6 @@
 
 using System;
 using System.Collections.Generic;
-using GeoAPI.CoordinateSystems;
 
 namespace ProjNet.CoordinateSystems
 {
@@ -25,7 +24,7 @@ namespace ProjNet.CoordinateSystems
 	/// A 2D coordinate system suitable for positions on the Earth's surface.
     /// </summary>
     [Serializable] 
-    public abstract class HorizontalCoordinateSystem : CoordinateSystem, IHorizontalCoordinateSystem
+    public abstract class HorizontalCoordinateSystem : CoordinateSystem
 	{
 		/// <summary>
 		/// Creates an instance of HorizontalCoordinateSystem
@@ -38,30 +37,25 @@ namespace ProjNet.CoordinateSystems
 		/// <param name="alias">Alias</param>
 		/// <param name="abbreviation">Abbreviation</param>
 		/// <param name="remarks">Provider-supplied remarks</param>
-		internal HorizontalCoordinateSystem(IHorizontalDatum datum, List<AxisInfo> axisInfo, 
+		internal HorizontalCoordinateSystem(HorizontalDatum datum, List<AxisInfo> axisInfo, 
 			string name, string authority, long code, string alias,
 			string remarks, string abbreviation)
 			: base(name, authority, code, alias, abbreviation, remarks)
 		{
-			_HorizontalDatum = datum;
+			HorizontalDatum = datum;
 			if (axisInfo.Count != 2)
 				throw new ArgumentException("Axis info should contain two axes for horizontal coordinate systems");
 			base.AxisInfo = axisInfo;
 		}
 
-		#region IHorizontalCoordinateSystem Members
+        #region IHorizontalCoordinateSystem Members
 
-		private IHorizontalDatum _HorizontalDatum;
 
-		/// <summary>
-		/// Gets or sets the HorizontalDatum.
-		/// </summary>
-		public IHorizontalDatum HorizontalDatum
-		{
-			get { return _HorizontalDatum; }
-			set { _HorizontalDatum = value; }
-		}
-		
-		#endregion
-	}
+        /// <summary>
+        /// Gets or sets the HorizontalDatum.
+        /// </summary>
+        public HorizontalDatum HorizontalDatum { get; set; }
+
+        #endregion
+    }
 }

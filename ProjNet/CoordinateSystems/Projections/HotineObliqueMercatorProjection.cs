@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Resources;
-using GeoAPI.CoordinateSystems;
-using GeoAPI.CoordinateSystems.Transformations;
+using ProjNet.CoordinateSystems.Transformations;
 
 namespace ProjNet.CoordinateSystems.Projections
 {
@@ -40,12 +38,12 @@ namespace ProjNet.CoordinateSystems.Projections
             Name = "Hotine_Oblique_Mercator";
 
             _azimuth = Degrees2Radians(_Parameters.GetParameterValue("azimuth"));
-            var rectifiedGridAngle = Degrees2Radians(_Parameters.GetParameterValue("rectified_grid_angle"));
+            double rectifiedGridAngle = Degrees2Radians(_Parameters.GetParameterValue("rectified_grid_angle"));
             
 
             sincos(lat_origin, out _sinP20, out _cosP20);
-            var con = 1.0 - _es * Math.Pow(_sinP20, 2);
-            var com = Math.Sqrt(1.0 - _es);
+            double con = 1.0 - _es * Math.Pow(_sinP20, 2);
+            double com = Math.Sqrt(1.0 - _es);
             _bl = Math.Sqrt(1.0 + _es * Math.Pow(_cosP20, 4.0) / ( 1.0 - _es ));
             _al = _semiMajor * _bl * scale_factor * com / con;
 
@@ -59,7 +57,7 @@ namespace ProjNet.CoordinateSystems.Projections
             }
             else
             {
-                var ts = tsfnz(_e, lat_origin, _sinP20);
+                double ts = tsfnz(_e, lat_origin, _sinP20);
                 con = Math.Sqrt(con);
                 _d = _bl * com / ( _cosP20 * con );
                 if ( ( _d * _d - 1.0 ) > 0.0 )
@@ -74,8 +72,8 @@ namespace ProjNet.CoordinateSystems.Projections
                 _el = f * Math.Pow(ts, _bl);
             }
 
-            var g = .5 * ( f - 1.0 / f );
-            var gama = asinz(Math.Sin(_azimuth) / _d);
+            double g = .5 * ( f - 1.0 / f );
+            double gama = asinz(Math.Sin(_azimuth) / _d);
             lon_origin = lon_origin - asinz(g * Math.Tan(gama)) / _bl;
 
             con = Math.Abs(lat_origin);
@@ -97,7 +95,7 @@ namespace ProjNet.CoordinateSystems.Projections
 
         }
 
-        public override IMathTransform Inverse()
+        public override MathTransform Inverse()
         {
             if (_inverse == null)
             {
@@ -167,9 +165,9 @@ namespace ProjNet.CoordinateSystems.Projections
 
             // Forward equations
             // -----------------
-            var sin_phi = Math.Sin(lat);
-            var dlon = adjust_lon(lon - lon_origin);
-            var vl = Math.Sin(_bl * dlon);
+            double sin_phi = Math.Sin(lat);
+            double dlon = adjust_lon(lon - lon_origin);
+            double vl = Math.Sin(_bl * dlon);
             if (Math.Abs(Math.Abs(lat) - HALF_PI) > EPSLN)
             {
                 double ts1 = tsfnz(_e, lat, sin_phi);

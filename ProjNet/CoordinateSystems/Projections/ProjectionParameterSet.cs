@@ -1,13 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using GeoAPI.CoordinateSystems;
 
 namespace ProjNet.CoordinateSystems.Projections
 {
     /// <summary>
     /// A set of projection parameters
     /// </summary>
+    // TODO: KeyedCollection<string, double>
     [Serializable] 
     public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<ProjectionParameterSet>
     {
@@ -23,12 +23,12 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <summary>
         /// Creates an instance of this class
         /// </summary>
-        /// <param name="parameters">An enumeration of paramters</param>
+        /// <param name="parameters">An enumeration of parameters</param>
         public ProjectionParameterSet(IEnumerable<ProjectionParameter> parameters)
         {
             foreach (var pp in parameters)
             {
-                var key = pp.Name.ToLowerInvariant();
+                string key = pp.Name.ToLowerInvariant();
                 _originalNames.Add(key, pp.Name);
                 _originalIndex.Add(_originalIndex.Count, key);
                 Add(key, pp.Value);
@@ -54,10 +54,10 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <exception cref="ArgumentException">Thrown if <paramref name="parameterName"> or any of <paramref name="alternateNames"/> is not defined.</paramref></exception>
         public double GetParameterValue(string parameterName, params string[] alternateNames)
         {
-            var name = parameterName.ToLowerInvariant();
+            string name = parameterName.ToLowerInvariant();
             if (!ContainsKey(name))
             {
-                foreach (var alternateName in alternateNames)
+                foreach (string alternateName in alternateNames)
                 {
                     double res;
                     if (TryGetValue(alternateName.ToLowerInvariant(), out res))
@@ -69,7 +69,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 if (alternateNames.Length > 0)
                 {
                     sb.AppendFormat("\nIt is also not defined as '{0}'", alternateNames[0]);
-                    for (var i = 1; i < alternateNames.Length; i++)
+                    for (int i = 1; i < alternateNames.Length; i++)
                         sb.AppendFormat(", '{0}'", alternateNames[i]);
                     sb.Append(".");
                 }
@@ -87,7 +87,7 @@ namespace ProjNet.CoordinateSystems.Projections
             name = name.ToLowerInvariant();
             if (!ContainsKey(name))
             {
-                foreach (var alternateName in alternateNames)
+                foreach (string alternateName in alternateNames)
                 {
                     double res;
                     if (TryGetValue(alternateName.ToLowerInvariant(), out res))
@@ -121,7 +121,7 @@ namespace ProjNet.CoordinateSystems.Projections
             if (index < 0 || index >= Count)
                 throw new ArgumentOutOfRangeException(nameof(index));
 
-            var name = _originalIndex[index];
+            string name = _originalIndex[index];
             return new ProjectionParameter(_originalNames[name], this[name]);
         }
 
@@ -143,7 +143,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 if (!other.ContainsKey(kvp.Key))
                     return false;
 
-                var otherValue = other.GetParameterValue(kvp.Key);
+                double otherValue = other.GetParameterValue(kvp.Key);
                 if (otherValue != kvp.Value)
                     return false;
             }
@@ -152,7 +152,7 @@ namespace ProjNet.CoordinateSystems.Projections
 
         internal void SetParameterValue(string name, double value)
         {
-            var key = name.ToLowerInvariant();
+            string key = name.ToLowerInvariant();
             if (!ContainsKey(key))
             {
                 _originalIndex.Add(_originalIndex.Count, key);

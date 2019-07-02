@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using GeoAPI.CoordinateSystems;
 using ProjNet.CoordinateSystems;
 
 namespace ProjNET.Tests
 {
     internal class SRIDReader
     {
-        private static readonly Lazy<ICoordinateSystemFactory> CoordinateSystemFactory = 
-            new Lazy<ICoordinateSystemFactory>(() => new CoordinateSystemFactory());
+        private static readonly Lazy<CoordinateSystemFactory> CoordinateSystemFactory = 
+            new Lazy<CoordinateSystemFactory>(() => new CoordinateSystemFactory());
 
         public struct WktString {
             /// <summary>
@@ -38,10 +37,10 @@ namespace ProjNET.Tests
             {
                 while (!sr.EndOfStream)
                 {
-                    var line = sr.ReadLine();
-                    if (string.IsNullOrEmpty(line)) continue;
+                    string line = sr.ReadLine();
+                    if (string.IsNullOrWhiteSpace(line)) continue;
 
-                    var split = line.IndexOf(';');
+                    int split = line.IndexOf(';');
                     if (split <= -1) continue;
 
                     var wkt = new WktString
@@ -60,7 +59,7 @@ namespace ProjNET.Tests
         /// <param name="id">EPSG ID</param>
         /// <param name="file">(optional) path to CSV File with WKT definitions.</param>
         /// <returns>Coordinate system, or <value>null</value> if no entry with <paramref name="id"/> was not found.</returns>
-        public static ICoordinateSystem GetCSbyID(int id, string file = null)
+        public static CoordinateSystem GetCSbyID(int id, string file = null)
         {
             //ICoordinateSystemFactory factory = new CoordinateSystemFactory();
             foreach (var wkt in GetSrids(file))

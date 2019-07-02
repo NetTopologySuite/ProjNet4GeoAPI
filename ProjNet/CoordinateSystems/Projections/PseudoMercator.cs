@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
-using GeoAPI.CoordinateSystems;
-using GeoAPI.CoordinateSystems.Transformations;
+using ProjNet.CoordinateSystems.Transformations;
 
 namespace ProjNet.CoordinateSystems.Projections
 {
@@ -24,14 +23,14 @@ namespace ProjNet.CoordinateSystems.Projections
         private static IEnumerable<ProjectionParameter> VerifyParameters(IEnumerable<ProjectionParameter> parameters)
         {
             var p = new ProjectionParameterSet(parameters);
-            var semi_major = p.GetParameterValue("semi_major");
+            double semi_major = p.GetParameterValue("semi_major");
             p.SetParameterValue("semi_minor", semi_major);
             p.SetParameterValue("scale_factor", 1);
 
             return p.ToProjectionParameter();
         }
 
-        public override IMathTransform Inverse()
+        public override MathTransform Inverse()
         {
             if (_inverse == null)
                 _inverse = new PseudoMercator(_Parameters.ToProjectionParameter(), this);

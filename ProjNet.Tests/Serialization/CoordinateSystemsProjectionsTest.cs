@@ -1,14 +1,14 @@
-﻿using GeoAPI.CoordinateSystems;
-using NUnit.Framework;
+﻿using NUnit.Framework;
+using ProjNet.CoordinateSystems;
 
-namespace ProjNet.UnitTests.Serialization
+namespace ProjNET.Tests.Serialization
 {
     public class CoordinateSystemsProjectionsTest : BaseSerializationTest
     {
         [Test]
         public void TestProjectionParameterSet() 
         {
-            var ps = new CoordinateSystems.Projections.ProjectionParameterSet(
+            var ps = new ProjNet.CoordinateSystems.Projections.ProjectionParameterSet(
                 new[]
                     {
                         new ProjectionParameter("latitude_of_origin", 0),

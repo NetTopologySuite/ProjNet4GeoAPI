@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-using GeoAPI.CoordinateSystems;
 
 namespace ProjNet.CoordinateSystems
 {
@@ -27,7 +26,7 @@ namespace ProjNet.CoordinateSystems
 	/// A 2D cartographic coordinate system.
     /// </summary>
     [Serializable] 
-    public class ProjectedCoordinateSystem : HorizontalCoordinateSystem,  IProjectedCoordinateSystem
+    public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
 	{
 		/// <summary>
 		/// Initializes a new instance of a projected coordinate system
@@ -43,8 +42,8 @@ namespace ProjNet.CoordinateSystems
 		/// <param name="alias">Alias</param>
 		/// <param name="abbreviation">Abbreviation</param>
 		/// <param name="remarks">Provider-supplied remarks</param>
-		internal ProjectedCoordinateSystem(IHorizontalDatum datum, IGeographicCoordinateSystem geographicCoordinateSystem,
-			ILinearUnit linearUnit, IProjection projection, List<AxisInfo> axisInfo,
+		internal ProjectedCoordinateSystem(HorizontalDatum datum, GeographicCoordinateSystem geographicCoordinateSystem,
+			LinearUnit linearUnit, IProjection projection, List<AxisInfo> axisInfo,
 			string name, string authority, long code, string alias,
 			string remarks, string abbreviation)
 			: base(datum, axisInfo, name, authority, code, alias, abbreviation, remarks)
@@ -62,7 +61,7 @@ namespace ProjNet.CoordinateSystems
 		/// <param name="zone">UTM zone</param>
 		/// <param name="zoneIsNorth">true of Northern hemisphere, false if southern</param>
 		/// <returns>UTM/WGS84 coordsys</returns>
-		public static IProjectedCoordinateSystem WGS84_UTM(int zone, bool zoneIsNorth)
+		public static ProjectedCoordinateSystem WGS84_UTM(int zone, bool zoneIsNorth)
 		{
 			var pInfo = new List<ProjectionParameter>();
 			pInfo.Add(new ProjectionParameter("latitude_of_origin", 0));
@@ -72,7 +71,7 @@ namespace ProjNet.CoordinateSystems
 			pInfo.Add(new ProjectionParameter("false_northing", zoneIsNorth ? 0 : 10000000));
 			//IProjection projection = cFac.CreateProjection("UTM" + Zone.ToString() + (ZoneIsNorth ? "N" : "S"), "Transverse_Mercator", parameters);
 			var proj = new Projection("Transverse_Mercator", pInfo, "UTM" + zone.ToString(CultureInfo.InvariantCulture) + (zoneIsNorth ? "N" : "S"),
-				"EPSG", 32600 + zone + (zoneIsNorth ? 0 : 100), String.Empty, String.Empty, String.Empty);
+				"EPSG", 32600 + zone + (zoneIsNorth ? 0 : 100), string.Empty, string.Empty, string.Empty);
 			var axes = new List<AxisInfo>
 			    {
 			        new AxisInfo("East", AxisOrientationEnum.East),
@@ -81,13 +80,13 @@ namespace ProjNet.CoordinateSystems
 		    return new ProjectedCoordinateSystem(CoordinateSystems.HorizontalDatum.WGS84,
 				CoordinateSystems.GeographicCoordinateSystem.WGS84, CoordinateSystems.LinearUnit.Metre, proj, axes,
 				"WGS 84 / UTM zone " + zone.ToString(CultureInfo.InvariantCulture) + (zoneIsNorth ? "N" : "S"), "EPSG", 32600 + zone + (zoneIsNorth ? 0 : 100),
-				String.Empty, "Large and medium scale topographic mapping and engineering survey.", string.Empty);
+				string.Empty, "Large and medium scale topographic mapping and engineering survey.", string.Empty);
 		}
 
 	    /// <summary>
 	    /// Gets a WebMercator coordinate reference system
 	    /// </summary>
-	    public static IProjectedCoordinateSystem WebMercator
+	    public static ProjectedCoordinateSystem WebMercator
 	    {
 	        get
 	        {
@@ -105,7 +104,7 @@ namespace ProjNet.CoordinateSystems
                     };
 
                 var proj = new Projection("Popular Visualisation Pseudo-Mercator", pInfo, "Popular Visualisation Pseudo-Mercator", "EPSG", 3856,
-                    "Pseudo-Mercator", String.Empty, String.Empty);
+                    "Pseudo-Mercator", string.Empty, string.Empty);
                 
                 var axes = new List<AxisInfo>
 			    {
@@ -125,12 +124,12 @@ namespace ProjNet.CoordinateSystems
         /// <summary>
         /// Gets or sets the GeographicCoordinateSystem.
         /// </summary>
-        public IGeographicCoordinateSystem GeographicCoordinateSystem { get; set; }
+        public GeographicCoordinateSystem GeographicCoordinateSystem { get; set; }
 
         /// <summary>
         /// Gets or sets the <see cref="LinearUnit">LinearUnits</see>. The linear unit must be the same as the <see cref="CoordinateSystem"/> units.
         /// </summary>
-        public ILinearUnit LinearUnit { get; set; }
+        public LinearUnit LinearUnit { get; set; }
 
         /// <summary>
         /// Gets units for dimension within coordinate system. Each dimension in 
@@ -156,13 +155,13 @@ namespace ProjNet.CoordinateSystems
 		{
 			get
 			{
-				StringBuilder sb = new StringBuilder();
+				var sb = new StringBuilder();
                 sb.AppendFormat("PROJCS[\"{0}\", {1}, {2}, {3}", Name, GeographicCoordinateSystem.WKT, LinearUnit.WKT, Projection.WKT);
 				for(int i=0;i<Projection.NumParameters;i++)
 					sb.AppendFormat(CultureInfo.InvariantCulture.NumberFormat, ", {0}", Projection.GetParameter(i).WKT);
 				//sb.AppendFormat(", {0}", LinearUnit.WKT);
                 //Skip authority and code if not defined
-                if (!String.IsNullOrEmpty(Authority) && AuthorityCode > 0)
+                if (!string.IsNullOrWhiteSpace(Authority) && AuthorityCode > 0)
                     sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
                 //Skip axis info if they contain default values
 				if (AxisInfo.Count != 2 ||
@@ -170,7 +169,7 @@ namespace ProjNet.CoordinateSystems
 					AxisInfo[1].Name != "Y" || AxisInfo[1].Orientation != AxisOrientationEnum.North)
 					for (int i = 0; i < AxisInfo.Count; i++)
 						sb.AppendFormat(", {0}", GetAxis(i).WKT);
-                //if (!String.IsNullOrEmpty(Authority) && AuthorityCode > 0)
+                //if (!string.IsNullOrWhiteSpace(Authority) && AuthorityCode > 0)
                 //    sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
                 sb.Append("]");
 				return sb.ToString();
@@ -184,11 +183,11 @@ namespace ProjNet.CoordinateSystems
 		{
 			get
 			{
-				StringBuilder sb = new StringBuilder();
+				var sb = new StringBuilder();
 				sb.AppendFormat(CultureInfo.InvariantCulture.NumberFormat,
 					"<CS_CoordinateSystem Dimension=\"{0}\"><CS_ProjectedCoordinateSystem>{1}",
 					Dimension, InfoXml);
-				foreach (AxisInfo ai in AxisInfo)
+				foreach (var ai in AxisInfo)
 					sb.Append(ai.XML);
 
 				sb.AppendFormat("{0}{1}{2}</CS_ProjectedCoordinateSystem></CS_CoordinateSystem>",

@@ -18,7 +18,6 @@
 using System;
 using System.Globalization;
 using System.Text;
-using GeoAPI.CoordinateSystems;
 
 namespace ProjNet.CoordinateSystems
 {
@@ -26,7 +25,7 @@ namespace ProjNet.CoordinateSystems
 	/// Definition of linear units.
     /// </summary>
     [Serializable] 
-    public class LinearUnit : Info, ILinearUnit
+    public class LinearUnit : Info, IUnit
 	{
 		/// <summary>
 		/// Creates an instance of a linear unit
@@ -42,7 +41,7 @@ namespace ProjNet.CoordinateSystems
 			:
 			base(name, authority, authorityCode, alias, abbreviation, remarks)
 		{
-			_MetersPerUnit = metersPerUnit;
+			MetersPerUnit = metersPerUnit;
 		}
 
 		#region Predefined units
@@ -50,30 +49,30 @@ namespace ProjNet.CoordinateSystems
 		/// Returns the meters linear unit.
 		/// Also known as International metre. SI standard unit.
 		/// </summary>
-		public static ILinearUnit Metre
+		public static LinearUnit Metre
 		{
-			get { return new LinearUnit(1.0,"metre", "EPSG", 9001, "m", String.Empty, "Also known as International metre. SI standard unit."); }
+			get { return new LinearUnit(1.0,"metre", "EPSG", 9001, "m", string.Empty, "Also known as International metre. SI standard unit."); }
 		}
 		/// <summary>
 		/// Returns the foot linear unit (1ft = 0.3048m).
 		/// </summary>
-		public static ILinearUnit Foot
+		public static LinearUnit Foot
 		{
-			get { return new LinearUnit(0.3048, "foot", "EPSG", 9002, "ft", String.Empty, String.Empty); }
+			get { return new LinearUnit(0.3048, "foot", "EPSG", 9002, "ft", string.Empty, string.Empty); }
 		}
 		/// <summary>
 		/// Returns the US Survey foot linear unit (1ftUS = 0.304800609601219m).
 		/// </summary>
-		public static ILinearUnit USSurveyFoot
+		public static LinearUnit USSurveyFoot
 		{
 			get { return new LinearUnit(0.304800609601219, "US survey foot", "EPSG", 9003, "American foot", "ftUS", "Used in USA."); }
 		}
 		/// <summary>
 		/// Returns the Nautical Mile linear unit (1NM = 1852m).
 		/// </summary>
-		public static ILinearUnit NauticalMile
+		public static LinearUnit NauticalMile
 		{
-			get { return new LinearUnit(1852, "nautical mile", "EPSG", 9030, "NM", String.Empty, String.Empty); }
+			get { return new LinearUnit(1852, "nautical mile", "EPSG", 9030, "NM", string.Empty, string.Empty); }
 		}
 
 		/// <summary>
@@ -83,36 +82,31 @@ namespace ProjNet.CoordinateSystems
 		/// Assumes Clarke's 1865 ratio of 1 British foot = 0.3047972654 French legal metres applies to the international metre. 
 		/// Used in older Australian, southern African &amp; British West Indian mapping.
 		/// </remarks>
-		public static ILinearUnit ClarkesFoot
+		public static LinearUnit ClarkesFoot
 		{
-			get { return new LinearUnit(0.3047972654, "Clarke's foot", "EPSG", 9005, "Clarke's foot", String.Empty, "Assumes Clarke's 1865 ratio of 1 British foot = 0.3047972654 French legal metres applies to the international metre. Used in older Australian, southern African & British West Indian mapping."); }
+			get { return new LinearUnit(0.3047972654, "Clarke's foot", "EPSG", 9005, "Clarke's foot", string.Empty, "Assumes Clarke's 1865 ratio of 1 British foot = 0.3047972654 French legal metres applies to the international metre. Used in older Australian, southern African & British West Indian mapping."); }
 		}
-		#endregion
+        #endregion
 
-		#region ILinearUnit Members
+        #region ILinearUnit Members
 
-		private double _MetersPerUnit;
 
-		/// <summary>
-		/// Gets or sets the number of meters per <see cref="LinearUnit"/>.
-		/// </summary>
-		public double MetersPerUnit
-		{
-			get { return _MetersPerUnit; }
-			set { _MetersPerUnit = value; }
-		}
+        /// <summary>
+        /// Gets or sets the number of meters per <see cref="LinearUnit"/>.
+        /// </summary>
+        public double MetersPerUnit { get; set; }
 
-		/// <summary>
-		/// Returns the Well-known text for this object
-		/// as defined in the simple features specification.
-		/// </summary>
-		public override string WKT
+        /// <summary>
+        /// Returns the Well-known text for this object
+        /// as defined in the simple features specification.
+        /// </summary>
+        public override string WKT
 		{
 			get
 			{
-				StringBuilder sb = new StringBuilder();
+				var sb = new StringBuilder();
 				sb.AppendFormat(CultureInfo.InvariantCulture.NumberFormat, "UNIT[\"{0}\", {1}", Name, MetersPerUnit);
-				if (!String.IsNullOrEmpty(Authority) && AuthorityCode > 0)
+				if (!string.IsNullOrWhiteSpace(Authority) && AuthorityCode > 0)
 					sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
 				sb.Append("]");
 				return sb.ToString();
@@ -126,7 +120,7 @@ namespace ProjNet.CoordinateSystems
 		{
 			get
 			{
-				return String.Format(CultureInfo.InvariantCulture.NumberFormat, "<CS_LinearUnit MetersPerUnit=\"{0}\">{1}</CS_LinearUnit>", MetersPerUnit, InfoXml);
+				return string.Format(CultureInfo.InvariantCulture.NumberFormat, "<CS_LinearUnit MetersPerUnit=\"{0}\">{1}</CS_LinearUnit>", MetersPerUnit, InfoXml);
 			}
 		}
 

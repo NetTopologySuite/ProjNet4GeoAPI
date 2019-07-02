@@ -38,9 +38,8 @@
 using System;
 using System.Globalization;
 using System.IO;
-using ProjNet.Converters.WellKnownText.IO;
 
-namespace ProjNet.Converters.WellKnownText
+namespace ProjNet.IO.CoordinateSystems
 {
     /// <summary>
     /// Reads a stream of Well Known Text (wkt) string and returns a stream of tokens.
@@ -65,7 +64,7 @@ namespace ProjNet.Converters.WellKnownText
             NextToken();
             if (GetStringValue() != expectedToken)
             {
-                string s = String.Format(_nfi, "Expecting ('{3}') but got a '{0}' at line {1} column {2}.", GetStringValue(), LineNumber, Column, expectedToken);
+                string s = string.Format(_nfi, "Expecting ('{3}') but got a '{0}' at line {1} column {2}.", GetStringValue(), LineNumber, Column, expectedToken);
                 throw new ArgumentException(s);
             }
         }
@@ -97,7 +96,7 @@ namespace ProjNet.Converters.WellKnownText
         /// </summary>
         /// <param name="authority">String to place the authority in.</param>
         /// <param name="authorityCode">String to place the authority code in.</param>
-        public void ReadAuthority(ref string authority, ref long authorityCode)
+        public void ReadAuthority(out string authority, out long authorityCode)
         {
             //AUTHORITY["EPGS","9102"]]
             if (GetStringValue() != "AUTHORITY")

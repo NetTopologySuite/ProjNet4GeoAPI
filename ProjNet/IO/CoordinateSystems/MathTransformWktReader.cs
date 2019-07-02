@@ -38,13 +38,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
-using GeoAPI.CoordinateSystems;
-using GeoAPI.CoordinateSystems.Transformations;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 
-namespace ProjNet.Converters.WellKnownText
+namespace ProjNet.IO.CoordinateSystems
 {
     /// <summary>
     /// Creates an math transform based on the supplied Well Known Text (WKT).
@@ -55,26 +52,16 @@ namespace ProjNet.Converters.WellKnownText
         /// Reads and parses a WKT-formatted projection string.
         /// </summary>
         /// <param name="wkt">String containing WKT.</param>
-        /// <param name="encoding">The parameter is not used.</param>
         /// <returns>Object representation of the WKT.</returns>
         /// <exception cref="System.ArgumentException">If a token is not recognised.</exception>
-        [Obsolete("The encoding is no longer used and will be removed in a future release.")]
-        public static IMathTransform Parse (string wkt, Encoding encoding) => Parse(wkt);
-
-        /// <summary>
-        /// Reads and parses a WKT-formatted projection string.
-        /// </summary>
-        /// <param name="wkt">String containing WKT.</param>
-        /// <returns>Object representation of the WKT.</returns>
-        /// <exception cref="System.ArgumentException">If a token is not recognised.</exception>
-        public static IMathTransform Parse (string wkt)
+        public static MathTransform Parse (string wkt)
         {
-            if (String.IsNullOrEmpty (wkt))
+            if (string.IsNullOrWhiteSpace (wkt))
                 throw new ArgumentNullException ("wkt");
 
             using (TextReader reader = new StringReader (wkt))
             {
-                WktStreamTokenizer tokenizer = new WktStreamTokenizer (reader);
+                var tokenizer = new WktStreamTokenizer (reader);
                 tokenizer.NextToken ();
                 string objectName = tokenizer.GetStringValue ();
                 switch (objectName)
@@ -82,7 +69,7 @@ namespace ProjNet.Converters.WellKnownText
                     case "PARAM_MT":
                         return ReadMathTransform (tokenizer);
                     default:
-                        throw new ArgumentException (String.Format ("'{0}' is not recognized.", objectName));
+                        throw new ArgumentException ($"'{objectName}' is not recognized.");
                 }
             }
         }
@@ -92,7 +79,7 @@ namespace ProjNet.Converters.WellKnownText
         /// </summary>
         /// <param name="tokenizer"></param>
         /// <returns></returns>
-        internal static IMathTransform ReadMathTransform (WktStreamTokenizer tokenizer)
+        internal static MathTransform ReadMathTransform (WktStreamTokenizer tokenizer)
         {
             if (tokenizer.GetStringValue () != "PARAM_MT")
                 tokenizer.ReadToken ("PARAM_MT");
@@ -109,9 +96,9 @@ namespace ProjNet.Converters.WellKnownText
             }
         }
 
-        private static IParameterInfo ReadParameters (WktStreamTokenizer tokenizer)
+        private static ParameterInfo ReadParameters (WktStreamTokenizer tokenizer)
         {
-            List<GeoAPI.CoordinateSystems.Parameter> paramList = new List<GeoAPI.CoordinateSystems.Parameter> ();
+            var paramList = new List<Parameter> ();
             while (tokenizer.GetStringValue () == "PARAMETER")
             {
                 tokenizer.ReadToken ("[");
@@ -124,13 +111,13 @@ namespace ProjNet.Converters.WellKnownText
                 tokenizer.NextToken ();
                 if (tokenizer.GetStringValue () != "]")
                     tokenizer.NextToken ();
-                paramList.Add (new GeoAPI.CoordinateSystems.Parameter (paramName, paramValue));
+                paramList.Add (new Parameter (paramName, paramValue));
             }
-            IParameterInfo info = new ParameterInfo () { Parameters = paramList };
+            var info = new ParameterInfo () { Parameters = paramList };
             return info;
         }
 
-        private static IMathTransform ReadAffineTransform (WktStreamTokenizer tokenizer)
+        private static MathTransform ReadAffineTransform (WktStreamTokenizer tokenizer)
         {
             /*
                  PARAM_MT[
@@ -150,18 +137,18 @@ namespace ProjNet.Converters.WellKnownText
             if (tokenizer.GetStringValue () != "PARAMETER")
                 tokenizer.ReadToken ("PARAMETER");
 
-            IParameterInfo paramInfo = ReadParameters (tokenizer);
+            var paramInfo = ReadParameters (tokenizer);
             //manage required parameters - row, col
             var rowParam = paramInfo.GetParameterByName ("num_row");
             var colParam = paramInfo.GetParameterByName ("num_col");
 
             if (rowParam == null)
             {
-                throw new ArgumentNullException ("Affine transform does not contain 'num_row' parameter");
+                throw new ArgumentNullException (nameof(rowParam), "Affine transform does not contain 'num_row' parameter");
             }
             if (colParam == null)
             {
-                throw new ArgumentNullException ("Affine transform does not contain 'num_col' parameter");
+                throw new ArgumentNullException (nameof(colParam), "Affine transform does not contain 'num_col' parameter");
             }
             int rowVal = (int)rowParam.Value;
             int colVal = (int)colParam.Value;
@@ -239,9 +226,6 @@ namespace ProjNet.Converters.WellKnownText
                     case "elt_3_3":
                         matrix[3, 3] = param.Value;
                         break;
-                    default:
-                        //unknown parameter
-                        break;
                 }
             }
 
@@ -250,7 +234,7 @@ namespace ProjNet.Converters.WellKnownText
                 tokenizer.ReadToken ("]");
 
             //use "matrix" constructor to create transformation matrix
-            IMathTransform affineTransform = new AffineTransform (matrix);
+            var affineTransform = new AffineTransform (matrix);
             return affineTransform;
         }
     }
