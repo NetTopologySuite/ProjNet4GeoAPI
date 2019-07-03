@@ -18,7 +18,6 @@
 using System;
 using System.Globalization;
 using System.Text;
-using GeoAPI.CoordinateSystems;
 
 namespace ProjNet.CoordinateSystems
 {
@@ -42,7 +41,7 @@ namespace ProjNet.CoordinateSystems
 			:
 			base(name, authority, authorityCode, alias, abbreviation, remarks)
 		{
-			_ConversionFactor = conversionFactor;
+			ConversionFactor = conversionFactor;
 		}
 
 		/// <summary>
@@ -51,32 +50,26 @@ namespace ProjNet.CoordinateSystems
 		/// <param name="name">Name of unit</param>
 		/// <param name="conversionFactor">Conversion factor to base unit</param>
 		internal Unit(string name, double conversionFactor)
-			: this(conversionFactor, name, String.Empty, -1, String.Empty, String.Empty, String.Empty)
+			: this(conversionFactor, name, string.Empty, -1, string.Empty, string.Empty, string.Empty)
 		{
 		}
 
-		private double _ConversionFactor;
+        /// <summary>
+        /// Gets or sets the number of units per base-unit.
+        /// </summary>
+        public double ConversionFactor { get; set; }
 
-		/// <summary>
-		/// Gets or sets the number of units per base-unit.
-		/// </summary>
-		public double ConversionFactor
-		{
-			get { return _ConversionFactor; }
-			set { _ConversionFactor = value; }
-		}
-
-		/// <summary>
-		/// Returns the Well-known text for this object
-		/// as defined in the simple features specification.
-		/// </summary>
-		public override string WKT
+        /// <summary>
+        /// Returns the Well-known text for this object
+        /// as defined in the simple features specification.
+        /// </summary>
+        public override string WKT
 		{
 			get
 			{
-				StringBuilder sb = new StringBuilder();
-				sb.AppendFormat(CultureInfo.InvariantCulture.NumberFormat, "UNIT[\"{0}\", {1}", Name, _ConversionFactor);
-				if (!String.IsNullOrEmpty(Authority) && AuthorityCode > 0)
+				var sb = new StringBuilder();
+				sb.AppendFormat(CultureInfo.InvariantCulture.NumberFormat, "UNIT[\"{0}\", {1}", Name, ConversionFactor);
+				if (!string.IsNullOrWhiteSpace(Authority) && AuthorityCode > 0)
 					sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
 				sb.Append("]");
 				return sb.ToString();
@@ -105,7 +98,7 @@ namespace ProjNet.CoordinateSystems
 		{
 			if (!(obj is Unit))
 				return false;
-			return (obj as Unit).ConversionFactor == this.ConversionFactor;
+			return (obj as Unit).ConversionFactor == ConversionFactor;
 		}
     }
 }

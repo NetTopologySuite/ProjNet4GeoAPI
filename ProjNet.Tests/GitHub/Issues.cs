@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using GeoAPI.CoordinateSystems;
-using GeoAPI.CoordinateSystems.Transformations;
-using GeoAPI.Geometries;
+using NetTopologySuite.Geometries;
+using NetTopologySuite.Geometries.Implementation;
 using NUnit.Framework;
 using ProjNet;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
-using ProjNet.Geometries.Implementation;
+using ProjNET.Tests.Geometries.Implementation;
 
 namespace ProjNET.Tests.GitHub
 {
@@ -76,8 +75,8 @@ namespace ProjNET.Tests.GitHub
         [Test]
         public void TestIssuesWith3857To25832()
         {
-            var epsg_3857 = (ICoordinateSystem)ProjectedCoordinateSystem.WebMercator;
-            Console.WriteLine(((IProjectedCoordinateSystem)epsg_3857).Projection.ClassName);
+            var epsg_3857 = ProjectedCoordinateSystem.WebMercator;
+            Console.WriteLine(epsg_3857.Projection.ClassName);
             Console.WriteLine(epsg_3857.WKT);
 
             var epsg25832 = _css.GetCoordinateSystem(25832);
@@ -90,8 +89,8 @@ namespace ProjNET.Tests.GitHub
             Assert.That(pt_3857.Distance(pt_3857ex), Is.LessThan(0.015));
 
 
-            epsg_3857 = _css.GetCoordinateSystem(3857);
-            Console.WriteLine(((IProjectedCoordinateSystem)epsg_3857).Projection.ClassName);
+            epsg_3857 = (ProjectedCoordinateSystem)_css.GetCoordinateSystem(3857);
+            Console.WriteLine(epsg_3857.Projection.ClassName);
             Console.WriteLine(epsg_3857.WKT);
 
             var mt2 = _css.CreateTransformation(epsg25832, epsg_3857).MathTransform;
@@ -105,13 +104,13 @@ namespace ProjNET.Tests.GitHub
             var epsg26910 = _css.GetCoordinateSystem("EPSG", 26910);
             var epsg_4326 = _css.GetCoordinateSystem("EPSG", 4326);
 
-            var ptI = new double[] { 3523562.711189, 6246615.391161 };
+            double[] ptI = { 3523562.711189, 6246615.391161 };
 
 
             var ct = _css.CreateTransformation(epsg26910, epsg_4326);
-            var pt1a = ct.MathTransform.Transform(ptI);
-            Assert.That(pt1a[0], Is.EqualTo(-82.0479097).Within(0.01), "Longitude");
-            Assert.That(pt1a[1], Is.EqualTo(48.4185597).Within(0.01), "Latitude");
+            var pt1a = ct.MathTransform.Transform(ptI[0], ptI[1]);
+            Assert.That(pt1a.x, Is.EqualTo(-82.0479097).Within(0.01), "Longitude");
+            Assert.That(pt1a.y, Is.EqualTo(48.4185597).Within(0.01), "Latitude");
             /*
             var pt1b = ct.MathTransform.Inverse().Transform(pt1a);
             Assert.That(pt1b[0], Is.EqualTo(3523562.711189).Within(0.01), "Easting");

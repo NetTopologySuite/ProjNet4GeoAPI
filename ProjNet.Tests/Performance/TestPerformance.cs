@@ -4,8 +4,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Runtime.InteropServices;
-using GeoAPI.CoordinateSystems.Transformations;
-using GeoAPI.Geometries;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.Geometries.Implementation;
 using NetTopologySuite.IO;
@@ -29,63 +27,42 @@ namespace ProjNET.Tests.Performance
             Console.WriteLine($"|---------|---------|-----------:|------------:|-------------------:|");
         }
 
-        [TestCase(@"TestData\africa.wkt")]
-        [TestCase(@"TestData\europe.wkt")]
-        [TestCase(@"TestData\world.wkt")]
-        public void TestPerformance(string pathToWktFile)
+        [TestCase("africa.wkt")]
+        [TestCase("europe.wkt")]
+        [TestCase("world.wkt")]
+        public void TestPerformance(string wktFileName)
         {
-            if (!Path.IsPathRooted(pathToWktFile))
-                pathToWktFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), pathToWktFile);
+            string fullPathToWktFile = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location),
+                                                    "TestData",
+                                                    wktFileName);
 
-            if (!File.Exists(pathToWktFile))
-                throw new IgnoreException($"File '{pathToWktFile}' not found.");
+            if (!File.Exists(fullPathToWktFile))
+            {
+                Assert.Ignore($"File '{wktFileName}' not found.");
+            }
 
             //Console.WriteLine(pathToWktFile);
-#if WithSpans
-#if SequenceCoordinateConverter
-            MathTransform.SequenceCoordinateConverter = null;
-            DoTestPerformance(CoordinateArraySequenceFactory.Instance, pathToWktFile);
-            DoTestPerformance(PackedCoordinateSequenceFactory.DoubleFactory, pathToWktFile);
-            DoTestPerformance(DotSpatialAffineCoordinateSequenceFactory.Instance, pathToWktFile);
-#else
-            DoTestPerformance(CoordinateArraySequenceFactory.Instance, pathToWktFile);
-            DoTestPerformance(CoordinateArraySequenceFactory.Instance, pathToWktFile, new CoordinateArraySequenceTransformer());
-            DoTestPerformance(PackedCoordinateSequenceFactory.DoubleFactory, pathToWktFile);
-            DoTestPerformance(PackedCoordinateSequenceFactory.DoubleFactory, pathToWktFile, new PackedDoubleSequenceTransformer());
-            DoTestPerformance(DotSpatialAffineCoordinateSequenceFactory.Instance, pathToWktFile);
-            DoTestPerformance(DotSpatialAffineCoordinateSequenceFactory.Instance, pathToWktFile, new DotSpatialSequenceTransformer());
-            DoTestPerformance(SpanCoordinateSequenceFactory.Instance, pathToWktFile, null);
-            DoTestPerformance(SpanCoordinateSequenceFactory.Instance, pathToWktFile, new SpanCoordinateSequenceTransformer());
-#endif
-#else
-            DoTestPerformance(CoordinateArraySequenceFactory.Instance, pathToWktFile);
-            DoTestPerformance(PackedCoordinateSequenceFactory.DoubleFactory, pathToWktFile);
-            DoTestPerformance(DotSpatialAffineCoordinateSequenceFactory.Instance, pathToWktFile);
-#endif
+            DoTestPerformance(CoordinateArraySequenceFactory.Instance, fullPathToWktFile, new SequenceCoordinateConverterBase());
+            DoTestPerformance(PackedCoordinateSequenceFactory.DoubleFactory, fullPathToWktFile, new SequenceCoordinateConverterBase());
+            DoTestPerformance(DotSpatialAffineCoordinateSequenceFactory.Instance, fullPathToWktFile, new SequenceCoordinateConverterBase());
+            DoTestPerformance(SpanCoordinateSequenceFactory.Instance, fullPathToWktFile, new SequenceCoordinateConverterBase());
+
+            DoTestPerformance(CoordinateArraySequenceFactory.Instance, fullPathToWktFile, new SequenceTransformerBase());
+            DoTestPerformance(CoordinateArraySequenceFactory.Instance, fullPathToWktFile, new CoordinateArraySequenceTransformer());
+            DoTestPerformance(PackedCoordinateSequenceFactory.DoubleFactory, fullPathToWktFile, new SequenceTransformerBase());
+            DoTestPerformance(PackedCoordinateSequenceFactory.DoubleFactory, fullPathToWktFile, new PackedDoubleSequenceTransformer());
+            DoTestPerformance(DotSpatialAffineCoordinateSequenceFactory.Instance, fullPathToWktFile, new SequenceTransformerBase());
+            DoTestPerformance(DotSpatialAffineCoordinateSequenceFactory.Instance, fullPathToWktFile, new DotSpatialSequenceTransformer());
+            DoTestPerformance(SpanCoordinateSequenceFactory.Instance, fullPathToWktFile, new SequenceTransformerBase());
+            DoTestPerformance(SpanCoordinateSequenceFactory.Instance, fullPathToWktFile, new SpanCoordinateSequenceTransformer());
         }
 
-        private void DoTestPerformance(ICoordinateSequenceFactory factory, string pathToWktFile
-#if WithSpans
-#if SequenceCoordinateConverter
-            , SequenceCoordinateConverterBase c = null)
-#else
-            , SequenceTransformerBase c = null)
-#endif
-#else
-        )
-#endif
+        private void DoTestPerformance(CoordinateSequenceFactory factory, string pathToWktFile, object transformUtility)
         {
             const int numIterations = 25;
             var gf = new GeometryFactory(new PrecisionModel(PrecisionModels.Floating), 4326, factory);
             var wktFileReader = new WKTFileReader(pathToWktFile, new WKTReader(gf));
 
-#if WithSpans
-#if SequenceCoordinateConverter
-            MathTransform.SequenceCoordinateConverter = c;
-#else
-            MathTransform.SequenceTransformer = c;
-#endif
-#endif
             var geometries = wktFileReader.Read();
             var stopwatch = new Stopwatch();
 
@@ -96,59 +73,65 @@ namespace ProjNET.Tests.Performance
             long numCoordinates = 0;
             for (int i = 0; i <= numIterations; i++)
             {
-                var transformed = new List<IGeometry>(geometries.Count);
+                var transformed = new List<Geometry>(geometries.Count);
 
-                stopwatch.Restart();
-                foreach (var geometry in geometries)
+                if (transformUtility is SequenceCoordinateConverterBase sc)
                 {
-                    transformed.Add(Transform(geometry, mt, gf2));
-                    if (i == 0) numCoordinates += geometry.NumPoints;
+                    stopwatch.Restart();
+                    foreach (var geometry in geometries)
+                    {
+                        transformed.Add(Transform(geometry, mt, gf2, sc));
+                        if (i == 0) numCoordinates += geometry.NumPoints;
+                    }
+
+                    stopwatch.Stop();
+                } else if (transformUtility is SequenceTransformerBase st)
+                {
+                    stopwatch.Restart();
+                    foreach (var geometry in geometries)
+                    {
+                        transformed.Add(Transform(geometry, mt, gf2, st));
+                        if (i == 0) numCoordinates += geometry.NumPoints;
+                    }
+
+                    stopwatch.Stop();
                 }
-                stopwatch.Stop();
 
                 elapsedMs += stopwatch.ElapsedMilliseconds;
             }
 
-#if (WithSpans)
-#if SequenceCoordinateConverter
-            string util = MathTransform.SequenceCoordinateConverter.GetType().Name;
-#else
-            string util = MathTransform.SequenceTransformer.GetType().Name;
-#endif
-#else
-            string util = "no span";
-#endif
+            string util = transformUtility.GetType().Name;
             Console.WriteLine($"| {gf.CoordinateSequenceFactory.GetType().Name} | {util} | {geometries.Count} | {numCoordinates} |  ~{elapsedMs / numIterations} ms |");
 
         }
 
-        private static IGeometry Transform(IGeometry geometry, IMathTransform transfrom, IGeometryFactory factory)
+        private static Geometry Transform(Geometry geometry, MathTransform transform, GeometryFactory factory, SequenceCoordinateConverterBase sc)
         {
-            if (geometry is IGeometryCollection)
+            if (geometry is GeometryCollection)
             {
-                var res = new IGeometry[geometry.NumGeometries];
+                var res = new Geometry[geometry.NumGeometries];
                 for (int i = 0; i < geometry.NumGeometries; i++)
-                    res[i] = Transform(geometry.GetGeometryN(i), transfrom, factory);
+                    res[i] = Transform(geometry.GetGeometryN(i), transform, factory, sc);
                 return factory.BuildGeometry(res);
             }
 
-            if (geometry is IPoint p)
-                return factory.CreatePoint(transfrom.Transform(p.CoordinateSequence));
+            if (geometry is Point p)
+                return factory.CreatePoint(transform.Transform(p.CoordinateSequence, sc));
 
-            if (geometry is ILineString l)
-                return factory.CreateLineString(transfrom.Transform(l.CoordinateSequence));
+            if (geometry is LineString l)
+                return factory.CreateLineString(transform.Transform(l.CoordinateSequence, sc));
 
-            if (geometry is IPolygon po)
+            if (geometry is Polygon po)
             {
-                var holes = new ILinearRing[po.NumInteriorRings];
+                var holes = new LinearRing[po.NumInteriorRings];
                 for (int i = 0; i < po.NumInteriorRings; i++)
                 {
-                    var ring = CoordinateSequences.EnsureValidRing(factory.CoordinateSequenceFactory, transfrom.Transform(po.InteriorRings[i].CoordinateSequence));
+                    var ring = CoordinateSequences.EnsureValidRing(factory.CoordinateSequenceFactory, transform.Transform(po.InteriorRings[i].CoordinateSequence, sc));
                     holes[i] = factory.CreateLinearRing(ring);
                 }
 
                 var shell = CoordinateSequences.EnsureValidRing(
-                    factory.CoordinateSequenceFactory, transfrom.Transform(po.ExteriorRing.CoordinateSequence));
+                    factory.CoordinateSequenceFactory, transform.Transform(po.ExteriorRing.CoordinateSequence, sc));
 
                 return CoordinateSequences.IsRing(shell)
                     ? factory.CreatePolygon(factory.CreateLinearRing(shell), holes)
@@ -157,19 +140,54 @@ namespace ProjNET.Tests.Performance
 
             throw new NotSupportedException();
         }
+
+        private static Geometry Transform(Geometry geometry, MathTransform transform, GeometryFactory factory, SequenceTransformerBase st)
+        {
+            if (geometry is GeometryCollection)
+            {
+                var res = new Geometry[geometry.NumGeometries];
+                for (int i = 0; i < geometry.NumGeometries; i++)
+                    res[i] = Transform(geometry.GetGeometryN(i), transform, factory, st);
+                return factory.BuildGeometry(res);
+            }
+
+            if (geometry is Point p)
+                return factory.CreatePoint(transform.Transform(p.CoordinateSequence, st));
+
+            if (geometry is LineString l)
+                return factory.CreateLineString(transform.Transform(l.CoordinateSequence, st));
+
+            if (geometry is Polygon po)
+            {
+                var holes = new LinearRing[po.NumInteriorRings];
+                for (int i = 0; i < po.NumInteriorRings; i++)
+                {
+                    var ring = CoordinateSequences.EnsureValidRing(factory.CoordinateSequenceFactory, transform.Transform(po.InteriorRings[i].CoordinateSequence, st));
+                    holes[i] = factory.CreateLinearRing(ring);
+                }
+
+                var shell = CoordinateSequences.EnsureValidRing(
+                    factory.CoordinateSequenceFactory, transform.Transform(po.ExteriorRing.CoordinateSequence, st));
+
+                return CoordinateSequences.IsRing(shell)
+                    ? factory.CreatePolygon(factory.CreateLinearRing(shell), holes)
+                    : null;
+            }
+
+            throw new NotSupportedException();
+        }
+
     }
-#if WithSpans
-#if !SequenceCoordinateConverter
 
     internal class CoordinateArraySequenceTransformer : SequenceTransformerBase
     {
-        public override void Transform(MathTransform transform, ICoordinateSequence sequence)
+        public override void Transform(MathTransform transform, CoordinateSequence sequence)
         {
             var s = (CoordinateArraySequence) sequence;
             var ca = s.ToCoordinateArray();
 
-            var xy = new double[2 * ca.Length];
-            var z = new double[ca.Length];
+            double[] xy = new double[2 * ca.Length];
+            double[] z = new double[ca.Length];
             for (int i = 0, j = 0; i < ca.Length; i++)
             {
                 xy[j++] = ca[i].X;
@@ -201,10 +219,10 @@ namespace ProjNET.Tests.Performance
 
     internal class PackedDoubleSequenceTransformer : SequenceTransformerBase
     {
-        public override void Transform(MathTransform transform, ICoordinateSequence sequence)
+        public override void Transform(MathTransform transform, CoordinateSequence sequence)
         {
             var s = (PackedDoubleCoordinateSequence) sequence;
-            var raw = s.GetRawCoordinates();
+            double[] raw = s.GetRawCoordinates();
             if (s.Dimension == 2)
             {
                 var xs = new Span<double>(raw).Slice(0, raw.Length - 1);
@@ -225,7 +243,7 @@ namespace ProjNET.Tests.Performance
 
     internal class DotSpatialSequenceTransformer : SequenceTransformerBase
     {
-        public override void Transform(MathTransform transform, ICoordinateSequence sequence)
+        public override void Transform(MathTransform transform, CoordinateSequence sequence)
         {
             var s = (DotSpatialAffineCoordinateSequence)sequence;
             int length = 2 * s.Count - 1;
@@ -251,7 +269,7 @@ namespace ProjNET.Tests.Performance
 
     internal class SpanCoordinateSequenceTransformer : SequenceTransformerBase
     {
-        public override void Transform(MathTransform transform, ICoordinateSequence sequence)
+        public override void Transform(MathTransform transform, CoordinateSequence sequence)
         {
             var scs = (SpanCoordinateSequence)sequence;
             var inZs = scs.ZsAsSpan();
@@ -262,7 +280,4 @@ namespace ProjNET.Tests.Performance
 
         }
     }
-
-#endif
-#endif
 }

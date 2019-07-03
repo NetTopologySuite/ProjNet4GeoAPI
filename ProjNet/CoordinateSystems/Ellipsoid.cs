@@ -18,7 +18,6 @@
 using System;
 using System.Globalization;
 using System.Text;
-using GeoAPI.CoordinateSystems;
 
 namespace ProjNet.CoordinateSystems
 {
@@ -26,7 +25,7 @@ namespace ProjNet.CoordinateSystems
 	/// The IEllipsoid interface defines the standard information stored with ellipsoid objects.
     /// </summary>
     [Serializable] 
-    public class Ellipsoid : Info, IEllipsoid
+    public class Ellipsoid : Info
 	{
 		/// <summary>
 		/// Initializes a new instance of an Ellipsoid
@@ -47,7 +46,7 @@ namespace ProjNet.CoordinateSystems
 			double semiMinorAxis, 
 			double inverseFlattening,
 			bool isIvfDefinitive,
-			ILinearUnit axisUnit, string name, string authority, long code, string alias, 
+			LinearUnit axisUnit, string name, string authority, long code, string alias, 
 			string abbreviation, string remarks)
 			: base(name, authority, code, alias, abbreviation, remarks)
 		{
@@ -90,7 +89,7 @@ namespace ProjNet.CoordinateSystems
 		{
 			get
 			{
-				return new Ellipsoid(6378135.0, 0, 298.26, true, LinearUnit.Metre, "WGS 72", "EPSG", 7043, "WGS 72", String.Empty, String.Empty);
+				return new Ellipsoid(6378135.0, 0, 298.26, true, LinearUnit.Metre, "WGS 72", "EPSG", 7043, "WGS 72", string.Empty, string.Empty);
 			}
 		}
 
@@ -124,7 +123,7 @@ namespace ProjNet.CoordinateSystems
 		{
 			get
 			{
-				return new Ellipsoid(6378388, 0, 297, true, LinearUnit.Metre, "International 1924", "EPSG", 7022, "Hayford 1909", String.Empty,
+				return new Ellipsoid(6378388, 0, 297, true, LinearUnit.Metre, "International 1924", "EPSG", 7022, "Hayford 1909", string.Empty,
 					"Described as a=6378388 m. and b=6356909 m. from which 1/f derived to be 296.95926. The figure was adopted as the International ellipsoid in 1924 but with 1/f taken as 297 exactly from which b is derived as 6356911.946m.");
 			}
 		}
@@ -139,7 +138,7 @@ namespace ProjNet.CoordinateSystems
 		{
 			get
 			{
-				return new Ellipsoid(20926202, 0, 297, true, LinearUnit.ClarkesFoot, "Clarke 1880", "EPSG", 7034, "Clarke 1880", String.Empty,
+				return new Ellipsoid(20926202, 0, 297, true, LinearUnit.ClarkesFoot, "Clarke 1880", "EPSG", 7034, "Clarke 1880", string.Empty,
 					"Clarke gave a and b and also 1/f=293.465 (to 3 decimal places).  1/f derived from a and b = 293.4663077…");
 			}
 		}
@@ -154,7 +153,7 @@ namespace ProjNet.CoordinateSystems
 		{
 			get
 			{
-				return new Ellipsoid(6378206.4, 6356583.8, double.PositiveInfinity, false, LinearUnit.Metre, "Clarke 1866", "EPSG", 7008, "Clarke 1866", String.Empty,
+				return new Ellipsoid(6378206.4, 6356583.8, double.PositiveInfinity, false, LinearUnit.Metre, "Clarke 1866", "EPSG", 7008, "Clarke 1866", string.Empty,
 					"Original definition a=20926062 and b=20855121 (British) feet. Uses Clarke's 1865 inch-metre ratio of 39.370432 to obtain metres. (Metric value then converted to US survey feet for use in the United States using 39.37 exactly giving a=20925832.16 ft US).");
 			}
 		}
@@ -196,7 +195,7 @@ namespace ProjNet.CoordinateSystems
 	    /// <summary>
 	    /// Gets or sets the value of the axis unit.
 	    /// </summary>
-	    public ILinearUnit AxisUnit { get; set; }
+	    public LinearUnit AxisUnit { get; set; }
 
 	    /// <summary>
 	    /// Tells if the Inverse Flattening is definitive for this ellipsoid. Some ellipsoids use 
@@ -216,7 +215,7 @@ namespace ProjNet.CoordinateSystems
 			{
 				var sb = new StringBuilder();
 				sb.AppendFormat(CultureInfo.InvariantCulture.NumberFormat, "SPHEROID[\"{0}\", {1}, {2}", Name, SemiMajorAxis, InverseFlattening);
-				if (!String.IsNullOrEmpty(Authority) && AuthorityCode > 0)
+				if (!string.IsNullOrWhiteSpace(Authority) && AuthorityCode > 0)
 					sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
 				sb.Append("]");
 				return sb.ToString();				
@@ -230,7 +229,7 @@ namespace ProjNet.CoordinateSystems
 		{
 			get
 			{
-				return String.Format(CultureInfo.InvariantCulture.NumberFormat,
+				return string.Format(CultureInfo.InvariantCulture.NumberFormat,
 					"<CS_Ellipsoid SemiMajorAxis=\"{0}\" SemiMinorAxis=\"{1}\" InverseFlattening=\"{2}\" IvfDefinitive=\"{3}\">{4}{5}</CS_Ellipsoid>",
 					SemiMajorAxis, SemiMinorAxis, InverseFlattening, (IsIvfDefinitive ? 1 : 0), InfoXml, AxisUnit.XML); ;
 			}
@@ -249,7 +248,7 @@ namespace ProjNet.CoordinateSystems
 		{
 			if (!(obj is Ellipsoid))
 				return false;
-			Ellipsoid e = obj as Ellipsoid;
+			var e = obj as Ellipsoid;
 			return (e.InverseFlattening == this.InverseFlattening &&
 					e.IsIvfDefinitive == this.IsIvfDefinitive &&
 					e.SemiMajorAxis == this.SemiMajorAxis &&

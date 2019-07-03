@@ -1,13 +1,10 @@
 using System;
-using GeoAPI.Geometries;
+using NetTopologySuite.Geometries;
 
 namespace ProjNET.Tests.Geometries.Implementation
 {
-    public class SpanCoordinateSequence : ICoordinateSequence
+    public class SpanCoordinateSequence : CoordinateSequence
     {
-        private readonly int _dimension;
-        private readonly int _measures;
-        private readonly Ordinates _ordinates;
         private readonly int[] _ordinateIndirection;
         private readonly double[] _ordinateValues;
         private readonly Coordinate _createCoordinateTemplate;
@@ -15,14 +12,8 @@ namespace ProjNET.Tests.Geometries.Implementation
         private Coordinate[] _cached;
 
         internal SpanCoordinateSequence(int dimension, int measures, double[] ordinateValues)
+            :base(ordinateValues.Length / dimension, dimension, measures)
         {
-            Count = ordinateValues.Length / dimension;
-
-            _dimension = dimension;
-            _measures = measures;
-            _ordinates = Ordinates.XY;
-            if (HasZ) _ordinates |= Ordinates.Z;
-            if (HasM) _ordinates |= Ordinates.M;
             _ordinateIndirection = new int[HasZ ? dimension : dimension + 1];
             for (int i = 1; i < _ordinateIndirection.Length; i++)
             {
@@ -37,12 +28,9 @@ namespace ProjNET.Tests.Geometries.Implementation
         }
 
         private SpanCoordinateSequence(int dimension, int measures, Ordinates ordinates, double[] ordinateValues, int[] ordinateIndirection, Coordinate createCoordinateTemplate)
+            :base(ordinateValues.Length / dimension,  dimension, measures)
         {
-            Count = ordinateValues.Length / dimension;
-            _dimension = dimension;
-            _measures = measures;
             _ordinateValues = ordinateValues;
-            _ordinates = ordinates;
             _ordinateIndirection = ordinateIndirection;
             _createCoordinateTemplate = createCoordinateTemplate;
         }
@@ -77,7 +65,7 @@ namespace ProjNET.Tests.Geometries.Implementation
             return default;
         }
 
-        public Coordinate CreateCoordinate() => _createCoordinateTemplate.Copy();
+        public override Coordinate CreateCoordinate() => _createCoordinateTemplate.Copy();
 
         private Coordinate CreateCoordinateTemplate()
         {
@@ -94,7 +82,7 @@ namespace ProjNET.Tests.Geometries.Implementation
         }
 
 
-        public Coordinate GetCoordinate(int i)
+        public override Coordinate GetCoordinate(int i)
         {
             var res = CreateCoordinate();
             res.X = _ordinateValues[_ordinateIndirection[(int) Ordinate.X] + i];
@@ -105,12 +93,12 @@ namespace ProjNET.Tests.Geometries.Implementation
             return res;
         }
 
-        public Coordinate GetCoordinateCopy(int i)
+        public override Coordinate GetCoordinateCopy(int i)
         {
             return GetCoordinate(i);
         }
 
-        public void GetCoordinate(int i, Coordinate coord)
+        public override void GetCoordinate(int i, Coordinate coord)
         {
             coord.X = _ordinateValues[_ordinateIndirection[(int)Ordinate.X] + i];
             coord.Y = _ordinateValues[_ordinateIndirection[(int)Ordinate.Y] + i];
@@ -120,27 +108,27 @@ namespace ProjNET.Tests.Geometries.Implementation
                 coord.M = HasM ? _ordinateValues[_ordinateIndirection[(int)Ordinate.M] + i] : _createCoordinateTemplate.M;
         }
 
-        public double GetX(int i)
+        public override double GetX(int i)
         {
             return _ordinateValues[_ordinateIndirection[(int)Ordinate.X] + i];
         }
 
-        public double GetY(int i)
+        public override double GetY(int i)
         {
             return _ordinateValues[_ordinateIndirection[(int)Ordinate.Y] + i];
         }
 
-        public double GetZ(int i)
+        public override double GetZ(int i)
         {
             return HasZ ? _ordinateValues[_ordinateIndirection[(int)Ordinate.Z] + i] : _createCoordinateTemplate.Z;
         }
 
-        public double GetM(int i)
+        public override double GetM(int i)
         {
             return HasM ? _ordinateValues[_ordinateIndirection[(int)Ordinate.M] + i] : _createCoordinateTemplate.M;
         }
 
-        public double GetOrdinate(int index, Ordinate ordinate)
+        public override double GetOrdinate(int index, int ordinate)
         {
             if (unchecked((uint)index >= (uint)Count))
                 throw new ArgumentOutOfRangeException(nameof(index));
@@ -148,13 +136,13 @@ namespace ProjNET.Tests.Geometries.Implementation
             if (unchecked((uint)ordinate >= (uint)_ordinateIndirection.Length))
                 throw new ArgumentOutOfRangeException(nameof(ordinate));
 
-            if (_ordinateIndirection[(int) ordinate] < 0)
+            if (_ordinateIndirection[ordinate] < 0)
                 throw new ArgumentOutOfRangeException(nameof(ordinate));
 
-            return _ordinateValues[_ordinateIndirection[(int) ordinate] + index];
+            return _ordinateValues[_ordinateIndirection[ordinate] + index];
         }
 
-        public void SetOrdinate(int index, Ordinate ordinate, double value)
+        public override void SetOrdinate(int index, int ordinate, double value)
         {
             if (unchecked((uint)index >= (uint)Count))
                 throw new ArgumentOutOfRangeException(nameof(index));
@@ -162,14 +150,14 @@ namespace ProjNET.Tests.Geometries.Implementation
             if (unchecked((uint)ordinate >= (uint)_ordinateIndirection.Length))
                 throw new ArgumentOutOfRangeException(nameof(ordinate));
 
-            if (_ordinateIndirection[(int)ordinate] < 0)
+            if (_ordinateIndirection[ordinate] < 0)
                 throw new ArgumentOutOfRangeException(nameof(ordinate));
 
-            _ordinateValues[_ordinateIndirection[(int) ordinate] + index] = value;
+            _ordinateValues[_ordinateIndirection[ordinate] + index] = value;
             _cached = null;
         }
 
-        public Coordinate[] ToCoordinateArray()
+        public override Coordinate[] ToCoordinateArray()
         {
             if (_cached != null)
                 return _cached;
@@ -179,7 +167,7 @@ namespace ProjNET.Tests.Geometries.Implementation
             return _cached = res;
         }
 
-        public Envelope ExpandEnvelope(Envelope env)
+        public override Envelope ExpandEnvelope(Envelope env)
         {
             //env = env.Copy();
             for (int i = 0, j = _ordinateIndirection[0], k = _ordinateIndirection[1]; i < Count; i++)
@@ -187,21 +175,9 @@ namespace ProjNET.Tests.Geometries.Implementation
             return env;
         }
 
-        public ICoordinateSequence Copy()
+        public override CoordinateSequence Copy()
         {
-            return new SpanCoordinateSequence(_dimension, _measures, _ordinates, (double[])_ordinateValues.Clone(), _ordinateIndirection, _createCoordinateTemplate);
+            return new SpanCoordinateSequence(Dimension, Measures, Ordinates, (double[])_ordinateValues.Clone(), _ordinateIndirection, _createCoordinateTemplate);
         }
-
-        public int Dimension => _dimension;
-
-        public int Measures => _measures;
-
-        public Ordinates Ordinates => _ordinates;
-
-        public bool HasZ => _dimension - _measures > 2;
-
-        public bool HasM => _measures > 0;
-
-        public int Count { get; }
     }
 }

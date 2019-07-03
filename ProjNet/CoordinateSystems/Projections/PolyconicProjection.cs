@@ -4,8 +4,7 @@
  */
 using System;
 using System.Collections.Generic;
-using GeoAPI.CoordinateSystems;
-using GeoAPI.CoordinateSystems.Transformations;
+using ProjNet.CoordinateSystems.Transformations;
 
 namespace ProjNet.CoordinateSystems.Projections
 {
@@ -116,7 +115,7 @@ namespace ProjNet.CoordinateSystems.Projections
                     double mlp = Math.Sqrt(1.0 - _es * sp * sp);
                     double c = sp * mlp / cp;
                     double ml = mlfn(phi, sp, cp);
-                    var mlb = ml * ml + r;
+                    double mlb = ml * ml + r;
                     mlp = (1.0 - _es) / (mlp * mlp * mlp);
                     double dPhi = (ml + ml + c * mlb - 2.0 * y * (c * ml + 1.0)) / (
                                    _es * s2ph * (mlb - 2.0 * y * ml) / c +
@@ -141,7 +140,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// Returns the inverse of this projection.
         /// </summary>
         /// <returns>IMathTransform that is the reverse of the current projection.</returns>
-        public override IMathTransform Inverse()
+        public override MathTransform Inverse()
         {
             if (_inverse == null)
                 _inverse = new PolyconicProjection(_Parameters.ToProjectionParameter(), this);

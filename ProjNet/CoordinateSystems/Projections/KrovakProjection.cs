@@ -36,8 +36,7 @@
 
 using System;
 using System.Collections.Generic;
-using GeoAPI.CoordinateSystems;
-using GeoAPI.CoordinateSystems.Transformations;
+using ProjNet.CoordinateSystems.Transformations;
 
 namespace ProjNet.CoordinateSystems.Projections
 {
@@ -164,15 +163,15 @@ namespace ProjNet.CoordinateSystems.Projections
 			_n       = Math.Sin(_pseudoStandardParallel);
 			_tanS2   = Math.Tan(_pseudoStandardParallel / 2 + S45);
 
-            var sinLat = Math.Sin(lat_origin);
-            var cosLat = Math.Cos(lat_origin);
-            var cosL2 = cosLat * cosLat;
+            double sinLat = Math.Sin(lat_origin);
+            double cosLat = Math.Cos(lat_origin);
+            double cosL2 = cosLat * cosLat;
             _alfa = Math.Sqrt(1 + ((_es * (cosL2 * cosL2)) / (1 - _es))); // parameter B
 			_hae    = _alfa * _e / 2;
-            var u0 = Math.Asin(sinLat / _alfa);
+            double u0 = Math.Asin(sinLat / _alfa);
 
-            var esl = _e * sinLat;
-            var g = Math.Pow((1 - esl) / (1 + esl), (_alfa * _e) / 2);
+            double esl = _e * sinLat;
+            double g = Math.Pow((1 - esl) / (1 + esl), (_alfa * _e) / 2);
             _k1 = Math.Pow(Math.Tan(lat_origin / 2 + S45), _alfa) * g / Math.Tan(u0 / 2 + S45);
 			_ka  = Math.Pow(1 / _k1, -1 / _alfa);
 
@@ -258,7 +257,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// Returns the inverse of this projection.
         /// </summary>
         /// <returns>IMathTransform that is the reverse of the current projection.</returns>
-        public override IMathTransform Inverse()
+        public override MathTransform Inverse()
 		{
 			if (_inverse == null)
 			{

@@ -18,8 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using GeoAPI.CoordinateSystems.Transformations;
-using GeoAPI.Geometries;
 using ProjNet.Geometries;
 
 namespace ProjNet.CoordinateSystems.Transformations
@@ -30,14 +28,12 @@ namespace ProjNet.CoordinateSystems.Transformations
     /// <remarks>
     /// If a client application wishes to query the source and target coordinate 
     /// systems of a transformation, then it should keep hold of the 
-    /// <see cref="ICoordinateTransformation"/> interface, and use the contained 
+    /// <see cref="CoordinateTransformation"/> object, and use the contained 
     /// math transform object whenever it wishes to perform a transform.
     /// </remarks>
     [Serializable]
-    public abstract class MathTransform : IMathTransform
+    public abstract class MathTransform
     {
-        #region IMathTransform Members
-
         /// <summary>
         /// Gets the dimension of input points.
         /// </summary>
@@ -135,144 +131,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// </summary>
         /// <remarks>This method may fail if the transform is not one to one. However, all cartographic projections should succeed.</remarks>
         /// <returns></returns>
-        public abstract IMathTransform Inverse();
-
-        /// <summary>
-        /// Transforms a coordinate point. The passed parameter point should not be modified.
-        /// </summary>
-        /// <param name="point"></param>
-        /// <returns></returns>
-        double[] IMathTransform.Transform(double[] point)
-        {
-            double x = point[0];
-            double y = point[1];
-            double z = point.Length < 3 ? 0 : point[2];
-
-            (x, y, z) = Transform(x, y, z);
-
-            return DimTarget == 2
-                ? new[] { x, y }
-                : new[] { x, y, z };
-        }
-
-        /// <summary>
-        /// Transforms a list of coordinate point ordinal values.
-        /// </summary>
-        /// <remarks>
-        /// This method is provided for efficiently transforming many points. The supplied array 
-        /// of ordinal values will contain packed ordinal values. For example, if the source 
-        /// dimension is 3, then the ordinals will be packed in this order (x0,y0,z0,x1,y1,z1 ...).
-        /// The size of the passed array must be an integer multiple of DimSource. The returned 
-        /// ordinal values are packed in a similar way. In some DCPs. the ordinals may be 
-        /// transformed in-place, and the returned array may be the same as the passed array.
-        /// So any client code should not attempt to reuse the passed ordinal values (although
-        /// they can certainly reuse the passed array). If there is any problem then the server
-        /// implementation will throw an exception. If this happens then the client should not
-        /// make any assumptions about the state of the ordinal values.
-        /// </remarks>
-        /// <param name="points"></param>
-        /// <returns></returns>
-        IList<double[]> IMathTransform.TransformList(IList<double[]> points)
-        {
-            var result = new List<double[]>(points.Count);
-            foreach (double[] point in points)
-            {
-                double x = point[0];
-                double y = point[1];
-                double z = point.Length < 3 ? 0 : point[2];
-                (x, y, z) = Transform(x, y, z);
-
-                result.Add(DimTarget == 2
-                    ? new[] { x, y }
-                    : new[] { x, y, z });
-            }
-
-            return result;
-        }
-
-        IList<Coordinate> IMathTransform.TransformList(IList<Coordinate> points)
-        {
-            var result = new List<Coordinate>(points.Count);
-
-            foreach (var point in points)
-            {
-                double x = point.X;
-                double y = point.Y;
-                double z = point.Z;
-                (x, y, z) = Transform(x, y, z);
-                result.Add(DimTarget == 2
-                    ? new Coordinate(x, y)
-                    : new CoordinateZ(x, y, z));
-            }
-
-            return result;
-        }
-
-        Coordinate IMathTransform.Transform(Coordinate coordinate)
-        {
-            double x = coordinate.X;
-            double y = coordinate.Y;
-            double z = coordinate.Z;
-            (x, y, z) = Transform(x, y, z);
-            return DimTarget == 2
-                ? new Coordinate(x, y)
-                : new CoordinateZ(x, y, z);
-        }
-
-        ICoordinateSequence IMathTransform.Transform(ICoordinateSequence coordinateSequence) =>
-            TransformCopy(coordinateSequence);
-
-        /// <summary>
-        /// Transforms <paramref name="coordinateSequence"/>
-        /// </summary>
-        /// <param name="coordinateSequence">A coordinate sequence</param>
-        public void Transform(ICoordinateSequence coordinateSequence)
-        {
-            // shortcout, no matter what
-            if (coordinateSequence == null || coordinateSequence.Count == 0)
-            {
-                return;
-            }
-
-            var converter = _sequenceCoordinateConverter;
-            if (converter != null)
-            {
-                var cleanup = converter.ExtractRawCoordinatesFromSequence(coordinateSequence, out var xs, out int strideX, out var ys, out int strideY, out var zs, out var strideZ);
-                try
-                {
-                    Transform(xs, ys, zs, strideX, strideY, strideZ);
-                    converter.CopyRawCoordinatesToSequence(xs, strideX, ys, strideY, zs, strideZ, coordinateSequence);
-                }
-                finally
-                {
-                    cleanup();
-                }
-            }
-            else
-            {
-                var st = SequenceTransformer;
-                st.Transform(this, coordinateSequence);
-            }
-        }
-
-        /// <summary>
-        /// Copies <paramref name="coordinateSequence"> and returns the transformed copy</paramref>
-        /// </summary>
-        /// <param name="coordinateSequence">A coordinate sequence</param>
-        /// <returns>A transformed sequence</returns>
-        public ICoordinateSequence TransformCopy(ICoordinateSequence coordinateSequence)
-        {
-            // shortcout, no matter what
-            if (coordinateSequence == null || coordinateSequence.Count == 0)
-            {
-                return coordinateSequence;
-            }
-
-            coordinateSequence = coordinateSequence.Copy();
-            Transform(coordinateSequence);
-            return coordinateSequence;
-        }
-
+        public abstract MathTransform Inverse();
 
         /// <summary>
         /// Reverses the transformation
@@ -332,6 +191,59 @@ namespace ProjNet.CoordinateSystems.Transformations
             {
                 radians[i] *= R2D;
             }
+        }
+
+        /// <summary>
+        /// Transforms a coordinate point. The passed parameter point should not be modified.
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public double[] Transform(double[] point)
+        {
+            double x = point[0];
+            double y = point[1];
+            double z = point.Length < 3 ? 0 : point[2];
+
+            (x, y, z) = Transform(x, y, z);
+
+            return DimTarget == 2
+                ? new[] { x, y }
+                : new[] { x, y, z };
+        }
+
+        /// <summary>
+        /// Transforms a list of coordinate point ordinal values.
+        /// </summary>
+        /// <remarks>
+        /// This method is provided for efficiently transforming many points. The supplied array 
+        /// of ordinal values will contain packed ordinal values. For example, if the source 
+        /// dimension is 3, then the ordinals will be packed in this order (x0,y0,z0,x1,y1,z1 ...).
+        /// The size of the passed array must be an integer multiple of DimSource. The returned 
+        /// ordinal values are packed in a similar way. In some DCPs. the ordinals may be 
+        /// transformed in-place, and the returned array may be the same as the passed array.
+        /// So any client code should not attempt to reuse the passed ordinal values (although
+        /// they can certainly reuse the passed array). If there is any problem then the server
+        /// implementation will throw an exception. If this happens then the client should not
+        /// make any assumptions about the state of the ordinal values.
+        /// </remarks>
+        /// <param name="points"></param>
+        /// <returns></returns>
+        public IList<double[]> TransformList(IList<double[]> points)
+        {
+            var result = new List<double[]>(points.Count);
+            foreach (double[] point in points)
+            {
+                double x = point[0];
+                double y = point[1];
+                double z = point.Length < 3 ? 0 : point[2];
+                (x, y, z) = Transform(x, y, z);
+
+                result.Add(DimTarget == 2
+                    ? new[] { x, y }
+                    : new[] { x, y, z });
+            }
+
+            return result;
         }
 
         /// <summary>
@@ -490,30 +402,6 @@ namespace ProjNet.CoordinateSystems.Transformations
             var inZs = read.Slice(2);//, read.Length - 2);
 
             TransformCore(inXs, inYs, inZs, 3,3,3);
-        }
-
-        #endregion
-
-        private static SequenceCoordinateConverterBase _sequenceCoordinateConverter;
-
-        /// <summary>
-        /// Gets or sets a converter to extract coordinates from a sequence, transform them and copy the transformed to the sequence.
-        /// </summary>
-        public static SequenceCoordinateConverterBase SequenceCoordinateConverter
-        {
-            get { return _sequenceCoordinateConverter ?? (_sequenceCoordinateConverter = new SequenceCoordinateConverterBase()); }
-            set { _sequenceCoordinateConverter = value; }
-        }
-
-        private static SequenceTransformerBase _sequenceTransformer;
-
-        /// <summary>
-        /// Gets or sets a transformer that transforms all coordinates in a sequence.
-        /// </summary>
-        public static SequenceTransformerBase SequenceTransformer
-        {
-            get { return _sequenceTransformer ?? (_sequenceTransformer = new SequenceTransformerBase()); }
-            set { _sequenceTransformer = value; }
         }
     }
 }

@@ -1,8 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using GeoAPI.CoordinateSystems;
-using GeoAPI.CoordinateSystems.Transformations;
+using ProjNet.CoordinateSystems.Transformations;
 
 namespace ProjNet.CoordinateSystems.Projections
 {
@@ -56,20 +55,20 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <param name="type"></param>
         public static void Register(string name, Type type)
         {
-            if (string.IsNullOrEmpty(name))
-                throw new ArgumentNullException("name");
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException(nameof(name));
 
             if (type == null)
-                throw new ArgumentNullException("type");
+                throw new ArgumentNullException(nameof(type));
 
-            if (!typeof(IMathTransform).IsAssignableFrom(type))
-                throw new ArgumentException("The provided type does not implement 'GeoAPI.CoordinateSystems.Transformations.IMathTransform'!", "type");
+            if (!typeof(MathTransform).IsAssignableFrom(type))
+                throw new ArgumentException("The provided type does not implement 'GeoAPI.CoordinateSystems.Transformations.IMathTransform'!", nameof(type));
 
             var ci = CheckConstructor(type);
             if (ci == null)
-                throw new ArgumentException("The provided type is lacking a suitable constructor", "type");
+                throw new ArgumentException("The provided type is lacking a suitable constructor", nameof(type));
 
-            var key = name.ToLowerInvariant().Replace(' ', '_');
+            string key = name.ToLowerInvariant().Replace(' ', '_');
             lock (RegistryLock)
             {
                 if (TypeRegistry.ContainsKey(key))
@@ -91,9 +90,9 @@ namespace ProjNet.CoordinateSystems.Projections
             // instance of List<ProjectionParameter>, and then return the exact
             // parameter type so that we can create instances of this type with
             // minimal copying in the future, when possible.
-            foreach (ConstructorInfo c in type.GetConstructors())
+            foreach (var c in type.GetConstructors())
             {
-                System.Reflection.ParameterInfo[] parameters = c.GetParameters();
+                var parameters = c.GetParameters();
                 if (parameters.Length == 1 && parameters[0].ParameterType.IsAssignableFrom(typeof(List<ProjectionParameter>)))
                 {
                     return parameters[0].ParameterType;
@@ -103,9 +102,9 @@ namespace ProjNet.CoordinateSystems.Projections
             return null;
         }
 
-        internal static IMathTransform CreateProjection(string className, IEnumerable<ProjectionParameter> parameters)
+        internal static MathTransform CreateProjection(string className, IEnumerable<ProjectionParameter> parameters)
         {
-            var key = className.ToLowerInvariant().Replace(' ', '_');
+            string key = className.ToLowerInvariant().Replace(' ', '_');
 
             Type projectionType;
             Type ci;
@@ -113,16 +112,16 @@ namespace ProjNet.CoordinateSystems.Projections
             lock (RegistryLock)
             {
                 if (!TypeRegistry.TryGetValue(key, out projectionType))
-                    throw new NotSupportedException(String.Format("Projection {0} is not supported.", className));
+                    throw new NotSupportedException($"Projection {className} is not supported.");
                 ci = ConstructorRegistry[key];
             }
 
-            if (!ci.IsAssignableFrom(parameters.GetType()))
+            if (!ci.IsInstanceOfType(parameters))
             {
                 parameters = new List<ProjectionParameter>(parameters);
             }
 
-            return (IMathTransform) Activator.CreateInstance(projectionType, parameters);
+            return (MathTransform) Activator.CreateInstance(projectionType, parameters);
         }
     }
 }

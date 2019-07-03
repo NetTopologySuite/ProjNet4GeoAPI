@@ -37,8 +37,7 @@
 
 using System;
 using System.Collections.Generic;
-using GeoAPI.CoordinateSystems;
-using GeoAPI.CoordinateSystems.Transformations;
+using ProjNet.CoordinateSystems.Transformations;
 
 namespace ProjNet.CoordinateSystems.Projections
 {
@@ -64,9 +63,9 @@ namespace ProjNet.CoordinateSystems.Projections
         //private readonly double e;             /* eccentricity                    */
         //private readonly double center_lon;    /* center longitude                */
         //private readonly double center_lat;    /* center latitude                 */
-        private readonly double ns;                /* ratio of angle between meridian */
-		private readonly double f0;                /* flattening of ellipsoid         */
-		private readonly double rh;                /* height above ellipsoid          */
+        private readonly double _ns;                /* ratio of angle between meridian */
+		private readonly double _f0;                /* flattening of ellipsoid         */
+		private readonly double _rh;                /* height above ellipsoid          */
 
 		#region Constructors
 
@@ -116,8 +115,8 @@ namespace ProjNet.CoordinateSystems.Projections
 			AuthorityCode = 9802;
 			
             //Check for missing parameters
-			var lat1 = Degrees2Radians(_Parameters.GetParameterValue("standard_parallel_1"));
-            var lat2 = Degrees2Radians(_Parameters.GetParameterValue("standard_parallel_2"));
+			double lat1 = Degrees2Radians(_Parameters.GetParameterValue("standard_parallel_1"));
+            double lat2 = Degrees2Radians(_Parameters.GetParameterValue("standard_parallel_2"));
 
 			double sin_po;                  /* sin value                            */
 			double cos_po;                  /* cos value                            */
@@ -149,11 +148,11 @@ namespace ProjNet.CoordinateSystems.Projections
 			ts0 = tsfnz(_e,lat_origin,sin_po);
 
 			if (Math.Abs(lat1 - lat2) > EPSLN)
-				ns = Math.Log(ms1/ms2)/ Math.Log (ts1/ts2);
+				_ns = Math.Log(ms1/ms2)/ Math.Log (ts1/ts2);
 			else
-				ns = con;
-			f0 = ms1 / (ns * Math.Pow(ts1,ns));
-			rh = _semiMajor * f0 * Math.Pow(ts0,ns);
+				_ns = con;
+			_f0 = ms1 / (_ns * Math.Pow(ts1,_ns));
+			_rh = _semiMajor * _f0 * Math.Pow(ts0,_ns);
 		}
         #endregion
 
@@ -180,20 +179,20 @@ namespace ProjNet.CoordinateSystems.Projections
             {
                 sinphi = Math.Sin(dLatitude);
                 ts = tsfnz(_e, dLatitude, sinphi);
-                rh1 = _semiMajor * f0 * Math.Pow(ts, ns);
+                rh1 = _semiMajor * _f0 * Math.Pow(ts, _ns);
             }
             else
             {
-                con = dLatitude * ns;
+                con = dLatitude * _ns;
                 if (con <= 0)
                     throw new ArgumentException();
                 rh1 = 0;
             }
 
-            theta = ns * adjust_lon(dLongitude - central_meridian);
+            theta = _ns * adjust_lon(dLongitude - central_meridian);
 
             lon = rh1 * Math.Sin(theta);
-            lat = rh - rh1 * Math.Cos(theta);
+            lat = _rh - rh1 * Math.Cos(theta);
         }
 
         /// <summary>
@@ -210,8 +209,8 @@ namespace ProjNet.CoordinateSystems.Projections
             //long flag; /* error flag			*/
 
             double dX = x;
-            double dY = rh - y;
-            if (ns > 0)
+            double dY = _rh - y;
+            if (_ns > 0)
             {
                 rh1 = Math.Sqrt(dX * dX + dY * dY);
                 con = 1.0;
@@ -225,17 +224,17 @@ namespace ProjNet.CoordinateSystems.Projections
             theta = 0.0;
             if (rh1 != 0)
                 theta = Math.Atan2((con * dX), (con * dY));
-            if ((rh1 != 0) || (ns > 0.0))
+            if ((rh1 != 0) || (_ns > 0.0))
             {
-                con = 1.0 / ns;
-                ts = Math.Pow((rh1 / (_semiMajor * f0)), con);
+                con = 1.0 / _ns;
+                ts = Math.Pow((rh1 / (_semiMajor * _f0)), con);
                 y = phi2z(_e, ts, out long flag);
                 if (flag != 0)
                     throw new ArgumentException();
             }
             else y = -HALF_PI;
 
-            x = adjust_lon(theta / ns + central_meridian);
+            x = adjust_lon(theta / _ns + central_meridian);
 
             //return (x, y, z);
         }
@@ -244,7 +243,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// Returns the inverse of this projection.
         /// </summary>
         /// <returns>IMathTransform that is the reverse of the current projection.</returns>
-        public override IMathTransform Inverse()
+        public override MathTransform Inverse()
 		{
 			if (_inverse == null)
 			{

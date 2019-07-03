@@ -3,23 +3,21 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using BenchmarkDotNet.Attributes;
-using GeoAPI.Geometries;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.Geometries.Implementation;
 using NetTopologySuite.IO;
 using NUnit.Framework;
-using ProjNet;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using ProjNET.Tests.Geometries.Implementation;
 
-namespace ProjNET.Benchmark.Performance
+namespace ProjNet.Benchmark.Performance
 {
     public class PerformanceTests
     {
         private MathTransform _mathTransform;
 
-        private IGeometry[] _geoms;
+        private Geometry[] _geoms;
 
         private SequenceTransformerBase _optimizedSequenceTransformer;
 
@@ -27,7 +25,7 @@ namespace ProjNET.Benchmark.Performance
 
         public PerformanceTests(bool verify)
         {
-            IGeometry[][] results =
+            Geometry[][] results =
             {
                 Run(true, nameof(CoordinateArraySequenceFactory), "Converter"),
                 Run(true, nameof(CoordinateArraySequenceFactory), "Transformer"),
@@ -64,7 +62,7 @@ namespace ProjNET.Benchmark.Performance
                 }
             }
 
-            IGeometry[] Run(bool runWithDefault, string sequenceFactory, string implementation)
+            Geometry[] Run(bool runWithDefault, string sequenceFactory, string implementation)
             {
                 SequenceFactory = sequenceFactory;
                 Implementation = implementation;
@@ -113,7 +111,7 @@ namespace ProjNET.Benchmark.Performance
             );
             _mathTransform = (MathTransform)css.CreateTransformation(GeographicCoordinateSystem.WGS84, ProjectedCoordinateSystem.WebMercator).MathTransform;
 
-            ICoordinateSequenceFactory sequenceFactory;
+            CoordinateSequenceFactory sequenceFactory;
             switch (SequenceFactory)
             {
                 case nameof(CoordinateArraySequenceFactory):
@@ -141,7 +139,7 @@ namespace ProjNET.Benchmark.Performance
             }
 
             var gf = new GeometryFactory(new PrecisionModel(PrecisionModels.Floating), 4326, sequenceFactory);
-            var wktReader = new WKTReader(gf) { IsOldNtsCoordinateSyntaxAllowed = false, HandleOrdinates = Ordinates.XY};
+            var wktReader = new WKTReader(gf) { IsOldNtsCoordinateSyntaxAllowed = false /*, HandleOrdinates = Ordinates.XY*/};
             _geoms = Directory.EnumerateFiles("TestData", "*.wkt")
                 .SelectMany(file => new WKTFileReader(file, wktReader).Read())
                 .ToArray();
@@ -152,16 +150,13 @@ namespace ProjNET.Benchmark.Performance
         {
             if (Implementation == "Converter")
             {
-                MathTransform.SequenceCoordinateConverter = new SequenceCoordinateConverterBase();
-                MathTransform.SequenceTransformer = null;
+                Run(new SequenceCoordinateConverterBase());
             }
             else
             {
-                MathTransform.SequenceCoordinateConverter = null;
-                MathTransform.SequenceTransformer = new SequenceTransformerBase();
+                Run(new SequenceTransformerBase());
             }
 
-            Run();
         }
 
         [Benchmark]
@@ -169,51 +164,89 @@ namespace ProjNET.Benchmark.Performance
         {
             if (Implementation == "Converter")
             {
-                MathTransform.SequenceCoordinateConverter = new OptimizedCoordinateSequenceConverter();
-                MathTransform.SequenceTransformer = null;
+                Run(new OptimizedCoordinateSequenceConverter());
             }
             else
             {
-                MathTransform.SequenceCoordinateConverter = null;
-                MathTransform.SequenceTransformer = _optimizedSequenceTransformer;
+                Run(_optimizedSequenceTransformer);
             }
 
-            Run();
         }
 
-        private void Run()
+        private void Run(SequenceCoordinateConverterBase sc)
         {
             foreach (var geometry in _geoms)
             {
-                Transform(geometry, _mathTransform);
+                Transform(geometry, _mathTransform, sc);
             }
         }
 
-        public static void Transform(IGeometry geometry, MathTransform transform)
+        private void Run(SequenceTransformerBase st)
+        {
+            foreach (var geometry in _geoms)
+            {
+                Transform(geometry, _mathTransform, st);
+            }
+        }
+
+        private static void Transform(Geometry geometry, MathTransform transform, SequenceTransformerBase st)
         {
             switch (geometry)
             {
-                case IGeometryCollection _:
+                case GeometryCollection _:
                     for (int i = 0; i < geometry.NumGeometries; i++)
                     {
-                        Transform(geometry.GetGeometryN(i), transform);
+                        Transform(geometry.GetGeometryN(i), transform, st);
                     }
 
                     break;
 
-                case IPoint p:
-                    transform.Transform(p.CoordinateSequence);
+                case Point p:
+                    transform.Transform(p.CoordinateSequence, st);
                     break;
 
-                case ILineString l:
-                    transform.Transform(l.CoordinateSequence);
+                case LineString l:
+                    transform.Transform(l.CoordinateSequence, st);
                     break;
 
-                case IPolygon po:
-                    transform.Transform(po.ExteriorRing.CoordinateSequence);
+                case Polygon po:
+                    transform.Transform(po.ExteriorRing.CoordinateSequence, st);
                     foreach (var hole in po.InteriorRings)
                     {
-                        transform.Transform(hole.CoordinateSequence);
+                        transform.Transform(hole.CoordinateSequence, st);
+                    }
+
+                    break;
+
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+        private static void Transform(Geometry geometry, MathTransform transform, SequenceCoordinateConverterBase sc)
+        {
+            switch (geometry)
+            {
+                case GeometryCollection _:
+                    for (int i = 0; i < geometry.NumGeometries; i++)
+                    {
+                        Transform(geometry.GetGeometryN(i), transform, sc);
+                    }
+
+                    break;
+
+                case Point p:
+                    transform.Transform(p.CoordinateSequence, sc);
+                    break;
+
+                case LineString l:
+                    transform.Transform(l.CoordinateSequence, sc);
+                    break;
+
+                case Polygon po:
+                    transform.Transform(po.ExteriorRing.CoordinateSequence, sc);
+                    foreach (var hole in po.InteriorRings)
+                    {
+                        transform.Transform(hole.CoordinateSequence, sc);
                     }
 
                     break;

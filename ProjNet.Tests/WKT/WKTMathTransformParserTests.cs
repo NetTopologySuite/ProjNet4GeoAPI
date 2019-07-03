@@ -1,13 +1,9 @@
 ﻿using System;
-using System.IO;
-using GeoAPI.CoordinateSystems;
-using GeoAPI.CoordinateSystems.Transformations;
 using NUnit.Framework;
-using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
-using ProjNet.Converters.WellKnownText;
+using ProjNet.IO.CoordinateSystems;
 
-namespace ProjNet.UnitTests.Converters.WKT
+namespace ProjNET.Tests.WKT
 {
     [TestFixture]
     public class WKTMathTransformParserTests
@@ -19,7 +15,7 @@ namespace ProjNet.UnitTests.Converters.WKT
         public void ParseAffineTransformWkt ()
         {
             //TODO MathTransformFactory fac = new MathTransformFactory ();
-            IMathTransform mt = null;
+            MathTransform mt = null;
             string wkt = "PARAM_MT[\"Affine\"," +
                             "PARAMETER[\"num_row\",3]," +
                             "PARAMETER[\"num_col\",3]," +
@@ -64,7 +60,7 @@ namespace ProjNet.UnitTests.Converters.WKT
         public void TestMathTransformWktReaderExponencialNumberParsingIssue(string wkt)
         {
             //string wkt = "PARAM_MT[\"Affine\",PARAMETER[\"num_row\", 3],PARAMETER[\"num_col\", 3],PARAMETER[\"elt_0_0\", 6.12303176911189E-17]]";
-            IMathTransform mt = null;
+            MathTransform mt = null;
 
             try
             {

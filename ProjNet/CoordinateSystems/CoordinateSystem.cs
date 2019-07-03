@@ -18,7 +18,6 @@
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using GeoAPI.CoordinateSystems;
 
 namespace ProjNet.CoordinateSystems
 {
@@ -40,7 +39,7 @@ namespace ProjNet.CoordinateSystems
 	/// mapping from the mathematical space into real-world locations is called a Datum.</para>
     /// </remarks>
     [Serializable] 
-    public abstract class CoordinateSystem : Info, ICoordinateSystem
+    public abstract class CoordinateSystem : Info
 	{
 		/// <summary>
 		/// Initializes a new instance of a coordinate system.

@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
-namespace ProjNet.UnitTests.Serialization
+namespace ProjNET.Tests.Serialization
 {
     public class BaseSerializationTest
     {

@@ -1,22 +1,20 @@
 ﻿using System;
 using System.Data;
 using System.IO;
-using GeoAPI.CoordinateSystems;
-using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Npgsql;
 using NUnit.Framework;
 using ProjNet.CoordinateSystems;
 
-namespace ProjNet.UnitTests.Converters.WKT
+namespace ProjNET.Tests.WKT
 {
     [TestFixture]
     public class SpatialRefSysTableParser
     {
         private static string _connectionString;
 
-        private static readonly Lazy<ICoordinateSystemFactory> CoordinateSystemFactory =
-            new Lazy<ICoordinateSystemFactory>(() => new CoordinateSystemFactory());
+        private static readonly Lazy<CoordinateSystemFactory> CoordinateSystemFactory =
+            new Lazy<CoordinateSystemFactory>(() => new CoordinateSystemFactory());
 
         [Test]
         public void TestParsePostgisDefinitions()
@@ -24,10 +22,10 @@ namespace ProjNet.UnitTests.Converters.WKT
             if (string.IsNullOrWhiteSpace(ConnectionString))
                 throw new IgnoreException("No Connection string provided or provided connection string invalid.");
 
-            using (NpgsqlConnection cn = new NpgsqlConnection(ConnectionString))
+            using (var cn = new NpgsqlConnection(ConnectionString))
             {
                 cn.Open();
-                NpgsqlCommand cmd = cn.CreateCommand();
+                var cmd = cn.CreateCommand();
                 cmd.CommandText = "SELECT \"srid\", \"srtext\" FROM \"public\".\"spatial_ref_sys\" ORDER BY \"srid\";";
 
                 int counted = 0;
@@ -42,7 +40,7 @@ namespace ProjNet.UnitTests.Converters.WKT
                             counted++;
                             int srid = r.GetInt32(0);
                             string srtext = r.GetString(1);
-                            if (string.IsNullOrEmpty(srtext)) continue;
+                            if (string.IsNullOrWhiteSpace(srtext)) continue;
                             if (srtext.StartsWith("COMPD_CS")) continue;
 
                             tested++;
@@ -105,7 +103,7 @@ namespace ProjNet.UnitTests.Converters.WKT
                 using (var jtr = new Newtonsoft.Json.JsonTextReader(new StreamReader("appsettings.json")))
                     token = JToken.ReadFrom(jtr);
 
-                var connectionString = (string)token["ConnectionString"];
+                string connectionString = (string)token["ConnectionString"];
                 try
                 {
                     using (var cn = new NpgsqlConnection(connectionString))

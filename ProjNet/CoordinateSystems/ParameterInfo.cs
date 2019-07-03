@@ -15,7 +15,6 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
-using GeoAPI.CoordinateSystems;
 using System;
 using System.Collections.Generic;
 
@@ -26,7 +25,7 @@ namespace ProjNet.CoordinateSystems
     /// It allows discovering the names, and for setting and getting parameter values.
     /// </summary>
     [Serializable]
-    internal class ParameterInfo : IParameterInfo
+    internal class ParameterInfo
     {
         /// <summary>
         /// Gets the number of parameters expected.
@@ -35,9 +34,9 @@ namespace ProjNet.CoordinateSystems
         { 
             get
             {
-                if (this.Parameters != null)
+                if (Parameters != null)
                 {
-                    return this.Parameters.Count;
+                    return Parameters.Count;
                 }
                 return 0;
             }
@@ -46,7 +45,7 @@ namespace ProjNet.CoordinateSystems
         /// <summary>
         /// Gets or sets the parameters set for this projection.
         /// </summary>
-        public List<GeoAPI.CoordinateSystems.Parameter> Parameters
+        public List<Parameter> Parameters
         { 
             get;
             set;
@@ -56,9 +55,9 @@ namespace ProjNet.CoordinateSystems
         /// Returns the default parameters for this projection.
         /// </summary>
         /// <returns></returns>
-        public GeoAPI.CoordinateSystems.Parameter[] DefaultParameters ()
+        public Parameter[] DefaultParameters ()
         {
-            return new GeoAPI.CoordinateSystems.Parameter[0];
+            return new Parameter[0];
         }
 
         /// <summary>
@@ -66,12 +65,12 @@ namespace ProjNet.CoordinateSystems
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public GeoAPI.CoordinateSystems.Parameter GetParameterByName (string name)
+        public Parameter GetParameterByName (string name)
         {
-            if (this.Parameters != null)
+            if (Parameters != null)
             {
                 //search parameter collection by name 
-                foreach (GeoAPI.CoordinateSystems.Parameter param in this.Parameters)
+                foreach (var param in Parameters)
                 {
                     if (param != null && param.Name == name)
                     {

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
@@ -6,32 +6,33 @@
     <RootNamespace>ProjNet</RootNamespace>
     <TargetFramework>netstandard2.0</TargetFramework>
     <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>$(SolutionDir)scskey.snk</AssemblyOriginatorKeyFile>
-    <LangVersion>7.3</LangVersion>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DefineConstants>TRACE;WithSpans</DefineConstants>
   </PropertyGroup>
 
   <Import Project="$(SolutionDir)ProjNet.Common.props" />
 
-  <ItemGroup>
-    <Compile Remove="CoordinateSystems\Transformations\MathTransformFactory.cs" />
-  </ItemGroup>
+  <PropertyGroup Label="Assembly Info">
+    <AssemblyTitle>Proj.NET</AssemblyTitle>
+    <Description>Proj.NET performs point-to-point coordinate conversions between geodetic coordinate systems for use in .Net, Geographic Information Systems (GIS) or GPS applications. The spatial reference model used adheres to the Simple Features specification.</Description>
+  </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="GeoAPI.CoordinateSystems" Version="$(GeoAPIPackageReferenceVersion)" />
-    <PackageReference Include="System.Memory" Version="4.5.2" />
-  </ItemGroup>
+  <PropertyGroup Label="NuGet Package Info">
+    <PackageId>ProjNET</PackageId>
+    <Authors>Morton Nielsen, NetTopologySuite-Team</Authors>
+    <PackageIconUrl>https://raw.githubusercontent.com/NetTopologySuite/ProjNet4GeoAPI/master/icon.png</PackageIconUrl>
+    <PackageLicenseExpression>LGPL-2.1-or-later</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageDescription>.NET Spatial Reference and Projection Engine.
+Proj.NET performs point-to-point coordinate conversions between geodetic coordinate systems for use in fx. Geographic Information Systems (GIS) or GPS applications. The spatial reference model used adheres to the Simple Features specification.
+    </PackageDescription>
+    <PackageTags>OGC;SFS;Projection</PackageTags>
+  </PropertyGroup>
 
   <ItemGroup>
     <None Include="$(SolutionDir)scskey.snk" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\SharedAssemblyVersion.cs">
-      <Link>Properties\SharedAssemblyVersion.cs</Link>
-    </Compile>
+    <PackageReference Include="System.Memory" Version="4.5.2" />
   </ItemGroup>
+
 </Project>

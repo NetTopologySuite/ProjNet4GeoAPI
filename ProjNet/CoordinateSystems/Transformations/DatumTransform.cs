@@ -16,10 +16,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
 using System;
-using System.Collections.Generic;
-using GeoAPI.CoordinateSystems;
-using GeoAPI.CoordinateSystems.Transformations;
-using GeoAPI.Geometries;
 
 namespace ProjNet.CoordinateSystems.Transformations
 {
@@ -29,9 +25,9 @@ namespace ProjNet.CoordinateSystems.Transformations
     [Serializable] 
     internal class DatumTransform : MathTransform
 	{
-		protected IMathTransform _inverse;
+        private MathTransform _inverse;
 		private readonly Wgs84ConversionInfo _toWgs94;
-		double[] v;
+        readonly double[] _v;
 
 		private bool _isInverse;
 
@@ -46,7 +42,7 @@ namespace ProjNet.CoordinateSystems.Transformations
 		private DatumTransform(Wgs84ConversionInfo towgs84, bool isInverse)
 		{
 			_toWgs94 = towgs84;
-			v = _toWgs94.GetAffineTransform();
+			_v = _toWgs94.GetAffineTransform();
 			_isInverse = isInverse;
 		}
         /// <summary>
@@ -82,7 +78,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// </summary>
         /// <returns></returns>
         /// <remarks>This method may fail if the transform is not one to one. However, all cartographic projections should succeed.</remarks>
-		public override IMathTransform Inverse()
+		public override MathTransform Inverse()
 		{
 			if (_inverse == null)
 				_inverse = new DatumTransform(_toWgs94,!_isInverse);
@@ -106,17 +102,17 @@ namespace ProjNet.CoordinateSystems.Transformations
         private (double x, double y, double z) Apply(double x, double y, double z)
         {
             return (
-                x: v[0] * (x - v[3] * y + v[2] * z) + v[4],
-                y: v[0] * (v[3] * x + y - v[1] * z) + v[5],
-                z: v[0] * (-v[2] * x + v[1] * y + z) + v[6]);
+                x: _v[0] * (x - _v[3] * y + _v[2] * z) + _v[4],
+                y: _v[0] * (_v[3] * x + y - _v[1] * z) + _v[5],
+                z: _v[0] * (-_v[2] * x + _v[1] * y + z) + _v[6]);
         }
 
         private (double x, double y, double z) ApplyInverted(double x, double y, double z)
         {
             return (
-                x: (1 - (v[0] - 1)) * (x + v[3] * y - v[2] * z) - v[4],
-                y: (1 - (v[0] - 1)) * (-v[3] * x + y + v[1] * z) - v[5],
-                z: (1 - (v[0] - 1)) * (v[2] * x - v[1] * y + z) - v[6]);
+                x: (1 - (_v[0] - 1)) * (x + _v[3] * y - _v[2] * z) - _v[4],
+                y: (1 - (_v[0] - 1)) * (-_v[3] * x + y + _v[1] * z) - _v[5],
+                z: (1 - (_v[0] - 1)) * (_v[2] * x - _v[1] * y + z) - _v[6]);
         }
 
         /// <summary>

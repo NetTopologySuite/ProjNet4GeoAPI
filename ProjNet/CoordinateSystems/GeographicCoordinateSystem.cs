@@ -19,7 +19,6 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
-using GeoAPI.CoordinateSystems;
 
 namespace ProjNet.CoordinateSystems
 {
@@ -33,7 +32,7 @@ namespace ProjNet.CoordinateSystems
 	/// use degrees.
     /// </remarks>
     [Serializable] 
-    public class GeographicCoordinateSystem : HorizontalCoordinateSystem, IGeographicCoordinateSystem
+    public class GeographicCoordinateSystem : HorizontalCoordinateSystem
 	{
 
 		/// <summary>
@@ -49,12 +48,12 @@ namespace ProjNet.CoordinateSystems
 		/// <param name="alias">Alias</param>
 		/// <param name="abbreviation">Abbreviation</param>
 		/// <param name="remarks">Provider-supplied remarks</param>
-		internal GeographicCoordinateSystem(IAngularUnit angularUnit, IHorizontalDatum horizontalDatum, IPrimeMeridian primeMeridian, List<AxisInfo> axisInfo, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks)
+		internal GeographicCoordinateSystem(AngularUnit angularUnit, HorizontalDatum horizontalDatum, PrimeMeridian primeMeridian, List<AxisInfo> axisInfo, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks)
 			:
 			base(horizontalDatum, axisInfo, name, authority, authorityCode, alias, abbreviation, remarks)
 		{
-			_AngularUnit = angularUnit;
-			_PrimeMeridian = primeMeridian;
+			AngularUnit = angularUnit;
+			PrimeMeridian = primeMeridian;
 		}
 
 		#region Predefined geographic coordinate systems
@@ -62,7 +61,7 @@ namespace ProjNet.CoordinateSystems
 		/// <summary>
 		/// Creates a decimal degrees geographic coordinate system based on the WGS84 ellipsoid, suitable for GPS measurements
 		/// </summary>
-		public static IGeographicCoordinateSystem WGS84
+		public static GeographicCoordinateSystem WGS84
 		{
 			get {
 				var axes = new List<AxisInfo>(2);
@@ -70,68 +69,52 @@ namespace ProjNet.CoordinateSystems
 				axes.Add(new AxisInfo("Lat", AxisOrientationEnum.North));
 				return new GeographicCoordinateSystem(CoordinateSystems.AngularUnit.Degrees,
 					CoordinateSystems.HorizontalDatum.WGS84, CoordinateSystems.PrimeMeridian.Greenwich, axes,
-					"WGS 84", "EPSG", 4326, String.Empty, string.Empty, string.Empty);
+					"WGS 84", "EPSG", 4326, string.Empty, string.Empty, string.Empty);
 			}
 		}
-        
+
         #endregion
 
-		#region IGeographicCoordinateSystem Members
-		
-		private IAngularUnit _AngularUnit;
+        #region IGeographicCoordinateSystem Members
 
-		/// <summary>
-		/// Gets or sets the angular units of the geographic coordinate system.
-		/// </summary>
-		public IAngularUnit AngularUnit
-		{
-			get { return _AngularUnit; }
-			set { _AngularUnit = value; }
-		}
-		
-		/// <summary>
-		/// Gets units for dimension within coordinate system. Each dimension in 
-		/// the coordinate system has corresponding units.
-		/// </summary>
-		/// <param name="dimension">Dimension</param>
-		/// <returns>Unit</returns>
-		public override IUnit GetUnits(int dimension)
-		{
-			return _AngularUnit;
-		}
-		private IPrimeMeridian _PrimeMeridian;
 
-		/// <summary>
-		/// Gets or sets the prime meridian of the geographic coordinate system.
-		/// </summary>
-		public IPrimeMeridian PrimeMeridian
+        /// <summary>
+        /// Gets or sets the angular units of the geographic coordinate system.
+        /// </summary>
+        public AngularUnit AngularUnit { get; set; }
+
+        /// <summary>
+        /// Gets units for dimension within coordinate system. Each dimension in 
+        /// the coordinate system has corresponding units.
+        /// </summary>
+        /// <param name="dimension">Dimension</param>
+        /// <returns>Unit</returns>
+        public override IUnit GetUnits(int dimension)
 		{
-			get { return _PrimeMeridian; }
-			set { _PrimeMeridian = value; }
-		}
-			
-		/// <summary>
-		/// Gets the number of available conversions to WGS84 coordinates.
-		/// </summary>
-		public int NumConversionToWGS84
-		{
-			get { return _WGS84ConversionInfo.Count; }
+			return AngularUnit;
 		}
 
-		private List<Wgs84ConversionInfo> _WGS84ConversionInfo;
-		
-		internal List<Wgs84ConversionInfo> WGS84ConversionInfo
+        /// <summary>
+        /// Gets or sets the prime meridian of the geographic coordinate system.
+        /// </summary>
+        public PrimeMeridian PrimeMeridian { get; set; }
+
+        /// <summary>
+        /// Gets the number of available conversions to WGS84 coordinates.
+        /// </summary>
+        public int NumConversionToWGS84
 		{
-			get { return _WGS84ConversionInfo; }
-			set { _WGS84ConversionInfo = value; }
+			get { return WGS84ConversionInfo.Count; }
 		}
 
-		/// <summary>
-		/// Gets details on a conversion to WGS84.
-		/// </summary>
-		public Wgs84ConversionInfo GetWgs84ConversionInfo(int index)
+        internal List<Wgs84ConversionInfo> WGS84ConversionInfo { get; set; }
+
+        /// <summary>
+        /// Gets details on a conversion to WGS84.
+        /// </summary>
+        public Wgs84ConversionInfo GetWgs84ConversionInfo(int index)
 		{
-			return _WGS84ConversionInfo[index];
+			return WGS84ConversionInfo[index];
 		}
 
 		/// <summary>
@@ -142,7 +125,7 @@ namespace ProjNet.CoordinateSystems
 		{
 			get
 			{
-				StringBuilder sb = new StringBuilder();
+				var sb = new StringBuilder();
 				sb.AppendFormat("GEOGCS[\"{0}\", {1}, {2}, {3}",Name, HorizontalDatum.WKT, PrimeMeridian.WKT, AngularUnit.WKT);
 				//Skip axis info if they contain default values
 				if (AxisInfo.Count != 2 ||
@@ -150,7 +133,7 @@ namespace ProjNet.CoordinateSystems
 					AxisInfo[1].Name != "Lat" || AxisInfo[1].Orientation != AxisOrientationEnum.North)
 					for (int i = 0; i < AxisInfo.Count; i++)
 						sb.AppendFormat(", {0}", GetAxis(i).WKT);
-				if (!String.IsNullOrEmpty(Authority) && AuthorityCode > 0)
+				if (!string.IsNullOrWhiteSpace(Authority) && AuthorityCode > 0)
 					sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
 				sb.Append("]");
 				return sb.ToString();
@@ -164,11 +147,11 @@ namespace ProjNet.CoordinateSystems
 		{
 			get
 			{
-				StringBuilder sb = new StringBuilder();
+				var sb = new StringBuilder();
 				sb.AppendFormat(CultureInfo.InvariantCulture.NumberFormat,
 					"<CS_CoordinateSystem Dimension=\"{0}\"><CS_GeographicCoordinateSystem>{1}",
 					this.Dimension, InfoXml);
-				foreach(AxisInfo ai in this.AxisInfo)
+				foreach(var ai in AxisInfo)
 					sb.Append(ai.XML);
 				sb.AppendFormat("{0}{1}{2}</CS_GeographicCoordinateSystem></CS_CoordinateSystem>",
 					HorizontalDatum.XML, AngularUnit.XML, PrimeMeridian.XML);
@@ -185,26 +168,26 @@ namespace ProjNet.CoordinateSystems
 		/// <returns>True if equal</returns>
 		public override bool EqualParams(object obj)	
 		{
-			if (!(obj is GeographicCoordinateSystem))
+			if (!(obj is GeographicCoordinateSystem gcs))
 				return false;
-			GeographicCoordinateSystem gcs = obj as GeographicCoordinateSystem;
-			if (gcs.Dimension != this.Dimension) return false;
-			if (this.WGS84ConversionInfo != null && gcs.WGS84ConversionInfo == null) return false;
-			if (this.WGS84ConversionInfo == null && gcs.WGS84ConversionInfo != null) return false;
-			if (this.WGS84ConversionInfo != null && gcs.WGS84ConversionInfo != null)
+
+            if (gcs.Dimension != Dimension) return false;
+			if (WGS84ConversionInfo != null && gcs.WGS84ConversionInfo == null) return false;
+			if (WGS84ConversionInfo == null && gcs.WGS84ConversionInfo != null) return false;
+			if (WGS84ConversionInfo != null && gcs.WGS84ConversionInfo != null)
 			{
-				if (this.WGS84ConversionInfo.Count != gcs.WGS84ConversionInfo.Count) return false;
-				for (int i = 0; i < this.WGS84ConversionInfo.Count; i++)
-					if (!gcs.WGS84ConversionInfo[i].Equals(this.WGS84ConversionInfo[i]))
+				if (WGS84ConversionInfo.Count != gcs.WGS84ConversionInfo.Count) return false;
+				for (int i = 0; i < WGS84ConversionInfo.Count; i++)
+					if (!gcs.WGS84ConversionInfo[i].Equals(WGS84ConversionInfo[i]))
 						return false;
 			}
-			if (this.AxisInfo.Count != gcs.AxisInfo.Count) return false;			
+			if (AxisInfo.Count != gcs.AxisInfo.Count) return false;			
 			for (int i = 0; i < gcs.AxisInfo.Count; i++)
-				if (gcs.AxisInfo[i].Orientation != this.AxisInfo[i].Orientation)
+				if (gcs.AxisInfo[i].Orientation != AxisInfo[i].Orientation)
 					return false;
-			return gcs.AngularUnit.EqualParams(this.AngularUnit) &&
-					gcs.HorizontalDatum.EqualParams(this.HorizontalDatum) &&
-					gcs.PrimeMeridian.EqualParams(this.PrimeMeridian);
+			return gcs.AngularUnit.EqualParams(AngularUnit) &&
+					gcs.HorizontalDatum.EqualParams(HorizontalDatum) &&
+					gcs.PrimeMeridian.EqualParams(PrimeMeridian);
 		}
 		#endregion
 	}

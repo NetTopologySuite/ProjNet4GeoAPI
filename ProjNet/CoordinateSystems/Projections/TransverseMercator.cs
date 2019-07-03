@@ -37,8 +37,7 @@
 
 using System;
 using System.Collections.Generic;
-using GeoAPI.CoordinateSystems;
-using GeoAPI.CoordinateSystems.Transformations;
+using ProjNet.CoordinateSystems.Transformations;
 
 namespace ProjNet.CoordinateSystems.Projections
 {
@@ -169,19 +168,19 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <returns>Point in projected meters</returns>
         protected override void RadiansToMeters(ref double lon, ref double lat)
 		{
-            var x = lon;
+            double x = lon;
 		    x = adjust_lon(x - central_meridian);
 
-            var y = lat;
-            var sinphi = Math.Sin(y);
-            var cosphi = Math.Cos(y);
+            double y = lat;
+            double sinphi = Math.Sin(y);
+            double cosphi = Math.Cos(y);
 
-            var t = (Math.Abs(cosphi) > EPSILON) ? sinphi / cosphi : 0;
+            double t = (Math.Abs(cosphi) > EPSILON) ? sinphi / cosphi : 0;
             t *= t;
-            var al = cosphi * x;
-            var als = al * al;
+            double al = cosphi * x;
+            double als = al * al;
             al /= Math.Sqrt(1.0 - _es * sinphi * sinphi);
-            var n = _esp * cosphi * cosphi;
+            double n = _esp * cosphi * cosphi;
 
             /* NOTE: meridinal distance at latitudeOfOrigin is always 0 */
             y = (mlfn(y, sinphi, cosphi) - _ml0 +
@@ -245,7 +244,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// Returns the inverse of this projection.
         /// </summary>
         /// <returns>IMathTransform that is the reverse of the current projection.</returns>
-        public override IMathTransform Inverse()
+        public override MathTransform Inverse()
 		{
 			if (_inverse==null)
 				_inverse = new TransverseMercator(_Parameters.ToProjectionParameter(), this);

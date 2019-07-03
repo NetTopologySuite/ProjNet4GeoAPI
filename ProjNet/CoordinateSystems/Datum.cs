@@ -16,7 +16,6 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
 using System;
-using GeoAPI.CoordinateSystems;
 
 namespace ProjNet.CoordinateSystems
 {
@@ -34,7 +33,7 @@ namespace ProjNet.CoordinateSystems
 	/// the orientation of the coordinate axes).
     /// </remarks>
     [Serializable] 
-    public abstract class Datum : Info, IDatum
+    public abstract class Datum : Info
 	{
 		/// <summary>
 		/// Initializes a new instance of a Datum object
@@ -51,31 +50,26 @@ namespace ProjNet.CoordinateSystems
 			string remarks, string abbreviation)
 			: base(name, authority, code, alias, abbreviation, remarks)
 		{
-			_DatumType = type;
+			DatumType = type;
 		}
-		#region IDatum Members
+        #region IDatum Members
 
-		private DatumType _DatumType;
 
-		/// <summary>
-		/// Gets or sets the type of the datum as an enumerated code.
-		/// </summary>
-		public DatumType DatumType
-		{
-			get { return _DatumType; }
-			set { _DatumType = value; }
-		}
+        /// <summary>
+        /// Gets or sets the type of the datum as an enumerated code.
+        /// </summary>
+        public DatumType DatumType { get; set; }
 
-		#endregion
+        #endregion
 
-		/// <summary>
-		/// Checks whether the values of this instance is equal to the values of another instance.
-		/// Only parameters used for coordinate system are used for comparison.
-		/// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
-		/// </summary>
-		/// <param name="obj"></param>
-		/// <returns>True if equal</returns>
-		public override bool EqualParams(object obj)
+        /// <summary>
+        /// Checks whether the values of this instance is equal to the values of another instance.
+        /// Only parameters used for coordinate system are used for comparison.
+        /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns>True if equal</returns>
+        public override bool EqualParams(object obj)
 		{
 			if (!(obj is Ellipsoid))
 				return false;

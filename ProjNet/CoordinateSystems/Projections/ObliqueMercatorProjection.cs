@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using GeoAPI.CoordinateSystems;
-using GeoAPI.CoordinateSystems.Transformations;
+using ProjNet.CoordinateSystems.Transformations;
 
 namespace ProjNet.CoordinateSystems.Projections
 {
@@ -20,7 +19,7 @@ namespace ProjNet.CoordinateSystems.Projections
             Name = "Oblique_Mercator";
         }
 
-        public override IMathTransform Inverse()
+        public override MathTransform Inverse()
         {
             if (_inverse == null)
                 _inverse = new ObliqueMercatorProjection(_Parameters.ToProjectionParameter(), this);

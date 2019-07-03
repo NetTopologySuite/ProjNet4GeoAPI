@@ -4,7 +4,7 @@ using BenchmarkDotNet.Configs;
 using BenchmarkDotNet.Diagnosers;
 using BenchmarkDotNet.Jobs;
 using BenchmarkDotNet.Running;
-using ProjNET.Benchmark.Performance;
+using ProjNet.Benchmark.Performance;
 
 namespace ProjNet.Benchmark
 {

@@ -1,20 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.Globalization;
-using GeoAPI.CoordinateSystems;
-using GeoAPI.CoordinateSystems.Transformations;
+using ProjNet.CoordinateSystems.Transformations;
 
 namespace ProjNet.CoordinateSystems.Projections
 {
     internal class CassiniSoldnerProjection : MapProjection
     {
-// ReSharper disable InconsistentNaming
-        private const Double One6th = 0.16666666666666666666d;      //C1
-        private const Double One120th = 0.00833333333333333333d;    //C2
-        private const Double One24th = 0.04166666666666666666d;     //C3
-        private const Double One3rd = 0.33333333333333333333d;      //C4
-        private const Double One15th = 0.06666666666666666666d;     //C5
-// ReSharper restore InconsistentNaming
+        // ReSharper disable InconsistentNaming
+        private const double One6th = 0.16666666666666666666d;      //C1
+        private const double One120th = 0.00833333333333333333d;    //C2
+        private const double One24th = 0.04166666666666666666d;     //C3
+        private const double One3rd = 0.33333333333333333333d;      //C4
+        private const double One15th = 0.06666666666666666666d;     //C5
+                                                                    // ReSharper restore InconsistentNaming
 
         private readonly double _cFactor;
         private readonly double _m0;
@@ -31,12 +29,12 @@ namespace ProjNet.CoordinateSystems.Projections
             AuthorityCode = 9806;
             Name = "Cassini_Soldner";
 
-            _cFactor = _es/(1 - _es);
+            _cFactor = _es / (1 - _es);
             _m0 = mlfn(lat_origin, Math.Sin(lat_origin), Math.Cos(lat_origin));
-            _reciprocalSemiMajor = 1d/_semiMajor;
+            _reciprocalSemiMajor = 1d / _semiMajor;
         }
 
-        public override IMathTransform Inverse()
+        public override MathTransform Inverse()
         {
             if (_inverse == null)
                 _inverse = new CassiniSoldnerProjection(_Parameters.ToProjectionParameter(), this);
@@ -138,13 +136,13 @@ namespace ProjNet.CoordinateSystems.Projections
             const int maxIter = 10;
             const double eps = 1e-11;
 
-            var k = 1.0d / (1.0d - _es);
+            double k = 1.0d / (1.0d - _es);
 
-            var phi = arg;
-            for (var i = maxIter; i > 0; --i)
+            double phi = arg;
+            for (int i = maxIter; i > 0; --i)
             { // rarely goes over 2 iterations 
-                var sinPhi = Math.Sin(phi);
-                var t = 1.0d - _es * sinPhi * sinPhi;
+                double sinPhi = Math.Sin(phi);
+                double t = 1.0d - _es * sinPhi * sinPhi;
                 t = (mlfn(phi, sinPhi, Math.Cos(phi)) - arg) * (t * Math.Sqrt(t)) * k;
                 phi -= t;
                 if (Math.Abs(t) < eps) return phi;
