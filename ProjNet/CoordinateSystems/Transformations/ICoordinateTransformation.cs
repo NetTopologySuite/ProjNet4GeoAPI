@@ -17,25 +17,29 @@
 
 namespace ProjNet.CoordinateSystems.Transformations
 {
-    public interface ICoordinateTransformationCore 
+    /// <summary>
+    /// Describes core information of a coordinate transformation
+    /// </summary>
+    public interface ICoordinateTransformationCore
     {
 
-    /// <summary>
-    /// Source coordinate system.
-    /// </summary>
-    CoordinateSystem SourceCS { get; }
+        /// <summary>
+        /// Source coordinate system.
+        /// </summary>
+        CoordinateSystem SourceCS { get; }
+
+        /// <summary>
+        /// Target coordinate system.
+        /// </summary>
+        CoordinateSystem TargetCS { get; }
+    }
 
     /// <summary>
-    /// Target coordinate system.
+    /// Describes a coordinate transformation. This interface only describes a 
+    /// coordinate transformation, it does not actually perform the transform 
+    /// operation on points. To transform points you must use a math transform.
     /// </summary>
-    CoordinateSystem TargetCS { get; }
-    }
-/// <summary>
-/// Describes a coordinate transformation. This interface only describes a 
-/// coordinate transformation, it does not actually perform the transform 
-/// operation on points. To transform points you must use a math transform.
-/// </summary>
-public interface ICoordinateTransformation : ICoordinateTransformationCore
+    public interface ICoordinateTransformation : ICoordinateTransformationCore
     {
         /// <summary>
         /// Human readable description of domain in source coordinate system.
