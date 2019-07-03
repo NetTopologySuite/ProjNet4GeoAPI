@@ -98,14 +98,16 @@ namespace ProjNet.CoordinateSystems.Transformations
                 x += _source.Longitude - _target.Longitude;
         }
 
-        protected override void TransformCore(Span<double> xs, Span<double> ys, Span<double> zs,
+        /// <inheritdoc />
+        protected sealed override void TransformCore(Span<double> xs, Span<double> ys, Span<double> zs,
             int strideX, int strideY, int strideZ)
         {
-            for (int i = 0, j = 0, k = 0; i < xs.Length; i += strideX, j += strideY, k += strideZ)
-            {
-                Transform(ref xs[i], ref ys[j], ref zs[k]);
-            }
+            double addend = _isInverted
+                ? _target.Longitude - _source.Longitude
+                : _source.Longitude - _target.Longitude;
+            AddInPlace(xs, strideX, addend);
         }
+
         /// <inheritdoc />
         public override void Invert()
         {

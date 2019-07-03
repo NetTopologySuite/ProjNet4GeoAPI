@@ -404,6 +404,39 @@ namespace ProjNet.CoordinateSystems.Transformations
         }
 
         /// <summary>
+        /// Adds a value to the elements of a <see cref="Span{T}"/> in-place, using SIMD when legal
+        /// and effective.
+        /// </summary>
+        /// <param name="vals">A series of values to transform in-place.</param>
+        /// <param name="stride">The spacing between elements.</param>
+        /// <param name="addend">The value to add to each element in <paramref name="vals"/> in-place.</param>
+        protected static void AddInPlace(Span<double> vals, int stride, double addend)
+        {
+            if (stride < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(stride), stride, "Must be greater than zero.");
+            }
+
+            int scalarStart = 0;
+            if (Vector.IsHardwareAccelerated && stride == 1 && vals.Length >= Vector<double>.Count)
+            {
+                var valsVector = MemoryMarshal.Cast<double, Vector<double>>(vals);
+                var addendVector = new Vector<double>(addend);
+                for (int i = 0; i < valsVector.Length; i++)
+                {
+                    valsVector[i] += addendVector;
+                }
+
+                scalarStart = valsVector.Length * Vector<double>.Count;
+            }
+
+            for (int i = scalarStart; i < vals.Length; i += stride)
+            {
+                vals[i] += addend;
+            }
+        }
+
+        /// <summary>
         /// Multiplies the elements of a <see cref="Span{T}"/> in-place by a multiplier, using SIMD
         /// when legal and effective.
         /// </summary>
