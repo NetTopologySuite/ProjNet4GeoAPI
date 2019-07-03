@@ -109,8 +109,8 @@ namespace ProjNet.CoordinateSystems.Projections
             Name = "Albers_Conic_Equal_Area";
 
             double lat0 = lat_origin;
-            double lat1 = Degrees2Radians(_Parameters.GetParameterValue("standard_parallel_1"));
-            double lat2 = Degrees2Radians(_Parameters.GetParameterValue("standard_parallel_2"));
+            double lat1 = DegreesToRadians(_Parameters.GetParameterValue("standard_parallel_1"));
+            double lat2 = DegreesToRadians(_Parameters.GetParameterValue("standard_parallel_2"));
 
             if (Math.Abs(lat1 + lat2) < double.Epsilon)
                 throw new ArgumentException("Equal latitudes for standard parallels on opposite sides of Equator.");

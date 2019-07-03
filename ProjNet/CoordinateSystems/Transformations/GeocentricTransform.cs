@@ -157,8 +157,8 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <param name="z">The z-ordinate value</param>
         private void DegreesToMeters(ref double lon, ref double lat, ref double z)
         {
-            lon = Degrees2Radians(lon);
-            lat = Degrees2Radians(lat);
+            lon = DegreesToRadians(lon);
+            lat = DegreesToRadians(lat);
             z = double.IsNaN(z) ? 0 : z;
 
             double v = _semiMajor / Math.Sqrt(1 - _es * Math.Pow(Math.Sin(lat), 2));
@@ -208,8 +208,8 @@ namespace ProjNet.CoordinateSystems.Transformations
                     else
                     {
                         /* center of earth */
-                        lon = Radians2Degrees(lon);
-                        lat = Radians2Degrees(Math.PI * 0.5);
+                        lon = RadiansToDegrees(lon);
+                        lat = RadiansToDegrees(Math.PI * 0.5);
                         x = lon;
                         y = lat;
                         z = -_semiMinor;
@@ -239,8 +239,8 @@ namespace ProjNet.CoordinateSystems.Transformations
             if (!At_Pole)
                 lat = Math.Atan(Sin_p1 / Cos_p1);
 
-            x = Radians2Degrees(lon);
-            y = Radians2Degrees(lat);
+            x = RadiansToDegrees(lon);
+            y = RadiansToDegrees(lat);
             z = Height;
         }
 

@@ -17,6 +17,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Runtime.InteropServices;
 using ProjNet.Geometries;
 
@@ -146,10 +147,9 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Converts a degree-value (<paramref name="deg"/>) to a radian-value by multiplying it with <c><see cref="Math.PI"/> / 180.0</c> 
         /// </summary>
-        protected static double Degrees2Radians(double deg)
+        protected static double DegreesToRadians(double deg)
         {
             return D2R * deg;
-
         }
 
         /// <summary>
@@ -159,10 +159,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <param name="stride">A stride value</param>
         protected static void DegreesToRadians(Span<double> degrees, int stride)
         {
-            for (int i = 0; i < degrees.Length; i += stride)
-            {
-                degrees[i] *= D2R;
-            }
+            MultiplyInPlace(degrees, stride, D2R);
         }
 
         /// <summary>
@@ -175,22 +172,19 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// </summary>
         /// <param name="rad"></param>
         /// <returns></returns>
-        protected static double Radians2Degrees(double rad)
+        protected static double RadiansToDegrees(double rad)
         {
             return R2D * rad;
         }
 
         /// <summary>
-        /// Converts a series of radian-values (<paramref name="degrees"/>) to a degrees-values by multiplying them with <c>180.0 / <see cref="Math.PI"/></c> 
+        /// Converts a series of radian-values (<paramref name="radians"/>) to a degrees-values by multiplying them with <c>180.0 / <see cref="Math.PI"/></c> 
         /// </summary>
         /// <param name="radians">A series of radian-values</param>
         /// <param name="stride">A stride value</param>
         protected static void RadiansToDegrees(Span<double> radians, int stride)
         {
-            for (int i = 0; i < radians.Length; i+=stride)
-            {
-                radians[i] *= R2D;
-            }
+            MultiplyInPlace(radians, stride, R2D);
         }
 
         /// <summary>
@@ -310,8 +304,6 @@ namespace ProjNet.CoordinateSystems.Transformations
             }
         }
 
-        private readonly double[] _dummyZ = new double[1];
-
         /// <summary>
         /// Core method to transform a series of points defined by their ordinates.
         /// The transformation is performed in-place.
@@ -329,7 +321,8 @@ namespace ProjNet.CoordinateSystems.Transformations
             if (elementsX != elementsY)
                 throw new ArgumentException("Spans of ordinate values don't match in size.");
 
-            TransformCore(xs, ys, _dummyZ, strideX, strideY, 0);
+            Span<double> dummyZ = stackalloc double[] { 0 };
+            TransformCore(xs, ys, dummyZ, strideX, strideY, 0);
         }
 
         /// <summary>
@@ -353,7 +346,8 @@ namespace ProjNet.CoordinateSystems.Transformations
 
             if (zs.IsEmpty)
             {
-                TransformCore(xs, ys, _dummyZ, strideX, strideY, 0);
+                Span<double> dummyZ = stackalloc double[] { 0 };
+                TransformCore(xs, ys, dummyZ, strideX, strideY, 0);
                 return;
             }
 
@@ -373,7 +367,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <exception cref="ArgumentException">If the provided series' and buffers don't match in size.</exception>
         public void Transform(Span<XY> xys, Span<double> zs = default, int strideZ = 0)
         {
-            if (zs.Length > 0)
+            if (!zs.IsEmpty)
             {
                 if (strideZ <= 0) strideZ = 1;
                 if (xys.Length != ((zs.Length / strideZ + (zs.Length % strideZ != 0 ? 1 : 0))))
@@ -385,9 +379,14 @@ namespace ProjNet.CoordinateSystems.Transformations
             var inYs = read.Slice(1);
 
             if (zs.IsEmpty)
-                TransformCore(inXs, inYs, _dummyZ, 2, 2, 0);
+            {
+                Span<double> dummyZ = stackalloc double[] { 0 };
+                TransformCore(inXs, inYs, dummyZ, 2, 2, 0);
+            }
             else
+            {
                 TransformCore(inXs, inYs, zs, 2, 2, strideZ);
+            }
         }
 
         /// <summary>
@@ -403,7 +402,108 @@ namespace ProjNet.CoordinateSystems.Transformations
 
             TransformCore(inXs, inYs, inZs, 3,3,3);
         }
+
+        /// <summary>
+        /// Multiplies the elements of a <see cref="Span{T}"/> in-place by a multiplier, using SIMD
+        /// when legal and effective.
+        /// </summary>
+        /// <param name="vals">A series of values to transform in-place.</param>
+        /// <param name="stride">The spacing between elements.</param>
+        /// <param name="multiplier">The value by which to multiply each element in <paramref name="vals"/> in-place.</param>
+        protected static void MultiplyInPlace(Span<double> vals, int stride, double multiplier)
+        {
+            if (stride < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(stride), stride, "Must be greater than zero.");
+            }
+
+            int scalarStart = 0;
+            if (Vector.IsHardwareAccelerated && stride == 1 && vals.Length >= Vector<double>.Count)
+            {
+                var valsVector = MemoryMarshal.Cast<double, Vector<double>>(vals);
+                var multiplierVector = new Vector<double>(multiplier);
+                for (int i = 0; i < valsVector.Length; i++)
+                {
+                    valsVector[i] *= multiplierVector;
+                }
+
+                scalarStart = valsVector.Length * Vector<double>.Count;
+            }
+
+            for (int i = scalarStart; i < vals.Length; i += stride)
+            {
+                vals[i] *= multiplier;
+            }
+        }
+
+        /// <summary>
+        /// Multiplies the elements of a <see cref="Span{T}"/> in-place by a multiplier, then adds a
+        /// value to the product in-place, using SIMD when legal and effective.
+        /// </summary>
+        /// <param name="vals">A series of values to transform in-place.</param>
+        /// <param name="stride">The spacing between elements.</param>
+        /// <param name="multiplier">The value by which to multiply each element in <paramref name="vals"/> in-place.</param>
+        /// <param name="addend">The value to add to each multiplied element in <paramref name="vals"/> in-place.</param>
+        protected static void MultiplyThenAddInPlace(Span<double> vals, int stride, double multiplier, double addend)
+        {
+            if (stride < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(stride), stride, "Must be greater than zero.");
+            }
+
+            int scalarStart = 0;
+            if (Vector.IsHardwareAccelerated && stride == 1 && vals.Length >= Vector<double>.Count)
+            {
+                var valsVector = MemoryMarshal.Cast<double, Vector<double>>(vals);
+                var multiplierVector = new Vector<double>(multiplier);
+                var addendVector = new Vector<double>(addend);
+                for (int i = 0; i < valsVector.Length; i++)
+                {
+                    valsVector[i] = valsVector[i] * multiplierVector + addendVector;
+                }
+
+                scalarStart = valsVector.Length * Vector<double>.Count;
+            }
+
+            for (int i = scalarStart; i < vals.Length; i += stride)
+            {
+                vals[i] = vals[i] * multiplier + addend;
+            }
+        }
+
+        /// <summary>
+        /// Adds a value to the elements of a <see cref="Span{T}"/> in-place, then multiplies each
+        /// sum by a multiplier in-place, using SIMD when legal and effective.
+        /// </summary>
+        /// <param name="vals">A series of values to transform in-place.</param>
+        /// <param name="stride">The spacing between elements.</param>
+        /// <param name="addend">The value to add to each element in <paramref name="vals"/> in-place.</param>
+        /// <param name="multiplier">The value by which to multiply each summed element in <paramref name="vals"/> in-place.</param>
+        protected static void AddThenMultiplyInPlace(Span<double> vals, int stride, double addend, double multiplier)
+        {
+            if (stride < 1)
+            {
+                throw new ArgumentOutOfRangeException(nameof(stride), stride, "Must be greater than zero.");
+            }
+
+            int scalarStart = 0;
+            if (Vector.IsHardwareAccelerated && stride == 1 && vals.Length >= Vector<double>.Count)
+            {
+                var valsVector = MemoryMarshal.Cast<double, Vector<double>>(vals);
+                var addendVector = new Vector<double>(addend);
+                var multiplierVector = new Vector<double>(multiplier);
+                for (int i = 0; i < valsVector.Length; i++)
+                {
+                    valsVector[i] = (valsVector[i] + addendVector) * multiplierVector;
+                }
+
+                scalarStart = valsVector.Length * Vector<double>.Count;
+            }
+
+            for (int i = scalarStart; i < vals.Length; i += stride)
+            {
+                vals[i] = (vals[i] + addend) * multiplier;
+            }
+        }
     }
 }
-
-

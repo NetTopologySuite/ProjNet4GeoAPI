@@ -154,8 +154,8 @@ namespace ProjNet.CoordinateSystems.Projections
 	        //UNIT["metre",1]]
 
 			//Check for missing parameters
-            _azimuth = Degrees2Radians(_Parameters.GetParameterValue("azimuth"));
-			_pseudoStandardParallel = Degrees2Radians(_Parameters.GetParameterValue("pseudo_standard_parallel_1"));
+            _azimuth = DegreesToRadians(_Parameters.GetParameterValue("azimuth"));
+			_pseudoStandardParallel = DegreesToRadians(_Parameters.GetParameterValue("pseudo_standard_parallel_1"));
             
             // Calculates useful constants.
 			_sinAzim = Math.Sin(_azimuth);

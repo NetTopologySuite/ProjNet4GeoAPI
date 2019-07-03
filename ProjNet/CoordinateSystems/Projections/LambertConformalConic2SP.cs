@@ -115,8 +115,8 @@ namespace ProjNet.CoordinateSystems.Projections
 			AuthorityCode = 9802;
 			
             //Check for missing parameters
-			double lat1 = Degrees2Radians(_Parameters.GetParameterValue("standard_parallel_1"));
-            double lat2 = Degrees2Radians(_Parameters.GetParameterValue("standard_parallel_2"));
+			double lat1 = DegreesToRadians(_Parameters.GetParameterValue("standard_parallel_1"));
+            double lat2 = DegreesToRadians(_Parameters.GetParameterValue("standard_parallel_2"));
 
 			double sin_po;                  /* sin value                            */
 			double cos_po;                  /* cos value                            */

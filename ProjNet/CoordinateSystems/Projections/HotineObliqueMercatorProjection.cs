@@ -37,8 +37,8 @@ namespace ProjNet.CoordinateSystems.Projections
             AuthorityCode = 9812;
             Name = "Hotine_Oblique_Mercator";
 
-            _azimuth = Degrees2Radians(_Parameters.GetParameterValue("azimuth"));
-            double rectifiedGridAngle = Degrees2Radians(_Parameters.GetParameterValue("rectified_grid_angle"));
+            _azimuth = DegreesToRadians(_Parameters.GetParameterValue("azimuth"));
+            double rectifiedGridAngle = DegreesToRadians(_Parameters.GetParameterValue("rectified_grid_angle"));
             
 
             sincos(lat_origin, out _sinP20, out _cosP20);

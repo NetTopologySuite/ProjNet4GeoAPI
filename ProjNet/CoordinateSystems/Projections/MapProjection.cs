@@ -175,8 +175,8 @@ namespace ProjNet.CoordinateSystems.Projections
 
             scale_factor = _Parameters.GetOptionalParameterValue("scale_factor", 1);
 
-            central_meridian = Degrees2Radians(_Parameters.GetParameterValue("central_meridian", "longitude_of_center"));
-            lat_origin = Degrees2Radians(_Parameters.GetOptionalParameterValue("latitude_of_origin", 0d, "latitude_of_center"));
+            central_meridian = DegreesToRadians(_Parameters.GetParameterValue("central_meridian", "longitude_of_center"));
+            lat_origin = DegreesToRadians(_Parameters.GetOptionalParameterValue("latitude_of_origin", 0d, "latitude_of_center"));
 
             _metersPerUnit = _Parameters.GetParameterValue("unit");
             _reciprocalMetersPerUnit = 1 / _metersPerUnit;
@@ -362,7 +362,7 @@ namespace ProjNet.CoordinateSystems.Projections
 
 
         /// <inheritdoc />
-        protected override void TransformCore(Span<double> xs, Span<double> ys, Span<double> zs, int strideX, int strideY, int strideZ)
+        protected sealed override void TransformCore(Span<double> xs, Span<double> ys, Span<double> zs, int strideX, int strideY, int strideZ)
         {
             if (IsInverse)
                 SourceToDegrees(xs, ys, strideX, strideY);
@@ -404,8 +404,8 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <param name="lat">The latitude in degree</param>
         protected void DegreesToMeters(ref double lon, ref double lat)
         {
-            lon = Degrees2Radians(lon);
-            lat = Degrees2Radians(lat);
+            lon = DegreesToRadians(lon);
+            lat = DegreesToRadians(lat);
             RadiansToMeters(ref lon, ref lat);
         }
 
@@ -474,11 +474,8 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <returns>A point.</returns>
         protected void MetersToTarget(Span<double> xs, Span<double> ys, int strideX, int strideY)
         {
-            for (int i = 0, j = 0; i < xs.Length; i += strideX, j += strideY)
-            {
-                xs[i] = (xs[i] + false_easting) * _reciprocalMetersPerUnit;
-                ys[j] = (ys[j] + false_northing) * _reciprocalMetersPerUnit;
-            }
+            AddThenMultiplyInPlace(xs, strideX, false_easting, _reciprocalMetersPerUnit);
+            AddThenMultiplyInPlace(ys, strideY, false_northing, _reciprocalMetersPerUnit);
         }
         #endregion
 
@@ -492,6 +489,21 @@ namespace ProjNet.CoordinateSystems.Projections
         protected abstract void MetersToRadians(ref double x, ref double y);
 
         /// <summary>
+        /// Method to convert a series of points defined by (x, y) in meters to (lon, lat) in radians
+        /// </summary>
+        /// <param name="xs">The x-ordinates of the points in meters when entering, their longitudes in radians after exit.</param>
+        /// <param name="ys">The y-ordinates of the points in meters when entering, their latitudes in radians after exit.</param>
+        /// <param name="strideX">A stride value for x-ordinates</param>
+        /// <param name="strideY">A stride value for y-ordinates</param>
+        protected virtual void MetersToRadians(Span<double> xs, Span<double> ys, int strideX, int strideY)
+        {
+            for (int i = 0, j = 0; i < xs.Length; i += strideX, j += strideY)
+            {
+                MetersToRadians(ref xs[i], ref ys[j]);
+            }
+        }
+
+        /// <summary>
         /// Method to convert a point from meters to degrees
         /// </summary>
         /// <param name="x">The x-ordinate when entering, the longitude value upon exit.</param>
@@ -499,8 +511,8 @@ namespace ProjNet.CoordinateSystems.Projections
         protected void MetersToDegrees(ref double x, ref double y)
         {
             MetersToRadians(ref x, ref y);
-            x = Radians2Degrees(x);
-            y = Radians2Degrees(y);
+            x = RadiansToDegrees(x);
+            y = RadiansToDegrees(y);
         }
 
         /// <summary>
@@ -512,8 +524,9 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <param name="strideY"></param>
         protected void MetersToDegrees(Span<double> xs, Span<double> ys, int strideX, int strideY)
         {
-            for (int i = 0, j = 0; i < xs.Length; i += strideX, j += strideY)
-                MetersToDegrees(ref xs[i], ref ys[j]);
+            MetersToRadians(xs, ys, strideX, strideY);
+            RadiansToDegrees(xs, strideX);
+            RadiansToDegrees(ys, strideY);
         }
 
         /// <summary>
@@ -553,11 +566,8 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <param name="strideY">A stride value for y-ordinates</param>
         protected void SourceToMeters(Span<double> xs, Span<double> ys, int strideX, int strideY)
         {
-            for (int i = 0, j = 0; i < xs.Length; i += strideX, j += strideY)
-            {
-                xs[i] = xs[i] * _metersPerUnit - false_easting;
-                ys[j] = ys[j] * _metersPerUnit - false_northing;
-            }
+            MultiplyThenAddInPlace(xs, strideX, _metersPerUnit, -false_easting);
+            MultiplyThenAddInPlace(ys, strideY, _metersPerUnit, -false_northing);
         }
 
         /// <summary>
@@ -1115,7 +1125,7 @@ namespace ProjNet.CoordinateSystems.Projections
         protected static double LongitudeToRadians(double x, bool edge)
         {
             if (edge ? (x >= -180 && x <= 180) : (x > -180 && x < 180))
-                return Degrees2Radians(x);
+                return DegreesToRadians(x);
             throw new ArgumentOutOfRangeException("x",
                                                   x.ToString(CultureInfo.InvariantCulture) +
                                                   " not a valid longitude in degrees.");
@@ -1130,7 +1140,7 @@ namespace ProjNet.CoordinateSystems.Projections
         protected static double LatitudeToRadians(double y, bool edge)
         {
             if (edge ? (y >= -90 && y <= 90) : (y > -90 && y < 90))
-                return Degrees2Radians(y);
+                return DegreesToRadians(y);
             throw new ArgumentOutOfRangeException("y",
                                                   y.ToString(CultureInfo.InvariantCulture) +
                                                   " not a valid latitude in degrees.");
