@@ -1,8 +1,11 @@
+using System.Runtime.InteropServices;
+
 namespace ProjNet.Geometries
 {
     /// <summary>
-    /// A tuple of X-, Y- and Z-ordinate values
+    /// A tuple of X-, Y- and Z-ordinate values, laid out in that order.
     /// </summary>
+    [StructLayout(LayoutKind.Sequential)]
     public struct XYZ
     {
         /// <summary>
