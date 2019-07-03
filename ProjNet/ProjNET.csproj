@@ -16,8 +16,8 @@
   </PropertyGroup>
 
   <PropertyGroup Label="NuGet Package Info">
-    <PackageId>ProjNET4GeoAPI</PackageId>
-    <Authors>NetTopologySuite - Team</Authors>
+    <PackageId>ProjNET</PackageId>
+    <Authors>Morton Nielsen, NetTopologySuite-Team</Authors>
     <PackageIconUrl>https://raw.githubusercontent.com/NetTopologySuite/ProjNet4GeoAPI/master/icon.png</PackageIconUrl>
     <PackageLicenseExpression>LGPL-2.1-or-later</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
