@@ -402,7 +402,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         /// <param name="lon">The longitude in degree</param>
         /// <param name="lat">The latitude in degree</param>
-        protected void DegreesToMeters(ref double lon, ref double lat)
+        protected virtual void DegreesToMeters(ref double lon, ref double lat)
         {
             lon = DegreesToRadians(lon);
             lat = DegreesToRadians(lat);
@@ -416,7 +416,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <param name="lats">The latitudes of the points in degree when entering, their y-ordinates in meters after exit.</param>
         /// <param name="strideX">A stride value for longitude-ordinates</param>
         /// <param name="strideY">A stride value for latitude-ordinates</param>
-        protected void DegreesToMeters(Span<double> lons, Span<double> lats, int strideX, int strideY)
+        protected virtual void DegreesToMeters(Span<double> lons, Span<double> lats, int strideX, int strideY)
         {
             DegreesToRadians(lons, strideX);
             DegreesToRadians(lats, strideY);
@@ -428,7 +428,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         /// <param name="lon">The longitude in degree</param>
         /// <param name="lat">The latitude in degree</param>
-        protected void DegreesToTarget(ref double lon, ref double lat)
+        protected virtual void DegreesToTarget(ref double lon, ref double lat)
         {
             DegreesToMeters(ref lon, ref lat);
             MetersToTarget(ref lon, ref lat);
@@ -441,7 +441,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <param name="lats">A series of y-ordinate values</param>
         /// <param name="strideX">A stride value for x-ordinates</param>
         /// <param name="strideY">A stride value for y-ordinates</param>
-        protected void DegreesToTarget(Span<double> lons, Span<double> lats,
+        protected virtual void DegreesToTarget(Span<double> lons, Span<double> lats,
             int strideX, int strideY)
         {
             DegreesToMeters(lons, lats, strideX, strideY);
@@ -508,7 +508,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         /// <param name="x">The x-ordinate when entering, the longitude value upon exit.</param>
         /// <param name="y">The y-ordinate when entering, the latitude value upon exit.</param>
-        protected void MetersToDegrees(ref double x, ref double y)
+        protected virtual void MetersToDegrees(ref double x, ref double y)
         {
             MetersToRadians(ref x, ref y);
             x = RadiansToDegrees(x);
@@ -522,7 +522,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <param name="ys">The y-ordinate values when entering, the latitude values upon exit</param>
         /// <param name="strideX"></param>
         /// <param name="strideY"></param>
-        protected void MetersToDegrees(Span<double> xs, Span<double> ys, int strideX, int strideY)
+        protected virtual void MetersToDegrees(Span<double> xs, Span<double> ys, int strideX, int strideY)
         {
             MetersToRadians(xs, ys, strideX, strideY);
             RadiansToDegrees(xs, strideX);
@@ -535,7 +535,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <param name="x">The x-ordinate</param>
         /// <param name="y">The y-ordinate</param>
         /// <returns>Converted point.</returns>
-        protected void SourceToDegrees(ref double x, ref double y)
+        protected virtual void SourceToDegrees(ref double x, ref double y)
         {
             SourceToMeters(ref x, ref y);
             MetersToDegrees(ref x, ref y);
@@ -548,7 +548,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <param name="ys">A series of y-ordinate values</param>
         /// <param name="strideX">A stride value for x-ordinates</param>
         /// <param name="strideY">A stride value for y-ordinates</param>
-        protected void SourceToDegrees(Span<double> xs, Span<double> ys,
+        protected virtual void SourceToDegrees(Span<double> xs, Span<double> ys,
             int strideX, int strideY)
         {
             SourceToMeters(xs, ys, strideX, strideY);
