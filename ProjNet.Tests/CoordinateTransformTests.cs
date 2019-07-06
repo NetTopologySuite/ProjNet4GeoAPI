@@ -29,7 +29,7 @@ namespace ProjNET.Tests
 
             var trans = ctFact.CreateFromCoordinateSystems(utm35ETRS, utm33);
 
-            var points = new XY[]
+            XY[] points =
             {
                 new XY(290586.087, 6714000), new XY(290586.392, 6713996.224),
                 new XY(290590.133, 6713973.772), new XY(290594.111, 6713957.416),
@@ -39,7 +39,17 @@ namespace ProjNET.Tests
             var tpoints = (XY[])points.Clone();
             trans.MathTransform.Transform(tpoints);
             for (int i = 0; i < points.Length; i++)
-                Assert.That((tpoints[i].X, tpoints[i].Y), Is.EqualTo(trans.MathTransform.Transform(points[i].X, points[i].Y)));
+            {
+                double expectedX = points[i].X;
+                double expectedY = points[i].Y;
+                trans.MathTransform.Transform(ref expectedX, ref expectedY);
+
+                double actualX = tpoints[i].X;
+                double actualY = tpoints[i].Y;
+
+                Assert.That(actualX, Is.EqualTo(expectedX).Within(1E-8));
+                Assert.That(actualY, Is.EqualTo(expectedY).Within(1E-8));
+            }
         }
 
         [Test]
@@ -55,7 +65,7 @@ namespace ProjNET.Tests
 
             var trans = ctFact.CreateFromCoordinateSystems(utm35ETRS, utm33);
 
-            var points = new List<double[]>
+            double[][] points =
             {
                 new[] {290586.087, 6714000 }, new[] {90586.392, 6713996.224},
                 new[] {290590.133, 6713973.772}, new[] {290594.111, 6713957.416},
@@ -63,21 +73,18 @@ namespace ProjNET.Tests
             };
 
             double[][] tpoints = trans.MathTransform.TransformList(points).ToArray();
-            for (int i = 0; i < points.Count; i++)
-                Assert.IsTrue(Equal(tpoints[i], trans.MathTransform.Transform(points[i])));
-        }
-
-        private static bool Equal(IList<double> a1, IList<double> a2)
-        {
-            if (a2.Count != a1.Count)
-                return false;
-
-            for (int i = 0; i < a1.Count; i++)
+            for (int i = 0; i < points.Length; i++)
             {
-                if (!a1[i].Equals(a2[i]))
-                    return false;
+                double expectedX = points[i][0];
+                double expectedY = points[i][1];
+                trans.MathTransform.Transform(ref expectedX, ref expectedY);
+
+                double actualX = tpoints[i][0];
+                double actualY = tpoints[i][1];
+
+                Assert.That(actualX, Is.EqualTo(expectedX).Within(1E-8));
+                Assert.That(actualY, Is.EqualTo(expectedY).Within(1E-8));
             }
-            return true;
         }
 
         [Test]
