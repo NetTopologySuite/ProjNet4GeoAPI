@@ -14,17 +14,14 @@
 
   <ItemGroup>
     <PackageReference Include="BenchmarkDotNet" Version="0.11.4" />
-    <PackageReference Include="NetTopologySuite" Version="2.0.0-pre001" />
-    <PackageReference Include="NUnit" Version="3.10.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(SolutionDir)ProjNet.Tests\ProjNET.Tests.csproj" />
     <ProjectReference Include="$(SolutionDir)ProjNet\ProjNET.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="TestData\*.wkt" CopyToOutputDirectory="PreserveNewest" />
+    <None Update="coords.dat.gz" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

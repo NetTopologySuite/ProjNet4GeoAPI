@@ -15,8 +15,6 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
 
-    <PackageReference Include="NetTopologySuite" Version="2.0.0-pre001" />
-
     <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
     <PackageReference Include="NUnit" Version="3.10.1" />
     <PackageReference Include="Npgsql" Version="4.0.5" />
@@ -28,15 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="TestData\*.wkt" CopyToOutputDirectory="PreserveNewest" />
-  </ItemGroup>
-
-  <ItemGroup>
     <EmbeddedResource Include="SRID.csv" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
 
 </Project>

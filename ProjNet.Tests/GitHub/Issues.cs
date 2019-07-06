@@ -1,12 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using NetTopologySuite.Geometries;
-using NetTopologySuite.Geometries.Implementation;
 using NUnit.Framework;
 using ProjNet;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
-using ProjNET.Tests.Geometries.Implementation;
 
 namespace ProjNET.Tests.GitHub
 {
@@ -62,12 +59,13 @@ namespace ProjNET.Tests.GitHub
             var wgs84 = ProjectedCoordinateSystem.WGS84_UTM(36, true).GeographicCoordinateSystem;
 
             var ctFwd = _css.CreateTransformation(itm, wgs84).MathTransform;
-            var pt1a = new Coordinate(200000, 600000);
-            var pt2a = ctFwd.Transform(pt1a);
-            var pt1b = ctFwd.Inverse().Transform(pt2a);
-            var pt2b = ctFwd.Transform(pt1a);
+            var pt1a = (x: 200000.0, y: 600000.0);
+            var pt2a = ctFwd.Transform(pt1a.x, pt1a.y);
+            var pt1b = ctFwd.Inverse().Transform(pt2a.x, pt2a.y);
+            var pt2b = ctFwd.Transform(pt1a.x, pt1a.y);
 
-            Assert.That(pt1a.Distance(pt1b), Is.LessThan(0.01));
+            Assert.That(pt1a.x, Is.EqualTo(pt1b.x).Within(0.01));
+            Assert.That(pt1a.y, Is.EqualTo(pt1b.y).Within(0.01));
             Assert.That(pt2a, Is.EqualTo(pt2b));
 
         }
@@ -82,20 +80,21 @@ namespace ProjNET.Tests.GitHub
             var epsg25832 = _css.GetCoordinateSystem(25832);
 
             var mt1 = _css.CreateTransformation(epsg25832, epsg_3857).MathTransform;
-            var pt25832 = new Coordinate(702575, 6153153);
-            var pt_3857ex = new Coordinate(1358761.89, 7456070.47);
+            var pt25832 = (x: 702575, y: 6153153);
+            var pt_3857ex = (x: 1358761.89, y: 7456070.47);
 
-            var pt_3857 = mt1.Transform(pt25832);
-            Assert.That(pt_3857.Distance(pt_3857ex), Is.LessThan(0.015));
-
+            var pt_3857 = mt1.Transform(pt25832.x, pt25832.y);
+            Assert.That(pt_3857.x, Is.EqualTo(pt_3857ex.x).Within(0.015));
+            Assert.That(pt_3857.y, Is.EqualTo(pt_3857ex.y).Within(0.015));
 
             epsg_3857 = (ProjectedCoordinateSystem)_css.GetCoordinateSystem(3857);
             Console.WriteLine(epsg_3857.Projection.ClassName);
             Console.WriteLine(epsg_3857.WKT);
 
             var mt2 = _css.CreateTransformation(epsg25832, epsg_3857).MathTransform;
-            pt_3857 = mt2.Transform(pt25832);
-            Assert.That(pt_3857.Distance(pt_3857ex), Is.LessThan(0.015));
+            pt_3857 = mt2.Transform(pt25832.x, pt25832.y);
+            Assert.That(pt_3857.x, Is.EqualTo(pt_3857ex.x).Within(0.015));
+            Assert.That(pt_3857.y, Is.EqualTo(pt_3857ex.y).Within(0.015));
         }
 
         [Test, Description("Convert latitude/longitude to Canada grid NAD83 (epsg:26910)")]
@@ -136,25 +135,6 @@ namespace ProjNET.Tests.GitHub
             Assert.That(ptI[0], Is.EqualTo(3523562.711189).Within(0.01), "Easting");
             Assert.That(ptI[1], Is.EqualTo(6246615.391161).Within(0.01), "Northing");
              */
-        }
-
-        [Test, Description("MathTransform.Transform modifies the original ICoordinateSequence")]
-        public void TestMathTransformOnSequence()
-        {
-            var epsg4326 = _css.GetCoordinateSystem(4326);
-            var epsg3857 = _css.GetCoordinateSystem(3857);
-
-            var ct = _css.CreateTransformation(epsg4326, epsg3857);
-            var seqIn = new CoordinateArraySequence(new [] {new Coordinate(7.47, 53.48),});
-            var seqOut = ct.MathTransform.Transform(seqIn);
-
-            Assert.That(seqOut, Is.Not.Null, "Output sequence null");
-            Assert.That(ReferenceEquals(seqIn, seqOut), Is.False, "In- and output sequence same object.");
-            Assert.That(seqOut.Count, Is.EqualTo(seqIn.Count), "In- and output sequence have same size");
-
-            for (int i = 0; i < seqIn.Count; i++)
-                Assert.That(ReferenceEquals(seqIn.GetCoordinate(i), seqOut.GetCoordinate(i)), Is.False, 
-                    "In- and output sequence contain same coordinate objects");
         }
     }
 }

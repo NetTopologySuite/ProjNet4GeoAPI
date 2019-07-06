@@ -1,11 +1,8 @@
 using System;
 using System.Globalization;
-using NetTopologySuite.Geometries;
-using NetTopologySuite.Geometries.Implementation;
 using NUnit.Framework;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
-using ProjNET.Tests.Geometries.Implementation;
 
 namespace ProjNET.Tests
 {
@@ -13,24 +10,6 @@ namespace ProjNET.Tests
     {
         protected readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
         protected readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
-
-        public CoordinateSequence CreateSequence(string sequenceTypeName, Coordinate[] coordinates)
-        {
-            switch (sequenceTypeName)
-            {
-                case "CoordinateArraySequence":
-                    return CoordinateArraySequenceFactory.Instance.Create(coordinates);
-                case "PackedDoubleCoordinateSequence":
-                    return PackedCoordinateSequenceFactory.DoubleFactory.Create(coordinates); 
-                case "PackedFloatCoordinateSequence":
-                    return PackedCoordinateSequenceFactory.FloatFactory.Create(coordinates);
-                case "DotSpatialAffineCoordinateSequence":
-                    return DotSpatialAffineCoordinateSequenceFactory.Instance.Create(coordinates);
-                case "SpanCoordinateSequence":
-                    return SpanCoordinateSequenceFactory.Instance.Create(coordinates);
-            }
-            throw new NotSupportedException($"Creation of {sequenceTypeName} not supported");
-        }
 
         protected bool Verbose { get; set; }
 

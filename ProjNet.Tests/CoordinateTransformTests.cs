@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using NetTopologySuite.Geometries;
 using NUnit.Framework;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
+using ProjNet.Geometries;
 using ProjNet.IO.CoordinateSystems;
-using ProjNET.Tests.Geometries.Implementation;
 
 namespace ProjNET.Tests
 {
@@ -30,16 +29,17 @@ namespace ProjNET.Tests
 
             var trans = ctFact.CreateFromCoordinateSystems(utm35ETRS, utm33);
 
-            var points = new []
+            var points = new XY[]
             {
-                new Coordinate(290586.087, 6714000), new Coordinate(290586.392, 6713996.224),
-                new Coordinate(290590.133, 6713973.772), new Coordinate(290594.111, 6713957.416),
-                new Coordinate(290596.615, 6713943.567), new Coordinate(290596.701, 6713939.485)
+                new XY(290586.087, 6714000), new XY(290586.392, 6713996.224),
+                new XY(290590.133, 6713973.772), new XY(290594.111, 6713957.416),
+                new XY(290596.615, 6713943.567), new XY(290596.701, 6713939.485)
             };
 
-            var tpoints = trans.MathTransform.TransformList(points);
+            var tpoints = (XY[])points.Clone();
+            trans.MathTransform.Transform(tpoints);
             for (int i = 0; i < points.Length; i++)
-                Assert.That(tpoints[i].Equals(trans.MathTransform.Transform(points[i])));
+                Assert.That((tpoints[i].X, tpoints[i].Y), Is.EqualTo(trans.MathTransform.Transform(points[i].X, points[i].Y)));
         }
 
         [Test]
@@ -78,30 +78,6 @@ namespace ProjNET.Tests
                     return false;
             }
             return true;
-        }
-
-        [TestCase("CoordinateArraySequence")]
-        [TestCase("PackedDoubleCoordinateSequence")]
-        [TestCase("SpanCoordinateSequence")]
-        public void TestTransformSequence(string sequenceType)
-        {
-
-            var utm35ETRS = CoordinateSystemFactory.CreateFromWkt(
-                    "PROJCS[\"ETRS89 / ETRS-TM35\",GEOGCS[\"ETRS89\",DATUM[\"D_ETRS_1989\",SPHEROID[\"GRS_1980\",6378137,298.257222101]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",27],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"Meter\",1]]");
-            var utm33 = ProjectedCoordinateSystem.WGS84_UTM(33, true);
-            var trans1 = CoordinateTransformationFactory.CreateFromCoordinateSystems(utm35ETRS, utm33);
-
-            var points = new Coordinate[]
-                {
-                    new Coordinate(290586.087, 6714000), new Coordinate(290586.392, 6713996.224),
-                    new Coordinate(290590.133, 6713973.772), new Coordinate(290594.111, 6713957.416),
-                    new Coordinate(290596.615, 6713943.567), new Coordinate(290596.701, 6713939.485)
-                };
-
-            var seq = CreateSequence(sequenceType, points);
-            var tpoints = trans1.MathTransform.Transform(seq);
-            for (int i = 0; i < seq.Count; i++)
-                Assert.AreEqual(trans1.MathTransform.Transform(seq.GetCoordinate(i)), tpoints.GetCoordinate(i));
         }
 
         [Test]
@@ -674,15 +650,15 @@ namespace ProjNET.Tests
             var utm33 = ProjectedCoordinateSystem.WGS84_UTM(33, true);
             var trans = CoordinateTransformationFactory.CreateFromCoordinateSystems(utm35ETRS, utm33);
 
-            var coords = new List<Coordinate>{
-                new Coordinate(290586.087, 6714000),
-                new Coordinate(290586.392, 6713996.224),
-                new Coordinate(290590.133, 6713973.772)
+            var coords = new XY[] {
+                new XY(290586.087, 6714000),
+                new XY(290586.392, 6713996.224),
+                new XY(290590.133, 6713973.772)
             };
 
-            var transformedCoords = trans.MathTransform.TransformList(coords);
-            Assert.AreNotEqual(290586.087, transformedCoords[0].X);
-            Assert.AreNotEqual(6714000, transformedCoords[0].Y);
+            trans.MathTransform.Transform(coords);
+            Assert.AreNotEqual(290586.087, coords[0].X);
+            Assert.AreNotEqual(6714000, coords[0].Y);
         }
 
         [Test]

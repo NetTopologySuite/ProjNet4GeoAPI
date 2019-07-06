@@ -417,6 +417,11 @@ namespace ProjNet.CoordinateSystems.Transformations
                 throw new ArgumentOutOfRangeException(nameof(stride), stride, "Must be greater than zero.");
             }
 
+            if (addend == 0)
+            {
+                return;
+            }
+
             int scalarStart = 0;
             if (Vector.IsHardwareAccelerated && stride == 1 && vals.Length >= Vector<double>.Count)
             {
@@ -448,6 +453,11 @@ namespace ProjNet.CoordinateSystems.Transformations
             if (stride < 1)
             {
                 throw new ArgumentOutOfRangeException(nameof(stride), stride, "Must be greater than zero.");
+            }
+
+            if (multiplier == 1)
+            {
+                return;
             }
 
             int scalarStart = 0;
@@ -484,6 +494,18 @@ namespace ProjNet.CoordinateSystems.Transformations
                 throw new ArgumentOutOfRangeException(nameof(stride), stride, "Must be greater than zero.");
             }
 
+            if (addend == 0)
+            {
+                MultiplyInPlace(vals, stride, multiplier);
+                return;
+            }
+
+            if (multiplier == 1)
+            {
+                AddInPlace(vals, stride, addend);
+                return;
+            }
+
             int scalarStart = 0;
             if (Vector.IsHardwareAccelerated && stride == 1 && vals.Length >= Vector<double>.Count)
             {
@@ -517,6 +539,18 @@ namespace ProjNet.CoordinateSystems.Transformations
             if (stride < 1)
             {
                 throw new ArgumentOutOfRangeException(nameof(stride), stride, "Must be greater than zero.");
+            }
+
+            if (addend == 0)
+            {
+                MultiplyInPlace(vals, stride, multiplier);
+                return;
+            }
+
+            if (multiplier == 1)
+            {
+                AddInPlace(vals, stride, addend);
+                return;
             }
 
             int scalarStart = 0;
