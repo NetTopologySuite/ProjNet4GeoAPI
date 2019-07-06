@@ -1,4 +1,4 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using System.Linq;
 using NetTopologySuite.Geometries;
 using NUnit.Framework;
@@ -656,7 +656,7 @@ namespace ProjNET.Tests
             var csSource = GeographicCoordinateSystem.WGS84;
             var csTarget = CoordinateSystemFactory.CreateFromWkt(
                "PROJCS[\"NAD83(NSRS2007) / Alaska zone 1\",GEOGCS[\"NAD83(NSRS2007)\",DATUM[\"NAD83_National_Spatial_Reference_System_2007\",SPHEROID[\"GRS 1980\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"7019\"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY[\"EPSG\",\"6759\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4759\"]],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],PROJECTION[\"Hotine_Oblique_Mercator\"],PARAMETER[\"latitude_of_center\",57],PARAMETER[\"longitude_of_center\",-133.6666666666667],PARAMETER[\"azimuth\",323.1301023611111],PARAMETER[\"rectified_grid_angle\",323.1301023611111],PARAMETER[\"scale_factor\",0.9999],PARAMETER[\"false_easting\",5000000],PARAMETER[\"false_northing\",-5000000],AUTHORITY[\"EPSG\",\"3468\"],AXIS[\"X\",EAST],AXIS[\"Y\",NORTH]]");
-            //61.216667°, -149.883333°
+            //61.216667Â°, -149.883333Â°
             //"POINT(4136805.82642057 -4424019.78560519)"
             Test("HotineObliqueMercator", csSource, csTarget,
                  new[] { -149.883333, 61.216667 },
@@ -712,7 +712,7 @@ namespace ProjNET.Tests
         [Test]
         public void AffineTransformationTest ()
         {
-            //Local coordinate system MNAU (Kraftwerk Mäuserich) (based on Gauß-Krüger using affine transformation)
+            //Local coordinate system MNAU (Kraftwerk MÃ¤erich) (based on GauÃŸ-KrÃ¼ger using affine transformation)
             // affine transform
             // 1) Offset: X=-3454886,640m Y=-5479481,278m;
             // 2)Rotation: 332,0657, Rotation point  X=3456926,640m Y=5481071,278m;
@@ -746,7 +746,7 @@ namespace ProjNET.Tests
         [Test]
         public void InverseAffineTransformationTest ()
         {
-            //Local coordinate system MNAU (Kraftwerk Mäuserich) (based on Gauß-Krüger using affine transformation)
+            //Local coordinate system MNAU (Kraftwerk MÃ¤userich) (based on GauÃŸ-KrÃ¼ger using affine transformation)
             // affine transform
             // 1) Offset: X=-3454886,640m Y=-5479481,278m;
             // 2)Rotation: 332,0657, Rotation point  X=3456926,640m Y=5481071,278m;
@@ -797,7 +797,7 @@ namespace ProjNET.Tests
         public void TestTransformOnFittedCoordinateSystem ()
         {
 
-            //Local coordinate system MNAU (Kraftwerk Mäuserich) (based on Gauß-Krüger using affine transformation)
+            //Local coordinate system MNAU (Kraftwerk MÃ¤userich) (based on GauÃŸ-KrÃ¼ger using affine transformation)
             // affine transform
             // 1) Offset: X=-3454886,640m Y=-5479481,278m;
             // 2)Rotation: 332,0657, Rotation point  X=3456926,640m Y=5481071,278m;
@@ -878,6 +878,23 @@ namespace ProjNET.Tests
             Assert.AreEqual(sourceCoord[0], transformedCoord[0], 0.1);
             Assert.AreEqual(sourceCoord[1], transformedCoord[1], 0.1);
 
+        }
+
+        // https://github.com/NetTopologySuite/ProjNet4GeoAPI/issues/48
+        [Test]
+        public void Test_EPSG_2056_HotineObliqueMercatorAzimuthCenter_Switzerland()
+        {
+            var csSrc = GeographicCoordinateSystem.WGS84;
+            var csTgt = new CoordinateSystemFactory().CreateFromWkt(@"PROJCS[""CH1903+ / LV95"",GEOGCS[""CH1903+"",DATUM[""CH1903+"",SPHEROID[""Bessel 1841"",6377397.155,299.1528128,AUTHORITY[""EPSG"",""7004""]],TOWGS84[674.374,15.056,405.346,0,0,0,0],AUTHORITY[""EPSG"",""6150""]],PRIMEM[""Greenwich"",0,AUTHORITY[""EPSG"",""8901""]],UNIT[""degree"",0.0174532925199433,AUTHORITY[""EPSG"",""9122""]],AUTHORITY[""EPSG"",""4150""]],PROJECTION[""Hotine_Oblique_Mercator""],PARAMETER[""latitude_of_center"",46.95240555555556],PARAMETER[""longitude_of_center"",7.439583333333333],PARAMETER[""azimuth"",90],PARAMETER[""rectified_grid_angle"",90],PARAMETER[""scale_factor"",1],PARAMETER[""false_easting"",2600000],PARAMETER[""false_northing"",1200000],UNIT[""metre"",1,AUTHORITY[""EPSG"",""9001""]],AXIS[""Y"",EAST],AXIS[""X"",NORTH],AUTHORITY[""EPSG"",""2056""]]");
+            var transformer = new CoordinateTransformationFactory().CreateFromCoordinateSystems(csSrc, csTgt);
+            double x = 9.619803;
+            double y = 47.408735;
+
+            transformer.MathTransform.Transform(ref x, ref y);
+
+            // https://epsg.io/transform#s_srs=4326&t_srs=2056&x=9.6198031&y=47.4087350
+            Assert.That(x, Is.EqualTo(2764607.79).Within(0.1));
+            Assert.That(y, Is.EqualTo(1253167.89).Within(0.1));
         }
     }
 }
