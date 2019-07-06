@@ -712,7 +712,7 @@ namespace ProjNET.Tests
         [Test]
         public void AffineTransformationTest ()
         {
-            //Local coordinate system MNAU (Kraftwerk Mäerich) (based on Gauß-Krüger using affine transformation)
+            //Local coordinate system MNAU (Kraftwerk Mäuserich) (based on Gauß-Krüger using affine transformation)
             // affine transform
             // 1) Offset: X=-3454886,640m Y=-5479481,278m;
             // 2)Rotation: 332,0657, Rotation point  X=3456926,640m Y=5481071,278m;
