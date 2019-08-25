@@ -76,12 +76,13 @@
     <!-- See https://docs.microsoft.com/en-us/dotnet/standard/library-guidance/versioning -->
     <AssemblyVersion>$(NtsMajorVersion).0.0.0</AssemblyVersion>
     <AssemblyFileVersion>$(NtsMajorVersion).$(NtsMinorVersion).$(NtsPatchVersion).$(NtsBuildNumber)</AssemblyFileVersion>
-    <InformationalVersion>$(NtsMajorVersion).$(NtsMinorVersion).$(NtsPatchVersion)</InformationalVersion>
 
     <Company>NetTopologySuite - Team</Company>
 
     <CopyrightPeople>$(Company)</CopyrightPeople>
-    <Copyright>Copyright © $([System.DateTime]::UtcNow.Year) $(CopyrightPeople)</Copyright>
+    <CopyrightPeople>$(CopyrightPeople), Morten Nielsen</CopyrightPeople>
+    <!--<CopyrightPeople>$(CopyrightPeople), Additional Person</CopyrightPeople>-->
+    <Copyright>Copyright © 2006 - $([System.DateTime]::UtcNow.Year) $(CopyrightPeople)</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Label="SourceLink Info">
