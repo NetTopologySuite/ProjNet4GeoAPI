@@ -1,23 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project>
 
+  <Import Project="../Directory.Build.props" />
+
   <PropertyGroup>
-    <MSBuildAllProjects Condition=" '$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0' ">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
-    <OutputPath>$(MSBuildThisFileDirectory)$(Configuration)\$(Platform)</OutputPath>
-    <DocumentationFile>$(OutputPath)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
-
-    <LangVersion>7.3</LangVersion>
-
-    <RestoreAdditionalProjectSources>$(RestoreAdditionalProjectSources);https://www.myget.org/F/nettopologysuite/api/v3/index.json</RestoreAdditionalProjectSources>
-
-    <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)scskey.snk</AssemblyOriginatorKeyFile>
-
-    <Deterministic>true</Deterministic>
-    <NtsOfficialRelease>false</NtsOfficialRelease>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <!-- Travis-CI -->
   <PropertyGroup Condition=" '$(TRAVIS)' == 'True' ">
+    <Deterministic>true</Deterministic>
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     <NtsBuildMetadata Condition=" '$(NtsBuildMetadata)' == '' ">ci.travis.$(TRAVIS_BUILD_NUMBER)</NtsBuildMetadata>
 
@@ -26,12 +18,14 @@
 
   <!-- TeamCity -->
   <PropertyGroup Condition=" '$(TEAMCITY_VERSION)' != '' ">
+    <Deterministic>true</Deterministic>
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     <NtsBuildMetadata Condition=" '$(NtsBuildMetadata)' == '' ">ci.teamcity.$(BUILD_NUMBER)</NtsBuildMetadata>
   </PropertyGroup>
 
   <!-- AppVeyor -->
   <PropertyGroup Condition=" '$(APPVEYOR)' == 'True' ">
+    <Deterministic>true</Deterministic>
     <ContinuousIntegrationBuild>true</ContinuousIntegrationBuild>
     <NtsBuildMetadata Condition=" '$(NtsBuildMetadata)' == '' ">ci.appveyor.$(APPVEYOR_BUILD_NUMBER)</NtsBuildMetadata>
   </PropertyGroup>
@@ -82,13 +76,12 @@
     <!-- See https://docs.microsoft.com/en-us/dotnet/standard/library-guidance/versioning -->
     <AssemblyVersion>$(NtsMajorVersion).0.0.0</AssemblyVersion>
     <AssemblyFileVersion>$(NtsMajorVersion).$(NtsMinorVersion).$(NtsPatchVersion).$(NtsBuildNumber)</AssemblyFileVersion>
+    <InformationalVersion>$(NtsMajorVersion).$(NtsMinorVersion).$(NtsPatchVersion)</InformationalVersion>
 
-    <Company>NetTopologySuite Team</Company>
+    <Company>NetTopologySuite - Team</Company>
 
     <CopyrightPeople>$(Company)</CopyrightPeople>
-    <CopyrightPeople>$(CopyrightPeople), Morten Nielsen</CopyrightPeople>
-    <!--<CopyrightPeople>$(CopyrightPeople), Additional Person</CopyrightPeople>-->
-    <Copyright>Copyright © 2006 - $([System.DateTime]::UtcNow.Year) $(CopyrightPeople)</Copyright>
+    <Copyright>Copyright © $([System.DateTime]::UtcNow.Year) $(CopyrightPeople)</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Label="SourceLink Info">
@@ -100,7 +93,7 @@
 
   <ItemGroup>
     <!-- SourceLink adds stuff to let debuggers step into our code. -->
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-19351-01" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta2-19367-01" PrivateAssets="All" />
   </ItemGroup>
 
 </Project>

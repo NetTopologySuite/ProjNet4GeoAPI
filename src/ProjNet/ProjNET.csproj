@@ -2,13 +2,10 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(ProjectDir)..\</SolutionDir>
     <RootNamespace>ProjNet</RootNamespace>
     <TargetFramework>netstandard2.0</TargetFramework>
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
-
-  <Import Project="$(SolutionDir)ProjNet.Common.props" />
 
   <PropertyGroup Label="Assembly Info">
     <AssemblyTitle>Proj.NET</AssemblyTitle>
@@ -26,10 +23,6 @@ Proj.NET performs point-to-point coordinate conversions between geodetic coordin
     </PackageDescription>
     <PackageTags>OGC;SFS;Projection</PackageTags>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Include="$(SolutionDir)scskey.snk" />
-  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="System.Memory" Version="4.5.3" />

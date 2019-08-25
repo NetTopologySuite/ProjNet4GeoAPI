@@ -2,27 +2,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(ProjectDir)..\</SolutionDir>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <SignAssembly>true</SignAssembly>
     <NoWarn>1701;1702;1591</NoWarn>
-
-    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
-  <Import Project="$(SolutionDir)ProjNet.Common.props" />
-
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
-
-    <PackageReference Include="Newtonsoft.Json" Version="12.0.1" />
-    <PackageReference Include="NUnit" Version="3.10.1" />
-    <PackageReference Include="Npgsql" Version="4.0.5" />
-    <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="Npgsql" Version="4.0.9" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(SolutionDir)ProjNet\ProjNET.csproj" />
+    <ProjectReference Include="$(SolutionDir)src\ProjNet\ProjNET.csproj" />
   </ItemGroup>
 
   <ItemGroup>
