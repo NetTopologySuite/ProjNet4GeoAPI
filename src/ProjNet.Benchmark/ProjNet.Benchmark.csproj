@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <NoWarn>1701;1702;1591</NoWarn>
+
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.11.5" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(SolutionDir)src\ProjNet\ProjNET.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="coords.dat.gz" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,32 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>ProjNet</RootNamespace>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+
+  <PropertyGroup Label="Assembly Info">
+    <AssemblyTitle>Proj.NET</AssemblyTitle>
+    <Description>Proj.NET performs point-to-point coordinate conversions between geodetic coordinate systems for use in .Net, Geographic Information Systems (GIS) or GPS applications. The spatial reference model used adheres to the Simple Features specification.</Description>
+  </PropertyGroup>
+
+  <PropertyGroup Label="NuGet Package Info">
+    <PackageId>ProjNET</PackageId>
+    <Authors>Morton Nielsen, NetTopologySuite-Team</Authors>
+    <PackageIconUrl>https://raw.githubusercontent.com/NetTopologySuite/ProjNet4GeoAPI/master/icon.png</PackageIconUrl>
+    <PackageLicenseExpression>LGPL-2.1-or-later</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <PackageDescription>.NET Spatial Reference and Projection Engine.
+Proj.NET performs point-to-point coordinate conversions between geodetic coordinate systems for use in fx. Geographic Information Systems (GIS) or GPS applications. The spatial reference model used adheres to the Simple Features specification.
+    </PackageDescription>
+    <PackageTags>OGC;SFS;Projection</PackageTags>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Memory" Version="4.5.3" />
+    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
+  </ItemGroup>
+
+</Project>

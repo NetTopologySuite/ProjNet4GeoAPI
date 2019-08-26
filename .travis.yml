@@ -1,0 +1,36 @@
+language: csharp
+mono: none
+sudo: false
+dotnet: 2.2
+dist: xenial
+
+
+script:
+  - dotnet build -c Release
+  - dotnet test  -c Release --no-build
+  - dotnet pack  -c Release --no-build -p:NoWarn=NU5105
+
+
+deploy:
+
+
+  - on:
+      branch: master
+    provider: script
+    script:
+      - dotnet nuget push **/*.nupkg -s https://api.nuget.org/v3/index.json -k $NUGET_API_KEY
+    skip_cleanup: true
+
+
+  - on:
+      branch: develop
+    provider: script
+    script:
+      - dotnet nuget push **/*.nupkg -s https://www.myget.org/F/nettopologysuite/api/v2/package -k $MYGET_API_KEY
+    skip_cleanup: true
+
+
+env:
+  global:
+  - secure: dUgjW1far6YaEOrqKiWinq3c/y3REQ0HrKyv7QYHcqGYZ/R9E+rs8hB11TEtXAdrwMxaYu/eb5k/dVN+u7LTfl3o6egcRFDNh3q+MJR7MPkeUhoDxreTajcgDzBsUIXzOBBveWAjGE9F/aTgrJx6AlrFw9oPgxzA4/FRm+C/MBA=
+  - secure: IqKYQqumcEtK+X2WCOZgzHN+DAiRtR4I+oWi9vquSdWplyXviQejh02QY+gxagrkZdufJ5K+scbw7nNH/tkej2Ogf2ce1YRglhLwTFiEpF7Bd8u3wHvVwHgmugd4pryshso4XBXr4e38xQt2LYHNGBx/b7TYqGwyQ24Ij+KvuDA=

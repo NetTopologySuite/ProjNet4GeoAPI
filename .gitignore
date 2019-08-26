@@ -186,4 +186,5 @@ UpgradeLog*.htm
 # Microsoft Fakes
 FakesAssemblies/
 /packages
-/ProjNET.Pcl/IO/CoordinateSystems/MathTransformWktReader.cs
+**/BenchmarkDotNet*/
+/ProjNet/CoordinateSystems/Transformations/MathTransformFactory.cs
