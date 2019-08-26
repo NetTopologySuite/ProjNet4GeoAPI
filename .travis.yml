@@ -32,5 +32,5 @@ deploy:
 
 env:
   global:
-  - secure: R3jnoaemk34d9bcYHgYskQ+etCtaG8rqyvqi3BM9aLJYTj76/eqXnfnIlAXr/xwe6ayd5BCWY4VP7yw24ltjEC8WDHBrso/bRQw6bpvE1xMjfSfcUwP7H5b0f0EsgvxambpYp68srUlOoNF9d8GRSIOh9BHtv5ZWlPEWiHShnTs=
-  - secure: Ifei2LBeUI7hlWc/9W93pK/C4HeCykMA8k+NahjFbQYgLh8m2ex5WRh18Lh6hEyZASLtyUobmIdpq1U65RTwnJ8/LdJnavQ12YOWi7ROGCA/HQDar5uK7GoM6QNjVILjCiCz0cOCgj2haK8+TGmpKo2oa/DY47pfho6oZBo3nv8=
+  - secure: dUgjW1far6YaEOrqKiWinq3c/y3REQ0HrKyv7QYHcqGYZ/R9E+rs8hB11TEtXAdrwMxaYu/eb5k/dVN+u7LTfl3o6egcRFDNh3q+MJR7MPkeUhoDxreTajcgDzBsUIXzOBBveWAjGE9F/aTgrJx6AlrFw9oPgxzA4/FRm+C/MBA=
+  - secure: IqKYQqumcEtK+X2WCOZgzHN+DAiRtR4I+oWi9vquSdWplyXviQejh02QY+gxagrkZdufJ5K+scbw7nNH/tkej2Ogf2ce1YRglhLwTFiEpF7Bd8u3wHvVwHgmugd4pryshso4XBXr4e38xQt2LYHNGBx/b7TYqGwyQ24Ij+KvuDA=
