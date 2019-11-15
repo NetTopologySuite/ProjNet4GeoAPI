@@ -28,6 +28,7 @@ namespace ProjNet.CoordinateSystems.Projections
             Register("google_mercator", typeof(PseudoMercator));
 			
             Register("transverse_mercator", typeof(TransverseMercator));
+            Register("transverse_mercator_south_orientated", typeof(TransverseMercator));
 
             Register("albers", typeof(AlbersProjection));
 			Register("albers_conic_equal_area", typeof(AlbersProjection));

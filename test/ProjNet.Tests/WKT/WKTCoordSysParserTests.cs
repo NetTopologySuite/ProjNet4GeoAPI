@@ -159,7 +159,7 @@ namespace ProjNET.Tests.WKT
                                 {
                                     //Skip not supported projections
                                     case "Oblique_Stereographic":
-                                    case "Transverse_Mercator_South_Orientated":
+                                //    case "Transverse_Mercator_South_Orientated":
                                     case "Lambert_Conformal_Conic_1SP":
                                     case "Lambert_Azimuthal_Equal_Area":
                                     case "Tunisia_Mining_Grid":
