@@ -109,7 +109,7 @@ namespace ProjNet.CoordinateSystems
 			get
 			{
 				StringBuilder sb = new StringBuilder();
-				sb.AppendFormat("PROJECTION[\"{0}\"", Name);
+				sb.AppendFormat("PROJECTION[\"{0}\"", ClassName);
 				if (!string.IsNullOrWhiteSpace(Authority) && AuthorityCode > 0)
 					sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
 				sb.Append("]");
