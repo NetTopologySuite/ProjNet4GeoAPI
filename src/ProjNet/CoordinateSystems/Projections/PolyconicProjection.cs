@@ -12,7 +12,7 @@ namespace ProjNet.CoordinateSystems.Projections
     /// 
     /// </summary>
     [Serializable] 
-    internal class PolyconicProjection : MapProjection
+    public class PolyconicProjection : MapProjection
     {
         /// <summary>
         /// Maximum difference allowed when comparing real numbers.

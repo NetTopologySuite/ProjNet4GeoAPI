@@ -4,7 +4,7 @@ using ProjNet.CoordinateSystems.Transformations;
 
 namespace ProjNet.CoordinateSystems.Projections
 {
-    internal class CassiniSoldnerProjection : MapProjection
+    public class CassiniSoldnerProjection : MapProjection
     {
         // ReSharper disable InconsistentNaming
         private const double One6th = 0.16666666666666666666d;      //C1

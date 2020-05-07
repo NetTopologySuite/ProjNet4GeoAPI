@@ -5,7 +5,7 @@ using ProjNet.CoordinateSystems.Transformations;
 namespace ProjNet.CoordinateSystems.Projections
 {
     [Serializable] 
-    internal class HotineObliqueMercatorProjection : MapProjection
+    public class HotineObliqueMercatorProjection : MapProjection
     {
         private readonly double _azimuth;
         private readonly double _sinP20, _cosP20;

@@ -5,7 +5,7 @@ using ProjNet.CoordinateSystems.Transformations;
 namespace ProjNet.CoordinateSystems.Projections
 {
     [Serializable] 
-    internal class PseudoMercator : Mercator
+    public class PseudoMercator : Mercator
     {
         public PseudoMercator(IEnumerable<ProjectionParameter> parameters)
             :this(parameters, null)

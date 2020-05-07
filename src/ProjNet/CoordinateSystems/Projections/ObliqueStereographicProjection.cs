@@ -44,7 +44,7 @@ namespace ProjNet.CoordinateSystems.Projections
     /// Implements the Oblique Stereographic Projection.
     /// </summary>
     [Serializable]
-    internal class ObliqueStereographicProjection : MapProjection
+    public class ObliqueStereographicProjection : MapProjection
     {
         private readonly double _globalScale;
         private readonly double _reciprocGlobalScale;

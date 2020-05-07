@@ -53,7 +53,7 @@ namespace ProjNet.CoordinateSystems.Projections
 	/// and Slovakia under the name "Krovak" projection.</para>
     /// </remarks>
     [Serializable] 
-    internal class KrovakProjection : MapProjection
+    public class KrovakProjection : MapProjection
 	{
 		/**
 		 * Maximum number of iterations for iterative computations.
