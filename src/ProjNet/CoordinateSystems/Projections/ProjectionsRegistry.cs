@@ -123,7 +123,13 @@ namespace ProjNet.CoordinateSystems.Projections
                 parameters = new List<ProjectionParameter>(parameters);
             }
 
-            return (MathTransform) Activator.CreateInstance(projectionType, parameters);
+            var res = (MapProjection)Activator.CreateInstance(projectionType, parameters);
+            if (!res.Name.Equals(className, StringComparison.InvariantCultureIgnoreCase))
+            {
+                res.Alias = res.Name;
+                res.Name = className;
+            }
+            return res;
         }
     }
 }
