@@ -95,6 +95,8 @@ namespace ProjNet.CoordinateSystems.Projections
         public ObliqueStereographicProjection(IEnumerable<ProjectionParameter> parameters, ObliqueStereographicProjection inverse)
             : base(parameters, inverse)
         {
+            Name = "Oblique_Stereographic";
+
             _globalScale = scale_factor * _semiMajor;
             _reciprocGlobalScale = 1 / _globalScale;
 

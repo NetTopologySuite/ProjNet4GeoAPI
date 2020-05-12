@@ -53,6 +53,8 @@ namespace ProjNet.CoordinateSystems.Projections
         protected PolyconicProjection(IEnumerable<ProjectionParameter> parameters, PolyconicProjection inverse)
             : base(parameters, inverse)
         {
+            Name = "Polyconic";
+
             _ml0 = mlfn(lat_origin, Math.Sin(lat_origin), Math.Cos(lat_origin));
             _reciprocSemiMajorTimesScaleFactor = 1 / (_semiMajor * scale_factor);
         }
