@@ -78,6 +78,8 @@ namespace ProjNet.CoordinateSystems.Projections
         public LambertAzimuthalEqualAreaProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
             : base(parameters, inverse)
         {
+            Name = "Lambert_Azimuthal_Equal_Area";
+
             double phi0 = lat_origin;
 
             double t = Math.Abs(phi0);
