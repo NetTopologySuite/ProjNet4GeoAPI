@@ -7,7 +7,7 @@ namespace ProjNet.CoordinateSystems.Projections
     /// <summary>
     /// 
     /// </summary>
-    public class LambertAzimuthalEqualAreaProjection : MapProjection
+    internal class LambertAzimuthalEqualAreaProjection : MapProjection
     {
         /// <summary>
         /// An enumeration of modes
