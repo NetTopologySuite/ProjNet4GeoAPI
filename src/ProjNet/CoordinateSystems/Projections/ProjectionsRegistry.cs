@@ -28,6 +28,7 @@ namespace ProjNet.CoordinateSystems.Projections
             Register("google_mercator", typeof(PseudoMercator));
 			
             Register("transverse_mercator", typeof(TransverseMercator));
+            Register("gauss_kruger", typeof(TransverseMercator));
 
             Register("albers", typeof(AlbersProjection));
 			Register("albers_conic_equal_area", typeof(AlbersProjection));
@@ -122,7 +123,13 @@ namespace ProjNet.CoordinateSystems.Projections
                 parameters = new List<ProjectionParameter>(parameters);
             }
 
-            return (MathTransform) Activator.CreateInstance(projectionType, parameters);
+            var res = (MapProjection)Activator.CreateInstance(projectionType, parameters);
+            if (!res.Name.Equals(className, StringComparison.InvariantCultureIgnoreCase))
+            {
+                res.Alias = res.Name;
+                res.Name = className;
+            }
+            return res;
         }
     }
 }
