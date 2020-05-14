@@ -57,7 +57,7 @@ namespace ProjNet.CoordinateSystems.Projections
 	///            U.S. Geological Survey Professional Paper 1395, 1987)</para>
     /// </remarks>
     [Serializable] 
-    public class TransverseMercator : MapProjection
+    internal class TransverseMercator : MapProjection
 	{
     // /* 
     //  * Maximum number of iterations for iterative computations.

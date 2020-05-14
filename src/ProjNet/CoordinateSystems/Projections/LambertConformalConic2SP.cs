@@ -53,7 +53,7 @@ namespace ProjNet.CoordinateSystems.Projections
 	/// to one another in the projected domain.</para>
     /// </remarks>
     [Serializable] 
-    public class LambertConformalConic2SP : MapProjection
+    internal class LambertConformalConic2SP : MapProjection
 	{
 
         //private double readonly _falseEasting;

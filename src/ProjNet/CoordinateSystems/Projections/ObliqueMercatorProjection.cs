@@ -5,7 +5,7 @@ using ProjNet.CoordinateSystems.Transformations;
 namespace ProjNet.CoordinateSystems.Projections
 {
     [Serializable] 
-    public class ObliqueMercatorProjection : HotineObliqueMercatorProjection
+    internal class ObliqueMercatorProjection : HotineObliqueMercatorProjection
     {
         public ObliqueMercatorProjection(IEnumerable<ProjectionParameter> parameters)
             : this(parameters, null)

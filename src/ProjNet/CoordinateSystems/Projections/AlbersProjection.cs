@@ -57,7 +57,7 @@ namespace ProjNet.CoordinateSystems.Projections
     ///		direction, distance and shape somewhat.</para>
     /// </remarks>
     [Serializable]
-    public class AlbersProjection : MapProjection
+    internal class AlbersProjection : MapProjection
     {
         private readonly double _c;		//constant c 
         private readonly double _ro0;

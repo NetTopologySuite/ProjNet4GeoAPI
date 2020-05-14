@@ -56,7 +56,7 @@ namespace ProjNet.CoordinateSystems.Projections
 	/// </para>
     /// </remarks>
     [Serializable]
-    public class Mercator : MapProjection
+    internal class Mercator : MapProjection
     {
         //double lon_center;		//Center longitude (projection center)
         //double lat_origin;		//center latitude
