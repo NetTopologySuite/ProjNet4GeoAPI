@@ -85,6 +85,24 @@ namespace ProjNet.CoordinateSystems.Projections
             }
         }
 
+        /// <summary>
+        /// Register an alias for an existing Map.
+        /// </summary>
+        /// <param name="aliasName"></param>
+        /// <param name="existingName"></param>
+        public static void RegisterAlias(string aliasName, string existingName)
+        {
+            lock (RegistryLock)
+            {
+                if (!TypeRegistry.TryGetValue(existingName, out var existingProjectionType))
+                {
+                    throw new ArgumentException($"{existingName} is not a registered projection type");
+                }
+
+                Register(aliasName, existingProjectionType);
+            }
+        }
+
         private static Type CheckConstructor(Type type)
         {
             // find a constructor that accepts exactly one parameter that's an
