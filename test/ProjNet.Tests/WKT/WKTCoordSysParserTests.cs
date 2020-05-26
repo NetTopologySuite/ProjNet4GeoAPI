@@ -419,6 +419,33 @@ namespace ProjNET.Tests.WKT
             Assert.That(fcs.AuthorityCode, Is.EqualTo(5250L));
         }
 
+        [Test]
+        public void ParseWktCreatedByCoordinateSystem()
+        {
+            // Sample WKT from an external source.
+            string sampleWKT =
+                "PROJCS[\"\", " +
+                  "GEOGCS[\"\", " +
+                    "DATUM[\"\", " +
+                      "SPHEROID[\"GRS_1980\", 6378137, 298.2572221010042] " +
+                    "], " +
+                  "PRIMEM[\"Greenwich\", 0], " +
+                  "UNIT[\"Degree\", 0.017453292519943295]" +
+                  "], " +
+                  "PROJECTION[\"Transverse_Mercator\"], " +
+                  "PARAMETER[\"False_Easting\", 500000], " +
+                  "PARAMETER[\"False_Northing\", 0], " +
+                  "PARAMETER[\"Central_Meridian\", -75], " +
+                  "PARAMETER[\"Scale_Factor\", 0.9996], " +
+                  "UNIT[\"Meter\", 1]" +
+                  "]";
+
+            var csFromSample = (CoordinateSystem)ProjNet.IO.CoordinateSystems.CoordinateSystemWktReader.Parse(sampleWKT);  // does not throw
+            string wktFromProjNetCS = csFromSample.WKT;
+            var csFromProjNetGeneratedWKT = (CoordinateSystem)ProjNet.IO.CoordinateSystems.CoordinateSystemWktReader.Parse(wktFromProjNetCS);  // throws
+        }
+
+
         #region Utility
 
         private bool CheckPrimem(PrimeMeridian primeMeridian, string name, double? longitude, string authority, long? code)
