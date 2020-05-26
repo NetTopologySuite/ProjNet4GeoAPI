@@ -298,9 +298,18 @@ namespace ProjNet.IO.CoordinateSystems
                 tokenizer.NextToken();
                 double paramValue = tokenizer.GetNumericValue();
                 tokenizer.ReadToken("]");
-                tokenizer.ReadToken(",");
                 paramList.Add(new ProjectionParameter(paramName, paramValue));
+                //tokenizer.ReadToken(",");
+                //tokenizer.NextToken();
                 tokenizer.NextToken();
+                if (tokenizer.GetStringValue() == ",")
+                {
+                    tokenizer.NextToken();
+                }
+                else
+                {
+                    break;
+                }
             }
             var projection = new Projection(projectionName, paramList, projectionName, authority, authorityCode, string.Empty, string.Empty, string.Empty);
             return projection;
