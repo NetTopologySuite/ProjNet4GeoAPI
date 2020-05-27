@@ -75,7 +75,13 @@ namespace ProjNET.Tests.WKT
                     {
                         int srid = dr.GetInt32(0);
                         string srtext = dr.GetString(1);
-                        switch (srtext.Substring(0, srtext.IndexOf("[")))
+                        int bracketIndex = srtext.IndexOf('[');
+                        if (bracketIndex < 0)
+                        {
+                            continue;
+                        }
+
+                        switch (srtext.Substring(0, bracketIndex))
                         {
                             case "PROJCS":
                             case "GEOGCS":
