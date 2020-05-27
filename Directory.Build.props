@@ -5,6 +5,12 @@
     <SolutionDir Condition=" '$(SolutionDir)' == '' ">$(MSBuildThisFileDirectory)</SolutionDir>
 
     <AssemblyOriginatorKeyFile>$(MSBuildThisFileDirectory)scskey.snk</AssemblyOriginatorKeyFile>
+
+    <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Condition=" '$(IsPackable)' == 'true' " Include="$(MSBuildThisFileDirectory)icon.png" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
 </Project>
