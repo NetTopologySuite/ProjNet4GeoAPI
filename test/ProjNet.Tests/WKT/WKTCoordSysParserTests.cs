@@ -440,9 +440,14 @@ namespace ProjNET.Tests.WKT
                   "UNIT[\"Meter\", 1]" +
                   "]";
 
-            var csFromSample = (CoordinateSystem)ProjNet.IO.CoordinateSystems.CoordinateSystemWktReader.Parse(sampleWKT);  // does not throw
+            var csFromSample = (CoordinateSystem)ProjNet.IO.CoordinateSystems.CoordinateSystemWktReader.Parse(sampleWKT);
             string wktFromProjNetCS = csFromSample.WKT;
-            var csFromProjNetGeneratedWKT = (CoordinateSystem)ProjNet.IO.CoordinateSystems.CoordinateSystemWktReader.Parse(wktFromProjNetCS);  // throws
+            var parsed = ProjNet.IO.CoordinateSystems.CoordinateSystemWktReader.Parse(wktFromProjNetCS);
+            Assert.That(parsed, Is.InstanceOf<ProjectedCoordinateSystem>());
+            var projCS = (ProjectedCoordinateSystem)parsed;
+            Assert.That(projCS.LinearUnit, Is.Not.Null);
+            Assert.That(projCS.LinearUnit.Name, Is.EqualTo("Meter"));
+            Assert.That(projCS.LinearUnit.MetersPerUnit, Is.EqualTo(1));
         }
 
 
