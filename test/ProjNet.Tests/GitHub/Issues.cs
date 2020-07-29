@@ -136,5 +136,51 @@ namespace ProjNET.Tests.GitHub
             Assert.That(ptI[1], Is.EqualTo(6246615.391161).Within(0.01), "Northing");
              */
         }
+
+        [Test(Description =
+            "Issue #64, Wrong parameter order when calling base constructor (in systems extending HorizontalCoordinateSystem)")]
+        public void TestHorizontalCoordinateSystemImplementationsAbbreviationAndRemarks()
+        {
+            string abbreviation = "TestAbbreviation";
+            string remarks = "This is a test remark.";
+
+            // construct a GeographicCoordinateSystem to test
+            var gcsAxes = new List<AxisInfo>(2);
+            gcsAxes.Add(new AxisInfo("Lon", AxisOrientationEnum.East));
+            gcsAxes.Add(new AxisInfo("Lat", AxisOrientationEnum.North));
+
+            var geographicCoordinateSystem =
+                new GeographicCoordinateSystem(AngularUnit.Degrees, HorizontalDatum.WGS84, PrimeMeridian.Greenwich, gcsAxes,
+                    "WGS 84", "EPSG", 4326, string.Empty, abbreviation, remarks);
+
+            Assert.That(geographicCoordinateSystem.Abbreviation, Is.EqualTo(abbreviation));
+            Assert.That(geographicCoordinateSystem.Remarks, Is.EqualTo(remarks));
+
+            // construct a ProjectedCoordinateSystem to test
+            var pInfo = new List<ProjectionParameter>
+            {
+                new ProjectionParameter("latitude_of_origin", 0.0),
+                new ProjectionParameter("central_meridian", 0.0),
+                new ProjectionParameter("false_easting", 0.0),
+                new ProjectionParameter("false_northing", 0.0)
+            };
+
+            var proj = new Projection("Popular Visualisation Pseudo-Mercator", pInfo, "Popular Visualisation Pseudo-Mercator", "EPSG", 3856,
+                "Pseudo-Mercator", string.Empty, string.Empty);
+
+            var pcsAxes = new List<AxisInfo>
+                {
+                    new AxisInfo("East", AxisOrientationEnum.East),
+                    new AxisInfo("North", AxisOrientationEnum.North)
+                };
+
+            var projectedCoordinateSystem =
+                new ProjectedCoordinateSystem(HorizontalDatum.WGS84, GeographicCoordinateSystem.WGS84, LinearUnit.Metre, proj, pcsAxes,
+                    "WGS 84 / Pseudo-Mercator", "EPSG", 3857, "WGS 84 / Popular Visualisation Pseudo-Mercator",
+                    remarks, abbreviation);
+
+            Assert.That(projectedCoordinateSystem.Abbreviation, Is.EqualTo(abbreviation));
+            Assert.That(projectedCoordinateSystem.Remarks, Is.EqualTo(remarks));
+        }
     }
 }
