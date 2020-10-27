@@ -70,7 +70,7 @@ namespace ProjNet.CoordinateSystems.Projections
             if (ci == null)
                 throw new ArgumentException("The provided type is lacking a suitable constructor", nameof(type));
 
-            string key = name.ToLowerInvariant().Replace(' ', '_');
+            string key = ProjectionNameToRegistryKey(name);
             lock (RegistryLock)
             {
                 if (TypeRegistry.ContainsKey(key))
@@ -83,6 +83,29 @@ namespace ProjNet.CoordinateSystems.Projections
 
                 TypeRegistry.Add(key, type);
                 ConstructorRegistry.Add(key, ci);
+            }
+        }
+
+        private static string ProjectionNameToRegistryKey(string name)
+        {
+            return name.ToLowerInvariant().Replace(' ', '_');
+        }
+
+        /// <summary>
+        /// Register an alias for an existing Map.
+        /// </summary>
+        /// <param name="aliasName"></param>
+        /// <param name="existingName"></param>
+        public static void RegisterAlias(string aliasName, string existingName)
+        {
+            lock (RegistryLock)
+            {
+                if (!TypeRegistry.TryGetValue(ProjectionNameToRegistryKey(existingName), out var existingProjectionType))
+                {
+                    throw new ArgumentException($"{existingName} is not a registered projection type");
+                }
+
+                Register(aliasName, existingProjectionType);
             }
         }
 
@@ -106,7 +129,7 @@ namespace ProjNet.CoordinateSystems.Projections
 
         internal static MathTransform CreateProjection(string className, IEnumerable<ProjectionParameter> parameters)
         {
-            string key = className.ToLowerInvariant().Replace(' ', '_');
+            string key = ProjectionNameToRegistryKey(className);
 
             Type projectionType;
             Type ci;
