@@ -50,7 +50,7 @@ namespace ProjNet.CoordinateSystems
 		/// <param name="remarks">Provider-supplied remarks</param>
 		internal GeographicCoordinateSystem(AngularUnit angularUnit, HorizontalDatum horizontalDatum, PrimeMeridian primeMeridian, List<AxisInfo> axisInfo, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks)
 			:
-			base(horizontalDatum, axisInfo, name, authority, authorityCode, alias, abbreviation, remarks)
+			base(horizontalDatum, axisInfo, name, authority, authorityCode, alias, remarks, abbreviation)
 		{
 			AngularUnit = angularUnit;
 			PrimeMeridian = primeMeridian;

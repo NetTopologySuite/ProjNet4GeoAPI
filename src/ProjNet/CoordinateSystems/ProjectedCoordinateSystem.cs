@@ -46,7 +46,7 @@ namespace ProjNet.CoordinateSystems
 			LinearUnit linearUnit, IProjection projection, List<AxisInfo> axisInfo,
 			string name, string authority, long code, string alias,
 			string remarks, string abbreviation)
-			: base(datum, axisInfo, name, authority, code, alias, abbreviation, remarks)
+			: base(datum, axisInfo, name, authority, code, alias, remarks, abbreviation)
 		{
 			GeographicCoordinateSystem = geographicCoordinateSystem;
 			LinearUnit = linearUnit;
