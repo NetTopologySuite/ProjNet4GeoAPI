@@ -80,6 +80,80 @@ namespace ProjNet.CoordinateSystems.Transformations
 		}
 		#endregion
 
+        #region Grid transforamtion
+
+        /// <summary>
+        /// Creates a transformation between two coordinate systems.
+        /// </summary>
+        /// <param name="sourceCS">Source coordinate system.</param>
+        /// <param name="targetCS">Target coordinate system.</param>
+        /// <param name="grid">The grid file.</param>
+        /// <param name="inverse">Indicates whether to use the inverse grid transform.</param>
+        /// <returns></returns>		
+        public ICoordinateTransformation CreateFromCoordinateSystems(CoordinateSystem sourceCS,
+            CoordinateSystem targetCS, NTv2.GridFile grid, bool inverse)
+        {
+            if (sourceCS == null)
+            {
+                throw new ArgumentNullException(nameof(sourceCS));
+            }
+
+            if (targetCS == null)
+            {
+                throw new ArgumentNullException(nameof(targetCS));
+            }
+
+            ICoordinateTransformation ct;
+
+            if (sourceCS is ProjectedCoordinateSystem && targetCS is ProjectedCoordinateSystem)
+            {
+                ct = CreateFromCoordinateSystems(sourceCS as ProjectedCoordinateSystem, targetCS as ProjectedCoordinateSystem);
+
+                var list = ((ConcatenatedTransform)ct.MathTransform).CoordinateTransformationList;
+
+                if (list.Count != 3)
+                {
+                    throw new NotSupportedException("No support for grid transformation.");
+                }
+
+                // Replace the geographic transform in the middle with our grid transformation.
+                list[1] = CreateCoordinateTransformation((ICoordinateTransformation)list[1], grid, inverse);
+            }
+            else if (sourceCS is GeographicCoordinateSystem && targetCS is GeographicCoordinateSystem)
+            {
+                ct = CreateFromCoordinateSystems(sourceCS as GeographicCoordinateSystem, targetCS as GeographicCoordinateSystem);
+
+                var list = ((ConcatenatedTransform)ct.MathTransform).CoordinateTransformationList;
+
+                var gt = CreateCoordinateTransformation((ICoordinateTransformation)list[0], grid, inverse);
+
+                list.Clear();
+                list.Add(gt);
+            }
+            else
+            {
+                throw new NotSupportedException("No support for grid transformation.");
+            }
+
+            return ct;
+        }
+
+        static ICoordinateTransformation CreateCoordinateTransformation(ICoordinateTransformation ct, NTv2.GridFile grid, bool inverse)
+        {
+            return new CoordinateTransformation(
+                ct.SourceCS,
+                ct.TargetCS,
+                ct.TransformType,
+                new GridTransformation(grid, inverse),
+                ct.Name,
+                ct.Authority,
+                ct.AuthorityCode,
+                ct.AreaOfUse,
+                ct.Remarks);
+        }
+
+        #endregion
+
 		private static void SimplifyTrans(ConcatenatedTransform mtrans, ref List<ICoordinateTransformationCore> MTs)
 		{
 			foreach(var t in mtrans.CoordinateTransformationList)
