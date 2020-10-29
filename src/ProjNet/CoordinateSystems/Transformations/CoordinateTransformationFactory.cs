@@ -80,7 +80,7 @@ namespace ProjNet.CoordinateSystems.Transformations
 		}
 		#endregion
 
-        #region Grid transforamtion
+        #region Grid transformation
 
         /// <summary>
         /// Creates a transformation between two coordinate systems.
@@ -103,11 +103,9 @@ namespace ProjNet.CoordinateSystems.Transformations
                 throw new ArgumentNullException(nameof(targetCS));
             }
 
-            ICoordinateTransformation ct;
-
-            if (sourceCS is ProjectedCoordinateSystem && targetCS is ProjectedCoordinateSystem)
+            if (sourceCS is ProjectedCoordinateSystem projS && targetCS is ProjectedCoordinateSystem projT)
             {
-                ct = CreateFromCoordinateSystems(sourceCS as ProjectedCoordinateSystem, targetCS as ProjectedCoordinateSystem);
+                var ct = CreateFromCoordinateSystems(projS, projT);
 
                 var list = ((ConcatenatedTransform)ct.MathTransform).CoordinateTransformationList;
 
@@ -117,39 +115,18 @@ namespace ProjNet.CoordinateSystems.Transformations
                 }
 
                 // Replace the geographic transform in the middle with our grid transformation.
-                list[1] = CreateCoordinateTransformation((ICoordinateTransformation)list[1], grid, inverse);
+                list[1] = new CoordinateTransformation(projS, projT, TransformType.Other, new GridTransformation(grid, inverse), "", "", -1, "", "");
+
+                return ct;
             }
-            else if (sourceCS is GeographicCoordinateSystem && targetCS is GeographicCoordinateSystem)
+            else if (sourceCS is GeographicCoordinateSystem geogS && targetCS is GeographicCoordinateSystem geogT)
             {
-                ct = CreateFromCoordinateSystems(sourceCS as GeographicCoordinateSystem, targetCS as GeographicCoordinateSystem);
-
-                var list = ((ConcatenatedTransform)ct.MathTransform).CoordinateTransformationList;
-
-                var gt = CreateCoordinateTransformation((ICoordinateTransformation)list[0], grid, inverse);
-
-                list.Clear();
-                list.Add(gt);
-            }
-            else
-            {
-                throw new NotSupportedException("No support for grid transformation.");
+                return new CoordinateTransformation(geogS, geogT, TransformType.Other, new GridTransformation(grid, inverse), "", "", -1, "", "");
             }
 
-            return ct;
-        }
+            // TODO: add support for PROJCS <> GEOGCS transformation?
 
-        static ICoordinateTransformation CreateCoordinateTransformation(ICoordinateTransformation ct, NTv2.GridFile grid, bool inverse)
-        {
-            return new CoordinateTransformation(
-                ct.SourceCS,
-                ct.TargetCS,
-                ct.TransformType,
-                new GridTransformation(grid, inverse),
-                ct.Name,
-                ct.Authority,
-                ct.AuthorityCode,
-                ct.AreaOfUse,
-                ct.Remarks);
+            throw new NotSupportedException("No support for grid transformation.");
         }
 
         #endregion
