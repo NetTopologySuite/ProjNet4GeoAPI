@@ -65,7 +65,7 @@ namespace ProjNET.Tests
             sw.Start();
 
             foreach (var sridWkt in SRIDReader.GetSrids(csvPath))
-                yield return new KeyValuePair<int, string>(sridWkt.WktId, sridWkt.Wkt);
+                yield return sridWkt;
 
             sw.Stop();
             Console.WriteLine("Read '{1}' in {0:N0}ms", sw.ElapsedMilliseconds, csvPath ?? "SRID.csv from resources stream");

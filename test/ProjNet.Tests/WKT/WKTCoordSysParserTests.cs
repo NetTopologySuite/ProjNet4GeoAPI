@@ -118,7 +118,7 @@ namespace ProjNET.Tests.WKT
             int parseCount = 0;
             foreach (var wkt in SRIDReader.GetSrids())
             {
-                var cs = _coordinateSystemFactory.CreateFromWkt(wkt.Wkt);
+                var cs = _coordinateSystemFactory.CreateFromWkt(wkt.Value);
                 Assert.IsNotNull(cs, "Could not parse WKT: " + wkt);
                 parseCount++;
             }
