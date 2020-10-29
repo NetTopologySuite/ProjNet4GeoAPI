@@ -103,10 +103,10 @@ namespace ProjNet.CoordinateSystems.Transformations
                 throw new ArgumentNullException(nameof(targetCS));
             }
 
-            if (sourceCS is ProjectedCoordinateSystem projS && targetCS is ProjectedCoordinateSystem projT)
-            {
-                var ct = CreateFromCoordinateSystems(projS, projT);
+            var ct = CreateFromCoordinateSystems(sourceCS, targetCS);
 
+            if (sourceCS is ProjectedCoordinateSystem && targetCS is ProjectedCoordinateSystem)
+            {
                 var list = ((ConcatenatedTransform)ct.MathTransform).CoordinateTransformationList;
 
                 if (list.Count != 3)
@@ -115,23 +115,48 @@ namespace ProjNet.CoordinateSystems.Transformations
                 }
 
                 // Replace the geographic transform in the middle with our grid transformation.
-                list[1] = new CoordinateTransformation(projS, projT, TransformType.Other, new GridTransformation(grid, inverse), "", "", -1, "", "");
-
-                return ct;
+                list[1] = CreateGridTransformation(list[1].SourceCS, list[1].TargetCS, new GridTransformation(grid, inverse));
             }
-            else if (sourceCS is GeographicCoordinateSystem geogS && targetCS is GeographicCoordinateSystem geogT)
+            else if (sourceCS is GeographicCoordinateSystem source && targetCS is GeographicCoordinateSystem target)
             {
-                return new CoordinateTransformation(geogS, geogT, TransformType.Other, new GridTransformation(grid, inverse), "", "", -1, "", "");
+                return CreateGridTransformation(source, target, new GridTransformation(grid, inverse));
+            }
+            else if (sourceCS is GeographicCoordinateSystem && targetCS is ProjectedCoordinateSystem)
+            {
+                var list = ((ConcatenatedTransform)ct.MathTransform).CoordinateTransformationList;
+
+                // list[0] = source geographic -> geocentric
+                // list[1] =        geocentric -> target projected
+
+                // Replace the geographic transform with our grid transformation.
+                list[0] = CreateGridTransformation(list[0].SourceCS, list[0].TargetCS, new GridTransformation(grid, inverse));
+            }
+            else if (sourceCS is ProjectedCoordinateSystem && targetCS is GeographicCoordinateSystem)
+            {
+                var list = ((ConcatenatedTransform)ct.MathTransform).CoordinateTransformationList;
+
+                // list[0] = source projected -> geocentric
+                // list[1] =        geocentric -> target geographic
+
+                // Replace the geographic transform with our grid transformation.
+                list[1] = CreateGridTransformation(list[1].SourceCS, list[1].TargetCS, new GridTransformation(grid, inverse));
+            }
+            else
+            {
+                throw new NotSupportedException("No support for grid transformation.");
             }
 
-            // TODO: add support for PROJCS <> GEOGCS transformation?
+            return ct;
+        }
 
-            throw new NotSupportedException("No support for grid transformation.");
+        private ICoordinateTransformation CreateGridTransformation(CoordinateSystem sourceCS, CoordinateSystem targetCS, GridTransformation gridTransformation)
+        {
+            return new CoordinateTransformation(sourceCS, targetCS, TransformType.Other, gridTransformation, "", "", -1, "", ""); ;
         }
 
         #endregion
 
-		private static void SimplifyTrans(ConcatenatedTransform mtrans, ref List<ICoordinateTransformationCore> MTs)
+        private static void SimplifyTrans(ConcatenatedTransform mtrans, ref List<ICoordinateTransformationCore> MTs)
 		{
 			foreach(var t in mtrans.CoordinateTransformationList)
 			{

@@ -964,5 +964,43 @@ namespace ProjNET.Tests
 
             CollectionAssert.AreEqual(expected, actual);
         }
+
+        [Test]
+        [DefaultFloatingPointTolerance(1e-8)]
+        public void TestGridTransformation_Proj2GeogCS_NTv2()
+        {
+            var GK = SRIDReader.GetCSbyID(31466); // DHDN (3-degree Gauss-Kruger zone 2)
+            var ETRS89 = SRIDReader.GetCSbyID(4326); // ETRS89_Lat-Lon
+
+            var ctf = new CoordinateTransformationFactory();
+            var ct = ctf.CreateFromCoordinateSystems(GK, ETRS89, Grid, false);
+
+            // Data taken from BETA2007testdaten.csv (http://www.crs-geo.eu/BeTA2007)
+            double[] input = new[] { 2598417.333192, 5930677.980308 };
+            double[] expected = new[] { 7.482506019176, 53.498461143331 };
+
+            double[] actual = ct.MathTransform.Transform(input);
+
+            CollectionAssert.AreEqual(expected, actual);
+        }
+
+        [Test]
+        [DefaultFloatingPointTolerance(1e-2)]
+        public void TestGridTransformation_Geog2ProjCS_NTv2()
+        {
+            var ETRS89 = SRIDReader.GetCSbyID(4326); // ETRS89_Lat-Lon
+            var GK = SRIDReader.GetCSbyID(31466); // DHDN (3-degree Gauss-Kruger zone 2)
+
+            // Data taken from BETA2007testdaten.csv (http://www.crs-geo.eu/BeTA2007)
+            var ctf = new CoordinateTransformationFactory();
+            var ct = ctf.CreateFromCoordinateSystems(ETRS89, GK, Grid, true);
+
+            double[] input = new[] { 7.482506019176, 53.498461143331 };
+            double[] expected = new[] { 2598417.333192, 5930677.980308 };
+
+            double[] actual = ct.MathTransform.Transform(input);
+
+            CollectionAssert.AreEqual(expected, actual);
+        }
     }
 }
