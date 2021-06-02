@@ -10,6 +10,7 @@ namespace ProjNET.Tests
     {
         protected readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
         protected readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
+        protected readonly Random Random = new Random();
 
         protected bool Verbose { get; set; }
 
