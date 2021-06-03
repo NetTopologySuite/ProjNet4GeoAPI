@@ -2,6 +2,7 @@
 using System.Linq;
 using NUnit.Framework;
 using ProjNet.CoordinateSystems;
+using ProjNet.CoordinateSystems.Projections;
 using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.Geometries;
 using ProjNet.IO.CoordinateSystems;
@@ -320,6 +321,82 @@ namespace ProjNET.Tests
 			Assert.IsTrue(ToleranceLessThan(pUtm, expected, 0.05), TransformationError("LambertConicConformal2SP", expected, pUtm));
 		    Assert.IsTrue(ToleranceLessThan(pGeo, pGeo2, 0.0000001), TransformationError("LambertConicConformal2SP", pGeo, pGeo2, true));
 
+		}
+
+		private ICoordinateTransformation CreateGeo2Laea(double centralMeridian, double latitudeOfOrigin)
+		{
+			var wgs84 = GeographicCoordinateSystem.WGS84;
+
+			var coordsys = CoordinateSystemFactory.CreateFromWkt("" +
+					"PROJCS[\"Lambert_Azimuthal_Equal_Area_Custom\"," +
+						"GEOGCS[\"GCS_WGS_1984\"," +
+							"DATUM[\"D_WGS_1984\"," +
+						"SPHEROID[\"WGS_1984\",6378137.0,298.257223563]]," +
+							"PRIMEM[\"Greenwich\",0.0]," +
+							"UNIT[\"Degree\",0.0174532925199433]]," +
+						"PROJECTION[\"Lambert_Azimuthal_Equal_Area\"]," +
+						"PARAMETER[\"False_Easting\",0.0]," +
+						"PARAMETER[\"False_Northing\",0.0]," +
+						$"PARAMETER[\"Central_Meridian\",{centralMeridian}]," +
+						$"PARAMETER[\"Latitude_Of_Origin\",{latitudeOfOrigin}]," +
+						"UNIT[\"Meter\",1.0]]");
+
+			return CoordinateTransformationFactory.CreateFromCoordinateSystems(wgs84, coordsys);
+		}
+
+		[Test]
+		[Repeat(1000)]
+		public void TestLambertAzimuthalEqualArea_Projection_round_trip_on_origin()
+		{
+			double centralMeridian = Random.Next(-180, +180);
+			double latitudeOfOrigin = Random.Next(-90, +90);
+
+			var trans = CreateGeo2Laea(centralMeridian, latitudeOfOrigin);
+
+			var forward = trans.MathTransform;
+			var reverse = forward.Inverse();
+
+			double[] pGeo = new[] { centralMeridian, latitudeOfOrigin };
+
+			double[] pLaea = forward.Transform(pGeo);
+
+			double[] pGeo2 = reverse.Transform(pLaea);
+
+			double[] expectedPLaea = new double[2] { 0, 0 };
+
+			Assert.IsTrue(ToleranceLessThan(pLaea, expectedPLaea, 0.05), TransformationError("Lambert_Azimuthal_Equal_Area", expectedPLaea, pLaea));
+			Assert.IsTrue(ToleranceLessThan(pGeo, pGeo2, 0.0000001), TransformationError("Lambert_Azimuthal_Equal_Area", pGeo, pGeo2, true));
+		}
+
+		[Test]
+		[Repeat(1000)]
+		public void TestLambertAzimuthalEqualArea_Projection_round_trip_on_arbitrary_point()
+		{
+			int GetRandomSign()
+			{
+				return Random.Next() % 2 == 0 ? -1 : +1;
+			}
+
+			double centralMeridian = Random.Next(-150, +150);
+			double latitudeOfOrigin = Random.Next(-70, +70);
+
+			var trans = CreateGeo2Laea(centralMeridian, latitudeOfOrigin);
+
+			var forward = trans.MathTransform;
+			var reverse = forward.Inverse();
+
+			double lat = latitudeOfOrigin + (0.01 + Random.NextDouble()) * GetRandomSign();
+			double lon = centralMeridian + (0.01 + Random.NextDouble()) * GetRandomSign();
+
+			double[] pGeo = new[] { lon, lat };
+
+			double[] pLaea = forward.Transform(pGeo);
+
+			double[] pGeo2 = reverse.Transform(pLaea);
+
+			Assert.NotZero(pLaea[0]);
+			Assert.NotZero(pLaea[1]);
+			Assert.IsTrue(ToleranceLessThan(pGeo, pGeo2, 0.0000001), TransformationError("Lambert_Azimuthal_Equal_Area", pGeo, pGeo2, true));
 		}
 
 		[Test]

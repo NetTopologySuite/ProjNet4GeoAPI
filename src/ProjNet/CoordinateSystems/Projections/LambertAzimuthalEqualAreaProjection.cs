@@ -326,7 +326,7 @@ namespace ProjNet.CoordinateSystems.Projections
                     rho = hypot(x, y);
                     if (rho < EPS10)
                     {
-                        x = 0.0;        // lam
+                        x = central_meridian; // lam
                         y = lat_origin; // phi
                         return;
                     }
@@ -354,7 +354,7 @@ namespace ProjNet.CoordinateSystems.Projections
                     q = (x * x + y * y);
                     if (q == 0.0)
                     {
-                        x = 0.0;          // lam
+                        x = central_meridian;          // lam
                         y = lat_origin;   // phi
                         return ;
                     }
