@@ -84,6 +84,10 @@ namespace ProjNET.Tests.WKT
             ProjectedCoordinateSystem pcs = null;
             Assert.That(() => pcs = _coordinateSystemFactory.CreateFromWkt(wkt) as ProjectedCoordinateSystem, Throws.Nothing);
 
+            ProjectedCoordinateSystem pcs2 = null;
+            Assert.That(() => pcs2 = _coordinateSystemFactory.CreateFromWkt(wkt.Replace("[", "(").Replace("]", ")")) as ProjectedCoordinateSystem, Throws.Nothing);
+            Assert.That(pcs.EqualParams(pcs2), Is.True);
+
             Assert.That(pcs, Is.Not.Null, "Could not parse WKT: " + wkt);
             CheckInfo(pcs, "NAD83(HARN) / Texas Central (ftUS)", "EPSG", 2918);
 
@@ -118,8 +122,10 @@ namespace ProjNET.Tests.WKT
             int parseCount = 0;
             foreach (var wkt in SRIDReader.GetSrids())
             {
-                var cs = _coordinateSystemFactory.CreateFromWkt(wkt.Wkt);
-                Assert.IsNotNull(cs, "Could not parse WKT: " + wkt);
+                var cs1 = _coordinateSystemFactory.CreateFromWkt(wkt.Wkt);
+                Assert.IsNotNull(cs1, "Could not parse WKT: " + wkt);
+                var cs2 = _coordinateSystemFactory.CreateFromWkt(wkt.Wkt.Replace("[", "(").Replace("]", ")"));
+                Assert.That(cs1.EqualParams(cs2), Is.True);
                 parseCount++;
             }
             Assert.That(parseCount, Is.GreaterThan(2671), "Not all WKT was parsed");
@@ -245,8 +251,12 @@ namespace ProjNET.Tests.WKT
                  "AXIS[\"Northing\",NORTH]]";
 
             ProjectedCoordinateSystem pcs = null;
-
             Assert.That(() => pcs = _coordinateSystemFactory.CreateFromWkt(wkt) as ProjectedCoordinateSystem, Throws.Nothing);
+
+            ProjectedCoordinateSystem pcs2 = null;
+            Assert.That(() => pcs2 = _coordinateSystemFactory.CreateFromWkt(wkt.Replace("[", "(").Replace("]", ")")) as ProjectedCoordinateSystem, Throws.Nothing);
+            Assert.That(pcs.EqualParams(pcs2), Is.True);
+
 
             CheckInfo(pcs, "OSGB 1936 / British National Grid", "EPSG", 27700);
 

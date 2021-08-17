@@ -92,6 +92,64 @@ namespace ProjNet.IO.CoordinateSystems
         }
 
         /// <summary>
+        /// Reads an opener
+        /// </summary>
+        /// <param name="expectedBracket">The expected bracket type.</param>
+        /// <returns>The bracket type encountered</returns>
+        public WktBracket ReadOpener(WktBracket expectedBracket = WktBracket.DontCare)
+        {
+            NextToken();
+            string stringValue = GetStringValue();
+            if (stringValue == "[")
+            {
+                if (expectedBracket == WktBracket.Square || expectedBracket == WktBracket.DontCare)
+                    return WktBracket.Square;
+            }
+            else if (stringValue == "(")
+            {
+                if (expectedBracket == WktBracket.Round || expectedBracket == WktBracket.DontCare)
+                    return WktBracket.Round;
+            }
+
+            string expectedToken = expectedBracket == WktBracket.Square ? "[" : "(";
+            string s = string.Format(_nfi, "Expecting ('{3}') but got a '{0}' at line {1} column {2}.", stringValue, LineNumber, Column, expectedToken);
+            throw new ArgumentException(s);
+        }
+
+        /// <summary>
+        /// Reads an closer
+        /// </summary>
+        /// <param name="expectedBracket">The expected bracket type.</param>
+        public void ReadCloser(WktBracket expectedBracket)
+        {
+            NextToken();
+            CheckCloser(expectedBracket);
+        }
+
+        /// <summary>
+        /// Checks if the current token is a closer of expected type.
+        /// </summary>
+        /// <param name="expectedBracket">The expected bracket type.</param>
+        public void CheckCloser(WktBracket expectedBracket)
+        {
+            string stringValue = GetStringValue();
+            if (stringValue == "]")
+            {
+                if (expectedBracket == WktBracket.Square || expectedBracket == WktBracket.DontCare)
+                    return;
+            }
+            else if (stringValue == ")")
+            {
+                if (expectedBracket == WktBracket.Round || expectedBracket == WktBracket.DontCare)
+                    return;
+            }
+
+            string expectedToken = expectedBracket == WktBracket.Square ? "]" : ")";
+            string s = string.Format(_nfi, "Expecting ('{3}') but got a '{0}' at line {1} column {2}.", stringValue, LineNumber, Column, expectedToken);
+            throw new ArgumentException(s);
+        }
+
+        /// <summary>
         /// Reads the authority and authority code.
         /// </summary>
         /// <param name="authority">String to place the authority in.</param>
@@ -101,7 +159,7 @@ namespace ProjNet.IO.CoordinateSystems
             //AUTHORITY["EPGS","9102"]]
             if (GetStringValue() != "AUTHORITY")
                 ReadToken("AUTHORITY");
-            ReadToken("[");
+            var bracket = ReadOpener();
             authority = ReadDoubleQuotedWord();
             ReadToken(",");
             NextToken();
@@ -109,7 +167,7 @@ namespace ProjNet.IO.CoordinateSystems
                 authorityCode = (long) GetNumericValue();
             else
                 long.TryParse(ReadDoubleQuotedWord(), NumberStyles.Any, _nfi, out authorityCode);
-            ReadToken("]");
+            ReadCloser(bracket);
         }
     }
 }
