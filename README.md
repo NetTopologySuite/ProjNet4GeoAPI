@@ -1,5 +1,16 @@
 # ProjNet (for GeoAPI)
 This library is an extended port of [ProjNet](http://projnet.codeplex.com)
+
+## Important notice
+The current team unfortunatly doesn't have the resources to dedicate to supporting this project at this moment.
+If you see yourself in the position to help out please [reach out](https://github.com/NetTopologySuite/ProjNet4GeoAPI/issues/99).
+
+Alternatives:
+* [SharpProj](https://www.nuget.org/packages/SharpProj.NetTopologySuite/)
+* [DotSpatial.Projections](https://www.nuget.org/packages/DotSpatial.Projections/)
+* [DotSpatial.Projections (NetStandard)](https://www.nuget.org/packages/DotSpatial.Projections.NetStandard/)
+* [GDAL/OGR](https://www.nuget.org/packages/GDAL/)
+
 ## .NET Spatial Reference and Projection Engine
 Proj.NET performs point-to-point coordinate conversions between geodetic coordinate systems for use in fx. Geographic Information Systems (GIS) or GPS applications. The spatial reference model used adheres to the Simple Features specification.
 * Read the [Frequently Asked Questions](https://github.com/NetTopologySuite/ProjNet4GeoAPI/wiki/Frequently-Asked-Questions) for common questions.
