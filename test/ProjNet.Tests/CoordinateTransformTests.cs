@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
 using ProjNet.CoordinateSystems;
@@ -955,6 +956,66 @@ namespace ProjNET.Tests
             // https://epsg.io/transform#s_srs=4326&t_srs=2056&x=9.6198031&y=47.4087350
             Assert.That(x, Is.EqualTo(2764607.79).Within(0.1));
             Assert.That(y, Is.EqualTo(1253167.89).Within(0.1));
+        }
+
+        [Test]
+        public void TestEllipsoidalOrthographicTransform()
+        {
+            //Check equatorial projection
+            var csWgs84 = GeographicCoordinateSystem.WGS84;
+            var parameters = new List<ProjectionParameter>(5)
+                                 {
+                                     new ProjectionParameter("central_meridian", 0),
+                                     new ProjectionParameter("latitude_of_origin", 0),
+                                     new ProjectionParameter("scale_factor", 1),
+                                     new ProjectionParameter("false_easting", 0),
+                                     new ProjectionParameter("false_northing", 0)
+                                 };
+            var projection = CoordinateSystemFactory.CreateProjection("Orthographic", "Orthographic", parameters);
+            var orthographicSystem = CoordinateSystemFactory.CreateProjectedCoordinateSystem("Orthographic centered", csWgs84, projection, LinearUnit.Metre, new AxisInfo("X", AxisOrientationEnum.East), new AxisInfo("Y", AxisOrientationEnum.North));
+            var trans = CoordinateTransformationFactory.CreateFromCoordinateSystems(csWgs84, orthographicSystem);
+
+            //Check origin remains in the same place
+            double[] origin = new[] { 0.0, 0.0 };
+            double[] transformedOrigin = trans.MathTransform.Transform(origin);
+            double[] inverseTransformedOrigin = trans.MathTransform.Inverse().Transform(transformedOrigin);
+            Assert.That(ToleranceLessThan(origin, transformedOrigin, 0.00001), TransformationError("Orthographic", origin, transformedOrigin));
+            Assert.That(ToleranceLessThan(origin, inverseTransformedOrigin, 0.00001), TransformationError("Orthograhpic", origin, inverseTransformedOrigin, true));
+
+            //Check projection works as expected away from origin
+            double[] testEastWgs = new[] { 0.001, 0.0 };
+            double[] expectedXOrtho = new[] { 111, 0.0}; // We should expect that .001 degrees is equal to 111 meters at origin
+            double[] transEastWgs = trans.MathTransform.Transform(testEastWgs);
+            double[] invTransEastWgs = trans.MathTransform.Inverse().Transform(transEastWgs);
+            Assert.That(ToleranceLessThan(expectedXOrtho, transEastWgs, 1.0), TransformationError("Orthographic", expectedXOrtho, transEastWgs));
+            Assert.That(ToleranceLessThan(testEastWgs, invTransEastWgs, 1.0), TransformationError("Orthographic", testEastWgs, invTransEastWgs, true));
+
+
+            //Check from guidance 7.2
+            var parameters2 = new List<ProjectionParameter>(5)
+                                 {
+                                     new ProjectionParameter("central_meridian", 5.0),
+                                     new ProjectionParameter("latitude_of_origin", 55.0),
+                                     new ProjectionParameter("scale_factor", 1),
+                                     new ProjectionParameter("false_easting", 0),
+                                     new ProjectionParameter("false_northing", 0)
+                                 };
+            var projection2 = CoordinateSystemFactory.CreateProjection("Orthographic", "Orthographic", parameters2);
+            var orthoSystem2 = CoordinateSystemFactory.CreateProjectedCoordinateSystem("Orthographic", csWgs84, projection2, LinearUnit.Metre, new AxisInfo("X", AxisOrientationEnum.East), new AxisInfo("Y", AxisOrientationEnum.North));
+            var trans2 = CoordinateTransformationFactory.CreateFromCoordinateSystems(csWgs84, orthoSystem2);
+            double[] test2 = new[] { 2.1295499950867, 53.809394412498 };
+            double[] expected2 = new[] { -189011.711, -128640.567 };
+            double[] transTest2 = trans2.MathTransform.Transform(test2);
+            double[] invTransTest2 = trans2.MathTransform.Inverse().Transform(transTest2);
+            Assert.That(ToleranceLessThan(expected2, transTest2, 1.0), TransformationError("Orthographic", expected2, transTest2));
+            Assert.That(ToleranceLessThan(test2, invTransTest2, 1.0), TransformationError("Orthographic", test2, invTransTest2, true));
+
+            //Check that the algorithm correctly identifies a point that cannot be seen
+            var @delegate = new TestDelegate(() => trans.MathTransform.Transform(new[] { 180.0, 0.0 }));
+            Assert.Throws<ArgumentOutOfRangeException>(@delegate);
+
+            var @delegate2 = new TestDelegate(() => trans2.MathTransform.Transform(new[] { 180.0, 0.0 }));
+            Assert.Throws<ArgumentOutOfRangeException>(@delegate2);
         }
     }
 }

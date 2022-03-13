@@ -48,6 +48,7 @@ namespace ProjNet.CoordinateSystems.Projections
             Register("hotine_oblique_mercator_azimuth_center", typeof(HotineObliqueMercatorProjection));
             Register("oblique_mercator", typeof(ObliqueMercatorProjection));
             Register("oblique_stereographic", typeof(ObliqueStereographicProjection));
+            Register("orthographic", typeof(OrthographicProjection));
         }
 
         /// <summary>
