@@ -26,8 +26,8 @@ namespace ProjNet.CoordinateSystems
     /// Builds up complex objects from simpler objects or values.
     /// </summary>
     /// <remarks>
-    /// <para>ICoordinateSystemFactory allows applications to make coordinate systems that 
-    /// cannot be created by a <see cref="ICoordinateSystemAuthorityFactory"/>. This factory is very 
+    /// <para>CoordinateSystemFactory allows applications to make coordinate systems that 
+    /// cannot be created by a <see cref="CoordinateSystemAuthorityFactory"/>. This factory is very 
     /// flexible, whereas the authority factory is easier to use.</para>
     /// <para>So <see cref="ICoordinateSystemAuthorityFactory"/>can be used to make 'standard' coordinate 
     /// systems, and <see cref="CoordinateSystemFactory"/> can be used to make 'special' 
@@ -67,7 +67,7 @@ namespace ProjNet.CoordinateSystems
             return info as CoordinateSystem;
         }
 
-        /*
+
         /// <summary>
         /// Creates a <see cref="CompoundCoordinateSystem"/> [NOT IMPLEMENTED].
         /// </summary>
@@ -75,11 +75,14 @@ namespace ProjNet.CoordinateSystems
         /// <param name="head">Head coordinate system</param>
         /// <param name="tail">Tail coordinate system</param>
         /// <returns>Compound coordinate system</returns>
-        public ICompoundCoordinateSystem CreateCompoundCoordinateSystem(string name, ICoordinateSystem head, ICoordinateSystem tail)
+        public CompoundCoordinateSystem CreateCompoundCoordinateSystem(string name, CoordinateSystem head, CoordinateSystem tail)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Invalid name");
+
+            return new CompoundCoordinateSystem(head, tail, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
         }
-         */
+
         /// <summary>
         /// Creates a <see cref="FittedCoordinateSystem"/>.
         /// </summary>
@@ -91,12 +94,30 @@ namespace ProjNet.CoordinateSystems
         /// should not rotate this coordinate system in any other plane.</remarks>
         /// <param name="name">Name of coordinate system</param>
         /// <param name="baseCoordinateSystem">Base coordinate system</param>
-        /// <param name="toBaseWkt"></param>
-        /// <param name="arAxes"></param>
+        /// <param name="toBaseWkt">WKT of the math transform to the base coordinate system</param>
+        /// <param name="arAxes">Axiis of the fitted coordinate system</param>
         /// <returns>Fitted coordinate system</returns>
         public FittedCoordinateSystem CreateFittedCoordinateSystem(string name, CoordinateSystem baseCoordinateSystem, string toBaseWkt, List<AxisInfo> arAxes)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Invalid name");
+
+            var toBaseTransform = MathTransformWktReader.Parse(toBaseWkt);
+            return new FittedCoordinateSystem(baseCoordinateSystem, toBaseTransform, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
+        }
+
+        /// <inheritdoc cref="CreateFittedCoordinateSystem(string, CoordinateSystem, string, List{AxisInfo})"/>
+        /// <param name="name">Name of coordinate system</param>
+        /// <param name="baseCoordinateSystem">Base coordinate system</param>
+        /// <param name="toBase">the math transform to the base coordinate system</param>
+        /// <param name="arAxes">Axiis of the fitted coordinate system</param>
+        /// <returns></returns>
+        public FittedCoordinateSystem CreateFittedCoordinateSystem(string name, CoordinateSystem baseCoordinateSystem, Transformations.MathTransform toBase, List<AxisInfo> arAxes)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Invalid name");
+
+            return new FittedCoordinateSystem(baseCoordinateSystem, toBase, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
         }
 
         /*
@@ -270,33 +291,39 @@ namespace ProjNet.CoordinateSystems
         }
         */
 
-        /*
+
         /// <summary>
-        /// Creates a <see cref="IVerticalDatum"/> from an enumerated type value.
+        /// Creates a <see cref="VerticalDatum"/> from an enumerated type value.
         /// </summary>
         /// <param name="name">Name of datum</param>
         /// <param name="datumType">Type of datum</param>
         /// <returns>Vertical datum</returns>	
-        public IVerticalDatum CreateVerticalDatum(string name, DatumType datumType)
+        public VerticalDatum CreateVerticalDatum(string name, DatumType datumType)
         {
-            throw new NotImplementedException();
-        }
-        */
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Invalid name");
 
-        /*
+            return new VerticalDatum(datumType, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
+        }
+
+
+
         /// <summary>
-        /// Creates a <see cref="IVerticalCoordinateSystem"/> from a <see cref="IVerticalDatum">datum</see> and <see cref="LinearUnit">linear units</see>.
+        /// Creates a <see cref="VerticalCoordinateSystem"/> from a <see cref="VerticalDatum">datum</see> and <see cref="LinearUnit">linear units</see>.
         /// </summary>
         /// <param name="name">Name of vertical coordinate system</param>
         /// <param name="datum">Vertical datum</param>
         /// <param name="verticalUnit">Unit</param>
         /// <param name="axis">Axis info</param>
         /// <returns>Vertical coordinate system</returns>
-        public IVerticalCoordinateSystem CreateVerticalCoordinateSystem(string name, IVerticalDatum datum, ILinearUnit verticalUnit, AxisInfo axis)
+        public VerticalCoordinateSystem CreateVerticalCoordinateSystem(string name, VerticalDatum datum, LinearUnit verticalUnit, AxisInfo axis)
         {
-            throw new NotImplementedException();
+            if (string.IsNullOrWhiteSpace(name))
+                throw new ArgumentException("Invalid name");
+
+            return new VerticalCoordinateSystem(verticalUnit, datum, axis, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
         }
-         */
+
         /// <summary>
         /// Creates a <see cref="CreateGeocentricCoordinateSystem"/> from a <see cref="HorizontalDatum">datum</see>, 
         /// <see cref="LinearUnit">linear unit</see> and <see cref="PrimeMeridian"/>.

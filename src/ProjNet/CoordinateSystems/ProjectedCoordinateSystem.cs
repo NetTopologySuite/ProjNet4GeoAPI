@@ -156,21 +156,19 @@ namespace ProjNet.CoordinateSystems
 			get
 			{
 				var sb = new StringBuilder();
-                sb.AppendFormat("PROJCS[\"{0}\", {1}, {2}, {3}", Name, GeographicCoordinateSystem.WKT, LinearUnit.WKT, Projection.WKT);
+                sb.AppendFormat("PROJCS[\"{0}\", {1}, {2}", Name, GeographicCoordinateSystem.WKT, Projection.WKT);
 				for(int i=0;i<Projection.NumParameters;i++)
 					sb.AppendFormat(CultureInfo.InvariantCulture.NumberFormat, ", {0}", Projection.GetParameter(i).WKT);
-				//sb.AppendFormat(", {0}", LinearUnit.WKT);
-                //Skip authority and code if not defined
-                if (!string.IsNullOrWhiteSpace(Authority) && AuthorityCode > 0)
-                    sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
+				sb.AppendFormat(", {0}", LinearUnit.WKT);
                 //Skip axis info if they contain default values
 				if (AxisInfo.Count != 2 ||
 					AxisInfo[0].Name != "X" || AxisInfo[0].Orientation != AxisOrientationEnum.East ||
 					AxisInfo[1].Name != "Y" || AxisInfo[1].Orientation != AxisOrientationEnum.North)
 					for (int i = 0; i < AxisInfo.Count; i++)
 						sb.AppendFormat(", {0}", GetAxis(i).WKT);
-                //if (!string.IsNullOrWhiteSpace(Authority) && AuthorityCode > 0)
-                //    sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
+                //Skip authority and code if not defined
+                if (!string.IsNullOrWhiteSpace(Authority) && AuthorityCode > 0)
+                    sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
                 sb.Append("]");
 				return sb.ToString();
 			}
