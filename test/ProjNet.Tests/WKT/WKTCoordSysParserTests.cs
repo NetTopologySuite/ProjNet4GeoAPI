@@ -71,7 +71,6 @@ namespace ProjNET.Tests.WKT
                                                  "PRIMEM[\"Greenwich\", 0, AUTHORITY[\"EPSG\", \"8901\"]], "+
                                                  "UNIT[\"degree\", 0.0174532925199433, AUTHORITY[\"EPSG\", \"9122\"]], "+
                                                  "AUTHORITY[\"EPSG\", \"4152\"]], "+
-                                        "UNIT[\"US survey foot\", 0.304800609601219, AUTHORITY[\"EPSG\", \"9003\"]], "+
                                         "PROJECTION[\"Lambert_Conformal_Conic_2SP\"], " +
                                         "PARAMETER[\"standard_parallel_1\", 31.883333333333], " +
                                         "PARAMETER[\"standard_parallel_2\", 30.1166666667], " +
@@ -79,6 +78,7 @@ namespace ProjNET.Tests.WKT
                                         "PARAMETER[\"central_meridian\", -100.333333333333], " +
                                         "PARAMETER[\"false_easting\", 2296583.333], " +
                                         "PARAMETER[\"false_northing\", 9842500], " +
+                                        "UNIT[\"US survey foot\", 0.304800609601219, AUTHORITY[\"EPSG\", \"9003\"]], "+
                                         "AUTHORITY[\"EPSG\", \"2918\"]]";
 
             ProjectedCoordinateSystem pcs = null;
@@ -239,16 +239,16 @@ namespace ProjNET.Tests.WKT
                           "PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]]," +
                           "UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]]," +
                           "AUTHORITY[\"EPSG\",\"4277\"]]," +
-                 "UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]]," +
                  "PROJECTION[\"Transverse_Mercator\"]," +
                  "PARAMETER[\"latitude_of_origin\",49]," +
                  "PARAMETER[\"central_meridian\",-2]," +
                  "PARAMETER[\"scale_factor\",0.9996012717]," +
                  "PARAMETER[\"false_easting\",400000]," +
                  "PARAMETER[\"false_northing\",-100000]," +
-                 "AUTHORITY[\"EPSG\",\"27700\"]," +
+                 "UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]]," +
                  "AXIS[\"Easting\",EAST]," +
-                 "AXIS[\"Northing\",NORTH]]";
+                 "AXIS[\"Northing\",NORTH]," +
+                 "AUTHORITY[\"EPSG\",\"27700\"]]";
 
             ProjectedCoordinateSystem pcs = null;
             Assert.That(() => pcs = _coordinateSystemFactory.CreateFromWkt(wkt) as ProjectedCoordinateSystem, Throws.Nothing);
@@ -293,10 +293,10 @@ namespace ProjNET.Tests.WKT
                 "6378137,0,AUTHORITY[\"EPSG\",\"7059\"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY[\"EPSG\"," +
                 "\"6055\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\"," +
                 "0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4055\"]]," +
-                "UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],PROJECTION[\"Mercator_1SP\"]," +
+                "PROJECTION[\"Mercator_1SP\"]," +
                 "PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[" +
-                "\"false_easting\",0],PARAMETER[\"false_northing\",0],AUTHORITY[\"EPSG\",\"3785\"]" +
-                ",AXIS[\"X\",EAST],AXIS[\"Y\",NORTH]]"), Throws.Nothing);
+                "\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"X\",EAST],AXIS[\"Y\",NORTH]],AUTHORITY[\"EPSG\",\"3785\"]"
+                ), Throws.Nothing);
         }
 
         [Test]
@@ -359,13 +359,13 @@ namespace ProjNET.Tests.WKT
                                        "PRIMEM[\"Greenwich\", 0, AUTHORITY[\"EPSG\", \"8901\"]]," + 
                                        "UNIT[\"degree\", 0.0174532925199433, AUTHORITY[\"EPSG\", \"9122\"]]," + 
                                        "AUTHORITY[\"EPSG\", \"4314\"]]," + 
-                                   "UNIT[\"metre\", 1, AUTHORITY[\"EPSG\", \"9001\"]]," + 
                                    "PROJECTION[\"Transverse_Mercator\"]," + 
                                    "PARAMETER[\"latitude_of_origin\", 0]," + 
                                    "PARAMETER[\"central_meridian\", 9]," + 
                                    "PARAMETER[\"scale_factor\", 1]," + 
                                    "PARAMETER[\"false_easting\", 3500000]," +
                                    "PARAMETER[\"false_northing\", 0]," + 
+                                   "UNIT[\"metre\", 1, AUTHORITY[\"EPSG\", \"9001\"]]," + 
                                    "AUTHORITY[\"EPSG\", \"31467\"]]" + 
                         "]";
 
