@@ -524,6 +524,7 @@ namespace ProjNet.IO.CoordinateSystems
             AXIS["Geodetic longitude","EAST"]
             AUTHORITY["EPSG","4277"]
             ]
+
             */
             var bracket = tokenizer.ReadOpener();
             string name = tokenizer.ReadDoubleQuotedWord();
@@ -561,8 +562,8 @@ namespace ProjNet.IO.CoordinateSystems
             //This is default axis values if not specified.
             if (info.Count == 0)
             {
-                info.Add(new AxisInfo("Lon", AxisOrientationEnum.East));
-                info.Add(new AxisInfo("Lat", AxisOrientationEnum.North));
+                info.Add(new AxisInfo("Easting", AxisOrientationEnum.East));
+                info.Add(new AxisInfo("Northing", AxisOrientationEnum.North));
             }
             var geographicCS = new GeographicCoordinateSystem(angularUnit, horizontalDatum,
                     primeMeridian, info, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
