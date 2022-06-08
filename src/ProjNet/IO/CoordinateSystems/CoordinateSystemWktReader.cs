@@ -5,7 +5,7 @@
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // ProjNet is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -13,11 +13,11 @@
 
 // You should have received a copy of the GNU Lesser General Public License
 // along with ProjNet; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 // SOURCECODE IS MODIFIED FROM ANOTHER WORK AND IS ORIGINALLY BASED ON GeoTools.NET:
 /*
- *  Copyright (C) 2002 Urban Science Applications, Inc. 
+ *  Copyright (C) 2002 Urban Science Applications, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -109,7 +109,7 @@ namespace ProjNet.IO.CoordinateSystems
                 tokenizer.ReadAuthority(out authority, out authorityCode);
                 tokenizer.ReadCloser(bracket);
             }
-            else 
+            else
                 tokenizer.CheckCloser(bracket);
 
             return new Unit(unitsPerUnit, unitName, authority, authorityCode, string.Empty, string.Empty, string.Empty);
@@ -387,8 +387,8 @@ namespace ProjNet.IO.CoordinateSystems
             //This is default axis values if not specified.
             if (axisInfo.Count == 0)
             {
-                axisInfo.Add(new AxisInfo("X", AxisOrientationEnum.East));
-                axisInfo.Add(new AxisInfo("Y", AxisOrientationEnum.North));
+                axisInfo.Add(new AxisInfo("X", AxisOrientationEnum.North));
+                axisInfo.Add(new AxisInfo("Y", AxisOrientationEnum.East));
             }
             var projectedCS = new ProjectedCoordinateSystem(geographicCS.HorizontalDatum, geographicCS, unit as LinearUnit, projection, axisInfo, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
             return projectedCS;
