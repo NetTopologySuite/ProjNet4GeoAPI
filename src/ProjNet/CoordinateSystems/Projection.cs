@@ -77,6 +77,16 @@ namespace ProjNet.CoordinateSystems
 		}
 
 		/// <summary>
+		/// Adds a parameter to the parameter list
+		/// </summary>
+		/// <param name="param">The projection parameter to add</param>
+		public void AddParameter(string name, double value)
+		{
+			ProjectionParameter param = new ProjectionParameter(name, value);
+			_parameters.Add(param);
+		}
+
+		/// <summary>
 		/// Gets an named parameter of the projection.
 		/// </summary>
 		/// <remarks>The parameter name is case insensitive</remarks>

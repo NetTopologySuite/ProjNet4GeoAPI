@@ -109,7 +109,7 @@ namespace ProjNet.IO.CoordinateSystems
                 tokenizer.ReadAuthority(out authority, out authorityCode);
                 tokenizer.ReadCloser(bracket);
             }
-            else 
+            else
                 tokenizer.CheckCloser(bracket);
 
             return new Unit(unitsPerUnit, unitName, authority, authorityCode, string.Empty, string.Empty, string.Empty);
@@ -192,6 +192,7 @@ namespace ProjNet.IO.CoordinateSystems
                 case "SOUTH": return new AxisInfo(axisName, AxisOrientationEnum.South);
                 case "UP": return new AxisInfo(axisName, AxisOrientationEnum.Up);
                 case "WEST": return new AxisInfo(axisName, AxisOrientationEnum.West);
+                case "UNKNOWN": return new AxisInfo(axisName, AxisOrientationEnum.Other);
                 default:
                     throw new ArgumentException("Invalid axis name '" + unitname + "' in WKT");
             }
@@ -206,7 +207,7 @@ namespace ProjNet.IO.CoordinateSystems
                 case "PROJCS":
                     return ReadProjectedCoordinateSystem(tokenizer);
                 case "FITTED_CS":
-                    return ReadFittedCoordinateSystem (tokenizer);
+                    return ReadFittedCoordinateSystem(tokenizer);
                 case "GEOCCS":
                     return ReadGeocentricCoordinateSystem(tokenizer);
                 case "COMPD_CS":
@@ -285,7 +286,7 @@ namespace ProjNet.IO.CoordinateSystems
             return ellipsoid;
         }
 
-        private static IProjection ReadProjection(WktStreamTokenizer tokenizer)
+        private static Projection ReadProjection(WktStreamTokenizer tokenizer)
         {
             if (tokenizer.GetStringValue() != "PROJECTION")
                 tokenizer.ReadToken("PROJECTION");
@@ -303,33 +304,45 @@ namespace ProjNet.IO.CoordinateSystems
             else
                 tokenizer.CheckCloser(bracket);
 
-            tokenizer.ReadToken(",");//,
-            tokenizer.ReadToken("PARAMETER");
             var paramList = new List<ProjectionParameter>();
-            while (tokenizer.GetStringValue() == "PARAMETER")
-            {
-                bracket = tokenizer.ReadOpener();
-                string paramName = tokenizer.ReadDoubleQuotedWord();
-                tokenizer.ReadToken(",");
-                tokenizer.NextToken();
-                double paramValue = tokenizer.GetNumericValue();
-                tokenizer.ReadCloser(bracket);
-                paramList.Add(new ProjectionParameter(paramName, paramValue));
-                //tokenizer.ReadToken(",");
-                //tokenizer.NextToken();
-                tokenizer.NextToken();
-                if (tokenizer.GetStringValue() == ",")
-                {
-                    tokenizer.NextToken();
-                }
-                else
-                {
-                    break;
-                }
-            }
+
             var projection = new Projection(projectionName, paramList, projectionName, authority, authorityCode, string.Empty, string.Empty, string.Empty);
             return projection;
         }
+
+        private static void ReadParamater(WktStreamTokenizer tokenizer, Projection projection)
+        {
+            var bracket = tokenizer.ReadOpener();
+            string paramName = tokenizer.ReadDoubleQuotedWord();
+            tokenizer.ReadToken(",");
+            tokenizer.NextToken();
+            double paramValue = tokenizer.GetNumericValue();
+            tokenizer.ReadCloser(bracket);
+
+            projection.AddParameter(paramName, paramValue);
+        }
+
+        private static void ReadExtension(WktStreamTokenizer tokenizer)
+        {
+            var bracket = tokenizer.ReadOpener();
+            string paramName = tokenizer.ReadDoubleQuotedWord();
+            tokenizer.ReadToken(",");
+            tokenizer.NextToken();
+            if (paramName == "PROJ4")
+            {
+                string paramValue = tokenizer.ReadDoubleQuotedWord();
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine("What are you?");
+            }
+
+            tokenizer.ReadCloser(bracket);
+
+            System.Diagnostics.Debug.WriteLine("Now what do we do with you?");
+        }
+
+
 
         private static ProjectedCoordinateSystem ReadProjectedCoordinateSystem(WktStreamTokenizer tokenizer)
         {
@@ -356,42 +369,65 @@ namespace ProjNet.IO.CoordinateSystems
             */
             var bracket = tokenizer.ReadOpener();
             string name = tokenizer.ReadDoubleQuotedWord();
-            tokenizer.ReadToken(",");
-            tokenizer.ReadToken("GEOGCS");
-            var geographicCS = ReadGeographicCoordinateSystem(tokenizer);
-            tokenizer.ReadToken(",");
-            tokenizer.ReadToken("PROJECTION");
-            var projection = ReadProjection(tokenizer);
-            var unit = ReadLinearUnit(tokenizer);
+            tokenizer.NextToken();
+
+            GeographicCoordinateSystem geographicCS = null;
+            Projection projection = null;
+            LinearUnit unit = null;
             var axisInfo = new List<AxisInfo>(2);
             string authority = string.Empty;
             long authorityCode = -1;
 
-            tokenizer.NextToken();
-            if (tokenizer.GetStringValue() == ",")
+            while (tokenizer.GetStringValue() == ",")
             {
                 tokenizer.NextToken();
-                while (tokenizer.GetStringValue() == "AXIS")
+                string nextToken = tokenizer.GetStringValue();
+                switch (nextToken)
                 {
-                    axisInfo.Add(ReadAxis(tokenizer));
-                    tokenizer.NextToken();
-                    if (tokenizer.GetStringValue() == ",") tokenizer.NextToken();
+                    case "AUTHORITY":
+                        tokenizer.ReadAuthority(out authority, out authorityCode);
+                        break;
+                    case "AXIS":
+                        axisInfo.Add(ReadAxis(tokenizer));
+                        break;
+                    case "GEOGCS":
+                        geographicCS = ReadGeographicCoordinateSystem(tokenizer);
+                        break;
+                    case "PARAMETER":
+                        ReadParamater(tokenizer, projection);
+                        break;
+                    case "PROJECTION":
+                        projection = ReadProjection(tokenizer);
+                        break;
+                    case "UNIT":
+                        unit = ReadLinearUnit(tokenizer);
+                        break;
+                    case "EXTENSION": 
+                        ReadExtension(tokenizer);
+                        break;
+                    default:
+                        throw new ArgumentException("Token not found for {0]", nextToken);
                 }
-                if (tokenizer.GetStringValue() == ",") tokenizer.NextToken();
-                if (tokenizer.GetStringValue() == "AUTHORITY")
-                {
-                    tokenizer.ReadAuthority(out authority, out authorityCode);
-                    tokenizer.ReadCloser(bracket);
-                }
+
+                tokenizer.NextToken();
             }
-            //This is default axis values if not specified.
+
+            // we should be at the end already!?
+            if (tokenizer.GetStringValue() != "]")
+                tokenizer.ReadCloser(bracket);
+
             if (axisInfo.Count == 0)
             {
                 axisInfo.Add(new AxisInfo("X", AxisOrientationEnum.East));
                 axisInfo.Add(new AxisInfo("Y", AxisOrientationEnum.North));
             }
-            var projectedCS = new ProjectedCoordinateSystem(geographicCS.HorizontalDatum, geographicCS, unit as LinearUnit, projection, axisInfo, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
-            return projectedCS;
+
+            if (geographicCS != null)
+            {
+                return new ProjectedCoordinateSystem(geographicCS.HorizontalDatum, geographicCS, unit as LinearUnit, projection, axisInfo, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+            }
+
+            return null;
         }
 
         private static VerticalCoordinateSystem ReadVerticalCoordinateSystem(WktStreamTokenizer tokenizer)
@@ -451,10 +487,10 @@ namespace ProjNet.IO.CoordinateSystems
             long authorityCode = -1;
             tokenizer.NextToken();
 
-            if ( tokenizer.GetStringValue() == ",")
+            if (tokenizer.GetStringValue() == ",")
             {
                 tokenizer.NextToken();
-                if(tokenizer.GetStringValue() == "AUTHORITY")
+                if (tokenizer.GetStringValue() == "AUTHORITY")
                 {
                     tokenizer.ReadAuthority(out authority, out authorityCode);
                 }
@@ -541,22 +577,24 @@ namespace ProjNet.IO.CoordinateSystems
             long authorityCode = -1;
             tokenizer.NextToken();
             var info = new List<AxisInfo>(2);
-            if (tokenizer.GetStringValue() == ",")
+            while (tokenizer.GetStringValue() == ",")
             {
                 tokenizer.NextToken();
-                while (tokenizer.GetStringValue() == "AXIS")
+                string nextToken = tokenizer.GetStringValue();
+                if (nextToken == "AXIS")
                 {
                     info.Add(ReadAxis(tokenizer));
-                    tokenizer.NextToken();
-                    if (tokenizer.GetStringValue() == ",") tokenizer.NextToken();
                 }
-                if (tokenizer.GetStringValue() == ",") tokenizer.NextToken();
-                if (tokenizer.GetStringValue() == "AUTHORITY")
+                else if (nextToken == "AUTHORITY")
                 {
                     tokenizer.ReadAuthority(out authority, out authorityCode);
-                    tokenizer.ReadCloser(bracket);
                 }
+
+                tokenizer.NextToken();
             }
+
+            if (tokenizer.GetStringValue() != "]") //We should be closed already
+                tokenizer.ReadCloser(bracket);
 
             //This is default axis values if not specified.
             if (info.Count == 0)
@@ -575,6 +613,8 @@ namespace ProjNet.IO.CoordinateSystems
             Wgs84ConversionInfo wgsInfo = null;
             string authority = string.Empty;
             long authorityCode = -1;
+            string extension = string.Empty;
+            string extensionMethod = string.Empty;
 
             var bracket = tokenizer.ReadOpener();
             string name = tokenizer.ReadDoubleQuotedWord();
@@ -595,6 +635,11 @@ namespace ProjNet.IO.CoordinateSystems
                     tokenizer.ReadAuthority(out authority, out authorityCode);
                     tokenizer.ReadCloser(bracket);
                 }
+                else if (tokenizer.GetStringValue() == "EXTENSION")
+                {
+                    tokenizer.ReadExtension(out extension, out extensionMethod);
+                    tokenizer.ReadCloser(bracket);
+                }
             }
             // make an assumption about the datum type.
             var horizontalDatum = new HorizontalDatum(ellipsoid, wgsInfo, DatumType.HD_Geocentric, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
@@ -612,7 +657,7 @@ namespace ProjNet.IO.CoordinateSystems
             string name = tokenizer.ReadDoubleQuotedWord();
             tokenizer.ReadToken(",");
             tokenizer.NextToken();
-            var datumType = (DatumType) tokenizer.GetNumericValue();
+            var datumType = (DatumType)tokenizer.GetNumericValue();
             tokenizer.NextToken();
             if (tokenizer.GetStringValue() == ",")
             {
@@ -623,7 +668,7 @@ namespace ProjNet.IO.CoordinateSystems
                     tokenizer.ReadCloser(bracket);
                 }
             }
-            var verticalDatum = new VerticalDatum( datumType, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+            var verticalDatum = new VerticalDatum(datumType, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
 
             return verticalDatum;
         }
@@ -654,7 +699,7 @@ namespace ProjNet.IO.CoordinateSystems
             return primeMeridian;
         }
 
-        private static FittedCoordinateSystem ReadFittedCoordinateSystem (WktStreamTokenizer tokenizer)
+        private static FittedCoordinateSystem ReadFittedCoordinateSystem(WktStreamTokenizer tokenizer)
         {
             /*
              FITTED_CS[
@@ -676,21 +721,21 @@ namespace ProjNet.IO.CoordinateSystems
              ]
             */
             var bracket = tokenizer.ReadOpener();
-            string name = tokenizer.ReadDoubleQuotedWord ();
-            tokenizer.ReadToken (",");
-            tokenizer.ReadToken ("PARAM_MT");
-            var toBaseTransform = MathTransformWktReader.ReadMathTransform (tokenizer);
-            tokenizer.ReadToken (",");
-            tokenizer.NextToken ();
-            var baseCS = ReadCoordinateSystem (null, tokenizer);
+            string name = tokenizer.ReadDoubleQuotedWord();
+            tokenizer.ReadToken(",");
+            tokenizer.ReadToken("PARAM_MT");
+            var toBaseTransform = MathTransformWktReader.ReadMathTransform(tokenizer);
+            tokenizer.ReadToken(",");
+            tokenizer.NextToken();
+            var baseCS = ReadCoordinateSystem(null, tokenizer);
 
             string authority = string.Empty;
             long authorityCode = -1;
 
-            var ct = tokenizer.NextToken ();
+            var ct = tokenizer.NextToken();
             while (ct != TokenType.Eol && ct != TokenType.Eof)
             {
-                switch (tokenizer.GetStringValue ())
+                switch (tokenizer.GetStringValue())
                 {
                     case ",":
                         break;
@@ -700,14 +745,14 @@ namespace ProjNet.IO.CoordinateSystems
 
                         break;
                     case "AUTHORITY":
-                        tokenizer.ReadAuthority (out authority, out authorityCode);
+                        tokenizer.ReadAuthority(out authority, out authorityCode);
                         //tokenizer.ReadCloser(bracket);
                         break;
                 }
-                ct = tokenizer.NextToken ();
+                ct = tokenizer.NextToken();
             }
 
-            var fittedCS = new FittedCoordinateSystem (baseCS, toBaseTransform, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+            var fittedCS = new FittedCoordinateSystem(baseCS, toBaseTransform, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
             return fittedCS;
         }
     }

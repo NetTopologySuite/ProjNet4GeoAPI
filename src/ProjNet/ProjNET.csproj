@@ -1,11 +1,11 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <RootNamespace>ProjNet</RootNamespace>
-    <TargetFramework>netstandard2.0</TargetFramework>
+	  <TargetFrameworks>net7.0;netstandard2.0</TargetFrameworks>
     <SignAssembly>true</SignAssembly>
     <EnableApiCompat>true</EnableApiCompat>
+	  <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Label="Assembly Info">
@@ -18,6 +18,8 @@
     <Authors>Morten Nielsen, NetTopologySuite-Team</Authors>
     <PackageLicenseExpression>LGPL-2.1-or-later</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <TargetFrameworks>net7.0;netstandard2.0</TargetFrameworks>
+    <Authors>Morten Nielsen</Authors>
     <PackageDescription>.NET Spatial Reference and Projection Engine.
 Proj.NET performs point-to-point coordinate conversions between geodetic coordinate systems for use in fx. Geographic Information Systems (GIS) or GPS applications. The spatial reference model used adheres to the Simple Features specification.
     </PackageDescription>
@@ -25,7 +27,18 @@ Proj.NET performs point-to-point coordinate conversions between geodetic coordin
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Memory" Version="4.5.3" />
+    <Compile Remove="IO\SqlReaderHelper.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="proj.db">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
+    <PackageReference Include="System.Memory" Version="4.5.5" />
     <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
   </ItemGroup>
 
