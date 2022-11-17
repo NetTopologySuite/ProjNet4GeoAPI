@@ -43,8 +43,8 @@ namespace ProjNet.CoordinateSystems
 			: base(name, authority, code, alias, abbreviation, remarks)
 		{
 			HorizontalDatum = datum;
-			if (axisInfo.Count != 2)
-				throw new ArgumentException("Axis info should contain two axes for horizontal coordinate systems");
+			//if (axisInfo.Count != 2)
+			//	throw new ArgumentException("Axis info should contain two axes for horizontal coordinate systems");
 			base.AxisInfo = axisInfo;
 		}
 

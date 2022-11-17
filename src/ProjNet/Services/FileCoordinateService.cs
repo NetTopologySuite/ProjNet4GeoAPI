@@ -3,9 +3,6 @@ using ProjNet.IO.CoordinateSystems;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -13,17 +10,44 @@ using System.Threading.Tasks;
 namespace ProjNet.Services
 {
     /// <summary>
-    /// Creates a CoordinateService initiated from a file
+    /// Creates a CoordinateService instantiated from a file
     /// </summary>
     internal class FileCoordinateService : DefaultCoordinateService
     {
-        private readonly ManualResetEvent _initialization = new ManualResetEvent(false);
-
-        public FileCoordinateService(CoordinateSystemServices css, string filename)
-            : base(css, null)
+        public FileCoordinateService(string filename)
+           : base(new CoordinateSystemFactory(), FileInitialization(filename))
         {
-            _initialization = new ManualResetEvent(false);
-            Task.Run(() => FileInitialization(filename));
+
+
+        }
+
+        public FileCoordinateService(string filename, char delimiter, CsvDefinition definition)
+           : base(new CoordinateSystemFactory(), FileInitialization(filename, delimiter, definition))
+        {
+
+
+        }
+
+        public FileCoordinateService(CoordinateSystemFactory csFactory, string filename)
+            : base(csFactory, FileInitialization(filename))
+        {
+        }
+
+        /// <summary>
+        /// Initializes the CoordinateSystemService from a csv file
+        /// </summary>
+        /// <param name="filename">the csv file without a header, code in column 1, wkt in column 2</param>
+        /// <returns></returns>
+        private static IEnumerable<KeyValuePair<int, CoordinateSystem>> FileInitialization(string filename)
+        {
+            var definition = new CsvDefinition()
+            {
+                HasHeader = false,
+                Code = 0,
+                WKT = 1
+            };
+
+            return FileInitialization(filename, ';', definition);
         }
 
         /// <summary>
@@ -31,54 +55,108 @@ namespace ProjNet.Services
         /// </summary>
         /// <param name="filename">the csv file with a header and 7 columns as follows:
         /// code, authority, name, alias, coordinateType, isDeprecated (True/False), and wkt string</param>
+        /// <param name="delimiter">Character to delimate the csv</param>
+        /// <param name="definition">The definition of csv columns in the file</param>
         /// <returns></returns>
-        private  IEnumerable<KeyValuePair<int, CoordinateSystem>> FileInitialization(string filename)
+        private static IEnumerable<KeyValuePair<int, CoordinateSystem>> FileInitialization(string filename, char delimiter, CsvDefinition definition)
         {
             using (Stream stream = File.OpenRead(filename))
             {
-                var data = ParseCsvStream(stream);
-                foreach (var system in data)
+                if (filename.ToLower().EndsWith("csv"))
                 {
-                    var csInfo = system.Value;
-                    CoordinateSystem cs = CoordinateSystemWktReader.Parse(csInfo.WKT) as CoordinateSystem;
-                    yield return new KeyValuePair<int, CoordinateSystem>(system.Value.Code, cs);
+                    var data = ParseCsvStream(stream, delimiter, definition);
+                    foreach (var system in data)
+                    {
+                        yield return new KeyValuePair<int, CoordinateSystem>(system.Key, system.Value);
+                    }
                 }
+                else
+                    throw new NotSupportedException("File format is not supported.");
             }
 
-            _initialization.Set();
+            InitializationSet();
         }
 
         /// <summary>
         /// Parses a stream from a csv file
         /// </summary>
-        /// <param name="s"></param>
+        /// <param name="stream"></param>
+        /// /// <param name="delimiter">Character to delimate the csv</param>
+        /// <param name="definition">The definition of csv columns in the file</param>
         /// <returns></returns>
-        private static Dictionary<string, IO.CoordinateSystemInfo> ParseCsvStream(Stream s)
+        public static Dictionary<int, CoordinateSystem> ParseCsvStream(Stream stream, char delimiter, CsvDefinition definition)
         {
-            var epsgDatabase = new Dictionary<string, IO.CoordinateSystemInfo>();
-            using (var sr = new StreamReader(s))
+            var keyValue = new Dictionary<int, CoordinateSystem>();
+            string regex = "[,]{1}(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))";
+            regex = regex.Replace(',', delimiter);
+
+            if (definition.Code < 0)
+                throw new ArgumentException("Code column index cannot be less that 0");
+            if (definition.WKT < 0)
+                throw new ArgumentException("WKT column index cannot be less that 0");
+
+            using (var sr = new StreamReader(stream))
             {
-                var header = sr.ReadLine();
+
+                if (definition.HasHeader)
+                    _ = sr.ReadLine();
 
                 while (!sr.EndOfStream)
                 {
                     string line = sr.ReadLine();
-                    var contents = Regex.Split(line, "[,]{1}(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))");
+                    string[] contents = Regex.Split(line, regex);
 
-                    int code = int.Parse(contents[0]);
-                    string authority = contents[1];
-                    string name = contents[2];
-                    string alias = contents[3];
-                    string systemType = contents[4];
-                    bool isDeprecated = bool.Parse(contents[5]);
-                    string wkt = contents[6];
+                    int code = int.Parse(contents[definition.Code]);
+                    string wkt = contents[definition.WKT];
+                    string authority = string.Empty;
+                    string name = string.Empty;
+                    string alias = string.Empty;
+                    string coordType = string.Empty;
+                    string isDeprecated = string.Empty;
 
-                    var info = new IO.CoordinateSystemInfo(name,alias, authority, code, systemType, isDeprecated, wkt);
-                    epsgDatabase[name] = info;
+                    if (definition.Authority > -1)
+                        authority = contents[definition.Authority];
+                    if (definition.Name > -1)
+                        name = contents[definition.Name];
+                    if (definition.Alias > -1)
+                        alias = contents[definition.Alias];
+                    if (definition.SystemType > -1)
+                        coordType = contents[definition.SystemType];
+                    if (definition.IsDeprecated > -1)
+                        isDeprecated = contents[definition.IsDeprecated];
+
+                    wkt = wkt.Trim('"');
+
+                    var cs = CoordinateSystemWktReader.Parse(wkt) as CoordinateSystem;
+                    if (cs != null)
+                    {
+                        cs.Name = name;
+                        cs.Alias = alias;
+                        cs.Authority = authority;
+                        //cs.Remarks = isDeprecated;
+                        cs.Remarks = coordType;
+                    }
+
+                    keyValue[code] = cs;
                 }
             }
 
-            return epsgDatabase;
+            return keyValue;
+        }
+
+        /// <summary>
+        /// Default properties to associate a column index to
+        /// </summary>
+        public class CsvDefinition
+        {
+            public bool HasHeader { get; set; }
+            public int Authority { get; set; } = -1;
+            public int Code { get; set; } = -1;
+            public int Name { get; set; } = -1;
+            public int Alias { get; set; } = -1;
+            public int IsDeprecated { get; set; } = -1;
+            public int SystemType { get; set; } = -1;
+            public int WKT { get; set; } = -1;
         }
     }
 }

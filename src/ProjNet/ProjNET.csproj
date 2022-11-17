@@ -2,10 +2,10 @@
 
   <PropertyGroup>
     <RootNamespace>ProjNet</RootNamespace>
-	  <TargetFrameworks>net7.0;netstandard2.0</TargetFrameworks>
+	<TargetFrameworks>net7.0;netstandard2.0</TargetFrameworks>
     <SignAssembly>true</SignAssembly>
     <EnableApiCompat>true</EnableApiCompat>
-	  <LangVersion>latest</LangVersion>
+	<LangVersion>latest</LangVersion>
   </PropertyGroup>
 
   <PropertyGroup Label="Assembly Info">
@@ -31,13 +31,6 @@ Proj.NET performs point-to-point coordinate conversions between geodetic coordin
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="proj.db">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
     <PackageReference Include="System.Memory" Version="4.5.5" />
     <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
   </ItemGroup>

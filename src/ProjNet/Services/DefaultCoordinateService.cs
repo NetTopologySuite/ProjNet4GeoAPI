@@ -9,13 +9,14 @@ using System.Threading.Tasks;
 
 namespace ProjNet.Services
 {
-    internal class DefaultCoordinateService : ICoordinateSystemService
+    /// <summary>
+    /// A default service for fetching Coordinate Systems
+    /// </summary>
+    public class DefaultCoordinateService : CoordinateSystemService, ICoordinateSystemService
     {
         private readonly Dictionary<int, CoordinateSystem> _csBySrid;
         private readonly Dictionary<IInfo, int> _sridByCs;
-        private readonly ManualResetEvent _initialization = new ManualResetEvent(false);
-        private CoordinateSystemServices _css;
-
+        private static ManualResetEvent _initialization = new ManualResetEvent(false);
 
         #region CsEqualityComparer class
         private class CsEqualityComparer : EqualityComparer<IInfo>
@@ -61,9 +62,52 @@ namespace ProjNet.Services
 
         #endregion
 
-        public DefaultCoordinateService(CoordinateSystemServices css, IEnumerable<KeyValuePair<int, string>> enumeration)
+        /// <summary>
+        /// The default coordinate system service.
+        /// </summary>
+        /// <param name="csFactory">The coordinate system factory</param>
+        /// <param name="enumeration">KeyValuePairs of srid and wkt string. If null, then
+        /// WGS84 and WebMercator are by default instatiated with this service</param>
+        public DefaultCoordinateService(CoordinateSystemFactory csFactory, IEnumerable<KeyValuePair<int, string>> enumeration)
+            : base(csFactory)
         {
-            _css = css;
+            _csBySrid = new Dictionary<int, CoordinateSystem>();
+            _sridByCs = new Dictionary<IInfo, int>(new CsEqualityComparer());
+
+            _initialization = new ManualResetEvent(false);
+            if (enumeration == null)
+                Task.Run(() => Initialize(DefaultInitialization()));
+            else
+                Task.Run(() => Initialize(enumeration));
+        }
+
+        /// <summary>
+        /// The default coordinate system service.
+        /// </summary>
+        /// <param name="csFactory">The coordinate system factory</param>
+        /// <param name="enumeration">KeyValuePairs of srid and wkt string. If null, then
+        /// WGS84 and WebMercator are by default instatiated with this service</param>
+        public DefaultCoordinateService(CoordinateSystemFactory csFactory, IEnumerable<KeyValuePair<int, CoordinateSystem>> enumeration)
+            : base(csFactory)
+        {
+            _csBySrid = new Dictionary<int, CoordinateSystem>();
+            _sridByCs = new Dictionary<IInfo, int>(new CsEqualityComparer());
+
+            _initialization = new ManualResetEvent(false);
+            if (enumeration == null)
+                Task.Run(() => Initialize(DefaultInitialization()));
+            else
+                Task.Run(() => Initialize(enumeration));
+        }
+
+        /// <summary>
+        /// The default coordinate system service.
+        /// </summary>
+        /// <param name="enumeration">KeyValuePairs of srid and wkt string. If null, then
+        /// WGS84 and WebMercator are by default instatiated with this service</param>
+        public DefaultCoordinateService(IEnumerable<KeyValuePair<int, string>> enumeration)
+            :base(new CoordinateSystemFactory())
+        {
             _csBySrid = new Dictionary<int, CoordinateSystem>();
             _sridByCs = new Dictionary<IInfo, int>(new CsEqualityComparer());
 
@@ -77,13 +121,13 @@ namespace ProjNet.Services
         private void Initialize(IEnumerable<KeyValuePair<int, string>> enumeration)
         {
             FromEnumeration(enumeration);
-            _initialization.Set();
+            InitializationSet();
         }
 
         private void Initialize(IEnumerable<KeyValuePair<int, CoordinateSystem>> enumeration)
         {
             FromEnumeration(enumeration);
-            _initialization.Set();
+            InitializationSet();
         }
 
         /// <summary>
@@ -96,6 +140,10 @@ namespace ProjNet.Services
             yield return new KeyValuePair<int, CoordinateSystem>(3857, ProjectedCoordinateSystem.WebMercator);
         }
 
+        /// <summary>
+        /// Enumeration method for adding crs to the dictionary
+        /// </summary>
+        /// <param name="enumeration"></param>
         protected void FromEnumeration(IEnumerable<KeyValuePair<int, CoordinateSystem>> enumeration)
         {
             foreach (var sridCs in enumeration)
@@ -127,7 +175,7 @@ namespace ProjNet.Services
         {
             try
             {
-                return _css.CreateFromWkt(wkt.Replace("ELLIPSOID", "SPHEROID"));
+                return CsFactory.CreateFromWkt(wkt.Replace("ELLIPSOID", "SPHEROID"));
             }
             catch (Exception)
             {
@@ -136,6 +184,60 @@ namespace ProjNet.Services
             }
         }
 
+        /// <summary>
+        /// Notifies that the initialization is complete
+        /// </summary>
+        protected static void InitializationSet()
+        {
+            _initialization.Set();
+        }
+        
+
+        /// <summary>
+        /// Clears the dictionary
+        /// </summary>
+        protected void Clear()
+        {
+            _csBySrid.Clear();
+            _sridByCs.Clear();
+        }
+
+        /// <summary>
+        /// Removes a single coordinate system from the dictionary
+        /// </summary>
+        /// <param name="srid"></param>
+        /// <returns></returns>
+        public bool RemoveCoordinateSystem(int srid)
+        {
+            if (_csBySrid.Remove(srid))
+            {
+                var cs = _sridByCs.Where(f => f.Value == srid);
+                foreach (var ss in cs)
+                {
+                    _sridByCs.Remove(ss.Key);
+                }
+                return true;
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Returns an enumeration of the coordinate systems
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerator<KeyValuePair<int, CoordinateSystem>> GetEnumerator()
+        {
+            _initialization.WaitOne();
+            return _csBySrid.GetEnumerator();
+        }
+
+        #region Interface Methods
+
+        /// <summary>
+        /// Adds a coordinate system to the dictionary based on srid
+        /// </summary>
+        /// <param name="srid"></param>
+        /// <param name="coordinateSystem"></param>
         public void AddCoordinateSystem(int srid, CoordinateSystem coordinateSystem)
         {
             lock (((IDictionary)_csBySrid).SyncRoot)
@@ -163,6 +265,12 @@ namespace ProjNet.Services
             }
         }
 
+        /// <summary>
+        /// Adds a coordinate system to the dictionary.
+        /// The authority code is defaulted as the srid.
+        /// </summary>
+        /// <param name="coordinateSystem"></param>
+        /// <returns></returns>
         public virtual int AddCoordinateSystem(CoordinateSystem coordinateSystem)
         {
             int srid = (int)coordinateSystem.AuthorityCode;
@@ -170,22 +278,6 @@ namespace ProjNet.Services
 
             return srid;
         }
-
-        protected void Clear()
-        {
-            _csBySrid.Clear();
-        }
-
-        public int Count
-        {
-            get
-            {
-                _initialization.WaitOne();
-                return _sridByCs.Count;
-            }
-        }
-
-        #region Public Methods
 
         /// <summary>
         /// Returns the coordinate system by <paramref name="srid" /> identifier
@@ -229,24 +321,17 @@ namespace ProjNet.Services
             return null;
         }
 
-        public bool RemoveCoordinateSystem(int srid)
-        {
-            if (_csBySrid.Remove(srid))
-            {
-                var cs = _sridByCs.Where(f => f.Value == srid);
-                foreach (var ss in cs)
-                {
-                    _sridByCs.Remove(ss.Key);
-                }
-                return true;
-            }
-            return false;
-        }
 
-        public IEnumerator<KeyValuePair<int, CoordinateSystem>> GetEnumerator()
+        /// <summary>
+        /// Returns number of coordinate systems registered by the service
+        /// </summary>
+        public int Count
         {
-            _initialization.WaitOne();
-            return _csBySrid.GetEnumerator();
+            get
+            {
+                _initialization.WaitOne();
+                return _sridByCs.Count;
+            }
         }
         #endregion
     }

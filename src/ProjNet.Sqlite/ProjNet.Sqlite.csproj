@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFrameworks>net7.0;netstandard2.0</TargetFrameworks>
+		<SignAssembly>true</SignAssembly>
+		<EnableApiCompat>true</EnableApiCompat>
+		<LangVersion>latest</LangVersion>
+	</PropertyGroup>
+
+	<PropertyGroup Label="NuGet Package Info">
+		<PackageId>ProjNet.Sqlite</PackageId>
+		<Authors>Travis Yeik, NetTopologySuite-Team</Authors>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<TargetFrameworks>net7.0;netstandard2.0</TargetFrameworks>
+		<Authors>Travis Yeik</Authors>
+		<PackageDescription>Provides an extension to ProjNet's ICoordinateSystemService by providing a database for coordinate systems</PackageDescription>
+		<PackageTags>OGC;SFS;Projection</PackageTags>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<None Remove="proj.db" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Content Include="proj.db">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\ProjNet\ProjNET.csproj" />
+	</ItemGroup>
+
+</Project>

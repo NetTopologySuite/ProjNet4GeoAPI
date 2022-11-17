@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 
@@ -11,6 +12,7 @@ namespace ProjNET.Tests.Serialization
             return new BinaryFormatter();
         }
 
+        [Obsolete]
         public static T SanD<T>(T instance, IFormatter formatter)
         {
             using (var ms = new MemoryStream())

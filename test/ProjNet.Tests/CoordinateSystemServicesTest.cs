@@ -9,6 +9,7 @@ using NUnit.Framework;
 using ProjNet;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
+using ProjNet.Services;
 
 namespace ProjNET.Tests
 {
@@ -31,7 +32,7 @@ namespace ProjNET.Tests
                 throw new IgnoreException("Specified file not found");
 
             var css = new CoordinateSystemServices(new CoordinateSystemFactory(),
-                new CoordinateTransformationFactory(), LoadXml(xmlPath));
+                new CoordinateTransformationFactory(), new DefaultCoordinateService(LoadXml(xmlPath)));
 
             Assert.IsNotNull(css.GetCoordinateSystem(4326));
             Assert.IsNotNull(css.GetCoordinateSystem("EPSG", 4326));
@@ -47,7 +48,7 @@ namespace ProjNET.Tests
                     throw new IgnoreException("Specified file not found");
 
             var css = new CoordinateSystemServices(new CoordinateSystemFactory(),
-                new CoordinateTransformationFactory(), LoadCsv(csvPath));
+                new CoordinateTransformationFactory(), new DefaultCoordinateService(LoadCsv(csvPath)));
 
             Assert.IsNotNull(css.GetCoordinateSystem(4326));
             Assert.IsNotNull(css.GetCoordinateSystem("EPSG", 4326));
@@ -88,7 +89,7 @@ namespace ProjNET.Tests
                 var sridElement = node.Element("SRID");
                 if (sridElement != null)
                 {
-                    var srid = int.Parse(sridElement.Value);
+                    int srid = int.Parse(sridElement.Value);
                     yield return new KeyValuePair<int, string>(srid, node.LastNode.ToString());
                 }
             }

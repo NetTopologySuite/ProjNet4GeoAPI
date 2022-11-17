@@ -36,11 +36,31 @@ namespace ProjNet
         private readonly CoordinateTransformationFactory _ctFactory;
 
         /// <summary>
+        /// Creates an instance of this class
+        /// </summary>
+        /// <param name="coordinateSystemFactory">The coordinate sequence factory to use.</param>
+        /// <param name="coordinateTransformationFactory">The coordinate transformation factory to use</param>
+        public CoordinateSystemServices(CoordinateSystemFactory coordinateSystemFactory,
+            CoordinateTransformationFactory coordinateTransformationFactory)
+            : this(coordinateSystemFactory, coordinateTransformationFactory, new DefaultCoordinateService(null))
+        {
+        }
+
+        /// <summary>
         /// Creates an instance of this class.
         /// </summary>
         /// <param name="definitions">An enumeration of coordinate system definitions (WKT)</param>
         public CoordinateSystemServices(IEnumerable<KeyValuePair<int, string>> definitions)
-            : this(new CoordinateSystemFactory(), new CoordinateTransformationFactory(), definitions)
+            : this(new CoordinateSystemFactory(), new CoordinateTransformationFactory(), new DefaultCoordinateService(definitions))
+        {
+        }
+
+        /// <summary>
+        /// Instantiates the class with a FileCoordinateService
+        /// </summary>
+        /// <param name="filename">filename of csv to parse</param>
+        public CoordinateSystemServices(string filename)
+            : this(new CoordinateSystemFactory(), new CoordinateTransformationFactory(), new FileCoordinateService(filename))
         {
         }
 
@@ -48,7 +68,7 @@ namespace ProjNet
         /// Creates an instance of this class
         /// </summary>
         public CoordinateSystemServices()
-            : this(new CoordinateSystemFactory(), new CoordinateTransformationFactory())
+            : this(new CoordinateSystemFactory(), new CoordinateTransformationFactory(), new DefaultCoordinateService(null))
         {
         }
 
@@ -58,6 +78,7 @@ namespace ProjNet
         /// <param name="coordinateSystemFactory">The coordinate sequence factory to use.</param>
         /// <param name="coordinateTransformationFactory">The coordinate transformation factory to use</param>
         /// <param name="enumeration">An enumeration of coordinate system definitions (WKT)</param>
+        [Obsolete ("Please pass in DefaultCoordinateService(enumeration) instead.")]
         public CoordinateSystemServices(CoordinateSystemFactory coordinateSystemFactory,
             CoordinateTransformationFactory coordinateTransformationFactory,
             IEnumerable<KeyValuePair<int, string>> enumeration)
@@ -70,16 +91,25 @@ namespace ProjNet
                 throw new ArgumentNullException(nameof(coordinateTransformationFactory));
             _ctFactory = coordinateTransformationFactory;
 
-            _service = new DefaultCoordinateService(this, enumeration);
+            _service = new DefaultCoordinateService(_coordinateSystemFactory, enumeration);
         }
 
         /// <summary>
-        /// Creates an instance of this class
+        /// Creates an instance of this class from an ICoordinateSystemService
+        /// </summary>
+        public CoordinateSystemServices(ICoordinateSystemService service)
+            : this(new CoordinateSystemFactory(), new CoordinateTransformationFactory(), service)
+        {
+        }
+
+        /// <summary>
+        /// Creates an instance of this class from an ICoordinateSystemService
         /// </summary>
         /// <param name="coordinateSystemFactory">The coordinate sequence factory to use.</param>
         /// <param name="coordinateTransformationFactory">The coordinate transformation factory to use</param>
+        /// <param name="service">The service to use for fetching coordinate systems (ie. Default, File, Database)</param>
         public CoordinateSystemServices(CoordinateSystemFactory coordinateSystemFactory,
-            CoordinateTransformationFactory coordinateTransformationFactory)
+            CoordinateTransformationFactory coordinateTransformationFactory, ICoordinateSystemService service)
         {
             if (coordinateSystemFactory == null)
                 throw new ArgumentNullException(nameof(coordinateSystemFactory));
@@ -88,8 +118,7 @@ namespace ProjNet
             if (coordinateTransformationFactory == null)
                 throw new ArgumentNullException(nameof(coordinateTransformationFactory));
             _ctFactory = coordinateTransformationFactory;
-
-            _service = new DatabaseCoordinateService(this);
+            _service = service;
         }
 
         /// <summary>
@@ -115,6 +144,10 @@ namespace ProjNet
             return null;
         }
 
+        /// <summary>
+        /// Creates a coordinate system from the wkt string
+        /// </summary>
+        /// <param name="wkt"></param>
         public CoordinateSystem CreateFromWkt(string wkt)
         {
             return _coordinateSystemFactory.CreateFromWkt(wkt);
@@ -200,18 +233,28 @@ namespace ProjNet
             get { return _service.Count; }
         }
 
+
+        /// <summary>
+        /// Removes a coordinate system
+        /// </summary>
         [Obsolete]
         public bool RemoveCoordinateSystem(int srid)
         {
             throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// Removes all coordinate systems
+        /// </summary>
         [Obsolete]
         protected void Clear()
         {
             throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// Provides enumeration of the coordinate systems
+        /// </summary>
         [Obsolete]
         public IEnumerator<KeyValuePair<int, CoordinateSystem>> GetEnumerator()
         {
