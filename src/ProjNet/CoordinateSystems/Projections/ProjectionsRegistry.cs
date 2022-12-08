@@ -49,6 +49,7 @@ namespace ProjNet.CoordinateSystems.Projections
             Register("oblique_mercator", typeof(ObliqueMercatorProjection));
             Register("oblique_stereographic", typeof(ObliqueStereographicProjection));
             Register("orthographic", typeof(OrthographicProjection));
+            Register("polar_stereographic", typeof(PolarStereographicProjection));
         }
 
         /// <summary>

@@ -644,6 +644,117 @@ namespace ProjNET.Tests
             Assert.AreEqual(Coord2171[1], transformedCoord2171[1], 1);
         }
 
+		[Test]
+		public void TestUniversalPolarStereographicProjection()
+		{
+            //test data from http://epsg.io/transform
+            double[] Coord4326 = new double[] { 15.00, 73.00 };
+            double[] Coord32661 = new double[] { 2491967.01029204, 163954.12194234435 };
+
+            string wkt4326 = "" +
+                "GEOGCS[\"WGS 84\"," +
+                "DATUM[\"WGS_1984\"," +
+                "SPHEROID[\"WGS 84\",6378137,298.257223563," +
+                "AUTHORITY[\"EPSG\",\"7030\"]]," +
+                "AUTHORITY[\"EPSG\",\"6326\"]]," +
+                "PRIMEM[\"Greenwich\",0," +
+                "AUTHORITY[\"EPSG\",\"8901\"]]," +
+                "UNIT[\"degree\",0.01745329251994328," +
+                "AUTHORITY[\"EPSG\",\"9122\"]]," +
+                "AUTHORITY[\"EPSG\",\"4326\"]]";
+
+            string wkt32661 = "" +
+                "PROJCS[\"WGS 84 / UPS North (N,E)\"," +
+                "GEOGCS[\"WGS 84\"," +
+                "DATUM[\"WGS_1984\"," +
+                "SPHEROID[\"WGS 84\",6378137,298.257223563," +
+                "AUTHORITY[\"EPSG\",\"7030\"]]," +
+                "AUTHORITY[\"EPSG\",\"6326\"]]," +
+                "PRIMEM[\"Greenwich\",0," +
+                "AUTHORITY[\"EPSG\",\"8901\"]]," +
+                "UNIT[\"degree\",0.0174532925199433," +
+                "AUTHORITY[\"EPSG\",\"9122\"]]," +
+                "AUTHORITY[\"EPSG\",\"4326\"]]," +
+                "PROJECTION[\"Polar_Stereographic\"]," +
+                "PARAMETER[\"latitude_of_origin\",90]," +
+                "PARAMETER[\"central_meridian\",0]," +
+                "PARAMETER[\"scale_factor\",0.994]," +
+                "PARAMETER[\"false_easting\",2000000]," +
+                "PARAMETER[\"false_northing\",2000000]," +
+                "UNIT[\"metre\",1," +
+                "AUTHORITY[\"EPSG\",\"9001\"]]," +
+                "AUTHORITY[\"EPSG\",\"32661\"]]";
+
+            var cs1 = CoordinateSystemFactory.CreateFromWkt(wkt4326);
+            var cs2 = CoordinateSystemFactory.CreateFromWkt(wkt32661);
+            var ctf = new CoordinateTransformationFactory();
+
+            var ict = ctf.CreateFromCoordinateSystems(cs2, cs1);
+            var ict2 = ctf.CreateFromCoordinateSystems(cs1, cs2);
+            double[] transformedCoord4326 = ict.MathTransform.Transform(Coord32661);
+            double[] transformedCoord32661 = ict2.MathTransform.Transform(Coord4326);
+
+            Assert.AreEqual(Coord4326[0], transformedCoord4326[0], 0.01);
+            Assert.AreEqual(Coord4326[1], transformedCoord4326[1], 0.01);
+            Assert.AreEqual(Coord32661[0], transformedCoord32661[0], 1);
+            Assert.AreEqual(Coord32661[1], transformedCoord32661[1], 1);
+		}
+
+		[Test]
+		public void TestAustralianAntarcticPolarStereographicProjection()
+		{
+            //test data from http://epsg.io/transform
+            double[] Coord4326 = new double[] { 15.00, -73.00 };
+            double[] Coord3032 = new double[] { 4476201.247377692, 7066975.373300694 };
+
+            string wkt4326 = "" +
+                "GEOGCS[\"WGS 84\"," +
+                "DATUM[\"WGS_1984\"," +
+                "SPHEROID[\"WGS 84\",6378137,298.257223563," +
+                "AUTHORITY[\"EPSG\",\"7030\"]]," +
+                "AUTHORITY[\"EPSG\",\"6326\"]]," +
+                "PRIMEM[\"Greenwich\",0," +
+                "AUTHORITY[\"EPSG\",\"8901\"]]," +
+                "UNIT[\"degree\",0.01745329251994328," +
+                "AUTHORITY[\"EPSG\",\"9122\"]]," +
+                "AUTHORITY[\"EPSG\",\"4326\"]]";
+
+            string wkt3032 = "" +
+                "PROJCS[\"WGS 84 / Australian Antarctic Polar Stereographic\"," +
+                "GEOGCS[\"WGS 84\"," +
+                "DATUM[\"WGS_1984\"," +
+                "SPHEROID[\"WGS 84\",6378137,298.257223563," +
+                "AUTHORITY[\"EPSG\",\"7030\"]]," +
+                "AUTHORITY[\"EPSG\",\"6326\"]]," +
+                "PRIMEM[\"Greenwich\",0," +
+                "AUTHORITY[\"EPSG\",\"8901\"]]," +
+                "UNIT[\"degree\",0.0174532925199433," +
+                "AUTHORITY[\"EPSG\",\"9122\"]]," +
+                "AUTHORITY[\"EPSG\",\"4326\"]]," +
+                "PROJECTION[\"Polar_Stereographic\"]," +
+                "PARAMETER[\"latitude_of_origin\",-71]," +
+                "PARAMETER[\"central_meridian\",70]," +
+                "PARAMETER[\"false_easting\",6000000]," +
+                "PARAMETER[\"false_northing\",6000000]," +
+                "UNIT[\"metre\",1," +
+                "AUTHORITY[\"EPSG\",\"9001\"]]," +
+                "AUTHORITY[\"EPSG\",\"3032\"]]";
+
+            var cs1 = CoordinateSystemFactory.CreateFromWkt(wkt4326);
+            var cs2 = CoordinateSystemFactory.CreateFromWkt(wkt3032);
+            var ctf = new CoordinateTransformationFactory();
+
+            var ict = ctf.CreateFromCoordinateSystems(cs2, cs1);
+            var ict2 = ctf.CreateFromCoordinateSystems(cs1, cs2);
+            double[] transformedCoord4326 = ict.MathTransform.Transform(Coord3032);
+            double[] transformedCoord3032 = ict2.MathTransform.Transform(Coord4326);
+
+            Assert.AreEqual(Coord4326[0], transformedCoord4326[0], 0.01);
+            Assert.AreEqual(Coord4326[1], transformedCoord4326[1], 0.01);
+            Assert.AreEqual(Coord3032[0], transformedCoord3032[0], 1);
+            Assert.AreEqual(Coord3032[1], transformedCoord3032[1], 1);
+		}
+
 	    [Test]
         public void TestUnitTransforms()
         {
