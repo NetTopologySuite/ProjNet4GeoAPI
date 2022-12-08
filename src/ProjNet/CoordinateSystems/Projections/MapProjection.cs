@@ -245,6 +245,14 @@ namespace ProjNet.CoordinateSystems.Projections
         }
 
         /// <summary>
+        /// Adds a parameter to the parameter list
+        /// </summary>
+        internal void AddParameter(string name, double value)
+        {
+            _Parameters.Add(name, value);
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         public int NumParameters
