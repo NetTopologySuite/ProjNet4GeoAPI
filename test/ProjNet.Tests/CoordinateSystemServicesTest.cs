@@ -88,7 +88,7 @@ namespace ProjNET.Tests
                 var sridElement = node.Element("SRID");
                 if (sridElement != null)
                 {
-                    var srid = int.Parse(sridElement.Value);
+                    int srid = int.Parse(sridElement.Value);
                     yield return new KeyValuePair<int, string>(srid, node.LastNode.ToString());
                 }
             }
