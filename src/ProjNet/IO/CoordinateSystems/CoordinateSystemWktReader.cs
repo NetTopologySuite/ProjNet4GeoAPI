@@ -304,13 +304,13 @@ namespace ProjNet.IO.CoordinateSystems
             else
                 tokenizer.CheckCloser(bracket);
 
-            var paramList = new List<ProjectionParameter>();
+            var parameters = new List<ProjectionParameter>();
 
-            var projection = new Projection(projectionName, paramList, projectionName, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+            var projection = new Projection(projectionName, parameters, projectionName, authority, authorityCode, string.Empty, string.Empty, string.Empty);
             return projection;
         }
 
-        private static void ReadParamater(WktStreamTokenizer tokenizer, Projection projection)
+        private static void ReadParameter(WktStreamTokenizer tokenizer, ICollection<ProjectionParameter> projections)
         {
             var bracket = tokenizer.ReadOpener();
             string paramName = tokenizer.ReadDoubleQuotedWord();
@@ -319,7 +319,7 @@ namespace ProjNet.IO.CoordinateSystems
             double paramValue = tokenizer.GetNumericValue();
             tokenizer.ReadCloser(bracket);
 
-            projection.AddParameter(paramName, paramValue);
+            projections.Add(new ProjectionParameter(paramName, paramValue));
         }
 
         private static void ReadExtension(WktStreamTokenizer tokenizer)
@@ -334,12 +334,13 @@ namespace ProjNet.IO.CoordinateSystems
             }
             else
             {
-                System.Diagnostics.Debug.WriteLine("What are you?");
+                System.Diagnostics.Debug.WriteLine(string.Format("Unknown type of extension: {0}", paramName));
             }
 
             tokenizer.ReadCloser(bracket);
 
-            System.Diagnostics.Debug.WriteLine("Now what do we do with you?");
+            //TODO: store this extension as a variable? Do something with it?
+            System.Diagnostics.Debug.WriteLine("An extension was read but not processed.");
         }
 
 
@@ -394,7 +395,7 @@ namespace ProjNet.IO.CoordinateSystems
                         geographicCS = ReadGeographicCoordinateSystem(tokenizer);
                         break;
                     case "PARAMETER":
-                        ReadParamater(tokenizer, projection);
+                        ReadParameter(tokenizer, projection.Parameters);
                         break;
                     case "PROJECTION":
                         projection = ReadProjection(tokenizer);
@@ -402,7 +403,7 @@ namespace ProjNet.IO.CoordinateSystems
                     case "UNIT":
                         unit = ReadLinearUnit(tokenizer);
                         break;
-                    case "EXTENSION": 
+                    case "EXTENSION":
                         ReadExtension(tokenizer);
                         break;
                     default:

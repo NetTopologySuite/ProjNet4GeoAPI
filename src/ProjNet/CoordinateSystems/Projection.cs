@@ -76,17 +76,6 @@ namespace ProjNet.CoordinateSystems
 			return _parameters[index];
 		}
 
-        /// <summary>
-        /// Adds a parameter to the parameter list
-        /// </summary>
-        /// <param name="name">The name of the projection to add</param>
-        /// <param name="value">The projection value</param>
-        public void AddParameter(string name, double value)
-		{
-			var param = new ProjectionParameter(name, value);
-			_parameters.Add(param);
-		}
-
 		/// <summary>
 		/// Gets an named parameter of the projection.
 		/// </summary>

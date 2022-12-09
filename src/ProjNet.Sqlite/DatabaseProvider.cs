@@ -56,9 +56,19 @@ namespace ProjNet.IO
         }
 
         /// <summary>
-        /// Returns the number of entries in the database
+        /// Searches the table names based on an expression
         /// </summary>
-        internal async Task<int> GetCount()
+        /// <param name="name"></param>
+        public async Task<CoordinateSystemInfo[]> SearchCoordinateSystemAsync(string name)
+        {
+            await Init();
+            return await Database.Table<CoordinateSystemInfo>().Where(s => s.Name.ToLower().Contains(name)).ToArrayAsync();
+       }
+
+            /// <summary>
+            /// Returns the number of entries in the database
+            /// </summary>
+            internal async Task<int> GetCount()
         {
             await Init();
             return await Database.Table<CoordinateSystemInfo>().CountAsync();

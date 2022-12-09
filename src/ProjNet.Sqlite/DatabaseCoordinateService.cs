@@ -52,6 +52,20 @@ namespace ProjNet.Services
         }
 
         /// <summary>
+        /// Returns the coordinate system by <paramref name="srid" /> identifier
+        /// </summary>
+        /// <param name="srid">The initialization for the coordinate system</param>
+        /// <returns>The coordinate system.</returns>
+        public async Task<CoordinateSystem> GetCoordinateSystemAsync(int srid)
+        {
+            var sysInfo = await _dbProvider.GetCoordinateSystemInfo(srid);
+            if (sysInfo != null)
+                return CsFactory.CreateFromWkt(sysInfo.WKT);
+
+            return null;
+        }
+
+        /// <summary>
         /// Returns the coordinate system by <paramref name="authority" /> and <paramref name="code" />.
         /// </summary>
         /// <param name="authority">The authority for the coordinate system</param>
@@ -64,6 +78,16 @@ namespace ProjNet.Services
             if (srid.HasValue)
                 return GetCoordinateSystem(srid.Value);
             return null;
+        }
+
+        /// <summary>
+        /// Searches the table names based on an expression
+        /// </summary>
+        /// <param name="name"></param>
+        public Task<CoordinateSystemInfo[]> SearchCoordinateSystemAsync(string name)
+        {
+            return _dbProvider.SearchCoordinateSystemAsync(name);
+
         }
 
         /// <summary>
