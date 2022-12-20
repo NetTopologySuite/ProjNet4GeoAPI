@@ -84,7 +84,7 @@ namespace ProjNet.Services
         /// Searches the table names based on an expression
         /// </summary>
         /// <param name="name"></param>
-        public Task<CoordinateSystemInfo[]> SearchCoordinateSystemAsync(string name)
+        public Task<IEnumerable<CoordinateSystemInfo>> SearchCoordinateSystemAsync(string name)
         {
             return _dbProvider.SearchCoordinateSystemAsync(name);
 

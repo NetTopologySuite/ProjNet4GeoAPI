@@ -1,8 +1,11 @@
 ﻿using ProjNet.CoordinateSystems;
 using ProjNet.IO.CoordinateSystems;
+using ProjNet.Sqlite.Extensions;
 using SQLite;
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ProjNet.IO
@@ -58,12 +61,23 @@ namespace ProjNet.IO
         /// <summary>
         /// Searches the table names based on an expression
         /// </summary>
-        /// <param name="name"></param>
-        public async Task<CoordinateSystemInfo[]> SearchCoordinateSystemAsync(string name)
+        /// <param name="searchKey"></param>
+        public async Task<IEnumerable<CoordinateSystemInfo>> SearchCoordinateSystemAsync(string searchKey)
         {
             await Init();
-            return await Database.Table<CoordinateSystemInfo>().Where(s => s.Name.ToLower().Contains(name)).ToArrayAsync();
+            var filters = searchKey.ToLower().Split(' ').ToList();
+            
+            return await Like(filters);
        }
+
+        private async Task<IEnumerable<CoordinateSystemInfo>> Like(List<string> filters)
+        {
+            var data =await Database.Table<CoordinateSystemInfo>().ToArrayAsync();
+            foreach (string filter in filters)
+                data = data.Where(x => x.Name.ToLower().Contains(filter)).ToArray();
+
+            return data;
+        }
 
             /// <summary>
             /// Returns the number of entries in the database
