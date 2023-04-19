@@ -44,7 +44,7 @@ namespace ProjNet.IO
             if (Database is not null)
                 return;
 
-            Database = new SQLiteAsyncConnection(_connectionString, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.Create | SQLiteOpenFlags.SharedCache);
+            Database = new SQLiteAsyncConnection(_connectionString, SQLiteOpenFlags.ReadWrite | SQLiteOpenFlags.SharedCache);
             var result = await Database.CreateTableAsync<CoordinateSystemInfo>();
         }
 

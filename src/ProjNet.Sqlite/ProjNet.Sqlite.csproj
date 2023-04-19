@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFrameworks>net7.0;netstandard2.0</TargetFrameworks>
@@ -18,25 +18,26 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
-		<None Remove="proj.db" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Content Include="proj.db">
+		<EmbeddedResource Include="proj.db">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
+		</EmbeddedResource>
 	</ItemGroup>
 
 	<ItemGroup>
 	  <PackageReference Include="sqlite-net-pcl" Version="1.8.116" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\ProjNet\ProjNET.csproj" />
+	  <PackageReference Include="SQLitePCLRaw.bundle_green" Version="2.1.4" />	 
 	</ItemGroup>
 
 	<ItemGroup>
 	  <PackageReference Update="Microsoft.SourceLink.GitHub" Version="1.1.1" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<Content Update="proj.db" PublishFolderType="Assembly" />
+		<Content Update="ProjNet.Sqlite.xml" PublishFolderType="Assembly" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\ProjNet\ProjNET.csproj" />
+	</ItemGroup>
 </Project>
