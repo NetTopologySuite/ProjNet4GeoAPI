@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <RootNamespace>ProjNet</RootNamespace>
@@ -49,8 +49,6 @@ Proj.NET performs point-to-point coordinate conversions between geodetic coordin
 
 	<ItemGroup Condition=" '$(EnableApiCompat)' == 'true' ">
 		<PackageReference Include="Microsoft.DotNet.ApiCompat" Version="6.0.0-beta.21159.11" PrivateAssets="All" />
-		<PackageDownload Include="ProjNet" Version="[2.0.0]" PrivateAssets="All" />
-
 		<ResolvedMatchingContract Include="$(NugetPackageRoot)projnet\2.0.0\lib\netstandard2.0\ProjNET.dll" />
 	</ItemGroup>
 
