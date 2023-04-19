@@ -27,9 +27,9 @@ namespace ProjNet.CoordinateSystems
     /// </summary>
     /// <remarks>
     /// <para>CoordinateSystemFactory allows applications to make coordinate systems that 
-    /// cannot be created by a <see cref="CoordinateSystemAuthorityFactory"/>. This factory is very 
+    /// cannot be created by a <see cref="CoordinateSystemFactory"/>. This factory is very 
     /// flexible, whereas the authority factory is easier to use.</para>
-    /// <para>So <see cref="ICoordinateSystemAuthorityFactory"/>can be used to make 'standard' coordinate 
+    /// <para>So <see cref="CoordinateSystemFactory"/>can be used to make 'standard' coordinate 
     /// systems, and <see cref="CoordinateSystemFactory"/> can be used to make 'special' 
     /// coordinate systems.</para>
     /// <para>For example, the EPSG authority has codes for USA state plane coordinate systems 

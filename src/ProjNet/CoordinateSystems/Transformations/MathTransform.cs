@@ -241,6 +241,64 @@ namespace ProjNet.CoordinateSystems.Transformations
         }
 
         /// <summary>
+        /// Transforms an array of coordinates. The passed parameter point should not be modified.
+        /// </summary>
+        /// <param name="points">the array of points [x,y] </param>
+        /// <param name="hasZ">if the array of coordinates containes a z value (i.e. [x,y,z])</param>
+        /// <returns></returns>
+        public double[] TransformArray(double[] points, bool hasZ = false)
+        {
+            if (hasZ)
+                return TransformArrayZ(points);
+
+            var result = new double[points.Length];
+
+            int index = 0;
+
+            while (index < points.Length)
+            {
+                double x = points[index];
+                double y = points[index + 1];
+                double z = 0;
+                (x, y, z) = Transform(x, y, z);
+
+                result[index] = x;
+                result[index + 1] = y;
+                index += 2;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// Transforms an array of coordinates. The passed parameter point should not be modified.
+        /// </summary>
+        /// <param name="points">the array of points [x,y,z] </param>
+        /// <returns></returns>
+        protected double[] TransformArrayZ(double[] points)
+        {
+            var result = new double[points.Length];
+
+            int index = 0;
+
+            while (index < points.Length)
+            {
+                double x = points[index];
+                double y = points[index + 1];
+                double z = points[index + 2];
+                (x, y, z) = Transform(x, y, z);
+
+                result[index] = x;
+                result[index + 1] = y;
+                result[index + 2] = z;
+
+                index += 2;
+            }
+
+            return result;
+        }
+
+        /// <summary>
         /// Transforms a single 2-dimensional point
         /// </summary>
         /// <param name="x">The ordinate value on the first axis, either x or longitude.</param>

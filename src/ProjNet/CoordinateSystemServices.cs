@@ -14,83 +14,26 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with SharpMap; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
-    
+
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
+using System.Net.Http;
+using System.Threading.Tasks;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
+using ProjNet.Services;
 
 namespace ProjNet
 {
     /// <summary>
     /// A coordinate system services class
     /// </summary>
-    public class CoordinateSystemServices // : ICoordinateSystemServices
+    public class CoordinateSystemServices
     {
-        //private static ICoordinateSequenceFactory _coordinateSequenceFactory;
 
-        ///// <summary>
-        ///// Gets or sets a default coordinate sequence factory
-        ///// </summary>
-        //public static ICoordinateSequenceFactory CoordinateSequenceFactory
-        //{
-        //    get { return _coordinateSequenceFactory ?? new CoordinateArraySequenceFactory(); }
-        //    set { _coordinateSequenceFactory = value; }
-        //}
-
-        private readonly Dictionary<int, CoordinateSystem> _csBySrid;
-        private readonly Dictionary<IInfo, int> _sridByCs;
-
+        private readonly ICoordinateSystemService _service;
         private readonly CoordinateSystemFactory _coordinateSystemFactory;
         private readonly CoordinateTransformationFactory _ctFactory;
-        
-        private readonly ManualResetEvent _initialization = new ManualResetEvent(false);
-
-        #region CsEqualityComparer class
-        private class CsEqualityComparer : EqualityComparer<IInfo>
-        {
-            public override bool Equals(IInfo x, IInfo y)
-            {
-                return x.AuthorityCode == y.AuthorityCode &&
-                    string.Compare(x.Authority, y.Authority, StringComparison.OrdinalIgnoreCase) == 0;
-            }
-
-            public override int GetHashCode(IInfo obj)
-            {
-                if (obj == null) return 0;
-                return Convert.ToInt32(obj.AuthorityCode) + (obj.Authority != null ? obj.Authority.GetHashCode() : 0);
-            }
-        }
-        #endregion
-
-        #region CoordinateSystemKey class
-
-        private class CoordinateSystemKey : IInfo
-        {
-            public CoordinateSystemKey(string authority, long authorityCode)
-            {
-                Authority = authority;
-                AuthorityCode = authorityCode;
-            }
-
-            public bool EqualParams(object obj)
-            {
-                throw new NotSupportedException();
-            }
-
-            public string Name { get { return null; } }
-            public string Authority { get; private set; }
-            public long AuthorityCode { get; private set; }
-            public string Alias { get { return null; } }
-            public string Abbreviation { get { return null; } }
-            public string Remarks { get { return null; } }
-            public string WKT { get { return null; } }
-            public string XML { get { return null; } }
-        }
-
-        #endregion
 
         /// <summary>
         /// Creates an instance of this class
@@ -99,7 +42,7 @@ namespace ProjNet
         /// <param name="coordinateTransformationFactory">The coordinate transformation factory to use</param>
         public CoordinateSystemServices(CoordinateSystemFactory coordinateSystemFactory,
             CoordinateTransformationFactory coordinateTransformationFactory)
-            : this(coordinateSystemFactory, coordinateTransformationFactory, null)
+            : this(coordinateSystemFactory, coordinateTransformationFactory, new DefaultCoordinateService(null))
         {
         }
 
@@ -108,7 +51,16 @@ namespace ProjNet
         /// </summary>
         /// <param name="definitions">An enumeration of coordinate system definitions (WKT)</param>
         public CoordinateSystemServices(IEnumerable<KeyValuePair<int, string>> definitions)
-            : this(new CoordinateSystemFactory(), new CoordinateTransformationFactory(), definitions)
+            : this(new CoordinateSystemFactory(), new CoordinateTransformationFactory(), new DefaultCoordinateService(definitions))
+        {
+        }
+
+        /// <summary>
+        /// Instantiates the class with a FileCoordinateService
+        /// </summary>
+        /// <param name="filename">filename of csv to parse</param>
+        public CoordinateSystemServices(string filename)
+            : this(new CoordinateSystemFactory(), new CoordinateTransformationFactory(), new FileCoordinateService(filename))
         {
         }
 
@@ -116,32 +68,9 @@ namespace ProjNet
         /// Creates an instance of this class
         /// </summary>
         public CoordinateSystemServices()
-            : this(new CoordinateSystemFactory(), new CoordinateTransformationFactory(), null)
+            : this(new CoordinateSystemFactory(), new CoordinateTransformationFactory(), new DefaultCoordinateService(null))
         {
         }
-        //public Func<string, long, string> GetDefinition { get; set; }
-
-        /*
-        public static string GetFromSpatialReferenceOrg(string authority, long code)
-        {
-            var url = string.Format("http://spatialreference.org/ref/{0}/{1}/ogcwkt/", 
-                authority.ToLowerInvariant(),
-                code);
-            var req = (HttpWebRequest) WebRequest.Create(url);
-            using (var resp = req.GetResponse())
-            {
-                using (var resps = resp.GetResponseStream())
-                {
-                    if (resps != null)
-                    {
-                        using (var sr = new StreamReader(resps))
-                            return sr.ReadToEnd();
-                    }
-                }
-            }
-            return null;
-        }
-         */
 
         /// <summary>
         /// Creates an instance of this class
@@ -149,6 +78,7 @@ namespace ProjNet
         /// <param name="coordinateSystemFactory">The coordinate sequence factory to use.</param>
         /// <param name="coordinateTransformationFactory">The coordinate transformation factory to use</param>
         /// <param name="enumeration">An enumeration of coordinate system definitions (WKT)</param>
+        [Obsolete ("Please pass in DefaultCoordinateService(enumeration) instead.")]
         public CoordinateSystemServices(CoordinateSystemFactory coordinateSystemFactory,
             CoordinateTransformationFactory coordinateTransformationFactory,
             IEnumerable<KeyValuePair<int, string>> enumeration)
@@ -161,83 +91,67 @@ namespace ProjNet
                 throw new ArgumentNullException(nameof(coordinateTransformationFactory));
             _ctFactory = coordinateTransformationFactory;
 
-            _csBySrid = new Dictionary<int, CoordinateSystem>();
-            _sridByCs = new Dictionary<IInfo, int>(new CsEqualityComparer());
-
-            object enumObj = (object)enumeration ?? DefaultInitialization();
-            _initialization = new ManualResetEvent(false);
-            System.Threading.Tasks.Task.Run(() => FromEnumeration((new[] { this, enumObj })));
+            _service = new DefaultCoordinateService(_coordinateSystemFactory, enumeration);
         }
 
-        //private CoordinateSystemServices(ICoordinateSystemFactory coordinateSystemFactory,
-        //    ICoordinateTransformationFactory coordinateTransformationFactory,
-        //    IEnumerable<KeyValuePair<int, ICoordinateSystem>> enumeration)
-        //    : this(coordinateSystemFactory, coordinateTransformationFactory)
-        //{
-        //    var enumObj = (object)enumeration ?? DefaultInitialization();
-        //    _initialization = new ManualResetEvent(false);
-        //    ThreadPool.QueueUserWorkItem(FromEnumeration, new[] { this, enumObj });
-        //}
+        /// <summary>
+        /// Creates an instance of this class from an ICoordinateSystemService
+        /// </summary>
+        public CoordinateSystemServices(ICoordinateSystemService service)
+            : this(new CoordinateSystemFactory(), new CoordinateTransformationFactory(), service)
+        {
+        }
 
-        private static CoordinateSystem CreateCoordinateSystem(CoordinateSystemFactory coordinateSystemFactory, string wkt)
+        /// <summary>
+        /// Creates an instance of this class from an ICoordinateSystemService
+        /// </summary>
+        /// <param name="coordinateSystemFactory">The coordinate sequence factory to use.</param>
+        /// <param name="coordinateTransformationFactory">The coordinate transformation factory to use</param>
+        /// <param name="service">The service to use for fetching coordinate systems (ie. Default, File, Database)</param>
+        public CoordinateSystemServices(CoordinateSystemFactory coordinateSystemFactory,
+            CoordinateTransformationFactory coordinateTransformationFactory, ICoordinateSystemService service)
+        {
+            if (coordinateSystemFactory == null)
+                throw new ArgumentNullException(nameof(coordinateSystemFactory));
+            _coordinateSystemFactory = coordinateSystemFactory;
+
+            if (coordinateTransformationFactory == null)
+                throw new ArgumentNullException(nameof(coordinateTransformationFactory));
+            _ctFactory = coordinateTransformationFactory;
+            _service = service;
+        }
+
+        /// <summary>
+        /// Returns a CoordinateSystem from a url containing the wkt
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns>Returns null if not found</returns>
+        public async Task<CoordinateSystem> GetCoordinateSystemFromWeb(string url)
         {
             try
             {
-                return coordinateSystemFactory.CreateFromWkt(wkt.Replace("ELLIPSOID", "SPHEROID"));
+                using (var client = new HttpClient())
+                {
+                    string wkt = await client.GetStringAsync(url);
+                    return _coordinateSystemFactory.CreateFromWkt(wkt);
+                }
             }
-            catch (Exception)
+            catch (HttpRequestException ex)
             {
-                // as a fallback we ignore projections not supported
-                return null;
+                System.Diagnostics.Debug.WriteLine(ex.Message);
             }
+
+            return null;
         }
 
-        private static IEnumerable<KeyValuePair<int, CoordinateSystem>> DefaultInitialization()
+        /// <summary>
+        /// Creates a coordinate system from the wkt string
+        /// </summary>
+        /// <param name="wkt"></param>
+        public CoordinateSystem CreateFromWkt(string wkt)
         {
-            yield return new KeyValuePair<int, CoordinateSystem>(4326, GeographicCoordinateSystem.WGS84);
-            yield return new KeyValuePair<int, CoordinateSystem>(3857, ProjectedCoordinateSystem.WebMercator);
+            return _coordinateSystemFactory.CreateFromWkt(wkt);
         }
-
-        private static void FromEnumeration(CoordinateSystemServices css,
-            IEnumerable<KeyValuePair<int, CoordinateSystem>> enumeration)
-        {
-            foreach (var sridCs in enumeration)
-            {
-                css.AddCoordinateSystem(sridCs.Key, sridCs.Value);
-            }
-        }
-
-        private static IEnumerable<KeyValuePair<int, CoordinateSystem>> CreateCoordinateSystems(
-            CoordinateSystemFactory factory,
-            IEnumerable<KeyValuePair<int, string>> enumeration)
-        {
-            foreach (var sridWkt in enumeration)
-            {
-                var cs = CreateCoordinateSystem(factory, sridWkt.Value);
-                if (cs != null)
-                    yield return new KeyValuePair<int, CoordinateSystem>(sridWkt.Key, cs);
-            }
-        }
-
-        private static void FromEnumeration(CoordinateSystemServices css,
-            IEnumerable<KeyValuePair<int, string>> enumeration)
-        {
-            FromEnumeration(css, CreateCoordinateSystems(css._coordinateSystemFactory, enumeration));
-        }
-
-        private static void FromEnumeration(object parameter)
-        {
-            object[] paras = (object[]) parameter;
-            var css = (CoordinateSystemServices) paras[0];
-
-            if (paras[1] is IEnumerable<KeyValuePair<int, string>>)
-                FromEnumeration(css, (IEnumerable<KeyValuePair<int, string>>) paras[1]);
-            else
-                FromEnumeration(css, (IEnumerable<KeyValuePair<int, CoordinateSystem>>)paras[1]);
-
-            css._initialization.Set();
-        }
-
 
         /// <summary>
         /// Returns the coordinate system by <paramref name="srid" /> identifier
@@ -246,8 +160,7 @@ namespace ProjNet
         /// <returns>The coordinate system.</returns>
         public CoordinateSystem GetCoordinateSystem(int srid)
         {
-            _initialization.WaitOne();
-            return _csBySrid.TryGetValue(srid, out var cs) ? cs : null;
+            return _service.GetCoordinateSystem(srid);
         }
 
         /// <summary>
@@ -258,10 +171,7 @@ namespace ProjNet
         /// <returns>The coordinate system.</returns>
         public CoordinateSystem GetCoordinateSystem(string authority, long code)
         {
-            int? srid = GetSRID(authority, code);
-            if (srid.HasValue)
-                return GetCoordinateSystem(srid.Value);
-            return null;
+            return _service.GetCoordinateSystem(authority, code);
         }
 
         /// <summary>
@@ -272,13 +182,7 @@ namespace ProjNet
         /// <returns>The identifier or <value>null</value></returns>
         public int? GetSRID(string authority, long authorityCode)
         {
-            var key = new CoordinateSystemKey(authority, authorityCode);
-            int srid;
-            _initialization.WaitOne();
-            if (_sridByCs.TryGetValue(key, out srid))
-                return srid;
-
-            return null;
+            return _service.GetSRID(authority, authorityCode);
         }
 
         /// <summary>
@@ -305,64 +209,56 @@ namespace ProjNet
             return _ctFactory.CreateFromCoordinateSystems(source, target);
         }
 
-        protected void AddCoordinateSystem(int srid, CoordinateSystem coordinateSystem)
+        /// <summary>
+        /// Adds a coordinate system to the service
+        /// </summary>
+        public void AddCoordinateSystem(int srid, CoordinateSystem coordinateSystem)
         {
-            lock (((IDictionary) _csBySrid).SyncRoot)
-            {
-                lock (((IDictionary) _sridByCs).SyncRoot)
-                {
-                    if (_sridByCs.ContainsKey(coordinateSystem))
-                        return;
-
-                    if (_csBySrid.ContainsKey(srid))
-                    {
-                        if (ReferenceEquals(coordinateSystem, _csBySrid[srid]))
-                            return;
-
-                        _sridByCs.Remove(_csBySrid[srid]);
-                        _csBySrid[srid] = coordinateSystem;
-                        _sridByCs.Add(coordinateSystem, srid);
-                    }
-                    else
-                    {
-                        _csBySrid.Add(srid, coordinateSystem);
-                        _sridByCs.Add(coordinateSystem, srid);
-                    }
-                }
-            }
+            _service.AddCoordinateSystem(srid, coordinateSystem);
         }
 
-        protected virtual int AddCoordinateSystem(CoordinateSystem coordinateSystem)
+        /// <summary>
+        /// Adds a coordinate system to the service
+        /// </summary>
+        public virtual int AddCoordinateSystem(CoordinateSystem coordinateSystem)
         {
-            int srid = (int) coordinateSystem.AuthorityCode;
-            AddCoordinateSystem(srid, coordinateSystem);
-
-            return srid;
+            return _service.AddCoordinateSystem(coordinateSystem);
         }
 
-        protected void Clear()
+        /// <summary>
+        /// Returns the number of coordinate systems in the service
+        /// </summary>
+        public int Count
         {
-            _csBySrid.Clear();
+            get { return _service.Count; }
         }
 
-        protected int Count
-        {
-            get
-            {
-                _initialization.WaitOne();
-                return _sridByCs.Count;
-            }
-        }
 
+        /// <summary>
+        /// Removes a coordinate system
+        /// </summary>
+        [Obsolete]
         public bool RemoveCoordinateSystem(int srid)
         {
             throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// Removes all coordinate systems
+        /// </summary>
+        [Obsolete]
+        protected void Clear()
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// Provides enumeration of the coordinate systems
+        /// </summary>
+        [Obsolete]
         public IEnumerator<KeyValuePair<int, CoordinateSystem>> GetEnumerator()
         {
-            _initialization.WaitOne();
-            return _csBySrid.GetEnumerator();
+            throw new NotSupportedException();
         }
     }
 }
