@@ -50,7 +50,7 @@ jobs:
         dotnet-version: '6.x'
 
     - name: Download Package Files
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4.1.7
       with:
         name: NuGet Package Files (ubuntu-latest)
         path: artifacts
@@ -75,7 +75,7 @@ jobs:
         dotnet-version: '6.x'
 
     - name: Download Package Files
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4.1.7
       with:
         name: NuGet Package Files (ubuntu-latest)
         path: artifacts
