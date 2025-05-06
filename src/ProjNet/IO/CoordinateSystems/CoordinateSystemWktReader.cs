@@ -38,6 +38,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using ProjNet.CoordinateSystems;
@@ -443,8 +444,13 @@ namespace ProjNet.IO.CoordinateSystems
             tokenizer.ReadToken(",");
             tokenizer.NextToken();
             var headcs = ReadCoordinateSystem(null, tokenizer);
-            tokenizer.ReadToken(",");
-            tokenizer.NextToken();
+
+            var ct = tokenizer.NextToken();
+            while (ct != TokenType.Eol && ct != TokenType.Eof && new[] { ",", "]"}.Contains(tokenizer.GetStringValue()))
+            {
+               ct = tokenizer.NextToken();
+
+            }
             var tailcs = ReadCoordinateSystem(null, tokenizer);
 
             string authority = string.Empty;
