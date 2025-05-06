@@ -367,7 +367,7 @@ namespace ProjNet.IO.CoordinateSystems
             string authority = string.Empty;
             long authorityCode = -1;
 
-            tokenizer.NextToken();
+            var ct = tokenizer.NextToken();
             if (tokenizer.GetStringValue() == ",")
             {
                 tokenizer.NextToken();
@@ -377,11 +377,18 @@ namespace ProjNet.IO.CoordinateSystems
                     tokenizer.NextToken();
                     if (tokenizer.GetStringValue() == ",") tokenizer.NextToken();
                 }
-                if (tokenizer.GetStringValue() == ",") tokenizer.NextToken();
-                if (tokenizer.GetStringValue() == "AUTHORITY")
+
+                while (ct != TokenType.Eol && ct != TokenType.Eof)
                 {
-                    tokenizer.ReadAuthority(out authority, out authorityCode);
-                    tokenizer.ReadCloser(bracket);
+                    if (tokenizer.GetStringValue() == "AUTHORITY")
+                    {
+                        tokenizer.ReadAuthority(out authority, out authorityCode);
+                        break;
+                    }
+                    else
+                    {
+                        ct = tokenizer.NextToken();
+                    }
                 }
             }
             //This is default axis values if not specified.
