@@ -100,7 +100,11 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <returns>The inverse projection as MathTransform.</returns>
         public override MathTransform Inverse()
         {
-            return (_inverse ??= new MercatorAuxiliarySphere(_Parameters.ToProjectionParameter(), this));
+            if (_inverse is null)
+            {
+                _inverse = new MercatorAuxiliarySphere(_Parameters.ToProjectionParameter(), this);
+            }
+            return _inverse;
         }
     }
 }
