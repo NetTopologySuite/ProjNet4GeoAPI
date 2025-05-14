@@ -169,5 +169,18 @@ namespace ProjNet.IO.CoordinateSystems
                 long.TryParse(ReadDoubleQuotedWord(), NumberStyles.Any, _nfi, out authorityCode);
             ReadCloser(bracket);
         }
+
+        public void ReadExtension(out string extension, out string extensionMethod)
+        {
+            //EXTENSION["PROJ4_GRIDS","CA61_003.gsb"]
+            if (GetStringValue() != "EXTENSION")
+                ReadToken("EXTENSION");
+            var bracket = ReadOpener();
+            extension = ReadDoubleQuotedWord();
+            ReadToken(",");
+            NextToken();
+            extensionMethod = ReadDoubleQuotedWord();
+            ReadCloser(bracket);
+        }
     }
 }
