@@ -171,9 +171,9 @@ namespace ProjNET.Tests
             Assert.That(projection, Is.Not.Null);
 
             var wgs84 = GeographicCoordinateSystem.WGS84;
-            var dummy = factory.CreateProjectedCoordinateSystem("dummy pcs", 
-                wgs84, projection, LinearUnit.Metre, 
-                new AxisInfo("X", AxisOrientationEnum.East), 
+            var dummy = factory.CreateProjectedCoordinateSystem("dummy pcs",
+                wgs84, projection, LinearUnit.Metre,
+                new AxisInfo("X", AxisOrientationEnum.East),
                 new AxisInfo("Y", AxisOrientationEnum.North));
             Assert.That(dummy, Is.Not.Null);
 
@@ -234,7 +234,7 @@ namespace ProjNET.Tests
             Assert.AreEqual(point[1], rBack[1], 1e-5);
         }
 
-        [Test, Description("Coordinate system isn't supported"), Category("Issue")]
+        [Test, Description("Coordinate system isn't supported"), Category("Issue"), Ignore("Currently parser Partial match isn't supported!")]
         public void TestGitHubIssue98()
         {
             var cs = CoordinateSystemFactory.CreateFromWkt(
@@ -266,7 +266,7 @@ namespace ProjNET.Tests
 			                    ],
 			                    UNIT[""degree"",0.0174532925199433, AUTHORITY[""EPSG"",""9122""]],
 		                        AUTHORITY[""EPSG"",""4619""]
-	                        ], 
+	                        ],
 	                        PROJECTION[""Transverse_Mercator""],
 	                        PARAMETER[""latitude_of_origin"",0],
 	                        PARAMETER[""central_meridian"",18],

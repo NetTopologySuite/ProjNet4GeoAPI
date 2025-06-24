@@ -15,6 +15,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjNET.Tests", "test\ProjN
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ProjNet.Benchmark", "src\ProjNet.Benchmark\ProjNet.Benchmark.csproj", "{1E5D1CC5-8CFE-4C9D-9553-900469C57D6C}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjNet.IO.Wkt", "src\ProjNet.IO.Wkt\ProjNet.IO.Wkt.csproj", "{50AAB59B-25FB-4E36-A31A-B22C62B2105E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProjNet.IO.Wkt.Tests", "ProjNet.IO.Wkt.Tests\ProjNet.IO.Wkt.Tests.csproj", "{3E23D15C-56F1-4431-B241-FC17D2F54BBF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{1E5D1CC5-8CFE-4C9D-9553-900469C57D6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E5D1CC5-8CFE-4C9D-9553-900469C57D6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E5D1CC5-8CFE-4C9D-9553-900469C57D6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{50AAB59B-25FB-4E36-A31A-B22C62B2105E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{50AAB59B-25FB-4E36-A31A-B22C62B2105E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{50AAB59B-25FB-4E36-A31A-B22C62B2105E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{50AAB59B-25FB-4E36-A31A-B22C62B2105E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E23D15C-56F1-4431-B241-FC17D2F54BBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E23D15C-56F1-4431-B241-FC17D2F54BBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E23D15C-56F1-4431-B241-FC17D2F54BBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E23D15C-56F1-4431-B241-FC17D2F54BBF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

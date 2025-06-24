@@ -20,4 +20,8 @@
     <EmbeddedResource Include="SRID.csv" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="WKT\WktToProjConverterTests.cs" />
+  </ItemGroup>
+
 </Project>

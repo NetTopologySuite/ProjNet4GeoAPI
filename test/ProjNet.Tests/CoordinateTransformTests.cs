@@ -17,7 +17,7 @@ namespace ProjNET.Tests
         {
             Verbose = true;
         }
-       
+
         [Test]
         public void TestTransformListOfCoordinates()
         {
@@ -98,7 +98,7 @@ namespace ProjNET.Tests
             var pSouthPole = pCoordSysFactory.CreateFromWkt(strSouthPole);
             Assert.IsNotNull(pSouthPole);
         }
-        
+
         [Test]
 		public void TestAlbersProjection()
 		{
@@ -516,7 +516,7 @@ namespace ProjNET.Tests
 			var gcsKrovak = CoordinateSystemFactory.CreateGeographicCoordinateSystem("Bessel 1840", AngularUnit.Degrees, datum,
 				PrimeMeridian.Greenwich, new AxisInfo("Lon", AxisOrientationEnum.East),
 				new AxisInfo("Lat", AxisOrientationEnum.North));
-            
+
 			var parameters = new List<ProjectionParameter>(5)
 			                     {
 			                         new ProjectionParameter("latitude_of_center", 49.5),
@@ -742,6 +742,7 @@ namespace ProjNET.Tests
 
             var cs1 = CoordinateSystemFactory.CreateFromWkt(wkt4326);
             var cs2 = CoordinateSystemFactory.CreateFromWkt(wkt3032);
+
             var ctf = new CoordinateTransformationFactory();
 
             var ict = ctf.CreateFromCoordinateSystems(cs2, cs1);
@@ -766,7 +767,7 @@ namespace ProjNET.Tests
             //var expected = new[] { 708066.19058, 1151461.51413 };
             double[] expected = new[] { 708066.19057935325, 1151426.4460563776 };
 
-			
+
 			double[] p1 = trans.MathTransform.Transform(p0);
 			double[] p2 = trans.MathTransform.Inverse().Transform(p1);
 
@@ -804,15 +805,15 @@ namespace ProjNET.Tests
             var csTarget = CoordinateSystemFactory.CreateFromWkt(
                 "PROJCS[\"DHDN / Soldner Berlin\",GEOGCS[\"DHDN\",DATUM[\"Deutsches_Hauptdreiecksnetz\",SPHEROID[\"Bessel 1841\",6377397.155,299.1528128,AUTHORITY[\"EPSG\",\"7004\"]],TOWGS84[598.1,73.7,418.2,0.202,0.045,-2.455,6.7],AUTHORITY[\"EPSG\",\"6314\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4314\"]],PROJECTION[\"Cassini_Soldner\"],PARAMETER[\"latitude_of_origin\",52.41864827777778],PARAMETER[\"central_meridian\",13.62720366666667],PARAMETER[\"false_easting\",40000],PARAMETER[\"false_northing\",10000],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"x\",NORTH],AXIS[\"y\",EAST],AUTHORITY[\"EPSG\",\"3068\"]]");
 
-            Test("CassiniSoldner", csSource, csTarget, 
-                 new[] { 13.408055555556, 52.518611111111 }, 
+            Test("CassiniSoldner", csSource, csTarget,
+                 new[] { 13.408055555556, 52.518611111111 },
                  new[] { 25244.540, 21300.969 }, 0.3, 1.0E-5);
 
             /*
             var ct = CoordinateTransformationFactory.CreateFromCoordinateSystems(csSource, csTarget);
             var pgeo = new[] {13.408055555556, 52.518611111111};
             var pcs = ct.MathTransform.Transform(pgeo);
-            
+
             //Evaluated using DotSpatial.Projections
             var pcsExpected = new[] {25244.540, 21300.969};
 
@@ -891,7 +892,7 @@ namespace ProjNET.Tests
             // 3) Scale: 1.0
 
             //TODO MathTransformFactory fac = new MathTransformFactory ();
-            double[,] matrix = new double[,] {{0.883485346527455, -0.468458794848877, 3455869.17937689}, 
+            double[,] matrix = new double[,] {{0.883485346527455, -0.468458794848877, 3455869.17937689},
                                               {0.468458794848877, 0.883485346527455, 5478710.88035753},
                                               {0.0 , 0.0, 1},};
             var mt = new AffineTransform (matrix);
@@ -925,7 +926,7 @@ namespace ProjNET.Tests
             // 3) Scale: 1.0
 
             //TODO MathTransformFactory fac = new MathTransformFactory ();
-            double[,] matrix = new double[,] {{0.883485346527455, -0.468458794848877, 3455869.17937689}, 
+            double[,] matrix = new double[,] {{0.883485346527455, -0.468458794848877, 3455869.17937689},
                                               {0.468458794848877, 0.883485346527455, 5478710.88035753},
                                               {0.0 , 0.0, 1},};
             var mt = new AffineTransform (matrix);
@@ -975,27 +976,27 @@ namespace ProjNET.Tests
             // 2)Rotation: 332,0657, Rotation point  X=3456926,640m Y=5481071,278m;
             // 3) Scale: 1.0
 
-            string ft_wkt = "FITTED_CS[\"Local coordinate system MNAU (based on Gauss-Krueger)\"," +
-                                "PARAM_MT[\"Affine\"," +
-                                   "PARAMETER[\"num_row\",3],PARAMETER[\"num_col\",3],PARAMETER[\"elt_0_0\", 0.883485346527455],PARAMETER[\"elt_0_1\", -0.468458794848877],PARAMETER[\"elt_0_2\", 3455869.17937689],PARAMETER[\"elt_1_0\", 0.468458794848877],PARAMETER[\"elt_1_1\", 0.883485346527455],PARAMETER[\"elt_1_2\", 5478710.88035753],PARAMETER[\"elt_2_2\", 1]]," +
-                                "PROJCS[\"DHDN / Gauss-Kruger zone 3\"," +
-                                   "GEOGCS[\"DHDN\"," +
-                                      "DATUM[\"Deutsches_Hauptdreiecksnetz\"," +
-                                         "SPHEROID[\"Bessel 1841\", 6377397.155, 299.1528128, AUTHORITY[\"EPSG\", \"7004\"]]," +
-                                         "TOWGS84[612.4, 77, 440.2, -0.054, 0.057, -2.797, 0.525975255930096]," +
-                                         "AUTHORITY[\"EPSG\", \"6314\"]]," +
-                                       "PRIMEM[\"Greenwich\", 0, AUTHORITY[\"EPSG\", \"8901\"]]," +
-                                       "UNIT[\"degree\", 0.0174532925199433, AUTHORITY[\"EPSG\", \"9122\"]]," +
-                                       "AUTHORITY[\"EPSG\", \"4314\"]]," +
-                                   "PROJECTION[\"Transverse_Mercator\"]," +
-                                   "PARAMETER[\"latitude_of_origin\", 0]," +
-                                   "PARAMETER[\"central_meridian\", 9]," +
-                                   "PARAMETER[\"scale_factor\", 1]," +
-                                   "PARAMETER[\"false_easting\", 3500000]," +
-                                   "PARAMETER[\"false_northing\", 0]," +
-                                   "UNIT[\"metre\", 1, AUTHORITY[\"EPSG\", \"9001\"]]," +
-                                   "AUTHORITY[\"EPSG\", \"31467\"]]" +
-                        "]";
+            string ft_wkt = "FITTED_CS[\"Local coordinate system MNAU (based on Gauss-Krueger)\",\n" +
+                                "PARAM_MT[\"Affine\",\n" +
+                                   "PARAMETER[\"num_row\",3],PARAMETER[\"num_col\",3],PARAMETER[\"elt_0_0\", 0.883485346527455],PARAMETER[\"elt_0_1\", -0.468458794848877],PARAMETER[\"elt_0_2\", 3455869.17937689],PARAMETER[\"elt_1_0\", 0.468458794848877],PARAMETER[\"elt_1_1\", 0.883485346527455],PARAMETER[\"elt_1_2\", 5478710.88035753],PARAMETER[\"elt_2_2\", 1]],\n" +
+                                "PROJCS[\"DHDN / Gauss-Kruger zone 3\",\n" +
+                                   "GEOGCS[\"DHDN\",\n" +
+                                      "DATUM[\"Deutsches_Hauptdreiecksnetz\",\n" +
+                                         "SPHEROID[\"Bessel 1841\", 6377397.155, 299.1528128, AUTHORITY[\"EPSG\", \"7004\"]],\n" +
+                                         "TOWGS84[612.4, 77, 440.2, -0.054, 0.057, -2.797, 0.525975255930096],\n" +
+                                         "AUTHORITY[\"EPSG\", \"6314\"]],\n" +
+                                       "PRIMEM[\"Greenwich\", 0, AUTHORITY[\"EPSG\", \"8901\"]],\n" +
+                                       "UNIT[\"degree\", 0.0174532925199433, AUTHORITY[\"EPSG\", \"9122\"]],\n" +
+                                       "AUTHORITY[\"EPSG\", \"4314\"]],\n" +
+                                   "PROJECTION[\"Transverse_Mercator\"],\n" +
+                                   "PARAMETER[\"latitude_of_origin\", 0],\n" +
+                                   "PARAMETER[\"central_meridian\", 9],\n" +
+                                   "PARAMETER[\"scale_factor\", 1],\n" +
+                                   "PARAMETER[\"false_easting\", 3500000],\n" +
+                                   "PARAMETER[\"false_northing\", 0],\n" +
+                                   "UNIT[\"metre\", 1, AUTHORITY[\"EPSG\", \"9001\"]],\n" +
+                                   "AUTHORITY[\"EPSG\", \"31467\"]]\n" +
+                                   "]";
 
             //string gk_wkt = "PROJCS[\"DHDN / Gauss-Kruger zone 3\",GEOGCS[\"DHDN\",DATUM[\"Deutsches_Hauptdreiecksnetz\",SPHEROID[\"Bessel 1841\",6377397.155,299.1528128,AUTHORITY[\"EPSG\",\"7004\"]],AUTHORITY[\"EPSG\",\"6314\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4314\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",9],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",3500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AUTHORITY[\"EPSG\",\"31467\"]]";
 

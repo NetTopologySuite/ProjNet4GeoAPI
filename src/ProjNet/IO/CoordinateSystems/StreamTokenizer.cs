@@ -5,7 +5,7 @@
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // ProjNet is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -13,11 +13,11 @@
 
 // You should have received a copy of the GNU Lesser General Public License
 // along with ProjNet; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 // SOURCECODE IS MODIFIED FROM ANOTHER WORK AND IS ORIGINALLY BASED ON GeoTools.NET:
 /*
- *  Copyright (C) 2002 Urban Science Applications, Inc. 
+ *  Copyright (C) 2002 Urban Science Applications, Inc.
  *
  *  This library is free software; you can redistribute it and/or
  *  modify it under the terms of the GNU Lesser General Public
@@ -45,7 +45,7 @@ namespace ProjNet.IO.CoordinateSystems
     ///The StreamTokenizer class takes an input stream and parses it into "tokens", allowing the tokens to be read one at a time. The parsing process is controlled by a table and a number of flags that can be set to various states. The stream tokenizer can recognize identifiers, numbers, quoted strings, and various comment style
     ///</summary>
     ///<remarks>
-    ///This is a crude c# implementation of Java's <a href="http://java.sun.com/products/jdk/1.2/docs/api/java/io/StreamTokenizer.html">StreamTokenizer</a> class.
+    ///This is a crude c# implementation of Java's <a href="http://java.sun.com/products/jdk/1.2/Docs/api/java/io/StreamTokenizer.html">StreamTokenizer</a> class.
     ///</remarks>
     internal class StreamTokenizer
     {
@@ -57,13 +57,13 @@ namespace ProjNet.IO.CoordinateSystems
 
         private int _lineNumber = 1;
         private int _colNumber = 1;
-        private readonly bool _ignoreWhitespace;        
+        private readonly bool _ignoreWhitespace;
 
         /// <summary>
         /// Initializes a new instance of the StreamTokenizer class.
         /// </summary>
         /// <param name="reader">A TextReader with some text to read.</param>
-        /// <param name="ignoreWhitespace">Flag indicating whether whitespace should be ignored.</param>        
+        /// <param name="ignoreWhitespace">Flag indicating whether whitespace should be ignored.</param>
         public StreamTokenizer(TextReader reader, bool ignoreWhitespace)
         {
             if (reader == null)
@@ -95,7 +95,7 @@ namespace ProjNet.IO.CoordinateSystems
         }
 
         /// <summary>
-        /// If the current token is a number, this field contains the value of that number. 
+        /// If the current token is a number, this field contains the value of that number.
         /// </summary>
         /// <remarks>
         /// If the current token is a number, this field contains the value of that number. The current token is a number when the value of the ttype field is TT_NUMBER.
@@ -112,7 +112,7 @@ namespace ProjNet.IO.CoordinateSystems
         }
 
         /// <summary>
-        /// If the current token is a word token, this field contains a string giving the characters of the word token. 
+        /// If the current token is a word token, this field contains a string giving the characters of the word token.
         /// </summary>
         public string GetStringValue()
         {

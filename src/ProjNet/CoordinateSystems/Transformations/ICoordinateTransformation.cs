@@ -55,7 +55,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         string Authority { get; }
 
         /// <summary>
-        /// Code used by authority to identify transformation. An empty string is used for no code.
+        /// Direction used by authority to identify transformation. An empty string is used for no code.
         /// </summary>
         /// <remarks>The AuthorityCode is a compact string defined by an Authority to reference a particular spatial reference object. For example, the European Survey Group (EPSG) authority uses 32 bit integers to reference coordinate systems, so all their code strings will consist of a few digits. The EPSG code for WGS84 Lat/Lon is �4326�.</remarks>
         long AuthorityCode { get; }
