@@ -113,10 +113,12 @@ namespace ProjNet.CoordinateSystems.Projections
 			Name = "Lambert_Conformal_Conic_2SP";
 			Authority = "EPSG";
 			AuthorityCode = 9802;
-			
-            //Check for missing parameters
-			double lat1 = DegreesToRadians(_Parameters.GetParameterValue("standard_parallel_1"));
-            double lat2 = DegreesToRadians(_Parameters.GetParameterValue("standard_parallel_2"));
+
+			//Check for missing parameters
+			//Since this implementation supports conic 1SP and 2SP we add the support for the 1SP implementation here.
+			//There is no need for standard_parallel_1 and standard_parallel_2 parameters in this version: https://pro.arcgis.com/en/pro-app/latest/help/mapping/properties/lambert-conformal-conic.htm
+			double lat1 = DegreesToRadians(_Parameters.GetParameterValue("standard_parallel_1", new[] { "latitude_of_origin" }));
+			double lat2 = DegreesToRadians(_Parameters.GetParameterValue("standard_parallel_2", new[] { "latitude_of_origin" }));
 
 			double sin_po;                  /* sin value                            */
 			double cos_po;                  /* cos value                            */
