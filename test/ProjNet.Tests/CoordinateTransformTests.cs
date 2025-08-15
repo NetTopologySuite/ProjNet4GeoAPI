@@ -1128,5 +1128,39 @@ namespace ProjNET.Tests
             var @delegate2 = new TestDelegate(() => trans2.MathTransform.Transform(new[] { 180.0, 0.0 }));
             Assert.Throws<ArgumentOutOfRangeException>(@delegate2);
         }
+
+        [Test]
+        public static void TestMercatorAuxilarySphereTransformation()
+        {
+            string sourceWkt = "PROJCS[\"WGS_1984_Web_Mercator_Auxiliary_Sphere\",GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Mercator_Auxiliary_Sphere\"],PARAMETER[\"False_Easting\",0.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",0.0],PARAMETER[\"Standard_Parallel_1\",0.0],PARAMETER[\"Auxiliary_Sphere_Type\",0.0],UNIT[\"Meter\",1.0]]";
+            var sourceCoordinateSystem = GetCoordinateSystem(sourceWkt);
+            Assert.NotNull(sourceCoordinateSystem);
+
+            string targetWkt = "PROJCS[\"TX83-NCF\",GEOGCS[\"LL83\",DATUM[\"NAD83\",SPHEROID[\"GRS1980\",6378137.000,298.25722210]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Lambert_Conformal_Conic_2SP\"],PARAMETER[\"false_easting\",1968500.000],PARAMETER[\"false_northing\",6561666.667],PARAMETER[\"central_meridian\",-98.50000000000000],PARAMETER[\"latitude_of_origin\",31.66666666666666],PARAMETER[\"standard_parallel_1\",33.96666666666667],PARAMETER[\"standard_parallel_2\",32.13333333333333],UNIT[\"Foot_US\",0.30480060960122]]";
+            var targetCoordinateSystem = GetCoordinateSystem(targetWkt);
+            Assert.NotNull(targetCoordinateSystem);
+
+            var transformation = GetTransformation(sourceCoordinateSystem, targetCoordinateSystem);
+            Assert.NotNull(transformation);
+
+            var tranformedPoint = transformation.MathTransform.Transform(-10775704.511, 3865240.329);
+            Assert.NotNull(tranformedPoint);
+
+            Assert.AreEqual(2491034.95, tranformedPoint.x, 0.1);
+            Assert.AreEqual(6968468.98, tranformedPoint.y, 0.1);
+        }
+
+        internal static CoordinateSystem GetCoordinateSystem(string wkt)
+        {
+            var coordinateSystemFactory = new CoordinateSystemFactory();
+            return coordinateSystemFactory.CreateFromWkt(wkt);
+        }
+
+        internal static ICoordinateTransformation GetTransformation(CoordinateSystem sourceCoordinateSystem, CoordinateSystem targetCoordinateSystem)
+        {
+            var coordinateSystemFactory = new CoordinateSystemFactory();
+            var coordinateService = new ProjNet.CoordinateSystemServices(coordinateSystemFactory, new CoordinateTransformationFactory());
+            return coordinateService.CreateTransformation(sourceCoordinateSystem, targetCoordinateSystem);
+        }
     }
 }

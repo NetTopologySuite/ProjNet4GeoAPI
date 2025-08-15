@@ -1,7 +1,6 @@
+using ProjNet.CoordinateSystems.Transformations;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using ProjNet.CoordinateSystems.Transformations;
 
 namespace ProjNet.CoordinateSystems.Projections
 {
@@ -21,25 +20,26 @@ namespace ProjNet.CoordinateSystems.Projections
         static ProjectionsRegistry()
         {
             Register("mercator", typeof(Mercator));
-            Register("mercator_1sp", typeof (Mercator));
-            Register("mercator_2sp", typeof (Mercator));
+            Register("mercator_1sp", typeof(Mercator));
+            Register("mercator_2sp", typeof(Mercator));
+            Register("mercator_auxiliary_sphere", typeof(MercatorAuxiliarySphere));
             Register("pseudo-mercator", typeof(PseudoMercator));
             Register("popular_visualisation pseudo-mercator", typeof(PseudoMercator));
             Register("google_mercator", typeof(PseudoMercator));
-			
+
             Register("transverse_mercator", typeof(TransverseMercator));
             Register("gauss_kruger", typeof(TransverseMercator));
 
             Register("albers", typeof(AlbersProjection));
-			Register("albers_conic_equal_area", typeof(AlbersProjection));
+            Register("albers_conic_equal_area", typeof(AlbersProjection));
 
-			Register("krovak", typeof(KrovakProjection));
+            Register("krovak", typeof(KrovakProjection));
 
-			Register("polyconic", typeof(PolyconicProjection));
-			
+            Register("polyconic", typeof(PolyconicProjection));
+
             Register("lambert_conformal_conic", typeof(LambertConformalConic2SP));
-			Register("lambert_conformal_conic_2sp", typeof(LambertConformalConic2SP));
-			Register("lambert_conic_conformal_(2sp)", typeof(LambertConformalConic2SP));
+            Register("lambert_conformal_conic_2sp", typeof(LambertConformalConic2SP));
+            Register("lambert_conic_conformal_(2sp)", typeof(LambertConformalConic2SP));
 
             Register("lambert_azimuthal_equal_area", typeof(LambertAzimuthalEqualAreaProjection));
 
