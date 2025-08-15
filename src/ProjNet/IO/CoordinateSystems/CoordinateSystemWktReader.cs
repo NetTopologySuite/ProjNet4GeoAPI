@@ -360,9 +360,17 @@ namespace ProjNet.IO.CoordinateSystems
             tokenizer.ReadToken("GEOGCS");
             var geographicCS = ReadGeographicCoordinateSystem(tokenizer);
             tokenizer.ReadToken(",");
-            tokenizer.ReadToken("PROJECTION");
+            tokenizer.NextToken();
+
+            LinearUnit linearUnit = null;
+
+            if (tokenizer.GetStringValue().Equals("UNIT", StringComparison.OrdinalIgnoreCase))
+            {
+                linearUnit = ReadLinearUnit(tokenizer);
+                tokenizer.ReadToken(",");
+            }
             var projection = ReadProjection(tokenizer);
-            var unit = ReadLinearUnit(tokenizer);
+            var unit = linearUnit ?? ReadLinearUnit(tokenizer);
             var axisInfo = new List<AxisInfo>(2);
             string authority = string.Empty;
             long authorityCode = -1;
