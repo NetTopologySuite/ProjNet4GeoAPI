@@ -1166,6 +1166,29 @@ namespace ProjNET.Tests
             Assert.NotNull(transformation);
         }
 
+        [Test]
+        public void TestLamberTangentialConformalConicProjectionRegistryAndTransformation()
+        {
+            string sourceWkt = "PROJCS[\"WORLD-LM-TAN\",GEOGCS[\"LL84\",DATUM[\"WGS84\",SPHEROID[\"WGS84\",6378137.000,298.25722356]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Lambert Tangential Conformal Conic Projection\"],PARAMETER[\"false_easting\",0.000],PARAMETER[\"false_northing\",0.000],PARAMETER[\"scale_factor\",1.000000000000],PARAMETER[\"central_meridian\",0.00000000000000],PARAMETER[\"latitude_of_origin\",1.00000000000000],UNIT[\"Meter\",1.00000000000000]]";
+            string targetWkt = "PROJCS[\"WGS84.PseudoMercator\",GEOGCS[\"LL84\",DATUM[\"WGS84\",SPHEROID[\"WGS84\",6378137.000,298.25722356]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Popular Visualisation Pseudo Mercator\"],PARAMETER[\"false_easting\",0.000],PARAMETER[\"false_northing\",0.000],PARAMETER[\"central_meridian\",0.00000000000000],UNIT[\"Meter\",1.00000000000000]]";
+
+            var sourceCoordinateSystem = GetCoordinateSystem(sourceWkt);
+            Assert.NotNull(sourceCoordinateSystem);
+
+            var targetCoordinateSystem = GetCoordinateSystem(targetWkt);
+            Assert.NotNull(targetCoordinateSystem);
+
+            var transformation = GetTransformation(sourceCoordinateSystem, targetCoordinateSystem);
+            Assert.NotNull(transformation);
+
+            // Test the transformation with a known points. Tested with AutoCAD map 3D
+            double[] pGeo = new[] { 4101119.6855, -229063.8661 }; // Nairobi, Kenya
+            double[] pUtm = transformation.MathTransform.Transform(pGeo);
+
+            double[] expected = new[] { 4098998.6422, -142387.5532 };
+            Assert.IsTrue(ToleranceLessThan(pUtm, expected, 0.05), TransformationError("LambertConicConformal2SP", expected, pUtm));
+        }
+
         internal static CoordinateSystem GetCoordinateSystem(string wkt)
         {
             var coordinateSystemFactory = new CoordinateSystemFactory();
