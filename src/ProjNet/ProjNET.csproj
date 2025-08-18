@@ -16,7 +16,7 @@
   <PropertyGroup Label="NuGet Package Info">
     <PackageId>ProjNET</PackageId>
     <Authors>Morten Nielsen, NetTopologySuite-Team</Authors>
-    <PackageLicenseExpression>LGPL-2.1-or-later</PackageLicenseExpression>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <PackageDescription>.NET Spatial Reference and Projection Engine.
 Proj.NET performs point-to-point coordinate conversions between geodetic coordinate systems for use in fx. Geographic Information Systems (GIS) or GPS applications. The spatial reference model used adheres to the Simple Features specification.
