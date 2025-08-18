@@ -5,7 +5,7 @@
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // ProjNet is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -13,12 +13,13 @@
 
 // You should have received a copy of the GNU Lesser General Public License
 // along with ProjNet; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using System;
 using System.Collections.Generic;
 using System.Text;
 using ProjNet.IO.CoordinateSystems;
+using ProjNet.IO.Wkt;
 
 namespace ProjNet.CoordinateSystems
 {
@@ -26,15 +27,15 @@ namespace ProjNet.CoordinateSystems
     /// Builds up complex objects from simpler objects or values.
     /// </summary>
     /// <remarks>
-    /// <para>CoordinateSystemFactory allows applications to make coordinate systems that 
+    /// <para>CoordinateSystemFactory allows applications to make coordinate systems that
     /// is very flexible, whereas the other factories are easier to use.</para>
     /// <para>So this Factory can be used to make 'special' coordinate systems.</para>
-    /// <para>For example, the EPSG authority has codes for USA state plane coordinate systems 
-    /// using the NAD83 datum, but these coordinate systems always use meters. EPSG does not 
+    /// <para>For example, the EPSG authority has codes for USA state plane coordinate systems
+    /// using the NAD83 datum, but these coordinate systems always use meters. EPSG does not
     /// have codes for NAD83 state plane coordinate systems that use feet units. This factory
     /// lets an application create such a hybrid coordinate system.</para>
     /// </remarks>
-    public class CoordinateSystemFactory 
+    public class CoordinateSystemFactory
     {
         /// <summary>
         /// Creates an instance of this class
@@ -64,6 +65,12 @@ namespace ProjNet.CoordinateSystems
             return info as CoordinateSystem;
         }
 
+        public CoordinateSystem CreateFromWktNew(string WKT)
+        {
+            var info = WktToProjBuilder.ParseAndBuild(WKT);
+            return info as CoordinateSystem;
+        }
+
 
         /// <summary>
         /// Creates a <see cref="CompoundCoordinateSystem"/> [NOT IMPLEMENTED].
@@ -83,11 +90,11 @@ namespace ProjNet.CoordinateSystems
         /// <summary>
         /// Creates a <see cref="FittedCoordinateSystem"/>.
         /// </summary>
-        /// <remarks>The units of the axes in the fitted coordinate system will be 
+        /// <remarks>The units of the axes in the fitted coordinate system will be
         /// inferred from the units of the base coordinate system. If the affine map
         /// performs a rotation, then any mixed axes must have identical units. For
-        /// example, a (lat_deg,lon_deg,height_feet) system can be rotated in the 
-        /// (lat,lon) plane, since both affected axes are in degrees. But you 
+        /// example, a (lat_deg,lon_deg,height_feet) system can be rotated in the
+        /// (lat,lon) plane, since both affected axes are in degrees. But you
         /// should not rotate this coordinate system in any other plane.</remarks>
         /// <param name="name">Name of coordinate system</param>
         /// <param name="baseCoordinateSystem">Base coordinate system</param>
@@ -122,9 +129,9 @@ namespace ProjNet.CoordinateSystems
         /// Creates a <see cref="ILocalCoordinateSystem">local coordinate system</see>.
         /// </summary>
         /// <remarks>
-        ///  The dimension of the local coordinate system is determined by the size of 
-        /// the axis array. All the axes will have the same units. If you want to make 
-        /// a coordinate system with mixed units, then you can make a compound 
+        ///  The dimension of the local coordinate system is determined by the size of
+        /// the axis array. All the axes will have the same units. If you want to make
+        /// a coordinate system with mixed units, then you can make a compound
         /// coordinate system from different local coordinate systems.
         /// </remarks>
         /// <param name="name">Name of local coordinate system</param>
@@ -219,9 +226,9 @@ namespace ProjNet.CoordinateSystems
         /// Creates <see cref="HorizontalDatum"/> from ellipsoid and Bursa-World parameters.
         /// </summary>
         /// <remarks>
-        /// Since this method contains a set of Bursa-Wolf parameters, the created 
+        /// Since this method contains a set of Bursa-Wolf parameters, the created
         /// datum will always have a relationship to WGS84. If you wish to create a
-        /// horizontal datum that has no relationship with WGS84, then you can 
+        /// horizontal datum that has no relationship with WGS84, then you can
         /// either specify a <see cref="DatumType">horizontalDatumType</see> of <see cref="DatumType.HD_Other"/>, or create it via WKT.
         /// </remarks>
         /// <param name="name">Name of ellipsoid</param>
@@ -294,7 +301,7 @@ namespace ProjNet.CoordinateSystems
         /// </summary>
         /// <param name="name">Name of datum</param>
         /// <param name="datumType">Type of datum</param>
-        /// <returns>Vertical datum</returns>	
+        /// <returns>Vertical datum</returns>
         public VerticalDatum CreateVerticalDatum(string name, DatumType datumType)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -322,7 +329,7 @@ namespace ProjNet.CoordinateSystems
         }
 
         /// <summary>
-        /// Creates a <see cref="CreateGeocentricCoordinateSystem"/> from a <see cref="HorizontalDatum">datum</see>, 
+        /// Creates a <see cref="CreateGeocentricCoordinateSystem"/> from a <see cref="HorizontalDatum">datum</see>,
         /// <see cref="LinearUnit">linear unit</see> and <see cref="PrimeMeridian"/>.
         /// </summary>
         /// <param name="name">Name of geocentric coordinate system</param>

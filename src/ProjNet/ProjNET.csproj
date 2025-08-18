@@ -25,7 +25,19 @@ Proj.NET performs point-to-point coordinate conversions between geodetic coordin
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Memory" Version="4.5.3" />
+    <Antlr4 Include="$(ProjectDir)\IO\Wkt\WktCrs.g4">
+      <Listener>false</Listener>
+      <Visitor>true</Visitor>
+      <GAtn>false</GAtn>
+      <Package>ProjNet.IO.Wkt</Package>
+      <Error>true</Error>
+    </Antlr4>
+  </ItemGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="Antlr4.Runtime.Standard" Version="4.13.1" />
+    <PackageReference Include="Antlr4BuildTasks" Version="12.8" PrivateAssets="all" />
+    <PackageReference Include="System.Memory" Version="4.5.5" />
     <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
   </ItemGroup>
 
