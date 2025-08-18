@@ -23,8 +23,8 @@ namespace ProjNet.CoordinateSystems.Projections
             Register("mercator_1sp", typeof(Mercator));
             Register("mercator_2sp", typeof(Mercator));
             Register("mercator_auxiliary_sphere", typeof(MercatorAuxiliarySphere));
-            Register("pseudo-mercator", typeof(PseudoMercator));
-            Register("popular_visualisation pseudo-mercator", typeof(PseudoMercator));
+            Register("pseudo_mercator", typeof(PseudoMercator));
+            Register("popular_visualisation_pseudo_mercator", typeof(PseudoMercator));
             Register("google_mercator", typeof(PseudoMercator));
 
             Register("transverse_mercator", typeof(TransverseMercator));
@@ -90,7 +90,7 @@ namespace ProjNet.CoordinateSystems.Projections
 
         private static string ProjectionNameToRegistryKey(string name)
         {
-            return name.ToLowerInvariant().Replace(' ', '_');
+            return name.ToLowerInvariant().Replace(' ', '_').Replace("-", "_");
         }
 
         /// <summary>

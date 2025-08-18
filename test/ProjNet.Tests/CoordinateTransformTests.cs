@@ -1150,6 +1150,22 @@ namespace ProjNET.Tests
             Assert.AreEqual(6968468.98, tranformedPoint.y, 0.1);
         }
 
+        [Test]
+        public void TestPopularVisualizationPseudoMercatorProjectionRegistry()
+        {
+            string sourceWkt = "GEOGCS[\"GCS_WGS_1984\", DATUM[\"D_WGS_1984\", SPHEROID[\"WGS_1984\",6378137.0,298.257223563]], PRIMEM[\"Greenwich\",0.0], UNIT[\"Degree\",0.0174532925199433]]";
+            string targetWkt = "PROJCS[\"WGS84.PseudoMercator\",GEOGCS[\"LL84\",DATUM[\"WGS84\",SPHEROID[\"WGS84\",6378137.000,298.25722356]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Popular Visualisation Pseudo Mercator\"],PARAMETER[\"false_easting\",0.000],PARAMETER[\"false_northing\",0.000],PARAMETER[\"central_meridian\",0.00000000000000],UNIT[\"Meter\",1.00000000000000]]";
+
+            var sourceCoordinateSystem = GetCoordinateSystem(sourceWkt);
+            Assert.NotNull(sourceCoordinateSystem);
+
+            var targetCoordinateSystem = GetCoordinateSystem(targetWkt);
+            Assert.NotNull(targetCoordinateSystem);
+
+            var transformation = GetTransformation(sourceCoordinateSystem, targetCoordinateSystem);
+            Assert.NotNull(transformation);
+        }
+
         internal static CoordinateSystem GetCoordinateSystem(string wkt)
         {
             var coordinateSystemFactory = new CoordinateSystemFactory();
