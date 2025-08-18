@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net6</TargetFramework>
+    <TargetFrameworks>net6;net8</TargetFrameworks>
     <SignAssembly>true</SignAssembly>
     <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
