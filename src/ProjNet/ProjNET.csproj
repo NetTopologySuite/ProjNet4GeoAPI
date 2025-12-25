@@ -3,9 +3,10 @@
 
   <PropertyGroup>
     <RootNamespace>ProjNet</RootNamespace>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
     <SignAssembly>true</SignAssembly>
-    <EnableApiCompat>true</EnableApiCompat>
+	  <EnablePackageValidation>true</EnablePackageValidation>
+	  <PackageValidationBaselineVersion>2.0.0</PackageValidationBaselineVersion>
   </PropertyGroup>
 
   <PropertyGroup Label="Assembly Info">
@@ -24,16 +25,9 @@ Proj.NET performs point-to-point coordinate conversions between geodetic coordin
     <PackageTags>OGC;SFS;Projection</PackageTags>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="System.Memory" Version="4.5.3" />
-    <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="System.Memory" Version="4.6.0" />
+	<!--<PackageReference Include="System.Numerics.Vectors" Version="4.6.0" />-->
   </ItemGroup>
-
-	<ItemGroup Condition=" '$(EnableApiCompat)' == 'true' ">
-		<PackageReference Include="Microsoft.DotNet.ApiCompat" Version="6.0.0-beta.21159.11" PrivateAssets="All" />
-		<PackageDownload Include="ProjNet" Version="[2.0.0]" PrivateAssets="All" />
-
-		<ResolvedMatchingContract Include="$(NugetPackageRoot)projnet\2.0.0\lib\netstandard2.0\ProjNET.dll" />
-	</ItemGroup>
 
 </Project>

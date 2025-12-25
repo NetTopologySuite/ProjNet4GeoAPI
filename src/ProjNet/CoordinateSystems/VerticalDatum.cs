@@ -24,6 +24,9 @@ namespace ProjNet.CoordinateSystems
         {
         }
 
+        /// <summary>
+        /// ODN - VerticalDatum
+        /// </summary>
         public static VerticalDatum ODN
         {
             get

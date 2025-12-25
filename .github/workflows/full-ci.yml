@@ -15,10 +15,10 @@ jobs:
     - name: Get source
       uses: actions/checkout@v2
 
-    - name: Setup .NET Core 3.1
-      uses: actions/setup-dotnet@v1
+    - name: Setup .NET 
+      uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 3.1.406
+        dotnet-version: 8
 
     - name: Build
       run: dotnet build -c Release -v minimal -p:WarningLevel=3
@@ -31,7 +31,7 @@ jobs:
       run: dotnet pack -c Release --no-build -o artifacts -p:NoWarn=NU5105
 
     - name: Upload
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4
       with:
         name: NuGet Package Files (${{ matrix.os }})
         path: artifacts
@@ -44,13 +44,13 @@ jobs:
     if: github.event_name == 'push' && (github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/master')
 
     steps:
-    - name: Setup .NET Core 3.1
-      uses: actions/setup-dotnet@v1
+    - name: Setup .NET 8
+      uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 3.1.406
+        dotnet-version: 8
 
     - name: Download Package Files
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4.1.7
       with:
         name: NuGet Package Files (ubuntu-latest)
         path: artifacts
@@ -69,13 +69,13 @@ jobs:
     if: github.event_name == 'push' && github.ref == 'refs/heads/master'
 
     steps:
-    - name: Setup .NET Core 3.1
-      uses: actions/setup-dotnet@v1
+    - name: Setup .NET 8
+      uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 3.1.406
+        dotnet-version: 8
 
     - name: Download Package Files
-      uses: actions/download-artifact@v2
+      uses: actions/download-artifact@v4.1.7
       with:
         name: NuGet Package Files (ubuntu-latest)
         path: artifacts

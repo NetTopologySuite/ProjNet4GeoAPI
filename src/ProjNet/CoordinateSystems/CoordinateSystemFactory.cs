@@ -27,11 +27,8 @@ namespace ProjNet.CoordinateSystems
     /// </summary>
     /// <remarks>
     /// <para>CoordinateSystemFactory allows applications to make coordinate systems that 
-    /// cannot be created by a <see cref="CoordinateSystemAuthorityFactory"/>. This factory is very 
-    /// flexible, whereas the authority factory is easier to use.</para>
-    /// <para>So <see cref="ICoordinateSystemAuthorityFactory"/>can be used to make 'standard' coordinate 
-    /// systems, and <see cref="CoordinateSystemFactory"/> can be used to make 'special' 
-    /// coordinate systems.</para>
+    /// is very flexible, whereas the other factories are easier to use.</para>
+    /// <para>So this Factory can be used to make 'special' coordinate systems.</para>
     /// <para>For example, the EPSG authority has codes for USA state plane coordinate systems 
     /// using the NAD83 datum, but these coordinate systems always use meters. EPSG does not 
     /// have codes for NAD83 state plane coordinate systems that use feet units. This factory

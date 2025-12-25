@@ -1,7 +1,6 @@
+using ProjNet.CoordinateSystems.Transformations;
 using System;
 using System.Collections.Generic;
-using System.Reflection;
-using ProjNet.CoordinateSystems.Transformations;
 
 namespace ProjNet.CoordinateSystems.Projections
 {
@@ -21,25 +20,27 @@ namespace ProjNet.CoordinateSystems.Projections
         static ProjectionsRegistry()
         {
             Register("mercator", typeof(Mercator));
-            Register("mercator_1sp", typeof (Mercator));
-            Register("mercator_2sp", typeof (Mercator));
-            Register("pseudo-mercator", typeof(PseudoMercator));
-            Register("popular_visualisation pseudo-mercator", typeof(PseudoMercator));
+            Register("mercator_1sp", typeof(Mercator));
+            Register("mercator_2sp", typeof(Mercator));
+            Register("mercator_auxiliary_sphere", typeof(MercatorAuxiliarySphere));
+            Register("pseudo_mercator", typeof(PseudoMercator));
+            Register("popular_visualisation_pseudo_mercator", typeof(PseudoMercator));
             Register("google_mercator", typeof(PseudoMercator));
-			
+
             Register("transverse_mercator", typeof(TransverseMercator));
             Register("gauss_kruger", typeof(TransverseMercator));
 
             Register("albers", typeof(AlbersProjection));
-			Register("albers_conic_equal_area", typeof(AlbersProjection));
+            Register("albers_conic_equal_area", typeof(AlbersProjection));
 
-			Register("krovak", typeof(KrovakProjection));
+            Register("krovak", typeof(KrovakProjection));
 
-			Register("polyconic", typeof(PolyconicProjection));
-			
+            Register("polyconic", typeof(PolyconicProjection));
+
             Register("lambert_conformal_conic", typeof(LambertConformalConic2SP));
-			Register("lambert_conformal_conic_2sp", typeof(LambertConformalConic2SP));
-			Register("lambert_conic_conformal_(2sp)", typeof(LambertConformalConic2SP));
+            Register("lambert_conformal_conic_2sp", typeof(LambertConformalConic2SP));
+            Register("lambert_conic_conformal_(2sp)", typeof(LambertConformalConic2SP));
+            Register("lambert_tangential_conformal_conic_projection", typeof(LambertConformalConic2SP));
 
             Register("lambert_azimuthal_equal_area", typeof(LambertAzimuthalEqualAreaProjection));
 
@@ -49,6 +50,7 @@ namespace ProjNet.CoordinateSystems.Projections
             Register("oblique_mercator", typeof(ObliqueMercatorProjection));
             Register("oblique_stereographic", typeof(ObliqueStereographicProjection));
             Register("orthographic", typeof(OrthographicProjection));
+            Register("polar_stereographic", typeof(PolarStereographicProjection));
         }
 
         /// <summary>
@@ -89,7 +91,7 @@ namespace ProjNet.CoordinateSystems.Projections
 
         private static string ProjectionNameToRegistryKey(string name)
         {
-            return name.ToLowerInvariant().Replace(' ', '_');
+            return name.ToLowerInvariant().Replace(' ', '_').Replace("-", "_");
         }
 
         /// <summary>

@@ -49,10 +49,19 @@ namespace ProjNet.CoordinateSystems.Projections
     [Serializable]
     public abstract class MapProjection : MathTransform, IProjection
     {
+        /// <summary>
+        /// EPS10 => 1e-10.
+        /// </summary>
         protected const double EPS10 = 1e-10;
 
+        /// <summary>
+        /// EPS7 => 1e-7.
+        /// </summary>
         protected const double EPS7 = 1e-7;
 
+        /// <summary>
+        /// HUGE_VAL => double.NaN.
+        /// </summary>
         protected const double HUGE_VAL = double.NaN;
 
         // ReSharper disable InconsistentNaming
@@ -1154,6 +1163,11 @@ namespace ProjNet.CoordinateSystems.Projections
         private const double P20 = 0.01677689594356261023; /* 761 / 45360 */
 
 
+        /// <summary>
+        /// authset
+        /// </summary>
+        /// <param name="es"></param>
+        /// <returns></returns>
         protected static double[] authset(double es)
         {
             double[] APA = new double[3];
@@ -1169,6 +1183,12 @@ namespace ProjNet.CoordinateSystems.Projections
             return APA;
         }
 
+        /// <summary>
+        /// authlat
+        /// </summary>
+        /// <param name="beta"></param>
+        /// <param name="APA"></param>
+        /// <returns></returns>
         protected static double authlat(double beta, double[] APA)
         {
             double t = beta + beta;

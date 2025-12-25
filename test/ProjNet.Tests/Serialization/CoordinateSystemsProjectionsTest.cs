@@ -1,11 +1,14 @@
 ﻿using NUnit.Framework;
 using ProjNet.CoordinateSystems;
+using System;
 
 namespace ProjNET.Tests.Serialization
 {
-    public class CoordinateSystemsProjectionsTest : BaseSerializationTest
+    public class CoordinateSystemsProjectionsTest
+#if !NET7_0_OR_GREATER
+        : BaseSerializationTest
     {
-        [Test]
+        [Test, Obsolete("ISerializable is deprecated")]
         public void TestProjectionParameterSet() 
         {
             var ps = new ProjNet.CoordinateSystems.Projections.ProjectionParameterSet(
@@ -20,6 +23,9 @@ namespace ProjNET.Tests.Serialization
 
             Assert.AreEqual(ps, psD);
         }
+#else
+    {
+#endif
 
         [Test]
         public void CreateTransformationFromCoordinateSystemDeserializedFromWKT()

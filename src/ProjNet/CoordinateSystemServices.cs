@@ -305,6 +305,11 @@ namespace ProjNet
             return _ctFactory.CreateFromCoordinateSystems(source, target);
         }
 
+        /// <summary>
+        /// AddCoordinateSystem
+        /// </summary>
+        /// <param name="srid"></param>
+        /// <param name="coordinateSystem"></param>
         protected void AddCoordinateSystem(int srid, CoordinateSystem coordinateSystem)
         {
             lock (((IDictionary) _csBySrid).SyncRoot)
@@ -332,6 +337,11 @@ namespace ProjNet
             }
         }
 
+        /// <summary>
+        /// AddCoordinateSystem
+        /// </summary>
+        /// <param name="coordinateSystem"></param>
+        /// <returns></returns>
         protected virtual int AddCoordinateSystem(CoordinateSystem coordinateSystem)
         {
             int srid = (int) coordinateSystem.AuthorityCode;
@@ -340,11 +350,17 @@ namespace ProjNet
             return srid;
         }
 
+        /// <summary>
+        /// Clear
+        /// </summary>
         protected void Clear()
         {
             _csBySrid.Clear();
         }
 
+        /// <summary>
+        /// Count
+        /// </summary>
         protected int Count
         {
             get
@@ -354,11 +370,21 @@ namespace ProjNet
             }
         }
 
+        /// <summary>
+        /// RemoveCoordinateSystem
+        /// </summary>
+        /// <param name="srid"></param>
+        /// <returns></returns>
+        /// <exception cref="NotSupportedException"></exception>
         public bool RemoveCoordinateSystem(int srid)
         {
             throw new NotSupportedException();
         }
 
+        /// <summary>
+        /// GetEnumerator
+        /// </summary>
+        /// <returns></returns>
         public IEnumerator<KeyValuePair<int, CoordinateSystem>> GetEnumerator()
         {
             _initialization.WaitOne();

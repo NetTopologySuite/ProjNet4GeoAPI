@@ -65,11 +65,17 @@ namespace ProjNet.CoordinateSystems.Transformations
 			}
 		}
 
+        /// <summary>
+        /// DimSource
+        /// </summary>
         public override int DimSource
         {
             get { return SourceGCS.Dimension; }
         }
 
+        /// <summary>
+        /// DimTarget
+        /// </summary>
         public override int DimTarget
         {
             get { return TargetGCS.Dimension; }

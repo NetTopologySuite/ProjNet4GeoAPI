@@ -53,8 +53,13 @@ Join the [![Gitter](https://img.shields.io/gitter/room/TechnologyAdvice/Stardust
 * Krovak
 * Lambert Azimuthal Equal Area
 * Lambert Conformal
+* Lambert Tangential Conformal Conic
 * Mercator
+* Mercator Auxiliary Sphere
+* Oblique Mercator
 * Oblique Stereographic
-* Polyconic
-* Transverse Mercator
 * Orthographic
+* Polar Stereographic
+* Polyconic
+* Pseudo Mercator
+* Transverse Mercator

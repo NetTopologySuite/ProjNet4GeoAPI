@@ -644,6 +644,117 @@ namespace ProjNET.Tests
             Assert.AreEqual(Coord2171[1], transformedCoord2171[1], 1);
         }
 
+		[Test]
+		public void TestUniversalPolarStereographicProjection()
+		{
+            //test data from http://epsg.io/transform
+            double[] Coord4326 = new double[] { 15.00, 73.00 };
+            double[] Coord32661 = new double[] { 2491967.01029204, 163954.12194234435 };
+
+            string wkt4326 = "" +
+                "GEOGCS[\"WGS 84\"," +
+                "DATUM[\"WGS_1984\"," +
+                "SPHEROID[\"WGS 84\",6378137,298.257223563," +
+                "AUTHORITY[\"EPSG\",\"7030\"]]," +
+                "AUTHORITY[\"EPSG\",\"6326\"]]," +
+                "PRIMEM[\"Greenwich\",0," +
+                "AUTHORITY[\"EPSG\",\"8901\"]]," +
+                "UNIT[\"degree\",0.01745329251994328," +
+                "AUTHORITY[\"EPSG\",\"9122\"]]," +
+                "AUTHORITY[\"EPSG\",\"4326\"]]";
+
+            string wkt32661 = "" +
+                "PROJCS[\"WGS 84 / UPS North (N,E)\"," +
+                "GEOGCS[\"WGS 84\"," +
+                "DATUM[\"WGS_1984\"," +
+                "SPHEROID[\"WGS 84\",6378137,298.257223563," +
+                "AUTHORITY[\"EPSG\",\"7030\"]]," +
+                "AUTHORITY[\"EPSG\",\"6326\"]]," +
+                "PRIMEM[\"Greenwich\",0," +
+                "AUTHORITY[\"EPSG\",\"8901\"]]," +
+                "UNIT[\"degree\",0.0174532925199433," +
+                "AUTHORITY[\"EPSG\",\"9122\"]]," +
+                "AUTHORITY[\"EPSG\",\"4326\"]]," +
+                "PROJECTION[\"Polar_Stereographic\"]," +
+                "PARAMETER[\"latitude_of_origin\",90]," +
+                "PARAMETER[\"central_meridian\",0]," +
+                "PARAMETER[\"scale_factor\",0.994]," +
+                "PARAMETER[\"false_easting\",2000000]," +
+                "PARAMETER[\"false_northing\",2000000]," +
+                "UNIT[\"metre\",1," +
+                "AUTHORITY[\"EPSG\",\"9001\"]]," +
+                "AUTHORITY[\"EPSG\",\"32661\"]]";
+
+            var cs1 = CoordinateSystemFactory.CreateFromWkt(wkt4326);
+            var cs2 = CoordinateSystemFactory.CreateFromWkt(wkt32661);
+            var ctf = new CoordinateTransformationFactory();
+
+            var ict = ctf.CreateFromCoordinateSystems(cs2, cs1);
+            var ict2 = ctf.CreateFromCoordinateSystems(cs1, cs2);
+            double[] transformedCoord4326 = ict.MathTransform.Transform(Coord32661);
+            double[] transformedCoord32661 = ict2.MathTransform.Transform(Coord4326);
+
+            Assert.AreEqual(Coord4326[0], transformedCoord4326[0], 0.01);
+            Assert.AreEqual(Coord4326[1], transformedCoord4326[1], 0.01);
+            Assert.AreEqual(Coord32661[0], transformedCoord32661[0], 1);
+            Assert.AreEqual(Coord32661[1], transformedCoord32661[1], 1);
+		}
+
+		[Test]
+		public void TestAustralianAntarcticPolarStereographicProjection()
+		{
+            //test data from http://epsg.io/transform
+            double[] Coord4326 = new double[] { 15.00, -73.00 };
+            double[] Coord3032 = new double[] { 4476201.247377692, 7066975.373300694 };
+
+            string wkt4326 = "" +
+                "GEOGCS[\"WGS 84\"," +
+                "DATUM[\"WGS_1984\"," +
+                "SPHEROID[\"WGS 84\",6378137,298.257223563," +
+                "AUTHORITY[\"EPSG\",\"7030\"]]," +
+                "AUTHORITY[\"EPSG\",\"6326\"]]," +
+                "PRIMEM[\"Greenwich\",0," +
+                "AUTHORITY[\"EPSG\",\"8901\"]]," +
+                "UNIT[\"degree\",0.01745329251994328," +
+                "AUTHORITY[\"EPSG\",\"9122\"]]," +
+                "AUTHORITY[\"EPSG\",\"4326\"]]";
+
+            string wkt3032 = "" +
+                "PROJCS[\"WGS 84 / Australian Antarctic Polar Stereographic\"," +
+                "GEOGCS[\"WGS 84\"," +
+                "DATUM[\"WGS_1984\"," +
+                "SPHEROID[\"WGS 84\",6378137,298.257223563," +
+                "AUTHORITY[\"EPSG\",\"7030\"]]," +
+                "AUTHORITY[\"EPSG\",\"6326\"]]," +
+                "PRIMEM[\"Greenwich\",0," +
+                "AUTHORITY[\"EPSG\",\"8901\"]]," +
+                "UNIT[\"degree\",0.0174532925199433," +
+                "AUTHORITY[\"EPSG\",\"9122\"]]," +
+                "AUTHORITY[\"EPSG\",\"4326\"]]," +
+                "PROJECTION[\"Polar_Stereographic\"]," +
+                "PARAMETER[\"latitude_of_origin\",-71]," +
+                "PARAMETER[\"central_meridian\",70]," +
+                "PARAMETER[\"false_easting\",6000000]," +
+                "PARAMETER[\"false_northing\",6000000]," +
+                "UNIT[\"metre\",1," +
+                "AUTHORITY[\"EPSG\",\"9001\"]]," +
+                "AUTHORITY[\"EPSG\",\"3032\"]]";
+
+            var cs1 = CoordinateSystemFactory.CreateFromWkt(wkt4326);
+            var cs2 = CoordinateSystemFactory.CreateFromWkt(wkt3032);
+            var ctf = new CoordinateTransformationFactory();
+
+            var ict = ctf.CreateFromCoordinateSystems(cs2, cs1);
+            var ict2 = ctf.CreateFromCoordinateSystems(cs1, cs2);
+            double[] transformedCoord4326 = ict.MathTransform.Transform(Coord3032);
+            double[] transformedCoord3032 = ict2.MathTransform.Transform(Coord4326);
+
+            Assert.AreEqual(Coord4326[0], transformedCoord4326[0], 0.01);
+            Assert.AreEqual(Coord4326[1], transformedCoord4326[1], 0.01);
+            Assert.AreEqual(Coord3032[0], transformedCoord3032[0], 1);
+            Assert.AreEqual(Coord3032[1], transformedCoord3032[1], 1);
+		}
+
 	    [Test]
         public void TestUnitTransforms()
         {
@@ -1016,6 +1127,79 @@ namespace ProjNET.Tests
 
             var @delegate2 = new TestDelegate(() => trans2.MathTransform.Transform(new[] { 180.0, 0.0 }));
             Assert.Throws<ArgumentOutOfRangeException>(@delegate2);
+        }
+
+        [Test]
+        public static void TestMercatorAuxilarySphereTransformation()
+        {
+            string sourceWkt = "PROJCS[\"WGS_1984_Web_Mercator_Auxiliary_Sphere\",GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Mercator_Auxiliary_Sphere\"],PARAMETER[\"False_Easting\",0.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",0.0],PARAMETER[\"Standard_Parallel_1\",0.0],PARAMETER[\"Auxiliary_Sphere_Type\",0.0],UNIT[\"Meter\",1.0]]";
+            var sourceCoordinateSystem = GetCoordinateSystem(sourceWkt);
+            Assert.NotNull(sourceCoordinateSystem);
+
+            string targetWkt = "PROJCS[\"TX83-NCF\",GEOGCS[\"LL83\",DATUM[\"NAD83\",SPHEROID[\"GRS1980\",6378137.000,298.25722210]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Lambert_Conformal_Conic_2SP\"],PARAMETER[\"false_easting\",1968500.000],PARAMETER[\"false_northing\",6561666.667],PARAMETER[\"central_meridian\",-98.50000000000000],PARAMETER[\"latitude_of_origin\",31.66666666666666],PARAMETER[\"standard_parallel_1\",33.96666666666667],PARAMETER[\"standard_parallel_2\",32.13333333333333],UNIT[\"Foot_US\",0.30480060960122]]";
+            var targetCoordinateSystem = GetCoordinateSystem(targetWkt);
+            Assert.NotNull(targetCoordinateSystem);
+
+            var transformation = GetTransformation(sourceCoordinateSystem, targetCoordinateSystem);
+            Assert.NotNull(transformation);
+
+            var tranformedPoint = transformation.MathTransform.Transform(-10775704.511, 3865240.329);
+            Assert.NotNull(tranformedPoint);
+
+            Assert.AreEqual(2491034.95, tranformedPoint.x, 0.1);
+            Assert.AreEqual(6968468.98, tranformedPoint.y, 0.1);
+        }
+
+        [Test]
+        public void TestPopularVisualizationPseudoMercatorProjectionRegistry()
+        {
+            string sourceWkt = "GEOGCS[\"GCS_WGS_1984\", DATUM[\"D_WGS_1984\", SPHEROID[\"WGS_1984\",6378137.0,298.257223563]], PRIMEM[\"Greenwich\",0.0], UNIT[\"Degree\",0.0174532925199433]]";
+            string targetWkt = "PROJCS[\"WGS84.PseudoMercator\",GEOGCS[\"LL84\",DATUM[\"WGS84\",SPHEROID[\"WGS84\",6378137.000,298.25722356]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Popular Visualisation Pseudo Mercator\"],PARAMETER[\"false_easting\",0.000],PARAMETER[\"false_northing\",0.000],PARAMETER[\"central_meridian\",0.00000000000000],UNIT[\"Meter\",1.00000000000000]]";
+
+            var sourceCoordinateSystem = GetCoordinateSystem(sourceWkt);
+            Assert.NotNull(sourceCoordinateSystem);
+
+            var targetCoordinateSystem = GetCoordinateSystem(targetWkt);
+            Assert.NotNull(targetCoordinateSystem);
+
+            var transformation = GetTransformation(sourceCoordinateSystem, targetCoordinateSystem);
+            Assert.NotNull(transformation);
+        }
+
+        [Test]
+        public void TestLamberTangentialConformalConicProjectionRegistryAndTransformation()
+        {
+            string sourceWkt = "PROJCS[\"WORLD-LM-TAN\",GEOGCS[\"LL84\",DATUM[\"WGS84\",SPHEROID[\"WGS84\",6378137.000,298.25722356]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Lambert Tangential Conformal Conic Projection\"],PARAMETER[\"false_easting\",0.000],PARAMETER[\"false_northing\",0.000],PARAMETER[\"scale_factor\",1.000000000000],PARAMETER[\"central_meridian\",0.00000000000000],PARAMETER[\"latitude_of_origin\",1.00000000000000],UNIT[\"Meter\",1.00000000000000]]";
+            string targetWkt = "PROJCS[\"WGS84.PseudoMercator\",GEOGCS[\"LL84\",DATUM[\"WGS84\",SPHEROID[\"WGS84\",6378137.000,298.25722356]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Popular Visualisation Pseudo Mercator\"],PARAMETER[\"false_easting\",0.000],PARAMETER[\"false_northing\",0.000],PARAMETER[\"central_meridian\",0.00000000000000],UNIT[\"Meter\",1.00000000000000]]";
+
+            var sourceCoordinateSystem = GetCoordinateSystem(sourceWkt);
+            Assert.NotNull(sourceCoordinateSystem);
+
+            var targetCoordinateSystem = GetCoordinateSystem(targetWkt);
+            Assert.NotNull(targetCoordinateSystem);
+
+            var transformation = GetTransformation(sourceCoordinateSystem, targetCoordinateSystem);
+            Assert.NotNull(transformation);
+
+            // Test the transformation with a known points. Tested with AutoCAD map 3D
+            double[] pGeo = new[] { 4101119.6855, -229063.8661 }; // Nairobi, Kenya
+            double[] pUtm = transformation.MathTransform.Transform(pGeo);
+
+            double[] expected = new[] { 4098998.6422, -142387.5532 };
+            Assert.IsTrue(ToleranceLessThan(pUtm, expected, 0.05), TransformationError("LambertConicConformal2SP", expected, pUtm));
+        }
+
+        internal static CoordinateSystem GetCoordinateSystem(string wkt)
+        {
+            var coordinateSystemFactory = new CoordinateSystemFactory();
+            return coordinateSystemFactory.CreateFromWkt(wkt);
+        }
+
+        internal static ICoordinateTransformation GetTransformation(CoordinateSystem sourceCoordinateSystem, CoordinateSystem targetCoordinateSystem)
+        {
+            var coordinateSystemFactory = new CoordinateSystemFactory();
+            var coordinateService = new ProjNet.CoordinateSystemServices(coordinateSystemFactory, new CoordinateTransformationFactory());
+            return coordinateService.CreateTransformation(sourceCoordinateSystem, targetCoordinateSystem);
         }
     }
 }
