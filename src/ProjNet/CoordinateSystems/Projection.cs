@@ -5,7 +5,7 @@
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // ProjNet is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -13,7 +13,7 @@
 
 // You should have received a copy of the GNU Lesser General Public License
 // along with ProjNet; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using System;
 using System.Collections.Generic;
@@ -30,11 +30,11 @@ namespace ProjNet.CoordinateSystems
 	/// interest, e.g., Transverse Mercator, Lambert, will be implemented as a class of
 	/// type Projection, supporting the IProjection interface.
     /// </summary>
-    [Serializable] 
+    [Serializable]
     public class Projection : Info, IProjection
 	{
 		internal Projection(string className, List<ProjectionParameter> parameters,
-			string name, string authority, long code, string alias, 
+			string name, string authority, long code, string alias,
 			string remarks, string abbreviation)
 			: base(name, authority, code, alias, abbreviation, remarks)
 		{
@@ -84,12 +84,12 @@ namespace ProjNet.CoordinateSystems
 		/// <returns>parameter or null if not found</returns>
 		public ProjectionParameter GetParameter(string name)
 		{
-			foreach (ProjectionParameter par in _parameters)
+			foreach (var par in _parameters)
 				if (par.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
 					return par;
 			return null;
 		}
-				
+
 		private string _ClassName;
 
 		/// <summary>
@@ -108,7 +108,7 @@ namespace ProjNet.CoordinateSystems
 		{
 			get
 			{
-				StringBuilder sb = new StringBuilder();
+				var sb = new StringBuilder();
 				sb.AppendFormat("PROJECTION[\"{0}\"", ClassName);
 				if (!string.IsNullOrWhiteSpace(Authority) && AuthorityCode > 0)
 					sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
@@ -124,9 +124,9 @@ namespace ProjNet.CoordinateSystems
 		{
 			get
 			{
-				StringBuilder sb = new StringBuilder();
+                var sb = new StringBuilder();
 				sb.AppendFormat(CultureInfo.InvariantCulture.NumberFormat, "<CS_Projection Classname=\"{0}\">{1}", ClassName, InfoXml);
-				foreach (ProjectionParameter param in Parameters)
+				foreach (var param in Parameters)
 					sb.Append(param.XML);
 				sb.Append("</CS_Projection>");
 				return sb.ToString();
@@ -144,12 +144,12 @@ namespace ProjNet.CoordinateSystems
 		{
 			if (!(obj is Projection))
 				return false;
-			Projection proj = obj as Projection;
+            var proj = obj as Projection;
 			if (proj.NumParameters != this.NumParameters)
 				return false;
 			for (int i = 0; i < _parameters.Count; i++)
 			{
-				ProjectionParameter param = GetParameter(proj.GetParameter(i).Name);
+                var param = GetParameter(proj.GetParameter(i).Name);
 				if (param == null)
 					return false;
 				if (param.Value != proj.GetParameter(i).Value)
