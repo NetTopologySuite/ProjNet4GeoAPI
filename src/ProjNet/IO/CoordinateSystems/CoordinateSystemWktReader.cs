@@ -68,6 +68,25 @@ namespace ProjNet.IO.CoordinateSystems
                 string objectName = tokenizer.GetStringValue();
                 switch (objectName)
                 {
+                    // WKT2 (OGC 18-010r7 / ISO 19162:2019)
+                    case "GEOGCRS":
+                    case "GEOGRAPHICCRS":
+                        return CoordinateSystemWkt2Reader.Parse(wkt);
+                    case "PROJCRS":
+                    case "PROJECTEDCRS":
+                        return CoordinateSystemWkt2Reader.Parse(wkt);
+                    case "VERTCRS":
+                    case "VERTICALCRS":
+                        return CoordinateSystemWkt2Reader.Parse(wkt);
+                    case "COMPOUNDCRS":
+                        return CoordinateSystemWkt2Reader.Parse(wkt);
+                    case "BOUNDCRS":
+                        return CoordinateSystemWkt2Reader.Parse(wkt);
+                    case "ENGCRS":
+                    case "ENGINEERINGCRS":
+                        return CoordinateSystemWkt2Reader.Parse(wkt);
+                    case "PARAMETRICCRS":
+                        return CoordinateSystemWkt2Reader.Parse(wkt);
                     case "UNIT":
                         return ReadUnit(tokenizer);
                     case "SPHEROID":
