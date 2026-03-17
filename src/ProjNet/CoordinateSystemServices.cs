@@ -18,6 +18,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
@@ -272,6 +273,18 @@ namespace ProjNet
         }
 
         /// <summary>
+        /// Tries to get a coordinate system by SRID.
+        /// </summary>
+        /// <param name="srid">The SRID value.</param>
+        /// <param name="coordinateSystem">The coordinate system if found; otherwise <c>null</c>.</param>
+        /// <returns><c>true</c> if a coordinate system was found; otherwise <c>false</c>.</returns>
+        public bool TryGetCoordinateSystem(int srid, out CoordinateSystem coordinateSystem)
+        {
+            _initialization.WaitOne();
+            return _csBySrid.TryGetValue(srid, out coordinateSystem);
+        }
+
+        /// <summary>
         /// Returns the coordinate system by <paramref name="authority" /> and <paramref name="code" />.
         /// </summary>
         /// <param name="authority">The authority for the coordinate system</param>
@@ -283,6 +296,34 @@ namespace ProjNet
             if (srid.HasValue)
                 return GetCoordinateSystem(srid.Value);
             return null;
+        }
+
+        /// <summary>
+        /// Tries to get a coordinate system by authority and code.
+        /// </summary>
+        /// <param name="authority">The authority name.</param>
+        /// <param name="code">The authority code.</param>
+        /// <param name="coordinateSystem">The coordinate system if found; otherwise <c>null</c>.</param>
+        /// <returns><c>true</c> if a coordinate system was found; otherwise <c>false</c>.</returns>
+        public bool TryGetCoordinateSystem(string authority, long code, out CoordinateSystem coordinateSystem)
+        {
+            coordinateSystem = null;
+            int? srid = GetSRID(authority, code);
+            if (!srid.HasValue)
+                return false;
+
+            coordinateSystem = GetCoordinateSystem(srid.Value);
+            return coordinateSystem != null;
+        }
+
+        /// <summary>
+        /// Gets all available SRID values currently loaded in the registry.
+        /// </summary>
+        /// <returns>Sorted SRID values.</returns>
+        public int[] GetAvailableSridValues()
+        {
+            _initialization.WaitOne();
+            return _csBySrid.Keys.OrderBy(v => v).ToArray();
         }
 
         /// <summary>

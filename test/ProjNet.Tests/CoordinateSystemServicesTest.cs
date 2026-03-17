@@ -24,6 +24,48 @@ namespace ProjNET.Tests
             Assert.IsNotNull(css.GetCoordinateSystem(3857));
         }
 
+        [Xunit.Fact]
+        public void TestTryGetCoordinateSystemBySrid()
+        {
+            var css = new CoordinateSystemServices(new CoordinateSystemFactory(),
+                new CoordinateTransformationFactory());
+
+            var found = css.TryGetCoordinateSystem(4326, out var coordinateSystem);
+            var missing = css.TryGetCoordinateSystem(999999, out var missingCoordinateSystem);
+
+            Assert.IsTrue(found);
+            Assert.IsNotNull(coordinateSystem);
+            Assert.IsFalse(missing);
+            Assert.IsNull(missingCoordinateSystem);
+        }
+
+        [Xunit.Fact]
+        public void TestTryGetCoordinateSystemByAuthorityCode()
+        {
+            var css = new CoordinateSystemServices(new CoordinateSystemFactory(),
+                new CoordinateTransformationFactory());
+
+            var found = css.TryGetCoordinateSystem("EPSG", 3857, out var coordinateSystem);
+            var missing = css.TryGetCoordinateSystem("EPSG", -1, out var missingCoordinateSystem);
+
+            Assert.IsTrue(found);
+            Assert.IsNotNull(coordinateSystem);
+            Assert.IsFalse(missing);
+            Assert.IsNull(missingCoordinateSystem);
+        }
+
+        [Xunit.Fact]
+        public void TestGetAvailableSridValues()
+        {
+            var css = new CoordinateSystemServices(new CoordinateSystemFactory(),
+                new CoordinateTransformationFactory());
+
+            var srids = css.GetAvailableSridValues();
+            Assert.IsNotNull(srids);
+            Assert.IsTrue(Array.IndexOf(srids, 4326) >= 0);
+            Assert.IsTrue(Array.IndexOf(srids, 3857) >= 0);
+        }
+
         [Xunit.Theory]
         [Xunit.InlineData(@"D:\temp\ConsoleApplication9\SpatialRefSys.xml")]
         public void TestConstructorLoadXml(string xmlPath)

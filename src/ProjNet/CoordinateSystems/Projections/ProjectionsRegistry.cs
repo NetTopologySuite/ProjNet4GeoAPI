@@ -22,12 +22,16 @@ namespace ProjNet.CoordinateSystems.Projections
             Register("mercator", typeof(Mercator));
             Register("mercator_1sp", typeof(Mercator));
             Register("mercator_2sp", typeof(Mercator));
+            Register("mercator_(variant_a)", typeof(Mercator));
+            Register("mercator_(variant_b)", typeof(Mercator));
             Register("mercator_auxiliary_sphere", typeof(MercatorAuxiliarySphere));
             Register("pseudo_mercator", typeof(PseudoMercator));
             Register("popular_visualisation_pseudo_mercator", typeof(PseudoMercator));
             Register("google_mercator", typeof(PseudoMercator));
+            Register("web_mercator", typeof(PseudoMercator));
 
             Register("transverse_mercator", typeof(TransverseMercator));
+            Register("transverse_mercator_south_oriented", typeof(TransverseMercator));
             Register("gauss_kruger", typeof(TransverseMercator));
 
             Register("albers", typeof(AlbersProjection));
@@ -38,7 +42,10 @@ namespace ProjNet.CoordinateSystems.Projections
             Register("polyconic", typeof(PolyconicProjection));
 
             Register("lambert_conformal_conic", typeof(LambertConformalConic2SP));
+            Register("lambert_conformal_conic_1sp", typeof(LambertConformalConic2SP));
             Register("lambert_conformal_conic_2sp", typeof(LambertConformalConic2SP));
+            Register("lambert_conformal_conic_2sp_belgium", typeof(LambertConformalConic2SP));
+            Register("lambert_conic_conformal_(1sp)", typeof(LambertConformalConic2SP));
             Register("lambert_conic_conformal_(2sp)", typeof(LambertConformalConic2SP));
             Register("lambert_tangential_conformal_conic_projection", typeof(LambertConformalConic2SP));
 

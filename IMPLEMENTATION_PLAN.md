@@ -68,7 +68,10 @@ A modern, evolvable .NET projection library aligned with current `PROJ` concepts
 - Next step progress:
   - `test-parity-matrix` completed (`docs\modernization\test-parity-matrix.md`);
   - `target-architecture` completed (`docs\modernization\target-architecture.md`);
-  - baseline implementation started for `managed-data-packaging` and `format-support-upgrade`.
+  - `managed-data-packaging` baseline completed (`docs\modernization\managed-data-packaging.md`);
+  - `format-support-upgrade` baseline completed (`docs\modernization\format-support-upgrade.md`);
+  - `projection-kernel-alignment` baseline completed (`docs\modernization\projection-kernel-alignment.md`);
+  - `registry-data-layer` baseline completed (`docs\modernization\registry-data-layer.md`) with additive public lookup APIs.
 
 ## Work packages (Todos)
 
