@@ -1,25 +1,23 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-
   <PropertyGroup>
     <!--<TargetFrameworks>net6;net8</TargetFrameworks>-->
     <TargetFramework>net8</TargetFramework>
-	  <SignAssembly>true</SignAssembly>
-	  <NoWarn>1701;1702;1591</NoWarn>
+    <SignAssembly>true</SignAssembly>
+    <NoWarn>1701;1702;1591</NoWarn>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Npgsql" Version="8.0.3" />
     <PackageReference Include="PublicApiGenerator" Version="11.2.0" />
   </ItemGroup>
-
   <ItemGroup>
     <ProjectReference Include="..\..\src\ProjNet\ProjNET.csproj" />
   </ItemGroup>
-
   <ItemGroup>
     <EmbeddedResource Include="SRID.csv" />
   </ItemGroup>
-
+  <ItemGroup>
+    <None Include="Generated\*.json" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>

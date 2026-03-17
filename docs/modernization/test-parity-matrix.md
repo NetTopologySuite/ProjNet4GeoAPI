@@ -1,5 +1,15 @@
 # Test Parity Matrix (.NET vs PROJ Reference)
 
+## Implemented now
+- Added deterministic PROJ-reference fixture generation script:
+  - `tools\Generate-ProjReferenceFixtures.ps1`
+- Added committed direct `proj2proj` fixture lanes:
+  - `test\ProjNet.Tests\Generated\proj2proj-direct-parity-fixture.json` (core lane),
+  - `test\ProjNet.Tests\Generated\proj2proj-direct-parity-exhaustive-fixture.json` (extended lane).
+- Added parity theory coverage:
+  - `Proj2ProjParityTheoryTests` (core deterministic lane),
+  - `Proj2ProjParityExhaustiveTheoryTests` (extended lane via `PROJNET_RUN_EXHAUSTIVE=1`).
+
 ## Scope and rule context
 - Scope: `test\ProjNet.Tests` (current .NET test evidence) mapped to `spec\PROJ\test\*` and related PROJ docs references.
 - Non-breaking rule: Public API compatibility remains mandatory during modernization.

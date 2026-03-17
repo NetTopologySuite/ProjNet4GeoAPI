@@ -55,3 +55,13 @@ This keeps migration paths explicit and non-breaking for existing consumers.
 - Style rules are enforced with `StyleCop.Analyzers`.
 - CI build does not downgrade warning level.
 - Warning suppression changes require explicit approval.
+
+## PROJ parity fixture lanes
+
+- Regenerate committed direct `proj2proj` parity fixtures:
+  - `pwsh .\tools\Generate-ProjReferenceFixtures.ps1`
+  - `pwsh .\tools\Generate-ProjReferenceFixtures.ps1 -OutputPath .\test\ProjNet.Tests\Generated\proj2proj-direct-parity-exhaustive-fixture.json -MaxCases 120`
+- Run default validation lane:
+  - `dotnet test .\ProjNet4GeoAPI.sln -v q`
+- Run exhaustive parity lane:
+  - PowerShell: `$env:PROJNET_RUN_EXHAUSTIVE='1'; dotnet test .\test\ProjNet.Tests\ProjNET.Tests.csproj --filter "Category=ExhaustiveValidation"; Remove-Item Env:PROJNET_RUN_EXHAUSTIVE -ErrorAction Ignore`

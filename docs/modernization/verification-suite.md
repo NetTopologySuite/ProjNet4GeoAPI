@@ -9,11 +9,13 @@
   - `GetCoordinateSystem(string,long)`,
   - `TryGetCoordinateSystem(string,long,...)`,
   - `GetSRID(string,long)`.
+- Added direct `proj2proj` parity theory suites backed by committed PROJ-derived fixtures:
+  - `Proj2ProjParityTheoryTests` (default/core lane),
+  - `Proj2ProjParityExhaustiveTheoryTests` (extended lane, opt-in with `PROJNET_RUN_EXHAUSTIVE=1`).
 
 ## Why this matters
 - Provides a stable, low-noise regression anchor for core transform correctness.
 - Adds explicit guardrails for legacy API behavior continuity during modernization.
 
 ## Next increment
-- Expand suite with additional EPSG operation classes and area-of-use-sensitive cases.
-- Add golden reference datasets sourced from prioritized parity matrix scenarios.
+- Continue expanding fixture breadth with additional EPSG projected pairs and grid-backed scenarios as grid assets become available.

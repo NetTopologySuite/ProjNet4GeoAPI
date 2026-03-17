@@ -21,5 +21,6 @@
 - Deterministic missing-grid behavior: `TryResolve` returns `false` when a grid cannot be resolved.
 
 ## Next increment
-- Wire resolver into transformation candidate selection for grid-dependent operations.
+- Resolver is now wired into projected `EPSG` metadata candidate selection for grid-dependent operations.
+- Missing required grid resources now fail deterministically with `DataUnavailable:` in strict mode (`PROJNET_GRID_REQUIRED=true`).
 - Add checksum/manifest verification for cached grid artifacts.

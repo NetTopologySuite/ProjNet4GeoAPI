@@ -17,8 +17,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Runtime.CompilerServices;
 using ProjNet.CoordinateSystems.Projections;
+using ProjNet.Data;
+using ProjNet.Resources;
 
 namespace ProjNet.CoordinateSystems.Transformations
 {
@@ -27,6 +30,15 @@ namespace ProjNet.CoordinateSystems.Transformations
 	/// </summary>
 	public class CoordinateTransformationFactory
 	{
+		private const string GridCacheEnvironmentVariable = "PROJNET_GRID_CACHE";
+		private const string GridModeEnvironmentVariable = "PROJNET_GRID_MODE";
+		private const string GridPathEnvironmentVariable = "PROJNET_GRID_PATHS";
+		private const string GridRequiredEnvironmentVariable = "PROJNET_GRID_REQUIRED";
+
+		private static readonly Lazy<Dictionary<SridPair, IReadOnlyList<CoordinateOperationDefinition>>> DirectOperationDefinitions =
+			new Lazy<Dictionary<SridPair, IReadOnlyList<CoordinateOperationDefinition>>>(LoadDirectOperationDefinitions, true);
+		private static readonly Lazy<GridResourceResolver> GridResolver = new Lazy<GridResourceResolver>(CreateGridResolver, true);
+
 		#region ICoordinateTransformationFactory Members
 
 		/// <summary>
@@ -42,7 +54,20 @@ namespace ProjNet.CoordinateSystems.Transformations
 		/// <returns></returns>		
 		public ICoordinateTransformation CreateFromCoordinateSystems(CoordinateSystem sourceCS, CoordinateSystem targetCS)
         {
-            return CoordinateOperationResolver.Resolve(sourceCS, targetCS, CreateFromCoordinateSystemsCore);
+            return CoordinateOperationResolver.Resolve(sourceCS, targetCS, CreateFromCoordinateSystemsWithMetadata);
+        }
+
+        private ICoordinateTransformation CreateFromCoordinateSystemsWithMetadata(CoordinateSystem sourceCS, CoordinateSystem targetCS)
+        {
+            var fallback = CreateFromCoordinateSystemsCore(sourceCS, targetCS);
+
+            if (fallback == null)
+                return null;
+
+            if (TryGetDirectProjectedOperation(sourceCS, targetCS, out var operation, out var resolvedGridPath))
+                return CreateMetadataBackedTransformation(sourceCS, targetCS, fallback, operation, resolvedGridPath);
+
+            return fallback;
         }
 
         private ICoordinateTransformation CreateFromCoordinateSystemsCore(CoordinateSystem sourceCS, CoordinateSystem targetCS)
@@ -419,6 +444,222 @@ namespace ProjNet.CoordinateSystems.Transformations
 			return transform;
              */
 		}
+
+        private static CoordinateTransformation CreateMetadataBackedTransformation(
+            CoordinateSystem source,
+            CoordinateSystem target,
+            ICoordinateTransformation fallback,
+            CoordinateOperationDefinition operation,
+            string resolvedGridPath)
+        {
+            string operationName = !string.IsNullOrWhiteSpace(operation.MethodName)
+                ? operation.MethodName
+                : fallback.Name;
+
+            string remarks = fallback.Remarks;
+            if (!string.IsNullOrWhiteSpace(operation.ParameterFileName))
+            {
+                string gridReference = !string.IsNullOrWhiteSpace(resolvedGridPath)
+                    ? operation.ParameterFileName + " (" + resolvedGridPath + ")"
+                    : operation.ParameterFileName;
+                remarks = string.IsNullOrWhiteSpace(remarks)
+                    ? "Grid: " + gridReference
+                    : remarks + "; Grid: " + gridReference;
+            }
+
+            return new CoordinateTransformation(
+                source,
+                target,
+                fallback.TransformType,
+                fallback.MathTransform,
+                operationName,
+                "EPSG",
+                operation.OperationCode,
+                fallback.AreaOfUse,
+                remarks);
+        }
+
+        private static Dictionary<SridPair, IReadOnlyList<CoordinateOperationDefinition>> LoadDirectOperationDefinitions()
+        {
+            var provider = new ManagedCoordinateOperationDefinitionProvider();
+            var definitions = new Dictionary<SridPair, List<CoordinateOperationDefinition>>();
+
+            foreach (var definition in provider.GetDefinitions())
+            {
+                if (definition.SourceSrid <= 0 || definition.TargetSrid <= 0)
+                    continue;
+
+                if (definition.SourceSrid == definition.TargetSrid)
+                    continue;
+
+                if (definition.OperationKind == CoordinateOperationKind.PointMotionOperation)
+                    continue;
+
+                var key = new SridPair(definition.SourceSrid, definition.TargetSrid);
+                if (!definitions.TryGetValue(key, out var operations))
+                {
+                    operations = new List<CoordinateOperationDefinition>();
+                    definitions[key] = operations;
+                }
+
+                operations.Add(definition);
+            }
+
+            var result = new Dictionary<SridPair, IReadOnlyList<CoordinateOperationDefinition>>(definitions.Count);
+            foreach (var pair in definitions)
+            {
+                pair.Value.Sort(OperationDefinitionComparer.Instance);
+                result[pair.Key] = pair.Value;
+            }
+
+            return result;
+        }
+
+        private static GridResourceResolver CreateGridResolver()
+        {
+            string[] localDirectories = ReadGridDirectoriesFromEnvironment();
+            string cacheDirectory = Environment.GetEnvironmentVariable(GridCacheEnvironmentVariable);
+            GridResourceResolutionMode mode = ParseGridResolutionMode(Environment.GetEnvironmentVariable(GridModeEnvironmentVariable));
+
+            var options = new GridResourceResolverOptions(localDirectories, cacheDirectory, mode);
+            return new GridResourceResolver(options);
+        }
+
+        private static string[] ReadGridDirectoriesFromEnvironment()
+        {
+            string configuredPaths = Environment.GetEnvironmentVariable(GridPathEnvironmentVariable);
+            if (string.IsNullOrWhiteSpace(configuredPaths))
+                return Array.Empty<string>();
+
+            return configuredPaths.Split(new[] { ';', Path.PathSeparator }, StringSplitOptions.RemoveEmptyEntries);
+        }
+
+        private static GridResourceResolutionMode ParseGridResolutionMode(string configuredMode)
+        {
+            if ("LocalThenNetwork".Equals(configuredMode, StringComparison.OrdinalIgnoreCase))
+                return GridResourceResolutionMode.LocalThenNetwork;
+
+            return GridResourceResolutionMode.LocalOnly;
+        }
+
+        private static double NormalizeAccuracy(double accuracy)
+        {
+            return accuracy > 0d ? accuracy : double.MaxValue;
+        }
+
+        private static bool TryGetDirectProjectedOperation(
+            CoordinateSystem source,
+            CoordinateSystem target,
+            out CoordinateOperationDefinition operation,
+            out string resolvedGridPath)
+        {
+            operation = null;
+            resolvedGridPath = null;
+
+            if (!(source is ProjectedCoordinateSystem) || !(target is ProjectedCoordinateSystem))
+                return false;
+
+            if (!TryGetEpsgCode(source, out var sourceSrid) || !TryGetEpsgCode(target, out var targetSrid))
+                return false;
+
+            if (!DirectOperationDefinitions.Value.TryGetValue(new SridPair(sourceSrid, targetSrid), out var operations))
+                return false;
+
+            string missingGridFile = null;
+            foreach (var candidate in operations)
+            {
+                if (string.IsNullOrWhiteSpace(candidate.ParameterFileName))
+                {
+                    operation = candidate;
+                    return true;
+                }
+
+                if (GridResolver.Value.TryResolve(candidate.ParameterFileName, out resolvedGridPath))
+                {
+                    operation = candidate;
+                    return true;
+                }
+
+                if (missingGridFile == null)
+                    missingGridFile = candidate.ParameterFileName;
+            }
+
+            if (!string.IsNullOrWhiteSpace(missingGridFile))
+            {
+                if (IsGridRequiredModeEnabled())
+                    throw new InvalidOperationException("DataUnavailable: Required grid resource '" + missingGridFile + "' was not found.");
+
+                return false;
+            }
+
+            return false;
+        }
+
+        private static bool IsGridRequiredModeEnabled()
+        {
+            string configuredValue = Environment.GetEnvironmentVariable(GridRequiredEnvironmentVariable);
+            if (string.IsNullOrWhiteSpace(configuredValue))
+                return false;
+
+            if ("1".Equals(configuredValue, StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            if ("true".Equals(configuredValue, StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            return "yes".Equals(configuredValue, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool TryGetEpsgCode(CoordinateSystem coordinateSystem, out int srid)
+        {
+            srid = 0;
+
+            if (coordinateSystem == null)
+                return false;
+
+            if (!"EPSG".Equals(coordinateSystem.Authority, StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            if (coordinateSystem.AuthorityCode <= 0 || coordinateSystem.AuthorityCode > int.MaxValue)
+                return false;
+
+            srid = (int)coordinateSystem.AuthorityCode;
+            return true;
+        }
+
+        private sealed class OperationDefinitionComparer : IComparer<CoordinateOperationDefinition>
+        {
+            internal static readonly OperationDefinitionComparer Instance = new OperationDefinitionComparer();
+
+            public int Compare(CoordinateOperationDefinition left, CoordinateOperationDefinition right)
+            {
+                if (ReferenceEquals(left, right))
+                    return 0;
+
+                if (left == null)
+                    return 1;
+
+                if (right == null)
+                    return -1;
+
+                int accuracyComparison = NormalizeAccuracy(left.Accuracy).CompareTo(NormalizeAccuracy(right.Accuracy));
+                if (accuracyComparison != 0)
+                    return accuracyComparison;
+
+                bool leftRequiresGrid = !string.IsNullOrWhiteSpace(left.ParameterFileName);
+                bool rightRequiresGrid = !string.IsNullOrWhiteSpace(right.ParameterFileName);
+                if (leftRequiresGrid != rightRequiresGrid)
+                    return leftRequiresGrid ? 1 : -1;
+
+                bool leftHasMethod = !string.IsNullOrWhiteSpace(left.MethodName);
+                bool rightHasMethod = !string.IsNullOrWhiteSpace(right.MethodName);
+                if (leftHasMethod != rightHasMethod)
+                    return leftHasMethod ? -1 : 1;
+
+                return left.OperationCode.CompareTo(right.OperationCode);
+            }
+        }
+
 	}
 }
 

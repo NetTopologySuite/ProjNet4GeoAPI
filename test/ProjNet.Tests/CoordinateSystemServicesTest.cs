@@ -9,6 +9,7 @@ using NUnit.Framework;
 using ProjNet;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
+using ProjNet.Data;
 
 namespace ProjNET.Tests
 {
@@ -64,6 +65,17 @@ namespace ProjNET.Tests
             Assert.IsNotNull(srids);
             Assert.IsTrue(Array.IndexOf(srids, 4326) >= 0);
             Assert.IsTrue(Array.IndexOf(srids, 3857) >= 0);
+        }
+
+        [Xunit.Fact]
+        public void TestManagedProviderIncludesFullGeneratedCatalog()
+        {
+            var provider = new ManagedCoordinateSystemDefinitionProvider();
+            var definitions = provider.GetDefinitions().ToList();
+
+            Assert.IsTrue(definitions.Count > 7000);
+            Assert.IsTrue(definitions.Any(item => item.Key == 4326));
+            Assert.IsTrue(definitions.Any(item => item.Key == 3857));
         }
 
         [Xunit.Theory]
