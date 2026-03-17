@@ -1,13 +1,14 @@
-﻿using BenchmarkDotNet.Running;
+using BenchmarkDotNet.Running;
 
 namespace ProjNet.Benchmark
 {
     class Program
     {
-        static void Main()
+        static void Main(string[] args)
         {
             PerformanceTests.Validate();
-            BenchmarkRunner.Run<PerformanceTests>();
+            ProjParityBenchmarks.Validate();
+            BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args);
         }
 
         // here's how I generated coords.dat.gz (set TestDataPath and add references + usings, of course):

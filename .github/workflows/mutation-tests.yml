@@ -1,0 +1,30 @@
+name: Mutation Tests
+
+on:
+  workflow_dispatch:
+
+jobs:
+  mutation:
+    name: Run Stryker mutation tests
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Get source
+      uses: actions/checkout@v4
+
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: 8
+
+    - name: Restore tools
+      run: dotnet tool restore
+
+    - name: Run mutation tests
+      run: dotnet dotnet-stryker --config-file stryker-config.json
+
+    - name: Upload mutation artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: mutation-artifacts
+        path: artifacts/stryker

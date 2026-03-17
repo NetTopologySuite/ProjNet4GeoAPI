@@ -1,0 +1,108 @@
+using System;
+using System.Collections.Generic;
+using System.IO;
+using ProjNet.Resources;
+using Xunit;
+
+namespace ProjNET.Tests
+{
+    public class GridResourceResolverTests
+    {
+        [Fact]
+        public void TryResolve_WithLocalGridFile_ResolvesWithoutNetwork()
+        {
+            string localDirectory = CreateTemporaryDirectory();
+            try
+            {
+                string localGridPath = Path.Combine(localDirectory, "sample.gsb");
+                File.WriteAllText(localGridPath, "local-grid");
+
+                var fetchClient = new RecordingFetchClient();
+                var options = new GridResourceResolverOptions(new[] { localDirectory }, null, GridResourceResolutionMode.LocalOnly);
+                var resolver = new GridResourceResolver(options, fetchClient);
+
+                bool resolved = resolver.TryResolve("sample.gsb", out string resolvedPath);
+
+                Assert.True(resolved);
+                Assert.Equal(localGridPath, resolvedPath);
+                Assert.Equal(0, fetchClient.Calls);
+            }
+            finally
+            {
+                Directory.Delete(localDirectory, true);
+            }
+        }
+
+        [Fact]
+        public void TryResolve_WithLocalOnlyMode_DoesNotCallNetworkFetcher()
+        {
+            string localDirectory = CreateTemporaryDirectory();
+            try
+            {
+                var fetchClient = new RecordingFetchClient();
+                var options = new GridResourceResolverOptions(new[] { localDirectory }, null, GridResourceResolutionMode.LocalOnly);
+                var resolver = new GridResourceResolver(options, fetchClient);
+
+                bool resolved = resolver.TryResolve("missing.gsb", out string _);
+
+                Assert.False(resolved);
+                Assert.Equal(0, fetchClient.Calls);
+            }
+            finally
+            {
+                Directory.Delete(localDirectory, true);
+            }
+        }
+
+        [Fact]
+        public void TryResolve_WithNetworkMode_DownloadsToCacheAndReusesCachedFile()
+        {
+            string localDirectory = CreateTemporaryDirectory();
+            string cacheDirectory = CreateTemporaryDirectory();
+            try
+            {
+                var fetchClient = new RecordingFetchClient
+                {
+                    OnFetch = path => File.WriteAllText(path, "downloaded-grid")
+                };
+                var options = new GridResourceResolverOptions(new[] { localDirectory }, cacheDirectory, GridResourceResolutionMode.LocalThenNetwork);
+                var resolver = new GridResourceResolver(options, fetchClient);
+
+                bool firstResolved = resolver.TryResolve("network-grid.gsb", out string firstPath);
+                bool secondResolved = resolver.TryResolve("network-grid.gsb", out string secondPath);
+
+                Assert.True(firstResolved);
+                Assert.True(secondResolved);
+                Assert.Equal(firstPath, secondPath);
+                Assert.True(File.Exists(firstPath));
+                Assert.Equal(1, fetchClient.Calls);
+            }
+            finally
+            {
+                Directory.Delete(localDirectory, true);
+                Directory.Delete(cacheDirectory, true);
+            }
+        }
+
+        private static string CreateTemporaryDirectory()
+        {
+            string path = Path.Combine(Path.GetTempPath(), "projnet-grid-tests", Guid.NewGuid().ToString("N"));
+            Directory.CreateDirectory(path);
+            return path;
+        }
+
+        private sealed class RecordingFetchClient : IGridResourceFetchClient
+        {
+            internal int Calls { get; private set; }
+
+            internal Action<string> OnFetch { get; set; }
+
+            public bool TryFetch(string gridName, string targetFilePath)
+            {
+                Calls++;
+                OnFetch?.Invoke(targetFilePath);
+                return OnFetch != null;
+            }
+        }
+    }
+}

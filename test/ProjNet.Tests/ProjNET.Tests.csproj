@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="$(SolutionDir)src\ProjNet\ProjNET.csproj" />
+    <ProjectReference Include="..\..\src\ProjNet\ProjNET.csproj" />
   </ItemGroup>
 
   <ItemGroup>

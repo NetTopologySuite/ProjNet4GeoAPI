@@ -46,6 +46,11 @@ Join the [![Gitter](https://img.shields.io/gitter/room/TechnologyAdvice/Stardust
 * Compatible with Microsoft .NetStandard 2.0
 * Converts coordinate systems to/from Well-Known Text (WKT) and to XML
 
+### Modernization notes
+Concise modernization artifacts and rollout notes are tracked in:
+* `docs/modernization/`
+* `IMPLEMENTATION_PLAN.md`
+
 ### Projection types currently supported:
 * Albers
 * Cassini Soldner

@@ -72,7 +72,12 @@ A modern, evolvable .NET projection library aligned with current `PROJ` concepts
   - `format-support-upgrade` baseline completed (`docs\modernization\format-support-upgrade.md`);
   - `projection-kernel-alignment` baseline completed (`docs\modernization\projection-kernel-alignment.md`);
   - `registry-data-layer` baseline completed (`docs\modernization\registry-data-layer.md`) with additive public lookup APIs;
-  - `operation-resolution-engine` baseline started (`docs\modernization\operation-resolution-engine.md`) with candidate resolver entrypoint and identity fast-path.
+  - `operation-resolution-engine` baseline completed (`docs\modernization\operation-resolution-engine.md`) with candidate resolver entrypoint and identity fast-path;
+  - `grid-resource-management` baseline completed (`docs\modernization\grid-resource-management.md`) with deterministic local-first resolution;
+  - `verification-suite` baseline completed (`docs\modernization\verification-suite.md`) with EPSG reference-point checks and compatibility assertions;
+  - `mutation-testing-stryker` baseline completed (`docs\modernization\mutation-testing-stryker.md`) with tooling and workflow integration;
+  - `benchmarkdotnet-parity` baseline completed (`docs\modernization\benchmarkdotnet-parity.md`) with reproducible parity scenarios;
+  - `migration-docs-release` baseline completed (`docs\modernization\migration-docs-release.md`) with concise migration and release guidance.
 
 ## Work packages (Todos)
 
