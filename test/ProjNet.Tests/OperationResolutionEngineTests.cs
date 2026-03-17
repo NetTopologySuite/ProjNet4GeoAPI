@@ -70,6 +70,23 @@ namespace ProjNET.Tests
         }
 
         [Fact]
+        public void CreateFromCoordinateSystems_WithProjectedFallbackPair_UsesDirectProj2ProjCorePath()
+        {
+            var source = ProjectedCoordinateSystem.WGS84_UTM(32, true);
+            var target = ProjectedCoordinateSystem.WGS84_UTM(33, true);
+            source.Authority = string.Empty;
+            source.AuthorityCode = -1;
+            target.Authority = string.Empty;
+            target.AuthorityCode = -1;
+
+            var transformation = _coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
+
+            var concatenated = Assert.IsType<ConcatenatedTransform>(transformation.MathTransform);
+            Assert.Equal(2, concatenated.CoordinateTransformationList.Count);
+            Assert.DoesNotContain(concatenated.CoordinateTransformationList, ContainsGeographicOrGeocentricCoordinateSystem);
+        }
+
+        [Fact]
         public void CreateFromCoordinateSystems_WithProjectedPairWithoutEpsgAuthority_UsesLegacyFallback()
         {
             var source = ProjectedCoordinateSystem.WGS84_UTM(32, true);

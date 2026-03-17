@@ -89,51 +89,7 @@ namespace ProjNet.CoordinateSystems.Transformations
             if (!sourceProjected.GeographicCoordinateSystem.EqualParams(targetProjected.GeographicCoordinateSystem))
                 return false;
 
-            var sourceInverseProjection = CreateCoordinateOperation(
-                sourceProjected.Projection,
-                sourceProjected.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid,
-                sourceProjected.LinearUnit).Inverse();
-
-            var targetForwardProjection = CreateCoordinateOperation(
-                targetProjected.Projection,
-                targetProjected.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid,
-                targetProjected.LinearUnit);
-
-            var directMathTransform = new ConcatenatedTransform();
-            directMathTransform.CoordinateTransformationList.Add(
-                new CoordinateTransformation(
-                    source,
-                    target,
-                    TransformType.Conversion,
-                    sourceInverseProjection,
-                    string.Empty,
-                    string.Empty,
-                    -1,
-                    string.Empty,
-                    string.Empty));
-            directMathTransform.CoordinateTransformationList.Add(
-                new CoordinateTransformation(
-                    source,
-                    target,
-                    TransformType.Conversion,
-                    targetForwardProjection,
-                    string.Empty,
-                    string.Empty,
-                    -1,
-                    string.Empty,
-                    string.Empty));
-
-            var fallback = new CoordinateTransformation(
-                source,
-                target,
-                TransformType.Transformation,
-                directMathTransform,
-                string.Empty,
-                string.Empty,
-                -1,
-                string.Empty,
-                string.Empty);
-
+            var fallback = CreateDirectProjectedTransform(sourceProjected, targetProjected);
             transformation = CreateMetadataBackedTransformation(source, target, fallback, operation, resolvedGridPath);
             return true;
         }
@@ -221,6 +177,11 @@ namespace ProjNet.CoordinateSystems.Transformations
 		
 		private static CoordinateTransformation Proj2Proj(ProjectedCoordinateSystem source, ProjectedCoordinateSystem target)
 		{
+            if (source.GeographicCoordinateSystem.EqualParams(target.GeographicCoordinateSystem))
+            {
+                return CreateDirectProjectedTransform(source, target);
+            }
+
 			var ct = new ConcatenatedTransform();
 			var ctFac = new CoordinateTransformationFactory();
 			//First transform from projection to geographic
@@ -236,7 +197,55 @@ namespace ProjNet.CoordinateSystems.Transformations
 			return new CoordinateTransformation(source,
 				target, TransformType.Transformation, ct,
 				string.Empty, string.Empty, -1, string.Empty, string.Empty);
-		}		
+		}
+
+        private static CoordinateTransformation CreateDirectProjectedTransform(ProjectedCoordinateSystem source, ProjectedCoordinateSystem target)
+        {
+            var sourceInverseProjection = CreateCoordinateOperation(
+                source.Projection,
+                source.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid,
+                source.LinearUnit).Inverse();
+
+            var targetForwardProjection = CreateCoordinateOperation(
+                target.Projection,
+                target.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid,
+                target.LinearUnit);
+
+            var directMathTransform = new ConcatenatedTransform();
+            directMathTransform.CoordinateTransformationList.Add(
+                new CoordinateTransformation(
+                    source,
+                    target,
+                    TransformType.Conversion,
+                    sourceInverseProjection,
+                    string.Empty,
+                    string.Empty,
+                    -1,
+                    string.Empty,
+                    string.Empty));
+            directMathTransform.CoordinateTransformationList.Add(
+                new CoordinateTransformation(
+                    source,
+                    target,
+                    TransformType.Conversion,
+                    targetForwardProjection,
+                    string.Empty,
+                    string.Empty,
+                    -1,
+                    string.Empty,
+                    string.Empty));
+
+            return new CoordinateTransformation(
+                source,
+                target,
+                TransformType.Transformation,
+                directMathTransform,
+                string.Empty,
+                string.Empty,
+                -1,
+                string.Empty,
+                string.Empty);
+        }
 
         private static CoordinateTransformation Geog2Proj(GeographicCoordinateSystem source, ProjectedCoordinateSystem target)
         {
