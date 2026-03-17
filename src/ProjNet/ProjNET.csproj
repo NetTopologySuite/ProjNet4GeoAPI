@@ -9,6 +9,20 @@
 	  <PackageValidationBaselineVersion>2.0.0</PackageValidationBaselineVersion>
   </PropertyGroup>
 
+
+  <PropertyGroup Label="Target Framework Policy">
+    <RequiredShippingTargetFramework>netstandard2.0</RequiredShippingTargetFramework>
+    <ApprovedTargetFrameworks>netstandard2.0;netstandard2.1</ApprovedTargetFrameworks>
+  </PropertyGroup>
+
+  <Target Name="ValidateTargetFrameworkPolicy" BeforeTargets="PrepareForBuild">
+    <Error Condition="'$(TargetFrameworks)' == ''" Text="ProjNET must define TargetFrameworks explicitly to enforce target policy." />
+    <Error Condition="'$(TargetFrameworks)' != '$(ApprovedTargetFrameworks)'"
+           Text="ProjNET target framework policy violation. Current: '$(TargetFrameworks)'. Approved: '$(ApprovedTargetFrameworks)'. Update src/ProjNet/ENGINEERING_GOVERNANCE.md when intentionally changing this policy." />
+    <Error Condition="$([System.String]::Copy('$(TargetFrameworks)').Contains('$(RequiredShippingTargetFramework)')) != 'True'"
+           Text="ProjNET must ship the required target framework '$(RequiredShippingTargetFramework)'." />
+  </Target>
+
   <PropertyGroup Label="Assembly Info">
     <AssemblyTitle>Proj.NET</AssemblyTitle>
     <Description>Proj.NET performs point-to-point coordinate conversions between geodetic coordinate systems for use in .Net, Geographic Information Systems (GIS) or GPS applications. The spatial reference model used adheres to the Simple Features specification.</Description>
