@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -14,7 +14,7 @@ namespace ProjNET.Tests
 {
     public class CoordinateSystemServicesTest
     {
-        [Test]
+        [Xunit.Fact]
         public void TestConstructor()
         {
             var css = new CoordinateSystemServices(new CoordinateSystemFactory(),
@@ -24,11 +24,12 @@ namespace ProjNET.Tests
             Assert.IsNotNull(css.GetCoordinateSystem(3857));
         }
 
-        [TestCase(@"D:\temp\ConsoleApplication9\SpatialRefSys.xml")]
+        [Xunit.Theory]
+        [Xunit.InlineData(@"D:\temp\ConsoleApplication9\SpatialRefSys.xml")]
         public void TestConstructorLoadXml(string xmlPath)
         {
             if (!File.Exists(xmlPath))
-                throw new IgnoreException("Specified file not found");
+                Xunit.Assert.Skip("Specified file not found");
 
             var css = new CoordinateSystemServices(new CoordinateSystemFactory(),
                 new CoordinateTransformationFactory(), LoadXml(xmlPath));
@@ -39,12 +40,13 @@ namespace ProjNET.Tests
 
         }
 
-        [TestCase(@"")]
+        [Xunit.Theory]
+        [Xunit.InlineData(@"")]
         public void TestConstructorLoadCsv(string csvPath)
         {
             if (!string.IsNullOrWhiteSpace(csvPath))
                 if (!File.Exists(csvPath))
-                    throw new IgnoreException("Specified file not found");
+                    Xunit.Assert.Skip("Specified file not found");
 
             var css = new CoordinateSystemServices(new CoordinateSystemFactory(),
                 new CoordinateTransformationFactory(), LoadCsv(csvPath));
@@ -99,3 +101,4 @@ namespace ProjNET.Tests
 
     }
 }
+

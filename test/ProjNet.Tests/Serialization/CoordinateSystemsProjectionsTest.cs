@@ -1,4 +1,4 @@
-﻿using NUnit.Framework;
+using NUnit.Framework;
 using ProjNet.CoordinateSystems;
 using System;
 
@@ -8,7 +8,7 @@ namespace ProjNET.Tests.Serialization
 #if !NET7_0_OR_GREATER
         : BaseSerializationTest
     {
-        [Test, Obsolete("ISerializable is deprecated")]
+        [Xunit.Fact, Obsolete("ISerializable is deprecated")]
         public void TestProjectionParameterSet() 
         {
             var ps = new ProjNet.CoordinateSystems.Projections.ProjectionParameterSet(
@@ -27,7 +27,7 @@ namespace ProjNET.Tests.Serialization
     {
 #endif
 
-        [Test]
+        [Xunit.Fact]
         public void CreateTransformationFromCoordinateSystemDeserializedFromWKT()
         {
             var utm17n_original = ProjNet.CoordinateSystems.ProjectedCoordinateSystem.WGS84_UTM(17, true);
@@ -41,3 +41,4 @@ namespace ProjNET.Tests.Serialization
         }
     }
 }
+

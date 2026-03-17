@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
@@ -10,7 +10,7 @@ using ProjNet.IO.CoordinateSystems;
 
 namespace ProjNET.Tests
 {
-    [TestFixture]
+    
 	public class CoordinateTransformTests : CoordinateTransformTestsBase
     {
         public CoordinateTransformTests()
@@ -18,7 +18,7 @@ namespace ProjNET.Tests
             Verbose = true;
         }
        
-        [Test]
+        [Xunit.Fact]
         public void TestTransformListOfCoordinates()
         {
             var csFact = new CoordinateSystemFactory();
@@ -54,7 +54,7 @@ namespace ProjNET.Tests
             }
         }
 
-        [Test]
+        [Xunit.Fact]
         public void TestTransformListOfDoubleArray()
         {
             var csFact = new CoordinateSystemFactory();
@@ -89,7 +89,7 @@ namespace ProjNET.Tests
             }
         }
 
-        [Test]
+        [Xunit.Fact]
 	    public void TestCentralMeridianParse()
 	    {
             const string strSouthPole = "PROJCS[\"South_Pole_Lambert_Azimuthal_Equal_Area\",GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Lambert_Azimuthal_Equal_Area\"],PARAMETER[\"False_Easting\",0],PARAMETER[\"False_Northing\",0],PARAMETER[\"Central_Meridian\",-127],PARAMETER[\"Latitude_Of_Origin\",-90],UNIT[\"Meter\",1]]";
@@ -99,7 +99,7 @@ namespace ProjNET.Tests
             Assert.IsNotNull(pSouthPole);
         }
         
-        [Test]
+        [Xunit.Fact]
 		public void TestAlbersProjection()
 		{
 			var ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Clarke 1866", 6378206.4, 294.9786982138982, LinearUnit.Metre);
@@ -133,7 +133,7 @@ namespace ProjNET.Tests
             Assert.IsTrue(ToleranceLessThan(pGeo, pGeo2, 0.0000001), TransformationError("Albers", pGeo, pGeo2, true));
 		}
 
-		[Test]
+		[Xunit.Fact]
 		public void TestAlbersProjectionFeet()
 		{
 			var ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Clarke 1866", 6378206.4, 294.9786982138982, LinearUnit.Metre);
@@ -166,7 +166,7 @@ namespace ProjNET.Tests
             Assert.IsTrue(ToleranceLessThan(pGeo, pGeo2, 0.0000001), TransformationError("Albers", pGeo, pGeo2, true));
         }
 
-		[Test]
+		[Xunit.Fact]
 		public void TestMercator_1SP_Projection()
 		{
 			var ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Bessel 1840", 6377397.155, 299.15281, LinearUnit.Metre);
@@ -197,7 +197,7 @@ namespace ProjNET.Tests
             Assert.IsTrue(ToleranceLessThan(pUtm, expected, 0.02), TransformationError("Mercator_1SP", expected, pUtm, false));
             Assert.IsTrue(ToleranceLessThan(pGeo, pGeo2, 0.0000001), TransformationError("Mercator_1SP", pGeo, pGeo2, true));
 		}
-		[Test]
+		[Xunit.Fact]
 		public void TestMercator_1SP_Projection_Feet()
 		{
 			var ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Bessel 1840", 6377397.155, 299.15281, LinearUnit.Metre);
@@ -228,7 +228,7 @@ namespace ProjNET.Tests
             Assert.IsTrue(ToleranceLessThan(pUtm, expected, 0.02), TransformationError("Mercator_1SP", expected, pUtm, false));
             Assert.IsTrue(ToleranceLessThan(pGeo, pGeo2, 0.0000001), TransformationError("Mercator_1SP", pGeo, pGeo2, true));
 		}
-		[Test]
+		[Xunit.Fact]
 		public void TestMercator_2SP_Projection()
 		{
 			var ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Krassowski 1940", 6378245.0, 298.3, LinearUnit.Metre);
@@ -258,7 +258,7 @@ namespace ProjNET.Tests
             Assert.IsTrue(ToleranceLessThan(pUtm, expected, 0.02), TransformationError("Mercator_2SP", expected, pUtm, false));
             Assert.IsTrue(ToleranceLessThan(pGeo, pGeo2, 0.0000001), TransformationError("Mercator_2SP", pGeo, pGeo2, true));
         }
-		[Test]
+		[Xunit.Fact]
 		public void TestTransverseMercator_Projection()
 		{
 			var ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Airy 1830", 6377563.396, 299.32496, LinearUnit.Metre);
@@ -289,7 +289,7 @@ namespace ProjNET.Tests
 			Assert.IsTrue(ToleranceLessThan(pUtm, expected, 0.01), TransformationError("TransverseMercator", expected, pUtm));
 			Assert.IsTrue(ToleranceLessThan(pGeo, pGeo2, 1E-6), TransformationError("TransverseMercator", pGeo, pGeo2, true));
 		}
-		[Test]
+		[Xunit.Fact]
 		public void TestLambertConicConformal2SP_Projection()
 		{
 		    var ellipsoid = /*Ellipsoid.Clarke1866;*/
@@ -345,7 +345,7 @@ namespace ProjNET.Tests
 			return CoordinateTransformationFactory.CreateFromCoordinateSystems(wgs84, coordsys);
 		}
 
-		[Test]
+		[Xunit.Fact]
 		[Repeat(1000)]
 		public void TestLambertAzimuthalEqualArea_Projection_round_trip_on_origin()
 		{
@@ -369,7 +369,7 @@ namespace ProjNET.Tests
 			Assert.IsTrue(ToleranceLessThan(pGeo, pGeo2, 0.0000001), TransformationError("Lambert_Azimuthal_Equal_Area", pGeo, pGeo2, true));
 		}
 
-		[Test]
+		[Xunit.Fact]
 		[Repeat(1000)]
 		public void TestLambertAzimuthalEqualArea_Projection_round_trip_on_arbitrary_point()
 		{
@@ -400,7 +400,7 @@ namespace ProjNET.Tests
 			Assert.IsTrue(ToleranceLessThan(pGeo, pGeo2, 0.0000001), TransformationError("Lambert_Azimuthal_Equal_Area", pGeo, pGeo2, true));
 		}
 
-		[Test]
+		[Xunit.Fact]
 		public void TestGeocentric()
 		{
 			var gcs = CoordinateSystemFactory.CreateGeographicCoordinateSystem("ETRF89 Geographic", AngularUnit.Degrees, HorizontalDatum.ETRF89, PrimeMeridian.Greenwich,
@@ -416,7 +416,7 @@ namespace ProjNET.Tests
 			Assert.IsTrue(ToleranceLessThan(p2, pExpected, 0.00001));
         }
 
-		[Test]
+		[Xunit.Fact]
 		public void TestDatumTransform()
 		{
 			//Define datums, set parameters
@@ -499,7 +499,7 @@ namespace ProjNET.Tests
 
 		}
 
-		[Test]
+		[Xunit.Fact]
         public void TestKrovak_Greenwich_Projection()
 		{
             //test case for epsg 5514 (102067)
@@ -556,7 +556,7 @@ namespace ProjNET.Tests
 			Assert.IsTrue(ToleranceLessThan(pGeo, pGeo2, 0.001), TransformationError("Krovak", pGeo, pGeo2));
 		}
 
-        [Test]
+        [Xunit.Fact]
         public void TestKrovak_Ferro_Projection()
         {
             //test case for epsg 2065 (prime meridian at Ferro)
@@ -613,7 +613,7 @@ namespace ProjNET.Tests
             Assert.IsTrue(ToleranceLessThan(pGeo, pGeo2, 0.001), TransformationError("Krovak", pGeo, pGeo2));
         }
 
-        [Test]
+        [Xunit.Fact]
         public void TestObliqueStereographicProjection()
         {
             //test data from http://www.spatialreference.org/ref/epsg/2171/
@@ -644,7 +644,7 @@ namespace ProjNET.Tests
             Assert.AreEqual(Coord2171[1], transformedCoord2171[1], 1);
         }
 
-		[Test]
+		[Xunit.Fact]
 		public void TestUniversalPolarStereographicProjection()
 		{
             //test data from http://epsg.io/transform
@@ -700,7 +700,7 @@ namespace ProjNET.Tests
             Assert.AreEqual(Coord32661[1], transformedCoord32661[1], 1);
 		}
 
-		[Test]
+		[Xunit.Fact]
 		public void TestAustralianAntarcticPolarStereographicProjection()
 		{
             //test data from http://epsg.io/transform
@@ -755,7 +755,7 @@ namespace ProjNET.Tests
             Assert.AreEqual(Coord3032[1], transformedCoord3032[1], 1);
 		}
 
-	    [Test]
+	    [Xunit.Fact]
         public void TestUnitTransforms()
         {
 			var nadUTM = SRIDReader.GetCSbyID(2868); //UTM Arizona Central State Plane using Feet as units
@@ -775,7 +775,7 @@ namespace ProjNET.Tests
             Assert.IsTrue(ToleranceLessThan(p0, p2, 0.0001), TransformationError("Unit", expected, p1, true));
         }
 
-        [Test, Description("Accuracy very poor!")]
+        [Xunit.Fact(DisplayName = "Accuracy very poor!")]
         public void TestPolyconicTransforms()
         {
             var wgs84GCS = SRIDReader.GetCSbyID(4326); //GCS WGS84
@@ -797,7 +797,7 @@ namespace ProjNET.Tests
             Assert.IsTrue(ToleranceLessThan(p0, p2, 0.0001), TransformationError("Polyconic", expected, p1, true));
         }
 
-        [Test]
+        [Xunit.Fact]
         public void TestCassiniSoldner()
         {
             var csSource = GeographicCoordinateSystem.WGS84;
@@ -822,7 +822,7 @@ namespace ProjNET.Tests
              */
         }
 
-        [Test]
+        [Xunit.Fact]
         public void TestHotineObliqueMercator()
         {
             var csSource = GeographicCoordinateSystem.WGS84;
@@ -836,7 +836,7 @@ namespace ProjNET.Tests
 
         }
 
-        [Test]
+        [Xunit.Fact]
         public void TestTransformListOnConcatenatedDoTransform()
         {
               var utm35ETRS =
@@ -857,7 +857,7 @@ namespace ProjNET.Tests
             Assert.AreNotEqual(6714000, coords[0].Y);
         }
 
-        [Test]
+        [Xunit.Fact]
         public void TestTransformListOnConcatenatedDoTransformDoubleArr()
         {
             var utm35ETRS =
@@ -881,7 +881,7 @@ namespace ProjNET.Tests
         /// <summary>
         /// Test transformation for affine transformation
         /// </summary>
-        [Test]
+        [Xunit.Fact]
         public void AffineTransformationTest ()
         {
             //Local coordinate system MNAU (Kraftwerk Mäuserich) (based on Gauß-Krüger using affine transformation)
@@ -915,7 +915,7 @@ namespace ProjNET.Tests
         /// <summary>
         /// Test inverse transformation for affine transformation
         /// </summary>
-        [Test]
+        [Xunit.Fact]
         public void InverseAffineTransformationTest ()
         {
             //Local coordinate system MNAU (Kraftwerk Mäuserich) (based on Gauß-Krüger using affine transformation)
@@ -965,7 +965,7 @@ namespace ProjNET.Tests
         /// <summary>
         /// Coordinate transformation test for fitted coordinate system - test CS - local coordinate system MNAU
         /// </summary>
-        [Test]
+        [Xunit.Fact]
         public void TestTransformOnFittedCoordinateSystem ()
         {
 
@@ -1021,7 +1021,7 @@ namespace ProjNET.Tests
         /// <summary>
         /// test for epsg 21780 projection (different prime meridian)
         /// </summary>
-        [Test]
+        [Xunit.Fact]
         public void Test_EPSG_21780_PrimeMeredianTransformation()
         {
             string wkt4326 = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]]";
@@ -1053,7 +1053,7 @@ namespace ProjNET.Tests
         }
 
         // https://github.com/NetTopologySuite/ProjNet4GeoAPI/issues/48
-        [Test]
+        [Xunit.Fact]
         public void Test_EPSG_2056_HotineObliqueMercatorAzimuthCenter_Switzerland()
         {
             var csSrc = GeographicCoordinateSystem.WGS84;
@@ -1069,7 +1069,7 @@ namespace ProjNET.Tests
             Assert.That(y, Is.EqualTo(1253167.89).Within(0.1));
         }
 
-        [Test]
+        [Xunit.Fact]
         public void TestEllipsoidalOrthographicTransform()
         {
             //Check equatorial projection
@@ -1129,7 +1129,7 @@ namespace ProjNET.Tests
             Assert.Throws<ArgumentOutOfRangeException>(@delegate2);
         }
 
-        [Test]
+        [Xunit.Fact]
         public static void TestMercatorAuxilarySphereTransformation()
         {
             string sourceWkt = "PROJCS[\"WGS_1984_Web_Mercator_Auxiliary_Sphere\",GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Mercator_Auxiliary_Sphere\"],PARAMETER[\"False_Easting\",0.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",0.0],PARAMETER[\"Standard_Parallel_1\",0.0],PARAMETER[\"Auxiliary_Sphere_Type\",0.0],UNIT[\"Meter\",1.0]]";
@@ -1150,7 +1150,7 @@ namespace ProjNET.Tests
             Assert.AreEqual(6968468.98, tranformedPoint.y, 0.1);
         }
 
-        [Test]
+        [Xunit.Fact]
         public void TestPopularVisualizationPseudoMercatorProjectionRegistry()
         {
             string sourceWkt = "GEOGCS[\"GCS_WGS_1984\", DATUM[\"D_WGS_1984\", SPHEROID[\"WGS_1984\",6378137.0,298.257223563]], PRIMEM[\"Greenwich\",0.0], UNIT[\"Degree\",0.0174532925199433]]";
@@ -1166,7 +1166,7 @@ namespace ProjNET.Tests
             Assert.NotNull(transformation);
         }
 
-        [Test]
+        [Xunit.Fact]
         public void TestLamberTangentialConformalConicProjectionRegistryAndTransformation()
         {
             string sourceWkt = "PROJCS[\"WORLD-LM-TAN\",GEOGCS[\"LL84\",DATUM[\"WGS84\",SPHEROID[\"WGS84\",6378137.000,298.25722356]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Lambert Tangential Conformal Conic Projection\"],PARAMETER[\"false_easting\",0.000],PARAMETER[\"false_northing\",0.000],PARAMETER[\"scale_factor\",1.000000000000],PARAMETER[\"central_meridian\",0.00000000000000],PARAMETER[\"latitude_of_origin\",1.00000000000000],UNIT[\"Meter\",1.00000000000000]]";
@@ -1203,3 +1203,4 @@ namespace ProjNET.Tests
         }
     }
 }
+

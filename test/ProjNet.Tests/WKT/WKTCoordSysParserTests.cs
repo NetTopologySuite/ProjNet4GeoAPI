@@ -9,7 +9,7 @@ using ProjNet.CoordinateSystems.Transformations;
 
 namespace ProjNET.Tests.WKT
 {
-    [TestFixture]
+    
     public class WKTCoordSysParserTests
     {
         private readonly CoordinateSystemFactory _coordinateSystemFactory = new CoordinateSystemFactory();
@@ -59,7 +59,7 @@ namespace ProjNET.Tests.WKT
         /// 	AUTHORITY["EPSG","2918"]
         /// ]
         /// </code></remarks>
-        [Test]
+        [Xunit.Fact]
         public void TestProjectedCoordinateSystem_EPSG_2918()
         {
             const string wkt = "PROJCS[\"NAD83(HARN) / Texas Central (ftUS)\", "+
@@ -116,7 +116,7 @@ namespace ProjNET.Tests.WKT
         /// This test reads in a file with 2671 pre-defined coordinate systems and projections,
         /// and tries to parse them.
         /// </summary>
-        [Test]
+        [Xunit.Fact]
         public void ParseAllWKTs()
         {
             int parseCount = 0;
@@ -135,7 +135,7 @@ namespace ProjNET.Tests.WKT
         /// This test reads in a file with 2671 pre-defined coordinate systems and projections,
         /// and tries to create a transformation with them.
         /// </summary>
-        [Test]
+        [Xunit.Fact]
         public void TestCreateCoordinateTransformationForWktInCsv()
         {
             //GeographicCoordinateSystem.WGS84
@@ -228,7 +228,7 @@ namespace ProjNET.Tests.WKT
         /// <summary>
         /// Test parsing of a <see cref="ProjectedCoordinateSystem"/> from WKT
         /// </summary>
-        [Test]
+        [Xunit.Fact]
         public void TestProjectedCoordinateSystem_EPSG27700_UnitBeforeProjection()
         {
             const string wkt = "PROJCS[\"OSGB 1936 / British National Grid\"," +
@@ -284,7 +284,7 @@ namespace ProjNET.Tests.WKT
 
         }
 
-        [Test]
+        [Xunit.Fact]
         public void TestParseSrOrg()
         {
             Assert.That(() => _coordinateSystemFactory.CreateFromWkt(
@@ -299,7 +299,7 @@ namespace ProjNET.Tests.WKT
                 ), Throws.Nothing);
         }
 
-        [Test]
+        [Xunit.Fact]
         public void TestProjNetIssues()
         {
             Assert.That(() => _coordinateSystemFactory.CreateFromWkt(
@@ -342,7 +342,7 @@ namespace ProjNET.Tests.WKT
         /// <summary>
         /// Test parsing of a <see cref="FittedCoordinateSystem"/> from WKT
         /// </summary>
-        [Test]
+        [Xunit.Fact]
         public void TestFittedCoordinateSystemWkt ()
         {
             var fac = new CoordinateSystemFactory ();
@@ -393,7 +393,7 @@ namespace ProjNET.Tests.WKT
         /// <summary>
         /// Test parsing of a <see cref="GeocentricCoordinateSystem"/> from WKT
         /// </summary>
-        [Test]
+        [Xunit.Fact]
         public void TestGeocentricCoordinateSystem()
         {
             var fac = new CoordinateSystemFactory();
@@ -429,7 +429,7 @@ namespace ProjNET.Tests.WKT
             Assert.That(fcs.AuthorityCode, Is.EqualTo(5250L));
         }
 
-        [Test]
+        [Xunit.Fact]
         public void ParseWktCreatedByCoordinateSystem()
         {
             // Sample WKT from an external source.
@@ -538,3 +538,4 @@ namespace ProjNET.Tests.WKT
         #endregion
     }
 }
+

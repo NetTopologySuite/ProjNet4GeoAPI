@@ -9,6 +9,18 @@
     <PackageIcon>icon.png</PackageIcon>
   </PropertyGroup>
 
+  <PropertyGroup Label="Quality Gates">
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest</AnalysisLevel>
+    <AnalysisMode>AllEnabledByDefault</AnalysisMode>
+    <EnforceCodeStyleInBuild>false</EnforceCodeStyleInBuild>
+    <WarningLevel>9999</WarningLevel>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.507" PrivateAssets="all" />
+  </ItemGroup>
+
   <ItemGroup>
     <None Condition=" '$(IsPackable)' == 'true' " Include="$(MSBuildThisFileDirectory)icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>

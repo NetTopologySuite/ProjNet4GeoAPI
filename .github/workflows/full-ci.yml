@@ -21,7 +21,7 @@ jobs:
         dotnet-version: 8
 
     - name: Build
-      run: dotnet build -c Release -v minimal -p:WarningLevel=3
+      run: dotnet build -c Release -v minimal
 
     - name: Test
       run: dotnet test -c Release --no-build

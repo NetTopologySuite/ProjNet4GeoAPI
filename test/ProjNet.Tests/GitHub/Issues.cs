@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using ProjNet;
@@ -7,13 +7,13 @@ using ProjNet.CoordinateSystems.Transformations;
 
 namespace ProjNET.Tests.GitHub
 {
-    [Category("GitHub Issue")]
+    [Xunit.Trait("Category", "GitHub Issue")]
     public class Issues
     {
         //
         private static CoordinateSystemServices _css = new CoordinateSystemServices(CoordinateSystemServicesTest.LoadCsv());
 
-        [Test(Description = "Issue #10, ConcatenatedTransform.Inverse() method destroys the state of child transformations")]
+        [Xunit.Fact(DisplayName = "Issue #10, ConcatenatedTransform.Inverse() method destroys the state of child transformations")]
         public void TestConcatenatedTransformInvert()
         {
             
@@ -32,7 +32,7 @@ namespace ProjNET.Tests.GitHub
                 Assert.That(ReferenceEquals(ctlFwd[i], ctlRev[j]), Is.False);
         }
 
-        [Test(Description = "Issue #20, Math transform bug")]
+        [Xunit.Fact(DisplayName = "Issue #20, Math transform bug")]
         public void TestMathTransformBug()
         {
             var coordinateTransformFactory = new CoordinateTransformationFactory();
@@ -70,7 +70,7 @@ namespace ProjNET.Tests.GitHub
 
         }
 
-        [Test]
+        [Xunit.Fact]
         public void TestIssuesWith3857To25832()
         {
             var epsg_3857 = ProjectedCoordinateSystem.WebMercator;
@@ -97,7 +97,7 @@ namespace ProjNET.Tests.GitHub
             Assert.That(pt_3857.y, Is.EqualTo(pt_3857ex.y).Within(0.015));
         }
 
-        [Test, Description("Convert latitude/longitude to Canada grid NAD83 (epsg:26910)")]
+        [Xunit.Fact(DisplayName = "Convert latitude/longitude to Canada grid NAD83 (epsg:26910)")]
         public void TestConvertWgs84ToEPSG26910()
         {
             var epsg26910 = _css.GetCoordinateSystem("EPSG", 26910);
@@ -117,7 +117,7 @@ namespace ProjNET.Tests.GitHub
              */
         }
 
-        [Test, Ignore("Requires DotSpatial.Projections, Result same as in TestConvertWgs84ToEPSG26910")]
+        [Xunit.Fact(Skip = "Requires DotSpatial.Projections, Result same as in TestConvertWgs84ToEPSG26910")]
         public void TestConvertWgs84ToEPSG26910_DS()
         {
             /*
@@ -137,8 +137,7 @@ namespace ProjNET.Tests.GitHub
              */
         }
 
-        [Test(Description =
-            "Issue #64, Wrong parameter order when calling base constructor (in systems extending HorizontalCoordinateSystem)")]
+        [Xunit.Fact(DisplayName = "Issue #64, Wrong parameter order when calling base constructor (in systems extending HorizontalCoordinateSystem)")]
         public void TestHorizontalCoordinateSystemImplementationsAbbreviationAndRemarks()
         {
             string abbreviation = "TestAbbreviation";
@@ -184,3 +183,4 @@ namespace ProjNET.Tests.GitHub
         }
     }
 }
+

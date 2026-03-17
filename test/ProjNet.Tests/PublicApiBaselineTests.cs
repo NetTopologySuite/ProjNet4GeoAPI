@@ -1,8 +1,8 @@
 using System;
 using System.IO;
-using NUnit.Framework;
 using ProjNet;
 using PublicApiGenerator;
+using Xunit;
 
 namespace ProjNET.Tests
 {
@@ -11,7 +11,7 @@ namespace ProjNET.Tests
         private const string BaselineFileName = "PublicAPI.Shipped.txt";
         private const string UpdateBaselineEnvironmentVariable = "PROJNET_UPDATE_PUBLIC_API_BASELINE";
 
-        [Test]
+        [Xunit.Fact]
         public void PublicApiMatchesBaseline()
         {
             var baselinePath = GetBaselinePath();
@@ -28,20 +28,19 @@ namespace ProjNET.Tests
             if (Environment.GetEnvironmentVariable(UpdateBaselineEnvironmentVariable) == "1")
             {
                 File.WriteAllText(baselinePath, currentPublicApi + Environment.NewLine);
-                Assert.Pass($"Public API baseline regenerated at '{baselinePath}'.");
+                return;
             }
 
             if (!File.Exists(baselinePath))
-                Assert.Fail($"Public API baseline file was not found at '{baselinePath}'. Set {UpdateBaselineEnvironmentVariable}=1 and run this test to generate it.");
+                throw new InvalidOperationException($"Public API baseline file was not found at '{baselinePath}'. Set {UpdateBaselineEnvironmentVariable}=1 and run this test to generate it.");
 
             var baseline = NormalizeLineEndings(File.ReadAllText(baselinePath));
-            Assert.That(currentPublicApi, Is.EqualTo(baseline),
-                $"Public API changed. If this change is intentional, set {UpdateBaselineEnvironmentVariable}=1 and rerun this test to update {BaselineFileName}.");
+            Assert.Equal(baseline, currentPublicApi);
         }
 
         private static string GetBaselinePath()
         {
-            var directory = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
+            var directory = new DirectoryInfo(AppContext.BaseDirectory);
             while (directory != null)
             {
                 var solutionPath = Path.Combine(directory.FullName, "ProjNet4GeoAPI.sln");
@@ -60,3 +59,4 @@ namespace ProjNET.Tests
         }
     }
 }
+

@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using NUnit.Framework;
 using ProjNet.CoordinateSystems;
 
 namespace ProjNET.Tests
 {
-    [TestFixture]
+    
     public class ProjNetIssues : CoordinateTransformTestsBase
     {
         public ProjNetIssues()
@@ -13,7 +13,7 @@ namespace ProjNET.Tests
             Verbose = true;
         }
 
-        [Test, Description("WGS_84UTM to WGS_84 is inaccurate")]
+        [Xunit.Fact(DisplayName = "WGS_84UTM to WGS_84 is inaccurate")]
         public void TestIssue23773()
         {
             var csUtm18N = ProjectedCoordinateSystem.WGS84_UTM(18, true);
@@ -35,7 +35,7 @@ namespace ProjNET.Tests
                 TransformationError("UTM18N -> WGS84", pExpected, pgeo));
         }
 
-        [Test, Description("Proj.net reprojection problem, Discussion http://projnet.codeplex.com/discussions/351733")]
+        [Xunit.Fact(DisplayName = "Proj.net reprojection problem, Discussion http://projnet.codeplex.com/discussions/351733")]
         public void TestDiscussion351733()
         {
             var csSource = CoordinateSystemFactory.CreateFromWkt(
@@ -57,7 +57,7 @@ namespace ProjNET.Tests
                 TransformationError("EPSG 28414 -> Pulkovo 1942", pp, pp2, true));
         }
 
-        [Test, Description("Problem converting coordinates, Discussion http://projnet.codeplex.com/discussions/352813")]
+        [Xunit.Fact(DisplayName = "Problem converting coordinates, Discussion http://projnet.codeplex.com/discussions/352813")]
         public void TestDiscussion352813()
         {
             var csSource = GeographicCoordinateSystem.WGS84;
@@ -108,7 +108,7 @@ namespace ProjNET.Tests
                 TransformationError("EPSG 4326 -> EPSG 3857", pg1, pg2, true));
         }
 
-        [Test, Description("Concerned about the accuracy, Discussion http://projnet.codeplex.com/discussions/361248")]
+        [Xunit.Fact(DisplayName = "Concerned about the accuracy, Discussion http://projnet.codeplex.com/discussions/361248")]
         public void TestDiscussion361248_1()
         {
             var csSource = CoordinateSystemFactory.CreateFromWkt(
@@ -130,7 +130,7 @@ namespace ProjNET.Tests
             Test("WGS 84 -> GDA94 / MGA zone 50", csSource, csTarget, new[] { 136d, -30d }, new[] { 2349315.05731837, 6524249.91789138}, 0.05, 1.0e-4);
         }
 
-        [Test, Description("Concerned about the accuracy, Discussion http://projnet.codeplex.com/discussions/361248")]
+        [Xunit.Fact(DisplayName = "Concerned about the accuracy, Discussion http://projnet.codeplex.com/discussions/361248")]
         public void TestDiscussion361248_2()
         {
             var csSource = ProjectedCoordinateSystem.WGS84_UTM(18, true);
@@ -154,7 +154,7 @@ namespace ProjNET.Tests
         /// Wrong <c>null</c> check in ObliqueMercatorProjection.Inverse() method
         /// </summary>
         /// <seealso href="https://code.google.com/p/nettopologysuite/issues/detail?id=191"/>
-        [Test, Description("ObliqueMercatorProjection.Inverse() wrong null check")]
+        [Xunit.Fact(DisplayName = "ObliqueMercatorProjection.Inverse() wrong null check")]
         public void TestNtsIssue191()
         {
             var parameters = new List<ProjectionParameter>();
@@ -188,7 +188,7 @@ namespace ProjNET.Tests
         /// <summary>
         /// Wrong AngularUnits.EqualParams implementation
         /// </summary>
-        [Test]
+        [Xunit.Fact]
         public void TestAngularUnitsEqualParamsIssue()
         {
             //string sourceWkt = " UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]";
@@ -215,7 +215,8 @@ namespace ProjNET.Tests
             Assert.AreEqual (true, pcs1.GeographicCoordinateSystem.AngularUnit.EqualParams (pcs2.GeographicCoordinateSystem.AngularUnit));
         }
 
-        [Test, Description("transformation somehow is wrong"), Category("Question")]
+        [Xunit.Fact(DisplayName = "transformation somehow is wrong")]
+        [Xunit.Trait("Category", "Question")]
         public void TestGitHubIssue53()
         {
             // arrange
@@ -234,7 +235,8 @@ namespace ProjNET.Tests
             Assert.AreEqual(point[1], rBack[1], 1e-5);
         }
 
-        [Test, Description("Coordinate system isn't supported"), Category("Issue")]
+        [Xunit.Fact(DisplayName = "Coordinate system isn't supported")]
+        [Xunit.Trait("Category", "Issue")]
         public void TestGitHubIssue98()
         {
             var cs = CoordinateSystemFactory.CreateFromWkt(
@@ -306,7 +308,7 @@ namespace ProjNET.Tests
         /// This test ensures that the WKT parsing functionality of the CoordinateSystemFactory
         /// correctly initializes the coordinate system and its associated metadata, such as the authority code.
         /// </remarks>
-        [Test]
+        [Xunit.Fact]
         public void TestAuthorityNotLoadedIssue()
         {
             string wkt = "PROJCS[\"WGS 84 / Pseudo-Mercator\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"Mercator_1SP\"],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"X\",EAST],AXIS[\"Y\",NORTH],EXTENSION[\"PROJ4\",\"+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs\"],AUTHORITY[\"EPSG\",\"3857\"]]";
@@ -316,3 +318,4 @@ namespace ProjNET.Tests
         }
     }
 }
+

@@ -56,6 +56,17 @@ A modern, evolvable .NET projection library aligned with current `PROJ` concepts
 - `src\ProjNet4GeoAPI` .NET tests passed (baseline confirmed earlier).
 - `spec\PROJ` was rebuilt with `vcpkg` and validated (`ctest` 54/54 passed).
 
+## Execution progress snapshot
+- Wave A completed:
+  - plan copied into repository (`IMPLEMENTATION_PLAN.md`);
+  - PROJ gap analysis artifact added (`docs\modernization\proj-gap-analysis.md`);
+  - public API baseline and verification test implemented.
+- Wave B completed:
+  - test suite migrated to xUnit v3.2.2 attributes and runner setup;
+  - CI/test tooling updated for xUnit v3 execution;
+  - analyzer/style quality baseline hardened and documented.
+- Next focus: `test-parity-matrix`, then `target-architecture` and `managed-data-packaging`.
+
 ## Work packages (Todos)
 
 ### 1) `proj-gap-analysis`

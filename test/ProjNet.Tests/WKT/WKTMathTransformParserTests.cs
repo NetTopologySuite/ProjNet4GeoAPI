@@ -1,17 +1,17 @@
-﻿using System;
+using System;
 using NUnit.Framework;
 using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.IO.CoordinateSystems;
 
 namespace ProjNET.Tests.WKT
 {
-    [TestFixture]
+    
     public class WKTMathTransformParserTests
     {
         /// <summary>
         /// Test parsing of affine math transform from WKT
         /// </summary>
-        [Test]
+        [Xunit.Fact]
         public void ParseAffineTransformWkt ()
         {
             //TODO MathTransformFactory fac = new MathTransformFactory ();
@@ -54,9 +54,10 @@ namespace ProjNET.Tests.WKT
         /// <summary>
         /// MathTransformWktReader parses real number with exponent incorrectly
         /// </summary>
-        [TestCase("PARAM_MT[\"Affine\",PARAMETER[\"num_row\", 3],PARAMETER[\"num_col\", 3],PARAMETER[\"elt_0_0\", 6.12303176911189E-17]]")]
-        [TestCase("PARAM_MT[\"Affine\",PARAMETER[\"num_row\", 3],PARAMETER[\"num_col\", 3],PARAMETER[\"elt_0_0\", 5.235E4]]")]
-        [TestCase ("PARAM_MT[\"Affine\",PARAMETER[\"num_row\", 3],PARAMETER[\"num_col\", 3],PARAMETER[\"elt_0_0\", 5.235E+4]]")]
+        [Xunit.Theory]
+        [Xunit.InlineData("PARAM_MT[\"Affine\",PARAMETER[\"num_row\", 3],PARAMETER[\"num_col\", 3],PARAMETER[\"elt_0_0\", 6.12303176911189E-17]]")]
+        [Xunit.InlineData("PARAM_MT[\"Affine\",PARAMETER[\"num_row\", 3],PARAMETER[\"num_col\", 3],PARAMETER[\"elt_0_0\", 5.235E4]]")]
+        [Xunit.InlineData("PARAM_MT[\"Affine\",PARAMETER[\"num_row\", 3],PARAMETER[\"num_col\", 3],PARAMETER[\"elt_0_0\", 5.235E+4]]")]
         public void TestMathTransformWktReaderExponencialNumberParsingIssue(string wkt)
         {
             //string wkt = "PARAM_MT[\"Affine\",PARAMETER[\"num_row\", 3],PARAMETER[\"num_col\", 3],PARAMETER[\"elt_0_0\", 6.12303176911189E-17]]";
@@ -81,3 +82,4 @@ namespace ProjNET.Tests.WKT
         }
     }
 }
+

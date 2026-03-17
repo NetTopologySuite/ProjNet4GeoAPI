@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.IO;
 using Newtonsoft.Json.Linq;
@@ -8,7 +8,7 @@ using ProjNet.CoordinateSystems;
 
 namespace ProjNET.Tests.WKT
 {
-    [TestFixture]
+    
     public class SpatialRefSysTableParser
     {
         private static string _connectionString;
@@ -16,11 +16,11 @@ namespace ProjNET.Tests.WKT
         private static readonly Lazy<CoordinateSystemFactory> CoordinateSystemFactory =
             new Lazy<CoordinateSystemFactory>(() => new CoordinateSystemFactory());
 
-        [Test]
+        [Xunit.Fact]
         public void TestParsePostgisDefinitions()
         {
             if (string.IsNullOrWhiteSpace(ConnectionString))
-                throw new IgnoreException("No Connection string provided or provided connection string invalid.");
+                Xunit.Assert.Skip("No Connection string provided or provided connection string invalid.");
 
             using (var cn = new NpgsqlConnection(ConnectionString))
             {
@@ -55,11 +55,11 @@ namespace ProjNET.Tests.WKT
 
         }
 
-        [Test]//, Ignore("Only run this if you want a new SRID.csv file")]
+        [Xunit.Fact]//, Ignore("Only run this if you want a new SRID.csv file")]
         public void TestCreateSridCsv()
         {
             if (string.IsNullOrWhiteSpace(ConnectionString))
-                throw new IgnoreException("No Connection string provided or provided connection string invalid.");
+                Xunit.Assert.Skip("No Connection string provided or provided connection string invalid.");
 
             if (File.Exists("SRID.csv")) File.Delete("SRID.csv");
 
@@ -144,3 +144,4 @@ namespace ProjNET.Tests.WKT
 
     }
 }
+
