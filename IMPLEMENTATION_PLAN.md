@@ -65,7 +65,10 @@ A modern, evolvable .NET projection library aligned with current `PROJ` concepts
   - test suite migrated to xUnit v3.2.2 attributes and runner setup;
   - CI/test tooling updated for xUnit v3 execution;
   - analyzer/style quality baseline hardened and documented.
-- Next focus: `test-parity-matrix`, then `target-architecture` and `managed-data-packaging`.
+- Next step progress:
+  - `test-parity-matrix` completed (`docs\modernization\test-parity-matrix.md`);
+  - `target-architecture` completed (`docs\modernization\target-architecture.md`);
+  - baseline implementation started for `managed-data-packaging` and `format-support-upgrade`.
 
 ## Work packages (Todos)
 

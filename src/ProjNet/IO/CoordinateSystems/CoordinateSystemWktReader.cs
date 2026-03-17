@@ -41,6 +41,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.ComTypes;
 using System.Text;
+using System.Text.RegularExpressions;
 using ProjNet.CoordinateSystems;
 
 namespace ProjNet.IO.CoordinateSystems
@@ -61,7 +62,8 @@ namespace ProjNet.IO.CoordinateSystems
             if (string.IsNullOrWhiteSpace(wkt))
                 throw new ArgumentNullException("wkt");
 
-            using (TextReader reader = new StringReader(wkt))
+            var normalizedWkt = NormalizeWkt(wkt);
+            using (TextReader reader = new StringReader(normalizedWkt))
             {
                 var tokenizer = new WktStreamTokenizer(reader);
                 tokenizer.NextToken();
@@ -83,11 +85,24 @@ namespace ProjNet.IO.CoordinateSystems
                     case "GEOCCS":
                     case "FITTED_CS":
                     case "LOCAL_CS":
-                        return ReadCoordinateSystem(wkt, tokenizer);
+                        return ReadCoordinateSystem(normalizedWkt, tokenizer);
                     default:
                         throw new ArgumentException($"'{objectName}' is not recognized.");
                 }
             }
+        }
+
+        private static string NormalizeWkt(string wkt)
+        {
+            var normalized = wkt;
+            normalized = normalized.Replace("ELLIPSOID", "SPHEROID");
+            normalized = Regex.Replace(normalized, @"\bID\[(?=\s*"")", "AUTHORITY[");
+            normalized = normalized.Replace("GEODETICCRS[", "GEOGCS[");
+            normalized = normalized.Replace("GEODCRS[", "GEOGCS[");
+            normalized = normalized.Replace("BASEGEODCRS[", "GEOGCS[");
+            normalized = normalized.Replace("BASEGEOGCRS[", "GEOGCS[");
+            normalized = normalized.Replace("PROJECTEDCRS[", "PROJCS[");
+            return normalized;
         }
 
         /// <summary>

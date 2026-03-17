@@ -460,6 +460,32 @@ namespace ProjNET.Tests.WKT
             Assert.That(projCS.LinearUnit.MetersPerUnit, Is.EqualTo(1));
         }
 
+        [Xunit.Fact]
+        public void ParseProjectedCrsWithWkt2LikeRootAndIdentifiers()
+        {
+            const string wkt =
+                "PROJECTEDCRS[\"WGS 84 / Pseudo-Mercator\",GEODCRS[\"WGS 84\",DATUM[\"WGS_1984\",ELLIPSOID[\"WGS 84\",6378137,298.257223563,ID[\"EPSG\",\"7030\"]],ID[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,ID[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",\"9122\"]],ID[\"EPSG\",\"4326\"]],PROJECTION[\"Mercator_1SP\"],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,ID[\"EPSG\",\"9001\"]],AXIS[\"X\",EAST],AXIS[\"Y\",NORTH],ID[\"EPSG\",\"3857\"]]";
+
+            var parsed = (ProjectedCoordinateSystem)ProjNet.IO.CoordinateSystems.CoordinateSystemWktReader.Parse(wkt);
+            Assert.That(parsed, Is.Not.Null);
+            Assert.That(parsed.Authority, Is.EqualTo("EPSG"));
+            Assert.That(parsed.AuthorityCode, Is.EqualTo(3857L));
+        }
+
+        [Xunit.Fact]
+        public void ParseGeodCrsWithEllipsoidAndIdTokens()
+        {
+            const string wkt =
+                "GEODCRS[\"WGS 84\",DATUM[\"WGS_1984\",ELLIPSOID[\"WGS 84\",6378137,298.257223563,ID[\"EPSG\",\"7030\"]],ID[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,ID[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,ID[\"EPSG\",\"9122\"]],ID[\"EPSG\",\"4326\"]]";
+
+            var parsed = (GeographicCoordinateSystem)ProjNet.IO.CoordinateSystems.CoordinateSystemWktReader.Parse(wkt);
+            Assert.That(parsed, Is.Not.Null);
+            Assert.That(parsed.Authority, Is.EqualTo("EPSG"));
+            Assert.That(parsed.AuthorityCode, Is.EqualTo(4326L));
+            Assert.That(parsed.HorizontalDatum, Is.Not.Null);
+            Assert.That(parsed.HorizontalDatum.Ellipsoid, Is.Not.Null);
+        }
+
 
         #region Utility
 

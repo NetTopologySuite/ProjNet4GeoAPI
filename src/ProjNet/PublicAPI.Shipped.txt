@@ -3,9 +3,11 @@ namespace ProjNet
     public class CoordinateSystemServices
     {
         public CoordinateSystemServices() { }
+        public CoordinateSystemServices(ProjNet.Data.ICoordinateSystemDefinitionProvider definitionProvider) { }
         public CoordinateSystemServices(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, string>> definitions) { }
         public CoordinateSystemServices(ProjNet.CoordinateSystems.CoordinateSystemFactory coordinateSystemFactory, ProjNet.CoordinateSystems.Transformations.CoordinateTransformationFactory coordinateTransformationFactory) { }
         public CoordinateSystemServices(ProjNet.CoordinateSystems.CoordinateSystemFactory coordinateSystemFactory, ProjNet.CoordinateSystems.Transformations.CoordinateTransformationFactory coordinateTransformationFactory, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, string>> enumeration) { }
+        public CoordinateSystemServices(ProjNet.CoordinateSystems.CoordinateSystemFactory coordinateSystemFactory, ProjNet.CoordinateSystems.Transformations.CoordinateTransformationFactory coordinateTransformationFactory, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, string>> enumeration, ProjNet.Data.ICoordinateSystemDefinitionProvider definitionProvider) { }
         protected int Count { get; }
         protected virtual int AddCoordinateSystem(ProjNet.CoordinateSystems.CoordinateSystem coordinateSystem) { }
         protected void AddCoordinateSystem(int srid, ProjNet.CoordinateSystems.CoordinateSystem coordinateSystem) { }
@@ -602,6 +604,18 @@ namespace ProjNet.CoordinateSystems.Transformations
         Conversion = 1,
         Transformation = 2,
         ConversionAndTransformation = 3,
+    }
+}
+namespace ProjNet.Data
+{
+    public interface ICoordinateSystemDefinitionProvider
+    {
+        System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, string>> GetDefinitions();
+    }
+    public sealed class ManagedCoordinateSystemDefinitionProvider : ProjNet.Data.ICoordinateSystemDefinitionProvider
+    {
+        public ManagedCoordinateSystemDefinitionProvider() { }
+        public System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, string>> GetDefinitions() { }
     }
 }
 namespace ProjNet.Geometries

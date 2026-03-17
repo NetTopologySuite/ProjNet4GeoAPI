@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Threading;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
+using ProjNet.Data;
 
 namespace ProjNet
 {
@@ -45,6 +46,7 @@ namespace ProjNet
 
         private readonly CoordinateSystemFactory _coordinateSystemFactory;
         private readonly CoordinateTransformationFactory _ctFactory;
+        private readonly ICoordinateSystemDefinitionProvider _definitionProvider;
         
         private readonly ManualResetEvent _initialization = new ManualResetEvent(false);
 
@@ -99,7 +101,7 @@ namespace ProjNet
         /// <param name="coordinateTransformationFactory">The coordinate transformation factory to use</param>
         public CoordinateSystemServices(CoordinateSystemFactory coordinateSystemFactory,
             CoordinateTransformationFactory coordinateTransformationFactory)
-            : this(coordinateSystemFactory, coordinateTransformationFactory, null)
+            : this(coordinateSystemFactory, coordinateTransformationFactory, null, null)
         {
         }
 
@@ -108,7 +110,7 @@ namespace ProjNet
         /// </summary>
         /// <param name="definitions">An enumeration of coordinate system definitions (WKT)</param>
         public CoordinateSystemServices(IEnumerable<KeyValuePair<int, string>> definitions)
-            : this(new CoordinateSystemFactory(), new CoordinateTransformationFactory(), definitions)
+            : this(new CoordinateSystemFactory(), new CoordinateTransformationFactory(), definitions, null)
         {
         }
 
@@ -116,7 +118,16 @@ namespace ProjNet
         /// Creates an instance of this class
         /// </summary>
         public CoordinateSystemServices()
-            : this(new CoordinateSystemFactory(), new CoordinateTransformationFactory(), null)
+            : this(new CoordinateSystemFactory(), new CoordinateTransformationFactory(), null, null)
+        {
+        }
+
+        /// <summary>
+        /// Creates an instance of this class with a managed definition provider.
+        /// </summary>
+        /// <param name="definitionProvider">Managed coordinate system definition provider.</param>
+        public CoordinateSystemServices(ICoordinateSystemDefinitionProvider definitionProvider)
+            : this(new CoordinateSystemFactory(), new CoordinateTransformationFactory(), null, definitionProvider)
         {
         }
         //public Func<string, long, string> GetDefinition { get; set; }
@@ -152,6 +163,21 @@ namespace ProjNet
         public CoordinateSystemServices(CoordinateSystemFactory coordinateSystemFactory,
             CoordinateTransformationFactory coordinateTransformationFactory,
             IEnumerable<KeyValuePair<int, string>> enumeration)
+            : this(coordinateSystemFactory, coordinateTransformationFactory, enumeration, null)
+        {
+        }
+
+        /// <summary>
+        /// Creates an instance of this class
+        /// </summary>
+        /// <param name="coordinateSystemFactory">The coordinate sequence factory to use.</param>
+        /// <param name="coordinateTransformationFactory">The coordinate transformation factory to use</param>
+        /// <param name="enumeration">An enumeration of coordinate system definitions (WKT)</param>
+        /// <param name="definitionProvider">Managed coordinate system definition provider used when <paramref name="enumeration"/> is null.</param>
+        public CoordinateSystemServices(CoordinateSystemFactory coordinateSystemFactory,
+            CoordinateTransformationFactory coordinateTransformationFactory,
+            IEnumerable<KeyValuePair<int, string>> enumeration,
+            ICoordinateSystemDefinitionProvider definitionProvider)
         {
             if (coordinateSystemFactory == null)
                 throw new ArgumentNullException(nameof(coordinateSystemFactory));
@@ -160,11 +186,12 @@ namespace ProjNet
             if (coordinateTransformationFactory == null)
                 throw new ArgumentNullException(nameof(coordinateTransformationFactory));
             _ctFactory = coordinateTransformationFactory;
+            _definitionProvider = definitionProvider ?? new ManagedCoordinateSystemDefinitionProvider();
 
             _csBySrid = new Dictionary<int, CoordinateSystem>();
             _sridByCs = new Dictionary<IInfo, int>(new CsEqualityComparer());
 
-            object enumObj = (object)enumeration ?? DefaultInitialization();
+            object enumObj = (object)enumeration ?? _definitionProvider.GetDefinitions();
             _initialization = new ManualResetEvent(false);
             System.Threading.Tasks.Task.Run(() => FromEnumeration((new[] { this, enumObj })));
         }
@@ -190,12 +217,6 @@ namespace ProjNet
                 // as a fallback we ignore projections not supported
                 return null;
             }
-        }
-
-        private static IEnumerable<KeyValuePair<int, CoordinateSystem>> DefaultInitialization()
-        {
-            yield return new KeyValuePair<int, CoordinateSystem>(4326, GeographicCoordinateSystem.WGS84);
-            yield return new KeyValuePair<int, CoordinateSystem>(3857, ProjectedCoordinateSystem.WebMercator);
         }
 
         private static void FromEnumeration(CoordinateSystemServices css,
