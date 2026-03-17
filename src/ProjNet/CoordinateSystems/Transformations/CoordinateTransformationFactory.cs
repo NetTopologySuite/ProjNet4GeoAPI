@@ -41,6 +41,11 @@ namespace ProjNet.CoordinateSystems.Transformations
 		/// <param name="targetCS">Target coordinate system</param>
 		/// <returns></returns>		
 		public ICoordinateTransformation CreateFromCoordinateSystems(CoordinateSystem sourceCS, CoordinateSystem targetCS)
+        {
+            return CoordinateOperationResolver.Resolve(sourceCS, targetCS, CreateFromCoordinateSystemsCore);
+        }
+
+        private ICoordinateTransformation CreateFromCoordinateSystemsCore(CoordinateSystem sourceCS, CoordinateSystem targetCS)
 		{
             ICoordinateTransformation trans;
             if (sourceCS is ProjectedCoordinateSystem && targetCS is GeographicCoordinateSystem) //Projected -> Geographic

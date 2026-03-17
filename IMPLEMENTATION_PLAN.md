@@ -71,7 +71,8 @@ A modern, evolvable .NET projection library aligned with current `PROJ` concepts
   - `managed-data-packaging` baseline completed (`docs\modernization\managed-data-packaging.md`);
   - `format-support-upgrade` baseline completed (`docs\modernization\format-support-upgrade.md`);
   - `projection-kernel-alignment` baseline completed (`docs\modernization\projection-kernel-alignment.md`);
-  - `registry-data-layer` baseline completed (`docs\modernization\registry-data-layer.md`) with additive public lookup APIs.
+  - `registry-data-layer` baseline completed (`docs\modernization\registry-data-layer.md`) with additive public lookup APIs;
+  - `operation-resolution-engine` baseline started (`docs\modernization\operation-resolution-engine.md`) with candidate resolver entrypoint and identity fast-path.
 
 ## Work packages (Todos)
 
