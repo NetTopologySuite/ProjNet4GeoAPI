@@ -15,7 +15,6 @@ namespace ProjNet.Data
         /// <inheritdoc />
         public IEnumerable<CoordinateOperationDefinition> GetDefinitions()
         {
-            var stringPool = EpsgGeneratedCatalog.StringPool;
             var records = EpsgGeneratedCatalog.Operations;
 
             for (int i = 0; i < records.Length; i++)
@@ -27,16 +26,9 @@ namespace ProjNet.Data
                     operation.SourceSrid,
                     operation.TargetSrid,
                     operation.Accuracy,
-                    GetStringValue(stringPool, operation.MethodNameIndex),
-                    GetStringValue(stringPool, operation.ParameterFileIndex));
+                    operation.MethodName,
+                    operation.ParameterFileName);
             }
-        }
-
-        private static string GetStringValue(string[] stringPool, int index)
-        {
-            return index >= 0 && index < stringPool.Length
-                ? stringPool[index]
-                : null;
         }
     }
 }

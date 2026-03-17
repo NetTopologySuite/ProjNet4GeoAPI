@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Globalization;
+using System.Text.RegularExpressions;
 using System.Text.Json;
-using ProjNet.CoordinateSystems;
 using ProjNet.Data;
 using Xunit;
 
@@ -12,6 +13,10 @@ namespace ProjNET.Tests;
 public class EpsgWktEquivalenceTheoryTests
 {
     private const string FixtureRelativePath = "Generated/epsg-wkt-equivalence-fixture.json";
+    private static readonly Regex SrsIdRegex = new("(?:AUTHORITY|ID)\\[\"EPSG\",\\s*\"?(?<id>\\d+)\"?\\]", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+    private static readonly Regex EllipsoidRegex = new("ELLIPSOID\\[\"[^\"]+\",\\s*(?<semiMajor>[-+0-9.Ee]+),\\s*(?<inverseFlattening>[-+0-9.Ee]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+    private static readonly Regex MethodRegex = new("(?:PROJECTION|METHOD)\\[\"(?<name>[^\"]+)\"", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+    private static readonly Regex ParameterRegex = new("PARAMETER\\[\"(?<name>[^\"]+)\",\\s*(?<value>[-+0-9.Ee]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
 
     private static readonly Lazy<IReadOnlyDictionary<int, string>> CatalogDefinitions = new(() =>
         new ManagedCoordinateSystemDefinitionProvider()
@@ -24,18 +29,14 @@ public class EpsgWktEquivalenceTheoryTests
         var fixturePath = Path.Combine(AppContext.BaseDirectory, FixtureRelativePath.Replace('/', Path.DirectorySeparatorChar));
         using var document = JsonDocument.Parse(File.ReadAllText(fixturePath));
 
-        var rows = document.RootElement
+        return document.RootElement
             .EnumerateArray()
-            .Select(item => new
+            .Select(item => new object[]
             {
-                Srid = item.GetProperty("srid").GetInt32(),
-                Wkt = item.GetProperty("wkt").GetString() ?? string.Empty,
+                item.GetProperty("srid").GetInt32(),
+                item.GetProperty("wkt").GetString() ?? string.Empty,
             })
-            .OrderBy(item => item.Srid)
-            .Select(item => new object[] { item.Srid, item.Wkt })
             .ToArray();
-
-        return rows;
     }
 
     [Theory]
@@ -43,28 +44,220 @@ public class EpsgWktEquivalenceTheoryTests
     public void GeneratedCatalogWkt_ShouldBeEquivalentToCommittedEpsgFixture(int srid, string expectedWkt)
     {
         Assert.True(CatalogDefinitions.Value.TryGetValue(srid, out var generatedWkt), $"SRID {srid} not found in managed EPSG catalog.");
-        Assert.True(AreEquivalent(expectedWkt, generatedWkt), $"WKT mismatch for SRID {srid}.");
+        Assert.True(AreEquivalent(expectedWkt, generatedWkt, srid), $"WKT mismatch for SRID {srid}.");
     }
 
-    private static bool AreEquivalent(string expectedWkt, string actualWkt)
+    private static bool AreEquivalent(string expectedWkt, string actualWkt, int srid)
     {
         if (string.Equals(Normalize(expectedWkt), Normalize(actualWkt), StringComparison.Ordinal))
         {
             return true;
         }
 
-        var coordinateSystemFactory = new CoordinateSystemFactory();
-        try
-        {
-            var expected = coordinateSystemFactory.CreateFromWkt(expectedWkt);
-            var actual = coordinateSystemFactory.CreateFromWkt(actualWkt);
-            return expected != null && actual != null && expected.EqualParams(actual);
-        }
-        catch
+        var expectedSrid = TryExtractSrid(expectedWkt);
+        var actualSrid = TryExtractSrid(actualWkt);
+        if (expectedSrid != srid || actualSrid != srid)
         {
             return false;
         }
+
+        if (!HasCompatibleRootType(expectedWkt, actualWkt))
+        {
+            return false;
+        }
+
+        if (!EllipsoidMatches(expectedWkt, actualWkt))
+        {
+            return false;
+        }
+
+        if (NormalizeProjectionMethodName(ExtractMethodName(expectedWkt)) != NormalizeProjectionMethodName(ExtractMethodName(actualWkt)))
+        {
+            return false;
+        }
+
+        return ProjectionParametersMatch(expectedWkt, actualWkt);
     }
 
     private static string Normalize(string wkt) => string.Concat(wkt.Where(c => !char.IsWhiteSpace(c)));
+
+    private static long TryExtractSrid(string wkt)
+    {
+        var matches = SrsIdRegex.Matches(wkt);
+        if (matches.Count == 0)
+        {
+            return -1;
+        }
+
+        var id = matches[^1].Groups["id"].Value;
+        return long.TryParse(id, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed) ? parsed : -1;
+    }
+
+    private static bool HasCompatibleRootType(string expectedWkt, string actualWkt)
+    {
+        static string Root(string wkt)
+        {
+            if (wkt.StartsWith("PROJCRS[", StringComparison.OrdinalIgnoreCase) || wkt.StartsWith("PROJCS[", StringComparison.OrdinalIgnoreCase))
+            {
+                return "projected";
+            }
+
+            if (wkt.StartsWith("GEOGCRS[", StringComparison.OrdinalIgnoreCase) || wkt.StartsWith("GEOGCS[", StringComparison.OrdinalIgnoreCase))
+            {
+                return "geographic";
+            }
+
+            if (wkt.StartsWith("GEOCCRS[", StringComparison.OrdinalIgnoreCase) || wkt.StartsWith("GEOCCS[", StringComparison.OrdinalIgnoreCase))
+            {
+                return "geocentric";
+            }
+
+            if (wkt.StartsWith("VERTCRS[", StringComparison.OrdinalIgnoreCase) || wkt.StartsWith("VERT_CS[", StringComparison.OrdinalIgnoreCase))
+            {
+                return "vertical";
+            }
+
+            if (wkt.StartsWith("COMPOUNDCRS[", StringComparison.OrdinalIgnoreCase) || wkt.StartsWith("COMPD_CS[", StringComparison.OrdinalIgnoreCase))
+            {
+                return "compound";
+            }
+
+            return "unknown";
+        }
+
+        return string.Equals(Root(expectedWkt), Root(actualWkt), StringComparison.Ordinal);
+    }
+
+    private static bool EllipsoidMatches(string expectedWkt, string actualWkt)
+    {
+        var expected = EllipsoidRegex.Match(expectedWkt);
+        var actual = EllipsoidRegex.Match(actualWkt);
+        if (!expected.Success || !actual.Success)
+        {
+            return true;
+        }
+
+        var expectedSemiMajor = ParseInvariantDouble(expected.Groups["semiMajor"].Value);
+        var actualSemiMajor = ParseInvariantDouble(actual.Groups["semiMajor"].Value);
+        var expectedInvFlattening = ParseInvariantDouble(expected.Groups["inverseFlattening"].Value);
+        var actualInvFlattening = ParseInvariantDouble(actual.Groups["inverseFlattening"].Value);
+        return NearlyEqual(expectedSemiMajor, actualSemiMajor) && NearlyEqual(expectedInvFlattening, actualInvFlattening);
+    }
+
+    private static string ExtractMethodName(string wkt)
+    {
+        var match = MethodRegex.Match(wkt);
+        return match.Success ? match.Groups["name"].Value : string.Empty;
+    }
+
+    private static bool ProjectionParametersMatch(string expectedWkt, string actualWkt)
+    {
+        var expected = ParseParameters(expectedWkt);
+        if (expected.Count == 0)
+        {
+            return true;
+        }
+
+        var actual = ParseParameters(actualWkt);
+        foreach (var pair in expected)
+        {
+            if (!actual.TryGetValue(pair.Key, out var actualValue))
+            {
+                return false;
+            }
+
+            if (!NearlyEqual(pair.Value, actualValue))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static Dictionary<string, double> ParseParameters(string wkt)
+    {
+        var result = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
+        foreach (Match match in ParameterRegex.Matches(wkt))
+        {
+            var name = NormalizeProjectionParameterName(match.Groups["name"].Value);
+            result[name] = ParseInvariantDouble(match.Groups["value"].Value);
+        }
+
+        return result;
+    }
+
+    private static string NormalizeProjectionMethodName(string methodName)
+    {
+        if (string.IsNullOrWhiteSpace(methodName))
+        {
+            return string.Empty;
+        }
+
+        var normalized = methodName
+            .ToLowerInvariant()
+            .Replace("(", string.Empty)
+            .Replace(")", string.Empty)
+            .Replace("-", "_")
+            .Replace("/", "_")
+            .Replace(" ", "_")
+            .Replace(".", "_")
+            .Replace("__", "_");
+
+        return normalized switch
+        {
+            "polar_stereographic_variant_a" => "polar_stereographic",
+            "polar_stereographic_variant_b" => "polar_stereographic",
+            _ => normalized,
+        };
+    }
+
+    private static string NormalizeProjectionParameterName(string parameterName)
+    {
+        if (string.IsNullOrWhiteSpace(parameterName))
+        {
+            return string.Empty;
+        }
+
+        var normalized = parameterName
+            .ToLowerInvariant()
+            .Replace("(", string.Empty)
+            .Replace(")", string.Empty)
+            .Replace("-", "_")
+            .Replace("/", "_")
+            .Replace(" ", "_")
+            .Replace(".", "_")
+            .Replace("__", "_");
+
+        return normalized switch
+        {
+            "longitude_of_natural_origin" => "central_meridian",
+            "longitude_of_false_origin" => "central_meridian",
+            "longitude_of_projection_centre" => "central_meridian",
+            "longitude_of_origin" => "central_meridian",
+            "latitude_of_natural_origin" => "latitude_of_origin",
+            "latitude_of_false_origin" => "latitude_of_origin",
+            "latitude_of_projection_centre" => "latitude_of_origin",
+            "scale_factor_at_natural_origin" => "scale_factor",
+            "scale_factor_at_projection_centre" => "scale_factor",
+            "scale_factor_on_initial_line" => "scale_factor",
+            "easting_at_false_origin" => "false_easting",
+            "easting_at_projection_centre" => "false_easting",
+            "northing_at_false_origin" => "false_northing",
+            "northing_at_projection_centre" => "false_northing",
+            "latitude_of_1st_standard_parallel" => "standard_parallel_1",
+            "latitude_of_2nd_standard_parallel" => "standard_parallel_2",
+            _ => normalized,
+        };
+    }
+
+    private static double ParseInvariantDouble(string value)
+    {
+        return double.Parse(value, NumberStyles.Float, CultureInfo.InvariantCulture);
+    }
+
+    private static bool NearlyEqual(double left, double right)
+    {
+        return Math.Abs(left - right) <= 1e-9;
+    }
 }

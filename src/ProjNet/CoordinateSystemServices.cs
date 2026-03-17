@@ -192,7 +192,19 @@ namespace ProjNet
             _csBySrid = new Dictionary<int, CoordinateSystem>();
             _sridByCs = new Dictionary<IInfo, int>(new CsEqualityComparer());
 
-            object enumObj = (object)enumeration ?? _definitionProvider.GetDefinitions();
+            object enumObj;
+            if (enumeration != null)
+            {
+                enumObj = enumeration;
+            }
+            else if (_definitionProvider is IManagedCoordinateSystemProvider managedCoordinateSystemProvider)
+            {
+                enumObj = managedCoordinateSystemProvider.GetCoordinateSystems();
+            }
+            else
+            {
+                enumObj = _definitionProvider.GetDefinitions();
+            }
             _initialization = new ManualResetEvent(false);
             System.Threading.Tasks.Task.Run(() => FromEnumeration((new[] { this, enumObj })));
         }
@@ -454,3 +466,4 @@ namespace ProjNet
         }
     }
 }
+

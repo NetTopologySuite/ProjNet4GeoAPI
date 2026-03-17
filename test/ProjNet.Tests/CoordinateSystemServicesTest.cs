@@ -78,6 +78,16 @@ namespace ProjNET.Tests
             Assert.IsTrue(definitions.Any(item => item.Key == 3857));
         }
 
+        [Xunit.Fact]
+        public void TestManagedObjectProviderBypassesWktParsing()
+        {
+            var provider = new TestManagedProvider();
+            var css = new CoordinateSystemServices(provider);
+
+            Assert.IsNotNull(css.GetCoordinateSystem(4326));
+            Assert.IsNotNull(css.GetCoordinateSystem(3857));
+        }
+
         [Xunit.Theory]
         [Xunit.InlineData(@"D:\temp\ConsoleApplication9\SpatialRefSys.xml")]
         public void TestConstructorLoadXml(string xmlPath)
@@ -153,6 +163,18 @@ namespace ProjNET.Tests
             Console.WriteLine("Read '{1}' in {0:N0}ms", sw.ElapsedMilliseconds, xmlPath);
         }
 
+        private sealed class TestManagedProvider : ICoordinateSystemDefinitionProvider, IManagedCoordinateSystemProvider
+        {
+            public IEnumerable<KeyValuePair<int, CoordinateSystem>> GetCoordinateSystems()
+            {
+                yield return new KeyValuePair<int, CoordinateSystem>(4326, GeographicCoordinateSystem.WGS84);
+                yield return new KeyValuePair<int, CoordinateSystem>(3857, ProjectedCoordinateSystem.WebMercator);
+            }
+
+            public IEnumerable<KeyValuePair<int, string>> GetDefinitions()
+            {
+                yield return new KeyValuePair<int, string>(4326, "INVALID_WKT_SHOULD_NOT_BE_USED");
+            }
+        }
     }
 }
-

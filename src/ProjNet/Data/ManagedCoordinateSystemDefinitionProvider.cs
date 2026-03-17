@@ -15,31 +15,33 @@ namespace ProjNet.Data
     /// This provider intentionally avoids runtime SQLite/native dependencies.
     /// It is the baseline managed packaging implementation and can be replaced by a generated provider in later phases.
     /// </remarks>
-    public sealed class ManagedCoordinateSystemDefinitionProvider : ICoordinateSystemDefinitionProvider
+    public sealed class ManagedCoordinateSystemDefinitionProvider : ICoordinateSystemDefinitionProvider, IManagedCoordinateSystemProvider
     {
+        IEnumerable<KeyValuePair<int, CoordinateSystem>> IManagedCoordinateSystemProvider.GetCoordinateSystems()
+        {
+            return GetManagedCoordinateSystems();
+        }
+
+        private static IEnumerable<KeyValuePair<int, CoordinateSystem>> GetManagedCoordinateSystems()
+        {
+            var yieldedSrids = new HashSet<int>();
+            foreach (var coordinateSystem in EpsgCoordinateSystemFactory.GetCoordinateSystems())
+            {
+                if (!yieldedSrids.Add(coordinateSystem.Key))
+                {
+                    continue;
+                }
+
+                yield return coordinateSystem;
+            }
+        }
+
         /// <inheritdoc />
         public IEnumerable<KeyValuePair<int, string>> GetDefinitions()
         {
-            var yieldedSrids = new HashSet<int>();
-            yieldedSrids.Add(4326);
-            yieldedSrids.Add(3857);
-            yield return new KeyValuePair<int, string>(4326, GeographicCoordinateSystem.WGS84.WKT);
-            yield return new KeyValuePair<int, string>(3857, ProjectedCoordinateSystem.WebMercator.WKT);
-
-            bool yieldedAny = false;
-            foreach (var definition in EpsgGeneratedCatalog.GetCoordinateSystemDefinitions())
+            foreach (var coordinateSystem in GetManagedCoordinateSystems())
             {
-                yieldedAny = true;
-                if (yieldedSrids.Contains(definition.Key))
-                    continue;
-
-                yieldedSrids.Add(definition.Key);
-                yield return definition;
-            }
-
-            if (!yieldedAny)
-            {
-                yield break;
+                yield return new KeyValuePair<int, string>(coordinateSystem.Key, coordinateSystem.Value.WKT);
             }
         }
     }
