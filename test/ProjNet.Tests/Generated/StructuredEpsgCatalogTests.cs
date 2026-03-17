@@ -25,6 +25,15 @@ public class StructuredEpsgCatalogTests
         Assert.True(found);
         Assert.Equal(4326, reference.Srid);
         Assert.True(cacheIndex >= 0);
+        Assert.True(EpsgGeneratedCatalog.TryGetCoordinateSridByCacheIndex(cacheIndex, out var mappedSrid));
+        Assert.Equal(4326, mappedSrid);
+    }
+
+    [Fact]
+    public void GeneratedCatalog_ShouldNotExposeSridArray()
+    {
+        var sridArrayField = typeof(EpsgGeneratedCatalog).GetField("CoordinateReferenceSrids", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+        Assert.Null(sridArrayField);
     }
 
     [Fact]

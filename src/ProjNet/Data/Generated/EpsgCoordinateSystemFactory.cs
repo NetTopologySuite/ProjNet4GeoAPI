@@ -6,20 +6,25 @@ namespace ProjNet.Data.Generated
 
     internal static class EpsgCoordinateSystemFactory
     {
-        private static readonly CoordinateSystem[] CoordinateSystemCache = new CoordinateSystem[EpsgGeneratedCatalog.CoordinateReferences.Length];
+        private static readonly CoordinateSystem[] CoordinateSystemCache = new CoordinateSystem[EpsgGeneratedCatalog.CoordinateReferenceCount];
         private static readonly object CoordinateSystemCacheSync = new object();
 
         internal static IEnumerable<KeyValuePair<int, CoordinateSystem>> GetCoordinateSystems()
         {
-            foreach (var reference in EpsgGeneratedCatalog.CoordinateReferences)
+            for (var cacheIndex = 0; cacheIndex < EpsgGeneratedCatalog.CoordinateReferenceCount; cacheIndex++)
             {
-                var coordinateSystem = TryCreateCoordinateSystem(reference.Srid);
+                if (!EpsgGeneratedCatalog.TryGetCoordinateSridByCacheIndex(cacheIndex, out var srid))
+                {
+                    continue;
+                }
+
+                var coordinateSystem = TryCreateCoordinateSystem(srid);
                 if (coordinateSystem == null)
                 {
                     continue;
                 }
 
-                yield return new KeyValuePair<int, CoordinateSystem>(reference.Srid, coordinateSystem);
+                yield return new KeyValuePair<int, CoordinateSystem>(srid, coordinateSystem);
             }
         }
 

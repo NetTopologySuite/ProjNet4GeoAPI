@@ -59,15 +59,83 @@ namespace ProjNet.CoordinateSystems.Transformations
 
         private ICoordinateTransformation CreateFromCoordinateSystemsWithMetadata(CoordinateSystem sourceCS, CoordinateSystem targetCS)
         {
-            var fallback = CreateFromCoordinateSystemsCore(sourceCS, targetCS);
-
-            if (fallback == null)
-                return null;
-
             if (TryGetDirectProjectedOperation(sourceCS, targetCS, out var operation, out var resolvedGridPath))
-                return CreateMetadataBackedTransformation(sourceCS, targetCS, fallback, operation, resolvedGridPath);
+            {
+                if (TryCreateDirectProjectedTransformation(sourceCS, targetCS, operation, resolvedGridPath, out var directTransformation))
+                    return directTransformation;
 
-            return fallback;
+                var fallbackWithMetadata = CreateFromCoordinateSystemsCore(sourceCS, targetCS);
+                if (fallbackWithMetadata == null)
+                    return null;
+
+                return CreateMetadataBackedTransformation(sourceCS, targetCS, fallbackWithMetadata, operation, resolvedGridPath);
+            }
+
+            return CreateFromCoordinateSystemsCore(sourceCS, targetCS);
+        }
+
+        private static bool TryCreateDirectProjectedTransformation(
+            CoordinateSystem source,
+            CoordinateSystem target,
+            CoordinateOperationDefinition operation,
+            string resolvedGridPath,
+            out ICoordinateTransformation transformation)
+        {
+            transformation = null;
+
+            if (!(source is ProjectedCoordinateSystem sourceProjected) || !(target is ProjectedCoordinateSystem targetProjected))
+                return false;
+
+            if (!sourceProjected.GeographicCoordinateSystem.EqualParams(targetProjected.GeographicCoordinateSystem))
+                return false;
+
+            var sourceInverseProjection = CreateCoordinateOperation(
+                sourceProjected.Projection,
+                sourceProjected.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid,
+                sourceProjected.LinearUnit).Inverse();
+
+            var targetForwardProjection = CreateCoordinateOperation(
+                targetProjected.Projection,
+                targetProjected.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid,
+                targetProjected.LinearUnit);
+
+            var directMathTransform = new ConcatenatedTransform();
+            directMathTransform.CoordinateTransformationList.Add(
+                new CoordinateTransformation(
+                    source,
+                    target,
+                    TransformType.Conversion,
+                    sourceInverseProjection,
+                    string.Empty,
+                    string.Empty,
+                    -1,
+                    string.Empty,
+                    string.Empty));
+            directMathTransform.CoordinateTransformationList.Add(
+                new CoordinateTransformation(
+                    source,
+                    target,
+                    TransformType.Conversion,
+                    targetForwardProjection,
+                    string.Empty,
+                    string.Empty,
+                    -1,
+                    string.Empty,
+                    string.Empty));
+
+            var fallback = new CoordinateTransformation(
+                source,
+                target,
+                TransformType.Transformation,
+                directMathTransform,
+                string.Empty,
+                string.Empty,
+                -1,
+                string.Empty,
+                string.Empty);
+
+            transformation = CreateMetadataBackedTransformation(source, target, fallback, operation, resolvedGridPath);
+            return true;
         }
 
         private ICoordinateTransformation CreateFromCoordinateSystemsCore(CoordinateSystem sourceCS, CoordinateSystem targetCS)

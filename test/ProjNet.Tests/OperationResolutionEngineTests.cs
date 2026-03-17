@@ -63,6 +63,10 @@ namespace ProjNET.Tests
             Assert.Equal(1044, metadataTransformation.AuthorityCode);
             Assert.Equal(fallbackOutput[0], metadataOutput[0], 9);
             Assert.Equal(fallbackOutput[1], metadataOutput[1], 9);
+
+            var concatenated = Assert.IsType<ConcatenatedTransform>(metadataTransformation.MathTransform);
+            Assert.Equal(2, concatenated.CoordinateTransformationList.Count);
+            Assert.DoesNotContain(concatenated.CoordinateTransformationList, ContainsGeographicOrGeocentricCoordinateSystem);
         }
 
         [Fact]
@@ -138,6 +142,32 @@ namespace ProjNET.Tests
 
             Assert.Equal("EPSG", transformation.Authority);
             Assert.DoesNotContain("Grid:", transformation.Remarks ?? string.Empty);
+        }
+
+        private static bool ContainsGeographicOrGeocentricCoordinateSystem(ICoordinateTransformationCore transformation)
+        {
+            if (transformation.SourceCS is GeographicCoordinateSystem || transformation.TargetCS is GeographicCoordinateSystem)
+            {
+                return true;
+            }
+
+            if (transformation.SourceCS is GeocentricCoordinateSystem || transformation.TargetCS is GeocentricCoordinateSystem)
+            {
+                return true;
+            }
+
+            if (transformation is ConcatenatedTransform nested)
+            {
+                foreach (var item in nested.CoordinateTransformationList)
+                {
+                    if (ContainsGeographicOrGeocentricCoordinateSystem(item))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
     }
 }
