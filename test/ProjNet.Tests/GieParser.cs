@@ -116,6 +116,11 @@ internal static class GieParser
 
                 if (pendingAccept is null)
                 {
+                    if (options.IgnoreUnknownDirectives)
+                    {
+                        continue;
+                    }
+
                     throw new FormatException("Found 'expect' without preceding 'accept' at line " + lineNumber.ToString(CultureInfo.InvariantCulture) + ".");
                 }
 
@@ -288,7 +293,8 @@ internal static class GieParser
             return GieDirection.Forward;
         }
 
-        if (normalized.Equals("inverse", StringComparison.OrdinalIgnoreCase))
+        if (normalized.Equals("inverse", StringComparison.OrdinalIgnoreCase)
+            || normalized.Equals("reverse", StringComparison.OrdinalIgnoreCase))
         {
             return GieDirection.Inverse;
         }
@@ -338,6 +344,11 @@ internal static class GieParser
     {
         string normalizedToken = token.Replace("_", string.Empty, StringComparison.Ordinal);
         if (double.TryParse(normalizedToken, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out double value))
+        {
+            return value;
+        }
+
+        if (TryParseDmsCoordinate(normalizedToken, out value))
         {
             return value;
         }
@@ -404,6 +415,77 @@ internal static class GieParser
         }
 
         unit = unitPart;
+        return true;
+    }
+
+    private static bool TryParseDmsCoordinate(string token, out double value)
+    {
+        value = 0d;
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return false;
+        }
+
+        string text = token.Trim();
+        int sign = 1;
+
+        char last = text[text.Length - 1];
+        if (last == 'W' || last == 'w' || last == 'S' || last == 's')
+        {
+            sign = -1;
+            text = text.Substring(0, text.Length - 1);
+        }
+        else if (last == 'E' || last == 'e' || last == 'N' || last == 'n')
+        {
+            text = text.Substring(0, text.Length - 1);
+        }
+
+        if (text.StartsWith("-", StringComparison.Ordinal))
+        {
+            sign *= -1;
+            text = text.Substring(1);
+        }
+        else if (text.StartsWith("+", StringComparison.Ordinal))
+        {
+            text = text.Substring(1);
+        }
+
+        int dIndex = text.IndexOf('d');
+        if (dIndex < 0)
+        {
+            dIndex = text.IndexOf('D');
+        }
+
+        int mIndex = text.IndexOf('\'');
+        if (dIndex <= 0 || mIndex <= dIndex)
+        {
+            return false;
+        }
+
+        string degreesToken = text.Substring(0, dIndex);
+        string minutesToken = text.Substring(dIndex + 1, mIndex - dIndex - 1);
+        if (!double.TryParse(degreesToken, NumberStyles.Float, CultureInfo.InvariantCulture, out double degrees))
+        {
+            return false;
+        }
+
+        if (!double.TryParse(minutesToken, NumberStyles.Float, CultureInfo.InvariantCulture, out double minutes))
+        {
+            return false;
+        }
+
+        double seconds = 0d;
+        int secondsMarker = text.IndexOf('"');
+        if (secondsMarker > mIndex + 1)
+        {
+            string secondsToken = text.Substring(mIndex + 1, secondsMarker - mIndex - 1);
+            if (!double.TryParse(secondsToken, NumberStyles.Float, CultureInfo.InvariantCulture, out seconds))
+            {
+                return false;
+            }
+        }
+
+        value = sign * (degrees + (minutes / 60d) + (seconds / 3600d));
         return true;
     }
 

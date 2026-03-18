@@ -60,10 +60,33 @@ public class GieBuiltinsTheoryTests
     [MemberData(nameof(GetBuiltinsCases))]
     public void BuiltinsCases_ForImplementedProjections_StayWithinTolerance(object rawCase)
     {
+        AssertCaseWithinTolerance(rawCase);
+    }
+
+    [Theory]
+    [Trait("Category", "GieBuiltins")]
+    [MemberData(nameof(GetMoreBuiltinsCases))]
+    public void MoreBuiltinsCases_ForImplementedProjections_StayWithinTolerance(object rawCase)
+    {
+        AssertCaseWithinTolerance(rawCase);
+    }
+
+    public static IEnumerable<object[]> GetBuiltinsCases()
+    {
+        return GetCasesFromFixture("builtins.gie", 600);
+    }
+
+    public static IEnumerable<object[]> GetMoreBuiltinsCases()
+    {
+        return GetCasesFromFixture("more_builtins.gie", 300);
+    }
+
+    private static void AssertCaseWithinTolerance(object rawCase)
+    {
         var testCase = rawCase as GieCase;
         if (testCase is null)
         {
-            Assert.Skip("builtins.gie not found under spec\\PROJ\\test\\gie.");
+            Assert.Skip("GIE fixture not found under spec\\PROJ\\test\\gie.");
         }
 
         if (testCase.ExpectsFailure)
@@ -106,17 +129,17 @@ public class GieBuiltinsTheoryTests
         }
     }
 
-    public static IEnumerable<object[]> GetBuiltinsCases()
+    private static IEnumerable<object[]> GetCasesFromFixture(string fileName, int maxCount)
     {
-        string builtinsPath = FindBuiltinsPath();
-        if (builtinsPath is null)
+        string fixturePath = FindGiePath(fileName);
+        if (fixturePath is null)
         {
             yield return new object[] { null };
             yield break;
         }
 
         var parsed = GieParser.ParseFile(
-            builtinsPath,
+            fixturePath,
             new GieParserOptions
             {
                 IgnoreUnknownDirectives = true,
@@ -148,7 +171,7 @@ public class GieBuiltinsTheoryTests
 
             yield return new object[] { item };
             emitted++;
-            if (emitted >= 600)
+            if (emitted >= maxCount)
             {
                 yield break;
             }
@@ -536,12 +559,12 @@ public class GieBuiltinsTheoryTests
         parameters.Add(new ProjectionParameter(name, value));
     }
 
-    private static string FindBuiltinsPath()
+    private static string FindGiePath(string fileName)
     {
         var current = new DirectoryInfo(AppContext.BaseDirectory);
         while (current is not null)
         {
-            string candidate = Path.Combine(current.FullName, "spec", "PROJ", "test", "gie", "builtins.gie");
+            string candidate = Path.Combine(current.FullName, "spec", "PROJ", "test", "gie", fileName);
             if (File.Exists(candidate))
             {
                 return candidate;
