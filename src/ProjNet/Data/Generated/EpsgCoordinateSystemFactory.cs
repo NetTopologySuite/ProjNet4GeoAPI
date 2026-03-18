@@ -25,6 +25,13 @@ namespace ProjNet.Data.Generated
     {
         private static readonly CoordinateSystem[] CoordinateSystemCache = new CoordinateSystem[EpsgGeneratedCatalog.CoordinateReferenceCount];
         private static readonly object CoordinateSystemCacheSync = new object();
+        private static readonly Lazy<Dictionary<int, EpsgUnitRecord>> UnitsByCode = new Lazy<Dictionary<int, EpsgUnitRecord>>(BuildUnitsByCode, true);
+        private static readonly Lazy<Dictionary<int, EpsgEllipsoidRecord>> EllipsoidsByCode = new Lazy<Dictionary<int, EpsgEllipsoidRecord>>(BuildEllipsoidsByCode, true);
+        private static readonly Lazy<Dictionary<int, EpsgPrimeMeridianRecord>> PrimeMeridiansByCode = new Lazy<Dictionary<int, EpsgPrimeMeridianRecord>>(BuildPrimeMeridiansByCode, true);
+        private static readonly Lazy<Dictionary<int, EpsgGeodeticDatumRecord>> GeodeticDatumsByCode = new Lazy<Dictionary<int, EpsgGeodeticDatumRecord>>(BuildGeodeticDatumsByCode, true);
+        private static readonly Lazy<Dictionary<int, EpsgVerticalDatumRecord>> VerticalDatumsByCode = new Lazy<Dictionary<int, EpsgVerticalDatumRecord>>(BuildVerticalDatumsByCode, true);
+        private static readonly Lazy<Dictionary<int, EpsgConversionRecord>> ConversionsByCode = new Lazy<Dictionary<int, EpsgConversionRecord>>(BuildConversionsByCode, true);
+        private static readonly Lazy<Dictionary<int, EpsgAxisRecord[]>> AxesByCoordinateSystemCode = new Lazy<Dictionary<int, EpsgAxisRecord[]>>(BuildAxesByCoordinateSystemCode, true);
 
         internal static IEnumerable<KeyValuePair<int, CoordinateSystem>> GetCoordinateSystems()
         {
@@ -455,22 +462,17 @@ namespace ProjNet.Data.Generated
 
         private static List<AxisInfo> GetAxes(int coordinateSystemCode, int expectedCount, bool includeAll = false)
         {
-            var orderedAxes = new List<EpsgAxisRecord>();
-            foreach (var axis in EpsgGeneratedCatalog.Axes)
-            {
-                if (axis.CoordinateSystemCode == coordinateSystemCode)
-                {
-                    orderedAxes.Add(axis);
-                }
-            }
-
-            orderedAxes.Sort((left, right) => left.AxisOrder.CompareTo(right.AxisOrder));
-            if (orderedAxes.Count < expectedCount)
+            if (!AxesByCoordinateSystemCode.Value.TryGetValue(coordinateSystemCode, out var orderedAxes))
             {
                 return null;
             }
 
-            int axisCount = includeAll ? orderedAxes.Count : expectedCount;
+            if (orderedAxes.Length < expectedCount)
+            {
+                return null;
+            }
+
+            int axisCount = includeAll ? orderedAxes.Length : expectedCount;
             var axes = new List<AxisInfo>(axisCount);
             for (int i = 0; i < axisCount; i++)
             {
@@ -483,9 +485,14 @@ namespace ProjNet.Data.Generated
 
         private static int GetUnitCode(int coordinateSystemCode, int axisOrder)
         {
-            foreach (var axis in EpsgGeneratedCatalog.Axes)
+            if (!AxesByCoordinateSystemCode.Value.TryGetValue(coordinateSystemCode, out var axes))
             {
-                if (axis.CoordinateSystemCode == coordinateSystemCode && axis.AxisOrder == axisOrder)
+                return -1;
+            }
+
+            foreach (var axis in axes)
+            {
+                if (axis.AxisOrder == axisOrder)
                 {
                     return axis.UnitCode;
                 }
@@ -496,92 +503,122 @@ namespace ProjNet.Data.Generated
 
         private static bool TryGetUnitRecord(int code, out EpsgUnitRecord record)
         {
-            foreach (var item in EpsgGeneratedCatalog.Units)
-            {
-                if (item.Code == code)
-                {
-                    record = item;
-                    return true;
-                }
-            }
-
-            record = default;
-            return false;
+            return UnitsByCode.Value.TryGetValue(code, out record);
         }
 
         private static bool TryGetEllipsoidRecord(int code, out EpsgEllipsoidRecord record)
         {
-            foreach (var item in EpsgGeneratedCatalog.Ellipsoids)
-            {
-                if (item.Code == code)
-                {
-                    record = item;
-                    return true;
-                }
-            }
-
-            record = default;
-            return false;
+            return EllipsoidsByCode.Value.TryGetValue(code, out record);
         }
 
         private static bool TryGetPrimeMeridianRecord(int code, out EpsgPrimeMeridianRecord record)
         {
-            foreach (var item in EpsgGeneratedCatalog.PrimeMeridians)
-            {
-                if (item.Code == code)
-                {
-                    record = item;
-                    return true;
-                }
-            }
-
-            record = default;
-            return false;
+            return PrimeMeridiansByCode.Value.TryGetValue(code, out record);
         }
 
         private static bool TryGetGeodeticDatumRecord(int code, out EpsgGeodeticDatumRecord record)
         {
-            foreach (var item in EpsgGeneratedCatalog.GeodeticDatums)
-            {
-                if (item.Code == code)
-                {
-                    record = item;
-                    return true;
-                }
-            }
-
-            record = default;
-            return false;
+            return GeodeticDatumsByCode.Value.TryGetValue(code, out record);
         }
 
         private static bool TryGetVerticalDatumRecord(int code, out EpsgVerticalDatumRecord record)
         {
-            foreach (var item in EpsgGeneratedCatalog.VerticalDatums)
-            {
-                if (item.Code == code)
-                {
-                    record = item;
-                    return true;
-                }
-            }
-
-            record = default;
-            return false;
+            return VerticalDatumsByCode.Value.TryGetValue(code, out record);
         }
 
         private static bool TryGetConversionRecord(int code, out EpsgConversionRecord record)
         {
-            foreach (var item in EpsgGeneratedCatalog.Conversions)
+            return ConversionsByCode.Value.TryGetValue(code, out record);
+        }
+
+        private static Dictionary<int, EpsgUnitRecord> BuildUnitsByCode()
+        {
+            var dictionary = new Dictionary<int, EpsgUnitRecord>(EpsgGeneratedCatalog.Units.Length);
+            foreach (var item in EpsgGeneratedCatalog.Units)
             {
-                if (item.Code == code)
-                {
-                    record = item;
-                    return true;
-                }
+                dictionary[item.Code] = item;
             }
 
-            record = default;
-            return false;
+            return dictionary;
+        }
+
+        private static Dictionary<int, EpsgEllipsoidRecord> BuildEllipsoidsByCode()
+        {
+            var dictionary = new Dictionary<int, EpsgEllipsoidRecord>(EpsgGeneratedCatalog.Ellipsoids.Length);
+            foreach (var item in EpsgGeneratedCatalog.Ellipsoids)
+            {
+                dictionary[item.Code] = item;
+            }
+
+            return dictionary;
+        }
+
+        private static Dictionary<int, EpsgPrimeMeridianRecord> BuildPrimeMeridiansByCode()
+        {
+            var dictionary = new Dictionary<int, EpsgPrimeMeridianRecord>(EpsgGeneratedCatalog.PrimeMeridians.Length);
+            foreach (var item in EpsgGeneratedCatalog.PrimeMeridians)
+            {
+                dictionary[item.Code] = item;
+            }
+
+            return dictionary;
+        }
+
+        private static Dictionary<int, EpsgGeodeticDatumRecord> BuildGeodeticDatumsByCode()
+        {
+            var dictionary = new Dictionary<int, EpsgGeodeticDatumRecord>(EpsgGeneratedCatalog.GeodeticDatums.Length);
+            foreach (var item in EpsgGeneratedCatalog.GeodeticDatums)
+            {
+                dictionary[item.Code] = item;
+            }
+
+            return dictionary;
+        }
+
+        private static Dictionary<int, EpsgVerticalDatumRecord> BuildVerticalDatumsByCode()
+        {
+            var dictionary = new Dictionary<int, EpsgVerticalDatumRecord>(EpsgGeneratedCatalog.VerticalDatums.Length);
+            foreach (var item in EpsgGeneratedCatalog.VerticalDatums)
+            {
+                dictionary[item.Code] = item;
+            }
+
+            return dictionary;
+        }
+
+        private static Dictionary<int, EpsgConversionRecord> BuildConversionsByCode()
+        {
+            var dictionary = new Dictionary<int, EpsgConversionRecord>(EpsgGeneratedCatalog.Conversions.Length);
+            foreach (var item in EpsgGeneratedCatalog.Conversions)
+            {
+                dictionary[item.Code] = item;
+            }
+
+            return dictionary;
+        }
+
+        private static Dictionary<int, EpsgAxisRecord[]> BuildAxesByCoordinateSystemCode()
+        {
+            var grouped = new Dictionary<int, List<EpsgAxisRecord>>();
+            foreach (var axis in EpsgGeneratedCatalog.Axes)
+            {
+                if (!grouped.TryGetValue(axis.CoordinateSystemCode, out var axes))
+                {
+                    axes = new List<EpsgAxisRecord>();
+                    grouped[axis.CoordinateSystemCode] = axes;
+                }
+
+                axes.Add(axis);
+            }
+
+            var result = new Dictionary<int, EpsgAxisRecord[]>(grouped.Count);
+            foreach (var item in grouped)
+            {
+                item.Value.Sort((left, right) => left.AxisOrder.CompareTo(right.AxisOrder));
+                result[item.Key] = item.Value.ToArray();
+            }
+
+            return result;
         }
     }
 }
