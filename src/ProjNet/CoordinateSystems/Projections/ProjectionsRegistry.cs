@@ -47,6 +47,9 @@ namespace ProjNet.CoordinateSystems.Projections
             Register("popular_visualisation_pseudo_mercator", typeof(PseudoMercator));
             Register("google_mercator", typeof(PseudoMercator));
             Register("web_mercator", typeof(PseudoMercator));
+            Register("miller_cylindrical", typeof(MillerCylindricalProjection));
+            Register("miller", typeof(MillerCylindricalProjection));
+            Register("mill", typeof(MillerCylindricalProjection));
 
             Register("transverse_mercator", typeof(TransverseMercator));
             Register("transverse_mercator_south_oriented", typeof(TransverseMercator));

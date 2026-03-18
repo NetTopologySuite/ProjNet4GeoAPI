@@ -42,6 +42,7 @@ public class GieBuiltinsTheoryTests
         ["laea"] = "lambert_azimuthal_equal_area",
         ["lcc"] = "lambert_conformal_conic_2sp",
         ["merc"] = "mercator",
+        ["mill"] = "miller_cylindrical",
         ["moll"] = "moll",
         ["natearth"] = "natearth",
         ["natearth2"] = "natearth2",
