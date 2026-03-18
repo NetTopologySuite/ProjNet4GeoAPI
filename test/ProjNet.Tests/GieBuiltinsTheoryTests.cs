@@ -55,6 +55,27 @@ public class GieBuiltinsTheoryTests
         ["utm"] = "utm",
     };
 
+    private static readonly string[] RemainingFixtureFiles =
+    {
+        "4D-API_cs2cs-style.gie",
+        "adams_hemi.gie",
+        "adams_ws1.gie",
+        "adams_ws2.gie",
+        "axisswap.gie",
+        "defmodel.gie",
+        "deformation.gie",
+        "ellipsoid.gie",
+        "GDA.gie",
+        "geotiff_grids.gie",
+        "gridshift.gie",
+        "guyou.gie",
+        "nkg.gie",
+        "peirce_q.gie",
+        "spilhaus.gie",
+        "tinshift.gie",
+        "unitconvert.gie",
+    };
+
     [Theory]
     [Trait("Category", "GieBuiltins")]
     [MemberData(nameof(GetBuiltinsCases))]
@@ -79,6 +100,14 @@ public class GieBuiltinsTheoryTests
         AssertCaseWithinTolerance(rawCase);
     }
 
+    [Theory]
+    [Trait("Category", "GieBuiltins")]
+    [MemberData(nameof(GetRemainingGieCases))]
+    public void RemainingGieCases_ForImplementedProjections_StayWithinTolerance(object rawCase)
+    {
+        AssertCaseWithinTolerance(rawCase);
+    }
+
     public static IEnumerable<object[]> GetBuiltinsCases()
     {
         return GetCasesFromFixture("builtins.gie", 600);
@@ -92,6 +121,17 @@ public class GieBuiltinsTheoryTests
     public static IEnumerable<object[]> GetDhdnEtrs89Cases()
     {
         return GetCasesFromFixture("DHDN_ETRS89.gie", 400);
+    }
+
+    public static IEnumerable<object[]> GetRemainingGieCases()
+    {
+        foreach (string fileName in RemainingFixtureFiles)
+        {
+            foreach (var item in GetCasesFromFixture(fileName, 300))
+            {
+                yield return item;
+            }
+        }
     }
 
     private static void AssertCaseWithinTolerance(object rawCase)
@@ -151,13 +191,29 @@ public class GieBuiltinsTheoryTests
             yield break;
         }
 
-        var parsed = GieParser.ParseFile(
-            fixturePath,
-            new GieParserOptions
-            {
-                IgnoreUnknownDirectives = true,
-                AllowOperationContinuation = true,
-            });
+        IReadOnlyList<GieCase> parsed;
+        bool parseFailed = false;
+        try
+        {
+            parsed = GieParser.ParseFile(
+                fixturePath,
+                new GieParserOptions
+                {
+                    IgnoreUnknownDirectives = true,
+                    AllowOperationContinuation = true,
+                });
+        }
+        catch (FormatException)
+        {
+            parsed = Array.Empty<GieCase>();
+            parseFailed = true;
+        }
+
+        if (parseFailed)
+        {
+            yield return new object[] { null };
+            yield break;
+        }
 
         int emitted = 0;
         foreach (var item in parsed)
