@@ -305,8 +305,8 @@ namespace ProjNet.CoordinateSystems.Transformations
 
         private ICoordinateTransformation CreateFromCoordinateSystemsCore(CoordinateSystem sourceCS, CoordinateSystem targetCS)
         {
-            CoordinateSystemRuntimeKind sourceKind = GetCoordinateSystemRuntimeKind(sourceCS);
-            CoordinateSystemRuntimeKind targetKind = GetCoordinateSystemRuntimeKind(targetCS);
+            var sourceKind = GetCoordinateSystemRuntimeKind(sourceCS);
+            var targetKind = GetCoordinateSystemRuntimeKind(targetCS);
 
             if (sourceKind == CoordinateSystemRuntimeKind.Fitted) // Fitted -> Any
             {

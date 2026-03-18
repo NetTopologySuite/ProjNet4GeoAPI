@@ -15,113 +15,112 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-namespace ProjNet.Benchmark
+namespace ProjNet.Benchmark;
+
+using System;
+using BenchmarkDotNet.Attributes;
+using ProjNet;
+using ProjNet.CoordinateSystems.Transformations;
+
+[MemoryDiagnoser]
+public class ProjParityBenchmarks
 {
-    using System;
-    using BenchmarkDotNet.Attributes;
-    using ProjNet;
-    using ProjNet.CoordinateSystems.Transformations;
+    private static readonly CoordinateSystemServices CoordinateSystemServices = new CoordinateSystemServices();
 
-    [MemoryDiagnoser]
-    public class ProjParityBenchmarks
+    private static readonly ICoordinateTransformation Wgs84ToWebMercator =
+        CoordinateSystemServices.CreateTransformation(4326, 3857);
+
+    private static readonly ICoordinateTransformation Wgs84ToUtm32N =
+        CoordinateSystemServices.CreateTransformation(4326, 32632);
+
+    private static readonly ICoordinateTransformation WebMercatorToWgs84 =
+        CoordinateSystemServices.CreateTransformation(3857, 4326);
+
+    [Params(10000)]
+    public int PointCount { get; set; }
+
+    private double[] longitudes;
+    private double[] latitudes;
+    private double[] xBuffer;
+    private double[] yBuffer;
+
+    public static void Validate()
     {
-        private static readonly CoordinateSystemServices CoordinateSystemServices = new CoordinateSystemServices();
+        var benchmark = new ProjParityBenchmarks { PointCount = 4 };
+        benchmark.GlobalSetup();
 
-        private static readonly ICoordinateTransformation Wgs84ToWebMercator =
-            CoordinateSystemServices.CreateTransformation(4326, 3857);
+        benchmark.Wgs84ToWebMercatorBatched();
+        EnsureFinite(benchmark.xBuffer, benchmark.yBuffer);
 
-        private static readonly ICoordinateTransformation Wgs84ToUtm32N =
-            CoordinateSystemServices.CreateTransformation(4326, 32632);
+        benchmark.Wgs84ToUtm32NBatched();
+        EnsureFinite(benchmark.xBuffer, benchmark.yBuffer);
 
-        private static readonly ICoordinateTransformation WebMercatorToWgs84 =
-            CoordinateSystemServices.CreateTransformation(3857, 4326);
+        benchmark.WebMercatorToWgs84Batched();
+        EnsureFinite(benchmark.xBuffer, benchmark.yBuffer);
+    }
 
-        [Params(10000)]
-        public int PointCount { get; set; }
+    [GlobalSetup]
+    public void GlobalSetup()
+    {
+        this.longitudes = new double[this.PointCount];
+        this.latitudes = new double[this.PointCount];
+        this.xBuffer = new double[this.PointCount];
+        this.yBuffer = new double[this.PointCount];
 
-        private double[] longitudes;
-        private double[] latitudes;
-        private double[] xBuffer;
-        private double[] yBuffer;
-
-        public static void Validate()
+        var random = new Random(20260317);
+        for (int i = 0; i < this.PointCount; i++)
         {
-            var benchmark = new ProjParityBenchmarks { PointCount = 4 };
-            benchmark.GlobalSetup();
-
-            benchmark.Wgs84ToWebMercatorBatched();
-            EnsureFinite(benchmark.xBuffer, benchmark.yBuffer);
-
-            benchmark.Wgs84ToUtm32NBatched();
-            EnsureFinite(benchmark.xBuffer, benchmark.yBuffer);
-
-            benchmark.WebMercatorToWgs84Batched();
-            EnsureFinite(benchmark.xBuffer, benchmark.yBuffer);
+            this.longitudes[i] = -179d + (random.NextDouble() * 358d);
+            this.latitudes[i] = -85d + (random.NextDouble() * 170d);
         }
+    }
 
-        [GlobalSetup]
-        public void GlobalSetup()
+    [Benchmark(Baseline = true)]
+    public void Wgs84ToWebMercatorBatched()
+    {
+        this.PrepareInput();
+        Wgs84ToWebMercator.MathTransform.Transform(this.xBuffer, this.yBuffer);
+    }
+
+    [Benchmark]
+    public void Wgs84ToWebMercatorOneByOne()
+    {
+        this.PrepareInput();
+        for (int i = 0; i < this.PointCount; i++)
         {
-            this.longitudes = new double[this.PointCount];
-            this.latitudes = new double[this.PointCount];
-            this.xBuffer = new double[this.PointCount];
-            this.yBuffer = new double[this.PointCount];
+            Wgs84ToWebMercator.MathTransform.Transform(ref this.xBuffer[i], ref this.yBuffer[i]);
+        }
+    }
 
-            var random = new Random(20260317);
-            for (int i = 0; i < this.PointCount; i++)
+    [Benchmark]
+    public void Wgs84ToUtm32NBatched()
+    {
+        this.PrepareInput();
+        Wgs84ToUtm32N.MathTransform.Transform(this.xBuffer, this.yBuffer);
+    }
+
+    [Benchmark]
+    public void WebMercatorToWgs84Batched()
+    {
+        this.PrepareInput();
+        Wgs84ToWebMercator.MathTransform.Transform(this.xBuffer, this.yBuffer);
+        WebMercatorToWgs84.MathTransform.Transform(this.xBuffer, this.yBuffer);
+    }
+
+    private void PrepareInput()
+    {
+        this.longitudes.CopyTo(this.xBuffer.AsSpan());
+        this.latitudes.CopyTo(this.yBuffer.AsSpan());
+    }
+
+    private static void EnsureFinite(double[] xs, double[] ys)
+    {
+        for (int i = 0; i < xs.Length; i++)
+        {
+            if (double.IsNaN(xs[i]) || double.IsInfinity(xs[i]) ||
+                double.IsNaN(ys[i]) || double.IsInfinity(ys[i]))
             {
-                this.longitudes[i] = -179d + (random.NextDouble() * 358d);
-                this.latitudes[i] = -85d + (random.NextDouble() * 170d);
-            }
-        }
-
-        [Benchmark(Baseline = true)]
-        public void Wgs84ToWebMercatorBatched()
-        {
-            this.PrepareInput();
-            Wgs84ToWebMercator.MathTransform.Transform(this.xBuffer, this.yBuffer);
-        }
-
-        [Benchmark]
-        public void Wgs84ToWebMercatorOneByOne()
-        {
-            this.PrepareInput();
-            for (int i = 0; i < this.PointCount; i++)
-            {
-                Wgs84ToWebMercator.MathTransform.Transform(ref this.xBuffer[i], ref this.yBuffer[i]);
-            }
-        }
-
-        [Benchmark]
-        public void Wgs84ToUtm32NBatched()
-        {
-            this.PrepareInput();
-            Wgs84ToUtm32N.MathTransform.Transform(this.xBuffer, this.yBuffer);
-        }
-
-        [Benchmark]
-        public void WebMercatorToWgs84Batched()
-        {
-            this.PrepareInput();
-            Wgs84ToWebMercator.MathTransform.Transform(this.xBuffer, this.yBuffer);
-            WebMercatorToWgs84.MathTransform.Transform(this.xBuffer, this.yBuffer);
-        }
-
-        private void PrepareInput()
-        {
-            this.longitudes.CopyTo(this.xBuffer.AsSpan());
-            this.latitudes.CopyTo(this.yBuffer.AsSpan());
-        }
-
-        private static void EnsureFinite(double[] xs, double[] ys)
-        {
-            for (int i = 0; i < xs.Length; i++)
-            {
-                if (double.IsNaN(xs[i]) || double.IsInfinity(xs[i]) ||
-                    double.IsNaN(ys[i]) || double.IsInfinity(ys[i]))
-                {
-                    throw new InvalidOperationException("Benchmark validation failed: transform produced non-finite values.");
-                }
+                throw new InvalidOperationException("Benchmark validation failed: transform produced non-finite values.");
             }
         }
     }

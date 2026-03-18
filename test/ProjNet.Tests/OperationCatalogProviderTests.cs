@@ -15,24 +15,23 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-namespace ProjNET.Tests
+namespace ProjNET.Tests;
+
+using System.Linq;
+using ProjNet.Data;
+using Xunit;
+
+public class OperationCatalogProviderTests
 {
-    using System.Linq;
-    using ProjNet.Data;
-    using Xunit;
-
-    public class OperationCatalogProviderTests
+    [Fact]
+    public void ManagedOperationProvider_LoadsGeneratedOperationCatalog()
     {
-        [Fact]
-        public void ManagedOperationProvider_LoadsGeneratedOperationCatalog()
-        {
-            var provider = new ManagedCoordinateOperationDefinitionProvider();
-            var definitions = provider.GetDefinitions().ToList();
+        var provider = new ManagedCoordinateOperationDefinitionProvider();
+        var definitions = provider.GetDefinitions().ToList();
 
-            Assert.True(definitions.Count > 2500);
-            Assert.Contains(definitions, operation => operation.SourceSrid > 0 && operation.TargetSrid > 0);
-            Assert.Contains(definitions, operation => !string.IsNullOrWhiteSpace(operation.MethodName));
-            Assert.Contains(definitions, operation => !string.IsNullOrWhiteSpace(operation.ParameterFileName));
-        }
+        Assert.True(definitions.Count > 2500);
+        Assert.Contains(definitions, operation => operation.SourceSrid > 0 && operation.TargetSrid > 0);
+        Assert.Contains(definitions, operation => !string.IsNullOrWhiteSpace(operation.MethodName));
+        Assert.Contains(definitions, operation => !string.IsNullOrWhiteSpace(operation.ParameterFileName));
     }
 }

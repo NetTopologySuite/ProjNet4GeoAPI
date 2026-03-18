@@ -15,45 +15,44 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-namespace ProjNet.Benchmark
+namespace ProjNet.Benchmark;
+
+using BenchmarkDotNet.Running;
+
+class Program
 {
-    using BenchmarkDotNet.Running;
-
-    class Program
+    static void Main(string[] args)
     {
-        static void Main(string[] args)
-        {
-            PerformanceTests.Validate();
-            ProjParityBenchmarks.Validate();
-            BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args);
-        }
-
-        // here's how I generated coords.dat.gz (set TestDataPath and add references + usings, of course):
-#if false
-        static void GenerateTestData()
-        {
-            const string TestDataPath = @"C:\Path\To\TestData";
-            var lst = new List<Coordinate>();
-            foreach (var fl in new[] { "africa.wkt", "europe.wkt", "world.wkt" })
-            {
-                var wkt = new WKTFileReader(Path.Combine(TestDataPath, fl), new WKTReader());
-                lst.AddRange(wkt.Read().SelectMany(g => g.Coordinates));
-            }
-
-            using (var writer = new BinaryWriter(new GZipStream(File.Create(Path.Combine(TestDataPath, "coords.dat.gz")), CompressionLevel.Optimal)))
-            {
-                writer.Write(lst.Count);
-                foreach (var coord in lst)
-                {
-                    writer.Write(coord.X);
-                }
-
-                foreach (var coord in lst)
-                {
-                    writer.Write(coord.Y);
-                }
-            }
-        }
-#endif
+        PerformanceTests.Validate();
+        ProjParityBenchmarks.Validate();
+        BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args);
     }
+
+    // here's how I generated coords.dat.gz (set TestDataPath and add references + usings, of course):
+#if false
+    static void GenerateTestData()
+    {
+        const string TestDataPath = @"C:\Path\To\TestData";
+        var lst = new List<Coordinate>();
+        foreach (var fl in new[] { "africa.wkt", "europe.wkt", "world.wkt" })
+        {
+            var wkt = new WKTFileReader(Path.Combine(TestDataPath, fl), new WKTReader());
+            lst.AddRange(wkt.Read().SelectMany(g => g.Coordinates));
+        }
+
+        using (var writer = new BinaryWriter(new GZipStream(File.Create(Path.Combine(TestDataPath, "coords.dat.gz")), CompressionLevel.Optimal)))
+        {
+            writer.Write(lst.Count);
+            foreach (var coord in lst)
+            {
+                writer.Write(coord.X);
+            }
+
+            foreach (var coord in lst)
+            {
+                writer.Write(coord.Y);
+            }
+        }
+    }
+#endif
 }

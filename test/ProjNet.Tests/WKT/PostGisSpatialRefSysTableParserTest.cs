@@ -15,174 +15,173 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-namespace ProjNET.Tests.WKT
+namespace ProjNET.Tests.WKT;
+
+using System;
+using System.Data;
+using System.IO;
+using Newtonsoft.Json.Linq;
+using Npgsql;
+using NUnit.Framework;
+using ProjNet.CoordinateSystems;
+
+public class SpatialRefSysTableParser
 {
-    using System;
-    using System.Data;
-    using System.IO;
-    using Newtonsoft.Json.Linq;
-    using Npgsql;
-    using NUnit.Framework;
-    using ProjNet.CoordinateSystems;
+    private static string connectionString;
 
-    public class SpatialRefSysTableParser
+    private static readonly Lazy<CoordinateSystemFactory> CoordinateSystemFactory =
+        new Lazy<CoordinateSystemFactory>(() => new CoordinateSystemFactory());
+
+    [Xunit.Fact]
+    public void TestParsePostgisDefinitions()
     {
-        private static string connectionString;
-
-        private static readonly Lazy<CoordinateSystemFactory> CoordinateSystemFactory =
-            new Lazy<CoordinateSystemFactory>(() => new CoordinateSystemFactory());
-
-        [Xunit.Fact]
-        public void TestParsePostgisDefinitions()
+        if (string.IsNullOrWhiteSpace(ConnectionString))
         {
-            if (string.IsNullOrWhiteSpace(ConnectionString))
-            {
-                Xunit.Assert.Skip("No Connection string provided or provided connection string invalid.");
-            }
-
-            using (var cn = new NpgsqlConnection(ConnectionString))
-            {
-                cn.Open();
-                var cmd = cn.CreateCommand();
-                cmd.CommandText = "SELECT \"srid\", \"srtext\" FROM \"public\".\"spatial_ref_sys\" ORDER BY \"srid\";";
-
-                int counted = 0;
-                int failed = 0;
-                int tested = 0;
-                using (var r = cmd.ExecuteReader(CommandBehavior.CloseConnection))
-                {
-                    if (r != null)
-                    {
-                        while (r.Read())
-                        {
-                            counted++;
-                            int srid = r.GetInt32(0);
-                            string srtext = r.GetString(1);
-                            if (string.IsNullOrWhiteSpace(srtext))
-                            {
-                                continue;
-                            }
-
-                            if (srtext.StartsWith("COMPD_CS"))
-                            {
-                                continue;
-                            }
-
-                            tested++;
-                            if (!TestParse(srid, srtext))
-                            {
-                                failed++;
-                            }
-                        }
-                    }
-                }
-
-                Console.WriteLine("\n\nTotal number of Tests {0}, failed {1}", tested, failed);
-                Assert.IsTrue(failed == 0);
-            }
-
+            Xunit.Assert.Skip("No Connection string provided or provided connection string invalid.");
         }
 
-        [Xunit.Fact]// , Ignore("Only run this if you want a new SRID.csv file")]
-        public void TestCreateSridCsv()
+        using (var cn = new NpgsqlConnection(ConnectionString))
         {
-            if (string.IsNullOrWhiteSpace(ConnectionString))
-            {
-                Xunit.Assert.Skip("No Connection string provided or provided connection string invalid.");
-            }
+            cn.Open();
+            var cmd = cn.CreateCommand();
+            cmd.CommandText = "SELECT \"srid\", \"srtext\" FROM \"public\".\"spatial_ref_sys\" ORDER BY \"srid\";";
 
-            if (File.Exists("SRID.csv"))
+            int counted = 0;
+            int failed = 0;
+            int tested = 0;
+            using (var r = cmd.ExecuteReader(CommandBehavior.CloseConnection))
             {
-                File.Delete("SRID.csv");
-            }
-
-            using (var sw = new StreamWriter(File.OpenWrite("SRID.csv")))
-            using (var cn = new NpgsqlConnection(ConnectionString))
-            {
-                cn.Open();
-                var cm = cn.CreateCommand();
-                cm.CommandText = "SELECT \"srid\", \"srtext\" FROM \"public\".\"spatial_ref_sys\" ORDER BY srid;";
-                using (var dr = cm.ExecuteReader(CommandBehavior.SequentialAccess))
+                if (r != null)
                 {
-                    while (dr.Read())
+                    while (r.Read())
                     {
-                        int srid = dr.GetInt32(0);
-                        string srtext = dr.GetString(1);
-                        int bracketIndex = srtext.IndexOf('[');
-                        if (bracketIndex < 0)
+                        counted++;
+                        int srid = r.GetInt32(0);
+                        string srtext = r.GetString(1);
+                        if (string.IsNullOrWhiteSpace(srtext))
                         {
                             continue;
                         }
 
-                        switch (srtext.Substring(0, bracketIndex))
+                        if (srtext.StartsWith("COMPD_CS"))
                         {
-                            case "PROJCS":
-                            case "GEOGCS":
-                            case "GEOCCS":
-                                sw.WriteLine($"{srid};{srtext}");
-                                break;
+                            continue;
+                        }
+
+                        tested++;
+                        if (!TestParse(srid, srtext))
+                        {
+                            failed++;
                         }
                     }
                 }
-
-                cm.Dispose();
             }
-        }
 
-        private static string ConnectionString
-        {
-            get
-            {
-                if (!string.IsNullOrWhiteSpace(SpatialRefSysTableParser.connectionString))
-                {
-                    return SpatialRefSysTableParser.connectionString;
-                }
-
-                if (!File.Exists("appsettings.json"))
-                {
-                    return null;
-                }
-
-                JToken token = null;
-                using (var jtr = new Newtonsoft.Json.JsonTextReader(new StreamReader("appsettings.json")))
-                {
-                    token = JToken.ReadFrom(jtr);
-                }
-
-                string connectionString = (string)token["ConnectionString"];
-                try
-                {
-                    using (var cn = new NpgsqlConnection(connectionString))
-                    {
-                        cn.Open();
-                    }
-                }
-                catch (Exception)
-                {
-                    return null;
-                }
-
-                SpatialRefSysTableParser.connectionString = connectionString;
-                return SpatialRefSysTableParser.connectionString;
-
-            }
-        }
-
-        private static bool TestParse(int srid, string srtext)
-        {
-            try
-            {
-                CoordinateSystemFactory.Value.CreateFromWkt(srtext);
-
-                // CoordinateSystemWktReader.Parse(srtext);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Test {0} failed:\n  {1}\n  {2}", srid, srtext, ex.Message);
-                return false;
-            }
+            Console.WriteLine("\n\nTotal number of Tests {0}, failed {1}", tested, failed);
+            Assert.IsTrue(failed == 0);
         }
 
     }
+
+    [Xunit.Fact]// , Ignore("Only run this if you want a new SRID.csv file")]
+    public void TestCreateSridCsv()
+    {
+        if (string.IsNullOrWhiteSpace(ConnectionString))
+        {
+            Xunit.Assert.Skip("No Connection string provided or provided connection string invalid.");
+        }
+
+        if (File.Exists("SRID.csv"))
+        {
+            File.Delete("SRID.csv");
+        }
+
+        using (var sw = new StreamWriter(File.OpenWrite("SRID.csv")))
+        using (var cn = new NpgsqlConnection(ConnectionString))
+        {
+            cn.Open();
+            var cm = cn.CreateCommand();
+            cm.CommandText = "SELECT \"srid\", \"srtext\" FROM \"public\".\"spatial_ref_sys\" ORDER BY srid;";
+            using (var dr = cm.ExecuteReader(CommandBehavior.SequentialAccess))
+            {
+                while (dr.Read())
+                {
+                    int srid = dr.GetInt32(0);
+                    string srtext = dr.GetString(1);
+                    int bracketIndex = srtext.IndexOf('[');
+                    if (bracketIndex < 0)
+                    {
+                        continue;
+                    }
+
+                    switch (srtext.Substring(0, bracketIndex))
+                    {
+                        case "PROJCS":
+                        case "GEOGCS":
+                        case "GEOCCS":
+                            sw.WriteLine($"{srid};{srtext}");
+                            break;
+                    }
+                }
+            }
+
+            cm.Dispose();
+        }
+    }
+
+    private static string ConnectionString
+    {
+        get
+        {
+            if (!string.IsNullOrWhiteSpace(SpatialRefSysTableParser.connectionString))
+            {
+                return SpatialRefSysTableParser.connectionString;
+            }
+
+            if (!File.Exists("appsettings.json"))
+            {
+                return null;
+            }
+
+            JToken token = null;
+            using (var jtr = new Newtonsoft.Json.JsonTextReader(new StreamReader("appsettings.json")))
+            {
+                token = JToken.ReadFrom(jtr);
+            }
+
+            string connectionString = (string)token["ConnectionString"];
+            try
+            {
+                using (var cn = new NpgsqlConnection(connectionString))
+                {
+                    cn.Open();
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            SpatialRefSysTableParser.connectionString = connectionString;
+            return SpatialRefSysTableParser.connectionString;
+
+        }
+    }
+
+    private static bool TestParse(int srid, string srtext)
+    {
+        try
+        {
+            CoordinateSystemFactory.Value.CreateFromWkt(srtext);
+
+            // CoordinateSystemWktReader.Parse(srtext);
+            return true;
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("Test {0} failed:\n  {1}\n  {2}", srid, srtext, ex.Message);
+            return false;
+        }
+    }
+
 }
