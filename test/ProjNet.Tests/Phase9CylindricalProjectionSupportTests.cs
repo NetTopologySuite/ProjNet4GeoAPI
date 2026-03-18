@@ -95,6 +95,41 @@ public class Phase9CylindricalProjectionSupportTests
         Assert.InRange(System.Math.Abs(roundtrip[1] - latitude), 0d, tolerance);
     }
 
+    [Theory]
+    [InlineData("cea")]
+    [InlineData("cylindrical_equal_area")]
+    [InlineData("lambert_cylindrical_equal_area")]
+    [InlineData("equal_area_cylindrical")]
+    public void SupportsCeaProjectionAliasesFromWkt(string projectionName)
+    {
+        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName));
+        var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
+        double[] result = transform.MathTransform.Transform(CreatePoint(1000d, 2000d));
+
+        Assert.NotNull(projected);
+        Assert.NotNull(transform);
+        Assert.NotNull(result);
+        Assert.True(result.Length >= 2);
+    }
+
+    [Fact]
+    public void SupportsCeaProjectionRoundtrip()
+    {
+        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt("cea"));
+        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(GeographicCoordinateSystem.WGS84, projected);
+        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
+
+        const double longitude = 42.6d;
+        const double latitude = 14.2d;
+        const double tolerance = 1e-8d;
+
+        double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
+        double[] roundtrip = inverse.MathTransform.Transform(projectedPoint);
+
+        Assert.InRange(System.Math.Abs(roundtrip[0] - longitude), 0d, tolerance);
+        Assert.InRange(System.Math.Abs(roundtrip[1] - latitude), 0d, tolerance);
+    }
+
     private static string BuildProjectedWkt(string projectionName)
     {
         return

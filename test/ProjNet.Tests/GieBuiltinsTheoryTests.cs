@@ -35,6 +35,7 @@ public class GieBuiltinsTheoryTests
         ["aea"] = "albers",
         ["aeqd"] = "aeqd",
         ["cass"] = "cassini_soldner",
+        ["cea"] = "cylindrical_equal_area",
         ["eqearth"] = "eqearth",
         ["eqc"] = "equidistant_cylindrical",
         ["etmerc"] = "etmerc",
