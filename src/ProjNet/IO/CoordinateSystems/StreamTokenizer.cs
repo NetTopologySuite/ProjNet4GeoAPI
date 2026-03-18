@@ -5,7 +5,7 @@
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // ProjNet is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -13,7 +13,7 @@
 
 // You should have received a copy of the GNU Lesser General Public License
 // along with ProjNet; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 // SOURCECODE IS MODIFIED FROM ANOTHER WORK AND IS ORIGINALLY BASED ON GeoTools.NET:
 namespace ProjNet.IO.CoordinateSystems
@@ -42,12 +42,12 @@ namespace ProjNet.IO.CoordinateSystems
     using System.Globalization;
     using System.IO;
 
-    ///<summary>
-    ///The StreamTokenizer class takes an input stream and parses it into "tokens", allowing the tokens to be read one at a time. The parsing process is controlled by a table and a number of flags that can be set to various states. The stream tokenizer can recognize identifiers, numbers, quoted strings, and various comment style.
-    ///</summary>
-    ///<remarks>
-    ///This is a crude c# implementation of Java's <a href="http://java.sun.com/products/jdk/1.2/docs/api/java/io/StreamTokenizer.html">StreamTokenizer</a> class.
-    ///</remarks>
+    /// <summary>
+    /// The StreamTokenizer class takes an input stream and parses it into "tokens", allowing the tokens to be read one at a time. The parsing process is controlled by a table and a number of flags that can be set to various states. The stream tokenizer can recognize identifiers, numbers, quoted strings, and various comment style.
+    /// </summary>
+    /// <remarks>
+    /// This is a crude c# implementation of Java's <a href="http://java.sun.com/products/jdk/1.2/docs/api/java/io/StreamTokenizer.html">StreamTokenizer</a> class.
+    /// </remarks>
     internal class StreamTokenizer
     {
         private readonly NumberFormatInfo nfi = CultureInfo.InvariantCulture.NumberFormat;
@@ -155,7 +155,7 @@ namespace ProjNet.IO.CoordinateSystems
 
         private TokenType NextTokenAny()
         {
-            this.currentToken = "";
+            this.currentToken = string.Empty;
             this.currentTokenType = TokenType.Eof;
             int finished = this.reader.Read();
 

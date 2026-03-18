@@ -14,7 +14,6 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-
 namespace ProjNet.CoordinateSystems.Transformations
 {
     using System;
@@ -574,8 +573,8 @@ namespace ProjNet.CoordinateSystems.Transformations
                     new CoordinateTransformation(
                     (target.HorizontalDatum.Wgs84Parameters == null || target.HorizontalDatum.Wgs84Parameters.HasZeroValuesOnly) ? target : GeocentricCoordinateSystem.WGS84,
                     source, TransformType.Transformation,
-                        new DatumTransform(source.HorizontalDatum.Wgs84Parameters)
-                        , "", "", -1, "", ""));
+                        new DatumTransform(source.HorizontalDatum.Wgs84Parameters),
+                        string.Empty, string.Empty, -1, string.Empty, string.Empty));
 
             // Does target has a datum different from WGS84 and is there a shift specified?
             if (target.HorizontalDatum.Wgs84Parameters != null && !target.HorizontalDatum.Wgs84Parameters.HasZeroValuesOnly)
@@ -584,8 +583,8 @@ namespace ProjNet.CoordinateSystems.Transformations
                     (source.HorizontalDatum.Wgs84Parameters == null || source.HorizontalDatum.Wgs84Parameters.HasZeroValuesOnly) ? source : GeocentricCoordinateSystem.WGS84,
                     target,
                     TransformType.Transformation,
-                        new DatumTransform(target.HorizontalDatum.Wgs84Parameters).Inverse()
-                        , "", "", -1, "", ""));
+                        new DatumTransform(target.HorizontalDatum.Wgs84Parameters).Inverse(),
+                        string.Empty, string.Empty, -1, string.Empty, string.Empty));
 
             // If we don't have a transformation in this list, return null
             if (ct.CoordinateTransformationList.Count == 0)
@@ -596,10 +595,10 @@ namespace ProjNet.CoordinateSystems.Transformations
             // If we only have one shift, lets just return the datumshift from/to wgs84
             if (ct.CoordinateTransformationList.Count == 1)
             {
-                return new CoordinateTransformation(source, target, TransformType.ConversionAndTransformation, ((ICoordinateTransformation)ct.CoordinateTransformationList[0]).MathTransform, "", "", -1, "", "");
+                return new CoordinateTransformation(source, target, TransformType.ConversionAndTransformation, ((ICoordinateTransformation)ct.CoordinateTransformationList[0]).MathTransform, string.Empty, string.Empty, -1, string.Empty, string.Empty);
             }
 
-            return new CoordinateTransformation(source, target, TransformType.ConversionAndTransformation, ct, "", "", -1, "", "");
+            return new CoordinateTransformation(source, target, TransformType.ConversionAndTransformation, ct, string.Empty, string.Empty, -1, string.Empty, string.Empty);
         }
 
         /// <summary>
@@ -1063,4 +1062,3 @@ namespace ProjNet.CoordinateSystems.Transformations
 
     }
 }
-

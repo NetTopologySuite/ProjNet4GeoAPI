@@ -1,3 +1,20 @@
+// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
+//
+// This file is part of ProjNet.
+// ProjNet is free software; you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// ProjNet is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with ProjNet; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 namespace ProjNET.Tests
 {
     using System;
@@ -34,7 +51,7 @@ namespace ProjNET.Tests
             {
                 new XY(290586.087, 6714000), new XY(290586.392, 6713996.224),
                 new XY(290590.133, 6713973.772), new XY(290594.111, 6713957.416),
-                new XY(290596.615, 6713943.567), new XY(290596.701, 6713939.485)
+                new XY(290596.615, 6713943.567), new XY(290596.701, 6713939.485),
             };
 
             var tpoints = (XY[])points.Clone();
@@ -70,7 +87,7 @@ namespace ProjNET.Tests
             {
                 new[] {290586.087, 6714000 }, new[] {90586.392, 6713996.224},
                 new[] {290590.133, 6713973.772}, new[] {290594.111, 6713957.416},
-                new[] {290596.615, 6713943.567}, new[] {290596.701, 6713939.485}
+                new[] {290596.615, 6713943.567}, new[] {290596.701, 6713939.485},
             };
 
             double[][] tpoints = trans.MathTransform.TransformList(points).ToArray();
@@ -114,7 +131,7 @@ namespace ProjNET.Tests
                                      new ProjectionParameter("standard_parallel_1", 29.5),
                                      new ProjectionParameter("standard_parallel_2", 45.5),
                                      new ProjectionParameter("false_easting", 0),
-                                     new ProjectionParameter("false_northing", 0)
+                                     new ProjectionParameter("false_northing", 0),
                                  };
             var projection = this.CoordinateSystemFactory.CreateProjection("Albers Conical Equal Area", "albers", parameters);
 
@@ -148,7 +165,7 @@ namespace ProjNET.Tests
                                      new ProjectionParameter("standard_parallel_1", 29.5),
                                      new ProjectionParameter("standard_parallel_2", 45.5),
                                      new ProjectionParameter("false_easting", 0),
-                                     new ProjectionParameter("false_northing", 0)
+                                     new ProjectionParameter("false_northing", 0),
                                  };
             var projection = this.CoordinateSystemFactory.CreateProjection("Albers Conical Equal Area", "albers", parameters);
 
@@ -180,7 +197,7 @@ namespace ProjNET.Tests
                                      new ProjectionParameter("central_meridian", 110),
                                      new ProjectionParameter("scale_factor", 0.997),
                                      new ProjectionParameter("false_easting", 3900000),
-                                     new ProjectionParameter("false_northing", 900000)
+                                     new ProjectionParameter("false_northing", 900000),
                                  };
             var projection = this.CoordinateSystemFactory.CreateProjection("Mercator_1SP", "Mercator_1SP", parameters);
 
@@ -212,7 +229,7 @@ namespace ProjNET.Tests
                                      new ProjectionParameter("central_meridian", 110),
                                      new ProjectionParameter("scale_factor", 0.997),
                                      new ProjectionParameter("false_easting", 3900000 / LinearUnit.Foot.MetersPerUnit),
-                                     new ProjectionParameter("false_northing", 900000 / LinearUnit.Foot.MetersPerUnit)
+                                     new ProjectionParameter("false_northing", 900000 / LinearUnit.Foot.MetersPerUnit),
                                  };
             var projection = this.CoordinateSystemFactory.CreateProjection("Mercator_1SP", "Mercator_1SP", parameters);
 
@@ -243,7 +260,7 @@ namespace ProjNET.Tests
                                      new ProjectionParameter("latitude_of_origin", 42),
                                      new ProjectionParameter("central_meridian", 51),
                                      new ProjectionParameter("false_easting", 0),
-                                     new ProjectionParameter("false_northing", 0)
+                                     new ProjectionParameter("false_northing", 0),
                                  };
             var projection = this.CoordinateSystemFactory.CreateProjection("Mercator_2SP", "Mercator_2SP", parameters);
 
@@ -275,7 +292,7 @@ namespace ProjNET.Tests
                                      new ProjectionParameter("central_meridian", -2),
                                      new ProjectionParameter("scale_factor", 0.9996012717 /* 0.9996*/),
                                      new ProjectionParameter("false_easting", 400000),
-                                     new ProjectionParameter("false_northing", -100000)
+                                     new ProjectionParameter("false_northing", -100000),
                                  };
             var projection = this.CoordinateSystemFactory.CreateProjection("Transverse Mercator", "Transverse_Mercator", parameters);
 
@@ -310,7 +327,7 @@ namespace ProjNET.Tests
                                      new ProjectionParameter("standard_parallel_1", 28.3833333333),
                                      new ProjectionParameter("standard_parallel_2", 30.2833333333),
                                      new ProjectionParameter("false_easting", 2000000 / LinearUnit.USSurveyFoot.MetersPerUnit),
-                                     new ProjectionParameter("false_northing", 0)
+                                     new ProjectionParameter("false_northing", 0),
                                  };
             var projection = this.CoordinateSystemFactory.CreateProjection("Lambert Conic Conformal (2SP)", "lambert_conformal_conic_2sp", parameters);
 
@@ -332,7 +349,7 @@ namespace ProjNET.Tests
         {
             var wgs84 = GeographicCoordinateSystem.WGS84;
 
-            var coordsys = this.CoordinateSystemFactory.CreateFromWkt("" +
+            var coordsys = this.CoordinateSystemFactory.CreateFromWkt(string.Empty +
                     "PROJCS[\"Lambert_Azimuthal_Equal_Area_Custom\"," +
                         "GEOGCS[\"GCS_WGS_1984\"," +
                             "DATUM[\"D_WGS_1984\"," +
@@ -431,7 +448,7 @@ namespace ProjNET.Tests
                                                            -0.48488, -0.02436, -0.41321,
                                                            -0.540645); // Parameters for Denmark
 
-                                                                       // Define geographic coordinate systems
+            // Define geographic coordinate systems
             var gcsWGS72 = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem("WGS72 Geographic", AngularUnit.Degrees, wgs72, PrimeMeridian.Greenwich,
                 new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
 
@@ -453,7 +470,7 @@ namespace ProjNET.Tests
                                      new ProjectionParameter("central_meridian", 9),
                                      new ProjectionParameter("scale_factor", 0.9996),
                                      new ProjectionParameter("false_easting", 500000),
-                                     new ProjectionParameter("false_northing", 0)
+                                     new ProjectionParameter("false_northing", 0),
                                  };
             var projection = this.CoordinateSystemFactory.CreateProjection("Transverse Mercator", "Transverse_Mercator", parameters);
             var utmED50 = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("ED50 UTM Zone 32N", gcsED50, projection, LinearUnit.Metre, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
@@ -529,7 +546,7 @@ namespace ProjNET.Tests
                                      new ProjectionParameter("pseudo_standard_parallel_1", 78.5),
                                      new ProjectionParameter("scale_factor", 0.9999),
                                      new ProjectionParameter("false_easting", 0),
-                                     new ProjectionParameter("false_northing", 0)
+                                     new ProjectionParameter("false_northing", 0),
                                  };
             var projection = this.CoordinateSystemFactory.CreateProjection("Krovak", "Krovak", parameters);
 
@@ -586,7 +603,7 @@ namespace ProjNET.Tests
                                      new ProjectionParameter("pseudo_standard_parallel_1", 78.5),
                                      new ProjectionParameter("scale_factor", 0.9999),
                                      new ProjectionParameter("false_easting", 0),
-                                     new ProjectionParameter("false_northing", 0)
+                                     new ProjectionParameter("false_northing", 0),
                                  };
             var projection = this.CoordinateSystemFactory.CreateProjection("Krovak", "Krovak", parameters);
 
@@ -653,7 +670,7 @@ namespace ProjNET.Tests
             double[] coord4326 = new double[] { 15.00, 73.00 };
             double[] coord32661 = new double[] { 2491967.01029204, 163954.12194234435 };
 
-            string wkt4326 = "" +
+            string wkt4326 = string.Empty +
                 "GEOGCS[\"WGS 84\"," +
                 "DATUM[\"WGS_1984\"," +
                 "SPHEROID[\"WGS 84\",6378137,298.257223563," +
@@ -665,7 +682,7 @@ namespace ProjNET.Tests
                 "AUTHORITY[\"EPSG\",\"9122\"]]," +
                 "AUTHORITY[\"EPSG\",\"4326\"]]";
 
-            string wkt32661 = "" +
+            string wkt32661 = string.Empty +
                 "PROJCS[\"WGS 84 / UPS North (N,E)\"," +
                 "GEOGCS[\"WGS 84\"," +
                 "DATUM[\"WGS_1984\"," +
@@ -709,7 +726,7 @@ namespace ProjNET.Tests
             double[] coord4326 = new double[] { 15.00, -73.00 };
             double[] coord3032 = new double[] { 4476201.247377692, 7066975.373300694 };
 
-            string wkt4326 = "" +
+            string wkt4326 = string.Empty +
                 "GEOGCS[\"WGS 84\"," +
                 "DATUM[\"WGS_1984\"," +
                 "SPHEROID[\"WGS 84\",6378137,298.257223563," +
@@ -721,7 +738,7 @@ namespace ProjNET.Tests
                 "AUTHORITY[\"EPSG\",\"9122\"]]," +
                 "AUTHORITY[\"EPSG\",\"4326\"]]";
 
-            string wkt3032 = "" +
+            string wkt3032 = string.Empty +
                 "PROJCS[\"WGS 84 / Australian Antarctic Polar Stereographic\"," +
                 "GEOGCS[\"WGS 84\"," +
                 "DATUM[\"WGS_1984\"," +
@@ -855,7 +872,7 @@ namespace ProjNET.Tests
             var coords = new XY[] {
                 new XY(290586.087, 6714000),
                 new XY(290586.392, 6713996.224),
-                new XY(290590.133, 6713973.772)
+                new XY(290590.133, 6713973.772),
             };
 
             trans.MathTransform.Transform(coords);
@@ -876,7 +893,7 @@ namespace ProjNET.Tests
             var coords = new List<double[]>{
                 new double[]{290586.087, 6714000},
                 new double[]{290586.392, 6713996.224},
-                new double[]{290590.133, 6713973.772}
+                new double[]{290590.133, 6713973.772},
             };
 
             var transformedCoords = trans.MathTransform.TransformList(coords);
@@ -899,7 +916,7 @@ namespace ProjNET.Tests
             // TODO MathTransformFactory fac = new MathTransformFactory ();
             double[,] matrix = new double[,] {{0.883485346527455, -0.468458794848877, 3455869.17937689},
                                               {0.468458794848877, 0.883485346527455, 5478710.88035753},
-                                              {0.0 , 0.0, 1},};
+                                              {0.0, 0.0, 1}, };
             var mt = new AffineTransform(matrix);
 
             Assert.IsNotNull(mt);
@@ -932,7 +949,7 @@ namespace ProjNET.Tests
             // TODO MathTransformFactory fac = new MathTransformFactory ();
             double[,] matrix = new double[,] {{0.883485346527455, -0.468458794848877, 3455869.17937689},
                                               {0.468458794848877, 0.883485346527455, 5478710.88035753},
-                                              {0.0 , 0.0, 1},};
+                                              {0.0, 0.0, 1}, };
             var mt = new AffineTransform(matrix);
 
             Assert.IsNotNull(mt);
@@ -1083,7 +1100,7 @@ namespace ProjNET.Tests
                                      new ProjectionParameter("latitude_of_origin", 0),
                                      new ProjectionParameter("scale_factor", 1),
                                      new ProjectionParameter("false_easting", 0),
-                                     new ProjectionParameter("false_northing", 0)
+                                     new ProjectionParameter("false_northing", 0),
                                  };
             var projection = this.CoordinateSystemFactory.CreateProjection("Orthographic", "Orthographic", parameters);
             var orthographicSystem = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("Orthographic centered", csWgs84, projection, LinearUnit.Metre, new AxisInfo("X", AxisOrientationEnum.East), new AxisInfo("Y", AxisOrientationEnum.North));
@@ -1111,7 +1128,7 @@ namespace ProjNET.Tests
                                      new ProjectionParameter("latitude_of_origin", 55.0),
                                      new ProjectionParameter("scale_factor", 1),
                                      new ProjectionParameter("false_easting", 0),
-                                     new ProjectionParameter("false_northing", 0)
+                                     new ProjectionParameter("false_northing", 0),
                                  };
             var projection2 = this.CoordinateSystemFactory.CreateProjection("Orthographic", "Orthographic", parameters2);
             var orthoSystem2 = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("Orthographic", csWgs84, projection2, LinearUnit.Metre, new AxisInfo("X", AxisOrientationEnum.East), new AxisInfo("Y", AxisOrientationEnum.North));
@@ -1205,4 +1222,3 @@ namespace ProjNET.Tests
         }
     }
 }
-

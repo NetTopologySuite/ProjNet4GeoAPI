@@ -1,3 +1,20 @@
+// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
+//
+// This file is part of ProjNet.
+// ProjNet is free software; you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// ProjNet is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with ProjNet; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 namespace ProjNET.Tests.WKT
 {
     using System;
@@ -105,7 +122,7 @@ namespace ProjNET.Tests.WKT
                 Tuple.Create("latitude_of_origin", 29.6666666667),
                 Tuple.Create("central_meridian", -100.333333333333),
                 Tuple.Create("false_easting", 2296583.333),
-                Tuple.Create("false_northing", 9842500d)
+                Tuple.Create("false_northing", 9842500d),
             });
 
             CheckUnit(pcs.LinearUnit, "US survey foot", 0.304800609601219, "EPSG", 9003);
@@ -280,10 +297,10 @@ namespace ProjNET.Tests.WKT
             CheckProjection(pcs.Projection, "Transverse_Mercator", new[]
             {
                 Tuple.Create("latitude_of_origin", 49d),
-                Tuple.Create("central_meridian",-2d),
-                Tuple.Create("scale_factor",0.9996012717),
-                Tuple.Create("false_easting",400000d),
-                Tuple.Create("false_northing",-100000d)
+                Tuple.Create("central_meridian", -2d),
+                Tuple.Create("scale_factor", 0.9996012717),
+                Tuple.Create("false_easting", 400000d),
+                Tuple.Create("false_northing", -100000d),
             });
 
             CheckUnit(pcs.LinearUnit, "metre", 1d, "EPSG", 9001);
@@ -305,8 +322,7 @@ namespace ProjNET.Tests.WKT
                 "0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4055\"]]," +
                 "PROJECTION[\"Mercator_1SP\"]," +
                 "PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[" +
-                "\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"X\",EAST],AXIS[\"Y\",NORTH]],AUTHORITY[\"EPSG\",\"3785\"]"
-                ), Throws.Nothing);
+                "\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"X\",EAST],AXIS[\"Y\",NORTH]],AUTHORITY[\"EPSG\",\"3785\"]"), Throws.Nothing);
         }
 
         [Xunit.Fact]
@@ -549,7 +565,7 @@ namespace ProjNET.Tests.WKT
         private static bool CheckDatum(Datum datum, string name, string authority, long? code)
         {
             Assert.That(datum, Is.Not.Null);
-            Assert.That(datum, Is.InstanceOf<HorizontalDatum>()/*.Or.InstanceOf<IVerticalDatum>()*/);
+            Assert.That(datum, Is.InstanceOf<HorizontalDatum>() /*.Or.InstanceOf<IVerticalDatum>()*/);
 
             Assert.That(CheckInfo(datum, name, authority, code), Is.True);
 
@@ -601,4 +617,3 @@ namespace ProjNET.Tests.WKT
         }
     }
 }
-

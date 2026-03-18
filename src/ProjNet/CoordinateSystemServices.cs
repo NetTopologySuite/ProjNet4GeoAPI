@@ -5,7 +5,7 @@
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // ProjNet is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -13,8 +13,8 @@
 //
 // You should have received a copy of the GNU Lesser General Public License
 // along with SharpMap; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
-    
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 namespace ProjNet
 {
     using System;
@@ -82,14 +82,32 @@ namespace ProjNet
                 throw new NotSupportedException();
             }
 
-            public string Name { get { return null; } }
+            public string Name
+            {
+                get { return null; }
+            }
             public string Authority { get; private set; }
             public long AuthorityCode { get; private set; }
-            public string Alias { get { return null; } }
-            public string Abbreviation { get { return null; } }
-            public string Remarks { get { return null; } }
-            public string WKT { get { return null; } }
-            public string XML { get { return null; } }
+            public string Alias
+            {
+                get { return null; }
+            }
+            public string Abbreviation
+            {
+                get { return null; }
+            }
+            public string Remarks
+            {
+                get { return null; }
+            }
+            public string WKT
+            {
+                get { return null; }
+            }
+            public string XML
+            {
+                get { return null; }
+            }
         }
 
         /// <summary>
@@ -498,4 +516,3 @@ namespace ProjNet
         }
     }
 }
-

@@ -5,7 +5,7 @@
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // SharpMap is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -13,8 +13,7 @@
 
 // You should have received a copy of the GNU Lesser General Public License
 // along with SharpMap; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
-
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 namespace ProjNet.CoordinateSystems
 {
     using System;
@@ -51,7 +50,9 @@ namespace ProjNet.CoordinateSystems
         /// Initializes a new instance of the <see cref="Wgs84ConversionInfo"/> class.
         /// Initializes an instance of Wgs84ConversionInfo with default parameters (all values = 0).
         /// </summary>
-        public Wgs84ConversionInfo() : this(0, 0, 0, 0, 0, 0, 0, string.Empty) { }
+        public Wgs84ConversionInfo() : this(0, 0, 0, 0, 0, 0, 0, string.Empty)
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Wgs84ConversionInfo"/> class.
@@ -65,7 +66,9 @@ namespace ProjNet.CoordinateSystems
         /// <param name="ez">Bursa Wolf rotation in arc seconds.</param>
         /// <param name="ppm">Bursa Wolf scaling in parts per million.</param>
         public Wgs84ConversionInfo(double dx, double dy, double dz, double ex, double ey, double ez, double ppm)
-            : this(dx, dy, dz, ex, ey, ez, ppm, string.Empty) { }
+            : this(dx, dy, dz, ex, ey, ez, ppm, string.Empty)
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Wgs84ConversionInfo"/> class.

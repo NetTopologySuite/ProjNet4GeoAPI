@@ -1,3 +1,20 @@
+// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
+//
+// This file is part of ProjNet.
+// ProjNet is free software; you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// ProjNet is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with ProjNet; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
 namespace ProjNet.CoordinateSystems.Projections
 {
     /*
@@ -29,7 +46,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         private const double IterationTolerance = 1E-12;
 
-        ///<summary>
+        /// <summary>
         /// Meridian distance at the latitude of origin.
         /// Used for calculations for the ellipsoid.
         /// </summary>
@@ -37,14 +54,15 @@ namespace ProjNet.CoordinateSystems.Projections
 
         private readonly double reciprocSemiMajorTimesScaleFactor;
 
-        ///<summary>
+        /// <summary>
         /// Initializes a new instance of the <see cref="PolyconicProjection"/> class.
         /// Constructs a new map projection from the supplied parameters.
-        ///</summary>
+        /// </summary>
         /// <param name="parameters">The parameter values in standard units.</param>
         public PolyconicProjection(IEnumerable<ProjectionParameter> parameters)
             : this(parameters, null)
-        { }
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PolyconicProjection"/> class.
@@ -163,11 +181,11 @@ namespace ProjNet.CoordinateSystems.Projections
             return this.inverse;
         }
 
-        ///<summary>
+        /// <summary>
         /// Computes function. <code>f(s,c,e²) = c/sqrt(1 - s²*e²)</code> needed for the true scale
         /// latitude (Snyder 14-15), where <var>s</var> and <var>c</var> are the sine and cosine of
         /// the true scale latitude, and <var>e²</var> is the eccentricity squared.
-        ///</summary>
+        /// </summary>
         double Msfn(double s, double c)
         {
             return c / Math.Sqrt(1.0 - ((s * s) * this.es));

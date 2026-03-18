@@ -5,7 +5,7 @@
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // ProjNet is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -13,7 +13,7 @@
 
 // You should have received a copy of the GNU Lesser General Public License
 // along with ProjNet; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 // SOURCECODE IS MODIFIED FROM ANOTHER WORK AND IS ORIGINALLY BASED ON GeoTools.NET:
 namespace ProjNet.CoordinateSystems.Projections
@@ -110,17 +110,27 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <summary>
         /// Gets or sets substitute for <see cref="central_meridian"/>.
         /// </summary>
-        protected double Lon_origin { get { return this.central_meridian; } set { this.central_meridian = value; } }
+        protected double Lon_origin
+        {
+            get { return this.central_meridian; }
+            set { this.central_meridian = value; }
+        }
 
         /// <summary>
         /// Gets center latitude (projection center), same as lat_origin.
         /// </summary>
-        protected double Central_parallel { get { return this.lat_origin; } }
+        protected double Central_parallel
+        {
+            get { return this.lat_origin; }
+        }
 
         /// <summary>
         /// Gets center latitude (projection center), same as lat_origin.
         /// </summary>
-        protected double Phi0 { get { return this.lat_origin; } }
+        protected double Phi0
+        {
+            get { return this.lat_origin; }
+        }
 
         /// <summary>
         /// Center latitude.
@@ -754,7 +764,7 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// <returns></returns>
         protected static double GMIN(ref double A, ref double B)
         {
-            return  A < B ? A : B; /* assign minimum of a and b */
+            return A < B ? A : B; /* assign minimum of a and b */
         }
 
         /// <summary>
@@ -769,9 +779,9 @@ for (var i = 0; i < _Parameters.Count; i++)
 
         }
 
-        ///<summary>
-        ///Function to return the sign of an argument.
-        ///</summary>
+        /// <summary>
+        /// Function to return the sign of an argument.
+        /// </summary>
         protected static double Sign(double x)
         {
             if (x < 0.0)
@@ -831,7 +841,7 @@ for (var i = 0; i < _Parameters.Count; i++)
             double con;
 
             con = eccent * sinphi;
-            return  (cosphi / Math.Sqrt(1.0 - (con * con)));
+            return (cosphi / Math.Sqrt(1.0 - (con * con)));
         }
 
         /// <summary>
@@ -951,9 +961,9 @@ for (var i = 0; i < _Parameters.Count; i++)
             throw new ArgumentException("Convergence error.");
         }
 
-        ///<summary>
-        ///Function to eliminate roundoff errors in asin.
-        ///</summary>
+        /// <summary>
+        /// Function to eliminate roundoff errors in asin.
+        /// </summary>
         protected static double Asinz(double con)
         {
             if (Math.Abs(con) > 1.0)
@@ -992,7 +1002,7 @@ for (var i = 0; i < _Parameters.Count; i++)
             {
                 sinpi = Math.Sin(chi);
                 con = eccent * sinpi;
-                dphi = HALF_PI - (2 * Math.Atan(ts *  Math.Pow((1.0 - con) / (1.0 + con), eccnth))) - chi;
+                dphi = HALF_PI - (2 * Math.Atan(ts * Math.Pow((1.0 - con) / (1.0 + con), eccnth))) - chi;
                 chi += dphi;
                 if (Math.Abs(dphi) <= .0000000001)
                 {
@@ -1016,11 +1026,11 @@ for (var i = 0; i < _Parameters.Count; i++)
                              C68 = 0.00569661458333333333,
                              C88 = 0.3076171875;
 
-        ///<summary>
-        ///Functions to compute the constants e0, e1, e2, and e3 which are used
-        ///in a series for calculating the distance along a meridian.  The
-        ///input x represents the eccentricity squared.
-        ///</summary>
+        /// <summary>
+        /// Functions to compute the constants e0, e1, e2, and e3 which are used
+        /// in a series for calculating the distance along a meridian.  The
+        /// input x represents the eccentricity squared.
+        /// </summary>
         protected static double E0fn(double x)
         {
             return 1.0 - (0.25 * x * (1.0 + (x / 16.0 * (3.0 + (1.25 * x)))));
@@ -1067,7 +1077,7 @@ for (var i = 0; i < _Parameters.Count; i++)
             double com;
             con = 1.0 + x;
             com = 1.0 - x;
-            return  Math.Sqrt(Math.Pow(con, con) * Math.Pow(com, com));
+            return Math.Sqrt(Math.Pow(con, con) * Math.Pow(com, com));
         }
 
         /// <summary>
