@@ -58,6 +58,12 @@ public class Gigs5101TheoryTests
         "5113.gie",
     };
 
+    private static readonly string[] Fixture5200Files =
+    {
+        "5201.gie",
+        "5208.gie",
+    };
+
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
     private static readonly CoordinateSystemServices CoordinateSystemServices = new CoordinateSystemServices();
@@ -83,6 +89,13 @@ public class Gigs5101TheoryTests
     public void Gigs5104To5113Cases_ForSupportedPipelines_Execute()
     {
         AssertFixtureCoverage(Fixture5104To5113Files, 80, 0, "5104-5113", requireToleranceMatch: false);
+    }
+
+    [Fact]
+    [Trait("Category", "Gigs5200")]
+    public void Gigs5200Cases_ForSupportedPipelines_Execute()
+    {
+        AssertFixtureCoverage(Fixture5200Files, 20, 0, "5200", requireToleranceMatch: false);
     }
 
     private static void AssertFixtureCoverage(
