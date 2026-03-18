@@ -18,9 +18,18 @@ namespace ProjNet.Data
     public sealed class ManagedCoordinateSystemDefinitionProvider : ICoordinateSystemDefinitionProvider, IManagedCoordinateSystemProvider
     {
         /// <inheritdoc/>
-        IEnumerable<KeyValuePair<int, CoordinateSystem>> IManagedCoordinateSystemProvider.GetCoordinateSystems()
+        public IEnumerable<KeyValuePair<int, CoordinateSystem>> GetCoordinateSystems()
         {
             return GetManagedCoordinateSystems();
+        }
+
+        /// <inheritdoc />
+        public IEnumerable<KeyValuePair<int, string>> GetDefinitions()
+        {
+            foreach (var coordinateSystem in GetManagedCoordinateSystems())
+            {
+                yield return new KeyValuePair<int, string>(coordinateSystem.Key, coordinateSystem.Value.WKT);
+            }
         }
 
         private static IEnumerable<KeyValuePair<int, CoordinateSystem>> GetManagedCoordinateSystems()
@@ -34,15 +43,6 @@ namespace ProjNet.Data
                 }
 
                 yield return coordinateSystem;
-            }
-        }
-
-        /// <inheritdoc />
-        public IEnumerable<KeyValuePair<int, string>> GetDefinitions()
-        {
-            foreach (var coordinateSystem in GetManagedCoordinateSystems())
-            {
-                yield return new KeyValuePair<int, string>(coordinateSystem.Key, coordinateSystem.Value.WKT);
             }
         }
     }

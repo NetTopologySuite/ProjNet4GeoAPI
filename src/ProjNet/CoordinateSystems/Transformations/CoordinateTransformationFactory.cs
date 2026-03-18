@@ -275,58 +275,75 @@ namespace ProjNet.CoordinateSystems.Transformations
             return true;
         }
 
-        private ICoordinateTransformation CreateFromCoordinateSystemsCore(CoordinateSystem sourceCS, CoordinateSystem targetCS)
+        private enum CoordinateSystemRuntimeKind : byte
         {
-            ICoordinateTransformation trans;
-            if (sourceCS is ProjectedCoordinateSystem && targetCS is GeographicCoordinateSystem) //Projected -> Geographic
+            Unknown = 0,
+            Projected = 1,
+            Geographic = 2,
+            Geocentric = 3,
+            Fitted = 4,
+        }
+
+        private static CoordinateSystemRuntimeKind GetCoordinateSystemRuntimeKind(CoordinateSystem coordinateSystem)
+        {
+            if (coordinateSystem is ProjectedCoordinateSystem)
             {
-                trans = Proj2Geog((ProjectedCoordinateSystem)sourceCS, (GeographicCoordinateSystem)targetCS);
-            }
-            else if (sourceCS is GeographicCoordinateSystem && targetCS is ProjectedCoordinateSystem) //Geographic -> Projected
-            {
-                trans = Geog2Proj((GeographicCoordinateSystem)sourceCS, (ProjectedCoordinateSystem)targetCS);
-            }
-            else if (sourceCS is GeographicCoordinateSystem && targetCS is GeocentricCoordinateSystem) //Geographic -> Geocentric
-            {
-                trans = Geog2Geoc((GeographicCoordinateSystem)sourceCS, (GeocentricCoordinateSystem)targetCS);
-            }
-            else if (sourceCS is GeocentricCoordinateSystem && targetCS is GeographicCoordinateSystem) //Geocentric -> Geographic
-            {
-                trans = Geoc2Geog((GeocentricCoordinateSystem)sourceCS, (GeographicCoordinateSystem)targetCS);
-            }
-            else if (sourceCS is ProjectedCoordinateSystem && targetCS is ProjectedCoordinateSystem) //Projected -> Projected
-            {
-                trans = Proj2Proj((ProjectedCoordinateSystem)sourceCS, (ProjectedCoordinateSystem)targetCS);
-            }
-            else if (sourceCS is GeocentricCoordinateSystem && targetCS is GeocentricCoordinateSystem) //Geocentric -> Geocentric
-            {
-                trans = CreateGeoc2Geoc((GeocentricCoordinateSystem)sourceCS, (GeocentricCoordinateSystem)targetCS);
-            }
-            else if (sourceCS is GeographicCoordinateSystem && targetCS is GeographicCoordinateSystem) //Geographic -> Geographic
-            {
-                trans = CreateGeog2Geog((GeographicCoordinateSystem)sourceCS, (GeographicCoordinateSystem)targetCS);
-            }
-            else if (sourceCS is FittedCoordinateSystem) //Fitted -> Any
-            {
-                trans = Fitt2Any((FittedCoordinateSystem)sourceCS, targetCS);
-            }
-            else if (targetCS is FittedCoordinateSystem) //Any -> Fitted
-            {
-                trans = Any2Fitt(sourceCS, (FittedCoordinateSystem)targetCS);
-            }
-            else
-            {
-                throw new NotSupportedException("No support for transforming between the two specified coordinate systems");
+                return CoordinateSystemRuntimeKind.Projected;
             }
 
-            // if (trans.MathTransform is ConcatenatedTransform) {
-            //    List<ICoordinateTransformation> MTs = new List<ICoordinateTransformation>();
-            //    SimplifyTrans(trans.MathTransform as ConcatenatedTransform, ref MTs);
-            //    return new CoordinateTransformation(sourceCS,
-            //        targetCS, TransformType.Transformation, new ConcatenatedTransform(MTs),
-            //        string.Empty, string.Empty, -1, string.Empty, string.Empty);
-            // }
-            return trans;
+            if (coordinateSystem is GeographicCoordinateSystem)
+            {
+                return CoordinateSystemRuntimeKind.Geographic;
+            }
+
+            if (coordinateSystem is GeocentricCoordinateSystem)
+            {
+                return CoordinateSystemRuntimeKind.Geocentric;
+            }
+
+            if (coordinateSystem is FittedCoordinateSystem)
+            {
+                return CoordinateSystemRuntimeKind.Fitted;
+            }
+
+            return CoordinateSystemRuntimeKind.Unknown;
+        }
+
+        private ICoordinateTransformation CreateFromCoordinateSystemsCore(CoordinateSystem sourceCS, CoordinateSystem targetCS)
+        {
+            CoordinateSystemRuntimeKind sourceKind = GetCoordinateSystemRuntimeKind(sourceCS);
+            CoordinateSystemRuntimeKind targetKind = GetCoordinateSystemRuntimeKind(targetCS);
+
+            if (sourceKind == CoordinateSystemRuntimeKind.Fitted) // Fitted -> Any
+            {
+                return Fitt2Any((FittedCoordinateSystem)sourceCS, targetCS);
+            }
+
+            if (targetKind == CoordinateSystemRuntimeKind.Fitted) // Any -> Fitted
+            {
+                return Any2Fitt(sourceCS, (FittedCoordinateSystem)targetCS);
+            }
+
+            int route = ((int)sourceKind * 10) + (int)targetKind;
+            switch (route)
+            {
+                case 12: // Projected -> Geographic
+                    return Proj2Geog((ProjectedCoordinateSystem)sourceCS, (GeographicCoordinateSystem)targetCS);
+                case 21: // Geographic -> Projected
+                    return Geog2Proj((GeographicCoordinateSystem)sourceCS, (ProjectedCoordinateSystem)targetCS);
+                case 23: // Geographic -> Geocentric
+                    return Geog2Geoc((GeographicCoordinateSystem)sourceCS, (GeocentricCoordinateSystem)targetCS);
+                case 32: // Geocentric -> Geographic
+                    return Geoc2Geog((GeocentricCoordinateSystem)sourceCS, (GeographicCoordinateSystem)targetCS);
+                case 11: // Projected -> Projected
+                    return Proj2Proj((ProjectedCoordinateSystem)sourceCS, (ProjectedCoordinateSystem)targetCS);
+                case 33: // Geocentric -> Geocentric
+                    return CreateGeoc2Geoc((GeocentricCoordinateSystem)sourceCS, (GeocentricCoordinateSystem)targetCS);
+                case 22: // Geographic -> Geographic
+                    return CreateGeog2Geog((GeographicCoordinateSystem)sourceCS, (GeographicCoordinateSystem)targetCS);
+                default:
+                    throw new NotSupportedException("No support for transforming between the two specified coordinate systems");
+            }
         }
 
         private static void SimplifyTrans(ConcatenatedTransform mtrans, ref List<ICoordinateTransformationCore> MTs)

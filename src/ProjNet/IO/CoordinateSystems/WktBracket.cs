@@ -28,12 +28,12 @@ namespace ProjNet.IO.CoordinateSystems
         DontCare,
 
         /// <summary>
-        /// Opener &quot;<c>(</c>&quot;, closer &quot;<c>)</c>&quot.
+        /// Opener &quot;<c>(</c>&quot;, closer &quot;<c>)</c>&quot;.
         /// </summary>
         Round,
 
         /// <summary>
-        /// Opener &quot;<c>[</c>&quot;, closer &quot;<c>]</c>&quot.
+        /// Opener &quot;<c>[</c>&quot;, closer &quot;<c>]</c>&quot;.
         /// </summary>
         Square,
 

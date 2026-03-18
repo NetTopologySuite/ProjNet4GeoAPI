@@ -22,6 +22,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)stylecop.json" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Condition=" '$(IsPackable)' == 'true' " Include="$(MSBuildThisFileDirectory)icon.png" Pack="true" PackagePath="\" />
   </ItemGroup>
 
