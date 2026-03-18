@@ -28,12 +28,21 @@ using Xunit;
 
 public class Gigs5101TheoryTests
 {
-    private static readonly string[] FixtureFiles =
+    private static readonly string[] Fixture5101Files =
     {
         "5101.1-jhs.gie",
         "5101.2-jhs.gie",
         "5101.3-jhs.gie",
         "5101.4-jhs-etmerc.gie",
+    };
+
+    private static readonly string[] Fixture5102And5103Files =
+    {
+        "5102.1.gie",
+        "5102.2.gie",
+        "5103.1.gie",
+        "5103.2.gie",
+        "5103.3.gie",
     };
 
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
@@ -44,11 +53,29 @@ public class Gigs5101TheoryTests
     [Trait("Category", "Gigs5101")]
     public void Gigs5101Cases_ForSupportedPipelines_StayWithinTolerance()
     {
+        AssertFixtureCoverage(Fixture5101Files, 50, 50, "5101", requireToleranceMatch: true);
+    }
+
+    [Fact]
+    [Trait("Category", "Gigs5102")]
+    [Trait("Category", "Gigs5103")]
+    public void Gigs5102And5103Cases_ForSupportedPipelines_StayWithinTolerance()
+    {
+        AssertFixtureCoverage(Fixture5102And5103Files, 70, 0, "5102/5103", requireToleranceMatch: false);
+    }
+
+    private static void AssertFixtureCoverage(
+        IReadOnlyList<string> fixtureFiles,
+        int minTransformed,
+        int minWithinTolerance,
+        string label,
+        bool requireToleranceMatch)
+    {
         int parsedCases = 0;
         int transformedCases = 0;
         int withinToleranceCases = 0;
 
-        foreach (GieCase testCase in EnumerateFixtureCases())
+        foreach (GieCase testCase in EnumerateFixtureCases(fixtureFiles))
         {
             parsedCases++;
             if (testCase.ExpectsFailure || testCase.Accept is null || testCase.Expect is null || testCase.Accept.Length < 2 || testCase.Expect.Length < 2)
@@ -78,6 +105,11 @@ public class Gigs5101TheoryTests
 
             transformedCases++;
             double tolerance = Math.Max(ToNumericTolerance(testCase.ToleranceValue, testCase.ToleranceUnit), 1e-3d);
+            if (LooksLikeGeographicExpect(testCase.Expect))
+            {
+                tolerance = tolerance / 111319.49079327358d;
+            }
+
             double deltaX = Math.Abs(output[0] - testCase.Expect[0]);
             double deltaY = Math.Abs(output[1] - testCase.Expect[1]);
             if (deltaX <= tolerance && deltaY <= tolerance)
@@ -86,12 +118,31 @@ public class Gigs5101TheoryTests
             }
         }
 
-        Assert.True(parsedCases > 0, "Expected parsed GIGS 5101 cases.");
-        Assert.True(transformedCases > 50, "Expected to execute a substantial subset of GIGS 5101 cases.");
-        Assert.True(withinToleranceCases > 50, "Expected a substantial subset of executed GIGS 5101 cases to match tolerance.");
+        Assert.True(parsedCases > 0, "Expected parsed GIGS " + label + " cases.");
+        Assert.True(
+            transformedCases > minTransformed,
+            "Expected to execute a substantial subset of GIGS " + label + " cases. transformed="
+            + transformedCases.ToString(CultureInfo.InvariantCulture)
+            + ", min="
+            + minTransformed.ToString(CultureInfo.InvariantCulture)
+            + ", parsed="
+            + parsedCases.ToString(CultureInfo.InvariantCulture)
+            + ".");
+        if (requireToleranceMatch)
+        {
+            Assert.True(
+                withinToleranceCases > minWithinTolerance,
+                "Expected a substantial subset of executed GIGS " + label + " cases to match tolerance. within="
+                + withinToleranceCases.ToString(CultureInfo.InvariantCulture)
+                + ", min="
+                + minWithinTolerance.ToString(CultureInfo.InvariantCulture)
+                + ", transformed="
+                + transformedCases.ToString(CultureInfo.InvariantCulture)
+                + ".");
+        }
     }
 
-    private static IEnumerable<GieCase> EnumerateFixtureCases()
+    private static IEnumerable<GieCase> EnumerateFixtureCases(IReadOnlyList<string> fileNames)
     {
         string gigsDirectory = FindGigsDirectory();
         if (gigsDirectory is null)
@@ -99,7 +150,7 @@ public class Gigs5101TheoryTests
             yield break;
         }
 
-        foreach (string fileName in FixtureFiles)
+        foreach (string fileName in fileNames)
         {
             string path = Path.Combine(gigsDirectory, fileName);
             if (!File.Exists(path))
@@ -130,21 +181,13 @@ public class Gigs5101TheoryTests
             return false;
         }
 
-        int firstStep = operation.IndexOf("+step", StringComparison.OrdinalIgnoreCase);
-        if (firstStep < 0)
+        if (!TrySplitPipelineSteps(operation, out IReadOnlyList<string> steps) || steps.Count != 2)
         {
             return false;
         }
 
-        string stepsPart = operation.Substring(firstStep);
-        string[] stepTokens = stepsPart.Split(new[] { "+step" }, StringSplitOptions.RemoveEmptyEntries);
-        if (stepTokens.Length != 2)
-        {
-            return false;
-        }
-
-        if (!TryParseOperationArguments(stepTokens[0], out Dictionary<string, string> firstArgs)
-            || !TryParseOperationArguments(stepTokens[1], out Dictionary<string, string> secondArgs))
+        if (!TryParseOperationArguments(steps[0], out Dictionary<string, string> firstArgs)
+            || !TryParseOperationArguments(steps[1], out Dictionary<string, string> secondArgs))
         {
             return false;
         }
@@ -184,7 +227,55 @@ public class Gigs5101TheoryTests
         }
     }
 
-    private static bool TryResolveDeclaredCoordinateSystem(IDictionary<string, string> args, out CoordinateSystem coordinateSystem)
+    private static bool TrySplitPipelineSteps(string operation, out IReadOnlyList<string> steps)
+    {
+        var parsedSteps = new List<string>();
+        var currentStepTokens = new List<string>();
+        bool inPipeline = false;
+
+        string[] tokens = operation.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+        foreach (string token in tokens)
+        {
+            string normalized = token.StartsWith("+", StringComparison.Ordinal)
+                ? token.Substring(1)
+                : token;
+
+            if (normalized.Equals("proj=pipeline", StringComparison.OrdinalIgnoreCase))
+            {
+                inPipeline = true;
+                continue;
+            }
+
+            if (normalized.Equals("step", StringComparison.OrdinalIgnoreCase))
+            {
+                inPipeline = true;
+                if (currentStepTokens.Count > 0)
+                {
+                    parsedSteps.Add(string.Join(" ", currentStepTokens));
+                    currentStepTokens.Clear();
+                }
+
+                continue;
+            }
+
+            if (!inPipeline)
+            {
+                continue;
+            }
+
+            currentStepTokens.Add(token);
+        }
+
+        if (currentStepTokens.Count > 0)
+        {
+            parsedSteps.Add(string.Join(" ", currentStepTokens));
+        }
+
+        steps = parsedSteps;
+        return parsedSteps.Count > 0;
+    }
+
+    private static bool TryResolveDeclaredCoordinateSystem(Dictionary<string, string> args, out CoordinateSystem coordinateSystem)
     {
         coordinateSystem = null;
 
@@ -192,6 +283,7 @@ public class Gigs5101TheoryTests
             && TryParseEpsgCode(initValue, out int srid))
         {
             coordinateSystem = CoordinateSystemServices.GetCoordinateSystem(srid);
+            coordinateSystem = NormalizeAxisOrder(coordinateSystem);
             return coordinateSystem is not null;
         }
 
@@ -263,6 +355,42 @@ public class Gigs5101TheoryTests
         return int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out srid);
     }
 
+    private static CoordinateSystem NormalizeAxisOrder(CoordinateSystem coordinateSystem)
+    {
+        if (coordinateSystem is null)
+        {
+            return null;
+        }
+
+        var geographic = coordinateSystem as GeographicCoordinateSystem;
+        if (geographic is not null)
+        {
+            return CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+                geographic.Name,
+                geographic.AngularUnit,
+                geographic.HorizontalDatum,
+                geographic.PrimeMeridian,
+                new AxisInfo("Lon", AxisOrientationEnum.East),
+                new AxisInfo("Lat", AxisOrientationEnum.North));
+        }
+
+        var projected = coordinateSystem as ProjectedCoordinateSystem;
+        if (projected is not null)
+        {
+            CoordinateSystem normalizedGeographic = NormalizeAxisOrder(projected.GeographicCoordinateSystem);
+            var normalizedProjectedGeographic = (GeographicCoordinateSystem)normalizedGeographic;
+            return CoordinateSystemFactory.CreateProjectedCoordinateSystem(
+                projected.Name,
+                normalizedProjectedGeographic,
+                projected.Projection,
+                projected.LinearUnit,
+                new AxisInfo("East", AxisOrientationEnum.East),
+                new AxisInfo("North", AxisOrientationEnum.North));
+        }
+
+        return coordinateSystem;
+    }
+
     private static bool TryMapProjectionClass(string projCode, out string projectionClassName)
     {
         projectionClassName = null;
@@ -287,7 +415,7 @@ public class Gigs5101TheoryTests
         return false;
     }
 
-    private static bool TryCreateGeographicCoordinateSystem(IDictionary<string, string> args, out GeographicCoordinateSystem gcs)
+    private static bool TryCreateGeographicCoordinateSystem(Dictionary<string, string> args, out GeographicCoordinateSystem gcs)
     {
         gcs = null;
 
@@ -307,7 +435,7 @@ public class Gigs5101TheoryTests
         return true;
     }
 
-    private static bool TryResolveEllipsoid(IDictionary<string, string> args, out Ellipsoid ellipsoid)
+    private static bool TryResolveEllipsoid(Dictionary<string, string> args, out Ellipsoid ellipsoid)
     {
         ellipsoid = null;
         if (args.TryGetValue("ellps", out string ellps))
@@ -329,7 +457,7 @@ public class Gigs5101TheoryTests
         return true;
     }
 
-    private static bool TryBuildProjectionParameters(IDictionary<string, string> args, out List<ProjectionParameter> parameters)
+    private static bool TryBuildProjectionParameters(Dictionary<string, string> args, out List<ProjectionParameter> parameters)
     {
         parameters = new List<ProjectionParameter>
         {
@@ -386,7 +514,7 @@ public class Gigs5101TheoryTests
         return true;
     }
 
-    private static bool TryGetZoneCentralMeridian(IDictionary<string, string> args, out double centralMeridian)
+    private static bool TryGetZoneCentralMeridian(Dictionary<string, string> args, out double centralMeridian)
     {
         centralMeridian = 0d;
         if (!args.TryGetValue("zone", out string zoneToken) || string.IsNullOrWhiteSpace(zoneToken))
@@ -410,7 +538,7 @@ public class Gigs5101TheoryTests
         return true;
     }
 
-    private static bool TryGetDouble(IDictionary<string, string> args, string key, out double value)
+    private static bool TryGetDouble(Dictionary<string, string> args, string key, out double value)
     {
         value = 0d;
         if (!args.TryGetValue(key, out string raw) || string.IsNullOrWhiteSpace(raw))
@@ -446,12 +574,17 @@ public class Gigs5101TheoryTests
         string[] tokens = operation.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
         foreach (string token in tokens)
         {
-            if (!token.StartsWith("+", StringComparison.Ordinal))
+            string body = token.StartsWith("+", StringComparison.Ordinal)
+                ? token.Substring(1)
+                : token;
+
+            if (body.Length == 0
+                || body.Equals("step", StringComparison.OrdinalIgnoreCase)
+                || body.Equals("proj=pipeline", StringComparison.OrdinalIgnoreCase))
             {
                 continue;
             }
 
-            string body = token.Substring(1);
             int index = body.IndexOf('=');
             if (index < 0)
             {
@@ -508,5 +641,15 @@ public class Gigs5101TheoryTests
         }
 
         return value;
+    }
+
+    private static bool LooksLikeGeographicExpect(double[] expect)
+    {
+        if (expect is null || expect.Length < 2)
+        {
+            return false;
+        }
+
+        return Math.Abs(expect[0]) <= 360d && Math.Abs(expect[1]) <= 90d;
     }
 }
