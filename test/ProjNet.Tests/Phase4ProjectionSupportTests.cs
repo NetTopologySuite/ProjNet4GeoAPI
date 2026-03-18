@@ -38,7 +38,7 @@ public class Phase4ProjectionSupportTests
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName));
         var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
-        double[] result = transform.MathTransform.Transform(new[] { 1000d, 2000d });
+        double[] result = transform.MathTransform.Transform(CreatePoint(1000d, 2000d));
 
         Assert.NotNull(projected);
         Assert.NotNull(transform);
@@ -60,7 +60,7 @@ public class Phase4ProjectionSupportTests
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(GeographicCoordinateSystem.WGS84, projected);
         var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
 
-        double[] projectedPoint = forward.MathTransform.Transform(new[] { longitude, latitude });
+        double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
         double[] roundtrip = inverse.MathTransform.Transform(projectedPoint);
 
         Assert.InRange(System.Math.Abs(roundtrip[0] - longitude), 0d, tolerance);
@@ -72,5 +72,9 @@ public class Phase4ProjectionSupportTests
         return
             $"PROJCS[\"Phase4-{projectionName}\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1]]";
     }
-}
 
+    private static double[] CreatePoint(double x, double y)
+    {
+        return new[] { x, y };
+    }
+}
