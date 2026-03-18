@@ -5,7 +5,7 @@
 // it under the terms of the GNU Lesser General Public License as published by
 // the Free Software Foundation; either version 2 of the License, or
 // (at your option) any later version.
-// 
+//
 // ProjNet is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -13,7 +13,7 @@
 
 // You should have received a copy of the GNU Lesser General Public License
 // along with ProjNet; if not, write to the Free Software
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
 using System;
 using System.Collections.Generic;
@@ -21,6 +21,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using ProjNet.CoordinateSystems.Projections;
 using ProjNet.Data;
+using ProjNet.Data.Generated;
 using ProjNet.Resources;
 
 namespace ProjNet.CoordinateSystems.Transformations
@@ -46,12 +47,12 @@ namespace ProjNet.CoordinateSystems.Transformations
 		/// </summary>
 		/// <remarks>
 		/// This method will examine the coordinate systems in order to construct
-		/// a transformation between them. This method may fail if no path between 
-		/// the coordinate systems is found, using the normal failing behavior of 
+		/// a transformation between them. This method may fail if no path between
+		/// the coordinate systems is found, using the normal failing behavior of
 		/// the DCP (e.g. throwing an exception).</remarks>
 		/// <param name="sourceCS">Source coordinate system</param>
 		/// <param name="targetCS">Target coordinate system</param>
-		/// <returns></returns>		
+		/// <returns></returns>
 		public ICoordinateTransformation CreateFromCoordinateSystems(CoordinateSystem sourceCS, CoordinateSystem targetCS)
         {
             return CoordinateOperationResolver.Resolve(sourceCS, targetCS, CreateFromCoordinateSystemsWithMetadata);
@@ -61,6 +62,9 @@ namespace ProjNet.CoordinateSystems.Transformations
         {
             if (TryGetDirectProjectedOperation(sourceCS, targetCS, out var operation, out var resolvedGridPath))
             {
+                if (TryCreateExplicitOperationTransformation(sourceCS, targetCS, operation, resolvedGridPath, out var explicitTransformation))
+                    return explicitTransformation;
+
                 if (TryCreateDirectProjectedTransformation(sourceCS, targetCS, operation, resolvedGridPath, out var directTransformation))
                     return directTransformation;
 
@@ -71,7 +75,51 @@ namespace ProjNet.CoordinateSystems.Transformations
                 return CreateMetadataBackedTransformation(sourceCS, targetCS, fallbackWithMetadata, operation, resolvedGridPath);
             }
 
+            if (TryGetDirectOperation(sourceCS, targetCS, out operation, out resolvedGridPath))
+            {
+                if (TryCreateExplicitOperationTransformation(sourceCS, targetCS, operation, resolvedGridPath, out var explicitTransformation))
+                    return explicitTransformation;
+            }
+
+            if (sourceCS is ProjectedCoordinateSystem sourceProjected
+                && targetCS is ProjectedCoordinateSystem targetProjected
+                && TryGetDirectOperation(sourceProjected.GeographicCoordinateSystem, targetProjected.GeographicCoordinateSystem, out operation, out resolvedGridPath))
+            {
+                if (TryCreateExplicitOperationTransformation(sourceCS, targetCS, operation, resolvedGridPath, out var explicitTransformation))
+                    return explicitTransformation;
+            }
+
             return CreateFromCoordinateSystemsCore(sourceCS, targetCS);
+        }
+
+        private static bool TryCreateExplicitOperationTransformation(
+            CoordinateSystem source,
+            CoordinateSystem target,
+            CoordinateOperationDefinition operation,
+            string resolvedGridPath,
+            out ICoordinateTransformation transformation)
+        {
+            transformation = null;
+
+            if (source is GeographicCoordinateSystem sourceGeographic && target is GeographicCoordinateSystem targetGeographic)
+            {
+                if (!TryCreateExplicitGeographicTransformation(sourceGeographic, targetGeographic, operation, out var geographicTransformation))
+                    return false;
+
+                transformation = CreateMetadataBackedTransformation(source, target, geographicTransformation, operation, resolvedGridPath);
+                return true;
+            }
+
+            if (source is ProjectedCoordinateSystem sourceProjected && target is ProjectedCoordinateSystem targetProjected)
+            {
+                if (!TryCreateExplicitProjectedTransformation(sourceProjected, targetProjected, operation, out var projectedTransformation))
+                    return false;
+
+                transformation = CreateMetadataBackedTransformation(source, target, projectedTransformation, operation, resolvedGridPath);
+                return true;
+            }
+
+            return false;
         }
 
         private static bool TryCreateDirectProjectedTransformation(
@@ -94,11 +142,227 @@ namespace ProjNet.CoordinateSystems.Transformations
             return true;
         }
 
+        private static bool TryCreateExplicitGeographicTransformation(
+            GeographicCoordinateSystem source,
+            GeographicCoordinateSystem target,
+            CoordinateOperationDefinition operation,
+            out CoordinateTransformation transformation)
+        {
+            transformation = null;
+
+            if (!TryCreateBursaWolfParameters(operation, out var helmert))
+                return false;
+
+            var ct = new ConcatenatedTransform();
+            var csFactory = new CoordinateSystemFactory();
+
+            var sourceCentric = csFactory.CreateGeocentricCoordinateSystem(
+                source.HorizontalDatum.Name + " Geocentric",
+                source.HorizontalDatum,
+                LinearUnit.Metre,
+                source.PrimeMeridian);
+
+            var targetCentric = csFactory.CreateGeocentricCoordinateSystem(
+                target.HorizontalDatum.Name + " Geocentric",
+                target.HorizontalDatum,
+                LinearUnit.Metre,
+                target.PrimeMeridian);
+
+            AddIfNotNull(ct, Geog2Geoc(source, sourceCentric));
+            AddIfNotNull(
+                ct,
+                new CoordinateTransformation(
+                    sourceCentric,
+                    targetCentric,
+                    TransformType.Transformation,
+                    new DatumTransform(helmert),
+                    string.Empty,
+                    string.Empty,
+                    -1,
+                    string.Empty,
+                    string.Empty));
+            AddIfNotNull(ct, Geoc2Geog(targetCentric, target));
+
+            transformation = new CoordinateTransformation(
+                source,
+                target,
+                TransformType.Transformation,
+                ct,
+                string.Empty,
+                string.Empty,
+                -1,
+                string.Empty,
+                string.Empty);
+
+            return true;
+        }
+
+        private static bool TryCreateExplicitProjectedTransformation(
+            ProjectedCoordinateSystem source,
+            ProjectedCoordinateSystem target,
+            CoordinateOperationDefinition operation,
+            out CoordinateTransformation transformation)
+        {
+            transformation = null;
+
+            if (!TryCreateExplicitGeographicTransformation(
+                    source.GeographicCoordinateSystem,
+                    target.GeographicCoordinateSystem,
+                    operation,
+                    out var geographicTransformation))
+            {
+                return false;
+            }
+
+            var ct = new ConcatenatedTransform();
+            AddIfNotNull(ct, Proj2Geog(source, source.GeographicCoordinateSystem));
+            AddIfNotNull(ct, geographicTransformation);
+            AddIfNotNull(ct, Geog2Proj(target.GeographicCoordinateSystem, target));
+
+            transformation = new CoordinateTransformation(
+                source,
+                target,
+                TransformType.Transformation,
+                ct,
+                string.Empty,
+                string.Empty,
+                -1,
+                string.Empty,
+                string.Empty);
+            return true;
+        }
+
+        private static bool TryCreateBursaWolfParameters(CoordinateOperationDefinition operation, out Wgs84ConversionInfo parameters)
+        {
+            parameters = null;
+
+            if (operation == null || string.IsNullOrWhiteSpace(operation.MethodName))
+                return false;
+
+            if (!TryGetOperationParameters(operation.OperationCode, out var operationParameters))
+                return false;
+
+            string method = NormalizeOperationMethodName(operation.MethodName);
+            if (!method.Contains("geocentrictranslations")
+                && !method.Contains("positionvectortransformation")
+                && !method.Contains("coordinateframerotation"))
+            {
+                return false;
+            }
+
+            if (!TryGetOperationParameterValue(operationParameters, "x_axis_translation", out var dx)
+                || !TryGetOperationParameterValue(operationParameters, "y_axis_translation", out var dy)
+                || !TryGetOperationParameterValue(operationParameters, "z_axis_translation", out var dz))
+            {
+                return false;
+            }
+
+            double ex = 0d;
+            double ey = 0d;
+            double ez = 0d;
+            double ppm = 0d;
+
+            bool hasRotationAndScale = method.Contains("positionvectortransformation") || method.Contains("coordinateframerotation");
+            if (hasRotationAndScale)
+            {
+                if (!TryGetOperationParameterValue(operationParameters, "x_axis_rotation", out ex)
+                    || !TryGetOperationParameterValue(operationParameters, "y_axis_rotation", out ey)
+                    || !TryGetOperationParameterValue(operationParameters, "z_axis_rotation", out ez)
+                    || !TryGetOperationParameterValue(operationParameters, "scale_difference", out ppm))
+                {
+                    return false;
+                }
+
+                if (method.Contains("coordinateframerotation"))
+                {
+                    ex = -ex;
+                    ey = -ey;
+                    ez = -ez;
+                }
+            }
+
+            parameters = new Wgs84ConversionInfo(dx, dy, dz, ex, ey, ez, ppm);
+            return true;
+        }
+
+        private static bool TryGetOperationParameters(int operationCode, out Dictionary<string, double> operationParameters)
+        {
+            operationParameters = null;
+
+            var operations = EpsgGeneratedCatalog.Operations;
+            for (int operationIndex = 0; operationIndex < operations.Length; operationIndex++)
+            {
+                var record = operations[operationIndex];
+                if (record.OperationCode != operationCode)
+                    continue;
+
+                operationParameters = new Dictionary<string, double>(record.ParameterCount, StringComparer.Ordinal);
+                for (int i = 0; i < record.ParameterCount; i++)
+                {
+                    var parameter = EpsgGeneratedCatalog.OperationParameters[record.ParameterStartIndex + i];
+                    operationParameters[NormalizeOperationParameterName(parameter.Name)] = parameter.Value;
+                }
+
+                return true;
+            }
+
+            return false;
+        }
+
+        private static bool TryGetOperationParameterValue(
+            IReadOnlyDictionary<string, double> operationParameters,
+            string parameterName,
+            out double value)
+        {
+            value = 0d;
+            if (operationParameters == null || operationParameters.Count == 0)
+                return false;
+
+            return operationParameters.TryGetValue(parameterName, out value);
+        }
+
+        private static string NormalizeOperationMethodName(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return string.Empty;
+
+            var buffer = new char[value.Length];
+            var length = 0;
+            foreach (char character in value)
+            {
+                if (char.IsLetterOrDigit(character))
+                    buffer[length++] = char.ToLowerInvariant(character);
+            }
+
+            return new string(buffer, 0, length);
+        }
+
+        private static string NormalizeOperationParameterName(string value)
+        {
+            if (string.IsNullOrWhiteSpace(value))
+                return string.Empty;
+
+            var buffer = new char[value.Length];
+            var length = 0;
+            foreach (char character in value)
+            {
+                if (char.IsLetterOrDigit(character))
+                    buffer[length++] = char.ToLowerInvariant(character);
+                else if (length > 0 && buffer[length - 1] != '_')
+                    buffer[length++] = '_';
+            }
+
+            if (length > 0 && buffer[length - 1] == '_')
+                length--;
+
+            return new string(buffer, 0, length);
+        }
+
         private ICoordinateTransformation CreateFromCoordinateSystemsCore(CoordinateSystem sourceCS, CoordinateSystem targetCS)
 		{
             ICoordinateTransformation trans;
             if (sourceCS is ProjectedCoordinateSystem && targetCS is GeographicCoordinateSystem) //Projected -> Geographic
-                trans = Proj2Geog((ProjectedCoordinateSystem)sourceCS, (GeographicCoordinateSystem)targetCS);            
+                trans = Proj2Geog((ProjectedCoordinateSystem)sourceCS, (GeographicCoordinateSystem)targetCS);
             else if (sourceCS is GeographicCoordinateSystem && targetCS is ProjectedCoordinateSystem) //Geographic -> Projected
 				trans = Geog2Proj((GeographicCoordinateSystem)sourceCS, (ProjectedCoordinateSystem)targetCS);
 
@@ -118,11 +382,11 @@ namespace ProjNet.CoordinateSystems.Transformations
 				trans = CreateGeog2Geog(sourceCS as GeographicCoordinateSystem, targetCS as GeographicCoordinateSystem);
 			else if (sourceCS is FittedCoordinateSystem) //Fitted -> Any
                 trans = Fitt2Any ((FittedCoordinateSystem)sourceCS, targetCS);
-            else if (targetCS is FittedCoordinateSystem) //Any -> Fitted 
+            else if (targetCS is FittedCoordinateSystem) //Any -> Fitted
                 trans = Any2Fitt (sourceCS, (FittedCoordinateSystem)targetCS);
             else
 				throw new NotSupportedException("No support for transforming between the two specified coordinate systems");
-			
+
 			//if (trans.MathTransform is ConcatenatedTransform) {
 			//    List<ICoordinateTransformation> MTs = new List<ICoordinateTransformation>();
 			//    SimplifyTrans(trans.MathTransform as ConcatenatedTransform, ref MTs);
@@ -142,7 +406,7 @@ namespace ProjNet.CoordinateSystems.Transformations
 					SimplifyTrans(ct, ref MTs);
 				else
 					MTs.Add(t);
-			}			
+			}
 		}
 
 		#region Methods for converting between specific systems
@@ -174,7 +438,7 @@ namespace ProjNet.CoordinateSystems.Transformations
             ct.CoordinateTransformationList.Add(new CoordinateTransformation(source, target, TransformType.Transformation, new PrimeMeridianTransform(source.PrimeMeridian, target.PrimeMeridian), string.Empty, string.Empty, -1, string.Empty, string.Empty));
             return new CoordinateTransformation(source, target, TransformType.Conversion, ct, string.Empty, string.Empty, -1, string.Empty, string.Empty);
         }
-		
+
 		private static CoordinateTransformation Proj2Proj(ProjectedCoordinateSystem source, ProjectedCoordinateSystem target)
 		{
             if (source.GeographicCoordinateSystem.EqualParams(target.GeographicCoordinateSystem))
@@ -251,7 +515,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         {
 	        if (source.EqualParams(target.GeographicCoordinateSystem))
 	        {
-				var mathTransform = CreateCoordinateOperation(target.Projection, 
+				var mathTransform = CreateCoordinateOperation(target.Projection,
                     target.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid, target.LinearUnit);
 		        return new CoordinateTransformation(source, target, TransformType.Transformation, mathTransform,
 			        string.Empty, string.Empty, -1, string.Empty, string.Empty);
@@ -286,7 +550,7 @@ namespace ProjNet.CoordinateSystems.Transformations
                     string.Empty, string.Empty, -1, string.Empty, string.Empty);
             }
         }
-		
+
 		/// <summary>
 		/// Geographic to geographic transformation
 		/// </summary>
@@ -310,14 +574,14 @@ namespace ProjNet.CoordinateSystems.Transformations
             var cFac = new CoordinateSystemFactory();
             var sourceCentric = cFac.CreateGeocentricCoordinateSystem(source.HorizontalDatum.Name + " Geocentric",
                 source.HorizontalDatum, LinearUnit.Metre, source.PrimeMeridian);
-            var targetCentric = cFac.CreateGeocentricCoordinateSystem(target.HorizontalDatum.Name + " Geocentric", 
+            var targetCentric = cFac.CreateGeocentricCoordinateSystem(target.HorizontalDatum.Name + " Geocentric",
                 target.HorizontalDatum, LinearUnit.Metre, source.PrimeMeridian);
             var ct = new ConcatenatedTransform();
             AddIfNotNull(ct, ctFac.CreateFromCoordinateSystems(source, sourceCentric));
             AddIfNotNull(ct, ctFac.CreateFromCoordinateSystems(sourceCentric, targetCentric));
             AddIfNotNull(ct, ctFac.CreateFromCoordinateSystems(targetCentric, target));
-				
-                
+
+
             return new CoordinateTransformation(source,
                 target, TransformType.Transformation, ct,
                 string.Empty, string.Empty, -1, string.Empty, string.Empty);
@@ -363,7 +627,7 @@ namespace ProjNet.CoordinateSystems.Transformations
             //If we only have one shift, lets just return the datumshift from/to wgs84
             if (ct.CoordinateTransformationList.Count == 1)
 				return new CoordinateTransformation(source, target, TransformType.ConversionAndTransformation, ((ICoordinateTransformation)ct.CoordinateTransformationList[0]).MathTransform, "", "", -1, "", "");
-		    
+
             return new CoordinateTransformation(source, target, TransformType.ConversionAndTransformation, ct, "", "", -1, "", "");
 		}
 
@@ -638,6 +902,33 @@ namespace ProjNet.CoordinateSystems.Transformations
 
             if (!TryGetEpsgCode(source, out var sourceSrid) || !TryGetEpsgCode(target, out var targetSrid))
                 return false;
+
+            return TryGetDirectOperationBySridPair(sourceSrid, targetSrid, out operation, out resolvedGridPath);
+        }
+
+        private static bool TryGetDirectOperation(
+            CoordinateSystem source,
+            CoordinateSystem target,
+            out CoordinateOperationDefinition operation,
+            out string resolvedGridPath)
+        {
+            operation = null;
+            resolvedGridPath = null;
+
+            if (!TryGetEpsgCode(source, out var sourceSrid) || !TryGetEpsgCode(target, out var targetSrid))
+                return false;
+
+            return TryGetDirectOperationBySridPair(sourceSrid, targetSrid, out operation, out resolvedGridPath);
+        }
+
+        private static bool TryGetDirectOperationBySridPair(
+            int sourceSrid,
+            int targetSrid,
+            out CoordinateOperationDefinition operation,
+            out string resolvedGridPath)
+        {
+            operation = null;
+            resolvedGridPath = null;
 
             if (!DirectOperationDefinitions.Value.TryGetValue(new SridPair(sourceSrid, targetSrid), out var operations))
                 return false;
