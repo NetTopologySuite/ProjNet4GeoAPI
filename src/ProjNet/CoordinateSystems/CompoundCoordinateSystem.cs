@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
-
 namespace ProjNet.CoordinateSystems
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Text;
+
     /// <summary>
     /// This is a compound coordinate system, which combines the coordinate of two other coordinate systems.
     /// For example, a compound 3D coordinate system could be made up of a
@@ -12,8 +12,8 @@ namespace ProjNet.CoordinateSystems
     /// </summary>
     public class CompoundCoordinateSystem : CoordinateSystem
     {
-        private CoordinateSystem _headCoordinateSystem;
-        private CoordinateSystem _tailCoordinateSystem;
+        private CoordinateSystem headCoordinateSystem;
+        private CoordinateSystem tailCoordinateSystem;
 
         /// <inheritdoc/>
         public override string WKT
@@ -21,11 +21,12 @@ namespace ProjNet.CoordinateSystems
             get
             {
                 var sb = new StringBuilder();
-                sb.Append($"COMPD_CS[\"{Name}\",{HeadCoordinateSystem.WKT},{TailCoordinateSystem.WKT}");
-                if (!string.IsNullOrWhiteSpace(Authority) && AuthorityCode > 0)
+                sb.Append($"COMPD_CS[\"{this.Name}\",{this.HeadCoordinateSystem.WKT},{this.TailCoordinateSystem.WKT}");
+                if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
                 {
-                    sb.Append($",AUTHORITY[\"{Authority}\",\"{AuthorityCode}\"]");
+                    sb.Append($",AUTHORITY[\"{this.Authority}\",\"{this.AuthorityCode}\"]");
                 }
+
                 sb.Append("]");
                 return sb.ToString();
             }
@@ -37,54 +38,60 @@ namespace ProjNet.CoordinateSystems
             get
             {
                 var sb = new StringBuilder();
-                sb.AppendFormat(CultureInfo.InvariantCulture.NumberFormat,
+                sb.AppendFormat(
+                    CultureInfo.InvariantCulture.NumberFormat,
                     "<CS_CoordinateSystem Dimension=\"{0}\"><CS_CompoundCoordinateSystem>{1}",
-                    this.Dimension, InfoXml);
-                foreach (var ai in AxisInfo)
+                    this.Dimension, this.InfoXml);
+                foreach (var ai in this.AxisInfo)
+                {
                     sb.Append(ai.XML);
-                sb.Append(HeadCoordinateSystem.XML);
-                sb.Append(TailCoordinateSystem.XML);
+                }
+
+                sb.Append(this.HeadCoordinateSystem.XML);
+                sb.Append(this.TailCoordinateSystem.XML);
                 sb.AppendFormat("</CS_CompoundCoordinateSystem></CS_CoordinateSystem>");
                 return sb.ToString();
             }
         }
 
         /// <summary>
-        /// The head coordinate system
+        /// Gets or sets the head coordinate system.
         /// </summary>
-        public CoordinateSystem HeadCoordinateSystem { get => _headCoordinateSystem; set { _headCoordinateSystem = value; } }
+        public CoordinateSystem HeadCoordinateSystem { get => this.headCoordinateSystem; set { this.headCoordinateSystem = value; } }
 
         /// <summary>
-        /// The tail coordinate system
+        /// Gets or sets the tail coordinate system.
         /// </summary>
-        public CoordinateSystem TailCoordinateSystem { get => _tailCoordinateSystem; set { _tailCoordinateSystem = value; } }
+        public CoordinateSystem TailCoordinateSystem { get => this.tailCoordinateSystem; set { this.tailCoordinateSystem = value; } }
+
         /// <summary>
-        /// A compound coordinate system
+        /// Initializes a new instance of the <see cref="CompoundCoordinateSystem"/> class.
+        /// A compound coordinate system.
         /// </summary>
-        /// <param name="headcs">The head (first) coordinate system</param>
-        /// <param name="tailcs">The tail (second) coordinate system</param>
-        /// <param name="name">Name</param>
-        /// <param name="authority">Authority name</param>
-        /// <param name="authorityCode">Authority-specific identification code</param>
-        /// <param name="alias">Alias</param>
-        /// <param name="abbreviation">Abbreviation</param>
-        /// <param name="remarks">Optional information</param>
+        /// <param name="headcs">The head (first) coordinate system.</param>
+        /// <param name="tailcs">The tail (second) coordinate system.</param>
+        /// <param name="name">Name.</param>
+        /// <param name="authority">Authority name.</param>
+        /// <param name="authorityCode">Authority-specific identification code.</param>
+        /// <param name="alias">Alias.</param>
+        /// <param name="abbreviation">Abbreviation.</param>
+        /// <param name="remarks">Optional information.</param>
         public CompoundCoordinateSystem(CoordinateSystem headcs, CoordinateSystem tailcs, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks)
             : base(name, authority, authorityCode, alias, abbreviation, remarks)
         {
-            _headCoordinateSystem = headcs;
-            _tailCoordinateSystem = tailcs;
-            AxisInfo = new List<AxisInfo>();
-            AxisInfo.AddRange(HeadCoordinateSystem.AxisInfo);
-            AxisInfo.AddRange(TailCoordinateSystem.AxisInfo);
+            this.headCoordinateSystem = headcs;
+            this.tailCoordinateSystem = tailcs;
+            this.AxisInfo = new List<AxisInfo>();
+            this.AxisInfo.AddRange(this.HeadCoordinateSystem.AxisInfo);
+            this.AxisInfo.AddRange(this.TailCoordinateSystem.AxisInfo);
         }
 
         /// <inheritdoc/>
         public override bool EqualParams(object obj)
         {
-            if( obj is CompoundCoordinateSystem compdCs )
+            if (obj is CompoundCoordinateSystem compdCs)
             {
-                return HeadCoordinateSystem.EqualParams(compdCs.HeadCoordinateSystem) && TailCoordinateSystem.EqualParams(compdCs.TailCoordinateSystem);
+                return this.HeadCoordinateSystem.EqualParams(compdCs.HeadCoordinateSystem) && this.TailCoordinateSystem.EqualParams(compdCs.TailCoordinateSystem);
             }
 
             return false;
@@ -93,17 +100,17 @@ namespace ProjNet.CoordinateSystems
         /// <inheritdoc/>
         public override IUnit GetUnits(int dimension)
         {
-            if( dimension < 0 || dimension >= Dimension )
+            if (dimension < 0 || dimension >= this.Dimension)
             {
                 throw new ArgumentException("Dimension not valid", nameof(dimension));
             }
 
-            if( dimension < HeadCoordinateSystem.Dimension)
+            if (dimension < this.HeadCoordinateSystem.Dimension)
             {
-                return HeadCoordinateSystem.GetUnits(dimension);
+                return this.HeadCoordinateSystem.GetUnits(dimension);
             }
 
-            return TailCoordinateSystem.GetUnits(dimension - HeadCoordinateSystem.Dimension);
+            return this.TailCoordinateSystem.GetUnits(dimension - this.HeadCoordinateSystem.Dimension);
         }
     }
 }

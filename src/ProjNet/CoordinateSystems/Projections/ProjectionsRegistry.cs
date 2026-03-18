@@ -1,9 +1,9 @@
-using ProjNet.CoordinateSystems.Transformations;
-using System;
-using System.Collections.Generic;
-
 namespace ProjNet.CoordinateSystems.Projections
 {
+    using ProjNet.CoordinateSystems.Transformations;
+    using System;
+    using System.Collections.Generic;
+
     /// <summary>
     /// Registry class for all known <see cref="MapProjection"/>s.
     /// </summary>
@@ -15,7 +15,8 @@ namespace ProjNet.CoordinateSystems.Projections
         private static readonly object RegistryLock = new object();
 
         /// <summary>
-        /// Static constructor
+        /// Initializes static members of the <see cref="ProjectionsRegistry"/> class.
+        /// Static constructor.
         /// </summary>
         static ProjectionsRegistry()
         {
@@ -61,24 +62,32 @@ namespace ProjNet.CoordinateSystems.Projections
         }
 
         /// <summary>
-        /// Method to register a new Map
+        /// Method to register a new Map.
         /// </summary>
         /// <param name="name"></param>
         /// <param name="type"></param>
         public static void Register(string name, Type type)
         {
             if (string.IsNullOrWhiteSpace(name))
+            {
                 throw new ArgumentNullException(nameof(name));
+            }
 
             if (type == null)
+            {
                 throw new ArgumentNullException(nameof(type));
+            }
 
             if (!typeof(MathTransform).IsAssignableFrom(type))
+            {
                 throw new ArgumentException("The provided type does not implement 'GeoAPI.CoordinateSystems.Transformations.IMathTransform'!", nameof(type));
+            }
 
             var ci = CheckConstructor(type);
             if (ci == null)
+            {
                 throw new ArgumentException("The provided type is lacking a suitable constructor", nameof(type));
+            }
 
             string key = ProjectionNameToRegistryKey(name);
             lock (RegistryLock)
@@ -87,7 +96,10 @@ namespace ProjNet.CoordinateSystems.Projections
                 {
                     var rt = TypeRegistry[key];
                     if (ReferenceEquals(type, rt))
+                    {
                         return;
+                    }
+
                     throw new ArgumentException("A different projection type has been registered with this name", "name");
                 }
 
@@ -147,7 +159,10 @@ namespace ProjNet.CoordinateSystems.Projections
             lock (RegistryLock)
             {
                 if (!TypeRegistry.TryGetValue(key, out projectionType))
+                {
                     throw new NotSupportedException($"Projection {className} is not supported.");
+                }
+
                 ci = ConstructorRegistry[key];
             }
 
@@ -162,6 +177,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 res.Alias = res.Name;
                 res.Name = className;
             }
+
             return res;
         }
     }

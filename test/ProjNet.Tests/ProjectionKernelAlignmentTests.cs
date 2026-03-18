@@ -1,9 +1,9 @@
-using ProjNet.CoordinateSystems;
-using ProjNet.CoordinateSystems.Transformations;
-using Xunit;
-
 namespace ProjNET.Tests
 {
+    using ProjNet.CoordinateSystems;
+    using ProjNet.CoordinateSystems.Transformations;
+    using Xunit;
+
     public class ProjectionKernelAlignmentTests
     {
         private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
@@ -20,7 +20,7 @@ namespace ProjNET.Tests
 
             var target = GeographicCoordinateSystem.WGS84;
             var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
-            var result = transform.MathTransform.Transform(new[] { 1000d, 2000d });
+            double[] result = transform.MathTransform.Transform(new[] { 1000d, 2000d });
 
             Assert.NotNull(transform);
             Assert.NotNull(result);
@@ -37,7 +37,7 @@ namespace ProjNET.Tests
 
             var target = GeographicCoordinateSystem.WGS84;
             var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
-            var result = transform.MathTransform.Transform(new[] { 500000d, 4649776.22482d });
+            double[] result = transform.MathTransform.Transform(new[] { 500000d, 4649776.22482d });
 
             Assert.NotNull(transform);
             Assert.NotNull(result);
@@ -54,7 +54,7 @@ namespace ProjNET.Tests
 
             var target = GeographicCoordinateSystem.WGS84;
             var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
-            var result = transform.MathTransform.Transform(new[] { 100000d, 100000d });
+            double[] result = transform.MathTransform.Transform(new[] { 100000d, 100000d });
 
             Assert.NotNull(transform);
             Assert.NotNull(result);

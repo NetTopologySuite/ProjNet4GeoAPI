@@ -15,47 +15,46 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
-using System;
-using System.Collections.Generic;
-
 namespace ProjNet.CoordinateSystems
 {
-	/// <summary>
-	/// A 2D coordinate system suitable for positions on the Earth's surface.
+    using System;
+    using System.Collections.Generic;
+
+    /// <summary>
+    /// A 2D coordinate system suitable for positions on the Earth's surface.
     /// </summary>
-    [Serializable] 
+    [Serializable]
     public abstract class HorizontalCoordinateSystem : CoordinateSystem
-	{
-		/// <summary>
-		/// Creates an instance of HorizontalCoordinateSystem
-		/// </summary>
-		/// <param name="datum">Horizontal datum</param>
-		/// <param name="axisInfo">Axis information</param>
-		/// <param name="name">Name</param>
-		/// <param name="authority">Authority name</param>
-		/// <param name="code">Authority-specific identification code.</param>
-		/// <param name="alias">Alias</param>
-		/// <param name="abbreviation">Abbreviation</param>
-		/// <param name="remarks">Provider-supplied remarks</param>
-		internal HorizontalCoordinateSystem(HorizontalDatum datum, List<AxisInfo> axisInfo, 
-			string name, string authority, long code, string alias,
-			string remarks, string abbreviation)
-			: base(name, authority, code, alias, abbreviation, remarks)
-		{
-			HorizontalDatum = datum;
-			if (axisInfo.Count != 2)
-				throw new ArgumentException("Axis info should contain two axes for horizontal coordinate systems");
-			base.AxisInfo = axisInfo;
-		}
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HorizontalCoordinateSystem"/> class.
+        /// Creates an instance of HorizontalCoordinateSystem.
+        /// </summary>
+        /// <param name="datum">Horizontal datum.</param>
+        /// <param name="axisInfo">Axis information.</param>
+        /// <param name="name">Name.</param>
+        /// <param name="authority">Authority name.</param>
+        /// <param name="code">Authority-specific identification code.</param>
+        /// <param name="alias">Alias.</param>
+        /// <param name="abbreviation">Abbreviation.</param>
+        /// <param name="remarks">Provider-supplied remarks.</param>
+        internal HorizontalCoordinateSystem(HorizontalDatum datum, List<AxisInfo> axisInfo,
+            string name, string authority, long code, string alias,
+            string remarks, string abbreviation)
+            : base(name, authority, code, alias, abbreviation, remarks)
+        {
+            this.HorizontalDatum = datum;
+            if (axisInfo.Count != 2)
+            {
+                throw new ArgumentException("Axis info should contain two axes for horizontal coordinate systems");
+            }
 
-        #region IHorizontalCoordinateSystem Members
-
+            base.AxisInfo = axisInfo;
+        }
 
         /// <summary>
         /// Gets or sets the HorizontalDatum.
         /// </summary>
         public HorizontalDatum HorizontalDatum { get; set; }
-
-        #endregion
     }
 }

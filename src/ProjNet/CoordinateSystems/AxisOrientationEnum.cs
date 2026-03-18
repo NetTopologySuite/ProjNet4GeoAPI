@@ -18,8 +18,8 @@
 namespace ProjNet.CoordinateSystems
 {
     /// <summary>
-    /// Orientation of axis. Some coordinate systems use non-standard orientations. 
-    /// For example, the first axis in South African grids usually points West, 
+    /// Orientation of axis. Some coordinate systems use non-standard orientations.
+    /// For example, the first axis in South African grids usually points West,
     /// instead of East. This information is obviously relevant for algorithms
     /// converting South African grid coordinates into Lat/Long.
     /// </summary>

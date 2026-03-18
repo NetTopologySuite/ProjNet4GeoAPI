@@ -1,31 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
-
 namespace ProjNet.CoordinateSystems
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Text;
+
     /// <summary>
-    /// A vertical datum defining the standard datum information
+    /// A vertical datum defining the standard datum information.
     /// </summary>
     public class VerticalDatum : Datum
     {
         /// <summary>
-		/// Initializes a new instance of a vertical datum
-		/// </summary>
-		/// <param name="type">Datum type</param>
-		/// <param name="name">Name</param>
-		/// <param name="authority">Authority name</param>
-		/// <param name="code">Authority-specific identification code.</param>
-		/// <param name="alias">Alias</param>
-		/// <param name="abbreviation">Abbreviation</param>
-		/// <param name="remarks">Provider-supplied remarks</param>
+        /// Initializes a new instance of the <see cref="VerticalDatum"/> class.
+        /// Initializes a new instance of a vertical datum.
+        /// </summary>
+        /// <param name="type">Datum type.</param>
+        /// <param name="name">Name.</param>
+        /// <param name="authority">Authority name.</param>
+        /// <param name="code">Authority-specific identification code.</param>
+        /// <param name="alias">Alias.</param>
+        /// <param name="abbreviation">Abbreviation.</param>
+        /// <param name="remarks">Provider-supplied remarks.</param>
         public VerticalDatum(DatumType type, string name, string authority, long code, string alias, string remarks, string abbreviation) : base(type, name, authority, code, alias, remarks, abbreviation)
         {
         }
 
         /// <summary>
-        /// ODN - VerticalDatum
+        /// Gets oDN - VerticalDatum.
         /// </summary>
         public static VerticalDatum ODN
         {
@@ -41,9 +42,12 @@ namespace ProjNet.CoordinateSystems
             get
             {
                 var sb = new StringBuilder();
-                sb.AppendFormat("DATUM[\"{0}\", {1}", Name, (int)DatumType);
-                if (!string.IsNullOrWhiteSpace(Authority) && AuthorityCode > 0)
-                    sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
+                sb.AppendFormat("DATUM[\"{0}\", {1}", this.Name, (int)this.DatumType);
+                if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
+                {
+                    sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", this.Authority, this.AuthorityCode);
+                }
+
                 sb.Append("]");
                 return sb.ToString();
             }
@@ -54,19 +58,21 @@ namespace ProjNet.CoordinateSystems
         {
             get
             {
-                return string.Format(CultureInfo.InvariantCulture.NumberFormat,
+                return string.Format(
+                    CultureInfo.InvariantCulture.NumberFormat,
                     "<CS_VerticalDatum DatumType=\"{0}\">{1}{2}</CS_VerticalDatum>",
-                    (int)DatumType, InfoXml);
+                    (int)this.DatumType, this.InfoXml);
             }
         }
 
         /// <inheritdoc/>
         public override bool EqualParams(object obj)
         {
-            if( obj is VerticalDatum vertDatum )
+            if (obj is VerticalDatum vertDatum)
             {
                 return base.EqualParams(vertDatum);
             }
+
             return false;
         }
     }

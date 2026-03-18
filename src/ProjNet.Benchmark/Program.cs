@@ -1,7 +1,7 @@
-using BenchmarkDotNet.Running;
-
 namespace ProjNet.Benchmark
 {
+    using BenchmarkDotNet.Running;
+
     class Program
     {
         static void Main(string[] args)

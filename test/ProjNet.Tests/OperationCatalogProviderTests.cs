@@ -1,9 +1,9 @@
-using System.Linq;
-using ProjNet.Data;
-using Xunit;
-
 namespace ProjNET.Tests
 {
+    using System.Linq;
+    using ProjNet.Data;
+    using Xunit;
+
     public class OperationCatalogProviderTests
     {
         [Fact]

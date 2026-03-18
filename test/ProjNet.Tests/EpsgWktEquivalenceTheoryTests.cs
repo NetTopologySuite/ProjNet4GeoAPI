@@ -1,3 +1,5 @@
+namespace ProjNET.Tests;
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,8 +9,6 @@ using System.Text.RegularExpressions;
 using System.Text.Json;
 using ProjNet.Data;
 using Xunit;
-
-namespace ProjNET.Tests;
 
 public class EpsgWktEquivalenceTheoryTests
 {
@@ -26,7 +26,7 @@ public class EpsgWktEquivalenceTheoryTests
 
     public static IEnumerable<object[]> EpsgFixtureRows()
     {
-        var fixturePath = Path.Combine(AppContext.BaseDirectory, FixtureRelativePath.Replace('/', Path.DirectorySeparatorChar));
+        string fixturePath = Path.Combine(AppContext.BaseDirectory, FixtureRelativePath.Replace('/', Path.DirectorySeparatorChar));
         using var document = JsonDocument.Parse(File.ReadAllText(fixturePath));
 
         return document.RootElement
@@ -43,7 +43,7 @@ public class EpsgWktEquivalenceTheoryTests
     [MemberData(nameof(EpsgFixtureRows))]
     public void GeneratedCatalogWkt_ShouldBeEquivalentToCommittedEpsgFixture(int srid, string expectedWkt)
     {
-        Assert.True(CatalogDefinitions.Value.TryGetValue(srid, out var generatedWkt), $"SRID {srid} not found in managed EPSG catalog.");
+        Assert.True(CatalogDefinitions.Value.TryGetValue(srid, out string generatedWkt), $"SRID {srid} not found in managed EPSG catalog.");
         Assert.True(AreEquivalent(expectedWkt, generatedWkt, srid), $"WKT mismatch for SRID {srid}.");
     }
 
@@ -54,8 +54,8 @@ public class EpsgWktEquivalenceTheoryTests
             return true;
         }
 
-        var expectedSrid = TryExtractSrid(expectedWkt);
-        var actualSrid = TryExtractSrid(actualWkt);
+        long expectedSrid = TryExtractSrid(expectedWkt);
+        long actualSrid = TryExtractSrid(actualWkt);
         if (expectedSrid != srid || actualSrid != srid)
         {
             return false;
@@ -89,8 +89,8 @@ public class EpsgWktEquivalenceTheoryTests
             return -1;
         }
 
-        var id = matches[^1].Groups["id"].Value;
-        return long.TryParse(id, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsed) ? parsed : -1;
+        string id = matches[^1].Groups["id"].Value;
+        return long.TryParse(id, NumberStyles.Integer, CultureInfo.InvariantCulture, out long parsed) ? parsed : -1;
     }
 
     private static bool HasCompatibleRootType(string expectedWkt, string actualWkt)
@@ -137,10 +137,10 @@ public class EpsgWktEquivalenceTheoryTests
             return true;
         }
 
-        var expectedSemiMajor = ParseInvariantDouble(expected.Groups["semiMajor"].Value);
-        var actualSemiMajor = ParseInvariantDouble(actual.Groups["semiMajor"].Value);
-        var expectedInvFlattening = ParseInvariantDouble(expected.Groups["inverseFlattening"].Value);
-        var actualInvFlattening = ParseInvariantDouble(actual.Groups["inverseFlattening"].Value);
+        double expectedSemiMajor = ParseInvariantDouble(expected.Groups["semiMajor"].Value);
+        double actualSemiMajor = ParseInvariantDouble(actual.Groups["semiMajor"].Value);
+        double expectedInvFlattening = ParseInvariantDouble(expected.Groups["inverseFlattening"].Value);
+        double actualInvFlattening = ParseInvariantDouble(actual.Groups["inverseFlattening"].Value);
         return NearlyEqual(expectedSemiMajor, actualSemiMajor) && NearlyEqual(expectedInvFlattening, actualInvFlattening);
     }
 
@@ -161,7 +161,7 @@ public class EpsgWktEquivalenceTheoryTests
         var actual = ParseParameters(actualWkt);
         foreach (var pair in expected)
         {
-            if (!actual.TryGetValue(pair.Key, out var actualValue))
+            if (!actual.TryGetValue(pair.Key, out double actualValue))
             {
                 return false;
             }
@@ -180,7 +180,7 @@ public class EpsgWktEquivalenceTheoryTests
         var result = new Dictionary<string, double>(StringComparer.OrdinalIgnoreCase);
         foreach (Match match in ParameterRegex.Matches(wkt))
         {
-            var name = NormalizeProjectionParameterName(match.Groups["name"].Value);
+            string name = NormalizeProjectionParameterName(match.Groups["name"].Value);
             result[name] = ParseInvariantDouble(match.Groups["value"].Value);
         }
 
@@ -194,7 +194,7 @@ public class EpsgWktEquivalenceTheoryTests
             return string.Empty;
         }
 
-        var normalized = methodName
+        string normalized = methodName
             .ToLowerInvariant()
             .Replace("(", string.Empty)
             .Replace(")", string.Empty)
@@ -219,7 +219,7 @@ public class EpsgWktEquivalenceTheoryTests
             return string.Empty;
         }
 
-        var normalized = parameterName
+        string normalized = parameterName
             .ToLowerInvariant()
             .Replace("(", string.Empty)
             .Replace(")", string.Empty)

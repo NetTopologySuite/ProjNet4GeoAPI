@@ -1,13 +1,13 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text.Json;
-using ProjNet.CoordinateSystems;
-using ProjNet.CoordinateSystems.Transformations;
-using Xunit;
-
 namespace ProjNET.Tests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Text.Json;
+    using ProjNet.CoordinateSystems;
+    using ProjNet.CoordinateSystems.Transformations;
+    using Xunit;
+
     public class Proj2ProjParityTheoryTests
     {
         [Theory]
@@ -25,9 +25,9 @@ namespace ProjNET.Tests
             target.AuthorityCode = testCase.TargetSrid;
 
             var transformation = transformationFactory.CreateFromCoordinateSystems(source, target);
-            var output = transformation.MathTransform.Transform(new[] { testCase.InputX, testCase.InputY });
-            var deltaX = Math.Abs(output[0] - testCase.ExpectedX);
-            var deltaY = Math.Abs(output[1] - testCase.ExpectedY);
+            double[] output = transformation.MathTransform.Transform(new[] { testCase.InputX, testCase.InputY });
+            double deltaX = Math.Abs(output[0] - testCase.ExpectedX);
+            double deltaY = Math.Abs(output[1] - testCase.ExpectedY);
 
             Assert.Equal("EPSG", transformation.Authority);
             Assert.Equal(testCase.OperationCode, transformation.AuthorityCode);
@@ -37,10 +37,10 @@ namespace ProjNET.Tests
 
         public static IEnumerable<object[]> GetParityCases()
         {
-            var fixturePath = Path.Combine(AppContext.BaseDirectory, "Generated", "proj2proj-direct-parity-fixture.json");
+            string fixturePath = Path.Combine(AppContext.BaseDirectory, "Generated", "proj2proj-direct-parity-fixture.json");
             Assert.True(File.Exists(fixturePath), "Fixture file not found: " + fixturePath);
 
-            var json = File.ReadAllText(fixturePath);
+            string json = File.ReadAllText(fixturePath);
             var fixture = JsonSerializer.Deserialize<Proj2ProjFixture>(
                 json,
                 new JsonSerializerOptions
@@ -52,7 +52,9 @@ namespace ProjNET.Tests
             Assert.NotEmpty(fixture.Cases);
 
             foreach (var item in fixture.Cases)
+            {
                 yield return new object[] { item };
+            }
         }
 
         public sealed class Proj2ProjCase

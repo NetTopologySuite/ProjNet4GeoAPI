@@ -15,18 +15,18 @@
 // along with SharpMap; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
-using System;
-using System.Globalization;
-
 namespace ProjNet.CoordinateSystems
 {
+    using System;
+    using System.Globalization;
+
     /// <summary>
     /// A named projection parameter value.
     /// </summary>
     /// <remarks>
-    /// The linear units of parameters' values match the linear units of the containing 
-    /// projected coordinate system. The angular units of parameter values match the 
-    /// angular units of the geographic coordinate system that the projected coordinate 
+    /// The linear units of parameters' values match the linear units of the containing
+    /// projected coordinate system. The angular units of parameter values match the
+    /// angular units of the geographic coordinate system that the projected coordinate
     /// system is based on. (Notice that this is different from <see cref="Parameter"/>,
     /// where the units are always meters and degrees.)
     /// </remarks>
@@ -34,71 +34,71 @@ namespace ProjNet.CoordinateSystems
     public class ProjectionParameter
     {
         /// <summary>
-        /// Initializes an instance of a ProjectionParameter
+        /// Initializes a new instance of the <see cref="ProjectionParameter"/> class.
+        /// Initializes an instance of a ProjectionParameter.
         /// </summary>
-        /// <param name="name">Name of parameter</param>
-        /// <param name="value">Parameter value</param>
+        /// <param name="name">Name of parameter.</param>
+        /// <param name="value">Parameter value.</param>
         public ProjectionParameter(string name, double value)
         {
-            _Name = name;
-            _Value = value;
+            this.Name = name;
+            this._Value = value;
         }
 
-
-        private string _Name;
+        private string _name;
 
         /// <summary>
-        /// Parameter name.
+        /// Gets or sets parameter name.
         /// </summary>
         public string Name
         {
-            get { return _Name; }
-            set { _Name = value; }
+            get { return this._name; }
+            set { this._name = value; }
         }
 
         private double _Value;
 
         /// <summary>
-        /// Parameter value.
-        /// The linear units of a parameters' values match the linear units of the containing 
-        /// projected coordinate system. The angular units of parameter values match the 
-        /// angular units of the geographic coordinate system that the projected coordinate 
+        /// Gets or sets parameter value.
+        /// The linear units of a parameters' values match the linear units of the containing
+        /// projected coordinate system. The angular units of parameter values match the
+        /// angular units of the geographic coordinate system that the projected coordinate
         /// system is based on.
         /// </summary>
         public double Value
         {
-            get { return _Value; }
-            set { _Value = value; }
+            get { return this._Value; }
+            set { this._Value = value; }
         }
 
         /// <summary>
-        /// Returns the Well-known text for this object
+        /// Gets the Well-known text for this object
         /// as defined in the simple features specification.
         /// </summary>
         public string WKT
         {
-            get => string.Format(CultureInfo.InvariantCulture.NumberFormat, "PARAMETER[\"{0}\", {1}]", Name, Value);
-            
+            get => string.Format(CultureInfo.InvariantCulture.NumberFormat, "PARAMETER[\"{0}\", {1}]", this.Name, this.Value);
+
         }
 
         /// <summary>
-        /// Gets an XML representation of this object
+        /// Gets an XML representation of this object.
         /// </summary>
         public string XML
         {
             get
             {
-                return string.Format(CultureInfo.InvariantCulture.NumberFormat, "<CS_ProjectionParameter Name=\"{0}\" Value=\"{1}\"/>", Name, Value);
+                return string.Format(CultureInfo.InvariantCulture.NumberFormat, "<CS_ProjectionParameter Name=\"{0}\" Value=\"{1}\"/>", this.Name, this.Value);
             }
         }
 
         /// <summary>
-        /// Function to get a textual representation of this envelope
+        /// Function to get a textual representation of this envelope.
         /// </summary>
-        /// <returns>A textual representation of this envelope</returns>
+        /// <returns>A textual representation of this envelope.</returns>
         public override string ToString()
         {
-            return $"ProjectionParameter '{Name}': {Value}";
+            return $"ProjectionParameter '{this.Name}': {this.Value}";
         }
     }
 }

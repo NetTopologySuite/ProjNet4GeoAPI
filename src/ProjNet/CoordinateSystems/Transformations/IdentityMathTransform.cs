@@ -1,39 +1,47 @@
-using System;
-
 namespace ProjNet.CoordinateSystems.Transformations
 {
+    using System;
+
     [Serializable]
     internal sealed class IdentityMathTransform : MathTransform
     {
-        private readonly int _dimension;
+        private readonly int dimension;
 
         internal IdentityMathTransform(int dimension)
         {
-            _dimension = dimension < 2 ? 2 : dimension;
+            this.dimension = dimension < 2 ? 2 : dimension;
         }
 
-        public override int DimSource => _dimension;
+        /// <inheritdoc/>
+        public override int DimSource => this.dimension;
 
-        public override int DimTarget => _dimension;
+        /// <inheritdoc/>
+        public override int DimTarget => this.dimension;
 
+        /// <inheritdoc/>
         public override bool Identity()
         {
             return true;
         }
 
-        public override string WKT => $"PARAM_MT[\"Identity\",PARAMETER[\"dimension\",{_dimension}]]";
+        /// <inheritdoc/>
+        public override string WKT => $"PARAM_MT[\"Identity\",PARAMETER[\"dimension\",{this.dimension}]]";
 
+        /// <inheritdoc/>
         public override string XML => throw new NotImplementedException();
 
+        /// <inheritdoc/>
         public override MathTransform Inverse()
         {
             return this;
         }
 
+        /// <inheritdoc/>
         public override void Invert()
         {
         }
 
+        /// <inheritdoc/>
         public override void Transform(ref double x, ref double y, ref double z)
         {
         }

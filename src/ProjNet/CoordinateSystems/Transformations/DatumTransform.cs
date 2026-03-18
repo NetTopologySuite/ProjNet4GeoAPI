@@ -15,59 +15,62 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
-using System;
-
 namespace ProjNet.CoordinateSystems.Transformations
 {
-	/// <summary>
-	/// Transformation for applying 
-    /// </summary>
-    [Serializable] 
-    internal class DatumTransform : MathTransform
-	{
-        private MathTransform _inverse;
-		private readonly Wgs84ConversionInfo _toWgs94;
-        readonly double[] _v;
+    using System;
 
-		private bool _isInverse;
+    /// <summary>
+    /// Transformation for applying.
+    /// </summary>
+    [Serializable]
+    internal class DatumTransform : MathTransform
+    {
+        private MathTransform inverse;
+        private readonly Wgs84ConversionInfo toWgs94;
+        readonly double[] v;
+
+        private bool isInverse;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DatumTransform"/> class.
         /// </summary>
         /// <param name="towgs84"></param>
-        public DatumTransform(Wgs84ConversionInfo towgs84) : this(towgs84,false)
-		{
-		}
+        public DatumTransform(Wgs84ConversionInfo towgs84) : this(towgs84, false)
+        {
+        }
 
-		private DatumTransform(Wgs84ConversionInfo towgs84, bool isInverse)
-		{
-			_toWgs94 = towgs84;
-			_v = _toWgs94.GetAffineTransform();
-			_isInverse = isInverse;
-		}
+        private DatumTransform(Wgs84ConversionInfo towgs84, bool isInverse)
+        {
+            this.toWgs94 = towgs84;
+            this.v = this.toWgs94.GetAffineTransform();
+            this.isInverse = isInverse;
+        }
+
         /// <summary>
         /// Gets a Well-Known text representation of this object.
         /// </summary>
         /// <value></value>
-		public override string WKT
-		{
-			get { throw new NotImplementedException(); }
-		}
+        public override string WKT
+        {
+            get { throw new NotImplementedException(); }
+        }
 
         /// <summary>
         /// Gets an XML representation of this object.
         /// </summary>
         /// <value></value>
-		public override string XML
-		{
-			get { throw new NotImplementedException(); }
-		}
-
-        public override int DimSource
+        public override string XML
         {
-            get {  return 3; }
+            get { throw new NotImplementedException(); }
         }
 
+        /// <inheritdoc/>
+        public override int DimSource
+        {
+            get { return 3; }
+        }
+
+        /// <inheritdoc/>
         public override int DimTarget
         {
             get { return 3; }
@@ -78,49 +81,51 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// </summary>
         /// <returns></returns>
         /// <remarks>This method may fail if the transform is not one to one. However, all cartographic projections should succeed.</remarks>
-		public override MathTransform Inverse()
-		{
-			if (_inverse == null)
-				_inverse = new DatumTransform(_toWgs94,!_isInverse);
-			return _inverse;
-		}
+        public override MathTransform Inverse()
+        {
+            if (this.inverse == null)
+            {
+                this.inverse = new DatumTransform(this.toWgs94, !this.isInverse);
+            }
 
+            return this.inverse;
+        }
 
         /// <inheritdoc />
         public sealed override void Transform(ref double x, ref double y, ref double z)
         {
-            if (_isInverse)
+            if (this.isInverse)
             {
-                (x, y, z) = ApplyInverted(x, y, z);
+                (x, y, z) = this.ApplyInverted(x, y, z);
             }
             else
             {
-                (x, y, z) = Apply(x, y, z);
+                (x, y, z) = this.Apply(x, y, z);
             }
         }
 
         private (double x, double y, double z) Apply(double x, double y, double z)
         {
             return (
-                x: _v[0] * (x - _v[3] * y + _v[2] * z) + _v[4],
-                y: _v[0] * (_v[3] * x + y - _v[1] * z) + _v[5],
-                z: _v[0] * (-_v[2] * x + _v[1] * y + z) + _v[6]);
+                x: (this.v[0] * (x - (this.v[3] * y) + (this.v[2] * z))) + this.v[4],
+                y: (this.v[0] * ((this.v[3] * x) + y - (this.v[1] * z))) + this.v[5],
+                z: (this.v[0] * ((-this.v[2] * x) + (this.v[1] * y) + z)) + this.v[6]);
         }
 
         private (double x, double y, double z) ApplyInverted(double x, double y, double z)
         {
             return (
-                x: (1 - (_v[0] - 1)) * (x + _v[3] * y - _v[2] * z) - _v[4],
-                y: (1 - (_v[0] - 1)) * (-_v[3] * x + y + _v[1] * z) - _v[5],
-                z: (1 - (_v[0] - 1)) * (_v[2] * x - _v[1] * y + z) - _v[6]);
+                x: ((1 - (this.v[0] - 1)) * (x + (this.v[3] * y) - (this.v[2] * z))) - this.v[4],
+                y: ((1 - (this.v[0] - 1)) * ((-this.v[3] * x) + y + (this.v[1] * z))) - this.v[5],
+                z: ((1 - (this.v[0] - 1)) * ((this.v[2] * x) - (this.v[1] * y) + z)) - this.v[6]);
         }
 
         /// <summary>
-        /// Reverses the transformation
+        /// Reverses the transformation.
         /// </summary>
-		public override void Invert()
-		{
-			_isInverse = !_isInverse;
-		}
-	}
+        public override void Invert()
+        {
+            this.isInverse = !this.isInverse;
+        }
+    }
 }

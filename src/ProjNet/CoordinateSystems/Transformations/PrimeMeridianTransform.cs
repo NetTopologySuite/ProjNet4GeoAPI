@@ -15,27 +15,23 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
-using System;
-
 namespace ProjNet.CoordinateSystems.Transformations
 {
+    using System;
 
     /// <summary>
-    /// Adjusts target Prime Meridian
+    /// Adjusts target Prime Meridian.
     /// </summary>
     [Serializable]
     internal class PrimeMeridianTransform : MathTransform
     {
-        #region class variables
+        private bool isInverted;
+        private readonly PrimeMeridian source;
+        private readonly PrimeMeridian target;
 
-        private bool _isInverted;
-        private readonly PrimeMeridian _source;
-        private readonly PrimeMeridian _target;
-        #endregion class variables
-
-        #region constructors & finalizers
         /// <summary>
-        /// Creates instance prime meridian transform
+        /// Initializes a new instance of the <see cref="PrimeMeridianTransform"/> class.
+        /// Creates instance prime meridian transform.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="target"></param>
@@ -43,16 +39,13 @@ namespace ProjNet.CoordinateSystems.Transformations
         {
             if (!source.AngularUnit.EqualParams(target.AngularUnit))
             {
-                throw new NotImplementedException("The method or operation is not implemented.");  
+                throw new NotImplementedException("The method or operation is not implemented.");
             }
-            _source = source;
-            _target = target;            
+
+            this.source = source;
+            this.target = target;
         }
 
-
-        #endregion constructors & finalizers
-
-        #region public properties
         /// <summary>
         /// Gets a Well-Known text representation of this affine math transformation.
         /// </summary>
@@ -61,6 +54,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         {
             get { throw new NotImplementedException("The method or operation is not implemented."); }
         }
+
         /// <summary>
         /// Gets an XML representation of this affine transformation.
         /// </summary>
@@ -79,41 +73,40 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// Gets the dimension of output points.
         /// </summary>
         public override int DimTarget { get { return 3; } }
-        #endregion public properties
-
-        #region public methods
 
         /// <inheritdoc />
         public override MathTransform Inverse()
         {
-            return new PrimeMeridianTransform(_target, _source);
+            return new PrimeMeridianTransform(this.target, this.source);
         }
 
         /// <inheritdoc />
         public sealed override void Transform(ref double x, ref double y, ref double z)
         {
-            if (_isInverted)
-                x += _target.Longitude - _source.Longitude;
+            if (this.isInverted)
+            {
+                x += this.target.Longitude - this.source.Longitude;
+            }
             else
-                x += _source.Longitude - _target.Longitude;
+            {
+                x += this.source.Longitude - this.target.Longitude;
+            }
         }
 
         /// <inheritdoc />
         protected sealed override void TransformCore(Span<double> xs, Span<double> ys, Span<double> zs,
             int strideX, int strideY, int strideZ)
         {
-            double addend = _isInverted
-                ? _target.Longitude - _source.Longitude
-                : _source.Longitude - _target.Longitude;
+            double addend = this.isInverted
+                ? this.target.Longitude - this.source.Longitude
+                : this.source.Longitude - this.target.Longitude;
             AddInPlace(xs, strideX, addend);
         }
 
         /// <inheritdoc />
         public override void Invert()
         {
-            _isInverted = !_isInverted;
+            this.isInverted = !this.isInverted;
         }
-
-        #endregion public methods
     }
 }

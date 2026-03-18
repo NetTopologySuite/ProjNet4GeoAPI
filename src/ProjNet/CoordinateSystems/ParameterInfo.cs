@@ -15,11 +15,11 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
-using System;
-using System.Collections.Generic;
-
 namespace ProjNet.CoordinateSystems
 {
+    using System;
+    using System.Collections.Generic;
+
     /// <summary>
     /// Simple class that implements the IParameterInfo interface for providing general set of the parameters.
     /// It allows discovering the names, and for setting and getting parameter values.
@@ -31,13 +31,14 @@ namespace ProjNet.CoordinateSystems
         /// Gets the number of parameters expected.
         /// </summary>
         public int NumParameters
-        { 
+        {
             get
             {
-                if (Parameters != null)
+                if (this.Parameters != null)
                 {
-                    return Parameters.Count;
+                    return this.Parameters.Count;
                 }
+
                 return 0;
             }
         }
@@ -46,7 +47,7 @@ namespace ProjNet.CoordinateSystems
         /// Gets or sets the parameters set for this projection.
         /// </summary>
         public List<Parameter> Parameters
-        { 
+        {
             get;
             set;
         }
@@ -55,22 +56,22 @@ namespace ProjNet.CoordinateSystems
         /// Returns the default parameters for this projection.
         /// </summary>
         /// <returns></returns>
-        public Parameter[] DefaultParameters ()
+        public Parameter[] DefaultParameters()
         {
             return new Parameter[0];
         }
 
         /// <summary>
-        /// Gets the parameter by its name
+        /// Gets the parameter by its name.
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
-        public Parameter GetParameterByName (string name)
+        public Parameter GetParameterByName(string name)
         {
-            if (Parameters != null)
+            if (this.Parameters != null)
             {
-                //search parameter collection by name 
-                foreach (var param in Parameters)
+                // search parameter collection by name
+                foreach (var param in this.Parameters)
                 {
                     if (param != null && param.Name == name)
                     {

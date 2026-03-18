@@ -1,26 +1,26 @@
-using System;
-using System.Collections.Generic;
-using NUnit.Framework;
-using ProjNet;
-using ProjNet.CoordinateSystems;
-using ProjNet.CoordinateSystems.Transformations;
-
 namespace ProjNET.Tests.GitHub
 {
+    using System;
+    using System.Collections.Generic;
+    using NUnit.Framework;
+    using ProjNet;
+    using ProjNet.CoordinateSystems;
+    using ProjNet.CoordinateSystems.Transformations;
+
     [Xunit.Trait("Category", "GitHub Issue")]
     public class Issues
     {
         //
-        private static CoordinateSystemServices _css = new CoordinateSystemServices(CoordinateSystemServicesTest.LoadCsv());
+        private static CoordinateSystemServices css = new CoordinateSystemServices(CoordinateSystemServicesTest.LoadCsv());
 
         [Xunit.Fact(DisplayName = "Issue #10, ConcatenatedTransform.Inverse() method destroys the state of child transformations")]
         public void TestConcatenatedTransformInvert()
         {
-            
-            var epsg31466 = _css.GetCoordinateSystem(31466);
-            var epsg25832 = _css.GetCoordinateSystem(25832);
 
-            var ctFwd = (ConcatenatedTransform)_css.CreateTransformation(epsg31466, epsg25832).MathTransform;
+            var epsg31466 = css.GetCoordinateSystem(31466);
+            var epsg25832 = css.GetCoordinateSystem(25832);
+
+            var ctFwd = (ConcatenatedTransform)css.CreateTransformation(epsg31466, epsg25832).MathTransform;
             var ctRev = (ConcatenatedTransform)ctFwd.Inverse();
 
             var ctlFwd = ctFwd.CoordinateTransformationList;
@@ -29,7 +29,9 @@ namespace ProjNET.Tests.GitHub
             Assert.That(ReferenceEquals(ctlFwd, ctlRev), Is.False);
             Assert.That(ctlFwd.Count, Is.EqualTo(ctlRev.Count));
             for (int i = 0, j = ctlFwd.Count - 1; i < ctlFwd.Count; i++, j--)
+            {
                 Assert.That(ReferenceEquals(ctlFwd[i], ctlRev[j]), Is.False);
+            }
         }
 
         [Xunit.Fact(DisplayName = "Issue #20, Math transform bug")]
@@ -58,7 +60,7 @@ namespace ProjNET.Tests.GitHub
 
             var wgs84 = ProjectedCoordinateSystem.WGS84_UTM(36, true).GeographicCoordinateSystem;
 
-            var ctFwd = _css.CreateTransformation(itm, wgs84).MathTransform;
+            var ctFwd = css.CreateTransformation(itm, wgs84).MathTransform;
             var pt1a = (x: 200000.0, y: 600000.0);
             var pt2a = ctFwd.Transform(pt1a.x, pt1a.y);
             var pt1b = ctFwd.Inverse().Transform(pt2a.x, pt2a.y);
@@ -77,9 +79,9 @@ namespace ProjNET.Tests.GitHub
             Console.WriteLine(epsg_3857.Projection.ClassName);
             Console.WriteLine(epsg_3857.WKT);
 
-            var epsg25832 = _css.GetCoordinateSystem(25832);
+            var epsg25832 = css.GetCoordinateSystem(25832);
 
-            var mt1 = _css.CreateTransformation(epsg25832, epsg_3857).MathTransform;
+            var mt1 = css.CreateTransformation(epsg25832, epsg_3857).MathTransform;
             var pt25832 = (x: 702575, y: 6153153);
             var pt_3857ex = (x: 1358761.89, y: 7456070.47);
 
@@ -87,11 +89,11 @@ namespace ProjNET.Tests.GitHub
             Assert.That(pt_3857.x, Is.EqualTo(pt_3857ex.x).Within(0.015));
             Assert.That(pt_3857.y, Is.EqualTo(pt_3857ex.y).Within(0.015));
 
-            epsg_3857 = (ProjectedCoordinateSystem)_css.GetCoordinateSystem(3857);
+            epsg_3857 = (ProjectedCoordinateSystem)css.GetCoordinateSystem(3857);
             Console.WriteLine(epsg_3857.Projection.ClassName);
             Console.WriteLine(epsg_3857.WKT);
 
-            var mt2 = _css.CreateTransformation(epsg25832, epsg_3857).MathTransform;
+            var mt2 = css.CreateTransformation(epsg25832, epsg_3857).MathTransform;
             pt_3857 = mt2.Transform(pt25832.x, pt25832.y);
             Assert.That(pt_3857.x, Is.EqualTo(pt_3857ex.x).Within(0.015));
             Assert.That(pt_3857.y, Is.EqualTo(pt_3857ex.y).Within(0.015));
@@ -100,13 +102,12 @@ namespace ProjNET.Tests.GitHub
         [Xunit.Fact(DisplayName = "Convert latitude/longitude to Canada grid NAD83 (epsg:26910)")]
         public void TestConvertWgs84ToEPSG26910()
         {
-            var epsg26910 = _css.GetCoordinateSystem("EPSG", 26910);
-            var epsg_4326 = _css.GetCoordinateSystem("EPSG", 4326);
+            var epsg26910 = css.GetCoordinateSystem("EPSG", 26910);
+            var epsg_4326 = css.GetCoordinateSystem("EPSG", 4326);
 
             double[] ptI = { 3523562.711189, 6246615.391161 };
 
-
-            var ct = _css.CreateTransformation(epsg26910, epsg_4326);
+            var ct = css.CreateTransformation(epsg26910, epsg_4326);
             var pt1a = ct.MathTransform.Transform(ptI[0], ptI[1]);
             Assert.That(pt1a.x, Is.EqualTo(-82.0479097).Within(0.01), "Longitude");
             Assert.That(pt1a.y, Is.EqualTo(48.4185597).Within(0.01), "Latitude");
@@ -130,7 +131,7 @@ namespace ProjNET.Tests.GitHub
             Assert.That(ptI[0], Is.EqualTo(-82.0479097).Within(0.01), "Longitude");
             Assert.That(ptI[1], Is.EqualTo(48.4185597).Within(0.01), "Latitude");
 
-            
+
             DotSpatial.Projections.Reproject.ReprojectPoints(ptI, null, epsg_4326, epsg26910, 0, 1);
             Assert.That(ptI[0], Is.EqualTo(3523562.711189).Within(0.01), "Easting");
             Assert.That(ptI[1], Is.EqualTo(6246615.391161).Within(0.01), "Northing");

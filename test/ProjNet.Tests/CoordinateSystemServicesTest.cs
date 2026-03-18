@@ -1,24 +1,25 @@
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Xml.Linq;
-using NUnit.Framework;
-using ProjNet;
-using ProjNet.CoordinateSystems;
-using ProjNet.CoordinateSystems.Transformations;
-using ProjNet.Data;
-
 namespace ProjNET.Tests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
+    using System.Threading;
+    using System.Xml.Linq;
+    using NUnit.Framework;
+    using ProjNet;
+    using ProjNet.CoordinateSystems;
+    using ProjNet.CoordinateSystems.Transformations;
+    using ProjNet.Data;
+
     public class CoordinateSystemServicesTest
     {
         [Xunit.Fact]
         public void TestConstructor()
         {
-            var css = new CoordinateSystemServices(new CoordinateSystemFactory(),
+            var css = new CoordinateSystemServices(
+                new CoordinateSystemFactory(),
                 new CoordinateTransformationFactory());
 
             Assert.IsNotNull(css.GetCoordinateSystem(4326));
@@ -28,11 +29,12 @@ namespace ProjNET.Tests
         [Xunit.Fact]
         public void TestTryGetCoordinateSystemBySrid()
         {
-            var css = new CoordinateSystemServices(new CoordinateSystemFactory(),
+            var css = new CoordinateSystemServices(
+                new CoordinateSystemFactory(),
                 new CoordinateTransformationFactory());
 
-            var found = css.TryGetCoordinateSystem(4326, out var coordinateSystem);
-            var missing = css.TryGetCoordinateSystem(999999, out var missingCoordinateSystem);
+            bool found = css.TryGetCoordinateSystem(4326, out var coordinateSystem);
+            bool missing = css.TryGetCoordinateSystem(999999, out var missingCoordinateSystem);
 
             Assert.IsTrue(found);
             Assert.IsNotNull(coordinateSystem);
@@ -43,11 +45,12 @@ namespace ProjNET.Tests
         [Xunit.Fact]
         public void TestTryGetCoordinateSystemByAuthorityCode()
         {
-            var css = new CoordinateSystemServices(new CoordinateSystemFactory(),
+            var css = new CoordinateSystemServices(
+                new CoordinateSystemFactory(),
                 new CoordinateTransformationFactory());
 
-            var found = css.TryGetCoordinateSystem("EPSG", 3857, out var coordinateSystem);
-            var missing = css.TryGetCoordinateSystem("EPSG", -1, out var missingCoordinateSystem);
+            bool found = css.TryGetCoordinateSystem("EPSG", 3857, out var coordinateSystem);
+            bool missing = css.TryGetCoordinateSystem("EPSG", -1, out var missingCoordinateSystem);
 
             Assert.IsTrue(found);
             Assert.IsNotNull(coordinateSystem);
@@ -58,10 +61,11 @@ namespace ProjNET.Tests
         [Xunit.Fact]
         public void TestGetAvailableSridValues()
         {
-            var css = new CoordinateSystemServices(new CoordinateSystemFactory(),
+            var css = new CoordinateSystemServices(
+                new CoordinateSystemFactory(),
                 new CoordinateTransformationFactory());
 
-            var srids = css.GetAvailableSridValues();
+            int[] srids = css.GetAvailableSridValues();
             Assert.IsNotNull(srids);
             Assert.IsTrue(Array.IndexOf(srids, 4326) >= 0);
             Assert.IsTrue(Array.IndexOf(srids, 3857) >= 0);
@@ -93,9 +97,12 @@ namespace ProjNET.Tests
         public void TestConstructorLoadXml(string xmlPath)
         {
             if (!File.Exists(xmlPath))
+            {
                 Xunit.Assert.Skip("Specified file not found");
+            }
 
-            var css = new CoordinateSystemServices(new CoordinateSystemFactory(),
+            var css = new CoordinateSystemServices(
+                new CoordinateSystemFactory(),
                 new CoordinateTransformationFactory(), LoadXml(xmlPath));
 
             Assert.IsNotNull(css.GetCoordinateSystem(4326));
@@ -110,9 +117,12 @@ namespace ProjNET.Tests
         {
             if (!string.IsNullOrWhiteSpace(csvPath))
                 if (!File.Exists(csvPath))
+                {
                     Xunit.Assert.Skip("Specified file not found");
+                }
 
-            var css = new CoordinateSystemServices(new CoordinateSystemFactory(),
+            var css = new CoordinateSystemServices(
+                new CoordinateSystemFactory(),
                 new CoordinateTransformationFactory(), LoadCsv(csvPath));
 
             Assert.IsNotNull(css.GetCoordinateSystem(4326));
@@ -122,7 +132,6 @@ namespace ProjNET.Tests
 
         }
 
-
         internal static IEnumerable<KeyValuePair<int, string>> LoadCsv(string csvPath = null)
         {
 
@@ -131,7 +140,9 @@ namespace ProjNET.Tests
             sw.Start();
 
             foreach (var sridWkt in SRIDReader.GetSrids(csvPath))
+            {
                 yield return new KeyValuePair<int, string>(sridWkt.WktId, sridWkt.Wkt);
+            }
 
             sw.Stop();
             Console.WriteLine("Read '{1}' in {0:N0}ms", sw.ElapsedMilliseconds, csvPath ?? "SRID.csv from resources stream");

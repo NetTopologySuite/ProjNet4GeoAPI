@@ -1,9 +1,9 @@
-using NUnit.Framework;
-using ProjNet.CoordinateSystems;
-using System;
-
 namespace ProjNET.Tests.Serialization
 {
+    using NUnit.Framework;
+    using ProjNet.CoordinateSystems;
+    using System;
+
     public class CoordinateSystemsProjectionsTest
 #if !NET7_0_OR_GREATER
         : BaseSerializationTest

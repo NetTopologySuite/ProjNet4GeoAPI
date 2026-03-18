@@ -15,149 +15,163 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
-
 namespace ProjNet.CoordinateSystems
 {
-	/// <summary>
-	/// The Projection class defines the standard information stored with a projection
-	/// objects. A projection object implements a coordinate transformation from a geographic
-	/// coordinate system to a projected coordinate system, given the ellipsoid for the
-	/// geographic coordinate system. It is expected that each coordinate transformation of
-	/// interest, e.g., Transverse Mercator, Lambert, will be implemented as a class of
-	/// type Projection, supporting the IProjection interface.
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Text;
+
+    /// <summary>
+    /// The Projection class defines the standard information stored with a projection
+    /// objects. A projection object implements a coordinate transformation from a geographic
+    /// coordinate system to a projected coordinate system, given the ellipsoid for the
+    /// geographic coordinate system. It is expected that each coordinate transformation of
+    /// interest, e.g., Transverse Mercator, Lambert, will be implemented as a class of
+    /// type Projection, supporting the IProjection interface.
     /// </summary>
-    [Serializable] 
+    [Serializable]
     public class Projection : Info, IProjection
-	{
-		internal Projection(string className, List<ProjectionParameter> parameters,
-			string name, string authority, long code, string alias, 
-			string remarks, string abbreviation)
-			: base(name, authority, code, alias, abbreviation, remarks)
-		{
-			_parameters = parameters;
-			_ClassName = className;
-		}
+    {
+        internal Projection(string className, List<ProjectionParameter> parameters,
+            string name, string authority, long code, string alias,
+            string remarks, string abbreviation)
+            : base(name, authority, code, alias, abbreviation, remarks)
+        {
+            this.parameters = parameters;
+            this._className = className;
+        }
 
-		#region Predefined projections
-		#endregion
+        /// <summary>
+        /// Gets the number of parameters of the projection.
+        /// </summary>
+        public int NumParameters
+        {
+            get { return this.parameters.Count; }
+        }
 
-		#region IProjection Members
+        private List<ProjectionParameter> parameters;
 
-		/// <summary>
-		/// Gets the number of parameters of the projection.
-		/// </summary>
-		public int NumParameters
-		{
-			get { return _parameters.Count; }
-		}
+        /// <summary>
+        /// Gets or sets the parameters of the projection.
+        /// </summary>
+        internal List<ProjectionParameter> Parameters
+        {
+            get { return this.parameters; }
+            set { this.parameters = value; }
+        }
 
-		private List<ProjectionParameter> _parameters;
+        /// <summary>
+        /// Gets an indexed parameter of the projection.
+        /// </summary>
+        /// <param name="index">Index of parameter.</param>
+        /// <returns>n'th parameter.</returns>
+        public ProjectionParameter GetParameter(int index)
+        {
+            return this.parameters[index];
+        }
 
-		/// <summary>
-		/// Gets or sets the parameters of the projection
-		/// </summary>
-		internal List<ProjectionParameter> Parameters
-		{
-			get { return _parameters; }
-			set { _parameters = value; }
-		}
+        /// <summary>
+        /// Gets an named parameter of the projection.
+        /// </summary>
+        /// <remarks>The parameter name is case insensitive.</remarks>
+        /// <param name="name">Name of parameter.</param>
+        /// <returns>parameter or null if not found.</returns>
+        public ProjectionParameter GetParameter(string name)
+        {
+            foreach (var par in this.parameters)
+                if (par.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+                {
+                    return par;
+                }
 
-		/// <summary>
-		/// Gets an indexed parameter of the projection.
-		/// </summary>
-		/// <param name="index">Index of parameter</param>
-		/// <returns>n'th parameter</returns>
-		public ProjectionParameter GetParameter(int index)
-		{
-			return _parameters[index];
-		}
+            return null;
+        }
 
-		/// <summary>
-		/// Gets an named parameter of the projection.
-		/// </summary>
-		/// <remarks>The parameter name is case insensitive</remarks>
-		/// <param name="name">Name of parameter</param>
-		/// <returns>parameter or null if not found</returns>
-		public ProjectionParameter GetParameter(string name)
-		{
-			foreach (ProjectionParameter par in _parameters)
-				if (par.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
-					return par;
-			return null;
-		}
-				
-		private string _ClassName;
+        private string _className;
 
-		/// <summary>
-		/// Gets the projection classification name (e.g. "Transverse_Mercator").
-		/// </summary>
-		public string ClassName
-		{
-			get { return _ClassName; }
-		}
+        /// <summary>
+        /// Gets the projection classification name (e.g. "Transverse_Mercator").
+        /// </summary>
+        public string ClassName
+        {
+            get { return this._className; }
+        }
 
-		/// <summary>
-		/// Returns the Well-known text for this object
-		/// as defined in the simple features specification.
-		/// </summary>
-		public override string WKT
-		{
-			get
-			{
-				StringBuilder sb = new StringBuilder();
-				sb.AppendFormat("PROJECTION[\"{0}\"", ClassName);
-				if (!string.IsNullOrWhiteSpace(Authority) && AuthorityCode > 0)
-					sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
-				sb.Append("]");
-				return sb.ToString();
-			}
-		}
+        /// <summary>
+        /// Gets the Well-known text for this object
+        /// as defined in the simple features specification.
+        /// </summary>
+        public override string WKT
+        {
+            get
+            {
+                var sb = new StringBuilder();
+                sb.AppendFormat("PROJECTION[\"{0}\"", this.ClassName);
+                if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
+                {
+                    sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", this.Authority, this.AuthorityCode);
+                }
 
-		/// <summary>
-		/// Gets an XML representation of this object
-		/// </summary>
-		public override string XML
-		{
-			get
-			{
-				StringBuilder sb = new StringBuilder();
-				sb.AppendFormat(CultureInfo.InvariantCulture.NumberFormat, "<CS_Projection Classname=\"{0}\">{1}", ClassName, InfoXml);
-				foreach (ProjectionParameter param in Parameters)
-					sb.Append(param.XML);
-				sb.Append("</CS_Projection>");
-				return sb.ToString();
-			}
-		}
+                sb.Append("]");
+                return sb.ToString();
+            }
+        }
 
-		/// <summary>
-		/// Checks whether the values of this instance is equal to the values of another instance.
-		/// Only parameters used for coordinate system are used for comparison.
-		/// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
-		/// </summary>
-		/// <param name="obj"></param>
-		/// <returns>True if equal</returns>
-		public override bool EqualParams(object obj)
-		{
-			if (!(obj is Projection))
-				return false;
-			Projection proj = obj as Projection;
-			if (proj.NumParameters != this.NumParameters)
-				return false;
-			for (int i = 0; i < _parameters.Count; i++)
-			{
-				ProjectionParameter param = GetParameter(proj.GetParameter(i).Name);
-				if (param == null)
-					return false;
-				if (param.Value != proj.GetParameter(i).Value)
-					return false;
-			}
-			return true;
-		}
+        /// <summary>
+        /// Gets an XML representation of this object.
+        /// </summary>
+        public override string XML
+        {
+            get
+            {
+                var sb = new StringBuilder();
+                sb.AppendFormat(CultureInfo.InvariantCulture.NumberFormat, "<CS_Projection Classname=\"{0}\">{1}", this.ClassName, this.InfoXml);
+                foreach (var param in this.Parameters)
+                {
+                    sb.Append(param.XML);
+                }
 
-		#endregion
-	}
+                sb.Append("</CS_Projection>");
+                return sb.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Checks whether the values of this instance is equal to the values of another instance.
+        /// Only parameters used for coordinate system are used for comparison.
+        /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns>True if equal.</returns>
+        public override bool EqualParams(object obj)
+        {
+            if (!(obj is Projection))
+            {
+                return false;
+            }
+
+            var proj = obj as Projection;
+            if (proj.NumParameters != this.NumParameters)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < this.parameters.Count; i++)
+            {
+                var param = this.GetParameter(proj.GetParameter(i).Name);
+                if (param == null)
+                {
+                    return false;
+                }
+
+                if (param.Value != proj.GetParameter(i).Value)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+    }
 }

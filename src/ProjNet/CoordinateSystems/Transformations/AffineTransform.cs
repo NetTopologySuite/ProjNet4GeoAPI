@@ -15,13 +15,13 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
-
 namespace ProjNet.CoordinateSystems.Transformations
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Text;
+
     /// <summary>
     /// Represents affine math transform which transforms input coordinates to target using affine transformation matrix. Dimensionality might change.
     /// </summary>
@@ -33,81 +33,82 @@ namespace ProjNet.CoordinateSystems.Transformations
     [Serializable]
     public class AffineTransform : MathTransform
     {
-        #region class variables
         /// <summary>
-        /// Saved inverse transform
+        /// Saved inverse transform.
         /// </summary>
-        private MathTransform _inverse;
+        private MathTransform inverse;
 
         /// <summary>
-        /// Dimension of source points - it's related to number of transformation matrix rows
+        /// Dimension of source points - it's related to number of transformation matrix rows.
         /// </summary>
-        private readonly int _dimSource;
+        private readonly int dimSource;
 
         /// <summary>
-        /// Dimension of output points - it's related to number of columns
+        /// Dimension of output points - it's related to number of columns.
         /// </summary>
-        private readonly int _dimTarget;
+        private readonly int dimTarget;
 
         /// <summary>
         /// Represents transform matrix of this affine transformation from input points to output ones using dimensionality defined within the affine transform
         /// Number of rows = dimTarget + 1
-        /// Number of columns = dimSource + 1
+        /// Number of columns = dimSource + 1.
         /// </summary>
-        private readonly double[,] _transformMatrix;
-        #endregion class variables
+        private readonly double[,] transformMatrix;
 
-        #region constructors & finalizers
         /// <summary>
-        /// Creates instance of 2D affine transform (source dimensionality 2, target dimensionality 2) using the specified values
+        /// Initializes a new instance of the <see cref="AffineTransform"/> class.
+        /// Creates instance of 2D affine transform (source dimensionality 2, target dimensionality 2) using the specified values.
         /// </summary>
-        /// <param name="m00">Value for row 0, column 0 - AKA ScaleX</param>
-        /// <param name="m01">Value for row 0, column 1 - AKA ShearX</param>
-        /// <param name="m02">Value for row 0, column 2 - AKA Translate X</param>
-        /// <param name="m10">Value for row 1, column 0 - AKA Shear Y</param>
-        /// <param name="m11">Value for row 1, column 1 - AKA Scale Y</param>
-        /// <param name="m12">Value for row 1, column 2 - AKA Translate Y</param>
+        /// <param name="m00">Value for row 0, column 0 - AKA ScaleX.</param>
+        /// <param name="m01">Value for row 0, column 1 - AKA ShearX.</param>
+        /// <param name="m02">Value for row 0, column 2 - AKA Translate X.</param>
+        /// <param name="m10">Value for row 1, column 0 - AKA Shear Y.</param>
+        /// <param name="m11">Value for row 1, column 1 - AKA Scale Y.</param>
+        /// <param name="m12">Value for row 1, column 2 - AKA Translate Y.</param>
         public AffineTransform(double m00, double m01, double m02, double m10, double m11, double m12)
         {
-            //fill dimensionlity
-            _dimSource = 2;
-            _dimTarget = 2;
-            //create matrix - 2D affine transform uses 3x3 matrix (3rd row is the special one)
-            _transformMatrix = new [,] { { m00, m01, m02 }, { m10, m11, m12 }, { 0, 0, 1 } };
+            // fill dimensionlity
+            this.dimSource = 2;
+            this.dimTarget = 2;
+
+            // create matrix - 2D affine transform uses 3x3 matrix (3rd row is the special one)
+            this.transformMatrix = new[,] { { m00, m01, m02 }, { m10, m11, m12 }, { 0, 0, 1 } };
         }
 
         /// <summary>
-        /// Creates instance of affine transform using the specified matrix. 
+        /// Initializes a new instance of the <see cref="AffineTransform"/> class.
+        /// Creates instance of affine transform using the specified matrix.
         /// </summary>
         /// <remarks>If the transform's input dimension is M, and output dimension is N, then the matrix will have size [N+1][M+1].
         /// The +1 in the matrix dimensions allows the matrix to do a shift, as well as a rotation. The [M][j] element of the matrix will be the j'th ordinate of the moved origin. The [i][N] element of the matrix will be 0 for i less than M, and 1 for i equals M.</remarks>
         ///
-        /// <param name="matrix">Matrix used to create afiine transform</param>
+        /// <param name="matrix">Matrix used to create afiine transform.</param>
         public AffineTransform(double[,] matrix)
         {
-            //check validity
+            // check validity
             if (matrix == null)
             {
                 throw new ArgumentNullException("matrix");
             }
+
             if (matrix.GetLength(0) <= 1)
             {
                 throw new ArgumentException("Transformation matrix must have at least 2 rows.");
             }
+
             if (matrix.GetLength(1) <= 1)
             {
                 throw new ArgumentException("Transformation matrix must have at least 2 columns.");
             }
 
-            //fill dimensionlity - dimension is M, and output dimension is N, then the matrix will have size [N+1][M+1].
-            _dimSource = matrix.GetLength(1) - 1;
-            _dimTarget = matrix.GetLength(0) - 1;
-            //use specified matrix
-            _transformMatrix = matrix;
-        }
-        #endregion constructors & finalizers
+            // fill dimensionlity - dimension is M, and output dimension is N, then the matrix will have size [N+1][M+1].
+            this.dimSource = matrix.GetLength(1) - 1;
+            this.dimTarget = matrix.GetLength(0) - 1;
 
-        #region public properties
+            // use specified matrix
+            this.transformMatrix = matrix;
+        }
+
         /// <summary>
         /// Gets a Well-Known text representation of this affine math transformation.
         /// </summary>
@@ -116,26 +117,28 @@ namespace ProjNet.CoordinateSystems.Transformations
         {
             get
             {
-                //PARAM_MT["Affine",
+                // PARAM_MT["Affine",
                 //    PARAMETER["num_row",3],
                 //    PARAMETER["num_col",3],
                 //    PARAMETER["elt_0_1",1],
                 //    PARAMETER["elt_0_2",2],
                 //    PARAMETER["elt 1 2",3]]
-
                 var sb = new StringBuilder();
 
                 sb.Append("PARAM_MT[\"Affine\"");
-                //append parameters
-                foreach (var param in GetParameterValues())
+
+                // append parameters
+                foreach (var param in this.GetParameterValues())
                 {
                     sb.Append(",");
                     sb.Append(param.WKT);
                 }
+
                 sb.Append("]");
                 return sb.ToString();
             }
         }
+
         /// <summary>
         /// Gets an XML representation of this affine transformation.
         /// </summary>
@@ -148,39 +151,37 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Gets the dimension of input points.
         /// </summary>
-        public override int DimSource { get { return _dimSource; } }
+        public override int DimSource { get { return this.dimSource; } }
 
         /// <summary>
         /// Gets the dimension of output points.
         /// </summary>
-        public override int DimTarget { get { return _dimTarget; } }
-        #endregion public properties
-
-        #region private methods
+        public override int DimTarget { get { return this.dimTarget; } }
 
         /// <summary>
-        /// Return affine transformation matrix as group of parameter values that maiy be used for retrieving WKT of this affine transform
+        /// Return affine transformation matrix as group of parameter values that maiy be used for retrieving WKT of this affine transform.
         /// </summary>
-        /// <returns>List of string pairs NAME VALUE</returns>
+        /// <returns>List of string pairs NAME VALUE.</returns>
         private IList<ProjectionParameter> GetParameterValues()
         {
-            int rowCnt = _transformMatrix.GetLength(0);
-            int colCnt = _transformMatrix.GetLength(1);
+            int rowCnt = this.transformMatrix.GetLength(0);
+            int colCnt = this.transformMatrix.GetLength(1);
             var pInfo = new List<ProjectionParameter>();
             pInfo.Add(new ProjectionParameter("num_row", rowCnt));
             pInfo.Add(new ProjectionParameter("num_col", colCnt));
-            //fill matrix values
+
+            // fill matrix values
             for (int row = 0; row < rowCnt; row++)
             {
                 for (int col = 0; col < colCnt; col++)
                 {
                     string name = string.Format(CultureInfo.InvariantCulture.NumberFormat, "elt_{0}_{1}", row, col);
-                    pInfo.Add(new ProjectionParameter(name, _transformMatrix[row, col]));
+                    pInfo.Add(new ProjectionParameter(name, this.transformMatrix[row, col]));
                 }
             }
+
             return pInfo;
         }
-
 
         /// <summary>
         /// Given L,U,P and b solve for x.
@@ -224,11 +225,14 @@ namespace ProjNet.CoordinateSystems.Transformations
                     {
                         lij = LU[i, j];
                     }
+
                     suml += lij * y[j];
                 }
+
                 y[i] = b[pi[i]] - suml;
             }
-            //Solve for x by using back substitution
+
+            // Solve for x by using back substitution
             for (int i = n; i >= 0; i--)
             {
                 double sumu = 0;
@@ -236,15 +240,17 @@ namespace ProjNet.CoordinateSystems.Transformations
                 {
                     sumu += LU[i, j] * x[j];
                 }
+
                 x[i] = (y[i] - sumu) / LU[i, i];
             }
+
             return x;
         }
 
         /// <summary>
         /// Perform LUP decomposition on a matrix A.
         /// Return P as an array of ints and L and U are just in A, "in place".
-        /// In order to make some of the calculations more straight forward and to 
+        /// In order to make some of the calculations more straight forward and to
         /// match Cormen's et al. pseudocode the matrix A should have its first row and first columns
         /// to be all 0.
         /// </summary>
@@ -256,13 +262,13 @@ namespace ProjNet.CoordinateSystems.Transformations
             int n = A.GetLength(0) - 1;
             /*
             * pi represents the permutation matrix.  We implement it as an array
-            * whose value indicates which column the 1 would appear.  We use it to avoid 
+            * whose value indicates which column the 1 would appear.  We use it to avoid
             * dividing by zero or small numbers.
             * */
             int[] pi = new int[n + 1];
             int kp = 0;
 
-            //Initialize the permutation matrix, will be the identity matrix
+            // Initialize the permutation matrix, will be the identity matrix
             for (int j = 0; j <= n; j++)
             {
                 pi[j] = j;
@@ -273,7 +279,7 @@ namespace ProjNet.CoordinateSystems.Transformations
                 /*
                 * In finding the permutation matrix p that avoids dividing by zero
                 * we take a slightly different approach.  For numerical stability
-                * We find the element with the largest 
+                * We find the element with the largest
                 * absolute value of those in the current first column (column k).  If all elements in
                 * the current first column are zero then the matrix is singluar and throw an
                 * error.
@@ -287,10 +293,12 @@ namespace ProjNet.CoordinateSystems.Transformations
                         kp = i;
                     }
                 }
+
                 if (p == 0)
                 {
                     throw new Exception("singular matrix");
                 }
+
                 /*
                 * These lines update the pivot array (which represents the pivot matrix)
                 * by exchanging pi[k] and pi[kp].
@@ -323,9 +331,9 @@ namespace ProjNet.CoordinateSystems.Transformations
                     }
                 }
             }
+
             return pi;
         }
-
 
         /// <summary>
         /// Given an nXn matrix A, solve n linear equations to find the inverse of A.
@@ -338,7 +346,7 @@ namespace ProjNet.CoordinateSystems.Transformations
             int n = A.GetLength(0);
             int m = A.GetLength(1);
 
-            //x will hold the inverse matrix to be returned
+            // x will hold the inverse matrix to be returned
             double[,] x = new double[n, m];
 
             /*
@@ -347,58 +355,57 @@ namespace ProjNet.CoordinateSystems.Transformations
             * */
             double[] solve;
 
-            //Get the LU matrix and P matrix (as an array)
-            int[] P = LUPDecomposition(A);
-            double[,] LU = A;
+            // Get the LU matrix and P matrix (as an array)
+            int[] p = LUPDecomposition(A);
+            double[,] lU = A;
 
             /*
             * Solve AX = e for each column ei of the identity matrix using LUP decomposition
             * */
             for (int i = 0; i < n; i++)
             {
-                //e will represent each column in the identity matrix
+                // e will represent each column in the identity matrix
                 double[] e = new double[m];
                 e[i] = 1;
-                solve = LUPSolve(LU, P, e);
+                solve = LUPSolve(lU, p, e);
                 for (int j = 0; j < solve.Length; j++)
                 {
                     x[j, i] = solve[j];
                 }
             }
+
             return x;
         }
-        #endregion private methods
 
-        #region public methods
         /// <summary>
         /// Returns the inverse of this affine transformation.
         /// </summary>
         /// <returns>IMathTransform that is the reverse of the current affine transformation.</returns>
         public override MathTransform Inverse()
         {
-            if (_inverse == null)
+            if (this.inverse == null)
             {
-                //find the inverse transformation matrix - use cloned matrix array
-                //remarks about dimensionality: if input dimension is M, and output dimension is N, then the matrix will have size [N+1][M+1].
-                double[,] invMatrix = InvertMatrix((double[,])_transformMatrix.Clone());
-                _inverse = new AffineTransform(invMatrix);
+                // find the inverse transformation matrix - use cloned matrix array
+                // remarks about dimensionality: if input dimension is M, and output dimension is N, then the matrix will have size [N+1][M+1].
+                double[,] invMatrix = InvertMatrix((double[,])this.transformMatrix.Clone());
+                this.inverse = new AffineTransform(invMatrix);
             }
 
-            return _inverse;
+            return this.inverse;
         }
 
         /// <summary>
         /// Transforms a coordinate point. The passed parameter point should not be modified.
         /// </summary>
-        /// <param name="x">The x-ordinate value</param>
-        /// <param name="y">The y-ordinate value</param>
-        /// <param name="z">The z-ordinate value</param>
-        /// <returns>The converted x-, y- and z-ordinate tuple</returns>
+        /// <param name="x">The x-ordinate value.</param>
+        /// <param name="y">The y-ordinate value.</param>
+        /// <param name="z">The z-ordinate value.</param>
+        /// <returns>The converted x-, y- and z-ordinate tuple.</returns>
         private (double x, double y, double z) TransformAffine(double x, double y, double z)
         {
-            //check source dimensionality - allow coordinate clipping, if source dimensionality is greater then expected source dimensionality of affine transformation
+            // check source dimensionality - allow coordinate clipping, if source dimensionality is greater then expected source dimensionality of affine transformation
             Span<double> point = stackalloc double[0];
-            switch (_dimSource)
+            switch (this.dimSource)
             {
                 case 0:
                     point = default;
@@ -420,23 +427,24 @@ namespace ProjNet.CoordinateSystems.Transformations
                     throw new NotSupportedException();
             }
 
-            if (_dimTarget > 3)
+            if (this.dimTarget > 3)
             {
                 throw new NotSupportedException();
             }
 
-            //use transformation matrix to create output points that has dimTarget dimensionality
-            Span<double> transformed = stackalloc double[_dimTarget];
+            // use transformation matrix to create output points that has dimTarget dimensionality
+            Span<double> transformed = stackalloc double[this.dimTarget];
 
-            //count each target dimension using the apropriate row
-            for (int row = 0; row < _dimTarget; row++)
+            // count each target dimension using the apropriate row
+            for (int row = 0; row < this.dimTarget; row++)
             {
-                //start with the last value which is in fact multiplied by 1
-                double dimVal = _transformMatrix[row, _dimSource];
-                for (int col = 0; col < _dimSource; col++)
+                // start with the last value which is in fact multiplied by 1
+                double dimVal = this.transformMatrix[row, this.dimSource];
+                for (int col = 0; col < this.dimSource; col++)
                 {
-                    dimVal += _transformMatrix[row, col] * point[col];
+                    dimVal += this.transformMatrix[row, col] * point[col];
                 }
+
                 transformed[row] = dimVal;
             }
 
@@ -459,21 +467,19 @@ namespace ProjNet.CoordinateSystems.Transformations
             return ret;
         }
 
-
         /// <inheritdoc />
         public override void Transform(ref double x, ref double y, ref double z)
         {
-            (x, y, z) = TransformAffine(x, y, z);
+            (x, y, z) = this.TransformAffine(x, y, z);
         }
 
         /// <summary>
-        /// Reverses the transformation
+        /// Reverses the transformation.
         /// </summary>
         public override void Invert()
         {
             throw new NotSupportedException("The method or operation is not supported.");
         }
-
 
         /// <summary>
         /// Returns this affine transform as an affine transform matrix.
@@ -481,8 +487,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <returns></returns>
         public double[,] GetMatrix()
         {
-            return (double[,])this._transformMatrix.Clone();
+            return (double[,])this.transformMatrix.Clone();
         }
-        #endregion public methods
     }
 }

@@ -1,7 +1,7 @@
-using System.Collections.Generic;
-
 namespace ProjNet.Data
 {
+    using System.Collections.Generic;
+
     /// <summary>
     /// Provides managed coordinate system definitions used to initialize <see cref="CoordinateSystemServices"/>.
     /// </summary>

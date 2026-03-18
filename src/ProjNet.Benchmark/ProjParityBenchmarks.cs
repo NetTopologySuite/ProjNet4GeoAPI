@@ -1,10 +1,10 @@
-using System;
-using BenchmarkDotNet.Attributes;
-using ProjNet;
-using ProjNet.CoordinateSystems.Transformations;
-
 namespace ProjNet.Benchmark
 {
+    using System;
+    using BenchmarkDotNet.Attributes;
+    using ProjNet;
+    using ProjNet.CoordinateSystems.Transformations;
+
     [MemoryDiagnoser]
     public class ProjParityBenchmarks
     {
@@ -22,10 +22,10 @@ namespace ProjNet.Benchmark
         [Params(10000)]
         public int PointCount { get; set; }
 
-        private double[] _longitudes;
-        private double[] _latitudes;
-        private double[] _xBuffer;
-        private double[] _yBuffer;
+        private double[] longitudes;
+        private double[] latitudes;
+        private double[] xBuffer;
+        private double[] yBuffer;
 
         public static void Validate()
         {
@@ -33,67 +33,67 @@ namespace ProjNet.Benchmark
             benchmark.GlobalSetup();
 
             benchmark.Wgs84ToWebMercatorBatched();
-            EnsureFinite(benchmark._xBuffer, benchmark._yBuffer);
+            EnsureFinite(benchmark.xBuffer, benchmark.yBuffer);
 
             benchmark.Wgs84ToUtm32NBatched();
-            EnsureFinite(benchmark._xBuffer, benchmark._yBuffer);
+            EnsureFinite(benchmark.xBuffer, benchmark.yBuffer);
 
             benchmark.WebMercatorToWgs84Batched();
-            EnsureFinite(benchmark._xBuffer, benchmark._yBuffer);
+            EnsureFinite(benchmark.xBuffer, benchmark.yBuffer);
         }
 
         [GlobalSetup]
         public void GlobalSetup()
         {
-            _longitudes = new double[PointCount];
-            _latitudes = new double[PointCount];
-            _xBuffer = new double[PointCount];
-            _yBuffer = new double[PointCount];
+            this.longitudes = new double[this.PointCount];
+            this.latitudes = new double[this.PointCount];
+            this.xBuffer = new double[this.PointCount];
+            this.yBuffer = new double[this.PointCount];
 
             var random = new Random(20260317);
-            for (int i = 0; i < PointCount; i++)
+            for (int i = 0; i < this.PointCount; i++)
             {
-                _longitudes[i] = -179d + (random.NextDouble() * 358d);
-                _latitudes[i] = -85d + (random.NextDouble() * 170d);
+                this.longitudes[i] = -179d + (random.NextDouble() * 358d);
+                this.latitudes[i] = -85d + (random.NextDouble() * 170d);
             }
         }
 
         [Benchmark(Baseline = true)]
         public void Wgs84ToWebMercatorBatched()
         {
-            PrepareInput();
-            Wgs84ToWebMercator.MathTransform.Transform(_xBuffer, _yBuffer);
+            this.PrepareInput();
+            Wgs84ToWebMercator.MathTransform.Transform(this.xBuffer, this.yBuffer);
         }
 
         [Benchmark]
         public void Wgs84ToWebMercatorOneByOne()
         {
-            PrepareInput();
-            for (int i = 0; i < PointCount; i++)
+            this.PrepareInput();
+            for (int i = 0; i < this.PointCount; i++)
             {
-                Wgs84ToWebMercator.MathTransform.Transform(ref _xBuffer[i], ref _yBuffer[i]);
+                Wgs84ToWebMercator.MathTransform.Transform(ref this.xBuffer[i], ref this.yBuffer[i]);
             }
         }
 
         [Benchmark]
         public void Wgs84ToUtm32NBatched()
         {
-            PrepareInput();
-            Wgs84ToUtm32N.MathTransform.Transform(_xBuffer, _yBuffer);
+            this.PrepareInput();
+            Wgs84ToUtm32N.MathTransform.Transform(this.xBuffer, this.yBuffer);
         }
 
         [Benchmark]
         public void WebMercatorToWgs84Batched()
         {
-            PrepareInput();
-            Wgs84ToWebMercator.MathTransform.Transform(_xBuffer, _yBuffer);
-            WebMercatorToWgs84.MathTransform.Transform(_xBuffer, _yBuffer);
+            this.PrepareInput();
+            Wgs84ToWebMercator.MathTransform.Transform(this.xBuffer, this.yBuffer);
+            WebMercatorToWgs84.MathTransform.Transform(this.xBuffer, this.yBuffer);
         }
 
         private void PrepareInput()
         {
-            _longitudes.CopyTo(_xBuffer.AsSpan());
-            _latitudes.CopyTo(_yBuffer.AsSpan());
+            this.longitudes.CopyTo(this.xBuffer.AsSpan());
+            this.latitudes.CopyTo(this.yBuffer.AsSpan());
         }
 
         private static void EnsureFinite(double[] xs, double[] ys)

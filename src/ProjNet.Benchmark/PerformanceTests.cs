@@ -1,38 +1,38 @@
-using System;
-using System.IO;
-using System.IO.Compression;
-using System.Linq;
-using System.Reflection;
-
-using BenchmarkDotNet.Attributes;
-
-using ProjNet.CoordinateSystems;
-using ProjNet.CoordinateSystems.Transformations;
-using ProjNet.Geometries;
-
 namespace ProjNet.Benchmark
 {
+    using System;
+    using System.IO;
+    using System.IO.Compression;
+    using System.Linq;
+    using System.Reflection;
+
+    using BenchmarkDotNet.Attributes;
+
+    using ProjNet.CoordinateSystems;
+    using ProjNet.CoordinateSystems.Transformations;
+    using ProjNet.Geometries;
+
     public class PerformanceTests
     {
         private static readonly MathTransform WGS84ToWebMercator = new CoordinateTransformationFactory().CreateFromCoordinateSystems(GeographicCoordinateSystem.WGS84, ProjectedCoordinateSystem.WebMercator).MathTransform;
 
-        private int _cnt;
+        private int cnt;
 
-        private double[] _xs;
+        private double[] xs;
 
-        private double[] _ys;
+        private double[] ys;
 
-        private XY[] _xys;
+        private XY[] xys;
 
-        private XYZ[] _xyzs;
+        private XYZ[] xyzs;
 
-        private double[] _xsCopy;
+        private double[] xsCopy;
 
-        private double[] _ysCopy;
+        private double[] ysCopy;
 
-        private XY[] _xysCopy;
+        private XY[] xysCopy;
 
-        private XYZ[] _xyzsCopy;
+        private XYZ[] xyzsCopy;
 
         public static void Validate()
         {
@@ -40,30 +40,30 @@ namespace ProjNet.Benchmark
             instance.GlobalSetup();
 
             instance.SoAOneByOne();
-            var firstOutput = instance._xsCopy.Zip(instance._ysCopy, (x, y) => (x, y)).ToArray();
+            var firstOutput = instance.xsCopy.Zip(instance.ysCopy, (x, y) => (x, y)).ToArray();
 
             for (int i = 0; i < firstOutput.Length; i++)
             {
-                if (firstOutput[i].Equals((instance._xys[i].X, instance._xys[i].Y)))
+                if (firstOutput[i].Equals((instance.xys[i].X, instance.xys[i].Y)))
                 {
                     throw new Exception("Validation failure: transformer isn't actually transforming.");
                 }
             }
 
             instance.SoABatched();
-            Validate(instance._xsCopy.Zip(instance._ysCopy, (x, y) => (x, y)).ToArray());
+            Validate(instance.xsCopy.Zip(instance.ysCopy, (x, y) => (x, y)).ToArray());
 
             instance.TightAoSOneByOne();
-            Validate(Array.ConvertAll(instance._xysCopy, xy => (xy.X, xy.Y)));
+            Validate(Array.ConvertAll(instance.xysCopy, xy => (xy.X, xy.Y)));
 
             instance.TightAoSBatched();
-            Validate(Array.ConvertAll(instance._xysCopy, xy => (xy.X, xy.Y)));
+            Validate(Array.ConvertAll(instance.xysCopy, xy => (xy.X, xy.Y)));
 
             instance.LooserAoSOneByOne();
-            Validate(Array.ConvertAll(instance._xyzsCopy, xyz => (xyz.X, xyz.Y)));
+            Validate(Array.ConvertAll(instance.xyzsCopy, xyz => (xyz.X, xyz.Y)));
 
             instance.LooserAoSBatched();
-            Validate(Array.ConvertAll(instance._xyzsCopy, xyz => (xyz.X, xyz.Y)));
+            Validate(Array.ConvertAll(instance.xyzsCopy, xyz => (xyz.X, xyz.Y)));
 
             void Validate(ReadOnlySpan<(double x, double y)> nextOutput)
             {
@@ -81,21 +81,21 @@ namespace ProjNet.Benchmark
             string fullPathToData = Path.Combine(currentFolderPath, "coords.dat.gz");
             using (var reader = new BinaryReader(new GZipStream(File.OpenRead(fullPathToData), CompressionMode.Decompress)))
             {
-                _cnt = reader.ReadInt32();
+                this.cnt = reader.ReadInt32();
 
-                _xs = new double[_cnt];
-                _ys = new double[_cnt];
-                _xys = new XY[_cnt];
-                _xyzs = new XYZ[_cnt];
+                this.xs = new double[this.cnt];
+                this.ys = new double[this.cnt];
+                this.xys = new XY[this.cnt];
+                this.xyzs = new XYZ[this.cnt];
 
-                for (int i = 0; i < _cnt; i++)
+                for (int i = 0; i < this.cnt; i++)
                 {
-                    _xs[i] = _xys[i].X = _xyzs[i].X = reader.ReadDouble();
+                    this.xs[i] = this.xys[i].X = this.xyzs[i].X = reader.ReadDouble();
                 }
 
-                for (int i = 0; i < _cnt; i++)
+                for (int i = 0; i < this.cnt; i++)
                 {
-                    _ys[i] = _xys[i].Y = _xyzs[i].Y = reader.ReadDouble();
+                    this.ys[i] = this.xys[i].Y = this.xyzs[i].Y = reader.ReadDouble();
                 }
             }
 
@@ -104,63 +104,63 @@ namespace ProjNet.Benchmark
             // without allocating anything.  this slightly hurts accuracy, but the effect appears to
             // be less than 5% of the total test's time, and [IterationSetup] / [IterationCleanup]
             // aren't designed for the kinds of benchmarks we're running here.
-            _xsCopy = new double[_cnt];
-            _ysCopy = new double[_cnt];
-            _xysCopy = new XY[_cnt];
-            _xyzsCopy = new XYZ[_cnt];
+            this.xsCopy = new double[this.cnt];
+            this.ysCopy = new double[this.cnt];
+            this.xysCopy = new XY[this.cnt];
+            this.xyzsCopy = new XYZ[this.cnt];
         }
 
         [Benchmark]
         public void SoAOneByOne()
         {
-            _xs.CopyTo(_xsCopy.AsSpan());
-            _ys.CopyTo(_ysCopy.AsSpan());
-            for (int i = 0; i < _cnt; i++)
+            this.xs.CopyTo(this.xsCopy.AsSpan());
+            this.ys.CopyTo(this.ysCopy.AsSpan());
+            for (int i = 0; i < this.cnt; i++)
             {
-                WGS84ToWebMercator.Transform(ref _xsCopy[i], ref _ysCopy[i]);
+                WGS84ToWebMercator.Transform(ref this.xsCopy[i], ref this.ysCopy[i]);
             }
         }
 
         [Benchmark]
         public void SoABatched()
         {
-            _xs.CopyTo(_xsCopy.AsSpan());
-            _ys.CopyTo(_ysCopy.AsSpan());
-            WGS84ToWebMercator.Transform(_xsCopy, _ysCopy);
+            this.xs.CopyTo(this.xsCopy.AsSpan());
+            this.ys.CopyTo(this.ysCopy.AsSpan());
+            WGS84ToWebMercator.Transform(this.xsCopy, this.ysCopy);
         }
 
         [Benchmark]
         public void TightAoSOneByOne()
         {
-            _xys.CopyTo(_xysCopy.AsSpan());
-            for (int i = 0; i < _cnt; i++)
+            this.xys.CopyTo(this.xysCopy.AsSpan());
+            for (int i = 0; i < this.cnt; i++)
             {
-                WGS84ToWebMercator.Transform(ref _xysCopy[i].X, ref _xysCopy[i].Y);
+                WGS84ToWebMercator.Transform(ref this.xysCopy[i].X, ref this.xysCopy[i].Y);
             }
         }
 
         [Benchmark]
         public void TightAoSBatched()
         {
-            _xys.CopyTo(_xysCopy.AsSpan());
-            WGS84ToWebMercator.Transform(_xysCopy);
+            this.xys.CopyTo(this.xysCopy.AsSpan());
+            WGS84ToWebMercator.Transform(this.xysCopy);
         }
 
         [Benchmark]
         public void LooserAoSOneByOne()
         {
-            _xyzs.CopyTo(_xyzsCopy.AsSpan());
-            for (int i = 0; i < _cnt; i++)
+            this.xyzs.CopyTo(this.xyzsCopy.AsSpan());
+            for (int i = 0; i < this.cnt; i++)
             {
-                WGS84ToWebMercator.Transform(ref _xyzsCopy[i].X, ref _xyzsCopy[i].Y);
+                WGS84ToWebMercator.Transform(ref this.xyzsCopy[i].X, ref this.xyzsCopy[i].Y);
             }
         }
 
         [Benchmark]
         public void LooserAoSBatched()
         {
-            _xyzs.CopyTo(_xyzsCopy.AsSpan());
-            WGS84ToWebMercator.Transform(_xyzsCopy);
+            this.xyzs.CopyTo(this.xyzsCopy.AsSpan());
+            WGS84ToWebMercator.Transform(this.xyzsCopy);
         }
     }
 }

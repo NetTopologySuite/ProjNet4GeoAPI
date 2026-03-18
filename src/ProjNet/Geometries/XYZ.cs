@@ -1,8 +1,8 @@
-using System;
-using System.Runtime.InteropServices;
-
 namespace ProjNet.Geometries
 {
+    using System;
+    using System.Runtime.InteropServices;
+
     /// <summary>
     /// A tuple of X-, Y- and Z-ordinate values, laid out in that order.
     /// </summary>
@@ -10,17 +10,17 @@ namespace ProjNet.Geometries
     public struct XYZ : IEquatable<XYZ>
     {
         /// <summary>
-        /// The X-ordinate value
+        /// The X-ordinate value.
         /// </summary>
         public double X;
 
         /// <summary>
-        /// The Y-ordinate value
+        /// The Y-ordinate value.
         /// </summary>
         public double Y;
 
         /// <summary>
-        /// The Z-ordinate value
+        /// The Z-ordinate value.
         /// </summary>
         public double Z;
 
@@ -31,18 +31,18 @@ namespace ProjNet.Geometries
         /// <param name="y">The value for <see cref="Y"/>.</param>
         /// <param name="z">The value for <see cref="Z"/>.</param>
         public XYZ(double x, double y, double z) =>
-            (X, Y, Z) = (x, y, z);
+            (this.X, this.Y, this.Z) = (x, y, z);
 
         /// <inheritdoc />
-        public override bool Equals(object obj) => obj is XYZ other && Equals(other);
+        public override bool Equals(object obj) => obj is XYZ other && this.Equals(other);
 
         /// <inheritdoc />
-        public bool Equals(XYZ other) => (X, Y, Z).Equals((other.X, other.Y, other.Z));
+        public bool Equals(XYZ other) => (this.X, this.Y, this.Z).Equals((other.X, other.Y, other.Z));
 
         /// <inheritdoc />
-        public override int GetHashCode() => (X, Y, Z).GetHashCode();
+        public override int GetHashCode() => (this.X, this.Y, this.Z).GetHashCode();
 
         /// <inheritdoc />
-        public override string ToString() => $"({X}, {Y}, {Z})";
+        public override string ToString() => $"({this.X}, {this.Y}, {this.Z})";
     }
 }

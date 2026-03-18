@@ -1,10 +1,10 @@
-using ProjNet;
-using ProjNet.CoordinateSystems;
-using ProjNet.CoordinateSystems.Transformations;
-using Xunit;
-
 namespace ProjNET.Tests
 {
+    using ProjNet;
+    using ProjNet.CoordinateSystems;
+    using ProjNet.CoordinateSystems.Transformations;
+    using Xunit;
+
     public class VerificationSuiteTests
     {
         [Theory]
@@ -15,7 +15,7 @@ namespace ProjNET.Tests
         {
             var services = CreateCanonicalServices();
             var transform = services.CreateTransformation(4326, 3857);
-            var result = transform.MathTransform.Transform(new[] { lon, lat });
+            double[] result = transform.MathTransform.Transform(new[] { lon, lat });
 
             AssertCoordinate(expectedX, expectedY, result[0], result[1], 1e-6);
         }
@@ -28,7 +28,7 @@ namespace ProjNET.Tests
         {
             var services = CreateCanonicalServices();
             var transform = services.CreateTransformation(3857, 4326);
-            var result = transform.MathTransform.Transform(new[] { x, y });
+            double[] result = transform.MathTransform.Transform(new[] { x, y });
 
             AssertCoordinate(expectedLon, expectedLat, result[0], result[1], 1e-9);
         }

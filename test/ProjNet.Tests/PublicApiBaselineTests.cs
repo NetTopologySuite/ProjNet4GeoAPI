@@ -1,11 +1,11 @@
-using System;
-using System.IO;
-using ProjNet;
-using PublicApiGenerator;
-using Xunit;
-
 namespace ProjNET.Tests
 {
+    using System;
+    using System.IO;
+    using ProjNet;
+    using PublicApiGenerator;
+    using Xunit;
+
     public class PublicApiBaselineTests
     {
         private const string BaselineFileName = "PublicAPI.Shipped.txt";
@@ -14,8 +14,8 @@ namespace ProjNET.Tests
         [Xunit.Fact]
         public void PublicApiMatchesBaseline()
         {
-            var baselinePath = GetBaselinePath();
-            var currentPublicApi = NormalizeLineEndings(typeof(CoordinateSystemServices).Assembly.GeneratePublicApi(new ApiGeneratorOptions
+            string baselinePath = GetBaselinePath();
+            string currentPublicApi = NormalizeLineEndings(typeof(CoordinateSystemServices).Assembly.GeneratePublicApi(new ApiGeneratorOptions
             {
                 IncludeAssemblyAttributes = false,
                 ExcludeAttributes = new[]
@@ -32,9 +32,11 @@ namespace ProjNET.Tests
             }
 
             if (!File.Exists(baselinePath))
+            {
                 throw new InvalidOperationException($"Public API baseline file was not found at '{baselinePath}'. Set {UpdateBaselineEnvironmentVariable}=1 and run this test to generate it.");
+            }
 
-            var baseline = NormalizeLineEndings(File.ReadAllText(baselinePath));
+            string baseline = NormalizeLineEndings(File.ReadAllText(baselinePath));
             Assert.Equal(baseline, currentPublicApi);
         }
 
@@ -43,9 +45,11 @@ namespace ProjNET.Tests
             var directory = new DirectoryInfo(AppContext.BaseDirectory);
             while (directory != null)
             {
-                var solutionPath = Path.Combine(directory.FullName, "ProjNet4GeoAPI.sln");
+                string solutionPath = Path.Combine(directory.FullName, "ProjNet4GeoAPI.sln");
                 if (File.Exists(solutionPath))
+                {
                     return Path.Combine(directory.FullName, "src", "ProjNet", BaselineFileName);
+                }
 
                 directory = directory.Parent;
             }

@@ -15,44 +15,45 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
-using System;
-using System.Globalization;
-using System.Text;
-
 namespace ProjNet.CoordinateSystems
 {
-	/// <summary>
-	/// Class for defining units
+    using System;
+    using System.Globalization;
+    using System.Text;
+
+    /// <summary>
+    /// Class for defining units.
     /// </summary>
-    [Serializable] 
+    [Serializable]
     public class Unit : Info, IUnit
     {
-		/// <summary>
-		/// Initializes a new unit
-		/// </summary>
-		/// <param name="conversionFactor">Conversion factor to base unit</param>
-		/// <param name="name">Name of unit</param>
-		/// <param name="authority">Authority name</param>
-		/// <param name="authorityCode">Authority-specific identification code.</param>
-		/// <param name="alias">Alias</param>
-		/// <param name="abbreviation">Abbreviation</param>
-		/// <param name="remarks">Provider-supplied remarks</param>
-		internal Unit(double conversionFactor, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks)
-			:
-			base(name, authority, authorityCode, alias, abbreviation, remarks)
-		{
-			ConversionFactor = conversionFactor;
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Unit"/> class.
+        /// Initializes a new unit.
+        /// </summary>
+        /// <param name="conversionFactor">Conversion factor to base unit.</param>
+        /// <param name="name">Name of unit.</param>
+        /// <param name="authority">Authority name.</param>
+        /// <param name="authorityCode">Authority-specific identification code.</param>
+        /// <param name="alias">Alias.</param>
+        /// <param name="abbreviation">Abbreviation.</param>
+        /// <param name="remarks">Provider-supplied remarks.</param>
+        internal Unit(double conversionFactor, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks)
+            : base(name, authority, authorityCode, alias, abbreviation, remarks)
+        {
+            this.ConversionFactor = conversionFactor;
+        }
 
-		/// <summary>
-		/// Initializes a new unit
-		/// </summary>
-		/// <param name="name">Name of unit</param>
-		/// <param name="conversionFactor">Conversion factor to base unit</param>
-		internal Unit(string name, double conversionFactor)
-			: this(conversionFactor, name, string.Empty, -1, string.Empty, string.Empty, string.Empty)
-		{
-		}
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Unit"/> class.
+        /// Initializes a new unit.
+        /// </summary>
+        /// <param name="name">Name of unit.</param>
+        /// <param name="conversionFactor">Conversion factor to base unit.</param>
+        internal Unit(string name, double conversionFactor)
+            : this(conversionFactor, name, string.Empty, -1, string.Empty, string.Empty, string.Empty)
+        {
+        }
 
         /// <summary>
         /// Gets or sets the number of units per base-unit.
@@ -60,45 +61,51 @@ namespace ProjNet.CoordinateSystems
         public double ConversionFactor { get; set; }
 
         /// <summary>
-        /// Returns the Well-known text for this object
+        /// Gets the Well-known text for this object
         /// as defined in the simple features specification.
         /// </summary>
         public override string WKT
-		{
-			get
-			{
-				var sb = new StringBuilder();
-				sb.AppendFormat(CultureInfo.InvariantCulture.NumberFormat, "UNIT[\"{0}\", {1}", Name, ConversionFactor);
-				if (!string.IsNullOrWhiteSpace(Authority) && AuthorityCode > 0)
-					sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
-				sb.Append("]");
-				return sb.ToString();
-			}
-		}
+        {
+            get
+            {
+                var sb = new StringBuilder();
+                sb.AppendFormat(CultureInfo.InvariantCulture.NumberFormat, "UNIT[\"{0}\", {1}", this.Name, this.ConversionFactor);
+                if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
+                {
+                    sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", this.Authority, this.AuthorityCode);
+                }
 
-		/// <summary>
-		/// Gets an XML representation of this object [NOT IMPLEMENTED].
-		/// </summary>
-		public override string XML
-		{
-			get
-			{
-				throw new NotImplementedException();
-			}
-		}
+                sb.Append("]");
+                return sb.ToString();
+            }
+        }
 
-		/// <summary>
-		/// Checks whether the values of this instance is equal to the values of another instance.
-		/// Only parameters used for coordinate system are used for comparison.
-		/// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
-		/// </summary>
-		/// <param name="obj"></param>
-		/// <returns>True if equal</returns>
-		public override bool EqualParams(object obj)
-		{
-			if (!(obj is Unit))
-				return false;
-			return (obj as Unit).ConversionFactor == ConversionFactor;
-		}
+        /// <summary>
+        /// Gets an XML representation of this object [NOT IMPLEMENTED].
+        /// </summary>
+        public override string XML
+        {
+            get
+            {
+                throw new NotImplementedException();
+            }
+        }
+
+        /// <summary>
+        /// Checks whether the values of this instance is equal to the values of another instance.
+        /// Only parameters used for coordinate system are used for comparison.
+        /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns>True if equal.</returns>
+        public override bool EqualParams(object obj)
+        {
+            if (!(obj is Unit))
+            {
+                return false;
+            }
+
+            return (obj as Unit).ConversionFactor == this.ConversionFactor;
+        }
     }
 }

@@ -1,11 +1,11 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using ProjNet.Resources;
-using Xunit;
-
 namespace ProjNET.Tests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using ProjNet.Resources;
+    using Xunit;
+
     public class GridResourceResolverTests
     {
         [Fact]
@@ -99,9 +99,9 @@ namespace ProjNET.Tests
 
             public bool TryFetch(string gridName, string targetFilePath)
             {
-                Calls++;
-                OnFetch?.Invoke(targetFilePath);
-                return OnFetch != null;
+                this.Calls++;
+                this.OnFetch?.Invoke(targetFilePath);
+                return this.OnFetch != null;
             }
         }
     }

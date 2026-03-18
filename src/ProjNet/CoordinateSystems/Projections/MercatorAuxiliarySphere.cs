@@ -1,9 +1,9 @@
-﻿using ProjNet.CoordinateSystems.Transformations;
-using System;
-using System.Collections.Generic;
-
 namespace ProjNet.CoordinateSystems.Projections
 {
+    using ProjNet.CoordinateSystems.Transformations;
+    using System;
+    using System.Collections.Generic;
+
     /// <summary>
     /// Implements the Mercator Auxiliary Sphere projection (Web Mercator).
     /// This projection uses a spherical model with a constant radius.
@@ -12,9 +12,10 @@ namespace ProjNet.CoordinateSystems.Projections
     internal class MercatorAuxiliarySphere : MapProjection
     {
         // Scale factor – for the spherical (auxiliary) Mercator this is 1.
-        private const double _k0 = 1.0;
+        private const double k0 = 1.0;
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="MercatorAuxiliarySphere"/> class.
         /// Initializes the MercatorAuxiliarySphere projection with the specified parameters.
         /// </summary>
         /// <param name="parameters">List of projection parameters.</param>
@@ -24,6 +25,7 @@ namespace ProjNet.CoordinateSystems.Projections
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="MercatorAuxiliarySphere"/> class.
         /// Initializes the MercatorAuxiliarySphere projection with the specified parameters.
         /// </summary>
         /// <param name="parameters">List of projection parameters.</param>
@@ -31,8 +33,8 @@ namespace ProjNet.CoordinateSystems.Projections
         protected MercatorAuxiliarySphere(IEnumerable<ProjectionParameter> parameters, MercatorAuxiliarySphere isInverse)
             : base(parameters, isInverse)
         {
-            Authority = "EPSG";
-            Name = "Mercator_Auxiliary_Sphere";
+            this.Authority = "EPSG";
+            this.Name = "Mercator_Auxiliary_Sphere";
         }
 
         /// <summary>
@@ -64,8 +66,9 @@ namespace ProjNet.CoordinateSystems.Projections
             // Forward equations for the Spherical (Auxiliary) Mercator Projection:
             // X = semiMajor * k0 * (lon - central_meridian)
             // Y = semiMajor * k0 * ln( tan(PI/4 + lat/2) )
-            lon = _semiMajor * _k0 * (dLon - central_meridian);
-            lat = _semiMajor * _k0 * Math.Log(Math.Tan((PI * 0.25) + (dLat * 0.5)));
+            lon = this.semiMajor * k0 * (dLon - this.central_meridian);
+            lat = this.semiMajor * k0 * Math.Log(Math.Tan((PI * 0.25) + (dLat * 0.5)));
+
             // Note: false_easting and false_northing can be added here if necessary.
         }
 
@@ -85,12 +88,13 @@ namespace ProjNet.CoordinateSystems.Projections
             // Inverse equations:
             // lon = central_meridian + X / (semiMajor * k0)
             // lat = PI/2 - 2 * atan( exp( -Y / (semiMajor * k0) ) )
-            double ts = Math.Exp(-dY / (_semiMajor * _k0));
+            double ts = Math.Exp(-dY / (this.semiMajor * k0));
             double dLat = HALF_PI - (2 * Math.Atan(ts));
-            double dLon = central_meridian + (dX / (_semiMajor * _k0));
+            double dLon = this.central_meridian + (dX / (this.semiMajor * k0));
 
             x = dLon;
             y = dLat;
+
             // Note: false_easting/false_northing can be subtracted here if provided in the parameter list.
         }
 
@@ -100,11 +104,12 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <returns>The inverse projection as MathTransform.</returns>
         public override MathTransform Inverse()
         {
-            if (_inverse is null)
+            if (this.inverse is null)
             {
-                _inverse = new MercatorAuxiliarySphere(_Parameters.ToProjectionParameter(), this);
+                this.inverse = new MercatorAuxiliarySphere(this.Parameters.ToProjectionParameter(), this);
             }
-            return _inverse;
+
+            return this.inverse;
         }
     }
 }

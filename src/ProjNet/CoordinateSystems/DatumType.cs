@@ -26,7 +26,7 @@ namespace ProjNet.CoordinateSystems
     public enum DatumType : int
     {
         /// <summary>
-        /// Lowest possible value for horizontal datum types
+        /// Lowest possible value for horizontal datum types.
         /// </summary>
         HD_Min = 1000,
 
@@ -45,7 +45,7 @@ namespace ProjNet.CoordinateSystems
         /// <summary>
         /// A geocentric datum is a "satellite age" modern geodetic datum mainly of global
         /// extent, such as WGS84 (used in GPS), PZ90 (used in GLONASS) and ITRF. These
-        /// datums were designed to support both a horizontal component of position and 
+        /// datums were designed to support both a horizontal component of position and
         /// a vertical component of position (through ellipsoidal heights). The regional
         /// realizations of ITRF, such as ETRF, are also included in this category.
         /// </summary>
@@ -94,7 +94,7 @@ namespace ProjNet.CoordinateSystems
         /// <summary>
         /// A vertical datum of geoid model derived heights, also called GPS-derived heights.
         /// These heights are approximations of orthometric heights (H), constructed from the
-        /// ellipsoidal heights (h) by the use of the given geoid undulation model (N) 
+        /// ellipsoidal heights (h) by the use of the given geoid undulation model (N)
         /// through the equation: H=h-N.
         /// </summary>
         VD_GeoidModelDerived = 2005,
@@ -102,7 +102,7 @@ namespace ProjNet.CoordinateSystems
         /// <summary>
         /// This attribute is used to support the set of datums generated for hydrographic
         /// engineering projects where depth measurements below sea level are needed. It is
-        /// often called a hydrographic or a marine datum. Depths are measured in the 
+        /// often called a hydrographic or a marine datum. Depths are measured in the
         /// direction perpendicular (approximately) to the actual equipotential surfaces of
         /// the earth's gravity field, using such procedures as echo-sounding.
         /// </summary>

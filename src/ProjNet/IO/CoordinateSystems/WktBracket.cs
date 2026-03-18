@@ -18,7 +18,7 @@
 namespace ProjNet.IO.CoordinateSystems
 {
     /// <summary>
-    /// An enumeration of possible bracket types
+    /// An enumeration of possible bracket types.
     /// </summary>
     internal enum WktBracket
     {
@@ -26,14 +26,17 @@ namespace ProjNet.IO.CoordinateSystems
         /// Bracket type not specified.
         /// </summary>
         DontCare,
+
         /// <summary>
-        /// Opener &quot;<c>(</c>&quot;, closer &quot;<c>)</c>&quot;
+        /// Opener &quot;<c>(</c>&quot;, closer &quot;<c>)</c>&quot.
         /// </summary>
         Round,
+
         /// <summary>
-        /// Opener &quot;<c>[</c>&quot;, closer &quot;<c>]</c>&quot;
+        /// Opener &quot;<c>[</c>&quot;, closer &quot;<c>]</c>&quot.
         /// </summary>
         Square,
-        //Brace
+
+        // Brace
     }
 }

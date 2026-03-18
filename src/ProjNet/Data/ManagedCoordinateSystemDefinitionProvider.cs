@@ -17,6 +17,7 @@ namespace ProjNet.Data
     /// </remarks>
     public sealed class ManagedCoordinateSystemDefinitionProvider : ICoordinateSystemDefinitionProvider, IManagedCoordinateSystemProvider
     {
+        /// <inheritdoc/>
         IEnumerable<KeyValuePair<int, CoordinateSystem>> IManagedCoordinateSystemProvider.GetCoordinateSystems()
         {
             return GetManagedCoordinateSystems();

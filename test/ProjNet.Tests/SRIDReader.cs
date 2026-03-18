@@ -1,24 +1,26 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Reflection;
-using System.Text;
-using ProjNet.CoordinateSystems;
-
 namespace ProjNET.Tests
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Reflection;
+    using System.Text;
+    using ProjNet.CoordinateSystems;
+
     internal class SRIDReader
     {
-        private static readonly Lazy<CoordinateSystemFactory> CoordinateSystemFactory = 
+        private static readonly Lazy<CoordinateSystemFactory> CoordinateSystemFactory =
             new Lazy<CoordinateSystemFactory>(() => new CoordinateSystemFactory());
 
-        public struct WktString {
+        public struct WktString
+        {
             /// <summary>
-            /// Well-known ID
+            /// Well-known ID.
             /// </summary>
             public int WktId;
+
             /// <summary>
-            /// Well-known Text
+            /// Well-known Text.
             /// </summary>
             public string Wkt;
         }
@@ -26,7 +28,7 @@ namespace ProjNET.Tests
         /// <summary>
         /// Enumerates all SRID's in the SRID.csv file.
         /// </summary>
-        /// <returns>Enumerator</returns>
+        /// <returns>Enumerator.</returns>
         public static IEnumerable<WktString> GetSrids(string filename = null)
         {
             var stream = string.IsNullOrWhiteSpace(filename)
@@ -38,10 +40,16 @@ namespace ProjNET.Tests
                 while (!sr.EndOfStream)
                 {
                     string line = sr.ReadLine();
-                    if (string.IsNullOrWhiteSpace(line)) continue;
+                    if (string.IsNullOrWhiteSpace(line))
+                    {
+                        continue;
+                    }
 
                     int split = line.IndexOf(';');
-                    if (split <= -1) continue;
+                    if (split <= -1)
+                    {
+                        continue;
+                    }
 
                     var wkt = new WktString
                     {
@@ -54,17 +62,20 @@ namespace ProjNET.Tests
         }
 
         /// <summary>
-        /// Gets a coordinate system from the SRID.csv file
+        /// Gets a coordinate system from the SRID.csv file.
         /// </summary>
-        /// <param name="id">EPSG ID</param>
+        /// <param name="id">EPSG ID.</param>
         /// <param name="file">(optional) path to CSV File with WKT definitions.</param>
         /// <returns>Coordinate system, or <value>null</value> if no entry with <paramref name="id"/> was not found.</returns>
         public static CoordinateSystem GetCSbyID(int id, string file = null)
         {
-            //ICoordinateSystemFactory factory = new CoordinateSystemFactory();
+            // ICoordinateSystemFactory factory = new CoordinateSystemFactory();
             foreach (var wkt in GetSrids(file))
                 if (wkt.WktId == id)
+                {
                     return CoordinateSystemFactory.Value.CreateFromWkt(wkt.Wkt);
+                }
+
             return null;
         }
     }

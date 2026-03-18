@@ -15,11 +15,11 @@
 // along with SharpMap; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
-using System;
-using System.Globalization;
-
 namespace ProjNet.CoordinateSystems
 {
+    using System;
+    using System.Globalization;
+
     /// <summary>
     /// Details of axis. This is used to label axes, and indicate the orientation.
     /// </summary>
@@ -27,59 +27,61 @@ namespace ProjNet.CoordinateSystems
     public class AxisInfo
     {
         /// <summary>
+        /// Initializes a new instance of the <see cref="AxisInfo"/> class.
         /// Initializes a new instance of an AxisInfo.
         /// </summary>
-        /// <param name="name">Name of axis</param>
-        /// <param name="orientation">Axis orientation</param>
+        /// <param name="name">Name of axis.</param>
+        /// <param name="orientation">Axis orientation.</param>
         public AxisInfo(string name, AxisOrientationEnum orientation)
         {
-            _Name = name;
-            _Orientation = orientation;
+            this._Name = name;
+            this.Orientation = orientation;
         }
 
         private string _Name;
 
         /// <summary>
-        /// Human readable name for axis. Possible values are X, Y, Long, Lat or any other short string.
+        /// Gets or sets human readable name for axis. Possible values are X, Y, Long, Lat or any other short string.
         /// </summary>
         public string Name
         {
-            get { return _Name; }
-            set { _Name = value; }
+            get { return this._Name; }
+            set { this._Name = value; }
         }
 
-        private AxisOrientationEnum _Orientation;
+        private AxisOrientationEnum _orientation;
 
         /// <summary>
-        /// Gets enumerated value for orientation.
+        /// Gets or sets enumerated value for orientation.
         /// </summary>
         public AxisOrientationEnum Orientation
         {
-            get { return _Orientation; }
-            set { _Orientation = value; }
+            get { return this._orientation; }
+            set { this._orientation = value; }
         }
 
         /// <summary>
-        /// Returns the Well-known text for this object
+        /// Gets the Well-known text for this object
         /// as defined in the simple features specification.
         /// </summary>
         public string WKT
         {
             get
             {
-                return $"AXIS[\"{Name}\", {Orientation.ToString().ToUpperInvariant()}]";
+                return $"AXIS[\"{this.Name}\", {this.Orientation.ToString().ToUpperInvariant()}]";
             }
         }
 
         /// <summary>
-        /// Gets an XML representation of this object
+        /// Gets an XML representation of this object.
         /// </summary>
         public string XML
         {
             get
             {
-                return string.Format(CultureInfo.InvariantCulture.NumberFormat,
-                    "<CS_AxisInfo Name=\"{0}\" Orientation=\"{1}\"/>", Name, Orientation.ToString()
+                return string.Format(
+                    CultureInfo.InvariantCulture.NumberFormat,
+                    "<CS_AxisInfo Name=\"{0}\" Orientation=\"{1}\"/>", this.Name, this.Orientation.ToString()
                     .ToUpperInvariant());
             }
         }

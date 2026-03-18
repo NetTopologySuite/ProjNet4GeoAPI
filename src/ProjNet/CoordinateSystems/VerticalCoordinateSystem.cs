@@ -1,46 +1,47 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Text;
-
 namespace ProjNet.CoordinateSystems
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Globalization;
+    using System.Text;
+
     /// <summary>
-	/// A 1D coordinate system suitable vertical coordinates
+    /// A 1D coordinate system suitable vertical coordinates.
     /// </summary>
     public class VerticalCoordinateSystem : CoordinateSystem
     {
         /// <summary>
-        /// Creates an instance of a VerticalCoordinateSystem
+        /// Initializes a new instance of the <see cref="VerticalCoordinateSystem"/> class.
+        /// Creates an instance of a VerticalCoordinateSystem.
         /// </summary>
-        /// <param name="linearUnit">The linear unit</param>
-        /// <param name="verticalDatum">The vertical datum</param>
-        /// <param name="axisInfo">Axis information</param>
-        /// <param name="name">Name</param>
-		/// <param name="authority">Authority name</param>
-		/// <param name="authorityCode">Authority-specific identification code.</param>
-		/// <param name="alias">Alias</param>
-		/// <param name="abbreviation">Abbreviation</param>
-		/// <param name="remarks">Provider-supplied remarks</param>
+        /// <param name="linearUnit">The linear unit.</param>
+        /// <param name="verticalDatum">The vertical datum.</param>
+        /// <param name="axisInfo">Axis information.</param>
+        /// <param name="name">Name.</param>
+        /// <param name="authority">Authority name.</param>
+        /// <param name="authorityCode">Authority-specific identification code.</param>
+        /// <param name="alias">Alias.</param>
+        /// <param name="abbreviation">Abbreviation.</param>
+        /// <param name="remarks">Provider-supplied remarks.</param>
         public VerticalCoordinateSystem(LinearUnit linearUnit, VerticalDatum verticalDatum, AxisInfo axisInfo, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks) : base(name, authority, authorityCode, alias, abbreviation, remarks)
         {
-            VerticalDatum = verticalDatum;
-            AxisInfo = new List<AxisInfo>() { axisInfo };
-            LinearUnit = linearUnit;
+            this.VerticalDatum = verticalDatum;
+            this.AxisInfo = new List<AxisInfo>() { axisInfo };
+            this.LinearUnit = linearUnit;
         }
 
         /// <summary>
-        /// Gets or sets the VerticalDatum
+        /// Gets or sets the VerticalDatum.
         /// </summary>
         public VerticalDatum VerticalDatum { get; set; }
 
         /// <summary>
-        /// Gets or sets the LinearUnit
+        /// Gets or sets the LinearUnit.
         /// </summary>
         public LinearUnit LinearUnit { get; set; }
 
         /// <summary>
-        /// Creates a meter unit coordinate system with <see cref="VerticalDatum.ODN"/>
+        /// Gets creates a meter unit coordinate system with <see cref="VerticalDatum.ODN"/>.
         /// </summary>
         public static VerticalCoordinateSystem ODN =>
             new VerticalCoordinateSystem(
@@ -53,21 +54,27 @@ namespace ProjNet.CoordinateSystems
                 , "ODN"
                 , string.Empty
                 );
+
         /// <inheritdoc/>
         public override string WKT
         {
             get
             {
                 var sb = new StringBuilder();
-                sb.AppendFormat("VERT_CS[\"{0}\", {1}, {2}", Name, VerticalDatum.WKT, LinearUnit.WKT);
-                //Skip axis info if they contain default values
-                if (AxisInfo.Count != 1 ||
-                    AxisInfo[0].Name != "Up" || AxisInfo[0].Orientation != AxisOrientationEnum.Up)
+                sb.AppendFormat("VERT_CS[\"{0}\", {1}, {2}", this.Name, this.VerticalDatum.WKT, this.LinearUnit.WKT);
+
+                // Skip axis info if they contain default values
+                if (this.AxisInfo.Count != 1 ||
+                    this.AxisInfo[0].Name != "Up" || this.AxisInfo[0].Orientation != AxisOrientationEnum.Up)
                 {
-                    sb.AppendFormat(", {0}", GetAxis(0).WKT);
+                    sb.AppendFormat(", {0}", this.GetAxis(0).WKT);
                 }
-                if (!string.IsNullOrWhiteSpace(Authority) && AuthorityCode > 0)
-                    sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
+
+                if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
+                {
+                    sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", this.Authority, this.AuthorityCode);
+                }
+
                 sb.Append("]");
                 return sb.ToString();
             }
@@ -79,13 +86,18 @@ namespace ProjNet.CoordinateSystems
             get
             {
                 var sb = new StringBuilder();
-                sb.AppendFormat(CultureInfo.InvariantCulture.NumberFormat,
+                sb.AppendFormat(
+                    CultureInfo.InvariantCulture.NumberFormat,
                     "<CS_CoordinateSystem Dimension=\"{0}\"><CS_VerticalCoordinateSystem>{1}",
-                    this.Dimension, InfoXml);
-                foreach (var ai in AxisInfo)
+                    this.Dimension, this.InfoXml);
+                foreach (var ai in this.AxisInfo)
+                {
                     sb.Append(ai.XML);
-                sb.AppendFormat("{0}{1}</CS_VerticalCoordinateSystem></CS_CoordinateSystem>",
-                    VerticalDatum.XML, LinearUnit.XML);
+                }
+
+                sb.AppendFormat(
+                    "{0}{1}</CS_VerticalCoordinateSystem></CS_CoordinateSystem>",
+                    this.VerticalDatum.XML, this.LinearUnit.XML);
                 return sb.ToString();
             }
         }
@@ -94,26 +106,39 @@ namespace ProjNet.CoordinateSystems
         public override bool EqualParams(object obj)
         {
             if (!(obj is VerticalCoordinateSystem vcs))
+            {
                 return false;
+            }
 
-            if (vcs.Dimension != Dimension) return false;
-            if (AxisInfo.Count != vcs.AxisInfo.Count) return false;
+            if (vcs.Dimension != this.Dimension)
+            {
+                return false;
+            }
+
+            if (this.AxisInfo.Count != vcs.AxisInfo.Count)
+            {
+                return false;
+            }
+
             for (int i = 0; i < vcs.AxisInfo.Count; i++)
-                if (vcs.AxisInfo[i].Orientation != AxisInfo[i].Orientation)
+                if (vcs.AxisInfo[i].Orientation != this.AxisInfo[i].Orientation)
+                {
                     return false;
-            return vcs.LinearUnit.EqualParams(LinearUnit) &&
-                    vcs.VerticalDatum.EqualParams(VerticalDatum);
+                }
+
+            return vcs.LinearUnit.EqualParams(this.LinearUnit) &&
+                    vcs.VerticalDatum.EqualParams(this.VerticalDatum);
         }
 
         /// <inheritdoc/>
         public override IUnit GetUnits(int dimension)
         {
-            if( dimension != 0 )
+            if (dimension != 0)
             {
                 throw new ArgumentOutOfRangeException(nameof(dimension), "Vertical Coordinate Systems have only one dimension");
             }
 
-            return LinearUnit;
+            return this.LinearUnit;
         }
     }
 }

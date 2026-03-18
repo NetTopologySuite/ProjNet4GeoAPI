@@ -1,10 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using ProjNet.CoordinateSystems.Transformations;
-
 namespace ProjNet.CoordinateSystems.Projections
 {
-    [Serializable] 
+    using System;
+    using System.Collections.Generic;
+    using ProjNet.CoordinateSystems.Transformations;
+
+    [Serializable]
     internal class ObliqueMercatorProjection : HotineObliqueMercatorProjection
     {
         public ObliqueMercatorProjection(IEnumerable<ProjectionParameter> parameters)
@@ -15,15 +15,19 @@ namespace ProjNet.CoordinateSystems.Projections
         public ObliqueMercatorProjection(IEnumerable<ProjectionParameter> parameters, ObliqueMercatorProjection inverse)
             : base(parameters, inverse)
         {
-            AuthorityCode = 9815;
-            Name = "Oblique_Mercator";
+            this.AuthorityCode = 9815;
+            this.Name = "Oblique_Mercator";
         }
 
+        /// <inheritdoc/>
         public override MathTransform Inverse()
         {
-            if (_inverse == null)
-                _inverse = new ObliqueMercatorProjection(_Parameters.ToProjectionParameter(), this);
-            return _inverse;
+            if (this.inverse == null)
+            {
+                this.inverse = new ObliqueMercatorProjection(this.Parameters.ToProjectionParameter(), this);
+            }
+
+            return this.inverse;
         }
     }
 }

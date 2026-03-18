@@ -15,10 +15,10 @@
 // along with SharpMap; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
-using System;
-
 namespace ProjNet.CoordinateSystems
 {
+    using System;
+
     /// <summary>
     /// A named parameter value.
     /// </summary>
@@ -26,24 +26,25 @@ namespace ProjNet.CoordinateSystems
     public class Parameter
     {
         /// <summary>
-        /// Creates an instance of a parameter
+        /// Initializes a new instance of the <see cref="Parameter"/> class.
+        /// Creates an instance of a parameter.
         /// </summary>
         /// <remarks>Units are always either meters or degrees.</remarks>
-        /// <param name="name">Name of parameter</param>
-        /// <param name="value">Value</param>
+        /// <param name="name">Name of parameter.</param>
+        /// <param name="value">Value.</param>
         public Parameter(string name, double value)
         {
-            Name = name;
-            Value = value;
+            this.Name = name;
+            this.Value = value;
         }
 
         /// <summary>
-        /// Parameter name
+        /// Gets or sets parameter name.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// Parameter value
+        /// Gets or sets parameter value.
         /// </summary>
         public double Value { get; set; }
     }

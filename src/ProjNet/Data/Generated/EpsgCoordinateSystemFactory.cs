@@ -11,9 +11,9 @@ namespace ProjNet.Data.Generated
 
         internal static IEnumerable<KeyValuePair<int, CoordinateSystem>> GetCoordinateSystems()
         {
-            for (var cacheIndex = 0; cacheIndex < EpsgGeneratedCatalog.CoordinateReferenceCount; cacheIndex++)
+            for (int cacheIndex = 0; cacheIndex < EpsgGeneratedCatalog.CoordinateReferenceCount; cacheIndex++)
             {
-                if (!EpsgGeneratedCatalog.TryGetCoordinateSridByCacheIndex(cacheIndex, out var srid))
+                if (!EpsgGeneratedCatalog.TryGetCoordinateSridByCacheIndex(cacheIndex, out int srid))
                 {
                     continue;
                 }
@@ -30,7 +30,7 @@ namespace ProjNet.Data.Generated
 
         private static CoordinateSystem TryCreateCoordinateSystem(int srid)
         {
-            if (!EpsgGeneratedCatalog.TryGetCoordinateReference(srid, out var reference, out var cacheIndex))
+            if (!EpsgGeneratedCatalog.TryGetCoordinateReference(srid, out var reference, out int cacheIndex))
             {
                 return null;
             }
@@ -178,13 +178,13 @@ namespace ProjNet.Data.Generated
             }
 
             var parameters = new List<ProjectionParameter>();
-            for (var i = 0; i < conversion.ParameterCount; i++)
+            for (int i = 0; i < conversion.ParameterCount; i++)
             {
                 var parameter = EpsgGeneratedCatalog.ConversionParameters[conversion.ParameterStartIndex + i];
                 parameters.Add(new ProjectionParameter(NormalizeProjectionParameterName(parameter.Name), parameter.Value));
             }
 
-            var projectionName = NormalizeProjectionMethodName(conversion.MethodName);
+            string projectionName = NormalizeProjectionMethodName(conversion.MethodName);
             var projection = new Projection(projectionName, parameters, projectionName, "EPSG", record.ConversionCode, string.Empty, string.Empty, string.Empty);
 
             var axes = GetAxes(record.CoordinateSystemCode, 2);
@@ -239,7 +239,6 @@ namespace ProjNet.Data.Generated
                 string.Empty);
         }
 
-
         private static string NormalizeProjectionMethodName(string methodName)
         {
             if (string.IsNullOrWhiteSpace(methodName))
@@ -247,7 +246,7 @@ namespace ProjNet.Data.Generated
                 return methodName;
             }
 
-            var normalized = methodName
+            string normalized = methodName
                 .ToLowerInvariant()
                 .Replace("(", string.Empty)
                 .Replace(")", string.Empty)
@@ -274,7 +273,7 @@ namespace ProjNet.Data.Generated
                 return parameterName;
             }
 
-            var normalized = parameterName
+            string normalized = parameterName
                 .ToLowerInvariant()
                 .Replace("(", string.Empty)
                 .Replace(")", string.Empty)
@@ -454,9 +453,9 @@ namespace ProjNet.Data.Generated
                 return null;
             }
 
-            var axisCount = includeAll ? orderedAxes.Count : expectedCount;
+            int axisCount = includeAll ? orderedAxes.Count : expectedCount;
             var axes = new List<AxisInfo>(axisCount);
-            for (var i = 0; i < axisCount; i++)
+            for (int i = 0; i < axisCount; i++)
             {
                 var axis = orderedAxes[i];
                 axes.Add(new AxisInfo(axis.Name, (AxisOrientationEnum)axis.Orientation));

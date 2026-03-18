@@ -16,43 +16,44 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA 
 
 // SOURCECODE IS MODIFIED FROM ANOTHER WORK AND IS ORIGINALLY BASED ON GeoTools.NET:
-/*
- *  Copyright (C) 2002 Urban Science Applications, Inc. 
- *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Lesser General Public
- *  License as published by the Free Software Foundation; either
- *  version 2.1 of the License, or (at your option) any later version.
- *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  Lesser General Public License for more details.
- *
- *  You should have received a copy of the GNU Lesser General Public
- *  License along with this library; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- */
-
-using System;
-using System.Globalization;
-using System.IO;
-
 namespace ProjNet.IO.CoordinateSystems
 {
+    // SOURCECODE IS MODIFIED FROM ANOTHER WORK AND IS ORIGINALLY BASED ON GeoTools.NET:
+    /*
+     *  Copyright (C) 2002 Urban Science Applications, Inc.
+     *
+     *  This library is free software; you can redistribute it and/or
+     *  modify it under the terms of the GNU Lesser General Public
+     *  License as published by the Free Software Foundation; either
+     *  version 2.1 of the License, or (at your option) any later version.
+     *
+     *  This library is distributed in the hope that it will be useful,
+     *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+     *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+     *  Lesser General Public License for more details.
+     *
+     *  You should have received a copy of the GNU Lesser General Public
+     *  License along with this library; if not, write to the Free Software
+     *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+     *
+     */
+
+    using System;
+    using System.Globalization;
+    using System.IO;
+
     /// <summary>
     /// Reads a stream of Well Known Text (wkt) string and returns a stream of tokens.
     /// </summary>
     internal class WktStreamTokenizer : StreamTokenizer
     {
-        private readonly NumberFormatInfo _nfi = CultureInfo.InvariantCulture.NumberFormat;
+        private readonly NumberFormatInfo nfi = CultureInfo.InvariantCulture.NumberFormat;
 
         /// <summary>
-        /// Initializes a new instance of the WktStreamTokenizer class.
+        /// Initializes a new instance of the <see cref="WktStreamTokenizer"/> class.
         /// </summary>
         /// <remarks>The WktStreamTokenizer class ais in reading WKT streams.</remarks>
-        /// <param name="reader">A TextReader that contains </param>
+        /// <param name="reader">A TextReader that contains. </param>
         public WktStreamTokenizer(TextReader reader) : base(reader, true) { }
 
         /// <summary>
@@ -61,10 +62,10 @@ namespace ProjNet.IO.CoordinateSystems
         /// <param name="expectedToken">The expected token.</param>
         internal void ReadToken(string expectedToken)
         {
-            NextToken();
-            if (GetStringValue() != expectedToken)
+            this.NextToken();
+            if (this.GetStringValue() != expectedToken)
             {
-                string s = string.Format(_nfi, "Expecting ('{3}') but got a '{0}' at line {1} column {2}.", GetStringValue(), LineNumber, Column, expectedToken);
+                string s = string.Format(this.nfi, "Expecting ('{3}') but got a '{0}' at line {1} column {2}.", this.GetStringValue(), this.LineNumber, this.Column, expectedToken);
                 throw new ArgumentException(s);
             }
         }
@@ -80,50 +81,58 @@ namespace ProjNet.IO.CoordinateSystems
         {
             string word = "";
 
-            if (GetStringValue()!="\"")
-                ReadToken("\"");
-            NextToken(false);
-            while (GetStringValue() != "\"")
+            if (this.GetStringValue() != "\"")
             {
-                word = word + GetStringValue();
-                NextToken(false);
+                this.ReadToken("\"");
             }
+
+            this.NextToken(false);
+            while (this.GetStringValue() != "\"")
+            {
+                word = word + this.GetStringValue();
+                this.NextToken(false);
+            }
+
             return word;
         }
 
         /// <summary>
-        /// Reads an opener
+        /// Reads an opener.
         /// </summary>
         /// <param name="expectedBracket">The expected bracket type.</param>
-        /// <returns>The bracket type encountered</returns>
+        /// <returns>The bracket type encountered.</returns>
         public WktBracket ReadOpener(WktBracket expectedBracket = WktBracket.DontCare)
         {
-            NextToken();
-            string stringValue = GetStringValue();
+            this.NextToken();
+            string stringValue = this.GetStringValue();
             if (stringValue == "[")
             {
                 if (expectedBracket == WktBracket.Square || expectedBracket == WktBracket.DontCare)
+                {
                     return WktBracket.Square;
+                }
             }
             else if (stringValue == "(")
             {
                 if (expectedBracket == WktBracket.Round || expectedBracket == WktBracket.DontCare)
+                {
                     return WktBracket.Round;
+                }
             }
 
             string expectedToken = expectedBracket == WktBracket.Square ? "[" : "(";
-            string s = string.Format(_nfi, "Expecting ('{3}') but got a '{0}' at line {1} column {2}.", stringValue, LineNumber, Column, expectedToken);
+            string s = string.Format(this.nfi, "Expecting ('{3}') but got a '{0}' at line {1} column {2}.", stringValue, this.LineNumber, this.Column, expectedToken);
             throw new ArgumentException(s);
         }
 
         /// <summary>
-        /// Reads an closer
+        /// Reads an closer.
         /// </summary>
         /// <param name="expectedBracket">The expected bracket type.</param>
         public void ReadCloser(WktBracket expectedBracket)
         {
-            NextToken();
-            CheckCloser(expectedBracket);
+            this.NextToken();
+            this.CheckCloser(expectedBracket);
         }
 
         /// <summary>
@@ -132,20 +141,24 @@ namespace ProjNet.IO.CoordinateSystems
         /// <param name="expectedBracket">The expected bracket type.</param>
         public void CheckCloser(WktBracket expectedBracket)
         {
-            string stringValue = GetStringValue();
+            string stringValue = this.GetStringValue();
             if (stringValue == "]")
             {
                 if (expectedBracket == WktBracket.Square || expectedBracket == WktBracket.DontCare)
+                {
                     return;
+                }
             }
             else if (stringValue == ")")
             {
                 if (expectedBracket == WktBracket.Round || expectedBracket == WktBracket.DontCare)
+                {
                     return;
+                }
             }
 
             string expectedToken = expectedBracket == WktBracket.Square ? "]" : ")";
-            string s = string.Format(_nfi, "Expecting ('{3}') but got a '{0}' at line {1} column {2}.", stringValue, LineNumber, Column, expectedToken);
+            string s = string.Format(this.nfi, "Expecting ('{3}') but got a '{0}' at line {1} column {2}.", stringValue, this.LineNumber, this.Column, expectedToken);
             throw new ArgumentException(s);
         }
 
@@ -156,18 +169,26 @@ namespace ProjNet.IO.CoordinateSystems
         /// <param name="authorityCode">String to place the authority code in.</param>
         public void ReadAuthority(out string authority, out long authorityCode)
         {
-            //AUTHORITY["EPGS","9102"]]
-            if (GetStringValue() != "AUTHORITY")
-                ReadToken("AUTHORITY");
-            var bracket = ReadOpener();
-            authority = ReadDoubleQuotedWord();
-            ReadToken(",");
-            NextToken();
-            if (GetTokenType() == TokenType.Number)
-                authorityCode = (long) GetNumericValue();
+            // AUTHORITY["EPGS","9102"]]
+            if (this.GetStringValue() != "AUTHORITY")
+            {
+                this.ReadToken("AUTHORITY");
+            }
+
+            var bracket = this.ReadOpener();
+            authority = this.ReadDoubleQuotedWord();
+            this.ReadToken(",");
+            this.NextToken();
+            if (this.GetTokenType() == TokenType.Number)
+            {
+                authorityCode = (long)this.GetNumericValue();
+            }
             else
-                long.TryParse(ReadDoubleQuotedWord(), NumberStyles.Any, _nfi, out authorityCode);
-            ReadCloser(bracket);
+            {
+                long.TryParse(this.ReadDoubleQuotedWord(), NumberStyles.Any, this.nfi, out authorityCode);
+            }
+
+            this.ReadCloser(bracket);
         }
     }
 }

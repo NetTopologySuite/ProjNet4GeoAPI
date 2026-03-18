@@ -40,16 +40,16 @@ namespace ProjNet.CoordinateSystems
         /// <summary>
         /// Gets an indexed parameter of the projection.
         /// </summary>
-        /// <param name="index">Index of parameter</param>
-        /// <returns>n'th parameter</returns>
+        /// <param name="index">Index of parameter.</param>
+        /// <returns>n'th parameter.</returns>
         ProjectionParameter GetParameter(int index);
 
         /// <summary>
         /// Gets an named parameter of the projection.
         /// </summary>
-        /// <remarks>The parameter name is case insensitive</remarks>
-        /// <param name="name">Name of parameter</param>
-        /// <returns>parameter or null if not found</returns>
+        /// <remarks>The parameter name is case insensitive.</remarks>
+        /// <param name="name">Name of parameter.</param>
+        /// <returns>parameter or null if not found.</returns>
         ProjectionParameter GetParameter(string name);
     }
 }

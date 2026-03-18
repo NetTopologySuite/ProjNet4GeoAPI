@@ -1,17 +1,16 @@
-using System;
-using System.Data;
-using System.IO;
-using Newtonsoft.Json.Linq;
-using Npgsql;
-using NUnit.Framework;
-using ProjNet.CoordinateSystems;
-
 namespace ProjNET.Tests.WKT
 {
-    
+    using System;
+    using System.Data;
+    using System.IO;
+    using Newtonsoft.Json.Linq;
+    using Npgsql;
+    using NUnit.Framework;
+    using ProjNet.CoordinateSystems;
+
     public class SpatialRefSysTableParser
     {
-        private static string _connectionString;
+        private static string connectionString;
 
         private static readonly Lazy<CoordinateSystemFactory> CoordinateSystemFactory =
             new Lazy<CoordinateSystemFactory>(() => new CoordinateSystemFactory());
@@ -20,7 +19,9 @@ namespace ProjNET.Tests.WKT
         public void TestParsePostgisDefinitions()
         {
             if (string.IsNullOrWhiteSpace(ConnectionString))
+            {
                 Xunit.Assert.Skip("No Connection string provided or provided connection string invalid.");
+            }
 
             using (var cn = new NpgsqlConnection(ConnectionString))
             {
@@ -40,11 +41,21 @@ namespace ProjNET.Tests.WKT
                             counted++;
                             int srid = r.GetInt32(0);
                             string srtext = r.GetString(1);
-                            if (string.IsNullOrWhiteSpace(srtext)) continue;
-                            if (srtext.StartsWith("COMPD_CS")) continue;
+                            if (string.IsNullOrWhiteSpace(srtext))
+                            {
+                                continue;
+                            }
+
+                            if (srtext.StartsWith("COMPD_CS"))
+                            {
+                                continue;
+                            }
 
                             tested++;
-                            if (!TestParse(srid, srtext)) failed++;
+                            if (!TestParse(srid, srtext))
+                            {
+                                failed++;
+                            }
                         }
                     }
                 }
@@ -55,13 +66,18 @@ namespace ProjNET.Tests.WKT
 
         }
 
-        [Xunit.Fact]//, Ignore("Only run this if you want a new SRID.csv file")]
+        [Xunit.Fact]// , Ignore("Only run this if you want a new SRID.csv file")]
         public void TestCreateSridCsv()
         {
             if (string.IsNullOrWhiteSpace(ConnectionString))
+            {
                 Xunit.Assert.Skip("No Connection string provided or provided connection string invalid.");
+            }
 
-            if (File.Exists("SRID.csv")) File.Delete("SRID.csv");
+            if (File.Exists("SRID.csv"))
+            {
+                File.Delete("SRID.csv");
+            }
 
             using (var sw = new StreamWriter(File.OpenWrite("SRID.csv")))
             using (var cn = new NpgsqlConnection(ConnectionString))
@@ -91,6 +107,7 @@ namespace ProjNET.Tests.WKT
                         }
                     }
                 }
+
                 cm.Dispose();
             }
         }
@@ -99,29 +116,37 @@ namespace ProjNET.Tests.WKT
         {
             get
             {
-                if (!string.IsNullOrWhiteSpace(_connectionString))
-                    return _connectionString;
+                if (!string.IsNullOrWhiteSpace(SpatialRefSysTableParser.connectionString))
+                {
+                    return SpatialRefSysTableParser.connectionString;
+                }
 
                 if (!File.Exists("appsettings.json"))
+                {
                     return null;
+                }
 
                 JToken token = null;
                 using (var jtr = new Newtonsoft.Json.JsonTextReader(new StreamReader("appsettings.json")))
+                {
                     token = JToken.ReadFrom(jtr);
+                }
 
                 string connectionString = (string)token["ConnectionString"];
                 try
                 {
                     using (var cn = new NpgsqlConnection(connectionString))
+                    {
                         cn.Open();
+                    }
                 }
                 catch (Exception)
                 {
                     return null;
                 }
 
-                _connectionString = connectionString;
-                return _connectionString;
+                SpatialRefSysTableParser.connectionString = connectionString;
+                return SpatialRefSysTableParser.connectionString;
 
             }
         }
@@ -131,7 +156,8 @@ namespace ProjNET.Tests.WKT
             try
             {
                 CoordinateSystemFactory.Value.CreateFromWkt(srtext);
-                //CoordinateSystemWktReader.Parse(srtext);
+
+                // CoordinateSystemWktReader.Parse(srtext);
                 return true;
             }
             catch (Exception ex)
@@ -140,7 +166,6 @@ namespace ProjNET.Tests.WKT
                 return false;
             }
         }
-
 
     }
 }

@@ -15,39 +15,39 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-/*
- *  Copyright (C) 2002 Urban Science Applications, Inc.
- *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Lesser General Public
- *  License as published by the Free Software Foundation; either
- *  version 2.1 of the License, or (at your option) any later version.
- *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  Lesser General Public License for more details.
- *
- *  You should have received a copy of the GNU Lesser General Public
- *  License along with this library; if not, write to the Free Software
- *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
- */
-
-using System;
-using System.Collections.Generic;
-using ProjNet.CoordinateSystems.Transformations;
-
 namespace ProjNet.CoordinateSystems.Projections
 {
+    /*
+     *  Copyright (C) 2002 Urban Science Applications, Inc.
+     *
+     *  This library is free software; you can redistribute it and/or
+     *  modify it under the terms of the GNU Lesser General Public
+     *  License as published by the Free Software Foundation; either
+     *  version 2.1 of the License, or (at your option) any later version.
+     *
+     *  This library is distributed in the hope that it will be useful,
+     *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+     *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+     *  Lesser General Public License for more details.
+     *
+     *  You should have received a copy of the GNU Lesser General Public
+     *  License along with this library; if not, write to the Free Software
+     *  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+     *
+     */
+
+    using System;
+    using System.Collections.Generic;
+    using ProjNet.CoordinateSystems.Transformations;
+
     /// <summary>
     /// Implements the Polar Stereographic Projection.
     /// </summary>
     [Serializable]
     internal class PolarStereographicProjection : MapProjection
     {
-        private readonly double _globalScale;
-        private readonly double _reciprocGlobalScale;
+        private readonly double globalScale;
+        private readonly double reciprocGlobalScale;
 
         private static int MAXIMUM_ITERATIONS = 15;
         private static double ITERATION_TOLERANCE = 1E-14;
@@ -56,8 +56,8 @@ namespace ProjNet.CoordinateSystems.Projections
         private double phits, akm1;
         private bool N_POLE;
 
-
         /// <summary>
+        /// Initializes a new instance of the <see cref="PolarStereographicProjection"/> class.
         /// Initializes the PolarStereographicProjection object with the specified parameters.
         /// </summary>
         /// <param name="parameters">List of parameters to initialize the projection.</param>
@@ -78,10 +78,11 @@ namespace ProjNet.CoordinateSystems.Projections
         }
 
         /// <summary>
+        /// Initializes a new instance of the <see cref="PolarStereographicProjection"/> class.
         /// Initializes the PolarStereographicProjection object with the specified parameters.
         /// </summary>
         /// <param name="parameters">List of parameters to initialize the projection.</param>
-        /// <param name="inverse">Inverse projection</param>
+        /// <param name="inverse">Inverse projection.</param>
         /// <remarks>
         /// <para>The parameters this projection expects are listed below.</para>
         /// <list type="table">
@@ -96,31 +97,35 @@ namespace ProjNet.CoordinateSystems.Projections
         public PolarStereographicProjection(IEnumerable<ProjectionParameter> parameters, PolarStereographicProjection inverse)
             : base(parameters, inverse)
         {
-            Name = "Polar_Stereographic";
+            this.Name = "Polar_Stereographic";
 
-            _globalScale = scale_factor * _semiMajor;
-            _reciprocGlobalScale = 1.0 / _globalScale;
+            this.globalScale = this.scale_factor * this.semiMajor;
+            this.reciprocGlobalScale = 1.0 / this.globalScale;
 
-            if (_e == 0.0) throw new Exception("Polar Stereographics: only ellipsoidal formulation");
-            N_POLE = (lat_origin > 0.0); // N or S hemisphere
-            phits = Math.Abs(lat_origin);
-
-            if (Math.Abs(phits - M_HALFPI) < EPS10)
+            if (this.e == 0.0)
             {
-                double one_p_e = 1.0 + _e;
-                double one_m_e = 1.0 - _e;
+                throw new Exception("Polar Stereographics: only ellipsoidal formulation");
+            }
+
+            this.N_POLE = this.lat_origin > 0.0; // N or S hemisphere
+            this.phits = Math.Abs(this.lat_origin);
+
+            if (Math.Abs(this.phits - M_HALFPI) < EPS10)
+            {
+                double one_p_e = 1.0 + this.e;
+                double one_m_e = 1.0 - this.e;
                 double pow_p = Math.Pow(one_p_e, one_p_e);
                 double pow_m = Math.Pow(one_m_e, one_m_e);
-                akm1 = 2.0 / Math.Sqrt(pow_p * pow_m);
+                this.akm1 = 2.0 / Math.Sqrt(pow_p * pow_m);
             }
             else
             {
-                double sinphits = Math.Sin(phits);
-                double cosphits = Math.Cos(phits);
-                akm1 = cosphits / tsfn(cosphits, sinphits, _e);
+                double sinphits = Math.Sin(this.phits);
+                double cosphits = Math.Cos(this.phits);
+                this.akm1 = cosphits / this.Tsfn(cosphits, sinphits, this.e);
 
-                double t = _e * sinphits;
-                akm1 /= Math.Sqrt(1.0 - t * t);
+                double t = this.e * sinphits;
+                this.akm1 /= Math.Sqrt(1.0 - (t * t));
             }
         }
 
@@ -131,22 +136,26 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <param name="y"></param>
         protected override void MetersToRadians(ref double x, ref double y)
         {
-            x *= _reciprocGlobalScale;
-            y *= _reciprocGlobalScale;
+            x *= this.reciprocGlobalScale;
+            y *= this.reciprocGlobalScale;
 
-            if (N_POLE) y = -y;
-            double rho = Math.Sqrt(x * x + y * y);
-            double tp = -rho / akm1;
-            double phi_l = M_HALFPI - 2.0 * Math.Atan(tp);
-            double halfe = -0.5 * _e;
+            if (this.N_POLE)
+            {
+                y = -y;
+            }
+
+            double rho = Math.Sqrt((x * x) + (y * y));
+            double tp = -rho / this.akm1;
+            double phi_l = M_HALFPI - (2.0 * Math.Atan(tp));
+            double halfe = -0.5 * this.e;
 
             double lp_phi = 0.0;
             for (int iter = MAXIMUM_ITERATIONS; ;)
             {
-                double sinphi = _e * Math.Sin(phi_l);
+                double sinphi = this.e * Math.Sin(phi_l);
                 double one_p_sinphi = 1.0 + sinphi;
                 double one_m_sinphi = 1.0 - sinphi;
-                lp_phi = 2.0 * Math.Atan(tp * Math.Pow(one_p_sinphi / one_m_sinphi, halfe))  + M_HALFPI;
+                lp_phi = (2.0 * Math.Atan(tp * Math.Pow(one_p_sinphi / one_m_sinphi, halfe))) + M_HALFPI;
                 if (Math.Abs(phi_l - lp_phi) < ITERATION_TOLERANCE)
                 {
                     break;
@@ -160,27 +169,31 @@ namespace ProjNet.CoordinateSystems.Projections
 
             }
 
-            if (!N_POLE) lp_phi = -lp_phi;
+            if (!this.N_POLE)
+            {
+                lp_phi = -lp_phi;
+            }
+
             double lp_lam = (x == 0.0 && y == 0.0) ? 0.0 : Math.Atan2(x, y);
 
-            x = lp_lam + central_meridian;
+            x = lp_lam + this.central_meridian;
             y = lp_phi;
         }
 
         /// <summary>
-        /// Method to convert a point (lon, lat) in radians to (x, y) in meters
+        /// Method to convert a point (lon, lat) in radians to (x, y) in meters.
         /// </summary>
         /// <param name="lon">The longitude of the point in radians when entering, its x-ordinate in meters after exit.</param>
         /// <param name="lat">The latitude of the point in radians when entering, its y-ordinate in meters after exit.</param>
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
-            double lp_lam = lon - central_meridian;
+            double lp_lam = lon - this.central_meridian;
             double lp_phi = lat;
 
             double coslam = Math.Cos(lp_lam);
             double sinlam = Math.Sin(lp_lam);
 
-            if (!N_POLE)
+            if (!this.N_POLE)
             {
                 lp_phi = -lp_phi;
                 coslam = -coslam;
@@ -189,11 +202,10 @@ namespace ProjNet.CoordinateSystems.Projections
             double sinphi = Math.Sin(lp_phi);
             double cosphi = Math.Cos(lp_phi);
 
-            double x = (Math.Abs(lp_phi - M_HALFPI) < EPS15) ? 0.0 : akm1 * tsfn(cosphi, sinphi, _e);
-            lon = x * sinlam * _globalScale;
-            lat = -x * coslam * _globalScale;
+            double x = (Math.Abs(lp_phi - M_HALFPI) < EPS15) ? 0.0 : this.akm1 * this.Tsfn(cosphi, sinphi, this.e);
+            lon = x * sinlam * this.globalScale;
+            lat = -x * coslam * this.globalScale;
         }
-
 
         /// <summary>
         /// Returns the inverse of this projection.
@@ -201,23 +213,22 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <returns>IMathTransform that is the reverse of the current projection.</returns>
         public override MathTransform Inverse()
         {
-            if (_inverse == null)
+            if (this.inverse == null)
             {
-                _inverse = new PolarStereographicProjection(_Parameters.ToProjectionParameter(), this);
+                this.inverse = new PolarStereographicProjection(this.Parameters.ToProjectionParameter(), this);
             }
 
-            return _inverse;
+            return this.inverse;
         }
 
-        private double tsfn(double cosphi, double sinphi, double e)
+        private double Tsfn(double cosphi, double sinphi, double e)
         {
             double t = (sinphi > 0.0) ? cosphi / (1.0 + sinphi) : (1.0 - sinphi) / cosphi;
             return Math.Exp(e * Atanh(e * sinphi)) * t;
         }
 
-
         /// <summary>
-        /// Atanh - Inverse of Math.Tanh
+        /// Atanh - Inverse of Math.Tanh.
         /// </summary>
         /// <remarks>The Math.Atanh is not available for netstandard2.0.</remarks>
         /// <param name="x"></param>

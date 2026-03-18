@@ -1,23 +1,24 @@
-using System;
-using System.Collections.Generic;
-using ProjNet.CoordinateSystems.Transformations;
-
 namespace ProjNet.CoordinateSystems.Projections
 {
-    [Serializable] 
+    using System;
+    using System.Collections.Generic;
+    using ProjNet.CoordinateSystems.Transformations;
+
+    [Serializable]
     internal class PseudoMercator : Mercator
     {
         public PseudoMercator(IEnumerable<ProjectionParameter> parameters)
-            :this(parameters, null)
+            : this(parameters, null)
         {
-            
+
         }
+
         protected PseudoMercator(IEnumerable<ProjectionParameter> parameters, Mercator inverse)
-            :base(VerifyParameters(parameters), inverse)
+            : base(VerifyParameters(parameters), inverse)
         {
-            Name = "Pseudo-Mercator";
-            Authority = "EPSG";
-            AuthorityCode = 3856;
+            this.Name = "Pseudo-Mercator";
+            this.Authority = "EPSG";
+            this.AuthorityCode = 3856;
         }
 
         private static IEnumerable<ProjectionParameter> VerifyParameters(IEnumerable<ProjectionParameter> parameters)
@@ -30,11 +31,15 @@ namespace ProjNet.CoordinateSystems.Projections
             return p.ToProjectionParameter();
         }
 
+        /// <inheritdoc/>
         public override MathTransform Inverse()
         {
-            if (_inverse == null)
-                _inverse = new PseudoMercator(_Parameters.ToProjectionParameter(), this);
-            return _inverse;
+            if (this.inverse == null)
+            {
+                this.inverse = new PseudoMercator(this.Parameters.ToProjectionParameter(), this);
+            }
+
+            return this.inverse;
         }
     }
 }
