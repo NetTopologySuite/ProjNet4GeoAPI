@@ -147,6 +147,11 @@ internal static class GieParser
 
         if (pendingAccept is not null)
         {
+            if (options.IgnoreUnknownDirectives)
+            {
+                return parsedCases;
+            }
+
             throw new FormatException("Dangling 'accept' without matching 'expect' at end of input.");
         }
 
