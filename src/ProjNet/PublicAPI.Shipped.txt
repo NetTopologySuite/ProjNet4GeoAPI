@@ -378,45 +378,45 @@ namespace ProjNet.CoordinateSystems.Projections
         protected const double HUGE_VAL = double.NaN;
         protected const double MAX_VAL = 4D;
         protected const double PI = 3.141592653589793D;
+        protected readonly ProjNet.CoordinateSystems.Projections.ProjectionParameterSet Parameters;
         protected const double S2R = 4.848136811095359E-06D;
         protected const double TWO_PI = 6.283185307179586D;
-        protected readonly ProjNet.CoordinateSystems.Projections.ProjectionParameterSet _Parameters;
-        protected readonly double _e;
-        protected readonly double _es;
-        protected ProjNet.CoordinateSystems.Transformations.MathTransform _inverse;
-        protected readonly double _metersPerUnit;
-        protected readonly double _reciprocalMetersPerUnit;
-        protected readonly double _semiMajor;
-        protected readonly double _semiMinor;
         protected double central_meridian;
+        protected readonly double e;
         protected readonly double en0;
         protected readonly double en1;
         protected readonly double en2;
         protected readonly double en3;
         protected readonly double en4;
+        protected readonly double es;
         protected readonly double false_easting;
         protected readonly double false_northing;
+        protected ProjNet.CoordinateSystems.Transformations.MathTransform inverse;
         protected readonly double lat_origin;
+        protected readonly double metersPerUnit;
         protected const double prjMAXLONG = 2147483647D;
+        protected readonly double reciprocalMetersPerUnit;
         protected readonly double scale_factor;
+        protected readonly double semiMajor;
+        protected readonly double semiMinor;
         protected MapProjection(System.Collections.Generic.IEnumerable<ProjNet.CoordinateSystems.ProjectionParameter> parameters) { }
         protected MapProjection(System.Collections.Generic.IEnumerable<ProjNet.CoordinateSystems.ProjectionParameter> parameters, ProjNet.CoordinateSystems.Projections.MapProjection inverse) { }
         public string Abbreviation { get; set; }
         public string Alias { get; set; }
         public string Authority { get; set; }
         public long AuthorityCode { get; set; }
+        protected double Central_parallel { get; }
         public string ClassName { get; }
         public virtual int DimSource { get; }
         public virtual int DimTarget { get; }
         protected bool IsInverse { get; }
+        protected double Lon_origin { get; set; }
         public string Name { get; set; }
         public int NumParameters { get; }
+        protected double Phi0 { get; }
         public string Remarks { get; set; }
         public override string WKT { get; }
         public override string XML { get; }
-        protected double central_parallel { get; }
-        protected double lon_origin { get; set; }
-        protected double phi0 { get; }
         protected virtual void DegreesToMeters(ref double lon, ref double lat) { }
         protected virtual void DegreesToMeters(System.Span<double> lons, System.Span<double> lats, int strideX, int strideY) { }
         protected virtual void DegreesToTarget(ref double lon, ref double lat) { }
@@ -424,6 +424,7 @@ namespace ProjNet.CoordinateSystems.Projections
         public bool EqualParams(object obj) { }
         public ProjNet.CoordinateSystems.ProjectionParameter GetParameter(int index) { }
         public ProjNet.CoordinateSystems.ProjectionParameter GetParameter(string name) { }
+        protected double Inv_mlfn(double arg) { }
         public override void Invert() { }
         protected void Invert(bool invertInverse) { }
         protected virtual void MetersToDegrees(ref double x, ref double y) { }
@@ -432,6 +433,7 @@ namespace ProjNet.CoordinateSystems.Projections
         protected virtual void MetersToRadians(System.Span<double> xs, System.Span<double> ys, int strideX, int strideY) { }
         protected void MetersToTarget(ref double x, ref double y) { }
         protected void MetersToTarget(System.Span<double> xs, System.Span<double> ys, int strideX, int strideY) { }
+        protected double Mlfn(double phi, double sphi, double cphi) { }
         protected abstract void RadiansToMeters(ref double lon, ref double lat);
         protected virtual void RadiansToMeters(System.Span<double> lons, System.Span<double> lats, int strideX, int strideY) { }
         protected virtual void SourceToDegrees(ref double x, ref double y) { }
@@ -440,36 +442,34 @@ namespace ProjNet.CoordinateSystems.Projections
         protected void SourceToMeters(System.Span<double> xs, System.Span<double> ys, int strideX, int strideY) { }
         public override sealed void Transform(ref double x, ref double y, ref double z) { }
         protected override sealed void TransformCore(System.Span<double> xs, System.Span<double> ys, System.Span<double> zs, int strideX, int strideY, int strideZ) { }
-        protected double inv_mlfn(double arg) { }
-        protected double mlfn(double phi, double sphi, double cphi) { }
+        protected static double Adjust_lon(double x) { }
+        protected static double Asinz(double con) { }
+        protected static double Authlat(double beta, double[] APA) { }
+        protected static double[] Authset(double es) { }
         protected static double CUBE(double x) { }
         public static long CalcUtmZone(double lon) { }
         protected static System.Collections.Generic.List<ProjNet.CoordinateSystems.ProjectionParameter> CloneParametersList(System.Collections.Generic.IEnumerable<ProjNet.CoordinateSystems.ProjectionParameter> projectionParameters) { }
+        protected static double E0fn(double x) { }
+        protected static double E1fn(double x) { }
+        protected static double E2fn(double x) { }
+        protected static double E3fn(double x) { }
+        protected static double E4fn(double x) { }
         protected static double GMAX(ref double A, ref double B) { }
         protected static double GMIN(ref double A, ref double B) { }
+        protected static double Hypot(double x, double y) { }
         protected static double IMOD(double A, double B) { }
         protected static double LatitudeToRadians(double y, bool edge) { }
         protected static double LongitudeToRadians(double x, bool edge) { }
+        protected static double Mlfn(double e0, double e1, double e2, double e3, double phi) { }
+        protected static double Msfnz(double eccent, double sinphi, double cosphi) { }
+        protected static double Phi1z(double eccent, double qs, out long flag) { }
+        protected static double Phi2z(double eccent, double ts, out long flag) { }
         protected static double QUAD(double x) { }
-        protected static double adjust_lon(double x) { }
-        protected static double asinz(double con) { }
-        protected static double authlat(double beta, double[] APA) { }
-        protected static double[] authset(double es) { }
-        protected static double e0fn(double x) { }
-        protected static double e1fn(double x) { }
-        protected static double e2fn(double x) { }
-        protected static double e3fn(double x) { }
-        protected static double e4fn(double x) { }
-        protected static double hypot(double x, double y) { }
-        protected static double mlfn(double e0, double e1, double e2, double e3, double phi) { }
-        protected static double msfnz(double eccent, double sinphi, double cosphi) { }
-        protected static double phi1z(double eccent, double qs, out long flag) { }
-        protected static double phi2z(double eccent, double ts, out long flag) { }
-        protected static double qsfn(double sinphi, double eccent, double one_es) { }
-        protected static double qsfnz(double sinphi, double eccent) { }
-        protected static double sign(double x) { }
-        protected static void sincos(double val, out double sin_val, out double cos_val) { }
-        protected static double tsfnz(double eccent, double phi, double sinphi) { }
+        protected static double Qsfn(double sinphi, double eccent, double one_es) { }
+        protected static double Qsfnz(double sinphi, double eccent) { }
+        protected static double Sign(double x) { }
+        protected static void Sincos(double val, out double sin_val, out double cos_val) { }
+        protected static double Tsfnz(double eccent, double phi, double sinphi) { }
     }
     [System.Serializable]
     public class ProjectionParameterSet : System.Collections.Generic.Dictionary<string, double>, System.IEquatable<ProjNet.CoordinateSystems.Projections.ProjectionParameterSet>
@@ -618,6 +618,7 @@ namespace ProjNet.Data
     public sealed class ManagedCoordinateSystemDefinitionProvider : ProjNet.Data.ICoordinateSystemDefinitionProvider
     {
         public ManagedCoordinateSystemDefinitionProvider() { }
+        public System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, ProjNet.CoordinateSystems.CoordinateSystem>> GetCoordinateSystems() { }
         public System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, string>> GetDefinitions() { }
     }
 }
@@ -656,4 +657,3 @@ namespace ProjNet.IO.CoordinateSystems
         public static ProjNet.CoordinateSystems.Transformations.MathTransform Parse(string wkt) { }
     }
 }
-
