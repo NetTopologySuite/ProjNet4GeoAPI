@@ -79,6 +79,28 @@ namespace ProjNet.CoordinateSystems.Projections
             Register("oblique_stereographic", typeof(ObliqueStereographicProjection));
             Register("orthographic", typeof(OrthographicProjection));
             Register("polar_stereographic", typeof(PolarStereographicProjection));
+
+            Register("equal_earth", typeof(EqualEarthProjection));
+            Register("eqearth", typeof(EqualEarthProjection));
+
+            Register("natural_earth", typeof(NaturalEarthProjection));
+            Register("natearth", typeof(NaturalEarthProjection));
+
+            Register("natural_earth_2", typeof(NaturalEarth2Projection));
+            Register("natural_earth2", typeof(NaturalEarth2Projection));
+            Register("natearth2", typeof(NaturalEarth2Projection));
+
+            Register("robinson", typeof(RobinsonProjection));
+            Register("robin", typeof(RobinsonProjection));
+
+            Register("mollweide", typeof(MollweideProjection));
+            Register("moll", typeof(MollweideProjection));
+
+            Register("azimuthal_equidistant", typeof(AzimuthalEquidistantProjection));
+            Register("aeqd", typeof(AzimuthalEquidistantProjection));
+
+            Register("gnomonic", typeof(GnomonicProjection));
+            Register("gnom", typeof(GnomonicProjection));
         }
 
         /// <summary>
@@ -202,3 +224,4 @@ namespace ProjNet.CoordinateSystems.Projections
         }
     }
 }
+
