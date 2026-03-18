@@ -36,6 +36,7 @@ public class GieBuiltinsTheoryTests
         ["aeqd"] = "aeqd",
         ["cass"] = "cassini_soldner",
         ["eqearth"] = "eqearth",
+        ["eqc"] = "equidistant_cylindrical",
         ["etmerc"] = "etmerc",
         ["gnom"] = "gnom",
         ["krovak"] = "krovak",

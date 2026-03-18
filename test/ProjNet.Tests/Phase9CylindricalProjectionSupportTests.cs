@@ -60,6 +60,41 @@ public class Phase9CylindricalProjectionSupportTests
         Assert.InRange(System.Math.Abs(roundtrip[1] - latitude), 0d, tolerance);
     }
 
+    [Theory]
+    [InlineData("eqc")]
+    [InlineData("equidistant_cylindrical")]
+    [InlineData("plate_carree")]
+    [InlineData("equirectangular")]
+    public void SupportsEqcProjectionAliasesFromWkt(string projectionName)
+    {
+        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName));
+        var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
+        double[] result = transform.MathTransform.Transform(CreatePoint(1000d, 2000d));
+
+        Assert.NotNull(projected);
+        Assert.NotNull(transform);
+        Assert.NotNull(result);
+        Assert.True(result.Length >= 2);
+    }
+
+    [Fact]
+    public void SupportsEqcProjectionRoundtrip()
+    {
+        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt("eqc"));
+        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(GeographicCoordinateSystem.WGS84, projected);
+        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
+
+        const double longitude = -11.25d;
+        const double latitude = 31.8d;
+        const double tolerance = 1e-8d;
+
+        double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
+        double[] roundtrip = inverse.MathTransform.Transform(projectedPoint);
+
+        Assert.InRange(System.Math.Abs(roundtrip[0] - longitude), 0d, tolerance);
+        Assert.InRange(System.Math.Abs(roundtrip[1] - latitude), 0d, tolerance);
+    }
+
     private static string BuildProjectedWkt(string projectionName)
     {
         return

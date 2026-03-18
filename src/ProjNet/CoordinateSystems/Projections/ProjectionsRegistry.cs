@@ -50,6 +50,10 @@ namespace ProjNet.CoordinateSystems.Projections
             Register("miller_cylindrical", typeof(MillerCylindricalProjection));
             Register("miller", typeof(MillerCylindricalProjection));
             Register("mill", typeof(MillerCylindricalProjection));
+            Register("equidistant_cylindrical", typeof(EquidistantCylindricalProjection));
+            Register("equirectangular", typeof(EquidistantCylindricalProjection));
+            Register("plate_carree", typeof(EquidistantCylindricalProjection));
+            Register("eqc", typeof(EquidistantCylindricalProjection));
 
             Register("transverse_mercator", typeof(TransverseMercator));
             Register("transverse_mercator_south_oriented", typeof(TransverseMercator));
