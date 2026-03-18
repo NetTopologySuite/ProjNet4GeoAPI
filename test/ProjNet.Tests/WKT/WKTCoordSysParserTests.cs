@@ -246,10 +246,8 @@ public class WKTCoordSysParserTests
             foreach (string fp in failedProjections)
             {
                 Console.WriteLine($"case \"{fp}\":");
-
             }
         }
-
     }
 
     /// <summary>
@@ -307,7 +305,6 @@ public class WKTCoordSysParserTests
 
         string newWkt = pcs.WKT.Replace(", ", ",");
         Assert.AreEqual(wkt, newWkt);
-
     }
 
     [Xunit.Fact]

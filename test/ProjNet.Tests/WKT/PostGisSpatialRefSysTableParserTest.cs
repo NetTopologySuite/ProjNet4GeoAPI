@@ -80,7 +80,6 @@ public class SpatialRefSysTableParser
             Console.WriteLine("\n\nTotal number of Tests {0}, failed {1}", tested, failed);
             Assert.IsTrue(failed == 0);
         }
-
     }
 
     [Xunit.Fact]// , Ignore("Only run this if you want a new SRID.csv file")]
@@ -164,7 +163,6 @@ public class SpatialRefSysTableParser
 
             SpatialRefSysTableParser.connectionString = connectionString;
             return SpatialRefSysTableParser.connectionString;
-
         }
     }
 
@@ -183,5 +181,4 @@ public class SpatialRefSysTableParser
             return false;
         }
     }
-
 }

@@ -342,7 +342,6 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         double[] expected = new[] { 2963503.91 / LinearUnit.USSurveyFoot.MetersPerUnit, 254759.80 / LinearUnit.USSurveyFoot.MetersPerUnit };
         Assert.IsTrue(this.ToleranceLessThan(pUtm, expected, 0.05), this.TransformationError("LambertConicConformal2SP", expected, pUtm));
         Assert.IsTrue(this.ToleranceLessThan(pGeo, pGeo2, 0.0000001), this.TransformationError("LambertConicConformal2SP", pGeo, pGeo2, true));
-
     }
 
     private ICoordinateTransformation CreateGeo2Laea(double centralMeridian, double latitudeOfOrigin)
@@ -856,7 +855,6 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         this.Test("HotineObliqueMercator", csSource, csTarget,
              new[] { -149.883333, 61.216667 },
              new[] { 4136805.826, -4424019.786 }, 0.01, 1.0E-5);
-
     }
 
     [Xunit.Fact]
@@ -869,7 +867,8 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         var utm33 = ProjectedCoordinateSystem.WGS84_UTM(33, true);
         var trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(utm35ETRS, utm33);
 
-        var coords = new XY[] {
+        var coords = new XY[]
+        {
             new XY(290586.087, 6714000),
             new XY(290586.392, 6713996.224),
             new XY(290590.133, 6713973.772),
@@ -890,7 +889,8 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         var utm33 = ProjectedCoordinateSystem.WGS84_UTM(33, true);
         var trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(utm35ETRS, utm33);
 
-        var coords = new List<double[]>{
+        var coords = new List<double[]>
+        {
             new double[]{290586.087, 6714000},
             new double[]{290586.392, 6713996.224},
             new double[]{290590.133, 6713973.772},
@@ -914,9 +914,12 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         // 3) Scale: 1.0
 
         // TODO MathTransformFactory fac = new MathTransformFactory ();
-        double[,] matrix = new double[,] {{0.883485346527455, -0.468458794848877, 3455869.17937689},
+        double[,] matrix = new double[,]
+        {
+            {0.883485346527455, -0.468458794848877, 3455869.17937689},
                                           {0.468458794848877, 0.883485346527455, 5478710.88035753},
-                                          {0.0, 0.0, 1}, };
+                                          {0.0, 0.0, 1},
+        };
         var mt = new AffineTransform(matrix);
 
         Assert.IsNotNull(mt);
@@ -947,9 +950,12 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         // 3) Scale: 1.0
 
         // TODO MathTransformFactory fac = new MathTransformFactory ();
-        double[,] matrix = new double[,] {{0.883485346527455, -0.468458794848877, 3455869.17937689},
+        double[,] matrix = new double[,]
+        {
+            {0.883485346527455, -0.468458794848877, 3455869.17937689},
                                           {0.468458794848877, 0.883485346527455, 5478710.88035753},
-                                          {0.0, 0.0, 1}, };
+                                          {0.0, 0.0, 1},
+        };
         var mt = new AffineTransform(matrix);
 
         Assert.IsNotNull(mt);
@@ -990,7 +996,6 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     [Xunit.Fact]
     public void TestTransformOnFittedCoordinateSystem()
     {
-
         // Local coordinate system MNAU (Kraftwerk Mäuserich) (based on Gauß-Krüger using affine transformation)
         // affine transform
         // 1) Offset: X=-3454886,640m Y=-5479481,278m;
@@ -1029,7 +1034,8 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         // Target point (GK): X=3456926,640m Y=5481071,278m;
         var trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(fcs, fcs.BaseCoordinateSystem);
 
-        var coords = new List<double[]>{
+        var coords = new List<double[]>
+        {
             new double[]{2040.0, 1590.0},
         };
 
@@ -1069,7 +1075,6 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.IsTrue(transformedCoord.Length >= 2);
         Assert.AreEqual(sourceCoord[0], transformedCoord[0], 0.1);
         Assert.AreEqual(sourceCoord[1], transformedCoord[1], 0.1);
-
     }
 
     // https://github.com/NetTopologySuite/ProjNet4GeoAPI/issues/48

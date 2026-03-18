@@ -93,6 +93,5 @@ public class CoordinateTransformTestsBase
         }
 
         Assert.IsTrue(forward && reverse);
-
     }
 }

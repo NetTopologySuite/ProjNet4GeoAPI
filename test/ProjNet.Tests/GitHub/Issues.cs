@@ -33,7 +33,6 @@ public class Issues
     [Xunit.Fact(DisplayName = "Issue #10, ConcatenatedTransform.Inverse() method destroys the state of child transformations")]
     public void TestConcatenatedTransformInvert()
     {
-
         var epsg31466 = css.GetCoordinateSystem(31466);
         var epsg25832 = css.GetCoordinateSystem(25832);
 
@@ -86,7 +85,6 @@ public class Issues
         Assert.That(pt1a.x, Is.EqualTo(pt1b.x).Within(0.01));
         Assert.That(pt1a.y, Is.EqualTo(pt1b.y).Within(0.01));
         Assert.That(pt2a, Is.EqualTo(pt2b));
-
     }
 
     [Xunit.Fact]

@@ -125,7 +125,6 @@ public class CoordinateSystemServicesTest
         Assert.IsNotNull(css.GetCoordinateSystem(4326));
         Assert.IsNotNull(css.GetCoordinateSystem("EPSG", 4326));
         Assert.IsTrue(ReferenceEquals(css.GetCoordinateSystem("EPSG", 4326), css.GetCoordinateSystem(4326)));
-
     }
 
     [Xunit.Theory]
@@ -146,12 +145,10 @@ public class CoordinateSystemServicesTest
         Assert.IsNotNull(css.GetCoordinateSystem("EPSG", 4326));
         Assert.IsTrue(ReferenceEquals(css.GetCoordinateSystem("EPSG", 4326), css.GetCoordinateSystem(4326)));
         Thread.Sleep(1000);
-
     }
 
     internal static IEnumerable<KeyValuePair<int, string>> LoadCsv(string csvPath = null)
     {
-
         Console.WriteLine("Reading '{0}'.", csvPath ?? "SRID.csv from resources stream");
         var sw = new Stopwatch();
         sw.Start();
