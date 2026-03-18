@@ -147,11 +147,6 @@ namespace ProjNet.CoordinateSystems.Transformations
                 return false;
             }
 
-            if (!sourceProjected.GeographicCoordinateSystem.EqualParams(targetProjected.GeographicCoordinateSystem))
-            {
-                return false;
-            }
-
             var fallback = CreateDirectProjectedTransform(sourceProjected, targetProjected);
             transformation = CreateMetadataBackedTransformation(source, target, fallback, operation, resolvedGridPath);
             return true;
