@@ -47,6 +47,9 @@ public class ProjectionKernelAlignmentTests
     [Theory]
     [InlineData("Transverse_Mercator_South_Oriented")]
     [InlineData("Gauss_Kruger")]
+    [InlineData("UTM")]
+    [InlineData("ETMERC")]
+    [InlineData("Extended_Transverse_Mercator")]
     public void SupportsTransverseMercatorAliases(string projectionName)
     {
         var source = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(

@@ -316,6 +316,7 @@ def extract_operation_data(zip_path: Path):
             'geocentrictranslations' in normalized_method
             or 'positionvectortransformation' in normalized_method
             or 'coordinateframerotation' in normalized_method
+            or 'molodensky' in normalized_method
         )
         if not supports_explicit_helmert:
             continue

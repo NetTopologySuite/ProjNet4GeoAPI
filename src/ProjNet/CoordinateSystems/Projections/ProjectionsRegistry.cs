@@ -51,6 +51,9 @@ namespace ProjNet.CoordinateSystems.Projections
             Register("transverse_mercator", typeof(TransverseMercator));
             Register("transverse_mercator_south_oriented", typeof(TransverseMercator));
             Register("gauss_kruger", typeof(TransverseMercator));
+            Register("utm", typeof(TransverseMercator));
+            Register("etmerc", typeof(TransverseMercator));
+            Register("extended_transverse_mercator", typeof(TransverseMercator));
 
             Register("albers", typeof(AlbersProjection));
             Register("albers_conic_equal_area", typeof(AlbersProjection));

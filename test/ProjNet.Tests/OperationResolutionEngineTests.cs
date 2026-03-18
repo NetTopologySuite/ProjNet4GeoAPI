@@ -359,11 +359,12 @@ public class OperationResolutionEngineTests
 
     private static bool IsExplicitMethodSupported(string methodName)
     {
-        string normalized = NormalizeMethodName(methodName);
-        return normalized.Contains("geocentrictranslations")
-            || normalized.Contains("positionvectortransformation")
-            || normalized.Contains("coordinateframerotation");
-    }
+            string normalized = NormalizeMethodName(methodName);
+            return normalized.Contains("geocentrictranslations")
+                || normalized.Contains("positionvectortransformation")
+                || normalized.Contains("coordinateframerotation")
+                || normalized.Contains("molodensky");
+        }
 
     private static string NormalizeMethodName(string value)
     {
