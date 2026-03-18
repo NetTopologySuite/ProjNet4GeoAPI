@@ -71,6 +71,14 @@ public class GieBuiltinsTheoryTests
         AssertCaseWithinTolerance(rawCase);
     }
 
+    [Theory]
+    [Trait("Category", "GieBuiltins")]
+    [MemberData(nameof(GetDhdnEtrs89Cases))]
+    public void DhdnEtrs89Cases_ForImplementedProjections_StayWithinTolerance(object rawCase)
+    {
+        AssertCaseWithinTolerance(rawCase);
+    }
+
     public static IEnumerable<object[]> GetBuiltinsCases()
     {
         return GetCasesFromFixture("builtins.gie", 600);
@@ -79,6 +87,11 @@ public class GieBuiltinsTheoryTests
     public static IEnumerable<object[]> GetMoreBuiltinsCases()
     {
         return GetCasesFromFixture("more_builtins.gie", 300);
+    }
+
+    public static IEnumerable<object[]> GetDhdnEtrs89Cases()
+    {
+        return GetCasesFromFixture("DHDN_ETRS89.gie", 400);
     }
 
     private static void AssertCaseWithinTolerance(object rawCase)
@@ -175,6 +188,11 @@ public class GieBuiltinsTheoryTests
             {
                 yield break;
             }
+        }
+
+        if (emitted == 0)
+        {
+            yield return new object[] { null };
         }
     }
 
