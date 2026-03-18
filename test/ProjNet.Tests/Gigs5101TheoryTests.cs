@@ -45,6 +45,19 @@ public class Gigs5101TheoryTests
         "5103.3.gie",
     };
 
+    private static readonly string[] Fixture5104To5113Files =
+    {
+        "5104.gie",
+        "5105.2.gie",
+        "5106.gie",
+        "5107.gie",
+        "5108.gie",
+        "5109.gie",
+        "5111.1.gie",
+        "5112.gie",
+        "5113.gie",
+    };
+
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
     private static readonly CoordinateSystemServices CoordinateSystemServices = new CoordinateSystemServices();
@@ -62,6 +75,14 @@ public class Gigs5101TheoryTests
     public void Gigs5102And5103Cases_ForSupportedPipelines_StayWithinTolerance()
     {
         AssertFixtureCoverage(Fixture5102And5103Files, 70, 0, "5102/5103", requireToleranceMatch: false);
+    }
+
+    [Fact]
+    [Trait("Category", "Gigs5104")]
+    [Trait("Category", "Gigs5113")]
+    public void Gigs5104To5113Cases_ForSupportedPipelines_Execute()
+    {
+        AssertFixtureCoverage(Fixture5104To5113Files, 80, 0, "5104-5113", requireToleranceMatch: false);
     }
 
     private static void AssertFixtureCoverage(
@@ -409,6 +430,12 @@ public class Gigs5101TheoryTests
         if (projCode.Equals("utm", StringComparison.OrdinalIgnoreCase))
         {
             projectionClassName = "utm";
+            return true;
+        }
+
+        if (projCode.Equals("poly", StringComparison.OrdinalIgnoreCase))
+        {
+            projectionClassName = "polyconic";
             return true;
         }
 
