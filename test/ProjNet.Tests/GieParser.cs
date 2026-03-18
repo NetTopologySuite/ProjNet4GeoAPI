@@ -26,82 +26,117 @@ internal static class GieParser
 {
     private static readonly char[] WhiteSpaceSeparators = { ' ', '\t' };
 
-    public static IReadOnlyList<GieCase> ParseFile(string path)
+    public static IReadOnlyList<GieCase> ParseFile(string path, GieParserOptions options = null)
     {
         ArgumentNullException.ThrowIfNull(path);
-
-        return Parse(File.ReadAllText(path));
+        return Parse(File.ReadAllText(path), options);
     }
 
-    public static IReadOnlyList<GieCase> Parse(string content)
+    public static IReadOnlyList<GieCase> Parse(string content, GieParserOptions options = null)
     {
         ArgumentNullException.ThrowIfNull(content);
+        options ??= new GieParserOptions();
 
         var parsedCases = new List<GieCase>();
         string currentOperation = null;
         double currentToleranceValue = 0d;
         string currentToleranceUnit = "m";
         GieDirection currentDirection = GieDirection.Forward;
+        int? currentRoundtrip = null;
         double[] pendingAccept = null;
 
-        string[] lines = content.Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n');
-        for (int i = 0; i < lines.Length; i++)
+        foreach (var logicalLine in EnumerateLogicalLines(content))
         {
-            string stripped = StripInlineComment(lines[i]).Trim();
-            if (stripped.Length == 0 || IsTagLine(stripped))
+            string stripped = logicalLine.Content;
+            int lineNumber = logicalLine.LineNumber;
+            if (stripped.Length == 0 || IsTagLine(stripped) || IsSeparatorLine(stripped))
             {
                 continue;
             }
 
-            string directive;
-            string payload;
-            SplitDirective(stripped, out directive, out payload);
+            if (options.AllowOperationContinuation && currentOperation is not null && stripped.StartsWith('+'))
+            {
+                currentOperation += " " + stripped;
+                continue;
+            }
+
+            SplitDirective(stripped, out string directive, out string payload);
 
             if (directive.Equals("operation", StringComparison.OrdinalIgnoreCase))
             {
-                EnsurePayload(payload, "operation", i + 1);
+                EnsurePayload(payload, "operation", lineNumber);
                 currentOperation = payload;
+                currentToleranceValue = 0d;
+                currentToleranceUnit = "m";
                 currentDirection = GieDirection.Forward;
+                currentRoundtrip = null;
                 pendingAccept = null;
             }
             else if (directive.Equals("tolerance", StringComparison.OrdinalIgnoreCase))
             {
-                ParseTolerance(payload, i + 1, out currentToleranceValue, out currentToleranceUnit);
+                ParseTolerance(payload, lineNumber, out currentToleranceValue, out currentToleranceUnit);
             }
             else if (directive.Equals("direction", StringComparison.OrdinalIgnoreCase))
             {
-                EnsurePayload(payload, "direction", i + 1);
-                currentDirection = ParseDirection(payload, i + 1);
+                EnsurePayload(payload, "direction", lineNumber);
+                currentDirection = ParseDirection(payload, lineNumber);
+            }
+            else if (directive.Equals("roundtrip", StringComparison.OrdinalIgnoreCase))
+            {
+                currentRoundtrip = ParseRoundtrip(payload, lineNumber);
             }
             else if (directive.Equals("accept", StringComparison.OrdinalIgnoreCase))
             {
-                EnsureOperationDeclared(currentOperation, i + 1, "accept");
-                pendingAccept = ParseVector(payload, i + 1, "accept");
+                EnsureOperationDeclared(currentOperation, lineNumber, "accept");
+                pendingAccept = ParseVector(payload, lineNumber, "accept");
             }
             else if (directive.Equals("expect", StringComparison.OrdinalIgnoreCase))
             {
-                EnsureOperationDeclared(currentOperation, i + 1, "expect");
-                if (pendingAccept is null)
+                EnsureOperationDeclared(currentOperation, lineNumber, "expect");
+
+                if (IsFailureExpectation(payload))
                 {
-                    throw new FormatException("Found 'expect' without preceding 'accept' at line " + (i + 1).ToString(CultureInfo.InvariantCulture) + ".");
+                    parsedCases.Add(
+                        new GieCase
+                        {
+                            LineNumber = lineNumber,
+                            Operation = currentOperation,
+                            ToleranceValue = currentToleranceValue,
+                            ToleranceUnit = currentToleranceUnit,
+                            Direction = currentDirection,
+                            Accept = pendingAccept,
+                            Expect = Array.Empty<double>(),
+                            ExpectsFailure = true,
+                            ExpectedErrorCode = ParseExpectedErrorCode(payload),
+                            RoundtripCount = currentRoundtrip,
+                        });
+                    pendingAccept = null;
+                    continue;
                 }
 
-                var expected = ParseVector(payload, i + 1, "expect");
+                if (pendingAccept is null)
+                {
+                    throw new FormatException("Found 'expect' without preceding 'accept' at line " + lineNumber.ToString(CultureInfo.InvariantCulture) + ".");
+                }
+
+                var expected = ParseVector(payload, lineNumber, "expect");
                 parsedCases.Add(
                     new GieCase
                     {
+                        LineNumber = lineNumber,
                         Operation = currentOperation,
                         ToleranceValue = currentToleranceValue,
                         ToleranceUnit = currentToleranceUnit,
                         Direction = currentDirection,
                         Accept = pendingAccept,
                         Expect = expected,
+                        RoundtripCount = currentRoundtrip,
                     });
                 pendingAccept = null;
             }
-            else
+            else if (!options.IgnoreUnknownDirectives)
             {
-                throw new FormatException("Unsupported GIE directive '" + directive + "' at line " + (i + 1).ToString(CultureInfo.InvariantCulture) + ".");
+                throw new FormatException("Unsupported GIE directive '" + directive + "' at line " + lineNumber.ToString(CultureInfo.InvariantCulture) + ".");
             }
         }
 
@@ -113,18 +148,78 @@ internal static class GieParser
         return parsedCases;
     }
 
-    private static void EnsureOperationDeclared(string operation, int lineNumber, string directive)
+    private static IEnumerable<LogicalLine> EnumerateLogicalLines(string content)
     {
-        if (operation is null)
+        string[] lines = content.Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n');
+        string current = null;
+        int currentStartLine = 1;
+
+        for (int i = 0; i < lines.Length; i++)
         {
-            throw new FormatException(
-                "Found '" + directive + "' before any 'operation' declaration at line " + lineNumber.ToString(CultureInfo.InvariantCulture) + ".");
+            string stripped = StripInlineComment(lines[i]).Trim();
+            if (stripped.Length == 0 && current is null)
+            {
+                continue;
+            }
+
+            bool hasContinuation = stripped.EndsWith("\\", StringComparison.Ordinal);
+            if (hasContinuation)
+            {
+                stripped = stripped.Substring(0, stripped.Length - 1).TrimEnd();
+            }
+
+            if (current is null)
+            {
+                current = stripped;
+                currentStartLine = i + 1;
+            }
+            else
+            {
+                current += " " + stripped;
+            }
+
+            if (hasContinuation)
+            {
+                continue;
+            }
+
+            yield return new LogicalLine(current, currentStartLine);
+            current = null;
+        }
+
+        if (current is not null)
+        {
+            yield return new LogicalLine(current, currentStartLine);
         }
     }
 
     private static bool IsTagLine(string line)
     {
         return line.StartsWith('<') && line.EndsWith('>');
+    }
+
+    private static bool IsSeparatorLine(string line)
+    {
+        if (line.Length < 3)
+        {
+            return false;
+        }
+
+        char first = line[0];
+        if (first != '-' && first != '=')
+        {
+            return false;
+        }
+
+        for (int i = 1; i < line.Length; i++)
+        {
+            if (line[i] != first)
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private static string StripInlineComment(string line)
@@ -152,6 +247,13 @@ internal static class GieParser
         payload = line.Substring(splitIndex + 1).Trim();
     }
 
+    private static int ParseRoundtrip(string payload, int lineNumber)
+    {
+        EnsurePayload(payload, "roundtrip", lineNumber);
+        string[] tokens = payload.Split(WhiteSpaceSeparators, StringSplitOptions.RemoveEmptyEntries);
+        return (int)ParseNumber(tokens[0], lineNumber, "roundtrip");
+    }
+
     private static void ParseTolerance(string payload, int lineNumber, out double value, out string unit)
     {
         EnsurePayload(payload, "tolerance", lineNumber);
@@ -161,8 +263,21 @@ internal static class GieParser
             throw new FormatException("Missing tolerance value at line " + lineNumber.ToString(CultureInfo.InvariantCulture) + ".");
         }
 
-        value = ParseNumber(tokens[0], lineNumber, "tolerance");
+        string firstToken = tokens[0];
         unit = tokens.Length > 1 ? tokens[1] : "m";
+
+        if (TryParseCompactTolerance(firstToken, out double compactValue, out string compactUnit))
+        {
+            value = compactValue;
+            if (tokens.Length == 1 && !string.IsNullOrWhiteSpace(compactUnit))
+            {
+                unit = compactUnit;
+            }
+
+            return;
+        }
+
+        value = ParseNumber(firstToken, lineNumber, "tolerance");
     }
 
     private static GieDirection ParseDirection(string payload, int lineNumber)
@@ -179,6 +294,25 @@ internal static class GieParser
         }
 
         throw new FormatException("Unsupported direction '" + payload + "' at line " + lineNumber.ToString(CultureInfo.InvariantCulture) + ".");
+    }
+
+    private static bool IsFailureExpectation(string payload)
+    {
+        return payload.StartsWith("failure", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string ParseExpectedErrorCode(string payload)
+    {
+        string[] tokens = payload.Split(WhiteSpaceSeparators, StringSplitOptions.RemoveEmptyEntries);
+        for (int i = 0; i < tokens.Length - 1; i++)
+        {
+            if (tokens[i].Equals("errno", StringComparison.OrdinalIgnoreCase))
+            {
+                return tokens[i + 1];
+            }
+        }
+
+        return string.Empty;
     }
 
     private static double[] ParseVector(string payload, int lineNumber, string directiveName)
@@ -202,13 +336,23 @@ internal static class GieParser
 
     private static double ParseNumber(string token, int lineNumber, string directiveName)
     {
-        if (double.TryParse(token, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out double value))
+        string normalizedToken = token.Replace("_", string.Empty, StringComparison.Ordinal);
+        if (double.TryParse(normalizedToken, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out double value))
         {
             return value;
         }
 
         throw new FormatException(
             "Failed to parse numeric value '" + token + "' in directive '" + directiveName + "' at line " + lineNumber.ToString(CultureInfo.InvariantCulture) + ".");
+    }
+
+    private static void EnsureOperationDeclared(string operation, int lineNumber, string directive)
+    {
+        if (operation is null)
+        {
+            throw new FormatException(
+                "Found '" + directive + "' before any 'operation' declaration at line " + lineNumber.ToString(CultureInfo.InvariantCulture) + ".");
+        }
     }
 
     private static void EnsurePayload(string payload, string directiveName, int lineNumber)
@@ -230,5 +374,49 @@ internal static class GieParser
         }
 
         return -1;
+    }
+
+    private static bool TryParseCompactTolerance(string token, out double value, out string unit)
+    {
+        value = 0d;
+        unit = string.Empty;
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return false;
+        }
+
+        int index = 0;
+        while (index < token.Length && (char.IsDigit(token[index]) || token[index] == '.' || token[index] == '-' || token[index] == '+' || token[index] == 'e' || token[index] == 'E'))
+        {
+            index++;
+        }
+
+        if (index <= 0 || index >= token.Length)
+        {
+            return false;
+        }
+
+        string numberPart = token.Substring(0, index);
+        string unitPart = token.Substring(index);
+        if (!double.TryParse(numberPart, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value))
+        {
+            return false;
+        }
+
+        unit = unitPart;
+        return true;
+    }
+
+    private readonly struct LogicalLine
+    {
+        public LogicalLine(string content, int lineNumber)
+        {
+            this.Content = content;
+            this.LineNumber = lineNumber;
+        }
+
+        public string Content { get; }
+
+        public int LineNumber { get; }
     }
 }

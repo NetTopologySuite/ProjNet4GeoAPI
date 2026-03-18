@@ -17,25 +17,9 @@
 
 namespace ProjNET.Tests;
 
-internal sealed class GieCase
+internal sealed class GieParserOptions
 {
-    public int LineNumber { get; set; }
+    public bool IgnoreUnknownDirectives { get; set; }
 
-    public string Operation { get; set; }
-
-    public double ToleranceValue { get; set; }
-
-    public string ToleranceUnit { get; set; }
-
-    public GieDirection Direction { get; set; }
-
-    public double[] Accept { get; set; }
-
-    public double[] Expect { get; set; }
-
-    public bool ExpectsFailure { get; set; }
-
-    public string ExpectedErrorCode { get; set; }
-
-    public int? RoundtripCount { get; set; }
+    public bool AllowOperationContinuation { get; set; } = true;
 }

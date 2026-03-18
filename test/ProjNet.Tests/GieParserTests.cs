@@ -118,4 +118,52 @@ foobar 1 2
             }
         }
     }
+
+    [Fact]
+    public void Parse_WithContinuationLine_AppendsOperation()
+    {
+        const string content = @"
+operation +proj=tmerc +ellps=WGS84 \
+          +lat_0=0 +lon_0=9
+accept 1 2
+expect 3 4
+";
+
+        var parsed = GieParser.Parse(content);
+
+        Assert.Single(parsed);
+        Assert.Contains("+lat_0=0", parsed[0].Operation);
+        Assert.Contains("+lon_0=9", parsed[0].Operation);
+    }
+
+    [Fact]
+    public void Parse_WithFailureExpectation_SetsFailureMetadata()
+    {
+        const string content = @"
+operation +proj=aea +lat_1=900
+expect failure errno invalid_op_illegal_arg_value
+";
+
+        var parsed = GieParser.Parse(content);
+
+        Assert.Single(parsed);
+        Assert.True(parsed[0].ExpectsFailure);
+        Assert.Equal("invalid_op_illegal_arg_value", parsed[0].ExpectedErrorCode);
+    }
+
+    [Fact]
+    public void Parse_WithIgnoreUnknownDirectivesEnabled_SkipsUnknownDirective()
+    {
+        const string content = @"
+operation +proj=merc +ellps=WGS84
+foobar this should be ignored
+accept 1 2
+expect 3 4
+";
+
+        var parsed = GieParser.Parse(content, new GieParserOptions { IgnoreUnknownDirectives = true });
+
+        Assert.Single(parsed);
+        Assert.False(parsed[0].ExpectsFailure);
+    }
 }
