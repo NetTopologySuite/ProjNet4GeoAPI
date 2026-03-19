@@ -39,8 +39,16 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <param name="authorityCode">Authority code.</param>
         /// <param name="areaOfUse">Area of use.</param>
         /// <param name="remarks">Remarks.</param>
-        internal CoordinateTransformation(CoordinateSystem sourceCS, CoordinateSystem targetCS, TransformType transformType, MathTransform mathTransform,
-                                        string name, string authority, long authorityCode, string areaOfUse, string remarks)
+        internal CoordinateTransformation(
+            CoordinateSystem sourceCS,
+            CoordinateSystem targetCS,
+            TransformType transformType,
+            MathTransform mathTransform,
+            string name,
+            string authority,
+            long authorityCode,
+            string areaOfUse,
+            string remarks)
         {
             this.TargetCS = targetCS;
             this.SourceCS = sourceCS;

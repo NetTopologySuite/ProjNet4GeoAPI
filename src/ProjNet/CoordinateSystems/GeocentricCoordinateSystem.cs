@@ -41,8 +41,15 @@ namespace ProjNet.CoordinateSystems
         /// <param name="alias">Alias name.</param>
         /// <param name="remarks">Additional remarks.</param>
         /// <param name="abbreviation">Abbreviation.</param>
-        internal GeocentricCoordinateSystem(HorizontalDatum datum, LinearUnit linearUnit, PrimeMeridian primeMeridian, List<AxisInfo> axisInfo,
-            string name, string authority, long code, string alias,
+        internal GeocentricCoordinateSystem(
+            HorizontalDatum datum,
+            LinearUnit linearUnit,
+            PrimeMeridian primeMeridian,
+            List<AxisInfo> axisInfo,
+            string name,
+            string authority,
+            long code,
+            string alias,
             string remarks, string abbreviation)
             : base(name, authority, code, alias, abbreviation, remarks)
         {
@@ -66,7 +73,9 @@ namespace ProjNet.CoordinateSystems
             {
                 return new CoordinateSystemFactory().CreateGeocentricCoordinateSystem(
                     "WGS84 Geocentric",
-                    HorizontalDatum.WGS84, LinearUnit.Metre, PrimeMeridian.Greenwich);
+                    HorizontalDatum.WGS84,
+                    LinearUnit.Metre,
+                    PrimeMeridian.Greenwich);
             }
         }
 
@@ -142,7 +151,8 @@ namespace ProjNet.CoordinateSystems
                 sb.AppendFormat(
                     CultureInfo.InvariantCulture.NumberFormat,
                     "<CS_CoordinateSystem Dimension=\"{0}\"><CS_GeocentricCoordinateSystem>{1}",
-                    this.Dimension, this.InfoXml);
+                    this.Dimension,
+                    this.InfoXml);
                 foreach (var ai in this.AxisInfo)
                 {
                     sb.Append(ai.XML);
@@ -150,7 +160,9 @@ namespace ProjNet.CoordinateSystems
 
                 sb.AppendFormat(
                     "{0}{1}{2}</CS_GeocentricCoordinateSystem></CS_CoordinateSystem>",
-                    this.HorizontalDatum.XML, this.LinearUnit.XML, this.PrimeMeridian.XML);
+                    this.HorizontalDatum.XML,
+                    this.LinearUnit.XML,
+                    this.PrimeMeridian.XML);
                 return sb.ToString();
             }
         }

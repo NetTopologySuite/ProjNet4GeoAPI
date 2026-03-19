@@ -40,7 +40,17 @@ namespace ProjNet.CoordinateSystems
         /// <param name="alias">Alias.</param>
         /// <param name="abbreviation">Abbreviation.</param>
         /// <param name="remarks">Provider-supplied remarks.</param>
-        public VerticalCoordinateSystem(LinearUnit linearUnit, VerticalDatum verticalDatum, AxisInfo axisInfo, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks) : base(name, authority, authorityCode, alias, abbreviation, remarks)
+        public VerticalCoordinateSystem(
+            LinearUnit linearUnit,
+            VerticalDatum verticalDatum,
+            AxisInfo axisInfo,
+            string name,
+            string authority,
+            long authorityCode,
+            string alias,
+            string abbreviation,
+            string remarks)
+            : base(name, authority, authorityCode, alias, abbreviation, remarks)
         {
             this.VerticalDatum = verticalDatum;
             this.AxisInfo = new List<AxisInfo>() { axisInfo };
@@ -61,12 +71,13 @@ namespace ProjNet.CoordinateSystems
         /// Gets creates a meter unit coordinate system with <see cref="VerticalDatum.ODN"/>.
         /// </summary>
         public static VerticalCoordinateSystem ODN =>
-            new VerticalCoordinateSystem(
-                new LinearUnit(1, "metre", "EPSG", 9001, string.Empty, "m", string.Empty),
-                VerticalDatum.ODN, new AxisInfo("Up", AxisOrientationEnum.Up),
-                "Newlyn",
-                "EPSG",
-                5701,
+                new VerticalCoordinateSystem(
+                    new LinearUnit(1, "metre", "EPSG", 9001, string.Empty, "m", string.Empty),
+                    VerticalDatum.ODN,
+                    new AxisInfo("Up", AxisOrientationEnum.Up),
+                    "Newlyn",
+                    "EPSG",
+                    5701,
                 string.Empty,
                 "ODN",
                 string.Empty);
@@ -105,7 +116,8 @@ namespace ProjNet.CoordinateSystems
                 sb.AppendFormat(
                     CultureInfo.InvariantCulture.NumberFormat,
                     "<CS_CoordinateSystem Dimension=\"{0}\"><CS_VerticalCoordinateSystem>{1}",
-                    this.Dimension, this.InfoXml);
+                    this.Dimension,
+                    this.InfoXml);
                 foreach (var ai in this.AxisInfo)
                 {
                     sb.Append(ai.XML);
@@ -113,7 +125,8 @@ namespace ProjNet.CoordinateSystems
 
                 sb.AppendFormat(
                     "{0}{1}</CS_VerticalCoordinateSystem></CS_CoordinateSystem>",
-                    this.VerticalDatum.XML, this.LinearUnit.XML);
+                    this.VerticalDatum.XML,
+                    this.LinearUnit.XML);
                 return sb.ToString();
             }
         }

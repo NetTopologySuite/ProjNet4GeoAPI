@@ -48,7 +48,17 @@ namespace ProjNet.CoordinateSystems
         /// <param name="alias">Alias.</param>
         /// <param name="abbreviation">Abbreviation.</param>
         /// <param name="remarks">Provider-supplied remarks.</param>
-        internal GeographicCoordinateSystem(AngularUnit angularUnit, HorizontalDatum horizontalDatum, PrimeMeridian primeMeridian, List<AxisInfo> axisInfo, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks)
+        internal GeographicCoordinateSystem(
+            AngularUnit angularUnit,
+            HorizontalDatum horizontalDatum,
+            PrimeMeridian primeMeridian,
+            List<AxisInfo> axisInfo,
+            string name,
+            string authority,
+            long authorityCode,
+            string alias,
+            string abbreviation,
+            string remarks)
             : base(horizontalDatum, axisInfo, name, authority, authorityCode, alias, remarks, abbreviation)
         {
             this.AngularUnit = angularUnit;
@@ -67,8 +77,15 @@ namespace ProjNet.CoordinateSystems
                 axes.Add(new AxisInfo("Lat", AxisOrientationEnum.North));
                 return new GeographicCoordinateSystem(
                     CoordinateSystems.AngularUnit.Degrees,
-                    CoordinateSystems.HorizontalDatum.WGS84, CoordinateSystems.PrimeMeridian.Greenwich, axes,
-                    "WGS 84", "EPSG", 4326, string.Empty, string.Empty, string.Empty);
+                    CoordinateSystems.HorizontalDatum.WGS84,
+                    CoordinateSystems.PrimeMeridian.Greenwich,
+                    axes,
+                    "WGS 84",
+                    "EPSG",
+                    4326,
+                    string.Empty,
+                    string.Empty,
+                    string.Empty);
             }
         }
 
@@ -159,7 +176,8 @@ namespace ProjNet.CoordinateSystems
                 sb.AppendFormat(
                     CultureInfo.InvariantCulture.NumberFormat,
                     "<CS_CoordinateSystem Dimension=\"{0}\"><CS_GeographicCoordinateSystem>{1}",
-                    this.Dimension, this.InfoXml);
+                    this.Dimension,
+                    this.InfoXml);
                 foreach (var ai in this.AxisInfo)
                 {
                     sb.Append(ai.XML);
@@ -167,7 +185,9 @@ namespace ProjNet.CoordinateSystems
 
                 sb.AppendFormat(
                     "{0}{1}{2}</CS_GeographicCoordinateSystem></CS_CoordinateSystem>",
-                    this.HorizontalDatum.XML, this.AngularUnit.XML, this.PrimeMeridian.XML);
+                    this.HorizontalDatum.XML,
+                    this.AngularUnit.XML,
+                    this.PrimeMeridian.XML);
                 return sb.ToString();
             }
         }
