@@ -125,10 +125,10 @@ namespace ProjNet.CoordinateSystems
             get
             {
                 var sb = new StringBuilder();
-                sb.AppendFormat("PROJECTION[\"{0}\"", this.ClassName);
+                sb.AppendFormat(CultureInfo.InvariantCulture, "PROJECTION[\"{0}\"", this.ClassName);
                 if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
                 {
-                    sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", this.Authority, this.AuthorityCode);
+                    sb.AppendFormat(CultureInfo.InvariantCulture, ", AUTHORITY[\"{0}\", \"{1}\"]", this.Authority, this.AuthorityCode);
                 }
 
                 sb.Append("]");

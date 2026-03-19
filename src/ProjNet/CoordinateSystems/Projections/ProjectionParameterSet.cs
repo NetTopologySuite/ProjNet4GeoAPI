@@ -19,6 +19,7 @@ namespace ProjNet.CoordinateSystems.Projections
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Text;
 
     /// <summary>
@@ -92,13 +93,13 @@ namespace ProjNet.CoordinateSystems.Projections
                 }
 
                 var sb = new StringBuilder();
-                sb.AppendFormat("Missing projection parameter '{0}'", parameterName);
+                sb.AppendFormat(CultureInfo.InvariantCulture, "Missing projection parameter '{0}'", parameterName);
                 if (alternateNames.Length > 0)
                 {
-                    sb.AppendFormat("\nIt is also not defined as '{0}'", alternateNames[0]);
+                    sb.AppendFormat(CultureInfo.InvariantCulture, "\nIt is also not defined as '{0}'", alternateNames[0]);
                     for (int i = 1; i < alternateNames.Length; i++)
                     {
-                        sb.AppendFormat(", '{0}'", alternateNames[i]);
+                        sb.AppendFormat(CultureInfo.InvariantCulture, ", '{0}'", alternateNames[i]);
                     }
 
                     sb.Append(".");

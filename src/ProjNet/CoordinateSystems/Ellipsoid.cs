@@ -295,7 +295,7 @@ namespace ProjNet.CoordinateSystems
                 sb.AppendFormat(CultureInfo.InvariantCulture.NumberFormat, "SPHEROID[\"{0}\", {1}, {2}", this.Name, this.SemiMajorAxis, this.InverseFlattening);
                 if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
                 {
-                    sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", this.Authority, this.AuthorityCode);
+                    sb.AppendFormat(CultureInfo.InvariantCulture, ", AUTHORITY[\"{0}\", \"{1}\"]", this.Authority, this.AuthorityCode);
                 }
 
                 sb.Append("]");

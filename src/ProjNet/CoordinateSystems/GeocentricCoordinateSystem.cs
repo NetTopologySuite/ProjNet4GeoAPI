@@ -117,7 +117,7 @@ namespace ProjNet.CoordinateSystems
             get
             {
                 var sb = new StringBuilder();
-                sb.AppendFormat("GEOCCS[\"{0}\", {1}, {2}, {3}", this.Name, this.HorizontalDatum.WKT, this.PrimeMeridian.WKT, this.LinearUnit.WKT);
+                sb.AppendFormat(CultureInfo.InvariantCulture, "GEOCCS[\"{0}\", {1}, {2}, {3}", this.Name, this.HorizontalDatum.WKT, this.PrimeMeridian.WKT, this.LinearUnit.WKT);
 
                 // Skip axis info if they contain default values
                 if (this.AxisInfo.Count != 3 ||
@@ -127,13 +127,13 @@ namespace ProjNet.CoordinateSystems
                 {
                     for (int i = 0; i < this.AxisInfo.Count; i++)
                     {
-                        sb.AppendFormat(", {0}", this.GetAxis(i).WKT);
+                        sb.AppendFormat(CultureInfo.InvariantCulture, ", {0}", this.GetAxis(i).WKT);
                     }
                 }
 
                 if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
                 {
-                    sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", this.Authority, this.AuthorityCode);
+                    sb.AppendFormat(CultureInfo.InvariantCulture, ", AUTHORITY[\"{0}\", \"{1}\"]", this.Authority, this.AuthorityCode);
                 }
 
                 sb.Append("]");
@@ -160,6 +160,7 @@ namespace ProjNet.CoordinateSystems
                 }
 
                 sb.AppendFormat(
+                    CultureInfo.InvariantCulture,
                     "{0}{1}{2}</CS_GeocentricCoordinateSystem></CS_CoordinateSystem>",
                     this.HorizontalDatum.XML,
                     this.LinearUnit.XML,

@@ -192,13 +192,13 @@ namespace ProjNet.CoordinateSystems
             get
             {
                 var sb = new StringBuilder();
-                sb.AppendFormat("PROJCS[\"{0}\", {1}, {2}", this.Name, this.GeographicCoordinateSystem.WKT, this.Projection.WKT);
+                sb.AppendFormat(CultureInfo.InvariantCulture, "PROJCS[\"{0}\", {1}, {2}", this.Name, this.GeographicCoordinateSystem.WKT, this.Projection.WKT);
                 for (int i = 0; i < this.Projection.NumParameters; i++)
                 {
                     sb.AppendFormat(CultureInfo.InvariantCulture.NumberFormat, ", {0}", this.Projection.GetParameter(i).WKT);
                 }
 
-                sb.AppendFormat(", {0}", this.LinearUnit.WKT);
+                sb.AppendFormat(CultureInfo.InvariantCulture, ", {0}", this.LinearUnit.WKT);
 
                 // Skip axis info if they contain default values
                 if (this.AxisInfo.Count != 2 ||
@@ -207,14 +207,14 @@ namespace ProjNet.CoordinateSystems
                 {
                     for (int i = 0; i < this.AxisInfo.Count; i++)
                     {
-                        sb.AppendFormat(", {0}", this.GetAxis(i).WKT);
+                        sb.AppendFormat(CultureInfo.InvariantCulture, ", {0}", this.GetAxis(i).WKT);
                     }
                 }
 
                 // Skip authority and code if not defined
                 if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
                 {
-                    sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", this.Authority, this.AuthorityCode);
+                    sb.AppendFormat(CultureInfo.InvariantCulture, ", AUTHORITY[\"{0}\", \"{1}\"]", this.Authority, this.AuthorityCode);
                 }
 
                 sb.Append("]");
@@ -241,6 +241,7 @@ namespace ProjNet.CoordinateSystems
                 }
 
                 sb.AppendFormat(
+                    CultureInfo.InvariantCulture,
                     "{0}{1}{2}</CS_ProjectedCoordinateSystem></CS_CoordinateSystem>",
                     this.GeographicCoordinateSystem.XML,
                     this.LinearUnit.XML,

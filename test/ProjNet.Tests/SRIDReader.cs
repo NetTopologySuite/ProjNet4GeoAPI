@@ -19,6 +19,7 @@ namespace ProjNET.Tests;
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Reflection;
 using System.Text;
@@ -77,7 +78,7 @@ internal class SRIDReader
 
                 var wkt = new WktString
                 {
-                    WktId = int.Parse(line.Substring(0, split)),
+                    WktId = int.Parse(line.Substring(0, split), CultureInfo.InvariantCulture),
                     Wkt = line.Substring(split + 1),
                 };
                 yield return wkt;

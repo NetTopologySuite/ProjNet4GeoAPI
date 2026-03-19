@@ -67,7 +67,7 @@ namespace ProjNet.CoordinateSystems
 
                 sb.Append(this.HeadCoordinateSystem.XML);
                 sb.Append(this.TailCoordinateSystem.XML);
-                sb.AppendFormat("</CS_CompoundCoordinateSystem></CS_CoordinateSystem>");
+                sb.Append("</CS_CompoundCoordinateSystem></CS_CoordinateSystem>");
                 return sb.ToString();
             }
         }

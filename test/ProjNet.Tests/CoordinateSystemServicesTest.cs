@@ -20,6 +20,7 @@ namespace ProjNET.Tests;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -217,7 +218,7 @@ public class CoordinateSystemServicesTest
             var sridElement = node.Element("SRID");
             if (sridElement != null)
             {
-                int srid = int.Parse(sridElement.Value);
+                int srid = int.Parse(sridElement.Value, CultureInfo.InvariantCulture);
                 yield return new KeyValuePair<int, string>(srid, node.LastNode.ToString());
             }
         }

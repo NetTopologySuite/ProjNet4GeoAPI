@@ -325,10 +325,10 @@ namespace ProjNet.CoordinateSystems.Projections
                     sb.Append("INVERSE_MT[");
                 }
 
-                sb.AppendFormat("PARAM_MT[\"{0}\"", this.Name);
+                sb.AppendFormat(CultureInfo.InvariantCulture, "PARAM_MT[\"{0}\"", this.Name);
                 for (int i = 0; i < this.NumParameters; i++)
                 {
-                    sb.AppendFormat(", {0}", this.GetParameter(i).WKT);
+                    sb.AppendFormat(CultureInfo.InvariantCulture, ", {0}", this.GetParameter(i).WKT);
                 }
 
                 // if (!string.IsNullOrWhiteSpace(Authority) && AuthorityCode > 0)
@@ -353,13 +353,14 @@ namespace ProjNet.CoordinateSystems.Projections
                 var sb = new StringBuilder();
                 sb.Append("<CT_MathTransform>");
                 sb.AppendFormat(
+                    CultureInfo.InvariantCulture,
                     this.IsInverse
                         ? "<CT_InverseTransform Name=\"{0}\">"
                         : "<CT_ParameterizedMathTransform Name=\"{0}\">",
                     this.ClassName);
                 for (int i = 0; i < this.NumParameters; i++)
                 {
-                    sb.AppendFormat(this.GetParameter(i).XML);
+                    sb.Append(this.GetParameter(i).XML);
                 }
 
                 sb.Append(this.IsInverse ? "</CT_InverseTransform>" : "</CT_ParameterizedMathTransform>");

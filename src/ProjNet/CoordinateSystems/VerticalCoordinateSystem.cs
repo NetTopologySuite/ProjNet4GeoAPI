@@ -88,18 +88,18 @@ namespace ProjNet.CoordinateSystems
             get
             {
                 var sb = new StringBuilder();
-                sb.AppendFormat("VERT_CS[\"{0}\", {1}, {2}", this.Name, this.VerticalDatum.WKT, this.LinearUnit.WKT);
+                sb.AppendFormat(CultureInfo.InvariantCulture, "VERT_CS[\"{0}\", {1}, {2}", this.Name, this.VerticalDatum.WKT, this.LinearUnit.WKT);
 
                 // Skip axis info if they contain default values
                 if (this.AxisInfo.Count != 1 ||
                     this.AxisInfo[0].Name != "Up" || this.AxisInfo[0].Orientation != AxisOrientationEnum.Up)
                 {
-                    sb.AppendFormat(", {0}", this.GetAxis(0).WKT);
+                    sb.AppendFormat(CultureInfo.InvariantCulture, ", {0}", this.GetAxis(0).WKT);
                 }
 
                 if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
                 {
-                    sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", this.Authority, this.AuthorityCode);
+                    sb.AppendFormat(CultureInfo.InvariantCulture, ", AUTHORITY[\"{0}\", \"{1}\"]", this.Authority, this.AuthorityCode);
                 }
 
                 sb.Append("]");
@@ -124,6 +124,7 @@ namespace ProjNet.CoordinateSystems
                 }
 
                 sb.AppendFormat(
+                    CultureInfo.InvariantCulture,
                     "{0}{1}</CS_VerticalCoordinateSystem></CS_CoordinateSystem>",
                     this.VerticalDatum.XML,
                     this.LinearUnit.XML);

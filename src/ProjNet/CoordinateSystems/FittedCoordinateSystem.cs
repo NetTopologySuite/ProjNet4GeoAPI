@@ -96,7 +96,7 @@ namespace ProjNet.CoordinateSystems
             {
                 // <fitted cs>          = FITTED_CS["<name>", <to base>, <base cs>]
                 var sb = new StringBuilder();
-                sb.AppendFormat("FITTED_CS[\"{0}\", {1}, {2}]", this.Name, this.ToBaseTransform.WKT, this.BaseCoordinateSystem.WKT);
+                sb.AppendFormat(CultureInfo.InvariantCulture, "FITTED_CS[\"{0}\", {1}, {2}]", this.Name, this.ToBaseTransform.WKT, this.BaseCoordinateSystem.WKT);
                 return sb.ToString();
             }
         }
