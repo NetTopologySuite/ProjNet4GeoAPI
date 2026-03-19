@@ -29,6 +29,10 @@ public class Phase9EqualAreaProjectionSupportTests
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
+    /// <summary>
+    /// Verifies that hammer projection aliases can be parsed from WKT.
+    /// </summary>
+    /// <param name="projectionName">The projection alias under test.</param>
     [Theory]
     [InlineData("hammer")]
     public void SupportsHammerProjectionAliasesFromWkt(string projectionName)
@@ -64,6 +68,10 @@ public class Phase9EqualAreaProjectionSupportTests
         Assert.InRange(System.Math.Abs(roundtrip[1] - latitude), 0d, tolerance);
     }
 
+    /// <summary>
+    /// Verifies that sinusoidal projection aliases can be parsed from WKT.
+    /// </summary>
+    /// <param name="projectionName">The projection alias under test.</param>
     [Theory]
     [InlineData("sinu")]
     [InlineData("sinusoidal")]
@@ -100,6 +108,10 @@ public class Phase9EqualAreaProjectionSupportTests
         Assert.InRange(System.Math.Abs(roundtrip[1] - latitude), 0d, tolerance);
     }
 
+    /// <summary>
+    /// Verifies that Goode projection aliases can be parsed from WKT.
+    /// </summary>
+    /// <param name="projectionName">The projection alias under test.</param>
     [Theory]
     [InlineData("goode")]
     [InlineData("goode_homolosine")]
@@ -136,6 +148,10 @@ public class Phase9EqualAreaProjectionSupportTests
         Assert.InRange(System.Math.Abs(roundtrip[1] - latitude), 0d, tolerance);
     }
 
+    /// <summary>
+    /// Verifies that IGH projection aliases can be parsed from WKT.
+    /// </summary>
+    /// <param name="projectionName">The projection alias under test.</param>
     [Theory]
     [InlineData("igh")]
     [InlineData("interrupted_goode_homolosine")]
@@ -172,6 +188,10 @@ public class Phase9EqualAreaProjectionSupportTests
         Assert.InRange(System.Math.Abs(roundtrip[1] - latitude), 0d, tolerance);
     }
 
+    /// <summary>
+    /// Verifies that healpix projection aliases can be parsed from WKT.
+    /// </summary>
+    /// <param name="projectionName">The projection alias under test.</param>
     [Theory]
     [InlineData("healpix")]
     public void SupportsHealpixProjectionAliasesFromWkt(string projectionName)

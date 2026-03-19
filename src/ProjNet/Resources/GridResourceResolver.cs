@@ -50,6 +50,12 @@ namespace ProjNet.Resources
     /// </summary>
     internal sealed class GridResourceResolverOptions
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GridResourceResolverOptions"/> class.
+        /// </summary>
+        /// <param name="localDirectories">The localDirectories value.</param>
+        /// <param name="cacheDirectory">The cacheDirectory value.</param>
+        /// <param name="mode">The mode value.</param>
         internal GridResourceResolverOptions(IEnumerable<string> localDirectories, string cacheDirectory, GridResourceResolutionMode mode)
         {
             if (localDirectories == null)
@@ -93,12 +99,23 @@ namespace ProjNet.Resources
         private readonly Dictionary<string, string> resolvedPathByGridName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         private readonly object sync = new object();
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GridResourceResolver"/> class.
+        /// </summary>
+        /// <param name="options">The options value.</param>
+        /// <param name="fetchClient">The fetchClient value.</param>
         internal GridResourceResolver(GridResourceResolverOptions options, IGridResourceFetchClient fetchClient = null)
         {
             this.options = options ?? throw new ArgumentNullException(nameof(options));
             this.fetchClient = fetchClient ?? DefaultFetchClient;
         }
 
+        /// <summary>
+        /// Performs the documented operation.
+        /// </summary>
+        /// <param name="gridName">The gridName value.</param>
+        /// <param name="resolvedPath">The resolvedPath value.</param>
+        /// <returns>The computed value.</returns>
         internal bool TryResolve(string gridName, out string resolvedPath)
         {
             if (string.IsNullOrWhiteSpace(gridName))

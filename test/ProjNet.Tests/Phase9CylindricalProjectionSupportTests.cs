@@ -29,6 +29,10 @@ public class Phase9CylindricalProjectionSupportTests
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
+    /// <summary>
+    /// Verifies that Miller projection aliases can be parsed from WKT.
+    /// </summary>
+    /// <param name="projectionName">The projection alias under test.</param>
     [Theory]
     [InlineData("mill")]
     [InlineData("miller")]
@@ -66,6 +70,10 @@ public class Phase9CylindricalProjectionSupportTests
         Assert.InRange(System.Math.Abs(roundtrip[1] - latitude), 0d, tolerance);
     }
 
+    /// <summary>
+    /// Verifies that EQC projection aliases can be parsed from WKT.
+    /// </summary>
+    /// <param name="projectionName">The projection alias under test.</param>
     [Theory]
     [InlineData("eqc")]
     [InlineData("equidistant_cylindrical")]
@@ -104,6 +112,10 @@ public class Phase9CylindricalProjectionSupportTests
         Assert.InRange(System.Math.Abs(roundtrip[1] - latitude), 0d, tolerance);
     }
 
+    /// <summary>
+    /// Verifies that CEA projection aliases can be parsed from WKT.
+    /// </summary>
+    /// <param name="projectionName">The projection alias under test.</param>
     [Theory]
     [InlineData("cea")]
     [InlineData("cylindrical_equal_area")]
@@ -142,6 +154,10 @@ public class Phase9CylindricalProjectionSupportTests
         Assert.InRange(System.Math.Abs(roundtrip[1] - latitude), 0d, tolerance);
     }
 
+    /// <summary>
+    /// Verifies that loxim projection aliases can be parsed from WKT.
+    /// </summary>
+    /// <param name="projectionName">The projection alias under test.</param>
     [Theory]
     [InlineData("loxim")]
     [InlineData("loximuthal")]
@@ -178,6 +194,10 @@ public class Phase9CylindricalProjectionSupportTests
         Assert.InRange(System.Math.Abs(roundtrip[1] - latitude), 0d, tolerance);
     }
 
+    /// <summary>
+    /// Verifies that patterson projection aliases can be parsed from WKT.
+    /// </summary>
+    /// <param name="projectionName">The projection alias under test.</param>
     [Theory]
     [InlineData("patterson")]
     public void SupportsPattersonProjectionAliasesFromWkt(string projectionName)
