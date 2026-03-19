@@ -86,6 +86,9 @@ namespace ProjNet.CoordinateSystems.Projections
             Register("equidistant_conic", typeof(EquidistantConicProjection));
             Register("equidistant_conic_(spherical)", typeof(EquidistantConicProjection));
             Register("eqdc", typeof(EquidistantConicProjection));
+            Register("bonne", typeof(BonneProjection));
+            Register("perspective_conic", typeof(PconicProjection));
+            Register("pconic", typeof(PconicProjection));
 
             Register("lambert_azimuthal_equal_area", typeof(LambertAzimuthalEqualAreaProjection));
 

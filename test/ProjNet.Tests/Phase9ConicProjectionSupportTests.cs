@@ -60,6 +60,71 @@ public class Phase9ConicProjectionSupportTests
         Assert.InRange(System.Math.Abs(roundtrip[1] - latitude), 0d, tolerance);
     }
 
+    [Theory]
+    [InlineData("bonne")]
+    public void SupportsBonneProjectionAliasesFromWkt(string projectionName)
+    {
+        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName));
+        var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
+        double[] result = transform.MathTransform.Transform(CreatePoint(1000d, 2000d));
+
+        Assert.NotNull(projected);
+        Assert.NotNull(transform);
+        Assert.NotNull(result);
+        Assert.True(result.Length >= 2);
+    }
+
+    [Fact]
+    public void SupportsBonneProjectionRoundtrip()
+    {
+        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt("bonne"));
+        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(GeographicCoordinateSystem.WGS84, projected);
+        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
+
+        const double longitude = 12.8d;
+        const double latitude = 31.4d;
+        const double tolerance = 1e-8d;
+
+        double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
+        double[] roundtrip = inverse.MathTransform.Transform(projectedPoint);
+
+        Assert.InRange(System.Math.Abs(roundtrip[0] - longitude), 0d, tolerance);
+        Assert.InRange(System.Math.Abs(roundtrip[1] - latitude), 0d, tolerance);
+    }
+
+    [Theory]
+    [InlineData("pconic")]
+    [InlineData("perspective_conic")]
+    public void SupportsPconicProjectionAliasesFromWkt(string projectionName)
+    {
+        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName));
+        var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
+        double[] result = transform.MathTransform.Transform(CreatePoint(1000d, 2000d));
+
+        Assert.NotNull(projected);
+        Assert.NotNull(transform);
+        Assert.NotNull(result);
+        Assert.True(result.Length >= 2);
+    }
+
+    [Fact]
+    public void SupportsPconicProjectionRoundtrip()
+    {
+        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt("pconic"));
+        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(GeographicCoordinateSystem.WGS84, projected);
+        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
+
+        const double longitude = -7.25d;
+        const double latitude = 44.1d;
+        const double tolerance = 1e-8d;
+
+        double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
+        double[] roundtrip = inverse.MathTransform.Transform(projectedPoint);
+
+        Assert.InRange(System.Math.Abs(roundtrip[0] - longitude), 0d, tolerance);
+        Assert.InRange(System.Math.Abs(roundtrip[1] - latitude), 0d, tolerance);
+    }
+
     private static string BuildProjectedWkt(string projectionName)
     {
         return
