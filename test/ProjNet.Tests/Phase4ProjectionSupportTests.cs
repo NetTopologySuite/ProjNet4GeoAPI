@@ -22,13 +22,17 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Validates phase-4 projection aliases and roundtrip behavior.
 /// </summary>
 public class Phase4ProjectionSupportTests
 {
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
+    /// <summary>
+    /// Verifies that phase-4 projection aliases resolve from WKT and produce usable transforms.
+    /// </summary>
+    /// <param name="projectionName">Projection alias to validate.</param>
     [Theory]
     [InlineData("eqearth")]
     [InlineData("natearth")]
@@ -49,6 +53,13 @@ public class Phase4ProjectionSupportTests
         Assert.True(result.Length >= 2);
     }
 
+    /// <summary>
+    /// Verifies forward/inverse roundtrip stability for phase-4 projection aliases.
+    /// </summary>
+    /// <param name="projectionName">Projection alias to validate.</param>
+    /// <param name="longitude">Input longitude.</param>
+    /// <param name="latitude">Input latitude.</param>
+    /// <param name="tolerance">Maximum absolute roundtrip delta.</param>
     [Theory]
     [InlineData("eqearth", 12.5d, 25.25d, 1e-6)]
     [InlineData("natearth", -32.4d, 18.6d, 1e-6)]

@@ -1309,12 +1309,23 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.IsTrue(this.ToleranceLessThan(pUtm, expected, 0.05), this.TransformationError("LambertConicConformal2SP", expected, pUtm));
     }
 
+    /// <summary>
+    /// Creates a coordinate system from WKT for test setup.
+    /// </summary>
+    /// <param name="wkt">Well-known text representation of the coordinate system.</param>
+    /// <returns>Parsed coordinate system instance.</returns>
     internal static CoordinateSystem GetCoordinateSystem(string wkt)
     {
         var coordinateSystemFactory = new CoordinateSystemFactory();
         return coordinateSystemFactory.CreateFromWkt(wkt);
     }
 
+    /// <summary>
+    /// Creates a transformation between source and target coordinate systems for test execution.
+    /// </summary>
+    /// <param name="sourceCoordinateSystem">Source coordinate system.</param>
+    /// <param name="targetCoordinateSystem">Target coordinate system.</param>
+    /// <returns>Coordinate transformation instance.</returns>
     internal static ICoordinateTransformation GetTransformation(CoordinateSystem sourceCoordinateSystem, CoordinateSystem targetCoordinateSystem)
     {
         var coordinateSystemFactory = new CoordinateSystemFactory();

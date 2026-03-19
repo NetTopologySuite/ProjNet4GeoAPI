@@ -23,18 +23,30 @@ using System.Globalization;
 using System.IO;
 
 /// <summary>
-/// Represents the documented type.
+/// Parses PROJ GIE fixture text into strongly typed test cases.
 /// </summary>
 internal static class GieParser
 {
     private static readonly char[] WhiteSpaceSeparators = { ' ', '\t' };
 
+    /// <summary>
+    /// Parses a GIE fixture file from disk.
+    /// </summary>
+    /// <param name="path">Path to the fixture file.</param>
+    /// <param name="options">Optional parser behavior options.</param>
+    /// <returns>Parsed GIE cases.</returns>
     public static IReadOnlyList<GieCase> ParseFile(string path, GieParserOptions options = null)
     {
         ArgumentNullException.ThrowIfNull(path);
         return Parse(File.ReadAllText(path), options);
     }
 
+    /// <summary>
+    /// Parses GIE fixture content provided as raw text.
+    /// </summary>
+    /// <param name="content">Fixture content text.</param>
+    /// <param name="options">Optional parser behavior options.</param>
+    /// <returns>Parsed GIE cases.</returns>
     public static IReadOnlyList<GieCase> Parse(string content, GieParserOptions options = null)
     {
         ArgumentNullException.ThrowIfNull(content);

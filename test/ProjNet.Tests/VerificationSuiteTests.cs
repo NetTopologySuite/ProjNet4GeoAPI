@@ -23,10 +23,17 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Verifies canonical transformation behavior against fixed reference points.
 /// </summary>
 public class VerificationSuiteTests
 {
+    /// <summary>
+    /// Verifies WGS84 to WebMercator conversion against reference coordinates.
+    /// </summary>
+    /// <param name="lon">Input longitude.</param>
+    /// <param name="lat">Input latitude.</param>
+    /// <param name="expectedX">Expected projected X.</param>
+    /// <param name="expectedY">Expected projected Y.</param>
     [Theory]
     [InlineData(0d, 0d, 0d, 0d)]
     [InlineData(10d, 10d, 1113194.90793274d, 1118889.97485796d)]
@@ -40,6 +47,13 @@ public class VerificationSuiteTests
         AssertCoordinate(expectedX, expectedY, result[0], result[1], 1e-6);
     }
 
+    /// <summary>
+    /// Verifies WebMercator to WGS84 conversion against reference coordinates.
+    /// </summary>
+    /// <param name="x">Input projected X.</param>
+    /// <param name="y">Input projected Y.</param>
+    /// <param name="expectedLon">Expected longitude.</param>
+    /// <param name="expectedLat">Expected latitude.</param>
     [Theory]
     [InlineData(0d, 0d, 0d, 0d)]
     [InlineData(1113194.90793274d, 1118889.97485796d, 10d, 10d)]
@@ -54,7 +68,7 @@ public class VerificationSuiteTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that legacy coordinate system service lookup APIs return consistent results.
     /// </summary>
     [Fact]
     public void LegacyCoordinateSystemServicesLookups_RemainConsistent()

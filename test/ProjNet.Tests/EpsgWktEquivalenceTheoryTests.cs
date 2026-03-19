@@ -28,7 +28,7 @@ using ProjNet.Data;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Verifies semantic equivalence between generated EPSG WKT and committed fixtures.
 /// </summary>
 public class EpsgWktEquivalenceTheoryTests
 {
@@ -45,9 +45,9 @@ public class EpsgWktEquivalenceTheoryTests
             .ToDictionary(group => group.Key, group => group.Last().Value));
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Enumerates fixture rows used by the WKT equivalence theory.
     /// </summary>
-    /// <returns>The computed value.</returns>
+    /// <returns>SRID/WKT row pairs.</returns>
     public static IEnumerable<object[]> EpsgFixtureRows()
     {
         string fixturePath = Path.Combine(AppContext.BaseDirectory, FixtureRelativePath.Replace('/', Path.DirectorySeparatorChar));
@@ -63,6 +63,11 @@ public class EpsgWktEquivalenceTheoryTests
             .ToArray();
     }
 
+    /// <summary>
+    /// Verifies that generated catalog WKT is equivalent to the committed fixture for a given SRID.
+    /// </summary>
+    /// <param name="srid">EPSG SRID.</param>
+    /// <param name="expectedWkt">Expected WKT from fixture.</param>
     [Theory]
     [MemberData(nameof(EpsgFixtureRows))]
     public void GeneratedCatalogWkt_ShouldBeEquivalentToCommittedEpsgFixture(int srid, string expectedWkt)

@@ -26,10 +26,14 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Runs exhaustive proj2proj parity fixture cases when explicitly enabled.
 /// </summary>
 public class Proj2ProjParityExhaustiveTheoryTests
 {
+    /// <summary>
+    /// Validates a direct projected pair against exhaustive PROJ reference output.
+    /// </summary>
+    /// <param name="testCase">Fixture case containing source/target definitions and expected result.</param>
     [Theory]
     [Trait("Category", "ExhaustiveValidation")]
     [MemberData(nameof(GetParityCases))]
@@ -62,9 +66,9 @@ public class Proj2ProjParityExhaustiveTheoryTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Loads exhaustive proj2proj parity test cases from the generated fixture.
     /// </summary>
-    /// <returns>The computed value.</returns>
+    /// <returns>Fixture rows for theory execution.</returns>
     public static IEnumerable<object[]> GetParityCases()
     {
         string fixturePath = Path.Combine(AppContext.BaseDirectory, "Generated", "proj2proj-direct-parity-exhaustive-fixture.json");

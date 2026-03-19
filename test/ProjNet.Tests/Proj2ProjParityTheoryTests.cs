@@ -26,10 +26,14 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Validates direct proj2proj parity fixtures against ProjNet transformations.
 /// </summary>
 public class Proj2ProjParityTheoryTests
 {
+    /// <summary>
+    /// Validates a direct projected pair against the reference fixture output.
+    /// </summary>
+    /// <param name="testCase">Fixture case containing source/target definitions and expected result.</param>
     [Theory]
     [MemberData(nameof(GetParityCases))]
     public void CreateFromCoordinateSystems_WithDirectProjectedPair_StaysWithinProjReference(Proj2ProjCase testCase)
@@ -56,9 +60,9 @@ public class Proj2ProjParityTheoryTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Loads direct proj2proj parity test cases from the generated fixture.
     /// </summary>
-    /// <returns>The computed value.</returns>
+    /// <returns>Fixture rows for theory execution.</returns>
     public static IEnumerable<object[]> GetParityCases()
     {
         string fixturePath = Path.Combine(AppContext.BaseDirectory, "Generated", "proj2proj-direct-parity-fixture.json");
