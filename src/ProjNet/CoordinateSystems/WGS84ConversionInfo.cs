@@ -195,7 +195,13 @@ namespace ProjNet.CoordinateSystems
                 return string.Format(
                     CultureInfo.InvariantCulture.NumberFormat,
                     "TOWGS84[{0}, {1}, {2}, {3}, {4}, {5}, {6}]",
-                    this.Dx, this.Dy, this.Dz, this.Ex, this.Ey, this.Ez, this.Ppm);
+                    this.Dx,
+                    this.Dy,
+                    this.Dz,
+                    this.Ex,
+                    this.Ey,
+                    this.Ez,
+                    this.Ppm);
             }
         }
 
@@ -209,7 +215,13 @@ namespace ProjNet.CoordinateSystems
                 return string.Format(
                     CultureInfo.InvariantCulture.NumberFormat,
                     "<CS_WGS84ConversionInfo Dx=\"{0}\" Dy=\"{1}\" Dz=\"{2}\" Ex=\"{3}\" Ey=\"{4}\" Ez=\"{5}\" Ppm=\"{6}\" />",
-                    this.Dx, this.Dy, this.Dz, this.Ex, this.Ey, this.Ez, this.Ppm);
+                    this.Dx,
+                    this.Dy,
+                    this.Dz,
+                    this.Ex,
+                    this.Ey,
+                    this.Ez,
+                    this.Ppm);
             }
         }
 

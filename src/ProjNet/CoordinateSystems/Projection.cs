@@ -50,7 +50,8 @@ namespace ProjNet.CoordinateSystems
             string authority,
             long code,
             string alias,
-            string remarks, string abbreviation)
+            string remarks,
+            string abbreviation)
             : base(name, authority, code, alias, abbreviation, remarks)
         {
             this.parameters = parameters;

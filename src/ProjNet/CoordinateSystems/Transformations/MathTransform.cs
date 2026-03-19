@@ -296,8 +296,13 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <param name="strideX">A stride value for the x-ordinate series.</param>
         /// <param name="strideY">A stride value for the y-ordinate series.</param>
         /// <param name="strideZ">A stride value for the z-ordinate series.</param>
-        protected virtual void TransformCore(Span<double> xs, Span<double> ys, Span<double> zs,
-            int strideX, int strideY, int strideZ)
+        protected virtual void TransformCore(
+            Span<double> xs,
+            Span<double> ys,
+            Span<double> zs,
+            int strideX,
+            int strideY,
+            int strideZ)
         {
             for (int i = 0, j = 0, k = 0; i < xs.Length; i += strideX, j += strideY, k += strideZ)
             {
@@ -339,8 +344,13 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <param name="strideY">A stride value for the y-ordinate series.</param>
         /// <param name="strideZ">A stride value for the z-ordinate series.</param>
         /// <exception cref="ArgumentException">If the provided span and stride values don't result in matching number of ordinates.</exception>
-        public void Transform(Span<double> xs, Span<double> ys, Span<double> zs,
-            int strideX = 1, int strideY = 1, int strideZ = 1)
+        public void Transform(
+            Span<double> xs,
+            Span<double> ys,
+            Span<double> zs,
+            int strideX = 1,
+            int strideY = 1,
+            int strideZ = 1)
         {
             int elementsX = (xs.Length / strideX) + (xs.Length % strideX) != 0 ? 1 : 0;
             int elementsY = (ys.Length / strideY) + (ys.Length % strideY) != 0 ? 1 : 0;

@@ -593,8 +593,17 @@ namespace ProjNet.IO.CoordinateSystems
                 info.Add(new AxisInfo("Geocentric Z", AxisOrientationEnum.North));
             }
 
-            return new GeocentricCoordinateSystem(horizontalDatum, linearUnit, primeMeridian, info, name, authority, authorityCode,
-                string.Empty, string.Empty, string.Empty);
+            return new GeocentricCoordinateSystem(
+                horizontalDatum,
+                linearUnit,
+                primeMeridian,
+                info,
+                name,
+                authority,
+                authorityCode,
+                string.Empty,
+                string.Empty,
+                string.Empty);
         }
 
         private static GeographicCoordinateSystem ReadGeographicCoordinateSystem(WktStreamTokenizer tokenizer)
@@ -656,8 +665,17 @@ namespace ProjNet.IO.CoordinateSystems
                 info.Add(new AxisInfo("Lat", AxisOrientationEnum.North));
             }
 
-            var geographicCS = new GeographicCoordinateSystem(angularUnit, horizontalDatum,
-                    primeMeridian, info, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+            var geographicCS = new GeographicCoordinateSystem(
+                angularUnit,
+                horizontalDatum,
+                primeMeridian,
+                info,
+                name,
+                authority,
+                authorityCode,
+                string.Empty,
+                string.Empty,
+                string.Empty);
             return geographicCS;
         }
 
