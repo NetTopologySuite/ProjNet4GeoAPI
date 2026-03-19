@@ -42,9 +42,16 @@ namespace ProjNet.CoordinateSystems
         /// <param name="alias">Alias.</param>
         /// <param name="abbreviation">Abbreviation.</param>
         /// <param name="remarks">Provider-supplied remarks.</param>
-        internal ProjectedCoordinateSystem(HorizontalDatum datum, GeographicCoordinateSystem geographicCoordinateSystem,
-            LinearUnit linearUnit, IProjection projection, List<AxisInfo> axisInfo,
-            string name, string authority, long code, string alias,
+        internal ProjectedCoordinateSystem(
+            HorizontalDatum datum,
+            GeographicCoordinateSystem geographicCoordinateSystem,
+            LinearUnit linearUnit,
+            IProjection projection,
+            List<AxisInfo> axisInfo,
+            string name,
+            string authority,
+            long code,
+            string alias,
             string remarks, string abbreviation)
             : base(datum, axisInfo, name, authority, code, alias, remarks, abbreviation)
         {
@@ -69,8 +76,15 @@ namespace ProjNet.CoordinateSystems
             pInfo.Add(new ProjectionParameter("false_northing", zoneIsNorth ? 0 : 10000000));
 
             // IProjection projection = cFac.CreateProjection("UTM" + Zone.ToString() + (ZoneIsNorth ? "N" : "S"), "Transverse_Mercator", parameters);
-            var proj = new Projection("Transverse_Mercator", pInfo, "UTM" + zone.ToString(CultureInfo.InvariantCulture) + (zoneIsNorth ? "N" : "S"),
-                "EPSG", 32600 + zone + (zoneIsNorth ? 0 : 100), string.Empty, string.Empty, string.Empty);
+            var proj = new Projection(
+                "Transverse_Mercator",
+                pInfo,
+                "UTM" + zone.ToString(CultureInfo.InvariantCulture) + (zoneIsNorth ? "N" : "S"),
+                "EPSG",
+                32600 + zone + (zoneIsNorth ? 0 : 100),
+                string.Empty,
+                string.Empty,
+                string.Empty);
             var axes = new List<AxisInfo>
                 {
                     new AxisInfo("East", AxisOrientationEnum.East),
@@ -78,9 +92,16 @@ namespace ProjNet.CoordinateSystems
                 };
             return new ProjectedCoordinateSystem(
                 CoordinateSystems.HorizontalDatum.WGS84,
-                CoordinateSystems.GeographicCoordinateSystem.WGS84, CoordinateSystems.LinearUnit.Metre, proj, axes,
-                "WGS 84 / UTM zone " + zone.ToString(CultureInfo.InvariantCulture) + (zoneIsNorth ? "N" : "S"), "EPSG", 32600 + zone + (zoneIsNorth ? 0 : 100),
-                string.Empty, "Large and medium scale topographic mapping and engineering survey.", string.Empty);
+                CoordinateSystems.GeographicCoordinateSystem.WGS84,
+                CoordinateSystems.LinearUnit.Metre,
+                proj,
+                axes,
+                "WGS 84 / UTM zone " + zone.ToString(CultureInfo.InvariantCulture) + (zoneIsNorth ? "N" : "S"),
+                "EPSG",
+                32600 + zone + (zoneIsNorth ? 0 : 100),
+                string.Empty,
+                "Large and medium scale topographic mapping and engineering survey.",
+                string.Empty);
         }
 
         /// <summary>
@@ -103,8 +124,15 @@ namespace ProjNet.CoordinateSystems
                         new ProjectionParameter("false_northing", 0.0),
                     };
 
-                var proj = new Projection("Popular Visualisation Pseudo-Mercator", pInfo, "Popular Visualisation Pseudo-Mercator", "EPSG", 3856,
-                    "Pseudo-Mercator", string.Empty, string.Empty);
+                var proj = new Projection(
+                    "Popular Visualisation Pseudo-Mercator",
+                    pInfo,
+                    "Popular Visualisation Pseudo-Mercator",
+                    "EPSG",
+                    3856,
+                    "Pseudo-Mercator",
+                    string.Empty,
+                    string.Empty);
 
                 var axes = new List<AxisInfo>
                 {
@@ -114,8 +142,14 @@ namespace ProjNet.CoordinateSystems
 
                 return new ProjectedCoordinateSystem(
                     CoordinateSystems.HorizontalDatum.WGS84,
-                    CoordinateSystems.GeographicCoordinateSystem.WGS84, CoordinateSystems.LinearUnit.Metre, proj, axes,
-                    "WGS 84 / Pseudo-Mercator", "EPSG", 3857, "WGS 84 / Popular Visualisation Pseudo-Mercator",
+                    CoordinateSystems.GeographicCoordinateSystem.WGS84,
+                    CoordinateSystems.LinearUnit.Metre,
+                    proj,
+                    axes,
+                    "WGS 84 / Pseudo-Mercator",
+                    "EPSG",
+                    3857,
+                    "WGS 84 / Popular Visualisation Pseudo-Mercator",
                     "Certain Web mapping and visualisation applications." +
                     "Uses spherical development of ellipsoidal coordinates. Relative to an ellipsoidal development errors of up to 800 metres in position and 0.7 percent in scale may arise. It is not a recognised geodetic system: see WGS 84 / World Mercator (CRS code 3395).",
                     "WebMercator");
@@ -198,7 +232,8 @@ namespace ProjNet.CoordinateSystems
                 sb.AppendFormat(
                     CultureInfo.InvariantCulture.NumberFormat,
                     "<CS_CoordinateSystem Dimension=\"{0}\"><CS_ProjectedCoordinateSystem>{1}",
-                    this.Dimension, this.InfoXml);
+                    this.Dimension,
+                    this.InfoXml);
                 foreach (var ai in this.AxisInfo)
                 {
                     sb.Append(ai.XML);
@@ -206,7 +241,9 @@ namespace ProjNet.CoordinateSystems
 
                 sb.AppendFormat(
                     "{0}{1}{2}</CS_ProjectedCoordinateSystem></CS_CoordinateSystem>",
-                    this.GeographicCoordinateSystem.XML, this.LinearUnit.XML, this.Projection.XML);
+                    this.GeographicCoordinateSystem.XML,
+                    this.LinearUnit.XML,
+                    this.Projection.XML);
                 return sb.ToString();
             }
         }
