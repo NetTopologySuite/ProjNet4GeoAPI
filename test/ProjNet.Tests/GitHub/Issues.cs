@@ -74,14 +74,21 @@ public class Issues
         };
 
         var itmDatum = coordinateSystemFactory.CreateHorizontalDatum("Isreal 1993", DatumType.HD_Geocentric,
-            Ellipsoid.GRS80, new Wgs84ConversionInfo(-24.0024, -17.1032, -17.8444, -0.33077, -1.85269, 1.66969, 5.4248));
+            Ellipsoid.GRS80,
+            new Wgs84ConversionInfo(-24.0024, -17.1032, -17.8444, -0.33077, -1.85269, 1.66969, 5.4248));
 
-        var itmGeo = coordinateSystemFactory.CreateGeographicCoordinateSystem("ITM", AngularUnit.Degrees, itmDatum,
-            PrimeMeridian.Greenwich, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
+        var itmGeo = coordinateSystemFactory.CreateGeographicCoordinateSystem(
+            "ITM",
+            AngularUnit.Degrees,
+            itmDatum,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("East", AxisOrientationEnum.East),
+            new AxisInfo("North", AxisOrientationEnum.North));
 
         var itmProjection = coordinateSystemFactory.CreateProjection("Transverse_Mercator", "Transverse_Mercator", itmParameters);
         var itm = coordinateSystemFactory.CreateProjectedCoordinateSystem("ITM", itmGeo, itmProjection, LinearUnit.Metre,
-            new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
+            new AxisInfo("East", AxisOrientationEnum.East),
+            new AxisInfo("North", AxisOrientationEnum.North));
 
         var wgs84 = ProjectedCoordinateSystem.WGS84_UTM(36, true).GeographicCoordinateSystem;
 
@@ -186,7 +193,11 @@ public class Issues
         gcsAxes.Add(new AxisInfo("Lat", AxisOrientationEnum.North));
 
         var geographicCoordinateSystem =
-            new GeographicCoordinateSystem(AngularUnit.Degrees, HorizontalDatum.WGS84, PrimeMeridian.Greenwich, gcsAxes,
+            new GeographicCoordinateSystem(
+                AngularUnit.Degrees,
+                HorizontalDatum.WGS84,
+                PrimeMeridian.Greenwich,
+                gcsAxes,
                 "WGS 84", "EPSG", 4326, string.Empty, abbreviation, remarks);
 
         Assert.That(geographicCoordinateSystem.Abbreviation, Is.EqualTo(abbreviation));
@@ -201,8 +212,15 @@ public class Issues
             new ProjectionParameter("false_northing", 0.0),
         };
 
-        var proj = new Projection("Popular Visualisation Pseudo-Mercator", pInfo, "Popular Visualisation Pseudo-Mercator", "EPSG", 3856,
-            "Pseudo-Mercator", string.Empty, string.Empty);
+        var proj = new Projection(
+            "Popular Visualisation Pseudo-Mercator",
+            pInfo,
+            "Popular Visualisation Pseudo-Mercator",
+            "EPSG",
+            3856,
+            "Pseudo-Mercator",
+            string.Empty,
+            string.Empty);
 
         var pcsAxes = new List<AxisInfo>
             {
@@ -211,7 +229,12 @@ public class Issues
             };
 
         var projectedCoordinateSystem =
-            new ProjectedCoordinateSystem(HorizontalDatum.WGS84, GeographicCoordinateSystem.WGS84, LinearUnit.Metre, proj, pcsAxes,
+            new ProjectedCoordinateSystem(
+                HorizontalDatum.WGS84,
+                GeographicCoordinateSystem.WGS84,
+                LinearUnit.Metre,
+                proj,
+                pcsAxes,
                 "WGS 84 / Pseudo-Mercator", "EPSG", 3857, "WGS 84 / Popular Visualisation Pseudo-Mercator",
                 remarks, abbreviation);
 

@@ -139,8 +139,12 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         var ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Clarke 1866", 6378206.4, 294.9786982138982, LinearUnit.Metre);
 
         var datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Clarke 1866", DatumType.HD_Geocentric, ellipsoid, null);
-        var gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem("Clarke 1866", AngularUnit.Degrees, datum,
-            PrimeMeridian.Greenwich, new AxisInfo("Lon", AxisOrientationEnum.East),
+        var gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+            "Clarke 1866",
+            AngularUnit.Degrees,
+            datum,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("Lon", AxisOrientationEnum.East),
             new AxisInfo("Lat", AxisOrientationEnum.North));
         var parameters = new List<ProjectionParameter>(5)
                              {
@@ -176,8 +180,12 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         var ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Clarke 1866", 6378206.4, 294.9786982138982, LinearUnit.Metre);
 
         var datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Clarke 1866", DatumType.HD_Geocentric, ellipsoid, null);
-        var gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem("Clarke 1866", AngularUnit.Degrees, datum,
-            PrimeMeridian.Greenwich, new AxisInfo("Lon", AxisOrientationEnum.East),
+        var gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+            "Clarke 1866",
+            AngularUnit.Degrees,
+            datum,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("Lon", AxisOrientationEnum.East),
             new AxisInfo("Lat", AxisOrientationEnum.North));
         var parameters = new List<ProjectionParameter>(5)
                              {
@@ -212,8 +220,12 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         var ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Bessel 1840", 6377397.155, 299.15281, LinearUnit.Metre);
 
         var datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Bessel 1840", DatumType.HD_Geocentric, ellipsoid, null);
-        var gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem("Bessel 1840", AngularUnit.Degrees, datum,
-            PrimeMeridian.Greenwich, new AxisInfo("Lon", AxisOrientationEnum.East),
+        var gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+            "Bessel 1840",
+            AngularUnit.Degrees,
+            datum,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("Lon", AxisOrientationEnum.East),
             new AxisInfo("Lat", AxisOrientationEnum.North));
         var parameters = new List<ProjectionParameter>(5)
                              {
@@ -247,8 +259,12 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         var ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Bessel 1840", 6377397.155, 299.15281, LinearUnit.Metre);
 
         var datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Bessel 1840", DatumType.HD_Geocentric, ellipsoid, null);
-        var gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem("Bessel 1840", AngularUnit.Degrees, datum,
-            PrimeMeridian.Greenwich, new AxisInfo("Lon", AxisOrientationEnum.East),
+        var gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+            "Bessel 1840",
+            AngularUnit.Degrees,
+            datum,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("Lon", AxisOrientationEnum.East),
             new AxisInfo("Lat", AxisOrientationEnum.North));
         var parameters = new List<ProjectionParameter>(5)
                              {
@@ -282,8 +298,12 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         var ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Krassowski 1940", 6378245.0, 298.3, LinearUnit.Metre);
 
         var datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Krassowski 1940", DatumType.HD_Geocentric, ellipsoid, null);
-        var gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem("Krassowski 1940", AngularUnit.Degrees, datum,
-            PrimeMeridian.Greenwich, new AxisInfo("Lon", AxisOrientationEnum.East),
+        var gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+            "Krassowski 1940",
+            AngularUnit.Degrees,
+            datum,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("Lon", AxisOrientationEnum.East),
             new AxisInfo("Lat", AxisOrientationEnum.North));
         var parameters = new List<ProjectionParameter>(5)
                              {
@@ -316,8 +336,12 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         var ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Airy 1830", 6377563.396, 299.32496, LinearUnit.Metre);
 
         var datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Airy 1830", DatumType.HD_Geocentric, ellipsoid, null);
-        var gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem("Airy 1830", AngularUnit.Degrees, datum,
-            PrimeMeridian.Greenwich, new AxisInfo("Lon", AxisOrientationEnum.East),
+        var gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+            "Airy 1830",
+            AngularUnit.Degrees,
+            datum,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("Lon", AxisOrientationEnum.East),
             new AxisInfo("Lat", AxisOrientationEnum.North));
         var parameters = new List<ProjectionParameter>(5)
                              {
@@ -353,8 +377,12 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             this.CoordinateSystemFactory.CreateFlattenedSphere("Clarke 1866", 20925832.16, 294.97470, LinearUnit.USSurveyFoot);
 
         var datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Clarke 1866", DatumType.HD_Geocentric, ellipsoid, null);
-        var gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem("Clarke 1866", AngularUnit.Degrees, datum,
-            PrimeMeridian.Greenwich, new AxisInfo("Lon", AxisOrientationEnum.East),
+        var gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+            "Clarke 1866",
+            AngularUnit.Degrees,
+            datum,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("Lon", AxisOrientationEnum.East),
             new AxisInfo("Lat", AxisOrientationEnum.North));
         var parameters = new List<ProjectionParameter>(5)
                              {
@@ -468,8 +496,13 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     [Xunit.Fact]
     public void TestGeocentric()
     {
-        var gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem("ETRF89 Geographic", AngularUnit.Degrees, HorizontalDatum.ETRF89, PrimeMeridian.Greenwich,
-            new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
+        var gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+            "ETRF89 Geographic",
+            AngularUnit.Degrees,
+            HorizontalDatum.ETRF89,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("East", AxisOrientationEnum.East),
+            new AxisInfo("North", AxisOrientationEnum.North));
         var gcenCs = this.CoordinateSystemFactory.CreateGeocentricCoordinateSystem("ETRF89 Geocentric", HorizontalDatum.ETRF89, LinearUnit.Metre, PrimeMeridian.Greenwich);
         var ct = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(gcs, gcenCs);
         double[] pExpected = new[] { 2 + (7.0 / 60) + (46.38 / 3600), 53 + (48.0 / 60) + (33.82 / 3600) }; // Point.FromDMS(2, 7, 46.38, 53, 48, 33.82);
@@ -491,19 +524,39 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         var wgs72 = HorizontalDatum.WGS72;
         wgs72.Wgs84Parameters = new Wgs84ConversionInfo(0, 0, 4.5, 0, 0, 0.554, 0.219);
         var ed50 = HorizontalDatum.ED50;
-        ed50.Wgs84Parameters = new Wgs84ConversionInfo(-81.0703, -89.3603, -115.7526,
-                                                       -0.48488, -0.02436, -0.41321,
-                                                       -0.540645); // Parameters for Denmark
+        ed50.Wgs84Parameters = new Wgs84ConversionInfo(
+            -81.0703,
+            -89.3603,
+            -115.7526,
+            -0.48488,
+            -0.02436,
+            -0.41321,
+            -0.540645); // Parameters for Denmark
 
         // Define geographic coordinate systems
-        var gcsWGS72 = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem("WGS72 Geographic", AngularUnit.Degrees, wgs72, PrimeMeridian.Greenwich,
-            new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
+        var gcsWGS72 = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+            "WGS72 Geographic",
+            AngularUnit.Degrees,
+            wgs72,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("East", AxisOrientationEnum.East),
+            new AxisInfo("North", AxisOrientationEnum.North));
 
-        var gcsWGS84 = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem("WGS84 Geographic", AngularUnit.Degrees, HorizontalDatum.WGS84, PrimeMeridian.Greenwich,
-            new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
+        var gcsWGS84 = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+            "WGS84 Geographic",
+            AngularUnit.Degrees,
+            HorizontalDatum.WGS84,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("East", AxisOrientationEnum.East),
+            new AxisInfo("North", AxisOrientationEnum.North));
 
-        var gcsED50 = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem("ED50 Geographic", AngularUnit.Degrees, ed50, PrimeMeridian.Greenwich,
-            new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
+        var gcsED50 = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+            "ED50 Geographic",
+            AngularUnit.Degrees,
+            ed50,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("East", AxisOrientationEnum.East),
+            new AxisInfo("North", AxisOrientationEnum.North));
 
         // Define geocentric coordinate systems
         var gcenCsWGS72 = this.CoordinateSystemFactory.CreateGeocentricCoordinateSystem("WGS72 Geocentric", wgs72, LinearUnit.Metre, PrimeMeridian.Greenwich);
@@ -576,16 +629,25 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     public void TestKrovak_Greenwich_Projection()
     {
         // test case for epsg 5514 (102067)
-        var gcsWGS84 = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem("WGS84 Geographic", AngularUnit.Degrees, HorizontalDatum.WGS84, PrimeMeridian.Greenwich,
-             new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
+        var gcsWGS84 = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+            "WGS84 Geographic",
+            AngularUnit.Degrees,
+            HorizontalDatum.WGS84,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("East", AxisOrientationEnum.East),
+            new AxisInfo("North", AxisOrientationEnum.North));
 
         var ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Bessel 1840", 6377397.155, 299.15281, LinearUnit.Metre);
 
         var datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Bessel 1840", DatumType.HD_Geocentric, ellipsoid, null);
         datum.Wgs84Parameters = new Wgs84ConversionInfo(570.8, 85.7, 462.8, 4.998, 1.587, 5.261, 3.56);
 
-        var gcsKrovak = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem("Bessel 1840", AngularUnit.Degrees, datum,
-            PrimeMeridian.Greenwich, new AxisInfo("Lon", AxisOrientationEnum.East),
+        var gcsKrovak = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+            "Bessel 1840",
+            AngularUnit.Degrees,
+            datum,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("Lon", AxisOrientationEnum.East),
             new AxisInfo("Lat", AxisOrientationEnum.North));
 
         var parameters = new List<ProjectionParameter>(5)
@@ -635,16 +697,25 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     public void TestKrovak_Ferro_Projection()
     {
         // test case for epsg 2065 (prime meridian at Ferro)
-        var gcsWGS84 = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem("WGS84 Geographic", AngularUnit.Degrees, HorizontalDatum.WGS84, PrimeMeridian.Greenwich,
-            new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
+        var gcsWGS84 = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+            "WGS84 Geographic",
+            AngularUnit.Degrees,
+            HorizontalDatum.WGS84,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("East", AxisOrientationEnum.East),
+            new AxisInfo("North", AxisOrientationEnum.North));
 
         var ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Bessel 1840", 6377397.155, 299.15281, LinearUnit.Metre);
 
         var datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Bessel 1840", DatumType.HD_Geocentric, ellipsoid, null);
         datum.Wgs84Parameters = new Wgs84ConversionInfo(570.8, 85.7, 462.8, 4.998, 1.587, 5.261, 3.56);
 
-        var gcsKrovak = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem("Bessel 1840", AngularUnit.Degrees, datum,
-            PrimeMeridian.Greenwich, new AxisInfo("Lon", AxisOrientationEnum.East),
+        var gcsKrovak = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+            "Bessel 1840",
+            AngularUnit.Degrees,
+            datum,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("Lon", AxisOrientationEnum.East),
             new AxisInfo("Lat", AxisOrientationEnum.North));
         gcsKrovak.PrimeMeridian = PrimeMeridian.Ferro;
 
@@ -898,8 +969,10 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             "PROJCS[\"DHDN / Soldner Berlin\",GEOGCS[\"DHDN\",DATUM[\"Deutsches_Hauptdreiecksnetz\",SPHEROID[\"Bessel 1841\",6377397.155,299.1528128,AUTHORITY[\"EPSG\",\"7004\"]],TOWGS84[598.1,73.7,418.2,0.202,0.045,-2.455,6.7],AUTHORITY[\"EPSG\",\"6314\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4314\"]],PROJECTION[\"Cassini_Soldner\"],PARAMETER[\"latitude_of_origin\",52.41864827777778],PARAMETER[\"central_meridian\",13.62720366666667],PARAMETER[\"false_easting\",40000],PARAMETER[\"false_northing\",10000],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"x\",NORTH],AXIS[\"y\",EAST],AUTHORITY[\"EPSG\",\"3068\"]]");
 
         this.Test("CassiniSoldner", csSource, csTarget,
-             new[] { 13.408055555556, 52.518611111111 },
-             new[] { 25244.540, 21300.969 }, 0.3, 1.0E-5);
+            new[] { 13.408055555556, 52.518611111111 },
+            new[] { 25244.540, 21300.969 },
+            0.3,
+            1.0E-5);
 
         /*
         var ct = CoordinateTransformationFactory.CreateFromCoordinateSystems(csSource, csTarget);
@@ -928,8 +1001,10 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         // 61.216667°, -149.883333°
         // "POINT(4136805.82642057 -4424019.78560519)"
         this.Test("HotineObliqueMercator", csSource, csTarget,
-             new[] { -149.883333, 61.216667 },
-             new[] { 4136805.826, -4424019.786 }, 0.01, 1.0E-5);
+            new[] { -149.883333, 61.216667 },
+            new[] { 4136805.826, -4424019.786 },
+            0.01,
+            1.0E-5);
     }
 
     /// <summary>
