@@ -167,7 +167,7 @@ public class OperationResolutionEngineTests
         {
             Environment.SetEnvironmentVariable("PROJNET_GRID_REQUIRED", "true");
             var exception = Assert.Throws<InvalidOperationException>(() => this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target));
-            Assert.StartsWith("DataUnavailable:", exception.Message);
+            Assert.StartsWith("DataUnavailable:", exception.Message, StringComparison.Ordinal);
         }
         finally
         {
@@ -202,7 +202,7 @@ public class OperationResolutionEngineTests
         var transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
 
         Assert.Equal("EPSG", transformation.Authority);
-        Assert.DoesNotContain("Grid:", transformation.Remarks ?? string.Empty);
+        Assert.DoesNotContain("Grid:", transformation.Remarks ?? string.Empty, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -393,10 +393,10 @@ public class OperationResolutionEngineTests
     private static bool IsExplicitMethodSupported(string methodName)
     {
         string normalized = NormalizeMethodName(methodName);
-        return normalized.Contains("geocentrictranslations")
-            || normalized.Contains("positionvectortransformation")
-            || normalized.Contains("coordinateframerotation")
-            || normalized.Contains("molodensky");
+        return normalized.Contains("geocentrictranslations", StringComparison.Ordinal)
+            || normalized.Contains("positionvectortransformation", StringComparison.Ordinal)
+            || normalized.Contains("coordinateframerotation", StringComparison.Ordinal)
+            || normalized.Contains("molodensky", StringComparison.Ordinal);
     }
 
     private static string NormalizeMethodName(string value)

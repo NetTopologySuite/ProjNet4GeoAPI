@@ -45,6 +45,7 @@ namespace ProjNet.IO.CoordinateSystems
     using System.Runtime.InteropServices.ComTypes;
     using System.Text;
     using System.Text.RegularExpressions;
+    using ProjNet;
     using ProjNet.CoordinateSystems;
 
     /// <summary>
@@ -98,13 +99,13 @@ namespace ProjNet.IO.CoordinateSystems
         private static string NormalizeWkt(string wkt)
         {
             string normalized = wkt;
-            normalized = normalized.Replace("ELLIPSOID", "SPHEROID");
+            normalized = StringCompatibility.ReplaceOrdinal(normalized, "ELLIPSOID", "SPHEROID");
             normalized = Regex.Replace(normalized, @"\bID\[(?=\s*"")", "AUTHORITY[");
-            normalized = normalized.Replace("GEODETICCRS[", "GEOGCS[");
-            normalized = normalized.Replace("GEODCRS[", "GEOGCS[");
-            normalized = normalized.Replace("BASEGEODCRS[", "GEOGCS[");
-            normalized = normalized.Replace("BASEGEOGCRS[", "GEOGCS[");
-            normalized = normalized.Replace("PROJECTEDCRS[", "PROJCS[");
+            normalized = StringCompatibility.ReplaceOrdinal(normalized, "GEODETICCRS[", "GEOGCS[");
+            normalized = StringCompatibility.ReplaceOrdinal(normalized, "GEODCRS[", "GEOGCS[");
+            normalized = StringCompatibility.ReplaceOrdinal(normalized, "BASEGEODCRS[", "GEOGCS[");
+            normalized = StringCompatibility.ReplaceOrdinal(normalized, "BASEGEOGCRS[", "GEOGCS[");
+            normalized = StringCompatibility.ReplaceOrdinal(normalized, "PROJECTEDCRS[", "PROJCS[");
             return normalized;
         }
 

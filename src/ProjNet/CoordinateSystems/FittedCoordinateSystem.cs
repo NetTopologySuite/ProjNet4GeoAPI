@@ -128,7 +128,7 @@ namespace ProjNet.CoordinateSystems
                 {
                     string fcsToBase = fcs.ToBase();
                     string thisToBase = this.ToBase();
-                    if (string.Equals(fcsToBase, thisToBase))
+                    if (string.Equals(fcsToBase, thisToBase, StringComparison.Ordinal))
                     {
                         return true;
                     }

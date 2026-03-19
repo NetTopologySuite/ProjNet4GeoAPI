@@ -225,13 +225,13 @@ public class EpsgWktEquivalenceTheoryTests
 
         string normalized = methodName
             .ToLowerInvariant()
-            .Replace("(", string.Empty)
-            .Replace(")", string.Empty)
-            .Replace("-", "_")
-            .Replace("/", "_")
-            .Replace(" ", "_")
-            .Replace(".", "_")
-            .Replace("__", "_");
+            .Replace("(", string.Empty, StringComparison.Ordinal)
+            .Replace(")", string.Empty, StringComparison.Ordinal)
+            .Replace("-", "_", StringComparison.Ordinal)
+            .Replace("/", "_", StringComparison.Ordinal)
+            .Replace(" ", "_", StringComparison.Ordinal)
+            .Replace(".", "_", StringComparison.Ordinal)
+            .Replace("__", "_", StringComparison.Ordinal);
 
         return normalized switch
         {
@@ -250,13 +250,13 @@ public class EpsgWktEquivalenceTheoryTests
 
         string normalized = parameterName
             .ToLowerInvariant()
-            .Replace("(", string.Empty)
-            .Replace(")", string.Empty)
-            .Replace("-", "_")
-            .Replace("/", "_")
-            .Replace(" ", "_")
-            .Replace(".", "_")
-            .Replace("__", "_");
+            .Replace("(", string.Empty, StringComparison.Ordinal)
+            .Replace(")", string.Empty, StringComparison.Ordinal)
+            .Replace("-", "_", StringComparison.Ordinal)
+            .Replace("/", "_", StringComparison.Ordinal)
+            .Replace(" ", "_", StringComparison.Ordinal)
+            .Replace(".", "_", StringComparison.Ordinal)
+            .Replace("__", "_", StringComparison.Ordinal);
 
         return normalized switch
         {

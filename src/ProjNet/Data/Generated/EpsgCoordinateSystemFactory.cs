@@ -19,6 +19,7 @@ namespace ProjNet.Data.Generated
 {
     using System;
     using System.Collections.Generic;
+    using ProjNet;
     using ProjNet.CoordinateSystems;
 
     /// <summary>
@@ -277,15 +278,14 @@ namespace ProjNet.Data.Generated
                 return methodName;
             }
 
-            string normalized = methodName
-                .ToLowerInvariant()
-                .Replace("(", string.Empty)
-                .Replace(")", string.Empty)
-                .Replace("-", "_")
-                .Replace("/", "_")
-                .Replace(" ", "_")
-                .Replace(".", "_")
-                .Replace("__", "_");
+            string normalized = methodName.ToLowerInvariant();
+            normalized = StringCompatibility.ReplaceOrdinal(normalized, "(", string.Empty);
+            normalized = StringCompatibility.ReplaceOrdinal(normalized, ")", string.Empty);
+            normalized = StringCompatibility.ReplaceOrdinal(normalized, "-", "_");
+            normalized = StringCompatibility.ReplaceOrdinal(normalized, "/", "_");
+            normalized = StringCompatibility.ReplaceOrdinal(normalized, " ", "_");
+            normalized = StringCompatibility.ReplaceOrdinal(normalized, ".", "_");
+            normalized = StringCompatibility.ReplaceOrdinal(normalized, "__", "_");
 
             switch (normalized)
             {
@@ -304,15 +304,14 @@ namespace ProjNet.Data.Generated
                 return parameterName;
             }
 
-            string normalized = parameterName
-                .ToLowerInvariant()
-                .Replace("(", string.Empty)
-                .Replace(")", string.Empty)
-                .Replace("-", "_")
-                .Replace("/", "_")
-                .Replace(" ", "_")
-                .Replace(".", "_")
-                .Replace("__", "_");
+            string normalized = parameterName.ToLowerInvariant();
+            normalized = StringCompatibility.ReplaceOrdinal(normalized, "(", string.Empty);
+            normalized = StringCompatibility.ReplaceOrdinal(normalized, ")", string.Empty);
+            normalized = StringCompatibility.ReplaceOrdinal(normalized, "-", "_");
+            normalized = StringCompatibility.ReplaceOrdinal(normalized, "/", "_");
+            normalized = StringCompatibility.ReplaceOrdinal(normalized, " ", "_");
+            normalized = StringCompatibility.ReplaceOrdinal(normalized, ".", "_");
+            normalized = StringCompatibility.ReplaceOrdinal(normalized, "__", "_");
 
             switch (normalized)
             {

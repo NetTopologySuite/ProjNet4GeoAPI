@@ -1033,12 +1033,12 @@ namespace ProjNet.CoordinateSystems.Transformations
             var ellipsoid = geo.HorizontalDatum.Ellipsoid;
 
             // var toMeter = ellipsoid.AxisUnit.MetersPerUnit;
-            if (parameterList.Find((p) => p.Name.ToLowerInvariant().Replace(' ', '_').Equals("semi_major")) == null)
+            if (parameterList.Find((p) => p.Name.ToLowerInvariant().Replace(' ', '_').Equals("semi_major", StringComparison.Ordinal)) == null)
             {
                 parameterList.Add(new ProjectionParameter("semi_major", /*toMeter * */ellipsoid.SemiMajorAxis));
             }
 
-            if (parameterList.Find((p) => p.Name.ToLowerInvariant().Replace(' ', '_').Equals("semi_minor")) == null)
+            if (parameterList.Find((p) => p.Name.ToLowerInvariant().Replace(' ', '_').Equals("semi_minor", StringComparison.Ordinal)) == null)
             {
                 parameterList.Add(new ProjectionParameter("semi_minor", /*toMeter * */ellipsoid.SemiMinorAxis));
             }
@@ -1055,17 +1055,17 @@ namespace ProjNet.CoordinateSystems.Transformations
             }
 
             // var toMeter = 1d/ellipsoid.AxisUnit.MetersPerUnit;
-            if (parameterList.Find((p) => p.Name.ToLowerInvariant().Replace(' ', '_').Equals("semi_major")) == null)
+            if (parameterList.Find((p) => p.Name.ToLowerInvariant().Replace(' ', '_').Equals("semi_major", StringComparison.Ordinal)) == null)
             {
                 parameterList.Add(new ProjectionParameter("semi_major", /*toMeter * */ellipsoid.SemiMajorAxis));
             }
 
-            if (parameterList.Find((p) => p.Name.ToLowerInvariant().Replace(' ', '_').Equals("semi_minor")) == null)
+            if (parameterList.Find((p) => p.Name.ToLowerInvariant().Replace(' ', '_').Equals("semi_minor", StringComparison.Ordinal)) == null)
             {
                 parameterList.Add(new ProjectionParameter("semi_minor", /*toMeter * */ellipsoid.SemiMinorAxis));
             }
 
-            if (parameterList.Find((p) => p.Name.ToLowerInvariant().Replace(' ', '_').Equals("unit")) == null)
+            if (parameterList.Find((p) => p.Name.ToLowerInvariant().Replace(' ', '_').Equals("unit", StringComparison.Ordinal)) == null)
             {
                 parameterList.Add(new ProjectionParameter("unit", unit.MetersPerUnit));
             }

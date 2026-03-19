@@ -180,7 +180,7 @@ namespace ProjNet.CoordinateSystems.Projections
 
         private static string ProjectionNameToRegistryKey(string name)
         {
-            return name.ToLowerInvariant().Replace(' ', '_').Replace("-", "_");
+            return name.ToLowerInvariant().Replace(' ', '_').Replace('-', '_');
         }
 
         /// <summary>

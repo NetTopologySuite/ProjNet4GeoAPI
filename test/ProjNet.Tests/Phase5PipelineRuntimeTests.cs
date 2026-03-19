@@ -16,6 +16,7 @@
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 namespace ProjNET.Tests;
 
+using System;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
@@ -70,6 +71,6 @@ public class Phase5PipelineRuntimeTests
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string skipReason);
 
         Assert.False(ok);
-        Assert.Contains("+order", skipReason);
+        Assert.Contains("+order", skipReason, StringComparison.Ordinal);
     }
 }

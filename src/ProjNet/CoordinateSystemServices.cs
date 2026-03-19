@@ -67,7 +67,7 @@ namespace ProjNet
                     return 0;
                 }
 
-                return Convert.ToInt32(obj.AuthorityCode) + (obj.Authority != null ? obj.Authority.GetHashCode() : 0);
+                return Convert.ToInt32(obj.AuthorityCode) + (obj.Authority != null ? StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Authority) : 0);
             }
         }
 
@@ -262,7 +262,7 @@ namespace ProjNet
         {
             try
             {
-                return coordinateSystemFactory.CreateFromWkt(wkt.Replace("ELLIPSOID", "SPHEROID"));
+                return coordinateSystemFactory.CreateFromWkt(StringCompatibility.ReplaceOrdinal(wkt, "ELLIPSOID", "SPHEROID"));
             }
             catch (Exception)
             {

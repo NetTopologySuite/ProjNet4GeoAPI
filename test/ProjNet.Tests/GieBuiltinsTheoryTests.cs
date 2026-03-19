@@ -716,7 +716,7 @@ public class GieBuiltinsTheoryTests
             }
 
             string body = token.Substring(1);
-            int index = body.IndexOf('=');
+            int index = body.IndexOf("=", StringComparison.Ordinal);
             if (index < 0)
             {
                 args[body] = "true";

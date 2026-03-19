@@ -153,8 +153,8 @@ expect 3 4
         var parsed = GieParser.Parse(content);
 
         Assert.Single(parsed);
-        Assert.Contains("+lat_0=0", parsed[0].Operation);
-        Assert.Contains("+lon_0=9", parsed[0].Operation);
+        Assert.Contains("+lat_0=0", parsed[0].Operation, StringComparison.Ordinal);
+        Assert.Contains("+lon_0=9", parsed[0].Operation, StringComparison.Ordinal);
     }
 
     /// <summary>

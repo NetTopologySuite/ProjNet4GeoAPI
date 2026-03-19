@@ -104,7 +104,7 @@ public class WKTCoordSysParserTests
         Assert.That(() => pcs = this.coordinateSystemFactory.CreateFromWkt(wkt) as ProjectedCoordinateSystem, Throws.Nothing);
 
         ProjectedCoordinateSystem pcs2 = null;
-        Assert.That(() => pcs2 = this.coordinateSystemFactory.CreateFromWkt(wkt.Replace("[", "(").Replace("]", ")")) as ProjectedCoordinateSystem, Throws.Nothing);
+        Assert.That(() => pcs2 = this.coordinateSystemFactory.CreateFromWkt(wkt.Replace("[", "(", StringComparison.Ordinal).Replace("]", ")", StringComparison.Ordinal)) as ProjectedCoordinateSystem, Throws.Nothing);
         Assert.That(pcs.EqualParams(pcs2), Is.True);
 
         Assert.That(pcs, Is.Not.Null, "Could not parse WKT: " + wkt);
@@ -143,7 +143,7 @@ public class WKTCoordSysParserTests
         {
             var cs1 = this.coordinateSystemFactory.CreateFromWkt(wkt.Wkt);
             Assert.IsNotNull(cs1, "Could not parse WKT: " + wkt);
-            var cs2 = this.coordinateSystemFactory.CreateFromWkt(wkt.Wkt.Replace("[", "(").Replace("]", ")"));
+            var cs2 = this.coordinateSystemFactory.CreateFromWkt(wkt.Wkt.Replace("[", "(", StringComparison.Ordinal).Replace("]", ")", StringComparison.Ordinal));
             Assert.That(cs1.EqualParams(cs2), Is.True);
             parseCount++;
         }
@@ -176,7 +176,7 @@ public class WKTCoordSysParserTests
                         continue;
                     }
 
-                    int split = line.IndexOf(';');
+                    int split = line.IndexOf(";", StringComparison.Ordinal);
                     if (split > -1)
                     {
                         string wkt = line.Substring(split + 1);
@@ -282,7 +282,7 @@ public class WKTCoordSysParserTests
         Assert.That(() => pcs = this.coordinateSystemFactory.CreateFromWkt(wkt) as ProjectedCoordinateSystem, Throws.Nothing);
 
         ProjectedCoordinateSystem pcs2 = null;
-        Assert.That(() => pcs2 = this.coordinateSystemFactory.CreateFromWkt(wkt.Replace("[", "(").Replace("]", ")")) as ProjectedCoordinateSystem, Throws.Nothing);
+        Assert.That(() => pcs2 = this.coordinateSystemFactory.CreateFromWkt(wkt.Replace("[", "(", StringComparison.Ordinal).Replace("]", ")", StringComparison.Ordinal)) as ProjectedCoordinateSystem, Throws.Nothing);
         Assert.That(pcs.EqualParams(pcs2), Is.True);
 
         CheckInfo(pcs, "OSGB 1936 / British National Grid", "EPSG", 27700);
@@ -306,7 +306,7 @@ public class WKTCoordSysParserTests
 
         CheckUnit(pcs.LinearUnit, "metre", 1d, "EPSG", 9001);
 
-        string newWkt = pcs.WKT.Replace(", ", ",");
+        string newWkt = pcs.WKT.Replace(", ", ",", StringComparison.Ordinal);
         Assert.AreEqual(wkt, newWkt);
     }
 

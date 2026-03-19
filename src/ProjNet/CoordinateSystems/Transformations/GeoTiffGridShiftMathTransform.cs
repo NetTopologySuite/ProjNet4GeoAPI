@@ -1029,13 +1029,13 @@ namespace ProjNet.CoordinateSystems.Transformations
             }
 
             string sanitized = metadata.Trim('\0', '\uFEFF', ' ', '\t', '\r', '\n');
-            int firstTag = sanitized.IndexOf('<');
+            int firstTag = sanitized.IndexOf("<", StringComparison.Ordinal);
             if (firstTag > 0)
             {
                 sanitized = sanitized.Substring(firstTag);
             }
 
-            int lastTag = sanitized.LastIndexOf('>');
+            int lastTag = sanitized.LastIndexOf(">", StringComparison.Ordinal);
             if (lastTag >= 0 && lastTag + 1 < sanitized.Length)
             {
                 sanitized = sanitized.Substring(0, lastTag + 1);

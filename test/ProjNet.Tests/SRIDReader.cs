@@ -70,7 +70,7 @@ internal class SRIDReader
                     continue;
                 }
 
-                int split = line.IndexOf(';');
+                int split = line.IndexOf(";", StringComparison.Ordinal);
                 if (split <= -1)
                 {
                     continue;

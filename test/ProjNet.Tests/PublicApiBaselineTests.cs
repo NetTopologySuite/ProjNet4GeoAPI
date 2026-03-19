@@ -82,6 +82,6 @@ public class PublicApiBaselineTests
 
     private static string NormalizeLineEndings(string text)
     {
-        return text.Replace("\r\n", "\n").Replace("\r", "\n").TrimEnd();
+        return text.Replace("\r\n", "\n", StringComparison.Ordinal).Replace("\r", "\n", StringComparison.Ordinal).TrimEnd();
     }
 }
