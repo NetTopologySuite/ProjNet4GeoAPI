@@ -72,6 +72,10 @@ namespace ProjNet.CoordinateSystems
         public abstract IUnit GetUnits(int dimension);
 
         private List<AxisInfo> axisInfo;
+
+        /// <summary>
+        /// Gets or sets the axis definitions for this coordinate system.
+        /// </summary>
         internal List<AxisInfo> AxisInfo
         {
             get { return this.axisInfo; }

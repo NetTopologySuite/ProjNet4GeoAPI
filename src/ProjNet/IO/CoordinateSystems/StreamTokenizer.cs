@@ -92,6 +92,9 @@ namespace ProjNet.IO.CoordinateSystems
             get { return this.colNumber; }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether whitespace tokens are skipped by <see cref="NextToken()"/>.
+        /// </summary>
         public bool IgnoreWhitespace
         {
             get { return this.ignoreWhitespace; }

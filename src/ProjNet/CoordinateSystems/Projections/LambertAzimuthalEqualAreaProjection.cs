@@ -22,7 +22,7 @@ namespace ProjNet.CoordinateSystems.Projections
     using ProjNet.CoordinateSystems.Transformations;
 
     /// <summary>
-    ///
+    /// Implements the Lambert Azimuthal Equal Area projection for spherical and ellipsoidal models.
     /// </summary>
     public class LambertAzimuthalEqualAreaProjection : MapProjection
     {

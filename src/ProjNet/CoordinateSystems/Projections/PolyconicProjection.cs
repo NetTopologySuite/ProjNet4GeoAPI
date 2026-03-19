@@ -26,7 +26,7 @@ namespace ProjNet.CoordinateSystems.Projections
     using ProjNet.CoordinateSystems.Transformations;
 
     /// <summary>
-    ///
+    /// Implements the American Polyconic map projection.
     /// </summary>
     [Serializable]
     internal class PolyconicProjection : MapProjection
