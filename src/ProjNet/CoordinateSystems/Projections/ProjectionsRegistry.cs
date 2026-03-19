@@ -107,6 +107,8 @@ namespace ProjNet.CoordinateSystems.Projections
             Register("sinusoidal", typeof(SinusoidalProjection));
             Register("goode", typeof(GoodeProjection));
             Register("goode_homolosine", typeof(GoodeProjection));
+            Register("igh", typeof(IghProjection));
+            Register("interrupted_goode_homolosine", typeof(IghProjection));
 
             Register("natural_earth", typeof(NaturalEarthProjection));
             Register("natearth", typeof(NaturalEarthProjection));

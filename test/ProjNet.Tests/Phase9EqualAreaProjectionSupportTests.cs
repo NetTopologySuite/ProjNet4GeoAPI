@@ -124,6 +124,39 @@ public class Phase9EqualAreaProjectionSupportTests
         Assert.InRange(System.Math.Abs(roundtrip[1] - latitude), 0d, tolerance);
     }
 
+    [Theory]
+    [InlineData("igh")]
+    [InlineData("interrupted_goode_homolosine")]
+    public void SupportsIghProjectionAliasesFromWkt(string projectionName)
+    {
+        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName));
+        var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
+        double[] result = transform.MathTransform.Transform(CreatePoint(1000d, 2000d));
+
+        Assert.NotNull(projected);
+        Assert.NotNull(transform);
+        Assert.NotNull(result);
+        Assert.True(result.Length >= 2);
+    }
+
+    [Fact]
+    public void SupportsIghProjectionRoundtrip()
+    {
+        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt("igh"));
+        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(GeographicCoordinateSystem.WGS84, projected);
+        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
+
+        const double longitude = 20d;
+        const double latitude = -22d;
+        const double tolerance = 2e-5d;
+
+        double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
+        double[] roundtrip = inverse.MathTransform.Transform(projectedPoint);
+
+        Assert.InRange(System.Math.Abs(roundtrip[0] - longitude), 0d, tolerance);
+        Assert.InRange(System.Math.Abs(roundtrip[1] - latitude), 0d, tolerance);
+    }
+
     private static string BuildProjectedWkt(string projectionName)
     {
         return

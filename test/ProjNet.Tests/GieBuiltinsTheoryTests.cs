@@ -44,6 +44,7 @@ public class GieBuiltinsTheoryTests
         ["gnom"] = "gnom",
         ["goode"] = "goode_homolosine",
         ["hammer"] = "hammer",
+        ["igh"] = "interrupted_goode_homolosine",
         ["krovak"] = "krovak",
         ["laea"] = "lambert_azimuthal_equal_area",
         ["lcc"] = "lambert_conformal_conic_2sp",
