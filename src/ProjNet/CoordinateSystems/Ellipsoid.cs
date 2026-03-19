@@ -46,8 +46,13 @@ namespace ProjNet.CoordinateSystems
             double semiMinorAxis,
             double inverseFlattening,
             bool isIvfDefinitive,
-            LinearUnit axisUnit, string name, string authority, long code, string alias,
-            string abbreviation, string remarks)
+            LinearUnit axisUnit,
+            string name,
+            string authority,
+            long code,
+            string alias,
+            string abbreviation,
+            string remarks)
             : base(name, authority, code, alias, abbreviation, remarks)
         {
             this.SemiMajorAxis = semiMajorAxis;
@@ -82,7 +87,8 @@ namespace ProjNet.CoordinateSystems
         {
             get
             {
-                return new Ellipsoid(6378137, 0, 298.257223563, true, LinearUnit.Metre, "WGS 84", "EPSG", 7030, "WGS84", string.Empty,
+                return new Ellipsoid(6378137, 0, 298.257223563, true, LinearUnit.Metre, "WGS 84", "EPSG", 7030, "WGS84",
+                    string.Empty,
                     "Inverse flattening derived from four defining parameters (semi-major axis; C20 = -484.16685*10e-6; earth's angular velocity w = 7292115e11 rad/sec; gravitational constant GM = 3986005e8 m*m*m/s/s).");
             }
         }
@@ -111,7 +117,8 @@ namespace ProjNet.CoordinateSystems
         {
             get
             {
-                return new Ellipsoid(6378137, 0, 298.257222101, true, LinearUnit.Metre, "GRS 1980", "EPSG", 7019, "International 1979", string.Empty,
+                return new Ellipsoid(6378137, 0, 298.257222101, true, LinearUnit.Metre, "GRS 1980", "EPSG", 7019, "International 1979",
+                    string.Empty,
                     "Adopted by IUGG 1979 Canberra.  Inverse flattening is derived from geocentric gravitational constant GM = 3986005e8 m*m*m/s/s; dynamic form factor J2 = 108263e8 and Earth's angular velocity = 7292115e-11 rad/s.");
             }
         }
@@ -128,7 +135,8 @@ namespace ProjNet.CoordinateSystems
         {
             get
             {
-                return new Ellipsoid(6378388, 0, 297, true, LinearUnit.Metre, "International 1924", "EPSG", 7022, "Hayford 1909", string.Empty,
+                return new Ellipsoid(6378388, 0, 297, true, LinearUnit.Metre, "International 1924", "EPSG", 7022, "Hayford 1909",
+                    string.Empty,
                     "Described as a=6378388 m. and b=6356909 m. from which 1/f derived to be 296.95926. The figure was adopted as the International ellipsoid in 1924 but with 1/f taken as 297 exactly from which b is derived as 6356911.946m.");
             }
         }
@@ -143,7 +151,8 @@ namespace ProjNet.CoordinateSystems
         {
             get
             {
-                return new Ellipsoid(20926202, 0, 297, true, LinearUnit.ClarkesFoot, "Clarke 1880", "EPSG", 7034, "Clarke 1880", string.Empty,
+                return new Ellipsoid(20926202, 0, 297, true, LinearUnit.ClarkesFoot, "Clarke 1880", "EPSG", 7034, "Clarke 1880",
+                    string.Empty,
                     "Clarke gave a and b and also 1/f=293.465 (to 3 decimal places).  1/f derived from a and b = 293.4663077�");
             }
         }
@@ -158,7 +167,8 @@ namespace ProjNet.CoordinateSystems
         {
             get
             {
-                return new Ellipsoid(6378206.4, 6356583.8, double.PositiveInfinity, false, LinearUnit.Metre, "Clarke 1866", "EPSG", 7008, "Clarke 1866", string.Empty,
+                return new Ellipsoid(6378206.4, 6356583.8, double.PositiveInfinity, false, LinearUnit.Metre, "Clarke 1866", "EPSG", 7008, "Clarke 1866",
+                    string.Empty,
                     "Original definition a=20926062 and b=20855121 (British) feet. Uses Clarke's 1865 inch-metre ratio of 39.370432 to obtain metres. (Metric value then converted to US survey feet for use in the United States using 39.37 exactly giving a=20925832.16 ft US).");
             }
         }
@@ -174,7 +184,8 @@ namespace ProjNet.CoordinateSystems
         {
             get
             {
-                return new Ellipsoid(6370997.0, 6370997.0, double.PositiveInfinity, false, LinearUnit.Metre, "GRS 1980 Authalic Sphere", "EPSG", 7048, "Sphere", string.Empty,
+                return new Ellipsoid(6370997.0, 6370997.0, double.PositiveInfinity, false, LinearUnit.Metre, "GRS 1980 Authalic Sphere", "EPSG", 7048, "Sphere",
+                    string.Empty,
                     "Authalic sphere derived from GRS 1980 ellipsoid (code 7019).  (An authalic sphere is one with a surface area equal to the surface area of the ellipsoid). 1/f is infinite.");
             }
         }
@@ -237,7 +248,7 @@ namespace ProjNet.CoordinateSystems
                 return string.Format(
                     CultureInfo.InvariantCulture.NumberFormat,
                     "<CS_Ellipsoid SemiMajorAxis=\"{0}\" SemiMinorAxis=\"{1}\" InverseFlattening=\"{2}\" IvfDefinitive=\"{3}\">{4}{5}</CS_Ellipsoid>",
-                    this.SemiMajorAxis, this.SemiMinorAxis, this.InverseFlattening, this.IsIvfDefinitive ? 1 : 0, this.InfoXml, this.AxisUnit.XML); ;
+                    this.SemiMajorAxis, this.SemiMinorAxis, this.InverseFlattening, this.IsIvfDefinitive ? 1 : 0, this.InfoXml, this.AxisUnit.XML);
             }
         }
 
