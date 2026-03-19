@@ -355,7 +355,8 @@ namespace ProjNet.CoordinateSystems.Projections
                 sb.AppendFormat(
                     this.IsInverse
                         ? "<CT_InverseTransform Name=\"{0}\">"
-                        : "<CT_ParameterizedMathTransform Name=\"{0}\">", this.ClassName);
+                        : "<CT_ParameterizedMathTransform Name=\"{0}\">",
+                    this.ClassName);
                 for (int i = 0; i < this.NumParameters; i++)
                 {
                     sb.AppendFormat(this.GetParameter(i).XML);
@@ -471,8 +472,11 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <param name="lats">A series of y-ordinate values.</param>
         /// <param name="strideX">A stride value for x-ordinates.</param>
         /// <param name="strideY">A stride value for y-ordinates.</param>
-        protected virtual void DegreesToTarget(Span<double> lons, Span<double> lats,
-            int strideX, int strideY)
+        protected virtual void DegreesToTarget(
+            Span<double> lons,
+            Span<double> lats,
+            int strideX,
+            int strideY)
         {
             this.DegreesToMeters(lons, lats, strideX, strideY);
             this.MetersToTarget(lons, lats, strideX, strideY);
@@ -575,8 +579,11 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <param name="ys">A series of y-ordinate values.</param>
         /// <param name="strideX">A stride value for x-ordinates.</param>
         /// <param name="strideY">A stride value for y-ordinates.</param>
-        protected virtual void SourceToDegrees(Span<double> xs, Span<double> ys,
-            int strideX, int strideY)
+        protected virtual void SourceToDegrees(
+            Span<double> xs,
+            Span<double> ys,
+            int strideX,
+            int strideY)
         {
             this.SourceToMeters(xs, ys, strideX, strideY);
             this.MetersToDegrees(xs, ys, strideX, strideY);

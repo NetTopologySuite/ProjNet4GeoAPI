@@ -43,8 +43,13 @@ namespace ProjNet.CoordinateSystems
         /// <param name="alias">Alias name.</param>
         /// <param name="remarks">Additional remarks.</param>
         /// <param name="abbreviation">Abbreviation.</param>
-        internal Projection(string className, List<ProjectionParameter> parameters,
-            string name, string authority, long code, string alias,
+        internal Projection(
+            string className,
+            List<ProjectionParameter> parameters,
+            string name,
+            string authority,
+            long code,
+            string alias,
             string remarks, string abbreviation)
             : base(name, authority, code, alias, abbreviation, remarks)
         {

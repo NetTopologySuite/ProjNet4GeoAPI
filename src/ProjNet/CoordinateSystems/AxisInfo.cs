@@ -80,7 +80,9 @@ namespace ProjNet.CoordinateSystems
             {
                 return string.Format(
                     CultureInfo.InvariantCulture.NumberFormat,
-                    "<CS_AxisInfo Name=\"{0}\" Orientation=\"{1}\"/>", this.Name, this.Orientation.ToString()
+                    "<CS_AxisInfo Name=\"{0}\" Orientation=\"{1}\"/>",
+                    this.Name,
+                    this.Orientation.ToString()
                     .ToUpperInvariant());
             }
         }
