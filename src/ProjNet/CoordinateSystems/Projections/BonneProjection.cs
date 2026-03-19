@@ -36,11 +36,20 @@ namespace ProjNet.CoordinateSystems.Projections
         private readonly double reducedCosphiOverSinphiAtStandardParallel;
         private readonly bool isEllipsoidal;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BonneProjection"/> class.
+        /// </summary>
+        /// <param name="parameters">Projection parameters.</param>
         public BonneProjection(IEnumerable<ProjectionParameter> parameters)
             : this(parameters, null)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BonneProjection"/> class.
+        /// </summary>
+        /// <param name="parameters">Projection parameters.</param>
+        /// <param name="inverse">Inverse transform instance when cloning.</param>
         public BonneProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
             : base(parameters, inverse)
         {
