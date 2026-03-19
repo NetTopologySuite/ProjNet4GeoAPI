@@ -43,6 +43,7 @@ public class GieBuiltinsTheoryTests
         ["krovak"] = "krovak",
         ["laea"] = "lambert_azimuthal_equal_area",
         ["lcc"] = "lambert_conformal_conic_2sp",
+        ["loxim"] = "loximuthal",
         ["merc"] = "mercator",
         ["mill"] = "miller_cylindrical",
         ["moll"] = "moll",

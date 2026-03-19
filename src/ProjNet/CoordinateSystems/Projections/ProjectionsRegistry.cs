@@ -58,6 +58,8 @@ namespace ProjNet.CoordinateSystems.Projections
             Register("lambert_cylindrical_equal_area", typeof(CylindricalEqualAreaProjection));
             Register("equal_area_cylindrical", typeof(CylindricalEqualAreaProjection));
             Register("cea", typeof(CylindricalEqualAreaProjection));
+            Register("loximuthal", typeof(LoximuthalProjection));
+            Register("loxim", typeof(LoximuthalProjection));
 
             Register("transverse_mercator", typeof(TransverseMercator));
             Register("transverse_mercator_south_oriented", typeof(TransverseMercator));

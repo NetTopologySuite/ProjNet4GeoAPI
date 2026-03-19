@@ -1,0 +1,117 @@
+// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
+//
+// This file is part of ProjNet.
+// ProjNet is free software; you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// ProjNet is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with ProjNet; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+namespace ProjNet.CoordinateSystems.Projections
+{
+    using System;
+    using System.Collections.Generic;
+    using ProjNet.CoordinateSystems.Transformations;
+
+    [Serializable]
+    internal class LoximuthalProjection : MapProjection
+    {
+        private readonly double radius;
+        private readonly double inverseRadius;
+        private readonly double referenceLatitude;
+        private readonly double referenceMercatorTerm;
+        private readonly double cosReferenceLatitude;
+
+        public LoximuthalProjection(IEnumerable<ProjectionParameter> parameters)
+            : this(parameters, null)
+        {
+        }
+
+        public LoximuthalProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+            : base(parameters, inverse)
+        {
+            this.Name = "Loximuthal";
+            this.radius = this.semiMajor * this.scale_factor;
+            this.inverseRadius = 1d / this.radius;
+
+            this.referenceLatitude = DegreesToRadians(this.Parameters.GetOptionalParameterValue("lat_1", RadiansToDegrees(this.lat_origin), "latitude_of_origin"));
+            this.cosReferenceLatitude = Math.Cos(this.referenceLatitude);
+            if (Math.Abs(Math.Abs(this.referenceLatitude) - HALF_PI) <= EPSLN)
+            {
+                throw new ArgumentException("The reference latitude cannot be at the poles.");
+            }
+
+            this.referenceMercatorTerm = Math.Log(Math.Tan(FORT_PI + (0.5d * this.referenceLatitude)));
+        }
+
+        public override MathTransform Inverse()
+        {
+            if (this.inverse is null)
+            {
+                this.inverse = new LoximuthalProjection(this.Parameters.ToProjectionParameter(), this);
+            }
+
+            return this.inverse;
+        }
+
+        protected override void RadiansToMeters(ref double lon, ref double lat)
+        {
+            double lambda = Adjust_lon(lon - this.central_meridian);
+            double phi = lat;
+            double deltaPhi = phi - this.referenceLatitude;
+            lat = this.radius * deltaPhi;
+
+            if (Math.Abs(deltaPhi) <= EPS10)
+            {
+                lon = this.radius * lambda * this.cosReferenceLatitude;
+                return;
+            }
+
+            double mercatorTerm = Math.Log(Math.Tan(FORT_PI + (0.5d * phi)));
+            double denominator = mercatorTerm - this.referenceMercatorTerm;
+            if (Math.Abs(denominator) <= EPS10)
+            {
+                lon = this.radius * lambda * this.cosReferenceLatitude;
+                return;
+            }
+
+            lon = this.radius * lambda * deltaPhi / denominator;
+        }
+
+        protected override void MetersToRadians(ref double x, ref double y)
+        {
+            double lat = this.referenceLatitude + (y * this.inverseRadius);
+            double deltaPhi = lat - this.referenceLatitude;
+
+            double lambda;
+            if (Math.Abs(deltaPhi) <= EPS10)
+            {
+                lambda = x * this.inverseRadius / this.cosReferenceLatitude;
+            }
+            else
+            {
+                double mercatorTerm = Math.Log(Math.Tan(FORT_PI + (0.5d * lat)));
+                double numerator = mercatorTerm - this.referenceMercatorTerm;
+                if (Math.Abs(numerator) <= EPS10)
+                {
+                    lambda = x * this.inverseRadius / this.cosReferenceLatitude;
+                }
+                else
+                {
+                    lambda = (x * this.inverseRadius) * numerator / deltaPhi;
+                }
+            }
+
+            x = Adjust_lon(this.central_meridian + lambda);
+            y = lat;
+        }
+    }
+}
