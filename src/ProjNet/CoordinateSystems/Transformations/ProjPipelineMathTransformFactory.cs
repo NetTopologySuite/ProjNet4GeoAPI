@@ -22,6 +22,9 @@ namespace ProjNet.CoordinateSystems.Transformations
     using System.IO;
     using System.Linq;
 
+    /// <summary>
+    /// Represents the documented type.
+    /// </summary>
     internal static class ProjPipelineMathTransformFactory
     {
         internal static bool TryCreateMathTransform(string operation, out MathTransform transform, out string skipReason)

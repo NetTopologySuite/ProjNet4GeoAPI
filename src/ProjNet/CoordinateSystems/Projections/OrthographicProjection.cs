@@ -22,6 +22,9 @@ namespace ProjNet.CoordinateSystems.Projections
     using System.Collections.Generic;
     using System.Text;
 
+    /// <summary>
+    /// Represents the documented type.
+    /// </summary>
     [Serializable]
     internal class OrthographicProjection : MapProjection
     {

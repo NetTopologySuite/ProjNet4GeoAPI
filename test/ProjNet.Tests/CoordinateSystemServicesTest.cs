@@ -30,8 +30,14 @@ using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.Data;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class CoordinateSystemServicesTest
 {
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestConstructor()
     {
@@ -43,6 +49,9 @@ public class CoordinateSystemServicesTest
         Assert.IsNotNull(css.GetCoordinateSystem(3857));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestTryGetCoordinateSystemBySrid()
     {
@@ -59,6 +68,9 @@ public class CoordinateSystemServicesTest
         Assert.IsNull(missingCoordinateSystem);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestTryGetCoordinateSystemByAuthorityCode()
     {
@@ -75,6 +87,9 @@ public class CoordinateSystemServicesTest
         Assert.IsNull(missingCoordinateSystem);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestGetAvailableSridValues()
     {
@@ -88,6 +103,9 @@ public class CoordinateSystemServicesTest
         Assert.IsTrue(Array.IndexOf(srids, 3857) >= 0);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestManagedProviderIncludesFullGeneratedCatalog()
     {
@@ -99,6 +117,9 @@ public class CoordinateSystemServicesTest
         Assert.IsTrue(definitions.Any(item => item.Key == 3857));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestManagedObjectProviderBypassesWktParsing()
     {

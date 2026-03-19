@@ -21,6 +21,9 @@ namespace ProjNet.Data.Generated
     using System.Collections.Generic;
     using ProjNet.CoordinateSystems;
 
+    /// <summary>
+    /// Represents the documented type.
+    /// </summary>
     internal static class EpsgCoordinateSystemFactory
     {
         private static readonly CoordinateSystem[] CoordinateSystemCache = new CoordinateSystem[EpsgGeneratedCatalog.CoordinateReferenceCount];
@@ -33,6 +36,9 @@ namespace ProjNet.Data.Generated
         private static readonly Lazy<Dictionary<int, EpsgConversionRecord>> ConversionsByCode = new Lazy<Dictionary<int, EpsgConversionRecord>>(BuildConversionsByCode, true);
         private static readonly Lazy<Dictionary<int, EpsgAxisRecord[]>> AxesByCoordinateSystemCode = new Lazy<Dictionary<int, EpsgAxisRecord[]>>(BuildAxesByCoordinateSystemCode, true);
 
+        /// <summary>
+        /// Performs the documented operation.
+        /// </summary>
         internal static IEnumerable<KeyValuePair<int, CoordinateSystem>> GetCoordinateSystems()
         {
             for (int cacheIndex = 0; cacheIndex < EpsgGeneratedCatalog.CoordinateReferenceCount; cacheIndex++)

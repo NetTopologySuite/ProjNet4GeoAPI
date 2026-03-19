@@ -17,25 +17,58 @@
 
 namespace ProjNET.Tests;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 internal sealed class GieCase
 {
+    /// <summary>
+    /// Gets the documented value.
+    /// </summary>
     public int LineNumber { get; set; }
 
+    /// <summary>
+    /// Gets the documented value.
+    /// </summary>
     public string Operation { get; set; }
 
+    /// <summary>
+    /// Gets the documented value.
+    /// </summary>
     public double ToleranceValue { get; set; }
 
+    /// <summary>
+    /// Gets the documented value.
+    /// </summary>
     public string ToleranceUnit { get; set; }
 
+    /// <summary>
+    /// Gets the documented value.
+    /// </summary>
     public GieDirection Direction { get; set; }
 
+    /// <summary>
+    /// Gets the documented value.
+    /// </summary>
     public double[] Accept { get; set; }
 
+    /// <summary>
+    /// Gets the documented value.
+    /// </summary>
     public double[] Expect { get; set; }
 
+    /// <summary>
+    /// Gets the documented value.
+    /// </summary>
     public bool ExpectsFailure { get; set; }
 
+    /// <summary>
+    /// Gets the documented value.
+    /// </summary>
     public string ExpectedErrorCode { get; set; }
 
+    /// <summary>
+    /// Gets the documented value.
+    /// </summary>
     public int? RoundtripCount { get; set; }
 }

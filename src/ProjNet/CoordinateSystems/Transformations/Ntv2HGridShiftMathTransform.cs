@@ -24,6 +24,9 @@ namespace ProjNet.CoordinateSystems.Transformations
     using System.Linq;
     using System.Text;
 
+    /// <summary>
+    /// Represents the documented type.
+    /// </summary>
     [Serializable]
     internal sealed class Ntv2HGridShiftMathTransform : MathTransform
     {

@@ -22,8 +22,14 @@ using System.IO;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class Phase6VGridShiftRuntimeTests
 {
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void Vgridshift_WithGtxGrid_AppliesExpectedDefaultVerticalShift()
     {
@@ -39,6 +45,9 @@ public class Phase6VGridShiftRuntimeTests
         Assert.Equal(-36.9959410718d, output[2], 9);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void Vgridshift_WithExplicitMultiplier_UsesProvidedScale()
     {
@@ -52,6 +61,9 @@ public class Phase6VGridShiftRuntimeTests
         Assert.Equal(36.9959410718d, output[2], 9);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void Vgridshift_WithInverseFlag_RoundtripsSinglePoint()
     {
@@ -73,6 +85,9 @@ public class Phase6VGridShiftRuntimeTests
         Assert.Equal(0d, unshifted[2], 7);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void Vgridshift_OutsideGridExtent_ThrowsArgumentException()
     {

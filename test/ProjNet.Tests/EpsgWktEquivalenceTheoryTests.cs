@@ -27,6 +27,9 @@ using System.Text.Json;
 using ProjNet.Data;
 using Xunit;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class EpsgWktEquivalenceTheoryTests
 {
     private const string FixtureRelativePath = "Generated/epsg-wkt-equivalence-fixture.json";
@@ -41,6 +44,9 @@ public class EpsgWktEquivalenceTheoryTests
             .GroupBy(item => item.Key)
             .ToDictionary(group => group.Key, group => group.Last().Value));
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     public static IEnumerable<object[]> EpsgFixtureRows()
     {
         string fixturePath = Path.Combine(AppContext.BaseDirectory, FixtureRelativePath.Replace('/', Path.DirectorySeparatorChar));

@@ -26,6 +26,9 @@ using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class Gigs5101TheoryTests
 {
     private static readonly string[] Fixture5101Files =
@@ -68,6 +71,9 @@ public class Gigs5101TheoryTests
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
     private static readonly CoordinateSystemServices CoordinateSystemServices = new CoordinateSystemServices();
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     [Trait("Category", "Gigs5101")]
     public void Gigs5101Cases_ForSupportedPipelines_StayWithinTolerance()
@@ -75,6 +81,9 @@ public class Gigs5101TheoryTests
         AssertFixtureCoverage(Fixture5101Files, 50, 50, "5101", requireToleranceMatch: true);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     [Trait("Category", "Gigs5102")]
     [Trait("Category", "Gigs5103")]
@@ -83,6 +92,9 @@ public class Gigs5101TheoryTests
         AssertFixtureCoverage(Fixture5102And5103Files, 70, 0, "5102/5103", requireToleranceMatch: false);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     [Trait("Category", "Gigs5104")]
     [Trait("Category", "Gigs5113")]
@@ -91,6 +103,9 @@ public class Gigs5101TheoryTests
         AssertFixtureCoverage(Fixture5104To5113Files, 80, 0, "5104-5113", requireToleranceMatch: false);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     [Trait("Category", "Gigs5200")]
     public void Gigs5200Cases_ForSupportedPipelines_Execute()

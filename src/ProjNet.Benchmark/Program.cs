@@ -19,6 +19,9 @@ namespace ProjNet.Benchmark;
 
 using BenchmarkDotNet.Running;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 class Program
 {
     static void Main(string[] args)

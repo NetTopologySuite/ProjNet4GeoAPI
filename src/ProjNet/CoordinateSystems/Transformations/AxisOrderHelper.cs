@@ -19,6 +19,9 @@ namespace ProjNet.CoordinateSystems.Transformations
     using System;
     using ProjNet.CoordinateSystems;
 
+    /// <summary>
+    /// Represents the documented type.
+    /// </summary>
     internal static class AxisOrderHelper
     {
         internal static bool TryCreateAxisSwapTransform(

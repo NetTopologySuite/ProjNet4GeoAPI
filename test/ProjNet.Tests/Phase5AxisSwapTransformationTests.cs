@@ -21,11 +21,17 @@ using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class Phase5AxisSwapTransformationTests
 {
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void GeographicAxisSwap_LonLatToLatLon_SwapsCoordinates()
     {
@@ -52,6 +58,9 @@ public class Phase5AxisSwapTransformationTests
         Assert.Equal(12d, transformed[1], 12);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void GeographicAxisSwap_EastNorthToWestSouth_NegatesAxes()
     {
@@ -78,6 +87,9 @@ public class Phase5AxisSwapTransformationTests
         Assert.Equal(-55d, transformed[1], 12);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void ProjectedAxisSwap_EastNorthToNorthEast_SwapsProjectedAxes()
     {
@@ -115,6 +127,9 @@ public class Phase5AxisSwapTransformationTests
         Assert.Equal(500000d, transformed[1], 8);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void GeographicUnitConversion_DegreesToRadians_ConvertsCoordinates()
     {
@@ -141,6 +156,9 @@ public class Phase5AxisSwapTransformationTests
         Assert.Equal(System.Math.PI / 2d, transformed[1], 12);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void ProjectedUnitConversion_MetreToFoot_ConvertsProjectedCoordinates()
     {
@@ -170,6 +188,9 @@ public class Phase5AxisSwapTransformationTests
         Assert.Equal(656.1679790026246d, transformed[1], 9);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void ProjectedUnitAndAxisConversion_MetreEastNorthToFootNorthEast_ConvertsAndSwaps()
     {

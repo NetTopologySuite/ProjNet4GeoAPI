@@ -21,6 +21,9 @@ using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class Phase9ConicProjectionSupportTests
 {
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
@@ -42,6 +45,9 @@ public class Phase9ConicProjectionSupportTests
         Assert.True(result.Length >= 2);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void SupportsEqdcProjectionRoundtrip()
     {
@@ -74,6 +80,9 @@ public class Phase9ConicProjectionSupportTests
         Assert.True(result.Length >= 2);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void SupportsBonneProjectionRoundtrip()
     {
@@ -107,6 +116,9 @@ public class Phase9ConicProjectionSupportTests
         Assert.True(result.Length >= 2);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void SupportsPconicProjectionRoundtrip()
     {

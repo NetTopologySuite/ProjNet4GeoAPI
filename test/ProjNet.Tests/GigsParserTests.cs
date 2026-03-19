@@ -23,8 +23,14 @@ using System.IO;
 using System.Linq;
 using Xunit;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class GigsParserTests
 {
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void Parse_GigsFixtures_ParsesAllNonFailingFiles()
     {
@@ -60,6 +66,9 @@ public class GigsParserTests
         Assert.True(totalCases > 100, "Expected substantial GIGS coverage from parsed cases.");
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void Parse_GigsFixtures_PreservesPipelineOperations()
     {

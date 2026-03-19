@@ -22,8 +22,14 @@ using System.IO;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class Phase6GeoTiffGridRuntimeTests
 {
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void Hgridshift_WithGeoTiffGrid_AppliesExpectedShift()
     {
@@ -39,6 +45,9 @@ public class Phase6GeoTiffGridRuntimeTests
         Assert.Equal(0d, output[2], 9);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void Hgridshift_WithGeoTiffPositiveWestMetadata_AppliesExpectedShift()
     {
@@ -53,6 +62,9 @@ public class Phase6GeoTiffGridRuntimeTests
         Assert.Equal(55.375d, output[1], 9);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void Vgridshift_WithGeoTiffGrid_AppliesExpectedDefaultShift()
     {
@@ -68,6 +80,9 @@ public class Phase6GeoTiffGridRuntimeTests
         Assert.Equal(11.5d, output[2], 9);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void Vgridshift_WithGeoTiffScaleOffset_AppliesScaleAndOffset()
     {
@@ -81,6 +96,9 @@ public class Phase6GeoTiffGridRuntimeTests
         Assert.Equal(11.5d, output[2], 9);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void Vgridshift_WithGeoTiffNodata_PerformsWeightedInterpolation()
     {

@@ -27,11 +27,17 @@ using ProjNet.Data;
 using ProjNet.Data.Generated;
 using Xunit;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class OperationResolutionEngineTests
 {
     private readonly CoordinateTransformationFactory coordinateTransformationFactory = new CoordinateTransformationFactory();
     private readonly CoordinateSystemFactory coordinateSystemFactory = new CoordinateSystemFactory();
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void CreateFromCoordinateSystems_WithSameProjectedCoordinateSystem_UsesIdentityTransform()
     {
@@ -44,6 +50,9 @@ public class OperationResolutionEngineTests
         Assert.Equal(4649776.22482d, output[1], 12);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void CreateFromCoordinateSystems_WithEquivalentGeographicCoordinateSystems_UsesIdentityTransform()
     {
@@ -57,6 +66,9 @@ public class OperationResolutionEngineTests
         Assert.Equal(52.9876d, output[1], 12);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void CreateFromCoordinateSystems_WithProjectedPairHavingDirectMetadata_PrefersMetadataCandidate()
     {
@@ -89,6 +101,9 @@ public class OperationResolutionEngineTests
         Assert.DoesNotContain(concatenated.CoordinateTransformationList, ContainsGeographicOrGeocentricCoordinateSystem);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void CreateFromCoordinateSystems_WithProjectedFallbackPair_UsesDirectProj2ProjCorePath()
     {
@@ -106,6 +121,9 @@ public class OperationResolutionEngineTests
         Assert.DoesNotContain(concatenated.CoordinateTransformationList, ContainsGeographicOrGeocentricCoordinateSystem);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void CreateFromCoordinateSystems_WithProjectedPairWithoutEpsgAuthority_UsesLegacyFallback()
     {
@@ -122,6 +140,9 @@ public class OperationResolutionEngineTests
         Assert.Equal(-1, transformation.AuthorityCode);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void CreateFromCoordinateSystems_WithGridOnlyDirectOperations_ThrowsDeterministicDataUnavailable()
     {
@@ -154,6 +175,9 @@ public class OperationResolutionEngineTests
         }
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void CreateFromCoordinateSystems_WithMixedGridAndNonGridDirectOperations_FallsBackToAvailableMetadataOperation()
     {
@@ -181,6 +205,9 @@ public class OperationResolutionEngineTests
         Assert.DoesNotContain("Grid:", transformation.Remarks ?? string.Empty);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void CreateFromCoordinateSystems_WithSupportedGeographicEpsgOperation_UsesExplicitDatumTransform()
     {
@@ -203,6 +230,9 @@ public class OperationResolutionEngineTests
         Assert.True(ContainsDatumTransform(transformation.MathTransform));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void CreateFromCoordinateSystems_WithProjectedPairUsingSupportedBaseGeographicOperation_UsesExplicitDatumTransform()
     {
@@ -256,6 +286,9 @@ public class OperationResolutionEngineTests
         Assert.Fail("No projected candidate produced an explicit EPSG datum transformation from base geographic metadata.");
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void CreateFromCoordinateSystems_WithFittedSourceAndTarget_ComposesViaBaseCoordinateSystems()
     {

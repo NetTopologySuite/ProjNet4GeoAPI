@@ -23,12 +23,27 @@ using NUnit.Framework;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class CoordinateTransformTestsBase
 {
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     protected readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     protected readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     protected readonly Random Random = new Random();
 
+    /// <summary>
+    /// Gets the documented value.
+    /// </summary>
     protected bool Verbose { get; set; }
 
     protected bool ToleranceLessThan(double[] p1, double[] p2, double tolerance)

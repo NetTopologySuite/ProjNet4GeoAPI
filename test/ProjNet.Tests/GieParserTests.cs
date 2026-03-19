@@ -21,8 +21,14 @@ using System;
 using System.IO;
 using Xunit;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class GieParserTests
 {
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void Parse_WithForwardAndInversePairs_ProducesExpectedCases()
     {
@@ -49,6 +55,9 @@ expect     3 80
         Assert.Equal(GieDirection.Inverse, parsed[1].Direction);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void Parse_IgnoresCommentsAndTags()
     {
@@ -68,6 +77,9 @@ expect 1000 2000
         Assert.Equal(10d, parsed[0].ToleranceValue, 12);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void Parse_WithoutAcceptBeforeExpect_ThrowsFormatException()
     {
@@ -79,6 +91,9 @@ expect 1 2
         Assert.Throws<FormatException>(() => GieParser.Parse(content));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void Parse_UnknownDirective_ThrowsFormatException()
     {
@@ -91,6 +106,9 @@ foobar 1 2
         Assert.Throws<FormatException>(() => GieParser.Parse(content));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void ParseFile_WithTemporaryInput_ProducesCases()
     {
@@ -119,6 +137,9 @@ foobar 1 2
         }
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void Parse_WithContinuationLine_AppendsOperation()
     {
@@ -136,6 +157,9 @@ expect 3 4
         Assert.Contains("+lon_0=9", parsed[0].Operation);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void Parse_WithFailureExpectation_SetsFailureMetadata()
     {
@@ -151,6 +175,9 @@ expect failure errno invalid_op_illegal_arg_value
         Assert.Equal("invalid_op_illegal_arg_value", parsed[0].ExpectedErrorCode);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void Parse_WithIgnoreUnknownDirectivesEnabled_SkipsUnknownDirective()
     {

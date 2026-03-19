@@ -22,6 +22,9 @@ using BenchmarkDotNet.Attributes;
 using ProjNet;
 using ProjNet.CoordinateSystems.Transformations;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 [MemoryDiagnoser]
 public class ProjParityBenchmarks
 {
@@ -36,6 +39,9 @@ public class ProjParityBenchmarks
     private static readonly ICoordinateTransformation WebMercatorToWgs84 =
         CoordinateSystemServices.CreateTransformation(3857, 4326);
 
+    /// <summary>
+    /// Gets the documented value.
+    /// </summary>
     [Params(10000)]
     public int PointCount { get; set; }
 
@@ -44,6 +50,9 @@ public class ProjParityBenchmarks
     private double[] xBuffer;
     private double[] yBuffer;
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     public static void Validate()
     {
         var benchmark = new ProjParityBenchmarks { PointCount = 4 };
@@ -59,6 +68,9 @@ public class ProjParityBenchmarks
         EnsureFinite(benchmark.xBuffer, benchmark.yBuffer);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [GlobalSetup]
     public void GlobalSetup()
     {
@@ -75,6 +87,9 @@ public class ProjParityBenchmarks
         }
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Benchmark(Baseline = true)]
     public void Wgs84ToWebMercatorBatched()
     {
@@ -82,6 +97,9 @@ public class ProjParityBenchmarks
         Wgs84ToWebMercator.MathTransform.Transform(this.xBuffer, this.yBuffer);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Benchmark]
     public void Wgs84ToWebMercatorOneByOne()
     {
@@ -92,6 +110,9 @@ public class ProjParityBenchmarks
         }
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Benchmark]
     public void Wgs84ToUtm32NBatched()
     {
@@ -99,6 +120,9 @@ public class ProjParityBenchmarks
         Wgs84ToUtm32N.MathTransform.Transform(this.xBuffer, this.yBuffer);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Benchmark]
     public void WebMercatorToWgs84Batched()
     {

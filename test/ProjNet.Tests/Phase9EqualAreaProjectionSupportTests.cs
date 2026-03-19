@@ -21,6 +21,9 @@ using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class Phase9EqualAreaProjectionSupportTests
 {
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
@@ -40,6 +43,9 @@ public class Phase9EqualAreaProjectionSupportTests
         Assert.True(result.Length >= 2);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void SupportsHammerProjectionRoundtrip()
     {
@@ -73,6 +79,9 @@ public class Phase9EqualAreaProjectionSupportTests
         Assert.True(result.Length >= 2);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void SupportsSinusoidalProjectionRoundtrip()
     {
@@ -106,6 +115,9 @@ public class Phase9EqualAreaProjectionSupportTests
         Assert.True(result.Length >= 2);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void SupportsGoodeProjectionRoundtrip()
     {
@@ -139,6 +151,9 @@ public class Phase9EqualAreaProjectionSupportTests
         Assert.True(result.Length >= 2);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void SupportsIghProjectionRoundtrip()
     {
@@ -171,6 +186,9 @@ public class Phase9EqualAreaProjectionSupportTests
         Assert.True(result.Length >= 2);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void SupportsHealpixProjectionRoundtrip()
     {

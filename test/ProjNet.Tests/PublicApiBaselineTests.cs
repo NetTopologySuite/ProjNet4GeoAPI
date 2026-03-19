@@ -23,11 +23,17 @@ using ProjNet;
 using PublicApiGenerator;
 using Xunit;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class PublicApiBaselineTests
 {
     private const string BaselineFileName = "PublicAPI.Shipped.txt";
     private const string UpdateBaselineEnvironmentVariable = "PROJNET_UPDATE_PUBLIC_API_BASELINE";
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void PublicApiMatchesBaseline()
     {

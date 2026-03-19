@@ -18,6 +18,9 @@ namespace ProjNet.CoordinateSystems.Transformations
 {
     using System;
 
+    /// <summary>
+    /// Represents the documented type.
+    /// </summary>
     [Serializable]
     internal sealed class UnitConvertMathTransform : MathTransform
     {

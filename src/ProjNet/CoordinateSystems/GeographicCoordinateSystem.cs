@@ -101,6 +101,9 @@ namespace ProjNet.CoordinateSystems
             get { return this.WGS84ConversionInfo.Count; }
         }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         internal List<Wgs84ConversionInfo> WGS84ConversionInfo { get; set; }
 
         /// <summary>

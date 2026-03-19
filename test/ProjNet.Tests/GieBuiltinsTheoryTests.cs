@@ -25,6 +25,9 @@ using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class GieBuiltinsTheoryTests
 {
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
@@ -132,21 +135,33 @@ public class GieBuiltinsTheoryTests
         AssertCaseWithinTolerance(rawCase);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     public static IEnumerable<object[]> GetBuiltinsCases()
     {
         return GetCasesFromFixture("builtins.gie", 600);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     public static IEnumerable<object[]> GetMoreBuiltinsCases()
     {
         return GetCasesFromFixture("more_builtins.gie", 300);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     public static IEnumerable<object[]> GetDhdnEtrs89Cases()
     {
         return GetCasesFromFixture("DHDN_ETRS89.gie", 400);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     public static IEnumerable<object[]> GetRemainingGieCases()
     {
         foreach (string fileName in RemainingFixtureFiles)

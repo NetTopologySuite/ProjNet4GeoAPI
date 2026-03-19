@@ -22,6 +22,9 @@ using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class VerificationSuiteTests
 {
     [Theory]
@@ -50,6 +53,9 @@ public class VerificationSuiteTests
         AssertCoordinate(expectedLon, expectedLat, result[0], result[1], 1e-9);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void LegacyCoordinateSystemServicesLookups_RemainConsistent()
     {

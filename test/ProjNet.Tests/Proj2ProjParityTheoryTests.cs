@@ -25,6 +25,9 @@ using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class Proj2ProjParityTheoryTests
 {
     [Theory]
@@ -52,6 +55,9 @@ public class Proj2ProjParityTheoryTests
         Assert.InRange(deltaY, 0d, testCase.ToleranceMeters);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     public static IEnumerable<object[]> GetParityCases()
     {
         string fixturePath = Path.Combine(AppContext.BaseDirectory, "Generated", "proj2proj-direct-parity-fixture.json");
@@ -74,35 +80,80 @@ public class Proj2ProjParityTheoryTests
         }
     }
 
+    /// <summary>
+    /// Represents the documented type.
+    /// </summary>
     public sealed class Proj2ProjCase
     {
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         public int OperationCode { get; set; }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         public int SourceSrid { get; set; }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         public int TargetSrid { get; set; }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         public string SourceWkt { get; set; }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         public string TargetWkt { get; set; }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         public double InputX { get; set; }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         public double InputY { get; set; }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         public double ExpectedX { get; set; }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         public double ExpectedY { get; set; }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         public double ToleranceMeters { get; set; }
     }
 
+    /// <summary>
+    /// Represents the documented type.
+    /// </summary>
     public sealed class Proj2ProjFixture
     {
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         public int FixtureVersion { get; set; }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         public string Generator { get; set; }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         public List<Proj2ProjCase> Cases { get; set; }
     }
 }

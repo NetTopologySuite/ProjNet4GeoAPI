@@ -22,17 +22,29 @@ namespace ProjNet.Resources
     using System.IO;
     using System.Linq;
 
+    /// <summary>
+    /// Represents the documented type.
+    /// </summary>
     internal enum GridResourceResolutionMode
     {
         LocalOnly = 0,
         LocalThenNetwork = 1,
     }
 
+    /// <summary>
+    /// Represents the documented type.
+    /// </summary>
     internal interface IGridResourceFetchClient
     {
+        /// <summary>
+        /// Performs the documented operation.
+        /// </summary>
         bool TryFetch(string gridName, string targetFilePath);
     }
 
+    /// <summary>
+    /// Represents the documented type.
+    /// </summary>
     internal sealed class GridResourceResolverOptions
     {
         internal GridResourceResolverOptions(IEnumerable<string> localDirectories, string cacheDirectory, GridResourceResolutionMode mode)
@@ -50,13 +62,25 @@ namespace ProjNet.Resources
             this.Mode = mode;
         }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         internal string CacheDirectory { get; }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         internal IReadOnlyList<string> LocalDirectories { get; }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         internal GridResourceResolutionMode Mode { get; }
     }
 
+    /// <summary>
+    /// Represents the documented type.
+    /// </summary>
     internal sealed class GridResourceResolver
     {
         private static readonly IGridResourceFetchClient DefaultFetchClient = new NoOpGridResourceFetchClient();

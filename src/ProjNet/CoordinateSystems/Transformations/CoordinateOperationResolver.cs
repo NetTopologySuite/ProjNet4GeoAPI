@@ -20,6 +20,9 @@ namespace ProjNet.CoordinateSystems.Transformations
     using System;
     using System.Collections.Generic;
 
+    /// <summary>
+    /// Represents the documented type.
+    /// </summary>
     internal static class CoordinateOperationResolver
     {
         internal static ICoordinateTransformation Resolve(

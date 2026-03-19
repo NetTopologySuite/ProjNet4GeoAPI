@@ -21,6 +21,9 @@ using NUnit.Framework;
 using ProjNet.CoordinateSystems;
 using System;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class CoordinateSystemsProjectionsTest
 #if !NET7_0_OR_GREATER
     : BaseSerializationTest
@@ -44,6 +47,9 @@ public class CoordinateSystemsProjectionsTest
 {
 #endif
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void CreateTransformationFromCoordinateSystemDeserializedFromWKT()
     {

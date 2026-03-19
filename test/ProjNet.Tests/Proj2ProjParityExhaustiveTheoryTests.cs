@@ -25,6 +25,9 @@ using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class Proj2ProjParityExhaustiveTheoryTests
 {
     [Theory]
@@ -58,6 +61,9 @@ public class Proj2ProjParityExhaustiveTheoryTests
         Assert.InRange(deltaY, 0d, testCase.ToleranceMeters);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     public static IEnumerable<object[]> GetParityCases()
     {
         string fixturePath = Path.Combine(AppContext.BaseDirectory, "Generated", "proj2proj-direct-parity-exhaustive-fixture.json");

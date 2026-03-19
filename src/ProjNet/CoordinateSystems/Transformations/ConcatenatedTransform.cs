@@ -127,6 +127,9 @@ namespace ProjNet.CoordinateSystems.Transformations
             }
         }
 
+        /// <summary>
+        /// Performs the documented operation.
+        /// </summary>
         public ConcatenatedTransform Clone()
         {
             var clonedList = new List<ICoordinateTransformationCore>(this.coordinateTransformationList.Count);

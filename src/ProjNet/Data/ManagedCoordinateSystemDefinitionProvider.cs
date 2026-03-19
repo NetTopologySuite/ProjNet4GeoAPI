@@ -23,6 +23,9 @@ namespace ProjNet.Data
             return GetManagedCoordinateSystems();
         }
 
+        /// <summary>
+        /// Performs the documented operation.
+        /// </summary>
         public IEnumerable<KeyValuePair<int, string>> GetDefinitions()
         {
             foreach (var coordinateSystem in GetManagedCoordinateSystems())

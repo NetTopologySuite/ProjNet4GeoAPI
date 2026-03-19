@@ -19,8 +19,14 @@ namespace ProjNET.Tests;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class Phase5PipelineRuntimeTests
 {
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void Pipeline_WithUnitConvertAndAxisSwap_ConvertsAndSwaps()
     {
@@ -35,6 +41,9 @@ public class Phase5PipelineRuntimeTests
         Assert.Equal(328.0839895013123d, transformed[1], 9);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void Pipeline_WithNoopSetAndUnitConvert_AppliesRelevantStep()
     {
@@ -50,6 +59,9 @@ public class Phase5PipelineRuntimeTests
         Assert.Equal(9d, transformed[2], 10);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void Pipeline_InvalidAxisSwapOrder_ReturnsValidationFailure()
     {

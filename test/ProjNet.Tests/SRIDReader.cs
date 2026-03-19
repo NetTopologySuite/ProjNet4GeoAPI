@@ -24,11 +24,17 @@ using System.Reflection;
 using System.Text;
 using ProjNet.CoordinateSystems;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 internal class SRIDReader
 {
     private static readonly Lazy<CoordinateSystemFactory> CoordinateSystemFactory =
         new Lazy<CoordinateSystemFactory>(() => new CoordinateSystemFactory());
 
+    /// <summary>
+    /// Represents the documented type.
+    /// </summary>
     public struct WktString
     {
         /// <summary>

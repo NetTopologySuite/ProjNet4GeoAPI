@@ -26,6 +26,9 @@ using NUnit.Framework;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class WKTCoordSysParserTests
 {
     private readonly CoordinateSystemFactory coordinateSystemFactory = new CoordinateSystemFactory();
@@ -307,6 +310,9 @@ public class WKTCoordSysParserTests
         Assert.AreEqual(wkt, newWkt);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestParseSrOrg()
     {
@@ -322,6 +328,9 @@ public class WKTCoordSysParserTests
             "\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"X\",EAST],AXIS[\"Y\",NORTH]],AUTHORITY[\"EPSG\",\"3785\"]"), Throws.Nothing);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestProjNetIssues()
     {
@@ -454,6 +463,9 @@ public class WKTCoordSysParserTests
         Assert.That(fcs.AuthorityCode, Is.EqualTo(5250L));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void ParseWktCreatedByCoordinateSystem()
     {
@@ -485,6 +497,9 @@ public class WKTCoordSysParserTests
         Assert.That(projCS.LinearUnit.MetersPerUnit, Is.EqualTo(1));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void ParseProjectedCrsWithWkt2LikeRootAndIdentifiers()
     {
@@ -497,6 +512,9 @@ public class WKTCoordSysParserTests
         Assert.That(parsed.AuthorityCode, Is.EqualTo(3857L));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void ParseGeodCrsWithEllipsoidAndIdTokens()
     {

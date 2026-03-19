@@ -19,6 +19,9 @@ namespace ProjNet.CoordinateSystems.Transformations
     using System;
     using System.Collections.Generic;
 
+    /// <summary>
+    /// Represents the documented type.
+    /// </summary>
     [Serializable]
     internal sealed class CompositeMathTransform : MathTransform
     {

@@ -12,6 +12,9 @@ namespace ProjNet.Data
     /// </summary>
     internal sealed class ManagedCoordinateOperationDefinitionProvider : ICoordinateOperationDefinitionProvider
     {
+        /// <summary>
+        /// Performs the documented operation.
+        /// </summary>
         public IEnumerable<CoordinateOperationDefinition> GetDefinitions()
         {
             var records = EpsgGeneratedCatalog.Operations;

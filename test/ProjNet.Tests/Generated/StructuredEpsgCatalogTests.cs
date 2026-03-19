@@ -25,8 +25,14 @@ using ProjNet.Data;
 using ProjNet.Data.Generated;
 using Xunit;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class StructuredEpsgCatalogTests
 {
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void GeneratedCatalog_ShouldNotExposeExplicitStringPool()
     {
@@ -34,6 +40,9 @@ public class StructuredEpsgCatalogTests
         Assert.Null(stringPoolField);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void GeneratedCatalog_ShouldExposeSwitchMappedSridLookup()
     {
@@ -46,6 +55,9 @@ public class StructuredEpsgCatalogTests
         Assert.Equal(4326, mappedSrid);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void GeneratedCatalog_ShouldNotExposeSridArray()
     {
@@ -53,6 +65,9 @@ public class StructuredEpsgCatalogTests
         Assert.Null(sridArrayField);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void CoordinateSystemFactory_ShouldNotUseDictionaryLookupCaches()
     {
@@ -64,6 +79,9 @@ public class StructuredEpsgCatalogTests
         Assert.Empty(dictionaryFields);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void ManagedProvider_ShouldExposeStructuredCoordinateSystems()
     {
@@ -76,6 +94,9 @@ public class StructuredEpsgCatalogTests
         Assert.Contains(coordinateSystems, item => item.Key == 3857);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void GeneratedCatalog_ShouldExposeExplicitOperationFastPath()
     {
@@ -93,6 +114,9 @@ public class StructuredEpsgCatalogTests
         Assert.False(double.IsNaN(parameters.Dz));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void GeneratedCatalog_ShouldReturnFalseForUnknownExplicitOperationCode()
     {

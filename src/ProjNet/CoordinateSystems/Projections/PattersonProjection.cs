@@ -21,6 +21,9 @@ namespace ProjNet.CoordinateSystems.Projections
     using System.Collections.Generic;
     using ProjNet.CoordinateSystems.Transformations;
 
+    /// <summary>
+    /// Represents the documented type.
+    /// </summary>
     [Serializable]
     internal class PattersonProjection : MapProjection
     {

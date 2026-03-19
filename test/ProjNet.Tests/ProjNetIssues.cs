@@ -22,13 +22,22 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using ProjNet.CoordinateSystems;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class ProjNetIssues : CoordinateTransformTestsBase
 {
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     public ProjNetIssues()
     {
         this.Verbose = true;
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact(DisplayName = "WGS_84UTM to WGS_84 is inaccurate")]
     public void TestIssue23773()
     {
@@ -53,6 +62,9 @@ public class ProjNetIssues : CoordinateTransformTestsBase
             this.TransformationError("UTM18N -> WGS84", pExpected, pgeo));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact(DisplayName = "Proj.net reprojection problem, Discussion http://projnet.codeplex.com/discussions/351733")]
     public void TestDiscussion351733()
     {
@@ -77,6 +89,9 @@ public class ProjNetIssues : CoordinateTransformTestsBase
             this.TransformationError("EPSG 28414 -> Pulkovo 1942", pp, pp2, true));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact(DisplayName = "Problem converting coordinates, Discussion http://projnet.codeplex.com/discussions/352813")]
     public void TestDiscussion352813()
     {
@@ -132,6 +147,9 @@ public class ProjNetIssues : CoordinateTransformTestsBase
             this.TransformationError("EPSG 4326 -> EPSG 3857", pg1, pg2, true));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact(DisplayName = "Concerned about the accuracy, Discussion http://projnet.codeplex.com/discussions/361248")]
     public void TestDiscussion361248_1()
     {
@@ -154,6 +172,9 @@ public class ProjNetIssues : CoordinateTransformTestsBase
         this.Test("WGS 84 -> GDA94 / MGA zone 50", csSource, csTarget, new[] { 136d, -30d }, new[] { 2349315.05731837, 6524249.91789138 }, 0.05, 1.0e-4);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact(DisplayName = "Concerned about the accuracy, Discussion http://projnet.codeplex.com/discussions/361248")]
     public void TestDiscussion361248_2()
     {
@@ -240,6 +261,9 @@ public class ProjNetIssues : CoordinateTransformTestsBase
         Assert.AreEqual(true, pcs1.GeographicCoordinateSystem.AngularUnit.EqualParams(pcs2.GeographicCoordinateSystem.AngularUnit));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact(DisplayName = "transformation somehow is wrong")]
     [Xunit.Trait("Category", "Question")]
     public void TestGitHubIssue53()
@@ -260,6 +284,9 @@ public class ProjNetIssues : CoordinateTransformTestsBase
         Assert.AreEqual(point[1], rBack[1], 1e-5);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact(DisplayName = "Coordinate system isn't supported")]
     [Xunit.Trait("Category", "Issue")]
     public void TestGitHubIssue98()

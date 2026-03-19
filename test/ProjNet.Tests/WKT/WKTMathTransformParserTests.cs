@@ -22,6 +22,9 @@ using NUnit.Framework;
 using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.IO.CoordinateSystems;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class WKTMathTransformParserTests
 {
     /// <summary>

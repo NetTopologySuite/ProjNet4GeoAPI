@@ -22,6 +22,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 internal static class GieParser
 {
     private static readonly char[] WhiteSpaceSeparators = { ' ', '\t' };

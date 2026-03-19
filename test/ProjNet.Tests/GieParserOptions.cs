@@ -17,9 +17,18 @@
 
 namespace ProjNET.Tests;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 internal sealed class GieParserOptions
 {
+    /// <summary>
+    /// Gets the documented value.
+    /// </summary>
     public bool IgnoreUnknownDirectives { get; set; }
 
+    /// <summary>
+    /// Gets the documented value.
+    /// </summary>
     public bool AllowOperationContinuation { get; set; } = true;
 }

@@ -17,6 +17,9 @@
 
 namespace ProjNET.Tests;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 internal enum GieDirection
 {
     Forward = 0,

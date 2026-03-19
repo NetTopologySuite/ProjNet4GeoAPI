@@ -21,8 +21,14 @@ using System.Linq;
 using ProjNet.Data;
 using Xunit;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class OperationCatalogProviderTests
 {
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void ManagedOperationProvider_LoadsGeneratedOperationCatalog()
     {

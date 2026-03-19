@@ -27,13 +27,22 @@ using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.Geometries;
 using ProjNet.IO.CoordinateSystems;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class CoordinateTransformTests : CoordinateTransformTestsBase
 {
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     public CoordinateTransformTests()
     {
         this.Verbose = true;
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestTransformListOfCoordinates()
     {
@@ -70,6 +79,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         }
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestTransformListOfDoubleArray()
     {
@@ -105,6 +117,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         }
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestCentralMeridianParse()
     {
@@ -115,6 +130,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.IsNotNull(pSouthPole);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestAlbersProjection()
     {
@@ -149,6 +167,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.IsTrue(this.ToleranceLessThan(pGeo, pGeo2, 0.0000001), this.TransformationError("Albers", pGeo, pGeo2, true));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestAlbersProjectionFeet()
     {
@@ -182,6 +203,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.IsTrue(this.ToleranceLessThan(pGeo, pGeo2, 0.0000001), this.TransformationError("Albers", pGeo, pGeo2, true));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestMercator_1SP_Projection()
     {
@@ -214,6 +238,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.IsTrue(this.ToleranceLessThan(pGeo, pGeo2, 0.0000001), this.TransformationError("Mercator_1SP", pGeo, pGeo2, true));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestMercator_1SP_Projection_Feet()
     {
@@ -246,6 +273,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.IsTrue(this.ToleranceLessThan(pGeo, pGeo2, 0.0000001), this.TransformationError("Mercator_1SP", pGeo, pGeo2, true));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestMercator_2SP_Projection()
     {
@@ -277,6 +307,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.IsTrue(this.ToleranceLessThan(pGeo, pGeo2, 0.0000001), this.TransformationError("Mercator_2SP", pGeo, pGeo2, true));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestTransverseMercator_Projection()
     {
@@ -310,6 +343,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.IsTrue(this.ToleranceLessThan(pGeo, pGeo2, 1E-6), this.TransformationError("TransverseMercator", pGeo, pGeo2, true));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestLambertConicConformal2SP_Projection()
     {
@@ -365,6 +401,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         return this.CoordinateTransformationFactory.CreateFromCoordinateSystems(wgs84, coordsys);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     [Repeat(1000)]
     public void TestLambertAzimuthalEqualArea_Projection_round_trip_on_origin()
@@ -389,6 +428,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.IsTrue(this.ToleranceLessThan(pGeo, pGeo2, 0.0000001), this.TransformationError("Lambert_Azimuthal_Equal_Area", pGeo, pGeo2, true));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     [Repeat(1000)]
     public void TestLambertAzimuthalEqualArea_Projection_round_trip_on_arbitrary_point()
@@ -420,6 +462,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.IsTrue(this.ToleranceLessThan(pGeo, pGeo2, 0.0000001), this.TransformationError("Lambert_Azimuthal_Equal_Area", pGeo, pGeo2, true));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestGeocentric()
     {
@@ -436,6 +481,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.IsTrue(this.ToleranceLessThan(p2, pExpected, 0.00001));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestDatumTransform()
     {
@@ -521,6 +569,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         // ED50_to_WGS84_Denmark: datum.Wgs84Parameters = new Wgs84ConversionInfo(-89.5, -93.8, 127.6, 0, 0, 4.5, 1.2);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestKrovak_Greenwich_Projection()
     {
@@ -577,6 +628,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.IsTrue(this.ToleranceLessThan(pGeo, pGeo2, 0.001), this.TransformationError("Krovak", pGeo, pGeo2));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestKrovak_Ferro_Projection()
     {
@@ -634,6 +688,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.IsTrue(this.ToleranceLessThan(pGeo, pGeo2, 0.001), this.TransformationError("Krovak", pGeo, pGeo2));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestObliqueStereographicProjection()
     {
@@ -662,6 +719,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.AreEqual(coord2171[1], transformedCoord2171[1], 1);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestUniversalPolarStereographicProjection()
     {
@@ -718,6 +778,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.AreEqual(coord32661[1], transformedCoord32661[1], 1);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestAustralianAntarcticPolarStereographicProjection()
     {
@@ -773,6 +836,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.AreEqual(coord3032[1], transformedCoord3032[1], 1);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestUnitTransforms()
     {
@@ -794,6 +860,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.IsTrue(this.ToleranceLessThan(p0, p2, 0.0001), this.TransformationError("Unit", expected, p1, true));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact(DisplayName = "Accuracy very poor!")]
     public void TestPolyconicTransforms()
     {
@@ -818,6 +887,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.IsTrue(this.ToleranceLessThan(p0, p2, 0.0001), this.TransformationError("Polyconic", expected, p1, true));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestCassiniSoldner()
     {
@@ -843,6 +915,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
          */
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestHotineObliqueMercator()
     {
@@ -857,6 +932,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
              new[] { 4136805.826, -4424019.786 }, 0.01, 1.0E-5);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestTransformListOnConcatenatedDoTransform()
     {
@@ -879,6 +957,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.AreNotEqual(6714000, coords[0].Y);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestTransformListOnConcatenatedDoTransformDoubleArr()
     {
@@ -1078,6 +1159,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     // https://github.com/NetTopologySuite/ProjNet4GeoAPI/issues/48
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void Test_EPSG_2056_HotineObliqueMercatorAzimuthCenter_Switzerland()
     {
@@ -1094,6 +1178,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.That(y, Is.EqualTo(1253167.89).Within(0.1));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestEllipsoidalOrthographicTransform()
     {
@@ -1153,6 +1240,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.Throws<ArgumentOutOfRangeException>(@delegate2);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public static void TestMercatorAuxilarySphereTransformation()
     {
@@ -1174,6 +1264,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.AreEqual(6968468.98, tranformedPoint.y, 0.1);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestPopularVisualizationPseudoMercatorProjectionRegistry()
     {
@@ -1190,6 +1283,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.NotNull(transformation);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestLamberTangentialConformalConicProjectionRegistryAndTransformation()
     {

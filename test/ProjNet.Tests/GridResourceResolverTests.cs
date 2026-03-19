@@ -23,8 +23,14 @@ using System.IO;
 using ProjNet.Resources;
 using Xunit;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class GridResourceResolverTests
 {
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void TryResolve_WithLocalGridFile_ResolvesWithoutNetwork()
     {
@@ -50,6 +56,9 @@ public class GridResourceResolverTests
         }
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void TryResolve_WithLocalOnlyMode_DoesNotCallNetworkFetcher()
     {
@@ -71,6 +80,9 @@ public class GridResourceResolverTests
         }
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void TryResolve_WithNetworkMode_DownloadsToCacheAndReusesCachedFile()
     {

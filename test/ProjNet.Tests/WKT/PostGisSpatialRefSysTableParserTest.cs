@@ -25,6 +25,9 @@ using Npgsql;
 using NUnit.Framework;
 using ProjNet.CoordinateSystems;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class SpatialRefSysTableParser
 {
     private static string connectionString;
@@ -32,6 +35,9 @@ public class SpatialRefSysTableParser
     private static readonly Lazy<CoordinateSystemFactory> CoordinateSystemFactory =
         new Lazy<CoordinateSystemFactory>(() => new CoordinateSystemFactory());
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestParsePostgisDefinitions()
     {
@@ -82,6 +88,9 @@ public class SpatialRefSysTableParser
         }
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]// , Ignore("Only run this if you want a new SRID.csv file")]
     public void TestCreateSridCsv()
     {

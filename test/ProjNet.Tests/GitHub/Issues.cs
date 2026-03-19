@@ -24,12 +24,18 @@ using ProjNet;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 [Xunit.Trait("Category", "GitHub Issue")]
 public class Issues
 {
     //
     private static CoordinateSystemServices css = new CoordinateSystemServices(CoordinateSystemServicesTest.LoadCsv());
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact(DisplayName = "Issue #10, ConcatenatedTransform.Inverse() method destroys the state of child transformations")]
     public void TestConcatenatedTransformInvert()
     {
@@ -50,6 +56,9 @@ public class Issues
         }
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact(DisplayName = "Issue #20, Math transform bug")]
     public void TestMathTransformBug()
     {
@@ -87,6 +96,9 @@ public class Issues
         Assert.That(pt2a, Is.EqualTo(pt2b));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact]
     public void TestIssuesWith3857To25832()
     {
@@ -114,6 +126,9 @@ public class Issues
         Assert.That(pt_3857.y, Is.EqualTo(pt_3857ex.y).Within(0.015));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact(DisplayName = "Convert latitude/longitude to Canada grid NAD83 (epsg:26910)")]
     public void TestConvertWgs84ToEPSG26910()
     {
@@ -133,6 +148,9 @@ public class Issues
          */
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact(Skip = "Requires DotSpatial.Projections, Result same as in TestConvertWgs84ToEPSG26910")]
     public void TestConvertWgs84ToEPSG26910_DS()
     {
@@ -153,6 +171,9 @@ public class Issues
          */
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact(DisplayName = "Issue #64, Wrong parameter order when calling base constructor (in systems extending HorizontalCoordinateSystem)")]
     public void TestHorizontalCoordinateSystemImplementationsAbbreviationAndRemarks()
     {

@@ -29,6 +29,9 @@ using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.Geometries;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class PerformanceTests
 {
     private static readonly MathTransform WGS84ToWebMercator = new CoordinateTransformationFactory().CreateFromCoordinateSystems(GeographicCoordinateSystem.WGS84, ProjectedCoordinateSystem.WebMercator).MathTransform;
@@ -51,6 +54,9 @@ public class PerformanceTests
 
     private XYZ[] xyzsCopy;
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     public static void Validate()
     {
         var instance = new PerformanceTests();
@@ -91,6 +97,9 @@ public class PerformanceTests
         }
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [GlobalSetup]
     public void GlobalSetup()
     {
@@ -127,6 +136,9 @@ public class PerformanceTests
         this.xyzsCopy = new XYZ[this.cnt];
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Benchmark]
     public void SoAOneByOne()
     {
@@ -138,6 +150,9 @@ public class PerformanceTests
         }
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Benchmark]
     public void SoABatched()
     {
@@ -146,6 +161,9 @@ public class PerformanceTests
         WGS84ToWebMercator.Transform(this.xsCopy, this.ysCopy);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Benchmark]
     public void TightAoSOneByOne()
     {
@@ -156,6 +174,9 @@ public class PerformanceTests
         }
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Benchmark]
     public void TightAoSBatched()
     {
@@ -163,6 +184,9 @@ public class PerformanceTests
         WGS84ToWebMercator.Transform(this.xysCopy);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Benchmark]
     public void LooserAoSOneByOne()
     {
@@ -173,6 +197,9 @@ public class PerformanceTests
         }
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Benchmark]
     public void LooserAoSBatched()
     {

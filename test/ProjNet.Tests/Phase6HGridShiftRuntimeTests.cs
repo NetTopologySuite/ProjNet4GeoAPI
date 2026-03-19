@@ -22,8 +22,14 @@ using System.IO;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
+/// <summary>
+/// Represents the documented type.
+/// </summary>
 public class Phase6HGridShiftRuntimeTests
 {
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void Hgridshift_WithLittleEndianNtv2Grid_AppliesExpectedShift()
     {
@@ -39,6 +45,9 @@ public class Phase6HGridShiftRuntimeTests
         Assert.Equal(0d, output[2], 9);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void Hgridshift_WithBigEndianNtv2Grid_AppliesExpectedShift()
     {
@@ -54,6 +63,9 @@ public class Phase6HGridShiftRuntimeTests
         Assert.Equal(0d, output[2], 9);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void Hgridshift_WithInverseFlag_ForSyntheticFixtureSignalsOutsideGrid()
     {
@@ -66,6 +78,9 @@ public class Phase6HGridShiftRuntimeTests
         Assert.Throws<ArgumentException>(() => transform.Transform(new[] { 5.875d, 55.375d, 0d }));
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Fact]
     public void Gridshift_WithNtv2Grid_UsesHorizontalShiftImplementation()
     {
