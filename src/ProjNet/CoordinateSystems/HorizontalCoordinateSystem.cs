@@ -37,9 +37,15 @@ namespace ProjNet.CoordinateSystems
         /// <param name="alias">Alias.</param>
         /// <param name="abbreviation">Abbreviation.</param>
         /// <param name="remarks">Provider-supplied remarks.</param>
-        internal HorizontalCoordinateSystem(HorizontalDatum datum, List<AxisInfo> axisInfo,
-            string name, string authority, long code, string alias,
-            string remarks, string abbreviation)
+        internal HorizontalCoordinateSystem(
+            HorizontalDatum datum,
+            List<AxisInfo> axisInfo,
+            string name,
+            string authority,
+            long code,
+            string alias,
+            string remarks,
+            string abbreviation)
             : base(name, authority, code, alias, abbreviation, remarks)
         {
             this.HorizontalDatum = datum;

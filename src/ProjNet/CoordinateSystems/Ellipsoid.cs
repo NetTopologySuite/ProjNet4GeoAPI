@@ -313,7 +313,12 @@ namespace ProjNet.CoordinateSystems
                 return string.Format(
                     CultureInfo.InvariantCulture.NumberFormat,
                     "<CS_Ellipsoid SemiMajorAxis=\"{0}\" SemiMinorAxis=\"{1}\" InverseFlattening=\"{2}\" IvfDefinitive=\"{3}\">{4}{5}</CS_Ellipsoid>",
-                    this.SemiMajorAxis, this.SemiMinorAxis, this.InverseFlattening, this.IsIvfDefinitive ? 1 : 0, this.InfoXml, this.AxisUnit.XML);
+                    this.SemiMajorAxis,
+                    this.SemiMinorAxis,
+                    this.InverseFlattening,
+                    this.IsIvfDefinitive ? 1 : 0,
+                    this.InfoXml,
+                    this.AxisUnit.XML);
             }
         }
 

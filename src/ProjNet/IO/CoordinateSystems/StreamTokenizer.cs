@@ -116,8 +116,12 @@ namespace ProjNet.IO.CoordinateSystems
                 return double.Parse(number, this.nfi);
             }
 
-            string s = string.Format(this.nfi, "The token '{0}' is not a number at line {1} column {2}.",
-                number, this.LineNumber, this.Column);
+            string s = string.Format(
+                this.nfi,
+                "The token '{0}' is not a number at line {1} column {2}.",
+                number,
+                this.LineNumber,
+                this.Column);
             throw new ArgumentException(s);
         }
 

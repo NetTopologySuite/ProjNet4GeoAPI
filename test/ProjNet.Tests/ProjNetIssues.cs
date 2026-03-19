@@ -218,7 +218,9 @@ public class ProjNetIssues : CoordinateTransformTestsBase
         var wgs84 = GeographicCoordinateSystem.WGS84;
         var dummy = factory.CreateProjectedCoordinateSystem(
             "dummy pcs",
-            wgs84, projection, LinearUnit.Metre,
+            wgs84,
+            projection,
+            LinearUnit.Metre,
             new AxisInfo("X", AxisOrientationEnum.East),
             new AxisInfo("Y", AxisOrientationEnum.North));
         Assert.That(dummy, Is.Not.Null);

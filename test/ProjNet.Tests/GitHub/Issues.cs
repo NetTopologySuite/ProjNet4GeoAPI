@@ -73,7 +73,9 @@ public class Issues
             new ProjectionParameter("scale_factor", 1.0000067),
         };
 
-        var itmDatum = coordinateSystemFactory.CreateHorizontalDatum("Isreal 1993", DatumType.HD_Geocentric,
+        var itmDatum = coordinateSystemFactory.CreateHorizontalDatum(
+            "Isreal 1993",
+            DatumType.HD_Geocentric,
             Ellipsoid.GRS80,
             new Wgs84ConversionInfo(-24.0024, -17.1032, -17.8444, -0.33077, -1.85269, 1.66969, 5.4248));
 
@@ -86,7 +88,11 @@ public class Issues
             new AxisInfo("North", AxisOrientationEnum.North));
 
         var itmProjection = coordinateSystemFactory.CreateProjection("Transverse_Mercator", "Transverse_Mercator", itmParameters);
-        var itm = coordinateSystemFactory.CreateProjectedCoordinateSystem("ITM", itmGeo, itmProjection, LinearUnit.Metre,
+        var itm = coordinateSystemFactory.CreateProjectedCoordinateSystem(
+            "ITM",
+            itmGeo,
+            itmProjection,
+            LinearUnit.Metre,
             new AxisInfo("East", AxisOrientationEnum.East),
             new AxisInfo("North", AxisOrientationEnum.North));
 
@@ -198,7 +204,12 @@ public class Issues
                 HorizontalDatum.WGS84,
                 PrimeMeridian.Greenwich,
                 gcsAxes,
-                "WGS 84", "EPSG", 4326, string.Empty, abbreviation, remarks);
+                "WGS 84",
+                "EPSG",
+                4326,
+                string.Empty,
+                abbreviation,
+                remarks);
 
         Assert.That(geographicCoordinateSystem.Abbreviation, Is.EqualTo(abbreviation));
         Assert.That(geographicCoordinateSystem.Remarks, Is.EqualTo(remarks));
@@ -235,8 +246,12 @@ public class Issues
                 LinearUnit.Metre,
                 proj,
                 pcsAxes,
-                "WGS 84 / Pseudo-Mercator", "EPSG", 3857, "WGS 84 / Popular Visualisation Pseudo-Mercator",
-                remarks, abbreviation);
+                "WGS 84 / Pseudo-Mercator",
+                "EPSG",
+                3857,
+                "WGS 84 / Popular Visualisation Pseudo-Mercator",
+                remarks,
+                abbreviation);
 
         Assert.That(projectedCoordinateSystem.Abbreviation, Is.EqualTo(abbreviation));
         Assert.That(projectedCoordinateSystem.Remarks, Is.EqualTo(remarks));

@@ -99,8 +99,13 @@ namespace ProjNet.CoordinateSystems.Transformations
         }
 
         /// <inheritdoc />
-        protected sealed override void TransformCore(Span<double> xs, Span<double> ys, Span<double> zs,
-            int strideX, int strideY, int strideZ)
+        protected sealed override void TransformCore(
+            Span<double> xs,
+            Span<double> ys,
+            Span<double> zs,
+            int strideX,
+            int strideY,
+            int strideZ)
         {
             double addend = this.isInverted
                 ? this.target.Longitude - this.source.Longitude

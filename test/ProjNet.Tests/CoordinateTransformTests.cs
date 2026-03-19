@@ -968,7 +968,10 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         var csTarget = this.CoordinateSystemFactory.CreateFromWkt(
             "PROJCS[\"DHDN / Soldner Berlin\",GEOGCS[\"DHDN\",DATUM[\"Deutsches_Hauptdreiecksnetz\",SPHEROID[\"Bessel 1841\",6377397.155,299.1528128,AUTHORITY[\"EPSG\",\"7004\"]],TOWGS84[598.1,73.7,418.2,0.202,0.045,-2.455,6.7],AUTHORITY[\"EPSG\",\"6314\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4314\"]],PROJECTION[\"Cassini_Soldner\"],PARAMETER[\"latitude_of_origin\",52.41864827777778],PARAMETER[\"central_meridian\",13.62720366666667],PARAMETER[\"false_easting\",40000],PARAMETER[\"false_northing\",10000],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"x\",NORTH],AXIS[\"y\",EAST],AUTHORITY[\"EPSG\",\"3068\"]]");
 
-        this.Test("CassiniSoldner", csSource, csTarget,
+        this.Test(
+            "CassiniSoldner",
+            csSource,
+            csTarget,
             new[] { 13.408055555556, 52.518611111111 },
             new[] { 25244.540, 21300.969 },
             0.3,
@@ -1000,7 +1003,10 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
 
         // 61.216667°, -149.883333°
         // "POINT(4136805.82642057 -4424019.78560519)"
-        this.Test("HotineObliqueMercator", csSource, csTarget,
+        this.Test(
+            "HotineObliqueMercator",
+            csSource,
+            csTarget,
             new[] { -149.883333, 61.216667 },
             new[] { 4136805.826, -4424019.786 },
             0.01,

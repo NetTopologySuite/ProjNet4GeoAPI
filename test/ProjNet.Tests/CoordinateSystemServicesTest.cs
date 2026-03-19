@@ -145,7 +145,8 @@ public class CoordinateSystemServicesTest
 
         var css = new CoordinateSystemServices(
             new CoordinateSystemFactory(),
-            new CoordinateTransformationFactory(), LoadXml(xmlPath));
+            new CoordinateTransformationFactory(),
+            LoadXml(xmlPath));
 
         Assert.IsNotNull(css.GetCoordinateSystem(4326));
         Assert.IsNotNull(css.GetCoordinateSystem("EPSG", 4326));
@@ -170,7 +171,8 @@ public class CoordinateSystemServicesTest
 
         var css = new CoordinateSystemServices(
             new CoordinateSystemFactory(),
-            new CoordinateTransformationFactory(), LoadCsv(csvPath));
+            new CoordinateTransformationFactory(),
+            LoadCsv(csvPath));
 
         Assert.IsNotNull(css.GetCoordinateSystem(4326));
         Assert.IsNotNull(css.GetCoordinateSystem("EPSG", 4326));

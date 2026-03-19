@@ -78,7 +78,8 @@ namespace ProjNet.CoordinateSystems
                     "EPSG",
                     6326,
                     string.Empty,
-                    "EPSG's WGS 84 datum has been the then current realisation. No distinction is made between the original WGS 84 frame, WGS 84 (G730), WGS 84 (G873) and WGS 84 (G1150). Since 1997, WGS 84 has been maintained within 10cm of the then current ITRF.", string.Empty);
+                    "EPSG's WGS 84 datum has been the then current realisation. No distinction is made between the original WGS 84 frame, WGS 84 (G730), WGS 84 (G873) and WGS 84 (G1150). Since 1997, WGS 84 has been maintained within 10cm of the then current ITRF.",
+                    string.Empty);
             }
         }
 

@@ -58,7 +58,8 @@ namespace ProjNet.CoordinateSystems
                 sb.AppendFormat(
                     CultureInfo.InvariantCulture.NumberFormat,
                     "<CS_CoordinateSystem Dimension=\"{0}\"><CS_CompoundCoordinateSystem>{1}",
-                    this.Dimension, this.InfoXml);
+                    this.Dimension,
+                    this.InfoXml);
                 foreach (var ai in this.AxisInfo)
                 {
                     sb.Append(ai.XML);

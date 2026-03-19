@@ -78,7 +78,8 @@ namespace ProjNet.CoordinateSystems
                 return string.Format(
                     CultureInfo.InvariantCulture.NumberFormat,
                     "<CS_VerticalDatum DatumType=\"{0}\">{1}{2}</CS_VerticalDatum>",
-                    (int)this.DatumType, this.InfoXml);
+                    (int)this.DatumType,
+                    this.InfoXml);
             }
         }
 

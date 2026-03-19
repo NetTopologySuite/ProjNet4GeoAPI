@@ -89,11 +89,15 @@ public class CoordinateTransformTestsBase
     {
         return string.Format(
             CultureInfo.InvariantCulture,
-                             "{6} {7} transformation outside tolerance!\n\tExpected [{0}, {1}],\n\tgot      [{2}, {3}],\n\tdelta    [{4}, {5}]",
-                             pExpected[0], pExpected[1],
-                             pResult[0], pResult[1],
-                             pExpected[0] - pResult[0], pExpected[1] - pResult[1],
-                             projection, reverse ? "reverse" : "forward");
+            "{6} {7} transformation outside tolerance!\n\tExpected [{0}, {1}],\n\tgot      [{2}, {3}],\n\tdelta    [{4}, {5}]",
+            pExpected[0],
+            pExpected[1],
+            pResult[0],
+            pResult[1],
+            pExpected[0] - pResult[0],
+            pExpected[1] - pResult[1],
+            projection,
+            reverse ? "reverse" : "forward");
     }
 
     /// <summary>
@@ -106,9 +110,14 @@ public class CoordinateTransformTestsBase
     /// <param name="expectedPoint">Expected coordinate in target space.</param>
     /// <param name="tolerance">Forward transformation tolerance.</param>
     /// <param name="reverseTolerance">Optional inverse tolerance; NaN skips inverse assertion.</param>
-    public void Test(string title, CoordinateSystem source, CoordinateSystem target,
-                     double[] testPoint, double[] expectedPoint,
-                     double tolerance, double reverseTolerance = double.NaN)
+    public void Test(
+        string title,
+        CoordinateSystem source,
+        CoordinateSystem target,
+        double[] testPoint,
+        double[] expectedPoint,
+        double tolerance,
+        double reverseTolerance = double.NaN)
     {
         var ct = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
 

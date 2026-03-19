@@ -47,8 +47,12 @@ namespace ProjNet.CoordinateSystems
         /// <param name="remarks">Provider-supplied remarks.</param>
         internal Datum(
             DatumType type,
-            string name, string authority, long code, string alias,
-            string remarks, string abbreviation)
+            string name,
+            string authority,
+            long code,
+            string alias,
+            string remarks,
+            string abbreviation)
             : base(name, authority, code, alias, abbreviation, remarks)
         {
             this.DatumType = type;

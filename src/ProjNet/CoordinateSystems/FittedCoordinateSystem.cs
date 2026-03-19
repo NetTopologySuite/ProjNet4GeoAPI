@@ -42,8 +42,15 @@ namespace ProjNet.CoordinateSystems
         /// <param name="alias">Alias.</param>
         /// <param name="abbreviation">Abbreviation.</param>
         /// <param name="remarks">Provider-supplied remarks.</param>
-        protected internal FittedCoordinateSystem(CoordinateSystem baseSystem, MathTransform transform,
-            string name, string authority, long code, string alias, string remarks, string abbreviation)
+        protected internal FittedCoordinateSystem(
+            CoordinateSystem baseSystem,
+            MathTransform transform,
+            string name,
+            string authority,
+            long code,
+            string alias,
+            string remarks,
+            string abbreviation)
             : base(name, authority, code, alias, abbreviation, remarks)
         {
             this.BaseCoordinateSystem = baseSystem;
