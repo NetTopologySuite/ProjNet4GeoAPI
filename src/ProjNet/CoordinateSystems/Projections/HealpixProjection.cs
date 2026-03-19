@@ -39,11 +39,20 @@ namespace ProjNet.CoordinateSystems.Projections
         private readonly double[] apa;
         private readonly double rotationRadians;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HealpixProjection"/> class.
+        /// </summary>
+        /// <param name="parameters">Projection parameters.</param>
         public HealpixProjection(IEnumerable<ProjectionParameter> parameters)
             : this(parameters, null)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="HealpixProjection"/> class.
+        /// </summary>
+        /// <param name="parameters">Projection parameters.</param>
+        /// <param name="inverse">Inverse transform instance when cloning.</param>
         public HealpixProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
             : base(parameters, inverse)
         {

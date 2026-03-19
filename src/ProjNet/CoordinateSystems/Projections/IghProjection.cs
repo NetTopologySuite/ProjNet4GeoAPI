@@ -49,11 +49,20 @@ namespace ProjNet.CoordinateSystems.Projections
         private readonly double dy0;
         private readonly ZoneDefinition[] zones;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IghProjection"/> class.
+        /// </summary>
+        /// <param name="parameters">Projection parameters.</param>
         public IghProjection(IEnumerable<ProjectionParameter> parameters)
             : this(parameters, null)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IghProjection"/> class.
+        /// </summary>
+        /// <param name="parameters">Projection parameters.</param>
+        /// <param name="inverse">Inverse transform instance when cloning.</param>
         public IghProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
             : base(parameters, inverse)
         {
