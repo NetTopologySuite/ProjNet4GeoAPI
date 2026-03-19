@@ -19,6 +19,7 @@ namespace ProjNet.CoordinateSystems.Transformations
     using System;
     using System.Collections.Generic;
     using System.Globalization;
+    using System.IO;
 
     internal static class ProjPipelineMathTransformFactory
     {
@@ -99,6 +100,12 @@ namespace ProjNet.CoordinateSystems.Transformations
             if (projCode.Equals("unitconvert", StringComparison.OrdinalIgnoreCase))
             {
                 return TryCreateUnitConvertTransform(args, out transform, out skipReason);
+            }
+
+            if (projCode.Equals("hgridshift", StringComparison.OrdinalIgnoreCase)
+                || projCode.Equals("gridshift", StringComparison.OrdinalIgnoreCase))
+            {
+                return TryCreateHorizontalGridShiftTransform(args, out transform, out skipReason);
             }
 
             skipReason = "Projection '" + projCode + "' is not part of the current builtins wave.";
@@ -195,6 +202,117 @@ namespace ProjNet.CoordinateSystems.Transformations
             }
 
             transform = new UnitConvertMathTransform(3, xyScale, zScale);
+            return true;
+        }
+
+        private static bool TryCreateHorizontalGridShiftTransform(
+            IDictionary<string, string> args,
+            out MathTransform transform,
+            out string skipReason)
+        {
+            transform = null;
+            skipReason = null;
+
+            if (!args.TryGetValue("grids", out string gridsToken) || string.IsNullOrWhiteSpace(gridsToken))
+            {
+                skipReason = "Horizontal grid shift requires +grids.";
+                return false;
+            }
+
+            if (!TryResolveGridPaths(gridsToken, out IReadOnlyList<string> gridPaths, out skipReason))
+            {
+                return false;
+            }
+
+            for (int i = 0; i < gridPaths.Count; i++)
+            {
+                string extension = Path.GetExtension(gridPaths[i]);
+                if (!extension.Equals(".gsb", StringComparison.OrdinalIgnoreCase))
+                {
+                    skipReason = "Grid '" + Path.GetFileName(gridPaths[i]) + "' is not an NTv2 .gsb file in the current runtime.";
+                    return false;
+                }
+            }
+
+            try
+            {
+                transform = new Ntv2HGridShiftMathTransform(gridPaths);
+            }
+            catch (IOException ioException)
+            {
+                skipReason = "Unable to read NTv2 grid: " + ioException.Message;
+                return false;
+            }
+            catch (InvalidDataException dataException)
+            {
+                skipReason = "Invalid NTv2 grid data: " + dataException.Message;
+                return false;
+            }
+            catch (ArgumentException argumentException)
+            {
+                skipReason = "Invalid grid parameters: " + argumentException.Message;
+                return false;
+            }
+
+            if (args.ContainsKey("inv"))
+            {
+                transform = transform.Inverse();
+            }
+
+            return true;
+        }
+
+        private static bool TryResolveGridPaths(
+            string gridsToken,
+            out IReadOnlyList<string> resolvedPaths,
+            out string skipReason)
+        {
+            resolvedPaths = Array.Empty<string>();
+            skipReason = null;
+
+            string[] entries = gridsToken.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            if (entries.Length == 0)
+            {
+                skipReason = "Horizontal grid shift requires at least one grid name in +grids.";
+                return false;
+            }
+
+            var resolved = new List<string>(entries.Length);
+            for (int i = 0; i < entries.Length; i++)
+            {
+                string token = entries[i].Trim();
+                if (string.IsNullOrWhiteSpace(token))
+                {
+                    continue;
+                }
+
+                bool isOptional = token.StartsWith("@", StringComparison.Ordinal);
+                string gridName = isOptional ? token.Substring(1) : token;
+                if (string.IsNullOrWhiteSpace(gridName))
+                {
+                    continue;
+                }
+
+                if (CoordinateTransformationFactory.TryResolveGridResourcePath(gridName, out string resolvedPath))
+                {
+                    resolved.Add(resolvedPath);
+                    continue;
+                }
+
+                if (!isOptional)
+                {
+                    skipReason = "Required grid '" + gridName + "' was not found.";
+                    return false;
+                }
+            }
+
+            if (resolved.Count == 0)
+            {
+                skipReason = "No grid from +grids could be resolved.";
+                return false;
+            }
+
+            resolvedPaths = resolved;
             return true;
         }
 

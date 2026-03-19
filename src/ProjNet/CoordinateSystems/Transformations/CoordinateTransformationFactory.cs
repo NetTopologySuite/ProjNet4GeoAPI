@@ -60,6 +60,11 @@ namespace ProjNet.CoordinateSystems.Transformations
             return ProjPipelineMathTransformFactory.TryCreateMathTransform(operation, out transform, out skipReason);
         }
 
+        internal static bool TryResolveGridResourcePath(string gridName, out string resolvedPath)
+        {
+            return GridResolver.Value.TryResolve(gridName, out resolvedPath);
+        }
+
         private ICoordinateTransformation CreateFromCoordinateSystemsWithMetadata(CoordinateSystem sourceCS, CoordinateSystem targetCS)
         {
             if (TryGetDirectProjectedOperation(sourceCS, targetCS, out var operation, out string resolvedGridPath))
