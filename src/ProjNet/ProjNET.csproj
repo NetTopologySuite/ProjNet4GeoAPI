@@ -44,4 +44,8 @@ Proj.NET performs point-to-point coordinate conversions between geodetic coordin
 	<!--<PackageReference Include="System.Numerics.Vectors" Version="4.6.0" />-->
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="BitMiracle.LibTiff.NET" Version="2.4.660" />
+  </ItemGroup>
+
 </Project>

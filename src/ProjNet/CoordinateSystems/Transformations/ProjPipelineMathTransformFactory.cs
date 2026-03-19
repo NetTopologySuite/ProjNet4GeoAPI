@@ -20,6 +20,7 @@ namespace ProjNet.CoordinateSystems.Transformations
     using System.Collections.Generic;
     using System.Globalization;
     using System.IO;
+    using System.Linq;
 
     internal static class ProjPipelineMathTransformFactory
     {
@@ -232,25 +233,36 @@ namespace ProjNet.CoordinateSystems.Transformations
             for (int i = 0; i < gridPaths.Count; i++)
             {
                 string extension = Path.GetExtension(gridPaths[i]);
-                if (!extension.Equals(".gsb", StringComparison.OrdinalIgnoreCase))
+                if (!extension.Equals(".gsb", StringComparison.OrdinalIgnoreCase)
+                    && !extension.Equals(".tif", StringComparison.OrdinalIgnoreCase)
+                    && !extension.Equals(".tiff", StringComparison.OrdinalIgnoreCase))
                 {
-                    skipReason = "Grid '" + Path.GetFileName(gridPaths[i]) + "' is not an NTv2 .gsb file in the current runtime.";
+                    skipReason = "Grid '" + Path.GetFileName(gridPaths[i]) + "' is not a supported horizontal grid format (.gsb/.tif/.tiff).";
                     return false;
                 }
             }
 
             try
             {
-                transform = new Ntv2HGridShiftMathTransform(gridPaths);
+                bool hasGeoTiff = gridPaths.Any(
+                    path =>
+                    {
+                        string extension = Path.GetExtension(path);
+                        return extension.Equals(".tif", StringComparison.OrdinalIgnoreCase)
+                            || extension.Equals(".tiff", StringComparison.OrdinalIgnoreCase);
+                    });
+                transform = hasGeoTiff
+                    ? (MathTransform)new GeoTiffHGridShiftMathTransform(gridPaths)
+                    : new Ntv2HGridShiftMathTransform(gridPaths);
             }
             catch (IOException ioException)
             {
-                skipReason = "Unable to read NTv2 grid: " + ioException.Message;
+                skipReason = "Unable to read horizontal grid: " + ioException.Message;
                 return false;
             }
             catch (InvalidDataException dataException)
             {
-                skipReason = "Invalid NTv2 grid data: " + dataException.Message;
+                skipReason = "Invalid horizontal grid data: " + dataException.Message;
                 return false;
             }
             catch (ArgumentException argumentException)
@@ -289,9 +301,11 @@ namespace ProjNet.CoordinateSystems.Transformations
             for (int i = 0; i < gridPaths.Count; i++)
             {
                 string extension = Path.GetExtension(gridPaths[i]);
-                if (!extension.Equals(".gtx", StringComparison.OrdinalIgnoreCase))
+                if (!extension.Equals(".gtx", StringComparison.OrdinalIgnoreCase)
+                    && !extension.Equals(".tif", StringComparison.OrdinalIgnoreCase)
+                    && !extension.Equals(".tiff", StringComparison.OrdinalIgnoreCase))
                 {
-                    skipReason = "Grid '" + Path.GetFileName(gridPaths[i]) + "' is not a GTX .gtx file in the current runtime.";
+                    skipReason = "Grid '" + Path.GetFileName(gridPaths[i]) + "' is not a supported vertical grid format (.gtx/.tif/.tiff).";
                     return false;
                 }
             }
@@ -312,16 +326,25 @@ namespace ProjNet.CoordinateSystems.Transformations
 
             try
             {
-                transform = new GtxVGridShiftMathTransform(gridPaths, multiplier);
+                bool hasGeoTiff = gridPaths.Any(
+                    path =>
+                    {
+                        string extension = Path.GetExtension(path);
+                        return extension.Equals(".tif", StringComparison.OrdinalIgnoreCase)
+                            || extension.Equals(".tiff", StringComparison.OrdinalIgnoreCase);
+                    });
+                transform = hasGeoTiff
+                    ? (MathTransform)new GeoTiffVGridShiftMathTransform(gridPaths, multiplier)
+                    : new GtxVGridShiftMathTransform(gridPaths, multiplier);
             }
             catch (IOException ioException)
             {
-                skipReason = "Unable to read GTX grid: " + ioException.Message;
+                skipReason = "Unable to read vertical grid: " + ioException.Message;
                 return false;
             }
             catch (InvalidDataException dataException)
             {
-                skipReason = "Invalid GTX grid data: " + dataException.Message;
+                skipReason = "Invalid vertical grid data: " + dataException.Message;
                 return false;
             }
             catch (ArgumentException argumentException)
