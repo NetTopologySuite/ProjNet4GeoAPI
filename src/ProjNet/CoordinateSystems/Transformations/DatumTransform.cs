@@ -33,7 +33,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Initializes a new instance of the <see cref="DatumTransform"/> class.
         /// </summary>
-        /// <param name="towgs84"></param>
+        /// <param name="towgs84">The towgs84 parameter.</param>
         public DatumTransform(Wgs84ConversionInfo towgs84) : this(towgs84, false)
         {
         }
@@ -48,7 +48,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Gets a Well-Known text representation of this object.
         /// </summary>
-        /// <value></value>
+        /// <value>The value.</value>
         public override string WKT
         {
             get { throw new NotImplementedException(); }
@@ -57,7 +57,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Gets an XML representation of this object.
         /// </summary>
-        /// <value></value>
+        /// <value>The value.</value>
         public override string XML
         {
             get { throw new NotImplementedException(); }
@@ -78,7 +78,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Creates the inverse transform of this object.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The transformation result.</returns>
         /// <remarks>This method may fail if the transform is not one to one. However, all cartographic projections should succeed.</remarks>
         public override MathTransform Inverse()
         {

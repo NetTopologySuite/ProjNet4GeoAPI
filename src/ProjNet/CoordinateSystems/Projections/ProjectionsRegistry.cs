@@ -134,8 +134,8 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <summary>
         /// Method to register a new Map.
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="type"></param>
+        /// <param name="name">The name parameter.</param>
+        /// <param name="type">The type parameter.</param>
         public static void Register(string name, Type type)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -186,8 +186,8 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <summary>
         /// Register an alias for an existing Map.
         /// </summary>
-        /// <param name="aliasName"></param>
-        /// <param name="existingName"></param>
+        /// <param name="aliasName">The aliasName parameter.</param>
+        /// <param name="existingName">The existingName parameter.</param>
         public static void RegisterAlias(string aliasName, string existingName)
         {
             lock (RegistryLock)

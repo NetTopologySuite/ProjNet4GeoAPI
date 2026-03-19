@@ -80,8 +80,8 @@ namespace ProjNet.IO.CoordinateSystems
         /// <summary>
         /// Reads math transform from using current token from the specified tokenizer.
         /// </summary>
-        /// <param name="tokenizer"></param>
-        /// <returns></returns>
+        /// <param name="tokenizer">The tokenizer parameter.</param>
+        /// <returns>The transformation result.</returns>
         internal static MathTransform ReadMathTransform(WktStreamTokenizer tokenizer)
         {
             if (tokenizer.GetStringValue() != "PARAM_MT")

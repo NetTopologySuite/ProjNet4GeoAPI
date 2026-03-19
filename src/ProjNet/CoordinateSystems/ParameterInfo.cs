@@ -54,7 +54,7 @@ namespace ProjNet.CoordinateSystems
         /// <summary>
         /// Returns the default parameters for this projection.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The transformation result.</returns>
         public Parameter[] DefaultParameters()
         {
             return new Parameter[0];
@@ -63,8 +63,8 @@ namespace ProjNet.CoordinateSystems
         /// <summary>
         /// Gets the parameter by its name.
         /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
+        /// <param name="name">The name parameter.</param>
+        /// <returns>The transformation result.</returns>
         public Parameter GetParameterByName(string name)
         {
             if (this.Parameters != null)

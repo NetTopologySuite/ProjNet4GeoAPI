@@ -49,7 +49,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// the DCP (e.g. throwing an exception).</remarks>
         /// <param name="sourceCS">Source coordinate system.</param>
         /// <param name="targetCS">Target coordinate system.</param>
-        /// <returns></returns>
+        /// <returns>The transformation result.</returns>
         public ICoordinateTransformation CreateFromCoordinateSystems(CoordinateSystem sourceCS, CoordinateSystem targetCS)
         {
             return CoordinateOperationResolver.Resolve(sourceCS, targetCS, this.CreateFromCoordinateSystemsWithMetadata);
@@ -768,9 +768,9 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// Geographic to geographic transformation.
         /// </summary>
         /// <remarks>Adds a datum shift if necessary.</remarks>
-        /// <param name="source"></param>
-        /// <param name="target"></param>
-        /// <returns></returns>
+        /// <param name="source">The source parameter.</param>
+        /// <param name="target">The target parameter.</param>
+        /// <returns>The transformation result.</returns>
         private static ICoordinateTransformation CreateGeog2Geog(GeographicCoordinateSystem source, GeographicCoordinateSystem target)
         {
             if (source.HorizontalDatum.EqualParams(target.HorizontalDatum))
@@ -814,9 +814,9 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Geocentric to Geocentric transformation.
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="target"></param>
-        /// <returns></returns>
+        /// <param name="source">The source parameter.</param>
+        /// <param name="target">The target parameter.</param>
+        /// <returns>The transformation result.</returns>
         private static CoordinateTransformation CreateGeoc2Geoc(GeocentricCoordinateSystem source, GeocentricCoordinateSystem target)
         {
             var ct = new ConcatenatedTransform();
@@ -858,9 +858,9 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Creates transformation from fitted coordinate system to the target one.
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="target"></param>
-        /// <returns></returns>
+        /// <param name="source">The source parameter.</param>
+        /// <param name="target">The target parameter.</param>
+        /// <returns>The transformation result.</returns>
         private static CoordinateTransformation Fitt2Any(FittedCoordinateSystem source, CoordinateSystem target)
         {
             // transform from fitted to base system of fitted (which is equal to target)
@@ -887,9 +887,9 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Creates transformation from source coordinate system to specified target system which is the fitted one.
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="target"></param>
-        /// <returns></returns>
+        /// <param name="source">The source parameter.</param>
+        /// <param name="target">The target parameter.</param>
+        /// <returns>The transformation result.</returns>
         private static CoordinateTransformation Any2Fitt(CoordinateSystem source, FittedCoordinateSystem target)
         {
             // Transform form base system of fitted to target coordinate system - use invered math transform

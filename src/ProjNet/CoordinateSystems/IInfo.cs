@@ -72,7 +72,7 @@ namespace ProjNet.CoordinateSystems
         /// Only parameters used for coordinate system are used for comparison.
         /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="obj">The obj parameter.</param>
         /// <returns>True if equal.</returns>
         bool EqualParams(object obj);
     }

@@ -171,7 +171,7 @@ namespace ProjNet.CoordinateSystems
         /// correction expressed in parts per million.</para>
         /// <para><see href="http://www.posc.org/Epicentre.2_2/DataModel/ExamplesofUsage/eu_cs35.html"/> for an explanation of the Bursa-Wolf transformation.</para>
         /// </remarks>
-        /// <returns></returns>
+        /// <returns>The transformation result.</returns>
         public double[] GetAffineTransform()
         {
             double rS = 1 + (this.Ppm * 0.000001);
@@ -226,7 +226,7 @@ namespace ProjNet.CoordinateSystems
         /// <summary>
         /// Gets a value indicating whether returns true of all 7 parameter values are 0.0.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The transformation result.</returns>
         public bool HasZeroValuesOnly
         {
             get
@@ -238,8 +238,8 @@ namespace ProjNet.CoordinateSystems
         /// <summary>
         /// Indicates whether the current object is equal to another object of the same type.
         /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
+        /// <param name="obj">The obj parameter.</param>
+        /// <returns>The transformation result.</returns>
         public override bool Equals(object obj)
         {
             return this.Equals(obj as Wgs84ConversionInfo);
@@ -261,7 +261,7 @@ namespace ProjNet.CoordinateSystems
         /// Only parameters used for coordinate system are used for comparison.
         /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="obj">The obj parameter.</param>
         /// <returns>True if equal.</returns>
         public bool Equals(Wgs84ConversionInfo obj)
         {

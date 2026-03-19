@@ -111,7 +111,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Gets a Well-Known text representation of this affine math transformation.
         /// </summary>
-        /// <value></value>
+        /// <value>The value.</value>
         public override string WKT
         {
             get
@@ -141,7 +141,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Gets an XML representation of this affine transformation.
         /// </summary>
-        /// <value></value>
+        /// <value>The value.</value>
         public override string XML
         {
             get { throw new NotImplementedException("The method or operation is not implemented."); }
@@ -198,10 +198,10 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// The pi array represents the permutation matrix.
         /// </summary>
         /// <seealso href="http://www.rkinteractive.com/blogs/SoftwareDevelopment/post/2013/05/14/Algorithms-In-C-Solving-A-System-Of-Linear-Equations.aspx"/>
-        /// <param name="LU"></param>
-        /// <param name="pi"></param>
-        /// <param name="b"></param>
-        /// <returns></returns>
+        /// <param name="LU">The LU parameter.</param>
+        /// <param name="pi">The pi parameter.</param>
+        /// <param name="b">The b parameter.</param>
+        /// <returns>The transformation result.</returns>
         private static double[] LUPSolve(double[,] LU, int[] pi, double[] b)
         {
             int n = LU.GetLength(0) - 1;
@@ -260,8 +260,8 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// to be all 0.
         /// </summary>
         /// <seealso href="http://www.rkinteractive.com/blogs/SoftwareDevelopment/post/2013/05/07/Algorithms-In-C-LUP-Decomposition.aspx"/>
-        /// <param name="A"></param>
-        /// <returns></returns>
+        /// <param name="A">The A parameter.</param>
+        /// <returns>The transformation result.</returns>
         private static int[] LUPDecomposition(double[,] A)
         {
             int n = A.GetLength(0) - 1;
@@ -344,8 +344,8 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// Given an nXn matrix A, solve n linear equations to find the inverse of A.
         /// </summary>
         /// <seealso href="http://www.rkinteractive.com/blogs/SoftwareDevelopment/post/2013/05/21/Algorithms-In-C-Finding-The-Inverse-Of-A-Matrix.aspx"/>
-        /// <param name="A"></param>
-        /// <returns></returns>
+        /// <param name="A">The A parameter.</param>
+        /// <returns>The transformation result.</returns>
         private static double[,] InvertMatrix(double[,] A)
         {
             int n = A.GetLength(0);
@@ -489,7 +489,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Returns this affine transform as an affine transform matrix.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The transformation result.</returns>
         public double[,] GetMatrix()
         {
             return (double[,])this.transformMatrix.Clone();

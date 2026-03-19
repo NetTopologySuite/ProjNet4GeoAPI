@@ -128,7 +128,7 @@ namespace ProjNet.IO.CoordinateSystems
         /// <summary>
         /// Gets the token type of the current token.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The transformation result.</returns>
         public TokenType GetTokenType()
         {
             return this.currentTokenType;
@@ -295,7 +295,7 @@ namespace ProjNet.IO.CoordinateSystems
         /// <summary>
         /// Returns next token that is not whitespace.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The transformation result.</returns>
         private TokenType NextNonWhitespaceToken()
         {
 

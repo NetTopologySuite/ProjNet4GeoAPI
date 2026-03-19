@@ -428,8 +428,8 @@ namespace ProjNet
         /// <summary>
         /// AddCoordinateSystem.
         /// </summary>
-        /// <param name="srid"></param>
-        /// <param name="coordinateSystem"></param>
+        /// <param name="srid">The srid parameter.</param>
+        /// <param name="coordinateSystem">The coordinateSystem parameter.</param>
         protected void AddCoordinateSystem(int srid, CoordinateSystem coordinateSystem)
         {
             lock (((IDictionary)this.csBySrid).SyncRoot)
@@ -464,8 +464,8 @@ namespace ProjNet
         /// <summary>
         /// AddCoordinateSystem.
         /// </summary>
-        /// <param name="coordinateSystem"></param>
-        /// <returns></returns>
+        /// <param name="coordinateSystem">The coordinateSystem parameter.</param>
+        /// <returns>The transformation result.</returns>
         protected virtual int AddCoordinateSystem(CoordinateSystem coordinateSystem)
         {
             int srid = (int)coordinateSystem.AuthorityCode;
@@ -497,8 +497,8 @@ namespace ProjNet
         /// <summary>
         /// RemoveCoordinateSystem.
         /// </summary>
-        /// <param name="srid"></param>
-        /// <returns></returns>
+        /// <param name="srid">The srid parameter.</param>
+        /// <returns>The transformation result.</returns>
         /// <exception cref="NotSupportedException"></exception>
         public bool RemoveCoordinateSystem(int srid)
         {
@@ -508,7 +508,7 @@ namespace ProjNet
         /// <summary>
         /// GetEnumerator.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The transformation result.</returns>
         public IEnumerator<KeyValuePair<int, CoordinateSystem>> GetEnumerator()
         {
             this.initialization.WaitOne();

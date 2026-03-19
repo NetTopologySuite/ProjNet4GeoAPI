@@ -285,7 +285,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Gets a Well-Known text representation of this object.
         /// </summary>
-        /// <value></value>
+        /// <value>The value.</value>
         public override string WKT
         {
             get { throw new NotImplementedException("The method or operation is not implemented."); }
@@ -294,7 +294,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Gets an XML representation of this object.
         /// </summary>
-        /// <value></value>
+        /// <value>The value.</value>
         public override string XML
         {
             get { throw new NotImplementedException("The method or operation is not implemented."); }

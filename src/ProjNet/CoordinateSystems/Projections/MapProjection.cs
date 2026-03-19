@@ -226,7 +226,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <summary>
         /// Returns a list of projection "cloned" projection parameters.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The transformation result.</returns>
         protected internal static List<ProjectionParameter> CloneParametersList(
             IEnumerable<ProjectionParameter> projectionParameters)
         {
@@ -250,8 +250,8 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <summary>
         ///
         /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
+        /// <param name="index">The index parameter.</param>
+        /// <returns>The transformation result.</returns>
         /// <inheritdoc/>
         public ProjectionParameter GetParameter(int index)
         {
@@ -546,8 +546,8 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         /// <param name="xs">The x-ordinate values when entering, the longitude values upon exit.</param>
         /// <param name="ys">The y-ordinate values when entering, the latitude values upon exit.</param>
-        /// <param name="strideX"></param>
-        /// <param name="strideY"></param>
+        /// <param name="strideX">The strideX parameter.</param>
+        /// <param name="strideY">The strideY parameter.</param>
         protected virtual void MetersToDegrees(Span<double> xs, Span<double> ys, int strideX, int strideY)
         {
             this.MetersToRadians(xs, ys, strideX, strideY);
@@ -647,7 +647,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// Only parameters used for coordinate system are used for comparison.
         /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="obj">The obj parameter.</param>
         /// <returns>True if equal.</returns>
         public bool EqualParams(object obj)
         {
@@ -730,7 +730,7 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// <summary>
         /// Returns the cube of a number.
         /// </summary>
-        /// <param name="x"> </param>
+        /// <param name="x">The x parameter.</param>
         protected static double CUBE(double x)
         {
             return Math.Pow(x, 3); /* x^3 */
@@ -739,7 +739,7 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// <summary>
         /// Returns the quad of a number.
         /// </summary>
-        /// <param name="x"> </param>
+        /// <param name="x">The x parameter.</param>
         protected static double QUAD(double x)
         {
             return Math.Pow(x, 4); /* x^4 */
@@ -748,9 +748,9 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// <summary>
         ///
         /// </summary>
-        /// <param name="A"></param>
-        /// <param name="B"></param>
-        /// <returns></returns>
+        /// <param name="A">The A parameter.</param>
+        /// <param name="B">The B parameter.</param>
+        /// <returns>The transformation result.</returns>
         protected static double GMAX(ref double A, ref double B)
         {
             return Math.Max(A, B); /* assign maximum of a and b */
@@ -759,9 +759,9 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// <summary>
         ///
         /// </summary>
-        /// <param name="A"></param>
-        /// <param name="B"></param>
-        /// <returns></returns>
+        /// <param name="A">The A parameter.</param>
+        /// <param name="B">The B parameter.</param>
+        /// <returns>The transformation result.</returns>
         protected static double GMIN(ref double A, ref double B)
         {
             return A < B ? A : B; /* assign minimum of a and b */
@@ -770,9 +770,9 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// <summary>
         /// IMOD.
         /// </summary>
-        /// <param name="A"></param>
-        /// <param name="B"></param>
-        /// <returns></returns>
+        /// <param name="A">The A parameter.</param>
+        /// <param name="B">The B parameter.</param>
+        /// <returns>The transformation result.</returns>
         protected static double IMOD(double A, double B)
         {
             return A - ((A / B) * B); /* Integer mod function */
@@ -797,8 +797,8 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// <summary>
         ///
         /// </summary>
-        /// <param name="x"></param>
-        /// <returns></returns>
+        /// <param name="x">The x parameter.</param>
+        /// <returns>The transformation result.</returns>
         protected static double Adjust_lon(double x)
         {
             long count = 0;
@@ -917,10 +917,10 @@ for (var i = 0; i < _Parameters.Count; i++)
         ///
         ///
         /// </summary>
-        /// <param name="eccent"></param>
-        /// <param name="qs"></param>
-        /// <param name="flag"></param>
-        /// <returns></returns>
+        /// <param name="eccent">The eccent parameter.</param>
+        /// <param name="qs">The qs parameter.</param>
+        /// <param name="flag">The flag parameter.</param>
+        /// <returns>The transformation result.</returns>
         protected static double Phi1z(double eccent, double qs, out long flag)
         {
             double eccnts;
@@ -1039,8 +1039,8 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// <summary>
         ///
         /// </summary>
-        /// <param name="x"></param>
-        /// <returns></returns>
+        /// <param name="x">The x parameter.</param>
+        /// <returns>The transformation result.</returns>
         protected static double E1fn(double x)
         {
             return 0.375 * x * (1.0 + (0.25 * x * (1.0 + (0.46875 * x))));
@@ -1049,8 +1049,8 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// <summary>
         ///
         /// </summary>
-        /// <param name="x"></param>
-        /// <returns></returns>
+        /// <param name="x">The x parameter.</param>
+        /// <returns>The transformation result.</returns>
         protected static double E2fn(double x)
         {
             return 0.05859375 * x * x * (1.0 + (0.75 * x));
@@ -1059,8 +1059,8 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// <summary>
         ///
         /// </summary>
-        /// <param name="x"></param>
-        /// <returns></returns>
+        /// <param name="x">The x parameter.</param>
+        /// <returns>The transformation result.</returns>
         protected static double E3fn(double x)
         {
             return x * x * x * (35.0 / 3072.0);
@@ -1094,10 +1094,10 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// meridian from the equator to <paramref name="phi"/>. Accurate to &lt; 1e-5 meters
         /// when used in conjuction with typical major axis values.
         /// </summary>
-        /// <param name="phi"></param>
-        /// <param name="sphi"></param>
-        /// <param name="cphi"></param>
-        /// <returns></returns>
+        /// <param name="phi">The phi parameter.</param>
+        /// <param name="sphi">The sphi parameter.</param>
+        /// <param name="cphi">The cphi parameter.</param>
+        /// <returns>The transformation result.</returns>
         protected double Mlfn(double phi, double sphi, double cphi)
         {
             cphi *= sphi;
@@ -1175,7 +1175,7 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// </summary>
         /// <param name="x">The value in degrees to convert to radians.</param>
         /// <param name="edge">If true, -180 and +180 are valid, otherwise they are considered out of range.</param>
-        /// <returns></returns>
+        /// <returns>The transformation result.</returns>
         protected static double LongitudeToRadians(double x, bool edge)
         {
             if (edge ? (x >= -180 && x <= 180) : (x > -180 && x < 180))
@@ -1194,7 +1194,7 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// </summary>
         /// <param name="y">The value in degrees to to radians.</param>
         /// <param name="edge">If true, -90 and +90 are valid, otherwise they are considered out of range.</param>
-        /// <returns></returns>
+        /// <returns>The transformation result.</returns>
         protected static double LatitudeToRadians(double y, bool edge)
         {
             if (edge ? (y >= -90 && y <= 90) : (y > -90 && y < 90))
@@ -1218,8 +1218,8 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// <summary>
         /// authset.
         /// </summary>
-        /// <param name="es"></param>
-        /// <returns></returns>
+        /// <param name="es">The es parameter.</param>
+        /// <returns>The transformation result.</returns>
         protected static double[] Authset(double es)
         {
             double[] aPA = new double[3];
@@ -1238,9 +1238,9 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// <summary>
         /// authlat.
         /// </summary>
-        /// <param name="beta"></param>
-        /// <param name="APA"></param>
-        /// <returns></returns>
+        /// <param name="beta">The beta parameter.</param>
+        /// <param name="APA">The APA parameter.</param>
+        /// <returns>The transformation result.</returns>
         protected static double Authlat(double beta, double[] APA)
         {
             double t = beta + beta;

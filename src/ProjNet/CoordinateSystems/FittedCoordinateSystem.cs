@@ -74,7 +74,7 @@ namespace ProjNet.CoordinateSystems
         /// this coordinate system's domain, and the base coordinate system dimension
         /// must be at least as big as the dimension of this coordinate system.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The transformation result.</returns>
         public string ToBase()
         {
             return this.ToBaseTransform.WKT;
@@ -110,7 +110,7 @@ namespace ProjNet.CoordinateSystems
         /// Only parameters used for coordinate system are used for comparison.
         /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
         /// </summary>
-        /// <param name="obj"></param>
+        /// <param name="obj">The obj parameter.</param>
         /// <returns>True if equal.</returns>
         public override bool EqualParams(object obj)
         {

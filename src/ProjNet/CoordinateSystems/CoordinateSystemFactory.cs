@@ -113,7 +113,7 @@ namespace ProjNet.CoordinateSystems
         /// <param name="baseCoordinateSystem">Base coordinate system.</param>
         /// <param name="toBase">the math transform to the base coordinate system.</param>
         /// <param name="arAxes">Axiis of the fitted coordinate system.</param>
-        /// <returns></returns>
+        /// <returns>The transformation result.</returns>
         public FittedCoordinateSystem CreateFittedCoordinateSystem(string name, CoordinateSystem baseCoordinateSystem, Transformations.MathTransform toBase, List<AxisInfo> arAxes)
         {
             if (string.IsNullOrWhiteSpace(name))
@@ -150,9 +150,9 @@ namespace ProjNet.CoordinateSystems
         /// </summary>
         /// <seealso cref="CreateFlattenedSphere"/>
         /// <param name="name">Name of ellipsoid.</param>
-        /// <param name="semiMajorAxis"></param>
-        /// <param name="semiMinorAxis"></param>
-        /// <param name="linearUnit"></param>
+        /// <param name="semiMajorAxis">The semiMajorAxis parameter.</param>
+        /// <param name="semiMinorAxis">The semiMinorAxis parameter.</param>
+        /// <param name="linearUnit">The linearUnit parameter.</param>
         /// <returns>Ellipsoid.</returns>
         public Ellipsoid CreateEllipsoid(string name, double semiMajorAxis, double semiMinorAxis, LinearUnit linearUnit)
         {
@@ -319,7 +319,7 @@ namespace ProjNet.CoordinateSystems
         /// </summary>
         /// <param name="name">Name of datum</param>
         /// <param name="datumType">Datum type</param>
-        /// <returns></returns>
+        /// <returns>The transformation result.</returns>
         public ILocalDatum CreateLocalDatum(string name, DatumType datumType)
         {
             throw new NotImplementedException();

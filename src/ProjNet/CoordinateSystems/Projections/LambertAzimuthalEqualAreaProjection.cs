@@ -181,7 +181,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// Creates the inverse transform of this object.
         /// </summary>
         /// <remarks>This method may fail if the transform is not one to one. However, all cartographic projections should succeed.</remarks>
-        /// <returns></returns>
+        /// <returns>The transformation result.</returns>
         public override MathTransform Inverse()
         {
             if (this.inverse == null)

@@ -43,7 +43,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Initializes a new instance of the <see cref="ConcatenatedTransform"/> class.
         /// </summary>
-        /// <param name="transformList"></param>
+        /// <param name="transformList">The transformList parameter.</param>
         public ConcatenatedTransform(IEnumerable<ICoordinateTransformationCore> transformList)
             : this()
         {
@@ -149,7 +149,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Gets a Well-Known text representation of this object.
         /// </summary>
-        /// <value></value>
+        /// <value>The value.</value>
         public override string WKT
         {
             get { throw new NotImplementedException(); }
@@ -158,7 +158,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Gets an XML representation of this object.
         /// </summary>
-        /// <value></value>
+        /// <value>The value.</value>
         public override string XML
         {
             get { throw new NotImplementedException(); }

@@ -115,8 +115,8 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <summary>
         /// Converts coordinates in projected meters to radians.
         /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
+        /// <param name="x">The x parameter.</param>
+        /// <param name="y">The y parameter.</param>
         protected override void MetersToRadians(ref double x, ref double y)
         {
             x *= this.reciprocGlobalScale;

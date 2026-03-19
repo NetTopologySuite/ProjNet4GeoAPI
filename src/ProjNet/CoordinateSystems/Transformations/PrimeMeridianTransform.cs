@@ -32,8 +32,8 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// Initializes a new instance of the <see cref="PrimeMeridianTransform"/> class.
         /// Creates instance prime meridian transform.
         /// </summary>
-        /// <param name="source"></param>
-        /// <param name="target"></param>
+        /// <param name="source">The source parameter.</param>
+        /// <param name="target">The target parameter.</param>
         public PrimeMeridianTransform(PrimeMeridian source, PrimeMeridian target)
         {
             if (!source.AngularUnit.EqualParams(target.AngularUnit))
@@ -48,7 +48,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Gets a Well-Known text representation of this affine math transformation.
         /// </summary>
-        /// <value></value>
+        /// <value>The value.</value>
         public override string WKT
         {
             get { throw new NotImplementedException("The method or operation is not implemented."); }
@@ -57,7 +57,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Gets an XML representation of this affine transformation.
         /// </summary>
-        /// <value></value>
+        /// <value>The value.</value>
         public override string XML
         {
             get { throw new NotImplementedException("The method or operation is not implemented."); }

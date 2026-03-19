@@ -47,7 +47,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Tests whether this transform does not move any points.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>The transformation result.</returns>
         public virtual bool Identity()
         {
             throw new NotImplementedException();
@@ -75,8 +75,8 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// parallel to the displacement caused by a small change in the m'th ordinate
         /// in the input space.
         /// </summary>
-        /// <param name="point"></param>
-        /// <returns></returns>
+        /// <param name="point">The point parameter.</param>
+        /// <returns>The transformation result.</returns>
         public virtual double[,] Derivative(double[] point)
         {
             throw new NotImplementedException();
@@ -101,8 +101,8 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// line between A and B has zero length.)</para>
         /// <para>Some examples of shapes that are NOT convex hulls are donuts, and horseshoes.</para>
         /// </remarks>
-        /// <param name="points"></param>
-        /// <returns></returns>
+        /// <param name="points">The points parameter.</param>
+        /// <returns>The transformation result.</returns>
         public virtual List<double> GetCodomainConvexHull(List<double> points)
         {
             throw new NotImplementedException();
@@ -119,8 +119,8 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// practice, implementations of different transforms will use different
         /// short-cuts to avoid doing an infinite number of tests.
         /// </remarks>
-        /// <param name="points"></param>
-        /// <returns></returns>
+        /// <param name="points">The points parameter.</param>
+        /// <returns>The transformation result.</returns>
         public virtual DomainFlags GetDomainFlags(List<double> points)
         {
             throw new NotImplementedException();
@@ -130,7 +130,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// Creates the inverse transform of this object.
         /// </summary>
         /// <remarks>This method may fail if the transform is not one to one. However, all cartographic projections should succeed.</remarks>
-        /// <returns></returns>
+        /// <returns>The transformation result.</returns>
         public abstract MathTransform Inverse();
 
         /// <summary>
@@ -169,8 +169,8 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Converts a radian-value (<paramref name="rad"/>) to a degree-value by multiplying it with <c>180.0 / <see cref="Math.PI"/></c>.
         /// </summary>
-        /// <param name="rad"></param>
-        /// <returns></returns>
+        /// <param name="rad">The rad parameter.</param>
+        /// <returns>The transformation result.</returns>
         protected static double RadiansToDegrees(double rad)
         {
             return R2D * rad;
@@ -189,8 +189,8 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Transforms a coordinate point. The passed parameter point should not be modified.
         /// </summary>
-        /// <param name="point"></param>
-        /// <returns></returns>
+        /// <param name="point">The point parameter.</param>
+        /// <returns>The transformation result.</returns>
         public double[] Transform(double[] point)
         {
             double x = point[0];
@@ -219,8 +219,8 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// implementation will throw an exception. If this happens then the client should not
         /// make any assumptions about the state of the ordinal values.
         /// </remarks>
-        /// <param name="points"></param>
-        /// <returns></returns>
+        /// <param name="points">The points parameter.</param>
+        /// <returns>The transformation result.</returns>
         public IList<double[]> TransformList(IList<double[]> points)
         {
             var result = new List<double[]>(points.Count);
