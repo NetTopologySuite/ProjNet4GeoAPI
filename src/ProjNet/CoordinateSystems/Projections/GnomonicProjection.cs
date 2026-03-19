@@ -32,11 +32,20 @@ namespace ProjNet.CoordinateSystems.Projections
         private readonly double sinPhi0;
         private readonly double cosPhi0;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GnomonicProjection"/> class.
+        /// </summary>
+        /// <param name="parameters">Projection parameters.</param>
         public GnomonicProjection(IEnumerable<ProjectionParameter> parameters)
             : this(parameters, null)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GnomonicProjection"/> class.
+        /// </summary>
+        /// <param name="parameters">Projection parameters.</param>
+        /// <param name="inverse">Inverse transform instance when cloning.</param>
         public GnomonicProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
             : base(parameters, inverse)
         {

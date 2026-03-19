@@ -38,11 +38,20 @@ namespace ProjNet.CoordinateSystems.Projections
         private readonly double radius;
         private readonly double inverseRadius;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EqualEarthProjection"/> class.
+        /// </summary>
+        /// <param name="parameters">Projection parameters.</param>
         public EqualEarthProjection(IEnumerable<ProjectionParameter> parameters)
             : this(parameters, null)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EqualEarthProjection"/> class.
+        /// </summary>
+        /// <param name="parameters">Projection parameters.</param>
+        /// <param name="inverse">Inverse transform instance when cloning.</param>
         public EqualEarthProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
             : base(parameters, inverse)
         {
