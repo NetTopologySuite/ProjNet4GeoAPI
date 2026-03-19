@@ -108,6 +108,11 @@ namespace ProjNet.CoordinateSystems.Transformations
                 return TryCreateHorizontalGridShiftTransform(args, out transform, out skipReason);
             }
 
+            if (projCode.Equals("vgridshift", StringComparison.OrdinalIgnoreCase))
+            {
+                return TryCreateVerticalGridShiftTransform(args, out transform, out skipReason);
+            }
+
             skipReason = "Projection '" + projCode + "' is not part of the current builtins wave.";
             return false;
         }
@@ -246,6 +251,77 @@ namespace ProjNet.CoordinateSystems.Transformations
             catch (InvalidDataException dataException)
             {
                 skipReason = "Invalid NTv2 grid data: " + dataException.Message;
+                return false;
+            }
+            catch (ArgumentException argumentException)
+            {
+                skipReason = "Invalid grid parameters: " + argumentException.Message;
+                return false;
+            }
+
+            if (args.ContainsKey("inv"))
+            {
+                transform = transform.Inverse();
+            }
+
+            return true;
+        }
+
+        private static bool TryCreateVerticalGridShiftTransform(
+            IDictionary<string, string> args,
+            out MathTransform transform,
+            out string skipReason)
+        {
+            transform = null;
+            skipReason = null;
+
+            if (!args.TryGetValue("grids", out string gridsToken) || string.IsNullOrWhiteSpace(gridsToken))
+            {
+                skipReason = "Vertical grid shift requires +grids.";
+                return false;
+            }
+
+            if (!TryResolveGridPaths(gridsToken, out IReadOnlyList<string> gridPaths, out skipReason))
+            {
+                return false;
+            }
+
+            for (int i = 0; i < gridPaths.Count; i++)
+            {
+                string extension = Path.GetExtension(gridPaths[i]);
+                if (!extension.Equals(".gtx", StringComparison.OrdinalIgnoreCase))
+                {
+                    skipReason = "Grid '" + Path.GetFileName(gridPaths[i]) + "' is not a GTX .gtx file in the current runtime.";
+                    return false;
+                }
+            }
+
+            double multiplier = -1d;
+            if (args.TryGetValue("multiplier", out string multiplierToken)
+                && !double.TryParse(multiplierToken, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out multiplier))
+            {
+                skipReason = "Unable to parse +multiplier parameter for vgridshift.";
+                return false;
+            }
+
+            if (double.IsNaN(multiplier) || double.IsInfinity(multiplier))
+            {
+                skipReason = "vgridshift +multiplier must be a finite numeric value.";
+                return false;
+            }
+
+            try
+            {
+                transform = new GtxVGridShiftMathTransform(gridPaths, multiplier);
+            }
+            catch (IOException ioException)
+            {
+                skipReason = "Unable to read GTX grid: " + ioException.Message;
+                return false;
+            }
+            catch (InvalidDataException dataException)
+            {
+                skipReason = "Invalid GTX grid data: " + dataException.Message;
                 return false;
             }
             catch (ArgumentException argumentException)
