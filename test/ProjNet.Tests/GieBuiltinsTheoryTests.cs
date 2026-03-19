@@ -103,6 +103,10 @@ public class GieBuiltinsTheoryTests
         "unitconvert.gie",
     };
 
+    /// <summary>
+    /// Validates builtins fixture cases for currently implemented projections against declared tolerances.
+    /// </summary>
+    /// <param name="rawCase">Raw GIE case payload from member data.</param>
     [Theory]
     [Trait("Category", "GieBuiltins")]
     [MemberData(nameof(GetBuiltinsCases))]
@@ -111,6 +115,10 @@ public class GieBuiltinsTheoryTests
         AssertCaseWithinTolerance(rawCase);
     }
 
+    /// <summary>
+    /// Validates more_builtins fixture cases for currently implemented projections against declared tolerances.
+    /// </summary>
+    /// <param name="rawCase">Raw GIE case payload from member data.</param>
     [Theory]
     [Trait("Category", "GieBuiltins")]
     [MemberData(nameof(GetMoreBuiltinsCases))]
@@ -119,6 +127,10 @@ public class GieBuiltinsTheoryTests
         AssertCaseWithinTolerance(rawCase);
     }
 
+    /// <summary>
+    /// Validates DHDN/ETRS89 fixture cases for currently implemented projections against declared tolerances.
+    /// </summary>
+    /// <param name="rawCase">Raw GIE case payload from member data.</param>
     [Theory]
     [Trait("Category", "GieBuiltins")]
     [MemberData(nameof(GetDhdnEtrs89Cases))]
@@ -127,6 +139,10 @@ public class GieBuiltinsTheoryTests
         AssertCaseWithinTolerance(rawCase);
     }
 
+    /// <summary>
+    /// Validates remaining selected GIE fixtures for currently implemented projections against declared tolerances.
+    /// </summary>
+    /// <param name="rawCase">Raw GIE case payload from member data.</param>
     [Theory]
     [Trait("Category", "GieBuiltins")]
     [MemberData(nameof(GetRemainingGieCases))]
