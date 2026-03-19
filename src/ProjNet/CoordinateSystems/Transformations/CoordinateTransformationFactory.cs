@@ -55,11 +55,24 @@ namespace ProjNet.CoordinateSystems.Transformations
             return CoordinateOperationResolver.Resolve(sourceCS, targetCS, this.CreateFromCoordinateSystemsWithMetadata);
         }
 
+        /// <summary>
+        /// Attempts to create a projection pipeline math transform from a PROJ-style operation string.
+        /// </summary>
+        /// <param name="operation">Operation string in pipeline syntax.</param>
+        /// <param name="transform">Created math transform when successful.</param>
+        /// <param name="skipReason">Reason why the transform could not be created.</param>
+        /// <returns><see langword="true"/> when the transform was created; otherwise <see langword="false"/>.</returns>
         internal static bool TryCreateProjPipelineMathTransform(string operation, out MathTransform transform, out string skipReason)
         {
             return ProjPipelineMathTransformFactory.TryCreateMathTransform(operation, out transform, out skipReason);
         }
 
+        /// <summary>
+        /// Attempts to resolve a grid resource name to a concrete file path.
+        /// </summary>
+        /// <param name="gridName">Grid resource name or path token.</param>
+        /// <param name="resolvedPath">Resolved local file path when available.</param>
+        /// <returns><see langword="true"/> when resolution succeeded; otherwise <see langword="false"/>.</returns>
         internal static bool TryResolveGridResourcePath(string gridName, out string resolvedPath)
         {
             return GridResolver.Value.TryResolve(gridName, out resolvedPath);
