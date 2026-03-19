@@ -305,6 +305,11 @@ namespace ProjNet.CoordinateSystems.Transformations
 
         private ICoordinateTransformation CreateFromCoordinateSystemsCore(CoordinateSystem sourceCS, CoordinateSystem targetCS)
         {
+            if (TryCreateAxisSwapOnlyTransformation(sourceCS, targetCS, out ICoordinateTransformation axisSwapOnlyTransformation))
+            {
+                return axisSwapOnlyTransformation;
+            }
+
             var sourceKind = GetCoordinateSystemRuntimeKind(sourceCS);
             var targetKind = GetCoordinateSystemRuntimeKind(targetCS);
 
@@ -338,6 +343,119 @@ namespace ProjNet.CoordinateSystems.Transformations
                 default:
                     throw new NotSupportedException("No support for transforming between the two specified coordinate systems");
             }
+        }
+
+        private static bool TryCreateAxisSwapOnlyTransformation(
+            CoordinateSystem source,
+            CoordinateSystem target,
+            out ICoordinateTransformation transformation)
+        {
+            transformation = null;
+
+            if (source is null || target is null)
+            {
+                return false;
+            }
+
+            if (source.GetType() != target.GetType())
+            {
+                return false;
+            }
+
+            if (!HaveEquivalentDefinitionsIgnoringAxis(source, target))
+            {
+                return false;
+            }
+
+            if (!AxisOrderHelper.TryCreateAxisSwapTransform(source, target, out MathTransform axisSwapTransform))
+            {
+                return false;
+            }
+
+            transformation = new CoordinateTransformation(
+                source,
+                target,
+                TransformType.Conversion,
+                axisSwapTransform,
+                string.Empty,
+                string.Empty,
+                -1,
+                string.Empty,
+                string.Empty);
+            return true;
+        }
+
+        private static bool HaveEquivalentDefinitionsIgnoringAxis(CoordinateSystem source, CoordinateSystem target)
+        {
+            if (source is GeographicCoordinateSystem sourceGeographic && target is GeographicCoordinateSystem targetGeographic)
+            {
+                return HaveEquivalentDefinitionsIgnoringAxis(sourceGeographic, targetGeographic);
+            }
+
+            if (source is ProjectedCoordinateSystem sourceProjected && target is ProjectedCoordinateSystem targetProjected)
+            {
+                return HaveEquivalentDefinitionsIgnoringAxis(sourceProjected, targetProjected);
+            }
+
+            if (source is GeocentricCoordinateSystem sourceGeocentric && target is GeocentricCoordinateSystem targetGeocentric)
+            {
+                return HaveEquivalentDefinitionsIgnoringAxis(sourceGeocentric, targetGeocentric);
+            }
+
+            return false;
+        }
+
+        private static bool HaveEquivalentDefinitionsIgnoringAxis(
+            GeographicCoordinateSystem source,
+            GeographicCoordinateSystem target)
+        {
+            if (source.Dimension != target.Dimension)
+            {
+                return false;
+            }
+
+            return source.AngularUnit.EqualParams(target.AngularUnit)
+                && source.HorizontalDatum.EqualParams(target.HorizontalDatum)
+                && source.PrimeMeridian.EqualParams(target.PrimeMeridian);
+        }
+
+        private static bool HaveEquivalentDefinitionsIgnoringAxis(
+            ProjectedCoordinateSystem source,
+            ProjectedCoordinateSystem target)
+        {
+            if (source.Dimension != target.Dimension)
+            {
+                return false;
+            }
+
+            bool sourceHorizontalDatumIsNull = source.HorizontalDatum is null;
+            bool targetHorizontalDatumIsNull = target.HorizontalDatum is null;
+            if (sourceHorizontalDatumIsNull != targetHorizontalDatumIsNull)
+            {
+                return false;
+            }
+
+            bool horizontalDatumsEqual = sourceHorizontalDatumIsNull
+                || source.HorizontalDatum.EqualParams(target.HorizontalDatum);
+
+            return horizontalDatumsEqual
+                && source.LinearUnit.EqualParams(target.LinearUnit)
+                && source.Projection.EqualParams(target.Projection)
+                && HaveEquivalentDefinitionsIgnoringAxis(source.GeographicCoordinateSystem, target.GeographicCoordinateSystem);
+        }
+
+        private static bool HaveEquivalentDefinitionsIgnoringAxis(
+            GeocentricCoordinateSystem source,
+            GeocentricCoordinateSystem target)
+        {
+            if (source.Dimension != target.Dimension)
+            {
+                return false;
+            }
+
+            return source.HorizontalDatum.EqualParams(target.HorizontalDatum)
+                && source.LinearUnit.EqualParams(target.LinearUnit)
+                && source.PrimeMeridian.EqualParams(target.PrimeMeridian);
         }
 
         private static void SimplifyTrans(ConcatenatedTransform mtrans, ref List<ICoordinateTransformationCore> MTs)

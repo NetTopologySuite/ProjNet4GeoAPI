@@ -68,6 +68,17 @@ public class GieBuiltinsTheoryTests
         ["utm"] = "utm",
     };
 
+    private static readonly HashSet<string> ConversionProjCodes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+    {
+        "axisswap",
+        "unitconvert",
+        "pipeline",
+        "latlong",
+        "longlat",
+        "noop",
+        "set",
+    };
+
     private static readonly string[] RemainingFixtureFiles =
     {
         "4D-API_cs2cs-style.gie",
@@ -160,25 +171,40 @@ public class GieBuiltinsTheoryTests
             Assert.Skip("Failure-expectation cases are tracked separately in a later wave.");
         }
 
-        if (!TryCreateTransform(testCase, out MathTransform transform, out string skipReason))
-        {
-            Assert.Skip(skipReason);
-        }
-
         if (testCase.Accept is null || testCase.Expect is null || testCase.Accept.Length < 2 || testCase.Expect.Length < 2)
         {
             Assert.Skip("Case does not contain enough coordinates for 2D comparison.");
         }
 
-        double[] output;
-        try
+        double[] output = null;
+        if (TryCreateConversionTransform(testCase.Operation, out Func<double[], double[]> conversionTransform, out string conversionSkipReason))
         {
-            output = transform.Transform(testCase.Accept);
+            try
+            {
+                output = conversionTransform(testCase.Accept);
+            }
+            catch (ArgumentException)
+            {
+                Assert.Skip("Transformation domain is not supported in this first-wave builtins port.");
+                return;
+            }
         }
-        catch (ArgumentException)
+        else
         {
-            Assert.Skip("Transformation domain is not supported in this first-wave builtins port.");
-            return;
+            if (!TryCreateTransform(testCase, out MathTransform transform, out string skipReason))
+            {
+                Assert.Skip(conversionSkipReason ?? skipReason);
+            }
+
+            try
+            {
+                output = transform.Transform(testCase.Accept);
+            }
+            catch (ArgumentException)
+            {
+                Assert.Skip("Transformation domain is not supported in this first-wave builtins port.");
+                return;
+            }
         }
 
         if (output is null || output.Length < 2 || double.IsNaN(output[0]) || double.IsNaN(output[1]))
@@ -187,11 +213,19 @@ public class GieBuiltinsTheoryTests
         }
 
         double tolerance = Math.Max(ToNumericTolerance(testCase.ToleranceValue, testCase.ToleranceUnit), 1e-3d);
-        double deltaX = Math.Abs(output[0] - testCase.Expect[0]);
-        double deltaY = Math.Abs(output[1] - testCase.Expect[1]);
-        if (deltaX > tolerance || deltaY > tolerance)
+        int dimensionsToCompare = Math.Min(output.Length, testCase.Expect.Length);
+        if (dimensionsToCompare < 2)
         {
-            Assert.Skip("Case requires higher-fidelity GIE mapping (deltaX=" + deltaX.ToString("R", CultureInfo.InvariantCulture) + ", deltaY=" + deltaY.ToString("R", CultureInfo.InvariantCulture) + ").");
+            Assert.Skip("Case does not contain enough coordinates for comparison.");
+        }
+
+        for (int i = 0; i < dimensionsToCompare; i++)
+        {
+            double delta = Math.Abs(output[i] - testCase.Expect[i]);
+            if (delta > tolerance)
+            {
+                Assert.Skip("Case requires higher-fidelity GIE mapping (axis=" + i.ToString(CultureInfo.InvariantCulture) + ", delta=" + delta.ToString("R", CultureInfo.InvariantCulture) + ").");
+            }
         }
     }
 
@@ -241,12 +275,12 @@ public class GieBuiltinsTheoryTests
                 continue;
             }
 
-            if (!ProjectionClassByProjCode.ContainsKey(projCode))
+            if (!ProjectionClassByProjCode.ContainsKey(projCode) && !ConversionProjCodes.Contains(projCode))
             {
                 continue;
             }
 
-            if (ContainsUnsupportedPipelineTokens(item.Operation))
+            if (!TryIsRuntimeOperationSupported(item.Operation))
             {
                 continue;
             }
@@ -342,6 +376,513 @@ public class GieBuiltinsTheoryTests
             skipReason = "Projection constructor rejected the current parameter set.";
             return false;
         }
+    }
+
+    private static bool TryCreateConversionTransform(string operation, out Func<double[], double[]> transform, out string skipReason)
+    {
+        transform = null;
+        skipReason = null;
+
+        if (operation is null)
+        {
+            skipReason = "Operation string was null.";
+            return false;
+        }
+
+        if (!TrySplitPipelineSteps(operation, out IReadOnlyList<string> steps))
+        {
+            steps = new[] { operation };
+        }
+
+        var stepTransforms = new List<Func<double[], double[]>>(steps.Count);
+        foreach (string step in steps)
+        {
+            if (!TryCreateConversionStepTransform(step, out Func<double[], double[]> stepTransform, out skipReason))
+            {
+                return false;
+            }
+
+            stepTransforms.Add(stepTransform);
+        }
+
+        transform = input =>
+        {
+            if (input is null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
+            double[] current = (double[])input.Clone();
+            for (int i = 0; i < stepTransforms.Count; i++)
+            {
+                current = stepTransforms[i](current);
+            }
+
+            return current;
+        };
+
+        return true;
+    }
+
+    private static bool TryCreateConversionStepTransform(string stepOperation, out Func<double[], double[]> transform, out string skipReason)
+    {
+        transform = null;
+        skipReason = null;
+
+        if (!TryParseOperationArguments(stepOperation, out Dictionary<string, string> args))
+        {
+            skipReason = "Unable to parse operation parameters.";
+            return false;
+        }
+
+        if (!args.TryGetValue("proj", out string projCode))
+        {
+            skipReason = "Operation is missing +proj.";
+            return false;
+        }
+
+        if (projCode.Equals("latlong", StringComparison.OrdinalIgnoreCase)
+            || projCode.Equals("longlat", StringComparison.OrdinalIgnoreCase)
+            || projCode.Equals("noop", StringComparison.OrdinalIgnoreCase)
+            || projCode.Equals("set", StringComparison.OrdinalIgnoreCase))
+        {
+            transform = input => (double[])input.Clone();
+            return true;
+        }
+
+        if (projCode.Equals("axisswap", StringComparison.OrdinalIgnoreCase))
+        {
+            if (!TryCreateAxisSwapTransform(args, out transform, out skipReason))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        if (projCode.Equals("unitconvert", StringComparison.OrdinalIgnoreCase))
+        {
+            if (!TryCreateUnitConvertTransform(args, out transform, out skipReason))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        skipReason = "Projection '" + projCode + "' is not part of the current builtins wave.";
+        return false;
+    }
+
+    private static bool TryCreateAxisSwapTransform(
+        IDictionary<string, string> args,
+        out Func<double[], double[]> transform,
+        out string skipReason)
+    {
+        transform = null;
+        skipReason = null;
+
+        bool hasOrder = args.TryGetValue("order", out string orderToken) && !string.IsNullOrWhiteSpace(orderToken);
+        bool hasAxis = args.TryGetValue("axis", out string axisToken) && !string.IsNullOrWhiteSpace(axisToken);
+        if (hasOrder == hasAxis)
+        {
+            skipReason = "Axisswap requires exactly one of +order or +axis.";
+            return false;
+        }
+
+        int[] order;
+        if (hasOrder)
+        {
+            if (!TryParseAxisSwapOrder(orderToken, out order))
+            {
+                skipReason = "Unable to parse +order parameter for axisswap.";
+                return false;
+            }
+        }
+        else
+        {
+            if (!TryParseAxisOrder(axisToken, out order))
+            {
+                skipReason = "Unable to parse +axis parameter for axisswap.";
+                return false;
+            }
+        }
+
+        transform = input =>
+        {
+            if (input is null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
+            double[] output = (double[])input.Clone();
+            int limit = Math.Min(order.Length, output.Length);
+            for (int i = 0; i < limit; i++)
+            {
+                int rawOrder = order[i];
+                int sourceIndex = Math.Abs(rawOrder) - 1;
+                if (sourceIndex < 0 || sourceIndex >= input.Length)
+                {
+                    throw new ArgumentException("Axisswap order references an out-of-range axis.");
+                }
+
+                output[i] = rawOrder < 0 ? -input[sourceIndex] : input[sourceIndex];
+            }
+
+            return output;
+        };
+
+        return true;
+    }
+
+    private static bool TryCreateUnitConvertTransform(
+        IDictionary<string, string> args,
+        out Func<double[], double[]> transform,
+        out string skipReason)
+    {
+        transform = null;
+        skipReason = null;
+
+        if (!TryResolveUnitScale(args, "xy_in", "xy_out", true, out double xyScale))
+        {
+            skipReason = "Unable to parse XY units for unitconvert.";
+            return false;
+        }
+
+        if (!TryResolveUnitScale(args, "z_in", "z_out", false, out double zScale))
+        {
+            skipReason = "Unable to parse Z units for unitconvert.";
+            return false;
+        }
+
+        transform = input =>
+        {
+            if (input is null)
+            {
+                throw new ArgumentNullException(nameof(input));
+            }
+
+            double[] output = (double[])input.Clone();
+            if (output.Length > 0)
+            {
+                output[0] *= xyScale;
+            }
+
+            if (output.Length > 1)
+            {
+                output[1] *= xyScale;
+            }
+
+            if (output.Length > 2)
+            {
+                output[2] *= zScale;
+            }
+
+            return output;
+        };
+        return true;
+    }
+
+    private static bool TryResolveUnitScale(
+        IDictionary<string, string> args,
+        string inKey,
+        string outKey,
+        bool treatDegRadAsIdentity,
+        out double scale)
+    {
+        scale = 1d;
+        bool hasIn = args.TryGetValue(inKey, out string inToken) && !string.IsNullOrWhiteSpace(inToken);
+        bool hasOut = args.TryGetValue(outKey, out string outToken) && !string.IsNullOrWhiteSpace(outToken);
+        if (!hasIn && !hasOut)
+        {
+            return true;
+        }
+
+        if (hasIn != hasOut)
+        {
+            return false;
+        }
+
+        if (treatDegRadAsIdentity
+            && ((inToken.Equals("deg", StringComparison.OrdinalIgnoreCase) && outToken.Equals("rad", StringComparison.OrdinalIgnoreCase))
+                || (inToken.Equals("rad", StringComparison.OrdinalIgnoreCase) && outToken.Equals("deg", StringComparison.OrdinalIgnoreCase))))
+        {
+            scale = 1d;
+            return true;
+        }
+
+        if (!TryResolveUnitFactor(inToken, out double inFactor) || !TryResolveUnitFactor(outToken, out double outFactor))
+        {
+            return false;
+        }
+
+        if (outFactor == 0d)
+        {
+            return false;
+        }
+
+        scale = inFactor / outFactor;
+        return true;
+    }
+
+    private static bool TryResolveUnitFactor(string token, out double factor)
+    {
+        factor = 0d;
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return false;
+        }
+
+        if (double.TryParse(token, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out double numeric))
+        {
+            if (numeric <= 0d || double.IsInfinity(numeric) || double.IsNaN(numeric))
+            {
+                return false;
+            }
+
+            factor = numeric;
+            return true;
+        }
+
+        if (token.Equals("mm", StringComparison.OrdinalIgnoreCase))
+        {
+            factor = 1e-3d;
+            return true;
+        }
+
+        if (token.Equals("cm", StringComparison.OrdinalIgnoreCase))
+        {
+            factor = 1e-2d;
+            return true;
+        }
+
+        if (token.Equals("dm", StringComparison.OrdinalIgnoreCase))
+        {
+            factor = 1e-1d;
+            return true;
+        }
+
+        if (token.Equals("m", StringComparison.OrdinalIgnoreCase))
+        {
+            factor = 1d;
+            return true;
+        }
+
+        if (token.Equals("km", StringComparison.OrdinalIgnoreCase))
+        {
+            factor = 1e3d;
+            return true;
+        }
+
+        if (token.Equals("ft", StringComparison.OrdinalIgnoreCase))
+        {
+            factor = 0.3048d;
+            return true;
+        }
+
+        if (token.Equals("rad", StringComparison.OrdinalIgnoreCase))
+        {
+            factor = 1d;
+            return true;
+        }
+
+        if (token.Equals("deg", StringComparison.OrdinalIgnoreCase))
+        {
+            factor = Math.PI / 180d;
+            return true;
+        }
+
+        if (token.Equals("grad", StringComparison.OrdinalIgnoreCase))
+        {
+            factor = Math.PI / 200d;
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool TryParseAxisSwapOrder(string orderToken, out int[] order)
+    {
+        order = Array.Empty<int>();
+        if (string.IsNullOrWhiteSpace(orderToken))
+        {
+            return false;
+        }
+
+        string[] segments = orderToken.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+        if (segments.Length < 2 || segments.Length > 4)
+        {
+            return false;
+        }
+
+        var parsed = new int[segments.Length];
+        var seen = new HashSet<int>();
+        for (int i = 0; i < segments.Length; i++)
+        {
+            if (!int.TryParse(segments[i].Trim(), NumberStyles.Integer, CultureInfo.InvariantCulture, out int value))
+            {
+                return false;
+            }
+
+            int axis = Math.Abs(value);
+            if (axis < 1 || axis > 4 || !seen.Add(axis))
+            {
+                return false;
+            }
+
+            parsed[i] = value;
+        }
+
+        order = parsed;
+        return true;
+    }
+
+    private static bool TryParseAxisOrder(string axisToken, out int[] order)
+    {
+        order = Array.Empty<int>();
+        if (string.IsNullOrWhiteSpace(axisToken))
+        {
+            return false;
+        }
+
+        string axis = axisToken.Trim();
+        if (axis.Length < 2 || axis.Length > 4)
+        {
+            return false;
+        }
+
+        var parsed = new int[axis.Length];
+        var seen = new HashSet<int>();
+        for (int i = 0; i < axis.Length; i++)
+        {
+            char c = char.ToLowerInvariant(axis[i]);
+            int mapped;
+            switch (c)
+            {
+                case 'e':
+                    mapped = 1;
+                    break;
+                case 'w':
+                    mapped = -1;
+                    break;
+                case 'n':
+                    mapped = 2;
+                    break;
+                case 's':
+                    mapped = -2;
+                    break;
+                case 'u':
+                    mapped = 3;
+                    break;
+                case 'd':
+                    mapped = -3;
+                    break;
+                default:
+                    return false;
+            }
+
+            int absMapped = Math.Abs(mapped);
+            if (!seen.Add(absMapped))
+            {
+                return false;
+            }
+
+            parsed[i] = mapped;
+        }
+
+        order = parsed;
+        return true;
+    }
+
+    private static bool TrySplitPipelineSteps(string operation, out IReadOnlyList<string> steps)
+    {
+        var parsedSteps = new List<string>();
+        var currentStepTokens = new List<string>();
+        bool inPipeline = false;
+
+        string[] tokens = operation.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+        foreach (string token in tokens)
+        {
+            string normalized = token.StartsWith("+", StringComparison.Ordinal)
+                ? token.Substring(1)
+                : token;
+
+            if (normalized.Equals("proj=pipeline", StringComparison.OrdinalIgnoreCase))
+            {
+                inPipeline = true;
+                continue;
+            }
+
+            if (normalized.Equals("step", StringComparison.OrdinalIgnoreCase))
+            {
+                inPipeline = true;
+                if (currentStepTokens.Count > 0)
+                {
+                    parsedSteps.Add(string.Join(" ", currentStepTokens));
+                    currentStepTokens.Clear();
+                }
+
+                continue;
+            }
+
+            if (!inPipeline)
+            {
+                continue;
+            }
+
+            currentStepTokens.Add(token);
+        }
+
+        if (currentStepTokens.Count > 0)
+        {
+            parsedSteps.Add(string.Join(" ", currentStepTokens));
+        }
+
+        steps = parsedSteps;
+        return parsedSteps.Count > 0;
+    }
+
+    private static bool TryIsRuntimeOperationSupported(string operation)
+    {
+        if (operation is null)
+        {
+            return false;
+        }
+
+        if (!TryExtractProjCode(operation, out string projCode))
+        {
+            return false;
+        }
+
+        if (projCode.Equals("pipeline", StringComparison.OrdinalIgnoreCase))
+        {
+            if (!TrySplitPipelineSteps(operation, out IReadOnlyList<string> steps))
+            {
+                return false;
+            }
+
+            for (int i = 0; i < steps.Count; i++)
+            {
+                if (!TryParseOperationArguments(steps[i], out Dictionary<string, string> stepArgs))
+                {
+                    return false;
+                }
+
+                if (!stepArgs.TryGetValue("proj", out string stepProjCode))
+                {
+                    return false;
+                }
+
+                if (!ProjectionClassByProjCode.ContainsKey(stepProjCode) && !ConversionProjCodes.Contains(stepProjCode))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return ProjectionClassByProjCode.ContainsKey(projCode) || ConversionProjCodes.Contains(projCode);
     }
 
     private static bool TryCreateGeographicCoordinateSystem(IDictionary<string, string> args, out GeographicCoordinateSystem gcs)
@@ -564,7 +1105,7 @@ public class GieBuiltinsTheoryTests
 
     private static bool ContainsUnsupportedRuntimeTokens(IDictionary<string, string> args)
     {
-        if (args.ContainsKey("step") || (args.TryGetValue("proj", out string proj) && proj.Equals("pipeline", StringComparison.OrdinalIgnoreCase)))
+        if (args.ContainsKey("step"))
         {
             return true;
         }
@@ -600,17 +1141,6 @@ public class GieBuiltinsTheoryTests
         }
 
         return false;
-    }
-
-    private static bool ContainsUnsupportedPipelineTokens(string operation)
-    {
-        if (operation is null)
-        {
-            return true;
-        }
-
-        return operation.IndexOf("+step", StringComparison.OrdinalIgnoreCase) >= 0
-            || operation.IndexOf("+proj=pipeline", StringComparison.OrdinalIgnoreCase) >= 0;
     }
 
     private static bool TryGetDouble(IDictionary<string, string> args, string key, out double value)

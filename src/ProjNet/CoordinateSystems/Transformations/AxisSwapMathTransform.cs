@@ -1,0 +1,129 @@
+// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
+//
+// This file is part of ProjNet.
+// ProjNet is free software; you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// ProjNet is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with ProjNet; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+namespace ProjNet.CoordinateSystems.Transformations
+{
+    using System;
+
+    [Serializable]
+    internal sealed class AxisSwapMathTransform : MathTransform
+    {
+        private readonly int dimension;
+        private readonly int xSourceIndex;
+        private readonly int ySourceIndex;
+        private readonly int zSourceIndex;
+        private readonly int xSign;
+        private readonly int ySign;
+        private readonly int zSign;
+
+        internal AxisSwapMathTransform(
+            int dimension,
+            int xSourceIndex,
+            int xSign,
+            int ySourceIndex,
+            int ySign,
+            int zSourceIndex,
+            int zSign)
+        {
+            this.dimension = ValidateDimension(dimension, nameof(dimension));
+            this.xSourceIndex = ValidateSourceIndex(xSourceIndex, nameof(xSourceIndex));
+            this.ySourceIndex = ValidateSourceIndex(ySourceIndex, nameof(ySourceIndex));
+            this.zSourceIndex = ValidateSourceIndex(zSourceIndex, nameof(zSourceIndex));
+
+            this.xSign = ValidateSign(xSign, nameof(xSign));
+            this.ySign = ValidateSign(ySign, nameof(ySign));
+            this.zSign = ValidateSign(zSign, nameof(zSign));
+        }
+
+        public override int DimSource => this.dimension;
+
+        public override int DimTarget => this.dimension;
+
+        public override string WKT => throw new NotImplementedException();
+
+        public override string XML => throw new NotImplementedException();
+
+        public override MathTransform Inverse()
+        {
+            int[] sourceIndices = { this.xSourceIndex, this.ySourceIndex, this.zSourceIndex };
+            int[] targetSigns = { this.xSign, this.ySign, this.zSign };
+
+            int[] inverseSourceIndices = { 0, 1, 2 };
+            int[] inverseSigns = { 1, 1, 1 };
+            for (int targetIndex = 0; targetIndex < 3; targetIndex++)
+            {
+                int sourceIndex = sourceIndices[targetIndex];
+                inverseSourceIndices[sourceIndex] = targetIndex;
+                inverseSigns[sourceIndex] = targetSigns[targetIndex];
+            }
+
+            return new AxisSwapMathTransform(
+                this.dimension,
+                inverseSourceIndices[0],
+                inverseSigns[0],
+                inverseSourceIndices[1],
+                inverseSigns[1],
+                inverseSourceIndices[2],
+                inverseSigns[2]);
+        }
+
+        public override void Invert()
+        {
+            throw new NotSupportedException("Axis swap inversion should be performed via Inverse().");
+        }
+
+        public override void Transform(ref double x, ref double y, ref double z)
+        {
+            double[] source = { x, y, z };
+            x = source[this.xSourceIndex] * this.xSign;
+            y = source[this.ySourceIndex] * this.ySign;
+            if (this.dimension > 2)
+            {
+                z = source[this.zSourceIndex] * this.zSign;
+            }
+        }
+
+        private static int ValidateDimension(int dimension, string parameterName)
+        {
+            if (dimension < 2 || dimension > 3)
+            {
+                throw new ArgumentOutOfRangeException(parameterName, dimension, "Axis swap dimension must be either 2 or 3.");
+            }
+
+            return dimension;
+        }
+
+        private static int ValidateSourceIndex(int sourceIndex, string parameterName)
+        {
+            if (sourceIndex < 0 || sourceIndex > 2)
+            {
+                throw new ArgumentOutOfRangeException(parameterName, sourceIndex, "Axis source index must be 0, 1 or 2.");
+            }
+
+            return sourceIndex;
+        }
+
+        private static int ValidateSign(int sign, string parameterName)
+        {
+            if (sign != -1 && sign != 1)
+            {
+                throw new ArgumentOutOfRangeException(parameterName, sign, "Axis sign must be either -1 or 1.");
+            }
+
+            return sign;
+        }
+    }
+}
