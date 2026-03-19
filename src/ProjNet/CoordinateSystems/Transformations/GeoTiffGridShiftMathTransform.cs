@@ -25,6 +25,9 @@ namespace ProjNet.CoordinateSystems.Transformations
     using System.Text.RegularExpressions;
     using BitMiracle.LibTiff.Classic;
 
+    /// <summary>
+    /// Represents a documented type.
+    /// </summary>
     [Serializable]
     internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
     {
@@ -34,6 +37,10 @@ namespace ProjNet.CoordinateSystems.Transformations
         private readonly IReadOnlyList<HorizontalGrid> grids;
         private bool isInverted;
 
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        /// <param name="gridPaths">The gridPaths value.</param>
         internal GeoTiffHGridShiftMathTransform(IReadOnlyList<string> gridPaths)
         {
             if (gridPaths is null)
@@ -237,6 +244,9 @@ namespace ProjNet.CoordinateSystems.Transformations
             return false;
         }
 
+        /// <summary>
+        /// Represents a documented type.
+        /// </summary>
         [Serializable]
         internal sealed class HorizontalGrid : BaseGeoGrid
         {
@@ -246,6 +256,9 @@ namespace ProjNet.CoordinateSystems.Transformations
             private readonly double latitudeUnitScale;
             private readonly double longitudeUnitScale;
 
+            /// <summary>
+            /// Initializes a new instance of the class.
+            /// </summary>
             internal HorizontalGrid(
                 string sourcePath,
                 int width,
@@ -277,11 +290,23 @@ namespace ProjNet.CoordinateSystems.Transformations
                 this.longitudeUnitScale = longitudeUnitScale;
             }
 
+            /// <summary>
+            /// Performs the documented operation.
+            /// </summary>
+            /// <param name="x">The x value.</param>
+            /// <param name="y">The y value.</param>
+            /// <returns>The computed value.</returns>
             internal double GetLatitudeShift(int x, int y)
             {
                 return this.GetSampleValue(this.latitudeSampleIndex, x, y) * this.latitudeUnitScale;
             }
 
+            /// <summary>
+            /// Performs the documented operation.
+            /// </summary>
+            /// <param name="x">The x value.</param>
+            /// <param name="y">The y value.</param>
+            /// <returns>The computed value.</returns>
             internal double GetLongitudeShift(int x, int y)
             {
                 double value = this.GetSampleValue(this.longitudeSampleIndex, x, y) * this.longitudeUnitScale;
@@ -290,6 +315,9 @@ namespace ProjNet.CoordinateSystems.Transformations
         }
     }
 
+    /// <summary>
+    /// Represents a documented type.
+    /// </summary>
     [Serializable]
     internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
     {
@@ -298,6 +326,11 @@ namespace ProjNet.CoordinateSystems.Transformations
         private readonly double forwardMultiplier;
         private bool isInverted;
 
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        /// <param name="gridPaths">The gridPaths value.</param>
+        /// <param name="forwardMultiplier">The forwardMultiplier value.</param>
         internal GeoTiffVGridShiftMathTransform(IReadOnlyList<string> gridPaths, double forwardMultiplier)
         {
             if (gridPaths is null)
@@ -504,12 +537,36 @@ namespace ProjNet.CoordinateSystems.Transformations
             return false;
         }
 
+        /// <summary>
+        /// Represents a documented type.
+        /// </summary>
         [Serializable]
         internal sealed class VerticalGrid : BaseGeoGrid
         {
             private readonly int sampleIndex;
             private readonly double? noDataValue;
 
+            /// <summary>
+            /// Initializes a new instance of the class.
+            /// </summary>
+            /// <param name="sourcePath">The sourcePath value.</param>
+            /// <param name="width">The width value.</param>
+            /// <param name="height">The height value.</param>
+            /// <param name="area">The area value.</param>
+            /// <param name="epsilon">The epsilon value.</param>
+            /// <param name="west">The west value.</param>
+            /// <param name="east">The east value.</param>
+            /// <param name="south">The south value.</param>
+            /// <param name="north">The north value.</param>
+            /// <param name="a">The a value.</param>
+            /// <param name="b">The b value.</param>
+            /// <param name="c">The c value.</param>
+            /// <param name="d">The d value.</param>
+            /// <param name="e">The e value.</param>
+            /// <param name="f">The f value.</param>
+            /// <param name="sampleData">The sampleData value.</param>
+            /// <param name="sampleIndex">The sampleIndex value.</param>
+            /// <param name="sampleData">The sampleData value.</param>
             internal VerticalGrid(
                 string sourcePath,
                 int width,
@@ -535,11 +592,22 @@ namespace ProjNet.CoordinateSystems.Transformations
                 this.noDataValue = noDataValue;
             }
 
+            /// <summary>
+            /// Performs the documented operation.
+            /// </summary>
+            /// <param name="x">The x value.</param>
+            /// <param name="y">The y value.</param>
+            /// <returns>The computed value.</returns>
             internal double GetValue(int x, int y)
             {
                 return this.GetSampleValue(this.sampleIndex, x, y);
             }
 
+            /// <summary>
+            /// Performs the documented operation.
+            /// </summary>
+            /// <param name="value">The value value.</param>
+            /// <returns>The computed value.</returns>
             internal bool IsNoData(double value)
             {
                 if (!this.noDataValue.HasValue)
@@ -552,6 +620,9 @@ namespace ProjNet.CoordinateSystems.Transformations
         }
     }
 
+    /// <summary>
+    /// Represents a documented type.
+    /// </summary>
     internal static class GeoTiffGridLoader
     {
         private const int ModelPixelScaleTag = 33550;
@@ -564,6 +635,11 @@ namespace ProjNet.CoordinateSystems.Transformations
         private const int GtRasterTypeGeoKey = 1025;
         private const int RasterPixelIsPoint = 2;
 
+        /// <summary>
+        /// Performs the documented operation.
+        /// </summary>
+        /// <param name="path">The path value.</param>
+        /// <returns>The computed value.</returns>
         internal static IReadOnlyList<GeoTiffHGridShiftMathTransform.HorizontalGrid> LoadHorizontal(string path)
         {
             return LoadCore(path, GridMode.Horizontal)
@@ -572,6 +648,11 @@ namespace ProjNet.CoordinateSystems.Transformations
                 .ToArray();
         }
 
+        /// <summary>
+        /// Performs the documented operation.
+        /// </summary>
+        /// <param name="path">The path value.</param>
+        /// <returns>The computed value.</returns>
         internal static IReadOnlyList<GeoTiffVGridShiftMathTransform.VerticalGrid> LoadVertical(string path)
         {
             return LoadCore(path, GridMode.Vertical)
@@ -1210,6 +1291,24 @@ namespace ProjNet.CoordinateSystems.Transformations
 
         private readonly struct GeoTransform
         {
+            /// <summary>
+            /// Initializes a new instance of the class.
+            /// </summary>
+            /// <param name="width">The width value.</param>
+            /// <param name="height">The height value.</param>
+            /// <param name="a">The a value.</param>
+            /// <param name="b">The b value.</param>
+            /// <param name="c">The c value.</param>
+            /// <param name="d">The d value.</param>
+            /// <param name="e">The e value.</param>
+            /// <param name="f">The f value.</param>
+            /// <param name="determinant">The determinant value.</param>
+            /// <param name="west">The west value.</param>
+            /// <param name="east">The east value.</param>
+            /// <param name="south">The south value.</param>
+            /// <param name="north">The north value.</param>
+            /// <param name="area">The area value.</param>
+            /// <param name="epsilon">The epsilon value.</param>
             internal GeoTransform(
                 int width,
                 int height,
@@ -1244,34 +1343,79 @@ namespace ProjNet.CoordinateSystems.Transformations
                 this.Epsilon = epsilon;
             }
 
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
             internal int Width { get; }
 
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
             internal int Height { get; }
 
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
             internal double A { get; }
 
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
             internal double B { get; }
 
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
             internal double C { get; }
 
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
             internal double D { get; }
 
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
             internal double E { get; }
 
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
             internal double F { get; }
 
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
             internal double Determinant { get; }
 
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
             internal double West { get; }
 
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
             internal double East { get; }
 
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
             internal double South { get; }
 
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
             internal double North { get; }
 
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
             internal double Area { get; }
 
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
             internal double Epsilon { get; }
         }
 
@@ -1306,6 +1450,16 @@ namespace ProjNet.CoordinateSystems.Transformations
                 this.mode = mode;
             }
 
+            /// <summary>
+            /// Performs the documented operation.
+            /// </summary>
+            /// <param name="transform">The transform value.</param>
+            /// <param name="sampleData">The sampleData value.</param>
+            /// <param name="metadata">The metadata value.</param>
+            /// <param name="latitudeSample">The latitudeSample value.</param>
+            /// <param name="longitudeSample">The longitudeSample value.</param>
+            /// <param name="longitudePositiveWest">The longitudePositiveWest value.</param>
+            /// <returns>The computed value.</returns>
             internal static LoadedPage CreateHorizontal(
                 GeoTransform transform,
                 SampleData sampleData,
@@ -1317,6 +1471,14 @@ namespace ProjNet.CoordinateSystems.Transformations
                 return new LoadedPage(transform, sampleData, metadata, latitudeSample, longitudeSample, -1, longitudePositiveWest, GridMode.Horizontal);
             }
 
+            /// <summary>
+            /// Performs the documented operation.
+            /// </summary>
+            /// <param name="transform">The transform value.</param>
+            /// <param name="sampleData">The sampleData value.</param>
+            /// <param name="metadata">The metadata value.</param>
+            /// <param name="verticalSample">The verticalSample value.</param>
+            /// <returns>The computed value.</returns>
             internal static LoadedPage CreateVertical(
                 GeoTransform transform,
                 SampleData sampleData,
@@ -1326,6 +1488,11 @@ namespace ProjNet.CoordinateSystems.Transformations
                 return new LoadedPage(transform, sampleData, metadata, -1, -1, verticalSample, false, GridMode.Vertical);
             }
 
+            /// <summary>
+            /// Performs the documented operation.
+            /// </summary>
+            /// <param name="sourcePath">The sourcePath value.</param>
+            /// <returns>The computed value.</returns>
             internal GeoTiffHGridShiftMathTransform.HorizontalGrid ToHorizontalGrid(string sourcePath)
             {
                 if (this.mode != GridMode.Horizontal)
@@ -1359,6 +1526,11 @@ namespace ProjNet.CoordinateSystems.Transformations
                     longitudeScale);
             }
 
+            /// <summary>
+            /// Performs the documented operation.
+            /// </summary>
+            /// <param name="sourcePath">The sourcePath value.</param>
+            /// <returns>The computed value.</returns>
             internal GeoTiffVGridShiftMathTransform.VerticalGrid ToVerticalGrid(string sourcePath)
             {
                 if (this.mode != GridMode.Vertical)
@@ -1425,6 +1597,16 @@ namespace ProjNet.CoordinateSystems.Transformations
 
         private readonly struct GeoMetadata
         {
+            /// <summary>
+            /// Initializes a new instance of the class.
+            /// </summary>
+            /// <param name="descriptionsBySample">The descriptionsBySample value.</param>
+            /// <param name="positiveValueBySample">The positiveValueBySample value.</param>
+            /// <param name="scaleBySample">The scaleBySample value.</param>
+            /// <param name="offsetBySample">The offsetBySample value.</param>
+            /// <param name="noDataValue">The noDataValue value.</param>
+            /// <param name="angularScaleToDegree">The angularScaleToDegree value.</param>
+            /// <param name="unitTypeBySample">The unitTypeBySample value.</param>
             internal GeoMetadata(
                 IReadOnlyDictionary<int, string> descriptionsBySample,
                 IReadOnlyDictionary<int, string> positiveValueBySample,
@@ -1443,28 +1625,71 @@ namespace ProjNet.CoordinateSystems.Transformations
                 this.UnitTypeBySample = unitTypeBySample;
             }
 
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
             internal IReadOnlyDictionary<int, string> DescriptionsBySample { get; }
 
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
             internal IReadOnlyDictionary<int, string> PositiveValueBySample { get; }
 
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
             internal IReadOnlyDictionary<int, double> ScaleBySample { get; }
 
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
             internal IReadOnlyDictionary<int, double> OffsetBySample { get; }
 
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
             internal double? NoDataValue { get; }
 
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
             internal double AngularScaleToDegree { get; }
 
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
             internal IReadOnlyDictionary<int, string> UnitTypeBySample { get; }
         }
     }
 
+    /// <summary>
+    /// Represents a documented type.
+    /// </summary>
     [Serializable]
     internal abstract class BaseGeoGrid
     {
         private readonly SampleData sampleData;
         private readonly double determinant;
 
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        /// <param name="sourcePath">The sourcePath value.</param>
+        /// <param name="width">The width value.</param>
+        /// <param name="height">The height value.</param>
+        /// <param name="area">The area value.</param>
+        /// <param name="epsilon">The epsilon value.</param>
+        /// <param name="west">The west value.</param>
+        /// <param name="east">The east value.</param>
+        /// <param name="south">The south value.</param>
+        /// <param name="north">The north value.</param>
+        /// <param name="a">The a value.</param>
+        /// <param name="b">The b value.</param>
+        /// <param name="c">The c value.</param>
+        /// <param name="d">The d value.</param>
+        /// <param name="e">The e value.</param>
+        /// <param name="f">The f value.</param>
+        /// <param name="sampleData">The sampleData value.</param>
         protected BaseGeoGrid(
             string sourcePath,
             int width,
@@ -1502,36 +1727,87 @@ namespace ProjNet.CoordinateSystems.Transformations
             this.determinant = (a * e) - (b * d);
         }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         internal string SourcePath { get; }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         internal int Width { get; }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         internal int Height { get; }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         internal double Area { get; }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         internal double Epsilon { get; }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         internal double West { get; }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         internal double East { get; }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         internal double South { get; }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         internal double North { get; }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         internal double A { get; }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         internal double B { get; }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         internal double C { get; }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         internal double D { get; }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         internal double E { get; }
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         internal double F { get; }
 
+        /// <summary>
+        /// Performs the documented operation.
+        /// </summary>
+        /// <param name="longitude">The longitude value.</param>
+        /// <param name="latitude">The latitude value.</param>
+        /// <returns>The computed value.</returns>
         internal bool Contains(double longitude, double latitude)
         {
             double lon = longitude;
@@ -1550,6 +1826,14 @@ namespace ProjNet.CoordinateSystems.Transformations
                 && latitude <= this.North + this.Epsilon;
         }
 
+        /// <summary>
+        /// Performs the documented operation.
+        /// </summary>
+        /// <param name="longitude">The longitude value.</param>
+        /// <param name="latitude">The latitude value.</param>
+        /// <param name="gridX">The gridX value.</param>
+        /// <param name="gridY">The gridY value.</param>
+        /// <returns>The computed value.</returns>
         internal bool TryMapToGridCoordinates(double longitude, double latitude, out double gridX, out double gridY)
         {
             if (TryMapRaw(longitude, latitude, out gridX, out gridY) && IsWithinGrid(gridX, gridY))
@@ -1570,6 +1854,13 @@ namespace ProjNet.CoordinateSystems.Transformations
             return false;
         }
 
+        /// <summary>
+        /// Performs the documented operation.
+        /// </summary>
+        /// <param name="sampleIndex">The sampleIndex value.</param>
+        /// <param name="x">The x value.</param>
+        /// <param name="y">The y value.</param>
+        /// <returns>The computed value.</returns>
         internal double GetSampleValue(int sampleIndex, int x, int y)
         {
             return this.sampleData.GetValue(sampleIndex, x, y);
@@ -1590,6 +1881,9 @@ namespace ProjNet.CoordinateSystems.Transformations
         }
     }
 
+    /// <summary>
+    /// Represents a documented type.
+    /// </summary>
     [Serializable]
     internal readonly struct SampleData
     {
@@ -1598,6 +1892,13 @@ namespace ProjNet.CoordinateSystems.Transformations
         private readonly double[] offsetBySample;
         private readonly int width;
 
+        /// <summary>
+        /// Initializes a new instance of the class.
+        /// </summary>
+        /// <param name="valuesBySample">The valuesBySample value.</param>
+        /// <param name="scaleBySample">The scaleBySample value.</param>
+        /// <param name="offsetBySample">The offsetBySample value.</param>
+        /// <param name="width">The width value.</param>
         internal SampleData(double[][] valuesBySample, double[] scaleBySample = null, double[] offsetBySample = null, int width = 0)
         {
             this.valuesBySample = valuesBySample;
@@ -1606,6 +1907,11 @@ namespace ProjNet.CoordinateSystems.Transformations
             this.width = width;
         }
 
+        /// <summary>
+        /// Performs the documented operation.
+        /// </summary>
+        /// <param name="angularScaleToDegree">The angularScaleToDegree value.</param>
+        /// <returns>The computed value.</returns>
         internal SampleData ApplyAngularScale(double angularScaleToDegree)
         {
             if (Math.Abs(angularScaleToDegree - 1d) <= 1e-12d)
@@ -1630,6 +1936,12 @@ namespace ProjNet.CoordinateSystems.Transformations
             return new SampleData(scaled, adjustedScale, adjustedOffset, this.width);
         }
 
+        /// <summary>
+        /// Performs the documented operation.
+        /// </summary>
+        /// <param name="scaleBySample">The scaleBySample value.</param>
+        /// <param name="offsetBySample">The offsetBySample value.</param>
+        /// <returns>The computed value.</returns>
         internal SampleData ApplyScaleOffset(IReadOnlyDictionary<int, double> scaleBySample, IReadOnlyDictionary<int, double> offsetBySample)
         {
             if ((scaleBySample is null || scaleBySample.Count == 0)
@@ -1667,6 +1979,13 @@ namespace ProjNet.CoordinateSystems.Transformations
             return new SampleData(copiedValues, adjustedScale, adjustedOffset, this.width);
         }
 
+        /// <summary>
+        /// Performs the documented operation.
+        /// </summary>
+        /// <param name="sample">The sample value.</param>
+        /// <param name="x">The x value.</param>
+        /// <param name="y">The y value.</param>
+        /// <returns>The computed value.</returns>
         internal double GetValue(int sample, int x, int y)
         {
             int index = (y * this.width) + x;
@@ -1685,6 +2004,9 @@ namespace ProjNet.CoordinateSystems.Transformations
         }
     }
 
+    /// <summary>
+    /// Represents a documented type.
+    /// </summary>
     internal readonly struct SampleEncoding
     {
         private readonly ValueReader valueReader;
@@ -1695,10 +2017,24 @@ namespace ProjNet.CoordinateSystems.Transformations
             this.valueReader = valueReader;
         }
 
+        /// <summary>
+        /// Represents a documented type.
+        /// </summary>
+        /// <returns>The computed value.</returns>
         internal delegate double ValueReader(byte[] buffer, int offset);
 
+        /// <summary>
+        /// Gets the documented value.
+        /// </summary>
         internal int BytesPerSample { get; }
 
+        /// <summary>
+        /// Performs the documented operation.
+        /// </summary>
+        /// <param name="bitsPerSample">The bitsPerSample value.</param>
+        /// <param name="sampleFormat">The sampleFormat value.</param>
+        /// <param name="encoding">The encoding value.</param>
+        /// <returns>The computed value.</returns>
         internal static bool TryCreate(int bitsPerSample, SampleFormat sampleFormat, out SampleEncoding encoding)
         {
             switch (sampleFormat)
@@ -1751,6 +2087,12 @@ namespace ProjNet.CoordinateSystems.Transformations
             return false;
         }
 
+        /// <summary>
+        /// Performs the documented operation.
+        /// </summary>
+        /// <param name="buffer">The buffer value.</param>
+        /// <param name="offset">The offset value.</param>
+        /// <returns>The computed value.</returns>
         internal double ReadValue(byte[] buffer, int offset)
         {
             return this.valueReader(buffer, offset);
