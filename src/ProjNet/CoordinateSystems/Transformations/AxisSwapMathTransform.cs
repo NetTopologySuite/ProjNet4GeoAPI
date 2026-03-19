@@ -22,12 +22,12 @@ namespace ProjNet.CoordinateSystems.Transformations
     internal sealed class AxisSwapMathTransform : MathTransform
     {
         private readonly int dimension;
-        private readonly int xSourceIndex;
-        private readonly int ySourceIndex;
-        private readonly int zSourceIndex;
-        private readonly int xSign;
-        private readonly int ySign;
-        private readonly int zSign;
+        private int xSourceIndex;
+        private int ySourceIndex;
+        private int zSourceIndex;
+        private int xSign;
+        private int ySign;
+        private int zSign;
 
         internal AxisSwapMathTransform(
             int dimension,
@@ -56,6 +56,23 @@ namespace ProjNet.CoordinateSystems.Transformations
 
         public override string XML => throw new NotImplementedException();
 
+        public override bool Identity()
+        {
+            bool xyIdentity = this.xSourceIndex == 0
+                && this.xSign == 1
+                && this.ySourceIndex == 1
+                && this.ySign == 1;
+
+            if (this.dimension < 3)
+            {
+                return xyIdentity;
+            }
+
+            return xyIdentity
+                && this.zSourceIndex == 2
+                && this.zSign == 1;
+        }
+
         public override MathTransform Inverse()
         {
             int[] sourceIndices = { this.xSourceIndex, this.ySourceIndex, this.zSourceIndex };
@@ -82,7 +99,24 @@ namespace ProjNet.CoordinateSystems.Transformations
 
         public override void Invert()
         {
-            throw new NotSupportedException("Axis swap inversion should be performed via Inverse().");
+            int[] sourceIndices = { this.xSourceIndex, this.ySourceIndex, this.zSourceIndex };
+            int[] targetSigns = { this.xSign, this.ySign, this.zSign };
+
+            int[] inverseSourceIndices = { 0, 1, 2 };
+            int[] inverseSigns = { 1, 1, 1 };
+            for (int targetIndex = 0; targetIndex < 3; targetIndex++)
+            {
+                int sourceIndex = sourceIndices[targetIndex];
+                inverseSourceIndices[sourceIndex] = targetIndex;
+                inverseSigns[sourceIndex] = targetSigns[targetIndex];
+            }
+
+            this.xSourceIndex = inverseSourceIndices[0];
+            this.xSign = inverseSigns[0];
+            this.ySourceIndex = inverseSourceIndices[1];
+            this.ySign = inverseSigns[1];
+            this.zSourceIndex = inverseSourceIndices[2];
+            this.zSign = inverseSigns[2];
         }
 
         public override void Transform(ref double x, ref double y, ref double z)

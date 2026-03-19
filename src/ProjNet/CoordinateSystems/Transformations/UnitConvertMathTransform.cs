@@ -21,11 +21,18 @@ namespace ProjNet.CoordinateSystems.Transformations
     [Serializable]
     internal sealed class UnitConvertMathTransform : MathTransform
     {
-        private readonly double xyScale;
-        private readonly double zScale;
+        private readonly int dimension;
+        private double xyScale;
+        private double zScale;
 
         internal UnitConvertMathTransform(double xyScale, double zScale)
+            : this(3, xyScale, zScale)
         {
+        }
+
+        internal UnitConvertMathTransform(int dimension, double xyScale, double zScale)
+        {
+            this.dimension = ValidateDimension(dimension, nameof(dimension));
             ValidateScale(xyScale, nameof(xyScale));
             ValidateScale(zScale, nameof(zScale));
 
@@ -33,29 +40,54 @@ namespace ProjNet.CoordinateSystems.Transformations
             this.zScale = zScale;
         }
 
-        public override int DimSource => 3;
+        public override int DimSource => this.dimension;
 
-        public override int DimTarget => 3;
+        public override int DimTarget => this.dimension;
 
         public override string WKT => throw new NotImplementedException();
 
         public override string XML => throw new NotImplementedException();
 
+        public override bool Identity()
+        {
+            bool xyIdentity = this.xyScale.Equals(1d);
+            if (this.dimension < 3)
+            {
+                return xyIdentity;
+            }
+
+            return xyIdentity && this.zScale.Equals(1d);
+        }
+
         public override MathTransform Inverse()
         {
-            return new UnitConvertMathTransform(1d / this.xyScale, 1d / this.zScale);
+            return new UnitConvertMathTransform(this.dimension, 1d / this.xyScale, 1d / this.zScale);
         }
 
         public override void Invert()
         {
-            throw new NotSupportedException("Unit conversion inversion should be performed via Inverse().");
+            this.xyScale = 1d / this.xyScale;
+            this.zScale = 1d / this.zScale;
         }
 
         public override void Transform(ref double x, ref double y, ref double z)
         {
             x *= this.xyScale;
             y *= this.xyScale;
-            z *= this.zScale;
+            if (this.dimension > 2)
+            {
+                z *= this.zScale;
+            }
+        }
+
+        private static int ValidateDimension(int dimension, string parameterName)
+        {
+            if (dimension < 2 || dimension > 3)
+            {
+                throw new ArgumentOutOfRangeException(parameterName, dimension, "Unit conversion dimension must be either 2 or 3.");
+            }
+
+            return dimension;
         }
 
         private static void ValidateScale(double scale, string parameterName)

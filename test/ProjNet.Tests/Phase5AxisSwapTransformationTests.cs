@@ -114,4 +114,102 @@ public class Phase5AxisSwapTransformationTests
         Assert.Equal(6100000d, transformed[0], 8);
         Assert.Equal(500000d, transformed[1], 8);
     }
+
+    [Fact]
+    public void GeographicUnitConversion_DegreesToRadians_ConvertsCoordinates()
+    {
+        var source = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+            "Source Degrees",
+            AngularUnit.Degrees,
+            HorizontalDatum.WGS84,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("Lon", AxisOrientationEnum.East),
+            new AxisInfo("Lat", AxisOrientationEnum.North));
+
+        var target = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+            "Target Radians",
+            AngularUnit.Radian,
+            HorizontalDatum.WGS84,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("Lon", AxisOrientationEnum.East),
+            new AxisInfo("Lat", AxisOrientationEnum.North));
+
+        var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target).MathTransform;
+        double[] transformed = transform.Transform(new[] { 180d, 90d });
+
+        Assert.Equal(System.Math.PI, transformed[0], 12);
+        Assert.Equal(System.Math.PI / 2d, transformed[1], 12);
+    }
+
+    [Fact]
+    public void ProjectedUnitConversion_MetreToFoot_ConvertsProjectedCoordinates()
+    {
+        var projection = CreateMercatorProjection();
+        var geographic = GeographicCoordinateSystem.WGS84;
+
+        var source = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
+            "Source Metre",
+            geographic,
+            projection,
+            LinearUnit.Metre,
+            new AxisInfo("East", AxisOrientationEnum.East),
+            new AxisInfo("North", AxisOrientationEnum.North));
+
+        var target = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
+            "Target Foot",
+            geographic,
+            projection,
+            LinearUnit.Foot,
+            new AxisInfo("East", AxisOrientationEnum.East),
+            new AxisInfo("North", AxisOrientationEnum.North));
+
+        var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target).MathTransform;
+        double[] transformed = transform.Transform(new[] { 100d, 200d });
+
+        Assert.Equal(328.0839895013123d, transformed[0], 9);
+        Assert.Equal(656.1679790026246d, transformed[1], 9);
+    }
+
+    [Fact]
+    public void ProjectedUnitAndAxisConversion_MetreEastNorthToFootNorthEast_ConvertsAndSwaps()
+    {
+        var projection = CreateMercatorProjection();
+        var geographic = GeographicCoordinateSystem.WGS84;
+
+        var source = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
+            "Source Metre EN",
+            geographic,
+            projection,
+            LinearUnit.Metre,
+            new AxisInfo("East", AxisOrientationEnum.East),
+            new AxisInfo("North", AxisOrientationEnum.North));
+
+        var target = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
+            "Target Foot NE",
+            geographic,
+            projection,
+            LinearUnit.Foot,
+            new AxisInfo("North", AxisOrientationEnum.North),
+            new AxisInfo("East", AxisOrientationEnum.East));
+
+        var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target).MathTransform;
+        double[] transformed = transform.Transform(new[] { 100d, 200d });
+
+        Assert.Equal(656.1679790026246d, transformed[0], 9);
+        Assert.Equal(328.0839895013123d, transformed[1], 9);
+    }
+
+    private static IProjection CreateMercatorProjection()
+    {
+        var projectionParameters = new List<ProjectionParameter>
+        {
+            new ProjectionParameter("latitude_of_origin", 0d),
+            new ProjectionParameter("central_meridian", 0d),
+            new ProjectionParameter("scale_factor", 1d),
+            new ProjectionParameter("false_easting", 0d),
+            new ProjectionParameter("false_northing", 0d),
+        };
+
+        return CoordinateSystemFactory.CreateProjection("Mercator", "mercator", projectionParameters);
+    }
 }
