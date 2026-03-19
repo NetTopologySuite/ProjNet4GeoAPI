@@ -28,11 +28,22 @@ namespace ProjNet.CoordinateSystems.Transformations
         private double xyScale;
         private double zScale;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UnitConvertMathTransform"/> class for 3D coordinates.
+        /// </summary>
+        /// <param name="xyScale">Scale factor applied to X and Y ordinates.</param>
+        /// <param name="zScale">Scale factor applied to Z ordinate.</param>
         internal UnitConvertMathTransform(double xyScale, double zScale)
             : this(3, xyScale, zScale)
         {
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UnitConvertMathTransform"/> class.
+        /// </summary>
+        /// <param name="dimension">Coordinate dimension (2 or 3).</param>
+        /// <param name="xyScale">Scale factor applied to X and Y ordinates.</param>
+        /// <param name="zScale">Scale factor applied to Z ordinate when dimension is 3.</param>
         internal UnitConvertMathTransform(int dimension, double xyScale, double zScale)
         {
             this.dimension = ValidateDimension(dimension, nameof(dimension));
