@@ -146,6 +146,8 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Converts a degree-value (<paramref name="deg"/>) to a radian-value by multiplying it with <c><see cref="Math.PI"/> / 180.0</c>.
         /// </summary>
+        /// <param name="deg">The deg value.</param>
+        /// <returns>The computed value.</returns>
         protected static double DegreesToRadians(double deg)
         {
             return D2R * deg;

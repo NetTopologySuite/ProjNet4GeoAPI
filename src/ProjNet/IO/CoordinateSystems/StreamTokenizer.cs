@@ -100,6 +100,7 @@ namespace ProjNet.IO.CoordinateSystems
         /// <summary>
         /// If the current token is a number, this field contains the value of that number.
         /// </summary>
+        /// <returns>The computed value.</returns>
         /// <remarks>
         /// If the current token is a number, this field contains the value of that number. The current token is a number when the value of the ttype field is TT_NUMBER.
         /// </remarks>
@@ -120,6 +121,7 @@ namespace ProjNet.IO.CoordinateSystems
         /// <summary>
         /// If the current token is a word token, this field contains a string giving the characters of the word token.
         /// </summary>
+        /// <returns>The computed value.</returns>
         public string GetStringValue()
         {
             return this.currentToken;

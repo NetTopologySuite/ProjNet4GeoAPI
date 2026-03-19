@@ -136,6 +136,7 @@ namespace ProjNet.CoordinateSystems
         /// Returns the Well-known text for this object
         /// as defined in the simple features specification.
         /// </summary>
+        /// <returns>The computed value.</returns>
         public override string ToString()
         {
             return this.WKT;

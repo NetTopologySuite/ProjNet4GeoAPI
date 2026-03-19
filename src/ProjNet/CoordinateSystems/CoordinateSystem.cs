@@ -67,6 +67,8 @@ namespace ProjNet.CoordinateSystems
         /// Gets the units for the dimension within coordinate system.
         /// Each dimension in the coordinate system has corresponding units.
         /// </summary>
+        /// <param name="dimension">The dimension value.</param>
+        /// <returns>The computed value.</returns>
         public abstract IUnit GetUnits(int dimension);
 
         private List<AxisInfo> axisInfo;

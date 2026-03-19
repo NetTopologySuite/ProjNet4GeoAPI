@@ -35,6 +35,8 @@ namespace ProjNet.CoordinateSystems.Projections
         /// Initializes a new instance of the <see cref="ProjectionParameterSet"/> class.
         /// Needed for serialzation.
         /// </summary>
+        /// <param name="context">The context value.</param>
+        /// <param name="info">The info value.</param>
         public ProjectionParameterSet(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
             : base(info, context)
         {
@@ -111,6 +113,10 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <summary>
         /// Method to check if all mandatory projection parameters are passed.
         /// </summary>
+        /// <param name="alternateNames">The alternateNames value.</param>
+        /// <param name="name">The name value.</param>
+        /// <param name="value">The value value.</param>
+        /// <returns>The computed value.</returns>
         public double GetOptionalParameterValue(string name, double value, params string[] alternateNames)
         {
             name = name.ToLowerInvariant();

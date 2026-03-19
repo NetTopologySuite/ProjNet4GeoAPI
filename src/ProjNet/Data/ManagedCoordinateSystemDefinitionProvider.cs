@@ -26,6 +26,7 @@ namespace ProjNet.Data
         /// <summary>
         /// Performs the documented operation.
         /// </summary>
+        /// <returns>The computed value.</returns>
         public IEnumerable<KeyValuePair<int, string>> GetDefinitions()
         {
             foreach (var coordinateSystem in GetManagedCoordinateSystems())

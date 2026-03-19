@@ -226,6 +226,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <summary>
         /// Returns a list of projection "cloned" projection parameters.
         /// </summary>
+        /// <param name="projectionParameters">The projectionParameters value.</param>
         /// <returns>The transformation result.</returns>
         protected internal static List<ProjectionParameter> CloneParametersList(
             IEnumerable<ProjectionParameter> projectionParameters)
@@ -731,6 +732,7 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// Returns the cube of a number.
         /// </summary>
         /// <param name="x">The x parameter.</param>
+        /// <returns>The computed value.</returns>
         protected static double CUBE(double x)
         {
             return Math.Pow(x, 3); /* x^3 */
@@ -740,6 +742,7 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// Returns the quad of a number.
         /// </summary>
         /// <param name="x">The x parameter.</param>
+        /// <returns>The computed value.</returns>
         protected static double QUAD(double x)
         {
             return Math.Pow(x, 4); /* x^4 */
@@ -782,6 +785,8 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// <summary>
         /// Function to return the sign of an argument.
         /// </summary>
+        /// <param name="x">The x value.</param>
+        /// <returns>The computed value.</returns>
         protected static double Sign(double x)
         {
             if (x < 0.0)
@@ -843,6 +848,10 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// Function to compute the constant small m which is the radius of
         /// a parallel of latitude, phi, divided by the semimajor axis.
         /// </summary>
+        /// <param name="cosphi">The cosphi value.</param>
+        /// <param name="eccent">The eccent value.</param>
+        /// <param name="sinphi">The sinphi value.</param>
+        /// <returns>The computed value.</returns>
         protected static double Msfnz(double eccent, double sinphi, double cosphi)
         {
             double con;
@@ -855,6 +864,9 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// Function to compute constant small q which is the radius of a
         /// parallel of latitude, phi, divided by the semimajor axis.
         /// </summary>
+        /// <param name="eccent">The eccent value.</param>
+        /// <param name="sinphi">The sinphi value.</param>
+        /// <returns>The computed value.</returns>
         protected static double Qsfnz(double sinphi, double eccent)
         {
             if (eccent > 1.0e-7)
@@ -871,6 +883,10 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// Function to compute constant small q which is the radius of a
         /// parallel of latitude, phi, divided by the semimajor axis.
         /// </summary>
+        /// <param name="eccent">The eccent value.</param>
+        /// <param name="one_es">The one_es value.</param>
+        /// <param name="sinphi">The sinphi value.</param>
+        /// <returns>The computed value.</returns>
         protected static double Qsfn(double sinphi, double eccent, double one_es)
         {
             if (eccent >= EPS7)
@@ -899,6 +915,9 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// than calling each function separately.  It is provided here for those
         /// computer systems which don`t implement this function.
         /// </summary>
+        /// <param name="cos_val">The cos_val value.</param>
+        /// <param name="sin_val">The sin_val value.</param>
+        /// <param name="val">The val value.</param>
         protected static void Sincos(double val, out double sin_val, out double cos_val)
 
         {
@@ -911,6 +930,10 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// computations in the Lambert Conformal Conic and the Polar
         /// Stereographic projections.
         /// </summary>
+        /// <param name="eccent">The eccent value.</param>
+        /// <param name="phi">The phi value.</param>
+        /// <param name="sinphi">The sinphi value.</param>
+        /// <returns>The computed value.</returns>
         protected static double Tsfnz(double eccent, double phi, double sinphi)
         {
             double con;
@@ -972,6 +995,8 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// <summary>
         /// Function to eliminate roundoff errors in asin.
         /// </summary>
+        /// <param name="con">The con value.</param>
+        /// <returns>The computed value.</returns>
         protected static double Asinz(double con)
         {
             if (Math.Abs(con) > 1.0)
@@ -996,6 +1021,7 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// <param name="eccent">Spheroid eccentricity.</param>
         /// <param name="ts">Constant value t.</param>
         /// <param name="flag">Error flag number.</param>
+        /// <returns>The computed value.</returns>
         protected static double Phi2z(double eccent, double ts, out long flag)
         {
             double con;
@@ -1039,6 +1065,8 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// in a series for calculating the distance along a meridian.  The
         /// input x represents the eccentricity squared.
         /// </summary>
+        /// <param name="x">The x value.</param>
+        /// <returns>The computed value.</returns>
         protected static double E0fn(double x)
         {
             return 1.0 - (0.25 * x * (1.0 + (x / 16.0 * (3.0 + (1.25 * x)))));
@@ -1079,6 +1107,8 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// of the spheroid, x.  This constant is used in the Polar Stereographic
         /// projection.
         /// </summary>
+        /// <param name="x">The x value.</param>
+        /// <returns>The computed value.</returns>
         protected static double E4fn(double x)
         {
             double con;
@@ -1092,6 +1122,12 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// Function computes the value of M which is the distance along a meridian
         /// from the Equator to latitude phi.
         /// </summary>
+        /// <param name="e0">The e0 value.</param>
+        /// <param name="e1">The e1 value.</param>
+        /// <param name="e2">The e2 value.</param>
+        /// <param name="e3">The e3 value.</param>
+        /// <param name="phi">The phi value.</param>
+        /// <returns>The computed value.</returns>
         protected static double Mlfn(double e0, double e1, double e2, double e3, double phi)
         {
             return (e0 * phi) - (e1 * Math.Sin(2.0 * phi)) + (e2 * Math.Sin(4.0 * phi)) - (e3 * Math.Sin(6.0 * phi));

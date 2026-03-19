@@ -259,6 +259,27 @@ namespace ProjNet.CoordinateSystems.Transformations
             /// <summary>
             /// Initializes a new instance of the class.
             /// </summary>
+            /// <param name="sourcePath">The sourcePath value.</param>
+            /// <param name="width">The width value.</param>
+            /// <param name="height">The height value.</param>
+            /// <param name="area">The area value.</param>
+            /// <param name="epsilon">The epsilon value.</param>
+            /// <param name="west">The west value.</param>
+            /// <param name="east">The east value.</param>
+            /// <param name="south">The south value.</param>
+            /// <param name="north">The north value.</param>
+            /// <param name="a">The a value.</param>
+            /// <param name="b">The b value.</param>
+            /// <param name="c">The c value.</param>
+            /// <param name="d">The d value.</param>
+            /// <param name="e">The e value.</param>
+            /// <param name="f">The f value.</param>
+            /// <param name="sampleData">The sampleData value.</param>
+            /// <param name="latitudeSampleIndex">The latitudeSampleIndex value.</param>
+            /// <param name="longitudeSampleIndex">The longitudeSampleIndex value.</param>
+            /// <param name="longitudeIsPositiveWest">The longitudeIsPositiveWest value.</param>
+            /// <param name="latitudeUnitScale">The latitudeUnitScale value.</param>
+            /// <param name="longitudeUnitScale">The longitudeUnitScale value.</param>
             internal HorizontalGrid(
                 string sourcePath,
                 int width,
@@ -566,7 +587,7 @@ namespace ProjNet.CoordinateSystems.Transformations
             /// <param name="f">The f value.</param>
             /// <param name="sampleData">The sampleData value.</param>
             /// <param name="sampleIndex">The sampleIndex value.</param>
-            /// <param name="sampleData">The sampleData value.</param>
+            /// <param name="noDataValue">The noDataValue value.</param>
             internal VerticalGrid(
                 string sourcePath,
                 int width,
@@ -2020,6 +2041,8 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         /// Represents a documented type.
         /// </summary>
+        /// <param name="buffer">The buffer value.</param>
+        /// <param name="offset">The offset value.</param>
         /// <returns>The computed value.</returns>
         internal delegate double ValueReader(byte[] buffer, int offset);
 

@@ -138,6 +138,7 @@ public class GieBuiltinsTheoryTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
+    /// <returns>The computed value.</returns>
     public static IEnumerable<object[]> GetBuiltinsCases()
     {
         return GetCasesFromFixture("builtins.gie", 600);
@@ -146,6 +147,7 @@ public class GieBuiltinsTheoryTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
+    /// <returns>The computed value.</returns>
     public static IEnumerable<object[]> GetMoreBuiltinsCases()
     {
         return GetCasesFromFixture("more_builtins.gie", 300);
@@ -154,6 +156,7 @@ public class GieBuiltinsTheoryTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
+    /// <returns>The computed value.</returns>
     public static IEnumerable<object[]> GetDhdnEtrs89Cases()
     {
         return GetCasesFromFixture("DHDN_ETRS89.gie", 400);
@@ -162,6 +165,7 @@ public class GieBuiltinsTheoryTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
+    /// <returns>The computed value.</returns>
     public static IEnumerable<object[]> GetRemainingGieCases()
     {
         foreach (string fileName in RemainingFixtureFiles)

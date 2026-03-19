@@ -39,6 +39,7 @@ namespace ProjNet.Data.Generated
         /// <summary>
         /// Performs the documented operation.
         /// </summary>
+        /// <returns>The computed value.</returns>
         internal static IEnumerable<KeyValuePair<int, CoordinateSystem>> GetCoordinateSystems()
         {
             for (int cacheIndex = 0; cacheIndex < EpsgGeneratedCatalog.CoordinateReferenceCount; cacheIndex++)

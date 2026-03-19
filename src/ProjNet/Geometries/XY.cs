@@ -50,6 +50,8 @@ namespace ProjNet.Geometries
         /// <summary>
         /// Performs the documented operation.
         /// </summary>
+        /// <param name="other">The other value.</param>
+        /// <returns>The computed value.</returns>
         public bool Equals(XY other) => (this.X, this.Y).Equals((other.X, other.Y));
 
         /// <inheritdoc />

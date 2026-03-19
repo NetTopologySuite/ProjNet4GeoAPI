@@ -64,6 +64,7 @@ public class Proj2ProjParityExhaustiveTheoryTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
+    /// <returns>The computed value.</returns>
     public static IEnumerable<object[]> GetParityCases()
     {
         string fixturePath = Path.Combine(AppContext.BaseDirectory, "Generated", "proj2proj-direct-parity-exhaustive-fixture.json");

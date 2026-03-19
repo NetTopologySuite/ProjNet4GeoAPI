@@ -47,6 +47,7 @@ public class EpsgWktEquivalenceTheoryTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
+    /// <returns>The computed value.</returns>
     public static IEnumerable<object[]> EpsgFixtureRows()
     {
         string fixturePath = Path.Combine(AppContext.BaseDirectory, FixtureRelativePath.Replace('/', Path.DirectorySeparatorChar));

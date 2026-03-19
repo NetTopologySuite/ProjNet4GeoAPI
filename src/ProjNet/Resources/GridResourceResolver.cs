@@ -39,6 +39,9 @@ namespace ProjNet.Resources
         /// <summary>
         /// Performs the documented operation.
         /// </summary>
+        /// <param name="gridName">The gridName value.</param>
+        /// <param name="targetFilePath">The targetFilePath value.</param>
+        /// <returns>The computed value.</returns>
         bool TryFetch(string gridName, string targetFilePath);
     }
 

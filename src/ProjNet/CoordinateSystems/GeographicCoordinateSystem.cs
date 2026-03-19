@@ -109,6 +109,8 @@ namespace ProjNet.CoordinateSystems
         /// <summary>
         /// Gets details on a conversion to WGS84.
         /// </summary>
+        /// <param name="index">The index value.</param>
+        /// <returns>The computed value.</returns>
         public Wgs84ConversionInfo GetWgs84ConversionInfo(int index)
         {
             return this.WGS84ConversionInfo[index];

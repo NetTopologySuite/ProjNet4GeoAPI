@@ -1,4 +1,4 @@
-﻿// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
+// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
 //
 // This file is part of ProjNet.
 // ProjNet is free software; you can redistribute it and/or modify
@@ -135,6 +135,8 @@ namespace ProjNet.CoordinateSystems
         /// Gets the units for the dimension within coordinate system.
         /// Each dimension in the coordinate system has corresponding units.
         /// </summary>
+        /// <param name="dimension">The dimension value.</param>
+        /// <returns>The computed value.</returns>
         public override IUnit GetUnits(int dimension)
         {
             return this.BaseCoordinateSystem.GetUnits(dimension);
