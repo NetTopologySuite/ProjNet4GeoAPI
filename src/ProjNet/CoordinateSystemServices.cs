@@ -88,24 +88,30 @@ namespace ProjNet
             {
                 get { return null; }
             }
+
             public string Authority { get; private set; }
             public long AuthorityCode { get; private set; }
+
             public string Alias
             {
                 get { return null; }
             }
+
             public string Abbreviation
             {
                 get { return null; }
             }
+
             public string Remarks
             {
                 get { return null; }
             }
+
             public string WKT
             {
                 get { return null; }
             }
+
             public string XML
             {
                 get { return null; }

@@ -22,6 +22,13 @@ namespace ProjNET.Tests;
 /// </summary>
 internal enum GieDirection
 {
+    /// <summary>
+    /// Executes the forward projection direction.
+    /// </summary>
     Forward = 0,
+
+    /// <summary>
+    /// Executes the inverse projection direction.
+    /// </summary>
     Inverse = 1,
 }

@@ -27,7 +27,14 @@ namespace ProjNet.Resources
     /// </summary>
     internal enum GridResourceResolutionMode
     {
+        /// <summary>
+        /// Resolves grids only from locally available files.
+        /// </summary>
         LocalOnly = 0,
+
+        /// <summary>
+        /// Resolves grids locally first, then falls back to network retrieval.
+        /// </summary>
         LocalThenNetwork = 1,
     }
 
