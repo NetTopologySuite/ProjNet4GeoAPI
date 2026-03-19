@@ -21,7 +21,7 @@ namespace ProjNet.CoordinateSystems.Transformations
     using System.Linq;
 
     /// <summary>
-    ///
+    /// Represents a transformation that executes a sequence of coordinate transformations in order.
     /// </summary>
     [Serializable]
     internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationCore
@@ -51,7 +51,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         }
 
         /// <summary>
-        ///
+        /// Gets the ordered list of transformations that form this concatenated transform.
         /// </summary>
         public IList<ICoordinateTransformationCore> CoordinateTransformationList
         {
