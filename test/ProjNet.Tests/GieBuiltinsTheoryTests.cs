@@ -42,6 +42,8 @@ public class GieBuiltinsTheoryTests
         ["eqc"] = "equidistant_cylindrical",
         ["etmerc"] = "etmerc",
         ["gnom"] = "gnom",
+        ["goode"] = "goode_homolosine",
+        ["hammer"] = "hammer",
         ["krovak"] = "krovak",
         ["laea"] = "lambert_azimuthal_equal_area",
         ["lcc"] = "lambert_conformal_conic_2sp",
@@ -59,6 +61,7 @@ public class GieBuiltinsTheoryTests
         ["robin"] = "robin",
         ["sterea"] = "oblique_stereographic",
         ["stere"] = "polar_stereographic",
+        ["sinu"] = "sinusoidal",
         ["tmerc"] = "transverse_mercator",
         ["utm"] = "utm",
     };

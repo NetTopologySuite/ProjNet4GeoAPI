@@ -102,6 +102,11 @@ namespace ProjNet.CoordinateSystems.Projections
 
             Register("equal_earth", typeof(EqualEarthProjection));
             Register("eqearth", typeof(EqualEarthProjection));
+            Register("hammer", typeof(HammerProjection));
+            Register("sinu", typeof(SinusoidalProjection));
+            Register("sinusoidal", typeof(SinusoidalProjection));
+            Register("goode", typeof(GoodeProjection));
+            Register("goode_homolosine", typeof(GoodeProjection));
 
             Register("natural_earth", typeof(NaturalEarthProjection));
             Register("natearth", typeof(NaturalEarthProjection));
