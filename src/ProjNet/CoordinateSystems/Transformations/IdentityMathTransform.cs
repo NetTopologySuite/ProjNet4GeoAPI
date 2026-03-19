@@ -20,13 +20,17 @@ namespace ProjNet.CoordinateSystems.Transformations
     using System;
 
     /// <summary>
-    /// Represents the documented type.
+    /// Represents a pass-through transform that leaves all ordinates unchanged.
     /// </summary>
     [Serializable]
     internal sealed class IdentityMathTransform : MathTransform
     {
         private readonly int dimension;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="IdentityMathTransform"/> class.
+        /// </summary>
+        /// <param name="dimension">Requested transform dimension; values below 2 are promoted to 2.</param>
         internal IdentityMathTransform(int dimension)
         {
             this.dimension = dimension < 2 ? 2 : dimension;

@@ -32,6 +32,11 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// </summary>
         internal int TargetSrid { get; }
 
+        /// <summary>
+        /// Compares this pair with another SRID pair.
+        /// </summary>
+        /// <param name="other">The pair to compare.</param>
+        /// <returns><see langword="true"/> when source and target SRIDs are equal.</returns>
         public bool Equals(SridPair other)
         {
             return this.SourceSrid == other.SourceSrid

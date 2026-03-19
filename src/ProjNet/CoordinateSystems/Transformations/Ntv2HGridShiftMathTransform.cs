@@ -25,7 +25,7 @@ namespace ProjNet.CoordinateSystems.Transformations
     using System.Text;
 
     /// <summary>
-    /// Represents the documented type.
+    /// Applies horizontal datum shifts using one or more NTv2 grid files.
     /// </summary>
     [Serializable]
     internal sealed class Ntv2HGridShiftMathTransform : MathTransform
@@ -38,6 +38,10 @@ namespace ProjNet.CoordinateSystems.Transformations
         private readonly IReadOnlyList<Ntv2GridSet> gridSets;
         private bool isInverted;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Ntv2HGridShiftMathTransform"/> class.
+        /// </summary>
+        /// <param name="gridPaths">Ordered NTv2 grid file paths to load.</param>
         internal Ntv2HGridShiftMathTransform(IReadOnlyList<string> gridPaths)
         {
             if (gridPaths is null)

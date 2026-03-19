@@ -23,10 +23,17 @@ namespace ProjNet.CoordinateSystems.Transformations
     using System.Linq;
 
     /// <summary>
-    /// Represents the documented type.
+    /// Creates runtime math transforms from PROJ-style pipeline operation strings.
     /// </summary>
     internal static class ProjPipelineMathTransformFactory
     {
+        /// <summary>
+        /// Tries to create an executable transform from a full operation or pipeline definition.
+        /// </summary>
+        /// <param name="operation">Operation text to parse.</param>
+        /// <param name="transform">Created transform when parsing succeeds.</param>
+        /// <param name="skipReason">Reason why transform creation was skipped.</param>
+        /// <returns><see langword="true"/> when a transform was created.</returns>
         internal static bool TryCreateMathTransform(string operation, out MathTransform transform, out string skipReason)
         {
             transform = null;
