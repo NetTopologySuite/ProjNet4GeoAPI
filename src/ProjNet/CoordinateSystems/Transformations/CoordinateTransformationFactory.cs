@@ -682,8 +682,14 @@ namespace ProjNet.CoordinateSystems.Transformations
 
             return new CoordinateTransformation(
                 source,
-                target, TransformType.Transformation, ct,
-                string.Empty, string.Empty, -1, string.Empty, string.Empty);
+                target,
+                TransformType.Transformation,
+                ct,
+                string.Empty,
+                string.Empty,
+                -1,
+                string.Empty,
+                string.Empty);
         }
 
         private static CoordinateTransformation CreateDirectProjectedTransform(ProjectedCoordinateSystem source, ProjectedCoordinateSystem target)
@@ -740,9 +746,18 @@ namespace ProjNet.CoordinateSystems.Transformations
             {
                 var mathTransform = CreateCoordinateOperation(
                     target.Projection,
-                    target.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid, target.LinearUnit);
-                return new CoordinateTransformation(source, target, TransformType.Transformation, mathTransform,
-                    string.Empty, string.Empty, -1, string.Empty, string.Empty);
+                    target.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid,
+                    target.LinearUnit);
+                return new CoordinateTransformation(
+                    source,
+                    target,
+                    TransformType.Transformation,
+                    mathTransform,
+                    string.Empty,
+                    string.Empty,
+                    -1,
+                    string.Empty,
+                    string.Empty);
             }
 
             // Geographic coordinatesystems differ - Create concatenated transform
@@ -752,17 +767,34 @@ namespace ProjNet.CoordinateSystems.Transformations
             ct.CoordinateTransformationList.Add(ctFac.CreateFromCoordinateSystems(target.GeographicCoordinateSystem, target));
             return new CoordinateTransformation(
                 source,
-                target, TransformType.Transformation, ct,
-                string.Empty, string.Empty, -1, string.Empty, string.Empty);
+                target,
+                TransformType.Transformation,
+                ct,
+                string.Empty,
+                string.Empty,
+                -1,
+                string.Empty,
+                string.Empty);
         }
 
         private static CoordinateTransformation Proj2Geog(ProjectedCoordinateSystem source, GeographicCoordinateSystem target)
         {
             if (source.GeographicCoordinateSystem.EqualParams(target))
             {
-                var mathTransform = CreateCoordinateOperation(source.Projection, source.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid, source.LinearUnit).Inverse();
-                return new CoordinateTransformation(source, target, TransformType.Transformation, mathTransform,
-                    string.Empty, string.Empty, -1, string.Empty, string.Empty);
+                var mathTransform = CreateCoordinateOperation(
+                    source.Projection,
+                    source.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid,
+                    source.LinearUnit).Inverse();
+                return new CoordinateTransformation(
+                    source,
+                    target,
+                    TransformType.Transformation,
+                    mathTransform,
+                    string.Empty,
+                    string.Empty,
+                    -1,
+                    string.Empty,
+                    string.Empty);
             }
             else
             {   // Geographic coordinatesystems differ - Create concatenated transform
@@ -772,8 +804,14 @@ namespace ProjNet.CoordinateSystems.Transformations
                 ct.CoordinateTransformationList.Add(ctFac.CreateFromCoordinateSystems(source.GeographicCoordinateSystem, target));
                 return new CoordinateTransformation(
                     source,
-                    target, TransformType.Transformation, ct,
-                    string.Empty, string.Empty, -1, string.Empty, string.Empty);
+                    target,
+                    TransformType.Transformation,
+                    ct,
+                    string.Empty,
+                    string.Empty,
+                    -1,
+                    string.Empty,
+                    string.Empty);
             }
         }
 
@@ -791,8 +829,14 @@ namespace ProjNet.CoordinateSystems.Transformations
                 // No datum shift needed
                 return new CoordinateTransformation(
                     source,
-                    target, TransformType.Conversion, new GeographicTransform(source, target),
-                    string.Empty, string.Empty, -1, string.Empty, string.Empty);
+                    target,
+                    TransformType.Conversion,
+                    new GeographicTransform(source, target),
+                    string.Empty,
+                    string.Empty,
+                    -1,
+                    string.Empty,
+                    string.Empty);
             }
 
             // Create datum shift
@@ -801,10 +845,14 @@ namespace ProjNet.CoordinateSystems.Transformations
             var cFac = new CoordinateSystemFactory();
             var sourceCentric = cFac.CreateGeocentricCoordinateSystem(
                 source.HorizontalDatum.Name + " Geocentric",
-                source.HorizontalDatum, LinearUnit.Metre, source.PrimeMeridian);
+                source.HorizontalDatum,
+                LinearUnit.Metre,
+                source.PrimeMeridian);
             var targetCentric = cFac.CreateGeocentricCoordinateSystem(
                 target.HorizontalDatum.Name + " Geocentric",
-                target.HorizontalDatum, LinearUnit.Metre, source.PrimeMeridian);
+                target.HorizontalDatum,
+                LinearUnit.Metre,
+                source.PrimeMeridian);
             var ct = new ConcatenatedTransform();
             AddIfNotNull(ct, ctFac.CreateFromCoordinateSystems(source, sourceCentric));
             AddIfNotNull(ct, ctFac.CreateFromCoordinateSystems(sourceCentric, targetCentric));
@@ -812,8 +860,14 @@ namespace ProjNet.CoordinateSystems.Transformations
 
             return new CoordinateTransformation(
                 source,
-                target, TransformType.Transformation, ct,
-                string.Empty, string.Empty, -1, string.Empty, string.Empty);
+                target,
+                TransformType.Transformation,
+                ct,
+                string.Empty,
+                string.Empty,
+                -1,
+                string.Empty,
+                string.Empty);
         }
 
         private static void AddIfNotNull(ConcatenatedTransform concatTrans, ICoordinateTransformation trans)
@@ -839,10 +893,15 @@ namespace ProjNet.CoordinateSystems.Transformations
             {
                 ct.CoordinateTransformationList.Add(
                     new CoordinateTransformation(
-                    (target.HorizontalDatum.Wgs84Parameters == null || target.HorizontalDatum.Wgs84Parameters.HasZeroValuesOnly) ? target : GeocentricCoordinateSystem.WGS84,
-                    source, TransformType.Transformation,
+                        (target.HorizontalDatum.Wgs84Parameters == null || target.HorizontalDatum.Wgs84Parameters.HasZeroValuesOnly) ? target : GeocentricCoordinateSystem.WGS84,
+                        source,
+                        TransformType.Transformation,
                         new DatumTransform(source.HorizontalDatum.Wgs84Parameters),
-                        string.Empty, string.Empty, -1, string.Empty, string.Empty));
+                        string.Empty,
+                        string.Empty,
+                        -1,
+                        string.Empty,
+                        string.Empty));
             }
 
             // Does target has a datum different from WGS84 and is there a shift specified?
@@ -850,11 +909,15 @@ namespace ProjNet.CoordinateSystems.Transformations
             {
                 ct.CoordinateTransformationList.Add(
                     new CoordinateTransformation(
-                    (source.HorizontalDatum.Wgs84Parameters == null || source.HorizontalDatum.Wgs84Parameters.HasZeroValuesOnly) ? source : GeocentricCoordinateSystem.WGS84,
-                    target,
-                    TransformType.Transformation,
+                        (source.HorizontalDatum.Wgs84Parameters == null || source.HorizontalDatum.Wgs84Parameters.HasZeroValuesOnly) ? source : GeocentricCoordinateSystem.WGS84,
+                        target,
+                        TransformType.Transformation,
                         new DatumTransform(target.HorizontalDatum.Wgs84Parameters).Inverse(),
-                        string.Empty, string.Empty, -1, string.Empty, string.Empty));
+                        string.Empty,
+                        string.Empty,
+                        -1,
+                        string.Empty,
+                        string.Empty));
             }
 
             // If we don't have a transformation in this list, return null
@@ -866,7 +929,16 @@ namespace ProjNet.CoordinateSystems.Transformations
             // If we only have one shift, lets just return the datumshift from/to wgs84
             if (ct.CoordinateTransformationList.Count == 1)
             {
-                return new CoordinateTransformation(source, target, TransformType.ConversionAndTransformation, ((ICoordinateTransformation)ct.CoordinateTransformationList[0]).MathTransform, string.Empty, string.Empty, -1, string.Empty, string.Empty);
+                return new CoordinateTransformation(
+                    source,
+                    target,
+                    TransformType.ConversionAndTransformation,
+                    ((ICoordinateTransformation)ct.CoordinateTransformationList[0]).MathTransform,
+                    string.Empty,
+                    string.Empty,
+                    -1,
+                    string.Empty,
+                    string.Empty);
             }
 
             return new CoordinateTransformation(source, target, TransformType.ConversionAndTransformation, ct, string.Empty, string.Empty, -1, string.Empty, string.Empty);
