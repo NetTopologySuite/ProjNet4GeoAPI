@@ -38,7 +38,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         private bool isInverted;
 
         /// <summary>
-        /// Initializes a new instance of the class.
+        /// Initializes a new instance of the <see cref="GeoTiffHGridShiftMathTransform"/> class.
         /// </summary>
         /// <param name="gridPaths">The gridPaths value.</param>
         internal GeoTiffHGridShiftMathTransform(IReadOnlyList<string> gridPaths)
@@ -257,7 +257,7 @@ namespace ProjNet.CoordinateSystems.Transformations
             private readonly double longitudeUnitScale;
 
             /// <summary>
-            /// Initializes a new instance of the class.
+            /// Initializes a new instance of the <see cref="GeoTiffHGridShiftMathTransform.HorizontalGrid"/> class.
             /// </summary>
             /// <param name="sourcePath">The sourcePath value.</param>
             /// <param name="width">The width value.</param>
@@ -348,7 +348,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         private bool isInverted;
 
         /// <summary>
-        /// Initializes a new instance of the class.
+        /// Initializes a new instance of the <see cref="GeoTiffVGridShiftMathTransform"/> class.
         /// </summary>
         /// <param name="gridPaths">The gridPaths value.</param>
         /// <param name="forwardMultiplier">The forwardMultiplier value.</param>
@@ -568,7 +568,7 @@ namespace ProjNet.CoordinateSystems.Transformations
             private readonly double? noDataValue;
 
             /// <summary>
-            /// Initializes a new instance of the class.
+            /// Initializes a new instance of the <see cref="GeoTiffVGridShiftMathTransform.VerticalGrid"/> class.
             /// </summary>
             /// <param name="sourcePath">The sourcePath value.</param>
             /// <param name="width">The width value.</param>
@@ -1313,7 +1313,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         private readonly struct GeoTransform
         {
             /// <summary>
-            /// Initializes a new instance of the class.
+            /// Initializes a new instance of the <see cref="GeoTransform"/> struct.
             /// </summary>
             /// <param name="width">The width value.</param>
             /// <param name="height">The height value.</param>
@@ -1619,7 +1619,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         private readonly struct GeoMetadata
         {
             /// <summary>
-            /// Initializes a new instance of the class.
+            /// Initializes a new instance of the <see cref="GeoMetadata"/> struct.
             /// </summary>
             /// <param name="descriptionsBySample">The descriptionsBySample value.</param>
             /// <param name="positiveValueBySample">The positiveValueBySample value.</param>
@@ -1693,7 +1693,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         private readonly double determinant;
 
         /// <summary>
-        /// Initializes a new instance of the class.
+        /// Initializes a new instance of the <see cref="BaseGeoGrid"/> class.
         /// </summary>
         /// <param name="sourcePath">The sourcePath value.</param>
         /// <param name="width">The width value.</param>
@@ -1914,7 +1914,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         private readonly int width;
 
         /// <summary>
-        /// Initializes a new instance of the class.
+        /// Initializes a new instance of the <see cref="SampleData"/> struct.
         /// </summary>
         /// <param name="valuesBySample">The valuesBySample value.</param>
         /// <param name="scaleBySample">The scaleBySample value.</param>

@@ -28,7 +28,7 @@ using ProjNet.CoordinateSystems;
 public class ProjNetIssues : CoordinateTransformTestsBase
 {
     /// <summary>
-    /// Performs the documented operation.
+    /// Initializes a new instance of the <see cref="ProjNetIssues"/> class.
     /// </summary>
     public ProjNetIssues()
     {

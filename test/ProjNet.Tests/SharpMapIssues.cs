@@ -28,7 +28,7 @@ using ProjNet.CoordinateSystems.Transformations;
 public class SharpMapIssues : CoordinateTransformTestsBase
 {
     /// <summary>
-    /// Performs the documented operation.
+    /// Initializes a new instance of the <see cref="SharpMapIssues"/> class.
     /// </summary>
     public SharpMapIssues()
     {

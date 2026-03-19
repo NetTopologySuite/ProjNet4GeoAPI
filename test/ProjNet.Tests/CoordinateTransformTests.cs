@@ -33,7 +33,7 @@ using ProjNet.IO.CoordinateSystems;
 public class CoordinateTransformTests : CoordinateTransformTestsBase
 {
     /// <summary>
-    /// Performs the documented operation.
+    /// Initializes a new instance of the <see cref="CoordinateTransformTests"/> class.
     /// </summary>
     public CoordinateTransformTests()
     {
