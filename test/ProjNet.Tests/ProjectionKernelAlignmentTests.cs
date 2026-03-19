@@ -29,6 +29,10 @@ public class ProjectionKernelAlignmentTests
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
+    /// <summary>
+    /// Validates Mercator family aliases against the projection registry.
+    /// </summary>
+    /// <param name="projectionName">Projection alias to resolve.</param>
     [Theory]
     [InlineData("Mercator (variant A)")]
     [InlineData("Mercator (variant B)")]
@@ -47,6 +51,10 @@ public class ProjectionKernelAlignmentTests
         Assert.True(result.Length >= 2);
     }
 
+    /// <summary>
+    /// Validates Transverse Mercator family aliases against the projection registry.
+    /// </summary>
+    /// <param name="projectionName">Projection alias to resolve.</param>
     [Theory]
     [InlineData("Transverse_Mercator_South_Oriented")]
     [InlineData("Gauss_Kruger")]
@@ -67,6 +75,10 @@ public class ProjectionKernelAlignmentTests
         Assert.True(result.Length >= 2);
     }
 
+    /// <summary>
+    /// Validates Lambert Conformal Conic aliases against the projection registry.
+    /// </summary>
+    /// <param name="projectionName">Projection alias to resolve.</param>
     [Theory]
     [InlineData("Lambert_Conformal_Conic_1SP")]
     [InlineData("Lambert_Conformal_Conic_2SP_Belgium")]

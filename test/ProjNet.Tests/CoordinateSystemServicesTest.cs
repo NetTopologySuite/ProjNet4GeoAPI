@@ -130,6 +130,10 @@ public class CoordinateSystemServicesTest
         Assert.IsNotNull(css.GetCoordinateSystem(3857));
     }
 
+    /// <summary>
+    /// Validates XML-backed constructor loading for coordinate system definitions.
+    /// </summary>
+    /// <param name="xmlPath">Path to the XML definition file.</param>
     [Xunit.Theory]
     [Xunit.InlineData(@"D:\temp\ConsoleApplication9\SpatialRefSys.xml")]
     public void TestConstructorLoadXml(string xmlPath)
@@ -148,6 +152,10 @@ public class CoordinateSystemServicesTest
         Assert.IsTrue(ReferenceEquals(css.GetCoordinateSystem("EPSG", 4326), css.GetCoordinateSystem(4326)));
     }
 
+    /// <summary>
+    /// Validates CSV-backed constructor loading for coordinate system definitions.
+    /// </summary>
+    /// <param name="csvPath">Path to the CSV definition file, or empty for embedded defaults.</param>
     [Xunit.Theory]
     [Xunit.InlineData(@"")]
     public void TestConstructorLoadCsv(string csvPath)
@@ -170,6 +178,11 @@ public class CoordinateSystemServicesTest
         Thread.Sleep(1000);
     }
 
+    /// <summary>
+    /// Loads SRID/WKT definitions from CSV input or embedded defaults.
+    /// </summary>
+    /// <param name="csvPath">Optional path to an external CSV file.</param>
+    /// <returns>Sequence of SRID/WKT pairs.</returns>
     internal static IEnumerable<KeyValuePair<int, string>> LoadCsv(string csvPath = null)
     {
         Console.WriteLine("Reading '{0}'.", csvPath ?? "SRID.csv from resources stream");

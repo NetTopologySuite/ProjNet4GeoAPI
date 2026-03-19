@@ -29,15 +29,15 @@ using ProjNet.CoordinateSystems.Transformations;
 public class CoordinateTransformTestsBase
 {
     /// <summary>
-    /// Performs the documented operation.
+    /// Shared coordinate system factory used by transformation tests.
     /// </summary>
     protected readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     /// <summary>
-    /// Performs the documented operation.
+    /// Shared transformation factory used by transformation tests.
     /// </summary>
     protected readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
     /// <summary>
-    /// Performs the documented operation.
+    /// Random source used for stochastic test data when needed.
     /// </summary>
     protected readonly Random Random = new Random();
 
@@ -46,6 +46,13 @@ public class CoordinateTransformTestsBase
     /// </summary>
     protected bool Verbose { get; set; }
 
+    /// <summary>
+    /// Checks whether the coordinate deltas between two points are below the provided tolerance.
+    /// </summary>
+    /// <param name="p1">First point.</param>
+    /// <param name="p2">Second point.</param>
+    /// <param name="tolerance">Maximum allowed absolute delta per ordinate.</param>
+    /// <returns><see langword="true"/> when all compared ordinates are within tolerance.</returns>
     protected bool ToleranceLessThan(double[] p1, double[] p2, double tolerance)
     {
         double d0 = Math.Abs(p1[0] - p2[0]);
@@ -70,6 +77,14 @@ public class CoordinateTransformTestsBase
         return d0 < tolerance && d1 < tolerance;
     }
 
+    /// <summary>
+    /// Formats a readable error message for transformation mismatches.
+    /// </summary>
+    /// <param name="projection">Projection label used in the message.</param>
+    /// <param name="pExpected">Expected coordinate.</param>
+    /// <param name="pResult">Actual coordinate.</param>
+    /// <param name="reverse">Whether the failing direction is reverse/inverse.</param>
+    /// <returns>Formatted error string for diagnostics.</returns>
     protected string TransformationError(string projection, double[] pExpected, double[] pResult, bool reverse = false)
     {
         return string.Format(
@@ -81,6 +96,16 @@ public class CoordinateTransformTestsBase
                              projection, reverse ? "reverse" : "forward");
     }
 
+    /// <summary>
+    /// Executes a forward (and optionally reverse) transformation assertion with tolerance checks.
+    /// </summary>
+    /// <param name="title">Display title for error diagnostics.</param>
+    /// <param name="source">Source coordinate system.</param>
+    /// <param name="target">Target coordinate system.</param>
+    /// <param name="testPoint">Input coordinate in source space.</param>
+    /// <param name="expectedPoint">Expected coordinate in target space.</param>
+    /// <param name="tolerance">Forward transformation tolerance.</param>
+    /// <param name="reverseTolerance">Optional inverse tolerance; NaN skips inverse assertion.</param>
     public void Test(string title, CoordinateSystem source, CoordinateSystem target,
                      double[] testPoint, double[] expectedPoint,
                      double tolerance, double reverseTolerance = double.NaN)

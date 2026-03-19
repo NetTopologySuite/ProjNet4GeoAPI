@@ -29,6 +29,10 @@ public class Phase9ConicProjectionSupportTests
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
+    /// <summary>
+    /// Validates that Equidistant Conic aliases resolve from WKT and produce usable transforms.
+    /// </summary>
+    /// <param name="projectionName">Projection alias to validate.</param>
     [Theory]
     [InlineData("eqdc")]
     [InlineData("equidistant_conic")]
@@ -66,6 +70,10 @@ public class Phase9ConicProjectionSupportTests
         Assert.InRange(System.Math.Abs(roundtrip[1] - latitude), 0d, tolerance);
     }
 
+    /// <summary>
+    /// Validates that Bonne aliases resolve from WKT and produce usable transforms.
+    /// </summary>
+    /// <param name="projectionName">Projection alias to validate.</param>
     [Theory]
     [InlineData("bonne")]
     public void SupportsBonneProjectionAliasesFromWkt(string projectionName)
@@ -101,6 +109,10 @@ public class Phase9ConicProjectionSupportTests
         Assert.InRange(System.Math.Abs(roundtrip[1] - latitude), 0d, tolerance);
     }
 
+    /// <summary>
+    /// Validates that Perspective Conic aliases resolve from WKT and produce usable transforms.
+    /// </summary>
+    /// <param name="projectionName">Projection alias to validate.</param>
     [Theory]
     [InlineData("pconic")]
     [InlineData("perspective_conic")]
