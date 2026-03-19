@@ -200,6 +200,11 @@ namespace ProjNet.CoordinateSystems.Projections
             return true;
         }
 
+        /// <summary>
+        /// Sets or adds a projection parameter value using case-insensitive key matching.
+        /// </summary>
+        /// <param name="name">Parameter name.</param>
+        /// <param name="value">Parameter value.</param>
         internal void SetParameterValue(string name, double value)
         {
             string key = name.ToLowerInvariant();

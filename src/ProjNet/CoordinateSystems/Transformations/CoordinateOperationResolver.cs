@@ -21,10 +21,17 @@ namespace ProjNet.CoordinateSystems.Transformations
     using System.Collections.Generic;
 
     /// <summary>
-    /// Represents the documented type.
+    /// Resolves the best available coordinate operation candidate for a source/target pair.
     /// </summary>
     internal static class CoordinateOperationResolver
     {
+        /// <summary>
+        /// Resolves the preferred transformation from identity and direct-operation candidates.
+        /// </summary>
+        /// <param name="source">Source coordinate system.</param>
+        /// <param name="target">Target coordinate system.</param>
+        /// <param name="directResolver">Resolver delegate for non-identity operations.</param>
+        /// <returns>Best scored transformation, or <see langword="null"/> when none is available.</returns>
         internal static ICoordinateTransformation Resolve(
             CoordinateSystem source,
             CoordinateSystem target,

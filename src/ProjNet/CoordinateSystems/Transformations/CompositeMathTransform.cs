@@ -20,7 +20,7 @@ namespace ProjNet.CoordinateSystems.Transformations
     using System.Collections.Generic;
 
     /// <summary>
-    /// Represents the documented type.
+    /// Composes multiple math transforms into a single sequential transform.
     /// </summary>
     [Serializable]
     internal sealed class CompositeMathTransform : MathTransform
@@ -28,6 +28,10 @@ namespace ProjNet.CoordinateSystems.Transformations
         private MathTransform[] transforms;
         private MathTransform inverse;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CompositeMathTransform"/> class.
+        /// </summary>
+        /// <param name="transforms">Ordered transform chain executed from first to last.</param>
         internal CompositeMathTransform(IReadOnlyList<MathTransform> transforms)
         {
             if (transforms is null)

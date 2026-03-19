@@ -219,6 +219,12 @@ namespace ProjNet.CoordinateSystems.Projections
             return null;
         }
 
+        /// <summary>
+        /// Creates a projection transform instance for the provided projection class name.
+        /// </summary>
+        /// <param name="className">Projection class name or alias.</param>
+        /// <param name="parameters">Projection parameters passed to the constructor.</param>
+        /// <returns>Constructed projection transform.</returns>
         internal static MathTransform CreateProjection(string className, IEnumerable<ProjectionParameter> parameters)
         {
             string key = ProjectionNameToRegistryKey(className);

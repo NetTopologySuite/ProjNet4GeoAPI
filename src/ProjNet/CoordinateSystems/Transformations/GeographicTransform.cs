@@ -25,6 +25,11 @@ namespace ProjNet.CoordinateSystems.Transformations
     [Serializable]
     public class GeographicTransform : MathTransform
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GeographicTransform"/> class.
+        /// </summary>
+        /// <param name="sourceGCS">Source geographic coordinate system.</param>
+        /// <param name="targetGCS">Target geographic coordinate system.</param>
         internal GeographicTransform(GeographicCoordinateSystem sourceGCS, GeographicCoordinateSystem targetGCS)
         {
             this.SourceGCS = sourceGCS;

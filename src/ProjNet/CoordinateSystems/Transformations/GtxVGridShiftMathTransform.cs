@@ -23,7 +23,7 @@ namespace ProjNet.CoordinateSystems.Transformations
     using System.Linq;
 
     /// <summary>
-    /// Represents the documented type.
+    /// Applies vertical datum shifts using one or more GTX grid files.
     /// </summary>
     [Serializable]
     internal sealed class GtxVGridShiftMathTransform : MathTransform
@@ -33,6 +33,11 @@ namespace ProjNet.CoordinateSystems.Transformations
         private readonly double forwardMultiplier;
         private bool isInverted;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GtxVGridShiftMathTransform"/> class.
+        /// </summary>
+        /// <param name="gridPaths">Ordered GTX grid file paths to load.</param>
+        /// <param name="forwardMultiplier">Multiplier applied to interpolated values in forward direction.</param>
         internal GtxVGridShiftMathTransform(IReadOnlyList<string> gridPaths, double forwardMultiplier = -1d)
         {
             if (gridPaths is null)
