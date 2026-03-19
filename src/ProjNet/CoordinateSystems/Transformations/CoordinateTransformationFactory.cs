@@ -55,6 +55,11 @@ namespace ProjNet.CoordinateSystems.Transformations
             return CoordinateOperationResolver.Resolve(sourceCS, targetCS, this.CreateFromCoordinateSystemsWithMetadata);
         }
 
+        internal static bool TryCreateProjPipelineMathTransform(string operation, out MathTransform transform, out string skipReason)
+        {
+            return ProjPipelineMathTransformFactory.TryCreateMathTransform(operation, out transform, out skipReason);
+        }
+
         private ICoordinateTransformation CreateFromCoordinateSystemsWithMetadata(CoordinateSystem sourceCS, CoordinateSystem targetCS)
         {
             if (TryGetDirectProjectedOperation(sourceCS, targetCS, out var operation, out string resolvedGridPath))
