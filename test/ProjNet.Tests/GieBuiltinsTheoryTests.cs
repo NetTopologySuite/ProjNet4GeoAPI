@@ -51,6 +51,7 @@ public class GieBuiltinsTheoryTests
         ["natearth2"] = "natearth2",
         ["omerc"] = "oblique_mercator",
         ["ortho"] = "orthographic",
+        ["patterson"] = "patterson",
         ["poly"] = "polyconic",
         ["robin"] = "robin",
         ["sterea"] = "oblique_stereographic",

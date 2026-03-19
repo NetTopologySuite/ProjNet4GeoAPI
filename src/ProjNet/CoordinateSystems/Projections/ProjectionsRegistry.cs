@@ -60,6 +60,7 @@ namespace ProjNet.CoordinateSystems.Projections
             Register("cea", typeof(CylindricalEqualAreaProjection));
             Register("loximuthal", typeof(LoximuthalProjection));
             Register("loxim", typeof(LoximuthalProjection));
+            Register("patterson", typeof(PattersonProjection));
 
             Register("transverse_mercator", typeof(TransverseMercator));
             Register("transverse_mercator_south_oriented", typeof(TransverseMercator));
