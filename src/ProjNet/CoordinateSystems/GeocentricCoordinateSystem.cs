@@ -28,6 +28,19 @@ namespace ProjNet.CoordinateSystems
     [Serializable]
     public class GeocentricCoordinateSystem : CoordinateSystem
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="GeocentricCoordinateSystem"/> class.
+        /// </summary>
+        /// <param name="datum">Horizontal datum used by this coordinate system.</param>
+        /// <param name="linearUnit">Linear unit applied to all axes.</param>
+        /// <param name="primeMeridian">Prime meridian used for longitude reference.</param>
+        /// <param name="axisInfo">Axis definition list (must contain 3 axes).</param>
+        /// <param name="name">Coordinate system name.</param>
+        /// <param name="authority">Authority name.</param>
+        /// <param name="code">Authority code.</param>
+        /// <param name="alias">Alias name.</param>
+        /// <param name="remarks">Additional remarks.</param>
+        /// <param name="abbreviation">Abbreviation.</param>
         internal GeocentricCoordinateSystem(HorizontalDatum datum, LinearUnit linearUnit, PrimeMeridian primeMeridian, List<AxisInfo> axisInfo,
             string name, string authority, long code, string alias,
             string remarks, string abbreviation)

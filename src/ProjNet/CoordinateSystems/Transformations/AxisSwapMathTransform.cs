@@ -19,7 +19,7 @@ namespace ProjNet.CoordinateSystems.Transformations
     using System;
 
     /// <summary>
-    /// Represents the documented type.
+    /// Reorders and optionally flips coordinate ordinates according to axis mapping rules.
     /// </summary>
     [Serializable]
     internal sealed class AxisSwapMathTransform : MathTransform
@@ -32,6 +32,16 @@ namespace ProjNet.CoordinateSystems.Transformations
         private int ySign;
         private int zSign;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AxisSwapMathTransform"/> class.
+        /// </summary>
+        /// <param name="dimension">Coordinate dimension (2 or 3).</param>
+        /// <param name="xSourceIndex">Source ordinate index used for X output.</param>
+        /// <param name="xSign">Sign multiplier for X output.</param>
+        /// <param name="ySourceIndex">Source ordinate index used for Y output.</param>
+        /// <param name="ySign">Sign multiplier for Y output.</param>
+        /// <param name="zSourceIndex">Source ordinate index used for Z output.</param>
+        /// <param name="zSign">Sign multiplier for Z output.</param>
         internal AxisSwapMathTransform(
             int dimension,
             int xSourceIndex,

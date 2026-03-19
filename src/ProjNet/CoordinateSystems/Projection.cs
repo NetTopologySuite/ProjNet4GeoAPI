@@ -32,6 +32,17 @@ namespace ProjNet.CoordinateSystems
     [Serializable]
     public class Projection : Info, IProjection
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Projection"/> class.
+        /// </summary>
+        /// <param name="className">Projection class name, for example <c>Transverse_Mercator</c>.</param>
+        /// <param name="parameters">Projection parameters.</param>
+        /// <param name="name">Projection display name.</param>
+        /// <param name="authority">Authority name.</param>
+        /// <param name="code">Authority code.</param>
+        /// <param name="alias">Alias name.</param>
+        /// <param name="remarks">Additional remarks.</param>
+        /// <param name="abbreviation">Abbreviation.</param>
         internal Projection(string className, List<ProjectionParameter> parameters,
             string name, string authority, long code, string alias,
             string remarks, string abbreviation)

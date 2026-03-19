@@ -20,10 +20,17 @@ namespace ProjNet.CoordinateSystems.Transformations
     using ProjNet.CoordinateSystems;
 
     /// <summary>
-    /// Represents the documented type.
+    /// Creates axis-order correction transforms between source and target coordinate systems.
     /// </summary>
     internal static class AxisOrderHelper
     {
+        /// <summary>
+        /// Tries to create an axis-swap transform that aligns source and target axis orientation.
+        /// </summary>
+        /// <param name="source">Source coordinate system.</param>
+        /// <param name="target">Target coordinate system.</param>
+        /// <param name="transform">Created transform when alignment is possible.</param>
+        /// <returns><see langword="true"/> when a transform was created.</returns>
         internal static bool TryCreateAxisSwapTransform(
             CoordinateSystem source,
             CoordinateSystem target,
