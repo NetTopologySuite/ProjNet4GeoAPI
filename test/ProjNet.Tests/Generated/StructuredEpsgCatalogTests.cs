@@ -34,7 +34,7 @@ public class StructuredEpsgCatalogTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void GeneratedCatalog_ShouldNotExposeExplicitStringPool()
+    public void GeneratedCatalogShouldNotExposeExplicitStringPool()
     {
         var stringPoolField = typeof(EpsgGeneratedCatalog).GetField("StringPool", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
         Assert.Null(stringPoolField);
@@ -44,7 +44,7 @@ public class StructuredEpsgCatalogTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void GeneratedCatalog_ShouldExposeSwitchMappedSridLookup()
+    public void GeneratedCatalogShouldExposeSwitchMappedSridLookup()
     {
         bool found = EpsgGeneratedCatalog.TryGetCoordinateReference(4326, out var reference, out int cacheIndex);
 
@@ -59,7 +59,7 @@ public class StructuredEpsgCatalogTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void GeneratedCatalog_ShouldNotExposeSridArray()
+    public void GeneratedCatalogShouldNotExposeSridArray()
     {
         var sridArrayField = typeof(EpsgGeneratedCatalog).GetField("CoordinateReferenceSrids", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
         Assert.Null(sridArrayField);
@@ -69,7 +69,7 @@ public class StructuredEpsgCatalogTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void CoordinateSystemFactory_ShouldNotUseDictionaryLookupCaches()
+    public void CoordinateSystemFactoryShouldNotUseDictionaryLookupCaches()
     {
         var dictionaryFields = typeof(EpsgCoordinateSystemFactory)
             .GetFields(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
@@ -83,7 +83,7 @@ public class StructuredEpsgCatalogTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void ManagedProvider_ShouldExposeStructuredCoordinateSystems()
+    public void ManagedProviderShouldExposeStructuredCoordinateSystems()
     {
         var provider = new ManagedCoordinateSystemDefinitionProvider();
         var managedProvider = Assert.IsAssignableFrom<IManagedCoordinateSystemProvider>(provider);
@@ -98,7 +98,7 @@ public class StructuredEpsgCatalogTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void GeneratedCatalog_ShouldExposeExplicitOperationFastPath()
+    public void GeneratedCatalogShouldExposeExplicitOperationFastPath()
     {
         var explicitOperation = EpsgGeneratedCatalog.Operations.First(record =>
             record.MethodName.Contains("Geocentric translations", StringComparison.OrdinalIgnoreCase)
@@ -118,7 +118,7 @@ public class StructuredEpsgCatalogTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void GeneratedCatalog_ShouldReturnFalseForUnknownExplicitOperationCode()
+    public void GeneratedCatalogShouldReturnFalseForUnknownExplicitOperationCode()
     {
         bool found = EpsgGeneratedCatalog.TryGetExplicitOperationParameters(-1, out _);
         Assert.False(found);

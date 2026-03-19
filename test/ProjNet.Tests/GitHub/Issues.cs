@@ -165,7 +165,7 @@ public class Issues
     /// Performs the documented operation.
     /// </summary>
     [Xunit.Fact(Skip = "Requires DotSpatial.Projections, Result same as in TestConvertWgs84ToEPSG26910")]
-    public void TestConvertWgs84ToEPSG26910_DS()
+    public void TestConvertWgs84ToEPSG26910DS()
     {
         /*
         var epsg26910 = DotSpatial.Projections.ProjectionInfo.FromEpsgCode(26910);

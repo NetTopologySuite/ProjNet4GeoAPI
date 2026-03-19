@@ -31,7 +31,7 @@ public class Phase6GeoTiffGridRuntimeTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void Hgridshift_WithGeoTiffGrid_AppliesExpectedShift()
+    public void HgridshiftWithGeoTiffGridAppliesExpectedShift()
     {
         string gridPath = FindGridPath("test_hgrid.tif");
         string operation = "+proj=hgridshift +grids=" + gridPath;
@@ -49,7 +49,7 @@ public class Phase6GeoTiffGridRuntimeTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void Hgridshift_WithGeoTiffPositiveWestMetadata_AppliesExpectedShift()
+    public void HgridshiftWithGeoTiffPositiveWestMetadataAppliesExpectedShift()
     {
         string gridPath = FindGridPath("test_hgrid_positive_west.tif");
         string operation = "+proj=hgridshift +grids=" + gridPath;
@@ -66,7 +66,7 @@ public class Phase6GeoTiffGridRuntimeTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void Vgridshift_WithGeoTiffGrid_AppliesExpectedDefaultShift()
+    public void VgridshiftWithGeoTiffGridAppliesExpectedDefaultShift()
     {
         string gridPath = FindGridPath("test_vgrid_pixelispoint.tif");
         string operation = "+proj=vgridshift +grids=" + gridPath + " +multiplier=1";
@@ -84,7 +84,7 @@ public class Phase6GeoTiffGridRuntimeTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void Vgridshift_WithGeoTiffScaleOffset_AppliesScaleAndOffset()
+    public void VgridshiftWithGeoTiffScaleOffsetAppliesScaleAndOffset()
     {
         string gridPath = FindGridPath("test_vgrid_uint16_with_scale_offset.tif");
         string operation = "+proj=vgridshift +grids=" + gridPath + " +multiplier=1";
@@ -100,7 +100,7 @@ public class Phase6GeoTiffGridRuntimeTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void Vgridshift_WithGeoTiffNodata_PerformsWeightedInterpolation()
+    public void VgridshiftWithGeoTiffNodataPerformsWeightedInterpolation()
     {
         string gridPath = FindGridPath("test_vgrid_nodata.tif");
         string operation = "+proj=vgridshift +grids=" + gridPath + " +multiplier=1";

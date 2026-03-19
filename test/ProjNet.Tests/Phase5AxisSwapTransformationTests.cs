@@ -33,7 +33,7 @@ public class Phase5AxisSwapTransformationTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void GeographicAxisSwap_LonLatToLatLon_SwapsCoordinates()
+    public void GeographicAxisSwapLonLatToLatLonSwapsCoordinates()
     {
         var source = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "Source EN",
@@ -62,7 +62,7 @@ public class Phase5AxisSwapTransformationTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void GeographicAxisSwap_EastNorthToWestSouth_NegatesAxes()
+    public void GeographicAxisSwapEastNorthToWestSouthNegatesAxes()
     {
         var source = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "Source EN",
@@ -91,7 +91,7 @@ public class Phase5AxisSwapTransformationTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void ProjectedAxisSwap_EastNorthToNorthEast_SwapsProjectedAxes()
+    public void ProjectedAxisSwapEastNorthToNorthEastSwapsProjectedAxes()
     {
         var projectionParameters = new List<ProjectionParameter>
         {
@@ -131,7 +131,7 @@ public class Phase5AxisSwapTransformationTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void GeographicUnitConversion_DegreesToRadians_ConvertsCoordinates()
+    public void GeographicUnitConversionDegreesToRadiansConvertsCoordinates()
     {
         var source = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "Source Degrees",
@@ -160,7 +160,7 @@ public class Phase5AxisSwapTransformationTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void ProjectedUnitConversion_MetreToFoot_ConvertsProjectedCoordinates()
+    public void ProjectedUnitConversionMetreToFootConvertsProjectedCoordinates()
     {
         var projection = CreateMercatorProjection();
         var geographic = GeographicCoordinateSystem.WGS84;
@@ -192,7 +192,7 @@ public class Phase5AxisSwapTransformationTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void ProjectedUnitAndAxisConversion_MetreEastNorthToFootNorthEast_ConvertsAndSwaps()
+    public void ProjectedUnitAndAxisConversionMetreEastNorthToFootNorthEastConvertsAndSwaps()
     {
         var projection = CreateMercatorProjection();
         var geographic = GeographicCoordinateSystem.WGS84;

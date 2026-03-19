@@ -110,7 +110,7 @@ public class GieBuiltinsTheoryTests
     [Theory]
     [Trait("Category", "GieBuiltins")]
     [MemberData(nameof(GetBuiltinsCases))]
-    public void BuiltinsCases_ForImplementedProjections_StayWithinTolerance(object rawCase)
+    public void BuiltinsCasesForImplementedProjectionsStayWithinTolerance(object rawCase)
     {
         AssertCaseWithinTolerance(rawCase);
     }
@@ -122,7 +122,7 @@ public class GieBuiltinsTheoryTests
     [Theory]
     [Trait("Category", "GieBuiltins")]
     [MemberData(nameof(GetMoreBuiltinsCases))]
-    public void MoreBuiltinsCases_ForImplementedProjections_StayWithinTolerance(object rawCase)
+    public void MoreBuiltinsCasesForImplementedProjectionsStayWithinTolerance(object rawCase)
     {
         AssertCaseWithinTolerance(rawCase);
     }
@@ -134,7 +134,7 @@ public class GieBuiltinsTheoryTests
     [Theory]
     [Trait("Category", "GieBuiltins")]
     [MemberData(nameof(GetDhdnEtrs89Cases))]
-    public void DhdnEtrs89Cases_ForImplementedProjections_StayWithinTolerance(object rawCase)
+    public void DhdnEtrs89CasesForImplementedProjectionsStayWithinTolerance(object rawCase)
     {
         AssertCaseWithinTolerance(rawCase);
     }
@@ -146,7 +146,7 @@ public class GieBuiltinsTheoryTests
     [Theory]
     [Trait("Category", "GieBuiltins")]
     [MemberData(nameof(GetRemainingGieCases))]
-    public void RemainingGieCases_ForImplementedProjections_StayWithinTolerance(object rawCase)
+    public void RemainingGieCasesForImplementedProjectionsStayWithinTolerance(object rawCase)
     {
         AssertCaseWithinTolerance(rawCase);
     }

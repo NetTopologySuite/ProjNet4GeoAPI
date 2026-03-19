@@ -28,7 +28,7 @@ public class Phase5PipelineRuntimeTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void Pipeline_WithUnitConvertAndAxisSwap_ConvertsAndSwaps()
+    public void PipelineWithUnitConvertAndAxisSwapConvertsAndSwaps()
     {
         const string operation = "+proj=pipeline +step +proj=unitconvert +xy_in=m +xy_out=ft +step +proj=axisswap +order=2,1";
 
@@ -45,7 +45,7 @@ public class Phase5PipelineRuntimeTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void Pipeline_WithNoopSetAndUnitConvert_AppliesRelevantStep()
+    public void PipelineWithNoopSetAndUnitConvertAppliesRelevantStep()
     {
         const string operation = "+proj=pipeline +step +proj=noop +step +proj=set +v_3=17 +step +proj=unitconvert +xy_in=km +xy_out=m";
 
@@ -63,7 +63,7 @@ public class Phase5PipelineRuntimeTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void Pipeline_InvalidAxisSwapOrder_ReturnsValidationFailure()
+    public void PipelineInvalidAxisSwapOrderReturnsValidationFailure()
     {
         const string operation = "+proj=pipeline +step +proj=axisswap +order=1,1";
 

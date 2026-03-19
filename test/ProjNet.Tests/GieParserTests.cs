@@ -30,7 +30,7 @@ public class GieParserTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void Parse_WithForwardAndInversePairs_ProducesExpectedCases()
+    public void ParseWithForwardAndInversePairsProducesExpectedCases()
     {
         const string content = @"
 <gie-strict>
@@ -59,7 +59,7 @@ expect     3 80
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void Parse_IgnoresCommentsAndTags()
+    public void ParseIgnoresCommentsAndTags()
     {
         const string content = @"
 <gie-strict>
@@ -81,7 +81,7 @@ expect 1000 2000
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void Parse_WithoutAcceptBeforeExpect_ThrowsFormatException()
+    public void ParseWithoutAcceptBeforeExpectThrowsFormatException()
     {
         const string content = @"
 operation +proj=moll +ellps=WGS84
@@ -95,7 +95,7 @@ expect 1 2
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void Parse_UnknownDirective_ThrowsFormatException()
+    public void ParseUnknownDirectiveThrowsFormatException()
     {
         const string content = @"
 operation +proj=aeqd +ellps=WGS84
@@ -110,7 +110,7 @@ foobar 1 2
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void ParseFile_WithTemporaryInput_ProducesCases()
+    public void ParseFileWithTemporaryInputProducesCases()
     {
         string filePath = Path.GetTempFileName();
         try
@@ -141,7 +141,7 @@ foobar 1 2
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void Parse_WithContinuationLine_AppendsOperation()
+    public void ParseWithContinuationLineAppendsOperation()
     {
         const string content = @"
 operation +proj=tmerc +ellps=WGS84 \
@@ -161,7 +161,7 @@ expect 3 4
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void Parse_WithFailureExpectation_SetsFailureMetadata()
+    public void ParseWithFailureExpectationSetsFailureMetadata()
     {
         const string content = @"
 operation +proj=aea +lat_1=900
@@ -179,7 +179,7 @@ expect failure errno invalid_op_illegal_arg_value
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void Parse_WithIgnoreUnknownDirectivesEnabled_SkipsUnknownDirective()
+    public void ParseWithIgnoreUnknownDirectivesEnabledSkipsUnknownDirective()
     {
         const string content = @"
 operation +proj=merc +ellps=WGS84

@@ -32,7 +32,7 @@ public class GridResourceResolverTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void TryResolve_WithLocalGridFile_ResolvesWithoutNetwork()
+    public void TryResolveWithLocalGridFileResolvesWithoutNetwork()
     {
         string localDirectory = CreateTemporaryDirectory();
         try
@@ -60,7 +60,7 @@ public class GridResourceResolverTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void TryResolve_WithLocalOnlyMode_DoesNotCallNetworkFetcher()
+    public void TryResolveWithLocalOnlyModeDoesNotCallNetworkFetcher()
     {
         string localDirectory = CreateTemporaryDirectory();
         try
@@ -84,7 +84,7 @@ public class GridResourceResolverTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void TryResolve_WithNetworkMode_DownloadsToCacheAndReusesCachedFile()
+    public void TryResolveWithNetworkModeDownloadsToCacheAndReusesCachedFile()
     {
         string localDirectory = CreateTemporaryDirectory();
         string cacheDirectory = CreateTemporaryDirectory();

@@ -70,7 +70,7 @@ public class EpsgWktEquivalenceTheoryTests
     /// <param name="expectedWkt">Expected WKT from fixture.</param>
     [Theory]
     [MemberData(nameof(EpsgFixtureRows))]
-    public void GeneratedCatalogWkt_ShouldBeEquivalentToCommittedEpsgFixture(int srid, string expectedWkt)
+    public void GeneratedCatalogWktShouldBeEquivalentToCommittedEpsgFixture(int srid, string expectedWkt)
     {
         Assert.True(CatalogDefinitions.Value.TryGetValue(srid, out string generatedWkt), $"SRID {srid} not found in managed EPSG catalog.");
         Assert.True(AreEquivalent(expectedWkt, generatedWkt, srid), $"WKT mismatch for SRID {srid}.");

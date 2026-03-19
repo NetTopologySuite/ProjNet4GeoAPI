@@ -76,7 +76,7 @@ public class Gigs5101TheoryTests
     /// </summary>
     [Fact]
     [Trait("Category", "Gigs5101")]
-    public void Gigs5101Cases_ForSupportedPipelines_StayWithinTolerance()
+    public void Gigs5101CasesForSupportedPipelinesStayWithinTolerance()
     {
         AssertFixtureCoverage(Fixture5101Files, 50, 50, "5101", requireToleranceMatch: true);
     }
@@ -87,7 +87,7 @@ public class Gigs5101TheoryTests
     [Fact]
     [Trait("Category", "Gigs5102")]
     [Trait("Category", "Gigs5103")]
-    public void Gigs5102And5103Cases_ForSupportedPipelines_StayWithinTolerance()
+    public void Gigs5102And5103CasesForSupportedPipelinesStayWithinTolerance()
     {
         AssertFixtureCoverage(Fixture5102And5103Files, 70, 0, "5102/5103", requireToleranceMatch: false);
     }
@@ -98,7 +98,7 @@ public class Gigs5101TheoryTests
     [Fact]
     [Trait("Category", "Gigs5104")]
     [Trait("Category", "Gigs5113")]
-    public void Gigs5104To5113Cases_ForSupportedPipelines_Execute()
+    public void Gigs5104To5113CasesForSupportedPipelinesExecute()
     {
         AssertFixtureCoverage(Fixture5104To5113Files, 80, 0, "5104-5113", requireToleranceMatch: false);
     }
@@ -108,7 +108,7 @@ public class Gigs5101TheoryTests
     /// </summary>
     [Fact]
     [Trait("Category", "Gigs5200")]
-    public void Gigs5200Cases_ForSupportedPipelines_Execute()
+    public void Gigs5200CasesForSupportedPipelinesExecute()
     {
         AssertFixtureCoverage(Fixture5200Files, 20, 0, "5200", requireToleranceMatch: false);
     }

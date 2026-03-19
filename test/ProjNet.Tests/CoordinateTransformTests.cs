@@ -215,7 +215,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// Performs the documented operation.
     /// </summary>
     [Xunit.Fact]
-    public void TestMercator_1SP_Projection()
+    public void TestMercator1SPProjection()
     {
         var ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Bessel 1840", 6377397.155, 299.15281, LinearUnit.Metre);
 
@@ -254,7 +254,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// Performs the documented operation.
     /// </summary>
     [Xunit.Fact]
-    public void TestMercator_1SP_Projection_Feet()
+    public void TestMercator1SPProjectionFeet()
     {
         var ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Bessel 1840", 6377397.155, 299.15281, LinearUnit.Metre);
 
@@ -293,7 +293,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// Performs the documented operation.
     /// </summary>
     [Xunit.Fact]
-    public void TestMercator_2SP_Projection()
+    public void TestMercator2SPProjection()
     {
         var ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Krassowski 1940", 6378245.0, 298.3, LinearUnit.Metre);
 
@@ -331,7 +331,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// Performs the documented operation.
     /// </summary>
     [Xunit.Fact]
-    public void TestTransverseMercator_Projection()
+    public void TestTransverseMercatorProjection()
     {
         var ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Airy 1830", 6377563.396, 299.32496, LinearUnit.Metre);
 
@@ -371,7 +371,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// Performs the documented operation.
     /// </summary>
     [Xunit.Fact]
-    public void TestLambertConicConformal2SP_Projection()
+    public void TestLambertConicConformal2SPProjection()
     {
         var ellipsoid = /*Ellipsoid.Clarke1866;*/
             this.CoordinateSystemFactory.CreateFlattenedSphere("Clarke 1866", 20925832.16, 294.97470, LinearUnit.USSurveyFoot);
@@ -434,7 +434,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// </summary>
     [Xunit.Fact]
     [Repeat(1000)]
-    public void TestLambertAzimuthalEqualArea_Projection_round_trip_on_origin()
+    public void TestLambertAzimuthalEqualAreaProjectionRoundTripOnOrigin()
     {
         double centralMeridian = this.Random.Next(-180, +180);
         double latitudeOfOrigin = this.Random.Next(-90, +90);
@@ -461,7 +461,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// </summary>
     [Xunit.Fact]
     [Repeat(1000)]
-    public void TestLambertAzimuthalEqualArea_Projection_round_trip_on_arbitrary_point()
+    public void TestLambertAzimuthalEqualAreaProjectionRoundTripOnArbitraryPoint()
     {
         int GetRandomSign()
         {
@@ -626,7 +626,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// Performs the documented operation.
     /// </summary>
     [Xunit.Fact]
-    public void TestKrovak_Greenwich_Projection()
+    public void TestKrovakGreenwichProjection()
     {
         // test case for epsg 5514 (102067)
         var gcsWGS84 = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
@@ -694,7 +694,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// Performs the documented operation.
     /// </summary>
     [Xunit.Fact]
-    public void TestKrovak_Ferro_Projection()
+    public void TestKrovakFerroProjection()
     {
         // test case for epsg 2065 (prime meridian at Ferro)
         var gcsWGS84 = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
@@ -1210,7 +1210,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// test for epsg 21780 projection (different prime meridian).
     /// </summary>
     [Xunit.Fact]
-    public void Test_EPSG_21780_PrimeMeredianTransformation()
+    public void TestEPSG21780PrimeMeredianTransformation()
     {
         string wkt4326 = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]]";
         string wkt21780 = "PROJCS[\"Bern 1898 (Bern) / LV03C\",GEOGCS[\"Bern 1898 (Bern)\",DATUM[\"CH1903_Bern\",SPHEROID[\"Bessel 1841\",6377397.155,299.1528128,AUTHORITY[\"EPSG\",\"7004\"]],AUTHORITY[\"EPSG\",\"6801\"]],PRIMEM[\"Bern\",7.439583333333333,AUTHORITY[\"EPSG\",\"8907\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4801\"]],PROJECTION[\"Hotine_Oblique_Mercator\"],PARAMETER[\"latitude_of_center\",46.95240555555556],PARAMETER[\"longitude_of_center\",0],PARAMETER[\"azimuth\",90],PARAMETER[\"rectified_grid_angle\",90],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AUTHORITY[\"EPSG\",\"21780\"]]";
@@ -1244,7 +1244,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// Performs the documented operation.
     /// </summary>
     [Xunit.Fact]
-    public void Test_EPSG_2056_HotineObliqueMercatorAzimuthCenter_Switzerland()
+    public void TestEPSG2056HotineObliqueMercatorAzimuthCenterSwitzerland()
     {
         var csSrc = GeographicCoordinateSystem.WGS84;
         var csTgt = SRIDReader.GetCSbyID(2056); // CH1903+ / LV95

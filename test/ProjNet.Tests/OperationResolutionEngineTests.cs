@@ -39,7 +39,7 @@ public class OperationResolutionEngineTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void CreateFromCoordinateSystems_WithSameProjectedCoordinateSystem_UsesIdentityTransform()
+    public void CreateFromCoordinateSystemsWithSameProjectedCoordinateSystemUsesIdentityTransform()
     {
         var source = ProjectedCoordinateSystem.WGS84_UTM(32, true);
         var transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, source);
@@ -54,7 +54,7 @@ public class OperationResolutionEngineTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void CreateFromCoordinateSystems_WithEquivalentGeographicCoordinateSystems_UsesIdentityTransform()
+    public void CreateFromCoordinateSystemsWithEquivalentGeographicCoordinateSystemsUsesIdentityTransform()
     {
         var source = GeographicCoordinateSystem.WGS84;
         var target = (GeographicCoordinateSystem)this.coordinateSystemFactory.CreateFromWkt(source.WKT);
@@ -70,7 +70,7 @@ public class OperationResolutionEngineTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void CreateFromCoordinateSystems_WithProjectedPairHavingDirectMetadata_PrefersMetadataCandidate()
+    public void CreateFromCoordinateSystemsWithProjectedPairHavingDirectMetadataPrefersMetadataCandidate()
     {
         var source = ProjectedCoordinateSystem.WGS84_UTM(32, true);
         var target = ProjectedCoordinateSystem.WGS84_UTM(33, true);
@@ -105,7 +105,7 @@ public class OperationResolutionEngineTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void CreateFromCoordinateSystems_WithProjectedFallbackPair_UsesDirectProj2ProjCorePath()
+    public void CreateFromCoordinateSystemsWithProjectedFallbackPairUsesDirectProj2ProjCorePath()
     {
         var source = ProjectedCoordinateSystem.WGS84_UTM(32, true);
         var target = ProjectedCoordinateSystem.WGS84_UTM(33, true);
@@ -125,7 +125,7 @@ public class OperationResolutionEngineTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void CreateFromCoordinateSystems_WithProjectedPairWithoutEpsgAuthority_UsesLegacyFallback()
+    public void CreateFromCoordinateSystemsWithProjectedPairWithoutEpsgAuthorityUsesLegacyFallback()
     {
         var source = ProjectedCoordinateSystem.WGS84_UTM(32, true);
         var target = ProjectedCoordinateSystem.WGS84_UTM(33, true);
@@ -144,7 +144,7 @@ public class OperationResolutionEngineTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void CreateFromCoordinateSystems_WithGridOnlyDirectOperations_ThrowsDeterministicDataUnavailable()
+    public void CreateFromCoordinateSystemsWithGridOnlyDirectOperationsThrowsDeterministicDataUnavailable()
     {
         var provider = new ManagedCoordinateOperationDefinitionProvider();
         var gridOnlyPair = provider.GetDefinitions()
@@ -179,7 +179,7 @@ public class OperationResolutionEngineTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void CreateFromCoordinateSystems_WithMixedGridAndNonGridDirectOperations_FallsBackToAvailableMetadataOperation()
+    public void CreateFromCoordinateSystemsWithMixedGridAndNonGridDirectOperationsFallsBackToAvailableMetadataOperation()
     {
         var provider = new ManagedCoordinateOperationDefinitionProvider();
         var mixedPair = provider.GetDefinitions()
@@ -209,7 +209,7 @@ public class OperationResolutionEngineTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void CreateFromCoordinateSystems_WithSupportedGeographicEpsgOperation_UsesExplicitDatumTransform()
+    public void CreateFromCoordinateSystemsWithSupportedGeographicEpsgOperationUsesExplicitDatumTransform()
     {
         var provider = new ManagedCoordinateOperationDefinitionProvider();
         var services = new CoordinateSystemServices();
@@ -234,7 +234,7 @@ public class OperationResolutionEngineTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void CreateFromCoordinateSystems_WithProjectedPairUsingSupportedBaseGeographicOperation_UsesExplicitDatumTransform()
+    public void CreateFromCoordinateSystemsWithProjectedPairUsingSupportedBaseGeographicOperationUsesExplicitDatumTransform()
     {
         var provider = new ManagedCoordinateOperationDefinitionProvider();
         var services = new CoordinateSystemServices();
@@ -290,7 +290,7 @@ public class OperationResolutionEngineTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void CreateFromCoordinateSystems_WithFittedSourceAndTarget_ComposesViaBaseCoordinateSystems()
+    public void CreateFromCoordinateSystemsWithFittedSourceAndTargetComposesViaBaseCoordinateSystems()
     {
         var sourceBase = ProjectedCoordinateSystem.WGS84_UTM(32, true);
         var targetBase = ProjectedCoordinateSystem.WGS84_UTM(33, true);

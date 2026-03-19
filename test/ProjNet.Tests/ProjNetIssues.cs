@@ -151,7 +151,7 @@ public class ProjNetIssues : CoordinateTransformTestsBase
     /// Performs the documented operation.
     /// </summary>
     [Xunit.Fact(DisplayName = "Concerned about the accuracy, Discussion http://projnet.codeplex.com/discussions/361248")]
-    public void TestDiscussion361248_1()
+    public void TestDiscussion3612481()
     {
         var csSource = this.CoordinateSystemFactory.CreateFromWkt(
 @"GEOGCS[""WGS 84"",
@@ -176,7 +176,7 @@ public class ProjNetIssues : CoordinateTransformTestsBase
     /// Performs the documented operation.
     /// </summary>
     [Xunit.Fact(DisplayName = "Concerned about the accuracy, Discussion http://projnet.codeplex.com/discussions/361248")]
-    public void TestDiscussion361248_2()
+    public void TestDiscussion3612482()
     {
         var csSource = ProjectedCoordinateSystem.WGS84_UTM(18, true);
 

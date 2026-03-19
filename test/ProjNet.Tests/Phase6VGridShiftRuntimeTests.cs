@@ -31,7 +31,7 @@ public class Phase6VGridShiftRuntimeTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void Vgridshift_WithGtxGrid_AppliesExpectedDefaultVerticalShift()
+    public void VgridshiftWithGtxGridAppliesExpectedDefaultVerticalShift()
     {
         string gridPath = FindGridPath("egm96_15_downsampled.gtx");
         string operation = "+proj=vgridshift +grids=" + gridPath;
@@ -49,7 +49,7 @@ public class Phase6VGridShiftRuntimeTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void Vgridshift_WithExplicitMultiplier_UsesProvidedScale()
+    public void VgridshiftWithExplicitMultiplierUsesProvidedScale()
     {
         string gridPath = FindGridPath("egm96_15_downsampled.gtx");
         string operation = "+proj=vgridshift +grids=" + gridPath + " +multiplier=1";
@@ -65,7 +65,7 @@ public class Phase6VGridShiftRuntimeTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void Vgridshift_WithInverseFlag_RoundtripsSinglePoint()
+    public void VgridshiftWithInverseFlagRoundtripsSinglePoint()
     {
         string gridPath = FindGridPath("egm96_15_downsampled.gtx");
         string forwardOperation = "+proj=vgridshift +grids=" + gridPath;
@@ -89,7 +89,7 @@ public class Phase6VGridShiftRuntimeTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void Vgridshift_OutsideGridExtent_ThrowsArgumentException()
+    public void VgridshiftOutsideGridExtentThrowsArgumentException()
     {
         string gridPath = FindGridPath("test_nodata.gtx");
         string operation = "+proj=vgridshift +grids=" + gridPath;

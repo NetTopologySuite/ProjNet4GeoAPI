@@ -32,7 +32,7 @@ public class GigsParserTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void Parse_GigsFixtures_ParsesAllNonFailingFiles()
+    public void ParseGigsFixturesParsesAllNonFailingFiles()
     {
         string gigsDirectory = FindGigsDirectory();
         if (gigsDirectory is null)
@@ -70,7 +70,7 @@ public class GigsParserTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void Parse_GigsFixtures_PreservesPipelineOperations()
+    public void ParseGigsFixturesPreservesPipelineOperations()
     {
         string gigsDirectory = FindGigsDirectory();
         if (gigsDirectory is null)

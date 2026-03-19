@@ -38,7 +38,7 @@ public class VerificationSuiteTests
     [InlineData(0d, 0d, 0d, 0d)]
     [InlineData(10d, 10d, 1113194.90793274d, 1118889.97485796d)]
     [InlineData(-75d, 35d, -8348961.80949552d, 4163881.14406429d)]
-    public void Wgs84ToWebMercator_MatchesReferencePoints(double lon, double lat, double expectedX, double expectedY)
+    public void Wgs84ToWebMercatorMatchesReferencePoints(double lon, double lat, double expectedX, double expectedY)
     {
         var services = CreateCanonicalServices();
         var transform = services.CreateTransformation(4326, 3857);
@@ -58,7 +58,7 @@ public class VerificationSuiteTests
     [InlineData(0d, 0d, 0d, 0d)]
     [InlineData(1113194.90793274d, 1118889.97485796d, 10d, 10d)]
     [InlineData(-8348961.80949552d, 4163881.14406429d, -75d, 35d)]
-    public void WebMercatorToWgs84_MatchesReferencePoints(double x, double y, double expectedLon, double expectedLat)
+    public void WebMercatorToWgs84MatchesReferencePoints(double x, double y, double expectedLon, double expectedLat)
     {
         var services = CreateCanonicalServices();
         var transform = services.CreateTransformation(3857, 4326);
@@ -71,7 +71,7 @@ public class VerificationSuiteTests
     /// Verifies that legacy coordinate system service lookup APIs return consistent results.
     /// </summary>
     [Fact]
-    public void LegacyCoordinateSystemServicesLookups_RemainConsistent()
+    public void LegacyCoordinateSystemServicesLookupsRemainConsistent()
     {
         var services = CreateCanonicalServices();
 

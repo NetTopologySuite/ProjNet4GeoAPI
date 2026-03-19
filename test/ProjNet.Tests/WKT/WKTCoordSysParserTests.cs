@@ -79,7 +79,7 @@ public class WKTCoordSysParserTests
     /// ]
     /// </code></remarks>
     [Xunit.Fact]
-    public void TestProjectedCoordinateSystem_EPSG_2918()
+    public void TestProjectedCoordinateSystemEPSG2918()
     {
         const string wkt = "PROJCS[\"NAD83(HARN) / Texas Central (ftUS)\", " +
                                     "GEOGCS[\"NAD83(HARN)\", " +
@@ -257,7 +257,7 @@ public class WKTCoordSysParserTests
     /// Test parsing of a <see cref="ProjectedCoordinateSystem"/> from WKT.
     /// </summary>
     [Xunit.Fact]
-    public void TestProjectedCoordinateSystem_EPSG27700_UnitBeforeProjection()
+    public void TestProjectedCoordinateSystemEPSG27700UnitBeforeProjection()
     {
         const string wkt = "PROJCS[\"OSGB 1936 / British National Grid\"," +
              "GEOGCS[\"OSGB 1936\"," +

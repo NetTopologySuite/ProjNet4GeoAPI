@@ -31,7 +31,7 @@ public class Phase6HGridShiftRuntimeTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void Hgridshift_WithLittleEndianNtv2Grid_AppliesExpectedShift()
+    public void HgridshiftWithLittleEndianNtv2GridAppliesExpectedShift()
     {
         string gridPath = FindGridPath("test_hgrid_little_endian.gsb");
         string operation = "+proj=hgridshift +grids=" + gridPath;
@@ -49,7 +49,7 @@ public class Phase6HGridShiftRuntimeTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void Hgridshift_WithBigEndianNtv2Grid_AppliesExpectedShift()
+    public void HgridshiftWithBigEndianNtv2GridAppliesExpectedShift()
     {
         string gridPath = FindGridPath("test_hgrid_big_endian.gsb");
         string operation = "+proj=hgridshift +grids=" + gridPath;
@@ -67,7 +67,7 @@ public class Phase6HGridShiftRuntimeTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void Hgridshift_WithInverseFlag_ForSyntheticFixtureSignalsOutsideGrid()
+    public void HgridshiftWithInverseFlagForSyntheticFixtureSignalsOutsideGrid()
     {
         string gridPath = FindGridPath("test_hgrid_little_endian.gsb");
         string operation = "+inv +proj=hgridshift +grids=" + gridPath;
@@ -82,7 +82,7 @@ public class Phase6HGridShiftRuntimeTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void Gridshift_WithNtv2Grid_UsesHorizontalShiftImplementation()
+    public void GridshiftWithNtv2GridUsesHorizontalShiftImplementation()
     {
         string gridPath = FindGridPath("test_hgrid_little_endian.gsb");
         string operation = "+proj=gridshift +grids=" + gridPath;

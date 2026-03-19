@@ -36,7 +36,7 @@ public class Proj2ProjParityTheoryTests
     /// <param name="testCase">Fixture case containing source/target definitions and expected result.</param>
     [Theory]
     [MemberData(nameof(GetParityCases))]
-    public void CreateFromCoordinateSystems_WithDirectProjectedPair_StaysWithinProjReference(Proj2ProjCase testCase)
+    public void CreateFromCoordinateSystemsWithDirectProjectedPairStaysWithinProjReference(Proj2ProjCase testCase)
     {
         var coordinateSystemFactory = new CoordinateSystemFactory();
         var transformationFactory = new CoordinateTransformationFactory();

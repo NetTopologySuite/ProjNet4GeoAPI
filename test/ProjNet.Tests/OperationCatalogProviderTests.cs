@@ -30,7 +30,7 @@ public class OperationCatalogProviderTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void ManagedOperationProvider_LoadsGeneratedOperationCatalog()
+    public void ManagedOperationProviderLoadsGeneratedOperationCatalog()
     {
         var provider = new ManagedCoordinateOperationDefinitionProvider();
         var definitions = provider.GetDefinitions().ToList();

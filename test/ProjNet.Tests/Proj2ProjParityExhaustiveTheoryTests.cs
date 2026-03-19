@@ -37,7 +37,7 @@ public class Proj2ProjParityExhaustiveTheoryTests
     [Theory]
     [Trait("Category", "ExhaustiveValidation")]
     [MemberData(nameof(GetParityCases))]
-    public void CreateFromCoordinateSystems_WithDirectProjectedPair_MatchesExhaustiveProjReference(Proj2ProjParityTheoryTests.Proj2ProjCase testCase)
+    public void CreateFromCoordinateSystemsWithDirectProjectedPairMatchesExhaustiveProjReference(Proj2ProjParityTheoryTests.Proj2ProjCase testCase)
     {
         if (!IsExhaustiveLaneEnabled())
         {
