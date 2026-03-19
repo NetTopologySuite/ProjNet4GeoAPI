@@ -151,7 +151,7 @@ namespace ProjNet.CoordinateSystems.Projections
             this.AuthorityCode = 9807;
 
             this.esp = this.es / (1.0 - this.es);
-            this.ml0 = this.Mlfn(this.lat_origin, Math.Sin(this.lat_origin), Math.Cos(this.lat_origin));
+            this.ml0 = this.Mlfn(this.latOrigin, Math.Sin(this.latOrigin), Math.Cos(this.latOrigin));
 
             /*
             e = Math.Sqrt(_es);
@@ -171,7 +171,7 @@ namespace ProjNet.CoordinateSystems.Projections
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
             double x = lon;
-            x = Adjust_lon(x - this.central_meridian);
+            x = Adjust_lon(x - this.centralMeridian);
 
             double y = lat;
             double sinphi = Math.Sin(y);
@@ -196,8 +196,8 @@ namespace ProjNet.CoordinateSystems.Projections
                 (FC5 * als * (5.0 + (t * (t - 18.0)) + (n * (14.0 - (58.0 * t))) +
                 (FC7 * als * (61.0 + (t * ((t * (179.0 - t)) - 479.0)))))))));
 
-            lon = this.scale_factor * this.semiMajor * x;
-            lat = this.scale_factor * this.semiMajor * y;
+            lon = this.scaleFactor * this.semiMajor * x;
+            lat = this.scaleFactor * this.semiMajor * y;
         }
 
         /// <summary>
@@ -211,7 +211,7 @@ namespace ProjNet.CoordinateSystems.Projections
             x *= this.reciprocSemiMajor;
             y *= this.reciprocSemiMajor;
 
-            double phi = this.Inv_mlfn(this.ml0 + (y / this.scale_factor));
+            double phi = this.Inv_mlfn(this.ml0 + (y / this.scaleFactor));
 
             if (Math.Abs(phi) >= PI / 2)
             {
@@ -225,7 +225,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 double t = (Math.Abs(cosphi) > EPSILON) ? sinphi / cosphi : 0.0;
                 double n = this.esp * cosphi * cosphi;
                 double con = 1.0 - (this.es * sinphi * sinphi);
-                double d = x * Math.Sqrt(con) / this.scale_factor;
+                double d = x * Math.Sqrt(con) / this.scaleFactor;
                 con *= t;
                 t *= t;
                 double ds = d * d;
@@ -236,7 +236,7 @@ namespace ProjNet.CoordinateSystems.Projections
                     FC6 * (61.0 + (t * (90.0 - (252.0 * n) + (45.0 * t))) + (46.0 * n) - (ds *
                     FC8 * (1385.0 + (t * (3633.0 + (t * (4095.0 + (1574.0 * t)))))))))))));
 
-                x = Adjust_lon(this.central_meridian + (d * (FC1 - (ds * FC3 * (1.0 + (2.0 * t) + n -
+                x = Adjust_lon(this.centralMeridian + (d * (FC1 - (ds * FC3 * (1.0 + (2.0 * t) + n -
                     (ds * FC5 * (5.0 + (t * (28.0 + (24 * t) + (8.0 * n))) + (6.0 * n) -
                     (ds * FC7 * (61.0 + (t * (662.0 + (t * (1320.0 + (720.0 * t)))))))))))) / cosphi));
             }

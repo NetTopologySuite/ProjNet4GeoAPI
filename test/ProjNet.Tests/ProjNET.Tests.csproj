@@ -4,7 +4,8 @@
     <!--<TargetFrameworks>net6;net8</TargetFrameworks>-->
     <TargetFramework>net8</TargetFramework>
     <SignAssembly>true</SignAssembly>
-    <NoWarn>1701;1702;1591</NoWarn>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1701;1702;1591</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />

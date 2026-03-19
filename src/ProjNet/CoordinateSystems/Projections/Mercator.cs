@@ -101,7 +101,7 @@ namespace ProjNet.CoordinateSystems.Projections
 
             if (scaleFactor == null) // This is a two standard parallel Mercator projection (2SP)
             {
-                this.k0 = Math.Cos(this.lat_origin) / Math.Sqrt(1.0 - (this.es * Math.Sin(this.lat_origin) * Math.Sin(this.lat_origin)));
+                this.k0 = Math.Cos(this.latOrigin) / Math.Sqrt(1.0 - (this.es * Math.Sin(this.latOrigin) * Math.Sin(this.latOrigin)));
                 this.AuthorityCode = 9805;
                 this.Name = "Mercator_2SP";
             }
@@ -131,13 +131,13 @@ namespace ProjNet.CoordinateSystems.Projections
             double dLatitude = lat;
 
             /* Forward equations */
-            if (Math.Abs(Math.Abs(dLatitude) - HALF_PI) <= EPSLN)
+            if (Math.Abs(Math.Abs(dLatitude) - HALFPI) <= EPSLN)
             {
                 throw new ArgumentException("Transformation cannot be computed at the poles.");
             }
 
             double esinphi = this.e * Math.Sin(dLatitude);
-            lon = this.semiMajor * this.k0 * (dLongitude - this.central_meridian);
+            lon = this.semiMajor * this.k0 * (dLongitude - this.centralMeridian);
             lat = this.semiMajor * this.k0 * Math.Log(Math.Tan((PI * 0.25) + (dLatitude * 0.5)) *
                                               Math.Pow((1 - esinphi) / (1 + esinphi), this.e * 0.5));
         }
@@ -156,7 +156,7 @@ namespace ProjNet.CoordinateSystems.Projections
             double dY = y; // * _metersPerUnit - this._falseNorthing;
             double ts = Math.Exp(-dY / (this.semiMajor * this.k0)); // t
 
-            double chi = HALF_PI - (2 * Math.Atan(ts));
+            double chi = HALFPI - (2 * Math.Atan(ts));
             double e4 = Math.Pow(this.e, 4);
             double e6 = Math.Pow(this.e, 6);
             double e8 = Math.Pow(this.e, 8);
@@ -166,7 +166,7 @@ namespace ProjNet.CoordinateSystems.Projections
                     (+((7 * e6 / 120) + (81 * e8 / 1120)) * Math.Sin(6 * chi)) +
                     (+(4279 * e8 / 161280) * Math.Sin(8 * chi));
 
-            x = (dX / (this.semiMajor * this.k0)) + this.central_meridian;
+            x = (dX / (this.semiMajor * this.k0)) + this.centralMeridian;
 
             // return (x, y, z);
         }

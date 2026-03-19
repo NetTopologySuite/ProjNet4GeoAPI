@@ -47,7 +47,7 @@ namespace ProjNet.CoordinateSystems.Projections
             this.Name = "Cassini_Soldner";
 
             this.cFactor = this.es / (1 - this.es);
-            this.m0 = this.Mlfn(this.lat_origin, Math.Sin(this.lat_origin), Math.Cos(this.lat_origin));
+            this.m0 = this.Mlfn(this.latOrigin, Math.Sin(this.latOrigin), Math.Cos(this.latOrigin));
             this.reciprocalSemiMajor = 1d / this.semiMajor;
         }
 
@@ -88,7 +88,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <inheritdoc/>
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
-            double lambda = lon - this.central_meridian;
+            double lambda = lon - this.centralMeridian;
             double phi = lat;
 
             double sinPhi, cosPhi; // sin and cos value
@@ -151,7 +151,7 @@ namespace ProjNet.CoordinateSystems.Projections
 
             y = phi1 - ((n * tn / r) * d2 * (.5 - ((1.0 + (3.0 * t)) * d2 * One24th)));
             double lambda = dd * (1.0 + (t * d2 * (-One3rd + ((1.0 + (3.0 * t)) * d2 * One15th)))) / Math.Cos(phi1);
-            x = Adjust_lon(lambda + this.central_meridian);
+            x = Adjust_lon(lambda + this.centralMeridian);
         }
 
         private double Phi1(double arg)

@@ -71,7 +71,7 @@ namespace ProjNet.CoordinateSystems.Projections
 
         private readonly Mode mode;
         private readonly double qp;
-        private readonly double one_es;
+        private readonly double oneEs;
         private readonly double[] apa;
 
         // private readonly double _mmf;
@@ -104,15 +104,15 @@ namespace ProjNet.CoordinateSystems.Projections
         {
             this.Name = "Lambert_Azimuthal_Equal_Area";
 
-            double phi0 = this.lat_origin;
+            double phi0 = this.latOrigin;
 
             double t = Math.Abs(phi0);
-            if (t > HALF_PI + EPS10)
+            if (t > HALFPI + EPS10)
             {
                 throw new ArgumentException(nameof(parameters));
             }
 
-            if (Math.Abs(t - HALF_PI) < EPS10)
+            if (Math.Abs(t - HALFPI) < EPS10)
             {
                 this.mode = phi0 < 0.0 ? Mode.S_POLE : Mode.N_POLE;
             }
@@ -127,8 +127,8 @@ namespace ProjNet.CoordinateSystems.Projections
 
             if (this.es != 0d)
             {
-                this.one_es = 1.0 - this.es;
-                this.qp = Qsfn(1, this.e, this.one_es);
+                this.oneEs = 1.0 - this.es;
+                this.qp = Qsfn(1, this.e, this.oneEs);
 
                 // _mmf = 0.5 / (1.0 - _es);
                 this.apa = Authset(this.es);
@@ -151,7 +151,7 @@ namespace ProjNet.CoordinateSystems.Projections
                     case Mode.OBLIQ:
                         this.rq = Math.Sqrt(0.5 * this.qp);
                         double sinphi = Math.Sin(phi0);
-                        this.sinb1 = Qsfn(sinphi, this.e, this.one_es) / this.qp;
+                        this.sinb1 = Qsfn(sinphi, this.e, this.oneEs) / this.qp;
                         this.cosb1 = Math.Sqrt(1.0 - (this.sinb1 * this.sinb1));
                         this.dd = Math.Cos(phi0) / (Math.Sqrt(1.0 - (this.es * sinphi * sinphi)) * this.rq * this.cosb1);
                         this.ymf = (this.xmf = this.rq) / this.dd;
@@ -174,7 +174,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 this.metersToRadians = this.SphericalMetersToRadians;
             }
 
-            this.reciprocSemiMajorTimesScaleFactor = 1d / (this.scale_factor * this.semiMajor);
+            this.reciprocSemiMajorTimesScaleFactor = 1d / (this.scaleFactor * this.semiMajor);
         }
 
         /// <summary>
@@ -200,21 +200,21 @@ namespace ProjNet.CoordinateSystems.Projections
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
             this.radiansToMeters(ref lon, ref lat);
-            lon *= this.scale_factor * this.semiMajor;
-            lat *= this.scale_factor * this.semiMajor;
+            lon *= this.scaleFactor * this.semiMajor;
+            lat *= this.scaleFactor * this.semiMajor;
         }
 
         private void EllipsoidalRadiansToMeters(ref double lon, ref double lat)
         {
             double sinb = 0.0, cosb = 0.0, b = 0.0;
 
-            double lam = Adjust_lon(lon - this.central_meridian);
+            double lam = Adjust_lon(lon - this.centralMeridian);
             double phi = lat;
 
             double coslam = Math.Cos(lam);
             double sinlam = Math.Sin(lam);
             double sinphi = Math.Sin(phi);
-            double q = Qsfn(sinphi, this.e, this.one_es);
+            double q = Qsfn(sinphi, this.e, this.oneEs);
 
             if (this.mode == Mode.OBLIQ || this.mode == Mode.EQUIT)
             {
@@ -231,17 +231,17 @@ namespace ProjNet.CoordinateSystems.Projections
                     b = 1.0 + (cosb * coslam);
                     break;
                 case Mode.N_POLE:
-                    b = HALF_PI + phi;
+                    b = HALFPI + phi;
                     q = this.qp - q;
                     break;
                 case Mode.S_POLE:
-                    b = phi - HALF_PI;
+                    b = phi - HALFPI;
                     q = this.qp + q;
                     break;
             }
 
-            double x = HUGE_VAL;
-            double y = HUGE_VAL;
+            double x = HUGEVAL;
+            double y = HUGEVAL;
             if (Math.Abs(b) < EPS10)
             {
                 // proj_errno_set(P, PJD_ERR_TOLERANCE_CONDITION);
@@ -269,7 +269,10 @@ namespace ProjNet.CoordinateSystems.Projections
                         y = coslam * (this.mode == Mode.S_POLE ? b : -b);
                     }
                     else
+                    {
                         x = y = 0.0;
+                    }
+
                     break;
             }
 
@@ -281,15 +284,15 @@ namespace ProjNet.CoordinateSystems.Projections
         private void SphericalRadiansToMeters(ref double lon, ref double lat)
         {
 
-            double lam = Adjust_lon(lon - this.central_meridian);
+            double lam = Adjust_lon(lon - this.centralMeridian);
             double phi = lat;
 
             double sinphi = Math.Sin(phi);
             double cosphi = Math.Cos(phi);
             double coslam = Math.Sin(lam);
 
-            double x = HUGE_VAL;
-            double y = HUGE_VAL;
+            double x = HUGEVAL;
+            double y = HUGEVAL;
 
             switch (this.mode)
             {
@@ -316,13 +319,13 @@ namespace ProjNet.CoordinateSystems.Projections
                 /*-fallthrough*/
                 case Mode.S_POLE:
                 continue_S_POLE:
-                    if (Math.Abs(phi + this.lat_origin) < EPS10)
+                    if (Math.Abs(phi + this.latOrigin) < EPS10)
                     {
                         // proj_errno_set(P, PJD_ERR_TOLERANCE_CONDITION);
                         return;
                     }
 
-                    y = FORT_PI - (phi * 0.5);
+                    y = FORTPI - (phi * 0.5);
                     y = 2.0 * (this.mode == Mode.S_POLE ? Math.Cos(y) : Math.Sin(y));
                     x = y * Math.Sin(lam);
                     y *= coslam;
@@ -359,8 +362,8 @@ namespace ProjNet.CoordinateSystems.Projections
                     rho = Hypot(x, y);
                     if (rho < EPS10)
                     {
-                        x = this.central_meridian; // lam
-                        y = this.lat_origin; // phi
+                        x = this.centralMeridian; // lam
+                        y = this.latOrigin; // phi
                         return;
                     }
 
@@ -389,8 +392,8 @@ namespace ProjNet.CoordinateSystems.Projections
                     q = (x * x) + (y * y);
                     if (q == 0.0)
                     {
-                        x = this.central_meridian;          // lam
-                        y = this.lat_origin;   // phi
+                        x = this.centralMeridian;          // lam
+                        y = this.latOrigin;   // phi
                         return;
                     }
 
@@ -403,7 +406,7 @@ namespace ProjNet.CoordinateSystems.Projections
                     break;
             }
 
-            x = x = Adjust_lon(Math.Atan2(x, y) + this.central_meridian); // lam
+            x = x = Adjust_lon(Math.Atan2(x, y) + this.centralMeridian); // lam
             y = Authlat(Math.Asin(ab), this.apa);                      // phi
         }
 
@@ -435,24 +438,24 @@ namespace ProjNet.CoordinateSystems.Projections
                     y = cosz * rh;
                     break;
                 case Mode.OBLIQ:
-                    phi = Math.Abs(rh) <= EPS10 ? this.lat_origin :
+                    phi = Math.Abs(rh) <= EPS10 ? this.latOrigin :
                         Math.Asin((cosz * this.sinb1) + (y * sinz * this.cosb1 / rh));
                     x *= sinz * this.cosb1;
                     y = (cosz - (Math.Sin(phi) * this.sinb1)) * rh;
                     break;
                 case Mode.N_POLE:
                     y = -y;
-                    phi = HALF_PI - phi;
+                    phi = HALFPI - phi;
                     break;
                 case Mode.S_POLE:
-                    phi -= HALF_PI;
+                    phi -= HALFPI;
                     break;
             }
 
             double lam = (y == 0.0 && (this.mode == Mode.EQUIT || this.mode == Mode.OBLIQ)) ?
                 0.0 : Math.Atan2(x, y);
 
-            x = Adjust_lon(lam + this.central_meridian);
+            x = Adjust_lon(lam + this.centralMeridian);
             y = phi;
 
         }

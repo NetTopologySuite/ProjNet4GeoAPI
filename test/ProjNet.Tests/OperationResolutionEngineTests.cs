@@ -253,7 +253,7 @@ public class OperationResolutionEngineTests
             return;
         }
 
-        Assert.True(false, "No projected candidate produced an explicit EPSG datum transformation from base geographic metadata.");
+        Assert.Fail("No projected candidate produced an explicit EPSG datum transformation from base geographic metadata.");
     }
 
     [Fact]
@@ -359,12 +359,12 @@ public class OperationResolutionEngineTests
 
     private static bool IsExplicitMethodSupported(string methodName)
     {
-            string normalized = NormalizeMethodName(methodName);
-            return normalized.Contains("geocentrictranslations")
-                || normalized.Contains("positionvectortransformation")
-                || normalized.Contains("coordinateframerotation")
-                || normalized.Contains("molodensky");
-        }
+        string normalized = NormalizeMethodName(methodName);
+        return normalized.Contains("geocentrictranslations")
+            || normalized.Contains("positionvectortransformation")
+            || normalized.Contains("coordinateframerotation")
+            || normalized.Contains("molodensky");
+    }
 
     private static string NormalizeMethodName(string value)
     {

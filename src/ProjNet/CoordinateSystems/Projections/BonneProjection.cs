@@ -42,9 +42,9 @@ namespace ProjNet.CoordinateSystems.Projections
             : base(parameters, inverse)
         {
             this.Name = "Bonne";
-            this.radius = this.semiMajor * this.scale_factor;
+            this.radius = this.semiMajor * this.scaleFactor;
             this.inverseRadius = 1d / this.radius;
-            this.standardParallel = DegreesToRadians(this.Parameters.GetOptionalParameterValue("lat_1", RadiansToDegrees(this.lat_origin), "standard_parallel_1"));
+            this.standardParallel = DegreesToRadians(this.Parameters.GetOptionalParameterValue("lat_1", RadiansToDegrees(this.latOrigin), "standard_parallel_1"));
 
             if (Math.Abs(this.standardParallel) <= EPS10)
             {
@@ -64,11 +64,12 @@ namespace ProjNet.CoordinateSystems.Projections
                 return;
             }
 
-            this.cotStandardParallel = (Math.Abs(Math.Abs(this.standardParallel) - HALF_PI) <= EPS10) ? 0d : (1d / Math.Tan(this.standardParallel));
+            this.cotStandardParallel = (Math.Abs(Math.Abs(this.standardParallel) - HALFPI) <= EPS10) ? 0d : (1d / Math.Tan(this.standardParallel));
             this.meridianDistanceAtStandardParallel = 0d;
             this.reducedCosphiOverSinphiAtStandardParallel = 0d;
         }
 
+        /// <inheritdoc />
         public override MathTransform Inverse()
         {
             if (this.inverse is null)
@@ -79,9 +80,10 @@ namespace ProjNet.CoordinateSystems.Projections
             return this.inverse;
         }
 
+        /// <inheritdoc />
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
-            double lambda = Adjust_lon(lon - this.central_meridian);
+            double lambda = Adjust_lon(lon - this.centralMeridian);
             double phi = lat;
 
             if (!this.isEllipsoidal)
@@ -116,6 +118,7 @@ namespace ProjNet.CoordinateSystems.Projections
             lat = this.radius * (this.reducedCosphiOverSinphiAtStandardParallel - (rho * Math.Cos(angularTermEllipsoid)));
         }
 
+        /// <inheritdoc />
         protected override void MetersToRadians(ref double x, ref double y)
         {
             double xUnit = x * this.inverseRadius;
@@ -127,13 +130,13 @@ namespace ProjNet.CoordinateSystems.Projections
                 double rhoSphere = Sign(this.standardParallel) * Hypot(xUnit, translatedY);
                 double phiSphere = this.cotStandardParallel + this.standardParallel - rhoSphere;
                 double absPhiSphere = Math.Abs(phiSphere);
-                if (absPhiSphere > HALF_PI)
+                if (absPhiSphere > HALFPI)
                 {
                     throw new ArgumentException("Input data outside projection domain.");
                 }
 
                 double lambdaSphere;
-                if (HALF_PI - absPhiSphere <= EPS10)
+                if (HALFPI - absPhiSphere <= EPS10)
                 {
                     lambdaSphere = 0d;
                 }
@@ -145,7 +148,7 @@ namespace ProjNet.CoordinateSystems.Projections
                         : scale * Math.Atan2(-xUnit, -translatedY);
                 }
 
-                x = Adjust_lon(this.central_meridian + lambdaSphere);
+                x = Adjust_lon(this.centralMeridian + lambdaSphere);
                 y = phiSphere;
                 return;
             }
@@ -156,7 +159,7 @@ namespace ProjNet.CoordinateSystems.Projections
             double absPhi = Math.Abs(phi);
 
             double lambda = 0d;
-            if (absPhi < HALF_PI)
+            if (absPhi < HALFPI)
             {
                 double sinPhi = Math.Sin(phi);
                 double scale = (rho * Math.Sqrt(1d - (this.es * sinPhi * sinPhi))) / Math.Cos(phi);
@@ -164,12 +167,12 @@ namespace ProjNet.CoordinateSystems.Projections
                     ? scale * Math.Atan2(xUnit, translatedEllipsoidalY)
                     : scale * Math.Atan2(-xUnit, -translatedEllipsoidalY);
             }
-            else if ((absPhi - HALF_PI) > EPS10)
+            else if ((absPhi - HALFPI) > EPS10)
             {
                 throw new ArgumentException("Input data outside projection domain.");
             }
 
-            x = Adjust_lon(this.central_meridian + lambda);
+            x = Adjust_lon(this.centralMeridian + lambda);
             y = phi;
         }
     }

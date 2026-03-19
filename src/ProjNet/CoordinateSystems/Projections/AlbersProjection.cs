@@ -109,7 +109,7 @@ namespace ProjNet.CoordinateSystems.Projections
         {
             this.Name = "Albers_Conic_Equal_Area";
 
-            double lat0 = this.lat_origin;
+            double lat0 = this.latOrigin;
             double lat1 = DegreesToRadians(this.Parameters.GetParameterValue("standard_parallel_1"));
             double lat2 = DegreesToRadians(this.Parameters.GetParameterValue("standard_parallel_2"));
 
@@ -162,7 +162,7 @@ namespace ProjNet.CoordinateSystems.Projections
         {
             double a = this.Alpha(lat);
             double ro = this.Ro(a);
-            double theta = this.n * (lon - this.central_meridian);
+            double theta = this.n * (lon - this.centralMeridian);
 
             lon = ro * Math.Sin(theta);
             lat = this.ro0 - (ro * Math.Cos(theta));
@@ -193,11 +193,13 @@ namespace ProjNet.CoordinateSystems.Projections
                         (1 / (2 * this.e) * Math.Log((1 - (this.e * sin)) / (1 + (this.e * sin)))));
                 iterationCounter++;
                 if (iterationCounter > 25)
+                {
                     throw new ArgumentException(
                         "Transformation failed to converge in Albers backwards transformation");
+                }
             }
 
-            x = this.central_meridian + (theta / this.n);
+            x = this.centralMeridian + (theta / this.n);
             y = lat;
         }
 

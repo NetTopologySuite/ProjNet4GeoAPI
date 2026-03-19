@@ -63,7 +63,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <summary>
         /// HUGE_VAL => double.NaN.
         /// </summary>
-        protected const double HUGE_VAL = double.NaN;
+        protected const double HUGEVAL = double.NaN;
 
         // ReSharper disable InconsistentNaming
 
@@ -100,20 +100,20 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <summary>
         /// Scale factor.
         /// </summary>
-        protected readonly double scale_factor; /* scale factor             */
+        protected readonly double scaleFactor; /* scale factor             */
 
         /// <summary>
         /// Center longitude (projection center).
         /// </summary>
-        protected double central_meridian; /* Center longitude (projection center) */
+        protected double centralMeridian; /* Center longitude (projection center) */
 
         /// <summary>
-        /// Gets or sets substitute for <see cref="central_meridian"/>.
+        /// Gets or sets substitute for <see cref="centralMeridian"/>.
         /// </summary>
         protected double Lon_origin
         {
-            get { return this.central_meridian; }
-            set { this.central_meridian = value; }
+            get { return this.centralMeridian; }
+            set { this.centralMeridian = value; }
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         protected double Central_parallel
         {
-            get { return this.lat_origin; }
+            get { return this.latOrigin; }
         }
 
         /// <summary>
@@ -129,23 +129,23 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         protected double Phi0
         {
-            get { return this.lat_origin; }
+            get { return this.latOrigin; }
         }
 
         /// <summary>
         /// Center latitude.
         /// </summary>
-        protected readonly double lat_origin; /* center latitude            */
+        protected readonly double latOrigin; /* center latitude            */
 
         /// <summary>
         /// Y offset in meters.
         /// </summary>
-        protected readonly double false_northing; /* y offset in meters         */
+        protected readonly double falseNorthing; /* y offset in meters         */
 
         /// <summary>
         /// X offset in meters.
         /// </summary>
-        protected readonly double false_easting; /* x offset in meters          */
+        protected readonly double falseEasting; /* x offset in meters          */
 
         /// <summary>
         /// Constants for <see cref="Mlfn(double,double,double,double,double)"/>.
@@ -197,16 +197,16 @@ namespace ProjNet.CoordinateSystems.Projections
             this.es = EccentricySquared(this.semiMajor, this.semiMinor);
             this.e = Math.Sqrt(this.es);
 
-            this.scale_factor = this.Parameters.GetOptionalParameterValue("scale_factor", 1);
+            this.scaleFactor = this.Parameters.GetOptionalParameterValue("scale_factor", 1);
 
-            this.central_meridian = DegreesToRadians(this.Parameters.GetParameterValue("central_meridian", "longitude_of_center"));
-            this.lat_origin = DegreesToRadians(this.Parameters.GetOptionalParameterValue("latitude_of_origin", 0d, "latitude_of_center"));
+            this.centralMeridian = DegreesToRadians(this.Parameters.GetParameterValue("central_meridian", "longitude_of_center"));
+            this.latOrigin = DegreesToRadians(this.Parameters.GetOptionalParameterValue("latitude_of_origin", 0d, "latitude_of_center"));
 
             this.metersPerUnit = this.Parameters.GetParameterValue("unit");
             this.reciprocalMetersPerUnit = 1 / this.metersPerUnit;
 
-            this.false_easting = this.Parameters.GetOptionalParameterValue("false_easting", 0) * this.metersPerUnit;
-            this.false_northing = this.Parameters.GetOptionalParameterValue("false_northing", 0) * this.metersPerUnit;
+            this.falseEasting = this.Parameters.GetOptionalParameterValue("false_easting", 0) * this.metersPerUnit;
+            this.falseNorthing = this.Parameters.GetOptionalParameterValue("false_northing", 0) * this.metersPerUnit;
 
             // TODO: Should really convert to the correct linear units??
 
@@ -479,7 +479,7 @@ namespace ProjNet.CoordinateSystems.Projections
 
         /// <summary>
         /// Transforms point from meters to unit of output coordinate. This is done by
-        /// adding <see cref="false_easting"/> or <see cref="false_northing"/> and
+        /// adding <see cref="falseEasting"/> or <see cref="falseNorthing"/> and
         /// multiplying with <see cref="reciprocalMetersPerUnit"/>.
         /// </summary>
         /// <param name="x">A x-ordinate.</param>
@@ -487,13 +487,13 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <returns>A point.</returns>
         protected void MetersToTarget(ref double x, ref double y)
         {
-            x = (x + this.false_easting) * this.reciprocalMetersPerUnit;
-            y = (y + this.false_northing) * this.reciprocalMetersPerUnit;
+            x = (x + this.falseEasting) * this.reciprocalMetersPerUnit;
+            y = (y + this.falseNorthing) * this.reciprocalMetersPerUnit;
         }
 
         /// <summary>
         /// Transforms point from meters to unit of output coordinate. This is done by
-        /// adding <see cref="false_easting"/> or <see cref="false_northing"/> and
+        /// adding <see cref="falseEasting"/> or <see cref="falseNorthing"/> and
         /// multiplying with <see cref="reciprocalMetersPerUnit"/>.
         /// </summary>
         /// <param name="xs">A x-ordinates.</param>
@@ -503,8 +503,8 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <returns>A point.</returns>
         protected void MetersToTarget(Span<double> xs, Span<double> ys, int strideX, int strideY)
         {
-            AddThenMultiplyInPlace(xs, strideX, this.false_easting, this.reciprocalMetersPerUnit);
-            AddThenMultiplyInPlace(ys, strideY, this.false_northing, this.reciprocalMetersPerUnit);
+            AddThenMultiplyInPlace(xs, strideX, this.falseEasting, this.reciprocalMetersPerUnit);
+            AddThenMultiplyInPlace(ys, strideY, this.falseNorthing, this.reciprocalMetersPerUnit);
         }
 
         /// <summary>
@@ -583,8 +583,8 @@ namespace ProjNet.CoordinateSystems.Projections
 
         /// <summary>
         /// Transforms unit of input coordinates to meters. This is done by multiplying with
-        /// <see cref="metersPerUnit"/> and subtracting <see cref="false_easting"/>
-        /// or <see cref="false_northing"/>.
+        /// <see cref="metersPerUnit"/> and subtracting <see cref="falseEasting"/>
+        /// or <see cref="falseNorthing"/>.
         /// </summary>
         /// <param name="xs">A series of x-ordinates.</param>
         /// <param name="ys">A series of y-ordinates.</param>
@@ -592,22 +592,22 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <param name="strideY">A stride value for y-ordinates.</param>
         protected void SourceToMeters(Span<double> xs, Span<double> ys, int strideX, int strideY)
         {
-            MultiplyThenAddInPlace(xs, strideX, this.metersPerUnit, -this.false_easting);
-            MultiplyThenAddInPlace(ys, strideY, this.metersPerUnit, -this.false_northing);
+            MultiplyThenAddInPlace(xs, strideX, this.metersPerUnit, -this.falseEasting);
+            MultiplyThenAddInPlace(ys, strideY, this.metersPerUnit, -this.falseNorthing);
         }
 
         /// <summary>
         /// Transforms unit of input coordinate to meters. This is done by multiplying with
-        /// <see cref="metersPerUnit"/> and subtracting <see cref="false_easting"/>
-        /// or <see cref="false_northing"/>.
+        /// <see cref="metersPerUnit"/> and subtracting <see cref="falseEasting"/>
+        /// or <see cref="falseNorthing"/>.
         /// </summary>
         /// <param name="x">A x-ordinate.</param>
         /// <param name="y">A y-ordinate.</param>
         /// <returns>A point.</returns>
         protected void SourceToMeters(ref double x, ref double y)
         {
-            x = (x * this.metersPerUnit) - this.false_easting;
-            y = (y * this.metersPerUnit) - this.false_northing;
+            x = (x * this.metersPerUnit) - this.falseEasting;
+            y = (y * this.metersPerUnit) - this.falseNorthing;
         }
 
         /// <summary>
@@ -690,17 +690,17 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// <summary>
         /// A fourth of <see cref="Math.PI"/>.
         /// </summary>
-        protected const double FORT_PI = PI * 0.25;
+        protected const double FORTPI = PI * 0.25;
 
         /// <summary>
         /// Half of PI.
         /// </summary>
-        protected const double HALF_PI = PI * 0.5;
+        protected const double HALFPI = PI * 0.5;
 
         /// <summary>
         /// PI * 2.
         /// </summary>
-        protected const double TWO_PI = PI * 2.0;
+        protected const double TWOPI = PI * 2.0;
 
         /// <summary>
         /// EPSLN.
@@ -715,7 +715,7 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// <summary>
         /// MAX_VAL.
         /// </summary>
-        protected const double MAX_VAL = 4;
+        protected const double MAXVAL = 4;
 
         /// <summary>
         /// prjMAXLONG.
@@ -805,25 +805,32 @@ for (var i = 0; i < _Parameters.Count; i++)
             for (; ; )
             {
                 if (Math.Abs(x) <= PI)
+                {
                     break;
+                }
                 else if (((long)Math.Abs(x / Math.PI)) < 2)
-                    x = x - (Sign(x) * TWO_PI);
-                else if (((long)Math.Abs(x / TWO_PI)) < prjMAXLONG)
                 {
-                    x = x - (((long)(x / TWO_PI)) * TWO_PI);
+                    x = x - (Sign(x) * TWOPI);
                 }
-                else if (((long)Math.Abs(x / (prjMAXLONG * TWO_PI))) < prjMAXLONG)
+                else if (((long)Math.Abs(x / TWOPI)) < prjMAXLONG)
                 {
-                    x = x - (((long)(x / (prjMAXLONG * TWO_PI))) * (TWO_PI * prjMAXLONG));
+                    x = x - (((long)(x / TWOPI)) * TWOPI);
                 }
-                else if (((long)Math.Abs(x / (DBLLONG * TWO_PI))) < prjMAXLONG)
+                else if (((long)Math.Abs(x / (prjMAXLONG * TWOPI))) < prjMAXLONG)
                 {
-                    x = x - (((long)(x / (DBLLONG * TWO_PI))) * (TWO_PI * DBLLONG));
+                    x = x - (((long)(x / (prjMAXLONG * TWOPI))) * (TWOPI * prjMAXLONG));
+                }
+                else if (((long)Math.Abs(x / (DBLLONG * TWOPI))) < prjMAXLONG)
+                {
+                    x = x - (((long)(x / (DBLLONG * TWOPI))) * (TWOPI * DBLLONG));
                 }
                 else
-                    x = x - (Sign(x) * TWO_PI);
+                {
+                    x = x - (Sign(x) * TWOPI);
+                }
+
                 count++;
-                if (count > MAX_VAL)
+                if (count > MAXVAL)
                 {
                     break;
                 }
@@ -875,14 +882,15 @@ for (var i = 0; i < _Parameters.Count; i++)
                 /* avoid zero division, fail gracefully */
                 if (div1 == 0.0 || div2 == 0.0)
                 {
-                    return HUGE_VAL;
+                    return HUGEVAL;
                 }
 
                 return one_es * ((sinphi / div1) - ((.5 / eccent) * Math.Log((1.0 - con) / div2)));
             }
             else
+            {
                 return sinphi + sinphi;
-
+            }
         }
 
         /// <summary>
@@ -910,7 +918,7 @@ for (var i = 0; i < _Parameters.Count; i++)
             con = eccent * sinphi;
             com = .5 * eccent;
             con = Math.Pow((1.0 - con) / (1.0 + con), com);
-            return Math.Tan(.5 * (HALF_PI - phi)) / con;
+            return Math.Tan(.5 * (HALFPI - phi)) / con;
         }
 
         /// <summary>
@@ -997,12 +1005,12 @@ for (var i = 0; i < _Parameters.Count; i++)
 
             flag = 0;
             double eccnth = .5 * eccent;
-            double chi = HALF_PI - (2 * Math.Atan(ts));
+            double chi = HALFPI - (2 * Math.Atan(ts));
             for (i = 0; i <= 15; i++)
             {
                 sinpi = Math.Sin(chi);
                 con = eccent * sinpi;
-                dphi = HALF_PI - (2 * Math.Atan(ts * Math.Pow((1.0 - con) / (1.0 + con), eccnth))) - chi;
+                dphi = HALFPI - (2 * Math.Atan(ts * Math.Pow((1.0 - con) / (1.0 + con), eccnth))) - chi;
                 chi += dphi;
                 if (Math.Abs(dphi) <= .0000000001)
                 {

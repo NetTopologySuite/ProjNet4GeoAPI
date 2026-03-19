@@ -66,14 +66,14 @@ namespace ProjNet.CoordinateSystems.Projections
             this.azimuth = DegreesToRadians(this.Parameters.GetParameterValue("azimuth"));
             double rectifiedGridAngle = DegreesToRadians(this.Parameters.GetParameterValue("rectified_grid_angle"));
 
-            Sincos(this.lat_origin, out this.sinP20, out this.cosP20);
+            Sincos(this.latOrigin, out this.sinP20, out this.cosP20);
             double con = 1.0 - (this.es * Math.Pow(this.sinP20, 2));
             double com = Math.Sqrt(1.0 - this.es);
             this.bl = Math.Sqrt(1.0 + (this.es * Math.Pow(this.cosP20, 4.0) / (1.0 - this.es)));
-            this.al = this.semiMajor * this.bl * this.scale_factor * com / con;
+            this.al = this.semiMajor * this.bl * this.scaleFactor * com / con;
 
             double f;
-            if (Math.Abs(this.lat_origin) < EPSLN)
+            if (Math.Abs(this.latOrigin) < EPSLN)
             {
                 // ts = 1.0;
                 this.d = 1.0;
@@ -82,12 +82,12 @@ namespace ProjNet.CoordinateSystems.Projections
             }
             else
             {
-                double ts = Tsfnz(this.e, this.lat_origin, this.sinP20);
+                double ts = Tsfnz(this.e, this.latOrigin, this.sinP20);
                 con = Math.Sqrt(con);
                 this.d = this.bl * com / (this.cosP20 * con);
                 if (((this.d * this.d) - 1.0) > 0.0)
                 {
-                    if (this.lat_origin >= 0.0)
+                    if (this.latOrigin >= 0.0)
                     {
                         f = this.d + Math.Sqrt((this.d * this.d) - 1.0);
                     }
@@ -97,7 +97,10 @@ namespace ProjNet.CoordinateSystems.Projections
                     }
                 }
                 else
+                {
                     f = this.d;
+                }
+
                 this.el = f * Math.Pow(ts, this.bl);
             }
 
@@ -105,12 +108,12 @@ namespace ProjNet.CoordinateSystems.Projections
             double gama = Asinz(Math.Sin(this.azimuth) / this.d);
             this.Lon_origin = this.Lon_origin - (Asinz(g * Math.Tan(gama)) / this.bl);
 
-            con = Math.Abs(this.lat_origin);
-            if ((con > EPSLN) && (Math.Abs(con - HALF_PI) > EPSLN))
+            con = Math.Abs(this.latOrigin);
+            if ((con > EPSLN) && (Math.Abs(con - HALFPI) > EPSLN))
             {
                 Sincos(gama, out this.singam, out this.cosgam);
                 Sincos(this.azimuth, out this.sinaz, out this.cosaz);
-                if (this.lat_origin >= 0)
+                if (this.latOrigin >= 0)
                 {
                     this.u = (this.al / this.bl) * Math.Atan(Math.Sqrt((this.d * this.d) - 1.0) / this.cosaz);
                 }
@@ -203,7 +206,7 @@ namespace ProjNet.CoordinateSystems.Projections
             double sin_phi = Math.Sin(lat);
             double dlon = Adjust_lon(lon - this.Lon_origin);
             double vl = Math.Sin(this.bl * dlon);
-            if (Math.Abs(Math.Abs(lat) - HALF_PI) > EPSLN)
+            if (Math.Abs(Math.Abs(lat) - HALFPI) > EPSLN)
             {
                 double ts1 = Tsfnz(this.e, lat, sin_phi);
                 double q = this.el / Math.Pow(ts1, this.bl);
@@ -273,7 +276,7 @@ namespace ProjNet.CoordinateSystems.Projections
             if (Math.Abs(Math.Abs(ul) - 1.0) <= EPSLN)
             {
                 x = this.Lon_origin;
-                y = Sign(ul) * HALF_PI;
+                y = Sign(ul) * HALFPI;
             }
             else
             {

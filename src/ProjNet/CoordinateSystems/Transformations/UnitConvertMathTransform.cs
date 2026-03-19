@@ -40,14 +40,19 @@ namespace ProjNet.CoordinateSystems.Transformations
             this.zScale = zScale;
         }
 
+        /// <inheritdoc />
         public override int DimSource => this.dimension;
 
+        /// <inheritdoc />
         public override int DimTarget => this.dimension;
 
+        /// <inheritdoc />
         public override string WKT => throw new NotImplementedException();
 
+        /// <inheritdoc />
         public override string XML => throw new NotImplementedException();
 
+        /// <inheritdoc />
         public override bool Identity()
         {
             bool xyIdentity = this.xyScale.Equals(1d);
@@ -59,17 +64,20 @@ namespace ProjNet.CoordinateSystems.Transformations
             return xyIdentity && this.zScale.Equals(1d);
         }
 
+        /// <inheritdoc />
         public override MathTransform Inverse()
         {
             return new UnitConvertMathTransform(this.dimension, 1d / this.xyScale, 1d / this.zScale);
         }
 
+        /// <inheritdoc />
         public override void Invert()
         {
             this.xyScale = 1d / this.xyScale;
             this.zScale = 1d / this.zScale;
         }
 
+        /// <inheritdoc />
         public override void Transform(ref double x, ref double y, ref double z)
         {
             x *= this.xyScale;

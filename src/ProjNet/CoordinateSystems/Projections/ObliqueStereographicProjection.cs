@@ -48,8 +48,8 @@ namespace ProjNet.CoordinateSystems.Projections
         private readonly double globalScale;
         private readonly double reciprocGlobalScale;
 
-        private static double ITERATION_TOLERANCE = 1E-14;
-        private static int MAXIMUM_ITERATIONS = 15;
+        private static double ITERATIONTOLERANCE = 1E-14;
+        private static int MAXIMUMITERATIONS = 15;
         private static double EPSILON = 1E-6;
         private double C, K, ratexp;
         private double phic0, cosc0, sinc0, R2;
@@ -97,11 +97,11 @@ namespace ProjNet.CoordinateSystems.Projections
         {
             this.Name = "Oblique_Stereographic";
 
-            this.globalScale = this.scale_factor * this.semiMajor;
+            this.globalScale = this.scaleFactor * this.semiMajor;
             this.reciprocGlobalScale = 1 / this.globalScale;
 
-            double sphi = Math.Sin(this.lat_origin);
-            double cphi = Math.Cos(this.lat_origin);
+            double sphi = Math.Sin(this.latOrigin);
+            double cphi = Math.Cos(this.latOrigin);
             cphi *= cphi;
             this.R2 = 2.0 * Math.Sqrt(1 - this.es) / (1 - (this.es * sphi * sphi));
             this.C = Math.Sqrt(1.0 + (this.es * cphi * cphi / (1.0 - this.es)));
@@ -109,7 +109,7 @@ namespace ProjNet.CoordinateSystems.Projections
             this.sinc0 = Math.Sin(this.phic0);
             this.cosc0 = Math.Cos(this.phic0);
             this.ratexp = 0.5 * this.C * this.e;
-            this.K = Math.Tan((0.5 * this.phic0) + (Math.PI / 4)) / (Math.Pow(Math.Tan((0.5 * this.lat_origin) + (Math.PI / 4)), this.C) * this.Srat(this.e * sphi, this.ratexp));
+            this.K = Math.Tan((0.5 * this.phic0) + (Math.PI / 4)) / (Math.Pow(Math.Tan((0.5 * this.latOrigin) + (Math.PI / 4)), this.C) * this.Srat(this.e * sphi, this.ratexp));
         }
 
         /// <summary>
@@ -149,10 +149,10 @@ namespace ProjNet.CoordinateSystems.Projections
 
             x /= this.C;
             double num = Math.Pow(Math.Tan((0.5 * y) + (Math.PI / 4.0)) / this.K, 1.0 / this.C);
-            for (int iter = MAXIMUM_ITERATIONS; ;)
+            for (int iter = MAXIMUMITERATIONS; ;)
             {
                 double phi = (2.0 * Math.Atan(num * this.Srat(this.e * Math.Sin(y), -0.5 * this.e))) - (Math.PI / 2.0);
-                if (Math.Abs(phi - y) < ITERATION_TOLERANCE)
+                if (Math.Abs(phi - y) < ITERATIONTOLERANCE)
                 {
                     break;
                 }
@@ -164,7 +164,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 }
             }
 
-            x += this.central_meridian;
+            x += this.centralMeridian;
         }
 
         /// <summary>
@@ -174,7 +174,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <param name="lat">The latitude of the point in radians when entering, its y-ordinate in meters after exit.</param>
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
-            double x = lon - this.central_meridian;
+            double x = lon - this.centralMeridian;
             double y = lat;
 
             y = (2.0 * Math.Atan(this.K * Math.Pow(Math.Tan((0.5 * y) + (Math.PI / 4)), this.C)

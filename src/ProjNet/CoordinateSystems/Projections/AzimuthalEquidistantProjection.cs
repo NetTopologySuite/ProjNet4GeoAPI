@@ -38,11 +38,12 @@ namespace ProjNet.CoordinateSystems.Projections
             : base(parameters, inverse)
         {
             this.Name = "Azimuthal_Equidistant";
-            this.radius = this.semiMajor * this.scale_factor;
+            this.radius = this.semiMajor * this.scaleFactor;
             this.inverseRadius = 1.0 / this.radius;
-            Sincos(this.lat_origin, out this.sinPhi0, out this.cosPhi0);
+            Sincos(this.latOrigin, out this.sinPhi0, out this.cosPhi0);
         }
 
+        /// <inheritdoc />
         public override MathTransform Inverse()
         {
             if (this.inverse is null)
@@ -53,9 +54,10 @@ namespace ProjNet.CoordinateSystems.Projections
             return this.inverse;
         }
 
+        /// <inheritdoc />
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
-            double lambda = Adjust_lon(lon - this.central_meridian);
+            double lambda = Adjust_lon(lon - this.centralMeridian);
             double sinPhi = Math.Sin(lat);
             double cosPhi = Math.Cos(lat);
             double cosLambda = Math.Cos(lambda);
@@ -69,13 +71,14 @@ namespace ProjNet.CoordinateSystems.Projections
             lat = this.radius * k * ((this.cosPhi0 * sinPhi) - (this.sinPhi0 * cosPhi * cosLambda));
         }
 
+        /// <inheritdoc />
         protected override void MetersToRadians(ref double x, ref double y)
         {
             double rho = Hypot(x, y);
             if (rho <= EPS10)
             {
-                x = this.central_meridian;
-                y = this.lat_origin;
+                x = this.centralMeridian;
+                y = this.latOrigin;
                 return;
             }
 
@@ -86,7 +89,7 @@ namespace ProjNet.CoordinateSystems.Projections
             double phi = Math.Asin(Clamp((cosC * this.sinPhi0) + ((y * sinC * this.cosPhi0) / rho), -1d, 1d));
             double lambda = Math.Atan2(x * sinC, (rho * this.cosPhi0 * cosC) - (y * this.sinPhi0 * sinC));
 
-            x = Adjust_lon(this.central_meridian + lambda);
+            x = Adjust_lon(this.centralMeridian + lambda);
             y = phi;
         }
 

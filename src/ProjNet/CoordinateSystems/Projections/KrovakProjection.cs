@@ -161,8 +161,8 @@ namespace ProjNet.CoordinateSystems.Projections
             this.n = Math.Sin(this.pseudoStandardParallel);
             this.tanS2 = Math.Tan((this.pseudoStandardParallel / 2) + S45);
 
-            double sinLat = Math.Sin(this.lat_origin);
-            double cosLat = Math.Cos(this.lat_origin);
+            double sinLat = Math.Sin(this.latOrigin);
+            double cosLat = Math.Cos(this.latOrigin);
             double cosL2 = cosLat * cosLat;
             this.alfa = Math.Sqrt(1 + ((this.es * (cosL2 * cosL2)) / (1 - this.es))); // parameter B
             this.hae = this.alfa * this.e / 2;
@@ -170,12 +170,12 @@ namespace ProjNet.CoordinateSystems.Projections
 
             double esl = this.e * sinLat;
             double g = Math.Pow((1 - esl) / (1 + esl), (this.alfa * this.e) / 2);
-            this.k1 = Math.Pow(Math.Tan((this.lat_origin / 2) + S45), this.alfa) * g / Math.Tan((u0 / 2) + S45);
+            this.k1 = Math.Pow(Math.Tan((this.latOrigin / 2) + S45), this.alfa) * g / Math.Tan((u0 / 2) + S45);
             this.ka = Math.Pow(1 / this.k1, -1 / this.alfa);
 
             double radius = Math.Sqrt(1 - this.es) / (1 - (this.es * (sinLat * sinLat)));
 
-            this.ro0 = this.scale_factor * radius / Math.Tan(this.pseudoStandardParallel);
+            this.ro0 = this.scaleFactor * radius / Math.Tan(this.pseudoStandardParallel);
             this.rop = this.ro0 * Math.Pow(this.tanS2, this.n);
 
             this.reciprocSemiMajor = 1 / this.semiMajor;
@@ -188,7 +188,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <param name="lat">The lat parameter.</param>
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
-            double lambda = lon - this.central_meridian;
+            double lambda = lon - this.centralMeridian;
             double phi = lat;
 
             double esp = this.e * Math.Sin(phi);
@@ -247,7 +247,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 }
             }
 
-            x = lambda + this.central_meridian;
+            x = lambda + this.centralMeridian;
             y = phi;
         }
 

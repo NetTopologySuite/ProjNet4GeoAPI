@@ -69,11 +69,11 @@ namespace ProjNet.CoordinateSystems
         /// </summary>
         public abstract IUnit GetUnits(int dimension);
 
-        private List<AxisInfo> _axisInfo;
+        private List<AxisInfo> axisInfo;
         internal List<AxisInfo> AxisInfo
         {
-            get { return this._axisInfo; }
-            set { this._axisInfo = value; }
+            get { return this.axisInfo; }
+            set { this.axisInfo = value; }
         }
 
         /// <summary>
@@ -91,7 +91,7 @@ namespace ProjNet.CoordinateSystems
             return this.AxisInfo[dimension];
         }
 
-        private double[] _defaultEnvelope;
+        private double[] defaultEnvelope;
 
         /// <summary>
         /// Gets or sets default envelope of coordinate system.
@@ -105,8 +105,8 @@ namespace ProjNet.CoordinateSystems
         /// </remarks>
         public double[] DefaultEnvelope
         {
-            get { return this._defaultEnvelope; }
-            set { this._defaultEnvelope = value; }
+            get { return this.defaultEnvelope; }
+            set { this.defaultEnvelope = value; }
         }
     }
 }

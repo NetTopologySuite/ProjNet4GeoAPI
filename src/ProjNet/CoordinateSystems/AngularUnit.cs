@@ -91,15 +91,15 @@ namespace ProjNet.CoordinateSystems
             get { return new AngularUnit(0.015707963267948966192313216916398, "gon", "EPSG", 9106, "g", string.Empty, "=pi/200 radians."); }
         }
 
-        private double _radiansPerUnit;
+        private double radiansPerUnit;
 
         /// <summary>
         /// Gets or sets the number of radians per <see cref="AngularUnit"/>.
         /// </summary>
         public double RadiansPerUnit
         {
-            get { return this._radiansPerUnit; }
-            set { this._radiansPerUnit = value; }
+            get { return this.radiansPerUnit; }
+            set { this.radiansPerUnit = value; }
         }
 
         /// <summary>

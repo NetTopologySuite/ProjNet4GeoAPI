@@ -39,19 +39,20 @@ namespace ProjNet.CoordinateSystems.Projections
             : base(parameters, inverse)
         {
             this.Name = "Loximuthal";
-            this.radius = this.semiMajor * this.scale_factor;
+            this.radius = this.semiMajor * this.scaleFactor;
             this.inverseRadius = 1d / this.radius;
 
-            this.referenceLatitude = DegreesToRadians(this.Parameters.GetOptionalParameterValue("lat_1", RadiansToDegrees(this.lat_origin), "latitude_of_origin"));
+            this.referenceLatitude = DegreesToRadians(this.Parameters.GetOptionalParameterValue("lat_1", RadiansToDegrees(this.latOrigin), "latitude_of_origin"));
             this.cosReferenceLatitude = Math.Cos(this.referenceLatitude);
-            if (Math.Abs(Math.Abs(this.referenceLatitude) - HALF_PI) <= EPSLN)
+            if (Math.Abs(Math.Abs(this.referenceLatitude) - HALFPI) <= EPSLN)
             {
                 throw new ArgumentException("The reference latitude cannot be at the poles.");
             }
 
-            this.referenceMercatorTerm = Math.Log(Math.Tan(FORT_PI + (0.5d * this.referenceLatitude)));
+            this.referenceMercatorTerm = Math.Log(Math.Tan(FORTPI + (0.5d * this.referenceLatitude)));
         }
 
+        /// <inheritdoc />
         public override MathTransform Inverse()
         {
             if (this.inverse is null)
@@ -62,9 +63,10 @@ namespace ProjNet.CoordinateSystems.Projections
             return this.inverse;
         }
 
+        /// <inheritdoc />
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
-            double lambda = Adjust_lon(lon - this.central_meridian);
+            double lambda = Adjust_lon(lon - this.centralMeridian);
             double phi = lat;
             double deltaPhi = phi - this.referenceLatitude;
             lat = this.radius * deltaPhi;
@@ -75,7 +77,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 return;
             }
 
-            double mercatorTerm = Math.Log(Math.Tan(FORT_PI + (0.5d * phi)));
+            double mercatorTerm = Math.Log(Math.Tan(FORTPI + (0.5d * phi)));
             double denominator = mercatorTerm - this.referenceMercatorTerm;
             if (Math.Abs(denominator) <= EPS10)
             {
@@ -86,6 +88,7 @@ namespace ProjNet.CoordinateSystems.Projections
             lon = this.radius * lambda * deltaPhi / denominator;
         }
 
+        /// <inheritdoc />
         protected override void MetersToRadians(ref double x, ref double y)
         {
             double lat = this.referenceLatitude + (y * this.inverseRadius);
@@ -98,7 +101,7 @@ namespace ProjNet.CoordinateSystems.Projections
             }
             else
             {
-                double mercatorTerm = Math.Log(Math.Tan(FORT_PI + (0.5d * lat)));
+                double mercatorTerm = Math.Log(Math.Tan(FORTPI + (0.5d * lat)));
                 double numerator = mercatorTerm - this.referenceMercatorTerm;
                 if (Math.Abs(numerator) <= EPS10)
                 {
@@ -110,7 +113,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 }
             }
 
-            x = Adjust_lon(this.central_meridian + lambda);
+            x = Adjust_lon(this.centralMeridian + lambda);
             y = lat;
         }
     }

@@ -144,8 +144,8 @@ namespace ProjNet.CoordinateSystems.Projections
             Sincos(lat2, out sin_po, out cos_po);
             ms2 = Msfnz(this.e, sin_po, cos_po);
             ts2 = Tsfnz(this.e, lat2, sin_po);
-            sin_po = Math.Sin(this.lat_origin);
-            ts0 = Tsfnz(this.e, this.lat_origin, sin_po);
+            sin_po = Math.Sin(this.latOrigin);
+            ts0 = Tsfnz(this.e, this.latOrigin, sin_po);
 
             if (Math.Abs(lat1 - lat2) > EPSLN)
             {
@@ -176,7 +176,7 @@ namespace ProjNet.CoordinateSystems.Projections
             double theta;  /* angle                                */
             double ts;     /* small value t                        */
 
-            con = Math.Abs(Math.Abs(dLatitude) - HALF_PI);
+            con = Math.Abs(Math.Abs(dLatitude) - HALFPI);
             if (con > EPSLN)
             {
                 sinphi = Math.Sin(dLatitude);
@@ -194,7 +194,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 rh1 = 0;
             }
 
-            theta = this.ns * Adjust_lon(dLongitude - this.central_meridian);
+            theta = this.ns * Adjust_lon(dLongitude - this.centralMeridian);
 
             lon = rh1 * Math.Sin(theta);
             lat = this.rh - (rh1 * Math.Cos(theta));
@@ -242,9 +242,12 @@ namespace ProjNet.CoordinateSystems.Projections
                     throw new ArgumentException();
                 }
             }
-            else y = -HALF_PI;
+            else
+            {
+                y = -HALFPI;
+            }
 
-            x = Adjust_lon((theta / this.ns) + this.central_meridian);
+            x = Adjust_lon((theta / this.ns) + this.centralMeridian);
 
             // return (x, y, z);
         }

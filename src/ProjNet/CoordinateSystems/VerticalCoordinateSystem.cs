@@ -137,10 +137,12 @@ namespace ProjNet.CoordinateSystems
             }
 
             for (int i = 0; i < vcs.AxisInfo.Count; i++)
+            {
                 if (vcs.AxisInfo[i].Orientation != this.AxisInfo[i].Orientation)
                 {
                     return false;
                 }
+            }
 
             return vcs.LinearUnit.EqualParams(this.LinearUnit) &&
                     vcs.VerticalDatum.EqualParams(this.VerticalDatum);

@@ -36,10 +36,11 @@ namespace ProjNet.CoordinateSystems.Projections
             : base(parameters, inverse)
         {
             this.Name = "Miller_Cylindrical";
-            this.radius = this.semiMajor * this.scale_factor;
+            this.radius = this.semiMajor * this.scaleFactor;
             this.inverseRadius = 1d / this.radius;
         }
 
+        /// <inheritdoc />
         public override MathTransform Inverse()
         {
             if (this.inverse is null)
@@ -50,6 +51,7 @@ namespace ProjNet.CoordinateSystems.Projections
             return this.inverse;
         }
 
+        /// <inheritdoc />
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
             if (double.IsNaN(lon) || double.IsNaN(lat))
@@ -59,20 +61,21 @@ namespace ProjNet.CoordinateSystems.Projections
                 return;
             }
 
-            if (Math.Abs(Math.Abs(lat) - HALF_PI) <= EPSLN)
+            if (Math.Abs(Math.Abs(lat) - HALFPI) <= EPSLN)
             {
                 throw new ArgumentException("Transformation cannot be computed at the poles.");
             }
 
-            double lambda = Adjust_lon(lon - this.central_meridian);
+            double lambda = Adjust_lon(lon - this.centralMeridian);
             lon = this.radius * lambda;
-            lat = this.radius * 1.25d * Math.Log(Math.Tan(FORT_PI + (0.4d * lat)));
+            lat = this.radius * 1.25d * Math.Log(Math.Tan(FORTPI + (0.4d * lat)));
         }
 
+        /// <inheritdoc />
         protected override void MetersToRadians(ref double x, ref double y)
         {
-            x = Adjust_lon(this.central_meridian + (x * this.inverseRadius));
-            y = 2.5d * (Math.Atan(Math.Exp((0.8d * y) * this.inverseRadius)) - FORT_PI);
+            x = Adjust_lon(this.centralMeridian + (x * this.inverseRadius));
+            y = 2.5d * (Math.Atan(Math.Exp((0.8d * y) * this.inverseRadius)) - FORTPI);
         }
     }
 }

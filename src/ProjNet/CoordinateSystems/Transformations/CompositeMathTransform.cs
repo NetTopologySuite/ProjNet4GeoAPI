@@ -49,14 +49,19 @@ namespace ProjNet.CoordinateSystems.Transformations
             }
         }
 
+        /// <inheritdoc />
         public override int DimSource => this.transforms[0].DimSource;
 
+        /// <inheritdoc />
         public override int DimTarget => this.transforms[this.transforms.Length - 1].DimTarget;
 
+        /// <inheritdoc />
         public override string WKT => throw new NotImplementedException();
 
+        /// <inheritdoc />
         public override string XML => throw new NotImplementedException();
 
+        /// <inheritdoc />
         public override bool Identity()
         {
             for (int i = 0; i < this.transforms.Length; i++)
@@ -70,6 +75,7 @@ namespace ProjNet.CoordinateSystems.Transformations
             return true;
         }
 
+        /// <inheritdoc />
         public override MathTransform Inverse()
         {
             if (!(this.inverse is null))
@@ -89,6 +95,7 @@ namespace ProjNet.CoordinateSystems.Transformations
             return this.inverse;
         }
 
+        /// <inheritdoc />
         public override void Invert()
         {
             Array.Reverse(this.transforms);
@@ -100,6 +107,7 @@ namespace ProjNet.CoordinateSystems.Transformations
             this.inverse = null;
         }
 
+        /// <inheritdoc />
         public override void Transform(ref double x, ref double y, ref double z)
         {
             for (int i = 0; i < this.transforms.Length; i++)

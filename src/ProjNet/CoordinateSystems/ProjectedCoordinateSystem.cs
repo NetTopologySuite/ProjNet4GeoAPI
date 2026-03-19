@@ -169,10 +169,12 @@ namespace ProjNet.CoordinateSystems
                 if (this.AxisInfo.Count != 2 ||
                     this.AxisInfo[0].Name != "X" || this.AxisInfo[0].Orientation != AxisOrientationEnum.East ||
                     this.AxisInfo[1].Name != "Y" || this.AxisInfo[1].Orientation != AxisOrientationEnum.North)
+                {
                     for (int i = 0; i < this.AxisInfo.Count; i++)
                     {
                         sb.AppendFormat(", {0}", this.GetAxis(i).WKT);
                     }
+                }
 
                 // Skip authority and code if not defined
                 if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)

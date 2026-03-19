@@ -45,7 +45,7 @@ namespace ProjNet.CoordinateSystems.Projections
             : base(parameters, inverse)
         {
             this.Name = "Goode_Homolosine";
-            this.radius = this.semiMajor * this.scale_factor;
+            this.radius = this.semiMajor * this.scaleFactor;
             this.inverseRadius = 1d / this.radius;
             this.isEllipsoidal = this.es > 0d;
             if (this.isEllipsoidal)
@@ -62,6 +62,7 @@ namespace ProjNet.CoordinateSystems.Projections
             }
         }
 
+        /// <inheritdoc />
         public override MathTransform Inverse()
         {
             if (this.inverse is null)
@@ -72,9 +73,10 @@ namespace ProjNet.CoordinateSystems.Projections
             return this.inverse;
         }
 
+        /// <inheritdoc />
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
-            double lambda = Adjust_lon(lon - this.central_meridian);
+            double lambda = Adjust_lon(lon - this.centralMeridian);
             double phi = this.isEllipsoidal ? GeographicToAuthalic(lat) : lat;
 
             double xUnit;
@@ -95,6 +97,7 @@ namespace ProjNet.CoordinateSystems.Projections
             lat = this.radius * yUnit;
         }
 
+        /// <inheritdoc />
         protected override void MetersToRadians(ref double x, ref double y)
         {
             double xUnit = x * this.inverseRadius;
@@ -114,16 +117,16 @@ namespace ProjNet.CoordinateSystems.Projections
                 MollweideInverseUnit(xUnit, correctedY, out lambda, out phi);
             }
 
-            x = Adjust_lon(this.central_meridian + lambda);
+            x = Adjust_lon(this.centralMeridian + lambda);
             y = this.isEllipsoidal ? AuthalicToGeographic(phi) : phi;
         }
 
         private static void MollweideForwardUnit(double lambda, double phi, out double x, out double y)
         {
             double theta;
-            if (Math.Abs(Math.Abs(phi) - HALF_PI) < 1e-12)
+            if (Math.Abs(Math.Abs(phi) - HALFPI) < 1e-12)
             {
-                theta = Sign(phi) * HALF_PI;
+                theta = Sign(phi) * HALFPI;
             }
             else
             {

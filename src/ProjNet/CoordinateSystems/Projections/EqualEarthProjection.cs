@@ -44,10 +44,11 @@ namespace ProjNet.CoordinateSystems.Projections
             : base(parameters, inverse)
         {
             this.Name = "Equal_Earth";
-            this.radius = this.semiMajor * this.scale_factor;
+            this.radius = this.semiMajor * this.scaleFactor;
             this.inverseRadius = 1.0 / this.radius;
         }
 
+        /// <inheritdoc />
         public override MathTransform Inverse()
         {
             if (this.inverse is null)
@@ -58,9 +59,10 @@ namespace ProjNet.CoordinateSystems.Projections
             return this.inverse;
         }
 
+        /// <inheritdoc />
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
-            double lambda = Adjust_lon(lon - this.central_meridian);
+            double lambda = Adjust_lon(lon - this.centralMeridian);
             double sinPhi = Math.Sin(lat);
             double theta = Math.Asin(Clamp(M * sinPhi, -1d, 1d));
 
@@ -72,6 +74,7 @@ namespace ProjNet.CoordinateSystems.Projections
             lat = this.radius * theta * (A1 + (A2 * theta2) + (theta6 * (A3 + (A4 * theta2))));
         }
 
+        /// <inheritdoc />
         protected override void MetersToRadians(ref double x, ref double y)
         {
             double theta = y * this.inverseRadius;
@@ -97,11 +100,11 @@ namespace ProjNet.CoordinateSystems.Projections
 
             if (Math.Abs(cosTheta) <= EPS10)
             {
-                x = this.central_meridian;
+                x = this.centralMeridian;
             }
             else
             {
-                x = Adjust_lon(this.central_meridian + ((x * this.inverseRadius) * M * denominatorFinal / cosTheta));
+                x = Adjust_lon(this.centralMeridian + ((x * this.inverseRadius) * M * denominatorFinal / cosTheta));
             }
 
             y = Math.Asin(Clamp(Math.Sin(theta) / M, -1d, 1d));

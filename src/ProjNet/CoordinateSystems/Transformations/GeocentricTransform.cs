@@ -40,8 +40,8 @@ namespace ProjNet.CoordinateSystems.Transformations
     [Serializable]
     internal class GeocentricTransform : MathTransform
     {
-        private const double COS_67P5 = 0.38268343236508977;    /* cosine of 67.5 degrees */
-        private const double AD_C = 1.0026000;                  /* Toms region 1 constant */
+        private const double COS67P5 = 0.38268343236508977;    /* cosine of 67.5 degrees */
+        private const double ADC = 1.0026000;                  /* Toms region 1 constant */
 
         /// <summary>
         ///
@@ -76,7 +76,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         ///
         /// </summary>
-        private List<ProjectionParameter> _parameters;
+        private List<ProjectionParameter> parameters;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GeocentricTransform"/> class.
@@ -96,8 +96,8 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <param name="parameters">List of parameters to initialize the projection.</param>
         internal GeocentricTransform(List<ProjectionParameter> parameters)
         {
-            this._parameters = parameters;
-            this.semiMajor = this._parameters.Find(delegate (ProjectionParameter par)
+            this.parameters = parameters;
+            this.semiMajor = this.parameters.Find(delegate (ProjectionParameter par)
             {
                 // Do not remove the following lines containing "_Parameters = _Parameters;"
                 // There is an issue deploying code with anonymous delegates to
@@ -109,16 +109,16 @@ namespace ProjNet.CoordinateSystems.Transformations
                 // that is used as the delegate.
                 // For details, see http://www.hedgate.net/articles/2006/01/27/troubles-with-shared-state-and-anonymous-delegates-in-sqlclr
 #pragma warning disable 1717
-                this._parameters = this._parameters;
+                this.parameters = this.parameters;
 #pragma warning restore 1717
 
                 return par.Name.Equals("semi_major", StringComparison.OrdinalIgnoreCase);
             }).Value;
 
-            this.semiMinor = this._parameters.Find(delegate (ProjectionParameter par)
+            this.semiMinor = this.parameters.Find(delegate (ProjectionParameter par)
             {
 #pragma warning disable 1717
-                this._parameters = this._parameters; // See explanation above.
+                this.parameters = this.parameters; // See explanation above.
 #pragma warning restore 1717
                 return par.Name.Equals("semi_minor", StringComparison.OrdinalIgnoreCase);
             }).Value;
@@ -150,7 +150,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         {
             if (this.inverse == null)
             {
-                this.inverse = new GeocentricTransform(this._parameters, !this.isInverse);
+                this.inverse = new GeocentricTransform(this.parameters, !this.isInverse);
             }
 
             return this.inverse;
@@ -191,13 +191,19 @@ namespace ProjNet.CoordinateSystems.Transformations
             double lat = 0;
             double height;
             if (x != 0.0)
+            {
                 lon = Math.Atan2(y, x);
+            }
             else
             {
                 if (y > 0)
+                {
                     lon = Math.PI / 2;
+                }
                 else if (y < 0)
+                {
                     lon = -Math.PI * 0.5;
+                }
                 else
                 {
                     at_Pole = true;
@@ -227,7 +233,7 @@ namespace ProjNet.CoordinateSystems.Transformations
 
             double w2 = (x * x) + (y * y); // Square of distance from Z axis
             double w = Math.Sqrt(w2); // distance from Z axis
-            double t0 = z * AD_C; // initial estimate of vertical component
+            double t0 = z * ADC; // initial estimate of vertical component
             double s0 = Math.Sqrt((t0 * t0) + w2); // initial estimate of horizontal component
             double sin_B0 = t0 / s0; // sin(B0), B0 is estimate of Bowring aux variable
             double cos_B0 = w / s0; // cos(B0)
@@ -238,11 +244,11 @@ namespace ProjNet.CoordinateSystems.Transformations
             double sin_p1 = t1 / s1; // sin(phi1), phi1 is estimated latitude
             double cos_p1 = sum / s1; // cos(phi1)
             double rn = this.semiMajor / Math.Sqrt(1.0 - (this.es * sin_p1 * sin_p1)); // Earth radius at location
-            if (cos_p1 >= COS_67P5)
+            if (cos_p1 >= COS67P5)
             {
                 height = (w / cos_p1) - rn;
             }
-            else if (cos_p1 <= -COS_67P5)
+            else if (cos_p1 <= -COS67P5)
             {
                 height = (w / -cos_p1) - rn;
             }

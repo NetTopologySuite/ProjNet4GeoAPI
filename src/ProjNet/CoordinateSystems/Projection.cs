@@ -38,7 +38,7 @@ namespace ProjNet.CoordinateSystems
             : base(name, authority, code, alias, abbreviation, remarks)
         {
             this.parameters = parameters;
-            this._className = className;
+            this.className = className;
         }
 
         /// <summary>
@@ -79,22 +79,24 @@ namespace ProjNet.CoordinateSystems
         public ProjectionParameter GetParameter(string name)
         {
             foreach (var par in this.parameters)
+            {
                 if (par.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
                 {
                     return par;
                 }
+            }
 
             return null;
         }
 
-        private string _className;
+        private string className;
 
         /// <summary>
         /// Gets the projection classification name (e.g. "Transverse_Mercator").
         /// </summary>
         public string ClassName
         {
-            get { return this._className; }
+            get { return this.className; }
         }
 
         /// <summary>

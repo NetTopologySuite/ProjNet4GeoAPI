@@ -88,10 +88,12 @@ internal class SRIDReader
     {
         // ICoordinateSystemFactory factory = new CoordinateSystemFactory();
         foreach (var wkt in GetSrids(file))
+        {
             if (wkt.WktId == id)
             {
                 return CoordinateSystemFactory.Value.CreateFromWkt(wkt.Wkt);
             }
+        }
 
         return null;
     }

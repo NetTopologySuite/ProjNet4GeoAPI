@@ -823,15 +823,18 @@ namespace ProjNet.CoordinateSystems.Transformations
 
             // Does source has a datum different from WGS84 and is there a shift specified?
             if (source.HorizontalDatum.Wgs84Parameters != null && !source.HorizontalDatum.Wgs84Parameters.HasZeroValuesOnly)
+            {
                 ct.CoordinateTransformationList.Add(
                     new CoordinateTransformation(
                     (target.HorizontalDatum.Wgs84Parameters == null || target.HorizontalDatum.Wgs84Parameters.HasZeroValuesOnly) ? target : GeocentricCoordinateSystem.WGS84,
                     source, TransformType.Transformation,
                         new DatumTransform(source.HorizontalDatum.Wgs84Parameters),
                         string.Empty, string.Empty, -1, string.Empty, string.Empty));
+            }
 
             // Does target has a datum different from WGS84 and is there a shift specified?
             if (target.HorizontalDatum.Wgs84Parameters != null && !target.HorizontalDatum.Wgs84Parameters.HasZeroValuesOnly)
+            {
                 ct.CoordinateTransformationList.Add(
                     new CoordinateTransformation(
                     (source.HorizontalDatum.Wgs84Parameters == null || source.HorizontalDatum.Wgs84Parameters.HasZeroValuesOnly) ? source : GeocentricCoordinateSystem.WGS84,
@@ -839,6 +842,7 @@ namespace ProjNet.CoordinateSystems.Transformations
                     TransformType.Transformation,
                         new DatumTransform(target.HorizontalDatum.Wgs84Parameters).Inverse(),
                         string.Empty, string.Empty, -1, string.Empty, string.Empty));
+            }
 
             // If we don't have a transformation in this list, return null
             if (ct.CoordinateTransformationList.Count == 0)

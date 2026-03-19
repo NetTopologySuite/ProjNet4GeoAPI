@@ -45,7 +45,7 @@ namespace ProjNet.CoordinateSystems.Projections
             : base(parameters, inverse)
         {
             this.Name = "HEALPix";
-            this.radius = this.semiMajor * this.scale_factor;
+            this.radius = this.semiMajor * this.scaleFactor;
             this.inverseRadius = 1d / this.radius;
 
             this.rotationRadians = DegreesToRadians(this.Parameters.GetOptionalParameterValue("rot_xy", 0d));
@@ -65,6 +65,7 @@ namespace ProjNet.CoordinateSystems.Projections
             }
         }
 
+        /// <inheritdoc />
         public override MathTransform Inverse()
         {
             if (this.inverse is null)
@@ -75,9 +76,10 @@ namespace ProjNet.CoordinateSystems.Projections
             return this.inverse;
         }
 
+        /// <inheritdoc />
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
-            double lambda = Adjust_lon(lon - this.central_meridian);
+            double lambda = Adjust_lon(lon - this.centralMeridian);
             double phi = this.isEllipsoidal ? GeographicToAuthalic(lat) : lat;
 
             ToHealpixSphere(lambda, phi, out double xUnit, out double yUnit);
@@ -87,6 +89,7 @@ namespace ProjNet.CoordinateSystems.Projections
             lat = this.radius * yUnit;
         }
 
+        /// <inheritdoc />
         protected override void MetersToRadians(ref double x, ref double y)
         {
             double xUnit = x * this.inverseRadius;
@@ -95,7 +98,7 @@ namespace ProjNet.CoordinateSystems.Projections
             Rotate(ref xUnit, ref yUnit, this.rotationRadians);
             FromHealpixSphere(xUnit, yUnit, out double lambda, out double phiAuthalic);
 
-            x = Adjust_lon(this.central_meridian + lambda);
+            x = Adjust_lon(this.centralMeridian + lambda);
             y = this.isEllipsoidal ? Authlat(phiAuthalic, this.apa) : phiAuthalic;
         }
 

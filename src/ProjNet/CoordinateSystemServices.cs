@@ -52,12 +52,14 @@ namespace ProjNet
 
         private class CsEqualityComparer : EqualityComparer<IInfo>
         {
+            /// <inheritdoc />
             public override bool Equals(IInfo x, IInfo y)
             {
                 return x.AuthorityCode == y.AuthorityCode &&
                     string.Compare(x.Authority, y.Authority, StringComparison.OrdinalIgnoreCase) == 0;
             }
 
+            /// <inheritdoc />
             public override int GetHashCode(IInfo obj)
             {
                 if (obj == null)

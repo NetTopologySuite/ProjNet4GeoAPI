@@ -44,7 +44,7 @@ namespace ProjNet.CoordinateSystems
     [Serializable]
     public class Wgs84ConversionInfo
     {
-        private const double SEC_TO_RAD = 4.84813681109535993589914102357e-6;
+        private const double SECTORAD = 4.84813681109535993589914102357e-6;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Wgs84ConversionInfo"/> class.
@@ -175,7 +175,7 @@ namespace ProjNet.CoordinateSystems
         public double[] GetAffineTransform()
         {
             double rS = 1 + (this.Ppm * 0.000001);
-            return new double[7] { rS, this.Ex * SEC_TO_RAD * rS, this.Ey * SEC_TO_RAD * rS, this.Ez * SEC_TO_RAD * rS, this.Dx, this.Dy, this.Dz };
+            return new double[7] { rS, this.Ex * SECTORAD * rS, this.Ey * SECTORAD * rS, this.Ez * SECTORAD * rS, this.Dx, this.Dy, this.Dz };
             /*return new double[3,4] {
                 { RS,               -Ez*SEC_TO_RAD*RS,  +Ey*SEC_TO_RAD*RS,  Dx} ,
                 { Ez*SEC_TO_RAD*RS, RS,                 -Ex*SEC_TO_RAD*RS,  Dy} ,

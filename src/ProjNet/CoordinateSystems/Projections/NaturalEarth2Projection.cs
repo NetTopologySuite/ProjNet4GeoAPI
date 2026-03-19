@@ -38,10 +38,11 @@ namespace ProjNet.CoordinateSystems.Projections
             : base(parameters, inverse)
         {
             this.Name = "Natural_Earth_2";
-            this.radius = this.semiMajor * this.scale_factor;
+            this.radius = this.semiMajor * this.scaleFactor;
             this.inverseRadius = 1.0 / this.radius;
         }
 
+        /// <inheritdoc />
         public override MathTransform Inverse()
         {
             if (this.inverse is null)
@@ -52,9 +53,10 @@ namespace ProjNet.CoordinateSystems.Projections
             return this.inverse;
         }
 
+        /// <inheritdoc />
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
-            double lambda = Adjust_lon(lon - this.central_meridian);
+            double lambda = Adjust_lon(lon - this.centralMeridian);
             double phi = lat;
             double phi2 = phi * phi;
             double phi4 = phi2 * phi2;
@@ -72,6 +74,7 @@ namespace ProjNet.CoordinateSystems.Projections
             lat = this.radius * phi * yScale;
         }
 
+        /// <inheritdoc />
         protected override void MetersToRadians(ref double x, ref double y)
         {
             double yy = y * this.inverseRadius;
@@ -107,7 +110,7 @@ namespace ProjNet.CoordinateSystems.Projections
 
             double xScaleFinal = 0.84719 - (0.13063 * phi2Final) - (0.04515 * phi12Final) + (0.05494 * phi14Final) - (0.02326 * phi16Final) + (0.00331 * phi18Final);
 
-            x = Adjust_lon(this.central_meridian + ((x * this.inverseRadius) / xScaleFinal));
+            x = Adjust_lon(this.centralMeridian + ((x * this.inverseRadius) / xScaleFinal));
             y = phi;
         }
     }

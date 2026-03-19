@@ -39,7 +39,7 @@ namespace ProjNet.CoordinateSystems.Projections
             : base(parameters, inverse)
         {
             this.Name = "Equidistant_Conic";
-            this.radius = this.semiMajor * this.scale_factor;
+            this.radius = this.semiMajor * this.scaleFactor;
             this.inverseRadius = 1d / this.radius;
 
             double standardParallel1 = DegreesToRadians(this.Parameters.GetParameterValue("standard_parallel_1", "lat_1"));
@@ -60,9 +60,10 @@ namespace ProjNet.CoordinateSystems.Projections
             }
 
             this.g = (Math.Cos(standardParallel1) / this.n) + standardParallel1;
-            this.rho0 = this.g - this.lat_origin;
+            this.rho0 = this.g - this.latOrigin;
         }
 
+        /// <inheritdoc />
         public override MathTransform Inverse()
         {
             if (this.inverse is null)
@@ -73,15 +74,17 @@ namespace ProjNet.CoordinateSystems.Projections
             return this.inverse;
         }
 
+        /// <inheritdoc />
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
-            double theta = this.n * Adjust_lon(lon - this.central_meridian);
+            double theta = this.n * Adjust_lon(lon - this.centralMeridian);
             double rho = this.g - lat;
 
             lon = this.radius * rho * Math.Sin(theta);
             lat = this.radius * (this.rho0 - (rho * Math.Cos(theta)));
         }
 
+        /// <inheritdoc />
         protected override void MetersToRadians(ref double x, ref double y)
         {
             double xUnit = x * this.inverseRadius;
@@ -95,7 +98,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 theta = Math.Atan2(xUnit, rhoPrime);
             }
 
-            x = Adjust_lon(this.central_meridian + (theta / this.n));
+            x = Adjust_lon(this.centralMeridian + (theta / this.n));
             y = this.g - rho;
         }
     }

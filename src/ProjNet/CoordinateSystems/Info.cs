@@ -58,24 +58,24 @@ namespace ProjNet.CoordinateSystems
         {
             this.Name = name;
             this.Authority = authority;
-            this._code = code;
+            this.code = code;
             this.Alias = alias;
             this.Abbreviation = abbreviation;
             this.Remarks = remarks;
         }
 
-        private string _name;
+        private string name;
 
         /// <summary>
         /// Gets or sets the name of the object.
         /// </summary>
         public string Name
         {
-            get { return this._name; }
-            set { this._name = value; }
+            get { return this.name; }
+            set { this.name = value; }
         }
 
-        private string _authority;
+        private string authority;
 
         /// <summary>
         /// Gets or sets the authority name for this object, e.g., "EPSG",
@@ -84,52 +84,52 @@ namespace ProjNet.CoordinateSystems
         /// </summary>
         public string Authority
         {
-            get { return this._authority; }
-            set { this._authority = value; }
+            get { return this.authority; }
+            set { this.authority = value; }
         }
 
-        private long _code;
+        private long code;
 
         /// <summary>
         /// Gets or sets the authority specific identification code of the object.
         /// </summary>
         public long AuthorityCode
         {
-            get { return this._code; }
-            set { this._code = value; }
+            get { return this.code; }
+            set { this.code = value; }
         }
 
-        private string _alias;
+        private string alias;
 
         /// <summary>
         /// Gets or sets the alias of the object.
         /// </summary>
         public string Alias
         {
-            get { return this._alias; }
-            set { this._alias = value; }
+            get { return this.alias; }
+            set { this.alias = value; }
         }
 
-        private string _abbreviation;
+        private string abbreviation;
 
         /// <summary>
         /// Gets or sets the abbreviation of the object.
         /// </summary>
         public string Abbreviation
         {
-            get { return this._abbreviation; }
-            set { this._abbreviation = value; }
+            get { return this.abbreviation; }
+            set { this.abbreviation = value; }
         }
 
-        private string _remarks;
+        private string remarks;
 
         /// <summary>
         /// Gets or sets the provider-supplied remarks for the object.
         /// </summary>
         public string Remarks
         {
-            get { return this._remarks; }
-            set { this._remarks = value; }
+            get { return this.remarks; }
+            set { this.remarks = value; }
         }
 
         /// <summary>

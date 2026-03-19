@@ -126,10 +126,12 @@ namespace ProjNet.CoordinateSystems
                 if (this.AxisInfo.Count != 2 ||
                     this.AxisInfo[0].Name != "Lon" || this.AxisInfo[0].Orientation != AxisOrientationEnum.East ||
                     this.AxisInfo[1].Name != "Lat" || this.AxisInfo[1].Orientation != AxisOrientationEnum.North)
+                {
                     for (int i = 0; i < this.AxisInfo.Count; i++)
                     {
                         sb.AppendFormat(", {0}", this.GetAxis(i).WKT);
                     }
+                }
 
                 if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
                 {
@@ -202,10 +204,12 @@ namespace ProjNet.CoordinateSystems
                 }
 
                 for (int i = 0; i < this.WGS84ConversionInfo.Count; i++)
+                {
                     if (!gcs.WGS84ConversionInfo[i].Equals(this.WGS84ConversionInfo[i]))
                     {
                         return false;
                     }
+                }
             }
 
             if (this.AxisInfo.Count != gcs.AxisInfo.Count)
@@ -214,10 +218,12 @@ namespace ProjNet.CoordinateSystems
             }
 
             for (int i = 0; i < gcs.AxisInfo.Count; i++)
+            {
                 if (gcs.AxisInfo[i].Orientation != this.AxisInfo[i].Orientation)
                 {
                     return false;
                 }
+            }
 
             return gcs.AngularUnit.EqualParams(this.AngularUnit) &&
                     gcs.HorizontalDatum.EqualParams(this.HorizontalDatum) &&

@@ -32,7 +32,6 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// </summary>
         internal int TargetSrid { get; }
 
-        /// <inheritdoc />
         public bool Equals(SridPair other)
         {
             return this.SourceSrid == other.SourceSrid

@@ -55,7 +55,7 @@ namespace ProjNet.CoordinateSystems.Projections
             : base(parameters, inverse)
         {
             this.Name = "Interrupted_Goode_Homolosine";
-            this.radius = this.semiMajor * this.scale_factor;
+            this.radius = this.semiMajor * this.scaleFactor;
             this.inverseRadius = 1d / this.radius;
 
             MollweideForwardUnit(0d, PhiBoundary, out _, out double mollweideBoundaryY);
@@ -63,6 +63,7 @@ namespace ProjNet.CoordinateSystems.Projections
             this.zones = CreateZones(this.dy0);
         }
 
+        /// <inheritdoc />
         public override MathTransform Inverse()
         {
             if (this.inverse is null)
@@ -73,9 +74,10 @@ namespace ProjNet.CoordinateSystems.Projections
             return this.inverse;
         }
 
+        /// <inheritdoc />
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
-            double lambda = Adjust_lon(lon - this.central_meridian);
+            double lambda = Adjust_lon(lon - this.centralMeridian);
             int zoneIndex = DetermineForwardZone(lat, lambda);
             ZoneDefinition zone = this.zones[zoneIndex];
 
@@ -96,6 +98,7 @@ namespace ProjNet.CoordinateSystems.Projections
             lat = this.radius * (zone.Y0 + yUnit);
         }
 
+        /// <inheritdoc />
         protected override void MetersToRadians(ref double x, ref double y)
         {
             double xUnit = x * this.inverseRadius;
@@ -129,7 +132,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 throw new ArgumentException("Input data outside projection domain.");
             }
 
-            x = Adjust_lon(this.central_meridian + lambda);
+            x = Adjust_lon(this.centralMeridian + lambda);
             y = phi;
         }
 
@@ -245,13 +248,13 @@ namespace ProjNet.CoordinateSystems.Projections
                 case 0:
                     return ((lambda >= -D180 - EpsLn) && (lambda <= -D40 + EpsLn))
                         || (((lambda >= -D40 - EpsLn) && (lambda <= -DegreesToRadians(10d) + EpsLn))
-                            && ((phi >= D60 - EpsLn) && (phi <= HALF_PI + EpsLn)));
+                            && ((phi >= D60 - EpsLn) && (phi <= HALFPI + EpsLn)));
                 case 1:
                     return ((lambda >= -D40 - EpsLn) && (lambda <= D180 + EpsLn))
                         || (((lambda >= -D180 - EpsLn) && (lambda <= -D160 + EpsLn))
-                            && ((phi >= D50 - EpsLn) && (phi <= HALF_PI + EpsLn)))
+                            && ((phi >= D50 - EpsLn) && (phi <= HALFPI + EpsLn)))
                         || (((lambda >= -DegreesToRadians(50d) - EpsLn) && (lambda <= -D40 + EpsLn))
-                            && ((phi >= D60 - EpsLn) && (phi <= HALF_PI + EpsLn)));
+                            && ((phi >= D60 - EpsLn) && (phi <= HALFPI + EpsLn)));
                 case 2:
                     return (lambda >= -D180 - EpsLn) && (lambda <= -D40 + EpsLn);
                 case 3:
@@ -276,9 +279,9 @@ namespace ProjNet.CoordinateSystems.Projections
         private static void MollweideForwardUnit(double lambda, double phi, out double x, out double y)
         {
             double theta;
-            if (Math.Abs(Math.Abs(phi) - HALF_PI) < 1e-12)
+            if (Math.Abs(Math.Abs(phi) - HALFPI) < 1e-12)
             {
-                theta = Sign(phi) * HALF_PI;
+                theta = Sign(phi) * HALFPI;
             }
             else
             {

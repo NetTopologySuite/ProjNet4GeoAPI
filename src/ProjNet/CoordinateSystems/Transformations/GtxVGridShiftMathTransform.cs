@@ -63,19 +63,25 @@ namespace ProjNet.CoordinateSystems.Transformations
             this.forwardMultiplier = forwardMultiplier;
         }
 
+        /// <inheritdoc />
         public override int DimSource => 3;
 
+        /// <inheritdoc />
         public override int DimTarget => 3;
 
+        /// <inheritdoc />
         public override string WKT => throw new NotImplementedException();
 
+        /// <inheritdoc />
         public override string XML => throw new NotImplementedException();
 
+        /// <inheritdoc />
         public override bool Identity()
         {
             return false;
         }
 
+        /// <inheritdoc />
         public override MathTransform Inverse()
         {
             return new GtxVGridShiftMathTransform(this.grids.Select(grid => grid.SourcePath).ToArray(), this.forwardMultiplier)
@@ -84,11 +90,13 @@ namespace ProjNet.CoordinateSystems.Transformations
             };
         }
 
+        /// <inheritdoc />
         public override void Invert()
         {
             this.isInverted = !this.isInverted;
         }
 
+        /// <inheritdoc />
         public override void Transform(ref double x, ref double y, ref double z)
         {
             if (!TryFindGridForPoint(x, y, out GtxGrid selectedGrid))

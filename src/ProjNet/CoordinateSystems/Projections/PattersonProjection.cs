@@ -43,11 +43,12 @@ namespace ProjNet.CoordinateSystems.Projections
             : base(parameters, inverse)
         {
             this.Name = "Patterson";
-            this.radius = this.semiMajor * this.scale_factor;
+            this.radius = this.semiMajor * this.scaleFactor;
             this.inverseRadius = 1d / this.radius;
-            this.maxY = ForwardPolynomial(HALF_PI);
+            this.maxY = ForwardPolynomial(HALFPI);
         }
 
+        /// <inheritdoc />
         public override MathTransform Inverse()
         {
             if (this.inverse is null)
@@ -58,16 +59,18 @@ namespace ProjNet.CoordinateSystems.Projections
             return this.inverse;
         }
 
+        /// <inheritdoc />
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
-            double lambda = Adjust_lon(lon - this.central_meridian);
+            double lambda = Adjust_lon(lon - this.centralMeridian);
             lon = this.radius * lambda;
             lat = this.radius * ForwardPolynomial(lat);
         }
 
+        /// <inheritdoc />
         protected override void MetersToRadians(ref double x, ref double y)
         {
-            x = Adjust_lon(this.central_meridian + (x * this.inverseRadius));
+            x = Adjust_lon(this.centralMeridian + (x * this.inverseRadius));
 
             double targetY = Clamp(y * this.inverseRadius, -this.maxY, this.maxY);
             double phi = targetY / K1;
@@ -84,7 +87,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 }
             }
 
-            y = Clamp(phi, -HALF_PI, HALF_PI);
+            y = Clamp(phi, -HALFPI, HALFPI);
         }
 
         private static double ForwardPolynomial(double phi)

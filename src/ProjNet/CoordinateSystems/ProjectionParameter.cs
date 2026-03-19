@@ -41,21 +41,21 @@ namespace ProjNet.CoordinateSystems
         public ProjectionParameter(string name, double value)
         {
             this.Name = name;
-            this._Value = value;
+            this.Value = value;
         }
 
-        private string _name;
+        private string name;
 
         /// <summary>
         /// Gets or sets parameter name.
         /// </summary>
         public string Name
         {
-            get { return this._name; }
-            set { this._name = value; }
+            get { return this.name; }
+            set { this.name = value; }
         }
 
-        private double _Value;
+        private double val;
 
         /// <summary>
         /// Gets or sets parameter value.
@@ -66,8 +66,8 @@ namespace ProjNet.CoordinateSystems
         /// </summary>
         public double Value
         {
-            get { return this._Value; }
-            set { this._Value = value; }
+            get { return this.val; }
+            set { this.val = value; }
         }
 
         /// <summary>

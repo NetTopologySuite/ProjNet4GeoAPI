@@ -48,14 +48,19 @@ namespace ProjNet.CoordinateSystems.Transformations
             this.zSign = ValidateSign(zSign, nameof(zSign));
         }
 
+        /// <inheritdoc />
         public override int DimSource => this.dimension;
 
+        /// <inheritdoc />
         public override int DimTarget => this.dimension;
 
+        /// <inheritdoc />
         public override string WKT => throw new NotImplementedException();
 
+        /// <inheritdoc />
         public override string XML => throw new NotImplementedException();
 
+        /// <inheritdoc />
         public override bool Identity()
         {
             bool xyIdentity = this.xSourceIndex == 0
@@ -73,6 +78,7 @@ namespace ProjNet.CoordinateSystems.Transformations
                 && this.zSign == 1;
         }
 
+        /// <inheritdoc />
         public override MathTransform Inverse()
         {
             int[] sourceIndices = { this.xSourceIndex, this.ySourceIndex, this.zSourceIndex };
@@ -97,6 +103,7 @@ namespace ProjNet.CoordinateSystems.Transformations
                 inverseSigns[2]);
         }
 
+        /// <inheritdoc />
         public override void Invert()
         {
             int[] sourceIndices = { this.xSourceIndex, this.ySourceIndex, this.zSourceIndex };
@@ -119,6 +126,7 @@ namespace ProjNet.CoordinateSystems.Transformations
             this.zSign = inverseSigns[2];
         }
 
+        /// <inheritdoc />
         public override void Transform(ref double x, ref double y, ref double z)
         {
             double[] source = { x, y, z };

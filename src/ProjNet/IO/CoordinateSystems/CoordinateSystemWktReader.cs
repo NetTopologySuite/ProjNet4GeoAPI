@@ -129,7 +129,9 @@ namespace ProjNet.IO.CoordinateSystems
                 tokenizer.ReadCloser(bracket);
             }
             else
+            {
                 tokenizer.CheckCloser(bracket);
+            }
 
             return new Unit(unitsPerUnit, unitName, authority, authorityCode, string.Empty, string.Empty, string.Empty);
         }
@@ -156,7 +158,9 @@ namespace ProjNet.IO.CoordinateSystems
                 tokenizer.ReadCloser(bracket);
             }
             else
+            {
                 tokenizer.CheckCloser(bracket);
+            }
 
             return new LinearUnit(unitsPerUnit, unitName, authority, authorityCode, string.Empty, string.Empty, string.Empty);
         }
@@ -334,7 +338,9 @@ namespace ProjNet.IO.CoordinateSystems
                 tokenizer.ReadCloser(bracket);
             }
             else
+            {
                 tokenizer.CheckCloser(bracket);
+            }
 
             tokenizer.ReadToken(","); // ,
             tokenizer.ReadToken("PARAMETER");
@@ -734,7 +740,9 @@ namespace ProjNet.IO.CoordinateSystems
                 tokenizer.ReadCloser(bracket);
             }
             else
+            {
                 tokenizer.CheckCloser(bracket);
+            }
 
             // make an assumption about the Angular units - degrees.
             var primeMeridian = new PrimeMeridian(longitude, AngularUnit.Degrees, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);

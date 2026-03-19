@@ -37,11 +37,12 @@ namespace ProjNet.CoordinateSystems.Projections
             : base(parameters, inverse)
         {
             this.Name = "Sinusoidal";
-            this.radius = this.semiMajor * this.scale_factor;
+            this.radius = this.semiMajor * this.scaleFactor;
             this.inverseRadius = 1d / this.radius;
             this.isEllipsoidal = this.es > 0d;
         }
 
+        /// <inheritdoc />
         public override MathTransform Inverse()
         {
             if (this.inverse is null)
@@ -52,9 +53,10 @@ namespace ProjNet.CoordinateSystems.Projections
             return this.inverse;
         }
 
+        /// <inheritdoc />
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
-            double lambda = Adjust_lon(lon - this.central_meridian);
+            double lambda = Adjust_lon(lon - this.centralMeridian);
             double phi = lat;
 
             if (this.isEllipsoidal)
@@ -70,6 +72,7 @@ namespace ProjNet.CoordinateSystems.Projections
             lat = this.radius * phi;
         }
 
+        /// <inheritdoc />
         protected override void MetersToRadians(ref double x, ref double y)
         {
             double xUnit = x * this.inverseRadius;
@@ -81,12 +84,12 @@ namespace ProjNet.CoordinateSystems.Projections
                 double absPhi = Math.Abs(phiEllipsoid);
                 double lambdaEllipsoid;
 
-                if (absPhi < HALF_PI)
+                if (absPhi < HALFPI)
                 {
                     double sinPhi = Math.Sin(phiEllipsoid);
                     lambdaEllipsoid = xUnit * Math.Sqrt(1d - (this.es * sinPhi * sinPhi)) / Math.Cos(phiEllipsoid);
                 }
-                else if ((absPhi - EPS10) < HALF_PI)
+                else if ((absPhi - EPS10) < HALFPI)
                 {
                     lambdaEllipsoid = 0d;
                 }
@@ -95,7 +98,7 @@ namespace ProjNet.CoordinateSystems.Projections
                     throw new ArgumentException("Input data outside projection domain.");
                 }
 
-                x = Adjust_lon(this.central_meridian + lambdaEllipsoid);
+                x = Adjust_lon(this.centralMeridian + lambdaEllipsoid);
                 y = phiEllipsoid;
                 return;
             }
@@ -104,7 +107,7 @@ namespace ProjNet.CoordinateSystems.Projections
             double cosPhiSphere = Math.Cos(phiSphere);
             double lambdaSphere = Math.Abs(cosPhiSphere) <= EPS10 ? 0d : (xUnit / cosPhiSphere);
 
-            x = Adjust_lon(this.central_meridian + lambdaSphere);
+            x = Adjust_lon(this.centralMeridian + lambdaSphere);
             y = phiSphere;
         }
     }

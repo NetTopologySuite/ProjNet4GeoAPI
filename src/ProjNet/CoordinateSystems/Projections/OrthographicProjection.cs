@@ -36,8 +36,8 @@ namespace ProjNet.CoordinateSystems.Projections
         private readonly double sinph0;
         private readonly double cosph0;
         private readonly double nu0;
-        private readonly double y_shift;
-        private readonly double y_scale;
+        private readonly double yShift;
+        private readonly double yScale;
         private readonly Mode mode;
 
         /// <summary>
@@ -83,7 +83,7 @@ namespace ProjNet.CoordinateSystems.Projections
 
             Sincos(this.Phi0, out this.sinph0, out this.cosph0);
 
-            if (Math.Abs(Math.Abs(this.Phi0) - HALF_PI) <= EPS10)
+            if (Math.Abs(Math.Abs(this.Phi0) - HALFPI) <= EPS10)
             {
                 this.mode = this.Phi0 < 0.0 ? Mode.S_POLE : Mode.N_POLE;
             }
@@ -99,8 +99,8 @@ namespace ProjNet.CoordinateSystems.Projections
             if (this.es > 0)
             {
                 this.nu0 = this.semiMajor / Math.Sqrt(1.0 - (this.es * this.sinph0 * this.sinph0));
-                this.y_shift = this.es * this.nu0 / this.semiMajor * this.sinph0 * this.cosph0;
-                this.y_scale = 1.0 / Math.Sqrt(1.0 - (this.es * this.cosph0 * this.cosph0));
+                this.yShift = this.es * this.nu0 / this.semiMajor * this.sinph0 * this.cosph0;
+                this.yScale = 1.0 / Math.Sqrt(1.0 - (this.es * this.cosph0 * this.cosph0));
             }
         }
 
@@ -162,7 +162,7 @@ namespace ProjNet.CoordinateSystems.Projections
             double lam;
             if (Math.Abs(rho) <= EPS10)
             {
-                phi = this.lat_origin;
+                phi = this.latOrigin;
                 lam = this.Lon_origin;
             }
             else
@@ -180,7 +180,7 @@ namespace ProjNet.CoordinateSystems.Projections
                     case Mode.EQUIT:
                         if (Math.Abs(y) >= this.semiMajor)
                         {
-                            phi = y < 0.0 ? -HALF_PI : HALF_PI;
+                            phi = y < 0.0 ? -HALFPI : HALFPI;
                         }
                         else
                         {
@@ -225,7 +225,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 // ==> (x/a)^2 + (y/a)^2 = nu^2 * cosphi^2
                 //                rh^2 = cosphi^2 / (1 - es * sinphi^2)
                 // ==>  cosphi^2 = rh^2 * (1 - es) / (1 - es * rh^2)
-                lam = Math.Atan2(x, -y * Sign(this.lat_origin));
+                lam = Math.Atan2(x, -y * Sign(this.latOrigin));
 
                 double rh2 = sQ(x_scaled) + sQ(y_scaled);
                 if (rh2 >= 1.0 - 1e-15)
@@ -239,7 +239,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 }
                 else
                 {
-                    phi = Math.Acos(Math.Sqrt(rh2 * (1 - this.es) / (1 - (this.es * rh2)))) * Sign(this.lat_origin);
+                    phi = Math.Acos(Math.Sqrt(rh2 * (1 - this.es) / (1 - (this.es * rh2)))) * Sign(this.latOrigin);
                 }
             }
             else if (this.mode == Mode.EQUIT)
@@ -259,7 +259,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 double sinphi2 = sQ(y_scaled) / (sQ(1 - this.es) + (sQ(y_scaled) * this.es));
                 if (sinphi2 > 1 - 1e-11)
                 {
-                    phi = HALF_PI * Sign(y_scaled);
+                    phi = HALFPI * Sign(y_scaled);
                     lam = 0.0;
                 }
                 else
@@ -268,7 +268,7 @@ namespace ProjNet.CoordinateSystems.Projections
                     double sinlam = x_scaled * Math.Sqrt((1 - (this.es * sinphi2)) / (1 - sinphi2));
                     if (Math.Abs(sinlam) - 1 > -1e-15)
                     {
-                        lam = HALF_PI * Sign(x_scaled);
+                        lam = HALFPI * Sign(x_scaled);
                     }
                     else
                     {
@@ -282,7 +282,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 // condition of the forward case) in the forward equations, and a lot of
                 // substitution games...
                 double x_recentered = x;
-                double y_recentered = (y - this.y_shift) / this.y_scale;
+                double y_recentered = (y - this.yShift) / this.yScale;
                 if (sQ(x_scaled) + sQ(y_scaled) > 1 + 1e-11)
                 {
                     throw new ArgumentOutOfRangeException($"Point ({x_scaled:F3}, {y_scaled:F3}) is outside of the projection boundary");
@@ -320,13 +320,13 @@ namespace ProjNet.CoordinateSystems.Projections
                     double dlam = ((-j21 * dx) + (j11 * dy)) / d;
 
                     phi += dphi;
-                    if (phi > HALF_PI)
+                    if (phi > HALFPI)
                     {
-                        phi = HALF_PI;
+                        phi = HALFPI;
                     }
-                    else if (phi < -HALF_PI)
+                    else if (phi < -HALFPI)
                     {
-                        phi = -HALF_PI;
+                        phi = -HALFPI;
                     }
 
                     lam += dlam;
@@ -366,8 +366,8 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <param name="phi">The latitude of the point in radians when entering, its y-ordinate in meters after exit.</param>
         private void OrthoSForward(ref double lam, ref double phi)
         {
-            double x = HUGE_VAL;
-            double y = HUGE_VAL;
+            double x = HUGEVAL;
+            double y = HUGEVAL;
 
             double cosphi = Math.Cos(phi);
             double coslam = Math.Cos(lam - this.Lon_origin);
@@ -400,7 +400,7 @@ namespace ProjNet.CoordinateSystems.Projections
                     break;
                 case Mode.N_POLE:
                     coslam = -coslam;
-                    if (Math.Abs(phi - this.Phi0) - EPS10 > HALF_PI)
+                    if (Math.Abs(phi - this.Phi0) - EPS10 > HALFPI)
                     {
                         throw new ArgumentOutOfRangeException($"Coordinate ({RadiansToDegrees(lam):F3}, {RadiansToDegrees(phi):F3}) is on the unprojected hemisphere");
                     }
@@ -408,7 +408,7 @@ namespace ProjNet.CoordinateSystems.Projections
                     y = this.semiMajor * cosphi * coslam;
                     break;
                 case Mode.S_POLE:
-                    if (Math.Abs(phi - this.Phi0) - EPS10 > HALF_PI)
+                    if (Math.Abs(phi - this.Phi0) - EPS10 > HALFPI)
                     {
                         throw new ArgumentOutOfRangeException($"Coordinate ({RadiansToDegrees(lam):F3}, {RadiansToDegrees(phi):F3}) is on the unprojected hemisphere");
                     }

@@ -101,10 +101,12 @@ namespace ProjNet.CoordinateSystems
                     this.AxisInfo[0].Name != "X" || this.AxisInfo[0].Orientation != AxisOrientationEnum.Other ||
                     this.AxisInfo[1].Name != "Y" || this.AxisInfo[1].Orientation != AxisOrientationEnum.East ||
                     this.AxisInfo[2].Name != "Z" || this.AxisInfo[2].Orientation != AxisOrientationEnum.North)
+                {
                     for (int i = 0; i < this.AxisInfo.Count; i++)
                     {
                         sb.AppendFormat(", {0}", this.GetAxis(i).WKT);
                     }
+                }
 
                 if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
                 {

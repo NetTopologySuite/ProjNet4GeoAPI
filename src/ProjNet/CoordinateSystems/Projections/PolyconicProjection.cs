@@ -75,8 +75,8 @@ namespace ProjNet.CoordinateSystems.Projections
         {
             this.Name = "Polyconic";
 
-            this.ml0 = this.Mlfn(this.lat_origin, Math.Sin(this.lat_origin), Math.Cos(this.lat_origin));
-            this.reciprocSemiMajorTimesScaleFactor = 1 / (this.semiMajor * this.scale_factor);
+            this.ml0 = this.Mlfn(this.latOrigin, Math.Sin(this.latOrigin), Math.Cos(this.latOrigin));
+            this.reciprocSemiMajorTimesScaleFactor = 1 / (this.semiMajor * this.scaleFactor);
         }
 
         /// <inheritdoc/>
@@ -85,7 +85,7 @@ namespace ProjNet.CoordinateSystems.Projections
             double lam = lon;
             double phi = lat;
 
-            double delta_lam = Adjust_lon(lam - this.central_meridian);
+            double delta_lam = Adjust_lon(lam - this.centralMeridian);
 
             double x, y;
 
@@ -105,8 +105,8 @@ namespace ProjNet.CoordinateSystems.Projections
                 y = (this.Mlfn(phi, sp, cp) - this.ml0) + (ms * (1.0 - Math.Cos( /*lam*/delta_lam)));
             }
 
-            lon = this.scale_factor * this.semiMajor * x;
-            lat = this.scale_factor * this.semiMajor * y;
+            lon = this.scaleFactor * this.semiMajor * x;
+            lat = this.scaleFactor * this.semiMajor * y;
         }
 
         /// <inheritdoc/>
@@ -163,7 +163,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 lam = Math.Asin(x * Math.Tan(phi) * Math.Sqrt(1.0 - (this.es * c2 * c2))) / Math.Sin(phi);
             }
 
-            x = Adjust_lon(lam + this.central_meridian);
+            x = Adjust_lon(lam + this.centralMeridian);
             y = phi;
         }
 

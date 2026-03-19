@@ -75,7 +75,7 @@ namespace ProjNet.CoordinateSystems.Projections
             double dLon = lon;
             double dLat = lat;
 
-            if (Math.Abs(Math.Abs(dLat) - HALF_PI) <= EPSLN)
+            if (Math.Abs(Math.Abs(dLat) - HALFPI) <= EPSLN)
             {
                 throw new ArgumentException("Transformation cannot be computed at the poles.");
             }
@@ -83,7 +83,7 @@ namespace ProjNet.CoordinateSystems.Projections
             // Forward equations for the Spherical (Auxiliary) Mercator Projection:
             // X = semiMajor * k0 * (lon - central_meridian)
             // Y = semiMajor * k0 * ln( tan(PI/4 + lat/2) )
-            lon = this.semiMajor * k0 * (dLon - this.central_meridian);
+            lon = this.semiMajor * k0 * (dLon - this.centralMeridian);
             lat = this.semiMajor * k0 * Math.Log(Math.Tan((PI * 0.25) + (dLat * 0.5)));
 
             // Note: false_easting and false_northing can be added here if necessary.
@@ -106,8 +106,8 @@ namespace ProjNet.CoordinateSystems.Projections
             // lon = central_meridian + X / (semiMajor * k0)
             // lat = PI/2 - 2 * atan( exp( -Y / (semiMajor * k0) ) )
             double ts = Math.Exp(-dY / (this.semiMajor * k0));
-            double dLat = HALF_PI - (2 * Math.Atan(ts));
-            double dLon = this.central_meridian + (dX / (this.semiMajor * k0));
+            double dLat = HALFPI - (2 * Math.Atan(ts));
+            double dLon = this.centralMeridian + (dX / (this.semiMajor * k0));
 
             x = dLon;
             y = dLat;

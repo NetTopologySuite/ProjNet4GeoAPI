@@ -37,7 +37,7 @@ namespace ProjNet.CoordinateSystems.Projections
             : base(parameters, inverse)
         {
             this.Name = "Cylindrical_Equal_Area";
-            this.radius = this.semiMajor * this.scale_factor;
+            this.radius = this.semiMajor * this.scaleFactor;
             this.inverseRadius = 1d / this.radius;
 
             double standardParallel = DegreesToRadians(this.Parameters.GetOptionalParameterValue("standard_parallel_1", 0d, "lat_ts"));
@@ -48,6 +48,7 @@ namespace ProjNet.CoordinateSystems.Projections
             }
         }
 
+        /// <inheritdoc />
         public override MathTransform Inverse()
         {
             if (this.inverse is null)
@@ -58,16 +59,18 @@ namespace ProjNet.CoordinateSystems.Projections
             return this.inverse;
         }
 
+        /// <inheritdoc />
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
-            double lambda = Adjust_lon(lon - this.central_meridian);
+            double lambda = Adjust_lon(lon - this.centralMeridian);
             lon = this.radius * lambda * this.cosStandardParallel;
             lat = this.radius * Math.Sin(lat) / this.cosStandardParallel;
         }
 
+        /// <inheritdoc />
         protected override void MetersToRadians(ref double x, ref double y)
         {
-            x = Adjust_lon(this.central_meridian + ((x * this.inverseRadius) / this.cosStandardParallel));
+            x = Adjust_lon(this.centralMeridian + ((x * this.inverseRadius) / this.cosStandardParallel));
             y = Math.Asin(Clamp((y * this.cosStandardParallel) * this.inverseRadius, -1d, 1d));
         }
 

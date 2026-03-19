@@ -33,30 +33,30 @@ namespace ProjNet.CoordinateSystems
         /// <param name="orientation">Axis orientation.</param>
         public AxisInfo(string name, AxisOrientationEnum orientation)
         {
-            this._Name = name;
+            this.Name = name;
             this.Orientation = orientation;
         }
 
-        private string _Name;
+        private string name;
 
         /// <summary>
         /// Gets or sets human readable name for axis. Possible values are X, Y, Long, Lat or any other short string.
         /// </summary>
         public string Name
         {
-            get { return this._Name; }
-            set { this._Name = value; }
+            get { return this.name; }
+            set { this.name = value; }
         }
 
-        private AxisOrientationEnum _orientation;
+        private AxisOrientationEnum orientation;
 
         /// <summary>
         /// Gets or sets enumerated value for orientation.
         /// </summary>
         public AxisOrientationEnum Orientation
         {
-            get { return this._orientation; }
-            set { this._orientation = value; }
+            get { return this.orientation; }
+            set { this.orientation = value; }
         }
 
         /// <summary>

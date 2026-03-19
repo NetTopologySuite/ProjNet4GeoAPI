@@ -41,7 +41,7 @@ namespace ProjNet.CoordinateSystems.Projections
             : base(parameters, inverse)
         {
             this.Name = "Perspective_Conic";
-            this.radius = this.semiMajor * this.scale_factor;
+            this.radius = this.semiMajor * this.scaleFactor;
             this.inverseRadius = 1d / this.radius;
 
             double standardParallel1 = DegreesToRadians(this.Parameters.GetParameterValue("standard_parallel_1", "lat_1"));
@@ -57,8 +57,8 @@ namespace ProjNet.CoordinateSystems.Projections
             this.c2 = Math.Cos(delta);
             this.c1 = 1d / Math.Tan(this.sig);
 
-            double latitudeOffset = this.lat_origin - this.sig;
-            if ((Math.Abs(latitudeOffset) - EPS10) >= HALF_PI)
+            double latitudeOffset = this.latOrigin - this.sig;
+            if ((Math.Abs(latitudeOffset) - EPS10) >= HALFPI)
             {
                 throw new ArgumentException("Invalid value for lat_0/lat_1/lat_2: |lat_0 - 0.5 * (lat_1 + lat_2)| should be < 90°.");
             }
@@ -66,6 +66,7 @@ namespace ProjNet.CoordinateSystems.Projections
             this.rho0 = this.c2 * (this.c1 - Math.Tan(latitudeOffset));
         }
 
+        /// <inheritdoc />
         public override MathTransform Inverse()
         {
             if (this.inverse is null)
@@ -76,15 +77,17 @@ namespace ProjNet.CoordinateSystems.Projections
             return this.inverse;
         }
 
+        /// <inheritdoc />
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
             double rho = this.c2 * (this.c1 - Math.Tan(lat - this.sig));
-            double theta = this.n * Adjust_lon(lon - this.central_meridian);
+            double theta = this.n * Adjust_lon(lon - this.centralMeridian);
 
             lon = this.radius * rho * Math.Sin(theta);
             lat = this.radius * (this.rho0 - (rho * Math.Cos(theta)));
         }
 
+        /// <inheritdoc />
         protected override void MetersToRadians(ref double x, ref double y)
         {
             double xUnit = x * this.inverseRadius;
@@ -101,7 +104,7 @@ namespace ProjNet.CoordinateSystems.Projections
             double lambda = Math.Atan2(xUnit, yUnit) / this.n;
             double phi = Math.Atan(this.c1 - (rho / this.c2)) + this.sig;
 
-            x = Adjust_lon(this.central_meridian + lambda);
+            x = Adjust_lon(this.centralMeridian + lambda);
             y = phi;
         }
     }

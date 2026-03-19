@@ -39,7 +39,7 @@ namespace ProjNet.CoordinateSystems.Projections
             : base(parameters, inverse)
         {
             this.Name = "Hammer";
-            this.radius = this.semiMajor * this.scale_factor;
+            this.radius = this.semiMajor * this.scaleFactor;
             this.inverseRadius = 1d / this.radius;
 
             this.w = Math.Abs(this.Parameters.GetOptionalParameterValue("W", 0.5d, "w"));
@@ -57,6 +57,7 @@ namespace ProjNet.CoordinateSystems.Projections
             this.inverseM = 1d / this.m;
         }
 
+        /// <inheritdoc />
         public override MathTransform Inverse()
         {
             if (this.inverse is null)
@@ -67,9 +68,10 @@ namespace ProjNet.CoordinateSystems.Projections
             return this.inverse;
         }
 
+        /// <inheritdoc />
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
-            double lambda = this.w * Adjust_lon(lon - this.central_meridian);
+            double lambda = this.w * Adjust_lon(lon - this.centralMeridian);
             double cosPhi = Math.Cos(lat);
             double denominator = 1d + (cosPhi * Math.Cos(lambda));
             if (denominator == 0d)
@@ -82,6 +84,7 @@ namespace ProjNet.CoordinateSystems.Projections
             lat = this.radius * (this.inverseM * d * Math.Sin(lat));
         }
 
+        /// <inheritdoc />
         protected override void MetersToRadians(ref double x, ref double y)
         {
             double xUnit = x * this.inverseRadius;
@@ -102,7 +105,7 @@ namespace ProjNet.CoordinateSystems.Projections
             double lambda = Math.Atan2(this.w * xUnit * z, (2d * z * z) - 1d) / this.w;
             double phi = Math.Asin(Clamp(z * yUnit, -1d, 1d));
 
-            x = Adjust_lon(this.central_meridian + lambda);
+            x = Adjust_lon(this.centralMeridian + lambda);
             y = phi;
         }
 

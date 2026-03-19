@@ -53,7 +53,6 @@ namespace ProjNet.Geometries
         /// <inheritdoc />
         public override bool Equals(object obj) => obj is XYZ other && this.Equals(other);
 
-        /// <inheritdoc />
         public bool Equals(XYZ other) => (this.X, this.Y, this.Z).Equals((other.X, other.Y, other.Z));
 
         /// <inheritdoc />
