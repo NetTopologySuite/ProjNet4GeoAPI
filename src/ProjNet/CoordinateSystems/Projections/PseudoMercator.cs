@@ -27,12 +27,21 @@ namespace ProjNet.CoordinateSystems.Projections
     [Serializable]
     internal class PseudoMercator : Mercator
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PseudoMercator"/> class.
+        /// </summary>
+        /// <param name="parameters">Projection parameters.</param>
         public PseudoMercator(IEnumerable<ProjectionParameter> parameters)
             : this(parameters, null)
         {
 
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PseudoMercator"/> class.
+        /// </summary>
+        /// <param name="parameters">Projection parameters.</param>
+        /// <param name="inverse">Inverse transform instance when cloning.</param>
         protected PseudoMercator(IEnumerable<ProjectionParameter> parameters, Mercator inverse)
             : base(VerifyParameters(parameters), inverse)
         {
