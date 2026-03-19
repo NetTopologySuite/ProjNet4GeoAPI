@@ -83,6 +83,9 @@ namespace ProjNet.CoordinateSystems.Projections
             Register("lambert_conic_conformal_(1sp)", typeof(LambertConformalConic2SP));
             Register("lambert_conic_conformal_(2sp)", typeof(LambertConformalConic2SP));
             Register("lambert_tangential_conformal_conic_projection", typeof(LambertConformalConic2SP));
+            Register("equidistant_conic", typeof(EquidistantConicProjection));
+            Register("equidistant_conic_(spherical)", typeof(EquidistantConicProjection));
+            Register("eqdc", typeof(EquidistantConicProjection));
 
             Register("lambert_azimuthal_equal_area", typeof(LambertAzimuthalEqualAreaProjection));
 
