@@ -51,6 +51,14 @@ Concise modernization artifacts and rollout notes are tracked in:
 * `docs/modernization/`
 * `IMPLEMENTATION_PLAN.md`
 
+### Release validation checklist
+Current release hardening is validated with the following commands:
+* `dotnet test .\test\ProjNet.Tests\ProjNet.Tests.csproj -c Release --framework net8 --filter "FullyQualifiedName~PublicApiBaselineTests"`
+* `dotnet test .\test\ProjNet.Tests\ProjNet.Tests.csproj -c Release --framework net8 --filter "FullyQualifiedName~GieBuiltinsTheoryTests|FullyQualifiedName~Gigs5101TheoryTests"`
+* `dotnet build .\src\ProjNet.Benchmark\ProjNet.Benchmark.csproj -c Release`
+* `dotnet run -c Release --project .\src\ProjNet.Benchmark\ProjNet.Benchmark.csproj -- --list flat`
+* `dotnet run -c Release --project .\src\ProjNet.Benchmark\ProjNet.Benchmark.csproj -- --filter *ProjParityBenchmarks*`
+
 ### Projection types currently supported:
 * Albers
 * Cassini Soldner

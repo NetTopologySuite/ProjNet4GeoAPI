@@ -13,7 +13,7 @@ jobs:
 
     steps:
     - name: Get source
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4
 
     - name: Setup .NET 
       uses: actions/setup-dotnet@v4
@@ -26,6 +26,21 @@ jobs:
     - name: Test
       run: dotnet test -c Release --no-build
       shell: bash # defaults disagree on how to quote the filter string
+
+    - name: API compatibility gate
+      if: matrix.os == 'ubuntu-latest'
+      run: dotnet test test/ProjNet.Tests/ProjNet.Tests.csproj -c Release --no-build --framework net8 --filter "FullyQualifiedName~PublicApiBaselineTests"
+      shell: bash
+
+    - name: GIE/GIGS parity smoke gate
+      if: matrix.os == 'ubuntu-latest'
+      run: dotnet test test/ProjNet.Tests/ProjNet.Tests.csproj -c Release --no-build --framework net8 --filter "FullyQualifiedName~GieBuiltinsTheoryTests|FullyQualifiedName~Gigs5101TheoryTests"
+      shell: bash
+
+    - name: Benchmark catalog gate
+      if: matrix.os == 'ubuntu-latest'
+      run: dotnet run -c Release --project src/ProjNet.Benchmark/ProjNet.Benchmark.csproj -- --list flat
+      shell: bash
 
     - name: Pack
       run: dotnet pack -c Release --no-build -o artifacts -p:NoWarn=NU5105
