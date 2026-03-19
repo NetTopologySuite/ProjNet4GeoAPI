@@ -157,6 +157,38 @@ public class Phase9EqualAreaProjectionSupportTests
         Assert.InRange(System.Math.Abs(roundtrip[1] - latitude), 0d, tolerance);
     }
 
+    [Theory]
+    [InlineData("healpix")]
+    public void SupportsHealpixProjectionAliasesFromWkt(string projectionName)
+    {
+        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName));
+        var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
+        double[] result = transform.MathTransform.Transform(CreatePoint(1000d, 2000d));
+
+        Assert.NotNull(projected);
+        Assert.NotNull(transform);
+        Assert.NotNull(result);
+        Assert.True(result.Length >= 2);
+    }
+
+    [Fact]
+    public void SupportsHealpixProjectionRoundtrip()
+    {
+        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt("healpix"));
+        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(GeographicCoordinateSystem.WGS84, projected);
+        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
+
+        const double longitude = 45d;
+        const double latitude = 35d;
+        const double tolerance = 1e-6d;
+
+        double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
+        double[] roundtrip = inverse.MathTransform.Transform(projectedPoint);
+
+        Assert.InRange(System.Math.Abs(roundtrip[0] - longitude), 0d, tolerance);
+        Assert.InRange(System.Math.Abs(roundtrip[1] - latitude), 0d, tolerance);
+    }
+
     private static string BuildProjectedWkt(string projectionName)
     {
         return

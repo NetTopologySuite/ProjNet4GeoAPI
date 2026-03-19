@@ -31,6 +31,10 @@ namespace ProjNet.CoordinateSystems.Projections
 
         private readonly double radius;
         private readonly double inverseRadius;
+        private readonly bool isEllipsoidal;
+        private readonly double oneEs;
+        private readonly double qp;
+        private readonly double[] apa;
 
         public GoodeProjection(IEnumerable<ProjectionParameter> parameters)
             : this(parameters, null)
@@ -43,6 +47,19 @@ namespace ProjNet.CoordinateSystems.Projections
             this.Name = "Goode_Homolosine";
             this.radius = this.semiMajor * this.scale_factor;
             this.inverseRadius = 1d / this.radius;
+            this.isEllipsoidal = this.es > 0d;
+            if (this.isEllipsoidal)
+            {
+                this.oneEs = 1d - this.es;
+                this.qp = Qsfn(1d, this.e, this.oneEs);
+                this.apa = Authset(this.es);
+            }
+            else
+            {
+                this.oneEs = 0d;
+                this.qp = 0d;
+                this.apa = null;
+            }
         }
 
         public override MathTransform Inverse()
@@ -58,7 +75,7 @@ namespace ProjNet.CoordinateSystems.Projections
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
             double lambda = Adjust_lon(lon - this.central_meridian);
-            double phi = lat;
+            double phi = this.isEllipsoidal ? GeographicToAuthalic(lat) : lat;
 
             double xUnit;
             double yUnit;
@@ -98,7 +115,7 @@ namespace ProjNet.CoordinateSystems.Projections
             }
 
             x = Adjust_lon(this.central_meridian + lambda);
-            y = phi;
+            y = this.isEllipsoidal ? AuthalicToGeographic(phi) : phi;
         }
 
         private static void MollweideForwardUnit(double lambda, double phi, out double x, out double y)
@@ -153,6 +170,18 @@ namespace ProjNet.CoordinateSystems.Projections
             }
 
             return value > maximum ? maximum : value;
+        }
+
+        private double GeographicToAuthalic(double phi)
+        {
+            double sinPhi = Math.Sin(phi);
+            double q = Qsfn(sinPhi, this.e, this.oneEs);
+            return Math.Asin(Clamp(q / this.qp, -1d, 1d));
+        }
+
+        private double AuthalicToGeographic(double beta)
+        {
+            return Authlat(beta, this.apa);
         }
     }
 }

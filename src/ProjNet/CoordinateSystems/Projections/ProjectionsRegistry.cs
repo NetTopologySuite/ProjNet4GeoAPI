@@ -109,6 +109,7 @@ namespace ProjNet.CoordinateSystems.Projections
             Register("goode_homolosine", typeof(GoodeProjection));
             Register("igh", typeof(IghProjection));
             Register("interrupted_goode_homolosine", typeof(IghProjection));
+            Register("healpix", typeof(HealpixProjection));
 
             Register("natural_earth", typeof(NaturalEarthProjection));
             Register("natearth", typeof(NaturalEarthProjection));
