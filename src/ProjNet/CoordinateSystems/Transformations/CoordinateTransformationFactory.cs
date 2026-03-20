@@ -612,17 +612,17 @@ namespace ProjNet.CoordinateSystems.Transformations
                 && source.PrimeMeridian.EqualParams(target.PrimeMeridian);
         }
 
-        private static void SimplifyTrans(ConcatenatedTransform mtrans, ref List<ICoordinateTransformationCore> MTs)
+        private static void SimplifyTrans(ConcatenatedTransform mtrans, ref List<ICoordinateTransformationCore> mts)
         {
             foreach (var t in mtrans.CoordinateTransformationList)
             {
                 if (t is ConcatenatedTransform ct)
                 {
-                    SimplifyTrans(ct, ref MTs);
+                    SimplifyTrans(ct, ref mts);
                 }
                 else
                 {
-                    MTs.Add(t);
+                    mts.Add(t);
                 }
             }
         }

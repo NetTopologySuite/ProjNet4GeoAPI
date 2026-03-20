@@ -58,11 +58,11 @@ namespace ProjNet.CoordinateSystems
         /// The output object may be either a <see cref="GeographicCoordinateSystem"/> or
         /// a <see cref="ProjectedCoordinateSystem"/>.
         /// </summary>
-        /// <param name="WKT">The Well-known text representation for the spatial reference.</param>
+        /// <param name="wkt">The Well-known text representation for the spatial reference.</param>
         /// <returns>The resulting spatial reference object.</returns>
-        public CoordinateSystem CreateFromWkt(string WKT)
+        public CoordinateSystem CreateFromWkt(string wkt)
         {
-            var info = CoordinateSystemWktReader.Parse(WKT);
+            var info = CoordinateSystemWktReader.Parse(wkt);
             return info as CoordinateSystem;
         }
 

@@ -796,34 +796,34 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// <summary>
         /// Returns the greater value of two inputs.
         /// </summary>
-        /// <param name="A">The A parameter.</param>
-        /// <param name="B">The B parameter.</param>
+        /// <param name="a">The a parameter.</param>
+        /// <param name="b">The b parameter.</param>
         /// <returns>The transformation result.</returns>
-        protected static double GMAX(ref double A, ref double B)
+        protected static double GMAX(ref double a, ref double b)
         {
-            return Math.Max(A, B); /* assign maximum of a and b */
+            return Math.Max(a, b); /* assign maximum of a and b */
         }
 
         /// <summary>
         /// Returns the smaller value of two inputs.
         /// </summary>
-        /// <param name="A">The A parameter.</param>
-        /// <param name="B">The B parameter.</param>
+        /// <param name="a">The a parameter.</param>
+        /// <param name="b">The b parameter.</param>
         /// <returns>The transformation result.</returns>
-        protected static double GMIN(ref double A, ref double B)
+        protected static double GMIN(ref double a, ref double b)
         {
-            return A < B ? A : B; /* assign minimum of a and b */
+            return a < b ? a : b; /* assign minimum of a and b */
         }
 
         /// <summary>
         /// IMOD.
         /// </summary>
-        /// <param name="A">The A parameter.</param>
-        /// <param name="B">The B parameter.</param>
+        /// <param name="a">The a parameter.</param>
+        /// <param name="b">The b parameter.</param>
         /// <returns>The transformation result.</returns>
-        protected static double IMOD(double A, double B)
+        protected static double IMOD(double a, double b)
         {
-            return A - ((A / B) * B); /* Integer mod function */
+            return a - ((a / b) * b); /* Integer mod function */
         }
 
         /// <summary>
@@ -1273,17 +1273,17 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// authlat.
         /// </summary>
         /// <param name="beta">The beta parameter.</param>
-        /// <param name="APA">The APA parameter.</param>
+        /// <param name="apa">The apa parameter.</param>
         /// <returns>The transformation result.</returns>
-        protected static double Authlat(double beta, double[] APA)
+        protected static double Authlat(double beta, double[] apa)
         {
-            if (APA is null)
+            if (apa is null)
             {
-                throw new ArgumentNullException(nameof(APA));
+                throw new ArgumentNullException(nameof(apa));
             }
 
             double t = beta + beta;
-            return beta + (APA[0] * Math.Sin(t)) + (APA[1] * Math.Sin(t + t)) + (APA[2] * Math.Sin(t + t + t));
+            return beta + (apa[0] * Math.Sin(t)) + (apa[1] * Math.Sin(t + t)) + (apa[2] * Math.Sin(t + t + t));
         }
 
         /// <summary>

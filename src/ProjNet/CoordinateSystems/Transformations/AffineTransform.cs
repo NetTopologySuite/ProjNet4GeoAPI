@@ -238,13 +238,13 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// The pi array represents the permutation matrix.
         /// </summary>
         /// <seealso href="http://www.rkinteractive.com/blogs/SoftwareDevelopment/post/2013/05/14/Algorithms-In-C-Solving-A-System-Of-Linear-Equations.aspx"/>
-        /// <param name="LU">The LU parameter.</param>
+        /// <param name="lu">The lu parameter.</param>
         /// <param name="pi">The pi parameter.</param>
         /// <param name="b">The b parameter.</param>
         /// <returns>The transformation result.</returns>
-        private static double[] LUPSolve(double[,] LU, int[] pi, double[] b)
+        private static double[] LUPSolve(double[,] lu, int[] pi, double[] b)
         {
-            int n = LU.GetLength(0) - 1;
+            int n = lu.GetLength(0) - 1;
             double[] x = new double[n + 1];
             double[] y = new double[n + 1];
 
@@ -268,7 +268,7 @@ namespace ProjNet.CoordinateSystems.Transformations
                     }
                     else
                     {
-                        lij = LU[i, j];
+                        lij = lu[i, j];
                     }
 
                     suml += lij * y[j];
@@ -283,10 +283,10 @@ namespace ProjNet.CoordinateSystems.Transformations
                 double sumu = 0;
                 for (int j = i + 1; j <= n; j++)
                 {
-                    sumu += LU[i, j] * x[j];
+                    sumu += lu[i, j] * x[j];
                 }
 
-                x[i] = (y[i] - sumu) / LU[i, i];
+                x[i] = (y[i] - sumu) / lu[i, i];
             }
 
             return x;
@@ -300,11 +300,11 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// to be all 0.
         /// </summary>
         /// <seealso href="http://www.rkinteractive.com/blogs/SoftwareDevelopment/post/2013/05/07/Algorithms-In-C-LUP-Decomposition.aspx"/>
-        /// <param name="A">The A parameter.</param>
+        /// <param name="a">The a parameter.</param>
         /// <returns>The transformation result.</returns>
-        private static int[] LUPDecomposition(double[,] A)
+        private static int[] LUPDecomposition(double[,] a)
         {
-            int n = A.GetLength(0) - 1;
+            int n = a.GetLength(0) - 1;
             /*
             * pi represents the permutation matrix.  We implement it as an array
             * whose value indicates which column the 1 would appear.  We use it to avoid
@@ -332,9 +332,9 @@ namespace ProjNet.CoordinateSystems.Transformations
                 double p = 0;
                 for (int i = k; i <= n; i++)
                 {
-                    if (Math.Abs(A[i, k]) > p)
+                    if (Math.Abs(a[i, k]) > p)
                     {
-                        p = Math.Abs(A[i, k]);
+                        p = Math.Abs(a[i, k]);
                         kp = i;
                     }
                 }
@@ -358,10 +358,10 @@ namespace ProjNet.CoordinateSystems.Transformations
                 * */
                 for (int i = 0; i <= n; i++)
                 {
-                    double aki = A[k, i];
-                    double akpi = A[kp, i];
-                    A[k, i] = akpi;
-                    A[kp, i] = aki;
+                    double aki = a[k, i];
+                    double akpi = a[kp, i];
+                    a[k, i] = akpi;
+                    a[kp, i] = aki;
                 }
 
                 /*
@@ -369,10 +369,10 @@ namespace ProjNet.CoordinateSystems.Transformations
                     * */
                 for (int i = k + 1; i <= n; i++)
                 {
-                    A[i, k] = A[i, k] / A[k, k];
+                    a[i, k] = a[i, k] / a[k, k];
                     for (int j = k + 1; j <= n; j++)
                     {
-                        A[i, j] = A[i, j] - (A[i, k] * A[k, j]);
+                        a[i, j] = a[i, j] - (a[i, k] * a[k, j]);
                     }
                 }
             }
@@ -384,12 +384,12 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// Given an nXn matrix A, solve n linear equations to find the inverse of A.
         /// </summary>
         /// <seealso href="http://www.rkinteractive.com/blogs/SoftwareDevelopment/post/2013/05/21/Algorithms-In-C-Finding-The-Inverse-Of-A-Matrix.aspx"/>
-        /// <param name="A">The A parameter.</param>
+        /// <param name="a">The a parameter.</param>
         /// <returns>The transformation result.</returns>
-        private static double[,] InvertMatrix(double[,] A)
+        private static double[,] InvertMatrix(double[,] a)
         {
-            int n = A.GetLength(0);
-            int m = A.GetLength(1);
+            int n = a.GetLength(0);
+            int m = a.GetLength(1);
 
             // x will hold the inverse matrix to be returned
             double[,] x = new double[n, m];
@@ -401,8 +401,8 @@ namespace ProjNet.CoordinateSystems.Transformations
             double[] solve;
 
             // Get the LU matrix and P matrix (as an array)
-            int[] p = LUPDecomposition(A);
-            double[,] lU = A;
+            int[] p = LUPDecomposition(a);
+            double[,] lU = a;
 
             /*
             * Solve AX = e for each column ei of the identity matrix using LUP decomposition
