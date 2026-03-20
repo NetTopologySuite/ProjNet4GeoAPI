@@ -92,7 +92,7 @@ namespace ProjNet.CoordinateSystems.Projections
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
             double lambda = Adjust_lon(lon - this.centralMeridian);
-            double phi = this.isEllipsoidal ? GeographicToAuthalic(lat) : lat;
+            double phi = this.isEllipsoidal ? this.GeographicToAuthalic(lat) : lat;
 
             ToHealpixSphere(lambda, phi, out double xUnit, out double yUnit);
             Rotate(ref xUnit, ref yUnit, -this.rotationRadians);

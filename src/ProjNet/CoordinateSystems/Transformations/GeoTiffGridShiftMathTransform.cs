@@ -322,7 +322,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <inheritdoc />
         public override void Transform(ref double x, ref double y, ref double z)
         {
-            if (!TryFindGridForPoint(x, y, out HorizontalGrid grid))
+            if (!this.TryFindGridForPoint(x, y, out HorizontalGrid grid))
             {
                 throw new ArgumentException("Coordinate is outside the horizontal GeoTIFF grid extent.");
             }
@@ -639,7 +639,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <inheritdoc />
         public override void Transform(ref double x, ref double y, ref double z)
         {
-            if (!TryFindGridForPoint(x, y, out VerticalGrid grid))
+            if (!this.TryFindGridForPoint(x, y, out VerticalGrid grid))
             {
                 throw new ArgumentException("Coordinate is outside the vertical GeoTIFF grid extent.");
             }
@@ -2074,17 +2074,17 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <returns>The computed value.</returns>
         internal bool TryMapToGridCoordinates(double longitude, double latitude, out double gridX, out double gridY)
         {
-            if (TryMapRaw(longitude, latitude, out gridX, out gridY) && IsWithinGrid(gridX, gridY))
+            if (this.TryMapRaw(longitude, latitude, out gridX, out gridY) && BaseGeoGrid.IsWithinGrid(gridX, gridY))
             {
                 return true;
             }
 
-            if (TryMapRaw(longitude + 360d, latitude, out gridX, out gridY) && IsWithinGrid(gridX, gridY))
+            if (this.TryMapRaw(longitude + 360d, latitude, out gridX, out gridY) && BaseGeoGrid.IsWithinGrid(gridX, gridY))
             {
                 return true;
             }
 
-            if (TryMapRaw(longitude - 360d, latitude, out gridX, out gridY) && IsWithinGrid(gridX, gridY))
+            if (this.TryMapRaw(longitude - 360d, latitude, out gridX, out gridY) && BaseGeoGrid.IsWithinGrid(gridX, gridY))
             {
                 return true;
             }

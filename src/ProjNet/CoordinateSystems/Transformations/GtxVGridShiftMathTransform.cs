@@ -107,7 +107,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <inheritdoc />
         public override void Transform(ref double x, ref double y, ref double z)
         {
-            if (!TryFindGridForPoint(x, y, out GtxGrid selectedGrid))
+            if (!this.TryFindGridForPoint(x, y, out GtxGrid selectedGrid))
             {
                 throw new ArgumentException("Coordinate is outside the vertical grid extent.");
             }

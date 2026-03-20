@@ -89,7 +89,7 @@ namespace ProjNet.CoordinateSystems.Projections
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
             double lambda = Adjust_lon(lon - this.centralMeridian);
-            double phi = this.isEllipsoidal ? GeographicToAuthalic(lat) : lat;
+            double phi = this.isEllipsoidal ? this.GeographicToAuthalic(lat) : lat;
 
             double xUnit;
             double yUnit;
@@ -130,7 +130,7 @@ namespace ProjNet.CoordinateSystems.Projections
             }
 
             x = Adjust_lon(this.centralMeridian + lambda);
-            y = this.isEllipsoidal ? AuthalicToGeographic(phi) : phi;
+            y = this.isEllipsoidal ? this.AuthalicToGeographic(phi) : phi;
         }
 
         private static void MollweideForwardUnit(double lambda, double phi, out double x, out double y)
