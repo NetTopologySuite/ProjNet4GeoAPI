@@ -84,13 +84,13 @@ namespace ProjNet
                 throw new NotSupportedException();
             }
 
+            public string Authority { get; private set; }
+            public long AuthorityCode { get; private set; }
+
             public string Name
             {
                 get { return null; }
             }
-
-            public string Authority { get; private set; }
-            public long AuthorityCode { get; private set; }
 
             public string Alias
             {
@@ -247,6 +247,18 @@ namespace ProjNet
 
             this.initialization = new ManualResetEvent(false);
             System.Threading.Tasks.Task.Run(() => FromEnumeration(new[] { this, enumObj }));
+        }
+
+        /// <summary>
+        /// Gets count.
+        /// </summary>
+        protected int Count
+        {
+            get
+            {
+                this.initialization.WaitOne();
+                return this.sridByCs.Count;
+            }
         }
 
         // private CoordinateSystemServices(ICoordinateSystemFactory coordinateSystemFactory,
@@ -488,18 +500,6 @@ namespace ProjNet
         protected void Clear()
         {
             this.csBySrid.Clear();
-        }
-
-        /// <summary>
-        /// Gets count.
-        /// </summary>
-        protected int Count
-        {
-            get
-            {
-                this.initialization.WaitOne();
-                return this.sridByCs.Count;
-            }
         }
 
         /// <summary>

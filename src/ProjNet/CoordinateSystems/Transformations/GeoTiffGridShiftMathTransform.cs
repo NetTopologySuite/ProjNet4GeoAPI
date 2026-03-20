@@ -656,6 +656,12 @@ namespace ProjNet.CoordinateSystems.Transformations
         private const int GtRasterTypeGeoKey = 1025;
         private const int RasterPixelIsPoint = 2;
 
+        private enum GridMode
+        {
+            Horizontal,
+            Vertical,
+        }
+
         /// <summary>
         /// Performs the documented operation.
         /// </summary>
@@ -1304,12 +1310,6 @@ namespace ProjNet.CoordinateSystems.Transformations
             return true;
         }
 
-        private enum GridMode
-        {
-            Horizontal,
-            Vertical,
-        }
-
         private readonly struct GeoTransform
         {
             /// <summary>
@@ -1438,6 +1438,72 @@ namespace ProjNet.CoordinateSystems.Transformations
             /// Gets the documented value.
             /// </summary>
             internal double Epsilon { get; }
+        }
+
+        private readonly struct GeoMetadata
+        {
+            /// <summary>
+            /// Initializes a new instance of the <see cref="GeoMetadata"/> struct.
+            /// </summary>
+            /// <param name="descriptionsBySample">The descriptionsBySample value.</param>
+            /// <param name="positiveValueBySample">The positiveValueBySample value.</param>
+            /// <param name="scaleBySample">The scaleBySample value.</param>
+            /// <param name="offsetBySample">The offsetBySample value.</param>
+            /// <param name="noDataValue">The noDataValue value.</param>
+            /// <param name="angularScaleToDegree">The angularScaleToDegree value.</param>
+            /// <param name="unitTypeBySample">The unitTypeBySample value.</param>
+            internal GeoMetadata(
+                IReadOnlyDictionary<int, string> descriptionsBySample,
+                IReadOnlyDictionary<int, string> positiveValueBySample,
+                IReadOnlyDictionary<int, double> scaleBySample,
+                IReadOnlyDictionary<int, double> offsetBySample,
+                double? noDataValue,
+                double angularScaleToDegree,
+                IReadOnlyDictionary<int, string> unitTypeBySample)
+            {
+                this.DescriptionsBySample = descriptionsBySample;
+                this.PositiveValueBySample = positiveValueBySample;
+                this.ScaleBySample = scaleBySample;
+                this.OffsetBySample = offsetBySample;
+                this.NoDataValue = noDataValue;
+                this.AngularScaleToDegree = angularScaleToDegree;
+                this.UnitTypeBySample = unitTypeBySample;
+            }
+
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
+            internal IReadOnlyDictionary<int, string> DescriptionsBySample { get; }
+
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
+            internal IReadOnlyDictionary<int, string> PositiveValueBySample { get; }
+
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
+            internal IReadOnlyDictionary<int, double> ScaleBySample { get; }
+
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
+            internal IReadOnlyDictionary<int, double> OffsetBySample { get; }
+
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
+            internal double? NoDataValue { get; }
+
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
+            internal double AngularScaleToDegree { get; }
+
+            /// <summary>
+            /// Gets the documented value.
+            /// </summary>
+            internal IReadOnlyDictionary<int, string> UnitTypeBySample { get; }
         }
 
         private sealed class LoadedPage
@@ -1614,72 +1680,6 @@ namespace ProjNet.CoordinateSystems.Transformations
                 // PROJ hgridshift defaults to arc-second offsets when unit metadata is absent.
                 return 1d / 3600d;
             }
-        }
-
-        private readonly struct GeoMetadata
-        {
-            /// <summary>
-            /// Initializes a new instance of the <see cref="GeoMetadata"/> struct.
-            /// </summary>
-            /// <param name="descriptionsBySample">The descriptionsBySample value.</param>
-            /// <param name="positiveValueBySample">The positiveValueBySample value.</param>
-            /// <param name="scaleBySample">The scaleBySample value.</param>
-            /// <param name="offsetBySample">The offsetBySample value.</param>
-            /// <param name="noDataValue">The noDataValue value.</param>
-            /// <param name="angularScaleToDegree">The angularScaleToDegree value.</param>
-            /// <param name="unitTypeBySample">The unitTypeBySample value.</param>
-            internal GeoMetadata(
-                IReadOnlyDictionary<int, string> descriptionsBySample,
-                IReadOnlyDictionary<int, string> positiveValueBySample,
-                IReadOnlyDictionary<int, double> scaleBySample,
-                IReadOnlyDictionary<int, double> offsetBySample,
-                double? noDataValue,
-                double angularScaleToDegree,
-                IReadOnlyDictionary<int, string> unitTypeBySample)
-            {
-                this.DescriptionsBySample = descriptionsBySample;
-                this.PositiveValueBySample = positiveValueBySample;
-                this.ScaleBySample = scaleBySample;
-                this.OffsetBySample = offsetBySample;
-                this.NoDataValue = noDataValue;
-                this.AngularScaleToDegree = angularScaleToDegree;
-                this.UnitTypeBySample = unitTypeBySample;
-            }
-
-            /// <summary>
-            /// Gets the documented value.
-            /// </summary>
-            internal IReadOnlyDictionary<int, string> DescriptionsBySample { get; }
-
-            /// <summary>
-            /// Gets the documented value.
-            /// </summary>
-            internal IReadOnlyDictionary<int, string> PositiveValueBySample { get; }
-
-            /// <summary>
-            /// Gets the documented value.
-            /// </summary>
-            internal IReadOnlyDictionary<int, double> ScaleBySample { get; }
-
-            /// <summary>
-            /// Gets the documented value.
-            /// </summary>
-            internal IReadOnlyDictionary<int, double> OffsetBySample { get; }
-
-            /// <summary>
-            /// Gets the documented value.
-            /// </summary>
-            internal double? NoDataValue { get; }
-
-            /// <summary>
-            /// Gets the documented value.
-            /// </summary>
-            internal double AngularScaleToDegree { get; }
-
-            /// <summary>
-            /// Gets the documented value.
-            /// </summary>
-            internal IReadOnlyDictionary<int, string> UnitTypeBySample { get; }
         }
     }
 

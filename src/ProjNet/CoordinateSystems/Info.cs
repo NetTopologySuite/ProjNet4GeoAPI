@@ -27,6 +27,13 @@ namespace ProjNet.CoordinateSystems
     [Serializable]
     public abstract class Info : IInfo
     {
+        private string name;
+        private string authority;
+        private long code;
+        private string alias;
+        private string abbreviation;
+        private string remarks;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Info"/> class.
         /// A base interface for metadata applicable to coordinate system objects.
@@ -65,8 +72,6 @@ namespace ProjNet.CoordinateSystems
             this.Remarks = remarks;
         }
 
-        private string name;
-
         /// <summary>
         /// Gets or sets the name of the object.
         /// </summary>
@@ -75,8 +80,6 @@ namespace ProjNet.CoordinateSystems
             get { return this.name; }
             set { this.name = value; }
         }
-
-        private string authority;
 
         /// <summary>
         /// Gets or sets the authority name for this object, e.g., "EPSG",
@@ -89,8 +92,6 @@ namespace ProjNet.CoordinateSystems
             set { this.authority = value; }
         }
 
-        private long code;
-
         /// <summary>
         /// Gets or sets the authority specific identification code of the object.
         /// </summary>
@@ -99,8 +100,6 @@ namespace ProjNet.CoordinateSystems
             get { return this.code; }
             set { this.code = value; }
         }
-
-        private string alias;
 
         /// <summary>
         /// Gets or sets the alias of the object.
@@ -111,8 +110,6 @@ namespace ProjNet.CoordinateSystems
             set { this.alias = value; }
         }
 
-        private string abbreviation;
-
         /// <summary>
         /// Gets or sets the abbreviation of the object.
         /// </summary>
@@ -122,8 +119,6 @@ namespace ProjNet.CoordinateSystems
             set { this.abbreviation = value; }
         }
 
-        private string remarks;
-
         /// <summary>
         /// Gets or sets the provider-supplied remarks for the object.
         /// </summary>
@@ -131,16 +126,6 @@ namespace ProjNet.CoordinateSystems
         {
             get { return this.remarks; }
             set { this.remarks = value; }
-        }
-
-        /// <summary>
-        /// Returns the Well-known text for this object
-        /// as defined in the simple features specification.
-        /// </summary>
-        /// <returns>The computed value.</returns>
-        public override string ToString()
-        {
-            return this.WKT;
         }
 
         /// <summary>
@@ -186,6 +171,16 @@ namespace ProjNet.CoordinateSystems
                 sb.Append("/>");
                 return sb.ToString();
             }
+        }
+
+        /// <summary>
+        /// Returns the Well-known text for this object
+        /// as defined in the simple features specification.
+        /// </summary>
+        /// <returns>The computed value.</returns>
+        public override string ToString()
+        {
+            return this.WKT;
         }
 
         /// <summary>

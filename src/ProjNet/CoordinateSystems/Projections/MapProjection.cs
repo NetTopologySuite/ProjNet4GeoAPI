@@ -65,6 +65,71 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         protected const double HUGEVAL = double.NaN;
 
+        /// <summary>
+        /// PI.
+        /// </summary>
+        protected const double PI = Math.PI;
+
+        /// <summary>
+        /// A fourth of <see cref="Math.PI"/>.
+        /// </summary>
+        protected const double FORTPI = PI * 0.25;
+
+        /// <summary>
+        /// Half of PI.
+        /// </summary>
+        protected const double HALFPI = PI * 0.5;
+
+        /// <summary>
+        /// PI * 2.
+        /// </summary>
+        protected const double TWOPI = PI * 2.0;
+
+        /// <summary>
+        /// EPSLN.
+        /// </summary>
+        protected const double EPSLN = EPS10;
+
+        /// <summary>
+        /// S2R.
+        /// </summary>
+        protected const double S2R = 4.848136811095359e-6;
+
+        /// <summary>
+        /// MAX_VAL.
+        /// </summary>
+        protected const double MAXVAL = 4;
+
+        /// <summary>
+        /// prjMAXLONG.
+        /// </summary>
+        protected const double prjMAXLONG = 2147483647;
+
+        /// <summary>
+        /// DBLLONG.
+        /// </summary>
+        protected const double DBLLONG = 4.61168601e18;
+
+        private const double C00 = 1.0,
+                             C02 = 0.25,
+                             C04 = 0.046875,
+                             C06 = 0.01953125,
+                             C08 = 0.01068115234375,
+                             C22 = 0.75,
+                             C44 = 0.46875,
+                             C46 = 0.01302083333333333333,
+                             C48 = 0.00712076822916666666,
+                             C66 = 0.36458333333333333333,
+                             C68 = 0.00569661458333333333,
+                             C88 = 0.3076171875;
+
+        private const double P00 = 0.33333333333333333333; /*   1 /     3 */
+        private const double P01 = 0.17222222222222222222; /*  31 /   180 */
+        private const double P02 = 0.10257936507936507937; /* 517 /  5040 */
+        private const double P10 = 0.06388888888888888888; /*  23 /   360 */
+        private const double P11 = 0.06640211640211640212; /* 251 /  3780 */
+        private const double P20 = 0.01677689594356261023; /* 761 / 45360 */
+
         // ReSharper disable InconsistentNaming
 
         /// <summary>
@@ -108,31 +173,6 @@ namespace ProjNet.CoordinateSystems.Projections
         protected double centralMeridian; /* Center longitude (projection center) */
 
         /// <summary>
-        /// Gets or sets substitute for <see cref="centralMeridian"/>.
-        /// </summary>
-        protected double Lon_origin
-        {
-            get { return this.centralMeridian; }
-            set { this.centralMeridian = value; }
-        }
-
-        /// <summary>
-        /// Gets center latitude (projection center), same as lat_origin.
-        /// </summary>
-        protected double Central_parallel
-        {
-            get { return this.latOrigin; }
-        }
-
-        /// <summary>
-        /// Gets center latitude (projection center), same as lat_origin.
-        /// </summary>
-        protected double Phi0
-        {
-            get { return this.latOrigin; }
-        }
-
-        /// <summary>
         /// Center latitude.
         /// </summary>
         protected readonly double latOrigin; /* center latitude            */
@@ -161,6 +201,31 @@ namespace ProjNet.CoordinateSystems.Projections
         /// The inverse <see cref="MathTransform"/>.
         /// </summary>
         protected MathTransform inverse;
+
+        /// <summary>
+        /// Gets or sets substitute for <see cref="centralMeridian"/>.
+        /// </summary>
+        protected double Lon_origin
+        {
+            get { return this.centralMeridian; }
+            set { this.centralMeridian = value; }
+        }
+
+        /// <summary>
+        /// Gets center latitude (projection center), same as lat_origin.
+        /// </summary>
+        protected double Central_parallel
+        {
+            get { return this.latOrigin; }
+        }
+
+        /// <summary>
+        /// Gets center latitude (projection center), same as lat_origin.
+        /// </summary>
+        protected double Phi0
+        {
+            get { return this.latOrigin; }
+        }
 
         // ReSharper restore InconsistentNaming
 
@@ -224,23 +289,6 @@ namespace ProjNet.CoordinateSystems.Projections
         }
 
         /// <summary>
-        /// Returns a list of projection "cloned" projection parameters.
-        /// </summary>
-        /// <param name="projectionParameters">The projectionParameters value.</param>
-        /// <returns>The transformation result.</returns>
-        protected internal static List<ProjectionParameter> CloneParametersList(
-            IEnumerable<ProjectionParameter> projectionParameters)
-        {
-            var res = new List<ProjectionParameter>();
-            foreach (var pp in projectionParameters)
-            {
-                res.Add(new ProjectionParameter(pp.Name, pp.Value));
-            }
-
-            return res;
-        }
-
-        /// <summary>
         /// Gets the projection classification name (e.g. 'Transverse_Mercator').
         /// </summary>
         public string ClassName
@@ -251,33 +299,18 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <summary>
         ///
         /// </summary>
-        /// <param name="index">The index parameter.</param>
-        /// <returns>The transformation result.</returns>
-        /// <inheritdoc/>
-        public ProjectionParameter GetParameter(int index)
-        {
-            return this.Parameters.GetAtIndex(index);
-        }
-
-        /// <summary>
-        /// Gets an named parameter of the projection.
-        /// </summary>
-        /// <remarks>The parameter name is case insensitive.</remarks>
-        /// <param name="name">Name of parameter.</param>
-        /// <returns>parameter or null if not found.</returns>
-        public ProjectionParameter GetParameter(string name)
-        {
-            return this.Parameters.Find(name);
-        }
-
-        /// <summary>
-        ///
-        /// </summary>
         /// <inheritdoc/>
         public int NumParameters
         {
             get { return this.Parameters.Count; }
         }
+
+        /// <summary>
+        /// Gets a value indicating whether returns true if this projection is inverted.
+        /// Most map projections define forward projection as "from geographic to projection", and backwards
+        /// as "from projection to geographic". If this projection is inverted, this will be the other way around.
+        /// </summary>
+        protected internal bool IsInverse { get; private set; }
 
         /// <summary>
         /// Gets or sets the abbreviation of the object.
@@ -379,6 +412,45 @@ namespace ProjNet.CoordinateSystems.Projections
         public sealed override int DimTarget
         {
             get { return 2; }
+        }
+
+        /// <summary>
+        /// Returns a list of projection "cloned" projection parameters.
+        /// </summary>
+        /// <param name="projectionParameters">The projectionParameters value.</param>
+        /// <returns>The transformation result.</returns>
+        protected internal static List<ProjectionParameter> CloneParametersList(
+            IEnumerable<ProjectionParameter> projectionParameters)
+        {
+            var res = new List<ProjectionParameter>();
+            foreach (var pp in projectionParameters)
+            {
+                res.Add(new ProjectionParameter(pp.Name, pp.Value));
+            }
+
+            return res;
+        }
+
+        /// <summary>
+        ///
+        /// </summary>
+        /// <param name="index">The index parameter.</param>
+        /// <returns>The transformation result.</returns>
+        /// <inheritdoc/>
+        public ProjectionParameter GetParameter(int index)
+        {
+            return this.Parameters.GetAtIndex(index);
+        }
+
+        /// <summary>
+        /// Gets an named parameter of the projection.
+        /// </summary>
+        /// <remarks>The parameter name is case insensitive.</remarks>
+        /// <param name="name">Name of parameter.</param>
+        /// <returns>parameter or null if not found.</returns>
+        public ProjectionParameter GetParameter(string name)
+        {
+            return this.Parameters.Find(name);
         }
 
         /// <inheritdoc />
@@ -645,13 +717,6 @@ namespace ProjNet.CoordinateSystems.Projections
         }
 
         /// <summary>
-        /// Gets a value indicating whether returns true if this projection is inverted.
-        /// Most map projections define forward projection as "from geographic to projection", and backwards
-        /// as "from projection to geographic". If this projection is inverted, this will be the other way around.
-        /// </summary>
-        protected internal bool IsInverse { get; private set; }
-
-        /// <summary>
         /// Checks whether the values of this instance is equal to the values of another instance.
         /// Only parameters used for coordinate system are used for comparison.
         /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
@@ -687,54 +752,6 @@ for (var i = 0; i < _Parameters.Count; i++)
 */
             return this.IsInverse == proj.IsInverse;
         }
-
-        // defines some useful constants that are used in the projection routines
-        // ReSharper disable InconsistentNaming
-
-        /// <summary>
-        /// PI.
-        /// </summary>
-        protected const double PI = Math.PI;
-
-        /// <summary>
-        /// A fourth of <see cref="Math.PI"/>.
-        /// </summary>
-        protected const double FORTPI = PI * 0.25;
-
-        /// <summary>
-        /// Half of PI.
-        /// </summary>
-        protected const double HALFPI = PI * 0.5;
-
-        /// <summary>
-        /// PI * 2.
-        /// </summary>
-        protected const double TWOPI = PI * 2.0;
-
-        /// <summary>
-        /// EPSLN.
-        /// </summary>
-        protected const double EPSLN = EPS10;
-
-        /// <summary>
-        /// S2R.
-        /// </summary>
-        protected const double S2R = 4.848136811095359e-6;
-
-        /// <summary>
-        /// MAX_VAL.
-        /// </summary>
-        protected const double MAXVAL = 4;
-
-        /// <summary>
-        /// prjMAXLONG.
-        /// </summary>
-        protected const double prjMAXLONG = 2147483647;
-
-        /// <summary>
-        /// DBLLONG.
-        /// </summary>
-        protected const double DBLLONG = 4.61168601e18;
 
         /// <summary>
         /// Returns the cube of a number.
@@ -1055,19 +1072,6 @@ for (var i = 0; i < _Parameters.Count; i++)
             throw new ArgumentException("Convergence error - phi2z-conv");
         }
 
-        private const double C00 = 1.0,
-                             C02 = 0.25,
-                             C04 = 0.046875,
-                             C06 = 0.01953125,
-                             C08 = 0.01068115234375,
-                             C22 = 0.75,
-                             C44 = 0.46875,
-                             C46 = 0.01302083333333333333,
-                             C48 = 0.00712076822916666666,
-                             C66 = 0.36458333333333333333,
-                             C68 = 0.00569661458333333333,
-                             C88 = 0.3076171875;
-
         /// <summary>
         /// Functions to compute the constants e0, e1, e2, and e3 which are used
         /// in a series for calculating the distance along a meridian.  The
@@ -1259,13 +1263,6 @@ for (var i = 0; i < _Parameters.Count; i++)
                                                   y.ToString(CultureInfo.InvariantCulture) +
                                                   " not a valid latitude in degrees.");
         }
-
-        private const double P00 = 0.33333333333333333333; /*   1 /     3 */
-        private const double P01 = 0.17222222222222222222; /*  31 /   180 */
-        private const double P02 = 0.10257936507936507937; /* 517 /  5040 */
-        private const double P10 = 0.06388888888888888888; /*  23 /   360 */
-        private const double P11 = 0.06640211640211640212; /* 251 /  3780 */
-        private const double P20 = 0.01677689594356261023; /* 761 / 45360 */
 
         /// <summary>
         /// authset.
