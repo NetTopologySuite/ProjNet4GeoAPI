@@ -1,4 +1,4 @@
-// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
+﻿// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
 //
 // This file is part of ProjNet.
 // ProjNet is free software; you can redistribute it and/or modify
@@ -1318,6 +1318,3 @@ for (var i = 0; i < _Parameters.Count; i++)
         }
     }
 }
-
-
-
