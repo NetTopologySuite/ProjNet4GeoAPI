@@ -26,6 +26,11 @@ using Xunit;
 /// </summary>
 public class Phase5AxisSwapTransformationTests
 {
+    private static readonly double[] GeographicAxisInput = { 12d, 55d };
+    private static readonly double[] ProjectedAxisInput = { 500000d, 6100000d };
+    private static readonly double[] UnitConversionInput = { 100d, 200d };
+    private static readonly double[] RadianConversionInput = { 180d, 90d };
+
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
@@ -52,7 +57,7 @@ public class Phase5AxisSwapTransformationTests
             new AxisInfo("Lon", AxisOrientationEnum.East));
 
         var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target).MathTransform;
-        double[] transformed = transform.Transform(new double[] { 12d, 55d });
+        double[] transformed = transform.Transform(GeographicAxisInput);
 
         Assert.Equal(55d, transformed[0], 12);
         Assert.Equal(12d, transformed[1], 12);
@@ -81,7 +86,7 @@ public class Phase5AxisSwapTransformationTests
             new AxisInfo("Lat", AxisOrientationEnum.South));
 
         var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target).MathTransform;
-        double[] transformed = transform.Transform(new double[] { 12d, 55d });
+        double[] transformed = transform.Transform(GeographicAxisInput);
 
         Assert.Equal(-12d, transformed[0], 12);
         Assert.Equal(-55d, transformed[1], 12);
@@ -121,7 +126,7 @@ public class Phase5AxisSwapTransformationTests
             new AxisInfo("East", AxisOrientationEnum.East));
 
         var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target).MathTransform;
-        double[] transformed = transform.Transform(new double[] { 500000d, 6100000d });
+        double[] transformed = transform.Transform(ProjectedAxisInput);
 
         Assert.Equal(6100000d, transformed[0], 8);
         Assert.Equal(500000d, transformed[1], 8);
@@ -150,7 +155,7 @@ public class Phase5AxisSwapTransformationTests
             new AxisInfo("Lat", AxisOrientationEnum.North));
 
         var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target).MathTransform;
-        double[] transformed = transform.Transform(new double[] { 180d, 90d });
+        double[] transformed = transform.Transform(RadianConversionInput);
 
         Assert.Equal(System.Math.PI, transformed[0], 12);
         Assert.Equal(System.Math.PI / 2d, transformed[1], 12);
@@ -182,7 +187,7 @@ public class Phase5AxisSwapTransformationTests
             new AxisInfo("North", AxisOrientationEnum.North));
 
         var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target).MathTransform;
-        double[] transformed = transform.Transform(new double[] { 100d, 200d });
+        double[] transformed = transform.Transform(UnitConversionInput);
 
         Assert.Equal(328.0839895013123d, transformed[0], 9);
         Assert.Equal(656.1679790026246d, transformed[1], 9);
@@ -214,7 +219,7 @@ public class Phase5AxisSwapTransformationTests
             new AxisInfo("East", AxisOrientationEnum.East));
 
         var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target).MathTransform;
-        double[] transformed = transform.Transform(new double[] { 100d, 200d });
+        double[] transformed = transform.Transform(UnitConversionInput);
 
         Assert.Equal(656.1679790026246d, transformed[0], 9);
         Assert.Equal(328.0839895013123d, transformed[1], 9);

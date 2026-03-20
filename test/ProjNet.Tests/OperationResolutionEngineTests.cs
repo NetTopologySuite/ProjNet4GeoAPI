@@ -32,6 +32,9 @@ using Xunit;
 /// </summary>
 public class OperationResolutionEngineTests
 {
+    private static readonly double[] GeographicSamplePoint = { 13.1234d, 52.9876d };
+    private static readonly double[] UtmSamplePoint = { 500000d, 4649776.22482d };
+
     private readonly CoordinateTransformationFactory coordinateTransformationFactory = new CoordinateTransformationFactory();
     private readonly CoordinateSystemFactory coordinateSystemFactory = new CoordinateSystemFactory();
 
@@ -43,7 +46,7 @@ public class OperationResolutionEngineTests
     {
         var source = ProjectedCoordinateSystem.WGS84_UTM(32, true);
         var transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, source);
-        double[] output = transformation.MathTransform.Transform(new double[] { 500000d, 4649776.22482d });
+        double[] output = transformation.MathTransform.Transform(UtmSamplePoint);
 
         Assert.True(transformation.MathTransform.Identity());
         Assert.Equal(500000d, output[0], 12);
@@ -59,7 +62,7 @@ public class OperationResolutionEngineTests
         var source = GeographicCoordinateSystem.WGS84;
         var target = (GeographicCoordinateSystem)this.coordinateSystemFactory.CreateFromWkt(source.WKT);
         var transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
-        double[] output = transformation.MathTransform.Transform(new double[] { 13.1234d, 52.9876d });
+        double[] output = transformation.MathTransform.Transform(GeographicSamplePoint);
 
         Assert.True(transformation.MathTransform.Identity());
         Assert.Equal(13.1234d, output[0], 12);
@@ -80,7 +83,7 @@ public class OperationResolutionEngineTests
         target.AuthorityCode = 23031;
 
         var metadataTransformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
-        double[] metadataOutput = metadataTransformation.MathTransform.Transform(new double[] { 500000d, 4649776.22482d });
+        double[] metadataOutput = metadataTransformation.MathTransform.Transform(UtmSamplePoint);
 
         var fallbackSource = ProjectedCoordinateSystem.WGS84_UTM(32, true);
         var fallbackTarget = ProjectedCoordinateSystem.WGS84_UTM(33, true);
@@ -89,7 +92,7 @@ public class OperationResolutionEngineTests
         fallbackTarget.Authority = string.Empty;
         fallbackTarget.AuthorityCode = -1;
         var fallbackTransformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(fallbackSource, fallbackTarget);
-        double[] fallbackOutput = fallbackTransformation.MathTransform.Transform(new double[] { 500000d, 4649776.22482d });
+        double[] fallbackOutput = fallbackTransformation.MathTransform.Transform(UtmSamplePoint);
 
         Assert.Equal("EPSG", metadataTransformation.Authority);
         Assert.Equal(1044, metadataTransformation.AuthorityCode);

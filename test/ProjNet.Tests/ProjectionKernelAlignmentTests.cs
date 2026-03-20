@@ -26,6 +26,10 @@ using Xunit;
 /// </summary>
 public class ProjectionKernelAlignmentTests
 {
+    private static readonly double[] LambertAliasInput = { 100000d, 100000d };
+    private static readonly double[] MercatorAliasInput = { 1000d, 2000d };
+    private static readonly double[] TransverseMercatorAliasInput = { 500000d, 4649776.22482d };
+
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
@@ -44,7 +48,7 @@ public class ProjectionKernelAlignmentTests
 
         var target = GeographicCoordinateSystem.WGS84;
         var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
-        double[] result = transform.MathTransform.Transform(new double[] { 1000d, 2000d });
+        double[] result = transform.MathTransform.Transform(MercatorAliasInput);
 
         Assert.NotNull(transform);
         Assert.NotNull(result);
@@ -68,7 +72,7 @@ public class ProjectionKernelAlignmentTests
 
         var target = GeographicCoordinateSystem.WGS84;
         var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
-        double[] result = transform.MathTransform.Transform(new double[] { 500000d, 4649776.22482d });
+        double[] result = transform.MathTransform.Transform(TransverseMercatorAliasInput);
 
         Assert.NotNull(transform);
         Assert.NotNull(result);
@@ -89,7 +93,7 @@ public class ProjectionKernelAlignmentTests
 
         var target = GeographicCoordinateSystem.WGS84;
         var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
-        double[] result = transform.MathTransform.Transform(new double[] { 100000d, 100000d });
+        double[] result = transform.MathTransform.Transform(LambertAliasInput);
 
         Assert.NotNull(transform);
         Assert.NotNull(result);

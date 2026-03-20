@@ -32,6 +32,15 @@ using ProjNet.IO.CoordinateSystems;
 /// </summary>
 public class CoordinateTransformTests : CoordinateTransformTestsBase
 {
+    private static readonly double[] AffineTargetPoint = { 3456926.640, 5481071.278 };
+    private static readonly double[] AffineTestPoint = { 2040.0, 1590.0 };
+    private static readonly double[] CassiniSoldnerExpected = { 25244.540, 21300.969 };
+    private static readonly double[] CassiniSoldnerInput = { 13.408055555556, 52.518611111111 };
+    private static readonly double[] TransformListSamplePoint1 = { 290586.087, 6714000 };
+    private static readonly double[] TransformListSamplePoint2 = { 290586.392, 6713996.224 };
+    private static readonly double[] TransformListSamplePoint3 = { 290590.133, 6713973.772 };
+    private static readonly double[] OrthographicHorizonTestPoint = { 180.0, 0.0 };
+
     /// <summary>
     /// Initializes a new instance of the <see cref="CoordinateTransformTests"/> class.
     /// </summary>
@@ -972,8 +981,8 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             "CassiniSoldner",
             csSource,
             csTarget,
-            new[] { 13.408055555556, 52.518611111111 },
-            new[] { 25244.540, 21300.969 },
+            CassiniSoldnerInput,
+            CassiniSoldnerExpected,
             0.3,
             1.0E-5);
 
@@ -1053,9 +1062,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
 
         var coords = new List<double[]>
         {
-            new double[]{290586.087, 6714000},
-            new double[]{290586.392, 6713996.224},
-            new double[]{290590.133, 6713973.772},
+            TransformListSamplePoint1,
+            TransformListSamplePoint2,
+            TransformListSamplePoint3,
         };
 
         var transformedCoords = trans.MathTransform.TransformList(coords);
@@ -1092,7 +1101,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         // Transformation example (MNAU -> GK)
         // Start point (MNAU) X=2040,000m Y=1590,000m]
         // Target point (GK): X=3456926,640m Y=5481071,278m;
-        double[] outPt = mt.Transform(new double[] { 2040.0, 1590.0 });
+        double[] outPt = mt.Transform(AffineTestPoint);
 
         Assert.AreEqual(2, outPt.Length);
         Assert.AreEqual(3456926.640, outPt[0], 0.00000001);
@@ -1130,7 +1139,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         // Target point (GK): X=3456926,640m Y=5481071,278m;
 
         // check source transform
-        double[] outPt = mt.Transform(new double[] { 2040.0, 1590.0 });
+        double[] outPt = mt.Transform(AffineTestPoint);
 
         Assert.AreEqual(2, outPt.Length);
         Assert.AreEqual(3456926.640, outPt[0], 0.00000001);
@@ -1138,14 +1147,14 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
 
         var invMt = mt.Inverse();
 
-        double[] inPt = invMt.Transform(new double[] { 3456926.640, 5481071.278 });
+        double[] inPt = invMt.Transform(AffineTargetPoint);
 
         Assert.AreEqual(2, inPt.Length);
         Assert.AreEqual(2040.0, inPt[0], 0.00000001);
         Assert.AreEqual(1590.0, inPt[1], 0.00000001);
 
         // check source transform - once more
-        double[] outPt2 = mt.Transform(new double[] { 2040.0, 1590.0 });
+        double[] outPt2 = mt.Transform(AffineTestPoint);
 
         Assert.AreEqual(2, outPt2.Length);
         Assert.AreEqual(3456926.640, outPt2[0], 0.00000001);
@@ -1198,7 +1207,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
 
         var coords = new List<double[]>
         {
-            new double[]{2040.0, 1590.0},
+            AffineTestPoint,
         };
 
         var transformedCoords = trans.MathTransform.TransformList(coords);
@@ -1314,10 +1323,10 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.That(this.ToleranceLessThan(test2, invTransTest2, 1.0), this.TransformationError("Orthographic", test2, invTransTest2, true));
 
         // Check that the algorithm correctly identifies a point that cannot be seen
-        var @delegate = new TestDelegate(() => trans.MathTransform.Transform(new[] { 180.0, 0.0 }));
+        var @delegate = new TestDelegate(() => trans.MathTransform.Transform(OrthographicHorizonTestPoint));
         Assert.Throws<ArgumentOutOfRangeException>(@delegate);
 
-        var @delegate2 = new TestDelegate(() => trans2.MathTransform.Transform(new[] { 180.0, 0.0 }));
+        var @delegate2 = new TestDelegate(() => trans2.MathTransform.Transform(OrthographicHorizonTestPoint));
         Assert.Throws<ArgumentOutOfRangeException>(@delegate2);
     }
 

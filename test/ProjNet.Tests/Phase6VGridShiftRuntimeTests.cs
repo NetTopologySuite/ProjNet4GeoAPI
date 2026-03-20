@@ -27,6 +27,8 @@ using Xunit;
 /// </summary>
 public class Phase6VGridShiftRuntimeTests
 {
+    private static readonly double[] VerticalGridInput = { 12d, 56d, 0d };
+
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
@@ -39,7 +41,7 @@ public class Phase6VGridShiftRuntimeTests
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
 
         Assert.True(ok, skipReason);
-        double[] output = transform.Transform(new double[] { 12d, 56d, 0d });
+        double[] output = transform.Transform(VerticalGridInput);
         Assert.Equal(12d, output[0], 12);
         Assert.Equal(56d, output[1], 12);
         Assert.Equal(-36.9959410718d, output[2], 9);
@@ -57,7 +59,7 @@ public class Phase6VGridShiftRuntimeTests
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
 
         Assert.True(ok, skipReason);
-        double[] output = transform.Transform(new double[] { 12d, 56d, 0d });
+        double[] output = transform.Transform(VerticalGridInput);
         Assert.Equal(36.9959410718d, output[2], 9);
     }
 
@@ -77,7 +79,7 @@ public class Phase6VGridShiftRuntimeTests
         Assert.True(forwardOk, forwardSkipReason);
         Assert.True(inverseOk, inverseSkipReason);
 
-        double[] shifted = forward.Transform(new double[] { 12d, 56d, 0d });
+        double[] shifted = forward.Transform(VerticalGridInput);
         double[] unshifted = inverse.Transform(shifted);
 
         Assert.Equal(12d, unshifted[0], 10);
@@ -97,7 +99,7 @@ public class Phase6VGridShiftRuntimeTests
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
         Assert.True(ok, skipReason);
 
-        Assert.Throws<ArgumentException>(() => transform.Transform(new double[] { 12d, 56d, 0d }));
+        Assert.Throws<ArgumentException>(() => transform.Transform(VerticalGridInput));
     }
 
     private static string FindGridPath(string fileName)

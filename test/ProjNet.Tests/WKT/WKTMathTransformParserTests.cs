@@ -27,6 +27,8 @@ using ProjNet.IO.CoordinateSystems;
 /// </summary>
 public class WKTMathTransformParserTests
 {
+    private static readonly double[] Origin2D = { 0.0, 0.0 };
+
     /// <summary>
     /// Test parsing of affine math transform from WKT.
     /// </summary>
@@ -63,7 +65,7 @@ public class WKTMathTransformParserTests
         Assert.AreEqual(2, mt.DimTarget);
 
         // test simple transform
-        double[] outPt = mt.Transform(new double[] { 0.0, 0.0 });
+        double[] outPt = mt.Transform(Origin2D);
 
         Assert.AreEqual(2, outPt.Length);
         Assert.AreEqual(3455869.17937689, outPt[0], 0.00000001);

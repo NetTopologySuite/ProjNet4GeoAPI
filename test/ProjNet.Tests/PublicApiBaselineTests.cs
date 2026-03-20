@@ -30,6 +30,11 @@ public class PublicApiBaselineTests
 {
     private const string BaselineFileName = "PublicAPI.Shipped.txt";
     private const string UpdateBaselineEnvironmentVariable = "PROJNET_UPDATE_PUBLIC_API_BASELINE";
+    private static readonly string[] ExcludedPublicApiAttributes =
+    {
+        "System.Runtime.Versioning.TargetFrameworkAttribute",
+        "System.Reflection.AssemblyMetadataAttribute",
+    };
 
     /// <summary>
     /// Performs the documented operation.
@@ -41,11 +46,7 @@ public class PublicApiBaselineTests
         string currentPublicApi = NormalizeLineEndings(typeof(CoordinateSystemServices).Assembly.GeneratePublicApi(new ApiGeneratorOptions
         {
             IncludeAssemblyAttributes = false,
-            ExcludeAttributes = new string[]
-            {
-                "System.Runtime.Versioning.TargetFrameworkAttribute",
-                "System.Reflection.AssemblyMetadataAttribute"
-            },
+            ExcludeAttributes = ExcludedPublicApiAttributes,
         }));
 
         if (Environment.GetEnvironmentVariable(UpdateBaselineEnvironmentVariable) == "1")
