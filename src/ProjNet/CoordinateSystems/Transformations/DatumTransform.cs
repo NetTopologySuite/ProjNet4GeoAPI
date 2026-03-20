@@ -103,20 +103,20 @@ namespace ProjNet.CoordinateSystems.Transformations
             }
         }
 
-        private (double x, double y, double z) Apply(double x, double y, double z)
+        private (double X, double Y, double Z) Apply(double x, double y, double z)
         {
             return (
-                x: (this.v[0] * (x - (this.v[3] * y) + (this.v[2] * z))) + this.v[4],
-                y: (this.v[0] * ((this.v[3] * x) + y - (this.v[1] * z))) + this.v[5],
-                z: (this.v[0] * ((-this.v[2] * x) + (this.v[1] * y) + z)) + this.v[6]);
+                X: (this.v[0] * (x - (this.v[3] * y) + (this.v[2] * z))) + this.v[4],
+                Y: (this.v[0] * ((this.v[3] * x) + y - (this.v[1] * z))) + this.v[5],
+                Z: (this.v[0] * ((-this.v[2] * x) + (this.v[1] * y) + z)) + this.v[6]);
         }
 
-        private (double x, double y, double z) ApplyInverted(double x, double y, double z)
+        private (double X, double Y, double Z) ApplyInverted(double x, double y, double z)
         {
             return (
-                x: ((1 - (this.v[0] - 1)) * (x + (this.v[3] * y) - (this.v[2] * z))) - this.v[4],
-                y: ((1 - (this.v[0] - 1)) * ((-this.v[3] * x) + y + (this.v[1] * z))) - this.v[5],
-                z: ((1 - (this.v[0] - 1)) * ((this.v[2] * x) - (this.v[1] * y) + z)) - this.v[6]);
+                X: ((1 - (this.v[0] - 1)) * (x + (this.v[3] * y) - (this.v[2] * z))) - this.v[4],
+                Y: ((1 - (this.v[0] - 1)) * ((-this.v[3] * x) + y + (this.v[1] * z))) - this.v[5],
+                Z: ((1 - (this.v[0] - 1)) * ((this.v[2] * x) - (this.v[1] * y) + z)) - this.v[6]);
         }
 
         /// <summary>

@@ -429,7 +429,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <param name="y">The y-ordinate value.</param>
         /// <param name="z">The z-ordinate value.</param>
         /// <returns>The converted x-, y- and z-ordinate tuple.</returns>
-        private (double x, double y, double z) TransformAffine(double x, double y, double z)
+        private (double X, double Y, double Z) TransformAffine(double x, double y, double z)
         {
             // check source dimensionality - allow coordinate clipping, if source dimensionality is greater then expected source dimensionality of affine transformation
             Span<double> point = stackalloc double[0];
@@ -476,20 +476,20 @@ namespace ProjNet.CoordinateSystems.Transformations
                 transformed[row] = dimVal;
             }
 
-            (double x, double y, double z) ret = default;
+            (double X, double Y, double Z) ret = default;
             if (transformed.Length > 2)
             {
-                ret.z = transformed[2];
+                ret.Z = transformed[2];
             }
 
             if (transformed.Length > 1)
             {
-                ret.y = transformed[1];
+                ret.Y = transformed[1];
             }
 
             if (transformed.Length > 0)
             {
-                ret.x = transformed[0];
+                ret.X = transformed[0];
             }
 
             return ret;

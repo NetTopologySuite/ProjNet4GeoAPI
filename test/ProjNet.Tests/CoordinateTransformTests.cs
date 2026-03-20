@@ -1341,8 +1341,8 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         var tranformedPoint = transformation.MathTransform.Transform(-10775704.511, 3865240.329);
         Assert.NotNull(tranformedPoint);
 
-        Assert.AreEqual(2491034.95, tranformedPoint.x, 0.1);
-        Assert.AreEqual(6968468.98, tranformedPoint.y, 0.1);
+        Assert.AreEqual(2491034.95, tranformedPoint.X, 0.1);
+        Assert.AreEqual(6968468.98, tranformedPoint.Y, 0.1);
     }
 
     /// <summary>

@@ -101,11 +101,11 @@ public class Issues
         var ctFwd = css.CreateTransformation(itm, wgs84).MathTransform;
         var pt1a = (x: 200000.0, y: 600000.0);
         var pt2a = ctFwd.Transform(pt1a.x, pt1a.y);
-        var pt1b = ctFwd.Inverse().Transform(pt2a.x, pt2a.y);
+        var pt1b = ctFwd.Inverse().Transform(pt2a.X, pt2a.Y);
         var pt2b = ctFwd.Transform(pt1a.x, pt1a.y);
 
-        Assert.That(pt1a.x, Is.EqualTo(pt1b.x).Within(0.01));
-        Assert.That(pt1a.y, Is.EqualTo(pt1b.y).Within(0.01));
+        Assert.That(pt1a.x, Is.EqualTo(pt1b.X).Within(0.01));
+        Assert.That(pt1a.y, Is.EqualTo(pt1b.Y).Within(0.01));
         Assert.That(pt2a, Is.EqualTo(pt2b));
     }
 
@@ -126,8 +126,8 @@ public class Issues
         var pt_3857ex = (x: 1358761.89, y: 7456070.47);
 
         var pt_3857 = mt1.Transform(pt25832.x, pt25832.y);
-        Assert.That(pt_3857.x, Is.EqualTo(pt_3857ex.x).Within(0.015));
-        Assert.That(pt_3857.y, Is.EqualTo(pt_3857ex.y).Within(0.015));
+        Assert.That(pt_3857.X, Is.EqualTo(pt_3857ex.x).Within(0.015));
+        Assert.That(pt_3857.Y, Is.EqualTo(pt_3857ex.y).Within(0.015));
 
         epsg_3857 = (ProjectedCoordinateSystem)css.GetCoordinateSystem(3857);
         Console.WriteLine(epsg_3857.Projection.ClassName);
@@ -135,8 +135,8 @@ public class Issues
 
         var mt2 = css.CreateTransformation(epsg25832, epsg_3857).MathTransform;
         pt_3857 = mt2.Transform(pt25832.x, pt25832.y);
-        Assert.That(pt_3857.x, Is.EqualTo(pt_3857ex.x).Within(0.015));
-        Assert.That(pt_3857.y, Is.EqualTo(pt_3857ex.y).Within(0.015));
+        Assert.That(pt_3857.X, Is.EqualTo(pt_3857ex.x).Within(0.015));
+        Assert.That(pt_3857.Y, Is.EqualTo(pt_3857ex.y).Within(0.015));
     }
 
     /// <summary>
@@ -152,8 +152,8 @@ public class Issues
 
         var ct = css.CreateTransformation(epsg26910, epsg_4326);
         var pt1a = ct.MathTransform.Transform(ptI[0], ptI[1]);
-        Assert.That(pt1a.x, Is.EqualTo(-82.0479097).Within(0.01), "Longitude");
-        Assert.That(pt1a.y, Is.EqualTo(48.4185597).Within(0.01), "Latitude");
+        Assert.That(pt1a.X, Is.EqualTo(-82.0479097).Within(0.01), "Longitude");
+        Assert.That(pt1a.Y, Is.EqualTo(48.4185597).Within(0.01), "Latitude");
         /*
         var pt1b = ct.MathTransform.Inverse().Transform(pt1a);
         Assert.That(pt1b[0], Is.EqualTo(3523562.711189).Within(0.01), "Easting");

@@ -88,7 +88,7 @@ public class PerformanceTests
         instance.LooserAoSBatched();
         Validate(Array.ConvertAll(instance.xyzsCopy, xyz => (xyz.X, xyz.Y)));
 
-        void Validate(ReadOnlySpan<(double x, double y)> nextOutput)
+        void Validate(ReadOnlySpan<(double X, double Y)> nextOutput)
         {
             if (!nextOutput.SequenceEqual(firstOutput))
             {

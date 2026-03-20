@@ -154,14 +154,14 @@ namespace ProjNet.CoordinateSystems.Transformations
             throw new ArgumentException("Inverse horizontal grid shift did not converge.");
         }
 
-        private static (double lonShift, double latShift) InterpolateShift(Ntv2Grid grid, double longitude, double latitude, bool compensateNtConvention)
+        private static (double LonShift, double LatShift) InterpolateShift(Ntv2Grid grid, double longitude, double latitude, bool compensateNtConvention)
         {
             double normalizedLongitude = NormalizeLongitudeToGrid(longitude, grid.West, grid.East, grid.Epsilon);
             double normalizedLatitude = latitude - grid.South;
             return InterpolateNormalized(grid, normalizedLongitude, normalizedLatitude, compensateNtConvention);
         }
 
-        private static (double lonShift, double latShift) InterpolateNormalized(Ntv2Grid grid, double normalizedLongitude, double normalizedLatitude, bool compensateNtConvention)
+        private static (double LonShift, double LatShift) InterpolateNormalized(Ntv2Grid grid, double normalizedLongitude, double normalizedLatitude, bool compensateNtConvention)
         {
             double x = normalizedLongitude / grid.ResolutionX;
             double y = normalizedLatitude / grid.ResolutionY;
@@ -569,7 +569,7 @@ namespace ProjNet.CoordinateSystems.Transformations
                 return IsPointInExtent(longitude, latitude, this.West, this.East, this.South, this.North, this.Epsilon);
             }
 
-            internal (double lonShift, double latShift) GetShift(int x, int y, bool compensateNtConvention)
+            internal (double LonShift, double LatShift) GetShift(int x, int y, bool compensateNtConvention)
             {
                 int fileX = (this.Width - 1) - x;
                 int index = (y * this.Width) + fileX;

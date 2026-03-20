@@ -364,7 +364,7 @@ namespace ProjNet.CoordinateSystems.Transformations
             throw new ArgumentException("Inverse horizontal GeoTIFF grid shift did not converge.");
         }
 
-        private static (double lonShift, double latShift) InterpolateShift(HorizontalGrid grid, double longitude, double latitude)
+        private static (double LonShift, double LatShift) InterpolateShift(HorizontalGrid grid, double longitude, double latitude)
         {
             if (!grid.TryMapToGridCoordinates(longitude, latitude, out double gridX, out double gridY))
             {
@@ -1122,7 +1122,7 @@ namespace ProjNet.CoordinateSystems.Transformations
             return true;
         }
 
-        private static (double west, double east, double south, double north, double area, double epsilon) ComputeBounds(
+        private static (double West, double East, double South, double North, double Area, double Epsilon) ComputeBounds(
             int width,
             int height,
             double a,
