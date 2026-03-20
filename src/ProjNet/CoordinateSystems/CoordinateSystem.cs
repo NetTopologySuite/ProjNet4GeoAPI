@@ -113,6 +113,5 @@ namespace ProjNet.CoordinateSystems
 
             return this.AxisInfo[dimension];
         }
-
     }
 }

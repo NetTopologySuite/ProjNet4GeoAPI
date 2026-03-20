@@ -305,6 +305,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         {
             this.isInverse = !this.isInverse;
         }
-
     }
 }
+
+

@@ -76,7 +76,6 @@ namespace ProjNet.CoordinateSystems
         public string WKT
         {
             get => string.Format(CultureInfo.InvariantCulture.NumberFormat, "PARAMETER[\"{0}\", {1}]", this.Name, this.Value);
-
         }
 
         /// <summary>

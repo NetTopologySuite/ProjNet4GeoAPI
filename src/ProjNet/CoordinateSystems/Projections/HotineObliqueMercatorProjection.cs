@@ -122,7 +122,6 @@ namespace ProjNet.CoordinateSystems.Projections
             }
 
             Sincos(rectifiedGridAngle, out this.singrid, out this.cosgrid);
-
         }
 
         private bool NaturalOriginOffsets
@@ -152,7 +151,6 @@ namespace ProjNet.CoordinateSystems.Projections
             }
 
             return this.inverse;
-
         }
 
         // protected override double[] RadiansToMeters(double[] lonlat)
@@ -303,3 +301,5 @@ namespace ProjNet.CoordinateSystems.Projections
         }
     }
 }
+
+

@@ -260,7 +260,6 @@ namespace ProjNet.CoordinateSystems.Projections
                   (C44 - (this.es * (C46 + (this.es * C48))));
             this.en3 = (t *= this.es) * (C66 - (this.es * C68));
             this.en4 = t * this.es * C88;
-
         }
 
         // ReSharper restore InconsistentNaming
@@ -821,7 +820,6 @@ for (var i = 0; i < _Parameters.Count; i++)
         protected static double IMOD(double A, double B)
         {
             return A - ((A / B) * B); /* Integer mod function */
-
         }
 
         /// <summary>
@@ -1320,4 +1318,6 @@ for (var i = 0; i < _Parameters.Count; i++)
         }
     }
 }
+
+
 

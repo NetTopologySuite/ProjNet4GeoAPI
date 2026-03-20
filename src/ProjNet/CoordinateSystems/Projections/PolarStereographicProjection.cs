@@ -165,7 +165,6 @@ namespace ProjNet.CoordinateSystems.Projections
                 {
                     throw new Exception("Polar Stereographics doesn't converge");
                 }
-
             }
 
             if (!this.NPOLE)
@@ -237,3 +236,5 @@ namespace ProjNet.CoordinateSystems.Projections
         }
     }
 }
+
+

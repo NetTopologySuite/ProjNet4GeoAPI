@@ -519,7 +519,6 @@ namespace ProjNet.IO.CoordinateSystems
             while (ct != TokenType.Eol && ct != TokenType.Eof && CompoundCoordinateSystemDelimiters.Contains(tokenizer.GetStringValue()))
             {
                 ct = tokenizer.NextToken();
-
             }
 
             var tailcs = ReadCoordinateSystem(null, tokenizer);
@@ -831,3 +830,5 @@ namespace ProjNet.IO.CoordinateSystems
         }
     }
 }
+
+

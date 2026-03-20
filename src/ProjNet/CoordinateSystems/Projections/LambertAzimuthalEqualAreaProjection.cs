@@ -278,7 +278,6 @@ namespace ProjNet.CoordinateSystems.Projections
 
             lon = x;
             lat = y;
-
         }
 
         private void SphericalRadiansToMeters(ref double lon, ref double lat)
@@ -457,7 +456,8 @@ namespace ProjNet.CoordinateSystems.Projections
 
             x = Adjust_lon(lam + this.centralMeridian);
             y = phi;
-
         }
     }
 }
+
+

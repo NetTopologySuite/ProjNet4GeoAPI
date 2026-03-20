@@ -34,7 +34,6 @@ namespace ProjNet.CoordinateSystems.Projections
         public PseudoMercator(IEnumerable<ProjectionParameter> parameters)
             : this(parameters, null)
         {
-
         }
 
         /// <summary>
@@ -72,3 +71,5 @@ namespace ProjNet.CoordinateSystems.Projections
         }
     }
 }
+
+

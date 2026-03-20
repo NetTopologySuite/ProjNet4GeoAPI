@@ -122,7 +122,6 @@ namespace ProjNet.CoordinateSystems.Projections
         public TransverseMercator(IEnumerable<ProjectionParameter> parameters)
             : this(parameters, null)
         {
-
         }
 
         /// <summary>
@@ -257,3 +256,5 @@ namespace ProjNet.CoordinateSystems.Projections
         }
     }
 }
+
+
