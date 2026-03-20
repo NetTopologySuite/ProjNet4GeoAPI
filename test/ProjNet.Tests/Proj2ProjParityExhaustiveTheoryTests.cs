@@ -39,6 +39,8 @@ public class Proj2ProjParityExhaustiveTheoryTests
     [MemberData(nameof(GetParityCases))]
     public void CreateFromCoordinateSystemsWithDirectProjectedPairMatchesExhaustiveProjReference(Proj2ProjParityTheoryTests.Proj2ProjCase testCase)
     {
+        Assert.NotNull(testCase);
+
         if (!IsExhaustiveLaneEnabled())
         {
             Assert.Skip("Set PROJNET_RUN_EXHAUSTIVE=1 to run exhaustive parity cases.");

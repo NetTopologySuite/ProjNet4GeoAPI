@@ -185,6 +185,16 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <param name="existingName">The existingName parameter.</param>
         public static void RegisterAlias(string aliasName, string existingName)
         {
+            if (aliasName is null)
+            {
+                throw new ArgumentNullException(nameof(aliasName));
+            }
+
+            if (existingName is null)
+            {
+                throw new ArgumentNullException(nameof(existingName));
+            }
+
             lock (RegistryLock)
             {
                 if (!TypeRegistry.TryGetValue(ProjectionNameToRegistryKey(existingName), out var existingProjectionType))

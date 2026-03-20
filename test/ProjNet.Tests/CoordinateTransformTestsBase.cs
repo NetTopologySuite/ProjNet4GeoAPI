@@ -61,6 +61,16 @@ public class CoordinateTransformTestsBase
     /// <returns><see langword="true"/> when all compared ordinates are within tolerance.</returns>
     protected bool ToleranceLessThan(double[] p1, double[] p2, double tolerance)
     {
+        if (p1 is null)
+        {
+            throw new ArgumentNullException(nameof(p1));
+        }
+
+        if (p2 is null)
+        {
+            throw new ArgumentNullException(nameof(p2));
+        }
+
         double d0 = Math.Abs(p1[0] - p2[0]);
         double d1 = Math.Abs(p1[1] - p2[1]);
         if (p1.Length > 2 && p2.Length > 2)
@@ -93,6 +103,16 @@ public class CoordinateTransformTestsBase
     /// <returns>Formatted error string for diagnostics.</returns>
     protected string TransformationError(string projection, double[] pExpected, double[] pResult, bool reverse = false)
     {
+        if (pExpected is null)
+        {
+            throw new ArgumentNullException(nameof(pExpected));
+        }
+
+        if (pResult is null)
+        {
+            throw new ArgumentNullException(nameof(pResult));
+        }
+
         return string.Format(
             CultureInfo.InvariantCulture,
             "{6} {7} transformation outside tolerance!\n\tExpected [{0}, {1}],\n\tgot      [{2}, {3}],\n\tdelta    [{4}, {5}]",
@@ -150,3 +170,4 @@ public class CoordinateTransformTestsBase
         Assert.IsTrue(forward && reverse);
     }
 }
+

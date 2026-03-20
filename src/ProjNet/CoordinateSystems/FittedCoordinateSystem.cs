@@ -53,6 +53,16 @@ namespace ProjNet.CoordinateSystems
             string abbreviation)
             : base(name, authority, code, alias, abbreviation, remarks)
         {
+            if (baseSystem is null)
+            {
+                throw new ArgumentNullException(nameof(baseSystem));
+            }
+
+            if (transform is null)
+            {
+                throw new ArgumentNullException(nameof(transform));
+            }
+
             this.BaseCoordinateSystem = baseSystem;
             this.ToBaseTransform = transform;
 

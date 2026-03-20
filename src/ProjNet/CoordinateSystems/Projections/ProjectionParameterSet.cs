@@ -50,6 +50,11 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <param name="parameters">An enumeration of parameters.</param>
         public ProjectionParameterSet(IEnumerable<ProjectionParameter> parameters)
         {
+            if (parameters is null)
+            {
+                throw new ArgumentNullException(nameof(parameters));
+            }
+
             foreach (var pp in parameters)
             {
                 string key = pp.Name.ToLowerInvariant();
@@ -80,6 +85,16 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <exception cref="ArgumentException">Thrown if. <paramref name="parameterName"> or any of <paramref name="alternateNames"/> is not defined.</paramref></exception>
         public double GetParameterValue(string parameterName, params string[] alternateNames)
         {
+            if (parameterName is null)
+            {
+                throw new ArgumentNullException(nameof(parameterName));
+            }
+
+            if (alternateNames is null)
+            {
+                throw new ArgumentNullException(nameof(alternateNames));
+            }
+
             string name = parameterName.ToLowerInvariant();
             if (!this.ContainsKey(name))
             {
@@ -120,6 +135,16 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <returns>The computed value.</returns>
         public double GetOptionalParameterValue(string name, double value, params string[] alternateNames)
         {
+            if (name is null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
+            if (alternateNames is null)
+            {
+                throw new ArgumentNullException(nameof(alternateNames));
+            }
+
             name = name.ToLowerInvariant();
             if (!this.ContainsKey(name))
             {
@@ -146,6 +171,11 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <returns>The parameter if present, otherwise null.</returns>
         public ProjectionParameter Find(string name)
         {
+            if (name is null)
+            {
+                throw new ArgumentNullException(nameof(name));
+            }
+
             name = name.ToLowerInvariant();
             return this.ContainsKey(name) ? new ProjectionParameter(this.originalNames[name], this[name]) : null;
         }

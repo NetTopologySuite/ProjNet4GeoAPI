@@ -155,6 +155,11 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <returns>The transformation result.</returns>
         public double[] Transform(double[] point)
         {
+            if (point is null)
+            {
+                throw new ArgumentNullException(nameof(point));
+            }
+
             double x = point[0];
             double y = point[1];
             double z = point.Length < 3 ? 0 : point[2];
@@ -185,6 +190,11 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <returns>The transformation result.</returns>
         public IList<double[]> TransformList(IList<double[]> points)
         {
+            if (points is null)
+            {
+                throw new ArgumentNullException(nameof(points));
+            }
+
             var result = new List<double[]>(points.Count);
             foreach (double[] point in points)
             {

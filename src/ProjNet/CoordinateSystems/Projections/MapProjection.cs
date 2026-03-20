@@ -214,7 +214,7 @@ namespace ProjNet.CoordinateSystems.Projections
             : this(parameters)
         {
             this.inverse = inverse;
-            if (this.inverse != null)
+            if (inverse != null)
             {
                 inverse.inverse = this;
                 this.IsInverse = !inverse.IsInverse;
@@ -756,6 +756,11 @@ for (var i = 0; i < _Parameters.Count; i++)
         protected internal static List<ProjectionParameter> CloneParametersList(
             IEnumerable<ProjectionParameter> projectionParameters)
         {
+            if (projectionParameters is null)
+            {
+                throw new ArgumentNullException(nameof(projectionParameters));
+            }
+
             var res = new List<ProjectionParameter>();
             foreach (var pp in projectionParameters)
             {
@@ -1271,6 +1276,11 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// <returns>The transformation result.</returns>
         protected static double Authlat(double beta, double[] APA)
         {
+            if (APA is null)
+            {
+                throw new ArgumentNullException(nameof(APA));
+            }
+
             double t = beta + beta;
             return beta + (APA[0] * Math.Sin(t)) + (APA[1] * Math.Sin(t + t)) + (APA[2] * Math.Sin(t + t + t));
         }

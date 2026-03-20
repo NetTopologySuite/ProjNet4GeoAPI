@@ -381,6 +381,11 @@ namespace ProjNet
         /// <returns>The transformation result.</returns>
         protected virtual int AddCoordinateSystem(CoordinateSystem coordinateSystem)
         {
+            if (coordinateSystem is null)
+            {
+                throw new ArgumentNullException(nameof(coordinateSystem));
+            }
+
             int srid = (int)coordinateSystem.AuthorityCode;
             this.AddCoordinateSystem(srid, coordinateSystem);
 

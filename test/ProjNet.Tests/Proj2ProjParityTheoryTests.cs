@@ -38,6 +38,8 @@ public class Proj2ProjParityTheoryTests
     [MemberData(nameof(GetParityCases))]
     public void CreateFromCoordinateSystemsWithDirectProjectedPairStaysWithinProjReference(Proj2ProjCase testCase)
     {
+        Assert.NotNull(testCase);
+
         var coordinateSystemFactory = new CoordinateSystemFactory();
         var transformationFactory = new CoordinateTransformationFactory();
 
