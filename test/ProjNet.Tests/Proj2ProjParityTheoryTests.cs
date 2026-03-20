@@ -93,52 +93,52 @@ public class Proj2ProjParityTheoryTests
     public sealed class Proj2ProjCase
     {
         /// <summary>
-        /// Gets the documented value.
+        /// Gets or sets the EPSG operation code for the parity case.
         /// </summary>
         public int OperationCode { get; set; }
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets or sets the source SRID.
         /// </summary>
         public int SourceSrid { get; set; }
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets or sets the target SRID.
         /// </summary>
         public int TargetSrid { get; set; }
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets or sets the source CRS WKT definition.
         /// </summary>
         public string SourceWkt { get; set; }
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets or sets the target CRS WKT definition.
         /// </summary>
         public string TargetWkt { get; set; }
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets or sets the input x coordinate.
         /// </summary>
         public double InputX { get; set; }
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets or sets the input y coordinate.
         /// </summary>
         public double InputY { get; set; }
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets or sets the expected x coordinate.
         /// </summary>
         public double ExpectedX { get; set; }
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets or sets the expected y coordinate.
         /// </summary>
         public double ExpectedY { get; set; }
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets or sets the tolerance in meters for result comparison.
         /// </summary>
         public double ToleranceMeters { get; set; }
     }
@@ -149,17 +149,17 @@ public class Proj2ProjParityTheoryTests
     public sealed class Proj2ProjFixture
     {
         /// <summary>
-        /// Gets the documented value.
+        /// Gets or sets the fixture schema/version marker.
         /// </summary>
         public int FixtureVersion { get; set; }
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets or sets the generator identifier used to produce the fixture.
         /// </summary>
         public string Generator { get; set; }
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets or sets the parity cases included in the fixture payload.
         /// </summary>
         public List<Proj2ProjCase> Cases { get; set; }
     }

@@ -45,7 +45,7 @@ public class ProjParityBenchmarks
     private double[] yBuffer;
 
     /// <summary>
-    /// Gets the documented value.
+    /// Gets or sets the number of coordinates processed per benchmark invocation.
     /// </summary>
     [Params(10000)]
     public int PointCount { get; set; }

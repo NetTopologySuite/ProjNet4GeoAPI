@@ -23,12 +23,12 @@ namespace ProjNET.Tests;
 internal sealed class GieParserOptions
 {
     /// <summary>
-    /// Gets the documented value.
+    /// Gets or sets a value indicating whether unknown directives are ignored during parsing.
     /// </summary>
     public bool IgnoreUnknownDirectives { get; set; }
 
     /// <summary>
-    /// Gets the documented value.
+    /// Gets or sets a value indicating whether multi-line operation directives are allowed.
     /// </summary>
     public bool AllowOperationContinuation { get; set; } = true;
 }

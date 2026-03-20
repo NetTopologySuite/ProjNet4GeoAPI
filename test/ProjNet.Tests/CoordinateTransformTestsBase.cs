@@ -48,7 +48,7 @@ public class CoordinateTransformTestsBase
     protected Random Random => this.random;
 
     /// <summary>
-    /// Gets the documented value.
+    /// Gets or sets a value indicating whether verbose test diagnostics are enabled.
     /// </summary>
     protected bool Verbose { get; set; }
 

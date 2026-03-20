@@ -108,7 +108,7 @@ namespace ProjNet.CoordinateSystems
         }
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets or sets the WGS84 conversion definitions.
         /// </summary>
         internal List<Wgs84ConversionInfo> WGS84ConversionInfo { get; set; }
 
