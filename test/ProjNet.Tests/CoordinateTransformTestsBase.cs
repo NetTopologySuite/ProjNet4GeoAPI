@@ -28,18 +28,24 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </summary>
 public class CoordinateTransformTestsBase
 {
+    private readonly CoordinateSystemFactory coordinateSystemFactory = new CoordinateSystemFactory();
+    private readonly CoordinateTransformationFactory coordinateTransformationFactory = new CoordinateTransformationFactory();
+    private readonly Random random = new Random();
+
     /// <summary>
-    /// Shared coordinate system factory used by transformation tests.
+    /// Gets the shared coordinate system factory used by transformation tests.
     /// </summary>
-    protected readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
+    protected CoordinateSystemFactory CoordinateSystemFactory => this.coordinateSystemFactory;
+
     /// <summary>
-    /// Shared transformation factory used by transformation tests.
+    /// Gets the shared transformation factory used by transformation tests.
     /// </summary>
-    protected readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
+    protected CoordinateTransformationFactory CoordinateTransformationFactory => this.coordinateTransformationFactory;
+
     /// <summary>
-    /// Random source used for stochastic test data when needed.
+    /// Gets the random source used for stochastic test data when needed.
     /// </summary>
-    protected readonly Random Random = new Random();
+    protected Random Random => this.random;
 
     /// <summary>
     /// Gets the documented value.
