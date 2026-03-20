@@ -48,16 +48,16 @@ namespace ProjNet.CoordinateSystems.Projections
         private readonly double globalScale;
         private readonly double reciprocGlobalScale;
 
-        private static double ITERATIONTOLERANCE = 1E-14;
-        private static int MAXIMUMITERATIONS = 15;
-        private static double EPSILON = 1E-6;
-        private double C;
-        private double K;
+        private static double iterationTolerance = 1E-14;
+        private static int maximumIterations = 15;
+        private static double epsilon = 1E-6;
+        private double c;
+        private double k;
         private double ratexp;
         private double phic0;
         private double cosc0;
         private double sinc0;
-        private double R2;
+        private double r2;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ObliqueStereographicProjection"/> class.
@@ -108,13 +108,13 @@ namespace ProjNet.CoordinateSystems.Projections
             double sphi = Math.Sin(this.latOrigin);
             double cphi = Math.Cos(this.latOrigin);
             cphi *= cphi;
-            this.R2 = 2.0 * Math.Sqrt(1 - this.es) / (1 - (this.es * sphi * sphi));
-            this.C = Math.Sqrt(1.0 + (this.es * cphi * cphi / (1.0 - this.es)));
-            this.phic0 = Math.Asin(sphi / this.C);
+            this.r2 = 2.0 * Math.Sqrt(1 - this.es) / (1 - (this.es * sphi * sphi));
+            this.c = Math.Sqrt(1.0 + (this.es * cphi * cphi / (1.0 - this.es)));
+            this.phic0 = Math.Asin(sphi / this.c);
             this.sinc0 = Math.Sin(this.phic0);
             this.cosc0 = Math.Cos(this.phic0);
-            this.ratexp = 0.5 * this.C * this.e;
-            this.K = Math.Tan((0.5 * this.phic0) + (Math.PI / 4)) / (Math.Pow(Math.Tan((0.5 * this.latOrigin) + (Math.PI / 4)), this.C) * this.Srat(this.e * sphi, this.ratexp));
+            this.ratexp = 0.5 * this.c * this.e;
+            this.k = Math.Tan((0.5 * this.phic0) + (Math.PI / 4)) / (Math.Pow(Math.Tan((0.5 * this.latOrigin) + (Math.PI / 4)), this.c) * this.Srat(this.e * sphi, this.ratexp));
         }
 
         /// <summary>
@@ -128,14 +128,14 @@ namespace ProjNet.CoordinateSystems.Projections
             y *= this.reciprocGlobalScale;
 
             double rho = Math.Sqrt((x * x) + (y * y));
-            if (Math.Abs(rho) < EPSILON)
+            if (Math.Abs(rho) < epsilon)
             {
                 x = 0.0;
                 y = this.phic0;
             }
             else
             {
-                double ce = 2.0 * Math.Atan2(rho, this.R2);
+                double ce = 2.0 * Math.Atan2(rho, this.r2);
                 double sinc = Math.Sin(ce);
                 double cosc = Math.Cos(ce);
                 x = Math.Atan2(x * sinc, (rho * this.cosc0 * cosc) - (y * this.sinc0
@@ -152,12 +152,12 @@ namespace ProjNet.CoordinateSystems.Projections
                 }
             }
 
-            x /= this.C;
-            double num = Math.Pow(Math.Tan((0.5 * y) + (Math.PI / 4.0)) / this.K, 1.0 / this.C);
-            for (int iter = MAXIMUMITERATIONS; ;)
+            x /= this.c;
+            double num = Math.Pow(Math.Tan((0.5 * y) + (Math.PI / 4.0)) / this.k, 1.0 / this.c);
+            for (int iter = maximumIterations; ;)
             {
                 double phi = (2.0 * Math.Atan(num * this.Srat(this.e * Math.Sin(y), -0.5 * this.e))) - (Math.PI / 2.0);
-                if (Math.Abs(phi - y) < ITERATIONTOLERANCE)
+                if (Math.Abs(phi - y) < iterationTolerance)
                 {
                     break;
                 }
@@ -182,14 +182,14 @@ namespace ProjNet.CoordinateSystems.Projections
             double x = lon - this.centralMeridian;
             double y = lat;
 
-            y = (2.0 * Math.Atan(this.K * Math.Pow(Math.Tan((0.5 * y) + (Math.PI / 4)), this.C)
-                                  * this.Srat(this.e * Math.Sin(y), this.ratexp)))
+            y = (2.0 * Math.Atan(this.k * Math.Pow(Math.Tan((0.5 * y) + (Math.PI / 4)), this.c)
+                                   * this.Srat(this.e * Math.Sin(y), this.ratexp)))
                 - (Math.PI / 2);
-            x *= this.C;
+            x *= this.c;
             double sinc = Math.Sin(y);
             double cosc = Math.Cos(y);
             double cosl = Math.Cos(x);
-            double k_ = this.R2 / (1.0 + (this.sinc0 * sinc) + (this.cosc0 * cosc * cosl));
+            double k_ = this.r2 / (1.0 + (this.sinc0 * sinc) + (this.cosc0 * cosc * cosl));
 
             lon = k_ * cosc * Math.Sin(x) * this.globalScale;
             lat = k_ * ((this.cosc0 * sinc) - (this.sinc0 * cosc * cosl)) * this.globalScale;

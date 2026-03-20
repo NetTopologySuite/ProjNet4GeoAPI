@@ -48,13 +48,13 @@ namespace ProjNet.CoordinateSystems.Projections
         private readonly double globalScale;
         private readonly double reciprocGlobalScale;
 
-        private static int MAXIMUMITERATIONS = 15;
-        private static double ITERATIONTOLERANCE = 1E-14;
-        private static double EPS15 = 1E-15;
-        private static double MHALFPI = 0.5 * Math.PI;
+        private static int maximumIterations = 15;
+        private static double iterationTolerance = 1E-14;
+        private static double eps15 = 1E-15;
+        private static double mhalfPi = 0.5 * Math.PI;
         private double phits;
         private double akm1;
-        private bool NPOLE;
+        private bool npole;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PolarStereographicProjection"/> class.
@@ -107,10 +107,10 @@ namespace ProjNet.CoordinateSystems.Projections
                 throw new Exception("Polar Stereographics: only ellipsoidal formulation");
             }
 
-            this.NPOLE = this.latOrigin > 0.0; // N or S hemisphere
+            this.npole = this.latOrigin > 0.0; // N or S hemisphere
             this.phits = Math.Abs(this.latOrigin);
 
-            if (Math.Abs(this.phits - MHALFPI) < EPS10)
+            if (Math.Abs(this.phits - mhalfPi) < EPS10)
             {
                 double one_p_e = 1.0 + this.e;
                 double one_m_e = 1.0 - this.e;
@@ -139,24 +139,24 @@ namespace ProjNet.CoordinateSystems.Projections
             x *= this.reciprocGlobalScale;
             y *= this.reciprocGlobalScale;
 
-            if (this.NPOLE)
+            if (this.npole)
             {
                 y = -y;
             }
 
             double rho = Math.Sqrt((x * x) + (y * y));
             double tp = -rho / this.akm1;
-            double phi_l = MHALFPI - (2.0 * Math.Atan(tp));
+            double phi_l = mhalfPi - (2.0 * Math.Atan(tp));
             double halfe = -0.5 * this.e;
 
             double lp_phi = 0.0;
-            for (int iter = MAXIMUMITERATIONS; ;)
+            for (int iter = maximumIterations; ;)
             {
                 double sinphi = this.e * Math.Sin(phi_l);
                 double one_p_sinphi = 1.0 + sinphi;
                 double one_m_sinphi = 1.0 - sinphi;
-                lp_phi = (2.0 * Math.Atan(tp * Math.Pow(one_p_sinphi / one_m_sinphi, halfe))) + MHALFPI;
-                if (Math.Abs(phi_l - lp_phi) < ITERATIONTOLERANCE)
+                lp_phi = (2.0 * Math.Atan(tp * Math.Pow(one_p_sinphi / one_m_sinphi, halfe))) + mhalfPi;
+                if (Math.Abs(phi_l - lp_phi) < iterationTolerance)
                 {
                     break;
                 }
@@ -168,7 +168,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 }
             }
 
-            if (!this.NPOLE)
+            if (!this.npole)
             {
                 lp_phi = -lp_phi;
             }
@@ -192,7 +192,7 @@ namespace ProjNet.CoordinateSystems.Projections
             double coslam = Math.Cos(lp_lam);
             double sinlam = Math.Sin(lp_lam);
 
-            if (!this.NPOLE)
+            if (!this.npole)
             {
                 lp_phi = -lp_phi;
                 coslam = -coslam;
@@ -201,7 +201,7 @@ namespace ProjNet.CoordinateSystems.Projections
             double sinphi = Math.Sin(lp_phi);
             double cosphi = Math.Cos(lp_phi);
 
-            double x = (Math.Abs(lp_phi - MHALFPI) < EPS15) ? 0.0 : this.akm1 * this.Tsfn(cosphi, sinphi, this.e);
+            double x = (Math.Abs(lp_phi - mhalfPi) < eps15) ? 0.0 : this.akm1 * this.Tsfn(cosphi, sinphi, this.e);
             lon = x * sinlam * this.globalScale;
             lat = -x * coslam * this.globalScale;
         }
