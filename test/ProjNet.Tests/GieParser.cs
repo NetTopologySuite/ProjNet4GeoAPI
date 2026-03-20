@@ -187,7 +187,7 @@ internal static class GieParser
                 continue;
             }
 
-            bool hasContinuation = stripped.EndsWith("\\", StringComparison.Ordinal);
+            bool hasContinuation = stripped.EndsWith('\\');
             if (hasContinuation)
             {
                 stripped = stripped.Substring(0, stripped.Length - 1).TrimEnd();
@@ -460,23 +460,23 @@ internal static class GieParser
             text = text.Substring(0, text.Length - 1);
         }
 
-        if (text.StartsWith("-", StringComparison.Ordinal))
+        if (text.StartsWith('-'))
         {
             sign *= -1;
             text = text.Substring(1);
         }
-        else if (text.StartsWith("+", StringComparison.Ordinal))
+        else if (text.StartsWith('+'))
         {
             text = text.Substring(1);
         }
 
-        int dIndex = text.IndexOf("d", StringComparison.Ordinal);
+        int dIndex = text.IndexOf('d');
         if (dIndex < 0)
         {
-            dIndex = text.IndexOf("D", StringComparison.Ordinal);
+            dIndex = text.IndexOf('D');
         }
 
-        int mIndex = text.IndexOf("'", StringComparison.Ordinal);
+        int mIndex = text.IndexOf('\'');
         if (dIndex <= 0 || mIndex <= dIndex)
         {
             return false;
@@ -495,7 +495,7 @@ internal static class GieParser
         }
 
         double seconds = 0d;
-        int secondsMarker = text.IndexOf("\"", StringComparison.Ordinal);
+        int secondsMarker = text.IndexOf('"');
         if (secondsMarker > mIndex + 1)
         {
             string secondsToken = text.Substring(mIndex + 1, secondsMarker - mIndex - 1);

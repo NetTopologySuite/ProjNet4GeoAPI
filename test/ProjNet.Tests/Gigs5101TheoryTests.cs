@@ -287,7 +287,7 @@ public class Gigs5101TheoryTests
         string[] tokens = operation.Split(OperationTokenSeparators, StringSplitOptions.RemoveEmptyEntries);
         foreach (string token in tokens)
         {
-            string normalized = token.StartsWith("+", StringComparison.Ordinal)
+            string normalized = token.StartsWith('+')
                 ? token.Substring(1)
                 : token;
 
@@ -631,7 +631,7 @@ public class Gigs5101TheoryTests
         string[] tokens = operation.Split(OperationTokenSeparators, StringSplitOptions.RemoveEmptyEntries);
         foreach (string token in tokens)
         {
-            string body = token.StartsWith("+", StringComparison.Ordinal)
+            string body = token.Length > 0 && token[0] == '+'
                 ? token.Substring(1)
                 : token;
 
@@ -642,7 +642,7 @@ public class Gigs5101TheoryTests
                 continue;
             }
 
-            int index = body.IndexOf("=", StringComparison.Ordinal);
+                int index = body.IndexOf('=');
             if (index < 0)
             {
                 args[body] = "true";

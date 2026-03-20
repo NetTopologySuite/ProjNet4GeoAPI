@@ -153,7 +153,7 @@ public class SpatialRefSysTableParser
                 {
                     int srid = dr.GetInt32(0);
                     string srtext = dr.GetString(1);
-                    int bracketIndex = srtext.IndexOf("[", StringComparison.Ordinal);
+                    int bracketIndex = srtext.IndexOf('[');
                     if (bracketIndex < 0)
                     {
                         continue;
