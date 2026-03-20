@@ -68,6 +68,18 @@ public class ProjParityBenchmarks
         EnsureFinite(benchmark.xBuffer, benchmark.yBuffer);
     }
 
+    private static void EnsureFinite(double[] xs, double[] ys)
+    {
+        for (int i = 0; i < xs.Length; i++)
+        {
+            if (double.IsNaN(xs[i]) || double.IsInfinity(xs[i]) ||
+                double.IsNaN(ys[i]) || double.IsInfinity(ys[i]))
+            {
+                throw new InvalidOperationException("Benchmark validation failed: transform produced non-finite values.");
+            }
+        }
+    }
+
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
@@ -137,15 +149,4 @@ public class ProjParityBenchmarks
         this.latitudes.CopyTo(this.yBuffer.AsSpan());
     }
 
-    private static void EnsureFinite(double[] xs, double[] ys)
-    {
-        for (int i = 0; i < xs.Length; i++)
-        {
-            if (double.IsNaN(xs[i]) || double.IsInfinity(xs[i]) ||
-                double.IsNaN(ys[i]) || double.IsInfinity(ys[i]))
-            {
-                throw new InvalidOperationException("Benchmark validation failed: transform produced non-finite values.");
-            }
-        }
-    }
 }
