@@ -110,26 +110,6 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         protected const double DBLLONG = 4.61168601e18;
 
-        private const double C00 = 1.0,
-                             C02 = 0.25,
-                             C04 = 0.046875,
-                             C06 = 0.01953125,
-                             C08 = 0.01068115234375,
-                             C22 = 0.75,
-                             C44 = 0.46875,
-                             C46 = 0.01302083333333333333,
-                             C48 = 0.00712076822916666666,
-                             C66 = 0.36458333333333333333,
-                             C68 = 0.00569661458333333333,
-                             C88 = 0.3076171875;
-
-        private const double P00 = 0.33333333333333333333; /*   1 /     3 */
-        private const double P01 = 0.17222222222222222222; /*  31 /   180 */
-        private const double P02 = 0.10257936507936507937; /* 517 /  5040 */
-        private const double P10 = 0.06388888888888888888; /*  23 /   360 */
-        private const double P11 = 0.06640211640211640212; /* 251 /  3780 */
-        private const double P20 = 0.01677689594356261023; /* 761 / 45360 */
-
         // ReSharper disable InconsistentNaming
 
         /// <summary>
@@ -202,6 +182,26 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         protected MathTransform inverse;
 
+        private const double C00 = 1.0,
+                             C02 = 0.25,
+                             C04 = 0.046875,
+                             C06 = 0.01953125,
+                             C08 = 0.01068115234375,
+                             C22 = 0.75,
+                             C44 = 0.46875,
+                             C46 = 0.01302083333333333333,
+                             C48 = 0.00712076822916666666,
+                             C66 = 0.36458333333333333333,
+                             C68 = 0.00569661458333333333,
+                             C88 = 0.3076171875;
+
+        private const double P00 = 0.33333333333333333333; /*   1 /     3 */
+        private const double P01 = 0.17222222222222222222; /*  31 /   180 */
+        private const double P02 = 0.10257936507936507937; /* 517 /  5040 */
+        private const double P10 = 0.06388888888888888888; /*  23 /   360 */
+        private const double P11 = 0.06640211640211640212; /* 251 /  3780 */
+        private const double P20 = 0.01677689594356261023; /* 761 / 45360 */
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MapProjection"/> class.
         /// Creates an instance of this class.
@@ -261,31 +261,6 @@ namespace ProjNet.CoordinateSystems.Projections
 
         }
 
-        /// <summary>
-        /// Gets or sets substitute for <see cref="centralMeridian"/>.
-        /// </summary>
-        protected double Lon_origin
-        {
-            get { return this.centralMeridian; }
-            set { this.centralMeridian = value; }
-        }
-
-        /// <summary>
-        /// Gets center latitude (projection center), same as lat_origin.
-        /// </summary>
-        protected double Central_parallel
-        {
-            get { return this.latOrigin; }
-        }
-
-        /// <summary>
-        /// Gets center latitude (projection center), same as lat_origin.
-        /// </summary>
-        protected double Phi0
-        {
-            get { return this.latOrigin; }
-        }
-
         // ReSharper restore InconsistentNaming
 
         /// <summary>
@@ -304,13 +279,6 @@ namespace ProjNet.CoordinateSystems.Projections
         {
             get { return this.Parameters.Count; }
         }
-
-        /// <summary>
-        /// Gets a value indicating whether returns true if this projection is inverted.
-        /// Most map projections define forward projection as "from geographic to projection", and backwards
-        /// as "from projection to geographic". If this projection is inverted, this will be the other way around.
-        /// </summary>
-        protected internal bool IsInverse { get; private set; }
 
         /// <summary>
         /// Gets or sets the abbreviation of the object.
@@ -343,6 +311,16 @@ namespace ProjNet.CoordinateSystems.Projections
         /// Gets or sets the provider-supplied remarks for the object.
         /// </summary>
         public string Remarks { get; set; }
+
+        /// <summary>
+        /// Function to calculate UTM zone number.
+        /// </summary>
+        /// <param name="lon">The longitudinal value (in Degrees!).</param>
+        /// <returns>The UTM zone number.</returns>
+        public static long CalcUtmZone(double lon)
+        {
+            return (long)(((lon + 180.0) / 6.0) + 1.0);
+        }
 
         /// <summary>
         /// Gets the Well-known text for this object
@@ -414,21 +392,66 @@ namespace ProjNet.CoordinateSystems.Projections
             get { return 2; }
         }
 
-        /// <summary>
-        /// Returns a list of projection "cloned" projection parameters.
-        /// </summary>
-        /// <param name="projectionParameters">The projectionParameters value.</param>
-        /// <returns>The transformation result.</returns>
-        protected internal static List<ProjectionParameter> CloneParametersList(
-            IEnumerable<ProjectionParameter> projectionParameters)
+        /// <inheritdoc />
+        public sealed override void Transform(ref double x, ref double y, ref double z)
         {
-            var res = new List<ProjectionParameter>();
-            foreach (var pp in projectionParameters)
+            if (this.IsInverse)
             {
-                res.Add(new ProjectionParameter(pp.Name, pp.Value));
+                this.SourceToDegrees(ref x, ref y);
+            }
+            else
+            {
+                this.DegreesToTarget(ref x, ref y);
+            }
+        }
+
+        /// <summary>
+        /// Reverses the transformation.
+        /// </summary>
+        public override void Invert()
+        {
+            this.IsInverse = !this.IsInverse;
+            if (this.inverse != null)
+            {
+                ((MapProjection)this.inverse).Invert(false);
+            }
+        }
+
+        /// <summary>
+        /// Checks whether the values of this instance is equal to the values of another instance.
+        /// Only parameters used for coordinate system are used for comparison.
+        /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
+        /// </summary>
+        /// <param name="obj">The obj parameter.</param>
+        /// <returns>True if equal.</returns>
+        public bool EqualParams(object obj)
+        {
+            if (!(obj is MapProjection))
+            {
+                return false;
             }
 
-            return res;
+            var proj = obj as MapProjection;
+
+            if (!this.Parameters.Equals(proj.Parameters))
+            {
+                return false;
+            }
+
+            /*
+if (proj.NumParameters != NumParameters)
+   return false;
+
+for (var i = 0; i < _Parameters.Count; i++)
+{
+   var param = _Parameters.Find(par => par.Name.Equals(proj.GetParameter(i).Name, StringComparison.OrdinalIgnoreCase));
+   if (param == null)
+       return false;
+   if (param.Value != proj.GetParameter(i).Value)
+       return false;
+}
+*/
+            return this.IsInverse == proj.IsInverse;
         }
 
         /// <summary>
@@ -453,18 +476,12 @@ namespace ProjNet.CoordinateSystems.Projections
             return this.Parameters.Find(name);
         }
 
-        /// <inheritdoc />
-        public sealed override void Transform(ref double x, ref double y, ref double z)
-        {
-            if (this.IsInverse)
-            {
-                this.SourceToDegrees(ref x, ref y);
-            }
-            else
-            {
-                this.DegreesToTarget(ref x, ref y);
-            }
-        }
+        /// <summary>
+        /// Gets a value indicating whether returns true if this projection is inverted.
+        /// Most map projections define forward projection as "from geographic to projection", and backwards
+        /// as "from projection to geographic". If this projection is inverted, this will be the other way around.
+        /// </summary>
+        protected internal bool IsInverse { get; private set; }
 
         /// <inheritdoc />
         protected sealed override void TransformCore(Span<double> xs, Span<double> ys, Span<double> zs, int strideX, int strideY, int strideZ)
@@ -692,18 +709,6 @@ namespace ProjNet.CoordinateSystems.Projections
         }
 
         /// <summary>
-        /// Reverses the transformation.
-        /// </summary>
-        public override void Invert()
-        {
-            this.IsInverse = !this.IsInverse;
-            if (this.inverse != null)
-            {
-                ((MapProjection)this.inverse).Invert(false);
-            }
-        }
-
-        /// <summary>
         /// Reverses this transformation.
         /// </summary>
         /// <param name="invertInverse">A flag indicating to reverse the <see cref="inverse"/>"/> projection as well.</param>
@@ -717,40 +722,45 @@ namespace ProjNet.CoordinateSystems.Projections
         }
 
         /// <summary>
-        /// Checks whether the values of this instance is equal to the values of another instance.
-        /// Only parameters used for coordinate system are used for comparison.
-        /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
+        /// Gets or sets substitute for <see cref="centralMeridian"/>.
         /// </summary>
-        /// <param name="obj">The obj parameter.</param>
-        /// <returns>True if equal.</returns>
-        public bool EqualParams(object obj)
+        protected double Lon_origin
         {
-            if (!(obj is MapProjection))
+            get { return this.centralMeridian; }
+            set { this.centralMeridian = value; }
+        }
+
+        /// <summary>
+        /// Gets center latitude (projection center), same as lat_origin.
+        /// </summary>
+        protected double Central_parallel
+        {
+            get { return this.latOrigin; }
+        }
+
+        /// <summary>
+        /// Gets center latitude (projection center), same as lat_origin.
+        /// </summary>
+        protected double Phi0
+        {
+            get { return this.latOrigin; }
+        }
+
+        /// <summary>
+        /// Returns a list of projection "cloned" projection parameters.
+        /// </summary>
+        /// <param name="projectionParameters">The projectionParameters value.</param>
+        /// <returns>The transformation result.</returns>
+        protected internal static List<ProjectionParameter> CloneParametersList(
+            IEnumerable<ProjectionParameter> projectionParameters)
+        {
+            var res = new List<ProjectionParameter>();
+            foreach (var pp in projectionParameters)
             {
-                return false;
+                res.Add(new ProjectionParameter(pp.Name, pp.Value));
             }
 
-            var proj = obj as MapProjection;
-
-            if (!this.Parameters.Equals(proj.Parameters))
-            {
-                return false;
-            }
-
-            /*
-if (proj.NumParameters != NumParameters)
-   return false;
-
-for (var i = 0; i < _Parameters.Count; i++)
-{
-   var param = _Parameters.Find(par => par.Name.Equals(proj.GetParameter(i).Name, StringComparison.OrdinalIgnoreCase));
-   if (param == null)
-       return false;
-   if (param.Value != proj.GetParameter(i).Value)
-       return false;
-}
-*/
-            return this.IsInverse == proj.IsInverse;
+            return res;
         }
 
         /// <summary>
@@ -1194,39 +1204,6 @@ for (var i = 0; i < _Parameters.Count; i++)
         }
 
         /// <summary>
-        /// Calculates the flattening factor, (<paramref name="equatorialRadius"/> - <paramref name="polarRadius"/>) / <paramref name="equatorialRadius"/>.
-        /// </summary>
-        /// <param name="equatorialRadius">The radius of the equator.</param>
-        /// <param name="polarRadius">The radius of a circle touching the poles.</param>
-        /// <returns>The flattening factor.</returns>
-        private static double FlatteningFactor(double equatorialRadius, double polarRadius)
-        {
-            return (equatorialRadius - polarRadius) / equatorialRadius;
-        }
-
-        /// <summary>
-        /// Calculates the square of eccentricity according to es = (2f - f^2) where f is the <see cref="FlatteningFactor">flattening factor</see>.
-        /// </summary>
-        /// <param name="equatorialRadius">The radius of the equator.</param>
-        /// <param name="polarRadius">The radius of a circle touching the poles.</param>
-        /// <returns>The square of eccentricity.</returns>
-        private static double EccentricySquared(double equatorialRadius, double polarRadius)
-        {
-            double f = FlatteningFactor(equatorialRadius, polarRadius);
-            return (2 * f) - (f * f);
-        }
-
-        /// <summary>
-        /// Function to calculate UTM zone number.
-        /// </summary>
-        /// <param name="lon">The longitudinal value (in Degrees!).</param>
-        /// <returns>The UTM zone number.</returns>
-        public static long CalcUtmZone(double lon)
-        {
-            return (long)(((lon + 180.0) / 6.0) + 1.0);
-        }
-
-        /// <summary>
         /// Converts a longitude value in degrees to radians.
         /// </summary>
         /// <param name="x">The value in degrees to convert to radians.</param>
@@ -1305,6 +1282,29 @@ for (var i = 0; i < _Parameters.Count; i++)
         protected static double Hypot(double x, double y)
         {
             return Math.Sqrt((x * x) + (y * y));
+        }
+
+        /// <summary>
+        /// Calculates the flattening factor, (<paramref name="equatorialRadius"/> - <paramref name="polarRadius"/>) / <paramref name="equatorialRadius"/>.
+        /// </summary>
+        /// <param name="equatorialRadius">The radius of the equator.</param>
+        /// <param name="polarRadius">The radius of a circle touching the poles.</param>
+        /// <returns>The flattening factor.</returns>
+        private static double FlatteningFactor(double equatorialRadius, double polarRadius)
+        {
+            return (equatorialRadius - polarRadius) / equatorialRadius;
+        }
+
+        /// <summary>
+        /// Calculates the square of eccentricity according to es = (2f - f^2) where f is the <see cref="FlatteningFactor">flattening factor</see>.
+        /// </summary>
+        /// <param name="equatorialRadius">The radius of the equator.</param>
+        /// <param name="polarRadius">The radius of a circle touching the poles.</param>
+        /// <returns>The square of eccentricity.</returns>
+        private static double EccentricySquared(double equatorialRadius, double polarRadius)
+        {
+            double f = FlatteningFactor(equatorialRadius, polarRadius);
+            return (2 * f) - (f * f);
         }
     }
 }

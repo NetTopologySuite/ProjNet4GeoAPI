@@ -178,11 +178,6 @@ namespace ProjNet.CoordinateSystems.Projections
             }
         }
 
-        private static string ProjectionNameToRegistryKey(string name)
-        {
-            return name.ToLowerInvariant().Replace(' ', '_').Replace('-', '_');
-        }
-
         /// <summary>
         /// Register an alias for an existing Map.
         /// </summary>
@@ -199,24 +194,6 @@ namespace ProjNet.CoordinateSystems.Projections
 
                 Register(aliasName, existingProjectionType);
             }
-        }
-
-        private static Type CheckConstructor(Type type)
-        {
-            // find a constructor that accepts exactly one parameter that's an
-            // instance of List<ProjectionParameter>, and then return the exact
-            // parameter type so that we can create instances of this type with
-            // minimal copying in the future, when possible.
-            foreach (var c in type.GetConstructors())
-            {
-                var parameters = c.GetParameters();
-                if (parameters.Length == 1 && parameters[0].ParameterType.IsAssignableFrom(typeof(List<ProjectionParameter>)))
-                {
-                    return parameters[0].ParameterType;
-                }
-            }
-
-            return null;
         }
 
         /// <summary>
@@ -255,6 +232,29 @@ namespace ProjNet.CoordinateSystems.Projections
             }
 
             return res;
+        }
+
+        private static string ProjectionNameToRegistryKey(string name)
+        {
+            return name.ToLowerInvariant().Replace(' ', '_').Replace('-', '_');
+        }
+
+        private static Type CheckConstructor(Type type)
+        {
+            // find a constructor that accepts exactly one parameter that's an
+            // instance of List<ProjectionParameter>, and then return the exact
+            // parameter type so that we can create instances of this type with
+            // minimal copying in the future, when possible.
+            foreach (var c in type.GetConstructors())
+            {
+                var parameters = c.GetParameters();
+                if (parameters.Length == 1 && parameters[0].ParameterType.IsAssignableFrom(typeof(List<ProjectionParameter>)))
+                {
+                    return parameters[0].ParameterType;
+                }
+            }
+
+            return null;
         }
     }
 }

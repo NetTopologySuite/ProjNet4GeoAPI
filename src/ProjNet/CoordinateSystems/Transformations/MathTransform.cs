@@ -149,46 +149,6 @@ namespace ProjNet.CoordinateSystems.Transformations
         public abstract void Invert();
 
         /// <summary>
-        /// Converts a degree-value (<paramref name="deg"/>) to a radian-value by multiplying it with <c><see cref="Math.PI"/> / 180.0</c>.
-        /// </summary>
-        /// <param name="deg">The deg value.</param>
-        /// <returns>The computed value.</returns>
-        protected static double DegreesToRadians(double deg)
-        {
-            return D2R * deg;
-        }
-
-        /// <summary>
-        /// Converts a series of degree-values (<paramref name="degrees"/>) to a radian-values by multiplying them with <c><see cref="Math.PI"/> / 180.0</c>.
-        /// </summary>
-        /// <param name="degrees">A series of degree-values.</param>
-        /// <param name="stride">A stride value.</param>
-        protected static void DegreesToRadians(Span<double> degrees, int stride)
-        {
-            MultiplyInPlace(degrees, stride, D2R);
-        }
-
-        /// <summary>
-        /// Converts a radian-value (<paramref name="rad"/>) to a degree-value by multiplying it with <c>180.0 / <see cref="Math.PI"/></c>.
-        /// </summary>
-        /// <param name="rad">The rad parameter.</param>
-        /// <returns>The transformation result.</returns>
-        protected static double RadiansToDegrees(double rad)
-        {
-            return R2D * rad;
-        }
-
-        /// <summary>
-        /// Converts a series of radian-values (<paramref name="radians"/>) to a degrees-values by multiplying them with <c>180.0 / <see cref="Math.PI"/></c>.
-        /// </summary>
-        /// <param name="radians">A series of radian-values.</param>
-        /// <param name="stride">A stride value.</param>
-        protected static void RadiansToDegrees(Span<double> radians, int stride)
-        {
-            MultiplyInPlace(radians, stride, R2D);
-        }
-
-        /// <summary>
         /// Transforms a coordinate point. The passed parameter point should not be modified.
         /// </summary>
         /// <param name="point">The point parameter.</param>
@@ -285,30 +245,6 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <param name="y">The ordinate value on the second axis, either y or latitude.</param>
         /// <param name="z">The ordinate value on the third axis, either z, height or altitude.</param>
         public abstract void Transform(ref double x, ref double y, ref double z);
-
-        /// <summary>
-        /// Core method to transform a series of points defined by their ordinates.
-        /// The transformation is performed in-place.
-        /// </summary>
-        /// <param name="xs">A series of x-ordinate values.</param>
-        /// <param name="ys">A series of y-ordinate values.</param>
-        /// <param name="zs">A series of z-ordinate values.</param>
-        /// <param name="strideX">A stride value for the x-ordinate series.</param>
-        /// <param name="strideY">A stride value for the y-ordinate series.</param>
-        /// <param name="strideZ">A stride value for the z-ordinate series.</param>
-        protected virtual void TransformCore(
-            Span<double> xs,
-            Span<double> ys,
-            Span<double> zs,
-            int strideX,
-            int strideY,
-            int strideZ)
-        {
-            for (int i = 0, j = 0, k = 0; i < xs.Length; i += strideX, j += strideY, k += strideZ)
-            {
-                this.Transform(ref xs[i], ref ys[j], ref zs[k]);
-            }
-        }
 
         /// <summary>
         /// Core method to transform a series of points defined by their ordinates.
@@ -424,6 +360,70 @@ namespace ProjNet.CoordinateSystems.Transformations
             var inZs = read.Slice(2); // , read.Length - 2);
 
             this.TransformCore(inXs, inYs, inZs, 3, 3, 3);
+        }
+
+        /// <summary>
+        /// Core method to transform a series of points defined by their ordinates.
+        /// The transformation is performed in-place.
+        /// </summary>
+        /// <param name="xs">A series of x-ordinate values.</param>
+        /// <param name="ys">A series of y-ordinate values.</param>
+        /// <param name="zs">A series of z-ordinate values.</param>
+        /// <param name="strideX">A stride value for the x-ordinate series.</param>
+        /// <param name="strideY">A stride value for the y-ordinate series.</param>
+        /// <param name="strideZ">A stride value for the z-ordinate series.</param>
+        protected virtual void TransformCore(
+            Span<double> xs,
+            Span<double> ys,
+            Span<double> zs,
+            int strideX,
+            int strideY,
+            int strideZ)
+        {
+            for (int i = 0, j = 0, k = 0; i < xs.Length; i += strideX, j += strideY, k += strideZ)
+            {
+                this.Transform(ref xs[i], ref ys[j], ref zs[k]);
+            }
+        }
+
+        /// <summary>
+        /// Converts a degree-value (<paramref name="deg"/>) to a radian-value by multiplying it with <c><see cref="Math.PI"/> / 180.0</c>.
+        /// </summary>
+        /// <param name="deg">The deg value.</param>
+        /// <returns>The computed value.</returns>
+        protected static double DegreesToRadians(double deg)
+        {
+            return D2R * deg;
+        }
+
+        /// <summary>
+        /// Converts a series of degree-values (<paramref name="degrees"/>) to a radian-values by multiplying them with <c><see cref="Math.PI"/> / 180.0</c>.
+        /// </summary>
+        /// <param name="degrees">A series of degree-values.</param>
+        /// <param name="stride">A stride value.</param>
+        protected static void DegreesToRadians(Span<double> degrees, int stride)
+        {
+            MultiplyInPlace(degrees, stride, D2R);
+        }
+
+        /// <summary>
+        /// Converts a radian-value (<paramref name="rad"/>) to a degree-value by multiplying it with <c>180.0 / <see cref="Math.PI"/></c>.
+        /// </summary>
+        /// <param name="rad">The rad parameter.</param>
+        /// <returns>The transformation result.</returns>
+        protected static double RadiansToDegrees(double rad)
+        {
+            return R2D * rad;
+        }
+
+        /// <summary>
+        /// Converts a series of radian-values (<paramref name="radians"/>) to a degrees-values by multiplying them with <c>180.0 / <see cref="Math.PI"/></c>.
+        /// </summary>
+        /// <param name="radians">A series of radian-values.</param>
+        /// <param name="stride">A stride value.</param>
+        protected static void RadiansToDegrees(Span<double> radians, int stride)
+        {
+            MultiplyInPlace(radians, stride, R2D);
         }
 
         /// <summary>

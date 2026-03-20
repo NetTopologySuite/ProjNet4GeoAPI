@@ -202,66 +202,6 @@ namespace ProjNet
         //    _initialization = new ManualResetEvent(false);
         //    ThreadPool.QueueUserWorkItem(FromEnumeration, new[] { this, enumObj });
         // }
-        private static CoordinateSystem CreateCoordinateSystem(CoordinateSystemFactory coordinateSystemFactory, string wkt)
-        {
-            try
-            {
-                return coordinateSystemFactory.CreateFromWkt(StringCompatibility.ReplaceOrdinal(wkt, "ELLIPSOID", "SPHEROID"));
-            }
-            catch (Exception)
-            {
-                // as a fallback we ignore projections not supported
-                return null;
-            }
-        }
-
-        private static void FromEnumeration(
-            CoordinateSystemServices css,
-            IEnumerable<KeyValuePair<int, CoordinateSystem>> enumeration)
-        {
-            foreach (var sridCs in enumeration)
-            {
-                css.AddCoordinateSystem(sridCs.Key, sridCs.Value);
-            }
-        }
-
-        private static IEnumerable<KeyValuePair<int, CoordinateSystem>> CreateCoordinateSystems(
-            CoordinateSystemFactory factory,
-            IEnumerable<KeyValuePair<int, string>> enumeration)
-        {
-            foreach (var sridWkt in enumeration)
-            {
-                var cs = CreateCoordinateSystem(factory, sridWkt.Value);
-                if (cs != null)
-                {
-                    yield return new KeyValuePair<int, CoordinateSystem>(sridWkt.Key, cs);
-                }
-            }
-        }
-
-        private static void FromEnumeration(
-            CoordinateSystemServices css,
-            IEnumerable<KeyValuePair<int, string>> enumeration)
-        {
-            FromEnumeration(css, CreateCoordinateSystems(css.coordinateSystemFactory, enumeration));
-        }
-
-        private static void FromEnumeration(object parameter)
-        {
-            object[] paras = (object[])parameter;
-            var css = (CoordinateSystemServices)paras[0];
-
-            if (paras[1] is IEnumerable<KeyValuePair<int, string>>)
-            {
-                FromEnumeration(css, (IEnumerable<KeyValuePair<int, string>>)paras[1]);
-            }
-            else
-            {
-                FromEnumeration(css, (IEnumerable<KeyValuePair<int, CoordinateSystem>>)paras[1]);
-            }
-
-            css.initialization.Set();
-        }
 
         /// <summary>
         /// Returns the coordinate system by <paramref name="srid" /> identifier.
@@ -378,6 +318,27 @@ namespace ProjNet
         }
 
         /// <summary>
+        /// RemoveCoordinateSystem.
+        /// </summary>
+        /// <param name="srid">The srid parameter.</param>
+        /// <returns>The transformation result.</returns>
+        /// <exception cref="NotSupportedException"></exception>
+        public bool RemoveCoordinateSystem(int srid)
+        {
+            throw new NotSupportedException();
+        }
+
+        /// <summary>
+        /// GetEnumerator.
+        /// </summary>
+        /// <returns>The transformation result.</returns>
+        public IEnumerator<KeyValuePair<int, CoordinateSystem>> GetEnumerator()
+        {
+            this.initialization.WaitOne();
+            return this.csBySrid.GetEnumerator();
+        }
+
+        /// <summary>
         /// AddCoordinateSystem.
         /// </summary>
         /// <param name="srid">The srid parameter.</param>
@@ -434,25 +395,65 @@ namespace ProjNet
             this.csBySrid.Clear();
         }
 
-        /// <summary>
-        /// RemoveCoordinateSystem.
-        /// </summary>
-        /// <param name="srid">The srid parameter.</param>
-        /// <returns>The transformation result.</returns>
-        /// <exception cref="NotSupportedException"></exception>
-        public bool RemoveCoordinateSystem(int srid)
+        private static CoordinateSystem CreateCoordinateSystem(CoordinateSystemFactory coordinateSystemFactory, string wkt)
         {
-            throw new NotSupportedException();
+            try
+            {
+                return coordinateSystemFactory.CreateFromWkt(StringCompatibility.ReplaceOrdinal(wkt, "ELLIPSOID", "SPHEROID"));
+            }
+            catch (Exception)
+            {
+                // as a fallback we ignore projections not supported
+                return null;
+            }
         }
 
-        /// <summary>
-        /// GetEnumerator.
-        /// </summary>
-        /// <returns>The transformation result.</returns>
-        public IEnumerator<KeyValuePair<int, CoordinateSystem>> GetEnumerator()
+        private static void FromEnumeration(
+            CoordinateSystemServices css,
+            IEnumerable<KeyValuePair<int, CoordinateSystem>> enumeration)
         {
-            this.initialization.WaitOne();
-            return this.csBySrid.GetEnumerator();
+            foreach (var sridCs in enumeration)
+            {
+                css.AddCoordinateSystem(sridCs.Key, sridCs.Value);
+            }
+        }
+
+        private static IEnumerable<KeyValuePair<int, CoordinateSystem>> CreateCoordinateSystems(
+            CoordinateSystemFactory factory,
+            IEnumerable<KeyValuePair<int, string>> enumeration)
+        {
+            foreach (var sridWkt in enumeration)
+            {
+                var cs = CreateCoordinateSystem(factory, sridWkt.Value);
+                if (cs != null)
+                {
+                    yield return new KeyValuePair<int, CoordinateSystem>(sridWkt.Key, cs);
+                }
+            }
+        }
+
+        private static void FromEnumeration(
+            CoordinateSystemServices css,
+            IEnumerable<KeyValuePair<int, string>> enumeration)
+        {
+            FromEnumeration(css, CreateCoordinateSystems(css.coordinateSystemFactory, enumeration));
+        }
+
+        private static void FromEnumeration(object parameter)
+        {
+            object[] paras = (object[])parameter;
+            var css = (CoordinateSystemServices)paras[0];
+
+            if (paras[1] is IEnumerable<KeyValuePair<int, string>>)
+            {
+                FromEnumeration(css, (IEnumerable<KeyValuePair<int, string>>)paras[1]);
+            }
+            else
+            {
+                FromEnumeration(css, (IEnumerable<KeyValuePair<int, CoordinateSystem>>)paras[1]);
+            }
+
+            css.initialization.Set();
         }
 
         private class CsEqualityComparer : EqualityComparer<IInfo>

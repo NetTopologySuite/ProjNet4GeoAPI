@@ -164,6 +164,46 @@ namespace ProjNet.CoordinateSystems.Transformations
         }
 
         /// <summary>
+        /// Returns the inverse of this affine transformation.
+        /// </summary>
+        /// <returns>IMathTransform that is the reverse of the current affine transformation.</returns>
+        public override MathTransform Inverse()
+        {
+            if (this.inverse == null)
+            {
+                // find the inverse transformation matrix - use cloned matrix array
+                // remarks about dimensionality: if input dimension is M, and output dimension is N, then the matrix will have size [N+1][M+1].
+                double[,] invMatrix = InvertMatrix((double[,])this.transformMatrix.Clone());
+                this.inverse = new AffineTransform(invMatrix);
+            }
+
+            return this.inverse;
+        }
+
+        /// <inheritdoc />
+        public override void Transform(ref double x, ref double y, ref double z)
+        {
+            (x, y, z) = this.TransformAffine(x, y, z);
+        }
+
+        /// <summary>
+        /// Reverses the transformation.
+        /// </summary>
+        public override void Invert()
+        {
+            throw new NotSupportedException("The method or operation is not supported.");
+        }
+
+        /// <summary>
+        /// Returns this affine transform as an affine transform matrix.
+        /// </summary>
+        /// <returns>The transformation result.</returns>
+        public double[,] GetMatrix()
+        {
+            return (double[,])this.transformMatrix.Clone();
+        }
+
+        /// <summary>
         /// Return affine transformation matrix as group of parameter values that maiy be used for retrieving WKT of this affine transform.
         /// </summary>
         /// <returns>List of string pairs NAME VALUE.</returns>
@@ -383,23 +423,6 @@ namespace ProjNet.CoordinateSystems.Transformations
         }
 
         /// <summary>
-        /// Returns the inverse of this affine transformation.
-        /// </summary>
-        /// <returns>IMathTransform that is the reverse of the current affine transformation.</returns>
-        public override MathTransform Inverse()
-        {
-            if (this.inverse == null)
-            {
-                // find the inverse transformation matrix - use cloned matrix array
-                // remarks about dimensionality: if input dimension is M, and output dimension is N, then the matrix will have size [N+1][M+1].
-                double[,] invMatrix = InvertMatrix((double[,])this.transformMatrix.Clone());
-                this.inverse = new AffineTransform(invMatrix);
-            }
-
-            return this.inverse;
-        }
-
-        /// <summary>
         /// Transforms a coordinate point. The passed parameter point should not be modified.
         /// </summary>
         /// <param name="x">The x-ordinate value.</param>
@@ -470,29 +493,6 @@ namespace ProjNet.CoordinateSystems.Transformations
             }
 
             return ret;
-        }
-
-        /// <inheritdoc />
-        public override void Transform(ref double x, ref double y, ref double z)
-        {
-            (x, y, z) = this.TransformAffine(x, y, z);
-        }
-
-        /// <summary>
-        /// Reverses the transformation.
-        /// </summary>
-        public override void Invert()
-        {
-            throw new NotSupportedException("The method or operation is not supported.");
-        }
-
-        /// <summary>
-        /// Returns this affine transform as an affine transform matrix.
-        /// </summary>
-        /// <returns>The transformation result.</returns>
-        public double[,] GetMatrix()
-        {
-            return (double[,])this.transformMatrix.Clone();
         }
     }
 }
