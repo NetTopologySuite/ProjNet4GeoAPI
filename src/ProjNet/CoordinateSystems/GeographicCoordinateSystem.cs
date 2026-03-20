@@ -145,27 +145,6 @@ namespace ProjNet.CoordinateSystems
         }
 
         /// <summary>
-        /// Gets units for dimension within coordinate system. Each dimension in
-        /// the coordinate system has corresponding units.
-        /// </summary>
-        /// <param name="dimension">Dimension.</param>
-        /// <returns>Unit.</returns>
-        public override IUnit GetUnits(int dimension)
-        {
-            return this.AngularUnit;
-        }
-
-        /// <summary>
-        /// Gets details on a conversion to WGS84.
-        /// </summary>
-        /// <param name="index">The index value.</param>
-        /// <returns>The computed value.</returns>
-        public Wgs84ConversionInfo GetWgs84ConversionInfo(int index)
-        {
-            return this.WGS84ConversionInfo[index];
-        }
-
-        /// <summary>
         /// Gets an XML representation of this object.
         /// </summary>
         public override string XML
@@ -191,6 +170,27 @@ namespace ProjNet.CoordinateSystems
                     this.PrimeMeridian.XML);
                 return sb.ToString();
             }
+        }
+
+        /// <summary>
+        /// Gets units for dimension within coordinate system. Each dimension in
+        /// the coordinate system has corresponding units.
+        /// </summary>
+        /// <param name="dimension">Dimension.</param>
+        /// <returns>Unit.</returns>
+        public override IUnit GetUnits(int dimension)
+        {
+            return this.AngularUnit;
+        }
+
+        /// <summary>
+        /// Gets details on a conversion to WGS84.
+        /// </summary>
+        /// <param name="index">The index value.</param>
+        /// <returns>The computed value.</returns>
+        public Wgs84ConversionInfo GetWgs84ConversionInfo(int index)
+        {
+            return this.WGS84ConversionInfo[index];
         }
 
         /// <summary>

@@ -55,15 +55,6 @@ namespace ProjNet.CoordinateSystems.Transformations
         public abstract int DimTarget { get; }
 
         /// <summary>
-        /// Tests whether this transform does not move any points.
-        /// </summary>
-        /// <returns>The transformation result.</returns>
-        public virtual bool Identity()
-        {
-            throw new NotImplementedException();
-        }
-
-        /// <summary>
         /// Gets a Well-Known text representation of this object.
         /// </summary>
         public abstract string WKT { get; }
@@ -72,6 +63,15 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// Gets an XML representation of this object.
         /// </summary>
         public abstract string XML { get; }
+
+        /// <summary>
+        /// Tests whether this transform does not move any points.
+        /// </summary>
+        /// <returns>The transformation result.</returns>
+        public virtual bool Identity()
+        {
+            throw new NotImplementedException();
+        }
 
         /// <summary>
         /// Gets the derivative of this transform at a point. If the transform does

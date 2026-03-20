@@ -31,16 +31,6 @@ namespace ProjNet.CoordinateSystems
     public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSystem
     {
         /// <summary>
-        /// Gets represents math transform that injects itself into the base coordinate system.
-        /// </summary>
-        public MathTransform ToBaseTransform { get; }
-
-        /// <summary>
-        /// Gets underlying coordinate system.
-        /// </summary>
-        public CoordinateSystem BaseCoordinateSystem { get; }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="FittedCoordinateSystem"/> class.
         /// Creates an instance of FittedCoordinateSystem using the specified parameters.
         /// </summary>
@@ -75,17 +65,14 @@ namespace ProjNet.CoordinateSystems
         }
 
         /// <summary>
-        /// Gets Well-Known Text of a math transform to the base coordinate system.
-        /// The dimension of this fitted coordinate system is determined by the source
-        /// dimension of the math transform. The transform should be one-to-one within
-        /// this coordinate system's domain, and the base coordinate system dimension
-        /// must be at least as big as the dimension of this coordinate system.
+        /// Gets represents math transform that injects itself into the base coordinate system.
         /// </summary>
-        /// <returns>The transformation result.</returns>
-        public string ToBase()
-        {
-            return this.ToBaseTransform.WKT;
-        }
+        public MathTransform ToBaseTransform { get; }
+
+        /// <summary>
+        /// Gets underlying coordinate system.
+        /// </summary>
+        public CoordinateSystem BaseCoordinateSystem { get; }
 
         /// <summary>
         /// Gets the Well-known text for this object as defined in the simple features specification.
@@ -110,6 +97,19 @@ namespace ProjNet.CoordinateSystems
             {
                 throw new NotImplementedException();
             }
+        }
+
+        /// <summary>
+        /// Gets Well-Known Text of a math transform to the base coordinate system.
+        /// The dimension of this fitted coordinate system is determined by the source
+        /// dimension of the math transform. The transform should be one-to-one within
+        /// this coordinate system's domain, and the base coordinate system dimension
+        /// must be at least as big as the dimension of this coordinate system.
+        /// </summary>
+        /// <returns>The transformation result.</returns>
+        public string ToBase()
+        {
+            return this.ToBaseTransform.WKT;
         }
 
         /// <summary>

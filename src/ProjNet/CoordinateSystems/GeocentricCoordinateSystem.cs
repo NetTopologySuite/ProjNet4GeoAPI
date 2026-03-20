@@ -29,23 +29,6 @@ namespace ProjNet.CoordinateSystems
     public class GeocentricCoordinateSystem : CoordinateSystem
     {
         /// <summary>
-        /// Gets or sets the HorizontalDatum. The horizontal datum is used to determine where
-        /// the centre of the Earth is considered to be. All coordinate points will be
-        /// measured from the centre of the Earth, and not the surface.
-        /// </summary>
-        public HorizontalDatum HorizontalDatum { get; set; }
-
-        /// <summary>
-        /// Gets or sets the units used along all the axes.
-        /// </summary>
-        public LinearUnit LinearUnit { get; set; }
-
-        /// <summary>
-        /// Gets or sets the PrimeMeridian.
-        /// </summary>
-        public PrimeMeridian PrimeMeridian { get; set; }
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="GeocentricCoordinateSystem"/> class.
         /// </summary>
         /// <param name="datum">Horizontal datum used by this coordinate system.</param>
@@ -98,15 +81,21 @@ namespace ProjNet.CoordinateSystems
         }
 
         /// <summary>
-        /// Gets units for dimension within coordinate system. Each dimension in
-        /// the coordinate system has corresponding units.
+        /// Gets or sets the HorizontalDatum. The horizontal datum is used to determine where
+        /// the centre of the Earth is considered to be. All coordinate points will be
+        /// measured from the centre of the Earth, and not the surface.
         /// </summary>
-        /// <param name="dimension">Dimension.</param>
-        /// <returns>Unit.</returns>
-        public override IUnit GetUnits(int dimension)
-        {
-            return this.LinearUnit;
-        }
+        public HorizontalDatum HorizontalDatum { get; set; }
+
+        /// <summary>
+        /// Gets or sets the units used along all the axes.
+        /// </summary>
+        public LinearUnit LinearUnit { get; set; }
+
+        /// <summary>
+        /// Gets or sets the PrimeMeridian.
+        /// </summary>
+        public PrimeMeridian PrimeMeridian { get; set; }
 
         /// <summary>
         /// Gets the Well-known text for this object
@@ -167,6 +156,17 @@ namespace ProjNet.CoordinateSystems
                     this.PrimeMeridian.XML);
                 return sb.ToString();
             }
+        }
+
+        /// <summary>
+        /// Gets units for dimension within coordinate system. Each dimension in
+        /// the coordinate system has corresponding units.
+        /// </summary>
+        /// <param name="dimension">Dimension.</param>
+        /// <returns>Unit.</returns>
+        public override IUnit GetUnits(int dimension)
+        {
+            return this.LinearUnit;
         }
 
         /// <summary>

@@ -203,33 +203,6 @@ namespace ProjNet.CoordinateSystems.Projections
         protected MathTransform inverse;
 
         /// <summary>
-        /// Gets or sets substitute for <see cref="centralMeridian"/>.
-        /// </summary>
-        protected double Lon_origin
-        {
-            get { return this.centralMeridian; }
-            set { this.centralMeridian = value; }
-        }
-
-        /// <summary>
-        /// Gets center latitude (projection center), same as lat_origin.
-        /// </summary>
-        protected double Central_parallel
-        {
-            get { return this.latOrigin; }
-        }
-
-        /// <summary>
-        /// Gets center latitude (projection center), same as lat_origin.
-        /// </summary>
-        protected double Phi0
-        {
-            get { return this.latOrigin; }
-        }
-
-        // ReSharper restore InconsistentNaming
-
-        /// <summary>
         /// Initializes a new instance of the <see cref="MapProjection"/> class.
         /// Creates an instance of this class.
         /// </summary>
@@ -287,6 +260,33 @@ namespace ProjNet.CoordinateSystems.Projections
             this.en4 = t * this.es * C88;
 
         }
+
+        /// <summary>
+        /// Gets or sets substitute for <see cref="centralMeridian"/>.
+        /// </summary>
+        protected double Lon_origin
+        {
+            get { return this.centralMeridian; }
+            set { this.centralMeridian = value; }
+        }
+
+        /// <summary>
+        /// Gets center latitude (projection center), same as lat_origin.
+        /// </summary>
+        protected double Central_parallel
+        {
+            get { return this.latOrigin; }
+        }
+
+        /// <summary>
+        /// Gets center latitude (projection center), same as lat_origin.
+        /// </summary>
+        protected double Phi0
+        {
+            get { return this.latOrigin; }
+        }
+
+        // ReSharper restore InconsistentNaming
 
         /// <summary>
         /// Gets the projection classification name (e.g. 'Transverse_Mercator').

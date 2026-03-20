@@ -67,35 +67,12 @@ namespace ProjNet.CoordinateSystems
         }
 
         /// <summary>
-        /// Gets the units for the dimension within coordinate system.
-        /// Each dimension in the coordinate system has corresponding units.
-        /// </summary>
-        /// <param name="dimension">The dimension value.</param>
-        /// <returns>The computed value.</returns>
-        public abstract IUnit GetUnits(int dimension);
-
-        /// <summary>
         /// Gets or sets the axis definitions for this coordinate system.
         /// </summary>
         internal List<AxisInfo> AxisInfo
         {
             get { return this.axisInfo; }
             set { this.axisInfo = value; }
-        }
-
-        /// <summary>
-        /// Gets axis details for dimension within coordinate system.
-        /// </summary>
-        /// <param name="dimension">Dimension.</param>
-        /// <returns>Axis info.</returns>
-        public AxisInfo GetAxis(int dimension)
-        {
-            if (dimension >= this.AxisInfo.Count || dimension < 0)
-            {
-                throw new ArgumentException("AxisInfo not available for dimension " + dimension.ToString(CultureInfo.InvariantCulture));
-            }
-
-            return this.AxisInfo[dimension];
         }
 
         /// <summary>
@@ -113,5 +90,29 @@ namespace ProjNet.CoordinateSystems
             get { return this.defaultEnvelope; }
             set { this.defaultEnvelope = value; }
         }
+
+        /// <summary>
+        /// Gets the units for the dimension within coordinate system.
+        /// Each dimension in the coordinate system has corresponding units.
+        /// </summary>
+        /// <param name="dimension">The dimension value.</param>
+        /// <returns>The computed value.</returns>
+        public abstract IUnit GetUnits(int dimension);
+
+        /// <summary>
+        /// Gets axis details for dimension within coordinate system.
+        /// </summary>
+        /// <param name="dimension">Dimension.</param>
+        /// <returns>Axis info.</returns>
+        public AxisInfo GetAxis(int dimension)
+        {
+            if (dimension >= this.AxisInfo.Count || dimension < 0)
+            {
+                throw new ArgumentException("AxisInfo not available for dimension " + dimension.ToString(CultureInfo.InvariantCulture));
+            }
+
+            return this.AxisInfo[dimension];
+        }
+
     }
 }

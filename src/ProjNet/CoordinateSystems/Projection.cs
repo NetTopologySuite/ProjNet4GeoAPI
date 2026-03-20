@@ -79,35 +79,6 @@ namespace ProjNet.CoordinateSystems
         }
 
         /// <summary>
-        /// Gets an indexed parameter of the projection.
-        /// </summary>
-        /// <param name="index">Index of parameter.</param>
-        /// <returns>n'th parameter.</returns>
-        public ProjectionParameter GetParameter(int index)
-        {
-            return this.parameters[index];
-        }
-
-        /// <summary>
-        /// Gets an named parameter of the projection.
-        /// </summary>
-        /// <remarks>The parameter name is case insensitive.</remarks>
-        /// <param name="name">Name of parameter.</param>
-        /// <returns>parameter or null if not found.</returns>
-        public ProjectionParameter GetParameter(string name)
-        {
-            foreach (var par in this.parameters)
-            {
-                if (par.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
-                {
-                    return par;
-                }
-            }
-
-            return null;
-        }
-
-        /// <summary>
         /// Gets the projection classification name (e.g. "Transverse_Mercator").
         /// </summary>
         public string ClassName
@@ -152,6 +123,35 @@ namespace ProjNet.CoordinateSystems
                 sb.Append("</CS_Projection>");
                 return sb.ToString();
             }
+        }
+
+        /// <summary>
+        /// Gets an indexed parameter of the projection.
+        /// </summary>
+        /// <param name="index">Index of parameter.</param>
+        /// <returns>n'th parameter.</returns>
+        public ProjectionParameter GetParameter(int index)
+        {
+            return this.parameters[index];
+        }
+
+        /// <summary>
+        /// Gets an named parameter of the projection.
+        /// </summary>
+        /// <remarks>The parameter name is case insensitive.</remarks>
+        /// <param name="name">Name of parameter.</param>
+        /// <returns>parameter or null if not found.</returns>
+        public ProjectionParameter GetParameter(string name)
+        {
+            foreach (var par in this.parameters)
+            {
+                if (par.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+                {
+                    return par;
+                }
+            }
+
+            return null;
         }
 
         /// <summary>

@@ -28,14 +28,6 @@ namespace ProjNet.CoordinateSystems.Projections
     [Serializable]
     internal class OrthographicProjection : MapProjection
     {
-        private enum Mode
-        {
-            N_POLE = 0,
-            S_POLE = 1,
-            EQUIT = 2,
-            OBLIQ = 3,
-        }
-
         private readonly double sinph0;
         private readonly double cosph0;
         private readonly double nu0;
@@ -105,6 +97,14 @@ namespace ProjNet.CoordinateSystems.Projections
                 this.yShift = this.es * this.nu0 / this.semiMajor * this.sinph0 * this.cosph0;
                 this.yScale = 1.0 / Math.Sqrt(1.0 - (this.es * this.cosph0 * this.cosph0));
             }
+        }
+
+        private enum Mode
+        {
+            N_POLE = 0,
+            S_POLE = 1,
+            EQUIT = 2,
+            OBLIQ = 3,
         }
 
         /// <summary>

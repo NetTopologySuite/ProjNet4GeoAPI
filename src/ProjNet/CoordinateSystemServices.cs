@@ -50,74 +50,6 @@ namespace ProjNet
 
         private readonly ManualResetEvent initialization = new ManualResetEvent(false);
 
-        private class CsEqualityComparer : EqualityComparer<IInfo>
-        {
-            /// <inheritdoc />
-            public override bool Equals(IInfo x, IInfo y)
-            {
-                return x.AuthorityCode == y.AuthorityCode &&
-                    string.Compare(x.Authority, y.Authority, StringComparison.OrdinalIgnoreCase) == 0;
-            }
-
-            /// <inheritdoc />
-            public override int GetHashCode(IInfo obj)
-            {
-                if (obj == null)
-                {
-                    return 0;
-                }
-
-                return Convert.ToInt32(obj.AuthorityCode) + (obj.Authority != null ? StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Authority) : 0);
-            }
-        }
-
-        private class CoordinateSystemKey : IInfo
-        {
-            public CoordinateSystemKey(string authority, long authorityCode)
-            {
-                this.Authority = authority;
-                this.AuthorityCode = authorityCode;
-            }
-
-            public bool EqualParams(object obj)
-            {
-                throw new NotSupportedException();
-            }
-
-            public string Authority { get; private set; }
-            public long AuthorityCode { get; private set; }
-
-            public string Name
-            {
-                get { return null; }
-            }
-
-            public string Alias
-            {
-                get { return null; }
-            }
-
-            public string Abbreviation
-            {
-                get { return null; }
-            }
-
-            public string Remarks
-            {
-                get { return null; }
-            }
-
-            public string WKT
-            {
-                get { return null; }
-            }
-
-            public string XML
-            {
-                get { return null; }
-            }
-        }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="CoordinateSystemServices"/> class.
         /// Creates an instance of this class.
@@ -521,6 +453,75 @@ namespace ProjNet
         {
             this.initialization.WaitOne();
             return this.csBySrid.GetEnumerator();
+        }
+
+        private class CsEqualityComparer : EqualityComparer<IInfo>
+        {
+            /// <inheritdoc />
+            public override bool Equals(IInfo x, IInfo y)
+            {
+                return x.AuthorityCode == y.AuthorityCode &&
+                    string.Compare(x.Authority, y.Authority, StringComparison.OrdinalIgnoreCase) == 0;
+            }
+
+            /// <inheritdoc />
+            public override int GetHashCode(IInfo obj)
+            {
+                if (obj == null)
+                {
+                    return 0;
+                }
+
+                return Convert.ToInt32(obj.AuthorityCode) + (obj.Authority != null ? StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Authority) : 0);
+            }
+        }
+
+        private class CoordinateSystemKey : IInfo
+        {
+            public CoordinateSystemKey(string authority, long authorityCode)
+            {
+                this.Authority = authority;
+                this.AuthorityCode = authorityCode;
+            }
+
+            public string Authority { get; private set; }
+
+            public long AuthorityCode { get; private set; }
+
+            public string Name
+            {
+                get { return null; }
+            }
+
+            public string Alias
+            {
+                get { return null; }
+            }
+
+            public string Abbreviation
+            {
+                get { return null; }
+            }
+
+            public string Remarks
+            {
+                get { return null; }
+            }
+
+            public string WKT
+            {
+                get { return null; }
+            }
+
+            public string XML
+            {
+                get { return null; }
+            }
+
+            public bool EqualParams(object obj)
+            {
+                throw new NotSupportedException();
+            }
         }
     }
 }

@@ -62,50 +62,6 @@ namespace ProjNet.CoordinateSystems
         }
 
         /// <summary>
-        /// Universal Transverse Mercator - WGS84.
-        /// </summary>
-        /// <param name="zone">UTM zone.</param>
-        /// <param name="zoneIsNorth">true of Northern hemisphere, false if southern.</param>
-        /// <returns>UTM/WGS84 coordsys.</returns>
-        public static ProjectedCoordinateSystem WGS84_UTM(int zone, bool zoneIsNorth)
-        {
-            var pInfo = new List<ProjectionParameter>();
-            pInfo.Add(new ProjectionParameter("latitude_of_origin", 0));
-            pInfo.Add(new ProjectionParameter("central_meridian", (zone * 6) - 183));
-            pInfo.Add(new ProjectionParameter("scale_factor", 0.9996));
-            pInfo.Add(new ProjectionParameter("false_easting", 500000));
-            pInfo.Add(new ProjectionParameter("false_northing", zoneIsNorth ? 0 : 10000000));
-
-            // IProjection projection = cFac.CreateProjection("UTM" + Zone.ToString() + (ZoneIsNorth ? "N" : "S"), "Transverse_Mercator", parameters);
-            var proj = new Projection(
-                "Transverse_Mercator",
-                pInfo,
-                "UTM" + zone.ToString(CultureInfo.InvariantCulture) + (zoneIsNorth ? "N" : "S"),
-                "EPSG",
-                32600 + zone + (zoneIsNorth ? 0 : 100),
-                string.Empty,
-                string.Empty,
-                string.Empty);
-            var axes = new List<AxisInfo>
-                {
-                    new AxisInfo("East", AxisOrientationEnum.East),
-                    new AxisInfo("North", AxisOrientationEnum.North),
-                };
-            return new ProjectedCoordinateSystem(
-                CoordinateSystems.HorizontalDatum.WGS84,
-                CoordinateSystems.GeographicCoordinateSystem.WGS84,
-                CoordinateSystems.LinearUnit.Metre,
-                proj,
-                axes,
-                "WGS 84 / UTM zone " + zone.ToString(CultureInfo.InvariantCulture) + (zoneIsNorth ? "N" : "S"),
-                "EPSG",
-                32600 + zone + (zoneIsNorth ? 0 : 100),
-                string.Empty,
-                "Large and medium scale topographic mapping and engineering survey.",
-                string.Empty);
-        }
-
-        /// <summary>
         /// Gets a WebMercator coordinate reference system.
         /// </summary>
         public static ProjectedCoordinateSystem WebMercator
@@ -166,17 +122,6 @@ namespace ProjNet.CoordinateSystems
         /// Gets or sets the <see cref="LinearUnit">LinearUnits</see>. The linear unit must be the same as the <see cref="CoordinateSystem"/> units.
         /// </summary>
         public LinearUnit LinearUnit { get; set; }
-
-        /// <summary>
-        /// Gets units for dimension within coordinate system. Each dimension in
-        /// the coordinate system has corresponding units.
-        /// </summary>
-        /// <param name="dimension">Dimension.</param>
-        /// <returns>Unit.</returns>
-        public override IUnit GetUnits(int dimension)
-        {
-            return this.LinearUnit;
-        }
 
         /// <summary>
         /// Gets or sets the projection.
@@ -248,6 +193,61 @@ namespace ProjNet.CoordinateSystems
                     this.Projection.XML);
                 return sb.ToString();
             }
+        }
+
+        /// <summary>
+        /// Universal Transverse Mercator - WGS84.
+        /// </summary>
+        /// <param name="zone">UTM zone.</param>
+        /// <param name="zoneIsNorth">true of Northern hemisphere, false if southern.</param>
+        /// <returns>UTM/WGS84 coordsys.</returns>
+        public static ProjectedCoordinateSystem WGS84_UTM(int zone, bool zoneIsNorth)
+        {
+            var pInfo = new List<ProjectionParameter>();
+            pInfo.Add(new ProjectionParameter("latitude_of_origin", 0));
+            pInfo.Add(new ProjectionParameter("central_meridian", (zone * 6) - 183));
+            pInfo.Add(new ProjectionParameter("scale_factor", 0.9996));
+            pInfo.Add(new ProjectionParameter("false_easting", 500000));
+            pInfo.Add(new ProjectionParameter("false_northing", zoneIsNorth ? 0 : 10000000));
+
+            // IProjection projection = cFac.CreateProjection("UTM" + Zone.ToString() + (ZoneIsNorth ? "N" : "S"), "Transverse_Mercator", parameters);
+            var proj = new Projection(
+                "Transverse_Mercator",
+                pInfo,
+                "UTM" + zone.ToString(CultureInfo.InvariantCulture) + (zoneIsNorth ? "N" : "S"),
+                "EPSG",
+                32600 + zone + (zoneIsNorth ? 0 : 100),
+                string.Empty,
+                string.Empty,
+                string.Empty);
+            var axes = new List<AxisInfo>
+                {
+                    new AxisInfo("East", AxisOrientationEnum.East),
+                    new AxisInfo("North", AxisOrientationEnum.North),
+                };
+            return new ProjectedCoordinateSystem(
+                CoordinateSystems.HorizontalDatum.WGS84,
+                CoordinateSystems.GeographicCoordinateSystem.WGS84,
+                CoordinateSystems.LinearUnit.Metre,
+                proj,
+                axes,
+                "WGS 84 / UTM zone " + zone.ToString(CultureInfo.InvariantCulture) + (zoneIsNorth ? "N" : "S"),
+                "EPSG",
+                32600 + zone + (zoneIsNorth ? 0 : 100),
+                string.Empty,
+                "Large and medium scale topographic mapping and engineering survey.",
+                string.Empty);
+        }
+
+        /// <summary>
+        /// Gets units for dimension within coordinate system. Each dimension in
+        /// the coordinate system has corresponding units.
+        /// </summary>
+        /// <param name="dimension">Dimension.</param>
+        /// <returns>Unit.</returns>
+        public override IUnit GetUnits(int dimension)
+        {
+            return this.LinearUnit;
         }
 
         /// <summary>

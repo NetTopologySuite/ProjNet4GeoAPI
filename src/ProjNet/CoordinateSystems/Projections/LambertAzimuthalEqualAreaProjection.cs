@@ -27,39 +27,6 @@ namespace ProjNet.CoordinateSystems.Projections
     public class LambertAzimuthalEqualAreaProjection : MapProjection
     {
         /// <summary>
-        /// An enumeration of modes.
-        /// </summary>
-        private enum Mode
-        {
-            /// <summary>
-            /// North pole.
-            /// </summary>
-            N_POLE,
-
-            /// <summary>
-            /// South pole.
-            /// </summary>
-            S_POLE,
-
-            /// <summary>
-            /// Equitorial.
-            /// </summary>
-            EQUIT,
-
-            /// <summary>
-            /// Oblique.
-            /// </summary>
-            OBLIQ,
-        }
-
-        /// <summary>
-        /// A function to perform the actual transformation.
-        /// </summary>
-        /// <param name="o1">The horizontal ordinate.</param>
-        /// <param name="o2">The vertical ordinate.</param>
-        delegate void Transformer(ref double o1, ref double o2);
-
-        /// <summary>
         /// The delegate to perform forward transformation.
         /// </summary>
         private readonly Transformer radiansToMeters;
@@ -175,6 +142,39 @@ namespace ProjNet.CoordinateSystems.Projections
             }
 
             this.reciprocSemiMajorTimesScaleFactor = 1d / (this.scaleFactor * this.semiMajor);
+        }
+
+        /// <summary>
+        /// A function to perform the actual transformation.
+        /// </summary>
+        /// <param name="o1">The horizontal ordinate.</param>
+        /// <param name="o2">The vertical ordinate.</param>
+        private delegate void Transformer(ref double o1, ref double o2);
+
+        /// <summary>
+        /// An enumeration of modes.
+        /// </summary>
+        private enum Mode
+        {
+            /// <summary>
+            /// North pole.
+            /// </summary>
+            N_POLE,
+
+            /// <summary>
+            /// South pole.
+            /// </summary>
+            S_POLE,
+
+            /// <summary>
+            /// Equitorial.
+            /// </summary>
+            EQUIT,
+
+            /// <summary>
+            /// Oblique.
+            /// </summary>
+            OBLIQ,
         }
 
         /// <summary>

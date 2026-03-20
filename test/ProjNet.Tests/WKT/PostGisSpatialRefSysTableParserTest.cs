@@ -31,9 +31,46 @@ using ProjNet.CoordinateSystems;
 public class SpatialRefSysTableParser
 {
     private static string connectionString;
-
     private static readonly Lazy<CoordinateSystemFactory> CoordinateSystemFactory =
         new Lazy<CoordinateSystemFactory>(() => new CoordinateSystemFactory());
+
+    private static string ConnectionString
+    {
+        get
+        {
+            if (!string.IsNullOrWhiteSpace(SpatialRefSysTableParser.connectionString))
+            {
+                return SpatialRefSysTableParser.connectionString;
+            }
+
+            if (!File.Exists("appsettings.json"))
+            {
+                return null;
+            }
+
+            JToken token = null;
+            using (var jtr = new Newtonsoft.Json.JsonTextReader(new StreamReader("appsettings.json")))
+            {
+                token = JToken.ReadFrom(jtr);
+            }
+
+            string connectionString = (string)token["ConnectionString"];
+            try
+            {
+                using (var cn = new NpgsqlConnection(connectionString))
+                {
+                    cn.Open();
+                }
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+
+            SpatialRefSysTableParser.connectionString = connectionString;
+            return SpatialRefSysTableParser.connectionString;
+        }
+    }
 
     /// <summary>
     /// Performs the documented operation.
@@ -134,44 +171,6 @@ public class SpatialRefSysTableParser
             }
 
             cm.Dispose();
-        }
-    }
-
-    private static string ConnectionString
-    {
-        get
-        {
-            if (!string.IsNullOrWhiteSpace(SpatialRefSysTableParser.connectionString))
-            {
-                return SpatialRefSysTableParser.connectionString;
-            }
-
-            if (!File.Exists("appsettings.json"))
-            {
-                return null;
-            }
-
-            JToken token = null;
-            using (var jtr = new Newtonsoft.Json.JsonTextReader(new StreamReader("appsettings.json")))
-            {
-                token = JToken.ReadFrom(jtr);
-            }
-
-            string connectionString = (string)token["ConnectionString"];
-            try
-            {
-                using (var cn = new NpgsqlConnection(connectionString))
-                {
-                    cn.Open();
-                }
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-
-            SpatialRefSysTableParser.connectionString = connectionString;
-            return SpatialRefSysTableParser.connectionString;
         }
     }
 

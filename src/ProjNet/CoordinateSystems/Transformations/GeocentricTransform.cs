@@ -143,6 +143,24 @@ namespace ProjNet.CoordinateSystems.Transformations
         }
 
         /// <summary>
+        /// Gets a Well-Known text representation of this object.
+        /// </summary>
+        /// <value>The value.</value>
+        public override string WKT
+        {
+            get { throw new NotImplementedException("The method or operation is not implemented."); }
+        }
+
+        /// <summary>
+        /// Gets an XML representation of this object.
+        /// </summary>
+        /// <value>The value.</value>
+        public override string XML
+        {
+            get { throw new NotImplementedException("The method or operation is not implemented."); }
+        }
+
+        /// <summary>
         /// Returns the inverse of this conversion.
         /// </summary>
         /// <returns>IMathTransform that is the reverse of the current conversion.</returns>
@@ -288,22 +306,5 @@ namespace ProjNet.CoordinateSystems.Transformations
             this.isInverse = !this.isInverse;
         }
 
-        /// <summary>
-        /// Gets a Well-Known text representation of this object.
-        /// </summary>
-        /// <value>The value.</value>
-        public override string WKT
-        {
-            get { throw new NotImplementedException("The method or operation is not implemented."); }
-        }
-
-        /// <summary>
-        /// Gets an XML representation of this object.
-        /// </summary>
-        /// <value>The value.</value>
-        public override string XML
-        {
-            get { throw new NotImplementedException("The method or operation is not implemented."); }
-        }
     }
 }

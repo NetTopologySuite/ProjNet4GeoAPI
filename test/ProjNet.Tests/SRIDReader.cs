@@ -34,19 +34,23 @@ internal class SRIDReader
         new Lazy<CoordinateSystemFactory>(() => new CoordinateSystemFactory());
 
     /// <summary>
-    /// Represents the documented type.
+    /// Gets a coordinate system from the SRID.csv file.
     /// </summary>
-    public struct WktString
+    /// <param name="id">EPSG ID.</param>
+    /// <param name="file">(optional) path to CSV File with WKT definitions.</param>
+    /// <returns>Coordinate system, or <value>null</value> if no entry with <paramref name="id"/> was not found.</returns>
+    public static CoordinateSystem GetCSbyID(int id, string file = null)
     {
-        /// <summary>
-        /// Well-known ID.
-        /// </summary>
-        public int WktId;
+        // ICoordinateSystemFactory factory = new CoordinateSystemFactory();
+        foreach (var wkt in GetSrids(file))
+        {
+            if (wkt.WktId == id)
+            {
+                return CoordinateSystemFactory.Value.CreateFromWkt(wkt.Wkt);
+            }
+        }
 
-        /// <summary>
-        /// Well-known Text.
-        /// </summary>
-        public string Wkt;
+        return null;
     }
 
     /// <summary>
@@ -87,22 +91,18 @@ internal class SRIDReader
     }
 
     /// <summary>
-    /// Gets a coordinate system from the SRID.csv file.
+    /// Represents the documented type.
     /// </summary>
-    /// <param name="id">EPSG ID.</param>
-    /// <param name="file">(optional) path to CSV File with WKT definitions.</param>
-    /// <returns>Coordinate system, or <value>null</value> if no entry with <paramref name="id"/> was not found.</returns>
-    public static CoordinateSystem GetCSbyID(int id, string file = null)
+    public struct WktString
     {
-        // ICoordinateSystemFactory factory = new CoordinateSystemFactory();
-        foreach (var wkt in GetSrids(file))
-        {
-            if (wkt.WktId == id)
-            {
-                return CoordinateSystemFactory.Value.CreateFromWkt(wkt.Wkt);
-            }
-        }
+        /// <summary>
+        /// Well-known ID.
+        /// </summary>
+        public int WktId;
 
-        return null;
+        /// <summary>
+        /// Well-known Text.
+        /// </summary>
+        public string Wkt;
     }
 }

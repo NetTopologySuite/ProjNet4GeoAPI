@@ -39,16 +39,16 @@ public class ProjParityBenchmarks
     private static readonly ICoordinateTransformation WebMercatorToWgs84 =
         CoordinateSystemServices.CreateTransformation(3857, 4326);
 
+    private double[] longitudes;
+    private double[] latitudes;
+    private double[] xBuffer;
+    private double[] yBuffer;
+
     /// <summary>
     /// Gets the documented value.
     /// </summary>
     [Params(10000)]
     public int PointCount { get; set; }
-
-    private double[] longitudes;
-    private double[] latitudes;
-    private double[] xBuffer;
-    private double[] yBuffer;
 
     /// <summary>
     /// Performs the documented operation.

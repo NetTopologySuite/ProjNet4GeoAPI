@@ -36,24 +36,6 @@ namespace ProjNet.CoordinateSystems.Projections
         private readonly double sinaz, cosaz;
         private readonly double u;
 
-        private bool NaturalOriginOffsets
-        {
-            get
-            {
-                if (this.AuthorityCode == 9812)
-                {
-                    return false;
-                }
-
-                if (this.AuthorityCode == 9815)
-                {
-                    return true;
-                }
-
-                throw new ArgumentException("AuthorityCode");
-            }
-        }
-
         /// <summary>
         /// Initializes a new instance of the <see cref="HotineObliqueMercatorProjection"/> class.
         /// </summary>
@@ -141,6 +123,24 @@ namespace ProjNet.CoordinateSystems.Projections
 
             Sincos(rectifiedGridAngle, out this.singrid, out this.cosgrid);
 
+        }
+
+        private bool NaturalOriginOffsets
+        {
+            get
+            {
+                if (this.AuthorityCode == 9812)
+                {
+                    return false;
+                }
+
+                if (this.AuthorityCode == 9815)
+                {
+                    return true;
+                }
+
+                throw new ArgumentException("AuthorityCode");
+            }
         }
 
         /// <inheritdoc/>

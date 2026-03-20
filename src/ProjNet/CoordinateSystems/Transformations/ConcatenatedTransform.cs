@@ -80,6 +80,30 @@ namespace ProjNet.CoordinateSystems.Transformations
             get { return this.coordinateTransformationList[this.coordinateTransformationList.Count - 1].TargetCS.Dimension; }
         }
 
+        /// <inheritdoc/>
+        public CoordinateSystem SourceCS { get => this.CoordinateTransformationList[0].SourceCS; }
+
+        /// <inheritdoc/>
+        public CoordinateSystem TargetCS { get => this.CoordinateTransformationList[this.CoordinateTransformationList.Count - 1].TargetCS; }
+
+        /// <summary>
+        /// Gets a Well-Known text representation of this object.
+        /// </summary>
+        /// <value>The value.</value>
+        public override string WKT
+        {
+            get { throw new NotImplementedException(); }
+        }
+
+        /// <summary>
+        /// Gets an XML representation of this object.
+        /// </summary>
+        /// <value>The value.</value>
+        public override string XML
+        {
+            get { throw new NotImplementedException(); }
+        }
+
         /// <inheritdoc />
         public override void Transform(ref double x, ref double y, ref double z)
         {
@@ -150,28 +174,5 @@ namespace ProjNet.CoordinateSystems.Transformations
             return CoordinateTransformationFactory.CreateFromCoordinateSystems(ict.SourceCS, ict.TargetCS);
         }
 
-        /// <summary>
-        /// Gets a Well-Known text representation of this object.
-        /// </summary>
-        /// <value>The value.</value>
-        public override string WKT
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        /// <summary>
-        /// Gets an XML representation of this object.
-        /// </summary>
-        /// <value>The value.</value>
-        public override string XML
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        /// <inheritdoc/>
-        public CoordinateSystem SourceCS { get => this.CoordinateTransformationList[0].SourceCS; }
-
-        /// <inheritdoc/>
-        public CoordinateSystem TargetCS { get => this.CoordinateTransformationList[this.CoordinateTransformationList.Count - 1].TargetCS; }
     }
 }

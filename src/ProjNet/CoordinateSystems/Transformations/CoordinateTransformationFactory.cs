@@ -39,6 +39,15 @@ namespace ProjNet.CoordinateSystems.Transformations
             new Lazy<Dictionary<SridPair, IReadOnlyList<CoordinateOperationDefinition>>>(LoadDirectOperationDefinitions, true);
         private static readonly Lazy<GridResourceResolver> GridResolver = new Lazy<GridResourceResolver>(CreateGridResolver, true);
 
+        private enum CoordinateSystemRuntimeKind : byte
+        {
+            Unknown = 0,
+            Projected = 1,
+            Geographic = 2,
+            Geocentric = 3,
+            Fitted = 4,
+        }
+
         /// <summary>
         /// Creates a transformation between two coordinate systems.
         /// </summary>
@@ -290,15 +299,6 @@ namespace ProjNet.CoordinateSystems.Transformations
                 operationParameters.Ez,
                 operationParameters.Ppm);
             return true;
-        }
-
-        private enum CoordinateSystemRuntimeKind : byte
-        {
-            Unknown = 0,
-            Projected = 1,
-            Geographic = 2,
-            Geocentric = 3,
-            Fitted = 4,
         }
 
         private static CoordinateSystemRuntimeKind GetCoordinateSystemRuntimeKind(CoordinateSystem coordinateSystem)

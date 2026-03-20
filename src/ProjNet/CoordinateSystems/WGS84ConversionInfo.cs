@@ -131,6 +131,60 @@ namespace ProjNet.CoordinateSystems
         }
 
         /// <summary>
+        /// Gets the Well Known Text (WKT) for this object.
+        /// </summary>
+        /// <remarks>The WKT format of this object is: <code>TOWGS84[dx, dy, dz, ex, ey, ez, ppm]</code></remarks>
+        /// <returns>WKT representaion.</returns>
+        public string WKT
+        {
+            get
+            {
+                return string.Format(
+                    CultureInfo.InvariantCulture.NumberFormat,
+                    "TOWGS84[{0}, {1}, {2}, {3}, {4}, {5}, {6}]",
+                    this.Dx,
+                    this.Dy,
+                    this.Dz,
+                    this.Ex,
+                    this.Ey,
+                    this.Ez,
+                    this.Ppm);
+            }
+        }
+
+        /// <summary>
+        /// Gets an XML representation of this object.
+        /// </summary>
+        public string XML
+        {
+            get
+            {
+                return string.Format(
+                    CultureInfo.InvariantCulture.NumberFormat,
+                    "<CS_WGS84ConversionInfo Dx=\"{0}\" Dy=\"{1}\" Dz=\"{2}\" Ex=\"{3}\" Ey=\"{4}\" Ez=\"{5}\" Ppm=\"{6}\" />",
+                    this.Dx,
+                    this.Dy,
+                    this.Dz,
+                    this.Ex,
+                    this.Ey,
+                    this.Ez,
+                    this.Ppm);
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether returns true of all 7 parameter values are 0.0.
+        /// </summary>
+        /// <returns>The transformation result.</returns>
+        public bool HasZeroValuesOnly
+        {
+            get
+            {
+                return !(this.Dx != 0 || this.Dy != 0 || this.Dz != 0 || this.Ex != 0 || this.Ey != 0 || this.Ez != 0 || this.Ppm != 0);
+            }
+        }
+
+        /// <summary>
         /// Affine Bursa-Wolf matrix transformation.
         /// </summary>
         /// <remarks>
@@ -184,48 +238,6 @@ namespace ProjNet.CoordinateSystems
         }
 
         /// <summary>
-        /// Gets the Well Known Text (WKT) for this object.
-        /// </summary>
-        /// <remarks>The WKT format of this object is: <code>TOWGS84[dx, dy, dz, ex, ey, ez, ppm]</code></remarks>
-        /// <returns>WKT representaion.</returns>
-        public string WKT
-        {
-            get
-            {
-                return string.Format(
-                    CultureInfo.InvariantCulture.NumberFormat,
-                    "TOWGS84[{0}, {1}, {2}, {3}, {4}, {5}, {6}]",
-                    this.Dx,
-                    this.Dy,
-                    this.Dz,
-                    this.Ex,
-                    this.Ey,
-                    this.Ez,
-                    this.Ppm);
-            }
-        }
-
-        /// <summary>
-        /// Gets an XML representation of this object.
-        /// </summary>
-        public string XML
-        {
-            get
-            {
-                return string.Format(
-                    CultureInfo.InvariantCulture.NumberFormat,
-                    "<CS_WGS84ConversionInfo Dx=\"{0}\" Dy=\"{1}\" Dz=\"{2}\" Ex=\"{3}\" Ey=\"{4}\" Ez=\"{5}\" Ppm=\"{6}\" />",
-                    this.Dx,
-                    this.Dy,
-                    this.Dz,
-                    this.Ex,
-                    this.Ey,
-                    this.Ez,
-                    this.Ppm);
-            }
-        }
-
-        /// <summary>
         /// Returns the Well Known Text (WKT) for this object.
         /// </summary>
         /// <remarks>The WKT format of this object is: <code>TOWGS84[dx, dy, dz, ex, ey, ez, ppm]</code></remarks>
@@ -233,18 +245,6 @@ namespace ProjNet.CoordinateSystems
         public override string ToString()
         {
             return this.WKT;
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether returns true of all 7 parameter values are 0.0.
-        /// </summary>
-        /// <returns>The transformation result.</returns>
-        public bool HasZeroValuesOnly
-        {
-            get
-            {
-                return !(this.Dx != 0 || this.Dy != 0 || this.Dz != 0 || this.Ex != 0 || this.Ey != 0 || this.Ez != 0 || this.Ppm != 0);
-            }
         }
 
         /// <summary>
