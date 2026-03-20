@@ -36,7 +36,7 @@ public class Phase5PipelineRuntimeTests
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
 
         Assert.True(ok, skipReason);
-        double[] transformed = transform.Transform(new[] { 100d, 200d });
+        double[] transformed = transform.Transform(new double[] { 100d, 200d });
 
         Assert.Equal(656.1679790026246d, transformed[0], 9);
         Assert.Equal(328.0839895013123d, transformed[1], 9);
@@ -53,7 +53,7 @@ public class Phase5PipelineRuntimeTests
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
 
         Assert.True(ok, skipReason);
-        double[] transformed = transform.Transform(new[] { 1.5d, 2.25d, 9d });
+        double[] transformed = transform.Transform(new double[] { 1.5d, 2.25d, 9d });
 
         Assert.Equal(1500d, transformed[0], 10);
         Assert.Equal(2250d, transformed[1], 10);

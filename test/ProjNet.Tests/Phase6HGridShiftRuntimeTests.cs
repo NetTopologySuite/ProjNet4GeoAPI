@@ -39,7 +39,7 @@ public class Phase6HGridShiftRuntimeTests
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
 
         Assert.True(ok, skipReason);
-        double[] output = transform.Transform(new[] { 4.5d, 52.5d, 0d });
+        double[] output = transform.Transform(new double[] { 4.5d, 52.5d, 0d });
         Assert.Equal(5.875d, output[0], 9);
         Assert.Equal(55.375d, output[1], 9);
         Assert.Equal(0d, output[2], 9);
@@ -57,7 +57,7 @@ public class Phase6HGridShiftRuntimeTests
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
 
         Assert.True(ok, skipReason);
-        double[] output = transform.Transform(new[] { 4.5d, 52.5d, 0d });
+        double[] output = transform.Transform(new double[] { 4.5d, 52.5d, 0d });
         Assert.Equal(5.875d, output[0], 9);
         Assert.Equal(55.375d, output[1], 9);
         Assert.Equal(0d, output[2], 9);
@@ -75,7 +75,7 @@ public class Phase6HGridShiftRuntimeTests
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
 
         Assert.True(ok, skipReason);
-        Assert.Throws<ArgumentException>(() => transform.Transform(new[] { 5.875d, 55.375d, 0d }));
+        Assert.Throws<ArgumentException>(() => transform.Transform(new double[] { 5.875d, 55.375d, 0d }));
     }
 
     /// <summary>
@@ -90,7 +90,7 @@ public class Phase6HGridShiftRuntimeTests
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
 
         Assert.True(ok, skipReason);
-        double[] output = transform.Transform(new[] { 4.5d, 52.5d, 0d });
+        double[] output = transform.Transform(new double[] { 4.5d, 52.5d, 0d });
         Assert.Equal(5.875d, output[0], 9);
         Assert.Equal(55.375d, output[1], 9);
     }

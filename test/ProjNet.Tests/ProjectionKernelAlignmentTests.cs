@@ -44,7 +44,7 @@ public class ProjectionKernelAlignmentTests
 
         var target = GeographicCoordinateSystem.WGS84;
         var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
-        double[] result = transform.MathTransform.Transform(new[] { 1000d, 2000d });
+        double[] result = transform.MathTransform.Transform(new double[] { 1000d, 2000d });
 
         Assert.NotNull(transform);
         Assert.NotNull(result);
@@ -68,7 +68,7 @@ public class ProjectionKernelAlignmentTests
 
         var target = GeographicCoordinateSystem.WGS84;
         var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
-        double[] result = transform.MathTransform.Transform(new[] { 500000d, 4649776.22482d });
+        double[] result = transform.MathTransform.Transform(new double[] { 500000d, 4649776.22482d });
 
         Assert.NotNull(transform);
         Assert.NotNull(result);
@@ -89,7 +89,7 @@ public class ProjectionKernelAlignmentTests
 
         var target = GeographicCoordinateSystem.WGS84;
         var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
-        double[] result = transform.MathTransform.Transform(new[] { 100000d, 100000d });
+        double[] result = transform.MathTransform.Transform(new double[] { 100000d, 100000d });
 
         Assert.NotNull(transform);
         Assert.NotNull(result);

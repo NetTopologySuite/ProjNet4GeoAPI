@@ -41,7 +41,7 @@ public class PublicApiBaselineTests
         string currentPublicApi = NormalizeLineEndings(typeof(CoordinateSystemServices).Assembly.GeneratePublicApi(new ApiGeneratorOptions
         {
             IncludeAssemblyAttributes = false,
-            ExcludeAttributes = new[]
+            ExcludeAttributes = new string[]
             {
                 "System.Runtime.Versioning.TargetFrameworkAttribute",
                 "System.Reflection.AssemblyMetadataAttribute"

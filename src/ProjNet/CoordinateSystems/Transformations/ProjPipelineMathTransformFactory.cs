@@ -27,6 +27,9 @@ namespace ProjNet.CoordinateSystems.Transformations
     /// </summary>
     internal static class ProjPipelineMathTransformFactory
     {
+        private static readonly char[] CommaSeparator = { ',' };
+        private static readonly char[] OperationTokenSeparators = { ' ', '\t' };
+
         /// <summary>
         /// Tries to create an executable transform from a full operation or pipeline definition.
         /// </summary>
@@ -379,7 +382,7 @@ namespace ProjNet.CoordinateSystems.Transformations
             resolvedPaths = Array.Empty<string>();
             skipReason = null;
 
-            string[] entries = gridsToken.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] entries = gridsToken.Split(CommaSeparator, StringSplitOptions.RemoveEmptyEntries);
             if (entries.Length == 0)
             {
                 skipReason = "Horizontal grid shift requires at least one grid name in +grids.";
@@ -551,7 +554,7 @@ namespace ProjNet.CoordinateSystems.Transformations
                 return false;
             }
 
-            string[] segments = orderToken.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] segments = orderToken.Split(CommaSeparator, StringSplitOptions.RemoveEmptyEntries);
             if (segments.Length < 2 || segments.Length > 4)
             {
                 return false;
@@ -642,7 +645,7 @@ namespace ProjNet.CoordinateSystems.Transformations
             var currentStepTokens = new List<string>();
             bool inPipeline = false;
 
-            string[] tokens = operation.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] tokens = operation.Split(OperationTokenSeparators, StringSplitOptions.RemoveEmptyEntries);
             foreach (string token in tokens)
             {
                 string normalized = token.StartsWith("+", StringComparison.Ordinal)
@@ -692,7 +695,7 @@ namespace ProjNet.CoordinateSystems.Transformations
                 return false;
             }
 
-            string[] tokens = operation.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] tokens = operation.Split(OperationTokenSeparators, StringSplitOptions.RemoveEmptyEntries);
             foreach (string token in tokens)
             {
                 if (!token.StartsWith("+", StringComparison.Ordinal))

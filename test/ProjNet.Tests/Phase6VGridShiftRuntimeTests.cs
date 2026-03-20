@@ -39,7 +39,7 @@ public class Phase6VGridShiftRuntimeTests
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
 
         Assert.True(ok, skipReason);
-        double[] output = transform.Transform(new[] { 12d, 56d, 0d });
+        double[] output = transform.Transform(new double[] { 12d, 56d, 0d });
         Assert.Equal(12d, output[0], 12);
         Assert.Equal(56d, output[1], 12);
         Assert.Equal(-36.9959410718d, output[2], 9);
@@ -57,7 +57,7 @@ public class Phase6VGridShiftRuntimeTests
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
 
         Assert.True(ok, skipReason);
-        double[] output = transform.Transform(new[] { 12d, 56d, 0d });
+        double[] output = transform.Transform(new double[] { 12d, 56d, 0d });
         Assert.Equal(36.9959410718d, output[2], 9);
     }
 
@@ -77,7 +77,7 @@ public class Phase6VGridShiftRuntimeTests
         Assert.True(forwardOk, forwardSkipReason);
         Assert.True(inverseOk, inverseSkipReason);
 
-        double[] shifted = forward.Transform(new[] { 12d, 56d, 0d });
+        double[] shifted = forward.Transform(new double[] { 12d, 56d, 0d });
         double[] unshifted = inverse.Transform(shifted);
 
         Assert.Equal(12d, unshifted[0], 10);
@@ -97,7 +97,7 @@ public class Phase6VGridShiftRuntimeTests
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
         Assert.True(ok, skipReason);
 
-        Assert.Throws<ArgumentException>(() => transform.Transform(new[] { 12d, 56d, 0d }));
+        Assert.Throws<ArgumentException>(() => transform.Transform(new double[] { 12d, 56d, 0d }));
     }
 
     private static string FindGridPath(string fileName)

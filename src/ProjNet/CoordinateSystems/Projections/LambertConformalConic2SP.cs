@@ -55,6 +55,7 @@ namespace ProjNet.CoordinateSystems.Projections
     [Serializable]
     internal class LambertConformalConic2SP : MapProjection
     {
+        private static readonly string[] LatitudeOfOriginFallback = { "latitude_of_origin" };
 
         // private double readonly _falseEasting;
         // private double readonly _falseNorthing;
@@ -117,8 +118,8 @@ namespace ProjNet.CoordinateSystems.Projections
             // Check for missing parameters
             // Since this implementation supports conic 1SP and 2SP we add the support for the 1SP implementation here.
             // There is no need for standard_parallel_1 and standard_parallel_2 parameters in this version: https://pro.arcgis.com/en/pro-app/latest/help/mapping/properties/lambert-conformal-conic.htm
-            double lat1 = DegreesToRadians(this.Parameters.GetParameterValue("standard_parallel_1", new[] { "latitude_of_origin" }));
-            double lat2 = DegreesToRadians(this.Parameters.GetParameterValue("standard_parallel_2", new[] { "latitude_of_origin" }));
+            double lat1 = DegreesToRadians(this.Parameters.GetParameterValue("standard_parallel_1", LatitudeOfOriginFallback));
+            double lat2 = DegreesToRadians(this.Parameters.GetParameterValue("standard_parallel_2", LatitudeOfOriginFallback));
 
             double sin_po;                  /* sin value                            */
             double cos_po;                  /* cos value                            */

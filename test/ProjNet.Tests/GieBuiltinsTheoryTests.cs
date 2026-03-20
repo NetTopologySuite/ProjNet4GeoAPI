@@ -32,6 +32,8 @@ public class GieBuiltinsTheoryTests
 {
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
+    
+    private static readonly char[] OperationTokenSeparators = { ' ', '\t' };
 
     private static readonly Dictionary<string, string> ProjectionClassByProjCode = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
@@ -440,7 +442,7 @@ public class GieBuiltinsTheoryTests
         var currentStepTokens = new List<string>();
         bool inPipeline = false;
 
-        string[] tokens = operation.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] tokens = operation.Split(OperationTokenSeparators, StringSplitOptions.RemoveEmptyEntries);
         foreach (string token in tokens)
         {
             string normalized = token.StartsWith("+", StringComparison.Ordinal)
@@ -707,7 +709,7 @@ public class GieBuiltinsTheoryTests
             return false;
         }
 
-        string[] tokens = operation.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] tokens = operation.Split(OperationTokenSeparators, StringSplitOptions.RemoveEmptyEntries);
         foreach (string token in tokens)
         {
             if (!token.StartsWith("+", StringComparison.Ordinal))

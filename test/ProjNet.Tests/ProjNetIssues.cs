@@ -169,7 +169,7 @@ public class ProjNetIssues : CoordinateTransformTestsBase
             "PROJCS[\"GDA94 / MGA zone 50\",GEOGCS[\"GDA94\",DATUM[\"Geocentric_Datum_of_Australia_1994\",SPHEROID[\"GRS 1980\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"7019\"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY[\"EPSG\",\"6283\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4283\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",117],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",10000000],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],AUTHORITY[\"EPSG\",\"28350\"]]");
 
         // Chose PostGis values
-        this.Test("WGS 84 -> GDA94 / MGA zone 50", csSource, csTarget, new[] { 136d, -30d }, new[] { 2349315.05731837, 6524249.91789138 }, 0.05, 1.0e-4);
+        this.Test("WGS 84 -> GDA94 / MGA zone 50", csSource, csTarget, new double[] { 136d, -30d }, new double[] { 2349315.05731837, 6524249.91789138 }, 0.05, 1.0e-4);
     }
 
     /// <summary>
@@ -192,7 +192,7 @@ public class ProjNetIssues : CoordinateTransformTestsBase
         AUTHORITY[""EPSG"",""9122""]],
     AUTHORITY[""EPSG"",""4326""]]");
 
-        this.Test("WGS84_UTM(18,N) -> WGS84", csSource, csTarget, new[] { 307821.867, 4219306.387 }, new[] { -77.191769, 38.101147 }, 1e-6);
+        this.Test("WGS84_UTM(18,N) -> WGS84", csSource, csTarget, new double[] { 307821.867, 4219306.387 }, new double[] { -77.191769, 38.101147 }, 1e-6);
     }
 
     /// <summary>

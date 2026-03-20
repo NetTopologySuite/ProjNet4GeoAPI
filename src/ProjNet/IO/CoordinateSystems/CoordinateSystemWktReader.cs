@@ -53,6 +53,8 @@ namespace ProjNet.IO.CoordinateSystems
     /// </summary>
     public static class CoordinateSystemWktReader
     {
+        private static readonly string[] CompoundCoordinateSystemDelimiters = { ",", "]" };
+
         /// <summary>
         /// Reads and parses a WKT-formatted projection string.
         /// </summary>
@@ -514,7 +516,7 @@ namespace ProjNet.IO.CoordinateSystems
             var headcs = ReadCoordinateSystem(null, tokenizer);
 
             var ct = tokenizer.NextToken();
-            while (ct != TokenType.Eol && ct != TokenType.Eof && new[] { ",", "]" }.Contains(tokenizer.GetStringValue()))
+            while (ct != TokenType.Eol && ct != TokenType.Eof && CompoundCoordinateSystemDelimiters.Contains(tokenizer.GetStringValue()))
             {
                 ct = tokenizer.NextToken();
 

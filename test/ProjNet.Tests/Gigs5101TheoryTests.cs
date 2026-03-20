@@ -69,6 +69,8 @@ public class Gigs5101TheoryTests
 
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
+    
+    private static readonly char[] OperationTokenSeparators = { ' ', '\t' };
     private static readonly CoordinateSystemServices CoordinateSystemServices = new CoordinateSystemServices();
 
     /// <summary>
@@ -282,7 +284,7 @@ public class Gigs5101TheoryTests
         var currentStepTokens = new List<string>();
         bool inPipeline = false;
 
-        string[] tokens = operation.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] tokens = operation.Split(OperationTokenSeparators, StringSplitOptions.RemoveEmptyEntries);
         foreach (string token in tokens)
         {
             string normalized = token.StartsWith("+", StringComparison.Ordinal)
@@ -626,7 +628,7 @@ public class Gigs5101TheoryTests
             return false;
         }
 
-        string[] tokens = operation.Split(new[] { ' ', '\t' }, StringSplitOptions.RemoveEmptyEntries);
+        string[] tokens = operation.Split(OperationTokenSeparators, StringSplitOptions.RemoveEmptyEntries);
         foreach (string token in tokens)
         {
             string body = token.StartsWith("+", StringComparison.Ordinal)
