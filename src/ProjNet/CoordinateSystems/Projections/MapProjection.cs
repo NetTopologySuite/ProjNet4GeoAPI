@@ -840,7 +840,7 @@ for (var i = 0; i < _Parameters.Count; i++)
         }
 
         /// <summary>
-        ///
+        /// Normalizes a longitude angle into the canonical interval.
         /// </summary>
         /// <param name="x">The x parameter.</param>
         /// <returns>The transformation result.</returns>

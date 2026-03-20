@@ -20,7 +20,7 @@ namespace ProjNet.CoordinateSystems.Transformations
     using System.Collections.Generic;
 
     /// <summary>
-    ///
+    /// Converts between geodetic and geocentric coordinate representations.
     /// </summary>
     /// <remarks>
     /// <para>Latitude, Longitude and ellipsoidal height in terms of a 3-dimensional geographic system
