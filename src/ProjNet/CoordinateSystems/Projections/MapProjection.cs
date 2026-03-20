@@ -48,6 +48,7 @@ namespace ProjNet.CoordinateSystems.Projections
     /// Projections inherit from this abstract class to get access to useful mathematical functions.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1051:Do not declare visible instance fields", Justification = "Legacy PROJ-compatible API surface is preserved for compatibility.")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Legacy PROJ-compatible API surface is preserved for compatibility.")]
     [Serializable]
     public abstract class MapProjection : MathTransform, IProjection
     {
