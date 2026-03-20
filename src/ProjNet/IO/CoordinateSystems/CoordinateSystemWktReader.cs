@@ -116,7 +116,7 @@ namespace ProjNet.IO.CoordinateSystems
         /// </summary>
         /// <param name="tokenizer">WktStreamTokenizer that has the WKT.</param>
         /// <returns>An object that implements the IUnit interface.</returns>
-        private static IUnit ReadUnit(WktStreamTokenizer tokenizer)
+        private static Unit ReadUnit(WktStreamTokenizer tokenizer)
         {
             var bracket = tokenizer.ReadOpener();
             string unitName = tokenizer.ReadDoubleQuotedWord();
@@ -322,7 +322,7 @@ namespace ProjNet.IO.CoordinateSystems
             return ellipsoid;
         }
 
-        private static IProjection ReadProjection(WktStreamTokenizer tokenizer)
+        private static Projection ReadProjection(WktStreamTokenizer tokenizer)
         {
             if (tokenizer.GetStringValue() != "PROJECTION")
             {

@@ -127,7 +127,7 @@ namespace ProjNet.IO.CoordinateSystems
             return info;
         }
 
-        private static MathTransform ReadAffineTransform(WktStreamTokenizer tokenizer)
+        private static AffineTransform ReadAffineTransform(WktStreamTokenizer tokenizer)
         {
             /*
                  PARAM_MT[

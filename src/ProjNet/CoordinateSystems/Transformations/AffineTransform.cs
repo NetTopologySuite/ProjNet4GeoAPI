@@ -207,7 +207,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// Return affine transformation matrix as group of parameter values that maiy be used for retrieving WKT of this affine transform.
         /// </summary>
         /// <returns>List of string pairs NAME VALUE.</returns>
-        private IList<ProjectionParameter> GetParameterValues()
+        private List<ProjectionParameter> GetParameterValues()
         {
             int rowCnt = this.transformMatrix.GetLength(0);
             int colCnt = this.transformMatrix.GetLength(1);

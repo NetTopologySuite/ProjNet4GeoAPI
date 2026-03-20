@@ -822,7 +822,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <param name="source">The source parameter.</param>
         /// <param name="target">The target parameter.</param>
         /// <returns>The transformation result.</returns>
-        private static ICoordinateTransformation CreateGeog2Geog(GeographicCoordinateSystem source, GeographicCoordinateSystem target)
+        private static CoordinateTransformation CreateGeog2Geog(GeographicCoordinateSystem source, GeographicCoordinateSystem target)
         {
             if (source.HorizontalDatum.EqualParams(target.HorizontalDatum))
             {
@@ -1026,7 +1026,7 @@ namespace ProjNet.CoordinateSystems.Transformations
             return new CoordinateTransformation(sourceCS, targetCS, transformType, mathTransform, string.Empty, string.Empty, -1, string.Empty, string.Empty);
         }
 
-        private static MathTransform CreateCoordinateOperation(GeocentricCoordinateSystem geo)
+        private static GeocentricTransform CreateCoordinateOperation(GeocentricCoordinateSystem geo)
         {
             var parameterList = new List<ProjectionParameter>(2);
 

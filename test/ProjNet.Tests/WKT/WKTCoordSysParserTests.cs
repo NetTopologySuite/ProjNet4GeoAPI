@@ -611,7 +611,7 @@ public class WKTCoordSysParserTests
         return true;
     }
 
-    private static void CheckProjection(IProjection projection, string name, IList<Tuple<string, double>> pp = null, string authority = null, long? code = null)
+    private static void CheckProjection(IProjection projection, string name, Tuple<string, double>[] pp = null, string authority = null, long? code = null)
     {
         Assert.That(projection, Is.Not.Null, "Projection not null");
         Assert.That(projection.ClassName, Is.EqualTo(name), "Projection class name");
@@ -622,9 +622,9 @@ public class WKTCoordSysParserTests
             return;
         }
 
-        Assert.That(projection.NumParameters, Is.EqualTo(pp.Count), "Number of projection parameters");
+        Assert.That(projection.NumParameters, Is.EqualTo(pp.Length), "Number of projection parameters");
 
-        for (int i = 0; i < pp.Count; i++)
+        for (int i = 0; i < pp.Length; i++)
         {
             ProjectionParameter par = null;
             Assert.That(() => par = projection.GetParameter(pp[i].Item1), Throws.Nothing, $"Getting projection parameter '{pp[i].Item1}' throws.");

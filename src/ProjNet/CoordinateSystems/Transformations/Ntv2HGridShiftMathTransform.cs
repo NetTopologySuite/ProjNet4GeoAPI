@@ -35,7 +35,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         private const double InverseTolerance = 1e-12d;
         private const int MaxInverseIterations = 10;
 
-        private readonly IReadOnlyList<Ntv2GridSet> gridSets;
+        private readonly ReadOnlyCollection<Ntv2GridSet> gridSets;
         private bool isInverted;
 
         /// <summary>

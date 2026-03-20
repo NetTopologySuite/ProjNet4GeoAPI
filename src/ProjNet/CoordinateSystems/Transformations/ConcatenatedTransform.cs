@@ -32,7 +32,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// <summary>
         ///
         /// </summary>
-        private MathTransform inverse;
+        private ConcatenatedTransform inverse;
         private readonly List<ICoordinateTransformationCore> coordinateTransformationList;
 
         /// <summary>

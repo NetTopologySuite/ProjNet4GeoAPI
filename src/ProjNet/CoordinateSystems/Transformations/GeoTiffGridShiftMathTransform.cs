@@ -251,7 +251,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         private const double RelativeTolerance = 1e-5d;
         private const double InverseTolerance = 1e-12d;
         private const int MaxInverseIterations = 10;
-        private readonly IReadOnlyList<HorizontalGrid> grids;
+        private readonly ReadOnlyCollection<HorizontalGrid> grids;
         private bool isInverted;
 
         /// <summary>
@@ -560,7 +560,7 @@ namespace ProjNet.CoordinateSystems.Transformations
     internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
     {
         private const double RelativeTolerance = 1e-5d;
-        private readonly IReadOnlyList<VerticalGrid> grids;
+        private readonly ReadOnlyCollection<VerticalGrid> grids;
         private readonly double forwardMultiplier;
         private bool isInverted;
 
@@ -905,7 +905,7 @@ namespace ProjNet.CoordinateSystems.Transformations
                 .ToArray();
         }
 
-        private static IReadOnlyList<LoadedPage> LoadCore(string path, GridMode mode)
+        private static List<LoadedPage> LoadCore(string path, GridMode mode)
         {
             if (string.IsNullOrWhiteSpace(path))
             {
@@ -1275,11 +1275,11 @@ namespace ProjNet.CoordinateSystems.Transformations
         private static void ParseMetadataItems(
             string metadata,
             int samplesPerPixel,
-            IDictionary<int, string> descriptionsBySample,
-            IDictionary<int, string> positiveValueBySample,
-            IDictionary<int, double> scaleBySample,
-            IDictionary<int, double> offsetBySample,
-            IDictionary<int, string> unitTypeBySample)
+            Dictionary<int, string> descriptionsBySample,
+            Dictionary<int, string> positiveValueBySample,
+            Dictionary<int, double> scaleBySample,
+            Dictionary<int, double> offsetBySample,
+            Dictionary<int, string> unitTypeBySample)
         {
             if (string.IsNullOrWhiteSpace(metadata))
             {

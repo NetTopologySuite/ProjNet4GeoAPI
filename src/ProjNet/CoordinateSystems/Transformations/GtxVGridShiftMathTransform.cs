@@ -29,7 +29,7 @@ namespace ProjNet.CoordinateSystems.Transformations
     internal sealed class GtxVGridShiftMathTransform : MathTransform
     {
         private const double RelativeTolerance = 1e-5d;
-        private readonly IReadOnlyList<GtxGrid> grids;
+        private readonly ReadOnlyCollection<GtxGrid> grids;
         private readonly double forwardMultiplier;
         private bool isInverted;
 

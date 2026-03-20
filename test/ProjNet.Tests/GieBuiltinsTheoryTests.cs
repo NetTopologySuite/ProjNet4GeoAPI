@@ -527,7 +527,7 @@ public class GieBuiltinsTheoryTests
         return ProjectionClassByProjCode.ContainsKey(projCode) || ConversionProjCodes.Contains(projCode);
     }
 
-    private static bool TryCreateGeographicCoordinateSystem(IDictionary<string, string> args, out GeographicCoordinateSystem gcs)
+    private static bool TryCreateGeographicCoordinateSystem(Dictionary<string, string> args, out GeographicCoordinateSystem gcs)
     {
         gcs = null;
 
@@ -547,7 +547,7 @@ public class GieBuiltinsTheoryTests
         return true;
     }
 
-    private static bool TryResolveEllipsoid(IDictionary<string, string> args, out Ellipsoid ellipsoid)
+    private static bool TryResolveEllipsoid(Dictionary<string, string> args, out Ellipsoid ellipsoid)
     {
         ellipsoid = null;
 
@@ -615,7 +615,7 @@ public class GieBuiltinsTheoryTests
         return true;
     }
 
-    private static bool TryBuildProjectionParameters(IDictionary<string, string> args, out List<ProjectionParameter> parameters)
+    private static bool TryBuildProjectionParameters(Dictionary<string, string> args, out List<ProjectionParameter> parameters)
     {
         parameters = new List<ProjectionParameter>
         {
@@ -677,7 +677,7 @@ public class GieBuiltinsTheoryTests
         return true;
     }
 
-    private static bool TryGetZoneCentralMeridian(IDictionary<string, string> args, out double centralMeridian)
+    private static bool TryGetZoneCentralMeridian(Dictionary<string, string> args, out double centralMeridian)
     {
         centralMeridian = 0d;
         if (!args.TryGetValue("zone", out string zoneToken) || string.IsNullOrWhiteSpace(zoneToken))
@@ -745,7 +745,7 @@ public class GieBuiltinsTheoryTests
         return args.TryGetValue("proj", out projCode);
     }
 
-    private static bool ContainsUnsupportedRuntimeTokens(IDictionary<string, string> args)
+    private static bool ContainsUnsupportedRuntimeTokens(Dictionary<string, string> args)
     {
         if (args.ContainsKey("step"))
         {
@@ -785,7 +785,7 @@ public class GieBuiltinsTheoryTests
         return false;
     }
 
-    private static bool TryGetDouble(IDictionary<string, string> args, string key, out double value)
+    private static bool TryGetDouble(Dictionary<string, string> args, string key, out double value)
     {
         value = 0d;
         if (!args.TryGetValue(key, out string raw) || string.IsNullOrWhiteSpace(raw))
@@ -796,7 +796,7 @@ public class GieBuiltinsTheoryTests
         return double.TryParse(raw, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value);
     }
 
-    private static void AddOptionalParameter(List<ProjectionParameter> parameters, IDictionary<string, string> args, string sourceName, string targetName)
+    private static void AddOptionalParameter(List<ProjectionParameter> parameters, Dictionary<string, string> args, string sourceName, string targetName)
     {
         if (TryGetDouble(args, sourceName, out double value))
         {

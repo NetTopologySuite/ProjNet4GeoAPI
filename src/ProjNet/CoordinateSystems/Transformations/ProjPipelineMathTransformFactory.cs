@@ -132,7 +132,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         }
 
         private static bool TryCreateAxisSwapTransform(
-            IDictionary<string, string> args,
+            Dictionary<string, string> args,
             out MathTransform transform,
             out string skipReason)
         {
@@ -225,7 +225,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         }
 
         private static bool TryCreateHorizontalGridShiftTransform(
-            IDictionary<string, string> args,
+            Dictionary<string, string> args,
             out MathTransform transform,
             out string skipReason)
         {
@@ -293,7 +293,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         }
 
         private static bool TryCreateVerticalGridShiftTransform(
-            IDictionary<string, string> args,
+            Dictionary<string, string> args,
             out MathTransform transform,
             out string skipReason)
         {
