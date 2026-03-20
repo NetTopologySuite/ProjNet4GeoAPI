@@ -172,7 +172,11 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <summary>
         /// Constants for <see cref="Mlfn(double,double,double,double,double)"/>.
         /// </summary>
-        protected readonly double en0, en1, en2, en3, en4;
+        protected readonly double en0;
+        protected readonly double en1;
+        protected readonly double en2;
+        protected readonly double en3;
+        protected readonly double en4;
 
         /// <summary>
         /// A set of projection parameters for this projection.
@@ -184,18 +188,18 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         protected MathTransform inverse;
 
-        private const double C00 = 1.0,
-                             C02 = 0.25,
-                             C04 = 0.046875,
-                             C06 = 0.01953125,
-                             C08 = 0.01068115234375,
-                             C22 = 0.75,
-                             C44 = 0.46875,
-                             C46 = 0.01302083333333333333,
-                             C48 = 0.00712076822916666666,
-                             C66 = 0.36458333333333333333,
-                             C68 = 0.00569661458333333333,
-                             C88 = 0.3076171875;
+        private const double C00 = 1.0;
+        private const double C02 = 0.25;
+        private const double C04 = 0.046875;
+        private const double C06 = 0.01953125;
+        private const double C08 = 0.01068115234375;
+        private const double C22 = 0.75;
+        private const double C44 = 0.46875;
+        private const double C46 = 0.01302083333333333333;
+        private const double C48 = 0.00712076822916666666;
+        private const double C66 = 0.36458333333333333333;
+        private const double C68 = 0.00569661458333333333;
+        private const double C88 = 0.3076171875;
 
         private const double P00 = 0.33333333333333333333; /*   1 /     3 */
         private const double P01 = 0.17222222222222222222; /*  31 /   180 */

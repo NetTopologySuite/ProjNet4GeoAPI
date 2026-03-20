@@ -52,7 +52,8 @@ namespace ProjNet.CoordinateSystems.Projections
         private static double ITERATIONTOLERANCE = 1E-14;
         private static double EPS15 = 1E-15;
         private static double MHALFPI = 0.5 * Math.PI;
-        private double phits, akm1;
+        private double phits;
+        private double akm1;
         private bool NPOLE;
 
         /// <summary>

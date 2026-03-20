@@ -78,7 +78,16 @@ namespace ProjNet.CoordinateSystems.Projections
         /**
          * Useful variables calculated from parameters defined by user.
          */
-        private readonly double sinAzim, cosAzim, n, tanS2, alfa, hae, k1, ka, ro0, rop;
+        private readonly double sinAzim;
+        private readonly double cosAzim;
+        private readonly double n;
+        private readonly double tanS2;
+        private readonly double alfa;
+        private readonly double hae;
+        private readonly double k1;
+        private readonly double ka;
+        private readonly double ro0;
+        private readonly double rop;
 
         private readonly double reciprocSemiMajor;
 

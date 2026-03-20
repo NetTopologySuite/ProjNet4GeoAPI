@@ -51,8 +51,13 @@ namespace ProjNet.CoordinateSystems.Projections
         private static double ITERATIONTOLERANCE = 1E-14;
         private static int MAXIMUMITERATIONS = 15;
         private static double EPSILON = 1E-6;
-        private double C, K, ratexp;
-        private double phic0, cosc0, sinc0, R2;
+        private double C;
+        private double K;
+        private double ratexp;
+        private double phic0;
+        private double cosc0;
+        private double sinc0;
+        private double R2;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ObliqueStereographicProjection"/> class.

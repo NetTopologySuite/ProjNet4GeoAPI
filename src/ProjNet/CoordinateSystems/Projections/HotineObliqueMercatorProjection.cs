@@ -28,12 +28,18 @@ namespace ProjNet.CoordinateSystems.Projections
     internal class HotineObliqueMercatorProjection : MapProjection
     {
         private readonly double azimuth;
-        private readonly double sinP20, cosP20;
-        private readonly double bl, al;
-        private readonly double d, el;
-        private readonly double singrid, cosgrid;
-        private readonly double singam, cosgam;
-        private readonly double sinaz, cosaz;
+        private readonly double sinP20;
+        private readonly double cosP20;
+        private readonly double bl;
+        private readonly double al;
+        private readonly double d;
+        private readonly double el;
+        private readonly double singrid;
+        private readonly double cosgrid;
+        private readonly double singam;
+        private readonly double cosgam;
+        private readonly double sinaz;
+        private readonly double cosaz;
         private readonly double u;
 
         /// <summary>
