@@ -888,9 +888,9 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// Function to compute the constant small m which is the radius of
         /// a parallel of latitude, phi, divided by the semimajor axis.
         /// </summary>
-        /// <param name="cosphi">The cosphi value.</param>
         /// <param name="eccent">The eccent value.</param>
         /// <param name="sinphi">The sinphi value.</param>
+        /// <param name="cosphi">The cosphi value.</param>
         /// <returns>The computed value.</returns>
         protected static double Msfnz(double eccent, double sinphi, double cosphi)
         {
@@ -904,8 +904,8 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// Function to compute constant small q which is the radius of a
         /// parallel of latitude, phi, divided by the semimajor axis.
         /// </summary>
-        /// <param name="eccent">The eccent value.</param>
         /// <param name="sinphi">The sinphi value.</param>
+        /// <param name="eccent">The eccent value.</param>
         /// <returns>The computed value.</returns>
         protected static double Qsfnz(double sinphi, double eccent)
         {
@@ -923,9 +923,9 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// Function to compute constant small q which is the radius of a
         /// parallel of latitude, phi, divided by the semimajor axis.
         /// </summary>
+        /// <param name="sinphi">The sinphi value.</param>
         /// <param name="eccent">The eccent value.</param>
         /// <param name="one_es">The one_es value.</param>
-        /// <param name="sinphi">The sinphi value.</param>
         /// <returns>The computed value.</returns>
         protected static double Qsfn(double sinphi, double eccent, double one_es)
         {
@@ -955,9 +955,9 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// than calling each function separately.  It is provided here for those
         /// computer systems which don`t implement this function.
         /// </summary>
-        /// <param name="cos_val">The cos_val value.</param>
-        /// <param name="sin_val">The sin_val value.</param>
         /// <param name="val">The val value.</param>
+        /// <param name="sin_val">The sin_val value.</param>
+        /// <param name="cos_val">The cos_val value.</param>
         protected static void Sincos(double val, out double sin_val, out double cos_val)
 
         {

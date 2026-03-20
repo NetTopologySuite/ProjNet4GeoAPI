@@ -129,9 +129,9 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <summary>
         /// Method to check if all mandatory projection parameters are passed.
         /// </summary>
-        /// <param name="alternateNames">The alternateNames value.</param>
         /// <param name="name">The name value.</param>
         /// <param name="value">The value value.</param>
+        /// <param name="alternateNames">The alternateNames value.</param>
         /// <returns>The computed value.</returns>
         public double GetOptionalParameterValue(string name, double value, params string[] alternateNames)
         {
