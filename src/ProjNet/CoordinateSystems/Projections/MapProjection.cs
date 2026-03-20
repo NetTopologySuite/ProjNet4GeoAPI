@@ -273,7 +273,7 @@ namespace ProjNet.CoordinateSystems.Projections
         }
 
         /// <summary>
-        ///
+        /// Gets the number of projection parameters.
         /// </summary>
         /// <inheritdoc/>
         public int NumParameters
@@ -456,7 +456,7 @@ for (var i = 0; i < _Parameters.Count; i++)
         }
 
         /// <summary>
-        ///
+        /// Returns the projection parameter at the specified index.
         /// </summary>
         /// <param name="index">The index parameter.</param>
         /// <returns>The transformation result.</returns>
@@ -790,7 +790,7 @@ for (var i = 0; i < _Parameters.Count; i++)
         }
 
         /// <summary>
-        ///
+        /// Returns the greater value of two inputs.
         /// </summary>
         /// <param name="A">The A parameter.</param>
         /// <param name="B">The B parameter.</param>
@@ -801,7 +801,7 @@ for (var i = 0; i < _Parameters.Count; i++)
         }
 
         /// <summary>
-        ///
+        /// Returns the smaller value of two inputs.
         /// </summary>
         /// <param name="A">The A parameter.</param>
         /// <param name="B">The B parameter.</param>
@@ -985,8 +985,7 @@ for (var i = 0; i < _Parameters.Count; i++)
         }
 
         /// <summary>
-        ///
-        ///
+        /// Computes latitude from the Snyder q-function using an iterative solution.
         /// </summary>
         /// <param name="eccent">The eccent parameter.</param>
         /// <param name="qs">The qs parameter.</param>
@@ -1100,7 +1099,7 @@ for (var i = 0; i < _Parameters.Count; i++)
         }
 
         /// <summary>
-        ///
+        /// Computes the first meridional distance series coefficient.
         /// </summary>
         /// <param name="x">The x parameter.</param>
         /// <returns>The transformation result.</returns>
@@ -1110,7 +1109,7 @@ for (var i = 0; i < _Parameters.Count; i++)
         }
 
         /// <summary>
-        ///
+        /// Computes the second meridional distance series coefficient.
         /// </summary>
         /// <param name="x">The x parameter.</param>
         /// <returns>The transformation result.</returns>
@@ -1120,7 +1119,7 @@ for (var i = 0; i < _Parameters.Count; i++)
         }
 
         /// <summary>
-        ///
+        /// Computes the third meridional distance series coefficient.
         /// </summary>
         /// <param name="x">The x parameter.</param>
         /// <returns>The transformation result.</returns>

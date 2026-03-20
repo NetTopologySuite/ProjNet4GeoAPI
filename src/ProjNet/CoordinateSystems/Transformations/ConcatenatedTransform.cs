@@ -30,7 +30,7 @@ namespace ProjNet.CoordinateSystems.Transformations
                 new CoordinateTransformationFactory();
 
         /// <summary>
-        ///
+        /// Cached inverse transform.
         /// </summary>
         private ConcatenatedTransform inverse;
         private readonly List<ICoordinateTransformationCore> coordinateTransformationList;
