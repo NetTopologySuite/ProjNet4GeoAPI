@@ -2,3 +2,6 @@ using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1202:Elements should be ordered by access", Justification = "Legacy test member ordering retained to keep test churn low.", Scope = "type", Target = "~T:ProjNET.Tests.CoordinateTransformTests")]
 [assembly: SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1202:Elements should be ordered by access", Justification = "Legacy test member ordering retained to keep test churn low.", Scope = "type", Target = "~T:ProjNET.Tests.CoordinateTransformTestsBase")]
+[assembly: SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test helper shape is retained to minimize churn in legacy test fixtures.", Scope = "type", Target = "~T:ProjNET.Tests.CoordinateTransformTestsBase")]
+[assembly: SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test helper shape is retained to minimize churn in legacy test fixtures.", Scope = "type", Target = "~T:ProjNET.Tests.SharpMapIssues")]
+[assembly: SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "Test helper shape is retained to minimize churn in legacy test fixtures.", Scope = "type", Target = "~T:ProjNET.Tests.WKT.WKTCoordSysParserTests")]
