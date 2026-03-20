@@ -32,6 +32,28 @@ namespace ProjNet.CoordinateSystems
         private CoordinateSystem headCoordinateSystem;
         private CoordinateSystem tailCoordinateSystem;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CompoundCoordinateSystem"/> class.
+        /// A compound coordinate system.
+        /// </summary>
+        /// <param name="headcs">The head (first) coordinate system.</param>
+        /// <param name="tailcs">The tail (second) coordinate system.</param>
+        /// <param name="name">Name.</param>
+        /// <param name="authority">Authority name.</param>
+        /// <param name="authorityCode">Authority-specific identification code.</param>
+        /// <param name="alias">Alias.</param>
+        /// <param name="abbreviation">Abbreviation.</param>
+        /// <param name="remarks">Optional information.</param>
+        public CompoundCoordinateSystem(CoordinateSystem headcs, CoordinateSystem tailcs, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks)
+            : base(name, authority, authorityCode, alias, abbreviation, remarks)
+        {
+            this.headCoordinateSystem = headcs;
+            this.tailCoordinateSystem = tailcs;
+            this.AxisInfo = new List<AxisInfo>();
+            this.AxisInfo.AddRange(this.HeadCoordinateSystem.AxisInfo);
+            this.AxisInfo.AddRange(this.TailCoordinateSystem.AxisInfo);
+        }
+
         /// <inheritdoc/>
         public override string WKT
         {
@@ -86,28 +108,6 @@ namespace ProjNet.CoordinateSystems
         public CoordinateSystem TailCoordinateSystem
         {
             get => this.tailCoordinateSystem; set { this.tailCoordinateSystem = value; }
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CompoundCoordinateSystem"/> class.
-        /// A compound coordinate system.
-        /// </summary>
-        /// <param name="headcs">The head (first) coordinate system.</param>
-        /// <param name="tailcs">The tail (second) coordinate system.</param>
-        /// <param name="name">Name.</param>
-        /// <param name="authority">Authority name.</param>
-        /// <param name="authorityCode">Authority-specific identification code.</param>
-        /// <param name="alias">Alias.</param>
-        /// <param name="abbreviation">Abbreviation.</param>
-        /// <param name="remarks">Optional information.</param>
-        public CompoundCoordinateSystem(CoordinateSystem headcs, CoordinateSystem tailcs, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks)
-            : base(name, authority, authorityCode, alias, abbreviation, remarks)
-        {
-            this.headCoordinateSystem = headcs;
-            this.tailCoordinateSystem = tailcs;
-            this.AxisInfo = new List<AxisInfo>();
-            this.AxisInfo.AddRange(this.HeadCoordinateSystem.AxisInfo);
-            this.AxisInfo.AddRange(this.TailCoordinateSystem.AxisInfo);
         }
 
         /// <inheritdoc/>

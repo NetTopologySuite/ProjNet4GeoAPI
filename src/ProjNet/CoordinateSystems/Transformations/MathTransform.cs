@@ -35,6 +35,16 @@ namespace ProjNet.CoordinateSystems.Transformations
     public abstract class MathTransform
     {
         /// <summary>
+        /// Constant for converting Degrees to Radians.
+        /// </summary>
+        protected const double D2R = Math.PI / 180;
+
+        /// <summary>
+        /// Constant for converting Radians to Degrees.
+        /// </summary>
+        protected const double R2D = 180 / Math.PI;
+
+        /// <summary>
         /// Gets the dimension of input points.
         /// </summary>
         public abstract int DimSource { get; }
@@ -139,11 +149,6 @@ namespace ProjNet.CoordinateSystems.Transformations
         public abstract void Invert();
 
         /// <summary>
-        /// Constant for converting Degrees to Radians.
-        /// </summary>
-        protected const double D2R = Math.PI / 180;
-
-        /// <summary>
         /// Converts a degree-value (<paramref name="deg"/>) to a radian-value by multiplying it with <c><see cref="Math.PI"/> / 180.0</c>.
         /// </summary>
         /// <param name="deg">The deg value.</param>
@@ -162,11 +167,6 @@ namespace ProjNet.CoordinateSystems.Transformations
         {
             MultiplyInPlace(degrees, stride, D2R);
         }
-
-        /// <summary>
-        /// Constant for converting Radians to Degrees.
-        /// </summary>
-        protected const double R2D = 180 / Math.PI;
 
         /// <summary>
         /// Converts a radian-value (<paramref name="rad"/>) to a degree-value by multiplying it with <c>180.0 / <see cref="Math.PI"/></c>.

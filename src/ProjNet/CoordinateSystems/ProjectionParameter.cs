@@ -32,6 +32,9 @@ namespace ProjNet.CoordinateSystems
     [Serializable]
     public class ProjectionParameter
     {
+        private string name;
+        private double val;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="ProjectionParameter"/> class.
         /// Initializes an instance of a ProjectionParameter.
@@ -44,8 +47,6 @@ namespace ProjNet.CoordinateSystems
             this.Value = value;
         }
 
-        private string name;
-
         /// <summary>
         /// Gets or sets parameter name.
         /// </summary>
@@ -54,8 +55,6 @@ namespace ProjNet.CoordinateSystems
             get { return this.name; }
             set { this.name = value; }
         }
-
-        private double val;
 
         /// <summary>
         /// Gets or sets parameter value.

@@ -32,6 +32,9 @@ namespace ProjNet.CoordinateSystems
     [Serializable]
     public class Projection : Info, IProjection
     {
+        private List<ProjectionParameter> parameters;
+        private string className;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="Projection"/> class.
         /// </summary>
@@ -65,8 +68,6 @@ namespace ProjNet.CoordinateSystems
         {
             get { return this.parameters.Count; }
         }
-
-        private List<ProjectionParameter> parameters;
 
         /// <summary>
         /// Gets or sets the parameters of the projection.
@@ -105,8 +106,6 @@ namespace ProjNet.CoordinateSystems
 
             return null;
         }
-
-        private string className;
 
         /// <summary>
         /// Gets the projection classification name (e.g. "Transverse_Mercator").

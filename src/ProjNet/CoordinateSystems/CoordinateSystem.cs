@@ -40,6 +40,9 @@ namespace ProjNet.CoordinateSystems
     [Serializable]
     public abstract class CoordinateSystem : Info
     {
+        private List<AxisInfo> axisInfo;
+        private double[] defaultEnvelope;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="CoordinateSystem"/> class.
         /// Initializes a new instance of a coordinate system.
@@ -71,8 +74,6 @@ namespace ProjNet.CoordinateSystems
         /// <returns>The computed value.</returns>
         public abstract IUnit GetUnits(int dimension);
 
-        private List<AxisInfo> axisInfo;
-
         /// <summary>
         /// Gets or sets the axis definitions for this coordinate system.
         /// </summary>
@@ -96,8 +97,6 @@ namespace ProjNet.CoordinateSystems
 
             return this.AxisInfo[dimension];
         }
-
-        private double[] defaultEnvelope;
 
         /// <summary>
         /// Gets or sets default envelope of coordinate system.

@@ -31,6 +31,16 @@ namespace ProjNet.CoordinateSystems
     public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSystem
     {
         /// <summary>
+        /// Gets represents math transform that injects itself into the base coordinate system.
+        /// </summary>
+        public MathTransform ToBaseTransform { get; }
+
+        /// <summary>
+        /// Gets underlying coordinate system.
+        /// </summary>
+        public CoordinateSystem BaseCoordinateSystem { get; }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="FittedCoordinateSystem"/> class.
         /// Creates an instance of FittedCoordinateSystem using the specified parameters.
         /// </summary>
@@ -63,16 +73,6 @@ namespace ProjNet.CoordinateSystems
                 base.AxisInfo.Add(baseSystem.GetAxis(dim));
             }
         }
-
-        /// <summary>
-        /// Gets represents math transform that injects itself into the base coordinate system.
-        /// </summary>
-        public MathTransform ToBaseTransform { get; }
-
-        /// <summary>
-        /// Gets underlying coordinate system.
-        /// </summary>
-        public CoordinateSystem BaseCoordinateSystem { get; }
 
         /// <summary>
         /// Gets Well-Known Text of a math transform to the base coordinate system.

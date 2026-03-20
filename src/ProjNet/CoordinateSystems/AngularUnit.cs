@@ -30,6 +30,7 @@ namespace ProjNet.CoordinateSystems
         /// Equality tolerance value. Values with a difference less than this are considered equal.
         /// </summary>
         private const double EqualityTolerance = 2.0e-17;
+        private double radiansPerUnit;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AngularUnit"/> class.
@@ -90,8 +91,6 @@ namespace ProjNet.CoordinateSystems
         {
             get { return new AngularUnit(0.015707963267948966192313216916398, "gon", "EPSG", 9106, "g", string.Empty, "=pi/200 radians."); }
         }
-
-        private double radiansPerUnit;
 
         /// <summary>
         /// Gets or sets the number of radians per <see cref="AngularUnit"/>.

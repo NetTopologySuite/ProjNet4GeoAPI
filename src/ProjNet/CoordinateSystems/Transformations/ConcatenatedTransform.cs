@@ -26,6 +26,9 @@ namespace ProjNet.CoordinateSystems.Transformations
     [Serializable]
     internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationCore
     {
+        private static readonly CoordinateTransformationFactory CoordinateTransformationFactory =
+                new CoordinateTransformationFactory();
+
         /// <summary>
         ///
         /// </summary>
@@ -141,9 +144,6 @@ namespace ProjNet.CoordinateSystems.Transformations
 
             return new ConcatenatedTransform(clonedList);
         }
-
-        private static readonly CoordinateTransformationFactory CoordinateTransformationFactory =
-                new CoordinateTransformationFactory();
 
         private static ICoordinateTransformationCore CloneCoordinateTransformation(ICoordinateTransformationCore ict)
         {

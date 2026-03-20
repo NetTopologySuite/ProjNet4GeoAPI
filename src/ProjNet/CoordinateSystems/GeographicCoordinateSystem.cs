@@ -95,17 +95,6 @@ namespace ProjNet.CoordinateSystems
         public AngularUnit AngularUnit { get; set; }
 
         /// <summary>
-        /// Gets units for dimension within coordinate system. Each dimension in
-        /// the coordinate system has corresponding units.
-        /// </summary>
-        /// <param name="dimension">Dimension.</param>
-        /// <returns>Unit.</returns>
-        public override IUnit GetUnits(int dimension)
-        {
-            return this.AngularUnit;
-        }
-
-        /// <summary>
         /// Gets or sets the prime meridian of the geographic coordinate system.
         /// </summary>
         public PrimeMeridian PrimeMeridian { get; set; }
@@ -122,16 +111,6 @@ namespace ProjNet.CoordinateSystems
         /// Gets the documented value.
         /// </summary>
         internal List<Wgs84ConversionInfo> WGS84ConversionInfo { get; set; }
-
-        /// <summary>
-        /// Gets details on a conversion to WGS84.
-        /// </summary>
-        /// <param name="index">The index value.</param>
-        /// <returns>The computed value.</returns>
-        public Wgs84ConversionInfo GetWgs84ConversionInfo(int index)
-        {
-            return this.WGS84ConversionInfo[index];
-        }
 
         /// <summary>
         /// Gets the Well-known text for this object
@@ -163,6 +142,27 @@ namespace ProjNet.CoordinateSystems
                 sb.Append("]");
                 return sb.ToString();
             }
+        }
+
+        /// <summary>
+        /// Gets units for dimension within coordinate system. Each dimension in
+        /// the coordinate system has corresponding units.
+        /// </summary>
+        /// <param name="dimension">Dimension.</param>
+        /// <returns>Unit.</returns>
+        public override IUnit GetUnits(int dimension)
+        {
+            return this.AngularUnit;
+        }
+
+        /// <summary>
+        /// Gets details on a conversion to WGS84.
+        /// </summary>
+        /// <param name="index">The index value.</param>
+        /// <returns>The computed value.</returns>
+        public Wgs84ConversionInfo GetWgs84ConversionInfo(int index)
+        {
+            return this.WGS84ConversionInfo[index];
         }
 
         /// <summary>

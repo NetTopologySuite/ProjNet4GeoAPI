@@ -25,6 +25,9 @@ namespace ProjNet.CoordinateSystems
     [Serializable]
     public class AxisInfo
     {
+        private string name;
+        private AxisOrientationEnum orientation;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="AxisInfo"/> class.
         /// Initializes a new instance of an AxisInfo.
@@ -37,8 +40,6 @@ namespace ProjNet.CoordinateSystems
             this.Orientation = orientation;
         }
 
-        private string name;
-
         /// <summary>
         /// Gets or sets human readable name for axis. Possible values are X, Y, Long, Lat or any other short string.
         /// </summary>
@@ -47,8 +48,6 @@ namespace ProjNet.CoordinateSystems
             get { return this.name; }
             set { this.name = value; }
         }
-
-        private AxisOrientationEnum orientation;
 
         /// <summary>
         /// Gets or sets enumerated value for orientation.

@@ -47,6 +47,46 @@ namespace ProjNet.CoordinateSystems
         private const double SECTORAD = 4.84813681109535993589914102357e-6;
 
         /// <summary>
+        /// Bursa Wolf shift in meters.
+        /// </summary>
+        public double Dx;
+
+        /// <summary>
+        /// Bursa Wolf shift in meters.
+        /// </summary>
+        public double Dy;
+
+        /// <summary>
+        /// Bursa Wolf shift in meters.
+        /// </summary>
+        public double Dz;
+
+        /// <summary>
+        /// Bursa Wolf rotation in arc seconds.
+        /// </summary>
+        public double Ex;
+
+        /// <summary>
+        /// Bursa Wolf rotation in arc seconds.
+        /// </summary>
+        public double Ey;
+
+        /// <summary>
+        /// Bursa Wolf rotation in arc seconds.
+        /// </summary>
+        public double Ez;
+
+        /// <summary>
+        /// Bursa Wolf scaling in parts per million.
+        /// </summary>
+        public double Ppm;
+
+        /// <summary>
+        /// Human readable text describing intended region of transformation.
+        /// </summary>
+        public string AreaOfUse;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Wgs84ConversionInfo"/> class.
         /// Initializes an instance of Wgs84ConversionInfo with default parameters (all values = 0).
         /// </summary>
@@ -89,46 +129,6 @@ namespace ProjNet.CoordinateSystems
             this.Ppm = ppm;
             this.AreaOfUse = areaOfUse;
         }
-
-        /// <summary>
-        /// Bursa Wolf shift in meters.
-        /// </summary>
-        public double Dx;
-
-        /// <summary>
-        /// Bursa Wolf shift in meters.
-        /// </summary>
-        public double Dy;
-
-        /// <summary>
-        /// Bursa Wolf shift in meters.
-        /// </summary>
-        public double Dz;
-
-        /// <summary>
-        /// Bursa Wolf rotation in arc seconds.
-        /// </summary>
-        public double Ex;
-
-        /// <summary>
-        /// Bursa Wolf rotation in arc seconds.
-        /// </summary>
-        public double Ey;
-
-        /// <summary>
-        /// Bursa Wolf rotation in arc seconds.
-        /// </summary>
-        public double Ez;
-
-        /// <summary>
-        /// Bursa Wolf scaling in parts per million.
-        /// </summary>
-        public double Ppm;
-
-        /// <summary>
-        /// Human readable text describing intended region of transformation.
-        /// </summary>
-        public string AreaOfUse;
 
         /// <summary>
         /// Affine Bursa-Wolf matrix transformation.
