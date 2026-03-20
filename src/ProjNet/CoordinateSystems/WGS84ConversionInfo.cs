@@ -41,6 +41,7 @@ namespace ProjNet.CoordinateSystems
     /// application can assume that the writing application believed that the datum is approximately equal to
     /// WGS84.</para>
     /// </remarks>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1051:Do not declare visible instance fields", Justification = "Legacy Bursa-Wolf parameter fields are part of the long-standing public API.")]
     [Serializable]
     public class Wgs84ConversionInfo
     {
