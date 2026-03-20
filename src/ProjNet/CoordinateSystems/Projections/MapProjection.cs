@@ -346,10 +346,10 @@ namespace ProjNet.CoordinateSystems.Projections
 
                 // if (!string.IsNullOrWhiteSpace(Authority) && AuthorityCode > 0)
                 // sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
-                sb.Append("]");
+                sb.Append(']');
                 if (this.IsInverse)
                 {
-                    sb.Append("]");
+                    sb.Append(']');
                 }
 
                 return sb.ToString();
@@ -1320,3 +1320,4 @@ for (var i = 0; i < _Parameters.Count; i++)
         }
     }
 }
+

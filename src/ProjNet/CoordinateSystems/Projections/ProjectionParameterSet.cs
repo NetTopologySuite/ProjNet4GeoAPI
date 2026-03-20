@@ -117,7 +117,7 @@ namespace ProjNet.CoordinateSystems.Projections
                         sb.AppendFormat(CultureInfo.InvariantCulture, ", '{0}'", alternateNames[i]);
                     }
 
-                    sb.Append(".");
+                    sb.Append('.');
                 }
 
                 throw new ArgumentException(sb.ToString(), "parameterName");
@@ -253,3 +253,4 @@ namespace ProjNet.CoordinateSystems.Projections
         }
     }
 }
+

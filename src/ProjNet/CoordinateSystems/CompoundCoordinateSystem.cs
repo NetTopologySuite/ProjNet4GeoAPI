@@ -66,7 +66,7 @@ namespace ProjNet.CoordinateSystems
                     sb.Append($",AUTHORITY[\"{this.Authority}\",\"{this.AuthorityCode}\"]");
                 }
 
-                sb.Append("]");
+                sb.Append(']');
                 return sb.ToString();
             }
         }
@@ -138,3 +138,4 @@ namespace ProjNet.CoordinateSystems
         }
     }
 }
+

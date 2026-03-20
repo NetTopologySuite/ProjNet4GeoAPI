@@ -129,11 +129,11 @@ namespace ProjNet.CoordinateSystems.Transformations
                 // append parameters
                 foreach (var param in this.GetParameterValues())
                 {
-                    sb.Append(",");
+                    sb.Append(',');
                     sb.Append(param.WKT);
                 }
 
-                sb.Append("]");
+                sb.Append(']');
                 return sb.ToString();
             }
         }
@@ -496,3 +496,4 @@ namespace ProjNet.CoordinateSystems.Transformations
         }
     }
 }
+

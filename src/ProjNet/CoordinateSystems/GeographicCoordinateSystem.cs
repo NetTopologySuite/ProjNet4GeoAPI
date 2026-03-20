@@ -139,7 +139,7 @@ namespace ProjNet.CoordinateSystems
                     sb.AppendFormat(CultureInfo.InvariantCulture, ", AUTHORITY[\"{0}\", \"{1}\"]", this.Authority, this.AuthorityCode);
                 }
 
-                sb.Append("]");
+                sb.Append(']');
                 return sb.ToString();
             }
         }
@@ -257,3 +257,4 @@ namespace ProjNet.CoordinateSystems
         }
     }
 }
+
