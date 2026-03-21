@@ -14,28 +14,27 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-namespace ProjNet.IO.CoordinateSystems
+namespace ProjNet.IO.CoordinateSystems;
+
+/// <summary>
+/// An enumeration of possible bracket types.
+/// </summary>
+internal enum WktBracket
 {
     /// <summary>
-    /// An enumeration of possible bracket types.
+    /// Bracket type not specified.
     /// </summary>
-    internal enum WktBracket
-    {
-        /// <summary>
-        /// Bracket type not specified.
-        /// </summary>
-        DontCare,
+    DontCare,
 
-        /// <summary>
-        /// Opener &quot;<c>(</c>&quot;, closer &quot;<c>)</c>&quot;.
-        /// </summary>
-        Round,
+    /// <summary>
+    /// Opener &quot;<c>(</c>&quot;, closer &quot;<c>)</c>&quot;.
+    /// </summary>
+    Round,
 
-        /// <summary>
-        /// Opener &quot;<c>[</c>&quot;, closer &quot;<c>]</c>&quot;.
-        /// </summary>
-        Square,
+    /// <summary>
+    /// Opener &quot;<c>[</c>&quot;, closer &quot;<c>]</c>&quot;.
+    /// </summary>
+    Square,
 
-        // Brace
-    }
+    // Brace
 }

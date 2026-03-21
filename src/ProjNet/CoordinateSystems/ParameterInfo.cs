@@ -14,72 +14,71 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-namespace ProjNet.CoordinateSystems
+namespace ProjNet.CoordinateSystems;
+
+using System;
+using System.Collections.Generic;
+
+/// <summary>
+/// Simple class that implements the IParameterInfo interface for providing general set of the parameters.
+/// It allows discovering the names, and for setting and getting parameter values.
+/// </summary>
+[Serializable]
+internal class ParameterInfo
 {
-    using System;
-    using System.Collections.Generic;
-
     /// <summary>
-    /// Simple class that implements the IParameterInfo interface for providing general set of the parameters.
-    /// It allows discovering the names, and for setting and getting parameter values.
+    /// Gets the number of parameters expected.
     /// </summary>
-    [Serializable]
-    internal class ParameterInfo
+    public int NumParameters
     {
-        /// <summary>
-        /// Gets the number of parameters expected.
-        /// </summary>
-        public int NumParameters
-        {
-            get
-            {
-                if (this.Parameters != null)
-                {
-                    return this.Parameters.Count;
-                }
-
-                return 0;
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the parameters set for this projection.
-        /// </summary>
-        public List<Parameter> Parameters
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// Returns the default parameters for this projection.
-        /// </summary>
-        /// <returns>The transformation result.</returns>
-        public Parameter[] DefaultParameters()
-        {
-            return Array.Empty<Parameter>();
-        }
-
-        /// <summary>
-        /// Gets the parameter by its name.
-        /// </summary>
-        /// <param name="name">The name parameter.</param>
-        /// <returns>The transformation result.</returns>
-        public Parameter GetParameterByName(string name)
+        get
         {
             if (this.Parameters != null)
             {
-                // search parameter collection by name
-                foreach (var param in this.Parameters)
-                {
-                    if (param != null && param.Name == name)
-                    {
-                        return param;
-                    }
-                }
+                return this.Parameters.Count;
             }
 
-            return null;
+            return 0;
         }
+    }
+
+    /// <summary>
+    /// Gets or sets the parameters set for this projection.
+    /// </summary>
+    public List<Parameter> Parameters
+    {
+        get;
+        set;
+    }
+
+    /// <summary>
+    /// Returns the default parameters for this projection.
+    /// </summary>
+    /// <returns>The transformation result.</returns>
+    public Parameter[] DefaultParameters()
+    {
+        return Array.Empty<Parameter>();
+    }
+
+    /// <summary>
+    /// Gets the parameter by its name.
+    /// </summary>
+    /// <param name="name">The name parameter.</param>
+    /// <returns>The transformation result.</returns>
+    public Parameter GetParameterByName(string name)
+    {
+        if (this.Parameters != null)
+        {
+            // search parameter collection by name
+            foreach (var param in this.Parameters)
+            {
+                if (param != null && param.Name == name)
+                {
+                    return param;
+                }
+            }
+        }
+
+        return null;
     }
 }

@@ -15,75 +15,74 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-namespace ProjNet.CoordinateSystems.Projections
+namespace ProjNet.CoordinateSystems.Projections;
+
+using System;
+using System.Collections.Generic;
+using ProjNet.CoordinateSystems.Transformations;
+
+/// <summary>
+/// Represents the documented type.
+/// </summary>
+[Serializable]
+internal class EquidistantCylindricalProjection : MapProjection
 {
-    using System;
-    using System.Collections.Generic;
-    using ProjNet.CoordinateSystems.Transformations;
+    private readonly double radius;
+    private readonly double inverseRadius;
+    private readonly double cosStandardParallel;
 
     /// <summary>
-    /// Represents the documented type.
+    /// Initializes a new instance of the <see cref="EquidistantCylindricalProjection"/> class.
     /// </summary>
-    [Serializable]
-    internal class EquidistantCylindricalProjection : MapProjection
+    /// <param name="parameters">Projection parameters.</param>
+    public EquidistantCylindricalProjection(IEnumerable<ProjectionParameter> parameters)
+        : this(parameters, null)
     {
-        private readonly double radius;
-        private readonly double inverseRadius;
-        private readonly double cosStandardParallel;
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="EquidistantCylindricalProjection"/> class.
-        /// </summary>
-        /// <param name="parameters">Projection parameters.</param>
-        public EquidistantCylindricalProjection(IEnumerable<ProjectionParameter> parameters)
-            : this(parameters, null)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="EquidistantCylindricalProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    /// <param name="inverse">Inverse transform instance when cloning.</param>
+    public EquidistantCylindricalProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+        : base(parameters, inverse)
+    {
+        this.Name = "Equidistant_Cylindrical";
+        this.radius = this.semiMajor * this.scaleFactor;
+        this.inverseRadius = 1d / this.radius;
+
+        double standardParallel = DegreesToRadians(this.Parameters.GetOptionalParameterValue("standard_parallel_1", 0d, "latitude_of_true_scale"));
+        this.cosStandardParallel = Math.Cos(standardParallel);
+        if (Math.Abs(this.cosStandardParallel) <= EPS10)
         {
+            throw new ArgumentException("The standard parallel cannot be at the poles.");
+        }
+    }
+
+    /// <inheritdoc />
+    public override MathTransform Inverse()
+    {
+        if (this.inverse is null)
+        {
+            this.inverse = new EquidistantCylindricalProjection(this.Parameters.ToProjectionParameter(), this);
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="EquidistantCylindricalProjection"/> class.
-        /// </summary>
-        /// <param name="parameters">Projection parameters.</param>
-        /// <param name="inverse">Inverse transform instance when cloning.</param>
-        public EquidistantCylindricalProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
-            : base(parameters, inverse)
-        {
-            this.Name = "Equidistant_Cylindrical";
-            this.radius = this.semiMajor * this.scaleFactor;
-            this.inverseRadius = 1d / this.radius;
+        return this.inverse;
+    }
 
-            double standardParallel = DegreesToRadians(this.Parameters.GetOptionalParameterValue("standard_parallel_1", 0d, "latitude_of_true_scale"));
-            this.cosStandardParallel = Math.Cos(standardParallel);
-            if (Math.Abs(this.cosStandardParallel) <= EPS10)
-            {
-                throw new ArgumentException("The standard parallel cannot be at the poles.");
-            }
-        }
+    /// <inheritdoc />
+    protected override void RadiansToMeters(ref double lon, ref double lat)
+    {
+        double lambda = Adjust_lon(lon - this.centralMeridian);
+        lon = this.radius * lambda * this.cosStandardParallel;
+        lat = this.radius * (lat - this.latOrigin);
+    }
 
-        /// <inheritdoc />
-        public override MathTransform Inverse()
-        {
-            if (this.inverse is null)
-            {
-                this.inverse = new EquidistantCylindricalProjection(this.Parameters.ToProjectionParameter(), this);
-            }
-
-            return this.inverse;
-        }
-
-        /// <inheritdoc />
-        protected override void RadiansToMeters(ref double lon, ref double lat)
-        {
-            double lambda = Adjust_lon(lon - this.centralMeridian);
-            lon = this.radius * lambda * this.cosStandardParallel;
-            lat = this.radius * (lat - this.latOrigin);
-        }
-
-        /// <inheritdoc />
-        protected override void MetersToRadians(ref double x, ref double y)
-        {
-            x = Adjust_lon(this.centralMeridian + ((x * this.inverseRadius) / this.cosStandardParallel));
-            y = this.latOrigin + (y * this.inverseRadius);
-        }
+    /// <inheritdoc />
+    protected override void MetersToRadians(ref double x, ref double y)
+    {
+        x = Adjust_lon(this.centralMeridian + ((x * this.inverseRadius) / this.cosStandardParallel));
+        y = this.latOrigin + (y * this.inverseRadius);
     }
 }

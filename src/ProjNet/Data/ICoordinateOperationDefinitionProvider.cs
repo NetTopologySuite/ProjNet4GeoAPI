@@ -15,19 +15,18 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-namespace ProjNet.Data
-{
-    using System.Collections.Generic;
+namespace ProjNet.Data;
 
+using System.Collections.Generic;
+
+/// <summary>
+/// Provides coordinate operation definitions from a backing catalog.
+/// </summary>
+internal interface ICoordinateOperationDefinitionProvider
+{
     /// <summary>
-    /// Provides coordinate operation definitions from a backing catalog.
+    /// Gets the coordinate operation definitions.
     /// </summary>
-    internal interface ICoordinateOperationDefinitionProvider
-    {
-        /// <summary>
-        /// Gets the coordinate operation definitions.
-        /// </summary>
-        /// <returns>A sequence of coordinate operation definitions.</returns>
-        IEnumerable<CoordinateOperationDefinition> GetDefinitions();
-    }
+    /// <returns>A sequence of coordinate operation definitions.</returns>
+    IEnumerable<CoordinateOperationDefinition> GetDefinitions();
 }

@@ -15,260 +15,259 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-namespace ProjNet.CoordinateSystems.Projections
+namespace ProjNet.CoordinateSystems.Projections;
+
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Text;
+
+/// <summary>
+/// A set of projection parameters.
+/// </summary>
+// TODO: KeyedCollection<string, double>
+[Serializable]
+public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<ProjectionParameterSet>
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Text;
+    private readonly Dictionary<string, string> originalNames = new Dictionary<string, string>();
+    private readonly Dictionary<int, string> originalIndex = new Dictionary<int, string>();
 
     /// <summary>
-    /// A set of projection parameters.
+    /// Initializes a new instance of the <see cref="ProjectionParameterSet"/> class.
+    /// Needed for serialzation.
     /// </summary>
-    // TODO: KeyedCollection<string, double>
-    [Serializable]
-    public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<ProjectionParameterSet>
+    /// <param name="context">The context value.</param>
+    /// <param name="info">The info value.</param>
+    public ProjectionParameterSet(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
+        : base(info, context)
     {
-        private readonly Dictionary<string, string> originalNames = new Dictionary<string, string>();
-        private readonly Dictionary<int, string> originalIndex = new Dictionary<int, string>();
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ProjectionParameterSet"/> class.
-        /// Needed for serialzation.
-        /// </summary>
-        /// <param name="context">The context value.</param>
-        /// <param name="info">The info value.</param>
-        public ProjectionParameterSet(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-            : base(info, context)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ProjectionParameterSet"/> class.
+    /// Creates an instance of this class.
+    /// </summary>
+    /// <param name="parameters">An enumeration of parameters.</param>
+    public ProjectionParameterSet(IEnumerable<ProjectionParameter> parameters)
+    {
+        if (parameters is null)
         {
+            throw new ArgumentNullException(nameof(parameters));
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ProjectionParameterSet"/> class.
-        /// Creates an instance of this class.
-        /// </summary>
-        /// <param name="parameters">An enumeration of parameters.</param>
-        public ProjectionParameterSet(IEnumerable<ProjectionParameter> parameters)
+        foreach (var pp in parameters)
         {
-            if (parameters is null)
-            {
-                throw new ArgumentNullException(nameof(parameters));
-            }
+            string key = pp.Name.ToLowerInvariant();
+            this.originalNames.Add(key, pp.Name);
+            this.originalIndex.Add(this.originalIndex.Count, key);
+            this.Add(key, pp.Value);
+        }
+    }
 
-            foreach (var pp in parameters)
-            {
-                string key = pp.Name.ToLowerInvariant();
-                this.originalNames.Add(key, pp.Name);
-                this.originalIndex.Add(this.originalIndex.Count, key);
-                this.Add(key, pp.Value);
-            }
+    /// <summary>
+    /// Function to create an enumeration of <see cref="ProjectionParameter"/>s of the content of this projection parameter set.
+    /// </summary>
+    /// <returns>An enumeration of <see cref="ProjectionParameter"/>s.</returns>
+    public IEnumerable<ProjectionParameter> ToProjectionParameter()
+    {
+        foreach (var oi in this.originalIndex)
+        {
+            yield return new ProjectionParameter(this.originalNames[oi.Value], this[oi.Value]);
+        }
+    }
+
+    /// <summary>
+    /// Function to get the value of a mandatory projection parameter.
+    /// </summary>
+    /// <returns>The value of the parameter.</returns>
+    /// <param name="parameterName">The name of the parameter.</param>
+    /// <param name="alternateNames">Possible alternate names for <paramref name="parameterName"/>.</param>
+    /// <exception cref="ArgumentException">Thrown if. <paramref name="parameterName"> or any of <paramref name="alternateNames"/> is not defined.</paramref></exception>
+    public double GetParameterValue(string parameterName, params string[] alternateNames)
+    {
+        if (parameterName is null)
+        {
+            throw new ArgumentNullException(nameof(parameterName));
         }
 
-        /// <summary>
-        /// Function to create an enumeration of <see cref="ProjectionParameter"/>s of the content of this projection parameter set.
-        /// </summary>
-        /// <returns>An enumeration of <see cref="ProjectionParameter"/>s.</returns>
-        public IEnumerable<ProjectionParameter> ToProjectionParameter()
+        if (alternateNames is null)
         {
-            foreach (var oi in this.originalIndex)
-            {
-                yield return new ProjectionParameter(this.originalNames[oi.Value], this[oi.Value]);
-            }
+            throw new ArgumentNullException(nameof(alternateNames));
         }
 
-        /// <summary>
-        /// Function to get the value of a mandatory projection parameter.
-        /// </summary>
-        /// <returns>The value of the parameter.</returns>
-        /// <param name="parameterName">The name of the parameter.</param>
-        /// <param name="alternateNames">Possible alternate names for <paramref name="parameterName"/>.</param>
-        /// <exception cref="ArgumentException">Thrown if. <paramref name="parameterName"> or any of <paramref name="alternateNames"/> is not defined.</paramref></exception>
-        public double GetParameterValue(string parameterName, params string[] alternateNames)
+        string name = parameterName.ToLowerInvariant();
+        if (!this.ContainsKey(name))
         {
-            if (parameterName is null)
+            foreach (string alternateName in alternateNames)
             {
-                throw new ArgumentNullException(nameof(parameterName));
-            }
-
-            if (alternateNames is null)
-            {
-                throw new ArgumentNullException(nameof(alternateNames));
-            }
-
-            string name = parameterName.ToLowerInvariant();
-            if (!this.ContainsKey(name))
-            {
-                foreach (string alternateName in alternateNames)
+                double res;
+                if (this.TryGetValue(alternateName.ToLowerInvariant(), out res))
                 {
-                    double res;
-                    if (this.TryGetValue(alternateName.ToLowerInvariant(), out res))
-                    {
-                        return res;
-                    }
+                    return res;
+                }
+            }
+
+            var sb = new StringBuilder();
+            sb.AppendFormat(CultureInfo.InvariantCulture, "Missing projection parameter '{0}'", parameterName);
+            if (alternateNames.Length > 0)
+            {
+                sb.AppendFormat(CultureInfo.InvariantCulture, "\nIt is also not defined as '{0}'", alternateNames[0]);
+                for (int i = 1; i < alternateNames.Length; i++)
+                {
+                    sb.AppendFormat(CultureInfo.InvariantCulture, ", '{0}'", alternateNames[i]);
                 }
 
-                var sb = new StringBuilder();
-                sb.AppendFormat(CultureInfo.InvariantCulture, "Missing projection parameter '{0}'", parameterName);
-                if (alternateNames.Length > 0)
+                sb.Append('.');
+            }
+
+            throw new ArgumentException(sb.ToString(), nameof(parameterName));
+        }
+
+        return this[name];
+    }
+
+    /// <summary>
+    /// Method to check if all mandatory projection parameters are passed.
+    /// </summary>
+    /// <param name="name">The name value.</param>
+    /// <param name="value">The value value.</param>
+    /// <param name="alternateNames">The alternateNames value.</param>
+    /// <returns>The computed value.</returns>
+    public double GetOptionalParameterValue(string name, double value, params string[] alternateNames)
+    {
+        if (name is null)
+        {
+            throw new ArgumentNullException(nameof(name));
+        }
+
+        if (alternateNames is null)
+        {
+            throw new ArgumentNullException(nameof(alternateNames));
+        }
+
+        name = name.ToLowerInvariant();
+        if (!this.ContainsKey(name))
+        {
+            foreach (string alternateName in alternateNames)
+            {
+                double res;
+                if (this.TryGetValue(alternateName.ToLowerInvariant(), out res))
                 {
-                    sb.AppendFormat(CultureInfo.InvariantCulture, "\nIt is also not defined as '{0}'", alternateNames[0]);
-                    for (int i = 1; i < alternateNames.Length; i++)
-                    {
-                        sb.AppendFormat(CultureInfo.InvariantCulture, ", '{0}'", alternateNames[i]);
-                    }
-
-                    sb.Append('.');
+                    return res;
                 }
-
-                throw new ArgumentException(sb.ToString(), nameof(parameterName));
             }
 
-            return this[name];
+            // Add(name, value);
+            return value;
         }
 
-        /// <summary>
-        /// Method to check if all mandatory projection parameters are passed.
-        /// </summary>
-        /// <param name="name">The name value.</param>
-        /// <param name="value">The value value.</param>
-        /// <param name="alternateNames">The alternateNames value.</param>
-        /// <returns>The computed value.</returns>
-        public double GetOptionalParameterValue(string name, double value, params string[] alternateNames)
+        return this[name];
+    }
+
+    /// <summary>
+    /// Function to find a parameter based on its name.
+    /// </summary>
+    /// <param name="name">The name of the parameter.</param>
+    /// <returns>The parameter if present, otherwise null.</returns>
+    public ProjectionParameter Find(string name)
+    {
+        if (name is null)
         {
-            if (name is null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
-
-            if (alternateNames is null)
-            {
-                throw new ArgumentNullException(nameof(alternateNames));
-            }
-
-            name = name.ToLowerInvariant();
-            if (!this.ContainsKey(name))
-            {
-                foreach (string alternateName in alternateNames)
-                {
-                    double res;
-                    if (this.TryGetValue(alternateName.ToLowerInvariant(), out res))
-                    {
-                        return res;
-                    }
-                }
-
-                // Add(name, value);
-                return value;
-            }
-
-            return this[name];
+            throw new ArgumentNullException(nameof(name));
         }
 
-        /// <summary>
-        /// Function to find a parameter based on its name.
-        /// </summary>
-        /// <param name="name">The name of the parameter.</param>
-        /// <returns>The parameter if present, otherwise null.</returns>
-        public ProjectionParameter Find(string name)
-        {
-            if (name is null)
-            {
-                throw new ArgumentNullException(nameof(name));
-            }
+        name = name.ToLowerInvariant();
+        return this.ContainsKey(name) ? new ProjectionParameter(this.originalNames[name], this[name]) : null;
+    }
 
-            name = name.ToLowerInvariant();
-            return this.ContainsKey(name) ? new ProjectionParameter(this.originalNames[name], this[name]) : null;
+    /// <summary>
+    /// Function to get the parameter at the given index.
+    /// </summary>
+    /// <param name="index">The index.</param>
+    /// <returns>The parameter.</returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="index"/> is outside the valid parameter range.</exception>
+    public ProjectionParameter GetAtIndex(int index)
+    {
+        if (index < 0 || index >= this.Count)
+        {
+            throw new ArgumentOutOfRangeException(nameof(index));
         }
 
-        /// <summary>
-        /// Function to get the parameter at the given index.
-        /// </summary>
-        /// <param name="index">The index.</param>
-        /// <returns>The parameter.</returns>
-        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="index"/> is outside the valid parameter range.</exception>
-        public ProjectionParameter GetAtIndex(int index)
-        {
-            if (index < 0 || index >= this.Count)
-            {
-                throw new ArgumentOutOfRangeException(nameof(index));
-            }
+        string name = this.originalIndex[index];
+        return new ProjectionParameter(this.originalNames[name], this[name]);
+    }
 
-            string name = this.originalIndex[index];
-            return new ProjectionParameter(this.originalNames[name], this[name]);
+    /// <summary>
+    /// Checks this projection parameter set with <paramref name="other"/>-.
+    /// </summary>
+    /// <param name="other">The other projection parameter set.</param>
+    /// <returns><value>true</value> if both sets are equal.</returns>
+    public bool Equals(ProjectionParameterSet other)
+    {
+        if (other == null)
+        {
+            return false;
         }
 
-        /// <summary>
-        /// Checks this projection parameter set with <paramref name="other"/>-.
-        /// </summary>
-        /// <param name="other">The other projection parameter set.</param>
-        /// <returns><value>true</value> if both sets are equal.</returns>
-        public bool Equals(ProjectionParameterSet other)
+        if (other.Count != this.Count)
         {
-            if (other == null)
+            return false;
+        }
+
+        foreach (var kvp in this)
+        {
+            if (!other.ContainsKey(kvp.Key))
             {
                 return false;
             }
 
-            if (other.Count != this.Count)
+            double otherValue = other.GetParameterValue(kvp.Key);
+            if (otherValue != kvp.Value)
             {
                 return false;
             }
-
-            foreach (var kvp in this)
-            {
-                if (!other.ContainsKey(kvp.Key))
-                {
-                    return false;
-                }
-
-                double otherValue = other.GetParameterValue(kvp.Key);
-                if (otherValue != kvp.Value)
-                {
-                    return false;
-                }
-            }
-
-            return true;
         }
 
-        /// <inheritdoc />
-        public override bool Equals(object obj)
+        return true;
+    }
+
+    /// <inheritdoc />
+    public override bool Equals(object obj)
+    {
+        return obj is ProjectionParameterSet other && this.Equals(other);
+    }
+
+    /// <inheritdoc />
+    public override int GetHashCode()
+    {
+        int hashCode = 0;
+        foreach (var kvp in this)
         {
-            return obj is ProjectionParameterSet other && this.Equals(other);
+            int pairHashCode = (StringComparer.Ordinal.GetHashCode(kvp.Key) * 397) ^ kvp.Value.GetHashCode();
+            hashCode ^= pairHashCode;
         }
 
-        /// <inheritdoc />
-        public override int GetHashCode()
-        {
-            int hashCode = 0;
-            foreach (var kvp in this)
-            {
-                int pairHashCode = (StringComparer.Ordinal.GetHashCode(kvp.Key) * 397) ^ kvp.Value.GetHashCode();
-                hashCode ^= pairHashCode;
-            }
+        return hashCode;
+    }
 
-            return hashCode;
+    /// <summary>
+    /// Sets or adds a projection parameter value using case-insensitive key matching.
+    /// </summary>
+    /// <param name="name">Parameter name.</param>
+    /// <param name="value">Parameter value.</param>
+    internal void SetParameterValue(string name, double value)
+    {
+        string key = name.ToLowerInvariant();
+        if (!this.ContainsKey(key))
+        {
+            this.originalIndex.Add(this.originalIndex.Count, key);
+            this.originalNames.Add(key, name);
+            this.Add(key, value);
         }
-
-        /// <summary>
-        /// Sets or adds a projection parameter value using case-insensitive key matching.
-        /// </summary>
-        /// <param name="name">Parameter name.</param>
-        /// <param name="value">Parameter value.</param>
-        internal void SetParameterValue(string name, double value)
+        else
         {
-            string key = name.ToLowerInvariant();
-            if (!this.ContainsKey(key))
-            {
-                this.originalIndex.Add(this.originalIndex.Count, key);
-                this.originalNames.Add(key, name);
-                this.Add(key, value);
-            }
-            else
-            {
-                this.Remove(key);
-                this.Add(key, value);
-            }
+            this.Remove(key);
+            this.Add(key, value);
         }
     }
 }

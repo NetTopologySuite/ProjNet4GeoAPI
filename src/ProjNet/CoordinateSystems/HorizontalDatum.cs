@@ -14,250 +14,249 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-namespace ProjNet.CoordinateSystems
+namespace ProjNet.CoordinateSystems;
+
+using System;
+using System.Globalization;
+using System.Text;
+
+/// <summary>
+/// Horizontal datum defining the standard datum information.
+/// </summary>
+[Serializable]
+public class HorizontalDatum : Datum
 {
-    using System;
-    using System.Globalization;
-    using System.Text;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HorizontalDatum"/> class.
+    /// Initializes a new instance of a horizontal datum.
+    /// </summary>
+    /// <param name="ellipsoid">Ellipsoid.</param>
+    /// <param name="toWgs84">Parameters for a Bursa Wolf transformation into WGS84.</param>
+    /// <param name="type">Datum type.</param>
+    /// <param name="name">Name.</param>
+    /// <param name="authority">Authority name.</param>
+    /// <param name="code">Authority-specific identification code.</param>
+    /// <param name="alias">Alias.</param>
+    /// <param name="abbreviation">Abbreviation.</param>
+    /// <param name="remarks">Provider-supplied remarks.</param>
+    internal HorizontalDatum(
+        Ellipsoid ellipsoid,
+        Wgs84ConversionInfo toWgs84,
+        DatumType type,
+        string name,
+        string authority,
+        long code,
+        string alias,
+        string remarks,
+        string abbreviation)
+        : base(type, name, authority, code, alias, remarks, abbreviation)
+    {
+        this.Ellipsoid = ellipsoid;
+        this.Wgs84Parameters = toWgs84;
+    }
 
     /// <summary>
-    /// Horizontal datum defining the standard datum information.
+    /// Gets ePSG's WGS 84 datum has been the then current realisation. No distinction is made between the original WGS 84
+    /// frame, WGS 84 (G730), WGS 84 (G873) and WGS 84 (G1150). Since 1997, WGS 84 has been maintained within 10cm of
+    /// the then current ITRF.
     /// </summary>
-    [Serializable]
-    public class HorizontalDatum : Datum
+    /// <remarks>
+    /// <para>Area of use: World.</para>
+    /// <para>Origin description: Defined through a consistent set of station coordinates. These have changed with time: by 0.7m
+    /// on 29/6/1994 [WGS 84 (G730)], a further 0.2m on 29/1/1997 [WGS 84 (G873)] and a further 0.06m on
+    /// 20/1/2002 [WGS 84 (G1150)].</para>
+    /// </remarks>
+    public static HorizontalDatum WGS84
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="HorizontalDatum"/> class.
-        /// Initializes a new instance of a horizontal datum.
-        /// </summary>
-        /// <param name="ellipsoid">Ellipsoid.</param>
-        /// <param name="toWgs84">Parameters for a Bursa Wolf transformation into WGS84.</param>
-        /// <param name="type">Datum type.</param>
-        /// <param name="name">Name.</param>
-        /// <param name="authority">Authority name.</param>
-        /// <param name="code">Authority-specific identification code.</param>
-        /// <param name="alias">Alias.</param>
-        /// <param name="abbreviation">Abbreviation.</param>
-        /// <param name="remarks">Provider-supplied remarks.</param>
-        internal HorizontalDatum(
-            Ellipsoid ellipsoid,
-            Wgs84ConversionInfo toWgs84,
-            DatumType type,
-            string name,
-            string authority,
-            long code,
-            string alias,
-            string remarks,
-            string abbreviation)
-            : base(type, name, authority, code, alias, remarks, abbreviation)
+        get
         {
-            this.Ellipsoid = ellipsoid;
-            this.Wgs84Parameters = toWgs84;
+            return new HorizontalDatum(
+                CoordinateSystems.Ellipsoid.WGS84,
+                null,
+                DatumType.HD_Geocentric,
+                "World Geodetic System 1984",
+                "EPSG",
+                6326,
+                string.Empty,
+                "EPSG's WGS 84 datum has been the then current realisation. No distinction is made between the original WGS 84 frame, WGS 84 (G730), WGS 84 (G873) and WGS 84 (G1150). Since 1997, WGS 84 has been maintained within 10cm of the then current ITRF.",
+                string.Empty);
         }
+    }
 
-        /// <summary>
-        /// Gets ePSG's WGS 84 datum has been the then current realisation. No distinction is made between the original WGS 84
-        /// frame, WGS 84 (G730), WGS 84 (G873) and WGS 84 (G1150). Since 1997, WGS 84 has been maintained within 10cm of
-        /// the then current ITRF.
-        /// </summary>
-        /// <remarks>
-        /// <para>Area of use: World.</para>
-        /// <para>Origin description: Defined through a consistent set of station coordinates. These have changed with time: by 0.7m
-        /// on 29/6/1994 [WGS 84 (G730)], a further 0.2m on 29/1/1997 [WGS 84 (G873)] and a further 0.06m on
-        /// 20/1/2002 [WGS 84 (G1150)].</para>
-        /// </remarks>
-        public static HorizontalDatum WGS84
+    /// <summary>
+    /// Gets world Geodetic System 1972.
+    /// </summary>
+    /// <remarks>
+    /// <para>Used by GPS before 1987. For Transit satellite positioning see also WGS 72BE. Datum code 6323 reserved for southern hemisphere ProjCS's.</para>
+    /// <para>Area of use: World.</para>
+    /// <para>Origin description: Developed from a worldwide distribution of terrestrial and
+    /// geodetic satellite observations and defined through a set of station coordinates.</para>
+    /// </remarks>
+    public static HorizontalDatum WGS72
+    {
+        get
         {
-            get
-            {
-                return new HorizontalDatum(
-                    CoordinateSystems.Ellipsoid.WGS84,
+            var datum =
+                new HorizontalDatum(
+                    CoordinateSystems.Ellipsoid.WGS72,
                     null,
                     DatumType.HD_Geocentric,
-                    "World Geodetic System 1984",
+                    "World Geodetic System 1972",
                     "EPSG",
-                    6326,
+                    6322,
                     string.Empty,
-                    "EPSG's WGS 84 datum has been the then current realisation. No distinction is made between the original WGS 84 frame, WGS 84 (G730), WGS 84 (G873) and WGS 84 (G1150). Since 1997, WGS 84 has been maintained within 10cm of the then current ITRF.",
+                    "Used by GPS before 1987. For Transit satellite positioning see also WGS 72BE. Datum code 6323 reserved for southern hemisphere ProjCS's.",
                     string.Empty);
-            }
+            datum.Wgs84Parameters = new Wgs84ConversionInfo(0, 0, 4.5, 0, 0, 0.554, 0.219);
+            return datum;
         }
+    }
 
-        /// <summary>
-        /// Gets world Geodetic System 1972.
-        /// </summary>
-        /// <remarks>
-        /// <para>Used by GPS before 1987. For Transit satellite positioning see also WGS 72BE. Datum code 6323 reserved for southern hemisphere ProjCS's.</para>
-        /// <para>Area of use: World.</para>
-        /// <para>Origin description: Developed from a worldwide distribution of terrestrial and
-        /// geodetic satellite observations and defined through a set of station coordinates.</para>
-        /// </remarks>
-        public static HorizontalDatum WGS72
+    /// <summary>
+    /// Gets european Terrestrial Reference System 1989.
+    /// </summary>
+    /// <remarks>
+    /// <para>Area of use:
+    /// Europe: Albania; Andorra; Austria; Belgium; Bosnia and Herzegovina; Bulgaria; Croatia;
+    /// Cyprus; Czech Republic; Denmark; Estonia; Finland; Faroe Islands; France; Germany; Greece;
+    /// Hungary; Ireland; Italy; Latvia; Liechtenstein; Lithuania; Luxembourg; Malta; Netherlands;
+    /// Norway; Poland; Portugal; Romania; San Marino; Serbia and Montenegro; Slovakia; Slovenia;
+    /// Spain; Svalbard; Sweden; Switzerland; United Kingdom (UK) including Channel Islands and
+    /// Isle of Man; Vatican City State.</para>
+    /// <para>Origin description: Fixed to the stable part of the Eurasian continental
+    /// plate and consistent with ITRS at the epoch 1989.0.</para>
+    /// </remarks>
+    public static HorizontalDatum ETRF89
+    {
+        get
         {
-            get
-            {
-                var datum =
-                    new HorizontalDatum(
-                        CoordinateSystems.Ellipsoid.WGS72,
-                        null,
-                        DatumType.HD_Geocentric,
-                        "World Geodetic System 1972",
-                        "EPSG",
-                        6322,
-                        string.Empty,
-                        "Used by GPS before 1987. For Transit satellite positioning see also WGS 72BE. Datum code 6323 reserved for southern hemisphere ProjCS's.",
-                        string.Empty);
-                datum.Wgs84Parameters = new Wgs84ConversionInfo(0, 0, 4.5, 0, 0, 0.554, 0.219);
-                return datum;
-            }
+            var datum = new HorizontalDatum(
+                CoordinateSystems.Ellipsoid.GRS80,
+                null,
+                DatumType.HD_Geocentric,
+                "European Terrestrial Reference System 1989",
+                "EPSG",
+                6258,
+                "ETRF89",
+                "The distinction in usage between ETRF89 and ETRS89 is confused: although in principle conceptually different in practice both are used for the realisation.",
+                string.Empty);
+            datum.Wgs84Parameters = new Wgs84ConversionInfo();
+            return datum;
         }
+    }
 
-        /// <summary>
-        /// Gets european Terrestrial Reference System 1989.
-        /// </summary>
-        /// <remarks>
-        /// <para>Area of use:
-        /// Europe: Albania; Andorra; Austria; Belgium; Bosnia and Herzegovina; Bulgaria; Croatia;
-        /// Cyprus; Czech Republic; Denmark; Estonia; Finland; Faroe Islands; France; Germany; Greece;
-        /// Hungary; Ireland; Italy; Latvia; Liechtenstein; Lithuania; Luxembourg; Malta; Netherlands;
-        /// Norway; Poland; Portugal; Romania; San Marino; Serbia and Montenegro; Slovakia; Slovenia;
-        /// Spain; Svalbard; Sweden; Switzerland; United Kingdom (UK) including Channel Islands and
-        /// Isle of Man; Vatican City State.</para>
-        /// <para>Origin description: Fixed to the stable part of the Eurasian continental
-        /// plate and consistent with ITRS at the epoch 1989.0.</para>
-        /// </remarks>
-        public static HorizontalDatum ETRF89
+    /// <summary>
+    /// Gets european Datum 1950.
+    /// </summary>
+    /// <remarks>
+    /// <para>Area of use:
+    /// Europe - west - Denmark; Faroe Islands; France offshore; Israel offshore; Italy including San
+    /// Marino and Vatican City State; Ireland offshore; Netherlands offshore; Germany; Greece (offshore);
+    /// North Sea; Norway; Spain; Svalbard; Turkey; United Kingdom UKCS offshore. Egypt - Western Desert.
+    /// </para>
+    /// <para>Origin description: Fundamental point: Potsdam (Helmert Tower).
+    /// Latitude: 52 deg 22 min 51.4456 sec N; Longitude: 13 deg  3 min 58.9283 sec E (of Greenwich).</para>
+    /// </remarks>
+    public static HorizontalDatum ED50
+    {
+        get
         {
-            get
-            {
-                var datum = new HorizontalDatum(
-                    CoordinateSystems.Ellipsoid.GRS80,
-                    null,
-                    DatumType.HD_Geocentric,
-                    "European Terrestrial Reference System 1989",
-                    "EPSG",
-                    6258,
-                    "ETRF89",
-                    "The distinction in usage between ETRF89 and ETRS89 is confused: although in principle conceptually different in practice both are used for the realisation.",
-                    string.Empty);
-                datum.Wgs84Parameters = new Wgs84ConversionInfo();
-                return datum;
-            }
+            return new HorizontalDatum(
+                CoordinateSystems.Ellipsoid.International1924,
+                new Wgs84ConversionInfo(-87, -98, -121, 0, 0, 0, 0),
+                DatumType.HD_Geocentric,
+                "European Datum 1950",
+                "EPSG",
+                6230,
+                "ED50",
+                string.Empty,
+                string.Empty);
         }
+    }
 
-        /// <summary>
-        /// Gets european Datum 1950.
-        /// </summary>
-        /// <remarks>
-        /// <para>Area of use:
-        /// Europe - west - Denmark; Faroe Islands; France offshore; Israel offshore; Italy including San
-        /// Marino and Vatican City State; Ireland offshore; Netherlands offshore; Germany; Greece (offshore);
-        /// North Sea; Norway; Spain; Svalbard; Turkey; United Kingdom UKCS offshore. Egypt - Western Desert.
-        /// </para>
-        /// <para>Origin description: Fundamental point: Potsdam (Helmert Tower).
-        /// Latitude: 52 deg 22 min 51.4456 sec N; Longitude: 13 deg  3 min 58.9283 sec E (of Greenwich).</para>
-        /// </remarks>
-        public static HorizontalDatum ED50
+    /// <summary>
+    /// Gets or sets the ellipsoid of the datum.
+    /// </summary>
+    public Ellipsoid Ellipsoid { get; set; }
+
+    /// <summary>
+    /// Gets or sets preferred parameters for a Bursa Wolf transformation into WGS84.
+    /// </summary>
+    public Wgs84ConversionInfo Wgs84Parameters { get; set; }
+
+    /// <summary>
+    /// Gets the Well-known text for this object
+    /// as defined in the simple features specification.
+    /// </summary>
+    public override string WKT
+    {
+        get
         {
-            get
+            var sb = new StringBuilder();
+            sb.AppendFormat(CultureInfo.InvariantCulture, "DATUM[\"{0}\", {1}", this.Name, this.Ellipsoid.WKT);
+            if (this.Wgs84Parameters != null)
             {
-                return new HorizontalDatum(
-                    CoordinateSystems.Ellipsoid.International1924,
-                    new Wgs84ConversionInfo(-87, -98, -121, 0, 0, 0, 0),
-                    DatumType.HD_Geocentric,
-                    "European Datum 1950",
-                    "EPSG",
-                    6230,
-                    "ED50",
-                    string.Empty,
-                    string.Empty);
+                sb.AppendFormat(CultureInfo.InvariantCulture, ", {0}", this.Wgs84Parameters.WKT);
             }
+
+            if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
+            {
+                sb.AppendFormat(CultureInfo.InvariantCulture, ", AUTHORITY[\"{0}\", \"{1}\"]", this.Authority, this.AuthorityCode);
+            }
+
+            sb.Append(']');
+            return sb.ToString();
         }
+    }
 
-        /// <summary>
-        /// Gets or sets the ellipsoid of the datum.
-        /// </summary>
-        public Ellipsoid Ellipsoid { get; set; }
-
-        /// <summary>
-        /// Gets or sets preferred parameters for a Bursa Wolf transformation into WGS84.
-        /// </summary>
-        public Wgs84ConversionInfo Wgs84Parameters { get; set; }
-
-        /// <summary>
-        /// Gets the Well-known text for this object
-        /// as defined in the simple features specification.
-        /// </summary>
-        public override string WKT
+    /// <summary>
+    /// Gets an XML representation of this object.
+    /// </summary>
+    public override string XML
+    {
+        get
         {
-            get
-            {
-                var sb = new StringBuilder();
-                sb.AppendFormat(CultureInfo.InvariantCulture, "DATUM[\"{0}\", {1}", this.Name, this.Ellipsoid.WKT);
-                if (this.Wgs84Parameters != null)
-                {
-                    sb.AppendFormat(CultureInfo.InvariantCulture, ", {0}", this.Wgs84Parameters.WKT);
-                }
-
-                if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
-                {
-                    sb.AppendFormat(CultureInfo.InvariantCulture, ", AUTHORITY[\"{0}\", \"{1}\"]", this.Authority, this.AuthorityCode);
-                }
-
-                sb.Append(']');
-                return sb.ToString();
-            }
+            return string.Format(
+                CultureInfo.InvariantCulture.NumberFormat,
+                "<CS_HorizontalDatum DatumType=\"{0}\">{1}{2}{3}</CS_HorizontalDatum>",
+                (int)this.DatumType,
+                this.InfoXml,
+                this.Ellipsoid.XML,
+                this.Wgs84Parameters is null ? string.Empty : this.Wgs84Parameters.XML);
         }
+    }
 
-        /// <summary>
-        /// Gets an XML representation of this object.
-        /// </summary>
-        public override string XML
+    /// <summary>
+    /// Checks whether the values of this instance is equal to the values of another instance.
+    /// Only parameters used for coordinate system are used for comparison.
+    /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
+    /// </summary>
+    /// <param name="obj">The obj parameter.</param>
+    /// <returns>True if equal.</returns>
+    public override bool EqualParams(object obj)
+    {
+        if (!(obj is HorizontalDatum))
         {
-            get
-            {
-                return string.Format(
-                    CultureInfo.InvariantCulture.NumberFormat,
-                    "<CS_HorizontalDatum DatumType=\"{0}\">{1}{2}{3}</CS_HorizontalDatum>",
-                    (int)this.DatumType,
-                    this.InfoXml,
-                    this.Ellipsoid.XML,
-                    this.Wgs84Parameters is null ? string.Empty : this.Wgs84Parameters.XML);
-            }
+            return false;
         }
 
-        /// <summary>
-        /// Checks whether the values of this instance is equal to the values of another instance.
-        /// Only parameters used for coordinate system are used for comparison.
-        /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
-        /// </summary>
-        /// <param name="obj">The obj parameter.</param>
-        /// <returns>True if equal.</returns>
-        public override bool EqualParams(object obj)
+        var datum = obj as HorizontalDatum;
+        if (datum.Wgs84Parameters == null && this.Wgs84Parameters != null)
         {
-            if (!(obj is HorizontalDatum))
-            {
-                return false;
-            }
-
-            var datum = obj as HorizontalDatum;
-            if (datum.Wgs84Parameters == null && this.Wgs84Parameters != null)
-            {
-                return false;
-            }
-
-            if (datum.Wgs84Parameters != null && !datum.Wgs84Parameters.Equals(this.Wgs84Parameters))
-            {
-                return false;
-            }
-
-            bool ellipsoidMatches =
-                (this.Ellipsoid is null && datum.Ellipsoid is null)
-                || (this.Ellipsoid is not null
-                    && datum.Ellipsoid is not null
-                    && datum.Ellipsoid.EqualParams(this.Ellipsoid));
-
-            return ellipsoidMatches && this.DatumType == datum.DatumType;
+            return false;
         }
+
+        if (datum.Wgs84Parameters != null && !datum.Wgs84Parameters.Equals(this.Wgs84Parameters))
+        {
+            return false;
+        }
+
+        bool ellipsoidMatches =
+            (this.Ellipsoid is null && datum.Ellipsoid is null)
+            || (this.Ellipsoid is not null
+                && datum.Ellipsoid is not null
+                && datum.Ellipsoid.EqualParams(this.Ellipsoid));
+
+        return ellipsoidMatches && this.DatumType == datum.DatumType;
     }
 }

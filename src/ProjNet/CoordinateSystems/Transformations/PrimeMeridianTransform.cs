@@ -14,109 +14,108 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-namespace ProjNet.CoordinateSystems.Transformations
+namespace ProjNet.CoordinateSystems.Transformations;
+
+using System;
+
+/// <summary>
+/// Adjusts target Prime Meridian.
+/// </summary>
+[Serializable]
+internal class PrimeMeridianTransform : MathTransform
 {
-    using System;
+    private readonly PrimeMeridian source;
+    private readonly PrimeMeridian target;
+    private bool isInverted;
 
     /// <summary>
-    /// Adjusts target Prime Meridian.
+    /// Initializes a new instance of the <see cref="PrimeMeridianTransform"/> class.
+    /// Creates instance prime meridian transform.
     /// </summary>
-    [Serializable]
-    internal class PrimeMeridianTransform : MathTransform
+    /// <param name="source">The source parameter.</param>
+    /// <param name="target">The target parameter.</param>
+    public PrimeMeridianTransform(PrimeMeridian source, PrimeMeridian target)
     {
-        private readonly PrimeMeridian source;
-        private readonly PrimeMeridian target;
-        private bool isInverted;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PrimeMeridianTransform"/> class.
-        /// Creates instance prime meridian transform.
-        /// </summary>
-        /// <param name="source">The source parameter.</param>
-        /// <param name="target">The target parameter.</param>
-        public PrimeMeridianTransform(PrimeMeridian source, PrimeMeridian target)
+        if (!source.AngularUnit.EqualParams(target.AngularUnit))
         {
-            if (!source.AngularUnit.EqualParams(target.AngularUnit))
-            {
-                throw new NotImplementedException("The method or operation is not implemented.");
-            }
-
-            this.source = source;
-            this.target = target;
+            throw new NotImplementedException("The method or operation is not implemented.");
         }
 
-        /// <summary>
-        /// Gets a Well-Known text representation of this affine math transformation.
-        /// </summary>
-        /// <value>The value.</value>
-        public override string WKT
-        {
-            get { throw new NotImplementedException("The method or operation is not implemented."); }
-        }
+        this.source = source;
+        this.target = target;
+    }
 
-        /// <summary>
-        /// Gets an XML representation of this affine transformation.
-        /// </summary>
-        /// <value>The value.</value>
-        public override string XML
-        {
-            get { throw new NotImplementedException("The method or operation is not implemented."); }
-        }
+    /// <summary>
+    /// Gets a Well-Known text representation of this affine math transformation.
+    /// </summary>
+    /// <value>The value.</value>
+    public override string WKT
+    {
+        get { throw new NotImplementedException("The method or operation is not implemented."); }
+    }
 
-        /// <summary>
-        /// Gets the dimension of input points.
-        /// </summary>
-        public override int DimSource
-        {
-            get { return 3; }
-        }
+    /// <summary>
+    /// Gets an XML representation of this affine transformation.
+    /// </summary>
+    /// <value>The value.</value>
+    public override string XML
+    {
+        get { throw new NotImplementedException("The method or operation is not implemented."); }
+    }
 
-        /// <summary>
-        /// Gets the dimension of output points.
-        /// </summary>
-        public override int DimTarget
-        {
-            get { return 3; }
-        }
+    /// <summary>
+    /// Gets the dimension of input points.
+    /// </summary>
+    public override int DimSource
+    {
+        get { return 3; }
+    }
 
-        /// <inheritdoc />
-        public override MathTransform Inverse()
-        {
-            return new PrimeMeridianTransform(this.target, this.source);
-        }
+    /// <summary>
+    /// Gets the dimension of output points.
+    /// </summary>
+    public override int DimTarget
+    {
+        get { return 3; }
+    }
 
-        /// <inheritdoc />
-        public sealed override void Transform(ref double x, ref double y, ref double z)
-        {
-            if (this.isInverted)
-            {
-                x += this.target.Longitude - this.source.Longitude;
-            }
-            else
-            {
-                x += this.source.Longitude - this.target.Longitude;
-            }
-        }
+    /// <inheritdoc />
+    public override MathTransform Inverse()
+    {
+        return new PrimeMeridianTransform(this.target, this.source);
+    }
 
-        /// <inheritdoc />
-        protected sealed override void TransformCore(
-            Span<double> xs,
-            Span<double> ys,
-            Span<double> zs,
-            int strideX,
-            int strideY,
-            int strideZ)
+    /// <inheritdoc />
+    public sealed override void Transform(ref double x, ref double y, ref double z)
+    {
+        if (this.isInverted)
         {
-            double addend = this.isInverted
-                ? this.target.Longitude - this.source.Longitude
-                : this.source.Longitude - this.target.Longitude;
-            AddInPlace(xs, strideX, addend);
+            x += this.target.Longitude - this.source.Longitude;
         }
+        else
+        {
+            x += this.source.Longitude - this.target.Longitude;
+        }
+    }
 
-        /// <inheritdoc />
-        public override void Invert()
-        {
-            this.isInverted = !this.isInverted;
-        }
+    /// <inheritdoc />
+    protected sealed override void TransformCore(
+        Span<double> xs,
+        Span<double> ys,
+        Span<double> zs,
+        int strideX,
+        int strideY,
+        int strideZ)
+    {
+        double addend = this.isInverted
+            ? this.target.Longitude - this.source.Longitude
+            : this.source.Longitude - this.target.Longitude;
+        AddInPlace(xs, strideX, addend);
+    }
+
+    /// <inheritdoc />
+    public override void Invert()
+    {
+        this.isInverted = !this.isInverted;
     }
 }

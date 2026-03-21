@@ -15,20 +15,19 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-namespace ProjNet.Data
-{
-    using System.Collections.Generic;
-    using ProjNet.CoordinateSystems;
+namespace ProjNet.Data;
 
+using System.Collections.Generic;
+using ProjNet.CoordinateSystems;
+
+/// <summary>
+/// Internal provider contract for managed coordinate systems emitted as structured objects.
+/// </summary>
+internal interface IManagedCoordinateSystemProvider
+{
     /// <summary>
-    /// Internal provider contract for managed coordinate systems emitted as structured objects.
+    /// Gets coordinate system objects keyed by SRID.
     /// </summary>
-    internal interface IManagedCoordinateSystemProvider
-    {
-        /// <summary>
-        /// Gets coordinate system objects keyed by SRID.
-        /// </summary>
-        /// <returns>Coordinate system objects.</returns>
-        IEnumerable<KeyValuePair<int, CoordinateSystem>> GetCoordinateSystems();
-    }
+    /// <returns>Coordinate system objects.</returns>
+    IEnumerable<KeyValuePair<int, CoordinateSystem>> GetCoordinateSystems();
 }

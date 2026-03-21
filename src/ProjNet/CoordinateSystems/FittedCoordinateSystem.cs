@@ -14,149 +14,148 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-namespace ProjNet.CoordinateSystems
+namespace ProjNet.CoordinateSystems;
+
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Text;
+using ProjNet.CoordinateSystems.Transformations;
+
+/// <summary>
+/// A coordinate system which sits inside another coordinate system. The fitted
+/// coordinate system can be rotated and shifted, or use any other math transform
+/// to inject itself into the base coordinate system.
+/// </summary>
+[Serializable]
+public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSystem
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Text;
-    using ProjNet.CoordinateSystems.Transformations;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="FittedCoordinateSystem"/> class.
+    /// Creates an instance of FittedCoordinateSystem using the specified parameters.
+    /// </summary>
+    /// <param name="baseSystem">Underlying coordinate system.</param>
+    /// <param name="transform">Transformation from fitted coordinate system to the base one.</param>
+    /// <param name="name">Name.</param>
+    /// <param name="authority">Authority name.</param>
+    /// <param name="code">Authority-specific identification code.</param>
+    /// <param name="alias">Alias.</param>
+    /// <param name="abbreviation">Abbreviation.</param>
+    /// <param name="remarks">Provider-supplied remarks.</param>
+    protected internal FittedCoordinateSystem(
+        CoordinateSystem baseSystem,
+        MathTransform transform,
+        string name,
+        string authority,
+        long code,
+        string alias,
+        string remarks,
+        string abbreviation)
+        : base(name, authority, code, alias, abbreviation, remarks)
+    {
+        if (baseSystem is null)
+        {
+            throw new ArgumentNullException(nameof(baseSystem));
+        }
+
+        if (transform is null)
+        {
+            throw new ArgumentNullException(nameof(transform));
+        }
+
+        this.BaseCoordinateSystem = baseSystem;
+        this.ToBaseTransform = transform;
+
+        // get axis infos from the source
+        this.AxisInfo = new List<AxisInfo>(baseSystem.Dimension);
+        for (int dim = 0; dim < baseSystem.Dimension; dim++)
+        {
+            this.AxisInfo.Add(baseSystem.GetAxis(dim));
+        }
+    }
 
     /// <summary>
-    /// A coordinate system which sits inside another coordinate system. The fitted
-    /// coordinate system can be rotated and shifted, or use any other math transform
-    /// to inject itself into the base coordinate system.
+    /// Gets represents math transform that injects itself into the base coordinate system.
     /// </summary>
-    [Serializable]
-    public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSystem
+    public MathTransform ToBaseTransform { get; }
+
+    /// <summary>
+    /// Gets underlying coordinate system.
+    /// </summary>
+    public CoordinateSystem BaseCoordinateSystem { get; }
+
+    /// <summary>
+    /// Gets the Well-known text for this object as defined in the simple features specification.
+    /// </summary>
+    public override string WKT
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="FittedCoordinateSystem"/> class.
-        /// Creates an instance of FittedCoordinateSystem using the specified parameters.
-        /// </summary>
-        /// <param name="baseSystem">Underlying coordinate system.</param>
-        /// <param name="transform">Transformation from fitted coordinate system to the base one.</param>
-        /// <param name="name">Name.</param>
-        /// <param name="authority">Authority name.</param>
-        /// <param name="code">Authority-specific identification code.</param>
-        /// <param name="alias">Alias.</param>
-        /// <param name="abbreviation">Abbreviation.</param>
-        /// <param name="remarks">Provider-supplied remarks.</param>
-        protected internal FittedCoordinateSystem(
-            CoordinateSystem baseSystem,
-            MathTransform transform,
-            string name,
-            string authority,
-            long code,
-            string alias,
-            string remarks,
-            string abbreviation)
-            : base(name, authority, code, alias, abbreviation, remarks)
+        get
         {
-            if (baseSystem is null)
-            {
-                throw new ArgumentNullException(nameof(baseSystem));
-            }
-
-            if (transform is null)
-            {
-                throw new ArgumentNullException(nameof(transform));
-            }
-
-            this.BaseCoordinateSystem = baseSystem;
-            this.ToBaseTransform = transform;
-
-            // get axis infos from the source
-            this.AxisInfo = new List<AxisInfo>(baseSystem.Dimension);
-            for (int dim = 0; dim < baseSystem.Dimension; dim++)
-            {
-                this.AxisInfo.Add(baseSystem.GetAxis(dim));
-            }
+            // <fitted cs>          = FITTED_CS["<name>", <to base>, <base cs>]
+            var sb = new StringBuilder();
+            sb.AppendFormat(CultureInfo.InvariantCulture, "FITTED_CS[\"{0}\", {1}, {2}]", this.Name, this.ToBaseTransform.WKT, this.BaseCoordinateSystem.WKT);
+            return sb.ToString();
         }
+    }
 
-        /// <summary>
-        /// Gets represents math transform that injects itself into the base coordinate system.
-        /// </summary>
-        public MathTransform ToBaseTransform { get; }
-
-        /// <summary>
-        /// Gets underlying coordinate system.
-        /// </summary>
-        public CoordinateSystem BaseCoordinateSystem { get; }
-
-        /// <summary>
-        /// Gets the Well-known text for this object as defined in the simple features specification.
-        /// </summary>
-        public override string WKT
+    /// <summary>
+    /// Gets an XML representation of this object.
+    /// </summary>
+    public override string XML
+    {
+        get
         {
-            get
-            {
-                // <fitted cs>          = FITTED_CS["<name>", <to base>, <base cs>]
-                var sb = new StringBuilder();
-                sb.AppendFormat(CultureInfo.InvariantCulture, "FITTED_CS[\"{0}\", {1}, {2}]", this.Name, this.ToBaseTransform.WKT, this.BaseCoordinateSystem.WKT);
-                return sb.ToString();
-            }
+            throw new NotImplementedException();
         }
+    }
 
-        /// <summary>
-        /// Gets an XML representation of this object.
-        /// </summary>
-        public override string XML
+    /// <summary>
+    /// Gets Well-Known Text of a math transform to the base coordinate system.
+    /// The dimension of this fitted coordinate system is determined by the source
+    /// dimension of the math transform. The transform should be one-to-one within
+    /// this coordinate system's domain, and the base coordinate system dimension
+    /// must be at least as big as the dimension of this coordinate system.
+    /// </summary>
+    /// <returns>The transformation result.</returns>
+    public string ToBase()
+    {
+        return this.ToBaseTransform.WKT;
+    }
+
+    /// <summary>
+    /// Checks whether the values of this instance is equal to the values of another instance.
+    /// Only parameters used for coordinate system are used for comparison.
+    /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
+    /// </summary>
+    /// <param name="obj">The obj parameter.</param>
+    /// <returns>True if equal.</returns>
+    public override bool EqualParams(object obj)
+    {
+        var fcs = obj as FittedCoordinateSystem;
+        if (fcs != null)
         {
-            get
+            if (fcs.BaseCoordinateSystem.EqualParams(this.BaseCoordinateSystem))
             {
-                throw new NotImplementedException();
-            }
-        }
-
-        /// <summary>
-        /// Gets Well-Known Text of a math transform to the base coordinate system.
-        /// The dimension of this fitted coordinate system is determined by the source
-        /// dimension of the math transform. The transform should be one-to-one within
-        /// this coordinate system's domain, and the base coordinate system dimension
-        /// must be at least as big as the dimension of this coordinate system.
-        /// </summary>
-        /// <returns>The transformation result.</returns>
-        public string ToBase()
-        {
-            return this.ToBaseTransform.WKT;
-        }
-
-        /// <summary>
-        /// Checks whether the values of this instance is equal to the values of another instance.
-        /// Only parameters used for coordinate system are used for comparison.
-        /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
-        /// </summary>
-        /// <param name="obj">The obj parameter.</param>
-        /// <returns>True if equal.</returns>
-        public override bool EqualParams(object obj)
-        {
-            var fcs = obj as FittedCoordinateSystem;
-            if (fcs != null)
-            {
-                if (fcs.BaseCoordinateSystem.EqualParams(this.BaseCoordinateSystem))
+                string fcsToBase = fcs.ToBase();
+                string thisToBase = this.ToBase();
+                if (string.Equals(fcsToBase, thisToBase, StringComparison.Ordinal))
                 {
-                    string fcsToBase = fcs.ToBase();
-                    string thisToBase = this.ToBase();
-                    if (string.Equals(fcsToBase, thisToBase, StringComparison.Ordinal))
-                    {
-                        return true;
-                    }
+                    return true;
                 }
             }
-
-            return false;
         }
 
-        /// <summary>
-        /// Gets the units for the dimension within coordinate system.
-        /// Each dimension in the coordinate system has corresponding units.
-        /// </summary>
-        /// <param name="dimension">The dimension value.</param>
-        /// <returns>The computed value.</returns>
-        public override IUnit GetUnits(int dimension)
-        {
-            return this.BaseCoordinateSystem.GetUnits(dimension);
-        }
+        return false;
+    }
+
+    /// <summary>
+    /// Gets the units for the dimension within coordinate system.
+    /// Each dimension in the coordinate system has corresponding units.
+    /// </summary>
+    /// <param name="dimension">The dimension value.</param>
+    /// <returns>The computed value.</returns>
+    public override IUnit GetUnits(int dimension)
+    {
+        return this.BaseCoordinateSystem.GetUnits(dimension);
     }
 }

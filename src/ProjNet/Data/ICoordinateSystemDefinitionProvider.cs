@@ -15,19 +15,18 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-namespace ProjNet.Data
-{
-    using System.Collections.Generic;
+namespace ProjNet.Data;
 
+using System.Collections.Generic;
+
+/// <summary>
+/// Provides managed coordinate system definitions used to initialize <see cref="CoordinateSystemServices"/>.
+/// </summary>
+public interface ICoordinateSystemDefinitionProvider
+{
     /// <summary>
-    /// Provides managed coordinate system definitions used to initialize <see cref="CoordinateSystemServices"/>.
+    /// Gets coordinate system definitions keyed by SRID.
     /// </summary>
-    public interface ICoordinateSystemDefinitionProvider
-    {
-        /// <summary>
-        /// Gets coordinate system definitions keyed by SRID.
-        /// </summary>
-        /// <returns>Coordinate system definitions.</returns>
-        IEnumerable<KeyValuePair<int, string>> GetDefinitions();
-    }
+    /// <returns>Coordinate system definitions.</returns>
+    IEnumerable<KeyValuePair<int, string>> GetDefinitions();
 }

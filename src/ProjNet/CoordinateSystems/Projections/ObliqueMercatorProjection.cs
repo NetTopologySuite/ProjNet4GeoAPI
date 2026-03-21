@@ -15,48 +15,47 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-namespace ProjNet.CoordinateSystems.Projections
+namespace ProjNet.CoordinateSystems.Projections;
+
+using System;
+using System.Collections.Generic;
+using ProjNet.CoordinateSystems.Transformations;
+
+/// <summary>
+/// Represents the documented type.
+/// </summary>
+[Serializable]
+internal class ObliqueMercatorProjection : HotineObliqueMercatorProjection
 {
-    using System;
-    using System.Collections.Generic;
-    using ProjNet.CoordinateSystems.Transformations;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ObliqueMercatorProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    public ObliqueMercatorProjection(IEnumerable<ProjectionParameter> parameters)
+        : this(parameters, null)
+    {
+    }
 
     /// <summary>
-    /// Represents the documented type.
+    /// Initializes a new instance of the <see cref="ObliqueMercatorProjection"/> class.
     /// </summary>
-    [Serializable]
-    internal class ObliqueMercatorProjection : HotineObliqueMercatorProjection
+    /// <param name="parameters">Projection parameters.</param>
+    /// <param name="inverse">Inverse transform instance when cloning.</param>
+    public ObliqueMercatorProjection(IEnumerable<ProjectionParameter> parameters, ObliqueMercatorProjection inverse)
+        : base(parameters, inverse)
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ObliqueMercatorProjection"/> class.
-        /// </summary>
-        /// <param name="parameters">Projection parameters.</param>
-        public ObliqueMercatorProjection(IEnumerable<ProjectionParameter> parameters)
-            : this(parameters, null)
+        this.AuthorityCode = 9815;
+        this.Name = "Oblique_Mercator";
+    }
+
+    /// <inheritdoc/>
+    public override MathTransform Inverse()
+    {
+        if (this.inverse == null)
         {
+            this.inverse = new ObliqueMercatorProjection(this.Parameters.ToProjectionParameter(), this);
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ObliqueMercatorProjection"/> class.
-        /// </summary>
-        /// <param name="parameters">Projection parameters.</param>
-        /// <param name="inverse">Inverse transform instance when cloning.</param>
-        public ObliqueMercatorProjection(IEnumerable<ProjectionParameter> parameters, ObliqueMercatorProjection inverse)
-            : base(parameters, inverse)
-        {
-            this.AuthorityCode = 9815;
-            this.Name = "Oblique_Mercator";
-        }
-
-        /// <inheritdoc/>
-        public override MathTransform Inverse()
-        {
-            if (this.inverse == null)
-            {
-                this.inverse = new ObliqueMercatorProjection(this.Parameters.ToProjectionParameter(), this);
-            }
-
-            return this.inverse;
-        }
+        return this.inverse;
     }
 }

@@ -15,84 +15,83 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-namespace ProjNet.CoordinateSystems
+namespace ProjNet.CoordinateSystems;
+
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Text;
+
+/// <summary>
+/// A vertical datum defining the standard datum information.
+/// </summary>
+public class VerticalDatum : Datum
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Text;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VerticalDatum"/> class.
+    /// Initializes a new instance of a vertical datum.
+    /// </summary>
+    /// <param name="type">Datum type.</param>
+    /// <param name="name">Name.</param>
+    /// <param name="authority">Authority name.</param>
+    /// <param name="code">Authority-specific identification code.</param>
+    /// <param name="alias">Alias.</param>
+    /// <param name="abbreviation">Abbreviation.</param>
+    /// <param name="remarks">Provider-supplied remarks.</param>
+    public VerticalDatum(DatumType type, string name, string authority, long code, string alias, string remarks, string abbreviation)
+        : base(type, name, authority, code, alias, remarks, abbreviation)
+    {
+    }
 
     /// <summary>
-    /// A vertical datum defining the standard datum information.
+    /// Gets oDN - VerticalDatum.
     /// </summary>
-    public class VerticalDatum : Datum
+    public static VerticalDatum ODN
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="VerticalDatum"/> class.
-        /// Initializes a new instance of a vertical datum.
-        /// </summary>
-        /// <param name="type">Datum type.</param>
-        /// <param name="name">Name.</param>
-        /// <param name="authority">Authority name.</param>
-        /// <param name="code">Authority-specific identification code.</param>
-        /// <param name="alias">Alias.</param>
-        /// <param name="abbreviation">Abbreviation.</param>
-        /// <param name="remarks">Provider-supplied remarks.</param>
-        public VerticalDatum(DatumType type, string name, string authority, long code, string alias, string remarks, string abbreviation)
-            : base(type, name, authority, code, alias, remarks, abbreviation)
+        get
         {
+            return new VerticalDatum(DatumType.VD_GeoidModelDerived, "Ordnance Datum Newlyn", "EPSG", 5101, string.Empty, string.Empty, string.Empty);
         }
+    }
 
-        /// <summary>
-        /// Gets oDN - VerticalDatum.
-        /// </summary>
-        public static VerticalDatum ODN
+    /// <inheritdoc/>
+    public override string WKT
+    {
+        get
         {
-            get
+            var sb = new StringBuilder();
+            sb.AppendFormat(CultureInfo.InvariantCulture, "DATUM[\"{0}\", {1}", this.Name, (int)this.DatumType);
+            if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
             {
-                return new VerticalDatum(DatumType.VD_GeoidModelDerived, "Ordnance Datum Newlyn", "EPSG", 5101, string.Empty, string.Empty, string.Empty);
-            }
-        }
-
-        /// <inheritdoc/>
-        public override string WKT
-        {
-            get
-            {
-                var sb = new StringBuilder();
-                sb.AppendFormat(CultureInfo.InvariantCulture, "DATUM[\"{0}\", {1}", this.Name, (int)this.DatumType);
-                if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
-                {
-                    sb.AppendFormat(CultureInfo.InvariantCulture, ", AUTHORITY[\"{0}\", \"{1}\"]", this.Authority, this.AuthorityCode);
-                }
-
-                sb.Append(']');
-                return sb.ToString();
-            }
-        }
-
-        /// <inheritdoc/>
-        public override string XML
-        {
-            get
-            {
-                return string.Format(
-                    CultureInfo.InvariantCulture.NumberFormat,
-                    "<CS_VerticalDatum DatumType=\"{0}\">{1}</CS_VerticalDatum>",
-                    (int)this.DatumType,
-                    this.InfoXml);
-            }
-        }
-
-        /// <inheritdoc/>
-        public override bool EqualParams(object obj)
-        {
-            if (obj is VerticalDatum vertDatum)
-            {
-                return base.EqualParams(vertDatum);
+                sb.AppendFormat(CultureInfo.InvariantCulture, ", AUTHORITY[\"{0}\", \"{1}\"]", this.Authority, this.AuthorityCode);
             }
 
-            return false;
+            sb.Append(']');
+            return sb.ToString();
         }
+    }
+
+    /// <inheritdoc/>
+    public override string XML
+    {
+        get
+        {
+            return string.Format(
+                CultureInfo.InvariantCulture.NumberFormat,
+                "<CS_VerticalDatum DatumType=\"{0}\">{1}</CS_VerticalDatum>",
+                (int)this.DatumType,
+                this.InfoXml);
+        }
+    }
+
+    /// <inheritdoc/>
+    public override bool EqualParams(object obj)
+    {
+        if (obj is VerticalDatum vertDatum)
+        {
+            return base.EqualParams(vertDatum);
+        }
+
+        return false;
     }
 }

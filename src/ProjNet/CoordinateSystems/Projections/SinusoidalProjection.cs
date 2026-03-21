@@ -15,112 +15,111 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-namespace ProjNet.CoordinateSystems.Projections
+namespace ProjNet.CoordinateSystems.Projections;
+
+using System;
+using System.Collections.Generic;
+using ProjNet.CoordinateSystems.Transformations;
+
+/// <summary>
+/// Represents the documented type.
+/// </summary>
+[Serializable]
+internal class SinusoidalProjection : MapProjection
 {
-    using System;
-    using System.Collections.Generic;
-    using ProjNet.CoordinateSystems.Transformations;
+    private readonly double radius;
+    private readonly double inverseRadius;
+    private readonly bool isEllipsoidal;
 
     /// <summary>
-    /// Represents the documented type.
+    /// Initializes a new instance of the <see cref="SinusoidalProjection"/> class.
     /// </summary>
-    [Serializable]
-    internal class SinusoidalProjection : MapProjection
+    /// <param name="parameters">Projection parameters.</param>
+    public SinusoidalProjection(IEnumerable<ProjectionParameter> parameters)
+        : this(parameters, null)
     {
-        private readonly double radius;
-        private readonly double inverseRadius;
-        private readonly bool isEllipsoidal;
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SinusoidalProjection"/> class.
-        /// </summary>
-        /// <param name="parameters">Projection parameters.</param>
-        public SinusoidalProjection(IEnumerable<ProjectionParameter> parameters)
-            : this(parameters, null)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SinusoidalProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    /// <param name="inverse">Inverse transform instance when cloning.</param>
+    public SinusoidalProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+        : base(parameters, inverse)
+    {
+        this.Name = "Sinusoidal";
+        this.radius = this.semiMajor * this.scaleFactor;
+        this.inverseRadius = 1d / this.radius;
+        this.isEllipsoidal = this.es > 0d;
+    }
+
+    /// <inheritdoc />
+    public override MathTransform Inverse()
+    {
+        if (this.inverse is null)
         {
+            this.inverse = new SinusoidalProjection(this.Parameters.ToProjectionParameter(), this);
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="SinusoidalProjection"/> class.
-        /// </summary>
-        /// <param name="parameters">Projection parameters.</param>
-        /// <param name="inverse">Inverse transform instance when cloning.</param>
-        public SinusoidalProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
-            : base(parameters, inverse)
+        return this.inverse;
+    }
+
+    /// <inheritdoc />
+    protected override void RadiansToMeters(ref double lon, ref double lat)
+    {
+        double lambda = Adjust_lon(lon - this.centralMeridian);
+        double phi = lat;
+
+        if (this.isEllipsoidal)
         {
-            this.Name = "Sinusoidal";
-            this.radius = this.semiMajor * this.scaleFactor;
-            this.inverseRadius = 1d / this.radius;
-            this.isEllipsoidal = this.es > 0d;
+            double sinPhi = Math.Sin(phi);
+            double cosPhi = Math.Cos(phi);
+            lat = this.radius * this.Mlfn(phi, sinPhi, cosPhi);
+            lon = this.radius * lambda * cosPhi / Math.Sqrt(1d - (this.es * sinPhi * sinPhi));
+            return;
         }
 
-        /// <inheritdoc />
-        public override MathTransform Inverse()
+        lon = this.radius * lambda * Math.Cos(phi);
+        lat = this.radius * phi;
+    }
+
+    /// <inheritdoc />
+    protected override void MetersToRadians(ref double x, ref double y)
+    {
+        double xUnit = x * this.inverseRadius;
+        double yUnit = y * this.inverseRadius;
+
+        if (this.isEllipsoidal)
         {
-            if (this.inverse is null)
+            double phiEllipsoid = this.Inv_mlfn(yUnit);
+            double absPhi = Math.Abs(phiEllipsoid);
+            double lambdaEllipsoid;
+
+            if (absPhi < HALFPI)
             {
-                this.inverse = new SinusoidalProjection(this.Parameters.ToProjectionParameter(), this);
+                double sinPhi = Math.Sin(phiEllipsoid);
+                lambdaEllipsoid = xUnit * Math.Sqrt(1d - (this.es * sinPhi * sinPhi)) / Math.Cos(phiEllipsoid);
+            }
+            else if ((absPhi - EPS10) < HALFPI)
+            {
+                lambdaEllipsoid = 0d;
+            }
+            else
+            {
+                throw new ArgumentException("Input data outside projection domain.");
             }
 
-            return this.inverse;
+            x = Adjust_lon(this.centralMeridian + lambdaEllipsoid);
+            y = phiEllipsoid;
+            return;
         }
 
-        /// <inheritdoc />
-        protected override void RadiansToMeters(ref double lon, ref double lat)
-        {
-            double lambda = Adjust_lon(lon - this.centralMeridian);
-            double phi = lat;
+        double phiSphere = yUnit;
+        double cosPhiSphere = Math.Cos(phiSphere);
+        double lambdaSphere = Math.Abs(cosPhiSphere) <= EPS10 ? 0d : (xUnit / cosPhiSphere);
 
-            if (this.isEllipsoidal)
-            {
-                double sinPhi = Math.Sin(phi);
-                double cosPhi = Math.Cos(phi);
-                lat = this.radius * this.Mlfn(phi, sinPhi, cosPhi);
-                lon = this.radius * lambda * cosPhi / Math.Sqrt(1d - (this.es * sinPhi * sinPhi));
-                return;
-            }
-
-            lon = this.radius * lambda * Math.Cos(phi);
-            lat = this.radius * phi;
-        }
-
-        /// <inheritdoc />
-        protected override void MetersToRadians(ref double x, ref double y)
-        {
-            double xUnit = x * this.inverseRadius;
-            double yUnit = y * this.inverseRadius;
-
-            if (this.isEllipsoidal)
-            {
-                double phiEllipsoid = this.Inv_mlfn(yUnit);
-                double absPhi = Math.Abs(phiEllipsoid);
-                double lambdaEllipsoid;
-
-                if (absPhi < HALFPI)
-                {
-                    double sinPhi = Math.Sin(phiEllipsoid);
-                    lambdaEllipsoid = xUnit * Math.Sqrt(1d - (this.es * sinPhi * sinPhi)) / Math.Cos(phiEllipsoid);
-                }
-                else if ((absPhi - EPS10) < HALFPI)
-                {
-                    lambdaEllipsoid = 0d;
-                }
-                else
-                {
-                    throw new ArgumentException("Input data outside projection domain.");
-                }
-
-                x = Adjust_lon(this.centralMeridian + lambdaEllipsoid);
-                y = phiEllipsoid;
-                return;
-            }
-
-            double phiSphere = yUnit;
-            double cosPhiSphere = Math.Cos(phiSphere);
-            double lambdaSphere = Math.Abs(cosPhiSphere) <= EPS10 ? 0d : (xUnit / cosPhiSphere);
-
-            x = Adjust_lon(this.centralMeridian + lambdaSphere);
-            y = phiSphere;
-        }
+        x = Adjust_lon(this.centralMeridian + lambdaSphere);
+        y = phiSphere;
     }
 }

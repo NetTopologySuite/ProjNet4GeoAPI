@@ -14,37 +14,36 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-namespace ProjNet.CoordinateSystems
+namespace ProjNet.CoordinateSystems;
+
+using System;
+
+/// <summary>
+/// A named parameter value.
+/// </summary>
+[Serializable]
+public class Parameter
 {
-    using System;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Parameter"/> class.
+    /// Creates an instance of a parameter.
+    /// </summary>
+    /// <remarks>Units are always either meters or degrees.</remarks>
+    /// <param name="name">Name of parameter.</param>
+    /// <param name="value">Value.</param>
+    public Parameter(string name, double value)
+    {
+        this.Name = name;
+        this.Value = value;
+    }
 
     /// <summary>
-    /// A named parameter value.
+    /// Gets or sets parameter name.
     /// </summary>
-    [Serializable]
-    public class Parameter
-    {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="Parameter"/> class.
-        /// Creates an instance of a parameter.
-        /// </summary>
-        /// <remarks>Units are always either meters or degrees.</remarks>
-        /// <param name="name">Name of parameter.</param>
-        /// <param name="value">Value.</param>
-        public Parameter(string name, double value)
-        {
-            this.Name = name;
-            this.Value = value;
-        }
+    public string Name { get; set; }
 
-        /// <summary>
-        /// Gets or sets parameter name.
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
-        /// Gets or sets parameter value.
-        /// </summary>
-        public double Value { get; set; }
-    }
+    /// <summary>
+    /// Gets or sets parameter value.
+    /// </summary>
+    public double Value { get; set; }
 }

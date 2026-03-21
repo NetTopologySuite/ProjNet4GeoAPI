@@ -15,59 +15,58 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-namespace ProjNet.CoordinateSystems.Transformations
+namespace ProjNet.CoordinateSystems.Transformations;
+
+using System;
+
+/// <summary>
+/// Represents a pass-through transform that leaves all ordinates unchanged.
+/// </summary>
+[Serializable]
+internal sealed class IdentityMathTransform : MathTransform
 {
-    using System;
+    private readonly int dimension;
 
     /// <summary>
-    /// Represents a pass-through transform that leaves all ordinates unchanged.
+    /// Initializes a new instance of the <see cref="IdentityMathTransform"/> class.
     /// </summary>
-    [Serializable]
-    internal sealed class IdentityMathTransform : MathTransform
+    /// <param name="dimension">Requested transform dimension; values below 2 are promoted to 2.</param>
+    internal IdentityMathTransform(int dimension)
     {
-        private readonly int dimension;
+        this.dimension = dimension < 2 ? 2 : dimension;
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="IdentityMathTransform"/> class.
-        /// </summary>
-        /// <param name="dimension">Requested transform dimension; values below 2 are promoted to 2.</param>
-        internal IdentityMathTransform(int dimension)
-        {
-            this.dimension = dimension < 2 ? 2 : dimension;
-        }
+    /// <inheritdoc/>
+    public override int DimSource => this.dimension;
 
-        /// <inheritdoc/>
-        public override int DimSource => this.dimension;
+    /// <inheritdoc/>
+    public override int DimTarget => this.dimension;
 
-        /// <inheritdoc/>
-        public override int DimTarget => this.dimension;
+    /// <inheritdoc/>
+    public override string WKT => $"PARAM_MT[\"Identity\",PARAMETER[\"dimension\",{this.dimension}]]";
 
-        /// <inheritdoc/>
-        public override string WKT => $"PARAM_MT[\"Identity\",PARAMETER[\"dimension\",{this.dimension}]]";
+    /// <inheritdoc/>
+    public override string XML => throw new NotImplementedException();
 
-        /// <inheritdoc/>
-        public override string XML => throw new NotImplementedException();
+    /// <inheritdoc/>
+    public override bool Identity()
+    {
+        return true;
+    }
 
-        /// <inheritdoc/>
-        public override bool Identity()
-        {
-            return true;
-        }
+    /// <inheritdoc/>
+    public override MathTransform Inverse()
+    {
+        return this;
+    }
 
-        /// <inheritdoc/>
-        public override MathTransform Inverse()
-        {
-            return this;
-        }
+    /// <inheritdoc/>
+    public override void Invert()
+    {
+    }
 
-        /// <inheritdoc/>
-        public override void Invert()
-        {
-        }
-
-        /// <inheritdoc/>
-        public override void Transform(ref double x, ref double y, ref double z)
-        {
-        }
+    /// <inheritdoc/>
+    public override void Transform(ref double x, ref double y, ref double z)
+    {
     }
 }

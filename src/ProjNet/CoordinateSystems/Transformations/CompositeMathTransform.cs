@@ -14,113 +14,112 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-namespace ProjNet.CoordinateSystems.Transformations
+namespace ProjNet.CoordinateSystems.Transformations;
+
+using System;
+using System.Collections.Generic;
+
+/// <summary>
+/// Composes multiple math transforms into a single sequential transform.
+/// </summary>
+[Serializable]
+internal sealed class CompositeMathTransform : MathTransform
 {
-    using System;
-    using System.Collections.Generic;
+    private MathTransform[] transforms;
+    private MathTransform inverse;
 
     /// <summary>
-    /// Composes multiple math transforms into a single sequential transform.
+    /// Initializes a new instance of the <see cref="CompositeMathTransform"/> class.
     /// </summary>
-    [Serializable]
-    internal sealed class CompositeMathTransform : MathTransform
+    /// <param name="transforms">Ordered transform chain executed from first to last.</param>
+    internal CompositeMathTransform(IReadOnlyList<MathTransform> transforms)
     {
-        private MathTransform[] transforms;
-        private MathTransform inverse;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="CompositeMathTransform"/> class.
-        /// </summary>
-        /// <param name="transforms">Ordered transform chain executed from first to last.</param>
-        internal CompositeMathTransform(IReadOnlyList<MathTransform> transforms)
+        if (transforms is null)
         {
-            if (transforms is null)
+            throw new ArgumentNullException(nameof(transforms));
+        }
+
+        if (transforms.Count == 0)
+        {
+            throw new ArgumentException("At least one math transform is required.", nameof(transforms));
+        }
+
+        this.transforms = new MathTransform[transforms.Count];
+        for (int i = 0; i < transforms.Count; i++)
+        {
+            if (transforms[i] is null)
             {
-                throw new ArgumentNullException(nameof(transforms));
+                throw new ArgumentException("Math transform list contains null element.", nameof(transforms));
             }
 
-            if (transforms.Count == 0)
-            {
-                throw new ArgumentException("At least one math transform is required.", nameof(transforms));
-            }
+            this.transforms[i] = transforms[i];
+        }
+    }
 
-            this.transforms = new MathTransform[transforms.Count];
-            for (int i = 0; i < transforms.Count; i++)
-            {
-                if (transforms[i] is null)
-                {
-                    throw new ArgumentException("Math transform list contains null element.", nameof(transforms));
-                }
+    /// <inheritdoc />
+    public override int DimSource => this.transforms[0].DimSource;
 
-                this.transforms[i] = transforms[i];
+    /// <inheritdoc />
+    public override int DimTarget => this.transforms[this.transforms.Length - 1].DimTarget;
+
+    /// <inheritdoc />
+    public override string WKT => throw new NotImplementedException();
+
+    /// <inheritdoc />
+    public override string XML => throw new NotImplementedException();
+
+    /// <inheritdoc />
+    public override bool Identity()
+    {
+        for (int i = 0; i < this.transforms.Length; i++)
+        {
+            if (!this.transforms[i].Identity())
+            {
+                return false;
             }
         }
 
-        /// <inheritdoc />
-        public override int DimSource => this.transforms[0].DimSource;
+        return true;
+    }
 
-        /// <inheritdoc />
-        public override int DimTarget => this.transforms[this.transforms.Length - 1].DimTarget;
-
-        /// <inheritdoc />
-        public override string WKT => throw new NotImplementedException();
-
-        /// <inheritdoc />
-        public override string XML => throw new NotImplementedException();
-
-        /// <inheritdoc />
-        public override bool Identity()
+    /// <inheritdoc />
+    public override MathTransform Inverse()
+    {
+        if (!(this.inverse is null))
         {
-            for (int i = 0; i < this.transforms.Length; i++)
-            {
-                if (!this.transforms[i].Identity())
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        /// <inheritdoc />
-        public override MathTransform Inverse()
-        {
-            if (!(this.inverse is null))
-            {
-                return this.inverse;
-            }
-
-            var inverted = new MathTransform[this.transforms.Length];
-            int output = 0;
-            for (int i = this.transforms.Length - 1; i >= 0; i--)
-            {
-                inverted[output] = this.transforms[i].Inverse();
-                output++;
-            }
-
-            this.inverse = new CompositeMathTransform(inverted);
             return this.inverse;
         }
 
-        /// <inheritdoc />
-        public override void Invert()
+        var inverted = new MathTransform[this.transforms.Length];
+        int output = 0;
+        for (int i = this.transforms.Length - 1; i >= 0; i--)
         {
-            Array.Reverse(this.transforms);
-            for (int i = 0; i < this.transforms.Length; i++)
-            {
-                this.transforms[i].Invert();
-            }
-
-            this.inverse = null;
+            inverted[output] = this.transforms[i].Inverse();
+            output++;
         }
 
-        /// <inheritdoc />
-        public override void Transform(ref double x, ref double y, ref double z)
+        this.inverse = new CompositeMathTransform(inverted);
+        return this.inverse;
+    }
+
+    /// <inheritdoc />
+    public override void Invert()
+    {
+        Array.Reverse(this.transforms);
+        for (int i = 0; i < this.transforms.Length; i++)
         {
-            for (int i = 0; i < this.transforms.Length; i++)
-            {
-                this.transforms[i].Transform(ref x, ref y, ref z);
-            }
+            this.transforms[i].Invert();
+        }
+
+        this.inverse = null;
+    }
+
+    /// <inheritdoc />
+    public override void Transform(ref double x, ref double y, ref double z)
+    {
+        for (int i = 0; i < this.transforms.Length; i++)
+        {
+            this.transforms[i].Transform(ref x, ref y, ref z);
         }
     }
 }

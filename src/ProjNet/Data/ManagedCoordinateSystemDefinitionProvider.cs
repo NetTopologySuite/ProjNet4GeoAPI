@@ -15,51 +15,50 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-namespace ProjNet.Data
+namespace ProjNet.Data;
+
+using System.Collections.Generic;
+using ProjNet.CoordinateSystems;
+using ProjNet.Data.Generated;
+
+/// <summary>
+/// Provides managed, runtime-independent defaults for core coordinate system definitions.
+/// </summary>
+/// <remarks>
+/// This provider intentionally avoids runtime SQLite/native dependencies.
+/// It is the baseline managed packaging implementation and can be replaced by a generated provider in later phases.
+/// </remarks>
+public sealed class ManagedCoordinateSystemDefinitionProvider : ICoordinateSystemDefinitionProvider, IManagedCoordinateSystemProvider
 {
-    using System.Collections.Generic;
-    using ProjNet.CoordinateSystems;
-    using ProjNet.Data.Generated;
+    /// <inheritdoc/>
+    public IEnumerable<KeyValuePair<int, CoordinateSystem>> GetCoordinateSystems()
+    {
+        return GetManagedCoordinateSystems();
+    }
 
     /// <summary>
-    /// Provides managed, runtime-independent defaults for core coordinate system definitions.
+    /// Performs the documented operation.
     /// </summary>
-    /// <remarks>
-    /// This provider intentionally avoids runtime SQLite/native dependencies.
-    /// It is the baseline managed packaging implementation and can be replaced by a generated provider in later phases.
-    /// </remarks>
-    public sealed class ManagedCoordinateSystemDefinitionProvider : ICoordinateSystemDefinitionProvider, IManagedCoordinateSystemProvider
+    /// <returns>The computed value.</returns>
+    public IEnumerable<KeyValuePair<int, string>> GetDefinitions()
     {
-        /// <inheritdoc/>
-        public IEnumerable<KeyValuePair<int, CoordinateSystem>> GetCoordinateSystems()
+        foreach (var coordinateSystem in GetManagedCoordinateSystems())
         {
-            return GetManagedCoordinateSystems();
+            yield return new KeyValuePair<int, string>(coordinateSystem.Key, coordinateSystem.Value.WKT);
         }
+    }
 
-        /// <summary>
-        /// Performs the documented operation.
-        /// </summary>
-        /// <returns>The computed value.</returns>
-        public IEnumerable<KeyValuePair<int, string>> GetDefinitions()
+    private static IEnumerable<KeyValuePair<int, CoordinateSystem>> GetManagedCoordinateSystems()
+    {
+        var yieldedSrids = new HashSet<int>();
+        foreach (var coordinateSystem in EpsgCoordinateSystemFactory.GetCoordinateSystems())
         {
-            foreach (var coordinateSystem in GetManagedCoordinateSystems())
+            if (!yieldedSrids.Add(coordinateSystem.Key))
             {
-                yield return new KeyValuePair<int, string>(coordinateSystem.Key, coordinateSystem.Value.WKT);
+                continue;
             }
-        }
 
-        private static IEnumerable<KeyValuePair<int, CoordinateSystem>> GetManagedCoordinateSystems()
-        {
-            var yieldedSrids = new HashSet<int>();
-            foreach (var coordinateSystem in EpsgCoordinateSystemFactory.GetCoordinateSystems())
-            {
-                if (!yieldedSrids.Add(coordinateSystem.Key))
-                {
-                    continue;
-                }
-
-                yield return coordinateSystem;
-            }
+            yield return coordinateSystem;
         }
     }
 }

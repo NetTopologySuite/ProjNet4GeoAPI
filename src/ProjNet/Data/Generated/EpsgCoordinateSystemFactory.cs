@@ -15,616 +15,615 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-namespace ProjNet.Data.Generated
+namespace ProjNet.Data.Generated;
+
+using System;
+using System.Collections.Generic;
+using ProjNet;
+using ProjNet.CoordinateSystems;
+
+/// <summary>
+/// Represents the documented type.
+/// </summary>
+internal static class EpsgCoordinateSystemFactory
 {
-    using System;
-    using System.Collections.Generic;
-    using ProjNet;
-    using ProjNet.CoordinateSystems;
+    private static readonly CoordinateSystem[] CoordinateSystemCache = new CoordinateSystem[EpsgGeneratedCatalog.CoordinateReferenceCount];
+    private static readonly object CoordinateSystemCacheSync = new object();
+    private static readonly Lazy<Dictionary<int, EpsgUnitRecord>> UnitsByCode = new Lazy<Dictionary<int, EpsgUnitRecord>>(BuildUnitsByCode, true);
+    private static readonly Lazy<Dictionary<int, EpsgEllipsoidRecord>> EllipsoidsByCode = new Lazy<Dictionary<int, EpsgEllipsoidRecord>>(BuildEllipsoidsByCode, true);
+    private static readonly Lazy<Dictionary<int, EpsgPrimeMeridianRecord>> PrimeMeridiansByCode = new Lazy<Dictionary<int, EpsgPrimeMeridianRecord>>(BuildPrimeMeridiansByCode, true);
+    private static readonly Lazy<Dictionary<int, EpsgGeodeticDatumRecord>> GeodeticDatumsByCode = new Lazy<Dictionary<int, EpsgGeodeticDatumRecord>>(BuildGeodeticDatumsByCode, true);
+    private static readonly Lazy<Dictionary<int, EpsgVerticalDatumRecord>> VerticalDatumsByCode = new Lazy<Dictionary<int, EpsgVerticalDatumRecord>>(BuildVerticalDatumsByCode, true);
+    private static readonly Lazy<Dictionary<int, EpsgConversionRecord>> ConversionsByCode = new Lazy<Dictionary<int, EpsgConversionRecord>>(BuildConversionsByCode, true);
+    private static readonly Lazy<Dictionary<int, EpsgAxisRecord[]>> AxesByCoordinateSystemCode = new Lazy<Dictionary<int, EpsgAxisRecord[]>>(BuildAxesByCoordinateSystemCode, true);
 
     /// <summary>
-    /// Represents the documented type.
+    /// Performs the documented operation.
     /// </summary>
-    internal static class EpsgCoordinateSystemFactory
+    /// <returns>The computed value.</returns>
+    internal static IEnumerable<KeyValuePair<int, CoordinateSystem>> GetCoordinateSystems()
     {
-        private static readonly CoordinateSystem[] CoordinateSystemCache = new CoordinateSystem[EpsgGeneratedCatalog.CoordinateReferenceCount];
-        private static readonly object CoordinateSystemCacheSync = new object();
-        private static readonly Lazy<Dictionary<int, EpsgUnitRecord>> UnitsByCode = new Lazy<Dictionary<int, EpsgUnitRecord>>(BuildUnitsByCode, true);
-        private static readonly Lazy<Dictionary<int, EpsgEllipsoidRecord>> EllipsoidsByCode = new Lazy<Dictionary<int, EpsgEllipsoidRecord>>(BuildEllipsoidsByCode, true);
-        private static readonly Lazy<Dictionary<int, EpsgPrimeMeridianRecord>> PrimeMeridiansByCode = new Lazy<Dictionary<int, EpsgPrimeMeridianRecord>>(BuildPrimeMeridiansByCode, true);
-        private static readonly Lazy<Dictionary<int, EpsgGeodeticDatumRecord>> GeodeticDatumsByCode = new Lazy<Dictionary<int, EpsgGeodeticDatumRecord>>(BuildGeodeticDatumsByCode, true);
-        private static readonly Lazy<Dictionary<int, EpsgVerticalDatumRecord>> VerticalDatumsByCode = new Lazy<Dictionary<int, EpsgVerticalDatumRecord>>(BuildVerticalDatumsByCode, true);
-        private static readonly Lazy<Dictionary<int, EpsgConversionRecord>> ConversionsByCode = new Lazy<Dictionary<int, EpsgConversionRecord>>(BuildConversionsByCode, true);
-        private static readonly Lazy<Dictionary<int, EpsgAxisRecord[]>> AxesByCoordinateSystemCode = new Lazy<Dictionary<int, EpsgAxisRecord[]>>(BuildAxesByCoordinateSystemCode, true);
-
-        /// <summary>
-        /// Performs the documented operation.
-        /// </summary>
-        /// <returns>The computed value.</returns>
-        internal static IEnumerable<KeyValuePair<int, CoordinateSystem>> GetCoordinateSystems()
+        for (int cacheIndex = 0; cacheIndex < EpsgGeneratedCatalog.CoordinateReferenceCount; cacheIndex++)
         {
-            for (int cacheIndex = 0; cacheIndex < EpsgGeneratedCatalog.CoordinateReferenceCount; cacheIndex++)
+            if (!EpsgGeneratedCatalog.TryGetCoordinateSridByCacheIndex(cacheIndex, out int srid))
             {
-                if (!EpsgGeneratedCatalog.TryGetCoordinateSridByCacheIndex(cacheIndex, out int srid))
-                {
-                    continue;
-                }
-
-                var coordinateSystem = TryCreateCoordinateSystem(srid);
-                if (coordinateSystem == null)
-                {
-                    continue;
-                }
-
-                yield return new KeyValuePair<int, CoordinateSystem>(srid, coordinateSystem);
+                continue;
             }
+
+            var coordinateSystem = TryCreateCoordinateSystem(srid);
+            if (coordinateSystem == null)
+            {
+                continue;
+            }
+
+            yield return new KeyValuePair<int, CoordinateSystem>(srid, coordinateSystem);
+        }
+    }
+
+    private static CoordinateSystem TryCreateCoordinateSystem(int srid)
+    {
+        if (!EpsgGeneratedCatalog.TryGetCoordinateReference(srid, out var reference, out int cacheIndex))
+        {
+            return null;
         }
 
-        private static CoordinateSystem TryCreateCoordinateSystem(int srid)
+        var cached = CoordinateSystemCache[cacheIndex];
+        if (cached != null)
         {
-            if (!EpsgGeneratedCatalog.TryGetCoordinateReference(srid, out var reference, out int cacheIndex))
-            {
-                return null;
-            }
-
-            var cached = CoordinateSystemCache[cacheIndex];
-            if (cached != null)
-            {
-                return cached;
-            }
-
-            var created = CreateCoordinateSystem(reference);
-            if (created == null)
-            {
-                return null;
-            }
-
-            lock (CoordinateSystemCacheSync)
-            {
-                if (CoordinateSystemCache[cacheIndex] == null)
-                {
-                    CoordinateSystemCache[cacheIndex] = created;
-                }
-
-                return CoordinateSystemCache[cacheIndex];
-            }
+            return cached;
         }
 
-        private static CoordinateSystem CreateCoordinateSystem(EpsgCoordinateReferenceRecord reference)
+        var created = CreateCoordinateSystem(reference);
+        if (created == null)
         {
-            switch (reference.Kind)
-            {
-                case EpsgCoordinateSystemKind.Geographic2D:
-                    return CreateGeographic(EpsgGeneratedCatalog.GeographicCrs[reference.RecordIndex]);
-                case EpsgCoordinateSystemKind.Geocentric:
-                    return CreateGeocentric(EpsgGeneratedCatalog.GeocentricCrs[reference.RecordIndex]);
-                case EpsgCoordinateSystemKind.Projected:
-                    return CreateProjected(EpsgGeneratedCatalog.ProjectedCrs[reference.RecordIndex]);
-                case EpsgCoordinateSystemKind.Vertical:
-                    return CreateVertical(EpsgGeneratedCatalog.VerticalCrs[reference.RecordIndex]);
-                case EpsgCoordinateSystemKind.Compound:
-                    return CreateCompound(EpsgGeneratedCatalog.CompoundCrs[reference.RecordIndex]);
-                default:
-                    return null;
-            }
+            return null;
         }
 
-        private static GeographicCoordinateSystem CreateGeographic(EpsgGeographicCrsRecord record)
+        lock (CoordinateSystemCacheSync)
         {
-            if (!TryCreateHorizontalDatum(record.DatumCode, out var datum))
+            if (CoordinateSystemCache[cacheIndex] == null)
             {
-                return null;
+                CoordinateSystemCache[cacheIndex] = created;
             }
 
-            if (!TryGetGeodeticDatumRecord(record.DatumCode, out var geodeticDatumRecord))
-            {
-                return null;
-            }
+            return CoordinateSystemCache[cacheIndex];
+        }
+    }
 
-            if (!TryCreatePrimeMeridian(geodeticDatumRecord.PrimeMeridianCode, out var primeMeridian))
-            {
+    private static CoordinateSystem CreateCoordinateSystem(EpsgCoordinateReferenceRecord reference)
+    {
+        switch (reference.Kind)
+        {
+            case EpsgCoordinateSystemKind.Geographic2D:
+                return CreateGeographic(EpsgGeneratedCatalog.GeographicCrs[reference.RecordIndex]);
+            case EpsgCoordinateSystemKind.Geocentric:
+                return CreateGeocentric(EpsgGeneratedCatalog.GeocentricCrs[reference.RecordIndex]);
+            case EpsgCoordinateSystemKind.Projected:
+                return CreateProjected(EpsgGeneratedCatalog.ProjectedCrs[reference.RecordIndex]);
+            case EpsgCoordinateSystemKind.Vertical:
+                return CreateVertical(EpsgGeneratedCatalog.VerticalCrs[reference.RecordIndex]);
+            case EpsgCoordinateSystemKind.Compound:
+                return CreateCompound(EpsgGeneratedCatalog.CompoundCrs[reference.RecordIndex]);
+            default:
                 return null;
-            }
+        }
+    }
 
-            var axes = GetAxes(record.CoordinateSystemCode, 2);
-            if (axes == null || axes.Count < 2)
-            {
-                return null;
-            }
-
-            if (!TryCreateAngularUnit(GetUnitCode(record.CoordinateSystemCode, 1), out var angularUnit))
-            {
-                return null;
-            }
-
-            return new GeographicCoordinateSystem(
-                angularUnit,
-                datum,
-                primeMeridian,
-                axes,
-                record.Name,
-                "EPSG",
-                record.Srid,
-                string.Empty,
-                string.Empty,
-                string.Empty);
+    private static GeographicCoordinateSystem CreateGeographic(EpsgGeographicCrsRecord record)
+    {
+        if (!TryCreateHorizontalDatum(record.DatumCode, out var datum))
+        {
+            return null;
         }
 
-        private static GeocentricCoordinateSystem CreateGeocentric(EpsgGeocentricCrsRecord record)
+        if (!TryGetGeodeticDatumRecord(record.DatumCode, out var geodeticDatumRecord))
         {
-            if (!TryCreateHorizontalDatum(record.DatumCode, out var datum))
-            {
-                return null;
-            }
-
-            if (!TryGetGeodeticDatumRecord(record.DatumCode, out var geodeticDatumRecord))
-            {
-                return null;
-            }
-
-            if (!TryCreatePrimeMeridian(geodeticDatumRecord.PrimeMeridianCode, out var primeMeridian))
-            {
-                return null;
-            }
-
-            var axes = GetAxes(record.CoordinateSystemCode, 3);
-            if (axes == null || axes.Count < 3)
-            {
-                return null;
-            }
-
-            if (!TryCreateLinearUnit(GetUnitCode(record.CoordinateSystemCode, 1), out var linearUnit))
-            {
-                return null;
-            }
-
-            return new GeocentricCoordinateSystem(
-                datum,
-                linearUnit,
-                primeMeridian,
-                axes,
-                record.Name,
-                "EPSG",
-                record.Srid,
-                string.Empty,
-                string.Empty,
-                string.Empty);
+            return null;
         }
 
-        private static ProjectedCoordinateSystem CreateProjected(EpsgProjectedCrsRecord record)
+        if (!TryCreatePrimeMeridian(geodeticDatumRecord.PrimeMeridianCode, out var primeMeridian))
         {
-            var baseCoordinateSystem = TryCreateCoordinateSystem(record.BaseSrid) as GeographicCoordinateSystem;
-            if (baseCoordinateSystem == null)
-            {
-                return null;
-            }
-
-            if (!TryCreateLinearUnit(GetUnitCode(record.CoordinateSystemCode, 1), out var linearUnit))
-            {
-                return null;
-            }
-
-            if (!TryGetConversionRecord(record.ConversionCode, out var conversion))
-            {
-                return null;
-            }
-
-            var parameters = new List<ProjectionParameter>();
-            for (int i = 0; i < conversion.ParameterCount; i++)
-            {
-                var parameter = EpsgGeneratedCatalog.ConversionParameters[conversion.ParameterStartIndex + i];
-                parameters.Add(new ProjectionParameter(NormalizeProjectionParameterName(parameter.Name), parameter.Value));
-            }
-
-            string projectionName = NormalizeProjectionMethodName(conversion.MethodName);
-            var projection = new Projection(projectionName, parameters, projectionName, "EPSG", record.ConversionCode, string.Empty, string.Empty, string.Empty);
-
-            var axes = GetAxes(record.CoordinateSystemCode, 2);
-            if (axes == null || axes.Count < 2)
-            {
-                return null;
-            }
-
-            return new ProjectedCoordinateSystem(
-                baseCoordinateSystem.HorizontalDatum,
-                baseCoordinateSystem,
-                linearUnit,
-                projection,
-                axes,
-                record.Name,
-                "EPSG",
-                record.Srid,
-                string.Empty,
-                string.Empty,
-                string.Empty);
+            return null;
         }
 
-        private static VerticalCoordinateSystem CreateVertical(EpsgVerticalCrsRecord record)
+        var axes = GetAxes(record.CoordinateSystemCode, 2);
+        if (axes == null || axes.Count < 2)
         {
-            if (!TryGetVerticalDatumRecord(record.DatumCode, out var datumRecord))
-            {
-                return null;
-            }
-
-            var axisInfo = GetAxes(record.CoordinateSystemCode, 1);
-            if (axisInfo == null || axisInfo.Count == 0)
-            {
-                return null;
-            }
-
-            if (!TryCreateLinearUnit(GetUnitCode(record.CoordinateSystemCode, 1), out var linearUnit))
-            {
-                return null;
-            }
-
-            var datum = new VerticalDatum(DatumType.VD_GeoidModelDerived, datumRecord.Name, "EPSG", datumRecord.Code, string.Empty, string.Empty, string.Empty);
-
-            return new VerticalCoordinateSystem(
-                linearUnit,
-                datum,
-                axisInfo[0],
-                record.Name,
-                "EPSG",
-                record.Srid,
-                string.Empty,
-                string.Empty,
-                string.Empty);
+            return null;
         }
 
-        private static string NormalizeProjectionMethodName(string methodName)
+        if (!TryCreateAngularUnit(GetUnitCode(record.CoordinateSystemCode, 1), out var angularUnit))
         {
-            if (string.IsNullOrWhiteSpace(methodName))
-            {
+            return null;
+        }
+
+        return new GeographicCoordinateSystem(
+            angularUnit,
+            datum,
+            primeMeridian,
+            axes,
+            record.Name,
+            "EPSG",
+            record.Srid,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
+    private static GeocentricCoordinateSystem CreateGeocentric(EpsgGeocentricCrsRecord record)
+    {
+        if (!TryCreateHorizontalDatum(record.DatumCode, out var datum))
+        {
+            return null;
+        }
+
+        if (!TryGetGeodeticDatumRecord(record.DatumCode, out var geodeticDatumRecord))
+        {
+            return null;
+        }
+
+        if (!TryCreatePrimeMeridian(geodeticDatumRecord.PrimeMeridianCode, out var primeMeridian))
+        {
+            return null;
+        }
+
+        var axes = GetAxes(record.CoordinateSystemCode, 3);
+        if (axes == null || axes.Count < 3)
+        {
+            return null;
+        }
+
+        if (!TryCreateLinearUnit(GetUnitCode(record.CoordinateSystemCode, 1), out var linearUnit))
+        {
+            return null;
+        }
+
+        return new GeocentricCoordinateSystem(
+            datum,
+            linearUnit,
+            primeMeridian,
+            axes,
+            record.Name,
+            "EPSG",
+            record.Srid,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
+    private static ProjectedCoordinateSystem CreateProjected(EpsgProjectedCrsRecord record)
+    {
+        var baseCoordinateSystem = TryCreateCoordinateSystem(record.BaseSrid) as GeographicCoordinateSystem;
+        if (baseCoordinateSystem == null)
+        {
+            return null;
+        }
+
+        if (!TryCreateLinearUnit(GetUnitCode(record.CoordinateSystemCode, 1), out var linearUnit))
+        {
+            return null;
+        }
+
+        if (!TryGetConversionRecord(record.ConversionCode, out var conversion))
+        {
+            return null;
+        }
+
+        var parameters = new List<ProjectionParameter>();
+        for (int i = 0; i < conversion.ParameterCount; i++)
+        {
+            var parameter = EpsgGeneratedCatalog.ConversionParameters[conversion.ParameterStartIndex + i];
+            parameters.Add(new ProjectionParameter(NormalizeProjectionParameterName(parameter.Name), parameter.Value));
+        }
+
+        string projectionName = NormalizeProjectionMethodName(conversion.MethodName);
+        var projection = new Projection(projectionName, parameters, projectionName, "EPSG", record.ConversionCode, string.Empty, string.Empty, string.Empty);
+
+        var axes = GetAxes(record.CoordinateSystemCode, 2);
+        if (axes == null || axes.Count < 2)
+        {
+            return null;
+        }
+
+        return new ProjectedCoordinateSystem(
+            baseCoordinateSystem.HorizontalDatum,
+            baseCoordinateSystem,
+            linearUnit,
+            projection,
+            axes,
+            record.Name,
+            "EPSG",
+            record.Srid,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
+    private static VerticalCoordinateSystem CreateVertical(EpsgVerticalCrsRecord record)
+    {
+        if (!TryGetVerticalDatumRecord(record.DatumCode, out var datumRecord))
+        {
+            return null;
+        }
+
+        var axisInfo = GetAxes(record.CoordinateSystemCode, 1);
+        if (axisInfo == null || axisInfo.Count == 0)
+        {
+            return null;
+        }
+
+        if (!TryCreateLinearUnit(GetUnitCode(record.CoordinateSystemCode, 1), out var linearUnit))
+        {
+            return null;
+        }
+
+        var datum = new VerticalDatum(DatumType.VD_GeoidModelDerived, datumRecord.Name, "EPSG", datumRecord.Code, string.Empty, string.Empty, string.Empty);
+
+        return new VerticalCoordinateSystem(
+            linearUnit,
+            datum,
+            axisInfo[0],
+            record.Name,
+            "EPSG",
+            record.Srid,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
+    private static string NormalizeProjectionMethodName(string methodName)
+    {
+        if (string.IsNullOrWhiteSpace(methodName))
+        {
+            return methodName;
+        }
+
+        string normalized = methodName.ToLowerInvariant();
+        normalized = StringCompatibility.ReplaceOrdinal(normalized, "(", string.Empty);
+        normalized = StringCompatibility.ReplaceOrdinal(normalized, ")", string.Empty);
+        normalized = StringCompatibility.ReplaceOrdinal(normalized, "-", "_");
+        normalized = StringCompatibility.ReplaceOrdinal(normalized, "/", "_");
+        normalized = StringCompatibility.ReplaceOrdinal(normalized, " ", "_");
+        normalized = StringCompatibility.ReplaceOrdinal(normalized, ".", "_");
+        normalized = StringCompatibility.ReplaceOrdinal(normalized, "__", "_");
+
+        switch (normalized)
+        {
+            case "polar_stereographic_variant_a":
+            case "polar_stereographic_variant_b":
+                return "Polar Stereographic";
+            default:
                 return methodName;
-            }
+        }
+    }
 
-            string normalized = methodName.ToLowerInvariant();
-            normalized = StringCompatibility.ReplaceOrdinal(normalized, "(", string.Empty);
-            normalized = StringCompatibility.ReplaceOrdinal(normalized, ")", string.Empty);
-            normalized = StringCompatibility.ReplaceOrdinal(normalized, "-", "_");
-            normalized = StringCompatibility.ReplaceOrdinal(normalized, "/", "_");
-            normalized = StringCompatibility.ReplaceOrdinal(normalized, " ", "_");
-            normalized = StringCompatibility.ReplaceOrdinal(normalized, ".", "_");
-            normalized = StringCompatibility.ReplaceOrdinal(normalized, "__", "_");
-
-            switch (normalized)
-            {
-                case "polar_stereographic_variant_a":
-                case "polar_stereographic_variant_b":
-                    return "Polar Stereographic";
-                default:
-                    return methodName;
-            }
+    private static string NormalizeProjectionParameterName(string parameterName)
+    {
+        if (string.IsNullOrWhiteSpace(parameterName))
+        {
+            return parameterName;
         }
 
-        private static string NormalizeProjectionParameterName(string parameterName)
+        string normalized = parameterName.ToLowerInvariant();
+        normalized = StringCompatibility.ReplaceOrdinal(normalized, "(", string.Empty);
+        normalized = StringCompatibility.ReplaceOrdinal(normalized, ")", string.Empty);
+        normalized = StringCompatibility.ReplaceOrdinal(normalized, "-", "_");
+        normalized = StringCompatibility.ReplaceOrdinal(normalized, "/", "_");
+        normalized = StringCompatibility.ReplaceOrdinal(normalized, " ", "_");
+        normalized = StringCompatibility.ReplaceOrdinal(normalized, ".", "_");
+        normalized = StringCompatibility.ReplaceOrdinal(normalized, "__", "_");
+
+        switch (normalized)
         {
-            if (string.IsNullOrWhiteSpace(parameterName))
-            {
-                return parameterName;
-            }
+            case "longitude_of_natural_origin":
+            case "longitude_of_false_origin":
+            case "longitude_of_projection_centre":
+                return "central_meridian";
+            case "latitude_of_natural_origin":
+            case "latitude_of_false_origin":
+            case "latitude_of_projection_centre":
+                return "latitude_of_origin";
+            case "scale_factor_at_natural_origin":
+            case "scale_factor_at_projection_centre":
+            case "scale_factor_on_initial_line":
+                return "scale_factor";
+            case "easting_at_false_origin":
+            case "easting_at_projection_centre":
+                return "false_easting";
+            case "northing_at_false_origin":
+            case "northing_at_projection_centre":
+                return "false_northing";
+            case "latitude_of_1st_standard_parallel":
+                return "standard_parallel_1";
+            case "latitude_of_2nd_standard_parallel":
+                return "standard_parallel_2";
+            default:
+                return normalized;
+        }
+    }
 
-            string normalized = parameterName.ToLowerInvariant();
-            normalized = StringCompatibility.ReplaceOrdinal(normalized, "(", string.Empty);
-            normalized = StringCompatibility.ReplaceOrdinal(normalized, ")", string.Empty);
-            normalized = StringCompatibility.ReplaceOrdinal(normalized, "-", "_");
-            normalized = StringCompatibility.ReplaceOrdinal(normalized, "/", "_");
-            normalized = StringCompatibility.ReplaceOrdinal(normalized, " ", "_");
-            normalized = StringCompatibility.ReplaceOrdinal(normalized, ".", "_");
-            normalized = StringCompatibility.ReplaceOrdinal(normalized, "__", "_");
-
-            switch (normalized)
-            {
-                case "longitude_of_natural_origin":
-                case "longitude_of_false_origin":
-                case "longitude_of_projection_centre":
-                    return "central_meridian";
-                case "latitude_of_natural_origin":
-                case "latitude_of_false_origin":
-                case "latitude_of_projection_centre":
-                    return "latitude_of_origin";
-                case "scale_factor_at_natural_origin":
-                case "scale_factor_at_projection_centre":
-                case "scale_factor_on_initial_line":
-                    return "scale_factor";
-                case "easting_at_false_origin":
-                case "easting_at_projection_centre":
-                    return "false_easting";
-                case "northing_at_false_origin":
-                case "northing_at_projection_centre":
-                    return "false_northing";
-                case "latitude_of_1st_standard_parallel":
-                    return "standard_parallel_1";
-                case "latitude_of_2nd_standard_parallel":
-                    return "standard_parallel_2";
-                default:
-                    return normalized;
-            }
+    private static CompoundCoordinateSystem CreateCompound(EpsgCompoundCrsRecord record)
+    {
+        var horizontal = TryCreateCoordinateSystem(record.HorizontalSrid);
+        var vertical = TryCreateCoordinateSystem(record.VerticalSrid);
+        if (horizontal == null || vertical == null)
+        {
+            return null;
         }
 
-        private static CompoundCoordinateSystem CreateCompound(EpsgCompoundCrsRecord record)
-        {
-            var horizontal = TryCreateCoordinateSystem(record.HorizontalSrid);
-            var vertical = TryCreateCoordinateSystem(record.VerticalSrid);
-            if (horizontal == null || vertical == null)
-            {
-                return null;
-            }
+        return new CompoundCoordinateSystem(
+            horizontal,
+            vertical,
+            record.Name,
+            "EPSG",
+            record.Srid,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
 
-            return new CompoundCoordinateSystem(
-                horizontal,
-                vertical,
-                record.Name,
-                "EPSG",
-                record.Srid,
-                string.Empty,
-                string.Empty,
-                string.Empty);
+    private static bool TryCreateHorizontalDatum(int datumCode, out HorizontalDatum datum)
+    {
+        datum = null;
+        if (!TryGetGeodeticDatumRecord(datumCode, out var datumRecord))
+        {
+            return false;
         }
 
-        private static bool TryCreateHorizontalDatum(int datumCode, out HorizontalDatum datum)
+        if (!TryCreateEllipsoid(datumRecord.EllipsoidCode, out var ellipsoid))
         {
-            datum = null;
-            if (!TryGetGeodeticDatumRecord(datumCode, out var datumRecord))
-            {
-                return false;
-            }
-
-            if (!TryCreateEllipsoid(datumRecord.EllipsoidCode, out var ellipsoid))
-            {
-                return false;
-            }
-
-            datum = new HorizontalDatum(
-                ellipsoid,
-                null,
-                DatumType.HD_Geocentric,
-                datumRecord.Name,
-                "EPSG",
-                datumRecord.Code,
-                string.Empty,
-                string.Empty,
-                string.Empty);
-            return true;
+            return false;
         }
 
-        private static bool TryCreateEllipsoid(int ellipsoidCode, out Ellipsoid ellipsoid)
+        datum = new HorizontalDatum(
+            ellipsoid,
+            null,
+            DatumType.HD_Geocentric,
+            datumRecord.Name,
+            "EPSG",
+            datumRecord.Code,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+        return true;
+    }
+
+    private static bool TryCreateEllipsoid(int ellipsoidCode, out Ellipsoid ellipsoid)
+    {
+        ellipsoid = null;
+        if (!TryGetEllipsoidRecord(ellipsoidCode, out var record))
         {
-            ellipsoid = null;
-            if (!TryGetEllipsoidRecord(ellipsoidCode, out var record))
-            {
-                return false;
-            }
-
-            if (!TryCreateLinearUnit(record.UnitCode, out var linearUnit))
-            {
-                return false;
-            }
-
-            ellipsoid = new Ellipsoid(
-                record.SemiMajor,
-                record.SemiMinor,
-                record.InverseFlattening,
-                record.IsInverseFlatteningDefinitive,
-                linearUnit,
-                record.Name,
-                "EPSG",
-                record.Code,
-                string.Empty,
-                string.Empty,
-                string.Empty);
-
-            return true;
+            return false;
         }
 
-        private static bool TryCreatePrimeMeridian(int primeMeridianCode, out PrimeMeridian primeMeridian)
+        if (!TryCreateLinearUnit(record.UnitCode, out var linearUnit))
         {
-            primeMeridian = null;
-            if (!TryGetPrimeMeridianRecord(primeMeridianCode, out var record))
-            {
-                return false;
-            }
-
-            if (!TryCreateAngularUnit(record.UnitCode, out var angularUnit))
-            {
-                return false;
-            }
-
-            primeMeridian = new PrimeMeridian(
-                record.Longitude,
-                angularUnit,
-                record.Name,
-                "EPSG",
-                record.Code,
-                string.Empty,
-                string.Empty,
-                string.Empty);
-            return true;
+            return false;
         }
 
-        private static bool TryCreateLinearUnit(int unitCode, out LinearUnit unit)
-        {
-            unit = null;
-            if (!TryGetUnitRecord(unitCode, out var record) || record.UnitType != 0)
-            {
-                return false;
-            }
+        ellipsoid = new Ellipsoid(
+            record.SemiMajor,
+            record.SemiMinor,
+            record.InverseFlattening,
+            record.IsInverseFlatteningDefinitive,
+            linearUnit,
+            record.Name,
+            "EPSG",
+            record.Code,
+            string.Empty,
+            string.Empty,
+            string.Empty);
 
-            unit = new LinearUnit(record.Factor, record.Name, "EPSG", record.Code, string.Empty, string.Empty, string.Empty);
-            return true;
+        return true;
+    }
+
+    private static bool TryCreatePrimeMeridian(int primeMeridianCode, out PrimeMeridian primeMeridian)
+    {
+        primeMeridian = null;
+        if (!TryGetPrimeMeridianRecord(primeMeridianCode, out var record))
+        {
+            return false;
         }
 
-        private static bool TryCreateAngularUnit(int unitCode, out AngularUnit unit)
+        if (!TryCreateAngularUnit(record.UnitCode, out var angularUnit))
         {
-            unit = null;
-            if (!TryGetUnitRecord(unitCode, out var record) || record.UnitType != 1)
-            {
-                return false;
-            }
-
-            unit = new AngularUnit(record.Factor, record.Name, "EPSG", record.Code, string.Empty, string.Empty, string.Empty);
-            return true;
+            return false;
         }
 
-        private static List<AxisInfo> GetAxes(int coordinateSystemCode, int expectedCount, bool includeAll = false)
+        primeMeridian = new PrimeMeridian(
+            record.Longitude,
+            angularUnit,
+            record.Name,
+            "EPSG",
+            record.Code,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+        return true;
+    }
+
+    private static bool TryCreateLinearUnit(int unitCode, out LinearUnit unit)
+    {
+        unit = null;
+        if (!TryGetUnitRecord(unitCode, out var record) || record.UnitType != 0)
         {
-            if (!AxesByCoordinateSystemCode.Value.TryGetValue(coordinateSystemCode, out var orderedAxes))
-            {
-                return null;
-            }
-
-            if (orderedAxes.Length < expectedCount)
-            {
-                return null;
-            }
-
-            int axisCount = includeAll ? orderedAxes.Length : expectedCount;
-            var axes = new List<AxisInfo>(axisCount);
-            for (int i = 0; i < axisCount; i++)
-            {
-                var axis = orderedAxes[i];
-                axes.Add(new AxisInfo(axis.Name, (AxisOrientationEnum)axis.Orientation));
-            }
-
-            return axes;
+            return false;
         }
 
-        private static int GetUnitCode(int coordinateSystemCode, int axisOrder)
+        unit = new LinearUnit(record.Factor, record.Name, "EPSG", record.Code, string.Empty, string.Empty, string.Empty);
+        return true;
+    }
+
+    private static bool TryCreateAngularUnit(int unitCode, out AngularUnit unit)
+    {
+        unit = null;
+        if (!TryGetUnitRecord(unitCode, out var record) || record.UnitType != 1)
         {
-            if (!AxesByCoordinateSystemCode.Value.TryGetValue(coordinateSystemCode, out var axes))
-            {
-                return -1;
-            }
+            return false;
+        }
 
-            foreach (var axis in axes)
-            {
-                if (axis.AxisOrder == axisOrder)
-                {
-                    return axis.UnitCode;
-                }
-            }
+        unit = new AngularUnit(record.Factor, record.Name, "EPSG", record.Code, string.Empty, string.Empty, string.Empty);
+        return true;
+    }
 
+    private static List<AxisInfo> GetAxes(int coordinateSystemCode, int expectedCount, bool includeAll = false)
+    {
+        if (!AxesByCoordinateSystemCode.Value.TryGetValue(coordinateSystemCode, out var orderedAxes))
+        {
+            return null;
+        }
+
+        if (orderedAxes.Length < expectedCount)
+        {
+            return null;
+        }
+
+        int axisCount = includeAll ? orderedAxes.Length : expectedCount;
+        var axes = new List<AxisInfo>(axisCount);
+        for (int i = 0; i < axisCount; i++)
+        {
+            var axis = orderedAxes[i];
+            axes.Add(new AxisInfo(axis.Name, (AxisOrientationEnum)axis.Orientation));
+        }
+
+        return axes;
+    }
+
+    private static int GetUnitCode(int coordinateSystemCode, int axisOrder)
+    {
+        if (!AxesByCoordinateSystemCode.Value.TryGetValue(coordinateSystemCode, out var axes))
+        {
             return -1;
         }
 
-        private static bool TryGetUnitRecord(int code, out EpsgUnitRecord record)
+        foreach (var axis in axes)
         {
-            return UnitsByCode.Value.TryGetValue(code, out record);
-        }
-
-        private static bool TryGetEllipsoidRecord(int code, out EpsgEllipsoidRecord record)
-        {
-            return EllipsoidsByCode.Value.TryGetValue(code, out record);
-        }
-
-        private static bool TryGetPrimeMeridianRecord(int code, out EpsgPrimeMeridianRecord record)
-        {
-            return PrimeMeridiansByCode.Value.TryGetValue(code, out record);
-        }
-
-        private static bool TryGetGeodeticDatumRecord(int code, out EpsgGeodeticDatumRecord record)
-        {
-            return GeodeticDatumsByCode.Value.TryGetValue(code, out record);
-        }
-
-        private static bool TryGetVerticalDatumRecord(int code, out EpsgVerticalDatumRecord record)
-        {
-            return VerticalDatumsByCode.Value.TryGetValue(code, out record);
-        }
-
-        private static bool TryGetConversionRecord(int code, out EpsgConversionRecord record)
-        {
-            return ConversionsByCode.Value.TryGetValue(code, out record);
-        }
-
-        private static Dictionary<int, EpsgUnitRecord> BuildUnitsByCode()
-        {
-            var dictionary = new Dictionary<int, EpsgUnitRecord>(EpsgGeneratedCatalog.Units.Length);
-            foreach (var item in EpsgGeneratedCatalog.Units)
+            if (axis.AxisOrder == axisOrder)
             {
-                dictionary[item.Code] = item;
+                return axis.UnitCode;
+            }
+        }
+
+        return -1;
+    }
+
+    private static bool TryGetUnitRecord(int code, out EpsgUnitRecord record)
+    {
+        return UnitsByCode.Value.TryGetValue(code, out record);
+    }
+
+    private static bool TryGetEllipsoidRecord(int code, out EpsgEllipsoidRecord record)
+    {
+        return EllipsoidsByCode.Value.TryGetValue(code, out record);
+    }
+
+    private static bool TryGetPrimeMeridianRecord(int code, out EpsgPrimeMeridianRecord record)
+    {
+        return PrimeMeridiansByCode.Value.TryGetValue(code, out record);
+    }
+
+    private static bool TryGetGeodeticDatumRecord(int code, out EpsgGeodeticDatumRecord record)
+    {
+        return GeodeticDatumsByCode.Value.TryGetValue(code, out record);
+    }
+
+    private static bool TryGetVerticalDatumRecord(int code, out EpsgVerticalDatumRecord record)
+    {
+        return VerticalDatumsByCode.Value.TryGetValue(code, out record);
+    }
+
+    private static bool TryGetConversionRecord(int code, out EpsgConversionRecord record)
+    {
+        return ConversionsByCode.Value.TryGetValue(code, out record);
+    }
+
+    private static Dictionary<int, EpsgUnitRecord> BuildUnitsByCode()
+    {
+        var dictionary = new Dictionary<int, EpsgUnitRecord>(EpsgGeneratedCatalog.Units.Length);
+        foreach (var item in EpsgGeneratedCatalog.Units)
+        {
+            dictionary[item.Code] = item;
+        }
+
+        return dictionary;
+    }
+
+    private static Dictionary<int, EpsgEllipsoidRecord> BuildEllipsoidsByCode()
+    {
+        var dictionary = new Dictionary<int, EpsgEllipsoidRecord>(EpsgGeneratedCatalog.Ellipsoids.Length);
+        foreach (var item in EpsgGeneratedCatalog.Ellipsoids)
+        {
+            dictionary[item.Code] = item;
+        }
+
+        return dictionary;
+    }
+
+    private static Dictionary<int, EpsgPrimeMeridianRecord> BuildPrimeMeridiansByCode()
+    {
+        var dictionary = new Dictionary<int, EpsgPrimeMeridianRecord>(EpsgGeneratedCatalog.PrimeMeridians.Length);
+        foreach (var item in EpsgGeneratedCatalog.PrimeMeridians)
+        {
+            dictionary[item.Code] = item;
+        }
+
+        return dictionary;
+    }
+
+    private static Dictionary<int, EpsgGeodeticDatumRecord> BuildGeodeticDatumsByCode()
+    {
+        var dictionary = new Dictionary<int, EpsgGeodeticDatumRecord>(EpsgGeneratedCatalog.GeodeticDatums.Length);
+        foreach (var item in EpsgGeneratedCatalog.GeodeticDatums)
+        {
+            dictionary[item.Code] = item;
+        }
+
+        return dictionary;
+    }
+
+    private static Dictionary<int, EpsgVerticalDatumRecord> BuildVerticalDatumsByCode()
+    {
+        var dictionary = new Dictionary<int, EpsgVerticalDatumRecord>(EpsgGeneratedCatalog.VerticalDatums.Length);
+        foreach (var item in EpsgGeneratedCatalog.VerticalDatums)
+        {
+            dictionary[item.Code] = item;
+        }
+
+        return dictionary;
+    }
+
+    private static Dictionary<int, EpsgConversionRecord> BuildConversionsByCode()
+    {
+        var dictionary = new Dictionary<int, EpsgConversionRecord>(EpsgGeneratedCatalog.Conversions.Length);
+        foreach (var item in EpsgGeneratedCatalog.Conversions)
+        {
+            dictionary[item.Code] = item;
+        }
+
+        return dictionary;
+    }
+
+    private static Dictionary<int, EpsgAxisRecord[]> BuildAxesByCoordinateSystemCode()
+    {
+        var grouped = new Dictionary<int, List<EpsgAxisRecord>>();
+        foreach (var axis in EpsgGeneratedCatalog.Axes)
+        {
+            if (!grouped.TryGetValue(axis.CoordinateSystemCode, out var axes))
+            {
+                axes = new List<EpsgAxisRecord>();
+                grouped[axis.CoordinateSystemCode] = axes;
             }
 
-            return dictionary;
+            axes.Add(axis);
         }
 
-        private static Dictionary<int, EpsgEllipsoidRecord> BuildEllipsoidsByCode()
+        var result = new Dictionary<int, EpsgAxisRecord[]>(grouped.Count);
+        foreach (var item in grouped)
         {
-            var dictionary = new Dictionary<int, EpsgEllipsoidRecord>(EpsgGeneratedCatalog.Ellipsoids.Length);
-            foreach (var item in EpsgGeneratedCatalog.Ellipsoids)
-            {
-                dictionary[item.Code] = item;
-            }
-
-            return dictionary;
+            item.Value.Sort((left, right) => left.AxisOrder.CompareTo(right.AxisOrder));
+            result[item.Key] = item.Value.ToArray();
         }
 
-        private static Dictionary<int, EpsgPrimeMeridianRecord> BuildPrimeMeridiansByCode()
-        {
-            var dictionary = new Dictionary<int, EpsgPrimeMeridianRecord>(EpsgGeneratedCatalog.PrimeMeridians.Length);
-            foreach (var item in EpsgGeneratedCatalog.PrimeMeridians)
-            {
-                dictionary[item.Code] = item;
-            }
-
-            return dictionary;
-        }
-
-        private static Dictionary<int, EpsgGeodeticDatumRecord> BuildGeodeticDatumsByCode()
-        {
-            var dictionary = new Dictionary<int, EpsgGeodeticDatumRecord>(EpsgGeneratedCatalog.GeodeticDatums.Length);
-            foreach (var item in EpsgGeneratedCatalog.GeodeticDatums)
-            {
-                dictionary[item.Code] = item;
-            }
-
-            return dictionary;
-        }
-
-        private static Dictionary<int, EpsgVerticalDatumRecord> BuildVerticalDatumsByCode()
-        {
-            var dictionary = new Dictionary<int, EpsgVerticalDatumRecord>(EpsgGeneratedCatalog.VerticalDatums.Length);
-            foreach (var item in EpsgGeneratedCatalog.VerticalDatums)
-            {
-                dictionary[item.Code] = item;
-            }
-
-            return dictionary;
-        }
-
-        private static Dictionary<int, EpsgConversionRecord> BuildConversionsByCode()
-        {
-            var dictionary = new Dictionary<int, EpsgConversionRecord>(EpsgGeneratedCatalog.Conversions.Length);
-            foreach (var item in EpsgGeneratedCatalog.Conversions)
-            {
-                dictionary[item.Code] = item;
-            }
-
-            return dictionary;
-        }
-
-        private static Dictionary<int, EpsgAxisRecord[]> BuildAxesByCoordinateSystemCode()
-        {
-            var grouped = new Dictionary<int, List<EpsgAxisRecord>>();
-            foreach (var axis in EpsgGeneratedCatalog.Axes)
-            {
-                if (!grouped.TryGetValue(axis.CoordinateSystemCode, out var axes))
-                {
-                    axes = new List<EpsgAxisRecord>();
-                    grouped[axis.CoordinateSystemCode] = axes;
-                }
-
-                axes.Add(axis);
-            }
-
-            var result = new Dictionary<int, EpsgAxisRecord[]>(grouped.Count);
-            foreach (var item in grouped)
-            {
-                item.Value.Sort((left, right) => left.AxisOrder.CompareTo(right.AxisOrder));
-                result[item.Key] = item.Value.ToArray();
-            }
-
-            return result;
-        }
+        return result;
     }
 }

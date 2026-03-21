@@ -15,115 +15,114 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-namespace ProjNet.CoordinateSystems.Projections
+namespace ProjNet.CoordinateSystems.Projections;
+
+using System;
+using System.Collections.Generic;
+using ProjNet.CoordinateSystems.Transformations;
+
+/// <summary>
+/// Represents the documented type.
+/// </summary>
+[Serializable]
+internal class MollweideProjection : MapProjection
 {
-    using System;
-    using System.Collections.Generic;
-    using ProjNet.CoordinateSystems.Transformations;
+    private const int Iterations = 12;
+
+    private static readonly double Sqrt2 = Math.Sqrt(2d);
+
+    private readonly double radius;
+    private readonly double inverseRadius;
 
     /// <summary>
-    /// Represents the documented type.
+    /// Initializes a new instance of the <see cref="MollweideProjection"/> class.
     /// </summary>
-    [Serializable]
-    internal class MollweideProjection : MapProjection
+    /// <param name="parameters">Projection parameters.</param>
+    public MollweideProjection(IEnumerable<ProjectionParameter> parameters)
+        : this(parameters, null)
     {
-        private const int Iterations = 12;
+    }
 
-        private static readonly double Sqrt2 = Math.Sqrt(2d);
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MollweideProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    /// <param name="inverse">Inverse transform instance when cloning.</param>
+    public MollweideProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+        : base(parameters, inverse)
+    {
+        this.Name = "Mollweide";
+        this.radius = this.semiMajor * this.scaleFactor;
+        this.inverseRadius = 1.0 / this.radius;
+    }
 
-        private readonly double radius;
-        private readonly double inverseRadius;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MollweideProjection"/> class.
-        /// </summary>
-        /// <param name="parameters">Projection parameters.</param>
-        public MollweideProjection(IEnumerable<ProjectionParameter> parameters)
-            : this(parameters, null)
+    /// <inheritdoc />
+    public override MathTransform Inverse()
+    {
+        if (this.inverse is null)
         {
+            this.inverse = new MollweideProjection(this.Parameters.ToProjectionParameter(), this);
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MollweideProjection"/> class.
-        /// </summary>
-        /// <param name="parameters">Projection parameters.</param>
-        /// <param name="inverse">Inverse transform instance when cloning.</param>
-        public MollweideProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
-            : base(parameters, inverse)
+        return this.inverse;
+    }
+
+    /// <inheritdoc />
+    protected override void RadiansToMeters(ref double lon, ref double lat)
+    {
+        double lambda = Adjust_lon(lon - this.centralMeridian);
+        double theta;
+
+        if (Math.Abs(Math.Abs(lat) - HALFPI) < 1e-12)
         {
-            this.Name = "Mollweide";
-            this.radius = this.semiMajor * this.scaleFactor;
-            this.inverseRadius = 1.0 / this.radius;
+            theta = Sign(lat) * HALFPI;
         }
-
-        /// <inheritdoc />
-        public override MathTransform Inverse()
+        else
         {
-            if (this.inverse is null)
+            theta = lat;
+            double target = PI * Math.Sin(lat);
+
+            for (int i = 0; i < Iterations; i++)
             {
-                this.inverse = new MollweideProjection(this.Parameters.ToProjectionParameter(), this);
-            }
-
-            return this.inverse;
-        }
-
-        /// <inheritdoc />
-        protected override void RadiansToMeters(ref double lon, ref double lat)
-        {
-            double lambda = Adjust_lon(lon - this.centralMeridian);
-            double theta;
-
-            if (Math.Abs(Math.Abs(lat) - HALFPI) < 1e-12)
-            {
-                theta = Sign(lat) * HALFPI;
-            }
-            else
-            {
-                theta = lat;
-                double target = PI * Math.Sin(lat);
-
-                for (int i = 0; i < Iterations; i++)
+                double twoTheta = 2d * theta;
+                double delta = ((twoTheta + Math.Sin(twoTheta)) - target) / (2d + (2d * Math.Cos(twoTheta)));
+                theta -= delta;
+                if (Math.Abs(delta) < 1e-12)
                 {
-                    double twoTheta = 2d * theta;
-                    double delta = ((twoTheta + Math.Sin(twoTheta)) - target) / (2d + (2d * Math.Cos(twoTheta)));
-                    theta -= delta;
-                    if (Math.Abs(delta) < 1e-12)
-                    {
-                        break;
-                    }
+                    break;
                 }
             }
-
-            lon = this.radius * (2d * Sqrt2 / PI) * lambda * Math.Cos(theta);
-            lat = this.radius * Sqrt2 * Math.Sin(theta);
         }
 
-        /// <inheritdoc />
-        protected override void MetersToRadians(ref double x, ref double y)
+        lon = this.radius * (2d * Sqrt2 / PI) * lambda * Math.Cos(theta);
+        lat = this.radius * Sqrt2 * Math.Sin(theta);
+    }
+
+    /// <inheritdoc />
+    protected override void MetersToRadians(ref double x, ref double y)
+    {
+        double theta = Math.Asin(Clamp((y * this.inverseRadius) / Sqrt2, -1d, 1d));
+        double cosTheta = Math.Cos(theta);
+
+        if (Math.Abs(cosTheta) <= EPS10)
         {
-            double theta = Math.Asin(Clamp((y * this.inverseRadius) / Sqrt2, -1d, 1d));
-            double cosTheta = Math.Cos(theta);
-
-            if (Math.Abs(cosTheta) <= EPS10)
-            {
-                x = this.centralMeridian;
-            }
-            else
-            {
-                x = Adjust_lon(this.centralMeridian + ((x * this.inverseRadius) * PI / (2d * Sqrt2 * cosTheta)));
-            }
-
-            y = Math.Asin(Clamp(((2d * theta) + Math.Sin(2d * theta)) / PI, -1d, 1d));
+            x = this.centralMeridian;
         }
-
-        private static double Clamp(double value, double minimum, double maximum)
+        else
         {
-            if (value < minimum)
-            {
-                return minimum;
-            }
-
-            return value > maximum ? maximum : value;
+            x = Adjust_lon(this.centralMeridian + ((x * this.inverseRadius) * PI / (2d * Sqrt2 * cosTheta)));
         }
+
+        y = Math.Asin(Clamp(((2d * theta) + Math.Sin(2d * theta)) / PI, -1d, 1d));
+    }
+
+    private static double Clamp(double value, double minimum, double maximum)
+    {
+        if (value < minimum)
+        {
+            return minimum;
+        }
+
+        return value > maximum ? maximum : value;
     }
 }

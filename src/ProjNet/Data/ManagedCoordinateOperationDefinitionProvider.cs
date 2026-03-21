@@ -15,36 +15,35 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-namespace ProjNet.Data
+namespace ProjNet.Data;
+
+using System.Collections.Generic;
+using ProjNet.Data.Generated;
+
+/// <summary>
+/// Provides managed coordinate operation definitions from generated catalog data.
+/// </summary>
+internal sealed class ManagedCoordinateOperationDefinitionProvider : ICoordinateOperationDefinitionProvider
 {
-    using System.Collections.Generic;
-    using ProjNet.Data.Generated;
-
     /// <summary>
-    /// Provides managed coordinate operation definitions from generated catalog data.
+    /// Performs the documented operation.
     /// </summary>
-    internal sealed class ManagedCoordinateOperationDefinitionProvider : ICoordinateOperationDefinitionProvider
+    /// <returns>The computed value.</returns>
+    public IEnumerable<CoordinateOperationDefinition> GetDefinitions()
     {
-        /// <summary>
-        /// Performs the documented operation.
-        /// </summary>
-        /// <returns>The computed value.</returns>
-        public IEnumerable<CoordinateOperationDefinition> GetDefinitions()
-        {
-            var records = EpsgGeneratedCatalog.Operations;
+        var records = EpsgGeneratedCatalog.Operations;
 
-            for (int i = 0; i < records.Length; i++)
-            {
-                var operation = records[i];
-                yield return new CoordinateOperationDefinition(
-                    (CoordinateOperationKind)operation.OperationType,
-                    operation.OperationCode,
-                    operation.SourceSrid,
-                    operation.TargetSrid,
-                    operation.Accuracy,
-                    operation.MethodName,
-                    operation.ParameterFileName);
-            }
+        for (int i = 0; i < records.Length; i++)
+        {
+            var operation = records[i];
+            yield return new CoordinateOperationDefinition(
+                (CoordinateOperationKind)operation.OperationType,
+                operation.OperationCode,
+                operation.SourceSrid,
+                operation.TargetSrid,
+                operation.Accuracy,
+                operation.MethodName,
+                operation.ParameterFileName);
         }
     }
 }

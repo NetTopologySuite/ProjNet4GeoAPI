@@ -15,118 +15,117 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-namespace ProjNet.CoordinateSystems.Projections
+namespace ProjNet.CoordinateSystems.Projections;
+
+using System;
+using System.Collections.Generic;
+using ProjNet.CoordinateSystems.Transformations;
+
+/// <summary>
+/// Represents the documented type.
+/// </summary>
+[Serializable]
+internal class LoximuthalProjection : MapProjection
 {
-    using System;
-    using System.Collections.Generic;
-    using ProjNet.CoordinateSystems.Transformations;
+    private readonly double radius;
+    private readonly double inverseRadius;
+    private readonly double referenceLatitude;
+    private readonly double referenceMercatorTerm;
+    private readonly double cosReferenceLatitude;
 
     /// <summary>
-    /// Represents the documented type.
+    /// Initializes a new instance of the <see cref="LoximuthalProjection"/> class.
     /// </summary>
-    [Serializable]
-    internal class LoximuthalProjection : MapProjection
+    /// <param name="parameters">Projection parameters.</param>
+    public LoximuthalProjection(IEnumerable<ProjectionParameter> parameters)
+        : this(parameters, null)
     {
-        private readonly double radius;
-        private readonly double inverseRadius;
-        private readonly double referenceLatitude;
-        private readonly double referenceMercatorTerm;
-        private readonly double cosReferenceLatitude;
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LoximuthalProjection"/> class.
-        /// </summary>
-        /// <param name="parameters">Projection parameters.</param>
-        public LoximuthalProjection(IEnumerable<ProjectionParameter> parameters)
-            : this(parameters, null)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="LoximuthalProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    /// <param name="inverse">Inverse transform instance when cloning.</param>
+    public LoximuthalProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+        : base(parameters, inverse)
+    {
+        this.Name = "Loximuthal";
+        this.radius = this.semiMajor * this.scaleFactor;
+        this.inverseRadius = 1d / this.radius;
+
+        this.referenceLatitude = DegreesToRadians(this.Parameters.GetOptionalParameterValue("lat_1", RadiansToDegrees(this.latOrigin), "latitude_of_origin"));
+        this.cosReferenceLatitude = Math.Cos(this.referenceLatitude);
+        if (Math.Abs(Math.Abs(this.referenceLatitude) - HALFPI) <= EPSLN)
         {
+            throw new ArgumentException("The reference latitude cannot be at the poles.");
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="LoximuthalProjection"/> class.
-        /// </summary>
-        /// <param name="parameters">Projection parameters.</param>
-        /// <param name="inverse">Inverse transform instance when cloning.</param>
-        public LoximuthalProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
-            : base(parameters, inverse)
+        this.referenceMercatorTerm = Math.Log(Math.Tan(FORTPI + (0.5d * this.referenceLatitude)));
+    }
+
+    /// <inheritdoc />
+    public override MathTransform Inverse()
+    {
+        if (this.inverse is null)
         {
-            this.Name = "Loximuthal";
-            this.radius = this.semiMajor * this.scaleFactor;
-            this.inverseRadius = 1d / this.radius;
-
-            this.referenceLatitude = DegreesToRadians(this.Parameters.GetOptionalParameterValue("lat_1", RadiansToDegrees(this.latOrigin), "latitude_of_origin"));
-            this.cosReferenceLatitude = Math.Cos(this.referenceLatitude);
-            if (Math.Abs(Math.Abs(this.referenceLatitude) - HALFPI) <= EPSLN)
-            {
-                throw new ArgumentException("The reference latitude cannot be at the poles.");
-            }
-
-            this.referenceMercatorTerm = Math.Log(Math.Tan(FORTPI + (0.5d * this.referenceLatitude)));
+            this.inverse = new LoximuthalProjection(this.Parameters.ToProjectionParameter(), this);
         }
 
-        /// <inheritdoc />
-        public override MathTransform Inverse()
-        {
-            if (this.inverse is null)
-            {
-                this.inverse = new LoximuthalProjection(this.Parameters.ToProjectionParameter(), this);
-            }
+        return this.inverse;
+    }
 
-            return this.inverse;
+    /// <inheritdoc />
+    protected override void RadiansToMeters(ref double lon, ref double lat)
+    {
+        double lambda = Adjust_lon(lon - this.centralMeridian);
+        double phi = lat;
+        double deltaPhi = phi - this.referenceLatitude;
+        lat = this.radius * deltaPhi;
+
+        if (Math.Abs(deltaPhi) <= EPS10)
+        {
+            lon = this.radius * lambda * this.cosReferenceLatitude;
+            return;
         }
 
-        /// <inheritdoc />
-        protected override void RadiansToMeters(ref double lon, ref double lat)
+        double mercatorTerm = Math.Log(Math.Tan(FORTPI + (0.5d * phi)));
+        double denominator = mercatorTerm - this.referenceMercatorTerm;
+        if (Math.Abs(denominator) <= EPS10)
         {
-            double lambda = Adjust_lon(lon - this.centralMeridian);
-            double phi = lat;
-            double deltaPhi = phi - this.referenceLatitude;
-            lat = this.radius * deltaPhi;
-
-            if (Math.Abs(deltaPhi) <= EPS10)
-            {
-                lon = this.radius * lambda * this.cosReferenceLatitude;
-                return;
-            }
-
-            double mercatorTerm = Math.Log(Math.Tan(FORTPI + (0.5d * phi)));
-            double denominator = mercatorTerm - this.referenceMercatorTerm;
-            if (Math.Abs(denominator) <= EPS10)
-            {
-                lon = this.radius * lambda * this.cosReferenceLatitude;
-                return;
-            }
-
-            lon = this.radius * lambda * deltaPhi / denominator;
+            lon = this.radius * lambda * this.cosReferenceLatitude;
+            return;
         }
 
-        /// <inheritdoc />
-        protected override void MetersToRadians(ref double x, ref double y)
-        {
-            double lat = this.referenceLatitude + (y * this.inverseRadius);
-            double deltaPhi = lat - this.referenceLatitude;
+        lon = this.radius * lambda * deltaPhi / denominator;
+    }
 
-            double lambda;
-            if (Math.Abs(deltaPhi) <= EPS10)
+    /// <inheritdoc />
+    protected override void MetersToRadians(ref double x, ref double y)
+    {
+        double lat = this.referenceLatitude + (y * this.inverseRadius);
+        double deltaPhi = lat - this.referenceLatitude;
+
+        double lambda;
+        if (Math.Abs(deltaPhi) <= EPS10)
+        {
+            lambda = x * this.inverseRadius / this.cosReferenceLatitude;
+        }
+        else
+        {
+            double mercatorTerm = Math.Log(Math.Tan(FORTPI + (0.5d * lat)));
+            double numerator = mercatorTerm - this.referenceMercatorTerm;
+            if (Math.Abs(numerator) <= EPS10)
             {
                 lambda = x * this.inverseRadius / this.cosReferenceLatitude;
             }
             else
             {
-                double mercatorTerm = Math.Log(Math.Tan(FORTPI + (0.5d * lat)));
-                double numerator = mercatorTerm - this.referenceMercatorTerm;
-                if (Math.Abs(numerator) <= EPS10)
-                {
-                    lambda = x * this.inverseRadius / this.cosReferenceLatitude;
-                }
-                else
-                {
-                    lambda = (x * this.inverseRadius) * numerator / deltaPhi;
-                }
+                lambda = (x * this.inverseRadius) * numerator / deltaPhi;
             }
-
-            x = Adjust_lon(this.centralMeridian + lambda);
-            y = lat;
         }
+
+        x = Adjust_lon(this.centralMeridian + lambda);
+        y = lat;
     }
 }

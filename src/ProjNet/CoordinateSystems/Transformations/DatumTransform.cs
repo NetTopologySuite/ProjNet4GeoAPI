@@ -14,119 +14,118 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-namespace ProjNet.CoordinateSystems.Transformations
+namespace ProjNet.CoordinateSystems.Transformations;
+
+using System;
+
+/// <summary>
+/// Transformation for applying.
+/// </summary>
+[Serializable]
+internal class DatumTransform : MathTransform
 {
-    using System;
+    private readonly Wgs84ConversionInfo toWgs94;
+    private readonly double[] v;
+
+    private MathTransform inverse;
+
+    private bool isInverse;
 
     /// <summary>
-    /// Transformation for applying.
+    /// Initializes a new instance of the <see cref="DatumTransform"/> class.
     /// </summary>
-    [Serializable]
-    internal class DatumTransform : MathTransform
+    /// <param name="towgs84">The towgs84 parameter.</param>
+    public DatumTransform(Wgs84ConversionInfo towgs84)
+        : this(towgs84, false)
     {
-        private readonly Wgs84ConversionInfo toWgs94;
-        private readonly double[] v;
+    }
 
-        private MathTransform inverse;
+    private DatumTransform(Wgs84ConversionInfo towgs84, bool isInverse)
+    {
+        this.toWgs94 = towgs84;
+        this.v = this.toWgs94.GetAffineTransform();
+        this.isInverse = isInverse;
+    }
 
-        private bool isInverse;
+    /// <summary>
+    /// Gets a Well-Known text representation of this object.
+    /// </summary>
+    /// <value>The value.</value>
+    public override string WKT
+    {
+        get { throw new NotImplementedException(); }
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DatumTransform"/> class.
-        /// </summary>
-        /// <param name="towgs84">The towgs84 parameter.</param>
-        public DatumTransform(Wgs84ConversionInfo towgs84)
-            : this(towgs84, false)
+    /// <summary>
+    /// Gets an XML representation of this object.
+    /// </summary>
+    /// <value>The value.</value>
+    public override string XML
+    {
+        get { throw new NotImplementedException(); }
+    }
+
+    /// <inheritdoc/>
+    public override int DimSource
+    {
+        get { return 3; }
+    }
+
+    /// <inheritdoc/>
+    public override int DimTarget
+    {
+        get { return 3; }
+    }
+
+    /// <summary>
+    /// Creates the inverse transform of this object.
+    /// </summary>
+    /// <returns>The transformation result.</returns>
+    /// <remarks>This method may fail if the transform is not one to one. However, all cartographic projections should succeed.</remarks>
+    public override MathTransform Inverse()
+    {
+        if (this.inverse == null)
         {
+            this.inverse = new DatumTransform(this.toWgs94, !this.isInverse);
         }
 
-        private DatumTransform(Wgs84ConversionInfo towgs84, bool isInverse)
-        {
-            this.toWgs94 = towgs84;
-            this.v = this.toWgs94.GetAffineTransform();
-            this.isInverse = isInverse;
-        }
+        return this.inverse;
+    }
 
-        /// <summary>
-        /// Gets a Well-Known text representation of this object.
-        /// </summary>
-        /// <value>The value.</value>
-        public override string WKT
+    /// <inheritdoc />
+    public sealed override void Transform(ref double x, ref double y, ref double z)
+    {
+        if (this.isInverse)
         {
-            get { throw new NotImplementedException(); }
+            (x, y, z) = this.ApplyInverted(x, y, z);
         }
-
-        /// <summary>
-        /// Gets an XML representation of this object.
-        /// </summary>
-        /// <value>The value.</value>
-        public override string XML
+        else
         {
-            get { throw new NotImplementedException(); }
+            (x, y, z) = this.Apply(x, y, z);
         }
+    }
 
-        /// <inheritdoc/>
-        public override int DimSource
-        {
-            get { return 3; }
-        }
+    private (double X, double Y, double Z) Apply(double x, double y, double z)
+    {
+        return (
+            X: (this.v[0] * (x - (this.v[3] * y) + (this.v[2] * z))) + this.v[4],
+            Y: (this.v[0] * ((this.v[3] * x) + y - (this.v[1] * z))) + this.v[5],
+            Z: (this.v[0] * ((-this.v[2] * x) + (this.v[1] * y) + z)) + this.v[6]);
+    }
 
-        /// <inheritdoc/>
-        public override int DimTarget
-        {
-            get { return 3; }
-        }
+    private (double X, double Y, double Z) ApplyInverted(double x, double y, double z)
+    {
+        return (
+            X: ((1 - (this.v[0] - 1)) * (x + (this.v[3] * y) - (this.v[2] * z))) - this.v[4],
+            Y: ((1 - (this.v[0] - 1)) * ((-this.v[3] * x) + y + (this.v[1] * z))) - this.v[5],
+            Z: ((1 - (this.v[0] - 1)) * ((this.v[2] * x) - (this.v[1] * y) + z)) - this.v[6]);
+    }
 
-        /// <summary>
-        /// Creates the inverse transform of this object.
-        /// </summary>
-        /// <returns>The transformation result.</returns>
-        /// <remarks>This method may fail if the transform is not one to one. However, all cartographic projections should succeed.</remarks>
-        public override MathTransform Inverse()
-        {
-            if (this.inverse == null)
-            {
-                this.inverse = new DatumTransform(this.toWgs94, !this.isInverse);
-            }
-
-            return this.inverse;
-        }
-
-        /// <inheritdoc />
-        public sealed override void Transform(ref double x, ref double y, ref double z)
-        {
-            if (this.isInverse)
-            {
-                (x, y, z) = this.ApplyInverted(x, y, z);
-            }
-            else
-            {
-                (x, y, z) = this.Apply(x, y, z);
-            }
-        }
-
-        private (double X, double Y, double Z) Apply(double x, double y, double z)
-        {
-            return (
-                X: (this.v[0] * (x - (this.v[3] * y) + (this.v[2] * z))) + this.v[4],
-                Y: (this.v[0] * ((this.v[3] * x) + y - (this.v[1] * z))) + this.v[5],
-                Z: (this.v[0] * ((-this.v[2] * x) + (this.v[1] * y) + z)) + this.v[6]);
-        }
-
-        private (double X, double Y, double Z) ApplyInverted(double x, double y, double z)
-        {
-            return (
-                X: ((1 - (this.v[0] - 1)) * (x + (this.v[3] * y) - (this.v[2] * z))) - this.v[4],
-                Y: ((1 - (this.v[0] - 1)) * ((-this.v[3] * x) + y + (this.v[1] * z))) - this.v[5],
-                Z: ((1 - (this.v[0] - 1)) * ((this.v[2] * x) - (this.v[1] * y) + z)) - this.v[6]);
-        }
-
-        /// <summary>
-        /// Reverses the transformation.
-        /// </summary>
-        public override void Invert()
-        {
-            this.isInverse = !this.isInverse;
-        }
+    /// <summary>
+    /// Reverses the transformation.
+    /// </summary>
+    public override void Invert()
+    {
+        this.isInverse = !this.isInverse;
     }
 }

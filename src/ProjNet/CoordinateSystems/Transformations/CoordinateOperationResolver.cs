@@ -15,97 +15,96 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-namespace ProjNet.CoordinateSystems.Transformations
+namespace ProjNet.CoordinateSystems.Transformations;
+
+using System;
+using System.Collections.Generic;
+
+/// <summary>
+/// Resolves the best available coordinate operation candidate for a source/target pair.
+/// </summary>
+internal static class CoordinateOperationResolver
 {
-    using System;
-    using System.Collections.Generic;
-
     /// <summary>
-    /// Resolves the best available coordinate operation candidate for a source/target pair.
+    /// Resolves the preferred transformation from identity and direct-operation candidates.
     /// </summary>
-    internal static class CoordinateOperationResolver
+    /// <param name="source">Source coordinate system.</param>
+    /// <param name="target">Target coordinate system.</param>
+    /// <param name="directResolver">Resolver delegate for non-identity operations.</param>
+    /// <returns>Best scored transformation, or <see langword="null"/> when none is available.</returns>
+    internal static ICoordinateTransformation Resolve(
+        CoordinateSystem source,
+        CoordinateSystem target,
+        Func<CoordinateSystem, CoordinateSystem, ICoordinateTransformation> directResolver)
     {
-        /// <summary>
-        /// Resolves the preferred transformation from identity and direct-operation candidates.
-        /// </summary>
-        /// <param name="source">Source coordinate system.</param>
-        /// <param name="target">Target coordinate system.</param>
-        /// <param name="directResolver">Resolver delegate for non-identity operations.</param>
-        /// <returns>Best scored transformation, or <see langword="null"/> when none is available.</returns>
-        internal static ICoordinateTransformation Resolve(
-            CoordinateSystem source,
-            CoordinateSystem target,
-            Func<CoordinateSystem, CoordinateSystem, ICoordinateTransformation> directResolver)
+        if (source == null)
         {
-            if (source == null)
-            {
-                throw new ArgumentNullException(nameof(source));
-            }
-
-            if (target == null)
-            {
-                throw new ArgumentNullException(nameof(target));
-            }
-
-            if (directResolver == null)
-            {
-                throw new ArgumentNullException(nameof(directResolver));
-            }
-
-            var candidates = new List<OperationCandidate>();
-            var identityCandidate = CreateIdentityCandidate(source, target);
-            if (identityCandidate != null)
-            {
-                candidates.Add(identityCandidate);
-            }
-
-            var directCandidate = directResolver(source, target);
-            if (directCandidate != null)
-            {
-                candidates.Add(new OperationCandidate(directCandidate, 0));
-            }
-
-            if (candidates.Count == 0)
-            {
-                return null;
-            }
-
-            candidates.Sort((left, right) => right.Score.CompareTo(left.Score));
-            return candidates[0].Transformation;
+            throw new ArgumentNullException(nameof(source));
         }
 
-        private static OperationCandidate CreateIdentityCandidate(CoordinateSystem source, CoordinateSystem target)
+        if (target == null)
         {
-            if (!ReferenceEquals(source, target) && !source.EqualParams(target))
-            {
-                return null;
-            }
-
-            int dimension = Math.Max(2, Math.Max(source.Dimension, target.Dimension));
-            var transformation = new CoordinateTransformation(
-                source,
-                target,
-                TransformType.Conversion,
-                new IdentityMathTransform(dimension),
-                string.Empty,
-                string.Empty,
-                -1,
-                string.Empty,
-                string.Empty);
-            return new OperationCandidate(transformation, 1000);
+            throw new ArgumentNullException(nameof(target));
         }
 
-        private sealed class OperationCandidate
+        if (directResolver == null)
         {
-            internal OperationCandidate(ICoordinateTransformation transformation, int score)
-            {
-                this.Transformation = transformation;
-                this.Score = score;
-            }
-
-            internal int Score { get; }
-
-            internal ICoordinateTransformation Transformation { get; }
+            throw new ArgumentNullException(nameof(directResolver));
         }
+
+        var candidates = new List<OperationCandidate>();
+        var identityCandidate = CreateIdentityCandidate(source, target);
+        if (identityCandidate != null)
+        {
+            candidates.Add(identityCandidate);
+        }
+
+        var directCandidate = directResolver(source, target);
+        if (directCandidate != null)
+        {
+            candidates.Add(new OperationCandidate(directCandidate, 0));
+        }
+
+        if (candidates.Count == 0)
+        {
+            return null;
+        }
+
+        candidates.Sort((left, right) => right.Score.CompareTo(left.Score));
+        return candidates[0].Transformation;
+    }
+
+    private static OperationCandidate CreateIdentityCandidate(CoordinateSystem source, CoordinateSystem target)
+    {
+        if (!ReferenceEquals(source, target) && !source.EqualParams(target))
+        {
+            return null;
+        }
+
+        int dimension = Math.Max(2, Math.Max(source.Dimension, target.Dimension));
+        var transformation = new CoordinateTransformation(
+            source,
+            target,
+            TransformType.Conversion,
+            new IdentityMathTransform(dimension),
+            string.Empty,
+            string.Empty,
+            -1,
+            string.Empty,
+            string.Empty);
+        return new OperationCandidate(transformation, 1000);
+    }
+
+    private sealed class OperationCandidate
+    {
+        internal OperationCandidate(ICoordinateTransformation transformation, int score)
+        {
+            this.Transformation = transformation;
+            this.Score = score;
+        }
+
+        internal int Score { get; }
+
+        internal ICoordinateTransformation Transformation { get; }
     }
 }

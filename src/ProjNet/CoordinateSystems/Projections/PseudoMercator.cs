@@ -15,59 +15,58 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-namespace ProjNet.CoordinateSystems.Projections
+namespace ProjNet.CoordinateSystems.Projections;
+
+using System;
+using System.Collections.Generic;
+using ProjNet.CoordinateSystems.Transformations;
+
+/// <summary>
+/// Represents the documented type.
+/// </summary>
+[Serializable]
+internal class PseudoMercator : Mercator
 {
-    using System;
-    using System.Collections.Generic;
-    using ProjNet.CoordinateSystems.Transformations;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PseudoMercator"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    public PseudoMercator(IEnumerable<ProjectionParameter> parameters)
+        : this(parameters, null)
+    {
+    }
 
     /// <summary>
-    /// Represents the documented type.
+    /// Initializes a new instance of the <see cref="PseudoMercator"/> class.
     /// </summary>
-    [Serializable]
-    internal class PseudoMercator : Mercator
+    /// <param name="parameters">Projection parameters.</param>
+    /// <param name="inverse">Inverse transform instance when cloning.</param>
+    protected PseudoMercator(IEnumerable<ProjectionParameter> parameters, Mercator inverse)
+        : base(VerifyParameters(parameters), inverse)
     {
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PseudoMercator"/> class.
-        /// </summary>
-        /// <param name="parameters">Projection parameters.</param>
-        public PseudoMercator(IEnumerable<ProjectionParameter> parameters)
-            : this(parameters, null)
+        this.Name = "Pseudo-Mercator";
+        this.Authority = "EPSG";
+        this.AuthorityCode = 3856;
+    }
+
+    private static IEnumerable<ProjectionParameter> VerifyParameters(IEnumerable<ProjectionParameter> parameters)
+    {
+        var p = new ProjectionParameterSet(parameters);
+        double semi_major = p.GetParameterValue("semi_major");
+        p.SetParameterValue("semi_minor", semi_major);
+        p.SetParameterValue("scale_factor", 1);
+
+        return p.ToProjectionParameter();
+    }
+
+    /// <inheritdoc/>
+    public override MathTransform Inverse()
+    {
+        if (this.inverse == null)
         {
+            this.inverse = new PseudoMercator(this.Parameters.ToProjectionParameter(), this);
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="PseudoMercator"/> class.
-        /// </summary>
-        /// <param name="parameters">Projection parameters.</param>
-        /// <param name="inverse">Inverse transform instance when cloning.</param>
-        protected PseudoMercator(IEnumerable<ProjectionParameter> parameters, Mercator inverse)
-            : base(VerifyParameters(parameters), inverse)
-        {
-            this.Name = "Pseudo-Mercator";
-            this.Authority = "EPSG";
-            this.AuthorityCode = 3856;
-        }
-
-        private static IEnumerable<ProjectionParameter> VerifyParameters(IEnumerable<ProjectionParameter> parameters)
-        {
-            var p = new ProjectionParameterSet(parameters);
-            double semi_major = p.GetParameterValue("semi_major");
-            p.SetParameterValue("semi_minor", semi_major);
-            p.SetParameterValue("scale_factor", 1);
-
-            return p.ToProjectionParameter();
-        }
-
-        /// <inheritdoc/>
-        public override MathTransform Inverse()
-        {
-            if (this.inverse == null)
-            {
-                this.inverse = new PseudoMercator(this.Parameters.ToProjectionParameter(), this);
-            }
-
-            return this.inverse;
-        }
+        return this.inverse;
     }
 }

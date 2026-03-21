@@ -14,165 +14,164 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-namespace ProjNet.CoordinateSystems.Transformations
+namespace ProjNet.CoordinateSystems.Transformations;
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+
+/// <summary>
+/// Represents a transformation that executes a sequence of coordinate transformations in order.
+/// </summary>
+[Serializable]
+internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationCore
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Linq;
+    private static readonly CoordinateTransformationFactory CoordinateTransformationFactory =
+            new CoordinateTransformationFactory();
+
+    private readonly List<ICoordinateTransformationCore> coordinateTransformationList;
 
     /// <summary>
-    /// Represents a transformation that executes a sequence of coordinate transformations in order.
+    /// Cached inverse transform.
     /// </summary>
-    [Serializable]
-    internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationCore
+    private ConcatenatedTransform inverse;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConcatenatedTransform"/> class.
+    /// </summary>
+    public ConcatenatedTransform()
     {
-        private static readonly CoordinateTransformationFactory CoordinateTransformationFactory =
-                new CoordinateTransformationFactory();
+        this.coordinateTransformationList = new List<ICoordinateTransformationCore>();
+    }
 
-        private readonly List<ICoordinateTransformationCore> coordinateTransformationList;
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ConcatenatedTransform"/> class.
+    /// </summary>
+    /// <param name="transformList">The transformList parameter.</param>
+    public ConcatenatedTransform(IEnumerable<ICoordinateTransformationCore> transformList)
+        : this()
+    {
+        this.coordinateTransformationList.AddRange(transformList);
+    }
 
-        /// <summary>
-        /// Cached inverse transform.
-        /// </summary>
-        private ConcatenatedTransform inverse;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ConcatenatedTransform"/> class.
-        /// </summary>
-        public ConcatenatedTransform()
+    /// <summary>
+    /// Gets the ordered list of transformations that form this concatenated transform.
+    /// </summary>
+    public IList<ICoordinateTransformationCore> CoordinateTransformationList
+    {
+        get { return this.coordinateTransformationList; }
+        /*
+        set
         {
-            this.coordinateTransformationList = new List<ICoordinateTransformationCore>();
+            _coordinateTransformationList = value;
+            _inverse = null;
         }
+         */
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="ConcatenatedTransform"/> class.
-        /// </summary>
-        /// <param name="transformList">The transformList parameter.</param>
-        public ConcatenatedTransform(IEnumerable<ICoordinateTransformationCore> transformList)
-            : this()
-        {
-            this.coordinateTransformationList.AddRange(transformList);
-        }
+    /// <inheritdoc/>
+    public override int DimSource
+    {
+        get { return this.coordinateTransformationList[0].SourceCS.Dimension; }
+    }
 
-        /// <summary>
-        /// Gets the ordered list of transformations that form this concatenated transform.
-        /// </summary>
-        public IList<ICoordinateTransformationCore> CoordinateTransformationList
+    /// <inheritdoc/>
+    public override int DimTarget
+    {
+        get { return this.coordinateTransformationList[this.coordinateTransformationList.Count - 1].TargetCS.Dimension; }
+    }
+
+    /// <inheritdoc/>
+    public CoordinateSystem SourceCS { get => this.CoordinateTransformationList[0].SourceCS; }
+
+    /// <inheritdoc/>
+    public CoordinateSystem TargetCS { get => this.CoordinateTransformationList[this.CoordinateTransformationList.Count - 1].TargetCS; }
+
+    /// <summary>
+    /// Gets a Well-Known text representation of this object.
+    /// </summary>
+    /// <value>The value.</value>
+    public override string WKT
+    {
+        get { throw new NotImplementedException(); }
+    }
+
+    /// <summary>
+    /// Gets an XML representation of this object.
+    /// </summary>
+    /// <value>The value.</value>
+    public override string XML
+    {
+        get { throw new NotImplementedException(); }
+    }
+
+    /// <inheritdoc />
+    public override void Transform(ref double x, ref double y, ref double z)
+    {
+        foreach (var ctc in this.coordinateTransformationList)
         {
-            get { return this.coordinateTransformationList; }
-            /*
-            set
+            if (ctc is CoordinateTransformation ct)
             {
-                _coordinateTransformationList = value;
-                _inverse = null;
+                ct.MathTransform.Transform(ref x, ref y, ref z);
             }
-             */
-        }
-
-        /// <inheritdoc/>
-        public override int DimSource
-        {
-            get { return this.coordinateTransformationList[0].SourceCS.Dimension; }
-        }
-
-        /// <inheritdoc/>
-        public override int DimTarget
-        {
-            get { return this.coordinateTransformationList[this.coordinateTransformationList.Count - 1].TargetCS.Dimension; }
-        }
-
-        /// <inheritdoc/>
-        public CoordinateSystem SourceCS { get => this.CoordinateTransformationList[0].SourceCS; }
-
-        /// <inheritdoc/>
-        public CoordinateSystem TargetCS { get => this.CoordinateTransformationList[this.CoordinateTransformationList.Count - 1].TargetCS; }
-
-        /// <summary>
-        /// Gets a Well-Known text representation of this object.
-        /// </summary>
-        /// <value>The value.</value>
-        public override string WKT
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        /// <summary>
-        /// Gets an XML representation of this object.
-        /// </summary>
-        /// <value>The value.</value>
-        public override string XML
-        {
-            get { throw new NotImplementedException(); }
-        }
-
-        /// <inheritdoc />
-        public override void Transform(ref double x, ref double y, ref double z)
-        {
-            foreach (var ctc in this.coordinateTransformationList)
+            else if (ctc is ConcatenatedTransform cct)
             {
-                if (ctc is CoordinateTransformation ct)
-                {
-                    ct.MathTransform.Transform(ref x, ref y, ref z);
-                }
-                else if (ctc is ConcatenatedTransform cct)
-                {
-                    cct.Transform(ref x, ref y, ref z);
-                }
+                cct.Transform(ref x, ref y, ref z);
             }
         }
+    }
 
-        /// <summary>
-        /// Returns the inverse of this conversion.
-        /// </summary>
-        /// <returns>IMathTransform that is the reverse of the current conversion.</returns>
-        public override MathTransform Inverse()
+    /// <summary>
+    /// Returns the inverse of this conversion.
+    /// </summary>
+    /// <returns>IMathTransform that is the reverse of the current conversion.</returns>
+    public override MathTransform Inverse()
+    {
+        if (this.inverse == null)
         {
-            if (this.inverse == null)
+            this.inverse = this.Clone();
+            this.inverse.Invert();
+        }
+
+        return this.inverse;
+    }
+
+    /// <summary>
+    /// Reverses the transformation.
+    /// </summary>
+    public override void Invert()
+    {
+        this.coordinateTransformationList.Reverse();
+        foreach (var ic in this.coordinateTransformationList)
+        {
+            if (ic is CoordinateTransformation ct)
             {
-                this.inverse = this.Clone();
-                this.inverse.Invert();
+                ct.MathTransform.Invert();
             }
-
-            return this.inverse;
-        }
-
-        /// <summary>
-        /// Reverses the transformation.
-        /// </summary>
-        public override void Invert()
-        {
-            this.coordinateTransformationList.Reverse();
-            foreach (var ic in this.coordinateTransformationList)
+            else if (ic is ConcatenatedTransform cct)
             {
-                if (ic is CoordinateTransformation ct)
-                {
-                    ct.MathTransform.Invert();
-                }
-                else if (ic is ConcatenatedTransform cct)
-                {
-                    cct.Invert();
-                }
+                cct.Invert();
             }
         }
+    }
 
-        /// <summary>
-        /// Performs the documented operation.
-        /// </summary>
-        /// <returns>The computed value.</returns>
-        public ConcatenatedTransform Clone()
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    /// <returns>The computed value.</returns>
+    public ConcatenatedTransform Clone()
+    {
+        var clonedList = new List<ICoordinateTransformationCore>(this.coordinateTransformationList.Count);
+        foreach (var ct in this.coordinateTransformationList)
         {
-            var clonedList = new List<ICoordinateTransformationCore>(this.coordinateTransformationList.Count);
-            foreach (var ct in this.coordinateTransformationList)
-            {
-                clonedList.Add(CloneCoordinateTransformation(ct));
-            }
-
-            return new ConcatenatedTransform(clonedList);
+            clonedList.Add(CloneCoordinateTransformation(ct));
         }
 
-        private static ICoordinateTransformationCore CloneCoordinateTransformation(ICoordinateTransformationCore ict)
-        {
-            return CoordinateTransformationFactory.CreateFromCoordinateSystems(ict.SourceCS, ict.TargetCS);
-        }
+        return new ConcatenatedTransform(clonedList);
+    }
+
+    private static ICoordinateTransformationCore CloneCoordinateTransformation(ICoordinateTransformationCore ict)
+    {
+        return CoordinateTransformationFactory.CreateFromCoordinateSystems(ict.SourceCS, ict.TargetCS);
     }
 }

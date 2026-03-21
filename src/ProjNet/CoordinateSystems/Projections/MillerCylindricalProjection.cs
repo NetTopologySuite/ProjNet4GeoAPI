@@ -15,79 +15,78 @@
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 
-namespace ProjNet.CoordinateSystems.Projections
+namespace ProjNet.CoordinateSystems.Projections;
+
+using System;
+using System.Collections.Generic;
+using ProjNet.CoordinateSystems.Transformations;
+
+/// <summary>
+/// Represents the documented type.
+/// </summary>
+[Serializable]
+internal class MillerCylindricalProjection : MapProjection
 {
-    using System;
-    using System.Collections.Generic;
-    using ProjNet.CoordinateSystems.Transformations;
+    private readonly double radius;
+    private readonly double inverseRadius;
 
     /// <summary>
-    /// Represents the documented type.
+    /// Initializes a new instance of the <see cref="MillerCylindricalProjection"/> class.
     /// </summary>
-    [Serializable]
-    internal class MillerCylindricalProjection : MapProjection
+    /// <param name="parameters">Projection parameters.</param>
+    public MillerCylindricalProjection(IEnumerable<ProjectionParameter> parameters)
+        : this(parameters, null)
     {
-        private readonly double radius;
-        private readonly double inverseRadius;
+    }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MillerCylindricalProjection"/> class.
-        /// </summary>
-        /// <param name="parameters">Projection parameters.</param>
-        public MillerCylindricalProjection(IEnumerable<ProjectionParameter> parameters)
-            : this(parameters, null)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MillerCylindricalProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    /// <param name="inverse">Inverse transform instance when cloning.</param>
+    public MillerCylindricalProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+        : base(parameters, inverse)
+    {
+        this.Name = "Miller_Cylindrical";
+        this.radius = this.semiMajor * this.scaleFactor;
+        this.inverseRadius = 1d / this.radius;
+    }
+
+    /// <inheritdoc />
+    public override MathTransform Inverse()
+    {
+        if (this.inverse is null)
         {
+            this.inverse = new MillerCylindricalProjection(this.Parameters.ToProjectionParameter(), this);
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MillerCylindricalProjection"/> class.
-        /// </summary>
-        /// <param name="parameters">Projection parameters.</param>
-        /// <param name="inverse">Inverse transform instance when cloning.</param>
-        public MillerCylindricalProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
-            : base(parameters, inverse)
+        return this.inverse;
+    }
+
+    /// <inheritdoc />
+    protected override void RadiansToMeters(ref double lon, ref double lat)
+    {
+        if (double.IsNaN(lon) || double.IsNaN(lat))
         {
-            this.Name = "Miller_Cylindrical";
-            this.radius = this.semiMajor * this.scaleFactor;
-            this.inverseRadius = 1d / this.radius;
+            lon = double.NaN;
+            lat = double.NaN;
+            return;
         }
 
-        /// <inheritdoc />
-        public override MathTransform Inverse()
+        if (Math.Abs(Math.Abs(lat) - HALFPI) <= EPSLN)
         {
-            if (this.inverse is null)
-            {
-                this.inverse = new MillerCylindricalProjection(this.Parameters.ToProjectionParameter(), this);
-            }
-
-            return this.inverse;
+            throw new ArgumentException("Transformation cannot be computed at the poles.");
         }
 
-        /// <inheritdoc />
-        protected override void RadiansToMeters(ref double lon, ref double lat)
-        {
-            if (double.IsNaN(lon) || double.IsNaN(lat))
-            {
-                lon = double.NaN;
-                lat = double.NaN;
-                return;
-            }
+        double lambda = Adjust_lon(lon - this.centralMeridian);
+        lon = this.radius * lambda;
+        lat = this.radius * 1.25d * Math.Log(Math.Tan(FORTPI + (0.4d * lat)));
+    }
 
-            if (Math.Abs(Math.Abs(lat) - HALFPI) <= EPSLN)
-            {
-                throw new ArgumentException("Transformation cannot be computed at the poles.");
-            }
-
-            double lambda = Adjust_lon(lon - this.centralMeridian);
-            lon = this.radius * lambda;
-            lat = this.radius * 1.25d * Math.Log(Math.Tan(FORTPI + (0.4d * lat)));
-        }
-
-        /// <inheritdoc />
-        protected override void MetersToRadians(ref double x, ref double y)
-        {
-            x = Adjust_lon(this.centralMeridian + (x * this.inverseRadius));
-            y = 2.5d * (Math.Atan(Math.Exp((0.8d * y) * this.inverseRadius)) - FORTPI);
-        }
+    /// <inheritdoc />
+    protected override void MetersToRadians(ref double x, ref double y)
+    {
+        x = Adjust_lon(this.centralMeridian + (x * this.inverseRadius));
+        y = 2.5d * (Math.Atan(Math.Exp((0.8d * y) * this.inverseRadius)) - FORTPI);
     }
 }

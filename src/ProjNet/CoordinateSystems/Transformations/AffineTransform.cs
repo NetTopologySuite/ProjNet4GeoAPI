@@ -14,490 +14,489 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with ProjNet; if not, write to the Free Software
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
-namespace ProjNet.CoordinateSystems.Transformations
+namespace ProjNet.CoordinateSystems.Transformations;
+
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Text;
+
+/// <summary>
+/// Represents affine math transform which transforms input coordinates to target using affine transformation matrix. Dimensionality might change.
+/// </summary>
+/// <remarks>If the transform's input dimension is M, and output dimension is N, then the matrix will have size [N+1][M+1].
+/// The +1 in the matrix dimensions allows the matrix to do a shift, as well as a rotation.
+/// The [M][j] element of the matrix will be the j'th ordinate of the moved origin.
+/// The [i][N] element of the matrix will be 0 for i less than M, and 1 for i equals M.</remarks>
+/// <seealso href="http://en.wikipedia.org/wiki/Affine_transformation"/>
+[Serializable]
+public class AffineTransform : MathTransform
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Text;
+    /// <summary>
+    /// Dimension of source points - it's related to number of transformation matrix rows.
+    /// </summary>
+    private readonly int dimSource;
 
     /// <summary>
-    /// Represents affine math transform which transforms input coordinates to target using affine transformation matrix. Dimensionality might change.
+    /// Dimension of output points - it's related to number of columns.
+    /// </summary>
+    private readonly int dimTarget;
+
+    /// <summary>
+    /// Represents transform matrix of this affine transformation from input points to output ones using dimensionality defined within the affine transform
+    /// Number of rows = dimTarget + 1
+    /// Number of columns = dimSource + 1.
+    /// </summary>
+    private readonly double[,] transformMatrix;
+
+    /// <summary>
+    /// Saved inverse transform.
+    /// </summary>
+    private MathTransform inverse;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AffineTransform"/> class.
+    /// Creates instance of 2D affine transform (source dimensionality 2, target dimensionality 2) using the specified values.
+    /// </summary>
+    /// <param name="m00">Value for row 0, column 0 - AKA ScaleX.</param>
+    /// <param name="m01">Value for row 0, column 1 - AKA ShearX.</param>
+    /// <param name="m02">Value for row 0, column 2 - AKA Translate X.</param>
+    /// <param name="m10">Value for row 1, column 0 - AKA Shear Y.</param>
+    /// <param name="m11">Value for row 1, column 1 - AKA Scale Y.</param>
+    /// <param name="m12">Value for row 1, column 2 - AKA Translate Y.</param>
+    public AffineTransform(double m00, double m01, double m02, double m10, double m11, double m12)
+    {
+        // fill dimensionlity
+        this.dimSource = 2;
+        this.dimTarget = 2;
+
+        // create matrix - 2D affine transform uses 3x3 matrix (3rd row is the special one)
+        this.transformMatrix = new[,]
+        {
+            { m00, m01, m02 },
+            { m10, m11, m12 },
+            { 0, 0, 1 },
+        };
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AffineTransform"/> class.
+    /// Creates instance of affine transform using the specified matrix.
     /// </summary>
     /// <remarks>If the transform's input dimension is M, and output dimension is N, then the matrix will have size [N+1][M+1].
-    /// The +1 in the matrix dimensions allows the matrix to do a shift, as well as a rotation.
-    /// The [M][j] element of the matrix will be the j'th ordinate of the moved origin.
-    /// The [i][N] element of the matrix will be 0 for i less than M, and 1 for i equals M.</remarks>
-    /// <seealso href="http://en.wikipedia.org/wiki/Affine_transformation"/>
-    [Serializable]
-    public class AffineTransform : MathTransform
+    /// The +1 in the matrix dimensions allows the matrix to do a shift, as well as a rotation. The [M][j] element of the matrix will be the j'th ordinate of the moved origin. The [i][N] element of the matrix will be 0 for i less than M, and 1 for i equals M.</remarks>
+    ///
+    /// <param name="matrix">Matrix used to create afiine transform.</param>
+    public AffineTransform(double[,] matrix)
     {
-        /// <summary>
-        /// Dimension of source points - it's related to number of transformation matrix rows.
-        /// </summary>
-        private readonly int dimSource;
-
-        /// <summary>
-        /// Dimension of output points - it's related to number of columns.
-        /// </summary>
-        private readonly int dimTarget;
-
-        /// <summary>
-        /// Represents transform matrix of this affine transformation from input points to output ones using dimensionality defined within the affine transform
-        /// Number of rows = dimTarget + 1
-        /// Number of columns = dimSource + 1.
-        /// </summary>
-        private readonly double[,] transformMatrix;
-
-        /// <summary>
-        /// Saved inverse transform.
-        /// </summary>
-        private MathTransform inverse;
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AffineTransform"/> class.
-        /// Creates instance of 2D affine transform (source dimensionality 2, target dimensionality 2) using the specified values.
-        /// </summary>
-        /// <param name="m00">Value for row 0, column 0 - AKA ScaleX.</param>
-        /// <param name="m01">Value for row 0, column 1 - AKA ShearX.</param>
-        /// <param name="m02">Value for row 0, column 2 - AKA Translate X.</param>
-        /// <param name="m10">Value for row 1, column 0 - AKA Shear Y.</param>
-        /// <param name="m11">Value for row 1, column 1 - AKA Scale Y.</param>
-        /// <param name="m12">Value for row 1, column 2 - AKA Translate Y.</param>
-        public AffineTransform(double m00, double m01, double m02, double m10, double m11, double m12)
+        // check validity
+        if (matrix == null)
         {
-            // fill dimensionlity
-            this.dimSource = 2;
-            this.dimTarget = 2;
-
-            // create matrix - 2D affine transform uses 3x3 matrix (3rd row is the special one)
-            this.transformMatrix = new[,]
-            {
-                { m00, m01, m02 },
-                { m10, m11, m12 },
-                { 0, 0, 1 },
-            };
+            throw new ArgumentNullException(nameof(matrix));
         }
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="AffineTransform"/> class.
-        /// Creates instance of affine transform using the specified matrix.
-        /// </summary>
-        /// <remarks>If the transform's input dimension is M, and output dimension is N, then the matrix will have size [N+1][M+1].
-        /// The +1 in the matrix dimensions allows the matrix to do a shift, as well as a rotation. The [M][j] element of the matrix will be the j'th ordinate of the moved origin. The [i][N] element of the matrix will be 0 for i less than M, and 1 for i equals M.</remarks>
-        ///
-        /// <param name="matrix">Matrix used to create afiine transform.</param>
-        public AffineTransform(double[,] matrix)
+        if (matrix.GetLength(0) <= 1)
         {
-            // check validity
-            if (matrix == null)
-            {
-                throw new ArgumentNullException(nameof(matrix));
-            }
-
-            if (matrix.GetLength(0) <= 1)
-            {
-                throw new ArgumentException("Transformation matrix must have at least 2 rows.");
-            }
-
-            if (matrix.GetLength(1) <= 1)
-            {
-                throw new ArgumentException("Transformation matrix must have at least 2 columns.");
-            }
-
-            // fill dimensionlity - dimension is M, and output dimension is N, then the matrix will have size [N+1][M+1].
-            this.dimSource = matrix.GetLength(1) - 1;
-            this.dimTarget = matrix.GetLength(0) - 1;
-
-            // use specified matrix
-            this.transformMatrix = matrix;
+            throw new ArgumentException("Transformation matrix must have at least 2 rows.");
         }
 
-        /// <summary>
-        /// Gets a Well-Known text representation of this affine math transformation.
-        /// </summary>
-        /// <value>The value.</value>
-        public override string WKT
+        if (matrix.GetLength(1) <= 1)
         {
-            get
+            throw new ArgumentException("Transformation matrix must have at least 2 columns.");
+        }
+
+        // fill dimensionlity - dimension is M, and output dimension is N, then the matrix will have size [N+1][M+1].
+        this.dimSource = matrix.GetLength(1) - 1;
+        this.dimTarget = matrix.GetLength(0) - 1;
+
+        // use specified matrix
+        this.transformMatrix = matrix;
+    }
+
+    /// <summary>
+    /// Gets a Well-Known text representation of this affine math transformation.
+    /// </summary>
+    /// <value>The value.</value>
+    public override string WKT
+    {
+        get
+        {
+            // PARAM_MT["Affine",
+            //    PARAMETER["num_row",3],
+            //    PARAMETER["num_col",3],
+            //    PARAMETER["elt_0_1",1],
+            //    PARAMETER["elt_0_2",2],
+            //    PARAMETER["elt 1 2",3]]
+            var sb = new StringBuilder();
+
+            sb.Append("PARAM_MT[\"Affine\"");
+
+            // append parameters
+            foreach (var param in this.GetParameterValues())
             {
-                // PARAM_MT["Affine",
-                //    PARAMETER["num_row",3],
-                //    PARAMETER["num_col",3],
-                //    PARAMETER["elt_0_1",1],
-                //    PARAMETER["elt_0_2",2],
-                //    PARAMETER["elt 1 2",3]]
-                var sb = new StringBuilder();
+                sb.Append(',');
+                sb.Append(param.WKT);
+            }
 
-                sb.Append("PARAM_MT[\"Affine\"");
+            sb.Append(']');
+            return sb.ToString();
+        }
+    }
 
-                // append parameters
-                foreach (var param in this.GetParameterValues())
+    /// <summary>
+    /// Gets an XML representation of this affine transformation.
+    /// </summary>
+    /// <value>The value.</value>
+    public override string XML
+    {
+        get { throw new NotImplementedException("The method or operation is not implemented."); }
+    }
+
+    /// <summary>
+    /// Gets the dimension of input points.
+    /// </summary>
+    public override int DimSource
+    {
+        get { return this.dimSource; }
+    }
+
+    /// <summary>
+    /// Gets the dimension of output points.
+    /// </summary>
+    public override int DimTarget
+    {
+        get { return this.dimTarget; }
+    }
+
+    /// <summary>
+    /// Returns the inverse of this affine transformation.
+    /// </summary>
+    /// <returns>IMathTransform that is the reverse of the current affine transformation.</returns>
+    public override MathTransform Inverse()
+    {
+        if (this.inverse == null)
+        {
+            // find the inverse transformation matrix - use cloned matrix array
+            // remarks about dimensionality: if input dimension is M, and output dimension is N, then the matrix will have size [N+1][M+1].
+            double[,] invMatrix = InvertMatrix((double[,])this.transformMatrix.Clone());
+            this.inverse = new AffineTransform(invMatrix);
+        }
+
+        return this.inverse;
+    }
+
+    /// <inheritdoc />
+    public override void Transform(ref double x, ref double y, ref double z)
+    {
+        (x, y, z) = this.TransformAffine(x, y, z);
+    }
+
+    /// <summary>
+    /// Reverses the transformation.
+    /// </summary>
+    public override void Invert()
+    {
+        throw new NotSupportedException("The method or operation is not supported.");
+    }
+
+    /// <summary>
+    /// Returns this affine transform as an affine transform matrix.
+    /// </summary>
+    /// <returns>The transformation result.</returns>
+    public double[,] GetMatrix()
+    {
+        return (double[,])this.transformMatrix.Clone();
+    }
+
+    /// <summary>
+    /// Return affine transformation matrix as group of parameter values that maiy be used for retrieving WKT of this affine transform.
+    /// </summary>
+    /// <returns>List of string pairs NAME VALUE.</returns>
+    private List<ProjectionParameter> GetParameterValues()
+    {
+        int rowCnt = this.transformMatrix.GetLength(0);
+        int colCnt = this.transformMatrix.GetLength(1);
+        var pInfo = new List<ProjectionParameter>();
+        pInfo.Add(new ProjectionParameter("num_row", rowCnt));
+        pInfo.Add(new ProjectionParameter("num_col", colCnt));
+
+        // fill matrix values
+        for (int row = 0; row < rowCnt; row++)
+        {
+            for (int col = 0; col < colCnt; col++)
+            {
+                string name = string.Format(CultureInfo.InvariantCulture.NumberFormat, "elt_{0}_{1}", row, col);
+                pInfo.Add(new ProjectionParameter(name, this.transformMatrix[row, col]));
+            }
+        }
+
+        return pInfo;
+    }
+
+    /// <summary>
+    /// Given L,U,P and b solve for x.
+    /// Input the L and U matrices as a single matrix LU.
+    /// Return the solution as a double[].
+    /// LU will be a n+1xm+1 matrix where the first row and columns are zero.
+    /// This is for ease of computation and consistency with Cormen et al.
+    /// pseudocode.
+    /// The pi array represents the permutation matrix.
+    /// </summary>
+    /// <seealso href="http://www.rkinteractive.com/blogs/SoftwareDevelopment/post/2013/05/14/Algorithms-In-C-Solving-A-System-Of-Linear-Equations.aspx"/>
+    /// <param name="lu">The lu parameter.</param>
+    /// <param name="pi">The pi parameter.</param>
+    /// <param name="b">The b parameter.</param>
+    /// <returns>The transformation result.</returns>
+    private static double[] LUPSolve(double[,] lu, int[] pi, double[] b)
+    {
+        int n = lu.GetLength(0) - 1;
+        double[] x = new double[n + 1];
+        double[] y = new double[n + 1];
+
+        /*
+        * Solve for y using formward substitution
+        * */
+        for (int i = 0; i <= n; i++)
+        {
+            double suml = 0;
+            for (int j = 0; j <= i - 1; j++)
+            {
+                /*
+                * Since we've taken L and U as a singular matrix as an input
+                * the value for L at index i and j will be 1 when i equals j, not LU[i][j], since
+                * the diagonal values are all 1 for L.
+                * */
+                double lij;
+                if (i == j)
                 {
-                    sb.Append(',');
-                    sb.Append(param.WKT);
+                    lij = 1;
+                }
+                else
+                {
+                    lij = lu[i, j];
                 }
 
-                sb.Append(']');
-                return sb.ToString();
-            }
-        }
-
-        /// <summary>
-        /// Gets an XML representation of this affine transformation.
-        /// </summary>
-        /// <value>The value.</value>
-        public override string XML
-        {
-            get { throw new NotImplementedException("The method or operation is not implemented."); }
-        }
-
-        /// <summary>
-        /// Gets the dimension of input points.
-        /// </summary>
-        public override int DimSource
-        {
-            get { return this.dimSource; }
-        }
-
-        /// <summary>
-        /// Gets the dimension of output points.
-        /// </summary>
-        public override int DimTarget
-        {
-            get { return this.dimTarget; }
-        }
-
-        /// <summary>
-        /// Returns the inverse of this affine transformation.
-        /// </summary>
-        /// <returns>IMathTransform that is the reverse of the current affine transformation.</returns>
-        public override MathTransform Inverse()
-        {
-            if (this.inverse == null)
-            {
-                // find the inverse transformation matrix - use cloned matrix array
-                // remarks about dimensionality: if input dimension is M, and output dimension is N, then the matrix will have size [N+1][M+1].
-                double[,] invMatrix = InvertMatrix((double[,])this.transformMatrix.Clone());
-                this.inverse = new AffineTransform(invMatrix);
+                suml += lij * y[j];
             }
 
-            return this.inverse;
+            y[i] = b[pi[i]] - suml;
         }
 
-        /// <inheritdoc />
-        public override void Transform(ref double x, ref double y, ref double z)
+        // Solve for x by using back substitution
+        for (int i = n; i >= 0; i--)
         {
-            (x, y, z) = this.TransformAffine(x, y, z);
-        }
-
-        /// <summary>
-        /// Reverses the transformation.
-        /// </summary>
-        public override void Invert()
-        {
-            throw new NotSupportedException("The method or operation is not supported.");
-        }
-
-        /// <summary>
-        /// Returns this affine transform as an affine transform matrix.
-        /// </summary>
-        /// <returns>The transformation result.</returns>
-        public double[,] GetMatrix()
-        {
-            return (double[,])this.transformMatrix.Clone();
-        }
-
-        /// <summary>
-        /// Return affine transformation matrix as group of parameter values that maiy be used for retrieving WKT of this affine transform.
-        /// </summary>
-        /// <returns>List of string pairs NAME VALUE.</returns>
-        private List<ProjectionParameter> GetParameterValues()
-        {
-            int rowCnt = this.transformMatrix.GetLength(0);
-            int colCnt = this.transformMatrix.GetLength(1);
-            var pInfo = new List<ProjectionParameter>();
-            pInfo.Add(new ProjectionParameter("num_row", rowCnt));
-            pInfo.Add(new ProjectionParameter("num_col", colCnt));
-
-            // fill matrix values
-            for (int row = 0; row < rowCnt; row++)
+            double sumu = 0;
+            for (int j = i + 1; j <= n; j++)
             {
-                for (int col = 0; col < colCnt; col++)
+                sumu += lu[i, j] * x[j];
+            }
+
+            x[i] = (y[i] - sumu) / lu[i, i];
+        }
+
+        return x;
+    }
+
+    /// <summary>
+    /// Perform LUP decomposition on a matrix A.
+    /// Return P as an array of ints and L and U are just in A, "in place".
+    /// In order to make some of the calculations more straight forward and to
+    /// match Cormen's et al. pseudocode the matrix A should have its first row and first columns
+    /// to be all 0.
+    /// </summary>
+    /// <seealso href="http://www.rkinteractive.com/blogs/SoftwareDevelopment/post/2013/05/07/Algorithms-In-C-LUP-Decomposition.aspx"/>
+    /// <param name="a">The a parameter.</param>
+    /// <returns>The transformation result.</returns>
+    private static int[] LUPDecomposition(double[,] a)
+    {
+        int n = a.GetLength(0) - 1;
+        /*
+        * pi represents the permutation matrix.  We implement it as an array
+        * whose value indicates which column the 1 would appear.  We use it to avoid
+        * dividing by zero or small numbers.
+        * */
+        int[] pi = new int[n + 1];
+        int kp = 0;
+
+        // Initialize the permutation matrix, will be the identity matrix
+        for (int j = 0; j <= n; j++)
+        {
+            pi[j] = j;
+        }
+
+        for (int k = 0; k <= n; k++)
+        {
+            /*
+            * In finding the permutation matrix p that avoids dividing by zero
+            * we take a slightly different approach.  For numerical stability
+            * We find the element with the largest
+            * absolute value of those in the current first column (column k).  If all elements in
+            * the current first column are zero then the matrix is singluar and throw an
+            * error.
+            * */
+            double p = 0;
+            for (int i = k; i <= n; i++)
+            {
+                if (Math.Abs(a[i, k]) > p)
                 {
-                    string name = string.Format(CultureInfo.InvariantCulture.NumberFormat, "elt_{0}_{1}", row, col);
-                    pInfo.Add(new ProjectionParameter(name, this.transformMatrix[row, col]));
+                    p = Math.Abs(a[i, k]);
+                    kp = i;
                 }
             }
 
-            return pInfo;
-        }
-
-        /// <summary>
-        /// Given L,U,P and b solve for x.
-        /// Input the L and U matrices as a single matrix LU.
-        /// Return the solution as a double[].
-        /// LU will be a n+1xm+1 matrix where the first row and columns are zero.
-        /// This is for ease of computation and consistency with Cormen et al.
-        /// pseudocode.
-        /// The pi array represents the permutation matrix.
-        /// </summary>
-        /// <seealso href="http://www.rkinteractive.com/blogs/SoftwareDevelopment/post/2013/05/14/Algorithms-In-C-Solving-A-System-Of-Linear-Equations.aspx"/>
-        /// <param name="lu">The lu parameter.</param>
-        /// <param name="pi">The pi parameter.</param>
-        /// <param name="b">The b parameter.</param>
-        /// <returns>The transformation result.</returns>
-        private static double[] LUPSolve(double[,] lu, int[] pi, double[] b)
-        {
-            int n = lu.GetLength(0) - 1;
-            double[] x = new double[n + 1];
-            double[] y = new double[n + 1];
+            if (p == 0)
+            {
+                throw new InvalidOperationException("singular matrix");
+            }
 
             /*
-            * Solve for y using formward substitution
+            * These lines update the pivot array (which represents the pivot matrix)
+            * by exchanging pi[k] and pi[kp].
+            * */
+            int pik = pi[k];
+            int pikp = pi[kp];
+            pi[k] = pikp;
+            pi[kp] = pik;
+
+            /*
+            * Exchange rows k and kpi as determined by the pivot
             * */
             for (int i = 0; i <= n; i++)
             {
-                double suml = 0;
-                for (int j = 0; j <= i - 1; j++)
-                {
-                    /*
-                    * Since we've taken L and U as a singular matrix as an input
-                    * the value for L at index i and j will be 1 when i equals j, not LU[i][j], since
-                    * the diagonal values are all 1 for L.
-                    * */
-                    double lij;
-                    if (i == j)
-                    {
-                        lij = 1;
-                    }
-                    else
-                    {
-                        lij = lu[i, j];
-                    }
-
-                    suml += lij * y[j];
-                }
-
-                y[i] = b[pi[i]] - suml;
+                double aki = a[k, i];
+                double akpi = a[kp, i];
+                a[k, i] = akpi;
+                a[kp, i] = aki;
             }
-
-            // Solve for x by using back substitution
-            for (int i = n; i >= 0; i--)
-            {
-                double sumu = 0;
-                for (int j = i + 1; j <= n; j++)
-                {
-                    sumu += lu[i, j] * x[j];
-                }
-
-                x[i] = (y[i] - sumu) / lu[i, i];
-            }
-
-            return x;
-        }
-
-        /// <summary>
-        /// Perform LUP decomposition on a matrix A.
-        /// Return P as an array of ints and L and U are just in A, "in place".
-        /// In order to make some of the calculations more straight forward and to
-        /// match Cormen's et al. pseudocode the matrix A should have its first row and first columns
-        /// to be all 0.
-        /// </summary>
-        /// <seealso href="http://www.rkinteractive.com/blogs/SoftwareDevelopment/post/2013/05/07/Algorithms-In-C-LUP-Decomposition.aspx"/>
-        /// <param name="a">The a parameter.</param>
-        /// <returns>The transformation result.</returns>
-        private static int[] LUPDecomposition(double[,] a)
-        {
-            int n = a.GetLength(0) - 1;
-            /*
-            * pi represents the permutation matrix.  We implement it as an array
-            * whose value indicates which column the 1 would appear.  We use it to avoid
-            * dividing by zero or small numbers.
-            * */
-            int[] pi = new int[n + 1];
-            int kp = 0;
-
-            // Initialize the permutation matrix, will be the identity matrix
-            for (int j = 0; j <= n; j++)
-            {
-                pi[j] = j;
-            }
-
-            for (int k = 0; k <= n; k++)
-            {
-                /*
-                * In finding the permutation matrix p that avoids dividing by zero
-                * we take a slightly different approach.  For numerical stability
-                * We find the element with the largest
-                * absolute value of those in the current first column (column k).  If all elements in
-                * the current first column are zero then the matrix is singluar and throw an
-                * error.
-                * */
-                double p = 0;
-                for (int i = k; i <= n; i++)
-                {
-                    if (Math.Abs(a[i, k]) > p)
-                    {
-                        p = Math.Abs(a[i, k]);
-                        kp = i;
-                    }
-                }
-
-                if (p == 0)
-                {
-                    throw new InvalidOperationException("singular matrix");
-                }
-
-                /*
-                * These lines update the pivot array (which represents the pivot matrix)
-                * by exchanging pi[k] and pi[kp].
-                * */
-                int pik = pi[k];
-                int pikp = pi[kp];
-                pi[k] = pikp;
-                pi[kp] = pik;
-
-                /*
-                * Exchange rows k and kpi as determined by the pivot
-                * */
-                for (int i = 0; i <= n; i++)
-                {
-                    double aki = a[k, i];
-                    double akpi = a[kp, i];
-                    a[k, i] = akpi;
-                    a[kp, i] = aki;
-                }
-
-                /*
-                    * Compute the Schur complement
-                    * */
-                for (int i = k + 1; i <= n; i++)
-                {
-                    a[i, k] = a[i, k] / a[k, k];
-                    for (int j = k + 1; j <= n; j++)
-                    {
-                        a[i, j] = a[i, j] - (a[i, k] * a[k, j]);
-                    }
-                }
-            }
-
-            return pi;
-        }
-
-        /// <summary>
-        /// Given an nXn matrix A, solve n linear equations to find the inverse of A.
-        /// </summary>
-        /// <seealso href="http://www.rkinteractive.com/blogs/SoftwareDevelopment/post/2013/05/21/Algorithms-In-C-Finding-The-Inverse-Of-A-Matrix.aspx"/>
-        /// <param name="a">The a parameter.</param>
-        /// <returns>The transformation result.</returns>
-        private static double[,] InvertMatrix(double[,] a)
-        {
-            int n = a.GetLength(0);
-            int m = a.GetLength(1);
-
-            // x will hold the inverse matrix to be returned
-            double[,] x = new double[n, m];
 
             /*
-            * solve will contain the vector solution for the LUP decomposition as we solve
-            * for each vector of x.  We will combine the solutions into the double[][] array x.
-            * */
-            double[] solve;
-
-            // Get the LU matrix and P matrix (as an array)
-            int[] p = LUPDecomposition(a);
-            double[,] lU = a;
-
-            /*
-            * Solve AX = e for each column ei of the identity matrix using LUP decomposition
-            * */
-            for (int i = 0; i < n; i++)
+                * Compute the Schur complement
+                * */
+            for (int i = k + 1; i <= n; i++)
             {
-                // e will represent each column in the identity matrix
-                double[] e = new double[m];
-                e[i] = 1;
-                solve = LUPSolve(lU, p, e);
-                for (int j = 0; j < solve.Length; j++)
+                a[i, k] = a[i, k] / a[k, k];
+                for (int j = k + 1; j <= n; j++)
                 {
-                    x[j, i] = solve[j];
+                    a[i, j] = a[i, j] - (a[i, k] * a[k, j]);
                 }
             }
-
-            return x;
         }
 
-        /// <summary>
-        /// Transforms a coordinate point. The passed parameter point should not be modified.
-        /// </summary>
-        /// <param name="x">The x-ordinate value.</param>
-        /// <param name="y">The y-ordinate value.</param>
-        /// <param name="z">The z-ordinate value.</param>
-        /// <returns>The converted x-, y- and z-ordinate tuple.</returns>
-        private (double X, double Y, double Z) TransformAffine(double x, double y, double z)
+        return pi;
+    }
+
+    /// <summary>
+    /// Given an nXn matrix A, solve n linear equations to find the inverse of A.
+    /// </summary>
+    /// <seealso href="http://www.rkinteractive.com/blogs/SoftwareDevelopment/post/2013/05/21/Algorithms-In-C-Finding-The-Inverse-Of-A-Matrix.aspx"/>
+    /// <param name="a">The a parameter.</param>
+    /// <returns>The transformation result.</returns>
+    private static double[,] InvertMatrix(double[,] a)
+    {
+        int n = a.GetLength(0);
+        int m = a.GetLength(1);
+
+        // x will hold the inverse matrix to be returned
+        double[,] x = new double[n, m];
+
+        /*
+        * solve will contain the vector solution for the LUP decomposition as we solve
+        * for each vector of x.  We will combine the solutions into the double[][] array x.
+        * */
+        double[] solve;
+
+        // Get the LU matrix and P matrix (as an array)
+        int[] p = LUPDecomposition(a);
+        double[,] lU = a;
+
+        /*
+        * Solve AX = e for each column ei of the identity matrix using LUP decomposition
+        * */
+        for (int i = 0; i < n; i++)
         {
-            // check source dimensionality - allow coordinate clipping, if source dimensionality is greater then expected source dimensionality of affine transformation
-            Span<double> point = stackalloc double[0];
-            switch (this.dimSource)
+            // e will represent each column in the identity matrix
+            double[] e = new double[m];
+            e[i] = 1;
+            solve = LUPSolve(lU, p, e);
+            for (int j = 0; j < solve.Length; j++)
             {
-                case 0:
-                    point = default;
-                    break;
-
-                case 1:
-                    point = stackalloc double[] { x };
-                    break;
-
-                case 2:
-                    point = stackalloc double[] { x, y };
-                    break;
-
-                case 3:
-                    point = stackalloc double[] { x, y, z };
-                    break;
-
-                default:
-                    throw new NotSupportedException();
+                x[j, i] = solve[j];
             }
+        }
 
-            if (this.dimTarget > 3)
-            {
+        return x;
+    }
+
+    /// <summary>
+    /// Transforms a coordinate point. The passed parameter point should not be modified.
+    /// </summary>
+    /// <param name="x">The x-ordinate value.</param>
+    /// <param name="y">The y-ordinate value.</param>
+    /// <param name="z">The z-ordinate value.</param>
+    /// <returns>The converted x-, y- and z-ordinate tuple.</returns>
+    private (double X, double Y, double Z) TransformAffine(double x, double y, double z)
+    {
+        // check source dimensionality - allow coordinate clipping, if source dimensionality is greater then expected source dimensionality of affine transformation
+        Span<double> point = stackalloc double[0];
+        switch (this.dimSource)
+        {
+            case 0:
+                point = default;
+                break;
+
+            case 1:
+                point = stackalloc double[] { x };
+                break;
+
+            case 2:
+                point = stackalloc double[] { x, y };
+                break;
+
+            case 3:
+                point = stackalloc double[] { x, y, z };
+                break;
+
+            default:
                 throw new NotSupportedException();
-            }
-
-            // use transformation matrix to create output points that has dimTarget dimensionality
-            Span<double> transformed = stackalloc double[this.dimTarget];
-
-            // count each target dimension using the apropriate row
-            for (int row = 0; row < this.dimTarget; row++)
-            {
-                // start with the last value which is in fact multiplied by 1
-                double dimVal = this.transformMatrix[row, this.dimSource];
-                for (int col = 0; col < this.dimSource; col++)
-                {
-                    dimVal += this.transformMatrix[row, col] * point[col];
-                }
-
-                transformed[row] = dimVal;
-            }
-
-            (double X, double Y, double Z) ret = default;
-            if (transformed.Length > 2)
-            {
-                ret.Z = transformed[2];
-            }
-
-            if (transformed.Length > 1)
-            {
-                ret.Y = transformed[1];
-            }
-
-            if (transformed.Length > 0)
-            {
-                ret.X = transformed[0];
-            }
-
-            return ret;
         }
+
+        if (this.dimTarget > 3)
+        {
+            throw new NotSupportedException();
+        }
+
+        // use transformation matrix to create output points that has dimTarget dimensionality
+        Span<double> transformed = stackalloc double[this.dimTarget];
+
+        // count each target dimension using the apropriate row
+        for (int row = 0; row < this.dimTarget; row++)
+        {
+            // start with the last value which is in fact multiplied by 1
+            double dimVal = this.transformMatrix[row, this.dimSource];
+            for (int col = 0; col < this.dimSource; col++)
+            {
+                dimVal += this.transformMatrix[row, col] * point[col];
+            }
+
+            transformed[row] = dimVal;
+        }
+
+        (double X, double Y, double Z) ret = default;
+        if (transformed.Length > 2)
+        {
+            ret.Z = transformed[2];
+        }
+
+        if (transformed.Length > 1)
+        {
+            ret.Y = transformed[1];
+        }
+
+        if (transformed.Length > 0)
+        {
+            ret.X = transformed[0];
+        }
+
+        return ret;
     }
 }
