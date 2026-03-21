@@ -671,7 +671,7 @@ namespace ProjNet.CoordinateSystems.Transformations
             // Transform geographic to geographic:
             var geogToGeog = ctFac.CreateFromCoordinateSystems(
                 source.GeographicCoordinateSystem,
-                                                              target.GeographicCoordinateSystem);
+                target.GeographicCoordinateSystem);
             if (geogToGeog != null)
             {
                 ct.CoordinateTransformationList.Add(geogToGeog);

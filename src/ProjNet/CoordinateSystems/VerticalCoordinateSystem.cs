@@ -71,13 +71,13 @@ namespace ProjNet.CoordinateSystems
         /// Gets creates a meter unit coordinate system with <see cref="VerticalDatum.ODN"/>.
         /// </summary>
         public static VerticalCoordinateSystem ODN =>
-                new VerticalCoordinateSystem(
-                    new LinearUnit(1, "metre", "EPSG", 9001, string.Empty, "m", string.Empty),
-                    VerticalDatum.ODN,
-                    new AxisInfo("Up", AxisOrientationEnum.Up),
-                    "Newlyn",
-                    "EPSG",
-                    5701,
+            new VerticalCoordinateSystem(
+                new LinearUnit(1, "metre", "EPSG", 9001, string.Empty, "m", string.Empty),
+                VerticalDatum.ODN,
+                new AxisInfo("Up", AxisOrientationEnum.Up),
+                "Newlyn",
+                "EPSG",
+                5701,
                 string.Empty,
                 "ODN",
                 string.Empty);

@@ -1226,8 +1226,8 @@ for (var i = 0; i < _Parameters.Count; i++)
 
             throw new ArgumentOutOfRangeException(
                 "x",
-                                                  x.ToString(CultureInfo.InvariantCulture) +
-                                                  " not a valid longitude in degrees.");
+                x.ToString(CultureInfo.InvariantCulture) +
+                " not a valid longitude in degrees.");
         }
 
         /// <summary>
@@ -1245,8 +1245,8 @@ for (var i = 0; i < _Parameters.Count; i++)
 
             throw new ArgumentOutOfRangeException(
                 "y",
-                                                  y.ToString(CultureInfo.InvariantCulture) +
-                                                  " not a valid latitude in degrees.");
+                y.ToString(CultureInfo.InvariantCulture) +
+                " not a valid latitude in degrees.");
         }
 
         /// <summary>

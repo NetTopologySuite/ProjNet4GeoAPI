@@ -1088,8 +1088,8 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         double[,] matrix = new double[,]
         {
             {0.883485346527455, -0.468458794848877, 3455869.17937689},
-                                          {0.468458794848877, 0.883485346527455, 5478710.88035753},
-                                          {0.0, 0.0, 1},
+            {0.468458794848877, 0.883485346527455, 5478710.88035753},
+            {0.0, 0.0, 1},
         };
         var mt = new AffineTransform(matrix);
 
@@ -1124,8 +1124,8 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         double[,] matrix = new double[,]
         {
             {0.883485346527455, -0.468458794848877, 3455869.17937689},
-                                          {0.468458794848877, 0.883485346527455, 5478710.88035753},
-                                          {0.0, 0.0, 1},
+            {0.468458794848877, 0.883485346527455, 5478710.88035753},
+            {0.0, 0.0, 1},
         };
         var mt = new AffineTransform(matrix);
 
