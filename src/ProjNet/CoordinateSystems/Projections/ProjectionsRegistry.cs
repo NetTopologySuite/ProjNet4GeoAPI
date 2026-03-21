@@ -1,4 +1,4 @@
-﻿// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
+// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
 //
 // This file is part of ProjNet.
 // ProjNet is free software; you can redistribute it and/or modify
@@ -170,7 +170,7 @@ namespace ProjNet.CoordinateSystems.Projections
                         return;
                     }
 
-                    throw new ArgumentException("A different projection type has been registered with this name", "name");
+                    throw new ArgumentException("A different projection type has been registered with this name", nameof(name));
                 }
 
                 TypeRegistry.Add(key, type);

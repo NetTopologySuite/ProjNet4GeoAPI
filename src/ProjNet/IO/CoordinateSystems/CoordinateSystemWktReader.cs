@@ -1,4 +1,4 @@
-﻿// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
+// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
 //
 // This file is part of ProjNet.
 // ProjNet is free software; you can redistribute it and/or modify
@@ -65,7 +65,7 @@ namespace ProjNet.IO.CoordinateSystems
         {
             if (string.IsNullOrWhiteSpace(wkt))
             {
-                throw new ArgumentNullException("wkt");
+                throw new ArgumentNullException(nameof(wkt));
             }
 
             string normalizedWkt = NormalizeWkt(wkt);

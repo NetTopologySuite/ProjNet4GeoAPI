@@ -87,7 +87,7 @@ namespace ProjNet.CoordinateSystems.Transformations
             // check validity
             if (matrix == null)
             {
-                throw new ArgumentNullException("matrix");
+                throw new ArgumentNullException(nameof(matrix));
             }
 
             if (matrix.GetLength(0) <= 1)

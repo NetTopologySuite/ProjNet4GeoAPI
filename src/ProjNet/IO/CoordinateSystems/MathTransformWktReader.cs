@@ -58,7 +58,7 @@ namespace ProjNet.IO.CoordinateSystems
         {
             if (string.IsNullOrWhiteSpace(wkt))
             {
-                throw new ArgumentNullException("wkt");
+                throw new ArgumentNullException(nameof(wkt));
             }
 
             using (TextReader reader = new StringReader(wkt))
