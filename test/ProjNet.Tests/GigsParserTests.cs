@@ -96,7 +96,7 @@ public class GigsParserTests
 
             pipelineCaseCount += parsed.Count(item =>
                 item.Operation is not null
-                && item.Operation.IndexOf("+proj=pipeline", StringComparison.OrdinalIgnoreCase) >= 0);
+                && item.Operation.Contains("+proj=pipeline", StringComparison.OrdinalIgnoreCase));
         }
 
         Assert.True(pipelineCaseCount > 0, "Expected parsed GIGS cases to include pipeline operations.");

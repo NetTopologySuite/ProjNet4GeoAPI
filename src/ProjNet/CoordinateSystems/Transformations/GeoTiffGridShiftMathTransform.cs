@@ -1006,11 +1006,11 @@ namespace ProjNet.CoordinateSystems.Transformations
                     continue;
                 }
 
-                if (description.IndexOf("latitude_offset", StringComparison.OrdinalIgnoreCase) >= 0)
+                if (ContainsOrdinalIgnoreCase(description, "latitude_offset"))
                 {
                     latitudeSample = i;
                 }
-                else if (description.IndexOf("longitude_offset", StringComparison.OrdinalIgnoreCase) >= 0)
+                else if (ContainsOrdinalIgnoreCase(description, "longitude_offset"))
                 {
                     longitudeSample = i;
                 }
@@ -1047,8 +1047,8 @@ namespace ProjNet.CoordinateSystems.Transformations
                     continue;
                 }
 
-                if (description.IndexOf("geoid_undulation", StringComparison.OrdinalIgnoreCase) >= 0
-                    || description.IndexOf("vertical_offset", StringComparison.OrdinalIgnoreCase) >= 0)
+                if (ContainsOrdinalIgnoreCase(description, "geoid_undulation")
+                    || ContainsOrdinalIgnoreCase(description, "vertical_offset"))
                 {
                     sampleIndex = i;
                     return true;
@@ -1057,6 +1057,15 @@ namespace ProjNet.CoordinateSystems.Transformations
 
             sampleIndex = 0;
             return samplesPerPixel >= 1;
+        }
+
+        private static bool ContainsOrdinalIgnoreCase(string value, string search)
+        {
+#if NETSTANDARD2_1_OR_GREATER
+            return value.Contains(search, StringComparison.OrdinalIgnoreCase);
+#else
+            return value.IndexOf(search, StringComparison.OrdinalIgnoreCase) >= 0;
+#endif
         }
 
         private static bool TryGetGeoTransform(Tiff tiff, int width, int height, out GeoTransform transform)
