@@ -69,7 +69,7 @@ public class Gigs5101TheoryTests
 
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
-    
+
     private static readonly char[] OperationTokenSeparators = { ' ', '\t' };
     private static readonly CoordinateSystemServices CoordinateSystemServices = new CoordinateSystemServices();
 

@@ -32,7 +32,7 @@ public class GieBuiltinsTheoryTests
 {
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
-    
+
     private static readonly char[] OperationTokenSeparators = { ' ', '\t' };
 
     private static readonly Dictionary<string, string> ProjectionClassByProjCode = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)

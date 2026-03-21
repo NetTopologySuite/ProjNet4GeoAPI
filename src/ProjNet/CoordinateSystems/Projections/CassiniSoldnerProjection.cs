@@ -1,4 +1,4 @@
-﻿// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
+// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
 //
 // This file is part of ProjNet.
 // ProjNet is free software; you can redistribute it and/or modify
@@ -98,6 +98,7 @@ namespace ProjNet.CoordinateSystems.Projections
         //               ? new[] {_semiMajor*x, _semiMajor*y}
         //               : new[] {_semiMajor*x, _semiMajor*y, lonlat[2]};
         // }
+
         /// <inheritdoc/>
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
@@ -146,6 +147,7 @@ namespace ProjNet.CoordinateSystems.Projections
         //               ? new[] {lambda, phi}
         //               : new[] {lambda, phi, p[2]};
         // }
+
         /// <inheritdoc/>
         protected override void MetersToRadians(ref double x, ref double y)
         {

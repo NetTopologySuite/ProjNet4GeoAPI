@@ -1248,7 +1248,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.AreEqual(sourceCoord[1], transformedCoord[1], 0.1);
     }
 
+
     // https://github.com/NetTopologySuite/ProjNet4GeoAPI/issues/48
+
     /// <summary>
     /// Performs the documented operation.
     /// </summary>

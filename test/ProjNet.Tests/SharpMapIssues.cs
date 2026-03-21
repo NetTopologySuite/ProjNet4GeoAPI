@@ -57,7 +57,9 @@ public class SharpMapIssues : CoordinateTransformTestsBase
         Assert.IsNotNull(transform);
     }
 
+
     // projection problem with Michigan GeoRef
+
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
