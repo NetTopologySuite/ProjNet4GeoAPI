@@ -911,7 +911,7 @@ for (var i = 0; i < _Parameters.Count; i++)
             double con;
 
             con = eccent * sinphi;
-            return (cosphi / Math.Sqrt(1.0 - (con * con)));
+            return cosphi / Math.Sqrt(1.0 - (con * con));
         }
 
         /// <summary>
