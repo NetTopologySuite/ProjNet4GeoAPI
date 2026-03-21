@@ -386,9 +386,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 sb.Append("<CT_MathTransform>");
                 sb.AppendFormat(
                     CultureInfo.InvariantCulture,
-                    this.IsInverse
-                        ? "<CT_InverseTransform Name=\"{0}\">"
-                        : "<CT_ParameterizedMathTransform Name=\"{0}\">",
+                    this.IsInverse ? "<CT_InverseTransform Name=\"{0}\">" : "<CT_ParameterizedMathTransform Name=\"{0}\">",
                     this.ClassName);
                 for (int i = 0; i < this.NumParameters; i++)
                 {
@@ -1236,10 +1234,8 @@ for (var i = 0; i < _Parameters.Count; i++)
                 return DegreesToRadians(x);
             }
 
-            throw new ArgumentOutOfRangeException(
-                nameof(x),
-                x.ToString(CultureInfo.InvariantCulture) +
-                " not a valid longitude in degrees.");
+            string longitudeMessage = x.ToString(CultureInfo.InvariantCulture) + " not a valid longitude in degrees.";
+            throw new ArgumentOutOfRangeException(nameof(x), longitudeMessage);
         }
 
         /// <summary>
@@ -1255,10 +1251,8 @@ for (var i = 0; i < _Parameters.Count; i++)
                 return DegreesToRadians(y);
             }
 
-            throw new ArgumentOutOfRangeException(
-                nameof(y),
-                y.ToString(CultureInfo.InvariantCulture) +
-                " not a valid latitude in degrees.");
+            string latitudeMessage = y.ToString(CultureInfo.InvariantCulture) + " not a valid latitude in degrees.";
+            throw new ArgumentOutOfRangeException(nameof(y), latitudeMessage);
         }
 
         /// <summary>

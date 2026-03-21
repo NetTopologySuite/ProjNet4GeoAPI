@@ -172,24 +172,30 @@ public class Gigs5101TheoryTests
         Assert.True(parsedCases > 0, "Expected parsed GIGS " + label + " cases.");
         Assert.True(
             transformedCases > minTransformed,
-            "Expected to execute a substantial subset of GIGS " + label + " cases. transformed="
-            + transformedCases.ToString(CultureInfo.InvariantCulture)
-            + ", min="
-            + minTransformed.ToString(CultureInfo.InvariantCulture)
-            + ", parsed="
-            + parsedCases.ToString(CultureInfo.InvariantCulture)
-            + ".");
+            string.Concat(
+                "Expected to execute a substantial subset of GIGS ",
+                label,
+                " cases. transformed=",
+                transformedCases.ToString(CultureInfo.InvariantCulture),
+                ", min=",
+                minTransformed.ToString(CultureInfo.InvariantCulture),
+                ", parsed=",
+                parsedCases.ToString(CultureInfo.InvariantCulture),
+                "."));
         if (requireToleranceMatch)
         {
             Assert.True(
                 withinToleranceCases > minWithinTolerance,
-                "Expected a substantial subset of executed GIGS " + label + " cases to match tolerance. within="
-                + withinToleranceCases.ToString(CultureInfo.InvariantCulture)
-                + ", min="
-                + minWithinTolerance.ToString(CultureInfo.InvariantCulture)
-                + ", transformed="
-                + transformedCases.ToString(CultureInfo.InvariantCulture)
-                + ".");
+                string.Concat(
+                    "Expected a substantial subset of executed GIGS ",
+                    label,
+                    " cases to match tolerance. within=",
+                    withinToleranceCases.ToString(CultureInfo.InvariantCulture),
+                    ", min=",
+                    minWithinTolerance.ToString(CultureInfo.InvariantCulture),
+                    ", transformed=",
+                    transformedCases.ToString(CultureInfo.InvariantCulture),
+                    "."));
         }
     }
 

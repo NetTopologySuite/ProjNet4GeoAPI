@@ -138,8 +138,8 @@ namespace ProjNet.CoordinateSystems.Projections
                 double ce = 2.0 * Math.Atan2(rho, this.r2);
                 double sinc = Math.Sin(ce);
                 double cosc = Math.Cos(ce);
-                x = Math.Atan2(x * sinc, (rho * this.cosc0 * cosc) - (y * this.sinc0
-                                                                * sinc));
+                double denominator = (rho * this.cosc0 * cosc) - (y * this.sinc0 * sinc);
+                x = Math.Atan2(x * sinc, denominator);
                 y = (cosc * this.sinc0) + (y * sinc * this.cosc0 / rho);
 
                 if (Math.Abs(y) >= 1.0)

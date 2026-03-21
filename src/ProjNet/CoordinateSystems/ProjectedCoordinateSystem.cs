@@ -97,6 +97,9 @@ namespace ProjNet.CoordinateSystems
                     new AxisInfo("North", AxisOrientationEnum.North),
                 };
 
+                const string remarks = "Certain Web mapping and visualisation applications. " +
+                                       "Uses spherical development of ellipsoidal coordinates. Relative to an ellipsoidal development errors of up to 800 metres in position and 0.7 percent in scale may arise. It is not a recognised geodetic system: see WGS 84 / World Mercator (CRS code 3395).";
+
                 return new ProjectedCoordinateSystem(
                     CoordinateSystems.HorizontalDatum.WGS84,
                     CoordinateSystems.GeographicCoordinateSystem.WGS84,
@@ -107,8 +110,7 @@ namespace ProjNet.CoordinateSystems
                     "EPSG",
                     3857,
                     "WGS 84 / Popular Visualisation Pseudo-Mercator",
-                    "Certain Web mapping and visualisation applications." +
-                    "Uses spherical development of ellipsoidal coordinates. Relative to an ellipsoidal development errors of up to 800 metres in position and 0.7 percent in scale may arise. It is not a recognised geodetic system: see WGS 84 / World Mercator (CRS code 3395).",
+                    remarks,
                     "WebMercator");
             }
         }

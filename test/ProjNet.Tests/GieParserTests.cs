@@ -115,12 +115,11 @@ foobar 1 2
         string filePath = Path.GetTempFileName();
         try
         {
-            File.WriteAllText(
-                filePath,
-                "operation +proj=gnom +ellps=WGS84\n" +
-                "tolerance 0.5 m\n" +
-                "accept 7 8\n" +
-                "expect 700 800\n");
+            string content = "operation +proj=gnom +ellps=WGS84\n" +
+                             "tolerance 0.5 m\n" +
+                             "accept 7 8\n" +
+                             "expect 700 800\n";
+            File.WriteAllText(filePath, content);
 
             var parsed = GieParser.ParseFile(filePath);
 
