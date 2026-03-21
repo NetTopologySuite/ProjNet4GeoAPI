@@ -584,7 +584,6 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// </summary>
         /// <param name="x">A x-ordinate.</param>
         /// <param name="y">A y-ordinate.</param>
-        /// <returns>A point.</returns>
         protected void MetersToTarget(ref double x, ref double y)
         {
             x = (x + this.falseEasting) * this.reciprocalMetersPerUnit;
@@ -600,7 +599,6 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// <param name="ys">A y-ordinates.</param>
         /// <param name="strideX">A stride value for x-ordinates.</param>
         /// <param name="strideY">A stride value for y-ordinates.</param>
-        /// <returns>A point.</returns>
         protected void MetersToTarget(Span<double> xs, Span<double> ys, int strideX, int strideY)
         {
             AddThenMultiplyInPlace(xs, strideX, this.falseEasting, this.reciprocalMetersPerUnit);
@@ -660,7 +658,6 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// </summary>
         /// <param name="x">The x-ordinate.</param>
         /// <param name="y">The y-ordinate.</param>
-        /// <returns>Converted point.</returns>
         protected virtual void SourceToDegrees(ref double x, ref double y)
         {
             this.SourceToMeters(ref x, ref y);
@@ -706,7 +703,6 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// </summary>
         /// <param name="x">A x-ordinate.</param>
         /// <param name="y">A y-ordinate.</param>
-        /// <returns>A point.</returns>
         protected void SourceToMeters(ref double x, ref double y)
         {
             x = (x * this.metersPerUnit) - this.falseEasting;

@@ -166,7 +166,6 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         /// <param name="lon">The longitude of the point in radians.</param>
         /// <param name="lat">The latitude of the point in radians.</param>
-        /// <returns>Point in projected meters.</returns>
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
             double x = lon;
@@ -204,7 +203,6 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         /// <param name="x">The x-ordinate of the point.</param>
         /// <param name="y">The y-ordinate of the point.</param>
-        /// <returns>Transformed point in decimal degrees.</returns>
         protected override void MetersToRadians(ref double x, ref double y)
         {
             x *= this.reciprocSemiMajor;

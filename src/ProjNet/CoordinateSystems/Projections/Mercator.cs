@@ -117,7 +117,6 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         /// <param name="lon">The longitude of the point in decimal degrees.</param>
         /// <param name="lat">The latitude of the point in decimal degrees.</param>
-        /// <returns>Point in projected meters.</returns>
         protected override void RadiansToMeters(ref double lon, ref double lat)
         {
             if (double.IsNaN(lon) || double.IsNaN(lat))
@@ -147,7 +146,6 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         /// <param name="x">The x-ordinate in projected meters.</param>
         /// <param name="y">The y-ordinate in projected meters.</param>
-        /// <returns>Transformed point in decimal degrees.</returns>
         protected override void MetersToRadians(ref double x, ref double y)
         {
             /* Inverse equations
