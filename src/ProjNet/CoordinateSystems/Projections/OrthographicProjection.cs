@@ -51,7 +51,8 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <item><term>false_northing</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Northing, FN, is the northing value assigned to the ordinate.</description></item>
         /// </list>
         /// </remarks>
-        public OrthographicProjection(IEnumerable<ProjectionParameter> parameters) : this(parameters, null)
+        public OrthographicProjection(IEnumerable<ProjectionParameter> parameters)
+            : this(parameters, null)
         {
         }
 
@@ -72,7 +73,8 @@ namespace ProjNet.CoordinateSystems.Projections
         /// <item><term>false_northing</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Northing, FN, is the northing value assigned to the ordinate.</description></item>
         /// </list>
         /// </remarks>
-        public OrthographicProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse) : base(parameters, inverse)
+        public OrthographicProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+            : base(parameters, inverse)
         {
             this.Name = "Orthographic";
 

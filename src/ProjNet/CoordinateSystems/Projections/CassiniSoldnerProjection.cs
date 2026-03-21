@@ -42,7 +42,8 @@ namespace ProjNet.CoordinateSystems.Projections
         /// Initializes a new instance of the <see cref="CassiniSoldnerProjection"/> class.
         /// </summary>
         /// <param name="parameters">Projection parameters.</param>
-        public CassiniSoldnerProjection(IEnumerable<ProjectionParameter> parameters) : this(parameters, null)
+        public CassiniSoldnerProjection(IEnumerable<ProjectionParameter> parameters)
+            : this(parameters, null)
         {
         }
 

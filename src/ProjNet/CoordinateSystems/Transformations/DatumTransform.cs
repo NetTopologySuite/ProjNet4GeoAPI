@@ -34,7 +34,8 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// Initializes a new instance of the <see cref="DatumTransform"/> class.
         /// </summary>
         /// <param name="towgs84">The towgs84 parameter.</param>
-        public DatumTransform(Wgs84ConversionInfo towgs84) : this(towgs84, false)
+        public DatumTransform(Wgs84ConversionInfo towgs84)
+            : this(towgs84, false)
         {
         }
 

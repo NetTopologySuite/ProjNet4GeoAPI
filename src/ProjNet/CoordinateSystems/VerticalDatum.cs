@@ -38,7 +38,8 @@ namespace ProjNet.CoordinateSystems
         /// <param name="alias">Alias.</param>
         /// <param name="abbreviation">Abbreviation.</param>
         /// <param name="remarks">Provider-supplied remarks.</param>
-        public VerticalDatum(DatumType type, string name, string authority, long code, string alias, string remarks, string abbreviation) : base(type, name, authority, code, alias, remarks, abbreviation)
+        public VerticalDatum(DatumType type, string name, string authority, long code, string alias, string remarks, string abbreviation)
+            : base(type, name, authority, code, alias, remarks, abbreviation)
         {
         }
 

@@ -54,7 +54,8 @@ namespace ProjNet.IO.CoordinateSystems
         /// </summary>
         /// <remarks>The WktStreamTokenizer class ais in reading WKT streams.</remarks>
         /// <param name="reader">A TextReader that contains. </param>
-        public WktStreamTokenizer(TextReader reader) : base(reader, true)
+        public WktStreamTokenizer(TextReader reader)
+            : base(reader, true)
         {
         }
 

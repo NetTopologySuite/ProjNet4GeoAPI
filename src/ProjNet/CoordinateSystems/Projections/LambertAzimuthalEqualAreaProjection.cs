@@ -56,7 +56,8 @@ namespace ProjNet.CoordinateSystems.Projections
         /// Creates an instance of this class.
         /// </summary>
         /// <param name="parameters">An enumeration of Projection parameters.</param>
-        public LambertAzimuthalEqualAreaProjection(IEnumerable<ProjectionParameter> parameters) : this(parameters, null)
+        public LambertAzimuthalEqualAreaProjection(IEnumerable<ProjectionParameter> parameters)
+            : this(parameters, null)
         {
         }
 

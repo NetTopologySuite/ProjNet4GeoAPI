@@ -92,7 +92,8 @@ namespace ProjNet.CoordinateSystems
         /// Initializes a new instance of the <see cref="Wgs84ConversionInfo"/> class.
         /// Initializes an instance of Wgs84ConversionInfo with default parameters (all values = 0).
         /// </summary>
-        public Wgs84ConversionInfo() : this(0, 0, 0, 0, 0, 0, 0, string.Empty)
+        public Wgs84ConversionInfo()
+            : this(0, 0, 0, 0, 0, 0, 0, string.Empty)
         {
         }
 

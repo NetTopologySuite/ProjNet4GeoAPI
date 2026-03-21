@@ -84,7 +84,8 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// </summary>
         /// <param name="parameters">List of parameters to initialize the projection.</param>
         /// <param name="isInverse">Indicates whether the projection forward (meters to degrees or degrees to meters).</param>
-        public GeocentricTransform(List<ProjectionParameter> parameters, bool isInverse) : this(parameters)
+        public GeocentricTransform(List<ProjectionParameter> parameters, bool isInverse)
+            : this(parameters)
         {
             this.isInverse = isInverse;
         }
