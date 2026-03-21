@@ -648,7 +648,7 @@ public class Gigs5101TheoryTests
                 continue;
             }
 
-            int index = body.IndexOf('=');
+            int index = body.IndexOf('=', StringComparison.Ordinal);
             if (index < 0)
             {
                 args[body] = "true";

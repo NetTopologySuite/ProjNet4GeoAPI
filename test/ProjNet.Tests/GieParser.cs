@@ -470,13 +470,13 @@ internal static class GieParser
             text = text.Substring(1);
         }
 
-        int dIndex = text.IndexOf('d');
+        int dIndex = text.IndexOf('d', StringComparison.Ordinal);
         if (dIndex < 0)
         {
-            dIndex = text.IndexOf('D');
+            dIndex = text.IndexOf('D', StringComparison.Ordinal);
         }
 
-        int mIndex = text.IndexOf('\'');
+        int mIndex = text.IndexOf('\'', StringComparison.Ordinal);
         if (dIndex <= 0 || mIndex <= dIndex)
         {
             return false;
@@ -495,7 +495,7 @@ internal static class GieParser
         }
 
         double seconds = 0d;
-        int secondsMarker = text.IndexOf('"');
+        int secondsMarker = text.IndexOf('"', StringComparison.Ordinal);
         if (secondsMarker > mIndex + 1)
         {
             string secondsToken = text.Substring(mIndex + 1, secondsMarker - mIndex - 1);

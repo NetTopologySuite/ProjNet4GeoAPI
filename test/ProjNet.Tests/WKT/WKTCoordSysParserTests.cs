@@ -176,7 +176,7 @@ public class WKTCoordSysParserTests
                         continue;
                     }
 
-                    int split = line.IndexOf(';');
+                    int split = line.IndexOf(';', StringComparison.Ordinal);
                     if (split > -1)
                     {
                         string wkt = line.Substring(split + 1);

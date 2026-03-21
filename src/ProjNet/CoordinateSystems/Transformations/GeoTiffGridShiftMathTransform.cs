@@ -1255,7 +1255,11 @@ namespace ProjNet.CoordinateSystems.Transformations
             }
 
             string sanitized = metadata.Trim('\0', '\uFEFF', ' ', '\t', '\r', '\n');
+#if NETSTANDARD2_1_OR_GREATER
+            int firstTag = sanitized.IndexOf('<', StringComparison.Ordinal);
+#else
             int firstTag = sanitized.IndexOf('<');
+#endif
             if (firstTag > 0)
             {
                 sanitized = sanitized.Substring(firstTag);

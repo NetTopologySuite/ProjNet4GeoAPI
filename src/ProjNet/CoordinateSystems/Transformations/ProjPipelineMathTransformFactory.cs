@@ -704,7 +704,11 @@ namespace ProjNet.CoordinateSystems.Transformations
                 }
 
                 string body = token.Substring(1);
+#if NETSTANDARD2_1_OR_GREATER
+                int index = body.IndexOf('=', StringComparison.Ordinal);
+#else
                 int index = body.IndexOf('=');
+#endif
                 if (index < 0)
                 {
                     args[body] = "true";
