@@ -61,15 +61,8 @@ public class CoordinateTransformTestsBase
     /// <returns><see langword="true"/> when all compared ordinates are within tolerance.</returns>
     protected bool ToleranceLessThan(double[] p1, double[] p2, double tolerance)
     {
-        if (p1 is null)
-        {
-            throw new ArgumentNullException(nameof(p1));
-        }
-
-        if (p2 is null)
-        {
-            throw new ArgumentNullException(nameof(p2));
-        }
+        ArgumentNullException.ThrowIfNull(p1);
+        ArgumentNullException.ThrowIfNull(p2);
 
         double d0 = Math.Abs(p1[0] - p2[0]);
         double d1 = Math.Abs(p1[1] - p2[1]);
@@ -103,15 +96,8 @@ public class CoordinateTransformTestsBase
     /// <returns>Formatted error string for diagnostics.</returns>
     protected string TransformationError(string projection, double[] pExpected, double[] pResult, bool reverse = false)
     {
-        if (pExpected is null)
-        {
-            throw new ArgumentNullException(nameof(pExpected));
-        }
-
-        if (pResult is null)
-        {
-            throw new ArgumentNullException(nameof(pResult));
-        }
+        ArgumentNullException.ThrowIfNull(pExpected);
+        ArgumentNullException.ThrowIfNull(pResult);
 
         return string.Format(
             CultureInfo.InvariantCulture,

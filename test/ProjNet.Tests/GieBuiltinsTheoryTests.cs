@@ -425,10 +425,7 @@ public class GieBuiltinsTheoryTests
 
         transform = input =>
         {
-            if (input is null)
-            {
-                throw new ArgumentNullException(nameof(input));
-            }
+            ArgumentNullException.ThrowIfNull(input);
 
             return mathTransform.Transform(input);
         };
