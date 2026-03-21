@@ -127,8 +127,12 @@ namespace ProjNet.CoordinateSystems
         /// <param name="areaOfUse">Area of use for this transformation.</param>
         public Wgs84ConversionInfo(double dx, double dy, double dz, double ex, double ey, double ez, double ppm, string areaOfUse)
         {
-            this.Dx = dx; this.Dy = dy; this.Dz = dz;
-            this.Ex = ex; this.Ey = ey; this.Ez = ez;
+            this.Dx = dx;
+            this.Dy = dy;
+            this.Dz = dz;
+            this.Ex = ex;
+            this.Ey = ey;
+            this.Ez = ez;
             this.Ppm = ppm;
             this.AreaOfUse = areaOfUse;
         }
