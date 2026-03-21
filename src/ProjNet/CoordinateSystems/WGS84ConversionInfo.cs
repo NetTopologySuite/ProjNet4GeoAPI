@@ -101,12 +101,12 @@ namespace ProjNet.CoordinateSystems
         /// Initializes a new instance of the <see cref="Wgs84ConversionInfo"/> class.
         /// Initializes an instance of Wgs84ConversionInfo.
         /// </summary>
-        /// <param name="dx">Bursa Wolf shift in meters.</param>
-        /// <param name="dy">Bursa Wolf shift in meters.</param>
-        /// <param name="dz">Bursa Wolf shift in meters.</param>
-        /// <param name="ex">Bursa Wolf rotation in arc seconds.</param>
-        /// <param name="ey">Bursa Wolf rotation in arc seconds.</param>
-        /// <param name="ez">Bursa Wolf rotation in arc seconds.</param>
+        /// <param name="dx">Bursa Wolf X-axis shift in meters.</param>
+        /// <param name="dy">Bursa Wolf Y-axis shift in meters.</param>
+        /// <param name="dz">Bursa Wolf Z-axis shift in meters.</param>
+        /// <param name="ex">Bursa Wolf X-axis rotation in arc seconds.</param>
+        /// <param name="ey">Bursa Wolf Y-axis rotation in arc seconds.</param>
+        /// <param name="ez">Bursa Wolf Z-axis rotation in arc seconds.</param>
         /// <param name="ppm">Bursa Wolf scaling in parts per million.</param>
         public Wgs84ConversionInfo(double dx, double dy, double dz, double ex, double ey, double ez, double ppm)
             : this(dx, dy, dz, ex, ey, ez, ppm, string.Empty)
@@ -117,12 +117,12 @@ namespace ProjNet.CoordinateSystems
         /// Initializes a new instance of the <see cref="Wgs84ConversionInfo"/> class.
         /// Initializes an instance of Wgs84ConversionInfo.
         /// </summary>
-        /// <param name="dx">Bursa Wolf shift in meters.</param>
-        /// <param name="dy">Bursa Wolf shift in meters.</param>
-        /// <param name="dz">Bursa Wolf shift in meters.</param>
-        /// <param name="ex">Bursa Wolf rotation in arc seconds.</param>
-        /// <param name="ey">Bursa Wolf rotation in arc seconds.</param>
-        /// <param name="ez">Bursa Wolf rotation in arc seconds.</param>
+        /// <param name="dx">Bursa Wolf X-axis shift in meters.</param>
+        /// <param name="dy">Bursa Wolf Y-axis shift in meters.</param>
+        /// <param name="dz">Bursa Wolf Z-axis shift in meters.</param>
+        /// <param name="ex">Bursa Wolf X-axis rotation in arc seconds.</param>
+        /// <param name="ey">Bursa Wolf Y-axis rotation in arc seconds.</param>
+        /// <param name="ez">Bursa Wolf Z-axis rotation in arc seconds.</param>
         /// <param name="ppm">Bursa Wolf scaling in parts per million.</param>
         /// <param name="areaOfUse">Area of use for this transformation.</param>
         public Wgs84ConversionInfo(double dx, double dy, double dz, double ex, double ey, double ez, double ppm, string areaOfUse)
