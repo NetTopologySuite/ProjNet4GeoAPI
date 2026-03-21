@@ -107,6 +107,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 this.AuthorityCode = 9805;
                 this.Name = "Mercator_2SP";
             }
+
             // This is a one standard parallel Mercator projection (1SP).
             else
             {

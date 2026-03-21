@@ -312,6 +312,7 @@ namespace ProjNet.IO.CoordinateSystems
             tokenizer.NextToken();
             string authority = string.Empty;
             long authorityCode = -1;
+
             // Read authority.
             if (tokenizer.GetStringValue() == ",")
             {
