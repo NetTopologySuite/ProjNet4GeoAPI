@@ -354,14 +354,14 @@ namespace ProjNet
                         return;
                     }
 
-                    if (this.csBySrid.ContainsKey(srid))
+                    if (this.csBySrid.TryGetValue(srid, out var existingCoordinateSystem))
                     {
-                        if (ReferenceEquals(coordinateSystem, this.csBySrid[srid]))
+                        if (ReferenceEquals(coordinateSystem, existingCoordinateSystem))
                         {
                             return;
                         }
 
-                        this.sridByCs.Remove(this.csBySrid[srid]);
+                        this.sridByCs.Remove(existingCoordinateSystem);
                         this.csBySrid[srid] = coordinateSystem;
                         this.sridByCs.Add(coordinateSystem, srid);
                     }

@@ -162,10 +162,9 @@ namespace ProjNet.CoordinateSystems.Projections
             string key = ProjectionNameToRegistryKey(name);
             lock (RegistryLock)
             {
-                if (TypeRegistry.ContainsKey(key))
+                if (TypeRegistry.TryGetValue(key, out var registeredType))
                 {
-                    var rt = TypeRegistry[key];
-                    if (ReferenceEquals(type, rt))
+                    if (ReferenceEquals(type, registeredType))
                     {
                         return;
                     }
