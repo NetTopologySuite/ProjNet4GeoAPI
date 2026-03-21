@@ -60,6 +60,22 @@ namespace ProjNet.Geometries
         /// <returns>The computed value.</returns>
         public bool Equals(XYZ other) => (this.X, this.Y, this.Z).Equals((other.X, other.Y, other.Z));
 
+        /// <summary>
+        /// Compares two <see cref="XYZ"/> values for equality.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns><see langword="true"/> when both values are equal; otherwise <see langword="false"/>.</returns>
+        public static bool operator ==(XYZ left, XYZ right) => left.Equals(right);
+
+        /// <summary>
+        /// Compares two <see cref="XYZ"/> values for inequality.
+        /// </summary>
+        /// <param name="left">The left operand.</param>
+        /// <param name="right">The right operand.</param>
+        /// <returns><see langword="true"/> when values differ; otherwise <see langword="false"/>.</returns>
+        public static bool operator !=(XYZ left, XYZ right) => !left.Equals(right);
+
         /// <inheritdoc />
         public override int GetHashCode() => (this.X, this.Y, this.Z).GetHashCode();
 
