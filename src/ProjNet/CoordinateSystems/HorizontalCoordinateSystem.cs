@@ -54,7 +54,7 @@ namespace ProjNet.CoordinateSystems
                 throw new ArgumentException("Axis info should contain two axes for horizontal coordinate systems");
             }
 
-            base.AxisInfo = axisInfo;
+            this.AxisInfo = axisInfo;
         }
 
         /// <summary>

@@ -62,7 +62,7 @@ namespace ProjNet.CoordinateSystems
                 throw new ArgumentException("Axis info should contain three axes for geocentric coordinate systems");
             }
 
-            base.AxisInfo = axisInfo;
+            this.AxisInfo = axisInfo;
         }
 
         /// <summary>

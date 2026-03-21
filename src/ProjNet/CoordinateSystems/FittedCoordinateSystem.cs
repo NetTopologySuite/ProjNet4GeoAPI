@@ -67,10 +67,10 @@ namespace ProjNet.CoordinateSystems
             this.ToBaseTransform = transform;
 
             // get axis infos from the source
-            base.AxisInfo = new List<AxisInfo>(baseSystem.Dimension);
+            this.AxisInfo = new List<AxisInfo>(baseSystem.Dimension);
             for (int dim = 0; dim < baseSystem.Dimension; dim++)
             {
-                base.AxisInfo.Add(baseSystem.GetAxis(dim));
+                this.AxisInfo.Add(baseSystem.GetAxis(dim));
             }
         }
 
