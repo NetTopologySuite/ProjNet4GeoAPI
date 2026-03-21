@@ -251,8 +251,11 @@ namespace ProjNet.CoordinateSystems
                 return false;
             }
 
-            return (datum != null && this.Ellipsoid != null &&
-                datum.Ellipsoid.EqualParams(this.Ellipsoid) || datum == null && this.Ellipsoid == null) && this.DatumType == datum.DatumType;
+            return (
+                (
+                    (datum != null && this.Ellipsoid != null && datum.Ellipsoid.EqualParams(this.Ellipsoid))
+                    || (datum == null && this.Ellipsoid == null))
+                && this.DatumType == datum.DatumType);
         }
     }
 }
