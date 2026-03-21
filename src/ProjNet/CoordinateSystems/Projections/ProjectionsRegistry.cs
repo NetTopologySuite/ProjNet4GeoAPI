@@ -17,9 +17,9 @@
 
 namespace ProjNet.CoordinateSystems.Projections
 {
-    using ProjNet.CoordinateSystems.Transformations;
     using System;
     using System.Collections.Generic;
+    using ProjNet.CoordinateSystems.Transformations;
 
     /// <summary>
     /// Registry class for all known <see cref="MapProjection"/>s.

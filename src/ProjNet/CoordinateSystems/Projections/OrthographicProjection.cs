@@ -17,10 +17,10 @@
 
 namespace ProjNet.CoordinateSystems.Projections
 {
-    using ProjNet.CoordinateSystems.Transformations;
     using System;
     using System.Collections.Generic;
     using System.Text;
+    using ProjNet.CoordinateSystems.Transformations;
 
     /// <summary>
     /// Represents the documented type.

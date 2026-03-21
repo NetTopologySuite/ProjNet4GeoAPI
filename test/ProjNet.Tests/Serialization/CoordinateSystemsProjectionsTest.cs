@@ -17,9 +17,9 @@
 
 namespace ProjNET.Tests.Serialization;
 
+using System;
 using NUnit.Framework;
 using ProjNet.CoordinateSystems;
-using System;
 
 /// <summary>
 /// Represents the documented type.
