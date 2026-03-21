@@ -21,7 +21,6 @@ namespace ProjNet.CoordinateSystems.Transformations
     /// </summary>
     public interface ICoordinateTransformationCore
     {
-
         /// <summary>
         /// Gets source coordinate system.
         /// </summary>

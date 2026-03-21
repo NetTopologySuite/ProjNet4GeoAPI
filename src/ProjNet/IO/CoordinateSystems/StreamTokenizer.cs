@@ -307,7 +307,6 @@ namespace ProjNet.IO.CoordinateSystems
         /// <returns>The transformation result.</returns>
         private TokenType NextNonWhitespaceToken()
         {
-
             var tokenType = this.NextTokenAny();
             while (tokenType == TokenType.Whitespace || tokenType == TokenType.Eol)
             {
