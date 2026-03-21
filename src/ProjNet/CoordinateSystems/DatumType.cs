@@ -33,7 +33,7 @@ namespace ProjNet.CoordinateSystems
         /// Unspecified horizontal datum type. Horizontal datums with this type should never
         /// supply a conversion to WGS84 using Bursa Wolf parameters.
         /// </summary>
-        HD_Other = 1000,
+        HD_Other = HD_Min,
 
         /// <summary>
         /// These datums, such as ED50, NAD27 and NAD83, have been designed to support
@@ -63,7 +63,7 @@ namespace ProjNet.CoordinateSystems
         /// <summary>
         /// Unspecified vertical datum type.
         /// </summary>
-        VD_Other = 2000,
+        VD_Other = VD_Min,
 
         /// <summary>
         /// A vertical datum for orthometric heights that are measured along the plumb line.
