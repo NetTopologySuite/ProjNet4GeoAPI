@@ -186,7 +186,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// latitude (Snyder 14-15), where <var>s</var> and <var>c</var> are the sine and cosine of
         /// the true scale latitude, and <var>e²</var> is the eccentricity squared.
         /// </summary>
-        double Msfn(double s, double c)
+        private double Msfn(double s, double c)
         {
             return c / Math.Sqrt(1.0 - ((s * s) * this.es));
         }

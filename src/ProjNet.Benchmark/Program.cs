@@ -22,9 +22,9 @@ using BenchmarkDotNet.Running;
 /// <summary>
 /// Represents the documented type.
 /// </summary>
-class Program
+internal static class Program
 {
-    static void Main(string[] args)
+    private static void Main(string[] args)
     {
         PerformanceTests.Validate();
         ProjParityBenchmarks.Validate();
@@ -33,7 +33,7 @@ class Program
 
     // here's how I generated coords.dat.gz (set TestDataPath and add references + usings, of course):
 #if false
-    static void GenerateTestData()
+    private static void GenerateTestData()
     {
         const string TestDataPath = @"C:\Path\To\TestData";
         var lst = new List<Coordinate>();
