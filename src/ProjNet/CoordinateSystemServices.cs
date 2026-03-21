@@ -322,7 +322,7 @@ namespace ProjNet
         /// </summary>
         /// <param name="srid">The srid parameter.</param>
         /// <returns>The transformation result.</returns>
-        /// <exception cref="NotSupportedException"></exception>
+        /// <exception cref="NotSupportedException">Thrown because removing coordinate systems is not supported by this service.</exception>
         public bool RemoveCoordinateSystem(int srid)
         {
             throw new NotSupportedException();

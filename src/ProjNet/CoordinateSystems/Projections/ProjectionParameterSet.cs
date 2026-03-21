@@ -185,7 +185,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         /// <param name="index">The index.</param>
         /// <returns>The parameter.</returns>
-        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="index"/> is outside the valid parameter range.</exception>
         public ProjectionParameter GetAtIndex(int index)
         {
             if (index < 0 || index >= this.Count)

@@ -70,6 +70,7 @@ namespace ProjNet.CoordinateSystems.Projections
         /// </summary>
         /// <param name="parameters">ParameterList with the required parameters.</param>
         /// <remarks>
+        /// Initializes the projection with default non-inverse mode.
         /// </remarks>
         public Mercator(IEnumerable<ProjectionParameter> parameters)
             : this(parameters, null)
