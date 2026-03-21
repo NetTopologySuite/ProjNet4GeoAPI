@@ -32,6 +32,7 @@ public class SpatialRefSysTableParser
 {
     private static readonly Lazy<CoordinateSystemFactory> CoordinateSystemFactory =
         new Lazy<CoordinateSystemFactory>(() => new CoordinateSystemFactory());
+
     private static string connectionString;
 
     private static string ConnectionString

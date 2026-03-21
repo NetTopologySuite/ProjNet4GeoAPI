@@ -37,6 +37,7 @@ namespace ProjNet.CoordinateSystems.Transformations
 
         private static readonly Lazy<Dictionary<SridPair, IReadOnlyList<CoordinateOperationDefinition>>> DirectOperationDefinitions =
             new Lazy<Dictionary<SridPair, IReadOnlyList<CoordinateOperationDefinition>>>(LoadDirectOperationDefinitions, true);
+
         private static readonly Lazy<GridResourceResolver> GridResolver = new Lazy<GridResourceResolver>(CreateGridResolver, true);
 
         private enum CoordinateSystemRuntimeKind : byte

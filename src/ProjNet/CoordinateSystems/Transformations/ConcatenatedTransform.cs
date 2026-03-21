@@ -28,6 +28,7 @@ namespace ProjNet.CoordinateSystems.Transformations
     {
         private static readonly CoordinateTransformationFactory CoordinateTransformationFactory =
                 new CoordinateTransformationFactory();
+
         private readonly List<ICoordinateTransformationCore> coordinateTransformationList;
 
         /// <summary>
