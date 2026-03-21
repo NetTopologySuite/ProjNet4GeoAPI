@@ -71,7 +71,12 @@ namespace ProjNet.CoordinateSystems.Transformations
             this.dimTarget = 2;
 
             // create matrix - 2D affine transform uses 3x3 matrix (3rd row is the special one)
-            this.transformMatrix = new[,] { { m00, m01, m02 }, { m10, m11, m12 }, { 0, 0, 1 } };
+            this.transformMatrix = new[,]
+            {
+                { m00, m01, m02 },
+                { m10, m11, m12 },
+                { 0, 0, 1 },
+            };
         }
 
         /// <summary>
