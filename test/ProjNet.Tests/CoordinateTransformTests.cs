@@ -106,9 +106,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
 
         double[][] points =
         {
-            new[] {290586.087, 6714000 }, new[] {90586.392, 6713996.224},
-            new[] {290590.133, 6713973.772}, new[] {290594.111, 6713957.416},
-            new[] {290596.615, 6713943.567}, new[] {290596.701, 6713939.485},
+            new[] { 290586.087, 6714000 }, new[] { 90586.392, 6713996.224 },
+            new[] { 290590.133, 6713973.772 }, new[] { 290594.111, 6713957.416 },
+            new[] { 290596.615, 6713943.567 }, new[] { 290596.701, 6713939.485 },
         };
 
         double[][] tpoints = trans.MathTransform.TransformList(points).ToArray();
@@ -1087,9 +1087,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         // TODO MathTransformFactory fac = new MathTransformFactory ();
         double[,] matrix = new double[,]
         {
-            {0.883485346527455, -0.468458794848877, 3455869.17937689},
-            {0.468458794848877, 0.883485346527455, 5478710.88035753},
-            {0.0, 0.0, 1},
+            { 0.883485346527455, -0.468458794848877, 3455869.17937689 },
+            { 0.468458794848877, 0.883485346527455, 5478710.88035753 },
+            { 0.0, 0.0, 1 },
         };
         var mt = new AffineTransform(matrix);
 
@@ -1123,9 +1123,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         // TODO MathTransformFactory fac = new MathTransformFactory ();
         double[,] matrix = new double[,]
         {
-            {0.883485346527455, -0.468458794848877, 3455869.17937689},
-            {0.468458794848877, 0.883485346527455, 5478710.88035753},
-            {0.0, 0.0, 1},
+            { 0.883485346527455, -0.468458794848877, 3455869.17937689 },
+            { 0.468458794848877, 0.883485346527455, 5478710.88035753 },
+            { 0.0, 0.0, 1 },
         };
         var mt = new AffineTransform(matrix);
 
