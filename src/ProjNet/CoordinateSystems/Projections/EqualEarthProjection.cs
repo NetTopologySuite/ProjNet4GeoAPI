@@ -95,7 +95,7 @@ namespace ProjNet.CoordinateSystems.Projections
             {
                 double theta2 = theta * theta;
                 double theta6 = theta2 * theta2 * theta2;
-                double value = theta * (A1 + (A2 * theta2) + (theta6 * (A3 + (A4 * theta2)))) - (y * this.inverseRadius);
+                double value = (theta * (A1 + (A2 * theta2) + (theta6 * (A3 + (A4 * theta2))))) - (y * this.inverseRadius);
                 double derivative = A1 + (3d * A2 * theta2) + (theta6 * ((7d * A3) + (9d * A4 * theta2)));
                 double delta = value / derivative;
                 theta -= delta;
@@ -133,3 +133,4 @@ namespace ProjNet.CoordinateSystems.Projections
         }
     }
 }
+
