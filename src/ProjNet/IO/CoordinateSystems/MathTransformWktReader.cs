@@ -157,12 +157,12 @@ namespace ProjNet.IO.CoordinateSystems
 
             if (rowParam == null)
             {
-                throw new ArgumentNullException(nameof(rowParam), "Affine transform does not contain 'num_row' parameter");
+                throw new ArgumentException("Affine transform does not contain 'num_row' parameter", nameof(tokenizer));
             }
 
             if (colParam == null)
             {
-                throw new ArgumentNullException(nameof(colParam), "Affine transform does not contain 'num_col' parameter");
+                throw new ArgumentException("Affine transform does not contain 'num_col' parameter", nameof(tokenizer));
             }
 
             int rowVal = (int)rowParam.Value;

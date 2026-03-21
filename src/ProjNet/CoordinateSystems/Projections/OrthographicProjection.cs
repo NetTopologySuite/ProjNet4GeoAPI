@@ -199,7 +199,7 @@ namespace ProjNet.CoordinateSystems.Projections
                         lam = this.Lon_origin + Math.Atan2(x * sinc, (rho * this.cosph0 * cosc) - (y * this.sinph0 * sinc));
                         break;
                     default:
-                        throw new ArgumentOutOfRangeException(nameof(this.mode));
+                        throw new InvalidOperationException("Unsupported orthographic mode.");
                 }
             }
 

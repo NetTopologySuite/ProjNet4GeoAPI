@@ -189,7 +189,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 con = dLatitude * this.ns;
                 if (con <= 0)
                 {
-                    throw new ArgumentException();
+                    throw new ArgumentException("Latitude is outside the valid range for this projection.", nameof(lat));
                 }
 
                 rh1 = 0;
@@ -240,7 +240,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 y = Phi2z(this.e, ts, out long flag);
                 if (flag != 0)
                 {
-                    throw new ArgumentException();
+                    throw new ArgumentException("Inverse projection failed to converge.", nameof(y));
                 }
             }
             else

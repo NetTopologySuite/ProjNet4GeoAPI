@@ -77,7 +77,7 @@ namespace ProjNet.CoordinateSystems.Projections
             double t = Math.Abs(phi0);
             if (t > HALFPI + EPS10)
             {
-                throw new ArgumentException(nameof(parameters));
+                throw new ArgumentException("Latitude of origin is outside the valid range.", nameof(parameters));
             }
 
             if (Math.Abs(t - HALFPI) < EPS10)
@@ -102,7 +102,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 this.apa = Authset(this.es);
                 if (this.apa == null)
                 {
-                    throw new ArgumentException(nameof(parameters));
+                    throw new ArgumentException("Failed to initialize authalic coefficients from projection parameters.", nameof(parameters));
                 }
 
                 switch (this.mode)
