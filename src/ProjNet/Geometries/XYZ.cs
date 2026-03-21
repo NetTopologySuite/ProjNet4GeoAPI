@@ -50,16 +50,6 @@ namespace ProjNet.Geometries
         public XYZ(double x, double y, double z) =>
             (this.X, this.Y, this.Z) = (x, y, z);
 
-        /// <inheritdoc />
-        public override bool Equals(object obj) => obj is XYZ other && this.Equals(other);
-
-        /// <summary>
-        /// Performs the documented operation.
-        /// </summary>
-        /// <param name="other">The other value.</param>
-        /// <returns>The computed value.</returns>
-        public bool Equals(XYZ other) => (this.X, this.Y, this.Z).Equals((other.X, other.Y, other.Z));
-
         /// <summary>
         /// Compares two <see cref="XYZ"/> values for equality.
         /// </summary>
@@ -75,6 +65,16 @@ namespace ProjNet.Geometries
         /// <param name="right">The right operand.</param>
         /// <returns><see langword="true"/> when values differ; otherwise <see langword="false"/>.</returns>
         public static bool operator !=(XYZ left, XYZ right) => !left.Equals(right);
+
+        /// <inheritdoc />
+        public override bool Equals(object obj) => obj is XYZ other && this.Equals(other);
+
+        /// <summary>
+        /// Performs the documented operation.
+        /// </summary>
+        /// <param name="other">The other value.</param>
+        /// <returns>The computed value.</returns>
+        public bool Equals(XYZ other) => (this.X, this.Y, this.Z).Equals((other.X, other.Y, other.Z));
 
         /// <inheritdoc />
         public override int GetHashCode() => (this.X, this.Y, this.Z).GetHashCode();

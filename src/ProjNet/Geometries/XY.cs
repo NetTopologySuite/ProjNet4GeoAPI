@@ -44,16 +44,6 @@ namespace ProjNet.Geometries
         public XY(double x, double y) =>
             (this.X, this.Y) = (x, y);
 
-        /// <inheritdoc />
-        public override bool Equals(object obj) => obj is XY other && this.Equals(other);
-
-        /// <summary>
-        /// Performs the documented operation.
-        /// </summary>
-        /// <param name="other">The other value.</param>
-        /// <returns>The computed value.</returns>
-        public bool Equals(XY other) => (this.X, this.Y).Equals((other.X, other.Y));
-
         /// <summary>
         /// Compares two <see cref="XY"/> values for equality.
         /// </summary>
@@ -69,6 +59,16 @@ namespace ProjNet.Geometries
         /// <param name="right">The right operand.</param>
         /// <returns><see langword="true"/> when values differ; otherwise <see langword="false"/>.</returns>
         public static bool operator !=(XY left, XY right) => !left.Equals(right);
+
+        /// <inheritdoc />
+        public override bool Equals(object obj) => obj is XY other && this.Equals(other);
+
+        /// <summary>
+        /// Performs the documented operation.
+        /// </summary>
+        /// <param name="other">The other value.</param>
+        /// <returns>The computed value.</returns>
+        public bool Equals(XY other) => (this.X, this.Y).Equals((other.X, other.Y));
 
         /// <inheritdoc />
         public override int GetHashCode() => (this.X, this.Y).GetHashCode();
