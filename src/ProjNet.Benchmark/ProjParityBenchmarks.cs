@@ -18,6 +18,7 @@
 namespace ProjNet.Benchmark;
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using BenchmarkDotNet.Attributes;
 using ProjNet;
 using ProjNet.CoordinateSystems.Transformations;
@@ -25,6 +26,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Represents the documented type.
 /// </summary>
+[SuppressMessage("Security", "CA5394:Do not use insecure randomness", Justification = "Benchmark input generation uses deterministic pseudo-random data for repeatability and is not security-sensitive.")]
 [MemoryDiagnoser]
 public class ProjParityBenchmarks
 {
