@@ -27,7 +27,7 @@ namespace ProjNet.CoordinateSystems.Projections
     [Serializable]
     internal class HealpixProjection : MapProjection
     {
-        private static readonly double Phi0 = Math.Asin(2d / 3d);
+        private static readonly double Phi0Limit = Math.Asin(2d / 3d);
         private const double QuarterPi = PI / 4d;
         private const double HalfPi = PI / 2d;
 
@@ -116,7 +116,7 @@ namespace ProjNet.CoordinateSystems.Projections
 
         private static void ToHealpixSphere(double lambda, double phi, out double x, out double y)
         {
-            if (Math.Abs(phi) <= Phi0)
+            if (Math.Abs(phi) <= Phi0Limit)
             {
                 x = lambda;
                 y = (3d * PI / 8d) * Math.Sin(phi);

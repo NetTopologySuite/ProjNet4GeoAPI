@@ -25,7 +25,7 @@ namespace ProjNet.CoordinateSystems.Transformations
     /// which means that some parts of the convex hull are inside the
     /// domain, and some parts of the convex hull are outside the domain.
     /// </remarks>
-    [Flags]
+    [System.Flags]
     public enum DomainFlags : int
     {
         /// <summary>
