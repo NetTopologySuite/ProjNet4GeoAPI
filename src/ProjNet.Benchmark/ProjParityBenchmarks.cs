@@ -26,6 +26,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Represents the documented type.
 /// </summary>
+[SuppressMessage("Maintainability", "CA1515:Consider making public types internal", Justification = "Benchmark entry types are intentionally public for explicit invocation from Program and benchmark tooling stability.")]
 [SuppressMessage("Security", "CA5394:Do not use insecure randomness", Justification = "Benchmark input generation uses deterministic pseudo-random data for repeatability and is not security-sensitive.")]
 [MemoryDiagnoser]
 public class ProjParityBenchmarks
