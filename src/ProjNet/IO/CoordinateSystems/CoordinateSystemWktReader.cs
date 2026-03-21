@@ -312,7 +312,8 @@ namespace ProjNet.IO.CoordinateSystems
             tokenizer.NextToken();
             string authority = string.Empty;
             long authorityCode = -1;
-            if (tokenizer.GetStringValue() == ",") // Read authority
+            // Read authority.
+            if (tokenizer.GetStringValue() == ",")
             {
                 tokenizer.ReadAuthority(out authority, out authorityCode);
                 tokenizer.ReadCloser(bracket);

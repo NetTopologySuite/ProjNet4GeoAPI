@@ -99,13 +99,15 @@ namespace ProjNet.CoordinateSystems.Projections
             this.Authority = "EPSG";
             var scaleFactor = this.GetParameter("scale_factor");
 
-            if (scaleFactor == null) // This is a two standard parallel Mercator projection (2SP)
+            // This is a two standard parallel Mercator projection (2SP).
+            if (scaleFactor == null)
             {
                 this.k0 = Math.Cos(this.latOrigin) / Math.Sqrt(1.0 - (this.es * Math.Sin(this.latOrigin) * Math.Sin(this.latOrigin)));
                 this.AuthorityCode = 9805;
                 this.Name = "Mercator_2SP";
             }
-            else // This is a one standard parallel Mercator projection (1SP)
+            // This is a one standard parallel Mercator projection (1SP).
+            else
             {
                 this.k0 = scaleFactor.Value;
                 this.Name = "Mercator_1SP";

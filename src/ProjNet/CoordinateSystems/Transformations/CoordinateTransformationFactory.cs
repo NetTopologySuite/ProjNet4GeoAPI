@@ -336,12 +336,14 @@ namespace ProjNet.CoordinateSystems.Transformations
             var sourceKind = GetCoordinateSystemRuntimeKind(sourceCS);
             var targetKind = GetCoordinateSystemRuntimeKind(targetCS);
 
-            if (sourceKind == CoordinateSystemRuntimeKind.Fitted) // Fitted -> Any
+            // Fitted -> Any
+            if (sourceKind == CoordinateSystemRuntimeKind.Fitted)
             {
                 return Fitt2Any((FittedCoordinateSystem)sourceCS, targetCS);
             }
 
-            if (targetKind == CoordinateSystemRuntimeKind.Fitted) // Any -> Fitted
+            // Any -> Fitted
+            if (targetKind == CoordinateSystemRuntimeKind.Fitted)
             {
                 return Any2Fitt(sourceCS, (FittedCoordinateSystem)targetCS);
             }
