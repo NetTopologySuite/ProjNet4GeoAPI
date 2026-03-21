@@ -69,7 +69,7 @@ public class PerformanceTests
         {
             if (firstOutput[i].Equals((instance.xys[i].X, instance.xys[i].Y)))
             {
-                throw new Exception("Validation failure: transformer isn't actually transforming.");
+                throw new InvalidOperationException("Validation failure: transformer isn't actually transforming.");
             }
         }
 
@@ -92,7 +92,7 @@ public class PerformanceTests
         {
             if (!nextOutput.SequenceEqual(firstOutput))
             {
-                throw new Exception("Validation failure: some transform method is giving different results than another.");
+                throw new InvalidOperationException("Validation failure: some transform method is giving different results than another.");
             }
         }
     }

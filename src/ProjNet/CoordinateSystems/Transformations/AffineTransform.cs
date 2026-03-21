@@ -1,4 +1,4 @@
-﻿// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
+// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
 //
 // This file is part of ProjNet.
 // ProjNet is free software; you can redistribute it and/or modify
@@ -341,7 +341,7 @@ namespace ProjNet.CoordinateSystems.Transformations
 
                 if (p == 0)
                 {
-                    throw new Exception("singular matrix");
+                    throw new InvalidOperationException("singular matrix");
                 }
 
                 /*

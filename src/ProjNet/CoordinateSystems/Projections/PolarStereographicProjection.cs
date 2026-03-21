@@ -1,4 +1,4 @@
-﻿// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
+// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
 //
 // This file is part of ProjNet.
 // ProjNet is free software; you can redistribute it and/or modify
@@ -104,7 +104,7 @@ namespace ProjNet.CoordinateSystems.Projections
 
             if (this.e == 0.0)
             {
-                throw new Exception("Polar Stereographics: only ellipsoidal formulation");
+                throw new NotSupportedException("Polar Stereographics: only ellipsoidal formulation");
             }
 
             this.npole = this.latOrigin > 0.0; // N or S hemisphere
@@ -164,7 +164,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 phi_l = lp_phi;
                 if (--iter < 0)
                 {
-                    throw new Exception("Polar Stereographics doesn't converge");
+                    throw new InvalidOperationException("Polar Stereographics doesn't converge");
                 }
             }
 

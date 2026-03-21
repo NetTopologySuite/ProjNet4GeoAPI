@@ -1,4 +1,4 @@
-﻿// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
+// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
 //
 // This file is part of ProjNet.
 // ProjNet is free software; you can redistribute it and/or modify
@@ -200,7 +200,7 @@ namespace ProjNet.CoordinateSystems.Projections
         //    }
         //    if (Math.Abs(Math.Abs(ul) - 1.0) <= EPSLN)
         //    {
-        //        throw new Exception("Point projects into infinity");
+        //        throw new InvalidOperationException("Point projects into infinity");
         //    }
 
         // var vs = .5 * _al * Math.Log((1.0 - ul) / (1.0 + ul)) / _bl;
@@ -259,7 +259,7 @@ namespace ProjNet.CoordinateSystems.Projections
 
             if (Math.Abs(Math.Abs(ul) - 1.0) <= EPSLN)
             {
-                throw new Exception("Point projects into infinity");
+                throw new InvalidOperationException("Point projects into infinity");
             }
 
             double vs = .5 * this.al * Math.Log((1.0 - ul) / (1.0 + ul)) / this.bl;

@@ -165,7 +165,7 @@ namespace ProjNet.CoordinateSystems.Projections
                 y = phi;
                 if (--iter < 0)
                 {
-                    throw new Exception("Oblique Stereographics doesn't converge");
+                    throw new InvalidOperationException("Oblique Stereographics doesn't converge");
                 }
             }
 

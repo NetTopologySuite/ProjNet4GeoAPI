@@ -134,7 +134,7 @@ namespace ProjNet.CoordinateSystems.Projections
                     double cp = Math.Cos(phi);
                     if (Math.Abs(cp) < IterationTolerance)
                     {
-                        throw new Exception("No Convergence");
+                        throw new InvalidOperationException("No Convergence");
                     }
 
                     double s2ph = sp * cp;
@@ -156,7 +156,7 @@ namespace ProjNet.CoordinateSystems.Projections
 
                 if (iter > MaximumIterations)
                 {
-                    throw new Exception("No Convergence");
+                    throw new InvalidOperationException("No Convergence");
                 }
 
                 double c2 = Math.Sin(phi);
