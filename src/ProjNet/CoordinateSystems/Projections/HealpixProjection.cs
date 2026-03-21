@@ -28,8 +28,8 @@ namespace ProjNet.CoordinateSystems.Projections
     internal class HealpixProjection : MapProjection
     {
         private static readonly double Phi0 = Math.Asin(2d / 3d);
-        private static readonly double QuarterPi = PI / 4d;
-        private static readonly double HalfPi = PI / 2d;
+        private const double QuarterPi = PI / 4d;
+        private const double HalfPi = PI / 2d;
 
         private readonly double radius;
         private readonly double inverseRadius;
