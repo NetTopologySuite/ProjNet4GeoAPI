@@ -24,9 +24,9 @@ namespace ProjNet.CoordinateSystems.Transformations
     [Serializable]
     internal class PrimeMeridianTransform : MathTransform
     {
-        private bool isInverted;
         private readonly PrimeMeridian source;
         private readonly PrimeMeridian target;
+        private bool isInverted;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="PrimeMeridianTransform"/> class.

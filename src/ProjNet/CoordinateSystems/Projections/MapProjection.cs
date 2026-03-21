@@ -150,11 +150,6 @@ namespace ProjNet.CoordinateSystems.Projections
         protected readonly double scaleFactor; /* scale factor             */
 
         /// <summary>
-        /// Center longitude (projection center).
-        /// </summary>
-        protected double centralMeridian; /* Center longitude (projection center) */
-
-        /// <summary>
         /// Center latitude.
         /// </summary>
         protected readonly double latOrigin; /* center latitude            */
@@ -187,6 +182,11 @@ namespace ProjNet.CoordinateSystems.Projections
         /// The inverse <see cref="MathTransform"/>.
         /// </summary>
         protected MathTransform inverse;
+
+        /// <summary>
+        /// Center longitude (projection center).
+        /// </summary>
+        protected double centralMeridian; /* Center longitude (projection center) */
 
         private const double C00 = 1.0;
         private const double C02 = 0.25;

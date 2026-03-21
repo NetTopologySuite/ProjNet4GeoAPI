@@ -30,9 +30,9 @@ using ProjNet.CoordinateSystems;
 /// </summary>
 public class SpatialRefSysTableParser
 {
-    private static string connectionString;
     private static readonly Lazy<CoordinateSystemFactory> CoordinateSystemFactory =
         new Lazy<CoordinateSystemFactory>(() => new CoordinateSystemFactory());
+    private static string connectionString;
 
     private static string ConnectionString
     {

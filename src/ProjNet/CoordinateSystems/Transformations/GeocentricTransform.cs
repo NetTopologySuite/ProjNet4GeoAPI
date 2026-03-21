@@ -44,16 +44,6 @@ namespace ProjNet.CoordinateSystems.Transformations
         private const double ADC = 1.0026000;                  /* Toms region 1 constant */
 
         /// <summary>
-        /// Indicates whether this instance runs in inverse mode.
-        /// </summary>
-        private bool isInverse;
-
-        /// <summary>
-        /// Cached inverse transform.
-        /// </summary>
-        private MathTransform inverse;
-
-        /// <summary>
         /// Eccentricity squared : (a^2 - b^2)/a^2.
         /// </summary>
         private readonly double es;
@@ -67,11 +57,22 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// Minor axis.
         /// </summary>
         private readonly double semiMinor;
+
+        private readonly double ses;             // Second eccentricity squared : (a^2 - b^2)/b^2
+
+        /// <summary>
+        /// Indicates whether this instance runs in inverse mode.
+        /// </summary>
+        private bool isInverse;
+
+        /// <summary>
+        /// Cached inverse transform.
+        /// </summary>
+        private MathTransform inverse;
         /*
         private double ab;              // Semi_major / semi_minor
         private double ba;              // Semi_minor / semi_major
          */
-        private readonly double ses;             // Second eccentricity squared : (a^2 - b^2)/b^2
 
         /// <summary>
         /// Projection parameters used to initialize the transform.

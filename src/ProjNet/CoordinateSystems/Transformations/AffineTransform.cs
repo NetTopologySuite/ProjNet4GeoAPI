@@ -33,11 +33,6 @@ namespace ProjNet.CoordinateSystems.Transformations
     public class AffineTransform : MathTransform
     {
         /// <summary>
-        /// Saved inverse transform.
-        /// </summary>
-        private MathTransform inverse;
-
-        /// <summary>
         /// Dimension of source points - it's related to number of transformation matrix rows.
         /// </summary>
         private readonly int dimSource;
@@ -53,6 +48,11 @@ namespace ProjNet.CoordinateSystems.Transformations
         /// Number of columns = dimSource + 1.
         /// </summary>
         private readonly double[,] transformMatrix;
+
+        /// <summary>
+        /// Saved inverse transform.
+        /// </summary>
+        private MathTransform inverse;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AffineTransform"/> class.

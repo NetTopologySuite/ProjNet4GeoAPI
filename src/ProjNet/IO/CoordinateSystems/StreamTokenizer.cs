@@ -51,14 +51,14 @@ namespace ProjNet.IO.CoordinateSystems
     internal class StreamTokenizer
     {
         private readonly NumberFormatInfo nfi = CultureInfo.InvariantCulture.NumberFormat;
+        private readonly TextReader reader;
+        private readonly bool ignoreWhitespace;
 
         private TokenType currentTokenType;
-        private readonly TextReader reader;
         private string currentToken;
 
         private int lineNumber = 1;
         private int colNumber = 1;
-        private readonly bool ignoreWhitespace;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="StreamTokenizer"/> class.

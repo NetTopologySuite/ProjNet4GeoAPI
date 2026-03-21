@@ -28,12 +28,12 @@ namespace ProjNet.CoordinateSystems.Transformations
     {
         private static readonly CoordinateTransformationFactory CoordinateTransformationFactory =
                 new CoordinateTransformationFactory();
+        private readonly List<ICoordinateTransformationCore> coordinateTransformationList;
 
         /// <summary>
         /// Cached inverse transform.
         /// </summary>
         private ConcatenatedTransform inverse;
-        private readonly List<ICoordinateTransformationCore> coordinateTransformationList;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ConcatenatedTransform"/> class.

@@ -24,9 +24,10 @@ namespace ProjNet.CoordinateSystems.Transformations
     [Serializable]
     internal class DatumTransform : MathTransform
     {
-        private MathTransform inverse;
         private readonly Wgs84ConversionInfo toWgs94;
-        readonly double[] v;
+        private readonly double[] v;
+
+        private MathTransform inverse;
 
         private bool isInverse;
 
