@@ -101,8 +101,8 @@ namespace ProjNet.CoordinateSystems.Projections
                 double ms = Math.Abs(cp = Math.Cos(phi)) > Epsilon ? this.Msfn(sp, cp) / sp : 0.0;
                 /*lam =*/
                 delta_lam *= sp;
-                x = ms * Math.Sin( /*lam*/delta_lam);
-                y = (this.Mlfn(phi, sp, cp) - this.ml0) + (ms * (1.0 - Math.Cos( /*lam*/delta_lam)));
+                x = ms * Math.Sin(delta_lam);
+                y = (this.Mlfn(phi, sp, cp) - this.ml0) + (ms * (1.0 - Math.Cos(delta_lam)));
             }
 
             lon = this.scaleFactor * this.semiMajor * x;

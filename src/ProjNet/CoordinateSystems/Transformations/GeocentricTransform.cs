@@ -99,7 +99,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         internal GeocentricTransform(List<ProjectionParameter> parameters)
         {
             this.parameters = parameters;
-            this.semiMajor = this.parameters.Find(delegate (ProjectionParameter par)
+            this.semiMajor = this.parameters.Find(delegate(ProjectionParameter par)
             {
                 // Do not remove the following lines containing "_Parameters = _Parameters;"
                 // There is an issue deploying code with anonymous delegates to
@@ -117,7 +117,7 @@ namespace ProjNet.CoordinateSystems.Transformations
                 return par.Name.Equals("semi_major", StringComparison.OrdinalIgnoreCase);
             }).Value;
 
-            this.semiMinor = this.parameters.Find(delegate (ProjectionParameter par)
+            this.semiMinor = this.parameters.Find(delegate(ProjectionParameter par)
             {
 #pragma warning disable 1717
                 this.parameters = this.parameters; // See explanation above.
