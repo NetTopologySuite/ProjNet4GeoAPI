@@ -861,7 +861,7 @@ for (var i = 0; i < _Parameters.Count; i++)
         protected static double Adjust_lon(double x)
         {
             long count = 0;
-            for (; ; )
+            while (true)
             {
                 if (Math.Abs(x) <= PI)
                 {
@@ -973,7 +973,6 @@ for (var i = 0; i < _Parameters.Count; i++)
         /// <param name="sin_val">The sin_val value.</param>
         /// <param name="cos_val">The cos_val value.</param>
         protected static void Sincos(double val, out double sin_val, out double cos_val)
-
         {
             sin_val = Math.Sin(val);
             cos_val = Math.Cos(val);

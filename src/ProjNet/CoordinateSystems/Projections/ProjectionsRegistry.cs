@@ -234,7 +234,7 @@ namespace ProjNet.CoordinateSystems.Projections
             }
 
             var res = (MapProjection)Activator.CreateInstance(projectionType, parameters);
-            if (!res.Name.Equals(className, StringComparison.InvariantCultureIgnoreCase))
+            if (!string.Equals(res.Name, className, StringComparison.OrdinalIgnoreCase))
             {
                 res.Alias = res.Name;
                 res.Name = className;

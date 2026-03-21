@@ -295,7 +295,7 @@ namespace ProjNet
         /// <summary>
         /// Method to create a coordinate transformation between two spatial reference systems, defined by their identifiers.
         /// </summary>
-        /// <remarks>This is a convenience function for <see cref="M:GeoAPI.ICoordinateSystemServices.CreateTransformation(GeoAPI.CoordinateSystems.ICoordinateSystem,GeoAPI.CoordinateSystems.ICoordinateSystem)" />.</remarks>
+        /// <remarks>This is a convenience function for <see cref="CreateTransformation(GeoAPI.CoordinateSystems.ICoordinateSystem,GeoAPI.CoordinateSystems.ICoordinateSystem)" />.</remarks>
         /// <param name="sourceSrid">The identifier for the source spatial reference system.</param>
         /// <param name="targetSrid">The identifier for the target spatial reference system.</param>
         /// <returns>A coordinate transformation, <value>null</value> if no transformation could be created.</returns>
@@ -467,7 +467,7 @@ namespace ProjNet
             public override bool Equals(IInfo x, IInfo y)
             {
                 return x.AuthorityCode == y.AuthorityCode &&
-                    string.Compare(x.Authority, y.Authority, StringComparison.OrdinalIgnoreCase) == 0;
+                    string.Equals(x.Authority, y.Authority, StringComparison.OrdinalIgnoreCase);
             }
 
             /// <inheritdoc />

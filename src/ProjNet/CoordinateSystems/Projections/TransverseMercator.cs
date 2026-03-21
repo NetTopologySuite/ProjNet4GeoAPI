@@ -43,7 +43,7 @@ namespace ProjNet.CoordinateSystems.Projections
     using ProjNet.CoordinateSystems.Transformations;
 
     /// <summary>
-    /// Summary description for MathTransform.
+    /// Implements the Transverse Mercator map projection.
     /// </summary>
     /// <remarks>
     /// <para>Universal (UTM) and Modified (MTM) Transverses Mercator projections. This

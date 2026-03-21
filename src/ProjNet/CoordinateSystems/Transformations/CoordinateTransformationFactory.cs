@@ -800,7 +800,8 @@ namespace ProjNet.CoordinateSystems.Transformations
                     string.Empty);
             }
             else
-            {   // Geographic coordinatesystems differ - Create concatenated transform
+            {
+                // Geographic coordinate systems differ - create concatenated transform
                 var ct = new ConcatenatedTransform();
                 var ctFac = new CoordinateTransformationFactory();
                 ct.CoordinateTransformationList.Add(ctFac.CreateFromCoordinateSystems(source, source.GeographicCoordinateSystem));

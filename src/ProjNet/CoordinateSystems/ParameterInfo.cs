@@ -57,7 +57,7 @@ namespace ProjNet.CoordinateSystems
         /// <returns>The transformation result.</returns>
         public Parameter[] DefaultParameters()
         {
-            return new Parameter[0];
+            return Array.Empty<Parameter>();
         }
 
         /// <summary>

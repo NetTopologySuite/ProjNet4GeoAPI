@@ -231,6 +231,25 @@ namespace ProjNet.CoordinateSystems.Projections
             return true;
         }
 
+        /// <inheritdoc />
+        public override bool Equals(object obj)
+        {
+            return obj is ProjectionParameterSet other && this.Equals(other);
+        }
+
+        /// <inheritdoc />
+        public override int GetHashCode()
+        {
+            int hashCode = 0;
+            foreach (var kvp in this)
+            {
+                int pairHashCode = (StringComparer.Ordinal.GetHashCode(kvp.Key) * 397) ^ kvp.Value.GetHashCode();
+                hashCode ^= pairHashCode;
+            }
+
+            return hashCode;
+        }
+
         /// <summary>
         /// Sets or adds a projection parameter value using case-insensitive key matching.
         /// </summary>
