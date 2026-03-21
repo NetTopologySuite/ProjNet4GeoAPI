@@ -245,6 +245,9 @@ namespace ProjNet.CoordinateSystems.Transformations
         }
     }
 
+    /// <summary>
+    /// Applies horizontal grid-shift corrections loaded from GeoTIFF grids.
+    /// </summary>
     [Serializable]
     internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
     {

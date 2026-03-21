@@ -168,9 +168,25 @@ namespace ProjNet.CoordinateSystems.Projections
         /// Constants for <see cref="Mlfn(double,double,double,double,double)"/>.
         /// </summary>
         protected readonly double en0;
+
+        /// <summary>
+        /// Coefficient 1 for <see cref="Mlfn(double,double,double,double,double)"/>.
+        /// </summary>
         protected readonly double en1;
+
+        /// <summary>
+        /// Coefficient 2 for <see cref="Mlfn(double,double,double,double,double)"/>.
+        /// </summary>
         protected readonly double en2;
+
+        /// <summary>
+        /// Coefficient 3 for <see cref="Mlfn(double,double,double,double,double)"/>.
+        /// </summary>
         protected readonly double en3;
+
+        /// <summary>
+        /// Coefficient 4 for <see cref="Mlfn(double,double,double,double,double)"/>.
+        /// </summary>
         protected readonly double en4;
 
         /// <summary>
