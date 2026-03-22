@@ -27,8 +27,8 @@ using System.Linq;
 /// </summary>
 internal static class ProjPipelineMathTransformFactory
 {
-    private static readonly char[] CommaSeparator = { ',' };
-    private static readonly char[] OperationTokenSeparators = { ' ', '\t' };
+    private static readonly char[] CommaSeparator = [','];
+    private static readonly char[] OperationTokenSeparators = [' ', '\t'];
 
     /// <summary>
     /// Tries to create an executable transform from a full operation or pipeline definition.
@@ -50,7 +50,7 @@ internal static class ProjPipelineMathTransformFactory
 
         if (!TrySplitPipelineSteps(operation, out IReadOnlyList<string> steps))
         {
-            steps = new[] { operation };
+            steps = [operation];
         }
 
         var stepTransforms = new List<MathTransform>(steps.Count);
@@ -99,11 +99,17 @@ internal static class ProjPipelineMathTransformFactory
 
         if (projCode.Equals("latlong", StringComparison.OrdinalIgnoreCase)
             || projCode.Equals("longlat", StringComparison.OrdinalIgnoreCase)
-            || projCode.Equals("noop", StringComparison.OrdinalIgnoreCase)
-            || projCode.Equals("set", StringComparison.OrdinalIgnoreCase))
+            || projCode.Equals("latlon", StringComparison.OrdinalIgnoreCase)
+            || projCode.Equals("lonlat", StringComparison.OrdinalIgnoreCase)
+            || projCode.Equals("noop", StringComparison.OrdinalIgnoreCase))
         {
             transform = new IdentityMathTransform(3);
             return true;
+        }
+
+        if (projCode.Equals("set", StringComparison.OrdinalIgnoreCase))
+        {
+            return SetMathTransform.TryCreate(args, out transform, out skipReason);
         }
 
         if (projCode.Equals("axisswap", StringComparison.OrdinalIgnoreCase))
@@ -125,6 +131,36 @@ internal static class ProjPipelineMathTransformFactory
         if (projCode.Equals("vgridshift", StringComparison.OrdinalIgnoreCase))
         {
             return TryCreateVerticalGridShiftTransform(args, out transform, out skipReason);
+        }
+
+        if (projCode.Equals("topocentric", StringComparison.OrdinalIgnoreCase))
+        {
+            return TopocentricMathTransform.TryCreate(args, out transform, out skipReason);
+        }
+
+        if (projCode.Equals("helmert", StringComparison.OrdinalIgnoreCase))
+        {
+            return HelmertMathTransform.TryCreate(args, out transform, out skipReason);
+        }
+
+        if (projCode.Equals("molodensky", StringComparison.OrdinalIgnoreCase))
+        {
+            return MolodenskyMathTransform.TryCreate(args, out transform, out skipReason);
+        }
+
+        if (projCode.Equals("ob_tran", StringComparison.OrdinalIgnoreCase))
+        {
+            return ObTranMathTransform.TryCreate(args, out transform, out skipReason);
+        }
+
+        if (projCode.Equals("sch", StringComparison.OrdinalIgnoreCase))
+        {
+            return SchMathTransform.TryCreate(args, out transform, out skipReason);
+        }
+
+        if (projCode.Equals("spherical_cross_track_height", StringComparison.OrdinalIgnoreCase))
+        {
+            return SchMathTransform.TryCreate(args, out transform, out skipReason);
         }
 
         skipReason = "Projection '" + projCode + "' is not part of the current builtins wave.";
@@ -166,14 +202,14 @@ internal static class ProjPipelineMathTransformFactory
         }
 
         int dimension = order.Length;
-        if (dimension < 2 || dimension > 3)
+        if (dimension is < 2 or > 3)
         {
             skipReason = "Axisswap supports only 2D or 3D coordinates in the current runtime.";
             return false;
         }
 
-        int[] sourceIndices = { 0, 1, 2 };
-        int[] signs = { 1, 1, 1 };
+        int[] sourceIndices = [0, 1, 2];
+        int[] signs = [1, 1, 1];
         for (int i = 0; i < dimension; i++)
         {
             int rawOrder = order[i];
