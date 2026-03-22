@@ -21,6 +21,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using ProjNet.CoordinateSystems;
 
 /// <summary>
 /// Creates runtime math transforms from PROJ-style pipeline operation strings.
@@ -131,6 +132,11 @@ internal static class ProjPipelineMathTransformFactory
         if (projCode.Equals("vgridshift", StringComparison.OrdinalIgnoreCase))
         {
             return TryCreateVerticalGridShiftTransform(args, out transform, out skipReason);
+        }
+
+        if (projCode.Equals("xyzgridshift", StringComparison.OrdinalIgnoreCase))
+        {
+            return TryCreateXyzGridShiftTransform(args, out transform, out skipReason);
         }
 
         if (projCode.Equals("topocentric", StringComparison.OrdinalIgnoreCase))
@@ -420,6 +426,101 @@ internal static class ProjPipelineMathTransformFactory
         return true;
     }
 
+    private static bool TryCreateXyzGridShiftTransform(
+        Dictionary<string, string> args,
+        out MathTransform transform,
+        out string skipReason)
+    {
+        transform = null;
+        skipReason = null;
+
+        if (!args.TryGetValue("grids", out string gridsToken) || string.IsNullOrWhiteSpace(gridsToken))
+        {
+            skipReason = "Geocentric grid shift requires +grids.";
+            return false;
+        }
+
+        if (!TryResolveGridPaths(gridsToken, out IReadOnlyList<string> gridPaths, out skipReason))
+        {
+            return false;
+        }
+
+        for (int i = 0; i < gridPaths.Count; i++)
+        {
+            string extension = Path.GetExtension(gridPaths[i]);
+            if (!extension.Equals(".tif", StringComparison.OrdinalIgnoreCase)
+                && !extension.Equals(".tiff", StringComparison.OrdinalIgnoreCase))
+            {
+                skipReason = "Grid '" + Path.GetFileName(gridPaths[i]) + "' is not a supported xyz grid format (.tif/.tiff).";
+                return false;
+            }
+        }
+
+        bool gridRefIsInput = true;
+        if (args.TryGetValue("grid_ref", out string gridRefToken) && !string.IsNullOrWhiteSpace(gridRefToken))
+        {
+            if (gridRefToken.Equals("input_crs", StringComparison.OrdinalIgnoreCase))
+            {
+                gridRefIsInput = true;
+            }
+            else if (gridRefToken.Equals("output_crs", StringComparison.OrdinalIgnoreCase))
+            {
+                gridRefIsInput = false;
+            }
+            else
+            {
+                skipReason = "xyzgridshift +grid_ref must be 'input_crs' or 'output_crs'.";
+                return false;
+            }
+        }
+
+        double multiplier = 1d;
+        if (args.TryGetValue("multiplier", out string multiplierToken)
+            && !double.TryParse(multiplierToken, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out multiplier))
+        {
+            skipReason = "Unable to parse +multiplier parameter for xyzgridshift.";
+            return false;
+        }
+
+        if (double.IsNaN(multiplier) || double.IsInfinity(multiplier))
+        {
+            skipReason = "xyzgridshift +multiplier must be a finite numeric value.";
+            return false;
+        }
+
+        if (!TryResolveEllipsoid(args, out double semiMajor, out double semiMinor, out skipReason))
+        {
+            return false;
+        }
+
+        try
+        {
+            transform = new GeoTiffXyzGridShiftMathTransform(gridPaths, semiMajor, semiMinor, multiplier, gridRefIsInput);
+        }
+        catch (IOException ioException)
+        {
+            skipReason = "Unable to read xyz grid: " + ioException.Message;
+            return false;
+        }
+        catch (InvalidDataException dataException)
+        {
+            skipReason = "Invalid xyz grid data: " + dataException.Message;
+            return false;
+        }
+        catch (ArgumentException argumentException)
+        {
+            skipReason = "Invalid xyz grid parameters: " + argumentException.Message;
+            return false;
+        }
+
+        if (args.ContainsKey("inv"))
+        {
+            transform = transform.Inverse();
+        }
+
+        return true;
+    }
+
     private static bool TryResolveGridPaths(
         string gridsToken,
         out IReadOnlyList<string> resolvedPaths,
@@ -472,6 +573,138 @@ internal static class ProjPipelineMathTransformFactory
 
         resolvedPaths = resolved;
         return true;
+    }
+
+    private static bool TryResolveEllipsoid(
+        IReadOnlyDictionary<string, string> args,
+        out double semiMajor,
+        out double semiMinor,
+        out string skipReason)
+    {
+        semiMajor = 0d;
+        semiMinor = 0d;
+        skipReason = null;
+
+        if (args.TryGetValue("r", out string radiusToken)
+            && TryParseFiniteDouble(radiusToken, out double radius)
+            && radius > 0d)
+        {
+            semiMajor = radius;
+            semiMinor = radius;
+            return true;
+        }
+
+        if (args.TryGetValue("a", out string majorToken)
+            && TryParseFiniteDouble(majorToken, out double major)
+            && major > 0d)
+        {
+            semiMajor = major;
+            if (args.TryGetValue("b", out string minorToken)
+                && TryParseFiniteDouble(minorToken, out double minor)
+                && minor > 0d)
+            {
+                semiMinor = minor;
+                return true;
+            }
+
+            if (args.TryGetValue("rf", out string inverseFlatteningToken)
+                && TryParseFiniteDouble(inverseFlatteningToken, out double inverseFlattening)
+                && inverseFlattening > 0d)
+            {
+                semiMinor = (1d - (1d / inverseFlattening)) * major;
+                return true;
+            }
+
+            semiMinor = major;
+            return true;
+        }
+
+        if (args.TryGetValue("ellps", out string ellps) && !string.IsNullOrWhiteSpace(ellps))
+        {
+            if (TryResolveKnownEllipsoid(ellps, out semiMajor, out semiMinor))
+            {
+                return true;
+            }
+
+            skipReason = "xyzgridshift received unsupported +ellps value.";
+            return false;
+        }
+
+        if (args.TryGetValue("datum", out string datum) && !string.IsNullOrWhiteSpace(datum))
+        {
+            if (TryResolveKnownEllipsoid(datum, out semiMajor, out semiMinor))
+            {
+                return true;
+            }
+
+            skipReason = "xyzgridshift received unsupported +datum value.";
+            return false;
+        }
+
+        skipReason = "xyzgridshift requires ellipsoid definition (+ellps, +datum, +r, +a/+b, or +a/+rf).";
+        return false;
+    }
+
+    private static bool TryResolveKnownEllipsoid(string token, out double semiMajor, out double semiMinor)
+    {
+        semiMajor = 0d;
+        semiMinor = 0d;
+
+        if (token.Equals("wgs84", StringComparison.OrdinalIgnoreCase))
+        {
+            semiMajor = Ellipsoid.WGS84.SemiMajorAxis;
+            semiMinor = Ellipsoid.WGS84.SemiMinorAxis;
+            return true;
+        }
+
+        if (token.Equals("grs80", StringComparison.OrdinalIgnoreCase)
+            || token.Equals("nad83", StringComparison.OrdinalIgnoreCase))
+        {
+            semiMajor = Ellipsoid.GRS80.SemiMajorAxis;
+            semiMinor = Ellipsoid.GRS80.SemiMinorAxis;
+            return true;
+        }
+
+        if (token.Equals("clrk66", StringComparison.OrdinalIgnoreCase)
+            || token.Equals("nad27", StringComparison.OrdinalIgnoreCase))
+        {
+            semiMajor = Ellipsoid.Clarke1866.SemiMajorAxis;
+            semiMinor = Ellipsoid.Clarke1866.SemiMinorAxis;
+            return true;
+        }
+
+        if (token.Equals("clrk80", StringComparison.OrdinalIgnoreCase)
+            || token.Equals("clrk80ign", StringComparison.OrdinalIgnoreCase))
+        {
+            semiMajor = Ellipsoid.Clarke1880.SemiMajorAxis;
+            semiMinor = Ellipsoid.Clarke1880.SemiMinorAxis;
+            return true;
+        }
+
+        if (token.Equals("intl", StringComparison.OrdinalIgnoreCase))
+        {
+            semiMajor = Ellipsoid.International1924.SemiMajorAxis;
+            semiMinor = Ellipsoid.International1924.SemiMinorAxis;
+            return true;
+        }
+
+        if (token.Equals("sphere", StringComparison.OrdinalIgnoreCase))
+        {
+            semiMajor = Ellipsoid.Sphere.SemiMajorAxis;
+            semiMinor = Ellipsoid.Sphere.SemiMinorAxis;
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool TryParseFiniteDouble(string token, out double value)
+    {
+        value = 0d;
+        return !string.IsNullOrWhiteSpace(token)
+            && double.TryParse(token, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value)
+            && !double.IsNaN(value)
+            && !double.IsInfinity(value);
     }
 
     private static bool TryResolveUnitScale(
