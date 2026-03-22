@@ -148,6 +148,11 @@ internal static class ProjPipelineMathTransformFactory
             return MolodenskyMathTransform.TryCreate(args, out transform, out skipReason);
         }
 
+        if (projCode.Equals("horner", StringComparison.OrdinalIgnoreCase))
+        {
+            return HornerMathTransform.TryCreate(args, out transform, out skipReason);
+        }
+
         if (projCode.Equals("ob_tran", StringComparison.OrdinalIgnoreCase))
         {
             return ObTranMathTransform.TryCreate(args, out transform, out skipReason);
