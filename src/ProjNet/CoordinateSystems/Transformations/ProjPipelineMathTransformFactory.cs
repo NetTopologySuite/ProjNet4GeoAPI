@@ -138,6 +138,11 @@ internal static class ProjPipelineMathTransformFactory
             return TopocentricMathTransform.TryCreate(args, out transform, out skipReason);
         }
 
+        if (projCode.Equals("vertoffset", StringComparison.OrdinalIgnoreCase))
+        {
+            return VertOffsetMathTransform.TryCreate(args, out transform, out skipReason);
+        }
+
         if (projCode.Equals("helmert", StringComparison.OrdinalIgnoreCase))
         {
             return HelmertMathTransform.TryCreate(args, out transform, out skipReason);
