@@ -259,7 +259,7 @@ internal class LambertConformalConic2SP : MapProjection
     /// <returns>IMathTransform that is the reverse of the current projection.</returns>
     public override MathTransform Inverse()
     {
-        if (this.inverse == null)
+        if (this.inverse is null)
         {
             this.inverse = new LambertConformalConic2SP(this.Parameters.ToProjectionParameter(), this);
         }

@@ -234,7 +234,7 @@ public abstract class MapProjection : MathTransform, IProjection
         : this(parameters)
     {
         this.inverse = inverse;
-        if (inverse != null)
+        if (inverse is not null)
         {
             inverse.inverse = this;
             this.IsInverse = !inverse.IsInverse;
@@ -430,7 +430,7 @@ public abstract class MapProjection : MathTransform, IProjection
     public override void Invert()
     {
         this.IsInverse = !this.IsInverse;
-        if (this.inverse != null)
+        if (this.inverse is not null)
         {
             ((MapProjection)this.inverse).Invert(false);
         }
@@ -464,7 +464,7 @@ return false;
 for (var i = 0; i < _Parameters.Count; i++)
 {
 var param = _Parameters.Find(par => par.Name.Equals(proj.GetParameter(i).Name, StringComparison.OrdinalIgnoreCase));
-if (param == null)
+if (param is null)
    return false;
 if (param.Value != proj.GetParameter(i).Value)
    return false;
@@ -730,7 +730,7 @@ if (param.Value != proj.GetParameter(i).Value)
     protected void Invert(bool invertInverse)
     {
         this.IsInverse = !this.IsInverse;
-        if (invertInverse && this.inverse != null)
+        if (invertInverse && this.inverse is not null)
         {
             ((MapProjection)this.inverse).Invert(false);
         }

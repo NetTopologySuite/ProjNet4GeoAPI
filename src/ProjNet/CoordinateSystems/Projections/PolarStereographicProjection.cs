@@ -212,7 +212,7 @@ internal class PolarStereographicProjection : MapProjection
     /// <returns>IMathTransform that is the reverse of the current projection.</returns>
     public override MathTransform Inverse()
     {
-        if (this.inverse == null)
+        if (this.inverse is null)
         {
             this.inverse = new PolarStereographicProjection(this.Parameters.ToProjectionParameter(), this);
         }

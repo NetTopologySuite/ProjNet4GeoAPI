@@ -154,7 +154,7 @@ public class ProjectionsRegistry
         }
 
         var ci = CheckConstructor(type);
-        if (ci == null)
+        if (ci is null)
         {
             throw new ArgumentException("The provided type is lacking a suitable constructor", nameof(type));
         }

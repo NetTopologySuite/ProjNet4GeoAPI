@@ -37,30 +37,30 @@ internal static class CoordinateOperationResolver
         CoordinateSystem target,
         Func<CoordinateSystem, CoordinateSystem, ICoordinateTransformation> directResolver)
     {
-        if (source == null)
+        if (source is null)
         {
             throw new ArgumentNullException(nameof(source));
         }
 
-        if (target == null)
+        if (target is null)
         {
             throw new ArgumentNullException(nameof(target));
         }
 
-        if (directResolver == null)
+        if (directResolver is null)
         {
             throw new ArgumentNullException(nameof(directResolver));
         }
 
         var candidates = new List<OperationCandidate>();
         var identityCandidate = CreateIdentityCandidate(source, target);
-        if (identityCandidate != null)
+        if (identityCandidate is not null)
         {
             candidates.Add(identityCandidate);
         }
 
         var directCandidate = directResolver(source, target);
-        if (directCandidate != null)
+        if (directCandidate is not null)
         {
             candidates.Add(new OperationCandidate(directCandidate, 0));
         }

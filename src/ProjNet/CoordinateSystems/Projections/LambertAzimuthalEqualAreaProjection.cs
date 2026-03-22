@@ -100,7 +100,7 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
 
             // _mmf = 0.5 / (1.0 - _es);
             this.apa = Authset(this.es);
-            if (this.apa == null)
+            if (this.apa is null)
             {
                 throw new ArgumentException("Failed to initialize authalic coefficients from projection parameters.", nameof(parameters));
             }
@@ -185,7 +185,7 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
     /// <returns>The transformation result.</returns>
     public override MathTransform Inverse()
     {
-        if (this.inverse == null)
+        if (this.inverse is null)
         {
             this.inverse = new LambertAzimuthalEqualAreaProjection(this.Parameters.ToProjectionParameter(), this);
         }

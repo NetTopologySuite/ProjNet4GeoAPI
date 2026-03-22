@@ -101,7 +101,7 @@ internal class Mercator : MapProjection
         var scaleFactor = this.GetParameter("scale_factor");
 
         // This is a two standard parallel Mercator projection (2SP).
-        if (scaleFactor == null)
+        if (scaleFactor is null)
         {
             this.k0 = Math.Cos(this.latOrigin) / Math.Sqrt(1.0 - (this.es * Math.Sin(this.latOrigin) * Math.Sin(this.latOrigin)));
             this.AuthorityCode = 9805;
@@ -179,7 +179,7 @@ internal class Mercator : MapProjection
     /// <returns>IMathTransform that is the reverse of the current projection.</returns>
     public override MathTransform Inverse()
     {
-        if (this.inverse == null)
+        if (this.inverse is null)
         {
             this.inverse = new Mercator(this.Parameters.ToProjectionParameter(), this);
         }

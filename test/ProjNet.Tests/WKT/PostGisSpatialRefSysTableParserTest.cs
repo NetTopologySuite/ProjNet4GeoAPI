@@ -95,7 +95,7 @@ public class SpatialRefSysTableParser
             int tested = 0;
             using (var r = cmd.ExecuteReader(CommandBehavior.CloseConnection))
             {
-                if (r != null)
+                if (r is not null)
                 {
                     while (r.Read())
                     {

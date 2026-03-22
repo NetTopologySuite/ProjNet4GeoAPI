@@ -151,7 +151,7 @@ internal class HotineObliqueMercatorProjection : MapProjection
     /// <inheritdoc/>
     public override MathTransform Inverse()
     {
-        if (this.inverse == null)
+        if (this.inverse is null)
         {
             this.inverse = new HotineObliqueMercatorProjection(this.Parameters.ToProjectionParameter(), this);
         }
