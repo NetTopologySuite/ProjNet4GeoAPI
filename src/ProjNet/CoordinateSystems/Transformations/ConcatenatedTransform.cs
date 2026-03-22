@@ -170,6 +170,22 @@ internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationC
         return new ConcatenatedTransform(clonedList);
     }
 
+    /// <inheritdoc />
+    internal override void Transform(ref double x, ref double y, ref double z, ref double t)
+    {
+        foreach (var ctc in this.coordinateTransformationList)
+        {
+            if (ctc is CoordinateTransformation ct)
+            {
+                ct.MathTransform.Transform(ref x, ref y, ref z, ref t);
+            }
+            else if (ctc is ConcatenatedTransform cct)
+            {
+                cct.Transform(ref x, ref y, ref z, ref t);
+            }
+        }
+    }
+
     private static ICoordinateTransformationCore CloneCoordinateTransformation(ICoordinateTransformationCore ict)
     {
         return CoordinateTransformationFactory.CreateFromCoordinateSystems(ict.SourceCS, ict.TargetCS);

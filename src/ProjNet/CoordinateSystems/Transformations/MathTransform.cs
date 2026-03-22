@@ -163,12 +163,39 @@ public abstract class MathTransform
         double x = point[0];
         double y = point[1];
         double z = point.Length < 3 ? 0 : point[2];
+        double t = point.Length < 4 ? 0 : point[3];
 
-        (x, y, z) = this.Transform(x, y, z);
+        if (point.Length >= 4)
+        {
+            this.Transform(ref x, ref y, ref z, ref t);
+        }
+        else
+        {
+            this.Transform(ref x, ref y, ref z);
+        }
 
-        return this.DimTarget == 2
-            ? new[] { x, y }
-            : new[] { x, y, z };
+        int minimumDimensions = this.DimTarget == 2 ? 2 : 3;
+        int resultDimensions = point.Length <= 3
+            ? minimumDimensions
+            : Math.Max(minimumDimensions, point.Length);
+        var transformed = new double[resultDimensions];
+        transformed[0] = x;
+        transformed[1] = y;
+        if (resultDimensions >= 3)
+        {
+            transformed[2] = z;
+        }
+
+        if (resultDimensions >= 4)
+        {
+            transformed[3] = t;
+            for (int i = 4; i < resultDimensions; i++)
+            {
+                transformed[i] = point[i];
+            }
+        }
+
+        return transformed;
     }
 
     /// <summary>
@@ -201,11 +228,39 @@ public abstract class MathTransform
             double x = point[0];
             double y = point[1];
             double z = point.Length < 3 ? 0 : point[2];
-            (x, y, z) = this.Transform(x, y, z);
+            double t = point.Length < 4 ? 0 : point[3];
 
-            result.Add(this.DimTarget == 2
-                ? new[] { x, y }
-                : new[] { x, y, z });
+            if (point.Length >= 4)
+            {
+                this.Transform(ref x, ref y, ref z, ref t);
+            }
+            else
+            {
+                this.Transform(ref x, ref y, ref z);
+            }
+
+            int minimumDimensions = this.DimTarget == 2 ? 2 : 3;
+            int resultDimensions = point.Length <= 3
+                ? minimumDimensions
+                : Math.Max(minimumDimensions, point.Length);
+            var transformed = new double[resultDimensions];
+            transformed[0] = x;
+            transformed[1] = y;
+            if (resultDimensions >= 3)
+            {
+                transformed[2] = z;
+            }
+
+            if (resultDimensions >= 4)
+            {
+                transformed[3] = t;
+                for (int i = 4; i < resultDimensions; i++)
+                {
+                    transformed[i] = point[i];
+                }
+            }
+
+            result.Add(transformed);
         }
 
         return result;
@@ -370,6 +425,18 @@ public abstract class MathTransform
         var inZs = read.Slice(2); // , read.Length - 2);
 
         this.TransformCore(inXs, inYs, inZs, 3, 3, 3);
+    }
+
+    /// <summary>
+    /// Transforms a single 4-dimensional point in-place.
+    /// </summary>
+    /// <param name="x">The ordinate value on the first axis, either x or longitude.</param>
+    /// <param name="y">The ordinate value on the second axis, either y or latitude.</param>
+    /// <param name="z">The ordinate value on the third axis, either z, height or altitude.</param>
+    /// <param name="t">The ordinate value on the fourth axis, typically observation epoch.</param>
+    internal virtual void Transform(ref double x, ref double y, ref double z, ref double t)
+    {
+        this.Transform(ref x, ref y, ref z);
     }
 
     /// <summary>

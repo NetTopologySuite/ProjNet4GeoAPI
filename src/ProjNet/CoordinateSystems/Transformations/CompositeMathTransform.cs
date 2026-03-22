@@ -122,4 +122,13 @@ internal sealed class CompositeMathTransform : MathTransform
             this.transforms[i].Transform(ref x, ref y, ref z);
         }
     }
+
+    /// <inheritdoc />
+    internal override void Transform(ref double x, ref double y, ref double z, ref double t)
+    {
+        for (int i = 0; i < this.transforms.Length; i++)
+        {
+            this.transforms[i].Transform(ref x, ref y, ref z, ref t);
+        }
+    }
 }

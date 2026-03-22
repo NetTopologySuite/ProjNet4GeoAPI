@@ -49,7 +49,7 @@ public class Phase5PipelineRuntimeTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
-    public void PipelineWithNoopSetAndUnitConvertAppliesRelevantStep()
+    public void PipelineWithNoopSetAndUnitConvertAppliesSetOverride()
     {
         const string operation = "+proj=pipeline +step +proj=noop +step +proj=set +v_3=17 +step +proj=unitconvert +xy_in=km +xy_out=m";
 
@@ -60,7 +60,7 @@ public class Phase5PipelineRuntimeTests
 
         Assert.Equal(1500d, transformed[0], 10);
         Assert.Equal(2250d, transformed[1], 10);
-        Assert.Equal(9d, transformed[2], 10);
+        Assert.Equal(17d, transformed[2], 10);
     }
 
     /// <summary>
@@ -75,5 +75,24 @@ public class Phase5PipelineRuntimeTests
 
         Assert.False(ok);
         Assert.Contains("+order", skipReason, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Verifies 4D epoch propagation through composite pipelines with kinematic Helmert.
+    /// </summary>
+    [Fact]
+    public void PipelineWithKinematicHelmertPreservesEpochAndAppliesDynamicParameters()
+    {
+        const string operation = "+proj=pipeline +step +proj=noop +step +proj=helmert +convention=position_vector +x=0.0127 +dx=-0.0029 +rx=-0.00039 +drx=-0.00011 +y=0.0065 +dy=-0.0002 +ry=0.00080 +dry=-0.00019 +z=-0.0209 +dz=-0.0006 +rz=-0.00114 +drz=0.00007 +s=0.00195 +ds=0.00001 +t_epoch=1988.0";
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+
+        Assert.True(ok, skipReason);
+        double[] transformed = transform.Transform([3370658.37800d, 711877.31400d, 5349787.08600d, 2018.0d]);
+
+        Assert.Equal(4, transformed.Length);
+        Assert.InRange(Math.Abs(transformed[0] - 3370658.18087d), 0d, 1e-4d);
+        Assert.InRange(Math.Abs(transformed[1] - 711877.42750d), 0d, 1e-4d);
+        Assert.InRange(Math.Abs(transformed[2] - 5349787.12648d), 0d, 1e-4d);
+        Assert.InRange(Math.Abs(transformed[3] - 2018.0d), 0d, 1e-12d);
     }
 }
