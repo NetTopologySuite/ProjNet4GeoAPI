@@ -18,7 +18,6 @@ namespace ProjNet.CoordinateSystems.Transformations;
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 /// <summary>
 /// Represents a transformation that executes a sequence of coordinate transformations in order.
@@ -51,6 +50,16 @@ internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationC
     public ConcatenatedTransform(IEnumerable<ICoordinateTransformationCore> transformList)
         : this()
     {
+        if (transformList is null)
+        {
+            throw new ArgumentNullException(nameof(transformList));
+        }
+
+        if (transformList is ICollection<ICoordinateTransformationCore> collection)
+        {
+            this.coordinateTransformationList.Capacity = collection.Count;
+        }
+
         this.coordinateTransformationList.AddRange(transformList);
     }
 
@@ -110,14 +119,7 @@ internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationC
     {
         foreach (var ctc in this.coordinateTransformationList)
         {
-            if (ctc is CoordinateTransformation ct)
-            {
-                ct.MathTransform.Transform(ref x, ref y, ref z);
-            }
-            else if (ctc is ConcatenatedTransform cct)
-            {
-                cct.Transform(ref x, ref y, ref z);
-            }
+            TransformCore(ctc, ref x, ref y, ref z);
         }
     }
 
@@ -127,7 +129,7 @@ internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationC
     /// <returns>IMathTransform that is the reverse of the current conversion.</returns>
     public override MathTransform Inverse()
     {
-        if (this.inverse == null)
+        if (this.inverse is null)
         {
             this.inverse = this.Clone();
             this.inverse.Invert();
@@ -175,19 +177,36 @@ internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationC
     {
         foreach (var ctc in this.coordinateTransformationList)
         {
-            if (ctc is CoordinateTransformation ct)
-            {
-                ct.MathTransform.Transform(ref x, ref y, ref z, ref t);
-            }
-            else if (ctc is ConcatenatedTransform cct)
-            {
-                cct.Transform(ref x, ref y, ref z, ref t);
-            }
+            TransformCore(ctc, ref x, ref y, ref z, ref t);
         }
     }
 
     private static ICoordinateTransformationCore CloneCoordinateTransformation(ICoordinateTransformationCore ict)
     {
         return CoordinateTransformationFactory.CreateFromCoordinateSystems(ict.SourceCS, ict.TargetCS);
+    }
+
+    private static void TransformCore(ICoordinateTransformationCore transformation, ref double x, ref double y, ref double z)
+    {
+        if (transformation is CoordinateTransformation coordinateTransformation)
+        {
+            coordinateTransformation.MathTransform.Transform(ref x, ref y, ref z);
+        }
+        else if (transformation is ConcatenatedTransform concatenatedTransform)
+        {
+            concatenatedTransform.Transform(ref x, ref y, ref z);
+        }
+    }
+
+    private static void TransformCore(ICoordinateTransformationCore transformation, ref double x, ref double y, ref double z, ref double t)
+    {
+        if (transformation is CoordinateTransformation coordinateTransformation)
+        {
+            coordinateTransformation.MathTransform.Transform(ref x, ref y, ref z, ref t);
+        }
+        else if (transformation is ConcatenatedTransform concatenatedTransform)
+        {
+            concatenatedTransform.Transform(ref x, ref y, ref z, ref t);
+        }
     }
 }

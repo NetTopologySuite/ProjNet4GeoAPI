@@ -30,6 +30,9 @@ internal static class ProjPipelineMathTransformFactory
 {
     private static readonly char[] CommaSeparator = [','];
     private static readonly char[] OperationTokenSeparators = [' ', '\t'];
+    private static readonly string[] HorizontalGridExtensions = [".gsb", ".tif", ".tiff"];
+    private static readonly string[] VerticalGridExtensions = [".gtx", ".tif", ".tiff"];
+    private static readonly string[] XyzGridExtensions = [".tif", ".tiff"];
 
     /// <summary>
     /// Tries to create an executable transform from a full operation or pipeline definition.
@@ -310,27 +313,14 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
-        for (int i = 0; i < gridPaths.Count; i++)
+        if (!TryValidateGridExtensions(gridPaths, HorizontalGridExtensions, "horizontal", out skipReason))
         {
-            string extension = Path.GetExtension(gridPaths[i]);
-            if (!extension.Equals(".gsb", StringComparison.OrdinalIgnoreCase)
-                && !extension.Equals(".tif", StringComparison.OrdinalIgnoreCase)
-                && !extension.Equals(".tiff", StringComparison.OrdinalIgnoreCase))
-            {
-                skipReason = "Grid '" + Path.GetFileName(gridPaths[i]) + "' is not a supported horizontal grid format (.gsb/.tif/.tiff).";
-                return false;
-            }
+            return false;
         }
 
         try
         {
-            bool hasGeoTiff = gridPaths.Any(
-                path =>
-                {
-                    string extension = Path.GetExtension(path);
-                    return extension.Equals(".tif", StringComparison.OrdinalIgnoreCase)
-                        || extension.Equals(".tiff", StringComparison.OrdinalIgnoreCase);
-                });
+            bool hasGeoTiff = ContainsGeoTiffGrid(gridPaths);
             transform = hasGeoTiff
                 ? (MathTransform)new GeoTiffHGridShiftMathTransform(gridPaths)
                 : new Ntv2HGridShiftMathTransform(gridPaths);
@@ -378,16 +368,9 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
-        for (int i = 0; i < gridPaths.Count; i++)
+        if (!TryValidateGridExtensions(gridPaths, VerticalGridExtensions, "vertical", out skipReason))
         {
-            string extension = Path.GetExtension(gridPaths[i]);
-            if (!extension.Equals(".gtx", StringComparison.OrdinalIgnoreCase)
-                && !extension.Equals(".tif", StringComparison.OrdinalIgnoreCase)
-                && !extension.Equals(".tiff", StringComparison.OrdinalIgnoreCase))
-            {
-                skipReason = "Grid '" + Path.GetFileName(gridPaths[i]) + "' is not a supported vertical grid format (.gtx/.tif/.tiff).";
-                return false;
-            }
+            return false;
         }
 
         double multiplier = -1d;
@@ -406,13 +389,7 @@ internal static class ProjPipelineMathTransformFactory
 
         try
         {
-            bool hasGeoTiff = gridPaths.Any(
-                path =>
-                {
-                    string extension = Path.GetExtension(path);
-                    return extension.Equals(".tif", StringComparison.OrdinalIgnoreCase)
-                        || extension.Equals(".tiff", StringComparison.OrdinalIgnoreCase);
-                });
+            bool hasGeoTiff = ContainsGeoTiffGrid(gridPaths);
             transform = hasGeoTiff
                 ? (MathTransform)new GeoTiffVGridShiftMathTransform(gridPaths, multiplier)
                 : new GtxVGridShiftMathTransform(gridPaths, multiplier);
@@ -460,15 +437,9 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
-        for (int i = 0; i < gridPaths.Count; i++)
+        if (!TryValidateGridExtensions(gridPaths, XyzGridExtensions, "xyz", out skipReason))
         {
-            string extension = Path.GetExtension(gridPaths[i]);
-            if (!extension.Equals(".tif", StringComparison.OrdinalIgnoreCase)
-                && !extension.Equals(".tiff", StringComparison.OrdinalIgnoreCase))
-            {
-                skipReason = "Grid '" + Path.GetFileName(gridPaths[i]) + "' is not a supported xyz grid format (.tif/.tiff).";
-                return false;
-            }
+            return false;
         }
 
         bool gridRefIsInput = true;
@@ -534,6 +505,59 @@ internal static class ProjPipelineMathTransformFactory
         }
 
         return true;
+    }
+
+    private static bool TryValidateGridExtensions(
+        IReadOnlyList<string> gridPaths,
+        IReadOnlyList<string> allowedExtensions,
+        string gridFamilyName,
+        out string skipReason)
+    {
+        skipReason = null;
+        string allowedList = string.Join("/", allowedExtensions);
+        for (int i = 0; i < gridPaths.Count; i++)
+        {
+            string path = gridPaths[i];
+            if (!IsPathWithAnyExtension(path, allowedExtensions))
+            {
+                skipReason = "Grid '" + Path.GetFileName(path) + "' is not a supported " + gridFamilyName + " grid format (" + allowedList + ").";
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool ContainsGeoTiffGrid(IReadOnlyList<string> gridPaths)
+    {
+        for (int i = 0; i < gridPaths.Count; i++)
+        {
+            if (IsGeoTiffPath(gridPaths[i]))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool IsGeoTiffPath(string path)
+    {
+        return IsPathWithAnyExtension(path, XyzGridExtensions);
+    }
+
+    private static bool IsPathWithAnyExtension(string path, IReadOnlyList<string> extensions)
+    {
+        string extension = Path.GetExtension(path);
+        for (int i = 0; i < extensions.Count; i++)
+        {
+            if (extension.Equals(extensions[i], StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static bool TryResolveGridPaths(
