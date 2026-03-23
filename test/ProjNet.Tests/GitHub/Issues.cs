@@ -19,7 +19,7 @@ namespace ProjNET.Tests.GitHub;
 
 using System;
 using System.Collections.Generic;
-using NUnit.Framework;
+using ProjNET.Tests.Testing;
 using ProjNet;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
@@ -257,3 +257,4 @@ public class Issues
         Assert.That(projectedCoordinateSystem.Remarks, Is.EqualTo(remarks));
     }
 }
+

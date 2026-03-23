@@ -18,7 +18,7 @@
 namespace ProjNET.Tests.WKT;
 
 using System;
-using NUnit.Framework;
+using ProjNET.Tests.Testing;
 using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.IO.CoordinateSystems;
 
@@ -103,3 +103,4 @@ public class WKTMathTransformParserTests
         Assert.IsNotNull(mt as AffineTransform);
     }
 }
+

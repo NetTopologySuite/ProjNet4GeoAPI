@@ -18,7 +18,7 @@
 namespace ProjNET.Tests.Serialization;
 
 using System;
-using NUnit.Framework;
+using ProjNET.Tests.Testing;
 using ProjNet.CoordinateSystems;
 
 /// <summary>
@@ -63,3 +63,4 @@ public class CoordinateSystemsProjectionsTest
         Assert.DoesNotThrow(() => coordinateSystemServices.CreateTransformation(utm17n_fromWKT, wgs84));
     }
 }
+

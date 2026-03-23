@@ -19,7 +19,7 @@ namespace ProjNET.Tests;
 
 using System;
 using System.Collections.Generic;
-using NUnit.Framework;
+using ProjNET.Tests.Testing;
 using ProjNet.CoordinateSystems;
 
 /// <summary>
@@ -376,3 +376,4 @@ public class ProjNetIssues : CoordinateTransformTestsBase
         Assert.AreEqual(coordinateSystem.AuthorityCode, 3857);
     }
 }
+

@@ -22,7 +22,7 @@ using System.Data;
 using System.IO;
 using Newtonsoft.Json.Linq;
 using Npgsql;
-using NUnit.Framework;
+using ProjNET.Tests.Testing;
 using ProjNet.CoordinateSystems;
 
 /// <summary>
@@ -191,3 +191,4 @@ public class SpatialRefSysTableParser
         }
     }
 }
+

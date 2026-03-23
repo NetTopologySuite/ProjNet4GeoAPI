@@ -25,7 +25,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
-using NUnit.Framework;
+using ProjNET.Tests.Testing;
 using ProjNet;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
@@ -201,7 +201,7 @@ public class CoordinateSystemServicesTest
     /// <returns>Sequence of SRID/WKT pairs.</returns>
     internal static IEnumerable<KeyValuePair<int, string>> LoadCsv(string csvPath = null)
     {
-        Console.WriteLine("Reading '{0}'.", csvPath ?? "SRID.csv from resources stream");
+        Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Reading '{0}'.", csvPath ?? "SRID.csv from resources stream"));
         var sw = new Stopwatch();
         sw.Start();
 
@@ -211,14 +211,14 @@ public class CoordinateSystemServicesTest
         }
 
         sw.Stop();
-        Console.WriteLine("Read '{1}' in {0:N0}ms", sw.ElapsedMilliseconds, csvPath ?? "SRID.csv from resources stream");
+        Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Read '{1}' in {0:N0}ms", sw.ElapsedMilliseconds, csvPath ?? "SRID.csv from resources stream"));
     }
 
     private static IEnumerable<KeyValuePair<int, string>> LoadXml(string xmlPath)
     {
         var stream = System.IO.File.OpenRead(xmlPath);
 
-        Console.WriteLine("Reading '{0}'.", xmlPath);
+        Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Reading '{0}'.", xmlPath));
         var sw = new Stopwatch();
         sw.Start();
 
@@ -237,7 +237,7 @@ public class CoordinateSystemServicesTest
         }
 
         sw.Stop();
-        Console.WriteLine("Read '{1}' in {0:N0}ms", sw.ElapsedMilliseconds, xmlPath);
+        Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Read '{1}' in {0:N0}ms", sw.ElapsedMilliseconds, xmlPath));
     }
 
     private sealed class TestManagedProvider : ICoordinateSystemDefinitionProvider, IManagedCoordinateSystemProvider
@@ -262,3 +262,4 @@ public class CoordinateSystemServicesTest
         }
     }
 }
+

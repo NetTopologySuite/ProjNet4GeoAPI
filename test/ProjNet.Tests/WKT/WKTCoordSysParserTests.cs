@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using NUnit.Framework;
+using ProjNET.Tests.Testing;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 
@@ -649,3 +649,4 @@ public class WKTCoordSysParserTests
         }
     }
 }
+

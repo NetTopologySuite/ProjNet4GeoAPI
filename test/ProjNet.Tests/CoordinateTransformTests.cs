@@ -20,7 +20,7 @@ namespace ProjNET.Tests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using NUnit.Framework;
+using ProjNET.Tests.Testing;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Projections;
 using ProjNet.CoordinateSystems.Transformations;
@@ -1425,3 +1425,4 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         return coordinateService.CreateTransformation(sourceCoordinateSystem, targetCoordinateSystem);
     }
 }
+
