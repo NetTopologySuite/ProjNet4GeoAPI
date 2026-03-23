@@ -89,6 +89,98 @@ public class Phase8TinShiftRuntimeTests
     }
 
     /// <summary>
+    /// Gets portable vectors harvested from PROJ <c>test_tinshift.cpp</c>.
+    /// </summary>
+    /// <returns>Forward case dataset.</returns>
+    public static IEnumerable<object[]> GetCppUnitForwardCases()
+    {
+        yield return Case(
+            BuildTinShiftOperation("tinshift_unit_basic_horizontal.json"),
+            CreatePoint(0d, 0d, 1000d),
+            CreatePoint(101d, 101d, 1000d),
+            1e-12d);
+
+        yield return Case(
+            BuildTinShiftOperation("tinshift_unit_basic_horizontal.json"),
+            CreatePoint(0d, 0.5d, 1000d),
+            CreatePoint(100.5d, 101d, 1000d),
+            1e-12d);
+
+        yield return Case(
+            BuildTinShiftOperation("tinshift_unit_basic_horizontal.json"),
+            CreatePoint(0.5d, 0.5d, 1000d),
+            CreatePoint(100.5d, 100.5d, 1000d),
+            1e-12d);
+
+        yield return Case(
+            BuildTinShiftOperation("tinshift_unit_vertical_source_target.json"),
+            CreatePoint(0d, 0d, 1000d),
+            CreatePoint(0d, 0d, 1000.1d),
+            1e-12d);
+
+        yield return Case(
+            BuildTinShiftOperation("tinshift_unit_vertical_source_target.json"),
+            CreatePoint(0.5d, 0.75d, 1000d),
+            CreatePoint(0.5d, 0.75d, 1000.325d),
+            1e-12d);
+
+        yield return Case(
+            BuildTinShiftOperation("tinshift_unit_vertical_offset.json"),
+            CreatePoint(0d, 0d, 1000d),
+            CreatePoint(0d, 0d, 1000.1d),
+            1e-12d);
+
+        yield return Case(
+            BuildTinShiftOperation("tinshift_unit_vertical_offset.json"),
+            CreatePoint(0.5d, 0.75d, 1000d),
+            CreatePoint(0.5d, 0.75d, 1000.325d),
+            1e-12d);
+
+        yield return Case(
+            BuildTinShiftOperation("tinshift_unit_horizontal_vertical.json"),
+            CreatePoint(0d, 0d, 1000d),
+            CreatePoint(101d, 101d, 1000.1d),
+            1e-12d);
+
+        yield return Case(
+            BuildTinShiftOperation("tinshift_unit_horizontal_vertical.json"),
+            CreatePoint(0.5d, 0.75d, 1000d),
+            CreatePoint(100.25d, 100.5d, 1000.325d),
+            1e-12d);
+    }
+
+    /// <summary>
+    /// Gets portable inverse vectors harvested from PROJ <c>test_tinshift.cpp</c>.
+    /// </summary>
+    /// <returns>Inverse case dataset.</returns>
+    public static IEnumerable<object[]> GetCppUnitInverseCases()
+    {
+        yield return Case(
+            BuildTinShiftOperation("tinshift_unit_basic_horizontal.json") + " +inv",
+            CreatePoint(100.25d, 100.5d, 1000d),
+            CreatePoint(0.5d, 0.75d, 1000d),
+            1e-12d);
+
+        yield return Case(
+            BuildTinShiftOperation("tinshift_unit_vertical_source_target.json") + " +inv",
+            CreatePoint(0.5d, 0.75d, 1000.325d),
+            CreatePoint(0.5d, 0.75d, 1000d),
+            1e-12d);
+
+        yield return Case(
+            BuildTinShiftOperation("tinshift_unit_vertical_offset.json") + " +inv",
+            CreatePoint(0.5d, 0.75d, 1000.325d),
+            CreatePoint(0.5d, 0.75d, 1000d),
+            1e-12d);
+
+        yield return Case(
+            BuildTinShiftOperation("tinshift_unit_horizontal_vertical.json") + " +inv",
+            CreatePoint(100.25d, 100.5d, 1000.325d),
+            CreatePoint(0.5d, 0.75d, 1000d),
+            1e-12d);
+    }
+
+    /// <summary>
     /// Verifies file argument validation paths.
     /// </summary>
     /// <param name="operation">Operation text.</param>
@@ -111,6 +203,16 @@ public class Phase8TinShiftRuntimeTests
         MathTransform transform = CreateTransform(BuildTinShiftOperation("tinshift_crs_implicit.json"));
         ArgumentException exception = Assert.Throws<ArgumentException>(() => transform.Transform(CreatePoint(0d, 0d, 0d)));
         Assert.Contains("failed", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Verifies the PROJ unit-case outside-triangle failure vector.
+    /// </summary>
+    [Fact]
+    public void TinShiftCppUnitReferenceOutsideTriangleFails()
+    {
+        MathTransform transform = CreateTransform(BuildTinShiftOperation("tinshift_unit_basic_horizontal.json"));
+        Assert.Throws<ArgumentException>(() => transform.Transform(CreatePoint(-0.1d, 0d, 1000d)));
     }
 
     /// <summary>
@@ -165,6 +267,38 @@ public class Phase8TinShiftRuntimeTests
         double[] projected = forward.Transform(input);
         double[] recovered = inverse.Transform(projected);
         AssertCoordinateClose(recovered, input, tolerance);
+    }
+
+    /// <summary>
+    /// Verifies harvested forward vectors from PROJ unit tests.
+    /// </summary>
+    /// <param name="operation">Operation text.</param>
+    /// <param name="input">Input coordinate.</param>
+    /// <param name="expected">Expected coordinate.</param>
+    /// <param name="tolerance">Maximum per-axis absolute tolerance.</param>
+    [Theory]
+    [MemberData(nameof(GetCppUnitForwardCases))]
+    public void TinShiftForwardVectorsMatchCppUnitReference(string operation, double[] input, double[] expected, double tolerance)
+    {
+        MathTransform transform = CreateTransform(operation);
+        double[] output = transform.Transform(input);
+        AssertCoordinateClose(output, expected, tolerance);
+    }
+
+    /// <summary>
+    /// Verifies harvested inverse vectors from PROJ unit tests.
+    /// </summary>
+    /// <param name="operation">Operation text.</param>
+    /// <param name="input">Input coordinate.</param>
+    /// <param name="expected">Expected coordinate.</param>
+    /// <param name="tolerance">Maximum per-axis absolute tolerance.</param>
+    [Theory]
+    [MemberData(nameof(GetCppUnitInverseCases))]
+    public void TinShiftInverseVectorsMatchCppUnitReference(string operation, double[] input, double[] expected, double tolerance)
+    {
+        MathTransform transform = CreateTransform(operation);
+        double[] output = transform.Transform(input);
+        AssertCoordinateClose(output, expected, tolerance);
     }
 
     private static object[] Case(string operation, double[] input, double[] expected, double tolerance)
