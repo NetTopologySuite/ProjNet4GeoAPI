@@ -49,7 +49,15 @@ Join the [![Gitter](https://img.shields.io/gitter/room/TechnologyAdvice/Stardust
 ### Modernization notes
 Concise modernization artifacts and rollout notes are tracked in:
 * `docs/modernization/`
-* `IMPLEMENTATION_PLAN.md`
+
+### v3 migration notes (major release)
+Version 3 introduces API modernization aligned with ongoing PROJ parity work.
+
+* The `CoordinateSystemFactory.CreateFromWkt` parameter name changed from `WKT` to `wkt` (non-breaking at runtime, but visible in API metadata/baseline output).
+* `MapProjection` constants were normalized to PascalCase (`FortPi`, `HalfPi`, `HugeVal`, `MaxVal`, `TwoPi`, `Eps10`, `Eps7`, `Epsln`, `DblLong`).
+* Legacy constant names remain available as `[Obsolete]` aliases (`FORT_PI`, `HALF_PI`, `HUGE_VAL`, `MAX_VAL`, `TWO_PI`, `FORTPI`, `HALFPI`, `HUGEVAL`, `MAXVAL`, `TWOPI`, `EPS10`, `EPS7`, `EPSLN`, `DBLLONG`) for migration compatibility.
+* Legacy projection field names remain available as `[Obsolete]` aliases (`central_meridian`, `false_easting`, `false_northing`, `lat_origin`, `scale_factor`) while internal code uses modernized names.
+* Public API review now tracks in both shipped (`PublicAPI.Shipped.txt`) and in-flight (`PublicAPI.Unshipped.txt`) baselines.
 
 ### Release validation checklist
 Current release hardening is validated with the following commands:
@@ -61,18 +69,51 @@ Current release hardening is validated with the following commands:
 
 ### Projection types currently supported:
 * Albers
+* Azimuthal Equidistant
+* Aitoff
 * Cassini Soldner
+* Bonne
+* Cylindrical Equal Area
+* Equal Earth
+* Equidistant Conic
+* Equidistant Cylindrical (Equirectangular / Plate Carree)
+* Gauss-Schreiber Transverse Mercator (Gauss-Laborde Reunion)
+* Geostationary Satellite
+* Gnomonic
+* Goode Homolosine
+* Hammer
+* HEALPix
+* Interrupted Goode Homolosine
 * Hotine Oblique Mercator
 * Krovak
+* Laborde
 * Lambert Azimuthal Equal Area
 * Lambert Conformal
 * Lambert Tangential Conformal Conic
+* LatLong / LongLat (identity)
+* Loximuthal
 * Mercator
 * Mercator Auxiliary Sphere
+* Miller Cylindrical
+* Mollweide
+* Natural Earth
+* Natural Earth 2
+* Near-Sided Perspective
+* New Zealand Map Grid
 * Oblique Mercator
 * Oblique Stereographic
 * Orthographic
+* Patterson
+* Perspective Conic
 * Polar Stereographic
+* Transverse Cylindrical Equal Area
+* Robinson
+* Sinusoidal
 * Polyconic
 * Pseudo Mercator
 * Transverse Mercator
+* Swiss Oblique Mercator
+* van der Grinten
+* Winkel I
+* Winkel II
+* Winkel Tripel

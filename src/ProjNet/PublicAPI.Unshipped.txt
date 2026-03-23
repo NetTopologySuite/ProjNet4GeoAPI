@@ -1,0 +1,36 @@
+# Public API additions and intentional metadata deltas pending ship
+
+# v3 API metadata change (parameter name casing)
+ProjNet.CoordinateSystems.CoordinateSystemFactory.CreateFromWkt(string wkt) -> parameter renamed from WKT to wkt
+
+# MapProjection compatibility aliases (obsolete)
+ProjNet.CoordinateSystems.Projections.MapProjection.FORTPI
+ProjNet.CoordinateSystems.Projections.MapProjection.HALFPI
+ProjNet.CoordinateSystems.Projections.MapProjection.HUGEVAL
+ProjNet.CoordinateSystems.Projections.MapProjection.MAXVAL
+ProjNet.CoordinateSystems.Projections.MapProjection.TWOPI
+ProjNet.CoordinateSystems.Projections.MapProjection.EPS10
+ProjNet.CoordinateSystems.Projections.MapProjection.EPS7
+ProjNet.CoordinateSystems.Projections.MapProjection.EPSLN
+ProjNet.CoordinateSystems.Projections.MapProjection.DBLLONG
+ProjNet.CoordinateSystems.Projections.MapProjection.FORT_PI
+ProjNet.CoordinateSystems.Projections.MapProjection.HALF_PI
+ProjNet.CoordinateSystems.Projections.MapProjection.HUGE_VAL
+ProjNet.CoordinateSystems.Projections.MapProjection.MAX_VAL
+ProjNet.CoordinateSystems.Projections.MapProjection.TWO_PI
+ProjNet.CoordinateSystems.Projections.MapProjection.central_meridian
+ProjNet.CoordinateSystems.Projections.MapProjection.false_easting
+ProjNet.CoordinateSystems.Projections.MapProjection.false_northing
+ProjNet.CoordinateSystems.Projections.MapProjection.lat_origin
+ProjNet.CoordinateSystems.Projections.MapProjection.scale_factor
+
+# MapProjection canonical PascalCase members
+ProjNet.CoordinateSystems.Projections.MapProjection.FortPi
+ProjNet.CoordinateSystems.Projections.MapProjection.HalfPi
+ProjNet.CoordinateSystems.Projections.MapProjection.HugeVal
+ProjNet.CoordinateSystems.Projections.MapProjection.MaxVal
+ProjNet.CoordinateSystems.Projections.MapProjection.TwoPi
+ProjNet.CoordinateSystems.Projections.MapProjection.Eps10
+ProjNet.CoordinateSystems.Projections.MapProjection.Eps7
+ProjNet.CoordinateSystems.Projections.MapProjection.Epsln
+ProjNet.CoordinateSystems.Projections.MapProjection.DblLong

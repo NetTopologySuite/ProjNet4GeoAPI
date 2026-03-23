@@ -84,7 +84,7 @@ namespace ProjNet.CoordinateSystems
         public ProjNet.CoordinateSystems.FittedCoordinateSystem CreateFittedCoordinateSystem(string name, ProjNet.CoordinateSystems.CoordinateSystem baseCoordinateSystem, ProjNet.CoordinateSystems.Transformations.MathTransform toBase, System.Collections.Generic.List<ProjNet.CoordinateSystems.AxisInfo> arAxes) { }
         public ProjNet.CoordinateSystems.FittedCoordinateSystem CreateFittedCoordinateSystem(string name, ProjNet.CoordinateSystems.CoordinateSystem baseCoordinateSystem, string toBaseWkt, System.Collections.Generic.List<ProjNet.CoordinateSystems.AxisInfo> arAxes) { }
         public ProjNet.CoordinateSystems.Ellipsoid CreateFlattenedSphere(string name, double semiMajorAxis, double inverseFlattening, ProjNet.CoordinateSystems.LinearUnit linearUnit) { }
-        public ProjNet.CoordinateSystems.CoordinateSystem CreateFromWkt(string WKT) { }
+        public ProjNet.CoordinateSystems.CoordinateSystem CreateFromWkt(string wkt) { }
         public ProjNet.CoordinateSystems.CoordinateSystem CreateFromXml(string xml) { }
         public ProjNet.CoordinateSystems.GeocentricCoordinateSystem CreateGeocentricCoordinateSystem(string name, ProjNet.CoordinateSystems.HorizontalDatum datum, ProjNet.CoordinateSystems.LinearUnit linearUnit, ProjNet.CoordinateSystems.PrimeMeridian primeMeridian) { }
         public ProjNet.CoordinateSystems.GeographicCoordinateSystem CreateGeographicCoordinateSystem(string name, ProjNet.CoordinateSystems.AngularUnit angularUnit, ProjNet.CoordinateSystems.HorizontalDatum datum, ProjNet.CoordinateSystems.PrimeMeridian primeMeridian, ProjNet.CoordinateSystems.AxisInfo axis0, ProjNet.CoordinateSystems.AxisInfo axis1) { }
@@ -369,19 +369,47 @@ namespace ProjNet.CoordinateSystems.Projections
     [System.Serializable]
     public abstract class MapProjection : ProjNet.CoordinateSystems.Transformations.MathTransform, ProjNet.CoordinateSystems.IInfo, ProjNet.CoordinateSystems.IProjection
     {
+        [System.Obsolete("Use DblLong instead.")]
         protected const double DBLLONG = 4.61168601E+18D;
+        protected const double DblLong = 4.61168601E+18D;
+        [System.Obsolete("Use Eps10 instead.")]
         protected const double EPS10 = 1E-10D;
+        [System.Obsolete("Use Eps7 instead.")]
         protected const double EPS7 = 1E-07D;
+        [System.Obsolete("Use Epsln instead.")]
         protected const double EPSLN = 1E-10D;
+        protected const double Eps10 = 1E-10D;
+        protected const double Eps7 = 1E-07D;
+        protected const double Epsln = 1E-10D;
+        [System.Obsolete("Use FortPi instead.")]
+        protected const double FORTPI = 0.7853981633974483D;
+        [System.Obsolete("Use FortPi instead.")]
         protected const double FORT_PI = 0.7853981633974483D;
+        protected const double FortPi = 0.7853981633974483D;
+        [System.Obsolete("Use HalfPi instead.")]
+        protected const double HALFPI = 1.5707963267948966D;
+        [System.Obsolete("Use HalfPi instead.")]
         protected const double HALF_PI = 1.5707963267948966D;
+        [System.Obsolete("Use HugeVal instead.")]
+        protected const double HUGEVAL = double.NaN;
+        [System.Obsolete("Use HugeVal instead.")]
         protected const double HUGE_VAL = double.NaN;
+        protected const double HalfPi = 1.5707963267948966D;
+        protected const double HugeVal = double.NaN;
+        [System.Obsolete("Use MaxVal instead.")]
+        protected const double MAXVAL = 4D;
+        [System.Obsolete("Use MaxVal instead.")]
         protected const double MAX_VAL = 4D;
+        protected const double MaxVal = 4D;
         protected const double PI = 3.141592653589793D;
         protected readonly ProjNet.CoordinateSystems.Projections.ProjectionParameterSet Parameters;
         protected const double S2R = 4.848136811095359E-06D;
+        [System.Obsolete("Use TwoPi instead.")]
+        protected const double TWOPI = 6.283185307179586D;
+        [System.Obsolete("Use TwoPi instead.")]
         protected const double TWO_PI = 6.283185307179586D;
-        protected double central_meridian;
+        protected const double TwoPi = 6.283185307179586D;
+        protected double centralMeridian;
         protected readonly double e;
         protected readonly double en0;
         protected readonly double en1;
@@ -389,14 +417,14 @@ namespace ProjNet.CoordinateSystems.Projections
         protected readonly double en3;
         protected readonly double en4;
         protected readonly double es;
-        protected readonly double false_easting;
-        protected readonly double false_northing;
+        protected readonly double falseEasting;
+        protected readonly double falseNorthing;
         protected ProjNet.CoordinateSystems.Transformations.MathTransform inverse;
-        protected readonly double lat_origin;
+        protected readonly double latOrigin;
         protected readonly double metersPerUnit;
         protected const double prjMAXLONG = 2147483647D;
         protected readonly double reciprocalMetersPerUnit;
-        protected readonly double scale_factor;
+        protected readonly double scaleFactor;
         protected readonly double semiMajor;
         protected readonly double semiMinor;
         protected MapProjection(System.Collections.Generic.IEnumerable<ProjNet.CoordinateSystems.ProjectionParameter> parameters) { }
@@ -417,6 +445,16 @@ namespace ProjNet.CoordinateSystems.Projections
         public string Remarks { get; set; }
         public override string WKT { get; }
         public override string XML { get; }
+        [System.Obsolete("Use centralMeridian instead.")]
+        protected double central_meridian { get; set; }
+        [System.Obsolete("Use falseEasting instead.")]
+        protected double false_easting { get; }
+        [System.Obsolete("Use falseNorthing instead.")]
+        protected double false_northing { get; }
+        [System.Obsolete("Use latOrigin instead.")]
+        protected double lat_origin { get; }
+        [System.Obsolete("Use scaleFactor instead.")]
+        protected double scale_factor { get; }
         protected virtual void DegreesToMeters(ref double lon, ref double lat) { }
         protected virtual void DegreesToMeters(System.Span<double> lons, System.Span<double> lats, int strideX, int strideY) { }
         protected virtual void DegreesToTarget(ref double lon, ref double lat) { }
@@ -444,7 +482,7 @@ namespace ProjNet.CoordinateSystems.Projections
         protected override sealed void TransformCore(System.Span<double> xs, System.Span<double> ys, System.Span<double> zs, int strideX, int strideY, int strideZ) { }
         protected static double Adjust_lon(double x) { }
         protected static double Asinz(double con) { }
-        protected static double Authlat(double beta, double[] APA) { }
+        protected static double Authlat(double beta, double[] apa) { }
         protected static double[] Authset(double es) { }
         protected static double CUBE(double x) { }
         public static long CalcUtmZone(double lon) { }
@@ -454,10 +492,10 @@ namespace ProjNet.CoordinateSystems.Projections
         protected static double E2fn(double x) { }
         protected static double E3fn(double x) { }
         protected static double E4fn(double x) { }
-        protected static double GMAX(ref double A, ref double B) { }
-        protected static double GMIN(ref double A, ref double B) { }
+        protected static double GMAX(ref double a, ref double b) { }
+        protected static double GMIN(ref double a, ref double b) { }
         protected static double Hypot(double x, double y) { }
-        protected static double IMOD(double A, double B) { }
+        protected static double IMOD(double a, double b) { }
         protected static double LatitudeToRadians(double y, bool edge) { }
         protected static double LongitudeToRadians(double x, bool edge) { }
         protected static double Mlfn(double e0, double e1, double e2, double e3, double phi) { }
@@ -477,8 +515,10 @@ namespace ProjNet.CoordinateSystems.Projections
         public ProjectionParameterSet(System.Collections.Generic.IEnumerable<ProjNet.CoordinateSystems.ProjectionParameter> parameters) { }
         public ProjectionParameterSet(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
         public bool Equals(ProjNet.CoordinateSystems.Projections.ProjectionParameterSet other) { }
+        public override bool Equals(object obj) { }
         public ProjNet.CoordinateSystems.ProjectionParameter Find(string name) { }
         public ProjNet.CoordinateSystems.ProjectionParameter GetAtIndex(int index) { }
+        public override int GetHashCode() { }
         public double GetOptionalParameterValue(string name, double value, params string[] alternateNames) { }
         public double GetParameterValue(string parameterName, params string[] alternateNames) { }
         public System.Collections.Generic.IEnumerable<ProjNet.CoordinateSystems.ProjectionParameter> ToProjectionParameter() { }
@@ -524,6 +564,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         public CoordinateTransformationFactory() { }
         public ProjNet.CoordinateSystems.Transformations.ICoordinateTransformation CreateFromCoordinateSystems(ProjNet.CoordinateSystems.CoordinateSystem sourceCS, ProjNet.CoordinateSystems.CoordinateSystem targetCS) { }
     }
+    [System.Flags]
     public enum DomainFlags
     {
         Inside = 1,
@@ -577,14 +618,14 @@ namespace ProjNet.CoordinateSystems.Transformations
         public double[] Transform(double[] point) { }
         public void Transform(System.Span<ProjNet.Geometries.XYZ> xyzs) { }
         [return: System.Runtime.CompilerServices.TupleElementNames(new string[] {
-                "x",
-                "y"})]
+                "X",
+                "Y"})]
         public System.ValueTuple<double, double> Transform(double x, double y) { }
         public void Transform(ref double x, ref double y) { }
         [return: System.Runtime.CompilerServices.TupleElementNames(new string[] {
-                "o1",
-                "o2",
-                "o3"})]
+                "O1",
+                "O2",
+                "O3"})]
         public System.ValueTuple<double, double, double> Transform(double x, double y, double z) { }
         public abstract void Transform(ref double x, ref double y, ref double z);
         public void Transform(System.Span<ProjNet.Geometries.XY> xys, System.Span<double> zs = default, int strideZ = 0) { }
@@ -633,6 +674,8 @@ namespace ProjNet.Geometries
         public override bool Equals(object obj) { }
         public override int GetHashCode() { }
         public override string ToString() { }
+        public static bool operator !=(ProjNet.Geometries.XY left, ProjNet.Geometries.XY right) { }
+        public static bool operator ==(ProjNet.Geometries.XY left, ProjNet.Geometries.XY right) { }
     }
     public struct XYZ : System.IEquatable<ProjNet.Geometries.XYZ>
     {
@@ -644,6 +687,8 @@ namespace ProjNet.Geometries
         public override bool Equals(object obj) { }
         public override int GetHashCode() { }
         public override string ToString() { }
+        public static bool operator !=(ProjNet.Geometries.XYZ left, ProjNet.Geometries.XYZ right) { }
+        public static bool operator ==(ProjNet.Geometries.XYZ left, ProjNet.Geometries.XYZ right) { }
     }
 }
 namespace ProjNet.IO.CoordinateSystems

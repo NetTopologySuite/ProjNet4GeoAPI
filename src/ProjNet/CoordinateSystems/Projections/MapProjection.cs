@@ -49,23 +49,24 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </summary>
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1051:Do not declare visible instance fields", Justification = "Legacy PROJ-compatible API surface is preserved for compatibility.")]
 [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Legacy PROJ-compatible API surface is preserved for compatibility.")]
+[System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1708:Identifiers should differ by more than case", Justification = "Obsolete compatibility aliases intentionally preserve legacy all-caps names alongside PascalCase names.")]
 [Serializable]
 public abstract class MapProjection : MathTransform, IProjection
 {
     /// <summary>
-    /// EPS10 => 1e-10.
+    /// Eps10 => 1e-10.
     /// </summary>
-    protected const double EPS10 = 1e-10;
+    protected const double Eps10 = 1e-10;
 
     /// <summary>
-    /// EPS7 => 1e-7.
+    /// Eps7 => 1e-7.
     /// </summary>
-    protected const double EPS7 = 1e-7;
+    protected const double Eps7 = 1e-7;
 
     /// <summary>
     /// HUGE_VAL => double.NaN.
     /// </summary>
-    protected const double HUGEVAL = double.NaN;
+    protected const double HugeVal = double.NaN;
 
     /// <summary>
     /// PI.
@@ -75,22 +76,22 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <summary>
     /// A fourth of <see cref="Math.PI"/>.
     /// </summary>
-    protected const double FORTPI = PI * 0.25;
+    protected const double FortPi = PI * 0.25;
 
     /// <summary>
     /// Half of PI.
     /// </summary>
-    protected const double HALFPI = PI * 0.5;
+    protected const double HalfPi = PI * 0.5;
 
     /// <summary>
     /// PI * 2.
     /// </summary>
-    protected const double TWOPI = PI * 2.0;
+    protected const double TwoPi = PI * 2.0;
 
     /// <summary>
-    /// EPSLN.
+    /// Epsln.
     /// </summary>
-    protected const double EPSLN = EPS10;
+    protected const double Epsln = Eps10;
 
     /// <summary>
     /// S2R.
@@ -100,7 +101,7 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <summary>
     /// MAX_VAL.
     /// </summary>
-    protected const double MAXVAL = 4;
+    protected const double MaxVal = 4;
 
     /// <summary>
     /// prjMAXLONG.
@@ -108,9 +109,53 @@ public abstract class MapProjection : MathTransform, IProjection
     protected const double prjMAXLONG = 2147483647;
 
     /// <summary>
-    /// DBLLONG.
+    /// DblLong.
     /// </summary>
-    protected const double DBLLONG = 4.61168601e18;
+    protected const double DblLong = 4.61168601e18;
+
+    // Backward-compatible aliases for legacy public API names.
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CA1707 // Identifiers should not contain underscores
+#pragma warning disable SA1300 // Element should begin with upper-case letter
+#pragma warning disable SA1303 // Const field names should begin with upper-case letter
+#pragma warning disable SA1307 // Accessible fields should begin with upper-case letter
+#pragma warning disable SA1310 // Field names should not contain underscore
+#pragma warning disable SA1600 // Elements should be documented
+    [Obsolete("Use FortPi instead.")]
+    protected const double FORTPI = FortPi;
+    [Obsolete("Use HalfPi instead.")]
+    protected const double HALFPI = HalfPi;
+    [Obsolete("Use HugeVal instead.")]
+    protected const double HUGEVAL = HugeVal;
+    [Obsolete("Use MaxVal instead.")]
+    protected const double MAXVAL = MaxVal;
+    [Obsolete("Use TwoPi instead.")]
+    protected const double TWOPI = TwoPi;
+    [Obsolete("Use Eps10 instead.")]
+    protected const double EPS10 = Eps10;
+    [Obsolete("Use Eps7 instead.")]
+    protected const double EPS7 = Eps7;
+    [Obsolete("Use Epsln instead.")]
+    protected const double EPSLN = Epsln;
+    [Obsolete("Use DblLong instead.")]
+    protected const double DBLLONG = DblLong;
+    [Obsolete("Use FortPi instead.")]
+    protected const double FORT_PI = FortPi;
+    [Obsolete("Use HalfPi instead.")]
+    protected const double HALF_PI = HalfPi;
+    [Obsolete("Use HugeVal instead.")]
+    protected const double HUGE_VAL = HugeVal;
+    [Obsolete("Use MaxVal instead.")]
+    protected const double MAX_VAL = MaxVal;
+    [Obsolete("Use TwoPi instead.")]
+    protected const double TWO_PI = TwoPi;
+#pragma warning restore SA1310
+#pragma warning restore SA1307
+#pragma warning restore SA1303
+#pragma warning restore SA1300
+#pragma warning restore CA1707
+#pragma warning restore CS1591
+#pragma warning restore SA1600
 
     // ReSharper disable InconsistentNaming
 
@@ -745,6 +790,46 @@ if (param.Value != proj.GetParameter(i).Value)
         set { this.centralMeridian = value; }
     }
 
+    // Backward-compatible aliases for legacy field names.
+#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
+#pragma warning disable CA1707 // Identifiers should not contain underscores
+#pragma warning disable SA1300 // Element should begin with upper-case letter
+#pragma warning disable SA1600 // Elements should be documented
+    [Obsolete("Use centralMeridian instead.")]
+    protected double central_meridian
+    {
+        get { return this.centralMeridian; }
+        set { this.centralMeridian = value; }
+    }
+
+    [Obsolete("Use falseEasting instead.")]
+    protected double false_easting
+    {
+        get { return this.falseEasting; }
+    }
+
+    [Obsolete("Use falseNorthing instead.")]
+    protected double false_northing
+    {
+        get { return this.falseNorthing; }
+    }
+
+    [Obsolete("Use latOrigin instead.")]
+    protected double lat_origin
+    {
+        get { return this.latOrigin; }
+    }
+
+    [Obsolete("Use scaleFactor instead.")]
+    protected double scale_factor
+    {
+        get { return this.scaleFactor; }
+    }
+#pragma warning restore SA1300
+#pragma warning restore CA1707
+#pragma warning restore CS1591
+#pragma warning restore SA1600
+
     /// <summary>
     /// Gets center latitude (projection center), same as lat_origin.
     /// </summary>
@@ -875,27 +960,27 @@ if (param.Value != proj.GetParameter(i).Value)
             }
             else if (((long)Math.Abs(x / Math.PI)) < 2)
             {
-                x = x - (Sign(x) * TWOPI);
+                x = x - (Sign(x) * TwoPi);
             }
-            else if (((long)Math.Abs(x / TWOPI)) < prjMAXLONG)
+            else if (((long)Math.Abs(x / TwoPi)) < prjMAXLONG)
             {
-                x = x - (((long)(x / TWOPI)) * TWOPI);
+                x = x - (((long)(x / TwoPi)) * TwoPi);
             }
-            else if (((long)Math.Abs(x / (prjMAXLONG * TWOPI))) < prjMAXLONG)
+            else if (((long)Math.Abs(x / (prjMAXLONG * TwoPi))) < prjMAXLONG)
             {
-                x = x - (((long)(x / (prjMAXLONG * TWOPI))) * (TWOPI * prjMAXLONG));
+                x = x - (((long)(x / (prjMAXLONG * TwoPi))) * (TwoPi * prjMAXLONG));
             }
-            else if (((long)Math.Abs(x / (DBLLONG * TWOPI))) < prjMAXLONG)
+            else if (((long)Math.Abs(x / (DblLong * TwoPi))) < prjMAXLONG)
             {
-                x = x - (((long)(x / (DBLLONG * TWOPI))) * (TWOPI * DBLLONG));
+                x = x - (((long)(x / (DblLong * TwoPi))) * (TwoPi * DblLong));
             }
             else
             {
-                x = x - (Sign(x) * TWOPI);
+                x = x - (Sign(x) * TwoPi);
             }
 
             count++;
-            if (count > MAXVAL)
+            if (count > MaxVal)
             {
                 break;
             }
@@ -949,7 +1034,7 @@ if (param.Value != proj.GetParameter(i).Value)
     /// <returns>The computed value.</returns>
     protected static double Qsfn(double sinphi, double eccent, double one_es)
     {
-        if (eccent >= EPS7)
+        if (eccent >= Eps7)
         {
             double con = eccent * sinphi;
             double div1 = 1.0 - (con * con);
@@ -958,7 +1043,7 @@ if (param.Value != proj.GetParameter(i).Value)
             /* avoid zero division, fail gracefully */
             if (div1 == 0.0 || div2 == 0.0)
             {
-                return HUGEVAL;
+                return HugeVal;
             }
 
             return one_es * ((sinphi / div1) - ((.5 / eccent) * Math.Log((1.0 - con) / div2)));
@@ -1000,7 +1085,7 @@ if (param.Value != proj.GetParameter(i).Value)
         con = eccent * sinphi;
         com = .5 * eccent;
         con = Math.Pow((1.0 - con) / (1.0 + con), com);
-        return Math.Tan(.5 * (HALFPI - phi)) / con;
+        return Math.Tan(.5 * (HalfPi - phi)) / con;
     }
 
     /// <summary>
@@ -1025,7 +1110,7 @@ if (param.Value != proj.GetParameter(i).Value)
         long i;
 
         phi = Asinz(.5 * qs);
-        if (eccent < EPSLN)
+        if (eccent < Epsln)
         {
             return phi;
         }
@@ -1089,12 +1174,12 @@ if (param.Value != proj.GetParameter(i).Value)
 
         flag = 0;
         double eccnth = .5 * eccent;
-        double chi = HALFPI - (2 * Math.Atan(ts));
+        double chi = HalfPi - (2 * Math.Atan(ts));
         for (i = 0; i <= 15; i++)
         {
             sinpi = Math.Sin(chi);
             con = eccent * sinpi;
-            dphi = HALFPI - (2 * Math.Atan(ts * Math.Pow((1.0 - con) / (1.0 + con), eccnth))) - chi;
+            dphi = HalfPi - (2 * Math.Atan(ts * Math.Pow((1.0 - con) / (1.0 + con), eccnth))) - chi;
             chi += dphi;
             if (Math.Abs(dphi) <= .0000000001)
             {
