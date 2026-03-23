@@ -144,6 +144,11 @@ internal static class ProjPipelineMathTransformFactory
             return DefModelMathTransform.TryCreate(args, out transform, out skipReason);
         }
 
+        if (projCode.Equals("tinshift", StringComparison.OrdinalIgnoreCase))
+        {
+            return TinShiftMathTransform.TryCreate(args, out transform, out skipReason);
+        }
+
         if (projCode.Equals("topocentric", StringComparison.OrdinalIgnoreCase))
         {
             return TopocentricMathTransform.TryCreate(args, out transform, out skipReason);
