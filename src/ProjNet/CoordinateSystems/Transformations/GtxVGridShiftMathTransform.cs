@@ -32,6 +32,7 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
     private readonly ReadOnlyCollection<GtxGrid> grids;
     private readonly double forwardMultiplier;
     private bool isInverted;
+    private MathTransform inverse;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GtxVGridShiftMathTransform"/> class.
@@ -71,6 +72,18 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
         this.forwardMultiplier = forwardMultiplier;
     }
 
+    private GtxVGridShiftMathTransform(GtxVGridShiftMathTransform source, bool isInverted)
+    {
+        if (source is null)
+        {
+            throw new ArgumentNullException(nameof(source));
+        }
+
+        this.grids = source.grids;
+        this.forwardMultiplier = source.forwardMultiplier;
+        this.isInverted = isInverted;
+    }
+
     /// <inheritdoc />
     public override int DimSource => 3;
 
@@ -92,16 +105,19 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
     /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        return new GtxVGridShiftMathTransform(this.grids.Select(grid => grid.SourcePath).ToArray(), this.forwardMultiplier)
+        if (this.inverse is null)
         {
-            isInverted = !this.isInverted,
-        };
+            this.inverse = new GtxVGridShiftMathTransform(this, !this.isInverted);
+        }
+
+        return this.inverse;
     }
 
     /// <inheritdoc />
     public override void Invert()
     {
         this.isInverted = !this.isInverted;
+        this.inverse = null;
     }
 
     /// <inheritdoc />

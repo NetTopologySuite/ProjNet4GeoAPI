@@ -37,6 +37,7 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
 
     private readonly ReadOnlyCollection<Ntv2GridSet> gridSets;
     private bool isInverted;
+    private MathTransform inverse;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Ntv2HGridShiftMathTransform"/> class.
@@ -69,6 +70,17 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
         this.gridSets = new ReadOnlyCollection<Ntv2GridSet>(sets);
     }
 
+    private Ntv2HGridShiftMathTransform(Ntv2HGridShiftMathTransform source, bool isInverted)
+    {
+        if (source is null)
+        {
+            throw new ArgumentNullException(nameof(source));
+        }
+
+        this.gridSets = source.gridSets;
+        this.isInverted = isInverted;
+    }
+
     /// <inheritdoc />
     public override int DimSource => 3;
 
@@ -90,16 +102,19 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
     /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        return new Ntv2HGridShiftMathTransform(this.gridSets.SelectMany(set => set.SourcePaths).ToArray())
+        if (this.inverse is null)
         {
-            isInverted = !this.isInverted,
-        };
+            this.inverse = new Ntv2HGridShiftMathTransform(this, !this.isInverted);
+        }
+
+        return this.inverse;
     }
 
     /// <inheritdoc />
     public override void Invert()
     {
         this.isInverted = !this.isInverted;
+        this.inverse = null;
     }
 
     /// <inheritdoc />

@@ -257,6 +257,7 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
     private const int MaxInverseIterations = 10;
     private readonly ReadOnlyCollection<HorizontalGrid> grids;
     private bool isInverted;
+    private MathTransform inverse;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GeoTiffHGridShiftMathTransform"/> class.
@@ -290,6 +291,17 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
             loadedGrids.OrderBy(grid => grid.Area, Comparer<double>.Default).ToArray());
     }
 
+    private GeoTiffHGridShiftMathTransform(GeoTiffHGridShiftMathTransform source, bool isInverted)
+    {
+        if (source is null)
+        {
+            throw new ArgumentNullException(nameof(source));
+        }
+
+        this.grids = source.grids;
+        this.isInverted = isInverted;
+    }
+
     /// <inheritdoc />
     public override int DimSource => 3;
 
@@ -311,16 +323,19 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
     /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        return new GeoTiffHGridShiftMathTransform(this.grids.Select(grid => grid.SourcePath).ToArray())
+        if (this.inverse is null)
         {
-            isInverted = !this.isInverted,
-        };
+            this.inverse = new GeoTiffHGridShiftMathTransform(this, !this.isInverted);
+        }
+
+        return this.inverse;
     }
 
     /// <inheritdoc />
     public override void Invert()
     {
         this.isInverted = !this.isInverted;
+        this.inverse = null;
     }
 
     /// <inheritdoc />
@@ -567,6 +582,7 @@ internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
     private readonly ReadOnlyCollection<VerticalGrid> grids;
     private readonly double forwardMultiplier;
     private bool isInverted;
+    private MathTransform inverse;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GeoTiffVGridShiftMathTransform"/> class.
@@ -607,6 +623,18 @@ internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
         this.forwardMultiplier = forwardMultiplier;
     }
 
+    private GeoTiffVGridShiftMathTransform(GeoTiffVGridShiftMathTransform source, bool isInverted)
+    {
+        if (source is null)
+        {
+            throw new ArgumentNullException(nameof(source));
+        }
+
+        this.grids = source.grids;
+        this.forwardMultiplier = source.forwardMultiplier;
+        this.isInverted = isInverted;
+    }
+
     /// <inheritdoc />
     public override int DimSource => 3;
 
@@ -628,16 +656,19 @@ internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
     /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        return new GeoTiffVGridShiftMathTransform(this.grids.Select(grid => grid.SourcePath).ToArray(), this.forwardMultiplier)
+        if (this.inverse is null)
         {
-            isInverted = !this.isInverted,
-        };
+            this.inverse = new GeoTiffVGridShiftMathTransform(this, !this.isInverted);
+        }
+
+        return this.inverse;
     }
 
     /// <inheritdoc />
     public override void Invert()
     {
         this.isInverted = !this.isInverted;
+        this.inverse = null;
     }
 
     /// <inheritdoc />
@@ -878,6 +909,7 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
     private readonly double multiplier;
     private readonly bool gridReferenceIsInput;
     private bool isInverted;
+    private MathTransform inverse;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GeoTiffXyzGridShiftMathTransform"/> class.
@@ -947,6 +979,22 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
         this.geocentricInverse = (GeocentricTransform)geocentricForward.Inverse();
     }
 
+    private GeoTiffXyzGridShiftMathTransform(GeoTiffXyzGridShiftMathTransform source, bool isInverted)
+    {
+        if (source is null)
+        {
+            throw new ArgumentNullException(nameof(source));
+        }
+
+        this.grids = source.grids;
+        this.geocentricInverse = source.geocentricInverse;
+        this.semiMajor = source.semiMajor;
+        this.semiMinor = source.semiMinor;
+        this.multiplier = source.multiplier;
+        this.gridReferenceIsInput = source.gridReferenceIsInput;
+        this.isInverted = isInverted;
+    }
+
     /// <inheritdoc />
     public override int DimSource => 3;
 
@@ -965,21 +1013,19 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
     /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        return new GeoTiffXyzGridShiftMathTransform(
-            this.grids.Select(grid => grid.SourcePath).ToArray(),
-            this.semiMajor,
-            this.semiMinor,
-            this.multiplier,
-            this.gridReferenceIsInput)
+        if (this.inverse is null)
         {
-            isInverted = !this.isInverted,
-        };
+            this.inverse = new GeoTiffXyzGridShiftMathTransform(this, !this.isInverted);
+        }
+
+        return this.inverse;
     }
 
     /// <inheritdoc />
     public override void Invert()
     {
         this.isInverted = !this.isInverted;
+        this.inverse = null;
     }
 
     /// <inheritdoc />
