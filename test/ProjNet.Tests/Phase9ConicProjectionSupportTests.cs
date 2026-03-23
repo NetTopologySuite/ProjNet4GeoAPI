@@ -52,16 +52,16 @@ public class Phase9ConicProjectionSupportTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Fact]
-    public void SupportsEqdcProjectionRoundtrip()
+    /// <param name="longitude">Input longitude in degrees.</param>
+    /// <param name="latitude">Input latitude in degrees.</param>
+    /// <param name="tolerance">Allowed roundtrip tolerance.</param>
+    [Theory]
+    [InlineData(9.6d, 43.2d, 1e-8d)]
+    public void SupportsEqdcProjectionRoundtrip(double longitude, double latitude, double tolerance)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt("eqdc"));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(GeographicCoordinateSystem.WGS84, projected);
         var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
-
-        const double longitude = 9.6d;
-        const double latitude = 43.2d;
-        const double tolerance = 1e-8d;
 
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
         double[] roundtrip = inverse.MathTransform.Transform(projectedPoint);
@@ -91,16 +91,16 @@ public class Phase9ConicProjectionSupportTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Fact]
-    public void SupportsBonneProjectionRoundtrip()
+    /// <param name="longitude">Input longitude in degrees.</param>
+    /// <param name="latitude">Input latitude in degrees.</param>
+    /// <param name="tolerance">Allowed roundtrip tolerance.</param>
+    [Theory]
+    [InlineData(12.8d, 31.4d, 1e-8d)]
+    public void SupportsBonneProjectionRoundtrip(double longitude, double latitude, double tolerance)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt("bonne"));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(GeographicCoordinateSystem.WGS84, projected);
         var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
-
-        const double longitude = 12.8d;
-        const double latitude = 31.4d;
-        const double tolerance = 1e-8d;
 
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
         double[] roundtrip = inverse.MathTransform.Transform(projectedPoint);
@@ -131,16 +131,16 @@ public class Phase9ConicProjectionSupportTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Fact]
-    public void SupportsPconicProjectionRoundtrip()
+    /// <param name="longitude">Input longitude in degrees.</param>
+    /// <param name="latitude">Input latitude in degrees.</param>
+    /// <param name="tolerance">Allowed roundtrip tolerance.</param>
+    [Theory]
+    [InlineData(-7.25d, 44.1d, 1e-8d)]
+    public void SupportsPconicProjectionRoundtrip(double longitude, double latitude, double tolerance)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt("pconic"));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(GeographicCoordinateSystem.WGS84, projected);
         var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
-
-        const double longitude = -7.25d;
-        const double latitude = 44.1d;
-        const double tolerance = 1e-8d;
 
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
         double[] roundtrip = inverse.MathTransform.Transform(projectedPoint);

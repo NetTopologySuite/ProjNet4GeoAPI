@@ -37,6 +37,9 @@ public class GieBuiltinsTheoryTests
 
     private static readonly Dictionary<string, string> ProjectionClassByProjCode = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
+        ["adams_hemi"] = "adams_hemisphere_in_a_square",
+        ["adams_ws1"] = "adams_world_in_a_square_i",
+        ["adams_ws2"] = "adams_world_in_a_square_ii",
         ["aea"] = "albers",
         ["aeqd"] = "aeqd",
         ["cass"] = "cassini_soldner",
@@ -45,17 +48,123 @@ public class GieBuiltinsTheoryTests
         ["eqdc"] = "equidistant_conic",
         ["eqearth"] = "eqearth",
         ["eqc"] = "equidistant_cylindrical",
+        ["eck1"] = "eckert_i",
+        ["eck2"] = "eckert_ii",
+        ["eck3"] = "eckert_iii",
+        ["eck4"] = "eckert_iv",
+        ["eck5"] = "eckert_v",
+        ["putp1"] = "putnins_p1",
+        ["putp2"] = "putnins_p2",
+        ["putp3"] = "putnins_p3",
+        ["putp3p"] = "putnins_p3p",
+        ["putp4p"] = "putnins_p4p",
+        ["putp5"] = "putnins_p5",
+        ["putp5p"] = "putnins_p5p",
+        ["putp6"] = "putnins_p6",
+        ["putp6p"] = "putnins_p6p",
+        ["weren"] = "werenskiold_i",
+        ["kav7"] = "kavrayskiy_vii",
+        ["wag2"] = "wagner_ii",
+        ["wag3"] = "wagner_iii",
+        ["wag4"] = "wagner_iv",
+        ["wag5"] = "wagner_v",
+        ["wag6"] = "wagner_vi",
+        ["wag1"] = "wagner_i",
+        ["wag7"] = "wagner_vii",
+        ["kav5"] = "kavrayskiy_v",
+        ["qua_aut"] = "quartic_authalic",
+        ["fouc"] = "foucaut",
+        ["mbt_s"] = "mcbryde_thomas_flat_polar_sine",
+        ["cc"] = "central_cylindrical",
+        ["ccon"] = "central_conic",
+        ["lcca"] = "lambert_conformal_conic_alternative",
+        ["ocea"] = "oblique_cylindrical_equal_area",
+        ["oea"] = "oblated_equal_area",
+        ["rpoly"] = "rectangular_polyconic",
+        ["tpeqd"] = "two_point_equidistant",
+        ["august"] = "august_epicycloidal",
+        ["bacon"] = "bacon_globular",
+        ["apian"] = "apian_globular_i",
+        ["ortel"] = "ortelius_oval",
+        ["calcofi"] = "cal_coop_ocean_fish_invest_lines_stations",
+        ["col_urban"] = "colombia_urban",
+        ["comill"] = "compact_miller",
+        ["denoy"] = "denoyer_semi_elliptical",
+        ["fouc_s"] = "foucaut_sinusoidal",
+        ["gins8"] = "ginsburg_viii",
+        ["igh_o"] = "interrupted_goode_homolosine_oceanic_view",
+        ["imoll"] = "interrupted_mollweide",
+        ["imoll_o"] = "interrupted_mollweide_oceanic_view",
+        ["bertin1953"] = "bertin_1953",
+        ["lagrng"] = "lagrange",
+        ["larr"] = "larrivee",
+        ["lask"] = "laskowski",
+        ["euler"] = "euler",
+        ["murd1"] = "murd1",
+        ["murd2"] = "murd2",
+        ["murd3"] = "murd3",
+        ["tissot"] = "tissot",
+        ["vitk1"] = "vitk1",
+        ["imw_p"] = "international_map_of_the_world_polyconic",
+        ["mbtfpp"] = "mcbryde_thomas_flat_polar_parabolic",
+        ["mbtfpq"] = "mcbryde_thomas_flat_polar_quartic",
+        ["mbt_fps"] = "mcbryde_thomas_flat_pole_sine",
+        ["tcc"] = "transverse_central_cylindrical",
+        ["tobmerc"] = "tobler_mercator",
+        ["gall"] = "gall",
+        ["gn_sinu"] = "general_sinusoidal",
+        ["guyou"] = "guyou",
+        ["eck6"] = "eckert_vi",
+        ["mbtfps"] = "mcbryde_thomas_flat_polar_sinusoidal",
+        ["crast"] = "craster_parabolic",
+        ["fahey"] = "fahey",
+        ["collg"] = "collignon",
+        ["boggs"] = "boggs_eumorphic",
+        ["airy"] = "airy",
+        ["bipc"] = "bipolar_conic",
+        ["chamb"] = "chamberlin_trimetric",
+        ["hatano"] = "hatano_asymmetrical_equal_area",
+        ["nell"] = "nell",
+        ["nell_h"] = "nell_hammer",
+        ["nicol"] = "nicolosi_globular",
+        ["urm5"] = "urmaev_v",
+        ["urmfps"] = "urmaev_flat_polar_sinusoidal",
+        ["times"] = "times_projection",
         ["etmerc"] = "etmerc",
         ["gnom"] = "gnom",
         ["goode"] = "goode_homolosine",
+        ["geos"] = "geostationary_satellite",
+        ["gstmerc"] = "gauss_schreiber_transverse_mercator",
+        ["qsc"] = "quadrilateralized_spherical_cube",
+        ["rouss"] = "roussilhe_stereographic",
+        ["mil_os"] = "miller_oblated_stereographic",
+        ["lee_os"] = "lee_oblated_stereographic",
+        ["gs48"] = "modified_stereographic_48_us",
+        ["alsk"] = "modified_stereographic_alaska",
+        ["gs50"] = "modified_stereographic_50_us",
+        ["labrd"] = "laborde",
+        ["nsper"] = "near_sided_perspective",
+        ["tpers"] = "tilted_perspective",
+        ["nzmg"] = "new_zealand_map_grid",
         ["hammer"] = "hammer",
         ["healpix"] = "healpix",
+        ["rhealpix"] = "rhealpix",
+        ["s2"] = "s2",
+        ["spilhaus"] = "spilhaus",
+        ["airocean"] = "airocean",
+        ["isea"] = "icosahedral_snyder_equal_area",
+        ["mod_krovak"] = "mod_krovak",
+        ["leac"] = "leac",
+        ["som"] = "space_oblique_mercator",
+        ["misrsom"] = "space_oblique_mercator",
+        ["lsat"] = "space_oblique_mercator",
         ["igh"] = "interrupted_goode_homolosine",
         ["krovak"] = "krovak",
         ["laea"] = "lambert_azimuthal_equal_area",
         ["lcc"] = "lambert_conformal_conic_2sp",
         ["loxim"] = "loximuthal",
         ["merc"] = "mercator",
+        ["webmerc"] = "webmerc",
         ["mill"] = "miller_cylindrical",
         ["moll"] = "moll",
         ["natearth"] = "natearth",
@@ -63,14 +172,23 @@ public class GieBuiltinsTheoryTests
         ["omerc"] = "oblique_mercator",
         ["ortho"] = "orthographic",
         ["pconic"] = "perspective_conic",
+        ["peirce_q"] = "peirce_quincuncial",
         ["patterson"] = "patterson",
         ["poly"] = "polyconic",
         ["robin"] = "robin",
         ["sterea"] = "oblique_stereographic",
         ["stere"] = "polar_stereographic",
         ["sinu"] = "sinusoidal",
+        ["aitoff"] = "aitoff",
+        ["wink1"] = "winkel_i",
+        ["wink2"] = "winkel_ii",
+        ["wintri"] = "winkel_tripel",
+        ["vandg2"] = "van_der_grinten_ii",
+        ["vandg3"] = "van_der_grinten_iii",
+        ["vandg4"] = "van_der_grinten_iv",
         ["tmerc"] = "transverse_mercator",
         ["utm"] = "utm",
+        ["ups"] = "ups",
     };
 
     private static readonly HashSet<string> ConversionProjCodes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -79,9 +197,41 @@ public class GieBuiltinsTheoryTests
         "unitconvert",
         "pipeline",
         "latlong",
+        "latlon",
+        "lonlat",
         "longlat",
         "noop",
         "set",
+        "xyzgridshift",
+        "tinshift",
+    };
+
+    private static readonly HashSet<string> ProjectionsWithoutInverse = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+    {
+        "wink2",
+        "wag7",
+        "airy",
+        "chamb",
+        "boggs",
+        "nicol",
+        "urm5",
+        "august",
+        "bacon",
+        "apian",
+        "ortel",
+        "denoy",
+        "gins8",
+        "larr",
+        "lask",
+        "tcc",
+        "guyou",
+        "adams_hemi",
+        "adams_ws1",
+        "rpoly",
+        "bertin1953",
+        "vandg2",
+        "vandg3",
+        "vandg4",
     };
 
     private static readonly string[] RemainingFixtureFiles =
@@ -200,7 +350,7 @@ public class GieBuiltinsTheoryTests
         var testCase = rawCase as GieCase;
         if (testCase is null)
         {
-            Assert.Skip("GIE fixture not found under spec\\PROJ\\test\\gie.");
+            Assert.Skip("No applicable GIE case was produced from local fixtures for this data row.");
         }
 
         if (testCase.ExpectsFailure)
@@ -356,6 +506,12 @@ public class GieBuiltinsTheoryTests
         if (!ProjectionClassByProjCode.TryGetValue(projCode, out string projectionClass))
         {
             skipReason = "Projection '" + projCode + "' is not part of the current builtins wave.";
+            return false;
+        }
+
+        if (testCase.Direction == GieDirection.Inverse && ProjectionsWithoutInverse.Contains(projCode))
+        {
+            skipReason = "Projection '" + projCode + "' has no inverse in PROJ and is skipped for inverse direction.";
             return false;
         }
 
@@ -654,8 +810,143 @@ public class GieBuiltinsTheoryTests
 
         AddOptionalParameter(parameters, args, "lat_1", "standard_parallel_1");
         AddOptionalParameter(parameters, args, "lat_2", "standard_parallel_2");
+        AddOptionalParameter(parameters, args, "lat_1", "lat_1");
+        AddOptionalParameter(parameters, args, "lat_2", "lat_2");
+        AddOptionalParameter(parameters, args, "lat_ts", "lat_ts");
+        AddOptionalParameter(parameters, args, "lat_ts", "latitude_true_scale");
+        AddOptionalParameter(parameters, args, "lon_1", "lon_1");
+        AddOptionalParameter(parameters, args, "lon_2", "lon_2");
+        AddOptionalParameter(parameters, args, "lat_3", "lat_3");
+        AddOptionalParameter(parameters, args, "lon_3", "lon_3");
+        AddOptionalParameter(parameters, args, "lat_b", "lat_b");
         AddOptionalParameter(parameters, args, "alpha", "azimuth");
+        AddOptionalParameter(parameters, args, "azi", "azi");
+        AddOptionalParameter(parameters, args, "tilt", "tilt");
         AddOptionalParameter(parameters, args, "lonc", "longitude_of_center");
+        AddOptionalParameter(parameters, args, "h", "h");
+        AddOptionalParameter(parameters, args, "satellite_height", "h");
+        if (args.TryGetValue("shape", out string shapeToken))
+        {
+            if (!TryGetPeirceShapeCode(shapeToken, out double shapeCode))
+            {
+                return false;
+            }
+
+            ReplaceParameter(parameters, "shape", shapeCode);
+        }
+
+        AddOptionalParameter(parameters, args, "scrollx", "scrollx");
+        AddOptionalParameter(parameters, args, "scrolly", "scrolly");
+        if (args.TryGetValue("UVtoST", out string uvToStMode)
+            || args.TryGetValue("uvtost", out uvToStMode)
+            || args.TryGetValue("uv_to_st", out uvToStMode))
+        {
+            double uvToStCode;
+            if (uvToStMode.Equals("linear", StringComparison.OrdinalIgnoreCase))
+            {
+                uvToStCode = 0d;
+            }
+            else if (uvToStMode.Equals("quadratic", StringComparison.OrdinalIgnoreCase))
+            {
+                uvToStCode = 1d;
+            }
+            else if (uvToStMode.Equals("tangent", StringComparison.OrdinalIgnoreCase))
+            {
+                uvToStCode = 2d;
+            }
+            else if (uvToStMode.Equals("none", StringComparison.OrdinalIgnoreCase))
+            {
+                uvToStCode = 3d;
+            }
+            else if (!double.TryParse(uvToStMode, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out uvToStCode))
+            {
+                uvToStCode = double.NaN;
+            }
+
+            ReplaceParameter(parameters, "uv_to_st", uvToStCode);
+        }
+
+        AddOptionalParameter(parameters, args, "h_0", "h_0");
+        AddOptionalParameter(parameters, args, "m", "m");
+        AddOptionalParameter(parameters, args, "n", "n");
+        AddOptionalParameter(parameters, args, "q", "q");
+        AddOptionalParameter(parameters, args, "W", "W");
+        AddOptionalParameter(parameters, args, "theta", "theta");
+        AddOptionalParameter(parameters, args, "inc_angle", "inc_angle");
+        AddOptionalParameter(parameters, args, "ps_rev", "ps_rev");
+        AddOptionalParameter(parameters, args, "asc_lon", "asc_lon");
+        AddOptionalParameter(parameters, args, "path", "path");
+        AddOptionalParameter(parameters, args, "lsat", "lsat");
+        AddOptionalParameter(parameters, args, "rot", "rot");
+        AddOptionalParameter(parameters, args, "lon_1", "longitude1");
+        AddOptionalParameter(parameters, args, "lat_1", "latitude1");
+        AddOptionalParameter(parameters, args, "lon_2", "longitude2");
+        AddOptionalParameter(parameters, args, "lat_2", "latitude2");
+        if (args.TryGetValue("sweep", out string sweepAxis))
+        {
+            double sweepX = sweepAxis.Equals("x", StringComparison.OrdinalIgnoreCase) ? 1d : 0d;
+            ReplaceParameter(parameters, "sweep_x", sweepX);
+        }
+
+        if (args.TryGetValue("proj", out string projectionCode))
+        {
+            if (projectionCode.Equals("airocean", StringComparison.OrdinalIgnoreCase) && args.TryGetValue("orient", out string airoceanOrientation))
+            {
+                if (!TryGetAiroceanOrientationCode(airoceanOrientation, out double orientationCode))
+                {
+                    return false;
+                }
+
+                ReplaceParameter(parameters, "airocean_orient", orientationCode);
+            }
+
+            if (projectionCode.Equals("isea", StringComparison.OrdinalIgnoreCase))
+            {
+                if (args.TryGetValue("orient", out string iseaOrientation))
+                {
+                    if (!TryGetIseaOrientCode(iseaOrientation, out double orientCode))
+                    {
+                        return false;
+                    }
+
+                    ReplaceParameter(parameters, "isea_orient", orientCode);
+                }
+
+                if (args.TryGetValue("mode", out string iseaMode))
+                {
+                    if (!TryGetIseaModeCode(iseaMode, out double modeCode))
+                    {
+                        return false;
+                    }
+
+                    ReplaceParameter(parameters, "isea_mode", modeCode);
+                }
+
+                AddOptionalParameter(parameters, args, "resolution", "isea_resolution");
+                AddOptionalParameter(parameters, args, "aperture", "isea_aperture");
+                AddOptionalParameter(parameters, args, "azi", "isea_azimuth");
+            }
+
+            if (projectionCode.Equals("leac", StringComparison.OrdinalIgnoreCase) && args.ContainsKey("south"))
+            {
+                ReplaceParameter(parameters, "south", 1d);
+            }
+
+            if (projectionCode.Equals("ups", StringComparison.OrdinalIgnoreCase) && args.ContainsKey("south"))
+            {
+                ReplaceParameter(parameters, "south", 1d);
+            }
+        }
+
+        if (args.ContainsKey("no_cut"))
+        {
+            ReplaceParameter(parameters, "no_cut", 1d);
+        }
+
+        if (args.ContainsKey("ns") || args.ContainsKey("noskew"))
+        {
+            ReplaceParameter(parameters, "ns", 1d);
+        }
 
         if (args.TryGetValue("proj", out string projCode) && projCode.Equals("utm", StringComparison.OrdinalIgnoreCase))
         {
@@ -689,7 +980,7 @@ public class GieBuiltinsTheoryTests
             i++;
         }
 
-        if (i == 0 || !int.TryParse(digits.Substring(0, i), NumberStyles.Integer, CultureInfo.InvariantCulture, out int zone))
+        if (i == 0 || !int.TryParse(digits.AsSpan(0, i), NumberStyles.Integer, CultureInfo.InvariantCulture, out int zone))
         {
             return false;
         }
@@ -709,12 +1000,12 @@ public class GieBuiltinsTheoryTests
         string[] tokens = operation.Split(OperationTokenSeparators, StringSplitOptions.RemoveEmptyEntries);
         foreach (string token in tokens)
         {
-            if (token.Length == 0 || token[0] != '+')
+            if (token.Length == 0)
             {
                 continue;
             }
 
-            string body = token.Substring(1);
+            string body = token[0] == '+' ? token.Substring(1) : token;
             int index = body.IndexOf('=', StringComparison.Ordinal);
             if (index < 0)
             {
@@ -754,17 +1045,44 @@ public class GieBuiltinsTheoryTests
             return true;
         }
 
-        if (args.ContainsKey("a") || args.ContainsKey("b") || args.ContainsKey("rf") || args.ContainsKey("r"))
+        if (args.ContainsKey("gamma") || args.ContainsKey("pm"))
         {
             return true;
         }
 
-        if (args.ContainsKey("alpha") || args.ContainsKey("gamma") || args.ContainsKey("pm"))
+        if (args.ContainsKey("alpha"))
+        {
+            if (!args.TryGetValue("proj", out string projCode) || !projCode.Equals("ocea", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+        }
+
+        if (args.ContainsKey("zone"))
         {
             return true;
         }
 
-        if (args.ContainsKey("lat_ts") || args.ContainsKey("zone"))
+        if (args.ContainsKey("north_square") || args.ContainsKey("south_square"))
+        {
+            if (!args.TryGetValue("proj", out string projectionCodeForSquares)
+                || !projectionCodeForSquares.Equals("rhealpix", StringComparison.OrdinalIgnoreCase))
+            {
+                return true;
+            }
+
+            if (TryGetDouble(args, "north_square", out double northSquare) && Math.Abs(northSquare) > 1e-12d)
+            {
+                return true;
+            }
+
+            if (TryGetDouble(args, "south_square", out double southSquare) && Math.Abs(southSquare) > 1e-12d)
+            {
+                return true;
+            }
+        }
+
+        if (args.ContainsKey("czech"))
         {
             return true;
         }
@@ -790,7 +1108,126 @@ public class GieBuiltinsTheoryTests
             return false;
         }
 
-        return double.TryParse(raw, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value);
+        string token = raw.Trim();
+        bool radiansSuffix = token.EndsWith("r", StringComparison.OrdinalIgnoreCase);
+        if (radiansSuffix)
+        {
+            token = token[..^1];
+        }
+
+        if (!double.TryParse(token, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value))
+        {
+            return false;
+        }
+
+        if (radiansSuffix)
+        {
+            value = value * (180d / Math.PI);
+        }
+
+        return true;
+    }
+
+    private static bool TryGetAiroceanOrientationCode(string token, out double orientationCode)
+    {
+        orientationCode = 0d;
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return false;
+        }
+
+        string normalized = token.Trim();
+        if (double.TryParse(normalized, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out orientationCode))
+        {
+            return orientationCode == 0d || orientationCode == 1d;
+        }
+
+        orientationCode = normalized.ToLowerInvariant() switch
+        {
+            "vertical" => 0d,
+            "horizontal" => 1d,
+            _ => double.NaN,
+        };
+
+        return !double.IsNaN(orientationCode);
+    }
+
+    private static bool TryGetIseaOrientCode(string token, out double orientCode)
+    {
+        orientCode = 0d;
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return false;
+        }
+
+        string normalized = token.Trim();
+        if (double.TryParse(normalized, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out orientCode))
+        {
+            return orientCode == 0d || orientCode == 1d;
+        }
+
+        orientCode = normalized.ToLowerInvariant() switch
+        {
+            "isea" => 0d,
+            "pole" => 1d,
+            _ => double.NaN,
+        };
+
+        return !double.IsNaN(orientCode);
+    }
+
+    private static bool TryGetIseaModeCode(string token, out double modeCode)
+    {
+        modeCode = 0d;
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return false;
+        }
+
+        string normalized = token.Trim();
+        if (double.TryParse(normalized, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out modeCode))
+        {
+            return modeCode >= 0d && modeCode <= 3d;
+        }
+
+        modeCode = normalized.ToLowerInvariant() switch
+        {
+            "plane" => 0d,
+            "di" => 1d,
+            "dd" => 2d,
+            "hex" => 3d,
+            _ => double.NaN,
+        };
+
+        return !double.IsNaN(modeCode);
+    }
+
+    private static bool TryGetPeirceShapeCode(string token, out double shapeCode)
+    {
+        shapeCode = 0d;
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return false;
+        }
+
+        string normalized = token.Trim();
+        if (double.TryParse(normalized, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out shapeCode))
+        {
+            return true;
+        }
+
+        shapeCode = normalized.ToLowerInvariant() switch
+        {
+            "square" => 0d,
+            "diamond" => 1d,
+            "nhemisphere" => 2d,
+            "shemisphere" => 3d,
+            "horizontal" => 4d,
+            "vertical" => 5d,
+            _ => double.NaN,
+        };
+
+        return !double.IsNaN(shapeCode);
     }
 
     private static void AddOptionalParameter(List<ProjectionParameter> parameters, Dictionary<string, string> args, string sourceName, string targetName)
@@ -817,10 +1254,16 @@ public class GieBuiltinsTheoryTests
 
     private static string FindGiePath(string fileName)
     {
+        string direct = Path.Combine(AppContext.BaseDirectory, "Fixtures", "gie", fileName);
+        if (File.Exists(direct))
+        {
+            return direct;
+        }
+
         var current = new DirectoryInfo(AppContext.BaseDirectory);
         while (current is not null)
         {
-            string candidate = Path.Combine(current.FullName, "spec", "PROJ", "test", "gie", fileName);
+            string candidate = Path.Combine(current.FullName, "test", "ProjNet.Tests", "Fixtures", "gie", fileName);
             if (File.Exists(candidate))
             {
                 return candidate;
