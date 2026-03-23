@@ -75,7 +75,7 @@ internal class GnomonicProjection : MapProjection
         double cosLambda = Math.Cos(lambda);
 
         double cosC = (this.sinPhi0 * sinPhi) + (this.cosPhi0 * cosPhi * cosLambda);
-        if (cosC <= EPS10)
+        if (cosC <= Eps10)
         {
             lon = double.NaN;
             lat = double.NaN;
@@ -91,7 +91,7 @@ internal class GnomonicProjection : MapProjection
     protected override void MetersToRadians(ref double x, ref double y)
     {
         double rho = Hypot(x, y);
-        if (rho <= EPS10)
+        if (rho <= Eps10)
         {
             x = this.centralMeridian;
             y = this.latOrigin;

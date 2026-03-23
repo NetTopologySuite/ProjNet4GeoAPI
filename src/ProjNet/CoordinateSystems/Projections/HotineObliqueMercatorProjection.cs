@@ -73,7 +73,7 @@ internal class HotineObliqueMercatorProjection : MapProjection
         this.al = this.semiMajor * this.bl * this.scaleFactor * com / con;
 
         double f;
-        if (Math.Abs(this.latOrigin) < EPSLN)
+        if (Math.Abs(this.latOrigin) < Epsln)
         {
             // ts = 1.0;
             this.d = 1.0;
@@ -109,7 +109,7 @@ internal class HotineObliqueMercatorProjection : MapProjection
         this.Lon_origin = this.Lon_origin - (Asinz(g * Math.Tan(gama)) / this.bl);
 
         con = Math.Abs(this.latOrigin);
-        if ((con > EPSLN) && (Math.Abs(con - HALFPI) > EPSLN))
+        if ((con > Epsln) && (Math.Abs(con - HalfPi) > Epsln))
         {
             Sincos(gama, out this.singam, out this.cosgam);
             Sincos(this.azimuth, out this.sinaz, out this.cosaz);
@@ -171,7 +171,7 @@ internal class HotineObliqueMercatorProjection : MapProjection
     //    var sin_phi = Math.Sin(lat);
     //    var dlon = adjust_lon(lon - lon_origin);
     //    var vl = Math.Sin(_bl * dlon);
-    //    if (Math.Abs(Math.Abs(lat) - HALF_PI) > EPSLN)
+    //    if (Math.Abs(Math.Abs(lat) - HALF_PI) > Epsln)
     //    {
     //        var ts1 = tsfnz(_e, lat, sin_phi);
     //        var q = _el / (Math.Pow(ts1, _bl));
@@ -198,7 +198,7 @@ internal class HotineObliqueMercatorProjection : MapProjection
     //            ul = -_singam;
     //        us = _al * lat / _bl;
     //    }
-    //    if (Math.Abs(Math.Abs(ul) - 1.0) <= EPSLN)
+    //    if (Math.Abs(Math.Abs(ul) - 1.0) <= Epsln)
     //    {
     //        throw new InvalidOperationException("Point projects into infinity");
     //    }
@@ -223,7 +223,7 @@ internal class HotineObliqueMercatorProjection : MapProjection
         double sin_phi = Math.Sin(lat);
         double dlon = Adjust_lon(lon - this.Lon_origin);
         double vl = Math.Sin(this.bl * dlon);
-        if (Math.Abs(Math.Abs(lat) - HALFPI) > EPSLN)
+        if (Math.Abs(Math.Abs(lat) - HalfPi) > Epsln)
         {
             double ts1 = Tsfnz(this.e, lat, sin_phi);
             double q = this.el / Math.Pow(ts1, this.bl);
@@ -258,7 +258,7 @@ internal class HotineObliqueMercatorProjection : MapProjection
             us = this.al * lat / this.bl;
         }
 
-        if (Math.Abs(Math.Abs(ul) - 1.0) <= EPSLN)
+        if (Math.Abs(Math.Abs(ul) - 1.0) <= Epsln)
         {
             throw new InvalidOperationException("Point projects into infinity");
         }
@@ -290,10 +290,10 @@ internal class HotineObliqueMercatorProjection : MapProjection
         double t = .5 * (q + (1.0 / q));
         double vl = Math.Sin(this.bl * us / this.al);
         double ul = ((vl * this.cosgam) + (s * this.singam)) / t;
-        if (Math.Abs(Math.Abs(ul) - 1.0) <= EPSLN)
+        if (Math.Abs(Math.Abs(ul) - 1.0) <= Epsln)
         {
             x = this.Lon_origin;
-            y = Sign(ul) * HALFPI;
+            y = Sign(ul) * HalfPi;
         }
         else
         {

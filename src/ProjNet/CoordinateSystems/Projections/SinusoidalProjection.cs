@@ -96,12 +96,12 @@ internal class SinusoidalProjection : MapProjection
             double absPhi = Math.Abs(phiEllipsoid);
             double lambdaEllipsoid;
 
-            if (absPhi < HALFPI)
+            if (absPhi < HalfPi)
             {
                 double sinPhi = Math.Sin(phiEllipsoid);
                 lambdaEllipsoid = xUnit * Math.Sqrt(1d - (this.es * sinPhi * sinPhi)) / Math.Cos(phiEllipsoid);
             }
-            else if ((absPhi - EPS10) < HALFPI)
+            else if ((absPhi - Eps10) < HalfPi)
             {
                 lambdaEllipsoid = 0d;
             }
@@ -117,7 +117,7 @@ internal class SinusoidalProjection : MapProjection
 
         double phiSphere = yUnit;
         double cosPhiSphere = Math.Cos(phiSphere);
-        double lambdaSphere = Math.Abs(cosPhiSphere) <= EPS10 ? 0d : (xUnit / cosPhiSphere);
+        double lambdaSphere = Math.Abs(cosPhiSphere) <= Eps10 ? 0d : (xUnit / cosPhiSphere);
 
         x = Adjust_lon(this.centralMeridian + lambdaSphere);
         y = phiSphere;

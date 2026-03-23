@@ -1,0 +1,149 @@
+// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
+//
+// This file is part of ProjNet.
+// ProjNet is free software; you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// ProjNet is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with ProjNet; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+namespace ProjNet.CoordinateSystems.Projections;
+
+using System;
+using System.Collections.Generic;
+using ProjNet.CoordinateSystems.Transformations;
+
+/// <summary>
+/// Implements the spherical McBryde-Thomas Flat-Polar Quartic projection (<c>mbtfpq</c>).
+/// </summary>
+[Serializable]
+internal class McBrydeThomasFlatPolarQuarticProjection : MapProjection
+{
+    private const int Iterations = 20;
+    private const double IterationTolerance = 1e-7d;
+    private const double OneTol = 1.000001d;
+    private const double C = 1.70710678118654752440d;
+    private const double Rc = 0.58578643762690495119d;
+    private const double Fyc = 1.87475828462269495505d;
+    private const double Ryc = 0.53340209679417701685d;
+    private const double Fxc = 0.31245971410378249250d;
+    private const double Rxc = 3.20041258076506210122d;
+
+    private readonly double radius;
+    private readonly double inverseRadius;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="McBrydeThomasFlatPolarQuarticProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    public McBrydeThomasFlatPolarQuarticProjection(IEnumerable<ProjectionParameter> parameters)
+        : this(parameters, null)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="McBrydeThomasFlatPolarQuarticProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    /// <param name="inverse">Inverse transform instance when cloning.</param>
+    public McBrydeThomasFlatPolarQuarticProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+        : base(parameters, inverse)
+    {
+        this.Name = "McBryde_Thomas_Flat_Polar_Quartic";
+        this.radius = this.semiMajor * this.scaleFactor;
+        this.inverseRadius = 1d / this.radius;
+    }
+
+    /// <inheritdoc />
+    public override MathTransform Inverse()
+    {
+        if (this.inverse is null)
+        {
+            this.inverse = new McBrydeThomasFlatPolarQuarticProjection(this.Parameters.ToProjectionParameter(), this);
+        }
+
+        return this.inverse;
+    }
+
+    /// <inheritdoc />
+    protected override void RadiansToMeters(ref double lon, ref double lat)
+    {
+        double lambda = Adjust_lon(lon - this.centralMeridian);
+        double phi = lat;
+        double c = C * Math.Sin(phi);
+        for (int i = Iterations; i > 0; i--)
+        {
+            double delta = ((Math.Sin(0.5d * phi) + Math.Sin(phi) - c) / ((0.5d * Math.Cos(0.5d * phi)) + Math.Cos(phi)));
+            phi -= delta;
+            if (Math.Abs(delta) < IterationTolerance)
+            {
+                break;
+            }
+        }
+
+        double x = Fxc * lambda * (1d + ((2d * Math.Cos(phi)) / Math.Cos(0.5d * phi)));
+        double y = Fyc * Math.Sin(0.5d * phi);
+        lon = this.radius * x;
+        lat = this.radius * y;
+    }
+
+    /// <inheritdoc />
+    protected override void MetersToRadians(ref double x, ref double y)
+    {
+        double xx = x * this.inverseRadius;
+        double yy = y * this.inverseRadius;
+
+        double phi = Ryc * yy;
+        double t;
+        if (Math.Abs(phi) > 1d)
+        {
+            if (Math.Abs(phi) > OneTol)
+            {
+                throw new ArgumentException("Input data outside projection domain.");
+            }
+
+            if (phi < 0d)
+            {
+                t = -1d;
+                phi = -PI;
+            }
+            else
+            {
+                t = 1d;
+                phi = PI;
+            }
+        }
+        else
+        {
+            t = phi;
+            phi = 2d * Math.Asin(phi);
+        }
+
+        double lambda = Rxc * xx / (1d + ((2d * Math.Cos(phi)) / Math.Cos(0.5d * phi)));
+        phi = Rc * (t + Math.Sin(phi));
+        if (Math.Abs(phi) > 1d)
+        {
+            if (Math.Abs(phi) > OneTol)
+            {
+                throw new ArgumentException("Input data outside projection domain.");
+            }
+
+            phi = phi < 0d ? -HalfPi : HalfPi;
+        }
+        else
+        {
+            phi = Math.Asin(phi);
+        }
+
+        x = Adjust_lon(this.centralMeridian + lambda);
+        y = phi;
+    }
+}

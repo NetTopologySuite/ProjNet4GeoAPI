@@ -73,20 +73,20 @@ internal class MillerCylindricalProjection : MapProjection
             return;
         }
 
-        if (Math.Abs(Math.Abs(lat) - HALFPI) <= EPSLN)
+        if (Math.Abs(Math.Abs(lat) - HalfPi) <= Epsln)
         {
             throw new ArgumentException("Transformation cannot be computed at the poles.");
         }
 
         double lambda = Adjust_lon(lon - this.centralMeridian);
         lon = this.radius * lambda;
-        lat = this.radius * 1.25d * Math.Log(Math.Tan(FORTPI + (0.4d * lat)));
+        lat = this.radius * 1.25d * Math.Log(Math.Tan(FortPi + (0.4d * lat)));
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
         x = Adjust_lon(this.centralMeridian + (x * this.inverseRadius));
-        y = 2.5d * (Math.Atan(Math.Exp((0.8d * y) * this.inverseRadius)) - FORTPI);
+        y = 2.5d * (Math.Atan(Math.Exp((0.8d * y) * this.inverseRadius)) - FortPi);
     }
 }

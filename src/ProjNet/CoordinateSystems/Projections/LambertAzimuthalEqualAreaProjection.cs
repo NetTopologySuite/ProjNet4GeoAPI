@@ -75,16 +75,16 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
         double phi0 = this.latOrigin;
 
         double t = Math.Abs(phi0);
-        if (t > HALFPI + EPS10)
+        if (t > HalfPi + Eps10)
         {
             throw new ArgumentException("Latitude of origin is outside the valid range.", nameof(parameters));
         }
 
-        if (Math.Abs(t - HALFPI) < EPS10)
+        if (Math.Abs(t - HalfPi) < Eps10)
         {
             this.mode = phi0 < 0.0 ? Mode.S_POLE : Mode.N_POLE;
         }
-        else if (Math.Abs(t) < EPS10)
+        else if (Math.Abs(t) < Eps10)
         {
             this.mode = Mode.EQUIT;
         }
@@ -232,18 +232,18 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
                 b = 1.0 + (cosb * coslam);
                 break;
             case Mode.N_POLE:
-                b = HALFPI + phi;
+                b = HalfPi + phi;
                 q = this.qp - q;
                 break;
             case Mode.S_POLE:
-                b = phi - HALFPI;
+                b = phi - HalfPi;
                 q = this.qp + q;
                 break;
         }
 
-        double x = HUGEVAL;
-        double y = HUGEVAL;
-        if (Math.Abs(b) < EPS10)
+        double x = HugeVal;
+        double y = HugeVal;
+        if (Math.Abs(b) < Eps10)
         {
             // proj_errno_set(P, PJD_ERR_TOLERANCE_CONDITION);
             return;
@@ -290,8 +290,8 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
         double cosphi = Math.Cos(phi);
         double coslam = Math.Sin(lam);
 
-        double x = HUGEVAL;
-        double y = HUGEVAL;
+        double x = HugeVal;
+        double y = HugeVal;
 
         switch (this.mode)
         {
@@ -301,7 +301,7 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
             case Mode.OBLIQ:
                 y = 1.0 + (this.sinb1 * sinphi) + (this.cosb1 * cosphi * coslam);
             oblcon:
-                if (y <= EPS10)
+                if (y <= Eps10)
                 {
                     // proj_errno_set(P, PJD_ERR_TOLERANCE_CONDITION);
                     return;
@@ -318,13 +318,13 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
             /*-fallthrough*/
             case Mode.S_POLE:
             continue_S_POLE:
-                if (Math.Abs(phi + this.latOrigin) < EPS10)
+                if (Math.Abs(phi + this.latOrigin) < Eps10)
                 {
                     // proj_errno_set(P, PJD_ERR_TOLERANCE_CONDITION);
                     return;
                 }
 
-                y = FORTPI - (phi * 0.5);
+                y = FortPi - (phi * 0.5);
                 y = 2.0 * (this.mode == Mode.S_POLE ? Math.Cos(y) : Math.Sin(y));
                 x = y * Math.Sin(lam);
                 y *= coslam;
@@ -359,7 +359,7 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
                 x /= this.dd;
                 y *= this.dd;
                 rho = Hypot(x, y);
-                if (rho < EPS10)
+                if (rho < Eps10)
                 {
                     x = this.centralMeridian; // lam
                     y = this.latOrigin; // phi
@@ -432,22 +432,22 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
         switch (this.mode)
         {
             case Mode.EQUIT:
-                phi = Math.Abs(rh) <= EPS10 ? 0.0 : Math.Asin(y * sinz / rh);
+                phi = Math.Abs(rh) <= Eps10 ? 0.0 : Math.Asin(y * sinz / rh);
                 x *= sinz;
                 y = cosz * rh;
                 break;
             case Mode.OBLIQ:
-                phi = Math.Abs(rh) <= EPS10 ? this.latOrigin :
+                phi = Math.Abs(rh) <= Eps10 ? this.latOrigin :
                     Math.Asin((cosz * this.sinb1) + (y * sinz * this.cosb1 / rh));
                 x *= sinz * this.cosb1;
                 y = (cosz - (Math.Sin(phi) * this.sinb1)) * rh;
                 break;
             case Mode.N_POLE:
                 y = -y;
-                phi = HALFPI - phi;
+                phi = HalfPi - phi;
                 break;
             case Mode.S_POLE:
-                phi -= HALFPI;
+                phi -= HalfPi;
                 break;
         }
 

@@ -54,7 +54,7 @@ internal class EquidistantCylindricalProjection : MapProjection
 
         double standardParallel = DegreesToRadians(this.Parameters.GetOptionalParameterValue("standard_parallel_1", 0d, "latitude_of_true_scale"));
         this.cosStandardParallel = Math.Cos(standardParallel);
-        if (Math.Abs(this.cosStandardParallel) <= EPS10)
+        if (Math.Abs(this.cosStandardParallel) <= Eps10)
         {
             throw new ArgumentException("The standard parallel cannot be at the poles.");
         }

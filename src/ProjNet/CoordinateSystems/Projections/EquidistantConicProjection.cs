@@ -57,7 +57,7 @@ internal class EquidistantConicProjection : MapProjection
         double standardParallel1 = DegreesToRadians(this.Parameters.GetParameterValue("standard_parallel_1", "lat_1"));
         double standardParallel2 = DegreesToRadians(this.Parameters.GetOptionalParameterValue("standard_parallel_2", RadiansToDegrees(standardParallel1), "lat_2"));
 
-        if (Math.Abs(standardParallel1 - standardParallel2) <= EPS10)
+        if (Math.Abs(standardParallel1 - standardParallel2) <= Eps10)
         {
             this.n = Math.Sin(standardParallel1);
         }
@@ -66,7 +66,7 @@ internal class EquidistantConicProjection : MapProjection
             this.n = (Math.Cos(standardParallel1) - Math.Cos(standardParallel2)) / (standardParallel2 - standardParallel1);
         }
 
-        if (Math.Abs(this.n) <= EPS10)
+        if (Math.Abs(this.n) <= Eps10)
         {
             throw new ArgumentException("Invalid standard parallels for equidistant conic projection.");
         }
@@ -105,7 +105,7 @@ internal class EquidistantConicProjection : MapProjection
         double rho = Sign(this.n) * Math.Sqrt((xUnit * xUnit) + (rhoPrime * rhoPrime));
 
         double theta = 0d;
-        if (Math.Abs(rho) > EPS10)
+        if (Math.Abs(rho) > Eps10)
         {
             theta = Math.Atan2(xUnit, rhoPrime);
         }

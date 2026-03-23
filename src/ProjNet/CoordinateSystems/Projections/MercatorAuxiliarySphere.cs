@@ -75,7 +75,7 @@ internal class MercatorAuxiliarySphere : MapProjection
         double dLon = lon;
         double dLat = lat;
 
-        if (Math.Abs(Math.Abs(dLat) - HALFPI) <= EPSLN)
+        if (Math.Abs(Math.Abs(dLat) - HalfPi) <= Epsln)
         {
             throw new ArgumentException("Transformation cannot be computed at the poles.");
         }
@@ -106,7 +106,7 @@ internal class MercatorAuxiliarySphere : MapProjection
         // lon = central_meridian + X / (semiMajor * k0)
         // lat = PI/2 - 2 * atan( exp( -Y / (semiMajor * k0) ) )
         double ts = Math.Exp(-dY / (this.semiMajor * k0));
-        double dLat = HALFPI - (2 * Math.Atan(ts));
+        double dLat = HalfPi - (2 * Math.Atan(ts));
         double dLon = this.centralMeridian + (dX / (this.semiMajor * k0));
 
         x = dLon;

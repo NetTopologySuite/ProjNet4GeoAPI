@@ -77,7 +77,7 @@ internal class AzimuthalEquidistantProjection : MapProjection
         double cosC = (this.sinPhi0 * sinPhi) + (this.cosPhi0 * cosPhi * cosLambda);
         double c = Math.Acos(Clamp(cosC, -1d, 1d));
         double sinC = Math.Sin(c);
-        double k = Math.Abs(sinC) <= EPS10 ? 1d : c / sinC;
+        double k = Math.Abs(sinC) <= Eps10 ? 1d : c / sinC;
 
         lon = this.radius * k * cosPhi * Math.Sin(lambda);
         lat = this.radius * k * ((this.cosPhi0 * sinPhi) - (this.sinPhi0 * cosPhi * cosLambda));
@@ -87,7 +87,7 @@ internal class AzimuthalEquidistantProjection : MapProjection
     protected override void MetersToRadians(ref double x, ref double y)
     {
         double rho = Hypot(x, y);
-        if (rho <= EPS10)
+        if (rho <= Eps10)
         {
             x = this.centralMeridian;
             y = this.latOrigin;

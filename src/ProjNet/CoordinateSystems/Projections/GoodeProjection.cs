@@ -121,7 +121,7 @@ internal class GoodeProjection : MapProjection
         {
             phi = yUnit;
             double cosPhi = Math.Cos(phi);
-            lambda = Math.Abs(cosPhi) <= EPS10 ? 0d : (xUnit / cosPhi);
+            lambda = Math.Abs(cosPhi) <= Eps10 ? 0d : (xUnit / cosPhi);
         }
         else
         {
@@ -136,9 +136,9 @@ internal class GoodeProjection : MapProjection
     private static void MollweideForwardUnit(double lambda, double phi, out double x, out double y)
     {
         double theta;
-        if (Math.Abs(Math.Abs(phi) - HALFPI) < 1e-12)
+        if (Math.Abs(Math.Abs(phi) - HalfPi) < 1e-12)
         {
-            theta = Sign(phi) * HALFPI;
+            theta = Sign(phi) * HalfPi;
         }
         else
         {
@@ -165,7 +165,7 @@ internal class GoodeProjection : MapProjection
         double theta = Math.Asin(Clamp(y / Sqrt2, -1d, 1d));
         double cosTheta = Math.Cos(theta);
 
-        if (Math.Abs(cosTheta) <= EPS10)
+        if (Math.Abs(cosTheta) <= Eps10)
         {
             lambda = 0d;
         }

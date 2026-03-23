@@ -60,7 +60,7 @@ internal class PconicProjection : MapProjection
         double standardParallel2 = DegreesToRadians(this.Parameters.GetParameterValue("standard_parallel_2", "lat_2"));
         double delta = 0.5d * (standardParallel2 - standardParallel1);
         this.sig = 0.5d * (standardParallel2 + standardParallel1);
-        if (Math.Abs(delta) < EPS10 || Math.Abs(this.sig) < EPS10)
+        if (Math.Abs(delta) < Eps10 || Math.Abs(this.sig) < Eps10)
         {
             throw new ArgumentException("Illegal value for lat_1 and lat_2: |lat_1 - lat_2| and |lat_1 + lat_2| should be > 0.");
         }
@@ -70,7 +70,7 @@ internal class PconicProjection : MapProjection
         this.c1 = 1d / Math.Tan(this.sig);
 
         double latitudeOffset = this.latOrigin - this.sig;
-        if ((Math.Abs(latitudeOffset) - EPS10) >= HALFPI)
+        if ((Math.Abs(latitudeOffset) - Eps10) >= HalfPi)
         {
             throw new ArgumentException("Invalid value for lat_0/lat_1/lat_2: |lat_0 - 0.5 * (lat_1 + lat_2)| should be < 90°.");
         }

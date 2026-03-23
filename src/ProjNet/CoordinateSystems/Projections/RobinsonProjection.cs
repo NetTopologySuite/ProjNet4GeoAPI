@@ -113,7 +113,7 @@ internal class RobinsonProjection : MapProjection
 
     private static int GetLatitudeBand(double phiAbs)
     {
-        if (phiAbs >= HALFPI)
+        if (phiAbs >= HalfPi)
         {
             return CoeffX.Length - 2;
         }

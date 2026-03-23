@@ -135,7 +135,7 @@ internal class IghProjection : MapProjection
         {
             phi = localY;
             double cosPhi = Math.Cos(phi);
-            lambdaLocal = Math.Abs(cosPhi) <= EPS10 ? 0d : (localX / cosPhi);
+            lambdaLocal = Math.Abs(cosPhi) <= Eps10 ? 0d : (localX / cosPhi);
         }
 
         double lambda = lambdaLocal + zone.Lambda0;
@@ -260,13 +260,13 @@ internal class IghProjection : MapProjection
             case 0:
                 return ((lambda >= -D180 - EpsLn) && (lambda <= -D40 + EpsLn))
                     || (((lambda >= -D40 - EpsLn) && (lambda <= -DegreesToRadians(10d) + EpsLn))
-                        && ((phi >= D60 - EpsLn) && (phi <= HALFPI + EpsLn)));
+                        && ((phi >= D60 - EpsLn) && (phi <= HalfPi + EpsLn)));
             case 1:
                 return ((lambda >= -D40 - EpsLn) && (lambda <= D180 + EpsLn))
                     || (((lambda >= -D180 - EpsLn) && (lambda <= -D160 + EpsLn))
-                        && ((phi >= D50 - EpsLn) && (phi <= HALFPI + EpsLn)))
+                        && ((phi >= D50 - EpsLn) && (phi <= HalfPi + EpsLn)))
                     || (((lambda >= -DegreesToRadians(50d) - EpsLn) && (lambda <= -D40 + EpsLn))
-                        && ((phi >= D60 - EpsLn) && (phi <= HALFPI + EpsLn)));
+                        && ((phi >= D60 - EpsLn) && (phi <= HalfPi + EpsLn)));
             case 2:
                 return (lambda >= -D180 - EpsLn) && (lambda <= -D40 + EpsLn);
             case 3:
@@ -291,9 +291,9 @@ internal class IghProjection : MapProjection
     private static void MollweideForwardUnit(double lambda, double phi, out double x, out double y)
     {
         double theta;
-        if (Math.Abs(Math.Abs(phi) - HALFPI) < 1e-12)
+        if (Math.Abs(Math.Abs(phi) - HalfPi) < 1e-12)
         {
-            theta = Sign(phi) * HALFPI;
+            theta = Sign(phi) * HalfPi;
         }
         else
         {
@@ -319,7 +319,7 @@ internal class IghProjection : MapProjection
     {
         double theta = Math.Asin(Clamp(y / Sqrt2, -1d, 1d));
         double cosTheta = Math.Cos(theta);
-        if (Math.Abs(cosTheta) <= EPS10)
+        if (Math.Abs(cosTheta) <= Eps10)
         {
             lambda = 0d;
         }

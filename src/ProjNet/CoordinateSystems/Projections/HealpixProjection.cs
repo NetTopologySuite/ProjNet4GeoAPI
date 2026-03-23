@@ -29,7 +29,7 @@ internal class HealpixProjection : MapProjection
 {
     private static readonly double Phi0Limit = Math.Asin(2d / 3d);
     private const double QuarterPi = PI / 4d;
-    private const double HalfPi = PI / 2d;
+    private const double HalfPiLocal = PI / 2d;
 
     private readonly double radius;
     private readonly double inverseRadius;
@@ -134,7 +134,7 @@ internal class HealpixProjection : MapProjection
             capNumber = 3;
         }
 
-        double lambdaCenter = (-3d * QuarterPi) + (HalfPi * capNumber);
+        double lambdaCenter = (-3d * QuarterPi) + (HalfPiLocal * capNumber);
         x = lambdaCenter + ((lambda - lambdaCenter) * sigma);
         y = Sign(phi) * QuarterPi * (2d - sigma);
     }
@@ -148,7 +148,7 @@ internal class HealpixProjection : MapProjection
             return;
         }
 
-        if (Math.Abs(y) < HalfPi)
+        if (Math.Abs(y) < HalfPiLocal)
         {
             int capNumber = (int)Math.Floor((2d * x / PI) + 2d);
             if (capNumber < 0)
@@ -160,12 +160,12 @@ internal class HealpixProjection : MapProjection
                 capNumber = 3;
             }
 
-            double xCenter = (-3d * QuarterPi) + (HalfPi * capNumber);
+            double xCenter = (-3d * QuarterPi) + (HalfPiLocal * capNumber);
             double tau = 2d - ((4d * Math.Abs(y)) / PI);
-            if (Math.Abs(tau) <= EPS10)
+            if (Math.Abs(tau) <= Eps10)
             {
                 lambda = xCenter;
-                phi = Sign(y) * HalfPi;
+                phi = Sign(y) * HalfPiLocal;
                 return;
             }
 
@@ -175,12 +175,12 @@ internal class HealpixProjection : MapProjection
         }
 
         lambda = -PI;
-        phi = Sign(y) * HalfPi;
+        phi = Sign(y) * HalfPiLocal;
     }
 
     private static void Rotate(ref double x, ref double y, double angle)
     {
-        if (Math.Abs(angle) <= EPS10)
+        if (Math.Abs(angle) <= Eps10)
         {
             return;
         }

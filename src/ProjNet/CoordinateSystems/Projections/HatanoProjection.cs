@@ -1,0 +1,158 @@
+// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
+//
+// This file is part of ProjNet.
+// ProjNet is free software; you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// ProjNet is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with ProjNet; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+namespace ProjNet.CoordinateSystems.Projections;
+
+using System;
+using System.Collections.Generic;
+using ProjNet.CoordinateSystems.Transformations;
+
+/// <summary>
+/// Implements the spherical Hatano Asymmetrical Equal Area projection (<c>hatano</c>).
+/// </summary>
+[Serializable]
+internal class HatanoProjection : MapProjection
+{
+    private const int Iterations = 20;
+    private const double Epsilon = 1e-7d;
+    private const double OneTol = 1.000001d;
+    private const double Cn = 2.67595d;
+    private const double Csz = 2.43763d;
+    private const double Rcn = 0.37369906014686373063d;
+    private const double Rcs = 0.41023453108141924738d;
+    private const double Fycn = 1.75859d;
+    private const double Fycs = 1.93052d;
+    private const double Rycn = 0.56863737426006061674d;
+    private const double Rycs = 0.51799515156538134803d;
+    private const double Fxc = 0.85d;
+    private const double Rxc = 1.17647058823529411764d;
+
+    private readonly double radius;
+    private readonly double inverseRadius;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HatanoProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    public HatanoProjection(IEnumerable<ProjectionParameter> parameters)
+        : this(parameters, null)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HatanoProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    /// <param name="inverse">Inverse transform instance when cloning.</param>
+    public HatanoProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+        : base(parameters, inverse)
+    {
+        this.Name = "Hatano";
+        this.radius = this.semiMajor * this.scaleFactor;
+        this.inverseRadius = 1d / this.radius;
+    }
+
+    /// <inheritdoc />
+    public override MathTransform Inverse()
+    {
+        if (this.inverse is null)
+        {
+            this.inverse = new HatanoProjection(this.Parameters.ToProjectionParameter(), this);
+        }
+
+        return this.inverse;
+    }
+
+    /// <inheritdoc />
+    protected override void RadiansToMeters(ref double lon, ref double lat)
+    {
+        double lambda = Adjust_lon(lon - this.centralMeridian);
+        double phi = lat;
+        double c = Math.Sin(phi) * (phi < 0d ? Csz : Cn);
+        for (int i = Iterations; i > 0; i--)
+        {
+            double denominator = 1d + Math.Cos(phi);
+            if (Math.Abs(denominator) <= Eps10)
+            {
+                break;
+            }
+
+            double th1 = (phi + Math.Sin(phi) - c) / denominator;
+            phi -= th1;
+            if (Math.Abs(th1) < Epsilon)
+            {
+                break;
+            }
+        }
+
+        phi *= 0.5d;
+        double x = Fxc * lambda * Math.Cos(phi);
+        double y = Math.Sin(phi) * (phi < 0d ? Fycs : Fycn);
+
+        lon = this.radius * x;
+        lat = this.radius * y;
+    }
+
+    /// <inheritdoc />
+    protected override void MetersToRadians(ref double x, ref double y)
+    {
+        double xx = x * this.inverseRadius;
+        double yy = y * this.inverseRadius;
+        double th = yy * (yy < 0d ? Rycs : Rycn);
+        double absTh = Math.Abs(th);
+        if (absTh > 1d)
+        {
+            if (absTh > OneTol)
+            {
+                throw new ArgumentException("Input data outside projection domain.");
+            }
+
+            th = th > 0d ? HalfPi : -HalfPi;
+        }
+        else
+        {
+            th = Math.Asin(th);
+        }
+
+        double cosTh = Math.Cos(th);
+        if (Math.Abs(cosTh) <= Eps10)
+        {
+            throw new ArgumentException("Input data outside projection domain.");
+        }
+
+        double lambda = (Rxc * xx) / cosTh;
+        double thetaDouble = th + th;
+        double phi = (thetaDouble + Math.Sin(thetaDouble)) * (yy < 0d ? Rcs : Rcn);
+        double absPhi = Math.Abs(phi);
+        if (absPhi > 1d)
+        {
+            if (absPhi > OneTol)
+            {
+                throw new ArgumentException("Input data outside projection domain.");
+            }
+
+            phi = phi > 0d ? HalfPi : -HalfPi;
+        }
+        else
+        {
+            phi = Math.Asin(phi);
+        }
+
+        x = Adjust_lon(this.centralMeridian + lambda);
+        y = phi;
+    }
+}

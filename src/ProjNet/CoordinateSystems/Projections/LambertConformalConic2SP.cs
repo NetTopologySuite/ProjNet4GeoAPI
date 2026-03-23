@@ -132,7 +132,7 @@ internal class LambertConformalConic2SP : MapProjection
 
         /* Standard Parallels cannot be equal and on opposite sides of the equator
         ------------------------------------------------------------------------*/
-        if (Math.Abs(lat1 + lat2) < EPSLN)
+        if (Math.Abs(lat1 + lat2) < Epsln)
         {
             // Debug.Assert(true,"LambertConformalConic:LambertConformalConic() - Equal Latitiudes for St. Parallels on opposite sides of equator");
             throw new ArgumentException("Equal latitudes for St. Parallels on opposite sides of equator.");
@@ -148,7 +148,7 @@ internal class LambertConformalConic2SP : MapProjection
         sin_po = Math.Sin(this.latOrigin);
         ts0 = Tsfnz(this.e, this.latOrigin, sin_po);
 
-        if (Math.Abs(lat1 - lat2) > EPSLN)
+        if (Math.Abs(lat1 - lat2) > Epsln)
         {
             this.ns = Math.Log(ms1 / ms2) / Math.Log(ts1 / ts2);
         }
@@ -177,8 +177,8 @@ internal class LambertConformalConic2SP : MapProjection
         double theta;  /* angle                                */
         double ts;     /* small value t                        */
 
-        con = Math.Abs(Math.Abs(dLatitude) - HALFPI);
-        if (con > EPSLN)
+        con = Math.Abs(Math.Abs(dLatitude) - HalfPi);
+        if (con > Epsln)
         {
             sinphi = Math.Sin(dLatitude);
             ts = Tsfnz(this.e, dLatitude, sinphi);
@@ -245,7 +245,7 @@ internal class LambertConformalConic2SP : MapProjection
         }
         else
         {
-            y = -HALFPI;
+            y = -HalfPi;
         }
 
         x = Adjust_lon((theta / this.ns) + this.centralMeridian);

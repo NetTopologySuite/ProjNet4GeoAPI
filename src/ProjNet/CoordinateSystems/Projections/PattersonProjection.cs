@@ -57,7 +57,7 @@ internal class PattersonProjection : MapProjection
         this.Name = "Patterson";
         this.radius = this.semiMajor * this.scaleFactor;
         this.inverseRadius = 1d / this.radius;
-        this.maxY = ForwardPolynomial(HALFPI);
+        this.maxY = ForwardPolynomial(HalfPi);
     }
 
     /// <inheritdoc />
@@ -99,7 +99,7 @@ internal class PattersonProjection : MapProjection
             }
         }
 
-        y = Clamp(phi, -HALFPI, HALFPI);
+        y = Clamp(phi, -HalfPi, HalfPi);
     }
 
     private static double ForwardPolynomial(double phi)

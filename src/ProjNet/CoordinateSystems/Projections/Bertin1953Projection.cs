@@ -1,0 +1,122 @@
+// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
+//
+// This file is part of ProjNet.
+// ProjNet is free software; you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// ProjNet is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with ProjNet; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+namespace ProjNet.CoordinateSystems.Projections;
+
+using System;
+using System.Collections.Generic;
+using ProjNet.CoordinateSystems.Transformations;
+
+/// <summary>
+/// Implements the Bertin 1953 projection (<c>bertin1953</c>).
+/// </summary>
+[Serializable]
+internal sealed class Bertin1953Projection : MapProjection
+{
+    private const double Fu = 1.4d;
+    private const double K = 12d;
+    private const double W = 1.68d;
+    private const double DeltaPhi = -42d * PI / 180d;
+    private const double DeltaGamma = 0d;
+    private const double LambdaOffset = -16.5d * PI / 180d;
+
+    private readonly double radius;
+    private readonly double cosDeltaPhi;
+    private readonly double sinDeltaPhi;
+    private readonly double cosDeltaGamma;
+    private readonly double sinDeltaGamma;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Bertin1953Projection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    public Bertin1953Projection(IEnumerable<ProjectionParameter> parameters)
+        : base(parameters, null)
+    {
+        this.Name = "Bertin_1953";
+        this.radius = this.semiMajor * this.scaleFactor;
+        this.cosDeltaPhi = Math.Cos(DeltaPhi);
+        this.sinDeltaPhi = Math.Sin(DeltaPhi);
+        this.cosDeltaGamma = Math.Cos(DeltaGamma);
+        this.sinDeltaGamma = Math.Sin(DeltaGamma);
+    }
+
+    /// <inheritdoc />
+    public override MathTransform Inverse()
+    {
+        throw new InvalidOperationException("Bertin 1953 does not support inverse projection in this wave.");
+    }
+
+    /// <inheritdoc />
+    protected override void RadiansToMeters(ref double lon, ref double lat)
+    {
+        double lambda = lon + LambdaOffset;
+        double phi = lat;
+
+        double cosPhi = Math.Cos(phi);
+        double x = Math.Cos(lambda) * cosPhi;
+        double y = Math.Sin(lambda) * cosPhi;
+        double z = Math.Sin(phi);
+
+        double z0 = (z * this.cosDeltaPhi) + (x * this.sinDeltaPhi);
+        lambda = Math.Atan2(
+            (y * this.cosDeltaGamma) - (z0 * this.sinDeltaGamma),
+            (x * this.cosDeltaPhi) - (z * this.sinDeltaPhi));
+        z0 = (z0 * this.cosDeltaGamma) + (y * this.sinDeltaGamma);
+        phi = Asinz(z0);
+        lambda = Adjust_lon(lambda);
+
+        if ((lambda + phi) < -Fu)
+        {
+            double d = (lambda - phi + 1.6d) * (lambda + phi + Fu) / 8d;
+            lambda += d;
+            phi -= 0.8d * d * Math.Sin(phi + (PI * 0.5d));
+        }
+
+        cosPhi = Math.Cos(phi);
+        double denom = 1d + (cosPhi * Math.Cos(lambda * 0.5d));
+        if (Math.Abs(denom) <= Eps10)
+        {
+            throw new ArgumentException("Input data outside projection domain.");
+        }
+
+        double dd = Math.Sqrt(2d / denom);
+        double xOut = W * dd * cosPhi * Math.Sin(lambda * 0.5d);
+        double yOut = dd * Math.Sin(phi);
+
+        double post = (1d - Math.Cos(lambda * phi)) / K;
+        if (yOut < 0d)
+        {
+            xOut *= 1d + post;
+        }
+
+        if (yOut > 0d)
+        {
+            yOut *= 1d + ((post / 1.5d) * xOut * xOut);
+        }
+
+        lon = this.radius * xOut;
+        lat = this.radius * yOut;
+    }
+
+    /// <inheritdoc />
+    protected override void MetersToRadians(ref double x, ref double y)
+    {
+        throw new InvalidOperationException("Bertin 1953 does not support inverse projection in this wave.");
+    }
+}
+

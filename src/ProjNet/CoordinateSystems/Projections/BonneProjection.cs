@@ -58,7 +58,7 @@ internal class BonneProjection : MapProjection
         this.inverseRadius = 1d / this.radius;
         this.standardParallel = DegreesToRadians(this.Parameters.GetOptionalParameterValue("lat_1", RadiansToDegrees(this.latOrigin), "standard_parallel_1"));
 
-        if (Math.Abs(this.standardParallel) <= EPS10)
+        if (Math.Abs(this.standardParallel) <= Eps10)
         {
             throw new ArgumentException("Invalid value for lat_1: |lat_1| should be > 0.");
         }
@@ -76,7 +76,7 @@ internal class BonneProjection : MapProjection
             return;
         }
 
-        this.cotStandardParallel = (Math.Abs(Math.Abs(this.standardParallel) - HALFPI) <= EPS10) ? 0d : (1d / Math.Tan(this.standardParallel));
+        this.cotStandardParallel = (Math.Abs(Math.Abs(this.standardParallel) - HalfPi) <= Eps10) ? 0d : (1d / Math.Tan(this.standardParallel));
         this.meridianDistanceAtStandardParallel = 0d;
         this.reducedCosphiOverSinphiAtStandardParallel = 0d;
     }
@@ -101,7 +101,7 @@ internal class BonneProjection : MapProjection
         if (!this.isEllipsoidal)
         {
             double rhoSphere = this.cotStandardParallel + this.standardParallel - phi;
-            if (Math.Abs(rhoSphere) <= EPS10)
+            if (Math.Abs(rhoSphere) <= Eps10)
             {
                 lon = 0d;
                 lat = 0d;
@@ -117,7 +117,7 @@ internal class BonneProjection : MapProjection
         double sinPhi = Math.Sin(phi);
         double cosPhi = Math.Cos(phi);
         double rho = this.reducedCosphiOverSinphiAtStandardParallel + this.meridianDistanceAtStandardParallel - this.Mlfn(phi, sinPhi, cosPhi);
-        if (Math.Abs(rho) <= EPS10)
+        if (Math.Abs(rho) <= Eps10)
         {
             lon = 0d;
             lat = 0d;
@@ -142,13 +142,13 @@ internal class BonneProjection : MapProjection
             double rhoSphere = Sign(this.standardParallel) * Hypot(xUnit, translatedY);
             double phiSphere = this.cotStandardParallel + this.standardParallel - rhoSphere;
             double absPhiSphere = Math.Abs(phiSphere);
-            if (absPhiSphere > HALFPI)
+            if (absPhiSphere > HalfPi)
             {
                 throw new ArgumentException("Input data outside projection domain.");
             }
 
             double lambdaSphere;
-            if (HALFPI - absPhiSphere <= EPS10)
+            if (HalfPi - absPhiSphere <= Eps10)
             {
                 lambdaSphere = 0d;
             }
@@ -171,7 +171,7 @@ internal class BonneProjection : MapProjection
         double absPhi = Math.Abs(phi);
 
         double lambda = 0d;
-        if (absPhi < HALFPI)
+        if (absPhi < HalfPi)
         {
             double sinPhi = Math.Sin(phi);
             double scale = (rho * Math.Sqrt(1d - (this.es * sinPhi * sinPhi))) / Math.Cos(phi);
@@ -179,7 +179,7 @@ internal class BonneProjection : MapProjection
                 ? scale * Math.Atan2(xUnit, translatedEllipsoidalY)
                 : scale * Math.Atan2(-xUnit, -translatedEllipsoidalY);
         }
-        else if ((absPhi - HALFPI) > EPS10)
+        else if ((absPhi - HalfPi) > Eps10)
         {
             throw new ArgumentException("Input data outside projection domain.");
         }

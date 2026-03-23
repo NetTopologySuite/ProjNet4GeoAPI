@@ -109,7 +109,7 @@ internal class HammerProjection : MapProjection
         }
 
         z = Math.Sqrt(z);
-        if (Math.Abs((2d * z * z) - 1d) < EPS10)
+        if (Math.Abs((2d * z * z) - 1d) < Eps10)
         {
             throw new ArgumentException("Input data outside projection domain.");
         }

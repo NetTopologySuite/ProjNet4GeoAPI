@@ -110,7 +110,7 @@ internal class PolarStereographicProjection : MapProjection
         this.npole = this.latOrigin > 0.0; // N or S hemisphere
         this.phits = Math.Abs(this.latOrigin);
 
-        if (Math.Abs(this.phits - mhalfPi) < EPS10)
+        if (Math.Abs(this.phits - mhalfPi) < Eps10)
         {
             double one_p_e = 1.0 + this.e;
             double one_m_e = 1.0 - this.e;

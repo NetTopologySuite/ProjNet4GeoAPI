@@ -144,7 +144,7 @@ internal class AlbersProjection : MapProjection
         double m2 = msfnz(e,sin_p2,cos_p2);
         double q2 = qsfnz(e,sin_p2,cos_p2);
 
-        if (Math.Abs(lat1 - lat2) > EPSLN)
+        if (Math.Abs(lat1 - lat2) > Epsln)
             ns0 = (m1 * m1 - m2 * m2)/ (q2 - q1);
         else
             ns0 = sin_p1;
@@ -179,23 +179,31 @@ internal class AlbersProjection : MapProjection
         double ro = Math.Sqrt(Math.Pow(x, 2) + Math.Pow(this.ro0 - y, 2));
         double q = (this.c - (Math.Pow(ro, 2) * Math.Pow(this.n, 2) / Math.Pow(this.semiMajor, 2))) / this.n;
 
-        // double b = Math.Sin(q / (1 - ((1 - _es) / (2 * _e)) * Math.Log((1 - _e) / (1 + _e))));
-        double lat = Math.Asin(q * 0.5);
-        double preLat = double.MaxValue;
-        int iterationCounter = 0;
-        while (Math.Abs(lat - preLat) > 0.000001)
+        double lat;
+        if (this.es <= Eps10)
         {
-            preLat = lat;
-            double sin = Math.Sin(lat);
-            double e2sin2 = this.es * Math.Pow(sin, 2);
-            lat += Math.Pow(1 - e2sin2, 2) / (2 * Math.Cos(lat)) *
-                   ((q / (1 - this.es)) - (sin / (1 - e2sin2)) +
-                    (1 / (2 * this.e) * Math.Log((1 - (this.e * sin)) / (1 + (this.e * sin)))));
-            iterationCounter++;
-            if (iterationCounter > 25)
+            lat = Asinz(q * 0.5);
+        }
+        else
+        {
+            // double b = Math.Sin(q / (1 - ((1 - _es) / (2 * _e)) * Math.Log((1 - _e) / (1 + _e))));
+            lat = Math.Asin(q * 0.5);
+            double preLat = double.MaxValue;
+            int iterationCounter = 0;
+            while (Math.Abs(lat - preLat) > 0.000001)
             {
-                throw new ArgumentException(
-                    "Transformation failed to converge in Albers backwards transformation");
+                preLat = lat;
+                double sin = Math.Sin(lat);
+                double e2sin2 = this.es * Math.Pow(sin, 2);
+                lat += Math.Pow(1 - e2sin2, 2) / (2 * Math.Cos(lat)) *
+                       ((q / (1 - this.es)) - (sin / (1 - e2sin2)) +
+                        (1 / (2 * this.e) * Math.Log((1 - (this.e * sin)) / (1 + (this.e * sin)))));
+                iterationCounter++;
+                if (iterationCounter > 25)
+                {
+                    throw new ArgumentException(
+                        "Transformation failed to converge in Albers backwards transformation");
+                }
             }
         }
 
@@ -230,6 +238,11 @@ internal class AlbersProjection : MapProjection
     private double Alpha(double lat)
     {
         double sin = Math.Sin(lat);
+        if (this.es <= Eps10)
+        {
+            return sin + sin;
+        }
+
         double sinsq = Math.Pow(sin, 2);
         return (1 - this.es) * ((sin / (1 - (this.es * sinsq))) - (1 / (2 * this.e) * Math.Log((1 - (this.e * sin)) / (1 + (this.e * sin)))));
     }

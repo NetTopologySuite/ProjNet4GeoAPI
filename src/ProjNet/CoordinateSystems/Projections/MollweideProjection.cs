@@ -27,12 +27,15 @@ using ProjNet.CoordinateSystems.Transformations;
 [Serializable]
 internal class MollweideProjection : MapProjection
 {
-    private const int Iterations = 12;
-
-    private static readonly double Sqrt2 = Math.Sqrt(2d);
+    private const int Iterations = 30;
+    private const double LoopTolerance = 1e-7d;
+    private const double DefaultP = 90d;
 
     private readonly double radius;
     private readonly double inverseRadius;
+    private readonly double cx;
+    private readonly double cy;
+    private readonly double cp;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MollweideProjection"/> class.
@@ -53,7 +56,21 @@ internal class MollweideProjection : MapProjection
     {
         this.Name = "Mollweide";
         this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1.0 / this.radius;
+        this.inverseRadius = 1d / this.radius;
+
+        double p = DegreesToRadians(this.Parameters.GetOptionalParameterValue("moll_p", DefaultP));
+        double sp = Math.Sin(p);
+        double p2 = p + p;
+        double denominator = p2 + Math.Sin(p2);
+        if (Math.Abs(sp) <= Eps10 || Math.Abs(denominator) <= Eps10)
+        {
+            throw new ArgumentException("Input data outside projection domain.");
+        }
+
+        double r = Math.Sqrt(TwoPi * sp / denominator);
+        this.cx = this.Parameters.GetOptionalParameterValue("moll_cx", 2d * r / PI);
+        this.cy = this.Parameters.GetOptionalParameterValue("moll_cy", r / sp);
+        this.cp = this.Parameters.GetOptionalParameterValue("moll_cp", denominator);
     }
 
     /// <inheritdoc />
@@ -71,58 +88,58 @@ internal class MollweideProjection : MapProjection
     protected override void RadiansToMeters(ref double lon, ref double lat)
     {
         double lambda = Adjust_lon(lon - this.centralMeridian);
-        double theta;
-
-        if (Math.Abs(Math.Abs(lat) - HALFPI) < 1e-12)
+        double phi = lat;
+        double k = this.cp * Math.Sin(phi);
+        int i = Iterations;
+        for (; i > 0; i--)
         {
-            theta = Sign(lat) * HALFPI;
-        }
-        else
-        {
-            theta = lat;
-            double target = PI * Math.Sin(lat);
-
-            for (int i = 0; i < Iterations; i++)
+            double v = (phi + Math.Sin(phi) - k) / (1d + Math.Cos(phi));
+            phi -= v;
+            if (Math.Abs(v) < LoopTolerance)
             {
-                double twoTheta = 2d * theta;
-                double delta = ((twoTheta + Math.Sin(twoTheta)) - target) / (2d + (2d * Math.Cos(twoTheta)));
-                theta -= delta;
-                if (Math.Abs(delta) < 1e-12)
-                {
-                    break;
-                }
+                break;
             }
         }
 
-        lon = this.radius * (2d * Sqrt2 / PI) * lambda * Math.Cos(theta);
-        lat = this.radius * Sqrt2 * Math.Sin(theta);
+        if (i == 0)
+        {
+            phi = phi < 0d ? -HalfPi : HalfPi;
+        }
+        else
+        {
+            phi *= 0.5d;
+        }
+
+        lon = this.radius * this.cx * lambda * Math.Cos(phi);
+        lat = this.radius * this.cy * Math.Sin(phi);
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double theta = Math.Asin(Clamp((y * this.inverseRadius) / Sqrt2, -1d, 1d));
-        double cosTheta = Math.Cos(theta);
-
-        if (Math.Abs(cosTheta) <= EPS10)
+        double xx = x * this.inverseRadius;
+        double yy = y * this.inverseRadius;
+        double phi = Asinz(yy / this.cy);
+        double cosPhi = Math.Cos(phi);
+        if (Math.Abs(cosPhi) <= Eps10)
         {
             x = this.centralMeridian;
+            y = phi >= 0d ? HalfPi : -HalfPi;
+            return;
+        }
+
+        double lambda = xx / (this.cx * cosPhi);
+        if (Math.Abs(lambda) < PI)
+        {
+            phi += phi;
+            phi = Asinz((phi + Math.Sin(phi)) / this.cp);
         }
         else
         {
-            x = Adjust_lon(this.centralMeridian + ((x * this.inverseRadius) * PI / (2d * Sqrt2 * cosTheta)));
+            throw new ArgumentException("Input data outside projection domain.");
         }
 
-        y = Math.Asin(Clamp(((2d * theta) + Math.Sin(2d * theta)) / PI, -1d, 1d));
-    }
-
-    private static double Clamp(double value, double minimum, double maximum)
-    {
-        if (value < minimum)
-        {
-            return minimum;
-        }
-
-        return value > maximum ? maximum : value;
+        x = Adjust_lon(this.centralMeridian + lambda);
+        y = phi;
     }
 }

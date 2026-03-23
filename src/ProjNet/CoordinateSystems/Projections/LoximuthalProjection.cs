@@ -56,12 +56,12 @@ internal class LoximuthalProjection : MapProjection
 
         this.referenceLatitude = DegreesToRadians(this.Parameters.GetOptionalParameterValue("lat_1", RadiansToDegrees(this.latOrigin), "latitude_of_origin"));
         this.cosReferenceLatitude = Math.Cos(this.referenceLatitude);
-        if (Math.Abs(Math.Abs(this.referenceLatitude) - HALFPI) <= EPSLN)
+        if (Math.Abs(Math.Abs(this.referenceLatitude) - HalfPi) <= Epsln)
         {
             throw new ArgumentException("The reference latitude cannot be at the poles.");
         }
 
-        this.referenceMercatorTerm = Math.Log(Math.Tan(FORTPI + (0.5d * this.referenceLatitude)));
+        this.referenceMercatorTerm = Math.Log(Math.Tan(FortPi + (0.5d * this.referenceLatitude)));
     }
 
     /// <inheritdoc />
@@ -83,15 +83,15 @@ internal class LoximuthalProjection : MapProjection
         double deltaPhi = phi - this.referenceLatitude;
         lat = this.radius * deltaPhi;
 
-        if (Math.Abs(deltaPhi) <= EPS10)
+        if (Math.Abs(deltaPhi) <= Eps10)
         {
             lon = this.radius * lambda * this.cosReferenceLatitude;
             return;
         }
 
-        double mercatorTerm = Math.Log(Math.Tan(FORTPI + (0.5d * phi)));
+        double mercatorTerm = Math.Log(Math.Tan(FortPi + (0.5d * phi)));
         double denominator = mercatorTerm - this.referenceMercatorTerm;
-        if (Math.Abs(denominator) <= EPS10)
+        if (Math.Abs(denominator) <= Eps10)
         {
             lon = this.radius * lambda * this.cosReferenceLatitude;
             return;
@@ -107,15 +107,15 @@ internal class LoximuthalProjection : MapProjection
         double deltaPhi = lat - this.referenceLatitude;
 
         double lambda;
-        if (Math.Abs(deltaPhi) <= EPS10)
+        if (Math.Abs(deltaPhi) <= Eps10)
         {
             lambda = x * this.inverseRadius / this.cosReferenceLatitude;
         }
         else
         {
-            double mercatorTerm = Math.Log(Math.Tan(FORTPI + (0.5d * lat)));
+            double mercatorTerm = Math.Log(Math.Tan(FortPi + (0.5d * lat)));
             double numerator = mercatorTerm - this.referenceMercatorTerm;
-            if (Math.Abs(numerator) <= EPS10)
+            if (Math.Abs(numerator) <= Eps10)
             {
                 lambda = x * this.inverseRadius / this.cosReferenceLatitude;
             }

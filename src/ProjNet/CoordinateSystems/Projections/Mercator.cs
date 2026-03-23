@@ -134,7 +134,7 @@ internal class Mercator : MapProjection
         double dLatitude = lat;
 
         /* Forward equations */
-        if (Math.Abs(Math.Abs(dLatitude) - HALFPI) <= EPSLN)
+        if (Math.Abs(Math.Abs(dLatitude) - HalfPi) <= Epsln)
         {
             throw new ArgumentException("Transformation cannot be computed at the poles.");
         }
@@ -158,7 +158,7 @@ internal class Mercator : MapProjection
         double dY = y; // * _metersPerUnit - this._falseNorthing;
         double ts = Math.Exp(-dY / (this.semiMajor * this.k0)); // t
 
-        double chi = HALFPI - (2 * Math.Atan(ts));
+        double chi = HalfPi - (2 * Math.Atan(ts));
         double e4 = Math.Pow(this.e, 4);
         double e6 = Math.Pow(this.e, 6);
         double e8 = Math.Pow(this.e, 8);

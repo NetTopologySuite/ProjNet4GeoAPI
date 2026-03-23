@@ -110,7 +110,7 @@ internal class EqualEarthProjection : MapProjection
         double denominatorFinal = A1 + (3d * A2 * theta2Final) + (theta6Final * ((7d * A3) + (9d * A4 * theta2Final)));
         double cosTheta = Math.Cos(theta);
 
-        if (Math.Abs(cosTheta) <= EPS10)
+        if (Math.Abs(cosTheta) <= Eps10)
         {
             x = this.centralMeridian;
         }

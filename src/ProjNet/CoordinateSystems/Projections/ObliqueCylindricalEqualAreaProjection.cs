@@ -1,0 +1,142 @@
+// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
+//
+// This file is part of ProjNet.
+// ProjNet is free software; you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// ProjNet is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with ProjNet; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+namespace ProjNet.CoordinateSystems.Projections;
+
+using System;
+using System.Collections.Generic;
+using ProjNet.CoordinateSystems.Transformations;
+
+/// <summary>
+/// Implements the spherical Oblique Cylindrical Equal Area projection (<c>ocea</c>).
+/// </summary>
+[Serializable]
+internal sealed class ObliqueCylindricalEqualAreaProjection : MapProjection
+{
+    private readonly double radius;
+    private readonly double inverseRadius;
+    private readonly double rok;
+    private readonly double rtk;
+    private readonly double sinPhiP;
+    private readonly double cosPhiP;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ObliqueCylindricalEqualAreaProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    public ObliqueCylindricalEqualAreaProjection(IEnumerable<ProjectionParameter> parameters)
+        : this(parameters, null)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ObliqueCylindricalEqualAreaProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    /// <param name="inverse">Inverse transform instance when cloning.</param>
+    public ObliqueCylindricalEqualAreaProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+        : base(parameters, inverse)
+    {
+        this.Name = "Oblique_Cylindrical_Equal_Area";
+        this.radius = this.semiMajor * this.scaleFactor;
+        this.inverseRadius = 1d / this.radius;
+        this.rtk = this.scaleFactor;
+        this.rok = 1d / this.scaleFactor;
+
+        double lamP;
+        double phiP;
+        if (this.Parameters.ContainsKey("alpha") || this.Parameters.ContainsKey("azimuth"))
+        {
+            double alpha = PI + DegreesToRadians(this.Parameters.GetOptionalParameterValue("alpha", this.Parameters.GetOptionalParameterValue("azimuth", 0d)));
+            double lonc = DegreesToRadians(this.Parameters.GetParameterValue("lonc", "longitude_of_center"));
+            lamP = Math.Atan2(-Math.Cos(alpha), -Math.Sin(this.latOrigin) * Math.Sin(alpha)) + lonc;
+            phiP = Asinz(Math.Cos(this.latOrigin) * Math.Sin(alpha));
+        }
+        else
+        {
+            double phi1 = DegreesToRadians(this.Parameters.GetParameterValue("lat_1", "standard_parallel_1"));
+            double phi2 = DegreesToRadians(this.Parameters.GetParameterValue("lat_2", "standard_parallel_2"));
+            double lam1 = DegreesToRadians(this.Parameters.GetParameterValue("lon_1"));
+            double lam2 = DegreesToRadians(this.Parameters.GetParameterValue("lon_2"));
+
+            lamP = Math.Atan2(
+                (Math.Cos(phi1) * Math.Sin(phi2) * Math.Cos(lam1)) - (Math.Sin(phi1) * Math.Cos(phi2) * Math.Cos(lam2)),
+                (Math.Sin(phi1) * Math.Cos(phi2) * Math.Sin(lam2)) - (Math.Cos(phi1) * Math.Sin(phi2) * Math.Sin(lam1)));
+            if (Math.Abs(lam1 + MapProjection.HalfPi) <= Eps10)
+            {
+                lamP = -lamP;
+            }
+
+            double cosLamDiff = Math.Cos(lamP - lam1);
+            double tanPhi1 = Math.Tan(phi1);
+            phiP = Math.Abs(tanPhi1) <= Eps10
+                ? (cosLamDiff >= 0d ? -MapProjection.HalfPi : MapProjection.HalfPi)
+                : Math.Atan(-cosLamDiff / tanPhi1);
+        }
+
+        this.centralMeridian = Adjust_lon(lamP + MapProjection.HalfPi);
+        this.sinPhiP = Math.Sin(phiP);
+        this.cosPhiP = Math.Cos(phiP);
+    }
+
+    /// <inheritdoc />
+    public override MathTransform Inverse()
+    {
+        if (this.inverse is null)
+        {
+            this.inverse = new ObliqueCylindricalEqualAreaProjection(this.Parameters.ToProjectionParameter(), this);
+        }
+
+        return this.inverse;
+    }
+
+    /// <inheritdoc />
+    protected override void RadiansToMeters(ref double lon, ref double lat)
+    {
+        double lambda = Adjust_lon(lon - this.centralMeridian);
+        double sinLam = Math.Sin(lambda);
+        double cosLam = Math.Cos(lambda);
+        double tanPhi = Math.Tan(lat);
+
+        double xUnit = Math.Atan((tanPhi * this.cosPhiP + (this.sinPhiP * sinLam)) / cosLam);
+        if (cosLam < 0d)
+        {
+            xUnit += PI;
+        }
+
+        xUnit *= this.rtk;
+        double yUnit = this.rok * ((this.sinPhiP * Math.Sin(lat)) - (this.cosPhiP * Math.Cos(lat) * sinLam));
+
+        lon = this.radius * xUnit;
+        lat = this.radius * yUnit;
+    }
+
+    /// <inheritdoc />
+    protected override void MetersToRadians(ref double x, ref double y)
+    {
+        double xUnit = (x * this.inverseRadius) / this.rtk;
+        double yUnit = (y * this.inverseRadius) / this.rok;
+        double t = Math.Sqrt(Math.Max(0d, 1d - (yUnit * yUnit)));
+        double s = Math.Sin(xUnit);
+        double phi = Asinz((yUnit * this.sinPhiP) + (t * this.cosPhiP * s));
+        double lambda = Math.Atan2((t * this.sinPhiP * s) - (yUnit * this.cosPhiP), t * Math.Cos(xUnit));
+
+        x = Adjust_lon(this.centralMeridian + lambda);
+        y = phi;
+    }
+}
+

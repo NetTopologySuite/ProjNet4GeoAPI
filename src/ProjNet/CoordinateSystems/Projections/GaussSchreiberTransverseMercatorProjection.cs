@@ -1,0 +1,107 @@
+// Copyright 2005 - 2009 - Morten Nielsen (www.sharpgis.net)
+//
+// This file is part of ProjNet.
+// ProjNet is free software; you can redistribute it and/or modify
+// it under the terms of the GNU Lesser General Public License as published by
+// the Free Software Foundation; either version 2 of the License, or
+// (at your option) any later version.
+//
+// ProjNet is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU Lesser General Public License for more details.
+//
+// You should have received a copy of the GNU Lesser General Public License
+// along with ProjNet; if not, write to the Free Software
+// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+
+namespace ProjNet.CoordinateSystems.Projections;
+
+using System;
+using System.Collections.Generic;
+using ProjNet.CoordinateSystems.Transformations;
+
+/// <summary>
+/// Implements the Gauss-Schreiber Transverse Mercator projection (<c>gstmerc</c>).
+/// </summary>
+[Serializable]
+internal class GaussSchreiberTransverseMercatorProjection : MapProjection
+{
+    private readonly double n1;
+    private readonly double c;
+    private readonly double n2;
+    private readonly double ys;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GaussSchreiberTransverseMercatorProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    public GaussSchreiberTransverseMercatorProjection(IEnumerable<ProjectionParameter> parameters)
+        : this(parameters, null)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="GaussSchreiberTransverseMercatorProjection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    /// <param name="inverse">Inverse transform instance when cloning.</param>
+    public GaussSchreiberTransverseMercatorProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+        : base(parameters, inverse)
+    {
+        this.Name = "Gauss_Schreiber_Transverse_Mercator";
+
+        double cosPhi0 = Math.Cos(this.latOrigin);
+        double sinPhi0 = Math.Sin(this.latOrigin);
+        double cosPhi0Pow4 = cosPhi0 * cosPhi0;
+        cosPhi0Pow4 *= cosPhi0Pow4;
+
+        this.n1 = Math.Sqrt(1d + ((this.es * cosPhi0Pow4) / (1d - this.es)));
+        double phic = Asinz(sinPhi0 / this.n1);
+        this.c = Math.Log(Tsfnz(0d, -phic, -Math.Sin(phic))) - (this.n1 * Math.Log(Tsfnz(this.e, -this.latOrigin, -sinPhi0)));
+        this.n2 = this.scaleFactor * this.semiMajor * Math.Sqrt(1d - this.es) / (1d - (this.es * sinPhi0 * sinPhi0));
+        this.ys = -this.n2 * phic;
+    }
+
+    /// <inheritdoc />
+    public override MathTransform Inverse()
+    {
+        if (this.inverse is null)
+        {
+            this.inverse = new GaussSchreiberTransverseMercatorProjection(this.Parameters.ToProjectionParameter(), this);
+        }
+
+        return this.inverse;
+    }
+
+    /// <inheritdoc />
+    protected override void RadiansToMeters(ref double lon, ref double lat)
+    {
+        double lambda = Adjust_lon(lon - this.centralMeridian);
+        double l = this.n1 * lambda;
+        double ls = this.c + (this.n1 * Math.Log(Tsfnz(this.e, -lat, -Math.Sin(lat))));
+        double sinLs1 = Math.Sin(l) / Math.Cosh(ls);
+        double ls1 = Math.Log(Tsfnz(0d, -Asinz(sinLs1), -sinLs1));
+        lon = this.n2 * ls1;
+        lat = this.ys + (this.n2 * Math.Atan(Math.Sinh(ls) / Math.Cos(l)));
+    }
+
+    /// <inheritdoc />
+    protected override void MetersToRadians(ref double x, ref double y)
+    {
+        double l = Math.Atan(Math.Sinh(x / this.n2) / Math.Cos((y - this.ys) / this.n2));
+        double sinC = Math.Sin((y - this.ys) / this.n2) / Math.Cosh(x / this.n2);
+        double lc = Math.Log(Tsfnz(0d, -Asinz(sinC), -sinC));
+        double lambda = l / this.n1;
+
+        long flag;
+        double phi = -Phi2z(this.e, Math.Exp((lc - this.c) / this.n1), out flag);
+        if (flag != 0)
+        {
+            throw new ArgumentException("Input data outside projection domain.");
+        }
+
+        x = Adjust_lon(this.centralMeridian + lambda);
+        y = phi;
+    }
+}
