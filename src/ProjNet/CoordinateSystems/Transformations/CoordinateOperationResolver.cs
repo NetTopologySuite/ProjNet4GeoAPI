@@ -52,26 +52,16 @@ internal static class CoordinateOperationResolver
             throw new ArgumentNullException(nameof(directResolver));
         }
 
-        var candidates = new List<OperationCandidate>();
-        var identityCandidate = CreateIdentityCandidate(source, target);
-        if (identityCandidate is not null)
-        {
-            candidates.Add(identityCandidate);
-        }
+        OperationCandidate bestCandidate = null;
+        bestCandidate = SelectHigherScore(bestCandidate, CreateIdentityCandidate(source, target));
 
         var directCandidate = directResolver(source, target);
         if (directCandidate is not null)
         {
-            candidates.Add(new OperationCandidate(directCandidate, 0));
+            bestCandidate = SelectHigherScore(bestCandidate, new OperationCandidate(directCandidate, 0));
         }
 
-        if (candidates.Count == 0)
-        {
-            return null;
-        }
-
-        candidates.Sort((left, right) => right.Score.CompareTo(left.Score));
-        return candidates[0].Transformation;
+        return bestCandidate?.Transformation;
     }
 
     private static OperationCandidate CreateIdentityCandidate(CoordinateSystem source, CoordinateSystem target)
@@ -95,16 +85,25 @@ internal static class CoordinateOperationResolver
         return new OperationCandidate(transformation, 1000);
     }
 
-    private sealed class OperationCandidate
+    private static OperationCandidate SelectHigherScore(OperationCandidate left, OperationCandidate right)
     {
-        internal OperationCandidate(ICoordinateTransformation transformation, int score)
+        if (right is null)
         {
-            this.Transformation = transformation;
-            this.Score = score;
+            return left;
         }
 
-        internal int Score { get; }
+        if (left is null)
+        {
+            return right;
+        }
 
-        internal ICoordinateTransformation Transformation { get; }
+        return right.Score > left.Score ? right : left;
+    }
+
+    private sealed class OperationCandidate(ICoordinateTransformation transformation, int score)
+    {
+        internal int Score { get; } = score;
+
+        internal ICoordinateTransformation Transformation { get; } = transformation;
     }
 }

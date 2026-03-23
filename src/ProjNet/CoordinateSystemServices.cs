@@ -104,7 +104,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
         {
             using (var resps = resp.GetResponseStream())
             {
-                if (resps != null)
+                if (resps is not null)
                 {
                     using (var sr = new StreamReader(resps))
                         return sr.ReadToEnd();
@@ -144,14 +144,14 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
         IEnumerable<KeyValuePair<int, string>> enumeration,
         ICoordinateSystemDefinitionProvider definitionProvider)
     {
-        if (coordinateSystemFactory == null)
+        if (coordinateSystemFactory is null)
         {
             throw new ArgumentNullException(nameof(coordinateSystemFactory));
         }
 
         this.coordinateSystemFactory = coordinateSystemFactory;
 
-        if (coordinateTransformationFactory == null)
+        if (coordinateTransformationFactory is null)
         {
             throw new ArgumentNullException(nameof(coordinateTransformationFactory));
         }
@@ -163,7 +163,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
         this.sridByCs = new Dictionary<IInfo, int>(new CsEqualityComparer());
 
         object enumObj;
-        if (enumeration != null)
+        if (enumeration is not null)
         {
             enumObj = enumeration;
         }
@@ -258,7 +258,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
         }
 
         coordinateSystem = this.GetCoordinateSystem(srid.Value);
-        return coordinateSystem != null;
+        return coordinateSystem is not null;
     }
 
     /// <summary>
@@ -428,7 +428,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
         foreach (var sridWkt in enumeration)
         {
             var cs = CreateCoordinateSystem(factory, sridWkt.Value);
-            if (cs != null)
+            if (cs is not null)
             {
                 yield return new KeyValuePair<int, CoordinateSystem>(sridWkt.Key, cs);
             }
@@ -489,12 +489,12 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
         /// <inheritdoc />
         public override int GetHashCode(IInfo obj)
         {
-            if (obj == null)
+            if (obj is null)
             {
                 return 0;
             }
 
-            return Convert.ToInt32(obj.AuthorityCode) + (obj.Authority != null ? StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Authority) : 0);
+            return Convert.ToInt32(obj.AuthorityCode) + (obj.Authority is not null ? StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Authority) : 0);
         }
     }
 
