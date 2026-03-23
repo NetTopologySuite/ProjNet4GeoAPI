@@ -1,7 +1,7 @@
 {
   "stryker-config": {
     "solution": "ProjNet4GeoAPI.sln",
-    "project": "ProjNET.csproj",
+    "project": "src/ProjNet/ProjNET.csproj",
     "test-projects": [
       "test/ProjNet.Tests/ProjNET.Tests.csproj"
     ],
@@ -9,11 +9,12 @@
     "mutation-level": "Standard",
     "coverage-analysis": "off",
     "mutate": [
-      "CoordinateSystemServices.cs",
-      "CoordinateSystems/Transformations/CoordinateOperationResolver.cs",
-      "CoordinateSystems/Transformations/IdentityMathTransform.cs",
-      "Resources/GridResourceResolver.cs",
-      "IO/CoordinateSystems/CoordinateSystemWktReader.cs"
+      "**/CoordinateSystemServices.cs",
+      "**/CoordinateSystems/Transformations/CoordinateOperationResolver.cs",
+      "**/CoordinateSystems/Transformations/IdentityMathTransform.cs",
+      "**/Resources/GridResourceResolver.cs",
+      "**/IO/CoordinateSystems/CoordinateSystemWktReader.cs",
+      "!**/*.g.cs"
     ],
     "reporters": [
       "Progress",
