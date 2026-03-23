@@ -20,5 +20,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Generated\*.json" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Fixtures\gie\*.gie" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Fixtures\gigs\*.gie" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Fixtures\grids\*.*" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="Fixtures\defmodel\**\*.*" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

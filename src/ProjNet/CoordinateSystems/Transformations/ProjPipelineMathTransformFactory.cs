@@ -139,6 +139,11 @@ internal static class ProjPipelineMathTransformFactory
             return TryCreateXyzGridShiftTransform(args, out transform, out skipReason);
         }
 
+        if (projCode.Equals("defmodel", StringComparison.OrdinalIgnoreCase))
+        {
+            return DefModelMathTransform.TryCreate(args, out transform, out skipReason);
+        }
+
         if (projCode.Equals("topocentric", StringComparison.OrdinalIgnoreCase))
         {
             return TopocentricMathTransform.TryCreate(args, out transform, out skipReason);
