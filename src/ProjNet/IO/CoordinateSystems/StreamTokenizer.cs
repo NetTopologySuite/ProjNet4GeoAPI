@@ -41,6 +41,7 @@ namespace ProjNet.IO.CoordinateSystems;
 using System;
 using System.Globalization;
 using System.IO;
+using System.Text;
 
 /// <summary>
 /// The StreamTokenizer class takes an input stream and parses it into "tokens", allowing the tokens to be read one at a time. The parsing process is controlled by a table and a number of flags that can be set to various states. The stream tokenizer can recognize identifiers, numbers, quoted strings, and various comment style.
@@ -164,6 +165,7 @@ internal class StreamTokenizer
 
     private TokenType NextTokenAny()
     {
+        var tokenBuilder = new StringBuilder();
         this.currentToken = string.Empty;
         this.currentTokenType = TokenType.Eof;
         int finished = this.reader.Read();
@@ -253,7 +255,7 @@ internal class StreamTokenizer
                 this.colNumber = 1;
             }
 
-            this.currentToken = this.currentToken + currentCharacter;
+            tokenBuilder.Append(currentCharacter);
             if (this.currentTokenType != nextTokenType)
             {
                 finished = -1;
@@ -268,6 +270,7 @@ internal class StreamTokenizer
             }
         }
 
+        this.currentToken = tokenBuilder.ToString();
         return this.currentTokenType;
     }
 

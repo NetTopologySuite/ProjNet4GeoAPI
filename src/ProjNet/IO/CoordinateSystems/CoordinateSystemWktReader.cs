@@ -42,7 +42,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Text.RegularExpressions;
 using ProjNet;
@@ -54,6 +53,7 @@ using ProjNet.CoordinateSystems;
 public static class CoordinateSystemWktReader
 {
     private static readonly string[] CompoundCoordinateSystemDelimiters = { ",", "]" };
+    private static readonly Regex Wkt2IdRegex = new(@"\bID\s*\[(?=\s*"")", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
 
     /// <summary>
     /// Reads and parses a WKT-formatted projection string.
@@ -102,7 +102,7 @@ public static class CoordinateSystemWktReader
     {
         string normalized = wkt;
         normalized = StringCompatibility.ReplaceOrdinal(normalized, "ELLIPSOID", "SPHEROID");
-        normalized = Regex.Replace(normalized, @"\bID\[(?=\s*"")", "AUTHORITY[");
+        normalized = Wkt2IdRegex.Replace(normalized, "AUTHORITY[");
         normalized = StringCompatibility.ReplaceOrdinal(normalized, "GEODETICCRS[", "GEOGCS[");
         normalized = StringCompatibility.ReplaceOrdinal(normalized, "GEODCRS[", "GEOGCS[");
         normalized = StringCompatibility.ReplaceOrdinal(normalized, "BASEGEODCRS[", "GEOGCS[");

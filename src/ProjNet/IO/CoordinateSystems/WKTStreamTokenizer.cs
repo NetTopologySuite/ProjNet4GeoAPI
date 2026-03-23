@@ -41,6 +41,7 @@ namespace ProjNet.IO.CoordinateSystems;
 using System;
 using System.Globalization;
 using System.IO;
+using System.Text;
 
 /// <summary>
 /// Reads a stream of Well Known Text (wkt) string and returns a stream of tokens.
@@ -82,21 +83,20 @@ internal class WktStreamTokenizer : StreamTokenizer
     /// <returns>The string inside the double quotes.</returns>
     public string ReadDoubleQuotedWord()
     {
-        string word = string.Empty;
-
         if (this.GetStringValue() != "\"")
         {
             this.ReadToken("\"");
         }
 
+        var wordBuilder = new StringBuilder();
         this.NextToken(false);
         while (this.GetStringValue() != "\"")
         {
-            word = word + this.GetStringValue();
+            wordBuilder.Append(this.GetStringValue());
             this.NextToken(false);
         }
 
-        return word;
+        return wordBuilder.ToString();
     }
 
     /// <summary>
