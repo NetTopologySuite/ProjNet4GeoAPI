@@ -774,7 +774,12 @@ if (param.Value != proj.GetParameter(i).Value)
             throw new ArgumentNullException(nameof(projectionParameters));
         }
 
-        var res = new List<ProjectionParameter>();
+        int capacity = projectionParameters is ICollection<ProjectionParameter> collection
+            ? collection.Count
+            : 0;
+        var res = capacity > 0
+            ? new List<ProjectionParameter>(capacity)
+            : new List<ProjectionParameter>();
         foreach (var pp in projectionParameters)
         {
             res.Add(new ProjectionParameter(pp.Name, pp.Value));
@@ -790,7 +795,7 @@ if (param.Value != proj.GetParameter(i).Value)
     /// <returns>The computed value.</returns>
     protected static double CUBE(double x)
     {
-        return Math.Pow(x, 3); /* x^3 */
+        return x * x * x; /* x^3 */
     }
 
     /// <summary>
@@ -800,7 +805,8 @@ if (param.Value != proj.GetParameter(i).Value)
     /// <returns>The computed value.</returns>
     protected static double QUAD(double x)
     {
-        return Math.Pow(x, 4); /* x^4 */
+        double squared = x * x;
+        return squared * squared; /* x^4 */
     }
 
     /// <summary>
