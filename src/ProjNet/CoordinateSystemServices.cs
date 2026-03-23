@@ -21,7 +21,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.Data;
@@ -48,7 +47,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     private readonly CoordinateTransformationFactory ctFactory;
     private readonly ICoordinateSystemDefinitionProvider definitionProvider;
 
-    private readonly ManualResetEvent initialization = new ManualResetEvent(false);
+    private readonly System.Threading.Tasks.Task initializationTask;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CoordinateSystemServices"/> class.
@@ -174,11 +173,10 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
         }
         else
         {
-            enumObj = this.definitionProvider.GetDefinitions();
+            enumObj = this.definitionProvider;
         }
 
-        this.initialization = new ManualResetEvent(false);
-        System.Threading.Tasks.Task.Run(() => FromEnumeration(new[] { this, enumObj }));
+        this.initializationTask = System.Threading.Tasks.Task.Run(() => this.InitializeFromEnumeration(enumObj));
     }
 
     /// <summary>
@@ -188,7 +186,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     {
         get
         {
-            this.initialization.WaitOne();
+            this.WaitForInitialization();
             return this.sridByCs.Count;
         }
     }
@@ -210,7 +208,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     /// <returns>The coordinate system.</returns>
     public CoordinateSystem GetCoordinateSystem(int srid)
     {
-        this.initialization.WaitOne();
+        this.WaitForInitialization();
         return this.csBySrid.TryGetValue(srid, out var cs) ? cs : null;
     }
 
@@ -222,7 +220,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     /// <returns><c>true</c> if a coordinate system was found; otherwise <c>false</c>.</returns>
     public bool TryGetCoordinateSystem(int srid, out CoordinateSystem coordinateSystem)
     {
-        this.initialization.WaitOne();
+        this.WaitForInitialization();
         return this.csBySrid.TryGetValue(srid, out coordinateSystem);
     }
 
@@ -269,7 +267,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     /// <returns>Sorted SRID values.</returns>
     public int[] GetAvailableSridValues()
     {
-        this.initialization.WaitOne();
+        this.WaitForInitialization();
         return this.csBySrid.Keys.OrderBy(v => v).ToArray();
     }
 
@@ -283,7 +281,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     {
         var key = new CoordinateSystemKey(authority, authorityCode);
         int srid;
-        this.initialization.WaitOne();
+        this.WaitForInitialization();
         if (this.sridByCs.TryGetValue(key, out srid))
         {
             return srid;
@@ -295,7 +293,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     /// <summary>
     /// Method to create a coordinate transformation between two spatial reference systems, defined by their identifiers.
     /// </summary>
-    /// <remarks>This is a convenience function for <see cref="CreateTransformation(GeoAPI.CoordinateSystems.ICoordinateSystem,GeoAPI.CoordinateSystems.ICoordinateSystem)" />.</remarks>
+    /// <remarks>This is a convenience function for <see cref="CreateTransformation(CoordinateSystem, CoordinateSystem)" />.</remarks>
     /// <param name="sourceSrid">The identifier for the source spatial reference system.</param>
     /// <param name="targetSrid">The identifier for the target spatial reference system.</param>
     /// <returns>A coordinate transformation, <value>null</value> if no transformation could be created.</returns>
@@ -334,7 +332,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     /// <returns>The transformation result.</returns>
     public IEnumerator<KeyValuePair<int, CoordinateSystem>> GetEnumerator()
     {
-        this.initialization.WaitOne();
+        this.WaitForInitialization();
         return this.csBySrid.GetEnumerator();
     }
 
@@ -444,21 +442,39 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
         FromEnumeration(css, CreateCoordinateSystems(css.coordinateSystemFactory, enumeration));
     }
 
-    private static void FromEnumeration(object parameter)
+    private void InitializeFromEnumeration(object enumeration)
     {
-        object[] paras = (object[])parameter;
-        var css = (CoordinateSystemServices)paras[0];
-
-        if (paras[1] is IEnumerable<KeyValuePair<int, string>>)
+        if (enumeration is ICoordinateSystemDefinitionProvider provider)
         {
-            FromEnumeration(css, (IEnumerable<KeyValuePair<int, string>>)paras[1]);
-        }
-        else
-        {
-            FromEnumeration(css, (IEnumerable<KeyValuePair<int, CoordinateSystem>>)paras[1]);
+            FromEnumeration(this, provider.GetDefinitions());
+            return;
         }
 
-        css.initialization.Set();
+        if (enumeration is IEnumerable<KeyValuePair<int, string>> wktEnumeration)
+        {
+            FromEnumeration(this, wktEnumeration);
+            return;
+        }
+
+        if (enumeration is IEnumerable<KeyValuePair<int, CoordinateSystem>> coordinateSystemEnumeration)
+        {
+            FromEnumeration(this, coordinateSystemEnumeration);
+            return;
+        }
+
+        throw new InvalidOperationException("Unsupported coordinate system initialization payload.");
+    }
+
+    private void WaitForInitialization()
+    {
+        try
+        {
+            this.initializationTask.GetAwaiter().GetResult();
+        }
+        catch (Exception exception)
+        {
+            throw new InvalidOperationException("Coordinate system initialization failed.", exception);
+        }
     }
 
     private class CsEqualityComparer : EqualityComparer<IInfo>

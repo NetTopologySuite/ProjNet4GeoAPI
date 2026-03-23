@@ -132,6 +132,19 @@ public class CoordinateSystemServicesTest
     }
 
     /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Xunit.Fact]
+    public void TestInitializationFailurePropagatesAsInvalidOperationException()
+    {
+        var css = new CoordinateSystemServices(new ThrowingDefinitionProvider());
+
+        var exception = Assert.Throws<InvalidOperationException>(() => css.GetCoordinateSystem(4326));
+        Assert.IsNotNull(exception.InnerException);
+        Assert.AreEqual("Coordinate system initialization failed.", exception.Message);
+    }
+
+    /// <summary>
     /// Validates XML-backed constructor loading for coordinate system definitions.
     /// </summary>
     /// <param name="xmlPath">Path to the XML definition file.</param>
@@ -238,6 +251,14 @@ public class CoordinateSystemServicesTest
         public IEnumerable<KeyValuePair<int, string>> GetDefinitions()
         {
             yield return new KeyValuePair<int, string>(4326, "INVALID_WKT_SHOULD_NOT_BE_USED");
+        }
+    }
+
+    private sealed class ThrowingDefinitionProvider : ICoordinateSystemDefinitionProvider
+    {
+        public IEnumerable<KeyValuePair<int, string>> GetDefinitions()
+        {
+            throw new InvalidOperationException("Synthetic provider failure.");
         }
     }
 }
