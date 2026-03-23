@@ -28,7 +28,7 @@ using ProjNet.CoordinateSystems;
 /// <summary>
 /// Represents the documented type.
 /// </summary>
-internal class SRIDReader
+internal sealed class SRIDReader
 {
     private static readonly Lazy<CoordinateSystemFactory> CoordinateSystemFactory =
         new Lazy<CoordinateSystemFactory>(() => new CoordinateSystemFactory());
@@ -82,7 +82,7 @@ internal class SRIDReader
 
                 var wkt = new WktString
                 {
-                    WktId = int.Parse(line.Substring(0, split), CultureInfo.InvariantCulture),
+                    WktId = int.Parse(line.AsSpan(0, split), CultureInfo.InvariantCulture),
                     Wkt = line.Substring(split + 1),
                 };
                 yield return wkt;

@@ -27,13 +27,6 @@ using System.Text;
 [Serializable]
 public abstract class Info : IInfo
 {
-    private string name;
-    private string authority;
-    private long code;
-    private string alias;
-    private string abbreviation;
-    private string remarks;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="Info"/> class.
     /// A base interface for metadata applicable to coordinate system objects.
@@ -66,7 +59,7 @@ public abstract class Info : IInfo
     {
         this.Name = name;
         this.Authority = authority;
-        this.code = code;
+        this.AuthorityCode = code;
         this.Alias = alias;
         this.Abbreviation = abbreviation;
         this.Remarks = remarks;
@@ -75,58 +68,34 @@ public abstract class Info : IInfo
     /// <summary>
     /// Gets or sets the name of the object.
     /// </summary>
-    public string Name
-    {
-        get { return this.name; }
-        set { this.name = value; }
-    }
+    public string Name { get; set; }
 
     /// <summary>
     /// Gets or sets the authority name for this object, e.g., "EPSG",
     /// is this is a standard object with an authority specific
     /// identity code. Returns "CUSTOM" if this is a custom object.
     /// </summary>
-    public string Authority
-    {
-        get { return this.authority; }
-        set { this.authority = value; }
-    }
+    public string Authority { get; set; }
 
     /// <summary>
     /// Gets or sets the authority specific identification code of the object.
     /// </summary>
-    public long AuthorityCode
-    {
-        get { return this.code; }
-        set { this.code = value; }
-    }
+    public long AuthorityCode { get; set; }
 
     /// <summary>
     /// Gets or sets the alias of the object.
     /// </summary>
-    public string Alias
-    {
-        get { return this.alias; }
-        set { this.alias = value; }
-    }
+    public string Alias { get; set; }
 
     /// <summary>
     /// Gets or sets the abbreviation of the object.
     /// </summary>
-    public string Abbreviation
-    {
-        get { return this.abbreviation; }
-        set { this.abbreviation = value; }
-    }
+    public string Abbreviation { get; set; }
 
     /// <summary>
     /// Gets or sets the provider-supplied remarks for the object.
     /// </summary>
-    public string Remarks
-    {
-        get { return this.remarks; }
-        set { this.remarks = value; }
-    }
+    public string Remarks { get; set; }
 
     /// <summary>
     /// Gets the Well-known text for this object

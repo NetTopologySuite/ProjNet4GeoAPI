@@ -1358,13 +1358,24 @@ internal static class GeoTiffGridLoader
     /// <returns>The computed value.</returns>
     internal static IReadOnlyList<GeoTiffXyzGridShiftMathTransform.XyzGrid> LoadXyz(string path)
     {
-        return LoadCore(path, GridMode.Xyz)
+        return LoadXyz(path, requireMetreUnits: true);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    /// <param name="path">The path value.</param>
+    /// <param name="requireMetreUnits">Whether XYZ samples must be unit=metre.</param>
+    /// <returns>The computed value.</returns>
+    internal static IReadOnlyList<GeoTiffXyzGridShiftMathTransform.XyzGrid> LoadXyz(string path, bool requireMetreUnits)
+    {
+        return LoadCore(path, GridMode.Xyz, requireMetreUnits)
             .Select(page => page.ToXyzGrid(path))
             .Where(grid => !(grid is null))
             .ToArray();
     }
 
-    private static List<LoadedPage> LoadCore(string path, GridMode mode)
+    private static List<LoadedPage> LoadCore(string path, GridMode mode, bool requireMetreUnitsForXyz = true)
     {
         if (string.IsNullOrWhiteSpace(path))
         {
@@ -1382,7 +1393,7 @@ internal static class GeoTiffGridLoader
             short pageIndex = 0;
             do
             {
-                if (!TryReadPage(path, tiff, mode, out LoadedPage page))
+                if (!TryReadPage(path, tiff, mode, requireMetreUnitsForXyz, out LoadedPage page))
                 {
                     pageIndex++;
                     continue;
@@ -1397,7 +1408,7 @@ internal static class GeoTiffGridLoader
         return pages;
     }
 
-    private static bool TryReadPage(string path, Tiff tiff, GridMode mode, out LoadedPage page)
+    private static bool TryReadPage(string path, Tiff tiff, GridMode mode, bool requireMetreUnitsForXyz, out LoadedPage page)
     {
         page = null;
         if (!TryGetIntField(tiff, TiffTag.IMAGEWIDTH, out int width)
@@ -1446,7 +1457,7 @@ internal static class GeoTiffGridLoader
                 page = LoadedPage.CreateVertical(transform, sampleData, metadata, sampleIndex);
                 return true;
             case GridMode.Xyz:
-                if (!TryResolveXyzSampleIndices(samplesPerPixel, metadata, out int sampleX, out int sampleY, out int sampleZ))
+                if (!TryResolveXyzSampleIndices(samplesPerPixel, metadata, requireMetreUnitsForXyz, out int sampleX, out int sampleY, out int sampleZ))
                 {
                     return false;
                 }
@@ -1523,7 +1534,7 @@ internal static class GeoTiffGridLoader
         return samplesPerPixel >= 1;
     }
 
-    private static bool TryResolveXyzSampleIndices(int samplesPerPixel, GeoMetadata metadata, out int sampleX, out int sampleY, out int sampleZ)
+    private static bool TryResolveXyzSampleIndices(int samplesPerPixel, GeoMetadata metadata, bool requireMetreUnits, out int sampleX, out int sampleY, out int sampleZ)
     {
         sampleX = -1;
         sampleY = -1;
@@ -1564,9 +1575,10 @@ internal static class GeoTiffGridLoader
             }
         }
 
-        if (!IsUnitMetreOrEmpty(metadata, sampleX)
+        if (requireMetreUnits
+            && (!IsUnitMetreOrEmpty(metadata, sampleX)
             || !IsUnitMetreOrEmpty(metadata, sampleY)
-            || !IsUnitMetreOrEmpty(metadata, sampleZ))
+            || !IsUnitMetreOrEmpty(metadata, sampleZ)))
         {
             throw new InvalidDataException("xyzgridshift only supports unit=metre for XYZ samples.");
         }

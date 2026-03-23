@@ -107,7 +107,7 @@ public class SpatialRefSysTableParser
                             continue;
                         }
 
-                        if (srtext.StartsWith("COMPD_CS"))
+                        if (srtext.StartsWith("COMPD_CS", StringComparison.Ordinal))
                         {
                             continue;
                         }

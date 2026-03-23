@@ -14,7 +14,7 @@ csharp_using_directive_placement = inside_namespace:error
 csharp_style_namespace_declarations = file_scoped:error
 dotnet_diagnostic.IDE0041.severity = error
 
-dotnet_style_qualification_for_event = true
-dotnet_style_qualification_for_field = true
-dotnet_style_qualification_for_method = true
-dotnet_style_qualification_for_property = true
+dotnet_style_qualification_for_event = true:error
+dotnet_style_qualification_for_field = true:error
+dotnet_style_qualification_for_method = true:error
+dotnet_style_qualification_for_property = true:error

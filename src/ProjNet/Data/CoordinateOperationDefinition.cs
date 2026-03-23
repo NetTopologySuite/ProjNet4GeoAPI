@@ -41,68 +41,47 @@ internal enum CoordinateOperationKind : byte
 /// <summary>
 /// Represents a coordinate operation catalog definition.
 /// </summary>
-internal sealed class CoordinateOperationDefinition
+internal sealed class CoordinateOperationDefinition(
+    CoordinateOperationKind operationKind,
+    int operationCode,
+    int sourceSrid,
+    int targetSrid,
+    double accuracy,
+    string methodName,
+    string parameterFileName)
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="CoordinateOperationDefinition"/> class.
-    /// </summary>
-    /// <param name="operationKind">The operation kind.</param>
-    /// <param name="operationCode">The operation code.</param>
-    /// <param name="sourceSrid">The source spatial reference identifier.</param>
-    /// <param name="targetSrid">The target spatial reference identifier.</param>
-    /// <param name="accuracy">The expected operation accuracy.</param>
-    /// <param name="methodName">The method name.</param>
-    /// <param name="parameterFileName">The optional parameter file name.</param>
-    internal CoordinateOperationDefinition(
-        CoordinateOperationKind operationKind,
-        int operationCode,
-        int sourceSrid,
-        int targetSrid,
-        double accuracy,
-        string methodName,
-        string parameterFileName)
-    {
-        this.OperationKind = operationKind;
-        this.OperationCode = operationCode;
-        this.SourceSrid = sourceSrid;
-        this.TargetSrid = targetSrid;
-        this.Accuracy = accuracy;
-        this.MethodName = methodName;
-        this.ParameterFileName = parameterFileName;
-    }
-
     /// <summary>
     /// Gets the expected operation accuracy.
     /// </summary>
-    internal double Accuracy { get; }
+    internal double Accuracy { get; } = accuracy;
 
     /// <summary>
     /// Gets the operation method name.
     /// </summary>
-    internal string MethodName { get; }
+    internal string MethodName { get; } = methodName;
 
     /// <summary>
     /// Gets the operation code.
     /// </summary>
-    internal int OperationCode { get; }
+    internal int OperationCode { get; } = operationCode;
 
     /// <summary>
     /// Gets the operation kind.
     /// </summary>
-    internal CoordinateOperationKind OperationKind { get; }
+    internal CoordinateOperationKind OperationKind { get; } = operationKind;
 
     /// <summary>
     /// Gets the optional parameter file name.
     /// </summary>
-    internal string ParameterFileName { get; }
+    internal string ParameterFileName { get; } = parameterFileName;
 
     /// <summary>
     /// Gets the source SRID.
     /// </summary>
-    internal int SourceSrid { get; }
+    internal int SourceSrid { get; } = sourceSrid;
 
     /// <summary>
     /// Gets the target SRID.
     /// </summary>
-    internal int TargetSrid { get; }
+    internal int TargetSrid { get; } = targetSrid;
 }

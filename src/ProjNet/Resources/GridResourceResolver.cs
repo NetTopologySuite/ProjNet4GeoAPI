@@ -65,7 +65,7 @@ internal sealed class GridResourceResolverOptions
     /// <param name="mode">The mode value.</param>
     internal GridResourceResolverOptions(IEnumerable<string> localDirectories, string cacheDirectory, GridResourceResolutionMode mode)
     {
-        if (localDirectories == null)
+        if (localDirectories is null)
         {
             throw new ArgumentNullException(nameof(localDirectories));
         }
@@ -244,9 +244,6 @@ internal sealed class GridResourceResolver
 
     private sealed class NoOpGridResourceFetchClient : IGridResourceFetchClient
     {
-        public bool TryFetch(string gridName, string targetFilePath)
-        {
-            return false;
-        }
+        public bool TryFetch(string gridName, string targetFilePath) => false;
     }
 }

@@ -94,11 +94,11 @@ internal sealed class AxisSwapMathTransform : MathTransform
     /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        int[] sourceIndices = { this.xSourceIndex, this.ySourceIndex, this.zSourceIndex };
-        int[] targetSigns = { this.xSign, this.ySign, this.zSign };
+        int[] sourceIndices = [this.xSourceIndex, this.ySourceIndex, this.zSourceIndex];
+        int[] targetSigns = [this.xSign, this.ySign, this.zSign];
 
-        int[] inverseSourceIndices = { 0, 1, 2 };
-        int[] inverseSigns = { 1, 1, 1 };
+        int[] inverseSourceIndices = [0, 1, 2];
+        int[] inverseSigns = [1, 1, 1];
         for (int targetIndex = 0; targetIndex < 3; targetIndex++)
         {
             int sourceIndex = sourceIndices[targetIndex];
@@ -119,11 +119,11 @@ internal sealed class AxisSwapMathTransform : MathTransform
     /// <inheritdoc />
     public override void Invert()
     {
-        int[] sourceIndices = { this.xSourceIndex, this.ySourceIndex, this.zSourceIndex };
-        int[] targetSigns = { this.xSign, this.ySign, this.zSign };
+        int[] sourceIndices = [this.xSourceIndex, this.ySourceIndex, this.zSourceIndex];
+        int[] targetSigns = [this.xSign, this.ySign, this.zSign];
 
-        int[] inverseSourceIndices = { 0, 1, 2 };
-        int[] inverseSigns = { 1, 1, 1 };
+        int[] inverseSourceIndices = [0, 1, 2];
+        int[] inverseSigns = [1, 1, 1];
         for (int targetIndex = 0; targetIndex < 3; targetIndex++)
         {
             int sourceIndex = sourceIndices[targetIndex];
@@ -142,7 +142,7 @@ internal sealed class AxisSwapMathTransform : MathTransform
     /// <inheritdoc />
     public override void Transform(ref double x, ref double y, ref double z)
     {
-        double[] source = { x, y, z };
+        double[] source = [x, y, z];
         x = source[this.xSourceIndex] * this.xSign;
         y = source[this.ySourceIndex] * this.ySign;
         if (this.dimension > 2)
@@ -153,7 +153,7 @@ internal sealed class AxisSwapMathTransform : MathTransform
 
     private static int ValidateDimension(int dimension, string parameterName)
     {
-        if (dimension < 2 || dimension > 3)
+        if (dimension is < 2 or > 3)
         {
             throw new ArgumentOutOfRangeException(parameterName, dimension, "Axis swap dimension must be either 2 or 3.");
         }
@@ -163,7 +163,7 @@ internal sealed class AxisSwapMathTransform : MathTransform
 
     private static int ValidateSourceIndex(int sourceIndex, string parameterName)
     {
-        if (sourceIndex < 0 || sourceIndex > 2)
+        if (sourceIndex is < 0 or > 2)
         {
             throw new ArgumentOutOfRangeException(parameterName, sourceIndex, "Axis source index must be 0, 1 or 2.");
         }

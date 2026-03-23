@@ -47,6 +47,7 @@ Proj.NET performs point-to-point coordinate conversions between geodetic coordin
 
   <ItemGroup>
     <PackageReference Include="BitMiracle.LibTiff.NET" Version="2.4.660" />
+    <PackageReference Include="System.Text.Json" Version="8.0.5" />
   </ItemGroup>
 
 </Project>

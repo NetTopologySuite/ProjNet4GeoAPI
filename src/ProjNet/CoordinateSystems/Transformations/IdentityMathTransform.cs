@@ -49,16 +49,10 @@ internal sealed class IdentityMathTransform : MathTransform
     public override string XML => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public override bool Identity()
-    {
-        return true;
-    }
+    public override bool Identity() => true;
 
     /// <inheritdoc/>
-    public override MathTransform Inverse()
-    {
-        return this;
-    }
+    public override MathTransform Inverse() => this;
 
     /// <inheritdoc/>
     public override void Invert()
