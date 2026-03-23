@@ -29,6 +29,51 @@ using Xunit;
 public class GigsParserTests
 {
     /// <summary>
+    /// Gets local non-failing GIGS fixture files.
+    /// </summary>
+    /// <value>Fixture file entries with file name and full path.</value>
+    public static IEnumerable<object[]> NonFailingFixtureFiles
+    {
+        get
+        {
+            string gigsDirectory = FindGigsDirectory();
+            if (gigsDirectory is null)
+            {
+                yield break;
+            }
+
+            foreach (string file in Directory.GetFiles(gigsDirectory, "*.gie")
+                         .Where(path => !path.EndsWith(".failing", StringComparison.OrdinalIgnoreCase))
+                         .OrderBy(path => path, StringComparer.OrdinalIgnoreCase))
+            {
+                yield return new object[] { Path.GetFileName(file), file };
+            }
+        }
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    /// <param name="fileName">Fixture file name.</param>
+    /// <param name="filePath">Fixture file full path.</param>
+    [Theory]
+    [MemberData(nameof(NonFailingFixtureFiles))]
+    public void ParseGigsFixtureFileProducesCases(string fileName, string filePath)
+    {
+        IReadOnlyList<GieCase> parsed = GieParser.ParseFile(
+            filePath,
+            new GieParserOptions
+            {
+                IgnoreUnknownDirectives = true,
+                AllowOperationContinuation = true,
+            });
+
+        Assert.NotNull(parsed);
+        Assert.NotEmpty(parsed);
+        Assert.False(string.IsNullOrWhiteSpace(fileName));
+    }
+
+    /// <summary>
     /// Performs the documented operation.
     /// </summary>
     [Fact]
@@ -37,7 +82,7 @@ public class GigsParserTests
         string gigsDirectory = FindGigsDirectory();
         if (gigsDirectory is null)
         {
-            Assert.Skip("GIGS fixtures were not found under spec\\PROJ\\test\\gigs.");
+            Assert.Skip("GIGS fixtures were not found under test\\ProjNet.Tests\\Fixtures\\gigs.");
         }
 
         var files = Directory.GetFiles(gigsDirectory, "*.gie")
@@ -75,7 +120,7 @@ public class GigsParserTests
         string gigsDirectory = FindGigsDirectory();
         if (gigsDirectory is null)
         {
-            Assert.Skip("GIGS fixtures were not found under spec\\PROJ\\test\\gigs.");
+            Assert.Skip("GIGS fixtures were not found under test\\ProjNet.Tests\\Fixtures\\gigs.");
         }
 
         var files = Directory.GetFiles(gigsDirectory, "*.gie")
@@ -104,10 +149,16 @@ public class GigsParserTests
 
     private static string FindGigsDirectory()
     {
+        string direct = Path.Combine(AppContext.BaseDirectory, "Fixtures", "gigs");
+        if (Directory.Exists(direct))
+        {
+            return direct;
+        }
+
         var current = new DirectoryInfo(AppContext.BaseDirectory);
         while (current is not null)
         {
-            string candidate = Path.Combine(current.FullName, "spec", "PROJ", "test", "gigs");
+            string candidate = Path.Combine(current.FullName, "test", "ProjNet.Tests", "Fixtures", "gigs");
             if (Directory.Exists(candidate))
             {
                 return candidate;

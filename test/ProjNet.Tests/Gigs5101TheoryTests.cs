@@ -74,45 +74,137 @@ public class Gigs5101TheoryTests
     private static readonly CoordinateSystemServices CoordinateSystemServices = new CoordinateSystemServices();
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Gets coverage parameters for GIGS 5101 fixtures.
     /// </summary>
-    [Fact]
-    [Trait("Category", "Gigs5101")]
-    public void Gigs5101CasesForSupportedPipelinesStayWithinTolerance()
+    /// <value>Coverage parameters.</value>
+    public static IEnumerable<object[]> Gigs5101CoverageData
     {
-        AssertFixtureCoverage(Fixture5101Files, 50, 50, "5101", requireToleranceMatch: true);
+        get
+        {
+            yield return new object[] { Fixture5101Files, 50, 50, "5101", true };
+        }
+    }
+
+    /// <summary>
+    /// Gets coverage parameters for GIGS 5102 and 5103 fixtures.
+    /// </summary>
+    /// <value>Coverage parameters.</value>
+    public static IEnumerable<object[]> Gigs5102And5103CoverageData
+    {
+        get
+        {
+            yield return new object[] { Fixture5102And5103Files, 70, 0, "5102/5103", false };
+        }
+    }
+
+    /// <summary>
+    /// Gets coverage parameters for GIGS 5104 through 5113 fixtures.
+    /// </summary>
+    /// <value>Coverage parameters.</value>
+    public static IEnumerable<object[]> Gigs5104To5113CoverageData
+    {
+        get
+        {
+            yield return new object[] { Fixture5104To5113Files, 80, 0, "5104-5113", false };
+        }
+    }
+
+    /// <summary>
+    /// Gets coverage parameters for GIGS 5200 fixtures.
+    /// </summary>
+    /// <value>Coverage parameters.</value>
+    public static IEnumerable<object[]> Gigs5200CoverageData
+    {
+        get
+        {
+            yield return new object[] { Fixture5200Files, 20, 0, "5200", false };
+        }
     }
 
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Fact]
+    /// <param name="fixtureFiles">Fixture file names to parse.</param>
+    /// <param name="minTransformed">Minimum transformed case count expected.</param>
+    /// <param name="minWithinTolerance">Minimum within-tolerance case count expected.</param>
+    /// <param name="label">Human-readable fixture group label.</param>
+    /// <param name="requireToleranceMatch">Whether tolerance assertions are required.</param>
+    [Theory]
+    [Trait("Category", "Gigs5101")]
+    [MemberData(nameof(Gigs5101CoverageData))]
+    public void Gigs5101CasesForSupportedPipelinesStayWithinTolerance(
+        string[] fixtureFiles,
+        int minTransformed,
+        int minWithinTolerance,
+        string label,
+        bool requireToleranceMatch)
+    {
+        AssertFixtureCoverage(fixtureFiles, minTransformed, minWithinTolerance, label, requireToleranceMatch);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    /// <param name="fixtureFiles">Fixture file names to parse.</param>
+    /// <param name="minTransformed">Minimum transformed case count expected.</param>
+    /// <param name="minWithinTolerance">Minimum within-tolerance case count expected.</param>
+    /// <param name="label">Human-readable fixture group label.</param>
+    /// <param name="requireToleranceMatch">Whether tolerance assertions are required.</param>
+    [Theory]
     [Trait("Category", "Gigs5102")]
     [Trait("Category", "Gigs5103")]
-    public void Gigs5102And5103CasesForSupportedPipelinesStayWithinTolerance()
+    [MemberData(nameof(Gigs5102And5103CoverageData))]
+    public void Gigs5102And5103CasesForSupportedPipelinesStayWithinTolerance(
+        string[] fixtureFiles,
+        int minTransformed,
+        int minWithinTolerance,
+        string label,
+        bool requireToleranceMatch)
     {
-        AssertFixtureCoverage(Fixture5102And5103Files, 70, 0, "5102/5103", requireToleranceMatch: false);
+        AssertFixtureCoverage(fixtureFiles, minTransformed, minWithinTolerance, label, requireToleranceMatch);
     }
 
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Fact]
+    /// <param name="fixtureFiles">Fixture file names to parse.</param>
+    /// <param name="minTransformed">Minimum transformed case count expected.</param>
+    /// <param name="minWithinTolerance">Minimum within-tolerance case count expected.</param>
+    /// <param name="label">Human-readable fixture group label.</param>
+    /// <param name="requireToleranceMatch">Whether tolerance assertions are required.</param>
+    [Theory]
     [Trait("Category", "Gigs5104")]
     [Trait("Category", "Gigs5113")]
-    public void Gigs5104To5113CasesForSupportedPipelinesExecute()
+    [MemberData(nameof(Gigs5104To5113CoverageData))]
+    public void Gigs5104To5113CasesForSupportedPipelinesExecute(
+        string[] fixtureFiles,
+        int minTransformed,
+        int minWithinTolerance,
+        string label,
+        bool requireToleranceMatch)
     {
-        AssertFixtureCoverage(Fixture5104To5113Files, 80, 0, "5104-5113", requireToleranceMatch: false);
+        AssertFixtureCoverage(fixtureFiles, minTransformed, minWithinTolerance, label, requireToleranceMatch);
     }
 
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Fact]
+    /// <param name="fixtureFiles">Fixture file names to parse.</param>
+    /// <param name="minTransformed">Minimum transformed case count expected.</param>
+    /// <param name="minWithinTolerance">Minimum within-tolerance case count expected.</param>
+    /// <param name="label">Human-readable fixture group label.</param>
+    /// <param name="requireToleranceMatch">Whether tolerance assertions are required.</param>
+    [Theory]
     [Trait("Category", "Gigs5200")]
-    public void Gigs5200CasesForSupportedPipelinesExecute()
+    [MemberData(nameof(Gigs5200CoverageData))]
+    public void Gigs5200CasesForSupportedPipelinesExecute(
+        string[] fixtureFiles,
+        int minTransformed,
+        int minWithinTolerance,
+        string label,
+        bool requireToleranceMatch)
     {
-        AssertFixtureCoverage(Fixture5200Files, 20, 0, "5200", requireToleranceMatch: false);
+        AssertFixtureCoverage(fixtureFiles, minTransformed, minWithinTolerance, label, requireToleranceMatch);
     }
 
     private static void AssertFixtureCoverage(
@@ -592,7 +684,7 @@ public class Gigs5101TheoryTests
             i++;
         }
 
-        if (i == 0 || !int.TryParse(digits.Substring(0, i), NumberStyles.Integer, CultureInfo.InvariantCulture, out int zone))
+        if (i == 0 || !int.TryParse(digits.AsSpan(0, i), NumberStyles.Integer, CultureInfo.InvariantCulture, out int zone))
         {
             return false;
         }
@@ -666,10 +758,16 @@ public class Gigs5101TheoryTests
 
     private static string FindGigsDirectory()
     {
+        string direct = Path.Combine(AppContext.BaseDirectory, "Fixtures", "gigs");
+        if (Directory.Exists(direct))
+        {
+            return direct;
+        }
+
         var current = new DirectoryInfo(AppContext.BaseDirectory);
         while (current is not null)
         {
-            string candidate = Path.Combine(current.FullName, "spec", "PROJ", "test", "gigs");
+            string candidate = Path.Combine(current.FullName, "test", "ProjNet.Tests", "Fixtures", "gigs");
             if (Directory.Exists(candidate))
             {
                 return candidate;

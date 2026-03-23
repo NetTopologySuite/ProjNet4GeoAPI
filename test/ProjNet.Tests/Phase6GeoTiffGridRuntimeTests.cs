@@ -33,28 +33,13 @@ public class Phase6GeoTiffGridRuntimeTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Fact]
-    public void HgridshiftWithGeoTiffGridAppliesExpectedShift()
+    /// <param name="gridFileName">GeoTIFF horizontal grid fixture file name.</param>
+    [Theory]
+    [InlineData("test_hgrid.tif")]
+    [InlineData("test_hgrid_positive_west.tif")]
+    public void HgridshiftWithGeoTiffGridAppliesExpectedShift(string gridFileName)
     {
-        string gridPath = FindGridPath("test_hgrid.tif");
-        string operation = "+proj=hgridshift +grids=" + gridPath;
-
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
-        Assert.True(ok, skipReason);
-
-        double[] output = transform.Transform(GeoTiffGridInput);
-        Assert.Equal(5.875d, output[0], 9);
-        Assert.Equal(55.375d, output[1], 9);
-        Assert.Equal(0d, output[2], 9);
-    }
-
-    /// <summary>
-    /// Performs the documented operation.
-    /// </summary>
-    [Fact]
-    public void HgridshiftWithGeoTiffPositiveWestMetadataAppliesExpectedShift()
-    {
-        string gridPath = FindGridPath("test_hgrid_positive_west.tif");
+        string gridPath = FindGridPath(gridFileName);
         string operation = "+proj=hgridshift +grids=" + gridPath;
 
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
@@ -68,10 +53,13 @@ public class Phase6GeoTiffGridRuntimeTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Fact]
-    public void VgridshiftWithGeoTiffGridAppliesExpectedDefaultShift()
+    /// <param name="gridFileName">GeoTIFF vertical grid fixture file name.</param>
+    [Theory]
+    [InlineData("test_vgrid_pixelispoint.tif")]
+    [InlineData("test_vgrid_uint16_with_scale_offset.tif")]
+    public void VgridshiftWithGeoTiffGridAppliesExpectedDefaultShift(string gridFileName)
     {
-        string gridPath = FindGridPath("test_vgrid_pixelispoint.tif");
+        string gridPath = FindGridPath(gridFileName);
         string operation = "+proj=vgridshift +grids=" + gridPath + " +multiplier=1";
 
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
@@ -80,22 +68,6 @@ public class Phase6GeoTiffGridRuntimeTests
         double[] output = transform.Transform(GeoTiffGridInput);
         Assert.Equal(4.5d, output[0], 9);
         Assert.Equal(52.5d, output[1], 9);
-        Assert.Equal(11.5d, output[2], 9);
-    }
-
-    /// <summary>
-    /// Performs the documented operation.
-    /// </summary>
-    [Fact]
-    public void VgridshiftWithGeoTiffScaleOffsetAppliesScaleAndOffset()
-    {
-        string gridPath = FindGridPath("test_vgrid_uint16_with_scale_offset.tif");
-        string operation = "+proj=vgridshift +grids=" + gridPath + " +multiplier=1";
-
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
-        Assert.True(ok, skipReason);
-
-        double[] output = transform.Transform(GeoTiffGridInput);
         Assert.Equal(11.5d, output[2], 9);
     }
 
@@ -117,10 +89,16 @@ public class Phase6GeoTiffGridRuntimeTests
 
     private static string FindGridPath(string fileName)
     {
+        string direct = Path.Combine(AppContext.BaseDirectory, "Fixtures", "grids", fileName);
+        if (File.Exists(direct))
+        {
+            return direct;
+        }
+
         var current = new DirectoryInfo(AppContext.BaseDirectory);
         while (current is not null)
         {
-            string candidate = Path.Combine(current.FullName, "spec", "PROJ", "data", "tests", fileName);
+            string candidate = Path.Combine(current.FullName, "test", "ProjNet.Tests", "Fixtures", "grids", fileName);
             if (File.Exists(candidate))
             {
                 return candidate;
@@ -129,6 +107,6 @@ public class Phase6GeoTiffGridRuntimeTests
             current = current.Parent;
         }
 
-        throw new FileNotFoundException("Could not locate PROJ test grid fixture.", fileName);
+        throw new FileNotFoundException("Could not locate local test grid fixture under test\\ProjNet.Tests\\Fixtures\\grids.", fileName);
     }
 }

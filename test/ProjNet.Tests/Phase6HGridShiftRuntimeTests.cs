@@ -33,10 +33,13 @@ public class Phase6HGridShiftRuntimeTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Fact]
-    public void HgridshiftWithLittleEndianNtv2GridAppliesExpectedShift()
+    /// <param name="gridFileName">NTv2 grid fixture file name.</param>
+    [Theory]
+    [InlineData("test_hgrid_little_endian.gsb")]
+    [InlineData("test_hgrid_big_endian.gsb")]
+    public void HgridshiftWithNtv2GridAppliesExpectedShift(string gridFileName)
     {
-        string gridPath = FindGridPath("test_hgrid_little_endian.gsb");
+        string gridPath = FindGridPath(gridFileName);
         string operation = "+proj=hgridshift +grids=" + gridPath;
 
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
@@ -51,28 +54,13 @@ public class Phase6HGridShiftRuntimeTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Fact]
-    public void HgridshiftWithBigEndianNtv2GridAppliesExpectedShift()
+    /// <param name="gridFileName">NTv2 grid fixture file name.</param>
+    [Theory]
+    [InlineData("test_hgrid_little_endian.gsb")]
+    [InlineData("test_hgrid_big_endian.gsb")]
+    public void HgridshiftWithInverseFlagForSyntheticFixtureSignalsOutsideGrid(string gridFileName)
     {
-        string gridPath = FindGridPath("test_hgrid_big_endian.gsb");
-        string operation = "+proj=hgridshift +grids=" + gridPath;
-
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
-
-        Assert.True(ok, skipReason);
-        double[] output = transform.Transform(HorizontalGridInput);
-        Assert.Equal(5.875d, output[0], 9);
-        Assert.Equal(55.375d, output[1], 9);
-        Assert.Equal(0d, output[2], 9);
-    }
-
-    /// <summary>
-    /// Performs the documented operation.
-    /// </summary>
-    [Fact]
-    public void HgridshiftWithInverseFlagForSyntheticFixtureSignalsOutsideGrid()
-    {
-        string gridPath = FindGridPath("test_hgrid_little_endian.gsb");
+        string gridPath = FindGridPath(gridFileName);
         string operation = "+inv +proj=hgridshift +grids=" + gridPath;
 
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
@@ -84,10 +72,13 @@ public class Phase6HGridShiftRuntimeTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Fact]
-    public void GridshiftWithNtv2GridUsesHorizontalShiftImplementation()
+    /// <param name="gridFileName">NTv2 grid fixture file name.</param>
+    [Theory]
+    [InlineData("test_hgrid_little_endian.gsb")]
+    [InlineData("test_hgrid_big_endian.gsb")]
+    public void GridshiftWithNtv2GridUsesHorizontalShiftImplementation(string gridFileName)
     {
-        string gridPath = FindGridPath("test_hgrid_little_endian.gsb");
+        string gridPath = FindGridPath(gridFileName);
         string operation = "+proj=gridshift +grids=" + gridPath;
 
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
@@ -100,10 +91,16 @@ public class Phase6HGridShiftRuntimeTests
 
     private static string FindGridPath(string fileName)
     {
+        string direct = Path.Combine(AppContext.BaseDirectory, "Fixtures", "grids", fileName);
+        if (File.Exists(direct))
+        {
+            return direct;
+        }
+
         var current = new DirectoryInfo(AppContext.BaseDirectory);
         while (current is not null)
         {
-            string candidate = Path.Combine(current.FullName, "spec", "PROJ", "data", "tests", fileName);
+            string candidate = Path.Combine(current.FullName, "test", "ProjNet.Tests", "Fixtures", "grids", fileName);
             if (File.Exists(candidate))
             {
                 return candidate;
@@ -112,6 +109,6 @@ public class Phase6HGridShiftRuntimeTests
             current = current.Parent;
         }
 
-        throw new FileNotFoundException("Could not locate PROJ test grid fixture.", fileName);
+        throw new FileNotFoundException("Could not locate local test grid fixture under test\\ProjNet.Tests\\Fixtures\\grids.", fileName);
     }
 }
