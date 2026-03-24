@@ -11,7 +11,7 @@ using Xunit;
 /// <summary>
 /// Represents the documented type.
 /// </summary>
-public class Phase5PipelineRuntimeTests
+public class PipelineRuntimeTests
 {
     private static readonly double[] PipelineNoopInput = { 1.5d, 2.25d, 9d };
     private static readonly double[] PipelineSwapInput = { 100d, 200d };
@@ -84,3 +84,4 @@ public class Phase5PipelineRuntimeTests
         Assert.InRange(Math.Abs(transformed[3] - 2018.0d), 0d, 1e-12d);
     }
 }
+

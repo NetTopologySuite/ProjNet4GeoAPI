@@ -14,7 +14,7 @@ using Xunit;
 /// <summary>
 /// Validates geostationary satellite (<c>geos</c>) projection support.
 /// </summary>
-public class Phase5GeosProjectionTests
+public class GeostationaryProjectionTests
 {
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
@@ -182,7 +182,7 @@ public class Phase5GeosProjectionTests
 
         return string.Format(
             CultureInfo.InvariantCulture,
-            "PROJCS[\"Phase5-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"h\",{2}],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{3},UNIT[\"metre\",1]]",
+            "PROJCS[\"Projection-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"h\",{2}],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{3},UNIT[\"metre\",1]]",
             projectionName,
             spheroid,
             hText,
@@ -191,3 +191,4 @@ public class Phase5GeosProjectionTests
 
     private static double[] CreatePoint(double x, double y) => [x, y];
 }
+

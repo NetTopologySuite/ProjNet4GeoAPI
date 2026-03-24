@@ -12,7 +12,7 @@ using Xunit;
 /// <summary>
 /// Represents the documented type.
 /// </summary>
-public class Phase5AxisSwapTransformationTests
+public class AxisSwapTransformationTests
 {
     private static readonly double[] GeographicAxisInput = { 12d, 55d };
     private static readonly double[] ProjectedAxisInput = { 500000d, 6100000d };
@@ -227,3 +227,4 @@ public class Phase5AxisSwapTransformationTests
         return CoordinateSystemFactory.CreateProjection("Mercator", "mercator", projectionParameters);
     }
 }
+

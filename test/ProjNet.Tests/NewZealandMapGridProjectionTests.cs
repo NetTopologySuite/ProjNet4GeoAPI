@@ -11,26 +11,25 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Validates van der Grinten I (<c>vandg</c>) projection support.
+/// Validates New Zealand Map Grid (<c>nzmg</c>) projection support.
 /// </summary>
-public class Phase5VandgProjectionTests
+public class NewZealandMapGridProjectionTests
 {
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
     /// <summary>
-    /// Verifies that vandg aliases resolve from WKT and produce usable transforms.
+    /// Verifies that nzmg aliases resolve from WKT and produce usable transforms.
     /// </summary>
     /// <param name="projectionName">Projection alias to validate.</param>
     [Theory]
-    [InlineData("vandg")]
-    [InlineData("VanDerGrinten")]
-    [InlineData("van_der_grinten")]
-    public void SupportsVandgAliasesFromWkt(string projectionName)
+    [InlineData("nzmg")]
+    [InlineData("New_Zealand_Map_Grid")]
+    public void SupportsNzmgAliasesFromWkt(string projectionName)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, 6400000d));
+        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName));
         var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
-        double[] result = transform.MathTransform.Transform(CreatePoint(2d, 1d));
+        double[] result = transform.MathTransform.Transform(CreatePoint(173.5d, -41.5d));
 
         Assert.NotNull(projected);
         Assert.NotNull(transform);
@@ -39,19 +38,19 @@ public class Phase5VandgProjectionTests
     }
 
     /// <summary>
-    /// Verifies forward/inverse roundtrip stability for vandg aliases.
+    /// Verifies forward/inverse roundtrip stability for nzmg.
     /// </summary>
     /// <param name="projectionName">Projection alias to validate.</param>
     /// <param name="longitude">Input longitude (degrees).</param>
     /// <param name="latitude">Input latitude (degrees).</param>
     /// <param name="tolerance">Maximum absolute roundtrip delta (degrees).</param>
     [Theory]
-    [InlineData("vandg", 2d, 1d, 2e-8)]
-    [InlineData("vandg", -2d, -1d, 2e-8)]
-    [InlineData("VanDerGrinten", 30d, -20d, 2e-8)]
-    public void SupportsVandgRoundtrip(string projectionName, double longitude, double latitude, double tolerance)
+    [InlineData("nzmg", 173.2d, -41.1d, 5e-7)]
+    [InlineData("nzmg", 174.0d, -40.5d, 5e-7)]
+    [InlineData("New_Zealand_Map_Grid", 172.8d, -42.0d, 5e-7)]
+    public void SupportsNzmgRoundtrip(string projectionName, double longitude, double latitude, double tolerance)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, 6400000d));
+        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName));
         var geographic = projected.GeographicCoordinateSystem;
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(geographic, projected);
         var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, geographic);
@@ -72,12 +71,10 @@ public class Phase5VandgProjectionTests
     /// <param name="expectedX">Expected x result (meters).</param>
     /// <param name="expectedY">Expected y result (meters).</param>
     [Theory]
-    [InlineData("vandg", 2d, 1d, 223395.249543407d, 111704.596633675d)]
-    [InlineData("vandg", 2d, -1d, 223395.249543407d, -111704.596633675d)]
-    [InlineData("vandergrinten", -2d, 1d, -223395.249543407d, 111704.596633675d)]
-    [InlineData("van_der_grinten_i", -2d, -1d, -223395.249543407d, -111704.596633675d)]
-    [InlineData("vandg", 179.9d, 50d, 18549161.7268d, 7731305.7162d)]
-    [InlineData("vandg", 180.1d, 50d, -18549161.7268d, 7731305.7162d)]
+    [InlineData("nzmg", 2d, 1d, 3352675144.747425100d, -7043205391.100243600d)]
+    [InlineData("nzmg", 2d, -1d, 3691989502.779306400d, -6729069415.332104700d)]
+    [InlineData("New_Zealand_Map_Grid", -2d, 1d, 4099000768.453238500d, -7863208779.667248700d)]
+    [InlineData("New_Zealand_Map_Grid", -2d, -1d, 4466166927.369976000d, -7502531736.628604900d)]
     public void MatchesProjBuiltinsForwardVectors(
         string projectionName,
         double longitude,
@@ -85,13 +82,12 @@ public class Phase5VandgProjectionTests
         double expectedX,
         double expectedY)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, 6400000d));
+        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
-
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
 
-        Assert.InRange(Math.Abs(projectedPoint[0] - expectedX), 0d, 3.5e-4);
-        Assert.InRange(Math.Abs(projectedPoint[1] - expectedY), 0d, 3.5e-4);
+        Assert.InRange(Math.Abs(projectedPoint[0] - expectedX), 0d, 5e-4);
+        Assert.InRange(Math.Abs(projectedPoint[1] - expectedY), 0d, 5e-4);
     }
 
     /// <summary>
@@ -103,10 +99,10 @@ public class Phase5VandgProjectionTests
     /// <param name="expectedLongitude">Expected longitude (degrees).</param>
     /// <param name="expectedLatitude">Expected latitude (degrees).</param>
     [Theory]
-    [InlineData("vandg", 200d, 100d, 0.001790494d, 0.000895247d)]
-    [InlineData("vandergrinten", 200d, -100d, 0.001790494d, -0.000895247d)]
-    [InlineData("van_der_grinten", -200d, 100d, -0.001790494d, 0.000895247d)]
-    [InlineData("van_der_grinten_i", -200d, -100d, -0.001790494d, -0.000895247d)]
+    [InlineData("nzmg", 200000d, 100000d, 175.482086827d, -69.422692183d)]
+    [InlineData("nzmg", 200000d, -100000d, 175.756819473d, -69.533571088d)]
+    [InlineData("New_Zealand_Map_Grid", -200000d, 100000d, 134.605119233d, -61.459995711d)]
+    [InlineData("New_Zealand_Map_Grid", -200000d, -100000d, 134.333684316d, -61.621553676d)]
     public void MatchesProjBuiltinsInverseVectors(
         string projectionName,
         double x,
@@ -114,21 +110,22 @@ public class Phase5VandgProjectionTests
         double expectedLongitude,
         double expectedLatitude)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, 6400000d));
+        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName));
         var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
-
         double[] geographicPoint = inverse.MathTransform.Transform(CreatePoint(x, y));
 
-        Assert.InRange(Math.Abs(geographicPoint[0] - expectedLongitude), 0d, 1e-9);
-        Assert.InRange(Math.Abs(geographicPoint[1] - expectedLatitude), 0d, 1e-9);
+        Assert.InRange(Math.Abs(geographicPoint[0] - expectedLongitude), 0d, 2e-9);
+        Assert.InRange(Math.Abs(geographicPoint[1] - expectedLatitude), 0d, 2e-9);
     }
 
-    private static string BuildProjectedWkt(string projectionName, double radius)
+    private static string BuildProjectedWkt(string projectionName)
     {
-        string radiusText = radius.ToString(CultureInfo.InvariantCulture);
-        return
-            $"PROJCS[\"Phase5-{projectionName}\",GEOGCS[\"Sphere\",DATUM[\"Sphere_Datum\",SPHEROID[\"Sphere\",{radiusText},0]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1]]";
+        return string.Format(
+            CultureInfo.InvariantCulture,
+            "PROJCS[\"Projection-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",SPHEROID[\"GRS 80\",6378137,298.257222101]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",-41],PARAMETER[\"central_meridian\",173],PARAMETER[\"false_easting\",2510000],PARAMETER[\"false_northing\",6023150],UNIT[\"metre\",1]]",
+            projectionName);
     }
 
     private static double[] CreatePoint(double x, double y) => [x, y];
 }
+

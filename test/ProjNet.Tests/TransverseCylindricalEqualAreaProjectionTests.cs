@@ -13,7 +13,7 @@ using Xunit;
 /// <summary>
 /// Validates TCEA projection aliases and roundtrip behavior.
 /// </summary>
-public class Phase5TceaProjectionTests
+public class TransverseCylindricalEqualAreaProjectionTests
 {
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
@@ -80,8 +80,9 @@ public class Phase5TceaProjectionTests
         string scaleText = scaleFactor.ToString(CultureInfo.InvariantCulture);
 
         return
-            $"PROJCS[\"Phase5-{projectionName}\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",{latitudeText}],PARAMETER[\"central_meridian\",{meridianText}],PARAMETER[\"scale_factor\",{scaleText}],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1]]";
+            $"PROJCS[\"Projection-{projectionName}\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",{latitudeText}],PARAMETER[\"central_meridian\",{meridianText}],PARAMETER[\"scale_factor\",{scaleText}],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1]]";
     }
 
     private static double[] CreatePoint(double x, double y) => [x, y];
 }
+

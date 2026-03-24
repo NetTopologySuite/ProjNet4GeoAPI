@@ -14,7 +14,7 @@ using Xunit;
 /// <summary>
 /// Validates near-sided perspective (<c>nsper</c>/<c>tpers</c>) and Laborde (<c>labrd</c>) projection support.
 /// </summary>
-public class Phase5NsperLabrdProjectionTests
+public class NearSidedPerspectiveLabordeProjectionTests
 {
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
@@ -273,7 +273,7 @@ public class Phase5NsperLabrdProjectionTests
 
         return string.Format(
             CultureInfo.InvariantCulture,
-            "PROJCS[\"Phase5-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",SPHEROID[\"Sphere\",{1},0]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",{2}],PARAMETER[\"central_meridian\",{3}],PARAMETER[\"h\",{4}],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{5}{6},UNIT[\"metre\",1]]",
+            "PROJCS[\"Projection-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",SPHEROID[\"Sphere\",{1},0]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",{2}],PARAMETER[\"central_meridian\",{3}],PARAMETER[\"h\",{4}],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{5}{6},UNIT[\"metre\",1]]",
             projectionName,
             semiMajor.ToString("R", CultureInfo.InvariantCulture),
             latitudeOfOrigin.ToString("R", CultureInfo.InvariantCulture),
@@ -287,7 +287,7 @@ public class Phase5NsperLabrdProjectionTests
     {
         return string.Format(
             CultureInfo.InvariantCulture,
-            "PROJCS[\"Phase5-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",SPHEROID[\"GRS 80\",6378137,298.257222101]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",{1}],PARAMETER[\"central_meridian\",{2}],PARAMETER[\"azi\",{3}],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1]]",
+            "PROJCS[\"Projection-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",SPHEROID[\"GRS 80\",6378137,298.257222101]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",{1}],PARAMETER[\"central_meridian\",{2}],PARAMETER[\"azi\",{3}],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1]]",
             projectionName,
             latitudeOfOrigin.ToString("R", CultureInfo.InvariantCulture),
             centralMeridian.ToString("R", CultureInfo.InvariantCulture),
@@ -296,3 +296,4 @@ public class Phase5NsperLabrdProjectionTests
 
     private static double[] CreatePoint(double x, double y) => [x, y];
 }
+
