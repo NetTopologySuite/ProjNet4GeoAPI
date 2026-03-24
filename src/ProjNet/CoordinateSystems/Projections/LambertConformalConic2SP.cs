@@ -30,7 +30,6 @@ internal class LambertConformalConic2SP : MapProjection
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LambertConformalConic2SP"/> class.
-    /// Creates an instance of an LambertConformalConic2SPProjection projection object.
     /// </summary>
     /// <remarks>
     /// <para>The parameters this projection expects are listed below.</para>
@@ -52,7 +51,6 @@ internal class LambertConformalConic2SP : MapProjection
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LambertConformalConic2SP"/> class.
-    /// Creates an instance of an Albers projection object.
     /// </summary>
     /// <remarks>
     /// <para>The parameters this projection expects are listed below.</para>
@@ -67,7 +65,7 @@ internal class LambertConformalConic2SP : MapProjection
     /// </list>
     /// </remarks>
     /// <param name="parameters">List of parameters to initialize the projection.</param>
-    /// <param name="inverse">Indicates whether the projection forward (meters to degrees or degrees to meters).</param>
+    /// <param name="inverse">The inverse projection instance, or <see langword="null"/> for a forward projection.</param>
     protected LambertConformalConic2SP(IEnumerable<ProjectionParameter> parameters, LambertConformalConic2SP inverse)
         : base(parameters, inverse)
     {

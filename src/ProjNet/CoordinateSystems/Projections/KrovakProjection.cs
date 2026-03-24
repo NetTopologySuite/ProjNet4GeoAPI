@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Implemetns the Krovak Projection.
+/// Implements the Krovak Oblique Conformal Conic map projection.
 /// </summary>
 /// <remarks>
 /// <para>The normal case of the Lambert Conformal conic is for the axis of the cone
@@ -69,18 +69,18 @@ internal class KrovakProjection : MapProjection
 
     /// <summary>
     /// Initializes a new instance of the <see cref="KrovakProjection"/> class.
-    /// Creates an instance of an LambertConformalConic2SPProjection projection object.
     /// </summary>
     /// <remarks>
     /// <para>The parameters this projection expects are listed below.</para>
     /// <list type="table">
-    /// <listheader><term>Items</term><description>Descriptions</description></listheader>
-    /// <item><term>latitude_of_false_origin</term><description>The latitude of the point which is not the natural origin and at which grid coordinate values false easting and false northing are defined.</description></item>
-    /// <item><term>longitude_of_false_origin</term><description>The longitude of the point which is not the natural origin and at which grid coordinate values false easting and false northing are defined.</description></item>
-    /// <item><term>latitude_of_1st_standard_parallel</term><description>For a conic projection with two standard parallels, this is the latitude of intersection of the cone with the ellipsoid that is nearest the pole.  Scale is true along this parallel.</description></item>
-    /// <item><term>latitude_of_2nd_standard_parallel</term><description>For a conic projection with two standard parallels, this is the latitude of intersection of the cone with the ellipsoid that is furthest from the pole.  Scale is true along this parallel.</description></item>
-    /// <item><term>easting_at_false_origin</term><description>The easting value assigned to the false origin.</description></item>
-    /// <item><term>northing_at_false_origin</term><description>The northing value assigned to the false origin.</description></item>
+    /// <listheader><term>Parameter</term><description>Description</description></listheader>
+    /// <item><term>latitude_of_center</term><description>Geodetic latitude of the projection centre.</description></item>
+    /// <item><term>longitude_of_center</term><description>Longitude of the projection centre (central meridian).</description></item>
+    /// <item><term>azimuth</term><description>Azimuth of the centre line at the projection centre.</description></item>
+    /// <item><term>pseudo_standard_parallel_1</term><description>Latitude of the pseudo standard parallel.</description></item>
+    /// <item><term>scale_factor</term><description>Scale factor on the pseudo standard parallel.</description></item>
+    /// <item><term>false_easting</term><description>Easting assigned to the projection centre.</description></item>
+    /// <item><term>false_northing</term><description>Northing assigned to the projection centre.</description></item>
     /// </list>
     /// </remarks>
     /// <param name="parameters">List of parameters to initialize the projection.</param>
@@ -91,22 +91,9 @@ internal class KrovakProjection : MapProjection
 
     /// <summary>
     /// Initializes a new instance of the <see cref="KrovakProjection"/> class.
-    /// Creates an instance of an Krovak projection object.
     /// </summary>
-    /// <remarks>
-    /// <para>The parameters this projection expects are listed below.</para>
-    /// <list type="table">
-    /// <listheader><term>Parameter</term><description>Description</description></listheader>
-    /// <item><term>latitude_of_origin</term><description>The latitude of the point which is not the natural origin and at which grid coordinate values false easting and false northing are defined.</description></item>
-    /// <item><term>central_meridian</term><description>The longitude of the point which is not the natural origin and at which grid coordinate values false easting and false northing are defined.</description></item>
-    /// <item><term>standard_parallel_1</term><description>For a conic projection with two standard parallels, this is the latitude of intersection of the cone with the ellipsoid that is nearest the pole.  Scale is true along this parallel.</description></item>
-    /// <item><term>standard_parallel_2</term><description>For a conic projection with two standard parallels, this is the latitude of intersection of the cone with the ellipsoid that is furthest from the pole.  Scale is true along this parallel.</description></item>
-    /// <item><term>false_easting</term><description>The easting value assigned to the false origin.</description></item>
-    /// <item><term>false_northing</term><description>The northing value assigned to the false origin.</description></item>
-    /// </list>
-    /// </remarks>
     /// <param name="parameters">List of parameters to initialize the projection.</param>
-    /// <param name="inverse">Indicates whether the projection forward (meters to degrees or degrees to meters).</param>
+    /// <param name="inverse">The inverse projection instance, or <see langword="null"/> for a forward projection.</param>
     protected KrovakProjection(IEnumerable<ProjectionParameter> parameters, KrovakProjection inverse)
         : base(parameters, inverse)
     {
@@ -164,8 +151,8 @@ internal class KrovakProjection : MapProjection
     /// <summary>
     /// Converts coordinates in radians to projected meters.
     /// </summary>
-    /// <param name="lon">The lon parameter.</param>
-    /// <param name="lat">The lat parameter.</param>
+    /// <param name="lon">The longitude of the point in radians when entering, its x-ordinate in meters after exit.</param>
+    /// <param name="lat">The latitude of the point in radians when entering, its y-ordinate in meters after exit.</param>
     protected override void RadiansToMeters(ref double lon, ref double lat)
     {
         double lambda = lon - this.centralMeridian;
@@ -189,8 +176,8 @@ internal class KrovakProjection : MapProjection
     /// <summary>
     /// Converts coordinates in projected meters to radians.
     /// </summary>
-    /// <param name="x">The x parameter.</param>
-    /// <param name="y">The y parameter.</param>
+    /// <param name="x">The x-ordinate in projected meters when entering, the longitude in radians after exit.</param>
+    /// <param name="y">The y-ordinate in projected meters when entering, the latitude in radians after exit.</param>
     protected override void MetersToRadians(ref double x, ref double y)
     {
         x *= this.reciprocSemiMajor;

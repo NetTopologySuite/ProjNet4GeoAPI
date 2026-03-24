@@ -9,8 +9,15 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Represents the documented type.
+/// Implements the Hotine Oblique Mercator map projection (EPSG method 9812).
 /// </summary>
+/// <remarks>
+/// <para>The Hotine Oblique Mercator projects a region along a central oblique line
+/// defined by an azimuth at the projection centre. The cylinder axis is tilted with
+/// respect to the Earth's axis, making it suitable for regions with a predominant
+/// oblique extent. It is a conformal projection. False easting and northing are
+/// applied relative to the centre of the initial line.</para>
+/// </remarks>
 [Serializable]
 internal class HotineObliqueMercatorProjection : MapProjection
 {

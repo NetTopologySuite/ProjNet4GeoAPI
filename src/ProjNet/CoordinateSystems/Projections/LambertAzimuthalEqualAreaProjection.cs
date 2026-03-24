@@ -39,9 +39,8 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LambertAzimuthalEqualAreaProjection"/> class.
-    /// Creates an instance of this class.
     /// </summary>
-    /// <param name="parameters">An enumeration of Projection parameters.</param>
+    /// <param name="parameters">List of parameters to initialize the projection.</param>
     public LambertAzimuthalEqualAreaProjection(IEnumerable<ProjectionParameter> parameters)
         : this(parameters, null)
     {
@@ -49,10 +48,9 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LambertAzimuthalEqualAreaProjection"/> class.
-    /// Creates an instance of this class.
     /// </summary>
-    /// <param name="parameters">An enumeration of Projection parameters.</param>
-    /// <param name="inverse">The inverse projection.</param>
+    /// <param name="parameters">List of parameters to initialize the projection.</param>
+    /// <param name="inverse">The inverse projection instance, or <see langword="null"/> for a forward projection.</param>
     public LambertAzimuthalEqualAreaProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
         : base(parameters, inverse)
     {
@@ -164,10 +162,9 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
     }
 
     /// <summary>
-    /// Creates the inverse transform of this object.
+    /// Returns the inverse of this projection.
     /// </summary>
-    /// <remarks>This method may fail if the transform is not one to one. However, all cartographic projections should succeed.</remarks>
-    /// <returns>The transformation result.</returns>
+    /// <returns>The inverse projection.</returns>
     public override MathTransform Inverse()
     {
         if (this.inverse is null)

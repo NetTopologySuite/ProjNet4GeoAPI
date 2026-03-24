@@ -9,8 +9,15 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Represents the documented type.
+/// Implements the Azimuthal Equidistant map projection.
 /// </summary>
+/// <remarks>
+/// <para>The Azimuthal Equidistant projection preserves both distance and direction from
+/// the projection centre. All points on the map are at proportionally correct distances
+/// from the centre, and the azimuth (bearing) from the centre to any other point is
+/// correctly represented. The spherical formulation is used for both forward and inverse
+/// transformations.</para>
+/// </remarks>
 [Serializable]
 internal class AzimuthalEquidistantProjection : MapProjection
 {

@@ -18,8 +18,7 @@ using ProjNet.CoordinateSystems.Transformations;
 ///     used to project the United States of America. It gives the northern
 ///     border with Canada a curved appearance.</para>
 ///
-///     <para>The <a href="http://www.geog.mcgill.ca/courses/geo201/mapproj/naaeana.gif">Albers Equal Area</a>
-///     projection has the property that the area bounded
+///     <para>The Albers Equal Area projection has the property that the area bounded
 ///     by any pair of parallels and meridians is exactly reproduced between the
 ///     image of those parallels and meridians in the projected domain, that is,
 ///     the projection preserves the correct area of the earth though distorts
@@ -34,7 +33,6 @@ internal class AlbersProjection : MapProjection
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AlbersProjection"/> class.
-    /// Creates an instance of an Albers projection object.
     /// </summary>
     /// <param name="parameters">List of parameters to initialize the projection.</param>
     /// <remarks>
@@ -56,7 +54,6 @@ internal class AlbersProjection : MapProjection
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AlbersProjection"/> class.
-    /// Creates an instance of an Albers projection object.
     /// </summary>
     /// <remarks>
     /// <para>The parameters this projection expects are listed below.</para>
@@ -71,7 +68,7 @@ internal class AlbersProjection : MapProjection
     /// </list>
     /// </remarks>
     /// <param name="parameters">List of parameters to initialize the projection.</param>
-    /// <param name="inverse">Indicates whether the projection forward (meters to degrees or degrees to meters).</param>
+    /// <param name="inverse">The inverse projection instance, or <see langword="null"/> for a forward projection.</param>
     protected AlbersProjection(IEnumerable<ProjectionParameter> parameters, AlbersProjection inverse)
         : base(parameters, inverse)
     {
@@ -99,10 +96,10 @@ internal class AlbersProjection : MapProjection
     }
 
     /// <summary>
-    /// Converts coordinates in decimal degrees to projected meters.
+    /// Converts coordinates in radians to projected meters.
     /// </summary>
     /// <param name="lon">The longitude of the point in radians when entering, its x-ordinate in meters after exit.</param>
-    /// <param name="lat">The latitude of the point in radians when entering, its y-in ordinate meters after exit.</param>
+    /// <param name="lat">The latitude of the point in radians when entering, its y-ordinate in meters after exit.</param>
     protected sealed override void RadiansToMeters(ref double lon, ref double lat)
     {
         double a = this.Alpha(lat);
@@ -114,7 +111,7 @@ internal class AlbersProjection : MapProjection
     }
 
     /// <summary>
-    /// Converts coordinates in projected meters to decimal degrees.
+    /// Converts coordinates in projected meters to radians.
     /// </summary>
     /// <param name="x">The x-ordinate of the point in meters when entering, its longitude in radians after exit.</param>
     /// <param name="y">The y-ordinate of the point in meters when entering, its latitude in radians after exit.</param>

@@ -9,8 +9,15 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Represents the documented type.
+/// Implements the Cassini-Soldner (Transverse Cylindrical Equidistant) map projection.
 /// </summary>
+/// <remarks>
+/// <para>The Cassini-Soldner projection is a transverse cylindrical equidistant projection.
+/// It maps the central meridian and its perpendicular cross-sections to straight lines while
+/// preserving distances along lines perpendicular to the central meridian. Scale is true
+/// along the central meridian and along lines perpendicular to it, but distortion increases
+/// with distance from the central meridian.</para>
+/// </remarks>
 internal class CassiniSoldnerProjection : MapProjection
 {
     // ReSharper disable InconsistentNaming

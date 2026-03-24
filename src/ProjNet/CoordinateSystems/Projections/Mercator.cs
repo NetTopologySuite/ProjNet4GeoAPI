@@ -31,12 +31,8 @@ internal class Mercator : MapProjection
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Mercator"/> class.
-    /// Initializes the MercatorProjection object with the specified parameters to project points.
     /// </summary>
-    /// <param name="parameters">ParameterList with the required parameters.</param>
-    /// <remarks>
-    /// Initializes the projection with default non-inverse mode.
-    /// </remarks>
+    /// <param name="parameters">List of parameters to initialize the projection.</param>
     public Mercator(IEnumerable<ProjectionParameter> parameters)
         : this(parameters, null)
     {
@@ -44,10 +40,9 @@ internal class Mercator : MapProjection
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Mercator"/> class.
-    /// Initializes the MercatorProjection object with the specified parameters.
     /// </summary>
     /// <param name="parameters">List of parameters to initialize the projection.</param>
-    /// <param name="isInverse">Indicates whether the projection forward (meters to degrees or degrees to meters).</param>
+    /// <param name="isInverse">The inverse projection instance, or <see langword="null"/> for a forward projection.</param>
     /// <remarks>
     /// <para>The parameters this projection expects are listed below.</para>
     /// <list type="table">
@@ -82,10 +77,10 @@ internal class Mercator : MapProjection
     }
 
     /// <summary>
-    /// Converts coordinates in decimal degrees to projected meters.
+    /// Converts coordinates in radians to projected meters.
     /// </summary>
-    /// <param name="lon">The longitude of the point in decimal degrees.</param>
-    /// <param name="lat">The latitude of the point in decimal degrees.</param>
+    /// <param name="lon">The longitude of the point in radians.</param>
+    /// <param name="lat">The latitude of the point in radians.</param>
     protected override void RadiansToMeters(ref double lon, ref double lat)
     {
         if (double.IsNaN(lon) || double.IsNaN(lat))

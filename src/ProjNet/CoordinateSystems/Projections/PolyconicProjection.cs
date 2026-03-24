@@ -45,7 +45,6 @@ internal class PolyconicProjection : MapProjection
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PolyconicProjection"/> class.
-    /// Constructs a new map projection from the supplied parameters.
     /// </summary>
     /// <param name="parameters">The parameter values in standard units.</param>
     public PolyconicProjection(IEnumerable<ProjectionParameter> parameters)
@@ -55,10 +54,9 @@ internal class PolyconicProjection : MapProjection
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PolyconicProjection"/> class.
-    /// Constructs a new map projection from the supplied parameters.
     /// </summary>
     /// <param name="parameters">The parameter values in standard units.</param>
-    /// <param name="inverse">Defines if Projection is inverse.</param>
+    /// <param name="inverse">The inverse projection instance, or <see langword="null"/> for a forward projection.</param>
     protected PolyconicProjection(IEnumerable<ProjectionParameter> parameters, PolyconicProjection inverse)
         : base(parameters, inverse)
     {

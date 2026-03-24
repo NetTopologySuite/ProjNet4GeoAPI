@@ -9,8 +9,14 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Represents the documented type.
+/// Implements the Oblique Mercator map projection (EPSG method 9815).
 /// </summary>
+/// <remarks>
+/// <para>The Oblique Mercator is a variant of the Hotine Oblique Mercator in which
+/// false easting and northing are referenced to the natural origin of the projection
+/// rather than to the centre of the initial line. This variant corresponds to EPSG
+/// method 9815.</para>
+/// </remarks>
 [Serializable]
 internal class ObliqueMercatorProjection : HotineObliqueMercatorProjection
 {

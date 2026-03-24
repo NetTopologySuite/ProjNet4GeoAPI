@@ -29,7 +29,6 @@ internal class PolarStereographicProjection : MapProjection
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PolarStereographicProjection"/> class.
-    /// Initializes the PolarStereographicProjection object with the specified parameters.
     /// </summary>
     /// <param name="parameters">List of parameters to initialize the projection.</param>
     /// <remarks>
@@ -50,21 +49,9 @@ internal class PolarStereographicProjection : MapProjection
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PolarStereographicProjection"/> class.
-    /// Initializes the PolarStereographicProjection object with the specified parameters.
     /// </summary>
     /// <param name="parameters">List of parameters to initialize the projection.</param>
-    /// <param name="inverse">Inverse projection.</param>
-    /// <remarks>
-    /// <para>The parameters this projection expects are listed below.</para>
-    /// <list type="table">
-    /// <listheader><term>Items</term><description>Descriptions</description></listheader>
-    /// <item><term>central_meridian</term><description>The longitude of the point from which the values of both the geographical coordinates on the ellipsoid and the grid coordinates on the projection are deemed to increment or decrement for computational purposes. Alternatively it may be considered as the longitude of the point which in the absence of application of false coordinates has grid coordinates of (0,0).</description></item>
-    /// <item><term>latitude_of_origin</term><description>The latitude of the point from which the values of both the geographical coordinates on the ellipsoid and the grid coordinates on the projection are deemed to increment or decrement for computational purposes. Alternatively it may be considered as the latitude of the point which in the absence of application of false coordinates has grid coordinates of (0,0).</description></item>
-    /// <item><term>scale_factor</term><description>The factor by which the map grid is reduced or enlarged during the projection process, defined by its value at the natural origin.</description></item>
-    /// <item><term>false_easting</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Easting, FE, is the easting value assigned to the abscissa (east).</description></item>
-    /// <item><term>false_northing</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Northing, FN, is the northing value assigned to the ordinate.</description></item>
-    /// </list>
-    /// </remarks>
+    /// <param name="inverse">The inverse projection instance, or <see langword="null"/> for a forward projection.</param>
     public PolarStereographicProjection(IEnumerable<ProjectionParameter> parameters, PolarStereographicProjection inverse)
         : base(parameters, inverse)
     {
@@ -103,8 +90,8 @@ internal class PolarStereographicProjection : MapProjection
     /// <summary>
     /// Converts coordinates in projected meters to radians.
     /// </summary>
-    /// <param name="x">The x parameter.</param>
-    /// <param name="y">The y parameter.</param>
+    /// <param name="x">The x-ordinate in projected meters.</param>
+    /// <param name="y">The y-ordinate in projected meters.</param>
     protected override void MetersToRadians(ref double x, ref double y)
     {
         x *= this.reciprocGlobalScale;

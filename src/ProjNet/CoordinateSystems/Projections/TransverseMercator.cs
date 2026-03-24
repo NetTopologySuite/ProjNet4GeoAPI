@@ -14,16 +14,15 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the Transverse Mercator map projection.
 /// </summary>
 /// <remarks>
-/// <para>Universal (UTM) and Modified (MTM) Transverses Mercator projections. This
-/// is a cylindrical projection, in which the cylinder has been rotated 90°.
-/// Instead of being tangent to the equator (or to an other standard latitude),
-/// it is tangent to a central meridian. Deformation are more important as we
-/// are going further from the central meridian. The Transverse Mercator
-/// projection is appropriate for region witch have a greater extent north-south
-/// than east-west.</para>
+/// <para>Universal (UTM) and Modified (MTM) Transverse Mercator projections. This
+/// is a cylindrical projection in which the cylinder has been rotated 90°.
+/// Instead of being tangent to the equator (or to another standard latitude),
+/// it is tangent to a central meridian. Distortion increases with distance from
+/// the central meridian. The Transverse Mercator projection is appropriate for
+/// regions which have a greater extent north-south than east-west.</para>
 ///
-/// <para>Reference: John P. Snyder (Map Projections - A Working Manual,
-///            U.S. Geological Survey Professional Paper 1395, 1987).</para>
+/// <para>Reference: John P. Snyder, Map Projections — A Working Manual,
+/// U.S. Geological Survey Professional Paper 1395, 1987.</para>
 /// </remarks>
 [Serializable]
 internal class TransverseMercator : MapProjection
@@ -63,7 +62,6 @@ internal class TransverseMercator : MapProjection
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TransverseMercator"/> class.
-    /// Creates an instance of an TransverseMercatorProjection projection object.
     /// </summary>
     /// <param name="parameters">List of parameters to initialize the projection.</param>
     public TransverseMercator(IEnumerable<ProjectionParameter> parameters)
@@ -73,20 +71,20 @@ internal class TransverseMercator : MapProjection
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TransverseMercator"/> class.
-    /// Creates an instance of an TransverseMercatorProjection projection object.
     /// </summary>
     /// <param name="parameters">List of parameters to initialize the projection.</param>
-    /// <param name="inverse">Flag indicating wether is a forward/projection (false) or an inverse projection (true).</param>
+    /// <param name="inverse">The inverse projection instance, or <see langword="null"/> for a forward projection.</param>
     /// <remarks>
-    /// <list type="bullet">
-    /// <listheader><term>Items</term><description>Descriptions</description></listheader>
-    /// <item><term>semi_major</term><description>Semi major radius</description></item>
-    /// <item><term>semi_minor</term><description>Semi minor radius</description></item>
-    /// <item><term>scale_factor</term><description></description></item>
-    /// <item><term>central meridian</term><description></description></item>
-    /// <item><term>latitude_origin</term><description></description></item>
-    /// <item><term>false_easting</term><description></description></item>
-    /// <item><term>false_northing</term><description></description></item>
+    /// <para>The parameters this projection expects are listed below.</para>
+    /// <list type="table">
+    /// <listheader><term>Parameter</term><description>Description</description></listheader>
+    /// <item><term>semi_major</term><description>Semi-major axis radius of the ellipsoid.</description></item>
+    /// <item><term>semi_minor</term><description>Semi-minor axis radius of the ellipsoid.</description></item>
+    /// <item><term>scale_factor</term><description>Scale factor at the central meridian.</description></item>
+    /// <item><term>central_meridian</term><description>Longitude of the central meridian.</description></item>
+    /// <item><term>latitude_of_origin</term><description>Latitude of the projection origin.</description></item>
+    /// <item><term>false_easting</term><description>Easting assigned to the natural origin.</description></item>
+    /// <item><term>false_northing</term><description>Northing assigned to the natural origin.</description></item>
     /// </list>
     /// </remarks>
     protected TransverseMercator(IEnumerable<ProjectionParameter> parameters, TransverseMercator inverse)
