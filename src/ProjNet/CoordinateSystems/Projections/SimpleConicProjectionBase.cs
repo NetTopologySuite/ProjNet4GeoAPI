@@ -20,16 +20,6 @@ namespace ProjNet.CoordinateSystems.Projections;
 using System;
 using System.Collections.Generic;
 
-internal enum SimpleConicType
-{
-    Euler = 0,
-    MurdochI = 1,
-    MurdochII = 2,
-    MurdochIII = 3,
-    Tissot = 4,
-    VitkovskyI = 5,
-}
-
 /// <summary>
 /// Shared implementation for simple spherical conic projections in <c>sconics.cpp</c>.
 /// </summary>
