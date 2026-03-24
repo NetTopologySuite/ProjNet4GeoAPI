@@ -1168,18 +1168,15 @@ def build_catalog(data):
         vertical_datum_records.append((code, d['name']))
 
     conversion_records = []
-    conversion_param_records = []
     used_conversions = {r[4] for r in projected_records}
     for code in sorted(used_conversions):
         c = conversions[code]
-        local_start = len(conversion_param_records)
-        local_count = 0
+        conversion_parameters = []
         for i in range(c['count']):
             parameter = data['conversion_parameters'][c['start'] + i]
-            conversion_param_records.append((code, parameter['name'], parameter['value']))
-            local_count += 1
+            conversion_parameters.append((parameter['name'], parameter['value']))
 
-        conversion_records.append((code, c['method_name'], local_start, local_count))
+        conversion_records.append((code, c['method_name'], conversion_parameters))
 
 
     ref_records = []
@@ -1208,7 +1205,6 @@ def build_catalog(data):
         'geodetic_datum_records': geodetic_datum_records,
         'vertical_datum_records': vertical_datum_records,
         'conversion_records': conversion_records,
-        'conversion_param_records': conversion_param_records,
         'geographic_records': geographic_records,
         'geocentric_records': geocentric_records,
         'projected_records': projected_records,
@@ -1247,7 +1243,7 @@ def emit(output_path: Path, zip_name: str, catalog, operations, operation_parame
         'EpsgPrimeMeridianRecord': 'int code, string name, double longitude, int unitCode',
         'EpsgGeodeticDatumRecord': 'int code, string name, int ellipsoidCode, int primeMeridianCode',
         'EpsgVerticalDatumRecord': 'int code, string name',
-        'EpsgConversionRecord': 'int code, string methodName, int parameterStartIndex, int parameterCount',
+        'EpsgConversionRecord': 'int code, string methodName, int parameterCount',
         'EpsgConversionParameterRecord': 'int conversionCode, string name, double value',
         'EpsgOperationRecord': 'EpsgOperationType operationType, int operationCode, int sourceSrid, int targetSrid, double accuracy, string methodName, string parameterFileName, int parameterStartIndex, int parameterCount',
         'EpsgOperationParameterRecord': 'int operationCode, string name, double value',
@@ -1337,6 +1333,82 @@ def emit(output_path: Path, zip_name: str, catalog, operations, operation_parame
             lines.append('        }')
             lines.append('')
 
+    def emit_conversion_switch_factories(values):
+        buckets = {}
+        for value in values:
+            bucket = value[0] // 1000
+            buckets.setdefault(bucket, []).append(value)
+
+        lines.append('        internal static bool TryGetConversion(int code, out EpsgConversionRecord record)')
+        lines.append('        {')
+        lines.append('            switch (code / 1000)')
+        lines.append('            {')
+        for bucket in sorted(buckets):
+            lines.append(f'                case {bucket}:')
+            lines.append(f'                    return TryGetConversionBucket{bucket}(code, out record);')
+        lines.append('                default:')
+        lines.append('                    record = default;')
+        lines.append('                    return false;')
+        lines.append('            }')
+        lines.append('        }')
+        lines.append('')
+
+        for bucket in sorted(buckets):
+            lines.append(f'        private static bool TryGetConversionBucket{bucket}(int code, out EpsgConversionRecord record)')
+            lines.append('        {')
+            lines.append('            switch (code)')
+            lines.append('            {')
+            for code, method_name, parameters in buckets[bucket]:
+                lines.append(f'                case {code}:')
+                lines.append(f'                    record = new EpsgConversionRecord({code}, "{esc(method_name)}", {len(parameters)});')
+                lines.append('                    return true;')
+            lines.append('                default:')
+            lines.append('                    record = default;')
+            lines.append('                    return false;')
+            lines.append('            }')
+            lines.append('        }')
+            lines.append('')
+
+        lines.append('        internal static bool TryGetConversionParameter(int conversionCode, int parameterIndex, out EpsgConversionParameterRecord parameter)')
+        lines.append('        {')
+        lines.append('            switch (conversionCode / 1000)')
+        lines.append('            {')
+        for bucket in sorted(buckets):
+            lines.append(f'                case {bucket}:')
+            lines.append(f'                    return TryGetConversionParameterBucket{bucket}(conversionCode, parameterIndex, out parameter);')
+        lines.append('                default:')
+        lines.append('                    parameter = default;')
+        lines.append('                    return false;')
+        lines.append('            }')
+        lines.append('        }')
+        lines.append('')
+
+        for bucket in sorted(buckets):
+            lines.append(f'        private static bool TryGetConversionParameterBucket{bucket}(int conversionCode, int parameterIndex, out EpsgConversionParameterRecord parameter)')
+            lines.append('        {')
+            lines.append('            switch (conversionCode)')
+            lines.append('            {')
+            for code, _, parameters in buckets[bucket]:
+                lines.append(f'                case {code}:')
+                lines.append('                    switch (parameterIndex)')
+                lines.append('                    {')
+                for parameter_index, parameter_record in enumerate(parameters):
+                    lines.append(f'                        case {parameter_index}:')
+                    lines.append(f'                            parameter = new EpsgConversionParameterRecord({code}, "{esc(parameter_record[0])}", {repr(parameter_record[1])}d);')
+                    lines.append('                            return true;')
+                lines.append('                        default:')
+                lines.append('                            break;')
+                lines.append('                    }')
+                lines.append('                    break;')
+            lines.append('                default:')
+            lines.append('                    break;')
+            lines.append('            }')
+            lines.append('')
+            lines.append('            parameter = default;')
+            lines.append('            return false;')
+            lines.append('        }')
+            lines.append('')
+
     lines.append(f'        internal const int CoordinateReferenceCount = {len(catalog["ref_records"])};')
     lines.append(f'        private static readonly int[] CoordinateSridByCacheIndex = new int[] {{ {", ".join(str(ref_record[0]) for ref_record in catalog["ref_records"])} }};')
     lines.append('')
@@ -1359,8 +1431,7 @@ def emit(output_path: Path, zip_name: str, catalog, operations, operation_parame
     emit_array('PrimeMeridians', 'EpsgPrimeMeridianRecord', catalog['prime_meridian_records'], lambda v: f"{v[0]}, \"{esc(v[1])}\", {repr(v[2])}d, {v[3]}")
     emit_array('GeodeticDatums', 'EpsgGeodeticDatumRecord', catalog['geodetic_datum_records'], lambda v: f"{v[0]}, \"{esc(v[1])}\", {v[2]}, {v[3]}")
     emit_array('VerticalDatums', 'EpsgVerticalDatumRecord', catalog['vertical_datum_records'], lambda v: f"{v[0]}, \"{esc(v[1])}\"")
-    emit_array('Conversions', 'EpsgConversionRecord', catalog['conversion_records'], lambda v: f"{v[0]}, \"{esc(v[1])}\", {v[2]}, {v[3]}")
-    emit_array('ConversionParameters', 'EpsgConversionParameterRecord', catalog['conversion_param_records'], lambda v: f"{v[0]}, \"{esc(v[1])}\", {repr(v[2])}d")
+    emit_conversion_switch_factories(catalog['conversion_records'])
 
     def fmt_op(v):
         acc = 'double.NaN' if math.isnan(v[4]) else f'{repr(v[4])}d'

@@ -34,7 +34,6 @@ internal static class EpsgCoordinateSystemFactory
     private static readonly Lazy<Dictionary<int, EpsgPrimeMeridianRecord>> PrimeMeridiansByCode = new Lazy<Dictionary<int, EpsgPrimeMeridianRecord>>(BuildPrimeMeridiansByCode, true);
     private static readonly Lazy<Dictionary<int, EpsgGeodeticDatumRecord>> GeodeticDatumsByCode = new Lazy<Dictionary<int, EpsgGeodeticDatumRecord>>(BuildGeodeticDatumsByCode, true);
     private static readonly Lazy<Dictionary<int, EpsgVerticalDatumRecord>> VerticalDatumsByCode = new Lazy<Dictionary<int, EpsgVerticalDatumRecord>>(BuildVerticalDatumsByCode, true);
-    private static readonly Lazy<Dictionary<int, EpsgConversionRecord>> ConversionsByCode = new Lazy<Dictionary<int, EpsgConversionRecord>>(BuildConversionsByCode, true);
     private static readonly Lazy<Dictionary<int, EpsgAxisRecord[]>> AxesByCoordinateSystemCode = new Lazy<Dictionary<int, EpsgAxisRecord[]>>(BuildAxesByCoordinateSystemCode, true);
 
     /// <summary>
@@ -229,15 +228,19 @@ internal static class EpsgCoordinateSystemFactory
             return null;
         }
 
-        if (!TryGetConversionRecord(record.ConversionCode, out var conversion))
+        if (!EpsgGeneratedCatalog.TryGetConversion(record.ConversionCode, out var conversion))
         {
             return null;
         }
 
-        var parameters = new List<ProjectionParameter>();
+        var parameters = new List<ProjectionParameter>(conversion.ParameterCount);
         for (int i = 0; i < conversion.ParameterCount; i++)
         {
-            var parameter = EpsgGeneratedCatalog.ConversionParameters[conversion.ParameterStartIndex + i];
+            if (!EpsgGeneratedCatalog.TryGetConversionParameter(record.ConversionCode, i, out var parameter))
+            {
+                return null;
+            }
+
             parameters.Add(new ProjectionParameter(NormalizeProjectionParameterName(parameter.Name), parameter.Value));
         }
 
@@ -557,11 +560,6 @@ internal static class EpsgCoordinateSystemFactory
         return VerticalDatumsByCode.Value.TryGetValue(code, out record);
     }
 
-    private static bool TryGetConversionRecord(int code, out EpsgConversionRecord record)
-    {
-        return ConversionsByCode.Value.TryGetValue(code, out record);
-    }
-
     private static Dictionary<int, EpsgUnitRecord> BuildUnitsByCode()
     {
         var dictionary = new Dictionary<int, EpsgUnitRecord>(EpsgGeneratedCatalog.Units.Length);
@@ -610,17 +608,6 @@ internal static class EpsgCoordinateSystemFactory
     {
         var dictionary = new Dictionary<int, EpsgVerticalDatumRecord>(EpsgGeneratedCatalog.VerticalDatums.Length);
         foreach (var item in EpsgGeneratedCatalog.VerticalDatums)
-        {
-            dictionary[item.Code] = item;
-        }
-
-        return dictionary;
-    }
-
-    private static Dictionary<int, EpsgConversionRecord> BuildConversionsByCode()
-    {
-        var dictionary = new Dictionary<int, EpsgConversionRecord>(EpsgGeneratedCatalog.Conversions.Length);
-        foreach (var item in EpsgGeneratedCatalog.Conversions)
         {
             dictionary[item.Code] = item;
         }
