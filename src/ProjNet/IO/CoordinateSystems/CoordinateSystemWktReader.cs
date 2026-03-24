@@ -50,10 +50,15 @@ using ProjNet.CoordinateSystems;
 /// <summary>
 /// Creates an object based on the supplied Well Known Text (WKT).
 /// </summary>
-public static class CoordinateSystemWktReader
+public static partial class CoordinateSystemWktReader
 {
     private static readonly string[] CompoundCoordinateSystemDelimiters = { ",", "]" };
+#if NET8_0_OR_GREATER
+    [GeneratedRegex(@"\bID\s*\[(?=\s*"")", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
+    private static partial Regex Wkt2IdRegex();
+#else
     private static readonly Regex Wkt2IdRegex = new(@"\bID\s*\[(?=\s*"")", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
+#endif
 
     /// <summary>
     /// Reads and parses a WKT-formatted projection string.
@@ -102,7 +107,11 @@ public static class CoordinateSystemWktReader
     {
         string normalized = wkt;
         normalized = StringCompatibility.ReplaceOrdinal(normalized, "ELLIPSOID", "SPHEROID");
+#if NET8_0_OR_GREATER
+        normalized = Wkt2IdRegex().Replace(normalized, "AUTHORITY[");
+#else
         normalized = Wkt2IdRegex.Replace(normalized, "AUTHORITY[");
+#endif
         normalized = StringCompatibility.ReplaceOrdinal(normalized, "GEODETICCRS[", "GEOGCS[");
         normalized = StringCompatibility.ReplaceOrdinal(normalized, "GEODCRS[", "GEOGCS[");
         normalized = StringCompatibility.ReplaceOrdinal(normalized, "BASEGEODCRS[", "GEOGCS[");
