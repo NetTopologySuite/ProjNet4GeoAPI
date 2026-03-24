@@ -128,29 +128,6 @@ internal class AlbersProjection : MapProjection
         this.c = Math.Pow(m1, 2) + (this.n * alpha1);
 
         this.ro0 = this.Ro(this.Alpha(lat0));
-        /*
-        double sin_p0 = Math.Sin(lat0);
-        double cos_p0 = Math.Cos(lat0);
-        double q0 = qsfnz(e, sin_p0, cos_p0);
-
-        double sin_p1 = Math.Sin(lat1);
-        double cos_p1 = Math.Cos(lat1);
-        double m1 = msfnz(e,sin_p1,cos_p1);
-        double q1 = qsfnz(e,sin_p1,cos_p1);
-
-
-        double sin_p2 = Math.Sin(lat2);
-        double cos_p2 = Math.Cos(lat2);
-        double m2 = msfnz(e,sin_p2,cos_p2);
-        double q2 = qsfnz(e,sin_p2,cos_p2);
-
-        if (Math.Abs(lat1 - lat2) > Epsln)
-            ns0 = (m1 * m1 - m2 * m2)/ (q2 - q1);
-        else
-            ns0 = sin_p1;
-        C = m1 * m1 + ns0 * q1;
-        rh = this._semiMajor * Math.Sqrt(C - ns0 * q0)/ns0;
-        */
     }
 
     /// <summary>
@@ -186,7 +163,6 @@ internal class AlbersProjection : MapProjection
         }
         else
         {
-            // double b = Math.Sin(q / (1 - ((1 - _es) / (2 * _e)) * Math.Log((1 - _e) / (1 + _e))));
             lat = Math.Asin(q * 0.5);
             double preLat = double.MaxValue;
             int iterationCounter = 0;
@@ -225,16 +201,6 @@ internal class AlbersProjection : MapProjection
         return this.inverse;
     }
 
-    // private double ToAuthalic(double lat)
-    // {
-    //    return Math.Atan(Q(lat) / Q(Math.PI * 0.5));
-    // }
-    // private double Q(double angle)
-    // {
-    //    double sin = Math.Sin(angle);
-    //    double esin = e * sin;
-    //    return Math.Abs(sin / (1 - Math.Pow(esin, 2)) - 0.5 * e) * Math.Log((1 - esin) / (1 + esin)));
-    // }
     private double Alpha(double lat)
     {
         double sin = Math.Sin(lat);

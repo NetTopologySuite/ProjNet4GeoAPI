@@ -30,16 +30,6 @@ using ProjNet.Data;
 /// </summary>
 public class CoordinateSystemServices // : ICoordinateSystemServices
 {
-    // private static ICoordinateSequenceFactory _coordinateSequenceFactory;
-
-    ///// <summary>
-    ///// Gets or sets a default coordinate sequence factory
-    ///// </summary>
-    // public static ICoordinateSequenceFactory CoordinateSequenceFactory
-    // {
-    //    get { return _coordinateSequenceFactory ?? new CoordinateArraySequenceFactory(); }
-    //    set { _coordinateSequenceFactory = value; }
-    // }
     private readonly Dictionary<int, CoordinateSystem> csBySrid;
     private readonly Dictionary<IInfo, int> sridByCs;
 
@@ -90,30 +80,6 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
         : this(new CoordinateSystemFactory(), new CoordinateTransformationFactory(), null, definitionProvider)
     {
     }
-
-    // public Func<string, long, string> GetDefinition { get; set; }
-
-    /*
-    public static string GetFromSpatialReferenceOrg(string authority, long code)
-    {
-        var url = string.Format("http://spatialreference.org/ref/{0}/{1}/ogcwkt/",
-            authority.ToLowerInvariant(),
-            code);
-        var req = (HttpWebRequest) WebRequest.Create(url);
-        using (var resp = req.GetResponse())
-        {
-            using (var resps = resp.GetResponseStream())
-            {
-                if (resps is not null)
-                {
-                    using (var sr = new StreamReader(resps))
-                        return sr.ReadToEnd();
-                }
-            }
-        }
-        return null;
-    }
-     */
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CoordinateSystemServices"/> class.
@@ -190,16 +156,6 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
             return this.sridByCs.Count;
         }
     }
-
-    // private CoordinateSystemServices(ICoordinateSystemFactory coordinateSystemFactory,
-    //    ICoordinateTransformationFactory coordinateTransformationFactory,
-    //    IEnumerable<KeyValuePair<int, ICoordinateSystem>> enumeration)
-    //    : this(coordinateSystemFactory, coordinateTransformationFactory)
-    // {
-    //    var enumObj = (object)enumeration ?? DefaultInitialization();
-    //    _initialization = new ManualResetEvent(false);
-    //    ThreadPool.QueueUserWorkItem(FromEnumeration, new[] { this, enumObj });
-    // }
 
     /// <summary>
     /// Returns the coordinate system by <paramref name="srid" /> identifier.

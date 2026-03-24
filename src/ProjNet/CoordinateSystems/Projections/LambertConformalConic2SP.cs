@@ -56,14 +56,6 @@ using ProjNet.CoordinateSystems.Transformations;
 internal class LambertConformalConic2SP : MapProjection
 {
     private static readonly string[] LatitudeOfOriginFallback = { "latitude_of_origin" };
-
-    // private double readonly _falseEasting;
-    // private double readonly _falseNorthing;
-
-    // private readonly double es;            /* eccentricity squared            */
-    // private readonly double e;             /* eccentricity                    */
-    // private readonly double center_lon;    /* center longitude                */
-    // private readonly double center_lat;    /* center latitude                 */
     private readonly double ns;                /* ratio of angle between meridian */
     private readonly double f0;                /* flattening of ellipsoid         */
     private readonly double rh;                /* height above ellipsoid          */
@@ -250,7 +242,6 @@ internal class LambertConformalConic2SP : MapProjection
 
         x = Adjust_lon((theta / this.ns) + this.centralMeridian);
 
-        // return (x, y, z);
     }
 
     /// <summary>

@@ -298,7 +298,6 @@ public abstract class MapProjection : MathTransform, IProjection
         this.semiMajor = this.Parameters.GetParameterValue("semi_major");
         this.semiMinor = this.Parameters.GetParameterValue("semi_minor");
 
-        // _es = 1.0 - (_semiMinor * _semiMinor) / (_semiMajor * _semiMajor);
         this.es = EccentricySquared(this.semiMajor, this.semiMinor);
         this.e = Math.Sqrt(this.es);
 
@@ -408,8 +407,6 @@ public abstract class MapProjection : MathTransform, IProjection
                 sb.AppendFormat(CultureInfo.InvariantCulture, ", {0}", this.GetParameter(i).WKT);
             }
 
-            // if (!string.IsNullOrWhiteSpace(Authority) && AuthorityCode > 0)
-            // sb.AppendFormat(", AUTHORITY[\"{0}\", \"{1}\"]", Authority, AuthorityCode);
             sb.Append(']');
             if (this.IsInverse)
             {
@@ -1106,7 +1103,6 @@ if (param.Value != proj.GetParameter(i).Value)
         double phi;
         flag = 0;
 
-        // double asinz();
         long i;
 
         phi = Asinz(.5 * qs);
@@ -1130,8 +1126,6 @@ if (param.Value != proj.GetParameter(i).Value)
             }
         }
 
-        // p_error ("Convergence error","phi1z-conv");
-        // ASSERT(FALSE);
         throw new ArgumentException("Convergence error.");
     }
 

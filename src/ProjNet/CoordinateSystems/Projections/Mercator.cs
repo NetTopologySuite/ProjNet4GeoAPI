@@ -59,9 +59,6 @@ using ProjNet.CoordinateSystems.Transformations;
 [Serializable]
 internal class Mercator : MapProjection
 {
-    // double lon_center;       //Center longitude (projection center)
-    // double lat_origin;       //center latitude
-    // double e,e2;         //eccentricity constants
     private readonly double k0;                // small value m
 
     /// <summary>
@@ -154,8 +151,8 @@ internal class Mercator : MapProjection
     {
         /* Inverse equations
           -----------------*/
-        double dX = x; // * _metersPerUnit - this._falseEasting;
-        double dY = y; // * _metersPerUnit - this._falseNorthing;
+        double dX = x;
+        double dY = y;
         double ts = Math.Exp(-dY / (this.semiMajor * this.k0)); // t
 
         double chi = HalfPi - (2 * Math.Atan(ts));
@@ -170,7 +167,6 @@ internal class Mercator : MapProjection
 
         x = (dX / (this.semiMajor * this.k0)) + this.centralMeridian;
 
-        // return (x, y, z);
     }
 
     /// <summary>

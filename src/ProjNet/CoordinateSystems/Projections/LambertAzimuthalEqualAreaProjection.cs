@@ -41,7 +41,6 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
     private readonly double oneEs;
     private readonly double[] apa;
 
-    // private readonly double _mmf;
     private readonly double dd;
     private readonly double sinb1;
     private readonly double cosb1;
@@ -98,7 +97,6 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
             this.oneEs = 1.0 - this.es;
             this.qp = Qsfn(1, this.e, this.oneEs);
 
-            // _mmf = 0.5 / (1.0 - _es);
             this.apa = Authset(this.es);
             if (this.apa is null)
             {

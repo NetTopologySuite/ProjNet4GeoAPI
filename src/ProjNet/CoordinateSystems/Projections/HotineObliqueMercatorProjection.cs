@@ -159,60 +159,6 @@ internal class HotineObliqueMercatorProjection : MapProjection
         return this.inverse;
     }
 
-    // protected override double[] RadiansToMeters(double[] lonlat)
-    // {
-    //    var lon = lonlat[0];
-    //    var lat = lonlat[1];
-
-    // Double us, ul;
-
-    // // Forward equations
-    //    // -----------------
-    //    var sin_phi = Math.Sin(lat);
-    //    var dlon = adjust_lon(lon - lon_origin);
-    //    var vl = Math.Sin(_bl * dlon);
-    //    if (Math.Abs(Math.Abs(lat) - HALF_PI) > Epsln)
-    //    {
-    //        var ts1 = tsfnz(_e, lat, sin_phi);
-    //        var q = _el / (Math.Pow(ts1, _bl));
-    //        var s = .5 * (q - 1.0 / q);
-    //        var t = .5 * (q + 1.0 / q);
-    //        ul = (s * _singam - vl * _cosgam) / t;
-    //        var con = Math.Cos(_bl * dlon);
-    //        if (Math.Abs(con) < .0000001)
-    //        {
-    //            us = _al * _bl * dlon;
-    //        }
-    //        else
-    //        {
-    //            us = _al * Math.Atan((s * _cosgam + vl * _singam) / con) / _bl;
-    //            if (con < 0)
-    //                us = us + PI * _al / _bl;
-    //        }
-    //    }
-    //    else
-    //    {
-    //        if (lat >= 0)
-    //            ul = _singam;
-    //        else
-    //            ul = -_singam;
-    //        us = _al * lat / _bl;
-    //    }
-    //    if (Math.Abs(Math.Abs(ul) - 1.0) <= Epsln)
-    //    {
-    //        throw new InvalidOperationException("Point projects into infinity");
-    //    }
-
-    // var vs = .5 * _al * Math.Log((1.0 - ul) / (1.0 + ul)) / _bl;
-    //    if (!NaturalOriginOffsets) us = us - _u;
-    //    var x = vs * _cosgrid + us * _singrid;
-    //    var y = us * _cosgrid - vs * _singrid;
-
-    // return lonlat.Length == 2
-    //        ? new [] {x, y} :
-    //          new [] {x, y, lonlat[2]};
-    // }
-
     /// <inheritdoc/>
     protected override void RadiansToMeters(ref double lon, ref double lat)
     {

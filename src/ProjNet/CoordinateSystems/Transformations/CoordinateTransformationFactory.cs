@@ -1011,11 +1011,6 @@ public class CoordinateTransformationFactory
     {
         // create transform From fitted to base and inverts it
         return fittedSystem.ToBaseTransform;
-
-        // MathTransformFactory mtFac = new MathTransformFactory ();
-        ////create transform From fitted to base and inverts it
-        // return mtFac.CreateFromWKT (fittedSystem.ToBase ());
-        throw new NotImplementedException();
     }
 
     /// <summary>
@@ -1036,15 +1031,14 @@ public class CoordinateTransformationFactory
 
         var ellipsoid = geo.HorizontalDatum.Ellipsoid;
 
-        // var toMeter = ellipsoid.AxisUnit.MetersPerUnit;
         if (parameterList.Find((p) => p.Name.ToLowerInvariant().Replace(' ', '_').Equals("semi_major", StringComparison.Ordinal)) == null)
         {
-            parameterList.Add(new ProjectionParameter("semi_major", /*toMeter * */ellipsoid.SemiMajorAxis));
+            parameterList.Add(new ProjectionParameter("semi_major", ellipsoid.SemiMajorAxis));
         }
 
         if (parameterList.Find((p) => p.Name.ToLowerInvariant().Replace(' ', '_').Equals("semi_minor", StringComparison.Ordinal)) == null)
         {
-            parameterList.Add(new ProjectionParameter("semi_minor", /*toMeter * */ellipsoid.SemiMinorAxis));
+            parameterList.Add(new ProjectionParameter("semi_minor", ellipsoid.SemiMinorAxis));
         }
 
         return new GeocentricTransform(parameterList);
@@ -1058,15 +1052,14 @@ public class CoordinateTransformationFactory
             parameterList.Add(projection.GetParameter(i));
         }
 
-        // var toMeter = 1d/ellipsoid.AxisUnit.MetersPerUnit;
         if (parameterList.Find((p) => p.Name.ToLowerInvariant().Replace(' ', '_').Equals("semi_major", StringComparison.Ordinal)) == null)
         {
-            parameterList.Add(new ProjectionParameter("semi_major", /*toMeter * */ellipsoid.SemiMajorAxis));
+            parameterList.Add(new ProjectionParameter("semi_major", ellipsoid.SemiMajorAxis));
         }
 
         if (parameterList.Find((p) => p.Name.ToLowerInvariant().Replace(' ', '_').Equals("semi_minor", StringComparison.Ordinal)) == null)
         {
-            parameterList.Add(new ProjectionParameter("semi_minor", /*toMeter * */ellipsoid.SemiMinorAxis));
+            parameterList.Add(new ProjectionParameter("semi_minor", ellipsoid.SemiMinorAxis));
         }
 
         if (parameterList.Find((p) => p.Name.ToLowerInvariant().Replace(' ', '_').Equals("unit", StringComparison.Ordinal)) == null)
@@ -1074,49 +1067,7 @@ public class CoordinateTransformationFactory
             parameterList.Add(new ProjectionParameter("unit", unit.MetersPerUnit));
         }
 
-        var operation = ProjectionsRegistry.CreateProjection(projection.ClassName, parameterList);
-        /*
-        var mpOperation = operation as MapProjection;
-        if (mpOperation != null && projection.AuthorityCode !=-1)
-        {
-            mpOperation.Authority = projection.Authority;
-            mpOperation.AuthorityCode = projection.AuthorityCode;
-        }
-         */
-
-        return operation;
-        /*
-        switch (projection.ClassName.ToLower(CultureInfo.InvariantCulture).Replace(' ', '_'))
-        {
-            case "mercator":
-            case "mercator_1sp":
-            case "mercator_2sp":
-                //1SP
-                transform = new Mercator(parameterList);
-                break;
-            case "transverse_mercator":
-                transform = new TransverseMercator(parameterList);
-                break;
-            case "albers":
-            case "albers_conic_equal_area":
-                transform = new AlbersProjection(parameterList);
-                break;
-            case "krovak":
-                transform = new KrovakProjection(parameterList);
-                break;
-            case "polyconic":
-                transform = new PolyconicProjection(parameterList);
-                break;
-            case "lambert_conformal_conic":
-            case "lambert_conformal_conic_2sp":
-            case "lambert_conic_conformal_(2sp)":
-                transform = new LambertConformalConic2SP(parameterList);
-                break;
-            default:
-                throw new NotSupportedException(String.Format("Projection {0} is not supported.", projection.ClassName));
-        }
-        return transform;
-         */
+        return ProjectionsRegistry.CreateProjection(projection.ClassName, parameterList);
     }
 
     private static CoordinateTransformation CreateMetadataBackedTransformation(

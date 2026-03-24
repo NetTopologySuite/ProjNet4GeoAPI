@@ -60,26 +60,10 @@ using ProjNet.CoordinateSystems.Transformations;
 [Serializable]
 internal class TransverseMercator : MapProjection
 {
-    // /*
-    //  * Maximum number of iterations for iterative computations.
-    //  */
-    // private const int MAXIMUM_ITERATIONS = 15;
-
-    // /*
-    //  * Relative iteration precision used in the {@code mlfn} method.
-    //  * This overrides the value in the {@link MapProjection} class.
-    //  */
-    // private const double ITERATION_TOLERANCE = 1E-11;
-
     /*
      * Maximum difference allowed when comparing real numbers.
      */
     private const double EPSILON = 1E-6;
-
-    // /*
-    //  * Maximum difference allowed when comparing latitudes.
-    //  */
-    // private const double EPSILON_LATITUDE = 1E-10;
 
     /*
      * A derived quantity of eccentricity, computed by <code>e'Â² = (aÂ²-bÂ²)/bÂ² = es/(1-es)</code>
@@ -108,11 +92,6 @@ internal class TransverseMercator : MapProjection
     private const double FC6 = 0.03333333333333333333333;  // 1/30
     private const double FC7 = 0.02380952380952380952380;  // 1/42
     private const double FC8 = 0.01785714285714285714285;  // 1/56
-
-    // // Variables common to all subroutines in this code file
-    // // -----------------------------------------------------
-    // private double esp;      /* eccentricity constants       */
-    // private double ml0;      /* small value m                */
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TransverseMercator"/> class.
@@ -151,12 +130,6 @@ internal class TransverseMercator : MapProjection
 
         this.esp = this.es / (1.0 - this.es);
         this.ml0 = this.Mlfn(this.latOrigin, Math.Sin(this.latOrigin), Math.Cos(this.latOrigin));
-
-        /*
-        e = Math.Sqrt(_es);
-        ml0 = _semiMajor*mlfn(lat_origin, Math.Sin(lat_origin), Math.Cos(lat_origin));
-        esp = _es / (1.0 - _es);
-         */
 
         this.reciprocSemiMajor = 1 / this.semiMajor;
     }

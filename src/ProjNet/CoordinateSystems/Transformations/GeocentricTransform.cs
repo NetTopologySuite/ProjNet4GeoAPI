@@ -128,8 +128,6 @@ internal class GeocentricTransform : MathTransform
         this.es = 1.0 - ((this.semiMinor * this.semiMinor) / (this.semiMajor * this.semiMajor)); // e^2
         this.ses = (Math.Pow(this.semiMajor, 2) - Math.Pow(this.semiMinor, 2)) / Math.Pow(this.semiMinor, 2);
 
-        // ba = _semiMinor / _semiMajor;
-        // ab = _semiMajor / _semiMinor;
     }
 
     /// <inheritdoc/>

@@ -251,8 +251,6 @@ internal class KrovakProjection : MapProjection
             if (--iter < 0)
             {
                 break;
-
-                // throw new ProjectionException(Errors.format(ErrorKeys.NO_CONVERGENCE));
             }
         }
 
