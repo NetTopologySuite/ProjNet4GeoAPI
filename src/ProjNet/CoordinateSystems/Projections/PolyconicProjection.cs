@@ -6,10 +6,6 @@
 
 namespace ProjNet.CoordinateSystems.Projections;
 
-/*
- * http://svn.osgeo.org/geotools/tags/2.6.2/modules/library/referencing/src/main/java/org/geotools/referencing/operation/projection/Polyconic.java
- * http://svn.osgeo.org/geotools/tags/2.6.2/modules/library/referencing/src/main/java/org/geotools/referencing/operation/projection/MapProjection.java
- */
 using System;
 using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
