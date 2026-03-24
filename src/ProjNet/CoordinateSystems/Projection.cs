@@ -111,18 +111,18 @@ public class Projection : Info, IProjection
     /// Gets an indexed parameter of the projection.
     /// </summary>
     /// <param name="index">Index of parameter.</param>
-    /// <returns>n'th parameter.</returns>
+    /// <returns>The projection parameter at the specified index.</returns>
     public ProjectionParameter GetParameter(int index)
     {
         return this.parameters[index];
     }
 
     /// <summary>
-    /// Gets an named parameter of the projection.
+    /// Gets a named parameter of the projection.
     /// </summary>
     /// <remarks>The parameter name is case insensitive.</remarks>
-    /// <param name="name">Name of parameter.</param>
-    /// <returns>parameter or null if not found.</returns>
+    /// <param name="name">Name of the parameter to find.</param>
+    /// <returns>The matching <see cref="ProjectionParameter"/>, or <see langword="null"/> if not found.</returns>
     public ProjectionParameter GetParameter(string name)
     {
         foreach (var par in this.parameters)
@@ -136,13 +136,7 @@ public class Projection : Info, IProjection
         return null;
     }
 
-    /// <summary>
-    /// Checks whether the values of this instance is equal to the values of another instance.
-    /// Only parameters used for coordinate system are used for comparison.
-    /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
-    /// </summary>
-    /// <param name="obj">The obj parameter.</param>
-    /// <returns>True if equal.</returns>
+    /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
         if (!(obj is Projection))

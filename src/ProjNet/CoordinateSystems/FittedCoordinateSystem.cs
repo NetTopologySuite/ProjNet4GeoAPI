@@ -20,7 +20,6 @@ public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSys
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="FittedCoordinateSystem"/> class.
-    /// Creates an instance of FittedCoordinateSystem using the specified parameters.
     /// </summary>
     /// <param name="baseSystem">Underlying coordinate system.</param>
     /// <param name="transform">Transformation from fitted coordinate system to the base one.</param>
@@ -63,7 +62,7 @@ public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSys
     }
 
     /// <summary>
-    /// Gets represents math transform that injects itself into the base coordinate system.
+    /// Gets the math transform that maps this fitted coordinate system into the base coordinate system.
     /// </summary>
     public MathTransform ToBaseTransform { get; }
 
@@ -98,22 +97,18 @@ public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSys
     }
 
     /// <summary>
-    /// Gets Well-Known Text of a math transform to the base coordinate system.
-    /// The dimension of this fitted coordinate system is determined by the source
-    /// dimension of the math transform. The transform should be one-to-one within
-    /// this coordinate system's domain, and the base coordinate system dimension
-    /// must be at least as big as the dimension of this coordinate system.
+    /// Gets the Well-Known Text of the math transform to the base coordinate system.
     /// </summary>
-    /// <returns>The transformation result.</returns>
+    /// <remarks>
+    /// The dimension of this fitted coordinate system is determined by the source
+    /// dimension of the math transform. The transform must be one-to-one within
+    /// this coordinate system's domain, and the base coordinate system dimension
+    /// must be at least as large as the dimension of this coordinate system.
+    /// </remarks>
+    /// <returns>The WKT string of the transform to the base coordinate system.</returns>
     public string ToBase() => this.ToBaseTransform.WKT;
 
-    /// <summary>
-    /// Checks whether the values of this instance is equal to the values of another instance.
-    /// Only parameters used for coordinate system are used for comparison.
-    /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
-    /// </summary>
-    /// <param name="obj">The obj parameter.</param>
-    /// <returns>True if equal.</returns>
+    /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
         var fcs = obj as FittedCoordinateSystem;
@@ -133,11 +128,6 @@ public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSys
         return false;
     }
 
-    /// <summary>
-    /// Gets the units for the dimension within coordinate system.
-    /// Each dimension in the coordinate system has corresponding units.
-    /// </summary>
-    /// <param name="dimension">The dimension value.</param>
-    /// <returns>The computed value.</returns>
+    /// <inheritdoc />
     public override IUnit GetUnits(int dimension) => this.BaseCoordinateSystem.GetUnits(dimension);
 }

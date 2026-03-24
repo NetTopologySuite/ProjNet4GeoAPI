@@ -16,7 +16,6 @@ public class PrimeMeridian : Info
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="PrimeMeridian"/> class.
-    /// Initializes a new instance of a prime meridian.
     /// </summary>
     /// <param name="longitude">Longitude of prime meridian.</param>
     /// <param name="angularUnit">Angular unit.</param>
@@ -34,73 +33,76 @@ public class PrimeMeridian : Info
     }
 
     /// <summary>
-    /// Gets greenwich prime meridian.
+    /// Gets the Greenwich prime meridian (0° longitude).
     /// </summary>
     public static PrimeMeridian Greenwich => new(0.0, CoordinateSystems.AngularUnit.Degrees, "Greenwich", "EPSG", 8901, string.Empty, string.Empty, string.Empty);
 
     /// <summary>
-    /// Gets lisbon prime meridian.
+    /// Gets the Lisbon prime meridian.
     /// </summary>
     public static PrimeMeridian Lisbon => new(-9.0754862, CoordinateSystems.AngularUnit.Degrees, "Lisbon", "EPSG", 8902, string.Empty, string.Empty, string.Empty);
 
     /// <summary>
-    /// Gets paris prime meridian.
-    /// Value adopted by IGN (Paris) in 1936. Equivalent to 2 deg 20min 14.025sec. Preferred by EPSG to earlier value of 2deg 20min 13.95sec (2.596898 grads) used by RGS London.
+    /// Gets the Paris prime meridian.
     /// </summary>
+    /// <remarks>
+    /// Value adopted by IGN (Paris) in 1936. Equivalent to 2 deg 20 min 14.025 sec.
+    /// Preferred by EPSG over the earlier value of 2 deg 20 min 13.95 sec (2.596898 grads) used by RGS London.
+    /// </remarks>
     public static PrimeMeridian Paris => new(2.5969213, CoordinateSystems.AngularUnit.Degrees, "Paris", "EPSG", 8903, string.Empty, string.Empty, "Value adopted by IGN (Paris) in 1936. Equivalent to 2 deg 20min 14.025sec. Preferred by EPSG to earlier value of 2deg 20min 13.95sec (2.596898 grads) used by RGS London.");
 
     /// <summary>
-    /// Gets bogota prime meridian.
+    /// Gets the Bogota prime meridian.
     /// </summary>
     public static PrimeMeridian Bogota => new(-74.04513, CoordinateSystems.AngularUnit.Degrees, "Bogota", "EPSG", 8904, string.Empty, string.Empty, string.Empty);
 
     /// <summary>
-    /// Gets madrid prime meridian.
+    /// Gets the Madrid prime meridian.
     /// </summary>
     public static PrimeMeridian Madrid => new(-3.411658, CoordinateSystems.AngularUnit.Degrees, "Madrid", "EPSG", 8905, string.Empty, string.Empty, string.Empty);
 
     /// <summary>
-    /// Gets rome prime meridian.
+    /// Gets the Rome prime meridian.
     /// </summary>
     public static PrimeMeridian Rome => new(12.27084, CoordinateSystems.AngularUnit.Degrees, "Rome", "EPSG", 8906, string.Empty, string.Empty, string.Empty);
 
     /// <summary>
-    /// Gets bern prime meridian.
-    /// 1895 value. Newer value of 7 deg 26 min 22.335 sec E determined in 1938.
+    /// Gets the Bern prime meridian.
     /// </summary>
+    /// <remarks>1895 value. A newer value of 7 deg 26 min 22.335 sec E was determined in 1938.</remarks>
     public static PrimeMeridian Bern => new(7.26225, CoordinateSystems.AngularUnit.Degrees, "Bern", "EPSG", 8907, string.Empty, string.Empty, "1895 value. Newer value of 7 deg 26 min 22.335 sec E determined in 1938.");
 
     /// <summary>
-    /// Gets jakarta prime meridian.
+    /// Gets the Jakarta prime meridian.
     /// </summary>
     public static PrimeMeridian Jakarta => new(106.482779, CoordinateSystems.AngularUnit.Degrees, "Jakarta", "EPSG", 8908, string.Empty, string.Empty, string.Empty);
 
     /// <summary>
-    /// Gets ferro prime meridian.
-    /// Used in Austria and former Czechoslovakia.
+    /// Gets the Ferro prime meridian.
     /// </summary>
+    /// <remarks>Used in Austria and former Czechoslovakia.</remarks>
     public static PrimeMeridian Ferro => new(-17.66666666666667, CoordinateSystems.AngularUnit.Degrees, "Ferro", "EPSG", 8909, string.Empty, string.Empty, "Used in Austria and former Czechoslovakia.");
 
     /// <summary>
-    /// Gets brussels prime meridian.
+    /// Gets the Brussels prime meridian.
     /// </summary>
     public static PrimeMeridian Brussels => new(4.220471, CoordinateSystems.AngularUnit.Degrees, "Brussels", "EPSG", 8910, string.Empty, string.Empty, string.Empty);
 
     /// <summary>
-    /// Gets stockholm prime meridian.
+    /// Gets the Stockholm prime meridian.
     /// </summary>
     public static PrimeMeridian Stockholm => new(18.03298, CoordinateSystems.AngularUnit.Degrees, "Stockholm", "EPSG", 8911, string.Empty, string.Empty, string.Empty);
 
     /// <summary>
-    /// Gets athens prime meridian.
-    /// Used in Greece for older mapping based on Hatt projection.
+    /// Gets the Athens prime meridian.
     /// </summary>
+    /// <remarks>Used in Greece for older mapping based on the Hatt projection.</remarks>
     public static PrimeMeridian Athens => new(23.4258815, CoordinateSystems.AngularUnit.Degrees, "Athens", "EPSG", 8912, string.Empty, string.Empty, "Used in Greece for older mapping based on Hatt projection.");
 
     /// <summary>
-    /// Gets oslo prime meridian.
-    /// Formerly known as Kristiania or Christiania.
+    /// Gets the Oslo prime meridian.
     /// </summary>
+    /// <remarks>Formerly known as Kristiania or Christiania.</remarks>
     public static PrimeMeridian Oslo => new(10.43225, CoordinateSystems.AngularUnit.Degrees, "Oslo", "EPSG", 8913, string.Empty, string.Empty, "Formerly known as Kristiania or Christiania.");
 
     /// <summary>
@@ -109,7 +111,7 @@ public class PrimeMeridian : Info
     public double Longitude { get; set; }
 
     /// <summary>
-    /// Gets or sets the AngularUnits.
+    /// Gets or sets the angular unit used to express the longitude of this prime meridian.
     /// </summary>
     public AngularUnit AngularUnit { get; set; }
 
@@ -149,13 +151,7 @@ public class PrimeMeridian : Info
         }
     }
 
-    /// <summary>
-    /// Checks whether the values of this instance is equal to the values of another instance.
-    /// Only parameters used for coordinate system are used for comparison.
-    /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
-    /// </summary>
-    /// <param name="obj">The obj parameter.</param>
-    /// <returns>True if equal.</returns>
+    /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
         if (!(obj is PrimeMeridian))

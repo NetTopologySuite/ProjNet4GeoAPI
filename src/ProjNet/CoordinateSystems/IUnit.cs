@@ -5,7 +5,7 @@
 namespace ProjNet.CoordinateSystems;
 
 /// <summary>
-/// The IUnit interface abstracts different kinds of units, it has no methods.
+/// Marker interface for unit types used in coordinate system definitions.
 /// </summary>
 public interface IUnit : IInfo
 {

@@ -25,7 +25,6 @@ public class ProjectionParameter
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ProjectionParameter"/> class.
-    /// Initializes an instance of a ProjectionParameter.
     /// </summary>
     /// <param name="name">Name of parameter.</param>
     /// <param name="value">Parameter value.</param>
@@ -45,12 +44,13 @@ public class ProjectionParameter
     }
 
     /// <summary>
-    /// Gets or sets parameter value.
-    /// The linear units of a parameters' values match the linear units of the containing
-    /// projected coordinate system. The angular units of parameter values match the
-    /// angular units of the geographic coordinate system that the projected coordinate
-    /// system is based on.
+    /// Gets or sets the parameter value.
     /// </summary>
+    /// <remarks>
+    /// The linear units of parameter values match the linear units of the containing
+    /// projected coordinate system. The angular units of parameter values match the
+    /// angular units of the underlying geographic coordinate system.
+    /// </remarks>
     public double Value
     {
         get { return this.val; }
@@ -78,8 +78,8 @@ public class ProjectionParameter
     }
 
     /// <summary>
-    /// Function to get a textual representation of this envelope.
+    /// Returns a string representation of this projection parameter.
     /// </summary>
-    /// <returns>A textual representation of this envelope.</returns>
+    /// <returns>A string in the format <c>ProjectionParameter 'name': value</c>.</returns>
     public override string ToString() => $"ProjectionParameter '{this.Name}': {this.Value}";
 }

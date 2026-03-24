@@ -9,14 +9,13 @@ using System.Globalization;
 using System.Text;
 
 /// <summary>
-/// The IEllipsoid interface defines the standard information stored with ellipsoid objects.
+/// Defines the standard information stored with an ellipsoid used as the reference surface for a geodetic datum.
 /// </summary>
 [Serializable]
 public class Ellipsoid : Info
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Ellipsoid"/> class.
-    /// Initializes a new instance of an Ellipsoid.
     /// </summary>
     /// <param name="semiMajorAxis">Semi major axis.</param>
     /// <param name="semiMinorAxis">Semi minor axis.</param>
@@ -62,7 +61,7 @@ public class Ellipsoid : Info
     }
 
     /// <summary>
-    /// Gets wGS 84 ellipsoid.
+    /// Gets the WGS 84 ellipsoid.
     /// </summary>
     /// <remarks>
     /// Inverse flattening derived from four defining parameters
@@ -91,7 +90,7 @@ public class Ellipsoid : Info
     }
 
     /// <summary>
-    /// Gets wGS 72 Ellipsoid.
+    /// Gets the WGS 72 ellipsoid.
     /// </summary>
     public static Ellipsoid WGS72
     {
@@ -113,7 +112,7 @@ public class Ellipsoid : Info
     }
 
     /// <summary>
-    /// Gets gRS 1980 / International 1979 ellipsoid.
+    /// Gets the GRS 1980 / International 1979 ellipsoid.
     /// </summary>
     /// <remarks>
     /// Adopted by IUGG 1979 Canberra.
@@ -141,7 +140,7 @@ public class Ellipsoid : Info
     }
 
     /// <summary>
-    /// Gets international 1924 / Hayford 1909 ellipsoid.
+    /// Gets the International 1924 / Hayford 1909 ellipsoid.
     /// </summary>
     /// <remarks>
     /// Described as a=6378388 m. and b=6356909m. from which 1/f derived to be 296.95926.
@@ -168,7 +167,7 @@ public class Ellipsoid : Info
     }
 
     /// <summary>
-    /// Gets clarke 1880.
+    /// Gets the Clarke 1880 ellipsoid.
     /// </summary>
     /// <remarks>
     /// Clarke gave a and b and also 1/f=293.465 (to 3 decimal places).  1/f derived from a and b = 293.4663077.
@@ -193,7 +192,7 @@ public class Ellipsoid : Info
     }
 
     /// <summary>
-    /// Gets clarke 1866.
+    /// Gets the Clarke 1866 ellipsoid.
     /// </summary>
     /// <remarks>
     /// Original definition a=20926062 and b=20855121 (British) feet. Uses Clarke's 1865 inch-metre ratio of 39.370432 to obtain metres. (Metric value then converted to US survey feet for use in the United States using 39.37 exactly giving a=20925832.16 ft US).
@@ -218,7 +217,7 @@ public class Ellipsoid : Info
     }
 
     /// <summary>
-    /// Gets sphere.
+    /// Gets the GRS 1980 Authalic Sphere.
     /// </summary>
     /// <remarks>
     /// Authalic sphere derived from GRS 1980 ellipsoid (code 7019).  (An authalic sphere is
@@ -264,11 +263,13 @@ public class Ellipsoid : Info
     public LinearUnit AxisUnit { get; set; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether tells if the Inverse Flattening is definitive for this ellipsoid. Some ellipsoids use
-    /// the IVF as the defining value, and calculate the polar radius whenever asked. Other
-    /// ellipsoids use the polar radius to calculate the IVF whenever asked. This
-    /// distinction can be important to avoid floating-point rounding errors.
+    /// Gets or sets a value indicating whether the inverse flattening value is the defining parameter for this ellipsoid.
     /// </summary>
+    /// <remarks>
+    /// When <see langword="true"/>, the semi-minor axis is derived from the inverse flattening value.
+    /// When <see langword="false"/>, the inverse flattening is derived from the semi-minor axis.
+    /// This distinction can be important to avoid floating-point rounding errors.
+    /// </remarks>
     public bool IsIvfDefinitive { get; set; }
 
     /// <summary>
@@ -310,13 +311,7 @@ public class Ellipsoid : Info
         }
     }
 
-    /// <summary>
-    /// Checks whether the values of this instance is equal to the values of another instance.
-    /// Only parameters used for coordinate system are used for comparison.
-    /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
-    /// </summary>
-    /// <param name="obj">The obj parameter.</param>
-    /// <returns>True if equal.</returns>
+    /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
         if (!(obj is Ellipsoid))

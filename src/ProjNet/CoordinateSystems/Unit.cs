@@ -16,7 +16,6 @@ public class Unit : Info, IUnit
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Unit"/> class.
-    /// Initializes a new unit.
     /// </summary>
     /// <param name="conversionFactor">Conversion factor to base unit.</param>
     /// <param name="name">Name of unit.</param>
@@ -33,7 +32,6 @@ public class Unit : Info, IUnit
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Unit"/> class.
-    /// Initializes a new unit.
     /// </summary>
     /// <param name="name">Name of unit.</param>
     /// <param name="conversionFactor">Conversion factor to base unit.</param>
@@ -78,13 +76,7 @@ public class Unit : Info, IUnit
         }
     }
 
-    /// <summary>
-    /// Checks whether the values of this instance is equal to the values of another instance.
-    /// Only parameters used for coordinate system are used for comparison.
-    /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
-    /// </summary>
-    /// <param name="obj">The obj parameter.</param>
-    /// <returns>True if equal.</returns>
+    /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
         if (!(obj is Unit))

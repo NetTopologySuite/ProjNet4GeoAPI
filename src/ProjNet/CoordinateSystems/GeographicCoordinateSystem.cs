@@ -23,7 +23,6 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="GeographicCoordinateSystem"/> class.
-    /// Creates an instance of a Geographic Coordinate System.
     /// </summary>
     /// <param name="angularUnit">Angular units.</param>
     /// <param name="horizontalDatum">Horizontal datum.</param>
@@ -53,7 +52,7 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
     }
 
     /// <summary>
-    /// Gets creates a decimal degrees geographic coordinate system based on the WGS84 ellipsoid, suitable for GPS measurements.
+    /// Gets a decimal degrees geographic coordinate system based on the WGS84 ellipsoid, suitable for GPS measurements.
     /// </summary>
     public static GeographicCoordinateSystem WGS84
     {
@@ -159,28 +158,17 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
         }
     }
 
-    /// <summary>
-    /// Gets units for dimension within coordinate system. Each dimension in
-    /// the coordinate system has corresponding units.
-    /// </summary>
-    /// <param name="dimension">Dimension.</param>
-    /// <returns>Unit.</returns>
+    /// <inheritdoc />
     public override IUnit GetUnits(int dimension) => this.AngularUnit;
 
     /// <summary>
     /// Gets details on a conversion to WGS84.
     /// </summary>
-    /// <param name="index">The index value.</param>
-    /// <returns>The computed value.</returns>
+    /// <param name="index">Zero-based index of the WGS84 conversion definition.</param>
+    /// <returns>The <see cref="Wgs84ConversionInfo"/> at the specified index.</returns>
     public Wgs84ConversionInfo GetWgs84ConversionInfo(int index) => this.WGS84ConversionInfo[index];
 
-    /// <summary>
-    /// Checks whether the values of this instance is equal to the values of another instance.
-    /// Only parameters used for coordinate system are used for comparison.
-    /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
-    /// </summary>
-    /// <param name="obj">The obj parameter.</param>
-    /// <returns>True if equal.</returns>
+    /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
         if (!(obj is GeographicCoordinateSystem gcs))

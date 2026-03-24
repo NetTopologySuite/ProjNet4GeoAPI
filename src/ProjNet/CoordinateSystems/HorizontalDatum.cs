@@ -16,7 +16,6 @@ public class HorizontalDatum : Datum
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="HorizontalDatum"/> class.
-    /// Initializes a new instance of a horizontal datum.
     /// </summary>
     /// <param name="ellipsoid">Ellipsoid.</param>
     /// <param name="toWgs84">Parameters for a Bursa Wolf transformation into WGS84.</param>
@@ -44,11 +43,11 @@ public class HorizontalDatum : Datum
     }
 
     /// <summary>
-    /// Gets ePSG's WGS 84 datum has been the then current realisation. No distinction is made between the original WGS 84
-    /// frame, WGS 84 (G730), WGS 84 (G873) and WGS 84 (G1150). Since 1997, WGS 84 has been maintained within 10cm of
-    /// the then current ITRF.
+    /// Gets the World Geodetic System 1984 (WGS 84) horizontal datum.
     /// </summary>
     /// <remarks>
+    /// <para>No distinction is made between the original WGS 84 frame, WGS 84 (G730), WGS 84 (G873), and WGS 84 (G1150).
+    /// Since 1997, WGS 84 has been maintained within 10 cm of the current ITRF.</para>
     /// <para>Area of use: World.</para>
     /// <para>Origin description: Defined through a consistent set of station coordinates. These have changed with time: by 0.7m
     /// on 29/6/1994 [WGS 84 (G730)], a further 0.2m on 29/1/1997 [WGS 84 (G873)] and a further 0.06m on
@@ -72,7 +71,7 @@ public class HorizontalDatum : Datum
     }
 
     /// <summary>
-    /// Gets world Geodetic System 1972.
+    /// Gets the World Geodetic System 1972 (WGS 72) horizontal datum.
     /// </summary>
     /// <remarks>
     /// <para>Used by GPS before 1987. For Transit satellite positioning see also WGS 72BE. Datum code 6323 reserved for southern hemisphere ProjCS's.</para>
@@ -101,7 +100,7 @@ public class HorizontalDatum : Datum
     }
 
     /// <summary>
-    /// Gets european Terrestrial Reference System 1989.
+    /// Gets the European Terrestrial Reference System 1989 (ETRS89) horizontal datum.
     /// </summary>
     /// <remarks>
     /// <para>Area of use:
@@ -134,7 +133,7 @@ public class HorizontalDatum : Datum
     }
 
     /// <summary>
-    /// Gets european Datum 1950.
+    /// Gets the European Datum 1950 (ED50) horizontal datum.
     /// </summary>
     /// <remarks>
     /// <para>Area of use:
@@ -214,13 +213,7 @@ public class HorizontalDatum : Datum
         }
     }
 
-    /// <summary>
-    /// Checks whether the values of this instance is equal to the values of another instance.
-    /// Only parameters used for coordinate system are used for comparison.
-    /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
-    /// </summary>
-    /// <param name="obj">The obj parameter.</param>
-    /// <returns>True if equal.</returns>
+    /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
         if (!(obj is HorizontalDatum))

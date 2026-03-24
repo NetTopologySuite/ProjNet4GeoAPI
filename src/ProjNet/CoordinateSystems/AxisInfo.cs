@@ -18,7 +18,6 @@ public class AxisInfo
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AxisInfo"/> class.
-    /// Initializes a new instance of an AxisInfo.
     /// </summary>
     /// <param name="name">Name of axis.</param>
     /// <param name="orientation">Axis orientation.</param>

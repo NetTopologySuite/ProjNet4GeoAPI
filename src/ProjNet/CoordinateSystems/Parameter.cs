@@ -14,7 +14,6 @@ public class Parameter
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Parameter"/> class.
-    /// Creates an instance of a parameter.
     /// </summary>
     /// <remarks>Units are always either meters or degrees.</remarks>
     /// <param name="name">Name of parameter.</param>

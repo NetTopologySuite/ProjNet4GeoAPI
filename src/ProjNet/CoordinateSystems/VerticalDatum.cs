@@ -16,7 +16,6 @@ public class VerticalDatum : Datum
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="VerticalDatum"/> class.
-    /// Initializes a new instance of a vertical datum.
     /// </summary>
     /// <param name="type">Datum type.</param>
     /// <param name="name">Name.</param>
@@ -31,7 +30,7 @@ public class VerticalDatum : Datum
     }
 
     /// <summary>
-    /// Gets oDN - VerticalDatum.
+    /// Gets the Ordnance Datum Newlyn (ODN) vertical datum.
     /// </summary>
     public static VerticalDatum ODN
     {

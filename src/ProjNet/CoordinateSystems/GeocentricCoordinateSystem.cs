@@ -54,7 +54,7 @@ public class GeocentricCoordinateSystem : CoordinateSystem
     }
 
     /// <summary>
-    /// Gets creates a geocentric coordinate system based on the WGS84 ellipsoid, suitable for GPS measurements.
+    /// Gets a geocentric coordinate system based on the WGS84 ellipsoid, suitable for GPS measurements.
     /// </summary>
     public static GeocentricCoordinateSystem WGS84
     {
@@ -81,7 +81,7 @@ public class GeocentricCoordinateSystem : CoordinateSystem
     public LinearUnit LinearUnit { get; set; }
 
     /// <summary>
-    /// Gets or sets the PrimeMeridian.
+    /// Gets or sets the prime meridian used as the longitude reference for this coordinate system.
     /// </summary>
     public PrimeMeridian PrimeMeridian { get; set; }
 
@@ -146,21 +146,10 @@ public class GeocentricCoordinateSystem : CoordinateSystem
         }
     }
 
-    /// <summary>
-    /// Gets units for dimension within coordinate system. Each dimension in
-    /// the coordinate system has corresponding units.
-    /// </summary>
-    /// <param name="dimension">Dimension.</param>
-    /// <returns>Unit.</returns>
+    /// <inheritdoc />
     public override IUnit GetUnits(int dimension) => this.LinearUnit;
 
-    /// <summary>
-    /// Checks whether the values of this instance is equal to the values of another instance.
-    /// Only parameters used for coordinate system are used for comparison.
-    /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
-    /// </summary>
-    /// <param name="obj">The obj parameter.</param>
-    /// <returns>True if equal.</returns>
+    /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
         if (!(obj is GeocentricCoordinateSystem gcc))

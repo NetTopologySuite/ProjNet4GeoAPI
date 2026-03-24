@@ -33,7 +33,6 @@ public abstract class CoordinateSystem : Info
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CoordinateSystem"/> class.
-    /// Initializes a new instance of a coordinate system.
     /// </summary>
     /// <param name="name">Name.</param>
     /// <param name="authority">Authority name.</param>
@@ -83,15 +82,15 @@ public abstract class CoordinateSystem : Info
     /// Gets the units for the dimension within coordinate system.
     /// Each dimension in the coordinate system has corresponding units.
     /// </summary>
-    /// <param name="dimension">The dimension value.</param>
-    /// <returns>The computed value.</returns>
+    /// <param name="dimension">Zero-based index of the dimension.</param>
+    /// <returns>The unit for the specified dimension.</returns>
     public abstract IUnit GetUnits(int dimension);
 
     /// <summary>
     /// Gets axis details for dimension within coordinate system.
     /// </summary>
-    /// <param name="dimension">Dimension.</param>
-    /// <returns>Axis info.</returns>
+    /// <param name="dimension">Zero-based index of the axis.</param>
+    /// <returns>The <see cref="AxisInfo"/> for the specified dimension.</returns>
     public AxisInfo GetAxis(int dimension)
     {
         if (dimension >= this.AxisInfo.Count || dimension < 0)

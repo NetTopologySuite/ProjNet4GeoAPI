@@ -77,8 +77,7 @@ public class Wgs84ConversionInfo
     public string AreaOfUse;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="Wgs84ConversionInfo"/> class.
-    /// Initializes an instance of Wgs84ConversionInfo with default parameters (all values = 0).
+    /// Initializes a new instance of the <see cref="Wgs84ConversionInfo"/> class with all parameters set to zero.
     /// </summary>
     public Wgs84ConversionInfo()
         : this(0, 0, 0, 0, 0, 0, 0, string.Empty)
@@ -87,7 +86,6 @@ public class Wgs84ConversionInfo
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Wgs84ConversionInfo"/> class.
-    /// Initializes an instance of Wgs84ConversionInfo.
     /// </summary>
     /// <param name="dx">Bursa Wolf X-axis shift in meters.</param>
     /// <param name="dy">Bursa Wolf Y-axis shift in meters.</param>
@@ -103,7 +101,6 @@ public class Wgs84ConversionInfo
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Wgs84ConversionInfo"/> class.
-    /// Initializes an instance of Wgs84ConversionInfo.
     /// </summary>
     /// <param name="dx">Bursa Wolf X-axis shift in meters.</param>
     /// <param name="dy">Bursa Wolf Y-axis shift in meters.</param>
@@ -129,7 +126,6 @@ public class Wgs84ConversionInfo
     /// Gets the Well Known Text (WKT) for this object.
     /// </summary>
     /// <remarks>The WKT format of this object is: <code>TOWGS84[dx, dy, dz, ex, ey, ez, ppm]</code></remarks>
-    /// <returns>WKT representaion.</returns>
     public string WKT
     {
         get
@@ -168,9 +164,8 @@ public class Wgs84ConversionInfo
     }
 
     /// <summary>
-    /// Gets a value indicating whether returns true of all 7 parameter values are 0.0.
+    /// Gets a value indicating whether all seven Bursa-Wolf parameter values are zero.
     /// </summary>
-    /// <returns>The transformation result.</returns>
     public bool HasZeroValuesOnly
     {
         get
@@ -218,9 +213,8 @@ public class Wgs84ConversionInfo
     /// <para>: The scale correction to be made to the position vector in the source coordinate system in order
     /// to obtain the correct scale in the target coordinate system. M = (1 + dS*10-6), whereby dS is the scale
     /// correction expressed in parts per million.</para>
-    /// <para><see href="http://www.posc.org/Epicentre.2_2/DataModel/ExamplesofUsage/eu_cs35.html"/> for an explanation of the Bursa-Wolf transformation.</para>
     /// </remarks>
-    /// <returns>The transformation result.</returns>
+    /// <returns>An array of 7 Bursa-Wolf transformation coefficients [S, Ex*S, Ey*S, Ez*S, Dx, Dy, Dz], where S = 1 + Ppm/1,000,000.</returns>
     public double[] GetAffineTransform()
     {
         double rS = 1 + (this.Ppm * 0.000001);
@@ -236,14 +230,10 @@ public class Wgs84ConversionInfo
     /// Returns the Well Known Text (WKT) for this object.
     /// </summary>
     /// <remarks>The WKT format of this object is: <code>TOWGS84[dx, dy, dz, ex, ey, ez, ppm]</code></remarks>
-    /// <returns>WKT representaion.</returns>
+    /// <returns>WKT representation.</returns>
     public override string ToString() => this.WKT;
 
-    /// <summary>
-    /// Indicates whether the current object is equal to another object of the same type.
-    /// </summary>
-    /// <param name="obj">The obj parameter.</param>
-    /// <returns>The transformation result.</returns>
+    /// <inheritdoc />
     public override bool Equals(object obj) => this.Equals(obj as Wgs84ConversionInfo);
 
     /// <summary>
@@ -258,12 +248,10 @@ public class Wgs84ConversionInfo
     }
 
     /// <summary>
-    /// Checks whether the values of this instance is equal to the values of another instance.
-    /// Only parameters used for coordinate system are used for comparison.
-    /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
+    /// Checks whether the Bursa-Wolf parameter values of this instance are equal to those of another instance.
     /// </summary>
-    /// <param name="obj">The obj parameter.</param>
-    /// <returns>True if equal.</returns>
+    /// <param name="obj">The <see cref="Wgs84ConversionInfo"/> instance to compare against.</param>
+    /// <returns><see langword="true"/> if all seven parameter values are equal; otherwise, <see langword="false"/>.</returns>
     public bool Equals(Wgs84ConversionInfo obj)
     {
         if (obj == null)

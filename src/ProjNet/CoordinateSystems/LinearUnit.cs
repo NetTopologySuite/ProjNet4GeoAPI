@@ -16,7 +16,6 @@ public class LinearUnit : Info, IUnit
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="LinearUnit"/> class.
-    /// Creates an instance of a linear unit.
     /// </summary>
     /// <param name="metersPerUnit">Number of meters per <see cref="LinearUnit" />.</param>
     /// <param name="name">Name.</param>
@@ -97,13 +96,7 @@ public class LinearUnit : Info, IUnit
         }
     }
 
-    /// <summary>
-    /// Checks whether the values of this instance is equal to the values of another instance.
-    /// Only parameters used for coordinate system are used for comparison.
-    /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
-    /// </summary>
-    /// <param name="obj">The obj parameter.</param>
-    /// <returns>True if equal.</returns>
+    /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
         if (!(obj is LinearUnit))

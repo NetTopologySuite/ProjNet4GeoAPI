@@ -22,7 +22,6 @@ public class AngularUnit : Info, IUnit
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AngularUnit"/> class.
-    /// Initializes a new instance of a angular unit.
     /// </summary>
     /// <param name="radiansPerUnit">Radians per unit.</param>
     public AngularUnit(double radiansPerUnit)
@@ -33,7 +32,6 @@ public class AngularUnit : Info, IUnit
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AngularUnit"/> class.
-    /// Initializes a new instance of a angular unit.
     /// </summary>
     /// <param name="radiansPerUnit">Radians per unit.</param>
     /// <param name="name">Name.</param>
@@ -49,22 +47,22 @@ public class AngularUnit : Info, IUnit
     }
 
     /// <summary>
-    /// Gets the angular degrees are PI/180 = 0.017453292519943295769236907684886 radians.
+    /// Gets the degree unit of angle (1° = π/180 radians).
     /// </summary>
     public static AngularUnit Degrees => new(0.017453292519943295769236907684886, "degree", "EPSG", 9102, "deg", string.Empty, "=pi/180 radians");
 
     /// <summary>
-    /// Gets sI standard unit.
+    /// Gets the radian angular unit, the SI standard unit of angle.
     /// </summary>
     public static AngularUnit Radian => new(1, "radian", "EPSG", 9101, "rad", string.Empty, "SI standard unit.");
 
     /// <summary>
-    /// Gets pi / 200 = 0.015707963267948966192313216916398 radians.
+    /// Gets the grad unit of angle (1 grad = π/200 radians).
     /// </summary>
     public static AngularUnit Grad => new(0.015707963267948966192313216916398, "grad", "EPSG", 9105, "gr", string.Empty, "=pi/200 radians.");
 
     /// <summary>
-    /// Gets pi / 200 = 0.015707963267948966192313216916398 radians.
+    /// Gets the gon unit of angle (1 gon = π/200 radians; equivalent to a grad).
     /// </summary>
     public static AngularUnit Gon => new(0.015707963267948966192313216916398, "gon", "EPSG", 9106, "g", string.Empty, "=pi/200 radians.");
 
@@ -108,13 +106,7 @@ public class AngularUnit : Info, IUnit
         }
     }
 
-    /// <summary>
-    /// Checks whether the values of this instance is equal to the values of another instance.
-    /// Only parameters used for coordinate system are used for comparison.
-    /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
-    /// </summary>
-    /// <param name="obj">The obj parameter.</param>
-    /// <returns>True if equal.</returns>
+    /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
         if (!(obj is AngularUnit))

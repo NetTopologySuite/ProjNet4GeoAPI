@@ -24,7 +24,6 @@ public abstract class Datum : Info
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Datum"/> class.
-    /// Initializes a new instance of a Datum object.
     /// </summary>
     /// <param name="type">Datum type.</param>
     /// <param name="name">Name.</param>
@@ -51,13 +50,7 @@ public abstract class Datum : Info
     /// </summary>
     public DatumType DatumType { get; set; }
 
-    /// <summary>
-    /// Checks whether the values of this instance is equal to the values of another instance.
-    /// Only parameters used for coordinate system are used for comparison.
-    /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
-    /// </summary>
-    /// <param name="obj">The obj parameter.</param>
-    /// <returns>True if equal.</returns>
+    /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
         if (!(obj is Ellipsoid))

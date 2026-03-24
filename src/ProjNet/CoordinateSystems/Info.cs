@@ -17,14 +17,13 @@ public abstract class Info : IInfo
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Info"/> class.
-    /// A base interface for metadata applicable to coordinate system objects.
     /// </summary>
     /// <remarks>
     /// <para>The metadata items �Abbreviation�, �Alias�, �Authority�, �AuthorityCode�, �Name� and �Remarks�
     /// were specified in the Simple Features interfaces, so they have been kept here.</para>
     /// <para>This specification does not dictate what the contents of these items
     /// should be. However, the following guidelines are suggested:</para>
-    /// <para>When <see href="ICoordinateSystemAuthorityFactory"/> is used to create an object, the �Authority�
+    /// <para>When <c>ICoordinateSystemAuthorityFactory</c> is used to create an object, the �Authority�
     /// and 'AuthorityCode' values should be set to the authority name of the factory object, and the authority
     /// code supplied by the client, respectively. The other values may or may not be set. (If the authority is
     /// EPSG, the implementer may consider using the corresponding metadata values in the EPSG tables.)</para>
@@ -134,15 +133,14 @@ public abstract class Info : IInfo
     /// Returns the Well-known text for this object
     /// as defined in the simple features specification.
     /// </summary>
-    /// <returns>The computed value.</returns>
+    /// <returns>The Well-known text representation of this object.</returns>
     public override string ToString() => this.WKT;
 
     /// <summary>
-    /// Checks whether the values of this instance is equal to the values of another instance.
-    /// Only parameters used for coordinate system are used for comparison.
-    /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
+    /// Checks whether the coordinate system parameter values of this instance are equal to those of another instance.
+    /// Name, abbreviation, authority, alias, and remarks are excluded from the comparison.
     /// </summary>
-    /// <param name="obj">The obj parameter.</param>
-    /// <returns>True if equal.</returns>
+    /// <param name="obj">The object to compare against.</param>
+    /// <returns><see langword="true"/> if all coordinate system parameters are equal; otherwise, <see langword="false"/>.</returns>
     public abstract bool EqualParams(object obj);
 }

@@ -25,7 +25,6 @@ public class CoordinateSystemFactory
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="CoordinateSystemFactory"/> class.
-    /// Creates an instance of this class.
     /// </summary>
     public CoordinateSystemFactory()
     {
@@ -83,8 +82,8 @@ public class CoordinateSystemFactory
     /// <param name="name">Name of coordinate system.</param>
     /// <param name="baseCoordinateSystem">Base coordinate system.</param>
     /// <param name="toBaseWkt">WKT of the math transform to the base coordinate system.</param>
-    /// <param name="arAxes">Axiis of the fitted coordinate system.</param>
-    /// <returns>Fitted coordinate system.</returns>
+    /// <param name="arAxes">Axes of the fitted coordinate system.</param>
+    /// <returns>A new <see cref="FittedCoordinateSystem"/>.</returns>
     public FittedCoordinateSystem CreateFittedCoordinateSystem(string name, CoordinateSystem baseCoordinateSystem, string toBaseWkt, List<AxisInfo> arAxes)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -96,12 +95,17 @@ public class CoordinateSystemFactory
         return new FittedCoordinateSystem(baseCoordinateSystem, toBaseTransform, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
     }
 
-    /// <inheritdoc cref="CreateFittedCoordinateSystem(string, CoordinateSystem, string, List{AxisInfo})"/>
+    /// <summary>
+    /// Creates a <see cref="FittedCoordinateSystem"/>.
+    /// </summary>
+    /// <remarks>The units of the axes in the fitted coordinate system will be
+    /// inferred from the units of the base coordinate system. If the affine map
+    /// performs a rotation, then any mixed axes must have identical units.</remarks>
     /// <param name="name">Name of coordinate system.</param>
     /// <param name="baseCoordinateSystem">Base coordinate system.</param>
-    /// <param name="toBase">the math transform to the base coordinate system.</param>
-    /// <param name="arAxes">Axiis of the fitted coordinate system.</param>
-    /// <returns>The transformation result.</returns>
+    /// <param name="toBase">Math transform to the base coordinate system.</param>
+    /// <param name="arAxes">Axes of the fitted coordinate system.</param>
+    /// <returns>A new <see cref="FittedCoordinateSystem"/>.</returns>
     public FittedCoordinateSystem CreateFittedCoordinateSystem(string name, CoordinateSystem baseCoordinateSystem, Transformations.MathTransform toBase, List<AxisInfo> arAxes)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -138,9 +142,9 @@ public class CoordinateSystemFactory
     /// </summary>
     /// <seealso cref="CreateFlattenedSphere"/>
     /// <param name="name">Name of ellipsoid.</param>
-    /// <param name="semiMajorAxis">The semiMajorAxis parameter.</param>
-    /// <param name="semiMinorAxis">The semiMinorAxis parameter.</param>
-    /// <param name="linearUnit">The linearUnit parameter.</param>
+    /// <param name="semiMajorAxis">Semi-major axis length in the units of <paramref name="linearUnit"/>.</param>
+    /// <param name="semiMinorAxis">Semi-minor axis length in the units of <paramref name="linearUnit"/>.</param>
+    /// <param name="linearUnit">Unit of measure for both axes.</param>
     /// <returns>Ellipsoid.</returns>
     public Ellipsoid CreateEllipsoid(string name, double semiMajorAxis, double semiMinorAxis, LinearUnit linearUnit)
     {
@@ -349,7 +353,7 @@ public class CoordinateSystemFactory
     }
 
     /// <summary>
-    /// Creates a <see cref="CreateGeocentricCoordinateSystem"/> from a <see cref="HorizontalDatum">datum</see>,
+    /// Creates a <see cref="GeocentricCoordinateSystem"/> from a <see cref="HorizontalDatum">datum</see>,
     /// <see cref="LinearUnit">linear unit</see> and <see cref="PrimeMeridian"/>.
     /// </summary>
     /// <param name="name">Name of geocentric coordinate system.</param>

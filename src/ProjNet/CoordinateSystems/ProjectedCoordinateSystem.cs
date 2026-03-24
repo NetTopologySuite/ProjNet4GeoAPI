@@ -17,7 +17,6 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="ProjectedCoordinateSystem"/> class.
-    /// Initializes a new instance of a projected coordinate system.
     /// </summary>
     /// <param name="datum">Horizontal datum.</param>
     /// <param name="geographicCoordinateSystem">Geographic coordinate system.</param>
@@ -104,7 +103,7 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
     }
 
     /// <summary>
-    /// Gets or sets the GeographicCoordinateSystem.
+    /// Gets or sets the geographic coordinate system on which this projection is based.
     /// </summary>
     public GeographicCoordinateSystem GeographicCoordinateSystem { get; set; }
 
@@ -189,7 +188,7 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
     /// Universal Transverse Mercator - WGS84.
     /// </summary>
     /// <param name="zone">UTM zone.</param>
-    /// <param name="zoneIsNorth">true of Northern hemisphere, false if southern.</param>
+    /// <param name="zoneIsNorth"><see langword="true"/> for the Northern Hemisphere; <see langword="false"/> for the Southern Hemisphere.</param>
     /// <returns>UTM/WGS84 coordsys.</returns>
     public static ProjectedCoordinateSystem WGS84_UTM(int zone, bool zoneIsNorth)
     {
@@ -229,21 +228,10 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
             string.Empty);
     }
 
-    /// <summary>
-    /// Gets units for dimension within coordinate system. Each dimension in
-    /// the coordinate system has corresponding units.
-    /// </summary>
-    /// <param name="dimension">Dimension.</param>
-    /// <returns>Unit.</returns>
+    /// <inheritdoc />
     public override IUnit GetUnits(int dimension) => this.LinearUnit;
 
-    /// <summary>
-    /// Checks whether the values of this instance is equal to the values of another instance.
-    /// Only parameters used for coordinate system are used for comparison.
-    /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
-    /// </summary>
-    /// <param name="obj">The obj parameter.</param>
-    /// <returns>True if equal.</returns>
+    /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
         if (!(obj is ProjectedCoordinateSystem pcs))
