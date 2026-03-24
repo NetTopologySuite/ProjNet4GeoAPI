@@ -20,79 +20,6 @@ namespace ProjNet.Resources;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-
-/// <summary>
-/// Represents the documented type.
-/// </summary>
-internal enum GridResourceResolutionMode
-{
-    /// <summary>
-    /// Resolves grids only from locally available files.
-    /// </summary>
-    LocalOnly = 0,
-
-    /// <summary>
-    /// Resolves grids locally first, then falls back to network retrieval.
-    /// </summary>
-    LocalThenNetwork = 1,
-}
-
-/// <summary>
-/// Represents the documented type.
-/// </summary>
-internal interface IGridResourceFetchClient
-{
-    /// <summary>
-    /// Performs the documented operation.
-    /// </summary>
-    /// <param name="gridName">The gridName value.</param>
-    /// <param name="targetFilePath">The targetFilePath value.</param>
-    /// <returns>The computed value.</returns>
-    bool TryFetch(string gridName, string targetFilePath);
-}
-
-/// <summary>
-/// Represents the documented type.
-/// </summary>
-internal sealed class GridResourceResolverOptions
-{
-    /// <summary>
-    /// Initializes a new instance of the <see cref="GridResourceResolverOptions"/> class.
-    /// </summary>
-    /// <param name="localDirectories">The localDirectories value.</param>
-    /// <param name="cacheDirectory">The cacheDirectory value.</param>
-    /// <param name="mode">The mode value.</param>
-    internal GridResourceResolverOptions(IEnumerable<string> localDirectories, string cacheDirectory, GridResourceResolutionMode mode)
-    {
-        if (localDirectories is null)
-        {
-            throw new ArgumentNullException(nameof(localDirectories));
-        }
-
-        this.LocalDirectories = localDirectories
-            .Where(path => !string.IsNullOrWhiteSpace(path))
-            .Select(Path.GetFullPath)
-            .ToArray();
-        this.CacheDirectory = string.IsNullOrWhiteSpace(cacheDirectory) ? null : Path.GetFullPath(cacheDirectory);
-        this.Mode = mode;
-    }
-
-    /// <summary>
-    /// Gets the documented value.
-    /// </summary>
-    internal string CacheDirectory { get; }
-
-    /// <summary>
-    /// Gets the documented value.
-    /// </summary>
-    internal IReadOnlyList<string> LocalDirectories { get; }
-
-    /// <summary>
-    /// Gets the documented value.
-    /// </summary>
-    internal GridResourceResolutionMode Mode { get; }
-}
 
 /// <summary>
 /// Represents the documented type.
@@ -240,10 +167,5 @@ internal sealed class GridResourceResolver
 
         resolvedPath = targetPath;
         return true;
-    }
-
-    private sealed class NoOpGridResourceFetchClient : IGridResourceFetchClient
-    {
-        public bool TryFetch(string gridName, string targetFilePath) => false;
     }
 }
