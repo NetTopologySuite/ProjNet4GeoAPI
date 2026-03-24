@@ -14,8 +14,8 @@ using ProjNet.CoordinateSystems.Transformations;
 [Serializable]
 internal sealed class AiroceanProjection : MapProjection
 {
-    private const double OrientationVertical = 0d;
-    private const double OrientationHorizontal = 1d;
+    private const int OrientationVertical = 0;
+    private const int OrientationHorizontal = 1;
 
     private readonly double radius;
     private readonly double inverseRadius;
@@ -54,8 +54,8 @@ internal sealed class AiroceanProjection : MapProjection
         int orientation = ReadDiscreteCode(orientationCode, "orient");
         this.horizontalOrientation = orientation switch
         {
-            0 => false,
-            1 => true,
+            OrientationVertical => false,
+            OrientationHorizontal => true,
             _ => throw new ArgumentException("Invalid value for orient: only vertical or horizontal are supported."),
         };
     }

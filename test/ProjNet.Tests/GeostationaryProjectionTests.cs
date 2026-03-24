@@ -191,4 +191,3 @@ public class GeostationaryProjectionTests
 
     private static double[] CreatePoint(double x, double y) => [x, y];
 }
-

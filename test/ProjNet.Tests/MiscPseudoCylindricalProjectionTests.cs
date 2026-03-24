@@ -192,4 +192,3 @@ public class MiscPseudoCylindricalProjectionTests
 
     private static double[] CreatePoint(double x, double y) => [x, y];
 }
-

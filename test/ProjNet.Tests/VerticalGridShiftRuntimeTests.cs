@@ -100,4 +100,3 @@ public class VerticalGridShiftRuntimeTests
         throw new FileNotFoundException("Could not locate local test grid fixture under test\\ProjNet.Tests\\Fixtures\\grids.", fileName);
     }
 }
-

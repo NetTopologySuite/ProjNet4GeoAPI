@@ -120,4 +120,3 @@ public class SetRuntimeTests
 
     private static double[] CreatePoint(double x, double y, double z) => [x, y, z];
 }
-

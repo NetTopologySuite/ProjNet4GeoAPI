@@ -227,4 +227,3 @@ public class AxisSwapTransformationTests
         return CoordinateSystemFactory.CreateProjection("Mercator", "mercator", projectionParameters);
     }
 }
-

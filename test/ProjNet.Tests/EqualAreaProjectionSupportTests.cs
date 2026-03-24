@@ -225,4 +225,3 @@ public class EqualAreaProjectionSupportTests
         return new[] { x, y };
     }
 }
-

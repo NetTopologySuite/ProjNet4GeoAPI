@@ -147,4 +147,3 @@ public class ConicProjectionSupportTests
         return new[] { x, y };
     }
 }
-

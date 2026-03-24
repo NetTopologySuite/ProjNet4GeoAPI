@@ -79,4 +79,3 @@ public class ProjectionSupportTests
         return new[] { x, y };
     }
 }
-

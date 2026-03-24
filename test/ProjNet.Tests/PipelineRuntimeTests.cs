@@ -84,4 +84,3 @@ public class PipelineRuntimeTests
         Assert.InRange(Math.Abs(transformed[3] - 2018.0d), 0d, 1e-12d);
     }
 }
-

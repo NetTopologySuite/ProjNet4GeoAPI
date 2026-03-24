@@ -148,4 +148,3 @@ public class PutninsProjectionTests
 
     private static double[] CreatePoint(double x, double y) => [x, y];
 }
-

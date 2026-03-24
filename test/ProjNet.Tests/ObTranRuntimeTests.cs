@@ -96,4 +96,3 @@ public class ObTranRuntimeTests
         Assert.Contains("Nested ob_tran", skipReason, StringComparison.Ordinal);
     }
 }
-

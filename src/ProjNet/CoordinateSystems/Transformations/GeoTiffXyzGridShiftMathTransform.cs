@@ -43,10 +43,14 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
         double multiplier,
         bool gridReferenceIsInput)
     {
+#if NET8_0_OR_GREATER
+        ArgumentNullException.ThrowIfNull(gridPaths);
+#else
         if (gridPaths is null)
         {
             throw new ArgumentNullException(nameof(gridPaths));
         }
+#endif
 
         if (semiMajor <= 0d || double.IsNaN(semiMajor) || double.IsInfinity(semiMajor))
         {
@@ -98,10 +102,14 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
 
     private GeoTiffXyzGridShiftMathTransform(GeoTiffXyzGridShiftMathTransform source, bool isInverted)
     {
+#if NET8_0_OR_GREATER
+        ArgumentNullException.ThrowIfNull(source);
+#else
         if (source is null)
         {
             throw new ArgumentNullException(nameof(source));
         }
+#endif
 
         this.grids = source.grids;
         this.geocentricInverse = source.geocentricInverse;
@@ -206,6 +214,48 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
         return error < 1e-10d;
     }
 
+    private static void InterpolateShift(XyzGrid grid, double longitude, double latitude, out double dx, out double dy, out double dz)
+    {
+        if (!grid.TryMapToGridCoordinates(longitude, latitude, out double gridX, out double gridY))
+        {
+            throw new ArgumentException("Coordinate is outside the XYZ GeoTIFF grid extent.");
+        }
+
+        int indexX = (int)Math.Floor(gridX);
+        int indexY = (int)Math.Floor(gridY);
+        double fractionX = gridX - indexX;
+        double fractionY = gridY - indexY;
+        NormalizeInterpolationCell(grid.Width, ref indexX, ref fractionX);
+        NormalizeInterpolationCell(grid.Height, ref indexY, ref fractionY);
+
+        int indexX2 = indexX + 1;
+        int indexY2 = indexY + 1;
+        double xA = grid.GetXShift(indexX, indexY);
+        double xB = grid.GetXShift(indexX2, indexY);
+        double xC = grid.GetXShift(indexX, indexY2);
+        double xD = grid.GetXShift(indexX2, indexY2);
+
+        double yA = grid.GetYShift(indexX, indexY);
+        double yB = grid.GetYShift(indexX2, indexY);
+        double yC = grid.GetYShift(indexX, indexY2);
+        double yD = grid.GetYShift(indexX2, indexY2);
+
+        double zA = grid.GetZShift(indexX, indexY);
+        double zB = grid.GetZShift(indexX2, indexY);
+        double zC = grid.GetZShift(indexX, indexY2);
+        double zD = grid.GetZShift(indexX2, indexY2);
+
+        double xy = fractionX * fractionY;
+        double wA = 1d - fractionX - fractionY + xy;
+        double wB = fractionX - xy;
+        double wC = fractionY - xy;
+        double wD = xy;
+
+        dx = (xA * wA) + (xB * wB) + (xC * wC) + (xD * wD);
+        dy = (yA * wA) + (yB * wB) + (yC * wC) + (yD * wD);
+        dz = (zA * wA) + (zB * wB) + (zC * wC) + (zD * wD);
+    }
+
     private void ApplyDirect(ref double x, ref double y, ref double z, double factor)
     {
         if (!this.TryGetShift(x, y, z, out double dx, out double dy, out double dz))
@@ -295,53 +345,11 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
             return false;
         }
 
-        InterpolateShift(grid, lon, lat, out dx, out dy, out dz);
+        GeoTiffXyzGridShiftMathTransform.InterpolateShift(grid, lon, lat, out dx, out dy, out dz);
         dx *= this.multiplier;
         dy *= this.multiplier;
         dz *= this.multiplier;
         return true;
-    }
-
-    private static void InterpolateShift(XyzGrid grid, double longitude, double latitude, out double dx, out double dy, out double dz)
-    {
-        if (!grid.TryMapToGridCoordinates(longitude, latitude, out double gridX, out double gridY))
-        {
-            throw new ArgumentException("Coordinate is outside the XYZ GeoTIFF grid extent.");
-        }
-
-        int indexX = (int)Math.Floor(gridX);
-        int indexY = (int)Math.Floor(gridY);
-        double fractionX = gridX - indexX;
-        double fractionY = gridY - indexY;
-        NormalizeInterpolationCell(grid.Width, ref indexX, ref fractionX);
-        NormalizeInterpolationCell(grid.Height, ref indexY, ref fractionY);
-
-        int indexX2 = indexX + 1;
-        int indexY2 = indexY + 1;
-        double xA = grid.GetXShift(indexX, indexY);
-        double xB = grid.GetXShift(indexX2, indexY);
-        double xC = grid.GetXShift(indexX, indexY2);
-        double xD = grid.GetXShift(indexX2, indexY2);
-
-        double yA = grid.GetYShift(indexX, indexY);
-        double yB = grid.GetYShift(indexX2, indexY);
-        double yC = grid.GetYShift(indexX, indexY2);
-        double yD = grid.GetYShift(indexX2, indexY2);
-
-        double zA = grid.GetZShift(indexX, indexY);
-        double zB = grid.GetZShift(indexX2, indexY);
-        double zC = grid.GetZShift(indexX, indexY2);
-        double zD = grid.GetZShift(indexX2, indexY2);
-
-        double xy = fractionX * fractionY;
-        double wA = 1d - fractionX - fractionY + xy;
-        double wB = fractionX - xy;
-        double wC = fractionY - xy;
-        double wD = xy;
-
-        dx = (xA * wA) + (xB * wB) + (xC * wC) + (xD * wD);
-        dy = (yA * wA) + (yB * wB) + (yC * wC) + (yD * wD);
-        dz = (zA * wA) + (zB * wB) + (zC * wC) + (zD * wD);
     }
 
     /// <summary>
@@ -406,16 +414,25 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
         /// <summary>
         /// Gets interpolated X-shift source sample value.
         /// </summary>
+        /// <param name="x">Horizontal sample index.</param>
+        /// <param name="y">Vertical sample index.</param>
+        /// <returns>The interpolated X-shift sample value.</returns>
         internal double GetXShift(int x, int y) => this.GetSampleValue(this.sampleX, x, y);
 
         /// <summary>
         /// Gets interpolated Y-shift source sample value.
         /// </summary>
+        /// <param name="x">Horizontal sample index.</param>
+        /// <param name="y">Vertical sample index.</param>
+        /// <returns>The interpolated Y-shift sample value.</returns>
         internal double GetYShift(int x, int y) => this.GetSampleValue(this.sampleY, x, y);
 
         /// <summary>
         /// Gets interpolated Z-shift source sample value.
         /// </summary>
+        /// <param name="x">Horizontal sample index.</param>
+        /// <param name="y">Vertical sample index.</param>
+        /// <returns>The interpolated Z-shift sample value.</returns>
         internal double GetZShift(int x, int y) => this.GetSampleValue(this.sampleZ, x, y);
     }
 }

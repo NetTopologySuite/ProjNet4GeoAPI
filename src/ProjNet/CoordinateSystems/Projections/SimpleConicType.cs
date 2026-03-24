@@ -4,12 +4,38 @@
 
 namespace ProjNet.CoordinateSystems.Projections;
 
+/// <summary>
+/// Identifies the simple conic projection variant.
+/// </summary>
 internal enum SimpleConicType
 {
+    /// <summary>
+    /// Euler projection variant.
+    /// </summary>
     Euler = 0,
+
+    /// <summary>
+    /// Murdoch projection variant I.
+    /// </summary>
     Murdoch1 = 1,
+
+    /// <summary>
+    /// Murdoch projection variant II.
+    /// </summary>
     Murdoch2 = 2,
+
+    /// <summary>
+    /// Murdoch projection variant III.
+    /// </summary>
     Murdoch3 = 3,
+
+    /// <summary>
+    /// Tissot projection variant.
+    /// </summary>
     Tissot = 4,
+
+    /// <summary>
+    /// Vitkovsky projection variant I.
+    /// </summary>
     Vitkovsky1 = 5,
 }

@@ -277,4 +277,3 @@ public class SpecialtyProjectionBatchD8Tests
 
     private static double[] CreatePoint(double x, double y) => [x, y];
 }
-

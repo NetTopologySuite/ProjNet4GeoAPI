@@ -106,4 +106,3 @@ public class MolodenskyRuntimeTests
 
     private static double[] CreatePoint(double x, double y, double z) => [x, y, z];
 }
-

@@ -356,4 +356,3 @@ public class TinShiftRuntimeTests
         }
     }
 }
-

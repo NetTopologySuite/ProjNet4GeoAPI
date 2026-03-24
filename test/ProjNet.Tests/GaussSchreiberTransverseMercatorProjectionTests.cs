@@ -123,4 +123,3 @@ public class GaussSchreiberTransverseMercatorProjectionTests
 
     private static double[] CreatePoint(double x, double y) => [x, y];
 }
-

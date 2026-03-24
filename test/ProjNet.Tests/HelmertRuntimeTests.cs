@@ -174,4 +174,3 @@ public class HelmertRuntimeTests
 
     private static double[] CreatePoint(double x, double y, double z, double t) => [x, y, z, t];
 }
-

@@ -222,4 +222,3 @@ public class AiryChamberlinBipolarProjectionTests
         public string ExtraParameters { get; }
     }
 }
-

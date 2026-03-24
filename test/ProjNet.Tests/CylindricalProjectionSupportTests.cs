@@ -231,4 +231,3 @@ public class CylindricalProjectionSupportTests
         return new[] { x, y };
     }
 }
-

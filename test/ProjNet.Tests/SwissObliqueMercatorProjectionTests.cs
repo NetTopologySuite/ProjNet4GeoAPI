@@ -139,4 +139,3 @@ public class SwissObliqueMercatorProjectionTests
 
     private static double[] CreatePoint(double x, double y) => [x, y];
 }
-
