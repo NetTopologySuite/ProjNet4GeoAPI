@@ -55,7 +55,7 @@ internal class ParameterInfo
     /// Returns the default parameters for this projection.
     /// </summary>
     /// <returns>The transformation result.</returns>
-    public Parameter[] DefaultParameters() => Array.Empty<Parameter>();
+    public Parameter[] DefaultParameters() => [];
 
     /// <summary>
     /// Gets the parameter by its name.

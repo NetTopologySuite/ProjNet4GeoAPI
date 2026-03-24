@@ -781,7 +781,7 @@ internal static partial class GeoTiffGridLoader
 
     private static bool TryGetDoubleArrayField(Tiff tiff, TiffTag tag, out double[] values)
     {
-        values = Array.Empty<double>();
+        values = [];
         FieldValue[] field = tiff.GetField(tag);
         if (field is null || field.Length == 0)
         {
@@ -800,7 +800,7 @@ internal static partial class GeoTiffGridLoader
 
     private static bool TryGetShortArrayField(Tiff tiff, TiffTag tag, out short[] values)
     {
-        values = Array.Empty<short>();
+        values = [];
         FieldValue[] field = tiff.GetField(tag);
         if (field is null || field.Length == 0)
         {

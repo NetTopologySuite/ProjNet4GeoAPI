@@ -1152,7 +1152,7 @@ public class CoordinateTransformationFactory
         string configuredPaths = Environment.GetEnvironmentVariable(GridPathEnvironmentVariable);
         if (string.IsNullOrWhiteSpace(configuredPaths))
         {
-            return Array.Empty<string>();
+            return [];
         }
 
         return configuredPaths.Split(new[] { ';', Path.PathSeparator }, StringSplitOptions.RemoveEmptyEntries);

@@ -565,7 +565,7 @@ internal static class ProjPipelineMathTransformFactory
         out IReadOnlyList<string> resolvedPaths,
         out string skipReason)
     {
-        resolvedPaths = Array.Empty<string>();
+        resolvedPaths = [];
         skipReason = null;
 
         string[] entries = gridsToken.Split(CommaSeparator, StringSplitOptions.RemoveEmptyEntries);
@@ -866,7 +866,7 @@ internal static class ProjPipelineMathTransformFactory
 
     private static bool TryParseAxisSwapOrder(string orderToken, out int[] order)
     {
-        order = Array.Empty<int>();
+        order = [];
         if (string.IsNullOrWhiteSpace(orderToken))
         {
             return false;
@@ -902,7 +902,7 @@ internal static class ProjPipelineMathTransformFactory
 
     private static bool TryParseAxisOrder(string axisToken, out int[] order)
     {
-        order = Array.Empty<int>();
+        order = [];
         if (string.IsNullOrWhiteSpace(axisToken))
         {
             return false;

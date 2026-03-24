@@ -63,9 +63,9 @@ internal sealed class DeformationMathTransform : MathTransform
         bool isInverted)
     {
         this.velocityGrids = new ReadOnlyCollection<GeoTiffXyzGridShiftMathTransform.XyzGrid>(
-            (velocityGrids ?? Array.Empty<GeoTiffXyzGridShiftMathTransform.XyzGrid>()).ToArray());
-        this.horizontalGrids = new ReadOnlyCollection<CTable2Grid>((horizontalGrids ?? Array.Empty<CTable2Grid>()).ToArray());
-        this.verticalGrids = new ReadOnlyCollection<GtxGrid>((verticalGrids ?? Array.Empty<GtxGrid>()).ToArray());
+            (velocityGrids ?? []).ToArray());
+        this.horizontalGrids = new ReadOnlyCollection<CTable2Grid>((horizontalGrids ?? []).ToArray());
+        this.verticalGrids = new ReadOnlyCollection<GtxGrid>((verticalGrids ?? []).ToArray());
         this.hasFixedDt = hasFixedDt;
         this.fixedDt = fixedDt;
         this.tEpoch = tEpoch;
@@ -354,7 +354,7 @@ internal sealed class DeformationMathTransform : MathTransform
         out IReadOnlyList<string> resolvedPaths,
         out string skipReason)
     {
-        resolvedPaths = Array.Empty<string>();
+        resolvedPaths = [];
         skipReason = null;
         if (string.IsNullOrWhiteSpace(gridsToken))
         {

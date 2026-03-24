@@ -1832,8 +1832,8 @@ internal sealed class DefModelMathTransform : MathTransform
             IReadOnlyList<GeoTiffVGridShiftMathTransform.VerticalGrid> verticalGrids)
         {
             this.Definition = definition;
-            this.XyzGrids = xyzGrids ?? Array.Empty<GeoTiffXyzGridShiftMathTransform.XyzGrid>();
-            this.VerticalGrids = verticalGrids ?? Array.Empty<GeoTiffVGridShiftMathTransform.VerticalGrid>();
+            this.XyzGrids = xyzGrids ?? [];
+            this.VerticalGrids = verticalGrids ?? [];
         }
 
         internal ComponentDefinition Definition { get; }
@@ -2055,7 +2055,7 @@ internal sealed class DefModelMathTransform : MathTransform
         {
             this.beforeFirst = beforeFirst;
             this.afterLast = afterLast;
-            this.model = model ?? Array.Empty<EpochScaleTuple>();
+            this.model = model ?? [];
         }
 
         public double Evaluate(double observationEpoch)
