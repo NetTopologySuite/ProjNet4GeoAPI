@@ -10,7 +10,7 @@ using Xunit;
 /// <summary>
 /// Verifies mutation-sensitive behavior of <see cref="IdentityMathTransform"/>.
 /// </summary>
-public class IdentityMathTransformMutationTests
+public class IdentityMathTransformTests
 {
     /// <summary>
     /// Verifies that dimensions below 2 are promoted to 2.
@@ -61,3 +61,4 @@ public class IdentityMathTransformMutationTests
         Assert.True(transform.Identity());
     }
 }
+
