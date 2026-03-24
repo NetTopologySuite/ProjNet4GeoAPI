@@ -95,15 +95,40 @@ internal static class EpsgCoordinateSystemFactory
         switch (reference.Kind)
         {
             case EpsgCoordinateSystemKind.Geographic2D:
-                return CreateGeographic(EpsgGeneratedCatalog.GeographicCrs[reference.RecordIndex]);
+                if (EpsgGeneratedCatalog.TryGetGeographicCrs(reference.RecordIndex, out var geographicRecord))
+                {
+                    return CreateGeographic(geographicRecord);
+                }
+
+                return null;
             case EpsgCoordinateSystemKind.Geocentric:
-                return CreateGeocentric(EpsgGeneratedCatalog.GeocentricCrs[reference.RecordIndex]);
+                if (EpsgGeneratedCatalog.TryGetGeocentricCrs(reference.RecordIndex, out var geocentricRecord))
+                {
+                    return CreateGeocentric(geocentricRecord);
+                }
+
+                return null;
             case EpsgCoordinateSystemKind.Projected:
-                return CreateProjected(EpsgGeneratedCatalog.ProjectedCrs[reference.RecordIndex]);
+                if (EpsgGeneratedCatalog.TryGetProjectedCrs(reference.RecordIndex, out var projectedRecord))
+                {
+                    return CreateProjected(projectedRecord);
+                }
+
+                return null;
             case EpsgCoordinateSystemKind.Vertical:
-                return CreateVertical(EpsgGeneratedCatalog.VerticalCrs[reference.RecordIndex]);
+                if (EpsgGeneratedCatalog.TryGetVerticalCrs(reference.RecordIndex, out var verticalRecord))
+                {
+                    return CreateVertical(verticalRecord);
+                }
+
+                return null;
             case EpsgCoordinateSystemKind.Compound:
-                return CreateCompound(EpsgGeneratedCatalog.CompoundCrs[reference.RecordIndex]);
+                if (EpsgGeneratedCatalog.TryGetCompoundCrs(reference.RecordIndex, out var compoundRecord))
+                {
+                    return CreateCompound(compoundRecord);
+                }
+
+                return null;
             default:
                 return null;
         }

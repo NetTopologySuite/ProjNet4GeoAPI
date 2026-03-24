@@ -1285,15 +1285,74 @@ def emit(output_path: Path, zip_name: str, catalog, operations, operation_parame
         lines.append('        };')
         lines.append('')
 
+    def emit_switch_factory(method_name, type_name, values, fmt):
+        lines.append(f'        internal static bool {method_name}(int index, out {type_name} record)')
+        lines.append('        {')
+        lines.append('            switch (index)')
+        lines.append('            {')
+        for idx, value in enumerate(values):
+            lines.append(f'                case {idx}:')
+            lines.append(f'                    record = new {type_name}({fmt(value)});')
+            lines.append('                    return true;')
+        lines.append('                default:')
+        lines.append('                    record = default;')
+        lines.append('                    return false;')
+        lines.append('            }')
+        lines.append('        }')
+        lines.append('')
+
+    def emit_projected_switch_factory(values):
+        buckets = {}
+        for idx, value in enumerate(values):
+            bucket = idx // 1000
+            buckets.setdefault(bucket, []).append((idx, value))
+
+        lines.append('        internal static bool TryGetProjectedCrs(int index, out EpsgProjectedCrsRecord record)')
+        lines.append('        {')
+        lines.append('            switch (index / 1000)')
+        lines.append('            {')
+        for bucket in sorted(buckets):
+            lines.append(f'                case {bucket}:')
+            lines.append(f'                    return TryGetProjectedCrsBucket{bucket}(index, out record);')
+        lines.append('                default:')
+        lines.append('                    record = default;')
+        lines.append('                    return false;')
+        lines.append('            }')
+        lines.append('        }')
+        lines.append('')
+
+        for bucket in sorted(buckets):
+            lines.append(f'        private static bool TryGetProjectedCrsBucket{bucket}(int index, out EpsgProjectedCrsRecord record)')
+            lines.append('        {')
+            lines.append('            switch (index)')
+            lines.append('            {')
+            for idx, value in buckets[bucket]:
+                lines.append(f'                case {idx}:')
+                lines.append(f'                    record = new EpsgProjectedCrsRecord({fmt_projected_crs(value)});')
+                lines.append('                    return true;')
+            lines.append('                default:')
+            lines.append('                    record = default;')
+            lines.append('                    return false;')
+            lines.append('            }')
+            lines.append('        }')
+            lines.append('')
+
     lines.append(f'        internal const int CoordinateReferenceCount = {len(catalog["ref_records"])};')
     lines.append(f'        private static readonly int[] CoordinateSridByCacheIndex = new int[] {{ {", ".join(str(ref_record[0]) for ref_record in catalog["ref_records"])} }};')
     lines.append('')
 
-    emit_array('GeographicCrs', 'EpsgGeographicCrsRecord', catalog['geographic_records'], lambda v: f"{v[0]}, \"{esc(v[1])}\", {v[2]}, {v[3]}")
-    emit_array('GeocentricCrs', 'EpsgGeocentricCrsRecord', catalog['geocentric_records'], lambda v: f"{v[0]}, \"{esc(v[1])}\", {v[2]}, {v[3]}")
-    emit_array('ProjectedCrs', 'EpsgProjectedCrsRecord', catalog['projected_records'], lambda v: f"{v[0]}, \"{esc(v[1])}\", {v[2]}, {v[3]}, {v[4]}")
-    emit_array('VerticalCrs', 'EpsgVerticalCrsRecord', catalog['vertical_records'], lambda v: f"{v[0]}, \"{esc(v[1])}\", {v[2]}, {v[3]}")
-    emit_array('CompoundCrs', 'EpsgCompoundCrsRecord', catalog['compound_records'], lambda v: f"{v[0]}, \"{esc(v[1])}\", {v[2]}, {v[3]}")
+    fmt_geographic_crs = lambda v: f"{v[0]}, \"{esc(v[1])}\", {v[2]}, {v[3]}"
+    fmt_geocentric_crs = lambda v: f"{v[0]}, \"{esc(v[1])}\", {v[2]}, {v[3]}"
+    fmt_projected_crs = lambda v: f"{v[0]}, \"{esc(v[1])}\", {v[2]}, {v[3]}, {v[4]}"
+    fmt_vertical_crs = lambda v: f"{v[0]}, \"{esc(v[1])}\", {v[2]}, {v[3]}"
+    fmt_compound_crs = lambda v: f"{v[0]}, \"{esc(v[1])}\", {v[2]}, {v[3]}"
+
+    emit_switch_factory('TryGetGeographicCrs', 'EpsgGeographicCrsRecord', catalog['geographic_records'], fmt_geographic_crs)
+    emit_switch_factory('TryGetGeocentricCrs', 'EpsgGeocentricCrsRecord', catalog['geocentric_records'], fmt_geocentric_crs)
+    emit_projected_switch_factory(catalog['projected_records'])
+    emit_switch_factory('TryGetVerticalCrs', 'EpsgVerticalCrsRecord', catalog['vertical_records'], fmt_vertical_crs)
+    emit_switch_factory('TryGetCompoundCrs', 'EpsgCompoundCrsRecord', catalog['compound_records'], fmt_compound_crs)
+
     emit_array('Units', 'EpsgUnitRecord', catalog['unit_records'], lambda v: f"{v[0]}, {v[1]}, {repr(v[2])}d, \"{esc(v[3])}\"")
     emit_array('Axes', 'EpsgAxisRecord', catalog['axis_records'], lambda v: f"{v[0]}, (byte){v[1]}, \"{esc(v[2])}\", (sbyte){v[3]}, {v[4]}")
     emit_array('Ellipsoids', 'EpsgEllipsoidRecord', catalog['ellipsoid_records'], lambda v: f"{v[0]}, \"{esc(v[1])}\", {repr(v[2])}d, {repr(v[3])}d, {repr(v[4])}d, {'true' if v[5] else 'false'}, {v[6]}")

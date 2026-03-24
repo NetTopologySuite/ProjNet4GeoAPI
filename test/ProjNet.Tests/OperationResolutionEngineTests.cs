@@ -241,13 +241,14 @@ public class OperationResolutionEngineTests
     {
         var provider = new ManagedCoordinateOperationDefinitionProvider();
         var services = new CoordinateSystemServices();
+        var projectedRecords = EnumerateProjectedCrsRecords().ToList();
 
         var candidates = (
             from operation in GetRankedOperations(provider)
             where IsExplicitMethodSupported(operation.MethodName)
                 && string.IsNullOrWhiteSpace(operation.ParameterFileName)
-            from sourceProjected in EpsgGeneratedCatalog.ProjectedCrs.Where(record => record.BaseSrid == operation.SourceSrid).Take(1)
-            from targetProjected in EpsgGeneratedCatalog.ProjectedCrs.Where(record => record.BaseSrid == operation.TargetSrid).Take(1)
+            from sourceProjected in projectedRecords.Where(record => record.BaseSrid == operation.SourceSrid).Take(1)
+            from targetProjected in projectedRecords.Where(record => record.BaseSrid == operation.TargetSrid).Take(1)
             select new
             {
                 operation,
@@ -287,6 +288,32 @@ public class OperationResolutionEngineTests
         }
 
         Assert.Fail("No projected candidate produced an explicit EPSG datum transformation from base geographic metadata.");
+    }
+
+    private static IEnumerable<EpsgProjectedCrsRecord> EnumerateProjectedCrsRecords()
+    {
+        for (int cacheIndex = 0; cacheIndex < EpsgGeneratedCatalog.CoordinateReferenceCount; cacheIndex++)
+        {
+            if (!EpsgGeneratedCatalog.TryGetCoordinateSridByCacheIndex(cacheIndex, out int srid))
+            {
+                continue;
+            }
+
+            if (!EpsgGeneratedCatalog.TryGetCoordinateReference(srid, out var reference, out _))
+            {
+                continue;
+            }
+
+            if (reference.Kind != EpsgCoordinateSystemKind.Projected)
+            {
+                continue;
+            }
+
+            if (EpsgGeneratedCatalog.TryGetProjectedCrs(reference.RecordIndex, out var projectedRecord))
+            {
+                yield return projectedRecord;
+            }
+        }
     }
 
     /// <summary>
