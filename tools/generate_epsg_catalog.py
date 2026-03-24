@@ -1442,7 +1442,6 @@ def emit(output_path: Path, zip_name: str, catalog, operations, operation_parame
 
     emit_array('Operations', 'EpsgOperationRecord', operations, fmt_op)
     emit_array('OperationParameters', 'EpsgOperationParameterRecord', operation_parameters, lambda v: f"{v[0]}, \"{esc(v[1])}\", {repr(v[2])}d")
-    emit_array('ExplicitOperations', 'EpsgExplicitOperationRecord', explicit_operations, lambda v: f"{v[0]}, {repr(v[1])}d, {repr(v[2])}d, {repr(v[3])}d, {repr(v[4])}d, {repr(v[5])}d, {repr(v[6])}d, {repr(v[7])}d")
 
     lines.append('        internal static bool TryGetCoordinateReference(int srid, out EpsgCoordinateReferenceRecord reference, out int cacheIndex)')
     lines.append('        {')
@@ -1464,9 +1463,9 @@ def emit(output_path: Path, zip_name: str, catalog, operations, operation_parame
     lines.append('        {')
     lines.append('            switch (operationCode)')
     lines.append('            {')
-    for idx, explicit_record in enumerate(explicit_operations):
+    for explicit_record in explicit_operations:
         lines.append(f'                case {explicit_record[0]}:')
-        lines.append(f'                    parameters = ExplicitOperations[{idx}];')
+        lines.append(f'                    parameters = new EpsgExplicitOperationRecord({explicit_record[0]}, {repr(explicit_record[1])}d, {repr(explicit_record[2])}d, {repr(explicit_record[3])}d, {repr(explicit_record[4])}d, {repr(explicit_record[5])}d, {repr(explicit_record[6])}d, {repr(explicit_record[7])}d);')
         lines.append('                    return true;')
     lines.append('                default:')
     lines.append('                    parameters = default;')

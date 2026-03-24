@@ -102358,1323 +102358,6 @@ namespace ProjNet.Data.Generated
             new EpsgOperationParameterRecord(11315, "Target epoch", 2020.28d),
         };
 
-        internal static readonly EpsgExplicitOperationRecord[] ExplicitOperations = new EpsgExplicitOperationRecord[]
-        {
-            new EpsgExplicitOperationRecord(1024, 601.705d, 84.263d, 485.227d, 4.7354d, 1.3145d, 5.393d, -2.3887d),
-            new EpsgExplicitOperationRecord(1055, -145.7d, -249.1d, 1.5d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1056, -85.645d, -273.077d, -79.708d, 2.289d, -1.421d, 2.532d, 3.194d),
-            new EpsgExplicitOperationRecord(1057, -202.234d, -168.351d, -63.51d, 3.545d, 0.659d, -1.945d, 2.1d),
-            new EpsgExplicitOperationRecord(1058, -18.944d, -379.364d, -24.063d, 0.04d, -0.764d, 6.431d, 3.657d),
-            new EpsgExplicitOperationRecord(1059, -294.7d, -200.1d, 525.5d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1060, -3.2d, -5.7d, 2.8d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1061, -20.8d, 11.3d, 2.4d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1062, 226.702d, -193.337d, -35.371d, -2.229d, -4.391d, 9.238d, 0.9798d),
-            new EpsgExplicitOperationRecord(1063, -2.227d, 6.524d, 2.178d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1064, -0.652d, 1.619d, 0.213d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1065, 44.585d, -131.212d, -39.544d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1066, 593.032d, 26.0d, 478.741d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1067, -92.1d, -89.9d, 114.9d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1070, -100.0d, -248.0d, 259.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1071, -181.0d, -122.0d, 225.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1073, -48.0d, 55.0d, 52.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1074, -275.7224d, 94.7824d, 340.8944d, -8.001d, -4.42d, -11.821d, 1.0d),
-            new EpsgExplicitOperationRecord(1075, -89.05d, -87.03d, -124.56d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1078, -265.983d, 76.918d, 20.182d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1079, -265.983d, 76.918d, 20.182d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1080, 175.0d, -38.0d, 113.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1081, 174.05d, -25.49d, 112.57d, -0.0d, -0.0d, 0.554d, 0.2263d),
-            new EpsgExplicitOperationRecord(1082, 174.05d, -25.49d, 112.57d, -0.0d, -0.0d, 0.554d, 0.2263d),
-            new EpsgExplicitOperationRecord(1083, 50.0d, 212.0d, 381.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1084, 70.0d, 207.0d, 389.5d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1085, 65.334d, 212.46d, 387.63d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1087, -112.0d, -110.3d, -140.2d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1088, -223.7d, -67.38d, 1.34d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1089, -225.4d, -67.7d, 7.85d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1090, -227.1d, -68.1d, 14.4d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1091, -231.61d, -68.21d, 13.93d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1092, -225.06d, -67.37d, 14.61d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1093, -229.08d, -65.73d, 20.21d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1094, -230.47d, -56.08d, 22.43d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1095, -270.933d, 115.599d, -360.226d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1096, -270.933d, 115.599d, -360.226d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1099, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1100, -166.0d, -15.0d, 204.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1101, -118.0d, -14.0d, 218.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1102, -134.0d, -2.0d, 210.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1103, -165.0d, -11.0d, 206.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1104, -123.0d, -20.0d, 220.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1105, -128.0d, -18.0d, 224.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1106, -161.0d, -14.0d, 205.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1107, -43.0d, -163.0d, 45.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1108, -133.0d, -48.0d, 148.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1109, -134.0d, -48.0d, 149.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1110, -150.0d, -250.0d, -1.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1111, -143.0d, -236.0d, 7.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1112, 593.16d, 26.15d, 478.54d, -6.3239d, -0.5008d, -5.5487d, 4.0775d),
-            new EpsgExplicitOperationRecord(1113, -143.0d, -90.0d, -294.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1114, -138.0d, -105.0d, -289.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1116, -125.0d, -108.0d, -295.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1117, -161.0d, -73.0d, -317.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1118, -134.0d, -105.0d, -295.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1120, -147.0d, -74.0d, -283.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1121, -142.0d, -96.0d, -293.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1122, -160.0d, -6.0d, -302.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1124, -73.0d, 213.0d, 296.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1125, 307.0d, 304.0d, -318.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1126, -384.0d, 664.0d, -48.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1127, -148.0d, 136.0d, 90.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1128, -136.0d, -108.0d, -292.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1129, -134.73d, -110.92d, -292.66d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1130, -263.0d, 6.0d, 431.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1131, -134.0d, 229.0d, -29.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1132, -206.0d, 172.0d, -6.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1133, -87.0d, -98.0d, -121.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1134, -87.0d, -96.0d, -120.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1135, -103.0d, -106.0d, -141.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1136, -104.0d, -101.0d, -140.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1137, -130.0d, -117.0d, -151.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1138, -86.0d, -96.0d, -120.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1139, -87.0d, -95.0d, -120.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1140, -84.0d, -95.0d, -130.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1141, -117.0d, -132.0d, -164.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1142, -97.0d, -103.0d, -120.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1143, -97.0d, -88.0d, -135.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1144, -107.0d, -88.0d, -149.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1145, -84.0d, -107.0d, -120.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1146, -82.981d, -99.719d, -110.709d, -0.5076d, 0.1503d, 0.3898d, -0.3143d),
-            new EpsgExplicitOperationRecord(1147, -1.51d, -0.84d, -3.5d, -1.893d, -0.687d, -2.764d, 0.609d),
-            new EpsgExplicitOperationRecord(1148, -130.0d, 110.0d, -13.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1149, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1150, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1151, 84.0d, -22.0d, 209.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1152, -637.0d, -549.0d, -203.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1153, 217.0d, 823.0d, 299.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1154, 209.0d, 818.0d, 290.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1155, 282.0d, 726.0d, 254.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1156, 295.0d, 736.0d, 257.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1157, -97.0d, 787.0d, 86.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1158, -11.0d, 851.0d, 5.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1159, -130.0d, 29.0d, 364.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1160, -90.0d, 40.0d, 88.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1161, -133.0d, -77.0d, -51.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1162, -133.0d, -79.0d, -72.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1163, -74.0d, -130.0d, 42.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1164, 41.0d, -220.0d, -134.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1165, 639.0d, 405.0d, 60.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1166, 31.0d, 146.0d, 47.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1167, -81.0d, -84.0d, 115.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1168, -92.0d, -93.0d, 122.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1169, -225.0d, -65.0d, 9.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1170, -3.0d, 142.0d, 183.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1171, 0.0d, 125.0d, 194.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1172, -10.0d, 158.0d, 187.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1173, -8.0d, 160.0d, 176.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1174, -9.0d, 161.0d, 179.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1175, -8.0d, 159.0d, 175.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1176, -5.0d, 135.0d, 172.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1177, -4.0d, 154.0d, 178.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1178, 1.0d, 140.0d, 165.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1179, -7.0d, 162.0d, 188.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1180, -9.0d, 157.0d, 184.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1181, -22.0d, 160.0d, 190.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1182, 4.0d, 159.0d, 188.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1183, -7.0d, 139.0d, 181.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1184, 0.0d, 125.0d, 201.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1185, -9.0d, 152.0d, 178.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1186, 11.0d, 114.0d, 195.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1187, -12.0d, 130.0d, 190.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1188, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1189, -247.0d, -148.0d, 369.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1190, -243.0d, -192.0d, 477.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1191, -249.0d, -156.0d, 381.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1192, -10.0d, 375.0d, 165.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1193, -168.0d, -60.0d, 320.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1194, 601.705d, 84.263d, 485.227d, 4.7354d, 1.3145d, 5.393d, -2.3887d),
-            new EpsgExplicitOperationRecord(1195, 375.0d, -111.0d, 431.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1196, 371.0d, -112.0d, 434.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1197, 371.0d, -111.0d, 434.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1198, 384.0d, -111.0d, 425.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1199, 370.0d, -108.0d, 434.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1200, -148.0d, 51.0d, -291.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1201, -288.0d, 175.0d, -376.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1202, -270.0d, 188.0d, -388.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1203, -270.0d, 183.0d, -390.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1204, -305.0d, 243.0d, -442.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1205, -282.0d, 169.0d, -371.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1206, -278.0d, 171.0d, -367.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1207, -298.0d, 159.0d, -369.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1208, -279.0d, 175.0d, -379.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1209, -295.0d, 173.0d, -371.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1210, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1225, -355.0d, 21.0d, 72.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1226, 616.0d, 97.0d, -251.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1227, -189.0d, -242.0d, -91.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1228, -679.0d, 669.0d, -48.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1230, -148.0d, 507.0d, 685.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1231, -148.0d, 507.0d, 685.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1232, -146.0d, 507.0d, 687.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1233, -158.0d, 507.0d, 676.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1234, -155.0d, 171.0d, 37.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1235, -265.0d, 120.0d, -358.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1236, -116.0d, -50.47d, 141.69d, 0.23d, 0.39d, 0.344d, 0.0983d),
-            new EpsgExplicitOperationRecord(1237, 0.0d, 0.0d, 4.5d, 0.0d, 0.0d, 0.554d, 0.2263d),
-            new EpsgExplicitOperationRecord(1238, 0.0d, 0.0d, 4.5d, 0.0d, 0.0d, 0.554d, 0.219d),
-            new EpsgExplicitOperationRecord(1239, 0.0d, 0.0d, -2.6d, 0.0d, 0.0d, 0.26d, -0.6063d),
-            new EpsgExplicitOperationRecord(1240, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.814d, -0.38d),
-            new EpsgExplicitOperationRecord(1242, 52.17d, -71.82d, -14.9d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1244, -1.08d, -0.27d, -0.9d, -0.0d, -0.0d, 0.16d, -0.12d),
-            new EpsgExplicitOperationRecord(1245, -112.0d, -77.0d, -145.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1246, -333.0d, -222.0d, 114.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1247, 283.0d, 682.0d, 231.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1248, -24.0d, -15.0d, 5.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1249, -2.0d, 152.0d, 149.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1250, 2.0d, 204.0d, 105.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1251, -2.0d, 0.0d, 4.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1252, 1.0d, 1.0d, -1.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1253, -186.0d, -93.0d, 310.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1254, 28.0d, -130.0d, -95.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1255, -123.0d, -206.0d, 219.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1256, -346.0d, -1.0d, 224.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1257, 25.9d, -130.94d, -81.76d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1267, 23.92d, -141.27d, -80.9d, -0.0d, 0.35d, 0.82d, -0.12d),
-            new EpsgExplicitOperationRecord(1271, 615.64d, 102.08d, -255.81d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1272, -199.87d, 74.79d, 246.62d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1274, -40.595d, -18.55d, -69.339d, 2.508d, 1.832d, -2.611d, -4.299d),
-            new EpsgExplicitOperationRecord(1275, -84.0d, -97.0d, -117.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1276, -84.0d, 37.0d, 437.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1277, -168.0d, -72.0d, 314.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1278, -127.8d, -52.3d, 152.9d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1279, -128.5d, -53.0d, 153.4d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1280, -117.763d, -51.51d, 139.061d, 0.292d, 0.443d, 0.277d, -0.191d),
-            new EpsgExplicitOperationRecord(1281, 24.82d, -131.21d, -82.66d, -0.0d, -0.0d, 0.16d, -0.12d),
-            new EpsgExplicitOperationRecord(1283, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1284, -157.0d, -2.0d, -299.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1285, -175.0d, -23.0d, -303.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1290, 24.0d, -124.0d, -82.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1291, 15.0d, -130.0d, -84.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1294, -73.0d, -247.0d, 227.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1296, -61.702d, 284.488d, 472.052d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1297, -115.064d, -87.39d, -101.716d, -0.058d, 4.001d, -2.062d, 9.366d),
-            new EpsgExplicitOperationRecord(1298, -82.875d, -57.097d, -156.768d, -2.158d, 1.524d, -0.982d, -0.359d),
-            new EpsgExplicitOperationRecord(1299, -138.527d, -91.999d, -114.591d, -0.14d, 3.363d, -2.217d, 11.748d),
-            new EpsgExplicitOperationRecord(1300, -73.472d, -51.66d, -112.482d, 0.953d, 4.6d, -2.368d, 0.586d),
-            new EpsgExplicitOperationRecord(1301, 219.315d, 168.975d, -166.145d, 0.198d, 5.926d, -2.356d, -57.104d),
-            new EpsgExplicitOperationRecord(1302, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1303, 43.822d, -108.842d, -119.585d, 1.455d, -0.761d, 0.737d, 0.549d),
-            new EpsgExplicitOperationRecord(1304, 210.0d, 814.0d, 289.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1305, -147.0d, 506.0d, 687.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1307, -2.0d, 374.0d, 172.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1309, 582.0d, 105.0d, 414.0d, 1.04d, 0.35d, -3.08d, 8.3d),
-            new EpsgExplicitOperationRecord(1311, -89.5d, -93.8d, -123.1d, 0.0d, 0.0d, -0.156d, 1.2d),
-            new EpsgExplicitOperationRecord(1314, 446.448d, -125.157d, 542.06d, 0.15d, 0.247d, 0.842d, -20.489d),
-            new EpsgExplicitOperationRecord(1315, 535.948d, -31.357d, 665.16d, 0.15d, 0.247d, 0.998d, -21.689d),
-            new EpsgExplicitOperationRecord(1317, -37.2d, -370.6d, -228.5d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1318, -42.01d, -332.21d, -229.75d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1319, -40.0d, -354.0d, -224.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1320, -37.2d, -370.6d, -224.0d, 0.0d, 0.0d, 0.554d, 0.219d),
-            new EpsgExplicitOperationRecord(1321, -41.8d, -342.2d, -228.2d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1322, -55.5d, -348.0d, -229.2d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1323, -43.0d, -337.0d, -233.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1324, -48.0d, -345.0d, -231.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1325, -48.6d, -345.1d, -230.8d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1326, -41.057d, -374.564d, -226.287d, 0.0d, 0.0d, 0.554d, 0.219d),
-            new EpsgExplicitOperationRecord(1327, -50.9d, -347.6d, -231.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1330, -252.95d, -4.11d, -96.38d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1331, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1332, 21.53219d, -97.00027d, -60.74046d, 0.99548d, 0.58147d, 0.2418d, -4.5981d),
-            new EpsgExplicitOperationRecord(1333, 0.055d, -0.541d, -0.185d, 0.0183d, -0.0003d, -0.007d, -0.014d),
-            new EpsgExplicitOperationRecord(1334, 21.58719d, -97.54127d, -60.92546d, 1.01378d, 0.58117d, 0.2348d, -4.6121d),
-            new EpsgExplicitOperationRecord(1437, 419.3836d, 99.3335d, 591.3451d, 0.850389d, 1.817277d, -7.862238d, -0.99496d),
-            new EpsgExplicitOperationRecord(1438, -333.102d, -11.02d, 230.69d, 0.0d, 0.0d, 0.554d, 0.219d),
-            new EpsgExplicitOperationRecord(1439, -180.624d, -225.516d, 173.919d, -0.81d, -1.898d, 8.336d, 16.71006d),
-            new EpsgExplicitOperationRecord(1440, -86.0d, -92.2d, -127.5d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1441, -255.0d, -15.0d, 71.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1442, 725.0d, 685.0d, 536.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1443, 72.0d, 213.7d, 93.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1444, 174.0d, 359.0d, 365.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1445, 9.0d, 183.0d, 236.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1446, -149.0d, 128.0d, 296.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1448, 52.684d, -71.194d, -13.975d, -0.312d, -0.1063d, -0.3729d, 1.0191d),
-            new EpsgExplicitOperationRecord(1449, 52.684d, -71.194d, -13.975d, -0.312d, -0.1063d, -0.3729d, 1.0191d),
-            new EpsgExplicitOperationRecord(1458, -129.193d, -41.212d, 130.73d, 0.246d, 0.374d, 0.329d, -2.955d),
-            new EpsgExplicitOperationRecord(1459, -120.695d, -62.73d, 165.46d, 0.109d, -0.141d, -0.116d, 2.733d),
-            new EpsgExplicitOperationRecord(1460, -119.353d, -48.301d, 139.484d, 0.415d, 0.26d, 0.437d, -0.613d),
-            new EpsgExplicitOperationRecord(1469, -125.0d, 53.0d, 467.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1470, -124.76d, 53.0d, 466.79d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1504, -134.73d, -110.92d, -292.66d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1505, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1509, 674.374d, 15.056d, 405.346d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1511, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1512, -133.63d, -157.5d, -158.62d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1513, -241.54d, -163.64d, 396.06d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1514, -110.33d, -97.73d, -119.85d, 0.3423d, 1.1634d, 0.2715d, 0.063d),
-            new EpsgExplicitOperationRecord(1516, -273.5d, 110.6d, -357.9d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1517, -23.0d, 259.0d, -9.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1518, -83.0d, 37.0d, 124.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1527, -154.5d, 150.7d, 100.4d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1528, 160.0d, 26.0d, 41.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1529, 18.38d, 192.45d, 96.82d, 0.056d, -0.142d, -0.2d, -0.0013d),
-            new EpsgExplicitOperationRecord(1530, -4.2d, 135.4d, 181.9d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1531, -245.0d, -153.9d, 382.8d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1532, -80.7d, -132.5d, 41.1d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1533, 214.0d, 804.0d, 268.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1536, -250.2d, -153.09d, 391.7d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1537, 204.64d, 834.74d, 293.8d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1538, -260.1d, 5.5d, 432.2d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1539, -76.0d, -138.0d, 67.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1540, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1541, 199.0d, 931.0d, 317.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1542, 198.0d, 881.0d, 317.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1543, 182.0d, 915.0d, 344.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1544, -17.51d, -108.32d, -62.39d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1545, -121.8d, 98.1d, -15.2d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1547, -173.0d, 253.0d, 27.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1550, -139.62d, 290.53d, -150.29d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1551, -141.15d, 293.44d, -150.56d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1552, -142.48d, 296.03d, -149.74d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1555, -0.465d, 372.095d, 171.736d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1556, -2.0d, 374.0d, 172.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1557, -254.1d, -5.36d, -100.29d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1558, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1560, -156.5d, -87.2d, 285.9d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1561, -128.0d, -283.0d, 22.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1562, -128.16d, -282.42d, 21.93d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1563, -128.033d, -283.697d, 21.052d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1564, 59.47d, -5.04d, 187.44d, 0.47d, -0.1d, 1.024d, -4.5993d),
-            new EpsgExplicitOperationRecord(1565, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1566, 54.4d, -20.1d, 183.1d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1569, -199.0d, 32.0d, 322.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1570, -171.16d, 17.29d, 323.31d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1577, -115.0d, 118.0d, 426.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1580, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1581, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1582, -259.73d, 173.12d, -398.27d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1583, -307.7d, 265.3d, -363.5d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1584, -174.6d, -3.1d, 236.2d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1586, -175.09d, 1.218d, 238.831d, -0.047d, 0.019d, 0.808d, 0.1698d),
-            new EpsgExplicitOperationRecord(1587, -191.77d, 15.01d, 235.07d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1588, -116.641d, -56.931d, -110.559d, 4.327d, 4.464d, -4.444d, -3.52d),
-            new EpsgExplicitOperationRecord(1592, -678.0d, 670.0d, -48.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1594, -120.271d, -64.543d, 161.632d, 0.217d, -0.067d, -0.129d, 2.499d),
-            new EpsgExplicitOperationRecord(1595, -124.133d, -42.003d, 137.4d, -0.008d, 0.557d, 0.178d, -1.854d),
-            new EpsgExplicitOperationRecord(1597, 304.5d, 306.5d, -318.1d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1609, -99.059d, 53.322d, -112.486d, 0.419d, -0.83d, 1.885d, -1.0d),
-            new EpsgExplicitOperationRecord(1610, -125.8d, 79.9d, -100.5d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1612, -116.641d, -56.931d, -110.559d, 0.893d, 0.921d, -0.917d, -3.52d),
-            new EpsgExplicitOperationRecord(1613, -90.365d, -101.13d, -123.384d, 0.333d, 0.077d, 0.894d, 1.994d),
-            new EpsgExplicitOperationRecord(1614, -88.0d, 4.0d, 101.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1615, -726.282d, 703.611d, -48.999d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1616, -182.046d, -225.604d, 168.884d, -0.616d, -1.655d, 7.824d, 16.641d),
-            new EpsgExplicitOperationRecord(1617, -191.808d, -250.512d, 167.861d, -0.792d, -1.653d, 8.558d, 20.703d),
-            new EpsgExplicitOperationRecord(1618, 577.326d, 90.129d, 463.919d, 5.137d, 1.474d, 5.297d, 2.4232d),
-            new EpsgExplicitOperationRecord(1619, 577.326d, 90.129d, 463.919d, 5.137d, 1.474d, 5.297d, 2.4232d),
-            new EpsgExplicitOperationRecord(1622, 570.8d, 85.7d, 462.8d, 4.998d, 1.587d, 5.261d, 3.56d),
-            new EpsgExplicitOperationRecord(1623, 570.8d, 85.7d, 462.8d, 4.998d, 1.587d, 5.261d, 3.56d),
-            new EpsgExplicitOperationRecord(1626, -81.1d, -89.4d, -115.8d, 0.485d, 0.024d, 0.413d, -0.54d),
-            new EpsgExplicitOperationRecord(1627, -81.1d, -89.4d, -115.8d, 0.485d, 0.024d, 0.413d, -0.54d),
-            new EpsgExplicitOperationRecord(1628, -116.8d, -106.4d, -154.4d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1629, -116.8d, -106.4d, -154.4d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1630, -181.5d, -90.3d, -187.2d, 0.144d, 0.492d, -0.394d, 17.57d),
-            new EpsgExplicitOperationRecord(1631, -181.5d, -90.3d, -187.2d, 0.144d, 0.492d, -0.394d, 17.57d),
-            new EpsgExplicitOperationRecord(1632, -131.0d, -100.3d, -163.4d, -1.244d, -0.02d, -1.144d, 9.39d),
-            new EpsgExplicitOperationRecord(1633, -131.0d, -100.3d, -163.4d, -1.244d, -0.02d, -1.144d, 9.39d),
-            new EpsgExplicitOperationRecord(1634, -178.4d, -83.2d, -221.3d, 0.54d, -0.532d, -0.126d, 21.2d),
-            new EpsgExplicitOperationRecord(1635, -178.4d, -83.2d, -221.3d, 0.54d, -0.532d, -0.126d, 21.2d),
-            new EpsgExplicitOperationRecord(1638, -90.7d, -106.1d, -119.2d, 4.09d, 0.218d, -1.05d, 1.37d),
-            new EpsgExplicitOperationRecord(1639, -90.7d, -106.1d, -119.2d, 4.09d, 0.218d, -1.05d, 1.37d),
-            new EpsgExplicitOperationRecord(1641, 482.5d, -130.6d, 564.6d, -1.042d, -0.214d, -0.631d, 8.15d),
-            new EpsgExplicitOperationRecord(1642, -193.0d, 13.7d, -39.3d, -0.41d, -2.933d, 2.688d, 0.43d),
-            new EpsgExplicitOperationRecord(1643, -193.0d, 13.7d, -39.3d, -0.41d, -2.933d, 2.688d, 0.43d),
-            new EpsgExplicitOperationRecord(1644, 33.4d, -146.6d, -76.3d, -0.359d, -0.053d, 0.844d, -0.84d),
-            new EpsgExplicitOperationRecord(1645, 33.4d, -146.6d, -76.3d, -0.359d, -0.053d, 0.844d, -0.84d),
-            new EpsgExplicitOperationRecord(1646, 674.374d, 15.056d, 405.346d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1647, 674.374d, 15.056d, 405.346d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1649, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1650, -84.0d, -97.0d, -117.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1651, -168.0d, -60.0d, 320.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1652, -99.1d, 53.3d, -112.5d, 0.419d, -0.83d, 1.885d, -1.0d),
-            new EpsgExplicitOperationRecord(1653, 278.3d, 93.0d, 474.5d, 7.889d, 0.05d, -6.61d, 6.21d),
-            new EpsgExplicitOperationRecord(1654, 278.3d, 93.0d, 474.5d, 7.889d, 0.05d, -6.61d, 6.21d),
-            new EpsgExplicitOperationRecord(1655, -280.9d, -89.8d, 130.2d, -1.721d, 0.355d, -0.371d, -5.92d),
-            new EpsgExplicitOperationRecord(1656, -280.9d, -89.8d, 130.2d, -1.721d, 0.355d, -0.371d, -5.92d),
-            new EpsgExplicitOperationRecord(1657, -238.2d, 85.2d, 29.9d, 0.166d, 0.046d, 1.248d, 2.03d),
-            new EpsgExplicitOperationRecord(1658, -238.2d, 85.2d, 29.9d, 0.166d, 0.046d, 1.248d, 2.03d),
-            new EpsgExplicitOperationRecord(1659, -104.1d, -49.1d, -9.9d, 0.971d, -2.917d, 0.714d, -11.68d),
-            new EpsgExplicitOperationRecord(1660, -104.1d, -49.1d, -9.9d, 0.971d, -2.917d, 0.714d, -11.68d),
-            new EpsgExplicitOperationRecord(1661, -168.6d, -34.0d, 38.6d, -0.374d, -0.679d, -1.379d, -9.48d),
-            new EpsgExplicitOperationRecord(1662, -168.6d, -34.0d, 38.6d, -0.374d, -0.679d, -1.379d, -9.48d),
-            new EpsgExplicitOperationRecord(1663, -50.2d, -50.4d, 84.8d, -0.69d, -2.012d, 0.459d, -28.08d),
-            new EpsgExplicitOperationRecord(1664, -50.2d, -50.4d, 84.8d, -0.69d, -2.012d, 0.459d, -28.08d),
-            new EpsgExplicitOperationRecord(1665, -129.193d, -41.212d, 130.73d, 0.246d, 0.374d, 0.329d, -2.955d),
-            new EpsgExplicitOperationRecord(1666, -119.353d, -48.301d, 139.484d, 0.415d, 0.26d, 0.437d, -0.613d),
-            new EpsgExplicitOperationRecord(1667, -120.271d, -64.543d, 161.632d, 0.217d, -0.067d, -0.129d, 2.499d),
-            new EpsgExplicitOperationRecord(1668, -124.133d, -42.003d, 137.4d, -0.008d, 0.557d, 0.178d, -1.854d),
-            new EpsgExplicitOperationRecord(1669, -117.763d, -51.51d, 139.061d, 0.292d, 0.443d, 0.277d, -0.191d),
-            new EpsgExplicitOperationRecord(1671, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1672, 565.04d, 49.91d, 465.84d, -1.9848d, 1.7439d, -9.0587d, 4.0772d),
-            new EpsgExplicitOperationRecord(1673, 582.0d, 105.0d, 414.0d, 1.04d, 0.35d, -3.08d, 8.3d),
-            new EpsgExplicitOperationRecord(1674, 24.0d, -123.0d, -94.0d, 0.02d, -0.25d, -0.13d, 1.1d),
-            new EpsgExplicitOperationRecord(1675, 24.0d, -123.0d, -94.0d, 0.02d, -0.25d, -0.13d, 1.1d),
-            new EpsgExplicitOperationRecord(1676, 674.374d, 15.056d, 405.346d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1678, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1679, -40.595d, -18.55d, -69.339d, 2.508d, 1.832d, -2.611d, -4.299d),
-            new EpsgExplicitOperationRecord(1680, 419.3836d, 99.3335d, 591.3451d, 0.850389d, 1.817277d, -7.862238d, -0.99496d),
-            new EpsgExplicitOperationRecord(1682, -76.0d, -138.0d, 67.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1683, -115.064d, -87.39d, -101.716d, -0.058d, 4.001d, -2.062d, 9.366d),
-            new EpsgExplicitOperationRecord(1684, -82.875d, -57.097d, -156.768d, -2.158d, 1.524d, -0.982d, -0.359d),
-            new EpsgExplicitOperationRecord(1685, -138.527d, -91.999d, -114.591d, -0.14d, 3.363d, -2.217d, 11.748d),
-            new EpsgExplicitOperationRecord(1686, -73.472d, -51.66d, -112.482d, 0.953d, 4.6d, -2.368d, 0.586d),
-            new EpsgExplicitOperationRecord(1687, 219.315d, 168.975d, -166.145d, 0.198d, 5.926d, -2.356d, -57.104d),
-            new EpsgExplicitOperationRecord(1701, 59.47d, -5.04d, 187.44d, 0.47d, -0.1d, 1.024d, -4.5993d),
-            new EpsgExplicitOperationRecord(1751, 565.04d, 49.91d, 465.84d, -1.9848d, 1.7439d, -9.0587d, 4.0772d),
-            new EpsgExplicitOperationRecord(1753, 660.077d, 13.551d, 369.344d, -2.484d, -1.783d, -2.939d, 5.66d),
-            new EpsgExplicitOperationRecord(1754, -111.92d, -87.85d, 114.5d, 1.875d, 0.202d, 0.219d, 0.032d),
-            new EpsgExplicitOperationRecord(1766, 674.374d, 15.056d, 405.346d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1767, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1768, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1769, -270.933d, 115.599d, -360.226d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1771, -270.933d, 115.599d, -360.226d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1773, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1774, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1775, 24.9d, -126.4d, -93.2d, -0.063d, -0.247d, -0.041d, 1.01d),
-            new EpsgExplicitOperationRecord(1776, 598.1d, 73.7d, 418.2d, 0.202d, 0.045d, -2.455d, 6.7d),
-            new EpsgExplicitOperationRecord(1777, 598.1d, 73.7d, 418.2d, 0.202d, 0.045d, -2.455d, 6.7d),
-            new EpsgExplicitOperationRecord(1778, 597.1d, 71.4d, 412.1d, 0.894d, 0.068d, -1.563d, 7.58d),
-            new EpsgExplicitOperationRecord(1779, 584.8d, 67.0d, 400.3d, 0.105d, 0.013d, -2.378d, 10.29d),
-            new EpsgExplicitOperationRecord(1780, 590.5d, 69.5d, 411.6d, -0.796d, -0.052d, -3.601d, 8.3d),
-            new EpsgExplicitOperationRecord(1783, -84.1d, -101.8d, -129.7d, 0.0d, 0.0d, 0.468d, 1.05d),
-            new EpsgExplicitOperationRecord(1784, -84.1d, -101.8d, -129.7d, 0.0d, 0.0d, 0.468d, 1.05d),
-            new EpsgExplicitOperationRecord(1796, -70.9d, -151.8d, -41.4d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1797, 164.0d, 138.0d, -189.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1798, 163.511d, 127.533d, -159.789d, 0.0d, 0.0d, 0.814d, -0.6d),
-            new EpsgExplicitOperationRecord(1799, 105.0d, 326.0d, -102.5d, 0.0d, 0.0d, 0.814d, -0.6d),
-            new EpsgExplicitOperationRecord(1800, -45.0d, 417.0d, -3.5d, 0.0d, 0.0d, 0.814d, -0.6d),
-            new EpsgExplicitOperationRecord(1801, -145.0d, 52.7d, -291.6d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1802, -178.3d, -316.7d, -131.5d, 5.278d, 6.077d, 10.979d, 19.166d),
-            new EpsgExplicitOperationRecord(1805, -56.1d, -167.8d, 13.1d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1806, -104.4d, -136.6d, 201.2d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1807, 27.0d, -135.0d, -84.5d, 0.0d, 0.0d, 0.554d, 0.2263d),
-            new EpsgExplicitOperationRecord(1808, 686.1d, -123.5d, -574.4d, 8.045d, -23.366d, 10.791d, -2.926d),
-            new EpsgExplicitOperationRecord(1809, 926.4d, -715.9d, -186.4d, -10.364d, -20.78d, 26.452d, -7.224d),
-            new EpsgExplicitOperationRecord(1810, -84.0d, -103.0d, -122.5d, 0.0d, 0.0d, 0.554d, 0.2263d),
-            new EpsgExplicitOperationRecord(1811, -291.87d, 106.37d, -364.52d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1812, 293.0d, 836.0d, 318.0d, 0.5d, 1.6d, -2.8d, 2.1d),
-            new EpsgExplicitOperationRecord(1813, -378.873d, 676.002d, -46.255d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1814, -377.7d, 675.1d, -52.2d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1815, -152.9d, 43.8d, 358.3d, 2.714d, 1.386d, -2.788d, -6.743d),
-            new EpsgExplicitOperationRecord(1816, -95.7d, 10.2d, 158.9d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1817, -165.914d, -70.607d, 305.009d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1818, -89.0d, -112.0d, 125.9d, 0.0d, 0.0d, 0.814d, -0.38d),
-            new EpsgExplicitOperationRecord(1820, -93.2d, -93.31d, 121.156d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1821, -88.98d, -83.23d, 113.55d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1822, -92.726d, -90.304d, 115.735d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1823, -93.134d, -86.647d, 114.196d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1824, -93.0d, -94.0d, 124.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1825, -162.619d, -276.959d, -161.764d, 0.067753d, -2.243648d, -1.158828d, -1.094246d),
-            new EpsgExplicitOperationRecord(1826, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1828, -37.0d, 157.0d, 85.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1829, 56.0d, -75.77d, -15.31d, -0.37d, -0.2d, -0.21d, 1.01d),
-            new EpsgExplicitOperationRecord(1830, 56.0d, -75.77d, -15.31d, -0.37d, -0.2d, -0.21d, 1.01d),
-            new EpsgExplicitOperationRecord(1831, 57.01d, -69.97d, -9.29d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1832, 2.691d, -14.757d, 4.724d, 0.0d, 0.0d, 0.774d, -0.6d),
-            new EpsgExplicitOperationRecord(1833, -1.977d, -13.06d, -9.993d, 0.364d, 0.254d, 0.689d, -1.037d),
-            new EpsgExplicitOperationRecord(1837, -587.8d, 519.75d, 145.76d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1838, -404.78d, 685.68d, 45.47d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1839, -101.0d, -111.0d, 187.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1840, -119.4248d, -303.65872d, -11.00061d, 1.164298d, 0.174458d, 1.096259d, 3.657065d),
-            new EpsgExplicitOperationRecord(1842, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1852, -533.4d, 669.2d, -52.5d, 0.0d, 0.0d, 4.28d, 9.4d),
-            new EpsgExplicitOperationRecord(1853, -82.31d, -95.23d, -114.96d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1854, -239.1d, -170.02d, 397.5d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1855, -244.72d, -162.773d, 400.75d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1856, -122.89d, -159.08d, -168.74d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1857, -84.78d, -107.55d, -137.25d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1858, -123.92d, -155.515d, -157.721d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1859, -69.06d, -90.71d, -142.56d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1860, -113.997d, -97.076d, -152.312d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1861, -114.5d, -96.1d, -151.9d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1862, -194.513d, -63.978d, -25.759d, -3.4027d, 3.756d, -3.352d, -0.9175d),
-            new EpsgExplicitOperationRecord(1863, -389.691d, 64.502d, 210.209d, 0.086d, 14.314d, -6.39d, 0.9264d),
-            new EpsgExplicitOperationRecord(1864, -57.0d, 1.0d, -41.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1865, -62.0d, -1.0d, -37.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1866, -61.0d, 2.0d, -48.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1867, -60.0d, -2.0d, -41.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1868, -75.0d, -1.0d, -44.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1869, -44.0d, 6.0d, -36.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1870, -48.0d, 3.0d, -44.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1871, -47.0d, 26.0d, -42.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1872, -53.0d, 3.0d, -47.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1873, -61.0d, 2.0d, -33.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1874, -58.0d, 0.0d, -44.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1875, -45.0d, 12.0d, -33.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1876, -45.0d, 8.0d, -33.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1877, -66.87d, 4.37d, -38.52d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1879, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1880, -106.0d, -129.0d, 165.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1885, -203.0d, 141.0d, 53.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1886, -104.0d, 167.0d, -38.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1887, -425.0d, -169.0d, 81.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1888, -499.0d, -249.0d, 314.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1890, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1892, 16.0d, 196.0d, 93.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1893, 11.0d, 72.0d, -101.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1895, 414.1d, 41.3d, 603.1d, -0.855d, 2.141d, -7.023d, 0.0d),
-            new EpsgExplicitOperationRecord(1896, 414.1d, 41.3d, 603.1d, -0.855d, 2.141d, -7.023d, 0.0d),
-            new EpsgExplicitOperationRecord(1897, -403.0d, 684.0d, 41.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1898, -387.06d, 636.53d, 46.29d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1899, -403.4d, 681.12d, 46.56d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1900, -0.9738d, 1.9453d, 0.5486d, 1.3357e-07d, 4.872e-08d, 5.507e-08d, 0.0d),
-            new EpsgExplicitOperationRecord(1901, -0.991d, 1.9072d, 0.5129d, 1.25033e-07d, 4.6785e-08d, 5.6529e-08d, 0.0d),
-            new EpsgExplicitOperationRecord(1902, -56.7d, -171.8d, -40.6d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1903, 137.0d, 248.0d, -430.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1904, -467.0d, -16.0d, -300.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1905, -472.29d, -5.63d, -304.12d, 0.4362d, -0.8374d, 0.2563d, 1.8984d),
-            new EpsgExplicitOperationRecord(1906, -186.0d, 230.0d, 110.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1908, -193.066d, 236.993d, 105.447d, 0.4814d, -0.8074d, 0.1276d, 1.5649d),
-            new EpsgExplicitOperationRecord(1909, 186.0d, 482.0d, 151.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1910, 126.93d, 547.94d, 130.41d, -2.7867d, 5.1612d, -0.8584d, 13.8227d),
-            new EpsgExplicitOperationRecord(1912, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1913, 65.0d, 342.0d, 77.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1914, 84.0d, 274.0d, 65.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1916, -382.0d, -59.0d, -262.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1917, 336.0d, 223.0d, -231.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1921, 365.0d, 194.0d, 166.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1922, 325.0d, 154.0d, 172.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1923, 30.0d, 430.0d, 368.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1924, 162.0d, 117.0d, 154.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1926, 789.524d, -626.486d, -89.904d, 0.6006d, 76.7946d, -10.5788d, -32.3241d),
-            new EpsgExplicitOperationRecord(1927, 137.092d, 131.66d, 91.475d, -1.9436d, -11.5993d, -4.3321d, -7.4824d),
-            new EpsgExplicitOperationRecord(1928, -408.809d, 366.856d, -412.987d, 1.8842d, -0.5308d, 2.1655d, -121.0993d),
-            new EpsgExplicitOperationRecord(1931, -480.26d, -438.32d, -643.429d, 16.3119d, 20.1721d, -4.0349d, -111.7002d),
-            new EpsgExplicitOperationRecord(1946, -0.991d, 1.9072d, 0.5129d, 1.25033e-07d, 4.6785e-08d, 5.6529e-08d, 0.0d),
-            new EpsgExplicitOperationRecord(1950, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1951, -73.0d, 46.0d, -86.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1952, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1953, 482.5d, -130.6d, 564.6d, -1.042d, -0.214d, -0.631d, 8.15d),
-            new EpsgExplicitOperationRecord(1954, 482.5d, -130.6d, 564.6d, -1.042d, -0.214d, -0.631d, 8.15d),
-            new EpsgExplicitOperationRecord(1955, 482.5d, -130.6d, 564.6d, -1.042d, -0.214d, -0.631d, 8.15d),
-            new EpsgExplicitOperationRecord(1956, 506.0d, -122.0d, 611.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1957, 982.6087d, 552.753d, -540.873d, 32.39344d, -153.25684d, -96.2266d, 16.805d),
-            new EpsgExplicitOperationRecord(1958, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1959, 195.671d, 332.517d, 274.607d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1962, -13.0d, -348.0d, 292.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1963, 97.295d, -263.247d, 310.882d, -1.5999d, 0.8386d, 3.1409d, 13.3259d),
-            new EpsgExplicitOperationRecord(1964, -789.99d, 627.333d, 89.685d, -0.6072d, -76.8019d, 10.568d, 32.2083d),
-            new EpsgExplicitOperationRecord(1965, -289.0d, -124.0d, 60.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1966, -502.862d, -247.438d, 312.724d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1967, -210.502d, -66.902d, -48.476d, 2.094d, -15.067d, -5.817d, 0.485d),
-            new EpsgExplicitOperationRecord(1968, -204.633d, 140.216d, 55.199d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1969, -211.939d, 137.626d, 58.3d, -0.089d, 0.251d, 0.079d, 0.384d),
-            new EpsgExplicitOperationRecord(1970, -204.619d, 140.176d, 55.226d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1971, -208.719d, 129.685d, 52.092d, -0.195d, -0.014d, 0.327d, 0.198d),
-            new EpsgExplicitOperationRecord(1972, -106.301d, 166.27d, -37.916d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1973, -105.854d, 165.589d, -38.312d, -0.003d, -0.026d, 0.024d, -0.048d),
-            new EpsgExplicitOperationRecord(1974, -106.248d, 166.244d, -37.845d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1975, -104.0d, 162.924d, -38.882d, -0.075d, -0.071d, 0.051d, -0.338d),
-            new EpsgExplicitOperationRecord(1976, -106.044d, 166.655d, -37.876d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1977, -95.323d, 166.098d, -69.942d, -0.215d, -1.031d, 0.047d, 1.922d),
-            new EpsgExplicitOperationRecord(1978, -106.253d, 166.239d, -37.854d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1979, -100.306d, 161.246d, -48.761d, -0.192d, -0.385d, 0.076d, 0.131d),
-            new EpsgExplicitOperationRecord(1980, -106.226d, 166.366d, -37.893d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1981, -103.088d, 162.481d, -28.276d, 0.167d, 0.082d, 0.168d, -1.504d),
-            new EpsgExplicitOperationRecord(1982, -422.651d, -172.995d, 84.02d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1983, -223.237d, 110.193d, 36.649d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1984, -304.046d, -60.576d, 103.64d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1985, -87.987d, -108.639d, -121.593d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1986, 508.088d, -191.042d, 565.223d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1987, -239.749d, 88.181d, 30.488d, 0.263d, 0.082d, 1.211d, 2.229d),
-            new EpsgExplicitOperationRecord(1988, -288.885d, -91.744d, 126.244d, -1.691d, 0.41d, -0.211d, -4.598d),
-            new EpsgExplicitOperationRecord(1989, -74.292d, -135.889d, -104.967d, -0.524d, -0.136d, 0.61d, -3.761d),
-            new EpsgExplicitOperationRecord(1990, 631.392d, -66.551d, 481.442d, 1.09d, -4.445d, -4.487d, -4.43d),
-            new EpsgExplicitOperationRecord(1992, -231.034d, 102.615d, 26.836d, 0.615d, -0.198d, 0.881d, 1.786d),
-            new EpsgExplicitOperationRecord(1993, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1994, -28.0d, 199.0d, 5.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1995, 103.25d, -100.4d, -307.19d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(1997, -282.1d, -72.2d, 120.0d, -1.529d, 0.145d, -0.89d, -4.46d),
-            new EpsgExplicitOperationRecord(1998, -157.89d, -17.16d, -78.41d, 2.118d, 2.697d, -1.434d, -5.38d),
-            new EpsgExplicitOperationRecord(3817, 595.48d, 121.69d, 515.35d, 4.115d, -2.9383d, 0.853d, -3.408d),
-            new EpsgExplicitOperationRecord(3830, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(3894, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(3904, -83.11d, -97.38d, -117.22d, 0.0276d, -0.2167d, 0.2147d, 0.1218d),
-            new EpsgExplicitOperationRecord(3905, -83.11d, -97.38d, -117.22d, 0.0276d, -0.2167d, 0.2147d, 0.1218d),
-            new EpsgExplicitOperationRecord(3914, 426.9d, 142.6d, 460.1d, 4.91d, 4.49d, -12.42d, 17.1d),
-            new EpsgExplicitOperationRecord(3915, 426.9d, 142.6d, 460.1d, 4.91d, 4.49d, -12.42d, 17.1d),
-            new EpsgExplicitOperationRecord(3916, 409.545d, 72.164d, 486.872d, 3.085957d, 5.46911d, -11.020289d, 17.919665d),
-            new EpsgExplicitOperationRecord(3917, 409.545d, 72.164d, 486.872d, 3.085957d, 5.46911d, -11.020289d, 17.919665d),
-            new EpsgExplicitOperationRecord(3918, 315.393d, 186.223d, 499.609d, 6.445954d, 8.131631d, -13.208641d, 23.449046d),
-            new EpsgExplicitOperationRecord(3919, 464.939d, -21.478d, 504.497d, -0.403d, 4.228747d, -9.954942d, 12.795378d),
-            new EpsgExplicitOperationRecord(3921, 459.968d, 82.193d, 458.756d, 3.565234d, 3.700593d, -10.860523d, 15.507563d),
-            new EpsgExplicitOperationRecord(3922, 427.914d, 105.528d, 510.908d, 4.992523d, 5.898813d, -10.306673d, 12.431493d),
-            new EpsgExplicitOperationRecord(3923, 468.63d, 81.389d, 445.221d, 3.839242d, 3.262525d, -10.566866d, 16.132726d),
-            new EpsgExplicitOperationRecord(3924, 439.5d, -11.77d, 494.976d, 0.026585d, 4.65641d, -10.155824d, 16.270002d),
-            new EpsgExplicitOperationRecord(3925, 524.442d, 3.275d, 519.002d, -0.013287d, 3.119714d, -10.232693d, 4.184981d),
-            new EpsgExplicitOperationRecord(3926, 281.529d, 45.963d, 537.515d, 2.570437d, 9.648271d, -10.759507d, 26.465548d),
-            new EpsgExplicitOperationRecord(3927, 355.845d, 274.282d, 462.979d, 9.086933d, 6.491055d, -14.502181d, 20.888647d),
-            new EpsgExplicitOperationRecord(3928, 400.629d, 90.651d, 472.249d, 3.261138d, 5.263404d, -11.83739d, 20.022676d),
-            new EpsgExplicitOperationRecord(3962, 682.0d, -203.0d, 480.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(3963, 551.7d, 162.9d, 467.9d, 6.04d, 1.96d, -11.38d, -4.82d),
-            new EpsgExplicitOperationRecord(3964, 551.7d, 162.9d, 467.9d, 6.04d, 1.96d, -11.38d, -4.82d),
-            new EpsgExplicitOperationRecord(3965, 695.5d, -216.6d, 491.1d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(3971, -60.31d, 245.935d, 31.008d, 12.324d, 3.755d, -7.37d, 0.447d),
-            new EpsgExplicitOperationRecord(3972, -143.87d, 243.37d, -33.52d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(3990, -60.31d, 245.935d, 31.008d, 12.324d, 3.755d, -7.37d, 0.447d),
-            new EpsgExplicitOperationRecord(3998, -153.0d, -5.0d, -292.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(4064, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(4065, -103.746d, -9.614d, -255.95d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(4066, -103.746d, -9.614d, -255.95d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(4067, -102.283d, -10.277d, -257.396d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(4068, -102.283d, -10.277d, -257.396d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(4069, -144.35d, 242.88d, -33.2d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(4077, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(4078, -83.11d, -97.38d, -117.22d, 0.0276d, -0.2167d, 0.2147d, 0.1218d),
-            new EpsgExplicitOperationRecord(4084, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(4290, -381.788d, -57.501d, -256.673d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(4461, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(4476, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(4477, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(4478, -381.788d, -57.501d, -256.673d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(4560, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(4827, 485.0d, 169.5d, 483.8d, 7.786d, 4.398d, 4.103d, 0.0d),
-            new EpsgExplicitOperationRecord(4829, 558.7d, 68.8d, 452.2d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(4830, 565.4171d, 50.3319d, 465.5524d, -1.9342d, 1.6677d, -9.1019d, 4.0725d),
-            new EpsgExplicitOperationRecord(4831, 593.0248d, 25.9984d, 478.7459d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(4832, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(4833, 565.4171d, 50.3319d, 465.5524d, -1.9342d, 1.6677d, -9.1019d, 4.0725d),
-            new EpsgExplicitOperationRecord(4834, -144.35d, 242.88d, -33.2d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(4836, 485.0d, 169.5d, 483.8d, 7.786d, 4.398d, 4.103d, 0.0d),
-            new EpsgExplicitOperationRecord(4837, -89.5d, -93.8d, -123.1d, -0.0d, -0.0d, 0.156d, 1.2d),
-            new EpsgExplicitOperationRecord(4840, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(4905, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5021, -503.229d, -247.375d, 312.582d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5022, -303.956d, 224.556d, 214.306d, 9.405d, -6.626d, -12.583d, 1.327d),
-            new EpsgExplicitOperationRecord(5023, -503.3d, -247.574d, 313.025d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5024, -204.926d, 140.353d, 55.063d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5025, -204.519d, 140.159d, 55.404d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5026, -205.808d, 140.771d, 54.326d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5027, -105.679d, 166.1d, -37.322d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5028, -105.377d, 165.769d, -36.965d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5029, -105.359d, 165.804d, -37.05d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5030, -105.531d, 166.39d, -37.326d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5031, -105.756d, 165.972d, -37.313d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5032, -106.235d, 166.236d, -37.768d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5033, -423.058d, -172.868d, 83.772d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5034, -423.053d, -172.871d, 83.771d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5035, -423.024d, -172.923d, 83.83d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5036, -223.15d, 110.132d, 36.711d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5037, -230.994d, 102.591d, 25.199d, 0.633d, -0.239d, 0.9d, 1.95d),
-            new EpsgExplicitOperationRecord(5038, -303.861d, -60.693d, 103.607d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5039, 508.088d, -191.042d, 565.223d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5040, -87.987d, -108.639d, -121.593d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5043, 24.47d, -130.89d, -81.56d, -0.0d, -0.0d, 0.13d, -0.22d),
-            new EpsgExplicitOperationRecord(5044, 23.57d, -140.95d, -79.8d, -0.0d, 0.35d, 0.79d, -0.22d),
-            new EpsgExplicitOperationRecord(5050, -157.84d, 308.54d, -146.6d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5051, -157.84d, 308.54d, -146.6d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5052, -160.31d, 314.82d, -142.25d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5053, -160.31d, 314.82d, -142.25d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5054, -161.11d, 310.25d, -144.64d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5055, -161.11d, 310.25d, -144.64d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5056, -160.4d, 302.29d, -144.19d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5057, -160.4d, 302.29d, -144.19d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5058, -153.54d, 302.33d, -152.37d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5059, -153.54d, 302.33d, -152.37d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5060, -151.5d, 300.09d, -151.15d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5061, -151.5d, 300.09d, -151.15d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5062, -156.8d, 298.41d, -147.41d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5063, -156.8d, 298.41d, -147.41d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5064, -157.4d, 295.05d, -150.19d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5065, -157.4d, 295.05d, -150.19d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5066, -151.99d, 287.04d, -147.45d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5067, -151.99d, 287.04d, -147.45d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5077, 70.995d, -335.916d, 262.898d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5078, 70.995d, -335.916d, 262.898d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5189, -145.907d, 505.034d, 685.756d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5191, -145.907d, 505.034d, 685.756d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5194, -192.873d, -39.382d, -111.202d, -0.00205d, -0.0005d, 0.00335d, 0.0188d),
-            new EpsgExplicitOperationRecord(5226, 572.213d, 85.334d, 461.94d, 4.9732d, 1.529d, 5.2484d, 3.5378d),
-            new EpsgExplicitOperationRecord(5227, 572.213d, 85.334d, 461.94d, 4.9732d, 1.529d, 5.2484d, 3.5378d),
-            new EpsgExplicitOperationRecord(5236, -0.293d, 766.95d, 87.713d, 0.195704d, 1.695068d, 3.473016d, -0.039338d),
-            new EpsgExplicitOperationRecord(5239, 572.213d, 85.334d, 461.94d, 4.9732d, 1.529d, 5.2484d, 3.5378d),
-            new EpsgExplicitOperationRecord(5249, -689.5937d, 623.84046d, -65.93566d, -0.02331d, 1.17094d, -0.80054d, 5.88536d),
-            new EpsgExplicitOperationRecord(5260, 0.023d, 0.036d, -0.068d, 0.00176d, 0.00912d, -0.01136d, 0.00439d),
-            new EpsgExplicitOperationRecord(5261, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5267, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5327, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5350, -148.0d, 136.0d, 90.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5351, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5374, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5376, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5377, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5378, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5384, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5385, -124.45d, 183.74d, 44.64d, -0.4384d, 0.5446d, -0.9706d, -2.1365d),
-            new EpsgExplicitOperationRecord(5386, -124.45d, 183.74d, 44.64d, -0.4384d, 0.5446d, -0.9706d, -2.1365d),
-            new EpsgExplicitOperationRecord(5395, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5470, 213.11d, 9.37d, -74.95d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5483, -265.8867d, 76.9851d, 20.2667d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5484, -265.8867d, 76.9851d, 20.2667d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5485, -189.6806d, 18.3463d, -42.7695d, -0.33746d, -3.09264d, 2.53861d, 0.4598d),
-            new EpsgExplicitOperationRecord(5486, -189.6806d, 18.3463d, -42.7695d, -0.33746d, -3.09264d, 2.53861d, 0.4598d),
-            new EpsgExplicitOperationRecord(5491, 127.744d, 547.069d, 118.359d, -3.1116d, 4.9509d, -0.8837d, 14.1012d),
-            new EpsgExplicitOperationRecord(5492, -471.06d, -3.212d, -305.843d, 0.4752d, -0.9978d, 0.2068d, 2.1353d),
-            new EpsgExplicitOperationRecord(5493, 151.613d, 253.832d, -429.084d, -0.0506d, 0.0958d, -0.5974d, -0.3971d),
-            new EpsgExplicitOperationRecord(5494, 0.7696d, -0.8692d, -12.0631d, -0.32511d, -0.21041d, -0.0239d, 0.2829d),
-            new EpsgExplicitOperationRecord(5495, 1.2239d, 2.4156d, -1.7598d, 0.038d, -0.16101d, -0.04925d, 0.2387d),
-            new EpsgExplicitOperationRecord(5496, 14.6642d, 5.2493d, 0.1981d, -0.06838d, 0.09141d, -0.58131d, -0.4067d),
-            new EpsgExplicitOperationRecord(5497, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5501, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5521, -963.0d, 510.0d, -359.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5553, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5585, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5586, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5590, 25.0d, -141.0d, -78.5d, -0.0d, 0.35d, 0.736d, 0.0d),
-            new EpsgExplicitOperationRecord(5599, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5622, 370.936d, -108.938d, 435.682d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5630, -168.52d, -72.05d, 304.3d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5660, -209.3622d, -87.8162d, 404.6198d, 0.0046d, 3.4784d, 0.5805d, -1.4547d),
-            new EpsgExplicitOperationRecord(5662, -124.0d, -60.0d, 153.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5826, 584.9636d, 107.7175d, 413.8067d, 1.1155d, 0.2824d, -3.1384d, 7.9922d),
-            new EpsgExplicitOperationRecord(5827, -129.164d, -41.188d, 130.718d, 0.246d, 0.374d, 0.329d, -2.955d),
-            new EpsgExplicitOperationRecord(5840, 24.0d, -121.0d, -76.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5841, -124.0d, -60.0d, 154.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5878, -689.5937d, 623.84046d, -65.93566d, -0.02331d, 1.17094d, -0.80054d, 5.88536d),
-            new EpsgExplicitOperationRecord(5881, -67.35d, 3.88d, -38.22d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5882, -67.35d, 3.88d, -38.22d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(5888, -599.928d, -275.552d, -195.665d, -0.0835d, -0.4715d, 0.0602d, 49.2814d),
-            new EpsgExplicitOperationRecord(6136, -179.483d, -69.379d, -27.584d, -7.862d, 8.163d, 6.042d, -13.925d),
-            new EpsgExplicitOperationRecord(6137, 8.853d, -52.644d, 180.304d, -0.393d, -2.323d, 2.96d, -24.081d),
-            new EpsgExplicitOperationRecord(6142, -179.483d, -69.379d, -27.584d, -7.862d, 8.163d, 6.042d, -13.925d),
-            new EpsgExplicitOperationRecord(6143, 8.853d, -52.644d, 180.304d, -0.393d, -2.323d, 2.96d, -24.081d),
-            new EpsgExplicitOperationRecord(6177, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6191, -138.7d, 164.4d, 34.4d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6192, -205.57d, 168.77d, -4.12d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6193, -206.05d, 168.28d, -3.82d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6194, -206.05d, 168.28d, -3.82d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6195, -67.35d, 3.88d, -38.22d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6196, -93.179d, -87.124d, 114.338d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6205, 517.4399d, 228.7318d, 579.7954d, 4.045d, 4.304d, -15.612d, -8.312d),
-            new EpsgExplicitOperationRecord(6206, 521.748d, 229.489d, 590.921d, 4.029d, 4.488d, -15.521d, -9.78d),
-            new EpsgExplicitOperationRecord(6208, 293.17d, 726.18d, 245.36d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6276, -84.68d, -19.42d, 32.01d, 0.4254d, -2.2578d, -2.4015d, 9.71d),
-            new EpsgExplicitOperationRecord(6277, -79.73d, -6.86d, 38.03d, 0.0351d, -2.1211d, -2.1411d, 6.636d),
-            new EpsgExplicitOperationRecord(6278, -45.91d, -29.85d, -20.37d, 1.6705d, -0.4594d, -1.9356d, 7.07d),
-            new EpsgExplicitOperationRecord(6279, -14.63d, -27.62d, -25.32d, 1.7893d, 0.6047d, -0.9962d, 6.695d),
-            new EpsgExplicitOperationRecord(6280, 24.54d, -36.43d, -68.12d, 2.7359d, 2.0431d, -0.3731d, 6.901d),
-            new EpsgExplicitOperationRecord(6313, -0.014d, 0.0431d, 0.201d, -0.012464d, -0.012013d, -0.006434d, 0.024607d),
-            new EpsgExplicitOperationRecord(6315, -0.0761d, -0.0101d, 0.0444d, -0.008765d, -0.009361d, -0.009325d, 0.007935d),
-            new EpsgExplicitOperationRecord(6373, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6392, -0.2088d, 0.0119d, 0.1855d, -0.012059d, -0.013639d, -0.011825d, 0.004559d),
-            new EpsgExplicitOperationRecord(6698, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6701, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6711, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6864, 0.991d, -1.9072d, -0.5129d, -25.79d, -9.65d, -11.66d, 0.0d),
-            new EpsgExplicitOperationRecord(6865, 0.9889d, -1.9074d, -0.503d, -25.915d, -9.426d, -11.599d, -0.93d),
-            new EpsgExplicitOperationRecord(6866, 0.9956d, -1.9013d, -0.5215d, -25.915d, -9.426d, -11.599d, 0.62d),
-            new EpsgExplicitOperationRecord(6872, -123.1d, 53.2d, 465.4d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6873, -198.383d, -240.517d, -107.909d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6888, 205.435d, -29.099d, -292.202d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6889, 213.116d, 9.358d, -74.946d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6890, 213.11d, 9.37d, -74.95d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6891, 205.0d, 96.0d, -98.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6895, 98.0d, 390.0d, -22.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6896, -170.0d, 33.0d, 326.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6897, -153.0d, 153.0d, 307.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6898, -306.0d, -62.0d, 105.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6899, 22.0d, -126.0d, -85.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6900, -132.0d, -110.0d, -335.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6901, -80.0d, -100.0d, -228.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6902, -679.0d, 667.0d, -49.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6903, -30.0d, 190.0d, 89.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6904, -179.0d, -81.0d, -314.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6905, -128.0d, -52.0d, 153.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6906, -145.0d, -97.0d, -292.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6907, -77.0d, -128.0d, 142.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6908, -345.0d, 3.0d, 223.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6909, -73.0d, 47.0d, -83.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6910, -24.0d, -203.0d, 268.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6911, -183.0d, -15.0d, 273.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6912, -235.0d, -110.0d, 393.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6913, -63.0d, 176.0d, 185.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6914, -43.685d, -179.785d, -267.721d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6926, -76.269d, -16.683d, 68.562d, -6.275d, 10.536d, -4.286d, -13.686d),
-            new EpsgExplicitOperationRecord(6935, 0.208d, -0.012d, -0.229d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6936, -0.214d, 0.119d, 0.156d, -0.01182d, 0.00811d, -0.01677d, -0.0059d),
-            new EpsgExplicitOperationRecord(6937, -0.41d, -2.37d, 2.0d, 3.592d, 3.698d, 3.989d, 8.843d),
-            new EpsgExplicitOperationRecord(6938, -129.0d, -58.0d, 152.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6939, -131.876d, -54.554d, 453.346d, -5.2155d, -8.2042d, 0.09d, 5.02d),
-            new EpsgExplicitOperationRecord(6940, -131.3d, -55.3d, 151.8d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6941, 45.928d, -177.212d, 336.867d, -4.6039d, -3.0921d, 0.5729d, 36.796d),
-            new EpsgExplicitOperationRecord(6942, -137.4d, -58.9d, 150.4d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6943, -129.0d, -58.0d, 152.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6944, -131.3d, -55.3d, 151.8d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6945, -137.4d, -58.9d, 150.4d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6949, -302.0d, 272.0d, -360.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6950, -328.0d, 340.0d, -329.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6951, -352.0d, 403.0d, -287.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6960, -191.90441429d, -39.30318279d, -111.45032835d, 0.00928836d, -0.01975479d, 0.00427372d, 0.252906278d),
-            new EpsgExplicitOperationRecord(6968, -64.0d, 0.0d, -32.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6970, -79.0d, 13.0d, -14.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6971, -302.0d, 272.0d, -360.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6972, -328.0d, 340.0d, -329.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6973, -352.0d, 403.0d, -287.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6974, -59.0d, -11.0d, -52.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6975, -64.0d, 0.0d, -32.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6976, -72.0d, 10.0d, -32.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6977, -79.0d, 13.0d, -14.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(6992, 0.2255d, -0.3709d, -0.1171d, 0.00388d, -0.00063d, 0.0182d, 0.013443d),
-            new EpsgExplicitOperationRecord(6993, -24.0024d, -17.1032d, -17.8444d, 0.33009d, 1.85269d, -1.66969d, 5.4248d),
-            new EpsgExplicitOperationRecord(6998, -233.4d, -160.7d, 381.5d, -0.0d, -0.0d, 0.554d, 0.2263d),
-            new EpsgExplicitOperationRecord(6999, -253.4392d, -148.452d, 386.5267d, 0.15605d, 0.43d, -0.1013d, -0.0424d),
-            new EpsgExplicitOperationRecord(7002, -246.1633d, -152.9047d, 382.6047d, 0.0989d, 0.1382d, 0.0768d, 2.1e-06d),
-            new EpsgExplicitOperationRecord(7003, -242.8907d, -149.0671d, 384.416d, 0.19044d, 0.24987d, 0.13925d, 0.0001746d),
-            new EpsgExplicitOperationRecord(7004, -246.734d, -153.4345d, 382.1477d, -0.116617d, -0.165167d, -0.091327d, 1.94e-05d),
-            new EpsgExplicitOperationRecord(7033, -242.2d, -144.9d, 370.3d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(7083, 324.912d, 153.282d, 172.026d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(7140, -23.8085d, -17.5937d, -17.801d, 0.3306d, 1.85706d, -1.64828d, 5.4374d),
-            new EpsgExplicitOperationRecord(7377, 0.819d, -0.5762d, -1.6446d, -0.00378d, -0.03317d, 0.00318d, 0.0693d),
-            new EpsgExplicitOperationRecord(7442, -181.7d, 64.7d, 247.2d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(7443, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(7448, -59.0d, -11.0d, -52.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(7449, -72.0d, 10.0d, -32.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(7666, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(7667, -4.0d, 3.0d, 4.0d, -0.27d, 0.27d, -0.38d, -6.9d),
-            new EpsgExplicitOperationRecord(7668, -6.0d, 5.0d, 20.0d, -0.0d, -0.0d, -0.0d, -4.5d),
-            new EpsgExplicitOperationRecord(7669, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(7670, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(7672, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(7675, 577.88891d, 165.22205d, 391.18289d, 4.9145d, -0.94729d, -13.05098d, 7.78664d),
-            new EpsgExplicitOperationRecord(7676, 577.88891d, 165.22205d, 391.18289d, 4.9145d, -0.94729d, -13.05098d, 7.78664d),
-            new EpsgExplicitOperationRecord(7697, -127.535d, 113.495d, -12.7d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(7698, -32.3841359d, 180.4090461d, 120.8442577d, -2.1545854d, -0.1498782d, 0.5742915d, 8.1049164d),
-            new EpsgExplicitOperationRecord(7702, -1.07d, -0.03d, 0.02d, -0.0d, -0.0d, 130.0d, -0.22d),
-            new EpsgExplicitOperationRecord(7703, -0.373d, 0.186d, 0.202d, 2.3d, -3.54d, 4.21d, -0.008d),
-            new EpsgExplicitOperationRecord(7704, -1.443d, 0.156d, 0.222d, 2.3d, -3.54d, 134.21d, -0.228d),
-            new EpsgExplicitOperationRecord(7705, 0.0d, 0.014d, -0.008d, 0.562d, 0.019d, -0.053d, -0.0006d),
-            new EpsgExplicitOperationRecord(7720, 8.846d, -4.394d, -1.122d, -0.00237d, -0.146528d, 0.130428d, 0.783926d),
-            new EpsgExplicitOperationRecord(7721, 8.846d, -4.394d, -1.122d, -0.00237d, -0.146528d, 0.130428d, 0.783926d),
-            new EpsgExplicitOperationRecord(7806, 5.0d, -133.0d, -104.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(7807, 0.99343d, -1.90331d, -0.52655d, -25.91467d, -9.42645d, -11.59935d, 1.71504d),
-            new EpsgExplicitOperationRecord(7808, 0.908d, -2.0161d, -0.5653d, -27.741d, -13.469d, -2.712d, 1.1d),
-            new EpsgExplicitOperationRecord(7809, 0.908d, -2.0161d, -0.5653d, -28.971d, -10.42d, -8.928d, 1.1d),
-            new EpsgExplicitOperationRecord(7817, 24.322d, -121.372d, -75.847d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(7833, -44.183d, -0.58d, -38.489d, 2.3867d, 2.7072d, -3.5196d, -8.2703d),
-            new EpsgExplicitOperationRecord(7834, -44.183d, -0.58d, -38.489d, 2.3867d, 2.7072d, -3.5196d, -8.2703d),
-            new EpsgExplicitOperationRecord(7835, 74.5d, -112.5d, -44.3d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(7836, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(7892, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(7893, -323.65d, 551.39d, -491.22d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(7894, -323.65d, 551.39d, -491.22d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(7895, -112.854d, 12.27d, -18.913d, 2.1692d, 16.8896d, 17.1961d, -19.54517d),
-            new EpsgExplicitOperationRecord(7897, -0.077d, 0.079d, 0.086d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(7898, -0.077d, 0.079d, 0.086d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(7960, -0.003d, -0.001d, 0.0d, -0.019d, 0.042d, -0.002d, 0.0d),
-            new EpsgExplicitOperationRecord(7961, 0.36d, -0.08d, -0.18d, -0.0d, -0.0d, -0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8047, -82.981d, -99.719d, -110.709d, -0.5076d, 0.1503d, 0.3898d, -0.3143d),
-            new EpsgExplicitOperationRecord(8048, 61.55d, -10.87d, -40.19d, 39.4924d, 32.7221d, 32.8979d, -9.994d),
-            new EpsgExplicitOperationRecord(8049, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8270, 11.363d, 424.148d, 373.13d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8365, -485.014055d, -169.473618d, -483.842943d, -7.78625453d, -4.39770887d, -4.10248899d, 0.0d),
-            new EpsgExplicitOperationRecord(8367, 485.021d, 169.465d, 483.839d, 7.786342d, 4.397554d, 4.102655d, 0.0d),
-            new EpsgExplicitOperationRecord(8368, 485.021d, 169.465d, 483.839d, 7.786342d, 4.397554d, 4.102655d, 0.0d),
-            new EpsgExplicitOperationRecord(8435, 202.865d, 303.99d, 155.873d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8436, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8438, -202.865d, -303.99d, -155.873d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8439, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8442, -485.014055d, -169.473618d, -483.842943d, -7.78625453d, -4.39770887d, -4.10248899d, 0.0d),
-            new EpsgExplicitOperationRecord(8448, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8450, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8452, -377.0d, 681.0d, -50.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8517, -154.5d, 150.7d, 100.4d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8532, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8537, 0.0d, 0.0d, 4.5d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8562, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8568, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8569, 0.0d, 0.0d, 0.0d, 4.327d, 4.464d, -4.444d, -3.52d),
-            new EpsgExplicitOperationRecord(8571, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8581, 0.0d, 0.0d, 4.5d, 0.0d, 0.0d, 0.554d, 0.2263d),
-            new EpsgExplicitOperationRecord(8631, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8632, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8633, 0.0d, 0.0d, 4.5d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8634, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8650, -48.0d, 55.0d, 52.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8651, 44.585d, -131.212d, -39.544d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8652, 44.585d, -131.212d, -39.544d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8655, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8656, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8657, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8659, -11.0d, 851.0d, 5.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8674, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8680, 489.88d, 183.912d, 533.711d, 5.76545d, 4.69994d, -12.58211d, 1.00646d),
-            new EpsgExplicitOperationRecord(8688, 476.08d, 125.947d, 417.81d, 4.610862d, 2.388137d, -11.942335d, 9.896638d),
-            new EpsgExplicitOperationRecord(8689, 476.08d, 125.947d, 417.81d, 4.610862d, 2.388137d, -11.942335d, 9.896638d),
-            new EpsgExplicitOperationRecord(8695, 42.899d, -214.863d, -11.927d, 1.844d, -0.648d, 6.37d, 0.169d),
-            new EpsgExplicitOperationRecord(8696, 45.799d, -212.263d, -11.927d, 1.844d, -0.648d, 6.37d, 0.169d),
-            new EpsgExplicitOperationRecord(8819, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8822, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8823, 489.88d, 183.912d, 533.711d, 5.76545d, 4.69994d, -12.58211d, 1.00646d),
-            new EpsgExplicitOperationRecord(8824, -61.15d, -315.86d, -3.51d, -0.41d, -0.74d, 3.52d, 1.36d),
-            new EpsgExplicitOperationRecord(8827, -93.799d, -132.737d, -219.073d, -1.844d, 0.648d, -6.37d, -0.169d),
-            new EpsgExplicitOperationRecord(8828, 0.072d, -0.507d, -0.245d, 0.0183d, -0.0003d, 0.007d, -0.0093d),
-            new EpsgExplicitOperationRecord(8829, 221.525d, 152.948d, 176.768d, 2.3847d, 1.3896d, 0.877d, 11.4741d),
-            new EpsgExplicitOperationRecord(8830, 221.597d, 152.441d, 176.523d, 2.403d, 1.3893d, 0.884d, 11.4648d),
-            new EpsgExplicitOperationRecord(8831, 218.697d, 151.257d, 176.995d, 3.5048d, 2.004d, 1.281d, 10.991d),
-            new EpsgExplicitOperationRecord(8832, 218.769d, 150.75d, 176.75d, 3.5231d, 2.0037d, 1.288d, 10.9817d),
-            new EpsgExplicitOperationRecord(8833, 72.438d, 345.918d, 79.486d, -1.6045d, -0.8823d, -0.5565d, 1.3746d),
-            new EpsgExplicitOperationRecord(8834, 72.51d, 345.411d, 79.241d, -1.5862d, -0.8826d, -0.5495d, 1.3653d),
-            new EpsgExplicitOperationRecord(8835, 347.103d, 1078.125d, 2623.922d, 33.8875d, -70.6773d, 9.3943d, 186.074d),
-            new EpsgExplicitOperationRecord(8842, 347.175d, 1077.618d, 2623.677d, 33.9058d, -70.6776d, 9.4013d, 186.0647d),
-            new EpsgExplicitOperationRecord(8843, 410.721d, 55.049d, 80.746d, -2.5779d, -2.3514d, -0.6664d, 17.3311d),
-            new EpsgExplicitOperationRecord(8844, 410.793d, 54.542d, 80.501d, -2.5596d, -2.3517d, -0.6594d, 17.3218d),
-            new EpsgExplicitOperationRecord(8845, 374.715d, -58.407d, -0.957d, -16.2111d, -11.4626d, -5.5357d, -0.5409d),
-            new EpsgExplicitOperationRecord(8846, 374.787d, -58.914d, -1.202d, -16.1928d, -11.4629d, -5.5287d, -0.5502d),
-            new EpsgExplicitOperationRecord(8847, 165.732d, 216.72d, 180.505d, -0.6434d, -0.4512d, -0.0791d, 7.4204d),
-            new EpsgExplicitOperationRecord(8848, 165.804d, 216.213d, 180.26d, -0.6251d, -0.4515d, -0.0721d, 7.4111d),
-            new EpsgExplicitOperationRecord(8849, 1363.785d, 1362.687d, 398.811d, -4.5322d, -6.7579d, -1.0574d, 268.361d),
-            new EpsgExplicitOperationRecord(8850, 1363.857d, 1362.18d, 398.566d, -4.5139d, -6.7582d, -1.0504d, 268.3517d),
-            new EpsgExplicitOperationRecord(8851, 259.551d, 297.612d, 197.833d, 1.4866d, 2.1224d, 0.4612d, 27.0249d),
-            new EpsgExplicitOperationRecord(8852, 259.623d, 297.105d, 197.588d, 1.5049d, 2.1221d, 0.4682d, 27.0156d),
-            new EpsgExplicitOperationRecord(8853, 217.109d, 86.452d, 23.711d, 0.0183d, -0.0003d, 0.007d, -0.0093d),
-            new EpsgExplicitOperationRecord(8882, -93.799d, -132.737d, -219.073d, -1.844d, 0.648d, -6.37d, -0.169d),
-            new EpsgExplicitOperationRecord(8883, -48.0d, -345.0d, -231.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8884, -50.9d, -347.6d, -231.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8886, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8887, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8890, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8894, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(8970, 1.0053d, -1.90921d, -0.54157d, -26.78138d, 0.42027d, -10.93206d, 0.36891d),
-            new EpsgExplicitOperationRecord(8971, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9020, 0.5d, 3.6d, 2.4d, -0.1d, 0.0d, 0.0d, -3.0d),
-            new EpsgExplicitOperationRecord(9021, -0.5d, -2.4d, 3.8d, 0.0d, 0.0d, 0.0d, -3.0d),
-            new EpsgExplicitOperationRecord(9022, -0.1d, 0.4d, 1.6d, 0.0d, 0.0d, 0.0d, -0.3d),
-            new EpsgExplicitOperationRecord(9023, -1.1d, -1.4d, 0.6d, 0.0d, 0.0d, 0.0d, -1.4d),
-            new EpsgExplicitOperationRecord(9076, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9077, 0.9102d, -2.0141d, -0.5602d, -29.039d, -10.065d, -10.101d, 0.0d),
-            new EpsgExplicitOperationRecord(9078, 0.9102d, -2.0141d, -0.5602d, -29.039d, -10.065d, -10.101d, 0.0d),
-            new EpsgExplicitOperationRecord(9126, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9127, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9128, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9129, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9142, 628.54052d, 192.2538d, 498.43507d, -13.79189d, -0.81467d, 41.21533d, -17.40368d),
-            new EpsgExplicitOperationRecord(9143, 628.54052d, 192.2538d, 498.43507d, -13.79189d, -0.81467d, 41.21533d, -17.40368d),
-            new EpsgExplicitOperationRecord(9144, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9145, -0.06d, 0.517d, 0.223d, -0.0183d, 0.0003d, -0.007d, 0.011d),
-            new EpsgExplicitOperationRecord(9185, -136.9703d, -37.5638d, 124.4242d, 0.25676d, 0.42966d, 0.30077d, -4.61966d),
-            new EpsgExplicitOperationRecord(9186, -23.772d, -17.49d, -17.859d, 0.3132d, 1.85274d, -1.67299d, 5.4262d),
-            new EpsgExplicitOperationRecord(9189, -23.772d, -17.49d, -17.859d, 0.3132d, 1.85274d, -1.67299d, 5.4262d),
-            new EpsgExplicitOperationRecord(9224, -157.89d, -17.16d, -78.41d, 2.118d, 2.697d, -1.434d, -5.38d),
-            new EpsgExplicitOperationRecord(9226, 112.771d, -12.282d, 18.935d, -2.1692d, -16.8896d, -17.1961d, 19.54517d),
-            new EpsgExplicitOperationRecord(9234, 230.25d, 632.76d, 161.03d, 1.114d, -1.115d, -1.212d, 12.584d),
-            new EpsgExplicitOperationRecord(9257, 8.88d, 184.86d, 106.69d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9258, 15.75d, 164.93d, 126.18d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9259, -233.43d, 6.65d, 173.64d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9260, -192.26d, 65.72d, 132.08d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9261, -9.5d, 122.9d, 138.2d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9262, -78.1d, 101.6d, 133.3d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9263, 18.2d, 190.7d, 100.9d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9264, -0.41d, 0.46d, -0.35d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9281, 565.7381d, 50.4018d, 465.2904d, -1.91514d, 1.60363d, -9.09546d, 4.07244d),
-            new EpsgExplicitOperationRecord(9291, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9298, 1.16835d, -1.42001d, -2.24431d, -0.00822d, -0.05508d, 0.01818d, 0.23388d),
-            new EpsgExplicitOperationRecord(9342, -302.0d, 272.0d, -360.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9343, -328.0d, 340.0d, -329.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9344, -352.0d, 403.0d, -287.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9345, -302.0d, 272.0d, -360.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9346, -328.0d, 340.0d, -329.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9347, -352.0d, 403.0d, -287.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9349, -79.0d, 13.0d, -14.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9350, -79.0d, 13.0d, -14.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9361, 0.0469d, -0.2827d, 0.0866d, 0.00559d, -0.004981d, 0.023108d, -0.008051d),
-            new EpsgExplicitOperationRecord(9362, 13.8714d, -83.9721d, 101.674d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9383, 0.0d, 0.0d, 0.0d, -8.393d, 0.749d, -10.276d, 0.0d),
-            new EpsgExplicitOperationRecord(9459, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9460, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9472, -0.2773d, 0.0534d, 0.4819d, -0.0935d, 0.0286d, -0.00969d, -0.028d),
-            new EpsgExplicitOperationRecord(9486, 577.84843d, 165.45019d, 390.43652d, 4.93131d, -0.96052d, -13.05072d, 7.86546d),
-            new EpsgExplicitOperationRecord(9495, 577.84843d, 165.45019d, 390.43652d, 4.93131d, -0.96052d, -13.05072d, 7.86546d),
-            new EpsgExplicitOperationRecord(9676, 23.772d, 17.49d, 17.859d, -0.3132d, -1.85274d, 1.67299d, -5.4262d),
-            new EpsgExplicitOperationRecord(9679, 283.729d, 735.942d, 261.143d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9682, -61.55d, 10.87d, 40.19d, -39.4924d, -32.7221d, -32.8979d, 9.994d),
-            new EpsgExplicitOperationRecord(9683, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9684, -61.55d, 10.87d, 40.19d, -39.4924d, -32.7221d, -32.8979d, 9.994d),
-            new EpsgExplicitOperationRecord(9685, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9686, 61.55d, -10.87d, -40.19d, 39.4924d, 32.7221d, 32.8979d, -9.994d),
-            new EpsgExplicitOperationRecord(9688, 61.55d, -10.87d, -40.19d, 39.4924d, 32.7221d, 32.8979d, -9.994d),
-            new EpsgExplicitOperationRecord(9690, 61.55d, -10.87d, -40.19d, 39.4924d, 32.7221d, 32.8979d, -9.994d),
-            new EpsgExplicitOperationRecord(9743, -307.0d, -92.0d, 127.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9751, -0.16959d, 0.35312d, 0.51846d, 0.03385d, -0.16325d, 0.03446d, 0.03693d),
-            new EpsgExplicitOperationRecord(9752, -0.16959d, 0.35312d, 0.51846d, 0.03385d, -0.16325d, 0.03446d, 0.03693d),
-            new EpsgExplicitOperationRecord(9756, 0.0058d, -0.0064d, 0.007d, -0.08d, -0.04d, -0.12d, -4.4d),
-            new EpsgExplicitOperationRecord(9757, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9768, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9769, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9770, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9771, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9772, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9773, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9774, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9788, -0.017d, 0.058d, 0.009d, 0.001305d, 0.00068d, -0.001467d, -0.00072d),
-            new EpsgExplicitOperationRecord(9791, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9792, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9882, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9898, -265.8979d, 76.9761d, 20.2504d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9899, -189.033d, 14.1335d, -43.0901d, -0.43331d, -3.11448d, 2.63636d, 0.4752d),
-            new EpsgExplicitOperationRecord(9904, -43.0d, -337.0d, -233.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9905, -41.057d, -374.564d, -226.287d, 0.0d, 0.0d, 0.554d, 0.219d),
-            new EpsgExplicitOperationRecord(9906, -254.1d, -5.36d, -100.29d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9913, -162.619d, -276.959d, -161.764d, 0.067753d, -2.243648d, -1.158828d, -1.094246d),
-            new EpsgExplicitOperationRecord(9936, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9937, -265.9196d, 76.9506d, 20.2222d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(9938, -189.228d, 12.0035d, -42.6303d, -0.48171d, -3.09948d, 2.68639d, 0.46346d),
-            new EpsgExplicitOperationRecord(9960, -58.0d, 521.0d, 239.0d, -18.3d, 0.3d, -7.0d, 10.7d),
-            new EpsgExplicitOperationRecord(9961, -20.0d, -16.0d, 14.0d, -0.0d, -0.0d, -0.0d, -0.69d),
-            new EpsgExplicitOperationRecord(9962, 1.1d, -4.7d, 22.0d, -0.0d, -0.0d, -0.16d, 1.45d),
-            new EpsgExplicitOperationRecord(9963, -2.4d, 1.6d, 23.2d, 0.27d, -0.27d, 0.38d, 2.08d),
-            new EpsgExplicitOperationRecord(10085, -61.0d, 285.2d, 471.6d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10086, 48.0d, 208.0d, 382.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10089, -163.466d, 317.396d, -147.538d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10090, -170.0d, 305.0d, -145.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10091, -162.904d, 312.531d, -137.109d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10092, -158.0d, 309.0d, -151.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10093, -161.0d, 308.0d, -142.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10098, -96.062d, -82.428d, -121.753d, 4.801d, 0.345d, -1.376d, 1.496d),
-            new EpsgExplicitOperationRecord(10099, -96.062d, -82.428d, -121.753d, 4.801d, 0.345d, -1.376d, 1.496d),
-            new EpsgExplicitOperationRecord(10135, -302.0d, 272.0d, -360.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10136, -328.0d, 340.0d, -329.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10137, -352.0d, 403.0d, -287.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10138, -79.0d, 13.0d, -14.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10139, 0.5d, 3.6d, 2.4d, -0.1d, 0.0d, 0.0d, -3.1d),
-            new EpsgExplicitOperationRecord(10140, -0.5d, -2.4d, 3.8d, 0.0d, 0.0d, 0.0d, -3.4d),
-            new EpsgExplicitOperationRecord(10141, 0.2d, 0.4d, 1.6d, 0.0d, 0.0d, 0.0d, -0.3d),
-            new EpsgExplicitOperationRecord(10142, -1.2d, -1.4d, 0.6d, 0.0d, 0.0d, 0.0d, -1.4d),
-            new EpsgExplicitOperationRecord(10149, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10264, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10292, 0.0d, 0.0d, 0.0d, 0.658d, -0.208d, 0.755d, 0.0d),
-            new EpsgExplicitOperationRecord(10296, -267.407d, -47.068d, 446.357d, -0.179423d, 5.577661d, -1.27762d, 1.204866d),
-            new EpsgExplicitOperationRecord(10321, -0.584d, -1.117d, 1.125d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10324, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10333, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10334, 1003.9d, -1909.61d, -541.17d, -26.78138d, 0.42027d, -10.93206d, -0.05109d),
-            new EpsgExplicitOperationRecord(10335, 0.9109d, -2.0129d, -0.5863d, -22.749d, -26.56d, 25.706d, 2.12d),
-            new EpsgExplicitOperationRecord(10336, 909.5d, -2013.3d, -585.9d, -22.749d, -26.56d, 25.706d, 1.7d),
-            new EpsgExplicitOperationRecord(10337, 0.9109d, -2.0129d, -0.5863d, -28.711d, -11.785d, -4.417d, 2.12d),
-            new EpsgExplicitOperationRecord(10338, 909.5d, -2013.3d, -585.9d, -28.711d, -11.785d, -4.417d, 1.7d),
-            new EpsgExplicitOperationRecord(10339, -152.9d, 43.8d, 358.3d, 2.714d, 1.386d, -2.788d, -6.743d),
-            new EpsgExplicitOperationRecord(10340, -95.7d, 10.2d, 158.9d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10341, -165.914d, -70.607d, 305.009d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10342, -169.559d, -72.34d, 303.102d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10343, -168.52d, -72.05d, 304.3d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10344, -181.7d, 64.7d, 247.2d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10416, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10419, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10478, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10511, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10512, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10513, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10514, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10543, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10589, 407.379d, -685.226d, -52.577d, 0.318d, -0.107d, 0.058d, 0.207d),
-            new EpsgExplicitOperationRecord(10607, 2.6d, 5.4d, -0.9d, 0.01d, 0.07d, -0.0d, 0.06d),
-            new EpsgExplicitOperationRecord(10608, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10646, 1138.7432d, -2064.4761d, 110.7016d, 214.615206d, -479.360036d, 164.703951d, -402.32073d),
-            new EpsgExplicitOperationRecord(10647, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10648, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10675, 1138.7432d, -2064.4761d, 110.7016d, 214.615206d, -479.360036d, 164.703951d, -402.32073d),
-            new EpsgExplicitOperationRecord(10676, 1138.7432d, -2064.4761d, 110.7016d, 214.615206d, -479.360036d, 164.703951d, -402.32073d),
-            new EpsgExplicitOperationRecord(10682, -0.5377d, 0.3946d, 0.3608d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10684, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10701, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10748, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10749, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10750, 1276.2485d, -2016.6406d, 667.4403d, 101.005288d, -212.913401d, 68.43277d, -431.59604d),
-            new EpsgExplicitOperationRecord(10754, 1276.2485d, -2016.6406d, 667.4403d, 101.005288d, -212.913401d, 68.43277d, -431.59604d),
-            new EpsgExplicitOperationRecord(10755, 1138.7432d, -2064.4761d, 110.7016d, 214.615206d, -479.360036d, 164.703951d, -402.32073d),
-            new EpsgExplicitOperationRecord(10756, 1276.2485d, -2016.6406d, 667.4403d, 101.005288d, -212.913401d, 68.43277d, -431.59604d),
-            new EpsgExplicitOperationRecord(10766, -366.1939d, -115.0688d, -776.7039d, -20.96308d, -16.462749d, 14.276379d, -12.809d),
-            new EpsgExplicitOperationRecord(10769, -366.1939d, -115.0688d, -776.7039d, -20.96308d, -16.462749d, 14.276379d, -12.809d),
-            new EpsgExplicitOperationRecord(10770, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10771, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10796, -136.7231d, -87.8654d, 20.1215d, -4.966933d, 9.01001d, 2.72486d, 7.86009d),
-            new EpsgExplicitOperationRecord(10797, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10803, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10804, 1276.2485d, -2016.6406d, 667.4403d, 101.005288d, -212.913401d, 68.43277d, -431.59604d),
-            new EpsgExplicitOperationRecord(10834, -2.0796d, -0.3484d, 1.7009d, -0.05465d, 0.06718d, -0.06143d, 0.0181d),
-            new EpsgExplicitOperationRecord(10835, -40.7436d, -40.0018d, -56.707d, 1.2753d, 1.42112d, -2.69445d, -4.5284d),
-            new EpsgExplicitOperationRecord(10840, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10853, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10905, -646.6552d, -165.0859d, -437.6858d, -4.77773d, 0.39139d, 1.07485d, 2.0025d),
-            new EpsgExplicitOperationRecord(10930, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10953, 1015.75d, -1920.11d, -559.77d, -27.78143d, 11.78187d, -10.16211d, -1.13124d),
-            new EpsgExplicitOperationRecord(10960, -0.30031d, -1.17512d, -0.30654d, -0.041614d, 0.026303d, 0.011214d, -0.01626d),
-            new EpsgExplicitOperationRecord(10961, 308.9415d, 136.202d, 986.3661d, 3.8742d, -3.77827d, 7.61345d, -171.67315d),
-            new EpsgExplicitOperationRecord(10963, 218.233d, 270.6151d, 253.1391d, -0.26337d, 0.15733d, 1.19862d, -59.923872d),
-            new EpsgExplicitOperationRecord(10965, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10969, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(10996, 19.019d, 115.122d, -97.287d, 3.577824d, -3.484437d, -2.767646d, 18.6084754d),
-            new EpsgExplicitOperationRecord(11010, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11011, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11028, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11038, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11040, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11044, -0.0533d, 0.0136d, -0.0707d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11048, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11050, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11054, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11058, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11060, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11064, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11067, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11071, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11073, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11080, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11081, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11083, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11084, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11088, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11090, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11094, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11096, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11100, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11105, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11109, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11111, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11123, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11125, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11135, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11136, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11137, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11138, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11149, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11150, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11151, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11152, -236.635d, 98.535d, 201.265d, -17.79d, 3.673d, -24.3695d, 0.0d),
-            new EpsgExplicitOperationRecord(11164, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11166, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11167, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11168, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11182, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11185, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11190, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11191, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11192, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11195, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11200, -41.1d, -52.0d, 101.1d, 1.348d, 0.719d, 2.684d, -7.9d),
-            new EpsgExplicitOperationRecord(11205, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11207, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11209, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11210, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11216, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11218, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11220, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11227, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(11229, 197.8579d, 146.5947d, -108.8501d, 0.85735d, -0.36082d, -0.38626d, -8.356137d),
-            new EpsgExplicitOperationRecord(11230, -1.6d, -1.9d, -2.4d, -0.0d, -0.0d, -0.0d, 0.02d),
-            new EpsgExplicitOperationRecord(11308, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15483, -146.414d, 507.337d, 680.507d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15484, -146.414d, 507.337d, 680.507d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15485, -67.35d, 3.88d, -38.22d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15493, -94.031d, -83.317d, 116.708d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15494, 274.164d, 677.282d, 226.704d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15495, -171.16d, 17.29d, 325.21d, 0.0d, 0.0d, 0.814d, -0.38d),
-            new EpsgExplicitOperationRecord(15496, 44.107d, -116.147d, -54.648d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15497, 28.0d, -121.0d, -77.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15699, -2.0d, 124.7d, 196.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15701, 275.57d, 676.78d, 229.6d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15702, 278.9d, 684.39d, 226.05d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15703, 271.905d, 669.593d, 231.495d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15705, -83.13d, -104.95d, 114.63d, 0.0d, 0.0d, 0.554d, 0.0d),
-            new EpsgExplicitOperationRecord(15706, -93.6d, -83.7d, 113.8d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15707, -118.996d, -111.177d, -198.687d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15708, -127.62d, -67.24d, -47.04d, -3.068d, 4.903d, 1.578d, -1.06d),
-            new EpsgExplicitOperationRecord(15709, 124.5d, -63.5d, -281.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15710, -160.0d, 315.0d, -142.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15711, -158.0d, 309.0d, -147.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15712, -161.0d, 310.0d, -145.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15713, -133.0d, -321.0d, 50.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15714, -806.413d, -263.5d, -622.671d, -6.018583e-05d, 1.450001e-05d, 0.0001892455d, -20.81616d),
-            new EpsgExplicitOperationRecord(15715, -806.413d, -263.5d, -622.671d, -6.018583e-05d, 1.450001e-05d, 0.0001892455d, -20.81616d),
-            new EpsgExplicitOperationRecord(15716, 100.783d, 187.382d, -47.0d, 4.471839e-05d, -1.175093e-05d, 4.027967e-05d, -13.56561d),
-            new EpsgExplicitOperationRecord(15717, 100.783d, 187.382d, -47.0d, 4.471839e-05d, -1.175093e-05d, 4.027967e-05d, -13.56561d),
-            new EpsgExplicitOperationRecord(15718, 336.026d, 348.565d, 252.978d, 8.358813e-05d, 3.057474e-05d, -7.573031e-06d, -5.771909d),
-            new EpsgExplicitOperationRecord(15719, 336.026d, 348.565d, 252.978d, 8.358813e-05d, 3.057474e-05d, -7.573031e-06d, -5.771909d),
-            new EpsgExplicitOperationRecord(15720, 963.273d, 486.386d, 190.997d, 7.992171e-05d, 8.090696e-06d, -0.0001051699d, -13.89914d),
-            new EpsgExplicitOperationRecord(15721, 963.273d, 486.386d, 190.997d, 7.992171e-05d, 8.090696e-06d, -0.0001051699d, -13.89914d),
-            new EpsgExplicitOperationRecord(15722, -90.29d, 247.559d, -21.989d, 4.216369e-05d, 2.030416e-05d, 6.209623e-05d, 2.181658d),
-            new EpsgExplicitOperationRecord(15723, -90.29d, 247.559d, -21.989d, 4.216369e-05d, 2.030416e-05d, 6.209623e-05d, 2.181658d),
-            new EpsgExplicitOperationRecord(15724, -0.562d, 244.299d, -456.938d, -3.329153e-05d, 4.001009e-05d, 4.507206e-05d, 3.74656d),
-            new EpsgExplicitOperationRecord(15725, -0.562d, 244.299d, -456.938d, -3.329153e-05d, 4.001009e-05d, 4.507206e-05d, 3.74656d),
-            new EpsgExplicitOperationRecord(15726, -305.356d, 222.004d, -30.023d, 4.698084e-05d, -5.003123e-06d, 9.578655e-05d, 6.325747d),
-            new EpsgExplicitOperationRecord(15727, -305.356d, 222.004d, -30.023d, 4.698084e-05d, -5.003123e-06d, 9.578655e-05d, 6.325747d),
-            new EpsgExplicitOperationRecord(15728, 221.899d, 274.136d, -397.554d, -1.361573e-05d, 2.174431e-06d, 1.36241e-05d, -2.199943d),
-            new EpsgExplicitOperationRecord(15729, 221.899d, 274.136d, -397.554d, -1.361573e-05d, 2.174431e-06d, 1.36241e-05d, -2.199943d),
-            new EpsgExplicitOperationRecord(15730, 300.449d, 293.757d, -317.306d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15731, 308.833d, 282.519d, -314.571d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15732, 311.118d, 289.167d, -310.641d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15733, 306.666d, 315.063d, -318.837d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15734, 307.871d, 305.803d, -311.992d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15735, 302.934d, 307.805d, -312.121d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15736, 295.282d, 321.293d, -311.001d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15737, 302.529d, 317.979d, -319.08d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15738, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15739, 565.2369d, 50.0087d, 465.658d, -1.9725d, 1.7004d, -9.0677d, 4.0812d),
-            new EpsgExplicitOperationRecord(15740, 593.0297d, 26.0038d, 478.7534d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15741, -187.5d, 14.1d, 237.6d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15742, -190.421d, 8.532d, 238.69d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15743, -83.58d, -397.54d, 458.78d, -17.595d, -2.847d, 4.256d, 3.225d),
-            new EpsgExplicitOperationRecord(15745, -123.02d, -158.95d, -168.47d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15746, 0.0d, -0.15d, 0.68d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15750, -7.0d, 215.0d, 225.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15751, 94.0d, -948.0d, -1262.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15752, -86.0d, -98.0d, -119.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15754, -158.0d, 315.0d, -148.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15755, -90.2d, -87.32d, 114.17d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15759, 217.037d, 86.959d, 23.956d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15778, -114.7d, -98.5d, -150.7d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15779, 283.7d, 735.9d, 261.1d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15782, -148.0d, 136.0d, 90.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15783, 287.0d, 178.0d, -136.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15784, -770.1d, 158.4d, -498.2d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15787, -79.9d, -158.0d, -168.9d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15788, -127.8d, -52.3d, 152.9d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15789, -128.5d, -53.0d, 153.4d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15790, -255.0d, -29.0d, -105.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15791, -259.99d, -5.28d, -97.09d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15792, -123.0d, 98.0d, 2.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15793, 31.95d, 300.99d, 419.19d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15794, -491.0d, -22.0d, 435.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15795, 114.0d, -116.0d, -333.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15796, 145.0d, 75.0d, -272.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15797, -205.0d, 107.0d, 53.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15798, -320.0d, 550.0d, -494.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15799, 124.0d, -234.0d, -25.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15800, -79.0d, -129.0d, 145.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15801, -127.0d, -769.0d, 472.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15802, -104.0d, -129.0d, 239.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15803, 298.0d, -304.0d, -375.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15804, -2.0d, 151.0d, 181.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15805, 230.0d, -199.0d, -752.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15806, 211.0d, 147.0d, 111.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15807, 252.0d, -209.0d, -751.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15808, 208.0d, -435.0d, -229.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15809, 189.0d, -79.0d, -202.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15810, 647.0d, 1777.0d, -1124.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15811, -270.0d, 13.0d, 62.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15812, 260.0d, 12.0d, -147.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15813, -794.0d, 119.0d, -298.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15814, 42.0d, 124.0d, 147.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15815, -307.0d, -92.0d, 127.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15816, -632.0d, 438.0d, -609.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15817, 912.0d, -58.0d, 1227.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15818, 403.0d, -81.0d, 277.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15819, 185.0d, 165.0d, 42.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15820, 170.0d, 42.0d, 84.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15822, 102.0d, 52.0d, -38.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15823, 276.0d, -57.0d, 149.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15824, 61.0d, -285.0d, -181.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15825, 89.0d, -279.0d, -183.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15826, 45.0d, -290.0d, -172.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15827, 65.0d, -290.0d, -190.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15828, 58.0d, -283.0d, -182.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15829, 44.4d, 109.0d, 151.7d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15830, 67.8d, 106.1d, 138.8d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15831, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15833, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15842, -156.0d, -271.0d, -189.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15843, 0.0d, 0.0d, 1.5d, -0.0d, -0.0d, 0.076d, 0.0d),
-            new EpsgExplicitOperationRecord(15844, 25.0d, -141.0d, -80.0d, -0.0d, 0.35d, 0.66d, 0.0d),
-            new EpsgExplicitOperationRecord(15846, -146.21d, 112.63d, 4.05d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15847, 253.0d, -132.0d, -127.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15848, -13.0d, -348.0d, 292.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15849, -106.0d, -87.0d, 188.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15850, 145.0d, -187.0d, 103.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15852, -3.0d, 154.0d, 177.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15853, -7.0d, 151.0d, 175.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15854, -7.0d, 151.0d, 178.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15855, -8.0d, 125.0d, 190.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15856, -7.0d, 158.0d, 172.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15860, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15865, 25.0d, -141.0d, -78.5d, -0.0d, 0.35d, 0.736d, 0.0d),
-            new EpsgExplicitOperationRecord(15866, -153.33d, -169.41d, 86.39d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15867, 599.4d, 72.4d, 419.2d, -0.062d, -0.022d, -2.723d, 6.46d),
-            new EpsgExplicitOperationRecord(15868, 612.4d, 77.0d, 440.2d, -0.054d, 0.057d, -2.797d, 2.55d),
-            new EpsgExplicitOperationRecord(15869, 612.4d, 77.0d, 440.2d, -0.054d, 0.057d, -2.797d, 2.55d),
-            new EpsgExplicitOperationRecord(15870, -80.01d, 253.26d, 291.19d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15872, 84.1d, -320.1d, 218.7d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15873, -206.1d, -174.7d, -87.7d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15874, -169.559d, -72.34d, 303.102d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15875, 265.025d, 384.929d, -194.046d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15876, 0.0d, 0.0d, 4.5d, 0.0d, 0.0d, 0.554d, 0.2263d),
-            new EpsgExplicitOperationRecord(15877, -35.173d, 136.571d, -36.964d, -1.37d, 0.842d, 4.718d, -1.537d),
-            new EpsgExplicitOperationRecord(15878, 51.0d, 391.0d, -36.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15879, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15880, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15881, -56.263d, 16.136d, -22.856d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15882, -11.64d, -348.6d, 291.98d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15883, 335.47d, 222.58d, -230.94d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15884, 287.58d, 177.78d, -135.41d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15885, -56.263d, 16.136d, -22.856d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15886, -10.18d, -350.43d, 291.37d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15887, 97.297d, -263.243d, 310.879d, -1.5999d, 0.8387d, 3.1409d, 13.326d),
-            new EpsgExplicitOperationRecord(15888, 48.812d, -205.932d, 343.993d, -3.4427d, -0.4999d, 4.0878d, 6.5215d),
-            new EpsgExplicitOperationRecord(15889, -166.0684d, -154.7826d, 254.8282d, -37.546d, 7.7018d, -10.2029d, -30.84d),
-            new EpsgExplicitOperationRecord(15890, 137.092d, 131.675d, 91.478d, -1.9435d, -11.5995d, -4.3316d, -7.4801d),
-            new EpsgExplicitOperationRecord(15891, -408.809d, 366.857d, -412.987d, 1.8843d, -0.5308d, 2.1657d, -121.0994d),
-            new EpsgExplicitOperationRecord(15892, -122.386d, -188.707d, 103.334d, 3.511d, -4.9665d, -5.7048d, 4.4799d),
-            new EpsgExplicitOperationRecord(15893, 244.42d, 85.352d, 168.129d, -8.936d, 7.752d, 12.5952d, 14.2723d),
-            new EpsgExplicitOperationRecord(15894, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15896, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15897, 51.0d, 391.0d, -36.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15899, 105.0d, 326.0d, -102.5d, 0.0d, 0.0d, 0.814d, -0.6d),
-            new EpsgExplicitOperationRecord(15900, -45.0d, 417.0d, -3.5d, 0.0d, 0.0d, 0.814d, -0.6d),
-            new EpsgExplicitOperationRecord(15901, 287.58d, 177.78d, -135.41d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15902, 335.47d, 222.58d, -230.94d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15903, -11.64d, -348.6d, 291.98d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15904, -10.18d, -350.43d, 291.37d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15908, -208.4058d, -109.8777d, -2.5764d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15909, -115.8543d, -99.0583d, -152.4616d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15911, -1.977d, -13.06d, -9.993d, 0.364d, 0.254d, 0.689d, -1.037d),
-            new EpsgExplicitOperationRecord(15912, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15913, 0.0d, 125.0d, 196.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15918, 12.646d, -155.176d, -80.863d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15919, 15.53d, -113.82d, -41.38d, 0.0d, 0.0d, 0.814d, -0.38d),
-            new EpsgExplicitOperationRecord(15920, 31.4d, -144.3d, -74.8d, 0.0d, 0.0d, 0.814d, -0.38d),
-            new EpsgExplicitOperationRecord(15921, 15.8d, -154.4d, -82.3d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15923, -117.7d, -100.3d, -152.4d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15924, 92.5515d, 10.8194d, -149.8852d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15925, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15926, -33.722d, 153.789d, 94.959d, -8.581d, -4.478d, 4.54d, 8.95d),
-            new EpsgExplicitOperationRecord(15927, -33.722d, 153.789d, 94.959d, -8.581d, -4.478d, 4.54d, 8.95d),
-            new EpsgExplicitOperationRecord(15928, -106.8686d, 52.2978d, -103.7239d, 0.3366d, -0.457d, 1.8422d, -1.2747d),
-            new EpsgExplicitOperationRecord(15929, -106.8686d, 52.2978d, -103.7239d, 0.3366d, -0.457d, 1.8422d, -1.2747d),
-            new EpsgExplicitOperationRecord(15931, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15934, 565.2369d, 50.0087d, 465.658d, -1.9725d, 1.7004d, -9.0677d, 4.0812d),
-            new EpsgExplicitOperationRecord(15935, 18.0d, -136.8d, -73.7d, 0.0d, 0.0d, 0.814d, -0.38d),
-            new EpsgExplicitOperationRecord(15936, 11.911d, -154.833d, -80.079d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15937, -245.8d, -152.2d, 382.9d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15938, -225.4d, -158.7d, 380.8d, 0.0d, 0.0d, 0.814d, -0.38d),
-            new EpsgExplicitOperationRecord(15952, -244.2d, -149.8d, 379.3d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15953, -250.7d, -157.9d, 380.4d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15957, 163.511d, 127.533d, -159.789d, 0.0d, 0.0d, 0.814d, -0.6d),
-            new EpsgExplicitOperationRecord(15964, -86.277d, -108.879d, -120.181d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15965, 589.0d, 76.0d, 480.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15967, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15969, -292.295d, 248.758d, 429.447d, 4.9971d, 2.99d, 6.6906d, 1.0289d),
-            new EpsgExplicitOperationRecord(15970, -292.295d, 248.758d, 429.447d, 4.9971d, 2.99d, 6.6906d, 1.0289d),
-            new EpsgExplicitOperationRecord(15971, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15972, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15974, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15975, 54.4d, -20.1d, 183.1d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15976, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15978, 2.478d, 149.752d, 197.726d, 0.526d, 0.498d, -0.501d, 0.685d),
-            new EpsgExplicitOperationRecord(15979, -117.808d, -51.536d, 137.784d, 0.303d, 0.446d, 0.234d, -0.29d),
-            new EpsgExplicitOperationRecord(15980, -117.808d, -51.536d, 137.784d, 0.303d, 0.446d, 0.234d, -0.29d),
-            new EpsgExplicitOperationRecord(15993, 68.1564d, 32.7756d, 80.2249d, -2.20333014d, -2.19256447d, 2.54166911d, -0.14155333d),
-            new EpsgExplicitOperationRecord(15994, 2.3287d, -147.0425d, -92.0802d, -0.3092483d, 0.32482185d, 0.49729934d, 5.68906266d),
-            new EpsgExplicitOperationRecord(15995, 2.329d, -147.042d, -92.08d, -0.309d, 0.325d, 0.497d, 5.69d),
-            new EpsgExplicitOperationRecord(15996, 28.0d, -121.0d, -77.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15997, 23.0d, -124.0d, -82.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15998, 26.0d, -121.0d, -78.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-            new EpsgExplicitOperationRecord(15999, 24.0d, -130.0d, -92.0d, 0.0d, 0.0d, 0.0d, 0.0d),
-        };
-
         internal static bool TryGetCoordinateReference(int srid, out EpsgCoordinateReferenceRecord reference, out int cacheIndex)
         {
             switch (srid)
@@ -132415,3943 +131098,3943 @@ namespace ProjNet.Data.Generated
             switch (operationCode)
             {
                 case 1024:
-                    parameters = ExplicitOperations[0];
+                    parameters = new EpsgExplicitOperationRecord(1024, 601.705d, 84.263d, 485.227d, 4.7354d, 1.3145d, 5.393d, -2.3887d);
                     return true;
                 case 1055:
-                    parameters = ExplicitOperations[1];
+                    parameters = new EpsgExplicitOperationRecord(1055, -145.7d, -249.1d, 1.5d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1056:
-                    parameters = ExplicitOperations[2];
+                    parameters = new EpsgExplicitOperationRecord(1056, -85.645d, -273.077d, -79.708d, 2.289d, -1.421d, 2.532d, 3.194d);
                     return true;
                 case 1057:
-                    parameters = ExplicitOperations[3];
+                    parameters = new EpsgExplicitOperationRecord(1057, -202.234d, -168.351d, -63.51d, 3.545d, 0.659d, -1.945d, 2.1d);
                     return true;
                 case 1058:
-                    parameters = ExplicitOperations[4];
+                    parameters = new EpsgExplicitOperationRecord(1058, -18.944d, -379.364d, -24.063d, 0.04d, -0.764d, 6.431d, 3.657d);
                     return true;
                 case 1059:
-                    parameters = ExplicitOperations[5];
+                    parameters = new EpsgExplicitOperationRecord(1059, -294.7d, -200.1d, 525.5d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1060:
-                    parameters = ExplicitOperations[6];
+                    parameters = new EpsgExplicitOperationRecord(1060, -3.2d, -5.7d, 2.8d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1061:
-                    parameters = ExplicitOperations[7];
+                    parameters = new EpsgExplicitOperationRecord(1061, -20.8d, 11.3d, 2.4d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1062:
-                    parameters = ExplicitOperations[8];
+                    parameters = new EpsgExplicitOperationRecord(1062, 226.702d, -193.337d, -35.371d, -2.229d, -4.391d, 9.238d, 0.9798d);
                     return true;
                 case 1063:
-                    parameters = ExplicitOperations[9];
+                    parameters = new EpsgExplicitOperationRecord(1063, -2.227d, 6.524d, 2.178d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1064:
-                    parameters = ExplicitOperations[10];
+                    parameters = new EpsgExplicitOperationRecord(1064, -0.652d, 1.619d, 0.213d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1065:
-                    parameters = ExplicitOperations[11];
+                    parameters = new EpsgExplicitOperationRecord(1065, 44.585d, -131.212d, -39.544d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1066:
-                    parameters = ExplicitOperations[12];
+                    parameters = new EpsgExplicitOperationRecord(1066, 593.032d, 26.0d, 478.741d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1067:
-                    parameters = ExplicitOperations[13];
+                    parameters = new EpsgExplicitOperationRecord(1067, -92.1d, -89.9d, 114.9d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1070:
-                    parameters = ExplicitOperations[14];
+                    parameters = new EpsgExplicitOperationRecord(1070, -100.0d, -248.0d, 259.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1071:
-                    parameters = ExplicitOperations[15];
+                    parameters = new EpsgExplicitOperationRecord(1071, -181.0d, -122.0d, 225.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1073:
-                    parameters = ExplicitOperations[16];
+                    parameters = new EpsgExplicitOperationRecord(1073, -48.0d, 55.0d, 52.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1074:
-                    parameters = ExplicitOperations[17];
+                    parameters = new EpsgExplicitOperationRecord(1074, -275.7224d, 94.7824d, 340.8944d, -8.001d, -4.42d, -11.821d, 1.0d);
                     return true;
                 case 1075:
-                    parameters = ExplicitOperations[18];
+                    parameters = new EpsgExplicitOperationRecord(1075, -89.05d, -87.03d, -124.56d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1078:
-                    parameters = ExplicitOperations[19];
+                    parameters = new EpsgExplicitOperationRecord(1078, -265.983d, 76.918d, 20.182d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1079:
-                    parameters = ExplicitOperations[20];
+                    parameters = new EpsgExplicitOperationRecord(1079, -265.983d, 76.918d, 20.182d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1080:
-                    parameters = ExplicitOperations[21];
+                    parameters = new EpsgExplicitOperationRecord(1080, 175.0d, -38.0d, 113.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1081:
-                    parameters = ExplicitOperations[22];
+                    parameters = new EpsgExplicitOperationRecord(1081, 174.05d, -25.49d, 112.57d, -0.0d, -0.0d, 0.554d, 0.2263d);
                     return true;
                 case 1082:
-                    parameters = ExplicitOperations[23];
+                    parameters = new EpsgExplicitOperationRecord(1082, 174.05d, -25.49d, 112.57d, -0.0d, -0.0d, 0.554d, 0.2263d);
                     return true;
                 case 1083:
-                    parameters = ExplicitOperations[24];
+                    parameters = new EpsgExplicitOperationRecord(1083, 50.0d, 212.0d, 381.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1084:
-                    parameters = ExplicitOperations[25];
+                    parameters = new EpsgExplicitOperationRecord(1084, 70.0d, 207.0d, 389.5d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1085:
-                    parameters = ExplicitOperations[26];
+                    parameters = new EpsgExplicitOperationRecord(1085, 65.334d, 212.46d, 387.63d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1087:
-                    parameters = ExplicitOperations[27];
+                    parameters = new EpsgExplicitOperationRecord(1087, -112.0d, -110.3d, -140.2d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1088:
-                    parameters = ExplicitOperations[28];
+                    parameters = new EpsgExplicitOperationRecord(1088, -223.7d, -67.38d, 1.34d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1089:
-                    parameters = ExplicitOperations[29];
+                    parameters = new EpsgExplicitOperationRecord(1089, -225.4d, -67.7d, 7.85d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1090:
-                    parameters = ExplicitOperations[30];
+                    parameters = new EpsgExplicitOperationRecord(1090, -227.1d, -68.1d, 14.4d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1091:
-                    parameters = ExplicitOperations[31];
+                    parameters = new EpsgExplicitOperationRecord(1091, -231.61d, -68.21d, 13.93d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1092:
-                    parameters = ExplicitOperations[32];
+                    parameters = new EpsgExplicitOperationRecord(1092, -225.06d, -67.37d, 14.61d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1093:
-                    parameters = ExplicitOperations[33];
+                    parameters = new EpsgExplicitOperationRecord(1093, -229.08d, -65.73d, 20.21d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1094:
-                    parameters = ExplicitOperations[34];
+                    parameters = new EpsgExplicitOperationRecord(1094, -230.47d, -56.08d, 22.43d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1095:
-                    parameters = ExplicitOperations[35];
+                    parameters = new EpsgExplicitOperationRecord(1095, -270.933d, 115.599d, -360.226d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1096:
-                    parameters = ExplicitOperations[36];
+                    parameters = new EpsgExplicitOperationRecord(1096, -270.933d, 115.599d, -360.226d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1099:
-                    parameters = ExplicitOperations[37];
+                    parameters = new EpsgExplicitOperationRecord(1099, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1100:
-                    parameters = ExplicitOperations[38];
+                    parameters = new EpsgExplicitOperationRecord(1100, -166.0d, -15.0d, 204.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1101:
-                    parameters = ExplicitOperations[39];
+                    parameters = new EpsgExplicitOperationRecord(1101, -118.0d, -14.0d, 218.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1102:
-                    parameters = ExplicitOperations[40];
+                    parameters = new EpsgExplicitOperationRecord(1102, -134.0d, -2.0d, 210.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1103:
-                    parameters = ExplicitOperations[41];
+                    parameters = new EpsgExplicitOperationRecord(1103, -165.0d, -11.0d, 206.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1104:
-                    parameters = ExplicitOperations[42];
+                    parameters = new EpsgExplicitOperationRecord(1104, -123.0d, -20.0d, 220.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1105:
-                    parameters = ExplicitOperations[43];
+                    parameters = new EpsgExplicitOperationRecord(1105, -128.0d, -18.0d, 224.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1106:
-                    parameters = ExplicitOperations[44];
+                    parameters = new EpsgExplicitOperationRecord(1106, -161.0d, -14.0d, 205.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1107:
-                    parameters = ExplicitOperations[45];
+                    parameters = new EpsgExplicitOperationRecord(1107, -43.0d, -163.0d, 45.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1108:
-                    parameters = ExplicitOperations[46];
+                    parameters = new EpsgExplicitOperationRecord(1108, -133.0d, -48.0d, 148.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1109:
-                    parameters = ExplicitOperations[47];
+                    parameters = new EpsgExplicitOperationRecord(1109, -134.0d, -48.0d, 149.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1110:
-                    parameters = ExplicitOperations[48];
+                    parameters = new EpsgExplicitOperationRecord(1110, -150.0d, -250.0d, -1.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1111:
-                    parameters = ExplicitOperations[49];
+                    parameters = new EpsgExplicitOperationRecord(1111, -143.0d, -236.0d, 7.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1112:
-                    parameters = ExplicitOperations[50];
+                    parameters = new EpsgExplicitOperationRecord(1112, 593.16d, 26.15d, 478.54d, -6.3239d, -0.5008d, -5.5487d, 4.0775d);
                     return true;
                 case 1113:
-                    parameters = ExplicitOperations[51];
+                    parameters = new EpsgExplicitOperationRecord(1113, -143.0d, -90.0d, -294.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1114:
-                    parameters = ExplicitOperations[52];
+                    parameters = new EpsgExplicitOperationRecord(1114, -138.0d, -105.0d, -289.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1116:
-                    parameters = ExplicitOperations[53];
+                    parameters = new EpsgExplicitOperationRecord(1116, -125.0d, -108.0d, -295.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1117:
-                    parameters = ExplicitOperations[54];
+                    parameters = new EpsgExplicitOperationRecord(1117, -161.0d, -73.0d, -317.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1118:
-                    parameters = ExplicitOperations[55];
+                    parameters = new EpsgExplicitOperationRecord(1118, -134.0d, -105.0d, -295.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1120:
-                    parameters = ExplicitOperations[56];
+                    parameters = new EpsgExplicitOperationRecord(1120, -147.0d, -74.0d, -283.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1121:
-                    parameters = ExplicitOperations[57];
+                    parameters = new EpsgExplicitOperationRecord(1121, -142.0d, -96.0d, -293.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1122:
-                    parameters = ExplicitOperations[58];
+                    parameters = new EpsgExplicitOperationRecord(1122, -160.0d, -6.0d, -302.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1124:
-                    parameters = ExplicitOperations[59];
+                    parameters = new EpsgExplicitOperationRecord(1124, -73.0d, 213.0d, 296.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1125:
-                    parameters = ExplicitOperations[60];
+                    parameters = new EpsgExplicitOperationRecord(1125, 307.0d, 304.0d, -318.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1126:
-                    parameters = ExplicitOperations[61];
+                    parameters = new EpsgExplicitOperationRecord(1126, -384.0d, 664.0d, -48.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1127:
-                    parameters = ExplicitOperations[62];
+                    parameters = new EpsgExplicitOperationRecord(1127, -148.0d, 136.0d, 90.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1128:
-                    parameters = ExplicitOperations[63];
+                    parameters = new EpsgExplicitOperationRecord(1128, -136.0d, -108.0d, -292.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1129:
-                    parameters = ExplicitOperations[64];
+                    parameters = new EpsgExplicitOperationRecord(1129, -134.73d, -110.92d, -292.66d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1130:
-                    parameters = ExplicitOperations[65];
+                    parameters = new EpsgExplicitOperationRecord(1130, -263.0d, 6.0d, 431.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1131:
-                    parameters = ExplicitOperations[66];
+                    parameters = new EpsgExplicitOperationRecord(1131, -134.0d, 229.0d, -29.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1132:
-                    parameters = ExplicitOperations[67];
+                    parameters = new EpsgExplicitOperationRecord(1132, -206.0d, 172.0d, -6.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1133:
-                    parameters = ExplicitOperations[68];
+                    parameters = new EpsgExplicitOperationRecord(1133, -87.0d, -98.0d, -121.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1134:
-                    parameters = ExplicitOperations[69];
+                    parameters = new EpsgExplicitOperationRecord(1134, -87.0d, -96.0d, -120.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1135:
-                    parameters = ExplicitOperations[70];
+                    parameters = new EpsgExplicitOperationRecord(1135, -103.0d, -106.0d, -141.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1136:
-                    parameters = ExplicitOperations[71];
+                    parameters = new EpsgExplicitOperationRecord(1136, -104.0d, -101.0d, -140.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1137:
-                    parameters = ExplicitOperations[72];
+                    parameters = new EpsgExplicitOperationRecord(1137, -130.0d, -117.0d, -151.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1138:
-                    parameters = ExplicitOperations[73];
+                    parameters = new EpsgExplicitOperationRecord(1138, -86.0d, -96.0d, -120.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1139:
-                    parameters = ExplicitOperations[74];
+                    parameters = new EpsgExplicitOperationRecord(1139, -87.0d, -95.0d, -120.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1140:
-                    parameters = ExplicitOperations[75];
+                    parameters = new EpsgExplicitOperationRecord(1140, -84.0d, -95.0d, -130.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1141:
-                    parameters = ExplicitOperations[76];
+                    parameters = new EpsgExplicitOperationRecord(1141, -117.0d, -132.0d, -164.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1142:
-                    parameters = ExplicitOperations[77];
+                    parameters = new EpsgExplicitOperationRecord(1142, -97.0d, -103.0d, -120.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1143:
-                    parameters = ExplicitOperations[78];
+                    parameters = new EpsgExplicitOperationRecord(1143, -97.0d, -88.0d, -135.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1144:
-                    parameters = ExplicitOperations[79];
+                    parameters = new EpsgExplicitOperationRecord(1144, -107.0d, -88.0d, -149.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1145:
-                    parameters = ExplicitOperations[80];
+                    parameters = new EpsgExplicitOperationRecord(1145, -84.0d, -107.0d, -120.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1146:
-                    parameters = ExplicitOperations[81];
+                    parameters = new EpsgExplicitOperationRecord(1146, -82.981d, -99.719d, -110.709d, -0.5076d, 0.1503d, 0.3898d, -0.3143d);
                     return true;
                 case 1147:
-                    parameters = ExplicitOperations[82];
+                    parameters = new EpsgExplicitOperationRecord(1147, -1.51d, -0.84d, -3.5d, -1.893d, -0.687d, -2.764d, 0.609d);
                     return true;
                 case 1148:
-                    parameters = ExplicitOperations[83];
+                    parameters = new EpsgExplicitOperationRecord(1148, -130.0d, 110.0d, -13.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1149:
-                    parameters = ExplicitOperations[84];
+                    parameters = new EpsgExplicitOperationRecord(1149, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1150:
-                    parameters = ExplicitOperations[85];
+                    parameters = new EpsgExplicitOperationRecord(1150, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1151:
-                    parameters = ExplicitOperations[86];
+                    parameters = new EpsgExplicitOperationRecord(1151, 84.0d, -22.0d, 209.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1152:
-                    parameters = ExplicitOperations[87];
+                    parameters = new EpsgExplicitOperationRecord(1152, -637.0d, -549.0d, -203.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1153:
-                    parameters = ExplicitOperations[88];
+                    parameters = new EpsgExplicitOperationRecord(1153, 217.0d, 823.0d, 299.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1154:
-                    parameters = ExplicitOperations[89];
+                    parameters = new EpsgExplicitOperationRecord(1154, 209.0d, 818.0d, 290.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1155:
-                    parameters = ExplicitOperations[90];
+                    parameters = new EpsgExplicitOperationRecord(1155, 282.0d, 726.0d, 254.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1156:
-                    parameters = ExplicitOperations[91];
+                    parameters = new EpsgExplicitOperationRecord(1156, 295.0d, 736.0d, 257.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1157:
-                    parameters = ExplicitOperations[92];
+                    parameters = new EpsgExplicitOperationRecord(1157, -97.0d, 787.0d, 86.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1158:
-                    parameters = ExplicitOperations[93];
+                    parameters = new EpsgExplicitOperationRecord(1158, -11.0d, 851.0d, 5.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1159:
-                    parameters = ExplicitOperations[94];
+                    parameters = new EpsgExplicitOperationRecord(1159, -130.0d, 29.0d, 364.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1160:
-                    parameters = ExplicitOperations[95];
+                    parameters = new EpsgExplicitOperationRecord(1160, -90.0d, 40.0d, 88.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1161:
-                    parameters = ExplicitOperations[96];
+                    parameters = new EpsgExplicitOperationRecord(1161, -133.0d, -77.0d, -51.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1162:
-                    parameters = ExplicitOperations[97];
+                    parameters = new EpsgExplicitOperationRecord(1162, -133.0d, -79.0d, -72.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1163:
-                    parameters = ExplicitOperations[98];
+                    parameters = new EpsgExplicitOperationRecord(1163, -74.0d, -130.0d, 42.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1164:
-                    parameters = ExplicitOperations[99];
+                    parameters = new EpsgExplicitOperationRecord(1164, 41.0d, -220.0d, -134.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1165:
-                    parameters = ExplicitOperations[100];
+                    parameters = new EpsgExplicitOperationRecord(1165, 639.0d, 405.0d, 60.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1166:
-                    parameters = ExplicitOperations[101];
+                    parameters = new EpsgExplicitOperationRecord(1166, 31.0d, 146.0d, 47.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1167:
-                    parameters = ExplicitOperations[102];
+                    parameters = new EpsgExplicitOperationRecord(1167, -81.0d, -84.0d, 115.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1168:
-                    parameters = ExplicitOperations[103];
+                    parameters = new EpsgExplicitOperationRecord(1168, -92.0d, -93.0d, 122.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1169:
-                    parameters = ExplicitOperations[104];
+                    parameters = new EpsgExplicitOperationRecord(1169, -225.0d, -65.0d, 9.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1170:
-                    parameters = ExplicitOperations[105];
+                    parameters = new EpsgExplicitOperationRecord(1170, -3.0d, 142.0d, 183.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1171:
-                    parameters = ExplicitOperations[106];
+                    parameters = new EpsgExplicitOperationRecord(1171, 0.0d, 125.0d, 194.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1172:
-                    parameters = ExplicitOperations[107];
+                    parameters = new EpsgExplicitOperationRecord(1172, -10.0d, 158.0d, 187.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1173:
-                    parameters = ExplicitOperations[108];
+                    parameters = new EpsgExplicitOperationRecord(1173, -8.0d, 160.0d, 176.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1174:
-                    parameters = ExplicitOperations[109];
+                    parameters = new EpsgExplicitOperationRecord(1174, -9.0d, 161.0d, 179.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1175:
-                    parameters = ExplicitOperations[110];
+                    parameters = new EpsgExplicitOperationRecord(1175, -8.0d, 159.0d, 175.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1176:
-                    parameters = ExplicitOperations[111];
+                    parameters = new EpsgExplicitOperationRecord(1176, -5.0d, 135.0d, 172.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1177:
-                    parameters = ExplicitOperations[112];
+                    parameters = new EpsgExplicitOperationRecord(1177, -4.0d, 154.0d, 178.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1178:
-                    parameters = ExplicitOperations[113];
+                    parameters = new EpsgExplicitOperationRecord(1178, 1.0d, 140.0d, 165.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1179:
-                    parameters = ExplicitOperations[114];
+                    parameters = new EpsgExplicitOperationRecord(1179, -7.0d, 162.0d, 188.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1180:
-                    parameters = ExplicitOperations[115];
+                    parameters = new EpsgExplicitOperationRecord(1180, -9.0d, 157.0d, 184.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1181:
-                    parameters = ExplicitOperations[116];
+                    parameters = new EpsgExplicitOperationRecord(1181, -22.0d, 160.0d, 190.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1182:
-                    parameters = ExplicitOperations[117];
+                    parameters = new EpsgExplicitOperationRecord(1182, 4.0d, 159.0d, 188.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1183:
-                    parameters = ExplicitOperations[118];
+                    parameters = new EpsgExplicitOperationRecord(1183, -7.0d, 139.0d, 181.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1184:
-                    parameters = ExplicitOperations[119];
+                    parameters = new EpsgExplicitOperationRecord(1184, 0.0d, 125.0d, 201.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1185:
-                    parameters = ExplicitOperations[120];
+                    parameters = new EpsgExplicitOperationRecord(1185, -9.0d, 152.0d, 178.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1186:
-                    parameters = ExplicitOperations[121];
+                    parameters = new EpsgExplicitOperationRecord(1186, 11.0d, 114.0d, 195.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1187:
-                    parameters = ExplicitOperations[122];
+                    parameters = new EpsgExplicitOperationRecord(1187, -12.0d, 130.0d, 190.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1188:
-                    parameters = ExplicitOperations[123];
+                    parameters = new EpsgExplicitOperationRecord(1188, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1189:
-                    parameters = ExplicitOperations[124];
+                    parameters = new EpsgExplicitOperationRecord(1189, -247.0d, -148.0d, 369.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1190:
-                    parameters = ExplicitOperations[125];
+                    parameters = new EpsgExplicitOperationRecord(1190, -243.0d, -192.0d, 477.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1191:
-                    parameters = ExplicitOperations[126];
+                    parameters = new EpsgExplicitOperationRecord(1191, -249.0d, -156.0d, 381.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1192:
-                    parameters = ExplicitOperations[127];
+                    parameters = new EpsgExplicitOperationRecord(1192, -10.0d, 375.0d, 165.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1193:
-                    parameters = ExplicitOperations[128];
+                    parameters = new EpsgExplicitOperationRecord(1193, -168.0d, -60.0d, 320.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1194:
-                    parameters = ExplicitOperations[129];
+                    parameters = new EpsgExplicitOperationRecord(1194, 601.705d, 84.263d, 485.227d, 4.7354d, 1.3145d, 5.393d, -2.3887d);
                     return true;
                 case 1195:
-                    parameters = ExplicitOperations[130];
+                    parameters = new EpsgExplicitOperationRecord(1195, 375.0d, -111.0d, 431.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1196:
-                    parameters = ExplicitOperations[131];
+                    parameters = new EpsgExplicitOperationRecord(1196, 371.0d, -112.0d, 434.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1197:
-                    parameters = ExplicitOperations[132];
+                    parameters = new EpsgExplicitOperationRecord(1197, 371.0d, -111.0d, 434.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1198:
-                    parameters = ExplicitOperations[133];
+                    parameters = new EpsgExplicitOperationRecord(1198, 384.0d, -111.0d, 425.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1199:
-                    parameters = ExplicitOperations[134];
+                    parameters = new EpsgExplicitOperationRecord(1199, 370.0d, -108.0d, 434.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1200:
-                    parameters = ExplicitOperations[135];
+                    parameters = new EpsgExplicitOperationRecord(1200, -148.0d, 51.0d, -291.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1201:
-                    parameters = ExplicitOperations[136];
+                    parameters = new EpsgExplicitOperationRecord(1201, -288.0d, 175.0d, -376.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1202:
-                    parameters = ExplicitOperations[137];
+                    parameters = new EpsgExplicitOperationRecord(1202, -270.0d, 188.0d, -388.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1203:
-                    parameters = ExplicitOperations[138];
+                    parameters = new EpsgExplicitOperationRecord(1203, -270.0d, 183.0d, -390.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1204:
-                    parameters = ExplicitOperations[139];
+                    parameters = new EpsgExplicitOperationRecord(1204, -305.0d, 243.0d, -442.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1205:
-                    parameters = ExplicitOperations[140];
+                    parameters = new EpsgExplicitOperationRecord(1205, -282.0d, 169.0d, -371.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1206:
-                    parameters = ExplicitOperations[141];
+                    parameters = new EpsgExplicitOperationRecord(1206, -278.0d, 171.0d, -367.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1207:
-                    parameters = ExplicitOperations[142];
+                    parameters = new EpsgExplicitOperationRecord(1207, -298.0d, 159.0d, -369.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1208:
-                    parameters = ExplicitOperations[143];
+                    parameters = new EpsgExplicitOperationRecord(1208, -279.0d, 175.0d, -379.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1209:
-                    parameters = ExplicitOperations[144];
+                    parameters = new EpsgExplicitOperationRecord(1209, -295.0d, 173.0d, -371.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1210:
-                    parameters = ExplicitOperations[145];
+                    parameters = new EpsgExplicitOperationRecord(1210, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1225:
-                    parameters = ExplicitOperations[146];
+                    parameters = new EpsgExplicitOperationRecord(1225, -355.0d, 21.0d, 72.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1226:
-                    parameters = ExplicitOperations[147];
+                    parameters = new EpsgExplicitOperationRecord(1226, 616.0d, 97.0d, -251.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1227:
-                    parameters = ExplicitOperations[148];
+                    parameters = new EpsgExplicitOperationRecord(1227, -189.0d, -242.0d, -91.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1228:
-                    parameters = ExplicitOperations[149];
+                    parameters = new EpsgExplicitOperationRecord(1228, -679.0d, 669.0d, -48.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1230:
-                    parameters = ExplicitOperations[150];
+                    parameters = new EpsgExplicitOperationRecord(1230, -148.0d, 507.0d, 685.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1231:
-                    parameters = ExplicitOperations[151];
+                    parameters = new EpsgExplicitOperationRecord(1231, -148.0d, 507.0d, 685.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1232:
-                    parameters = ExplicitOperations[152];
+                    parameters = new EpsgExplicitOperationRecord(1232, -146.0d, 507.0d, 687.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1233:
-                    parameters = ExplicitOperations[153];
+                    parameters = new EpsgExplicitOperationRecord(1233, -158.0d, 507.0d, 676.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1234:
-                    parameters = ExplicitOperations[154];
+                    parameters = new EpsgExplicitOperationRecord(1234, -155.0d, 171.0d, 37.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1235:
-                    parameters = ExplicitOperations[155];
+                    parameters = new EpsgExplicitOperationRecord(1235, -265.0d, 120.0d, -358.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1236:
-                    parameters = ExplicitOperations[156];
+                    parameters = new EpsgExplicitOperationRecord(1236, -116.0d, -50.47d, 141.69d, 0.23d, 0.39d, 0.344d, 0.0983d);
                     return true;
                 case 1237:
-                    parameters = ExplicitOperations[157];
+                    parameters = new EpsgExplicitOperationRecord(1237, 0.0d, 0.0d, 4.5d, 0.0d, 0.0d, 0.554d, 0.2263d);
                     return true;
                 case 1238:
-                    parameters = ExplicitOperations[158];
+                    parameters = new EpsgExplicitOperationRecord(1238, 0.0d, 0.0d, 4.5d, 0.0d, 0.0d, 0.554d, 0.219d);
                     return true;
                 case 1239:
-                    parameters = ExplicitOperations[159];
+                    parameters = new EpsgExplicitOperationRecord(1239, 0.0d, 0.0d, -2.6d, 0.0d, 0.0d, 0.26d, -0.6063d);
                     return true;
                 case 1240:
-                    parameters = ExplicitOperations[160];
+                    parameters = new EpsgExplicitOperationRecord(1240, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.814d, -0.38d);
                     return true;
                 case 1242:
-                    parameters = ExplicitOperations[161];
+                    parameters = new EpsgExplicitOperationRecord(1242, 52.17d, -71.82d, -14.9d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1244:
-                    parameters = ExplicitOperations[162];
+                    parameters = new EpsgExplicitOperationRecord(1244, -1.08d, -0.27d, -0.9d, -0.0d, -0.0d, 0.16d, -0.12d);
                     return true;
                 case 1245:
-                    parameters = ExplicitOperations[163];
+                    parameters = new EpsgExplicitOperationRecord(1245, -112.0d, -77.0d, -145.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1246:
-                    parameters = ExplicitOperations[164];
+                    parameters = new EpsgExplicitOperationRecord(1246, -333.0d, -222.0d, 114.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1247:
-                    parameters = ExplicitOperations[165];
+                    parameters = new EpsgExplicitOperationRecord(1247, 283.0d, 682.0d, 231.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1248:
-                    parameters = ExplicitOperations[166];
+                    parameters = new EpsgExplicitOperationRecord(1248, -24.0d, -15.0d, 5.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1249:
-                    parameters = ExplicitOperations[167];
+                    parameters = new EpsgExplicitOperationRecord(1249, -2.0d, 152.0d, 149.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1250:
-                    parameters = ExplicitOperations[168];
+                    parameters = new EpsgExplicitOperationRecord(1250, 2.0d, 204.0d, 105.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1251:
-                    parameters = ExplicitOperations[169];
+                    parameters = new EpsgExplicitOperationRecord(1251, -2.0d, 0.0d, 4.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1252:
-                    parameters = ExplicitOperations[170];
+                    parameters = new EpsgExplicitOperationRecord(1252, 1.0d, 1.0d, -1.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1253:
-                    parameters = ExplicitOperations[171];
+                    parameters = new EpsgExplicitOperationRecord(1253, -186.0d, -93.0d, 310.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1254:
-                    parameters = ExplicitOperations[172];
+                    parameters = new EpsgExplicitOperationRecord(1254, 28.0d, -130.0d, -95.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1255:
-                    parameters = ExplicitOperations[173];
+                    parameters = new EpsgExplicitOperationRecord(1255, -123.0d, -206.0d, 219.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1256:
-                    parameters = ExplicitOperations[174];
+                    parameters = new EpsgExplicitOperationRecord(1256, -346.0d, -1.0d, 224.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1257:
-                    parameters = ExplicitOperations[175];
+                    parameters = new EpsgExplicitOperationRecord(1257, 25.9d, -130.94d, -81.76d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1267:
-                    parameters = ExplicitOperations[176];
+                    parameters = new EpsgExplicitOperationRecord(1267, 23.92d, -141.27d, -80.9d, -0.0d, 0.35d, 0.82d, -0.12d);
                     return true;
                 case 1271:
-                    parameters = ExplicitOperations[177];
+                    parameters = new EpsgExplicitOperationRecord(1271, 615.64d, 102.08d, -255.81d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1272:
-                    parameters = ExplicitOperations[178];
+                    parameters = new EpsgExplicitOperationRecord(1272, -199.87d, 74.79d, 246.62d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1274:
-                    parameters = ExplicitOperations[179];
+                    parameters = new EpsgExplicitOperationRecord(1274, -40.595d, -18.55d, -69.339d, 2.508d, 1.832d, -2.611d, -4.299d);
                     return true;
                 case 1275:
-                    parameters = ExplicitOperations[180];
+                    parameters = new EpsgExplicitOperationRecord(1275, -84.0d, -97.0d, -117.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1276:
-                    parameters = ExplicitOperations[181];
+                    parameters = new EpsgExplicitOperationRecord(1276, -84.0d, 37.0d, 437.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1277:
-                    parameters = ExplicitOperations[182];
+                    parameters = new EpsgExplicitOperationRecord(1277, -168.0d, -72.0d, 314.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1278:
-                    parameters = ExplicitOperations[183];
+                    parameters = new EpsgExplicitOperationRecord(1278, -127.8d, -52.3d, 152.9d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1279:
-                    parameters = ExplicitOperations[184];
+                    parameters = new EpsgExplicitOperationRecord(1279, -128.5d, -53.0d, 153.4d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1280:
-                    parameters = ExplicitOperations[185];
+                    parameters = new EpsgExplicitOperationRecord(1280, -117.763d, -51.51d, 139.061d, 0.292d, 0.443d, 0.277d, -0.191d);
                     return true;
                 case 1281:
-                    parameters = ExplicitOperations[186];
+                    parameters = new EpsgExplicitOperationRecord(1281, 24.82d, -131.21d, -82.66d, -0.0d, -0.0d, 0.16d, -0.12d);
                     return true;
                 case 1283:
-                    parameters = ExplicitOperations[187];
+                    parameters = new EpsgExplicitOperationRecord(1283, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1284:
-                    parameters = ExplicitOperations[188];
+                    parameters = new EpsgExplicitOperationRecord(1284, -157.0d, -2.0d, -299.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1285:
-                    parameters = ExplicitOperations[189];
+                    parameters = new EpsgExplicitOperationRecord(1285, -175.0d, -23.0d, -303.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1290:
-                    parameters = ExplicitOperations[190];
+                    parameters = new EpsgExplicitOperationRecord(1290, 24.0d, -124.0d, -82.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1291:
-                    parameters = ExplicitOperations[191];
+                    parameters = new EpsgExplicitOperationRecord(1291, 15.0d, -130.0d, -84.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1294:
-                    parameters = ExplicitOperations[192];
+                    parameters = new EpsgExplicitOperationRecord(1294, -73.0d, -247.0d, 227.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1296:
-                    parameters = ExplicitOperations[193];
+                    parameters = new EpsgExplicitOperationRecord(1296, -61.702d, 284.488d, 472.052d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1297:
-                    parameters = ExplicitOperations[194];
+                    parameters = new EpsgExplicitOperationRecord(1297, -115.064d, -87.39d, -101.716d, -0.058d, 4.001d, -2.062d, 9.366d);
                     return true;
                 case 1298:
-                    parameters = ExplicitOperations[195];
+                    parameters = new EpsgExplicitOperationRecord(1298, -82.875d, -57.097d, -156.768d, -2.158d, 1.524d, -0.982d, -0.359d);
                     return true;
                 case 1299:
-                    parameters = ExplicitOperations[196];
+                    parameters = new EpsgExplicitOperationRecord(1299, -138.527d, -91.999d, -114.591d, -0.14d, 3.363d, -2.217d, 11.748d);
                     return true;
                 case 1300:
-                    parameters = ExplicitOperations[197];
+                    parameters = new EpsgExplicitOperationRecord(1300, -73.472d, -51.66d, -112.482d, 0.953d, 4.6d, -2.368d, 0.586d);
                     return true;
                 case 1301:
-                    parameters = ExplicitOperations[198];
+                    parameters = new EpsgExplicitOperationRecord(1301, 219.315d, 168.975d, -166.145d, 0.198d, 5.926d, -2.356d, -57.104d);
                     return true;
                 case 1302:
-                    parameters = ExplicitOperations[199];
+                    parameters = new EpsgExplicitOperationRecord(1302, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d);
                     return true;
                 case 1303:
-                    parameters = ExplicitOperations[200];
+                    parameters = new EpsgExplicitOperationRecord(1303, 43.822d, -108.842d, -119.585d, 1.455d, -0.761d, 0.737d, 0.549d);
                     return true;
                 case 1304:
-                    parameters = ExplicitOperations[201];
+                    parameters = new EpsgExplicitOperationRecord(1304, 210.0d, 814.0d, 289.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1305:
-                    parameters = ExplicitOperations[202];
+                    parameters = new EpsgExplicitOperationRecord(1305, -147.0d, 506.0d, 687.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1307:
-                    parameters = ExplicitOperations[203];
+                    parameters = new EpsgExplicitOperationRecord(1307, -2.0d, 374.0d, 172.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1309:
-                    parameters = ExplicitOperations[204];
+                    parameters = new EpsgExplicitOperationRecord(1309, 582.0d, 105.0d, 414.0d, 1.04d, 0.35d, -3.08d, 8.3d);
                     return true;
                 case 1311:
-                    parameters = ExplicitOperations[205];
+                    parameters = new EpsgExplicitOperationRecord(1311, -89.5d, -93.8d, -123.1d, 0.0d, 0.0d, -0.156d, 1.2d);
                     return true;
                 case 1314:
-                    parameters = ExplicitOperations[206];
+                    parameters = new EpsgExplicitOperationRecord(1314, 446.448d, -125.157d, 542.06d, 0.15d, 0.247d, 0.842d, -20.489d);
                     return true;
                 case 1315:
-                    parameters = ExplicitOperations[207];
+                    parameters = new EpsgExplicitOperationRecord(1315, 535.948d, -31.357d, 665.16d, 0.15d, 0.247d, 0.998d, -21.689d);
                     return true;
                 case 1317:
-                    parameters = ExplicitOperations[208];
+                    parameters = new EpsgExplicitOperationRecord(1317, -37.2d, -370.6d, -228.5d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1318:
-                    parameters = ExplicitOperations[209];
+                    parameters = new EpsgExplicitOperationRecord(1318, -42.01d, -332.21d, -229.75d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1319:
-                    parameters = ExplicitOperations[210];
+                    parameters = new EpsgExplicitOperationRecord(1319, -40.0d, -354.0d, -224.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1320:
-                    parameters = ExplicitOperations[211];
+                    parameters = new EpsgExplicitOperationRecord(1320, -37.2d, -370.6d, -224.0d, 0.0d, 0.0d, 0.554d, 0.219d);
                     return true;
                 case 1321:
-                    parameters = ExplicitOperations[212];
+                    parameters = new EpsgExplicitOperationRecord(1321, -41.8d, -342.2d, -228.2d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1322:
-                    parameters = ExplicitOperations[213];
+                    parameters = new EpsgExplicitOperationRecord(1322, -55.5d, -348.0d, -229.2d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1323:
-                    parameters = ExplicitOperations[214];
+                    parameters = new EpsgExplicitOperationRecord(1323, -43.0d, -337.0d, -233.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1324:
-                    parameters = ExplicitOperations[215];
+                    parameters = new EpsgExplicitOperationRecord(1324, -48.0d, -345.0d, -231.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1325:
-                    parameters = ExplicitOperations[216];
+                    parameters = new EpsgExplicitOperationRecord(1325, -48.6d, -345.1d, -230.8d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1326:
-                    parameters = ExplicitOperations[217];
+                    parameters = new EpsgExplicitOperationRecord(1326, -41.057d, -374.564d, -226.287d, 0.0d, 0.0d, 0.554d, 0.219d);
                     return true;
                 case 1327:
-                    parameters = ExplicitOperations[218];
+                    parameters = new EpsgExplicitOperationRecord(1327, -50.9d, -347.6d, -231.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1330:
-                    parameters = ExplicitOperations[219];
+                    parameters = new EpsgExplicitOperationRecord(1330, -252.95d, -4.11d, -96.38d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1331:
-                    parameters = ExplicitOperations[220];
+                    parameters = new EpsgExplicitOperationRecord(1331, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d);
                     return true;
                 case 1332:
-                    parameters = ExplicitOperations[221];
+                    parameters = new EpsgExplicitOperationRecord(1332, 21.53219d, -97.00027d, -60.74046d, 0.99548d, 0.58147d, 0.2418d, -4.5981d);
                     return true;
                 case 1333:
-                    parameters = ExplicitOperations[222];
+                    parameters = new EpsgExplicitOperationRecord(1333, 0.055d, -0.541d, -0.185d, 0.0183d, -0.0003d, -0.007d, -0.014d);
                     return true;
                 case 1334:
-                    parameters = ExplicitOperations[223];
+                    parameters = new EpsgExplicitOperationRecord(1334, 21.58719d, -97.54127d, -60.92546d, 1.01378d, 0.58117d, 0.2348d, -4.6121d);
                     return true;
                 case 1437:
-                    parameters = ExplicitOperations[224];
+                    parameters = new EpsgExplicitOperationRecord(1437, 419.3836d, 99.3335d, 591.3451d, 0.850389d, 1.817277d, -7.862238d, -0.99496d);
                     return true;
                 case 1438:
-                    parameters = ExplicitOperations[225];
+                    parameters = new EpsgExplicitOperationRecord(1438, -333.102d, -11.02d, 230.69d, 0.0d, 0.0d, 0.554d, 0.219d);
                     return true;
                 case 1439:
-                    parameters = ExplicitOperations[226];
+                    parameters = new EpsgExplicitOperationRecord(1439, -180.624d, -225.516d, 173.919d, -0.81d, -1.898d, 8.336d, 16.71006d);
                     return true;
                 case 1440:
-                    parameters = ExplicitOperations[227];
+                    parameters = new EpsgExplicitOperationRecord(1440, -86.0d, -92.2d, -127.5d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1441:
-                    parameters = ExplicitOperations[228];
+                    parameters = new EpsgExplicitOperationRecord(1441, -255.0d, -15.0d, 71.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1442:
-                    parameters = ExplicitOperations[229];
+                    parameters = new EpsgExplicitOperationRecord(1442, 725.0d, 685.0d, 536.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1443:
-                    parameters = ExplicitOperations[230];
+                    parameters = new EpsgExplicitOperationRecord(1443, 72.0d, 213.7d, 93.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1444:
-                    parameters = ExplicitOperations[231];
+                    parameters = new EpsgExplicitOperationRecord(1444, 174.0d, 359.0d, 365.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1445:
-                    parameters = ExplicitOperations[232];
+                    parameters = new EpsgExplicitOperationRecord(1445, 9.0d, 183.0d, 236.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1446:
-                    parameters = ExplicitOperations[233];
+                    parameters = new EpsgExplicitOperationRecord(1446, -149.0d, 128.0d, 296.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1448:
-                    parameters = ExplicitOperations[234];
+                    parameters = new EpsgExplicitOperationRecord(1448, 52.684d, -71.194d, -13.975d, -0.312d, -0.1063d, -0.3729d, 1.0191d);
                     return true;
                 case 1449:
-                    parameters = ExplicitOperations[235];
+                    parameters = new EpsgExplicitOperationRecord(1449, 52.684d, -71.194d, -13.975d, -0.312d, -0.1063d, -0.3729d, 1.0191d);
                     return true;
                 case 1458:
-                    parameters = ExplicitOperations[236];
+                    parameters = new EpsgExplicitOperationRecord(1458, -129.193d, -41.212d, 130.73d, 0.246d, 0.374d, 0.329d, -2.955d);
                     return true;
                 case 1459:
-                    parameters = ExplicitOperations[237];
+                    parameters = new EpsgExplicitOperationRecord(1459, -120.695d, -62.73d, 165.46d, 0.109d, -0.141d, -0.116d, 2.733d);
                     return true;
                 case 1460:
-                    parameters = ExplicitOperations[238];
+                    parameters = new EpsgExplicitOperationRecord(1460, -119.353d, -48.301d, 139.484d, 0.415d, 0.26d, 0.437d, -0.613d);
                     return true;
                 case 1469:
-                    parameters = ExplicitOperations[239];
+                    parameters = new EpsgExplicitOperationRecord(1469, -125.0d, 53.0d, 467.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1470:
-                    parameters = ExplicitOperations[240];
+                    parameters = new EpsgExplicitOperationRecord(1470, -124.76d, 53.0d, 466.79d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1504:
-                    parameters = ExplicitOperations[241];
+                    parameters = new EpsgExplicitOperationRecord(1504, -134.73d, -110.92d, -292.66d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1505:
-                    parameters = ExplicitOperations[242];
+                    parameters = new EpsgExplicitOperationRecord(1505, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1509:
-                    parameters = ExplicitOperations[243];
+                    parameters = new EpsgExplicitOperationRecord(1509, 674.374d, 15.056d, 405.346d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1511:
-                    parameters = ExplicitOperations[244];
+                    parameters = new EpsgExplicitOperationRecord(1511, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1512:
-                    parameters = ExplicitOperations[245];
+                    parameters = new EpsgExplicitOperationRecord(1512, -133.63d, -157.5d, -158.62d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1513:
-                    parameters = ExplicitOperations[246];
+                    parameters = new EpsgExplicitOperationRecord(1513, -241.54d, -163.64d, 396.06d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1514:
-                    parameters = ExplicitOperations[247];
+                    parameters = new EpsgExplicitOperationRecord(1514, -110.33d, -97.73d, -119.85d, 0.3423d, 1.1634d, 0.2715d, 0.063d);
                     return true;
                 case 1516:
-                    parameters = ExplicitOperations[248];
+                    parameters = new EpsgExplicitOperationRecord(1516, -273.5d, 110.6d, -357.9d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1517:
-                    parameters = ExplicitOperations[249];
+                    parameters = new EpsgExplicitOperationRecord(1517, -23.0d, 259.0d, -9.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1518:
-                    parameters = ExplicitOperations[250];
+                    parameters = new EpsgExplicitOperationRecord(1518, -83.0d, 37.0d, 124.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1527:
-                    parameters = ExplicitOperations[251];
+                    parameters = new EpsgExplicitOperationRecord(1527, -154.5d, 150.7d, 100.4d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1528:
-                    parameters = ExplicitOperations[252];
+                    parameters = new EpsgExplicitOperationRecord(1528, 160.0d, 26.0d, 41.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1529:
-                    parameters = ExplicitOperations[253];
+                    parameters = new EpsgExplicitOperationRecord(1529, 18.38d, 192.45d, 96.82d, 0.056d, -0.142d, -0.2d, -0.0013d);
                     return true;
                 case 1530:
-                    parameters = ExplicitOperations[254];
+                    parameters = new EpsgExplicitOperationRecord(1530, -4.2d, 135.4d, 181.9d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1531:
-                    parameters = ExplicitOperations[255];
+                    parameters = new EpsgExplicitOperationRecord(1531, -245.0d, -153.9d, 382.8d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1532:
-                    parameters = ExplicitOperations[256];
+                    parameters = new EpsgExplicitOperationRecord(1532, -80.7d, -132.5d, 41.1d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1533:
-                    parameters = ExplicitOperations[257];
+                    parameters = new EpsgExplicitOperationRecord(1533, 214.0d, 804.0d, 268.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1536:
-                    parameters = ExplicitOperations[258];
+                    parameters = new EpsgExplicitOperationRecord(1536, -250.2d, -153.09d, 391.7d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1537:
-                    parameters = ExplicitOperations[259];
+                    parameters = new EpsgExplicitOperationRecord(1537, 204.64d, 834.74d, 293.8d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1538:
-                    parameters = ExplicitOperations[260];
+                    parameters = new EpsgExplicitOperationRecord(1538, -260.1d, 5.5d, 432.2d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1539:
-                    parameters = ExplicitOperations[261];
+                    parameters = new EpsgExplicitOperationRecord(1539, -76.0d, -138.0d, 67.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1540:
-                    parameters = ExplicitOperations[262];
+                    parameters = new EpsgExplicitOperationRecord(1540, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1541:
-                    parameters = ExplicitOperations[263];
+                    parameters = new EpsgExplicitOperationRecord(1541, 199.0d, 931.0d, 317.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1542:
-                    parameters = ExplicitOperations[264];
+                    parameters = new EpsgExplicitOperationRecord(1542, 198.0d, 881.0d, 317.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1543:
-                    parameters = ExplicitOperations[265];
+                    parameters = new EpsgExplicitOperationRecord(1543, 182.0d, 915.0d, 344.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1544:
-                    parameters = ExplicitOperations[266];
+                    parameters = new EpsgExplicitOperationRecord(1544, -17.51d, -108.32d, -62.39d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1545:
-                    parameters = ExplicitOperations[267];
+                    parameters = new EpsgExplicitOperationRecord(1545, -121.8d, 98.1d, -15.2d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1547:
-                    parameters = ExplicitOperations[268];
+                    parameters = new EpsgExplicitOperationRecord(1547, -173.0d, 253.0d, 27.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1550:
-                    parameters = ExplicitOperations[269];
+                    parameters = new EpsgExplicitOperationRecord(1550, -139.62d, 290.53d, -150.29d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1551:
-                    parameters = ExplicitOperations[270];
+                    parameters = new EpsgExplicitOperationRecord(1551, -141.15d, 293.44d, -150.56d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1552:
-                    parameters = ExplicitOperations[271];
+                    parameters = new EpsgExplicitOperationRecord(1552, -142.48d, 296.03d, -149.74d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1555:
-                    parameters = ExplicitOperations[272];
+                    parameters = new EpsgExplicitOperationRecord(1555, -0.465d, 372.095d, 171.736d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1556:
-                    parameters = ExplicitOperations[273];
+                    parameters = new EpsgExplicitOperationRecord(1556, -2.0d, 374.0d, 172.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1557:
-                    parameters = ExplicitOperations[274];
+                    parameters = new EpsgExplicitOperationRecord(1557, -254.1d, -5.36d, -100.29d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1558:
-                    parameters = ExplicitOperations[275];
+                    parameters = new EpsgExplicitOperationRecord(1558, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1560:
-                    parameters = ExplicitOperations[276];
+                    parameters = new EpsgExplicitOperationRecord(1560, -156.5d, -87.2d, 285.9d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1561:
-                    parameters = ExplicitOperations[277];
+                    parameters = new EpsgExplicitOperationRecord(1561, -128.0d, -283.0d, 22.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1562:
-                    parameters = ExplicitOperations[278];
+                    parameters = new EpsgExplicitOperationRecord(1562, -128.16d, -282.42d, 21.93d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1563:
-                    parameters = ExplicitOperations[279];
+                    parameters = new EpsgExplicitOperationRecord(1563, -128.033d, -283.697d, 21.052d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1564:
-                    parameters = ExplicitOperations[280];
+                    parameters = new EpsgExplicitOperationRecord(1564, 59.47d, -5.04d, 187.44d, 0.47d, -0.1d, 1.024d, -4.5993d);
                     return true;
                 case 1565:
-                    parameters = ExplicitOperations[281];
+                    parameters = new EpsgExplicitOperationRecord(1565, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1566:
-                    parameters = ExplicitOperations[282];
+                    parameters = new EpsgExplicitOperationRecord(1566, 54.4d, -20.1d, 183.1d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1569:
-                    parameters = ExplicitOperations[283];
+                    parameters = new EpsgExplicitOperationRecord(1569, -199.0d, 32.0d, 322.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1570:
-                    parameters = ExplicitOperations[284];
+                    parameters = new EpsgExplicitOperationRecord(1570, -171.16d, 17.29d, 323.31d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1577:
-                    parameters = ExplicitOperations[285];
+                    parameters = new EpsgExplicitOperationRecord(1577, -115.0d, 118.0d, 426.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1580:
-                    parameters = ExplicitOperations[286];
+                    parameters = new EpsgExplicitOperationRecord(1580, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1581:
-                    parameters = ExplicitOperations[287];
+                    parameters = new EpsgExplicitOperationRecord(1581, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1582:
-                    parameters = ExplicitOperations[288];
+                    parameters = new EpsgExplicitOperationRecord(1582, -259.73d, 173.12d, -398.27d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1583:
-                    parameters = ExplicitOperations[289];
+                    parameters = new EpsgExplicitOperationRecord(1583, -307.7d, 265.3d, -363.5d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1584:
-                    parameters = ExplicitOperations[290];
+                    parameters = new EpsgExplicitOperationRecord(1584, -174.6d, -3.1d, 236.2d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1586:
-                    parameters = ExplicitOperations[291];
+                    parameters = new EpsgExplicitOperationRecord(1586, -175.09d, 1.218d, 238.831d, -0.047d, 0.019d, 0.808d, 0.1698d);
                     return true;
                 case 1587:
-                    parameters = ExplicitOperations[292];
+                    parameters = new EpsgExplicitOperationRecord(1587, -191.77d, 15.01d, 235.07d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1588:
-                    parameters = ExplicitOperations[293];
+                    parameters = new EpsgExplicitOperationRecord(1588, -116.641d, -56.931d, -110.559d, 4.327d, 4.464d, -4.444d, -3.52d);
                     return true;
                 case 1592:
-                    parameters = ExplicitOperations[294];
+                    parameters = new EpsgExplicitOperationRecord(1592, -678.0d, 670.0d, -48.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1594:
-                    parameters = ExplicitOperations[295];
+                    parameters = new EpsgExplicitOperationRecord(1594, -120.271d, -64.543d, 161.632d, 0.217d, -0.067d, -0.129d, 2.499d);
                     return true;
                 case 1595:
-                    parameters = ExplicitOperations[296];
+                    parameters = new EpsgExplicitOperationRecord(1595, -124.133d, -42.003d, 137.4d, -0.008d, 0.557d, 0.178d, -1.854d);
                     return true;
                 case 1597:
-                    parameters = ExplicitOperations[297];
+                    parameters = new EpsgExplicitOperationRecord(1597, 304.5d, 306.5d, -318.1d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1609:
-                    parameters = ExplicitOperations[298];
+                    parameters = new EpsgExplicitOperationRecord(1609, -99.059d, 53.322d, -112.486d, 0.419d, -0.83d, 1.885d, -1.0d);
                     return true;
                 case 1610:
-                    parameters = ExplicitOperations[299];
+                    parameters = new EpsgExplicitOperationRecord(1610, -125.8d, 79.9d, -100.5d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1612:
-                    parameters = ExplicitOperations[300];
+                    parameters = new EpsgExplicitOperationRecord(1612, -116.641d, -56.931d, -110.559d, 0.893d, 0.921d, -0.917d, -3.52d);
                     return true;
                 case 1613:
-                    parameters = ExplicitOperations[301];
+                    parameters = new EpsgExplicitOperationRecord(1613, -90.365d, -101.13d, -123.384d, 0.333d, 0.077d, 0.894d, 1.994d);
                     return true;
                 case 1614:
-                    parameters = ExplicitOperations[302];
+                    parameters = new EpsgExplicitOperationRecord(1614, -88.0d, 4.0d, 101.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1615:
-                    parameters = ExplicitOperations[303];
+                    parameters = new EpsgExplicitOperationRecord(1615, -726.282d, 703.611d, -48.999d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1616:
-                    parameters = ExplicitOperations[304];
+                    parameters = new EpsgExplicitOperationRecord(1616, -182.046d, -225.604d, 168.884d, -0.616d, -1.655d, 7.824d, 16.641d);
                     return true;
                 case 1617:
-                    parameters = ExplicitOperations[305];
+                    parameters = new EpsgExplicitOperationRecord(1617, -191.808d, -250.512d, 167.861d, -0.792d, -1.653d, 8.558d, 20.703d);
                     return true;
                 case 1618:
-                    parameters = ExplicitOperations[306];
+                    parameters = new EpsgExplicitOperationRecord(1618, 577.326d, 90.129d, 463.919d, 5.137d, 1.474d, 5.297d, 2.4232d);
                     return true;
                 case 1619:
-                    parameters = ExplicitOperations[307];
+                    parameters = new EpsgExplicitOperationRecord(1619, 577.326d, 90.129d, 463.919d, 5.137d, 1.474d, 5.297d, 2.4232d);
                     return true;
                 case 1622:
-                    parameters = ExplicitOperations[308];
+                    parameters = new EpsgExplicitOperationRecord(1622, 570.8d, 85.7d, 462.8d, 4.998d, 1.587d, 5.261d, 3.56d);
                     return true;
                 case 1623:
-                    parameters = ExplicitOperations[309];
+                    parameters = new EpsgExplicitOperationRecord(1623, 570.8d, 85.7d, 462.8d, 4.998d, 1.587d, 5.261d, 3.56d);
                     return true;
                 case 1626:
-                    parameters = ExplicitOperations[310];
+                    parameters = new EpsgExplicitOperationRecord(1626, -81.1d, -89.4d, -115.8d, 0.485d, 0.024d, 0.413d, -0.54d);
                     return true;
                 case 1627:
-                    parameters = ExplicitOperations[311];
+                    parameters = new EpsgExplicitOperationRecord(1627, -81.1d, -89.4d, -115.8d, 0.485d, 0.024d, 0.413d, -0.54d);
                     return true;
                 case 1628:
-                    parameters = ExplicitOperations[312];
+                    parameters = new EpsgExplicitOperationRecord(1628, -116.8d, -106.4d, -154.4d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1629:
-                    parameters = ExplicitOperations[313];
+                    parameters = new EpsgExplicitOperationRecord(1629, -116.8d, -106.4d, -154.4d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1630:
-                    parameters = ExplicitOperations[314];
+                    parameters = new EpsgExplicitOperationRecord(1630, -181.5d, -90.3d, -187.2d, 0.144d, 0.492d, -0.394d, 17.57d);
                     return true;
                 case 1631:
-                    parameters = ExplicitOperations[315];
+                    parameters = new EpsgExplicitOperationRecord(1631, -181.5d, -90.3d, -187.2d, 0.144d, 0.492d, -0.394d, 17.57d);
                     return true;
                 case 1632:
-                    parameters = ExplicitOperations[316];
+                    parameters = new EpsgExplicitOperationRecord(1632, -131.0d, -100.3d, -163.4d, -1.244d, -0.02d, -1.144d, 9.39d);
                     return true;
                 case 1633:
-                    parameters = ExplicitOperations[317];
+                    parameters = new EpsgExplicitOperationRecord(1633, -131.0d, -100.3d, -163.4d, -1.244d, -0.02d, -1.144d, 9.39d);
                     return true;
                 case 1634:
-                    parameters = ExplicitOperations[318];
+                    parameters = new EpsgExplicitOperationRecord(1634, -178.4d, -83.2d, -221.3d, 0.54d, -0.532d, -0.126d, 21.2d);
                     return true;
                 case 1635:
-                    parameters = ExplicitOperations[319];
+                    parameters = new EpsgExplicitOperationRecord(1635, -178.4d, -83.2d, -221.3d, 0.54d, -0.532d, -0.126d, 21.2d);
                     return true;
                 case 1638:
-                    parameters = ExplicitOperations[320];
+                    parameters = new EpsgExplicitOperationRecord(1638, -90.7d, -106.1d, -119.2d, 4.09d, 0.218d, -1.05d, 1.37d);
                     return true;
                 case 1639:
-                    parameters = ExplicitOperations[321];
+                    parameters = new EpsgExplicitOperationRecord(1639, -90.7d, -106.1d, -119.2d, 4.09d, 0.218d, -1.05d, 1.37d);
                     return true;
                 case 1641:
-                    parameters = ExplicitOperations[322];
+                    parameters = new EpsgExplicitOperationRecord(1641, 482.5d, -130.6d, 564.6d, -1.042d, -0.214d, -0.631d, 8.15d);
                     return true;
                 case 1642:
-                    parameters = ExplicitOperations[323];
+                    parameters = new EpsgExplicitOperationRecord(1642, -193.0d, 13.7d, -39.3d, -0.41d, -2.933d, 2.688d, 0.43d);
                     return true;
                 case 1643:
-                    parameters = ExplicitOperations[324];
+                    parameters = new EpsgExplicitOperationRecord(1643, -193.0d, 13.7d, -39.3d, -0.41d, -2.933d, 2.688d, 0.43d);
                     return true;
                 case 1644:
-                    parameters = ExplicitOperations[325];
+                    parameters = new EpsgExplicitOperationRecord(1644, 33.4d, -146.6d, -76.3d, -0.359d, -0.053d, 0.844d, -0.84d);
                     return true;
                 case 1645:
-                    parameters = ExplicitOperations[326];
+                    parameters = new EpsgExplicitOperationRecord(1645, 33.4d, -146.6d, -76.3d, -0.359d, -0.053d, 0.844d, -0.84d);
                     return true;
                 case 1646:
-                    parameters = ExplicitOperations[327];
+                    parameters = new EpsgExplicitOperationRecord(1646, 674.374d, 15.056d, 405.346d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1647:
-                    parameters = ExplicitOperations[328];
+                    parameters = new EpsgExplicitOperationRecord(1647, 674.374d, 15.056d, 405.346d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1649:
-                    parameters = ExplicitOperations[329];
+                    parameters = new EpsgExplicitOperationRecord(1649, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1650:
-                    parameters = ExplicitOperations[330];
+                    parameters = new EpsgExplicitOperationRecord(1650, -84.0d, -97.0d, -117.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1651:
-                    parameters = ExplicitOperations[331];
+                    parameters = new EpsgExplicitOperationRecord(1651, -168.0d, -60.0d, 320.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1652:
-                    parameters = ExplicitOperations[332];
+                    parameters = new EpsgExplicitOperationRecord(1652, -99.1d, 53.3d, -112.5d, 0.419d, -0.83d, 1.885d, -1.0d);
                     return true;
                 case 1653:
-                    parameters = ExplicitOperations[333];
+                    parameters = new EpsgExplicitOperationRecord(1653, 278.3d, 93.0d, 474.5d, 7.889d, 0.05d, -6.61d, 6.21d);
                     return true;
                 case 1654:
-                    parameters = ExplicitOperations[334];
+                    parameters = new EpsgExplicitOperationRecord(1654, 278.3d, 93.0d, 474.5d, 7.889d, 0.05d, -6.61d, 6.21d);
                     return true;
                 case 1655:
-                    parameters = ExplicitOperations[335];
+                    parameters = new EpsgExplicitOperationRecord(1655, -280.9d, -89.8d, 130.2d, -1.721d, 0.355d, -0.371d, -5.92d);
                     return true;
                 case 1656:
-                    parameters = ExplicitOperations[336];
+                    parameters = new EpsgExplicitOperationRecord(1656, -280.9d, -89.8d, 130.2d, -1.721d, 0.355d, -0.371d, -5.92d);
                     return true;
                 case 1657:
-                    parameters = ExplicitOperations[337];
+                    parameters = new EpsgExplicitOperationRecord(1657, -238.2d, 85.2d, 29.9d, 0.166d, 0.046d, 1.248d, 2.03d);
                     return true;
                 case 1658:
-                    parameters = ExplicitOperations[338];
+                    parameters = new EpsgExplicitOperationRecord(1658, -238.2d, 85.2d, 29.9d, 0.166d, 0.046d, 1.248d, 2.03d);
                     return true;
                 case 1659:
-                    parameters = ExplicitOperations[339];
+                    parameters = new EpsgExplicitOperationRecord(1659, -104.1d, -49.1d, -9.9d, 0.971d, -2.917d, 0.714d, -11.68d);
                     return true;
                 case 1660:
-                    parameters = ExplicitOperations[340];
+                    parameters = new EpsgExplicitOperationRecord(1660, -104.1d, -49.1d, -9.9d, 0.971d, -2.917d, 0.714d, -11.68d);
                     return true;
                 case 1661:
-                    parameters = ExplicitOperations[341];
+                    parameters = new EpsgExplicitOperationRecord(1661, -168.6d, -34.0d, 38.6d, -0.374d, -0.679d, -1.379d, -9.48d);
                     return true;
                 case 1662:
-                    parameters = ExplicitOperations[342];
+                    parameters = new EpsgExplicitOperationRecord(1662, -168.6d, -34.0d, 38.6d, -0.374d, -0.679d, -1.379d, -9.48d);
                     return true;
                 case 1663:
-                    parameters = ExplicitOperations[343];
+                    parameters = new EpsgExplicitOperationRecord(1663, -50.2d, -50.4d, 84.8d, -0.69d, -2.012d, 0.459d, -28.08d);
                     return true;
                 case 1664:
-                    parameters = ExplicitOperations[344];
+                    parameters = new EpsgExplicitOperationRecord(1664, -50.2d, -50.4d, 84.8d, -0.69d, -2.012d, 0.459d, -28.08d);
                     return true;
                 case 1665:
-                    parameters = ExplicitOperations[345];
+                    parameters = new EpsgExplicitOperationRecord(1665, -129.193d, -41.212d, 130.73d, 0.246d, 0.374d, 0.329d, -2.955d);
                     return true;
                 case 1666:
-                    parameters = ExplicitOperations[346];
+                    parameters = new EpsgExplicitOperationRecord(1666, -119.353d, -48.301d, 139.484d, 0.415d, 0.26d, 0.437d, -0.613d);
                     return true;
                 case 1667:
-                    parameters = ExplicitOperations[347];
+                    parameters = new EpsgExplicitOperationRecord(1667, -120.271d, -64.543d, 161.632d, 0.217d, -0.067d, -0.129d, 2.499d);
                     return true;
                 case 1668:
-                    parameters = ExplicitOperations[348];
+                    parameters = new EpsgExplicitOperationRecord(1668, -124.133d, -42.003d, 137.4d, -0.008d, 0.557d, 0.178d, -1.854d);
                     return true;
                 case 1669:
-                    parameters = ExplicitOperations[349];
+                    parameters = new EpsgExplicitOperationRecord(1669, -117.763d, -51.51d, 139.061d, 0.292d, 0.443d, 0.277d, -0.191d);
                     return true;
                 case 1671:
-                    parameters = ExplicitOperations[350];
+                    parameters = new EpsgExplicitOperationRecord(1671, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1672:
-                    parameters = ExplicitOperations[351];
+                    parameters = new EpsgExplicitOperationRecord(1672, 565.04d, 49.91d, 465.84d, -1.9848d, 1.7439d, -9.0587d, 4.0772d);
                     return true;
                 case 1673:
-                    parameters = ExplicitOperations[352];
+                    parameters = new EpsgExplicitOperationRecord(1673, 582.0d, 105.0d, 414.0d, 1.04d, 0.35d, -3.08d, 8.3d);
                     return true;
                 case 1674:
-                    parameters = ExplicitOperations[353];
+                    parameters = new EpsgExplicitOperationRecord(1674, 24.0d, -123.0d, -94.0d, 0.02d, -0.25d, -0.13d, 1.1d);
                     return true;
                 case 1675:
-                    parameters = ExplicitOperations[354];
+                    parameters = new EpsgExplicitOperationRecord(1675, 24.0d, -123.0d, -94.0d, 0.02d, -0.25d, -0.13d, 1.1d);
                     return true;
                 case 1676:
-                    parameters = ExplicitOperations[355];
+                    parameters = new EpsgExplicitOperationRecord(1676, 674.374d, 15.056d, 405.346d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1678:
-                    parameters = ExplicitOperations[356];
+                    parameters = new EpsgExplicitOperationRecord(1678, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1679:
-                    parameters = ExplicitOperations[357];
+                    parameters = new EpsgExplicitOperationRecord(1679, -40.595d, -18.55d, -69.339d, 2.508d, 1.832d, -2.611d, -4.299d);
                     return true;
                 case 1680:
-                    parameters = ExplicitOperations[358];
+                    parameters = new EpsgExplicitOperationRecord(1680, 419.3836d, 99.3335d, 591.3451d, 0.850389d, 1.817277d, -7.862238d, -0.99496d);
                     return true;
                 case 1682:
-                    parameters = ExplicitOperations[359];
+                    parameters = new EpsgExplicitOperationRecord(1682, -76.0d, -138.0d, 67.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1683:
-                    parameters = ExplicitOperations[360];
+                    parameters = new EpsgExplicitOperationRecord(1683, -115.064d, -87.39d, -101.716d, -0.058d, 4.001d, -2.062d, 9.366d);
                     return true;
                 case 1684:
-                    parameters = ExplicitOperations[361];
+                    parameters = new EpsgExplicitOperationRecord(1684, -82.875d, -57.097d, -156.768d, -2.158d, 1.524d, -0.982d, -0.359d);
                     return true;
                 case 1685:
-                    parameters = ExplicitOperations[362];
+                    parameters = new EpsgExplicitOperationRecord(1685, -138.527d, -91.999d, -114.591d, -0.14d, 3.363d, -2.217d, 11.748d);
                     return true;
                 case 1686:
-                    parameters = ExplicitOperations[363];
+                    parameters = new EpsgExplicitOperationRecord(1686, -73.472d, -51.66d, -112.482d, 0.953d, 4.6d, -2.368d, 0.586d);
                     return true;
                 case 1687:
-                    parameters = ExplicitOperations[364];
+                    parameters = new EpsgExplicitOperationRecord(1687, 219.315d, 168.975d, -166.145d, 0.198d, 5.926d, -2.356d, -57.104d);
                     return true;
                 case 1701:
-                    parameters = ExplicitOperations[365];
+                    parameters = new EpsgExplicitOperationRecord(1701, 59.47d, -5.04d, 187.44d, 0.47d, -0.1d, 1.024d, -4.5993d);
                     return true;
                 case 1751:
-                    parameters = ExplicitOperations[366];
+                    parameters = new EpsgExplicitOperationRecord(1751, 565.04d, 49.91d, 465.84d, -1.9848d, 1.7439d, -9.0587d, 4.0772d);
                     return true;
                 case 1753:
-                    parameters = ExplicitOperations[367];
+                    parameters = new EpsgExplicitOperationRecord(1753, 660.077d, 13.551d, 369.344d, -2.484d, -1.783d, -2.939d, 5.66d);
                     return true;
                 case 1754:
-                    parameters = ExplicitOperations[368];
+                    parameters = new EpsgExplicitOperationRecord(1754, -111.92d, -87.85d, 114.5d, 1.875d, 0.202d, 0.219d, 0.032d);
                     return true;
                 case 1766:
-                    parameters = ExplicitOperations[369];
+                    parameters = new EpsgExplicitOperationRecord(1766, 674.374d, 15.056d, 405.346d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1767:
-                    parameters = ExplicitOperations[370];
+                    parameters = new EpsgExplicitOperationRecord(1767, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1768:
-                    parameters = ExplicitOperations[371];
+                    parameters = new EpsgExplicitOperationRecord(1768, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1769:
-                    parameters = ExplicitOperations[372];
+                    parameters = new EpsgExplicitOperationRecord(1769, -270.933d, 115.599d, -360.226d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1771:
-                    parameters = ExplicitOperations[373];
+                    parameters = new EpsgExplicitOperationRecord(1771, -270.933d, 115.599d, -360.226d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1773:
-                    parameters = ExplicitOperations[374];
+                    parameters = new EpsgExplicitOperationRecord(1773, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1774:
-                    parameters = ExplicitOperations[375];
+                    parameters = new EpsgExplicitOperationRecord(1774, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1775:
-                    parameters = ExplicitOperations[376];
+                    parameters = new EpsgExplicitOperationRecord(1775, 24.9d, -126.4d, -93.2d, -0.063d, -0.247d, -0.041d, 1.01d);
                     return true;
                 case 1776:
-                    parameters = ExplicitOperations[377];
+                    parameters = new EpsgExplicitOperationRecord(1776, 598.1d, 73.7d, 418.2d, 0.202d, 0.045d, -2.455d, 6.7d);
                     return true;
                 case 1777:
-                    parameters = ExplicitOperations[378];
+                    parameters = new EpsgExplicitOperationRecord(1777, 598.1d, 73.7d, 418.2d, 0.202d, 0.045d, -2.455d, 6.7d);
                     return true;
                 case 1778:
-                    parameters = ExplicitOperations[379];
+                    parameters = new EpsgExplicitOperationRecord(1778, 597.1d, 71.4d, 412.1d, 0.894d, 0.068d, -1.563d, 7.58d);
                     return true;
                 case 1779:
-                    parameters = ExplicitOperations[380];
+                    parameters = new EpsgExplicitOperationRecord(1779, 584.8d, 67.0d, 400.3d, 0.105d, 0.013d, -2.378d, 10.29d);
                     return true;
                 case 1780:
-                    parameters = ExplicitOperations[381];
+                    parameters = new EpsgExplicitOperationRecord(1780, 590.5d, 69.5d, 411.6d, -0.796d, -0.052d, -3.601d, 8.3d);
                     return true;
                 case 1783:
-                    parameters = ExplicitOperations[382];
+                    parameters = new EpsgExplicitOperationRecord(1783, -84.1d, -101.8d, -129.7d, 0.0d, 0.0d, 0.468d, 1.05d);
                     return true;
                 case 1784:
-                    parameters = ExplicitOperations[383];
+                    parameters = new EpsgExplicitOperationRecord(1784, -84.1d, -101.8d, -129.7d, 0.0d, 0.0d, 0.468d, 1.05d);
                     return true;
                 case 1796:
-                    parameters = ExplicitOperations[384];
+                    parameters = new EpsgExplicitOperationRecord(1796, -70.9d, -151.8d, -41.4d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1797:
-                    parameters = ExplicitOperations[385];
+                    parameters = new EpsgExplicitOperationRecord(1797, 164.0d, 138.0d, -189.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1798:
-                    parameters = ExplicitOperations[386];
+                    parameters = new EpsgExplicitOperationRecord(1798, 163.511d, 127.533d, -159.789d, 0.0d, 0.0d, 0.814d, -0.6d);
                     return true;
                 case 1799:
-                    parameters = ExplicitOperations[387];
+                    parameters = new EpsgExplicitOperationRecord(1799, 105.0d, 326.0d, -102.5d, 0.0d, 0.0d, 0.814d, -0.6d);
                     return true;
                 case 1800:
-                    parameters = ExplicitOperations[388];
+                    parameters = new EpsgExplicitOperationRecord(1800, -45.0d, 417.0d, -3.5d, 0.0d, 0.0d, 0.814d, -0.6d);
                     return true;
                 case 1801:
-                    parameters = ExplicitOperations[389];
+                    parameters = new EpsgExplicitOperationRecord(1801, -145.0d, 52.7d, -291.6d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1802:
-                    parameters = ExplicitOperations[390];
+                    parameters = new EpsgExplicitOperationRecord(1802, -178.3d, -316.7d, -131.5d, 5.278d, 6.077d, 10.979d, 19.166d);
                     return true;
                 case 1805:
-                    parameters = ExplicitOperations[391];
+                    parameters = new EpsgExplicitOperationRecord(1805, -56.1d, -167.8d, 13.1d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1806:
-                    parameters = ExplicitOperations[392];
+                    parameters = new EpsgExplicitOperationRecord(1806, -104.4d, -136.6d, 201.2d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1807:
-                    parameters = ExplicitOperations[393];
+                    parameters = new EpsgExplicitOperationRecord(1807, 27.0d, -135.0d, -84.5d, 0.0d, 0.0d, 0.554d, 0.2263d);
                     return true;
                 case 1808:
-                    parameters = ExplicitOperations[394];
+                    parameters = new EpsgExplicitOperationRecord(1808, 686.1d, -123.5d, -574.4d, 8.045d, -23.366d, 10.791d, -2.926d);
                     return true;
                 case 1809:
-                    parameters = ExplicitOperations[395];
+                    parameters = new EpsgExplicitOperationRecord(1809, 926.4d, -715.9d, -186.4d, -10.364d, -20.78d, 26.452d, -7.224d);
                     return true;
                 case 1810:
-                    parameters = ExplicitOperations[396];
+                    parameters = new EpsgExplicitOperationRecord(1810, -84.0d, -103.0d, -122.5d, 0.0d, 0.0d, 0.554d, 0.2263d);
                     return true;
                 case 1811:
-                    parameters = ExplicitOperations[397];
+                    parameters = new EpsgExplicitOperationRecord(1811, -291.87d, 106.37d, -364.52d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1812:
-                    parameters = ExplicitOperations[398];
+                    parameters = new EpsgExplicitOperationRecord(1812, 293.0d, 836.0d, 318.0d, 0.5d, 1.6d, -2.8d, 2.1d);
                     return true;
                 case 1813:
-                    parameters = ExplicitOperations[399];
+                    parameters = new EpsgExplicitOperationRecord(1813, -378.873d, 676.002d, -46.255d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1814:
-                    parameters = ExplicitOperations[400];
+                    parameters = new EpsgExplicitOperationRecord(1814, -377.7d, 675.1d, -52.2d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1815:
-                    parameters = ExplicitOperations[401];
+                    parameters = new EpsgExplicitOperationRecord(1815, -152.9d, 43.8d, 358.3d, 2.714d, 1.386d, -2.788d, -6.743d);
                     return true;
                 case 1816:
-                    parameters = ExplicitOperations[402];
+                    parameters = new EpsgExplicitOperationRecord(1816, -95.7d, 10.2d, 158.9d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1817:
-                    parameters = ExplicitOperations[403];
+                    parameters = new EpsgExplicitOperationRecord(1817, -165.914d, -70.607d, 305.009d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1818:
-                    parameters = ExplicitOperations[404];
+                    parameters = new EpsgExplicitOperationRecord(1818, -89.0d, -112.0d, 125.9d, 0.0d, 0.0d, 0.814d, -0.38d);
                     return true;
                 case 1820:
-                    parameters = ExplicitOperations[405];
+                    parameters = new EpsgExplicitOperationRecord(1820, -93.2d, -93.31d, 121.156d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1821:
-                    parameters = ExplicitOperations[406];
+                    parameters = new EpsgExplicitOperationRecord(1821, -88.98d, -83.23d, 113.55d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1822:
-                    parameters = ExplicitOperations[407];
+                    parameters = new EpsgExplicitOperationRecord(1822, -92.726d, -90.304d, 115.735d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1823:
-                    parameters = ExplicitOperations[408];
+                    parameters = new EpsgExplicitOperationRecord(1823, -93.134d, -86.647d, 114.196d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1824:
-                    parameters = ExplicitOperations[409];
+                    parameters = new EpsgExplicitOperationRecord(1824, -93.0d, -94.0d, 124.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1825:
-                    parameters = ExplicitOperations[410];
+                    parameters = new EpsgExplicitOperationRecord(1825, -162.619d, -276.959d, -161.764d, 0.067753d, -2.243648d, -1.158828d, -1.094246d);
                     return true;
                 case 1826:
-                    parameters = ExplicitOperations[411];
+                    parameters = new EpsgExplicitOperationRecord(1826, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1828:
-                    parameters = ExplicitOperations[412];
+                    parameters = new EpsgExplicitOperationRecord(1828, -37.0d, 157.0d, 85.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1829:
-                    parameters = ExplicitOperations[413];
+                    parameters = new EpsgExplicitOperationRecord(1829, 56.0d, -75.77d, -15.31d, -0.37d, -0.2d, -0.21d, 1.01d);
                     return true;
                 case 1830:
-                    parameters = ExplicitOperations[414];
+                    parameters = new EpsgExplicitOperationRecord(1830, 56.0d, -75.77d, -15.31d, -0.37d, -0.2d, -0.21d, 1.01d);
                     return true;
                 case 1831:
-                    parameters = ExplicitOperations[415];
+                    parameters = new EpsgExplicitOperationRecord(1831, 57.01d, -69.97d, -9.29d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1832:
-                    parameters = ExplicitOperations[416];
+                    parameters = new EpsgExplicitOperationRecord(1832, 2.691d, -14.757d, 4.724d, 0.0d, 0.0d, 0.774d, -0.6d);
                     return true;
                 case 1833:
-                    parameters = ExplicitOperations[417];
+                    parameters = new EpsgExplicitOperationRecord(1833, -1.977d, -13.06d, -9.993d, 0.364d, 0.254d, 0.689d, -1.037d);
                     return true;
                 case 1837:
-                    parameters = ExplicitOperations[418];
+                    parameters = new EpsgExplicitOperationRecord(1837, -587.8d, 519.75d, 145.76d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1838:
-                    parameters = ExplicitOperations[419];
+                    parameters = new EpsgExplicitOperationRecord(1838, -404.78d, 685.68d, 45.47d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1839:
-                    parameters = ExplicitOperations[420];
+                    parameters = new EpsgExplicitOperationRecord(1839, -101.0d, -111.0d, 187.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1840:
-                    parameters = ExplicitOperations[421];
+                    parameters = new EpsgExplicitOperationRecord(1840, -119.4248d, -303.65872d, -11.00061d, 1.164298d, 0.174458d, 1.096259d, 3.657065d);
                     return true;
                 case 1842:
-                    parameters = ExplicitOperations[422];
+                    parameters = new EpsgExplicitOperationRecord(1842, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1852:
-                    parameters = ExplicitOperations[423];
+                    parameters = new EpsgExplicitOperationRecord(1852, -533.4d, 669.2d, -52.5d, 0.0d, 0.0d, 4.28d, 9.4d);
                     return true;
                 case 1853:
-                    parameters = ExplicitOperations[424];
+                    parameters = new EpsgExplicitOperationRecord(1853, -82.31d, -95.23d, -114.96d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1854:
-                    parameters = ExplicitOperations[425];
+                    parameters = new EpsgExplicitOperationRecord(1854, -239.1d, -170.02d, 397.5d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1855:
-                    parameters = ExplicitOperations[426];
+                    parameters = new EpsgExplicitOperationRecord(1855, -244.72d, -162.773d, 400.75d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1856:
-                    parameters = ExplicitOperations[427];
+                    parameters = new EpsgExplicitOperationRecord(1856, -122.89d, -159.08d, -168.74d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1857:
-                    parameters = ExplicitOperations[428];
+                    parameters = new EpsgExplicitOperationRecord(1857, -84.78d, -107.55d, -137.25d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1858:
-                    parameters = ExplicitOperations[429];
+                    parameters = new EpsgExplicitOperationRecord(1858, -123.92d, -155.515d, -157.721d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1859:
-                    parameters = ExplicitOperations[430];
+                    parameters = new EpsgExplicitOperationRecord(1859, -69.06d, -90.71d, -142.56d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1860:
-                    parameters = ExplicitOperations[431];
+                    parameters = new EpsgExplicitOperationRecord(1860, -113.997d, -97.076d, -152.312d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1861:
-                    parameters = ExplicitOperations[432];
+                    parameters = new EpsgExplicitOperationRecord(1861, -114.5d, -96.1d, -151.9d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1862:
-                    parameters = ExplicitOperations[433];
+                    parameters = new EpsgExplicitOperationRecord(1862, -194.513d, -63.978d, -25.759d, -3.4027d, 3.756d, -3.352d, -0.9175d);
                     return true;
                 case 1863:
-                    parameters = ExplicitOperations[434];
+                    parameters = new EpsgExplicitOperationRecord(1863, -389.691d, 64.502d, 210.209d, 0.086d, 14.314d, -6.39d, 0.9264d);
                     return true;
                 case 1864:
-                    parameters = ExplicitOperations[435];
+                    parameters = new EpsgExplicitOperationRecord(1864, -57.0d, 1.0d, -41.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1865:
-                    parameters = ExplicitOperations[436];
+                    parameters = new EpsgExplicitOperationRecord(1865, -62.0d, -1.0d, -37.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1866:
-                    parameters = ExplicitOperations[437];
+                    parameters = new EpsgExplicitOperationRecord(1866, -61.0d, 2.0d, -48.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1867:
-                    parameters = ExplicitOperations[438];
+                    parameters = new EpsgExplicitOperationRecord(1867, -60.0d, -2.0d, -41.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1868:
-                    parameters = ExplicitOperations[439];
+                    parameters = new EpsgExplicitOperationRecord(1868, -75.0d, -1.0d, -44.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1869:
-                    parameters = ExplicitOperations[440];
+                    parameters = new EpsgExplicitOperationRecord(1869, -44.0d, 6.0d, -36.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1870:
-                    parameters = ExplicitOperations[441];
+                    parameters = new EpsgExplicitOperationRecord(1870, -48.0d, 3.0d, -44.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1871:
-                    parameters = ExplicitOperations[442];
+                    parameters = new EpsgExplicitOperationRecord(1871, -47.0d, 26.0d, -42.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1872:
-                    parameters = ExplicitOperations[443];
+                    parameters = new EpsgExplicitOperationRecord(1872, -53.0d, 3.0d, -47.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1873:
-                    parameters = ExplicitOperations[444];
+                    parameters = new EpsgExplicitOperationRecord(1873, -61.0d, 2.0d, -33.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1874:
-                    parameters = ExplicitOperations[445];
+                    parameters = new EpsgExplicitOperationRecord(1874, -58.0d, 0.0d, -44.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1875:
-                    parameters = ExplicitOperations[446];
+                    parameters = new EpsgExplicitOperationRecord(1875, -45.0d, 12.0d, -33.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1876:
-                    parameters = ExplicitOperations[447];
+                    parameters = new EpsgExplicitOperationRecord(1876, -45.0d, 8.0d, -33.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1877:
-                    parameters = ExplicitOperations[448];
+                    parameters = new EpsgExplicitOperationRecord(1877, -66.87d, 4.37d, -38.52d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1879:
-                    parameters = ExplicitOperations[449];
+                    parameters = new EpsgExplicitOperationRecord(1879, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1880:
-                    parameters = ExplicitOperations[450];
+                    parameters = new EpsgExplicitOperationRecord(1880, -106.0d, -129.0d, 165.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1885:
-                    parameters = ExplicitOperations[451];
+                    parameters = new EpsgExplicitOperationRecord(1885, -203.0d, 141.0d, 53.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1886:
-                    parameters = ExplicitOperations[452];
+                    parameters = new EpsgExplicitOperationRecord(1886, -104.0d, 167.0d, -38.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1887:
-                    parameters = ExplicitOperations[453];
+                    parameters = new EpsgExplicitOperationRecord(1887, -425.0d, -169.0d, 81.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1888:
-                    parameters = ExplicitOperations[454];
+                    parameters = new EpsgExplicitOperationRecord(1888, -499.0d, -249.0d, 314.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1890:
-                    parameters = ExplicitOperations[455];
+                    parameters = new EpsgExplicitOperationRecord(1890, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1892:
-                    parameters = ExplicitOperations[456];
+                    parameters = new EpsgExplicitOperationRecord(1892, 16.0d, 196.0d, 93.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1893:
-                    parameters = ExplicitOperations[457];
+                    parameters = new EpsgExplicitOperationRecord(1893, 11.0d, 72.0d, -101.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1895:
-                    parameters = ExplicitOperations[458];
+                    parameters = new EpsgExplicitOperationRecord(1895, 414.1d, 41.3d, 603.1d, -0.855d, 2.141d, -7.023d, 0.0d);
                     return true;
                 case 1896:
-                    parameters = ExplicitOperations[459];
+                    parameters = new EpsgExplicitOperationRecord(1896, 414.1d, 41.3d, 603.1d, -0.855d, 2.141d, -7.023d, 0.0d);
                     return true;
                 case 1897:
-                    parameters = ExplicitOperations[460];
+                    parameters = new EpsgExplicitOperationRecord(1897, -403.0d, 684.0d, 41.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1898:
-                    parameters = ExplicitOperations[461];
+                    parameters = new EpsgExplicitOperationRecord(1898, -387.06d, 636.53d, 46.29d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1899:
-                    parameters = ExplicitOperations[462];
+                    parameters = new EpsgExplicitOperationRecord(1899, -403.4d, 681.12d, 46.56d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1900:
-                    parameters = ExplicitOperations[463];
+                    parameters = new EpsgExplicitOperationRecord(1900, -0.9738d, 1.9453d, 0.5486d, 1.3357e-07d, 4.872e-08d, 5.507e-08d, 0.0d);
                     return true;
                 case 1901:
-                    parameters = ExplicitOperations[464];
+                    parameters = new EpsgExplicitOperationRecord(1901, -0.991d, 1.9072d, 0.5129d, 1.25033e-07d, 4.6785e-08d, 5.6529e-08d, 0.0d);
                     return true;
                 case 1902:
-                    parameters = ExplicitOperations[465];
+                    parameters = new EpsgExplicitOperationRecord(1902, -56.7d, -171.8d, -40.6d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1903:
-                    parameters = ExplicitOperations[466];
+                    parameters = new EpsgExplicitOperationRecord(1903, 137.0d, 248.0d, -430.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1904:
-                    parameters = ExplicitOperations[467];
+                    parameters = new EpsgExplicitOperationRecord(1904, -467.0d, -16.0d, -300.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1905:
-                    parameters = ExplicitOperations[468];
+                    parameters = new EpsgExplicitOperationRecord(1905, -472.29d, -5.63d, -304.12d, 0.4362d, -0.8374d, 0.2563d, 1.8984d);
                     return true;
                 case 1906:
-                    parameters = ExplicitOperations[469];
+                    parameters = new EpsgExplicitOperationRecord(1906, -186.0d, 230.0d, 110.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1908:
-                    parameters = ExplicitOperations[470];
+                    parameters = new EpsgExplicitOperationRecord(1908, -193.066d, 236.993d, 105.447d, 0.4814d, -0.8074d, 0.1276d, 1.5649d);
                     return true;
                 case 1909:
-                    parameters = ExplicitOperations[471];
+                    parameters = new EpsgExplicitOperationRecord(1909, 186.0d, 482.0d, 151.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1910:
-                    parameters = ExplicitOperations[472];
+                    parameters = new EpsgExplicitOperationRecord(1910, 126.93d, 547.94d, 130.41d, -2.7867d, 5.1612d, -0.8584d, 13.8227d);
                     return true;
                 case 1912:
-                    parameters = ExplicitOperations[473];
+                    parameters = new EpsgExplicitOperationRecord(1912, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1913:
-                    parameters = ExplicitOperations[474];
+                    parameters = new EpsgExplicitOperationRecord(1913, 65.0d, 342.0d, 77.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1914:
-                    parameters = ExplicitOperations[475];
+                    parameters = new EpsgExplicitOperationRecord(1914, 84.0d, 274.0d, 65.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1916:
-                    parameters = ExplicitOperations[476];
+                    parameters = new EpsgExplicitOperationRecord(1916, -382.0d, -59.0d, -262.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1917:
-                    parameters = ExplicitOperations[477];
+                    parameters = new EpsgExplicitOperationRecord(1917, 336.0d, 223.0d, -231.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1921:
-                    parameters = ExplicitOperations[478];
+                    parameters = new EpsgExplicitOperationRecord(1921, 365.0d, 194.0d, 166.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1922:
-                    parameters = ExplicitOperations[479];
+                    parameters = new EpsgExplicitOperationRecord(1922, 325.0d, 154.0d, 172.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1923:
-                    parameters = ExplicitOperations[480];
+                    parameters = new EpsgExplicitOperationRecord(1923, 30.0d, 430.0d, 368.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1924:
-                    parameters = ExplicitOperations[481];
+                    parameters = new EpsgExplicitOperationRecord(1924, 162.0d, 117.0d, 154.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1926:
-                    parameters = ExplicitOperations[482];
+                    parameters = new EpsgExplicitOperationRecord(1926, 789.524d, -626.486d, -89.904d, 0.6006d, 76.7946d, -10.5788d, -32.3241d);
                     return true;
                 case 1927:
-                    parameters = ExplicitOperations[483];
+                    parameters = new EpsgExplicitOperationRecord(1927, 137.092d, 131.66d, 91.475d, -1.9436d, -11.5993d, -4.3321d, -7.4824d);
                     return true;
                 case 1928:
-                    parameters = ExplicitOperations[484];
+                    parameters = new EpsgExplicitOperationRecord(1928, -408.809d, 366.856d, -412.987d, 1.8842d, -0.5308d, 2.1655d, -121.0993d);
                     return true;
                 case 1931:
-                    parameters = ExplicitOperations[485];
+                    parameters = new EpsgExplicitOperationRecord(1931, -480.26d, -438.32d, -643.429d, 16.3119d, 20.1721d, -4.0349d, -111.7002d);
                     return true;
                 case 1946:
-                    parameters = ExplicitOperations[486];
+                    parameters = new EpsgExplicitOperationRecord(1946, -0.991d, 1.9072d, 0.5129d, 1.25033e-07d, 4.6785e-08d, 5.6529e-08d, 0.0d);
                     return true;
                 case 1950:
-                    parameters = ExplicitOperations[487];
+                    parameters = new EpsgExplicitOperationRecord(1950, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1951:
-                    parameters = ExplicitOperations[488];
+                    parameters = new EpsgExplicitOperationRecord(1951, -73.0d, 46.0d, -86.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1952:
-                    parameters = ExplicitOperations[489];
+                    parameters = new EpsgExplicitOperationRecord(1952, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1953:
-                    parameters = ExplicitOperations[490];
+                    parameters = new EpsgExplicitOperationRecord(1953, 482.5d, -130.6d, 564.6d, -1.042d, -0.214d, -0.631d, 8.15d);
                     return true;
                 case 1954:
-                    parameters = ExplicitOperations[491];
+                    parameters = new EpsgExplicitOperationRecord(1954, 482.5d, -130.6d, 564.6d, -1.042d, -0.214d, -0.631d, 8.15d);
                     return true;
                 case 1955:
-                    parameters = ExplicitOperations[492];
+                    parameters = new EpsgExplicitOperationRecord(1955, 482.5d, -130.6d, 564.6d, -1.042d, -0.214d, -0.631d, 8.15d);
                     return true;
                 case 1956:
-                    parameters = ExplicitOperations[493];
+                    parameters = new EpsgExplicitOperationRecord(1956, 506.0d, -122.0d, 611.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1957:
-                    parameters = ExplicitOperations[494];
+                    parameters = new EpsgExplicitOperationRecord(1957, 982.6087d, 552.753d, -540.873d, 32.39344d, -153.25684d, -96.2266d, 16.805d);
                     return true;
                 case 1958:
-                    parameters = ExplicitOperations[495];
+                    parameters = new EpsgExplicitOperationRecord(1958, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1959:
-                    parameters = ExplicitOperations[496];
+                    parameters = new EpsgExplicitOperationRecord(1959, 195.671d, 332.517d, 274.607d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1962:
-                    parameters = ExplicitOperations[497];
+                    parameters = new EpsgExplicitOperationRecord(1962, -13.0d, -348.0d, 292.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1963:
-                    parameters = ExplicitOperations[498];
+                    parameters = new EpsgExplicitOperationRecord(1963, 97.295d, -263.247d, 310.882d, -1.5999d, 0.8386d, 3.1409d, 13.3259d);
                     return true;
                 case 1964:
-                    parameters = ExplicitOperations[499];
+                    parameters = new EpsgExplicitOperationRecord(1964, -789.99d, 627.333d, 89.685d, -0.6072d, -76.8019d, 10.568d, 32.2083d);
                     return true;
                 case 1965:
-                    parameters = ExplicitOperations[500];
+                    parameters = new EpsgExplicitOperationRecord(1965, -289.0d, -124.0d, 60.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1966:
-                    parameters = ExplicitOperations[501];
+                    parameters = new EpsgExplicitOperationRecord(1966, -502.862d, -247.438d, 312.724d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1967:
-                    parameters = ExplicitOperations[502];
+                    parameters = new EpsgExplicitOperationRecord(1967, -210.502d, -66.902d, -48.476d, 2.094d, -15.067d, -5.817d, 0.485d);
                     return true;
                 case 1968:
-                    parameters = ExplicitOperations[503];
+                    parameters = new EpsgExplicitOperationRecord(1968, -204.633d, 140.216d, 55.199d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1969:
-                    parameters = ExplicitOperations[504];
+                    parameters = new EpsgExplicitOperationRecord(1969, -211.939d, 137.626d, 58.3d, -0.089d, 0.251d, 0.079d, 0.384d);
                     return true;
                 case 1970:
-                    parameters = ExplicitOperations[505];
+                    parameters = new EpsgExplicitOperationRecord(1970, -204.619d, 140.176d, 55.226d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1971:
-                    parameters = ExplicitOperations[506];
+                    parameters = new EpsgExplicitOperationRecord(1971, -208.719d, 129.685d, 52.092d, -0.195d, -0.014d, 0.327d, 0.198d);
                     return true;
                 case 1972:
-                    parameters = ExplicitOperations[507];
+                    parameters = new EpsgExplicitOperationRecord(1972, -106.301d, 166.27d, -37.916d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1973:
-                    parameters = ExplicitOperations[508];
+                    parameters = new EpsgExplicitOperationRecord(1973, -105.854d, 165.589d, -38.312d, -0.003d, -0.026d, 0.024d, -0.048d);
                     return true;
                 case 1974:
-                    parameters = ExplicitOperations[509];
+                    parameters = new EpsgExplicitOperationRecord(1974, -106.248d, 166.244d, -37.845d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1975:
-                    parameters = ExplicitOperations[510];
+                    parameters = new EpsgExplicitOperationRecord(1975, -104.0d, 162.924d, -38.882d, -0.075d, -0.071d, 0.051d, -0.338d);
                     return true;
                 case 1976:
-                    parameters = ExplicitOperations[511];
+                    parameters = new EpsgExplicitOperationRecord(1976, -106.044d, 166.655d, -37.876d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1977:
-                    parameters = ExplicitOperations[512];
+                    parameters = new EpsgExplicitOperationRecord(1977, -95.323d, 166.098d, -69.942d, -0.215d, -1.031d, 0.047d, 1.922d);
                     return true;
                 case 1978:
-                    parameters = ExplicitOperations[513];
+                    parameters = new EpsgExplicitOperationRecord(1978, -106.253d, 166.239d, -37.854d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1979:
-                    parameters = ExplicitOperations[514];
+                    parameters = new EpsgExplicitOperationRecord(1979, -100.306d, 161.246d, -48.761d, -0.192d, -0.385d, 0.076d, 0.131d);
                     return true;
                 case 1980:
-                    parameters = ExplicitOperations[515];
+                    parameters = new EpsgExplicitOperationRecord(1980, -106.226d, 166.366d, -37.893d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1981:
-                    parameters = ExplicitOperations[516];
+                    parameters = new EpsgExplicitOperationRecord(1981, -103.088d, 162.481d, -28.276d, 0.167d, 0.082d, 0.168d, -1.504d);
                     return true;
                 case 1982:
-                    parameters = ExplicitOperations[517];
+                    parameters = new EpsgExplicitOperationRecord(1982, -422.651d, -172.995d, 84.02d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1983:
-                    parameters = ExplicitOperations[518];
+                    parameters = new EpsgExplicitOperationRecord(1983, -223.237d, 110.193d, 36.649d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1984:
-                    parameters = ExplicitOperations[519];
+                    parameters = new EpsgExplicitOperationRecord(1984, -304.046d, -60.576d, 103.64d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1985:
-                    parameters = ExplicitOperations[520];
+                    parameters = new EpsgExplicitOperationRecord(1985, -87.987d, -108.639d, -121.593d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1986:
-                    parameters = ExplicitOperations[521];
+                    parameters = new EpsgExplicitOperationRecord(1986, 508.088d, -191.042d, 565.223d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1987:
-                    parameters = ExplicitOperations[522];
+                    parameters = new EpsgExplicitOperationRecord(1987, -239.749d, 88.181d, 30.488d, 0.263d, 0.082d, 1.211d, 2.229d);
                     return true;
                 case 1988:
-                    parameters = ExplicitOperations[523];
+                    parameters = new EpsgExplicitOperationRecord(1988, -288.885d, -91.744d, 126.244d, -1.691d, 0.41d, -0.211d, -4.598d);
                     return true;
                 case 1989:
-                    parameters = ExplicitOperations[524];
+                    parameters = new EpsgExplicitOperationRecord(1989, -74.292d, -135.889d, -104.967d, -0.524d, -0.136d, 0.61d, -3.761d);
                     return true;
                 case 1990:
-                    parameters = ExplicitOperations[525];
+                    parameters = new EpsgExplicitOperationRecord(1990, 631.392d, -66.551d, 481.442d, 1.09d, -4.445d, -4.487d, -4.43d);
                     return true;
                 case 1992:
-                    parameters = ExplicitOperations[526];
+                    parameters = new EpsgExplicitOperationRecord(1992, -231.034d, 102.615d, 26.836d, 0.615d, -0.198d, 0.881d, 1.786d);
                     return true;
                 case 1993:
-                    parameters = ExplicitOperations[527];
+                    parameters = new EpsgExplicitOperationRecord(1993, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1994:
-                    parameters = ExplicitOperations[528];
+                    parameters = new EpsgExplicitOperationRecord(1994, -28.0d, 199.0d, 5.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1995:
-                    parameters = ExplicitOperations[529];
+                    parameters = new EpsgExplicitOperationRecord(1995, 103.25d, -100.4d, -307.19d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 1997:
-                    parameters = ExplicitOperations[530];
+                    parameters = new EpsgExplicitOperationRecord(1997, -282.1d, -72.2d, 120.0d, -1.529d, 0.145d, -0.89d, -4.46d);
                     return true;
                 case 1998:
-                    parameters = ExplicitOperations[531];
+                    parameters = new EpsgExplicitOperationRecord(1998, -157.89d, -17.16d, -78.41d, 2.118d, 2.697d, -1.434d, -5.38d);
                     return true;
                 case 3817:
-                    parameters = ExplicitOperations[532];
+                    parameters = new EpsgExplicitOperationRecord(3817, 595.48d, 121.69d, 515.35d, 4.115d, -2.9383d, 0.853d, -3.408d);
                     return true;
                 case 3830:
-                    parameters = ExplicitOperations[533];
+                    parameters = new EpsgExplicitOperationRecord(3830, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 3894:
-                    parameters = ExplicitOperations[534];
+                    parameters = new EpsgExplicitOperationRecord(3894, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 3904:
-                    parameters = ExplicitOperations[535];
+                    parameters = new EpsgExplicitOperationRecord(3904, -83.11d, -97.38d, -117.22d, 0.0276d, -0.2167d, 0.2147d, 0.1218d);
                     return true;
                 case 3905:
-                    parameters = ExplicitOperations[536];
+                    parameters = new EpsgExplicitOperationRecord(3905, -83.11d, -97.38d, -117.22d, 0.0276d, -0.2167d, 0.2147d, 0.1218d);
                     return true;
                 case 3914:
-                    parameters = ExplicitOperations[537];
+                    parameters = new EpsgExplicitOperationRecord(3914, 426.9d, 142.6d, 460.1d, 4.91d, 4.49d, -12.42d, 17.1d);
                     return true;
                 case 3915:
-                    parameters = ExplicitOperations[538];
+                    parameters = new EpsgExplicitOperationRecord(3915, 426.9d, 142.6d, 460.1d, 4.91d, 4.49d, -12.42d, 17.1d);
                     return true;
                 case 3916:
-                    parameters = ExplicitOperations[539];
+                    parameters = new EpsgExplicitOperationRecord(3916, 409.545d, 72.164d, 486.872d, 3.085957d, 5.46911d, -11.020289d, 17.919665d);
                     return true;
                 case 3917:
-                    parameters = ExplicitOperations[540];
+                    parameters = new EpsgExplicitOperationRecord(3917, 409.545d, 72.164d, 486.872d, 3.085957d, 5.46911d, -11.020289d, 17.919665d);
                     return true;
                 case 3918:
-                    parameters = ExplicitOperations[541];
+                    parameters = new EpsgExplicitOperationRecord(3918, 315.393d, 186.223d, 499.609d, 6.445954d, 8.131631d, -13.208641d, 23.449046d);
                     return true;
                 case 3919:
-                    parameters = ExplicitOperations[542];
+                    parameters = new EpsgExplicitOperationRecord(3919, 464.939d, -21.478d, 504.497d, -0.403d, 4.228747d, -9.954942d, 12.795378d);
                     return true;
                 case 3921:
-                    parameters = ExplicitOperations[543];
+                    parameters = new EpsgExplicitOperationRecord(3921, 459.968d, 82.193d, 458.756d, 3.565234d, 3.700593d, -10.860523d, 15.507563d);
                     return true;
                 case 3922:
-                    parameters = ExplicitOperations[544];
+                    parameters = new EpsgExplicitOperationRecord(3922, 427.914d, 105.528d, 510.908d, 4.992523d, 5.898813d, -10.306673d, 12.431493d);
                     return true;
                 case 3923:
-                    parameters = ExplicitOperations[545];
+                    parameters = new EpsgExplicitOperationRecord(3923, 468.63d, 81.389d, 445.221d, 3.839242d, 3.262525d, -10.566866d, 16.132726d);
                     return true;
                 case 3924:
-                    parameters = ExplicitOperations[546];
+                    parameters = new EpsgExplicitOperationRecord(3924, 439.5d, -11.77d, 494.976d, 0.026585d, 4.65641d, -10.155824d, 16.270002d);
                     return true;
                 case 3925:
-                    parameters = ExplicitOperations[547];
+                    parameters = new EpsgExplicitOperationRecord(3925, 524.442d, 3.275d, 519.002d, -0.013287d, 3.119714d, -10.232693d, 4.184981d);
                     return true;
                 case 3926:
-                    parameters = ExplicitOperations[548];
+                    parameters = new EpsgExplicitOperationRecord(3926, 281.529d, 45.963d, 537.515d, 2.570437d, 9.648271d, -10.759507d, 26.465548d);
                     return true;
                 case 3927:
-                    parameters = ExplicitOperations[549];
+                    parameters = new EpsgExplicitOperationRecord(3927, 355.845d, 274.282d, 462.979d, 9.086933d, 6.491055d, -14.502181d, 20.888647d);
                     return true;
                 case 3928:
-                    parameters = ExplicitOperations[550];
+                    parameters = new EpsgExplicitOperationRecord(3928, 400.629d, 90.651d, 472.249d, 3.261138d, 5.263404d, -11.83739d, 20.022676d);
                     return true;
                 case 3962:
-                    parameters = ExplicitOperations[551];
+                    parameters = new EpsgExplicitOperationRecord(3962, 682.0d, -203.0d, 480.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 3963:
-                    parameters = ExplicitOperations[552];
+                    parameters = new EpsgExplicitOperationRecord(3963, 551.7d, 162.9d, 467.9d, 6.04d, 1.96d, -11.38d, -4.82d);
                     return true;
                 case 3964:
-                    parameters = ExplicitOperations[553];
+                    parameters = new EpsgExplicitOperationRecord(3964, 551.7d, 162.9d, 467.9d, 6.04d, 1.96d, -11.38d, -4.82d);
                     return true;
                 case 3965:
-                    parameters = ExplicitOperations[554];
+                    parameters = new EpsgExplicitOperationRecord(3965, 695.5d, -216.6d, 491.1d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 3971:
-                    parameters = ExplicitOperations[555];
+                    parameters = new EpsgExplicitOperationRecord(3971, -60.31d, 245.935d, 31.008d, 12.324d, 3.755d, -7.37d, 0.447d);
                     return true;
                 case 3972:
-                    parameters = ExplicitOperations[556];
+                    parameters = new EpsgExplicitOperationRecord(3972, -143.87d, 243.37d, -33.52d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 3990:
-                    parameters = ExplicitOperations[557];
+                    parameters = new EpsgExplicitOperationRecord(3990, -60.31d, 245.935d, 31.008d, 12.324d, 3.755d, -7.37d, 0.447d);
                     return true;
                 case 3998:
-                    parameters = ExplicitOperations[558];
+                    parameters = new EpsgExplicitOperationRecord(3998, -153.0d, -5.0d, -292.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 4064:
-                    parameters = ExplicitOperations[559];
+                    parameters = new EpsgExplicitOperationRecord(4064, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 4065:
-                    parameters = ExplicitOperations[560];
+                    parameters = new EpsgExplicitOperationRecord(4065, -103.746d, -9.614d, -255.95d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 4066:
-                    parameters = ExplicitOperations[561];
+                    parameters = new EpsgExplicitOperationRecord(4066, -103.746d, -9.614d, -255.95d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 4067:
-                    parameters = ExplicitOperations[562];
+                    parameters = new EpsgExplicitOperationRecord(4067, -102.283d, -10.277d, -257.396d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 4068:
-                    parameters = ExplicitOperations[563];
+                    parameters = new EpsgExplicitOperationRecord(4068, -102.283d, -10.277d, -257.396d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 4069:
-                    parameters = ExplicitOperations[564];
+                    parameters = new EpsgExplicitOperationRecord(4069, -144.35d, 242.88d, -33.2d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 4077:
-                    parameters = ExplicitOperations[565];
+                    parameters = new EpsgExplicitOperationRecord(4077, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 4078:
-                    parameters = ExplicitOperations[566];
+                    parameters = new EpsgExplicitOperationRecord(4078, -83.11d, -97.38d, -117.22d, 0.0276d, -0.2167d, 0.2147d, 0.1218d);
                     return true;
                 case 4084:
-                    parameters = ExplicitOperations[567];
+                    parameters = new EpsgExplicitOperationRecord(4084, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 4290:
-                    parameters = ExplicitOperations[568];
+                    parameters = new EpsgExplicitOperationRecord(4290, -381.788d, -57.501d, -256.673d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 4461:
-                    parameters = ExplicitOperations[569];
+                    parameters = new EpsgExplicitOperationRecord(4461, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 4476:
-                    parameters = ExplicitOperations[570];
+                    parameters = new EpsgExplicitOperationRecord(4476, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 4477:
-                    parameters = ExplicitOperations[571];
+                    parameters = new EpsgExplicitOperationRecord(4477, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 4478:
-                    parameters = ExplicitOperations[572];
+                    parameters = new EpsgExplicitOperationRecord(4478, -381.788d, -57.501d, -256.673d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 4560:
-                    parameters = ExplicitOperations[573];
+                    parameters = new EpsgExplicitOperationRecord(4560, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 4827:
-                    parameters = ExplicitOperations[574];
+                    parameters = new EpsgExplicitOperationRecord(4827, 485.0d, 169.5d, 483.8d, 7.786d, 4.398d, 4.103d, 0.0d);
                     return true;
                 case 4829:
-                    parameters = ExplicitOperations[575];
+                    parameters = new EpsgExplicitOperationRecord(4829, 558.7d, 68.8d, 452.2d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 4830:
-                    parameters = ExplicitOperations[576];
+                    parameters = new EpsgExplicitOperationRecord(4830, 565.4171d, 50.3319d, 465.5524d, -1.9342d, 1.6677d, -9.1019d, 4.0725d);
                     return true;
                 case 4831:
-                    parameters = ExplicitOperations[577];
+                    parameters = new EpsgExplicitOperationRecord(4831, 593.0248d, 25.9984d, 478.7459d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 4832:
-                    parameters = ExplicitOperations[578];
+                    parameters = new EpsgExplicitOperationRecord(4832, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 4833:
-                    parameters = ExplicitOperations[579];
+                    parameters = new EpsgExplicitOperationRecord(4833, 565.4171d, 50.3319d, 465.5524d, -1.9342d, 1.6677d, -9.1019d, 4.0725d);
                     return true;
                 case 4834:
-                    parameters = ExplicitOperations[580];
+                    parameters = new EpsgExplicitOperationRecord(4834, -144.35d, 242.88d, -33.2d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 4836:
-                    parameters = ExplicitOperations[581];
+                    parameters = new EpsgExplicitOperationRecord(4836, 485.0d, 169.5d, 483.8d, 7.786d, 4.398d, 4.103d, 0.0d);
                     return true;
                 case 4837:
-                    parameters = ExplicitOperations[582];
+                    parameters = new EpsgExplicitOperationRecord(4837, -89.5d, -93.8d, -123.1d, -0.0d, -0.0d, 0.156d, 1.2d);
                     return true;
                 case 4840:
-                    parameters = ExplicitOperations[583];
+                    parameters = new EpsgExplicitOperationRecord(4840, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 4905:
-                    parameters = ExplicitOperations[584];
+                    parameters = new EpsgExplicitOperationRecord(4905, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5021:
-                    parameters = ExplicitOperations[585];
+                    parameters = new EpsgExplicitOperationRecord(5021, -503.229d, -247.375d, 312.582d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5022:
-                    parameters = ExplicitOperations[586];
+                    parameters = new EpsgExplicitOperationRecord(5022, -303.956d, 224.556d, 214.306d, 9.405d, -6.626d, -12.583d, 1.327d);
                     return true;
                 case 5023:
-                    parameters = ExplicitOperations[587];
+                    parameters = new EpsgExplicitOperationRecord(5023, -503.3d, -247.574d, 313.025d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5024:
-                    parameters = ExplicitOperations[588];
+                    parameters = new EpsgExplicitOperationRecord(5024, -204.926d, 140.353d, 55.063d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5025:
-                    parameters = ExplicitOperations[589];
+                    parameters = new EpsgExplicitOperationRecord(5025, -204.519d, 140.159d, 55.404d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5026:
-                    parameters = ExplicitOperations[590];
+                    parameters = new EpsgExplicitOperationRecord(5026, -205.808d, 140.771d, 54.326d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5027:
-                    parameters = ExplicitOperations[591];
+                    parameters = new EpsgExplicitOperationRecord(5027, -105.679d, 166.1d, -37.322d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5028:
-                    parameters = ExplicitOperations[592];
+                    parameters = new EpsgExplicitOperationRecord(5028, -105.377d, 165.769d, -36.965d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5029:
-                    parameters = ExplicitOperations[593];
+                    parameters = new EpsgExplicitOperationRecord(5029, -105.359d, 165.804d, -37.05d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5030:
-                    parameters = ExplicitOperations[594];
+                    parameters = new EpsgExplicitOperationRecord(5030, -105.531d, 166.39d, -37.326d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5031:
-                    parameters = ExplicitOperations[595];
+                    parameters = new EpsgExplicitOperationRecord(5031, -105.756d, 165.972d, -37.313d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5032:
-                    parameters = ExplicitOperations[596];
+                    parameters = new EpsgExplicitOperationRecord(5032, -106.235d, 166.236d, -37.768d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5033:
-                    parameters = ExplicitOperations[597];
+                    parameters = new EpsgExplicitOperationRecord(5033, -423.058d, -172.868d, 83.772d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5034:
-                    parameters = ExplicitOperations[598];
+                    parameters = new EpsgExplicitOperationRecord(5034, -423.053d, -172.871d, 83.771d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5035:
-                    parameters = ExplicitOperations[599];
+                    parameters = new EpsgExplicitOperationRecord(5035, -423.024d, -172.923d, 83.83d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5036:
-                    parameters = ExplicitOperations[600];
+                    parameters = new EpsgExplicitOperationRecord(5036, -223.15d, 110.132d, 36.711d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5037:
-                    parameters = ExplicitOperations[601];
+                    parameters = new EpsgExplicitOperationRecord(5037, -230.994d, 102.591d, 25.199d, 0.633d, -0.239d, 0.9d, 1.95d);
                     return true;
                 case 5038:
-                    parameters = ExplicitOperations[602];
+                    parameters = new EpsgExplicitOperationRecord(5038, -303.861d, -60.693d, 103.607d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5039:
-                    parameters = ExplicitOperations[603];
+                    parameters = new EpsgExplicitOperationRecord(5039, 508.088d, -191.042d, 565.223d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5040:
-                    parameters = ExplicitOperations[604];
+                    parameters = new EpsgExplicitOperationRecord(5040, -87.987d, -108.639d, -121.593d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5043:
-                    parameters = ExplicitOperations[605];
+                    parameters = new EpsgExplicitOperationRecord(5043, 24.47d, -130.89d, -81.56d, -0.0d, -0.0d, 0.13d, -0.22d);
                     return true;
                 case 5044:
-                    parameters = ExplicitOperations[606];
+                    parameters = new EpsgExplicitOperationRecord(5044, 23.57d, -140.95d, -79.8d, -0.0d, 0.35d, 0.79d, -0.22d);
                     return true;
                 case 5050:
-                    parameters = ExplicitOperations[607];
+                    parameters = new EpsgExplicitOperationRecord(5050, -157.84d, 308.54d, -146.6d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5051:
-                    parameters = ExplicitOperations[608];
+                    parameters = new EpsgExplicitOperationRecord(5051, -157.84d, 308.54d, -146.6d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5052:
-                    parameters = ExplicitOperations[609];
+                    parameters = new EpsgExplicitOperationRecord(5052, -160.31d, 314.82d, -142.25d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5053:
-                    parameters = ExplicitOperations[610];
+                    parameters = new EpsgExplicitOperationRecord(5053, -160.31d, 314.82d, -142.25d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5054:
-                    parameters = ExplicitOperations[611];
+                    parameters = new EpsgExplicitOperationRecord(5054, -161.11d, 310.25d, -144.64d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5055:
-                    parameters = ExplicitOperations[612];
+                    parameters = new EpsgExplicitOperationRecord(5055, -161.11d, 310.25d, -144.64d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5056:
-                    parameters = ExplicitOperations[613];
+                    parameters = new EpsgExplicitOperationRecord(5056, -160.4d, 302.29d, -144.19d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5057:
-                    parameters = ExplicitOperations[614];
+                    parameters = new EpsgExplicitOperationRecord(5057, -160.4d, 302.29d, -144.19d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5058:
-                    parameters = ExplicitOperations[615];
+                    parameters = new EpsgExplicitOperationRecord(5058, -153.54d, 302.33d, -152.37d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5059:
-                    parameters = ExplicitOperations[616];
+                    parameters = new EpsgExplicitOperationRecord(5059, -153.54d, 302.33d, -152.37d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5060:
-                    parameters = ExplicitOperations[617];
+                    parameters = new EpsgExplicitOperationRecord(5060, -151.5d, 300.09d, -151.15d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5061:
-                    parameters = ExplicitOperations[618];
+                    parameters = new EpsgExplicitOperationRecord(5061, -151.5d, 300.09d, -151.15d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5062:
-                    parameters = ExplicitOperations[619];
+                    parameters = new EpsgExplicitOperationRecord(5062, -156.8d, 298.41d, -147.41d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5063:
-                    parameters = ExplicitOperations[620];
+                    parameters = new EpsgExplicitOperationRecord(5063, -156.8d, 298.41d, -147.41d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5064:
-                    parameters = ExplicitOperations[621];
+                    parameters = new EpsgExplicitOperationRecord(5064, -157.4d, 295.05d, -150.19d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5065:
-                    parameters = ExplicitOperations[622];
+                    parameters = new EpsgExplicitOperationRecord(5065, -157.4d, 295.05d, -150.19d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5066:
-                    parameters = ExplicitOperations[623];
+                    parameters = new EpsgExplicitOperationRecord(5066, -151.99d, 287.04d, -147.45d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5067:
-                    parameters = ExplicitOperations[624];
+                    parameters = new EpsgExplicitOperationRecord(5067, -151.99d, 287.04d, -147.45d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5077:
-                    parameters = ExplicitOperations[625];
+                    parameters = new EpsgExplicitOperationRecord(5077, 70.995d, -335.916d, 262.898d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5078:
-                    parameters = ExplicitOperations[626];
+                    parameters = new EpsgExplicitOperationRecord(5078, 70.995d, -335.916d, 262.898d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5189:
-                    parameters = ExplicitOperations[627];
+                    parameters = new EpsgExplicitOperationRecord(5189, -145.907d, 505.034d, 685.756d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5191:
-                    parameters = ExplicitOperations[628];
+                    parameters = new EpsgExplicitOperationRecord(5191, -145.907d, 505.034d, 685.756d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5194:
-                    parameters = ExplicitOperations[629];
+                    parameters = new EpsgExplicitOperationRecord(5194, -192.873d, -39.382d, -111.202d, -0.00205d, -0.0005d, 0.00335d, 0.0188d);
                     return true;
                 case 5226:
-                    parameters = ExplicitOperations[630];
+                    parameters = new EpsgExplicitOperationRecord(5226, 572.213d, 85.334d, 461.94d, 4.9732d, 1.529d, 5.2484d, 3.5378d);
                     return true;
                 case 5227:
-                    parameters = ExplicitOperations[631];
+                    parameters = new EpsgExplicitOperationRecord(5227, 572.213d, 85.334d, 461.94d, 4.9732d, 1.529d, 5.2484d, 3.5378d);
                     return true;
                 case 5236:
-                    parameters = ExplicitOperations[632];
+                    parameters = new EpsgExplicitOperationRecord(5236, -0.293d, 766.95d, 87.713d, 0.195704d, 1.695068d, 3.473016d, -0.039338d);
                     return true;
                 case 5239:
-                    parameters = ExplicitOperations[633];
+                    parameters = new EpsgExplicitOperationRecord(5239, 572.213d, 85.334d, 461.94d, 4.9732d, 1.529d, 5.2484d, 3.5378d);
                     return true;
                 case 5249:
-                    parameters = ExplicitOperations[634];
+                    parameters = new EpsgExplicitOperationRecord(5249, -689.5937d, 623.84046d, -65.93566d, -0.02331d, 1.17094d, -0.80054d, 5.88536d);
                     return true;
                 case 5260:
-                    parameters = ExplicitOperations[635];
+                    parameters = new EpsgExplicitOperationRecord(5260, 0.023d, 0.036d, -0.068d, 0.00176d, 0.00912d, -0.01136d, 0.00439d);
                     return true;
                 case 5261:
-                    parameters = ExplicitOperations[636];
+                    parameters = new EpsgExplicitOperationRecord(5261, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5267:
-                    parameters = ExplicitOperations[637];
+                    parameters = new EpsgExplicitOperationRecord(5267, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5327:
-                    parameters = ExplicitOperations[638];
+                    parameters = new EpsgExplicitOperationRecord(5327, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5350:
-                    parameters = ExplicitOperations[639];
+                    parameters = new EpsgExplicitOperationRecord(5350, -148.0d, 136.0d, 90.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5351:
-                    parameters = ExplicitOperations[640];
+                    parameters = new EpsgExplicitOperationRecord(5351, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5374:
-                    parameters = ExplicitOperations[641];
+                    parameters = new EpsgExplicitOperationRecord(5374, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5376:
-                    parameters = ExplicitOperations[642];
+                    parameters = new EpsgExplicitOperationRecord(5376, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5377:
-                    parameters = ExplicitOperations[643];
+                    parameters = new EpsgExplicitOperationRecord(5377, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5378:
-                    parameters = ExplicitOperations[644];
+                    parameters = new EpsgExplicitOperationRecord(5378, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5384:
-                    parameters = ExplicitOperations[645];
+                    parameters = new EpsgExplicitOperationRecord(5384, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5385:
-                    parameters = ExplicitOperations[646];
+                    parameters = new EpsgExplicitOperationRecord(5385, -124.45d, 183.74d, 44.64d, -0.4384d, 0.5446d, -0.9706d, -2.1365d);
                     return true;
                 case 5386:
-                    parameters = ExplicitOperations[647];
+                    parameters = new EpsgExplicitOperationRecord(5386, -124.45d, 183.74d, 44.64d, -0.4384d, 0.5446d, -0.9706d, -2.1365d);
                     return true;
                 case 5395:
-                    parameters = ExplicitOperations[648];
+                    parameters = new EpsgExplicitOperationRecord(5395, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5470:
-                    parameters = ExplicitOperations[649];
+                    parameters = new EpsgExplicitOperationRecord(5470, 213.11d, 9.37d, -74.95d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5483:
-                    parameters = ExplicitOperations[650];
+                    parameters = new EpsgExplicitOperationRecord(5483, -265.8867d, 76.9851d, 20.2667d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5484:
-                    parameters = ExplicitOperations[651];
+                    parameters = new EpsgExplicitOperationRecord(5484, -265.8867d, 76.9851d, 20.2667d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5485:
-                    parameters = ExplicitOperations[652];
+                    parameters = new EpsgExplicitOperationRecord(5485, -189.6806d, 18.3463d, -42.7695d, -0.33746d, -3.09264d, 2.53861d, 0.4598d);
                     return true;
                 case 5486:
-                    parameters = ExplicitOperations[653];
+                    parameters = new EpsgExplicitOperationRecord(5486, -189.6806d, 18.3463d, -42.7695d, -0.33746d, -3.09264d, 2.53861d, 0.4598d);
                     return true;
                 case 5491:
-                    parameters = ExplicitOperations[654];
+                    parameters = new EpsgExplicitOperationRecord(5491, 127.744d, 547.069d, 118.359d, -3.1116d, 4.9509d, -0.8837d, 14.1012d);
                     return true;
                 case 5492:
-                    parameters = ExplicitOperations[655];
+                    parameters = new EpsgExplicitOperationRecord(5492, -471.06d, -3.212d, -305.843d, 0.4752d, -0.9978d, 0.2068d, 2.1353d);
                     return true;
                 case 5493:
-                    parameters = ExplicitOperations[656];
+                    parameters = new EpsgExplicitOperationRecord(5493, 151.613d, 253.832d, -429.084d, -0.0506d, 0.0958d, -0.5974d, -0.3971d);
                     return true;
                 case 5494:
-                    parameters = ExplicitOperations[657];
+                    parameters = new EpsgExplicitOperationRecord(5494, 0.7696d, -0.8692d, -12.0631d, -0.32511d, -0.21041d, -0.0239d, 0.2829d);
                     return true;
                 case 5495:
-                    parameters = ExplicitOperations[658];
+                    parameters = new EpsgExplicitOperationRecord(5495, 1.2239d, 2.4156d, -1.7598d, 0.038d, -0.16101d, -0.04925d, 0.2387d);
                     return true;
                 case 5496:
-                    parameters = ExplicitOperations[659];
+                    parameters = new EpsgExplicitOperationRecord(5496, 14.6642d, 5.2493d, 0.1981d, -0.06838d, 0.09141d, -0.58131d, -0.4067d);
                     return true;
                 case 5497:
-                    parameters = ExplicitOperations[660];
+                    parameters = new EpsgExplicitOperationRecord(5497, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5501:
-                    parameters = ExplicitOperations[661];
+                    parameters = new EpsgExplicitOperationRecord(5501, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5521:
-                    parameters = ExplicitOperations[662];
+                    parameters = new EpsgExplicitOperationRecord(5521, -963.0d, 510.0d, -359.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5553:
-                    parameters = ExplicitOperations[663];
+                    parameters = new EpsgExplicitOperationRecord(5553, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5585:
-                    parameters = ExplicitOperations[664];
+                    parameters = new EpsgExplicitOperationRecord(5585, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5586:
-                    parameters = ExplicitOperations[665];
+                    parameters = new EpsgExplicitOperationRecord(5586, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5590:
-                    parameters = ExplicitOperations[666];
+                    parameters = new EpsgExplicitOperationRecord(5590, 25.0d, -141.0d, -78.5d, -0.0d, 0.35d, 0.736d, 0.0d);
                     return true;
                 case 5599:
-                    parameters = ExplicitOperations[667];
+                    parameters = new EpsgExplicitOperationRecord(5599, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5622:
-                    parameters = ExplicitOperations[668];
+                    parameters = new EpsgExplicitOperationRecord(5622, 370.936d, -108.938d, 435.682d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5630:
-                    parameters = ExplicitOperations[669];
+                    parameters = new EpsgExplicitOperationRecord(5630, -168.52d, -72.05d, 304.3d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5660:
-                    parameters = ExplicitOperations[670];
+                    parameters = new EpsgExplicitOperationRecord(5660, -209.3622d, -87.8162d, 404.6198d, 0.0046d, 3.4784d, 0.5805d, -1.4547d);
                     return true;
                 case 5662:
-                    parameters = ExplicitOperations[671];
+                    parameters = new EpsgExplicitOperationRecord(5662, -124.0d, -60.0d, 153.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5826:
-                    parameters = ExplicitOperations[672];
+                    parameters = new EpsgExplicitOperationRecord(5826, 584.9636d, 107.7175d, 413.8067d, 1.1155d, 0.2824d, -3.1384d, 7.9922d);
                     return true;
                 case 5827:
-                    parameters = ExplicitOperations[673];
+                    parameters = new EpsgExplicitOperationRecord(5827, -129.164d, -41.188d, 130.718d, 0.246d, 0.374d, 0.329d, -2.955d);
                     return true;
                 case 5840:
-                    parameters = ExplicitOperations[674];
+                    parameters = new EpsgExplicitOperationRecord(5840, 24.0d, -121.0d, -76.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5841:
-                    parameters = ExplicitOperations[675];
+                    parameters = new EpsgExplicitOperationRecord(5841, -124.0d, -60.0d, 154.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5878:
-                    parameters = ExplicitOperations[676];
+                    parameters = new EpsgExplicitOperationRecord(5878, -689.5937d, 623.84046d, -65.93566d, -0.02331d, 1.17094d, -0.80054d, 5.88536d);
                     return true;
                 case 5881:
-                    parameters = ExplicitOperations[677];
+                    parameters = new EpsgExplicitOperationRecord(5881, -67.35d, 3.88d, -38.22d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5882:
-                    parameters = ExplicitOperations[678];
+                    parameters = new EpsgExplicitOperationRecord(5882, -67.35d, 3.88d, -38.22d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 5888:
-                    parameters = ExplicitOperations[679];
+                    parameters = new EpsgExplicitOperationRecord(5888, -599.928d, -275.552d, -195.665d, -0.0835d, -0.4715d, 0.0602d, 49.2814d);
                     return true;
                 case 6136:
-                    parameters = ExplicitOperations[680];
+                    parameters = new EpsgExplicitOperationRecord(6136, -179.483d, -69.379d, -27.584d, -7.862d, 8.163d, 6.042d, -13.925d);
                     return true;
                 case 6137:
-                    parameters = ExplicitOperations[681];
+                    parameters = new EpsgExplicitOperationRecord(6137, 8.853d, -52.644d, 180.304d, -0.393d, -2.323d, 2.96d, -24.081d);
                     return true;
                 case 6142:
-                    parameters = ExplicitOperations[682];
+                    parameters = new EpsgExplicitOperationRecord(6142, -179.483d, -69.379d, -27.584d, -7.862d, 8.163d, 6.042d, -13.925d);
                     return true;
                 case 6143:
-                    parameters = ExplicitOperations[683];
+                    parameters = new EpsgExplicitOperationRecord(6143, 8.853d, -52.644d, 180.304d, -0.393d, -2.323d, 2.96d, -24.081d);
                     return true;
                 case 6177:
-                    parameters = ExplicitOperations[684];
+                    parameters = new EpsgExplicitOperationRecord(6177, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6191:
-                    parameters = ExplicitOperations[685];
+                    parameters = new EpsgExplicitOperationRecord(6191, -138.7d, 164.4d, 34.4d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6192:
-                    parameters = ExplicitOperations[686];
+                    parameters = new EpsgExplicitOperationRecord(6192, -205.57d, 168.77d, -4.12d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6193:
-                    parameters = ExplicitOperations[687];
+                    parameters = new EpsgExplicitOperationRecord(6193, -206.05d, 168.28d, -3.82d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6194:
-                    parameters = ExplicitOperations[688];
+                    parameters = new EpsgExplicitOperationRecord(6194, -206.05d, 168.28d, -3.82d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6195:
-                    parameters = ExplicitOperations[689];
+                    parameters = new EpsgExplicitOperationRecord(6195, -67.35d, 3.88d, -38.22d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6196:
-                    parameters = ExplicitOperations[690];
+                    parameters = new EpsgExplicitOperationRecord(6196, -93.179d, -87.124d, 114.338d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6205:
-                    parameters = ExplicitOperations[691];
+                    parameters = new EpsgExplicitOperationRecord(6205, 517.4399d, 228.7318d, 579.7954d, 4.045d, 4.304d, -15.612d, -8.312d);
                     return true;
                 case 6206:
-                    parameters = ExplicitOperations[692];
+                    parameters = new EpsgExplicitOperationRecord(6206, 521.748d, 229.489d, 590.921d, 4.029d, 4.488d, -15.521d, -9.78d);
                     return true;
                 case 6208:
-                    parameters = ExplicitOperations[693];
+                    parameters = new EpsgExplicitOperationRecord(6208, 293.17d, 726.18d, 245.36d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6276:
-                    parameters = ExplicitOperations[694];
+                    parameters = new EpsgExplicitOperationRecord(6276, -84.68d, -19.42d, 32.01d, 0.4254d, -2.2578d, -2.4015d, 9.71d);
                     return true;
                 case 6277:
-                    parameters = ExplicitOperations[695];
+                    parameters = new EpsgExplicitOperationRecord(6277, -79.73d, -6.86d, 38.03d, 0.0351d, -2.1211d, -2.1411d, 6.636d);
                     return true;
                 case 6278:
-                    parameters = ExplicitOperations[696];
+                    parameters = new EpsgExplicitOperationRecord(6278, -45.91d, -29.85d, -20.37d, 1.6705d, -0.4594d, -1.9356d, 7.07d);
                     return true;
                 case 6279:
-                    parameters = ExplicitOperations[697];
+                    parameters = new EpsgExplicitOperationRecord(6279, -14.63d, -27.62d, -25.32d, 1.7893d, 0.6047d, -0.9962d, 6.695d);
                     return true;
                 case 6280:
-                    parameters = ExplicitOperations[698];
+                    parameters = new EpsgExplicitOperationRecord(6280, 24.54d, -36.43d, -68.12d, 2.7359d, 2.0431d, -0.3731d, 6.901d);
                     return true;
                 case 6313:
-                    parameters = ExplicitOperations[699];
+                    parameters = new EpsgExplicitOperationRecord(6313, -0.014d, 0.0431d, 0.201d, -0.012464d, -0.012013d, -0.006434d, 0.024607d);
                     return true;
                 case 6315:
-                    parameters = ExplicitOperations[700];
+                    parameters = new EpsgExplicitOperationRecord(6315, -0.0761d, -0.0101d, 0.0444d, -0.008765d, -0.009361d, -0.009325d, 0.007935d);
                     return true;
                 case 6373:
-                    parameters = ExplicitOperations[701];
+                    parameters = new EpsgExplicitOperationRecord(6373, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6392:
-                    parameters = ExplicitOperations[702];
+                    parameters = new EpsgExplicitOperationRecord(6392, -0.2088d, 0.0119d, 0.1855d, -0.012059d, -0.013639d, -0.011825d, 0.004559d);
                     return true;
                 case 6698:
-                    parameters = ExplicitOperations[703];
+                    parameters = new EpsgExplicitOperationRecord(6698, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6701:
-                    parameters = ExplicitOperations[704];
+                    parameters = new EpsgExplicitOperationRecord(6701, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6711:
-                    parameters = ExplicitOperations[705];
+                    parameters = new EpsgExplicitOperationRecord(6711, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6864:
-                    parameters = ExplicitOperations[706];
+                    parameters = new EpsgExplicitOperationRecord(6864, 0.991d, -1.9072d, -0.5129d, -25.79d, -9.65d, -11.66d, 0.0d);
                     return true;
                 case 6865:
-                    parameters = ExplicitOperations[707];
+                    parameters = new EpsgExplicitOperationRecord(6865, 0.9889d, -1.9074d, -0.503d, -25.915d, -9.426d, -11.599d, -0.93d);
                     return true;
                 case 6866:
-                    parameters = ExplicitOperations[708];
+                    parameters = new EpsgExplicitOperationRecord(6866, 0.9956d, -1.9013d, -0.5215d, -25.915d, -9.426d, -11.599d, 0.62d);
                     return true;
                 case 6872:
-                    parameters = ExplicitOperations[709];
+                    parameters = new EpsgExplicitOperationRecord(6872, -123.1d, 53.2d, 465.4d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6873:
-                    parameters = ExplicitOperations[710];
+                    parameters = new EpsgExplicitOperationRecord(6873, -198.383d, -240.517d, -107.909d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6888:
-                    parameters = ExplicitOperations[711];
+                    parameters = new EpsgExplicitOperationRecord(6888, 205.435d, -29.099d, -292.202d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6889:
-                    parameters = ExplicitOperations[712];
+                    parameters = new EpsgExplicitOperationRecord(6889, 213.116d, 9.358d, -74.946d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6890:
-                    parameters = ExplicitOperations[713];
+                    parameters = new EpsgExplicitOperationRecord(6890, 213.11d, 9.37d, -74.95d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6891:
-                    parameters = ExplicitOperations[714];
+                    parameters = new EpsgExplicitOperationRecord(6891, 205.0d, 96.0d, -98.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6895:
-                    parameters = ExplicitOperations[715];
+                    parameters = new EpsgExplicitOperationRecord(6895, 98.0d, 390.0d, -22.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6896:
-                    parameters = ExplicitOperations[716];
+                    parameters = new EpsgExplicitOperationRecord(6896, -170.0d, 33.0d, 326.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6897:
-                    parameters = ExplicitOperations[717];
+                    parameters = new EpsgExplicitOperationRecord(6897, -153.0d, 153.0d, 307.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6898:
-                    parameters = ExplicitOperations[718];
+                    parameters = new EpsgExplicitOperationRecord(6898, -306.0d, -62.0d, 105.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6899:
-                    parameters = ExplicitOperations[719];
+                    parameters = new EpsgExplicitOperationRecord(6899, 22.0d, -126.0d, -85.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6900:
-                    parameters = ExplicitOperations[720];
+                    parameters = new EpsgExplicitOperationRecord(6900, -132.0d, -110.0d, -335.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6901:
-                    parameters = ExplicitOperations[721];
+                    parameters = new EpsgExplicitOperationRecord(6901, -80.0d, -100.0d, -228.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6902:
-                    parameters = ExplicitOperations[722];
+                    parameters = new EpsgExplicitOperationRecord(6902, -679.0d, 667.0d, -49.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6903:
-                    parameters = ExplicitOperations[723];
+                    parameters = new EpsgExplicitOperationRecord(6903, -30.0d, 190.0d, 89.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6904:
-                    parameters = ExplicitOperations[724];
+                    parameters = new EpsgExplicitOperationRecord(6904, -179.0d, -81.0d, -314.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6905:
-                    parameters = ExplicitOperations[725];
+                    parameters = new EpsgExplicitOperationRecord(6905, -128.0d, -52.0d, 153.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6906:
-                    parameters = ExplicitOperations[726];
+                    parameters = new EpsgExplicitOperationRecord(6906, -145.0d, -97.0d, -292.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6907:
-                    parameters = ExplicitOperations[727];
+                    parameters = new EpsgExplicitOperationRecord(6907, -77.0d, -128.0d, 142.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6908:
-                    parameters = ExplicitOperations[728];
+                    parameters = new EpsgExplicitOperationRecord(6908, -345.0d, 3.0d, 223.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6909:
-                    parameters = ExplicitOperations[729];
+                    parameters = new EpsgExplicitOperationRecord(6909, -73.0d, 47.0d, -83.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6910:
-                    parameters = ExplicitOperations[730];
+                    parameters = new EpsgExplicitOperationRecord(6910, -24.0d, -203.0d, 268.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6911:
-                    parameters = ExplicitOperations[731];
+                    parameters = new EpsgExplicitOperationRecord(6911, -183.0d, -15.0d, 273.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6912:
-                    parameters = ExplicitOperations[732];
+                    parameters = new EpsgExplicitOperationRecord(6912, -235.0d, -110.0d, 393.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6913:
-                    parameters = ExplicitOperations[733];
+                    parameters = new EpsgExplicitOperationRecord(6913, -63.0d, 176.0d, 185.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6914:
-                    parameters = ExplicitOperations[734];
+                    parameters = new EpsgExplicitOperationRecord(6914, -43.685d, -179.785d, -267.721d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6926:
-                    parameters = ExplicitOperations[735];
+                    parameters = new EpsgExplicitOperationRecord(6926, -76.269d, -16.683d, 68.562d, -6.275d, 10.536d, -4.286d, -13.686d);
                     return true;
                 case 6935:
-                    parameters = ExplicitOperations[736];
+                    parameters = new EpsgExplicitOperationRecord(6935, 0.208d, -0.012d, -0.229d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6936:
-                    parameters = ExplicitOperations[737];
+                    parameters = new EpsgExplicitOperationRecord(6936, -0.214d, 0.119d, 0.156d, -0.01182d, 0.00811d, -0.01677d, -0.0059d);
                     return true;
                 case 6937:
-                    parameters = ExplicitOperations[738];
+                    parameters = new EpsgExplicitOperationRecord(6937, -0.41d, -2.37d, 2.0d, 3.592d, 3.698d, 3.989d, 8.843d);
                     return true;
                 case 6938:
-                    parameters = ExplicitOperations[739];
+                    parameters = new EpsgExplicitOperationRecord(6938, -129.0d, -58.0d, 152.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6939:
-                    parameters = ExplicitOperations[740];
+                    parameters = new EpsgExplicitOperationRecord(6939, -131.876d, -54.554d, 453.346d, -5.2155d, -8.2042d, 0.09d, 5.02d);
                     return true;
                 case 6940:
-                    parameters = ExplicitOperations[741];
+                    parameters = new EpsgExplicitOperationRecord(6940, -131.3d, -55.3d, 151.8d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6941:
-                    parameters = ExplicitOperations[742];
+                    parameters = new EpsgExplicitOperationRecord(6941, 45.928d, -177.212d, 336.867d, -4.6039d, -3.0921d, 0.5729d, 36.796d);
                     return true;
                 case 6942:
-                    parameters = ExplicitOperations[743];
+                    parameters = new EpsgExplicitOperationRecord(6942, -137.4d, -58.9d, 150.4d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6943:
-                    parameters = ExplicitOperations[744];
+                    parameters = new EpsgExplicitOperationRecord(6943, -129.0d, -58.0d, 152.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6944:
-                    parameters = ExplicitOperations[745];
+                    parameters = new EpsgExplicitOperationRecord(6944, -131.3d, -55.3d, 151.8d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6945:
-                    parameters = ExplicitOperations[746];
+                    parameters = new EpsgExplicitOperationRecord(6945, -137.4d, -58.9d, 150.4d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6949:
-                    parameters = ExplicitOperations[747];
+                    parameters = new EpsgExplicitOperationRecord(6949, -302.0d, 272.0d, -360.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6950:
-                    parameters = ExplicitOperations[748];
+                    parameters = new EpsgExplicitOperationRecord(6950, -328.0d, 340.0d, -329.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6951:
-                    parameters = ExplicitOperations[749];
+                    parameters = new EpsgExplicitOperationRecord(6951, -352.0d, 403.0d, -287.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6960:
-                    parameters = ExplicitOperations[750];
+                    parameters = new EpsgExplicitOperationRecord(6960, -191.90441429d, -39.30318279d, -111.45032835d, 0.00928836d, -0.01975479d, 0.00427372d, 0.252906278d);
                     return true;
                 case 6968:
-                    parameters = ExplicitOperations[751];
+                    parameters = new EpsgExplicitOperationRecord(6968, -64.0d, 0.0d, -32.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6970:
-                    parameters = ExplicitOperations[752];
+                    parameters = new EpsgExplicitOperationRecord(6970, -79.0d, 13.0d, -14.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6971:
-                    parameters = ExplicitOperations[753];
+                    parameters = new EpsgExplicitOperationRecord(6971, -302.0d, 272.0d, -360.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6972:
-                    parameters = ExplicitOperations[754];
+                    parameters = new EpsgExplicitOperationRecord(6972, -328.0d, 340.0d, -329.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6973:
-                    parameters = ExplicitOperations[755];
+                    parameters = new EpsgExplicitOperationRecord(6973, -352.0d, 403.0d, -287.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6974:
-                    parameters = ExplicitOperations[756];
+                    parameters = new EpsgExplicitOperationRecord(6974, -59.0d, -11.0d, -52.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6975:
-                    parameters = ExplicitOperations[757];
+                    parameters = new EpsgExplicitOperationRecord(6975, -64.0d, 0.0d, -32.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6976:
-                    parameters = ExplicitOperations[758];
+                    parameters = new EpsgExplicitOperationRecord(6976, -72.0d, 10.0d, -32.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6977:
-                    parameters = ExplicitOperations[759];
+                    parameters = new EpsgExplicitOperationRecord(6977, -79.0d, 13.0d, -14.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 6992:
-                    parameters = ExplicitOperations[760];
+                    parameters = new EpsgExplicitOperationRecord(6992, 0.2255d, -0.3709d, -0.1171d, 0.00388d, -0.00063d, 0.0182d, 0.013443d);
                     return true;
                 case 6993:
-                    parameters = ExplicitOperations[761];
+                    parameters = new EpsgExplicitOperationRecord(6993, -24.0024d, -17.1032d, -17.8444d, 0.33009d, 1.85269d, -1.66969d, 5.4248d);
                     return true;
                 case 6998:
-                    parameters = ExplicitOperations[762];
+                    parameters = new EpsgExplicitOperationRecord(6998, -233.4d, -160.7d, 381.5d, -0.0d, -0.0d, 0.554d, 0.2263d);
                     return true;
                 case 6999:
-                    parameters = ExplicitOperations[763];
+                    parameters = new EpsgExplicitOperationRecord(6999, -253.4392d, -148.452d, 386.5267d, 0.15605d, 0.43d, -0.1013d, -0.0424d);
                     return true;
                 case 7002:
-                    parameters = ExplicitOperations[764];
+                    parameters = new EpsgExplicitOperationRecord(7002, -246.1633d, -152.9047d, 382.6047d, 0.0989d, 0.1382d, 0.0768d, 2.1e-06d);
                     return true;
                 case 7003:
-                    parameters = ExplicitOperations[765];
+                    parameters = new EpsgExplicitOperationRecord(7003, -242.8907d, -149.0671d, 384.416d, 0.19044d, 0.24987d, 0.13925d, 0.0001746d);
                     return true;
                 case 7004:
-                    parameters = ExplicitOperations[766];
+                    parameters = new EpsgExplicitOperationRecord(7004, -246.734d, -153.4345d, 382.1477d, -0.116617d, -0.165167d, -0.091327d, 1.94e-05d);
                     return true;
                 case 7033:
-                    parameters = ExplicitOperations[767];
+                    parameters = new EpsgExplicitOperationRecord(7033, -242.2d, -144.9d, 370.3d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 7083:
-                    parameters = ExplicitOperations[768];
+                    parameters = new EpsgExplicitOperationRecord(7083, 324.912d, 153.282d, 172.026d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 7140:
-                    parameters = ExplicitOperations[769];
+                    parameters = new EpsgExplicitOperationRecord(7140, -23.8085d, -17.5937d, -17.801d, 0.3306d, 1.85706d, -1.64828d, 5.4374d);
                     return true;
                 case 7377:
-                    parameters = ExplicitOperations[770];
+                    parameters = new EpsgExplicitOperationRecord(7377, 0.819d, -0.5762d, -1.6446d, -0.00378d, -0.03317d, 0.00318d, 0.0693d);
                     return true;
                 case 7442:
-                    parameters = ExplicitOperations[771];
+                    parameters = new EpsgExplicitOperationRecord(7442, -181.7d, 64.7d, 247.2d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 7443:
-                    parameters = ExplicitOperations[772];
+                    parameters = new EpsgExplicitOperationRecord(7443, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 7448:
-                    parameters = ExplicitOperations[773];
+                    parameters = new EpsgExplicitOperationRecord(7448, -59.0d, -11.0d, -52.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 7449:
-                    parameters = ExplicitOperations[774];
+                    parameters = new EpsgExplicitOperationRecord(7449, -72.0d, 10.0d, -32.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 7666:
-                    parameters = ExplicitOperations[775];
+                    parameters = new EpsgExplicitOperationRecord(7666, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d);
                     return true;
                 case 7667:
-                    parameters = ExplicitOperations[776];
+                    parameters = new EpsgExplicitOperationRecord(7667, -4.0d, 3.0d, 4.0d, -0.27d, 0.27d, -0.38d, -6.9d);
                     return true;
                 case 7668:
-                    parameters = ExplicitOperations[777];
+                    parameters = new EpsgExplicitOperationRecord(7668, -6.0d, 5.0d, 20.0d, -0.0d, -0.0d, -0.0d, -4.5d);
                     return true;
                 case 7669:
-                    parameters = ExplicitOperations[778];
+                    parameters = new EpsgExplicitOperationRecord(7669, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d);
                     return true;
                 case 7670:
-                    parameters = ExplicitOperations[779];
+                    parameters = new EpsgExplicitOperationRecord(7670, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d);
                     return true;
                 case 7672:
-                    parameters = ExplicitOperations[780];
+                    parameters = new EpsgExplicitOperationRecord(7672, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d);
                     return true;
                 case 7675:
-                    parameters = ExplicitOperations[781];
+                    parameters = new EpsgExplicitOperationRecord(7675, 577.88891d, 165.22205d, 391.18289d, 4.9145d, -0.94729d, -13.05098d, 7.78664d);
                     return true;
                 case 7676:
-                    parameters = ExplicitOperations[782];
+                    parameters = new EpsgExplicitOperationRecord(7676, 577.88891d, 165.22205d, 391.18289d, 4.9145d, -0.94729d, -13.05098d, 7.78664d);
                     return true;
                 case 7697:
-                    parameters = ExplicitOperations[783];
+                    parameters = new EpsgExplicitOperationRecord(7697, -127.535d, 113.495d, -12.7d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 7698:
-                    parameters = ExplicitOperations[784];
+                    parameters = new EpsgExplicitOperationRecord(7698, -32.3841359d, 180.4090461d, 120.8442577d, -2.1545854d, -0.1498782d, 0.5742915d, 8.1049164d);
                     return true;
                 case 7702:
-                    parameters = ExplicitOperations[785];
+                    parameters = new EpsgExplicitOperationRecord(7702, -1.07d, -0.03d, 0.02d, -0.0d, -0.0d, 130.0d, -0.22d);
                     return true;
                 case 7703:
-                    parameters = ExplicitOperations[786];
+                    parameters = new EpsgExplicitOperationRecord(7703, -0.373d, 0.186d, 0.202d, 2.3d, -3.54d, 4.21d, -0.008d);
                     return true;
                 case 7704:
-                    parameters = ExplicitOperations[787];
+                    parameters = new EpsgExplicitOperationRecord(7704, -1.443d, 0.156d, 0.222d, 2.3d, -3.54d, 134.21d, -0.228d);
                     return true;
                 case 7705:
-                    parameters = ExplicitOperations[788];
+                    parameters = new EpsgExplicitOperationRecord(7705, 0.0d, 0.014d, -0.008d, 0.562d, 0.019d, -0.053d, -0.0006d);
                     return true;
                 case 7720:
-                    parameters = ExplicitOperations[789];
+                    parameters = new EpsgExplicitOperationRecord(7720, 8.846d, -4.394d, -1.122d, -0.00237d, -0.146528d, 0.130428d, 0.783926d);
                     return true;
                 case 7721:
-                    parameters = ExplicitOperations[790];
+                    parameters = new EpsgExplicitOperationRecord(7721, 8.846d, -4.394d, -1.122d, -0.00237d, -0.146528d, 0.130428d, 0.783926d);
                     return true;
                 case 7806:
-                    parameters = ExplicitOperations[791];
+                    parameters = new EpsgExplicitOperationRecord(7806, 5.0d, -133.0d, -104.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 7807:
-                    parameters = ExplicitOperations[792];
+                    parameters = new EpsgExplicitOperationRecord(7807, 0.99343d, -1.90331d, -0.52655d, -25.91467d, -9.42645d, -11.59935d, 1.71504d);
                     return true;
                 case 7808:
-                    parameters = ExplicitOperations[793];
+                    parameters = new EpsgExplicitOperationRecord(7808, 0.908d, -2.0161d, -0.5653d, -27.741d, -13.469d, -2.712d, 1.1d);
                     return true;
                 case 7809:
-                    parameters = ExplicitOperations[794];
+                    parameters = new EpsgExplicitOperationRecord(7809, 0.908d, -2.0161d, -0.5653d, -28.971d, -10.42d, -8.928d, 1.1d);
                     return true;
                 case 7817:
-                    parameters = ExplicitOperations[795];
+                    parameters = new EpsgExplicitOperationRecord(7817, 24.322d, -121.372d, -75.847d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 7833:
-                    parameters = ExplicitOperations[796];
+                    parameters = new EpsgExplicitOperationRecord(7833, -44.183d, -0.58d, -38.489d, 2.3867d, 2.7072d, -3.5196d, -8.2703d);
                     return true;
                 case 7834:
-                    parameters = ExplicitOperations[797];
+                    parameters = new EpsgExplicitOperationRecord(7834, -44.183d, -0.58d, -38.489d, 2.3867d, 2.7072d, -3.5196d, -8.2703d);
                     return true;
                 case 7835:
-                    parameters = ExplicitOperations[798];
+                    parameters = new EpsgExplicitOperationRecord(7835, 74.5d, -112.5d, -44.3d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 7836:
-                    parameters = ExplicitOperations[799];
+                    parameters = new EpsgExplicitOperationRecord(7836, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 7892:
-                    parameters = ExplicitOperations[800];
+                    parameters = new EpsgExplicitOperationRecord(7892, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 7893:
-                    parameters = ExplicitOperations[801];
+                    parameters = new EpsgExplicitOperationRecord(7893, -323.65d, 551.39d, -491.22d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 7894:
-                    parameters = ExplicitOperations[802];
+                    parameters = new EpsgExplicitOperationRecord(7894, -323.65d, 551.39d, -491.22d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 7895:
-                    parameters = ExplicitOperations[803];
+                    parameters = new EpsgExplicitOperationRecord(7895, -112.854d, 12.27d, -18.913d, 2.1692d, 16.8896d, 17.1961d, -19.54517d);
                     return true;
                 case 7897:
-                    parameters = ExplicitOperations[804];
+                    parameters = new EpsgExplicitOperationRecord(7897, -0.077d, 0.079d, 0.086d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 7898:
-                    parameters = ExplicitOperations[805];
+                    parameters = new EpsgExplicitOperationRecord(7898, -0.077d, 0.079d, 0.086d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 7960:
-                    parameters = ExplicitOperations[806];
+                    parameters = new EpsgExplicitOperationRecord(7960, -0.003d, -0.001d, 0.0d, -0.019d, 0.042d, -0.002d, 0.0d);
                     return true;
                 case 7961:
-                    parameters = ExplicitOperations[807];
+                    parameters = new EpsgExplicitOperationRecord(7961, 0.36d, -0.08d, -0.18d, -0.0d, -0.0d, -0.0d, 0.0d);
                     return true;
                 case 8047:
-                    parameters = ExplicitOperations[808];
+                    parameters = new EpsgExplicitOperationRecord(8047, -82.981d, -99.719d, -110.709d, -0.5076d, 0.1503d, 0.3898d, -0.3143d);
                     return true;
                 case 8048:
-                    parameters = ExplicitOperations[809];
+                    parameters = new EpsgExplicitOperationRecord(8048, 61.55d, -10.87d, -40.19d, 39.4924d, 32.7221d, 32.8979d, -9.994d);
                     return true;
                 case 8049:
-                    parameters = ExplicitOperations[810];
+                    parameters = new EpsgExplicitOperationRecord(8049, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d);
                     return true;
                 case 8270:
-                    parameters = ExplicitOperations[811];
+                    parameters = new EpsgExplicitOperationRecord(8270, 11.363d, 424.148d, 373.13d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8365:
-                    parameters = ExplicitOperations[812];
+                    parameters = new EpsgExplicitOperationRecord(8365, -485.014055d, -169.473618d, -483.842943d, -7.78625453d, -4.39770887d, -4.10248899d, 0.0d);
                     return true;
                 case 8367:
-                    parameters = ExplicitOperations[813];
+                    parameters = new EpsgExplicitOperationRecord(8367, 485.021d, 169.465d, 483.839d, 7.786342d, 4.397554d, 4.102655d, 0.0d);
                     return true;
                 case 8368:
-                    parameters = ExplicitOperations[814];
+                    parameters = new EpsgExplicitOperationRecord(8368, 485.021d, 169.465d, 483.839d, 7.786342d, 4.397554d, 4.102655d, 0.0d);
                     return true;
                 case 8435:
-                    parameters = ExplicitOperations[815];
+                    parameters = new EpsgExplicitOperationRecord(8435, 202.865d, 303.99d, 155.873d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8436:
-                    parameters = ExplicitOperations[816];
+                    parameters = new EpsgExplicitOperationRecord(8436, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8438:
-                    parameters = ExplicitOperations[817];
+                    parameters = new EpsgExplicitOperationRecord(8438, -202.865d, -303.99d, -155.873d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8439:
-                    parameters = ExplicitOperations[818];
+                    parameters = new EpsgExplicitOperationRecord(8439, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8442:
-                    parameters = ExplicitOperations[819];
+                    parameters = new EpsgExplicitOperationRecord(8442, -485.014055d, -169.473618d, -483.842943d, -7.78625453d, -4.39770887d, -4.10248899d, 0.0d);
                     return true;
                 case 8448:
-                    parameters = ExplicitOperations[820];
+                    parameters = new EpsgExplicitOperationRecord(8448, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d);
                     return true;
                 case 8450:
-                    parameters = ExplicitOperations[821];
+                    parameters = new EpsgExplicitOperationRecord(8450, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8452:
-                    parameters = ExplicitOperations[822];
+                    parameters = new EpsgExplicitOperationRecord(8452, -377.0d, 681.0d, -50.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8517:
-                    parameters = ExplicitOperations[823];
+                    parameters = new EpsgExplicitOperationRecord(8517, -154.5d, 150.7d, 100.4d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8532:
-                    parameters = ExplicitOperations[824];
+                    parameters = new EpsgExplicitOperationRecord(8532, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8537:
-                    parameters = ExplicitOperations[825];
+                    parameters = new EpsgExplicitOperationRecord(8537, 0.0d, 0.0d, 4.5d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8562:
-                    parameters = ExplicitOperations[826];
+                    parameters = new EpsgExplicitOperationRecord(8562, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8568:
-                    parameters = ExplicitOperations[827];
+                    parameters = new EpsgExplicitOperationRecord(8568, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8569:
-                    parameters = ExplicitOperations[828];
+                    parameters = new EpsgExplicitOperationRecord(8569, 0.0d, 0.0d, 0.0d, 4.327d, 4.464d, -4.444d, -3.52d);
                     return true;
                 case 8571:
-                    parameters = ExplicitOperations[829];
+                    parameters = new EpsgExplicitOperationRecord(8571, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8581:
-                    parameters = ExplicitOperations[830];
+                    parameters = new EpsgExplicitOperationRecord(8581, 0.0d, 0.0d, 4.5d, 0.0d, 0.0d, 0.554d, 0.2263d);
                     return true;
                 case 8631:
-                    parameters = ExplicitOperations[831];
+                    parameters = new EpsgExplicitOperationRecord(8631, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8632:
-                    parameters = ExplicitOperations[832];
+                    parameters = new EpsgExplicitOperationRecord(8632, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8633:
-                    parameters = ExplicitOperations[833];
+                    parameters = new EpsgExplicitOperationRecord(8633, 0.0d, 0.0d, 4.5d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8634:
-                    parameters = ExplicitOperations[834];
+                    parameters = new EpsgExplicitOperationRecord(8634, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8650:
-                    parameters = ExplicitOperations[835];
+                    parameters = new EpsgExplicitOperationRecord(8650, -48.0d, 55.0d, 52.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8651:
-                    parameters = ExplicitOperations[836];
+                    parameters = new EpsgExplicitOperationRecord(8651, 44.585d, -131.212d, -39.544d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8652:
-                    parameters = ExplicitOperations[837];
+                    parameters = new EpsgExplicitOperationRecord(8652, 44.585d, -131.212d, -39.544d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8655:
-                    parameters = ExplicitOperations[838];
+                    parameters = new EpsgExplicitOperationRecord(8655, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8656:
-                    parameters = ExplicitOperations[839];
+                    parameters = new EpsgExplicitOperationRecord(8656, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8657:
-                    parameters = ExplicitOperations[840];
+                    parameters = new EpsgExplicitOperationRecord(8657, 0.0d, 0.0d, 1.9d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8659:
-                    parameters = ExplicitOperations[841];
+                    parameters = new EpsgExplicitOperationRecord(8659, -11.0d, 851.0d, 5.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8674:
-                    parameters = ExplicitOperations[842];
+                    parameters = new EpsgExplicitOperationRecord(8674, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8680:
-                    parameters = ExplicitOperations[843];
+                    parameters = new EpsgExplicitOperationRecord(8680, 489.88d, 183.912d, 533.711d, 5.76545d, 4.69994d, -12.58211d, 1.00646d);
                     return true;
                 case 8688:
-                    parameters = ExplicitOperations[844];
+                    parameters = new EpsgExplicitOperationRecord(8688, 476.08d, 125.947d, 417.81d, 4.610862d, 2.388137d, -11.942335d, 9.896638d);
                     return true;
                 case 8689:
-                    parameters = ExplicitOperations[845];
+                    parameters = new EpsgExplicitOperationRecord(8689, 476.08d, 125.947d, 417.81d, 4.610862d, 2.388137d, -11.942335d, 9.896638d);
                     return true;
                 case 8695:
-                    parameters = ExplicitOperations[846];
+                    parameters = new EpsgExplicitOperationRecord(8695, 42.899d, -214.863d, -11.927d, 1.844d, -0.648d, 6.37d, 0.169d);
                     return true;
                 case 8696:
-                    parameters = ExplicitOperations[847];
+                    parameters = new EpsgExplicitOperationRecord(8696, 45.799d, -212.263d, -11.927d, 1.844d, -0.648d, 6.37d, 0.169d);
                     return true;
                 case 8819:
-                    parameters = ExplicitOperations[848];
+                    parameters = new EpsgExplicitOperationRecord(8819, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8822:
-                    parameters = ExplicitOperations[849];
+                    parameters = new EpsgExplicitOperationRecord(8822, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8823:
-                    parameters = ExplicitOperations[850];
+                    parameters = new EpsgExplicitOperationRecord(8823, 489.88d, 183.912d, 533.711d, 5.76545d, 4.69994d, -12.58211d, 1.00646d);
                     return true;
                 case 8824:
-                    parameters = ExplicitOperations[851];
+                    parameters = new EpsgExplicitOperationRecord(8824, -61.15d, -315.86d, -3.51d, -0.41d, -0.74d, 3.52d, 1.36d);
                     return true;
                 case 8827:
-                    parameters = ExplicitOperations[852];
+                    parameters = new EpsgExplicitOperationRecord(8827, -93.799d, -132.737d, -219.073d, -1.844d, 0.648d, -6.37d, -0.169d);
                     return true;
                 case 8828:
-                    parameters = ExplicitOperations[853];
+                    parameters = new EpsgExplicitOperationRecord(8828, 0.072d, -0.507d, -0.245d, 0.0183d, -0.0003d, 0.007d, -0.0093d);
                     return true;
                 case 8829:
-                    parameters = ExplicitOperations[854];
+                    parameters = new EpsgExplicitOperationRecord(8829, 221.525d, 152.948d, 176.768d, 2.3847d, 1.3896d, 0.877d, 11.4741d);
                     return true;
                 case 8830:
-                    parameters = ExplicitOperations[855];
+                    parameters = new EpsgExplicitOperationRecord(8830, 221.597d, 152.441d, 176.523d, 2.403d, 1.3893d, 0.884d, 11.4648d);
                     return true;
                 case 8831:
-                    parameters = ExplicitOperations[856];
+                    parameters = new EpsgExplicitOperationRecord(8831, 218.697d, 151.257d, 176.995d, 3.5048d, 2.004d, 1.281d, 10.991d);
                     return true;
                 case 8832:
-                    parameters = ExplicitOperations[857];
+                    parameters = new EpsgExplicitOperationRecord(8832, 218.769d, 150.75d, 176.75d, 3.5231d, 2.0037d, 1.288d, 10.9817d);
                     return true;
                 case 8833:
-                    parameters = ExplicitOperations[858];
+                    parameters = new EpsgExplicitOperationRecord(8833, 72.438d, 345.918d, 79.486d, -1.6045d, -0.8823d, -0.5565d, 1.3746d);
                     return true;
                 case 8834:
-                    parameters = ExplicitOperations[859];
+                    parameters = new EpsgExplicitOperationRecord(8834, 72.51d, 345.411d, 79.241d, -1.5862d, -0.8826d, -0.5495d, 1.3653d);
                     return true;
                 case 8835:
-                    parameters = ExplicitOperations[860];
+                    parameters = new EpsgExplicitOperationRecord(8835, 347.103d, 1078.125d, 2623.922d, 33.8875d, -70.6773d, 9.3943d, 186.074d);
                     return true;
                 case 8842:
-                    parameters = ExplicitOperations[861];
+                    parameters = new EpsgExplicitOperationRecord(8842, 347.175d, 1077.618d, 2623.677d, 33.9058d, -70.6776d, 9.4013d, 186.0647d);
                     return true;
                 case 8843:
-                    parameters = ExplicitOperations[862];
+                    parameters = new EpsgExplicitOperationRecord(8843, 410.721d, 55.049d, 80.746d, -2.5779d, -2.3514d, -0.6664d, 17.3311d);
                     return true;
                 case 8844:
-                    parameters = ExplicitOperations[863];
+                    parameters = new EpsgExplicitOperationRecord(8844, 410.793d, 54.542d, 80.501d, -2.5596d, -2.3517d, -0.6594d, 17.3218d);
                     return true;
                 case 8845:
-                    parameters = ExplicitOperations[864];
+                    parameters = new EpsgExplicitOperationRecord(8845, 374.715d, -58.407d, -0.957d, -16.2111d, -11.4626d, -5.5357d, -0.5409d);
                     return true;
                 case 8846:
-                    parameters = ExplicitOperations[865];
+                    parameters = new EpsgExplicitOperationRecord(8846, 374.787d, -58.914d, -1.202d, -16.1928d, -11.4629d, -5.5287d, -0.5502d);
                     return true;
                 case 8847:
-                    parameters = ExplicitOperations[866];
+                    parameters = new EpsgExplicitOperationRecord(8847, 165.732d, 216.72d, 180.505d, -0.6434d, -0.4512d, -0.0791d, 7.4204d);
                     return true;
                 case 8848:
-                    parameters = ExplicitOperations[867];
+                    parameters = new EpsgExplicitOperationRecord(8848, 165.804d, 216.213d, 180.26d, -0.6251d, -0.4515d, -0.0721d, 7.4111d);
                     return true;
                 case 8849:
-                    parameters = ExplicitOperations[868];
+                    parameters = new EpsgExplicitOperationRecord(8849, 1363.785d, 1362.687d, 398.811d, -4.5322d, -6.7579d, -1.0574d, 268.361d);
                     return true;
                 case 8850:
-                    parameters = ExplicitOperations[869];
+                    parameters = new EpsgExplicitOperationRecord(8850, 1363.857d, 1362.18d, 398.566d, -4.5139d, -6.7582d, -1.0504d, 268.3517d);
                     return true;
                 case 8851:
-                    parameters = ExplicitOperations[870];
+                    parameters = new EpsgExplicitOperationRecord(8851, 259.551d, 297.612d, 197.833d, 1.4866d, 2.1224d, 0.4612d, 27.0249d);
                     return true;
                 case 8852:
-                    parameters = ExplicitOperations[871];
+                    parameters = new EpsgExplicitOperationRecord(8852, 259.623d, 297.105d, 197.588d, 1.5049d, 2.1221d, 0.4682d, 27.0156d);
                     return true;
                 case 8853:
-                    parameters = ExplicitOperations[872];
+                    parameters = new EpsgExplicitOperationRecord(8853, 217.109d, 86.452d, 23.711d, 0.0183d, -0.0003d, 0.007d, -0.0093d);
                     return true;
                 case 8882:
-                    parameters = ExplicitOperations[873];
+                    parameters = new EpsgExplicitOperationRecord(8882, -93.799d, -132.737d, -219.073d, -1.844d, 0.648d, -6.37d, -0.169d);
                     return true;
                 case 8883:
-                    parameters = ExplicitOperations[874];
+                    parameters = new EpsgExplicitOperationRecord(8883, -48.0d, -345.0d, -231.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8884:
-                    parameters = ExplicitOperations[875];
+                    parameters = new EpsgExplicitOperationRecord(8884, -50.9d, -347.6d, -231.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8886:
-                    parameters = ExplicitOperations[876];
+                    parameters = new EpsgExplicitOperationRecord(8886, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8887:
-                    parameters = ExplicitOperations[877];
+                    parameters = new EpsgExplicitOperationRecord(8887, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8890:
-                    parameters = ExplicitOperations[878];
+                    parameters = new EpsgExplicitOperationRecord(8890, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8894:
-                    parameters = ExplicitOperations[879];
+                    parameters = new EpsgExplicitOperationRecord(8894, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 8970:
-                    parameters = ExplicitOperations[880];
+                    parameters = new EpsgExplicitOperationRecord(8970, 1.0053d, -1.90921d, -0.54157d, -26.78138d, 0.42027d, -10.93206d, 0.36891d);
                     return true;
                 case 8971:
-                    parameters = ExplicitOperations[881];
+                    parameters = new EpsgExplicitOperationRecord(8971, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9020:
-                    parameters = ExplicitOperations[882];
+                    parameters = new EpsgExplicitOperationRecord(9020, 0.5d, 3.6d, 2.4d, -0.1d, 0.0d, 0.0d, -3.0d);
                     return true;
                 case 9021:
-                    parameters = ExplicitOperations[883];
+                    parameters = new EpsgExplicitOperationRecord(9021, -0.5d, -2.4d, 3.8d, 0.0d, 0.0d, 0.0d, -3.0d);
                     return true;
                 case 9022:
-                    parameters = ExplicitOperations[884];
+                    parameters = new EpsgExplicitOperationRecord(9022, -0.1d, 0.4d, 1.6d, 0.0d, 0.0d, 0.0d, -0.3d);
                     return true;
                 case 9023:
-                    parameters = ExplicitOperations[885];
+                    parameters = new EpsgExplicitOperationRecord(9023, -1.1d, -1.4d, 0.6d, 0.0d, 0.0d, 0.0d, -1.4d);
                     return true;
                 case 9076:
-                    parameters = ExplicitOperations[886];
+                    parameters = new EpsgExplicitOperationRecord(9076, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d);
                     return true;
                 case 9077:
-                    parameters = ExplicitOperations[887];
+                    parameters = new EpsgExplicitOperationRecord(9077, 0.9102d, -2.0141d, -0.5602d, -29.039d, -10.065d, -10.101d, 0.0d);
                     return true;
                 case 9078:
-                    parameters = ExplicitOperations[888];
+                    parameters = new EpsgExplicitOperationRecord(9078, 0.9102d, -2.0141d, -0.5602d, -29.039d, -10.065d, -10.101d, 0.0d);
                     return true;
                 case 9126:
-                    parameters = ExplicitOperations[889];
+                    parameters = new EpsgExplicitOperationRecord(9126, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9127:
-                    parameters = ExplicitOperations[890];
+                    parameters = new EpsgExplicitOperationRecord(9127, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9128:
-                    parameters = ExplicitOperations[891];
+                    parameters = new EpsgExplicitOperationRecord(9128, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9129:
-                    parameters = ExplicitOperations[892];
+                    parameters = new EpsgExplicitOperationRecord(9129, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9142:
-                    parameters = ExplicitOperations[893];
+                    parameters = new EpsgExplicitOperationRecord(9142, 628.54052d, 192.2538d, 498.43507d, -13.79189d, -0.81467d, 41.21533d, -17.40368d);
                     return true;
                 case 9143:
-                    parameters = ExplicitOperations[894];
+                    parameters = new EpsgExplicitOperationRecord(9143, 628.54052d, 192.2538d, 498.43507d, -13.79189d, -0.81467d, 41.21533d, -17.40368d);
                     return true;
                 case 9144:
-                    parameters = ExplicitOperations[895];
+                    parameters = new EpsgExplicitOperationRecord(9144, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9145:
-                    parameters = ExplicitOperations[896];
+                    parameters = new EpsgExplicitOperationRecord(9145, -0.06d, 0.517d, 0.223d, -0.0183d, 0.0003d, -0.007d, 0.011d);
                     return true;
                 case 9185:
-                    parameters = ExplicitOperations[897];
+                    parameters = new EpsgExplicitOperationRecord(9185, -136.9703d, -37.5638d, 124.4242d, 0.25676d, 0.42966d, 0.30077d, -4.61966d);
                     return true;
                 case 9186:
-                    parameters = ExplicitOperations[898];
+                    parameters = new EpsgExplicitOperationRecord(9186, -23.772d, -17.49d, -17.859d, 0.3132d, 1.85274d, -1.67299d, 5.4262d);
                     return true;
                 case 9189:
-                    parameters = ExplicitOperations[899];
+                    parameters = new EpsgExplicitOperationRecord(9189, -23.772d, -17.49d, -17.859d, 0.3132d, 1.85274d, -1.67299d, 5.4262d);
                     return true;
                 case 9224:
-                    parameters = ExplicitOperations[900];
+                    parameters = new EpsgExplicitOperationRecord(9224, -157.89d, -17.16d, -78.41d, 2.118d, 2.697d, -1.434d, -5.38d);
                     return true;
                 case 9226:
-                    parameters = ExplicitOperations[901];
+                    parameters = new EpsgExplicitOperationRecord(9226, 112.771d, -12.282d, 18.935d, -2.1692d, -16.8896d, -17.1961d, 19.54517d);
                     return true;
                 case 9234:
-                    parameters = ExplicitOperations[902];
+                    parameters = new EpsgExplicitOperationRecord(9234, 230.25d, 632.76d, 161.03d, 1.114d, -1.115d, -1.212d, 12.584d);
                     return true;
                 case 9257:
-                    parameters = ExplicitOperations[903];
+                    parameters = new EpsgExplicitOperationRecord(9257, 8.88d, 184.86d, 106.69d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9258:
-                    parameters = ExplicitOperations[904];
+                    parameters = new EpsgExplicitOperationRecord(9258, 15.75d, 164.93d, 126.18d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9259:
-                    parameters = ExplicitOperations[905];
+                    parameters = new EpsgExplicitOperationRecord(9259, -233.43d, 6.65d, 173.64d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9260:
-                    parameters = ExplicitOperations[906];
+                    parameters = new EpsgExplicitOperationRecord(9260, -192.26d, 65.72d, 132.08d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9261:
-                    parameters = ExplicitOperations[907];
+                    parameters = new EpsgExplicitOperationRecord(9261, -9.5d, 122.9d, 138.2d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9262:
-                    parameters = ExplicitOperations[908];
+                    parameters = new EpsgExplicitOperationRecord(9262, -78.1d, 101.6d, 133.3d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9263:
-                    parameters = ExplicitOperations[909];
+                    parameters = new EpsgExplicitOperationRecord(9263, 18.2d, 190.7d, 100.9d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9264:
-                    parameters = ExplicitOperations[910];
+                    parameters = new EpsgExplicitOperationRecord(9264, -0.41d, 0.46d, -0.35d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9281:
-                    parameters = ExplicitOperations[911];
+                    parameters = new EpsgExplicitOperationRecord(9281, 565.7381d, 50.4018d, 465.2904d, -1.91514d, 1.60363d, -9.09546d, 4.07244d);
                     return true;
                 case 9291:
-                    parameters = ExplicitOperations[912];
+                    parameters = new EpsgExplicitOperationRecord(9291, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9298:
-                    parameters = ExplicitOperations[913];
+                    parameters = new EpsgExplicitOperationRecord(9298, 1.16835d, -1.42001d, -2.24431d, -0.00822d, -0.05508d, 0.01818d, 0.23388d);
                     return true;
                 case 9342:
-                    parameters = ExplicitOperations[914];
+                    parameters = new EpsgExplicitOperationRecord(9342, -302.0d, 272.0d, -360.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9343:
-                    parameters = ExplicitOperations[915];
+                    parameters = new EpsgExplicitOperationRecord(9343, -328.0d, 340.0d, -329.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9344:
-                    parameters = ExplicitOperations[916];
+                    parameters = new EpsgExplicitOperationRecord(9344, -352.0d, 403.0d, -287.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9345:
-                    parameters = ExplicitOperations[917];
+                    parameters = new EpsgExplicitOperationRecord(9345, -302.0d, 272.0d, -360.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9346:
-                    parameters = ExplicitOperations[918];
+                    parameters = new EpsgExplicitOperationRecord(9346, -328.0d, 340.0d, -329.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9347:
-                    parameters = ExplicitOperations[919];
+                    parameters = new EpsgExplicitOperationRecord(9347, -352.0d, 403.0d, -287.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9349:
-                    parameters = ExplicitOperations[920];
+                    parameters = new EpsgExplicitOperationRecord(9349, -79.0d, 13.0d, -14.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9350:
-                    parameters = ExplicitOperations[921];
+                    parameters = new EpsgExplicitOperationRecord(9350, -79.0d, 13.0d, -14.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9361:
-                    parameters = ExplicitOperations[922];
+                    parameters = new EpsgExplicitOperationRecord(9361, 0.0469d, -0.2827d, 0.0866d, 0.00559d, -0.004981d, 0.023108d, -0.008051d);
                     return true;
                 case 9362:
-                    parameters = ExplicitOperations[923];
+                    parameters = new EpsgExplicitOperationRecord(9362, 13.8714d, -83.9721d, 101.674d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9383:
-                    parameters = ExplicitOperations[924];
+                    parameters = new EpsgExplicitOperationRecord(9383, 0.0d, 0.0d, 0.0d, -8.393d, 0.749d, -10.276d, 0.0d);
                     return true;
                 case 9459:
-                    parameters = ExplicitOperations[925];
+                    parameters = new EpsgExplicitOperationRecord(9459, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d);
                     return true;
                 case 9460:
-                    parameters = ExplicitOperations[926];
+                    parameters = new EpsgExplicitOperationRecord(9460, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d);
                     return true;
                 case 9472:
-                    parameters = ExplicitOperations[927];
+                    parameters = new EpsgExplicitOperationRecord(9472, -0.2773d, 0.0534d, 0.4819d, -0.0935d, 0.0286d, -0.00969d, -0.028d);
                     return true;
                 case 9486:
-                    parameters = ExplicitOperations[928];
+                    parameters = new EpsgExplicitOperationRecord(9486, 577.84843d, 165.45019d, 390.43652d, 4.93131d, -0.96052d, -13.05072d, 7.86546d);
                     return true;
                 case 9495:
-                    parameters = ExplicitOperations[929];
+                    parameters = new EpsgExplicitOperationRecord(9495, 577.84843d, 165.45019d, 390.43652d, 4.93131d, -0.96052d, -13.05072d, 7.86546d);
                     return true;
                 case 9676:
-                    parameters = ExplicitOperations[930];
+                    parameters = new EpsgExplicitOperationRecord(9676, 23.772d, 17.49d, 17.859d, -0.3132d, -1.85274d, 1.67299d, -5.4262d);
                     return true;
                 case 9679:
-                    parameters = ExplicitOperations[931];
+                    parameters = new EpsgExplicitOperationRecord(9679, 283.729d, 735.942d, 261.143d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9682:
-                    parameters = ExplicitOperations[932];
+                    parameters = new EpsgExplicitOperationRecord(9682, -61.55d, 10.87d, 40.19d, -39.4924d, -32.7221d, -32.8979d, 9.994d);
                     return true;
                 case 9683:
-                    parameters = ExplicitOperations[933];
+                    parameters = new EpsgExplicitOperationRecord(9683, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d);
                     return true;
                 case 9684:
-                    parameters = ExplicitOperations[934];
+                    parameters = new EpsgExplicitOperationRecord(9684, -61.55d, 10.87d, 40.19d, -39.4924d, -32.7221d, -32.8979d, 9.994d);
                     return true;
                 case 9685:
-                    parameters = ExplicitOperations[935];
+                    parameters = new EpsgExplicitOperationRecord(9685, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d);
                     return true;
                 case 9686:
-                    parameters = ExplicitOperations[936];
+                    parameters = new EpsgExplicitOperationRecord(9686, 61.55d, -10.87d, -40.19d, 39.4924d, 32.7221d, 32.8979d, -9.994d);
                     return true;
                 case 9688:
-                    parameters = ExplicitOperations[937];
+                    parameters = new EpsgExplicitOperationRecord(9688, 61.55d, -10.87d, -40.19d, 39.4924d, 32.7221d, 32.8979d, -9.994d);
                     return true;
                 case 9690:
-                    parameters = ExplicitOperations[938];
+                    parameters = new EpsgExplicitOperationRecord(9690, 61.55d, -10.87d, -40.19d, 39.4924d, 32.7221d, 32.8979d, -9.994d);
                     return true;
                 case 9743:
-                    parameters = ExplicitOperations[939];
+                    parameters = new EpsgExplicitOperationRecord(9743, -307.0d, -92.0d, 127.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9751:
-                    parameters = ExplicitOperations[940];
+                    parameters = new EpsgExplicitOperationRecord(9751, -0.16959d, 0.35312d, 0.51846d, 0.03385d, -0.16325d, 0.03446d, 0.03693d);
                     return true;
                 case 9752:
-                    parameters = ExplicitOperations[941];
+                    parameters = new EpsgExplicitOperationRecord(9752, -0.16959d, 0.35312d, 0.51846d, 0.03385d, -0.16325d, 0.03446d, 0.03693d);
                     return true;
                 case 9756:
-                    parameters = ExplicitOperations[942];
+                    parameters = new EpsgExplicitOperationRecord(9756, 0.0058d, -0.0064d, 0.007d, -0.08d, -0.04d, -0.12d, -4.4d);
                     return true;
                 case 9757:
-                    parameters = ExplicitOperations[943];
+                    parameters = new EpsgExplicitOperationRecord(9757, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d);
                     return true;
                 case 9768:
-                    parameters = ExplicitOperations[944];
+                    parameters = new EpsgExplicitOperationRecord(9768, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9769:
-                    parameters = ExplicitOperations[945];
+                    parameters = new EpsgExplicitOperationRecord(9769, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9770:
-                    parameters = ExplicitOperations[946];
+                    parameters = new EpsgExplicitOperationRecord(9770, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9771:
-                    parameters = ExplicitOperations[947];
+                    parameters = new EpsgExplicitOperationRecord(9771, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9772:
-                    parameters = ExplicitOperations[948];
+                    parameters = new EpsgExplicitOperationRecord(9772, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9773:
-                    parameters = ExplicitOperations[949];
+                    parameters = new EpsgExplicitOperationRecord(9773, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9774:
-                    parameters = ExplicitOperations[950];
+                    parameters = new EpsgExplicitOperationRecord(9774, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9788:
-                    parameters = ExplicitOperations[951];
+                    parameters = new EpsgExplicitOperationRecord(9788, -0.017d, 0.058d, 0.009d, 0.001305d, 0.00068d, -0.001467d, -0.00072d);
                     return true;
                 case 9791:
-                    parameters = ExplicitOperations[952];
+                    parameters = new EpsgExplicitOperationRecord(9791, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9792:
-                    parameters = ExplicitOperations[953];
+                    parameters = new EpsgExplicitOperationRecord(9792, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9882:
-                    parameters = ExplicitOperations[954];
+                    parameters = new EpsgExplicitOperationRecord(9882, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9898:
-                    parameters = ExplicitOperations[955];
+                    parameters = new EpsgExplicitOperationRecord(9898, -265.8979d, 76.9761d, 20.2504d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9899:
-                    parameters = ExplicitOperations[956];
+                    parameters = new EpsgExplicitOperationRecord(9899, -189.033d, 14.1335d, -43.0901d, -0.43331d, -3.11448d, 2.63636d, 0.4752d);
                     return true;
                 case 9904:
-                    parameters = ExplicitOperations[957];
+                    parameters = new EpsgExplicitOperationRecord(9904, -43.0d, -337.0d, -233.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9905:
-                    parameters = ExplicitOperations[958];
+                    parameters = new EpsgExplicitOperationRecord(9905, -41.057d, -374.564d, -226.287d, 0.0d, 0.0d, 0.554d, 0.219d);
                     return true;
                 case 9906:
-                    parameters = ExplicitOperations[959];
+                    parameters = new EpsgExplicitOperationRecord(9906, -254.1d, -5.36d, -100.29d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9913:
-                    parameters = ExplicitOperations[960];
+                    parameters = new EpsgExplicitOperationRecord(9913, -162.619d, -276.959d, -161.764d, 0.067753d, -2.243648d, -1.158828d, -1.094246d);
                     return true;
                 case 9936:
-                    parameters = ExplicitOperations[961];
+                    parameters = new EpsgExplicitOperationRecord(9936, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9937:
-                    parameters = ExplicitOperations[962];
+                    parameters = new EpsgExplicitOperationRecord(9937, -265.9196d, 76.9506d, 20.2222d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 9938:
-                    parameters = ExplicitOperations[963];
+                    parameters = new EpsgExplicitOperationRecord(9938, -189.228d, 12.0035d, -42.6303d, -0.48171d, -3.09948d, 2.68639d, 0.46346d);
                     return true;
                 case 9960:
-                    parameters = ExplicitOperations[964];
+                    parameters = new EpsgExplicitOperationRecord(9960, -58.0d, 521.0d, 239.0d, -18.3d, 0.3d, -7.0d, 10.7d);
                     return true;
                 case 9961:
-                    parameters = ExplicitOperations[965];
+                    parameters = new EpsgExplicitOperationRecord(9961, -20.0d, -16.0d, 14.0d, -0.0d, -0.0d, -0.0d, -0.69d);
                     return true;
                 case 9962:
-                    parameters = ExplicitOperations[966];
+                    parameters = new EpsgExplicitOperationRecord(9962, 1.1d, -4.7d, 22.0d, -0.0d, -0.0d, -0.16d, 1.45d);
                     return true;
                 case 9963:
-                    parameters = ExplicitOperations[967];
+                    parameters = new EpsgExplicitOperationRecord(9963, -2.4d, 1.6d, 23.2d, 0.27d, -0.27d, 0.38d, 2.08d);
                     return true;
                 case 10085:
-                    parameters = ExplicitOperations[968];
+                    parameters = new EpsgExplicitOperationRecord(10085, -61.0d, 285.2d, 471.6d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10086:
-                    parameters = ExplicitOperations[969];
+                    parameters = new EpsgExplicitOperationRecord(10086, 48.0d, 208.0d, 382.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10089:
-                    parameters = ExplicitOperations[970];
+                    parameters = new EpsgExplicitOperationRecord(10089, -163.466d, 317.396d, -147.538d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10090:
-                    parameters = ExplicitOperations[971];
+                    parameters = new EpsgExplicitOperationRecord(10090, -170.0d, 305.0d, -145.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10091:
-                    parameters = ExplicitOperations[972];
+                    parameters = new EpsgExplicitOperationRecord(10091, -162.904d, 312.531d, -137.109d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10092:
-                    parameters = ExplicitOperations[973];
+                    parameters = new EpsgExplicitOperationRecord(10092, -158.0d, 309.0d, -151.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10093:
-                    parameters = ExplicitOperations[974];
+                    parameters = new EpsgExplicitOperationRecord(10093, -161.0d, 308.0d, -142.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10098:
-                    parameters = ExplicitOperations[975];
+                    parameters = new EpsgExplicitOperationRecord(10098, -96.062d, -82.428d, -121.753d, 4.801d, 0.345d, -1.376d, 1.496d);
                     return true;
                 case 10099:
-                    parameters = ExplicitOperations[976];
+                    parameters = new EpsgExplicitOperationRecord(10099, -96.062d, -82.428d, -121.753d, 4.801d, 0.345d, -1.376d, 1.496d);
                     return true;
                 case 10135:
-                    parameters = ExplicitOperations[977];
+                    parameters = new EpsgExplicitOperationRecord(10135, -302.0d, 272.0d, -360.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10136:
-                    parameters = ExplicitOperations[978];
+                    parameters = new EpsgExplicitOperationRecord(10136, -328.0d, 340.0d, -329.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10137:
-                    parameters = ExplicitOperations[979];
+                    parameters = new EpsgExplicitOperationRecord(10137, -352.0d, 403.0d, -287.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10138:
-                    parameters = ExplicitOperations[980];
+                    parameters = new EpsgExplicitOperationRecord(10138, -79.0d, 13.0d, -14.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10139:
-                    parameters = ExplicitOperations[981];
+                    parameters = new EpsgExplicitOperationRecord(10139, 0.5d, 3.6d, 2.4d, -0.1d, 0.0d, 0.0d, -3.1d);
                     return true;
                 case 10140:
-                    parameters = ExplicitOperations[982];
+                    parameters = new EpsgExplicitOperationRecord(10140, -0.5d, -2.4d, 3.8d, 0.0d, 0.0d, 0.0d, -3.4d);
                     return true;
                 case 10141:
-                    parameters = ExplicitOperations[983];
+                    parameters = new EpsgExplicitOperationRecord(10141, 0.2d, 0.4d, 1.6d, 0.0d, 0.0d, 0.0d, -0.3d);
                     return true;
                 case 10142:
-                    parameters = ExplicitOperations[984];
+                    parameters = new EpsgExplicitOperationRecord(10142, -1.2d, -1.4d, 0.6d, 0.0d, 0.0d, 0.0d, -1.4d);
                     return true;
                 case 10149:
-                    parameters = ExplicitOperations[985];
+                    parameters = new EpsgExplicitOperationRecord(10149, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10264:
-                    parameters = ExplicitOperations[986];
+                    parameters = new EpsgExplicitOperationRecord(10264, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10292:
-                    parameters = ExplicitOperations[987];
+                    parameters = new EpsgExplicitOperationRecord(10292, 0.0d, 0.0d, 0.0d, 0.658d, -0.208d, 0.755d, 0.0d);
                     return true;
                 case 10296:
-                    parameters = ExplicitOperations[988];
+                    parameters = new EpsgExplicitOperationRecord(10296, -267.407d, -47.068d, 446.357d, -0.179423d, 5.577661d, -1.27762d, 1.204866d);
                     return true;
                 case 10321:
-                    parameters = ExplicitOperations[989];
+                    parameters = new EpsgExplicitOperationRecord(10321, -0.584d, -1.117d, 1.125d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10324:
-                    parameters = ExplicitOperations[990];
+                    parameters = new EpsgExplicitOperationRecord(10324, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10333:
-                    parameters = ExplicitOperations[991];
+                    parameters = new EpsgExplicitOperationRecord(10333, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10334:
-                    parameters = ExplicitOperations[992];
+                    parameters = new EpsgExplicitOperationRecord(10334, 1003.9d, -1909.61d, -541.17d, -26.78138d, 0.42027d, -10.93206d, -0.05109d);
                     return true;
                 case 10335:
-                    parameters = ExplicitOperations[993];
+                    parameters = new EpsgExplicitOperationRecord(10335, 0.9109d, -2.0129d, -0.5863d, -22.749d, -26.56d, 25.706d, 2.12d);
                     return true;
                 case 10336:
-                    parameters = ExplicitOperations[994];
+                    parameters = new EpsgExplicitOperationRecord(10336, 909.5d, -2013.3d, -585.9d, -22.749d, -26.56d, 25.706d, 1.7d);
                     return true;
                 case 10337:
-                    parameters = ExplicitOperations[995];
+                    parameters = new EpsgExplicitOperationRecord(10337, 0.9109d, -2.0129d, -0.5863d, -28.711d, -11.785d, -4.417d, 2.12d);
                     return true;
                 case 10338:
-                    parameters = ExplicitOperations[996];
+                    parameters = new EpsgExplicitOperationRecord(10338, 909.5d, -2013.3d, -585.9d, -28.711d, -11.785d, -4.417d, 1.7d);
                     return true;
                 case 10339:
-                    parameters = ExplicitOperations[997];
+                    parameters = new EpsgExplicitOperationRecord(10339, -152.9d, 43.8d, 358.3d, 2.714d, 1.386d, -2.788d, -6.743d);
                     return true;
                 case 10340:
-                    parameters = ExplicitOperations[998];
+                    parameters = new EpsgExplicitOperationRecord(10340, -95.7d, 10.2d, 158.9d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10341:
-                    parameters = ExplicitOperations[999];
+                    parameters = new EpsgExplicitOperationRecord(10341, -165.914d, -70.607d, 305.009d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10342:
-                    parameters = ExplicitOperations[1000];
+                    parameters = new EpsgExplicitOperationRecord(10342, -169.559d, -72.34d, 303.102d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10343:
-                    parameters = ExplicitOperations[1001];
+                    parameters = new EpsgExplicitOperationRecord(10343, -168.52d, -72.05d, 304.3d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10344:
-                    parameters = ExplicitOperations[1002];
+                    parameters = new EpsgExplicitOperationRecord(10344, -181.7d, 64.7d, 247.2d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10416:
-                    parameters = ExplicitOperations[1003];
+                    parameters = new EpsgExplicitOperationRecord(10416, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10419:
-                    parameters = ExplicitOperations[1004];
+                    parameters = new EpsgExplicitOperationRecord(10419, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10478:
-                    parameters = ExplicitOperations[1005];
+                    parameters = new EpsgExplicitOperationRecord(10478, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10511:
-                    parameters = ExplicitOperations[1006];
+                    parameters = new EpsgExplicitOperationRecord(10511, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10512:
-                    parameters = ExplicitOperations[1007];
+                    parameters = new EpsgExplicitOperationRecord(10512, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10513:
-                    parameters = ExplicitOperations[1008];
+                    parameters = new EpsgExplicitOperationRecord(10513, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10514:
-                    parameters = ExplicitOperations[1009];
+                    parameters = new EpsgExplicitOperationRecord(10514, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10543:
-                    parameters = ExplicitOperations[1010];
+                    parameters = new EpsgExplicitOperationRecord(10543, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10589:
-                    parameters = ExplicitOperations[1011];
+                    parameters = new EpsgExplicitOperationRecord(10589, 407.379d, -685.226d, -52.577d, 0.318d, -0.107d, 0.058d, 0.207d);
                     return true;
                 case 10607:
-                    parameters = ExplicitOperations[1012];
+                    parameters = new EpsgExplicitOperationRecord(10607, 2.6d, 5.4d, -0.9d, 0.01d, 0.07d, -0.0d, 0.06d);
                     return true;
                 case 10608:
-                    parameters = ExplicitOperations[1013];
+                    parameters = new EpsgExplicitOperationRecord(10608, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d);
                     return true;
                 case 10646:
-                    parameters = ExplicitOperations[1014];
+                    parameters = new EpsgExplicitOperationRecord(10646, 1138.7432d, -2064.4761d, 110.7016d, 214.615206d, -479.360036d, 164.703951d, -402.32073d);
                     return true;
                 case 10647:
-                    parameters = ExplicitOperations[1015];
+                    parameters = new EpsgExplicitOperationRecord(10647, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d);
                     return true;
                 case 10648:
-                    parameters = ExplicitOperations[1016];
+                    parameters = new EpsgExplicitOperationRecord(10648, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10675:
-                    parameters = ExplicitOperations[1017];
+                    parameters = new EpsgExplicitOperationRecord(10675, 1138.7432d, -2064.4761d, 110.7016d, 214.615206d, -479.360036d, 164.703951d, -402.32073d);
                     return true;
                 case 10676:
-                    parameters = ExplicitOperations[1018];
+                    parameters = new EpsgExplicitOperationRecord(10676, 1138.7432d, -2064.4761d, 110.7016d, 214.615206d, -479.360036d, 164.703951d, -402.32073d);
                     return true;
                 case 10682:
-                    parameters = ExplicitOperations[1019];
+                    parameters = new EpsgExplicitOperationRecord(10682, -0.5377d, 0.3946d, 0.3608d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10684:
-                    parameters = ExplicitOperations[1020];
+                    parameters = new EpsgExplicitOperationRecord(10684, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10701:
-                    parameters = ExplicitOperations[1021];
+                    parameters = new EpsgExplicitOperationRecord(10701, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10748:
-                    parameters = ExplicitOperations[1022];
+                    parameters = new EpsgExplicitOperationRecord(10748, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d);
                     return true;
                 case 10749:
-                    parameters = ExplicitOperations[1023];
+                    parameters = new EpsgExplicitOperationRecord(10749, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10750:
-                    parameters = ExplicitOperations[1024];
+                    parameters = new EpsgExplicitOperationRecord(10750, 1276.2485d, -2016.6406d, 667.4403d, 101.005288d, -212.913401d, 68.43277d, -431.59604d);
                     return true;
                 case 10754:
-                    parameters = ExplicitOperations[1025];
+                    parameters = new EpsgExplicitOperationRecord(10754, 1276.2485d, -2016.6406d, 667.4403d, 101.005288d, -212.913401d, 68.43277d, -431.59604d);
                     return true;
                 case 10755:
-                    parameters = ExplicitOperations[1026];
+                    parameters = new EpsgExplicitOperationRecord(10755, 1138.7432d, -2064.4761d, 110.7016d, 214.615206d, -479.360036d, 164.703951d, -402.32073d);
                     return true;
                 case 10756:
-                    parameters = ExplicitOperations[1027];
+                    parameters = new EpsgExplicitOperationRecord(10756, 1276.2485d, -2016.6406d, 667.4403d, 101.005288d, -212.913401d, 68.43277d, -431.59604d);
                     return true;
                 case 10766:
-                    parameters = ExplicitOperations[1028];
+                    parameters = new EpsgExplicitOperationRecord(10766, -366.1939d, -115.0688d, -776.7039d, -20.96308d, -16.462749d, 14.276379d, -12.809d);
                     return true;
                 case 10769:
-                    parameters = ExplicitOperations[1029];
+                    parameters = new EpsgExplicitOperationRecord(10769, -366.1939d, -115.0688d, -776.7039d, -20.96308d, -16.462749d, 14.276379d, -12.809d);
                     return true;
                 case 10770:
-                    parameters = ExplicitOperations[1030];
+                    parameters = new EpsgExplicitOperationRecord(10770, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10771:
-                    parameters = ExplicitOperations[1031];
+                    parameters = new EpsgExplicitOperationRecord(10771, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10796:
-                    parameters = ExplicitOperations[1032];
+                    parameters = new EpsgExplicitOperationRecord(10796, -136.7231d, -87.8654d, 20.1215d, -4.966933d, 9.01001d, 2.72486d, 7.86009d);
                     return true;
                 case 10797:
-                    parameters = ExplicitOperations[1033];
+                    parameters = new EpsgExplicitOperationRecord(10797, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10803:
-                    parameters = ExplicitOperations[1034];
+                    parameters = new EpsgExplicitOperationRecord(10803, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10804:
-                    parameters = ExplicitOperations[1035];
+                    parameters = new EpsgExplicitOperationRecord(10804, 1276.2485d, -2016.6406d, 667.4403d, 101.005288d, -212.913401d, 68.43277d, -431.59604d);
                     return true;
                 case 10834:
-                    parameters = ExplicitOperations[1036];
+                    parameters = new EpsgExplicitOperationRecord(10834, -2.0796d, -0.3484d, 1.7009d, -0.05465d, 0.06718d, -0.06143d, 0.0181d);
                     return true;
                 case 10835:
-                    parameters = ExplicitOperations[1037];
+                    parameters = new EpsgExplicitOperationRecord(10835, -40.7436d, -40.0018d, -56.707d, 1.2753d, 1.42112d, -2.69445d, -4.5284d);
                     return true;
                 case 10840:
-                    parameters = ExplicitOperations[1038];
+                    parameters = new EpsgExplicitOperationRecord(10840, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10853:
-                    parameters = ExplicitOperations[1039];
+                    parameters = new EpsgExplicitOperationRecord(10853, 0.0d, 0.0d, 0.0d, -0.0d, -0.0d, -0.0d, 0.0d);
                     return true;
                 case 10905:
-                    parameters = ExplicitOperations[1040];
+                    parameters = new EpsgExplicitOperationRecord(10905, -646.6552d, -165.0859d, -437.6858d, -4.77773d, 0.39139d, 1.07485d, 2.0025d);
                     return true;
                 case 10930:
-                    parameters = ExplicitOperations[1041];
+                    parameters = new EpsgExplicitOperationRecord(10930, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10953:
-                    parameters = ExplicitOperations[1042];
+                    parameters = new EpsgExplicitOperationRecord(10953, 1015.75d, -1920.11d, -559.77d, -27.78143d, 11.78187d, -10.16211d, -1.13124d);
                     return true;
                 case 10960:
-                    parameters = ExplicitOperations[1043];
+                    parameters = new EpsgExplicitOperationRecord(10960, -0.30031d, -1.17512d, -0.30654d, -0.041614d, 0.026303d, 0.011214d, -0.01626d);
                     return true;
                 case 10961:
-                    parameters = ExplicitOperations[1044];
+                    parameters = new EpsgExplicitOperationRecord(10961, 308.9415d, 136.202d, 986.3661d, 3.8742d, -3.77827d, 7.61345d, -171.67315d);
                     return true;
                 case 10963:
-                    parameters = ExplicitOperations[1045];
+                    parameters = new EpsgExplicitOperationRecord(10963, 218.233d, 270.6151d, 253.1391d, -0.26337d, 0.15733d, 1.19862d, -59.923872d);
                     return true;
                 case 10965:
-                    parameters = ExplicitOperations[1046];
+                    parameters = new EpsgExplicitOperationRecord(10965, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10969:
-                    parameters = ExplicitOperations[1047];
+                    parameters = new EpsgExplicitOperationRecord(10969, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 10996:
-                    parameters = ExplicitOperations[1048];
+                    parameters = new EpsgExplicitOperationRecord(10996, 19.019d, 115.122d, -97.287d, 3.577824d, -3.484437d, -2.767646d, 18.6084754d);
                     return true;
                 case 11010:
-                    parameters = ExplicitOperations[1049];
+                    parameters = new EpsgExplicitOperationRecord(11010, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11011:
-                    parameters = ExplicitOperations[1050];
+                    parameters = new EpsgExplicitOperationRecord(11011, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11028:
-                    parameters = ExplicitOperations[1051];
+                    parameters = new EpsgExplicitOperationRecord(11028, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11038:
-                    parameters = ExplicitOperations[1052];
+                    parameters = new EpsgExplicitOperationRecord(11038, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11040:
-                    parameters = ExplicitOperations[1053];
+                    parameters = new EpsgExplicitOperationRecord(11040, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11044:
-                    parameters = ExplicitOperations[1054];
+                    parameters = new EpsgExplicitOperationRecord(11044, -0.0533d, 0.0136d, -0.0707d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11048:
-                    parameters = ExplicitOperations[1055];
+                    parameters = new EpsgExplicitOperationRecord(11048, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11050:
-                    parameters = ExplicitOperations[1056];
+                    parameters = new EpsgExplicitOperationRecord(11050, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11054:
-                    parameters = ExplicitOperations[1057];
+                    parameters = new EpsgExplicitOperationRecord(11054, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11058:
-                    parameters = ExplicitOperations[1058];
+                    parameters = new EpsgExplicitOperationRecord(11058, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11060:
-                    parameters = ExplicitOperations[1059];
+                    parameters = new EpsgExplicitOperationRecord(11060, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11064:
-                    parameters = ExplicitOperations[1060];
+                    parameters = new EpsgExplicitOperationRecord(11064, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11067:
-                    parameters = ExplicitOperations[1061];
+                    parameters = new EpsgExplicitOperationRecord(11067, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11071:
-                    parameters = ExplicitOperations[1062];
+                    parameters = new EpsgExplicitOperationRecord(11071, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11073:
-                    parameters = ExplicitOperations[1063];
+                    parameters = new EpsgExplicitOperationRecord(11073, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11080:
-                    parameters = ExplicitOperations[1064];
+                    parameters = new EpsgExplicitOperationRecord(11080, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11081:
-                    parameters = ExplicitOperations[1065];
+                    parameters = new EpsgExplicitOperationRecord(11081, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11083:
-                    parameters = ExplicitOperations[1066];
+                    parameters = new EpsgExplicitOperationRecord(11083, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11084:
-                    parameters = ExplicitOperations[1067];
+                    parameters = new EpsgExplicitOperationRecord(11084, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11088:
-                    parameters = ExplicitOperations[1068];
+                    parameters = new EpsgExplicitOperationRecord(11088, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11090:
-                    parameters = ExplicitOperations[1069];
+                    parameters = new EpsgExplicitOperationRecord(11090, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11094:
-                    parameters = ExplicitOperations[1070];
+                    parameters = new EpsgExplicitOperationRecord(11094, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11096:
-                    parameters = ExplicitOperations[1071];
+                    parameters = new EpsgExplicitOperationRecord(11096, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11100:
-                    parameters = ExplicitOperations[1072];
+                    parameters = new EpsgExplicitOperationRecord(11100, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11105:
-                    parameters = ExplicitOperations[1073];
+                    parameters = new EpsgExplicitOperationRecord(11105, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11109:
-                    parameters = ExplicitOperations[1074];
+                    parameters = new EpsgExplicitOperationRecord(11109, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11111:
-                    parameters = ExplicitOperations[1075];
+                    parameters = new EpsgExplicitOperationRecord(11111, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11123:
-                    parameters = ExplicitOperations[1076];
+                    parameters = new EpsgExplicitOperationRecord(11123, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11125:
-                    parameters = ExplicitOperations[1077];
+                    parameters = new EpsgExplicitOperationRecord(11125, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11135:
-                    parameters = ExplicitOperations[1078];
+                    parameters = new EpsgExplicitOperationRecord(11135, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11136:
-                    parameters = ExplicitOperations[1079];
+                    parameters = new EpsgExplicitOperationRecord(11136, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11137:
-                    parameters = ExplicitOperations[1080];
+                    parameters = new EpsgExplicitOperationRecord(11137, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11138:
-                    parameters = ExplicitOperations[1081];
+                    parameters = new EpsgExplicitOperationRecord(11138, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11149:
-                    parameters = ExplicitOperations[1082];
+                    parameters = new EpsgExplicitOperationRecord(11149, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11150:
-                    parameters = ExplicitOperations[1083];
+                    parameters = new EpsgExplicitOperationRecord(11150, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11151:
-                    parameters = ExplicitOperations[1084];
+                    parameters = new EpsgExplicitOperationRecord(11151, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11152:
-                    parameters = ExplicitOperations[1085];
+                    parameters = new EpsgExplicitOperationRecord(11152, -236.635d, 98.535d, 201.265d, -17.79d, 3.673d, -24.3695d, 0.0d);
                     return true;
                 case 11164:
-                    parameters = ExplicitOperations[1086];
+                    parameters = new EpsgExplicitOperationRecord(11164, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11166:
-                    parameters = ExplicitOperations[1087];
+                    parameters = new EpsgExplicitOperationRecord(11166, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11167:
-                    parameters = ExplicitOperations[1088];
+                    parameters = new EpsgExplicitOperationRecord(11167, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11168:
-                    parameters = ExplicitOperations[1089];
+                    parameters = new EpsgExplicitOperationRecord(11168, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11182:
-                    parameters = ExplicitOperations[1090];
+                    parameters = new EpsgExplicitOperationRecord(11182, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11185:
-                    parameters = ExplicitOperations[1091];
+                    parameters = new EpsgExplicitOperationRecord(11185, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11190:
-                    parameters = ExplicitOperations[1092];
+                    parameters = new EpsgExplicitOperationRecord(11190, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11191:
-                    parameters = ExplicitOperations[1093];
+                    parameters = new EpsgExplicitOperationRecord(11191, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11192:
-                    parameters = ExplicitOperations[1094];
+                    parameters = new EpsgExplicitOperationRecord(11192, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11195:
-                    parameters = ExplicitOperations[1095];
+                    parameters = new EpsgExplicitOperationRecord(11195, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11200:
-                    parameters = ExplicitOperations[1096];
+                    parameters = new EpsgExplicitOperationRecord(11200, -41.1d, -52.0d, 101.1d, 1.348d, 0.719d, 2.684d, -7.9d);
                     return true;
                 case 11205:
-                    parameters = ExplicitOperations[1097];
+                    parameters = new EpsgExplicitOperationRecord(11205, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11207:
-                    parameters = ExplicitOperations[1098];
+                    parameters = new EpsgExplicitOperationRecord(11207, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11209:
-                    parameters = ExplicitOperations[1099];
+                    parameters = new EpsgExplicitOperationRecord(11209, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11210:
-                    parameters = ExplicitOperations[1100];
+                    parameters = new EpsgExplicitOperationRecord(11210, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11216:
-                    parameters = ExplicitOperations[1101];
+                    parameters = new EpsgExplicitOperationRecord(11216, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11218:
-                    parameters = ExplicitOperations[1102];
+                    parameters = new EpsgExplicitOperationRecord(11218, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11220:
-                    parameters = ExplicitOperations[1103];
+                    parameters = new EpsgExplicitOperationRecord(11220, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11227:
-                    parameters = ExplicitOperations[1104];
+                    parameters = new EpsgExplicitOperationRecord(11227, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 11229:
-                    parameters = ExplicitOperations[1105];
+                    parameters = new EpsgExplicitOperationRecord(11229, 197.8579d, 146.5947d, -108.8501d, 0.85735d, -0.36082d, -0.38626d, -8.356137d);
                     return true;
                 case 11230:
-                    parameters = ExplicitOperations[1106];
+                    parameters = new EpsgExplicitOperationRecord(11230, -1.6d, -1.9d, -2.4d, -0.0d, -0.0d, -0.0d, 0.02d);
                     return true;
                 case 11308:
-                    parameters = ExplicitOperations[1107];
+                    parameters = new EpsgExplicitOperationRecord(11308, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15483:
-                    parameters = ExplicitOperations[1108];
+                    parameters = new EpsgExplicitOperationRecord(15483, -146.414d, 507.337d, 680.507d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15484:
-                    parameters = ExplicitOperations[1109];
+                    parameters = new EpsgExplicitOperationRecord(15484, -146.414d, 507.337d, 680.507d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15485:
-                    parameters = ExplicitOperations[1110];
+                    parameters = new EpsgExplicitOperationRecord(15485, -67.35d, 3.88d, -38.22d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15493:
-                    parameters = ExplicitOperations[1111];
+                    parameters = new EpsgExplicitOperationRecord(15493, -94.031d, -83.317d, 116.708d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15494:
-                    parameters = ExplicitOperations[1112];
+                    parameters = new EpsgExplicitOperationRecord(15494, 274.164d, 677.282d, 226.704d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15495:
-                    parameters = ExplicitOperations[1113];
+                    parameters = new EpsgExplicitOperationRecord(15495, -171.16d, 17.29d, 325.21d, 0.0d, 0.0d, 0.814d, -0.38d);
                     return true;
                 case 15496:
-                    parameters = ExplicitOperations[1114];
+                    parameters = new EpsgExplicitOperationRecord(15496, 44.107d, -116.147d, -54.648d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15497:
-                    parameters = ExplicitOperations[1115];
+                    parameters = new EpsgExplicitOperationRecord(15497, 28.0d, -121.0d, -77.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15699:
-                    parameters = ExplicitOperations[1116];
+                    parameters = new EpsgExplicitOperationRecord(15699, -2.0d, 124.7d, 196.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15701:
-                    parameters = ExplicitOperations[1117];
+                    parameters = new EpsgExplicitOperationRecord(15701, 275.57d, 676.78d, 229.6d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15702:
-                    parameters = ExplicitOperations[1118];
+                    parameters = new EpsgExplicitOperationRecord(15702, 278.9d, 684.39d, 226.05d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15703:
-                    parameters = ExplicitOperations[1119];
+                    parameters = new EpsgExplicitOperationRecord(15703, 271.905d, 669.593d, 231.495d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15705:
-                    parameters = ExplicitOperations[1120];
+                    parameters = new EpsgExplicitOperationRecord(15705, -83.13d, -104.95d, 114.63d, 0.0d, 0.0d, 0.554d, 0.0d);
                     return true;
                 case 15706:
-                    parameters = ExplicitOperations[1121];
+                    parameters = new EpsgExplicitOperationRecord(15706, -93.6d, -83.7d, 113.8d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15707:
-                    parameters = ExplicitOperations[1122];
+                    parameters = new EpsgExplicitOperationRecord(15707, -118.996d, -111.177d, -198.687d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15708:
-                    parameters = ExplicitOperations[1123];
+                    parameters = new EpsgExplicitOperationRecord(15708, -127.62d, -67.24d, -47.04d, -3.068d, 4.903d, 1.578d, -1.06d);
                     return true;
                 case 15709:
-                    parameters = ExplicitOperations[1124];
+                    parameters = new EpsgExplicitOperationRecord(15709, 124.5d, -63.5d, -281.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15710:
-                    parameters = ExplicitOperations[1125];
+                    parameters = new EpsgExplicitOperationRecord(15710, -160.0d, 315.0d, -142.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15711:
-                    parameters = ExplicitOperations[1126];
+                    parameters = new EpsgExplicitOperationRecord(15711, -158.0d, 309.0d, -147.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15712:
-                    parameters = ExplicitOperations[1127];
+                    parameters = new EpsgExplicitOperationRecord(15712, -161.0d, 310.0d, -145.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15713:
-                    parameters = ExplicitOperations[1128];
+                    parameters = new EpsgExplicitOperationRecord(15713, -133.0d, -321.0d, 50.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15714:
-                    parameters = ExplicitOperations[1129];
+                    parameters = new EpsgExplicitOperationRecord(15714, -806.413d, -263.5d, -622.671d, -6.018583e-05d, 1.450001e-05d, 0.0001892455d, -20.81616d);
                     return true;
                 case 15715:
-                    parameters = ExplicitOperations[1130];
+                    parameters = new EpsgExplicitOperationRecord(15715, -806.413d, -263.5d, -622.671d, -6.018583e-05d, 1.450001e-05d, 0.0001892455d, -20.81616d);
                     return true;
                 case 15716:
-                    parameters = ExplicitOperations[1131];
+                    parameters = new EpsgExplicitOperationRecord(15716, 100.783d, 187.382d, -47.0d, 4.471839e-05d, -1.175093e-05d, 4.027967e-05d, -13.56561d);
                     return true;
                 case 15717:
-                    parameters = ExplicitOperations[1132];
+                    parameters = new EpsgExplicitOperationRecord(15717, 100.783d, 187.382d, -47.0d, 4.471839e-05d, -1.175093e-05d, 4.027967e-05d, -13.56561d);
                     return true;
                 case 15718:
-                    parameters = ExplicitOperations[1133];
+                    parameters = new EpsgExplicitOperationRecord(15718, 336.026d, 348.565d, 252.978d, 8.358813e-05d, 3.057474e-05d, -7.573031e-06d, -5.771909d);
                     return true;
                 case 15719:
-                    parameters = ExplicitOperations[1134];
+                    parameters = new EpsgExplicitOperationRecord(15719, 336.026d, 348.565d, 252.978d, 8.358813e-05d, 3.057474e-05d, -7.573031e-06d, -5.771909d);
                     return true;
                 case 15720:
-                    parameters = ExplicitOperations[1135];
+                    parameters = new EpsgExplicitOperationRecord(15720, 963.273d, 486.386d, 190.997d, 7.992171e-05d, 8.090696e-06d, -0.0001051699d, -13.89914d);
                     return true;
                 case 15721:
-                    parameters = ExplicitOperations[1136];
+                    parameters = new EpsgExplicitOperationRecord(15721, 963.273d, 486.386d, 190.997d, 7.992171e-05d, 8.090696e-06d, -0.0001051699d, -13.89914d);
                     return true;
                 case 15722:
-                    parameters = ExplicitOperations[1137];
+                    parameters = new EpsgExplicitOperationRecord(15722, -90.29d, 247.559d, -21.989d, 4.216369e-05d, 2.030416e-05d, 6.209623e-05d, 2.181658d);
                     return true;
                 case 15723:
-                    parameters = ExplicitOperations[1138];
+                    parameters = new EpsgExplicitOperationRecord(15723, -90.29d, 247.559d, -21.989d, 4.216369e-05d, 2.030416e-05d, 6.209623e-05d, 2.181658d);
                     return true;
                 case 15724:
-                    parameters = ExplicitOperations[1139];
+                    parameters = new EpsgExplicitOperationRecord(15724, -0.562d, 244.299d, -456.938d, -3.329153e-05d, 4.001009e-05d, 4.507206e-05d, 3.74656d);
                     return true;
                 case 15725:
-                    parameters = ExplicitOperations[1140];
+                    parameters = new EpsgExplicitOperationRecord(15725, -0.562d, 244.299d, -456.938d, -3.329153e-05d, 4.001009e-05d, 4.507206e-05d, 3.74656d);
                     return true;
                 case 15726:
-                    parameters = ExplicitOperations[1141];
+                    parameters = new EpsgExplicitOperationRecord(15726, -305.356d, 222.004d, -30.023d, 4.698084e-05d, -5.003123e-06d, 9.578655e-05d, 6.325747d);
                     return true;
                 case 15727:
-                    parameters = ExplicitOperations[1142];
+                    parameters = new EpsgExplicitOperationRecord(15727, -305.356d, 222.004d, -30.023d, 4.698084e-05d, -5.003123e-06d, 9.578655e-05d, 6.325747d);
                     return true;
                 case 15728:
-                    parameters = ExplicitOperations[1143];
+                    parameters = new EpsgExplicitOperationRecord(15728, 221.899d, 274.136d, -397.554d, -1.361573e-05d, 2.174431e-06d, 1.36241e-05d, -2.199943d);
                     return true;
                 case 15729:
-                    parameters = ExplicitOperations[1144];
+                    parameters = new EpsgExplicitOperationRecord(15729, 221.899d, 274.136d, -397.554d, -1.361573e-05d, 2.174431e-06d, 1.36241e-05d, -2.199943d);
                     return true;
                 case 15730:
-                    parameters = ExplicitOperations[1145];
+                    parameters = new EpsgExplicitOperationRecord(15730, 300.449d, 293.757d, -317.306d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15731:
-                    parameters = ExplicitOperations[1146];
+                    parameters = new EpsgExplicitOperationRecord(15731, 308.833d, 282.519d, -314.571d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15732:
-                    parameters = ExplicitOperations[1147];
+                    parameters = new EpsgExplicitOperationRecord(15732, 311.118d, 289.167d, -310.641d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15733:
-                    parameters = ExplicitOperations[1148];
+                    parameters = new EpsgExplicitOperationRecord(15733, 306.666d, 315.063d, -318.837d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15734:
-                    parameters = ExplicitOperations[1149];
+                    parameters = new EpsgExplicitOperationRecord(15734, 307.871d, 305.803d, -311.992d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15735:
-                    parameters = ExplicitOperations[1150];
+                    parameters = new EpsgExplicitOperationRecord(15735, 302.934d, 307.805d, -312.121d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15736:
-                    parameters = ExplicitOperations[1151];
+                    parameters = new EpsgExplicitOperationRecord(15736, 295.282d, 321.293d, -311.001d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15737:
-                    parameters = ExplicitOperations[1152];
+                    parameters = new EpsgExplicitOperationRecord(15737, 302.529d, 317.979d, -319.08d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15738:
-                    parameters = ExplicitOperations[1153];
+                    parameters = new EpsgExplicitOperationRecord(15738, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15739:
-                    parameters = ExplicitOperations[1154];
+                    parameters = new EpsgExplicitOperationRecord(15739, 565.2369d, 50.0087d, 465.658d, -1.9725d, 1.7004d, -9.0677d, 4.0812d);
                     return true;
                 case 15740:
-                    parameters = ExplicitOperations[1155];
+                    parameters = new EpsgExplicitOperationRecord(15740, 593.0297d, 26.0038d, 478.7534d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15741:
-                    parameters = ExplicitOperations[1156];
+                    parameters = new EpsgExplicitOperationRecord(15741, -187.5d, 14.1d, 237.6d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15742:
-                    parameters = ExplicitOperations[1157];
+                    parameters = new EpsgExplicitOperationRecord(15742, -190.421d, 8.532d, 238.69d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15743:
-                    parameters = ExplicitOperations[1158];
+                    parameters = new EpsgExplicitOperationRecord(15743, -83.58d, -397.54d, 458.78d, -17.595d, -2.847d, 4.256d, 3.225d);
                     return true;
                 case 15745:
-                    parameters = ExplicitOperations[1159];
+                    parameters = new EpsgExplicitOperationRecord(15745, -123.02d, -158.95d, -168.47d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15746:
-                    parameters = ExplicitOperations[1160];
+                    parameters = new EpsgExplicitOperationRecord(15746, 0.0d, -0.15d, 0.68d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15750:
-                    parameters = ExplicitOperations[1161];
+                    parameters = new EpsgExplicitOperationRecord(15750, -7.0d, 215.0d, 225.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15751:
-                    parameters = ExplicitOperations[1162];
+                    parameters = new EpsgExplicitOperationRecord(15751, 94.0d, -948.0d, -1262.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15752:
-                    parameters = ExplicitOperations[1163];
+                    parameters = new EpsgExplicitOperationRecord(15752, -86.0d, -98.0d, -119.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15754:
-                    parameters = ExplicitOperations[1164];
+                    parameters = new EpsgExplicitOperationRecord(15754, -158.0d, 315.0d, -148.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15755:
-                    parameters = ExplicitOperations[1165];
+                    parameters = new EpsgExplicitOperationRecord(15755, -90.2d, -87.32d, 114.17d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15759:
-                    parameters = ExplicitOperations[1166];
+                    parameters = new EpsgExplicitOperationRecord(15759, 217.037d, 86.959d, 23.956d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15778:
-                    parameters = ExplicitOperations[1167];
+                    parameters = new EpsgExplicitOperationRecord(15778, -114.7d, -98.5d, -150.7d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15779:
-                    parameters = ExplicitOperations[1168];
+                    parameters = new EpsgExplicitOperationRecord(15779, 283.7d, 735.9d, 261.1d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15782:
-                    parameters = ExplicitOperations[1169];
+                    parameters = new EpsgExplicitOperationRecord(15782, -148.0d, 136.0d, 90.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15783:
-                    parameters = ExplicitOperations[1170];
+                    parameters = new EpsgExplicitOperationRecord(15783, 287.0d, 178.0d, -136.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15784:
-                    parameters = ExplicitOperations[1171];
+                    parameters = new EpsgExplicitOperationRecord(15784, -770.1d, 158.4d, -498.2d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15787:
-                    parameters = ExplicitOperations[1172];
+                    parameters = new EpsgExplicitOperationRecord(15787, -79.9d, -158.0d, -168.9d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15788:
-                    parameters = ExplicitOperations[1173];
+                    parameters = new EpsgExplicitOperationRecord(15788, -127.8d, -52.3d, 152.9d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15789:
-                    parameters = ExplicitOperations[1174];
+                    parameters = new EpsgExplicitOperationRecord(15789, -128.5d, -53.0d, 153.4d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15790:
-                    parameters = ExplicitOperations[1175];
+                    parameters = new EpsgExplicitOperationRecord(15790, -255.0d, -29.0d, -105.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15791:
-                    parameters = ExplicitOperations[1176];
+                    parameters = new EpsgExplicitOperationRecord(15791, -259.99d, -5.28d, -97.09d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15792:
-                    parameters = ExplicitOperations[1177];
+                    parameters = new EpsgExplicitOperationRecord(15792, -123.0d, 98.0d, 2.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15793:
-                    parameters = ExplicitOperations[1178];
+                    parameters = new EpsgExplicitOperationRecord(15793, 31.95d, 300.99d, 419.19d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15794:
-                    parameters = ExplicitOperations[1179];
+                    parameters = new EpsgExplicitOperationRecord(15794, -491.0d, -22.0d, 435.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15795:
-                    parameters = ExplicitOperations[1180];
+                    parameters = new EpsgExplicitOperationRecord(15795, 114.0d, -116.0d, -333.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15796:
-                    parameters = ExplicitOperations[1181];
+                    parameters = new EpsgExplicitOperationRecord(15796, 145.0d, 75.0d, -272.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15797:
-                    parameters = ExplicitOperations[1182];
+                    parameters = new EpsgExplicitOperationRecord(15797, -205.0d, 107.0d, 53.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15798:
-                    parameters = ExplicitOperations[1183];
+                    parameters = new EpsgExplicitOperationRecord(15798, -320.0d, 550.0d, -494.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15799:
-                    parameters = ExplicitOperations[1184];
+                    parameters = new EpsgExplicitOperationRecord(15799, 124.0d, -234.0d, -25.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15800:
-                    parameters = ExplicitOperations[1185];
+                    parameters = new EpsgExplicitOperationRecord(15800, -79.0d, -129.0d, 145.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15801:
-                    parameters = ExplicitOperations[1186];
+                    parameters = new EpsgExplicitOperationRecord(15801, -127.0d, -769.0d, 472.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15802:
-                    parameters = ExplicitOperations[1187];
+                    parameters = new EpsgExplicitOperationRecord(15802, -104.0d, -129.0d, 239.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15803:
-                    parameters = ExplicitOperations[1188];
+                    parameters = new EpsgExplicitOperationRecord(15803, 298.0d, -304.0d, -375.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15804:
-                    parameters = ExplicitOperations[1189];
+                    parameters = new EpsgExplicitOperationRecord(15804, -2.0d, 151.0d, 181.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15805:
-                    parameters = ExplicitOperations[1190];
+                    parameters = new EpsgExplicitOperationRecord(15805, 230.0d, -199.0d, -752.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15806:
-                    parameters = ExplicitOperations[1191];
+                    parameters = new EpsgExplicitOperationRecord(15806, 211.0d, 147.0d, 111.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15807:
-                    parameters = ExplicitOperations[1192];
+                    parameters = new EpsgExplicitOperationRecord(15807, 252.0d, -209.0d, -751.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15808:
-                    parameters = ExplicitOperations[1193];
+                    parameters = new EpsgExplicitOperationRecord(15808, 208.0d, -435.0d, -229.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15809:
-                    parameters = ExplicitOperations[1194];
+                    parameters = new EpsgExplicitOperationRecord(15809, 189.0d, -79.0d, -202.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15810:
-                    parameters = ExplicitOperations[1195];
+                    parameters = new EpsgExplicitOperationRecord(15810, 647.0d, 1777.0d, -1124.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15811:
-                    parameters = ExplicitOperations[1196];
+                    parameters = new EpsgExplicitOperationRecord(15811, -270.0d, 13.0d, 62.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15812:
-                    parameters = ExplicitOperations[1197];
+                    parameters = new EpsgExplicitOperationRecord(15812, 260.0d, 12.0d, -147.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15813:
-                    parameters = ExplicitOperations[1198];
+                    parameters = new EpsgExplicitOperationRecord(15813, -794.0d, 119.0d, -298.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15814:
-                    parameters = ExplicitOperations[1199];
+                    parameters = new EpsgExplicitOperationRecord(15814, 42.0d, 124.0d, 147.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15815:
-                    parameters = ExplicitOperations[1200];
+                    parameters = new EpsgExplicitOperationRecord(15815, -307.0d, -92.0d, 127.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15816:
-                    parameters = ExplicitOperations[1201];
+                    parameters = new EpsgExplicitOperationRecord(15816, -632.0d, 438.0d, -609.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15817:
-                    parameters = ExplicitOperations[1202];
+                    parameters = new EpsgExplicitOperationRecord(15817, 912.0d, -58.0d, 1227.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15818:
-                    parameters = ExplicitOperations[1203];
+                    parameters = new EpsgExplicitOperationRecord(15818, 403.0d, -81.0d, 277.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15819:
-                    parameters = ExplicitOperations[1204];
+                    parameters = new EpsgExplicitOperationRecord(15819, 185.0d, 165.0d, 42.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15820:
-                    parameters = ExplicitOperations[1205];
+                    parameters = new EpsgExplicitOperationRecord(15820, 170.0d, 42.0d, 84.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15822:
-                    parameters = ExplicitOperations[1206];
+                    parameters = new EpsgExplicitOperationRecord(15822, 102.0d, 52.0d, -38.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15823:
-                    parameters = ExplicitOperations[1207];
+                    parameters = new EpsgExplicitOperationRecord(15823, 276.0d, -57.0d, 149.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15824:
-                    parameters = ExplicitOperations[1208];
+                    parameters = new EpsgExplicitOperationRecord(15824, 61.0d, -285.0d, -181.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15825:
-                    parameters = ExplicitOperations[1209];
+                    parameters = new EpsgExplicitOperationRecord(15825, 89.0d, -279.0d, -183.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15826:
-                    parameters = ExplicitOperations[1210];
+                    parameters = new EpsgExplicitOperationRecord(15826, 45.0d, -290.0d, -172.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15827:
-                    parameters = ExplicitOperations[1211];
+                    parameters = new EpsgExplicitOperationRecord(15827, 65.0d, -290.0d, -190.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15828:
-                    parameters = ExplicitOperations[1212];
+                    parameters = new EpsgExplicitOperationRecord(15828, 58.0d, -283.0d, -182.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15829:
-                    parameters = ExplicitOperations[1213];
+                    parameters = new EpsgExplicitOperationRecord(15829, 44.4d, 109.0d, 151.7d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15830:
-                    parameters = ExplicitOperations[1214];
+                    parameters = new EpsgExplicitOperationRecord(15830, 67.8d, 106.1d, 138.8d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15831:
-                    parameters = ExplicitOperations[1215];
+                    parameters = new EpsgExplicitOperationRecord(15831, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15833:
-                    parameters = ExplicitOperations[1216];
+                    parameters = new EpsgExplicitOperationRecord(15833, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15842:
-                    parameters = ExplicitOperations[1217];
+                    parameters = new EpsgExplicitOperationRecord(15842, -156.0d, -271.0d, -189.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15843:
-                    parameters = ExplicitOperations[1218];
+                    parameters = new EpsgExplicitOperationRecord(15843, 0.0d, 0.0d, 1.5d, -0.0d, -0.0d, 0.076d, 0.0d);
                     return true;
                 case 15844:
-                    parameters = ExplicitOperations[1219];
+                    parameters = new EpsgExplicitOperationRecord(15844, 25.0d, -141.0d, -80.0d, -0.0d, 0.35d, 0.66d, 0.0d);
                     return true;
                 case 15846:
-                    parameters = ExplicitOperations[1220];
+                    parameters = new EpsgExplicitOperationRecord(15846, -146.21d, 112.63d, 4.05d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15847:
-                    parameters = ExplicitOperations[1221];
+                    parameters = new EpsgExplicitOperationRecord(15847, 253.0d, -132.0d, -127.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15848:
-                    parameters = ExplicitOperations[1222];
+                    parameters = new EpsgExplicitOperationRecord(15848, -13.0d, -348.0d, 292.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15849:
-                    parameters = ExplicitOperations[1223];
+                    parameters = new EpsgExplicitOperationRecord(15849, -106.0d, -87.0d, 188.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15850:
-                    parameters = ExplicitOperations[1224];
+                    parameters = new EpsgExplicitOperationRecord(15850, 145.0d, -187.0d, 103.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15852:
-                    parameters = ExplicitOperations[1225];
+                    parameters = new EpsgExplicitOperationRecord(15852, -3.0d, 154.0d, 177.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15853:
-                    parameters = ExplicitOperations[1226];
+                    parameters = new EpsgExplicitOperationRecord(15853, -7.0d, 151.0d, 175.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15854:
-                    parameters = ExplicitOperations[1227];
+                    parameters = new EpsgExplicitOperationRecord(15854, -7.0d, 151.0d, 178.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15855:
-                    parameters = ExplicitOperations[1228];
+                    parameters = new EpsgExplicitOperationRecord(15855, -8.0d, 125.0d, 190.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15856:
-                    parameters = ExplicitOperations[1229];
+                    parameters = new EpsgExplicitOperationRecord(15856, -7.0d, 158.0d, 172.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15860:
-                    parameters = ExplicitOperations[1230];
+                    parameters = new EpsgExplicitOperationRecord(15860, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15865:
-                    parameters = ExplicitOperations[1231];
+                    parameters = new EpsgExplicitOperationRecord(15865, 25.0d, -141.0d, -78.5d, -0.0d, 0.35d, 0.736d, 0.0d);
                     return true;
                 case 15866:
-                    parameters = ExplicitOperations[1232];
+                    parameters = new EpsgExplicitOperationRecord(15866, -153.33d, -169.41d, 86.39d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15867:
-                    parameters = ExplicitOperations[1233];
+                    parameters = new EpsgExplicitOperationRecord(15867, 599.4d, 72.4d, 419.2d, -0.062d, -0.022d, -2.723d, 6.46d);
                     return true;
                 case 15868:
-                    parameters = ExplicitOperations[1234];
+                    parameters = new EpsgExplicitOperationRecord(15868, 612.4d, 77.0d, 440.2d, -0.054d, 0.057d, -2.797d, 2.55d);
                     return true;
                 case 15869:
-                    parameters = ExplicitOperations[1235];
+                    parameters = new EpsgExplicitOperationRecord(15869, 612.4d, 77.0d, 440.2d, -0.054d, 0.057d, -2.797d, 2.55d);
                     return true;
                 case 15870:
-                    parameters = ExplicitOperations[1236];
+                    parameters = new EpsgExplicitOperationRecord(15870, -80.01d, 253.26d, 291.19d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15872:
-                    parameters = ExplicitOperations[1237];
+                    parameters = new EpsgExplicitOperationRecord(15872, 84.1d, -320.1d, 218.7d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15873:
-                    parameters = ExplicitOperations[1238];
+                    parameters = new EpsgExplicitOperationRecord(15873, -206.1d, -174.7d, -87.7d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15874:
-                    parameters = ExplicitOperations[1239];
+                    parameters = new EpsgExplicitOperationRecord(15874, -169.559d, -72.34d, 303.102d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15875:
-                    parameters = ExplicitOperations[1240];
+                    parameters = new EpsgExplicitOperationRecord(15875, 265.025d, 384.929d, -194.046d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15876:
-                    parameters = ExplicitOperations[1241];
+                    parameters = new EpsgExplicitOperationRecord(15876, 0.0d, 0.0d, 4.5d, 0.0d, 0.0d, 0.554d, 0.2263d);
                     return true;
                 case 15877:
-                    parameters = ExplicitOperations[1242];
+                    parameters = new EpsgExplicitOperationRecord(15877, -35.173d, 136.571d, -36.964d, -1.37d, 0.842d, 4.718d, -1.537d);
                     return true;
                 case 15878:
-                    parameters = ExplicitOperations[1243];
+                    parameters = new EpsgExplicitOperationRecord(15878, 51.0d, 391.0d, -36.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15879:
-                    parameters = ExplicitOperations[1244];
+                    parameters = new EpsgExplicitOperationRecord(15879, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15880:
-                    parameters = ExplicitOperations[1245];
+                    parameters = new EpsgExplicitOperationRecord(15880, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15881:
-                    parameters = ExplicitOperations[1246];
+                    parameters = new EpsgExplicitOperationRecord(15881, -56.263d, 16.136d, -22.856d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15882:
-                    parameters = ExplicitOperations[1247];
+                    parameters = new EpsgExplicitOperationRecord(15882, -11.64d, -348.6d, 291.98d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15883:
-                    parameters = ExplicitOperations[1248];
+                    parameters = new EpsgExplicitOperationRecord(15883, 335.47d, 222.58d, -230.94d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15884:
-                    parameters = ExplicitOperations[1249];
+                    parameters = new EpsgExplicitOperationRecord(15884, 287.58d, 177.78d, -135.41d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15885:
-                    parameters = ExplicitOperations[1250];
+                    parameters = new EpsgExplicitOperationRecord(15885, -56.263d, 16.136d, -22.856d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15886:
-                    parameters = ExplicitOperations[1251];
+                    parameters = new EpsgExplicitOperationRecord(15886, -10.18d, -350.43d, 291.37d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15887:
-                    parameters = ExplicitOperations[1252];
+                    parameters = new EpsgExplicitOperationRecord(15887, 97.297d, -263.243d, 310.879d, -1.5999d, 0.8387d, 3.1409d, 13.326d);
                     return true;
                 case 15888:
-                    parameters = ExplicitOperations[1253];
+                    parameters = new EpsgExplicitOperationRecord(15888, 48.812d, -205.932d, 343.993d, -3.4427d, -0.4999d, 4.0878d, 6.5215d);
                     return true;
                 case 15889:
-                    parameters = ExplicitOperations[1254];
+                    parameters = new EpsgExplicitOperationRecord(15889, -166.0684d, -154.7826d, 254.8282d, -37.546d, 7.7018d, -10.2029d, -30.84d);
                     return true;
                 case 15890:
-                    parameters = ExplicitOperations[1255];
+                    parameters = new EpsgExplicitOperationRecord(15890, 137.092d, 131.675d, 91.478d, -1.9435d, -11.5995d, -4.3316d, -7.4801d);
                     return true;
                 case 15891:
-                    parameters = ExplicitOperations[1256];
+                    parameters = new EpsgExplicitOperationRecord(15891, -408.809d, 366.857d, -412.987d, 1.8843d, -0.5308d, 2.1657d, -121.0994d);
                     return true;
                 case 15892:
-                    parameters = ExplicitOperations[1257];
+                    parameters = new EpsgExplicitOperationRecord(15892, -122.386d, -188.707d, 103.334d, 3.511d, -4.9665d, -5.7048d, 4.4799d);
                     return true;
                 case 15893:
-                    parameters = ExplicitOperations[1258];
+                    parameters = new EpsgExplicitOperationRecord(15893, 244.42d, 85.352d, 168.129d, -8.936d, 7.752d, 12.5952d, 14.2723d);
                     return true;
                 case 15894:
-                    parameters = ExplicitOperations[1259];
+                    parameters = new EpsgExplicitOperationRecord(15894, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15896:
-                    parameters = ExplicitOperations[1260];
+                    parameters = new EpsgExplicitOperationRecord(15896, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15897:
-                    parameters = ExplicitOperations[1261];
+                    parameters = new EpsgExplicitOperationRecord(15897, 51.0d, 391.0d, -36.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15899:
-                    parameters = ExplicitOperations[1262];
+                    parameters = new EpsgExplicitOperationRecord(15899, 105.0d, 326.0d, -102.5d, 0.0d, 0.0d, 0.814d, -0.6d);
                     return true;
                 case 15900:
-                    parameters = ExplicitOperations[1263];
+                    parameters = new EpsgExplicitOperationRecord(15900, -45.0d, 417.0d, -3.5d, 0.0d, 0.0d, 0.814d, -0.6d);
                     return true;
                 case 15901:
-                    parameters = ExplicitOperations[1264];
+                    parameters = new EpsgExplicitOperationRecord(15901, 287.58d, 177.78d, -135.41d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15902:
-                    parameters = ExplicitOperations[1265];
+                    parameters = new EpsgExplicitOperationRecord(15902, 335.47d, 222.58d, -230.94d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15903:
-                    parameters = ExplicitOperations[1266];
+                    parameters = new EpsgExplicitOperationRecord(15903, -11.64d, -348.6d, 291.98d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15904:
-                    parameters = ExplicitOperations[1267];
+                    parameters = new EpsgExplicitOperationRecord(15904, -10.18d, -350.43d, 291.37d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15908:
-                    parameters = ExplicitOperations[1268];
+                    parameters = new EpsgExplicitOperationRecord(15908, -208.4058d, -109.8777d, -2.5764d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15909:
-                    parameters = ExplicitOperations[1269];
+                    parameters = new EpsgExplicitOperationRecord(15909, -115.8543d, -99.0583d, -152.4616d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15911:
-                    parameters = ExplicitOperations[1270];
+                    parameters = new EpsgExplicitOperationRecord(15911, -1.977d, -13.06d, -9.993d, 0.364d, 0.254d, 0.689d, -1.037d);
                     return true;
                 case 15912:
-                    parameters = ExplicitOperations[1271];
+                    parameters = new EpsgExplicitOperationRecord(15912, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15913:
-                    parameters = ExplicitOperations[1272];
+                    parameters = new EpsgExplicitOperationRecord(15913, 0.0d, 125.0d, 196.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15918:
-                    parameters = ExplicitOperations[1273];
+                    parameters = new EpsgExplicitOperationRecord(15918, 12.646d, -155.176d, -80.863d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15919:
-                    parameters = ExplicitOperations[1274];
+                    parameters = new EpsgExplicitOperationRecord(15919, 15.53d, -113.82d, -41.38d, 0.0d, 0.0d, 0.814d, -0.38d);
                     return true;
                 case 15920:
-                    parameters = ExplicitOperations[1275];
+                    parameters = new EpsgExplicitOperationRecord(15920, 31.4d, -144.3d, -74.8d, 0.0d, 0.0d, 0.814d, -0.38d);
                     return true;
                 case 15921:
-                    parameters = ExplicitOperations[1276];
+                    parameters = new EpsgExplicitOperationRecord(15921, 15.8d, -154.4d, -82.3d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15923:
-                    parameters = ExplicitOperations[1277];
+                    parameters = new EpsgExplicitOperationRecord(15923, -117.7d, -100.3d, -152.4d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15924:
-                    parameters = ExplicitOperations[1278];
+                    parameters = new EpsgExplicitOperationRecord(15924, 92.5515d, 10.8194d, -149.8852d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15925:
-                    parameters = ExplicitOperations[1279];
+                    parameters = new EpsgExplicitOperationRecord(15925, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15926:
-                    parameters = ExplicitOperations[1280];
+                    parameters = new EpsgExplicitOperationRecord(15926, -33.722d, 153.789d, 94.959d, -8.581d, -4.478d, 4.54d, 8.95d);
                     return true;
                 case 15927:
-                    parameters = ExplicitOperations[1281];
+                    parameters = new EpsgExplicitOperationRecord(15927, -33.722d, 153.789d, 94.959d, -8.581d, -4.478d, 4.54d, 8.95d);
                     return true;
                 case 15928:
-                    parameters = ExplicitOperations[1282];
+                    parameters = new EpsgExplicitOperationRecord(15928, -106.8686d, 52.2978d, -103.7239d, 0.3366d, -0.457d, 1.8422d, -1.2747d);
                     return true;
                 case 15929:
-                    parameters = ExplicitOperations[1283];
+                    parameters = new EpsgExplicitOperationRecord(15929, -106.8686d, 52.2978d, -103.7239d, 0.3366d, -0.457d, 1.8422d, -1.2747d);
                     return true;
                 case 15931:
-                    parameters = ExplicitOperations[1284];
+                    parameters = new EpsgExplicitOperationRecord(15931, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15934:
-                    parameters = ExplicitOperations[1285];
+                    parameters = new EpsgExplicitOperationRecord(15934, 565.2369d, 50.0087d, 465.658d, -1.9725d, 1.7004d, -9.0677d, 4.0812d);
                     return true;
                 case 15935:
-                    parameters = ExplicitOperations[1286];
+                    parameters = new EpsgExplicitOperationRecord(15935, 18.0d, -136.8d, -73.7d, 0.0d, 0.0d, 0.814d, -0.38d);
                     return true;
                 case 15936:
-                    parameters = ExplicitOperations[1287];
+                    parameters = new EpsgExplicitOperationRecord(15936, 11.911d, -154.833d, -80.079d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15937:
-                    parameters = ExplicitOperations[1288];
+                    parameters = new EpsgExplicitOperationRecord(15937, -245.8d, -152.2d, 382.9d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15938:
-                    parameters = ExplicitOperations[1289];
+                    parameters = new EpsgExplicitOperationRecord(15938, -225.4d, -158.7d, 380.8d, 0.0d, 0.0d, 0.814d, -0.38d);
                     return true;
                 case 15952:
-                    parameters = ExplicitOperations[1290];
+                    parameters = new EpsgExplicitOperationRecord(15952, -244.2d, -149.8d, 379.3d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15953:
-                    parameters = ExplicitOperations[1291];
+                    parameters = new EpsgExplicitOperationRecord(15953, -250.7d, -157.9d, 380.4d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15957:
-                    parameters = ExplicitOperations[1292];
+                    parameters = new EpsgExplicitOperationRecord(15957, 163.511d, 127.533d, -159.789d, 0.0d, 0.0d, 0.814d, -0.6d);
                     return true;
                 case 15964:
-                    parameters = ExplicitOperations[1293];
+                    parameters = new EpsgExplicitOperationRecord(15964, -86.277d, -108.879d, -120.181d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15965:
-                    parameters = ExplicitOperations[1294];
+                    parameters = new EpsgExplicitOperationRecord(15965, 589.0d, 76.0d, 480.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15967:
-                    parameters = ExplicitOperations[1295];
+                    parameters = new EpsgExplicitOperationRecord(15967, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15969:
-                    parameters = ExplicitOperations[1296];
+                    parameters = new EpsgExplicitOperationRecord(15969, -292.295d, 248.758d, 429.447d, 4.9971d, 2.99d, 6.6906d, 1.0289d);
                     return true;
                 case 15970:
-                    parameters = ExplicitOperations[1297];
+                    parameters = new EpsgExplicitOperationRecord(15970, -292.295d, 248.758d, 429.447d, 4.9971d, 2.99d, 6.6906d, 1.0289d);
                     return true;
                 case 15971:
-                    parameters = ExplicitOperations[1298];
+                    parameters = new EpsgExplicitOperationRecord(15971, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15972:
-                    parameters = ExplicitOperations[1299];
+                    parameters = new EpsgExplicitOperationRecord(15972, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15974:
-                    parameters = ExplicitOperations[1300];
+                    parameters = new EpsgExplicitOperationRecord(15974, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15975:
-                    parameters = ExplicitOperations[1301];
+                    parameters = new EpsgExplicitOperationRecord(15975, 54.4d, -20.1d, 183.1d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15976:
-                    parameters = ExplicitOperations[1302];
+                    parameters = new EpsgExplicitOperationRecord(15976, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15978:
-                    parameters = ExplicitOperations[1303];
+                    parameters = new EpsgExplicitOperationRecord(15978, 2.478d, 149.752d, 197.726d, 0.526d, 0.498d, -0.501d, 0.685d);
                     return true;
                 case 15979:
-                    parameters = ExplicitOperations[1304];
+                    parameters = new EpsgExplicitOperationRecord(15979, -117.808d, -51.536d, 137.784d, 0.303d, 0.446d, 0.234d, -0.29d);
                     return true;
                 case 15980:
-                    parameters = ExplicitOperations[1305];
+                    parameters = new EpsgExplicitOperationRecord(15980, -117.808d, -51.536d, 137.784d, 0.303d, 0.446d, 0.234d, -0.29d);
                     return true;
                 case 15993:
-                    parameters = ExplicitOperations[1306];
+                    parameters = new EpsgExplicitOperationRecord(15993, 68.1564d, 32.7756d, 80.2249d, -2.20333014d, -2.19256447d, 2.54166911d, -0.14155333d);
                     return true;
                 case 15994:
-                    parameters = ExplicitOperations[1307];
+                    parameters = new EpsgExplicitOperationRecord(15994, 2.3287d, -147.0425d, -92.0802d, -0.3092483d, 0.32482185d, 0.49729934d, 5.68906266d);
                     return true;
                 case 15995:
-                    parameters = ExplicitOperations[1308];
+                    parameters = new EpsgExplicitOperationRecord(15995, 2.329d, -147.042d, -92.08d, -0.309d, 0.325d, 0.497d, 5.69d);
                     return true;
                 case 15996:
-                    parameters = ExplicitOperations[1309];
+                    parameters = new EpsgExplicitOperationRecord(15996, 28.0d, -121.0d, -77.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15997:
-                    parameters = ExplicitOperations[1310];
+                    parameters = new EpsgExplicitOperationRecord(15997, 23.0d, -124.0d, -82.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15998:
-                    parameters = ExplicitOperations[1311];
+                    parameters = new EpsgExplicitOperationRecord(15998, 26.0d, -121.0d, -78.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 case 15999:
-                    parameters = ExplicitOperations[1312];
+                    parameters = new EpsgExplicitOperationRecord(15999, 24.0d, -130.0d, -92.0d, 0.0d, 0.0d, 0.0d, 0.0d);
                     return true;
                 default:
                     parameters = default;
