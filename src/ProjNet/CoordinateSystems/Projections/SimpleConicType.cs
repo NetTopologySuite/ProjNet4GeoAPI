@@ -20,10 +20,11 @@ namespace ProjNet.CoordinateSystems.Projections;
 internal enum SimpleConicType
 {
     Euler = 0,
-    MurdochI = 1,
-    MurdochII = 2,
-    MurdochIII = 3,
+    Murdoch1 = 1,
+    Murdoch2 = 2,
+    Murdoch3 = 3,
     Tissot = 4,
     VitkovskyI = 5,
 }
+
 

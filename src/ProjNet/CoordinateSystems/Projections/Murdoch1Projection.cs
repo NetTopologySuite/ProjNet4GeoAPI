@@ -22,27 +22,27 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Implements the spherical Murdoch II projection (<c>murd2</c>).
+/// Implements the spherical Murdoch I projection (<c>murd1</c>).
 /// </summary>
 [Serializable]
-internal sealed class MurdochIIProjection : SimpleConicProjectionBase
+internal sealed class Murdoch1Projection : SimpleConicProjectionBase
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="MurdochIIProjection"/> class.
+    /// Initializes a new instance of the <see cref="Murdoch1Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
-    public MurdochIIProjection(IEnumerable<ProjectionParameter> parameters)
+    public Murdoch1Projection(IEnumerable<ProjectionParameter> parameters)
         : this(parameters, null)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MurdochIIProjection"/> class.
+    /// Initializes a new instance of the <see cref="Murdoch1Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public MurdochIIProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
-        : base(parameters, inverse, SimpleConicType.MurdochII, "Murdoch_II")
+    public Murdoch1Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+        : base(parameters, inverse, SimpleConicType.Murdoch1, "Murdoch_I")
     {
     }
 
@@ -51,10 +51,11 @@ internal sealed class MurdochIIProjection : SimpleConicProjectionBase
     {
         if (this.inverse is null)
         {
-            this.inverse = new MurdochIIProjection(this.Parameters.ToProjectionParameter(), this);
+            this.inverse = new Murdoch1Projection(this.Parameters.ToProjectionParameter(), this);
         }
 
         return this.inverse;
     }
 }
+
 

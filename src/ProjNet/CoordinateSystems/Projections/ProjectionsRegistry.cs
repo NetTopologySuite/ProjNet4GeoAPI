@@ -111,9 +111,9 @@ public class ProjectionsRegistry
         Register("equidistant_conic_(spherical)", typeof(EquidistantConicProjection));
         Register("eqdc", typeof(EquidistantConicProjection));
         Register("euler", typeof(EulerProjection));
-        Register("murd1", typeof(MurdochIProjection));
-        Register("murd2", typeof(MurdochIIProjection));
-        Register("murd3", typeof(MurdochIIIProjection));
+        Register("murd1", typeof(Murdoch1Projection));
+        Register("murd2", typeof(Murdoch2Projection));
+        Register("murd3", typeof(Murdoch3Projection));
         Register("tissot", typeof(TissotProjection));
         Register("vitk1", typeof(VitkovskyIProjection));
         Register("imw_p", typeof(InternationalMapWorldPolyconicProjection));
@@ -509,6 +509,7 @@ public class ProjectionsRegistry
         return null;
     }
 }
+
 
 
 

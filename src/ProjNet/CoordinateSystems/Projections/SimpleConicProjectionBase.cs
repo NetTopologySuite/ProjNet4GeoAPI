@@ -80,13 +80,13 @@ internal abstract class SimpleConicProjectionBase : MapProjection
                 break;
             }
 
-            case SimpleConicType.MurdochI:
+            case SimpleConicType.Murdoch1:
                 this.rhoC = (Math.Sin(delta) / (delta * Math.Tan(this.sig))) + this.sig;
                 this.rho0 = this.rhoC - this.latOrigin;
                 this.n = Math.Sin(this.sig);
                 break;
 
-            case SimpleConicType.MurdochII:
+            case SimpleConicType.Murdoch2:
             {
                 double cosDelta = Math.Cos(delta);
                 if (cosDelta < 0d)
@@ -101,7 +101,7 @@ internal abstract class SimpleConicProjectionBase : MapProjection
                 break;
             }
 
-            case SimpleConicType.MurdochIII:
+            case SimpleConicType.Murdoch3:
                 this.rhoC = (delta / (Math.Tan(this.sig) * Math.Tan(delta))) + this.sig;
                 this.rho0 = this.rhoC - this.latOrigin;
                 this.n = Math.Sin(this.sig) * Math.Sin(delta) * Math.Tan(delta) / (delta * delta);
@@ -132,7 +132,7 @@ internal abstract class SimpleConicProjectionBase : MapProjection
     protected override void RadiansToMeters(ref double lon, ref double lat)
     {
         double lambda = Adjust_lon(lon - this.centralMeridian);
-        double rho = this.type == SimpleConicType.MurdochII
+        double rho = this.type == SimpleConicType.Murdoch2
             ? this.rhoC + Math.Tan(this.sig - lat)
             : this.rhoC - lat;
         double theta = lambda * this.n;
@@ -155,7 +155,7 @@ internal abstract class SimpleConicProjectionBase : MapProjection
         }
 
         double lambda = Math.Atan2(xUnit, yUnit) / this.n;
-        double phi = this.type == SimpleConicType.MurdochII
+        double phi = this.type == SimpleConicType.Murdoch2
             ? this.sig - Math.Atan(rho - this.rhoC)
             : this.rhoC - rho;
 
@@ -163,4 +163,5 @@ internal abstract class SimpleConicProjectionBase : MapProjection
         y = phi;
     }
 }
+
 
