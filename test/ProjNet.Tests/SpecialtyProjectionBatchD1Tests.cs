@@ -12,9 +12,9 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Validates M7 batch D1 specialty projections.
+/// Validates specialty batch D1 specialty projections.
 /// </summary>
-public class Phase7SpecialtyProjectionBatchD1Tests
+public class SpecialtyProjectionBatchD1Tests
 {
     private const string Sphere6400000 = "SPHEROID[\"Sphere\",6400000,0]";
     private const string Grs80 = "SPHEROID[\"GRS 80\",6378137,298.257222101]";
@@ -216,7 +216,7 @@ public class Phase7SpecialtyProjectionBatchD1Tests
     {
         return string.Format(
             CultureInfo.InvariantCulture,
-            "PROJCS[\"Phase7-D1-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{2},UNIT[\"metre\",1]]",
+            "PROJCS[\"Specialty-D1-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{2},UNIT[\"metre\",1]]",
             projectionName,
             spheroidClause,
             extraParameters ?? string.Empty);
@@ -224,3 +224,4 @@ public class Phase7SpecialtyProjectionBatchD1Tests
 
     private static double[] CreatePoint(double x, double y) => [x, y];
 }
+

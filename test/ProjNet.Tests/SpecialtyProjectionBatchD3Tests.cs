@@ -12,9 +12,9 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Validates M7 batch D3 specialty projections.
+/// Validates specialty batch D3 specialty projections.
 /// </summary>
-public class Phase7SpecialtyProjectionBatchD3Tests
+public class SpecialtyProjectionBatchD3Tests
 {
     private const string Wgs84 = "SPHEROID[\"WGS 84\",6378137,298.257223563]";
 
@@ -183,7 +183,7 @@ public class Phase7SpecialtyProjectionBatchD3Tests
 
         return string.Format(
             CultureInfo.InvariantCulture,
-            "PROJCS[\"Phase7-D3-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",{2}],PARAMETER[\"central_meridian\",{3}],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{4},UNIT[\"metre\",1]]",
+            "PROJCS[\"Specialty-D3-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",{2}],PARAMETER[\"central_meridian\",{3}],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{4},UNIT[\"metre\",1]]",
             projectionName,
             Wgs84,
             lat0.ToString("R", CultureInfo.InvariantCulture),
@@ -193,3 +193,4 @@ public class Phase7SpecialtyProjectionBatchD3Tests
 
     private static double[] CreatePoint(double x, double y) => [x, y];
 }
+

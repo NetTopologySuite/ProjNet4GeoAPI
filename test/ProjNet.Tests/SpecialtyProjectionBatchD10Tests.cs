@@ -9,9 +9,9 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Validates M7 batch D10 runtime parity for <c>sch</c>.
+/// Validates specialty batch D10 runtime parity for <c>sch</c>.
 /// </summary>
-public class Phase7SpecialtyProjectionBatchD10Tests
+public class SpecialtyProjectionBatchD10Tests
 {
     private const string SchForwardOperation = "+proj=sch +datum=WGS84 +plat_0=30.0 +plon_0=45.0 +phdg_0=-12.0 +nodefs";
     private const string SchInverseOperation = "+proj=sch +datum=WGS84 +plat_0=30.0 +plon_0=45.0 +phdg_0=-12.0 +nodefs +inv";
@@ -119,3 +119,4 @@ public class Phase7SpecialtyProjectionBatchD10Tests
 
     private static double[] CreatePoint(double x, double y, double z) => [x, y, z];
 }
+

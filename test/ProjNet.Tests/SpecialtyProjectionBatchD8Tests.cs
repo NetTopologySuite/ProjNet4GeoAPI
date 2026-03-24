@@ -12,9 +12,9 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Validates M7 batch D8 specialty projections (<c>airocean</c>, <c>isea</c>).
+/// Validates specialty batch D8 specialty projections (<c>airocean</c>, <c>isea</c>).
 /// </summary>
-public class Phase7SpecialtyProjectionBatchD8Tests
+public class SpecialtyProjectionBatchD8Tests
 {
     private const string Grs80 = "SPHEROID[\"GRS 80\",6378137,298.257222101]";
     private const string Sphere6400000 = "SPHEROID[\"Sphere\",6400000,0]";
@@ -248,7 +248,7 @@ public class Phase7SpecialtyProjectionBatchD8Tests
     {
         return string.Format(
             CultureInfo.InvariantCulture,
-            "PROJCS[\"Phase7-D8-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"orient\",{2}],UNIT[\"metre\",1]]",
+            "PROJCS[\"Specialty-D8-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"orient\",{2}],UNIT[\"metre\",1]]",
             projectionName,
             Grs80,
             orientCode.ToString("R", CultureInfo.InvariantCulture));
@@ -265,7 +265,7 @@ public class Phase7SpecialtyProjectionBatchD8Tests
     {
         return string.Format(
             CultureInfo.InvariantCulture,
-            "PROJCS[\"Phase7-D8-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"orient\",{2}],PARAMETER[\"mode\",{3}],PARAMETER[\"aperture\",{4}],PARAMETER[\"resolution\",{5}],PARAMETER[\"azi\",{6}],UNIT[\"metre\",1]]",
+            "PROJCS[\"Specialty-D8-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"orient\",{2}],PARAMETER[\"mode\",{3}],PARAMETER[\"aperture\",{4}],PARAMETER[\"resolution\",{5}],PARAMETER[\"azi\",{6}],UNIT[\"metre\",1]]",
             projectionName,
             spheroidClause,
             orientCode.ToString("R", CultureInfo.InvariantCulture),
@@ -277,3 +277,4 @@ public class Phase7SpecialtyProjectionBatchD8Tests
 
     private static double[] CreatePoint(double x, double y) => [x, y];
 }
+

@@ -12,9 +12,9 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Validates M7 batch D9 projection aliases and vectors (<c>leac</c>, <c>ups</c>).
+/// Validates specialty batch D9 projection aliases and vectors (<c>leac</c>, <c>ups</c>).
 /// </summary>
-public class Phase7SpecialtyProjectionBatchD9Tests
+public class SpecialtyProjectionBatchD9Tests
 {
     private const string Grs80 = "SPHEROID[\"GRS 80\",6378137,298.257222101]";
     private const string Sphere6400000 = "SPHEROID[\"Sphere\",6400000,0]";
@@ -161,7 +161,7 @@ public class Phase7SpecialtyProjectionBatchD9Tests
     {
         return string.Format(
             CultureInfo.InvariantCulture,
-            "PROJCS[\"Phase7-D9-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"standard_parallel_1\",{2}],PARAMETER[\"south\",{3}],UNIT[\"metre\",1]]",
+            "PROJCS[\"Specialty-D9-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"standard_parallel_1\",{2}],PARAMETER[\"south\",{3}],UNIT[\"metre\",1]]",
             projectionName,
             spheroidClause,
             standardParallel1.ToString("R", CultureInfo.InvariantCulture),
@@ -172,7 +172,7 @@ public class Phase7SpecialtyProjectionBatchD9Tests
     {
         return string.Format(
             CultureInfo.InvariantCulture,
-            "PROJCS[\"Phase7-D9-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",{2}],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"south\",{3}],UNIT[\"metre\",1]]",
+            "PROJCS[\"Specialty-D9-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",{2}],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"south\",{3}],UNIT[\"metre\",1]]",
             projectionName,
             spheroidClause,
             south ? "-90" : "90",
@@ -183,10 +183,11 @@ public class Phase7SpecialtyProjectionBatchD9Tests
     {
         return string.Format(
             CultureInfo.InvariantCulture,
-            "PROJCS[\"Phase7-D9-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1]]",
+            "PROJCS[\"Specialty-D9-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1]]",
             projectionName,
             spheroidClause);
     }
 
     private static double[] CreatePoint(double x, double y) => [x, y];
 }
+

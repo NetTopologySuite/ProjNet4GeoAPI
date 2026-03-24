@@ -12,9 +12,9 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Validates M7 batch C specialty projections.
+/// Validates specialty batch C specialty projections.
 /// </summary>
-public class Phase7SpecialtyProjectionBatchCTests
+public class SpecialtyProjectionBatchCTests
 {
     private const string Sphere6390000 = "SPHEROID[\"Sphere\",6390000,0]";
     private const string Sphere6400000 = "SPHEROID[\"Sphere\",6400000,0]";
@@ -250,7 +250,7 @@ public class Phase7SpecialtyProjectionBatchCTests
     {
         return string.Format(
             CultureInfo.InvariantCulture,
-            "PROJCS[\"Phase7-C-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{2},UNIT[\"metre\",1]]",
+            "PROJCS[\"Specialty-C-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{2},UNIT[\"metre\",1]]",
             projectionName,
             spheroidClause,
             extraParameters ?? string.Empty);
@@ -260,7 +260,7 @@ public class Phase7SpecialtyProjectionBatchCTests
     {
         return string.Format(
             CultureInfo.InvariantCulture,
-            "PROJCS[\"Phase7-C-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",52],PARAMETER[\"central_meridian\",19],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",330000],PARAMETER[\"false_northing\",-350000],PARAMETER[\"lat_1\",52],UNIT[\"metre\",1]]",
+            "PROJCS[\"Specialty-C-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",52],PARAMETER[\"central_meridian\",19],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",330000],PARAMETER[\"false_northing\",-350000],PARAMETER[\"lat_1\",52],UNIT[\"metre\",1]]",
             projectionName,
             Sphere6390000);
     }
@@ -269,7 +269,7 @@ public class Phase7SpecialtyProjectionBatchCTests
     {
         return string.Format(
             CultureInfo.InvariantCulture,
-            "PROJCS[\"Phase7-C-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",1],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"lat_1\",0.5],PARAMETER[\"lat_2\",2],UNIT[\"metre\",1]]",
+            "PROJCS[\"Specialty-C-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",1],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"lat_1\",0.5],PARAMETER[\"lat_2\",2],UNIT[\"metre\",1]]",
             projectionName,
             Grs80);
     }
@@ -278,7 +278,7 @@ public class Phase7SpecialtyProjectionBatchCTests
     {
         return string.Format(
             CultureInfo.InvariantCulture,
-            "PROJCS[\"Phase7-C-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"lat_1\",0.5],PARAMETER[\"lat_2\",2],PARAMETER[\"lon_1\",0],PARAMETER[\"lon_2\",0],UNIT[\"metre\",1]]",
+            "PROJCS[\"Specialty-C-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"lat_1\",0.5],PARAMETER[\"lat_2\",2],PARAMETER[\"lon_1\",0],PARAMETER[\"lon_2\",0],UNIT[\"metre\",1]]",
             projectionName,
             Sphere6400000);
     }
@@ -287,7 +287,7 @@ public class Phase7SpecialtyProjectionBatchCTests
     {
         return string.Format(
             CultureInfo.InvariantCulture,
-            "PROJCS[\"Phase7-C-{0}-alpha\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",45],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"alpha\",0],PARAMETER[\"lonc\",0],UNIT[\"metre\",1]]",
+            "PROJCS[\"Specialty-C-{0}-alpha\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",45],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"alpha\",0],PARAMETER[\"lonc\",0],UNIT[\"metre\",1]]",
             projectionName,
             Sphere6400000);
     }
@@ -296,7 +296,7 @@ public class Phase7SpecialtyProjectionBatchCTests
     {
         return string.Format(
             CultureInfo.InvariantCulture,
-            "PROJCS[\"Phase7-C-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"n\",1],PARAMETER[\"m\",2],PARAMETER[\"theta\",3],UNIT[\"metre\",1]]",
+            "PROJCS[\"Specialty-C-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"n\",1],PARAMETER[\"m\",2],PARAMETER[\"theta\",3],UNIT[\"metre\",1]]",
             projectionName,
             Sphere6400000);
     }
@@ -310,15 +310,16 @@ public class Phase7SpecialtyProjectionBatchCTests
     {
         return string.Format(
             CultureInfo.InvariantCulture,
-            "PROJCS[\"Phase7-C-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"lat_1\",0.5],PARAMETER[\"lat_2\",2],PARAMETER[\"lon_1\",0],PARAMETER[\"lon_2\",0],UNIT[\"metre\",1]]",
+            "PROJCS[\"Specialty-C-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"lat_1\",0.5],PARAMETER[\"lat_2\",2],PARAMETER[\"lon_1\",0],PARAMETER[\"lon_2\",0],UNIT[\"metre\",1]]",
             projectionName,
             Grs80);
     }
 
     private static string BuildTpeqdDegenerateWkt()
     {
-        return "PROJCS[\"Phase7-C-tpeqd-degenerate\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",SPHEROID[\"Sphere\",6400000,0]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"tpeqd\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"lat_1\",90],PARAMETER[\"lat_2\",90],PARAMETER[\"lon_1\",0],PARAMETER[\"lon_2\",1],UNIT[\"metre\",1]]";
+        return "PROJCS[\"Specialty-C-tpeqd-degenerate\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",SPHEROID[\"Sphere\",6400000,0]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"tpeqd\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"lat_1\",90],PARAMETER[\"lat_2\",90],PARAMETER[\"lon_1\",0],PARAMETER[\"lon_2\",1],UNIT[\"metre\",1]]";
     }
 
     private static double[] CreatePoint(double x, double y) => [x, y];
 }
+
