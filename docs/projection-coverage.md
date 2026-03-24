@@ -22,6 +22,7 @@ This document tracks the projection feature-parity status between `spec\PROJ` (C
   - implemented via non-dispatch runtime/factory paths: `affine`, `cart`, `geocent`
   - direct `+proj` dispatcher gaps: `push`, `pop`, `geogoffset`, `molobadekas`, `geoc`
 - Detailed audit record: `docs/modernization/m1-projection-audit.md`.
+- Pipeline dispatch audit record: `docs/modernization/m1-pipeline-ops-audit.md`.
 - Baseline validation at audit time:
   - `dotnet build ProjNet4GeoAPI.sln -c Release` succeeded with 570 warnings (existing baseline),
   - `dotnet test test/ProjNet.Tests/ProjNET.Tests.csproj -c Release --no-build` succeeded (`3731 total / 3213 passed / 518 skipped / 0 failed`).
@@ -109,6 +110,11 @@ The following `PROJ_HEAD` identifiers are not currently dispatched as direct `+p
 - `geogoffset`
 - `molobadekas`
 - `geoc`
+
+Additional notable direct-dispatch gaps with existing runtime/factory support:
+
+- `affine` (runtime class + WKT path exists)
+- `cart` / `geocent` (geocentric conversion path exists via factory composition)
 
 These are runtime operation-dispatch parity items, not projection-class registration items.
 
