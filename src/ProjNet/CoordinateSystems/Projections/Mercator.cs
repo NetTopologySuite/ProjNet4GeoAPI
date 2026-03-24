@@ -166,7 +166,6 @@ internal class Mercator : MapProjection
                 (+(4279 * e8 / 161280) * Math.Sin(8 * chi));
 
         x = (dX / (this.semiMajor * this.k0)) + this.centralMeridian;
-
     }
 
     /// <summary>

@@ -241,7 +241,6 @@ internal class LambertConformalConic2SP : MapProjection
         }
 
         x = Adjust_lon((theta / this.ns) + this.centralMeridian);
-
     }
 
     /// <summary>
