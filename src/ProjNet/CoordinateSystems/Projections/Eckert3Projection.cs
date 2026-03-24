@@ -25,7 +25,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical Eckert III projection (<c>eck3</c>).
 /// </summary>
 [Serializable]
-internal class EckertIIIProjection : MapProjection
+internal class Eckert3Projection : MapProjection
 {
     private const double DefaultCx = 0.42223820031577120149d;
     private const double DefaultCy = 0.84447640063154240298d;
@@ -40,20 +40,20 @@ internal class EckertIIIProjection : MapProjection
     private readonly double b;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="EckertIIIProjection"/> class.
+    /// Initializes a new instance of the <see cref="Eckert3Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
-    public EckertIIIProjection(IEnumerable<ProjectionParameter> parameters)
+    public Eckert3Projection(IEnumerable<ProjectionParameter> parameters)
         : this(parameters, null)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="EckertIIIProjection"/> class.
+    /// Initializes a new instance of the <see cref="Eckert3Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public EckertIIIProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public Eckert3Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
         : base(parameters, inverse)
     {
         this.Name = "Eckert_III";
@@ -70,7 +70,7 @@ internal class EckertIIIProjection : MapProjection
     {
         if (this.inverse is null)
         {
-            this.inverse = new EckertIIIProjection(this.Parameters.ToProjectionParameter(), this);
+            this.inverse = new Eckert3Projection(this.Parameters.ToProjectionParameter(), this);
         }
 
         return this.inverse;
@@ -116,3 +116,4 @@ internal class EckertIIIProjection : MapProjection
         y = phi;
     }
 }
+

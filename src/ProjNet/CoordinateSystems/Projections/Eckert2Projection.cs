@@ -25,7 +25,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical Eckert II projection (<c>eck2</c>).
 /// </summary>
 [Serializable]
-internal class EckertIIProjection : MapProjection
+internal class Eckert2Projection : MapProjection
 {
     private const double Fxc = 0.46065886596178063902d;
     private const double Fyc = 1.44720250911653531871d;
@@ -36,20 +36,20 @@ internal class EckertIIProjection : MapProjection
     private readonly double inverseRadius;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="EckertIIProjection"/> class.
+    /// Initializes a new instance of the <see cref="Eckert2Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
-    public EckertIIProjection(IEnumerable<ProjectionParameter> parameters)
+    public Eckert2Projection(IEnumerable<ProjectionParameter> parameters)
         : this(parameters, null)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="EckertIIProjection"/> class.
+    /// Initializes a new instance of the <see cref="Eckert2Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public EckertIIProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public Eckert2Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
         : base(parameters, inverse)
     {
         this.Name = "Eckert_II";
@@ -62,7 +62,7 @@ internal class EckertIIProjection : MapProjection
     {
         if (this.inverse is null)
         {
-            this.inverse = new EckertIIProjection(this.Parameters.ToProjectionParameter(), this);
+            this.inverse = new Eckert2Projection(this.Parameters.ToProjectionParameter(), this);
         }
 
         return this.inverse;
@@ -123,3 +123,4 @@ internal class EckertIIProjection : MapProjection
         y = phi;
     }
 }
+

@@ -25,23 +25,23 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical Eckert VI projection (<c>eck6</c>).
 /// </summary>
 [Serializable]
-internal class EckertVIProjection : GeneralSinusoidalProjection
+internal class Eckert6Projection : GeneralSinusoidalProjection
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="EckertVIProjection"/> class.
+    /// Initializes a new instance of the <see cref="Eckert6Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
-    public EckertVIProjection(IEnumerable<ProjectionParameter> parameters)
+    public Eckert6Projection(IEnumerable<ProjectionParameter> parameters)
         : this(parameters, null)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="EckertVIProjection"/> class.
+    /// Initializes a new instance of the <see cref="Eckert6Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public EckertVIProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public Eckert6Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
         : base(MergeParameters(parameters), inverse)
     {
         this.Name = "Eckert_VI";
@@ -69,3 +69,4 @@ internal class EckertVIProjection : GeneralSinusoidalProjection
         parameters.Add(new ProjectionParameter(name, value));
     }
 }
+

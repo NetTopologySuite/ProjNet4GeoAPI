@@ -160,16 +160,16 @@ public class ProjectionsRegistry
 
         Register("equal_earth", typeof(EqualEarthProjection));
         Register("eqearth", typeof(EqualEarthProjection));
-        Register("eck1", typeof(EckertIProjection));
-        Register("eckert_i", typeof(EckertIProjection));
-        Register("eck2", typeof(EckertIIProjection));
-        Register("eckert_ii", typeof(EckertIIProjection));
-        Register("eck3", typeof(EckertIIIProjection));
-        Register("eckert_iii", typeof(EckertIIIProjection));
-        Register("eck4", typeof(EckertIVProjection));
-        Register("eckert_iv", typeof(EckertIVProjection));
-        Register("eck5", typeof(EckertVProjection));
-        Register("eckert_v", typeof(EckertVProjection));
+        Register("eck1", typeof(Eckert1Projection));
+        Register("eckert_i", typeof(Eckert1Projection));
+        Register("eck2", typeof(Eckert2Projection));
+        Register("eckert_ii", typeof(Eckert2Projection));
+        Register("eck3", typeof(Eckert3Projection));
+        Register("eckert_iii", typeof(Eckert3Projection));
+        Register("eck4", typeof(Eckert4Projection));
+        Register("eckert_iv", typeof(Eckert4Projection));
+        Register("eck5", typeof(Eckert5Projection));
+        Register("eckert_v", typeof(Eckert5Projection));
         Register("putp2", typeof(PutninsP2Projection));
         Register("putnins_p2", typeof(PutninsP2Projection));
         Register("putp1", typeof(PutninsP1Projection));
@@ -212,8 +212,8 @@ public class ProjectionsRegistry
         Register("gall_stereographic", typeof(GallProjection));
         Register("gn_sinu", typeof(GeneralSinusoidalProjection));
         Register("general_sinusoidal", typeof(GeneralSinusoidalProjection));
-        Register("eck6", typeof(EckertVIProjection));
-        Register("eckert_vi", typeof(EckertVIProjection));
+        Register("eck6", typeof(Eckert6Projection));
+        Register("eckert_vi", typeof(Eckert6Projection));
         Register("kav5", typeof(KavrayskiyVProjection));
         Register("kavrayskiy_v", typeof(KavrayskiyVProjection));
         Register("qua_aut", typeof(QuarticAuthalicProjection));
@@ -509,3 +509,4 @@ public class ProjectionsRegistry
         return null;
     }
 }
+

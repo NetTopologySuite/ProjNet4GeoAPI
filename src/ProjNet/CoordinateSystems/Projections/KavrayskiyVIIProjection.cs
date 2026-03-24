@@ -25,7 +25,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical Kavrayskiy VII projection (<c>kav7</c>).
 /// </summary>
 [Serializable]
-internal class KavrayskiyVIIProjection : EckertIIIProjection
+internal class KavrayskiyVIIProjection : Eckert3Projection
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="KavrayskiyVIIProjection"/> class.
@@ -71,4 +71,5 @@ internal class KavrayskiyVIIProjection : EckertIIIProjection
         parameters.Add(new ProjectionParameter(name, value));
     }
 }
+
 

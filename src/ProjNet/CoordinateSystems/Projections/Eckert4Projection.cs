@@ -25,7 +25,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical Eckert IV projection (<c>eck4</c>).
 /// </summary>
 [Serializable]
-internal class EckertIVProjection : MapProjection
+internal class Eckert4Projection : MapProjection
 {
     private const double OneTol = 1.00000000000001d;
     private const double Cx = 0.42223820031577120149d;
@@ -40,20 +40,20 @@ internal class EckertIVProjection : MapProjection
     private readonly double inverseRadius;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="EckertIVProjection"/> class.
+    /// Initializes a new instance of the <see cref="Eckert4Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
-    public EckertIVProjection(IEnumerable<ProjectionParameter> parameters)
+    public Eckert4Projection(IEnumerable<ProjectionParameter> parameters)
         : this(parameters, null)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="EckertIVProjection"/> class.
+    /// Initializes a new instance of the <see cref="Eckert4Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public EckertIVProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public Eckert4Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
         : base(parameters, inverse)
     {
         this.Name = "Eckert_IV";
@@ -66,7 +66,7 @@ internal class EckertIVProjection : MapProjection
     {
         if (this.inverse is null)
         {
-            this.inverse = new EckertIVProjection(this.Parameters.ToProjectionParameter(), this);
+            this.inverse = new Eckert4Projection(this.Parameters.ToProjectionParameter(), this);
         }
 
         return this.inverse;
@@ -161,3 +161,4 @@ internal class EckertIVProjection : MapProjection
         y = phi;
     }
 }
+

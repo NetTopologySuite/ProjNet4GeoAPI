@@ -22,35 +22,37 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Implements the spherical Eckert I projection (<c>eck1</c>).
+/// Implements the spherical Eckert V projection (<c>eck5</c>).
 /// </summary>
 [Serializable]
-internal class EckertIProjection : MapProjection
+internal class Eckert5Projection : MapProjection
 {
-    private const double Fc = 0.92131773192356127802d;
-    private const double Rp = 0.31830988618379067154d;
+    private const double Xf = 0.44101277172455148219d;
+    private const double Rxf = 2.26750802723822639137d;
+    private const double Yf = 0.88202554344910296438d;
+    private const double Ryf = 1.13375401361911319568d;
 
     private readonly double radius;
     private readonly double inverseRadius;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="EckertIProjection"/> class.
+    /// Initializes a new instance of the <see cref="Eckert5Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
-    public EckertIProjection(IEnumerable<ProjectionParameter> parameters)
+    public Eckert5Projection(IEnumerable<ProjectionParameter> parameters)
         : this(parameters, null)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="EckertIProjection"/> class.
+    /// Initializes a new instance of the <see cref="Eckert5Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public EckertIProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public Eckert5Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
         : base(parameters, inverse)
     {
-        this.Name = "Eckert_I";
+        this.Name = "Eckert_V";
         this.radius = this.semiMajor * this.scaleFactor;
         this.inverseRadius = 1d / this.radius;
     }
@@ -60,7 +62,7 @@ internal class EckertIProjection : MapProjection
     {
         if (this.inverse is null)
         {
-            this.inverse = new EckertIProjection(this.Parameters.ToProjectionParameter(), this);
+            this.inverse = new Eckert5Projection(this.Parameters.ToProjectionParameter(), this);
         }
 
         return this.inverse;
@@ -70,9 +72,8 @@ internal class EckertIProjection : MapProjection
     protected override void RadiansToMeters(ref double lon, ref double lat)
     {
         double lambda = Adjust_lon(lon - this.centralMeridian);
-        double x = Fc * lambda * (1d - (Rp * Math.Abs(lat)));
-        double y = Fc * lat;
-
+        double x = Xf * (1d + Math.Cos(lat)) * lambda;
+        double y = Yf * lat;
         lon = this.radius * x;
         lat = this.radius * y;
     }
@@ -82,15 +83,16 @@ internal class EckertIProjection : MapProjection
     {
         double xx = x * this.inverseRadius;
         double yy = y * this.inverseRadius;
-        double phi = yy / Fc;
-        double denominator = Fc * (1d - (Rp * Math.Abs(phi)));
+        double phi = Ryf * yy;
+        double denominator = 1d + Math.Cos(phi);
         if (Math.Abs(denominator) <= Eps10)
         {
             throw new ArgumentException("Input data outside projection domain.");
         }
 
-        double lambda = xx / denominator;
+        double lambda = Rxf * xx / denominator;
         x = Adjust_lon(this.centralMeridian + lambda);
         y = phi;
     }
 }
+

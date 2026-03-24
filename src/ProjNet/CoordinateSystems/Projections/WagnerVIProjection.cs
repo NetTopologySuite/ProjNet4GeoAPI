@@ -25,7 +25,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical Wagner VI projection (<c>wag6</c>).
 /// </summary>
 [Serializable]
-internal class WagnerVIProjection : EckertIIIProjection
+internal class WagnerVIProjection : Eckert3Projection
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="WagnerVIProjection"/> class.
@@ -71,4 +71,5 @@ internal class WagnerVIProjection : EckertIIIProjection
         parameters.Add(new ProjectionParameter(name, value));
     }
 }
+
 
