@@ -29,7 +29,7 @@ internal class McBrydeThomasFlatPolarQuarticProjection : MapProjection
 {
     private const int Iterations = 20;
     private const double IterationTolerance = 1e-7d;
-    private const double OneTol = 1.000001d;
+    private const double OneTol = ProjectionConstants.OnePlusEps6;
     private const double C = 1.70710678118654752440d;
     private const double Rc = 0.58578643762690495119d;
     private const double Fyc = 1.87475828462269495505d;

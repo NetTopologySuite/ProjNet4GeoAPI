@@ -30,9 +30,9 @@ internal class McBrydeThomasFlatPolarParabolicProjection : MapProjection
     private const double Csy = 0.95257934441568037152d;
     private const double Fxc = 0.92582009977255146156d;
     private const double Fyc = 3.40168025708304504493d;
-    private const double C23 = 0.66666666666666666666d;
-    private const double C13 = 0.33333333333333333333d;
-    private const double OneEps = 1.0000001d;
+    private const double C23 = ProjectionConstants.TwoThirds;
+    private const double C13 = ProjectionConstants.OneThird;
+    private const double OneEps = ProjectionConstants.OnePlusEps7;
 
     private readonly double radius;
     private readonly double inverseRadius;

@@ -44,7 +44,7 @@ internal class PolyconicProjection : MapProjection
     /// <summary>
     /// Difference allowed in iterative computations.
     /// </summary>
-    private const double IterationTolerance = 1E-12;
+    private const double IterationTolerance = ProjectionConstants.Tolerance1E12;
 
     /// <summary>
     /// Meridian distance at the latitude of origin.

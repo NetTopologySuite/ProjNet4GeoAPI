@@ -29,8 +29,8 @@ internal class Eckert2Projection : MapProjection
 {
     private const double Fxc = 0.46065886596178063902d;
     private const double Fyc = 1.44720250911653531871d;
-    private const double C13 = 0.33333333333333333333d;
-    private const double OneEps = 1.0000001d;
+    private const double C13 = ProjectionConstants.OneThird;
+    private const double OneEps = ProjectionConstants.OnePlusEps7;
 
     private readonly double radius;
     private readonly double inverseRadius;

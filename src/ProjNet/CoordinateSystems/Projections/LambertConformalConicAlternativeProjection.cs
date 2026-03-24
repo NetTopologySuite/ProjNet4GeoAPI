@@ -28,7 +28,7 @@ using ProjNet.CoordinateSystems.Transformations;
 internal sealed class LambertConformalConicAlternativeProjection : MapProjection
 {
     private const int MaximumIterations = 10;
-    private const double DeltaTolerance = 1e-12;
+    private const double DeltaTolerance = ProjectionConstants.Tolerance1E12;
 
     private readonly double radius;
     private readonly double inverseRadius;

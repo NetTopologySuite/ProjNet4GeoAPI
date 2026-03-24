@@ -31,7 +31,7 @@ internal class CrasterProjection : MapProjection
     private const double Rxm = 1.02332670794648848847d;
     private const double Ym = 3.06998012383946546542d;
     private const double Rym = 0.32573500793527994772d;
-    private const double Third = 0.333333333333333333d;
+    private const double Third = ProjectionConstants.OneThird;
 
     private readonly double radius;
     private readonly double inverseRadius;

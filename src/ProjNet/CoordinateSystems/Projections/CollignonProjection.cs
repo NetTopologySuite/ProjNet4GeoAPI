@@ -29,7 +29,7 @@ internal class CollignonProjection : MapProjection
 {
     private const double Fxc = 1.12837916709551257390d;
     private const double Fyc = 1.77245385090551602729d;
-    private const double OneEps = 1.0000001d;
+    private const double OneEps = ProjectionConstants.OnePlusEps7;
 
     private readonly double radius;
     private readonly double inverseRadius;

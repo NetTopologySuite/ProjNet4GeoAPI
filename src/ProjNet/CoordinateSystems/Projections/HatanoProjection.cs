@@ -29,7 +29,7 @@ internal class HatanoProjection : MapProjection
 {
     private const int Iterations = 20;
     private const double Epsilon = 1e-7d;
-    private const double OneTol = 1.000001d;
+    private const double OneTol = ProjectionConstants.OnePlusEps6;
     private const double Cn = 2.67595d;
     private const double Csz = 2.43763d;
     private const double Rcn = 0.37369906014686373063d;
