@@ -9,8 +9,13 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Represents the documented type.
+/// Implements the Equidistant Cylindrical projection (<c>eqc</c>).
 /// </summary>
+/// <remarks>
+/// Maps longitude linearly scaled by the cosine of the standard parallel and latitude
+/// linearly from the origin latitude. When the standard parallel is at the equator this
+/// is equivalent to the Plate Carrée projection.
+/// </remarks>
 [Serializable]
 internal class EquidistantCylindricalProjection : MapProjection
 {

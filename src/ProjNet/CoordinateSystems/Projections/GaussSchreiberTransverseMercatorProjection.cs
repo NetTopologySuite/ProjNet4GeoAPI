@@ -11,6 +11,10 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the Gauss-Schreiber Transverse Mercator projection (<c>gstmerc</c>).
 /// </summary>
+/// <remarks>
+/// Supports ellipsoidal computation. The forward transform first maps geodetic coordinates
+/// onto a conformal sphere, then applies a transverse Mercator development on that sphere.
+/// </remarks>
 [Serializable]
 internal class GaussSchreiberTransverseMercatorProjection : MapProjection
 {

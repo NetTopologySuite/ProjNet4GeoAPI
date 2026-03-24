@@ -11,6 +11,10 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Transverse Central Cylindrical projection (<c>tcc</c>).
 /// </summary>
+/// <remarks>
+/// The inverse transformation is not supported. Transforming coordinates via the inverse
+/// projection will throw an <see cref="System.InvalidOperationException"/>.
+/// </remarks>
 [Serializable]
 internal class TransverseCentralCylindricalProjection : MapProjection
 {

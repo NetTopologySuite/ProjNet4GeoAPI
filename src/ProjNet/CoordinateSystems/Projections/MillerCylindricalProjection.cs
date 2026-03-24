@@ -9,8 +9,12 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Represents the documented type.
+/// Implements the spherical Miller Cylindrical projection (<c>mill</c>).
 /// </summary>
+/// <remarks>
+/// A compromise cylindrical projection that reduces the high-latitude area exaggeration
+/// of the Mercator projection by compressing the latitude formula. Poles cannot be projected.
+/// </remarks>
 [Serializable]
 internal class MillerCylindricalProjection : MapProjection
 {

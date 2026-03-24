@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the Colombia Urban projection (<c>col_urban</c>).
 /// </summary>
+/// <remarks>
+/// Applies a height-above-ellipsoid correction via the mandatory <c>h_0</c> parameter
+/// (height in meters above the ellipsoid), which scales coordinates to account for
+/// terrain elevation and is intended for large-scale urban surveys in Colombia.
+/// </remarks>
 [Serializable]
 internal class ColombiaUrbanProjection : MapProjection
 {

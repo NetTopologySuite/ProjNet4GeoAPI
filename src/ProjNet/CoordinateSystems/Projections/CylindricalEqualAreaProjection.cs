@@ -9,8 +9,13 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Represents the documented type.
+/// Implements the Cylindrical Equal Area projection (<c>cea</c>).
 /// </summary>
+/// <remarks>
+/// Preserves area by mapping latitude to y = R·sin(φ) / cos(φ₁), where φ₁ is the
+/// standard parallel. When the standard parallel is at the equator this is equivalent
+/// to the Lambert Cylindrical Equal Area projection.
+/// </remarks>
 [Serializable]
 internal class CylindricalEqualAreaProjection : MapProjection
 {

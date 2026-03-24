@@ -9,8 +9,13 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Represents the documented type.
+/// Implements the Pseudo-Mercator (Web Mercator) projection (EPSG:3856).
 /// </summary>
+/// <remarks>
+/// Applies a spherical Mercator formula by treating the ellipsoidal semi-major axis as
+/// the sphere radius and forcing the scale factor to 1. Geodetic latitude is projected
+/// without ellipsoidal correction, producing the projection used by most web mapping services.
+/// </remarks>
 [Serializable]
 internal class PseudoMercator : Mercator
 {

@@ -9,9 +9,12 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Implements the Mercator Auxiliary Sphere projection (Web Mercator).
-/// This projection uses a spherical model with a constant radius.
+/// Implements the Mercator Auxiliary Sphere projection (Web Mercator, EPSG:3857).
 /// </summary>
+/// <remarks>
+/// Applies a spherical Mercator formula using the semi-major axis as the sphere radius,
+/// without ellipsoidal correction. This is the projection used by most web mapping services.
+/// </remarks>
 [Serializable]
 internal class MercatorAuxiliarySphere : MapProjection
 {
@@ -20,7 +23,6 @@ internal class MercatorAuxiliarySphere : MapProjection
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MercatorAuxiliarySphere"/> class.
-    /// Initializes the MercatorAuxiliarySphere projection with the specified parameters.
     /// </summary>
     /// <param name="parameters">List of projection parameters.</param>
     public MercatorAuxiliarySphere(IEnumerable<ProjectionParameter> parameters)
@@ -30,10 +32,9 @@ internal class MercatorAuxiliarySphere : MapProjection
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MercatorAuxiliarySphere"/> class.
-    /// Initializes the MercatorAuxiliarySphere projection with the specified parameters.
     /// </summary>
     /// <param name="parameters">List of projection parameters.</param>
-    /// <param name="isInverse">Reference to the inverse projection.</param>
+    /// <param name="isInverse">Inverse transform instance when cloning.</param>
     protected MercatorAuxiliarySphere(IEnumerable<ProjectionParameter> parameters, MercatorAuxiliarySphere isInverse)
         : base(parameters, isInverse)
     {
@@ -41,15 +42,7 @@ internal class MercatorAuxiliarySphere : MapProjection
         this.Name = "Mercator_Auxiliary_Sphere";
     }
 
-    /// <summary>
-    /// Converts geographic coordinates (in radians) to projected coordinates (in meters).
-    /// </summary>
-    /// <param name="lon">Longitude in radians.</param>
-    /// <param name="lat">Latitude in radians.</param>
-    /// <remarks>
-    /// It is assumed that _semiMajor and central_meridian (as well as other parameters like false_easting/false_northing)
-    /// are already set in the base class.
-    /// </remarks>
+    /// <inheritdoc />
     protected override void RadiansToMeters(ref double lon, ref double lat)
     {
         if (double.IsNaN(lon) || double.IsNaN(lat))
@@ -76,14 +69,7 @@ internal class MercatorAuxiliarySphere : MapProjection
         // Note: false_easting and false_northing can be added here if necessary.
     }
 
-    /// <summary>
-    /// Converts projected coordinates (in meters) to geographic coordinates (in radians).
-    /// </summary>
-    /// <param name="x">X coordinate in meters.</param>
-    /// <param name="y">Y coordinate in meters.</param>
-    /// <remarks>
-    /// Uses the inverse transformation of the Spherical Mercator Projection.
-    /// </remarks>
+    /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
         double dX = x;
@@ -102,10 +88,7 @@ internal class MercatorAuxiliarySphere : MapProjection
         // Note: false_easting/false_northing can be subtracted here if provided in the parameter list.
     }
 
-    /// <summary>
-    /// Returns the inverse transformation of this projection.
-    /// </summary>
-    /// <returns>The inverse projection as MathTransform.</returns>
+    /// <inheritdoc />
     public override MathTransform Inverse()
     {
         if (this.inverse is null)
