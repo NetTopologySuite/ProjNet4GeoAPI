@@ -11,6 +11,10 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Wagner VII projection (<c>wag7</c>).
 /// </summary>
+/// <remarks>
+/// Wagner VII is an equal-area polyconic projection with curved meridians and parallels.
+/// Inverse projection is not supported.
+/// </remarks>
 [Serializable]
 internal class Wagner7Projection : MapProjection
 {

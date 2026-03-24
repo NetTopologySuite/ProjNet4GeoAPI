@@ -9,8 +9,14 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Represents the documented type.
+/// Implements the Mollweide projection (<c>moll</c>).
 /// </summary>
+/// <remarks>
+/// The Mollweide projection is an equal-area pseudocylindrical projection with an elliptical
+/// outline. The forward formula solves an auxiliary angle iteratively. The projection supports
+/// an optional pole parameter (<c>moll_p</c>, in degrees; default 90°) for parameterised variants
+/// such as Wagner IV and Wagner V.
+/// </remarks>
 [Serializable]
 internal class MollweideProjection : MapProjection
 {

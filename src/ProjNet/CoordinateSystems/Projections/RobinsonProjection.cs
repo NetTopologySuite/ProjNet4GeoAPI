@@ -9,8 +9,13 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Represents the documented type.
+/// Implements the Robinson projection (<c>robin</c>).
 /// </summary>
+/// <remarks>
+/// The Robinson projection is a pseudocylindrical projection defined by a look-up table of
+/// x- and y-scale coefficients at 5° latitude intervals, with linear interpolation between
+/// tabulated values. The inverse reads back from the table using the same interpolation.
+/// </remarks>
 [Serializable]
 internal class RobinsonProjection : MapProjection
 {

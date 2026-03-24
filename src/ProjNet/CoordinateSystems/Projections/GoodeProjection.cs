@@ -9,8 +9,14 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Represents the documented type.
+/// Implements the Goode Homolosine projection (<c>goode</c>).
 /// </summary>
+/// <remarks>
+/// The Goode Homolosine projection combines the sinusoidal projection for latitudes within
+/// approximately ±40.7° and the Mollweide projection for higher latitudes, providing an
+/// equal-area representation with interrupted distortion at the seam. Both spherical and
+/// ellipsoidal modes are supported.
+/// </remarks>
 [Serializable]
 internal class GoodeProjection : MapProjection
 {

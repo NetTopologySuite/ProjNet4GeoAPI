@@ -9,8 +9,13 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Represents the documented type.
+/// Implements the spherical Loximuthal projection (<c>loxim</c>).
 /// </summary>
+/// <remarks>
+/// The Loximuthal projection preserves the shape of loxodromes (rhumb lines) as straight lines
+/// emanating from a user-defined reference latitude (<c>lat_1</c>). The reference latitude must
+/// not be at the poles.
+/// </remarks>
 [Serializable]
 internal class LoximuthalProjection : MapProjection
 {

@@ -9,8 +9,12 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Represents the documented type.
+/// Implements the spherical Equal Earth projection (<c>eqearth</c>).
 /// </summary>
+/// <remarks>
+/// Equal Earth is an equal-area pseudocylindrical projection with curved parallels and
+/// a polynomial forward formula. The inverse is solved iteratively.
+/// </remarks>
 [Serializable]
 internal class EqualEarthProjection : MapProjection
 {

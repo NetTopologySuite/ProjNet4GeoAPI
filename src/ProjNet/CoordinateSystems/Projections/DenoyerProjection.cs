@@ -11,6 +11,10 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Denoyer Semi-Elliptical projection (<c>denoy</c>).
 /// </summary>
+/// <remarks>
+/// The Denoyer Semi-Elliptical projection is a compromise pseudocylindrical projection
+/// intended for atlas use. Inverse projection is not supported.
+/// </remarks>
 [Serializable]
 internal class DenoyerProjection : MapProjection
 {

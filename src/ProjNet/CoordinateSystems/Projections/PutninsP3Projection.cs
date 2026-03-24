@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Implements the spherical Putnins P3 projection (<c>putp3</c> and <c>putp3p</c>).
+/// Implements the spherical Putnins P3 projection (<c>putp3</c>).
 /// </summary>
 [Serializable]
 internal class PutninsP3Projection : MapProjection

@@ -9,8 +9,12 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Represents the documented type.
+/// Implements the spherical Natural Earth projection (<c>natearth</c>).
 /// </summary>
+/// <remarks>
+/// The Natural Earth projection is a pseudocylindrical projection with polynomial scaling
+/// functions for x and y. The inverse is solved iteratively via Newton–Raphson iteration.
+/// </remarks>
 [Serializable]
 internal class NaturalEarthProjection : MapProjection
 {

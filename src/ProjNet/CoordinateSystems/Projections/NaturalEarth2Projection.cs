@@ -9,8 +9,13 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Represents the documented type.
+/// Implements the spherical Natural Earth II projection (<c>natearth2</c>).
 /// </summary>
+/// <remarks>
+/// Natural Earth II is an updated pseudocylindrical projection with revised polynomial
+/// scaling coefficients for a smoother visual appearance. The inverse is solved iteratively
+/// via Newton–Raphson iteration.
+/// </remarks>
 [Serializable]
 internal class NaturalEarth2Projection : MapProjection
 {

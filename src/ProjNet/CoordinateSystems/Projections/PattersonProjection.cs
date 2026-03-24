@@ -9,8 +9,13 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Represents the documented type.
+/// Implements the spherical Patterson cylindrical projection (<c>patterson</c>).
 /// </summary>
+/// <remarks>
+/// The Patterson projection is a cylindrical projection whose y-coordinates are computed via
+/// a polynomial formula designed for a visually balanced appearance. The inverse is solved
+/// iteratively via Newton–Raphson iteration.
+/// </remarks>
 [Serializable]
 internal class PattersonProjection : MapProjection
 {

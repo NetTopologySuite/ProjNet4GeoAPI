@@ -9,8 +9,13 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Represents the documented type.
+/// Implements the Sinusoidal projection (<c>sinu</c>).
 /// </summary>
+/// <remarks>
+/// The Sinusoidal projection is an equal-area pseudocylindrical projection in which parallels
+/// are evenly spaced straight lines and meridians are sinusoidal curves. Both spherical and
+/// ellipsoidal modes are supported.
+/// </remarks>
 [Serializable]
 internal class SinusoidalProjection : MapProjection
 {
