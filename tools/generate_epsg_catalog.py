@@ -1286,8 +1286,6 @@ def emit(output_path: Path, zip_name: str, catalog, operations, operation_parame
         lines.append('')
 
     lines.append(f'        internal const int CoordinateReferenceCount = {len(catalog["ref_records"])};')
-    lines.append('        private static readonly Dictionary<int, EpsgCoordinateReferenceRecord> CoordinateReferences = new Dictionary<int, EpsgCoordinateReferenceRecord>();')
-    lines.append('        private static readonly object CoordinateReferencesSync = new object();')
     lines.append(f'        private static readonly int[] CoordinateSridByCacheIndex = new int[] {{ {", ".join(str(ref_record[0]) for ref_record in catalog["ref_records"])} }};')
     lines.append('')
 
@@ -1323,17 +1321,7 @@ def emit(output_path: Path, zip_name: str, catalog, operations, operation_parame
     for idx, ref_record in enumerate(catalog['ref_records']):
         lines.append(f'                case {ref_record[0]}:')
         lines.append(f'                    cacheIndex = {idx};')
-        lines.append(f'                    if (!CoordinateReferences.TryGetValue({idx}, out reference))')
-        lines.append('                    {')
-        lines.append('                        lock (CoordinateReferencesSync)')
-        lines.append('                        {')
-        lines.append(f'                            if (!CoordinateReferences.TryGetValue({idx}, out reference))')
-        lines.append('                            {')
-        lines.append(f'                                reference = new EpsgCoordinateReferenceRecord({ref_record[0]}, (EpsgCoordinateSystemKind){ref_record[1]}, {ref_record[2]});')
-        lines.append(f'                                CoordinateReferences[{idx}] = reference;')
-        lines.append('                            }')
-        lines.append('                        }')
-        lines.append('                    }')
+        lines.append(f'                    reference = new EpsgCoordinateReferenceRecord({ref_record[0]}, (EpsgCoordinateSystemKind){ref_record[1]}, {ref_record[2]});')
         lines.append('                    return true;')
     lines.append('                default:')
     lines.append('                    cacheIndex = -1;')
