@@ -47,8 +47,8 @@
 
   <PropertyGroup Label="Version numbers">
     <!-- MAJOR, MINOR, and PATCH are defined according to SemVer 2.0.0. -->
-    <NtsMajorVersion>2</NtsMajorVersion>
-    <NtsMinorVersion>2</NtsMinorVersion>
+    <NtsMajorVersion>3</NtsMajorVersion>
+    <NtsMinorVersion>0</NtsMinorVersion>
     <NtsPatchVersion>0</NtsPatchVersion>
 
     <NtsBuildTimestamp>$([System.DateTime]::UtcNow.Ticks)</NtsBuildTimestamp>
@@ -68,17 +68,17 @@
         A sample of what this could have been on 2019-05-13 at 11:00:00 PM UTC:
         NtsBuildTimestamp            = 636933024000000000
 
-        NtsMajorVersion              = 2
+        NtsMajorVersion              = 3
         NtsMinorVersion              = 0
         NtsPatchVersion              = 0
-        VersionPrefix                = 2.0.0
+        VersionPrefix                = 3.0.0
 
         NtsDaysSinceEpoch            = 18029
         NtsMinutesSinceStartOfUtcDay = 1380
         NtsBuildMetadata             = local
         VersionSuffix                = pre.180291380+local
 
-        (ultimate) package version   = 2.0.0-pre.180291380+local
+        (ultimate) package version   = 3.0.0-pre.180291380+local
     -->
   </PropertyGroup>
 
