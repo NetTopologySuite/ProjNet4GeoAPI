@@ -61,18 +61,16 @@ public static class MathTransformWktReader
             throw new ArgumentNullException(nameof(wkt));
         }
 
-        using (TextReader reader = new StringReader(wkt))
+        using TextReader reader = new StringReader(wkt);
+        var tokenizer = new WktStreamTokenizer(reader);
+        tokenizer.NextToken();
+        string objectName = tokenizer.GetStringValue();
+        switch (objectName)
         {
-            var tokenizer = new WktStreamTokenizer(reader);
-            tokenizer.NextToken();
-            string objectName = tokenizer.GetStringValue();
-            switch (objectName)
-            {
-                case "PARAM_MT":
-                    return ReadMathTransform(tokenizer);
-                default:
-                    throw new ArgumentException($"'{objectName}' is not recognized.");
-            }
+            case "PARAM_MT":
+                return ReadMathTransform(tokenizer);
+            default:
+                throw new ArgumentException($"'{objectName}' is not recognized.");
         }
     }
 

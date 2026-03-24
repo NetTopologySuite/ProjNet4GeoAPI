@@ -74,32 +74,30 @@ public static partial class CoordinateSystemWktReader
         }
 
         string normalizedWkt = NormalizeWkt(wkt);
-        using (TextReader reader = new StringReader(normalizedWkt))
+        using TextReader reader = new StringReader(normalizedWkt);
+        var tokenizer = new WktStreamTokenizer(reader);
+        tokenizer.NextToken();
+        string objectName = tokenizer.GetStringValue();
+        switch (objectName)
         {
-            var tokenizer = new WktStreamTokenizer(reader);
-            tokenizer.NextToken();
-            string objectName = tokenizer.GetStringValue();
-            switch (objectName)
-            {
-                case "UNIT":
-                    return ReadUnit(tokenizer);
-                case "SPHEROID":
-                    return ReadEllipsoid(tokenizer);
-                case "DATUM":
-                    return ReadHorizontalDatum(tokenizer);
-                case "PRIMEM":
-                    return ReadPrimeMeridian(tokenizer);
-                case "VERT_CS":
-                case "GEOGCS":
-                case "PROJCS":
-                case "COMPD_CS":
-                case "GEOCCS":
-                case "FITTED_CS":
-                case "LOCAL_CS":
-                    return ReadCoordinateSystem(normalizedWkt, tokenizer);
-                default:
-                    throw new ArgumentException($"'{objectName}' is not recognized.");
-            }
+            case "UNIT":
+                return ReadUnit(tokenizer);
+            case "SPHEROID":
+                return ReadEllipsoid(tokenizer);
+            case "DATUM":
+                return ReadHorizontalDatum(tokenizer);
+            case "PRIMEM":
+                return ReadPrimeMeridian(tokenizer);
+            case "VERT_CS":
+            case "GEOGCS":
+            case "PROJCS":
+            case "COMPD_CS":
+            case "GEOCCS":
+            case "FITTED_CS":
+            case "LOCAL_CS":
+                return ReadCoordinateSystem(normalizedWkt, tokenizer);
+            default:
+                throw new ArgumentException($"'{objectName}' is not recognized.");
         }
     }
 

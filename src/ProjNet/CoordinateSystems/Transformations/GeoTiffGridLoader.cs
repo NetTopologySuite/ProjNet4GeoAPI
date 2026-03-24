@@ -111,27 +111,25 @@ internal static partial class GeoTiffGridLoader
         }
 
         var pages = new List<LoadedPage>();
-        using (Tiff tiff = Tiff.Open(path, "r"))
+        using Tiff tiff = Tiff.Open(path, "r");
+        if (tiff is null)
         {
-            if (tiff is null)
-            {
-                throw new InvalidDataException("Unable to open GeoTIFF grid.");
-            }
-
-            short pageIndex = 0;
-            do
-            {
-                if (!TryReadPage(path, tiff, mode, requireMetreUnitsForXyz, out LoadedPage page))
-                {
-                    pageIndex++;
-                    continue;
-                }
-
-                pages.Add(page);
-                pageIndex++;
-            }
-            while (tiff.ReadDirectory());
+            throw new InvalidDataException("Unable to open GeoTIFF grid.");
         }
+
+        short pageIndex = 0;
+        do
+        {
+            if (!TryReadPage(path, tiff, mode, requireMetreUnitsForXyz, out LoadedPage page))
+            {
+                pageIndex++;
+                continue;
+            }
+
+            pages.Add(page);
+            pageIndex++;
+        }
+        while (tiff.ReadDirectory());
 
         return pages;
     }
