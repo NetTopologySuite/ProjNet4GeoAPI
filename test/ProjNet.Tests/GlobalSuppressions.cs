@@ -1,3 +1,7 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
+// Derived from PROJ (https://proj.org), MIT license.
+
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1202:Elements should be ordered by access", Justification = "Legacy test member ordering retained to keep test churn low.", Scope = "type", Target = "~T:ProjNET.Tests.CoordinateTransformTests")]
