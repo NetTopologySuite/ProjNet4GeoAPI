@@ -82,6 +82,7 @@ internal class Winkel2Projection : MapProjection
     }
 
     /// <inheritdoc />
+    /// <exception cref="InvalidOperationException">Always thrown; the Winkel II projection does not support inverse transformation.</exception>
     protected override void MetersToRadians(ref double x, ref double y)
     {
         throw new InvalidOperationException("Winkel II does not support inverse projection in this wave.");

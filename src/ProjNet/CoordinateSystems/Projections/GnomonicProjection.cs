@@ -9,8 +9,14 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Represents the documented type.
+/// Implements the Gnomonic map projection (<c>gnom</c>).
 /// </summary>
+/// <remarks>
+/// The Gnomonic projection is a perspective azimuthal projection from the center of the
+/// sphere onto a tangent plane. All great circles (geodesics) project as straight lines.
+/// Points at or beyond 90° angular distance from the projection center cannot be projected
+/// and produce <see cref="double.NaN"/> output coordinates.
+/// </remarks>
 [Serializable]
 internal class GnomonicProjection : MapProjection
 {

@@ -10,8 +10,13 @@ using System.Text;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Represents the documented type.
+/// Implements the Orthographic map projection (<c>ortho</c>).
 /// </summary>
+/// <remarks>
+/// The Orthographic projection is a perspective azimuthal projection from an infinite
+/// distance. Only the hemisphere facing the projection center is visible. Both spherical
+/// and ellipsoidal models are supported.
+/// </remarks>
 [Serializable]
 internal class OrthographicProjection : MapProjection
 {
@@ -24,20 +29,8 @@ internal class OrthographicProjection : MapProjection
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OrthographicProjection"/> class.
-    /// Initializes the OrthographicProjection object with the specified parameters to project points.
     /// </summary>
-    /// <param name="parameters">ParameterList with the required parameters.</param>
-    /// <remarks>
-    /// <para>The parameters this projection expects are listed below.</para>
-    /// <list type="table">
-    /// <listheader><term>Items</term><description>Descriptions</description></listheader>
-    /// <item><term>central_meridian</term><description>The longitude of the point from which the values of both the geographical coordinates on the ellipsoid and the grid coordinates on the projection are deemed to increment or decrement for computational purposes. Alternatively it may be considered as the longitude of the point which in the absence of application of false coordinates has grid coordinates of (0,0).</description></item>
-    /// <item><term>latitude_of_origin</term><description>The latitude of the point from which the values of both the geographical coordinates on the ellipsoid and the grid coordinates on the projection are deemed to increment or decrement for computational purposes. Alternatively it may be considered as the latitude of the point which in the absence of application of false coordinates has grid coordinates of (0,0).</description></item>
-    /// <item><term>scale_factor</term><description>The factor by which the map grid is reduced or enlarged during the projection process, defined by its value at the natural origin.</description></item>
-    /// <item><term>false_easting</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Easting, FE, is the easting value assigned to the abscissa (east).</description></item>
-    /// <item><term>false_northing</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Northing, FN, is the northing value assigned to the ordinate.</description></item>
-    /// </list>
-    /// </remarks>
+    /// <param name="parameters">Projection parameters.</param>
     public OrthographicProjection(IEnumerable<ProjectionParameter> parameters)
         : this(parameters, null)
     {
@@ -45,21 +38,9 @@ internal class OrthographicProjection : MapProjection
 
     /// <summary>
     /// Initializes a new instance of the <see cref="OrthographicProjection"/> class.
-    /// Initializes the OrthographicProjection object with the specified parameters to project points.
     /// </summary>
-    /// <param name="parameters">List of parameters to initialize the projection.</param>
-    /// <param name="inverse">Null indicates the projection is forward (degrees to meters).</param>
-    /// <remarks>
-    /// <para>The parameters this projection expects are listed below.</para>
-    /// <list type="table">
-    /// <listheader><term>Items</term><description>Descriptions</description></listheader>
-    /// <item><term>central_meridian</term><description>The longitude of the point from which the values of both the geographical coordinates on the ellipsoid and the grid coordinates on the projection are deemed to increment or decrement for computational purposes. Alternatively it may be considered as the longitude of the point which in the absence of application of false coordinates has grid coordinates of (0,0).</description></item>
-    /// <item><term>latitude_of_origin</term><description>The latitude of the point from which the values of both the geographical coordinates on the ellipsoid and the grid coordinates on the projection are deemed to increment or decrement for computational purposes. Alternatively it may be considered as the latitude of the point which in the absence of application of false coordinates has grid coordinates of (0,0).</description></item>
-    /// <item><term>scale_factor</term><description>The factor by which the map grid is reduced or enlarged during the projection process, defined by its value at the natural origin.</description></item>
-    /// <item><term>false_easting</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Easting, FE, is the easting value assigned to the abscissa (east).</description></item>
-    /// <item><term>false_northing</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Northing, FN, is the northing value assigned to the ordinate.</description></item>
-    /// </list>
-    /// </remarks>
+    /// <param name="parameters">Projection parameters.</param>
+    /// <param name="inverse">Inverse transform instance when cloning.</param>
     public OrthographicProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
         : base(parameters, inverse)
     {
@@ -96,10 +77,7 @@ internal class OrthographicProjection : MapProjection
         OBLIQ = 3,
     }
 
-    /// <summary>
-    /// Returns the inverse of this projection.
-    /// </summary>
-    /// <returns>IMathTransform that is the reverse of the current projection.</returns>
+    /// <inheritdoc />
     public override MathTransform Inverse()
     {
         if (this.inverse is null)
@@ -110,11 +88,7 @@ internal class OrthographicProjection : MapProjection
         return this.inverse;
     }
 
-    /// <summary>
-    /// Converts coordinates in projected meters to radians.
-    /// </summary>
-    /// <param name="x">The x-ordinate in meters when entering, longitude in radians ater exit.</param>
-    /// <param name="y">The y-ordinate in meters when entering, latitude in radians after exit.</param>
+    /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
         if (this.es == 0.0)
@@ -130,7 +104,7 @@ internal class OrthographicProjection : MapProjection
     /// <summary>
     /// Converts coordinates in projected meters to radians for spherical orthographic projections.
     /// </summary>
-    /// <param name="x">The x-ordinate in meters when entering, longitude in radians ater exit.</param>
+    /// <param name="x">The x-ordinate in meters when entering, longitude in radians after exit.</param>
     /// <param name="y">The y-ordinate in meters when entering, latitude in radians after exit.</param>
     private void OrthoSInverse(ref double x, ref double y)
     {
@@ -198,7 +172,7 @@ internal class OrthographicProjection : MapProjection
     /// <summary>
     /// Converts coordinates in projected meters to radians for ellipsoidal orthographic projections.
     /// </summary>
-    /// <param name="x">The x-ordinate in meters when entering, longitude in radians ater exit.</param>
+    /// <param name="x">The x-ordinate in meters when entering, longitude in radians after exit.</param>
     /// <param name="y">The y-ordinate in meters when entering, latitude in radians after exit.</param>
     private void OrthoEInverse(ref double x, ref double y)
     {
@@ -334,11 +308,7 @@ internal class OrthographicProjection : MapProjection
         y = phi;
     }
 
-    /// <summary>
-    /// Method to convert a point (lon, lat) in radians to (x, y) in meters.
-    /// </summary>
-    /// <param name="lon">The longitude of the point in radians when entering, its x-ordinate in meters after exit.</param>
-    /// <param name="lat">The latitude of the point in radians when entering, its y-ordinate in meters after exit.</param>
+    /// <inheritdoc />
     protected override void RadiansToMeters(ref double lon, ref double lat)
     {
         if (this.es == 0.0)

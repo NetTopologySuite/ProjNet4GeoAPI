@@ -151,7 +151,7 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
         S_POLE,
 
         /// <summary>
-        /// Equitorial.
+        /// Equatorial.
         /// </summary>
         EQUIT,
 
@@ -161,10 +161,7 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
         OBLIQ,
     }
 
-    /// <summary>
-    /// Returns the inverse of this projection.
-    /// </summary>
-    /// <returns>The inverse projection.</returns>
+    /// <inheritdoc />
     public override MathTransform Inverse()
     {
         if (this.inverse is null)
@@ -175,11 +172,7 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
         return this.inverse;
     }
 
-    /// <summary>
-    /// Method to convert a point (lon, lat) in radians to (x, y) in meters.
-    /// </summary>
-    /// <param name="lon">The longitude of the point in radians when entering, its x-ordinate in meters after exit.</param>
-    /// <param name="lat">The latitude of the point in radians when entering, its y-ordinate in meters after exit.</param>
+    /// <inheritdoc />
     protected override void RadiansToMeters(ref double lon, ref double lat)
     {
         this.radiansToMeters(ref lon, ref lat);
@@ -317,11 +310,7 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
         lat = y;
     }
 
-    /// <summary>
-    /// Method to convert a point from meters to radians.
-    /// </summary>
-    /// <param name="x">The x-ordinate when entering, the longitude value upon exit.</param>
-    /// <param name="y">The y-ordinate when entering, the latitude value upon exit.</param>
+    /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
         x *= this.reciprocSemiMajorTimesScaleFactor;
