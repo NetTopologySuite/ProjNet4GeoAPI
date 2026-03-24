@@ -1,8 +1,11 @@
-# PROJ Gap Analysis (Wave A)
+# PROJ Gap Analysis (Wave A, historical baseline)
 
 ## Scope
 This matrix compares current `ProjNet4GeoAPI` implementation evidence with `PROJ` reference capabilities to drive modernization work.  
 Legacy public API compatibility is mandatory: existing public members must stay present and functional.
+
+> This document is retained as an early planning baseline.  
+> For current parity status, use `m1-projection-audit.md`, `m1-transform-audit.md`, `m1-pipeline-ops-audit.md`, and `docs/projection-coverage.md`.
 
 ## Feature matrix
 
