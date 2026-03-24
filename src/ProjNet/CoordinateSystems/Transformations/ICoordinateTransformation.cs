@@ -17,22 +17,6 @@
 namespace ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Describes core information of a coordinate transformation.
-/// </summary>
-public interface ICoordinateTransformationCore
-{
-    /// <summary>
-    /// Gets source coordinate system.
-    /// </summary>
-    CoordinateSystem SourceCS { get; }
-
-    /// <summary>
-    /// Gets target coordinate system.
-    /// </summary>
-    CoordinateSystem TargetCS { get; }
-}
-
-/// <summary>
 /// Describes a coordinate transformation. This interface only describes a
 /// coordinate transformation, it does not actually perform the transform
 /// operation on points. To transform points you must use a math transform.
