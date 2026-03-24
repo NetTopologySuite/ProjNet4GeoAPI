@@ -25,7 +25,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical Wagner VII projection (<c>wag7</c>).
 /// </summary>
 [Serializable]
-internal class WagnerVIIProjection : MapProjection
+internal class Wagner7Projection : MapProjection
 {
     private const double YPreFactor = 0.90630778703664996d;
     private const double XFactor = 2.66723d;
@@ -35,20 +35,20 @@ internal class WagnerVIIProjection : MapProjection
     private readonly double inverseRadius;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="WagnerVIIProjection"/> class.
+    /// Initializes a new instance of the <see cref="Wagner7Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
-    public WagnerVIIProjection(IEnumerable<ProjectionParameter> parameters)
+    public Wagner7Projection(IEnumerable<ProjectionParameter> parameters)
         : this(parameters, null)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="WagnerVIIProjection"/> class.
+    /// Initializes a new instance of the <see cref="Wagner7Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public WagnerVIIProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public Wagner7Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
         : base(parameters, inverse)
     {
         this.Name = "Wagner_VII";
@@ -61,7 +61,7 @@ internal class WagnerVIIProjection : MapProjection
     {
         if (this.inverse is null)
         {
-            this.inverse = new WagnerVIIProjection(this.Parameters.ToProjectionParameter(), this);
+            this.inverse = new Wagner7Projection(this.Parameters.ToProjectionParameter(), this);
         }
 
         return this.inverse;
@@ -97,3 +97,4 @@ internal class WagnerVIIProjection : MapProjection
         throw new InvalidOperationException("Wagner VII does not support inverse projection in this wave.");
     }
 }
+

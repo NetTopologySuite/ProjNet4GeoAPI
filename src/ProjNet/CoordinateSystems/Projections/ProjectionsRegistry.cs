@@ -192,20 +192,20 @@ public class ProjectionsRegistry
         Register("putnins_p6p", typeof(PutninsP6PrimeProjection));
         Register("kav7", typeof(KavrayskiyVIIProjection));
         Register("kavrayskiy_vii", typeof(KavrayskiyVIIProjection));
-        Register("wag2", typeof(WagnerIIProjection));
-        Register("wagner_ii", typeof(WagnerIIProjection));
-        Register("wag3", typeof(WagnerIIIProjection));
-        Register("wagner_iii", typeof(WagnerIIIProjection));
-        Register("wag4", typeof(WagnerIVProjection));
-        Register("wagner_iv", typeof(WagnerIVProjection));
-        Register("wag5", typeof(WagnerVProjection));
-        Register("wagner_v", typeof(WagnerVProjection));
-        Register("wag6", typeof(WagnerVIProjection));
-        Register("wagner_vi", typeof(WagnerVIProjection));
-        Register("wag1", typeof(WagnerIProjection));
-        Register("wagner_i", typeof(WagnerIProjection));
-        Register("wag7", typeof(WagnerVIIProjection));
-        Register("wagner_vii", typeof(WagnerVIIProjection));
+        Register("wag2", typeof(Wagner2Projection));
+        Register("wagner_ii", typeof(Wagner2Projection));
+        Register("wag3", typeof(Wagner3Projection));
+        Register("wagner_iii", typeof(Wagner3Projection));
+        Register("wag4", typeof(Wagner4Projection));
+        Register("wagner_iv", typeof(Wagner4Projection));
+        Register("wag5", typeof(Wagner5Projection));
+        Register("wagner_v", typeof(Wagner5Projection));
+        Register("wag6", typeof(Wagner6Projection));
+        Register("wagner_vi", typeof(Wagner6Projection));
+        Register("wag1", typeof(Wagner1Projection));
+        Register("wagner_i", typeof(Wagner1Projection));
+        Register("wag7", typeof(Wagner7Projection));
+        Register("wagner_vii", typeof(Wagner7Projection));
         Register("cc", typeof(CentralCylindricalProjection));
         Register("central_cylindrical", typeof(CentralCylindricalProjection));
         Register("gall", typeof(GallProjection));
@@ -509,5 +509,6 @@ public class ProjectionsRegistry
         return null;
     }
 }
+
 
 

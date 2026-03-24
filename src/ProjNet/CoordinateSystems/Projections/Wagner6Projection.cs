@@ -22,37 +22,38 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Implements the spherical Wagner V projection (<c>wag5</c>).
+/// Implements the spherical Wagner VI projection (<c>wag6</c>).
 /// </summary>
 [Serializable]
-internal class WagnerVProjection : MollweideProjection
+internal class Wagner6Projection : Eckert3Projection
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="WagnerVProjection"/> class.
+    /// Initializes a new instance of the <see cref="Wagner6Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
-    public WagnerVProjection(IEnumerable<ProjectionParameter> parameters)
+    public Wagner6Projection(IEnumerable<ProjectionParameter> parameters)
         : this(parameters, null)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="WagnerVProjection"/> class.
+    /// Initializes a new instance of the <see cref="Wagner6Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public WagnerVProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public Wagner6Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
         : base(MergeParameters(parameters), inverse)
     {
-        this.Name = "Wagner_V";
+        this.Name = "Wagner_VI";
     }
 
     private static List<ProjectionParameter> MergeParameters(IEnumerable<ProjectionParameter> parameters)
     {
         var merged = CloneParametersList(parameters);
-        ReplaceOrAdd(merged, "moll_cx", 0.90977d);
-        ReplaceOrAdd(merged, "moll_cy", 1.65014d);
-        ReplaceOrAdd(merged, "moll_cp", 3.00896d);
+        ReplaceOrAdd(merged, "eck3_a", 0d);
+        ReplaceOrAdd(merged, "eck3_b", 0.30396355092701331433d);
+        ReplaceOrAdd(merged, "eck3_cx", 1d);
+        ReplaceOrAdd(merged, "eck3_cy", 1d);
         return merged;
     }
 
@@ -70,4 +71,6 @@ internal class WagnerVProjection : MollweideProjection
         parameters.Add(new ProjectionParameter(name, value));
     }
 }
+
+
 

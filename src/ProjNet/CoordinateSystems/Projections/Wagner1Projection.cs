@@ -22,35 +22,35 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Implements the spherical Wagner IV projection (<c>wag4</c>).
+/// Implements the spherical Wagner I projection (<c>wag1</c>).
 /// </summary>
 [Serializable]
-internal class WagnerIVProjection : MollweideProjection
+internal class Wagner1Projection : UrmaevFlatPolarSinusoidalProjection
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="WagnerIVProjection"/> class.
+    /// Initializes a new instance of the <see cref="Wagner1Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
-    public WagnerIVProjection(IEnumerable<ProjectionParameter> parameters)
+    public Wagner1Projection(IEnumerable<ProjectionParameter> parameters)
         : this(parameters, null)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="WagnerIVProjection"/> class.
+    /// Initializes a new instance of the <see cref="Wagner1Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public WagnerIVProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public Wagner1Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
         : base(MergeParameters(parameters), inverse)
     {
-        this.Name = "Wagner_IV";
+        this.Name = "Wagner_I";
     }
 
     private static List<ProjectionParameter> MergeParameters(IEnumerable<ProjectionParameter> parameters)
     {
         var merged = CloneParametersList(parameters);
-        ReplaceOrAdd(merged, "moll_p", 60d);
+        ReplaceOrAdd(merged, "n", 0.8660254037844386467637231707d);
         return merged;
     }
 

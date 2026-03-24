@@ -22,35 +22,37 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Implements the spherical Wagner I projection (<c>wag1</c>).
+/// Implements the spherical Wagner V projection (<c>wag5</c>).
 /// </summary>
 [Serializable]
-internal class WagnerIProjection : UrmaevFlatPolarSinusoidalProjection
+internal class Wagner5Projection : MollweideProjection
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="WagnerIProjection"/> class.
+    /// Initializes a new instance of the <see cref="Wagner5Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
-    public WagnerIProjection(IEnumerable<ProjectionParameter> parameters)
+    public Wagner5Projection(IEnumerable<ProjectionParameter> parameters)
         : this(parameters, null)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="WagnerIProjection"/> class.
+    /// Initializes a new instance of the <see cref="Wagner5Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public WagnerIProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public Wagner5Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
         : base(MergeParameters(parameters), inverse)
     {
-        this.Name = "Wagner_I";
+        this.Name = "Wagner_V";
     }
 
     private static List<ProjectionParameter> MergeParameters(IEnumerable<ProjectionParameter> parameters)
     {
         var merged = CloneParametersList(parameters);
-        ReplaceOrAdd(merged, "n", 0.8660254037844386467637231707d);
+        ReplaceOrAdd(merged, "moll_cx", 0.90977d);
+        ReplaceOrAdd(merged, "moll_cy", 1.65014d);
+        ReplaceOrAdd(merged, "moll_cp", 3.00896d);
         return merged;
     }
 
@@ -68,3 +70,5 @@ internal class WagnerIProjection : UrmaevFlatPolarSinusoidalProjection
         parameters.Add(new ProjectionParameter(name, value));
     }
 }
+
+
