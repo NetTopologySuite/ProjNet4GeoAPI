@@ -11,6 +11,9 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Ginsburg VIII projection (<c>gins8</c>).
 /// </summary>
+/// <remarks>
+/// Inverse projection is not supported.
+/// </remarks>
 [Serializable]
 internal class Ginsburg8Projection : MapProjection
 {

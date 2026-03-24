@@ -11,6 +11,9 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Rectangular Polyconic projection (<c>rpoly</c>).
 /// </summary>
+/// <remarks>
+/// Inverse projection is not supported.
+/// </remarks>
 [Serializable]
 internal sealed class RectangularPolyconicProjection : MapProjection
 {

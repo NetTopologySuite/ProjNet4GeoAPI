@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Represents the documented type.
+/// Implements the spherical Hammer projection (<c>hammer</c>).
 /// </summary>
 [Serializable]
 internal class HammerProjection : MapProjection

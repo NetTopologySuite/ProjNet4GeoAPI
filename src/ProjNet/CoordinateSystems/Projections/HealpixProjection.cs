@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Represents the documented type.
+/// Implements the HEALPix (Hierarchical Equal Area isoLatitude Pixelization) projection (<c>healpix</c>).
 /// </summary>
 [Serializable]
 internal class HealpixProjection : MapProjection

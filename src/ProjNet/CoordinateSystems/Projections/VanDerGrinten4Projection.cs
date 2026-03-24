@@ -11,6 +11,9 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical van der Grinten IV projection (<c>vandg4</c>).
 /// </summary>
+/// <remarks>
+/// Inverse projection is not supported.
+/// </remarks>
 [Serializable]
 internal class VanDerGrinten4Projection : MapProjection
 {

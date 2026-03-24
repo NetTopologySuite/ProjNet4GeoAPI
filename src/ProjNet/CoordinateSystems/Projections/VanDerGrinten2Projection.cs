@@ -11,6 +11,9 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical van der Grinten II projection (<c>vandg2</c>).
 /// </summary>
+/// <remarks>
+/// Inverse projection is not supported.
+/// </remarks>
 [Serializable]
 internal class VanDerGrinten2Projection : MapProjection
 {
