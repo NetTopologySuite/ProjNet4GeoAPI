@@ -130,34 +130,22 @@ internal class GeocentricTransform : MathTransform
     }
 
     /// <inheritdoc/>
-    public override int DimSource
-    {
-        get { return 3; }
-    }
+    public override int DimSource => 3;
 
     /// <inheritdoc/>
-    public override int DimTarget
-    {
-        get { return 3; }
-    }
+    public override int DimTarget => 3;
 
     /// <summary>
     /// Gets a Well-Known text representation of this object.
     /// </summary>
     /// <value>The value.</value>
-    public override string WKT
-    {
-        get { throw new NotImplementedException("The method or operation is not implemented."); }
-    }
+    public override string WKT => throw new NotImplementedException("The method or operation is not implemented.");
 
     /// <summary>
     /// Gets an XML representation of this object.
     /// </summary>
     /// <value>The value.</value>
-    public override string XML
-    {
-        get { throw new NotImplementedException("The method or operation is not implemented."); }
-    }
+    public override string XML => throw new NotImplementedException("The method or operation is not implemented.");
 
     /// <summary>
     /// Returns the inverse of this conversion.

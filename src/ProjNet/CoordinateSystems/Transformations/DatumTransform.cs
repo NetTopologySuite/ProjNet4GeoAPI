@@ -60,22 +60,13 @@ internal class DatumTransform : MathTransform
     /// Gets an XML representation of this object.
     /// </summary>
     /// <value>The value.</value>
-    public override string XML
-    {
-        get { throw new NotImplementedException(); }
-    }
+    public override string XML => throw new NotImplementedException();
 
     /// <inheritdoc/>
-    public override int DimSource
-    {
-        get { return 3; }
-    }
+    public override int DimSource => 3;
 
     /// <inheritdoc/>
-    public override int DimTarget
-    {
-        get { return 3; }
-    }
+    public override int DimTarget => 3;
 
     /// <summary>
     /// Creates the inverse transform of this object.

@@ -66,29 +66,13 @@ internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationC
     /// <summary>
     /// Gets the ordered list of transformations that form this concatenated transform.
     /// </summary>
-    public IList<ICoordinateTransformationCore> CoordinateTransformationList
-    {
-        get { return this.coordinateTransformationList; }
-        /*
-        set
-        {
-            _coordinateTransformationList = value;
-            _inverse = null;
-        }
-         */
-    }
+    public IList<ICoordinateTransformationCore> CoordinateTransformationList => this.coordinateTransformationList;
 
     /// <inheritdoc/>
-    public override int DimSource
-    {
-        get { return this.coordinateTransformationList[0].SourceCS.Dimension; }
-    }
+    public override int DimSource => this.coordinateTransformationList[0].SourceCS.Dimension;
 
     /// <inheritdoc/>
-    public override int DimTarget
-    {
-        get { return this.coordinateTransformationList[this.coordinateTransformationList.Count - 1].TargetCS.Dimension; }
-    }
+    public override int DimTarget => this.coordinateTransformationList[this.coordinateTransformationList.Count - 1].TargetCS.Dimension;
 
     /// <inheritdoc/>
     public CoordinateSystem SourceCS { get => this.CoordinateTransformationList[0].SourceCS; }

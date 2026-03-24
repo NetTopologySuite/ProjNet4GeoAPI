@@ -147,26 +147,17 @@ public class AffineTransform : MathTransform
     /// Gets an XML representation of this affine transformation.
     /// </summary>
     /// <value>The value.</value>
-    public override string XML
-    {
-        get { throw new NotImplementedException("The method or operation is not implemented."); }
-    }
+    public override string XML => throw new NotImplementedException("The method or operation is not implemented.");
 
     /// <summary>
     /// Gets the dimension of input points.
     /// </summary>
-    public override int DimSource
-    {
-        get { return this.dimSource; }
-    }
+    public override int DimSource => this.dimSource;
 
     /// <summary>
     /// Gets the dimension of output points.
     /// </summary>
-    public override int DimTarget
-    {
-        get { return this.dimTarget; }
-    }
+    public override int DimTarget => this.dimTarget;
 
     /// <summary>
     /// Returns the inverse of this affine transformation.

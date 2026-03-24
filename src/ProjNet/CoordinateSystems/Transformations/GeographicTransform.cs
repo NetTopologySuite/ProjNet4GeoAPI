@@ -61,29 +61,17 @@ public class GeographicTransform : MathTransform
     /// <summary>
     /// Gets an XML representation of this object [NOT IMPLEMENTED].
     /// </summary>
-    public override string XML
-    {
-        get
-        {
-            throw new NotImplementedException();
-        }
-    }
+    public override string XML => throw new NotImplementedException();
 
     /// <summary>
     /// Gets dimSource.
     /// </summary>
-    public override int DimSource
-    {
-        get { return this.SourceGCS.Dimension; }
-    }
+    public override int DimSource => this.SourceGCS.Dimension;
 
     /// <summary>
     /// Gets dimTarget.
     /// </summary>
-    public override int DimTarget
-    {
-        get { return this.TargetGCS.Dimension; }
-    }
+    public override int DimTarget => this.TargetGCS.Dimension;
 
     /// <summary>
     /// Creates the inverse transform of this object.

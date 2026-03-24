@@ -58,26 +58,17 @@ internal class PrimeMeridianTransform : MathTransform
     /// Gets an XML representation of this affine transformation.
     /// </summary>
     /// <value>The value.</value>
-    public override string XML
-    {
-        get { throw new NotImplementedException("The method or operation is not implemented."); }
-    }
+    public override string XML => throw new NotImplementedException("The method or operation is not implemented.");
 
     /// <summary>
     /// Gets the dimension of input points.
     /// </summary>
-    public override int DimSource
-    {
-        get { return 3; }
-    }
+    public override int DimSource => 3;
 
     /// <summary>
     /// Gets the dimension of output points.
     /// </summary>
-    public override int DimTarget
-    {
-        get { return 3; }
-    }
+    public override int DimTarget => 3;
 
     /// <inheritdoc />
     public override MathTransform Inverse()
