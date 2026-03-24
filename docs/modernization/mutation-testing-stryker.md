@@ -28,4 +28,12 @@
   - `Killed: 0`, `Survived: 6` (full focused run),
   - `Killed: 0`, `Survived: 2` (narrow baseline run),
   - survivors all in `IdentityMathTransform` with `coveredBy=[]`.
-- Conclusion: current blocker is tooling/result attribution in Stryker+xUnit v3 integration, not missing assertions in the added mutation tests.
+- Manual mutant validation was executed by temporarily changing `IdentityMathTransform` constructor logic (`dimension < 2` -> `dimension > 2`) and running:
+  - `dotnet test test/ProjNet.Tests/ProjNET.Tests.csproj -c Release --no-restore --filter "FullyQualifiedName~IdentityMathTransformMutationTests"`
+  - Result: 3 focused mutation tests fail immediately, proving assertions are mutation-sensitive.
+- A focused Stryker rerun on `IdentityMathTransform.cs` **without** `test-case-filter` reports:
+  - `Number of tests found: 1230`
+  - `2 total mutants will be tested`
+  - `Killed: 2`, `Survived: 0`, mutation score `100.00%`
+  - both equality mutants (`id=15032`, `id=15033`) are killed (killer test id resolves to `PublicApiBaselineTests.PublicApiMatchesBaseline`).
+- Conclusion: the remaining false survivors are tied to `test-case-filter` behavior in this Stryker/xUnit v3 setup, not to missing test assertions. For M11 verification, use the no-filter focused run on the mutate scope.
