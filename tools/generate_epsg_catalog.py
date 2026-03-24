@@ -1,7 +1,6 @@
 import argparse
 import math
 import re
-import sqlite3
 import zipfile
 from pathlib import Path
 
@@ -217,6 +216,22 @@ class WktParser:
 
 def parse_wkt_node(text: str):
     return WktParser(text).parse()
+
+
+def _looks_like_wkt(text: str):
+    if text is None:
+        return False
+
+    stripped = text.lstrip()
+    if stripped == '':
+        return False
+
+    for ch in stripped:
+        if ch.isalpha() or ch == '_':
+            continue
+        return ch == '['
+
+    return False
 
 
 def _iter_wkt_nodes(node: WktNode):
@@ -744,6 +759,9 @@ def load_wkt_data(zip_path: Path):
                 continue
 
             text = zip_file.read(info).decode('utf-8', errors='replace')
+            if not _looks_like_wkt(text):
+                continue
+
             try:
                 root_node = parse_wkt_node(text)
             except ValueError as ex:
@@ -816,130 +834,6 @@ def load_wkt_data(zip_path: Path):
         'units': units,
         'coordinate_systems': coordinate_systems,
         'axes_by_cs': normalized_axes_by_cs,
-        'ellipsoids': ellipsoids,
-        'prime_meridians': prime_meridians,
-        'geodetic_datums': geodetic_datums,
-        'vertical_datums': vertical_datums,
-        'conversions': conversions,
-        'conversion_parameters': conversion_parameters,
-        'geodetic_crs': geodetic_crs,
-        'projected_crs': projected_crs,
-        'vertical_crs': vertical_crs,
-        'compound_crs': compound_crs,
-    }
-
-
-def load_proj_data(db_path: Path):
-    conn = sqlite3.connect(str(db_path))
-    conn.row_factory = sqlite3.Row
-    cur = conn.cursor()
-
-    cur.execute("SELECT code, name, type, conv_factor FROM unit_of_measure WHERE auth_name='EPSG' ORDER BY CAST(code AS INTEGER)")
-    units = {}
-    for row in cur.fetchall():
-        typ = (row['type'] or '').strip().lower()
-        if typ.startswith('linear') or typ == 'length':
-            unit_type = UNIT_LINEAR
-        elif typ.startswith('angular') or typ == 'angle':
-            unit_type = UNIT_ANGULAR
-        else:
-            continue
-        units[int(row['code'])] = {
-            'code': int(row['code']),
-            'name': row['name'] or '',
-            'unit_type': unit_type,
-            'factor': float(row['conv_factor']) if row['conv_factor'] is not None else 1.0,
-        }
-
-    cur.execute("SELECT code, type, dimension FROM coordinate_system WHERE auth_name='EPSG'")
-    coordinate_systems = {int(r['code']): {'type': r['type'] or '', 'dimension': int(r['dimension'])} for r in cur.fetchall()}
-
-    cur.execute("SELECT coordinate_system_code, coordinate_system_order, name, orientation, uom_code FROM axis WHERE auth_name='EPSG' ORDER BY CAST(coordinate_system_code AS INTEGER), coordinate_system_order")
-    axes_by_cs = {}
-    for row in cur.fetchall():
-        cs_code = int(row['coordinate_system_code'])
-        orientation = map_orientation(row['orientation'])
-        axis = {
-            'order': int(row['coordinate_system_order']),
-            'name': row['name'] or '',
-            'orientation': orientation,
-            'unit_code': int(row['uom_code']) if row['uom_code'] is not None else -1,
-        }
-        axes_by_cs.setdefault(cs_code, []).append(axis)
-
-    cur.execute("SELECT code, name, semi_major_axis, semi_minor_axis, inv_flattening, uom_code FROM ellipsoid WHERE auth_name='EPSG'")
-    ellipsoids = {}
-    for row in cur.fetchall():
-        inv_flattening = row['inv_flattening']
-        semi_minor = row['semi_minor_axis']
-        if inv_flattening is None:
-            inv_flattening = 0.0
-        if semi_minor is None:
-            semi_minor = 0.0
-        use_ivf = bool(inv_flattening and not math.isinf(inv_flattening))
-        ellipsoids[int(row['code'])] = {
-            'code': int(row['code']),
-            'name': row['name'] or '',
-            'semi_major': float(row['semi_major_axis']),
-            'semi_minor': float(semi_minor),
-            'inv_flattening': float(inv_flattening),
-            'use_ivf': use_ivf,
-            'unit_code': int(row['uom_code']) if row['uom_code'] is not None else -1,
-        }
-
-    cur.execute("SELECT code, name, longitude, uom_code FROM prime_meridian WHERE auth_name='EPSG'")
-    prime_meridians = {int(r['code']): {'code': int(r['code']), 'name': r['name'] or '', 'longitude': float(r['longitude']), 'unit_code': int(r['uom_code']) if r['uom_code'] is not None else -1} for r in cur.fetchall()}
-
-    cur.execute("SELECT code, name, ellipsoid_code, prime_meridian_code FROM geodetic_datum WHERE auth_name='EPSG'")
-    geodetic_datums = {int(r['code']): {'code': int(r['code']), 'name': r['name'] or '', 'ellipsoid_code': int(r['ellipsoid_code']), 'prime_meridian_code': int(r['prime_meridian_code'])} for r in cur.fetchall()}
-
-    cur.execute("SELECT code, name FROM vertical_datum WHERE auth_name='EPSG'")
-    vertical_datums = {int(r['code']): {'code': int(r['code']), 'name': r['name'] or ''} for r in cur.fetchall()}
-
-    cur.execute("SELECT code, name FROM conversion_method WHERE auth_name='EPSG'")
-    conversion_methods = {int(r['code']): r['name'] or '' for r in cur.fetchall()}
-
-    cur.execute("SELECT code, name FROM conversion_param WHERE auth_name='EPSG'")
-    conversion_params = {int(r['code']): r['name'] or '' for r in cur.fetchall()}
-
-    cur.execute("SELECT * FROM conversion_table WHERE auth_name='EPSG'")
-    conversions = {}
-    conversion_parameters = []
-    for row in cur.fetchall():
-        code = int(row['code'])
-        method_name = conversion_methods.get(int(row['method_code']), '')
-        start = len(conversion_parameters)
-        count = 0
-        for i in range(1, 8):
-            param_code = row[f'param{i}_code']
-            if param_code is None:
-                continue
-            value = row[f'param{i}_value']
-            if value is None:
-                continue
-            name = conversion_params.get(int(param_code), '')
-            conversion_parameters.append({'conversion_code': code, 'name': name, 'value': float(value)})
-            count += 1
-        conversions[code] = {'code': code, 'method_name': method_name, 'start': start, 'count': count}
-
-    cur.execute("SELECT code, name, type, coordinate_system_code, datum_code FROM geodetic_crs WHERE auth_name='EPSG'")
-    geodetic_crs = {int(r['code']): {'srid': int(r['code']), 'name': r['name'] or '', 'type': (r['type'] or '').lower(), 'coordinate_system_code': int(r['coordinate_system_code']), 'datum_code': int(r['datum_code'])} for r in cur.fetchall()}
-
-    cur.execute("SELECT code, name, coordinate_system_code, geodetic_crs_code, conversion_code FROM projected_crs WHERE auth_name='EPSG'")
-    projected_crs = {int(r['code']): {'srid': int(r['code']), 'name': r['name'] or '', 'coordinate_system_code': int(r['coordinate_system_code']), 'base_srid': int(r['geodetic_crs_code']), 'conversion_code': int(r['conversion_code'])} for r in cur.fetchall()}
-
-    cur.execute("SELECT code, name, coordinate_system_code, datum_code FROM vertical_crs WHERE auth_name='EPSG'")
-    vertical_crs = {int(r['code']): {'srid': int(r['code']), 'name': r['name'] or '', 'coordinate_system_code': int(r['coordinate_system_code']), 'datum_code': int(r['datum_code'])} for r in cur.fetchall()}
-
-    cur.execute("SELECT code, name, horiz_crs_code, vertical_crs_code FROM compound_crs WHERE auth_name='EPSG'")
-    compound_crs = {int(r['code']): {'srid': int(r['code']), 'name': r['name'] or '', 'horizontal_srid': int(r['horiz_crs_code']), 'vertical_srid': int(r['vertical_crs_code'])} for r in cur.fetchall()}
-
-    conn.close()
-
-    return {
-        'units': units,
-        'coordinate_systems': coordinate_systems,
-        'axes_by_cs': axes_by_cs,
         'ellipsoids': ellipsoids,
         'prime_meridians': prime_meridians,
         'geodetic_datums': geodetic_datums,
@@ -1509,18 +1403,15 @@ def emit(output_path: Path, zip_name: str, catalog, operations, operation_parame
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--zip', required=True)
-    parser.add_argument('--proj-db', required=True)
     parser.add_argument('--output', required=True)
     args = parser.parse_args()
 
     zip_path = Path(args.zip)
-    proj_db_path = Path(args.proj_db)
     output_path = Path(args.output)
 
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
-    proj_data = load_proj_data(proj_db_path)
-    catalog = build_catalog(proj_data)
+    catalog = build_catalog(load_wkt_data(zip_path))
     operations, operation_parameters, explicit_operations = extract_operation_data(zip_path)
 
     emit(output_path, zip_path.name, catalog, operations, operation_parameters, explicit_operations)
