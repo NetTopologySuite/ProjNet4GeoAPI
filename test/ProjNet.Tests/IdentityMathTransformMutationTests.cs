@@ -51,4 +51,26 @@ public class IdentityMathTransformMutationTests
         Assert.Equal(3, output.Length);
         Assert.Equal(56d, output[2], 12);
     }
+
+    /// <summary>
+    /// Verifies that the generated WKT carries the configured dimension.
+    /// </summary>
+    [Fact]
+    public void WktContainsConfiguredDimension()
+    {
+        var transform = new IdentityMathTransform(4);
+
+        Assert.Equal("PARAM_MT[\"Identity\",PARAMETER[\"dimension\",4]]", transform.WKT);
+    }
+
+    /// <summary>
+    /// Verifies that the transform reports identity semantics.
+    /// </summary>
+    [Fact]
+    public void IdentityReturnsTrue()
+    {
+        var transform = new IdentityMathTransform(4);
+
+        Assert.True(transform.Identity());
+    }
 }
