@@ -141,6 +141,35 @@ public class StructuredEpsgCatalogTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
+    public void GeneratedCatalogProjectedConversionsShouldBeConsistentAcrossCatalog()
+    {
+        for (int cacheIndex = 0; cacheIndex < EpsgGeneratedCatalog.CoordinateReferenceCount; cacheIndex++)
+        {
+            Assert.True(EpsgGeneratedCatalog.TryGetCoordinateSridByCacheIndex(cacheIndex, out int srid));
+            Assert.True(EpsgGeneratedCatalog.TryGetCoordinateReference(srid, out var reference, out _));
+
+            if (reference.Kind != EpsgCoordinateSystemKind.Projected)
+            {
+                continue;
+            }
+
+            Assert.True(EpsgGeneratedCatalog.TryGetProjectedCrs(reference.RecordIndex, out var projectedRecord));
+            Assert.True(EpsgGeneratedCatalog.TryGetConversion(projectedRecord.ConversionCode, out var conversion));
+
+            for (int parameterIndex = 0; parameterIndex < conversion.ParameterCount; parameterIndex++)
+            {
+                Assert.True(EpsgGeneratedCatalog.TryGetConversionParameter(projectedRecord.ConversionCode, parameterIndex, out var parameter));
+                Assert.False(string.IsNullOrWhiteSpace(parameter.Name));
+            }
+
+            Assert.False(EpsgGeneratedCatalog.TryGetConversionParameter(projectedRecord.ConversionCode, conversion.ParameterCount, out _));
+        }
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
     public void GeneratedCatalogShouldExposeExplicitOperationFastPath()
     {
         var explicitOperation = EpsgGeneratedCatalog.Operations.First(record =>
