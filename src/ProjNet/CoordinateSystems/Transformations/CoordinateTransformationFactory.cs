@@ -36,9 +36,9 @@ public class CoordinateTransformationFactory
     private const string GridRequiredEnvironmentVariable = "PROJNET_GRID_REQUIRED";
 
     private static readonly Lazy<Dictionary<SridPair, IReadOnlyList<CoordinateOperationDefinition>>> DirectOperationDefinitions =
-        new Lazy<Dictionary<SridPair, IReadOnlyList<CoordinateOperationDefinition>>>(LoadDirectOperationDefinitions, true);
+        new(LoadDirectOperationDefinitions, true);
 
-    private static readonly Lazy<GridResourceResolver> GridResolver = new Lazy<GridResourceResolver>(CreateGridResolver, true);
+    private static readonly Lazy<GridResourceResolver> GridResolver = new(CreateGridResolver, true);
 
     private enum CoordinateSystemRuntimeKind : byte
     {
@@ -1303,7 +1303,7 @@ public class CoordinateTransformationFactory
 
     private sealed class OperationDefinitionComparer : IComparer<CoordinateOperationDefinition>
     {
-        internal static readonly OperationDefinitionComparer Instance = new OperationDefinitionComparer();
+        internal static readonly OperationDefinitionComparer Instance = new();
 
         public int Compare(CoordinateOperationDefinition left, CoordinateOperationDefinition right)
         {

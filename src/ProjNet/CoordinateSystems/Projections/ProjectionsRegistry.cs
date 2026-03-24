@@ -26,10 +26,10 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </summary>
 public class ProjectionsRegistry
 {
-    private static readonly Dictionary<string, Type> TypeRegistry = new Dictionary<string, Type>();
-    private static readonly Dictionary<string, Type> ConstructorRegistry = new Dictionary<string, Type>();
+    private static readonly Dictionary<string, Type> TypeRegistry = new();
+    private static readonly Dictionary<string, Type> ConstructorRegistry = new();
 
-    private static readonly object RegistryLock = new object();
+    private static readonly object RegistryLock = new();
 
     /// <summary>
     /// Initializes static members of the <see cref="ProjectionsRegistry"/> class.

@@ -1969,7 +1969,7 @@ internal sealed class DefModelMathTransform : MathTransform
     [Serializable]
     private sealed class ConstantTimeFunction : ITimeFunction
     {
-        internal static readonly ConstantTimeFunction Instance = new ConstantTimeFunction();
+        internal static readonly ConstantTimeFunction Instance = new();
 
         private ConstantTimeFunction()
         {

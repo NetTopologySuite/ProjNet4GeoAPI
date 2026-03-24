@@ -182,7 +182,7 @@ internal abstract class ModifiedStereographicProjectionBase : MapProjection
         }
 
         double s = 2d / denominator;
-        ComplexNumber p = new ComplexNumber(
+        ComplexNumber p = new(
             s * cchi * sinLambda,
             s * ((this.cchio * schi) - (this.schio * cchi * cosLambda)));
 
@@ -197,7 +197,7 @@ internal abstract class ModifiedStereographicProjectionBase : MapProjection
         double targetX = x * this.inverseEffectiveScale;
         double targetY = y * this.inverseEffectiveScale;
 
-        ComplexNumber p = new ComplexNumber(targetX, targetY);
+        ComplexNumber p = new(targetX, targetY);
         bool converged = false;
         for (int i = 0; i < MaximumNewtonIterations; i++)
         {
@@ -210,7 +210,7 @@ internal abstract class ModifiedStereographicProjectionBase : MapProjection
                 break;
             }
 
-            ComplexNumber delta = new ComplexNumber(
+            ComplexNumber delta = new(
                 -((f.Real * derivative.Real) + (f.Imaginary * derivative.Imaginary)) / denominator,
                 -((f.Imaginary * derivative.Real) - (f.Real * derivative.Imaginary)) / denominator);
 

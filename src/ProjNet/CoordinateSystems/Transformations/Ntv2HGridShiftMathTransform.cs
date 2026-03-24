@@ -503,7 +503,7 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
     [Serializable]
     private sealed class Ntv2Grid
     {
-        private readonly List<Ntv2Grid> children = new List<Ntv2Grid>();
+        private readonly List<Ntv2Grid> children = new();
         private readonly float[] latShiftSeconds;
         private readonly float[] lonShiftSeconds;
 

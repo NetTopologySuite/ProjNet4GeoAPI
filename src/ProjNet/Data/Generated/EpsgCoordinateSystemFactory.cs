@@ -28,13 +28,13 @@ using ProjNet.CoordinateSystems;
 internal static class EpsgCoordinateSystemFactory
 {
     private static readonly CoordinateSystem[] CoordinateSystemCache = new CoordinateSystem[EpsgGeneratedCatalog.CoordinateReferenceCount];
-    private static readonly object CoordinateSystemCacheSync = new object();
-    private static readonly Lazy<Dictionary<int, EpsgUnitRecord>> UnitsByCode = new Lazy<Dictionary<int, EpsgUnitRecord>>(BuildUnitsByCode, true);
-    private static readonly Lazy<Dictionary<int, EpsgEllipsoidRecord>> EllipsoidsByCode = new Lazy<Dictionary<int, EpsgEllipsoidRecord>>(BuildEllipsoidsByCode, true);
-    private static readonly Lazy<Dictionary<int, EpsgPrimeMeridianRecord>> PrimeMeridiansByCode = new Lazy<Dictionary<int, EpsgPrimeMeridianRecord>>(BuildPrimeMeridiansByCode, true);
-    private static readonly Lazy<Dictionary<int, EpsgGeodeticDatumRecord>> GeodeticDatumsByCode = new Lazy<Dictionary<int, EpsgGeodeticDatumRecord>>(BuildGeodeticDatumsByCode, true);
-    private static readonly Lazy<Dictionary<int, EpsgVerticalDatumRecord>> VerticalDatumsByCode = new Lazy<Dictionary<int, EpsgVerticalDatumRecord>>(BuildVerticalDatumsByCode, true);
-    private static readonly Lazy<Dictionary<int, EpsgAxisRecord[]>> AxesByCoordinateSystemCode = new Lazy<Dictionary<int, EpsgAxisRecord[]>>(BuildAxesByCoordinateSystemCode, true);
+    private static readonly object CoordinateSystemCacheSync = new();
+    private static readonly Lazy<Dictionary<int, EpsgUnitRecord>> UnitsByCode = new(BuildUnitsByCode, true);
+    private static readonly Lazy<Dictionary<int, EpsgEllipsoidRecord>> EllipsoidsByCode = new(BuildEllipsoidsByCode, true);
+    private static readonly Lazy<Dictionary<int, EpsgPrimeMeridianRecord>> PrimeMeridiansByCode = new(BuildPrimeMeridiansByCode, true);
+    private static readonly Lazy<Dictionary<int, EpsgGeodeticDatumRecord>> GeodeticDatumsByCode = new(BuildGeodeticDatumsByCode, true);
+    private static readonly Lazy<Dictionary<int, EpsgVerticalDatumRecord>> VerticalDatumsByCode = new(BuildVerticalDatumsByCode, true);
+    private static readonly Lazy<Dictionary<int, EpsgAxisRecord[]>> AxesByCoordinateSystemCode = new(BuildAxesByCoordinateSystemCode, true);
 
     /// <summary>
     /// Performs the documented operation.

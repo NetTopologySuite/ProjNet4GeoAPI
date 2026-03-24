@@ -125,8 +125,8 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
         this.ctFactory = coordinateTransformationFactory;
         this.definitionProvider = definitionProvider ?? new ManagedCoordinateSystemDefinitionProvider();
 
-        this.csBySrid = new Dictionary<int, CoordinateSystem>();
-        this.sridByCs = new Dictionary<IInfo, int>(new CsEqualityComparer());
+        this.csBySrid = new();
+        this.sridByCs = new(new CsEqualityComparer());
 
         object enumObj;
         if (enumeration is not null)

@@ -30,8 +30,8 @@ internal sealed class GridResourceResolver
 
     private readonly IGridResourceFetchClient fetchClient;
     private readonly GridResourceResolverOptions options;
-    private readonly Dictionary<string, string> resolvedPathByGridName = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-    private readonly object sync = new object();
+    private readonly Dictionary<string, string> resolvedPathByGridName = new(StringComparer.OrdinalIgnoreCase);
+    private readonly object sync = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GridResourceResolver"/> class.

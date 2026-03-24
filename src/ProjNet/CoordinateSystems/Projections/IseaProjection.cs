@@ -309,7 +309,7 @@ internal sealed class IseaProjection : MapProjection
 
     private int IseaTransform(in GeoPoint input, out IseaPoint output)
     {
-        GeoPoint pole = new GeoPoint(this.orientationLatitude, this.orientationLongitude);
+        GeoPoint pole = new(this.orientationLatitude, this.orientationLongitude);
         GeoPoint transformed = IseaCtran(pole, input, this.orientationAzimuth);
         int triangle = this.IseaSnyderForward(transformed, out output);
         return triangle;

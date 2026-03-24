@@ -278,7 +278,7 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
         }
 
         var merged = CloneParametersList(parameters);
-        ProjectionParameterSet input = new ProjectionParameterSet(merged);
+        ProjectionParameterSet input = new(merged);
 
         bool hasSom = input.ContainsKey("inc_angle") || input.ContainsKey("ps_rev") || input.ContainsKey("asc_lon");
         bool hasLsat = input.ContainsKey("lsat");
@@ -336,7 +336,7 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
             ReplaceParameter(merged, "som_rlm_mode", 0d);
         }
 
-        ProjectionParameterSet resolved = new ProjectionParameterSet(merged);
+        ProjectionParameterSet resolved = new(merged);
         double ascLon = resolved.GetParameterValue("asc_lon");
         double ascLonRadians = ReadAngleRadians(ascLon, "asc_lon", -TwoPi, TwoPi);
         ReplaceParameter(merged, "central_meridian", RadiansToDegrees(ascLonRadians));
