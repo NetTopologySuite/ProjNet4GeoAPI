@@ -28,7 +28,7 @@ using BitMiracle.LibTiff.Classic;
 /// <summary>
 /// Represents a documented type.
 /// </summary>
-internal static class GeoTiffGridLoader
+internal static partial class GeoTiffGridLoader
 {
     private const int ModelPixelScaleTag = 33550;
     private const int ModelTiePointTag = 33922;
@@ -39,6 +39,12 @@ internal static class GeoTiffGridLoader
     private const int GeogAngularUnitsGeoKey = 2054;
     private const int GtRasterTypeGeoKey = 1025;
     private const int RasterPixelIsPoint = 2;
+#if NET8_0_OR_GREATER
+    [GeneratedRegex("<Item(?<attrs>[^>]*)>(?<value>.*?)</Item>", RegexOptions.IgnoreCase | RegexOptions.Singleline)]
+    private static partial Regex MetadataItemRegex();
+#else
+    private static readonly Regex MetadataItemRegex = new("<Item(?<attrs>[^>]*)>(?<value>.*?)</Item>", RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
+#endif
 
     private enum GridMode
     {
@@ -571,10 +577,11 @@ internal static class GeoTiffGridLoader
             return;
         }
 
-        MatchCollection matches = Regex.Matches(
-            metadata,
-            "<Item(?<attrs>[^>]*)>(?<value>.*?)</Item>",
-            RegexOptions.IgnoreCase | RegexOptions.Singleline);
+#if NET8_0_OR_GREATER
+        MatchCollection matches = MetadataItemRegex().Matches(metadata);
+#else
+        MatchCollection matches = MetadataItemRegex.Matches(metadata);
+#endif
         for (int i = 0; i < matches.Count; i++)
         {
             Match match = matches[i];
