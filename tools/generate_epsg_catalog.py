@@ -1,5 +1,6 @@
 import argparse
 import math
+import re
 import sqlite3
 import zipfile
 from pathlib import Path
@@ -51,6 +52,781 @@ UNIT_ANGULAR = 1
 
 def esc(value: str) -> str:
     return value.replace('\\', '\\\\').replace('"', '\\"').replace('\r', '\\r').replace('\n', '\\n').replace('\t', '\\t')
+
+
+class WktIdentifier(str):
+    pass
+
+
+class WktNode:
+    __slots__ = ('keyword', 'items')
+
+    def __init__(self, keyword: str, items):
+        self.keyword = (keyword or '').upper()
+        self.items = items
+
+
+class WktParser:
+    def __init__(self, text: str):
+        self._text = text or ''
+        self._index = 0
+        self._length = len(self._text)
+
+    def parse(self):
+        self._skip_whitespace()
+        if self._index >= self._length:
+            raise ValueError('WKT text is empty.')
+
+        node = self._parse_node()
+        self._skip_whitespace()
+        return node
+
+    def _skip_whitespace(self):
+        while self._index < self._length and self._text[self._index].isspace():
+            self._index += 1
+
+    def _peek(self):
+        if self._index >= self._length:
+            return ''
+        return self._text[self._index]
+
+    def _consume(self, expected: str):
+        actual = self._peek()
+        if actual != expected:
+            raise ValueError(f'Unexpected token "{actual}" while expecting "{expected}" at offset {self._index}.')
+        self._index += 1
+
+    def _parse_identifier(self):
+        start = self._index
+        while self._index < self._length:
+            ch = self._text[self._index]
+            if ch.isalnum() or ch == '_':
+                self._index += 1
+                continue
+            break
+
+        if start == self._index:
+            raise ValueError(f'Expected identifier at offset {self._index}.')
+        return self._text[start:self._index]
+
+    def _parse_string(self):
+        self._consume('"')
+        buffer = []
+        while self._index < self._length:
+            ch = self._text[self._index]
+            if ch == '"':
+                if self._index + 1 < self._length and self._text[self._index + 1] == '"':
+                    buffer.append('"')
+                    self._index += 2
+                    continue
+
+                self._index += 1
+                return ''.join(buffer)
+
+            buffer.append(ch)
+            self._index += 1
+
+        raise ValueError('Unterminated string literal in WKT text.')
+
+    def _parse_number(self):
+        start = self._index
+        if self._peek() in '+-':
+            self._index += 1
+
+        digits_seen = False
+        while self._index < self._length and self._text[self._index].isdigit():
+            digits_seen = True
+            self._index += 1
+
+        if self._index < self._length and self._text[self._index] == '.':
+            self._index += 1
+            while self._index < self._length and self._text[self._index].isdigit():
+                digits_seen = True
+                self._index += 1
+
+        if self._index < self._length and self._text[self._index] in 'eE':
+            exponent_pos = self._index
+            self._index += 1
+            if self._index < self._length and self._text[self._index] in '+-':
+                self._index += 1
+
+            exponent_digits = False
+            while self._index < self._length and self._text[self._index].isdigit():
+                exponent_digits = True
+                self._index += 1
+
+            if not exponent_digits:
+                self._index = exponent_pos
+
+        token = self._text[start:self._index]
+        if not digits_seen:
+            raise ValueError(f'Invalid number token "{token}" at offset {start}.')
+
+        if '.' in token or 'e' in token.lower():
+            return float(token)
+        return int(token)
+
+    def _parse_value(self):
+        self._skip_whitespace()
+        ch = self._peek()
+        if not ch:
+            raise ValueError('Unexpected end of WKT text.')
+
+        if ch == '"':
+            return self._parse_string()
+
+        if ch in '+-.' or ch.isdigit():
+            return self._parse_number()
+
+        if ch.isalpha() or ch == '_':
+            identifier = self._parse_identifier()
+            self._skip_whitespace()
+            if self._peek() == '[':
+                return self._parse_node(identifier)
+            return WktIdentifier(identifier)
+
+        raise ValueError(f'Unsupported token "{ch}" at offset {self._index}.')
+
+    def _parse_node(self, keyword: str = None):
+        node_keyword = keyword if keyword is not None else self._parse_identifier()
+        self._skip_whitespace()
+        self._consume('[')
+
+        items = []
+        while True:
+            self._skip_whitespace()
+            ch = self._peek()
+            if ch == ']':
+                self._consume(']')
+                break
+
+            items.append(self._parse_value())
+            self._skip_whitespace()
+            ch = self._peek()
+            if ch == ',':
+                self._consume(',')
+                continue
+            if ch == ']':
+                self._consume(']')
+                break
+
+            raise ValueError(f'Unexpected token "{ch}" at offset {self._index} while parsing "{node_keyword}".')
+
+        return WktNode(node_keyword, items)
+
+
+def parse_wkt_node(text: str):
+    return WktParser(text).parse()
+
+
+def _iter_wkt_nodes(node: WktNode):
+    if node is None:
+        return
+
+    yield node
+    for item in node.items:
+        if isinstance(item, WktNode):
+            yield from _iter_wkt_nodes(item)
+
+
+def _child_nodes(node: WktNode, *keywords):
+    if node is None:
+        return []
+
+    normalized = {keyword.upper() for keyword in keywords} if keywords else None
+    children = []
+    for item in node.items:
+        if not isinstance(item, WktNode):
+            continue
+        if normalized is None or item.keyword in normalized:
+            children.append(item)
+
+    return children
+
+
+def _first_child(node: WktNode, *keywords):
+    children = _child_nodes(node, *keywords)
+    if children:
+        return children[0]
+    return None
+
+
+def _first_quoted_string(node: WktNode):
+    if node is None:
+        return None
+
+    for item in node.items:
+        if isinstance(item, str) and not isinstance(item, WktIdentifier):
+            return item
+
+    return None
+
+
+def _first_identifier(node: WktNode):
+    if node is None:
+        return None
+
+    for item in node.items:
+        if isinstance(item, WktIdentifier):
+            return str(item)
+
+    return None
+
+
+def _first_numeric(node: WktNode):
+    if node is None:
+        return None
+
+    for item in node.items:
+        if isinstance(item, (int, float)):
+            return item
+
+    return None
+
+
+def _numeric_items(node: WktNode):
+    if node is None:
+        return []
+
+    return [float(item) for item in node.items if isinstance(item, (int, float))]
+
+
+def _as_int(value):
+    if value is None:
+        return None
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, int):
+        return value
+    if isinstance(value, float):
+        if math.isnan(value) or math.isinf(value):
+            return None
+        return int(value)
+
+    return None
+
+
+def _epsg_id(node: WktNode):
+    if node is None:
+        return None
+
+    for id_node in _child_nodes(node, 'ID'):
+        if len(id_node.items) < 2:
+            continue
+
+        authority = id_node.items[0]
+        if isinstance(authority, str) and not isinstance(authority, WktIdentifier) and authority.upper() == 'EPSG':
+            return _as_int(id_node.items[1])
+
+    return None
+
+
+def _collect_unit(unit_node: WktNode, units):
+    if unit_node is None:
+        return
+
+    unit_code = _epsg_id(unit_node)
+    if unit_code is None:
+        return
+
+    if unit_node.keyword == 'LENGTHUNIT':
+        unit_type = UNIT_LINEAR
+    elif unit_node.keyword == 'ANGLEUNIT':
+        unit_type = UNIT_ANGULAR
+    else:
+        return
+
+    unit_name = _first_quoted_string(unit_node) or ''
+    values = _numeric_items(unit_node)
+    unit_factor = float(values[0]) if values else 1.0
+
+    existing = units.get(unit_code)
+    if existing is None:
+        units[unit_code] = {
+            'code': unit_code,
+            'name': unit_name,
+            'unit_type': unit_type,
+            'factor': unit_factor,
+        }
+        return
+
+    if existing['name'] == '' and unit_name != '':
+        existing['name'] = unit_name
+    if existing['factor'] == 1.0 and unit_factor != 1.0:
+        existing['factor'] = unit_factor
+
+
+def _collect_ellipsoid(ellipsoid_node: WktNode, units, ellipsoids):
+    if ellipsoid_node is None:
+        return
+
+    ellipsoid_code = _epsg_id(ellipsoid_node)
+    if ellipsoid_code is None:
+        return
+
+    unit_node = _first_child(ellipsoid_node, 'LENGTHUNIT')
+    if unit_node is not None:
+        _collect_unit(unit_node, units)
+    unit_code = _epsg_id(unit_node) if unit_node is not None else -1
+    if unit_code is None:
+        unit_code = -1
+
+    name = _first_quoted_string(ellipsoid_node) or ''
+    values = _numeric_items(ellipsoid_node)
+    semi_major = float(values[0]) if values else 0.0
+    inverse_flattening = float(values[1]) if len(values) > 1 else 0.0
+    use_ivf = inverse_flattening > 0.0 and not math.isinf(inverse_flattening)
+    if use_ivf:
+        semi_minor = semi_major * (1.0 - (1.0 / inverse_flattening))
+    else:
+        semi_minor = semi_major
+
+    existing = ellipsoids.get(ellipsoid_code)
+    if existing is None:
+        ellipsoids[ellipsoid_code] = {
+            'code': ellipsoid_code,
+            'name': name,
+            'semi_major': semi_major,
+            'semi_minor': semi_minor,
+            'inv_flattening': inverse_flattening,
+            'use_ivf': use_ivf,
+            'unit_code': unit_code,
+        }
+        return
+
+    if existing['name'] == '' and name != '':
+        existing['name'] = name
+    if existing['unit_code'] < 0 and unit_code >= 0:
+        existing['unit_code'] = unit_code
+
+
+def _collect_prime_meridian(prime_meridian_node: WktNode, units, prime_meridians):
+    if prime_meridian_node is None:
+        return
+
+    prime_meridian_code = _epsg_id(prime_meridian_node)
+    if prime_meridian_code is None:
+        return
+
+    unit_node = _first_child(prime_meridian_node, 'ANGLEUNIT')
+    if unit_node is not None:
+        _collect_unit(unit_node, units)
+    unit_code = _epsg_id(unit_node) if unit_node is not None else -1
+    if unit_code is None:
+        unit_code = -1
+
+    name = _first_quoted_string(prime_meridian_node) or ''
+    values = _numeric_items(prime_meridian_node)
+    longitude = float(values[0]) if values else 0.0
+
+    existing = prime_meridians.get(prime_meridian_code)
+    if existing is None:
+        prime_meridians[prime_meridian_code] = {
+            'code': prime_meridian_code,
+            'name': name,
+            'longitude': longitude,
+            'unit_code': unit_code,
+        }
+        return
+
+    if existing['name'] == '' and name != '':
+        existing['name'] = name
+    if existing['unit_code'] < 0 and unit_code >= 0:
+        existing['unit_code'] = unit_code
+
+
+def _collect_geodetic_datum(datum_node: WktNode, units, ellipsoids, prime_meridians, geodetic_datums):
+    if datum_node is None:
+        return
+
+    datum_code = _epsg_id(datum_node)
+    if datum_code is None:
+        return
+
+    ellipsoid_node = _first_child(datum_node, 'ELLIPSOID')
+    if ellipsoid_node is not None:
+        _collect_ellipsoid(ellipsoid_node, units, ellipsoids)
+    ellipsoid_code = _epsg_id(ellipsoid_node) if ellipsoid_node is not None else -1
+    if ellipsoid_code is None:
+        ellipsoid_code = -1
+
+    prime_meridian_node = _first_child(datum_node, 'PRIMEM', 'PRIMEMERIDIAN')
+    if prime_meridian_node is not None:
+        _collect_prime_meridian(prime_meridian_node, units, prime_meridians)
+    prime_meridian_code = _epsg_id(prime_meridian_node) if prime_meridian_node is not None else -1
+    if prime_meridian_code is None:
+        prime_meridian_code = -1
+
+    name = _first_quoted_string(datum_node) or ''
+    existing = geodetic_datums.get(datum_code)
+    if existing is None:
+        geodetic_datums[datum_code] = {
+            'code': datum_code,
+            'name': name,
+            'ellipsoid_code': ellipsoid_code,
+            'prime_meridian_code': prime_meridian_code,
+        }
+        return
+
+    if existing['name'] == '' and name != '':
+        existing['name'] = name
+    if existing['ellipsoid_code'] < 0 and ellipsoid_code >= 0:
+        existing['ellipsoid_code'] = ellipsoid_code
+    if existing['prime_meridian_code'] < 0 and prime_meridian_code >= 0:
+        existing['prime_meridian_code'] = prime_meridian_code
+
+
+def _collect_vertical_datum(vertical_datum_node: WktNode, vertical_datums):
+    if vertical_datum_node is None:
+        return
+
+    datum_code = _epsg_id(vertical_datum_node)
+    if datum_code is None:
+        return
+
+    name = _first_quoted_string(vertical_datum_node) or ''
+    existing = vertical_datums.get(datum_code)
+    if existing is None:
+        vertical_datums[datum_code] = {'code': datum_code, 'name': name}
+        return
+
+    if existing['name'] == '' and name != '':
+        existing['name'] = name
+
+
+def _update_datum_prime_meridian_bindings(root_node: WktNode, units, prime_meridians, geodetic_datums):
+    for node in _iter_wkt_nodes(root_node):
+        if node.keyword not in {'GEOGCRS', 'GEODCRS', 'BASEGEOGCRS', 'BASEGEODCRS'}:
+            continue
+
+        datum_node = _first_child(node, 'DATUM', 'ENSEMBLE')
+        datum_code = _epsg_id(datum_node)
+        if datum_code is None:
+            continue
+
+        prime_meridian_node = _first_child(node, 'PRIMEM', 'PRIMEMERIDIAN')
+        if prime_meridian_node is None:
+            continue
+
+        _collect_prime_meridian(prime_meridian_node, units, prime_meridians)
+        prime_meridian_code = _epsg_id(prime_meridian_node)
+        if prime_meridian_code is None:
+            continue
+
+        datum = geodetic_datums.get(datum_code)
+        if datum is None:
+            continue
+
+        if datum['prime_meridian_code'] < 0:
+            datum['prime_meridian_code'] = prime_meridian_code
+
+
+def _extract_coordinate_system(root_node: WktNode, units, coordinate_systems, axes_by_cs):
+    cs_node = _first_child(root_node, 'CS')
+    if cs_node is None:
+        return
+
+    cs_code = _epsg_id(cs_node)
+    if cs_code is None:
+        return
+
+    cs_type = (_first_identifier(cs_node) or '').lower()
+    dimension = _as_int(_first_numeric(cs_node))
+    if dimension is None:
+        dimension = 0
+
+    existing_cs = coordinate_systems.get(cs_code)
+    if existing_cs is None:
+        coordinate_systems[cs_code] = {'type': cs_type, 'dimension': dimension}
+    else:
+        if existing_cs['type'] == '' and cs_type != '':
+            existing_cs['type'] = cs_type
+        if existing_cs['dimension'] <= 0 and dimension > 0:
+            existing_cs['dimension'] = dimension
+
+    default_unit_node = None
+    if cs_type in {'ellipsoidal', 'spherical'}:
+        default_unit_node = _first_child(root_node, 'ANGLEUNIT')
+
+    if default_unit_node is None:
+        default_unit_node = _first_child(root_node, 'LENGTHUNIT', 'ANGLEUNIT')
+
+    if default_unit_node is not None:
+        _collect_unit(default_unit_node, units)
+    default_unit_code = _epsg_id(default_unit_node) if default_unit_node is not None else -1
+    if default_unit_code is None:
+        default_unit_code = -1
+
+    axis_map = axes_by_cs.setdefault(cs_code, {})
+    axis_nodes = _child_nodes(root_node, 'AXIS')
+    for axis_index, axis_node in enumerate(axis_nodes, start=1):
+        axis_name = _first_quoted_string(axis_node) or ''
+        orientation_token = _first_identifier(axis_node) or ''
+        orientation = map_orientation(orientation_token)
+
+        order_node = _first_child(axis_node, 'ORDER')
+        axis_order = _as_int(_first_numeric(order_node)) if order_node is not None else axis_index
+        if axis_order is None:
+            axis_order = axis_index
+
+        axis_unit_node = _first_child(axis_node, 'LENGTHUNIT', 'ANGLEUNIT')
+        if axis_unit_node is not None:
+            _collect_unit(axis_unit_node, units)
+        unit_code = _epsg_id(axis_unit_node) if axis_unit_node is not None else default_unit_code
+        if unit_code is None:
+            unit_code = default_unit_code
+        if unit_code is None:
+            unit_code = -1
+
+        axis_map[int(axis_order)] = {
+            'order': int(axis_order),
+            'name': axis_name,
+            'orientation': orientation,
+            'unit_code': int(unit_code),
+        }
+
+
+def _collect_projected_conversion(root_node: WktNode, conversion_by_code):
+    if root_node.keyword != 'PROJCRS':
+        return
+
+    conversion_node = _first_child(root_node, 'CONVERSION')
+    if conversion_node is None:
+        return
+
+    conversion_code = _epsg_id(conversion_node)
+    if conversion_code is None:
+        return
+
+    method_node = _first_child(conversion_node, 'METHOD')
+    method_name = _first_quoted_string(method_node) or ''
+    parameters = []
+    for parameter_node in _child_nodes(conversion_node, 'PARAMETER'):
+        parameter_name = _first_quoted_string(parameter_node)
+        parameter_value = _first_numeric(parameter_node)
+        if parameter_name is None or parameter_value is None:
+            continue
+
+        parameters.append((parameter_name, float(parameter_value)))
+
+    existing = conversion_by_code.get(conversion_code)
+    if existing is None:
+        conversion_by_code[conversion_code] = {
+            'code': conversion_code,
+            'method_name': method_name,
+            'parameters': parameters,
+        }
+        return
+
+    if existing['method_name'] == '' and method_name != '':
+        existing['method_name'] = method_name
+    if len(existing['parameters']) < len(parameters):
+        existing['parameters'] = parameters
+
+
+def _extract_crs_record(root_node: WktNode, geodetic_crs, projected_crs, vertical_crs, compound_crs):
+    srid = _epsg_id(root_node)
+    if srid is None:
+        return
+
+    name = _first_quoted_string(root_node) or ''
+    cs_node = _first_child(root_node, 'CS')
+    cs_code = _epsg_id(cs_node) if cs_node is not None else None
+
+    if root_node.keyword in {'GEOGCRS', 'GEODCRS'}:
+        datum_node = _first_child(root_node, 'DATUM', 'ENSEMBLE')
+        datum_code = _epsg_id(datum_node) if datum_node is not None else None
+        if cs_code is None or datum_code is None:
+            return
+
+        crs_type = 'geographic 2d'
+        if root_node.keyword == 'GEODCRS':
+            cs_type = (_first_identifier(cs_node) or '').lower()
+            dimension = _as_int(_first_numeric(cs_node))
+            if cs_type == 'cartesian':
+                crs_type = 'geocentric'
+            elif cs_type == 'ellipsoidal' and dimension == 2:
+                crs_type = 'geographic 2d'
+            elif cs_type == 'ellipsoidal' and dimension == 3:
+                crs_type = 'geographic 3d'
+            else:
+                crs_type = cs_type
+
+        geodetic_crs[srid] = {
+            'srid': srid,
+            'name': name,
+            'type': crs_type,
+            'coordinate_system_code': cs_code,
+            'datum_code': datum_code,
+        }
+        return
+
+    if root_node.keyword == 'PROJCRS':
+        base_node = _first_child(root_node, 'BASEGEOGCRS', 'BASEGEODCRS')
+        conversion_node = _first_child(root_node, 'CONVERSION')
+        base_srid = _epsg_id(base_node) if base_node is not None else None
+        conversion_code = _epsg_id(conversion_node) if conversion_node is not None else None
+        if cs_code is None or base_srid is None or conversion_code is None:
+            return
+
+        projected_crs[srid] = {
+            'srid': srid,
+            'name': name,
+            'coordinate_system_code': cs_code,
+            'base_srid': base_srid,
+            'conversion_code': conversion_code,
+        }
+        return
+
+    if root_node.keyword == 'VERTCRS':
+        vdatum_node = _first_child(root_node, 'VDATUM')
+        datum_code = _epsg_id(vdatum_node) if vdatum_node is not None else None
+        if cs_code is None or datum_code is None:
+            return
+
+        vertical_crs[srid] = {
+            'srid': srid,
+            'name': name,
+            'coordinate_system_code': cs_code,
+            'datum_code': datum_code,
+        }
+        return
+
+    if root_node.keyword == 'COMPOUNDCRS':
+        horizontal_srid = None
+        vertical_srid = None
+        for item in root_node.items:
+            if not isinstance(item, WktNode):
+                continue
+            if not item.keyword.endswith('CRS'):
+                continue
+
+            component_srid = _epsg_id(item)
+            if component_srid is None:
+                continue
+
+            if item.keyword == 'VERTCRS':
+                vertical_srid = component_srid
+            elif horizontal_srid is None:
+                horizontal_srid = component_srid
+
+        if horizontal_srid is None or vertical_srid is None:
+            return
+
+        compound_crs[srid] = {
+            'srid': srid,
+            'name': name,
+            'horizontal_srid': horizontal_srid,
+            'vertical_srid': vertical_srid,
+        }
+
+
+def load_wkt_data(zip_path: Path):
+    crs_pattern = re.compile(r'^EPSG-CRS-(\d+)\.wkt$', re.IGNORECASE)
+
+    units = {}
+    coordinate_systems = {}
+    axes_by_cs = {}
+    ellipsoids = {}
+    prime_meridians = {}
+    geodetic_datums = {}
+    vertical_datums = {}
+    conversion_by_code = {}
+    geodetic_crs = {}
+    projected_crs = {}
+    vertical_crs = {}
+    compound_crs = {}
+
+    with zipfile.ZipFile(zip_path, 'r') as zip_file:
+        for info in sorted(zip_file.infolist(), key=lambda i: i.filename):
+            name = Path(info.filename).name
+            if not crs_pattern.match(name):
+                continue
+
+            text = zip_file.read(info).decode('utf-8', errors='replace')
+            try:
+                root_node = parse_wkt_node(text)
+            except ValueError as ex:
+                raise ValueError(f'Failed to parse CRS WKT "{name}".') from ex
+
+            for node in _iter_wkt_nodes(root_node):
+                if node.keyword in {'LENGTHUNIT', 'ANGLEUNIT'}:
+                    _collect_unit(node, units)
+                elif node.keyword == 'ELLIPSOID':
+                    _collect_ellipsoid(node, units, ellipsoids)
+                elif node.keyword in {'PRIMEM', 'PRIMEMERIDIAN'}:
+                    _collect_prime_meridian(node, units, prime_meridians)
+                elif node.keyword in {'DATUM', 'ENSEMBLE'}:
+                    _collect_geodetic_datum(node, units, ellipsoids, prime_meridians, geodetic_datums)
+                elif node.keyword == 'VDATUM':
+                    _collect_vertical_datum(node, vertical_datums)
+
+            _update_datum_prime_meridian_bindings(root_node, units, prime_meridians, geodetic_datums)
+            _collect_projected_conversion(root_node, conversion_by_code)
+            _extract_coordinate_system(root_node, units, coordinate_systems, axes_by_cs)
+            _extract_crs_record(root_node, geodetic_crs, projected_crs, vertical_crs, compound_crs)
+
+    if 9102 not in units:
+        units[9102] = {
+            'code': 9102,
+            'name': 'degree',
+            'unit_type': UNIT_ANGULAR,
+            'factor': 0.0174532925199433,
+        }
+
+    if 8901 not in prime_meridians:
+        prime_meridians[8901] = {
+            'code': 8901,
+            'name': 'Greenwich',
+            'longitude': 0.0,
+            'unit_code': 9102,
+        }
+
+    for datum in geodetic_datums.values():
+        if datum['prime_meridian_code'] < 0:
+            datum['prime_meridian_code'] = 8901
+
+    normalized_axes_by_cs = {}
+    for cs_code in sorted(axes_by_cs):
+        axis_map = axes_by_cs[cs_code]
+        normalized_axes_by_cs[cs_code] = [axis_map[order] for order in sorted(axis_map)]
+
+    conversion_parameters = []
+    conversions = {}
+    for conversion_code in sorted(conversion_by_code):
+        conversion = conversion_by_code[conversion_code]
+        start = len(conversion_parameters)
+        for parameter_name, parameter_value in conversion['parameters']:
+            conversion_parameters.append(
+                {
+                    'conversion_code': conversion_code,
+                    'name': parameter_name or '',
+                    'value': float(parameter_value),
+                }
+            )
+
+        conversions[conversion_code] = {
+            'code': conversion_code,
+            'method_name': conversion['method_name'] or '',
+            'start': start,
+            'count': len(conversion_parameters) - start,
+        }
+
+    return {
+        'units': units,
+        'coordinate_systems': coordinate_systems,
+        'axes_by_cs': normalized_axes_by_cs,
+        'ellipsoids': ellipsoids,
+        'prime_meridians': prime_meridians,
+        'geodetic_datums': geodetic_datums,
+        'vertical_datums': vertical_datums,
+        'conversions': conversions,
+        'conversion_parameters': conversion_parameters,
+        'geodetic_crs': geodetic_crs,
+        'projected_crs': projected_crs,
+        'vertical_crs': vertical_crs,
+        'compound_crs': compound_crs,
+    }
 
 
 def load_proj_data(db_path: Path):
@@ -178,8 +954,6 @@ def load_proj_data(db_path: Path):
 
 
 def extract_operation_data(zip_path: Path):
-    import re
-
     crs_pattern = re.compile(r'^EPSG-CRS-(\d+)\.wkt$')
     transform_pattern = re.compile(r'^EPSG-Transformation-(\d+)\.wkt$')
     concat_pattern = re.compile(r'^EPSG-ConcatenatedOperation-(\d+)\.wkt$')
