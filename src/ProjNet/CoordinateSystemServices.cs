@@ -468,32 +468,32 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
 
         public string Name
         {
-            get { return null; }
+            get => null;
         }
 
         public string Alias
         {
-            get { return null; }
+            get => null;
         }
 
         public string Abbreviation
         {
-            get { return null; }
+            get => null;
         }
 
         public string Remarks
         {
-            get { return null; }
+            get => null;
         }
 
         public string WKT
         {
-            get { return null; }
+            get => null;
         }
 
         public string XML
         {
-            get { return null; }
+            get => null;
         }
 
         public bool EqualParams(object obj)

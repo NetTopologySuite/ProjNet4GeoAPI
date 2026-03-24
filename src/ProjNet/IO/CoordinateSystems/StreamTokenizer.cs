@@ -80,26 +80,17 @@ internal class StreamTokenizer
     /// <summary>
     /// Gets the current line number of the stream being read.
     /// </summary>
-    public int LineNumber
-    {
-        get { return this.lineNumber; }
-    }
+    public int LineNumber => this.lineNumber;
 
     /// <summary>
     /// Gets the current column number of the stream being read.
     /// </summary>
-    public int Column
-    {
-        get { return this.colNumber; }
-    }
+    public int Column => this.colNumber;
 
     /// <summary>
     /// Gets a value indicating whether whitespace tokens are skipped by <see cref="NextToken()"/>.
     /// </summary>
-    public bool IgnoreWhitespace
-    {
-        get { return this.ignoreWhitespace; }
-    }
+    public bool IgnoreWhitespace => this.ignoreWhitespace;
 
     /// <summary>
     /// If the current token is a number, this field contains the value of that number.
