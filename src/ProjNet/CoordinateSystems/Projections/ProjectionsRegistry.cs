@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Registry class for all known <see cref="MapProjection"/>s.
+/// Registry that maps projection names and aliases to their corresponding <see cref="MapProjection"/> implementation types.
 /// </summary>
 public class ProjectionsRegistry
 {
@@ -20,7 +20,6 @@ public class ProjectionsRegistry
 
     /// <summary>
     /// Initializes static members of the <see cref="ProjectionsRegistry"/> class.
-    /// Static constructor.
     /// </summary>
     static ProjectionsRegistry()
     {
@@ -362,10 +361,15 @@ public class ProjectionsRegistry
     }
 
     /// <summary>
-    /// Method to register a new Map.
+    /// Registers a projection type under the given name.
     /// </summary>
-    /// <param name="name">The name parameter.</param>
-    /// <param name="type">The type parameter.</param>
+    /// <param name="name">The projection name or alias (case-insensitive).</param>
+    /// <param name="type">The <see cref="MathTransform"/>-derived type that implements the projection.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="name"/> or <paramref name="type"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="type"/> does not derive from <see cref="MathTransform"/>, lacks a required
+    /// constructor, or a different type is already registered under <paramref name="name"/>.
+    /// </exception>
     public static void Register(string name, Type type)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -408,10 +412,12 @@ public class ProjectionsRegistry
     }
 
     /// <summary>
-    /// Register an alias for an existing Map.
+    /// Registers an alternative name for an already-registered projection type.
     /// </summary>
-    /// <param name="aliasName">The aliasName parameter.</param>
-    /// <param name="existingName">The existingName parameter.</param>
+    /// <param name="aliasName">The new alias to register.</param>
+    /// <param name="existingName">The name of the already-registered projection.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="aliasName"/> or <paramref name="existingName"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="existingName"/> is not a registered projection name.</exception>
     public static void RegisterAlias(string aliasName, string existingName)
     {
         if (aliasName is null)

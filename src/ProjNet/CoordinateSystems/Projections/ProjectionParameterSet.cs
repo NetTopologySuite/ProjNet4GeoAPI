@@ -10,7 +10,7 @@ using System.Globalization;
 using System.Text;
 
 /// <summary>
-/// A set of projection parameters.
+/// A named collection of projection parameters, supporting case-insensitive key lookup and insertion-order enumeration.
 /// </summary>
 // TODO: KeyedCollection<string, double>
 [Serializable]
@@ -20,21 +20,20 @@ public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<Pro
     private readonly Dictionary<int, string> originalIndex = new Dictionary<int, string>();
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ProjectionParameterSet"/> class.
-    /// Needed for serialzation.
+    /// Initializes a new instance of the <see cref="ProjectionParameterSet"/> class for deserialization.
     /// </summary>
-    /// <param name="context">The context value.</param>
-    /// <param name="info">The info value.</param>
+    /// <param name="info">The serialization data.</param>
+    /// <param name="context">The serialization context.</param>
     public ProjectionParameterSet(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
         : base(info, context)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ProjectionParameterSet"/> class.
-    /// Creates an instance of this class.
+    /// Initializes a new instance of the <see cref="ProjectionParameterSet"/> class from an enumeration of projection parameters.
     /// </summary>
-    /// <param name="parameters">An enumeration of parameters.</param>
+    /// <param name="parameters">The projection parameters to populate the set.</param>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="parameters"/> is <see langword="null"/>.</exception>
     public ProjectionParameterSet(IEnumerable<ProjectionParameter> parameters)
     {
         if (parameters is null)
@@ -52,9 +51,9 @@ public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<Pro
     }
 
     /// <summary>
-    /// Function to create an enumeration of <see cref="ProjectionParameter"/>s of the content of this projection parameter set.
+    /// Returns the contents of this set as an enumerable sequence of <see cref="ProjectionParameter"/> instances.
     /// </summary>
-    /// <returns>An enumeration of <see cref="ProjectionParameter"/>s.</returns>
+    /// <returns>An enumeration of <see cref="ProjectionParameter"/>s in insertion order.</returns>
     public IEnumerable<ProjectionParameter> ToProjectionParameter()
     {
         foreach (var oi in this.originalIndex)
@@ -64,12 +63,13 @@ public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<Pro
     }
 
     /// <summary>
-    /// Function to get the value of a mandatory projection parameter.
+    /// Retrieves the value of a mandatory projection parameter.
     /// </summary>
+    /// <param name="parameterName">The primary name of the parameter.</param>
+    /// <param name="alternateNames">Optional alternate names to search when <paramref name="parameterName"/> is not found.</param>
     /// <returns>The value of the parameter.</returns>
-    /// <param name="parameterName">The name of the parameter.</param>
-    /// <param name="alternateNames">Possible alternate names for <paramref name="parameterName"/>.</param>
-    /// <exception cref="ArgumentException">Thrown if. <paramref name="parameterName"> or any of <paramref name="alternateNames"/> is not defined.</paramref></exception>
+    /// <exception cref="ArgumentNullException">Thrown when <paramref name="parameterName"/> or <paramref name="alternateNames"/> is <see langword="null"/>.</exception>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="parameterName"/> and all <paramref name="alternateNames"/> are absent from the set.</exception>
     public double GetParameterValue(string parameterName, params string[] alternateNames)
     {
         if (parameterName is null)
@@ -114,12 +114,15 @@ public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<Pro
     }
 
     /// <summary>
-    /// Method to check if all mandatory projection parameters are passed.
+    /// Retrieves the value of an optional projection parameter, returning a default value when the parameter is absent.
     /// </summary>
-    /// <param name="name">The name value.</param>
-    /// <param name="value">The value value.</param>
-    /// <param name="alternateNames">The alternateNames value.</param>
-    /// <returns>The computed value.</returns>
+    /// <param name="name">The primary name of the parameter.</param>
+    /// <param name="value">The default value to return when the parameter is absent.</param>
+    /// <param name="alternateNames">Optional alternate names to search when <paramref name="name"/> is not found.</param>
+    /// <returns>
+    /// The stored parameter value, or <paramref name="value"/> if neither <paramref name="name"/> nor any of
+    /// <paramref name="alternateNames"/> is present.
+    /// </returns>
     public double GetOptionalParameterValue(string name, double value, params string[] alternateNames)
     {
         if (name is null)
@@ -152,10 +155,10 @@ public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<Pro
     }
 
     /// <summary>
-    /// Function to find a parameter based on its name.
+    /// Finds the parameter with the given name.
     /// </summary>
     /// <param name="name">The name of the parameter.</param>
-    /// <returns>The parameter if present, otherwise null.</returns>
+    /// <returns>The parameter if present; otherwise <see langword="null"/>.</returns>
     public ProjectionParameter Find(string name)
     {
         if (name is null)
@@ -168,10 +171,10 @@ public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<Pro
     }
 
     /// <summary>
-    /// Function to get the parameter at the given index.
+    /// Returns the parameter at the specified index.
     /// </summary>
-    /// <param name="index">The index.</param>
-    /// <returns>The parameter.</returns>
+    /// <param name="index">The zero-based index of the parameter.</param>
+    /// <returns>The <see cref="ProjectionParameter"/> at <paramref name="index"/>.</returns>
     /// <exception cref="ArgumentOutOfRangeException">Thrown when <paramref name="index"/> is outside the valid parameter range.</exception>
     public ProjectionParameter GetAtIndex(int index)
     {
@@ -185,10 +188,10 @@ public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<Pro
     }
 
     /// <summary>
-    /// Checks this projection parameter set with <paramref name="other"/>-.
+    /// Determines whether this parameter set is equal to <paramref name="other"/>.
     /// </summary>
-    /// <param name="other">The other projection parameter set.</param>
-    /// <returns><value>true</value> if both sets are equal.</returns>
+    /// <param name="other">The parameter set to compare with.</param>
+    /// <returns><see langword="true"/> if both sets contain the same parameter names and values; otherwise <see langword="false"/>.</returns>
     public bool Equals(ProjectionParameterSet other)
     {
         if (other == null)

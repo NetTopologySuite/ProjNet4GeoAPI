@@ -13,7 +13,8 @@ using System.Text;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Projections inherit from this abstract class to get access to useful mathematical functions.
+/// Abstract base class for all map projections, providing shared mathematical utilities and
+/// coordinate transformation infrastructure.
 /// </summary>
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1051:Do not declare visible instance fields", Justification = "Legacy PROJ-compatible API surface is preserved for compatibility.")]
 [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Legacy PROJ-compatible API surface is preserved for compatibility.")]
@@ -22,22 +23,22 @@ using ProjNet.CoordinateSystems.Transformations;
 public abstract class MapProjection : MathTransform, IProjection
 {
     /// <summary>
-    /// Eps10 => 1e-10.
+    /// Tolerance constant equal to 1e-10, used for near-zero comparisons in projection formulas.
     /// </summary>
     protected const double Eps10 = 1e-10;
 
     /// <summary>
-    /// Eps7 => 1e-7.
+    /// Tolerance constant equal to 1e-7, used for near-zero comparisons in projection formulas.
     /// </summary>
     protected const double Eps7 = 1e-7;
 
     /// <summary>
-    /// HUGE_VAL => double.NaN.
+    /// Sentinel value equal to <see cref="double.NaN"/>, used to signal an undefined or out-of-range projection result.
     /// </summary>
     protected const double HugeVal = double.NaN;
 
     /// <summary>
-    /// PI.
+    /// The constant pi, equal to <see cref="Math.PI"/>.
     /// </summary>
     protected const double PI = Math.PI;
 
@@ -57,27 +58,27 @@ public abstract class MapProjection : MathTransform, IProjection
     protected const double TwoPi = PI * 2.0;
 
     /// <summary>
-    /// Epsln.
+    /// Tolerance threshold for near-zero comparisons; equal to <see cref="Eps10"/>.
     /// </summary>
     protected const double Epsln = Eps10;
 
     /// <summary>
-    /// S2R.
+    /// Conversion factor from arc-seconds to radians (pi / 648000 ~= 4.848e-6).
     /// </summary>
     protected const double S2R = 4.848136811095359e-6;
 
     /// <summary>
-    /// MAX_VAL.
+    /// Maximum iteration count used in longitude normalisation loops.
     /// </summary>
     protected const double MaxVal = 4;
 
     /// <summary>
-    /// prjMAXLONG.
+    /// Maximum 32-bit integer value (2 147 483 647) used as a scale threshold in longitude normalisation.
     /// </summary>
     protected const double prjMAXLONG = 2147483647;
 
     /// <summary>
-    /// DblLong.
+    /// Large double constant used as an upper-bound threshold in longitude normalisation.
     /// </summary>
     protected const double DblLong = 4.61168601e18;
 
@@ -178,7 +179,7 @@ public abstract class MapProjection : MathTransform, IProjection
     protected readonly double falseEasting; /* x offset in meters          */
 
     /// <summary>
-    /// Constants for <see cref="Mlfn(double,double,double,double,double)"/>.
+    /// Coefficient 0 for <see cref="Mlfn(double,double,double,double,double)"/>.
     /// </summary>
     protected readonly double en0;
 
@@ -238,11 +239,10 @@ public abstract class MapProjection : MathTransform, IProjection
     private const double P20 = 0.01677689594356261023; /* 761 / 45360 */
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MapProjection"/> class.
-    /// Creates an instance of this class.
+    /// Initializes a new instance of the <see cref="MapProjection"/> class with a paired inverse projection.
     /// </summary>
     /// <param name="parameters">An enumeration of projection parameters.</param>
-    /// <param name="inverse">Indicator if this projection is inverse.</param>
+    /// <param name="inverse">The paired inverse projection, or <see langword="null"/> if not yet available.</param>
     protected MapProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
         : this(parameters)
     {
@@ -255,8 +255,7 @@ public abstract class MapProjection : MathTransform, IProjection
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="MapProjection"/> class.
-    /// Creates an instance of this class.
+    /// Initializes a new instance of the <see cref="MapProjection"/> class from a set of projection parameters.
     /// </summary>
     /// <param name="parameters">An enumeration of projection parameters.</param>
     protected MapProjection(IEnumerable<ProjectionParameter> parameters)
@@ -304,7 +303,6 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <summary>
     /// Gets the number of projection parameters.
     /// </summary>
-    /// <inheritdoc/>
     public int NumParameters => this.Parameters.Count;
 
     /// <summary>
@@ -340,10 +338,10 @@ public abstract class MapProjection : MathTransform, IProjection
     public string Remarks { get; set; }
 
     /// <summary>
-    /// Function to calculate UTM zone number.
+    /// Calculates the UTM zone number for the given longitude.
     /// </summary>
-    /// <param name="lon">The longitudinal value (in Degrees!).</param>
-    /// <returns>The UTM zone number.</returns>
+    /// <param name="lon">The longitude in decimal degrees.</param>
+    /// <returns>The UTM zone number (1-60).</returns>
     public static long CalcUtmZone(double lon) => (long)(((lon + 180.0) / 6.0) + 1.0);
 
     /// <summary>
@@ -432,12 +430,14 @@ public abstract class MapProjection : MathTransform, IProjection
     }
 
     /// <summary>
-    /// Checks whether the values of this instance is equal to the values of another instance.
-    /// Only parameters used for coordinate system are used for comparison.
-    /// Name, abbreviation, authority, alias and remarks are ignored in the comparison.
+    /// Determines whether this projection is equal to another projection by comparing only the
+    /// coordinate-system parameters.
     /// </summary>
-    /// <param name="obj">The obj parameter.</param>
-    /// <returns>True if equal.</returns>
+    /// <remarks>
+    /// Name, abbreviation, authority, alias, and remarks are ignored in the comparison.
+    /// </remarks>
+    /// <param name="obj">The object to compare with.</param>
+    /// <returns><see langword="true"/> if the projection parameters and direction are equal; otherwise <see langword="false"/>.</returns>
     public bool EqualParams(object obj)
     {
         if (!(obj is MapProjection))
@@ -471,24 +471,25 @@ if (param.Value != proj.GetParameter(i).Value)
     /// <summary>
     /// Returns the projection parameter at the specified index.
     /// </summary>
-    /// <param name="index">The index parameter.</param>
-    /// <returns>The transformation result.</returns>
-    /// <inheritdoc/>
+    /// <param name="index">The zero-based index of the parameter.</param>
+    /// <returns>The <see cref="ProjectionParameter"/> at <paramref name="index"/>.</returns>
     public ProjectionParameter GetParameter(int index) => this.Parameters.GetAtIndex(index);
 
     /// <summary>
-    /// Gets an named parameter of the projection.
+    /// Gets a named parameter of the projection.
     /// </summary>
     /// <remarks>The parameter name is case insensitive.</remarks>
     /// <param name="name">Name of parameter.</param>
-    /// <returns>parameter or null if not found.</returns>
+    /// <returns>The named <see cref="ProjectionParameter"/>, or <see langword="null"/> if not found.</returns>
     public ProjectionParameter GetParameter(string name) => this.Parameters.Find(name);
 
     /// <summary>
-    /// Gets a value indicating whether returns true if this projection is inverted.
-    /// Most map projections define forward projection as "from geographic to projection", and backwards
-    /// as "from projection to geographic". If this projection is inverted, this will be the other way around.
+    /// Gets a value indicating whether this projection operates in the inverse direction.
     /// </summary>
+    /// <remarks>
+    /// Most map projections define the forward direction as geographic-to-projection (lon/lat -> x/y)
+    /// and the inverse direction as projection-to-geographic (x/y -> lon/lat).
+    /// </remarks>
     protected internal bool IsInverse { get; private set; }
 
     /// <inheritdoc />
@@ -564,7 +565,7 @@ if (param.Value != proj.GetParameter(i).Value)
     }
 
     /// <summary>
-    /// Converts a series of points from degrees to target units to degrees.
+    /// Converts a series of points from geographic degrees to target projection units.
     /// </summary>
     /// <param name="lons">A series of x-ordinate values.</param>
     /// <param name="lats">A series of y-ordinate values.</param>
@@ -598,8 +599,8 @@ if (param.Value != proj.GetParameter(i).Value)
     /// adding <see cref="falseEasting"/> or <see cref="falseNorthing"/> and
     /// multiplying with <see cref="reciprocalMetersPerUnit"/>.
     /// </summary>
-    /// <param name="xs">A x-ordinates.</param>
-    /// <param name="ys">A y-ordinates.</param>
+    /// <param name="xs">The x-ordinates.</param>
+    /// <param name="ys">The y-ordinates.</param>
     /// <param name="strideX">A stride value for x-ordinates.</param>
     /// <param name="strideY">A stride value for y-ordinates.</param>
     protected void MetersToTarget(Span<double> xs, Span<double> ys, int strideX, int strideY)
@@ -647,8 +648,8 @@ if (param.Value != proj.GetParameter(i).Value)
     /// </summary>
     /// <param name="xs">The x-ordinate values when entering, the longitude values upon exit.</param>
     /// <param name="ys">The y-ordinate values when entering, the latitude values upon exit.</param>
-    /// <param name="strideX">The strideX parameter.</param>
-    /// <param name="strideY">The strideY parameter.</param>
+    /// <param name="strideX">A stride value for x-ordinates.</param>
+    /// <param name="strideY">A stride value for y-ordinates.</param>
     protected virtual void MetersToDegrees(Span<double> xs, Span<double> ys, int strideX, int strideY)
     {
         this.MetersToRadians(xs, ys, strideX, strideY);
@@ -685,12 +686,12 @@ if (param.Value != proj.GetParameter(i).Value)
     }
 
     /// <summary>
-    /// Transforms unit of input coordinates to meters. This is done by multiplying with
+    /// Transforms the unit of input coordinates to meters by multiplying by
     /// <see cref="metersPerUnit"/> and subtracting <see cref="falseEasting"/>
     /// or <see cref="falseNorthing"/>.
     /// </summary>
-    /// <param name="xs">A series of x-ordinates.</param>
-    /// <param name="ys">A series of y-ordinates.</param>
+    /// <param name="xs">The x-ordinates.</param>
+    /// <param name="ys">The y-ordinates.</param>
     /// <param name="strideX">A stride value for x-ordinates.</param>
     /// <param name="strideY">A stride value for y-ordinates.</param>
     protected void SourceToMeters(Span<double> xs, Span<double> ys, int strideX, int strideY)
@@ -700,7 +701,7 @@ if (param.Value != proj.GetParameter(i).Value)
     }
 
     /// <summary>
-    /// Transforms unit of input coordinate to meters. This is done by multiplying with
+    /// Transforms the unit of the input coordinate to meters by multiplying by
     /// <see cref="metersPerUnit"/> and subtracting <see cref="falseEasting"/>
     /// or <see cref="falseNorthing"/>.
     /// </summary>
@@ -715,7 +716,7 @@ if (param.Value != proj.GetParameter(i).Value)
     /// <summary>
     /// Reverses this transformation.
     /// </summary>
-    /// <param name="invertInverse">A flag indicating to reverse the <see cref="inverse"/>"/> projection as well.</param>
+    /// <param name="invertInverse">If <see langword="true"/>, also inverts the paired <see cref="inverse"/> projection.</param>
     protected void Invert(bool invertInverse)
     {
         this.IsInverse = !this.IsInverse;
@@ -726,7 +727,7 @@ if (param.Value != proj.GetParameter(i).Value)
     }
 
     /// <summary>
-    /// Gets or sets substitute for <see cref="centralMeridian"/>.
+    /// Gets or sets the central meridian (projection centre longitude) in radians; an alias for <see cref="centralMeridian"/>.
     /// </summary>
     protected double Lon_origin
     {
@@ -763,20 +764,20 @@ if (param.Value != proj.GetParameter(i).Value)
 #pragma warning restore SA1600
 
     /// <summary>
-    /// Gets center latitude (projection center), same as lat_origin.
+    /// Gets the central parallel (projection centre latitude) in radians; an alias for <see cref="latOrigin"/>.
     /// </summary>
     protected double Central_parallel => this.latOrigin;
 
     /// <summary>
-    /// Gets center latitude (projection center), same as lat_origin.
+    /// Gets the origin latitude phi0 in radians; an alias for <see cref="latOrigin"/>.
     /// </summary>
     protected double Phi0 => this.latOrigin;
 
     /// <summary>
-    /// Returns a list of projection "cloned" projection parameters.
+    /// Returns a list of cloned projection parameters.
     /// </summary>
-    /// <param name="projectionParameters">The projectionParameters value.</param>
-    /// <returns>The transformation result.</returns>
+    /// <param name="projectionParameters">The projection parameters to clone.</param>
+    /// <returns>A new list containing a copy of each <see cref="ProjectionParameter"/>.</returns>
     protected internal static List<ProjectionParameter> CloneParametersList(
         IEnumerable<ProjectionParameter> projectionParameters)
     {
@@ -802,18 +803,18 @@ if (param.Value != proj.GetParameter(i).Value)
     /// <summary>
     /// Returns the cube of a number.
     /// </summary>
-    /// <param name="x">The x parameter.</param>
-    /// <returns>The computed value.</returns>
+    /// <param name="x">The value to cube.</param>
+    /// <returns>The cube of <paramref name="x"/> (x^3).</returns>
     protected static double CUBE(double x)
     {
         return x * x * x; /* x^3 */
     }
 
     /// <summary>
-    /// Returns the quad of a number.
+    /// Returns the fourth power of a number.
     /// </summary>
-    /// <param name="x">The x parameter.</param>
-    /// <returns>The computed value.</returns>
+    /// <param name="x">The value to raise to the fourth power.</param>
+    /// <returns>The fourth power of <paramref name="x"/> (x^4).</returns>
     protected static double QUAD(double x)
     {
         double squared = x * x;
@@ -823,9 +824,9 @@ if (param.Value != proj.GetParameter(i).Value)
     /// <summary>
     /// Returns the greater value of two inputs.
     /// </summary>
-    /// <param name="a">The a parameter.</param>
-    /// <param name="b">The b parameter.</param>
-    /// <returns>The transformation result.</returns>
+    /// <param name="a">The first value.</param>
+    /// <param name="b">The second value.</param>
+    /// <returns>The greater of <paramref name="a"/> and <paramref name="b"/>.</returns>
     protected static double GMAX(ref double a, ref double b)
     {
         return Math.Max(a, b); /* assign maximum of a and b */
@@ -834,30 +835,30 @@ if (param.Value != proj.GetParameter(i).Value)
     /// <summary>
     /// Returns the smaller value of two inputs.
     /// </summary>
-    /// <param name="a">The a parameter.</param>
-    /// <param name="b">The b parameter.</param>
-    /// <returns>The transformation result.</returns>
+    /// <param name="a">The first value.</param>
+    /// <param name="b">The second value.</param>
+    /// <returns>The lesser of <paramref name="a"/> and <paramref name="b"/>.</returns>
     protected static double GMIN(ref double a, ref double b)
     {
         return a < b ? a : b; /* assign minimum of a and b */
     }
 
     /// <summary>
-    /// IMOD.
+    /// Computes the floating-point integer modulus of <paramref name="a"/> divided by <paramref name="b"/>.
     /// </summary>
-    /// <param name="a">The a parameter.</param>
-    /// <param name="b">The b parameter.</param>
-    /// <returns>The transformation result.</returns>
+    /// <param name="a">The dividend.</param>
+    /// <param name="b">The divisor.</param>
+    /// <returns>The remainder of the integer division of <paramref name="a"/> by <paramref name="b"/>.</returns>
     protected static double IMOD(double a, double b)
     {
         return a - ((a / b) * b); /* Integer mod function */
     }
 
     /// <summary>
-    /// Function to return the sign of an argument.
+    /// Returns the sign of an argument.
     /// </summary>
-    /// <param name="x">The x value.</param>
-    /// <returns>The computed value.</returns>
+    /// <param name="x">The value to evaluate.</param>
+    /// <returns>1 if <paramref name="x"/> is non-negative; otherwise -1.</returns>
     protected static double Sign(double x)
     {
         if (x < 0.0)
@@ -871,10 +872,10 @@ if (param.Value != proj.GetParameter(i).Value)
     }
 
     /// <summary>
-    /// Normalizes a longitude angle into the canonical interval.
+    /// Normalises a longitude angle into the canonical interval [-pi, pi].
     /// </summary>
-    /// <param name="x">The x parameter.</param>
-    /// <returns>The transformation result.</returns>
+    /// <param name="x">The longitude in radians to normalise.</param>
+    /// <returns>The normalised longitude in radians, within [-pi, pi].</returns>
     protected static double Adjust_lon(double x)
     {
         long count = 0;
@@ -916,13 +917,12 @@ if (param.Value != proj.GetParameter(i).Value)
     }
 
     /// <summary>
-    /// Function to compute the constant small m which is the radius of
-    /// a parallel of latitude, phi, divided by the semimajor axis.
+    /// Computes the small m function: the radius of a parallel of latitude phi divided by the semi-major axis.
     /// </summary>
-    /// <param name="eccent">The eccent value.</param>
-    /// <param name="sinphi">The sinphi value.</param>
-    /// <param name="cosphi">The cosphi value.</param>
-    /// <returns>The computed value.</returns>
+    /// <param name="eccent">The ellipsoid eccentricity.</param>
+    /// <param name="sinphi">The sine of the latitude angle phi.</param>
+    /// <param name="cosphi">The cosine of the latitude angle phi.</param>
+    /// <returns>The value of the small m function for latitude phi.</returns>
     protected static double Msfnz(double eccent, double sinphi, double cosphi)
     {
         double con;
@@ -932,12 +932,11 @@ if (param.Value != proj.GetParameter(i).Value)
     }
 
     /// <summary>
-    /// Function to compute constant small q which is the radius of a
-    /// parallel of latitude, phi, divided by the semimajor axis.
+    /// Computes the small q function: the authalic latitude weighting used in equal-area projections.
     /// </summary>
-    /// <param name="sinphi">The sinphi value.</param>
-    /// <param name="eccent">The eccent value.</param>
-    /// <returns>The computed value.</returns>
+    /// <param name="sinphi">The sine of the latitude angle phi.</param>
+    /// <param name="eccent">The ellipsoid eccentricity.</param>
+    /// <returns>The value of the small q function for latitude phi.</returns>
     protected static double Qsfnz(double sinphi, double eccent)
     {
         if (eccent > 1.0e-7)
@@ -951,13 +950,12 @@ if (param.Value != proj.GetParameter(i).Value)
     }
 
     /// <summary>
-    /// Function to compute constant small q which is the radius of a
-    /// parallel of latitude, phi, divided by the semimajor axis.
+    /// Computes the small q function with an explicit (1 - e^2) factor supplied by the caller.
     /// </summary>
-    /// <param name="sinphi">The sinphi value.</param>
-    /// <param name="eccent">The eccent value.</param>
-    /// <param name="one_es">The one_es value.</param>
-    /// <returns>The computed value.</returns>
+    /// <param name="sinphi">The sine of the latitude angle phi.</param>
+    /// <param name="eccent">The ellipsoid eccentricity.</param>
+    /// <param name="one_es">One minus the square of the eccentricity (1 - e^2).</param>
+    /// <returns>The value of the small q function for latitude phi, or <see cref="HugeVal"/> on a singularity.</returns>
     protected static double Qsfn(double sinphi, double eccent, double one_es)
     {
         if (eccent >= Eps7)
@@ -981,14 +979,11 @@ if (param.Value != proj.GetParameter(i).Value)
     }
 
     /// <summary>
-    /// Function to calculate the sine and cosine in one call.  Some computer
-    /// systems have implemented this function, resulting in a faster implementation
-    /// than calling each function separately.  It is provided here for those
-    /// computer systems which don`t implement this function.
+    /// Computes the sine and cosine of an angle in a single call.
     /// </summary>
-    /// <param name="val">The val value.</param>
-    /// <param name="sin_val">The sin_val value.</param>
-    /// <param name="cos_val">The cos_val value.</param>
+    /// <param name="val">The angle in radians.</param>
+    /// <param name="sin_val">The sine of <paramref name="val"/>.</param>
+    /// <param name="cos_val">The cosine of <paramref name="val"/>.</param>
     protected static void Sincos(double val, out double sin_val, out double cos_val)
     {
         sin_val = Math.Sin(val);
@@ -996,14 +991,12 @@ if (param.Value != proj.GetParameter(i).Value)
     }
 
     /// <summary>
-    /// Function to compute the constant small t for use in the forward
-    /// computations in the Lambert Conformal Conic and the Polar
-    /// Stereographic projections.
+    /// Computes the small t value used in forward Lambert Conformal Conic and Polar Stereographic projections.
     /// </summary>
-    /// <param name="eccent">The eccent value.</param>
-    /// <param name="phi">The phi value.</param>
-    /// <param name="sinphi">The sinphi value.</param>
-    /// <returns>The computed value.</returns>
+    /// <param name="eccent">The ellipsoid eccentricity.</param>
+    /// <param name="phi">The latitude angle in radians.</param>
+    /// <param name="sinphi">The sine of <paramref name="phi"/>.</param>
+    /// <returns>The small t value for the given latitude.</returns>
     protected static double Tsfnz(double eccent, double phi, double sinphi)
     {
         double con;
@@ -1017,10 +1010,10 @@ if (param.Value != proj.GetParameter(i).Value)
     /// <summary>
     /// Computes latitude from the Snyder q-function using an iterative solution.
     /// </summary>
-    /// <param name="eccent">The eccent parameter.</param>
-    /// <param name="qs">The qs parameter.</param>
-    /// <param name="flag">The flag parameter.</param>
-    /// <returns>The transformation result.</returns>
+    /// <param name="eccent">The ellipsoid eccentricity.</param>
+    /// <param name="qs">The value of the Snyder q-function.</param>
+    /// <param name="flag">Set to a non-zero value on error; otherwise 0.</param>
+    /// <returns>The latitude in radians corresponding to the given q value.</returns>
     protected static double Phi1z(double eccent, double qs, out long flag)
     {
         double eccnts;
@@ -1081,13 +1074,12 @@ if (param.Value != proj.GetParameter(i).Value)
     }
 
     /// <summary>
-    /// Function to compute the latitude angle, phi2, for the inverse of the
-    /// Lambert Conformal Conic and Polar Stereographic projections.
+    /// Computes the latitude angle phi2 for the inverse of the Lambert Conformal Conic and Polar Stereographic projections.
     /// </summary>
     /// <param name="eccent">Spheroid eccentricity.</param>
-    /// <param name="ts">Constant value t.</param>
-    /// <param name="flag">Error flag number.</param>
-    /// <returns>The computed value.</returns>
+    /// <param name="ts">The small t value from <see cref="Tsfnz"/>.</param>
+    /// <param name="flag">Set to a non-zero value on error; otherwise 0.</param>
+    /// <returns>The latitude phi2 in radians.</returns>
     protected static double Phi2z(double eccent, double ts, out long flag)
     {
         double con;
@@ -1114,42 +1106,38 @@ if (param.Value != proj.GetParameter(i).Value)
     }
 
     /// <summary>
-    /// Functions to compute the constants e0, e1, e2, and e3 which are used
-    /// in a series for calculating the distance along a meridian.  The
-    /// input x represents the eccentricity squared.
+    /// Computes the zeroth meridional arc series coefficient e0 from the squared eccentricity.
     /// </summary>
-    /// <param name="x">The x value.</param>
-    /// <returns>The computed value.</returns>
+    /// <param name="x">The squared eccentricity (e^2) of the ellipsoid.</param>
+    /// <returns>The coefficient e0.</returns>
     protected static double E0fn(double x) => 1.0 - (0.25 * x * (1.0 + (x / 16.0 * (3.0 + (1.25 * x)))));
 
     /// <summary>
-    /// Computes the first meridional distance series coefficient.
+    /// Computes the first meridional distance series coefficient e1 from the squared eccentricity.
     /// </summary>
-    /// <param name="x">The x parameter.</param>
-    /// <returns>The transformation result.</returns>
+    /// <param name="x">The squared eccentricity (e^2) of the ellipsoid.</param>
+    /// <returns>The coefficient e1.</returns>
     protected static double E1fn(double x) => 0.375 * x * (1.0 + (0.25 * x * (1.0 + (0.46875 * x))));
 
     /// <summary>
-    /// Computes the second meridional distance series coefficient.
+    /// Computes the second meridional distance series coefficient e2 from the squared eccentricity.
     /// </summary>
-    /// <param name="x">The x parameter.</param>
-    /// <returns>The transformation result.</returns>
+    /// <param name="x">The squared eccentricity (e^2) of the ellipsoid.</param>
+    /// <returns>The coefficient e2.</returns>
     protected static double E2fn(double x) => 0.05859375 * x * x * (1.0 + (0.75 * x));
 
     /// <summary>
-    /// Computes the third meridional distance series coefficient.
+    /// Computes the third meridional distance series coefficient e3 from the squared eccentricity.
     /// </summary>
-    /// <param name="x">The x parameter.</param>
-    /// <returns>The transformation result.</returns>
+    /// <param name="x">The squared eccentricity (e^2) of the ellipsoid.</param>
+    /// <returns>The coefficient e3.</returns>
     protected static double E3fn(double x) => x * x * x * (35.0 / 3072.0);
 
     /// <summary>
-    /// Function to compute the constant e4 from the input of the eccentricity
-    /// of the spheroid, x.  This constant is used in the Polar Stereographic
-    /// projection.
+    /// Computes the coefficient e4 used in the Polar Stereographic projection from the ellipsoid eccentricity.
     /// </summary>
-    /// <param name="x">The x value.</param>
-    /// <returns>The computed value.</returns>
+    /// <param name="x">The eccentricity of the ellipsoid.</param>
+    /// <returns>The coefficient e4.</returns>
     protected static double E4fn(double x)
     {
         double con;
@@ -1160,15 +1148,14 @@ if (param.Value != proj.GetParameter(i).Value)
     }
 
     /// <summary>
-    /// Function computes the value of M which is the distance along a meridian
-    /// from the Equator to latitude phi.
+    /// Computes the meridian distance M from the equator to latitude phi using a four-coefficient series.
     /// </summary>
-    /// <param name="e0">The e0 value.</param>
-    /// <param name="e1">The e1 value.</param>
-    /// <param name="e2">The e2 value.</param>
-    /// <param name="e3">The e3 value.</param>
-    /// <param name="phi">The phi value.</param>
-    /// <returns>The computed value.</returns>
+    /// <param name="e0">The meridional arc coefficient e0.</param>
+    /// <param name="e1">The meridional arc coefficient e1.</param>
+    /// <param name="e2">The meridional arc coefficient e2.</param>
+    /// <param name="e3">The meridional arc coefficient e3.</param>
+    /// <param name="phi">The latitude in radians.</param>
+    /// <returns>The meridian distance M from the equator to latitude <paramref name="phi"/>.</returns>
     protected static double Mlfn(double e0, double e1, double e2, double e3, double phi) => (e0 * phi) - (e1 * Math.Sin(2.0 * phi)) + (e2 * Math.Sin(4.0 * phi)) - (e3 * Math.Sin(6.0 * phi));
 
     /// <summary>
@@ -1176,10 +1163,10 @@ if (param.Value != proj.GetParameter(i).Value)
     /// meridian from the equator to <paramref name="phi"/>. Accurate to &lt; 1e-5 meters
     /// when used in conjuction with typical major axis values.
     /// </summary>
-    /// <param name="phi">The phi parameter.</param>
-    /// <param name="sphi">The sphi parameter.</param>
-    /// <param name="cphi">The cphi parameter.</param>
-    /// <returns>The transformation result.</returns>
+    /// <param name="phi">The latitude in radians.</param>
+    /// <param name="sphi">The sine of <paramref name="phi"/>.</param>
+    /// <param name="cphi">The cosine of <paramref name="phi"/>.</param>
+    /// <returns>The meridian distance M from the equator to latitude <paramref name="phi"/>.</returns>
     protected double Mlfn(double phi, double sphi, double cphi)
     {
         cphi *= sphi;
@@ -1191,8 +1178,8 @@ if (param.Value != proj.GetParameter(i).Value)
     /// Calculates the latitude (phi) from a meridian distance.
     /// Determines phi to TOL (1e-11) radians, about 1e-6 seconds.
     /// </summary>
-    /// <param name="arg">The meridonial distance.</param>
-    /// <returns>The latitude of the meridian distance.</returns>
+    /// <param name="arg">The meridional distance.</param>
+    /// <returns>The latitude in radians corresponding to meridian distance <paramref name="arg"/>.</returns>
     protected double Inv_mlfn(double arg)
     {
         const double MLFN_TOL = 1E-11;
@@ -1224,7 +1211,7 @@ if (param.Value != proj.GetParameter(i).Value)
     /// </summary>
     /// <param name="x">The value in degrees to convert to radians.</param>
     /// <param name="edge">If true, -180 and +180 are valid, otherwise they are considered out of range.</param>
-    /// <returns>The transformation result.</returns>
+    /// <returns>The longitude converted to radians.</returns>
     protected static double LongitudeToRadians(double x, bool edge)
     {
         if (edge ? (x >= -180 && x <= 180) : (x > -180 && x < 180))
@@ -1239,9 +1226,9 @@ if (param.Value != proj.GetParameter(i).Value)
     /// <summary>
     /// Converts a latitude value in degrees to radians.
     /// </summary>
-    /// <param name="y">The value in degrees to to radians.</param>
+    /// <param name="y">The value in degrees to convert to radians.</param>
     /// <param name="edge">If true, -90 and +90 are valid, otherwise they are considered out of range.</param>
-    /// <returns>The transformation result.</returns>
+    /// <returns>The latitude converted to radians.</returns>
     protected static double LatitudeToRadians(double y, bool edge)
     {
         if (edge ? (y >= -90 && y <= 90) : (y > -90 && y < 90))
@@ -1254,10 +1241,10 @@ if (param.Value != proj.GetParameter(i).Value)
     }
 
     /// <summary>
-    /// authset.
+    /// Computes the series coefficients used by <see cref="Authlat"/> for authalic latitude conversion.
     /// </summary>
-    /// <param name="es">The es parameter.</param>
-    /// <returns>The transformation result.</returns>
+    /// <param name="es">The squared eccentricity (e^2) of the ellipsoid.</param>
+    /// <returns>An array of three series coefficients for the authalic latitude series.</returns>
     protected static double[] Authset(double es)
     {
         double[] aPA = new double[3];
@@ -1274,11 +1261,11 @@ if (param.Value != proj.GetParameter(i).Value)
     }
 
     /// <summary>
-    /// authlat.
+    /// Converts an authalic latitude to a geodetic latitude using a series approximation.
     /// </summary>
-    /// <param name="beta">The beta parameter.</param>
-    /// <param name="apa">The apa parameter.</param>
-    /// <returns>The transformation result.</returns>
+    /// <param name="beta">The authalic latitude in radians.</param>
+    /// <param name="apa">The series coefficients from <see cref="Authset"/>.</param>
+    /// <returns>The geodetic latitude in radians.</returns>
     protected static double Authlat(double beta, double[] apa)
     {
         if (apa is null)
