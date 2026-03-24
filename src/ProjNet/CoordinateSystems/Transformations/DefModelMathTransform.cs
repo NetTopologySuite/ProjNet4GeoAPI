@@ -1983,50 +1983,29 @@ internal sealed class DefModelMathTransform : MathTransform
     }
 
     [Serializable]
-    private sealed class VelocityTimeFunction : ITimeFunction
+    private sealed class VelocityTimeFunction(double referenceEpoch) : ITimeFunction
     {
-        private readonly double referenceEpoch;
-
-        internal VelocityTimeFunction(double referenceEpoch)
-        {
-            this.referenceEpoch = referenceEpoch;
-        }
-
         public double Evaluate(double observationEpoch)
         {
-            return observationEpoch - this.referenceEpoch;
+            return observationEpoch - referenceEpoch;
         }
     }
 
     [Serializable]
-    private sealed class StepTimeFunction : ITimeFunction
+    private sealed class StepTimeFunction(double stepEpoch) : ITimeFunction
     {
-        private readonly double stepEpoch;
-
-        internal StepTimeFunction(double stepEpoch)
-        {
-            this.stepEpoch = stepEpoch;
-        }
-
         public double Evaluate(double observationEpoch)
         {
-            return observationEpoch < this.stepEpoch ? 0d : 1d;
+            return observationEpoch < stepEpoch ? 0d : 1d;
         }
     }
 
     [Serializable]
-    private sealed class ReverseStepTimeFunction : ITimeFunction
+    private sealed class ReverseStepTimeFunction(double stepEpoch) : ITimeFunction
     {
-        private readonly double stepEpoch;
-
-        internal ReverseStepTimeFunction(double stepEpoch)
-        {
-            this.stepEpoch = stepEpoch;
-        }
-
         public double Evaluate(double observationEpoch)
         {
-            return observationEpoch < this.stepEpoch ? -1d : 0d;
+            return observationEpoch < stepEpoch ? -1d : 0d;
         }
     }
 
