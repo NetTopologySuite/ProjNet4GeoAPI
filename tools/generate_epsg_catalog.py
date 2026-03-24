@@ -1277,19 +1277,6 @@ def emit(output_path: Path, zip_name: str, catalog, operations, operation_parame
     lines.append('    {')
     lines.append(f'        internal const string SourceArchive = "{esc(zip_name)}";')
 
-    def build_string_pool(values):
-        pool = sorted(set(values))
-        index_by_value = {value: idx for idx, value in enumerate(pool)}
-        return pool, index_by_value
-
-    def emit_string_array(name, values):
-        lines.append(f'        private static readonly string[] {name} = new string[]')
-        lines.append('        {')
-        for value in values:
-            lines.append(f'            "{esc(value)}",')
-        lines.append('        };')
-        lines.append('')
-
     def emit_array(name, type_name, values, fmt):
         lines.append(f'        internal static readonly {type_name}[] {name} = new {type_name}[]')
         lines.append('        {')
@@ -1304,18 +1291,6 @@ def emit(output_path: Path, zip_name: str, catalog, operations, operation_parame
     lines.append(f'        private static readonly int[] CoordinateSridByCacheIndex = new int[] {{ {", ".join(str(ref_record[0]) for ref_record in catalog["ref_records"])} }};')
     lines.append('')
 
-    conversion_method_pool, conversion_method_index = build_string_pool([record[1] for record in catalog['conversion_records']])
-    conversion_parameter_pool, conversion_parameter_index = build_string_pool([record[1] for record in catalog['conversion_param_records']])
-    operation_method_pool, operation_method_index = build_string_pool([record[5] for record in operations])
-    operation_parameter_file_pool, operation_parameter_file_index = build_string_pool([record[6] for record in operations])
-    operation_parameter_pool, operation_parameter_index = build_string_pool([record[1] for record in operation_parameters])
-
-    emit_string_array('ConversionMethodNames', conversion_method_pool)
-    emit_string_array('ConversionParameterNames', conversion_parameter_pool)
-    emit_string_array('OperationMethodNames', operation_method_pool)
-    emit_string_array('OperationParameterFileNames', operation_parameter_file_pool)
-    emit_string_array('OperationParameterNames', operation_parameter_pool)
-
     emit_array('GeographicCrs', 'EpsgGeographicCrsRecord', catalog['geographic_records'], lambda v: f"{v[0]}, \"{esc(v[1])}\", {v[2]}, {v[3]}")
     emit_array('GeocentricCrs', 'EpsgGeocentricCrsRecord', catalog['geocentric_records'], lambda v: f"{v[0]}, \"{esc(v[1])}\", {v[2]}, {v[3]}")
     emit_array('ProjectedCrs', 'EpsgProjectedCrsRecord', catalog['projected_records'], lambda v: f"{v[0]}, \"{esc(v[1])}\", {v[2]}, {v[3]}, {v[4]}")
@@ -1327,19 +1302,18 @@ def emit(output_path: Path, zip_name: str, catalog, operations, operation_parame
     emit_array('PrimeMeridians', 'EpsgPrimeMeridianRecord', catalog['prime_meridian_records'], lambda v: f"{v[0]}, \"{esc(v[1])}\", {repr(v[2])}d, {v[3]}")
     emit_array('GeodeticDatums', 'EpsgGeodeticDatumRecord', catalog['geodetic_datum_records'], lambda v: f"{v[0]}, \"{esc(v[1])}\", {v[2]}, {v[3]}")
     emit_array('VerticalDatums', 'EpsgVerticalDatumRecord', catalog['vertical_datum_records'], lambda v: f"{v[0]}, \"{esc(v[1])}\"")
-    emit_array('Conversions', 'EpsgConversionRecord', catalog['conversion_records'], lambda v: f"{v[0]}, ConversionMethodNames[{conversion_method_index[v[1]]}], {v[2]}, {v[3]}")
-    emit_array('ConversionParameters', 'EpsgConversionParameterRecord', catalog['conversion_param_records'], lambda v: f"{v[0]}, ConversionParameterNames[{conversion_parameter_index[v[1]]}], {repr(v[2])}d")
+    emit_array('Conversions', 'EpsgConversionRecord', catalog['conversion_records'], lambda v: f"{v[0]}, \"{esc(v[1])}\", {v[2]}, {v[3]}")
+    emit_array('ConversionParameters', 'EpsgConversionParameterRecord', catalog['conversion_param_records'], lambda v: f"{v[0]}, \"{esc(v[1])}\", {repr(v[2])}d")
 
     def fmt_op(v):
         acc = 'double.NaN' if math.isnan(v[4]) else f'{repr(v[4])}d'
         return (
             f"(EpsgOperationType){v[0]}, {v[1]}, {v[2]}, {v[3]}, {acc}, "
-            f"OperationMethodNames[{operation_method_index[v[5]]}], "
-            f"OperationParameterFileNames[{operation_parameter_file_index[v[6]]}], {v[7]}, {v[8]}"
+            f"\"{esc(v[5])}\", \"{esc(v[6])}\", {v[7]}, {v[8]}"
         )
 
     emit_array('Operations', 'EpsgOperationRecord', operations, fmt_op)
-    emit_array('OperationParameters', 'EpsgOperationParameterRecord', operation_parameters, lambda v: f"{v[0]}, OperationParameterNames[{operation_parameter_index[v[1]]}], {repr(v[2])}d")
+    emit_array('OperationParameters', 'EpsgOperationParameterRecord', operation_parameters, lambda v: f"{v[0]}, \"{esc(v[1])}\", {repr(v[2])}d")
     emit_array('ExplicitOperations', 'EpsgExplicitOperationRecord', explicit_operations, lambda v: f"{v[0]}, {repr(v[1])}d, {repr(v[2])}d, {repr(v[3])}d, {repr(v[4])}d, {repr(v[5])}d, {repr(v[6])}d, {repr(v[7])}d")
 
     lines.append('        internal static bool TryGetCoordinateReference(int srid, out EpsgCoordinateReferenceRecord reference, out int cacheIndex)')
