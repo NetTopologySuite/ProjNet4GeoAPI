@@ -1,29 +1,26 @@
-# Engineering governance (Wave A)
+# Engineering governance
+
+This document defines the active engineering and quality gates for `ProjNET`.
 
 ## Public API baseline policy
 
 `src/ProjNet/PublicAPI.Shipped.txt` is the canonical public API baseline for the main `ProjNET` library.
 
 - Verification runs in `test/ProjNet.Tests/PublicApiBaselineTests.cs`.
-- The test fails when public API changes are detected.
-- This check is non-breaking for consumers and guards accidental API drift.
+- The baseline gate must stay green in regular validation.
+- Intentional API surface changes must update shipped/unshipped baselines in a reviewed commit.
 
-## Unit test framework policy
+### Approved baseline update flow
 
-All tests are executed on xUnit v3.2.2.
-
-- Test discovery/execution uses xUnit attributes (`[Fact]`, `[Theory]`, `[InlineData]`).
-- `dotnet test` is supported via `xunit.runner.visualstudio` (v3 adapter).
-- Existing test intent is preserved; compatibility/environment-dependent tests are skipped explicitly with reason.
-
-### Approved update flow
-
-Use this only when a public API change is intentional and reviewed:
+Use this only when a public API change is intentional and approved:
 
 1. Run baseline update:
-   - PowerShell: `$env:PROJNET_UPDATE_PUBLIC_API_BASELINE='1'; dotnet test .\test\ProjNet.Tests\ProjNET.Tests.csproj --filter PublicApiBaselineTests`
-2. Inspect and review changes in `src/ProjNet/PublicAPI.Shipped.txt`.
-3. Run full validation without the update variable:
+   - PowerShell:  
+     `$env:PROJNET_UPDATE_PUBLIC_API_BASELINE='1'; dotnet test .\test\ProjNet.Tests\ProjNET.Tests.csproj --filter PublicApiBaselineTests`
+2. Inspect and review changes in:
+   - `src/ProjNet/PublicAPI.Shipped.txt`
+   - `src/ProjNet/PublicAPI.Unshipped.txt`
+3. Re-run without update variable:
    - `Remove-Item Env:PROJNET_UPDATE_PUBLIC_API_BASELINE -ErrorAction Ignore`
    - `dotnet test .\test\ProjNet.Tests\ProjNET.Tests.csproj --filter PublicApiBaselineTests`
 
@@ -31,37 +28,47 @@ Use this only when a public API change is intentional and reviewed:
 
 `ProjNET` must continue to ship `netstandard2.0`.
 
-Current approved targets are:
+Approved target frameworks:
 
 - `netstandard2.0` (required shipping target)
-- `netstandard2.1` (additional target justified by runtime/API improvements while preserving broad compatibility through `netstandard2.0`)
+- `netstandard2.1`
+- `net8.0`
 
 Build policy is enforced in `src/ProjNet/ProjNET.csproj` via `ValidateTargetFrameworkPolicy`.
 
-## Obsolete usage compatibility guidance
+## Testing policy
 
-Obsolete APIs are allowed when all of the following are true:
+- Unit and integration tests run on xUnit v3.
+- Default validation command:
+  - `dotnet test .\test\ProjNet.Tests\ProjNET.Tests.csproj --tl:off -v minimal`
+- Exhaustive parity lane is opt-in:
+  - `$env:PROJNET_RUN_EXHAUSTIVE='1'; dotnet test .\test\ProjNet.Tests\ProjNET.Tests.csproj --filter "Category=ExhaustiveValidation"; Remove-Item Env:PROJNET_RUN_EXHAUSTIVE -ErrorAction Ignore`
 
-- A replacement API is clearly identified in the obsolete message.
-- Existing obsolete behavior remains functional for the deprecation window.
-- Removal is deferred to a major version change.
+## Code style and analyzers
 
-This keeps migration paths explicit and non-breaking for existing consumers.
+- `.editorconfig` is the primary style source of truth.
+- StyleCop analyzers are enabled repository-wide.
+- File-header diagnostics `SA1633`-`SA1638` are intentionally disabled to allow provenance-specific SPDX headers.
+- `stylecop.json` keeps XML header enforcement disabled (`xmlHeader: false`) for variable attribution scenarios.
+- Null checks should use pattern-style comparisons (`is null` / `is not null`) in new and touched code.
 
-## Analyzer and StyleCop quality gates
+## Documentation policy
 
-- Style policy baseline follows StyleCop 6.2.0 conventions; SDK-style build enforcement is implemented via `StyleCop.Analyzers`.
-- Roslyn analyzers are enabled solution-wide with maximum build strictness (`AnalysisLevel=latest`, `AnalysisMode=AllEnabledByDefault`, `WarningLevel=9999`, `EnforceCodeStyleInBuild=true`).
-- Style rules are enforced with `StyleCop.Analyzers`.
-- CI build does not downgrade warning level.
-- Warning suppression changes require explicit approval.
+- Public API changes should include XML documentation updates when applicable.
+- External web URLs should not be embedded in XML API docs unless required for legal/provenance context.
+- Modernization and milestone records are maintained in `docs/modernization/`.
 
-## PROJ parity fixture lanes
+## Licensing and attribution policy
 
-- Regenerate committed direct `proj2proj` parity fixtures:
-  - `pwsh .\tools\Generate-ProjReferenceFixtures.ps1`
-  - `pwsh .\tools\Generate-ProjReferenceFixtures.ps1 -OutputPath .\test\ProjNet.Tests\Generated\proj2proj-direct-parity-exhaustive-fixture.json -MaxCases 120`
-- Run default validation lane:
-  - `dotnet test .\ProjNet4GeoAPI.sln -v q`
-- Run exhaustive parity lane:
-  - PowerShell: `$env:PROJNET_RUN_EXHAUSTIVE='1'; dotnet test .\test\ProjNet.Tests\ProjNET.Tests.csproj --filter "Category=ExhaustiveValidation"; Remove-Item Env:PROJNET_RUN_EXHAUSTIVE -ErrorAction Ignore`
+- Project-level licensing and attribution references are maintained in:
+  - `LICENSES/`
+  - `NOTICE.md`
+- Source files use SPDX-style headers with provenance-specific attribution.
+
+## Deprecation and compatibility policy
+
+- Compatibility-first is the default: avoid breaking removals in active modernization waves.
+- Obsolete APIs are acceptable when:
+  - replacement guidance is explicit,
+  - behavior remains functional during deprecation window,
+  - removals are deferred to a major-version decision.
