@@ -118,6 +118,25 @@ Additional notable direct-dispatch gaps with existing runtime/factory support:
 
 These are runtime operation-dispatch parity items, not projection-class registration items.
 
+## Remaining gap table (M1 consolidated)
+
+| Identifier | C++ reference surface | .NET status | Classification | Notes |
+| --- | --- | --- | --- | --- |
+| `push` | pipeline stack op (`PROJ_HEAD`) | no direct pipeline dispatch | gap | Missing `+proj=push` branch in `TryCreateStepTransform`. |
+| `pop` | pipeline stack op (`PROJ_HEAD`) | no direct pipeline dispatch | gap | Missing `+proj=pop` branch in `TryCreateStepTransform`. |
+| `geogoffset` | transform op (`affine.cpp`) | no direct pipeline dispatch | gap | No `+proj=geogoffset` dispatch branch found. |
+| `molobadekas` | transform op (`helmert.cpp`) | no direct pipeline dispatch | partial | Helmert runtime exists; explicit `+proj=molobadekas` token dispatch is absent. |
+| `geoc` | geocentric latitude op (`PROJ_HEAD`) | no direct pipeline dispatch | gap | No explicit `+proj=geoc` token branch found. |
+| `affine` | transform op (`affine.cpp`) | runtime class exists | partial | `AffineTransform` + WKT path available, but no direct `+proj=affine` dispatch. |
+| `cart` | geodetic/cartesian conversion op (`PROJ_HEAD`) | runtime/factory path exists | partial | `GeocentricTransform` + factory composition available, but no direct `+proj=cart` dispatch. |
+| `geocent` | geocentric conversion op (`PROJ_HEAD`) | runtime/factory path exists | partial | Geocentric runtime exists, but no direct `+proj=geocent` dispatch. |
+
+Audit artifacts:
+
+- `docs/modernization/m1-projection-audit.md`
+- `docs/modernization/m1-transform-audit.md`
+- `docs/modernization/m1-pipeline-ops-audit.md`
+
 ## Validation linkage
 
 Recent parity-related validation evidence:
