@@ -25,27 +25,27 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical van der Grinten III projection (<c>vandg3</c>).
 /// </summary>
 [Serializable]
-internal class VanDerGrintenIIIProjection : MapProjection
+internal class VanDerGrinten3Projection : MapProjection
 {
     private const double Tolerance = 1e-10d;
 
     private readonly double radius;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="VanDerGrintenIIIProjection"/> class.
+    /// Initializes a new instance of the <see cref="VanDerGrinten3Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
-    public VanDerGrintenIIIProjection(IEnumerable<ProjectionParameter> parameters)
+    public VanDerGrinten3Projection(IEnumerable<ProjectionParameter> parameters)
         : this(parameters, null)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="VanDerGrintenIIIProjection"/> class.
+    /// Initializes a new instance of the <see cref="VanDerGrinten3Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public VanDerGrintenIIIProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public VanDerGrinten3Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
         : base(parameters, inverse)
     {
         this.Name = "Van_der_Grinten_III";
@@ -57,7 +57,7 @@ internal class VanDerGrintenIIIProjection : MapProjection
     {
         if (this.inverse is null)
         {
-            this.inverse = new VanDerGrintenIIIProjection(this.Parameters.ToProjectionParameter(), this);
+            this.inverse = new VanDerGrinten3Projection(this.Parameters.ToProjectionParameter(), this);
         }
 
         return this.inverse;
@@ -113,4 +113,5 @@ internal class VanDerGrintenIIIProjection : MapProjection
         throw new InvalidOperationException("van der Grinten III does not support inverse projection in this wave.");
     }
 }
+
 

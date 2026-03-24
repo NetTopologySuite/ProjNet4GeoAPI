@@ -25,27 +25,27 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical van der Grinten IV projection (<c>vandg4</c>).
 /// </summary>
 [Serializable]
-internal class VanDerGrintenIVProjection : MapProjection
+internal class VanDerGrinten4Projection : MapProjection
 {
     private const double Tolerance = 1e-10d;
 
     private readonly double radius;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="VanDerGrintenIVProjection"/> class.
+    /// Initializes a new instance of the <see cref="VanDerGrinten4Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
-    public VanDerGrintenIVProjection(IEnumerable<ProjectionParameter> parameters)
+    public VanDerGrinten4Projection(IEnumerable<ProjectionParameter> parameters)
         : this(parameters, null)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="VanDerGrintenIVProjection"/> class.
+    /// Initializes a new instance of the <see cref="VanDerGrinten4Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public VanDerGrintenIVProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public VanDerGrinten4Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
         : base(parameters, inverse)
     {
         this.Name = "Van_der_Grinten_IV";
@@ -57,7 +57,7 @@ internal class VanDerGrintenIVProjection : MapProjection
     {
         if (this.inverse is null)
         {
-            this.inverse = new VanDerGrintenIVProjection(this.Parameters.ToProjectionParameter(), this);
+            this.inverse = new VanDerGrinten4Projection(this.Parameters.ToProjectionParameter(), this);
         }
 
         return this.inverse;
@@ -126,4 +126,5 @@ internal class VanDerGrintenIVProjection : MapProjection
         throw new InvalidOperationException("van der Grinten IV does not support inverse projection in this wave.");
     }
 }
+
 

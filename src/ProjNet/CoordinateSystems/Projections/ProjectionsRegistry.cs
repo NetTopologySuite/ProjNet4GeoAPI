@@ -289,12 +289,12 @@ public class ProjectionsRegistry
         Register("vandergrinten", typeof(VanDerGrintenProjection));
         Register("van_der_grinten", typeof(VanDerGrintenProjection));
         Register("van_der_grinten_i", typeof(VanDerGrintenProjection));
-        Register("vandg2", typeof(VanDerGrintenIIProjection));
-        Register("van_der_grinten_ii", typeof(VanDerGrintenIIProjection));
-        Register("vandg3", typeof(VanDerGrintenIIIProjection));
-        Register("van_der_grinten_iii", typeof(VanDerGrintenIIIProjection));
-        Register("vandg4", typeof(VanDerGrintenIVProjection));
-        Register("van_der_grinten_iv", typeof(VanDerGrintenIVProjection));
+        Register("vandg2", typeof(VanDerGrinten2Projection));
+        Register("van_der_grinten_ii", typeof(VanDerGrinten2Projection));
+        Register("vandg3", typeof(VanDerGrinten3Projection));
+        Register("van_der_grinten_iii", typeof(VanDerGrinten3Projection));
+        Register("vandg4", typeof(VanDerGrinten4Projection));
+        Register("van_der_grinten_iv", typeof(VanDerGrinten4Projection));
         Register("wink1", typeof(WinkelIProjection));
         Register("winkel_i", typeof(WinkelIProjection));
         Register("wink2", typeof(WinkelIIProjection));
@@ -509,4 +509,5 @@ public class ProjectionsRegistry
         return null;
     }
 }
+
 

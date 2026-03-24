@@ -25,27 +25,27 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical van der Grinten II projection (<c>vandg2</c>).
 /// </summary>
 [Serializable]
-internal class VanDerGrintenIIProjection : MapProjection
+internal class VanDerGrinten2Projection : MapProjection
 {
     private const double Tolerance = 1e-10d;
 
     private readonly double radius;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="VanDerGrintenIIProjection"/> class.
+    /// Initializes a new instance of the <see cref="VanDerGrinten2Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
-    public VanDerGrintenIIProjection(IEnumerable<ProjectionParameter> parameters)
+    public VanDerGrinten2Projection(IEnumerable<ProjectionParameter> parameters)
         : this(parameters, null)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="VanDerGrintenIIProjection"/> class.
+    /// Initializes a new instance of the <see cref="VanDerGrinten2Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public VanDerGrintenIIProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public VanDerGrinten2Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
         : base(parameters, inverse)
     {
         this.Name = "Van_der_Grinten_II";
@@ -57,7 +57,7 @@ internal class VanDerGrintenIIProjection : MapProjection
     {
         if (this.inverse is null)
         {
-            this.inverse = new VanDerGrintenIIProjection(this.Parameters.ToProjectionParameter(), this);
+            this.inverse = new VanDerGrinten2Projection(this.Parameters.ToProjectionParameter(), this);
         }
 
         return this.inverse;
@@ -113,4 +113,5 @@ internal class VanDerGrintenIIProjection : MapProjection
         throw new InvalidOperationException("van der Grinten II does not support inverse projection in this wave.");
     }
 }
+
 
