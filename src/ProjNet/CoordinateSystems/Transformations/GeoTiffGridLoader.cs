@@ -13,7 +13,7 @@ using System.Text.RegularExpressions;
 using BitMiracle.LibTiff.Classic;
 
 /// <summary>
-/// Represents a documented type.
+/// Loads grid shift data from GeoTIFF files for use in coordinate transformations.
 /// </summary>
 internal static partial class GeoTiffGridLoader
 {
@@ -41,10 +41,10 @@ internal static partial class GeoTiffGridLoader
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Loads all horizontal grid shift pages from a GeoTIFF file.
     /// </summary>
-    /// <param name="path">The path value.</param>
-    /// <returns>The computed value.</returns>
+    /// <param name="path">Path to the GeoTIFF grid file.</param>
+    /// <returns>The list of horizontal grid shift grids parsed from the file.</returns>
     internal static IReadOnlyList<GeoTiffHGridShiftMathTransform.HorizontalGrid> LoadHorizontal(string path)
     {
         return LoadCore(path, GridMode.Horizontal)
@@ -54,10 +54,10 @@ internal static partial class GeoTiffGridLoader
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Loads all vertical grid shift pages from a GeoTIFF file.
     /// </summary>
-    /// <param name="path">The path value.</param>
-    /// <returns>The computed value.</returns>
+    /// <param name="path">Path to the GeoTIFF grid file.</param>
+    /// <returns>The list of vertical grid shift grids parsed from the file.</returns>
     internal static IReadOnlyList<GeoTiffVGridShiftMathTransform.VerticalGrid> LoadVertical(string path)
     {
         return LoadCore(path, GridMode.Vertical)
@@ -67,21 +67,21 @@ internal static partial class GeoTiffGridLoader
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Loads all XYZ grid shift pages from a GeoTIFF file, requiring metre units.
     /// </summary>
-    /// <param name="path">The path value.</param>
-    /// <returns>The computed value.</returns>
+    /// <param name="path">Path to the GeoTIFF grid file.</param>
+    /// <returns>The list of XYZ grid shift grids parsed from the file.</returns>
     internal static IReadOnlyList<GeoTiffXyzGridShiftMathTransform.XyzGrid> LoadXyz(string path)
     {
         return LoadXyz(path, requireMetreUnits: true);
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Loads all XYZ grid shift pages from a GeoTIFF file.
     /// </summary>
-    /// <param name="path">The path value.</param>
-    /// <param name="requireMetreUnits">Whether XYZ samples must be unit=metre.</param>
-    /// <returns>The computed value.</returns>
+    /// <param name="path">Path to the GeoTIFF grid file.</param>
+    /// <param name="requireMetreUnits">When <see langword="true"/>, only pages whose XYZ samples are in metres are included.</param>
+    /// <returns>The list of XYZ grid shift grids parsed from the file.</returns>
     internal static IReadOnlyList<GeoTiffXyzGridShiftMathTransform.XyzGrid> LoadXyz(string path, bool requireMetreUnits)
     {
         return LoadCore(path, GridMode.Xyz, requireMetreUnits)

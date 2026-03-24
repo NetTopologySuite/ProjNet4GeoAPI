@@ -32,7 +32,7 @@ internal enum TokenType
     Eof,
 
     /// <summary>
-    /// Indictaes that the token is white space (space, tab, newline).
+    /// Indicates that the token is white space (space, tab, newline).
     /// </summary>
     Whitespace,
 

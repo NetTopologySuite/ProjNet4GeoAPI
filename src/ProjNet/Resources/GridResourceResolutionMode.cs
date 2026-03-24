@@ -4,7 +4,7 @@
 namespace ProjNet.Resources;
 
 /// <summary>
-/// Represents the documented type.
+/// Specifies how grid resources are resolved by <see cref="GridResourceResolver"/>.
 /// </summary>
 internal enum GridResourceResolutionMode
 {

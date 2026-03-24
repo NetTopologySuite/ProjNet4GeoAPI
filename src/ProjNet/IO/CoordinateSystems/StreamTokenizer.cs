@@ -15,7 +15,7 @@ using System.Text;
 /// The StreamTokenizer class takes an input stream and parses it into "tokens", allowing the tokens to be read one at a time. The parsing process is controlled by a table and a number of flags that can be set to various states. The stream tokenizer can recognize identifiers, numbers, quoted strings, and various comment style.
 /// </summary>
 /// <remarks>
-/// This is a crude c# implementation of Java's <a href="http://java.sun.com/products/jdk/1.2/docs/api/java/io/StreamTokenizer.html">StreamTokenizer</a> class.
+/// This is a crude C# port of the Java <c>StreamTokenizer</c> class.
 /// </remarks>
 internal class StreamTokenizer
 {
@@ -61,12 +61,12 @@ internal class StreamTokenizer
     public bool IgnoreWhitespace => this.ignoreWhitespace;
 
     /// <summary>
-    /// If the current token is a number, this field contains the value of that number.
+    /// Parses and returns the current token as a double-precision floating-point number.
     /// </summary>
-    /// <returns>The computed value.</returns>
     /// <remarks>
-    /// If the current token is a number, this field contains the value of that number. The current token is a number when the value of the ttype field is TT_NUMBER.
+    /// The current token must be of type <see cref="TokenType.Number"/>; otherwise an <see cref="ArgumentException"/> is thrown.
     /// </remarks>
+    /// <returns>The numeric value of the current token.</returns>
     /// <exception cref="FormatException">Current token is not a number in a valid format.</exception>
     public double GetNumericValue()
     {
@@ -86,15 +86,15 @@ internal class StreamTokenizer
     }
 
     /// <summary>
-    /// If the current token is a word token, this field contains a string giving the characters of the word token.
+    /// Returns the text content of the current token.
     /// </summary>
-    /// <returns>The computed value.</returns>
+    /// <returns>The string value of the current token.</returns>
     public string GetStringValue() => this.currentToken;
 
     /// <summary>
     /// Gets the token type of the current token.
     /// </summary>
-    /// <returns>The transformation result.</returns>
+    /// <returns>The <see cref="TokenType"/> of the current token.</returns>
     public TokenType GetTokenType() => this.currentTokenType;
 
     /// <summary>
@@ -252,9 +252,9 @@ internal class StreamTokenizer
     }
 
     /// <summary>
-    /// Returns next token that is not whitespace.
+    /// Returns the next token that is not whitespace.
     /// </summary>
-    /// <returns>The transformation result.</returns>
+    /// <returns>The <see cref="TokenType"/> of the next non-whitespace token.</returns>
     private TokenType NextNonWhitespaceToken()
     {
         var tokenType = this.NextTokenAny();

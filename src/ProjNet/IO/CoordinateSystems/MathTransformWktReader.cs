@@ -13,7 +13,7 @@ using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Creates an math transform based on the supplied Well Known Text (WKT).
+/// Creates a <see cref="MathTransform"/> from a Well Known Text (WKT) string.
 /// </summary>
 public static class MathTransformWktReader
 {
@@ -44,10 +44,10 @@ public static class MathTransformWktReader
     }
 
     /// <summary>
-    /// Reads math transform from using current token from the specified tokenizer.
+    /// Reads a math transform from the current position of the specified tokenizer.
     /// </summary>
-    /// <param name="tokenizer">The tokenizer parameter.</param>
-    /// <returns>The transformation result.</returns>
+    /// <param name="tokenizer">The WKT stream tokenizer positioned at or before a <c>PARAM_MT</c> token.</param>
+    /// <returns>The parsed <see cref="MathTransform"/>.</returns>
     internal static MathTransform ReadMathTransform(WktStreamTokenizer tokenizer)
     {
         if (tokenizer.GetStringValue() != "PARAM_MT")

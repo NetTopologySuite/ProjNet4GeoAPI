@@ -13,7 +13,7 @@ using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.Data;
 
 /// <summary>
-/// A coordinate system services class.
+/// Provides coordinate system lookup and transformation creation backed by a registry of SRID-keyed systems.
 /// </summary>
 public class CoordinateSystemServices // : ICoordinateSystemServices
 {
@@ -27,10 +27,10 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     private readonly System.Threading.Tasks.Task initializationTask;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="CoordinateSystemServices"/> class.
-    /// Creates an instance of this class.
+    /// Initializes a new instance of the <see cref="CoordinateSystemServices"/> class
+    /// using the specified factories and the default definition provider.
     /// </summary>
-    /// <param name="coordinateSystemFactory">The coordinate sequence factory to use.</param>
+    /// <param name="coordinateSystemFactory">The coordinate system factory to use.</param>
     /// <param name="coordinateTransformationFactory">The coordinate transformation factory to use.</param>
     public CoordinateSystemServices(
         CoordinateSystemFactory coordinateSystemFactory,
@@ -40,18 +40,18 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="CoordinateSystemServices"/> class.
-    /// Creates an instance of this class.
+    /// Initializes a new instance of the <see cref="CoordinateSystemServices"/> class
+    /// pre-populated from the supplied SRID-to-WKT definition pairs.
     /// </summary>
-    /// <param name="definitions">An enumeration of coordinate system definitions (WKT).</param>
+    /// <param name="definitions">An enumeration of SRID-to-WKT coordinate system definitions.</param>
     public CoordinateSystemServices(IEnumerable<KeyValuePair<int, string>> definitions)
         : this(new CoordinateSystemFactory(), new CoordinateTransformationFactory(), definitions, null)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="CoordinateSystemServices"/> class.
-    /// Creates an instance of this class.
+    /// Initializes a new instance of the <see cref="CoordinateSystemServices"/> class
+    /// using default factories and the default definition provider.
     /// </summary>
     public CoordinateSystemServices()
         : this(new CoordinateSystemFactory(), new CoordinateTransformationFactory(), null, null)
@@ -59,22 +59,22 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="CoordinateSystemServices"/> class.
-    /// Creates an instance of this class with a managed definition provider.
+    /// Initializes a new instance of the <see cref="CoordinateSystemServices"/> class
+    /// using the supplied definition provider and default factories.
     /// </summary>
-    /// <param name="definitionProvider">Managed coordinate system definition provider.</param>
+    /// <param name="definitionProvider">Coordinate system definition provider that supplies SRID definitions.</param>
     public CoordinateSystemServices(ICoordinateSystemDefinitionProvider definitionProvider)
         : this(new CoordinateSystemFactory(), new CoordinateTransformationFactory(), null, definitionProvider)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="CoordinateSystemServices"/> class.
-    /// Creates an instance of this class.
+    /// Initializes a new instance of the <see cref="CoordinateSystemServices"/> class
+    /// pre-populated from the supplied SRID-to-WKT definition pairs.
     /// </summary>
-    /// <param name="coordinateSystemFactory">The coordinate sequence factory to use.</param>
+    /// <param name="coordinateSystemFactory">The coordinate system factory to use.</param>
     /// <param name="coordinateTransformationFactory">The coordinate transformation factory to use.</param>
-    /// <param name="enumeration">An enumeration of coordinate system definitions (WKT).</param>
+    /// <param name="enumeration">An enumeration of SRID-to-WKT coordinate system definitions.</param>
     public CoordinateSystemServices(
         CoordinateSystemFactory coordinateSystemFactory,
         CoordinateTransformationFactory coordinateTransformationFactory,
@@ -84,13 +84,13 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="CoordinateSystemServices"/> class.
-    /// Creates an instance of this class.
+    /// Initializes a new instance of the <see cref="CoordinateSystemServices"/> class
+    /// with explicit control over all dependencies.
     /// </summary>
-    /// <param name="coordinateSystemFactory">The coordinate sequence factory to use.</param>
+    /// <param name="coordinateSystemFactory">The coordinate system factory to use.</param>
     /// <param name="coordinateTransformationFactory">The coordinate transformation factory to use.</param>
-    /// <param name="enumeration">An enumeration of coordinate system definitions (WKT).</param>
-    /// <param name="definitionProvider">Managed coordinate system definition provider used when <paramref name="enumeration"/> is null.</param>
+    /// <param name="enumeration">An enumeration of SRID-to-WKT coordinate system definitions; when <see langword="null"/>, <paramref name="definitionProvider"/> is used instead.</param>
+    /// <param name="definitionProvider">Definition provider used when <paramref name="enumeration"/> is <see langword="null"/>; defaults to <see cref="ManagedCoordinateSystemDefinitionProvider"/> when <see langword="null"/>.</param>
     public CoordinateSystemServices(
         CoordinateSystemFactory coordinateSystemFactory,
         CoordinateTransformationFactory coordinateTransformationFactory,
@@ -133,7 +133,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     }
 
     /// <summary>
-    /// Gets count.
+    /// Gets the number of coordinate systems registered in this instance.
     /// </summary>
     protected int Count
     {
@@ -145,10 +145,10 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     }
 
     /// <summary>
-    /// Returns the coordinate system by <paramref name="srid" /> identifier.
+    /// Returns the coordinate system registered under the specified SRID.
     /// </summary>
-    /// <param name="srid">The initialization for the coordinate system.</param>
-    /// <returns>The coordinate system.</returns>
+    /// <param name="srid">The SRID of the coordinate system.</param>
+    /// <returns>The coordinate system, or <see langword="null"/> if not found.</returns>
     public CoordinateSystem GetCoordinateSystem(int srid)
     {
         this.WaitForInitialization();
@@ -158,9 +158,9 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     /// <summary>
     /// Tries to get a coordinate system by SRID.
     /// </summary>
-    /// <param name="srid">The SRID value.</param>
-    /// <param name="coordinateSystem">The coordinate system if found; otherwise <c>null</c>.</param>
-    /// <returns><c>true</c> if a coordinate system was found; otherwise <c>false</c>.</returns>
+    /// <param name="srid">The SRID of the coordinate system.</param>
+    /// <param name="coordinateSystem">The coordinate system if found; otherwise <see langword="null"/>.</param>
+    /// <returns><see langword="true"/> if a coordinate system was found; otherwise <see langword="false"/>.</returns>
     public bool TryGetCoordinateSystem(int srid, out CoordinateSystem coordinateSystem)
     {
         this.WaitForInitialization();
@@ -189,8 +189,8 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     /// </summary>
     /// <param name="authority">The authority name.</param>
     /// <param name="code">The authority code.</param>
-    /// <param name="coordinateSystem">The coordinate system if found; otherwise <c>null</c>.</param>
-    /// <returns><c>true</c> if a coordinate system was found; otherwise <c>false</c>.</returns>
+    /// <param name="coordinateSystem">The coordinate system if found; otherwise <see langword="null"/>.</param>
+    /// <returns><see langword="true"/> if a coordinate system was found; otherwise <see langword="false"/>.</returns>
     public bool TryGetCoordinateSystem(string authority, long code, out CoordinateSystem coordinateSystem)
     {
         coordinateSystem = null;
@@ -215,11 +215,11 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     }
 
     /// <summary>
-    /// Method to get the identifier, by which this coordinate system can be accessed.
+    /// Returns the SRID under which the coordinate system identified by <paramref name="authority"/> and <paramref name="authorityCode"/> is registered.
     /// </summary>
     /// <param name="authority">The authority name.</param>
-    /// <param name="authorityCode">The code assigned by <paramref name="authority" />.</param>
-    /// <returns>The identifier or. <value>null</value></returns>
+    /// <param name="authorityCode">The code assigned by <paramref name="authority"/>.</param>
+    /// <returns>The SRID, or <see langword="null"/> if no matching coordinate system is registered.</returns>
     public int? GetSRID(string authority, long authorityCode)
     {
         var key = new CoordinateSystemKey(authority, authorityCode);
@@ -234,12 +234,12 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     }
 
     /// <summary>
-    /// Method to create a coordinate transformation between two spatial reference systems, defined by their identifiers.
+    /// Creates a coordinate transformation between two spatial reference systems identified by their SRIDs.
     /// </summary>
-    /// <remarks>This is a convenience function for <see cref="CreateTransformation(CoordinateSystem, CoordinateSystem)" />.</remarks>
-    /// <param name="sourceSrid">The identifier for the source spatial reference system.</param>
-    /// <param name="targetSrid">The identifier for the target spatial reference system.</param>
-    /// <returns>A coordinate transformation, <value>null</value> if no transformation could be created.</returns>
+    /// <remarks>This is a convenience overload for <see cref="CreateTransformation(CoordinateSystem, CoordinateSystem)"/>.</remarks>
+    /// <param name="sourceSrid">The SRID of the source spatial reference system.</param>
+    /// <param name="targetSrid">The SRID of the target spatial reference system.</param>
+    /// <returns>A coordinate transformation, or <see langword="null"/> if no transformation could be created.</returns>
     public ICoordinateTransformation CreateTransformation(int sourceSrid, int targetSrid)
     {
         return this.CreateTransformation(
@@ -248,28 +248,28 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     }
 
     /// <summary>
-    /// Method to create a coordinate transformation between two spatial reference systems.
+    /// Creates a coordinate transformation between two spatial reference systems.
     /// </summary>
     /// <param name="source">The source spatial reference system.</param>
     /// <param name="target">The target spatial reference system.</param>
-    /// <returns>A coordinate transformation, <value>null</value> if no transformation could be created.</returns>
+    /// <returns>A coordinate transformation, or <see langword="null"/> if no transformation could be created.</returns>
     public ICoordinateTransformation CreateTransformation(CoordinateSystem source, CoordinateSystem target) => this.ctFactory.CreateFromCoordinateSystems(source, target);
 
     /// <summary>
-    /// RemoveCoordinateSystem.
+    /// This operation is not supported.
     /// </summary>
-    /// <param name="srid">The srid parameter.</param>
-    /// <returns>The transformation result.</returns>
-    /// <exception cref="NotSupportedException">Thrown because removing coordinate systems is not supported by this service.</exception>
+    /// <param name="srid">The SRID of the coordinate system to remove.</param>
+    /// <returns>This method never returns normally.</returns>
+    /// <exception cref="NotSupportedException">Always thrown; removing coordinate systems is not supported.</exception>
     public bool RemoveCoordinateSystem(int srid)
     {
         throw new NotSupportedException();
     }
 
     /// <summary>
-    /// GetEnumerator.
+    /// Returns an enumerator that iterates over all registered SRID–coordinate-system pairs.
     /// </summary>
-    /// <returns>The transformation result.</returns>
+    /// <returns>An enumerator over the registered SRID-to-coordinate-system mappings.</returns>
     public IEnumerator<KeyValuePair<int, CoordinateSystem>> GetEnumerator()
     {
         this.WaitForInitialization();
@@ -277,10 +277,10 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     }
 
     /// <summary>
-    /// AddCoordinateSystem.
+    /// Registers a coordinate system under the specified SRID, replacing any existing entry for that SRID.
     /// </summary>
-    /// <param name="srid">The srid parameter.</param>
-    /// <param name="coordinateSystem">The coordinateSystem parameter.</param>
+    /// <param name="srid">The SRID key.</param>
+    /// <param name="coordinateSystem">The coordinate system to register.</param>
     protected void AddCoordinateSystem(int srid, CoordinateSystem coordinateSystem)
     {
         lock (((IDictionary)this.csBySrid).SyncRoot)
@@ -313,10 +313,10 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     }
 
     /// <summary>
-    /// AddCoordinateSystem.
+    /// Registers a coordinate system using its own <see cref="IInfo.AuthorityCode"/> as the SRID.
     /// </summary>
-    /// <param name="coordinateSystem">The coordinateSystem parameter.</param>
-    /// <returns>The transformation result.</returns>
+    /// <param name="coordinateSystem">The coordinate system to register.</param>
+    /// <returns>The SRID under which the coordinate system was registered.</returns>
     protected virtual int AddCoordinateSystem(CoordinateSystem coordinateSystem)
     {
         if (coordinateSystem is null)
@@ -331,7 +331,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     }
 
     /// <summary>
-    /// Clear.
+    /// Removes all registered coordinate systems.
     /// </summary>
     protected void Clear()
     {

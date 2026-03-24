@@ -8,7 +8,8 @@ using System.Collections.Generic;
 using System.IO;
 
 /// <summary>
-/// Represents the documented type.
+/// Resolves named grid resources to local file paths, searching local directories first
+/// and optionally falling back to network retrieval via an <see cref="IGridResourceFetchClient"/>.
 /// </summary>
 internal sealed class GridResourceResolver
 {
@@ -22,8 +23,8 @@ internal sealed class GridResourceResolver
     /// <summary>
     /// Initializes a new instance of the <see cref="GridResourceResolver"/> class.
     /// </summary>
-    /// <param name="options">The options value.</param>
-    /// <param name="fetchClient">The fetchClient value.</param>
+    /// <param name="options">Resolution options including local search directories and cache settings.</param>
+    /// <param name="fetchClient">Optional fetch client used for network retrieval; defaults to a no-op client when <see langword="null"/>.</param>
     internal GridResourceResolver(GridResourceResolverOptions options, IGridResourceFetchClient fetchClient = null)
     {
         this.options = options ?? throw new ArgumentNullException(nameof(options));
@@ -31,11 +32,16 @@ internal sealed class GridResourceResolver
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Attempts to resolve a named grid resource to an absolute local file path.
     /// </summary>
-    /// <param name="gridName">The gridName value.</param>
-    /// <param name="resolvedPath">The resolvedPath value.</param>
-    /// <returns>The computed value.</returns>
+    /// <remarks>
+    /// Resolution order: in-memory cache, local file system (rooted path or configured directories),
+    /// and network retrieval when <see cref="GridResourceResolutionMode.LocalThenNetwork"/> is active.
+    /// Successful resolutions are cached for subsequent calls.
+    /// </remarks>
+    /// <param name="gridName">The grid resource name or rooted file path to resolve.</param>
+    /// <param name="resolvedPath">The absolute local path when resolution succeeds; otherwise <see langword="null"/>.</param>
+    /// <returns><see langword="true"/> when the grid was located; otherwise <see langword="false"/>.</returns>
     internal bool TryResolve(string gridName, out string resolvedPath)
     {
         if (string.IsNullOrWhiteSpace(gridName))

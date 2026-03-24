@@ -21,8 +21,8 @@ internal class WktStreamTokenizer : StreamTokenizer
     /// <summary>
     /// Initializes a new instance of the <see cref="WktStreamTokenizer"/> class.
     /// </summary>
-    /// <remarks>The WktStreamTokenizer class ais in reading WKT streams.</remarks>
-    /// <param name="reader">A TextReader that contains. </param>
+    /// <remarks>Whitespace is ignored by default; internal whitespace inside quoted strings is preserved.</remarks>
+    /// <param name="reader">A <see cref="TextReader"/> providing the WKT character stream.</param>
     public WktStreamTokenizer(TextReader reader)
         : base(reader, true)
     {
@@ -97,7 +97,7 @@ internal class WktStreamTokenizer : StreamTokenizer
     }
 
     /// <summary>
-    /// Reads an closer.
+    /// Reads a closing bracket that matches the type used by the corresponding opener.
     /// </summary>
     /// <param name="expectedBracket">The expected bracket type.</param>
     public void ReadCloser(WktBracket expectedBracket)
