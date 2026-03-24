@@ -13,7 +13,7 @@ using Xunit;
 /// <summary>
 /// Validates M8 runtime parity for <c>tinshift</c>.
 /// </summary>
-public class Phase8TinShiftRuntimeTests
+public class TinShiftRuntimeTests
 {
     /// <summary>
     /// Gets invalid creation scenarios.
@@ -356,3 +356,4 @@ public class Phase8TinShiftRuntimeTests
         }
     }
 }
+

@@ -11,7 +11,7 @@ using Xunit;
 /// <summary>
 /// Validates M8 runtime parity for <c>topocentric</c>.
 /// </summary>
-public class Phase8TopocentricRuntimeTests
+public class TopocentricRuntimeTests
 {
     private const string TopocentricGeocentricOriginOperation = "+proj=topocentric +ellps=WGS84 +X_0=3652755.3058 +Y_0=319574.6799 +Z_0=5201547.3536";
     private const string TopocentricGeographicOriginOperation = "+proj=topocentric +ellps=WGS84 +lon_0=5 +lat_0=55 +h_0=200";
@@ -101,3 +101,4 @@ public class Phase8TopocentricRuntimeTests
 
     private static double[] CreatePoint(double x, double y, double z) => [x, y, z];
 }
+

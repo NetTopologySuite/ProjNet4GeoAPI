@@ -11,7 +11,7 @@ using Xunit;
 /// <summary>
 /// Validates M8 runtime parity for <c>vertoffset</c>.
 /// </summary>
-public class Phase8VertOffsetRuntimeTests
+public class VertOffsetRuntimeTests
 {
     private const string BuiltinsOperation = "+proj=vertoffset +lat_0=46.9166666666666666 +lon_0=8.183333333333334 +dh=-0.245 +slope_lat=-0.210 +slope_lon=-0.032 +ellps=GRS80";
 
@@ -89,3 +89,4 @@ public class Phase8VertOffsetRuntimeTests
 
     private static double[] CreatePoint(double x, double y, double z) => [x, y, z];
 }
+

@@ -11,7 +11,7 @@ using Xunit;
 /// <summary>
 /// Validates M8 runtime parity for <c>helmert</c>.
 /// </summary>
-public class Phase8HelmertRuntimeTests
+public class HelmertRuntimeTests
 {
     /// <summary>
     /// Verifies coordinate-frame Helmert vector from PROJ <c>more_builtins.gie</c>.
@@ -174,3 +174,4 @@ public class Phase8HelmertRuntimeTests
 
     private static double[] CreatePoint(double x, double y, double z, double t) => [x, y, z, t];
 }
+

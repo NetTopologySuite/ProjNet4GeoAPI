@@ -11,7 +11,7 @@ using Xunit;
 /// <summary>
 /// Validates M8 runtime parity for <c>molodensky</c>.
 /// </summary>
-public class Phase8MolodenskyRuntimeTests
+public class MolodenskyRuntimeTests
 {
     /// <summary>
     /// Verifies abridged Molodensky vector from PROJ <c>more_builtins.gie</c>.
@@ -106,3 +106,4 @@ public class Phase8MolodenskyRuntimeTests
 
     private static double[] CreatePoint(double x, double y, double z) => [x, y, z];
 }
+

@@ -13,7 +13,7 @@ using Xunit;
 /// <summary>
 /// Validates M8 runtime parity for <c>deformation</c>.
 /// </summary>
-public class Phase8DeformationRuntimeTests
+public class DeformationRuntimeTests
 {
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
@@ -205,3 +205,4 @@ public class Phase8DeformationRuntimeTests
         }
     }
 }
+

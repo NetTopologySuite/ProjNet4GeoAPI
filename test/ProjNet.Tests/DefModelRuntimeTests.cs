@@ -14,7 +14,7 @@ using Xunit;
 /// <summary>
 /// Validates M8 runtime parity for <c>defmodel</c>.
 /// </summary>
-public class Phase8DefModelRuntimeTests
+public class DefModelRuntimeTests
 {
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
@@ -289,3 +289,4 @@ public class Phase8DefModelRuntimeTests
         }
     }
 }
+

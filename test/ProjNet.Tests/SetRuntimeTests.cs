@@ -11,7 +11,7 @@ using Xunit;
 /// <summary>
 /// Validates M8 runtime parity for <c>set</c>.
 /// </summary>
-public class Phase8SetRuntimeTests
+public class SetRuntimeTests
 {
     /// <summary>
     /// Verifies that empty set operation behaves as identity.
@@ -120,3 +120,4 @@ public class Phase8SetRuntimeTests
 
     private static double[] CreatePoint(double x, double y, double z) => [x, y, z];
 }
+

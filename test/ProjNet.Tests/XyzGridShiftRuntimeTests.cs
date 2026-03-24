@@ -14,7 +14,7 @@ using Xunit;
 /// <summary>
 /// Validates M8 runtime parity for <c>xyzgridshift</c>.
 /// </summary>
-public class Phase8XyzGridShiftRuntimeTests
+public class XyzGridShiftRuntimeTests
 {
     private const string GridPlaceholder = "{GRID}";
 
@@ -241,3 +241,4 @@ public class Phase8XyzGridShiftRuntimeTests
     }
 
 }
+
