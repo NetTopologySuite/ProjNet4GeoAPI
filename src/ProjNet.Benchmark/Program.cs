@@ -43,18 +43,16 @@ internal static class Program
             lst.AddRange(wkt.Read().SelectMany(g => g.Coordinates));
         }
 
-        using (var writer = new BinaryWriter(new GZipStream(File.Create(Path.Combine(TestDataPath, "coords.dat.gz")), CompressionLevel.Optimal)))
+        using var writer = new BinaryWriter(new GZipStream(File.Create(Path.Combine(TestDataPath, "coords.dat.gz")), CompressionLevel.Optimal));
+        writer.Write(lst.Count);
+        foreach (var coord in lst)
         {
-            writer.Write(lst.Count);
-            foreach (var coord in lst)
-            {
-                writer.Write(coord.X);
-            }
+            writer.Write(coord.X);
+        }
 
-            foreach (var coord in lst)
-            {
-                writer.Write(coord.Y);
-            }
+        foreach (var coord in lst)
+        {
+            writer.Write(coord.Y);
         }
     }
 #endif

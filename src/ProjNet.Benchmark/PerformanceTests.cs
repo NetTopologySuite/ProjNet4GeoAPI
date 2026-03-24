@@ -107,24 +107,22 @@ public class PerformanceTests
     {
         string currentFolderPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
         string fullPathToData = Path.Combine(currentFolderPath, "coords.dat.gz");
-        using (var reader = new BinaryReader(new GZipStream(File.OpenRead(fullPathToData), CompressionMode.Decompress)))
+        using var reader = new BinaryReader(new GZipStream(File.OpenRead(fullPathToData), CompressionMode.Decompress));
+        this.cnt = reader.ReadInt32();
+
+        this.xs = new double[this.cnt];
+        this.ys = new double[this.cnt];
+        this.xys = new XY[this.cnt];
+        this.xyzs = new XYZ[this.cnt];
+
+        for (int i = 0; i < this.cnt; i++)
         {
-            this.cnt = reader.ReadInt32();
+            this.xs[i] = this.xys[i].X = this.xyzs[i].X = reader.ReadDouble();
+        }
 
-            this.xs = new double[this.cnt];
-            this.ys = new double[this.cnt];
-            this.xys = new XY[this.cnt];
-            this.xyzs = new XYZ[this.cnt];
-
-            for (int i = 0; i < this.cnt; i++)
-            {
-                this.xs[i] = this.xys[i].X = this.xyzs[i].X = reader.ReadDouble();
-            }
-
-            for (int i = 0; i < this.cnt; i++)
-            {
-                this.ys[i] = this.xys[i].Y = this.xyzs[i].Y = reader.ReadDouble();
-            }
+        for (int i = 0; i < this.cnt; i++)
+        {
+            this.ys[i] = this.xys[i].Y = this.xyzs[i].Y = reader.ReadDouble();
         }
 
         // transforms happen in-place, so at the start of every iteration, we copy the source
