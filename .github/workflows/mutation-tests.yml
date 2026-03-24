@@ -2,6 +2,14 @@ name: Mutation Tests
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+    - develop
+    paths:
+    - 'src/**'
+    - 'test/**'
+    - 'stryker-config.json'
+    - '.github/workflows/mutation-tests.yml'
 
 jobs:
   mutation:
@@ -15,10 +23,13 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: 8
+        dotnet-version: 8.0.x
 
     - name: Restore tools
       run: dotnet tool restore
+
+    - name: Restore dependencies
+      run: dotnet restore ProjNet4GeoAPI.sln
 
     - name: Run mutation tests
       run: dotnet dotnet-stryker --config-file stryker-config.json
