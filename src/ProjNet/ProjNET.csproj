@@ -3,7 +3,7 @@
 
   <PropertyGroup>
     <RootNamespace>ProjNet</RootNamespace>
-    <TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0</TargetFrameworks>
     <SignAssembly>true</SignAssembly>
 	  <EnablePackageValidation>true</EnablePackageValidation>
 	  <PackageValidationBaselineVersion>2.1.0</PackageValidationBaselineVersion>
@@ -13,7 +13,7 @@
 
   <PropertyGroup Label="Target Framework Policy">
     <RequiredShippingTargetFramework>netstandard2.0</RequiredShippingTargetFramework>
-    <ApprovedTargetFrameworks>netstandard2.0;netstandard2.1</ApprovedTargetFrameworks>
+    <ApprovedTargetFrameworks>netstandard2.0;netstandard2.1;net8.0</ApprovedTargetFrameworks>
   </PropertyGroup>
 
   <Target Name="ValidateTargetFrameworkPolicy" BeforeTargets="PrepareForBuild">
