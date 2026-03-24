@@ -11,7 +11,7 @@ using Xunit;
 /// <summary>
 /// Represents the documented type.
 /// </summary>
-public class Phase9ConicProjectionSupportTests
+public class ConicProjectionSupportTests
 {
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
@@ -139,7 +139,7 @@ public class Phase9ConicProjectionSupportTests
     private static string BuildProjectedWkt(string projectionName)
     {
         return
-            $"PROJCS[\"Phase9-{projectionName}\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"standard_parallel_1\",20],PARAMETER[\"standard_parallel_2\",50],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1]]";
+            $"PROJCS[\"Projection-{projectionName}\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"standard_parallel_1\",20],PARAMETER[\"standard_parallel_2\",50],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1]]";
     }
 
     private static double[] CreatePoint(double x, double y)
@@ -147,3 +147,4 @@ public class Phase9ConicProjectionSupportTests
         return new[] { x, y };
     }
 }
+
