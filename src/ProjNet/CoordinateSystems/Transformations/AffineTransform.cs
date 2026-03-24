@@ -10,13 +10,12 @@ using System.Globalization;
 using System.Text;
 
 /// <summary>
-/// Represents affine math transform which transforms input coordinates to target using affine transformation matrix. Dimensionality might change.
+/// Represents an affine math transform that transforms input coordinates to target coordinates using an affine transformation matrix. Dimensionality may change.
 /// </summary>
 /// <remarks>If the transform's input dimension is M, and output dimension is N, then the matrix will have size [N+1][M+1].
 /// The +1 in the matrix dimensions allows the matrix to do a shift, as well as a rotation.
 /// The [M][j] element of the matrix will be the j'th ordinate of the moved origin.
 /// The [i][N] element of the matrix will be 0 for i less than M, and 1 for i equals M.</remarks>
-/// <seealso href="http://en.wikipedia.org/wiki/Affine_transformation"/>
 [Serializable]
 public class AffineTransform : MathTransform
 {
@@ -43,8 +42,7 @@ public class AffineTransform : MathTransform
     private MathTransform inverse;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AffineTransform"/> class.
-    /// Creates instance of 2D affine transform (source dimensionality 2, target dimensionality 2) using the specified values.
+    /// Initializes a new instance of the <see cref="AffineTransform"/> class with a 2D affine transform.
     /// </summary>
     /// <param name="m00">Value for row 0, column 0 - AKA ScaleX.</param>
     /// <param name="m01">Value for row 0, column 1 - AKA ShearX.</param>
@@ -68,13 +66,12 @@ public class AffineTransform : MathTransform
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="AffineTransform"/> class.
-    /// Creates instance of affine transform using the specified matrix.
+    /// Initializes a new instance of the <see cref="AffineTransform"/> class using the specified transformation matrix.
     /// </summary>
     /// <remarks>If the transform's input dimension is M, and output dimension is N, then the matrix will have size [N+1][M+1].
     /// The +1 in the matrix dimensions allows the matrix to do a shift, as well as a rotation. The [M][j] element of the matrix will be the j'th ordinate of the moved origin. The [i][N] element of the matrix will be 0 for i less than M, and 1 for i equals M.</remarks>
     ///
-    /// <param name="matrix">Matrix used to create afiine transform.</param>
+    /// <param name="matrix">Matrix used to create the affine transform.</param>
     public AffineTransform(double[,] matrix)
     {
         // check validity
@@ -102,9 +99,8 @@ public class AffineTransform : MathTransform
     }
 
     /// <summary>
-    /// Gets a Well-Known text representation of this affine math transformation.
+    /// Gets a Well-Known Text representation of this affine math transformation.
     /// </summary>
-    /// <value>The value.</value>
     public override string WKT
     {
         get
@@ -134,17 +130,12 @@ public class AffineTransform : MathTransform
     /// <summary>
     /// Gets an XML representation of this affine transformation.
     /// </summary>
-    /// <value>The value.</value>
     public override string XML => throw new NotImplementedException("The method or operation is not implemented.");
 
-    /// <summary>
-    /// Gets the dimension of input points.
-    /// </summary>
+    /// <inheritdoc />
     public override int DimSource => this.dimSource;
 
-    /// <summary>
-    /// Gets the dimension of output points.
-    /// </summary>
+    /// <inheritdoc />
     public override int DimTarget => this.dimTarget;
 
     /// <summary>
@@ -179,9 +170,9 @@ public class AffineTransform : MathTransform
     }
 
     /// <summary>
-    /// Returns this affine transform as an affine transform matrix.
+    /// Returns this affine transform as a cloned transformation matrix.
     /// </summary>
-    /// <returns>The transformation result.</returns>
+    /// <returns>A copy of the internal transformation matrix with dimensions [<see cref="DimTarget"/>+1][<see cref="DimSource"/>+1].</returns>
     public double[,] GetMatrix()
     {
         return (double[,])this.transformMatrix.Clone();
@@ -213,15 +204,13 @@ public class AffineTransform : MathTransform
     }
 
     /// <summary>
-    /// Given L,U,P and b solve for x.
-    /// Input the L and U matrices as a single matrix LU.
-    /// Return the solution as a double[].
-    /// LU will be a n+1xm+1 matrix where the first row and columns are zero.
-    /// This is for ease of computation and consistency with Cormen et al.
-    /// pseudocode.
+    /// Given L, U, P and b, solves for x using forward and back substitution.
+    /// Input the L and U matrices as a single combined LU matrix.
+    /// Returns the solution as a <see cref="double"/> array.
+    /// LU will be a n+1 x m+1 matrix where the first row and columns are zero.
+    /// This is for ease of computation and consistency with Cormen et al. pseudocode.
     /// The pi array represents the permutation matrix.
     /// </summary>
-    /// <seealso href="http://www.rkinteractive.com/blogs/SoftwareDevelopment/post/2013/05/14/Algorithms-In-C-Solving-A-System-Of-Linear-Equations.aspx"/>
     /// <param name="lu">The lu parameter.</param>
     /// <param name="pi">The pi parameter.</param>
     /// <param name="b">The b parameter.</param>
@@ -277,13 +266,9 @@ public class AffineTransform : MathTransform
     }
 
     /// <summary>
-    /// Perform LUP decomposition on a matrix A.
-    /// Return P as an array of ints and L and U are just in A, "in place".
-    /// In order to make some of the calculations more straight forward and to
-    /// match Cormen's et al. pseudocode the matrix A should have its first row and first columns
-    /// to be all 0.
+    /// Performs LUP decomposition on matrix A in-place and returns the permutation array.
+    /// The first row and first column of A are expected to be zero (1-based indexing convention).
     /// </summary>
-    /// <seealso href="http://www.rkinteractive.com/blogs/SoftwareDevelopment/post/2013/05/07/Algorithms-In-C-LUP-Decomposition.aspx"/>
     /// <param name="a">The a parameter.</param>
     /// <returns>The transformation result.</returns>
     private static int[] LUPDecomposition(double[,] a)
@@ -365,9 +350,8 @@ public class AffineTransform : MathTransform
     }
 
     /// <summary>
-    /// Given an nXn matrix A, solve n linear equations to find the inverse of A.
+    /// Given an n×n matrix A, solves n linear equations to find the inverse of A using LUP decomposition.
     /// </summary>
-    /// <seealso href="http://www.rkinteractive.com/blogs/SoftwareDevelopment/post/2013/05/21/Algorithms-In-C-Finding-The-Inverse-Of-A-Matrix.aspx"/>
     /// <param name="a">The a parameter.</param>
     /// <returns>The transformation result.</returns>
     private static double[,] InvertMatrix(double[,] a)

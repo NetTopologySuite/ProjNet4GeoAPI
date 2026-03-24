@@ -7,7 +7,8 @@ namespace ProjNet.CoordinateSystems.Transformations;
 using System;
 
 /// <summary>
-/// Represents a documented type.
+/// Abstract base class for a geo-referenced raster grid that maps geographic coordinates
+/// to grid pixel coordinates using an affine transformation.
 /// </summary>
 [Serializable]
 internal abstract class BaseGeoGrid
@@ -18,22 +19,22 @@ internal abstract class BaseGeoGrid
     /// <summary>
     /// Initializes a new instance of the <see cref="BaseGeoGrid"/> class.
     /// </summary>
-    /// <param name="sourcePath">The sourcePath value.</param>
-    /// <param name="width">The width value.</param>
-    /// <param name="height">The height value.</param>
-    /// <param name="area">The area value.</param>
-    /// <param name="epsilon">The epsilon value.</param>
-    /// <param name="west">The west value.</param>
-    /// <param name="east">The east value.</param>
-    /// <param name="south">The south value.</param>
-    /// <param name="north">The north value.</param>
-    /// <param name="a">The a value.</param>
-    /// <param name="b">The b value.</param>
-    /// <param name="c">The c value.</param>
-    /// <param name="d">The d value.</param>
-    /// <param name="e">The e value.</param>
-    /// <param name="f">The f value.</param>
-    /// <param name="sampleData">The sampleData value.</param>
+    /// <param name="sourcePath">Path of the source file the grid was loaded from.</param>
+    /// <param name="width">Number of grid columns.</param>
+    /// <param name="height">Number of grid rows.</param>
+    /// <param name="area">Geographic coverage area used to order grids by specificity.</param>
+    /// <param name="epsilon">Tolerance used for geographic boundary checks in degrees.</param>
+    /// <param name="west">Western boundary of the grid in degrees.</param>
+    /// <param name="east">Eastern boundary of the grid in degrees.</param>
+    /// <param name="south">Southern boundary of the grid in degrees.</param>
+    /// <param name="north">Northern boundary of the grid in degrees.</param>
+    /// <param name="a">Affine coefficient: longitude change per grid column.</param>
+    /// <param name="b">Affine coefficient: longitude change per grid row.</param>
+    /// <param name="c">Affine coefficient: longitude of the grid origin.</param>
+    /// <param name="d">Affine coefficient: latitude change per grid column.</param>
+    /// <param name="e">Affine coefficient: latitude change per grid row.</param>
+    /// <param name="f">Affine coefficient: latitude of the grid origin.</param>
+    /// <param name="sampleData">The raster sample data store for this grid.</param>
     protected BaseGeoGrid(
         string sourcePath,
         int width,
@@ -72,86 +73,86 @@ internal abstract class BaseGeoGrid
     }
 
     /// <summary>
-    /// Gets the documented value.
+    /// Gets the path of the source file from which this grid was loaded.
     /// </summary>
     internal string SourcePath { get; }
 
     /// <summary>
-    /// Gets the documented value.
+    /// Gets the number of grid columns.
     /// </summary>
     internal int Width { get; }
 
     /// <summary>
-    /// Gets the documented value.
+    /// Gets the number of grid rows.
     /// </summary>
     internal int Height { get; }
 
     /// <summary>
-    /// Gets the documented value.
+    /// Gets the geographic coverage area, used to order grids by specificity.
     /// </summary>
     internal double Area { get; }
 
     /// <summary>
-    /// Gets the documented value.
+    /// Gets the tolerance in degrees used for geographic boundary checks.
     /// </summary>
     internal double Epsilon { get; }
 
     /// <summary>
-    /// Gets the documented value.
+    /// Gets the western geographic boundary of the grid in degrees.
     /// </summary>
     internal double West { get; }
 
     /// <summary>
-    /// Gets the documented value.
+    /// Gets the eastern geographic boundary of the grid in degrees.
     /// </summary>
     internal double East { get; }
 
     /// <summary>
-    /// Gets the documented value.
+    /// Gets the southern geographic boundary of the grid in degrees.
     /// </summary>
     internal double South { get; }
 
     /// <summary>
-    /// Gets the documented value.
+    /// Gets the northern geographic boundary of the grid in degrees.
     /// </summary>
     internal double North { get; }
 
     /// <summary>
-    /// Gets the documented value.
+    /// Gets the affine coefficient representing longitude change per grid column.
     /// </summary>
     internal double A { get; }
 
     /// <summary>
-    /// Gets the documented value.
+    /// Gets the affine coefficient representing longitude change per grid row.
     /// </summary>
     internal double B { get; }
 
     /// <summary>
-    /// Gets the documented value.
+    /// Gets the affine coefficient representing the longitude of the grid origin.
     /// </summary>
     internal double C { get; }
 
     /// <summary>
-    /// Gets the documented value.
+    /// Gets the affine coefficient representing latitude change per grid column.
     /// </summary>
     internal double D { get; }
 
     /// <summary>
-    /// Gets the documented value.
+    /// Gets the affine coefficient representing latitude change per grid row.
     /// </summary>
     internal double E { get; }
 
     /// <summary>
-    /// Gets the documented value.
+    /// Gets the affine coefficient representing the latitude of the grid origin.
     /// </summary>
     internal double F { get; }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Determines whether the specified geographic coordinate falls within the extent of this grid.
     /// </summary>
-    /// <param name="longitude">The longitude value.</param>
-    /// <param name="latitude">The latitude value.</param>
-    /// <returns>The computed value.</returns>
+    /// <param name="longitude">Longitude in degrees.</param>
+    /// <param name="latitude">Latitude in degrees.</param>
+    /// <returns><see langword="true"/> when the coordinate is within the grid extent; otherwise <see langword="false"/>.</returns>
     internal bool Contains(double longitude, double latitude)
     {
         double lon = longitude;
@@ -171,13 +172,13 @@ internal abstract class BaseGeoGrid
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Attempts to map a geographic coordinate to fractional grid pixel coordinates.
     /// </summary>
-    /// <param name="longitude">The longitude value.</param>
-    /// <param name="latitude">The latitude value.</param>
-    /// <param name="gridX">The gridX value.</param>
-    /// <param name="gridY">The gridY value.</param>
-    /// <returns>The computed value.</returns>
+    /// <param name="longitude">Longitude in degrees.</param>
+    /// <param name="latitude">Latitude in degrees.</param>
+    /// <param name="gridX">Fractional column index in grid space on success.</param>
+    /// <param name="gridY">Fractional row index in grid space on success.</param>
+    /// <returns><see langword="true"/> when the mapping succeeds; otherwise <see langword="false"/>.</returns>
     internal bool TryMapToGridCoordinates(double longitude, double latitude, out double gridX, out double gridY)
     {
         if (this.TryMapRaw(longitude, latitude, out gridX, out gridY) && BaseGeoGrid.IsWithinGrid(gridX, gridY))
@@ -199,12 +200,12 @@ internal abstract class BaseGeoGrid
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Gets the raw sample value at the specified grid cell for the given sample band index.
     /// </summary>
-    /// <param name="sampleIndex">The sampleIndex value.</param>
-    /// <param name="x">The x value.</param>
-    /// <param name="y">The y value.</param>
-    /// <returns>The computed value.</returns>
+    /// <param name="sampleIndex">Zero-based index of the sample band.</param>
+    /// <param name="x">Column index.</param>
+    /// <param name="y">Row index.</param>
+    /// <returns>The raw sample value stored at position (<paramref name="x"/>, <paramref name="y"/>) in band <paramref name="sampleIndex"/>.</returns>
     internal double GetSampleValue(int sampleIndex, int x, int y)
     {
         return this.sampleData.GetValue(sampleIndex, x, y);

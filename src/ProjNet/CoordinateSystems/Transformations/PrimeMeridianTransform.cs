@@ -18,10 +18,9 @@ internal class PrimeMeridianTransform : MathTransform
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PrimeMeridianTransform"/> class.
-    /// Creates instance prime meridian transform.
     /// </summary>
-    /// <param name="source">The source parameter.</param>
-    /// <param name="target">The target parameter.</param>
+    /// <param name="source">Source prime meridian.</param>
+    /// <param name="target">Target prime meridian.</param>
     public PrimeMeridianTransform(PrimeMeridian source, PrimeMeridian target)
     {
         if (!source.AngularUnit.EqualParams(target.AngularUnit))
@@ -34,18 +33,16 @@ internal class PrimeMeridianTransform : MathTransform
     }
 
     /// <summary>
-    /// Gets a Well-Known text representation of this affine math transformation.
+    /// Gets a Well-Known Text representation of this prime meridian transformation.
     /// </summary>
-    /// <value>The value.</value>
     public override string WKT
     {
         get { throw new NotImplementedException("The method or operation is not implemented."); }
     }
 
     /// <summary>
-    /// Gets an XML representation of this affine transformation.
+    /// Gets an XML representation of this prime meridian transformation.
     /// </summary>
-    /// <value>The value.</value>
     public override string XML => throw new NotImplementedException("The method or operation is not implemented.");
 
     /// <summary>
@@ -57,7 +54,6 @@ internal class PrimeMeridianTransform : MathTransform
     /// Gets the dimension of output points.
     /// </summary>
     public override int DimTarget => 3;
-
     /// <inheritdoc />
     public override MathTransform Inverse()
     {

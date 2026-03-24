@@ -16,7 +16,6 @@ public class CoordinateTransformation : ICoordinateTransformation
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="CoordinateTransformation"/> class.
-    /// Initializes an instance of a CoordinateTransformation.
     /// </summary>
     /// <param name="sourceCS">Source coordinate system.</param>
     /// <param name="targetCS">Target coordinate system.</param>

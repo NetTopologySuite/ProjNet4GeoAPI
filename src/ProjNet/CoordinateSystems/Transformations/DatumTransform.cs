@@ -7,7 +7,7 @@ namespace ProjNet.CoordinateSystems.Transformations;
 using System;
 
 /// <summary>
-/// Transformation for applying.
+/// Applies a Bursa-Wolf seven-parameter geocentric datum shift using <see cref="Wgs84ConversionInfo"/> parameters.
 /// </summary>
 [Serializable]
 internal class DatumTransform : MathTransform
@@ -22,7 +22,7 @@ internal class DatumTransform : MathTransform
     /// <summary>
     /// Initializes a new instance of the <see cref="DatumTransform"/> class.
     /// </summary>
-    /// <param name="towgs84">The towgs84 parameter.</param>
+    /// <param name="towgs84">WGS84 conversion parameters defining the seven-parameter shift.</param>
     public DatumTransform(Wgs84ConversionInfo towgs84)
         : this(towgs84, false)
     {
@@ -36,9 +36,8 @@ internal class DatumTransform : MathTransform
     }
 
     /// <summary>
-    /// Gets a Well-Known text representation of this object.
+    /// Gets a Well-Known Text representation of this object.
     /// </summary>
-    /// <value>The value.</value>
     public override string WKT
     {
         get { throw new NotImplementedException(); }
@@ -47,7 +46,6 @@ internal class DatumTransform : MathTransform
     /// <summary>
     /// Gets an XML representation of this object.
     /// </summary>
-    /// <value>The value.</value>
     public override string XML => throw new NotImplementedException();
 
     /// <inheritdoc/>
@@ -59,7 +57,7 @@ internal class DatumTransform : MathTransform
     /// <summary>
     /// Creates the inverse transform of this object.
     /// </summary>
-    /// <returns>The transformation result.</returns>
+    /// <returns>A <see cref="MathTransform"/> that is the reverse of this datum shift.</returns>
     /// <remarks>This method may fail if the transform is not one to one. However, all cartographic projections should succeed.</remarks>
     public override MathTransform Inverse()
     {

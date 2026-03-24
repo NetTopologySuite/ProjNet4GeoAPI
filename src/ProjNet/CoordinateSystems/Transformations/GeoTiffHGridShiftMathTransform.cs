@@ -25,7 +25,7 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
     /// <summary>
     /// Initializes a new instance of the <see cref="GeoTiffHGridShiftMathTransform"/> class.
     /// </summary>
-    /// <param name="gridPaths">The gridPaths value.</param>
+    /// <param name="gridPaths">Ordered GeoTIFF grid file paths to load.</param>
     internal GeoTiffHGridShiftMathTransform(IReadOnlyList<string> gridPaths)
     {
         if (gridPaths is null)
@@ -244,7 +244,7 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
     }
 
     /// <summary>
-    /// Represents a documented type.
+    /// Represents a single horizontal-shift grid loaded from a GeoTIFF file.
     /// </summary>
     [Serializable]
     internal sealed class HorizontalGrid : BaseGeoGrid
@@ -258,27 +258,30 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
         /// <summary>
         /// Initializes a new instance of the <see cref="GeoTiffHGridShiftMathTransform.HorizontalGrid"/> class.
         /// </summary>
-        /// <param name="sourcePath">The sourcePath value.</param>
-        /// <param name="width">The width value.</param>
-        /// <param name="height">The height value.</param>
-        /// <param name="area">The area value.</param>
-        /// <param name="epsilon">The epsilon value.</param>
-        /// <param name="west">The west value.</param>
-        /// <param name="east">The east value.</param>
-        /// <param name="south">The south value.</param>
-        /// <param name="north">The north value.</param>
-        /// <param name="a">The a value.</param>
-        /// <param name="b">The b value.</param>
-        /// <param name="c">The c value.</param>
-        /// <param name="d">The d value.</param>
-        /// <param name="e">The e value.</param>
-        /// <param name="f">The f value.</param>
-        /// <param name="sampleData">The sampleData value.</param>
-        /// <param name="latitudeSampleIndex">The latitudeSampleIndex value.</param>
-        /// <param name="longitudeSampleIndex">The longitudeSampleIndex value.</param>
-        /// <param name="longitudeIsPositiveWest">The longitudeIsPositiveWest value.</param>
-        /// <param name="latitudeUnitScale">The latitudeUnitScale value.</param>
-        /// <param name="longitudeUnitScale">The longitudeUnitScale value.</param>
+        /// <param name="sourcePath">Path of the source GeoTIFF file.</param>
+        /// <param name="width">Number of grid columns.</param>
+        /// <param name="height">Number of grid rows.</param>
+        /// <param name="area">Geographic coverage area used to order grids by specificity.</param>
+        /// <param name="epsilon">Tolerance in degrees used for boundary checks.</param>
+        /// <param name="west">Western boundary in degrees.</param>
+        /// <param name="east">Eastern boundary in degrees.</param>
+        /// <param name="south">Southern boundary in degrees.</param>
+        /// <param name="north">Northern boundary in degrees.</param>
+        /// <param name="a">Affine coefficient: longitude change per grid column.</param>
+        /// <param name="b">Affine coefficient: longitude change per grid row.</param>
+        /// <param name="c">Affine coefficient: longitude of the grid origin.</param>
+        /// <param name="d">Affine coefficient: latitude change per grid column.</param>
+        /// <param name="e">Affine coefficient: latitude change per grid row.</param>
+        /// <param name="f">Affine coefficient: latitude of the grid origin.</param>
+        /// <param name="sampleData">The raster sample data store.</param>
+        /// <param name="latitudeSampleIndex">Zero-based band index of the latitude-shift sample.</param>
+        /// <param name="longitudeSampleIndex">Zero-based band index of the longitude-shift sample.</param>
+        /// <param name="longitudeIsPositiveWest">
+        /// <see langword="true"/> when the longitude shift values are stored with positive-west convention
+        /// and must be negated before use.
+        /// </param>
+        /// <param name="latitudeUnitScale">Scale factor to convert the raw latitude-shift sample to degrees.</param>
+        /// <param name="longitudeUnitScale">Scale factor to convert the raw longitude-shift sample to degrees.</param>
         internal HorizontalGrid(
             string sourcePath,
             int width,
@@ -311,22 +314,22 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
         }
 
         /// <summary>
-        /// Performs the documented operation.
+        /// Gets the latitude shift in degrees at the specified grid cell.
         /// </summary>
-        /// <param name="x">The x value.</param>
-        /// <param name="y">The y value.</param>
-        /// <returns>The computed value.</returns>
+        /// <param name="x">Column index.</param>
+        /// <param name="y">Row index.</param>
+        /// <returns>The latitude shift in degrees at (<paramref name="x"/>, <paramref name="y"/>).</returns>
         internal double GetLatitudeShift(int x, int y)
         {
             return this.GetSampleValue(this.latitudeSampleIndex, x, y) * this.latitudeUnitScale;
         }
 
         /// <summary>
-        /// Performs the documented operation.
+        /// Gets the longitude shift in degrees at the specified grid cell, with positive-east sign convention applied.
         /// </summary>
-        /// <param name="x">The x value.</param>
-        /// <param name="y">The y value.</param>
-        /// <returns>The computed value.</returns>
+        /// <param name="x">Column index.</param>
+        /// <param name="y">Row index.</param>
+        /// <returns>The longitude shift in degrees at (<paramref name="x"/>, <paramref name="y"/>), positive east.</returns>
         internal double GetLongitudeShift(int x, int y)
         {
             double value = this.GetSampleValue(this.longitudeSampleIndex, x, y) * this.longitudeUnitScale;

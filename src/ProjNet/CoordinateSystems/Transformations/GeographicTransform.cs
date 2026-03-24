@@ -52,20 +52,20 @@ public class GeographicTransform : MathTransform
     public override string XML => throw new NotImplementedException();
 
     /// <summary>
-    /// Gets dimSource.
+    /// Gets the dimension of input points.
     /// </summary>
     public override int DimSource => this.SourceGCS.Dimension;
 
     /// <summary>
-    /// Gets dimTarget.
+    /// Gets the dimension of output points.
     /// </summary>
     public override int DimTarget => this.TargetGCS.Dimension;
 
     /// <summary>
     /// Creates the inverse transform of this object.
     /// </summary>
+    /// <returns>A <see cref="MathTransform"/> that reverses this geographic transformation.</returns>
     /// <remarks>This method may fail if the transform is not one to one. However, all cartographic projections should succeed.</remarks>
-    /// <returns>The transformation result.</returns>
     public override MathTransform Inverse()
     {
         throw new NotImplementedException();

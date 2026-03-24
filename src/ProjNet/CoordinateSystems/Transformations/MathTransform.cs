@@ -55,7 +55,7 @@ public abstract class MathTransform
     /// <summary>
     /// Tests whether this transform does not move any points.
     /// </summary>
-    /// <returns>The transformation result.</returns>
+    /// <returns><see langword="true"/> when the transform is an identity; otherwise <see langword="false"/>.</returns>
     public virtual bool Identity()
     {
         throw new NotImplementedException();
@@ -73,8 +73,8 @@ public abstract class MathTransform
     /// parallel to the displacement caused by a small change in the m'th ordinate
     /// in the input space.
     /// </summary>
-    /// <param name="point">The point parameter.</param>
-    /// <returns>The transformation result.</returns>
+    /// <param name="point">The ordinate values of the point at which to compute the derivative.</param>
+    /// <returns>An [N][M] matrix of partial derivatives where N is the output dimension and M is the input dimension.</returns>
     public virtual double[,] Derivative(double[] point)
     {
         throw new NotImplementedException();
@@ -99,8 +99,8 @@ public abstract class MathTransform
     /// line between A and B has zero length.)</para>
     /// <para>Some examples of shapes that are NOT convex hulls are donuts, and horseshoes.</para>
     /// </remarks>
-    /// <param name="points">The points parameter.</param>
-    /// <returns>The transformation result.</returns>
+    /// <param name="points">Packed ordinate values representing the source convex hull.</param>
+    /// <returns>Packed ordinate values representing the transformed convex hull in the output space.</returns>
     public virtual List<double> GetCodomainConvexHull(List<double> points)
     {
         throw new NotImplementedException();
@@ -117,8 +117,8 @@ public abstract class MathTransform
     /// practice, implementations of different transforms will use different
     /// short-cuts to avoid doing an infinite number of tests.
     /// </remarks>
-    /// <param name="points">The points parameter.</param>
-    /// <returns>The transformation result.</returns>
+    /// <param name="points">Packed ordinate values representing the source convex hull.</param>
+    /// <returns>Combined <see cref="DomainFlags"/> for all points inside the source convex hull.</returns>
     public virtual DomainFlags GetDomainFlags(List<double> points)
     {
         throw new NotImplementedException();
@@ -128,7 +128,7 @@ public abstract class MathTransform
     /// Creates the inverse transform of this object.
     /// </summary>
     /// <remarks>This method may fail if the transform is not one to one. However, all cartographic projections should succeed.</remarks>
-    /// <returns>The transformation result.</returns>
+    /// <returns>A <see cref="MathTransform"/> that reverses this transform.</returns>
     public abstract MathTransform Inverse();
 
     /// <summary>
@@ -139,8 +139,8 @@ public abstract class MathTransform
     /// <summary>
     /// Transforms a coordinate point. The passed parameter point should not be modified.
     /// </summary>
-    /// <param name="point">The point parameter.</param>
-    /// <returns>The transformation result.</returns>
+    /// <param name="point">The input coordinate as an array of ordinate values.</param>
+    /// <returns>The transformed coordinate as an array of ordinate values.</returns>
     public double[] Transform(double[] point)
     {
         if (point is null)
@@ -201,8 +201,8 @@ public abstract class MathTransform
     /// implementation will throw an exception. If this happens then the client should not
     /// make any assumptions about the state of the ordinal values.
     /// </remarks>
-    /// <param name="points">The points parameter.</param>
-    /// <returns>The transformation result.</returns>
+    /// <param name="points">The packed ordinate values to transform.</param>
+    /// <returns>The transformed packed ordinate values.</returns>
     public IList<double[]> TransformList(IList<double[]> points)
     {
         if (points is null)
@@ -452,10 +452,10 @@ public abstract class MathTransform
     }
 
     /// <summary>
-    /// Converts a degree-value (<paramref name="deg"/>) to a radian-value by multiplying it with <c><see cref="Math.PI"/> / 180.0</c>.
+    /// Converts a degree value to radians by multiplying it with <c><see cref="Math.PI"/> / 180.0</c>.
     /// </summary>
-    /// <param name="deg">The deg value.</param>
-    /// <returns>The computed value.</returns>
+    /// <param name="deg">The value in degrees to convert.</param>
+    /// <returns>The equivalent value in radians.</returns>
     protected static double DegreesToRadians(double deg) => D2R * deg;
 
     /// <summary>
@@ -469,10 +469,10 @@ public abstract class MathTransform
     }
 
     /// <summary>
-    /// Converts a radian-value (<paramref name="rad"/>) to a degree-value by multiplying it with <c>180.0 / <see cref="Math.PI"/></c>.
+    /// Converts a radian value to degrees by multiplying it with <c>180.0 / <see cref="Math.PI"/></c>.
     /// </summary>
-    /// <param name="rad">The rad parameter.</param>
-    /// <returns>The transformation result.</returns>
+    /// <param name="rad">The value in radians to convert.</param>
+    /// <returns>The equivalent value in degrees.</returns>
     protected static double RadiansToDegrees(double rad) => R2D * rad;
 
     /// <summary>

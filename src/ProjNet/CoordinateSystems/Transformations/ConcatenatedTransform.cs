@@ -34,7 +34,7 @@ internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationC
     /// <summary>
     /// Initializes a new instance of the <see cref="ConcatenatedTransform"/> class.
     /// </summary>
-    /// <param name="transformList">The transformList parameter.</param>
+    /// <param name="transformList">Ordered sequence of coordinate transformations to concatenate.</param>
     public ConcatenatedTransform(IEnumerable<ICoordinateTransformationCore> transformList)
         : this()
     {
@@ -69,7 +69,7 @@ internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationC
     public CoordinateSystem TargetCS { get => this.CoordinateTransformationList[this.CoordinateTransformationList.Count - 1].TargetCS; }
 
     /// <summary>
-    /// Gets a Well-Known text representation of this object.
+    /// Gets a Well-Known Text representation of this object.
     /// </summary>
     /// <value>The value.</value>
     public override string WKT
@@ -98,7 +98,7 @@ internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationC
     /// <summary>
     /// Returns the inverse of this conversion.
     /// </summary>
-    /// <returns>IMathTransform that is the reverse of the current conversion.</returns>
+    /// <returns>A <see cref="MathTransform"/> that reverses this concatenated transform.</returns>
     public override MathTransform Inverse()
     {
         if (this.inverse is null)
@@ -130,9 +130,9 @@ internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationC
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Creates a deep clone of this concatenated transform with freshly resolved sub-transformations.
     /// </summary>
-    /// <returns>The computed value.</returns>
+    /// <returns>A new <see cref="ConcatenatedTransform"/> with cloned sub-transformations.</returns>
     public ConcatenatedTransform Clone()
     {
         var clonedList = new List<ICoordinateTransformationCore>(this.coordinateTransformationList.Count);

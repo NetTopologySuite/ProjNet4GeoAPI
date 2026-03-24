@@ -69,10 +69,12 @@ internal class GeocentricTransform : MathTransform
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GeocentricTransform"/> class.
-    /// Initializes a geocentric projection object.
     /// </summary>
     /// <param name="parameters">List of parameters to initialize the projection.</param>
-    /// <param name="isInverse">Indicates whether the projection forward (meters to degrees or degrees to meters).</param>
+    /// <param name="isInverse">
+    /// <see langword="true"/> to convert geocentric Cartesian (meters) to geodetic (degrees);
+    /// <see langword="false"/> to convert geodetic (degrees) to geocentric Cartesian (meters).
+    /// </param>
     public GeocentricTransform(List<ProjectionParameter> parameters, bool isInverse)
         : this(parameters)
     {
@@ -81,7 +83,6 @@ internal class GeocentricTransform : MathTransform
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GeocentricTransform"/> class.
-    /// Initializes a geocentric projection object.
     /// </summary>
     /// <param name="parameters">List of parameters to initialize the projection.</param>
     internal GeocentricTransform(List<ProjectionParameter> parameters)
@@ -124,21 +125,19 @@ internal class GeocentricTransform : MathTransform
     public override int DimTarget => 3;
 
     /// <summary>
-    /// Gets a Well-Known text representation of this object.
+    /// Gets a Well-Known Text representation of this object.
     /// </summary>
-    /// <value>The value.</value>
     public override string WKT => throw new NotImplementedException("The method or operation is not implemented.");
 
     /// <summary>
     /// Gets an XML representation of this object.
     /// </summary>
-    /// <value>The value.</value>
     public override string XML => throw new NotImplementedException("The method or operation is not implemented.");
 
     /// <summary>
     /// Returns the inverse of this conversion.
     /// </summary>
-    /// <returns>IMathTransform that is the reverse of the current conversion.</returns>
+    /// <returns>A <see cref="MathTransform"/> that reverses this geocentric conversion.</returns>
     public override MathTransform Inverse()
     {
         if (this.inverse == null)

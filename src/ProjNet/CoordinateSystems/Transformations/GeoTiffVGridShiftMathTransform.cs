@@ -10,7 +10,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 
 /// <summary>
-/// Represents a documented type.
+/// Applies vertical datum shifts loaded from GeoTIFF grid files.
 /// </summary>
 [Serializable]
 internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
@@ -24,8 +24,8 @@ internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
     /// <summary>
     /// Initializes a new instance of the <see cref="GeoTiffVGridShiftMathTransform"/> class.
     /// </summary>
-    /// <param name="gridPaths">The gridPaths value.</param>
-    /// <param name="forwardMultiplier">The forwardMultiplier value.</param>
+    /// <param name="gridPaths">Ordered GeoTIFF grid file paths to load.</param>
+    /// <param name="forwardMultiplier">Multiplier applied to interpolated shift values in the forward direction.</param>
     internal GeoTiffVGridShiftMathTransform(IReadOnlyList<string> gridPaths, double forwardMultiplier)
     {
         if (gridPaths is null)
@@ -248,7 +248,7 @@ internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
     }
 
     /// <summary>
-    /// Represents a documented type.
+    /// Represents a single vertical-shift band loaded from a GeoTIFF grid file.
     /// </summary>
     [Serializable]
     internal sealed class VerticalGrid : BaseGeoGrid
@@ -259,24 +259,24 @@ internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
         /// <summary>
         /// Initializes a new instance of the <see cref="GeoTiffVGridShiftMathTransform.VerticalGrid"/> class.
         /// </summary>
-        /// <param name="sourcePath">The sourcePath value.</param>
-        /// <param name="width">The width value.</param>
-        /// <param name="height">The height value.</param>
-        /// <param name="area">The area value.</param>
-        /// <param name="epsilon">The epsilon value.</param>
-        /// <param name="west">The west value.</param>
-        /// <param name="east">The east value.</param>
-        /// <param name="south">The south value.</param>
-        /// <param name="north">The north value.</param>
-        /// <param name="a">The a value.</param>
-        /// <param name="b">The b value.</param>
-        /// <param name="c">The c value.</param>
-        /// <param name="d">The d value.</param>
-        /// <param name="e">The e value.</param>
-        /// <param name="f">The f value.</param>
-        /// <param name="sampleData">The sampleData value.</param>
-        /// <param name="sampleIndex">The sampleIndex value.</param>
-        /// <param name="noDataValue">The noDataValue value.</param>
+        /// <param name="sourcePath">Path of the source GeoTIFF file.</param>
+        /// <param name="width">Number of grid columns.</param>
+        /// <param name="height">Number of grid rows.</param>
+        /// <param name="area">Geographic coverage area used to order grids by specificity.</param>
+        /// <param name="epsilon">Tolerance in degrees used for boundary checks.</param>
+        /// <param name="west">Western boundary in degrees.</param>
+        /// <param name="east">Eastern boundary in degrees.</param>
+        /// <param name="south">Southern boundary in degrees.</param>
+        /// <param name="north">Northern boundary in degrees.</param>
+        /// <param name="a">Affine coefficient: longitude change per grid column.</param>
+        /// <param name="b">Affine coefficient: longitude change per grid row.</param>
+        /// <param name="c">Affine coefficient: longitude of the grid origin.</param>
+        /// <param name="d">Affine coefficient: latitude change per grid column.</param>
+        /// <param name="e">Affine coefficient: latitude change per grid row.</param>
+        /// <param name="f">Affine coefficient: latitude of the grid origin.</param>
+        /// <param name="sampleData">The raster sample data store.</param>
+        /// <param name="sampleIndex">Zero-based band index of the vertical-shift sample.</param>
+        /// <param name="noDataValue">No-data sentinel value, or <see langword="null"/> if none is defined.</param>
         internal VerticalGrid(
             string sourcePath,
             int width,
@@ -303,21 +303,21 @@ internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
         }
 
         /// <summary>
-        /// Performs the documented operation.
+        /// Gets the scaled vertical shift value at the specified grid cell.
         /// </summary>
-        /// <param name="x">The x value.</param>
-        /// <param name="y">The y value.</param>
-        /// <returns>The computed value.</returns>
+        /// <param name="x">Column index.</param>
+        /// <param name="y">Row index.</param>
+        /// <returns>The raw sample value at (<paramref name="x"/>, <paramref name="y"/>).</returns>
         internal double GetValue(int x, int y)
         {
             return this.GetSampleValue(this.sampleIndex, x, y);
         }
 
         /// <summary>
-        /// Performs the documented operation.
+        /// Determines whether the specified sample value equals the no-data sentinel.
         /// </summary>
-        /// <param name="value">The value value.</param>
-        /// <returns>The computed value.</returns>
+        /// <param name="value">The sample value to test.</param>
+        /// <returns><see langword="true"/> when <paramref name="value"/> matches the no-data value; otherwise <see langword="false"/>.</returns>
         internal bool IsNoData(double value)
         {
             if (!this.noDataValue.HasValue)

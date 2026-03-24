@@ -47,7 +47,7 @@ public class CoordinateTransformationFactory
     /// the DCP (e.g. throwing an exception).</remarks>
     /// <param name="sourceCS">Source coordinate system.</param>
     /// <param name="targetCS">Target coordinate system.</param>
-    /// <returns>The transformation result.</returns>
+    /// <returns>The coordinate transformation from <paramref name="sourceCS"/> to <paramref name="targetCS"/>.</returns>
     public ICoordinateTransformation CreateFromCoordinateSystems(CoordinateSystem sourceCS, CoordinateSystem targetCS) => CoordinateOperationResolver.Resolve(sourceCS, targetCS, this.CreateFromCoordinateSystemsWithMetadata);
 
     /// <summary>
