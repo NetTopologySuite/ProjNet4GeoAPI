@@ -468,10 +468,7 @@ public abstract class MathTransform
     /// </summary>
     /// <param name="deg">The deg value.</param>
     /// <returns>The computed value.</returns>
-    protected static double DegreesToRadians(double deg)
-    {
-        return D2R * deg;
-    }
+    protected static double DegreesToRadians(double deg) => D2R * deg;
 
     /// <summary>
     /// Converts a series of degree-values (<paramref name="degrees"/>) to a radian-values by multiplying them with <c><see cref="Math.PI"/> / 180.0</c>.
@@ -488,10 +485,7 @@ public abstract class MathTransform
     /// </summary>
     /// <param name="rad">The rad parameter.</param>
     /// <returns>The transformation result.</returns>
-    protected static double RadiansToDegrees(double rad)
-    {
-        return R2D * rad;
-    }
+    protected static double RadiansToDegrees(double rad) => R2D * rad;
 
     /// <summary>
     /// Converts a series of radian-values (<paramref name="radians"/>) to a degrees-values by multiplying them with <c>180.0 / <see cref="Math.PI"/></c>.

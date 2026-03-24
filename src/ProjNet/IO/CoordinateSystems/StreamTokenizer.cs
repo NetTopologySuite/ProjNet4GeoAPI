@@ -121,38 +121,26 @@ internal class StreamTokenizer
     /// If the current token is a word token, this field contains a string giving the characters of the word token.
     /// </summary>
     /// <returns>The computed value.</returns>
-    public string GetStringValue()
-    {
-        return this.currentToken;
-    }
+    public string GetStringValue() => this.currentToken;
 
     /// <summary>
     /// Gets the token type of the current token.
     /// </summary>
     /// <returns>The transformation result.</returns>
-    public TokenType GetTokenType()
-    {
-        return this.currentTokenType;
-    }
+    public TokenType GetTokenType() => this.currentTokenType;
 
     /// <summary>
     /// Returns the next token.
     /// </summary>
     /// <param name="ignoreWhitespace">Determines is whitespace is ignored. True if whitespace is to be ignored.</param>
     /// <returns>The TokenType of the next token.</returns>
-    public TokenType NextToken(bool ignoreWhitespace)
-    {
-        return ignoreWhitespace ? this.NextNonWhitespaceToken() : this.NextTokenAny();
-    }
+    public TokenType NextToken(bool ignoreWhitespace) => ignoreWhitespace ? this.NextNonWhitespaceToken() : this.NextTokenAny();
 
     /// <summary>
     /// Returns the next token.
     /// </summary>
     /// <returns>The TokenType of the next token.</returns>
-    public TokenType NextToken()
-    {
-        return this.NextToken(this.IgnoreWhitespace);
-    }
+    public TokenType NextToken() => this.NextToken(this.IgnoreWhitespace);
 
     private TokenType NextTokenAny()
     {

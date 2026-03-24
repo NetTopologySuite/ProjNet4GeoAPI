@@ -376,10 +376,7 @@ public abstract class MapProjection : MathTransform, IProjection
     /// </summary>
     /// <param name="lon">The longitudinal value (in Degrees!).</param>
     /// <returns>The UTM zone number.</returns>
-    public static long CalcUtmZone(double lon)
-    {
-        return (long)(((lon + 180.0) / 6.0) + 1.0);
-    }
+    public static long CalcUtmZone(double lon) => (long)(((lon + 180.0) / 6.0) + 1.0);
 
     /// <summary>
     /// Gets the Well-known text for this object
@@ -509,10 +506,7 @@ if (param.Value != proj.GetParameter(i).Value)
     /// <param name="index">The index parameter.</param>
     /// <returns>The transformation result.</returns>
     /// <inheritdoc/>
-    public ProjectionParameter GetParameter(int index)
-    {
-        return this.Parameters.GetAtIndex(index);
-    }
+    public ProjectionParameter GetParameter(int index) => this.Parameters.GetAtIndex(index);
 
     /// <summary>
     /// Gets an named parameter of the projection.
@@ -520,10 +514,7 @@ if (param.Value != proj.GetParameter(i).Value)
     /// <remarks>The parameter name is case insensitive.</remarks>
     /// <param name="name">Name of parameter.</param>
     /// <returns>parameter or null if not found.</returns>
-    public ProjectionParameter GetParameter(string name)
-    {
-        return this.Parameters.Find(name);
-    }
+    public ProjectionParameter GetParameter(string name) => this.Parameters.Find(name);
 
     /// <summary>
     /// Gets a value indicating whether returns true if this projection is inverted.
@@ -1161,40 +1152,28 @@ if (param.Value != proj.GetParameter(i).Value)
     /// </summary>
     /// <param name="x">The x value.</param>
     /// <returns>The computed value.</returns>
-    protected static double E0fn(double x)
-    {
-        return 1.0 - (0.25 * x * (1.0 + (x / 16.0 * (3.0 + (1.25 * x)))));
-    }
+    protected static double E0fn(double x) => 1.0 - (0.25 * x * (1.0 + (x / 16.0 * (3.0 + (1.25 * x)))));
 
     /// <summary>
     /// Computes the first meridional distance series coefficient.
     /// </summary>
     /// <param name="x">The x parameter.</param>
     /// <returns>The transformation result.</returns>
-    protected static double E1fn(double x)
-    {
-        return 0.375 * x * (1.0 + (0.25 * x * (1.0 + (0.46875 * x))));
-    }
+    protected static double E1fn(double x) => 0.375 * x * (1.0 + (0.25 * x * (1.0 + (0.46875 * x))));
 
     /// <summary>
     /// Computes the second meridional distance series coefficient.
     /// </summary>
     /// <param name="x">The x parameter.</param>
     /// <returns>The transformation result.</returns>
-    protected static double E2fn(double x)
-    {
-        return 0.05859375 * x * x * (1.0 + (0.75 * x));
-    }
+    protected static double E2fn(double x) => 0.05859375 * x * x * (1.0 + (0.75 * x));
 
     /// <summary>
     /// Computes the third meridional distance series coefficient.
     /// </summary>
     /// <param name="x">The x parameter.</param>
     /// <returns>The transformation result.</returns>
-    protected static double E3fn(double x)
-    {
-        return x * x * x * (35.0 / 3072.0);
-    }
+    protected static double E3fn(double x) => x * x * x * (35.0 / 3072.0);
 
     /// <summary>
     /// Function to compute the constant e4 from the input of the eccentricity
@@ -1222,10 +1201,7 @@ if (param.Value != proj.GetParameter(i).Value)
     /// <param name="e3">The e3 value.</param>
     /// <param name="phi">The phi value.</param>
     /// <returns>The computed value.</returns>
-    protected static double Mlfn(double e0, double e1, double e2, double e3, double phi)
-    {
-        return (e0 * phi) - (e1 * Math.Sin(2.0 * phi)) + (e2 * Math.Sin(4.0 * phi)) - (e3 * Math.Sin(6.0 * phi));
-    }
+    protected static double Mlfn(double e0, double e1, double e2, double e3, double phi) => (e0 * phi) - (e1 * Math.Sin(2.0 * phi)) + (e2 * Math.Sin(4.0 * phi)) - (e3 * Math.Sin(6.0 * phi));
 
     /// <summary>
     /// Calculates the meridian distance. This is the distance along the central
@@ -1352,10 +1328,7 @@ if (param.Value != proj.GetParameter(i).Value)
     /// <param name="x">The length of one orthogonal leg of the triangle.</param>
     /// <param name="y">The length of the other orthogonal leg of the triangle.</param>
     /// <returns>The length of the diagonal.</returns>
-    protected static double Hypot(double x, double y)
-    {
-        return Math.Sqrt((x * x) + (y * y));
-    }
+    protected static double Hypot(double x, double y) => Math.Sqrt((x * x) + (y * y));
 
     /// <summary>
     /// Calculates the flattening factor, (<paramref name="equatorialRadius"/> - <paramref name="polarRadius"/>) / <paramref name="equatorialRadius"/>.
@@ -1363,10 +1336,7 @@ if (param.Value != proj.GetParameter(i).Value)
     /// <param name="equatorialRadius">The radius of the equator.</param>
     /// <param name="polarRadius">The radius of a circle touching the poles.</param>
     /// <returns>The flattening factor.</returns>
-    private static double FlatteningFactor(double equatorialRadius, double polarRadius)
-    {
-        return (equatorialRadius - polarRadius) / equatorialRadius;
-    }
+    private static double FlatteningFactor(double equatorialRadius, double polarRadius) => (equatorialRadius - polarRadius) / equatorialRadius;
 
     /// <summary>
     /// Calculates the square of eccentricity according to es = (2f - f^2) where f is the <see cref="FlatteningFactor">flattening factor</see>.

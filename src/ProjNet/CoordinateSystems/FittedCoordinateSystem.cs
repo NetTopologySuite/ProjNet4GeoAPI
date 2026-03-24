@@ -117,10 +117,7 @@ public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSys
     /// must be at least as big as the dimension of this coordinate system.
     /// </summary>
     /// <returns>The transformation result.</returns>
-    public string ToBase()
-    {
-        return this.ToBaseTransform.WKT;
-    }
+    public string ToBase() => this.ToBaseTransform.WKT;
 
     /// <summary>
     /// Checks whether the values of this instance is equal to the values of another instance.
@@ -154,8 +151,5 @@ public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSys
     /// </summary>
     /// <param name="dimension">The dimension value.</param>
     /// <returns>The computed value.</returns>
-    public override IUnit GetUnits(int dimension)
-    {
-        return this.BaseCoordinateSystem.GetUnits(dimension);
-    }
+    public override IUnit GetUnits(int dimension) => this.BaseCoordinateSystem.GetUnits(dimension);
 }

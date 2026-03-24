@@ -60,10 +60,7 @@ public class CoordinateTransformationFactory
     /// <param name="sourceCS">Source coordinate system.</param>
     /// <param name="targetCS">Target coordinate system.</param>
     /// <returns>The transformation result.</returns>
-    public ICoordinateTransformation CreateFromCoordinateSystems(CoordinateSystem sourceCS, CoordinateSystem targetCS)
-    {
-        return CoordinateOperationResolver.Resolve(sourceCS, targetCS, this.CreateFromCoordinateSystemsWithMetadata);
-    }
+    public ICoordinateTransformation CreateFromCoordinateSystems(CoordinateSystem sourceCS, CoordinateSystem targetCS) => CoordinateOperationResolver.Resolve(sourceCS, targetCS, this.CreateFromCoordinateSystemsWithMetadata);
 
     /// <summary>
     /// Attempts to create a projection pipeline math transform from a PROJ-style operation string.
@@ -72,10 +69,7 @@ public class CoordinateTransformationFactory
     /// <param name="transform">Created math transform when successful.</param>
     /// <param name="skipReason">Reason why the transform could not be created.</param>
     /// <returns><see langword="true"/> when the transform was created; otherwise <see langword="false"/>.</returns>
-    internal static bool TryCreateProjPipelineMathTransform(string operation, out MathTransform transform, out string skipReason)
-    {
-        return ProjPipelineMathTransformFactory.TryCreateMathTransform(operation, out transform, out skipReason);
-    }
+    internal static bool TryCreateProjPipelineMathTransform(string operation, out MathTransform transform, out string skipReason) => ProjPipelineMathTransformFactory.TryCreateMathTransform(operation, out transform, out skipReason);
 
     /// <summary>
     /// Attempts to resolve a grid resource name to a concrete file path.
@@ -83,10 +77,7 @@ public class CoordinateTransformationFactory
     /// <param name="gridName">Grid resource name or path token.</param>
     /// <param name="resolvedPath">Resolved local file path when available.</param>
     /// <returns><see langword="true"/> when resolution succeeded; otherwise <see langword="false"/>.</returns>
-    internal static bool TryResolveGridResourcePath(string gridName, out string resolvedPath)
-    {
-        return GridResolver.Value.TryResolve(gridName, out resolvedPath);
-    }
+    internal static bool TryResolveGridResourcePath(string gridName, out string resolvedPath) => GridResolver.Value.TryResolve(gridName, out resolvedPath);
 
     private ICoordinateTransformation CreateFromCoordinateSystemsWithMetadata(CoordinateSystem sourceCS, CoordinateSystem targetCS)
     {
@@ -1177,10 +1168,7 @@ public class CoordinateTransformationFactory
         return GridResourceResolutionMode.LocalOnly;
     }
 
-    private static double NormalizeAccuracy(double accuracy)
-    {
-        return accuracy > 0d ? accuracy : double.MaxValue;
-    }
+    private static double NormalizeAccuracy(double accuracy) => accuracy > 0d ? accuracy : double.MaxValue;
 
     private static bool TryGetDirectProjectedOperation(
         CoordinateSystem source,

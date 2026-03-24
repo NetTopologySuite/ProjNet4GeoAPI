@@ -147,10 +147,7 @@ public abstract class Info : IInfo
     /// as defined in the simple features specification.
     /// </summary>
     /// <returns>The computed value.</returns>
-    public override string ToString()
-    {
-        return this.WKT;
-    }
+    public override string ToString() => this.WKT;
 
     /// <summary>
     /// Checks whether the values of this instance is equal to the values of another instance.

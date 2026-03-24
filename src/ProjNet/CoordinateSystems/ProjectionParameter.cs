@@ -93,8 +93,5 @@ public class ProjectionParameter
     /// Function to get a textual representation of this envelope.
     /// </summary>
     /// <returns>A textual representation of this envelope.</returns>
-    public override string ToString()
-    {
-        return $"ProjectionParameter '{this.Name}': {this.Value}";
-    }
+    public override string ToString() => $"ProjectionParameter '{this.Name}': {this.Value}";
 }

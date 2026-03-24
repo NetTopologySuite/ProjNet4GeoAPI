@@ -249,20 +249,14 @@ public class Wgs84ConversionInfo
     /// </summary>
     /// <remarks>The WKT format of this object is: <code>TOWGS84[dx, dy, dz, ex, ey, ez, ppm]</code></remarks>
     /// <returns>WKT representaion.</returns>
-    public override string ToString()
-    {
-        return this.WKT;
-    }
+    public override string ToString() => this.WKT;
 
     /// <summary>
     /// Indicates whether the current object is equal to another object of the same type.
     /// </summary>
     /// <param name="obj">The obj parameter.</param>
     /// <returns>The transformation result.</returns>
-    public override bool Equals(object obj)
-    {
-        return this.Equals(obj as Wgs84ConversionInfo);
-    }
+    public override bool Equals(object obj) => this.Equals(obj as Wgs84ConversionInfo);
 
     /// <summary>
     /// Returns a hash code for the specified object.

@@ -177,20 +177,14 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
     /// </summary>
     /// <param name="dimension">Dimension.</param>
     /// <returns>Unit.</returns>
-    public override IUnit GetUnits(int dimension)
-    {
-        return this.AngularUnit;
-    }
+    public override IUnit GetUnits(int dimension) => this.AngularUnit;
 
     /// <summary>
     /// Gets details on a conversion to WGS84.
     /// </summary>
     /// <param name="index">The index value.</param>
     /// <returns>The computed value.</returns>
-    public Wgs84ConversionInfo GetWgs84ConversionInfo(int index)
-    {
-        return this.WGS84ConversionInfo[index];
-    }
+    public Wgs84ConversionInfo GetWgs84ConversionInfo(int index) => this.WGS84ConversionInfo[index];
 
     /// <summary>
     /// Checks whether the values of this instance is equal to the values of another instance.

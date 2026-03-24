@@ -266,10 +266,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     /// <param name="source">The source spatial reference system.</param>
     /// <param name="target">The target spatial reference system.</param>
     /// <returns>A coordinate transformation, <value>null</value> if no transformation could be created.</returns>
-    public ICoordinateTransformation CreateTransformation(CoordinateSystem source, CoordinateSystem target)
-    {
-        return this.ctFactory.CreateFromCoordinateSystems(source, target);
-    }
+    public ICoordinateTransformation CreateTransformation(CoordinateSystem source, CoordinateSystem target) => this.ctFactory.CreateFromCoordinateSystems(source, target);
 
     /// <summary>
     /// RemoveCoordinateSystem.

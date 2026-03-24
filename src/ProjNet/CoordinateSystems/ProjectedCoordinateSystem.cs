@@ -247,10 +247,7 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
     /// </summary>
     /// <param name="dimension">Dimension.</param>
     /// <returns>Unit.</returns>
-    public override IUnit GetUnits(int dimension)
-    {
-        return this.LinearUnit;
-    }
+    public override IUnit GetUnits(int dimension) => this.LinearUnit;
 
     /// <summary>
     /// Checks whether the values of this instance is equal to the values of another instance.
