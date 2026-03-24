@@ -47,34 +47,22 @@ public class LinearUnit : Info, IUnit
     /// Gets the meters linear unit.
     /// Also known as International metre. SI standard unit.
     /// </summary>
-    public static LinearUnit Metre
-    {
-        get { return new LinearUnit(1.0, "metre", "EPSG", 9001, "m", string.Empty, "Also known as International metre. SI standard unit."); }
-    }
+    public static LinearUnit Metre => new(1.0, "metre", "EPSG", 9001, "m", string.Empty, "Also known as International metre. SI standard unit.");
 
     /// <summary>
     /// Gets the foot linear unit (1ft = 0.3048m).
     /// </summary>
-    public static LinearUnit Foot
-    {
-        get { return new LinearUnit(0.3048, "foot", "EPSG", 9002, "ft", string.Empty, string.Empty); }
-    }
+    public static LinearUnit Foot => new(0.3048, "foot", "EPSG", 9002, "ft", string.Empty, string.Empty);
 
     /// <summary>
     /// Gets the US Survey foot linear unit (1ftUS = 0.304800609601219m).
     /// </summary>
-    public static LinearUnit USSurveyFoot
-    {
-        get { return new LinearUnit(0.304800609601219, "US survey foot", "EPSG", 9003, "American foot", "ftUS", "Used in USA."); }
-    }
+    public static LinearUnit USSurveyFoot => new(0.304800609601219, "US survey foot", "EPSG", 9003, "American foot", "ftUS", "Used in USA.");
 
     /// <summary>
     /// Gets the Nautical Mile linear unit (1NM = 1852m).
     /// </summary>
-    public static LinearUnit NauticalMile
-    {
-        get { return new LinearUnit(1852, "nautical mile", "EPSG", 9030, "NM", string.Empty, string.Empty); }
-    }
+    public static LinearUnit NauticalMile => new(1852, "nautical mile", "EPSG", 9030, "NM", string.Empty, string.Empty);
 
     /// <summary>
     /// Gets clarke's foot.
@@ -83,10 +71,7 @@ public class LinearUnit : Info, IUnit
     /// Assumes Clarke's 1865 ratio of 1 British foot = 0.3047972654 French legal metres applies to the international metre.
     /// Used in older Australian, southern African &amp; British West Indian mapping.
     /// </remarks>
-    public static LinearUnit ClarkesFoot
-    {
-        get { return new LinearUnit(0.3047972654, "Clarke's foot", "EPSG", 9005, "Clarke's foot", string.Empty, "Assumes Clarke's 1865 ratio of 1 British foot = 0.3047972654 French legal metres applies to the international metre. Used in older Australian, southern African & British West Indian mapping."); }
-    }
+    public static LinearUnit ClarkesFoot => new(0.3047972654, "Clarke's foot", "EPSG", 9005, "Clarke's foot", string.Empty, "Assumes Clarke's 1865 ratio of 1 British foot = 0.3047972654 French legal metres applies to the international metre. Used in older Australian, southern African & British West Indian mapping.");
 
     /// <summary>
     /// Gets or sets the number of meters per <see cref="LinearUnit"/>.

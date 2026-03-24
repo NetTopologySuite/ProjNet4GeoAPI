@@ -63,42 +63,30 @@ public class AngularUnit : Info, IUnit
     /// <summary>
     /// Gets the angular degrees are PI/180 = 0.017453292519943295769236907684886 radians.
     /// </summary>
-    public static AngularUnit Degrees
-    {
-        get { return new AngularUnit(0.017453292519943295769236907684886, "degree", "EPSG", 9102, "deg", string.Empty, "=pi/180 radians"); }
-    }
+    public static AngularUnit Degrees => new(0.017453292519943295769236907684886, "degree", "EPSG", 9102, "deg", string.Empty, "=pi/180 radians");
 
     /// <summary>
     /// Gets sI standard unit.
     /// </summary>
-    public static AngularUnit Radian
-    {
-        get { return new AngularUnit(1, "radian", "EPSG", 9101, "rad", string.Empty, "SI standard unit."); }
-    }
+    public static AngularUnit Radian => new(1, "radian", "EPSG", 9101, "rad", string.Empty, "SI standard unit.");
 
     /// <summary>
     /// Gets pi / 200 = 0.015707963267948966192313216916398 radians.
     /// </summary>
-    public static AngularUnit Grad
-    {
-        get { return new AngularUnit(0.015707963267948966192313216916398, "grad", "EPSG", 9105, "gr", string.Empty, "=pi/200 radians."); }
-    }
+    public static AngularUnit Grad => new(0.015707963267948966192313216916398, "grad", "EPSG", 9105, "gr", string.Empty, "=pi/200 radians.");
 
     /// <summary>
     /// Gets pi / 200 = 0.015707963267948966192313216916398 radians.
     /// </summary>
-    public static AngularUnit Gon
-    {
-        get { return new AngularUnit(0.015707963267948966192313216916398, "gon", "EPSG", 9106, "g", string.Empty, "=pi/200 radians."); }
-    }
+    public static AngularUnit Gon => new(0.015707963267948966192313216916398, "gon", "EPSG", 9106, "g", string.Empty, "=pi/200 radians.");
 
     /// <summary>
     /// Gets or sets the number of radians per <see cref="AngularUnit"/>.
     /// </summary>
     public double RadiansPerUnit
     {
-        get { return this.radiansPerUnit; }
-        set { this.radiansPerUnit = value; }
+        get => this.radiansPerUnit;
+        set => this.radiansPerUnit = value;
     }
 
     /// <summary>

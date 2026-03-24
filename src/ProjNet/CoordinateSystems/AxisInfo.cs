@@ -45,8 +45,8 @@ public class AxisInfo
     /// </summary>
     public string Name
     {
-        get { return this.name; }
-        set { this.name = value; }
+        get => this.name;
+        set => this.name = value;
     }
 
     /// <summary>
@@ -54,8 +54,8 @@ public class AxisInfo
     /// </summary>
     public AxisOrientationEnum Orientation
     {
-        get { return this.orientation; }
-        set { this.orientation = value; }
+        get => this.orientation;
+        set => this.orientation = value;
     }
 
     /// <summary>

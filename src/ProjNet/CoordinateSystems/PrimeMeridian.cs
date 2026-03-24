@@ -48,111 +48,72 @@ public class PrimeMeridian : Info
     /// <summary>
     /// Gets greenwich prime meridian.
     /// </summary>
-    public static PrimeMeridian Greenwich
-    {
-        get { return new PrimeMeridian(0.0, CoordinateSystems.AngularUnit.Degrees, "Greenwich", "EPSG", 8901, string.Empty, string.Empty, string.Empty); }
-    }
+    public static PrimeMeridian Greenwich => new(0.0, CoordinateSystems.AngularUnit.Degrees, "Greenwich", "EPSG", 8901, string.Empty, string.Empty, string.Empty);
 
     /// <summary>
     /// Gets lisbon prime meridian.
     /// </summary>
-    public static PrimeMeridian Lisbon
-    {
-        get { return new PrimeMeridian(-9.0754862, CoordinateSystems.AngularUnit.Degrees, "Lisbon", "EPSG", 8902, string.Empty, string.Empty, string.Empty); }
-    }
+    public static PrimeMeridian Lisbon => new(-9.0754862, CoordinateSystems.AngularUnit.Degrees, "Lisbon", "EPSG", 8902, string.Empty, string.Empty, string.Empty);
 
     /// <summary>
     /// Gets paris prime meridian.
     /// Value adopted by IGN (Paris) in 1936. Equivalent to 2 deg 20min 14.025sec. Preferred by EPSG to earlier value of 2deg 20min 13.95sec (2.596898 grads) used by RGS London.
     /// </summary>
-    public static PrimeMeridian Paris
-    {
-        get { return new PrimeMeridian(2.5969213, CoordinateSystems.AngularUnit.Degrees, "Paris", "EPSG", 8903, string.Empty, string.Empty, "Value adopted by IGN (Paris) in 1936. Equivalent to 2 deg 20min 14.025sec. Preferred by EPSG to earlier value of 2deg 20min 13.95sec (2.596898 grads) used by RGS London."); }
-    }
+    public static PrimeMeridian Paris => new(2.5969213, CoordinateSystems.AngularUnit.Degrees, "Paris", "EPSG", 8903, string.Empty, string.Empty, "Value adopted by IGN (Paris) in 1936. Equivalent to 2 deg 20min 14.025sec. Preferred by EPSG to earlier value of 2deg 20min 13.95sec (2.596898 grads) used by RGS London.");
 
     /// <summary>
     /// Gets bogota prime meridian.
     /// </summary>
-    public static PrimeMeridian Bogota
-    {
-        get { return new PrimeMeridian(-74.04513, CoordinateSystems.AngularUnit.Degrees, "Bogota", "EPSG", 8904, string.Empty, string.Empty, string.Empty); }
-    }
+    public static PrimeMeridian Bogota => new(-74.04513, CoordinateSystems.AngularUnit.Degrees, "Bogota", "EPSG", 8904, string.Empty, string.Empty, string.Empty);
 
     /// <summary>
     /// Gets madrid prime meridian.
     /// </summary>
-    public static PrimeMeridian Madrid
-    {
-        get { return new PrimeMeridian(-3.411658, CoordinateSystems.AngularUnit.Degrees, "Madrid", "EPSG", 8905, string.Empty, string.Empty, string.Empty); }
-    }
+    public static PrimeMeridian Madrid => new(-3.411658, CoordinateSystems.AngularUnit.Degrees, "Madrid", "EPSG", 8905, string.Empty, string.Empty, string.Empty);
 
     /// <summary>
     /// Gets rome prime meridian.
     /// </summary>
-    public static PrimeMeridian Rome
-    {
-        get { return new PrimeMeridian(12.27084, CoordinateSystems.AngularUnit.Degrees, "Rome", "EPSG", 8906, string.Empty, string.Empty, string.Empty); }
-    }
+    public static PrimeMeridian Rome => new(12.27084, CoordinateSystems.AngularUnit.Degrees, "Rome", "EPSG", 8906, string.Empty, string.Empty, string.Empty);
 
     /// <summary>
     /// Gets bern prime meridian.
     /// 1895 value. Newer value of 7 deg 26 min 22.335 sec E determined in 1938.
     /// </summary>
-    public static PrimeMeridian Bern
-    {
-        get { return new PrimeMeridian(7.26225, CoordinateSystems.AngularUnit.Degrees, "Bern", "EPSG", 8907, string.Empty, string.Empty, "1895 value. Newer value of 7 deg 26 min 22.335 sec E determined in 1938."); }
-    }
+    public static PrimeMeridian Bern => new(7.26225, CoordinateSystems.AngularUnit.Degrees, "Bern", "EPSG", 8907, string.Empty, string.Empty, "1895 value. Newer value of 7 deg 26 min 22.335 sec E determined in 1938.");
 
     /// <summary>
     /// Gets jakarta prime meridian.
     /// </summary>
-    public static PrimeMeridian Jakarta
-    {
-        get { return new PrimeMeridian(106.482779, CoordinateSystems.AngularUnit.Degrees, "Jakarta", "EPSG", 8908, string.Empty, string.Empty, string.Empty); }
-    }
+    public static PrimeMeridian Jakarta => new(106.482779, CoordinateSystems.AngularUnit.Degrees, "Jakarta", "EPSG", 8908, string.Empty, string.Empty, string.Empty);
 
     /// <summary>
     /// Gets ferro prime meridian.
     /// Used in Austria and former Czechoslovakia.
     /// </summary>
-    public static PrimeMeridian Ferro
-    {
-        get { return new PrimeMeridian(-17.66666666666667, CoordinateSystems.AngularUnit.Degrees, "Ferro", "EPSG", 8909, string.Empty, string.Empty, "Used in Austria and former Czechoslovakia."); }
-    }
+    public static PrimeMeridian Ferro => new(-17.66666666666667, CoordinateSystems.AngularUnit.Degrees, "Ferro", "EPSG", 8909, string.Empty, string.Empty, "Used in Austria and former Czechoslovakia.");
 
     /// <summary>
     /// Gets brussels prime meridian.
     /// </summary>
-    public static PrimeMeridian Brussels
-    {
-        get { return new PrimeMeridian(4.220471, CoordinateSystems.AngularUnit.Degrees, "Brussels", "EPSG", 8910, string.Empty, string.Empty, string.Empty); }
-    }
+    public static PrimeMeridian Brussels => new(4.220471, CoordinateSystems.AngularUnit.Degrees, "Brussels", "EPSG", 8910, string.Empty, string.Empty, string.Empty);
 
     /// <summary>
     /// Gets stockholm prime meridian.
     /// </summary>
-    public static PrimeMeridian Stockholm
-    {
-        get { return new PrimeMeridian(18.03298, CoordinateSystems.AngularUnit.Degrees, "Stockholm", "EPSG", 8911, string.Empty, string.Empty, string.Empty); }
-    }
+    public static PrimeMeridian Stockholm => new(18.03298, CoordinateSystems.AngularUnit.Degrees, "Stockholm", "EPSG", 8911, string.Empty, string.Empty, string.Empty);
 
     /// <summary>
     /// Gets athens prime meridian.
     /// Used in Greece for older mapping based on Hatt projection.
     /// </summary>
-    public static PrimeMeridian Athens
-    {
-        get { return new PrimeMeridian(23.4258815, CoordinateSystems.AngularUnit.Degrees, "Athens", "EPSG", 8912, string.Empty, string.Empty, "Used in Greece for older mapping based on Hatt projection."); }
-    }
+    public static PrimeMeridian Athens => new(23.4258815, CoordinateSystems.AngularUnit.Degrees, "Athens", "EPSG", 8912, string.Empty, string.Empty, "Used in Greece for older mapping based on Hatt projection.");
 
     /// <summary>
     /// Gets oslo prime meridian.
     /// Formerly known as Kristiania or Christiania.
     /// </summary>
-    public static PrimeMeridian Oslo
-    {
-        get { return new PrimeMeridian(10.43225, CoordinateSystems.AngularUnit.Degrees, "Oslo", "EPSG", 8913, string.Empty, string.Empty, "Formerly known as Kristiania or Christiania."); }
-    }
+    public static PrimeMeridian Oslo => new(10.43225, CoordinateSystems.AngularUnit.Degrees, "Oslo", "EPSG", 8913, string.Empty, string.Empty, "Formerly known as Kristiania or Christiania.");
 
     /// <summary>
     /// Gets or sets the longitude of the prime meridian (relative to the Greenwich prime meridian).

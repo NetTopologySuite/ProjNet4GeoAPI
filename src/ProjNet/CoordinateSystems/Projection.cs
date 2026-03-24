@@ -64,27 +64,21 @@ public class Projection : Info, IProjection
     /// <summary>
     /// Gets the number of parameters of the projection.
     /// </summary>
-    public int NumParameters
-    {
-        get { return this.parameters.Count; }
-    }
+    public int NumParameters => this.parameters.Count;
 
     /// <summary>
     /// Gets or sets the parameters of the projection.
     /// </summary>
     internal List<ProjectionParameter> Parameters
     {
-        get { return this.parameters; }
-        set { this.parameters = value; }
+        get => this.parameters;
+        set => this.parameters = value;
     }
 
     /// <summary>
     /// Gets the projection classification name (e.g. "Transverse_Mercator").
     /// </summary>
-    public string ClassName
-    {
-        get { return this.className; }
-    }
+    public string ClassName => this.className;
 
     /// <summary>
     /// Gets the Well-known text for this object

@@ -331,19 +331,13 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <summary>
     /// Gets the projection classification name (e.g. 'Transverse_Mercator').
     /// </summary>
-    public string ClassName
-    {
-        get { return this.Name; }
-    }
+    public string ClassName => this.Name;
 
     /// <summary>
     /// Gets the number of projection parameters.
     /// </summary>
     /// <inheritdoc/>
-    public int NumParameters
-    {
-        get { return this.Parameters.Count; }
-    }
+    public int NumParameters => this.Parameters.Count;
 
     /// <summary>
     /// Gets or sets the abbreviation of the object.
@@ -442,16 +436,10 @@ public abstract class MapProjection : MathTransform, IProjection
     }
 
     /// <inheritdoc/>
-    public sealed override int DimSource
-    {
-        get { return 2; }
-    }
+    public sealed override int DimSource => 2;
 
     /// <inheritdoc/>
-    public sealed override int DimTarget
-    {
-        get { return 2; }
-    }
+    public sealed override int DimTarget => 2;
 
     /// <inheritdoc />
     public sealed override void Transform(ref double x, ref double y, ref double z)
@@ -783,8 +771,8 @@ if (param.Value != proj.GetParameter(i).Value)
     /// </summary>
     protected double Lon_origin
     {
-        get { return this.centralMeridian; }
-        set { this.centralMeridian = value; }
+        get => this.centralMeridian;
+        set => this.centralMeridian = value;
     }
 
     // Backward-compatible aliases for legacy field names.
@@ -795,33 +783,21 @@ if (param.Value != proj.GetParameter(i).Value)
     [Obsolete("Use centralMeridian instead.")]
     protected double central_meridian
     {
-        get { return this.centralMeridian; }
-        set { this.centralMeridian = value; }
+        get => this.centralMeridian;
+        set => this.centralMeridian = value;
     }
 
     [Obsolete("Use falseEasting instead.")]
-    protected double false_easting
-    {
-        get { return this.falseEasting; }
-    }
+    protected double false_easting => this.falseEasting;
 
     [Obsolete("Use falseNorthing instead.")]
-    protected double false_northing
-    {
-        get { return this.falseNorthing; }
-    }
+    protected double false_northing => this.falseNorthing;
 
     [Obsolete("Use latOrigin instead.")]
-    protected double lat_origin
-    {
-        get { return this.latOrigin; }
-    }
+    protected double lat_origin => this.latOrigin;
 
     [Obsolete("Use scaleFactor instead.")]
-    protected double scale_factor
-    {
-        get { return this.scaleFactor; }
-    }
+    protected double scale_factor => this.scaleFactor;
 #pragma warning restore SA1300
 #pragma warning restore CA1707
 #pragma warning restore CS1591
@@ -830,18 +806,12 @@ if (param.Value != proj.GetParameter(i).Value)
     /// <summary>
     /// Gets center latitude (projection center), same as lat_origin.
     /// </summary>
-    protected double Central_parallel
-    {
-        get { return this.latOrigin; }
-    }
+    protected double Central_parallel => this.latOrigin;
 
     /// <summary>
     /// Gets center latitude (projection center), same as lat_origin.
     /// </summary>
-    protected double Phi0
-    {
-        get { return this.latOrigin; }
-    }
+    protected double Phi0 => this.latOrigin;
 
     /// <summary>
     /// Returns a list of projection "cloned" projection parameters.
