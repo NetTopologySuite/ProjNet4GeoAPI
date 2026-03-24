@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+All notable changes to this project are documented in this file.
 
 The format is based on Keep a Changelog and this project follows Semantic Versioning.
 
@@ -8,22 +8,44 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 
 ### Added
 
-- Added managed-data runtime support for coordinate system definitions and modernization artifacts under `docs/modernization`.
-- Added targeted mutation-focused tests for `IdentityMathTransform` to strengthen regression safety.
-- Added explicit release validation commands in `README.md` for API baseline, benchmark, and parity checks.
+- Added managed EPSG catalog runtime and supporting generated data access layers for coordinate reference and operation resolution.
+- Added EPSG WKT ZIP-based generator pipeline as the primary managed data source.
+- Added `net8.0` target for `ProjNET` in addition to `netstandard2.0` and `netstandard2.1`.
+- Added source-generated regex paths (conditional on .NET 8) for selected hot regex call sites.
+- Added structured modernization audit/finalization artifacts under `docs/modernization/` for parity, generator, style, license, test, and documentation waves.
+- Added `LICENSES/` folder and `NOTICE.md` for consolidated attribution and licensing context.
+- Added broad projection and transformation runtime verification coverage, including direct proj2proj parity fixtures.
 
 ### Changed
 
-- Updated package version line to `3.0.0` via shared build props (`src/Directory.Build.props`).
-- Updated `CoordinateSystemFactory.CreateFromWkt` parameter metadata from `WKT` to `wkt`.
-- Migrated test suite usage to xUnit v3 APIs and removed NUnit compatibility dependencies.
-- Normalized `MapProjection` constants to PascalCase and retained compatibility aliases.
+- Reworked EPSG generator output to reduce eager runtime initialization and lookup overhead:
+  - removed generator dependency on `proj.db`,
+  - replaced large eager arrays with on-demand switch-based lookup paths where applicable,
+  - split generated catalog into focused partial files.
+- Migrated the test stack fully to xUnit v3 and removed NUnit compatibility usage.
+- Renamed phase-prefixed test files/classes to descriptive names that reflect tested behavior.
+- Performed structural cleanup:
+  - one top-level type per file in targeted areas,
+  - Roman numeral class-name suffixes replaced with numeric suffixes,
+  - shared projection constants consolidated.
+- Modernized coding style for C# 12 consistency:
+  - expanded expression-bodied members where appropriate,
+  - converted applicable `using (...)` scopes to `using var`,
+  - expanded target-typed `new` and collection-expression usage where safe.
+- Updated XML documentation across public API surfaces (projections, transformations, coordinate systems, and services/IO) and removed stale external URL references in targeted doc blocks.
+- Updated README to current project status, feature scope, and compatibility/build guidance.
+
+### Fixed
+
+- Corrected outdated and inconsistent file attribution headers by adopting SPDX-style per-file headers based on provenance categories.
+- Removed dead/commented legacy code found during structural cleanup.
+- Fixed multiple legacy naming inconsistencies in projection class families and their registry references.
 
 ### Deprecated
 
-- Legacy uppercase and snake_case `MapProjection` aliases are now compatibility members and should be replaced with PascalCase names.
+- Legacy uppercase and snake_case `MapProjection` aliases remain as compatibility members but should be replaced with PascalCase names in new code.
 
 ### Notes
 
-- `PackageValidationBaselineVersion` is set to `2.1.0` until `3.0.0` is published, so package validation restore remains stable during release preparation.
-- Mutation testing reruns currently report survivors in `IdentityMathTransform` with `coveredBy=[]` despite targeted tests; this is tracked as a tooling correlation blocker in Milestone 11.
+- Package version line is aligned to `3.0.0` via shared build props (`src/Directory.Build.props`).
+- `PackageValidationBaselineVersion` remains `2.1.0` until `3.0.0` is published.
