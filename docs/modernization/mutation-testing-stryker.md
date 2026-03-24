@@ -19,3 +19,13 @@
 ## Notes
 - Mutation testing is intentionally separated from the default CI path to keep regular PR feedback fast.
 - Thresholds are set for ratcheting and can be tightened as coverage quality improves.
+
+## M11 blocker snapshot
+- The xUnit v3 stack in this repository currently defaults to Microsoft Testing Platform behavior.
+- To keep Stryker on the intended VSTest path, test projects are pinned with:
+  - `<UseMicrosoftTestingPlatformRunner>false</UseMicrosoftTestingPlatformRunner>`
+- Repeated focused reruns on `IdentityMathTransformMutationTests` still report:
+  - `Killed: 0`, `Survived: 6` (full focused run),
+  - `Killed: 0`, `Survived: 2` (narrow baseline run),
+  - survivors all in `IdentityMathTransform` with `coveredBy=[]`.
+- Conclusion: current blocker is tooling/result attribution in Stryker+xUnit v3 integration, not missing assertions in the added mutation tests.
