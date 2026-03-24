@@ -11,15 +11,15 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Validates M6 wave 4 pseudo-cylindrical projections.
+/// Validates current projection group pseudo-cylindrical projections.
 /// </summary>
-public class Phase6MiscPseudoProjectionTests
+public class MiscPseudoCylindricalProjectionTests
 {
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
     /// <summary>
-    /// Verifies aliases resolve from WKT for wave 4 projections.
+    /// Verifies aliases resolve from WKT for covered projections.
     /// </summary>
     /// <param name="projectionName">Projection alias.</param>
     [Theory]
@@ -41,7 +41,7 @@ public class Phase6MiscPseudoProjectionTests
     [InlineData("Nicolosi_Globular")]
     [InlineData("times")]
     [InlineData("Times_Projection")]
-    public void SupportsWave4AliasesFromWkt(string projectionName)
+    public void SupportsAliasesFromWkt(string projectionName)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 
@@ -56,7 +56,7 @@ public class Phase6MiscPseudoProjectionTests
     }
 
     /// <summary>
-    /// Verifies PROJ builtins forward vectors for wave 4 projections.
+    /// Verifies PROJ builtins forward vectors for covered projections.
     /// </summary>
     /// <param name="projectionName">Projection code.</param>
     /// <param name="longitude">Input longitude degrees.</param>
@@ -93,7 +93,7 @@ public class Phase6MiscPseudoProjectionTests
     }
 
     /// <summary>
-    /// Verifies PROJ builtins inverse vectors for inverse-capable wave 4 projections.
+    /// Verifies PROJ builtins inverse vectors for inverse-capable covered projections.
     /// </summary>
     /// <param name="projectionName">Projection code.</param>
     /// <param name="x">Input x meters.</param>
@@ -128,7 +128,7 @@ public class Phase6MiscPseudoProjectionTests
     }
 
     /// <summary>
-    /// Verifies Boggs and Nicolosi remain forward-only in this wave.
+    /// Verifies Boggs and Nicolosi remain forward-only in this test set.
     /// </summary>
     /// <param name="projectionName">Projection code.</param>
     [Theory]
@@ -145,7 +145,7 @@ public class Phase6MiscPseudoProjectionTests
     }
 
     /// <summary>
-    /// Verifies roundtrip stability for inverse-capable wave 4 projections.
+    /// Verifies roundtrip stability for inverse-capable covered projections.
     /// </summary>
     /// <param name="projectionName">Projection code.</param>
     /// <param name="longitude">Input longitude degrees.</param>
@@ -159,7 +159,7 @@ public class Phase6MiscPseudoProjectionTests
     [InlineData("nell", -2d, -1d)]
     [InlineData("nell_h", 2d, -1d)]
     [InlineData("times", -35d, 20d)]
-    public void SupportsWave4Roundtrip(string projectionName, double longitude, double latitude)
+    public void SupportsRoundtrip(string projectionName, double longitude, double latitude)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 
@@ -185,10 +185,11 @@ public class Phase6MiscPseudoProjectionTests
 
         return string.Format(
             CultureInfo.InvariantCulture,
-            "PROJCS[\"Phase6-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1]]",
+            "PROJCS[\"Projection-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1]]",
             projectionName,
             spheroidClause);
     }
 
     private static double[] CreatePoint(double x, double y) => [x, y];
 }
+

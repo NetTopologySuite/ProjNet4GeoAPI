@@ -11,7 +11,7 @@ using Xunit;
 /// <summary>
 /// Validates runtime pipeline support for <c>ob_tran</c>.
 /// </summary>
-public class Phase6ObTranRuntimeTests
+public class ObTranRuntimeTests
 {
     /// <summary>
     /// Verifies builtins vector parity for spherical ob_tran with latlong child projection.
@@ -96,3 +96,4 @@ public class Phase6ObTranRuntimeTests
         Assert.Contains("Nested ob_tran", skipReason, StringComparison.Ordinal);
     }
 }
+

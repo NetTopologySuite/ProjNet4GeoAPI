@@ -11,15 +11,15 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Validates M6 wave 5 projections (<c>airy</c>, <c>chamb</c>, <c>bipc</c>).
+/// Validates current projection group projections (<c>airy</c>, <c>chamb</c>, <c>bipc</c>).
 /// </summary>
-public class Phase6AiryChambBipcProjectionTests
+public class AiryChamberlinBipolarProjectionTests
 {
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
     /// <summary>
-    /// Verifies aliases resolve from WKT for wave 5 projections.
+    /// Verifies aliases resolve from WKT for covered projections.
     /// </summary>
     /// <param name="projectionName">Projection alias.</param>
     [Theory]
@@ -28,7 +28,7 @@ public class Phase6AiryChambBipcProjectionTests
     [InlineData("Bipolar_Conic")]
     [InlineData("chamb")]
     [InlineData("Chamberlin_Trimetric")]
-    public void SupportsWave5AliasesFromWkt(string projectionName)
+    public void SupportsAliasesFromWkt(string projectionName)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 
@@ -43,7 +43,7 @@ public class Phase6AiryChambBipcProjectionTests
     }
 
     /// <summary>
-    /// Verifies PROJ builtins forward vectors for wave 5 projections.
+    /// Verifies PROJ builtins forward vectors for covered projections.
     /// </summary>
     /// <param name="projectionName">Projection code.</param>
     /// <param name="sphereRadius">Sphere radius meters for the fixture profile.</param>
@@ -76,7 +76,7 @@ public class Phase6AiryChambBipcProjectionTests
     }
 
     /// <summary>
-    /// Verifies PROJ builtins inverse vectors for inverse-capable wave 5 projections.
+    /// Verifies PROJ builtins inverse vectors for inverse-capable covered projections.
     /// </summary>
     /// <param name="projectionName">Projection code.</param>
     /// <param name="sphereRadius">Sphere radius meters for the fixture profile.</param>
@@ -106,7 +106,7 @@ public class Phase6AiryChambBipcProjectionTests
     }
 
     /// <summary>
-    /// Verifies Airy and Chamberlin remain forward-only in this wave.
+    /// Verifies Airy and Chamberlin remain forward-only in this test set.
     /// </summary>
     /// <param name="projectionName">Projection code.</param>
     [Theory]
@@ -189,7 +189,7 @@ public class Phase6AiryChambBipcProjectionTests
         string latitudeOfOriginParameter = hasLatitudeOfOrigin ? string.Empty : ",PARAMETER[\"latitude_of_origin\",0]";
         return string.Format(
             CultureInfo.InvariantCulture,
-            "PROJCS[\"Phase6-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",SPHEROID[\"Sphere\",{1},0]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"]{2},PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{3},UNIT[\"metre\",1]]",
+            "PROJCS[\"Projection-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",SPHEROID[\"Sphere\",{1},0]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"]{2},PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{3},UNIT[\"metre\",1]]",
             projectionName,
             effectiveProfile.SphereRadius.ToString("R", CultureInfo.InvariantCulture),
             latitudeOfOriginParameter,
@@ -222,3 +222,4 @@ public class Phase6AiryChambBipcProjectionTests
         public string ExtraParameters { get; }
     }
 }
+

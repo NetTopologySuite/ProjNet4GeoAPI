@@ -12,7 +12,7 @@ using Xunit;
 /// <summary>
 /// Represents the documented type.
 /// </summary>
-public class Phase6VGridShiftRuntimeTests
+public class VerticalGridShiftRuntimeTests
 {
     private static readonly double[] VerticalGridInput = { 12d, 56d, 0d };
 
@@ -100,3 +100,4 @@ public class Phase6VGridShiftRuntimeTests
         throw new FileNotFoundException("Could not locate local test grid fixture under test\\ProjNet.Tests\\Fixtures\\grids.", fileName);
     }
 }
+

@@ -12,66 +12,68 @@ using Xunit;
 /// <summary>
 /// Represents the documented type.
 /// </summary>
-public class Phase6GeoTiffGridRuntimeTests
+public class HorizontalGridShiftRuntimeTests
 {
-    private static readonly double[] GeoTiffGridInput = { 4.5d, 52.5d, 0d };
-    private static readonly double[] GeoTiffNodataInput = { 4.05d, 52.1d, 0d };
+    private static readonly double[] HorizontalGridInput = { 4.5d, 52.5d, 0d };
+    private static readonly double[] HorizontalGridInverseInput = { 5.875d, 55.375d, 0d };
 
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    /// <param name="gridFileName">GeoTIFF horizontal grid fixture file name.</param>
+    /// <param name="gridFileName">NTv2 grid fixture file name.</param>
     [Theory]
-    [InlineData("test_hgrid.tif")]
-    [InlineData("test_hgrid_positive_west.tif")]
-    public void HgridshiftWithGeoTiffGridAppliesExpectedShift(string gridFileName)
+    [InlineData("test_hgrid_little_endian.gsb")]
+    [InlineData("test_hgrid_big_endian.gsb")]
+    public void HgridshiftWithNtv2GridAppliesExpectedShift(string gridFileName)
     {
         string gridPath = FindGridPath(gridFileName);
         string operation = "+proj=hgridshift +grids=" + gridPath;
 
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
-        Assert.True(ok, skipReason);
 
-        double[] output = transform.Transform(GeoTiffGridInput);
+        Assert.True(ok, skipReason);
+        double[] output = transform.Transform(HorizontalGridInput);
         Assert.Equal(5.875d, output[0], 9);
         Assert.Equal(55.375d, output[1], 9);
+        Assert.Equal(0d, output[2], 9);
     }
 
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    /// <param name="gridFileName">GeoTIFF vertical grid fixture file name.</param>
+    /// <param name="gridFileName">NTv2 grid fixture file name.</param>
     [Theory]
-    [InlineData("test_vgrid_pixelispoint.tif")]
-    [InlineData("test_vgrid_uint16_with_scale_offset.tif")]
-    public void VgridshiftWithGeoTiffGridAppliesExpectedDefaultShift(string gridFileName)
+    [InlineData("test_hgrid_little_endian.gsb")]
+    [InlineData("test_hgrid_big_endian.gsb")]
+    public void HgridshiftWithInverseFlagForSyntheticFixtureSignalsOutsideGrid(string gridFileName)
     {
         string gridPath = FindGridPath(gridFileName);
-        string operation = "+proj=vgridshift +grids=" + gridPath + " +multiplier=1";
+        string operation = "+inv +proj=hgridshift +grids=" + gridPath;
 
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
-        Assert.True(ok, skipReason);
 
-        double[] output = transform.Transform(GeoTiffGridInput);
-        Assert.Equal(4.5d, output[0], 9);
-        Assert.Equal(52.5d, output[1], 9);
-        Assert.Equal(11.5d, output[2], 9);
+        Assert.True(ok, skipReason);
+        Assert.Throws<ArgumentException>(() => transform.Transform(HorizontalGridInverseInput));
     }
 
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Fact]
-    public void VgridshiftWithGeoTiffNodataPerformsWeightedInterpolation()
+    /// <param name="gridFileName">NTv2 grid fixture file name.</param>
+    [Theory]
+    [InlineData("test_hgrid_little_endian.gsb")]
+    [InlineData("test_hgrid_big_endian.gsb")]
+    public void GridshiftWithNtv2GridUsesHorizontalShiftImplementation(string gridFileName)
     {
-        string gridPath = FindGridPath("test_vgrid_nodata.tif");
-        string operation = "+proj=vgridshift +grids=" + gridPath + " +multiplier=1";
+        string gridPath = FindGridPath(gridFileName);
+        string operation = "+proj=gridshift +grids=" + gridPath;
 
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
-        Assert.True(ok, skipReason);
 
-        double[] output = transform.Transform(GeoTiffNodataInput);
-        Assert.Equal(10d, output[2], 7);
+        Assert.True(ok, skipReason);
+        double[] output = transform.Transform(HorizontalGridInput);
+        Assert.Equal(5.875d, output[0], 9);
+        Assert.Equal(55.375d, output[1], 9);
     }
 
     private static string FindGridPath(string fileName)
@@ -97,3 +99,4 @@ public class Phase6GeoTiffGridRuntimeTests
         throw new FileNotFoundException("Could not locate local test grid fixture under test\\ProjNet.Tests\\Fixtures\\grids.", fileName);
     }
 }
+

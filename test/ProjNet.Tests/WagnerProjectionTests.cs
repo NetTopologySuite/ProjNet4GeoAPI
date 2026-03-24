@@ -11,9 +11,9 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Validates Wagner projection support for M6 wave 3 (<c>wag2</c>, <c>wag3</c>, <c>wag7</c>).
+/// Validates Wagner projection support for current projection group (<c>wag2</c>, <c>wag3</c>, <c>wag7</c>).
 /// </summary>
-public class Phase6WagProjectionTests
+public class WagnerProjectionTests
 {
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
@@ -29,7 +29,7 @@ public class Phase6WagProjectionTests
     [InlineData("Wagner_III")]
     [InlineData("wag7")]
     [InlineData("Wagner_VII")]
-    public void SupportsWagAliasesFromWkt(string projectionName)
+    public void SupportsAliasesFromWkt(string projectionName)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, null));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
@@ -129,7 +129,7 @@ public class Phase6WagProjectionTests
     [InlineData("wag3", null, -2d, -1d)]
     [InlineData("wag3", 10d, 2d, 1d)]
     [InlineData("wag3", 10d, -2d, -1d)]
-    public void SupportsWagRoundtrip(string projectionName, double? latTs, double longitude, double latitude)
+    public void SupportsRoundtrip(string projectionName, double? latTs, double longitude, double latitude)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, latTs));
         var geographic = projected.GeographicCoordinateSystem;
@@ -169,10 +169,11 @@ public class Phase6WagProjectionTests
 
         return string.Format(
             CultureInfo.InvariantCulture,
-            "PROJCS[\"Phase6-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",SPHEROID[\"Sphere\",6400000,0]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{1},UNIT[\"metre\",1]]",
+            "PROJCS[\"Projection-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",SPHEROID[\"Sphere\",6400000,0]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{1},UNIT[\"metre\",1]]",
             projectionName,
             latTsParameter);
     }
 
     private static double[] CreatePoint(double x, double y) => [x, y];
 }
+

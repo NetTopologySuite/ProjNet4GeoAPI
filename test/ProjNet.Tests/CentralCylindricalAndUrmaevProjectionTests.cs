@@ -12,15 +12,15 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Validates M6 wave 6 projections (<c>cc</c>, <c>gn_sinu</c>, <c>eck6</c>, <c>mbtfps</c>, <c>urm5</c>, <c>urmfps</c>, <c>wag1</c>).
+/// Validates current projection group projections (<c>cc</c>, <c>gn_sinu</c>, <c>eck6</c>, <c>mbtfps</c>, <c>urm5</c>, <c>urmfps</c>, <c>wag1</c>).
 /// </summary>
-public class Phase6CcGnSinuUrmProjectionTests
+public class CentralCylindricalAndUrmaevProjectionTests
 {
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
     /// <summary>
-    /// Verifies aliases resolve from WKT for wave 6 projections.
+    /// Verifies aliases resolve from WKT for covered projections.
     /// </summary>
     /// <param name="projectionName">Projection alias.</param>
     /// <param name="extraParameters">Optional WKT parameter segment.</param>
@@ -39,7 +39,7 @@ public class Phase6CcGnSinuUrmProjectionTests
     [InlineData("Urmaev_V", ",PARAMETER[\"n\",0.5]")]
     [InlineData("wag1", null)]
     [InlineData("Wagner_I", null)]
-    public void SupportsWave6AliasesFromWkt(string projectionName, string extraParameters)
+    public void SupportsAliasesFromWkt(string projectionName, string extraParameters)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 
@@ -54,7 +54,7 @@ public class Phase6CcGnSinuUrmProjectionTests
     }
 
     /// <summary>
-    /// Verifies PROJ builtins forward vectors for wave 6 projections.
+    /// Verifies PROJ builtins forward vectors for covered projections.
     /// </summary>
     /// <param name="projectionName">Projection code.</param>
     /// <param name="longitude">Input longitude degrees.</param>
@@ -89,7 +89,7 @@ public class Phase6CcGnSinuUrmProjectionTests
     }
 
     /// <summary>
-    /// Verifies PROJ builtins inverse vectors for inverse-capable wave 6 projections.
+    /// Verifies PROJ builtins inverse vectors for inverse-capable covered projections.
     /// </summary>
     /// <param name="projectionName">Projection code.</param>
     /// <param name="x">Input x meters.</param>
@@ -123,7 +123,7 @@ public class Phase6CcGnSinuUrmProjectionTests
     }
 
     /// <summary>
-    /// Verifies Urmaev V remains forward-only in this wave.
+    /// Verifies Urmaev V remains forward-only in this test set.
     /// </summary>
     [Fact]
     public void Urm5DoesNotSupportInverse()
@@ -145,7 +145,7 @@ public class Phase6CcGnSinuUrmProjectionTests
     }
 
     /// <summary>
-    /// Verifies roundtrip stability for inverse-capable wave 6 projections.
+    /// Verifies roundtrip stability for inverse-capable covered projections.
     /// </summary>
     /// <param name="projectionName">Projection code.</param>
     /// <param name="longitude">Input longitude degrees.</param>
@@ -158,7 +158,7 @@ public class Phase6CcGnSinuUrmProjectionTests
     [InlineData("mbtfps", -2d, 1d, null)]
     [InlineData("urmfps", 2d, 1d, ",PARAMETER[\"n\",0.5]")]
     [InlineData("wag1", -2d, -1d, null)]
-    public void SupportsWave6Roundtrip(string projectionName, double longitude, double latitude, string extraParameters)
+    public void SupportsRoundtrip(string projectionName, double longitude, double latitude, string extraParameters)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 
@@ -182,7 +182,7 @@ public class Phase6CcGnSinuUrmProjectionTests
             : "SPHEROID[\"Sphere\",6400000,0]";
         return string.Format(
             CultureInfo.InvariantCulture,
-            "PROJCS[\"Phase6-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{2},UNIT[\"metre\",1]]",
+            "PROJCS[\"Projection-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{2},UNIT[\"metre\",1]]",
             projectionName,
             spheroidClause,
             extraParameters ?? string.Empty);
@@ -190,3 +190,4 @@ public class Phase6CcGnSinuUrmProjectionTests
 
     private static double[] CreatePoint(double x, double y) => [x, y];
 }
+
