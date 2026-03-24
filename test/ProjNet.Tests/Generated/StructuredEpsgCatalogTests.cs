@@ -98,6 +98,49 @@ public class StructuredEpsgCatalogTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
+    public void GeneratedCatalogShouldNotExposeConversionAndExplicitOperationArrays()
+    {
+        var conversionsField = typeof(EpsgGeneratedCatalog).GetField("Conversions", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+        var conversionParametersField = typeof(EpsgGeneratedCatalog).GetField("ConversionParameters", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+        var explicitOperationsField = typeof(EpsgGeneratedCatalog).GetField("ExplicitOperations", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+
+        Assert.Null(conversionsField);
+        Assert.Null(conversionParametersField);
+        Assert.Null(explicitOperationsField);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void GeneratedCatalogShouldExposeSwitchBasedConversionLookup()
+    {
+        bool hasReference = EpsgGeneratedCatalog.TryGetCoordinateReference(3857, out var reference, out _);
+        Assert.True(hasReference);
+        Assert.Equal(2, (int)reference.Kind);
+
+        bool hasProjectedRecord = EpsgGeneratedCatalog.TryGetProjectedCrs(reference.RecordIndex, out var projectedRecord);
+        Assert.True(hasProjectedRecord);
+
+        bool hasConversion = EpsgGeneratedCatalog.TryGetConversion(projectedRecord.ConversionCode, out var conversion);
+        Assert.True(hasConversion);
+        Assert.True(conversion.ParameterCount > 0);
+
+        for (int i = 0; i < conversion.ParameterCount; i++)
+        {
+            bool hasParameter = EpsgGeneratedCatalog.TryGetConversionParameter(projectedRecord.ConversionCode, i, out var parameter);
+            Assert.True(hasParameter);
+            Assert.False(string.IsNullOrWhiteSpace(parameter.Name));
+        }
+
+        Assert.False(EpsgGeneratedCatalog.TryGetConversionParameter(projectedRecord.ConversionCode, conversion.ParameterCount, out _));
+        Assert.False(EpsgGeneratedCatalog.TryGetConversion(-1, out _));
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
     public void GeneratedCatalogShouldExposeExplicitOperationFastPath()
     {
         var explicitOperation = EpsgGeneratedCatalog.Operations.First(record =>
