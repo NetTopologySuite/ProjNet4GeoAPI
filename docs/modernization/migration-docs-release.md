@@ -24,10 +24,18 @@
 
 ## Reproducible update operations
 - Test baseline:
-  - `dotnet test .\\ProjNet4GeoAPI.sln -v q`
+  - `dotnet build .\\ProjNet4GeoAPI.sln -c Release -v minimal`
+  - `dotnet test .\\ProjNet4GeoAPI.sln -c Release --no-build -v minimal`
 - Mutation baseline:
   - `dotnet tool restore`
   - `dotnet dotnet-stryker --config-file stryker-config.json --output artifacts/stryker`
 - Benchmark baseline:
   - `dotnet build .\\src\\ProjNet.Benchmark\\ProjNet.Benchmark.csproj -c Release`
   - `dotnet run -c Release --project src\\ProjNet.Benchmark\\ProjNet.Benchmark.csproj -- --filter *ProjParityBenchmarks*`
+
+## Current release hardening snapshot
+- Version line is prepared for `3.0.0` (`src/Directory.Build.props`).
+- `PackageValidationBaselineVersion` is pinned to `2.1.0` until `3.0.0` is published.
+- Full release suite currently passes with baseline warning/skipped-test profile:
+  - `Build`: success with warning baseline
+  - `Tests`: `3731 total`, `3213 passed`, `0 failed`, `518 skipped`
