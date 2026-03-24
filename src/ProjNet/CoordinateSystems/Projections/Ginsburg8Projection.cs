@@ -22,28 +22,36 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Implements the spherical Kavrayskiy V projection (<c>kav5</c>).
+/// Implements the spherical Ginsburg VIII projection (<c>gins8</c>).
 /// </summary>
 [Serializable]
-internal sealed class KavrayskiyVProjection : StsProjectionBase
+internal class Ginsburg8Projection : MapProjection
 {
+    private const double Cl = 0.000952426d;
+    private const double Cp = 0.162388d;
+    private const double C12 = 0.08333333333333333d;
+
+    private readonly double radius;
+
     /// <summary>
-    /// Initializes a new instance of the <see cref="KavrayskiyVProjection"/> class.
+    /// Initializes a new instance of the <see cref="Ginsburg8Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
-    public KavrayskiyVProjection(IEnumerable<ProjectionParameter> parameters)
+    public Ginsburg8Projection(IEnumerable<ProjectionParameter> parameters)
         : this(parameters, null)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="KavrayskiyVProjection"/> class.
+    /// Initializes a new instance of the <see cref="Ginsburg8Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public KavrayskiyVProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
-        : base(parameters, inverse, "Kavrayskiy_V", 1.50488d, 1.35439d, false)
+    public Ginsburg8Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+        : base(parameters, inverse)
     {
+        this.Name = "Ginsburg_VIII";
+        this.radius = this.semiMajor * this.scaleFactor;
     }
 
     /// <inheritdoc />
@@ -51,10 +59,30 @@ internal sealed class KavrayskiyVProjection : StsProjectionBase
     {
         if (this.inverse is null)
         {
-            this.inverse = new KavrayskiyVProjection(this.Parameters.ToProjectionParameter(), this);
+            this.inverse = new Ginsburg8Projection(this.Parameters.ToProjectionParameter(), this);
         }
 
         return this.inverse;
+    }
+
+    /// <inheritdoc />
+    protected override void RadiansToMeters(ref double lon, ref double lat)
+    {
+        double lambda = Adjust_lon(lon - this.centralMeridian);
+        double t = lat * lat;
+        double y = lat * (1d + (t * C12));
+        double x = lambda * (1d - (Cp * t));
+        t = lambda * lambda;
+        x *= 0.87d - (Cl * t * t);
+
+        lon = this.radius * x;
+        lat = this.radius * y;
+    }
+
+    /// <inheritdoc />
+    protected override void MetersToRadians(ref double x, ref double y)
+    {
+        throw new InvalidOperationException("Ginsburg VIII does not support inverse projection in this wave.");
     }
 }
 

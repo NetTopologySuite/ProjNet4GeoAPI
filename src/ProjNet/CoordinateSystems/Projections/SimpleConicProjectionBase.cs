@@ -114,7 +114,7 @@ internal abstract class SimpleConicProjectionBase : MapProjection
                 this.rho0 = this.rhoC - this.latOrigin;
                 break;
 
-            case SimpleConicType.VitkovskyI:
+            case SimpleConicType.Vitkovsky1:
             {
                 double cs = Math.Tan(delta);
                 this.n = cs * Math.Sin(this.sig) / delta;
@@ -163,5 +163,6 @@ internal abstract class SimpleConicProjectionBase : MapProjection
         y = phi;
     }
 }
+
 
 

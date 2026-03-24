@@ -24,7 +24,8 @@ internal enum SimpleConicType
     Murdoch2 = 2,
     Murdoch3 = 3,
     Tissot = 4,
-    VitkovskyI = 5,
+    Vitkovsky1 = 5,
 }
+
 
 

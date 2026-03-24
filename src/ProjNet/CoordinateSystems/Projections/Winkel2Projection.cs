@@ -25,7 +25,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical Winkel II projection (<c>wink2</c>).
 /// </summary>
 [Serializable]
-internal class WinkelIIProjection : MapProjection
+internal class Winkel2Projection : MapProjection
 {
     private const int MaximumIterations = 10;
     private const double LoopTolerance = 1e-7;
@@ -34,20 +34,20 @@ internal class WinkelIIProjection : MapProjection
     private readonly double cosphi1;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="WinkelIIProjection"/> class.
+    /// Initializes a new instance of the <see cref="Winkel2Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
-    public WinkelIIProjection(IEnumerable<ProjectionParameter> parameters)
+    public Winkel2Projection(IEnumerable<ProjectionParameter> parameters)
         : this(parameters, null)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="WinkelIIProjection"/> class.
+    /// Initializes a new instance of the <see cref="Winkel2Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public WinkelIIProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public Winkel2Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
         : base(parameters, inverse)
     {
         this.Name = "Winkel_II";
@@ -61,7 +61,7 @@ internal class WinkelIIProjection : MapProjection
     {
         if (this.inverse is null)
         {
-            this.inverse = new WinkelIIProjection(this.Parameters.ToProjectionParameter(), this);
+            this.inverse = new Winkel2Projection(this.Parameters.ToProjectionParameter(), this);
         }
 
         return this.inverse;
@@ -128,3 +128,4 @@ internal class WinkelIIProjection : MapProjection
         y = FortPi * (Math.Sin(phiWorking) + yPrime);
     }
 }
+

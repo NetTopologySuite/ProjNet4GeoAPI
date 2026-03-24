@@ -22,27 +22,27 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Implements the spherical Vitkovsky I projection (<c>vitk1</c>).
+/// Implements the spherical Kavrayskiy V projection (<c>kav5</c>).
 /// </summary>
 [Serializable]
-internal sealed class VitkovskyIProjection : SimpleConicProjectionBase
+internal sealed class Kavrayskiy5Projection : StsProjectionBase
 {
     /// <summary>
-    /// Initializes a new instance of the <see cref="VitkovskyIProjection"/> class.
+    /// Initializes a new instance of the <see cref="Kavrayskiy5Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
-    public VitkovskyIProjection(IEnumerable<ProjectionParameter> parameters)
+    public Kavrayskiy5Projection(IEnumerable<ProjectionParameter> parameters)
         : this(parameters, null)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="VitkovskyIProjection"/> class.
+    /// Initializes a new instance of the <see cref="Kavrayskiy5Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public VitkovskyIProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
-        : base(parameters, inverse, SimpleConicType.VitkovskyI, "Vitkovsky_I")
+    public Kavrayskiy5Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+        : base(parameters, inverse, "Kavrayskiy_V", 1.50488d, 1.35439d, false)
     {
     }
 
@@ -51,10 +51,11 @@ internal sealed class VitkovskyIProjection : SimpleConicProjectionBase
     {
         if (this.inverse is null)
         {
-            this.inverse = new VitkovskyIProjection(this.Parameters.ToProjectionParameter(), this);
+            this.inverse = new Kavrayskiy5Projection(this.Parameters.ToProjectionParameter(), this);
         }
 
         return this.inverse;
     }
 }
+
 

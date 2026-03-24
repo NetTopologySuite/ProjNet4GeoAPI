@@ -115,7 +115,7 @@ public class ProjectionsRegistry
         Register("murd2", typeof(Murdoch2Projection));
         Register("murd3", typeof(Murdoch3Projection));
         Register("tissot", typeof(TissotProjection));
-        Register("vitk1", typeof(VitkovskyIProjection));
+        Register("vitk1", typeof(Vitkovsky1Projection));
         Register("imw_p", typeof(InternationalMapWorldPolyconicProjection));
         Register("international_map_of_the_world_polyconic", typeof(InternationalMapWorldPolyconicProjection));
         Register("bonne", typeof(BonneProjection));
@@ -190,8 +190,8 @@ public class ProjectionsRegistry
         Register("putnins_p6", typeof(PutninsP6Projection));
         Register("putp6p", typeof(PutninsP6PrimeProjection));
         Register("putnins_p6p", typeof(PutninsP6PrimeProjection));
-        Register("kav7", typeof(KavrayskiyVIIProjection));
-        Register("kavrayskiy_vii", typeof(KavrayskiyVIIProjection));
+        Register("kav7", typeof(Kavrayskiy7Projection));
+        Register("kavrayskiy_vii", typeof(Kavrayskiy7Projection));
         Register("wag2", typeof(Wagner2Projection));
         Register("wagner_ii", typeof(Wagner2Projection));
         Register("wag3", typeof(Wagner3Projection));
@@ -214,8 +214,8 @@ public class ProjectionsRegistry
         Register("general_sinusoidal", typeof(GeneralSinusoidalProjection));
         Register("eck6", typeof(Eckert6Projection));
         Register("eckert_vi", typeof(Eckert6Projection));
-        Register("kav5", typeof(KavrayskiyVProjection));
-        Register("kavrayskiy_v", typeof(KavrayskiyVProjection));
+        Register("kav5", typeof(Kavrayskiy5Projection));
+        Register("kavrayskiy_v", typeof(Kavrayskiy5Projection));
         Register("qua_aut", typeof(QuarticAuthalicProjection));
         Register("quartic_authalic", typeof(QuarticAuthalicProjection));
         Register("fouc", typeof(FoucautProjection));
@@ -274,8 +274,8 @@ public class ProjectionsRegistry
         Register("denoyer_semi_elliptical", typeof(DenoyerProjection));
         Register("fouc_s", typeof(FoucautSinusoidalProjection));
         Register("foucaut_sinusoidal", typeof(FoucautSinusoidalProjection));
-        Register("gins8", typeof(GinsburgVIIIProjection));
-        Register("ginsburg_viii", typeof(GinsburgVIIIProjection));
+        Register("gins8", typeof(Ginsburg8Projection));
+        Register("ginsburg_viii", typeof(Ginsburg8Projection));
         Register("lagrng", typeof(LagrangeProjection));
         Register("lagrange", typeof(LagrangeProjection));
         Register("larr", typeof(LarriveeProjection));
@@ -295,10 +295,10 @@ public class ProjectionsRegistry
         Register("van_der_grinten_iii", typeof(VanDerGrinten3Projection));
         Register("vandg4", typeof(VanDerGrinten4Projection));
         Register("van_der_grinten_iv", typeof(VanDerGrinten4Projection));
-        Register("wink1", typeof(WinkelIProjection));
-        Register("winkel_i", typeof(WinkelIProjection));
-        Register("wink2", typeof(WinkelIIProjection));
-        Register("winkel_ii", typeof(WinkelIIProjection));
+        Register("wink1", typeof(Winkel1Projection));
+        Register("winkel_i", typeof(Winkel1Projection));
+        Register("wink2", typeof(Winkel2Projection));
+        Register("winkel_ii", typeof(Winkel2Projection));
         Register("wintri", typeof(WinkelTripelProjection));
         Register("winkel_tripel", typeof(WinkelTripelProjection));
         Register("hammer", typeof(HammerProjection));
@@ -509,6 +509,7 @@ public class ProjectionsRegistry
         return null;
     }
 }
+
 
 
 

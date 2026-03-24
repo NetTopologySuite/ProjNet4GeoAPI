@@ -25,27 +25,27 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical Winkel I projection (<c>wink1</c>).
 /// </summary>
 [Serializable]
-internal class WinkelIProjection : MapProjection
+internal class Winkel1Projection : MapProjection
 {
     private readonly double radius;
     private readonly double inverseRadius;
     private readonly double cosphi1;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="WinkelIProjection"/> class.
+    /// Initializes a new instance of the <see cref="Winkel1Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
-    public WinkelIProjection(IEnumerable<ProjectionParameter> parameters)
+    public Winkel1Projection(IEnumerable<ProjectionParameter> parameters)
         : this(parameters, null)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="WinkelIProjection"/> class.
+    /// Initializes a new instance of the <see cref="Winkel1Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public WinkelIProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public Winkel1Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
         : base(parameters, inverse)
     {
         this.Name = "Winkel_I";
@@ -61,7 +61,7 @@ internal class WinkelIProjection : MapProjection
     {
         if (this.inverse is null)
         {
-            this.inverse = new WinkelIProjection(this.Parameters.ToProjectionParameter(), this);
+            this.inverse = new Winkel1Projection(this.Parameters.ToProjectionParameter(), this);
         }
 
         return this.inverse;
@@ -94,3 +94,4 @@ internal class WinkelIProjection : MapProjection
         y = yy;
     }
 }
+
