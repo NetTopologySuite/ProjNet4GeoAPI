@@ -1244,7 +1244,7 @@ def emit(output_path: Path, zip_name: str, catalog, operations, operation_parame
         'EpsgGeodeticDatumRecord': 'int code, string name, int ellipsoidCode, int primeMeridianCode',
         'EpsgVerticalDatumRecord': 'int code, string name',
         'EpsgConversionRecord': 'int code, string methodName, int parameterCount',
-        'EpsgConversionParameterRecord': 'int conversionCode, string name, double value',
+        'EpsgConversionParameterRecord': 'string name, double value',
         'EpsgOperationRecord': 'EpsgOperationType operationType, int operationCode, int sourceSrid, int targetSrid, double accuracy, string methodName, string parameterFileName, int parameterStartIndex, int parameterCount',
         'EpsgOperationParameterRecord': 'int operationCode, string name, double value',
         'EpsgExplicitOperationRecord': 'int operationCode, double dx, double dy, double dz, double ex, double ey, double ez, double ppm',
@@ -1394,7 +1394,7 @@ def emit(output_path: Path, zip_name: str, catalog, operations, operation_parame
                 lines.append('                    {')
                 for parameter_index, parameter_record in enumerate(parameters):
                     lines.append(f'                        case {parameter_index}:')
-                    lines.append(f'                            parameter = new EpsgConversionParameterRecord({code}, "{esc(parameter_record[0])}", {repr(parameter_record[1])}d);')
+                    lines.append(f'                            parameter = new EpsgConversionParameterRecord("{esc(parameter_record[0])}", {repr(parameter_record[1])}d);')
                     lines.append('                            return true;')
                 lines.append('                        default:')
                 lines.append('                            break;')
