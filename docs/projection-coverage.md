@@ -12,11 +12,19 @@ This document tracks the projection feature-parity status between `spec\PROJ` (C
 
 ## Current summary
 
-- C++ projection codes discovered: **161** (`PROJ_HEAD` entries, including aliases and compatibility names).
-- .NET projection registry parity gap: **1 code** (`ob_tran`).
-- `sch` is now available in ProjNet as a **runtime 3D transform** (`SchMathTransform`) and is also registered under projection aliases (`sch`, `spherical_cross_track_height`) for operation creation parity.
-- `ob_tran` remains implemented as a **runtime transform** (`ObTranMathTransform`) with dedicated parity tests; it is intentionally not instantiated through the 2D map-projection implementation path.
-- Latest focused regression: `Phase7SpecialtyProjectionBatchD8/D9/D10` + `GieBuiltinsTheoryTests` passed with `2533 total / 2044 passed / 489 skipped / 0 failed`.
+- C++ `PROJ_HEAD` identifiers discovered: **186**.
+- Projection aliases registered in `ProjectionsRegistry`: **321**.
+- Runtime pipeline conversion dispatches (`ProjPipelineMathTransformFactory`): **23**.
+- Classified as projection-registry backed: **160**.
+- Classified as runtime-pipeline backed: **18**.
+- Initially unresolved after direct registry+pipeline lookup: **8** (`affine`, `cart`, `geoc`, `geocent`, `geogoffset`, `molobadekas`, `pop`, `push`).
+- Refined resolution:
+  - implemented via non-dispatch runtime/factory paths: `affine`, `cart`, `geocent`
+  - direct `+proj` dispatcher gaps: `push`, `pop`, `geogoffset`, `molobadekas`, `geoc`
+- Detailed audit record: `docs/modernization/m1-projection-audit.md`.
+- Baseline validation at audit time:
+  - `dotnet build ProjNet4GeoAPI.sln -c Release` succeeded with 570 warnings (existing baseline),
+  - `dotnet test test/ProjNet.Tests/ProjNET.Tests.csproj -c Release --no-build` succeeded (`3731 total / 3213 passed / 518 skipped / 0 failed`).
 
 ## Implemented projection families in ProjNet
 
@@ -72,19 +80,44 @@ This document tracks the projection feature-parity status between `spec\PROJ` (C
 | Gnomonic | `gnomonic`, `gnom` |
 | Spherical Cross-Track Height (runtime 3D) | `sch`, `spherical_cross_track_height` |
 
-## High-priority missing projection codes (next tiers)
+## Coverage classification (latest audit)
 
-These codes are present in C++ PROJ but currently not registered in ProjNet:
+### Projection registry backed (class mapping)
 
-- Remaining registry-name gap from `PROJ_HEAD`: `ob_tran` (implemented in runtime transform pipeline).
+These are mapped through `Register("...")` aliases in `ProjectionsRegistry` and instantiate through projection classes.
+
+- Count: **160 `PROJ_HEAD` identifiers**.
+
+### Runtime pipeline backed (conversion/transform dispatch)
+
+These are mapped through `projCode.Equals("...")` dispatch in `ProjPipelineMathTransformFactory.TryCreateStepTransform`.
+
+- Count: **18 `PROJ_HEAD` identifiers**.
+- Includes: `axisswap`, `gridshift` family, `defmodel`, `deformation`, `tinshift`, `topocentric`, `vertoffset`, `helmert`, `molodensky`, `ob_tran`, `sch`, `set`, `unitconvert`, `pipeline`.
+
+### Factory/runtime-only support (not direct `+proj` dispatch)
+
+- `affine` is implemented by `AffineTransform` and WKT transform parsing paths.
+- `cart`/`geocent` are implemented through geocentric conversion composition in `CoordinateTransformationFactory` and `GeocentricTransform`.
+
+### Direct `+proj` dispatch gaps
+
+The following `PROJ_HEAD` identifiers are not currently dispatched as direct `+proj` tokens in `ProjPipelineMathTransformFactory`:
+
+- `push`
+- `pop`
+- `geogoffset`
+- `molobadekas`
+- `geoc`
+
+These are runtime operation-dispatch parity items, not projection-class registration items.
 
 ## Validation linkage
 
-Recent M7 closure validation:
+Recent parity-related validation evidence:
 
-- `Phase7SpecialtyProjectionBatchD8Tests`
-- `Phase7SpecialtyProjectionBatchD9Tests`
-- `Phase7SpecialtyProjectionBatchD10Tests`
-- `Phase6ObTranRuntimeTests`
-- `GieBuiltinsTheoryTests`
+- Build baseline: `dotnet build ProjNet4GeoAPI.sln -c Release`
+- Test baseline: `dotnet test test/ProjNet.Tests/ProjNET.Tests.csproj -c Release --no-build`
+- Runtime GIE coverage harness: `GieBuiltinsTheoryTests`
+- Dedicated runtime transform support checks for `ob_tran` and conversion pipeline operations.
 
