@@ -1,119 +1,146 @@
-# ProjNet (for GeoAPI)
-This library is an extended port of [ProjNet](http://projnet.codeplex.com)
+# ProjNET 3.0 (modernized ProjNet4GeoAPI)
 
-## Important notice
-The current team unfortunatly doesn't have the resources to dedicate to supporting this project at this moment.
-If you see yourself in the position to help out please [reach out](https://github.com/NetTopologySuite/ProjNet4GeoAPI/issues/99).
+ProjNET is a managed .NET spatial reference and projection engine for geodetic coordinate system modeling and coordinate transformation workflows.
 
-Alternatives:
-* [SharpProj](https://www.nuget.org/packages/SharpProj.NetTopologySuite/)
-* [DotSpatial.Projections](https://www.nuget.org/packages/DotSpatial.Projections/)
-* [DotSpatial.Projections (NetStandard)](https://www.nuget.org/packages/DotSpatial.Projections.NetStandard/)
-* [GDAL/OGR](https://www.nuget.org/packages/GDAL/)
+This repository contains an actively modernized codebase aligned with current PROJ behavior and expanded runtime coverage while preserving compatibility-focused API surfaces.
 
-## .NET Spatial Reference and Projection Engine
-Proj.NET performs point-to-point coordinate conversions between geodetic coordinate systems for use in fx. Geographic Information Systems (GIS) or GPS applications. The spatial reference model used adheres to the Simple Features specification.
-* Read the [Frequently Asked Questions](https://github.com/NetTopologySuite/ProjNet4GeoAPI/wiki/Frequently-Asked-Questions) for common questions.
-* Popular [Well-Known Text](https://github.com/NetTopologySuite/ProjNet4GeoAPI/wiki/Popular-Well-Known-Text-representations-of-Spatial-Reference-Systems) representations for Spatial Reference Systems
+## What is included
 
-### Build status
-| Branch | Status |
-| --- | --- |
-| develop | [![Build Status](https://travis-ci.org/NetTopologySuite/ProjNet4GeoAPI.svg?branch=develop)](https://travis-ci.org/NetTopologySuite/ProjNet4GeoAPI) |
-| master | [![Build Status](https://travis-ci.org/NetTopologySuite/ProjNet4GeoAPI.svg?branch=master)](https://travis-ci.org/NetTopologySuite/ProjNet4GeoAPI) |
+- Managed coordinate system definitions and EPSG-backed lookup/catalog support.
+- Projection registration with broad alias coverage (`321` aliases).
+- Coordinate operation and transformation runtime (including affine, Helmert, Molodensky, deformation, grid-shift, topocentric, and pipeline-based paths).
+- WKT parsing/writing support and modernization artifacts under `docs/modernization/`.
 
+## Target frameworks
 
-### Get it from NuGet
-* For version 1.*
-  `PM> Install-Package ProjNet4GeoAPI`  
-  - More information on [NuGet](https://www.nuget.org/packages/ProjNet4GeoAPI)  
-* For version 2.*  
-  `PM> Install-Package ProjNet`
+`ProjNET` currently targets:
 
+- `netstandard2.0` (required shipping target)
+- `netstandard2.1`
+- `net8.0`
 
-### Talk...
-Join the [![Gitter](https://img.shields.io/gitter/room/TechnologyAdvice/Stardust.svg)](https://gitter.im/NetTopologySuite/ProjNet4GeoAPI) on ProjNet (for GeoAPI).
+The project is built with C# 12 and includes .NET 8-specific runtime optimizations where applicable (for example conditional source-generated regex paths).
 
+## Installation
 
-### Projects using ProjNet(4GeoAPI)
-* [SharpMap](https://github.com/SharpMap/SharpMap)
+```powershell
+dotnet add package ProjNET
+```
 
-(If your project is missing, there is an edit button up-right)
+## Quick usage
 
-### Supports:
-* Datum transformations
-* Geographic, Geocentric, and Projected coordinate systems
-* Compatible with Microsoft .NetStandard 2.0
-* Converts coordinate systems to/from Well-Known Text (WKT) and to XML
+```csharp
+using ProjNet;
 
-### Modernization notes
-Concise modernization artifacts and rollout notes are tracked in:
-* `docs/modernization/`
+var services = new CoordinateSystemServices(new[]
+{
+    new KeyValuePair<int, string>(4326, GeographicCoordinateSystem.WGS84.WKT),
+    new KeyValuePair<int, string>(3857, ProjectedCoordinateSystem.WebMercator.WKT),
+});
 
-### v3 migration notes (major release)
-Version 3 introduces API modernization aligned with ongoing PROJ parity work.
+var transform = services.CreateTransformation(4326, 3857);
+double[] result = transform.MathTransform.Transform(new[] { 10d, 10d });
+```
 
-* The `CoordinateSystemFactory.CreateFromWkt` parameter name changed from `WKT` to `wkt` (non-breaking at runtime, but visible in API metadata/baseline output).
-* `MapProjection` constants were normalized to PascalCase (`FortPi`, `HalfPi`, `HugeVal`, `MaxVal`, `TwoPi`, `Eps10`, `Eps7`, `Epsln`, `DblLong`).
-* Legacy constant names remain available as `[Obsolete]` aliases (`FORT_PI`, `HALF_PI`, `HUGE_VAL`, `MAX_VAL`, `TWO_PI`, `FORTPI`, `HALFPI`, `HUGEVAL`, `MAXVAL`, `TWOPI`, `EPS10`, `EPS7`, `EPSLN`, `DBLLONG`) for migration compatibility.
-* Legacy projection field names remain available as `[Obsolete]` aliases (`central_meridian`, `false_easting`, `false_northing`, `lat_origin`, `scale_factor`) while internal code uses modernized names.
-* Public API review now tracks in both shipped (`PublicAPI.Shipped.txt`) and in-flight (`PublicAPI.Unshipped.txt`) baselines.
+Expected reference point for `10°,10°` in EPSG:3857 is approximately:
 
-### Release validation checklist
-Current release hardening is validated with the following commands:
-* `dotnet test .\test\ProjNet.Tests\ProjNet.Tests.csproj -c Release --framework net8 --filter "FullyQualifiedName~PublicApiBaselineTests"`
-* `dotnet test .\test\ProjNet.Tests\ProjNet.Tests.csproj -c Release --framework net8 --filter "FullyQualifiedName~GieBuiltinsTheoryTests|FullyQualifiedName~Gigs5101TheoryTests"`
-* `dotnet build .\src\ProjNet.Benchmark\ProjNet.Benchmark.csproj -c Release`
-* `dotnet run -c Release --project .\src\ProjNet.Benchmark\ProjNet.Benchmark.csproj -- --list flat`
-* `dotnet run -c Release --project .\src\ProjNet.Benchmark\ProjNet.Benchmark.csproj -- --filter *ProjParityBenchmarks*`
+- `X = 1113194.90793274`
+- `Y = 1118889.97485796`
 
-### Projection types currently supported:
-* Albers
-* Azimuthal Equidistant
-* Aitoff
-* Cassini Soldner
-* Bonne
-* Cylindrical Equal Area
-* Equal Earth
-* Equidistant Conic
-* Equidistant Cylindrical (Equirectangular / Plate Carree)
-* Gauss-Schreiber Transverse Mercator (Gauss-Laborde Reunion)
-* Geostationary Satellite
-* Gnomonic
-* Goode Homolosine
-* Hammer
-* HEALPix
-* Interrupted Goode Homolosine
-* Hotine Oblique Mercator
-* Krovak
-* Laborde
-* Lambert Azimuthal Equal Area
-* Lambert Conformal
-* Lambert Tangential Conformal Conic
-* LatLong / LongLat (identity)
-* Loximuthal
-* Mercator
-* Mercator Auxiliary Sphere
-* Miller Cylindrical
-* Mollweide
-* Natural Earth
-* Natural Earth 2
-* Near-Sided Perspective
-* New Zealand Map Grid
-* Oblique Mercator
-* Oblique Stereographic
-* Orthographic
-* Patterson
-* Perspective Conic
-* Polar Stereographic
-* Transverse Cylindrical Equal Area
-* Robinson
-* Sinusoidal
-* Polyconic
-* Pseudo Mercator
-* Transverse Mercator
-* Swiss Oblique Mercator
-* van der Grinten
-* Winkel I
-* Winkel II
-* Winkel Tripel
+(Validated by `test/ProjNet.Tests/VerificationSuiteTests.cs`.)
+
+## Build and test
+
+From repository root:
+
+```powershell
+dotnet build .\ProjNet4GeoAPI.sln --tl:off -v minimal
+dotnet test .\test\ProjNet.Tests\ProjNET.Tests.csproj --tl:off -v minimal
+```
+
+## Modernization highlights (v3 line)
+
+- Added `net8.0` as a library target while preserving `netstandard` targets.
+- Generator now uses EPSG WKT ZIP as primary source (no runtime `proj.db` dependency).
+- Large generated eager arrays were replaced by on-demand switch-based lookup paths in the managed EPSG catalog.
+- Test stack modernized to xUnit v3.
+- SPDX-based file attribution and `LICENSES/` + `NOTICE.md` consolidation completed.
+- API XML documentation overhauled across projection, transformation, coordinate-system, and IO/service surfaces.
+
+## Transformation coverage summary
+
+Implemented and validated transformation families include:
+
+- Affine transforms (`AffineTransform`)
+- Geocentric/geographic bridge transforms
+- Axis swap and unit conversion
+- Helmert and Molodensky families
+- Deformation and deformation model transforms
+- Horner and TIN shift transforms
+- Horizontal/vertical/XYZ grid shifts (NTv2, GTX, GeoTIFF)
+- Prime-meridian and topocentric transforms
+- Pipeline composition and concatenation paths
+
+For audit details, see:
+
+- `docs/modernization/m1-transform-audit.md`
+- `docs/modernization/m1-pipeline-ops-audit.md`
+
+## Projection coverage summary
+
+Total registered projection classes: **152**  
+Projection aliases registered in `ProjectionsRegistry`: **321**
+
+### Cylindrical and Mercator family (20)
+
+`CalCoFiProjection`, `CentralCylindricalProjection`, `ColombiaUrbanProjection`, `CylindricalEqualAreaProjection`, `EquidistantCylindricalProjection`, `GaussSchreiberTransverseMercatorProjection`, `HotineObliqueMercatorProjection`, `LatLongProjection`, `Mercator`, `MercatorAuxiliarySphere`, `MillerCylindricalProjection`, `ObliqueCylindricalEqualAreaProjection`, `ObliqueMercatorProjection`, `PseudoMercator`, `SpaceObliqueMercatorProjection`, `SwissObliqueMercatorProjection`, `ToblerMercatorProjection`, `TransverseCentralCylindricalProjection`, `TransverseCylindricalEqualAreaProjection`, `TransverseMercator`.
+
+### Transverse and oblique family (2)
+
+`LabordeProjection`, `UpsProjection`.
+
+### Conic family (18)
+
+`BipolarConicProjection`, `BonneProjection`, `CentralConicProjection`, `EquidistantConicProjection`, `EulerProjection`, `InternationalMapWorldPolyconicProjection`, `KrovakProjection`, `LambertConformalConic2SP`, `LambertConformalConicAlternativeProjection`, `LambertEqualAreaConicProjection`, `Murdoch1Projection`, `Murdoch2Projection`, `Murdoch3Projection`, `PconicProjection`, `PolyconicProjection`, `RectangularPolyconicProjection`, `TissotProjection`, `Vitkovsky1Projection`.
+
+### Azimuthal and perspective family (16)
+
+`AiryProjection`, `AzimuthalEquidistantProjection`, `GeostationarySatelliteProjection`, `GnomonicProjection`, `LambertAzimuthalEqualAreaProjection`, `LeeOblatedStereographicProjection`, `MillerOblatedStereographicProjection`, `ModifiedStereographic48USProjection`, `ModifiedStereographic50USProjection`, `ModifiedStereographicAlaskaProjection`, `NearSidedPerspectiveProjection`, `OblatedEqualAreaProjection`, `ObliqueStereographicProjection`, `OrthographicProjection`, `PolarStereographicProjection`, `RoussilheStereographicProjection`.
+
+### Pseudocylindrical and world map family (68)
+
+`AitoffProjection`, `AlbersProjection`, `ApianProjection`, `AugustProjection`, `BaconProjection`, `BoggsProjection`, `CollignonProjection`, `CompactMillerProjection`, `CrasterProjection`, `DenoyerProjection`, `Eckert1Projection`, `Eckert2Projection`, `Eckert3Projection`, `Eckert4Projection`, `Eckert5Projection`, `Eckert6Projection`, `EqualEarthProjection`, `FaheyProjection`, `FoucautProjection`, `FoucautSinusoidalProjection`, `GallProjection`, `GeneralSinusoidalProjection`, `Ginsburg8Projection`, `HammerProjection`, `HatanoProjection`, `IghProjection`, `Kavrayskiy5Projection`, `Kavrayskiy7Projection`, `LagrangeProjection`, `LarriveeProjection`, `LaskowskiProjection`, `LoximuthalProjection`, `McBrydeThomasFlatPolarParabolicProjection`, `McBrydeThomasFlatPolarQuarticProjection`, `McBrydeThomasFlatPolarSineProjection`, `McBrydeThomasFlatPolarSinusoidalProjection`, `McBrydeThomasFlatPoleSineProjection`, `NaturalEarth2Projection`, `NaturalEarthProjection`, `NellHammerProjection`, `NellProjection`, `NicolosiProjection`, `OrteliusProjection`, `PattersonProjection`, `PutninsP1Projection`, `PutninsP2Projection`, `PutninsP3PrimeProjection`, `PutninsP3Projection`, `PutninsP4PProjection`, `PutninsP5PrimeProjection`, `PutninsP5Projection`, `PutninsP6PrimeProjection`, `PutninsP6Projection`, `QuarticAuthalicProjection`, `RobinsonProjection`, `SinusoidalProjection`, `TimesProjection`, `TwoPointEquidistantProjection`, `UrmaevFlatPolarSinusoidalProjection`, `UrmaevVProjection`, `Wagner1Projection`, `Wagner2Projection`, `Wagner3Projection`, `Wagner4Projection`, `Wagner5Projection`, `Wagner6Projection`, `Wagner7Projection`, `WerenskioldProjection`.
+
+### Polyconic and related family (1)
+
+`CassiniSoldnerProjection`.
+
+### Van der Grinten and Winkel family (7)
+
+`VanDerGrinten2Projection`, `VanDerGrinten3Projection`, `VanDerGrinten4Projection`, `VanDerGrintenProjection`, `Winkel1Projection`, `Winkel2Projection`, `WinkelTripelProjection`.
+
+### Interrupted and composite family (7)
+
+`Bertin1953Projection`, `GoodeProjection`, `InterruptedGoodeHomolosineOceanicProjection`, `InterruptedMollweideOceanicProjection`, `InterruptedMollweideProjection`, `MollweideProjection`, `SpilhausProjection`.
+
+### Polyhedral and specialty geometric family (12)
+
+`AdamsHemisphereInSquareProjection`, `AdamsWorldInSquareIIProjection`, `AdamsWorldInSquareIProjection`, `AiroceanProjection`, `ChamberlinTrimetricProjection`, `GuyouProjection`, `HealpixProjection`, `IseaProjection`, `NewZealandMapGridProjection`, `PeirceQuincuncialProjection`, `QuadrilateralizedSphericalCubeProjection`, `S2Projection`.
+
+### Legacy runtime operation registration (1)
+
+`SchMathTransform`.
+
+## Documentation and governance
+
+- Modernization and parity artifacts: `docs/modernization/`
+- Projection parity matrix: `docs/projection-coverage.md`
+- Engineering governance and API baseline policy: `src/ProjNet/ENGINEERING_GOVERNANCE.md`
+
+## License and attribution
+
+This project ships under **LGPL-2.1-or-later**.
+
+- License texts: `LICENSES/`
+- Attribution and provenance summary: `NOTICE.md`
+- Per-file SPDX attribution is used across source and tests.
