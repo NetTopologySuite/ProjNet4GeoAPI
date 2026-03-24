@@ -11,6 +11,12 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the Lambert Conformal Conic Alternative projection (<c>lcca</c>).
 /// </summary>
+/// <remarks>
+/// Differs from the standard Lambert Conformal Conic in that it is defined by a single
+/// latitude of origin (<c>lat_0</c>, which must be non-zero) rather than two standard
+/// parallels. The inverse transform uses Newton–Raphson iteration (up to 10 steps) to
+/// recover the meridian arc length.
+/// </remarks>
 [Serializable]
 internal sealed class LambertConformalConicAlternativeProjection : MapProjection
 {

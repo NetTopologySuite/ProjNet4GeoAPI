@@ -10,6 +10,12 @@ using System.Collections.Generic;
 /// <summary>
 /// Shared implementation for simple spherical conic projections in <c>sconics.cpp</c>.
 /// </summary>
+/// <remarks>
+/// All variants are spherical-only and share a common polar-conic forward and inverse
+/// transform. The cone constant <c>n</c> and the reference radius <c>rhoC</c> are computed
+/// differently for each variant. The Murdoch II variant uses a tangent-based radial
+/// distance rather than the linear distance used by the other variants.
+/// </remarks>
 [Serializable]
 internal abstract class SimpleConicProjectionBase : MapProjection
 {

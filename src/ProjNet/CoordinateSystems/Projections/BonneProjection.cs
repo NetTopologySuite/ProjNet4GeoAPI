@@ -9,8 +9,14 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Represents the documented type.
+/// Implements the Bonne projection (<c>bonne</c>).
 /// </summary>
+/// <remarks>
+/// A pseudoconical equal-area projection in which all parallels are represented as concentric
+/// circular arcs with true spacing, and all meridians are equally spaced along each parallel.
+/// Both spherical and ellipsoidal forms are supported. The standard parallel <c>lat_1</c>
+/// must be non-zero; at ±90° the projection degenerates to a Werner projection.
+/// </remarks>
 [Serializable]
 internal class BonneProjection : MapProjection
 {

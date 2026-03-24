@@ -11,6 +11,12 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the interrupted Goode Homolosine oceanic projection (<c>igh_o</c>).
 /// </summary>
+/// <remarks>
+/// Uses the same sinusoidal/Mollweide blend as the standard Interrupted Goode Homolosine
+/// projection, but with interruptions placed over the continental landmasses so that the
+/// oceanic regions appear continuous. The projection uses 12 zones arranged in three
+/// longitudinal panels per hemisphere.
+/// </remarks>
 [Serializable]
 internal class InterruptedGoodeHomolosineOceanicProjection : MapProjection
 {

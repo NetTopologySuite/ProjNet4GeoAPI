@@ -9,8 +9,14 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Represents the documented type.
+/// Implements the Interrupted Goode Homolosine projection (<c>igh</c>).
 /// </summary>
+/// <remarks>
+/// Combines the sinusoidal projection for latitudes within approximately ±40°44′12″ and the
+/// Mollweide projection for higher latitudes, with interruptions optimised for the continental
+/// landmasses. The projection uses 12 zones: two Mollweide and two sinusoidal zones in the
+/// northern hemisphere, and four sinusoidal and four Mollweide zones in the southern hemisphere.
+/// </remarks>
 [Serializable]
 internal class IghProjection : MapProjection
 {

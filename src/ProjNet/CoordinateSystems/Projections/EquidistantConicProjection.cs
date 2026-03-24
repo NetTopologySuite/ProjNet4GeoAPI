@@ -9,8 +9,14 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Represents the documented type.
+/// Implements the Equidistant Conic projection (<c>eqdc</c>).
 /// </summary>
+/// <remarks>
+/// Distances along all meridians and along the two standard parallels are preserved.
+/// Supports both one-standard-parallel and two-standard-parallel forms; when a single
+/// parallel is specified via <c>standard_parallel_1</c>, the cone constant is set to
+/// the sine of that parallel.
+/// </remarks>
 [Serializable]
 internal class EquidistantConicProjection : MapProjection
 {

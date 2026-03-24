@@ -9,8 +9,13 @@ using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Represents the documented type.
+/// Implements the Perspective Conic projection (<c>pconic</c>).
 /// </summary>
+/// <remarks>
+/// A spherical conic projection in which the cone is defined by two standard parallels and
+/// the graticule is constructed by perspective projection from the opposite pole. Only
+/// spherical input is supported.
+/// </remarks>
 [Serializable]
 internal class PconicProjection : MapProjection
 {

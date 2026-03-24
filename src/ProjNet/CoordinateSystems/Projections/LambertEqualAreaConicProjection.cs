@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements PROJ's <c>leac</c> projection by normalizing parameters to the Albers implementation.
 /// </summary>
+/// <remarks>
+/// Maps the appropriate pole (north or south) as the first Albers standard parallel and the
+/// user-supplied <c>lat_1</c> as the second. Set the <c>south</c> parameter to a non-zero
+/// value to select the southern hemisphere variant.
+/// </remarks>
 [Serializable]
 internal sealed class LambertEqualAreaConicProjection : AlbersProjection
 {

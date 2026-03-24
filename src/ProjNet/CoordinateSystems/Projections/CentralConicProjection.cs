@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Central Conic projection (<c>ccon</c>).
 /// </summary>
+/// <remarks>
+/// A perspective conic projection defined by a single standard parallel (<c>lat_1</c>,
+/// which must be non-zero). Graticule lines are constructed by central (gnomonic)
+/// projection onto the cone. Only spherical input is supported.
+/// </remarks>
 [Serializable]
 internal sealed class CentralConicProjection : MapProjection
 {
