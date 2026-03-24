@@ -19,7 +19,7 @@ namespace ProjNET.Tests;
 
 using System;
 using System.Globalization;
-using ProjNET.Tests.Testing;
+using Xunit;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 
@@ -153,7 +153,7 @@ public class CoordinateTransformTestsBase
             this.TransformationError(title, testPoint, reverseResult, true);
         }
 
-        Assert.IsTrue(forward && reverse);
+        Assert.True(forward && reverse);
     }
 }
 

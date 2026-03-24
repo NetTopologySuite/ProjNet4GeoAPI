@@ -22,7 +22,7 @@ using System.Data;
 using System.IO;
 using Newtonsoft.Json.Linq;
 using Npgsql;
-using ProjNET.Tests.Testing;
+using Xunit;
 using ProjNet.CoordinateSystems;
 
 /// <summary>
@@ -122,7 +122,7 @@ public class SpatialRefSysTableParser
             }
 
             Console.WriteLine("\n\nTotal number of Tests {0}, failed {1}", tested, failed);
-            Assert.IsTrue(failed == 0);
+            Assert.True(failed == 0);
         }
     }
 

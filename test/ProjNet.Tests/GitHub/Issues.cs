@@ -19,7 +19,7 @@ namespace ProjNET.Tests.GitHub;
 
 using System;
 using System.Collections.Generic;
-using ProjNET.Tests.Testing;
+using Xunit;
 using ProjNet;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
@@ -48,11 +48,11 @@ public class Issues
         var ctlFwd = ctFwd.CoordinateTransformationList;
         var ctlRev = ctRev.CoordinateTransformationList;
 
-        Assert.That(ReferenceEquals(ctlFwd, ctlRev), Is.False);
-        Assert.That(ctlFwd.Count, Is.EqualTo(ctlRev.Count));
+        Assert.False(ReferenceEquals(ctlFwd, ctlRev));
+        Assert.Equal(ctlRev.Count, ctlFwd.Count);
         for (int i = 0, j = ctlFwd.Count - 1; i < ctlFwd.Count; i++, j--)
         {
-            Assert.That(ReferenceEquals(ctlFwd[i], ctlRev[j]), Is.False);
+            Assert.False(ReferenceEquals(ctlFwd[i], ctlRev[j]));
         }
     }
 
@@ -104,9 +104,9 @@ public class Issues
         var pt1b = ctFwd.Inverse().Transform(pt2a.X, pt2a.Y);
         var pt2b = ctFwd.Transform(pt1a.x, pt1a.y);
 
-        Assert.That(pt1a.x, Is.EqualTo(pt1b.X).Within(0.01));
-        Assert.That(pt1a.y, Is.EqualTo(pt1b.Y).Within(0.01));
-        Assert.That(pt2a, Is.EqualTo(pt2b));
+        Assert.InRange(pt1b.X, pt1a.x - 0.01, pt1a.x + 0.01);
+        Assert.InRange(pt1b.Y, pt1a.y - 0.01, pt1a.y + 0.01);
+        Assert.Equal(pt2b, pt2a);
     }
 
     /// <summary>
@@ -126,8 +126,8 @@ public class Issues
         var pt_3857ex = (x: 1358761.89, y: 7456070.47);
 
         var pt_3857 = mt1.Transform(pt25832.x, pt25832.y);
-        Assert.That(pt_3857.X, Is.EqualTo(pt_3857ex.x).Within(0.015));
-        Assert.That(pt_3857.Y, Is.EqualTo(pt_3857ex.y).Within(0.015));
+        Assert.InRange(pt_3857.X, pt_3857ex.x - 0.015, pt_3857ex.x + 0.015);
+        Assert.InRange(pt_3857.Y, pt_3857ex.y - 0.015, pt_3857ex.y + 0.015);
 
         epsg_3857 = (ProjectedCoordinateSystem)css.GetCoordinateSystem(3857);
         Console.WriteLine(epsg_3857.Projection.ClassName);
@@ -135,8 +135,8 @@ public class Issues
 
         var mt2 = css.CreateTransformation(epsg25832, epsg_3857).MathTransform;
         pt_3857 = mt2.Transform(pt25832.x, pt25832.y);
-        Assert.That(pt_3857.X, Is.EqualTo(pt_3857ex.x).Within(0.015));
-        Assert.That(pt_3857.Y, Is.EqualTo(pt_3857ex.y).Within(0.015));
+        Assert.InRange(pt_3857.X, pt_3857ex.x - 0.015, pt_3857ex.x + 0.015);
+        Assert.InRange(pt_3857.Y, pt_3857ex.y - 0.015, pt_3857ex.y + 0.015);
     }
 
     /// <summary>
@@ -152,12 +152,12 @@ public class Issues
 
         var ct = css.CreateTransformation(epsg26910, epsg_4326);
         var pt1a = ct.MathTransform.Transform(ptI[0], ptI[1]);
-        Assert.That(pt1a.X, Is.EqualTo(-82.0479097).Within(0.01), "Longitude");
-        Assert.That(pt1a.Y, Is.EqualTo(48.4185597).Within(0.01), "Latitude");
+        Assert.InRange(pt1a.X, -82.0479097 - 0.01, -82.0479097 + 0.01);
+        Assert.InRange(pt1a.Y, 48.4185597 - 0.01, 48.4185597 + 0.01);
         /*
         var pt1b = ct.MathTransform.Inverse().Transform(pt1a);
-        Assert.That(pt1b[0], Is.EqualTo(3523562.711189).Within(0.01), "Easting");
-        Assert.That(pt1b[1], Is.EqualTo(6246615.391161).Within(0.01), "Northing");
+        Assert.InRange(pt1b[0], 3523562.711189 - 0.01, 3523562.711189 + 0.01);
+        Assert.InRange(pt1b[1], 6246615.391161 - 0.01, 6246615.391161 + 0.01);
          */
     }
 
@@ -174,13 +174,13 @@ public class Issues
         var ptI = new double[] { 3523562.711189, 6246615.391161 };
 
         DotSpatial.Projections.Reproject.ReprojectPoints(ptI, null, epsg26910, epsg_4326, 0, 1);
-        Assert.That(ptI[0], Is.EqualTo(-82.0479097).Within(0.01), "Longitude");
-        Assert.That(ptI[1], Is.EqualTo(48.4185597).Within(0.01), "Latitude");
+        Assert.InRange(ptI[0], -82.0479097 - 0.01, -82.0479097 + 0.01);
+        Assert.InRange(ptI[1], 48.4185597 - 0.01, 48.4185597 + 0.01);
 
 
         DotSpatial.Projections.Reproject.ReprojectPoints(ptI, null, epsg_4326, epsg26910, 0, 1);
-        Assert.That(ptI[0], Is.EqualTo(3523562.711189).Within(0.01), "Easting");
-        Assert.That(ptI[1], Is.EqualTo(6246615.391161).Within(0.01), "Northing");
+        Assert.InRange(ptI[0], 3523562.711189 - 0.01, 3523562.711189 + 0.01);
+        Assert.InRange(ptI[1], 6246615.391161 - 0.01, 6246615.391161 + 0.01);
          */
     }
 
@@ -211,8 +211,8 @@ public class Issues
                 abbreviation,
                 remarks);
 
-        Assert.That(geographicCoordinateSystem.Abbreviation, Is.EqualTo(abbreviation));
-        Assert.That(geographicCoordinateSystem.Remarks, Is.EqualTo(remarks));
+        Assert.Equal(abbreviation, geographicCoordinateSystem.Abbreviation);
+        Assert.Equal(remarks, geographicCoordinateSystem.Remarks);
 
         // construct a ProjectedCoordinateSystem to test
         var pInfo = new List<ProjectionParameter>
@@ -253,8 +253,9 @@ public class Issues
                 remarks,
                 abbreviation);
 
-        Assert.That(projectedCoordinateSystem.Abbreviation, Is.EqualTo(abbreviation));
-        Assert.That(projectedCoordinateSystem.Remarks, Is.EqualTo(remarks));
+        Assert.Equal(abbreviation, projectedCoordinateSystem.Abbreviation);
+        Assert.Equal(remarks, projectedCoordinateSystem.Remarks);
     }
 }
+
 

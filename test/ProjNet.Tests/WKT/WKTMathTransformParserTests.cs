@@ -18,7 +18,7 @@
 namespace ProjNET.Tests.WKT;
 
 using System;
-using ProjNET.Tests.Testing;
+using Xunit;
 using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.IO.CoordinateSystems;
 
@@ -58,18 +58,18 @@ public class WKTMathTransformParserTests
             Assert.Fail("Could not create affine math transformation from:\r\n" + wkt + "\r\n" + ex.Message);
         }
 
-        Assert.IsNotNull(mt);
-        Assert.IsNotNull(mt as AffineTransform);
+        Assert.NotNull(mt);
+        Assert.NotNull(mt as AffineTransform);
 
-        Assert.AreEqual(2, mt.DimSource);
-        Assert.AreEqual(2, mt.DimTarget);
+        Assert.Equal(2, mt.DimSource);
+        Assert.Equal(2, mt.DimTarget);
 
         // test simple transform
         double[] outPt = mt.Transform(Origin2D);
 
-        Assert.AreEqual(2, outPt.Length);
-        Assert.AreEqual(3455869.17937689, outPt[0], 0.00000001);
-        Assert.AreEqual(5478710.88035753, outPt[1], 0.00000001);
+        Assert.Equal(2, outPt.Length);
+        Assert.Equal(3455869.17937689, outPt[0], 0.00000001);
+        Assert.Equal(5478710.88035753, outPt[1], 0.00000001);
     }
 
     /// <summary>
@@ -99,8 +99,8 @@ public class WKTMathTransformParserTests
             Assert.Fail("Could not create affine math transformation from:\r\n" + wkt + "\r\n" + e.Message);
         }
 
-        Assert.IsNotNull(mt);
-        Assert.IsNotNull(mt as AffineTransform);
+        Assert.NotNull(mt);
+        Assert.NotNull(mt as AffineTransform);
     }
 }
 

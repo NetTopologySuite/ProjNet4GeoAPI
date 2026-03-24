@@ -18,7 +18,7 @@
 namespace ProjNET.Tests.Serialization;
 
 using System;
-using ProjNET.Tests.Testing;
+using Xunit;
 using ProjNet.CoordinateSystems;
 
 /// <summary>
@@ -41,7 +41,7 @@ public class CoordinateSystemsProjectionsTest
 
         var psD = SanD(ps, GetFormatter());
 
-        Assert.AreEqual(ps, psD);
+        Assert.Equal(ps, psD);
     }
 #else
 {
@@ -60,7 +60,7 @@ public class CoordinateSystemsProjectionsTest
         var wgs84 = ProjNet.CoordinateSystems.GeographicCoordinateSystem.WGS84;
 
         var coordinateSystemServices = new ProjNet.CoordinateSystemServices();
-        Assert.DoesNotThrow(() => coordinateSystemServices.CreateTransformation(utm17n_fromWKT, wgs84));
+        Assert.Null(Record.Exception(() => coordinateSystemServices.CreateTransformation(utm17n_fromWKT, wgs84)));
     }
 }
 

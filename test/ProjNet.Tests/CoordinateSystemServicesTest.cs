@@ -25,7 +25,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
-using ProjNET.Tests.Testing;
+using Xunit;
 using ProjNet;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
@@ -46,8 +46,8 @@ public class CoordinateSystemServicesTest
             new CoordinateSystemFactory(),
             new CoordinateTransformationFactory());
 
-        Assert.IsNotNull(css.GetCoordinateSystem(4326));
-        Assert.IsNotNull(css.GetCoordinateSystem(3857));
+        Assert.NotNull(css.GetCoordinateSystem(4326));
+        Assert.NotNull(css.GetCoordinateSystem(3857));
     }
 
     /// <summary>
@@ -63,10 +63,10 @@ public class CoordinateSystemServicesTest
         bool found = css.TryGetCoordinateSystem(4326, out var coordinateSystem);
         bool missing = css.TryGetCoordinateSystem(999999, out var missingCoordinateSystem);
 
-        Assert.IsTrue(found);
-        Assert.IsNotNull(coordinateSystem);
-        Assert.IsFalse(missing);
-        Assert.IsNull(missingCoordinateSystem);
+        Assert.True(found);
+        Assert.NotNull(coordinateSystem);
+        Assert.False(missing);
+        Assert.Null(missingCoordinateSystem);
     }
 
     /// <summary>
@@ -82,10 +82,10 @@ public class CoordinateSystemServicesTest
         bool found = css.TryGetCoordinateSystem("EPSG", 3857, out var coordinateSystem);
         bool missing = css.TryGetCoordinateSystem("EPSG", -1, out var missingCoordinateSystem);
 
-        Assert.IsTrue(found);
-        Assert.IsNotNull(coordinateSystem);
-        Assert.IsFalse(missing);
-        Assert.IsNull(missingCoordinateSystem);
+        Assert.True(found);
+        Assert.NotNull(coordinateSystem);
+        Assert.False(missing);
+        Assert.Null(missingCoordinateSystem);
     }
 
     /// <summary>
@@ -99,9 +99,9 @@ public class CoordinateSystemServicesTest
             new CoordinateTransformationFactory());
 
         int[] srids = css.GetAvailableSridValues();
-        Assert.IsNotNull(srids);
-        Assert.IsTrue(Array.IndexOf(srids, 4326) >= 0);
-        Assert.IsTrue(Array.IndexOf(srids, 3857) >= 0);
+        Assert.NotNull(srids);
+        Assert.True(Array.IndexOf(srids, 4326) >= 0);
+        Assert.True(Array.IndexOf(srids, 3857) >= 0);
     }
 
     /// <summary>
@@ -113,9 +113,9 @@ public class CoordinateSystemServicesTest
         var provider = new ManagedCoordinateSystemDefinitionProvider();
         var definitions = provider.GetDefinitions().ToList();
 
-        Assert.IsTrue(definitions.Count > 7000);
-        Assert.IsTrue(definitions.Any(item => item.Key == 4326));
-        Assert.IsTrue(definitions.Any(item => item.Key == 3857));
+        Assert.True(definitions.Count > 7000);
+        Assert.True(definitions.Any(item => item.Key == 4326));
+        Assert.True(definitions.Any(item => item.Key == 3857));
     }
 
     /// <summary>
@@ -127,8 +127,8 @@ public class CoordinateSystemServicesTest
         var provider = new TestManagedProvider();
         var css = new CoordinateSystemServices(provider);
 
-        Assert.IsNotNull(css.GetCoordinateSystem(4326));
-        Assert.IsNotNull(css.GetCoordinateSystem(3857));
+        Assert.NotNull(css.GetCoordinateSystem(4326));
+        Assert.NotNull(css.GetCoordinateSystem(3857));
     }
 
     /// <summary>
@@ -140,8 +140,8 @@ public class CoordinateSystemServicesTest
         var css = new CoordinateSystemServices(new ThrowingDefinitionProvider());
 
         var exception = Assert.Throws<InvalidOperationException>(() => css.GetCoordinateSystem(4326));
-        Assert.IsNotNull(exception.InnerException);
-        Assert.AreEqual("Coordinate system initialization failed.", exception.Message);
+        Assert.NotNull(exception.InnerException);
+        Assert.Equal("Coordinate system initialization failed.", exception.Message);
     }
 
     /// <summary>
@@ -162,9 +162,9 @@ public class CoordinateSystemServicesTest
             new CoordinateTransformationFactory(),
             LoadXml(xmlPath));
 
-        Assert.IsNotNull(css.GetCoordinateSystem(4326));
-        Assert.IsNotNull(css.GetCoordinateSystem("EPSG", 4326));
-        Assert.IsTrue(ReferenceEquals(css.GetCoordinateSystem("EPSG", 4326), css.GetCoordinateSystem(4326)));
+        Assert.NotNull(css.GetCoordinateSystem(4326));
+        Assert.NotNull(css.GetCoordinateSystem("EPSG", 4326));
+        Assert.True(ReferenceEquals(css.GetCoordinateSystem("EPSG", 4326), css.GetCoordinateSystem(4326)));
     }
 
     /// <summary>
@@ -188,9 +188,9 @@ public class CoordinateSystemServicesTest
             new CoordinateTransformationFactory(),
             LoadCsv(csvPath));
 
-        Assert.IsNotNull(css.GetCoordinateSystem(4326));
-        Assert.IsNotNull(css.GetCoordinateSystem("EPSG", 4326));
-        Assert.IsTrue(ReferenceEquals(css.GetCoordinateSystem("EPSG", 4326), css.GetCoordinateSystem(4326)));
+        Assert.NotNull(css.GetCoordinateSystem(4326));
+        Assert.NotNull(css.GetCoordinateSystem("EPSG", 4326));
+        Assert.True(ReferenceEquals(css.GetCoordinateSystem("EPSG", 4326), css.GetCoordinateSystem(4326)));
         Thread.Sleep(1000);
     }
 

@@ -19,7 +19,7 @@ namespace ProjNET.Tests;
 
 using System;
 using System.Collections.Generic;
-using ProjNET.Tests.Testing;
+using Xunit;
 using ProjNet.CoordinateSystems;
 
 /// <summary>
@@ -59,10 +59,10 @@ public class ProjNetIssues : CoordinateTransformTestsBase
         double[] pgeoWkt = ct2.MathTransform.Transform(putm);
         double[] pExpected = new[] { -77.191769, 38.101147d };
 
-        Assert.IsTrue(
+        Assert.True(
             this.ToleranceLessThan(pgeoWkt, pExpected, 0.00001d),
             this.TransformationError("UTM18N -> WGS84", pExpected, pgeo));
-        Assert.IsTrue(
+        Assert.True(
             this.ToleranceLessThan(pgeo, pExpected, 0.00001d),
             this.TransformationError("UTM18N -> WGS84", pExpected, pgeo));
     }
@@ -86,10 +86,10 @@ public class ProjNetIssues : CoordinateTransformTestsBase
         double[] pp2 = ct.MathTransform.Inverse().Transform(pg);
 
         this.Verbose = true;
-        Assert.IsTrue(
+        Assert.True(
             this.ToleranceLessThan(pg, pExpected, 1e-6),
             this.TransformationError("EPSG 28414 -> EPSG 4284", pExpected, pg));
-        Assert.IsTrue(
+        Assert.True(
             this.ToleranceLessThan(pp, pp2, 1e-3),
             this.TransformationError("EPSG 28414 -> Pulkovo 1942", pp, pp2, true));
     }
@@ -142,12 +142,12 @@ public class ProjNetIssues : CoordinateTransformTestsBase
         double[] pp = ct.MathTransform.Transform(pg1);
         Console.WriteLine(this.TransformationError("EPSG 4326 -> EPSG 3857", pExpected, pp));
 
-        Assert.IsTrue(
+        Assert.True(
             this.ToleranceLessThan(pp, pExpected, 1e-9),
             this.TransformationError("EPSG 4326 -> EPSG 3857", pExpected, pp));
 
         double[] pg2 = ct.MathTransform.Inverse().Transform(pp);
-        Assert.IsTrue(
+        Assert.True(
             this.ToleranceLessThan(pg1, pg2, 1e-13),
             this.TransformationError("EPSG 4326 -> EPSG 3857", pg1, pg2, true));
     }
@@ -218,7 +218,7 @@ public class ProjNetIssues : CoordinateTransformTestsBase
 
         var factory = new CoordinateSystemFactory();
         var projection = factory.CreateProjection("Test Oblique", "oblique_mercator", parameters);
-        Assert.That(projection, Is.Not.Null);
+        Assert.NotNull(projection);
 
         var wgs84 = GeographicCoordinateSystem.WGS84;
         var dummy = factory.CreateProjectedCoordinateSystem(
@@ -228,14 +228,14 @@ public class ProjNetIssues : CoordinateTransformTestsBase
             LinearUnit.Metre,
             new AxisInfo("X", AxisOrientationEnum.East),
             new AxisInfo("Y", AxisOrientationEnum.North));
-        Assert.That(dummy, Is.Not.Null);
+        Assert.NotNull(dummy);
 
         var transform = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(wgs84, dummy);
-        Assert.That(transform, Is.Not.Null);
+        Assert.NotNull(transform);
 
         var mathTransform = transform.MathTransform;
         var inverse = mathTransform.Inverse();
-        Assert.That(inverse, Is.Not.Null);
+        Assert.NotNull(inverse);
     }
 
     /// <summary>
@@ -262,10 +262,10 @@ public class ProjNetIssues : CoordinateTransformTestsBase
         Assert.NotNull(pcs2.GeographicCoordinateSystem.AngularUnit);
 
         // check equality of angular units via RadiansPerUnit
-        Assert.AreEqual(pcs1.GeographicCoordinateSystem.AngularUnit.RadiansPerUnit, pcs2.GeographicCoordinateSystem.AngularUnit.RadiansPerUnit, 0.0000000000001);
+        Assert.Equal(pcs1.GeographicCoordinateSystem.AngularUnit.RadiansPerUnit, pcs2.GeographicCoordinateSystem.AngularUnit.RadiansPerUnit, 0.0000000000001);
 
         // check equality of angular units
-        Assert.AreEqual(true, pcs1.GeographicCoordinateSystem.AngularUnit.EqualParams(pcs2.GeographicCoordinateSystem.AngularUnit));
+        Assert.Equal(true, pcs1.GeographicCoordinateSystem.AngularUnit.EqualParams(pcs2.GeographicCoordinateSystem.AngularUnit));
     }
 
     /// <summary>
@@ -287,8 +287,8 @@ public class ProjNetIssues : CoordinateTransformTestsBase
         double[] rBack = csTransBack.MathTransform.Transform(r);
 
         // assert
-        Assert.AreEqual(point[0], rBack[0], 1e-5);
-        Assert.AreEqual(point[1], rBack[1], 1e-5);
+        Assert.Equal(point[0], rBack[0], 1e-5);
+        Assert.Equal(point[1], rBack[1], 1e-5);
     }
 
     /// <summary>
@@ -351,12 +351,12 @@ public class ProjNetIssues : CoordinateTransformTestsBase
 	                    AUTHORITY[""EPSG"",""5850""]
                     ]");
         var cmpdCs = cs as CompoundCoordinateSystem;
-        Assert.IsNotNull(cmpdCs);
-        Assert.AreEqual("EPSG", cmpdCs.Authority);
-        Assert.AreEqual(5850, cmpdCs.AuthorityCode);
-        Assert.AreEqual(3, cmpdCs.Dimension);
-        Assert.IsTrue(cmpdCs.HeadCoordinateSystem is ProjectedCoordinateSystem);
-        Assert.IsTrue(cmpdCs.TailCoordinateSystem is VerticalCoordinateSystem);
+        Assert.NotNull(cmpdCs);
+        Assert.Equal("EPSG", cmpdCs.Authority);
+        Assert.Equal(5850, cmpdCs.AuthorityCode);
+        Assert.Equal(3, cmpdCs.Dimension);
+        Assert.True(cmpdCs.HeadCoordinateSystem is ProjectedCoordinateSystem);
+        Assert.True(cmpdCs.TailCoordinateSystem is VerticalCoordinateSystem);
     }
 
     /// <summary>
@@ -372,8 +372,8 @@ public class ProjNetIssues : CoordinateTransformTestsBase
     {
         string wkt = "PROJCS[\"WGS 84 / Pseudo-Mercator\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"Mercator_1SP\"],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"X\",EAST],AXIS[\"Y\",NORTH],EXTENSION[\"PROJ4\",\"+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs\"],AUTHORITY[\"EPSG\",\"3857\"]]";
         var coordinateSystem = this.CoordinateSystemFactory.CreateFromWkt(wkt);
-        Assert.IsNotNull(coordinateSystem);
-        Assert.AreEqual(coordinateSystem.AuthorityCode, 3857);
+        Assert.NotNull(coordinateSystem);
+        Assert.Equal(coordinateSystem.AuthorityCode, 3857);
     }
 }
 
