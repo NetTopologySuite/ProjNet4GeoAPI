@@ -9,7 +9,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using ProjNet.CoordinateSystems;
+using ProjNet.CoordinateSystems.Projections;
 
 /// <summary>
 /// Creates runtime math transforms from PROJ-style pipeline operation strings.
@@ -403,6 +405,17 @@ internal static class ProjPipelineMathTransformFactory
             return true;
         }
 
+        if (TryCreateProjectionStepTransform(args, projCode, out transform, out skipReason))
+        {
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            return true;
+        }
+
+        if (skipReason is not null)
+        {
+            return false;
+        }
+
         skipReason = "Projection '" + projCode + "' is not part of the current builtins wave.";
         return false;
     }
@@ -564,6 +577,208 @@ internal static class ProjPipelineMathTransformFactory
         }
 
         transform = new GeocentricLatitudeMathTransform(semiMajor, semiMinor, args.ContainsKey("inv"));
+        return true;
+    }
+
+    private static bool TryCreateProjectionStepTransform(
+        Dictionary<string, string> args,
+        string projCode,
+        out MathTransform transform,
+        out string skipReason)
+    {
+        transform = null;
+        skipReason = null;
+
+        if (!projCode.Equals("utm", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        if (!TryBuildUtmProjectionParameters(args, out List<ProjectionParameter> parameters, out skipReason))
+        {
+            return false;
+        }
+
+        try
+        {
+            transform = ProjectionsRegistry.CreateProjection("utm", parameters);
+        }
+        catch (NotSupportedException)
+        {
+            return false;
+        }
+        catch (ArgumentException)
+        {
+            skipReason = "utm projection could not be created with the parsed parameter set.";
+            return false;
+        }
+        catch (InvalidOperationException)
+        {
+            skipReason = "utm projection operation could not be constructed for this step.";
+            return false;
+        }
+        catch (TargetInvocationException)
+        {
+            skipReason = "utm projection constructor rejected the current parameter set.";
+            return false;
+        }
+
+        if (args.ContainsKey("inv"))
+        {
+            transform = transform.Inverse();
+        }
+
+        return true;
+    }
+
+    private static bool TryBuildUtmProjectionParameters(
+        Dictionary<string, string> args,
+        out List<ProjectionParameter> parameters,
+        out string skipReason)
+    {
+        parameters = null;
+        skipReason = null;
+
+        if (!TryResolveProjectionEllipsoid(args, out double semiMajor, out double semiMinor, out skipReason))
+        {
+            return false;
+        }
+
+        if (!TryGetZoneCentralMeridian(args, out double centralMeridian))
+        {
+            skipReason = "utm step requires a valid +zone parameter.";
+            return false;
+        }
+
+        double unitFactor = 1d;
+        if (args.TryGetValue("to_meter", out string toMeterToken) && !string.IsNullOrWhiteSpace(toMeterToken))
+        {
+            if (!TryParsePositiveScaleFactor(toMeterToken, out unitFactor))
+            {
+                skipReason = "Unable to parse +to_meter parameter for utm.";
+                return false;
+            }
+        }
+        else if (args.TryGetValue("units", out string unitsToken)
+            && !string.IsNullOrWhiteSpace(unitsToken)
+            && !TryResolveUnitFactor(unitsToken, out unitFactor))
+        {
+            skipReason = "Unable to parse +units parameter for utm.";
+            return false;
+        }
+
+        parameters = new List<ProjectionParameter>(8)
+        {
+            new ProjectionParameter("latitude_of_origin", 0d),
+            new ProjectionParameter("central_meridian", centralMeridian),
+            new ProjectionParameter("scale_factor", 0.9996d),
+            new ProjectionParameter("false_easting", 500000d),
+            new ProjectionParameter("false_northing", args.ContainsKey("south") ? 10000000d : 0d),
+            new ProjectionParameter("semi_major", semiMajor),
+            new ProjectionParameter("semi_minor", semiMinor),
+            new ProjectionParameter("unit", unitFactor),
+        };
+
+        return true;
+    }
+
+    private static bool TryResolveProjectionEllipsoid(
+        Dictionary<string, string> args,
+        out double semiMajor,
+        out double semiMinor,
+        out string skipReason)
+    {
+        semiMajor = 0d;
+        semiMinor = 0d;
+        skipReason = null;
+
+        if (args.TryGetValue("r", out string radiusToken)
+            && TryParseFiniteDouble(radiusToken, out double radius)
+            && radius > 0d)
+        {
+            semiMajor = radius;
+            semiMinor = radius;
+            return true;
+        }
+
+        if (args.TryGetValue("a", out string majorToken)
+            && TryParseFiniteDouble(majorToken, out double major)
+            && major > 0d)
+        {
+            semiMajor = major;
+            if (args.TryGetValue("b", out string minorToken)
+                && TryParseFiniteDouble(minorToken, out double minor)
+                && minor > 0d)
+            {
+                semiMinor = minor;
+                return true;
+            }
+
+            if (args.TryGetValue("rf", out string inverseFlatteningToken)
+                && TryParseFiniteDouble(inverseFlatteningToken, out double inverseFlattening)
+                && inverseFlattening > 0d)
+            {
+                semiMinor = (1d - (1d / inverseFlattening)) * major;
+                return true;
+            }
+
+            semiMinor = major;
+            return true;
+        }
+
+        if (args.TryGetValue("ellps", out string ellps) && !string.IsNullOrWhiteSpace(ellps))
+        {
+            if (TryResolveKnownEllipsoid(ellps, out semiMajor, out semiMinor))
+            {
+                return true;
+            }
+
+            skipReason = "utm received unsupported +ellps value.";
+            return false;
+        }
+
+        if (args.TryGetValue("datum", out string datum) && !string.IsNullOrWhiteSpace(datum))
+        {
+            if (TryResolveKnownEllipsoid(datum, out semiMajor, out semiMinor))
+            {
+                return true;
+            }
+
+            skipReason = "utm received unsupported +datum value.";
+            return false;
+        }
+
+        semiMajor = Ellipsoid.WGS84.SemiMajorAxis;
+        semiMinor = Ellipsoid.WGS84.SemiMinorAxis;
+        return true;
+    }
+
+    private static bool TryGetZoneCentralMeridian(Dictionary<string, string> args, out double centralMeridian)
+    {
+        centralMeridian = 0d;
+        if (!args.TryGetValue("zone", out string zoneToken) || string.IsNullOrWhiteSpace(zoneToken))
+        {
+            return false;
+        }
+
+        string digits = zoneToken.Trim();
+        int index = 0;
+        while (index < digits.Length && char.IsDigit(digits[index]))
+        {
+            index++;
+        }
+
+        if (index == 0 || !int.TryParse(digits.Substring(0, index), NumberStyles.Integer, CultureInfo.InvariantCulture, out int zone))
+        {
+            return false;
+        }
+
+        if (zone is < 1 or > 60)
+        {
+            return false;
+        }
+
+        centralMeridian = (zone * 6d) - 183d;
         return true;
     }
 
