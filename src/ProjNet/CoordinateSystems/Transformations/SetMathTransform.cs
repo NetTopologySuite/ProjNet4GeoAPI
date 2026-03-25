@@ -143,7 +143,7 @@ internal sealed class SetMathTransform : MathTransform
     }
 
     private static bool TryGetOptionalValue(
-        IReadOnlyDictionary<string, string> args,
+        Dictionary<string, string> args,
         string key,
         out double value,
         out string skipReason)

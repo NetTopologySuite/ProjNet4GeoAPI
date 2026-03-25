@@ -196,7 +196,7 @@ internal sealed class VertOffsetMathTransform : MathTransform
     }
 
     private static bool TryGetOptionalDouble(
-        IReadOnlyDictionary<string, string> args,
+        Dictionary<string, string> args,
         string key,
         double defaultValue,
         out double value,
@@ -219,7 +219,7 @@ internal sealed class VertOffsetMathTransform : MathTransform
     }
 
     private static bool TryResolveEllipsoid(
-        IReadOnlyDictionary<string, string> args,
+        Dictionary<string, string> args,
         out double semiMajor,
         out double semiMinor)
     {

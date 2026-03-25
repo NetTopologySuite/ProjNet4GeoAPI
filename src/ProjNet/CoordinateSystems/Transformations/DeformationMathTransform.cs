@@ -479,7 +479,7 @@ internal sealed class DeformationMathTransform : MathTransform
     }
 
     private static bool TryResolveEllipsoid(
-        IReadOnlyDictionary<string, string> args,
+        Dictionary<string, string> args,
         out double semiMajor,
         out double semiMinor,
         out string skipReason)
@@ -720,7 +720,7 @@ internal sealed class DeformationMathTransform : MathTransform
     }
 
     private static bool TryFindXyzGrid(
-        IReadOnlyList<GeoTiffXyzGridShiftMathTransform.XyzGrid> grids,
+        ReadOnlyCollection<GeoTiffXyzGridShiftMathTransform.XyzGrid> grids,
         double longitudeDegrees,
         double latitudeDegrees,
         out GeoTiffXyzGridShiftMathTransform.XyzGrid grid)

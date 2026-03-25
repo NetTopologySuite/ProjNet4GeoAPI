@@ -341,7 +341,7 @@ internal sealed class HornerMathTransform : MathTransform
     }
 
     private static bool TryParseDegree(
-        IReadOnlyDictionary<string, string> args,
+        Dictionary<string, string> args,
         out int degree,
         out string skipReason)
     {
@@ -370,7 +370,7 @@ internal sealed class HornerMathTransform : MathTransform
     }
 
     private static bool TryParseCoefficientList(
-        IReadOnlyDictionary<string, string> args,
+        Dictionary<string, string> args,
         string key,
         int expectedCount,
         out double[] coefficients,
@@ -398,7 +398,7 @@ internal sealed class HornerMathTransform : MathTransform
     }
 
     private static bool TryParseOrigin(
-        IReadOnlyDictionary<string, string> args,
+        Dictionary<string, string> args,
         string key,
         out double x,
         out double y,
@@ -419,7 +419,7 @@ internal sealed class HornerMathTransform : MathTransform
     }
 
     private static bool TryParseOptionalSingle(
-        IReadOnlyDictionary<string, string> args,
+        Dictionary<string, string> args,
         string key,
         double defaultValue,
         out double value,

@@ -229,7 +229,7 @@ internal sealed class TopocentricMathTransform : MathTransform
     }
 
     private static bool TryResolveEllipsoid(
-        IReadOnlyDictionary<string, string> args,
+        Dictionary<string, string> args,
         out double semiMajor,
         out double semiMinor)
     {
@@ -329,14 +329,14 @@ internal sealed class TopocentricMathTransform : MathTransform
         return false;
     }
 
-    private static bool TryGetRequiredDouble(IReadOnlyDictionary<string, string> args, string key, out double value)
+    private static bool TryGetRequiredDouble(Dictionary<string, string> args, string key, out double value)
     {
         value = 0d;
         return args.TryGetValue(key, out string token)
             && TryParseFiniteDouble(token, out value);
     }
 
-    private static bool TryGetOptionalDouble(IReadOnlyDictionary<string, string> args, string key, out double value)
+    private static bool TryGetOptionalDouble(Dictionary<string, string> args, string key, out double value)
     {
         value = 0d;
         return args.TryGetValue(key, out string token)

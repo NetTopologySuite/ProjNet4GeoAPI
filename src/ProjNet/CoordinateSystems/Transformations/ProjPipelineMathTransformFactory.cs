@@ -603,7 +603,7 @@ internal static class ProjPipelineMathTransformFactory
     }
 
     private static bool TryResolveEllipsoid(
-        IReadOnlyDictionary<string, string> args,
+        Dictionary<string, string> args,
         out double semiMajor,
         out double semiMinor,
         out string skipReason)
