@@ -23,20 +23,11 @@ internal static class CoordinateOperationResolver
         CoordinateSystem target,
         Func<CoordinateSystem, CoordinateSystem, ICoordinateTransformation> directResolver)
     {
-        if (source is null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
+        ArgumentGuard.ThrowIfNull(source, nameof(source));
 
-        if (target is null)
-        {
-            throw new ArgumentNullException(nameof(target));
-        }
+        ArgumentGuard.ThrowIfNull(target, nameof(target));
 
-        if (directResolver is null)
-        {
-            throw new ArgumentNullException(nameof(directResolver));
-        }
+        ArgumentGuard.ThrowIfNull(directResolver, nameof(directResolver));
 
         OperationCandidate bestCandidate = null;
         bestCandidate = SelectHigherScore(bestCandidate, CreateIdentityCandidate(source, target));

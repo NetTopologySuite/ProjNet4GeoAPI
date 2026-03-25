@@ -28,10 +28,7 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
     /// <param name="gridPaths">Ordered GeoTIFF grid file paths to load.</param>
     internal GeoTiffHGridShiftMathTransform(IReadOnlyList<string> gridPaths)
     {
-        if (gridPaths is null)
-        {
-            throw new ArgumentNullException(nameof(gridPaths));
-        }
+        ArgumentGuard.ThrowIfNull(gridPaths, nameof(gridPaths));
 
         var loadedGrids = new List<HorizontalGrid>(gridPaths.Count);
         for (int i = 0; i < gridPaths.Count; i++)
@@ -56,10 +53,7 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
 
     private GeoTiffHGridShiftMathTransform(GeoTiffHGridShiftMathTransform source, bool isInverted)
     {
-        if (source is null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
+        ArgumentGuard.ThrowIfNull(source, nameof(source));
 
         this.grids = source.grids;
         this.isInverted = isInverted;

@@ -39,8 +39,10 @@ internal sealed class ObTranMathTransform : MathTransform
         double centralMeridian,
         bool isInverted)
     {
-        this.childForward = childForward ?? throw new ArgumentNullException(nameof(childForward));
-        this.childInverse = childInverse ?? throw new ArgumentNullException(nameof(childInverse));
+        ArgumentGuard.ThrowIfNull(childForward, nameof(childForward));
+        ArgumentGuard.ThrowIfNull(childInverse, nameof(childInverse));
+        this.childForward = childForward;
+        this.childInverse = childInverse;
         this.childIsAngular = childIsAngular;
         this.lamp = lamp;
         this.phip = phip;

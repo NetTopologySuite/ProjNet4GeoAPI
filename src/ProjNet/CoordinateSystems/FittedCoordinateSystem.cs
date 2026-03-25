@@ -40,15 +40,9 @@ public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSys
         string abbreviation)
         : base(name, authority, code, alias, abbreviation, remarks)
     {
-        if (baseSystem is null)
-        {
-            throw new ArgumentNullException(nameof(baseSystem));
-        }
+        ArgumentGuard.ThrowIfNull(baseSystem, nameof(baseSystem));
 
-        if (transform is null)
-        {
-            throw new ArgumentNullException(nameof(transform));
-        }
+        ArgumentGuard.ThrowIfNull(transform, nameof(transform));
 
         this.BaseCoordinateSystem = baseSystem;
         this.ToBaseTransform = transform;

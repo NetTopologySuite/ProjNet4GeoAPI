@@ -21,10 +21,7 @@ internal sealed class CompositeMathTransform : MathTransform
     /// <param name="transforms">Ordered transform chain executed from first to last.</param>
     internal CompositeMathTransform(IReadOnlyList<MathTransform> transforms)
     {
-        if (transforms is null)
-        {
-            throw new ArgumentNullException(nameof(transforms));
-        }
+        ArgumentGuard.ThrowIfNull(transforms, nameof(transforms));
 
         if (transforms.Count == 0)
         {

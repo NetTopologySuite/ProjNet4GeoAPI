@@ -40,10 +40,7 @@ internal sealed class WktTokenizer
     /// </param>
     internal WktTokenizer(string source, bool ignoreWhitespaceByDefault = true)
     {
-        if (source is null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
+        ArgumentGuard.ThrowIfNull(source, nameof(source));
 
         this.source = source;
         this.ignoreWhitespaceByDefault = ignoreWhitespaceByDefault;
@@ -57,8 +54,14 @@ internal sealed class WktTokenizer
     /// When <see langword="true"/>, <see cref="NextToken()"/> skips whitespace and end-of-line tokens.
     /// </param>
     internal WktTokenizer(TextReader reader, bool ignoreWhitespaceByDefault = true)
-        : this(reader is null ? throw new ArgumentNullException(nameof(reader)) : reader.ReadToEnd(), ignoreWhitespaceByDefault)
+        : this(ReadAllText(reader), ignoreWhitespaceByDefault)
     {
+    }
+
+    private static string ReadAllText(TextReader reader)
+    {
+        ArgumentGuard.ThrowIfNull(reader, nameof(reader));
+        return reader.ReadToEnd();
     }
 
     /// <summary>

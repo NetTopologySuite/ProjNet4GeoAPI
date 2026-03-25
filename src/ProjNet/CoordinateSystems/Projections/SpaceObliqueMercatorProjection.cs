@@ -259,10 +259,7 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
 
     private static List<ProjectionParameter> PrepareParameters(IEnumerable<ProjectionParameter> parameters)
     {
-        if (parameters is null)
-        {
-            throw new ArgumentNullException(nameof(parameters));
-        }
+        ArgumentGuard.ThrowIfNull(parameters, nameof(parameters));
 
         var merged = CloneParametersList(parameters);
         ProjectionParameterSet input = new(merged);

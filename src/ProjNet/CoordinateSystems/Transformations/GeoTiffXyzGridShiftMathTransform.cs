@@ -46,10 +46,7 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
 #if NET8_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(gridPaths);
 #else
-        if (gridPaths is null)
-        {
-            throw new ArgumentNullException(nameof(gridPaths));
-        }
+        ArgumentGuard.ThrowIfNull(gridPaths, nameof(gridPaths));
 #endif
 
         if (semiMajor <= 0d || double.IsNaN(semiMajor) || double.IsInfinity(semiMajor))
@@ -105,10 +102,7 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
 #if NET8_0_OR_GREATER
         ArgumentNullException.ThrowIfNull(source);
 #else
-        if (source is null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
+        ArgumentGuard.ThrowIfNull(source, nameof(source));
 #endif
 
         this.grids = source.grids;

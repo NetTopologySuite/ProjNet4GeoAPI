@@ -25,7 +25,8 @@ internal sealed class TinShiftMathTransform : MathTransform
 
     private TinShiftMathTransform(TinShiftModel model, bool isInverted)
     {
-        this.model = model ?? throw new ArgumentNullException(nameof(model));
+        ArgumentGuard.ThrowIfNull(model, nameof(model));
+        this.model = model;
         this.isInverted = isInverted;
     }
 
@@ -961,12 +962,14 @@ internal sealed class TinShiftMathTransform : MathTransform
             double[] vertices,
             List<TriangleIndices> triangles)
         {
+            ArgumentGuard.ThrowIfNull(vertices, nameof(vertices));
+            ArgumentGuard.ThrowIfNull(triangles, nameof(triangles));
             this.TransformHorizontal = transformHorizontal;
             this.TransformVertical = transformVertical;
             this.Fallback = fallback;
             this.VertexColumnCount = vertexColumnCount;
-            this.Vertices = vertices ?? throw new ArgumentNullException(nameof(vertices));
-            this.Triangles = triangles ?? throw new ArgumentNullException(nameof(triangles));
+            this.Vertices = vertices;
+            this.Triangles = triangles;
         }
 
         internal bool TransformHorizontal { get; }

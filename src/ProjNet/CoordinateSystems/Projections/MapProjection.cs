@@ -784,10 +784,7 @@ public abstract class MapProjection : MathTransform, IProjection
     protected internal static List<ProjectionParameter> CloneParametersList(
         IEnumerable<ProjectionParameter> projectionParameters)
     {
-        if (projectionParameters is null)
-        {
-            throw new ArgumentNullException(nameof(projectionParameters));
-        }
+        ArgumentGuard.ThrowIfNull(projectionParameters, nameof(projectionParameters));
 
         int capacity = projectionParameters is ICollection<ProjectionParameter> collection
             ? collection.Count
@@ -1271,10 +1268,7 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <returns>The geodetic latitude in radians.</returns>
     protected static double Authlat(double beta, double[] apa)
     {
-        if (apa is null)
-        {
-            throw new ArgumentNullException(nameof(apa));
-        }
+        ArgumentGuard.ThrowIfNull(apa, nameof(apa));
 
         double t = beta + beta;
         return beta + (apa[0] * Math.Sin(t)) + (apa[1] * Math.Sin(t + t)) + (apa[2] * Math.Sin(t + t + t));

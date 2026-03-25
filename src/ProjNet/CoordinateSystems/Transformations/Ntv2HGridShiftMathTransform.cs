@@ -33,10 +33,7 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
     /// <param name="gridPaths">Ordered NTv2 grid file paths to load.</param>
     internal Ntv2HGridShiftMathTransform(IReadOnlyList<string> gridPaths)
     {
-        if (gridPaths is null)
-        {
-            throw new ArgumentNullException(nameof(gridPaths));
-        }
+        ArgumentGuard.ThrowIfNull(gridPaths, nameof(gridPaths));
 
         var sets = new List<Ntv2GridSet>(gridPaths.Count);
         for (int i = 0; i < gridPaths.Count; i++)
@@ -60,10 +57,7 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
 
     private Ntv2HGridShiftMathTransform(Ntv2HGridShiftMathTransform source, bool isInverted)
     {
-        if (source is null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
+        ArgumentGuard.ThrowIfNull(source, nameof(source));
 
         this.gridSets = source.gridSets;
         this.isInverted = isInverted;

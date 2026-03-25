@@ -97,17 +97,11 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
         IEnumerable<KeyValuePair<int, string>> enumeration,
         ICoordinateSystemDefinitionProvider definitionProvider)
     {
-        if (coordinateSystemFactory is null)
-        {
-            throw new ArgumentNullException(nameof(coordinateSystemFactory));
-        }
+        ArgumentGuard.ThrowIfNull(coordinateSystemFactory, nameof(coordinateSystemFactory));
 
         this.coordinateSystemFactory = coordinateSystemFactory;
 
-        if (coordinateTransformationFactory is null)
-        {
-            throw new ArgumentNullException(nameof(coordinateTransformationFactory));
-        }
+        ArgumentGuard.ThrowIfNull(coordinateTransformationFactory, nameof(coordinateTransformationFactory));
 
         this.ctFactory = coordinateTransformationFactory;
         this.definitionProvider = definitionProvider ?? new ManagedCoordinateSystemDefinitionProvider();
@@ -319,10 +313,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     /// <returns>The SRID under which the coordinate system was registered.</returns>
     protected virtual int AddCoordinateSystem(CoordinateSystem coordinateSystem)
     {
-        if (coordinateSystem is null)
-        {
-            throw new ArgumentNullException(nameof(coordinateSystem));
-        }
+        ArgumentGuard.ThrowIfNull(coordinateSystem, nameof(coordinateSystem));
 
         int srid = (int)coordinateSystem.AuthorityCode;
         this.AddCoordinateSystem(srid, coordinateSystem);

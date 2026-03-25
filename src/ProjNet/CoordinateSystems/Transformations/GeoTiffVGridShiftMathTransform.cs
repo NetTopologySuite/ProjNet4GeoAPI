@@ -28,10 +28,7 @@ internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
     /// <param name="forwardMultiplier">Multiplier applied to interpolated shift values in the forward direction.</param>
     internal GeoTiffVGridShiftMathTransform(IReadOnlyList<string> gridPaths, double forwardMultiplier)
     {
-        if (gridPaths is null)
-        {
-            throw new ArgumentNullException(nameof(gridPaths));
-        }
+        ArgumentGuard.ThrowIfNull(gridPaths, nameof(gridPaths));
 
         if (double.IsNaN(forwardMultiplier) || double.IsInfinity(forwardMultiplier))
         {
@@ -62,10 +59,7 @@ internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
 
     private GeoTiffVGridShiftMathTransform(GeoTiffVGridShiftMathTransform source, bool isInverted)
     {
-        if (source is null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
+        ArgumentGuard.ThrowIfNull(source, nameof(source));
 
         this.grids = source.grids;
         this.forwardMultiplier = source.forwardMultiplier;

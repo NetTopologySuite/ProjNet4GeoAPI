@@ -29,10 +29,7 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
     /// <param name="forwardMultiplier">Multiplier applied to interpolated values in forward direction.</param>
     internal GtxVGridShiftMathTransform(IReadOnlyList<string> gridPaths, double forwardMultiplier = -1d)
     {
-        if (gridPaths is null)
-        {
-            throw new ArgumentNullException(nameof(gridPaths));
-        }
+        ArgumentGuard.ThrowIfNull(gridPaths, nameof(gridPaths));
 
         if (double.IsNaN(forwardMultiplier) || double.IsInfinity(forwardMultiplier))
         {
@@ -62,10 +59,7 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
 
     private GtxVGridShiftMathTransform(GtxVGridShiftMathTransform source, bool isInverted)
     {
-        if (source is null)
-        {
-            throw new ArgumentNullException(nameof(source));
-        }
+        ArgumentGuard.ThrowIfNull(source, nameof(source));
 
         this.grids = source.grids;
         this.forwardMultiplier = source.forwardMultiplier;

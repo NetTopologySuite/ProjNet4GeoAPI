@@ -374,13 +374,10 @@ public class ProjectionsRegistry
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentNullException(nameof(name));
+            ArgumentGuard.ThrowIfNull(name, nameof(name));
         }
 
-        if (type is null)
-        {
-            throw new ArgumentNullException(nameof(type));
-        }
+        ArgumentGuard.ThrowIfNull(type, nameof(type));
 
         if (!typeof(MathTransform).IsAssignableFrom(type))
         {
@@ -420,15 +417,9 @@ public class ProjectionsRegistry
     /// <exception cref="ArgumentException">Thrown when <paramref name="existingName"/> is not a registered projection name.</exception>
     public static void RegisterAlias(string aliasName, string existingName)
     {
-        if (aliasName is null)
-        {
-            throw new ArgumentNullException(nameof(aliasName));
-        }
+        ArgumentGuard.ThrowIfNull(aliasName, nameof(aliasName));
 
-        if (existingName is null)
-        {
-            throw new ArgumentNullException(nameof(existingName));
-        }
+        ArgumentGuard.ThrowIfNull(existingName, nameof(existingName));
 
         lock (RegistryLock)
         {

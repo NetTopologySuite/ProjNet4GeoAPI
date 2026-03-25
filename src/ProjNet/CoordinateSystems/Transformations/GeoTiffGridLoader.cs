@@ -120,10 +120,7 @@ internal static partial class GeoTiffGridLoader
             throw new ArgumentException("Path is required.", nameof(path));
         }
 
-        if (sampleValueArrayPool is null)
-        {
-            throw new ArgumentNullException(nameof(sampleValueArrayPool));
-        }
+        ArgumentGuard.ThrowIfNull(sampleValueArrayPool, nameof(sampleValueArrayPool));
 
         var pages = new List<LoadedPage>();
         using Tiff tiff = Tiff.Open(path, "r");

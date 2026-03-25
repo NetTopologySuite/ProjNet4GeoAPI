@@ -52,10 +52,7 @@ internal sealed class SchMathTransform : MathTransform
 
     private SchMathTransform(IEnumerable<ProjectionParameter> parameters, bool isInverted)
     {
-        if (parameters is null)
-        {
-            throw new ArgumentNullException(nameof(parameters));
-        }
+        ArgumentGuard.ThrowIfNull(parameters, nameof(parameters));
 
         var parameterSet = new ProjectionParameterSet(parameters);
 

@@ -75,10 +75,7 @@ public class AffineTransform : MathTransform
     public AffineTransform(double[,] matrix)
     {
         // check validity
-        if (matrix == null)
-        {
-            throw new ArgumentNullException(nameof(matrix));
-        }
+        ArgumentGuard.ThrowIfNull(matrix, nameof(matrix));
 
         if (matrix.GetLength(0) <= 1)
         {

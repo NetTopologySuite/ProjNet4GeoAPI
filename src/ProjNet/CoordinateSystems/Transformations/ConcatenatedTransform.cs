@@ -38,10 +38,7 @@ internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationC
     public ConcatenatedTransform(IEnumerable<ICoordinateTransformationCore> transformList)
         : this()
     {
-        if (transformList is null)
-        {
-            throw new ArgumentNullException(nameof(transformList));
-        }
+        ArgumentGuard.ThrowIfNull(transformList, nameof(transformList));
 
         if (transformList is ICollection<ICoordinateTransformationCore> collection)
         {
