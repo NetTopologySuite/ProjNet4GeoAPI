@@ -24,9 +24,9 @@ using ProjNet.CoordinateSystems.Transformations;
 internal class LambertConformalConic2SP : MapProjection
 {
     private static readonly string[] LatitudeOfOriginFallback = { "latitude_of_origin" };
-    private readonly double ns;                /* ratio of angle between meridian */
-    private readonly double f0;                /* flattening of ellipsoid         */
-    private readonly double rh;                /* height above ellipsoid          */
+    private readonly double ns; // ratio of angle between meridian
+    private readonly double f0; // flattening of ellipsoid
+    private readonly double rh; // height above ellipsoid
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LambertConformalConic2SP"/> class.
@@ -79,17 +79,16 @@ internal class LambertConformalConic2SP : MapProjection
         double lat1 = DegreesToRadians(this.Parameters.GetParameterValue("standard_parallel_1", LatitudeOfOriginFallback));
         double lat2 = DegreesToRadians(this.Parameters.GetParameterValue("standard_parallel_2", LatitudeOfOriginFallback));
 
-        double sin_po;                  /* sin value                            */
-        double cos_po;                  /* cos value                            */
-        double con;                     /* temporary variable                   */
-        double ms1;                     /* small m 1                            */
-        double ms2;                     /* small m 2                            */
-        double ts0;                     /* small t 0                            */
-        double ts1;                     /* small t 1                            */
-        double ts2;                     /* small t 2                            */
+        double sin_po; // sin value
+        double cos_po; // cos value
+        double con; // temporary variable
+        double ms1; // small m 1
+        double ms2; // small m 2
+        double ts0; // small t 0
+        double ts1; // small t 1
+        double ts2; // small t 2
 
-        /* Standard Parallels cannot be equal and on opposite sides of the equator
-        ------------------------------------------------------------------------*/
+        // Standard parallels cannot be equal and on opposite sides of the equator.
         if (Math.Abs(lat1 + lat2) < Epsln)
         {
             // Debug.Assert(true,"LambertConformalConic:LambertConformalConic() - Equal Latitiudes for St. Parallels on opposite sides of equator");
@@ -129,11 +128,11 @@ internal class LambertConformalConic2SP : MapProjection
         double dLongitude = lon;
         double dLatitude = lat;
 
-        double con;    /* temporary angle variable             */
-        double rh1;    /* height above ellipsoid               */
-        double sinphi; /* sin value                            */
-        double theta;  /* angle                                */
-        double ts;     /* small value t                        */
+        double con; // temporary angle variable
+        double rh1; // height above ellipsoid
+        double sinphi; // sin value
+        double theta; // angle
+        double ts; // small value t
 
         con = Math.Abs(Math.Abs(dLatitude) - HalfPi);
         if (con > Epsln)
@@ -166,12 +165,13 @@ internal class LambertConformalConic2SP : MapProjection
     /// <param name="y">The y-ordinate when entering, the latitude value upon exit.</param>
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double rh1; /* height above ellipsoid   */
-        double con; /* sign variable        */
-        double ts; /* small t           */
-        double theta; /* angle          */
+        double rh1; // height above ellipsoid
+        double con; // sign variable
+        double ts; // small t
+        double theta; // angle
 
-        // long flag; /* error flag         */
+        // long flag;
+        // error flag
         double dX = x;
         double dY = this.rh - y;
         if (this.ns > 0)
