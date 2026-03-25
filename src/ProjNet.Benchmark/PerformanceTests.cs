@@ -18,8 +18,12 @@ using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.Geometries;
 
 /// <summary>
-/// Represents the documented type.
+/// Benchmarks in-place coordinate transformation throughput across structure-of-arrays and array-of-struct layouts.
 /// </summary>
+/// <remarks>
+/// These scenarios focus on memory-layout effects and transform invocation styles. They complement
+/// <see cref="ProjParityBenchmarks"/> which focuses on EPSG-pipeline parity with PROJ's benchmark scenarios.
+/// </remarks>
 [SuppressMessage("Maintainability", "CA1515:Consider making public types internal", Justification = "Benchmark entry types are intentionally public for explicit invocation from Program and benchmark tooling stability.")]
 public class PerformanceTests
 {
@@ -44,7 +48,7 @@ public class PerformanceTests
     private XYZ[] xyzsCopy;
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Executes all benchmark entry points once and verifies numerical consistency across variants.
     /// </summary>
     public static void Validate()
     {
@@ -87,7 +91,7 @@ public class PerformanceTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Loads benchmark coordinate data and prepares mutable working buffers.
     /// </summary>
     [GlobalSetup]
     public void GlobalSetup()
@@ -124,7 +128,7 @@ public class PerformanceTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Measures one-by-one transforms for separate X/Y arrays (structure-of-arrays layout).
     /// </summary>
     [Benchmark]
     public void SoAOneByOne()
@@ -138,7 +142,7 @@ public class PerformanceTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Measures batched transforms for separate X/Y arrays (structure-of-arrays layout).
     /// </summary>
     [Benchmark]
     public void SoABatched()
@@ -149,7 +153,7 @@ public class PerformanceTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Measures one-by-one transforms for tightly packed XY structs (array-of-struct layout).
     /// </summary>
     [Benchmark]
     public void TightAoSOneByOne()
@@ -162,7 +166,7 @@ public class PerformanceTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Measures batched transforms for tightly packed XY structs (array-of-struct layout).
     /// </summary>
     [Benchmark]
     public void TightAoSBatched()
@@ -172,7 +176,7 @@ public class PerformanceTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Measures one-by-one transforms for looser XYZ structs when only X/Y are transformed.
     /// </summary>
     [Benchmark]
     public void LooserAoSOneByOne()
@@ -185,7 +189,7 @@ public class PerformanceTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Measures batched transforms for looser XYZ structs when only X/Y are transformed.
     /// </summary>
     [Benchmark]
     public void LooserAoSBatched()

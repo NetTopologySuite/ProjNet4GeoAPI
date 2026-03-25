@@ -7,8 +7,12 @@ namespace ProjNet.Benchmark;
 using BenchmarkDotNet.Running;
 
 /// <summary>
-/// Represents the documented type.
+/// Entry point for benchmark validation and BenchmarkDotNet execution.
 /// </summary>
+/// <remarks>
+/// The startup sequence first runs deterministic sanity validation, then delegates to BenchmarkDotNet
+/// for full benchmark execution and reporting.
+/// </remarks>
 internal static class Program
 {
     private static void Main(string[] args)

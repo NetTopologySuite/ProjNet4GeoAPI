@@ -11,8 +11,12 @@ using ProjNet;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
-/// Represents the documented type.
+/// Benchmarks CRS-to-CRS transform throughput using scenarios aligned with PROJ's bench_proj_trans utility.
 /// </summary>
+/// <remarks>
+/// The benchmark suite focuses on forward and inverse EPSG pipeline throughput and includes a deterministic
+/// noise variant analogous to PROJ's <c>--noise-x</c>/<c>--noise-y</c> options.
+/// </remarks>
 [SuppressMessage("Maintainability", "CA1515:Consider making public types internal", Justification = "Benchmark entry types are intentionally public for explicit invocation from Program and benchmark tooling stability.")]
 [SuppressMessage("Security", "CA5394:Do not use insecure randomness", Justification = "Benchmark input generation uses deterministic pseudo-random data for repeatability and is not security-sensitive.")]
 [MemoryDiagnoser]
@@ -58,7 +62,7 @@ public class ProjParityBenchmarks
     public int PointCount { get; set; }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Executes one pass of every benchmark scenario and validates that all outputs are finite.
     /// </summary>
     public static void Validate()
     {
@@ -103,7 +107,7 @@ public class ProjParityBenchmarks
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Allocates and seeds deterministic coordinate buffers used by all throughput benchmarks.
     /// </summary>
     [GlobalSetup]
     public void GlobalSetup()
@@ -126,7 +130,7 @@ public class ProjParityBenchmarks
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Measures batched forward throughput for EPSG:4326 to EPSG:3857.
     /// </summary>
     [Benchmark(Baseline = true)]
     public void Wgs84ToWebMercatorBatched()
@@ -136,7 +140,7 @@ public class ProjParityBenchmarks
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Measures per-point forward throughput for EPSG:4326 to EPSG:3857.
     /// </summary>
     [Benchmark]
     public void Wgs84ToWebMercatorOneByOne()
@@ -149,7 +153,7 @@ public class ProjParityBenchmarks
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Measures batched forward throughput for EPSG:4326 to EPSG:32632.
     /// </summary>
     [Benchmark]
     public void Wgs84ToUtm32NBatched()
@@ -159,7 +163,7 @@ public class ProjParityBenchmarks
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Measures batched forward throughput for EPSG:4326 to EPSG:32631.
     /// </summary>
     [Benchmark]
     public void Wgs84ToUtm31NBatched()
@@ -169,7 +173,7 @@ public class ProjParityBenchmarks
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Measures batched inverse throughput for EPSG:32631 to EPSG:4326.
     /// </summary>
     [Benchmark]
     public void Utm31NToWgs84Batched()
@@ -179,7 +183,7 @@ public class ProjParityBenchmarks
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Measures batched forward throughput for EPSG:4326 to EPSG:2154.
     /// </summary>
     [Benchmark]
     public void Wgs84ToLambert93Batched()
@@ -189,7 +193,7 @@ public class ProjParityBenchmarks
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Measures batched inverse throughput for EPSG:2154 to EPSG:4326.
     /// </summary>
     [Benchmark]
     public void Lambert93ToWgs84Batched()
@@ -199,7 +203,7 @@ public class ProjParityBenchmarks
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Measures round-trip batched throughput via EPSG:3857 and back to EPSG:4326.
     /// </summary>
     [Benchmark]
     public void WebMercatorToWgs84Batched()
@@ -210,8 +214,12 @@ public class ProjParityBenchmarks
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Measures EPSG:4326 to EPSG:3857 throughput with deterministic coordinate perturbation.
     /// </summary>
+    /// <remarks>
+    /// The perturbation model follows the PROJ benchmark pattern:
+    /// <c>value + noise * uniform(-1, 1)</c> for each axis.
+    /// </remarks>
     [Benchmark]
     public void Wgs84ToWebMercatorBatchedWithNoise()
     {
