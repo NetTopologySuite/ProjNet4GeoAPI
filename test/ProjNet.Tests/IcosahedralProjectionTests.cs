@@ -12,9 +12,9 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Validates specialty batch D8 specialty projections (<c>airocean</c>, <c>isea</c>).
+/// Validates icosahedral projection variants (<c>airocean</c>, <c>isea</c>).
 /// </summary>
-public class SpecialtyProjectionBatchD8Tests
+public class IcosahedralProjectionTests
 {
     private const string Grs80 = "SPHEROID[\"GRS 80\",6378137,298.257222101]";
     private const string Sphere6400000 = "SPHEROID[\"Sphere\",6400000,0]";
@@ -24,7 +24,7 @@ public class SpecialtyProjectionBatchD8Tests
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
     /// <summary>
-    /// Verifies aliases resolve from WKT for batch D8 projections.
+    /// Verifies aliases resolve from WKT for icosahedral projection variants.
     /// </summary>
     /// <param name="projectionName">Projection alias.</param>
     /// <param name="isIsea"><see langword="true"/> for ISEA aliases, <see langword="false"/> for Airocean aliases.</param>
@@ -33,7 +33,7 @@ public class SpecialtyProjectionBatchD8Tests
     [InlineData("Airocean", false)]
     [InlineData("isea", true)]
     [InlineData("Icosahedral_Snyder_Equal_Area", true)]
-    public void SupportsBatchD8AliasesFromWkt(string projectionName, bool isIsea)
+    public void SupportsIcosahedralAliasesFromWkt(string projectionName, bool isIsea)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(
             isIsea

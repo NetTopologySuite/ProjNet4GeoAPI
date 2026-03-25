@@ -9,9 +9,9 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Validates specialty batch D10 runtime parity for <c>sch</c>.
+/// Validates SCH projection runtime parity.
 /// </summary>
-public class SpecialtyProjectionBatchD10Tests
+public class SchProjectionTests
 {
     private const string SchForwardOperation = "+proj=sch +datum=WGS84 +plat_0=30.0 +plon_0=45.0 +phdg_0=-12.0 +nodefs";
     private const string SchInverseOperation = "+proj=sch +datum=WGS84 +plat_0=30.0 +plon_0=45.0 +phdg_0=-12.0 +nodefs +inv";
@@ -23,7 +23,7 @@ public class SpecialtyProjectionBatchD10Tests
     [Theory]
     [InlineData("+proj=sch +datum=WGS84 +plat_0=30 +plon_0=45 +phdg_0=-12")]
     [InlineData("+proj=spherical_cross_track_height +datum=WGS84 +plat_0=30 +plon_0=45 +phdg_0=-12")]
-    public void SupportsBatchD10AliasesInRuntime(string operation)
+    public void SupportsSchAliasesInRuntime(string operation)
     {
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
 

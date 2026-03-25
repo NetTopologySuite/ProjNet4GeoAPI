@@ -11,9 +11,9 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Validates specialty batch D7 specialty projection (<c>spilhaus</c>).
+/// Validates Spilhaus projection variants.
 /// </summary>
-public class SpecialtyProjectionBatchD7Tests
+public class SpilhausProjectionTests
 {
     private const string Wgs84 = "SPHEROID[\"WGS 84\",6378137,298.257223563]";
 
@@ -27,7 +27,7 @@ public class SpecialtyProjectionBatchD7Tests
     [Theory]
     [InlineData("spilhaus")]
     [InlineData("Spilhaus")]
-    public void SupportsBatchD7AliasesFromWkt(string projectionName)
+    public void SupportsSpilhausAliasesFromWkt(string projectionName)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, -49.56371678d, 66.94970198d, 40.17823482d, 45d, 1d));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
@@ -105,7 +105,7 @@ public class SpecialtyProjectionBatchD7Tests
     [InlineData(-49.56371678d, 66.94970198d, 40.17823482d, 45d, 1d, 173d, 70d, 0.05d)]
     [InlineData(-49.56371678d, 66.94970198d, 40.17823482d, 40.1d, 1d, 130.4d, -16.2d, 0.05d)]
     [InlineData(-49.56371678d, 66.94970198d, 40.17823482d, 45d, 0.9d, 130.4d, -16.2d, 0.05d)]
-    public void SupportsBatchD7Roundtrip(double lat0, double lon0, double azi, double rot, double k0, double longitude, double latitude, double tolerance)
+    public void SupportsSpilhausRoundtrip(double lat0, double lon0, double azi, double rot, double k0, double longitude, double latitude, double tolerance)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt("spilhaus", lat0, lon0, azi, rot, k0));
         var geographic = projected.GeographicCoordinateSystem;

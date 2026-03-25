@@ -12,9 +12,9 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Validates specialty batch D9 projection aliases and vectors (<c>leac</c>, <c>ups</c>).
+/// Validates LEAC, UPS, and Web Mercator projection variants.
 /// </summary>
-public class SpecialtyProjectionBatchD9Tests
+public class LeacUpsWebMercatorProjectionTests
 {
     private const string Grs80 = "SPHEROID[\"GRS 80\",6378137,298.257222101]";
     private const string Sphere6400000 = "SPHEROID[\"Sphere\",6400000,0]";
@@ -23,14 +23,14 @@ public class SpecialtyProjectionBatchD9Tests
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
     /// <summary>
-    /// Verifies aliases resolve from WKT for batch D9 projections.
+    /// Verifies aliases resolve from WKT for LEAC, UPS, and Web Mercator projection variants.
     /// </summary>
     /// <param name="projectionName">Projection alias.</param>
     [Theory]
     [InlineData("leac")]
     [InlineData("ups")]
     [InlineData("webmerc")]
-    public void SupportsBatchD9AliasesFromWkt(string projectionName)
+    public void SupportsLeacUpsWebMercatorAliasesFromWkt(string projectionName)
     {
         string wkt = projectionName.Equals("leac", StringComparison.OrdinalIgnoreCase)
             ? BuildLeacWkt(projectionName, Grs80, 0d, false)
