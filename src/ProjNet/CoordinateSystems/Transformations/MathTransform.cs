@@ -168,41 +168,19 @@ public abstract class MathTransform
             throw new ArgumentNullException(nameof(point));
         }
 
-        double x = point[0];
-        double y = point[1];
-        double z = point.Length < 3 ? 0 : point[2];
-        double t = point.Length < 4 ? 0 : point[3];
-
-        if (point.Length >= 4)
+        int resultDimensions = this.GetResultDimensions(point.Length);
+        if (resultDimensions <= 4)
         {
-            this.Transform(ref x, ref y, ref z, ref t);
-        }
-        else
-        {
-            this.Transform(ref x, ref y, ref z);
+            Span<double> scratch = stackalloc double[4];
+            Span<double> scratchResult = scratch.Slice(0, resultDimensions);
+            this.TransformPoint(point, scratchResult, resultDimensions);
+            var transformedSmall = new double[resultDimensions];
+            scratchResult.CopyTo(transformedSmall);
+            return transformedSmall;
         }
 
-        int minimumDimensions = this.DimTarget == 2 ? 2 : 3;
-        int resultDimensions = point.Length <= 3
-            ? minimumDimensions
-            : Math.Max(minimumDimensions, point.Length);
         var transformed = new double[resultDimensions];
-        transformed[0] = x;
-        transformed[1] = y;
-        if (resultDimensions >= 3)
-        {
-            transformed[2] = z;
-        }
-
-        if (resultDimensions >= 4)
-        {
-            transformed[3] = t;
-            for (int i = 4; i < resultDimensions; i++)
-            {
-                transformed[i] = point[i];
-            }
-        }
-
+        this.TransformPoint(point, transformed, resultDimensions);
         return transformed;
     }
 
@@ -222,10 +200,7 @@ public abstract class MathTransform
             throw new ArgumentException("At least two ordinate values are required.", nameof(point));
         }
 
-        int minimumDimensions = this.DimTarget == 2 ? 2 : 3;
-        int resultDimensions = point.Length <= 3
-            ? minimumDimensions
-            : Math.Max(minimumDimensions, point.Length);
+        int resultDimensions = this.GetResultDimensions(point.Length);
         if (result.Length < resultDimensions)
         {
             throw new ArgumentException(
@@ -233,6 +208,53 @@ public abstract class MathTransform
                 nameof(result));
         }
 
+        this.TransformPoint(point, result, resultDimensions);
+    }
+
+    /// <summary>
+    /// Transforms a list of coordinate point ordinal values.
+    /// </summary>
+    /// <remarks>
+    /// This method is provided for efficiently transforming many points. The supplied array
+    /// of ordinal values will contain packed ordinal values. For example, if the source
+    /// dimension is 3, then the ordinals will be packed in this order (x0,y0,z0,x1,y1,z1 ...).
+    /// The size of the passed array must be an integer multiple of DimSource. The returned
+    /// ordinal values are packed in a similar way. In some DCPs. the ordinals may be
+    /// transformed in-place, and the returned array may be the same as the passed array.
+    /// So any client code should not attempt to reuse the passed ordinal values (although
+    /// they can certainly reuse the passed array). If there is any problem then the server
+    /// implementation will throw an exception. If this happens then the client should not
+    /// make any assumptions about the state of the ordinal values.
+    /// </remarks>
+    /// <param name="points">The packed ordinate values to transform.</param>
+    /// <returns>The transformed packed ordinate values.</returns>
+    public IList<double[]> TransformList(IList<double[]> points)
+    {
+        if (points is null)
+        {
+            throw new ArgumentNullException(nameof(points));
+        }
+
+        var result = new List<double[]>(points.Count);
+        foreach (double[] point in points)
+        {
+            int resultDimensions = this.GetResultDimensions(point.Length);
+            var transformed = new double[resultDimensions];
+            this.TransformPoint(point, transformed, resultDimensions);
+            result.Add(transformed);
+        }
+
+        return result;
+    }
+
+    /// <summary>
+    /// Transforms a single source coordinate into an already-sized destination span.
+    /// </summary>
+    /// <param name="point">Source ordinates.</param>
+    /// <param name="result">Destination ordinates.</param>
+    /// <param name="resultDimensions">The number of result ordinates to write.</param>
+    private void TransformPoint(ReadOnlySpan<double> point, Span<double> result, int resultDimensions)
+    {
         double x = point[0];
         double y = point[1];
         double z = point.Length < 3 ? 0 : point[2];
@@ -265,71 +287,16 @@ public abstract class MathTransform
     }
 
     /// <summary>
-    /// Transforms a list of coordinate point ordinal values.
+    /// Gets the required number of ordinates in a transformed point.
     /// </summary>
-    /// <remarks>
-    /// This method is provided for efficiently transforming many points. The supplied array
-    /// of ordinal values will contain packed ordinal values. For example, if the source
-    /// dimension is 3, then the ordinals will be packed in this order (x0,y0,z0,x1,y1,z1 ...).
-    /// The size of the passed array must be an integer multiple of DimSource. The returned
-    /// ordinal values are packed in a similar way. In some DCPs. the ordinals may be
-    /// transformed in-place, and the returned array may be the same as the passed array.
-    /// So any client code should not attempt to reuse the passed ordinal values (although
-    /// they can certainly reuse the passed array). If there is any problem then the server
-    /// implementation will throw an exception. If this happens then the client should not
-    /// make any assumptions about the state of the ordinal values.
-    /// </remarks>
-    /// <param name="points">The packed ordinate values to transform.</param>
-    /// <returns>The transformed packed ordinate values.</returns>
-    public IList<double[]> TransformList(IList<double[]> points)
+    /// <param name="pointLength">Input point ordinate count.</param>
+    /// <returns>Output ordinate count.</returns>
+    private int GetResultDimensions(int pointLength)
     {
-        if (points is null)
-        {
-            throw new ArgumentNullException(nameof(points));
-        }
-
-        var result = new List<double[]>(points.Count);
-        foreach (double[] point in points)
-        {
-            double x = point[0];
-            double y = point[1];
-            double z = point.Length < 3 ? 0 : point[2];
-            double t = point.Length < 4 ? 0 : point[3];
-
-            if (point.Length >= 4)
-            {
-                this.Transform(ref x, ref y, ref z, ref t);
-            }
-            else
-            {
-                this.Transform(ref x, ref y, ref z);
-            }
-
-            int minimumDimensions = this.DimTarget == 2 ? 2 : 3;
-            int resultDimensions = point.Length <= 3
-                ? minimumDimensions
-                : Math.Max(minimumDimensions, point.Length);
-            var transformed = new double[resultDimensions];
-            transformed[0] = x;
-            transformed[1] = y;
-            if (resultDimensions >= 3)
-            {
-                transformed[2] = z;
-            }
-
-            if (resultDimensions >= 4)
-            {
-                transformed[3] = t;
-                for (int i = 4; i < resultDimensions; i++)
-                {
-                    transformed[i] = point[i];
-                }
-            }
-
-            result.Add(transformed);
-        }
-
-        return result;
+        int minimumDimensions = this.DimTarget == 2 ? 2 : 3;
+        return pointLength <= 3
+            ? minimumDimensions
+            : Math.Max(minimumDimensions, pointLength);
     }
 
     /// <summary>
