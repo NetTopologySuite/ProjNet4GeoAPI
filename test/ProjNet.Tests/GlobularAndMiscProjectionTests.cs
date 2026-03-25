@@ -12,15 +12,15 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Validates specialty batch A specialty projections.
+/// Validates globular and miscellaneous specialty projections.
 /// </summary>
-public class SpecialtyProjectionBatchATests
+public class GlobularAndMiscProjectionTests
 {
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
     /// <summary>
-    /// Verifies aliases resolve from WKT for batch A projections.
+    /// Verifies aliases resolve from WKT for globular and miscellaneous projections.
     /// </summary>
     /// <param name="projectionName">Projection alias.</param>
     /// <param name="extraParameters">Optional WKT parameter segment.</param>
@@ -49,7 +49,7 @@ public class SpecialtyProjectionBatchATests
     [InlineData("Laskowski", null)]
     [InlineData("tcc", null)]
     [InlineData("Transverse_Central_Cylindrical", null)]
-    public void SupportsBatchAAliasesFromWkt(string projectionName, string extraParameters)
+    public void SupportsGlobularAndMiscAliasesFromWkt(string projectionName, string extraParameters)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 
@@ -64,7 +64,7 @@ public class SpecialtyProjectionBatchATests
     }
 
     /// <summary>
-    /// Verifies PROJ builtins forward vectors for batch A projections.
+    /// Verifies PROJ builtins forward vectors for globular and miscellaneous projections.
     /// </summary>
     /// <param name="projectionName">Projection code.</param>
     /// <param name="longitude">Input longitude degrees.</param>
@@ -104,7 +104,7 @@ public class SpecialtyProjectionBatchATests
     }
 
     /// <summary>
-    /// Verifies PROJ builtins inverse vectors for inverse-capable batch A projections.
+    /// Verifies PROJ builtins inverse vectors for inverse-capable globular and miscellaneous projections.
     /// </summary>
     /// <param name="projectionName">Projection code.</param>
     /// <param name="x">Input x meters.</param>
@@ -134,7 +134,7 @@ public class SpecialtyProjectionBatchATests
     }
 
     /// <summary>
-    /// Verifies forward-only batch A projections reject inverse.
+    /// Verifies forward-only globular and miscellaneous projections reject inverse.
     /// </summary>
     /// <param name="projectionName">Projection code.</param>
     /// <param name="extraParameters">Optional WKT parameter segment.</param>
@@ -158,7 +158,7 @@ public class SpecialtyProjectionBatchATests
     }
 
     /// <summary>
-    /// Verifies roundtrip stability for inverse-capable batch A projections.
+    /// Verifies roundtrip stability for inverse-capable globular and miscellaneous projections.
     /// </summary>
     /// <param name="projectionName">Projection code.</param>
     /// <param name="longitude">Input longitude degrees.</param>
@@ -168,7 +168,7 @@ public class SpecialtyProjectionBatchATests
     [InlineData("comill", 2d, 1d, null)]
     [InlineData("fouc_s", -2d, -1d, null)]
     [InlineData("lagrng", 2d, -1d, ",PARAMETER[\"lat_1\",0.5],PARAMETER[\"W\",2]")]
-    public void SupportsBatchARoundtrip(string projectionName, double longitude, double latitude, string extraParameters)
+    public void SupportsGlobularAndMiscRoundtrip(string projectionName, double longitude, double latitude, string extraParameters)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 
