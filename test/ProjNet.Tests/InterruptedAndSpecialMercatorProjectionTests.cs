@@ -11,9 +11,9 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Validates specialty batch B specialty projections.
+/// Validates interrupted and specialized Mercator-family projections.
 /// </summary>
-public class SpecialtyProjectionBatchBTests
+public class InterruptedAndSpecialMercatorProjectionTests
 {
     private const string Sphere6400000 = "SPHEROID[\"Sphere\",6400000,0]";
     private const string Sphere6370997 = "SPHEROID[\"Sphere\",6370997,0]";
@@ -24,7 +24,7 @@ public class SpecialtyProjectionBatchBTests
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
     /// <summary>
-    /// Verifies aliases resolve from WKT for batch B projections.
+    /// Verifies aliases resolve from WKT for interrupted and specialized Mercator-family projections.
     /// </summary>
     /// <param name="projectionName">Projection alias.</param>
     /// <param name="spheroidClause">Spheroid clause.</param>
@@ -44,7 +44,7 @@ public class SpecialtyProjectionBatchBTests
     [InlineData("Interrupted_Mollweide_Oceanic_View", Sphere6400000, null)]
     [InlineData("igh_o", Sphere6400000, null)]
     [InlineData("Interrupted_Goode_Homolosine_Oceanic_View", Sphere6400000, null)]
-    public void SupportsBatchBAliasesFromWkt(string projectionName, string spheroidClause, string extraParameters)
+    public void SupportsInterruptedAndSpecialMercatorAliasesFromWkt(string projectionName, string spheroidClause, string extraParameters)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
         ArgumentNullException.ThrowIfNull(spheroidClause);
@@ -81,7 +81,7 @@ public class SpecialtyProjectionBatchBTests
     }
 
     /// <summary>
-    /// Verifies PROJ builtins forward vectors for batch B projections.
+    /// Verifies PROJ builtins forward vectors for interrupted and specialized Mercator-family projections.
     /// </summary>
     /// <param name="projectionName">Projection code.</param>
     /// <param name="spheroidClause">Spheroid clause.</param>
@@ -155,7 +155,7 @@ public class SpecialtyProjectionBatchBTests
     }
 
     /// <summary>
-    /// Verifies PROJ builtins inverse vectors for inverse-capable batch B projections.
+    /// Verifies PROJ builtins inverse vectors for inverse-capable interrupted and specialized Mercator-family projections.
     /// </summary>
     /// <param name="projectionName">Projection code.</param>
     /// <param name="spheroidClause">Spheroid clause.</param>
@@ -195,7 +195,7 @@ public class SpecialtyProjectionBatchBTests
     }
 
     /// <summary>
-    /// Verifies roundtrip stability for inverse-capable batch B projections.
+    /// Verifies roundtrip stability for inverse-capable interrupted and specialized Mercator-family projections.
     /// </summary>
     /// <param name="projectionName">Projection code.</param>
     /// <param name="spheroidClause">Spheroid clause.</param>
@@ -210,7 +210,7 @@ public class SpecialtyProjectionBatchBTests
     [InlineData("imoll", Sphere6400000, -39.99d, 0.1d, null)]
     [InlineData("imoll_o", Sphere6400000, -89.99d, 0.1d, null)]
     [InlineData("igh_o", Sphere6400000, 170d, 70d, null)]
-    public void SupportsBatchBRoundtrip(
+    public void SupportsInterruptedAndSpecialMercatorRoundtrip(
         string projectionName,
         string spheroidClause,
         double longitude,
