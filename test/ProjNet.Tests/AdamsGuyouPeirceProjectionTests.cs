@@ -11,9 +11,9 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Validates specialty batch D6 specialty projections (Adams/Guyou/Peirce family).
+/// Validates Adams, Guyou, and Peirce projection families.
 /// </summary>
-public class SpecialtyProjectionBatchD6Tests
+public class AdamsGuyouPeirceProjectionTests
 {
     private const string Sphere6370997 = "SPHEROID[\"Sphere\",6370997,0]";
     private const string Wgs84 = "SPHEROID[\"WGS 84\",6378137,298.257223563]";
@@ -22,7 +22,7 @@ public class SpecialtyProjectionBatchD6Tests
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
     /// <summary>
-    /// Verifies aliases resolve from WKT for batch D6 projections.
+    /// Verifies aliases resolve from WKT for Adams, Guyou, and Peirce projection families.
     /// </summary>
     /// <param name="projectionName">Projection alias.</param>
     [Theory]
@@ -36,7 +36,7 @@ public class SpecialtyProjectionBatchD6Tests
     [InlineData("Adams_World_In_A_Square_I")]
     [InlineData("adams_ws2")]
     [InlineData("Adams_World_In_A_Square_II")]
-    public void SupportsBatchD6AliasesFromWkt(string projectionName)
+    public void SupportsAdamsGuyouPeirceAliasesFromWkt(string projectionName)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, Sphere6370997, null));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
@@ -83,7 +83,7 @@ public class SpecialtyProjectionBatchD6Tests
     }
 
     /// <summary>
-    /// Verifies PROJ fixture inverse vectors for inverse-capable batch D6 projections.
+    /// Verifies PROJ fixture inverse vectors for inverse-capable Adams, Guyou, and Peirce projection families.
     /// </summary>
     [Theory]
     [InlineData("adams_ws2", Wgs84, 0d, 0d, 0d, 0d, null, 2e-9d)]
@@ -110,14 +110,14 @@ public class SpecialtyProjectionBatchD6Tests
     }
 
     /// <summary>
-    /// Verifies roundtrip stability for inverse-capable batch D6 projections.
+    /// Verifies roundtrip stability for inverse-capable Adams, Guyou, and Peirce projection families.
     /// </summary>
     [Theory]
     [InlineData("adams_ws2", Wgs84, 40d, 60d, null, 2e-7d)]
     [InlineData("adams_ws2", Wgs84, -179.999d, 0d, null, 2e-6d)]
     [InlineData("peirce_q", Sphere6370997, 45d, 45d, ",PARAMETER[\"shape\",0]", 1e-6d)]
     [InlineData("peirce_q", Sphere6370997, 90d, 0d, ",PARAMETER[\"shape\",1]", 1e-6d)]
-    public void SupportsBatchD6Roundtrip(string projectionName, string spheroidClause, double longitude, double latitude, string extraParameters, double tolerance)
+    public void SupportsAdamsGuyouPeirceRoundtrip(string projectionName, string spheroidClause, double longitude, double latitude, string extraParameters, double tolerance)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, spheroidClause, extraParameters));
         var geographic = projected.GeographicCoordinateSystem;

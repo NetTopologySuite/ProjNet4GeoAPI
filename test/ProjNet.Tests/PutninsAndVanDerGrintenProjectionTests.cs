@@ -11,9 +11,9 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Validates specialty batch D5 specialty projections.
+/// Validates Putnins and Van der Grinten projection families.
 /// </summary>
-public class SpecialtyProjectionBatchD5Tests
+public class PutninsAndVanDerGrintenProjectionTests
 {
     private const string Sphere6400000 = "SPHEROID[\"Sphere\",6400000,0]";
 
@@ -21,7 +21,7 @@ public class SpecialtyProjectionBatchD5Tests
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
     /// <summary>
-    /// Verifies aliases resolve from WKT for batch D5 projections.
+    /// Verifies aliases resolve from WKT for Putnins and Van der Grinten projection families.
     /// </summary>
     /// <param name="projectionName">Projection alias.</param>
     [Theory]
@@ -49,7 +49,7 @@ public class SpecialtyProjectionBatchD5Tests
     [InlineData("Van_Der_Grinten_III")]
     [InlineData("vandg4")]
     [InlineData("Van_Der_Grinten_IV")]
-    public void SupportsBatchD5AliasesFromWkt(string projectionName)
+    public void SupportsPutninsAndVanDerGrintenAliasesFromWkt(string projectionName)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
@@ -62,7 +62,7 @@ public class SpecialtyProjectionBatchD5Tests
     }
 
     /// <summary>
-    /// Verifies PROJ builtins forward vectors for batch D5 projections.
+    /// Verifies PROJ builtins forward vectors for Putnins and Van der Grinten projection families.
     /// </summary>
     [Theory]
     [InlineData("putp1", 2d, 1d, 211642.762754160d, 105831.180787330d, 1e-6d)]
@@ -94,7 +94,7 @@ public class SpecialtyProjectionBatchD5Tests
     }
 
     /// <summary>
-    /// Verifies PROJ builtins inverse vectors for inverse-capable batch D5 projections.
+    /// Verifies PROJ builtins inverse vectors for inverse-capable Putnins and Van der Grinten projection families.
     /// </summary>
     [Theory]
     [InlineData("putp1", 200d, 100d, 0.001889802d, 0.000944901d, 2e-9d)]
@@ -123,7 +123,7 @@ public class SpecialtyProjectionBatchD5Tests
     }
 
     /// <summary>
-    /// Verifies roundtrip stability for inverse-capable batch D5 projections.
+    /// Verifies roundtrip stability for inverse-capable Putnins and Van der Grinten projection families.
     /// </summary>
     [Theory]
     [InlineData("putp1", 2d, 1d)]
@@ -135,7 +135,7 @@ public class SpecialtyProjectionBatchD5Tests
     [InlineData("wag5", 2d, 1d)]
     [InlineData("wag6", 2d, 1d)]
     [InlineData("weren", 2d, 1d)]
-    public void SupportsBatchD5Roundtrip(string projectionName, double longitude, double latitude)
+    public void SupportsPutninsAndVanDerGrintenRoundtrip(string projectionName, double longitude, double latitude)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName));
         var geographic = projected.GeographicCoordinateSystem;
