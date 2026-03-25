@@ -161,22 +161,22 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <summary>
     /// Scale factor.
     /// </summary>
-    protected readonly double scaleFactor; /* scale factor             */
+    protected readonly double scaleFactor; // scale factor
 
     /// <summary>
     /// Center latitude.
     /// </summary>
-    protected readonly double latOrigin; /* center latitude            */
+    protected readonly double latOrigin; // center latitude
 
     /// <summary>
     /// Y offset in meters.
     /// </summary>
-    protected readonly double falseNorthing; /* y offset in meters         */
+    protected readonly double falseNorthing; // y offset in meters
 
     /// <summary>
     /// X offset in meters.
     /// </summary>
-    protected readonly double falseEasting; /* x offset in meters          */
+    protected readonly double falseEasting; // x offset in meters
 
     /// <summary>
     /// Coefficient 0 for <see cref="Mlfn(double,double,double,double,double)"/>.
@@ -216,7 +216,7 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <summary>
     /// Center longitude (projection center).
     /// </summary>
-    protected double centralMeridian; /* Center longitude (projection center) */
+    protected double centralMeridian; // Center longitude (projection center)
 
     private const double C00 = 1.0;
     private const double C02 = 0.25;
@@ -231,12 +231,12 @@ public abstract class MapProjection : MathTransform, IProjection
     private const double C68 = 0.00569661458333333333;
     private const double C88 = 0.3076171875;
 
-    private const double P00 = 0.33333333333333333333; /*   1 /     3 */
-    private const double P01 = 0.17222222222222222222; /*  31 /   180 */
-    private const double P02 = 0.10257936507936507937; /* 517 /  5040 */
-    private const double P10 = 0.06388888888888888888; /*  23 /   360 */
-    private const double P11 = 0.06640211640211640212; /* 251 /  3780 */
-    private const double P20 = 0.01677689594356261023; /* 761 / 45360 */
+    private const double P00 = 0.33333333333333333333; //   1 /     3
+    private const double P01 = 0.17222222222222222222; //  31 /   180
+    private const double P02 = 0.10257936507936507937; // 517 /  5040
+    private const double P10 = 0.06388888888888888888; //  23 /   360
+    private const double P11 = 0.06640211640211640212; // 251 /  3780
+    private const double P20 = 0.01677689594356261023; // 761 / 45360
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MapProjection"/> class with a paired inverse projection.
@@ -452,19 +452,22 @@ public abstract class MapProjection : MathTransform, IProjection
             return false;
         }
 
-        /*
-if (proj.NumParameters != NumParameters)
-return false;
-
-for (var i = 0; i < _Parameters.Count; i++)
-{
-var param = _Parameters.Find(par => par.Name.Equals(proj.GetParameter(i).Name, StringComparison.OrdinalIgnoreCase));
-if (param is null)
-   return false;
-if (param.Value != proj.GetParameter(i).Value)
-   return false;
-}
-*/
+        // if (proj.NumParameters != NumParameters)
+        // return false;
+        //
+        // for (var i = 0; i < _Parameters.Count; i++)
+        // {
+        //     var param = _Parameters.Find(par => par.Name.Equals(proj.GetParameter(i).Name, StringComparison.OrdinalIgnoreCase));
+        //     if (param is null)
+        //     {
+        //         return false;
+        //     }
+        //
+        //     if (param.Value != proj.GetParameter(i).Value)
+        //     {
+        //         return false;
+        //     }
+        // }
         return this.IsInverse == proj.IsInverse;
     }
 
@@ -807,7 +810,7 @@ if (param.Value != proj.GetParameter(i).Value)
     /// <returns>The cube of <paramref name="x"/> (x^3).</returns>
     protected static double CUBE(double x)
     {
-        return x * x * x; /* x^3 */
+        return x * x * x; // x^3
     }
 
     /// <summary>
@@ -818,7 +821,7 @@ if (param.Value != proj.GetParameter(i).Value)
     protected static double QUAD(double x)
     {
         double squared = x * x;
-        return squared * squared; /* x^4 */
+        return squared * squared; // x^4
     }
 
     /// <summary>
@@ -829,7 +832,7 @@ if (param.Value != proj.GetParameter(i).Value)
     /// <returns>The greater of <paramref name="a"/> and <paramref name="b"/>.</returns>
     protected static double GMAX(ref double a, ref double b)
     {
-        return Math.Max(a, b); /* assign maximum of a and b */
+        return Math.Max(a, b); // assign maximum of a and b
     }
 
     /// <summary>
@@ -840,7 +843,7 @@ if (param.Value != proj.GetParameter(i).Value)
     /// <returns>The lesser of <paramref name="a"/> and <paramref name="b"/>.</returns>
     protected static double GMIN(ref double a, ref double b)
     {
-        return a < b ? a : b; /* assign minimum of a and b */
+        return a < b ? a : b; // assign minimum of a and b
     }
 
     /// <summary>
@@ -851,7 +854,7 @@ if (param.Value != proj.GetParameter(i).Value)
     /// <returns>The remainder of the integer division of <paramref name="a"/> by <paramref name="b"/>.</returns>
     protected static double IMOD(double a, double b)
     {
-        return a - ((a / b) * b); /* Integer mod function */
+        return a - ((a / b) * b); // Integer mod function
     }
 
     /// <summary>
@@ -964,7 +967,7 @@ if (param.Value != proj.GetParameter(i).Value)
             double div1 = 1.0 - (con * con);
             double div2 = 1.0 + con;
 
-            /* avoid zero division, fail gracefully */
+            // avoid zero division, fail gracefully
             if (div1 == 0.0 || div2 == 0.0)
             {
                 return HugeVal;
@@ -1187,7 +1190,7 @@ if (param.Value != proj.GetParameter(i).Value)
         double s, t, phi, k = 1.0 / (1.0 - this.es);
         int i;
         phi = arg;
-        for (i = MAXIMUM_ITERATIONS; /*true*/;)
+        for (i = MAXIMUM_ITERATIONS;;)
         {
             // rarely goes over 5 iterations
             if (--i < 0)
