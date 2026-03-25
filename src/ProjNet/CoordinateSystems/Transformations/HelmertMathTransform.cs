@@ -16,6 +16,12 @@ internal sealed class HelmertMathTransform : MathTransform
 {
     private const double ArcSecondToRadians = Math.PI / (180d * 3600d);
     private const double MissingObservationEpoch = double.MaxValue;
+    private enum CsvParseStatus
+    {
+        Success,
+        TooManyValues,
+        InvalidValue,
+    }
 
     private readonly HelmertParameterState baseState;
     private readonly HelmertRateState rateState;
@@ -355,40 +361,65 @@ internal sealed class HelmertMathTransform : MathTransform
             return true;
         }
 
-        string[] tokens = towgs84Token.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
-        if (tokens.Length != 3 && tokens.Length != 6 && tokens.Length != 7)
+        Span<double> values = stackalloc double[7];
+        CsvParseStatus parseStatus = TryParseCsvValues(towgs84Token.AsSpan(), values, out int valueCount);
+        if (parseStatus != CsvParseStatus.Success || (valueCount != 3 && valueCount != 6 && valueCount != 7))
         {
             skipReason = "Invalid value for +towgs84.";
             return false;
         }
 
-        var values = new double[tokens.Length];
-        for (int i = 0; i < tokens.Length; i++)
-        {
-            if (!TryParseFiniteDouble(tokens[i].Trim(), out values[i]))
-            {
-                skipReason = "Invalid value for +towgs84.";
-                return false;
-            }
-        }
-
         translationX = values[0];
         translationY = values[1];
         translationZ = values[2];
-        if (tokens.Length >= 6)
+        if (valueCount >= 6)
         {
             rotationX = values[3] * ArcSecondToRadians;
             rotationY = values[4] * ArcSecondToRadians;
             rotationZ = values[5] * ArcSecondToRadians;
         }
 
-        if (tokens.Length == 7)
+        if (valueCount == 7)
         {
             scale = values[6];
         }
 
         hasTowgs84 = true;
         return true;
+    }
+
+    private static CsvParseStatus TryParseCsvValues(ReadOnlySpan<char> token, Span<double> destination, out int parsedCount)
+    {
+        parsedCount = 0;
+        int segmentStart = 0;
+        for (int i = 0; i <= token.Length; i++)
+        {
+            bool atDelimiter = i < token.Length && token[i] == ',';
+            if (i != token.Length && !atDelimiter)
+            {
+                continue;
+            }
+
+            ReadOnlySpan<char> segment = TrimWhitespace(token.Slice(segmentStart, i - segmentStart));
+            if (!segment.IsEmpty)
+            {
+                if (parsedCount >= destination.Length)
+                {
+                    return CsvParseStatus.TooManyValues;
+                }
+
+                if (!TryParseFiniteDouble(segment, out destination[parsedCount]))
+                {
+                    return CsvParseStatus.InvalidValue;
+                }
+
+                parsedCount++;
+            }
+
+            segmentStart = i + 1;
+        }
+
+        return CsvParseStatus.Success;
     }
 
     private static HelmertParameterState EvaluateKinematicState(
@@ -456,9 +487,35 @@ internal sealed class HelmertMathTransform : MathTransform
     {
         value = 0d;
         return !string.IsNullOrWhiteSpace(token)
-            && double.TryParse(token, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value)
-            && !double.IsNaN(value)
-            && !double.IsInfinity(value);
+            && TryParseFiniteDouble(token.AsSpan(), out value);
+    }
+
+    private static bool TryParseFiniteDouble(ReadOnlySpan<char> token, out double value)
+    {
+#if NETSTANDARD2_0
+        bool parsed = double.TryParse(token.ToString(), NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value);
+#else
+        bool parsed = double.TryParse(token, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value);
+#endif
+
+        return parsed && !double.IsNaN(value) && !double.IsInfinity(value);
+    }
+
+    private static ReadOnlySpan<char> TrimWhitespace(ReadOnlySpan<char> value)
+    {
+        int start = 0;
+        while (start < value.Length && char.IsWhiteSpace(value[start]))
+        {
+            start++;
+        }
+
+        int end = value.Length - 1;
+        while (end >= start && char.IsWhiteSpace(value[end]))
+        {
+            end--;
+        }
+
+        return end < start ? ReadOnlySpan<char>.Empty : value.Slice(start, (end - start) + 1);
     }
 
     private static void BuildRotationMatrix(

@@ -19,7 +19,12 @@ internal sealed class HornerMathTransform : MathTransform
     private const double DefaultRange = 500000d;
     private const double DefaultInverseTolerance = 0.001d;
     private const double DeterminantTolerance = 1e-24d;
-    private static readonly char[] CommaSeparator = [','];
+    private enum CsvParseStatus
+    {
+        Success,
+        TooManyValues,
+        InvalidValue,
+    }
 
     private readonly int degree;
     private readonly bool isComplex;
@@ -380,21 +385,12 @@ internal sealed class HornerMathTransform : MathTransform
             return false;
         }
 
-        string[] parts = token.Split(CommaSeparator, StringSplitOptions.RemoveEmptyEntries);
-        if (parts.Length != expectedCount)
+        var values = new double[expectedCount];
+        CsvParseStatus parseStatus = TryParseCsvValues(token.AsSpan(), values, out int parsedCount);
+        if (parseStatus != CsvParseStatus.Success || parsedCount != expectedCount)
         {
             skipReason = "Malformed polynomium set " + key + ". need " + expectedCount.ToString(CultureInfo.InvariantCulture) + " coefs";
             return false;
-        }
-
-        var values = new double[expectedCount];
-        for (int i = 0; i < parts.Length; i++)
-        {
-            if (!TryParseFiniteDouble(parts[i], out values[i]))
-            {
-                skipReason = "Invalid coefficient in +" + key + ".";
-                return false;
-            }
         }
 
         coefficients = values;
@@ -437,13 +433,15 @@ internal sealed class HornerMathTransform : MathTransform
             return true;
         }
 
-        string[] parts = token.Split(CommaSeparator, StringSplitOptions.RemoveEmptyEntries);
-        if (parts.Length != 1 || !TryParseFiniteDouble(parts[0], out value))
+        Span<double> parsed = stackalloc double[1];
+        CsvParseStatus parseStatus = TryParseCsvValues(token.AsSpan(), parsed, out int parsedCount);
+        if (parseStatus != CsvParseStatus.Success || parsedCount != 1)
         {
             skipReason = "Invalid value for +" + key + ".";
             return false;
         }
 
+        value = parsed[0];
         return true;
     }
 
@@ -451,9 +449,69 @@ internal sealed class HornerMathTransform : MathTransform
     {
         value = 0d;
         return !string.IsNullOrWhiteSpace(token)
-            && double.TryParse(token.Trim(), NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value)
-            && !double.IsNaN(value)
-            && !double.IsInfinity(value);
+            && TryParseFiniteDouble(token.AsSpan(), out value);
+    }
+
+    private static bool TryParseFiniteDouble(ReadOnlySpan<char> token, out double value)
+    {
+#if NETSTANDARD2_0
+        bool parsed = double.TryParse(token.ToString(), NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value);
+#else
+        bool parsed = double.TryParse(token, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value);
+#endif
+
+        return parsed && !double.IsNaN(value) && !double.IsInfinity(value);
+    }
+
+    private static CsvParseStatus TryParseCsvValues(ReadOnlySpan<char> token, Span<double> destination, out int parsedCount)
+    {
+        parsedCount = 0;
+        int segmentStart = 0;
+        for (int i = 0; i <= token.Length; i++)
+        {
+            bool atDelimiter = i < token.Length && token[i] == ',';
+            if (i != token.Length && !atDelimiter)
+            {
+                continue;
+            }
+
+            ReadOnlySpan<char> segment = TrimWhitespace(token.Slice(segmentStart, i - segmentStart));
+            if (!segment.IsEmpty)
+            {
+                if (parsedCount >= destination.Length)
+                {
+                    return CsvParseStatus.TooManyValues;
+                }
+
+                if (!TryParseFiniteDouble(segment, out destination[parsedCount]))
+                {
+                    return CsvParseStatus.InvalidValue;
+                }
+
+                parsedCount++;
+            }
+
+            segmentStart = i + 1;
+        }
+
+        return CsvParseStatus.Success;
+    }
+
+    private static ReadOnlySpan<char> TrimWhitespace(ReadOnlySpan<char> value)
+    {
+        int start = 0;
+        while (start < value.Length && char.IsWhiteSpace(value[start]))
+        {
+            start++;
+        }
+
+        int end = value.Length - 1;
+        while (end >= start && char.IsWhiteSpace(value[end]))
+        {
+            end--;
+        }
+
+        return end < start ? ReadOnlySpan<char>.Empty : value.Slice(start, (end - start) + 1);
     }
 
     private static (double E, double N) EvaluateReal(
