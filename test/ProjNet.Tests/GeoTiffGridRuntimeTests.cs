@@ -5,6 +5,8 @@
 namespace ProjNET.Tests;
 
 using System;
+using System.Buffers;
+using System.Collections.Generic;
 using System.IO;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
@@ -72,6 +74,90 @@ public class GeoTiffGridRuntimeTests
 
         double[] output = transform.Transform(GeoTiffNodataInput);
         Assert.Equal(10d, output[2], 7);
+    }
+
+    /// <summary>
+    /// Verifies temporary GeoTIFF sample buffers are returned to the configured array pool on successful load.
+    /// </summary>
+    [Fact]
+    public void LoadHorizontalReturnsRentedSampleBuffersToArrayPoolOnSuccess()
+    {
+        string gridPath = FindGridPath("test_hgrid.tif");
+        var pool = new TrackingDoubleArrayPool();
+
+        IReadOnlyList<GeoTiffHGridShiftMathTransform.HorizontalGrid> grids = GeoTiffGridLoader.LoadHorizontal(gridPath, pool);
+
+        Assert.NotEmpty(grids);
+        Assert.Equal(pool.RentedArrays.Count, pool.ReturnedArrays.Count);
+        foreach (double[] rented in pool.RentedArrays)
+        {
+            int returnCount = 0;
+            foreach (double[] returned in pool.ReturnedArrays)
+            {
+                if (ReferenceEquals(rented, returned))
+                {
+                    returnCount++;
+                }
+            }
+
+            Assert.Equal(1, returnCount);
+        }
+    }
+
+    /// <summary>
+    /// Verifies partially-rented temporary GeoTIFF sample buffers are returned when loading fails.
+    /// </summary>
+    [Fact]
+    public void LoadHorizontalReturnsAlreadyRentedSampleBuffersWhenRentThrows()
+    {
+        string gridPath = FindGridPath("test_hgrid.tif");
+        var pool = new ThrowingAfterFirstRentArrayPool();
+
+        InvalidOperationException exception = Assert.Throws<InvalidOperationException>(
+            () => GeoTiffGridLoader.LoadHorizontal(gridPath, pool));
+
+        Assert.Contains("rent", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Single(pool.RentedArrays);
+        Assert.Single(pool.ReturnedArrays);
+        Assert.Same(pool.RentedArrays[0], pool.ReturnedArrays[0]);
+    }
+
+    private class TrackingDoubleArrayPool : ArrayPool<double>
+    {
+        private readonly ArrayPool<double> inner = ArrayPool<double>.Shared;
+
+        public List<double[]> RentedArrays { get; } = [];
+
+        public List<double[]> ReturnedArrays { get; } = [];
+
+        public override double[] Rent(int minimumLength)
+        {
+            double[] buffer = this.inner.Rent(minimumLength);
+            this.RentedArrays.Add(buffer);
+            return buffer;
+        }
+
+        public override void Return(double[] array, bool clearArray = false)
+        {
+            this.ReturnedArrays.Add(array);
+            this.inner.Return(array, clearArray);
+        }
+    }
+
+    private sealed class ThrowingAfterFirstRentArrayPool : TrackingDoubleArrayPool
+    {
+        private int rentCount;
+
+        public override double[] Rent(int minimumLength)
+        {
+            this.rentCount++;
+            if (this.rentCount > 1)
+            {
+                throw new InvalidOperationException("Simulated rent failure");
+            }
+
+            return base.Rent(minimumLength);
+        }
     }
 
     private static string FindGridPath(string fileName)

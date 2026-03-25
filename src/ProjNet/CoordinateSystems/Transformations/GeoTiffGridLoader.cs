@@ -48,7 +48,18 @@ internal static partial class GeoTiffGridLoader
     /// <returns>The list of horizontal grid shift grids parsed from the file.</returns>
     internal static IReadOnlyList<GeoTiffHGridShiftMathTransform.HorizontalGrid> LoadHorizontal(string path)
     {
-        return LoadCore(path, GridMode.Horizontal)
+        return LoadHorizontal(path, ArrayPool<double>.Shared);
+    }
+
+    /// <summary>
+    /// Loads all horizontal grid shift pages from a GeoTIFF file.
+    /// </summary>
+    /// <param name="path">Path to the GeoTIFF grid file.</param>
+    /// <param name="sampleValueArrayPool">Array pool used for temporary sample buffers.</param>
+    /// <returns>The list of horizontal grid shift grids parsed from the file.</returns>
+    internal static IReadOnlyList<GeoTiffHGridShiftMathTransform.HorizontalGrid> LoadHorizontal(string path, ArrayPool<double> sampleValueArrayPool)
+    {
+        return LoadCore(path, GridMode.Horizontal, requireMetreUnitsForXyz: true, sampleValueArrayPool)
             .Select(page => page.ToHorizontalGrid(path))
             .Where(grid => !(grid is null))
             .ToArray();
@@ -61,7 +72,18 @@ internal static partial class GeoTiffGridLoader
     /// <returns>The list of vertical grid shift grids parsed from the file.</returns>
     internal static IReadOnlyList<GeoTiffVGridShiftMathTransform.VerticalGrid> LoadVertical(string path)
     {
-        return LoadCore(path, GridMode.Vertical)
+        return LoadVertical(path, ArrayPool<double>.Shared);
+    }
+
+    /// <summary>
+    /// Loads all vertical grid shift pages from a GeoTIFF file.
+    /// </summary>
+    /// <param name="path">Path to the GeoTIFF grid file.</param>
+    /// <param name="sampleValueArrayPool">Array pool used for temporary sample buffers.</param>
+    /// <returns>The list of vertical grid shift grids parsed from the file.</returns>
+    internal static IReadOnlyList<GeoTiffVGridShiftMathTransform.VerticalGrid> LoadVertical(string path, ArrayPool<double> sampleValueArrayPool)
+    {
+        return LoadCore(path, GridMode.Vertical, requireMetreUnitsForXyz: true, sampleValueArrayPool)
             .Select(page => page.ToVerticalGrid(path))
             .Where(grid => !(grid is null))
             .ToArray();
@@ -85,17 +107,22 @@ internal static partial class GeoTiffGridLoader
     /// <returns>The list of XYZ grid shift grids parsed from the file.</returns>
     internal static IReadOnlyList<GeoTiffXyzGridShiftMathTransform.XyzGrid> LoadXyz(string path, bool requireMetreUnits)
     {
-        return LoadCore(path, GridMode.Xyz, requireMetreUnits)
+        return LoadCore(path, GridMode.Xyz, requireMetreUnits, ArrayPool<double>.Shared)
             .Select(page => page.ToXyzGrid(path))
             .Where(grid => !(grid is null))
             .ToArray();
     }
 
-    private static List<LoadedPage> LoadCore(string path, GridMode mode, bool requireMetreUnitsForXyz = true)
+    private static List<LoadedPage> LoadCore(string path, GridMode mode, bool requireMetreUnitsForXyz, ArrayPool<double> sampleValueArrayPool)
     {
         if (string.IsNullOrWhiteSpace(path))
         {
             throw new ArgumentException("Path is required.", nameof(path));
+        }
+
+        if (sampleValueArrayPool is null)
+        {
+            throw new ArgumentNullException(nameof(sampleValueArrayPool));
         }
 
         var pages = new List<LoadedPage>();
@@ -108,7 +135,7 @@ internal static partial class GeoTiffGridLoader
         short pageIndex = 0;
         do
         {
-            if (!TryReadPage(path, tiff, mode, requireMetreUnitsForXyz, out LoadedPage page))
+            if (!TryReadPage(path, tiff, mode, requireMetreUnitsForXyz, sampleValueArrayPool, out LoadedPage page))
             {
                 pageIndex++;
                 continue;
@@ -122,7 +149,7 @@ internal static partial class GeoTiffGridLoader
         return pages;
     }
 
-    private static bool TryReadPage(string path, Tiff tiff, GridMode mode, bool requireMetreUnitsForXyz, out LoadedPage page)
+    private static bool TryReadPage(string path, Tiff tiff, GridMode mode, bool requireMetreUnitsForXyz, ArrayPool<double> sampleValueArrayPool, out LoadedPage page)
     {
         page = null;
         if (!TryGetIntField(tiff, TiffTag.IMAGEWIDTH, out int width)
@@ -149,7 +176,7 @@ internal static partial class GeoTiffGridLoader
             return false;
         }
 
-        SampleData sampleData = ReadSampleData(tiff, width, height, samplesPerPixel, encoding);
+        SampleData sampleData = ReadSampleData(tiff, width, height, samplesPerPixel, encoding, sampleValueArrayPool);
         GeoMetadata metadata = ReadMetadata(tiff, samplesPerPixel);
         sampleData = sampleData.ApplyScaleOffset(metadata.ScaleBySample, metadata.OffsetBySample);
         switch (mode)
@@ -428,18 +455,19 @@ internal static partial class GeoTiffGridLoader
         return (west, east, south, north, area, epsilon);
     }
 
-    private static SampleData ReadSampleData(Tiff tiff, int width, int height, int samplesPerPixel, SampleEncoding encoding)
+    private static SampleData ReadSampleData(Tiff tiff, int width, int height, int samplesPerPixel, SampleEncoding encoding, ArrayPool<double> sampleValueArrayPool)
     {
         int scanlineSize = tiff.ScanlineSize();
         int valueCount = checked(width * height);
         var sampleValues = new double[samplesPerPixel][];
-        for (int i = 0; i < samplesPerPixel; i++)
-        {
-            sampleValues[i] = ArrayPool<double>.Shared.Rent(valueCount);
-        }
 
         try
         {
+            for (int i = 0; i < samplesPerPixel; i++)
+            {
+                sampleValues[i] = sampleValueArrayPool.Rent(valueCount);
+            }
+
             PlanarConfig planarConfig = PlanarConfig.CONTIG;
             if (TryGetIntField(tiff, TiffTag.PLANARCONFIG, out int planarConfigValue))
             {
@@ -492,7 +520,7 @@ internal static partial class GeoTiffGridLoader
         }
         finally
         {
-            ReturnSampleBuffers(sampleValues);
+            ReturnSampleBuffers(sampleValues, sampleValueArrayPool);
         }
     }
 
@@ -509,7 +537,7 @@ internal static partial class GeoTiffGridLoader
         return copied;
     }
 
-    private static void ReturnSampleBuffers(double[][] sampleValues)
+    private static void ReturnSampleBuffers(double[][] sampleValues, ArrayPool<double> sampleValueArrayPool)
     {
         for (int i = 0; i < sampleValues.Length; i++)
         {
@@ -518,7 +546,7 @@ internal static partial class GeoTiffGridLoader
                 continue;
             }
 
-            ArrayPool<double>.Shared.Return(sampleValues[i], clearArray: false);
+            sampleValueArrayPool.Return(sampleValues[i], clearArray: false);
             sampleValues[i] = null;
         }
     }
