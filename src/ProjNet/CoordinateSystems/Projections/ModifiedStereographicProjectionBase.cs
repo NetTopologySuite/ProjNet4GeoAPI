@@ -106,6 +106,10 @@ internal abstract class ModifiedStereographicProjectionBase : MapProjection
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
     /// <param name="name">Projection name.</param>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Usage",
+        "CA2214:Do not call overridable methods in constructors",
+        Justification = "Variant-specific constants must be provided by derived projection types during initialization.")]
     protected ModifiedStereographicProjectionBase(IEnumerable<ProjectionParameter> parameters, MapProjection inverse, string name)
         : base(parameters, inverse)
     {
@@ -134,6 +138,48 @@ internal abstract class ModifiedStereographicProjectionBase : MapProjection
         this.schio = Math.Sin(chi0);
         this.cchio = Math.Cos(chi0);
     }
+
+    /// <summary>
+    /// Gets the coefficient set used by <c>mil_os</c>.
+    /// </summary>
+    /// <returns>The coefficient array.</returns>
+    protected static ComplexNumber[] GetMilOsCoefficients() => MilOsCoefficients;
+
+    /// <summary>
+    /// Gets the coefficient set used by <c>lee_os</c>.
+    /// </summary>
+    /// <returns>The coefficient array.</returns>
+    protected static ComplexNumber[] GetLeeOsCoefficients() => LeeOsCoefficients;
+
+    /// <summary>
+    /// Gets the coefficient set used by <c>gs48</c>.
+    /// </summary>
+    /// <returns>The coefficient array.</returns>
+    protected static ComplexNumber[] GetGs48Coefficients() => Gs48Coefficients;
+
+    /// <summary>
+    /// Gets the coefficient set used by ellipsoidal <c>alsk</c>.
+    /// </summary>
+    /// <returns>The coefficient array.</returns>
+    protected static ComplexNumber[] GetAlskEllipsoidalCoefficients() => AlskEllipsoidalCoefficients;
+
+    /// <summary>
+    /// Gets the coefficient set used by spherical <c>alsk</c>.
+    /// </summary>
+    /// <returns>The coefficient array.</returns>
+    protected static ComplexNumber[] GetAlskSphericalCoefficients() => AlskSphericalCoefficients;
+
+    /// <summary>
+    /// Gets the coefficient set used by ellipsoidal <c>gs50</c>.
+    /// </summary>
+    /// <returns>The coefficient array.</returns>
+    protected static ComplexNumber[] GetGs50EllipsoidalCoefficients() => Gs50EllipsoidalCoefficients;
+
+    /// <summary>
+    /// Gets the coefficient set used by spherical <c>gs50</c>.
+    /// </summary>
+    /// <returns>The coefficient array.</returns>
+    protected static ComplexNumber[] GetGs50SphericalCoefficients() => Gs50SphericalCoefficients;
 
     /// <summary>
     /// Configures variant-specific constants.
@@ -225,7 +271,7 @@ internal abstract class ModifiedStereographicProjectionBase : MapProjection
         double z = 2d * Math.Atan(0.5d * rh);
         double sinZ = Math.Sin(z);
         double cosZ = Math.Cos(z);
-        double chi = Asinz(cosZ * this.schio + ((p.Imaginary * sinZ * this.cchio) / rh));
+        double chi = Asinz((cosZ * this.schio) + ((p.Imaginary * sinZ * this.cchio) / rh));
         double phi = this.ComputeGeodeticLatitude(chi);
         double lambda = Math.Atan2(
             p.Real * sinZ,
@@ -234,48 +280,6 @@ internal abstract class ModifiedStereographicProjectionBase : MapProjection
         x = Adjust_lon(this.lambda0 + lambda);
         y = phi;
     }
-
-    /// <summary>
-    /// Gets the coefficient set used by <c>mil_os</c>.
-    /// </summary>
-    /// <returns>The coefficient array.</returns>
-    protected static ComplexNumber[] GetMilOsCoefficients() => MilOsCoefficients;
-
-    /// <summary>
-    /// Gets the coefficient set used by <c>lee_os</c>.
-    /// </summary>
-    /// <returns>The coefficient array.</returns>
-    protected static ComplexNumber[] GetLeeOsCoefficients() => LeeOsCoefficients;
-
-    /// <summary>
-    /// Gets the coefficient set used by <c>gs48</c>.
-    /// </summary>
-    /// <returns>The coefficient array.</returns>
-    protected static ComplexNumber[] GetGs48Coefficients() => Gs48Coefficients;
-
-    /// <summary>
-    /// Gets the coefficient set used by ellipsoidal <c>alsk</c>.
-    /// </summary>
-    /// <returns>The coefficient array.</returns>
-    protected static ComplexNumber[] GetAlskEllipsoidalCoefficients() => AlskEllipsoidalCoefficients;
-
-    /// <summary>
-    /// Gets the coefficient set used by spherical <c>alsk</c>.
-    /// </summary>
-    /// <returns>The coefficient array.</returns>
-    protected static ComplexNumber[] GetAlskSphericalCoefficients() => AlskSphericalCoefficients;
-
-    /// <summary>
-    /// Gets the coefficient set used by ellipsoidal <c>gs50</c>.
-    /// </summary>
-    /// <returns>The coefficient array.</returns>
-    protected static ComplexNumber[] GetGs50EllipsoidalCoefficients() => Gs50EllipsoidalCoefficients;
-
-    /// <summary>
-    /// Gets the coefficient set used by spherical <c>gs50</c>.
-    /// </summary>
-    /// <returns>The coefficient array.</returns>
-    protected static ComplexNumber[] GetGs50SphericalCoefficients() => Gs50SphericalCoefficients;
 
     private static ComplexNumber EvaluateComplexPolynomial(ComplexNumber z, IReadOnlyList<ComplexNumber> coefficients, int order)
     {

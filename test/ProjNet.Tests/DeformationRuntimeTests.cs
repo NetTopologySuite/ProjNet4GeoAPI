@@ -15,55 +15,62 @@ using Xunit;
 /// </summary>
 public class DeformationRuntimeTests
 {
-    private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
-
     /// <summary>
     /// Gets invalid creation scenarios.
     /// </summary>
     /// <returns>Invalid case dataset.</returns>
-    public static IEnumerable<object[]> GetInvalidCreationCases()
+    public static IEnumerable<object[]> InvalidCreationCases
     {
-        yield return new object[] { "+proj=deformation +dt=1 +ellps=GRS80", "xy_grids" };
-        yield return new object[] { "+proj=deformation +xy_grids=alaska +dt=1 +ellps=GRS80", "z_grids" };
-        yield return new object[] { "+proj=deformation +z_grids=egm96_15.gtx +dt=1 +ellps=GRS80", "xy_grids" };
-        yield return new object[] { "+proj=deformation +xy_grids=alaska +z_grids=egm96_15.gtx +ellps=GRS80", "+dt or +t_epoch" };
-        yield return new object[] { "+proj=deformation +xy_grids=alaska +z_grids=egm96_15.gtx +dt=1 +t_epoch=2016 +ellps=GRS80", "mutually exclusive" };
-        yield return new object[] { "+proj=deformation +xy_grids=nonexisting +z_grids=egm96_15.gtx +dt=1 +ellps=GRS80", "Required grid" };
-        yield return new object[] { "+proj=deformation +xy_grids=alaska +z_grids=nonexisting +dt=1 +ellps=GRS80", "Required grid" };
+        get
+        {
+            yield return new object[] { "+proj=deformation +dt=1 +ellps=GRS80", "xy_grids" };
+            yield return new object[] { "+proj=deformation +xy_grids=alaska +dt=1 +ellps=GRS80", "z_grids" };
+            yield return new object[] { "+proj=deformation +z_grids=egm96_15.gtx +dt=1 +ellps=GRS80", "xy_grids" };
+            yield return new object[] { "+proj=deformation +xy_grids=alaska +z_grids=egm96_15.gtx +ellps=GRS80", "+dt or +t_epoch" };
+            yield return new object[] { "+proj=deformation +xy_grids=alaska +z_grids=egm96_15.gtx +dt=1 +t_epoch=2016 +ellps=GRS80", "mutually exclusive" };
+            yield return new object[] { "+proj=deformation +xy_grids=nonexisting +z_grids=egm96_15.gtx +dt=1 +ellps=GRS80", "Required grid" };
+            yield return new object[] { "+proj=deformation +xy_grids=alaska +z_grids=nonexisting +dt=1 +ellps=GRS80", "Required grid" };
+        }
     }
 
     /// <summary>
     /// Gets forward vector scenarios from <c>deformation.gie</c>.
     /// </summary>
     /// <returns>Forward case dataset.</returns>
-    public static IEnumerable<object[]> GetForwardCases()
+    public static IEnumerable<object[]> ForwardCases
     {
-        string legacyOperation = "+proj=deformation +xy_grids=alaska +z_grids=egm96_15.gtx +ellps=GRS80 +dt=16.0";
-        yield return Case(
-            legacyOperation,
-            CreateCartesianPoint(-3004295.5882503074d, -1093474.1690603832d, 5500477.1338251457d),
-            CreateCartesianPoint(-3004295.7000d, -1093474.2097d, 5500477.3397d),
-            1e-4d);
+        get
+        {
+            string legacyOperation = "+proj=deformation +xy_grids=alaska +z_grids=egm96_15.gtx +ellps=GRS80 +dt=16.0";
+            yield return Case(
+                legacyOperation,
+                CreateCartesianPoint(-3004295.5882503074d, -1093474.1690603832d, 5500477.1338251457d),
+                CreateCartesianPoint(-3004295.7000d, -1093474.2097d, 5500477.3397d),
+                1e-4d);
 
-        string geotiffOperation = "+proj=deformation +grids=nkgrf03vel_realigned_extract.tif +ellps=GRS80 +dt=1";
-        yield return Case(
-            geotiffOperation,
-            GeographicToCartesian(21.5d, 63d, 0d),
-            GeographicToCartesian(21.5000000049d, 62.9999999937d, 0.0083d),
-            2e-4d);
+            string geotiffOperation = "+proj=deformation +grids=nkgrf03vel_realigned_extract.tif +ellps=GRS80 +dt=1";
+            yield return Case(
+                geotiffOperation,
+                GeographicToCartesian(21.5d, 63d, 0d),
+                GeographicToCartesian(21.5000000049d, 62.9999999937d, 0.0083d),
+                2e-4d);
+        }
     }
 
     /// <summary>
     /// Gets inverse 4D scenarios that rely on <c>+t_epoch</c>.
     /// </summary>
     /// <returns>Inverse case dataset.</returns>
-    public static IEnumerable<object[]> GetInverseCases()
+    public static IEnumerable<object[]> InverseCases
     {
-        yield return Case(
-            "+proj=deformation +xy_grids=alaska +z_grids=egm96_15.gtx +ellps=GRS80 +t_epoch=2016.0 +inv",
-            CreateCartesianPointWithTime(-3004295.5882503074d, -1093474.1690603832d, 5500477.1338251457d, 2000.0d),
-            CreateCartesianPointWithTime(-3004295.7000d, -1093474.2097d, 5500477.3397d, 2000.0d),
-            1e-4d);
+        get
+        {
+            yield return Case(
+                "+proj=deformation +xy_grids=alaska +z_grids=egm96_15.gtx +ellps=GRS80 +t_epoch=2016.0 +inv",
+                CreateCartesianPointWithTime(-3004295.5882503074d, -1093474.1690603832d, 5500477.1338251457d, 2000.0d),
+                CreateCartesianPointWithTime(-3004295.7000d, -1093474.2097d, 5500477.3397d, 2000.0d),
+                1e-4d);
+        }
     }
 
     /// <summary>
@@ -72,7 +79,7 @@ public class DeformationRuntimeTests
     /// <param name="operation">Operation text.</param>
     /// <param name="expectedToken">Expected diagnostic token.</param>
     [Theory]
-    [MemberData(nameof(GetInvalidCreationCases))]
+    [MemberData(nameof(InvalidCreationCases))]
     public void DeformationCreationFailsForInvalidParameters(string operation, string expectedToken)
     {
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string skipReason);
@@ -121,8 +128,8 @@ public class DeformationRuntimeTests
     /// <param name="expected">Expected coordinate.</param>
     /// <param name="tolerance">Maximum per-axis absolute tolerance.</param>
     [Theory]
-    [MemberData(nameof(GetForwardCases))]
-    [MemberData(nameof(GetInverseCases))]
+    [MemberData(nameof(ForwardCases))]
+    [MemberData(nameof(InverseCases))]
     public void DeformationVectorsMatchGie(string operation, double[] input, double[] expected, double tolerance)
     {
         MathTransform transform = CreateTransform(operation);
@@ -139,6 +146,7 @@ public class DeformationRuntimeTests
     [InlineData("+proj=deformation +grids=nkgrf03vel_realigned_extract.tif +ellps=GRS80 +dt=1")]
     public void DeformationRoundtripRecoversInput(string operation)
     {
+        ArgumentNullException.ThrowIfNull(operation);
         double[] input = operation.Contains("nkgrf", StringComparison.OrdinalIgnoreCase)
             ? GeographicToCartesian(21.5d, 63d, 0d)
             : CreateCartesianPoint(-3004295.5882503074d, -1093474.1690603832d, 5500477.1338251457d);

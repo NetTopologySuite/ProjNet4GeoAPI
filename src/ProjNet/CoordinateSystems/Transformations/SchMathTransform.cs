@@ -180,6 +180,36 @@ internal sealed class SchMathTransform : MathTransform
     /// <inheritdoc />
     public override string XML => throw new NotImplementedException();
 
+    /// <inheritdoc />
+    public override MathTransform Inverse()
+    {
+        if (this.inverse is null)
+        {
+            this.inverse = new SchMathTransform(this, !this.isInverted);
+        }
+
+        return this.inverse;
+    }
+
+    /// <inheritdoc />
+    public override void Invert()
+    {
+        this.isInverted = !this.isInverted;
+    }
+
+    /// <inheritdoc />
+    public override void Transform(ref double x, ref double y, ref double z)
+    {
+        if (this.isInverted)
+        {
+            this.TransformInverse(ref x, ref y, ref z);
+        }
+        else
+        {
+            this.TransformForward(ref x, ref y, ref z);
+        }
+    }
+
     /// <summary>
     /// Creates an <see cref="SchMathTransform"/> from parsed PROJ arguments.
     /// </summary>
@@ -255,36 +285,6 @@ internal sealed class SchMathTransform : MathTransform
         {
             skipReason = argumentException.Message;
             return false;
-        }
-    }
-
-    /// <inheritdoc />
-    public override MathTransform Inverse()
-    {
-        if (this.inverse is null)
-        {
-            this.inverse = new SchMathTransform(this, !this.isInverted);
-        }
-
-        return this.inverse;
-    }
-
-    /// <inheritdoc />
-    public override void Invert()
-    {
-        this.isInverted = !this.isInverted;
-    }
-
-    /// <inheritdoc />
-    public override void Transform(ref double x, ref double y, ref double z)
-    {
-        if (this.isInverted)
-        {
-            this.TransformInverse(ref x, ref y, ref z);
-        }
-        else
-        {
-            this.TransformForward(ref x, ref y, ref z);
         }
     }
 

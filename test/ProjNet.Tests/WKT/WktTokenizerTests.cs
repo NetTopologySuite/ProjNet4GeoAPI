@@ -3,9 +3,9 @@
 
 namespace ProjNET.Tests.WKT;
 
-using ProjNet.IO.CoordinateSystems;
 using System;
 using System.Text;
+using ProjNet.IO.CoordinateSystems;
 using Xunit;
 
 /// <summary>
@@ -51,6 +51,8 @@ public class WktTokenizerTests
     /// <summary>
     /// Verifies numeric parsing for precision-boundary and signed scientific values.
     /// </summary>
+    /// <param name="tokenText">Input token to parse.</param>
+    /// <param name="expected">Expected parsed value.</param>
     [Theory]
     [InlineData("-1.7976931348623157E+308", -1.7976931348623157E+308)]
     [InlineData("2.2250738585072014E-308", 2.2250738585072014E-308)]
@@ -98,6 +100,9 @@ public class WktTokenizerTests
     /// <summary>
     /// Verifies AUTHORITY parsing for both numeric and quoted authority codes.
     /// </summary>
+    /// <param name="authorityWkt">AUTHORITY fragment.</param>
+    /// <param name="expectedAuthority">Expected authority name.</param>
+    /// <param name="expectedCode">Expected authority code, or 0 for non-numeric codes.</param>
     [Theory]
     [InlineData("AUTHORITY[\"EPSG\",4326]", "EPSG", 4326L)]
     [InlineData("AUTHORITY[\"EPSG\",\"3857\"]", "EPSG", 3857L)]

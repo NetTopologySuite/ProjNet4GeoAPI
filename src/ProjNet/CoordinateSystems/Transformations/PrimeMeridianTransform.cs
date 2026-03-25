@@ -54,6 +54,7 @@ internal class PrimeMeridianTransform : MathTransform
     /// Gets the dimension of output points.
     /// </summary>
     public override int DimTarget => 3;
+
     /// <inheritdoc />
     public override MathTransform Inverse()
     {

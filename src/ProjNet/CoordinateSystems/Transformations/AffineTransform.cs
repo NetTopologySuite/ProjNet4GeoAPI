@@ -277,6 +277,7 @@ public class AffineTransform : MathTransform
     private static int[] LUPDecomposition(double[,] a)
     {
         int n = a.GetLength(0) - 1;
+
         // pi represents the permutation matrix.  We implement it as an array
         // whose value indicates which column the 1 would appear.  We use it to avoid
         // dividing by zero or small numbers.

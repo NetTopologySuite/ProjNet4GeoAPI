@@ -21,7 +21,7 @@ internal sealed class McBrydeThomasFlatPoleSineProjection : MapProjection
     private const double C3 = 1.41546d;
     private const double CX = 0.22248d;
     private const double CY = 1.44492d;
-    private const double C1_2 = 0.33333333333333333333333333d;
+    private const double C1Over2 = 0.33333333333333333333333333d;
 
     private readonly double radius;
     private readonly double inverseRadius;
@@ -68,7 +68,7 @@ internal sealed class McBrydeThomasFlatPoleSineProjection : MapProjection
         for (int i = 0; i < MaximumIterations; i++)
         {
             double t = phi / C2;
-            double denominator = (C1_2 * Math.Cos(t)) + Math.Cos(phi);
+            double denominator = (C1Over2 * Math.Cos(t)) + Math.Cos(phi);
             if (Math.Abs(denominator) <= Eps10)
             {
                 throw new ArgumentException("Input data outside projection domain.");

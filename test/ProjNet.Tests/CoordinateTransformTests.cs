@@ -7,12 +7,12 @@ namespace ProjNET.Tests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Xunit;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Projections;
 using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.Geometries;
 using ProjNet.IO.CoordinateSystems;
+using Xunit;
 
 /// <summary>
 /// Represents the documented type.
@@ -343,7 +343,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
                              {
                                  new ProjectionParameter("latitude_of_origin", 49),
                                  new ProjectionParameter("central_meridian", -2),
-                                  new ProjectionParameter("scale_factor", 0.9996012717), // 0.9996
+                                 new ProjectionParameter("scale_factor", 0.9996012717), // 0.9996
                                  new ProjectionParameter("false_easting", 400000),
                                  new ProjectionParameter("false_northing", -100000),
                              };
@@ -1237,7 +1237,6 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.Equal(sourceCoord[1], transformedCoord[1], 0.1);
     }
 
-
     // https://github.com/NetTopologySuite/ProjNet4GeoAPI/issues/48
 
     /// <summary>
@@ -1339,7 +1338,6 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.NotNull(transformation);
 
         var tranformedPoint = transformation.MathTransform.Transform(-10775704.511, 3865240.329);
-        Assert.NotNull(tranformedPoint);
 
         Assert.Equal(2491034.95, tranformedPoint.X, 0.1);
         Assert.Equal(6968468.98, tranformedPoint.Y, 0.1);

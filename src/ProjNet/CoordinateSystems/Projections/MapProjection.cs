@@ -231,11 +231,11 @@ public abstract class MapProjection : MathTransform, IProjection
     private const double C68 = 0.00569661458333333333;
     private const double C88 = 0.3076171875;
 
-    private const double P00 = 0.33333333333333333333; //   1 /     3
-    private const double P01 = 0.17222222222222222222; //  31 /   180
-    private const double P02 = 0.10257936507936507937; // 517 /  5040
-    private const double P10 = 0.06388888888888888888; //  23 /   360
-    private const double P11 = 0.06640211640211640212; // 251 /  3780
+    private const double P00 = 0.33333333333333333333; // 1 / 3
+    private const double P01 = 0.17222222222222222222; // 31 / 180
+    private const double P02 = 0.10257936507936507937; // 517 / 5040
+    private const double P10 = 0.06388888888888888888; // 23 / 360
+    private const double P11 = 0.06640211640211640212; // 251 / 3780
     private const double P20 = 0.01677689594356261023; // 761 / 45360
 
     /// <summary>
@@ -1185,9 +1185,9 @@ public abstract class MapProjection : MathTransform, IProjection
         const double MLFN_TOL = 1E-11;
         const int MAXIMUM_ITERATIONS = 20;
         double s, t, phi, k = 1.0 / (1.0 - this.es);
-        int i;
         phi = arg;
-        for (i = MAXIMUM_ITERATIONS;;)
+        int i = MAXIMUM_ITERATIONS;
+        while (true)
         {
             // rarely goes over 5 iterations
             if (--i < 0)

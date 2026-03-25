@@ -22,7 +22,9 @@ internal static class StringCompatibility
 #if NETSTANDARD2_1_OR_GREATER
         return value.Replace(oldValue, newValue, StringComparison.Ordinal);
 #else
-        return value.Replace(oldValue, newValue);
+        return value.Split([oldValue], StringSplitOptions.None).Length > 1
+            ? string.Join(newValue, value.Split([oldValue], StringSplitOptions.None))
+            : value;
 #endif
     }
 }

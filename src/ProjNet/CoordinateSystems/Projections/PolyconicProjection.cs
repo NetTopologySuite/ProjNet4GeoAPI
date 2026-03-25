@@ -82,6 +82,7 @@ internal class PolyconicProjection : MapProjection
             double sp = Math.Sin(phi);
             double cp;
             double ms = Math.Abs(cp = Math.Cos(phi)) > Epsilon ? this.Msfn(sp, cp) / sp : 0.0;
+
             // lam =
             delta_lam *= sp;
             x = ms * Math.Sin(delta_lam);

@@ -9,9 +9,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
-using Xunit;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
+using Xunit;
 
 /// <summary>
 /// Represents the documented type.

@@ -5,9 +5,9 @@
 namespace ProjNET.Tests.WKT;
 
 using System;
-using Xunit;
 using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.IO.CoordinateSystems;
+using Xunit;
 
 /// <summary>
 /// Represents the documented type.

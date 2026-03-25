@@ -104,7 +104,7 @@ internal sealed class ObliqueCylindricalEqualAreaProjection : MapProjection
         double cosLam = Math.Cos(lambda);
         double tanPhi = Math.Tan(lat);
 
-        double xUnit = Math.Atan((tanPhi * this.cosPhiP + (this.sinPhiP * sinLam)) / cosLam);
+        double xUnit = Math.Atan(((tanPhi * this.cosPhiP) + (this.sinPhiP * sinLam)) / cosLam);
         if (cosLam < 0d)
         {
             xUnit += PI;

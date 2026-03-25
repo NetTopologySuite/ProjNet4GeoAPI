@@ -514,6 +514,7 @@ namespace ProjNet.CoordinateSystems.Projections
     public class ProjectionParameterSet : System.Collections.Generic.Dictionary<string, double>, System.IEquatable<ProjNet.CoordinateSystems.Projections.ProjectionParameterSet>
     {
         public ProjectionParameterSet(System.Collections.Generic.IEnumerable<ProjNet.CoordinateSystems.ProjectionParameter> parameters) { }
+        [System.Obsolete("Formatter-based serialization constructor is retained for compatibility.")]
         public ProjectionParameterSet(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
         public bool Equals(ProjNet.CoordinateSystems.Projections.ProjectionParameterSet other) { }
         public override bool Equals(object obj) { }

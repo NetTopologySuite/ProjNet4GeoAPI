@@ -19,12 +19,6 @@ internal sealed class HornerMathTransform : MathTransform
     private const double DefaultRange = 500000d;
     private const double DefaultInverseTolerance = 0.001d;
     private const double DeterminantTolerance = 1e-24d;
-    private enum CsvParseStatus
-    {
-        Success,
-        TooManyValues,
-        InvalidValue,
-    }
 
     private readonly int degree;
     private readonly bool isComplex;
@@ -111,6 +105,13 @@ internal sealed class HornerMathTransform : MathTransform
         this.isInverted = isInverted;
     }
 
+    private enum CsvParseStatus
+    {
+        Success,
+        TooManyValues,
+        InvalidValue,
+    }
+
     /// <inheritdoc />
     public override int DimSource => 3;
 
@@ -150,7 +151,7 @@ internal sealed class HornerMathTransform : MathTransform
     /// <inheritdoc />
     public override void Transform(ref double x, ref double y, ref double z)
     {
-        double _ = z;
+        _ = z;
         if (this.isComplex)
         {
             if (!this.isInverted)

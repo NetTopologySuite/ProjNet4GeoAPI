@@ -12,11 +12,11 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Xml.Linq;
-using Xunit;
 using ProjNet;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.Data;
+using Xunit;
 
 /// <summary>
 /// Represents the documented type.
@@ -101,8 +101,8 @@ public class CoordinateSystemServicesTests
         var definitions = provider.GetDefinitions().ToList();
 
         Assert.True(definitions.Count > 7000);
-        Assert.True(definitions.Any(item => item.Key == 4326));
-        Assert.True(definitions.Any(item => item.Key == 3857));
+        Assert.Contains(definitions, item => item.Key == 4326);
+        Assert.Contains(definitions, item => item.Key == 3857);
     }
 
     /// <summary>
@@ -203,13 +203,11 @@ public class CoordinateSystemServicesTests
 
     private static IEnumerable<KeyValuePair<int, string>> LoadXml(string xmlPath)
     {
-        var stream = System.IO.File.OpenRead(xmlPath);
-
         Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Reading '{0}'.", xmlPath));
         var sw = new Stopwatch();
         sw.Start();
 
-        var document = XDocument.Load(stream);
+        var document = XDocument.Load(xmlPath);
 
         var rs = from tmp in document.Elements("SpatialReference").Elements("ReferenceSystem") select tmp;
 

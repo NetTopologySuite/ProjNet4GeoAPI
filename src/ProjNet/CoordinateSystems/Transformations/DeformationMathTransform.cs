@@ -99,6 +99,42 @@ internal sealed class DeformationMathTransform : MathTransform
     /// <inheritdoc />
     public override string XML => throw new NotImplementedException();
 
+    /// <inheritdoc />
+    public override bool Identity() => false;
+
+    /// <inheritdoc />
+    public override MathTransform Inverse()
+    {
+        if (this.inverse is null)
+        {
+            this.inverse = new DeformationMathTransform(this, !this.isInverted);
+        }
+
+        return this.inverse;
+    }
+
+    /// <inheritdoc />
+    public override void Invert()
+    {
+        this.isInverted = !this.isInverted;
+    }
+
+    /// <inheritdoc />
+    public override void Transform(ref double x, ref double y, ref double z)
+    {
+        if (!this.TryResolveDeltaTime(MissingObservationEpoch, out double deltaTime, out bool missingTime))
+        {
+            if (missingTime)
+            {
+                throw new ArgumentException("deformation requires a valid observation time.");
+            }
+
+            throw new ArgumentException("deformation could not resolve delta time.");
+        }
+
+        this.TransformCore(ref x, ref y, ref z, deltaTime);
+    }
+
     /// <summary>
     /// Creates a <see cref="DeformationMathTransform"/> from parsed PROJ arguments.
     /// </summary>
@@ -287,42 +323,6 @@ internal sealed class DeformationMathTransform : MathTransform
     }
 
     /// <inheritdoc />
-    public override bool Identity() => false;
-
-    /// <inheritdoc />
-    public override MathTransform Inverse()
-    {
-        if (this.inverse is null)
-        {
-            this.inverse = new DeformationMathTransform(this, !this.isInverted);
-        }
-
-        return this.inverse;
-    }
-
-    /// <inheritdoc />
-    public override void Invert()
-    {
-        this.isInverted = !this.isInverted;
-    }
-
-    /// <inheritdoc />
-    public override void Transform(ref double x, ref double y, ref double z)
-    {
-        if (!this.TryResolveDeltaTime(MissingObservationEpoch, out double deltaTime, out bool missingTime))
-        {
-            if (missingTime)
-            {
-                throw new ArgumentException("deformation requires a valid observation time.");
-            }
-
-            throw new ArgumentException("deformation could not resolve delta time.");
-        }
-
-        this.TransformCore(ref x, ref y, ref z, deltaTime);
-    }
-
-    /// <inheritdoc />
     internal override void Transform(ref double x, ref double y, ref double z, ref double t)
     {
         if (!this.TryResolveDeltaTime(t, out double deltaTime, out bool missingTime))
@@ -467,7 +467,19 @@ internal sealed class DeformationMathTransform : MathTransform
             resolvedPath = fullPath;
             return true;
         }
-        catch (Exception) when (true)
+        catch (ArgumentException)
+        {
+            return false;
+        }
+        catch (NotSupportedException)
+        {
+            return false;
+        }
+        catch (PathTooLongException)
+        {
+            return false;
+        }
+        catch (System.Security.SecurityException)
         {
             return false;
         }

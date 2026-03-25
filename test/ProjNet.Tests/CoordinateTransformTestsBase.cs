@@ -6,9 +6,9 @@ namespace ProjNET.Tests;
 
 using System;
 using System.Globalization;
-using Xunit;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
+using Xunit;
 
 /// <summary>
 /// Represents the documented type.

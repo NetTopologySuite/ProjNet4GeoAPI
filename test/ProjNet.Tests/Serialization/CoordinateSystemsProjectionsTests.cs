@@ -5,8 +5,8 @@
 namespace ProjNET.Tests.Serialization;
 
 using System;
-using Xunit;
 using ProjNet.CoordinateSystems;
+using Xunit;
 
 /// <summary>
 /// Represents the documented type.
@@ -16,7 +16,7 @@ public class CoordinateSystemsProjectionsTests
     : BaseSerializationTest
 {
     [Xunit.Fact, Obsolete("ISerializable is deprecated")]
-    public void TestProjectionParameterSet() 
+    public void TestProjectionParameterSet()
     {
         var ps = new ProjNet.CoordinateSystems.Projections.ProjectionParameterSet(
             new[]

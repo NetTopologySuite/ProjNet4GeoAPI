@@ -27,12 +27,6 @@ internal static partial class GeoTiffGridLoader
     private const int GeogAngularUnitsGeoKey = 2054;
     private const int GtRasterTypeGeoKey = 1025;
     private const int RasterPixelIsPoint = 2;
-#if NET8_0_OR_GREATER
-    [GeneratedRegex("<Item(?<attrs>[^>]*)>(?<value>.*?)</Item>", RegexOptions.IgnoreCase | RegexOptions.Singleline)]
-    private static partial Regex MetadataItemRegex();
-#else
-    private static readonly Regex MetadataItemRegex = new("<Item(?<attrs>[^>]*)>(?<value>.*?)</Item>", RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
-#endif
 
     private enum GridMode
     {
@@ -112,6 +106,11 @@ internal static partial class GeoTiffGridLoader
             .Where(grid => !(grid is null))
             .ToArray();
     }
+
+#if NET8_0_OR_GREATER
+    [GeneratedRegex("<Item(?<attrs>[^>]*)>(?<value>.*?)</Item>", RegexOptions.IgnoreCase | RegexOptions.Singleline)]
+    private static partial Regex MetadataItemRegex();
+#endif
 
     private static List<LoadedPage> LoadCore(string path, GridMode mode, bool requireMetreUnitsForXyz, ArrayPool<double> sampleValueArrayPool)
     {
@@ -346,7 +345,7 @@ internal static partial class GeoTiffGridLoader
 
     private static bool ContainsOrdinalIgnoreCase(string value, string search)
     {
-#if NETSTANDARD2_1_OR_GREATER
+#if NET8_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
         return value.Contains(search, StringComparison.OrdinalIgnoreCase);
 #else
         return value.IndexOf(search, StringComparison.OrdinalIgnoreCase) >= 0;
@@ -585,7 +584,7 @@ internal static partial class GeoTiffGridLoader
         }
 
         string sanitized = metadata.Trim('\0', '\uFEFF', ' ', '\t', '\r', '\n');
-#if NETSTANDARD2_1_OR_GREATER
+#if NET8_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
         int firstTag = sanitized.IndexOf('<', StringComparison.Ordinal);
 #else
         int firstTag = sanitized.IndexOf('<');
@@ -626,7 +625,10 @@ internal static partial class GeoTiffGridLoader
 #if NET8_0_OR_GREATER
         MatchCollection matches = MetadataItemRegex().Matches(metadata);
 #else
-        MatchCollection matches = MetadataItemRegex.Matches(metadata);
+        MatchCollection matches = Regex.Matches(
+            metadata,
+            "<Item(?<attrs>[^>]*)>(?<value>.*?)</Item>",
+            RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.Compiled);
 #endif
         for (int i = 0; i < matches.Count; i++)
         {

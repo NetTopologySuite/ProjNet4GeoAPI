@@ -61,6 +61,30 @@ internal sealed class IseaProjection : MapProjection
     private const int OrientIsea = 0;
     private const int OrientPole = 1;
 
+    private static readonly GeoPoint[] FacesCenterDodecahedronVertices =
+    [
+        new GeoPoint(ERad, -144d * DegToRad),
+        new GeoPoint(ERad, -72d * DegToRad),
+        new GeoPoint(ERad, 0d * DegToRad),
+        new GeoPoint(ERad, 72d * DegToRad),
+        new GeoPoint(ERad, 144d * DegToRad),
+        new GeoPoint(FRad, -144d * DegToRad),
+        new GeoPoint(FRad, -72d * DegToRad),
+        new GeoPoint(FRad, 0d * DegToRad),
+        new GeoPoint(FRad, 72d * DegToRad),
+        new GeoPoint(FRad, 144d * DegToRad),
+        new GeoPoint(-FRad, -108d * DegToRad),
+        new GeoPoint(-FRad, -36d * DegToRad),
+        new GeoPoint(-FRad, 36d * DegToRad),
+        new GeoPoint(-FRad, 108d * DegToRad),
+        new GeoPoint(-FRad, 180d * DegToRad),
+        new GeoPoint(-ERad, -108d * DegToRad),
+        new GeoPoint(-ERad, -36d * DegToRad),
+        new GeoPoint(-ERad, 36d * DegToRad),
+        new GeoPoint(-ERad, 108d * DegToRad),
+        new GeoPoint(-ERad, 180d * DegToRad),
+    ];
+
     private readonly double radius;
     private readonly double inverseRadius;
     private readonly IseaOutputMode outputMode;
@@ -70,7 +94,9 @@ internal sealed class IseaProjection : MapProjection
     private readonly double orientationLongitude;
     private readonly double orientationAzimuth;
     private readonly IseaSinCos[] vertexLatSinCos = new IseaSinCos[NumIcosahedronFaces];
+    [field: NonSerialized]
     private readonly IseaPlanarState planarState;
+    [field: NonSerialized]
     private readonly IseaPlanarInverseProjection planarInverseProjection;
 
     /// <summary>
@@ -148,6 +174,14 @@ internal sealed class IseaProjection : MapProjection
         this.planarInverseProjection = this.TryCreatePlanarInverseProjection();
     }
 
+    private enum IseaOutputMode
+    {
+        Plane,
+        Di,
+        Dd,
+        Hex,
+    }
+
     /// <inheritdoc />
     public override MathTransform Inverse()
     {
@@ -218,173 +252,6 @@ internal sealed class IseaProjection : MapProjection
     private static bool IsNearlyEqual(double x, double y)
     {
         return Math.Abs(x - y) <= 1e-12d;
-    }
-
-    private IseaPlanarInverseProjection TryCreatePlanarInverseProjection()
-    {
-        if (this.outputMode != IseaOutputMode.Plane)
-        {
-            return null;
-        }
-
-        if (this.aperture != 3 || this.resolution != 4 || Math.Abs(this.orientationAzimuth) > 1e-12d)
-        {
-            return null;
-        }
-
-        if (IsNearlyEqual(this.orientationLatitude, IseaStdLat) && IsNearlyEqual(this.orientationLongitude, IseaStdLon))
-        {
-            return new IseaPlanarInverseProjection(StandardInverseOrientationLat, StandardInverseOrientationLon);
-        }
-
-        if (IsNearlyEqual(this.orientationLatitude, HalfPi) && IsNearlyEqual(this.orientationLongitude, 0d))
-        {
-            return new IseaPlanarInverseProjection(0d, 0d);
-        }
-
-        return null;
-    }
-
-    private IseaPlanarState CreatePlanarState()
-    {
-        double normalizedR2;
-        if (this.e > Eps10)
-        {
-            double bOverA = this.semiMinor / this.semiMajor;
-            double bOverASquared = bOverA * bOverA;
-            double log1pe1me = Math.Log((1d + this.e) / (1d - this.e));
-            normalizedR2 = 0.5d + ((bOverASquared * log1pe1me) / (4d * this.e));
-        }
-        else
-        {
-            normalizedR2 = 1d;
-        }
-
-        double rPrime = RPrimeOverR * Math.Sqrt(normalizedR2);
-        double rPrime2X = 2d * rPrime;
-        double rPrimeTang = rPrime * Tang;
-        double centerToBase = rPrimeTang * 0.5d;
-        double triangleWidth = rPrimeTang * Sqrt3;
-        double rPrime2Tan2g = rPrimeTang * rPrimeTang;
-
-        double[] yOffsets =
-        [
-            -2d * centerToBase,
-            -4d * centerToBase,
-            -5d * centerToBase,
-            -7d * centerToBase,
-        ];
-
-        double xOffset = 2.5d * triangleWidth;
-        double yOffset = -1.5d * centerToBase;
-        double scaleX = 1d / triangleWidth;
-        double scaleY = 1d / (3d * centerToBase);
-
-        return new IseaPlanarState(
-            normalizedR2,
-            rPrime2X,
-            rPrimeTang,
-            rPrime2Tan2g,
-            centerToBase,
-            triangleWidth,
-            yOffsets,
-            xOffset,
-            yOffset,
-            scaleX,
-            scaleY);
-    }
-
-    private int IseaTransform(in GeoPoint input, out IseaPoint output)
-    {
-        GeoPoint pole = new(this.orientationLatitude, this.orientationLongitude);
-        GeoPoint transformed = IseaCtran(pole, input, this.orientationAzimuth);
-        int triangle = this.IseaSnyderForward(transformed, out output);
-        return triangle;
-    }
-
-    private int IseaSnyderForward(in GeoPoint input, out IseaPoint output)
-    {
-        double sinLat = Math.Sin(input.Lat);
-        double cosLat = Math.Cos(input.Lat);
-
-        for (int i = 0; i < NumIcosahedronFaces; i++)
-        {
-            GeoPoint center = FacesCenterDodecahedronVertices[i];
-            IseaSinCos centerLatSinCos = this.vertexLatSinCos[i];
-            double deltaLon = input.Lon - center.Lon;
-            double cosLatCosLon = cosLat * Math.Cos(deltaLon);
-            double cosZ = (centerLatSinCos.Sin * sinLat) + (centerLatSinCos.Cos * cosLatCosLon);
-            double z = SafeArcCos(cosZ);
-
-            if (z > Sdc2VoS + 0.000005d)
-            {
-                continue;
-            }
-
-            double azimuth = Math.Atan2(
-                cosLat * Math.Sin(deltaLon),
-                (centerLatSinCos.Cos * sinLat) - (centerLatSinCos.Sin * cosLatCosLon));
-
-            double azOffset = AzAdjustment(i);
-            azimuth -= azOffset;
-            if (azimuth < 0d)
-            {
-                azimuth += TwoPi;
-            }
-
-            int azimuthAdjustMultiples = 0;
-            while (azimuth < 0d)
-            {
-                azimuth += Deg120;
-                azimuthAdjustMultiples--;
-            }
-
-            while (azimuth > Deg120 + double.Epsilon)
-            {
-                azimuth -= Deg120;
-                azimuthAdjustMultiples++;
-            }
-
-            double cosAz = Math.Cos(azimuth);
-            double sinAz = Math.Sin(azimuth);
-            double q = Math.Atan2(Tang, cosAz + (sinAz * CotTheta));
-
-            if (z > q + 0.000005d)
-            {
-                continue;
-            }
-
-            double h = Math.Acos(Clamp((sinAz * SinGcosSdc2VoS) - (cosAz * CosG), -1d, 1d));
-            double area = azimuth + (36d * DegToRad) + h - Deg180;
-            double azimuthPrime = Math.Atan2(
-                2d * area,
-                (RPrimeOverR * RPrimeOverR * Tang * Tang) - (2d * area * CotTheta));
-
-            double denominator = Math.Cos(azimuthPrime) + (Math.Sin(azimuthPrime) * CotTheta);
-            if (Math.Abs(denominator) <= Eps10)
-            {
-                continue;
-            }
-
-            double dPrime = (RPrimeOverR * Tang) / denominator;
-            double sinQHalf = Math.Sin(q * 0.5d);
-            if (Math.Abs(sinQHalf) <= Eps10)
-            {
-                continue;
-            }
-
-            double f = dPrime / (2d * RPrimeOverR * sinQHalf);
-            double rho = 2d * RPrimeOverR * f * Math.Sin(z * 0.5d);
-
-            azimuthPrime += Deg120 * azimuthAdjustMultiples;
-
-            output = new IseaPoint(
-                rho * Math.Sin(azimuthPrime),
-                rho * Math.Cos(azimuthPrime));
-            return i;
-        }
-
-        throw new ArgumentException("Input data outside projection domain.");
     }
 
     private static GeoPoint SnyderCtran(in GeoPoint np, in GeoPoint point)
@@ -563,36 +430,171 @@ internal sealed class IseaProjection : MapProjection
         return normalized;
     }
 
-    private static readonly GeoPoint[] FacesCenterDodecahedronVertices =
-    [
-        new GeoPoint(ERad, -144d * DegToRad),
-        new GeoPoint(ERad, -72d * DegToRad),
-        new GeoPoint(ERad, 0d * DegToRad),
-        new GeoPoint(ERad, 72d * DegToRad),
-        new GeoPoint(ERad, 144d * DegToRad),
-        new GeoPoint(FRad, -144d * DegToRad),
-        new GeoPoint(FRad, -72d * DegToRad),
-        new GeoPoint(FRad, 0d * DegToRad),
-        new GeoPoint(FRad, 72d * DegToRad),
-        new GeoPoint(FRad, 144d * DegToRad),
-        new GeoPoint(-FRad, -108d * DegToRad),
-        new GeoPoint(-FRad, -36d * DegToRad),
-        new GeoPoint(-FRad, 36d * DegToRad),
-        new GeoPoint(-FRad, 108d * DegToRad),
-        new GeoPoint(-FRad, 180d * DegToRad),
-        new GeoPoint(-ERad, -108d * DegToRad),
-        new GeoPoint(-ERad, -36d * DegToRad),
-        new GeoPoint(-ERad, 36d * DegToRad),
-        new GeoPoint(-ERad, 108d * DegToRad),
-        new GeoPoint(-ERad, 180d * DegToRad),
-    ];
-
-    private enum IseaOutputMode
+    private IseaPlanarInverseProjection TryCreatePlanarInverseProjection()
     {
-        Plane,
-        Di,
-        Dd,
-        Hex,
+        if (this.outputMode != IseaOutputMode.Plane)
+        {
+            return null;
+        }
+
+        if (this.aperture != 3 || this.resolution != 4 || Math.Abs(this.orientationAzimuth) > 1e-12d)
+        {
+            return null;
+        }
+
+        if (IsNearlyEqual(this.orientationLatitude, IseaStdLat) && IsNearlyEqual(this.orientationLongitude, IseaStdLon))
+        {
+            return new IseaPlanarInverseProjection(StandardInverseOrientationLat, StandardInverseOrientationLon);
+        }
+
+        if (IsNearlyEqual(this.orientationLatitude, HalfPi) && IsNearlyEqual(this.orientationLongitude, 0d))
+        {
+            return new IseaPlanarInverseProjection(0d, 0d);
+        }
+
+        return null;
+    }
+
+    private IseaPlanarState CreatePlanarState()
+    {
+        double normalizedR2;
+        if (this.e > Eps10)
+        {
+            double bOverA = this.semiMinor / this.semiMajor;
+            double bOverASquared = bOverA * bOverA;
+            double log1pe1me = Math.Log((1d + this.e) / (1d - this.e));
+            normalizedR2 = 0.5d + ((bOverASquared * log1pe1me) / (4d * this.e));
+        }
+        else
+        {
+            normalizedR2 = 1d;
+        }
+
+        double rPrime = RPrimeOverR * Math.Sqrt(normalizedR2);
+        double rPrime2X = 2d * rPrime;
+        double rPrimeTang = rPrime * Tang;
+        double centerToBase = rPrimeTang * 0.5d;
+        double triangleWidth = rPrimeTang * Sqrt3;
+        double rPrime2Tan2g = rPrimeTang * rPrimeTang;
+
+        double[] yOffsets =
+        [
+            -2d * centerToBase,
+            -4d * centerToBase,
+            -5d * centerToBase,
+            -7d * centerToBase,
+        ];
+
+        double xOffset = 2.5d * triangleWidth;
+        double yOffset = -1.5d * centerToBase;
+        double scaleX = 1d / triangleWidth;
+        double scaleY = 1d / (3d * centerToBase);
+
+        return new IseaPlanarState(
+            normalizedR2,
+            rPrime2X,
+            rPrimeTang,
+            rPrime2Tan2g,
+            centerToBase,
+            triangleWidth,
+            yOffsets,
+            xOffset,
+            yOffset,
+            scaleX,
+            scaleY);
+    }
+
+    private int IseaTransform(in GeoPoint input, out IseaPoint output)
+    {
+        GeoPoint pole = new(this.orientationLatitude, this.orientationLongitude);
+        GeoPoint transformed = IseaCtran(pole, input, this.orientationAzimuth);
+        int triangle = this.IseaSnyderForward(transformed, out output);
+        return triangle;
+    }
+
+    private int IseaSnyderForward(in GeoPoint input, out IseaPoint output)
+    {
+        double sinLat = Math.Sin(input.Lat);
+        double cosLat = Math.Cos(input.Lat);
+
+        for (int i = 0; i < NumIcosahedronFaces; i++)
+        {
+            GeoPoint center = FacesCenterDodecahedronVertices[i];
+            IseaSinCos centerLatSinCos = this.vertexLatSinCos[i];
+            double deltaLon = input.Lon - center.Lon;
+            double cosLatCosLon = cosLat * Math.Cos(deltaLon);
+            double cosZ = (centerLatSinCos.Sin * sinLat) + (centerLatSinCos.Cos * cosLatCosLon);
+            double z = SafeArcCos(cosZ);
+
+            if (z > Sdc2VoS + 0.000005d)
+            {
+                continue;
+            }
+
+            double azimuth = Math.Atan2(
+                cosLat * Math.Sin(deltaLon),
+                (centerLatSinCos.Cos * sinLat) - (centerLatSinCos.Sin * cosLatCosLon));
+
+            double azOffset = AzAdjustment(i);
+            azimuth -= azOffset;
+            if (azimuth < 0d)
+            {
+                azimuth += TwoPi;
+            }
+
+            int azimuthAdjustMultiples = 0;
+            while (azimuth < 0d)
+            {
+                azimuth += Deg120;
+                azimuthAdjustMultiples--;
+            }
+
+            while (azimuth > Deg120 + double.Epsilon)
+            {
+                azimuth -= Deg120;
+                azimuthAdjustMultiples++;
+            }
+
+            double cosAz = Math.Cos(azimuth);
+            double sinAz = Math.Sin(azimuth);
+            double q = Math.Atan2(Tang, cosAz + (sinAz * CotTheta));
+
+            if (z > q + 0.000005d)
+            {
+                continue;
+            }
+
+            double h = Math.Acos(Clamp((sinAz * SinGcosSdc2VoS) - (cosAz * CosG), -1d, 1d));
+            double area = azimuth + (36d * DegToRad) + h - Deg180;
+            double azimuthPrime = Math.Atan2(
+                2d * area,
+                (RPrimeOverR * RPrimeOverR * Tang * Tang) - (2d * area * CotTheta));
+
+            double denominator = Math.Cos(azimuthPrime) + (Math.Sin(azimuthPrime) * CotTheta);
+            if (Math.Abs(denominator) <= Eps10)
+            {
+                continue;
+            }
+
+            double dPrime = (RPrimeOverR * Tang) / denominator;
+            double sinQHalf = Math.Sin(q * 0.5d);
+            if (Math.Abs(sinQHalf) <= Eps10)
+            {
+                continue;
+            }
+
+            double f = dPrime / (2d * RPrimeOverR * sinQHalf);
+            double rho = 2d * RPrimeOverR * f * Math.Sin(z * 0.5d);
+
+            azimuthPrime += Deg120 * azimuthAdjustMultiples;
+
+            output = new IseaPoint(
+                rho * Math.Sin(azimuthPrime),
+                rho * Math.Cos(azimuthPrime));
+            return i;
+        }
+
+        throw new ArgumentException("Input data outside projection domain.");
     }
 
     private readonly struct GeoPoint(double lat, double lon)
@@ -763,6 +765,7 @@ internal sealed class IseaProjection : MapProjection
             int faceIndex = face - 1;
             int fy = faceIndex / 5;
             int fx = faceIndex - (5 * fy);
+
             // Match PROJ integer arithmetic: fy/2 is integer division in the source implementation.
             double rx = positionX - (((2d * fx) + (fy / 2) + 1d) * state.TriangleWidth * 0.5d);
             double ry = positionY - (state.YOffsets[fy] + (3d * state.CenterToBase));
@@ -785,6 +788,11 @@ internal sealed class IseaProjection : MapProjection
 
             result = new GeoPoint(dst.Lat, lon);
             return true;
+        }
+
+        private static double FaceOrientation(int face)
+        {
+            return (face <= 4 || (face >= 10 && face <= 14)) ? 0d : PI;
         }
 
         private bool TryIcosahedronToSphere(
@@ -839,7 +847,7 @@ internal sealed class IseaProjection : MapProjection
                     return false;
                 }
 
-                double derivative = ((cosAzEarth * SinGcosSdc2VoS) + (sinAzEarth * CosG)) / derivativeDenominator - 1d;
+                double derivative = (((cosAzEarth * SinGcosSdc2VoS) + (sinAzEarth * CosG)) / derivativeDenominator) - 1d;
                 if (Math.Abs(derivative) <= Eps10)
                 {
                     result = default;
@@ -910,22 +918,19 @@ internal sealed class IseaProjection : MapProjection
                 double sinLon = Math.Sin(lon);
                 double cosLon = Math.Cos(lon);
                 double cosLonCosLat = cosLon * cosLat;
+                double orientedLon = Math.Atan2(
+                    sinLon * cosLat,
+                    (cosLonCosLat * this.cosOrientationLatitude) + (sinLat * this.sinOrientationLatitude))
+                    - this.orientationLongitude;
 
                 result = new GeoPoint(
                     Math.Asin((sinLat * this.cosOrientationLatitude) - (cosLonCosLat * this.sinOrientationLatitude)),
-                    Math.Atan2(
-                        sinLon * cosLat,
-                        (cosLonCosLat * this.cosOrientationLatitude) + (sinLat * this.sinOrientationLatitude)) - this.orientationLongitude);
+                    orientedLon);
             }
             else
             {
                 result = new GeoPoint(point.Lat, lon);
             }
-        }
-
-        private static double FaceOrientation(int face)
-        {
-            return (face <= 4 || (face >= 10 && face <= 14)) ? 0d : PI;
         }
     }
 }

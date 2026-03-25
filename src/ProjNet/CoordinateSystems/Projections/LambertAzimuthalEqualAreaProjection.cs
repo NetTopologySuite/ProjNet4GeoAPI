@@ -290,6 +290,7 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
             case Mode.N_POLE:
                 coslam = -coslam;
                 goto continue_S_POLE;
+
             // -fallthrough
             case Mode.S_POLE:
             continue_S_POLE:
@@ -356,6 +357,7 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
             case Mode.N_POLE:
                 y = -y;
                 goto continue_S_POLE;
+
             // -fallthrough
             case Mode.S_POLE:
             continue_S_POLE:

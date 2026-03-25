@@ -111,6 +111,10 @@ public abstract class MathTransform
     /// </summary>
     /// <param name="points">Packed ordinate values representing the source convex hull.</param>
     /// <returns>Packed ordinate values representing the transformed convex hull in the output space.</returns>
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Design",
+        "CA1002:Do not expose generic lists",
+        Justification = "Legacy API surface; span overload added as a non-breaking alternative.")]
     public virtual List<double> GetCodomainConvexHull(ReadOnlySpan<double> points)
     {
         return this.GetCodomainConvexHull(CreatePointList(points));
@@ -246,59 +250,6 @@ public abstract class MathTransform
         }
 
         return result;
-    }
-
-    /// <summary>
-    /// Transforms a single source coordinate into an already-sized destination span.
-    /// </summary>
-    /// <param name="point">Source ordinates.</param>
-    /// <param name="pointLength">The number of source ordinates available in <paramref name="point"/>.</param>
-    /// <param name="result">Destination ordinates.</param>
-    /// <param name="resultDimensions">The number of result ordinates to write.</param>
-    private void TransformPoint(ReadOnlySpan<double> point, int pointLength, Span<double> result, int resultDimensions)
-    {
-        double x = point[0];
-        double y = point[1];
-        double z = pointLength >= 3 ? point[2] : 0;
-        double t = pointLength >= 4 ? point[3] : 0;
-
-        if (pointLength >= 4)
-        {
-            this.Transform(ref x, ref y, ref z, ref t);
-        }
-        else
-        {
-            this.Transform(ref x, ref y, ref z);
-        }
-
-        result[0] = x;
-        result[1] = y;
-        if (resultDimensions >= 3)
-        {
-            result[2] = z;
-        }
-
-        if (resultDimensions >= 4)
-        {
-            result[3] = t;
-            if (resultDimensions > 4)
-            {
-                point.Slice(4, resultDimensions - 4).CopyTo(result.Slice(4));
-            }
-        }
-    }
-
-    /// <summary>
-    /// Gets the required number of ordinates in a transformed point.
-    /// </summary>
-    /// <param name="pointLength">Input point ordinate count.</param>
-    /// <returns>Output ordinate count.</returns>
-    private int GetResultDimensions(int pointLength)
-    {
-        int minimumDimensions = this.DimTarget == 2 ? 2 : 3;
-        return pointLength <= 3
-            ? minimumDimensions
-            : Math.Max(minimumDimensions, pointLength);
     }
 
     /// <summary>
@@ -716,5 +667,58 @@ public abstract class MathTransform
         }
 
         return list;
+    }
+
+    /// <summary>
+    /// Transforms a single source coordinate into an already-sized destination span.
+    /// </summary>
+    /// <param name="point">Source ordinates.</param>
+    /// <param name="pointLength">The number of source ordinates available in <paramref name="point"/>.</param>
+    /// <param name="result">Destination ordinates.</param>
+    /// <param name="resultDimensions">The number of result ordinates to write.</param>
+    private void TransformPoint(ReadOnlySpan<double> point, int pointLength, Span<double> result, int resultDimensions)
+    {
+        double x = point[0];
+        double y = point[1];
+        double z = pointLength >= 3 ? point[2] : 0;
+        double t = pointLength >= 4 ? point[3] : 0;
+
+        if (pointLength >= 4)
+        {
+            this.Transform(ref x, ref y, ref z, ref t);
+        }
+        else
+        {
+            this.Transform(ref x, ref y, ref z);
+        }
+
+        result[0] = x;
+        result[1] = y;
+        if (resultDimensions >= 3)
+        {
+            result[2] = z;
+        }
+
+        if (resultDimensions >= 4)
+        {
+            result[3] = t;
+            if (resultDimensions > 4)
+            {
+                point.Slice(4, resultDimensions - 4).CopyTo(result.Slice(4));
+            }
+        }
+    }
+
+    /// <summary>
+    /// Gets the required number of ordinates in a transformed point.
+    /// </summary>
+    /// <param name="pointLength">Input point ordinate count.</param>
+    /// <returns>Output ordinate count.</returns>
+    private int GetResultDimensions(int pointLength)
+    {
+        int minimumDimensions = this.DimTarget == 2 ? 2 : 3;
+        return pointLength <= 3
+            ? minimumDimensions
+            : Math.Max(minimumDimensions, pointLength);
     }
 }

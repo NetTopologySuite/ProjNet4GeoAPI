@@ -66,6 +66,18 @@ public class ProjParityBenchmarks
     /// </summary>
     public static void Validate()
     {
+        static void EnsureFinite(double[] xs, double[] ys)
+        {
+            for (int i = 0; i < xs.Length; i++)
+            {
+                if (double.IsNaN(xs[i]) || double.IsInfinity(xs[i]) ||
+                    double.IsNaN(ys[i]) || double.IsInfinity(ys[i]))
+                {
+                    throw new InvalidOperationException("Benchmark validation failed: transform produced non-finite values.");
+                }
+            }
+        }
+
         var benchmark = new ProjParityBenchmarks { PointCount = 4 };
         benchmark.GlobalSetup();
 
@@ -92,18 +104,6 @@ public class ProjParityBenchmarks
 
         benchmark.Wgs84ToWebMercatorBatchedWithNoise();
         EnsureFinite(benchmark.xBuffer, benchmark.yBuffer);
-    }
-
-    private static void EnsureFinite(double[] xs, double[] ys)
-    {
-        for (int i = 0; i < xs.Length; i++)
-        {
-            if (double.IsNaN(xs[i]) || double.IsInfinity(xs[i]) ||
-                double.IsNaN(ys[i]) || double.IsInfinity(ys[i]))
-            {
-                throw new InvalidOperationException("Benchmark validation failed: transform produced non-finite values.");
-            }
-        }
     }
 
     /// <summary>
@@ -255,5 +255,4 @@ public class ProjParityBenchmarks
             }
         }
     }
-
 }

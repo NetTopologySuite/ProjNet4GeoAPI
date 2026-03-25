@@ -50,6 +50,7 @@ public class ConicAndEqualAreaMiscProjectionTests
     [InlineData("Two_Point_Equidistant")]
     public void SupportsConicAndEqualAreaMiscAliasesFromWkt(string projectionName)
     {
+        ArgumentNullException.ThrowIfNull(projectionName);
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildAliasWkt(projectionName));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(2d, 1d));
@@ -82,6 +83,7 @@ public class ConicAndEqualAreaMiscProjectionTests
     [InlineData("ccon", 24d, 55d, 650031.5410941322d, -4106.161777064670d, 1e-6d)]
     public void MatchesProjBuiltinsForwardVectors(string projectionName, double longitude, double latitude, double expectedX, double expectedY, double tolerance)
     {
+        ArgumentNullException.ThrowIfNull(projectionName);
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildCanonicalWkt(projectionName));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
@@ -117,6 +119,7 @@ public class ConicAndEqualAreaMiscProjectionTests
         double expectedLatitude,
         double tolerance)
     {
+        ArgumentNullException.ThrowIfNull(projectionName);
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildCanonicalWkt(projectionName));
         var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
         double[] geographicPoint = inverse.MathTransform.Transform(CreatePoint(x, y));
@@ -143,6 +146,7 @@ public class ConicAndEqualAreaMiscProjectionTests
     [InlineData("ccon", 24d, 55d)]
     public void SupportsConicAndEqualAreaMiscRoundtrip(string projectionName, double longitude, double latitude)
     {
+        ArgumentNullException.ThrowIfNull(projectionName);
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildCanonicalWkt(projectionName));
         var geographic = projected.GeographicCoordinateSystem;
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(geographic, projected);
@@ -234,14 +238,14 @@ public class ConicAndEqualAreaMiscProjectionTests
 
     private static string BuildCanonicalWkt(string projectionName)
     {
-        return projectionName.ToLowerInvariant() switch
+        return projectionName.ToUpperInvariant() switch
         {
-            "ccon" => BuildCconWkt("ccon"),
-            "lcca" => BuildLccaWkt("lcca"),
-            "ocea" => BuildOceaTwoPointWkt("ocea"),
-            "oea" => BuildOeaWkt("oea"),
-            "rpoly" => BuildRpolyWkt("rpoly"),
-            "tpeqd" => BuildTpeqdWkt("tpeqd"),
+            "CCON" => BuildCconWkt("ccon"),
+            "LCCA" => BuildLccaWkt("lcca"),
+            "OCEA" => BuildOceaTwoPointWkt("ocea"),
+            "OEA" => BuildOeaWkt("oea"),
+            "RPOLY" => BuildRpolyWkt("rpoly"),
+            "TPEQD" => BuildTpeqdWkt("tpeqd"),
             _ => BuildProjectedWkt(projectionName, Grs80, null),
         };
     }

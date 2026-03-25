@@ -6,10 +6,10 @@ namespace ProjNET.Tests.GitHub;
 
 using System;
 using System.Collections.Generic;
-using Xunit;
 using ProjNet;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
+using Xunit;
 
 /// <summary>
 /// Represents the documented type.
@@ -17,7 +17,6 @@ using ProjNet.CoordinateSystems.Transformations;
 [Xunit.Trait("Category", "GitHub Issue")]
 public class GitHubIssueRegressionTests
 {
-    //
     private static CoordinateSystemServices css = new CoordinateSystemServices(CoordinateSystemServicesTests.LoadCsv());
 
     /// <summary>
@@ -141,6 +140,7 @@ public class GitHubIssueRegressionTests
         var pt1a = ct.MathTransform.Transform(ptI[0], ptI[1]);
         Assert.InRange(pt1a.X, -82.0479097 - 0.01, -82.0479097 + 0.01);
         Assert.InRange(pt1a.Y, 48.4185597 - 0.01, 48.4185597 + 0.01);
+
         // var pt1b = ct.MathTransform.Inverse().Transform(pt1a);
         // Assert.InRange(pt1b[0], 3523562.711189 - 0.01, 3523562.711189 + 0.01);
         // Assert.InRange(pt1b[1], 6246615.391161 - 0.01, 6246615.391161 + 0.01);

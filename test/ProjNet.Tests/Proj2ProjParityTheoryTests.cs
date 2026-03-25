@@ -17,6 +17,11 @@ using Xunit;
 /// </summary>
 public class Proj2ProjParityTheoryTests
 {
+    private static readonly JsonSerializerOptions SerializerOptions = new JsonSerializerOptions
+    {
+        PropertyNameCaseInsensitive = true,
+    };
+
     /// <summary>
     /// Validates a direct projected pair against the reference fixture output.
     /// </summary>
@@ -38,7 +43,7 @@ public class Proj2ProjParityTheoryTests
         target.AuthorityCode = testCase.TargetSrid;
 
         var transformation = transformationFactory.CreateFromCoordinateSystems(source, target);
-        double[] output = transformation.MathTransform.Transform(new[] { testCase.InputX, testCase.InputY });
+        double[] output = transformation.MathTransform.Transform([testCase.InputX, testCase.InputY]);
         double deltaX = Math.Abs(output[0] - testCase.ExpectedX);
         double deltaY = Math.Abs(output[1] - testCase.ExpectedY);
 
@@ -58,12 +63,7 @@ public class Proj2ProjParityTheoryTests
         Assert.True(File.Exists(fixturePath), "Fixture file not found: " + fixturePath);
 
         string json = File.ReadAllText(fixturePath);
-        var fixture = JsonSerializer.Deserialize<Proj2ProjFixture>(
-            json,
-            new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-            });
+        var fixture = JsonSerializer.Deserialize<Proj2ProjFixture>(json, SerializerOptions);
         Assert.NotNull(fixture);
         Assert.NotNull(fixture.Cases);
         Assert.NotEmpty(fixture.Cases);
@@ -72,82 +72,5 @@ public class Proj2ProjParityTheoryTests
         {
             yield return new object[] { item };
         }
-    }
-
-    /// <summary>
-    /// Represents the documented type.
-    /// </summary>
-    public sealed class Proj2ProjCase
-    {
-        /// <summary>
-        /// Gets or sets the EPSG operation code for the parity case.
-        /// </summary>
-        public int OperationCode { get; set; }
-
-        /// <summary>
-        /// Gets or sets the source SRID.
-        /// </summary>
-        public int SourceSrid { get; set; }
-
-        /// <summary>
-        /// Gets or sets the target SRID.
-        /// </summary>
-        public int TargetSrid { get; set; }
-
-        /// <summary>
-        /// Gets or sets the source CRS WKT definition.
-        /// </summary>
-        public string SourceWkt { get; set; }
-
-        /// <summary>
-        /// Gets or sets the target CRS WKT definition.
-        /// </summary>
-        public string TargetWkt { get; set; }
-
-        /// <summary>
-        /// Gets or sets the input x coordinate.
-        /// </summary>
-        public double InputX { get; set; }
-
-        /// <summary>
-        /// Gets or sets the input y coordinate.
-        /// </summary>
-        public double InputY { get; set; }
-
-        /// <summary>
-        /// Gets or sets the expected x coordinate.
-        /// </summary>
-        public double ExpectedX { get; set; }
-
-        /// <summary>
-        /// Gets or sets the expected y coordinate.
-        /// </summary>
-        public double ExpectedY { get; set; }
-
-        /// <summary>
-        /// Gets or sets the tolerance in meters for result comparison.
-        /// </summary>
-        public double ToleranceMeters { get; set; }
-    }
-
-    /// <summary>
-    /// Represents the documented type.
-    /// </summary>
-    public sealed class Proj2ProjFixture
-    {
-        /// <summary>
-        /// Gets or sets the fixture schema/version marker.
-        /// </summary>
-        public int FixtureVersion { get; set; }
-
-        /// <summary>
-        /// Gets or sets the generator identifier used to produce the fixture.
-        /// </summary>
-        public string Generator { get; set; }
-
-        /// <summary>
-        /// Gets or sets the parity cases included in the fixture payload.
-        /// </summary>
-        public List<Proj2ProjCase> Cases { get; set; }
     }
 }

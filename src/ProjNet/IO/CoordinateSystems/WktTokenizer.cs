@@ -54,14 +54,11 @@ internal sealed class WktTokenizer
     /// When <see langword="true"/>, <see cref="NextToken()"/> skips whitespace and end-of-line tokens.
     /// </param>
     internal WktTokenizer(TextReader reader, bool ignoreWhitespaceByDefault = true)
-        : this(ReadAllText(reader), ignoreWhitespaceByDefault)
-    {
-    }
-
-    private static string ReadAllText(TextReader reader)
     {
         ArgumentGuard.ThrowIfNull(reader, nameof(reader));
-        return reader.ReadToEnd();
+
+        this.source = reader.ReadToEnd();
+        this.ignoreWhitespaceByDefault = ignoreWhitespaceByDefault;
     }
 
     /// <summary>

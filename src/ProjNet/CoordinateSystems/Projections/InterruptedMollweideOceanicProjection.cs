@@ -198,28 +198,6 @@ internal class InterruptedMollweideOceanicProjection : MapProjection
         }
     }
 
-    private void MollweideForward(int zone, double lambda, double phi, out double x, out double y)
-    {
-        ZoneDefinition def = this.zones[zone - 1];
-        MollweideForwardUnit(lambda - def.Lambda0, phi, out double xUnit, out double yUnit);
-        x = xUnit + def.X0;
-        y = yUnit + def.Y0;
-    }
-
-    private double ComputeZoneOffset(int zone1, int zone2, double lambda, double phi1, double phi2)
-    {
-        this.MollweideForward(zone1, lambda, phi1, out double x1, out _);
-        this.MollweideForward(zone2, lambda, phi2, out double x2, out _);
-        return x2 - x1;
-    }
-
-    private double ComputeZoneBoundaryX(double lambda, double phi)
-    {
-        this.MollweideForward(DetermineForwardZone(phi, lambda - SeamSlack), lambda - SeamSlack, phi, out double x1, out _);
-        this.MollweideForward(DetermineForwardZone(phi, lambda + SeamSlack), lambda + SeamSlack, phi, out double x2, out _);
-        return (x1 + x2) * 0.5d;
-    }
-
     private static void MollweideForwardUnit(double lambda, double phi, out double x, out double y)
     {
         double theta;
@@ -263,6 +241,28 @@ internal class InterruptedMollweideOceanicProjection : MapProjection
         }
 
         return value > maximum ? maximum : value;
+    }
+
+    private void MollweideForward(int zone, double lambda, double phi, out double x, out double y)
+    {
+        ZoneDefinition def = this.zones[zone - 1];
+        MollweideForwardUnit(lambda - def.Lambda0, phi, out double xUnit, out double yUnit);
+        x = xUnit + def.X0;
+        y = yUnit + def.Y0;
+    }
+
+    private double ComputeZoneOffset(int zone1, int zone2, double lambda, double phi1, double phi2)
+    {
+        this.MollweideForward(zone1, lambda, phi1, out double x1, out _);
+        this.MollweideForward(zone2, lambda, phi2, out double x2, out _);
+        return x2 - x1;
+    }
+
+    private double ComputeZoneBoundaryX(double lambda, double phi)
+    {
+        this.MollweideForward(DetermineForwardZone(phi, lambda - SeamSlack), lambda - SeamSlack, phi, out double x1, out _);
+        this.MollweideForward(DetermineForwardZone(phi, lambda + SeamSlack), lambda + SeamSlack, phi, out double x2, out _);
+        return (x1 + x2) * 0.5d;
     }
 
     private sealed class ZoneDefinition

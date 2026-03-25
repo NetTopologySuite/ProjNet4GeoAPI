@@ -89,7 +89,7 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
         this.u = esc * this.roneEs;
         this.xj = this.oneEs * this.oneEs * this.oneEs;
 
-        (this.a2, this.a4, this.b, this.c1, this.c3) = ComputeSeriesCoefficients();
+        (this.a2, this.a4, this.b, this.c1, this.c3) = this.ComputeSeriesCoefficients();
     }
 
     /// <inheritdoc />
@@ -249,9 +249,11 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
         lamt -= HalfPi * (1d - signCosLamdp) * signLam;
 
         double lambda = lamt - (this.p22 * lamdp);
+        double phiNumerator = (Math.Tan(lamdp) * Math.Cos(lamt)) - (this.ca * Math.Sin(lamt));
+        double phiDenominator = this.oneEs * this.sa;
         double phi = Math.Abs(this.sa) < Tolerance
             ? Asinz(spp / Math.Sqrt((this.oneEs * this.oneEs) + (this.es * sppsq)))
-            : Math.Atan((Math.Tan(lamdp) * Math.Cos(lamt) - (this.ca * Math.Sin(lamt))) / (this.oneEs * this.sa));
+            : Math.Atan(phiNumerator / phiDenominator);
 
         x = Adjust_lon(this.centralMeridian + lambda);
         y = phi;
@@ -364,55 +366,6 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
         return radians;
     }
 
-    private (double A2, double A4, double B, double C1, double C3) ComputeSeriesCoefficients()
-    {
-        double a2 = 0d;
-        double a4 = 0d;
-        double b = 0d;
-        double c1 = 0d;
-        double c3 = 0d;
-
-        AddSerazContribution(0d, 1d, ref a2, ref a4, ref b, ref c1, ref c3);
-        for (double lam = 9d; lam <= 81.0001d; lam += 18d)
-        {
-            AddSerazContribution(lam, 4d, ref a2, ref a4, ref b, ref c1, ref c3);
-        }
-
-        for (double lam = 18d; lam <= 72.0001d; lam += 18d)
-        {
-            AddSerazContribution(lam, 2d, ref a2, ref a4, ref b, ref c1, ref c3);
-        }
-
-        AddSerazContribution(90d, 1d, ref a2, ref a4, ref b, ref c1, ref c3);
-
-        return (a2 / 30d, a4 / 60d, b / 30d, c1 / 15d, c3 / 45d);
-    }
-
-    private void AddSerazContribution(double lamDegrees, double multiplier, ref double a2, ref double a4, ref double b, ref double c1, ref double c3)
-    {
-        double lam = DegreesToRadians(lamDegrees);
-        double sd = Math.Sin(lam);
-        double sdsq = sd * sd;
-
-        double s = this.p22 * this.sa * Math.Cos(lam)
-            * Math.Sqrt((1d + (this.t * sdsq)) / ((1d + (this.w * sdsq)) * (1d + (this.q * sdsq))));
-
-        double d1 = 1d + (this.q * sdsq);
-        double h = Math.Sqrt((1d + (this.q * sdsq)) / (1d + (this.w * sdsq)))
-            * (((1d + (this.w * sdsq)) / (d1 * d1)) - (this.p22 * this.ca));
-
-        double sq = Math.Sqrt((this.xj * this.xj) + (s * s));
-        double fc = multiplier * ((h * this.xj) - (s * s)) / sq;
-
-        b += fc;
-        a2 += fc * Math.Cos(2d * lam);
-        a4 += fc * Math.Cos(4d * lam);
-
-        fc = multiplier * s * (h + this.xj) / sq;
-        c1 += fc * Math.Cos(lam);
-        c3 += fc * Math.Cos(3d * lam);
-    }
-
     private static int ReadPositiveInt(ProjectionParameterSet parameters, string name)
     {
         double value = parameters.GetParameterValue(name);
@@ -450,6 +403,55 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
         }
 
         parameters.Add(new ProjectionParameter(name, value));
+    }
+
+    private (double A2, double A4, double B, double C1, double C3) ComputeSeriesCoefficients()
+    {
+        double a2 = 0d;
+        double a4 = 0d;
+        double b = 0d;
+        double c1 = 0d;
+        double c3 = 0d;
+
+        this.AddSerazContribution(0d, 1d, ref a2, ref a4, ref b, ref c1, ref c3);
+        for (double lam = 9d; lam <= 81.0001d; lam += 18d)
+        {
+            this.AddSerazContribution(lam, 4d, ref a2, ref a4, ref b, ref c1, ref c3);
+        }
+
+        for (double lam = 18d; lam <= 72.0001d; lam += 18d)
+        {
+            this.AddSerazContribution(lam, 2d, ref a2, ref a4, ref b, ref c1, ref c3);
+        }
+
+        this.AddSerazContribution(90d, 1d, ref a2, ref a4, ref b, ref c1, ref c3);
+
+        return (a2 / 30d, a4 / 60d, b / 30d, c1 / 15d, c3 / 45d);
+    }
+
+    private void AddSerazContribution(double lamDegrees, double multiplier, ref double a2, ref double a4, ref double b, ref double c1, ref double c3)
+    {
+        double lam = DegreesToRadians(lamDegrees);
+        double sd = Math.Sin(lam);
+        double sdsq = sd * sd;
+
+        double s = this.p22 * this.sa * Math.Cos(lam)
+            * Math.Sqrt((1d + (this.t * sdsq)) / ((1d + (this.w * sdsq)) * (1d + (this.q * sdsq))));
+
+        double d1 = 1d + (this.q * sdsq);
+        double h = Math.Sqrt((1d + (this.q * sdsq)) / (1d + (this.w * sdsq)))
+            * (((1d + (this.w * sdsq)) / (d1 * d1)) - (this.p22 * this.ca));
+
+        double sq = Math.Sqrt((this.xj * this.xj) + (s * s));
+        double fc = multiplier * ((h * this.xj) - (s * s)) / sq;
+
+        b += fc;
+        a2 += fc * Math.Cos(2d * lam);
+        a4 += fc * Math.Cos(4d * lam);
+
+        fc = multiplier * s * (h + this.xj) / sq;
+        c1 += fc * Math.Cos(lam);
+        c3 += fc * Math.Cos(3d * lam);
     }
 
     private readonly struct SomSetupParameters

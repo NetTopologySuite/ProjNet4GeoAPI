@@ -30,6 +30,13 @@ internal sealed class TinShiftMathTransform : MathTransform
         this.isInverted = isInverted;
     }
 
+    private enum FallbackStrategy
+    {
+        None = 0,
+        NearestSide = 1,
+        NearestCentroid = 2,
+    }
+
     /// <inheritdoc />
     public override int DimSource => 3;
 
@@ -944,11 +951,38 @@ internal sealed class TinShiftMathTransform : MathTransform
         y3 = this.model.GetVertexValue(triangle.Index3, yIndex);
     }
 
-    private enum FallbackStrategy
+    private struct TriangleIndices
     {
-        None = 0,
-        NearestSide = 1,
-        NearestCentroid = 2,
+        internal TriangleIndices(int index1, int index2, int index3)
+        {
+            this.Index1 = index1;
+            this.Index2 = index2;
+            this.Index3 = index3;
+        }
+
+        internal int Index1 { get; }
+
+        internal int Index2 { get; }
+
+        internal int Index3 { get; }
+    }
+
+    private struct VerticesColumnMap
+    {
+        internal int SourceX;
+        internal int SourceY;
+        internal int SourceZ;
+        internal int TargetX;
+        internal int TargetY;
+        internal int TargetZ;
+        internal int OffsetZ;
+    }
+
+    private struct TriangleColumnMap
+    {
+        internal int Index1;
+        internal int Index2;
+        internal int Index3;
     }
 
     [Serializable]
@@ -989,40 +1023,5 @@ internal sealed class TinShiftMathTransform : MathTransform
             int baseOffset = vertexIndex * this.VertexColumnCount;
             return this.Vertices[baseOffset + columnIndex];
         }
-    }
-
-    [Serializable]
-    private struct TriangleIndices
-    {
-        internal TriangleIndices(int index1, int index2, int index3)
-        {
-            this.Index1 = index1;
-            this.Index2 = index2;
-            this.Index3 = index3;
-        }
-
-        internal int Index1 { get; }
-
-        internal int Index2 { get; }
-
-        internal int Index3 { get; }
-    }
-
-    private struct VerticesColumnMap
-    {
-        internal int SourceX;
-        internal int SourceY;
-        internal int SourceZ;
-        internal int TargetX;
-        internal int TargetY;
-        internal int TargetZ;
-        internal int OffsetZ;
-    }
-
-    private struct TriangleColumnMap
-    {
-        internal int Index1;
-        internal int Index2;
-        internal int Index3;
     }
 }

@@ -16,12 +16,6 @@ internal sealed class HelmertMathTransform : MathTransform
 {
     private const double ArcSecondToRadians = Math.PI / (180d * 3600d);
     private const double MissingObservationEpoch = double.MaxValue;
-    private enum CsvParseStatus
-    {
-        Success,
-        TooManyValues,
-        InvalidValue,
-    }
 
     private readonly HelmertParameterState baseState;
     private readonly HelmertRateState rateState;
@@ -78,6 +72,75 @@ internal sealed class HelmertMathTransform : MathTransform
         this.runtimeState = source.runtimeState.Clone();
         this.staticState = source.staticState;
         this.isInverted = isInverted;
+    }
+
+    private enum CsvParseStatus
+    {
+        Success,
+        TooManyValues,
+        InvalidValue,
+    }
+
+    /// <inheritdoc />
+    public override int DimSource => 3;
+
+    /// <inheritdoc />
+    public override int DimTarget => 3;
+
+    /// <inheritdoc />
+    public override string WKT => throw new NotImplementedException();
+
+    /// <inheritdoc />
+    public override string XML => throw new NotImplementedException();
+
+    /// <inheritdoc />
+    public override bool Identity()
+    {
+        HelmertParameterState state = this.staticState;
+        if (this.fourParameter)
+        {
+            return state.TranslationX == 0d
+                && state.TranslationY == 0d
+                && state.Theta == 0d
+                && state.Scale == 1d;
+        }
+
+        return state.TranslationX == 0d
+            && state.TranslationY == 0d
+            && state.TranslationZ == 0d
+            && this.noRotation
+            && state.Scale == 0d;
+    }
+
+    /// <inheritdoc />
+    public override MathTransform Inverse()
+    {
+        if (this.inverse is null)
+        {
+            this.inverse = new HelmertMathTransform(this, !this.isInverted);
+        }
+
+        return this.inverse;
+    }
+
+    /// <inheritdoc />
+    public override void Invert()
+    {
+        this.isInverted = !this.isInverted;
+    }
+
+    /// <inheritdoc />
+    public override void Transform(ref double x, ref double y, ref double z)
+    {
+        HelmertParameterState state = this.staticState;
+        if (this.isInverted)
+        {
+            this.TransformInverse(ref x, ref y, ref z, state);
+        }
+        else
+        {
+            this.TransformForward(ref x, ref y, ref z, state);
+        }
     }
 
     /// <summary>
@@ -341,6 +404,20 @@ internal sealed class HelmertMathTransform : MathTransform
         return true;
     }
 
+    /// <inheritdoc />
+    internal override void Transform(ref double x, ref double y, ref double z, ref double t)
+    {
+        HelmertParameterState state = this.GetOrCreateStateForObservationEpoch(t);
+        if (this.isInverted)
+        {
+            this.TransformInverse(ref x, ref y, ref z, state);
+        }
+        else
+        {
+            this.TransformForward(ref x, ref y, ref z, state);
+        }
+    }
+
     private static bool TryApplyTowgs84(
         Dictionary<string, string> args,
         out bool hasTowgs84,
@@ -422,24 +499,6 @@ internal sealed class HelmertMathTransform : MathTransform
         return CsvParseStatus.Success;
     }
 
-    private static HelmertParameterState EvaluateKinematicState(
-        HelmertParameterState baseState,
-        HelmertRateState rateState,
-        double epochReference,
-        double observationEpoch)
-    {
-        double dt = observationEpoch - epochReference;
-        return new HelmertParameterState(
-            baseState.TranslationX + (rateState.TranslationRateX * dt),
-            baseState.TranslationY + (rateState.TranslationRateY * dt),
-            baseState.TranslationZ + (rateState.TranslationRateZ * dt),
-            baseState.RotationX + (rateState.RotationRateX * dt),
-            baseState.RotationY + (rateState.RotationRateY * dt),
-            baseState.RotationZ + (rateState.RotationRateZ * dt),
-            baseState.Scale + (rateState.ScaleRate * dt),
-            baseState.Theta + (rateState.ThetaRate * dt));
-    }
-
     private static bool TryAssignOptionalDouble(
         Dictionary<string, string> args,
         string key,
@@ -518,6 +577,24 @@ internal sealed class HelmertMathTransform : MathTransform
         return end < start ? ReadOnlySpan<char>.Empty : value.Slice(start, (end - start) + 1);
     }
 
+    private static HelmertParameterState EvaluateKinematicState(
+        HelmertParameterState baseState,
+        HelmertRateState rateState,
+        double epochReference,
+        double observationEpoch)
+    {
+        double dt = observationEpoch - epochReference;
+        return new HelmertParameterState(
+            baseState.TranslationX + (rateState.TranslationRateX * dt),
+            baseState.TranslationY + (rateState.TranslationRateY * dt),
+            baseState.TranslationZ + (rateState.TranslationRateZ * dt),
+            baseState.RotationX + (rateState.RotationRateX * dt),
+            baseState.RotationY + (rateState.RotationRateY * dt),
+            baseState.RotationZ + (rateState.RotationRateZ * dt),
+            baseState.Scale + (rateState.ScaleRate * dt),
+            baseState.Theta + (rateState.ThetaRate * dt));
+    }
+
     private static void BuildRotationMatrix(
         double rotationX,
         double rotationY,
@@ -581,82 +658,6 @@ internal sealed class HelmertMathTransform : MathTransform
         double value = left;
         left = right;
         right = value;
-    }
-
-    /// <inheritdoc />
-    public override int DimSource => 3;
-
-    /// <inheritdoc />
-    public override int DimTarget => 3;
-
-    /// <inheritdoc />
-    public override string WKT => throw new NotImplementedException();
-
-    /// <inheritdoc />
-    public override string XML => throw new NotImplementedException();
-
-    /// <inheritdoc />
-    public override bool Identity()
-    {
-        HelmertParameterState state = this.staticState;
-        if (this.fourParameter)
-        {
-            return state.TranslationX == 0d
-                && state.TranslationY == 0d
-                && state.Theta == 0d
-                && state.Scale == 1d;
-        }
-
-        return state.TranslationX == 0d
-            && state.TranslationY == 0d
-            && state.TranslationZ == 0d
-            && this.noRotation
-            && state.Scale == 0d;
-    }
-
-    /// <inheritdoc />
-    public override MathTransform Inverse()
-    {
-        if (this.inverse is null)
-        {
-            this.inverse = new HelmertMathTransform(this, !this.isInverted);
-        }
-
-        return this.inverse;
-    }
-
-    /// <inheritdoc />
-    public override void Invert()
-    {
-        this.isInverted = !this.isInverted;
-    }
-
-    /// <inheritdoc />
-    public override void Transform(ref double x, ref double y, ref double z)
-    {
-        HelmertParameterState state = this.staticState;
-        if (this.isInverted)
-        {
-            this.TransformInverse(ref x, ref y, ref z, state);
-        }
-        else
-        {
-            this.TransformForward(ref x, ref y, ref z, state);
-        }
-    }
-
-    /// <inheritdoc />
-    internal override void Transform(ref double x, ref double y, ref double z, ref double t)
-    {
-        HelmertParameterState state = this.GetOrCreateStateForObservationEpoch(t);
-        if (this.isInverted)
-        {
-            this.TransformInverse(ref x, ref y, ref z, state);
-        }
-        else
-        {
-            this.TransformForward(ref x, ref y, ref z, state);
-        }
     }
 
     private HelmertParameterState GetOrCreateStateForObservationEpoch(double observationEpoch)

@@ -133,5 +133,4 @@ internal sealed class LambertConformalConicAlternativeProjection : MapProjection
     {
         return 1d + (3d * s * s * c);
     }
-
 }

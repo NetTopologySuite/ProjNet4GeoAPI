@@ -220,6 +220,7 @@ public class Wgs84ConversionInfo
         var result = new double[7];
         this.WriteAffineTransform(result);
         return result;
+
         // return new double[3,4] {
         //     { RS,               -Ez*SEC_TO_RAD*RS,  +Ey*SEC_TO_RAD*RS,  Dx} ,
         //     { Ez*SEC_TO_RAD*RS, RS,                 -Ex*SEC_TO_RAD*RS,  Dy} ,

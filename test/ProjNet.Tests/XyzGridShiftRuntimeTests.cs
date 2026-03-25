@@ -109,6 +109,8 @@ public class XyzGridShiftRuntimeTests
     [InlineData("+proj=xyzgridshift +grids={GRID} +grid_ref=input_crs", "ellipsoid")]
     public void XyzGridShiftCreationFailsForInvalidParameters(string operation, string expectedToken)
     {
+        ArgumentNullException.ThrowIfNull(operation);
+        ArgumentNullException.ThrowIfNull(expectedToken);
         if (operation.Contains(GridPlaceholder, StringComparison.Ordinal))
         {
             operation = operation.Replace(GridPlaceholder, FindGridPath("subset_of_gr3df97a.tif"), StringComparison.Ordinal);
@@ -239,5 +241,4 @@ public class XyzGridShiftRuntimeTests
         transform.Transform(ref x, ref y, ref z);
         return [x, y, z];
     }
-
 }

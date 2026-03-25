@@ -47,10 +47,19 @@ public class CompoundCoordinateSystem : CoordinateSystem
         get
         {
             var sb = new StringBuilder();
-            sb.Append($"COMPD_CS[\"{this.Name}\",{this.HeadCoordinateSystem.WKT},{this.TailCoordinateSystem.WKT}");
+            sb.Append("COMPD_CS[\"");
+            sb.Append(this.Name);
+            sb.Append("\",");
+            sb.Append(this.HeadCoordinateSystem.WKT);
+            sb.Append(',');
+            sb.Append(this.TailCoordinateSystem.WKT);
             if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
             {
-                sb.Append($",AUTHORITY[\"{this.Authority}\",\"{this.AuthorityCode}\"]");
+                sb.Append(",AUTHORITY[\"");
+                sb.Append(this.Authority);
+                sb.Append("\",\"");
+                sb.Append(this.AuthorityCode.ToString(CultureInfo.InvariantCulture));
+                sb.Append("\"]");
             }
 
             sb.Append(']');

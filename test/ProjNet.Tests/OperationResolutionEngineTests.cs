@@ -277,32 +277,6 @@ public class OperationResolutionEngineTests
         Assert.Fail("No projected candidate produced an explicit EPSG datum transformation from base geographic metadata.");
     }
 
-    private static IEnumerable<EpsgProjectedCrsRecord> EnumerateProjectedCrsRecords()
-    {
-        for (int cacheIndex = 0; cacheIndex < EpsgGeneratedCatalog.CoordinateReferenceCount; cacheIndex++)
-        {
-            if (!EpsgGeneratedCatalog.TryGetCoordinateSridByCacheIndex(cacheIndex, out int srid))
-            {
-                continue;
-            }
-
-            if (!EpsgGeneratedCatalog.TryGetCoordinateReference(srid, out var reference, out _))
-            {
-                continue;
-            }
-
-            if (reference.Kind != EpsgCoordinateSystemKind.Projected)
-            {
-                continue;
-            }
-
-            if (EpsgGeneratedCatalog.TryGetProjectedCrs(reference.RecordIndex, out var projectedRecord))
-            {
-                yield return projectedRecord;
-            }
-        }
-    }
-
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
@@ -349,6 +323,32 @@ public class OperationResolutionEngineTests
 
         Assert.Equal(expected[0], transformed[0], 9);
         Assert.Equal(expected[1], transformed[1], 9);
+    }
+
+    private static IEnumerable<EpsgProjectedCrsRecord> EnumerateProjectedCrsRecords()
+    {
+        for (int cacheIndex = 0; cacheIndex < EpsgGeneratedCatalog.CoordinateReferenceCount; cacheIndex++)
+        {
+            if (!EpsgGeneratedCatalog.TryGetCoordinateSridByCacheIndex(cacheIndex, out int srid))
+            {
+                continue;
+            }
+
+            if (!EpsgGeneratedCatalog.TryGetCoordinateReference(srid, out var reference, out _))
+            {
+                continue;
+            }
+
+            if (reference.Kind != EpsgCoordinateSystemKind.Projected)
+            {
+                continue;
+            }
+
+            if (EpsgGeneratedCatalog.TryGetProjectedCrs(reference.RecordIndex, out var projectedRecord))
+            {
+                yield return projectedRecord;
+            }
+        }
     }
 
     private static bool ContainsGeographicOrGeocentricCoordinateSystem(ICoordinateTransformationCore transformation)

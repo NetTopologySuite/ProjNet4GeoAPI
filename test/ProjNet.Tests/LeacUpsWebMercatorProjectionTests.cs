@@ -32,6 +32,7 @@ public class LeacUpsWebMercatorProjectionTests
     [InlineData("webmerc")]
     public void SupportsLeacUpsWebMercatorAliasesFromWkt(string projectionName)
     {
+        ArgumentNullException.ThrowIfNull(projectionName);
         string wkt = projectionName.Equals("leac", StringComparison.OrdinalIgnoreCase)
             ? BuildLeacWkt(projectionName, Grs80, 0d, false)
             : BuildUpsWkt(projectionName, Grs80, false);

@@ -24,6 +24,11 @@ public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<Pro
     /// </summary>
     /// <param name="info">The serialization data.</param>
     /// <param name="context">The serialization context.</param>
+    [Obsolete("Formatter-based serialization constructor is retained for compatibility.")]
+    [System.Diagnostics.CodeAnalysis.SuppressMessage(
+        "Interoperability",
+        "SYSLIB0051:Legacy serialization support APIs are obsolete",
+        Justification = "Required for compatibility with serialized payloads.")]
     public ProjectionParameterSet(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
         : base(info, context)
     {

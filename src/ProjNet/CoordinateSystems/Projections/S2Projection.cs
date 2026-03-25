@@ -23,24 +23,6 @@ internal sealed class S2Projection : MapProjection
     private readonly double oneMinusF;
     private readonly double oneMinusFSquared;
 
-    private enum Face
-    {
-        Front = 0,
-        Right = 1,
-        Top = 2,
-        Back = 3,
-        Left = 4,
-        Bottom = 5,
-    }
-
-    private enum UvToStProjectionType
-    {
-        Linear = 0,
-        Quadratic = 1,
-        Tangent = 2,
-        None = 3,
-    }
-
     /// <summary>
     /// Initializes a new instance of the <see cref="S2Projection"/> class.
     /// </summary>
@@ -74,6 +56,24 @@ internal sealed class S2Projection : MapProjection
             this.oneMinusF = 1d;
             this.oneMinusFSquared = 1d;
         }
+    }
+
+    private enum Face
+    {
+        Front = 0,
+        Right = 1,
+        Top = 2,
+        Back = 3,
+        Left = 4,
+        Bottom = 5,
+    }
+
+    private enum UvToStProjectionType
+    {
+        Linear = 0,
+        Quadratic = 1,
+        Tangent = 2,
+        None = 3,
     }
 
     /// <inheritdoc />

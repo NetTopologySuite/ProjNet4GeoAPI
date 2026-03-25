@@ -5,9 +5,9 @@
 namespace ProjNET.Tests;
 
 using System.Reflection;
-using Xunit;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
+using Xunit;
 
 /// <summary>
 /// Represents the documented type.
@@ -33,7 +33,7 @@ public class SharpMapIssueRegressionTests : CoordinateTransformTestsBase
     public void TestNad83ToWGS84()
     {
         var src = this.CoordinateSystemFactory.CreateFromWkt(this.wkt2236);
-        var tgt = this.CoordinateSystemFactory.CreateFromWkt(this.wkt8307); // CoordinateSystems.GeographicCoordinateSystem.WGS84;;
+        var tgt = this.CoordinateSystemFactory.CreateFromWkt(this.wkt8307);
 
         ProjNet.CoordinateSystems.Projections.ProjectionsRegistry.Register(
             "SPCS83 Florida East zone (US Survey feet) (EPSG OP 15318)",
@@ -43,7 +43,6 @@ public class SharpMapIssueRegressionTests : CoordinateTransformTestsBase
         Assert.Null(Record.Exception(() => transform = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(src, tgt)));
         Assert.NotNull(transform);
     }
-
 
     // projection problem with Michigan GeoRef
 

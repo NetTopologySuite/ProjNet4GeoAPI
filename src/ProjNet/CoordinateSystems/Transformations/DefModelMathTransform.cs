@@ -53,8 +53,8 @@ internal sealed class DefModelMathTransform : MathTransform
         this.semiMinor = semiMinor;
         this.eccentricitySquared = 1d - ((semiMinor * semiMinor) / (semiMajor * semiMajor));
         this.isGeographicCrs = isGeographicCrs;
-        this.isHorizontalUnitDegree = string.Equals(model.HorizontalOffsetUnit, "degree", StringComparison.Ordinal);
-        this.isAddition = string.Equals(model.HorizontalOffsetMethod, "addition", StringComparison.Ordinal);
+        this.isHorizontalUnitDegree = string.Equals(model.HorizontalOffsetUnit, "DEGREE", StringComparison.Ordinal);
+        this.isAddition = string.Equals(model.HorizontalOffsetMethod, "ADDITION", StringComparison.Ordinal);
         this.globalExtent = model.Extent;
         this.timeExtent = model.TimeExtent;
         this.components = LoadComponents(model, modelPath, this.isHorizontalUnitDegree);
@@ -88,6 +88,33 @@ internal sealed class DefModelMathTransform : MathTransform
         this.isInverted = isInverted;
     }
 
+    private enum DisplacementType : byte
+    {
+        None = 0,
+        Horizontal = 1,
+        Vertical = 2,
+        ThreeDimensional = 3,
+    }
+
+    private enum InterpolationMethod : byte
+    {
+        Bilinear = 0,
+        GeocentricBilinear = 1,
+    }
+
+    /// <summary>
+    /// Represents a time-dependent scale-factor function.
+    /// </summary>
+    private interface ITimeFunction
+    {
+        /// <summary>
+        /// Evaluates the scale factor for the supplied observation epoch.
+        /// </summary>
+        /// <param name="observationEpoch">Observation epoch expressed in decimal years.</param>
+        /// <returns>The scale factor for the supplied epoch.</returns>
+        double Evaluate(double observationEpoch);
+    }
+
     /// <inheritdoc />
     public override int DimSource => 3;
 
@@ -99,6 +126,32 @@ internal sealed class DefModelMathTransform : MathTransform
 
     /// <inheritdoc />
     public override string XML => throw new NotImplementedException();
+
+    /// <inheritdoc />
+    public override bool Identity() => false;
+
+    /// <inheritdoc />
+    public override MathTransform Inverse()
+    {
+        if (this.inverse is null)
+        {
+            this.inverse = new DefModelMathTransform(this, !this.isInverted);
+        }
+
+        return this.inverse;
+    }
+
+    /// <inheritdoc />
+    public override void Invert()
+    {
+        this.isInverted = !this.isInverted;
+    }
+
+    /// <inheritdoc />
+    public override void Transform(ref double x, ref double y, ref double z)
+    {
+        throw new ArgumentException("defmodel requires observation time (4D input).");
+    }
 
     /// <summary>
     /// Creates a <see cref="DefModelMathTransform"/> from parsed PROJ arguments.
@@ -199,32 +252,6 @@ internal sealed class DefModelMathTransform : MathTransform
             skipReason = "invalid model: " + exception.Message;
             return false;
         }
-    }
-
-    /// <inheritdoc />
-    public override bool Identity() => false;
-
-    /// <inheritdoc />
-    public override MathTransform Inverse()
-    {
-        if (this.inverse is null)
-        {
-            this.inverse = new DefModelMathTransform(this, !this.isInverted);
-        }
-
-        return this.inverse;
-    }
-
-    /// <inheritdoc />
-    public override void Invert()
-    {
-        this.isInverted = !this.isInverted;
-    }
-
-    /// <inheritdoc />
-    public override void Transform(ref double x, ref double y, ref double z)
-    {
-        throw new ArgumentException("defmodel requires observation time (4D input).");
     }
 
     /// <inheritdoc />
@@ -560,21 +587,21 @@ internal sealed class DefModelMathTransform : MathTransform
     private static void ValidateModelMetadata(ModelDefinition model)
     {
         if (!string.IsNullOrEmpty(model.HorizontalOffsetUnit)
-            && !string.Equals(model.HorizontalOffsetUnit, "metre", StringComparison.Ordinal)
-            && !string.Equals(model.HorizontalOffsetUnit, "degree", StringComparison.Ordinal))
+            && !string.Equals(model.HorizontalOffsetUnit, "METRE", StringComparison.Ordinal)
+            && !string.Equals(model.HorizontalOffsetUnit, "DEGREE", StringComparison.Ordinal))
         {
             throw new FormatException("Unsupported value for horizontal_offset_unit.");
         }
 
         if (!string.IsNullOrEmpty(model.VerticalOffsetUnit)
-            && !string.Equals(model.VerticalOffsetUnit, "metre", StringComparison.Ordinal))
+            && !string.Equals(model.VerticalOffsetUnit, "METRE", StringComparison.Ordinal))
         {
             throw new FormatException("Unsupported value for vertical_offset_unit.");
         }
 
         if (!string.IsNullOrEmpty(model.HorizontalOffsetMethod)
-            && !string.Equals(model.HorizontalOffsetMethod, "addition", StringComparison.Ordinal)
-            && !string.Equals(model.HorizontalOffsetMethod, "geocentric", StringComparison.Ordinal))
+            && !string.Equals(model.HorizontalOffsetMethod, "ADDITION", StringComparison.Ordinal)
+            && !string.Equals(model.HorizontalOffsetMethod, "GEOCENTRIC", StringComparison.Ordinal))
         {
             throw new FormatException("Unsupported value for horizontal_offset_method.");
         }
@@ -605,15 +632,15 @@ internal sealed class DefModelMathTransform : MathTransform
                 }
             }
 
-            if (string.Equals(model.HorizontalOffsetUnit, "degree", StringComparison.Ordinal)
+            if (string.Equals(model.HorizontalOffsetUnit, "DEGREE", StringComparison.Ordinal)
                 && component.InterpolationMethod != InterpolationMethod.Bilinear)
             {
                 throw new FormatException("horizontal_offset_unit = degree requires interpolation_method = bilinear.");
             }
         }
 
-        if (string.Equals(model.HorizontalOffsetUnit, "degree", StringComparison.Ordinal)
-            && !string.Equals(model.HorizontalOffsetMethod, "addition", StringComparison.Ordinal))
+        if (string.Equals(model.HorizontalOffsetUnit, "DEGREE", StringComparison.Ordinal)
+            && !string.Equals(model.HorizontalOffsetMethod, "ADDITION", StringComparison.Ordinal))
         {
             throw new FormatException("horizontal_offset_unit = degree requires horizontal_offset_method = addition.");
         }
@@ -657,22 +684,22 @@ internal sealed class DefModelMathTransform : MathTransform
 
     private static DisplacementType ParseDisplacementType(string token)
     {
-        if (token == "none")
+        if (token == "NONE")
         {
             return DisplacementType.None;
         }
 
-        if (token == "horizontal")
+        if (token == "HORIZONTAL")
         {
             return DisplacementType.Horizontal;
         }
 
-        if (token == "vertical")
+        if (token == "VERTICAL")
         {
             return DisplacementType.Vertical;
         }
 
-        if (token == "3d")
+        if (token == "3D")
         {
             return DisplacementType.ThreeDimensional;
         }
@@ -682,12 +709,12 @@ internal sealed class DefModelMathTransform : MathTransform
 
     private static InterpolationMethod ParseInterpolationMethod(string token)
     {
-        if (token == "bilinear")
+        if (token == "BILINEAR")
         {
             return InterpolationMethod.Bilinear;
         }
 
-        if (token == "geocentric_bilinear")
+        if (token == "GEOCENTRIC_BILINEAR")
         {
             return InterpolationMethod.GeocentricBilinear;
         }
@@ -697,37 +724,37 @@ internal sealed class DefModelMathTransform : MathTransform
 
     private static ITimeFunction ParseTimeFunction(string timeFunctionType, JsonElement timeFunctionObject)
     {
-        if (timeFunctionType == "constant")
+        if (timeFunctionType == "CONSTANT")
         {
             return ConstantTimeFunction.Instance;
         }
 
         JsonElement parameters = GetRequiredObject(timeFunctionObject, "parameters");
-        if (timeFunctionType == "velocity")
+        if (timeFunctionType == "VELOCITY")
         {
             return new VelocityTimeFunction(ParseIso8601ToDecimalYear(GetRequiredString(parameters, "reference_epoch")));
         }
 
-        if (timeFunctionType == "step")
+        if (timeFunctionType == "STEP")
         {
             return new StepTimeFunction(ParseIso8601ToDecimalYear(GetRequiredString(parameters, "step_epoch")));
         }
 
-        if (timeFunctionType == "reverse_step")
+        if (timeFunctionType == "REVERSE_STEP")
         {
             return new ReverseStepTimeFunction(ParseIso8601ToDecimalYear(GetRequiredString(parameters, "step_epoch")));
         }
 
-        if (timeFunctionType == "piecewise")
+        if (timeFunctionType == "PIECEWISE")
         {
             string beforeFirst = NormalizeOptionalString(GetRequiredString(parameters, "before_first"));
-            if (beforeFirst != "zero" && beforeFirst != "constant" && beforeFirst != "linear")
+            if (beforeFirst != "ZERO" && beforeFirst != "CONSTANT" && beforeFirst != "LINEAR")
             {
                 throw new FormatException("Unsupported value for before_first.");
             }
 
             string afterLast = NormalizeOptionalString(GetRequiredString(parameters, "after_last"));
-            if (afterLast != "zero" && afterLast != "constant" && afterLast != "linear")
+            if (afterLast != "ZERO" && afterLast != "CONSTANT" && afterLast != "LINEAR")
             {
                 throw new FormatException("Unsupported value for after_last.");
             }
@@ -749,7 +776,7 @@ internal sealed class DefModelMathTransform : MathTransform
             return new PiecewiseTimeFunction(beforeFirst, afterLast, tuples.ToArray());
         }
 
-        if (timeFunctionType == "exponential")
+        if (timeFunctionType == "EXPONENTIAL")
         {
             double referenceEpoch = ParseIso8601ToDecimalYear(GetRequiredString(parameters, "reference_epoch"));
             string endEpochString = GetOptionalString(parameters, "end_epoch");
@@ -789,7 +816,7 @@ internal sealed class DefModelMathTransform : MathTransform
     private static SpatialExtent ParseSpatialExtent(JsonElement extentObject, string context)
     {
         string type = NormalizeOptionalString(GetRequiredString(extentObject, "type"));
-        if (type != "bbox")
+        if (type != "BBOX")
         {
             throw new FormatException(context + " only supports type=bbox.");
         }
@@ -909,7 +936,7 @@ internal sealed class DefModelMathTransform : MathTransform
     {
         return string.IsNullOrWhiteSpace(text)
             ? string.Empty
-            : text.Trim().ToLowerInvariant();
+            : text.Trim().ToUpperInvariant();
     }
 
     private static double ParseIso8601ToDecimalYear(string value)
@@ -964,7 +991,11 @@ internal sealed class DefModelMathTransform : MathTransform
 
     private static int ParseEpochPart(string value, int startIndex, int length)
     {
+#if NETSTANDARD2_0
         if (!int.TryParse(value.Substring(startIndex, length), NumberStyles.None, CultureInfo.InvariantCulture, out int parsed))
+#else
+        if (!int.TryParse(value.AsSpan(startIndex, length), NumberStyles.None, CultureInfo.InvariantCulture, out int parsed))
+#endif
         {
             throw new FormatException("Wrong formatting / invalid date-time for " + value + ".");
         }
@@ -1118,233 +1149,6 @@ internal sealed class DefModelMathTransform : MathTransform
     private static bool IsValidObservationEpoch(double epoch)
     {
         return !double.IsNaN(epoch) && !double.IsInfinity(epoch) && epoch != MissingObservationEpoch;
-    }
-
-    private bool TryForward(
-        double x,
-        double y,
-        double z,
-        double observationEpoch,
-        bool forInverseComputation,
-        out double xOut,
-        out double yOut,
-        out double zOut)
-    {
-        xOut = x;
-        yOut = y;
-        zOut = double.IsNaN(z) ? 0d : z;
-        double xWorking = x;
-        double yWorking = y;
-
-        double epsilon = this.isGeographicCrs ? 1e-10d : 1e-5d;
-        double globalMinX = this.globalExtent.MinX;
-        double globalMaxX = this.globalExtent.MaxX;
-        if (this.isGeographicCrs)
-        {
-            while (xWorking < globalMinX - epsilon)
-            {
-                xWorking += 360d;
-            }
-
-            while (xWorking > globalMaxX + epsilon)
-            {
-                xWorking -= 360d;
-            }
-        }
-
-        double globalExtraMargin = this.isGeographicCrs ? 0.1d : 10000d;
-        if (!BboxCheck(ref xWorking, ref yWorking, forInverseComputation, this.globalExtent, epsilon, globalExtraMargin))
-        {
-            return false;
-        }
-
-        if (observationEpoch < this.timeExtent.First || observationEpoch > this.timeExtent.Last)
-        {
-            return false;
-        }
-
-        double longitudeOffsetDegrees = 0d;
-        double latitudeOffsetDegrees = 0d;
-        double eastingOffset = 0d;
-        double northingOffset = 0d;
-        double verticalOffset = 0d;
-
-        for (int i = 0; i < this.components.Length; i++)
-        {
-            ComponentRuntime component = this.components[i];
-            if (component.Definition.DisplacementType == DisplacementType.None)
-            {
-                continue;
-            }
-
-            double xForGrid = xWorking;
-            double yForGrid = yWorking;
-            if (!BboxCheck(ref xForGrid, ref yForGrid, forInverseComputation, component.Definition.Extent, epsilon, 0d))
-            {
-                continue;
-            }
-
-            xForGrid = Clamp(xForGrid, component.Definition.Extent.MinX, component.Definition.Extent.MaxX);
-            yForGrid = Clamp(yForGrid, component.Definition.Extent.MinY, component.Definition.Extent.MaxY);
-
-            double timeFactor = component.Definition.TimeFunction.Evaluate(observationEpoch);
-            if (timeFactor == 0d)
-            {
-                continue;
-            }
-
-            if (component.Definition.DisplacementType == DisplacementType.Vertical)
-            {
-                if (!TryFindVerticalGrid(component.VerticalGrids, xForGrid, yForGrid, out GeoTiffVGridShiftMathTransform.VerticalGrid verticalGrid))
-                {
-                    continue;
-                }
-
-                if (!TryInterpolateVerticalShift(verticalGrid, xForGrid, yForGrid, out double verticalComponent))
-                {
-                    return false;
-                }
-
-                verticalOffset += timeFactor * verticalComponent;
-                continue;
-            }
-
-            if (!TryFindXyzGrid(component.XyzGrids, xForGrid, yForGrid, out GeoTiffXyzGridShiftMathTransform.XyzGrid xyzGrid))
-            {
-                continue;
-            }
-
-            if (!TryGetInterpolationCell(xyzGrid, xForGrid, yForGrid, out InterpolationCell cell))
-            {
-                continue;
-            }
-
-            if (!TryReadXyzCornerValues(xyzGrid, cell, out XyzCornerValues cornerValues))
-            {
-                return false;
-            }
-
-            if (component.Definition.DisplacementType == DisplacementType.ThreeDimensional)
-            {
-                double zComponent = Bilinear(cornerValues.Z00, cornerValues.Z01, cornerValues.Z10, cornerValues.Z11, cell.W00, cell.W01, cell.W10, cell.W11);
-                verticalOffset += timeFactor * zComponent;
-            }
-
-            if (this.isHorizontalUnitDegree)
-            {
-                double longitudeComponent = Bilinear(cornerValues.X00, cornerValues.X01, cornerValues.X10, cornerValues.X11, cell.W00, cell.W01, cell.W10, cell.W11);
-                double latitudeComponent = Bilinear(cornerValues.Y00, cornerValues.Y01, cornerValues.Y10, cornerValues.Y11, cell.W00, cell.W01, cell.W10, cell.W11);
-                longitudeOffsetDegrees += timeFactor * longitudeComponent;
-                latitudeOffsetDegrees += timeFactor * latitudeComponent;
-                continue;
-            }
-
-            if (component.Definition.InterpolationMethod == InterpolationMethod.Bilinear)
-            {
-                double eastComponent = Bilinear(cornerValues.X00, cornerValues.X01, cornerValues.X10, cornerValues.X11, cell.W00, cell.W01, cell.W10, cell.W11);
-                double northComponent = Bilinear(cornerValues.Y00, cornerValues.Y01, cornerValues.Y10, cornerValues.Y11, cell.W00, cell.W01, cell.W10, cell.W11);
-                eastingOffset += timeFactor * eastComponent;
-                northingOffset += timeFactor * northComponent;
-                continue;
-            }
-
-            if (!TryInterpolateGeocentricBilinear(xyzGrid, cell, cornerValues, yWorking, out double eastGeocentricComponent, out double northGeocentricComponent))
-            {
-                return false;
-            }
-
-            eastingOffset += timeFactor * eastGeocentricComponent;
-            northingOffset += timeFactor * northGeocentricComponent;
-        }
-
-        xOut = xWorking;
-        yOut = yWorking;
-        zOut += verticalOffset;
-
-        if (this.isHorizontalUnitDegree)
-        {
-            xOut += longitudeOffsetDegrees;
-            yOut += latitudeOffsetDegrees;
-            return true;
-        }
-
-        if (this.isAddition && !this.isGeographicCrs)
-        {
-            xOut += eastingOffset;
-            yOut += northingOffset;
-            return true;
-        }
-
-        if (this.isAddition)
-        {
-            double cosPhi = Math.Cos(DegreesToRadians(yWorking));
-            if (Math.Abs(cosPhi) < 1e-16d)
-            {
-                return false;
-            }
-
-            DeltaEastingNorthingToLongLat(cosPhi, eastingOffset, northingOffset, this.semiMajor, this.semiMinor, this.eccentricitySquared, out double dLamRadians, out double dPhiRadians);
-            xOut += RadiansToDegrees(dLamRadians);
-            yOut += RadiansToDegrees(dPhiRadians);
-            return true;
-        }
-
-        double lambdaRadians = DegreesToRadians(xWorking);
-        double phiRadians = DegreesToRadians(yWorking);
-        double sinLambda = Math.Sin(lambdaRadians);
-        double cosLambda = Math.Cos(lambdaRadians);
-        double sinPhi = Math.Sin(phiRadians);
-        double cosPhiForGeocentric = Math.Cos(phiRadians);
-        double dnSinPhi = northingOffset * sinPhi;
-        double deltaX = (-eastingOffset * sinLambda) - (dnSinPhi * cosLambda);
-        double deltaY = (eastingOffset * cosLambda) - (dnSinPhi * sinLambda);
-        double deltaZ = northingOffset * cosPhiForGeocentric;
-
-        double geocentricX = xWorking;
-        double geocentricY = yWorking;
-        double geocentricZ = 0d;
-        this.geocentricForward.Transform(ref geocentricX, ref geocentricY, ref geocentricZ);
-        geocentricX += deltaX;
-        geocentricY += deltaY;
-        geocentricZ += deltaZ;
-        this.geocentricInverse.Transform(ref geocentricX, ref geocentricY, ref geocentricZ);
-        xOut = geocentricX;
-        yOut = geocentricY;
-        return true;
-    }
-
-    private bool TryInverse(
-        double x,
-        double y,
-        double z,
-        double observationEpoch,
-        out double xOut,
-        out double yOut,
-        out double zOut)
-    {
-        xOut = x;
-        yOut = y;
-        zOut = z;
-        for (int i = 0; i < MaxInverseIterations; i++)
-        {
-            if (!this.TryForward(xOut, yOut, zOut, observationEpoch, true, out double xNew, out double yNew, out double zNew))
-            {
-                return false;
-            }
-
-            double dx = xNew - x;
-            double dy = yNew - y;
-            double dz = zNew - z;
-            xOut -= dx;
-            yOut -= dy;
-            zOut -= dz;
-            if (Math.Max(Math.Abs(dx), Math.Abs(dy)) < InverseHorizontalTolerance && Math.Abs(dz) < InverseVerticalTolerance)
-            {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     private static bool BboxCheck(
@@ -1659,7 +1463,7 @@ internal sealed class DefModelMathTransform : MathTransform
         double sinLatitude = Math.Sin(latitudeRadians);
         double cosLatitude = Math.Cos(latitudeRadians);
         eastOffset = (-dX * sinLambda) + (dY * cosLambda);
-        northOffset = ((-dX * cosLambda) - (dY * sinLambda)) * sinLatitude + (dZ * cosLatitude);
+        northOffset = (((-dX * cosLambda) - (dY * sinLambda)) * sinLatitude) + (dZ * cosLatitude);
         return true;
     }
 
@@ -1735,6 +1539,233 @@ internal sealed class DefModelMathTransform : MathTransform
         deltaPhiRadians = northOffset * semiMajor * sqrtX * x / (semiMinor * semiMinor);
     }
 
+    private bool TryForward(
+        double x,
+        double y,
+        double z,
+        double observationEpoch,
+        bool forInverseComputation,
+        out double xOut,
+        out double yOut,
+        out double zOut)
+    {
+        xOut = x;
+        yOut = y;
+        zOut = double.IsNaN(z) ? 0d : z;
+        double xWorking = x;
+        double yWorking = y;
+
+        double epsilon = this.isGeographicCrs ? 1e-10d : 1e-5d;
+        double globalMinX = this.globalExtent.MinX;
+        double globalMaxX = this.globalExtent.MaxX;
+        if (this.isGeographicCrs)
+        {
+            while (xWorking < globalMinX - epsilon)
+            {
+                xWorking += 360d;
+            }
+
+            while (xWorking > globalMaxX + epsilon)
+            {
+                xWorking -= 360d;
+            }
+        }
+
+        double globalExtraMargin = this.isGeographicCrs ? 0.1d : 10000d;
+        if (!BboxCheck(ref xWorking, ref yWorking, forInverseComputation, this.globalExtent, epsilon, globalExtraMargin))
+        {
+            return false;
+        }
+
+        if (observationEpoch < this.timeExtent.First || observationEpoch > this.timeExtent.Last)
+        {
+            return false;
+        }
+
+        double longitudeOffsetDegrees = 0d;
+        double latitudeOffsetDegrees = 0d;
+        double eastingOffset = 0d;
+        double northingOffset = 0d;
+        double verticalOffset = 0d;
+
+        for (int i = 0; i < this.components.Length; i++)
+        {
+            ComponentRuntime component = this.components[i];
+            if (component.Definition.DisplacementType == DisplacementType.None)
+            {
+                continue;
+            }
+
+            double xForGrid = xWorking;
+            double yForGrid = yWorking;
+            if (!BboxCheck(ref xForGrid, ref yForGrid, forInverseComputation, component.Definition.Extent, epsilon, 0d))
+            {
+                continue;
+            }
+
+            xForGrid = Clamp(xForGrid, component.Definition.Extent.MinX, component.Definition.Extent.MaxX);
+            yForGrid = Clamp(yForGrid, component.Definition.Extent.MinY, component.Definition.Extent.MaxY);
+
+            double timeFactor = component.Definition.TimeFunction.Evaluate(observationEpoch);
+            if (timeFactor == 0d)
+            {
+                continue;
+            }
+
+            if (component.Definition.DisplacementType == DisplacementType.Vertical)
+            {
+                if (!TryFindVerticalGrid(component.VerticalGrids, xForGrid, yForGrid, out GeoTiffVGridShiftMathTransform.VerticalGrid verticalGrid))
+                {
+                    continue;
+                }
+
+                if (!TryInterpolateVerticalShift(verticalGrid, xForGrid, yForGrid, out double verticalComponent))
+                {
+                    return false;
+                }
+
+                verticalOffset += timeFactor * verticalComponent;
+                continue;
+            }
+
+            if (!TryFindXyzGrid(component.XyzGrids, xForGrid, yForGrid, out GeoTiffXyzGridShiftMathTransform.XyzGrid xyzGrid))
+            {
+                continue;
+            }
+
+            if (!TryGetInterpolationCell(xyzGrid, xForGrid, yForGrid, out InterpolationCell cell))
+            {
+                continue;
+            }
+
+            if (!TryReadXyzCornerValues(xyzGrid, cell, out XyzCornerValues cornerValues))
+            {
+                return false;
+            }
+
+            if (component.Definition.DisplacementType == DisplacementType.ThreeDimensional)
+            {
+                double zComponent = Bilinear(cornerValues.Z00, cornerValues.Z01, cornerValues.Z10, cornerValues.Z11, cell.W00, cell.W01, cell.W10, cell.W11);
+                verticalOffset += timeFactor * zComponent;
+            }
+
+            if (this.isHorizontalUnitDegree)
+            {
+                double longitudeComponent = Bilinear(cornerValues.X00, cornerValues.X01, cornerValues.X10, cornerValues.X11, cell.W00, cell.W01, cell.W10, cell.W11);
+                double latitudeComponent = Bilinear(cornerValues.Y00, cornerValues.Y01, cornerValues.Y10, cornerValues.Y11, cell.W00, cell.W01, cell.W10, cell.W11);
+                longitudeOffsetDegrees += timeFactor * longitudeComponent;
+                latitudeOffsetDegrees += timeFactor * latitudeComponent;
+                continue;
+            }
+
+            if (component.Definition.InterpolationMethod == InterpolationMethod.Bilinear)
+            {
+                double eastComponent = Bilinear(cornerValues.X00, cornerValues.X01, cornerValues.X10, cornerValues.X11, cell.W00, cell.W01, cell.W10, cell.W11);
+                double northComponent = Bilinear(cornerValues.Y00, cornerValues.Y01, cornerValues.Y10, cornerValues.Y11, cell.W00, cell.W01, cell.W10, cell.W11);
+                eastingOffset += timeFactor * eastComponent;
+                northingOffset += timeFactor * northComponent;
+                continue;
+            }
+
+            if (!TryInterpolateGeocentricBilinear(xyzGrid, cell, cornerValues, yWorking, out double eastGeocentricComponent, out double northGeocentricComponent))
+            {
+                return false;
+            }
+
+            eastingOffset += timeFactor * eastGeocentricComponent;
+            northingOffset += timeFactor * northGeocentricComponent;
+        }
+
+        xOut = xWorking;
+        yOut = yWorking;
+        zOut += verticalOffset;
+
+        if (this.isHorizontalUnitDegree)
+        {
+            xOut += longitudeOffsetDegrees;
+            yOut += latitudeOffsetDegrees;
+            return true;
+        }
+
+        if (this.isAddition && !this.isGeographicCrs)
+        {
+            xOut += eastingOffset;
+            yOut += northingOffset;
+            return true;
+        }
+
+        if (this.isAddition)
+        {
+            double cosPhi = Math.Cos(DegreesToRadians(yWorking));
+            if (Math.Abs(cosPhi) < 1e-16d)
+            {
+                return false;
+            }
+
+            DeltaEastingNorthingToLongLat(cosPhi, eastingOffset, northingOffset, this.semiMajor, this.semiMinor, this.eccentricitySquared, out double dLamRadians, out double dPhiRadians);
+            xOut += RadiansToDegrees(dLamRadians);
+            yOut += RadiansToDegrees(dPhiRadians);
+            return true;
+        }
+
+        double lambdaRadians = DegreesToRadians(xWorking);
+        double phiRadians = DegreesToRadians(yWorking);
+        double sinLambda = Math.Sin(lambdaRadians);
+        double cosLambda = Math.Cos(lambdaRadians);
+        double sinPhi = Math.Sin(phiRadians);
+        double cosPhiForGeocentric = Math.Cos(phiRadians);
+        double dnSinPhi = northingOffset * sinPhi;
+        double deltaX = (-eastingOffset * sinLambda) - (dnSinPhi * cosLambda);
+        double deltaY = (eastingOffset * cosLambda) - (dnSinPhi * sinLambda);
+        double deltaZ = northingOffset * cosPhiForGeocentric;
+
+        double geocentricX = xWorking;
+        double geocentricY = yWorking;
+        double geocentricZ = 0d;
+        this.geocentricForward.Transform(ref geocentricX, ref geocentricY, ref geocentricZ);
+        geocentricX += deltaX;
+        geocentricY += deltaY;
+        geocentricZ += deltaZ;
+        this.geocentricInverse.Transform(ref geocentricX, ref geocentricY, ref geocentricZ);
+        xOut = geocentricX;
+        yOut = geocentricY;
+        return true;
+    }
+
+    private bool TryInverse(
+        double x,
+        double y,
+        double z,
+        double observationEpoch,
+        out double xOut,
+        out double yOut,
+        out double zOut)
+    {
+        xOut = x;
+        yOut = y;
+        zOut = z;
+        for (int i = 0; i < MaxInverseIterations; i++)
+        {
+            if (!this.TryForward(xOut, yOut, zOut, observationEpoch, true, out double xNew, out double yNew, out double zNew))
+            {
+                return false;
+            }
+
+            double dx = xNew - x;
+            double dy = yNew - y;
+            double dz = zNew - z;
+            xOut -= dx;
+            yOut -= dy;
+            zOut -= dz;
+            if (Math.Max(Math.Abs(dx), Math.Abs(dy)) < InverseHorizontalTolerance && Math.Abs(dz) < InverseVerticalTolerance)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     [Serializable]
     private readonly struct SpatialExtent
     {
@@ -1767,68 +1798,6 @@ internal sealed class DefModelMathTransform : MathTransform
         internal double First { get; }
 
         internal double Last { get; }
-    }
-
-    [Serializable]
-    private sealed class ModelDefinition
-    {
-        internal string FileType { get; set; }
-
-        internal string FormatVersion { get; set; }
-
-        internal string SourceCrs { get; set; }
-
-        internal string TargetCrs { get; set; }
-
-        internal string DefinitionCrs { get; set; }
-
-        internal string HorizontalOffsetUnit { get; set; }
-
-        internal string VerticalOffsetUnit { get; set; }
-
-        internal string HorizontalOffsetMethod { get; set; }
-
-        internal SpatialExtent Extent { get; set; }
-
-        internal TimeExtent TimeExtent { get; set; }
-
-        internal ComponentDefinition[] Components { get; set; }
-    }
-
-    [Serializable]
-    private sealed class ComponentDefinition
-    {
-        internal string Description { get; set; }
-
-        internal DisplacementType DisplacementType { get; set; }
-
-        internal InterpolationMethod InterpolationMethod { get; set; }
-
-        internal SpatialExtent Extent { get; set; }
-
-        internal string SpatialModelFileName { get; set; }
-
-        internal ITimeFunction TimeFunction { get; set; }
-    }
-
-    [Serializable]
-    private sealed class ComponentRuntime
-    {
-        internal ComponentRuntime(
-            ComponentDefinition definition,
-            IReadOnlyList<GeoTiffXyzGridShiftMathTransform.XyzGrid> xyzGrids,
-            IReadOnlyList<GeoTiffVGridShiftMathTransform.VerticalGrid> verticalGrids)
-        {
-            this.Definition = definition;
-            this.XyzGrids = xyzGrids ?? [];
-            this.VerticalGrids = verticalGrids ?? [];
-        }
-
-        internal ComponentDefinition Definition { get; }
-
-        internal IReadOnlyList<GeoTiffXyzGridShiftMathTransform.XyzGrid> XyzGrids { get; }
-
-        internal IReadOnlyList<GeoTiffVGridShiftMathTransform.VerticalGrid> VerticalGrids { get; }
     }
 
     [Serializable]
@@ -1935,23 +1904,66 @@ internal sealed class DefModelMathTransform : MathTransform
         internal double Z11 { get; }
     }
 
-    private enum DisplacementType : byte
+    [Serializable]
+    private sealed class ModelDefinition
     {
-        None = 0,
-        Horizontal = 1,
-        Vertical = 2,
-        ThreeDimensional = 3,
+        internal string FileType { get; set; }
+
+        internal string FormatVersion { get; set; }
+
+        internal string SourceCrs { get; set; }
+
+        internal string TargetCrs { get; set; }
+
+        internal string DefinitionCrs { get; set; }
+
+        internal string HorizontalOffsetUnit { get; set; }
+
+        internal string VerticalOffsetUnit { get; set; }
+
+        internal string HorizontalOffsetMethod { get; set; }
+
+        internal SpatialExtent Extent { get; set; }
+
+        internal TimeExtent TimeExtent { get; set; }
+
+        internal ComponentDefinition[] Components { get; set; }
     }
 
-    private enum InterpolationMethod : byte
+    [Serializable]
+    private sealed class ComponentDefinition
     {
-        Bilinear = 0,
-        GeocentricBilinear = 1,
+        internal string Description { get; set; }
+
+        internal DisplacementType DisplacementType { get; set; }
+
+        internal InterpolationMethod InterpolationMethod { get; set; }
+
+        internal SpatialExtent Extent { get; set; }
+
+        internal string SpatialModelFileName { get; set; }
+
+        internal ITimeFunction TimeFunction { get; set; }
     }
 
-    private interface ITimeFunction
+    [Serializable]
+    private sealed class ComponentRuntime
     {
-        double Evaluate(double observationEpoch);
+        internal ComponentRuntime(
+            ComponentDefinition definition,
+            IReadOnlyList<GeoTiffXyzGridShiftMathTransform.XyzGrid> xyzGrids,
+            IReadOnlyList<GeoTiffVGridShiftMathTransform.VerticalGrid> verticalGrids)
+        {
+            this.Definition = definition;
+            this.XyzGrids = xyzGrids ?? [];
+            this.VerticalGrids = verticalGrids ?? [];
+        }
+
+        internal ComponentDefinition Definition { get; }
+
+        internal IReadOnlyList<GeoTiffXyzGridShiftMathTransform.XyzGrid> XyzGrids { get; }
+
+        internal IReadOnlyList<GeoTiffVGridShiftMathTransform.VerticalGrid> VerticalGrids { get; }
     }
 
     [Serializable]
@@ -1965,7 +1977,7 @@ internal sealed class DefModelMathTransform : MathTransform
 
         public double Evaluate(double observationEpoch)
         {
-            double _ = observationEpoch;
+            _ = observationEpoch;
             return 1d;
         }
     }
@@ -2000,20 +2012,6 @@ internal sealed class DefModelMathTransform : MathTransform
     [Serializable]
     private sealed class PiecewiseTimeFunction : ITimeFunction
     {
-        [Serializable]
-        internal readonly struct EpochScaleTuple
-        {
-            internal EpochScaleTuple(double epoch, double scaleFactor)
-            {
-                this.Epoch = epoch;
-                this.ScaleFactor = scaleFactor;
-            }
-
-            internal double Epoch { get; }
-
-            internal double ScaleFactor { get; }
-        }
-
         private readonly string beforeFirst;
         private readonly string afterLast;
         private readonly EpochScaleTuple[] model;
@@ -2035,12 +2033,12 @@ internal sealed class DefModelMathTransform : MathTransform
             double firstEpoch = this.model[0].Epoch;
             if (observationEpoch < firstEpoch)
             {
-                if (this.beforeFirst == "zero")
+                if (this.beforeFirst == "ZERO")
                 {
                     return 0d;
                 }
 
-                if (this.beforeFirst == "constant" || this.model.Length == 1)
+                if (this.beforeFirst == "CONSTANT" || this.model.Length == 1)
                 {
                     return this.model[0].ScaleFactor;
                 }
@@ -2068,12 +2066,12 @@ internal sealed class DefModelMathTransform : MathTransform
                 }
             }
 
-            if (this.afterLast == "zero")
+            if (this.afterLast == "ZERO")
             {
                 return 0d;
             }
 
-            if (this.afterLast == "constant" || this.model.Length == 1)
+            if (this.afterLast == "CONSTANT" || this.model.Length == 1)
             {
                 return this.model[this.model.Length - 1].ScaleFactor;
             }
@@ -2088,6 +2086,20 @@ internal sealed class DefModelMathTransform : MathTransform
             }
 
             return ((previousFactor * (lastEpoch - observationEpoch)) + (lastFactor * (observationEpoch - previousEpoch))) / (lastEpoch - previousEpoch);
+        }
+
+        [Serializable]
+        internal readonly struct EpochScaleTuple
+        {
+            internal EpochScaleTuple(double epoch, double scaleFactor)
+            {
+                this.Epoch = epoch;
+                this.ScaleFactor = scaleFactor;
+            }
+
+            internal double Epoch { get; }
+
+            internal double ScaleFactor { get; }
         }
     }
 

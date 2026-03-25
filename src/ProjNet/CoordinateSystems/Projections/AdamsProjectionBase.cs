@@ -190,6 +190,46 @@ internal abstract class AdamsProjectionBase : MapProjection
         };
     }
 
+    private static void RotateFortyFive(ref double x, ref double y)
+    {
+        double temp = x;
+        x = Rsqrt2 * (x - y);
+        y = Rsqrt2 * (temp + y);
+    }
+
+    private static double EllipticIntegralHalf(double phi)
+    {
+        const double c0 = 2.19174570831038d;
+        double y = phi * (2d / PI);
+        y = (2d * y * y) - 1d;
+        double y2 = 2d * y;
+        double d1 = 0d;
+        double d2 = 0d;
+        foreach (double c in EllipticIntegralCoefficients)
+        {
+            double temp = d1;
+            d1 = (y2 * d1) - d2 + c;
+            d2 = temp;
+        }
+
+        return phi * ((y * d1) - d2 + (0.5d * c0));
+    }
+
+    private static double Clamp(double value, double minimum, double maximum)
+    {
+        if (value < minimum)
+        {
+            return minimum;
+        }
+
+        return value > maximum ? maximum : value;
+    }
+
+    private static bool IsApproximatelyZero(double value)
+    {
+        return Math.Abs(value) <= 1e-12d;
+    }
+
     private void ForwardNormalized(double lambda, double phi, out double x, out double y)
     {
         double a = 0d;
@@ -216,8 +256,8 @@ internal abstract class AdamsProjectionBase : MapProjection
                     double sl = Math.Sin(lambda);
                     double sp = Math.Sin(phi);
                     double cp = Math.Cos(phi);
-                    a = Math.Acos(Clamp((cp * sl - sp) * Rsqrt2, -1d, 1d));
-                    b = Math.Acos(Clamp((cp * sl + sp) * Rsqrt2, -1d, 1d));
+                    a = Math.Acos(Clamp(((cp * sl) - sp) * Rsqrt2, -1d, 1d));
+                    b = Math.Acos(Clamp(((cp * sl) + sp) * Rsqrt2, -1d, 1d));
                     sm = lambda < 0d;
                     sn = phi < 0d;
                 }
@@ -400,31 +440,6 @@ internal abstract class AdamsProjectionBase : MapProjection
                 }
             }
         }
-    }
-
-    private static void RotateFortyFive(ref double x, ref double y)
-    {
-        double temp = x;
-        x = Rsqrt2 * (x - y);
-        y = Rsqrt2 * (temp + y);
-    }
-
-    private static double EllipticIntegralHalf(double phi)
-    {
-        const double c0 = 2.19174570831038d;
-        double y = phi * (2d / PI);
-        y = (2d * y * y) - 1d;
-        double y2 = 2d * y;
-        double d1 = 0d;
-        double d2 = 0d;
-        foreach (double c in EllipticIntegralCoefficients)
-        {
-            double temp = d1;
-            d1 = (y2 * d1) - d2 + c;
-            d2 = temp;
-        }
-
-        return phi * ((y * d1) - d2 + (0.5d * c0));
     }
 
     private bool TryInverseAdamsWs2(double x, double y, out double lambda, out double phi)
@@ -671,20 +686,5 @@ internal abstract class AdamsProjectionBase : MapProjection
             y = 0d;
             return false;
         }
-    }
-
-    private static double Clamp(double value, double minimum, double maximum)
-    {
-        if (value < minimum)
-        {
-            return minimum;
-        }
-
-        return value > maximum ? maximum : value;
-    }
-
-    private static bool IsApproximatelyZero(double value)
-    {
-        return Math.Abs(value) <= 1e-12d;
     }
 }

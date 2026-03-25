@@ -385,7 +385,7 @@ internal sealed class MolodenskyMathTransform : MathTransform
 
     private (double DeltaLam, double DeltaPhi, double DeltaH) CalculateAbridgedDelta(double lam, double phi, double h)
     {
-        double _ = h;
+        _ = h;
         double sinLam = Math.Sin(lam);
         double cosLam = Math.Cos(lam);
         double sinPhi = Math.Sin(phi);

@@ -17,6 +17,11 @@ using Xunit;
 /// </summary>
 public class Proj2ProjParityExhaustiveTheoryTests
 {
+    private static readonly JsonSerializerOptions SerializerOptions = new JsonSerializerOptions
+    {
+        PropertyNameCaseInsensitive = true,
+    };
+
     /// <summary>
     /// Validates a direct projected pair against exhaustive PROJ reference output.
     /// </summary>
@@ -24,7 +29,7 @@ public class Proj2ProjParityExhaustiveTheoryTests
     [Theory]
     [Trait("Category", "ExhaustiveValidation")]
     [MemberData(nameof(GetParityCases))]
-    public void CreateFromCoordinateSystemsWithDirectProjectedPairMatchesExhaustiveProjReference(Proj2ProjParityTheoryTests.Proj2ProjCase testCase)
+    public void CreateFromCoordinateSystemsWithDirectProjectedPairMatchesExhaustiveProjReference(Proj2ProjCase testCase)
     {
         Assert.NotNull(testCase);
 
@@ -44,7 +49,7 @@ public class Proj2ProjParityExhaustiveTheoryTests
         target.AuthorityCode = testCase.TargetSrid;
 
         var transformation = transformationFactory.CreateFromCoordinateSystems(source, target);
-        double[] output = transformation.MathTransform.Transform(new[] { testCase.InputX, testCase.InputY });
+        double[] output = transformation.MathTransform.Transform([testCase.InputX, testCase.InputY]);
         double deltaX = Math.Abs(output[0] - testCase.ExpectedX);
         double deltaY = Math.Abs(output[1] - testCase.ExpectedY);
 
@@ -64,12 +69,7 @@ public class Proj2ProjParityExhaustiveTheoryTests
         Assert.True(File.Exists(fixturePath), "Fixture file not found: " + fixturePath);
 
         string json = File.ReadAllText(fixturePath);
-        var fixture = JsonSerializer.Deserialize<Proj2ProjParityTheoryTests.Proj2ProjFixture>(
-            json,
-            new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true,
-            });
+        var fixture = JsonSerializer.Deserialize<Proj2ProjFixture>(json, SerializerOptions);
         Assert.NotNull(fixture);
         Assert.NotNull(fixture.Cases);
         Assert.NotEmpty(fixture.Cases);

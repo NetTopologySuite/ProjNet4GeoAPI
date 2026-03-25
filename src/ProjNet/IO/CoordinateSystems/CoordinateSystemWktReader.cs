@@ -20,10 +20,7 @@ using ProjNet.CoordinateSystems;
 public static partial class CoordinateSystemWktReader
 {
     private static readonly string[] CompoundCoordinateSystemDelimiters = { ",", "]" };
-#if NET8_0_OR_GREATER
-    [GeneratedRegex(@"\bID\s*\[(?=\s*"")", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
-    private static partial Regex Wkt2IdRegex();
-#else
+#if !NET8_0_OR_GREATER
     private static readonly Regex Wkt2IdRegex = new(@"\bID\s*\[(?=\s*"")", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
 #endif
 
@@ -33,16 +30,7 @@ public static partial class CoordinateSystemWktReader
     /// <param name="wkt">String containing WKT.</param>
     /// <returns>Object representation of the WKT.</returns>
     /// <exception cref="System.ArgumentException">If a token is not recognized.</exception>
-    public static IInfo Parse(string wkt)
-    {
-        if (string.IsNullOrWhiteSpace(wkt))
-        {
-            throw new ArgumentNullException(nameof(wkt));
-        }
-
-        string normalizedWkt = NormalizeWkt(wkt);
-        return ParseNormalizedWkt(normalizedWkt);
-    }
+    public static IInfo Parse(string wkt) => Parse(wkt.AsSpan());
 
     /// <summary>
     /// Reads and parses a WKT-formatted projection text from a character span.
@@ -61,33 +49,10 @@ public static partial class CoordinateSystemWktReader
         return ParseNormalizedWkt(normalizedWkt);
     }
 
-    private static IInfo ParseNormalizedWkt(string normalizedWkt)
-    {
-        var tokenizer = new WktTokenizer(normalizedWkt);
-        tokenizer.NextToken();
-        string objectName = tokenizer.GetStringValue();
-        switch (objectName)
-        {
-            case "UNIT":
-                return ReadUnit(tokenizer);
-            case "SPHEROID":
-                return ReadEllipsoid(tokenizer);
-            case "DATUM":
-                return ReadHorizontalDatum(tokenizer);
-            case "PRIMEM":
-                return ReadPrimeMeridian(tokenizer);
-            case "VERT_CS":
-            case "GEOGCS":
-            case "PROJCS":
-            case "COMPD_CS":
-            case "GEOCCS":
-            case "FITTED_CS":
-            case "LOCAL_CS":
-                return ReadCoordinateSystem(normalizedWkt, tokenizer);
-            default:
-                throw new ArgumentException($"'{objectName}' is not recognized.");
-        }
-    }
+#if NET8_0_OR_GREATER
+    [GeneratedRegex(@"\bID\s*\[(?=\s*"")", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase)]
+    private static partial Regex Wkt2IdRegex();
+#endif
 
     private static bool IsWhitespaceOnly(ReadOnlySpan<char> value)
     {
@@ -117,6 +82,34 @@ public static partial class CoordinateSystemWktReader
         normalized = StringCompatibility.ReplaceOrdinal(normalized, "BASEGEOGCRS[", "GEOGCS[");
         normalized = StringCompatibility.ReplaceOrdinal(normalized, "PROJECTEDCRS[", "PROJCS[");
         return normalized;
+    }
+
+    private static IInfo ParseNormalizedWkt(string normalizedWkt)
+    {
+        var tokenizer = new WktTokenizer(normalizedWkt);
+        tokenizer.NextToken();
+        string objectName = tokenizer.GetStringValue();
+        switch (objectName)
+        {
+            case "UNIT":
+                return ReadUnit(tokenizer);
+            case "SPHEROID":
+                return ReadEllipsoid(tokenizer);
+            case "DATUM":
+                return ReadHorizontalDatum(tokenizer);
+            case "PRIMEM":
+                return ReadPrimeMeridian(tokenizer);
+            case "VERT_CS":
+            case "GEOGCS":
+            case "PROJCS":
+            case "COMPD_CS":
+            case "GEOCCS":
+            case "FITTED_CS":
+            case "LOCAL_CS":
+                return ReadCoordinateSystem(normalizedWkt, tokenizer);
+            default:
+                throw new ArgumentException($"'{objectName}' is not recognized.");
+        }
     }
 
     /// <summary>
@@ -551,7 +544,6 @@ public static partial class CoordinateSystemWktReader
     private static GeocentricCoordinateSystem ReadGeocentricCoordinateSystem(WktTokenizer tokenizer)
     {
         // GEOCCS["<name>", <datum>, <prime meridian>, <linear unit> {,<axis>, <axis>, <axis>} {,<authority>}]
-
         var bracket = tokenizer.ReadOpener();
         string name = tokenizer.ReadDoubleQuotedWord();
         tokenizer.ReadToken(",");
@@ -832,4 +824,3 @@ public static partial class CoordinateSystemWktReader
         return fittedCS;
     }
 }
-

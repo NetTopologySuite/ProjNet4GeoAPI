@@ -1010,7 +1010,7 @@ internal static class ProjPipelineMathTransformFactory
             }
 
             string body = token.Substring(1);
-#if NETSTANDARD2_1_OR_GREATER
+#if NET8_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
             int index = body.IndexOf('=', StringComparison.Ordinal);
 #else
             int index = body.IndexOf('=');

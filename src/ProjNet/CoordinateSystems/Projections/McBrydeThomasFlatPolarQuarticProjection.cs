@@ -68,7 +68,9 @@ internal class McBrydeThomasFlatPolarQuarticProjection : MapProjection
         double c = C * Math.Sin(phi);
         for (int i = Iterations; i > 0; i--)
         {
-            double delta = ((Math.Sin(0.5d * phi) + Math.Sin(phi) - c) / ((0.5d * Math.Cos(0.5d * phi)) + Math.Cos(phi)));
+            double deltaNumerator = (Math.Sin(0.5d * phi) + Math.Sin(phi)) - c;
+            double deltaDenominator = (0.5d * Math.Cos(0.5d * phi)) + Math.Cos(phi);
+            double delta = deltaNumerator / deltaDenominator;
             phi -= delta;
             if (Math.Abs(delta) < IterationTolerance)
             {

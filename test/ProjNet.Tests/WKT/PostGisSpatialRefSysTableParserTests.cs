@@ -9,8 +9,8 @@ using System.Data;
 using System.IO;
 using Newtonsoft.Json.Linq;
 using Npgsql;
-using Xunit;
 using ProjNet.CoordinateSystems;
+using Xunit;
 
 /// <summary>
 /// Represents the documented type.
@@ -116,7 +116,7 @@ public class PostGisSpatialRefSysTableParserTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]// , Ignore("Only run this if you want a new SRID.csv file")]
+    [Xunit.Fact] // Ignore("Only run this if you want a new SRID.csv file")
     public void TestCreateSridCsv()
     {
         if (string.IsNullOrWhiteSpace(ConnectionString))

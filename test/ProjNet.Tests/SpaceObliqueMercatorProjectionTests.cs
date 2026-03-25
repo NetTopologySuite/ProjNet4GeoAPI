@@ -33,6 +33,7 @@ public class SpaceObliqueMercatorProjectionTests
     [InlineData("lsat")]
     public void SupportsSpaceObliqueMercatorAliasesFromWkt(string projectionName)
     {
+        ArgumentNullException.ThrowIfNull(projectionName);
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildAliasWkt(projectionName));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(2d, 1d));
@@ -146,10 +147,10 @@ public class SpaceObliqueMercatorProjectionTests
 
     private static string BuildAliasWkt(string projectionName)
     {
-        return projectionName.ToLowerInvariant() switch
+        return projectionName.ToUpperInvariant() switch
         {
-            "misrsom" => BuildProjectedWkt(projectionName, Grs80, ",PARAMETER[\"path\",1]"),
-            "lsat" => BuildProjectedWkt(projectionName, Grs80, ",PARAMETER[\"lsat\",1],PARAMETER[\"path\",2]"),
+            "MISRSOM" => BuildProjectedWkt(projectionName, Grs80, ",PARAMETER[\"path\",1]"),
+            "LSAT" => BuildProjectedWkt(projectionName, Grs80, ",PARAMETER[\"lsat\",1],PARAMETER[\"path\",2]"),
             _ => BuildProjectedWkt(projectionName, Grs80, ",PARAMETER[\"inc_angle\",98.30382],PARAMETER[\"ps_rev\",0.06866666666666667],PARAMETER[\"asc_lon\",127.7605356226]"),
         };
     }

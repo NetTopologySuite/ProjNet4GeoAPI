@@ -6,8 +6,16 @@ namespace ProjNet;
 using System;
 using System.Runtime.CompilerServices;
 
+/// <summary>
+/// Provides lightweight argument validation helpers shared across targets.
+/// </summary>
 internal static class ArgumentGuard
 {
+    /// <summary>
+    /// Throws an <see cref="ArgumentNullException"/> when <paramref name="value"/> is <see langword="null"/>.
+    /// </summary>
+    /// <param name="value">Value to validate.</param>
+    /// <param name="paramName">Parameter name for exception reporting.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static void ThrowIfNull(object value, string paramName)
     {

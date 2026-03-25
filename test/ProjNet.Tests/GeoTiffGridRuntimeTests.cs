@@ -122,6 +122,29 @@ public class GeoTiffGridRuntimeTests
         Assert.Same(pool.RentedArrays[0], pool.ReturnedArrays[0]);
     }
 
+    private static string FindGridPath(string fileName)
+    {
+        string direct = Path.Combine(AppContext.BaseDirectory, "Fixtures", "grids", fileName);
+        if (File.Exists(direct))
+        {
+            return direct;
+        }
+
+        var current = new DirectoryInfo(AppContext.BaseDirectory);
+        while (current is not null)
+        {
+            string candidate = Path.Combine(current.FullName, "test", "ProjNet.Tests", "Fixtures", "grids", fileName);
+            if (File.Exists(candidate))
+            {
+                return candidate;
+            }
+
+            current = current.Parent;
+        }
+
+        throw new FileNotFoundException("Could not locate local test grid fixture under test\\ProjNet.Tests\\Fixtures\\grids.", fileName);
+    }
+
     private class TrackingDoubleArrayPool : ArrayPool<double>
     {
         private readonly ArrayPool<double> inner = ArrayPool<double>.Shared;
@@ -158,28 +181,5 @@ public class GeoTiffGridRuntimeTests
 
             return base.Rent(minimumLength);
         }
-    }
-
-    private static string FindGridPath(string fileName)
-    {
-        string direct = Path.Combine(AppContext.BaseDirectory, "Fixtures", "grids", fileName);
-        if (File.Exists(direct))
-        {
-            return direct;
-        }
-
-        var current = new DirectoryInfo(AppContext.BaseDirectory);
-        while (current is not null)
-        {
-            string candidate = Path.Combine(current.FullName, "test", "ProjNet.Tests", "Fixtures", "grids", fileName);
-            if (File.Exists(candidate))
-            {
-                return candidate;
-            }
-
-            current = current.Parent;
-        }
-
-        throw new FileNotFoundException("Could not locate local test grid fixture under test\\ProjNet.Tests\\Fixtures\\grids.", fileName);
     }
 }

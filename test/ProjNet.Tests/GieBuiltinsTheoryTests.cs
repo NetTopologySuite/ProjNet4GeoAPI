@@ -1096,7 +1096,7 @@ public class GieBuiltinsTheoryTests
         }
 
         string token = raw.Trim();
-        bool radiansSuffix = token.EndsWith("r", StringComparison.OrdinalIgnoreCase);
+        bool radiansSuffix = token.Length > 0 && (token[^1] == 'r' || token[^1] == 'R');
         if (radiansSuffix)
         {
             token = token[..^1];
@@ -1129,10 +1129,10 @@ public class GieBuiltinsTheoryTests
             return orientationCode == 0d || orientationCode == 1d;
         }
 
-        orientationCode = normalized.ToLowerInvariant() switch
+        orientationCode = normalized.ToUpperInvariant() switch
         {
-            "vertical" => 0d,
-            "horizontal" => 1d,
+            "VERTICAL" => 0d,
+            "HORIZONTAL" => 1d,
             _ => double.NaN,
         };
 
@@ -1153,10 +1153,10 @@ public class GieBuiltinsTheoryTests
             return orientCode == 0d || orientCode == 1d;
         }
 
-        orientCode = normalized.ToLowerInvariant() switch
+        orientCode = normalized.ToUpperInvariant() switch
         {
-            "isea" => 0d,
-            "pole" => 1d,
+            "ISEA" => 0d,
+            "POLE" => 1d,
             _ => double.NaN,
         };
 
@@ -1177,12 +1177,12 @@ public class GieBuiltinsTheoryTests
             return modeCode >= 0d && modeCode <= 3d;
         }
 
-        modeCode = normalized.ToLowerInvariant() switch
+        modeCode = normalized.ToUpperInvariant() switch
         {
-            "plane" => 0d,
-            "di" => 1d,
-            "dd" => 2d,
-            "hex" => 3d,
+            "PLANE" => 0d,
+            "DI" => 1d,
+            "DD" => 2d,
+            "HEX" => 3d,
             _ => double.NaN,
         };
 
@@ -1203,14 +1203,14 @@ public class GieBuiltinsTheoryTests
             return true;
         }
 
-        shapeCode = normalized.ToLowerInvariant() switch
+        shapeCode = normalized.ToUpperInvariant() switch
         {
-            "square" => 0d,
-            "diamond" => 1d,
-            "nhemisphere" => 2d,
-            "shemisphere" => 3d,
-            "horizontal" => 4d,
-            "vertical" => 5d,
+            "SQUARE" => 0d,
+            "DIAMOND" => 1d,
+            "NHEMISPHERE" => 2d,
+            "SHEMISPHERE" => 3d,
+            "HORIZONTAL" => 4d,
+            "VERTICAL" => 5d,
             _ => double.NaN,
         };
 
