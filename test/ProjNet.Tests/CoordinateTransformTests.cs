@@ -343,7 +343,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
                              {
                                  new ProjectionParameter("latitude_of_origin", 49),
                                  new ProjectionParameter("central_meridian", -2),
-                                 new ProjectionParameter("scale_factor", 0.9996012717 /* 0.9996*/),
+                                  new ProjectionParameter("scale_factor", 0.9996012717), // 0.9996
                                  new ProjectionParameter("false_easting", 400000),
                                  new ProjectionParameter("false_northing", -100000),
                              };
@@ -369,8 +369,8 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     [Xunit.Fact]
     public void TestLambertConicConformal2SPProjection()
     {
-        var ellipsoid = /*Ellipsoid.Clarke1866;*/
-            this.CoordinateSystemFactory.CreateFlattenedSphere("Clarke 1866", 20925832.16, 294.97470, LinearUnit.USSurveyFoot);
+        // var ellipsoid = Ellipsoid.Clarke1866;
+        var ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Clarke 1866", 20925832.16, 294.97470, LinearUnit.USSurveyFoot);
 
         var datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Clarke 1866", DatumType.HD_Geocentric, ellipsoid, null);
         var gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
@@ -977,18 +977,16 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             0.3,
             1.0E-5);
 
-        /*
-        var ct = CoordinateTransformationFactory.CreateFromCoordinateSystems(csSource, csTarget);
-        var pgeo = new[] {13.408055555556, 52.518611111111};
-        var pcs = ct.MathTransform.Transform(pgeo);
-
-        //Evaluated using DotSpatial.Projections
-        var pcsExpected = new[] {25244.540, 21300.969};
-
-        Assert.True(ToleranceLessThan(pcsExpected, pcs, 0.3), TransformationError("CassiniSoldner", pcsExpected, pcs));
-        var pgeo2 = ct.MathTransform.Inverse().Transform(pcs);
-        Assert.True(ToleranceLessThan(pgeo, pgeo2, 1.0E-5), TransformationError("CassiniSoldner", pgeo, pgeo2));
-         */
+        // var ct = CoordinateTransformationFactory.CreateFromCoordinateSystems(csSource, csTarget);
+        // var pgeo = new[] {13.408055555556, 52.518611111111};
+        // var pcs = ct.MathTransform.Transform(pgeo);
+        //
+        // Evaluated using DotSpatial.Projections
+        // var pcsExpected = new[] {25244.540, 21300.969};
+        //
+        // Assert.True(ToleranceLessThan(pcsExpected, pcs, 0.3), TransformationError("CassiniSoldner", pcsExpected, pcs));
+        // var pgeo2 = ct.MathTransform.Inverse().Transform(pcs);
+        // Assert.True(ToleranceLessThan(pgeo, pgeo2, 1.0E-5), TransformationError("CassiniSoldner", pgeo, pgeo2));
     }
 
     /// <summary>

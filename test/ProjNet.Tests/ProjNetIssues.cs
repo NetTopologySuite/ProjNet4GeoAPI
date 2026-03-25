@@ -96,7 +96,7 @@ public class ProjNetIssues : CoordinateTransformTestsBase
         //                  "DATUM[\"Popular Visualisation Datum\"," +
         //                          "SPHEROID[\"Popular Visualisation Sphere\", 6378137, 298.257223563, " +
         //                          "AUTHORITY[\"EPSG\", \"7030\"]]," +
-        // /*"TOWGS84[0, 0, 0, 0, 0, 0, 0], */"AUTHORITY[\"EPSG\", \"6055\"]], " +
+        // "TOWGS84[0, 0, 0, 0, 0, 0, 0], " + "AUTHORITY[\"EPSG\", \"6055\"]], " +
         //                  "PRIMEM[\"Greenwich\", 0, AUTHORITY[\"EPSG\", \"8901\"]]," +
         //                  "UNIT[\"degree\", 0.0174532925199433, AUTHORITY[\"EPSG\", \"9102\"]]," +
         //                  "AXIS[\"E\", EAST]," +

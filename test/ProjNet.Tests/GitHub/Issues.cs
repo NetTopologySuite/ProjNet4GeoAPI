@@ -141,11 +141,9 @@ public class Issues
         var pt1a = ct.MathTransform.Transform(ptI[0], ptI[1]);
         Assert.InRange(pt1a.X, -82.0479097 - 0.01, -82.0479097 + 0.01);
         Assert.InRange(pt1a.Y, 48.4185597 - 0.01, 48.4185597 + 0.01);
-        /*
-        var pt1b = ct.MathTransform.Inverse().Transform(pt1a);
-        Assert.InRange(pt1b[0], 3523562.711189 - 0.01, 3523562.711189 + 0.01);
-        Assert.InRange(pt1b[1], 6246615.391161 - 0.01, 6246615.391161 + 0.01);
-         */
+        // var pt1b = ct.MathTransform.Inverse().Transform(pt1a);
+        // Assert.InRange(pt1b[0], 3523562.711189 - 0.01, 3523562.711189 + 0.01);
+        // Assert.InRange(pt1b[1], 6246615.391161 - 0.01, 6246615.391161 + 0.01);
     }
 
     /// <summary>
@@ -154,21 +152,18 @@ public class Issues
     [Xunit.Fact(Skip = "Requires DotSpatial.Projections, Result same as in TestConvertWgs84ToEPSG26910")]
     public void TestConvertWgs84ToEPSG26910DS()
     {
-        /*
-        var epsg26910 = DotSpatial.Projections.ProjectionInfo.FromEpsgCode(26910);
-        var epsg_4326 = DotSpatial.Projections.ProjectionInfo.FromEpsgCode(4326);
-
-        var ptI = new double[] { 3523562.711189, 6246615.391161 };
-
-        DotSpatial.Projections.Reproject.ReprojectPoints(ptI, null, epsg26910, epsg_4326, 0, 1);
-        Assert.InRange(ptI[0], -82.0479097 - 0.01, -82.0479097 + 0.01);
-        Assert.InRange(ptI[1], 48.4185597 - 0.01, 48.4185597 + 0.01);
-
-
-        DotSpatial.Projections.Reproject.ReprojectPoints(ptI, null, epsg_4326, epsg26910, 0, 1);
-        Assert.InRange(ptI[0], 3523562.711189 - 0.01, 3523562.711189 + 0.01);
-        Assert.InRange(ptI[1], 6246615.391161 - 0.01, 6246615.391161 + 0.01);
-         */
+        // var epsg26910 = DotSpatial.Projections.ProjectionInfo.FromEpsgCode(26910);
+        // var epsg_4326 = DotSpatial.Projections.ProjectionInfo.FromEpsgCode(4326);
+        //
+        // var ptI = new double[] { 3523562.711189, 6246615.391161 };
+        //
+        // DotSpatial.Projections.Reproject.ReprojectPoints(ptI, null, epsg26910, epsg_4326, 0, 1);
+        // Assert.InRange(ptI[0], -82.0479097 - 0.01, -82.0479097 + 0.01);
+        // Assert.InRange(ptI[1], 48.4185597 - 0.01, 48.4185597 + 0.01);
+        //
+        // DotSpatial.Projections.Reproject.ReprojectPoints(ptI, null, epsg_4326, epsg26910, 0, 1);
+        // Assert.InRange(ptI[0], 3523562.711189 - 0.01, 3523562.711189 + 0.01);
+        // Assert.InRange(ptI[1], 6246615.391161 - 0.01, 6246615.391161 + 0.01);
     }
 
     /// <summary>
