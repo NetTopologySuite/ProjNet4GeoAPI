@@ -12,9 +12,9 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Validates specialty batch C specialty projections.
+/// Validates conic and equal-area miscellaneous projections.
 /// </summary>
-public class SpecialtyProjectionBatchCTests
+public class ConicAndEqualAreaMiscProjectionTests
 {
     private const string Sphere6390000 = "SPHEROID[\"Sphere\",6390000,0]";
     private const string Sphere6400000 = "SPHEROID[\"Sphere\",6400000,0]";
@@ -24,7 +24,7 @@ public class SpecialtyProjectionBatchCTests
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
     /// <summary>
-    /// Verifies aliases resolve from WKT for batch C projections.
+    /// Verifies aliases resolve from WKT for conic and equal-area miscellaneous projections.
     /// </summary>
     /// <param name="projectionName">Projection alias.</param>
     [Theory]
@@ -48,7 +48,7 @@ public class SpecialtyProjectionBatchCTests
     [InlineData("Rectangular_Polyconic")]
     [InlineData("tpeqd")]
     [InlineData("Two_Point_Equidistant")]
-    public void SupportsBatchCAliasesFromWkt(string projectionName)
+    public void SupportsConicAndEqualAreaMiscAliasesFromWkt(string projectionName)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildAliasWkt(projectionName));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
@@ -61,7 +61,7 @@ public class SpecialtyProjectionBatchCTests
     }
 
     /// <summary>
-    /// Verifies PROJ builtins forward vectors for batch C projections.
+    /// Verifies PROJ builtins forward vectors for conic and equal-area miscellaneous projections.
     /// </summary>
     /// <param name="projectionName">Projection code.</param>
     /// <param name="longitude">Input longitude degrees.</param>
@@ -91,7 +91,7 @@ public class SpecialtyProjectionBatchCTests
     }
 
     /// <summary>
-    /// Verifies PROJ builtins inverse vectors for inverse-capable batch C projections.
+    /// Verifies PROJ builtins inverse vectors for inverse-capable conic and equal-area miscellaneous projections.
     /// </summary>
     /// <param name="projectionName">Projection code.</param>
     /// <param name="x">Input x meters.</param>
@@ -126,7 +126,7 @@ public class SpecialtyProjectionBatchCTests
     }
 
     /// <summary>
-    /// Verifies roundtrip stability for inverse-capable batch C projections.
+    /// Verifies roundtrip stability for inverse-capable conic and equal-area miscellaneous projections.
     /// </summary>
     /// <param name="projectionName">Projection code.</param>
     /// <param name="longitude">Input longitude degrees.</param>
@@ -141,7 +141,7 @@ public class SpecialtyProjectionBatchCTests
     [InlineData("oea", 2d, 1d)]
     [InlineData("tpeqd", 2d, 1d)]
     [InlineData("ccon", 24d, 55d)]
-    public void SupportsBatchCRoundtrip(string projectionName, double longitude, double latitude)
+    public void SupportsConicAndEqualAreaMiscRoundtrip(string projectionName, double longitude, double latitude)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildCanonicalWkt(projectionName));
         var geographic = projected.GeographicCoordinateSystem;
