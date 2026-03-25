@@ -168,19 +168,20 @@ public abstract class MathTransform
             throw new ArgumentNullException(nameof(point));
         }
 
-        int resultDimensions = this.GetResultDimensions(point.Length);
+        int pointLength = point.Length;
+        int resultDimensions = this.GetResultDimensions(pointLength);
         if (resultDimensions <= 4)
         {
             Span<double> scratch = stackalloc double[4];
             Span<double> scratchResult = scratch.Slice(0, resultDimensions);
-            this.TransformPoint(point, scratchResult, resultDimensions);
+            this.TransformPoint(point, pointLength, scratchResult, resultDimensions);
             var transformedSmall = new double[resultDimensions];
             scratchResult.CopyTo(transformedSmall);
             return transformedSmall;
         }
 
         var transformed = new double[resultDimensions];
-        this.TransformPoint(point, transformed, resultDimensions);
+        this.TransformPoint(point, pointLength, transformed, resultDimensions);
         return transformed;
     }
 
@@ -195,12 +196,13 @@ public abstract class MathTransform
     /// </exception>
     public void Transform(ReadOnlySpan<double> point, Span<double> result)
     {
-        if (point.Length < 2)
+        int pointLength = point.Length;
+        if (pointLength < 2)
         {
             throw new ArgumentException("At least two ordinate values are required.", nameof(point));
         }
 
-        int resultDimensions = this.GetResultDimensions(point.Length);
+        int resultDimensions = this.GetResultDimensions(pointLength);
         if (result.Length < resultDimensions)
         {
             throw new ArgumentException(
@@ -208,7 +210,7 @@ public abstract class MathTransform
                 nameof(result));
         }
 
-        this.TransformPoint(point, result, resultDimensions);
+        this.TransformPoint(point, pointLength, result, resultDimensions);
     }
 
     /// <summary>
@@ -235,12 +237,17 @@ public abstract class MathTransform
             throw new ArgumentNullException(nameof(points));
         }
 
+        int minimumDimensions = this.DimTarget == 2 ? 2 : 3;
         var result = new List<double[]>(points.Count);
-        foreach (double[] point in points)
+        for (int pointIndex = 0; pointIndex < points.Count; pointIndex++)
         {
-            int resultDimensions = this.GetResultDimensions(point.Length);
+            double[] point = points[pointIndex];
+            int pointLength = point.Length;
+            int resultDimensions = pointLength <= 3
+                ? minimumDimensions
+                : Math.Max(minimumDimensions, pointLength);
             var transformed = new double[resultDimensions];
-            this.TransformPoint(point, transformed, resultDimensions);
+            this.TransformPoint(point, pointLength, transformed, resultDimensions);
             result.Add(transformed);
         }
 
@@ -251,16 +258,17 @@ public abstract class MathTransform
     /// Transforms a single source coordinate into an already-sized destination span.
     /// </summary>
     /// <param name="point">Source ordinates.</param>
+    /// <param name="pointLength">The number of source ordinates available in <paramref name="point"/>.</param>
     /// <param name="result">Destination ordinates.</param>
     /// <param name="resultDimensions">The number of result ordinates to write.</param>
-    private void TransformPoint(ReadOnlySpan<double> point, Span<double> result, int resultDimensions)
+    private void TransformPoint(ReadOnlySpan<double> point, int pointLength, Span<double> result, int resultDimensions)
     {
         double x = point[0];
         double y = point[1];
-        double z = point.Length < 3 ? 0 : point[2];
-        double t = point.Length < 4 ? 0 : point[3];
+        double z = pointLength >= 3 ? point[2] : 0;
+        double t = pointLength >= 4 ? point[3] : 0;
 
-        if (point.Length >= 4)
+        if (pointLength >= 4)
         {
             this.Transform(ref x, ref y, ref z, ref t);
         }
@@ -279,9 +287,9 @@ public abstract class MathTransform
         if (resultDimensions >= 4)
         {
             result[3] = t;
-            for (int i = 4; i < resultDimensions; i++)
+            if (resultDimensions > 4)
             {
-                result[i] = point[i];
+                point.Slice(4, resultDimensions - 4).CopyTo(result.Slice(4));
             }
         }
     }
