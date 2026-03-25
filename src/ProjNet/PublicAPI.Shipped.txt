@@ -611,7 +611,9 @@ namespace ProjNet.CoordinateSystems.Transformations
         public abstract string XML { get; }
         public virtual double[] Derivative(double[] point) { }
         public virtual System.Collections.Generic.List<double> GetCodomainConvexHull(System.Collections.Generic.List<double> points) { }
+        public virtual System.Collections.Generic.List<double> GetCodomainConvexHull(System.ReadOnlySpan<double> points) { }
         public virtual ProjNet.CoordinateSystems.Transformations.DomainFlags GetDomainFlags(System.Collections.Generic.List<double> points) { }
+        public virtual ProjNet.CoordinateSystems.Transformations.DomainFlags GetDomainFlags(System.ReadOnlySpan<double> points) { }
         public virtual bool Identity() { }
         public abstract ProjNet.CoordinateSystems.Transformations.MathTransform Inverse();
         public abstract void Invert();

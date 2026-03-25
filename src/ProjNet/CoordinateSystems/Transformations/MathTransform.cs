@@ -107,6 +107,16 @@ public abstract class MathTransform
     }
 
     /// <summary>
+    /// Gets transformed convex hull.
+    /// </summary>
+    /// <param name="points">Packed ordinate values representing the source convex hull.</param>
+    /// <returns>Packed ordinate values representing the transformed convex hull in the output space.</returns>
+    public virtual List<double> GetCodomainConvexHull(ReadOnlySpan<double> points)
+    {
+        return this.GetCodomainConvexHull(CreatePointList(points));
+    }
+
+    /// <summary>
     /// Gets flags classifying domain points within a convex hull.
     /// </summary>
     /// <remarks>
@@ -122,6 +132,16 @@ public abstract class MathTransform
     public virtual DomainFlags GetDomainFlags(List<double> points)
     {
         throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Gets flags classifying domain points within a convex hull.
+    /// </summary>
+    /// <param name="points">Packed ordinate values representing the source convex hull.</param>
+    /// <returns>Combined <see cref="DomainFlags"/> for all points inside the source convex hull.</returns>
+    public virtual DomainFlags GetDomainFlags(ReadOnlySpan<double> points)
+    {
+        return this.GetDomainFlags(CreatePointList(points));
     }
 
     /// <summary>
@@ -711,5 +731,21 @@ public abstract class MathTransform
         {
             vals[i] = (vals[i] + addend) * multiplier;
         }
+    }
+
+    private static List<double> CreatePointList(ReadOnlySpan<double> points)
+    {
+        if (points.IsEmpty)
+        {
+            return new List<double>();
+        }
+
+        var list = new List<double>(points.Length);
+        for (int i = 0; i < points.Length; i++)
+        {
+            list.Add(points[i]);
+        }
+
+        return list;
     }
 }
