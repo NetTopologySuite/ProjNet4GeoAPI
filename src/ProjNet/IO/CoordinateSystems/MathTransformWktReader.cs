@@ -8,7 +8,6 @@ namespace ProjNet.IO.CoordinateSystems;
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 
@@ -30,8 +29,7 @@ public static class MathTransformWktReader
             throw new ArgumentNullException(nameof(wkt));
         }
 
-        using TextReader reader = new StringReader(wkt);
-        var tokenizer = new WktStreamTokenizer(reader);
+        var tokenizer = new WktTokenizer(wkt);
         tokenizer.NextToken();
         string objectName = tokenizer.GetStringValue();
         switch (objectName)
@@ -46,9 +44,9 @@ public static class MathTransformWktReader
     /// <summary>
     /// Reads a math transform from the current position of the specified tokenizer.
     /// </summary>
-    /// <param name="tokenizer">The WKT stream tokenizer positioned at or before a <c>PARAM_MT</c> token.</param>
+    /// <param name="tokenizer">The tokenizer positioned at or before a <c>PARAM_MT</c> token.</param>
     /// <returns>The parsed <see cref="MathTransform"/>.</returns>
-    internal static MathTransform ReadMathTransform(WktStreamTokenizer tokenizer)
+    internal static MathTransform ReadMathTransform(WktTokenizer tokenizer)
     {
         if (tokenizer.GetStringValue() != "PARAM_MT")
         {
@@ -68,7 +66,7 @@ public static class MathTransformWktReader
         }
     }
 
-    private static ParameterInfo ReadParameters(WktStreamTokenizer tokenizer)
+    private static ParameterInfo ReadParameters(WktTokenizer tokenizer)
     {
         var paramList = new List<Parameter>();
         while (tokenizer.GetStringValue() == "PARAMETER")
@@ -94,7 +92,7 @@ public static class MathTransformWktReader
         return info;
     }
 
-    private static AffineTransform ReadAffineTransform(WktStreamTokenizer tokenizer)
+    private static AffineTransform ReadAffineTransform(WktTokenizer tokenizer)
     {
         /*
              PARAM_MT[

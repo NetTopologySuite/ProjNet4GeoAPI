@@ -8,7 +8,6 @@ namespace ProjNet.IO.CoordinateSystems;
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -42,8 +41,7 @@ public static partial class CoordinateSystemWktReader
         }
 
         string normalizedWkt = NormalizeWkt(wkt);
-        using TextReader reader = new StringReader(normalizedWkt);
-        var tokenizer = new WktStreamTokenizer(reader);
+        var tokenizer = new WktTokenizer(normalizedWkt);
         tokenizer.NextToken();
         string objectName = tokenizer.GetStringValue();
         switch (objectName)
@@ -89,9 +87,9 @@ public static partial class CoordinateSystemWktReader
     /// <summary>
     /// Returns a IUnit given a piece of WKT.
     /// </summary>
-    /// <param name="tokenizer">WktStreamTokenizer that has the WKT.</param>
+    /// <param name="tokenizer">WktTokenizer that has the WKT.</param>
     /// <returns>An object that implements the IUnit interface.</returns>
-    private static Unit ReadUnit(WktStreamTokenizer tokenizer)
+    private static Unit ReadUnit(WktTokenizer tokenizer)
     {
         var bracket = tokenizer.ReadOpener();
         string unitName = tokenizer.ReadDoubleQuotedWord();
@@ -117,9 +115,9 @@ public static partial class CoordinateSystemWktReader
     /// <summary>
     /// Returns a <see cref="LinearUnit"/> given a piece of WKT.
     /// </summary>
-    /// <param name="tokenizer">WktStreamTokenizer that has the WKT.</param>
+    /// <param name="tokenizer">WktTokenizer that has the WKT.</param>
     /// <returns>An object that implements the IUnit interface.</returns>
-    private static LinearUnit ReadLinearUnit(WktStreamTokenizer tokenizer)
+    private static LinearUnit ReadLinearUnit(WktTokenizer tokenizer)
     {
         var bracket = tokenizer.ReadOpener();
 
@@ -146,9 +144,9 @@ public static partial class CoordinateSystemWktReader
     /// <summary>
     /// Returns a <see cref="AngularUnit"/> given a piece of WKT.
     /// </summary>
-    /// <param name="tokenizer">WktStreamTokenizer that has the WKT.</param>
+    /// <param name="tokenizer">WktTokenizer that has the WKT.</param>
     /// <returns>An object that implements the IUnit interface.</returns>
-    private static AngularUnit ReadAngularUnit(WktStreamTokenizer tokenizer)
+    private static AngularUnit ReadAngularUnit(WktTokenizer tokenizer)
     {
         var bracket = tokenizer.ReadOpener();
 
@@ -175,9 +173,9 @@ public static partial class CoordinateSystemWktReader
     /// <summary>
     /// Returns a <see cref="AxisInfo"/> given a piece of WKT.
     /// </summary>
-    /// <param name="tokenizer">WktStreamTokenizer that has the WKT.</param>
+    /// <param name="tokenizer">WktTokenizer that has the WKT.</param>
     /// <returns>An AxisInfo object.</returns>
-    private static AxisInfo ReadAxis(WktStreamTokenizer tokenizer)
+    private static AxisInfo ReadAxis(WktTokenizer tokenizer)
     {
         if (tokenizer.GetStringValue() != "AXIS")
         {
@@ -204,7 +202,7 @@ public static partial class CoordinateSystemWktReader
         }
     }
 
-    private static CoordinateSystem ReadCoordinateSystem(string coordinateSystem, WktStreamTokenizer tokenizer)
+    private static CoordinateSystem ReadCoordinateSystem(string coordinateSystem, WktTokenizer tokenizer)
     {
         switch (tokenizer.GetStringValue())
         {
@@ -228,7 +226,7 @@ public static partial class CoordinateSystemWktReader
     }
 
     // Reads either 3, 6 or 7 parameter Bursa-Wolf values from TOWGS84 token
-    private static Wgs84ConversionInfo ReadWGS84ConversionInfo(WktStreamTokenizer tokenizer)
+    private static Wgs84ConversionInfo ReadWGS84ConversionInfo(WktTokenizer tokenizer)
     {
         // TOWGS84[0,0,0,0,0,0,0]
         var bracket = tokenizer.ReadOpener();
@@ -273,7 +271,7 @@ public static partial class CoordinateSystemWktReader
         return info;
     }
 
-    private static Ellipsoid ReadEllipsoid(WktStreamTokenizer tokenizer)
+    private static Ellipsoid ReadEllipsoid(WktTokenizer tokenizer)
     {
         // SPHEROID["Airy 1830",6377563.396,299.3249646,AUTHORITY["EPSG","7001"]]
         var bracket = tokenizer.ReadOpener();
@@ -299,7 +297,7 @@ public static partial class CoordinateSystemWktReader
         return ellipsoid;
     }
 
-    private static Projection ReadProjection(WktStreamTokenizer tokenizer)
+    private static Projection ReadProjection(WktTokenizer tokenizer)
     {
         if (tokenizer.GetStringValue() != "PROJECTION")
         {
@@ -352,7 +350,7 @@ public static partial class CoordinateSystemWktReader
         return projection;
     }
 
-    private static ProjectedCoordinateSystem ReadProjectedCoordinateSystem(WktStreamTokenizer tokenizer)
+    private static ProjectedCoordinateSystem ReadProjectedCoordinateSystem(WktTokenizer tokenizer)
     {
         /*PROJCS[
             "OSGB 1936 / British National Grid",
@@ -436,7 +434,7 @@ public static partial class CoordinateSystemWktReader
         return projectedCS;
     }
 
-    private static VerticalCoordinateSystem ReadVerticalCoordinateSystem(WktStreamTokenizer tokenizer)
+    private static VerticalCoordinateSystem ReadVerticalCoordinateSystem(WktTokenizer tokenizer)
     {
         // VERT_CS["<name>", <vert datum>, <linear unit>, {<axis>,} {,< authority >}]
         var bracket = tokenizer.ReadOpener();
@@ -483,7 +481,7 @@ public static partial class CoordinateSystemWktReader
         return verticalCs;
     }
 
-    private static CompoundCoordinateSystem ReadCompoundCoordinateSystem(WktStreamTokenizer tokenizer)
+    private static CompoundCoordinateSystem ReadCompoundCoordinateSystem(WktTokenizer tokenizer)
     {
         // <compd cs> = COMPD_CS["<name>", <head cs>, <tail cs> {,<authority>}]
         var bracket = tokenizer.ReadOpener();
@@ -516,7 +514,7 @@ public static partial class CoordinateSystemWktReader
         return new CompoundCoordinateSystem(headcs, tailcs, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
     }
 
-    private static GeocentricCoordinateSystem ReadGeocentricCoordinateSystem(WktStreamTokenizer tokenizer)
+    private static GeocentricCoordinateSystem ReadGeocentricCoordinateSystem(WktTokenizer tokenizer)
     {
         /*
          * GEOCCS["<name>", <datum>, <prime meridian>, <linear unit> {,<axis>, <axis>, <axis>} {,<authority>}]
@@ -585,7 +583,7 @@ public static partial class CoordinateSystemWktReader
             string.Empty);
     }
 
-    private static GeographicCoordinateSystem ReadGeographicCoordinateSystem(WktStreamTokenizer tokenizer)
+    private static GeographicCoordinateSystem ReadGeographicCoordinateSystem(WktTokenizer tokenizer)
     {
         /*
         GEOGCS["OSGB 1936",
@@ -658,7 +656,7 @@ public static partial class CoordinateSystemWktReader
         return geographicCS;
     }
 
-    private static HorizontalDatum ReadHorizontalDatum(WktStreamTokenizer tokenizer)
+    private static HorizontalDatum ReadHorizontalDatum(WktTokenizer tokenizer)
     {
         // DATUM["OSGB 1936",SPHEROID["Airy 1830",6377563.396,299.3249646,AUTHORITY["EPSG","7001"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY["EPSG","6277"]]
         Wgs84ConversionInfo wgsInfo = null;
@@ -692,7 +690,7 @@ public static partial class CoordinateSystemWktReader
         return horizontalDatum;
     }
 
-    private static VerticalDatum ReadVerticalDatum(WktStreamTokenizer tokenizer)
+    private static VerticalDatum ReadVerticalDatum(WktTokenizer tokenizer)
     {
         // <vert datum> = VERT_DATUM["<name>", <datum type> {,<authority>}]
         string authority = string.Empty;
@@ -719,7 +717,7 @@ public static partial class CoordinateSystemWktReader
         return verticalDatum;
     }
 
-    private static PrimeMeridian ReadPrimeMeridian(WktStreamTokenizer tokenizer)
+    private static PrimeMeridian ReadPrimeMeridian(WktTokenizer tokenizer)
     {
         // PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]]
         var bracket = tokenizer.ReadOpener();
@@ -747,7 +745,7 @@ public static partial class CoordinateSystemWktReader
         return primeMeridian;
     }
 
-    private static FittedCoordinateSystem ReadFittedCoordinateSystem(WktStreamTokenizer tokenizer)
+    private static FittedCoordinateSystem ReadFittedCoordinateSystem(WktTokenizer tokenizer)
     {
         /*
          FITTED_CS[
@@ -806,3 +804,4 @@ public static partial class CoordinateSystemWktReader
         return fittedCS;
     }
 }
+
