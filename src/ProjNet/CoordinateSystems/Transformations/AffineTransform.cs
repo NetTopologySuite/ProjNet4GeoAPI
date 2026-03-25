@@ -221,19 +221,15 @@ public class AffineTransform : MathTransform
         double[] x = new double[n + 1];
         double[] y = new double[n + 1];
 
-        /*
-        * Solve for y using formward substitution
-        * */
+        // Solve for y using formward substitution
         for (int i = 0; i <= n; i++)
         {
             double suml = 0;
             for (int j = 0; j <= i - 1; j++)
             {
-                /*
-                * Since we've taken L and U as a singular matrix as an input
-                * the value for L at index i and j will be 1 when i equals j, not LU[i][j], since
-                * the diagonal values are all 1 for L.
-                * */
+                // Since we've taken L and U as a singular matrix as an input
+                // the value for L at index i and j will be 1 when i equals j, not LU[i][j], since
+                // the diagonal values are all 1 for L.
                 double lij;
                 if (i == j)
                 {
@@ -274,11 +270,9 @@ public class AffineTransform : MathTransform
     private static int[] LUPDecomposition(double[,] a)
     {
         int n = a.GetLength(0) - 1;
-        /*
-        * pi represents the permutation matrix.  We implement it as an array
-        * whose value indicates which column the 1 would appear.  We use it to avoid
-        * dividing by zero or small numbers.
-        * */
+        // pi represents the permutation matrix.  We implement it as an array
+        // whose value indicates which column the 1 would appear.  We use it to avoid
+        // dividing by zero or small numbers.
         int[] pi = new int[n + 1];
         int kp = 0;
 
@@ -290,14 +284,12 @@ public class AffineTransform : MathTransform
 
         for (int k = 0; k <= n; k++)
         {
-            /*
-            * In finding the permutation matrix p that avoids dividing by zero
-            * we take a slightly different approach.  For numerical stability
-            * We find the element with the largest
-            * absolute value of those in the current first column (column k).  If all elements in
-            * the current first column are zero then the matrix is singluar and throw an
-            * error.
-            * */
+            // In finding the permutation matrix p that avoids dividing by zero
+            // we take a slightly different approach.  For numerical stability
+            // We find the element with the largest
+            // absolute value of those in the current first column (column k).  If all elements in
+            // the current first column are zero then the matrix is singluar and throw an
+            // error.
             double p = 0;
             for (int i = k; i <= n; i++)
             {
@@ -313,18 +305,14 @@ public class AffineTransform : MathTransform
                 throw new InvalidOperationException("singular matrix");
             }
 
-            /*
-            * These lines update the pivot array (which represents the pivot matrix)
-            * by exchanging pi[k] and pi[kp].
-            * */
+            // These lines update the pivot array (which represents the pivot matrix)
+            // by exchanging pi[k] and pi[kp].
             int pik = pi[k];
             int pikp = pi[kp];
             pi[k] = pikp;
             pi[kp] = pik;
 
-            /*
-            * Exchange rows k and kpi as determined by the pivot
-            * */
+            // Exchange rows k and kpi as determined by the pivot
             for (int i = 0; i <= n; i++)
             {
                 double aki = a[k, i];
@@ -333,9 +321,7 @@ public class AffineTransform : MathTransform
                 a[kp, i] = aki;
             }
 
-            /*
-                * Compute the Schur complement
-                * */
+            // Compute the Schur complement
             for (int i = k + 1; i <= n; i++)
             {
                 a[i, k] = a[i, k] / a[k, k];
@@ -362,19 +348,15 @@ public class AffineTransform : MathTransform
         // x will hold the inverse matrix to be returned
         double[,] x = new double[n, m];
 
-        /*
-        * solve will contain the vector solution for the LUP decomposition as we solve
-        * for each vector of x.  We will combine the solutions into the double[][] array x.
-        * */
+        // solve will contain the vector solution for the LUP decomposition as we solve
+        // for each vector of x.  We will combine the solutions into the double[][] array x.
         double[] solve;
 
         // Get the LU matrix and P matrix (as an array)
         int[] p = LUPDecomposition(a);
         double[,] lU = a;
 
-        /*
-        * Solve AX = e for each column ei of the identity matrix using LUP decomposition
-        * */
+        // Solve AX = e for each column ei of the identity matrix using LUP decomposition
         for (int i = 0; i < n; i++)
         {
             // e will represent each column in the identity matrix
