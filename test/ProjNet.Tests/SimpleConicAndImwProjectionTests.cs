@@ -12,9 +12,9 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Validates specialty batch D1 specialty projections.
+/// Validates simple conic and IMW-style projections.
 /// </summary>
-public class SpecialtyProjectionBatchD1Tests
+public class SimpleConicAndImwProjectionTests
 {
     private const string Sphere6400000 = "SPHEROID[\"Sphere\",6400000,0]";
     private const string Grs80 = "SPHEROID[\"GRS 80\",6378137,298.257222101]";
@@ -23,7 +23,7 @@ public class SpecialtyProjectionBatchD1Tests
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
     /// <summary>
-    /// Verifies aliases resolve from WKT for batch D1 projections.
+    /// Verifies aliases resolve from WKT for simple conic and IMW-style projections.
     /// </summary>
     /// <param name="projectionName">Projection alias.</param>
     /// <param name="spheroidClause">Spheroid clause.</param>
@@ -41,7 +41,7 @@ public class SpecialtyProjectionBatchD1Tests
     [InlineData("McBryde_Thomas_Flat_Pole_Sine", Sphere6400000, null)]
     [InlineData("bertin1953", Sphere6400000, null)]
     [InlineData("Bertin_1953", Sphere6400000, null)]
-    public void SupportsBatchD1AliasesFromWkt(string projectionName, string spheroidClause, string extraParameters)
+    public void SupportsSimpleConicAndImwAliasesFromWkt(string projectionName, string spheroidClause, string extraParameters)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, spheroidClause, extraParameters));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
@@ -54,7 +54,7 @@ public class SpecialtyProjectionBatchD1Tests
     }
 
     /// <summary>
-    /// Verifies PROJ builtins forward vectors for batch D1 projections.
+    /// Verifies PROJ builtins forward vectors for simple conic and IMW-style projections.
     /// </summary>
     /// <param name="projectionName">Projection code.</param>
     /// <param name="spheroidClause">Spheroid clause.</param>
@@ -94,7 +94,7 @@ public class SpecialtyProjectionBatchD1Tests
     }
 
     /// <summary>
-    /// Verifies PROJ builtins inverse vectors for inverse-capable batch D1 projections.
+    /// Verifies PROJ builtins inverse vectors for inverse-capable simple conic and IMW-style projections.
     /// </summary>
     /// <param name="projectionName">Projection code.</param>
     /// <param name="spheroidClause">Spheroid clause.</param>
@@ -132,7 +132,7 @@ public class SpecialtyProjectionBatchD1Tests
     }
 
     /// <summary>
-    /// Verifies roundtrip stability for inverse-capable batch D1 projections.
+    /// Verifies roundtrip stability for inverse-capable simple conic and IMW-style projections.
     /// </summary>
     /// <param name="projectionName">Projection code.</param>
     /// <param name="spheroidClause">Spheroid clause.</param>
@@ -148,7 +148,7 @@ public class SpecialtyProjectionBatchD1Tests
     [InlineData("vitk1", Grs80, 2d, 1d, ",PARAMETER[\"lat_1\",0.5],PARAMETER[\"lat_2\",2]")]
     [InlineData("imw_p", Grs80, 2d, 1d, ",PARAMETER[\"lat_1\",0.5],PARAMETER[\"lat_2\",2]")]
     [InlineData("mbt_fps", Sphere6400000, 2d, 1d, null)]
-    public void SupportsBatchD1Roundtrip(string projectionName, string spheroidClause, double longitude, double latitude, string extraParameters)
+    public void SupportsSimpleConicAndImwRoundtrip(string projectionName, string spheroidClause, double longitude, double latitude, string extraParameters)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, spheroidClause, extraParameters));
         var geographic = projected.GeographicCoordinateSystem;
