@@ -28,8 +28,8 @@ using System.Collections.Generic;
 [Serializable]
 internal class GeocentricTransform : MathTransform
 {
-    private const double COS67P5 = 0.38268343236508977;    /* cosine of 67.5 degrees */
-    private const double ADC = 1.0026000;                  /* Toms region 1 constant */
+    private const double COS67P5 = 0.38268343236508977; // cosine of 67.5 degrees
+    private const double ADC = 1.0026000; // Toms region 1 constant
 
     /// <summary>
     /// Eccentricity squared : (a^2 - b^2)/a^2.
@@ -57,10 +57,8 @@ internal class GeocentricTransform : MathTransform
     /// Cached inverse transform.
     /// </summary>
     private MathTransform inverse;
-    /*
-    private double ab;              // Semi_major / semi_minor
-    private double ba;              // Semi_minor / semi_major
-     */
+    // private double ab; // Semi_major / semi_minor
+    // private double ba; // Semi_minor / semi_major
 
     /// <summary>
     /// Projection parameters used to initialize the transform.
@@ -177,7 +175,7 @@ internal class GeocentricTransform : MathTransform
     /// <param name="z">The z-ordinate value.</param>
     private void MetersToDegrees(ref double x, ref double y, ref double z)
     {
-        bool at_Pole = false; // indicates whether location is in polar region */
+        bool at_Pole = false; // indicates whether location is in polar region
 
         double lon;
         double lat = 0;
@@ -202,17 +200,17 @@ internal class GeocentricTransform : MathTransform
                 lon = 0.0;
                 if (z > 0.0)
                 {
-                    /* north pole */
+                    // north pole
                     lat = Math.PI * 0.5;
                 }
                 else if (z < 0.0)
                 {
-                    /* south pole */
+                    // south pole
                     lat = -Math.PI * 0.5;
                 }
                 else
                 {
-                    /* center of earth */
+                    // center of earth
                     lon = RadiansToDegrees(lon);
                     lat = RadiansToDegrees(Math.PI * 0.5);
                     x = lon;
