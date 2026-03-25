@@ -40,15 +40,20 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
-        if (!TrySplitPipelineSteps(operation, out IReadOnlyList<string> steps))
+        bool isPipeline = TrySplitPipelineSteps(operation, out IReadOnlyList<string> steps);
+        if (!isPipeline)
         {
             steps = [operation];
         }
 
+        PipelineExecutionContext executionContext = isPipeline
+            ? new PipelineExecutionContext()
+            : null;
+
         var stepTransforms = new List<MathTransform>(steps.Count);
         for (int i = 0; i < steps.Count; i++)
         {
-            if (!TryCreateStepTransform(steps[i], out MathTransform stepTransform, out skipReason))
+            if (!TryCreateStepTransform(steps[i], executionContext, out MathTransform stepTransform, out skipReason))
             {
                 return false;
             }
@@ -62,17 +67,23 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
-        if (stepTransforms.Count == 1)
+        if (stepTransforms.Count == 1 && !isPipeline)
         {
             transform = stepTransforms[0];
             return true;
         }
 
-        transform = new CompositeMathTransform(stepTransforms);
+        transform = isPipeline
+            ? new PipelineCompositeMathTransform(stepTransforms, executionContext)
+            : new CompositeMathTransform(stepTransforms);
         return true;
     }
 
-    private static bool TryCreateStepTransform(string operation, out MathTransform transform, out string skipReason)
+    private static bool TryCreateStepTransform(
+        string operation,
+        PipelineExecutionContext executionContext,
+        out MathTransform transform,
+        out string skipReason)
     {
         transform = null;
         skipReason = null;
@@ -118,6 +129,16 @@ internal static class ProjPipelineMathTransformFactory
         if (projCode.Equals("affine", StringComparison.OrdinalIgnoreCase))
         {
             return AffineRuntimeMathTransform.TryCreate(args, out transform, out skipReason);
+        }
+
+        if (projCode.Equals("push", StringComparison.OrdinalIgnoreCase))
+        {
+            return PipelineStackTransferMathTransform.TryCreatePush(args, executionContext, out transform, out skipReason);
+        }
+
+        if (projCode.Equals("pop", StringComparison.OrdinalIgnoreCase))
+        {
+            return PipelineStackTransferMathTransform.TryCreatePop(args, executionContext, out transform, out skipReason);
         }
 
         if (projCode.Equals("set", StringComparison.OrdinalIgnoreCase))

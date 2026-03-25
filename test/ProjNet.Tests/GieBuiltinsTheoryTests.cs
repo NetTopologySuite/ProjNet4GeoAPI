@@ -189,6 +189,8 @@ public class GieBuiltinsTheoryTests
         "longlat",
         "noop",
         "set",
+        "push",
+        "pop",
         "xyzgridshift",
         "tinshift",
     };

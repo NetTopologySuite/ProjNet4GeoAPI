@@ -23,6 +23,7 @@ public class PipelineRuntimeTests
     private static readonly double[] GeogOffsetInverseInput = { 11d, 19d, 33d };
     private static readonly double[] MolobadekasInput = { 2550408.96d, -5749912.26d, 1054891.11d };
     private static readonly double[] AffineInput4D = { 2d, 49d, 10d, 100d };
+    private static readonly double[] PushPopInput4D = { 12d, 56d, 0d, 2020d };
     private static readonly double[] PipelineNoopInput = { 1.5d, 2.25d, 9d };
     private static readonly double[] PipelineSwapInput = { 100d, 200d };
 
@@ -59,6 +60,134 @@ public class PipelineRuntimeTests
         Assert.Equal(1500d, transformed[0], 10);
         Assert.Equal(2250d, transformed[1], 10);
         Assert.Equal(17d, transformed[2], 10);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void PipelineWithPushAndPopRestoresSavedHorizontalComponent()
+    {
+        const string operation = "+proj=pipeline +step +proj=push +v_1 +step +proj=affine +xoff=1 +s11=2 +step +proj=pop +v_1";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+
+        Assert.True(ok, skipReason);
+        double[] transformed = transform.Transform(PushPopInput4D);
+
+        Assert.Equal(PushPopInput4D[0], transformed[0], 9);
+        Assert.Equal(PushPopInput4D[1], transformed[1], 9);
+        Assert.Equal(PushPopInput4D[2], transformed[2], 9);
+        Assert.Equal(PushPopInput4D[3], transformed[3], 9);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void PipelineWithPushWithoutPopKeepsChangedValue()
+    {
+        const string operation = "+proj=pipeline +step +proj=push +v_1 +step +proj=set +v_1=18";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+
+        Assert.True(ok, skipReason);
+        double[] transformed = transform.Transform(PushPopInput4D);
+
+        Assert.Equal(18d, transformed[0], 12);
+        Assert.Equal(PushPopInput4D[1], transformed[1], 12);
+        Assert.Equal(PushPopInput4D[2], transformed[2], 12);
+        Assert.Equal(PushPopInput4D[3], transformed[3], 12);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void PipelineWithPopFromEmptyStackKeepsCurrentValue()
+    {
+        const string operation = "+proj=pipeline +step +proj=set +v_1=18 +step +proj=pop +v_1";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+
+        Assert.True(ok, skipReason);
+        double[] transformed = transform.Transform(PushPopInput4D);
+
+        Assert.Equal(18d, transformed[0], 12);
+        Assert.Equal(PushPopInput4D[1], transformed[1], 12);
+        Assert.Equal(PushPopInput4D[2], transformed[2], 12);
+        Assert.Equal(PushPopInput4D[3], transformed[3], 12);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void PipelineWithPushAndPopOnTimeComponentRestoresEpoch()
+    {
+        const string operation = "+proj=pipeline +step +proj=push +v_4 +step +proj=affine +toff=4 +tscale=34 +step +proj=pop +v_4";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+
+        Assert.True(ok, skipReason);
+        double[] transformed = transform.Transform(PushPopInput4D);
+
+        Assert.Equal(PushPopInput4D[0], transformed[0], 12);
+        Assert.Equal(PushPopInput4D[1], transformed[1], 12);
+        Assert.Equal(PushPopInput4D[2], transformed[2], 12);
+        Assert.Equal(PushPopInput4D[3], transformed[3], 12);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void PipelineWithMultiplePushesAndPopsUsesLifoPerComponent()
+    {
+        const string operation = "+proj=pipeline +step +proj=push +v_1 +step +proj=set +v_1=20 +step +proj=push +v_1 +step +proj=set +v_1=30 +step +proj=pop +v_1 +step +proj=pop +v_1";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+
+        Assert.True(ok, skipReason);
+        double[] transformed = transform.Transform(PushPopInput4D);
+
+        Assert.Equal(PushPopInput4D[0], transformed[0], 12);
+        Assert.Equal(PushPopInput4D[1], transformed[1], 12);
+        Assert.Equal(PushPopInput4D[2], transformed[2], 12);
+        Assert.Equal(PushPopInput4D[3], transformed[3], 12);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void PipelinePushWithoutOrdinateFlagReturnsValidationFailure()
+    {
+        const string operation = "+proj=pipeline +step +proj=push +step +proj=pop +v_1";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string skipReason);
+
+        Assert.False(ok);
+        Assert.Contains("v_1", skipReason, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Theory]
+    [InlineData("+proj=push +v_3")]
+    [InlineData("+proj=pop +v_3")]
+    public void StandalonePushOrPopBehavesAsNoop(string operation)
+    {
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+
+        Assert.True(ok, skipReason);
+        double[] transformed = transform.Transform(PushPopInput4D);
+
+        Assert.Equal(PushPopInput4D[0], transformed[0], 12);
+        Assert.Equal(PushPopInput4D[1], transformed[1], 12);
+        Assert.Equal(PushPopInput4D[2], transformed[2], 12);
+        Assert.Equal(PushPopInput4D[3], transformed[3], 12);
     }
 
     /// <summary>
