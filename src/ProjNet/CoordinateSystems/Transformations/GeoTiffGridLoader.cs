@@ -5,6 +5,7 @@
 namespace ProjNet.CoordinateSystems.Transformations;
 
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -430,61 +431,96 @@ internal static partial class GeoTiffGridLoader
     private static SampleData ReadSampleData(Tiff tiff, int width, int height, int samplesPerPixel, SampleEncoding encoding)
     {
         int scanlineSize = tiff.ScanlineSize();
+        int valueCount = checked(width * height);
         var sampleValues = new double[samplesPerPixel][];
         for (int i = 0; i < samplesPerPixel; i++)
         {
-            sampleValues[i] = new double[width * height];
+            sampleValues[i] = ArrayPool<double>.Shared.Rent(valueCount);
         }
 
-        PlanarConfig planarConfig = PlanarConfig.CONTIG;
-        if (TryGetIntField(tiff, TiffTag.PLANARCONFIG, out int planarConfigValue))
+        try
         {
-            planarConfig = (PlanarConfig)planarConfigValue;
-        }
+            PlanarConfig planarConfig = PlanarConfig.CONTIG;
+            if (TryGetIntField(tiff, TiffTag.PLANARCONFIG, out int planarConfigValue))
+            {
+                planarConfig = (PlanarConfig)planarConfigValue;
+            }
 
-        if (planarConfig == PlanarConfig.SEPARATE && samplesPerPixel > 1)
-        {
-            for (int sample = 0; sample < samplesPerPixel; sample++)
+            if (planarConfig == PlanarConfig.SEPARATE && samplesPerPixel > 1)
+            {
+                for (int sample = 0; sample < samplesPerPixel; sample++)
+                {
+                    byte[] buffer = new byte[scanlineSize];
+                    for (int row = 0; row < height; row++)
+                    {
+                        if (!tiff.ReadScanline(buffer, row, (short)sample))
+                        {
+                            throw new InvalidDataException("Failed to read GeoTIFF scanline.");
+                        }
+
+                        for (int column = 0; column < width; column++)
+                        {
+                            int offset = column * encoding.BytesPerSample;
+                            sampleValues[sample][(row * width) + column] = encoding.ReadValue(buffer, offset);
+                        }
+                    }
+                }
+            }
+            else
             {
                 byte[] buffer = new byte[scanlineSize];
                 for (int row = 0; row < height; row++)
                 {
-                    if (!tiff.ReadScanline(buffer, row, (short)sample))
+                    if (!tiff.ReadScanline(buffer, row))
                     {
                         throw new InvalidDataException("Failed to read GeoTIFF scanline.");
                     }
 
                     for (int column = 0; column < width; column++)
                     {
-                        int offset = column * encoding.BytesPerSample;
-                        sampleValues[sample][(row * width) + column] = encoding.ReadValue(buffer, offset);
+                        int pixelBase = column * encoding.BytesPerSample * samplesPerPixel;
+                        for (int sample = 0; sample < samplesPerPixel; sample++)
+                        {
+                            int offset = pixelBase + (sample * encoding.BytesPerSample);
+                            sampleValues[sample][(row * width) + column] = encoding.ReadValue(buffer, offset);
+                        }
                     }
                 }
             }
+
+            return new SampleData(CopySampleBuffers(sampleValues, valueCount), width: width);
         }
-        else
+        finally
         {
-            byte[] buffer = new byte[scanlineSize];
-            for (int row = 0; row < height; row++)
-            {
-                if (!tiff.ReadScanline(buffer, row))
-                {
-                    throw new InvalidDataException("Failed to read GeoTIFF scanline.");
-                }
+            ReturnSampleBuffers(sampleValues);
+        }
+    }
 
-                for (int column = 0; column < width; column++)
-                {
-                    int pixelBase = column * encoding.BytesPerSample * samplesPerPixel;
-                    for (int sample = 0; sample < samplesPerPixel; sample++)
-                    {
-                        int offset = pixelBase + (sample * encoding.BytesPerSample);
-                        sampleValues[sample][(row * width) + column] = encoding.ReadValue(buffer, offset);
-                    }
-                }
-            }
+    private static double[][] CopySampleBuffers(double[][] sampleValues, int valueCount)
+    {
+        var copied = new double[sampleValues.Length][];
+        for (int i = 0; i < sampleValues.Length; i++)
+        {
+            var destination = new double[valueCount];
+            Array.Copy(sampleValues[i], destination, valueCount);
+            copied[i] = destination;
         }
 
-        return new SampleData(sampleValues, width: width);
+        return copied;
+    }
+
+    private static void ReturnSampleBuffers(double[][] sampleValues)
+    {
+        for (int i = 0; i < sampleValues.Length; i++)
+        {
+            if (sampleValues[i] is null)
+            {
+                continue;
+            }
+
+            ArrayPool<double>.Shared.Return(sampleValues[i], clearArray: false);
+            sampleValues[i] = null;
+        }
     }
 
     private static GeoMetadata ReadMetadata(Tiff tiff, int samplesPerPixel)
