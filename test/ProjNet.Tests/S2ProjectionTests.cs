@@ -12,9 +12,9 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Validates specialty batch D3 specialty projections.
+/// Validates S2 projection variants.
 /// </summary>
-public class SpecialtyProjectionBatchD3Tests
+public class S2ProjectionTests
 {
     private const string Wgs84 = "SPHEROID[\"WGS 84\",6378137,298.257223563]";
 
@@ -22,7 +22,7 @@ public class SpecialtyProjectionBatchD3Tests
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
     /// <summary>
-    /// Verifies aliases resolve from WKT for batch D3 projections.
+    /// Verifies aliases resolve from WKT for S2 projection variants.
     /// </summary>
     /// <param name="projectionName">Projection alias.</param>
     [Theory]
@@ -30,7 +30,7 @@ public class SpecialtyProjectionBatchD3Tests
     [InlineData("S2")]
     [InlineData("s2_projection")]
     [InlineData("S2_Projection")]
-    public void SupportsBatchD3AliasesFromWkt(string projectionName)
+    public void SupportsS2AliasesFromWkt(string projectionName)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, 0d, 0d, 1d));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
@@ -43,7 +43,7 @@ public class SpecialtyProjectionBatchD3Tests
     }
 
     /// <summary>
-    /// Verifies PROJ builtins forward vectors for batch D3 projections.
+    /// Verifies PROJ builtins forward vectors for S2 projection variants.
     /// </summary>
     /// <param name="lat0">Projection latitude of origin in degrees.</param>
     /// <param name="lon0">Projection central meridian in degrees.</param>
@@ -90,7 +90,7 @@ public class SpecialtyProjectionBatchD3Tests
     }
 
     /// <summary>
-    /// Verifies PROJ builtins inverse vectors for batch D3 projections.
+    /// Verifies PROJ builtins inverse vectors for S2 projection variants.
     /// </summary>
     /// <param name="lat0">Projection latitude of origin in degrees.</param>
     /// <param name="lon0">Projection central meridian in degrees.</param>
@@ -146,7 +146,7 @@ public class SpecialtyProjectionBatchD3Tests
     [InlineData(0d, 180d, 3d, 160d, 20.124006563576454d)]
     [InlineData(0d, -90d, null, -70d, 20.124006563576454d)]
     [InlineData(-90d, 0d, 0d, 20d, -70.12337013762533d)]
-    public void SupportsBatchD3Roundtrip(double lat0, double lon0, double? uvToSt, double longitude, double latitude)
+    public void SupportsS2Roundtrip(double lat0, double lon0, double? uvToSt, double longitude, double latitude)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt("s2", lat0, lon0, uvToSt));
         var geographic = projected.GeographicCoordinateSystem;

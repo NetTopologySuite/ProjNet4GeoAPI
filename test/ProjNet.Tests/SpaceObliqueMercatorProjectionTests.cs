@@ -12,9 +12,9 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Validates specialty batch D4 specialty projections.
+/// Validates space oblique mercator projection variants.
 /// </summary>
-public class SpecialtyProjectionBatchD4Tests
+public class SpaceObliqueMercatorProjectionTests
 {
     private const string Grs80 = "SPHEROID[\"GRS 80\",6378137,298.257222101]";
     private const string Sphere6400000 = "SPHEROID[\"Sphere\",6400000,0]";
@@ -23,7 +23,7 @@ public class SpecialtyProjectionBatchD4Tests
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
     /// <summary>
-    /// Verifies aliases resolve from WKT for batch D4 projections.
+    /// Verifies aliases resolve from WKT for space oblique mercator projection variants.
     /// </summary>
     /// <param name="projectionName">Projection alias.</param>
     [Theory]
@@ -31,7 +31,7 @@ public class SpecialtyProjectionBatchD4Tests
     [InlineData("Space_Oblique_Mercator")]
     [InlineData("misrsom")]
     [InlineData("lsat")]
-    public void SupportsBatchD4AliasesFromWkt(string projectionName)
+    public void SupportsSpaceObliqueMercatorAliasesFromWkt(string projectionName)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildAliasWkt(projectionName));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
@@ -44,7 +44,7 @@ public class SpecialtyProjectionBatchD4Tests
     }
 
     /// <summary>
-    /// Verifies PROJ builtins forward vectors for batch D4 projections.
+    /// Verifies PROJ builtins forward vectors for space oblique mercator projection variants.
     /// </summary>
     [Theory]
     [InlineData("som", Grs80, ",PARAMETER[\"inc_angle\",98.30382],PARAMETER[\"ps_rev\",0.06866666666666667],PARAMETER[\"asc_lon\",127.7605356226]", 2d, 1d, 18556630.368369825d, 9533394.675311271d, 1e-3d)]
@@ -71,7 +71,7 @@ public class SpecialtyProjectionBatchD4Tests
     }
 
     /// <summary>
-    /// Verifies PROJ builtins inverse vectors for batch D4 projections.
+    /// Verifies PROJ builtins inverse vectors for space oblique mercator projection variants.
     /// </summary>
     [Theory]
     [InlineData("som", Grs80, ",PARAMETER[\"inc_angle\",98.30382],PARAMETER[\"ps_rev\",0.06866666666666667],PARAMETER[\"asc_lon\",127.7605356226]", 200d, 100d, 127.759503988d, 0.001735150d, 2e-9d)]
@@ -98,7 +98,7 @@ public class SpecialtyProjectionBatchD4Tests
     }
 
     /// <summary>
-    /// Verifies roundtrip stability for inverse-capable batch D4 projections.
+    /// Verifies roundtrip stability for inverse-capable space oblique mercator projection variants.
     /// </summary>
     [Theory]
     [InlineData("som", Grs80, ",PARAMETER[\"inc_angle\",98.30382],PARAMETER[\"ps_rev\",0.06866666666666667],PARAMETER[\"asc_lon\",127.7605356226]", 2d, 1d)]
@@ -106,7 +106,7 @@ public class SpecialtyProjectionBatchD4Tests
     [InlineData("misrsom", Grs80, ",PARAMETER[\"path\",1]", 2d, 1d)]
     [InlineData("misrsom", Sphere6400000, ",PARAMETER[\"path\",1]", -2d, -1d)]
     [InlineData("lsat", Grs80, ",PARAMETER[\"lsat\",1],PARAMETER[\"path\",2]", 2d, 1d)]
-    public void SupportsBatchD4Roundtrip(
+    public void SupportsSpaceObliqueMercatorRoundtrip(
         string projectionName,
         string spheroidClause,
         string extraParameters,
@@ -133,7 +133,7 @@ public class SpecialtyProjectionBatchD4Tests
     [InlineData("lsat", Grs80, ",PARAMETER[\"lsat\",1],PARAMETER[\"path\",252]")]
     [InlineData("som", Grs80, ",PARAMETER[\"inc_angle\",190],PARAMETER[\"ps_rev\",0.06866666666666667],PARAMETER[\"asc_lon\",127.7605356226]")]
     [InlineData("som", Grs80, ",PARAMETER[\"inc_angle\",98.30382],PARAMETER[\"asc_lon\",127.7605356226]")]
-    public void RejectsInvalidBatchD4ParameterSets(string projectionName, string spheroidClause, string extraParameters)
+    public void RejectsInvalidSpaceObliqueMercatorParameterSets(string projectionName, string spheroidClause, string extraParameters)
     {
         var exception = Assert.Throws<TargetInvocationException>(() =>
         {
