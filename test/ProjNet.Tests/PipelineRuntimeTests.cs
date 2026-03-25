@@ -22,6 +22,7 @@ public class PipelineRuntimeTests
     private static readonly double[] GeogOffset3DInput = { 10d, 20d, 30d };
     private static readonly double[] GeogOffsetInverseInput = { 11d, 19d, 33d };
     private static readonly double[] MolobadekasInput = { 2550408.96d, -5749912.26d, 1054891.11d };
+    private static readonly double[] AffineInput4D = { 2d, 49d, 10d, 100d };
     private static readonly double[] PipelineNoopInput = { 1.5d, 2.25d, 9d };
     private static readonly double[] PipelineSwapInput = { 100d, 200d };
 
@@ -251,5 +252,90 @@ public class PipelineRuntimeTests
 
         Assert.False(ok);
         Assert.Contains("convention", skipReason, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void PipelineWithAffineIdentityLeavesCoordinatesUnchanged()
+    {
+        const string operation = "+proj=affine";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+
+        Assert.True(ok, skipReason);
+        double[] transformed = transform.Transform(AffineInput4D);
+
+        Assert.Equal(AffineInput4D[0], transformed[0], 12);
+        Assert.Equal(AffineInput4D[1], transformed[1], 12);
+        Assert.Equal(AffineInput4D[2], transformed[2], 12);
+        Assert.Equal(AffineInput4D[3], transformed[3], 12);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void PipelineWithAffineAppliesConfiguredSpatialAndTemporalTerms()
+    {
+        const string operation = "+proj=affine +xoff=1 +yoff=2 +zoff=3 +toff=4 +s11=11 +s12=12 +s13=13 +s21=21 +s22=22 +s23=23 +s31=-31 +s32=32 +s33=33 +tscale=34";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+
+        Assert.True(ok, skipReason);
+        double[] transformed = transform.Transform(AffineInput4D);
+
+        Assert.Equal(741d, transformed[0], 12);
+        Assert.Equal(1352d, transformed[1], 12);
+        Assert.Equal(1839d, transformed[2], 12);
+        Assert.Equal(3404d, transformed[3], 12);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void PipelineWithAffineInverseRoundTrips()
+    {
+        const string operation = "+proj=affine +xoff=1 +yoff=2 +zoff=3 +toff=4 +s11=11 +s12=12 +s13=13 +s21=21 +s22=22 +s23=23 +s31=-31 +s32=32 +s33=33 +tscale=34";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+        Assert.True(ok, skipReason);
+        double[] transformed = transform.Transform(AffineInput4D);
+        double[] roundTripped = transform.Inverse().Transform(transformed);
+
+        Assert.Equal(AffineInput4D[0], roundTripped[0], 9);
+        Assert.Equal(AffineInput4D[1], roundTripped[1], 9);
+        Assert.Equal(AffineInput4D[2], roundTripped[2], 9);
+        Assert.Equal(AffineInput4D[3], roundTripped[3], 9);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void PipelineWithAffineNonInvertibleMatrixRejectsInverse()
+    {
+        const string operation = "+proj=affine +s11=0 +s22=0 +s23=0 +inv";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string skipReason);
+
+        Assert.False(ok);
+        Assert.Contains("invertible", skipReason, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void PipelineWithAffineZeroTimeScaleRejectsInverse()
+    {
+        const string operation = "+proj=affine +tscale=0 +inv";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string skipReason);
+
+        Assert.False(ok);
+        Assert.Contains("tscale", skipReason, StringComparison.OrdinalIgnoreCase);
     }
 }

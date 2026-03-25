@@ -115,6 +115,11 @@ internal static class ProjPipelineMathTransformFactory
             return GeogOffsetMathTransform.TryCreate(args, out transform, out skipReason);
         }
 
+        if (projCode.Equals("affine", StringComparison.OrdinalIgnoreCase))
+        {
+            return AffineRuntimeMathTransform.TryCreate(args, out transform, out skipReason);
+        }
+
         if (projCode.Equals("set", StringComparison.OrdinalIgnoreCase))
         {
             return SetMathTransform.TryCreate(args, out transform, out skipReason);
