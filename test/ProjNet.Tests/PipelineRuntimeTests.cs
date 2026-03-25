@@ -18,6 +18,9 @@ public class PipelineRuntimeTests
     private static readonly double[] GeocForwardInput = { 12d, 45d };
     private static readonly double[] GeocInverseInput = { 12d, GeocentricLatitudeAt45OnGrs80 };
     private static readonly double[] CartAliasInput = { 90d, 0d, 0d };
+    private static readonly double[] GeogOffset2DInput = { 10d, 20d };
+    private static readonly double[] GeogOffset3DInput = { 10d, 20d, 30d };
+    private static readonly double[] GeogOffsetInverseInput = { 11d, 19d, 33d };
     private static readonly double[] PipelineNoopInput = { 1.5d, 2.25d, 9d };
     private static readonly double[] PipelineSwapInput = { 100d, 200d };
 
@@ -157,5 +160,62 @@ public class PipelineRuntimeTests
         Assert.Equal(0d, transformed[0], 12);
         Assert.Equal(1d, transformed[1], 12);
         Assert.Equal(0d, transformed[2], 12);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void PipelineWithGeogOffsetAddsConfiguredArcSecondAndHeightOffsets()
+    {
+        const string operation = "+proj=geogoffset +dlon=3600 +dlat=-3600 +dh=3";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+
+        Assert.True(ok, skipReason);
+        double[] transformed2D = transform.Transform(GeogOffset2DInput);
+        double[] transformed3D = transform.Transform(GeogOffset3DInput);
+
+        Assert.Equal(11d, transformed2D[0], 12);
+        Assert.Equal(19d, transformed2D[1], 12);
+        Assert.Equal(11d, transformed3D[0], 12);
+        Assert.Equal(19d, transformed3D[1], 12);
+        Assert.Equal(33d, transformed3D[2], 12);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void PipelineWithGeogOffsetInverseSubtractsConfiguredOffsets()
+    {
+        const string operation = "+proj=geogoffset +dlon=3600 +dlat=-3600 +dh=3 +inv";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+
+        Assert.True(ok, skipReason);
+        double[] transformed = transform.Transform(GeogOffsetInverseInput);
+
+        Assert.Equal(10d, transformed[0], 12);
+        Assert.Equal(20d, transformed[1], 12);
+        Assert.Equal(30d, transformed[2], 12);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void PipelineWithGeogOffsetWithoutOffsetsActsAsIdentity()
+    {
+        const string operation = "+proj=geogoffset";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+
+        Assert.True(ok, skipReason);
+        double[] transformed = transform.Transform(GeogOffset3DInput);
+
+        Assert.Equal(GeogOffset3DInput[0], transformed[0], 12);
+        Assert.Equal(GeogOffset3DInput[1], transformed[1], 12);
+        Assert.Equal(GeogOffset3DInput[2], transformed[2], 12);
     }
 }

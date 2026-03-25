@@ -110,6 +110,11 @@ internal static class ProjPipelineMathTransformFactory
             return TryCreateGeocentricLatitudeTransform(args, out transform, out skipReason);
         }
 
+        if (projCode.Equals("geogoffset", StringComparison.OrdinalIgnoreCase))
+        {
+            return GeogOffsetMathTransform.TryCreate(args, out transform, out skipReason);
+        }
+
         if (projCode.Equals("set", StringComparison.OrdinalIgnoreCase))
         {
             return SetMathTransform.TryCreate(args, out transform, out skipReason);
