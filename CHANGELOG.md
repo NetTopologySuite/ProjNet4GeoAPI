@@ -15,6 +15,13 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 - Added structured modernization audit/finalization artifacts under `docs/modernization/` for parity, generator, style, license, test, and documentation waves.
 - Added `LICENSES/` folder and `NOTICE.md` for consolidated attribution and licensing context.
 - Added broad projection and transformation runtime verification coverage, including direct proj2proj parity fixtures.
+- Added additive span-based public API overloads for key transformation and WKT parsing workflows:
+  - `MathTransform.Transform(ReadOnlySpan<double>, Span<double>)`
+  - `MathTransform.GetCodomainConvexHull(ReadOnlySpan<double>)`
+  - `MathTransform.GetDomainFlags(ReadOnlySpan<double>)`
+  - `CoordinateSystemWktReader.Parse(ReadOnlySpan<char>)`
+  - `Wgs84ConversionInfo.WriteAffineTransform(Span<double>)`
+- Added benchmark scenarios aligned to relevant PROJ `bench_proj_trans` patterns, including deterministic noise-based runs and additional CRS pair coverage.
 
 ### Changed
 
@@ -34,12 +41,19 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
   - expanded target-typed `new` and collection-expression usage where safe.
 - Updated XML documentation across public API surfaces (projections, transformations, coordinate systems, and services/IO) and removed stale external URL references in targeted doc blocks.
 - Updated README to current project status, feature scope, and compatibility/build guidance.
+- Replaced legacy Java-style stream tokenization for WKT parsing with a buffered span-based tokenizer (`WktTokenizer`) and integrated it across WKT readers.
+- Unified versioning with Nerdbank.GitVersioning (`version.json`) and removed CI-specific legacy `Nts*` version computation paths.
+- Moved `InternalsVisibleTo` declaration from source-level assembly attributes to MSBuild project configuration.
+- Normalized historical block comments in handwritten source/test files to consistent line comments.
+- Renamed opaque `SpecialtyProjectionBatch*` tests into descriptive projection-family-focused test classes.
+- Optimized selected hot internal paths using `stackalloc`, `ReadOnlySpan<T>/Span<T>`, and `ArrayPool<T>` to reduce transient allocations.
 
 ### Fixed
 
 - Corrected outdated and inconsistent file attribution headers by adopting SPDX-style per-file headers based on provenance categories.
 - Removed dead/commented legacy code found during structural cleanup.
 - Fixed multiple legacy naming inconsistencies in projection class families and their registry references.
+- Fixed pooled-buffer lifecycle coverage by adding explicit success/failure-path tests for `GeoTiffGridLoader` pool rental/return behavior.
 
 ### Deprecated
 
