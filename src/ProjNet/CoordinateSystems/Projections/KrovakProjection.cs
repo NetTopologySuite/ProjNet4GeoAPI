@@ -24,31 +24,21 @@ using ProjNet.CoordinateSystems.Transformations;
 [Serializable]
 internal class KrovakProjection : MapProjection
 {
-    /**
-     * Maximum number of iterations for iterative computations.
-     */
+    // Maximum number of iterations for iterative computations.
     private const int MaximumIterations = 15;
 
-    /**
-     * When to stop the iteration.
-     */
+    // When to stop the iteration.
     private const double IterationTolerance = 1E-11;
 
-    /**
-     * Azimuth of the centre line passing through the centre of the projection.
-     * This is equals to the co-latitude of the cone axis at point of intersection
-     * with the ellipsoid.
-     */
+    // Azimuth of the centre line passing through the centre of the projection.
+    // This is equals to the co-latitude of the cone axis at point of intersection
+    // with the ellipsoid.
     private readonly double azimuth;
 
-    /**
-     * Latitude of pseudo standard parallel.
-     */
+    // Latitude of pseudo standard parallel.
     private readonly double pseudoStandardParallel;
 
-    /**
-     * Useful variables calculated from parameters defined by user.
-     */
+    // Useful variables calculated from parameters defined by user.
     private readonly double sinAzim;
     private readonly double cosAzim;
     private readonly double n;
@@ -62,9 +52,7 @@ internal class KrovakProjection : MapProjection
 
     private readonly double reciprocSemiMajor;
 
-    /**
-     * Useful constant - 45° in radians.
-     */
+    // Useful constant - 45° in radians.
     private const double S45 = 0.785398163397448;
 
     /// <summary>
@@ -168,7 +156,7 @@ internal class KrovakProjection : MapProjection
         double eps = this.n * d;
         double ro = this.rop / Math.Pow(Math.Tan((s / 2) + S45), this.n);
 
-        /* x and y are reverted  */
+        // x and y are reverted
         lat = -(ro * Math.Cos(eps)) * this.semiMajor;
         lon = -(ro * Math.Sin(eps)) * this.semiMajor;
     }
