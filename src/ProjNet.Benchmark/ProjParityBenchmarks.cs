@@ -18,6 +18,9 @@ using ProjNet.CoordinateSystems.Transformations;
 [MemoryDiagnoser]
 public class ProjParityBenchmarks
 {
+    private const double NoiseXDegrees = 1e-4;
+    private const double NoiseYDegrees = 1e-4;
+
     private static readonly CoordinateSystemServices CoordinateSystemServices = new CoordinateSystemServices();
 
     private static readonly ICoordinateTransformation Wgs84ToWebMercator =
@@ -33,6 +36,8 @@ public class ProjParityBenchmarks
     private double[] latitudes;
     private double[] xBuffer;
     private double[] yBuffer;
+    private double[] noiseX;
+    private double[] noiseY;
 
     /// <summary>
     /// Gets or sets the number of coordinates processed per benchmark invocation.
@@ -55,6 +60,9 @@ public class ProjParityBenchmarks
         EnsureFinite(benchmark.xBuffer, benchmark.yBuffer);
 
         benchmark.WebMercatorToWgs84Batched();
+        EnsureFinite(benchmark.xBuffer, benchmark.yBuffer);
+
+        benchmark.Wgs84ToWebMercatorBatchedWithNoise();
         EnsureFinite(benchmark.xBuffer, benchmark.yBuffer);
     }
 
@@ -80,12 +88,16 @@ public class ProjParityBenchmarks
         this.latitudes = new double[this.PointCount];
         this.xBuffer = new double[this.PointCount];
         this.yBuffer = new double[this.PointCount];
+        this.noiseX = new double[this.PointCount];
+        this.noiseY = new double[this.PointCount];
 
         var random = new Random(20260317);
         for (int i = 0; i < this.PointCount; i++)
         {
             this.longitudes[i] = -179d + (random.NextDouble() * 358d);
             this.latitudes[i] = -85d + (random.NextDouble() * 170d);
+            this.noiseX[i] = (2d * random.NextDouble()) - 1d;
+            this.noiseY[i] = (2d * random.NextDouble()) - 1d;
         }
     }
 
@@ -133,10 +145,37 @@ public class ProjParityBenchmarks
         WebMercatorToWgs84.MathTransform.Transform(this.xBuffer, this.yBuffer);
     }
 
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Benchmark]
+    public void Wgs84ToWebMercatorBatchedWithNoise()
+    {
+        this.PrepareInput();
+        this.ApplyNoise(this.xBuffer.AsSpan(), this.yBuffer.AsSpan(), NoiseXDegrees, NoiseYDegrees);
+        Wgs84ToWebMercator.MathTransform.Transform(this.xBuffer, this.yBuffer);
+    }
+
     private void PrepareInput()
     {
         this.longitudes.CopyTo(this.xBuffer.AsSpan());
         this.latitudes.CopyTo(this.yBuffer.AsSpan());
+    }
+
+    private void ApplyNoise(Span<double> xs, Span<double> ys, double noiseX, double noiseY)
+    {
+        for (int i = 0; i < this.PointCount; i++)
+        {
+            if (noiseX != 0d)
+            {
+                xs[i] += noiseX * this.noiseX[i];
+            }
+
+            if (noiseY != 0d)
+            {
+                ys[i] += noiseY * this.noiseY[i];
+            }
+        }
     }
 
 }
