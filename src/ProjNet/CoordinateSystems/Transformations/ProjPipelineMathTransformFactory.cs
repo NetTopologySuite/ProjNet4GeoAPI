@@ -176,6 +176,11 @@ internal static class ProjPipelineMathTransformFactory
             return HelmertMathTransform.TryCreate(args, out transform, out skipReason);
         }
 
+        if (projCode.Equals("molobadekas", StringComparison.OrdinalIgnoreCase))
+        {
+            return MolobadekasMathTransform.TryCreate(args, out transform, out skipReason);
+        }
+
         if (projCode.Equals("molodensky", StringComparison.OrdinalIgnoreCase))
         {
             return MolodenskyMathTransform.TryCreate(args, out transform, out skipReason);

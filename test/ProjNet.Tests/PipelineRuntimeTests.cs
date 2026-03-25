@@ -21,6 +21,7 @@ public class PipelineRuntimeTests
     private static readonly double[] GeogOffset2DInput = { 10d, 20d };
     private static readonly double[] GeogOffset3DInput = { 10d, 20d, 30d };
     private static readonly double[] GeogOffsetInverseInput = { 11d, 19d, 33d };
+    private static readonly double[] MolobadekasInput = { 2550408.96d, -5749912.26d, 1054891.11d };
     private static readonly double[] PipelineNoopInput = { 1.5d, 2.25d, 9d };
     private static readonly double[] PipelineSwapInput = { 100d, 200d };
 
@@ -217,5 +218,38 @@ public class PipelineRuntimeTests
         Assert.Equal(GeogOffset3DInput[0], transformed[0], 12);
         Assert.Equal(GeogOffset3DInput[1], transformed[1], 12);
         Assert.Equal(GeogOffset3DInput[2], transformed[2], 12);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void PipelineWithMolobadekasAppliesCoordinateFrameParameters()
+    {
+        const string operation = "+proj=molobadekas +convention=coordinate_frame +x=-270.933 +y=115.599 +z=-360.226 +rx=-5.266 +ry=-1.238 +rz=2.381 +s=-5.109 +px=2464351.59 +py=-5783466.61 +pz=974809.81";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+
+        Assert.True(ok, skipReason);
+        double[] transformed = transform.Transform(MolobadekasInput);
+
+        const double toleranceMeters = 0.01d;
+        Assert.InRange(Math.Abs(transformed[0] - 2550138.45d), 0d, toleranceMeters);
+        Assert.InRange(Math.Abs(transformed[1] - -5749799.87d), 0d, toleranceMeters);
+        Assert.InRange(Math.Abs(transformed[2] - 1054530.82d), 0d, toleranceMeters);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void PipelineWithMolobadekasMissingConventionReturnsValidationFailure()
+    {
+        const string operation = "+proj=molobadekas";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string skipReason);
+
+        Assert.False(ok);
+        Assert.Contains("convention", skipReason, StringComparison.OrdinalIgnoreCase);
     }
 }
