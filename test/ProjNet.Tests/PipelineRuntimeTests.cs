@@ -161,6 +161,46 @@ public class PipelineRuntimeTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
+    public void PipelineWithOmitInvSkipsStepOnlyInInverseDirection()
+    {
+        const string operation = "+proj=pipeline +step +proj=affine +xoff=1 +yoff=1 +omit_inv";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+
+        Assert.True(ok, skipReason);
+        double[] forward = transform.Transform(AffineInput4D);
+        double[] inverse = transform.Inverse().Transform(AffineInput4D);
+
+        Assert.Equal(3d, forward[0], 12);
+        Assert.Equal(50d, forward[1], 12);
+        Assert.Equal(2d, inverse[0], 12);
+        Assert.Equal(49d, inverse[1], 12);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void PipelineWithOmitFwdSkipsStepOnlyInForwardDirection()
+    {
+        const string operation = "+proj=pipeline +step +proj=affine +xoff=1 +yoff=1 +omit_fwd";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+
+        Assert.True(ok, skipReason);
+        double[] forward = transform.Transform(AffineInput4D);
+        double[] inverse = transform.Inverse().Transform(AffineInput4D);
+
+        Assert.Equal(2d, forward[0], 12);
+        Assert.Equal(49d, forward[1], 12);
+        Assert.Equal(1d, inverse[0], 12);
+        Assert.Equal(48d, inverse[1], 12);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
     public void PipelinePushWithoutOrdinateFlagReturnsValidationFailure()
     {
         const string operation = "+proj=pipeline +step +proj=push +step +proj=pop +v_1";

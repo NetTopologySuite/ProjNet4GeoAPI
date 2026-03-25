@@ -53,8 +53,9 @@ internal static class ProjPipelineMathTransformFactory
         var stepTransforms = new List<MathTransform>(steps.Count);
         for (int i = 0; i < steps.Count; i++)
         {
-            if (!TryCreateStepTransform(steps[i], executionContext, out MathTransform stepTransform, out skipReason))
+            if (!TryCreateStepTransform(steps[i], executionContext, out MathTransform stepTransform, out string stepSkipReason))
             {
+                skipReason = "Pipeline step " + (i + 1).ToString(CultureInfo.InvariantCulture) + " failed: " + stepSkipReason;
                 return false;
             }
 
@@ -100,6 +101,9 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
+        bool omitForward = executionContext is not null && args.ContainsKey("omit_fwd");
+        bool omitInverse = executionContext is not null && args.ContainsKey("omit_inv");
+
         if (projCode.Equals("latlong", StringComparison.OrdinalIgnoreCase)
             || projCode.Equals("longlat", StringComparison.OrdinalIgnoreCase)
             || projCode.Equals("latlon", StringComparison.OrdinalIgnoreCase)
@@ -107,133 +111,285 @@ internal static class ProjPipelineMathTransformFactory
             || projCode.Equals("noop", StringComparison.OrdinalIgnoreCase))
         {
             transform = new IdentityMathTransform(3);
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
             return true;
         }
 
         if (projCode.Equals("geocent", StringComparison.OrdinalIgnoreCase)
             || projCode.Equals("cart", StringComparison.OrdinalIgnoreCase))
         {
-            return TryCreateGeocentricCartesianTransform(args, out transform, out skipReason);
+            if (!TryCreateGeocentricCartesianTransform(args, out transform, out skipReason))
+            {
+                return false;
+            }
+
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            return true;
         }
 
         if (projCode.Equals("geoc", StringComparison.OrdinalIgnoreCase))
         {
-            return TryCreateGeocentricLatitudeTransform(args, out transform, out skipReason);
+            if (!TryCreateGeocentricLatitudeTransform(args, out transform, out skipReason))
+            {
+                return false;
+            }
+
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            return true;
         }
 
         if (projCode.Equals("geogoffset", StringComparison.OrdinalIgnoreCase))
         {
-            return GeogOffsetMathTransform.TryCreate(args, out transform, out skipReason);
+            if (!GeogOffsetMathTransform.TryCreate(args, out transform, out skipReason))
+            {
+                return false;
+            }
+
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            return true;
         }
 
         if (projCode.Equals("affine", StringComparison.OrdinalIgnoreCase))
         {
-            return AffineRuntimeMathTransform.TryCreate(args, out transform, out skipReason);
+            if (!AffineRuntimeMathTransform.TryCreate(args, out transform, out skipReason))
+            {
+                return false;
+            }
+
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            return true;
         }
 
         if (projCode.Equals("push", StringComparison.OrdinalIgnoreCase))
         {
-            return PipelineStackTransferMathTransform.TryCreatePush(args, executionContext, out transform, out skipReason);
+            if (!PipelineStackTransferMathTransform.TryCreatePush(args, executionContext, out transform, out skipReason))
+            {
+                return false;
+            }
+
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            return true;
         }
 
         if (projCode.Equals("pop", StringComparison.OrdinalIgnoreCase))
         {
-            return PipelineStackTransferMathTransform.TryCreatePop(args, executionContext, out transform, out skipReason);
+            if (!PipelineStackTransferMathTransform.TryCreatePop(args, executionContext, out transform, out skipReason))
+            {
+                return false;
+            }
+
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            return true;
         }
 
         if (projCode.Equals("set", StringComparison.OrdinalIgnoreCase))
         {
-            return SetMathTransform.TryCreate(args, out transform, out skipReason);
+            if (!SetMathTransform.TryCreate(args, out transform, out skipReason))
+            {
+                return false;
+            }
+
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            return true;
         }
 
         if (projCode.Equals("axisswap", StringComparison.OrdinalIgnoreCase))
         {
-            return TryCreateAxisSwapTransform(args, out transform, out skipReason);
+            if (!TryCreateAxisSwapTransform(args, out transform, out skipReason))
+            {
+                return false;
+            }
+
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            return true;
         }
 
         if (projCode.Equals("unitconvert", StringComparison.OrdinalIgnoreCase))
         {
-            return TryCreateUnitConvertTransform(args, out transform, out skipReason);
+            if (!TryCreateUnitConvertTransform(args, out transform, out skipReason))
+            {
+                return false;
+            }
+
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            return true;
         }
 
         if (projCode.Equals("hgridshift", StringComparison.OrdinalIgnoreCase)
             || projCode.Equals("gridshift", StringComparison.OrdinalIgnoreCase))
         {
-            return TryCreateHorizontalGridShiftTransform(args, out transform, out skipReason);
+            if (!TryCreateHorizontalGridShiftTransform(args, out transform, out skipReason))
+            {
+                return false;
+            }
+
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            return true;
         }
 
         if (projCode.Equals("vgridshift", StringComparison.OrdinalIgnoreCase))
         {
-            return TryCreateVerticalGridShiftTransform(args, out transform, out skipReason);
+            if (!TryCreateVerticalGridShiftTransform(args, out transform, out skipReason))
+            {
+                return false;
+            }
+
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            return true;
         }
 
         if (projCode.Equals("xyzgridshift", StringComparison.OrdinalIgnoreCase))
         {
-            return TryCreateXyzGridShiftTransform(args, out transform, out skipReason);
+            if (!TryCreateXyzGridShiftTransform(args, out transform, out skipReason))
+            {
+                return false;
+            }
+
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            return true;
         }
 
         if (projCode.Equals("defmodel", StringComparison.OrdinalIgnoreCase))
         {
-            return DefModelMathTransform.TryCreate(args, out transform, out skipReason);
+            if (!DefModelMathTransform.TryCreate(args, out transform, out skipReason))
+            {
+                return false;
+            }
+
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            return true;
         }
 
         if (projCode.Equals("deformation", StringComparison.OrdinalIgnoreCase))
         {
-            return DeformationMathTransform.TryCreate(args, out transform, out skipReason);
+            if (!DeformationMathTransform.TryCreate(args, out transform, out skipReason))
+            {
+                return false;
+            }
+
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            return true;
         }
 
         if (projCode.Equals("tinshift", StringComparison.OrdinalIgnoreCase))
         {
-            return TinShiftMathTransform.TryCreate(args, out transform, out skipReason);
+            if (!TinShiftMathTransform.TryCreate(args, out transform, out skipReason))
+            {
+                return false;
+            }
+
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            return true;
         }
 
         if (projCode.Equals("topocentric", StringComparison.OrdinalIgnoreCase))
         {
-            return TopocentricMathTransform.TryCreate(args, out transform, out skipReason);
+            if (!TopocentricMathTransform.TryCreate(args, out transform, out skipReason))
+            {
+                return false;
+            }
+
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            return true;
         }
 
         if (projCode.Equals("vertoffset", StringComparison.OrdinalIgnoreCase))
         {
-            return VertOffsetMathTransform.TryCreate(args, out transform, out skipReason);
+            if (!VertOffsetMathTransform.TryCreate(args, out transform, out skipReason))
+            {
+                return false;
+            }
+
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            return true;
         }
 
         if (projCode.Equals("helmert", StringComparison.OrdinalIgnoreCase))
         {
-            return HelmertMathTransform.TryCreate(args, out transform, out skipReason);
+            if (!HelmertMathTransform.TryCreate(args, out transform, out skipReason))
+            {
+                return false;
+            }
+
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            return true;
         }
 
         if (projCode.Equals("molobadekas", StringComparison.OrdinalIgnoreCase))
         {
-            return MolobadekasMathTransform.TryCreate(args, out transform, out skipReason);
+            if (!MolobadekasMathTransform.TryCreate(args, out transform, out skipReason))
+            {
+                return false;
+            }
+
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            return true;
         }
 
         if (projCode.Equals("molodensky", StringComparison.OrdinalIgnoreCase))
         {
-            return MolodenskyMathTransform.TryCreate(args, out transform, out skipReason);
+            if (!MolodenskyMathTransform.TryCreate(args, out transform, out skipReason))
+            {
+                return false;
+            }
+
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            return true;
         }
 
         if (projCode.Equals("horner", StringComparison.OrdinalIgnoreCase))
         {
-            return HornerMathTransform.TryCreate(args, out transform, out skipReason);
+            if (!HornerMathTransform.TryCreate(args, out transform, out skipReason))
+            {
+                return false;
+            }
+
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            return true;
         }
 
         if (projCode.Equals("ob_tran", StringComparison.OrdinalIgnoreCase))
         {
-            return ObTranMathTransform.TryCreate(args, out transform, out skipReason);
+            if (!ObTranMathTransform.TryCreate(args, out transform, out skipReason))
+            {
+                return false;
+            }
+
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            return true;
         }
 
         if (projCode.Equals("sch", StringComparison.OrdinalIgnoreCase))
         {
-            return SchMathTransform.TryCreate(args, out transform, out skipReason);
+            if (!SchMathTransform.TryCreate(args, out transform, out skipReason))
+            {
+                return false;
+            }
+
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            return true;
         }
 
         if (projCode.Equals("spherical_cross_track_height", StringComparison.OrdinalIgnoreCase))
         {
-            return SchMathTransform.TryCreate(args, out transform, out skipReason);
+            if (!SchMathTransform.TryCreate(args, out transform, out skipReason))
+            {
+                return false;
+            }
+
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            return true;
         }
 
         skipReason = "Projection '" + projCode + "' is not part of the current builtins wave.";
         return false;
+    }
+
+    private static MathTransform WrapWithOmitFlags(MathTransform stepTransform, bool omitForward, bool omitInverse)
+    {
+        return omitForward || omitInverse
+            ? new PipelineOmitMathTransform(stepTransform, omitForward, omitInverse)
+            : stepTransform;
     }
 
     private static bool TryCreateAxisSwapTransform(
