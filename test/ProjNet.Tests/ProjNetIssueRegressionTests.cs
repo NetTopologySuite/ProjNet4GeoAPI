@@ -12,7 +12,7 @@ using ProjNet.CoordinateSystems;
 /// <summary>
 /// Represents the documented type.
 /// </summary>
-public class ProjNetIssues : CoordinateTransformTestsBase
+public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
 {
     private static readonly double[] TestDiscussion3612481Expected = { 2349315.05731837, 6524249.91789138 };
     private static readonly double[] TestDiscussion3612481Input = { 136d, -30d };
@@ -20,9 +20,9 @@ public class ProjNetIssues : CoordinateTransformTestsBase
     private static readonly double[] TestDiscussion3612482Input = { 307821.867, 4219306.387 };
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="ProjNetIssues"/> class.
+    /// Initializes a new instance of the <see cref="ProjNetIssueRegressionTests"/> class.
     /// </summary>
-    public ProjNetIssues()
+    public ProjNetIssueRegressionTests()
     {
         this.Verbose = true;
     }

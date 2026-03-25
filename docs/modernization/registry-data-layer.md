@@ -5,7 +5,7 @@
   - `TryGetCoordinateSystem(int srid, out CoordinateSystem coordinateSystem)`
   - `TryGetCoordinateSystem(string authority, long code, out CoordinateSystem coordinateSystem)`
   - `GetAvailableSridValues()`
-- Added tests in `CoordinateSystemServicesTest` for:
+- Added tests in `CoordinateSystemServicesTests` for:
   - lookup by SRID,
   - lookup by authority/code,
   - available SRID list coverage for default managed definitions.

@@ -15,10 +15,10 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Represents the documented type.
 /// </summary>
 [Xunit.Trait("Category", "GitHub Issue")]
-public class Issues
+public class GitHubIssueRegressionTests
 {
     //
-    private static CoordinateSystemServices css = new CoordinateSystemServices(CoordinateSystemServicesTest.LoadCsv());
+    private static CoordinateSystemServices css = new CoordinateSystemServices(CoordinateSystemServicesTests.LoadCsv());
 
     /// <summary>
     /// Performs the documented operation.

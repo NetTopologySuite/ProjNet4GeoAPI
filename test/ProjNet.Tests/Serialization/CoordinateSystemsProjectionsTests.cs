@@ -11,7 +11,7 @@ using ProjNet.CoordinateSystems;
 /// <summary>
 /// Represents the documented type.
 /// </summary>
-public class CoordinateSystemsProjectionsTest
+public class CoordinateSystemsProjectionsTests
 #if !NET7_0_OR_GREATER
     : BaseSerializationTest
 {

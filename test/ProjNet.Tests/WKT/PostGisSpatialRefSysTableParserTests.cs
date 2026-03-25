@@ -15,7 +15,7 @@ using ProjNet.CoordinateSystems;
 /// <summary>
 /// Represents the documented type.
 /// </summary>
-public class SpatialRefSysTableParser
+public class PostGisSpatialRefSysTableParserTests
 {
     private static readonly Lazy<CoordinateSystemFactory> CoordinateSystemFactory =
         new Lazy<CoordinateSystemFactory>(() => new CoordinateSystemFactory());
@@ -26,9 +26,9 @@ public class SpatialRefSysTableParser
     {
         get
         {
-            if (!string.IsNullOrWhiteSpace(SpatialRefSysTableParser.connectionString))
+            if (!string.IsNullOrWhiteSpace(PostGisSpatialRefSysTableParserTests.connectionString))
             {
-                return SpatialRefSysTableParser.connectionString;
+                return PostGisSpatialRefSysTableParserTests.connectionString;
             }
 
             if (!File.Exists("appsettings.json"))
@@ -55,8 +55,8 @@ public class SpatialRefSysTableParser
                 return null;
             }
 
-            SpatialRefSysTableParser.connectionString = connectionString;
-            return SpatialRefSysTableParser.connectionString;
+            PostGisSpatialRefSysTableParserTests.connectionString = connectionString;
+            return PostGisSpatialRefSysTableParserTests.connectionString;
         }
     }
 

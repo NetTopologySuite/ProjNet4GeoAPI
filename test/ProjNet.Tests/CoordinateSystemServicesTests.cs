@@ -21,7 +21,7 @@ using ProjNet.Data;
 /// <summary>
 /// Represents the documented type.
 /// </summary>
-public class CoordinateSystemServicesTest
+public class CoordinateSystemServicesTests
 {
     /// <summary>
     /// Performs the documented operation.
