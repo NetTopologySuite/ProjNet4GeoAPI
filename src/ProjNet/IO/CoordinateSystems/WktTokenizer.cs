@@ -94,6 +94,24 @@ internal sealed class WktTokenizer
     /// Gets the current token as a string.
     /// </summary>
     /// <returns>The current token string value.</returns>
+    internal string GetStringValue()
+    {
+        return this.GetTokenString();
+    }
+
+    /// <summary>
+    /// Gets the token type of the current token.
+    /// </summary>
+    /// <returns>The current <see cref="TokenType"/>.</returns>
+    internal TokenType GetTokenType()
+    {
+        return this.tokenType;
+    }
+
+    /// <summary>
+    /// Gets the current token as a string.
+    /// </summary>
+    /// <returns>The current token string value.</returns>
     internal string GetTokenString()
     {
         return this.tokenLength == 0
@@ -152,6 +170,150 @@ internal sealed class WktTokenizer
             CultureInfo.InvariantCulture,
             out value);
 #endif
+    }
+
+    /// <summary>
+    /// Reads a token and verifies that it matches the expected token text.
+    /// </summary>
+    /// <param name="expectedToken">Expected token text.</param>
+    /// <exception cref="ArgumentException">Thrown when the token does not match.</exception>
+    internal void ReadToken(string expectedToken)
+    {
+        this.NextToken();
+        if (!this.IsCurrentToken(expectedToken.AsSpan()))
+        {
+            throw new ArgumentException(
+                $"Expecting ('{expectedToken}') but got a '{this.GetTokenString()}' at line {this.LineNumber} column {this.Column}.");
+        }
+    }
+
+    /// <summary>
+    /// Reads a string value enclosed in double quotes.
+    /// </summary>
+    /// <returns>The unquoted string value.</returns>
+    /// <exception cref="ArgumentException">Thrown when the quoted value is not terminated.</exception>
+    internal string ReadDoubleQuotedWord()
+    {
+        if (!this.IsCurrentSymbol('"'))
+        {
+            this.ReadToken("\"");
+        }
+
+        int valueStart = this.index;
+        this.NextToken(false);
+
+        while (!this.IsCurrentSymbol('"'))
+        {
+            if (this.tokenType == TokenType.Eof)
+            {
+                throw new ArgumentException(
+                    $"Unterminated quoted string at line {this.LineNumber} column {this.Column}.");
+            }
+
+            this.NextToken(false);
+        }
+
+        int valueLength = this.tokenStartIndex - valueStart;
+        return valueLength <= 0 ? string.Empty : this.source.Substring(valueStart, valueLength);
+    }
+
+    /// <summary>
+    /// Reads an opening bracket token.
+    /// </summary>
+    /// <param name="expectedBracket">Expected opening bracket type.</param>
+    /// <returns>The encountered bracket type.</returns>
+    /// <exception cref="ArgumentException">Thrown when the bracket does not match.</exception>
+    internal WktBracket ReadOpener(WktBracket expectedBracket = WktBracket.DontCare)
+    {
+        this.NextToken();
+        if (this.IsCurrentSymbol('['))
+        {
+            if (expectedBracket == WktBracket.Square || expectedBracket == WktBracket.DontCare)
+            {
+                return WktBracket.Square;
+            }
+        }
+        else if (this.IsCurrentSymbol('('))
+        {
+            if (expectedBracket == WktBracket.Round || expectedBracket == WktBracket.DontCare)
+            {
+                return WktBracket.Round;
+            }
+        }
+
+        string expectedToken = expectedBracket == WktBracket.Square ? "[" : "(";
+        throw new ArgumentException(
+            $"Expecting ('{expectedToken}') but got a '{this.GetTokenString()}' at line {this.LineNumber} column {this.Column}.");
+    }
+
+    /// <summary>
+    /// Reads and validates a closing bracket token.
+    /// </summary>
+    /// <param name="expectedBracket">Expected closing bracket type.</param>
+    internal void ReadCloser(WktBracket expectedBracket)
+    {
+        this.NextToken();
+        this.CheckCloser(expectedBracket);
+    }
+
+    /// <summary>
+    /// Validates that the current token is a matching closing bracket token.
+    /// </summary>
+    /// <param name="expectedBracket">Expected closing bracket type.</param>
+    /// <exception cref="ArgumentException">Thrown when the bracket does not match.</exception>
+    internal void CheckCloser(WktBracket expectedBracket)
+    {
+        if (this.IsCurrentSymbol(']'))
+        {
+            if (expectedBracket == WktBracket.Square || expectedBracket == WktBracket.DontCare)
+            {
+                return;
+            }
+        }
+        else if (this.IsCurrentSymbol(')'))
+        {
+            if (expectedBracket == WktBracket.Round || expectedBracket == WktBracket.DontCare)
+            {
+                return;
+            }
+        }
+
+        string expectedToken = expectedBracket == WktBracket.Square ? "]" : ")";
+        throw new ArgumentException(
+            $"Expecting ('{expectedToken}') but got a '{this.GetTokenString()}' at line {this.LineNumber} column {this.Column}.");
+    }
+
+    /// <summary>
+    /// Reads an AUTHORITY token block.
+    /// </summary>
+    /// <param name="authority">Parsed authority name.</param>
+    /// <param name="authorityCode">Parsed authority code.</param>
+    internal void ReadAuthority(out string authority, out long authorityCode)
+    {
+        if (!this.IsCurrentToken("AUTHORITY".AsSpan()))
+        {
+            this.ReadToken("AUTHORITY");
+        }
+
+        WktBracket bracket = this.ReadOpener();
+        authority = this.ReadDoubleQuotedWord();
+        this.ReadToken(",");
+        this.NextToken();
+
+        if (this.tokenType == TokenType.Number)
+        {
+            authorityCode = (long)this.GetNumericValue();
+        }
+        else
+        {
+            long.TryParse(
+                this.ReadDoubleQuotedWord(),
+                NumberStyles.Any,
+                CultureInfo.InvariantCulture,
+                out authorityCode);
+        }
+
+        this.ReadCloser(bracket);
     }
 
     /// <summary>
@@ -324,6 +486,18 @@ internal sealed class WktTokenizer
 
         int fractionalStartIndex = nextIndex + 1;
         return fractionalStartIndex < this.source.Length && char.IsDigit(this.source[fractionalStartIndex]);
+    }
+
+    private bool IsCurrentSymbol(char symbol)
+    {
+        return this.tokenType == TokenType.Symbol &&
+            this.tokenLength == 1 &&
+            this.source[this.tokenStartIndex] == symbol;
+    }
+
+    private bool IsCurrentToken(ReadOnlySpan<char> expectedToken)
+    {
+        return this.GetTokenSpan().SequenceEqual(expectedToken);
     }
 
     private void ConsumeSymbol()
