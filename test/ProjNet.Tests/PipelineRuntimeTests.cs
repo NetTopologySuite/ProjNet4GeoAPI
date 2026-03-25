@@ -13,6 +13,11 @@ using Xunit;
 /// </summary>
 public class PipelineRuntimeTests
 {
+    private const double GeocentricLatitudeAt45OnGrs80 = 44.807576783073245d;
+    private static readonly double[] GeocentRoundtripInput = { 2d, 1d, 250d };
+    private static readonly double[] GeocForwardInput = { 12d, 45d };
+    private static readonly double[] GeocInverseInput = { 12d, GeocentricLatitudeAt45OnGrs80 };
+    private static readonly double[] CartAliasInput = { 90d, 0d, 0d };
     private static readonly double[] PipelineNoopInput = { 1.5d, 2.25d, 9d };
     private static readonly double[] PipelineSwapInput = { 100d, 200d };
 
@@ -82,5 +87,75 @@ public class PipelineRuntimeTests
         Assert.InRange(Math.Abs(transformed[1] - 711877.42750d), 0d, 1e-4d);
         Assert.InRange(Math.Abs(transformed[2] - 5349787.12648d), 0d, 1e-4d);
         Assert.InRange(Math.Abs(transformed[3] - 2018.0d), 0d, 1e-12d);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void PipelineWithGeocentAndInverseRoundTripsGeodeticCoordinates()
+    {
+        const string operation = "+proj=pipeline +step +proj=geocent +ellps=GRS80 +step +proj=geocent +ellps=GRS80 +inv";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+
+        Assert.True(ok, skipReason);
+        double[] transformed = transform.Transform(GeocentRoundtripInput);
+
+        Assert.Equal(2d, transformed[0], 9);
+        Assert.Equal(1d, transformed[1], 9);
+        Assert.Equal(250d, transformed[2], 6);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void PipelineWithGeocAliasConvertsGeodeticToGeocentricLatitude()
+    {
+        const string operation = "+proj=geoc +ellps=GRS80";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+
+        Assert.True(ok, skipReason);
+        double[] transformed = transform.Transform(GeocForwardInput);
+
+        Assert.Equal(12d, transformed[0], 12);
+        Assert.Equal(GeocentricLatitudeAt45OnGrs80, transformed[1], 12);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void PipelineWithGeocAliasInverseConvertsGeocentricToGeodeticLatitude()
+    {
+        const string operation = "+proj=geoc +ellps=GRS80 +inv";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+
+        Assert.True(ok, skipReason);
+        double[] transformed = transform.Transform(GeocInverseInput);
+
+        Assert.Equal(12d, transformed[0], 12);
+        Assert.Equal(45d, transformed[1], 12);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void PipelineWithCartAliasAndToMeterScalesCartesianOutputUnits()
+    {
+        const string operation = "+proj=cart +a=1000 +b=1000 +to_meter=1000";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+
+        Assert.True(ok, skipReason);
+        double[] transformed = transform.Transform(CartAliasInput);
+
+        Assert.Equal(0d, transformed[0], 12);
+        Assert.Equal(1d, transformed[1], 12);
+        Assert.Equal(0d, transformed[2], 12);
     }
 }

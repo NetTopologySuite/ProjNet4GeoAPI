@@ -99,6 +99,17 @@ internal static class ProjPipelineMathTransformFactory
             return true;
         }
 
+        if (projCode.Equals("geocent", StringComparison.OrdinalIgnoreCase)
+            || projCode.Equals("cart", StringComparison.OrdinalIgnoreCase))
+        {
+            return TryCreateGeocentricCartesianTransform(args, out transform, out skipReason);
+        }
+
+        if (projCode.Equals("geoc", StringComparison.OrdinalIgnoreCase))
+        {
+            return TryCreateGeocentricLatitudeTransform(args, out transform, out skipReason);
+        }
+
         if (projCode.Equals("set", StringComparison.OrdinalIgnoreCase))
         {
             return SetMathTransform.TryCreate(args, out transform, out skipReason);
@@ -279,6 +290,146 @@ internal static class ProjPipelineMathTransformFactory
         }
 
         transform = new UnitConvertMathTransform(3, xyScale, zScale);
+        return true;
+    }
+
+    private static bool TryCreateGeocentricCartesianTransform(
+        Dictionary<string, string> args,
+        out MathTransform transform,
+        out string skipReason)
+    {
+        transform = null;
+        skipReason = null;
+
+        if (!TryResolveEllipsoid(args, out double semiMajor, out double semiMinor, out skipReason))
+        {
+            return false;
+        }
+
+        if (!TryResolveGeocentricScale(args, out double toMeterScale, out skipReason))
+        {
+            return false;
+        }
+
+        // PROJ cart/geocent applies to_meter to cartesian output units. Keep internal
+        // ellipsoid units aligned by scaling axis values accordingly.
+        semiMajor /= toMeterScale;
+        semiMinor /= toMeterScale;
+        if (semiMajor <= 0d || semiMinor <= 0d || double.IsNaN(semiMajor) || double.IsInfinity(semiMajor) || double.IsNaN(semiMinor) || double.IsInfinity(semiMinor))
+        {
+            skipReason = "geocent/cart resolved ellipsoid axes must be finite and positive.";
+            return false;
+        }
+
+        var geocentricParameters = new List<ProjectionParameter>(2)
+        {
+            new ProjectionParameter("semi_major", semiMajor),
+            new ProjectionParameter("semi_minor", semiMinor),
+        };
+
+        transform = new GeocentricTransform(geocentricParameters, false);
+        if (args.ContainsKey("inv"))
+        {
+            transform = transform.Inverse();
+        }
+
+        return true;
+    }
+
+    private static bool TryCreateGeocentricLatitudeTransform(
+        Dictionary<string, string> args,
+        out MathTransform transform,
+        out string skipReason)
+    {
+        transform = null;
+        skipReason = null;
+
+        if (!TryResolveEllipsoid(args, out double semiMajor, out double semiMinor, out skipReason))
+        {
+            return false;
+        }
+
+        transform = new GeocentricLatitudeMathTransform(semiMajor, semiMinor, args.ContainsKey("inv"));
+        return true;
+    }
+
+    private static bool TryResolveGeocentricScale(
+        Dictionary<string, string> args,
+        out double scale,
+        out string skipReason)
+    {
+        scale = 1d;
+        skipReason = null;
+
+        if (args.TryGetValue("units", out string unitsToken)
+            && !string.IsNullOrWhiteSpace(unitsToken)
+            && !unitsToken.Equals("m", StringComparison.OrdinalIgnoreCase))
+        {
+            skipReason = "geocent/cart currently supports only +units=m.";
+            return false;
+        }
+
+        if (args.TryGetValue("to_meter", out string toMeterToken) && !string.IsNullOrWhiteSpace(toMeterToken))
+        {
+            if (!TryParsePositiveScaleFactor(toMeterToken, out scale))
+            {
+                skipReason = "Unable to parse +to_meter parameter for geocent/cart.";
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private static bool TryParsePositiveScaleFactor(string token, out double scale)
+    {
+        scale = 0d;
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return false;
+        }
+
+        if (double.TryParse(token, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out double parsedScale))
+        {
+            if (parsedScale <= 0d || double.IsNaN(parsedScale) || double.IsInfinity(parsedScale))
+            {
+                return false;
+            }
+
+            scale = parsedScale;
+            return true;
+        }
+
+#if NET8_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+        int slashIndex = token.IndexOf('/', StringComparison.Ordinal);
+#else
+        int slashIndex = token.IndexOf('/');
+#endif
+        if (slashIndex <= 0 || slashIndex >= token.Length - 1)
+        {
+            return false;
+        }
+
+        string numeratorToken = token.Substring(0, slashIndex).Trim();
+        string denominatorToken = token.Substring(slashIndex + 1).Trim();
+        if (!double.TryParse(numeratorToken, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out double numerator)
+            || !double.TryParse(denominatorToken, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out double denominator))
+        {
+            return false;
+        }
+
+        if (denominator == 0d)
+        {
+            return false;
+        }
+
+        parsedScale = numerator / denominator;
+        if (parsedScale <= 0d || double.IsNaN(parsedScale) || double.IsInfinity(parsedScale))
+        {
+            return false;
+        }
+
+        scale = parsedScale;
         return true;
     }
 
