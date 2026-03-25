@@ -547,6 +547,20 @@ public class WKTCoordSysParserTests
         Assert.Equal(fromString.AuthorityCode, fromSpan.AuthorityCode);
     }
 
+    /// <summary>
+    /// Verifies that whitespace-only span input is rejected by the span-based parser overload.
+    /// </summary>
+    [Xunit.Fact]
+    public void ParseReadOnlySpanWhitespaceThrowsArgumentNullException()
+    {
+        const string whitespaceWkt = "   \t\r\n";
+
+        ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
+            () => ProjNet.IO.CoordinateSystems.CoordinateSystemWktReader.Parse(whitespaceWkt.AsSpan()));
+
+        Assert.Equal("wkt", exception.ParamName);
+    }
+
     private bool CheckPrimem(PrimeMeridian primeMeridian, string name, double? longitude, string authority, long? code)
     {
         Assert.NotNull(primeMeridian);

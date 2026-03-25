@@ -45,6 +45,22 @@ public class MathTransformSpanOverloadTests
     }
 
     /// <summary>
+    /// Verifies span point transform parity for dimensions above 4 ordinates.
+    /// </summary>
+    [Fact]
+    public void TransformReadOnlySpan5DMatchesArrayTransform()
+    {
+        MathTransform transform = new IdentityMathTransform(5);
+        double[] input = [11.0, -3.5, 4.25, 2026.0, 99.75];
+
+        double[] expected = transform.Transform(input);
+        var actual = new double[expected.Length];
+        transform.Transform(new ReadOnlySpan<double>(input), actual.AsSpan());
+
+        Assert.Equal(expected, actual);
+    }
+
+    /// <summary>
     /// Verifies that too-small destination spans are rejected.
     /// </summary>
     [Fact]
@@ -56,6 +72,35 @@ public class MathTransformSpanOverloadTests
 
         var exception = Assert.Throws<ArgumentException>(() => transform.Transform(new ReadOnlySpan<double>(input), destination.AsSpan()));
         Assert.Equal("result", exception.ParamName);
+    }
+
+    /// <summary>
+    /// Verifies that span point transforms only overwrite the required destination prefix.
+    /// </summary>
+    [Fact]
+    public void TransformReadOnlySpanWithLargerDestinationPreservesRemainingValues()
+    {
+        MathTransform transform = new IdentityMathTransform(3);
+        double[] input = [4.0, 5.0, 6.0];
+        double[] expected = transform.Transform(input);
+
+        var actual = new double[6];
+        for (int i = 0; i < actual.Length; i++)
+        {
+            actual[i] = -1.0;
+        }
+
+        transform.Transform(new ReadOnlySpan<double>(input), actual.AsSpan());
+
+        for (int i = 0; i < expected.Length; i++)
+        {
+            Assert.Equal(expected[i], actual[i], 12);
+        }
+
+        for (int i = expected.Length; i < actual.Length; i++)
+        {
+            Assert.Equal(-1.0, actual[i], 12);
+        }
     }
 
     /// <summary>
@@ -76,14 +121,36 @@ public class MathTransformSpanOverloadTests
         Assert.Equal(flagsFromList, flagsFromSpan);
     }
 
+    /// <summary>
+    /// Verifies span overload parity for empty convex hull and domain flag inputs.
+    /// </summary>
+    [Fact]
+    public void ConvexHullAndDomainFlagsSpanOverloadsMatchListOverloadsForEmptyInput()
+    {
+        var transform = new StubMathTransform();
+        double[] ordinates = [];
+
+        var hullFromList = transform.GetCodomainConvexHull(new System.Collections.Generic.List<double>(ordinates));
+        var hullFromSpan = transform.GetCodomainConvexHull(ordinates.AsSpan());
+        Assert.Equal(hullFromList, hullFromSpan);
+
+        DomainFlags flagsFromList = transform.GetDomainFlags(new System.Collections.Generic.List<double>(ordinates));
+        DomainFlags flagsFromSpan = transform.GetDomainFlags(ordinates.AsSpan());
+        Assert.Equal(flagsFromList, flagsFromSpan);
+    }
+
     private sealed class StubMathTransform : MathTransform
     {
         public override int DimSource => 2;
+
         public override int DimTarget => 2;
+
         public override string WKT => "PARAM_MT[\"Stub\"]";
+
         public override string XML => "<Stub />";
 
         public override MathTransform Inverse() => this;
+
         public override void Invert()
         {
         }

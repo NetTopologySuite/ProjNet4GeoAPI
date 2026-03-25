@@ -52,4 +52,34 @@ public class Wgs84ConversionInfoTests
         Assert.NotNull(exception);
         Assert.Equal("destination", exception.ParamName);
     }
+
+    /// <summary>
+    /// Verifies that writing affine coefficients updates only the required 7 destination elements.
+    /// </summary>
+    [Fact]
+    public void WriteAffineTransformWithLargerDestinationPreservesTrailingValues()
+    {
+        var info = new Wgs84ConversionInfo(1.0, 2.0, 3.0, 0.1, 0.2, 0.3, 0.4);
+        Span<double> destination = stackalloc double[9];
+        destination[0] = -1.0;
+        destination[1] = -1.0;
+        destination[2] = -1.0;
+        destination[3] = -1.0;
+        destination[4] = -1.0;
+        destination[5] = -1.0;
+        destination[6] = -1.0;
+        destination[7] = 1234.5;
+        destination[8] = -9876.5;
+
+        info.WriteAffineTransform(destination);
+        double[] expected = info.GetAffineTransform();
+
+        for (int i = 0; i < expected.Length; i++)
+        {
+            Assert.Equal(expected[i], destination[i], 12);
+        }
+
+        Assert.Equal(1234.5, destination[7], 12);
+        Assert.Equal(-9876.5, destination[8], 12);
+    }
 }
