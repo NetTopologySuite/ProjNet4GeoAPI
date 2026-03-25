@@ -354,6 +354,7 @@ namespace ProjNet.CoordinateSystems
         public double[] GetAffineTransform() { }
         public override int GetHashCode() { }
         public override string ToString() { }
+        public void WriteAffineTransform(System.Span<double> destination) { }
     }
 }
 namespace ProjNet.CoordinateSystems.Projections

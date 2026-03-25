@@ -217,13 +217,36 @@ public class Wgs84ConversionInfo
     /// <returns>An array of 7 Bursa-Wolf transformation coefficients [S, Ex*S, Ey*S, Ez*S, Dx, Dy, Dz], where S = 1 + Ppm/1,000,000.</returns>
     public double[] GetAffineTransform()
     {
-        double rS = 1 + (this.Ppm * 0.000001);
-        return new double[7] { rS, this.Ex * SECTORAD * rS, this.Ey * SECTORAD * rS, this.Ez * SECTORAD * rS, this.Dx, this.Dy, this.Dz };
+        var result = new double[7];
+        this.WriteAffineTransform(result);
+        return result;
         // return new double[3,4] {
         //     { RS,               -Ez*SEC_TO_RAD*RS,  +Ey*SEC_TO_RAD*RS,  Dx} ,
         //     { Ez*SEC_TO_RAD*RS, RS,                 -Ex*SEC_TO_RAD*RS,  Dy} ,
         //     { -Ey*SEC_TO_RAD*RS,Ex*SEC_TO_RAD*RS,   RS,                 Dz}
         // };
+    }
+
+    /// <summary>
+    /// Writes affine Bursa-Wolf transformation coefficients into the supplied destination span.
+    /// </summary>
+    /// <param name="destination">Destination span for 7 Bursa-Wolf coefficients [S, Ex*S, Ey*S, Ez*S, Dx, Dy, Dz].</param>
+    /// <exception cref="ArgumentException">Thrown when <paramref name="destination"/> has fewer than 7 elements.</exception>
+    public void WriteAffineTransform(Span<double> destination)
+    {
+        if (destination.Length < 7)
+        {
+            throw new ArgumentException("Destination span must contain at least 7 elements.", nameof(destination));
+        }
+
+        double rS = 1 + (this.Ppm * 0.000001);
+        destination[0] = rS;
+        destination[1] = this.Ex * SECTORAD * rS;
+        destination[2] = this.Ey * SECTORAD * rS;
+        destination[3] = this.Ez * SECTORAD * rS;
+        destination[4] = this.Dx;
+        destination[5] = this.Dy;
+        destination[6] = this.Dz;
     }
 
     /// <summary>
