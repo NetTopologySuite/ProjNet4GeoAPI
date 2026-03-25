@@ -64,8 +64,16 @@ dotnet test .\test\ProjNet.Tests\ProjNET.Tests.csproj --tl:off -v minimal
 - Generator now uses EPSG WKT ZIP as primary source (no runtime `proj.db` dependency).
 - Large generated eager arrays were replaced by on-demand switch-based lookup paths in the managed EPSG catalog.
 - Test stack modernized to xUnit v3.
+- Historical `SpecialtyProjectionBatch*` test naming was removed in favor of behavior-oriented class names.
 - SPDX-based file attribution and `LICENSES/` + `NOTICE.md` consolidation completed.
 - API XML documentation overhauled across projection, transformation, coordinate-system, and IO/service surfaces.
+- Build/versioning was unified with Nerdbank.GitVersioning (`version.json` + shared build props).
+
+## API baseline and coverage workflow
+
+- Public API drift is guarded by `PublicApiBaselineTests` against `src/ProjNet/PublicAPI.Shipped.txt`.
+- Baseline regeneration (intentional API change only) is controlled by `PROJNET_UPDATE_PUBLIC_API_BASELINE=1`.
+- Modernization-wave verification artifacts (coverage baseline/delta, review/finalization/checkpoints) are tracked in `docs/modernization/`.
 
 ## Transformation coverage summary
 
