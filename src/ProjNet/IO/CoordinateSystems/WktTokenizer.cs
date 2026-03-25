@@ -5,6 +5,7 @@
 namespace ProjNet.IO.CoordinateSystems;
 
 using System;
+using System.Globalization;
 using System.IO;
 
 /// <summary>
@@ -101,6 +102,59 @@ internal sealed class WktTokenizer
     }
 
     /// <summary>
+    /// Gets the current token parsed as a number.
+    /// </summary>
+    /// <returns>The current token parsed as <see cref="double"/>.</returns>
+    /// <exception cref="ArgumentException">Current token is not a number token.</exception>
+    /// <exception cref="FormatException">Current token text is not a valid floating-point number.</exception>
+    internal double GetNumericValue()
+    {
+        if (this.tokenType != TokenType.Number)
+        {
+            throw new ArgumentException($"The token '{this.GetTokenString()}' is not a number at line {this.LineNumber} column {this.Column}.");
+        }
+
+        if (this.TryGetNumericValue(out double value))
+        {
+            return value;
+        }
+
+        throw new FormatException($"The token '{this.GetTokenString()}' is not a valid number at line {this.LineNumber} column {this.Column}.");
+    }
+
+    /// <summary>
+    /// Tries to parse the current token as a number.
+    /// </summary>
+    /// <param name="value">The parsed value, when successful.</param>
+    /// <returns>
+    /// <see langword="true"/> when the current token is numeric and parsing succeeded;
+    /// otherwise <see langword="false"/>.
+    /// </returns>
+    internal bool TryGetNumericValue(out double value)
+    {
+        if (this.tokenType != TokenType.Number)
+        {
+            value = default;
+            return false;
+        }
+
+        ReadOnlySpan<char> tokenSpan = this.GetTokenSpan();
+#if NETSTANDARD2_0
+        return double.TryParse(
+            tokenSpan.ToString(),
+            NumberStyles.Float | NumberStyles.AllowLeadingSign,
+            CultureInfo.InvariantCulture,
+            out value);
+#else
+        return double.TryParse(
+            tokenSpan,
+            NumberStyles.Float | NumberStyles.AllowLeadingSign,
+            CultureInfo.InvariantCulture,
+            out value);
+#endif
+    }
+
+    /// <summary>
     /// Reads the next token using the default whitespace behavior.
     /// </summary>
     /// <returns>The type of the next token.</returns>
@@ -132,25 +186,30 @@ internal sealed class WktTokenizer
             }
 
             char current = this.source[this.index];
-            TokenType nextTokenType = GetCharacterType(current);
-
-            switch (nextTokenType)
+            TokenType nextTokenType;
+            if (char.IsLetter(current))
             {
-                case TokenType.Word:
-                    this.ConsumeWord();
-                    break;
-                case TokenType.Number:
-                    this.ConsumeNumber();
-                    break;
-                case TokenType.Eol:
-                    this.ConsumeEol();
-                    break;
-                case TokenType.Whitespace:
-                    this.ConsumeWhitespace();
-                    break;
-                default:
-                    this.ConsumeSymbol();
-                    break;
+                nextTokenType = TokenType.Word;
+                this.ConsumeWord();
+            }
+            else if (this.TryConsumeNumber())
+            {
+                nextTokenType = TokenType.Number;
+            }
+            else if (current == '\r' || current == '\n')
+            {
+                nextTokenType = TokenType.Eol;
+                this.ConsumeEol();
+            }
+            else if (char.IsWhiteSpace(current) || char.IsControl(current))
+            {
+                nextTokenType = TokenType.Whitespace;
+                this.ConsumeWhitespace();
+            }
+            else
+            {
+                nextTokenType = TokenType.Symbol;
+                this.ConsumeSymbol();
             }
 
             this.tokenType = nextTokenType;
@@ -159,31 +218,6 @@ internal sealed class WktTokenizer
                 return this.tokenType;
             }
         }
-    }
-
-    private static TokenType GetCharacterType(char value)
-    {
-        if (value == '\r' || value == '\n')
-        {
-            return TokenType.Eol;
-        }
-
-        if (char.IsDigit(value))
-        {
-            return TokenType.Number;
-        }
-
-        if (char.IsLetter(value))
-        {
-            return TokenType.Word;
-        }
-
-        if (char.IsWhiteSpace(value) || char.IsControl(value))
-        {
-            return TokenType.Whitespace;
-        }
-
-        return TokenType.Symbol;
     }
 
     private void ConsumeWord()
@@ -204,15 +238,92 @@ internal sealed class WktTokenizer
         this.tokenLength = this.index - this.tokenStartIndex;
     }
 
-    private void ConsumeNumber()
+    private bool TryConsumeNumber()
     {
-        this.AdvanceNonEolCharacter();
-        while (this.index < this.source.Length && char.IsDigit(this.source[this.index]))
+        int scanIndex = this.index;
+
+        if (this.source[scanIndex] == '-' || this.source[scanIndex] == '+')
+        {
+            if (!this.IsSignPrefixForNumber(scanIndex))
+            {
+                return false;
+            }
+
+            scanIndex++;
+        }
+
+        bool hasDigits = false;
+        while (scanIndex < this.source.Length && char.IsDigit(this.source[scanIndex]))
+        {
+            scanIndex++;
+            hasDigits = true;
+        }
+
+        if (scanIndex < this.source.Length && this.source[scanIndex] == '.')
+        {
+            scanIndex++;
+            while (scanIndex < this.source.Length && char.IsDigit(this.source[scanIndex]))
+            {
+                scanIndex++;
+                hasDigits = true;
+            }
+        }
+
+        if (!hasDigits)
+        {
+            return false;
+        }
+
+        if (scanIndex < this.source.Length && (this.source[scanIndex] == 'E' || this.source[scanIndex] == 'e'))
+        {
+            int exponentIndex = scanIndex + 1;
+            if (exponentIndex < this.source.Length && (this.source[exponentIndex] == '+' || this.source[exponentIndex] == '-'))
+            {
+                exponentIndex++;
+            }
+
+            int exponentDigitsStart = exponentIndex;
+            while (exponentIndex < this.source.Length && char.IsDigit(this.source[exponentIndex]))
+            {
+                exponentIndex++;
+            }
+
+            if (exponentIndex > exponentDigitsStart)
+            {
+                scanIndex = exponentIndex;
+            }
+        }
+
+        while (this.index < scanIndex)
         {
             this.AdvanceNonEolCharacter();
         }
 
         this.tokenLength = this.index - this.tokenStartIndex;
+        return true;
+    }
+
+    private bool IsSignPrefixForNumber(int signIndex)
+    {
+        int nextIndex = signIndex + 1;
+        if (nextIndex >= this.source.Length)
+        {
+            return false;
+        }
+
+        char nextCharacter = this.source[nextIndex];
+        if (char.IsDigit(nextCharacter))
+        {
+            return true;
+        }
+
+        if (nextCharacter != '.')
+        {
+            return false;
+        }
+
+        int fractionalStartIndex = nextIndex + 1;
+        return fractionalStartIndex < this.source.Length && char.IsDigit(this.source[fractionalStartIndex]);
     }
 
     private void ConsumeSymbol()
