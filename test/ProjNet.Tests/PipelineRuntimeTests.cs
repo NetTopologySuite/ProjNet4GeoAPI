@@ -68,7 +68,7 @@ public class PipelineRuntimeTests
     [Fact]
     public void PipelineWithPushAndPopRestoresSavedHorizontalComponent()
     {
-        const string operation = "+proj=pipeline +step +proj=push +v_1 +step +proj=affine +xoff=1 +s11=2 +step +proj=pop +v_1";
+        const string operation = "+proj=pipeline +step +proj=push +v_1 +step +proj=affine +xoff=10 +s11=2 +step +proj=affine +xoff=-10 +s11=0.5 +step +proj=pop +v_1";
 
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
 
@@ -79,6 +79,24 @@ public class PipelineRuntimeTests
         Assert.Equal(PushPopInput4D[1], transformed[1], 9);
         Assert.Equal(PushPopInput4D[2], transformed[2], 9);
         Assert.Equal(PushPopInput4D[3], transformed[3], 9);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void PipelineUsesGlobalEllipsoidParametersAcrossSteps()
+    {
+        const string operation = "+proj=pipeline +ellps=GRS80 +step +proj=geocent +step +proj=geocent +inv";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+
+        Assert.True(ok, skipReason);
+        double[] transformed = transform.Transform(GeocentRoundtripInput);
+
+        Assert.Equal(GeocentRoundtripInput[0], transformed[0], 9);
+        Assert.Equal(GeocentRoundtripInput[1], transformed[1], 9);
+        Assert.Equal(GeocentRoundtripInput[2], transformed[2], 6);
     }
 
     /// <summary>

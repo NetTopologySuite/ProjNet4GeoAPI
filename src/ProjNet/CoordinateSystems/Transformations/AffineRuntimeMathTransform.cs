@@ -279,65 +279,6 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
         return true;
     }
 
-    /// <inheritdoc />
-    public override bool Identity()
-    {
-        return this.xOffset == 0d
-            && this.yOffset == 0d
-            && this.zOffset == 0d
-            && this.tOffset == 0d
-            && this.s11 == 1d
-            && this.s12 == 0d
-            && this.s13 == 0d
-            && this.s21 == 0d
-            && this.s22 == 1d
-            && this.s23 == 0d
-            && this.s31 == 0d
-            && this.s32 == 0d
-            && this.s33 == 1d
-            && this.tScale == 1d;
-    }
-
-    /// <inheritdoc />
-    public override MathTransform Inverse()
-    {
-        if (this.inverse is null)
-        {
-            if (!this.TryCreateInverse(out MathTransform inverseTransform, out string error))
-            {
-                throw new InvalidOperationException(error);
-            }
-
-            this.inverse = inverseTransform;
-        }
-
-        return this.inverse;
-    }
-
-    /// <inheritdoc />
-    public override void Invert()
-    {
-        throw new NotSupportedException("Affine runtime transform does not support in-place inversion.");
-    }
-
-    /// <inheritdoc />
-    public override void Transform(ref double x, ref double y, ref double z)
-    {
-        double sourceX = x;
-        double sourceY = y;
-        double sourceZ = z;
-        x = this.xOffset + (this.s11 * sourceX) + (this.s12 * sourceY) + (this.s13 * sourceZ);
-        y = this.yOffset + (this.s21 * sourceX) + (this.s22 * sourceY) + (this.s23 * sourceZ);
-        z = this.zOffset + (this.s31 * sourceX) + (this.s32 * sourceY) + (this.s33 * sourceZ);
-    }
-
-    /// <inheritdoc />
-    internal override void Transform(ref double x, ref double y, ref double z, ref double t)
-    {
-        this.Transform(ref x, ref y, ref z);
-        t = this.tOffset + (this.tScale * t);
-    }
-
     private bool TryCreateInverse(out MathTransform inverseTransform, out string error)
     {
         inverseTransform = null;
@@ -395,5 +336,64 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
             i33,
             inverseTScale);
         return true;
+    }
+
+    /// <inheritdoc />
+    public override bool Identity()
+    {
+        return this.xOffset == 0d
+            && this.yOffset == 0d
+            && this.zOffset == 0d
+            && this.tOffset == 0d
+            && this.s11 == 1d
+            && this.s12 == 0d
+            && this.s13 == 0d
+            && this.s21 == 0d
+            && this.s22 == 1d
+            && this.s23 == 0d
+            && this.s31 == 0d
+            && this.s32 == 0d
+            && this.s33 == 1d
+            && this.tScale == 1d;
+    }
+
+    /// <inheritdoc />
+    public override MathTransform Inverse()
+    {
+        if (this.inverse is null)
+        {
+            if (!this.TryCreateInverse(out MathTransform inverseTransform, out string error))
+            {
+                throw new InvalidOperationException(error);
+            }
+
+            this.inverse = inverseTransform;
+        }
+
+        return this.inverse;
+    }
+
+    /// <inheritdoc />
+    public override void Invert()
+    {
+        throw new NotSupportedException("Affine runtime transform does not support in-place inversion.");
+    }
+
+    /// <inheritdoc />
+    public override void Transform(ref double x, ref double y, ref double z)
+    {
+        double sourceX = x;
+        double sourceY = y;
+        double sourceZ = z;
+        x = this.xOffset + (this.s11 * sourceX) + (this.s12 * sourceY) + (this.s13 * sourceZ);
+        y = this.yOffset + (this.s21 * sourceX) + (this.s22 * sourceY) + (this.s23 * sourceZ);
+        z = this.zOffset + (this.s31 * sourceX) + (this.s32 * sourceY) + (this.s33 * sourceZ);
+    }
+
+    /// <inheritdoc />
+    internal override void Transform(ref double x, ref double y, ref double z, ref double t)
+    {
+        this.Transform(ref x, ref y, ref z);
+        t = this.tOffset + (this.tScale * t);
     }
 }
