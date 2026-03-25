@@ -187,6 +187,64 @@ public abstract class MathTransform
     }
 
     /// <summary>
+    /// Transforms a coordinate point from <paramref name="point"/> into <paramref name="result"/>.
+    /// </summary>
+    /// <param name="point">The input coordinate as a readonly span of ordinate values.</param>
+    /// <param name="result">Destination span that receives the transformed ordinate values.</param>
+    /// <exception cref="ArgumentException">
+    /// Thrown when <paramref name="point"/> has fewer than two ordinates or
+    /// <paramref name="result"/> is too small to hold the transformed ordinates.
+    /// </exception>
+    public void Transform(ReadOnlySpan<double> point, Span<double> result)
+    {
+        if (point.Length < 2)
+        {
+            throw new ArgumentException("At least two ordinate values are required.", nameof(point));
+        }
+
+        int minimumDimensions = this.DimTarget == 2 ? 2 : 3;
+        int resultDimensions = point.Length <= 3
+            ? minimumDimensions
+            : Math.Max(minimumDimensions, point.Length);
+        if (result.Length < resultDimensions)
+        {
+            throw new ArgumentException(
+                "Destination span is too small to store the transformed coordinate.",
+                nameof(result));
+        }
+
+        double x = point[0];
+        double y = point[1];
+        double z = point.Length < 3 ? 0 : point[2];
+        double t = point.Length < 4 ? 0 : point[3];
+
+        if (point.Length >= 4)
+        {
+            this.Transform(ref x, ref y, ref z, ref t);
+        }
+        else
+        {
+            this.Transform(ref x, ref y, ref z);
+        }
+
+        result[0] = x;
+        result[1] = y;
+        if (resultDimensions >= 3)
+        {
+            result[2] = z;
+        }
+
+        if (resultDimensions >= 4)
+        {
+            result[3] = t;
+            for (int i = 4; i < resultDimensions; i++)
+            {
+                result[i] = point[i];
+            }
+        }
+    }
+
+    /// <summary>
     /// Transforms a list of coordinate point ordinal values.
     /// </summary>
     /// <remarks>

@@ -622,6 +622,7 @@ namespace ProjNet.CoordinateSystems.Transformations
                 "Y"})]
         public System.ValueTuple<double, double> Transform(double x, double y) { }
         public void Transform(ref double x, ref double y) { }
+        public void Transform(System.ReadOnlySpan<double> point, System.Span<double> result) { }
         [return: System.Runtime.CompilerServices.TupleElementNames(new string[] {
                 "O1",
                 "O2",
