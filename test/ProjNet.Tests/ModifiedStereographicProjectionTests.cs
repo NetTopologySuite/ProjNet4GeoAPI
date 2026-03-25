@@ -11,9 +11,9 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Validates specialty batch D2 specialty projections.
+/// Validates modified stereographic projection variants.
 /// </summary>
-public class SpecialtyProjectionBatchD2Tests
+public class ModifiedStereographicProjectionTests
 {
     private const string Sphere6400000 = "SPHEROID[\"Sphere\",6400000,0]";
     private const string Sphere6370997 = "SPHEROID[\"Sphere\",6370997,0]";
@@ -24,7 +24,7 @@ public class SpecialtyProjectionBatchD2Tests
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
     /// <summary>
-    /// Verifies aliases resolve from WKT for batch D2 projections.
+    /// Verifies aliases resolve from WKT for modified stereographic projection variants.
     /// </summary>
     /// <param name="projectionName">Projection alias.</param>
     /// <param name="spheroidClause">Spheroid clause.</param>
@@ -43,7 +43,7 @@ public class SpecialtyProjectionBatchD2Tests
     [InlineData("Modified_Stereographic_Alaska", Clarke66)]
     [InlineData("gs50", Clarke66)]
     [InlineData("Modified_Stereographic_50_US", Clarke66)]
-    public void SupportsBatchD2AliasesFromWkt(string projectionName, string spheroidClause)
+    public void SupportsModifiedStereographicAliasesFromWkt(string projectionName, string spheroidClause)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, spheroidClause));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
@@ -56,7 +56,7 @@ public class SpecialtyProjectionBatchD2Tests
     }
 
     /// <summary>
-    /// Verifies PROJ builtins forward vectors for batch D2 projections.
+    /// Verifies PROJ builtins forward vectors for modified stereographic projection variants.
     /// </summary>
     /// <param name="projectionName">Projection code.</param>
     /// <param name="spheroidClause">Spheroid clause.</param>
@@ -91,7 +91,7 @@ public class SpecialtyProjectionBatchD2Tests
     }
 
     /// <summary>
-    /// Verifies PROJ builtins inverse vectors for batch D2 projections.
+    /// Verifies PROJ builtins inverse vectors for modified stereographic projection variants.
     /// </summary>
     /// <param name="projectionName">Projection code.</param>
     /// <param name="spheroidClause">Spheroid clause.</param>
@@ -126,7 +126,7 @@ public class SpecialtyProjectionBatchD2Tests
     }
 
     /// <summary>
-    /// Verifies roundtrip stability for inverse-capable batch D2 projections.
+    /// Verifies roundtrip stability for inverse-capable modified stereographic projection variants.
     /// </summary>
     /// <param name="projectionName">Projection code.</param>
     /// <param name="spheroidClause">Spheroid clause.</param>
@@ -140,7 +140,7 @@ public class SpecialtyProjectionBatchD2Tests
     [InlineData("gs48", Sphere6370997, -95d, 35d)]
     [InlineData("alsk", Clarke66, -145d, 60d)]
     [InlineData("gs50", Clarke66, -80d, 36d)]
-    public void SupportsBatchD2Roundtrip(string projectionName, string spheroidClause, double longitude, double latitude)
+    public void SupportsModifiedStereographicRoundtrip(string projectionName, string spheroidClause, double longitude, double latitude)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, spheroidClause));
         var geographic = projected.GeographicCoordinateSystem;
