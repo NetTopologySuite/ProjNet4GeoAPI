@@ -698,6 +698,7 @@ namespace ProjNet.IO.CoordinateSystems
 {
     public static class CoordinateSystemWktReader
     {
+        public static ProjNet.CoordinateSystems.IInfo Parse(System.ReadOnlySpan<char> wkt) { }
         public static ProjNet.CoordinateSystems.IInfo Parse(string wkt) { }
     }
     public static class MathTransformWktReader

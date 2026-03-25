@@ -41,6 +41,28 @@ public static partial class CoordinateSystemWktReader
         }
 
         string normalizedWkt = NormalizeWkt(wkt);
+        return ParseNormalizedWkt(normalizedWkt);
+    }
+
+    /// <summary>
+    /// Reads and parses a WKT-formatted projection text from a character span.
+    /// </summary>
+    /// <param name="wkt">Character span containing WKT.</param>
+    /// <returns>Object representation of the WKT.</returns>
+    /// <exception cref="System.ArgumentException">If a token is not recognized.</exception>
+    public static IInfo Parse(ReadOnlySpan<char> wkt)
+    {
+        if (wkt.IsEmpty || IsWhitespaceOnly(wkt))
+        {
+            throw new ArgumentNullException(nameof(wkt));
+        }
+
+        string normalizedWkt = NormalizeWkt(wkt.ToString());
+        return ParseNormalizedWkt(normalizedWkt);
+    }
+
+    private static IInfo ParseNormalizedWkt(string normalizedWkt)
+    {
         var tokenizer = new WktTokenizer(normalizedWkt);
         tokenizer.NextToken();
         string objectName = tokenizer.GetStringValue();
@@ -65,6 +87,19 @@ public static partial class CoordinateSystemWktReader
             default:
                 throw new ArgumentException($"'{objectName}' is not recognized.");
         }
+    }
+
+    private static bool IsWhitespaceOnly(ReadOnlySpan<char> value)
+    {
+        for (int i = 0; i < value.Length; i++)
+        {
+            if (!char.IsWhiteSpace(value[i]))
+            {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private static string NormalizeWkt(string wkt)
