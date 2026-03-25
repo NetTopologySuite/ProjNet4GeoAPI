@@ -57,11 +57,9 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
         {
             var pInfo = new List<ProjectionParameter>
                 {
-                    /*
-                    new ProjectionParameter("semi_major", 6378137.0),
-                    new ProjectionParameter("semi_minor", 6378137.0),
-                    new ProjectionParameter("scale_factor", 1.0),
-                     */
+                    // new ProjectionParameter("semi_major", 6378137.0),
+                    // new ProjectionParameter("semi_minor", 6378137.0),
+                    // new ProjectionParameter("scale_factor", 1.0),
                     new ProjectionParameter("latitude_of_origin", 0.0),
                     new ProjectionParameter("central_meridian", 0.0),
                     new ProjectionParameter("false_easting", 0.0),

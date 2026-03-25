@@ -352,27 +352,26 @@ public static partial class CoordinateSystemWktReader
 
     private static ProjectedCoordinateSystem ReadProjectedCoordinateSystem(WktTokenizer tokenizer)
     {
-        /*PROJCS[
-            "OSGB 1936 / British National Grid",
-            GEOGCS[
-                "OSGB 1936",
-                DATUM[...]
-                PRIMEM[...]
-                AXIS["Geodetic latitude","NORTH"]
-                AXIS["Geodetic longitude","EAST"]
-                AUTHORITY["EPSG","4277"]
-            ],
-            PROJECTION["Transverse Mercator"],
-            PARAMETER["latitude_of_natural_origin",49],
-            PARAMETER["longitude_of_natural_origin",-2],
-            PARAMETER["scale_factor_at_natural_origin",0.999601272],
-            PARAMETER["false_easting",400000],
-            PARAMETER["false_northing",-100000],
-            AXIS["Easting","EAST"],
-            AXIS["Northing","NORTH"],
-            AUTHORITY["EPSG","27700"]
-        ]
-        */
+        // PROJCS[
+        //     "OSGB 1936 / British National Grid",
+        //     GEOGCS[
+        //         "OSGB 1936",
+        //         DATUM[...]
+        //         PRIMEM[...]
+        //         AXIS["Geodetic latitude","NORTH"]
+        //         AXIS["Geodetic longitude","EAST"]
+        //         AUTHORITY["EPSG","4277"]
+        //     ],
+        //     PROJECTION["Transverse Mercator"],
+        //     PARAMETER["latitude_of_natural_origin",49],
+        //     PARAMETER["longitude_of_natural_origin",-2],
+        //     PARAMETER["scale_factor_at_natural_origin",0.999601272],
+        //     PARAMETER["false_easting",400000],
+        //     PARAMETER["false_northing",-100000],
+        //     AXIS["Easting","EAST"],
+        //     AXIS["Northing","NORTH"],
+        //     AUTHORITY["EPSG","27700"]
+        // ]
         var bracket = tokenizer.ReadOpener();
         string name = tokenizer.ReadDoubleQuotedWord();
         tokenizer.ReadToken(",");
@@ -516,9 +515,7 @@ public static partial class CoordinateSystemWktReader
 
     private static GeocentricCoordinateSystem ReadGeocentricCoordinateSystem(WktTokenizer tokenizer)
     {
-        /*
-         * GEOCCS["<name>", <datum>, <prime meridian>, <linear unit> {,<axis>, <axis>, <axis>} {,<authority>}]
-         */
+        // GEOCCS["<name>", <datum>, <prime meridian>, <linear unit> {,<axis>, <axis>, <axis>} {,<authority>}]
 
         var bracket = tokenizer.ReadOpener();
         string name = tokenizer.ReadDoubleQuotedWord();
@@ -585,15 +582,13 @@ public static partial class CoordinateSystemWktReader
 
     private static GeographicCoordinateSystem ReadGeographicCoordinateSystem(WktTokenizer tokenizer)
     {
-        /*
-        GEOGCS["OSGB 1936",
-        DATUM["OSGB 1936",SPHEROID["Airy 1830",6377563.396,299.3249646,AUTHORITY["EPSG","7001"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY["EPSG","6277"]]
-        PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]]
-        AXIS["Geodetic latitude","NORTH"]
-        AXIS["Geodetic longitude","EAST"]
-        AUTHORITY["EPSG","4277"]
-        ]
-        */
+        // GEOGCS["OSGB 1936",
+        // DATUM["OSGB 1936",SPHEROID["Airy 1830",6377563.396,299.3249646,AUTHORITY["EPSG","7001"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY["EPSG","6277"]]
+        // PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]]
+        // AXIS["Geodetic latitude","NORTH"]
+        // AXIS["Geodetic longitude","EAST"]
+        // AUTHORITY["EPSG","4277"]
+        // ]
         var bracket = tokenizer.ReadOpener();
         string name = tokenizer.ReadDoubleQuotedWord();
         tokenizer.ReadToken(",");
@@ -747,25 +742,23 @@ public static partial class CoordinateSystemWktReader
 
     private static FittedCoordinateSystem ReadFittedCoordinateSystem(WktTokenizer tokenizer)
     {
-        /*
-         FITTED_CS[
-             "Local coordinate system MNAU (based on Gauss-Krueger)",
-             PARAM_MT[
-                "Affine",
-                PARAMETER["num_row",3],
-                PARAMETER["num_col",3],
-                PARAMETER["elt_0_0", 0.883485346527455],
-                PARAMETER["elt_0_1", -0.468458794848877],
-                PARAMETER["elt_0_2", 3455869.17937689],
-                PARAMETER["elt_1_0", 0.468458794848877],
-                PARAMETER["elt_1_1", 0.883485346527455],
-                PARAMETER["elt_1_2", 5478710.88035753],
-                PARAMETER["elt_2_2", 1],
-             ],
-             PROJCS["DHDN / Gauss-Kruger zone 3", GEOGCS["DHDN", DATUM["Deutsches_Hauptdreiecksnetz", SPHEROID["Bessel 1841", 6377397.155, 299.1528128, AUTHORITY["EPSG", "7004"]], TOWGS84[612.4, 77, 440.2, -0.054, 0.057, -2.797, 0.525975255930096], AUTHORITY["EPSG", "6314"]], PRIMEM["Greenwich", 0, AUTHORITY["EPSG", "8901"]], UNIT["degree", 0.0174532925199433, AUTHORITY["EPSG", "9122"]], AUTHORITY["EPSG", "4314"]], UNIT["metre", 1, AUTHORITY["EPSG", "9001"]], PROJECTION["Transverse_Mercator"], PARAMETER["latitude_of_origin", 0], PARAMETER["central_meridian", 9], PARAMETER["scale_factor", 1], PARAMETER["false_easting", 3500000], PARAMETER["false_northing", 0], AUTHORITY["EPSG", "31467"]]
-             AUTHORITY["CUSTOM","12345"]
-         ]
-        */
+        // FITTED_CS[
+        //     "Local coordinate system MNAU (based on Gauss-Krueger)",
+        //     PARAM_MT[
+        //        "Affine",
+        //        PARAMETER["num_row",3],
+        //        PARAMETER["num_col",3],
+        //        PARAMETER["elt_0_0", 0.883485346527455],
+        //        PARAMETER["elt_0_1", -0.468458794848877],
+        //        PARAMETER["elt_0_2", 3455869.17937689],
+        //        PARAMETER["elt_1_0", 0.468458794848877],
+        //        PARAMETER["elt_1_1", 0.883485346527455],
+        //        PARAMETER["elt_1_2", 5478710.88035753],
+        //        PARAMETER["elt_2_2", 1],
+        //     ],
+        //     PROJCS["DHDN / Gauss-Kruger zone 3", GEOGCS["DHDN", DATUM["Deutsches_Hauptdreiecksnetz", SPHEROID["Bessel 1841", 6377397.155, 299.1528128, AUTHORITY["EPSG", "7004"]], TOWGS84[612.4, 77, 440.2, -0.054, 0.057, -2.797, 0.525975255930096], AUTHORITY["EPSG", "6314"]], PRIMEM["Greenwich", 0, AUTHORITY["EPSG", "8901"]], UNIT["degree", 0.0174532925199433, AUTHORITY["EPSG", "9122"]], AUTHORITY["EPSG", "4314"]], UNIT["metre", 1, AUTHORITY["EPSG", "9001"]], PROJECTION["Transverse_Mercator"], PARAMETER["latitude_of_origin", 0], PARAMETER["central_meridian", 9], PARAMETER["scale_factor", 1], PARAMETER["false_easting", 3500000], PARAMETER["false_northing", 0], AUTHORITY["EPSG", "31467"]]
+        //     AUTHORITY["CUSTOM","12345"]
+        // ]
         var bracket = tokenizer.ReadOpener();
         string name = tokenizer.ReadDoubleQuotedWord();
         tokenizer.ReadToken(",");

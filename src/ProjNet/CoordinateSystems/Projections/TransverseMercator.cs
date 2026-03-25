@@ -27,30 +27,22 @@ using ProjNet.CoordinateSystems.Transformations;
 [Serializable]
 internal class TransverseMercator : MapProjection
 {
-    /*
-     * Maximum difference allowed when comparing real numbers.
-     */
+    // Maximum difference allowed when comparing real numbers.
     private const double EPSILON = 1E-6;
 
-    /*
-     * A derived quantity of eccentricity, computed by <code>e'Â² = (aÂ²-bÂ²)/bÂ² = es/(1-es)</code>
-     * where <c>a</c> is the semi-major axis length and <c>b</c> is the semi-minor axis
-     * length.
-     */
+    // A derived quantity of eccentricity, computed by <code>e'Â² = (aÂ²-bÂ²)/bÂ² = es/(1-es)</code>
+    // where <c>a</c> is the semi-major axis length and <c>b</c> is the semi-minor axis
+    // length.
     private readonly double esp;
 
-    /*
-     * Meridian distance at the {@code latitudeOfOrigin}.
-     * Used for calculations for the ellipsoid.
-     */
+    // Meridian distance at the {@code latitudeOfOrigin}.
+    // Used for calculations for the ellipsoid.
     private readonly double ml0;
 
     private readonly double reciprocSemiMajor;
 
-    /*
-     * Constants used for the forward and inverse transform for the elliptical
-     * case of the Transverse Mercator.
-     */
+    // Constants used for the forward and inverse transform for the elliptical
+    // case of the Transverse Mercator.
     private const double FC1 = 1.00000000000000000000000;  // 1/1
     private const double FC2 = 0.50000000000000000000000;  // 1/2
     private const double FC3 = 0.16666666666666666666666;  // 1/6
@@ -121,7 +113,7 @@ internal class TransverseMercator : MapProjection
         al /= Math.Sqrt(1.0 - (this.es * sinphi * sinphi));
         double n = this.esp * cosphi * cosphi;
 
-        /* NOTE: meridinal distance at latitudeOfOrigin is always 0 */
+        // NOTE: meridinal distance at latitudeOfOrigin is always 0
         y = this.Mlfn(y, sinphi, cosphi) - this.ml0 +
             (sinphi * al * x *
             FC2 * (1.0 +

@@ -93,7 +93,7 @@ internal class Mercator : MapProjection
         double dLongitude = lon;
         double dLatitude = lat;
 
-        /* Forward equations */
+        // Forward equations
         if (Math.Abs(Math.Abs(dLatitude) - HalfPi) <= Epsln)
         {
             throw new ArgumentException("Transformation cannot be computed at the poles.");
@@ -112,8 +112,7 @@ internal class Mercator : MapProjection
     /// <param name="y">The y-ordinate in projected meters.</param>
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        /* Inverse equations
-          -----------------*/
+        // Inverse equations
         double dX = x;
         double dY = y;
         double ts = Math.Exp(-dY / (this.semiMajor * this.k0)); // t

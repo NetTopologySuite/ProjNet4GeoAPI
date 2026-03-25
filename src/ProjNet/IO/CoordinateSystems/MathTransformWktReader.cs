@@ -94,20 +94,18 @@ public static class MathTransformWktReader
 
     private static AffineTransform ReadAffineTransform(WktTokenizer tokenizer)
     {
-        /*
-             PARAM_MT[
-                "Affine",
-                PARAMETER["num_row",3],
-                PARAMETER["num_col",3],
-                PARAMETER["elt_0_0", 0.883485346527455],
-                PARAMETER["elt_0_1", -0.468458794848877],
-                PARAMETER["elt_0_2", 3455869.17937689],
-                PARAMETER["elt_1_0", 0.468458794848877],
-                PARAMETER["elt_1_1", 0.883485346527455],
-                PARAMETER["elt_1_2", 5478710.88035753],
-                PARAMETER["elt_2_2", 1]
-             ]
-        */
+        // PARAM_MT[
+        //    "Affine",
+        //    PARAMETER["num_row",3],
+        //    PARAMETER["num_col",3],
+        //    PARAMETER["elt_0_0", 0.883485346527455],
+        //    PARAMETER["elt_0_1", -0.468458794848877],
+        //    PARAMETER["elt_0_2", 3455869.17937689],
+        //    PARAMETER["elt_1_0", 0.468458794848877],
+        //    PARAMETER["elt_1_1", 0.883485346527455],
+        //    PARAMETER["elt_1_2", 5478710.88035753],
+        //    PARAMETER["elt_2_2", 1]
+        // ]
         // tokenizer stands on the first PARAMETER
         if (tokenizer.GetStringValue() != "PARAMETER")
         {

@@ -116,26 +116,24 @@ public class CoordinateSystemFactory
         return new FittedCoordinateSystem(baseCoordinateSystem, toBase, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
     }
 
-    /*
-    /// <summary>
-    /// Creates a <see cref="ILocalCoordinateSystem">local coordinate system</see>.
-    /// </summary>
-    /// <remarks>
-    ///  The dimension of the local coordinate system is determined by the size of
-    /// the axis array. All the axes will have the same units. If you want to make
-    /// a coordinate system with mixed units, then you can make a compound
-    /// coordinate system from different local coordinate systems.
-    /// </remarks>
-    /// <param name="name">Name of local coordinate system</param>
-    /// <param name="datum">Local datum</param>
-    /// <param name="unit">Units</param>
-    /// <param name="axes">Axis info</param>
-    /// <returns>Local coordinate system</returns>
-    public ILocalCoordinateSystem CreateLocalCoordinateSystem(string name, ILocalDatum datum, IUnit unit, List<AxisInfo> axes)
-    {
-        throw new NotImplementedException();
-    }
-    */
+    // /// <summary>
+    // /// Creates a <see cref="ILocalCoordinateSystem">local coordinate system</see>.
+    // /// </summary>
+    // /// <remarks>
+    // ///  The dimension of the local coordinate system is determined by the size of
+    // /// the axis array. All the axes will have the same units. If you want to make
+    // /// a coordinate system with mixed units, then you can make a compound
+    // /// coordinate system from different local coordinate systems.
+    // /// </remarks>
+    // /// <param name="name">Name of local coordinate system</param>
+    // /// <param name="datum">Local datum</param>
+    // /// <param name="unit">Units</param>
+    // /// <param name="axes">Axis info</param>
+    // /// <returns>Local coordinate system</returns>
+    // public ILocalCoordinateSystem CreateLocalCoordinateSystem(string name, ILocalDatum datum, IUnit unit, List<AxisInfo> axes)
+    // {
+    //     throw new NotImplementedException();
+    // }
 
     /// <summary>
     /// Creates an <see cref="Ellipsoid"/> from radius values.
@@ -305,18 +303,16 @@ public class CoordinateSystemFactory
         return new GeographicCoordinateSystem(angularUnit, datum, primeMeridian, info, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
     }
 
-    /*
-    /// <summary>
-    /// Creates a <see cref="ILocalDatum"/>.
-    /// </summary>
-    /// <param name="name">Name of datum</param>
-    /// <param name="datumType">Datum type</param>
-    /// <returns>The transformation result.</returns>
-    public ILocalDatum CreateLocalDatum(string name, DatumType datumType)
-    {
-        throw new NotImplementedException();
-    }
-    */
+    // /// <summary>
+    // /// Creates a <see cref="ILocalDatum"/>.
+    // /// </summary>
+    // /// <param name="name">Name of datum</param>
+    // /// <param name="datumType">Datum type</param>
+    // /// <returns>The transformation result.</returns>
+    // public ILocalDatum CreateLocalDatum(string name, DatumType datumType)
+    // {
+    //     throw new NotImplementedException();
+    // }
 
     /// <summary>
     /// Creates a <see cref="VerticalDatum"/> from an enumerated type value.

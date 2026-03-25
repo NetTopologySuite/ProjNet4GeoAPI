@@ -219,11 +219,11 @@ public class Wgs84ConversionInfo
     {
         double rS = 1 + (this.Ppm * 0.000001);
         return new double[7] { rS, this.Ex * SECTORAD * rS, this.Ey * SECTORAD * rS, this.Ez * SECTORAD * rS, this.Dx, this.Dy, this.Dz };
-        /*return new double[3,4] {
-            { RS,               -Ez*SEC_TO_RAD*RS,  +Ey*SEC_TO_RAD*RS,  Dx} ,
-            { Ez*SEC_TO_RAD*RS, RS,                 -Ex*SEC_TO_RAD*RS,  Dy} ,
-            { -Ey*SEC_TO_RAD*RS,Ex*SEC_TO_RAD*RS,   RS,                 Dz}
-        };*/
+        // return new double[3,4] {
+        //     { RS,               -Ez*SEC_TO_RAD*RS,  +Ey*SEC_TO_RAD*RS,  Dx} ,
+        //     { Ez*SEC_TO_RAD*RS, RS,                 -Ex*SEC_TO_RAD*RS,  Dy} ,
+        //     { -Ey*SEC_TO_RAD*RS,Ex*SEC_TO_RAD*RS,   RS,                 Dz}
+        // };
     }
 
     /// <summary>
