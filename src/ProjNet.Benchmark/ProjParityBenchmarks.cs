@@ -29,6 +29,18 @@ public class ProjParityBenchmarks
     private static readonly ICoordinateTransformation Wgs84ToUtm32N =
         CoordinateSystemServices.CreateTransformation(4326, 32632);
 
+    private static readonly ICoordinateTransformation Wgs84ToUtm31N =
+        CoordinateSystemServices.CreateTransformation(4326, 32631);
+
+    private static readonly ICoordinateTransformation Utm31NToWgs84 =
+        CoordinateSystemServices.CreateTransformation(32631, 4326);
+
+    private static readonly ICoordinateTransformation Wgs84ToLambert93 =
+        CoordinateSystemServices.CreateTransformation(4326, 2154);
+
+    private static readonly ICoordinateTransformation Lambert93ToWgs84 =
+        CoordinateSystemServices.CreateTransformation(2154, 4326);
+
     private static readonly ICoordinateTransformation WebMercatorToWgs84 =
         CoordinateSystemServices.CreateTransformation(3857, 4326);
 
@@ -57,6 +69,18 @@ public class ProjParityBenchmarks
         EnsureFinite(benchmark.xBuffer, benchmark.yBuffer);
 
         benchmark.Wgs84ToUtm32NBatched();
+        EnsureFinite(benchmark.xBuffer, benchmark.yBuffer);
+
+        benchmark.Wgs84ToUtm31NBatched();
+        EnsureFinite(benchmark.xBuffer, benchmark.yBuffer);
+
+        benchmark.Utm31NToWgs84Batched();
+        EnsureFinite(benchmark.xBuffer, benchmark.yBuffer);
+
+        benchmark.Wgs84ToLambert93Batched();
+        EnsureFinite(benchmark.xBuffer, benchmark.yBuffer);
+
+        benchmark.Lambert93ToWgs84Batched();
         EnsureFinite(benchmark.xBuffer, benchmark.yBuffer);
 
         benchmark.WebMercatorToWgs84Batched();
@@ -138,6 +162,46 @@ public class ProjParityBenchmarks
     /// Performs the documented operation.
     /// </summary>
     [Benchmark]
+    public void Wgs84ToUtm31NBatched()
+    {
+        this.PrepareInput();
+        Wgs84ToUtm31N.MathTransform.Transform(this.xBuffer, this.yBuffer);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Benchmark]
+    public void Utm31NToWgs84Batched()
+    {
+        this.PrepareProjectedInput(Wgs84ToUtm31N);
+        Utm31NToWgs84.MathTransform.Transform(this.xBuffer, this.yBuffer);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Benchmark]
+    public void Wgs84ToLambert93Batched()
+    {
+        this.PrepareInput();
+        Wgs84ToLambert93.MathTransform.Transform(this.xBuffer, this.yBuffer);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Benchmark]
+    public void Lambert93ToWgs84Batched()
+    {
+        this.PrepareProjectedInput(Wgs84ToLambert93);
+        Lambert93ToWgs84.MathTransform.Transform(this.xBuffer, this.yBuffer);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Benchmark]
     public void WebMercatorToWgs84Batched()
     {
         this.PrepareInput();
@@ -160,6 +224,12 @@ public class ProjParityBenchmarks
     {
         this.longitudes.CopyTo(this.xBuffer.AsSpan());
         this.latitudes.CopyTo(this.yBuffer.AsSpan());
+    }
+
+    private void PrepareProjectedInput(ICoordinateTransformation forwardTransform)
+    {
+        this.PrepareInput();
+        forwardTransform.MathTransform.Transform(this.xBuffer, this.yBuffer);
     }
 
     private void ApplyNoise(Span<double> xs, Span<double> ys, double noiseX, double noiseY)
