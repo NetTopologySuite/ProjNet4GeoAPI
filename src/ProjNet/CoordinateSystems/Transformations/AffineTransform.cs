@@ -214,12 +214,24 @@ public class AffineTransform : MathTransform
     /// <param name="lu">The lu parameter.</param>
     /// <param name="pi">The pi parameter.</param>
     /// <param name="b">The b parameter.</param>
-    /// <returns>The transformation result.</returns>
-    private static double[] LUPSolve(double[,] lu, int[] pi, double[] b)
+    /// <param name="solution">Destination span for the computed solution vector.</param>
+    private static void LUPSolve(double[,] lu, int[] pi, ReadOnlySpan<double> b, Span<double> solution)
     {
         int n = lu.GetLength(0) - 1;
-        double[] x = new double[n + 1];
-        double[] y = new double[n + 1];
+        int dimension = n + 1;
+        if (b.Length < dimension)
+        {
+            throw new ArgumentException("Input vector is too short.", nameof(b));
+        }
+
+        if (solution.Length < dimension)
+        {
+            throw new ArgumentException("Solution buffer is too short.", nameof(solution));
+        }
+
+        Span<double> xSpan = solution.Slice(0, dimension);
+        Span<double> yBuffer = dimension <= 128 ? stackalloc double[128] : new double[dimension];
+        Span<double> ySpan = yBuffer.Slice(0, dimension);
 
         // Solve for y using formward substitution
         for (int i = 0; i <= n; i++)
@@ -240,10 +252,10 @@ public class AffineTransform : MathTransform
                     lij = lu[i, j];
                 }
 
-                suml += lij * y[j];
+                suml += lij * ySpan[j];
             }
 
-            y[i] = b[pi[i]] - suml;
+            ySpan[i] = b[pi[i]] - suml;
         }
 
         // Solve for x by using back substitution
@@ -252,13 +264,11 @@ public class AffineTransform : MathTransform
             double sumu = 0;
             for (int j = i + 1; j <= n; j++)
             {
-                sumu += lu[i, j] * x[j];
+                sumu += lu[i, j] * xSpan[j];
             }
 
-            x[i] = (y[i] - sumu) / lu[i, i];
+            xSpan[i] = (ySpan[i] - sumu) / lu[i, i];
         }
-
-        return x;
     }
 
     /// <summary>
@@ -348,21 +358,21 @@ public class AffineTransform : MathTransform
         // x will hold the inverse matrix to be returned
         double[,] x = new double[n, m];
 
-        // solve will contain the vector solution for the LUP decomposition as we solve
-        // for each vector of x.  We will combine the solutions into the double[][] array x.
-        double[] solve;
-
         // Get the LU matrix and P matrix (as an array)
         int[] p = LUPDecomposition(a);
         double[,] lU = a;
+        Span<double> eBuffer = m <= 128 ? stackalloc double[128] : new double[m];
+        Span<double> solveBuffer = m <= 128 ? stackalloc double[128] : new double[m];
+        Span<double> e = eBuffer.Slice(0, m);
+        Span<double> solve = solveBuffer.Slice(0, m);
 
         // Solve AX = e for each column ei of the identity matrix using LUP decomposition
         for (int i = 0; i < n; i++)
         {
             // e will represent each column in the identity matrix
-            double[] e = new double[m];
+            e.Clear();
             e[i] = 1;
-            solve = LUPSolve(lU, p, e);
+            LUPSolve(lU, p, e, solve);
             for (int j = 0; j < solve.Length; j++)
             {
                 x[j, i] = solve[j];
