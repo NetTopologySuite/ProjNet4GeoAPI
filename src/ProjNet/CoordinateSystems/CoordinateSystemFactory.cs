@@ -177,20 +177,9 @@ public class CoordinateSystemFactory
             ArgumentGuard.ThrowArgument("Invalid name", nameof(name));
         }
 
-        if (gcs is null)
-        {
-            ArgumentGuard.ThrowIfNull(gcs, nameof(gcs));
-        }
-
-        if (projection is null)
-        {
-            ArgumentGuard.ThrowIfNull(projection, nameof(projection));
-        }
-
-        if (linearUnit is null)
-        {
-            ArgumentGuard.ThrowIfNull(linearUnit, nameof(linearUnit));
-        }
+        gcs = ArgumentGuard.ThrowIfNull(gcs, nameof(gcs));
+        projection = ArgumentGuard.ThrowIfNull(projection, nameof(projection));
+        linearUnit = ArgumentGuard.ThrowIfNull(linearUnit, nameof(linearUnit));
 
         var info = new List<AxisInfo>(2);
         info.Add(axis0);

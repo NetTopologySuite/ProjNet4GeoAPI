@@ -25,8 +25,8 @@ internal sealed class PipelineCompositeMathTransform : MathTransform
     /// <param name="executionContext">Pipeline execution context shared across steps.</param>
     internal PipelineCompositeMathTransform(IReadOnlyList<MathTransform> transforms, PipelineExecutionContext executionContext)
     {
-        ArgumentGuard.ThrowIfNull(transforms, nameof(transforms));
-        ArgumentGuard.ThrowIfNull(executionContext, nameof(executionContext));
+        transforms = ArgumentGuard.ThrowIfNull(transforms, nameof(transforms));
+        this.executionContext = ArgumentGuard.ThrowIfNull(executionContext, nameof(executionContext));
 
         if (transforms.Count == 0)
         {
@@ -44,7 +44,6 @@ internal sealed class PipelineCompositeMathTransform : MathTransform
             this.transforms[i] = transforms[i];
         }
 
-        this.executionContext = executionContext;
     }
 
     /// <inheritdoc />

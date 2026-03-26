@@ -59,8 +59,7 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
 
     private Ntv2HGridShiftMathTransform(Ntv2HGridShiftMathTransform source, bool isInverted)
     {
-        ArgumentGuard.ThrowIfNull(source, nameof(source));
-
+        source = ArgumentGuard.ThrowIfNull(source, nameof(source));
         this.gridSets = source.gridSets;
         this.isInverted = isInverted;
     }

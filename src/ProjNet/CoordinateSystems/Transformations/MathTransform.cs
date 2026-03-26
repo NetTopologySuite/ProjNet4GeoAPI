@@ -168,7 +168,7 @@ public abstract class MathTransform
     /// <returns>The transformed coordinate as an array of ordinate values.</returns>
     public double[] Transform(double[] point)
     {
-        ArgumentGuard.ThrowIfNull(point, nameof(point));
+        point = ArgumentGuard.ThrowIfNull(point, nameof(point));
 
         int pointLength = point.Length;
         int resultDimensions = this.GetResultDimensions(pointLength);
@@ -234,7 +234,7 @@ public abstract class MathTransform
     /// <returns>The transformed packed ordinate values.</returns>
     public IList<double[]> TransformList(IList<double[]> points)
     {
-        ArgumentGuard.ThrowIfNull(points, nameof(points));
+        points = ArgumentGuard.ThrowIfNull(points, nameof(points));
 
         int minimumDimensions = this.DimTarget == 2 ? 2 : 3;
         var result = new List<double[]>(points.Count);

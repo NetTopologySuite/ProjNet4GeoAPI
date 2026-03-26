@@ -311,8 +311,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     /// <returns>The SRID under which the coordinate system was registered.</returns>
     protected virtual int AddCoordinateSystem(CoordinateSystem coordinateSystem)
     {
-        ArgumentGuard.ThrowIfNull(coordinateSystem, nameof(coordinateSystem));
-
+        coordinateSystem = ArgumentGuard.ThrowIfNull(coordinateSystem, nameof(coordinateSystem));
         int srid = (int)coordinateSystem.AuthorityCode;
         this.AddCoordinateSystem(srid, coordinateSystem);
 

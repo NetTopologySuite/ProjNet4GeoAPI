@@ -42,7 +42,7 @@ public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<Pro
     /// <exception cref="ArgumentNullException">Thrown when <paramref name="parameters"/> is <see langword="null"/>.</exception>
     public ProjectionParameterSet(IEnumerable<ProjectionParameter> parameters)
     {
-        ArgumentGuard.ThrowIfNull(parameters, nameof(parameters));
+        parameters = ArgumentGuard.ThrowIfNull(parameters, nameof(parameters));
 
         foreach (var pp in parameters)
         {
@@ -75,9 +75,8 @@ public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<Pro
     /// <exception cref="ArgumentException">Thrown when <paramref name="parameterName"/> and all <paramref name="alternateNames"/> are absent from the set.</exception>
     public double GetParameterValue(string parameterName, params string[] alternateNames)
     {
-        ArgumentGuard.ThrowIfNull(parameterName, nameof(parameterName));
-
-        ArgumentGuard.ThrowIfNull(alternateNames, nameof(alternateNames));
+        parameterName = ArgumentGuard.ThrowIfNull(parameterName, nameof(parameterName));
+        alternateNames = ArgumentGuard.ThrowIfNull(alternateNames, nameof(alternateNames));
 
         string name = parameterName.ToLowerInvariant();
         if (!this.ContainsKey(name))
@@ -122,9 +121,8 @@ public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<Pro
     /// </returns>
     public double GetOptionalParameterValue(string name, double value, params string[] alternateNames)
     {
-        ArgumentGuard.ThrowIfNull(name, nameof(name));
-
-        ArgumentGuard.ThrowIfNull(alternateNames, nameof(alternateNames));
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
+        alternateNames = ArgumentGuard.ThrowIfNull(alternateNames, nameof(alternateNames));
 
         name = name.ToLowerInvariant();
         if (!this.ContainsKey(name))
@@ -152,7 +150,7 @@ public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<Pro
     /// <returns>The parameter if present; otherwise <see langword="null"/>.</returns>
     public ProjectionParameter Find(string name)
     {
-        ArgumentGuard.ThrowIfNull(name, nameof(name));
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
 
         name = name.ToLowerInvariant();
         return this.ContainsKey(name) ? new ProjectionParameter(this.originalNames[name], this[name]) : null;

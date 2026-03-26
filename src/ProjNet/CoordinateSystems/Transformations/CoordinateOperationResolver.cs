@@ -24,11 +24,9 @@ internal static class CoordinateOperationResolver
         CoordinateSystem target,
         Func<CoordinateSystem, CoordinateSystem, ICoordinateTransformation?> directResolver)
     {
-        ArgumentGuard.ThrowIfNull(source, nameof(source));
-
-        ArgumentGuard.ThrowIfNull(target, nameof(target));
-
-        ArgumentGuard.ThrowIfNull(directResolver, nameof(directResolver));
+        source = ArgumentGuard.ThrowIfNull(source, nameof(source));
+        target = ArgumentGuard.ThrowIfNull(target, nameof(target));
+        directResolver = ArgumentGuard.ThrowIfNull(directResolver, nameof(directResolver));
 
         OperationCandidate? bestCandidate = null;
         bestCandidate = SelectHigherScore(bestCandidate, CreateIdentityCandidate(source, target));

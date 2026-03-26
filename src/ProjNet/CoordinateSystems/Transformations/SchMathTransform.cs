@@ -54,8 +54,7 @@ internal sealed class SchMathTransform : MathTransform
 
     private SchMathTransform(IEnumerable<ProjectionParameter> parameters, bool isInverted)
     {
-        ArgumentGuard.ThrowIfNull(parameters, nameof(parameters));
-
+        parameters = ArgumentGuard.ThrowIfNull(parameters, nameof(parameters));
         var parameterSet = new ProjectionParameterSet(parameters);
 
         double pegLatitude = DegreesToRadians(parameterSet.GetParameterValue("plat_0", "peg_point_latitude"));

@@ -46,9 +46,9 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
         bool gridReferenceIsInput)
     {
 #if NET8_0_OR_GREATER
-        ArgumentGuard.ThrowIfNull(gridPaths);
+        gridPaths = ArgumentGuard.ThrowIfNull(gridPaths);
 #else
-        ArgumentGuard.ThrowIfNull(gridPaths, nameof(gridPaths));
+        gridPaths = ArgumentGuard.ThrowIfNull(gridPaths, nameof(gridPaths));
 #endif
 
         if (semiMajor <= 0d || double.IsNaN(semiMajor) || double.IsInfinity(semiMajor))
@@ -102,9 +102,9 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
     private GeoTiffXyzGridShiftMathTransform(GeoTiffXyzGridShiftMathTransform source, bool isInverted)
     {
 #if NET8_0_OR_GREATER
-        ArgumentGuard.ThrowIfNull(source);
+        source = ArgumentGuard.ThrowIfNull(source);
 #else
-        ArgumentGuard.ThrowIfNull(source, nameof(source));
+        source = ArgumentGuard.ThrowIfNull(source, nameof(source));
 #endif
 
         this.grids = source.grids;

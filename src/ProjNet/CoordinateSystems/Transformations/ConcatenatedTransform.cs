@@ -39,8 +39,7 @@ internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationC
     public ConcatenatedTransform(IEnumerable<ICoordinateTransformationCore> transformList)
         : this()
     {
-        ArgumentGuard.ThrowIfNull(transformList, nameof(transformList));
-
+        transformList = ArgumentGuard.ThrowIfNull(transformList, nameof(transformList));
         if (transformList is ICollection<ICoordinateTransformationCore> collection)
         {
             this.coordinateTransformationList.Capacity = collection.Count;

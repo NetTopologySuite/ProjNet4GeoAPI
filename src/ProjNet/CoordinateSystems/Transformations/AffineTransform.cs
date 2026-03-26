@@ -76,8 +76,7 @@ public class AffineTransform : MathTransform
     public AffineTransform(double[,] matrix)
     {
         // check validity
-        ArgumentGuard.ThrowIfNull(matrix, nameof(matrix));
-
+        matrix = ArgumentGuard.ThrowIfNull(matrix, nameof(matrix));
         if (matrix.GetLength(0) <= 1)
         {
             ArgumentGuard.ThrowArgument("Transformation matrix must have at least 2 rows.");

@@ -23,8 +23,7 @@ internal sealed class GridResourceResolverOptions
     /// <param name="mode">Resolution mode controlling whether network retrieval is attempted.</param>
     internal GridResourceResolverOptions(IEnumerable<string> localDirectories, string cacheDirectory, GridResourceResolutionMode mode)
     {
-        ArgumentGuard.ThrowIfNull(localDirectories, nameof(localDirectories));
-
+        localDirectories = ArgumentGuard.ThrowIfNull(localDirectories, nameof(localDirectories));
         this.LocalDirectories = localDirectories
             .Where(path => !string.IsNullOrWhiteSpace(path))
             .Select(Path.GetFullPath)

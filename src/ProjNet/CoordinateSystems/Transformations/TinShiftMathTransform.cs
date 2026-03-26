@@ -997,14 +997,12 @@ internal sealed class TinShiftMathTransform : MathTransform
             double[] vertices,
             List<TriangleIndices> triangles)
         {
-            ArgumentGuard.ThrowIfNull(vertices, nameof(vertices));
-            ArgumentGuard.ThrowIfNull(triangles, nameof(triangles));
+            this.Vertices = ArgumentGuard.ThrowIfNull(vertices, nameof(vertices));
+            this.Triangles = ArgumentGuard.ThrowIfNull(triangles, nameof(triangles));
             this.TransformHorizontal = transformHorizontal;
             this.TransformVertical = transformVertical;
             this.Fallback = fallback;
             this.VertexColumnCount = vertexColumnCount;
-            this.Vertices = vertices;
-            this.Triangles = triangles;
         }
 
         internal bool TransformHorizontal { get; }

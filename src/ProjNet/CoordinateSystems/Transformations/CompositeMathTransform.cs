@@ -22,8 +22,7 @@ internal sealed class CompositeMathTransform : MathTransform
     /// <param name="transforms">Ordered transform chain executed from first to last.</param>
     internal CompositeMathTransform(IReadOnlyList<MathTransform> transforms)
     {
-        ArgumentGuard.ThrowIfNull(transforms, nameof(transforms));
-
+        transforms = ArgumentGuard.ThrowIfNull(transforms, nameof(transforms));
         if (transforms.Count == 0)
         {
             ArgumentGuard.ThrowArgument("At least one math transform is required.", nameof(transforms));

@@ -121,7 +121,7 @@ internal static partial class GeoTiffGridLoader
             ArgumentGuard.ThrowArgument("Path is required.", nameof(path));
         }
 
-        ArgumentGuard.ThrowIfNull(sampleValueArrayPool, nameof(sampleValueArrayPool));
+        sampleValueArrayPool = ArgumentGuard.ThrowIfNull(sampleValueArrayPool, nameof(sampleValueArrayPool));
 
         var pages = new List<LoadedPage>();
         using Tiff tiff = Tiff.Open(path, "r");
