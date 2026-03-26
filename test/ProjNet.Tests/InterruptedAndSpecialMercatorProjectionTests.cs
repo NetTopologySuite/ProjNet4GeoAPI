@@ -44,7 +44,7 @@ public class InterruptedAndSpecialMercatorProjectionTests
     [InlineData("Interrupted_Mollweide_Oceanic_View", Sphere6400000, null)]
     [InlineData("igh_o", Sphere6400000, null)]
     [InlineData("Interrupted_Goode_Homolosine_Oceanic_View", Sphere6400000, null)]
-    public void SupportsInterruptedAndSpecialMercatorAliasesFromWkt(string projectionName, string spheroidClause, string extraParameters)
+    public void SupportsInterruptedAndSpecialMercatorAliasesFromWkt(string projectionName, string spheroidClause, string? extraParameters)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
         ArgumentNullException.ThrowIfNull(spheroidClause);
@@ -106,7 +106,7 @@ public class InterruptedAndSpecialMercatorProjectionTests
         double latitude,
         double expectedX,
         double expectedY,
-        string extraParameters,
+        string? extraParameters,
         double tolerance)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
@@ -180,7 +180,7 @@ public class InterruptedAndSpecialMercatorProjectionTests
         double y,
         double expectedLongitude,
         double expectedLatitude,
-        string extraParameters,
+        string? extraParameters,
         double tolerance)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
@@ -215,7 +215,7 @@ public class InterruptedAndSpecialMercatorProjectionTests
         string spheroidClause,
         double longitude,
         double latitude,
-        string extraParameters)
+        string? extraParameters)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
         ArgumentNullException.ThrowIfNull(spheroidClause);
@@ -281,7 +281,7 @@ public class InterruptedAndSpecialMercatorProjectionTests
         Assert.InRange(Math.Abs(geographicPoint[1] - 1e-15d), 0d, 1e-13);
     }
 
-    private static string BuildProjectedWkt(string projectionName, string spheroidClause, string extraParameters)
+    private static string BuildProjectedWkt(string projectionName, string spheroidClause, string? extraParameters)
     {
         return string.Format(
             CultureInfo.InvariantCulture,

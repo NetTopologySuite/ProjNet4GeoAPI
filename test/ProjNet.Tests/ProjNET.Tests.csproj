@@ -3,6 +3,7 @@
   <PropertyGroup>
     <!--<TargetFrameworks>net6;net8</TargetFrameworks>-->
     <TargetFramework>net8</TargetFramework>
+    <Nullable>annotations</Nullable>
     <SignAssembly>true</SignAssembly>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1701;1702;1591</NoWarn>

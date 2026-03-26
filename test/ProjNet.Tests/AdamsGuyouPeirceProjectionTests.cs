@@ -71,7 +71,7 @@ public class AdamsGuyouPeirceProjectionTests
         double latitude,
         double expectedX,
         double expectedY,
-        string extraParameters,
+        string? extraParameters,
         double tolerance)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, spheroidClause, extraParameters));
@@ -98,7 +98,7 @@ public class AdamsGuyouPeirceProjectionTests
         double y,
         double expectedLongitude,
         double expectedLatitude,
-        string extraParameters,
+        string? extraParameters,
         double tolerance)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, spheroidClause, extraParameters));
@@ -117,7 +117,7 @@ public class AdamsGuyouPeirceProjectionTests
     [InlineData("adams_ws2", Wgs84, -179.999d, 0d, null, 2e-6d)]
     [InlineData("peirce_q", Sphere6370997, 45d, 45d, ",PARAMETER[\"shape\",0]", 1e-6d)]
     [InlineData("peirce_q", Sphere6370997, 90d, 0d, ",PARAMETER[\"shape\",1]", 1e-6d)]
-    public void SupportsAdamsGuyouPeirceRoundtrip(string projectionName, string spheroidClause, double longitude, double latitude, string extraParameters, double tolerance)
+    public void SupportsAdamsGuyouPeirceRoundtrip(string projectionName, string spheroidClause, double longitude, double latitude, string? extraParameters, double tolerance)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, spheroidClause, extraParameters));
         var geographic = projected.GeographicCoordinateSystem;
@@ -143,7 +143,7 @@ public class AdamsGuyouPeirceProjectionTests
     [InlineData("peirce_q", ",PARAMETER[\"shape\",3]")]
     [InlineData("peirce_q", ",PARAMETER[\"shape\",4]")]
     [InlineData("peirce_q", ",PARAMETER[\"shape\",5]")]
-    public void ForwardOnlyVariantsDoNotSupportInverse(string projectionName, string extraParameters)
+    public void ForwardOnlyVariantsDoNotSupportInverse(string projectionName, string? extraParameters)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, Sphere6370997, extraParameters));
         var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
@@ -158,7 +158,7 @@ public class AdamsGuyouPeirceProjectionTests
     [InlineData(",PARAMETER[\"shape\",9]")]
     [InlineData(",PARAMETER[\"shape\",4],PARAMETER[\"scrollx\",1.5]")]
     [InlineData(",PARAMETER[\"shape\",5],PARAMETER[\"scrolly\",-1.5]")]
-    public void RejectsInvalidPeirceParameters(string extraParameters)
+    public void RejectsInvalidPeirceParameters(string? extraParameters)
     {
         Assert.Throws<System.Reflection.TargetInvocationException>(() =>
         {
@@ -167,7 +167,7 @@ public class AdamsGuyouPeirceProjectionTests
         });
     }
 
-    private static string BuildProjectedWkt(string projectionName, string spheroidClause, string extraParameters)
+    private static string BuildProjectedWkt(string projectionName, string spheroidClause, string? extraParameters)
     {
         return string.Format(
             CultureInfo.InvariantCulture,

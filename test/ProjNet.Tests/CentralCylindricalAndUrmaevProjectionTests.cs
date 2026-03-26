@@ -39,7 +39,7 @@ public class CentralCylindricalAndUrmaevProjectionTests
     [InlineData("Urmaev_V", ",PARAMETER[\"n\",0.5]")]
     [InlineData("wag1", null)]
     [InlineData("Wagner_I", null)]
-    public void SupportsAliasesFromWkt(string projectionName, string extraParameters)
+    public void SupportsAliasesFromWkt(string projectionName, string? extraParameters)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 
@@ -76,7 +76,7 @@ public class CentralCylindricalAndUrmaevProjectionTests
         double latitude,
         double expectedX,
         double expectedY,
-        string extraParameters)
+        string? extraParameters)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 
@@ -110,7 +110,7 @@ public class CentralCylindricalAndUrmaevProjectionTests
         double y,
         double expectedLongitude,
         double expectedLatitude,
-        string extraParameters)
+        string? extraParameters)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 
@@ -158,7 +158,7 @@ public class CentralCylindricalAndUrmaevProjectionTests
     [InlineData("mbtfps", -2d, 1d, null)]
     [InlineData("urmfps", 2d, 1d, ",PARAMETER[\"n\",0.5]")]
     [InlineData("wag1", -2d, -1d, null)]
-    public void SupportsRoundtrip(string projectionName, double longitude, double latitude, string extraParameters)
+    public void SupportsRoundtrip(string projectionName, double longitude, double latitude, string? extraParameters)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 
@@ -173,7 +173,7 @@ public class CentralCylindricalAndUrmaevProjectionTests
         Assert.InRange(Math.Abs(roundtrip[1] - latitude), 0d, 1e-9);
     }
 
-    private static string BuildProjectedWkt(string projectionName, bool useWgs84, string extraParameters)
+    private static string BuildProjectedWkt(string projectionName, bool useWgs84, string? extraParameters)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 

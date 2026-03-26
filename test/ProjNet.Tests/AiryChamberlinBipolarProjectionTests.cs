@@ -63,7 +63,7 @@ public class AiryChamberlinBipolarProjectionTests
         double latitude,
         double expectedX,
         double expectedY,
-        string extraParameters)
+        string? extraParameters)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 
@@ -211,7 +211,7 @@ public class AiryChamberlinBipolarProjectionTests
 
     private sealed class ProjectionProfile
     {
-        public ProjectionProfile(double sphereRadius, string extraParameters)
+        public ProjectionProfile(double sphereRadius, string? extraParameters)
         {
             this.SphereRadius = sphereRadius;
             this.ExtraParameters = extraParameters;

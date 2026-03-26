@@ -41,7 +41,7 @@ public class SimpleConicAndImwProjectionTests
     [InlineData("McBryde_Thomas_Flat_Pole_Sine", Sphere6400000, null)]
     [InlineData("bertin1953", Sphere6400000, null)]
     [InlineData("Bertin_1953", Sphere6400000, null)]
-    public void SupportsSimpleConicAndImwAliasesFromWkt(string projectionName, string spheroidClause, string extraParameters)
+    public void SupportsSimpleConicAndImwAliasesFromWkt(string projectionName, string spheroidClause, string? extraParameters)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, spheroidClause, extraParameters));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
@@ -82,7 +82,7 @@ public class SimpleConicAndImwProjectionTests
         double latitude,
         double expectedX,
         double expectedY,
-        string extraParameters,
+        string? extraParameters,
         double tolerance)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, spheroidClause, extraParameters));
@@ -120,7 +120,7 @@ public class SimpleConicAndImwProjectionTests
         double y,
         double expectedLongitude,
         double expectedLatitude,
-        string extraParameters,
+        string? extraParameters,
         double tolerance)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, spheroidClause, extraParameters));
@@ -148,7 +148,7 @@ public class SimpleConicAndImwProjectionTests
     [InlineData("vitk1", Grs80, 2d, 1d, ",PARAMETER[\"lat_1\",0.5],PARAMETER[\"lat_2\",2]")]
     [InlineData("imw_p", Grs80, 2d, 1d, ",PARAMETER[\"lat_1\",0.5],PARAMETER[\"lat_2\",2]")]
     [InlineData("mbt_fps", Sphere6400000, 2d, 1d, null)]
-    public void SupportsSimpleConicAndImwRoundtrip(string projectionName, string spheroidClause, double longitude, double latitude, string extraParameters)
+    public void SupportsSimpleConicAndImwRoundtrip(string projectionName, string spheroidClause, double longitude, double latitude, string? extraParameters)
     {
         var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, spheroidClause, extraParameters));
         var geographic = projected.GeographicCoordinateSystem;
@@ -212,7 +212,7 @@ public class SimpleConicAndImwProjectionTests
         Assert.IsType<ArgumentException>(exception.InnerException);
     }
 
-    private static string BuildProjectedWkt(string projectionName, string spheroidClause, string extraParameters)
+    private static string BuildProjectedWkt(string projectionName, string spheroidClause, string? extraParameters)
     {
         return string.Format(
             CultureInfo.InvariantCulture,

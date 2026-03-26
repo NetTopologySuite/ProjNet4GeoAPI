@@ -49,7 +49,7 @@ public class GlobularAndMiscProjectionTests
     [InlineData("Laskowski", null)]
     [InlineData("tcc", null)]
     [InlineData("Transverse_Central_Cylindrical", null)]
-    public void SupportsGlobularAndMiscAliasesFromWkt(string projectionName, string extraParameters)
+    public void SupportsGlobularAndMiscAliasesFromWkt(string projectionName, string? extraParameters)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 
@@ -91,7 +91,7 @@ public class GlobularAndMiscProjectionTests
         double latitude,
         double expectedX,
         double expectedY,
-        string extraParameters)
+        string? extraParameters)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 
@@ -121,7 +121,7 @@ public class GlobularAndMiscProjectionTests
         double y,
         double expectedLongitude,
         double expectedLatitude,
-        string extraParameters)
+        string? extraParameters)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 
@@ -148,7 +148,7 @@ public class GlobularAndMiscProjectionTests
     [InlineData("larr", null)]
     [InlineData("lask", null)]
     [InlineData("tcc", null)]
-    public void ForwardOnlyProjectionsDoNotSupportInverse(string projectionName, string extraParameters)
+    public void ForwardOnlyProjectionsDoNotSupportInverse(string projectionName, string? extraParameters)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 
@@ -168,7 +168,7 @@ public class GlobularAndMiscProjectionTests
     [InlineData("comill", 2d, 1d, null)]
     [InlineData("fouc_s", -2d, -1d, null)]
     [InlineData("lagrng", 2d, -1d, ",PARAMETER[\"lat_1\",0.5],PARAMETER[\"W\",2]")]
-    public void SupportsGlobularAndMiscRoundtrip(string projectionName, double longitude, double latitude, string extraParameters)
+    public void SupportsGlobularAndMiscRoundtrip(string projectionName, double longitude, double latitude, string? extraParameters)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 
@@ -205,7 +205,7 @@ public class GlobularAndMiscProjectionTests
         Assert.IsType<ArgumentException>(exception.InnerException);
     }
 
-    private static string BuildProjectedWkt(string projectionName, bool useWgs84, string extraParameters)
+    private static string BuildProjectedWkt(string projectionName, bool useWgs84, string? extraParameters)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 
