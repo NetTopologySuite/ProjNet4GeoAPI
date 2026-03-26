@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
+#nullable enable
+
 namespace ProjNet.CoordinateSystems.Transformations;
 
 using System;
@@ -391,3 +393,4 @@ internal sealed class MolobadekasMathTransform : MathTransform
         z = this.pivotZ + (this.rotationM02 * sourceX) + (this.rotationM12 * sourceY) + (this.rotationM22 * sourceZ);
     }
 }
+
