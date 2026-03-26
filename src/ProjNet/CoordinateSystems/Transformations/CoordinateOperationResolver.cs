@@ -19,10 +19,10 @@ internal static class CoordinateOperationResolver
     /// <param name="target">Target coordinate system.</param>
     /// <param name="directResolver">Resolver delegate for non-identity operations.</param>
     /// <returns>Best scored transformation, or <see langword="null"/> when none is available.</returns>
-    internal static ICoordinateTransformation Resolve(
+    internal static ICoordinateTransformation? Resolve(
         CoordinateSystem source,
         CoordinateSystem target,
-        Func<CoordinateSystem, CoordinateSystem, ICoordinateTransformation> directResolver)
+        Func<CoordinateSystem, CoordinateSystem, ICoordinateTransformation?> directResolver)
     {
         ArgumentGuard.ThrowIfNull(source, nameof(source));
 
@@ -30,7 +30,7 @@ internal static class CoordinateOperationResolver
 
         ArgumentGuard.ThrowIfNull(directResolver, nameof(directResolver));
 
-        OperationCandidate bestCandidate = default!;
+        OperationCandidate? bestCandidate = null;
         bestCandidate = SelectHigherScore(bestCandidate, CreateIdentityCandidate(source, target));
 
         var directCandidate = directResolver(source, target);
@@ -42,11 +42,11 @@ internal static class CoordinateOperationResolver
         return bestCandidate?.Transformation;
     }
 
-    private static OperationCandidate CreateIdentityCandidate(CoordinateSystem source, CoordinateSystem target)
+    private static OperationCandidate? CreateIdentityCandidate(CoordinateSystem source, CoordinateSystem target)
     {
         if (!ReferenceEquals(source, target) && !source.EqualParams(target))
         {
-            return default!;
+            return null;
         }
 
         int dimension = Math.Max(2, Math.Max(source.Dimension, target.Dimension));
@@ -63,7 +63,7 @@ internal static class CoordinateOperationResolver
         return new OperationCandidate(transformation, 1000);
     }
 
-    private static OperationCandidate SelectHigherScore(OperationCandidate left, OperationCandidate right)
+    private static OperationCandidate? SelectHigherScore(OperationCandidate? left, OperationCandidate? right)
     {
         if (right is null)
         {

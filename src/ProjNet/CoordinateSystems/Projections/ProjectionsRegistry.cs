@@ -476,7 +476,7 @@ public class ProjectionsRegistry
         return name.ToLowerInvariant().Replace(' ', '_').Replace('-', '_');
     }
 
-    private static Type CheckConstructor(Type type)
+    private static Type? CheckConstructor(Type type)
     {
         // find a constructor that accepts exactly one parameter that's an
         // instance of List<ProjectionParameter>, and then return the exact
@@ -491,6 +491,6 @@ public class ProjectionsRegistry
             }
         }
 
-        return default!;
+        return null;
     }
 }

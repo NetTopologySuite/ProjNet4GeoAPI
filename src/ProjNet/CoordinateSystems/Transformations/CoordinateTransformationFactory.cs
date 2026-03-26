@@ -68,7 +68,7 @@ public class CoordinateTransformationFactory
     /// <returns><see langword="true"/> when resolution succeeded; otherwise <see langword="false"/>.</returns>
     internal static bool TryResolveGridResourcePath(string gridName, out string resolvedPath) => GridResolver.Value.TryResolve(gridName, out resolvedPath);
 
-    private ICoordinateTransformation CreateFromCoordinateSystemsWithMetadata(CoordinateSystem sourceCS, CoordinateSystem targetCS)
+    private ICoordinateTransformation? CreateFromCoordinateSystemsWithMetadata(CoordinateSystem sourceCS, CoordinateSystem targetCS)
     {
         if (TryGetDirectProjectedOperation(sourceCS, targetCS, out var operation, out string resolvedGridPath))
         {
@@ -85,7 +85,7 @@ public class CoordinateTransformationFactory
             var fallbackWithMetadata = this.CreateFromCoordinateSystemsCore(sourceCS, targetCS);
             if (fallbackWithMetadata is null)
             {
-                return default!;
+                return null;
             }
 
             return CreateMetadataBackedTransformation(sourceCS, targetCS, fallbackWithMetadata, operation, resolvedGridPath);
@@ -868,7 +868,7 @@ public class CoordinateTransformationFactory
     /// <param name="source">The source parameter.</param>
     /// <param name="target">The target parameter.</param>
     /// <returns>The transformation result.</returns>
-    private static CoordinateTransformation CreateGeoc2Geoc(GeocentricCoordinateSystem source, GeocentricCoordinateSystem target)
+    private static CoordinateTransformation? CreateGeoc2Geoc(GeocentricCoordinateSystem source, GeocentricCoordinateSystem target)
     {
         var ct = new ConcatenatedTransform();
 
@@ -907,7 +907,7 @@ public class CoordinateTransformationFactory
         // If we don't have a transformation in this list, return null
         if (ct.CoordinateTransformationList.Count == 0)
         {
-            return default!;
+            return null;
         }
 
         // If we only have one shift, lets just return the datumshift from/to wgs84

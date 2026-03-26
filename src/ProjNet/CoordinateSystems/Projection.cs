@@ -135,7 +135,7 @@ public class Projection : Info, IProjection
             }
         }
 
-        return default!;
+        return null;
     }
 
     /// <inheritdoc />

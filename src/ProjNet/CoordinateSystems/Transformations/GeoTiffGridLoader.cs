@@ -1111,11 +1111,11 @@ internal static partial class GeoTiffGridLoader
         /// </summary>
         /// <param name="sourcePath">The sourcePath value.</param>
         /// <returns>The computed value.</returns>
-        internal GeoTiffHGridShiftMathTransform.HorizontalGrid ToHorizontalGrid(string sourcePath)
+        internal GeoTiffHGridShiftMathTransform.HorizontalGrid? ToHorizontalGrid(string sourcePath)
         {
             if (this.mode != GridMode.Horizontal)
             {
-                return default!;
+                return null;
             }
 
             double latitudeScale = ResolveHorizontalShiftScaleToDegree(this.metadata, this.latitudeSample);
@@ -1149,11 +1149,11 @@ internal static partial class GeoTiffGridLoader
         /// </summary>
         /// <param name="sourcePath">The sourcePath value.</param>
         /// <returns>The computed value.</returns>
-        internal GeoTiffVGridShiftMathTransform.VerticalGrid ToVerticalGrid(string sourcePath)
+        internal GeoTiffVGridShiftMathTransform.VerticalGrid? ToVerticalGrid(string sourcePath)
         {
             if (this.mode != GridMode.Vertical)
             {
-                return default!;
+                return null;
             }
 
             return new GeoTiffVGridShiftMathTransform.VerticalGrid(
@@ -1182,11 +1182,11 @@ internal static partial class GeoTiffGridLoader
         /// </summary>
         /// <param name="sourcePath">The sourcePath value.</param>
         /// <returns>The computed value.</returns>
-        internal GeoTiffXyzGridShiftMathTransform.XyzGrid ToXyzGrid(string sourcePath)
+        internal GeoTiffXyzGridShiftMathTransform.XyzGrid? ToXyzGrid(string sourcePath)
         {
             if (this.mode != GridMode.Xyz)
             {
-                return default!;
+                return null;
             }
 
             return new GeoTiffXyzGridShiftMathTransform.XyzGrid(

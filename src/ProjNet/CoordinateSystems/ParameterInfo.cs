@@ -35,7 +35,7 @@ internal class ParameterInfo
     /// <summary>
     /// Gets or sets the parameters set for this projection.
     /// </summary>
-    public List<Parameter> Parameters
+    public List<Parameter>? Parameters
     {
         get;
         set;
@@ -51,8 +51,8 @@ internal class ParameterInfo
     /// Gets the parameter by its name.
     /// </summary>
     /// <param name="name">The name parameter.</param>
-    /// <returns>The transformation result.</returns>
-    public Parameter GetParameterByName(string name)
+    /// <returns>The matching parameter, or <see langword="null"/> when not found.</returns>
+    public Parameter? GetParameterByName(string name)
     {
         if (this.Parameters is not null)
         {
@@ -66,6 +66,6 @@ internal class ParameterInfo
             }
         }
 
-        return default!;
+        return null;
     }
 }
