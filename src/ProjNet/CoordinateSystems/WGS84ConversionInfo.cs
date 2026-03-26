@@ -265,9 +265,7 @@ public class Wgs84ConversionInfo
     /// <returns>A hash code for the specified object.</returns>
     public override int GetHashCode()
     {
-        return this.Dx.GetHashCode() ^ this.Dy.GetHashCode() ^ this.Dz.GetHashCode() ^
-            this.Ex.GetHashCode() ^ this.Ey.GetHashCode() ^ this.Ez.GetHashCode() ^
-            this.Ppm.GetHashCode();
+        return HashCode.Combine(this.Dx, this.Dy, this.Dz, this.Ex, this.Ey, this.Ez, this.Ppm);
     }
 
     /// <summary>

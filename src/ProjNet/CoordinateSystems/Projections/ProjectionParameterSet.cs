@@ -218,14 +218,14 @@ public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<Pro
     /// <inheritdoc />
     public override int GetHashCode()
     {
-        int hashCode = 0;
+        var hashCode = new HashCode();
         foreach (var kvp in this)
         {
-            int pairHashCode = (StringComparer.Ordinal.GetHashCode(kvp.Key) * 397) ^ kvp.Value.GetHashCode();
-            hashCode ^= pairHashCode;
+            hashCode.Add(kvp.Key, StringComparer.Ordinal);
+            hashCode.Add(kvp.Value);
         }
 
-        return hashCode;
+        return hashCode.ToHashCode();
     }
 
     /// <summary>
