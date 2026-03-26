@@ -154,7 +154,7 @@ public class VerticalCoordinateSystem : CoordinateSystem
     {
         if (dimension != 0)
         {
-            throw new ArgumentOutOfRangeException(nameof(dimension), "Vertical Coordinate Systems have only one dimension");
+            ArgumentGuard.ThrowArgumentOutOfRange(nameof(dimension), "Vertical Coordinate Systems have only one dimension");
         }
 
         return this.LinearUnit;

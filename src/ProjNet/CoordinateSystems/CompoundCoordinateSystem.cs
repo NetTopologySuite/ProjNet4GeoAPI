@@ -122,7 +122,7 @@ public class CompoundCoordinateSystem : CoordinateSystem
     {
         if (dimension < 0 || dimension >= this.Dimension)
         {
-            throw new ArgumentException("Dimension not valid", nameof(dimension));
+            ArgumentGuard.ThrowArgument("Dimension not valid", nameof(dimension));
         }
 
         if (dimension < this.HeadCoordinateSystem.Dimension)

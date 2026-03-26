@@ -39,7 +39,7 @@ public abstract class HorizontalCoordinateSystem : CoordinateSystem
         this.HorizontalDatum = datum;
         if (axisInfo.Count != 2)
         {
-            throw new ArgumentException("Axis info should contain two axes for horizontal coordinate systems");
+            ArgumentGuard.ThrowArgument("Axis info should contain two axes for horizontal coordinate systems");
         }
 
         this.AxisInfo = axisInfo;

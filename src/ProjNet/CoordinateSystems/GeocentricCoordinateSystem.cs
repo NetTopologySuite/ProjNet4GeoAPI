@@ -47,7 +47,7 @@ public class GeocentricCoordinateSystem : CoordinateSystem
         this.PrimeMeridian = primeMeridian;
         if (axisInfo.Count != 3)
         {
-            throw new ArgumentException("Axis info should contain three axes for geocentric coordinate systems");
+            ArgumentGuard.ThrowArgument("Axis info should contain three axes for geocentric coordinate systems");
         }
 
         this.AxisInfo = axisInfo;

@@ -64,7 +64,7 @@ public class CoordinateSystemFactory
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentException("Invalid name");
+            ArgumentGuard.ThrowArgument("Invalid name");
         }
 
         return new CompoundCoordinateSystem(head, tail, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
@@ -88,7 +88,7 @@ public class CoordinateSystemFactory
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentException("Invalid name");
+            ArgumentGuard.ThrowArgument("Invalid name");
         }
 
         var toBaseTransform = MathTransformWktReader.Parse(toBaseWkt);
@@ -110,7 +110,7 @@ public class CoordinateSystemFactory
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentException("Invalid name");
+            ArgumentGuard.ThrowArgument("Invalid name");
         }
 
         return new FittedCoordinateSystem(baseCoordinateSystem, toBase, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
@@ -149,7 +149,7 @@ public class CoordinateSystemFactory
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentException("Invalid name");
+            ArgumentGuard.ThrowArgument("Invalid name");
         }
 
         return new Ellipsoid(semiMajorAxis, -1, inverseFlattening, true, linearUnit, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
@@ -169,22 +169,22 @@ public class CoordinateSystemFactory
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentException("Invalid name", nameof(name));
+            ArgumentGuard.ThrowArgument("Invalid name", nameof(name));
         }
 
         if (gcs is null)
         {
-            throw new ArgumentException("Geographic coordinate system was null", nameof(gcs));
+            ArgumentGuard.ThrowArgument("Geographic coordinate system was null", nameof(gcs));
         }
 
         if (projection is null)
         {
-            throw new ArgumentException("Projection was null", nameof(projection));
+            ArgumentGuard.ThrowArgument("Projection was null", nameof(projection));
         }
 
         if (linearUnit is null)
         {
-            throw new ArgumentException("Linear unit was null");
+            ArgumentGuard.ThrowArgument("Linear unit was null");
         }
 
         var info = new List<AxisInfo>(2);
@@ -204,12 +204,12 @@ public class CoordinateSystemFactory
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentException("Invalid name");
+            ArgumentGuard.ThrowArgument("Invalid name");
         }
 
         if (parameters is null || parameters.Count == 0)
         {
-            throw new ArgumentException("Invalid projection parameters");
+            ArgumentGuard.ThrowArgument("Invalid projection parameters");
         }
 
         return new Projection(wktProjectionClass, parameters, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
@@ -233,12 +233,12 @@ public class CoordinateSystemFactory
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentException("Invalid name");
+            ArgumentGuard.ThrowArgument("Invalid name");
         }
 
         if (ellipsoid is null)
         {
-            throw new ArgumentException("Ellipsoid was null");
+            ArgumentGuard.ThrowArgument("Ellipsoid was null");
         }
 
         return new HorizontalDatum(ellipsoid, toWgs84, datumType, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
@@ -255,7 +255,7 @@ public class CoordinateSystemFactory
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentException("Invalid name");
+            ArgumentGuard.ThrowArgument("Invalid name");
         }
 
         return new PrimeMeridian(longitude, angularUnit, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
@@ -275,7 +275,7 @@ public class CoordinateSystemFactory
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentException("Invalid name");
+            ArgumentGuard.ThrowArgument("Invalid name");
         }
 
         var info = new List<AxisInfo>(2);
@@ -294,7 +294,7 @@ public class CoordinateSystemFactory
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentException("Invalid name");
+            ArgumentGuard.ThrowArgument("Invalid name");
         }
 
         return new VerticalDatum(datumType, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
@@ -312,7 +312,7 @@ public class CoordinateSystemFactory
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentException("Invalid name");
+            ArgumentGuard.ThrowArgument("Invalid name");
         }
 
         return new VerticalCoordinateSystem(verticalUnit, datum, axis, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
@@ -331,7 +331,7 @@ public class CoordinateSystemFactory
     {
         if (string.IsNullOrWhiteSpace(name))
         {
-            throw new ArgumentException("Invalid name");
+            ArgumentGuard.ThrowArgument("Invalid name");
         }
 
         var info = new List<AxisInfo>(3);

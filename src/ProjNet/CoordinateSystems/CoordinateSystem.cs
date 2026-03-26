@@ -95,7 +95,7 @@ public abstract class CoordinateSystem : Info
     {
         if (dimension >= this.AxisInfo.Count || dimension < 0)
         {
-            throw new ArgumentException("AxisInfo not available for dimension " + dimension.ToString(CultureInfo.InvariantCulture));
+            ArgumentGuard.ThrowArgument("AxisInfo not available for dimension " + dimension.ToString(CultureInfo.InvariantCulture));
         }
 
         return this.AxisInfo[dimension];

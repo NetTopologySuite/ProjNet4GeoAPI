@@ -234,7 +234,7 @@ public class Wgs84ConversionInfo
     {
         if (destination.Length < 7)
         {
-            throw new ArgumentException("Destination span must contain at least 7 elements.", nameof(destination));
+            ArgumentGuard.ThrowArgument("Destination span must contain at least 7 elements.", nameof(destination));
         }
 
         double rS = 1 + (this.Ppm * 0.000001);
