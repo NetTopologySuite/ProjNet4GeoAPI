@@ -17,20 +17,24 @@ internal sealed class AxisSwapMathTransform : MathTransform
     private int xSourceIndex;
     private int ySourceIndex;
     private int zSourceIndex;
+    private int tSourceIndex;
     private int xSign;
     private int ySign;
     private int zSign;
+    private int tSign;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AxisSwapMathTransform"/> class.
     /// </summary>
-    /// <param name="dimension">Coordinate dimension (2 or 3).</param>
+    /// <param name="dimension">Coordinate dimension (2, 3 or 4).</param>
     /// <param name="xSourceIndex">Source ordinate index used for X output.</param>
     /// <param name="xSign">Sign multiplier for X output.</param>
     /// <param name="ySourceIndex">Source ordinate index used for Y output.</param>
     /// <param name="ySign">Sign multiplier for Y output.</param>
     /// <param name="zSourceIndex">Source ordinate index used for Z output.</param>
     /// <param name="zSign">Sign multiplier for Z output.</param>
+    /// <param name="tSourceIndex">Source ordinate index used for T output.</param>
+    /// <param name="tSign">Sign multiplier for T output.</param>
     internal AxisSwapMathTransform(
         int dimension,
         int xSourceIndex,
@@ -38,16 +42,20 @@ internal sealed class AxisSwapMathTransform : MathTransform
         int ySourceIndex,
         int ySign,
         int zSourceIndex,
-        int zSign)
+        int zSign,
+        int tSourceIndex,
+        int tSign)
     {
         this.dimension = ValidateDimension(dimension, nameof(dimension));
         this.xSourceIndex = ValidateSourceIndex(xSourceIndex, nameof(xSourceIndex));
         this.ySourceIndex = ValidateSourceIndex(ySourceIndex, nameof(ySourceIndex));
         this.zSourceIndex = ValidateSourceIndex(zSourceIndex, nameof(zSourceIndex));
+        this.tSourceIndex = ValidateSourceIndex(tSourceIndex, nameof(tSourceIndex));
 
         this.xSign = ValidateSign(xSign, nameof(xSign));
         this.ySign = ValidateSign(ySign, nameof(ySign));
         this.zSign = ValidateSign(zSign, nameof(zSign));
+        this.tSign = ValidateSign(tSign, nameof(tSign));
     }
 
     /// <inheritdoc />
@@ -75,20 +83,29 @@ internal sealed class AxisSwapMathTransform : MathTransform
             return xyIdentity;
         }
 
-        return xyIdentity
+        bool xyzIdentity = xyIdentity
             && this.zSourceIndex == 2
             && this.zSign == 1;
+
+        if (this.dimension < 4)
+        {
+            return xyzIdentity;
+        }
+
+        return xyzIdentity
+            && this.tSourceIndex == 3
+            && this.tSign == 1;
     }
 
     /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        int[] sourceIndices = [this.xSourceIndex, this.ySourceIndex, this.zSourceIndex];
-        int[] targetSigns = [this.xSign, this.ySign, this.zSign];
+        int[] sourceIndices = [this.xSourceIndex, this.ySourceIndex, this.zSourceIndex, this.tSourceIndex];
+        int[] targetSigns = [this.xSign, this.ySign, this.zSign, this.tSign];
 
-        int[] inverseSourceIndices = [0, 1, 2];
-        int[] inverseSigns = [1, 1, 1];
-        for (int targetIndex = 0; targetIndex < 3; targetIndex++)
+        int[] inverseSourceIndices = [0, 1, 2, 3];
+        int[] inverseSigns = [1, 1, 1, 1];
+        for (int targetIndex = 0; targetIndex < this.dimension; targetIndex++)
         {
             int sourceIndex = sourceIndices[targetIndex];
             inverseSourceIndices[sourceIndex] = targetIndex;
@@ -102,18 +119,20 @@ internal sealed class AxisSwapMathTransform : MathTransform
             inverseSourceIndices[1],
             inverseSigns[1],
             inverseSourceIndices[2],
-            inverseSigns[2]);
+            inverseSigns[2],
+            inverseSourceIndices[3],
+            inverseSigns[3]);
     }
 
     /// <inheritdoc />
     public override void Invert()
     {
-        int[] sourceIndices = [this.xSourceIndex, this.ySourceIndex, this.zSourceIndex];
-        int[] targetSigns = [this.xSign, this.ySign, this.zSign];
+        int[] sourceIndices = [this.xSourceIndex, this.ySourceIndex, this.zSourceIndex, this.tSourceIndex];
+        int[] targetSigns = [this.xSign, this.ySign, this.zSign, this.tSign];
 
-        int[] inverseSourceIndices = [0, 1, 2];
-        int[] inverseSigns = [1, 1, 1];
-        for (int targetIndex = 0; targetIndex < 3; targetIndex++)
+        int[] inverseSourceIndices = [0, 1, 2, 3];
+        int[] inverseSigns = [1, 1, 1, 1];
+        for (int targetIndex = 0; targetIndex < this.dimension; targetIndex++)
         {
             int sourceIndex = sourceIndices[targetIndex];
             inverseSourceIndices[sourceIndex] = targetIndex;
@@ -126,25 +145,50 @@ internal sealed class AxisSwapMathTransform : MathTransform
         this.ySign = inverseSigns[1];
         this.zSourceIndex = inverseSourceIndices[2];
         this.zSign = inverseSigns[2];
+        this.tSourceIndex = inverseSourceIndices[3];
+        this.tSign = inverseSigns[3];
     }
 
     /// <inheritdoc />
     public override void Transform(ref double x, ref double y, ref double z)
     {
-        double[] source = [x, y, z];
-        x = source[this.xSourceIndex] * this.xSign;
-        y = source[this.ySourceIndex] * this.ySign;
+        double sourceX = x;
+        double sourceY = y;
+        double sourceZ = z;
+        x = GetSourceValue(this.xSourceIndex, sourceX, sourceY, sourceZ, 0d) * this.xSign;
+        y = GetSourceValue(this.ySourceIndex, sourceX, sourceY, sourceZ, 0d) * this.ySign;
         if (this.dimension > 2)
         {
-            z = source[this.zSourceIndex] * this.zSign;
+            z = GetSourceValue(this.zSourceIndex, sourceX, sourceY, sourceZ, 0d) * this.zSign;
+        }
+    }
+
+    /// <inheritdoc />
+    internal override void Transform(ref double x, ref double y, ref double z, ref double t)
+    {
+        double sourceX = x;
+        double sourceY = y;
+        double sourceZ = z;
+        double sourceT = t;
+
+        x = GetSourceValue(this.xSourceIndex, sourceX, sourceY, sourceZ, sourceT) * this.xSign;
+        y = GetSourceValue(this.ySourceIndex, sourceX, sourceY, sourceZ, sourceT) * this.ySign;
+        if (this.dimension > 2)
+        {
+            z = GetSourceValue(this.zSourceIndex, sourceX, sourceY, sourceZ, sourceT) * this.zSign;
+        }
+
+        if (this.dimension > 3)
+        {
+            t = GetSourceValue(this.tSourceIndex, sourceX, sourceY, sourceZ, sourceT) * this.tSign;
         }
     }
 
     private static int ValidateDimension(int dimension, string parameterName)
     {
-        if (dimension is < 2 or > 3)
+        if (dimension is < 2 or > 4)
         {
-            ArgumentGuard.ThrowArgumentOutOfRange(parameterName, dimension, "Axis swap dimension must be either 2 or 3.");
+            ArgumentGuard.ThrowArgumentOutOfRange(parameterName, dimension, "Axis swap dimension must be either 2, 3 or 4.");
         }
 
         return dimension;
@@ -152,12 +196,24 @@ internal sealed class AxisSwapMathTransform : MathTransform
 
     private static int ValidateSourceIndex(int sourceIndex, string parameterName)
     {
-        if (sourceIndex is < 0 or > 2)
+        if (sourceIndex is < 0 or > 3)
         {
-            ArgumentGuard.ThrowArgumentOutOfRange(parameterName, sourceIndex, "Axis source index must be 0, 1 or 2.");
+            ArgumentGuard.ThrowArgumentOutOfRange(parameterName, sourceIndex, "Axis source index must be 0, 1, 2 or 3.");
         }
 
         return sourceIndex;
+    }
+
+    private static double GetSourceValue(int sourceIndex, double x, double y, double z, double t)
+    {
+        return sourceIndex switch
+        {
+            0 => x,
+            1 => y,
+            2 => z,
+            3 => t,
+            _ => throw new ArgumentOutOfRangeException(nameof(sourceIndex), sourceIndex, "Axis source index must be between 0 and 3."),
+        };
     }
 
     private static int ValidateSign(int sign, string parameterName)

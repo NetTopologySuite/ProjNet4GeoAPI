@@ -66,6 +66,25 @@ public class PipelineRuntimeTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
+    public void PipelineWith4DAxisSwapReordersAndFlipsAllOrdinates()
+    {
+        const string operation = "+proj=axisswap +order=4,3,-2,1";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+
+        Assert.True(ok, skipReason);
+        double[] transformed = transform.Transform(AffineInput4D);
+
+        Assert.Equal(100d, transformed[0], 12);
+        Assert.Equal(10d, transformed[1], 12);
+        Assert.Equal(-49d, transformed[2], 12);
+        Assert.Equal(2d, transformed[3], 12);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
     public void PipelineWithPushAndPopRestoresSavedHorizontalComponent()
     {
         const string operation = "+proj=pipeline +step +proj=push +v_1 +step +proj=utm +zone=32 +step +proj=utm +zone=33 +inv +step +proj=pop +v_1";

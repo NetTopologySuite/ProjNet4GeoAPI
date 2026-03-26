@@ -463,14 +463,14 @@ internal static class ProjPipelineMathTransformFactory
         }
 
         int dimension = order.Length;
-        if (dimension is < 2 or > 3)
+        if (dimension is < 2 or > 4)
         {
-            skipReason = "Axisswap supports only 2D or 3D coordinates in the current runtime.";
+            skipReason = "Axisswap supports only 2D, 3D or 4D coordinates in the current runtime.";
             return false;
         }
 
-        int[] sourceIndices = [0, 1, 2];
-        int[] signs = [1, 1, 1];
+        int[] sourceIndices = [0, 1, 2, 3];
+        int[] signs = [1, 1, 1, 1];
         for (int i = 0; i < dimension; i++)
         {
             int rawOrder = order[i];
@@ -492,7 +492,9 @@ internal static class ProjPipelineMathTransformFactory
             sourceIndices[1],
             signs[1],
             sourceIndices[2],
-            signs[2]);
+            signs[2],
+            sourceIndices[3],
+            signs[3]);
 
         return true;
     }

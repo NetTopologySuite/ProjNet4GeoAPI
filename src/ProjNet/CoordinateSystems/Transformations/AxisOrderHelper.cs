@@ -106,7 +106,9 @@ internal static class AxisOrderHelper
             sourceIndices[1],
             signs[1],
             sourceIndices[2],
-            signs[2]);
+            signs[2],
+            3,
+            1);
         return true;
     }
 

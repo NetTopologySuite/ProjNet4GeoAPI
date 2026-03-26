@@ -103,6 +103,12 @@ expect      failure pjd_err_axis
 operation   proj=axisswap order=2,3,4
 expect      failure pjd_err_axis
 
+operation   proj=axisswap order=4,3,-2,1
+tolerance   0.000001 m
+accept      1 2 3 4
+expect      4 3 -2 1
+roundtrip   100
+
 operation   proj=axisswap order=1,2,3,5
 expect      failure pjd_err_axis
 
