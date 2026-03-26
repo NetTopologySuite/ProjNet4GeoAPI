@@ -275,7 +275,7 @@ public class Wgs84ConversionInfo
     /// <returns><see langword="true"/> if all seven parameter values are equal; otherwise, <see langword="false"/>.</returns>
     public bool Equals(Wgs84ConversionInfo obj)
     {
-        if (obj == null)
+        if (obj is null)
         {
             return false;
         }

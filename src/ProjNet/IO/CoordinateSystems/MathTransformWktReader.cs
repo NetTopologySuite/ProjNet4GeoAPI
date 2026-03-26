@@ -118,12 +118,12 @@ public static class MathTransformWktReader
         var rowParam = paramInfo.GetParameterByName("num_row");
         var colParam = paramInfo.GetParameterByName("num_col");
 
-        if (rowParam == null)
+        if (rowParam is null)
         {
             throw new ArgumentException("Affine transform does not contain 'num_row' parameter", nameof(tokenizer));
         }
 
-        if (colParam == null)
+        if (colParam is null)
         {
             throw new ArgumentException("Affine transform does not contain 'num_col' parameter", nameof(tokenizer));
         }
@@ -147,7 +147,7 @@ public static class MathTransformWktReader
         // simply process matrix values - no elt_ROW_COL parsing
         foreach (var param in paramInfo.Parameters)
         {
-            if (param == null || param.Name == null)
+            if (param is null || param.Name is null)
             {
                 continue;
             }

@@ -146,7 +146,7 @@ internal class GeocentricTransform : MathTransform
     /// <returns>A <see cref="MathTransform"/> that reverses this geocentric conversion.</returns>
     public override MathTransform Inverse()
     {
-        if (this.inverse == null)
+        if (this.inverse is null)
         {
             this.inverse = new GeocentricTransform(this.parameters, !this.isInverse);
         }

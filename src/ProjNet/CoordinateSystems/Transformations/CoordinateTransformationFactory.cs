@@ -82,7 +82,7 @@ public class CoordinateTransformationFactory
             }
 
             var fallbackWithMetadata = this.CreateFromCoordinateSystemsCore(sourceCS, targetCS);
-            if (fallbackWithMetadata == null)
+            if (fallbackWithMetadata is null)
             {
                 return null;
             }
@@ -260,7 +260,7 @@ public class CoordinateTransformationFactory
     {
         parameters = null;
 
-        if (operation == null)
+        if (operation is null)
         {
             return false;
         }
@@ -654,7 +654,7 @@ public class CoordinateTransformationFactory
         var geogToGeog = ctFac.CreateFromCoordinateSystems(
             source.GeographicCoordinateSystem,
             target.GeographicCoordinateSystem);
-        if (geogToGeog != null)
+        if (geogToGeog is not null)
         {
             ct.CoordinateTransformationList.Add(geogToGeog);
         }
@@ -855,7 +855,7 @@ public class CoordinateTransformationFactory
 
     private static void AddIfNotNull(ConcatenatedTransform concatTrans, ICoordinateTransformation trans)
     {
-        if (trans != null)
+        if (trans is not null)
         {
             concatTrans.CoordinateTransformationList.Add(trans);
         }
@@ -872,11 +872,11 @@ public class CoordinateTransformationFactory
         var ct = new ConcatenatedTransform();
 
         // Does source has a datum different from WGS84 and is there a shift specified?
-        if (source.HorizontalDatum.Wgs84Parameters != null && !source.HorizontalDatum.Wgs84Parameters.HasZeroValuesOnly)
+        if (source.HorizontalDatum.Wgs84Parameters is not null && !source.HorizontalDatum.Wgs84Parameters.HasZeroValuesOnly)
         {
             ct.CoordinateTransformationList.Add(
                 new CoordinateTransformation(
-                    (target.HorizontalDatum.Wgs84Parameters == null || target.HorizontalDatum.Wgs84Parameters.HasZeroValuesOnly) ? target : GeocentricCoordinateSystem.WGS84,
+                    (target.HorizontalDatum.Wgs84Parameters is null || target.HorizontalDatum.Wgs84Parameters.HasZeroValuesOnly) ? target : GeocentricCoordinateSystem.WGS84,
                     source,
                     TransformType.Transformation,
                     new DatumTransform(source.HorizontalDatum.Wgs84Parameters),
@@ -888,11 +888,11 @@ public class CoordinateTransformationFactory
         }
 
         // Does target has a datum different from WGS84 and is there a shift specified?
-        if (target.HorizontalDatum.Wgs84Parameters != null && !target.HorizontalDatum.Wgs84Parameters.HasZeroValuesOnly)
+        if (target.HorizontalDatum.Wgs84Parameters is not null && !target.HorizontalDatum.Wgs84Parameters.HasZeroValuesOnly)
         {
             ct.CoordinateTransformationList.Add(
                 new CoordinateTransformation(
-                    (source.HorizontalDatum.Wgs84Parameters == null || source.HorizontalDatum.Wgs84Parameters.HasZeroValuesOnly) ? source : GeocentricCoordinateSystem.WGS84,
+                    (source.HorizontalDatum.Wgs84Parameters is null || source.HorizontalDatum.Wgs84Parameters.HasZeroValuesOnly) ? source : GeocentricCoordinateSystem.WGS84,
                     target,
                     TransformType.Transformation,
                     new DatumTransform(target.HorizontalDatum.Wgs84Parameters).Inverse(),
@@ -1010,12 +1010,12 @@ public class CoordinateTransformationFactory
 
         var ellipsoid = geo.HorizontalDatum.Ellipsoid;
 
-        if (parameterList.Find((p) => p.Name.ToLowerInvariant().Replace(' ', '_').Equals("semi_major", StringComparison.Ordinal)) == null)
+        if (parameterList.Find((p) => p.Name.ToLowerInvariant().Replace(' ', '_').Equals("semi_major", StringComparison.Ordinal)) is null)
         {
             parameterList.Add(new ProjectionParameter("semi_major", ellipsoid.SemiMajorAxis));
         }
 
-        if (parameterList.Find((p) => p.Name.ToLowerInvariant().Replace(' ', '_').Equals("semi_minor", StringComparison.Ordinal)) == null)
+        if (parameterList.Find((p) => p.Name.ToLowerInvariant().Replace(' ', '_').Equals("semi_minor", StringComparison.Ordinal)) is null)
         {
             parameterList.Add(new ProjectionParameter("semi_minor", ellipsoid.SemiMinorAxis));
         }
@@ -1031,17 +1031,17 @@ public class CoordinateTransformationFactory
             parameterList.Add(projection.GetParameter(i));
         }
 
-        if (parameterList.Find((p) => p.Name.ToLowerInvariant().Replace(' ', '_').Equals("semi_major", StringComparison.Ordinal)) == null)
+        if (parameterList.Find((p) => p.Name.ToLowerInvariant().Replace(' ', '_').Equals("semi_major", StringComparison.Ordinal)) is null)
         {
             parameterList.Add(new ProjectionParameter("semi_major", ellipsoid.SemiMajorAxis));
         }
 
-        if (parameterList.Find((p) => p.Name.ToLowerInvariant().Replace(' ', '_').Equals("semi_minor", StringComparison.Ordinal)) == null)
+        if (parameterList.Find((p) => p.Name.ToLowerInvariant().Replace(' ', '_').Equals("semi_minor", StringComparison.Ordinal)) is null)
         {
             parameterList.Add(new ProjectionParameter("semi_minor", ellipsoid.SemiMinorAxis));
         }
 
-        if (parameterList.Find((p) => p.Name.ToLowerInvariant().Replace(' ', '_').Equals("unit", StringComparison.Ordinal)) == null)
+        if (parameterList.Find((p) => p.Name.ToLowerInvariant().Replace(' ', '_').Equals("unit", StringComparison.Ordinal)) is null)
         {
             parameterList.Add(new ProjectionParameter("unit", unit.MetersPerUnit));
         }
@@ -1226,7 +1226,7 @@ public class CoordinateTransformationFactory
                 return true;
             }
 
-            if (missingGridFile == null)
+            if (missingGridFile is null)
             {
                 missingGridFile = candidate.ParameterFileName;
             }
@@ -1270,7 +1270,7 @@ public class CoordinateTransformationFactory
     {
         srid = 0;
 
-        if (coordinateSystem == null)
+        if (coordinateSystem is null)
         {
             return false;
         }
@@ -1300,12 +1300,12 @@ public class CoordinateTransformationFactory
                 return 0;
             }
 
-            if (left == null)
+            if (left is null)
             {
                 return 1;
             }
 
-            if (right == null)
+            if (right is null)
             {
                 return -1;
             }

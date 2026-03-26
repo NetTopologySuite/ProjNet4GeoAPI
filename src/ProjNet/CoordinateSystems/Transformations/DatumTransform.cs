@@ -61,7 +61,7 @@ internal class DatumTransform : MathTransform
     /// <remarks>This method may fail if the transform is not one to one. However, all cartographic projections should succeed.</remarks>
     public override MathTransform Inverse()
     {
-        if (this.inverse == null)
+        if (this.inverse is null)
         {
             this.inverse = new DatumTransform(this.toWgs94, !this.isInverse);
         }

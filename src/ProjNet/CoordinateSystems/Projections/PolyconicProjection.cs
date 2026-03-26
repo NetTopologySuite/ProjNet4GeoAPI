@@ -157,7 +157,7 @@ internal class PolyconicProjection : MapProjection
     /// <returns>IMathTransform that is the reverse of the current projection.</returns>
     public override MathTransform Inverse()
     {
-        if (this.inverse == null)
+        if (this.inverse is null)
         {
             this.inverse = new PolyconicProjection(this.Parameters.ToProjectionParameter(), this);
         }

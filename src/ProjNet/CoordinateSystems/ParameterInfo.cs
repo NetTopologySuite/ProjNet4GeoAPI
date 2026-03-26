@@ -21,7 +21,7 @@ internal class ParameterInfo
     {
         get
         {
-            if (this.Parameters != null)
+            if (this.Parameters is not null)
             {
                 return this.Parameters.Count;
             }
@@ -52,12 +52,12 @@ internal class ParameterInfo
     /// <returns>The transformation result.</returns>
     public Parameter GetParameterByName(string name)
     {
-        if (this.Parameters != null)
+        if (this.Parameters is not null)
         {
             // search parameter collection by name
             foreach (var param in this.Parameters)
             {
-                if (param != null && param.Name == name)
+                if (param is not null && param.Name == name)
                 {
                     return param;
                 }

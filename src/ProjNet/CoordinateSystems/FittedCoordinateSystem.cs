@@ -106,7 +106,7 @@ public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSys
     public override bool EqualParams(object obj)
     {
         var fcs = obj as FittedCoordinateSystem;
-        if (fcs != null)
+        if (fcs is not null)
         {
             if (fcs.BaseCoordinateSystem.EqualParams(this.BaseCoordinateSystem))
             {

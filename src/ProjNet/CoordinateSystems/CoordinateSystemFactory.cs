@@ -172,17 +172,17 @@ public class CoordinateSystemFactory
             throw new ArgumentException("Invalid name", nameof(name));
         }
 
-        if (gcs == null)
+        if (gcs is null)
         {
             throw new ArgumentException("Geographic coordinate system was null", nameof(gcs));
         }
 
-        if (projection == null)
+        if (projection is null)
         {
             throw new ArgumentException("Projection was null", nameof(projection));
         }
 
-        if (linearUnit == null)
+        if (linearUnit is null)
         {
             throw new ArgumentException("Linear unit was null");
         }
@@ -207,7 +207,7 @@ public class CoordinateSystemFactory
             throw new ArgumentException("Invalid name");
         }
 
-        if (parameters == null || parameters.Count == 0)
+        if (parameters is null || parameters.Count == 0)
         {
             throw new ArgumentException("Invalid projection parameters");
         }
@@ -236,7 +236,7 @@ public class CoordinateSystemFactory
             throw new ArgumentException("Invalid name");
         }
 
-        if (ellipsoid == null)
+        if (ellipsoid is null)
         {
             throw new ArgumentException("Ellipsoid was null");
         }

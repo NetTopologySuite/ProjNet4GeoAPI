@@ -54,7 +54,7 @@ internal class PseudoMercator : Mercator
     /// <inheritdoc/>
     public override MathTransform Inverse()
     {
-        if (this.inverse == null)
+        if (this.inverse is null)
         {
             this.inverse = new PseudoMercator(this.Parameters.ToProjectionParameter(), this);
         }

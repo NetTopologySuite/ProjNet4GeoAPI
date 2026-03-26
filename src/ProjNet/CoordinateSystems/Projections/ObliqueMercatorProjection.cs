@@ -44,7 +44,7 @@ internal class ObliqueMercatorProjection : HotineObliqueMercatorProjection
     /// <inheritdoc/>
     public override MathTransform Inverse()
     {
-        if (this.inverse == null)
+        if (this.inverse is null)
         {
             this.inverse = new ObliqueMercatorProjection(this.Parameters.ToProjectionParameter(), this);
         }

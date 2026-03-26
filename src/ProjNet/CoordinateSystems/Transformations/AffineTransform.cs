@@ -141,7 +141,7 @@ public class AffineTransform : MathTransform
     /// <returns>IMathTransform that is the reverse of the current affine transformation.</returns>
     public override MathTransform Inverse()
     {
-        if (this.inverse == null)
+        if (this.inverse is null)
         {
             // find the inverse transformation matrix - use cloned matrix array
             // remarks about dimensionality: if input dimension is M, and output dimension is N, then the matrix will have size [N+1][M+1].

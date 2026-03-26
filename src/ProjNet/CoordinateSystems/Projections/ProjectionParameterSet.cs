@@ -181,7 +181,7 @@ public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<Pro
     /// <returns><see langword="true"/> if both sets contain the same parameter names and values; otherwise <see langword="false"/>.</returns>
     public bool Equals(ProjectionParameterSet other)
     {
-        if (other == null)
+        if (other is null)
         {
             return false;
         }

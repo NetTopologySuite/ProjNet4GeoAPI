@@ -181,7 +181,7 @@ public class HorizontalDatum : Datum
         {
             var sb = new StringBuilder();
             sb.AppendFormat(CultureInfo.InvariantCulture, "DATUM[\"{0}\", {1}", this.Name, this.Ellipsoid.WKT);
-            if (this.Wgs84Parameters != null)
+            if (this.Wgs84Parameters is not null)
             {
                 sb.AppendFormat(CultureInfo.InvariantCulture, ", {0}", this.Wgs84Parameters.WKT);
             }

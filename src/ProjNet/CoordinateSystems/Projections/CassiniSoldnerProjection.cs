@@ -89,7 +89,7 @@ internal class CassiniSoldnerProjection : MapProjection
     /// <inheritdoc/>
     public override MathTransform Inverse()
     {
-        if (this.inverse == null)
+        if (this.inverse is null)
         {
             this.inverse = new CassiniSoldnerProjection(this.Parameters.ToProjectionParameter(), this);
         }

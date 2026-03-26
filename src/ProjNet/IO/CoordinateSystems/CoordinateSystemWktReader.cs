@@ -499,7 +499,7 @@ public static partial class CoordinateSystemWktReader
         }
 
         // This is default axis values if not specified.
-        if (info == null)
+        if (info is null)
         {
             info = new AxisInfo("Up", AxisOrientationEnum.Up);
         }

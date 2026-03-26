@@ -181,17 +181,17 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
             return false;
         }
 
-        if (this.WGS84ConversionInfo != null && gcs.WGS84ConversionInfo == null)
+        if (this.WGS84ConversionInfo is not null && gcs.WGS84ConversionInfo is null)
         {
             return false;
         }
 
-        if (this.WGS84ConversionInfo == null && gcs.WGS84ConversionInfo != null)
+        if (this.WGS84ConversionInfo is null && gcs.WGS84ConversionInfo is not null)
         {
             return false;
         }
 
-        if (this.WGS84ConversionInfo != null && gcs.WGS84ConversionInfo != null)
+        if (this.WGS84ConversionInfo is not null && gcs.WGS84ConversionInfo is not null)
         {
             if (this.WGS84ConversionInfo.Count != gcs.WGS84ConversionInfo.Count)
             {
