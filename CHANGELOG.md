@@ -22,6 +22,8 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
   - `CoordinateSystemWktReader.Parse(ReadOnlySpan<char>)`
   - `Wgs84ConversionInfo.WriteAffineTransform(Span<double>)`
 - Added benchmark scenarios aligned to relevant PROJ `bench_proj_trans` patterns, including deterministic noise-based runs and additional CRS pair coverage.
+- Added 4D `+proj=axisswap` runtime support (including sign-aware time ordinate handling) in pipeline execution paths.
+- Added focused axisswap coverage with new `AxisSwapMathTransformTests` and `AxisOrderHelperTests`, plus expanded pipeline validation scenarios for `+axis` / `+order` combinations.
 
 ### Changed
 
@@ -47,6 +49,7 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 - Normalized historical block comments in handwritten source/test files to consistent line comments.
 - Renamed opaque `SpecialtyProjectionBatch*` tests into descriptive projection-family-focused test classes.
 - Optimized selected hot internal paths using `stackalloc`, `ReadOnlySpan<T>/Span<T>`, and `ArrayPool<T>` to reduce transient allocations.
+- Improved GIE builtins conversion fallback handling by normalizing cs2cs-style operation tokens for runtime conversion attempts and prioritizing detailed transform skip reasons.
 
 ### Fixed
 
@@ -63,3 +66,4 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 
 - Package version line is aligned to `3.0.0` via shared build props (`src/Directory.Build.props`).
 - `PackageValidationBaselineVersion` remains `2.1.0` until `3.0.0` is published.
+- Current validation snapshot (Phase 3): full tests `3834 total / 3003 passed / 0 failed / 831 skipped`; GIE builtins `2465 total / 1664 passed / 0 failed / 801 skipped`.
