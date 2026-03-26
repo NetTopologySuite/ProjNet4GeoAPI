@@ -150,4 +150,48 @@ internal static class ArgumentGuard
         }
 #endif
     }
+
+    /// <summary>
+    /// Throws an <see cref="ArgumentException"/> with parameter context.
+    /// </summary>
+    /// <param name="message">Exception message.</param>
+    /// <param name="paramName">Parameter name for exception reporting.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static void ThrowArgument(string message, string paramName)
+    {
+        throw new ArgumentException(message, paramName);
+    }
+
+    /// <summary>
+    /// Throws an <see cref="ArgumentException"/>.
+    /// </summary>
+    /// <param name="message">Exception message.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static void ThrowArgument(string message)
+    {
+        throw new ArgumentException(message);
+    }
+
+    /// <summary>
+    /// Throws an <see cref="ArgumentOutOfRangeException"/> with actual value context.
+    /// </summary>
+    /// <param name="paramName">Parameter name for exception reporting.</param>
+    /// <param name="actualValue">Actual out-of-range value.</param>
+    /// <param name="message">Exception message.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static void ThrowArgumentOutOfRange(string paramName, object actualValue, string message)
+    {
+        throw new ArgumentOutOfRangeException(paramName, actualValue, message);
+    }
+
+    /// <summary>
+    /// Throws an <see cref="ArgumentOutOfRangeException"/>.
+    /// </summary>
+    /// <param name="paramName">Parameter name for exception reporting.</param>
+    /// <param name="message">Exception message.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static void ThrowArgumentOutOfRange(string paramName, string message)
+    {
+        throw new ArgumentOutOfRangeException(paramName, message);
+    }
 }

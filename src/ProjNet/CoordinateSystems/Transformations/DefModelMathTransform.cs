@@ -150,7 +150,7 @@ internal sealed class DefModelMathTransform : MathTransform
     /// <inheritdoc />
     public override void Transform(ref double x, ref double y, ref double z)
     {
-        throw new ArgumentException("defmodel requires observation time (4D input).");
+        ArgumentGuard.ThrowArgument("defmodel requires observation time (4D input).");
     }
 
     /// <summary>
@@ -259,14 +259,14 @@ internal sealed class DefModelMathTransform : MathTransform
     {
         if (!IsValidObservationEpoch(t))
         {
-            throw new ArgumentException("defmodel requires a valid observation epoch.");
+            ArgumentGuard.ThrowArgument("defmodel requires a valid observation epoch.");
         }
 
         if (!this.isInverted)
         {
             if (!this.TryForward(x, y, z, t, false, out double xOut, out double yOut, out double zOut))
             {
-                throw new ArgumentException("defmodel forward transformation failed.");
+                ArgumentGuard.ThrowArgument("defmodel forward transformation failed.");
             }
 
             x = xOut;
@@ -277,7 +277,7 @@ internal sealed class DefModelMathTransform : MathTransform
 
         if (!this.TryInverse(x, y, z, t, out double xInv, out double yInv, out double zInv))
         {
-            throw new ArgumentException("defmodel inverse transformation failed.");
+            ArgumentGuard.ThrowArgument("defmodel inverse transformation failed.");
         }
 
         x = xInv;
@@ -1106,12 +1106,12 @@ internal sealed class DefModelMathTransform : MathTransform
     {
         if (!isGeographicCrs && isHorizontalUnitDegree)
         {
-            throw new ArgumentException("definition_crs = projected CRS and horizontal_offset_unit = degree are incompatible.");
+            ArgumentGuard.ThrowArgument("definition_crs = projected CRS and horizontal_offset_unit = degree are incompatible.");
         }
 
         if (!isGeographicCrs && !isAddition)
         {
-            throw new ArgumentException("definition_crs = projected CRS and horizontal_offset_method = geocentric are incompatible.");
+            ArgumentGuard.ThrowArgument("definition_crs = projected CRS and horizontal_offset_method = geocentric are incompatible.");
         }
 
         if (isGeographicCrs)
@@ -1123,7 +1123,7 @@ internal sealed class DefModelMathTransform : MathTransform
         {
             if (model.Components[i].InterpolationMethod == InterpolationMethod.GeocentricBilinear)
             {
-                throw new ArgumentException("definition_crs = projected CRS and interpolation_method = geocentric_bilinear are incompatible.");
+                ArgumentGuard.ThrowArgument("definition_crs = projected CRS and interpolation_method = geocentric_bilinear are incompatible.");
             }
         }
     }

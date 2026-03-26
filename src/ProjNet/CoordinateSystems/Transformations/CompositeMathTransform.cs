@@ -25,7 +25,7 @@ internal sealed class CompositeMathTransform : MathTransform
 
         if (transforms.Count == 0)
         {
-            throw new ArgumentException("At least one math transform is required.", nameof(transforms));
+            ArgumentGuard.ThrowArgument("At least one math transform is required.", nameof(transforms));
         }
 
         this.transforms = new MathTransform[transforms.Count];
@@ -33,7 +33,7 @@ internal sealed class CompositeMathTransform : MathTransform
         {
             if (transforms[i] is null)
             {
-                throw new ArgumentException("Math transform list contains null element.", nameof(transforms));
+                ArgumentGuard.ThrowArgument("Math transform list contains null element.", nameof(transforms));
             }
 
             this.transforms[i] = transforms[i];

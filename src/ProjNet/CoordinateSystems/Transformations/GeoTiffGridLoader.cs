@@ -116,7 +116,7 @@ internal static partial class GeoTiffGridLoader
     {
         if (string.IsNullOrWhiteSpace(path))
         {
-            throw new ArgumentException("Path is required.", nameof(path));
+            ArgumentGuard.ThrowArgument("Path is required.", nameof(path));
         }
 
         ArgumentGuard.ThrowIfNull(sampleValueArrayPool, nameof(sampleValueArrayPool));
@@ -202,7 +202,8 @@ internal static partial class GeoTiffGridLoader
                 page = LoadedPage.CreateXyz(transform, sampleData, metadata, sampleX, sampleY, sampleZ);
                 return true;
             default:
-                throw new ArgumentOutOfRangeException(nameof(mode), mode, "Unsupported GeoTIFF grid mode.");
+                ArgumentGuard.ThrowArgumentOutOfRange(nameof(mode), mode, "Unsupported GeoTIFF grid mode.");
+                return false;
         }
     }
 

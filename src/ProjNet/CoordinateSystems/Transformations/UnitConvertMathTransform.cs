@@ -94,7 +94,7 @@ internal sealed class UnitConvertMathTransform : MathTransform
     {
         if (dimension < 2 || dimension > 3)
         {
-            throw new ArgumentOutOfRangeException(parameterName, dimension, "Unit conversion dimension must be either 2 or 3.");
+            ArgumentGuard.ThrowArgumentOutOfRange(parameterName, dimension, "Unit conversion dimension must be either 2 or 3.");
         }
 
         return dimension;
@@ -104,7 +104,7 @@ internal sealed class UnitConvertMathTransform : MathTransform
     {
         if (scale <= 0d || double.IsNaN(scale) || double.IsInfinity(scale))
         {
-            throw new ArgumentOutOfRangeException(parameterName, scale, "Scale must be finite and positive.");
+            ArgumentGuard.ThrowArgumentOutOfRange(parameterName, scale, "Scale must be finite and positive.");
         }
     }
 }

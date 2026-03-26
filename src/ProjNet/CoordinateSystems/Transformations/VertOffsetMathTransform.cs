@@ -40,12 +40,12 @@ internal sealed class VertOffsetMathTransform : MathTransform
     {
         if (semiMajor <= 0d || double.IsNaN(semiMajor) || double.IsInfinity(semiMajor))
         {
-            throw new ArgumentException("vertoffset requires a positive finite semi-major axis.", nameof(semiMajor));
+            ArgumentGuard.ThrowArgument("vertoffset requires a positive finite semi-major axis.", nameof(semiMajor));
         }
 
         if (semiMinor <= 0d || double.IsNaN(semiMinor) || double.IsInfinity(semiMinor))
         {
-            throw new ArgumentException("vertoffset requires a positive finite semi-minor axis.", nameof(semiMinor));
+            ArgumentGuard.ThrowArgument("vertoffset requires a positive finite semi-minor axis.", nameof(semiMinor));
         }
 
         this.latOriginRadians = DegreesToRadians(latOriginDegrees);
@@ -59,7 +59,7 @@ internal sealed class VertOffsetMathTransform : MathTransform
         double oneMinusEsSinLat0Square = 1d - (eccentricitySquared * sinLat0 * sinLat0);
         if (oneMinusEsSinLat0Square <= 0d)
         {
-            throw new ArgumentException("vertoffset produced invalid ellipsoid curvature terms.");
+            ArgumentGuard.ThrowArgument("vertoffset produced invalid ellipsoid curvature terms.");
         }
 
         double sqrtDenominator = Math.Sqrt(oneMinusEsSinLat0Square);

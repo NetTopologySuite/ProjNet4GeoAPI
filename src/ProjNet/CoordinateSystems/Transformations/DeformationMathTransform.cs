@@ -126,10 +126,10 @@ internal sealed class DeformationMathTransform : MathTransform
         {
             if (missingTime)
             {
-                throw new ArgumentException("deformation requires a valid observation time.");
+                ArgumentGuard.ThrowArgument("deformation requires a valid observation time.");
             }
 
-            throw new ArgumentException("deformation could not resolve delta time.");
+            ArgumentGuard.ThrowArgument("deformation could not resolve delta time.");
         }
 
         this.TransformCore(ref x, ref y, ref z, deltaTime);
@@ -329,10 +329,10 @@ internal sealed class DeformationMathTransform : MathTransform
         {
             if (missingTime)
             {
-                throw new ArgumentException("deformation requires a valid observation time.");
+                ArgumentGuard.ThrowArgument("deformation requires a valid observation time.");
             }
 
-            throw new ArgumentException("deformation could not resolve delta time.");
+            ArgumentGuard.ThrowArgument("deformation could not resolve delta time.");
         }
 
         this.TransformCore(ref x, ref y, ref z, deltaTime);
@@ -816,7 +816,7 @@ internal sealed class DeformationMathTransform : MathTransform
         {
             if (!this.TryGetGridShift(x, y, z, out double shiftX, out double shiftY, out double shiftZ))
             {
-                throw new ArgumentException("Coordinate is outside deformation model grid extent.");
+                ArgumentGuard.ThrowArgument("Coordinate is outside deformation model grid extent.");
             }
 
             x += deltaTime * shiftX;
@@ -827,7 +827,7 @@ internal sealed class DeformationMathTransform : MathTransform
 
         if (!this.TryReverseShift(x, y, z, deltaTime, out double xOut, out double yOut, out double zOut))
         {
-            throw new ArgumentException("deformation inverse transformation failed.");
+            ArgumentGuard.ThrowArgument("deformation inverse transformation failed.");
         }
 
         x = xOut;

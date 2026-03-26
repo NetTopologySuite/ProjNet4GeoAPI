@@ -44,7 +44,7 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
 
         if (loadedGrids.Count == 0)
         {
-            throw new ArgumentException("No horizontal grid could be loaded from GeoTIFF input.", nameof(gridPaths));
+            ArgumentGuard.ThrowArgument("No horizontal grid could be loaded from GeoTIFF input.", nameof(gridPaths));
         }
 
         this.grids = new ReadOnlyCollection<HorizontalGrid>(
@@ -100,7 +100,7 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
     {
         if (!this.TryFindGridForPoint(x, y, out HorizontalGrid grid))
         {
-            throw new ArgumentException("Coordinate is outside the horizontal GeoTIFF grid extent.");
+            ArgumentGuard.ThrowArgument("Coordinate is outside the horizontal GeoTIFF grid extent.");
         }
 
         if (!this.isInverted)
@@ -137,14 +137,14 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
             }
         }
 
-        throw new ArgumentException("Inverse horizontal GeoTIFF grid shift did not converge.");
+        ArgumentGuard.ThrowArgument("Inverse horizontal GeoTIFF grid shift did not converge.");
     }
 
     private static (double LonShift, double LatShift) InterpolateShift(HorizontalGrid grid, double longitude, double latitude)
     {
         if (!grid.TryMapToGridCoordinates(longitude, latitude, out double gridX, out double gridY))
         {
-            throw new ArgumentException("Coordinate is outside the horizontal GeoTIFF grid extent.");
+            ArgumentGuard.ThrowArgument("Coordinate is outside the horizontal GeoTIFF grid extent.");
         }
 
         int indexX = (int)Math.Floor(gridX);
@@ -188,7 +188,7 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
                 return;
             }
 
-            throw new ArgumentException("Coordinate is outside the horizontal GeoTIFF grid extent.");
+            ArgumentGuard.ThrowArgument("Coordinate is outside the horizontal GeoTIFF grid extent.");
         }
 
         if (index + 1 < size)
@@ -203,7 +203,7 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
             return;
         }
 
-        throw new ArgumentException("Coordinate is outside the horizontal GeoTIFF grid extent.");
+        ArgumentGuard.ThrowArgument("Coordinate is outside the horizontal GeoTIFF grid extent.");
     }
 
     private static double NormalizeLongitude(double longitude)

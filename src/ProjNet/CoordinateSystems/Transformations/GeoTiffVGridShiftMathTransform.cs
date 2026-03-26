@@ -32,7 +32,7 @@ internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
 
         if (double.IsNaN(forwardMultiplier) || double.IsInfinity(forwardMultiplier))
         {
-            throw new ArgumentException("Forward multiplier must be finite.", nameof(forwardMultiplier));
+            ArgumentGuard.ThrowArgument("Forward multiplier must be finite.", nameof(forwardMultiplier));
         }
 
         var loadedGrids = new List<VerticalGrid>(gridPaths.Count);
@@ -49,7 +49,7 @@ internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
 
         if (loadedGrids.Count == 0)
         {
-            throw new ArgumentException("No vertical grid could be loaded from GeoTIFF input.", nameof(gridPaths));
+            ArgumentGuard.ThrowArgument("No vertical grid could be loaded from GeoTIFF input.", nameof(gridPaths));
         }
 
         this.grids = new ReadOnlyCollection<VerticalGrid>(
@@ -107,7 +107,7 @@ internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
     {
         if (!this.TryFindGridForPoint(x, y, out VerticalGrid grid))
         {
-            throw new ArgumentException("Coordinate is outside the vertical GeoTIFF grid extent.");
+            ArgumentGuard.ThrowArgument("Coordinate is outside the vertical GeoTIFF grid extent.");
         }
 
         double shift = InterpolateValue(grid, x, y, this.forwardMultiplier);
@@ -124,7 +124,7 @@ internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
     {
         if (!grid.TryMapToGridCoordinates(longitude, latitude, out double gridX, out double gridY))
         {
-            throw new ArgumentException("Coordinate is outside the vertical GeoTIFF grid extent.");
+            ArgumentGuard.ThrowArgument("Coordinate is outside the vertical GeoTIFF grid extent.");
         }
 
         int indexX = (int)Math.Floor(gridX);
@@ -149,7 +149,7 @@ internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
         int validCount = (aValid ? 1 : 0) + (bValid ? 1 : 0) + (cValid ? 1 : 0) + (dValid ? 1 : 0);
         if (validCount == 0)
         {
-            throw new ArgumentException("Coordinate falls on vertical GeoTIFF grid nodata region.");
+            ArgumentGuard.ThrowArgument("Coordinate falls on vertical GeoTIFF grid nodata region.");
         }
 
         double xy = fractionX * fractionY;
@@ -191,7 +191,7 @@ internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
 
         if (totalWeight == 0d)
         {
-            throw new ArgumentException("Coordinate falls on vertical GeoTIFF grid nodata region.");
+            ArgumentGuard.ThrowArgument("Coordinate falls on vertical GeoTIFF grid nodata region.");
         }
 
         return (weightedValue / totalWeight) * multiplier;
@@ -208,7 +208,7 @@ internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
                 return;
             }
 
-            throw new ArgumentException("Coordinate is outside the vertical GeoTIFF grid extent.");
+            ArgumentGuard.ThrowArgument("Coordinate is outside the vertical GeoTIFF grid extent.");
         }
 
         if (index + 1 < size)
@@ -223,7 +223,7 @@ internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
             return;
         }
 
-        throw new ArgumentException("Coordinate is outside the vertical GeoTIFF grid extent.");
+        ArgumentGuard.ThrowArgument("Coordinate is outside the vertical GeoTIFF grid extent.");
     }
 
     private bool TryFindGridForPoint(double longitude, double latitude, out VerticalGrid grid)

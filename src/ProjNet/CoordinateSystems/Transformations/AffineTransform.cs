@@ -79,12 +79,12 @@ public class AffineTransform : MathTransform
 
         if (matrix.GetLength(0) <= 1)
         {
-            throw new ArgumentException("Transformation matrix must have at least 2 rows.");
+            ArgumentGuard.ThrowArgument("Transformation matrix must have at least 2 rows.");
         }
 
         if (matrix.GetLength(1) <= 1)
         {
-            throw new ArgumentException("Transformation matrix must have at least 2 columns.");
+            ArgumentGuard.ThrowArgument("Transformation matrix must have at least 2 columns.");
         }
 
         // fill dimensionlity - dimension is M, and output dimension is N, then the matrix will have size [N+1][M+1].
@@ -218,12 +218,12 @@ public class AffineTransform : MathTransform
         int dimension = n + 1;
         if (b.Length < dimension)
         {
-            throw new ArgumentException("Input vector is too short.", nameof(b));
+            ArgumentGuard.ThrowArgument("Input vector is too short.", nameof(b));
         }
 
         if (solution.Length < dimension)
         {
-            throw new ArgumentException("Solution buffer is too short.", nameof(solution));
+            ArgumentGuard.ThrowArgument("Solution buffer is too short.", nameof(solution));
         }
 
         Span<double> xSpan = solution.Slice(0, dimension);

@@ -637,7 +637,7 @@ internal sealed class HornerMathTransform : MathTransform
             }
         }
 
-        throw new ArgumentException("horner inverse iteration did not converge.");
+        ArgumentGuard.ThrowArgument("horner inverse iteration did not converge.");
     }
 
     private void TransformComplexForward(ref double x, ref double y)
@@ -731,14 +731,14 @@ internal sealed class HornerMathTransform : MathTransform
             }
         }
 
-        throw new ArgumentException("horner inverse iteration did not converge.");
+        ArgumentGuard.ThrowArgument("horner inverse iteration did not converge.");
     }
 
     private void ValidateRange(double n, double e)
     {
         if (Math.Abs(n) > this.range || Math.Abs(e) > this.range)
         {
-            throw new ArgumentException("Coordinate is outside horner operation range.");
+            ArgumentGuard.ThrowArgument("Coordinate is outside horner operation range.");
         }
     }
 }

@@ -365,7 +365,7 @@ internal sealed class MolobadekasMathTransform : MathTransform
     {
         if (double.IsNaN(value) || double.IsInfinity(value))
         {
-            throw new ArgumentOutOfRangeException(parameterName, value, "Molobadekas parameters must be finite.");
+            ArgumentGuard.ThrowArgumentOutOfRange(parameterName, value, "Molobadekas parameters must be finite.");
         }
     }
 

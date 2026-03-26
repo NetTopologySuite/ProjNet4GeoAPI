@@ -143,7 +143,7 @@ internal sealed class AxisSwapMathTransform : MathTransform
     {
         if (dimension is < 2 or > 3)
         {
-            throw new ArgumentOutOfRangeException(parameterName, dimension, "Axis swap dimension must be either 2 or 3.");
+            ArgumentGuard.ThrowArgumentOutOfRange(parameterName, dimension, "Axis swap dimension must be either 2 or 3.");
         }
 
         return dimension;
@@ -153,7 +153,7 @@ internal sealed class AxisSwapMathTransform : MathTransform
     {
         if (sourceIndex is < 0 or > 2)
         {
-            throw new ArgumentOutOfRangeException(parameterName, sourceIndex, "Axis source index must be 0, 1 or 2.");
+            ArgumentGuard.ThrowArgumentOutOfRange(parameterName, sourceIndex, "Axis source index must be 0, 1 or 2.");
         }
 
         return sourceIndex;
@@ -163,7 +163,7 @@ internal sealed class AxisSwapMathTransform : MathTransform
     {
         if (sign != -1 && sign != 1)
         {
-            throw new ArgumentOutOfRangeException(parameterName, sign, "Axis sign must be either -1 or 1.");
+            ArgumentGuard.ThrowArgumentOutOfRange(parameterName, sign, "Axis sign must be either -1 or 1.");
         }
 
         return sign;

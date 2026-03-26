@@ -33,7 +33,7 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
 
         if (double.IsNaN(forwardMultiplier) || double.IsInfinity(forwardMultiplier))
         {
-            throw new ArgumentException("Forward multiplier must be finite.", nameof(forwardMultiplier));
+            ArgumentGuard.ThrowArgument("Forward multiplier must be finite.", nameof(forwardMultiplier));
         }
 
         var loadedGrids = new List<GtxGrid>(gridPaths.Count);
@@ -50,7 +50,7 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
 
         if (loadedGrids.Count == 0)
         {
-            throw new ArgumentException("At least one GTX grid file must be provided.", nameof(gridPaths));
+            ArgumentGuard.ThrowArgument("At least one GTX grid file must be provided.", nameof(gridPaths));
         }
 
         this.grids = new ReadOnlyCollection<GtxGrid>(loadedGrids);
@@ -107,7 +107,7 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
     {
         if (!this.TryFindGridForPoint(x, y, out GtxGrid selectedGrid))
         {
-            throw new ArgumentException("Coordinate is outside the vertical grid extent.");
+            ArgumentGuard.ThrowArgument("Coordinate is outside the vertical grid extent.");
         }
 
         double value = InterpolateValue(selectedGrid, x, y, this.forwardMultiplier);
@@ -153,7 +153,7 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
         int indexY = (int)Math.Floor(gridY);
         if (indexX < 0 || indexX >= grid.Width || indexY < 0 || indexY >= grid.Height)
         {
-            throw new ArgumentException("Coordinate is outside the vertical grid extent.");
+            ArgumentGuard.ThrowArgument("Coordinate is outside the vertical grid extent.");
         }
 
         double fractionX = gridX - indexX;
@@ -170,7 +170,7 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
             }
             else
             {
-                throw new ArgumentException("Coordinate is outside the vertical grid extent.");
+                ArgumentGuard.ThrowArgument("Coordinate is outside the vertical grid extent.");
             }
         }
 
@@ -185,7 +185,7 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
             }
             else
             {
-                throw new ArgumentException("Coordinate is outside the vertical grid extent.");
+                ArgumentGuard.ThrowArgument("Coordinate is outside the vertical grid extent.");
             }
         }
 
@@ -201,7 +201,7 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
         int validCount = (aValid ? 1 : 0) + (bValid ? 1 : 0) + (cValid ? 1 : 0) + (dValid ? 1 : 0);
         if (validCount == 0)
         {
-            throw new ArgumentException("Coordinate falls on vertical grid nodata region.");
+            ArgumentGuard.ThrowArgument("Coordinate falls on vertical grid nodata region.");
         }
 
         double gridXy = fractionX * fractionY;
@@ -244,7 +244,7 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
 
         if (totalWeight == 0d)
         {
-            throw new ArgumentException("Coordinate falls on vertical grid nodata region.");
+            ArgumentGuard.ThrowArgument("Coordinate falls on vertical grid nodata region.");
         }
 
         return (weightedValue / totalWeight) * multiplier;

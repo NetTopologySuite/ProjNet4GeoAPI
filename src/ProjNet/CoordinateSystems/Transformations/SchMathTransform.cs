@@ -107,7 +107,7 @@ internal sealed class SchMathTransform : MathTransform
 
         if (Math.Abs(this.radiusOfCurvature) <= 1e-12d)
         {
-            throw new ArgumentException("sch produced a zero radius of curvature.", nameof(parameters));
+            ArgumentGuard.ThrowArgument("sch produced a zero radius of curvature.", nameof(parameters));
         }
 
         var sphereParameters = new List<ProjectionParameter>

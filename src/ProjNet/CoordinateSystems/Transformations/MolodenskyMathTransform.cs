@@ -41,12 +41,12 @@ internal sealed class MolodenskyMathTransform : MathTransform
     {
         if (semiMajor <= 0d || double.IsNaN(semiMajor) || double.IsInfinity(semiMajor))
         {
-            throw new ArgumentException("Molodensky requires a positive finite semi-major axis.", nameof(semiMajor));
+            ArgumentGuard.ThrowArgument("Molodensky requires a positive finite semi-major axis.", nameof(semiMajor));
         }
 
         if (semiMinor <= 0d || double.IsNaN(semiMinor) || double.IsInfinity(semiMinor))
         {
-            throw new ArgumentException("Molodensky requires a positive finite semi-minor axis.", nameof(semiMinor));
+            ArgumentGuard.ThrowArgument("Molodensky requires a positive finite semi-minor axis.", nameof(semiMinor));
         }
 
         this.semiMajor = semiMajor;
@@ -363,7 +363,7 @@ internal sealed class MolodenskyMathTransform : MathTransform
         double dPhiDenominator = rho + h;
         if (dPhiDenominator == 0d)
         {
-            throw new ArgumentException("Molodensky standard produced invalid denominator for dphi.");
+            ArgumentGuard.ThrowArgument("Molodensky standard produced invalid denominator for dphi.");
         }
 
         dPhi /= dPhiDenominator;
@@ -371,7 +371,7 @@ internal sealed class MolodenskyMathTransform : MathTransform
         double dLamDenominator = (nu + h) * cosPhi;
         if (dLamDenominator == 0d)
         {
-            throw new ArgumentException("Molodensky standard produced invalid denominator for dlam.");
+            ArgumentGuard.ThrowArgument("Molodensky standard produced invalid denominator for dlam.");
         }
 
         double dLam = ((-this.dx * sinLam) + (this.dy * cosLam)) / dLamDenominator;
@@ -401,7 +401,7 @@ internal sealed class MolodenskyMathTransform : MathTransform
         double dLamDenominator = this.ComputeRn(phi) * cosPhi;
         if (dLamDenominator == 0d)
         {
-            throw new ArgumentException("Molodensky abridged produced invalid denominator for dlam.");
+            ArgumentGuard.ThrowArgument("Molodensky abridged produced invalid denominator for dlam.");
         }
 
         double dLam = ((-this.dx * sinLam) + (this.dy * cosLam)) / dLamDenominator;

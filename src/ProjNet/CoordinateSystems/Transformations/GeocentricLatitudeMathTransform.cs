@@ -29,7 +29,7 @@ internal sealed class GeocentricLatitudeMathTransform : MathTransform
     {
         if (semiMajor <= 0d || semiMinor <= 0d || double.IsNaN(semiMajor) || double.IsInfinity(semiMajor) || double.IsNaN(semiMinor) || double.IsInfinity(semiMinor))
         {
-            throw new ArgumentOutOfRangeException(nameof(semiMajor), "Semi-major and semi-minor axes must be finite and positive.");
+            ArgumentGuard.ThrowArgumentOutOfRange(nameof(semiMajor), "Semi-major and semi-minor axes must be finite and positive.");
         }
 
         this.geodeticToGeocentricFactor = (semiMinor * semiMinor) / (semiMajor * semiMajor);
@@ -49,7 +49,7 @@ internal sealed class GeocentricLatitudeMathTransform : MathTransform
     {
         if (geodeticToGeocentricFactor <= 0d || double.IsNaN(geodeticToGeocentricFactor) || double.IsInfinity(geodeticToGeocentricFactor))
         {
-            throw new ArgumentOutOfRangeException(nameof(geodeticToGeocentricFactor), "Geocentric latitude factor must be finite and positive.");
+            ArgumentGuard.ThrowArgumentOutOfRange(nameof(geodeticToGeocentricFactor), "Geocentric latitude factor must be finite and positive.");
         }
 
         this.geodeticToGeocentricFactor = geodeticToGeocentricFactor;

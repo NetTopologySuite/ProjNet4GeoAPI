@@ -200,13 +200,13 @@ public abstract class MathTransform
         int pointLength = point.Length;
         if (pointLength < 2)
         {
-            throw new ArgumentException("At least two ordinate values are required.", nameof(point));
+            ArgumentGuard.ThrowArgument("At least two ordinate values are required.", nameof(point));
         }
 
         int resultDimensions = this.GetResultDimensions(pointLength);
         if (result.Length < resultDimensions)
         {
-            throw new ArgumentException(
+            ArgumentGuard.ThrowArgument(
                 "Destination span is too small to store the transformed coordinate.",
                 nameof(result));
         }
@@ -313,7 +313,7 @@ public abstract class MathTransform
 
         if (elementsX != elementsY)
         {
-            throw new ArgumentException("Spans of ordinate values don't match in size.");
+            ArgumentGuard.ThrowArgument("Spans of ordinate values don't match in size.");
         }
 
         Span<double> dummyZ = stackalloc double[] { 0 };
@@ -343,7 +343,7 @@ public abstract class MathTransform
         int elementsY = (ys.Length / strideY) + (ys.Length % strideY) != 0 ? 1 : 0;
         if (elementsX != elementsY)
         {
-            throw new ArgumentException("Spans of ordinate values don't match in size.");
+            ArgumentGuard.ThrowArgument("Spans of ordinate values don't match in size.");
         }
 
         if (zs.IsEmpty)
@@ -356,7 +356,7 @@ public abstract class MathTransform
         int elementsZ = (zs.Length / strideZ) + (zs.Length % strideZ) != 0 ? 1 : 0;
         if (elementsZ != elementsX)
         {
-            throw new ArgumentException("Spans of ordinate values don't match in size.");
+            ArgumentGuard.ThrowArgument("Spans of ordinate values don't match in size.");
         }
 
         this.TransformCore(xs, ys, zs, strideX, strideY, strideZ);
@@ -380,7 +380,7 @@ public abstract class MathTransform
 
             if (xys.Length != ((zs.Length / strideZ) + (zs.Length % strideZ != 0 ? 1 : 0)))
             {
-                throw new ArgumentException("Provided spans don't match in size.");
+                ArgumentGuard.ThrowArgument("Provided spans don't match in size.");
             }
         }
 
@@ -494,7 +494,7 @@ public abstract class MathTransform
     {
         if (stride < 1)
         {
-            throw new ArgumentOutOfRangeException(nameof(stride), stride, "Must be greater than zero.");
+            ArgumentGuard.ThrowArgumentOutOfRange(nameof(stride), stride, "Must be greater than zero.");
         }
 
         if (addend == 0)
@@ -532,7 +532,7 @@ public abstract class MathTransform
     {
         if (stride < 1)
         {
-            throw new ArgumentOutOfRangeException(nameof(stride), stride, "Must be greater than zero.");
+            ArgumentGuard.ThrowArgumentOutOfRange(nameof(stride), stride, "Must be greater than zero.");
         }
 
         if (multiplier == 1)
@@ -571,7 +571,7 @@ public abstract class MathTransform
     {
         if (stride < 1)
         {
-            throw new ArgumentOutOfRangeException(nameof(stride), stride, "Must be greater than zero.");
+            ArgumentGuard.ThrowArgumentOutOfRange(nameof(stride), stride, "Must be greater than zero.");
         }
 
         if (addend == 0)
@@ -618,7 +618,7 @@ public abstract class MathTransform
     {
         if (stride < 1)
         {
-            throw new ArgumentOutOfRangeException(nameof(stride), stride, "Must be greater than zero.");
+            ArgumentGuard.ThrowArgumentOutOfRange(nameof(stride), stride, "Must be greater than zero.");
         }
 
         if (addend == 0)

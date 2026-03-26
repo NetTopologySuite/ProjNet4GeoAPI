@@ -216,7 +216,7 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
     {
         if (double.IsNaN(value) || double.IsInfinity(value))
         {
-            throw new ArgumentOutOfRangeException(parameterName, value, "Affine parameters must be finite.");
+            ArgumentGuard.ThrowArgumentOutOfRange(parameterName, value, "Affine parameters must be finite.");
         }
     }
 
