@@ -14,7 +14,7 @@ using System.Collections.Generic;
 internal sealed class CompositeMathTransform : MathTransform
 {
     private MathTransform[] transforms;
-    private MathTransform inverse;
+    private MathTransform? inverse;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CompositeMathTransform"/> class.
@@ -96,7 +96,7 @@ internal sealed class CompositeMathTransform : MathTransform
             this.transforms[i].Invert();
         }
 
-        this.inverse = default!;
+        this.inverse = null;
     }
 
     /// <inheritdoc />

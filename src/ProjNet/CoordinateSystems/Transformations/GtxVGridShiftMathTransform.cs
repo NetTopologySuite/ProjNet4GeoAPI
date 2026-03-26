@@ -22,7 +22,7 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
     private readonly ReadOnlyCollection<GtxGrid> grids;
     private readonly double forwardMultiplier;
     private bool isInverted;
-    private MathTransform inverse;
+    private MathTransform? inverse;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GtxVGridShiftMathTransform"/> class.
@@ -101,7 +101,7 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
     public override void Invert()
     {
         this.isInverted = !this.isInverted;
-        this.inverse = default!;
+        this.inverse = null;
     }
 
     /// <inheritdoc />

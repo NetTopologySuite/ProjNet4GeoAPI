@@ -28,7 +28,7 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
     private readonly double multiplier;
     private readonly bool gridReferenceIsInput;
     private bool isInverted;
-    private MathTransform inverse;
+    private MathTransform? inverse;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GeoTiffXyzGridShiftMathTransform"/> class.
@@ -146,7 +146,7 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
     public override void Invert()
     {
         this.isInverted = !this.isInverted;
-        this.inverse = default!;
+        this.inverse = null;
     }
 
     /// <inheritdoc />

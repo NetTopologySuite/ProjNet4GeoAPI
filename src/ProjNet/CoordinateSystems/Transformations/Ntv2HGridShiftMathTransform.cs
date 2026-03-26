@@ -27,7 +27,7 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
 
     private readonly ReadOnlyCollection<Ntv2GridSet> gridSets;
     private bool isInverted;
-    private MathTransform inverse;
+    private MathTransform? inverse;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Ntv2HGridShiftMathTransform"/> class.
@@ -98,7 +98,7 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
     public override void Invert()
     {
         this.isInverted = !this.isInverted;
-        this.inverse = default!;
+        this.inverse = null;
     }
 
     /// <inheritdoc />

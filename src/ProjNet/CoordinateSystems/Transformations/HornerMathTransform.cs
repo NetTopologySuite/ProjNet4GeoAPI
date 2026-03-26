@@ -43,7 +43,7 @@ internal sealed class HornerMathTransform : MathTransform
     private readonly double invOriginY;
 
     private bool isInverted;
-    private MathTransform inverse;
+    private MathTransform? inverse;
 
     private HornerMathTransform(
         int degree,
@@ -147,7 +147,7 @@ internal sealed class HornerMathTransform : MathTransform
     public override void Invert()
     {
         this.isInverted = !this.isInverted;
-        this.inverse = default!;
+        this.inverse = null;
     }
 
     /// <inheritdoc />

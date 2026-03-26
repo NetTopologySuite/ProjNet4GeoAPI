@@ -21,7 +21,7 @@ internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
     private readonly ReadOnlyCollection<VerticalGrid> grids;
     private readonly double forwardMultiplier;
     private bool isInverted;
-    private MathTransform inverse;
+    private MathTransform? inverse;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GeoTiffVGridShiftMathTransform"/> class.
@@ -101,7 +101,7 @@ internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
     public override void Invert()
     {
         this.isInverted = !this.isInverted;
-        this.inverse = default!;
+        this.inverse = null;
     }
 
     /// <inheritdoc />

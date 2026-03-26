@@ -22,7 +22,7 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
     private const int MaxInverseIterations = 10;
     private readonly ReadOnlyCollection<HorizontalGrid> grids;
     private bool isInverted;
-    private MathTransform inverse;
+    private MathTransform? inverse;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GeoTiffHGridShiftMathTransform"/> class.
@@ -94,7 +94,7 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
     public override void Invert()
     {
         this.isInverted = !this.isInverted;
-        this.inverse = default!;
+        this.inverse = null;
     }
 
     /// <inheritdoc />

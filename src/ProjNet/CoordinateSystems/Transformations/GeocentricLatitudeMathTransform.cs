@@ -15,7 +15,7 @@ internal sealed class GeocentricLatitudeMathTransform : MathTransform
 {
     private readonly double geodeticToGeocentricFactor;
     private bool isInverse;
-    private MathTransform inverse;
+    private MathTransform? inverse;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GeocentricLatitudeMathTransform"/> class.
@@ -87,7 +87,7 @@ internal sealed class GeocentricLatitudeMathTransform : MathTransform
     public override void Invert()
     {
         this.isInverse = !this.isInverse;
-        this.inverse = default!;
+        this.inverse = null;
     }
 
     /// <inheritdoc/>
