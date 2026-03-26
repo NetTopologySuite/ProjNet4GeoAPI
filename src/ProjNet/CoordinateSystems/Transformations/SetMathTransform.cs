@@ -7,6 +7,7 @@ namespace ProjNet.CoordinateSystems.Transformations;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 /// <summary>
@@ -100,11 +101,11 @@ internal sealed class SetMathTransform : MathTransform
     /// <returns><see langword="true"/> when a transform was created.</returns>
     internal static bool TryCreate(
         Dictionary<string, string> args,
-        out MathTransform transform,
-        out string skipReason)
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
     {
-        transform = default!;
-        skipReason = default!;
+        transform = null;
+        skipReason = null;
 
         if (args is null)
         {
@@ -147,9 +148,9 @@ internal sealed class SetMathTransform : MathTransform
         Dictionary<string, string> args,
         string key,
         out double value,
-        out string skipReason)
+        out string? skipReason)
     {
-        skipReason = default!;
+        skipReason = null;
         value = 0d;
         if (!args.TryGetValue(key, out string? token))
         {

@@ -7,6 +7,7 @@ namespace ProjNet.CoordinateSystems.Transformations;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using ProjNet.CoordinateSystems;
 
@@ -143,11 +144,11 @@ internal sealed class VertOffsetMathTransform : MathTransform
     /// <returns><see langword="true"/> when a transform was created.</returns>
     internal static bool TryCreate(
         Dictionary<string, string> args,
-        out MathTransform transform,
-        out string skipReason)
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
     {
-        transform = default!;
-        skipReason = default!;
+        transform = null;
+        skipReason = null;
 
         if (args is null)
         {
@@ -201,10 +202,10 @@ internal sealed class VertOffsetMathTransform : MathTransform
         string key,
         double defaultValue,
         out double value,
-        out string skipReason)
+        out string? skipReason)
     {
         value = defaultValue;
-        skipReason = default!;
+        skipReason = null;
         if (!args.TryGetValue(key, out string? token))
         {
             return true;

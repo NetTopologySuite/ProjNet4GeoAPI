@@ -7,6 +7,7 @@ namespace ProjNet.CoordinateSystems.Transformations;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Projections;
@@ -114,11 +115,11 @@ internal sealed class TopocentricMathTransform : MathTransform
     /// <returns><see langword="true"/> when a transform was created.</returns>
     internal static bool TryCreate(
         Dictionary<string, string> args,
-        out MathTransform transform,
-        out string skipReason)
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
     {
-        transform = default!;
-        skipReason = default!;
+        transform = null;
+        skipReason = null;
         if (args is null)
         {
             skipReason = "topocentric arguments were null.";

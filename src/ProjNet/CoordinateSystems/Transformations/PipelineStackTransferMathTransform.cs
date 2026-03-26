@@ -7,6 +7,7 @@ namespace ProjNet.CoordinateSystems.Transformations;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 
 /// <summary>
 /// Implements PROJ pipeline stack transfer steps (<c>push</c> and <c>pop</c>).
@@ -79,8 +80,8 @@ internal sealed class PipelineStackTransferMathTransform : MathTransform
     internal static bool TryCreatePush(
         Dictionary<string, string> args,
         PipelineExecutionContext executionContext,
-        out MathTransform transform,
-        out string skipReason)
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
     {
         return TryCreate(args, executionContext, isPush: true, out transform, out skipReason);
     }
@@ -96,8 +97,8 @@ internal sealed class PipelineStackTransferMathTransform : MathTransform
     internal static bool TryCreatePop(
         Dictionary<string, string> args,
         PipelineExecutionContext executionContext,
-        out MathTransform transform,
-        out string skipReason)
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
     {
         return TryCreate(args, executionContext, isPush: false, out transform, out skipReason);
     }
@@ -106,11 +107,11 @@ internal sealed class PipelineStackTransferMathTransform : MathTransform
         Dictionary<string, string> args,
         PipelineExecutionContext executionContext,
         bool isPush,
-        out MathTransform transform,
-        out string skipReason)
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
     {
-        transform = default!;
-        skipReason = default!;
+        transform = null;
+        skipReason = null;
 
         if (args is null)
         {
@@ -136,10 +137,10 @@ internal sealed class PipelineStackTransferMathTransform : MathTransform
     private static bool TryParseEnabledOrdinateFlags(
         Dictionary<string, string> args,
         out bool[] enabledOrdinateFlags,
-        out string skipReason)
+        out string? skipReason)
     {
         enabledOrdinateFlags = [false, false, false, false];
-        skipReason = default!;
+        skipReason = null;
 
         if (args.TryGetValue("v_1", out string? v1Token) && !IsBooleanFlag(v1Token))
         {
