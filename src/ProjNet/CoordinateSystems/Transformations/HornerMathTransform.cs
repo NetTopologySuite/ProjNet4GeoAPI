@@ -7,6 +7,7 @@ namespace ProjNet.CoordinateSystems.Transformations;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 /// <summary>
@@ -198,11 +199,11 @@ internal sealed class HornerMathTransform : MathTransform
     /// <returns><see langword="true"/> when a transform was created.</returns>
     internal static bool TryCreate(
         Dictionary<string, string> args,
-        out MathTransform transform,
-        out string skipReason)
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
     {
-        transform = default!;
-        skipReason = default!;
+        transform = null;
+        skipReason = null;
 
         if (args is null)
         {
@@ -345,10 +346,10 @@ internal sealed class HornerMathTransform : MathTransform
     private static bool TryParseDegree(
         Dictionary<string, string> args,
         out int degree,
-        out string skipReason)
+        out string? skipReason)
     {
         degree = 0;
-        skipReason = default!;
+        skipReason = null;
 
         if (!args.TryGetValue("deg", out string? degreeToken) || string.IsNullOrWhiteSpace(degreeToken))
         {
@@ -375,11 +376,11 @@ internal sealed class HornerMathTransform : MathTransform
         Dictionary<string, string> args,
         string key,
         int expectedCount,
-        out double[] coefficients,
-        out string skipReason)
+        [NotNullWhen(true)] out double[]? coefficients,
+        out string? skipReason)
     {
-        coefficients = default!;
-        skipReason = default!;
+        coefficients = null;
+        skipReason = null;
 
         if (!args.TryGetValue(key, out string? token) || string.IsNullOrWhiteSpace(token))
         {
@@ -404,13 +405,13 @@ internal sealed class HornerMathTransform : MathTransform
         string key,
         out double x,
         out double y,
-        out string skipReason)
+        out string? skipReason)
     {
         x = 0d;
         y = 0d;
-        skipReason = default!;
+        skipReason = null;
 
-        if (!TryParseCoefficientList(args, key, 2, out double[] values, out skipReason))
+        if (!TryParseCoefficientList(args, key, 2, out double[]? values, out skipReason))
         {
             return false;
         }
@@ -425,10 +426,10 @@ internal sealed class HornerMathTransform : MathTransform
         string key,
         double defaultValue,
         out double value,
-        out string skipReason)
+        out string? skipReason)
     {
         value = defaultValue;
-        skipReason = default!;
+        skipReason = null;
 
         if (!args.TryGetValue(key, out string? token) || string.IsNullOrWhiteSpace(token))
         {
