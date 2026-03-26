@@ -589,19 +589,14 @@ internal static class ProjPipelineMathTransformFactory
         transform = null;
         skipReason = null;
 
-        if (!projCode.Equals("utm", StringComparison.OrdinalIgnoreCase))
-        {
-            return false;
-        }
-
-        if (!TryBuildUtmProjectionParameters(args, out List<ProjectionParameter> parameters, out skipReason))
+        if (!TryBuildProjectionStepParameters(args, projCode, out List<ProjectionParameter> parameters, out skipReason))
         {
             return false;
         }
 
         try
         {
-            transform = ProjectionsRegistry.CreateProjection("utm", parameters);
+            transform = ProjectionsRegistry.CreateProjection(projCode, parameters);
         }
         catch (NotSupportedException)
         {
@@ -609,17 +604,17 @@ internal static class ProjPipelineMathTransformFactory
         }
         catch (ArgumentException)
         {
-            skipReason = "utm projection could not be created with the parsed parameter set.";
+            skipReason = projCode + " projection could not be created with the parsed parameter set.";
             return false;
         }
         catch (InvalidOperationException)
         {
-            skipReason = "utm projection operation could not be constructed for this step.";
+            skipReason = projCode + " projection operation could not be constructed for this step.";
             return false;
         }
         catch (TargetInvocationException)
         {
-            skipReason = "utm projection constructor rejected the current parameter set.";
+            skipReason = projCode + " projection constructor rejected the current parameter set.";
             return false;
         }
 
@@ -631,8 +626,9 @@ internal static class ProjPipelineMathTransformFactory
         return true;
     }
 
-    private static bool TryBuildUtmProjectionParameters(
+    private static bool TryBuildProjectionStepParameters(
         Dictionary<string, string> args,
+        string projCode,
         out List<ProjectionParameter> parameters,
         out string skipReason)
     {
@@ -644,18 +640,95 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
+        if (!TryResolveProjectionUnitFactor(args, out double unitFactor, out skipReason))
+        {
+            return false;
+        }
+
+        parameters = new List<ProjectionParameter>(10)
+        {
+            new ProjectionParameter("latitude_of_origin", 0d),
+            new ProjectionParameter("central_meridian", 0d),
+            new ProjectionParameter("scale_factor", 1d),
+            new ProjectionParameter("false_easting", 0d),
+            new ProjectionParameter("false_northing", 0d),
+            new ProjectionParameter("semi_major", semiMajor),
+            new ProjectionParameter("semi_minor", semiMinor),
+            new ProjectionParameter("unit", unitFactor),
+        };
+
+        if (!TryApplyOptionalProjectionParameter(args, "lat_0", "latitude_of_origin", parameters, out skipReason)
+            || !TryApplyOptionalProjectionParameter(args, "lon_0", "central_meridian", parameters, out skipReason)
+            || !TryApplyOptionalProjectionParameter(args, "x_0", "false_easting", parameters, out skipReason)
+            || !TryApplyOptionalProjectionParameter(args, "y_0", "false_northing", parameters, out skipReason)
+            || !TryApplyOptionalProjectionParameter(args, "lat_1", "standard_parallel_1", parameters, out skipReason)
+            || !TryApplyOptionalProjectionParameter(args, "lat_2", "standard_parallel_2", parameters, out skipReason)
+            || !TryApplyOptionalProjectionParameter(args, "lonc", "longitude_of_center", parameters, out skipReason)
+            || !TryApplyOptionalProjectionParameter(args, "lat_ts", "latitude_true_scale", parameters, out skipReason)
+            || !TryApplyOptionalProjectionParameter(args, "lat_ts", "lat_ts", parameters, out skipReason))
+        {
+            return false;
+        }
+
+        if (args.TryGetValue("k_0", out string k0Token) && !string.IsNullOrWhiteSpace(k0Token))
+        {
+            if (!TryParseFiniteDouble(k0Token, out double k0))
+            {
+                skipReason = "Invalid value for +k_0.";
+                return false;
+            }
+
+            SetOrAddProjectionParameter(parameters, "scale_factor", k0);
+        }
+        else if (args.TryGetValue("k", out string kToken) && !string.IsNullOrWhiteSpace(kToken))
+        {
+            if (!TryParseFiniteDouble(kToken, out double k))
+            {
+                skipReason = "Invalid value for +k.";
+                return false;
+            }
+
+            SetOrAddProjectionParameter(parameters, "scale_factor", k);
+        }
+
+        if (args.ContainsKey("south"))
+        {
+            SetOrAddProjectionParameter(parameters, "south", 1d);
+        }
+
+        if (!projCode.Equals("utm", StringComparison.OrdinalIgnoreCase))
+        {
+            return true;
+        }
+
         if (!TryGetZoneCentralMeridian(args, out double centralMeridian))
         {
             skipReason = "utm step requires a valid +zone parameter.";
             return false;
         }
 
-        double unitFactor = 1d;
+        SetOrAddProjectionParameter(parameters, "latitude_of_origin", 0d);
+        SetOrAddProjectionParameter(parameters, "central_meridian", centralMeridian);
+        SetOrAddProjectionParameter(parameters, "scale_factor", 0.9996d);
+        SetOrAddProjectionParameter(parameters, "false_easting", 500000d);
+        SetOrAddProjectionParameter(parameters, "false_northing", args.ContainsKey("south") ? 10000000d : 0d);
+
+        return true;
+    }
+
+    private static bool TryResolveProjectionUnitFactor(
+        Dictionary<string, string> args,
+        out double unitFactor,
+        out string skipReason)
+    {
+        unitFactor = 1d;
+        skipReason = null;
+
         if (args.TryGetValue("to_meter", out string toMeterToken) && !string.IsNullOrWhiteSpace(toMeterToken))
         {
             if (!TryParsePositiveScaleFactor(toMeterToken, out unitFactor))
             {
-                skipReason = "Unable to parse +to_meter parameter for utm.";
+                skipReason = "Unable to parse +to_meter parameter for projection step.";
                 return false;
             }
         }
@@ -663,23 +736,51 @@ internal static class ProjPipelineMathTransformFactory
             && !string.IsNullOrWhiteSpace(unitsToken)
             && !TryResolveUnitFactor(unitsToken, out unitFactor))
         {
-            skipReason = "Unable to parse +units parameter for utm.";
+            skipReason = "Unable to parse +units parameter for projection step.";
             return false;
         }
 
-        parameters = new List<ProjectionParameter>(8)
-        {
-            new ProjectionParameter("latitude_of_origin", 0d),
-            new ProjectionParameter("central_meridian", centralMeridian),
-            new ProjectionParameter("scale_factor", 0.9996d),
-            new ProjectionParameter("false_easting", 500000d),
-            new ProjectionParameter("false_northing", args.ContainsKey("south") ? 10000000d : 0d),
-            new ProjectionParameter("semi_major", semiMajor),
-            new ProjectionParameter("semi_minor", semiMinor),
-            new ProjectionParameter("unit", unitFactor),
-        };
-
         return true;
+    }
+
+    private static bool TryApplyOptionalProjectionParameter(
+        Dictionary<string, string> args,
+        string sourceKey,
+        string targetName,
+        List<ProjectionParameter> parameters,
+        out string skipReason)
+    {
+        skipReason = null;
+        if (!args.TryGetValue(sourceKey, out string token) || string.IsNullOrWhiteSpace(token))
+        {
+            return true;
+        }
+
+        if (!TryParseFiniteDouble(token, out double value))
+        {
+            skipReason = "Invalid value for +" + sourceKey + ".";
+            return false;
+        }
+
+        SetOrAddProjectionParameter(parameters, targetName, value);
+        return true;
+    }
+
+    private static void SetOrAddProjectionParameter(
+        List<ProjectionParameter> parameters,
+        string name,
+        double value)
+    {
+        for (int i = 0; i < parameters.Count; i++)
+        {
+            if (parameters[i].Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+            {
+                parameters[i] = new ProjectionParameter(name, value);
+                return;
+            }
+        }
+
+        parameters.Add(new ProjectionParameter(name, value));
     }
 
     private static bool TryResolveProjectionEllipsoid(

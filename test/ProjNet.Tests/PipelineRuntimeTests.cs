@@ -120,6 +120,23 @@ public class PipelineRuntimeTests
     /// Performs the documented operation.
     /// </summary>
     [Fact]
+    public void PipelineWithTmercStepRoundTripsUsingProjectionParameters()
+    {
+        const string operation = "+proj=pipeline +ellps=GRS80 +step +proj=tmerc +lon_0=9 +k_0=0.9996 +x_0=500000 +y_0=0 +step +proj=tmerc +lon_0=9 +k_0=0.9996 +x_0=500000 +y_0=0 +inv";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+
+        Assert.True(ok, skipReason);
+        double[] transformed = transform.Transform(GeocForwardInput);
+
+        Assert.Equal(GeocForwardInput[0], transformed[0], 7);
+        Assert.Equal(GeocForwardInput[1], transformed[1], 7);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
     public void PipelineWithPushWithoutPopKeepsChangedValue()
     {
         const string operation = "+proj=pipeline +step +proj=push +v_1 +step +proj=set +v_1=18";
@@ -244,6 +261,20 @@ public class PipelineRuntimeTests
 
         Assert.False(ok);
         Assert.Contains("v_1", skipReason, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void PipelineWithInvalidTmercParameterReturnsValidationFailure()
+    {
+        const string operation = "+proj=pipeline +step +proj=tmerc +lon_0=abc";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string skipReason);
+
+        Assert.False(ok);
+        Assert.Contains("lon_0", skipReason, StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>
