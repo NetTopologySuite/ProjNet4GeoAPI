@@ -218,7 +218,7 @@ public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<Pro
     /// <inheritdoc />
     public override int GetHashCode()
     {
-        var hashCode = new HashCode();
+        HashCode hashCode = default;
         foreach (var kvp in this)
         {
             hashCode.Add(kvp.Key, StringComparer.Ordinal);
