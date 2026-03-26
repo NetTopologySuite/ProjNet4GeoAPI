@@ -35,7 +35,7 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
     /// <param name="gridPaths">Ordered NTv2 grid file paths to load.</param>
     internal Ntv2HGridShiftMathTransform(IReadOnlyList<string> gridPaths)
     {
-        ArgumentGuard.ThrowIfNull(gridPaths, nameof(gridPaths));
+        gridPaths = ArgumentGuard.ThrowIfNull(gridPaths, nameof(gridPaths));
 
         var sets = new List<Ntv2GridSet>(gridPaths.Count);
         for (int i = 0; i < gridPaths.Count; i++)

@@ -42,12 +42,8 @@ public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSys
         string abbreviation)
         : base(name, authority, code, alias, abbreviation, remarks)
     {
-        ArgumentGuard.ThrowIfNull(baseSystem, nameof(baseSystem));
-
-        ArgumentGuard.ThrowIfNull(transform, nameof(transform));
-
-        this.BaseCoordinateSystem = baseSystem;
-        this.ToBaseTransform = transform;
+        this.BaseCoordinateSystem = ArgumentGuard.ThrowIfNull(baseSystem, nameof(baseSystem));
+        this.ToBaseTransform = ArgumentGuard.ThrowIfNull(transform, nameof(transform));
 
         // get axis infos from the source
         this.AxisInfo = new List<AxisInfo>(baseSystem.Dimension);

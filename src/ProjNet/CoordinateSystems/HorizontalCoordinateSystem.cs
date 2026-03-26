@@ -38,9 +38,8 @@ public abstract class HorizontalCoordinateSystem : CoordinateSystem
         string abbreviation)
         : base(name, authority, code, alias, abbreviation, remarks)
     {
-        ArgumentGuard.ThrowIfNull(datum, nameof(datum));
-        ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo));
-        this.HorizontalDatum = datum;
+        this.HorizontalDatum = ArgumentGuard.ThrowIfNull(datum, nameof(datum));
+        axisInfo = ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo));
         if (axisInfo.Count != 2)
         {
             ArgumentGuard.ThrowArgument("Axis info should contain two axes for horizontal coordinate systems");

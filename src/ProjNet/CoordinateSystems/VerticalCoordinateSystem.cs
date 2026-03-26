@@ -41,12 +41,9 @@ public class VerticalCoordinateSystem : CoordinateSystem
         string remarks)
         : base(name, authority, authorityCode, alias, abbreviation, remarks)
     {
-        ArgumentGuard.ThrowIfNull(linearUnit, nameof(linearUnit));
-        ArgumentGuard.ThrowIfNull(verticalDatum, nameof(verticalDatum));
-        ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo));
-        this.VerticalDatum = verticalDatum;
-        this.AxisInfo = new List<AxisInfo>() { axisInfo };
-        this.LinearUnit = linearUnit;
+        this.VerticalDatum = ArgumentGuard.ThrowIfNull(verticalDatum, nameof(verticalDatum));
+        this.AxisInfo = new List<AxisInfo>() { ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo)) };
+        this.LinearUnit = ArgumentGuard.ThrowIfNull(linearUnit, nameof(linearUnit));
     }
 
     /// <summary>

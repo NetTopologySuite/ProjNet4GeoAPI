@@ -44,13 +44,10 @@ public class GeocentricCoordinateSystem : CoordinateSystem
         string abbreviation)
         : base(name, authority, code, alias, abbreviation, remarks)
     {
-        ArgumentGuard.ThrowIfNull(datum, nameof(datum));
-        ArgumentGuard.ThrowIfNull(linearUnit, nameof(linearUnit));
-        ArgumentGuard.ThrowIfNull(primeMeridian, nameof(primeMeridian));
-        ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo));
-        this.HorizontalDatum = datum;
-        this.LinearUnit = linearUnit;
-        this.PrimeMeridian = primeMeridian;
+        this.HorizontalDatum = ArgumentGuard.ThrowIfNull(datum, nameof(datum));
+        this.LinearUnit = ArgumentGuard.ThrowIfNull(linearUnit, nameof(linearUnit));
+        this.PrimeMeridian = ArgumentGuard.ThrowIfNull(primeMeridian, nameof(primeMeridian));
+        axisInfo = ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo));
         if (axisInfo.Count != 3)
         {
             ArgumentGuard.ThrowArgument("Axis info should contain three axes for geocentric coordinate systems");
