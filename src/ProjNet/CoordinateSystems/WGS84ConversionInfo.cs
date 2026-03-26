@@ -34,7 +34,10 @@ using System.Globalization;
 [Serializable]
 public class Wgs84ConversionInfo
 {
-    private const double SECTORAD = 4.84813681109535993589914102357e-6;
+    /// <summary>
+    /// Conversion factor from arc-seconds to radians: <c>(π / 180) / 3600</c>.
+    /// </summary>
+    private const double SecondsToRadians = 4.84813681109535993589914102357e-6;
 
     /// <summary>
     /// Bursa Wolf shift in meters.
@@ -220,12 +223,6 @@ public class Wgs84ConversionInfo
         var result = new double[7];
         this.WriteAffineTransform(result);
         return result;
-
-        // return new double[3,4] {
-        //     { RS,               -Ez*SEC_TO_RAD*RS,  +Ey*SEC_TO_RAD*RS,  Dx} ,
-        //     { Ez*SEC_TO_RAD*RS, RS,                 -Ex*SEC_TO_RAD*RS,  Dy} ,
-        //     { -Ey*SEC_TO_RAD*RS,Ex*SEC_TO_RAD*RS,   RS,                 Dz}
-        // };
     }
 
     /// <summary>
@@ -242,9 +239,9 @@ public class Wgs84ConversionInfo
 
         double rS = 1 + (this.Ppm * 0.000001);
         destination[0] = rS;
-        destination[1] = this.Ex * SECTORAD * rS;
-        destination[2] = this.Ey * SECTORAD * rS;
-        destination[3] = this.Ez * SECTORAD * rS;
+        destination[1] = this.Ex * SecondsToRadians * rS;
+        destination[2] = this.Ey * SecondsToRadians * rS;
+        destination[3] = this.Ez * SecondsToRadians * rS;
         destination[4] = this.Dx;
         destination[5] = this.Dy;
         destination[6] = this.Dz;
