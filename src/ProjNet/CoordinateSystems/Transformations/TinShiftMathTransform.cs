@@ -7,6 +7,7 @@ namespace ProjNet.CoordinateSystems.Transformations;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Text.Json;
@@ -92,11 +93,11 @@ internal sealed class TinShiftMathTransform : MathTransform
     /// <returns><see langword="true"/> when a transform was created.</returns>
     internal static bool TryCreate(
         Dictionary<string, string> args,
-        out MathTransform transform,
-        out string skipReason)
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
     {
-        transform = default!;
-        skipReason = default!;
+        transform = null;
+        skipReason = null;
 
         if (args is null)
         {
@@ -110,7 +111,7 @@ internal sealed class TinShiftMathTransform : MathTransform
             return false;
         }
 
-        if (!TryResolveFilePath(fileToken, out string resolvedPath))
+        if (!TryResolveFilePath(fileToken, out string? resolvedPath))
         {
             skipReason = "Cannot open " + fileToken + ".";
             return false;
@@ -516,9 +517,9 @@ internal sealed class TinShiftMathTransform : MathTransform
         return triangles;
     }
 
-    private static bool TryResolveFilePath(string fileToken, out string resolvedPath)
+    private static bool TryResolveFilePath(string fileToken, [NotNullWhen(true)] out string? resolvedPath)
     {
-        resolvedPath = default!;
+        resolvedPath = null;
         if (string.IsNullOrWhiteSpace(fileToken))
         {
             return false;
@@ -565,9 +566,9 @@ internal sealed class TinShiftMathTransform : MathTransform
         return false;
     }
 
-    private static bool TryGetExistingPath(string candidate, out string resolvedPath)
+    private static bool TryGetExistingPath(string candidate, [NotNullWhen(true)] out string? resolvedPath)
     {
-        resolvedPath = default!;
+        resolvedPath = null;
         if (string.IsNullOrWhiteSpace(candidate))
         {
             return false;

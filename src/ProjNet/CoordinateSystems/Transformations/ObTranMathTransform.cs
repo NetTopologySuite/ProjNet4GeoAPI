@@ -7,6 +7,7 @@ namespace ProjNet.CoordinateSystems.Transformations;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Projections;
@@ -112,11 +113,11 @@ internal sealed class ObTranMathTransform : MathTransform
     /// <returns><see langword="true"/> when a transform was created.</returns>
     internal static bool TryCreate(
         Dictionary<string, string> args,
-        out MathTransform transform,
-        out string skipReason)
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
     {
-        transform = default!;
-        skipReason = default!;
+        transform = null;
+        skipReason = null;
 
         if (!args.TryGetValue("o_proj", out string? childProjCode) || string.IsNullOrWhiteSpace(childProjCode))
         {
@@ -182,11 +183,11 @@ internal sealed class ObTranMathTransform : MathTransform
         Dictionary<string, string> args,
         out double lamp,
         out double phip,
-        out string skipReason)
+        out string? skipReason)
     {
         lamp = 0d;
         phip = 0d;
-        skipReason = default!;
+        skipReason = null;
 
         if (args.ContainsKey("o_alpha"))
         {
@@ -267,15 +268,15 @@ internal sealed class ObTranMathTransform : MathTransform
 
     private static bool TryCreateProjectionTransform(
         Dictionary<string, string> args,
-        out MathTransform forward,
-        out MathTransform inverse,
+        [NotNullWhen(true)] out MathTransform? forward,
+        [NotNullWhen(true)] out MathTransform? inverse,
         out bool childIsAngular,
-        out string skipReason)
+        out string? skipReason)
     {
-        forward = default!;
-        inverse = default!;
+        forward = null;
+        inverse = null;
         childIsAngular = false;
-        skipReason = default!;
+        skipReason = null;
 
         if (!args.TryGetValue("proj", out string? projCode) || string.IsNullOrWhiteSpace(projCode))
         {
