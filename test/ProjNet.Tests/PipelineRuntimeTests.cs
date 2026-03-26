@@ -280,6 +280,34 @@ public class PipelineRuntimeTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
+    [Fact]
+    public void PipelineWithUnsupportedProjectionKeepsBuiltinsWaveError()
+    {
+        const string operation = "+proj=pipeline +step +proj=unknown_projection";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string skipReason);
+
+        Assert.False(ok);
+        Assert.Contains("current builtins wave", skipReason, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void PipelineWithInvalidUtmZoneReturnsValidationFailure()
+    {
+        const string operation = "+proj=pipeline +step +proj=utm +zone=99";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string skipReason);
+
+        Assert.False(ok);
+        Assert.Contains("zone", skipReason, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Theory]
     [InlineData("+proj=push +v_3")]
     [InlineData("+proj=pop +v_3")]
