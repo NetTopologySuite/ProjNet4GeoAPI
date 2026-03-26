@@ -5,6 +5,7 @@
 namespace ProjNet.CoordinateSystems.Transformations;
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using ProjNet.CoordinateSystems;
 
 /// <summary>
@@ -22,9 +23,9 @@ internal static class AxisOrderHelper
     internal static bool TryCreateAxisSwapTransform(
         CoordinateSystem source,
         CoordinateSystem target,
-        out MathTransform transform)
+        [NotNullWhen(true)] out MathTransform? transform)
     {
-        transform = default!;
+        transform = null;
         if (source is null || target is null)
         {
             return false;

@@ -7,6 +7,7 @@ namespace ProjNet.CoordinateSystems.Transformations;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
 /// <summary>
@@ -116,11 +117,11 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
     /// <returns><see langword="true"/> when a transform was created.</returns>
     internal static bool TryCreate(
         Dictionary<string, string> args,
-        out MathTransform transform,
-        out string skipReason)
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
     {
-        transform = default!;
-        skipReason = default!;
+        transform = null;
+        skipReason = null;
 
         if (args is null)
         {
@@ -195,9 +196,9 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
         string key,
         double defaultValue,
         out double value,
-        out string skipReason)
+        out string? skipReason)
     {
-        skipReason = default!;
+        skipReason = null;
         value = defaultValue;
         if (!args.TryGetValue(key, out string? token))
         {
@@ -359,10 +360,10 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
         t = this.tOffset + (this.tScale * t);
     }
 
-    private bool TryCreateInverse(out MathTransform inverseTransform, out string error)
+    private bool TryCreateInverse([NotNullWhen(true)] out MathTransform? inverseTransform, out string? error)
     {
-        inverseTransform = default!;
-        error = default!;
+        inverseTransform = null;
+        error = null;
 
         if (!TryInvertSpatialMatrix(
                 this.s11,
