@@ -158,6 +158,86 @@ public class LeacUpsWebMercatorProjectionTests
         Assert.IsType<NotSupportedException>(exception.InnerException);
     }
 
+    /// <summary>
+    /// Verifies that batched Web Mercator forward transformation matches point-wise transformation results.
+    /// </summary>
+    [Fact]
+    public void WebMercatorBatchTransformMatchesPointwiseTransform()
+    {
+        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildWebMercWkt("webmerc", Grs80));
+        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+
+        double[] batchedLongitudes = [-170d, -120.5d, -45d, 0d, 37.5d, 89.9d, 120.25d, 170d];
+        double[] batchedLatitudes = [-80d, -65d, -30.5d, -1d, 1d, 30.5d, 65d, 80d];
+        double[] expectedLongitudes = (double[])batchedLongitudes.Clone();
+        double[] expectedLatitudes = (double[])batchedLatitudes.Clone();
+
+        for (int i = 0; i < expectedLongitudes.Length; i++)
+        {
+            forward.MathTransform.Transform(ref expectedLongitudes[i], ref expectedLatitudes[i]);
+        }
+
+        forward.MathTransform.Transform(batchedLongitudes, batchedLatitudes);
+
+        for (int i = 0; i < batchedLongitudes.Length; i++)
+        {
+            Assert.InRange(Math.Abs(batchedLongitudes[i] - expectedLongitudes[i]), 0d, 1e-9d);
+            Assert.InRange(Math.Abs(batchedLatitudes[i] - expectedLatitudes[i]), 0d, 1e-9d);
+        }
+    }
+
+    /// <summary>
+    /// Verifies that batched Web Mercator forward transformation propagates NaN inputs consistently with point-wise transformation.
+    /// </summary>
+    [Fact]
+    public void WebMercatorBatchTransformPropagatesNaNConsistently()
+    {
+        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildWebMercWkt("webmerc", Grs80));
+        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+
+        double[] batchedLongitudes = [0d, double.NaN, 10d, 20d, double.NaN, -40d, 50d, 60d];
+        double[] batchedLatitudes = [0d, 5d, double.NaN, 15d, 20d, double.NaN, 30d, 40d];
+        double[] expectedLongitudes = (double[])batchedLongitudes.Clone();
+        double[] expectedLatitudes = (double[])batchedLatitudes.Clone();
+
+        for (int i = 0; i < expectedLongitudes.Length; i++)
+        {
+            forward.MathTransform.Transform(ref expectedLongitudes[i], ref expectedLatitudes[i]);
+        }
+
+        forward.MathTransform.Transform(batchedLongitudes, batchedLatitudes);
+
+        for (int i = 0; i < batchedLongitudes.Length; i++)
+        {
+            Assert.Equal(double.IsNaN(expectedLongitudes[i]), double.IsNaN(batchedLongitudes[i]));
+            Assert.Equal(double.IsNaN(expectedLatitudes[i]), double.IsNaN(batchedLatitudes[i]));
+            if (!double.IsNaN(expectedLongitudes[i]))
+            {
+                Assert.InRange(Math.Abs(batchedLongitudes[i] - expectedLongitudes[i]), 0d, 1e-9d);
+            }
+
+            if (!double.IsNaN(expectedLatitudes[i]))
+            {
+                Assert.InRange(Math.Abs(batchedLatitudes[i] - expectedLatitudes[i]), 0d, 1e-9d);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Verifies that batched Web Mercator forward transformation rejects pole latitude inputs.
+    /// </summary>
+    [Fact]
+    public void WebMercatorBatchTransformRejectsPoleLatitude()
+    {
+        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildWebMercWkt("webmerc", Grs80));
+        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+
+        double[] batchedLongitudes = [0d, 10d, 20d, 30d, 40d, 50d, 60d, 70d];
+        double[] batchedLatitudes = [0d, 10d, 20d, 30d, 40d, 50d, 60d, 90d];
+
+        Assert.Throws<ArgumentException>(() => forward.MathTransform.Transform(batchedLongitudes, batchedLatitudes));
+    }
+
     private static string BuildLeacWkt(string projectionName, string spheroidClause, double standardParallel1, bool south)
     {
         return string.Format(
