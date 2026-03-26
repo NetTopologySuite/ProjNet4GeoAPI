@@ -7,6 +7,7 @@ namespace ProjNet;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 /// <summary>
@@ -16,12 +17,44 @@ internal static class ArgumentGuard
 {
     /// <summary>
     /// Throws an <see cref="ArgumentNullException"/> when <paramref name="value"/> is <see langword="null"/>.
+    /// Returns the non-null value for inline assignment scenarios.
+    /// </summary>
+    /// <typeparam name="T">Reference type of the value being validated.</typeparam>
+    /// <param name="value">Value to validate.</param>
+    /// <param name="paramName">Parameter name for exception reporting.</param>
+    /// <returns>The validated non-null <paramref name="value"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [return: NotNull]
+    internal static T ThrowIfNull<T>(
+        [NotNull] T? value,
+#if NET8_0_OR_GREATER
+        [CallerArgumentExpression(nameof(value))] string paramName = null)
+        where T : class
+    {
+        ArgumentNullException.ThrowIfNull(value, paramName);
+        return value;
+    }
+#else
+        string paramName)
+        where T : class
+    {
+        if (value is null)
+        {
+            throw new ArgumentNullException(paramName);
+        }
+
+        return value;
+    }
+#endif
+
+    /// <summary>
+    /// Throws an <see cref="ArgumentNullException"/> when <paramref name="value"/> is <see langword="null"/>.
     /// </summary>
     /// <param name="value">Value to validate.</param>
     /// <param name="paramName">Parameter name for exception reporting.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static void ThrowIfNull(
-        object value,
+        object? value,
 #if NET8_0_OR_GREATER
         [CallerArgumentExpression(nameof(value))] string paramName = null)
     {
@@ -42,13 +75,15 @@ internal static class ArgumentGuard
     /// </summary>
     /// <param name="value">Value to validate.</param>
     /// <param name="paramName">Parameter name for exception reporting.</param>
+    /// <returns>The validated non-null, non-empty <paramref name="value"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static void ThrowIfNullOrEmpty(
-        string value,
+    internal static string ThrowIfNullOrEmpty(
+        string? value,
 #if NET8_0_OR_GREATER
         [CallerArgumentExpression(nameof(value))] string paramName = null)
     {
         ArgumentException.ThrowIfNullOrEmpty(value, paramName);
+        return value;
     }
 #else
         string paramName)
@@ -62,6 +97,8 @@ internal static class ArgumentGuard
         {
             throw new ArgumentException("Value cannot be empty.", paramName);
         }
+
+        return value;
     }
 #endif
 
@@ -70,13 +107,15 @@ internal static class ArgumentGuard
     /// </summary>
     /// <param name="value">Value to validate.</param>
     /// <param name="paramName">Parameter name for exception reporting.</param>
+    /// <returns>The validated non-null, non-empty, non-whitespace <paramref name="value"/>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    internal static void ThrowIfNullOrWhiteSpace(
-        string value,
+    internal static string ThrowIfNullOrWhiteSpace(
+        string? value,
 #if NET8_0_OR_GREATER
         [CallerArgumentExpression(nameof(value))] string paramName = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value, paramName);
+        return value;
     }
 #else
         string paramName)
@@ -90,6 +129,57 @@ internal static class ArgumentGuard
         {
             throw new ArgumentException("Value cannot be empty or whitespace.", paramName);
         }
+
+        return value;
+    }
+#endif
+
+    /// <summary>
+    /// Throws when <paramref name="value"/> cannot be cast to <typeparamref name="TTarget"/>.
+    /// </summary>
+    /// <typeparam name="TTarget">Expected reference type.</typeparam>
+    /// <param name="value">Value to validate and cast.</param>
+    /// <param name="paramName">Parameter name for exception reporting.</param>
+    /// <returns>The validated value cast to <typeparamref name="TTarget"/>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [return: NotNull]
+    internal static TTarget ThrowIfNotType<TTarget>(
+        object? value,
+#if NET8_0_OR_GREATER
+        [CallerArgumentExpression(nameof(value))] string paramName = null)
+        where TTarget : class
+    {
+        if (value is null)
+        {
+            throw new ArgumentNullException(paramName);
+        }
+
+        if (value is TTarget typed)
+        {
+            return typed;
+        }
+
+        throw new ArgumentException(
+            $"Value must be of type {typeof(TTarget).FullName}.",
+            paramName);
+    }
+#else
+        string paramName)
+        where TTarget : class
+    {
+        if (value is null)
+        {
+            throw new ArgumentNullException(paramName);
+        }
+
+        if (value is TTarget typed)
+        {
+            return typed;
+        }
+
+        throw new ArgumentException(
+            $"Value must be of type {typeof(TTarget).FullName}.",
+            paramName);
     }
 #endif
 
