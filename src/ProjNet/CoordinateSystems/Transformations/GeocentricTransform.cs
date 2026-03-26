@@ -28,8 +28,15 @@ using System.Collections.Generic;
 [Serializable]
 internal class GeocentricTransform : MathTransform
 {
-    private const double COS67P5 = 0.38268343236508977; // cosine of 67.5 degrees
-    private const double ADC = 1.0026000; // Toms region 1 constant
+    /// <summary>
+    /// Cosine of 67.5 degrees, used in geocentric inverse iteration bounds.
+    /// </summary>
+    private const double COS67P5 = 0.38268343236508977;
+
+    /// <summary>
+    /// Toms region-1 threshold constant for inverse conversion branching.
+    /// </summary>
+    private const double ADC = 1.0026000;
 
     /// <summary>
     /// Eccentricity squared : (a^2 - b^2)/a^2.
@@ -37,7 +44,7 @@ internal class GeocentricTransform : MathTransform
     private readonly double es;
 
     /// <summary>
-    /// major axis.
+    /// Semi-major axis length.
     /// </summary>
     private readonly double semiMajor;
 
@@ -46,7 +53,10 @@ internal class GeocentricTransform : MathTransform
     /// </summary>
     private readonly double semiMinor;
 
-    private readonly double ses;             // Second eccentricity squared : (a^2 - b^2)/b^2
+    /// <summary>
+    /// Second eccentricity squared: <c>(a² - b²) / b²</c>.
+    /// </summary>
+    private readonly double ses;
 
     /// <summary>
     /// Indicates whether this instance runs in inverse mode.
