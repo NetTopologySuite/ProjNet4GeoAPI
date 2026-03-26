@@ -67,8 +67,7 @@ public abstract class CoordinateSystem : Info
 
         set
         {
-            ArgumentGuard.ThrowIfNull(value, nameof(value));
-            this.axisInfo = value;
+            this.axisInfo = ArgumentGuard.ThrowIfNull(value, nameof(value));
         }
     }
 

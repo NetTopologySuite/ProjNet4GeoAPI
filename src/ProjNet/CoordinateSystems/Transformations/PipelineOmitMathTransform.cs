@@ -26,9 +26,7 @@ internal sealed class PipelineOmitMathTransform : MathTransform
     /// <param name="skipInverse">Whether to skip the step in inverse traversal.</param>
     internal PipelineOmitMathTransform(MathTransform inner, bool skipForward, bool skipInverse)
     {
-        ArgumentGuard.ThrowIfNull(inner, nameof(inner));
-
-        this.inner = inner;
+        this.inner = ArgumentGuard.ThrowIfNull(inner, nameof(inner));
         this.skipForward = skipForward;
         this.skipInverse = skipInverse;
     }

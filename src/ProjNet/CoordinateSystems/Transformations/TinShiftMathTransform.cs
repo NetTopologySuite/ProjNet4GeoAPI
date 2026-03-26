@@ -27,8 +27,7 @@ internal sealed class TinShiftMathTransform : MathTransform
 
     private TinShiftMathTransform(TinShiftModel model, bool isInverted)
     {
-        ArgumentGuard.ThrowIfNull(model, nameof(model));
-        this.model = model;
+        this.model = ArgumentGuard.ThrowIfNull(model, nameof(model));
         this.isInverted = isInverted;
     }
 

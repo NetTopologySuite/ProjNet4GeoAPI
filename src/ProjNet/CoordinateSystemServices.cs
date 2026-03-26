@@ -100,13 +100,8 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
         IEnumerable<KeyValuePair<int, string>> enumeration,
         ICoordinateSystemDefinitionProvider definitionProvider)
     {
-        ArgumentGuard.ThrowIfNull(coordinateSystemFactory, nameof(coordinateSystemFactory));
-
-        this.coordinateSystemFactory = coordinateSystemFactory;
-
-        ArgumentGuard.ThrowIfNull(coordinateTransformationFactory, nameof(coordinateTransformationFactory));
-
-        this.ctFactory = coordinateTransformationFactory;
+        this.coordinateSystemFactory = ArgumentGuard.ThrowIfNull(coordinateSystemFactory, nameof(coordinateSystemFactory));
+        this.ctFactory = ArgumentGuard.ThrowIfNull(coordinateTransformationFactory, nameof(coordinateTransformationFactory));
         this.definitionProvider = definitionProvider ?? new ManagedCoordinateSystemDefinitionProvider();
 
         this.csBySrid = new();

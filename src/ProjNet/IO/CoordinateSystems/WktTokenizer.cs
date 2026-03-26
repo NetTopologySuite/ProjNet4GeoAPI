@@ -42,9 +42,7 @@ internal sealed class WktTokenizer
     /// </param>
     internal WktTokenizer(string source, bool ignoreWhitespaceByDefault = true)
     {
-        ArgumentGuard.ThrowIfNull(source, nameof(source));
-
-        this.source = source;
+        this.source = ArgumentGuard.ThrowIfNull(source, nameof(source));
         this.ignoreWhitespaceByDefault = ignoreWhitespaceByDefault;
     }
 
@@ -57,9 +55,7 @@ internal sealed class WktTokenizer
     /// </param>
     internal WktTokenizer(TextReader reader, bool ignoreWhitespaceByDefault = true)
     {
-        ArgumentGuard.ThrowIfNull(reader, nameof(reader));
-
-        this.source = reader.ReadToEnd();
+        this.source = ArgumentGuard.ThrowIfNull(reader, nameof(reader)).ReadToEnd();
         this.ignoreWhitespaceByDefault = ignoreWhitespaceByDefault;
     }
 
