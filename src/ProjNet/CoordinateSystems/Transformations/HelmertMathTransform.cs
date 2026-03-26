@@ -156,8 +156,8 @@ internal sealed class HelmertMathTransform : MathTransform
         out MathTransform transform,
         out string skipReason)
     {
-        transform = null;
-        skipReason = null;
+        transform = default!;
+        skipReason = default!;
 
         if (args is null)
         {
@@ -212,7 +212,7 @@ internal sealed class HelmertMathTransform : MathTransform
             return false;
         }
 
-        if (args.TryGetValue("theta", out string thetaToken))
+        if (args.TryGetValue("theta", out string? thetaToken))
         {
             if (!TryParseFiniteDouble(thetaToken, out double thetaArcSeconds))
             {
@@ -225,7 +225,7 @@ internal sealed class HelmertMathTransform : MathTransform
             scale = 1d;
         }
 
-        if (args.TryGetValue("dtheta", out string thetaRateToken))
+        if (args.TryGetValue("dtheta", out string? thetaRateToken))
         {
             if (!TryParseFiniteDouble(thetaRateToken, out double thetaRateArcSeconds))
             {
@@ -237,7 +237,7 @@ internal sealed class HelmertMathTransform : MathTransform
             hasKinematicRates = true;
         }
 
-        if (args.TryGetValue("s", out string scaleToken))
+        if (args.TryGetValue("s", out string? scaleToken))
         {
             if (!TryParseFiniteDouble(scaleToken, out scale))
             {
@@ -246,7 +246,7 @@ internal sealed class HelmertMathTransform : MathTransform
             }
         }
 
-        if (args.TryGetValue("ds", out string scaleRateToken))
+        if (args.TryGetValue("ds", out string? scaleRateToken))
         {
             if (!TryParseFiniteDouble(scaleRateToken, out scaleRate))
             {
@@ -281,7 +281,7 @@ internal sealed class HelmertMathTransform : MathTransform
             hasKinematicRates = true;
         }
 
-        if (args.TryGetValue("t_epoch", out string epochToken))
+        if (args.TryGetValue("t_epoch", out string? epochToken))
         {
             if (!TryParseFiniteDouble(epochToken, out epochReference))
             {
@@ -305,7 +305,7 @@ internal sealed class HelmertMathTransform : MathTransform
         bool isPositionVector = false;
         if (!noRotation)
         {
-            if (!args.TryGetValue("convention", out string convention) || string.IsNullOrWhiteSpace(convention))
+            if (!args.TryGetValue("convention", out string? convention) || string.IsNullOrWhiteSpace(convention))
             {
                 skipReason = "helmert: missing 'convention' argument";
                 return false;
@@ -431,10 +431,10 @@ internal sealed class HelmertMathTransform : MathTransform
         ref double scale,
         out string skipReason)
     {
-        skipReason = null;
+        skipReason = default!;
         hasTowgs84 = false;
 
-        if (!args.TryGetValue("towgs84", out string towgs84Token) || string.IsNullOrWhiteSpace(towgs84Token))
+        if (!args.TryGetValue("towgs84", out string? towgs84Token) || string.IsNullOrWhiteSpace(towgs84Token))
         {
             return true;
         }
@@ -506,8 +506,8 @@ internal sealed class HelmertMathTransform : MathTransform
         ref double target,
         out string skipReason)
     {
-        skipReason = null;
-        if (!args.TryGetValue(key, out string token))
+        skipReason = default!;
+        if (!args.TryGetValue(key, out string? token))
         {
             return true;
         }
@@ -527,8 +527,8 @@ internal sealed class HelmertMathTransform : MathTransform
         ref double target,
         out string skipReason)
     {
-        skipReason = null;
-        if (!args.TryGetValue(key, out string token))
+        skipReason = default!;
+        if (!args.TryGetValue(key, out string? token))
         {
             return true;
         }

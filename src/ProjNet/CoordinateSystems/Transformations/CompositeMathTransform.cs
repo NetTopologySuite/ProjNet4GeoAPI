@@ -96,7 +96,7 @@ internal sealed class CompositeMathTransform : MathTransform
             this.transforms[i].Invert();
         }
 
-        this.inverse = null;
+        this.inverse = default!;
     }
 
     /// <inheritdoc />

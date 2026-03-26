@@ -126,8 +126,8 @@ internal sealed class GeogOffsetMathTransform : MathTransform
         out MathTransform transform,
         out string skipReason)
     {
-        transform = null;
-        skipReason = null;
+        transform = default!;
+        skipReason = default!;
 
         if (args is null)
         {
@@ -161,8 +161,8 @@ internal sealed class GeogOffsetMathTransform : MathTransform
         out string skipReason)
     {
         value = 0d;
-        skipReason = null;
-        if (!args.TryGetValue(key, out string token))
+        skipReason = default!;
+        if (!args.TryGetValue(key, out string? token))
         {
             return true;
         }

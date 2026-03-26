@@ -97,7 +97,7 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
     public override void Invert()
     {
         this.isInverted = !this.isInverted;
-        this.inverse = null;
+        this.inverse = default!;
     }
 
     /// <inheritdoc />
@@ -272,7 +272,7 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
 
     private bool TryFindGridForPoint(double longitude, double latitude, out Ntv2Grid grid)
     {
-        grid = null;
+        grid = default!;
         for (int setIndex = 0; setIndex < this.gridSets.Count; setIndex++)
         {
             if (this.gridSets[setIndex].TryFindGrid(longitude, latitude, out Ntv2Grid candidate))
@@ -424,7 +424,7 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
 
         internal bool TryFindGrid(double longitude, double latitude, out Ntv2Grid grid)
         {
-            grid = null;
+            grid = default!;
             for (int i = 0; i < this.rootGrids.Count; i++)
             {
                 Ntv2Grid root = this.rootGrids[i];

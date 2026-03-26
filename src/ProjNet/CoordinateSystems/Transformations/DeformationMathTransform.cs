@@ -148,17 +148,17 @@ internal sealed class DeformationMathTransform : MathTransform
         out MathTransform transform,
         out string skipReason)
     {
-        transform = null;
-        skipReason = null;
+        transform = default!;
+        skipReason = default!;
         if (args is null)
         {
             skipReason = "deformation arguments were null.";
             return false;
         }
 
-        bool hasGenericGrids = args.TryGetValue("grids", out string genericGridToken) && !string.IsNullOrWhiteSpace(genericGridToken);
-        bool hasHorizontalGrids = args.TryGetValue("xy_grids", out string horizontalGridToken) && !string.IsNullOrWhiteSpace(horizontalGridToken);
-        bool hasVerticalGrids = args.TryGetValue("z_grids", out string verticalGridToken) && !string.IsNullOrWhiteSpace(verticalGridToken);
+        bool hasGenericGrids = args.TryGetValue("grids", out string? genericGridToken) && !string.IsNullOrWhiteSpace(genericGridToken);
+        bool hasHorizontalGrids = args.TryGetValue("xy_grids", out string? horizontalGridToken) && !string.IsNullOrWhiteSpace(horizontalGridToken);
+        bool hasVerticalGrids = args.TryGetValue("z_grids", out string? verticalGridToken) && !string.IsNullOrWhiteSpace(verticalGridToken);
         if (!hasGenericGrids && (!hasHorizontalGrids || !hasVerticalGrids))
         {
             skipReason = "deformation requires either +grids or (+xy_grids and +z_grids).";
@@ -177,8 +177,8 @@ internal sealed class DeformationMathTransform : MathTransform
             return false;
         }
 
-        bool hasDt = args.TryGetValue("dt", out string dtToken);
-        bool hasEpoch = args.TryGetValue("t_epoch", out string epochToken);
+        bool hasDt = args.TryGetValue("dt", out string? dtToken);
+        bool hasEpoch = args.TryGetValue("t_epoch", out string? epochToken);
         if (!hasDt && !hasEpoch)
         {
             skipReason = "deformation requires +dt or +t_epoch.";
@@ -346,7 +346,7 @@ internal sealed class DeformationMathTransform : MathTransform
         out string skipReason)
     {
         resolvedPaths = [];
-        skipReason = null;
+        skipReason = default!;
         if (string.IsNullOrWhiteSpace(gridsToken))
         {
             skipReason = "deformation requires +" + parameterName + ".";
@@ -401,7 +401,7 @@ internal sealed class DeformationMathTransform : MathTransform
 
     private static bool TryResolveGridPath(string gridToken, out string resolvedPath)
     {
-        resolvedPath = null;
+        resolvedPath = default!;
         if (string.IsNullOrWhiteSpace(gridToken))
         {
             return false;
@@ -449,7 +449,7 @@ internal sealed class DeformationMathTransform : MathTransform
 
     private static bool TryGetExistingPath(string candidate, out string resolvedPath)
     {
-        resolvedPath = null;
+        resolvedPath = default!;
         if (string.IsNullOrWhiteSpace(candidate))
         {
             return false;
@@ -499,9 +499,9 @@ internal sealed class DeformationMathTransform : MathTransform
     {
         semiMajor = 0d;
         semiMinor = 0d;
-        skipReason = null;
+        skipReason = default!;
 
-        if (args.TryGetValue("r", out string radiusToken)
+        if (args.TryGetValue("r", out string? radiusToken)
             && TryParseFiniteDouble(radiusToken, out double radius))
         {
             if (radius <= 0d)
@@ -515,7 +515,7 @@ internal sealed class DeformationMathTransform : MathTransform
             return true;
         }
 
-        if (args.TryGetValue("a", out string majorToken)
+        if (args.TryGetValue("a", out string? majorToken)
             && TryParseFiniteDouble(majorToken, out double major))
         {
             if (major <= 0d)
@@ -525,7 +525,7 @@ internal sealed class DeformationMathTransform : MathTransform
             }
 
             semiMajor = major;
-            if (args.TryGetValue("b", out string minorToken)
+            if (args.TryGetValue("b", out string? minorToken)
                 && TryParseFiniteDouble(minorToken, out double minor))
             {
                 if (minor <= 0d)
@@ -538,7 +538,7 @@ internal sealed class DeformationMathTransform : MathTransform
                 return true;
             }
 
-            if (args.TryGetValue("rf", out string inverseFlatteningToken)
+            if (args.TryGetValue("rf", out string? inverseFlatteningToken)
                 && TryParseFiniteDouble(inverseFlatteningToken, out double inverseFlattening))
             {
                 if (inverseFlattening <= 0d)
@@ -555,7 +555,7 @@ internal sealed class DeformationMathTransform : MathTransform
             return true;
         }
 
-        if (args.TryGetValue("ellps", out string ellipsoidToken) && !string.IsNullOrWhiteSpace(ellipsoidToken))
+        if (args.TryGetValue("ellps", out string? ellipsoidToken) && !string.IsNullOrWhiteSpace(ellipsoidToken))
         {
             if (TryResolveKnownEllipsoid(ellipsoidToken, out semiMajor, out semiMinor))
             {
@@ -566,7 +566,7 @@ internal sealed class DeformationMathTransform : MathTransform
             return false;
         }
 
-        if (args.TryGetValue("datum", out string datumToken) && !string.IsNullOrWhiteSpace(datumToken))
+        if (args.TryGetValue("datum", out string? datumToken) && !string.IsNullOrWhiteSpace(datumToken))
         {
             if (TryResolveKnownEllipsoid(datumToken, out semiMajor, out semiMinor))
             {
@@ -747,7 +747,7 @@ internal sealed class DeformationMathTransform : MathTransform
             }
         }
 
-        grid = null;
+        grid = default!;
         return false;
     }
 
@@ -766,7 +766,7 @@ internal sealed class DeformationMathTransform : MathTransform
             }
         }
 
-        grid = null;
+        grid = default!;
         return false;
     }
 
@@ -785,7 +785,7 @@ internal sealed class DeformationMathTransform : MathTransform
             }
         }
 
-        grid = null;
+        grid = default!;
         return false;
     }
 

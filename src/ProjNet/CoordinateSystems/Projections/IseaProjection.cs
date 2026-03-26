@@ -436,12 +436,12 @@ internal sealed class IseaProjection : MapProjection
     {
         if (this.outputMode != IseaOutputMode.Plane)
         {
-            return null;
+            return default!;
         }
 
         if (this.aperture != 3 || this.resolution != 4 || Math.Abs(this.orientationAzimuth) > 1e-12d)
         {
-            return null;
+            return default!;
         }
 
         if (IsNearlyEqual(this.orientationLatitude, IseaStdLat) && IsNearlyEqual(this.orientationLongitude, IseaStdLon))
@@ -454,7 +454,7 @@ internal sealed class IseaProjection : MapProjection
             return new IseaPlanarInverseProjection(0d, 0d);
         }
 
-        return null;
+        return default!;
     }
 
     private IseaPlanarState CreatePlanarState()

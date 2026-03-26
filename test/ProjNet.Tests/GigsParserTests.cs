@@ -154,6 +154,6 @@ public class GigsParserTests
             current = current.Parent;
         }
 
-        return null;
+        return default!;
     }
 }

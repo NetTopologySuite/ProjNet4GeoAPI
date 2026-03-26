@@ -166,8 +166,8 @@ internal sealed class DefModelMathTransform : MathTransform
         out MathTransform transform,
         out string skipReason)
     {
-        transform = null;
-        skipReason = null;
+        transform = default!;
+        skipReason = default!;
 
         if (args is null)
         {
@@ -175,7 +175,7 @@ internal sealed class DefModelMathTransform : MathTransform
             return false;
         }
 
-        if (!args.TryGetValue("model", out string modelToken) || string.IsNullOrWhiteSpace(modelToken))
+        if (!args.TryGetValue("model", out string? modelToken) || string.IsNullOrWhiteSpace(modelToken))
         {
             skipReason = "defmodel requires +model.";
             return false;
@@ -288,7 +288,7 @@ internal sealed class DefModelMathTransform : MathTransform
 
     private static bool TryResolveModelPath(string modelToken, out string resolvedPath)
     {
-        resolvedPath = null;
+        resolvedPath = default!;
         if (string.IsNullOrWhiteSpace(modelToken))
         {
             return false;
@@ -337,7 +337,7 @@ internal sealed class DefModelMathTransform : MathTransform
 
     private static bool TryGetExistingPath(string candidate, out string resolvedPath)
     {
-        resolvedPath = null;
+        resolvedPath = default!;
         if (string.IsNullOrWhiteSpace(candidate))
         {
             return false;
@@ -370,9 +370,9 @@ internal sealed class DefModelMathTransform : MathTransform
     {
         semiMajor = 0d;
         semiMinor = 0d;
-        skipReason = null;
+        skipReason = default!;
 
-        if (args.TryGetValue("r", out string radiusToken)
+        if (args.TryGetValue("r", out string? radiusToken)
             && TryParseFiniteDouble(radiusToken, out double radius))
         {
             if (radius <= 0d)
@@ -386,7 +386,7 @@ internal sealed class DefModelMathTransform : MathTransform
             return true;
         }
 
-        if (args.TryGetValue("a", out string majorToken) && TryParseFiniteDouble(majorToken, out double major))
+        if (args.TryGetValue("a", out string? majorToken) && TryParseFiniteDouble(majorToken, out double major))
         {
             if (major <= 0d)
             {
@@ -395,7 +395,7 @@ internal sealed class DefModelMathTransform : MathTransform
             }
 
             semiMajor = major;
-            if (args.TryGetValue("b", out string minorToken) && TryParseFiniteDouble(minorToken, out double minor))
+            if (args.TryGetValue("b", out string? minorToken) && TryParseFiniteDouble(minorToken, out double minor))
             {
                 if (minor <= 0d)
                 {
@@ -407,7 +407,7 @@ internal sealed class DefModelMathTransform : MathTransform
                 return true;
             }
 
-            if (args.TryGetValue("rf", out string inverseFlatteningToken)
+            if (args.TryGetValue("rf", out string? inverseFlatteningToken)
                 && TryParseFiniteDouble(inverseFlatteningToken, out double inverseFlattening))
             {
                 if (inverseFlattening <= 0d)
@@ -424,7 +424,7 @@ internal sealed class DefModelMathTransform : MathTransform
             return true;
         }
 
-        if (args.TryGetValue("ellps", out string ellipsoidToken) && !string.IsNullOrWhiteSpace(ellipsoidToken))
+        if (args.TryGetValue("ellps", out string? ellipsoidToken) && !string.IsNullOrWhiteSpace(ellipsoidToken))
         {
             if (TryResolveKnownEllipsoid(ellipsoidToken, out semiMajor, out semiMinor))
             {
@@ -435,7 +435,7 @@ internal sealed class DefModelMathTransform : MathTransform
             return false;
         }
 
-        if (args.TryGetValue("datum", out string datumToken) && !string.IsNullOrWhiteSpace(datumToken))
+        if (args.TryGetValue("datum", out string? datumToken) && !string.IsNullOrWhiteSpace(datumToken))
         {
             if (TryResolveKnownEllipsoid(datumToken, out semiMajor, out semiMinor))
             {
@@ -1037,7 +1037,7 @@ internal sealed class DefModelMathTransform : MathTransform
 
     private static bool TryResolveComponentPath(string fileName, string modelDirectory, out string resolvedPath)
     {
-        resolvedPath = null;
+        resolvedPath = default!;
         if (string.IsNullOrWhiteSpace(fileName))
         {
             return false;
@@ -1215,7 +1215,7 @@ internal sealed class DefModelMathTransform : MathTransform
             }
         }
 
-        grid = null;
+        grid = default!;
         return false;
     }
 
@@ -1234,7 +1234,7 @@ internal sealed class DefModelMathTransform : MathTransform
             }
         }
 
-        grid = null;
+        grid = default!;
         return false;
     }
 

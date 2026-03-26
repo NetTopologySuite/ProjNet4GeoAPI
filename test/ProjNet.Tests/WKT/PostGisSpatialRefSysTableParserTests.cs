@@ -33,10 +33,10 @@ public class PostGisSpatialRefSysTableParserTests
 
             if (!File.Exists("appsettings.json"))
             {
-                return null;
+                return default!;
             }
 
-            JToken token = null;
+            JToken token = default!;
             using (var jtr = new Newtonsoft.Json.JsonTextReader(new StreamReader("appsettings.json")))
             {
                 token = JToken.ReadFrom(jtr);
@@ -52,7 +52,7 @@ public class PostGisSpatialRefSysTableParserTests
             }
             catch (Exception)
             {
-                return null;
+                return default!;
             }
 
             PostGisSpatialRefSysTableParserTests.connectionString = connectionString;

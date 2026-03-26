@@ -30,7 +30,7 @@ internal static class CoordinateOperationResolver
 
         ArgumentGuard.ThrowIfNull(directResolver, nameof(directResolver));
 
-        OperationCandidate bestCandidate = null;
+        OperationCandidate bestCandidate = default!;
         bestCandidate = SelectHigherScore(bestCandidate, CreateIdentityCandidate(source, target));
 
         var directCandidate = directResolver(source, target);
@@ -46,7 +46,7 @@ internal static class CoordinateOperationResolver
     {
         if (!ReferenceEquals(source, target) && !source.EqualParams(target))
         {
-            return null;
+            return default!;
         }
 
         int dimension = Math.Max(2, Math.Max(source.Dimension, target.Dimension));

@@ -148,7 +148,7 @@ internal static partial class GeoTiffGridLoader
 
     private static bool TryReadPage(string path, Tiff tiff, GridMode mode, bool requireMetreUnitsForXyz, ArrayPool<double> sampleValueArrayPool, out LoadedPage page)
     {
-        page = null;
+        page = default!;
         if (!TryGetIntField(tiff, TiffTag.IMAGEWIDTH, out int width)
             || !TryGetIntField(tiff, TiffTag.IMAGELENGTH, out int height)
             || width <= 1
@@ -215,7 +215,7 @@ internal static partial class GeoTiffGridLoader
         positiveWest = false;
         for (int i = 0; i < samplesPerPixel; i++)
         {
-            if (!metadata.DescriptionsBySample.TryGetValue(i, out string description))
+            if (!metadata.DescriptionsBySample.TryGetValue(i, out string? description))
             {
                 continue;
             }
@@ -243,7 +243,7 @@ internal static partial class GeoTiffGridLoader
             }
         }
 
-        if (metadata.PositiveValueBySample.TryGetValue(longitudeSample, out string positiveValue)
+        if (metadata.PositiveValueBySample.TryGetValue(longitudeSample, out string? positiveValue)
             && positiveValue.Equals("west", StringComparison.OrdinalIgnoreCase))
         {
             positiveWest = true;
@@ -256,7 +256,7 @@ internal static partial class GeoTiffGridLoader
     {
         for (int i = 0; i < samplesPerPixel; i++)
         {
-            if (!metadata.DescriptionsBySample.TryGetValue(i, out string description))
+            if (!metadata.DescriptionsBySample.TryGetValue(i, out string? description))
             {
                 continue;
             }
@@ -281,7 +281,7 @@ internal static partial class GeoTiffGridLoader
 
         for (int i = 0; i < samplesPerPixel; i++)
         {
-            if (!metadata.DescriptionsBySample.TryGetValue(i, out string description))
+            if (!metadata.DescriptionsBySample.TryGetValue(i, out string? description))
             {
                 continue;
             }
@@ -327,7 +327,7 @@ internal static partial class GeoTiffGridLoader
 
     private static bool IsUnitMetreOrEmpty(GeoMetadata metadata, int sampleIndex)
     {
-        if (!metadata.UnitTypeBySample.TryGetValue(sampleIndex, out string unitType))
+        if (!metadata.UnitTypeBySample.TryGetValue(sampleIndex, out string? unitType))
         {
             return true;
         }
@@ -545,7 +545,7 @@ internal static partial class GeoTiffGridLoader
             }
 
             sampleValueArrayPool.Return(sampleValues[i], clearArray: false);
-            sampleValues[i] = null;
+            sampleValues[i] = default!;
         }
     }
 
@@ -563,7 +563,7 @@ internal static partial class GeoTiffGridLoader
             ParseMetadataItems(sanitizedMetadata, samplesPerPixel, descriptionsBySample, positiveValueBySample, scaleBySample, offsetBySample, unitTypeBySample);
         }
 
-        double? noDataValue = null;
+        double? noDataValue = default!;
         if (TryGetStringField(tiff, (TiffTag)GdalNoDataTag, out string noDataText)
             && double.TryParse(
                 CleanMetadataValue(noDataText),
@@ -815,7 +815,7 @@ internal static partial class GeoTiffGridLoader
 
     private static bool TryGetStringField(Tiff tiff, TiffTag tag, out string value)
     {
-        value = null;
+        value = default!;
         FieldValue[] field = tiff.GetField(tag);
         if (field is null || field.Length == 0)
         {
@@ -1115,7 +1115,7 @@ internal static partial class GeoTiffGridLoader
         {
             if (this.mode != GridMode.Horizontal)
             {
-                return null;
+                return default!;
             }
 
             double latitudeScale = ResolveHorizontalShiftScaleToDegree(this.metadata, this.latitudeSample);
@@ -1153,7 +1153,7 @@ internal static partial class GeoTiffGridLoader
         {
             if (this.mode != GridMode.Vertical)
             {
-                return null;
+                return default!;
             }
 
             return new GeoTiffVGridShiftMathTransform.VerticalGrid(
@@ -1186,7 +1186,7 @@ internal static partial class GeoTiffGridLoader
         {
             if (this.mode != GridMode.Xyz)
             {
-                return null;
+                return default!;
             }
 
             return new GeoTiffXyzGridShiftMathTransform.XyzGrid(
@@ -1213,7 +1213,7 @@ internal static partial class GeoTiffGridLoader
 
         private static double ResolveHorizontalShiftScaleToDegree(GeoMetadata metadata, int sampleIndex)
         {
-            if (metadata.UnitTypeBySample.TryGetValue(sampleIndex, out string unitType))
+            if (metadata.UnitTypeBySample.TryGetValue(sampleIndex, out string? unitType))
             {
                 string unit = unitType.Trim();
                 if (unit.Equals("degree", StringComparison.OrdinalIgnoreCase)

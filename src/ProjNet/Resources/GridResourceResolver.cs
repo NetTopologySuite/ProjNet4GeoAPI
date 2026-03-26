@@ -69,7 +69,7 @@ internal sealed class GridResourceResolver
             return true;
         }
 
-        resolvedPath = null;
+        resolvedPath = default!;
         return false;
     }
 
@@ -96,7 +96,7 @@ internal sealed class GridResourceResolver
             }
         }
 
-        resolvedPath = null;
+        resolvedPath = default!;
         return false;
     }
 
@@ -111,7 +111,7 @@ internal sealed class GridResourceResolver
         string fileName = Path.GetFileName(gridName);
         if (string.IsNullOrWhiteSpace(fileName))
         {
-            resolvedPath = null;
+            resolvedPath = default!;
             return false;
         }
 
@@ -127,7 +127,7 @@ internal sealed class GridResourceResolver
             return true;
         }
 
-        resolvedPath = null;
+        resolvedPath = default!;
         return false;
     }
 
@@ -135,7 +135,7 @@ internal sealed class GridResourceResolver
     {
         if (string.IsNullOrWhiteSpace(this.options.CacheDirectory))
         {
-            resolvedPath = null;
+            resolvedPath = default!;
             return false;
         }
 
@@ -143,7 +143,7 @@ internal sealed class GridResourceResolver
         string fileName = Path.GetFileName(gridName);
         if (string.IsNullOrWhiteSpace(fileName))
         {
-            resolvedPath = null;
+            resolvedPath = default!;
             return false;
         }
 
@@ -156,7 +156,7 @@ internal sealed class GridResourceResolver
 
         if (!this.fetchClient.TryFetch(gridName, targetPath) || !File.Exists(targetPath))
         {
-            resolvedPath = null;
+            resolvedPath = default!;
             return false;
         }
 

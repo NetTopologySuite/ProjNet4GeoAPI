@@ -40,12 +40,12 @@ internal static class GieParser
         options ??= new GieParserOptions();
 
         var parsedCases = new List<GieCase>();
-        string currentOperation = null;
+        string currentOperation = default!;
         double currentToleranceValue = 0d;
         string currentToleranceUnit = "m";
         GieDirection currentDirection = GieDirection.Forward;
-        int? currentRoundtrip = null;
-        double[] pendingAccept = null;
+        int? currentRoundtrip = default!;
+        double[] pendingAccept = default!;
 
         foreach (var logicalLine in EnumerateLogicalLines(content))
         {
@@ -71,8 +71,8 @@ internal static class GieParser
                 currentToleranceValue = 0d;
                 currentToleranceUnit = "m";
                 currentDirection = GieDirection.Forward;
-                currentRoundtrip = null;
-                pendingAccept = null;
+                currentRoundtrip = default!;
+                pendingAccept = default!;
             }
             else if (directive.Equals("tolerance", StringComparison.OrdinalIgnoreCase))
             {
@@ -112,7 +112,7 @@ internal static class GieParser
                             ExpectedErrorCode = ParseExpectedErrorCode(payload),
                             RoundtripCount = currentRoundtrip,
                         });
-                    pendingAccept = null;
+                    pendingAccept = default!;
                     continue;
                 }
 
@@ -139,7 +139,7 @@ internal static class GieParser
                         Expect = expected,
                         RoundtripCount = currentRoundtrip,
                     });
-                pendingAccept = null;
+                pendingAccept = default!;
             }
             else if (!options.IgnoreUnknownDirectives)
             {
@@ -163,7 +163,7 @@ internal static class GieParser
     private static IEnumerable<LogicalLine> EnumerateLogicalLines(string content)
     {
         string[] lines = content.Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n');
-        string current = null;
+        string current = default!;
         int currentStartLine = 1;
 
         for (int i = 0; i < lines.Length; i++)
@@ -196,7 +196,7 @@ internal static class GieParser
             }
 
             yield return new LogicalLine(current, currentStartLine);
-            current = null;
+            current = default!;
         }
 
         if (current is not null)

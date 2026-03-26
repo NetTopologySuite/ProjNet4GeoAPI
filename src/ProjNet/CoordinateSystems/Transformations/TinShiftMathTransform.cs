@@ -95,8 +95,8 @@ internal sealed class TinShiftMathTransform : MathTransform
         out MathTransform transform,
         out string skipReason)
     {
-        transform = null;
-        skipReason = null;
+        transform = default!;
+        skipReason = default!;
 
         if (args is null)
         {
@@ -104,7 +104,7 @@ internal sealed class TinShiftMathTransform : MathTransform
             return false;
         }
 
-        if (!args.TryGetValue("file", out string fileToken) || string.IsNullOrWhiteSpace(fileToken))
+        if (!args.TryGetValue("file", out string? fileToken) || string.IsNullOrWhiteSpace(fileToken))
         {
             skipReason = "tinshift requires +file.";
             return false;
@@ -518,7 +518,7 @@ internal sealed class TinShiftMathTransform : MathTransform
 
     private static bool TryResolveFilePath(string fileToken, out string resolvedPath)
     {
-        resolvedPath = null;
+        resolvedPath = default!;
         if (string.IsNullOrWhiteSpace(fileToken))
         {
             return false;
@@ -567,7 +567,7 @@ internal sealed class TinShiftMathTransform : MathTransform
 
     private static bool TryGetExistingPath(string candidate, out string resolvedPath)
     {
-        resolvedPath = null;
+        resolvedPath = default!;
         if (string.IsNullOrWhiteSpace(candidate))
         {
             return false;

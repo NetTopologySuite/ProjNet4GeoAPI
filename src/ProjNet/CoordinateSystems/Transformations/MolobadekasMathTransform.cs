@@ -203,8 +203,8 @@ internal sealed class MolobadekasMathTransform : MathTransform
         out MathTransform transform,
         out string skipReason)
     {
-        transform = null;
-        skipReason = null;
+        transform = default!;
+        skipReason = default!;
 
         if (args is null)
         {
@@ -212,7 +212,7 @@ internal sealed class MolobadekasMathTransform : MathTransform
             return false;
         }
 
-        if (!args.TryGetValue("convention", out string conventionToken)
+        if (!args.TryGetValue("convention", out string? conventionToken)
             || string.IsNullOrWhiteSpace(conventionToken))
         {
             skipReason = "molobadekas: missing 'convention' argument";
@@ -296,8 +296,8 @@ internal sealed class MolobadekasMathTransform : MathTransform
         out string skipReason)
     {
         value = 0d;
-        skipReason = null;
-        if (!args.TryGetValue(key, out string token))
+        skipReason = default!;
+        if (!args.TryGetValue(key, out string? token))
         {
             return true;
         }

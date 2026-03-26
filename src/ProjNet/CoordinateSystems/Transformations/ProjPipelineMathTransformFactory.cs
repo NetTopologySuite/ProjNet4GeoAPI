@@ -34,8 +34,8 @@ internal static class ProjPipelineMathTransformFactory
     /// <returns><see langword="true"/> when a transform was created.</returns>
     internal static bool TryCreateMathTransform(string operation, out MathTransform transform, out string skipReason)
     {
-        transform = null;
-        skipReason = null;
+        transform = default!;
+        skipReason = default!;
 
         if (operation is null)
         {
@@ -44,7 +44,7 @@ internal static class ProjPipelineMathTransformFactory
         }
 
         bool hasPipeline = ContainsPipelineProjection(operation);
-        IReadOnlyList<Dictionary<string, string>> pipelineStepArguments = null;
+        IReadOnlyList<Dictionary<string, string>> pipelineStepArguments = default!;
         if (hasPipeline
             && !TryParsePipelineStepArguments(operation, out pipelineStepArguments, out skipReason))
         {
@@ -99,8 +99,8 @@ internal static class ProjPipelineMathTransformFactory
         out MathTransform transform,
         out string skipReason)
     {
-        transform = null;
-        skipReason = null;
+        transform = default!;
+        skipReason = default!;
 
         if (!TryParseOperationArguments(operation, out Dictionary<string, string> args))
         {
@@ -117,10 +117,10 @@ internal static class ProjPipelineMathTransformFactory
         out MathTransform transform,
         out string skipReason)
     {
-        transform = null;
-        skipReason = null;
+        transform = default!;
+        skipReason = default!;
 
-        if (!args.TryGetValue("proj", out string projCode))
+        if (!args.TryGetValue("proj", out string? projCode))
         {
             skipReason = "Operation is missing +proj.";
             return false;
@@ -433,11 +433,11 @@ internal static class ProjPipelineMathTransformFactory
         out MathTransform transform,
         out string skipReason)
     {
-        transform = null;
-        skipReason = null;
+        transform = default!;
+        skipReason = default!;
 
-        bool hasOrder = args.TryGetValue("order", out string orderToken) && !string.IsNullOrWhiteSpace(orderToken);
-        bool hasAxis = args.TryGetValue("axis", out string axisToken) && !string.IsNullOrWhiteSpace(axisToken);
+        bool hasOrder = args.TryGetValue("order", out string? orderToken) && !string.IsNullOrWhiteSpace(orderToken);
+        bool hasAxis = args.TryGetValue("axis", out string? axisToken) && !string.IsNullOrWhiteSpace(axisToken);
         if (hasOrder == hasAxis)
         {
             skipReason = "Axisswap requires exactly one of +order or +axis.";
@@ -502,8 +502,8 @@ internal static class ProjPipelineMathTransformFactory
         out MathTransform transform,
         out string skipReason)
     {
-        transform = null;
-        skipReason = null;
+        transform = default!;
+        skipReason = default!;
 
         if (!TryResolveUnitScale(args, "xy_in", "xy_out", true, out double xyScale))
         {
@@ -526,8 +526,8 @@ internal static class ProjPipelineMathTransformFactory
         out MathTransform transform,
         out string skipReason)
     {
-        transform = null;
-        skipReason = null;
+        transform = default!;
+        skipReason = default!;
 
         if (!TryResolveEllipsoid(args, out double semiMajor, out double semiMinor, out skipReason))
         {
@@ -569,8 +569,8 @@ internal static class ProjPipelineMathTransformFactory
         out MathTransform transform,
         out string skipReason)
     {
-        transform = null;
-        skipReason = null;
+        transform = default!;
+        skipReason = default!;
 
         if (!TryResolveEllipsoid(args, out double semiMajor, out double semiMinor, out skipReason))
         {
@@ -587,8 +587,8 @@ internal static class ProjPipelineMathTransformFactory
         out MathTransform transform,
         out string skipReason)
     {
-        transform = null;
-        skipReason = null;
+        transform = default!;
+        skipReason = default!;
 
         if (!TryBuildProjectionStepParameters(args, projCode, out List<ProjectionParameter> parameters, out skipReason))
         {
@@ -633,8 +633,8 @@ internal static class ProjPipelineMathTransformFactory
         out List<ProjectionParameter> parameters,
         out string skipReason)
     {
-        parameters = null;
-        skipReason = null;
+        parameters = default!;
+        skipReason = default!;
 
         if (!TryResolveProjectionEllipsoid(args, out double semiMajor, out double semiMinor, out skipReason))
         {
@@ -671,7 +671,7 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
-        if (args.TryGetValue("k_0", out string k0Token) && !string.IsNullOrWhiteSpace(k0Token))
+        if (args.TryGetValue("k_0", out string? k0Token) && !string.IsNullOrWhiteSpace(k0Token))
         {
             if (!TryParseFiniteDouble(k0Token, out double k0))
             {
@@ -681,7 +681,7 @@ internal static class ProjPipelineMathTransformFactory
 
             SetOrAddProjectionParameter(parameters, "scale_factor", k0);
         }
-        else if (args.TryGetValue("k", out string kToken) && !string.IsNullOrWhiteSpace(kToken))
+        else if (args.TryGetValue("k", out string? kToken) && !string.IsNullOrWhiteSpace(kToken))
         {
             if (!TryParseFiniteDouble(kToken, out double k))
             {
@@ -723,9 +723,9 @@ internal static class ProjPipelineMathTransformFactory
         out string skipReason)
     {
         unitFactor = 1d;
-        skipReason = null;
+        skipReason = default!;
 
-        if (args.TryGetValue("to_meter", out string toMeterToken) && !string.IsNullOrWhiteSpace(toMeterToken))
+        if (args.TryGetValue("to_meter", out string? toMeterToken) && !string.IsNullOrWhiteSpace(toMeterToken))
         {
             if (!TryParsePositiveScaleFactor(toMeterToken, out unitFactor))
             {
@@ -733,7 +733,7 @@ internal static class ProjPipelineMathTransformFactory
                 return false;
             }
         }
-        else if (args.TryGetValue("units", out string unitsToken)
+        else if (args.TryGetValue("units", out string? unitsToken)
             && !string.IsNullOrWhiteSpace(unitsToken)
             && !TryResolveUnitFactor(unitsToken, out unitFactor))
         {
@@ -751,8 +751,8 @@ internal static class ProjPipelineMathTransformFactory
         List<ProjectionParameter> parameters,
         out string skipReason)
     {
-        skipReason = null;
-        if (!args.TryGetValue(sourceKey, out string token) || string.IsNullOrWhiteSpace(token))
+        skipReason = default!;
+        if (!args.TryGetValue(sourceKey, out string? token) || string.IsNullOrWhiteSpace(token))
         {
             return true;
         }
@@ -792,9 +792,9 @@ internal static class ProjPipelineMathTransformFactory
     {
         semiMajor = 0d;
         semiMinor = 0d;
-        skipReason = null;
+        skipReason = default!;
 
-        if (args.TryGetValue("r", out string radiusToken)
+        if (args.TryGetValue("r", out string? radiusToken)
             && TryParseFiniteDouble(radiusToken, out double radius)
             && radius > 0d)
         {
@@ -803,12 +803,12 @@ internal static class ProjPipelineMathTransformFactory
             return true;
         }
 
-        if (args.TryGetValue("a", out string majorToken)
+        if (args.TryGetValue("a", out string? majorToken)
             && TryParseFiniteDouble(majorToken, out double major)
             && major > 0d)
         {
             semiMajor = major;
-            if (args.TryGetValue("b", out string minorToken)
+            if (args.TryGetValue("b", out string? minorToken)
                 && TryParseFiniteDouble(minorToken, out double minor)
                 && minor > 0d)
             {
@@ -816,7 +816,7 @@ internal static class ProjPipelineMathTransformFactory
                 return true;
             }
 
-            if (args.TryGetValue("rf", out string inverseFlatteningToken)
+            if (args.TryGetValue("rf", out string? inverseFlatteningToken)
                 && TryParseFiniteDouble(inverseFlatteningToken, out double inverseFlattening)
                 && inverseFlattening > 0d)
             {
@@ -828,7 +828,7 @@ internal static class ProjPipelineMathTransformFactory
             return true;
         }
 
-        if (args.TryGetValue("ellps", out string ellps) && !string.IsNullOrWhiteSpace(ellps))
+        if (args.TryGetValue("ellps", out string? ellps) && !string.IsNullOrWhiteSpace(ellps))
         {
             if (TryResolveKnownEllipsoid(ellps, out semiMajor, out semiMinor))
             {
@@ -839,7 +839,7 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
-        if (args.TryGetValue("datum", out string datum) && !string.IsNullOrWhiteSpace(datum))
+        if (args.TryGetValue("datum", out string? datum) && !string.IsNullOrWhiteSpace(datum))
         {
             if (TryResolveKnownEllipsoid(datum, out semiMajor, out semiMinor))
             {
@@ -858,7 +858,7 @@ internal static class ProjPipelineMathTransformFactory
     private static bool TryGetZoneCentralMeridian(Dictionary<string, string> args, out double centralMeridian)
     {
         centralMeridian = 0d;
-        if (!args.TryGetValue("zone", out string zoneToken) || string.IsNullOrWhiteSpace(zoneToken))
+        if (!args.TryGetValue("zone", out string? zoneToken) || string.IsNullOrWhiteSpace(zoneToken))
         {
             return false;
         }
@@ -898,9 +898,9 @@ internal static class ProjPipelineMathTransformFactory
         out string skipReason)
     {
         scale = 1d;
-        skipReason = null;
+        skipReason = default!;
 
-        if (args.TryGetValue("units", out string unitsToken)
+        if (args.TryGetValue("units", out string? unitsToken)
             && !string.IsNullOrWhiteSpace(unitsToken)
             && !unitsToken.Equals("m", StringComparison.OrdinalIgnoreCase))
         {
@@ -908,7 +908,7 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
-        if (args.TryGetValue("to_meter", out string toMeterToken) && !string.IsNullOrWhiteSpace(toMeterToken))
+        if (args.TryGetValue("to_meter", out string? toMeterToken) && !string.IsNullOrWhiteSpace(toMeterToken))
         {
             if (!TryParsePositiveScaleFactor(toMeterToken, out scale))
             {
@@ -977,10 +977,10 @@ internal static class ProjPipelineMathTransformFactory
         out MathTransform transform,
         out string skipReason)
     {
-        transform = null;
-        skipReason = null;
+        transform = default!;
+        skipReason = default!;
 
-        if (!args.TryGetValue("grids", out string gridsToken) || string.IsNullOrWhiteSpace(gridsToken))
+        if (!args.TryGetValue("grids", out string? gridsToken) || string.IsNullOrWhiteSpace(gridsToken))
         {
             skipReason = "Horizontal grid shift requires +grids.";
             return false;
@@ -1032,10 +1032,10 @@ internal static class ProjPipelineMathTransformFactory
         out MathTransform transform,
         out string skipReason)
     {
-        transform = null;
-        skipReason = null;
+        transform = default!;
+        skipReason = default!;
 
-        if (!args.TryGetValue("grids", out string gridsToken) || string.IsNullOrWhiteSpace(gridsToken))
+        if (!args.TryGetValue("grids", out string? gridsToken) || string.IsNullOrWhiteSpace(gridsToken))
         {
             skipReason = "Vertical grid shift requires +grids.";
             return false;
@@ -1052,7 +1052,7 @@ internal static class ProjPipelineMathTransformFactory
         }
 
         double multiplier = -1d;
-        if (args.TryGetValue("multiplier", out string multiplierToken)
+        if (args.TryGetValue("multiplier", out string? multiplierToken)
             && !double.TryParse(multiplierToken, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out multiplier))
         {
             skipReason = "Unable to parse +multiplier parameter for vgridshift.";
@@ -1101,10 +1101,10 @@ internal static class ProjPipelineMathTransformFactory
         out MathTransform transform,
         out string skipReason)
     {
-        transform = null;
-        skipReason = null;
+        transform = default!;
+        skipReason = default!;
 
-        if (!args.TryGetValue("grids", out string gridsToken) || string.IsNullOrWhiteSpace(gridsToken))
+        if (!args.TryGetValue("grids", out string? gridsToken) || string.IsNullOrWhiteSpace(gridsToken))
         {
             skipReason = "Geocentric grid shift requires +grids.";
             return false;
@@ -1121,7 +1121,7 @@ internal static class ProjPipelineMathTransformFactory
         }
 
         bool gridRefIsInput = true;
-        if (args.TryGetValue("grid_ref", out string gridRefToken) && !string.IsNullOrWhiteSpace(gridRefToken))
+        if (args.TryGetValue("grid_ref", out string? gridRefToken) && !string.IsNullOrWhiteSpace(gridRefToken))
         {
             if (gridRefToken.Equals("input_crs", StringComparison.OrdinalIgnoreCase))
             {
@@ -1139,7 +1139,7 @@ internal static class ProjPipelineMathTransformFactory
         }
 
         double multiplier = 1d;
-        if (args.TryGetValue("multiplier", out string multiplierToken)
+        if (args.TryGetValue("multiplier", out string? multiplierToken)
             && !double.TryParse(multiplierToken, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out multiplier))
         {
             skipReason = "Unable to parse +multiplier parameter for xyzgridshift.";
@@ -1191,7 +1191,7 @@ internal static class ProjPipelineMathTransformFactory
         string gridFamilyName,
         out string skipReason)
     {
-        skipReason = null;
+        skipReason = default!;
         string allowedList = string.Join("/", allowedExtensions);
         for (int i = 0; i < gridPaths.Count; i++)
         {
@@ -1244,7 +1244,7 @@ internal static class ProjPipelineMathTransformFactory
         out string skipReason)
     {
         resolvedPaths = [];
-        skipReason = null;
+        skipReason = default!;
 
         string[] entries = gridsToken.Split(CommaSeparator, StringSplitOptions.RemoveEmptyEntries);
         if (entries.Length == 0)
@@ -1300,9 +1300,9 @@ internal static class ProjPipelineMathTransformFactory
     {
         semiMajor = 0d;
         semiMinor = 0d;
-        skipReason = null;
+        skipReason = default!;
 
-        if (args.TryGetValue("r", out string radiusToken)
+        if (args.TryGetValue("r", out string? radiusToken)
             && TryParseFiniteDouble(radiusToken, out double radius)
             && radius > 0d)
         {
@@ -1311,12 +1311,12 @@ internal static class ProjPipelineMathTransformFactory
             return true;
         }
 
-        if (args.TryGetValue("a", out string majorToken)
+        if (args.TryGetValue("a", out string? majorToken)
             && TryParseFiniteDouble(majorToken, out double major)
             && major > 0d)
         {
             semiMajor = major;
-            if (args.TryGetValue("b", out string minorToken)
+            if (args.TryGetValue("b", out string? minorToken)
                 && TryParseFiniteDouble(minorToken, out double minor)
                 && minor > 0d)
             {
@@ -1324,7 +1324,7 @@ internal static class ProjPipelineMathTransformFactory
                 return true;
             }
 
-            if (args.TryGetValue("rf", out string inverseFlatteningToken)
+            if (args.TryGetValue("rf", out string? inverseFlatteningToken)
                 && TryParseFiniteDouble(inverseFlatteningToken, out double inverseFlattening)
                 && inverseFlattening > 0d)
             {
@@ -1336,7 +1336,7 @@ internal static class ProjPipelineMathTransformFactory
             return true;
         }
 
-        if (args.TryGetValue("ellps", out string ellps) && !string.IsNullOrWhiteSpace(ellps))
+        if (args.TryGetValue("ellps", out string? ellps) && !string.IsNullOrWhiteSpace(ellps))
         {
             if (TryResolveKnownEllipsoid(ellps, out semiMajor, out semiMinor))
             {
@@ -1347,7 +1347,7 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
-        if (args.TryGetValue("datum", out string datum) && !string.IsNullOrWhiteSpace(datum))
+        if (args.TryGetValue("datum", out string? datum) && !string.IsNullOrWhiteSpace(datum))
         {
             if (TryResolveKnownEllipsoid(datum, out semiMajor, out semiMinor))
             {
@@ -1432,8 +1432,8 @@ internal static class ProjPipelineMathTransformFactory
         out double scale)
     {
         scale = 1d;
-        bool hasIn = args.TryGetValue(inKey, out string inToken) && !string.IsNullOrWhiteSpace(inToken);
-        bool hasOut = args.TryGetValue(outKey, out string outToken) && !string.IsNullOrWhiteSpace(outToken);
+        bool hasIn = args.TryGetValue(inKey, out string? inToken) && !string.IsNullOrWhiteSpace(inToken);
+        bool hasOut = args.TryGetValue(outKey, out string? outToken) && !string.IsNullOrWhiteSpace(outToken);
         if (!hasIn && !hasOut)
         {
             return true;
@@ -1714,8 +1714,8 @@ internal static class ProjPipelineMathTransformFactory
         out IReadOnlyList<Dictionary<string, string>> steps,
         out string skipReason)
     {
-        steps = null;
-        skipReason = null;
+        steps = default!;
+        skipReason = default!;
 
         if (operation is null)
         {
@@ -1837,7 +1837,7 @@ internal static class ProjPipelineMathTransformFactory
         }
 
         merged.Remove("step");
-        if (merged.TryGetValue("proj", out string mergedProjCode)
+        if (merged.TryGetValue("proj", out string? mergedProjCode)
             && mergedProjCode.Equals("pipeline", StringComparison.OrdinalIgnoreCase))
         {
             merged.Remove("proj");

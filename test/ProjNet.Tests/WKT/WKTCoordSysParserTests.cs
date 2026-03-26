@@ -87,10 +87,10 @@ public class WKTCoordSysParserTests
                                     "UNIT[\"US survey foot\", 0.304800609601219, AUTHORITY[\"EPSG\", \"9003\"]], " +
                                     "AUTHORITY[\"EPSG\", \"2918\"]]";
 
-        ProjectedCoordinateSystem pcs = null;
+        ProjectedCoordinateSystem pcs = default!;
         Assert.Null(Record.Exception(() => pcs = this.coordinateSystemFactory.CreateFromWkt(wkt) as ProjectedCoordinateSystem));
 
-        ProjectedCoordinateSystem pcs2 = null;
+        ProjectedCoordinateSystem pcs2 = default!;
         Assert.Null(Record.Exception(() => pcs2 = this.coordinateSystemFactory.CreateFromWkt(wkt.Replace("[", "(", StringComparison.Ordinal).Replace("]", ")", StringComparison.Ordinal)) as ProjectedCoordinateSystem));
         Assert.True(pcs.EqualParams(pcs2));
 
@@ -265,10 +265,10 @@ public class WKTCoordSysParserTests
              "AXIS[\"Northing\",NORTH]," +
              "AUTHORITY[\"EPSG\",\"27700\"]]";
 
-        ProjectedCoordinateSystem pcs = null;
+        ProjectedCoordinateSystem pcs = default!;
         Assert.Null(Record.Exception(() => pcs = this.coordinateSystemFactory.CreateFromWkt(wkt) as ProjectedCoordinateSystem));
 
-        ProjectedCoordinateSystem pcs2 = null;
+        ProjectedCoordinateSystem pcs2 = default!;
         Assert.Null(Record.Exception(() => pcs2 = this.coordinateSystemFactory.CreateFromWkt(wkt.Replace("[", "(", StringComparison.Ordinal).Replace("]", ")", StringComparison.Ordinal)) as ProjectedCoordinateSystem));
         Assert.True(pcs.EqualParams(pcs2));
 
@@ -364,7 +364,7 @@ public class WKTCoordSysParserTests
     public void TestFittedCoordinateSystemWkt()
     {
         var fac = new CoordinateSystemFactory();
-        FittedCoordinateSystem fcs = null;
+        FittedCoordinateSystem fcs = default!;
         string wkt = "FITTED_CS[\"Local coordinate system MNAU (based on Gauss-Krueger)\"," +
                             "PARAM_MT[\"Affine\"," +
                                "PARAMETER[\"num_row\",3],PARAMETER[\"num_col\",3],PARAMETER[\"elt_0_0\", 0.883485346527455],PARAMETER[\"elt_0_1\", -0.468458794848877],PARAMETER[\"elt_0_2\", 3455869.17937689],PARAMETER[\"elt_1_0\", 0.468458794848877],PARAMETER[\"elt_1_1\", 0.883485346527455],PARAMETER[\"elt_1_2\", 5478710.88035753],PARAMETER[\"elt_2_2\", 1]]," +
@@ -415,7 +415,7 @@ public class WKTCoordSysParserTests
     public void TestGeocentricCoordinateSystem()
     {
         var fac = new CoordinateSystemFactory();
-        GeocentricCoordinateSystem fcs = null;
+        GeocentricCoordinateSystem fcs = default!;
 
         const string wkt = "GEOCCS[\"TUREF\", " +
                         "DATUM[\"Turkish_National_Reference_Frame\", " +
@@ -655,7 +655,7 @@ public class WKTCoordSysParserTests
 
         for (int i = 0; i < pp.Length; i++)
         {
-            ProjectionParameter par = null;
+            ProjectionParameter par = default!;
             Assert.Null(Record.Exception(() => par = projection.GetParameter(pp[i].Item1)));
             Assert.NotNull(par);
             Assert.Equal(pp[i].Item1, par.Name);

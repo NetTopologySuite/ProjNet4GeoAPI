@@ -146,8 +146,8 @@ internal sealed class VertOffsetMathTransform : MathTransform
         out MathTransform transform,
         out string skipReason)
     {
-        transform = null;
-        skipReason = null;
+        transform = default!;
+        skipReason = default!;
 
         if (args is null)
         {
@@ -204,8 +204,8 @@ internal sealed class VertOffsetMathTransform : MathTransform
         out string skipReason)
     {
         value = defaultValue;
-        skipReason = null;
-        if (!args.TryGetValue(key, out string token))
+        skipReason = default!;
+        if (!args.TryGetValue(key, out string? token))
         {
             return true;
         }
@@ -227,7 +227,7 @@ internal sealed class VertOffsetMathTransform : MathTransform
         semiMajor = 0d;
         semiMinor = 0d;
 
-        if (args.TryGetValue("r", out string radiusToken)
+        if (args.TryGetValue("r", out string? radiusToken)
             && TryParseFiniteDouble(radiusToken, out double radius)
             && radius > 0d)
         {
@@ -236,12 +236,12 @@ internal sealed class VertOffsetMathTransform : MathTransform
             return true;
         }
 
-        if (args.TryGetValue("a", out string majorToken)
+        if (args.TryGetValue("a", out string? majorToken)
             && TryParseFiniteDouble(majorToken, out double major)
             && major > 0d)
         {
             semiMajor = major;
-            if (args.TryGetValue("b", out string minorToken)
+            if (args.TryGetValue("b", out string? minorToken)
                 && TryParseFiniteDouble(minorToken, out double minor)
                 && minor > 0d)
             {
@@ -249,7 +249,7 @@ internal sealed class VertOffsetMathTransform : MathTransform
                 return true;
             }
 
-            if (args.TryGetValue("rf", out string inverseFlatteningToken)
+            if (args.TryGetValue("rf", out string? inverseFlatteningToken)
                 && TryParseFiniteDouble(inverseFlatteningToken, out double inverseFlattening)
                 && inverseFlattening > 0d)
             {
@@ -261,12 +261,12 @@ internal sealed class VertOffsetMathTransform : MathTransform
             return true;
         }
 
-        if (args.TryGetValue("ellps", out string ellps) && !string.IsNullOrWhiteSpace(ellps))
+        if (args.TryGetValue("ellps", out string? ellps) && !string.IsNullOrWhiteSpace(ellps))
         {
             return TryResolveKnownEllipsoid(ellps, out semiMajor, out semiMinor);
         }
 
-        if (args.TryGetValue("datum", out string datum) && !string.IsNullOrWhiteSpace(datum))
+        if (args.TryGetValue("datum", out string? datum) && !string.IsNullOrWhiteSpace(datum))
         {
             return TryResolveKnownEllipsoid(datum, out semiMajor, out semiMinor);
         }

@@ -66,6 +66,6 @@ internal class ParameterInfo
             }
         }
 
-        return null;
+        return default!;
     }
 }

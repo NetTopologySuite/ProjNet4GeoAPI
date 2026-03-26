@@ -410,7 +410,7 @@ public static partial class CoordinateSystemWktReader
         tokenizer.ReadToken(",");
         tokenizer.NextToken();
 
-        LinearUnit linearUnit = null;
+        LinearUnit linearUnit = default!;
 
         if (tokenizer.GetStringValue().Equals("UNIT", StringComparison.OrdinalIgnoreCase))
         {
@@ -478,7 +478,7 @@ public static partial class CoordinateSystemWktReader
         string authority = string.Empty;
         long authorityCode = -1;
         tokenizer.NextToken();
-        AxisInfo info = null;
+        AxisInfo info = default!;
         if (tokenizer.GetStringValue() == ",")
         {
             tokenizer.NextToken();
@@ -683,7 +683,7 @@ public static partial class CoordinateSystemWktReader
     private static HorizontalDatum ReadHorizontalDatum(WktTokenizer tokenizer)
     {
         // DATUM["OSGB 1936",SPHEROID["Airy 1830",6377563.396,299.3249646,AUTHORITY["EPSG","7001"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY["EPSG","6277"]]
-        Wgs84ConversionInfo wgsInfo = null;
+        Wgs84ConversionInfo wgsInfo = default!;
         string authority = string.Empty;
         long authorityCode = -1;
 

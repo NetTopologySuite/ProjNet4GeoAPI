@@ -115,10 +115,10 @@ internal sealed class ObTranMathTransform : MathTransform
         out MathTransform transform,
         out string skipReason)
     {
-        transform = null;
-        skipReason = null;
+        transform = default!;
+        skipReason = default!;
 
-        if (!args.TryGetValue("o_proj", out string childProjCode) || string.IsNullOrWhiteSpace(childProjCode))
+        if (!args.TryGetValue("o_proj", out string? childProjCode) || string.IsNullOrWhiteSpace(childProjCode))
         {
             skipReason = "ob_tran requires +o_proj.";
             return false;
@@ -186,7 +186,7 @@ internal sealed class ObTranMathTransform : MathTransform
     {
         lamp = 0d;
         phip = 0d;
-        skipReason = null;
+        skipReason = default!;
 
         if (args.ContainsKey("o_alpha"))
         {
@@ -217,7 +217,7 @@ internal sealed class ObTranMathTransform : MathTransform
                 return false;
             }
 
-            if (args.TryGetValue("o_lon_p", out string lonPoleToken) && !string.IsNullOrWhiteSpace(lonPoleToken))
+            if (args.TryGetValue("o_lon_p", out string? lonPoleToken) && !string.IsNullOrWhiteSpace(lonPoleToken))
             {
                 if (!TryGetDouble(lonPoleToken, out double lonPoleDegrees))
                 {
@@ -272,12 +272,12 @@ internal sealed class ObTranMathTransform : MathTransform
         out bool childIsAngular,
         out string skipReason)
     {
-        forward = null;
-        inverse = null;
+        forward = default!;
+        inverse = default!;
         childIsAngular = false;
-        skipReason = null;
+        skipReason = default!;
 
-        if (!args.TryGetValue("proj", out string projCode) || string.IsNullOrWhiteSpace(projCode))
+        if (!args.TryGetValue("proj", out string? projCode) || string.IsNullOrWhiteSpace(projCode))
         {
             skipReason = "Projection argument +proj is required.";
             return false;
@@ -363,7 +363,7 @@ internal sealed class ObTranMathTransform : MathTransform
             ReplaceOrAdd(parameters, "ns", 1d);
         }
 
-        if (args.TryGetValue("sweep", out string sweepAxis))
+        if (args.TryGetValue("sweep", out string? sweepAxis))
         {
             double sweepX = sweepAxis.Equals("x", StringComparison.OrdinalIgnoreCase) ? 1d : 0d;
             ReplaceOrAdd(parameters, "sweep_x", sweepX);
@@ -378,7 +378,7 @@ internal sealed class ObTranMathTransform : MathTransform
         string sourceName,
         string targetName)
     {
-        if (!args.TryGetValue(sourceName, out string valueToken) || string.IsNullOrWhiteSpace(valueToken))
+        if (!args.TryGetValue(sourceName, out string? valueToken) || string.IsNullOrWhiteSpace(valueToken))
         {
             return;
         }
@@ -455,7 +455,7 @@ internal sealed class ObTranMathTransform : MathTransform
             return true;
         }
 
-        if (args.TryGetValue("ellps", out string ellps) && !string.IsNullOrWhiteSpace(ellps))
+        if (args.TryGetValue("ellps", out string? ellps) && !string.IsNullOrWhiteSpace(ellps))
         {
             if (ellps.Equals("wgs84", StringComparison.OrdinalIgnoreCase))
             {
@@ -523,7 +523,7 @@ internal sealed class ObTranMathTransform : MathTransform
     private static bool TryGetFromArgs(Dictionary<string, string> args, string key, out double value)
     {
         value = 0d;
-        if (!args.TryGetValue(key, out string token) || string.IsNullOrWhiteSpace(token))
+        if (!args.TryGetValue(key, out string? token) || string.IsNullOrWhiteSpace(token))
         {
             return false;
         }

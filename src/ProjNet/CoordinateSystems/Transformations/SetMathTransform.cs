@@ -103,8 +103,8 @@ internal sealed class SetMathTransform : MathTransform
         out MathTransform transform,
         out string skipReason)
     {
-        transform = null;
-        skipReason = null;
+        transform = default!;
+        skipReason = default!;
 
         if (args is null)
         {
@@ -130,7 +130,7 @@ internal sealed class SetMathTransform : MathTransform
             return false;
         }
 
-        if (args.TryGetValue("v_4", out string v4Token)
+        if (args.TryGetValue("v_4", out string? v4Token)
             && !TryParseFiniteDouble(v4Token, out _))
         {
             skipReason = "Invalid value for +v_4.";
@@ -149,9 +149,9 @@ internal sealed class SetMathTransform : MathTransform
         out double value,
         out string skipReason)
     {
-        skipReason = null;
+        skipReason = default!;
         value = 0d;
-        if (!args.TryGetValue(key, out string token))
+        if (!args.TryGetValue(key, out string? token))
         {
             return false;
         }

@@ -311,7 +311,7 @@ public class Gigs5101TheoryTests
 
     private static bool TryCreatePipelineTransform(string operation, out MathTransform transform)
     {
-        transform = null;
+        transform = default!;
         if (string.IsNullOrWhiteSpace(operation))
         {
             return false;
@@ -413,9 +413,9 @@ public class Gigs5101TheoryTests
 
     private static bool TryResolveDeclaredCoordinateSystem(Dictionary<string, string> args, out CoordinateSystem coordinateSystem)
     {
-        coordinateSystem = null;
+        coordinateSystem = default!;
 
-        if (args.TryGetValue("init", out string initValue)
+        if (args.TryGetValue("init", out string? initValue)
             && TryParseEpsgCode(initValue, out int srid))
         {
             coordinateSystem = CoordinateSystemServices.GetCoordinateSystem(srid);
@@ -423,7 +423,7 @@ public class Gigs5101TheoryTests
             return coordinateSystem is not null;
         }
 
-        if (!args.TryGetValue("proj", out string projCode))
+        if (!args.TryGetValue("proj", out string? projCode))
         {
             return false;
         }
@@ -495,7 +495,7 @@ public class Gigs5101TheoryTests
     {
         if (coordinateSystem is null)
         {
-            return null;
+            return default!;
         }
 
         var geographic = coordinateSystem as GeographicCoordinateSystem;
@@ -529,7 +529,7 @@ public class Gigs5101TheoryTests
 
     private static bool TryMapProjectionClass(string projCode, out string projectionClassName)
     {
-        projectionClassName = null;
+        projectionClassName = default!;
         if (projCode is null)
         {
             return false;
@@ -559,7 +559,7 @@ public class Gigs5101TheoryTests
 
     private static bool TryCreateGeographicCoordinateSystem(Dictionary<string, string> args, out GeographicCoordinateSystem gcs)
     {
-        gcs = null;
+        gcs = default!;
 
         if (!TryResolveEllipsoid(args, out Ellipsoid ellipsoid))
         {
@@ -579,8 +579,8 @@ public class Gigs5101TheoryTests
 
     private static bool TryResolveEllipsoid(Dictionary<string, string> args, out Ellipsoid ellipsoid)
     {
-        ellipsoid = null;
-        if (args.TryGetValue("ellps", out string ellps))
+        ellipsoid = default!;
+        if (args.TryGetValue("ellps", out string? ellps))
         {
             if (ellps.Equals("wgs84", StringComparison.OrdinalIgnoreCase))
             {
@@ -639,7 +639,7 @@ public class Gigs5101TheoryTests
             ReplaceParameter(parameters, "false_northing", y0);
         }
 
-        if (args.TryGetValue("proj", out string projCode) && projCode.Equals("utm", StringComparison.OrdinalIgnoreCase))
+        if (args.TryGetValue("proj", out string? projCode) && projCode.Equals("utm", StringComparison.OrdinalIgnoreCase))
         {
             if (!TryGetZoneCentralMeridian(args, out double utmCentralMeridian))
             {
@@ -659,7 +659,7 @@ public class Gigs5101TheoryTests
     private static bool TryGetZoneCentralMeridian(Dictionary<string, string> args, out double centralMeridian)
     {
         centralMeridian = 0d;
-        if (!args.TryGetValue("zone", out string zoneToken) || string.IsNullOrWhiteSpace(zoneToken))
+        if (!args.TryGetValue("zone", out string? zoneToken) || string.IsNullOrWhiteSpace(zoneToken))
         {
             return false;
         }
@@ -683,7 +683,7 @@ public class Gigs5101TheoryTests
     private static bool TryGetDouble(Dictionary<string, string> args, string key, out double value)
     {
         value = 0d;
-        if (!args.TryGetValue(key, out string raw) || string.IsNullOrWhiteSpace(raw))
+        if (!args.TryGetValue(key, out string? raw) || string.IsNullOrWhiteSpace(raw))
         {
             return false;
         }
@@ -763,7 +763,7 @@ public class Gigs5101TheoryTests
             current = current.Parent;
         }
 
-        return null;
+        return default!;
     }
 
     private static double ToNumericTolerance(double value, string unit)

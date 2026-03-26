@@ -24,7 +24,7 @@ internal static class AxisOrderHelper
         CoordinateSystem target,
         out MathTransform transform)
     {
-        transform = null;
+        transform = default!;
         if (source is null || target is null)
         {
             return false;

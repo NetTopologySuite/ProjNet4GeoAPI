@@ -177,7 +177,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
             return this.GetCoordinateSystem(srid.Value);
         }
 
-        return null;
+        return default!;
     }
 
     /// <summary>
@@ -189,7 +189,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     /// <returns><see langword="true"/> if a coordinate system was found; otherwise <see langword="false"/>.</returns>
     public bool TryGetCoordinateSystem(string authority, long code, out CoordinateSystem coordinateSystem)
     {
-        coordinateSystem = null;
+        coordinateSystem = default!;
         int? srid = this.GetSRID(authority, code);
         if (!srid.HasValue)
         {
@@ -226,7 +226,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
             return srid;
         }
 
-        return null;
+        return default!;
     }
 
     /// <summary>
@@ -340,7 +340,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
         catch (Exception)
         {
             // as a fallback we ignore projections not supported
-            return null;
+            return default!;
         }
     }
 

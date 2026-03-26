@@ -491,6 +491,6 @@ public class ProjectionsRegistry
             }
         }
 
-        return null;
+        return default!;
     }
 }

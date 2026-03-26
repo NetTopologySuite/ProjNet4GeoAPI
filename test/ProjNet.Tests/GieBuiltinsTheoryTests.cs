@@ -352,7 +352,7 @@ public class GieBuiltinsTheoryTests
             Assert.Skip("Case does not contain enough coordinates for 2D comparison.");
         }
 
-        double[] output = null;
+        double[] output = default!;
         if (TryCreateConversionTransform(testCase.Operation, out Func<double[], double[]> conversionTransform, out string conversionSkipReason))
         {
             try
@@ -477,8 +477,8 @@ public class GieBuiltinsTheoryTests
 
     private static bool TryCreateTransform(GieCase testCase, out MathTransform transform, out string skipReason)
     {
-        transform = null;
-        skipReason = null;
+        transform = default!;
+        skipReason = default!;
 
         if (!TryParseOperationArguments(testCase.Operation, out Dictionary<string, string> args))
         {
@@ -486,13 +486,13 @@ public class GieBuiltinsTheoryTests
             return false;
         }
 
-        if (!args.TryGetValue("proj", out string projCode))
+        if (!args.TryGetValue("proj", out string? projCode))
         {
             skipReason = "Operation is missing +proj.";
             return false;
         }
 
-        if (!ProjectionClassByProjCode.TryGetValue(projCode, out string projectionClass))
+        if (!ProjectionClassByProjCode.TryGetValue(projCode, out string? projectionClass))
         {
             skipReason = "Projection '" + projCode + "' is not part of the current builtins wave.";
             return false;
@@ -562,7 +562,7 @@ public class GieBuiltinsTheoryTests
 
     private static bool TryCreateConversionTransform(string operation, out Func<double[], double[]> transform, out string skipReason)
     {
-        transform = null;
+        transform = default!;
         if (!CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform mathTransform, out skipReason))
         {
             return false;
@@ -652,7 +652,7 @@ public class GieBuiltinsTheoryTests
                     return false;
                 }
 
-                if (!stepArgs.TryGetValue("proj", out string stepProjCode))
+                if (!stepArgs.TryGetValue("proj", out string? stepProjCode))
                 {
                     return false;
                 }
@@ -671,7 +671,7 @@ public class GieBuiltinsTheoryTests
 
     private static bool TryCreateGeographicCoordinateSystem(Dictionary<string, string> args, out GeographicCoordinateSystem gcs)
     {
-        gcs = null;
+        gcs = default!;
 
         if (!TryResolveEllipsoid(args, out Ellipsoid ellipsoid))
         {
@@ -691,7 +691,7 @@ public class GieBuiltinsTheoryTests
 
     private static bool TryResolveEllipsoid(Dictionary<string, string> args, out Ellipsoid ellipsoid)
     {
-        ellipsoid = null;
+        ellipsoid = default!;
 
         if (TryGetDouble(args, "r", out double sphereRadius) && sphereRadius > 0d)
         {
@@ -714,7 +714,7 @@ public class GieBuiltinsTheoryTests
             }
         }
 
-        if (args.TryGetValue("ellps", out string ellps))
+        if (args.TryGetValue("ellps", out string? ellps))
         {
             if (ellps.Equals("wgs84", StringComparison.OrdinalIgnoreCase))
             {
@@ -814,7 +814,7 @@ public class GieBuiltinsTheoryTests
         AddOptionalParameter(parameters, args, "lonc", "longitude_of_center");
         AddOptionalParameter(parameters, args, "h", "h");
         AddOptionalParameter(parameters, args, "satellite_height", "h");
-        if (args.TryGetValue("shape", out string shapeToken))
+        if (args.TryGetValue("shape", out string? shapeToken))
         {
             if (!TryGetPeirceShapeCode(shapeToken, out double shapeCode))
             {
@@ -826,7 +826,7 @@ public class GieBuiltinsTheoryTests
 
         AddOptionalParameter(parameters, args, "scrollx", "scrollx");
         AddOptionalParameter(parameters, args, "scrolly", "scrolly");
-        if (args.TryGetValue("UVtoST", out string uvToStMode)
+        if (args.TryGetValue("UVtoST", out string? uvToStMode)
             || args.TryGetValue("uvtost", out uvToStMode)
             || args.TryGetValue("uv_to_st", out uvToStMode))
         {
@@ -871,15 +871,15 @@ public class GieBuiltinsTheoryTests
         AddOptionalParameter(parameters, args, "lat_1", "latitude1");
         AddOptionalParameter(parameters, args, "lon_2", "longitude2");
         AddOptionalParameter(parameters, args, "lat_2", "latitude2");
-        if (args.TryGetValue("sweep", out string sweepAxis))
+        if (args.TryGetValue("sweep", out string? sweepAxis))
         {
             double sweepX = sweepAxis.Equals("x", StringComparison.OrdinalIgnoreCase) ? 1d : 0d;
             ReplaceParameter(parameters, "sweep_x", sweepX);
         }
 
-        if (args.TryGetValue("proj", out string projectionCode))
+        if (args.TryGetValue("proj", out string? projectionCode))
         {
-            if (projectionCode.Equals("airocean", StringComparison.OrdinalIgnoreCase) && args.TryGetValue("orient", out string airoceanOrientation))
+            if (projectionCode.Equals("airocean", StringComparison.OrdinalIgnoreCase) && args.TryGetValue("orient", out string? airoceanOrientation))
             {
                 if (!TryGetAiroceanOrientationCode(airoceanOrientation, out double orientationCode))
                 {
@@ -891,7 +891,7 @@ public class GieBuiltinsTheoryTests
 
             if (projectionCode.Equals("isea", StringComparison.OrdinalIgnoreCase))
             {
-                if (args.TryGetValue("orient", out string iseaOrientation))
+                if (args.TryGetValue("orient", out string? iseaOrientation))
                 {
                     if (!TryGetIseaOrientCode(iseaOrientation, out double orientCode))
                     {
@@ -901,7 +901,7 @@ public class GieBuiltinsTheoryTests
                     ReplaceParameter(parameters, "isea_orient", orientCode);
                 }
 
-                if (args.TryGetValue("mode", out string iseaMode))
+                if (args.TryGetValue("mode", out string? iseaMode))
                 {
                     if (!TryGetIseaModeCode(iseaMode, out double modeCode))
                     {
@@ -937,7 +937,7 @@ public class GieBuiltinsTheoryTests
             ReplaceParameter(parameters, "ns", 1d);
         }
 
-        if (args.TryGetValue("proj", out string projCode) && projCode.Equals("utm", StringComparison.OrdinalIgnoreCase))
+        if (args.TryGetValue("proj", out string? projCode) && projCode.Equals("utm", StringComparison.OrdinalIgnoreCase))
         {
             if (!TryGetZoneCentralMeridian(args, out double utmCentralMeridian))
             {
@@ -957,7 +957,7 @@ public class GieBuiltinsTheoryTests
     private static bool TryGetZoneCentralMeridian(Dictionary<string, string> args, out double centralMeridian)
     {
         centralMeridian = 0d;
-        if (!args.TryGetValue("zone", out string zoneToken) || string.IsNullOrWhiteSpace(zoneToken))
+        if (!args.TryGetValue("zone", out string? zoneToken) || string.IsNullOrWhiteSpace(zoneToken))
         {
             return false;
         }
@@ -1013,7 +1013,7 @@ public class GieBuiltinsTheoryTests
 
     private static bool TryExtractProjCode(string operation, out string projCode)
     {
-        projCode = null;
+        projCode = default!;
         if (!TryParseOperationArguments(operation, out Dictionary<string, string> args))
         {
             return false;
@@ -1041,7 +1041,7 @@ public class GieBuiltinsTheoryTests
 
         if (args.ContainsKey("alpha"))
         {
-            if (!args.TryGetValue("proj", out string projCode) || !projCode.Equals("ocea", StringComparison.OrdinalIgnoreCase))
+            if (!args.TryGetValue("proj", out string? projCode) || !projCode.Equals("ocea", StringComparison.OrdinalIgnoreCase))
             {
                 return true;
             }
@@ -1054,7 +1054,7 @@ public class GieBuiltinsTheoryTests
 
         if (args.ContainsKey("north_square") || args.ContainsKey("south_square"))
         {
-            if (!args.TryGetValue("proj", out string projectionCodeForSquares)
+            if (!args.TryGetValue("proj", out string? projectionCodeForSquares)
                 || !projectionCodeForSquares.Equals("rhealpix", StringComparison.OrdinalIgnoreCase))
             {
                 return true;
@@ -1081,7 +1081,7 @@ public class GieBuiltinsTheoryTests
             return true;
         }
 
-        if (args.TryGetValue("units", out string units) && !units.Equals("m", StringComparison.OrdinalIgnoreCase))
+        if (args.TryGetValue("units", out string? units) && !units.Equals("m", StringComparison.OrdinalIgnoreCase))
         {
             return true;
         }
@@ -1092,7 +1092,7 @@ public class GieBuiltinsTheoryTests
     private static bool TryGetDouble(Dictionary<string, string> args, string key, out double value)
     {
         value = 0d;
-        if (!args.TryGetValue(key, out string raw) || string.IsNullOrWhiteSpace(raw))
+        if (!args.TryGetValue(key, out string? raw) || string.IsNullOrWhiteSpace(raw))
         {
             return false;
         }
@@ -1261,7 +1261,7 @@ public class GieBuiltinsTheoryTests
             current = current.Parent;
         }
 
-        return null;
+        return default!;
     }
 
     private static double ToNumericTolerance(double value, string unit)

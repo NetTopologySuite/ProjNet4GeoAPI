@@ -85,7 +85,7 @@ public class CoordinateTransformationFactory
             var fallbackWithMetadata = this.CreateFromCoordinateSystemsCore(sourceCS, targetCS);
             if (fallbackWithMetadata is null)
             {
-                return null;
+                return default!;
             }
 
             return CreateMetadataBackedTransformation(sourceCS, targetCS, fallbackWithMetadata, operation, resolvedGridPath);
@@ -119,7 +119,7 @@ public class CoordinateTransformationFactory
         string resolvedGridPath,
         out ICoordinateTransformation transformation)
     {
-        transformation = null;
+        transformation = default!;
 
         if (source is GeographicCoordinateSystem sourceGeographic && target is GeographicCoordinateSystem targetGeographic)
         {
@@ -153,7 +153,7 @@ public class CoordinateTransformationFactory
         string resolvedGridPath,
         out ICoordinateTransformation transformation)
     {
-        transformation = null;
+        transformation = default!;
 
         if (!(source is ProjectedCoordinateSystem sourceProjected) || !(target is ProjectedCoordinateSystem targetProjected))
         {
@@ -171,7 +171,7 @@ public class CoordinateTransformationFactory
         CoordinateOperationDefinition operation,
         out CoordinateTransformation transformation)
     {
-        transformation = null;
+        transformation = default!;
 
         if (!TryCreateBursaWolfParameters(operation, out var helmert))
         {
@@ -228,7 +228,7 @@ public class CoordinateTransformationFactory
         CoordinateOperationDefinition operation,
         out CoordinateTransformation transformation)
     {
-        transformation = null;
+        transformation = default!;
 
         if (!TryCreateExplicitGeographicTransformation(
                 source.GeographicCoordinateSystem,
@@ -259,7 +259,7 @@ public class CoordinateTransformationFactory
 
     private static bool TryCreateBursaWolfParameters(CoordinateOperationDefinition operation, out Wgs84ConversionInfo parameters)
     {
-        parameters = null;
+        parameters = default!;
 
         if (operation is null)
         {
@@ -356,7 +356,7 @@ public class CoordinateTransformationFactory
         CoordinateSystem target,
         out ICoordinateTransformation transformation)
     {
-        transformation = null;
+        transformation = default!;
 
         if (source is null || target is null)
         {
@@ -437,7 +437,7 @@ public class CoordinateTransformationFactory
             return true;
         }
 
-        transform = null;
+        transform = default!;
         return false;
     }
 
@@ -479,7 +479,7 @@ public class CoordinateTransformationFactory
             return TryCreateUnitConversionTransform(sourceGeocentric, targetGeocentric, out transform);
         }
 
-        transform = null;
+        transform = default!;
         return false;
     }
 
@@ -500,7 +500,7 @@ public class CoordinateTransformationFactory
     {
         if (source.LinearUnit is null || target.LinearUnit is null)
         {
-            transform = null;
+            transform = default!;
             return false;
         }
 
@@ -516,7 +516,7 @@ public class CoordinateTransformationFactory
     {
         if (source.LinearUnit is null || target.LinearUnit is null)
         {
-            transform = null;
+            transform = default!;
             return false;
         }
 
@@ -907,7 +907,7 @@ public class CoordinateTransformationFactory
         // If we don't have a transformation in this list, return null
         if (ct.CoordinateTransformationList.Count == 0)
         {
-            return null;
+            return default!;
         }
 
         // If we only have one shift, lets just return the datumshift from/to wgs84
@@ -1165,8 +1165,8 @@ public class CoordinateTransformationFactory
         out CoordinateOperationDefinition operation,
         out string resolvedGridPath)
     {
-        operation = null;
-        resolvedGridPath = null;
+        operation = default!;
+        resolvedGridPath = default!;
 
         if (!(source is ProjectedCoordinateSystem) || !(target is ProjectedCoordinateSystem))
         {
@@ -1187,8 +1187,8 @@ public class CoordinateTransformationFactory
         out CoordinateOperationDefinition operation,
         out string resolvedGridPath)
     {
-        operation = null;
-        resolvedGridPath = null;
+        operation = default!;
+        resolvedGridPath = default!;
 
         if (!TryGetEpsgCode(source, out int sourceSrid) || !TryGetEpsgCode(target, out int targetSrid))
         {
@@ -1204,15 +1204,15 @@ public class CoordinateTransformationFactory
         out CoordinateOperationDefinition operation,
         out string resolvedGridPath)
     {
-        operation = null;
-        resolvedGridPath = null;
+        operation = default!;
+        resolvedGridPath = default!;
 
         if (!DirectOperationDefinitions.Value.TryGetValue(new SridPair(sourceSrid, targetSrid), out var operations))
         {
             return false;
         }
 
-        string missingGridFile = null;
+        string missingGridFile = default!;
         foreach (var candidate in operations)
         {
             if (string.IsNullOrWhiteSpace(candidate.ParameterFileName))

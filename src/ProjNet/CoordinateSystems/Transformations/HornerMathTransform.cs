@@ -146,7 +146,7 @@ internal sealed class HornerMathTransform : MathTransform
     public override void Invert()
     {
         this.isInverted = !this.isInverted;
-        this.inverse = null;
+        this.inverse = default!;
     }
 
     /// <inheritdoc />
@@ -201,8 +201,8 @@ internal sealed class HornerMathTransform : MathTransform
         out MathTransform transform,
         out string skipReason)
     {
-        transform = null;
-        skipReason = null;
+        transform = default!;
+        skipReason = default!;
 
         if (args is null)
         {
@@ -223,12 +223,12 @@ internal sealed class HornerMathTransform : MathTransform
             ? GetComplexCoefficientCount(degree)
             : GetRealCoefficientCount(degree);
 
-        double[] fwdU = null;
-        double[] fwdV = null;
-        double[] invU = null;
-        double[] invV = null;
-        double[] fwdC = null;
-        double[] invC = null;
+        double[] fwdU = default!;
+        double[] fwdV = default!;
+        double[] invU = default!;
+        double[] invV = default!;
+        double[] fwdC = default!;
+        double[] invC = default!;
 
         if (isComplex)
         {
@@ -348,9 +348,9 @@ internal sealed class HornerMathTransform : MathTransform
         out string skipReason)
     {
         degree = 0;
-        skipReason = null;
+        skipReason = default!;
 
-        if (!args.TryGetValue("deg", out string degreeToken) || string.IsNullOrWhiteSpace(degreeToken))
+        if (!args.TryGetValue("deg", out string? degreeToken) || string.IsNullOrWhiteSpace(degreeToken))
         {
             skipReason = "Must specify polynomial degree, (+deg=n)";
             return false;
@@ -378,10 +378,10 @@ internal sealed class HornerMathTransform : MathTransform
         out double[] coefficients,
         out string skipReason)
     {
-        coefficients = null;
-        skipReason = null;
+        coefficients = default!;
+        skipReason = default!;
 
-        if (!args.TryGetValue(key, out string token) || string.IsNullOrWhiteSpace(token))
+        if (!args.TryGetValue(key, out string? token) || string.IsNullOrWhiteSpace(token))
         {
             skipReason = "missing " + key;
             return false;
@@ -408,7 +408,7 @@ internal sealed class HornerMathTransform : MathTransform
     {
         x = 0d;
         y = 0d;
-        skipReason = null;
+        skipReason = default!;
 
         if (!TryParseCoefficientList(args, key, 2, out double[] values, out skipReason))
         {
@@ -428,9 +428,9 @@ internal sealed class HornerMathTransform : MathTransform
         out string skipReason)
     {
         value = defaultValue;
-        skipReason = null;
+        skipReason = default!;
 
-        if (!args.TryGetValue(key, out string token) || string.IsNullOrWhiteSpace(token))
+        if (!args.TryGetValue(key, out string? token) || string.IsNullOrWhiteSpace(token))
         {
             return true;
         }

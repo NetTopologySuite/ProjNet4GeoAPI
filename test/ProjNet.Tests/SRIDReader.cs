@@ -37,7 +37,7 @@ internal sealed class SRIDReader
             }
         }
 
-        return null;
+        return default!;
     }
 
     /// <summary>

@@ -23,7 +23,7 @@ public class WKTMathTransformParserTests
     public void ParseAffineTransformWkt()
     {
         // TODO MathTransformFactory fac = new MathTransformFactory ();
-        MathTransform mt = null;
+        MathTransform mt = default!;
         string wkt = "PARAM_MT[\"Affine\"," +
                         "PARAMETER[\"num_row\",3]," +
                         "PARAMETER[\"num_col\",3]," +
@@ -70,7 +70,7 @@ public class WKTMathTransformParserTests
     public void TestMathTransformWktReaderExponencialNumberParsingIssue(string wkt)
     {
         // string wkt = "PARAM_MT[\"Affine\",PARAMETER[\"num_row\", 3],PARAMETER[\"num_col\", 3],PARAMETER[\"elt_0_0\", 6.12303176911189E-17]]";
-        MathTransform mt = null;
+        MathTransform mt = default!;
 
         try
         {

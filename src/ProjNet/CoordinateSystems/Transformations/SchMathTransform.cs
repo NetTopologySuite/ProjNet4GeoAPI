@@ -223,8 +223,8 @@ internal sealed class SchMathTransform : MathTransform
         out MathTransform transform,
         out string skipReason)
     {
-        transform = null;
-        skipReason = null;
+        transform = default!;
+        skipReason = default!;
 
         if (args is null)
         {
@@ -324,12 +324,12 @@ internal sealed class SchMathTransform : MathTransform
             return true;
         }
 
-        if (args.TryGetValue("ellps", out string ellps) && !string.IsNullOrWhiteSpace(ellps))
+        if (args.TryGetValue("ellps", out string? ellps) && !string.IsNullOrWhiteSpace(ellps))
         {
             return TryResolveKnownEllipsoid(ellps, out semiMajor, out semiMinor);
         }
 
-        if (args.TryGetValue("datum", out string datum) && !string.IsNullOrWhiteSpace(datum))
+        if (args.TryGetValue("datum", out string? datum) && !string.IsNullOrWhiteSpace(datum))
         {
             return TryResolveKnownEllipsoid(datum, out semiMajor, out semiMinor);
         }
@@ -394,7 +394,7 @@ internal sealed class SchMathTransform : MathTransform
     private static bool TryGetFromArgs(Dictionary<string, string> args, string key, out double value)
     {
         value = 0d;
-        if (!args.TryGetValue(key, out string token) || string.IsNullOrWhiteSpace(token))
+        if (!args.TryGetValue(key, out string? token) || string.IsNullOrWhiteSpace(token))
         {
             return false;
         }

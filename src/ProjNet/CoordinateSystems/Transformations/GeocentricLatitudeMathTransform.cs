@@ -87,7 +87,7 @@ internal sealed class GeocentricLatitudeMathTransform : MathTransform
     public override void Invert()
     {
         this.isInverse = !this.isInverse;
-        this.inverse = null;
+        this.inverse = default!;
     }
 
     /// <inheritdoc/>

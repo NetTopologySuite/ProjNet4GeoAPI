@@ -39,7 +39,7 @@ public class Wgs84ConversionInfoTests
         var info = new Wgs84ConversionInfo();
         Span<double> destination = stackalloc double[6];
 
-        ArgumentException exception = null;
+        ArgumentException exception = default!;
         try
         {
             info.WriteAffineTransform(destination);

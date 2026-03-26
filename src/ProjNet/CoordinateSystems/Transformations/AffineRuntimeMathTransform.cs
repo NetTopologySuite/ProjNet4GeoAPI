@@ -119,8 +119,8 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
         out MathTransform transform,
         out string skipReason)
     {
-        transform = null;
-        skipReason = null;
+        transform = default!;
+        skipReason = default!;
 
         if (args is null)
         {
@@ -197,9 +197,9 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
         out double value,
         out string skipReason)
     {
-        skipReason = null;
+        skipReason = default!;
         value = defaultValue;
-        if (!args.TryGetValue(key, out string token))
+        if (!args.TryGetValue(key, out string? token))
         {
             return true;
         }
@@ -361,8 +361,8 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
 
     private bool TryCreateInverse(out MathTransform inverseTransform, out string error)
     {
-        inverseTransform = null;
-        error = null;
+        inverseTransform = default!;
+        error = default!;
 
         if (!TryInvertSpatialMatrix(
                 this.s11,

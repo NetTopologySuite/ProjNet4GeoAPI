@@ -93,7 +93,7 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
     public override void Invert()
     {
         this.isInverted = !this.isInverted;
-        this.inverse = null;
+        this.inverse = default!;
     }
 
     /// <inheritdoc />
@@ -234,7 +234,7 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
             }
         }
 
-        grid = null;
+        grid = default!;
         return false;
     }
 
