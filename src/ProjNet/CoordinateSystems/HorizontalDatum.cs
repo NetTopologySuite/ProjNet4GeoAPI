@@ -223,12 +223,14 @@ public class HorizontalDatum : Datum
             return false;
         }
 
-        if (datum.Wgs84Parameters is null && this.Wgs84Parameters is not null)
+        if ((datum.Wgs84Parameters is null) != (this.Wgs84Parameters is null))
         {
             return false;
         }
 
-        if (datum.Wgs84Parameters is not null && !datum.Wgs84Parameters.Equals(this.Wgs84Parameters))
+        if (datum.Wgs84Parameters is not null
+            && this.Wgs84Parameters is not null
+            && !datum.Wgs84Parameters.Equals(this.Wgs84Parameters))
         {
             return false;
         }

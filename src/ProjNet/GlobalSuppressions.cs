@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
+#nullable enable annotations
+
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Naming", "CA1707:Identifiers should not contain underscores", Justification = "Legacy API naming retained for compatibility.", Scope = "member", Target = "~M:ProjNet.CoordinateSystems.ProjectedCoordinateSystem.WGS84_UTM(System.Int32,System.Boolean)")]
