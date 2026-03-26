@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
+#nullable enable
+
 namespace ProjNet.CoordinateSystems.Projections;
 
 using System;
@@ -116,3 +118,4 @@ internal class VanDerGrinten4Projection : MapProjection
         throw new InvalidOperationException("van der Grinten IV does not support inverse projection in this wave.");
     }
 }
+

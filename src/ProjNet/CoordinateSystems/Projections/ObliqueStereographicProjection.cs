@@ -4,6 +4,8 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from GeoTools.NET.
 
+#nullable enable
+
 namespace ProjNet.CoordinateSystems.Projections;
 
 using System;
@@ -172,3 +174,4 @@ internal class ObliqueStereographicProjection : MapProjection
         return Math.Pow((1.0 - esinp) / (1.0 + esinp), exp);
     }
 }
+

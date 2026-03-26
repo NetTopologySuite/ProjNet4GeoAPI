@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
+#nullable enable
+
 namespace ProjNet.CoordinateSystems.Projections;
 
 using System;
@@ -78,3 +80,4 @@ internal class EquidistantCylindricalProjection : MapProjection
         y = this.latOrigin + (y * this.inverseRadius);
     }
 }
+

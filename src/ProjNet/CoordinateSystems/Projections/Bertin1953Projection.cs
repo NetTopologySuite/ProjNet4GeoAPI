@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
+#nullable enable
+
 namespace ProjNet.CoordinateSystems.Projections;
 
 using System;
@@ -109,3 +111,4 @@ internal sealed class Bertin1953Projection : MapProjection
         throw new InvalidOperationException("Bertin 1953 does not support inverse projection in this wave.");
     }
 }
+

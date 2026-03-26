@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
+#nullable enable
+
 namespace ProjNet.CoordinateSystems.Projections;
 
 using System;
@@ -89,3 +91,4 @@ internal sealed class RectangularPolyconicProjection : MapProjection
         throw new InvalidOperationException("Rectangular Polyconic does not support inverse projection in this wave.");
     }
 }
+

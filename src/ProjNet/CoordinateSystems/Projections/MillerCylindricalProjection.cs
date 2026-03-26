@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
+#nullable enable
+
 namespace ProjNet.CoordinateSystems.Projections;
 
 using System;
@@ -81,3 +83,4 @@ internal class MillerCylindricalProjection : MapProjection
         y = 2.5d * (Math.Atan(Math.Exp((0.8d * y) * this.inverseRadius)) - FortPi);
     }
 }
+
