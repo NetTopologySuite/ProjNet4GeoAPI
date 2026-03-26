@@ -333,7 +333,7 @@ namespace ProjNet.CoordinateSystems
         public override bool EqualParams(object obj) { }
     }
     [System.Serializable]
-    public class Wgs84ConversionInfo
+    public class Wgs84ConversionInfo : System.IEquatable<ProjNet.CoordinateSystems.Wgs84ConversionInfo>
     {
         public string AreaOfUse;
         public double Dx;
