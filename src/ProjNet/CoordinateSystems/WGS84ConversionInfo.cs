@@ -34,7 +34,7 @@ using System.Globalization;
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1051:Do not declare visible instance fields", Justification = "Legacy Bursa-Wolf parameter fields are part of the long-standing public API.")]
 [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Legacy Bursa-Wolf parameter fields are part of the long-standing public API.")]
 [Serializable]
-public class Wgs84ConversionInfo
+public class Wgs84ConversionInfo : IEquatable<Wgs84ConversionInfo>
 {
     /// <summary>
     /// Conversion factor from arc-seconds to radians: <c>(π / 180) / 3600</c>.
@@ -257,7 +257,7 @@ public class Wgs84ConversionInfo
     public override string ToString() => this.WKT;
 
     /// <inheritdoc />
-    public override bool Equals(object obj) => this.Equals(obj as Wgs84ConversionInfo);
+    public override bool Equals(object obj) => this.EqualsCore(obj as Wgs84ConversionInfo);
 
     /// <summary>
     /// Returns a hash code for the specified object.
@@ -274,6 +274,11 @@ public class Wgs84ConversionInfo
     /// <param name="obj">The <see cref="Wgs84ConversionInfo"/> instance to compare against.</param>
     /// <returns><see langword="true"/> if all seven parameter values are equal; otherwise, <see langword="false"/>.</returns>
     public bool Equals(Wgs84ConversionInfo obj)
+    {
+        return this.EqualsCore(obj);
+    }
+
+    private bool EqualsCore(Wgs84ConversionInfo? obj)
     {
         if (obj is null)
         {
