@@ -152,6 +152,16 @@ internal static class ArgumentGuard
     }
 
     /// <summary>
+    /// Throws an <see cref="ArgumentNullException"/>.
+    /// </summary>
+    /// <param name="paramName">Parameter name for exception reporting.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static void ThrowArgumentNull(string paramName)
+    {
+        throw new ArgumentNullException(paramName);
+    }
+
+    /// <summary>
     /// Throws an <see cref="ArgumentException"/> with parameter context.
     /// </summary>
     /// <param name="message">Exception message.</param>

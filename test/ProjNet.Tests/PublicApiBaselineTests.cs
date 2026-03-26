@@ -54,7 +54,7 @@ public class PublicApiBaselineTests
     private static string GetBaselinePath()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
-        while (directory != null)
+        while (directory is not null)
         {
             string solutionPath = Path.Combine(directory.FullName, "ProjNet4GeoAPI.sln");
             if (File.Exists(solutionPath))

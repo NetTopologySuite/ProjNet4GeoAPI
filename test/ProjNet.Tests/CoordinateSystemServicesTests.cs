@@ -214,7 +214,7 @@ public class CoordinateSystemServicesTests
         foreach (var node in rs)
         {
             var sridElement = node.Element("SRID");
-            if (sridElement != null)
+            if (sridElement is not null)
             {
                 int srid = int.Parse(sridElement.Value, CultureInfo.InvariantCulture);
                 yield return new KeyValuePair<int, string>(srid, node.LastNode.ToString());

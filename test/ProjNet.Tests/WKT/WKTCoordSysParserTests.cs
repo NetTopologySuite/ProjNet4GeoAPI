@@ -168,7 +168,7 @@ public class WKTCoordSysParserTests
                     {
                         string wkt = line.Substring(split + 1);
                         var cs = fac.CreateFromWkt(wkt);
-                        if (cs == null)
+                        if (cs is null)
                         {
                             continue; // We check this in another test.
                         }
@@ -646,7 +646,7 @@ public class WKTCoordSysParserTests
         Assert.Equal(name, projection.ClassName);
         CheckInfo(projection, name, authority, code);
 
-        if (pp == null)
+        if (pp is null)
         {
             return;
         }

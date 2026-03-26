@@ -117,7 +117,7 @@ public class GridResourceResolverTests
         {
             this.Calls++;
             this.OnFetch?.Invoke(targetFilePath);
-            return this.OnFetch != null;
+            return this.OnFetch is not null;
         }
     }
 }

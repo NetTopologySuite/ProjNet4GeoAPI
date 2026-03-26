@@ -42,7 +42,7 @@ public static partial class CoordinateSystemWktReader
     {
         if (wkt.IsEmpty || IsWhitespaceOnly(wkt))
         {
-            ArgumentGuard.ThrowArgument("WKT text must not be empty or whitespace.", nameof(wkt));
+            ArgumentGuard.ThrowArgumentNull(nameof(wkt));
         }
 
         string normalizedWkt = NormalizeWkt(wkt.ToString());
