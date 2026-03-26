@@ -3,46 +3,29 @@
 
 namespace ProjNet.CoordinateSystems.Transformations;
 
-using System;
-
 /// <summary>
 /// Represents a source/target SRID pair for dictionary lookups.
 /// </summary>
-internal readonly struct SridPair(int sourceSrid, int targetSrid) : IEquatable<SridPair>
+internal readonly record struct SridPair
 {
     /// <summary>
     /// Gets the source SRID.
     /// </summary>
-    internal int SourceSrid { get; } = sourceSrid;
+    internal int SourceSrid { get; }
 
     /// <summary>
     /// Gets the target SRID.
     /// </summary>
-    internal int TargetSrid { get; } = targetSrid;
+    internal int TargetSrid { get; }
 
     /// <summary>
-    /// Compares this pair with another SRID pair.
+    /// Initializes a new instance of the <see cref="SridPair"/> record struct.
     /// </summary>
-    /// <param name="other">The pair to compare.</param>
-    /// <returns><see langword="true"/> when source and target SRIDs are equal.</returns>
-    public bool Equals(SridPair other)
+    /// <param name="sourceSrid">The source SRID.</param>
+    /// <param name="targetSrid">The target SRID.</param>
+    internal SridPair(int sourceSrid, int targetSrid)
     {
-        return this.SourceSrid == other.SourceSrid
-            && this.TargetSrid == other.TargetSrid;
-    }
-
-    /// <inheritdoc />
-    public override bool Equals(object obj)
-    {
-        return obj is SridPair other && this.Equals(other);
-    }
-
-    /// <inheritdoc />
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            return (this.SourceSrid * 397) ^ this.TargetSrid;
-        }
+        this.SourceSrid = sourceSrid;
+        this.TargetSrid = targetSrid;
     }
 }
