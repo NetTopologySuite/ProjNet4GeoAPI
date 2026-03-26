@@ -85,20 +85,9 @@ internal class LambertConformalConic2SP : MapProjection
         this.Authority = "EPSG";
         this.AuthorityCode = 9802;
 
-        // Check for missing parameters
-        // Since this implementation supports conic 1SP and 2SP we add the support for the 1SP implementation here.
-        // There is no need for standard_parallel_1 and standard_parallel_2 parameters in this version: https://pro.arcgis.com/en/pro-app/latest/help/mapping/properties/lambert-conformal-conic.htm
+        // This implementation supports both 2SP and 1SP-style inputs by falling back to latitude_of_origin.
         double lat1 = DegreesToRadians(this.Parameters.GetParameterValue("standard_parallel_1", LatitudeOfOriginFallback));
         double lat2 = DegreesToRadians(this.Parameters.GetParameterValue("standard_parallel_2", LatitudeOfOriginFallback));
-
-        double sin_po; // sin value
-        double cos_po; // cos value
-        double con; // temporary variable
-        double ms1; // small m 1
-        double ms2; // small m 2
-        double ts0; // small t 0
-        double ts1; // small t 1
-        double ts2; // small t 2
 
         // Standard parallels cannot be equal and on opposite sides of the equator.
         if (Math.Abs(lat1 + lat2) < Epsln)
@@ -106,15 +95,16 @@ internal class LambertConformalConic2SP : MapProjection
             throw new ArgumentException("Equal latitudes for St. Parallels on opposite sides of equator.");
         }
 
-        Sincos(lat1, out sin_po, out cos_po);
-        con = sin_po;
-        ms1 = Msfnz(this.e, sin_po, cos_po);
-        ts1 = Tsfnz(this.e, lat1, sin_po);
-        Sincos(lat2, out sin_po, out cos_po);
-        ms2 = Msfnz(this.e, sin_po, cos_po);
-        ts2 = Tsfnz(this.e, lat2, sin_po);
-        sin_po = Math.Sin(this.latOrigin);
-        ts0 = Tsfnz(this.e, this.latOrigin, sin_po);
+        Sincos(lat1, out double sinLatitude1, out double cosLatitude1);
+        double ms1 = Msfnz(this.e, sinLatitude1, cosLatitude1);
+        double ts1 = Tsfnz(this.e, lat1, sinLatitude1);
+
+        Sincos(lat2, out double sinLatitude2, out double cosLatitude2);
+        double ms2 = Msfnz(this.e, sinLatitude2, cosLatitude2);
+        double ts2 = Tsfnz(this.e, lat2, sinLatitude2);
+
+        double sinLatitudeOrigin = Math.Sin(this.latOrigin);
+        double ts0 = Tsfnz(this.e, this.latOrigin, sinLatitudeOrigin);
 
         if (Math.Abs(lat1 - lat2) > Epsln)
         {
@@ -122,7 +112,7 @@ internal class LambertConformalConic2SP : MapProjection
         }
         else
         {
-            this.ns = con;
+            this.ns = sinLatitude1;
         }
 
         this.f0 = ms1 / (this.ns * Math.Pow(ts1, this.ns));
@@ -136,37 +126,32 @@ internal class LambertConformalConic2SP : MapProjection
     /// <param name="lat">The latitude of the point in radians when entering, its y-ordinate in meters after exit.</param>
     protected override void RadiansToMeters(ref double lon, ref double lat)
     {
-        double dLongitude = lon;
-        double dLatitude = lat;
+        double longitude = lon;
+        double latitude = lat;
+        double radialDistance;
 
-        double con; // temporary angle variable
-        double rh1; // height above ellipsoid
-        double sinphi; // sin value
-        double theta; // angle
-        double ts; // small value t
-
-        con = Math.Abs(Math.Abs(dLatitude) - HalfPi);
-        if (con > Epsln)
+        double latitudeDistanceFromPole = Math.Abs(Math.Abs(latitude) - HalfPi);
+        if (latitudeDistanceFromPole > Epsln)
         {
-            sinphi = Math.Sin(dLatitude);
-            ts = Tsfnz(this.e, dLatitude, sinphi);
-            rh1 = this.semiMajor * this.f0 * Math.Pow(ts, this.ns);
+            double sinLatitude = Math.Sin(latitude);
+            double ts = Tsfnz(this.e, latitude, sinLatitude);
+            radialDistance = this.semiMajor * this.f0 * Math.Pow(ts, this.ns);
         }
         else
         {
-            con = dLatitude * this.ns;
-            if (con <= 0)
+            double signedLatitude = latitude * this.ns;
+            if (signedLatitude <= 0)
             {
                 throw new ArgumentException("Latitude is outside the valid range for this projection.", nameof(lat));
             }
 
-            rh1 = 0;
+            radialDistance = 0;
         }
 
-        theta = this.ns * Adjust_lon(dLongitude - this.centralMeridian);
+        double theta = this.ns * Adjust_lon(longitude - this.centralMeridian);
 
-        lon = rh1 * Math.Sin(theta);
-        lat = this.rh - (rh1 * Math.Cos(theta));
+        lon = radialDistance * Math.Sin(theta);
+        lat = this.rh - (radialDistance * Math.Cos(theta));
     }
 
     /// <summary>
@@ -176,36 +161,28 @@ internal class LambertConformalConic2SP : MapProjection
     /// <param name="y">The y-ordinate when entering, the latitude value upon exit.</param>
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double rh1; // height above ellipsoid
-        double con; // sign variable
-        double ts; // small t
-        double theta; // angle
-
-        // long flag;
-        // error flag
         double dX = x;
         double dY = this.rh - y;
+        double sign;
+        double radialDistance;
+
         if (this.ns > 0)
         {
-            rh1 = Math.Sqrt((dX * dX) + (dY * dY));
-            con = 1.0;
+            radialDistance = Math.Sqrt((dX * dX) + (dY * dY));
+            sign = 1.0;
         }
         else
         {
-            rh1 = -Math.Sqrt((dX * dX) + (dY * dY));
-            con = -1.0;
+            radialDistance = -Math.Sqrt((dX * dX) + (dY * dY));
+            sign = -1.0;
         }
 
-        theta = 0.0;
-        if (rh1 != 0)
-        {
-            theta = Math.Atan2(con * dX, con * dY);
-        }
+        double theta = radialDistance != 0 ? Math.Atan2(sign * dX, sign * dY) : 0.0;
 
-        if ((rh1 != 0) || (this.ns > 0.0))
+        if ((radialDistance != 0) || (this.ns > 0.0))
         {
-            con = 1.0 / this.ns;
-            ts = Math.Pow(rh1 / (this.semiMajor * this.f0), con);
+            double exponent = 1.0 / this.ns;
+            double ts = Math.Pow(radialDistance / (this.semiMajor * this.f0), exponent);
             y = Phi2z(this.e, ts, out long flag);
             if (flag != 0)
             {
