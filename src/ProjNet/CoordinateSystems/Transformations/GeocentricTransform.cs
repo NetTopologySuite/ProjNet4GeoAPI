@@ -68,9 +68,6 @@ internal class GeocentricTransform : MathTransform
     /// </summary>
     private MathTransform inverse;
 
-    // private double ab; // Semi_major / semi_minor
-    // private double ba; // Semi_minor / semi_major
-
     /// <summary>
     /// Projection parameters used to initialize the transform.
     /// </summary>

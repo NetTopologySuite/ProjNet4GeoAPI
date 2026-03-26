@@ -475,22 +475,6 @@ public abstract class MapProjection : MathTransform, IProjection
             return false;
         }
 
-        // if (proj.NumParameters != NumParameters)
-        // return false;
-        //
-        // for (var i = 0; i < _Parameters.Count; i++)
-        // {
-        //     var param = _Parameters.Find(par => par.Name.Equals(proj.GetParameter(i).Name, StringComparison.OrdinalIgnoreCase));
-        //     if (param is null)
-        //     {
-        //         return false;
-        //     }
-        //
-        //     if (param.Value != proj.GetParameter(i).Value)
-        //     {
-        //         return false;
-        //     }
-        // }
         return this.IsInverse == proj.IsInverse;
     }
 
