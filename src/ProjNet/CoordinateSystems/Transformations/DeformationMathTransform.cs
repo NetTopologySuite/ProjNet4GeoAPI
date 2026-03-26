@@ -2,8 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-#nullable enable
-
+#nullable enable annotations
 namespace ProjNet.CoordinateSystems.Transformations;
 
 using System;
@@ -1592,4 +1591,3 @@ internal sealed class DeformationMathTransform : MathTransform
         }
     }
 }
-

@@ -2,8 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-#nullable enable
-
+#nullable enable annotations
 namespace ProjNet.CoordinateSystems.Projections;
 
 /// <summary>
@@ -36,4 +35,3 @@ internal static class ProjectionConstants
     /// </summary>
     internal const double Tolerance1E12 = 1e-12d;
 }
-

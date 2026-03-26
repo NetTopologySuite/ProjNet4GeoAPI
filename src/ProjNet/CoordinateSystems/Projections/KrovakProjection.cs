@@ -4,8 +4,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from GeoTools.NET.
 
-#nullable enable
-
+#nullable enable annotations
 namespace ProjNet.CoordinateSystems.Projections;
 
 using System;
@@ -203,4 +202,3 @@ internal class KrovakProjection : MapProjection
         return this.inverse;
     }
 }
-

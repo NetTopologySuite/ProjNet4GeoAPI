@@ -2,8 +2,7 @@
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
-#nullable enable
-
+#nullable enable annotations
 namespace ProjNet.CoordinateSystems.Transformations;
 
 using System;
@@ -108,4 +107,3 @@ internal class DatumTransform : MathTransform
         this.isInverse = !this.isInverse;
     }
 }
-

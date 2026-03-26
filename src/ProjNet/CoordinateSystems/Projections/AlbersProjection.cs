@@ -4,8 +4,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from GeoTools.NET.
 
-#nullable enable
-
+#nullable enable annotations
 namespace ProjNet.CoordinateSystems.Projections;
 
 using System;
@@ -196,4 +195,3 @@ internal class AlbersProjection : MapProjection
         return this.semiMajor * Math.Sqrt(this.c - (this.n * a)) / this.n;
     }
 }
-
