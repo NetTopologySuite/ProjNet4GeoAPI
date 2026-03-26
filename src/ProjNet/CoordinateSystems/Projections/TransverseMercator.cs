@@ -30,12 +30,12 @@ internal class TransverseMercator : MapProjection
     // Maximum difference allowed when comparing real numbers.
     private const double EPSILON = 1E-6;
 
-    // A derived quantity of eccentricity, computed by <code>e'Â² = (aÂ²-bÂ²)/bÂ² = es/(1-es)</code>
+    // A derived quantity of eccentricity, computed by <c>e'² = (a²-b²)/b² = es/(1-es)</c>
     // where <c>a</c> is the semi-major axis length and <c>b</c> is the semi-minor axis
     // length.
     private readonly double esp;
 
-    // Meridian distance at the {@code latitudeOfOrigin}.
+    // Meridian distance at the latitude of origin.
     // Used for calculations for the ellipsoid.
     private readonly double ml0;
 

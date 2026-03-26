@@ -103,7 +103,6 @@ internal class LambertConformalConic2SP : MapProjection
         // Standard parallels cannot be equal and on opposite sides of the equator.
         if (Math.Abs(lat1 + lat2) < Epsln)
         {
-            // Debug.Assert(true,"LambertConformalConic:LambertConformalConic() - Equal Latitiudes for St. Parallels on opposite sides of equator");
             throw new ArgumentException("Equal latitudes for St. Parallels on opposite sides of equator.");
         }
 

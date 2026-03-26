@@ -17,7 +17,7 @@ using System.Globalization;
 /// WGS84 datum using a Bursa Wolf transformation. However, it must be remembered that this transformation
 /// is only an approximation. For a given horizontal datum, different Bursa Wolf transformations can be
 /// used to minimize the errors over different regions.</para>
-/// <para>If the DATUM clause contains a TOWGS84 clause, then this should be its �preferred� transformation,
+/// <para>If the DATUM clause contains a TOWGS84 clause, then this should be its preferred transformation,
 /// which will often be the transformation which gives a broad approximation over the whole area of interest
 /// (e.g. the area of interest in the containing geographic coordinate system).</para>
 /// <para>Sometimes, only the first three or six parameters are defined. In this case the remaining
@@ -196,7 +196,7 @@ public class Wgs84ConversionInfo
     ///  [ Zt ]    [ -Ey*S   +Ex*S       S   Dz ]  [ Zs ]
     ///  [ 1  ]    [     0       0       0    1 ]  [ 1  ]
     /// </code><br/>
-    /// The parameters are commonly referred to defining the transformation "from source coordinate system
+    /// The parameters are commonly referred to as defining the transformation "from source coordinate system
     /// to target coordinate system", whereby (XS, YS, ZS) are the coordinates of the point in the source
     /// geocentric coordinate system and (XT, YT, ZT) are the coordinates of the point in the target
     /// geocentric coordinate system. But that does not define the parameters uniquely; neither is the
