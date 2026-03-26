@@ -216,18 +216,17 @@ public class HorizontalDatum : Datum
     /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
-        if (!(obj is HorizontalDatum))
+        if (obj is not HorizontalDatum datum)
         {
             return false;
         }
 
-        var datum = obj as HorizontalDatum;
-        if (datum.Wgs84Parameters == null && this.Wgs84Parameters != null)
+        if (datum.Wgs84Parameters is null && this.Wgs84Parameters is not null)
         {
             return false;
         }
 
-        if (datum.Wgs84Parameters != null && !datum.Wgs84Parameters.Equals(this.Wgs84Parameters))
+        if (datum.Wgs84Parameters is not null && !datum.Wgs84Parameters.Equals(this.Wgs84Parameters))
         {
             return false;
         }

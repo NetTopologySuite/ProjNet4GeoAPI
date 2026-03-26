@@ -79,11 +79,11 @@ public class Unit : Info, IUnit
     /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
-        if (!(obj is Unit))
+        if (obj is not Unit unit)
         {
             return false;
         }
 
-        return (obj as Unit).ConversionFactor == this.ConversionFactor;
+        return unit.ConversionFactor == this.ConversionFactor;
     }
 }

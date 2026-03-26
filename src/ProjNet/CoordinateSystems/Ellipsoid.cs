@@ -314,16 +314,15 @@ public class Ellipsoid : Info
     /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
-        if (!(obj is Ellipsoid))
+        if (obj is not Ellipsoid ellipsoid)
         {
             return false;
         }
 
-        var e = obj as Ellipsoid;
-        return e.InverseFlattening == this.InverseFlattening &&
-                e.IsIvfDefinitive == this.IsIvfDefinitive &&
-                e.SemiMajorAxis == this.SemiMajorAxis &&
-                e.SemiMinorAxis == this.SemiMinorAxis &&
-                e.AxisUnit.EqualParams(this.AxisUnit);
+        return ellipsoid.InverseFlattening == this.InverseFlattening &&
+                ellipsoid.IsIvfDefinitive == this.IsIvfDefinitive &&
+                ellipsoid.SemiMajorAxis == this.SemiMajorAxis &&
+                ellipsoid.SemiMinorAxis == this.SemiMinorAxis &&
+                ellipsoid.AxisUnit.EqualParams(this.AxisUnit);
     }
 }

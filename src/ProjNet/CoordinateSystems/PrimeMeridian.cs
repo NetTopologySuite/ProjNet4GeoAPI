@@ -154,12 +154,11 @@ public class PrimeMeridian : Info
     /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
-        if (!(obj is PrimeMeridian))
+        if (obj is not PrimeMeridian prime)
         {
             return false;
         }
 
-        var prime = obj as PrimeMeridian;
         return prime.AngularUnit.EqualParams(this.AngularUnit) && prime.Longitude == this.Longitude;
     }
 }

@@ -463,19 +463,17 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <returns><see langword="true"/> if the projection parameters and direction are equal; otherwise <see langword="false"/>.</returns>
     public bool EqualParams(object obj)
     {
-        if (!(obj is MapProjection))
+        if (obj is not MapProjection projection)
         {
             return false;
         }
 
-        var proj = obj as MapProjection;
-
-        if (!this.Parameters.Equals(proj.Parameters))
+        if (!this.Parameters.Equals(projection.Parameters))
         {
             return false;
         }
 
-        return this.IsInverse == proj.IsInverse;
+        return this.IsInverse == projection.IsInverse;
     }
 
     /// <summary>

@@ -139,26 +139,25 @@ public class Projection : Info, IProjection
     /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
-        if (!(obj is Projection))
+        if (obj is not Projection projection)
         {
             return false;
         }
 
-        var proj = obj as Projection;
-        if (proj.NumParameters != this.NumParameters)
+        if (projection.NumParameters != this.NumParameters)
         {
             return false;
         }
 
         for (int i = 0; i < this.parameters.Count; i++)
         {
-            var param = this.GetParameter(proj.GetParameter(i).Name);
-            if (param == null)
+            ProjectionParameter param = this.GetParameter(projection.GetParameter(i).Name);
+            if (param is null)
             {
                 return false;
             }
 
-            if (param.Value != proj.GetParameter(i).Value)
+            if (param.Value != projection.GetParameter(i).Value)
             {
                 return false;
             }
