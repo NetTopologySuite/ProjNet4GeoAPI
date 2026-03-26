@@ -684,42 +684,24 @@ internal sealed class DefModelMathTransform : MathTransform
 
     private static DisplacementType ParseDisplacementType(string token)
     {
-        if (token == "NONE")
+        return token switch
         {
-            return DisplacementType.None;
-        }
-
-        if (token == "HORIZONTAL")
-        {
-            return DisplacementType.Horizontal;
-        }
-
-        if (token == "VERTICAL")
-        {
-            return DisplacementType.Vertical;
-        }
-
-        if (token == "3D")
-        {
-            return DisplacementType.ThreeDimensional;
-        }
-
-        throw new FormatException("Unsupported value for displacement_type.");
+            "NONE" => DisplacementType.None,
+            "HORIZONTAL" => DisplacementType.Horizontal,
+            "VERTICAL" => DisplacementType.Vertical,
+            "3D" => DisplacementType.ThreeDimensional,
+            _ => throw new FormatException("Unsupported value for displacement_type."),
+        };
     }
 
     private static InterpolationMethod ParseInterpolationMethod(string token)
     {
-        if (token == "BILINEAR")
+        return token switch
         {
-            return InterpolationMethod.Bilinear;
-        }
-
-        if (token == "GEOCENTRIC_BILINEAR")
-        {
-            return InterpolationMethod.GeocentricBilinear;
-        }
-
-        throw new FormatException("Unsupported value for interpolation_method.");
+            "BILINEAR" => InterpolationMethod.Bilinear,
+            "GEOCENTRIC_BILINEAR" => InterpolationMethod.GeocentricBilinear,
+            _ => throw new FormatException("Unsupported value for interpolation_method."),
+        };
     }
 
     private static ITimeFunction ParseTimeFunction(string timeFunctionType, JsonElement timeFunctionObject)
