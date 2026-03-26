@@ -7,6 +7,7 @@ namespace ProjNet.CoordinateSystems.Transformations;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -32,10 +33,10 @@ internal static class ProjPipelineMathTransformFactory
     /// <param name="transform">Created transform when parsing succeeds.</param>
     /// <param name="skipReason">Reason why transform creation was skipped.</param>
     /// <returns><see langword="true"/> when a transform was created.</returns>
-    internal static bool TryCreateMathTransform(string operation, out MathTransform transform, out string skipReason)
+    internal static bool TryCreateMathTransform(string operation, [NotNullWhen(true)] out MathTransform? transform, out string? skipReason)
     {
-        transform = default!;
-        skipReason = default!;
+        transform = null;
+        skipReason = null;
 
         if (operation is null)
         {
@@ -44,7 +45,7 @@ internal static class ProjPipelineMathTransformFactory
         }
 
         bool hasPipeline = ContainsPipelineProjection(operation);
-        IReadOnlyList<Dictionary<string, string>> pipelineStepArguments = default!;
+        IReadOnlyList<Dictionary<string, string>> pipelineStepArguments = [];
         if (hasPipeline
             && !TryParsePipelineStepArguments(operation, out pipelineStepArguments, out skipReason))
         {
@@ -54,7 +55,7 @@ internal static class ProjPipelineMathTransformFactory
         int stepCount = hasPipeline
             ? pipelineStepArguments.Count
             : 1;
-        PipelineExecutionContext executionContext = hasPipeline
+        PipelineExecutionContext? executionContext = hasPipeline
             ? new PipelineExecutionContext()
             : null;
 
@@ -95,12 +96,12 @@ internal static class ProjPipelineMathTransformFactory
 
     private static bool TryCreateStepTransform(
         string operation,
-        PipelineExecutionContext executionContext,
-        out MathTransform transform,
-        out string skipReason)
+        PipelineExecutionContext? executionContext,
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
     {
-        transform = default!;
-        skipReason = default!;
+        transform = null;
+        skipReason = null;
 
         if (!TryParseOperationArguments(operation, out Dictionary<string, string> args))
         {
@@ -113,12 +114,12 @@ internal static class ProjPipelineMathTransformFactory
 
     private static bool TryCreateStepTransform(
         Dictionary<string, string> args,
-        PipelineExecutionContext executionContext,
-        out MathTransform transform,
-        out string skipReason)
+        PipelineExecutionContext? executionContext,
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
     {
-        transform = default!;
-        skipReason = default!;
+        transform = null;
+        skipReason = null;
 
         if (!args.TryGetValue("proj", out string? projCode))
         {
@@ -430,11 +431,11 @@ internal static class ProjPipelineMathTransformFactory
 
     private static bool TryCreateAxisSwapTransform(
         Dictionary<string, string> args,
-        out MathTransform transform,
-        out string skipReason)
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
     {
-        transform = default!;
-        skipReason = default!;
+        transform = null;
+        skipReason = null;
 
         bool hasOrder = args.TryGetValue("order", out string? orderToken) && !string.IsNullOrWhiteSpace(orderToken);
         bool hasAxis = args.TryGetValue("axis", out string? axisToken) && !string.IsNullOrWhiteSpace(axisToken);
@@ -501,11 +502,11 @@ internal static class ProjPipelineMathTransformFactory
 
     private static bool TryCreateUnitConvertTransform(
         IDictionary<string, string> args,
-        out MathTransform transform,
-        out string skipReason)
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
     {
-        transform = default!;
-        skipReason = default!;
+        transform = null;
+        skipReason = null;
 
         if (!TryResolveUnitScale(args, "xy_in", "xy_out", true, out double xyScale))
         {
@@ -525,11 +526,11 @@ internal static class ProjPipelineMathTransformFactory
 
     private static bool TryCreateGeocentricCartesianTransform(
         Dictionary<string, string> args,
-        out MathTransform transform,
-        out string skipReason)
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
     {
-        transform = default!;
-        skipReason = default!;
+        transform = null;
+        skipReason = null;
 
         if (!TryResolveEllipsoid(args, out double semiMajor, out double semiMinor, out skipReason))
         {
@@ -568,11 +569,11 @@ internal static class ProjPipelineMathTransformFactory
 
     private static bool TryCreateGeocentricLatitudeTransform(
         Dictionary<string, string> args,
-        out MathTransform transform,
-        out string skipReason)
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
     {
-        transform = default!;
-        skipReason = default!;
+        transform = null;
+        skipReason = null;
 
         if (!TryResolveEllipsoid(args, out double semiMajor, out double semiMinor, out skipReason))
         {
@@ -586,11 +587,11 @@ internal static class ProjPipelineMathTransformFactory
     private static bool TryCreateProjectionStepTransform(
         Dictionary<string, string> args,
         string projCode,
-        out MathTransform transform,
-        out string skipReason)
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
     {
-        transform = default!;
-        skipReason = default!;
+        transform = null;
+        skipReason = null;
 
         if (!TryBuildProjectionStepParameters(args, projCode, out List<ProjectionParameter> parameters, out skipReason))
         {
@@ -632,11 +633,11 @@ internal static class ProjPipelineMathTransformFactory
     private static bool TryBuildProjectionStepParameters(
         Dictionary<string, string> args,
         string projCode,
-        out List<ProjectionParameter> parameters,
-        out string skipReason)
+        [NotNullWhen(true)] out List<ProjectionParameter>? parameters,
+        out string? skipReason)
     {
-        parameters = default!;
-        skipReason = default!;
+        parameters = null;
+        skipReason = null;
 
         if (!TryResolveProjectionEllipsoid(args, out double semiMajor, out double semiMinor, out skipReason))
         {
@@ -722,10 +723,10 @@ internal static class ProjPipelineMathTransformFactory
     private static bool TryResolveProjectionUnitFactor(
         Dictionary<string, string> args,
         out double unitFactor,
-        out string skipReason)
+        out string? skipReason)
     {
         unitFactor = 1d;
-        skipReason = default!;
+        skipReason = null;
 
         if (args.TryGetValue("to_meter", out string? toMeterToken) && !string.IsNullOrWhiteSpace(toMeterToken))
         {
@@ -751,9 +752,9 @@ internal static class ProjPipelineMathTransformFactory
         string sourceKey,
         string targetName,
         List<ProjectionParameter> parameters,
-        out string skipReason)
+        out string? skipReason)
     {
-        skipReason = default!;
+        skipReason = null;
         if (!args.TryGetValue(sourceKey, out string? token) || string.IsNullOrWhiteSpace(token))
         {
             return true;
@@ -790,11 +791,11 @@ internal static class ProjPipelineMathTransformFactory
         Dictionary<string, string> args,
         out double semiMajor,
         out double semiMinor,
-        out string skipReason)
+        out string? skipReason)
     {
         semiMajor = 0d;
         semiMinor = 0d;
-        skipReason = default!;
+        skipReason = null;
 
         if (args.TryGetValue("r", out string? radiusToken)
             && TryParseFiniteDouble(radiusToken, out double radius)
@@ -897,10 +898,10 @@ internal static class ProjPipelineMathTransformFactory
     private static bool TryResolveGeocentricScale(
         Dictionary<string, string> args,
         out double scale,
-        out string skipReason)
+        out string? skipReason)
     {
         scale = 1d;
-        skipReason = default!;
+        skipReason = null;
 
         if (args.TryGetValue("units", out string? unitsToken)
             && !string.IsNullOrWhiteSpace(unitsToken)
@@ -976,11 +977,11 @@ internal static class ProjPipelineMathTransformFactory
 
     private static bool TryCreateHorizontalGridShiftTransform(
         Dictionary<string, string> args,
-        out MathTransform transform,
-        out string skipReason)
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
     {
-        transform = default!;
-        skipReason = default!;
+        transform = null;
+        skipReason = null;
 
         if (!args.TryGetValue("grids", out string? gridsToken) || string.IsNullOrWhiteSpace(gridsToken))
         {
@@ -1031,11 +1032,11 @@ internal static class ProjPipelineMathTransformFactory
 
     private static bool TryCreateVerticalGridShiftTransform(
         Dictionary<string, string> args,
-        out MathTransform transform,
-        out string skipReason)
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
     {
-        transform = default!;
-        skipReason = default!;
+        transform = null;
+        skipReason = null;
 
         if (!args.TryGetValue("grids", out string? gridsToken) || string.IsNullOrWhiteSpace(gridsToken))
         {
@@ -1100,11 +1101,11 @@ internal static class ProjPipelineMathTransformFactory
 
     private static bool TryCreateXyzGridShiftTransform(
         Dictionary<string, string> args,
-        out MathTransform transform,
-        out string skipReason)
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
     {
-        transform = default!;
-        skipReason = default!;
+        transform = null;
+        skipReason = null;
 
         if (!args.TryGetValue("grids", out string? gridsToken) || string.IsNullOrWhiteSpace(gridsToken))
         {
@@ -1191,9 +1192,9 @@ internal static class ProjPipelineMathTransformFactory
         IReadOnlyList<string> gridPaths,
         IReadOnlyList<string> allowedExtensions,
         string gridFamilyName,
-        out string skipReason)
+        out string? skipReason)
     {
-        skipReason = default!;
+        skipReason = null;
         string allowedList = string.Join("/", allowedExtensions);
         for (int i = 0; i < gridPaths.Count; i++)
         {
@@ -1242,11 +1243,11 @@ internal static class ProjPipelineMathTransformFactory
 
     private static bool TryResolveGridPaths(
         string gridsToken,
-        out IReadOnlyList<string> resolvedPaths,
-        out string skipReason)
+        [NotNullWhen(true)] out IReadOnlyList<string>? resolvedPaths,
+        out string? skipReason)
     {
         resolvedPaths = [];
-        skipReason = default!;
+        skipReason = null;
 
         string[] entries = gridsToken.Split(CommaSeparator, StringSplitOptions.RemoveEmptyEntries);
         if (entries.Length == 0)
@@ -1298,11 +1299,11 @@ internal static class ProjPipelineMathTransformFactory
         Dictionary<string, string> args,
         out double semiMajor,
         out double semiMinor,
-        out string skipReason)
+        out string? skipReason)
     {
         semiMajor = 0d;
         semiMinor = 0d;
-        skipReason = default!;
+        skipReason = null;
 
         if (args.TryGetValue("r", out string? radiusToken)
             && TryParseFiniteDouble(radiusToken, out double radius)
@@ -1713,11 +1714,11 @@ internal static class ProjPipelineMathTransformFactory
 
     private static bool TryParsePipelineStepArguments(
         string operation,
-        out IReadOnlyList<Dictionary<string, string>> steps,
-        out string skipReason)
+        [NotNullWhen(true)] out IReadOnlyList<Dictionary<string, string>>? steps,
+        out string? skipReason)
     {
-        steps = default!;
-        skipReason = default!;
+        steps = null;
+        skipReason = null;
 
         if (operation is null)
         {
