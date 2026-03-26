@@ -42,7 +42,7 @@ public static partial class CoordinateSystemWktReader
     {
         if (wkt.IsEmpty || IsWhitespaceOnly(wkt))
         {
-            throw new ArgumentNullException(nameof(wkt));
+            ArgumentGuard.ThrowArgument("WKT text must not be empty or whitespace.", nameof(wkt));
         }
 
         string normalizedWkt = NormalizeWkt(wkt.ToString());
@@ -108,7 +108,7 @@ public static partial class CoordinateSystemWktReader
             case "LOCAL_CS":
                 return ReadCoordinateSystem(normalizedWkt, tokenizer);
             default:
-                throw new ArgumentException($"'{objectName}' is not recognized.");
+                return ArgumentGuard.ThrowArgument<IInfo>($"'{objectName}' is not recognized.");
         }
     }
 
@@ -226,7 +226,7 @@ public static partial class CoordinateSystemWktReader
             case "UP": return new AxisInfo(axisName, AxisOrientationEnum.Up);
             case "WEST": return new AxisInfo(axisName, AxisOrientationEnum.West);
             default:
-                throw new ArgumentException("Invalid axis name '" + unitname + "' in WKT");
+                return ArgumentGuard.ThrowArgument<AxisInfo>("Invalid axis name '" + unitname + "' in WKT");
         }
     }
 

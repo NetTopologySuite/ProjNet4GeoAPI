@@ -26,7 +26,7 @@ public static class MathTransformWktReader
     {
         if (string.IsNullOrWhiteSpace(wkt))
         {
-            throw new ArgumentNullException(nameof(wkt));
+            ArgumentGuard.ThrowArgument("WKT text must not be empty or whitespace.", nameof(wkt));
         }
 
         var tokenizer = new WktTokenizer(wkt);
@@ -37,7 +37,7 @@ public static class MathTransformWktReader
             case "PARAM_MT":
                 return ReadMathTransform(tokenizer);
             default:
-                throw new ArgumentException($"'{objectName}' is not recognized.");
+                return ArgumentGuard.ThrowArgument<MathTransform>($"'{objectName}' is not recognized.");
         }
     }
 
@@ -120,12 +120,12 @@ public static class MathTransformWktReader
 
         if (rowParam is null)
         {
-            throw new ArgumentException("Affine transform does not contain 'num_row' parameter", nameof(tokenizer));
+            ArgumentGuard.ThrowArgument("Affine transform does not contain 'num_row' parameter", nameof(tokenizer));
         }
 
         if (colParam is null)
         {
-            throw new ArgumentException("Affine transform does not contain 'num_col' parameter", nameof(tokenizer));
+            ArgumentGuard.ThrowArgument("Affine transform does not contain 'num_col' parameter", nameof(tokenizer));
         }
 
         int rowVal = (int)rowParam.Value;
@@ -133,12 +133,12 @@ public static class MathTransformWktReader
 
         if (rowVal <= 0)
         {
-            throw new ArgumentException("Affine transform contains invalid value of 'num_row' parameter");
+            ArgumentGuard.ThrowArgument("Affine transform contains invalid value of 'num_row' parameter");
         }
 
         if (colVal <= 0)
         {
-            throw new ArgumentException("Affine transform contains invalid value of 'num_col' parameter");
+            ArgumentGuard.ThrowArgument("Affine transform contains invalid value of 'num_col' parameter");
         }
 
         // creates working matrix;

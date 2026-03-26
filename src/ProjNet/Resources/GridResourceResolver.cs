@@ -47,7 +47,7 @@ internal sealed class GridResourceResolver
     {
         if (string.IsNullOrWhiteSpace(gridName))
         {
-            throw new ArgumentException("Grid name must not be empty.", nameof(gridName));
+            ArgumentGuard.ThrowArgument("Grid name must not be empty.", nameof(gridName));
         }
 
         if (this.TryResolveFromCache(gridName, out resolvedPath))

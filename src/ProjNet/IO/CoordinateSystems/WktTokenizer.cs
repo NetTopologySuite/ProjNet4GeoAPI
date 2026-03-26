@@ -129,7 +129,7 @@ internal sealed class WktTokenizer
     {
         if (this.tokenType != TokenType.Number)
         {
-            throw new ArgumentException($"The token '{this.GetTokenString()}' is not a number at line {this.LineNumber} column {this.Column}.");
+            ArgumentGuard.ThrowArgument($"The token '{this.GetTokenString()}' is not a number at line {this.LineNumber} column {this.Column}.");
         }
 
         if (this.TryGetNumericValue(out double value))
@@ -182,7 +182,7 @@ internal sealed class WktTokenizer
         this.NextToken();
         if (!this.IsCurrentToken(expectedToken.AsSpan()))
         {
-            throw new ArgumentException(
+            ArgumentGuard.ThrowArgument(
                 $"Expecting ('{expectedToken}') but got a '{this.GetTokenString()}' at line {this.LineNumber} column {this.Column}.");
         }
     }
@@ -206,7 +206,7 @@ internal sealed class WktTokenizer
         {
             if (this.tokenType == TokenType.Eof)
             {
-                throw new ArgumentException(
+                ArgumentGuard.ThrowArgument(
                     $"Unterminated quoted string at line {this.LineNumber} column {this.Column}.");
             }
 
@@ -242,7 +242,7 @@ internal sealed class WktTokenizer
         }
 
         string expectedToken = expectedBracket == WktBracket.Square ? "[" : "(";
-        throw new ArgumentException(
+        return ArgumentGuard.ThrowArgument<WktBracket>(
             $"Expecting ('{expectedToken}') but got a '{this.GetTokenString()}' at line {this.LineNumber} column {this.Column}.");
     }
 
@@ -279,7 +279,7 @@ internal sealed class WktTokenizer
         }
 
         string expectedToken = expectedBracket == WktBracket.Square ? "]" : ")";
-        throw new ArgumentException(
+        ArgumentGuard.ThrowArgument(
             $"Expecting ('{expectedToken}') but got a '{this.GetTokenString()}' at line {this.LineNumber} column {this.Column}.");
     }
 
