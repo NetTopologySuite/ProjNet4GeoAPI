@@ -24,9 +24,21 @@ using ProjNet.CoordinateSystems.Transformations;
 internal class LambertConformalConic2SP : MapProjection
 {
     private static readonly string[] LatitudeOfOriginFallback = { "latitude_of_origin" };
-    private readonly double ns; // ratio of angle between meridian
-    private readonly double f0; // flattening of ellipsoid
-    private readonly double rh; // height above ellipsoid
+
+    /// <summary>
+    /// Ratio of angular change between meridians.
+    /// </summary>
+    private readonly double ns;
+
+    /// <summary>
+    /// Projection constant derived from standard parallels.
+    /// </summary>
+    private readonly double f0;
+
+    /// <summary>
+    /// Radial distance at the latitude of origin.
+    /// </summary>
+    private readonly double rh;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LambertConformalConic2SP"/> class.

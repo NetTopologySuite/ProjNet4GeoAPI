@@ -27,8 +27,19 @@ using ProjNet.CoordinateSystems.Transformations;
 [Serializable]
 internal class AlbersProjection : MapProjection
 {
-    private readonly double c;     // constant c
+    /// <summary>
+    /// Albers projection constant <c>c</c>.
+    /// </summary>
+    private readonly double c;
+
+    /// <summary>
+    /// Radial distance at the latitude of origin.
+    /// </summary>
     private readonly double ro0;
+
+    /// <summary>
+    /// Projection exponent <c>n</c>.
+    /// </summary>
     private readonly double n;
 
     /// <summary>

@@ -14,7 +14,10 @@ using ProjNet.CoordinateSystems.Transformations;
 [Serializable]
 internal class WinkelTripelProjection : MapProjection
 {
-    private const double DefaultCosphi1 = 0.636619772367581343d; // cos(50d28') == 2 / PI
+    /// <summary>
+    /// Default cosine of the standard parallel (approximately 50°28').
+    /// </summary>
+    private const double DefaultCosphi1 = 0.636619772367581343d;
 
     private readonly double radius;
     private readonly double inverseRadius;

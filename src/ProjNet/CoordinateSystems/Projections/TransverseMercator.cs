@@ -41,16 +41,45 @@ internal class TransverseMercator : MapProjection
 
     private readonly double reciprocSemiMajor;
 
-    // Constants used for the forward and inverse transform for the elliptical
-    // case of the Transverse Mercator.
-    private const double FC1 = 1.00000000000000000000000;  // 1/1
-    private const double FC2 = 0.50000000000000000000000;  // 1/2
-    private const double FC3 = 0.16666666666666666666666;  // 1/6
-    private const double FC4 = 0.08333333333333333333333;  // 1/12
-    private const double FC5 = 0.05000000000000000000000;  // 1/20
-    private const double FC6 = 0.03333333333333333333333;  // 1/30
-    private const double FC7 = 0.02380952380952380952380;  // 1/42
-    private const double FC8 = 0.01785714285714285714285;  // 1/56
+    /// <summary>
+    /// Fraction constant 1/1 used in series expansion terms.
+    /// </summary>
+    private const double FC1 = 1.00000000000000000000000;
+
+    /// <summary>
+    /// Fraction constant 1/2 used in series expansion terms.
+    /// </summary>
+    private const double FC2 = 0.50000000000000000000000;
+
+    /// <summary>
+    /// Fraction constant 1/6 used in series expansion terms.
+    /// </summary>
+    private const double FC3 = 0.16666666666666666666666;
+
+    /// <summary>
+    /// Fraction constant 1/12 used in series expansion terms.
+    /// </summary>
+    private const double FC4 = 0.08333333333333333333333;
+
+    /// <summary>
+    /// Fraction constant 1/20 used in series expansion terms.
+    /// </summary>
+    private const double FC5 = 0.05000000000000000000000;
+
+    /// <summary>
+    /// Fraction constant 1/30 used in series expansion terms.
+    /// </summary>
+    private const double FC6 = 0.03333333333333333333333;
+
+    /// <summary>
+    /// Fraction constant 1/42 used in series expansion terms.
+    /// </summary>
+    private const double FC7 = 0.02380952380952380952380;
+
+    /// <summary>
+    /// Fraction constant 1/56 used in series expansion terms.
+    /// </summary>
+    private const double FC8 = 0.01785714285714285714285;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TransverseMercator"/> class.

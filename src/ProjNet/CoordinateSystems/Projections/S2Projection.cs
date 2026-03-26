@@ -15,7 +15,11 @@ using ProjNet.CoordinateSystems.Transformations;
 internal sealed class S2Projection : MapProjection
 {
     private const double HalfPiMinusFortPiHalf = HalfPi - (FortPi * 0.5d);
-    private const double TangentBias = 1.1102230246251565e-16d; // 2^-53
+
+    /// <summary>
+    /// Small bias to avoid tangent singularities close to machine precision.
+    /// </summary>
+    private const double TangentBias = 1.1102230246251565e-16d;
 
     private readonly Face face;
     private readonly UvToStProjectionType uvToStProjectionType;

@@ -27,7 +27,10 @@ using ProjNet.CoordinateSystems.Transformations;
 [Serializable]
 internal class Mercator : MapProjection
 {
-    private readonly double k0;                // small value m
+    /// <summary>
+    /// Scale coefficient at the projection origin.
+    /// </summary>
+    private readonly double k0;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Mercator"/> class.

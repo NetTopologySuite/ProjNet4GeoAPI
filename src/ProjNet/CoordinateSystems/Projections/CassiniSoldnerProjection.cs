@@ -20,16 +20,44 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 internal class CassiniSoldnerProjection : MapProjection
 {
-    // ReSharper disable InconsistentNaming
-    private const double One6th = 0.16666666666666666666d;      // C1
-    private const double One120th = 0.00833333333333333333d;    // C2
-    private const double One24th = 0.04166666666666666666d;     // C3
-    private const double One3rd = 0.33333333333333333333d;      // C4
-    private const double One15th = 0.06666666666666666666d;     // C5
+    /// <summary>
+    /// Fraction constant 1/6 used in polynomial terms.
+    /// </summary>
+    private const double One6th = 0.16666666666666666666d;
 
-    // ReSharper restore InconsistentNaming
+    /// <summary>
+    /// Fraction constant 1/120 used in polynomial terms.
+    /// </summary>
+    private const double One120th = 0.00833333333333333333d;
+
+    /// <summary>
+    /// Fraction constant 1/24 used in polynomial terms.
+    /// </summary>
+    private const double One24th = 0.04166666666666666666d;
+
+    /// <summary>
+    /// Fraction constant 1/3 used in polynomial terms.
+    /// </summary>
+    private const double One3rd = 0.33333333333333333333d;
+
+    /// <summary>
+    /// Fraction constant 1/15 used in polynomial terms.
+    /// </summary>
+    private const double One15th = 0.06666666666666666666d;
+
+    /// <summary>
+    /// Ellipsoid eccentricity helper factor <c>e² / (1 - e²)</c>.
+    /// </summary>
     private readonly double cFactor;
+
+    /// <summary>
+    /// Meridional distance at latitude of origin.
+    /// </summary>
     private readonly double m0;
+
+    /// <summary>
+    /// Reciprocal of the semi-major axis length.
+    /// </summary>
     private readonly double reciprocalSemiMajor;
 
     /// <summary>

@@ -161,22 +161,22 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <summary>
     /// Scale factor.
     /// </summary>
-    protected readonly double scaleFactor; // scale factor
+    protected readonly double scaleFactor;
 
     /// <summary>
     /// Center latitude.
     /// </summary>
-    protected readonly double latOrigin; // center latitude
+    protected readonly double latOrigin;
 
     /// <summary>
     /// Y offset in meters.
     /// </summary>
-    protected readonly double falseNorthing; // y offset in meters
+    protected readonly double falseNorthing;
 
     /// <summary>
     /// X offset in meters.
     /// </summary>
-    protected readonly double falseEasting; // x offset in meters
+    protected readonly double falseEasting;
 
     /// <summary>
     /// Coefficient 0 for <see cref="Mlfn(double,double,double,double,double)"/>.
@@ -216,7 +216,7 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <summary>
     /// Center longitude (projection center).
     /// </summary>
-    protected double centralMeridian; // Center longitude (projection center)
+    protected double centralMeridian;
 
     private const double C00 = 1.0;
     private const double C02 = 0.25;
@@ -231,12 +231,35 @@ public abstract class MapProjection : MathTransform, IProjection
     private const double C68 = 0.00569661458333333333;
     private const double C88 = 0.3076171875;
 
-    private const double P00 = 0.33333333333333333333; // 1 / 3
-    private const double P01 = 0.17222222222222222222; // 31 / 180
-    private const double P02 = 0.10257936507936507937; // 517 / 5040
-    private const double P10 = 0.06388888888888888888; // 23 / 360
-    private const double P11 = 0.06640211640211640212; // 251 / 3780
-    private const double P20 = 0.01677689594356261023; // 761 / 45360
+    /// <summary>
+    /// Fraction constant 1/3 used in inverse meridional distance series.
+    /// </summary>
+    private const double P00 = 0.33333333333333333333;
+
+    /// <summary>
+    /// Fraction constant 31/180 used in inverse meridional distance series.
+    /// </summary>
+    private const double P01 = 0.17222222222222222222;
+
+    /// <summary>
+    /// Fraction constant 517/5040 used in inverse meridional distance series.
+    /// </summary>
+    private const double P02 = 0.10257936507936507937;
+
+    /// <summary>
+    /// Fraction constant 23/360 used in inverse meridional distance series.
+    /// </summary>
+    private const double P10 = 0.06388888888888888888;
+
+    /// <summary>
+    /// Fraction constant 251/3780 used in inverse meridional distance series.
+    /// </summary>
+    private const double P11 = 0.06640211640211640212;
+
+    /// <summary>
+    /// Fraction constant 761/45360 used in inverse meridional distance series.
+    /// </summary>
+    private const double P20 = 0.01677689594356261023;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MapProjection"/> class with a paired inverse projection.
