@@ -7,6 +7,7 @@ namespace ProjNet.CoordinateSystems.Transformations;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -163,11 +164,11 @@ internal sealed class DefModelMathTransform : MathTransform
     /// <returns><see langword="true"/> when a transform was created.</returns>
     internal static bool TryCreate(
         Dictionary<string, string> args,
-        out MathTransform transform,
-        out string skipReason)
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
     {
-        transform = default!;
-        skipReason = default!;
+        transform = null;
+        skipReason = null;
 
         if (args is null)
         {
@@ -286,9 +287,9 @@ internal sealed class DefModelMathTransform : MathTransform
         z = zInv;
     }
 
-    private static bool TryResolveModelPath(string modelToken, out string resolvedPath)
+    private static bool TryResolveModelPath(string modelToken, [NotNullWhen(true)] out string? resolvedPath)
     {
-        resolvedPath = default!;
+        resolvedPath = null;
         if (string.IsNullOrWhiteSpace(modelToken))
         {
             return false;
@@ -335,9 +336,9 @@ internal sealed class DefModelMathTransform : MathTransform
         return false;
     }
 
-    private static bool TryGetExistingPath(string candidate, out string resolvedPath)
+    private static bool TryGetExistingPath(string candidate, [NotNullWhen(true)] out string? resolvedPath)
     {
-        resolvedPath = default!;
+        resolvedPath = null;
         if (string.IsNullOrWhiteSpace(candidate))
         {
             return false;
@@ -366,11 +367,11 @@ internal sealed class DefModelMathTransform : MathTransform
         Dictionary<string, string> args,
         out double semiMajor,
         out double semiMinor,
-        out string skipReason)
+        out string? skipReason)
     {
         semiMajor = 0d;
         semiMinor = 0d;
-        skipReason = default!;
+        skipReason = null;
 
         if (args.TryGetValue("r", out string? radiusToken)
             && TryParseFiniteDouble(radiusToken, out double radius))
@@ -1035,9 +1036,9 @@ internal sealed class DefModelMathTransform : MathTransform
         return loaded.ToArray();
     }
 
-    private static bool TryResolveComponentPath(string fileName, string modelDirectory, out string resolvedPath)
+    private static bool TryResolveComponentPath(string fileName, string modelDirectory, [NotNullWhen(true)] out string? resolvedPath)
     {
-        resolvedPath = default!;
+        resolvedPath = null;
         if (string.IsNullOrWhiteSpace(fileName))
         {
             return false;
@@ -1204,7 +1205,7 @@ internal sealed class DefModelMathTransform : MathTransform
         IReadOnlyList<GeoTiffXyzGridShiftMathTransform.XyzGrid> grids,
         double x,
         double y,
-        out GeoTiffXyzGridShiftMathTransform.XyzGrid grid)
+        [NotNullWhen(true)] out GeoTiffXyzGridShiftMathTransform.XyzGrid? grid)
     {
         for (int i = 0; i < grids.Count; i++)
         {
@@ -1215,7 +1216,7 @@ internal sealed class DefModelMathTransform : MathTransform
             }
         }
 
-        grid = default!;
+        grid = null;
         return false;
     }
 
@@ -1223,7 +1224,7 @@ internal sealed class DefModelMathTransform : MathTransform
         IReadOnlyList<GeoTiffVGridShiftMathTransform.VerticalGrid> grids,
         double x,
         double y,
-        out GeoTiffVGridShiftMathTransform.VerticalGrid grid)
+        [NotNullWhen(true)] out GeoTiffVGridShiftMathTransform.VerticalGrid? grid)
     {
         for (int i = 0; i < grids.Count; i++)
         {
@@ -1234,7 +1235,7 @@ internal sealed class DefModelMathTransform : MathTransform
             }
         }
 
-        grid = default!;
+        grid = null;
         return false;
     }
 

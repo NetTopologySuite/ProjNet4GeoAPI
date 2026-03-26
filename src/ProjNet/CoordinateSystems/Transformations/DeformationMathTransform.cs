@@ -9,6 +9,7 @@ using System;
 using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -145,11 +146,11 @@ internal sealed class DeformationMathTransform : MathTransform
     /// <returns><see langword="true"/> when a transform was created.</returns>
     internal static bool TryCreate(
         Dictionary<string, string> args,
-        out MathTransform transform,
-        out string skipReason)
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
     {
-        transform = default!;
-        skipReason = default!;
+        transform = null;
+        skipReason = null;
         if (args is null)
         {
             skipReason = "deformation arguments were null.";
@@ -343,10 +344,10 @@ internal sealed class DeformationMathTransform : MathTransform
         string gridsToken,
         string parameterName,
         out IReadOnlyList<string> resolvedPaths,
-        out string skipReason)
+        out string? skipReason)
     {
         resolvedPaths = [];
-        skipReason = default!;
+        skipReason = null;
         if (string.IsNullOrWhiteSpace(gridsToken))
         {
             skipReason = "deformation requires +" + parameterName + ".";
@@ -399,9 +400,9 @@ internal sealed class DeformationMathTransform : MathTransform
         return true;
     }
 
-    private static bool TryResolveGridPath(string gridToken, out string resolvedPath)
+    private static bool TryResolveGridPath(string gridToken, [NotNullWhen(true)] out string? resolvedPath)
     {
-        resolvedPath = default!;
+        resolvedPath = null;
         if (string.IsNullOrWhiteSpace(gridToken))
         {
             return false;
@@ -447,9 +448,9 @@ internal sealed class DeformationMathTransform : MathTransform
         return false;
     }
 
-    private static bool TryGetExistingPath(string candidate, out string resolvedPath)
+    private static bool TryGetExistingPath(string candidate, [NotNullWhen(true)] out string? resolvedPath)
     {
-        resolvedPath = default!;
+        resolvedPath = null;
         if (string.IsNullOrWhiteSpace(candidate))
         {
             return false;
@@ -495,11 +496,11 @@ internal sealed class DeformationMathTransform : MathTransform
         Dictionary<string, string> args,
         out double semiMajor,
         out double semiMinor,
-        out string skipReason)
+        out string? skipReason)
     {
         semiMajor = 0d;
         semiMinor = 0d;
-        skipReason = default!;
+        skipReason = null;
 
         if (args.TryGetValue("r", out string? radiusToken)
             && TryParseFiniteDouble(radiusToken, out double radius))
@@ -736,7 +737,7 @@ internal sealed class DeformationMathTransform : MathTransform
         ReadOnlyCollection<GeoTiffXyzGridShiftMathTransform.XyzGrid> grids,
         double longitudeDegrees,
         double latitudeDegrees,
-        out GeoTiffXyzGridShiftMathTransform.XyzGrid grid)
+        [NotNullWhen(true)] out GeoTiffXyzGridShiftMathTransform.XyzGrid? grid)
     {
         for (int i = 0; i < grids.Count; i++)
         {
@@ -747,7 +748,7 @@ internal sealed class DeformationMathTransform : MathTransform
             }
         }
 
-        grid = default!;
+        grid = null;
         return false;
     }
 
@@ -755,7 +756,7 @@ internal sealed class DeformationMathTransform : MathTransform
         IReadOnlyList<CTable2Grid> grids,
         double longitudeRadians,
         double latitudeRadians,
-        out CTable2Grid grid)
+        [NotNullWhen(true)] out CTable2Grid? grid)
     {
         for (int i = 0; i < grids.Count; i++)
         {
@@ -766,7 +767,7 @@ internal sealed class DeformationMathTransform : MathTransform
             }
         }
 
-        grid = default!;
+        grid = null;
         return false;
     }
 
@@ -774,7 +775,7 @@ internal sealed class DeformationMathTransform : MathTransform
         IReadOnlyList<GtxGrid> grids,
         double longitudeRadians,
         double latitudeRadians,
-        out GtxGrid grid)
+        [NotNullWhen(true)] out GtxGrid? grid)
     {
         for (int i = 0; i < grids.Count; i++)
         {
@@ -785,7 +786,7 @@ internal sealed class DeformationMathTransform : MathTransform
             }
         }
 
-        grid = default!;
+        grid = null;
         return false;
     }
 
