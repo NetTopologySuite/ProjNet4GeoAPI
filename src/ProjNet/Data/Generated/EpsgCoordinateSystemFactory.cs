@@ -5,6 +5,7 @@ namespace ProjNet.Data.Generated;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using ProjNet;
 using ProjNet.CoordinateSystems;
 
@@ -45,7 +46,7 @@ internal static class EpsgCoordinateSystemFactory
         }
     }
 
-    private static CoordinateSystem TryCreateCoordinateSystem(int srid)
+    private static CoordinateSystem? TryCreateCoordinateSystem(int srid)
     {
         if (!EpsgGeneratedCatalog.TryGetCoordinateReference(srid, out var reference, out int cacheIndex))
         {
@@ -75,7 +76,7 @@ internal static class EpsgCoordinateSystemFactory
         }
     }
 
-    private static CoordinateSystem CreateCoordinateSystem(EpsgCoordinateReferenceRecord reference)
+    private static CoordinateSystem? CreateCoordinateSystem(EpsgCoordinateReferenceRecord reference)
     {
         switch (reference.Kind)
         {
@@ -119,7 +120,7 @@ internal static class EpsgCoordinateSystemFactory
         }
     }
 
-    private static GeographicCoordinateSystem CreateGeographic(EpsgGeographicCrsRecord record)
+    private static GeographicCoordinateSystem? CreateGeographic(EpsgGeographicCrsRecord record)
     {
         if (!TryCreateHorizontalDatum(record.DatumCode, out var datum))
         {
@@ -160,7 +161,7 @@ internal static class EpsgCoordinateSystemFactory
             string.Empty);
     }
 
-    private static GeocentricCoordinateSystem CreateGeocentric(EpsgGeocentricCrsRecord record)
+    private static GeocentricCoordinateSystem? CreateGeocentric(EpsgGeocentricCrsRecord record)
     {
         if (!TryCreateHorizontalDatum(record.DatumCode, out var datum))
         {
@@ -201,7 +202,7 @@ internal static class EpsgCoordinateSystemFactory
             string.Empty);
     }
 
-    private static ProjectedCoordinateSystem CreateProjected(EpsgProjectedCrsRecord record)
+    private static ProjectedCoordinateSystem? CreateProjected(EpsgProjectedCrsRecord record)
     {
         var baseCoordinateSystem = TryCreateCoordinateSystem(record.BaseSrid) as GeographicCoordinateSystem;
         if (baseCoordinateSystem == null)
@@ -253,7 +254,7 @@ internal static class EpsgCoordinateSystemFactory
             string.Empty);
     }
 
-    private static VerticalCoordinateSystem CreateVertical(EpsgVerticalCrsRecord record)
+    private static VerticalCoordinateSystem? CreateVertical(EpsgVerticalCrsRecord record)
     {
         if (!TryGetVerticalDatumRecord(record.DatumCode, out var datumRecord))
         {
@@ -356,7 +357,7 @@ internal static class EpsgCoordinateSystemFactory
         }
     }
 
-    private static CompoundCoordinateSystem CreateCompound(EpsgCompoundCrsRecord record)
+    private static CompoundCoordinateSystem? CreateCompound(EpsgCompoundCrsRecord record)
     {
         var horizontal = TryCreateCoordinateSystem(record.HorizontalSrid);
         var vertical = TryCreateCoordinateSystem(record.VerticalSrid);
@@ -376,7 +377,7 @@ internal static class EpsgCoordinateSystemFactory
             string.Empty);
     }
 
-    private static bool TryCreateHorizontalDatum(int datumCode, out HorizontalDatum datum)
+    private static bool TryCreateHorizontalDatum(int datumCode, [NotNullWhen(true)] out HorizontalDatum? datum)
     {
         datum = null;
         if (!TryGetGeodeticDatumRecord(datumCode, out var datumRecord))
@@ -402,7 +403,7 @@ internal static class EpsgCoordinateSystemFactory
         return true;
     }
 
-    private static bool TryCreateEllipsoid(int ellipsoidCode, out Ellipsoid ellipsoid)
+    private static bool TryCreateEllipsoid(int ellipsoidCode, [NotNullWhen(true)] out Ellipsoid? ellipsoid)
     {
         ellipsoid = null;
         if (!TryGetEllipsoidRecord(ellipsoidCode, out var record))
@@ -431,7 +432,7 @@ internal static class EpsgCoordinateSystemFactory
         return true;
     }
 
-    private static bool TryCreatePrimeMeridian(int primeMeridianCode, out PrimeMeridian primeMeridian)
+    private static bool TryCreatePrimeMeridian(int primeMeridianCode, [NotNullWhen(true)] out PrimeMeridian? primeMeridian)
     {
         primeMeridian = null;
         if (!TryGetPrimeMeridianRecord(primeMeridianCode, out var record))
@@ -456,7 +457,7 @@ internal static class EpsgCoordinateSystemFactory
         return true;
     }
 
-    private static bool TryCreateLinearUnit(int unitCode, out LinearUnit unit)
+    private static bool TryCreateLinearUnit(int unitCode, [NotNullWhen(true)] out LinearUnit? unit)
     {
         unit = null;
         if (!TryGetUnitRecord(unitCode, out var record) || record.UnitType != 0)
@@ -468,7 +469,7 @@ internal static class EpsgCoordinateSystemFactory
         return true;
     }
 
-    private static bool TryCreateAngularUnit(int unitCode, out AngularUnit unit)
+    private static bool TryCreateAngularUnit(int unitCode, [NotNullWhen(true)] out AngularUnit? unit)
     {
         unit = null;
         if (!TryGetUnitRecord(unitCode, out var record) || record.UnitType != 1)

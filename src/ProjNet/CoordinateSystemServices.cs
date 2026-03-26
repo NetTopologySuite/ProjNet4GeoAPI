@@ -9,6 +9,7 @@ namespace ProjNet;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
@@ -157,7 +158,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     /// <param name="srid">The SRID of the coordinate system.</param>
     /// <param name="coordinateSystem">The coordinate system if found; otherwise <see langword="null"/>.</param>
     /// <returns><see langword="true"/> if a coordinate system was found; otherwise <see langword="false"/>.</returns>
-    public bool TryGetCoordinateSystem(int srid, out CoordinateSystem coordinateSystem)
+    public bool TryGetCoordinateSystem(int srid, [NotNullWhen(true)] out CoordinateSystem? coordinateSystem)
     {
         this.WaitForInitialization();
         return this.csBySrid.TryGetValue(srid, out coordinateSystem);
@@ -187,7 +188,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     /// <param name="code">The authority code.</param>
     /// <param name="coordinateSystem">The coordinate system if found; otherwise <see langword="null"/>.</param>
     /// <returns><see langword="true"/> if a coordinate system was found; otherwise <see langword="false"/>.</returns>
-    public bool TryGetCoordinateSystem(string authority, long code, out CoordinateSystem? coordinateSystem)
+    public bool TryGetCoordinateSystem(string authority, long code, [NotNullWhen(true)] out CoordinateSystem? coordinateSystem)
     {
         coordinateSystem = null;
         int? srid = this.GetSRID(authority, code);
