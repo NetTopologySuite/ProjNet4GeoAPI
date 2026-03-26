@@ -53,7 +53,7 @@ internal abstract class SimpleConicProjectionBase : MapProjection
 
         if (Math.Abs(delta) < Eps10 || Math.Abs(this.sig) < Eps10)
         {
-            throw new ArgumentException("Illegal value for lat_1 and lat_2: |lat_1 - lat_2| and |lat_1 + lat_2| should be > 0.");
+            ArgumentGuard.ThrowArgument("Illegal value for lat_1 and lat_2: |lat_1 - lat_2| and |lat_1 + lat_2| should be > 0.");
         }
 
         switch (type)
@@ -66,7 +66,7 @@ internal abstract class SimpleConicProjectionBase : MapProjection
                 double tissotDomain = (this.rhoC - (2d * Math.Sin(this.latOrigin))) / this.n;
                 if (tissotDomain < 0d)
                 {
-                    throw new ArgumentException("Input data outside projection domain.");
+                    ArgumentGuard.ThrowArgument("Input data outside projection domain.");
                 }
 
                 this.rho0 = Math.Sqrt(tissotDomain);
@@ -84,7 +84,7 @@ internal abstract class SimpleConicProjectionBase : MapProjection
                 double cosDelta = Math.Cos(delta);
                 if (cosDelta < 0d)
                 {
-                    throw new ArgumentException("Input data outside projection domain.");
+                    ArgumentGuard.ThrowArgument("Input data outside projection domain.");
                 }
 
                 double cs = Math.Sqrt(cosDelta);
@@ -117,7 +117,8 @@ internal abstract class SimpleConicProjectionBase : MapProjection
             }
 
             default:
-                throw new ArgumentOutOfRangeException(nameof(type));
+                ArgumentGuard.ThrowArgumentOutOfRange(nameof(type));
+                break;
         }
     }
 

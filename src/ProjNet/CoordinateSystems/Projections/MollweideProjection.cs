@@ -57,7 +57,7 @@ internal class MollweideProjection : MapProjection
         double denominator = p2 + Math.Sin(p2);
         if (Math.Abs(sp) <= Eps10 || Math.Abs(denominator) <= Eps10)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double r = Math.Sqrt(TwoPi * sp / denominator);
@@ -129,7 +129,7 @@ internal class MollweideProjection : MapProjection
         }
         else
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         x = Adjust_lon(this.centralMeridian + lambda);

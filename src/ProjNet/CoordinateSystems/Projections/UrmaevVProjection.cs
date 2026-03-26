@@ -42,7 +42,7 @@ internal class UrmaevVProjection : MapProjection
         this.n = this.Parameters.GetParameterValue("n");
         if (this.n <= 0d || this.n > 1d)
         {
-            throw new ArgumentException("Invalid value for n: it should be in ]0,1] range.");
+            ArgumentGuard.ThrowArgument("Invalid value for n: it should be in ]0,1] range.");
         }
 
         double q = this.Parameters.GetOptionalParameterValue("q", 0d);
@@ -53,7 +53,7 @@ internal class UrmaevVProjection : MapProjection
         double denom = Math.Sqrt(1d - (t * t));
         if (denom == 0d)
         {
-            throw new ArgumentException("Invalid value for n / alpha: n * sin(|alpha|) should be < 1.");
+            ArgumentGuard.ThrowArgument("Invalid value for n / alpha: n * sin(|alpha|) should be < 1.");
         }
 
         this.m = Math.Cos(alpha) / denom;

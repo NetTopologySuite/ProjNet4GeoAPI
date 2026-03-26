@@ -47,7 +47,7 @@ internal class LabordeProjection : MapProjection
 
         if (Math.Abs(this.latOrigin) < Eps10)
         {
-            throw new ArgumentException("Invalid value for lat_0: lat_0 should be different from 0.");
+            ArgumentGuard.ThrowArgument("Invalid value for lat_0: lat_0 should be different from 0.");
         }
 
         double azimuth = DegreesToRadians(this.Parameters.GetOptionalParameterValue("azi", this.Parameters.GetOptionalParameterValue("azimuth", 0d)));
@@ -152,7 +152,7 @@ internal class LabordeProjection : MapProjection
 
         if (!converged)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double t = this.e * Math.Sin(pe);

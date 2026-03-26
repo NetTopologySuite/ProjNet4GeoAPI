@@ -107,7 +107,7 @@ internal class PutninsP2Projection : MapProjection
         double denominator = Cx * (cosPhi - 0.5d);
         if (Math.Abs(denominator) <= Eps10)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double lambda = xx / denominator;

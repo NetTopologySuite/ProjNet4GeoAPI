@@ -60,7 +60,7 @@ internal class LarriveeProjection : MapProjection
         double denominator = Math.Cos(0.5d * lat) * Math.Cos(Sixth * lambda);
         if (Math.Abs(denominator) <= Eps10)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double x = 0.5d * lambda * (1d + Math.Sqrt(Math.Cos(lat)));

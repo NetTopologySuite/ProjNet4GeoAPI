@@ -53,7 +53,7 @@ internal class BonneProjection : MapProjection
 
         if (Math.Abs(this.standardParallel) <= Eps10)
         {
-            throw new ArgumentException("Invalid value for lat_1: |lat_1| should be > 0.");
+            ArgumentGuard.ThrowArgument("Invalid value for lat_1: |lat_1| should be > 0.");
         }
 
         this.sineStandardParallel = Math.Sin(this.standardParallel);
@@ -137,7 +137,7 @@ internal class BonneProjection : MapProjection
             double absPhiSphere = Math.Abs(phiSphere);
             if (absPhiSphere > HalfPi)
             {
-                throw new ArgumentException("Input data outside projection domain.");
+                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
             }
 
             double lambdaSphere;
@@ -174,7 +174,7 @@ internal class BonneProjection : MapProjection
         }
         else if ((absPhi - HalfPi) > Eps10)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         x = Adjust_lon(this.centralMeridian + lambda);

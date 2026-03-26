@@ -118,7 +118,7 @@ internal class HotineObliqueMercatorProjection : MapProjection
         }
         else
         {
-            throw new ArgumentException("Input data error");
+            ArgumentGuard.ThrowArgument("Input data error");
         }
 
         Sincos(rectifiedGridAngle, out this.singrid, out this.cosgrid);
@@ -138,7 +138,8 @@ internal class HotineObliqueMercatorProjection : MapProjection
                 return true;
             }
 
-            throw new ArgumentException("AuthorityCode");
+            ArgumentGuard.ThrowArgument("AuthorityCode");
+            return false;
         }
     }
 

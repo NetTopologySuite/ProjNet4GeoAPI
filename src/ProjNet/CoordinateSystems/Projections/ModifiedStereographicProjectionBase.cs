@@ -127,7 +127,7 @@ internal abstract class ModifiedStereographicProjectionBase : MapProjection
         this.effectiveScale = this.effectiveSemiMajor * this.scaleFactor;
         if (Math.Abs(this.effectiveScale) <= Eps10)
         {
-            throw new ArgumentException("Scale factor must be non-zero for modified stereographic projection.");
+            ArgumentGuard.ThrowArgument("Scale factor must be non-zero for modified stereographic projection.");
         }
 
         this.inverseEffectiveScale = 1d / this.effectiveScale;
@@ -211,7 +211,7 @@ internal abstract class ModifiedStereographicProjectionBase : MapProjection
         double denominator = 1d + (this.schio * schi) + (this.cchio * cchi * cosLambda);
         if (Math.Abs(denominator) <= Eps10)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double s = 2d / denominator;
@@ -257,7 +257,7 @@ internal abstract class ModifiedStereographicProjectionBase : MapProjection
 
         if (!converged)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double rh = Hypot(p.Real, p.Imaginary);
@@ -384,7 +384,8 @@ internal abstract class ModifiedStereographicProjectionBase : MapProjection
             }
         }
 
-        throw new ArgumentException("Input data outside projection domain.");
+        ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+        return conformalLatitude;
     }
 
     /// <summary>

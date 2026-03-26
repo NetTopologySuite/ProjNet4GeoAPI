@@ -77,7 +77,7 @@ internal class Wagner2Projection : MapProjection
         double denominator = Cx * Math.Cos(phi);
         if (Math.Abs(denominator) <= Eps10)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double lambda = xx / denominator;

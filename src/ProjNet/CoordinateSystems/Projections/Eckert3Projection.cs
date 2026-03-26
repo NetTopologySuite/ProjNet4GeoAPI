@@ -71,7 +71,7 @@ internal class Eckert3Projection : MapProjection
         double underRoot = 1d - (this.b * lat * lat);
         if (underRoot < 0d)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double x = this.cx * lambda * (this.a + Math.Sqrt(underRoot));
@@ -89,13 +89,13 @@ internal class Eckert3Projection : MapProjection
         double underRoot = 1d - (this.b * phi * phi);
         if (underRoot < 0d)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double denominator = this.cx * (this.a + Math.Sqrt(underRoot));
         if (Math.Abs(denominator) <= Eps10)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double lambda = xx / denominator;

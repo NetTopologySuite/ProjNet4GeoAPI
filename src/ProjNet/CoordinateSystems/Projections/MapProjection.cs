@@ -1053,7 +1053,8 @@ public abstract class MapProjection : MathTransform, IProjection
             }
         }
 
-        throw new ArgumentException("Convergence error.");
+        ArgumentGuard.ThrowArgument("Convergence error.");
+        return 0d;
     }
 
     /// <summary>
@@ -1107,7 +1108,8 @@ public abstract class MapProjection : MathTransform, IProjection
             }
         }
 
-        throw new ArgumentException("Convergence error - phi2z-conv");
+        ArgumentGuard.ThrowArgument("Convergence error - phi2z-conv");
+        return 0d;
     }
 
     /// <summary>
@@ -1225,7 +1227,8 @@ public abstract class MapProjection : MathTransform, IProjection
         }
 
         string longitudeMessage = x.ToString(CultureInfo.InvariantCulture) + " not a valid longitude in degrees.";
-        throw new ArgumentOutOfRangeException(nameof(x), longitudeMessage);
+        ArgumentGuard.ThrowArgumentOutOfRange(nameof(x), longitudeMessage);
+        return 0d;
     }
 
     /// <summary>
@@ -1242,7 +1245,8 @@ public abstract class MapProjection : MathTransform, IProjection
         }
 
         string latitudeMessage = y.ToString(CultureInfo.InvariantCulture) + " not a valid latitude in degrees.";
-        throw new ArgumentOutOfRangeException(nameof(y), latitudeMessage);
+        ArgumentGuard.ThrowArgumentOutOfRange(nameof(y), latitudeMessage);
+        return 0d;
     }
 
     /// <summary>

@@ -118,7 +118,7 @@ internal class AiryProjection : MapProjection
 
                 if (!this.noCut && cosz < -Epsilon)
                 {
-                    throw new ArgumentException("Input data outside projection domain.");
+                    ArgumentGuard.ThrowArgument("Input data outside projection domain.");
                 }
 
                 double s = 1d - cosz;
@@ -128,7 +128,7 @@ internal class AiryProjection : MapProjection
                     double t = 0.5d * (1d + cosz);
                     if (Math.Abs(t) <= Eps10)
                     {
-                        throw new ArgumentException("Input data outside projection domain.");
+                        ArgumentGuard.ThrowArgument("Input data outside projection domain.");
                     }
 
                     kRho = (-Math.Log(t) / s) - (this.cb / t);
@@ -152,7 +152,7 @@ internal class AiryProjection : MapProjection
                 double phi = Math.Abs(this.pHalfPi - lat);
                 if (!this.noCut && (phi - Epsilon) > HalfPi)
                 {
-                    throw new ArgumentException("Input data outside projection domain.");
+                    ArgumentGuard.ThrowArgument("Input data outside projection domain.");
                 }
 
                 phi *= 0.5d;

@@ -61,7 +61,7 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
         double t = Math.Abs(phi0);
         if (t > HalfPi + Eps10)
         {
-            throw new ArgumentException("Latitude of origin is outside the valid range.", nameof(parameters));
+            ArgumentGuard.ThrowArgument("Latitude of origin is outside the valid range.", nameof(parameters));
         }
 
         if (Math.Abs(t - HalfPi) < Eps10)
@@ -85,7 +85,7 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
             this.apa = Authset(this.es);
             if (this.apa is null)
             {
-                throw new ArgumentException("Failed to initialize authalic coefficients from projection parameters.", nameof(parameters));
+                ArgumentGuard.ThrowArgument("Failed to initialize authalic coefficients from projection parameters.", nameof(parameters));
             }
 
             switch (this.mode)

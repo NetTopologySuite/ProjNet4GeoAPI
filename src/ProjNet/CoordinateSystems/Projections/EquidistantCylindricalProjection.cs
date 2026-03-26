@@ -48,7 +48,7 @@ internal class EquidistantCylindricalProjection : MapProjection
         this.cosStandardParallel = Math.Cos(standardParallel);
         if (Math.Abs(this.cosStandardParallel) <= Eps10)
         {
-            throw new ArgumentException("The standard parallel cannot be at the poles.");
+            ArgumentGuard.ThrowArgument("The standard parallel cannot be at the poles.");
         }
     }
 

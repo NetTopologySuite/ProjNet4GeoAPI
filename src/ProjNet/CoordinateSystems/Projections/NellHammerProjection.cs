@@ -100,7 +100,7 @@ internal class NellHammerProjection : MapProjection
             double denominator = 1d + Math.Cos(phi);
             if (Math.Abs(denominator) <= Eps10)
             {
-                throw new ArgumentException("Input data outside projection domain.");
+                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
             }
 
             lambda = (2d * xx) / denominator;

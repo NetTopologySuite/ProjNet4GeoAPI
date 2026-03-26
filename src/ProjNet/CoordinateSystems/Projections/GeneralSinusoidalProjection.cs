@@ -49,12 +49,12 @@ internal class GeneralSinusoidalProjection : MapProjection
 
         if (this.n <= 0d)
         {
-            throw new ArgumentException("Invalid value for n: it should be > 0.");
+            ArgumentGuard.ThrowArgument("Invalid value for n: it should be > 0.");
         }
 
         if (this.m < 0d)
         {
-            throw new ArgumentException("Invalid value for m: it should be >= 0.");
+            ArgumentGuard.ThrowArgument("Invalid value for m: it should be >= 0.");
         }
 
         this.cY = Math.Sqrt((this.m + 1d) / this.n);
@@ -103,7 +103,7 @@ internal class GeneralSinusoidalProjection : MapProjection
 
             if (i == 0)
             {
-                throw new ArgumentException("Input data outside projection domain.");
+                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
             }
         }
 
@@ -123,7 +123,7 @@ internal class GeneralSinusoidalProjection : MapProjection
         double denominator = this.cX * (this.m + Math.Cos(phiNormalized));
         if (Math.Abs(denominator) <= Eps10)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double lambda = xx / denominator;

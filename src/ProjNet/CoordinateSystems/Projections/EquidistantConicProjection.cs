@@ -61,7 +61,7 @@ internal class EquidistantConicProjection : MapProjection
 
         if (Math.Abs(this.n) <= Eps10)
         {
-            throw new ArgumentException("Invalid standard parallels for equidistant conic projection.");
+            ArgumentGuard.ThrowArgument("Invalid standard parallels for equidistant conic projection.");
         }
 
         this.g = (Math.Cos(standardParallel1) / this.n) + standardParallel1;

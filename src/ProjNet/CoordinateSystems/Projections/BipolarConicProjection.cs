@@ -108,7 +108,7 @@ internal class BipolarConicProjection : MapProjection
             {
                 if (Math.Abs(z) > OneEpsilon)
                 {
-                    throw new ArgumentException("Input data outside projection domain.");
+                    ArgumentGuard.ThrowArgument("Input data outside projection domain.");
                 }
 
                 z = z < 0d ? -1d : 1d;
@@ -134,7 +134,7 @@ internal class BipolarConicProjection : MapProjection
             {
                 if (Math.Abs(z) > OneEpsilon)
                 {
-                    throw new ArgumentException("Input data outside projection domain.");
+                    ArgumentGuard.ThrowArgument("Input data outside projection domain.");
                 }
 
                 z = z < 0d ? -1d : 1d;
@@ -150,7 +150,7 @@ internal class BipolarConicProjection : MapProjection
 
         if (z < 0d)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double t = Math.Pow(Math.Tan(0.5d * z), N);
@@ -158,7 +158,7 @@ internal class BipolarConicProjection : MapProjection
         double al = 0.5d * (R104 - z);
         if (al < 0d)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         al = (t + Math.Pow(al, N)) / T;
@@ -166,7 +166,7 @@ internal class BipolarConicProjection : MapProjection
         {
             if (Math.Abs(al) > OneEpsilon)
             {
-                throw new ArgumentException("Input data outside projection domain.");
+                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
             }
 
             al = al < 0d ? -1d : 1d;
@@ -182,7 +182,7 @@ internal class BipolarConicProjection : MapProjection
             double denominator = Math.Cos(al + (tag ? t : -t));
             if (Math.Abs(denominator) <= Eps10)
             {
-                throw new ArgumentException("Input data outside projection domain.");
+                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
             }
 
             r /= denominator;
@@ -262,7 +262,7 @@ internal class BipolarConicProjection : MapProjection
 
         if (i == 0)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         az = av - (az / N);

@@ -81,7 +81,7 @@ internal class Eckert2Projection : MapProjection
         double denominator = Fxc * phiTmp;
         if (Math.Abs(denominator) <= Eps10)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double lambda = xx / denominator;
@@ -91,7 +91,7 @@ internal class Eckert2Projection : MapProjection
         {
             if (absPhi > OneEps)
             {
-                throw new ArgumentException("Input data outside projection domain.");
+                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
             }
 
             phi = phi < 0d ? -HalfPi : HalfPi;

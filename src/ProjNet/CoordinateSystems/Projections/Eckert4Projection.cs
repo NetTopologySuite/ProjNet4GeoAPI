@@ -106,7 +106,7 @@ internal class Eckert4Projection : MapProjection
         double absSinTheta = Math.Abs(sinTheta);
         if (absSinTheta > OneTol)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double oneMinusAbs = 1d - Math.Abs(sinTheta);
@@ -125,7 +125,7 @@ internal class Eckert4Projection : MapProjection
             double denominator = Cx * (1d + cosTheta);
             if (Math.Abs(denominator) <= Eps10)
             {
-                throw new ArgumentException("Input data outside projection domain.");
+                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
             }
 
             lambda = xx / denominator;
@@ -138,7 +138,7 @@ internal class Eckert4Projection : MapProjection
         {
             if (absLamMinusPi > 1e-10d)
             {
-                throw new ArgumentException("Input data outside projection domain.");
+                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
             }
 
             lambda = lambda > 0d ? PI : -PI;

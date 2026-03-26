@@ -96,7 +96,7 @@ internal class McBrydeThomasFlatPolarQuarticProjection : MapProjection
         {
             if (Math.Abs(phi) > OneTol)
             {
-                throw new ArgumentException("Input data outside projection domain.");
+                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
             }
 
             if (phi < 0d)
@@ -122,7 +122,7 @@ internal class McBrydeThomasFlatPolarQuarticProjection : MapProjection
         {
             if (Math.Abs(phi) > OneTol)
             {
-                throw new ArgumentException("Input data outside projection domain.");
+                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
             }
 
             phi = phi < 0d ? -HalfPi : HalfPi;

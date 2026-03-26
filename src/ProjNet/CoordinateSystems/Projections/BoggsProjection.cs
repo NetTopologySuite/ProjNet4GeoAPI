@@ -85,7 +85,7 @@ internal class BoggsProjection : MapProjection
             double denominator = (1d / Math.Cos(lat)) + (Fxc2 / Math.Cos(theta));
             if (Math.Abs(denominator) <= Eps10)
             {
-                throw new ArgumentException("Input data outside projection domain.");
+                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
             }
 
             x = Fxc * lambda / denominator;

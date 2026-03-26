@@ -90,7 +90,7 @@ internal class CollignonProjection : MapProjection
         }
         else if (absPhi > OneEps)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
         else
         {

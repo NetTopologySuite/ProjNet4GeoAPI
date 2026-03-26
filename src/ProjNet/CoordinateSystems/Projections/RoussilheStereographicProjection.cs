@@ -133,7 +133,7 @@ internal sealed class RoussilheStereographicProjection : MapProjection
         double denominator = Math.Sqrt(1d - (this.es * sp * sp));
         if (Math.Abs(denominator) <= Eps10)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double al = lon * cp / denominator;
@@ -169,7 +169,7 @@ internal sealed class RoussilheStereographicProjection : MapProjection
         double cosPhi = Math.Cos(phi);
         if (Math.Abs(cosPhi) <= Eps10)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double lam = al * Math.Sqrt(1d - (this.es * sinPhi * sinPhi)) / cosPhi;

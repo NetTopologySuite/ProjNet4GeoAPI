@@ -76,7 +76,7 @@ internal class CrasterProjection : MapProjection
         double denominator = (2d * Math.Cos((phi + phi) * Third)) - 1d;
         if (Math.Abs(denominator) <= Eps10)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double lambda = (xx * Rxm) / denominator;

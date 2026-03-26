@@ -56,7 +56,7 @@ internal class CentralCylindricalProjection : MapProjection
         double lambda = Adjust_lon(lon - this.centralMeridian);
         if (Math.Abs(Math.Abs(lat) - HalfPi) <= Eps10)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         lon = this.radius * lambda;

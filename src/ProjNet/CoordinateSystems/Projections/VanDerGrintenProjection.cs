@@ -66,7 +66,7 @@ internal class VanDerGrintenProjection : MapProjection
         double p2 = Math.Abs(lat / HalfPi);
         if ((p2 - Tolerance) > 1d)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         if (p2 > 1d)
@@ -106,7 +106,7 @@ internal class VanDerGrintenProjection : MapProjection
             double radicand = (al2 * diff * diff) - (sum * (g2 - pSquared));
             if (radicand < -Tolerance)
             {
-                throw new ArgumentException("Input data outside projection domain.");
+                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
             }
 
             if (radicand < 0d)
@@ -124,7 +124,7 @@ internal class VanDerGrintenProjection : MapProjection
             y = 1d - (y * (y + (2d * al)));
             if (y < -Tolerance)
             {
-                throw new ArgumentException("Input data outside projection domain.");
+                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
             }
 
             if (y < 0d)
@@ -176,14 +176,14 @@ internal class VanDerGrintenProjection : MapProjection
         double alMulM = al * m;
         if (Math.Abs(alMulM) < InverseDomainEpsilon)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         d = 3d * d / alMulM;
         double ad = Math.Abs(d);
         if ((ad - Tolerance) > 1d)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         d = ad > 1d ? (d > 0d ? 0d : PI) : Math.Acos(d);

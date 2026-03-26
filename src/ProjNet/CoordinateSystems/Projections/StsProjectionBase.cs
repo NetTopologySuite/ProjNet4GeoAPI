@@ -66,7 +66,7 @@ internal abstract class StsProjectionBase : MapProjection
         {
             if (Math.Abs(c) <= Eps10)
             {
-                throw new ArgumentException("Input data outside projection domain.");
+                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
             }
 
             xUnit /= c;
@@ -89,7 +89,7 @@ internal abstract class StsProjectionBase : MapProjection
         double cosLatitude = Math.Cos(latitude);
         if (Math.Abs(cosLatitude) <= Eps10)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double lambda = xUnit / (this.cX * cosLatitude);
@@ -98,7 +98,7 @@ internal abstract class StsProjectionBase : MapProjection
             double cSquared = c * c;
             if (Math.Abs(cSquared) <= Eps10)
             {
-                throw new ArgumentException("Input data outside projection domain.");
+                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
             }
 
             lambda /= cSquared;

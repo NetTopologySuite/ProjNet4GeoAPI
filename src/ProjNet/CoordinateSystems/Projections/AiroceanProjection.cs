@@ -56,7 +56,7 @@ internal sealed class AiroceanProjection : MapProjection
         {
             OrientationVertical => false,
             OrientationHorizontal => true,
-            _ => throw new ArgumentException("Invalid value for orient: only vertical or horizontal are supported."),
+            _ => ArgumentGuard.ThrowArgument<bool>("Invalid value for orient: only vertical or horizontal are supported."),
         };
     }
 
@@ -88,7 +88,7 @@ internal sealed class AiroceanProjection : MapProjection
         int faceId = GetIcosahedronFaceIndex(cartesianPoint);
         if (faceId < 0)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         Vector3 icosahedronPoint = CartesianToIcosahedron(cartesianPoint, faceId);
@@ -114,7 +114,7 @@ internal sealed class AiroceanProjection : MapProjection
         int faceId = GetAiroceanFaceIndex(projectedPoint);
         if (faceId < 0)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         Vector3 sphereCoordinates = AiroceanToIcosahedron(projectedPoint, faceId);
@@ -122,7 +122,7 @@ internal sealed class AiroceanProjection : MapProjection
         double norm = Math.Sqrt((sphereCoordinates.X * sphereCoordinates.X) + (sphereCoordinates.Y * sphereCoordinates.Y) + (sphereCoordinates.Z * sphereCoordinates.Z));
         if (norm <= Eps10)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double q = sphereCoordinates.X / norm;
@@ -166,13 +166,13 @@ internal sealed class AiroceanProjection : MapProjection
     {
         if (double.IsNaN(value) || double.IsInfinity(value))
         {
-            throw new ArgumentException("Invalid value for " + parameterName + ".");
+            ArgumentGuard.ThrowArgument("Invalid value for " + parameterName + ".");
         }
 
         int rounded = (int)Math.Round(value, MidpointRounding.AwayFromZero);
         if (Math.Abs(value - rounded) > 1e-12d)
         {
-            throw new ArgumentException("Invalid value for " + parameterName + ".");
+            ArgumentGuard.ThrowArgument("Invalid value for " + parameterName + ".");
         }
 
         return rounded;
@@ -231,7 +231,7 @@ internal sealed class AiroceanProjection : MapProjection
         double denominator = (point.X * normal.X) + (point.Y * normal.Y) + (point.Z * normal.Z);
         if (Math.Abs(denominator) <= Eps10)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double numerator = (center.X * normal.X) + (center.Y * normal.Y) + (center.Z * normal.Z);

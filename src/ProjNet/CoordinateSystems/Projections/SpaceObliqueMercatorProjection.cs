@@ -72,7 +72,7 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
         this.oneEs = 1d - this.es;
         if (this.oneEs <= 0d)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         this.roneEs = 1d / this.oneEs;
@@ -161,7 +161,7 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
 
         if (l == 0)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double sp = Math.Sin(phi);
@@ -236,7 +236,7 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
         double denom = 1d - (sppsq * (1d + this.u));
         if (denom == 0d)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double lamt = Math.Atan(
@@ -279,14 +279,14 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
             int lsat = ReadPositiveInt(input, "lsat");
             if (lsat < 1 || lsat > 5)
             {
-                throw new ArgumentException("Invalid value for lsat: lsat should be in [1, 5] range");
+                ArgumentGuard.ThrowArgument("Invalid value for lsat: lsat should be in [1, 5] range");
             }
 
             int path = ReadPositiveInt(input, "path");
             int maxPath = lsat <= 3 ? 251 : 233;
             if (path < 1 || path > maxPath)
             {
-                throw new ArgumentException($"Invalid value for path: path should be in [1, {maxPath}] range");
+                ArgumentGuard.ThrowArgument($"Invalid value for path: path should be in [1, {maxPath}] range");
             }
 
             if (lsat <= 3)
@@ -309,7 +309,7 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
             int path = ReadPositiveInt(input, "path");
             if (path < 1 || path > 233)
             {
-                throw new ArgumentException("Invalid value for path: path should be in [1, 233] range");
+                ArgumentGuard.ThrowArgument("Invalid value for path: path should be in [1, 233] range");
             }
 
             ReplaceParameter(merged, "inc_angle", 98.30382d);
@@ -329,7 +329,7 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
 
         if (!HasParameter(merged, "inc_angle") || !HasParameter(merged, "ps_rev") || !HasParameter(merged, "asc_lon"))
         {
-            throw new ArgumentException("Missing required SOM parameters: inc_angle, ps_rev, asc_lon.");
+            ArgumentGuard.ThrowArgument("Missing required SOM parameters: inc_angle, ps_rev, asc_lon.");
         }
 
         return merged;
@@ -342,7 +342,7 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
         double p22 = parameters.GetParameterValue("ps_rev");
         if (p22 < 0d)
         {
-            throw new ArgumentException("Number of days per rotation should be positive");
+            ArgumentGuard.ThrowArgument("Number of days per rotation should be positive");
         }
 
         bool lsatMode = Math.Abs(parameters.GetOptionalParameterValue("som_rlm_mode", 0d)) > 0.5d;
@@ -354,13 +354,13 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
     {
         if (double.IsNaN(raw) || double.IsInfinity(raw))
         {
-            throw new ArgumentException($"Invalid value for {name}.");
+            ArgumentGuard.ThrowArgument($"Invalid value for {name}.");
         }
 
         double radians = DegreesToRadians(raw);
         if (radians < minRadians || radians > maxRadians)
         {
-            throw new ArgumentException($"Invalid value for {name}.");
+            ArgumentGuard.ThrowArgument($"Invalid value for {name}.");
         }
 
         return radians;
@@ -372,7 +372,7 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
         int rounded = (int)Math.Round(value);
         if (Math.Abs(value - rounded) > Eps10 || rounded <= 0)
         {
-            throw new ArgumentException($"Invalid value for {name}.");
+            ArgumentGuard.ThrowArgument($"Invalid value for {name}.");
         }
 
         return rounded;

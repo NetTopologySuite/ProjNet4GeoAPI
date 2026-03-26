@@ -99,7 +99,7 @@ internal class Mercator : MapProjection
         // Forward equations
         if (Math.Abs(Math.Abs(dLatitude) - HalfPi) <= Epsln)
         {
-            throw new ArgumentException("Transformation cannot be computed at the poles.");
+            ArgumentGuard.ThrowArgument("Transformation cannot be computed at the poles.");
         }
 
         double esinphi = this.e * Math.Sin(dLatitude);

@@ -92,7 +92,7 @@ internal class LambertConformalConic2SP : MapProjection
         // Standard parallels cannot be equal and on opposite sides of the equator.
         if (Math.Abs(lat1 + lat2) < Epsln)
         {
-            throw new ArgumentException("Equal latitudes for St. Parallels on opposite sides of equator.");
+            ArgumentGuard.ThrowArgument("Equal latitudes for St. Parallels on opposite sides of equator.");
         }
 
         Sincos(lat1, out double sinLatitude1, out double cosLatitude1);
@@ -142,7 +142,7 @@ internal class LambertConformalConic2SP : MapProjection
             double signedLatitude = latitude * this.ns;
             if (signedLatitude <= 0)
             {
-                throw new ArgumentException("Latitude is outside the valid range for this projection.", nameof(lat));
+                ArgumentGuard.ThrowArgument("Latitude is outside the valid range for this projection.", nameof(lat));
             }
 
             radialDistance = 0;
@@ -186,7 +186,7 @@ internal class LambertConformalConic2SP : MapProjection
             y = Phi2z(this.e, ts, out long flag);
             if (flag != 0)
             {
-                throw new ArgumentException("Inverse projection failed to converge.", nameof(y));
+                ArgumentGuard.ThrowArgument("Inverse projection failed to converge.", nameof(y));
             }
         }
         else

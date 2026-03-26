@@ -55,7 +55,7 @@ internal class ToblerMercatorProjection : MapProjection
     {
         if (Math.Abs(lat) >= HalfPi)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double cosPhi = Math.Cos(lat);

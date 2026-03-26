@@ -48,7 +48,7 @@ internal sealed class CentralConicProjection : MapProjection
         this.phi1 = DegreesToRadians(this.Parameters.GetParameterValue("lat_1", "standard_parallel_1"));
         if (Math.Abs(this.phi1) < Eps10)
         {
-            throw new ArgumentException("Invalid value for lat_1: |lat_1| should be > 0.");
+            ArgumentGuard.ThrowArgument("Invalid value for lat_1: |lat_1| should be > 0.");
         }
 
         this.sinPhi1 = Math.Sin(this.phi1);

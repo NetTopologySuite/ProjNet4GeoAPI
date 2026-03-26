@@ -79,7 +79,7 @@ internal class McBrydeThomasFlatPolarParabolicProjection : MapProjection
         {
             if (Math.Abs(phi) > OneEps)
             {
-                throw new ArgumentException("Input data outside projection domain.");
+                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
             }
 
             phi = phi < 0d ? -HalfPi : HalfPi;
@@ -96,7 +96,7 @@ internal class McBrydeThomasFlatPolarParabolicProjection : MapProjection
         {
             if (Math.Abs(phi) > OneEps)
             {
-                throw new ArgumentException("Input data outside projection domain.");
+                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
             }
 
             phi = phi < 0d ? -HalfPi : HalfPi;

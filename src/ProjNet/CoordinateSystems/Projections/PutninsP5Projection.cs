@@ -80,7 +80,7 @@ internal class PutninsP5Projection : MapProjection
         double denominator = C * (this.a - (this.b * Math.Sqrt(1d + (D * phi * phi))));
         if (Math.Abs(denominator) <= Eps10)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double lambda = xx / denominator;

@@ -103,7 +103,7 @@ public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<Pro
                 sb.Append('.');
             }
 
-            throw new ArgumentException(sb.ToString(), nameof(parameterName));
+            ArgumentGuard.ThrowArgument(sb.ToString(), nameof(parameterName));
         }
 
         return this[name];
@@ -167,7 +167,7 @@ public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<Pro
     {
         if (index < 0 || index >= this.Count)
         {
-            throw new ArgumentOutOfRangeException(nameof(index));
+            ArgumentGuard.ThrowArgumentOutOfRange(nameof(index));
         }
 
         string name = this.originalIndex[index];

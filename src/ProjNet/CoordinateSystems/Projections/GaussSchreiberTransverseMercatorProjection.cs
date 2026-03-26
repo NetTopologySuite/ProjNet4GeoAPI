@@ -89,7 +89,7 @@ internal class GaussSchreiberTransverseMercatorProjection : MapProjection
         double phi = -Phi2z(this.e, Math.Exp((lc - this.c) / this.n1), out flag);
         if (flag != 0)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         x = Adjust_lon(this.centralMeridian + lambda);

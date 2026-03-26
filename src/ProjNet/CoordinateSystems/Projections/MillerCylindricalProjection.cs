@@ -66,7 +66,7 @@ internal class MillerCylindricalProjection : MapProjection
 
         if (Math.Abs(Math.Abs(lat) - HalfPi) <= Epsln)
         {
-            throw new ArgumentException("Transformation cannot be computed at the poles.");
+            ArgumentGuard.ThrowArgument("Transformation cannot be computed at the poles.");
         }
 
         double lambda = Adjust_lon(lon - this.centralMeridian);

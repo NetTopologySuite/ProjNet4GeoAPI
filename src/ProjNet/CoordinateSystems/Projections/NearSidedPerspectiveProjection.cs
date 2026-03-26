@@ -51,7 +51,7 @@ internal class NearSidedPerspectiveProjection : MapProjection
         this.pn1 = height / this.semiMajor;
         if (this.pn1 <= 0d || this.pn1 > 1e10)
         {
-            throw new ArgumentException("Invalid value for h.");
+            ArgumentGuard.ThrowArgument("Invalid value for h.");
         }
 
         this.radius = this.semiMajor * this.scaleFactor;
@@ -132,7 +132,7 @@ internal class NearSidedPerspectiveProjection : MapProjection
 
         if (yValue < this.rp)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         yValue = this.pn1 / (this.p - yValue);
@@ -187,13 +187,13 @@ internal class NearSidedPerspectiveProjection : MapProjection
             double sinz = 1d - ((rh * rh) * this.pfact);
             if (sinz < 0d)
             {
-                throw new ArgumentException("Input data outside projection domain.");
+                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
             }
 
             sinz = (this.p - Math.Sqrt(sinz)) / ((this.pn1 / rh) + (rh / this.pn1));
             if (Math.Abs(sinz) > 1d + Eps10)
             {
-                throw new ArgumentException("Input data outside projection domain.");
+                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
             }
 
             sinz = Math.Max(-1d, Math.Min(1d, sinz));

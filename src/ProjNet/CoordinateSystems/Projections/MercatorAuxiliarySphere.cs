@@ -57,7 +57,7 @@ internal class MercatorAuxiliarySphere : MapProjection
 
         if (Math.Abs(Math.Abs(dLat) - HalfPi) <= Epsln)
         {
-            throw new ArgumentException("Transformation cannot be computed at the poles.");
+            ArgumentGuard.ThrowArgument("Transformation cannot be computed at the poles.");
         }
 
         // Forward equations for the Spherical (Auxiliary) Mercator Projection:

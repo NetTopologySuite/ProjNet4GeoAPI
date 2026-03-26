@@ -74,7 +74,7 @@ internal class Eckert5Projection : MapProjection
         double denominator = 1d + Math.Cos(phi);
         if (Math.Abs(denominator) <= Eps10)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double lambda = Rxf * xx / denominator;

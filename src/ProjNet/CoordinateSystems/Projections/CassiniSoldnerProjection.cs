@@ -162,6 +162,7 @@ internal class CassiniSoldnerProjection : MapProjection
             }
         }
 
-        throw new ArgumentException("Convergence error.");
+        ArgumentGuard.ThrowArgument("Convergence error.");
+        return 0d;
     }
 }

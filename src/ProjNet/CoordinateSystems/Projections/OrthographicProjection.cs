@@ -114,7 +114,7 @@ internal class OrthographicProjection : MapProjection
         {
             if ((rho - this.semiMajor) > Eps10)
             {
-                throw new ArgumentOutOfRangeException($"Point ({x:F3}, {y:F3}) is outside of the projection boundary");
+                ArgumentGuard.ThrowArgumentOutOfRange($"Point ({x:F3}, {y:F3}) is outside of the projection boundary");
             }
 
             rho = this.semiMajor;
@@ -198,7 +198,7 @@ internal class OrthographicProjection : MapProjection
             {
                 if ((rh2 - 1.0) > Eps10)
                 {
-                    throw new ArgumentOutOfRangeException($"Point ({x_scaled:F3}, {y_scaled:F3}) is outside of the projection boundary");
+                    ArgumentGuard.ThrowArgumentOutOfRange($"Point ({x_scaled:F3}, {y_scaled:F3}) is outside of the projection boundary");
                 }
 
                 phi = 0.0;
@@ -219,7 +219,7 @@ internal class OrthographicProjection : MapProjection
             // Equation of the ellipse
             if (sQ(x_scaled) + sQ(y_scaled * (this.semiMajor / this.semiMinor)) > 1 + 1e-11)
             {
-                throw new ArgumentOutOfRangeException($"Point ({x:F3}, {y:F3}) is outside of the projection boundary");
+                ArgumentGuard.ThrowArgumentOutOfRange($"Point ({x:F3}, {y:F3}) is outside of the projection boundary");
             }
 
             double sinphi2 = sQ(y_scaled) / (sQ(1 - this.es) + (sQ(y_scaled) * this.es));
@@ -251,7 +251,7 @@ internal class OrthographicProjection : MapProjection
             double y_recentered = (y - this.yShift) / this.yScale;
             if (sQ(x_scaled) + sQ(y_scaled) > 1 + 1e-11)
             {
-                throw new ArgumentOutOfRangeException($"Point ({x_scaled:F3}, {y_scaled:F3}) is outside of the projection boundary");
+                ArgumentGuard.ThrowArgumentOutOfRange($"Point ({x_scaled:F3}, {y_scaled:F3}) is outside of the projection boundary");
             }
 
             // From EPSG guidance note 7.2, March 2020, §3.3.5 Orthographic
@@ -339,7 +339,7 @@ internal class OrthographicProjection : MapProjection
             case Mode.EQUIT:
                 if (cosphi * coslam < -Eps10)
                 {
-                    throw new ArgumentOutOfRangeException($"Coordinate ({RadiansToDegrees(lam):F3}, {RadiansToDegrees(phi):F3}) is on the unprojected hemisphere");
+                    ArgumentGuard.ThrowArgumentOutOfRange($"Coordinate ({RadiansToDegrees(lam):F3}, {RadiansToDegrees(phi):F3}) is on the unprojected hemisphere");
                 }
 
                 y = this.semiMajor * Math.Sin(phi);
@@ -355,7 +355,7 @@ internal class OrthographicProjection : MapProjection
                 // Also from Snyder's Map Projection - A working manual, equation (5-3), page 149
                 if ((this.sinph0 * sinphi) + (this.cosph0 * cosphi * coslam) < -Eps10)
                 {
-                    throw new ArgumentOutOfRangeException($"Coordinate ({RadiansToDegrees(lam):F3}, {RadiansToDegrees(phi):F3}) is on the unprojected hemisphere");
+                    ArgumentGuard.ThrowArgumentOutOfRange($"Coordinate ({RadiansToDegrees(lam):F3}, {RadiansToDegrees(phi):F3}) is on the unprojected hemisphere");
                 }
 
                 y = this.semiMajor * ((this.cosph0 * sinphi) - (this.sinph0 * cosphi * coslam));
@@ -364,7 +364,7 @@ internal class OrthographicProjection : MapProjection
                 coslam = -coslam;
                 if (Math.Abs(phi - this.Phi0) - Eps10 > HalfPi)
                 {
-                    throw new ArgumentOutOfRangeException($"Coordinate ({RadiansToDegrees(lam):F3}, {RadiansToDegrees(phi):F3}) is on the unprojected hemisphere");
+                    ArgumentGuard.ThrowArgumentOutOfRange($"Coordinate ({RadiansToDegrees(lam):F3}, {RadiansToDegrees(phi):F3}) is on the unprojected hemisphere");
                 }
 
                 y = this.semiMajor * cosphi * coslam;
@@ -372,7 +372,7 @@ internal class OrthographicProjection : MapProjection
             case Mode.S_POLE:
                 if (Math.Abs(phi - this.Phi0) - Eps10 > HalfPi)
                 {
-                    throw new ArgumentOutOfRangeException($"Coordinate ({RadiansToDegrees(lam):F3}, {RadiansToDegrees(phi):F3}) is on the unprojected hemisphere");
+                    ArgumentGuard.ThrowArgumentOutOfRange($"Coordinate ({RadiansToDegrees(lam):F3}, {RadiansToDegrees(phi):F3}) is on the unprojected hemisphere");
                 }
 
                 y = this.semiMajor * cosphi * coslam;
@@ -401,7 +401,7 @@ internal class OrthographicProjection : MapProjection
         // Same condition as in spherical case
         if ((this.sinph0 * sinphi) + (this.cosph0 * cosphi * coslam) < -Eps10)
         {
-            throw new ArgumentOutOfRangeException($"Coordinate ({RadiansToDegrees(lam):F3}, {RadiansToDegrees(phi):F3}) is on the unprojected hemisphere");
+            ArgumentGuard.ThrowArgumentOutOfRange($"Coordinate ({RadiansToDegrees(lam):F3}, {RadiansToDegrees(phi):F3}) is on the unprojected hemisphere");
         }
 
         double nu = this.semiMajor / Math.Sqrt(1.0 - (this.es * sinphi * sinphi));

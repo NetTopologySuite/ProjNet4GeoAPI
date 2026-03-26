@@ -45,7 +45,7 @@ internal class UrmaevFlatPolarSinusoidalProjection : MapProjection
         this.n = this.Parameters.GetParameterValue("n");
         if (this.n <= 0d || this.n > 1d)
         {
-            throw new ArgumentException("Invalid value for n: it should be in ]0,1] range.");
+            ArgumentGuard.ThrowArgument("Invalid value for n: it should be in ]0,1] range.");
         }
 
         this.cY = Cy / this.n;
@@ -81,7 +81,7 @@ internal class UrmaevFlatPolarSinusoidalProjection : MapProjection
         double denominator = Cx * Math.Cos(phiNormalized);
         if (Math.Abs(denominator) <= Eps10)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double lambda = xx / denominator;

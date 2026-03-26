@@ -381,13 +381,13 @@ public class ProjectionsRegistry
 
         if (!typeof(MathTransform).IsAssignableFrom(type))
         {
-            throw new ArgumentException("The provided type does not implement 'GeoAPI.CoordinateSystems.Transformations.IMathTransform'!", nameof(type));
+            ArgumentGuard.ThrowArgument("The provided type does not implement 'GeoAPI.CoordinateSystems.Transformations.IMathTransform'!", nameof(type));
         }
 
         var ci = CheckConstructor(type);
         if (ci is null)
         {
-            throw new ArgumentException("The provided type is lacking a suitable constructor", nameof(type));
+            ArgumentGuard.ThrowArgument("The provided type is lacking a suitable constructor", nameof(type));
         }
 
         string key = ProjectionNameToRegistryKey(name);
@@ -400,7 +400,7 @@ public class ProjectionsRegistry
                     return;
                 }
 
-                throw new ArgumentException("A different projection type has been registered with this name", nameof(name));
+                ArgumentGuard.ThrowArgument("A different projection type has been registered with this name", nameof(name));
             }
 
             TypeRegistry.Add(key, type);
@@ -425,7 +425,7 @@ public class ProjectionsRegistry
         {
             if (!TypeRegistry.TryGetValue(ProjectionNameToRegistryKey(existingName), out var existingProjectionType))
             {
-                throw new ArgumentException($"{existingName} is not a registered projection type");
+                ArgumentGuard.ThrowArgument($"{existingName} is not a registered projection type");
             }
 
             Register(aliasName, existingProjectionType);

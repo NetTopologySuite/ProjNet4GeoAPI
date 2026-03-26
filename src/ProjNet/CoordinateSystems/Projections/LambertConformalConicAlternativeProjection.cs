@@ -53,7 +53,7 @@ internal sealed class LambertConformalConicAlternativeProjection : MapProjection
 
         if (Math.Abs(this.latOrigin) < Eps10)
         {
-            throw new ArgumentException("Invalid value for lat_0: it should be different from 0.");
+            ArgumentGuard.ThrowArgument("Invalid value for lat_0: it should be different from 0.");
         }
 
         this.l = Math.Sin(this.latOrigin);
@@ -115,7 +115,7 @@ internal sealed class LambertConformalConicAlternativeProjection : MapProjection
 
         if (i == MaximumIterations)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double phi = this.Inv_mlfn(s + this.m0);

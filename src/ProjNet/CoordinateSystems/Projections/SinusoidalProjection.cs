@@ -99,7 +99,8 @@ internal class SinusoidalProjection : MapProjection
             }
             else
             {
-                throw new ArgumentException("Input data outside projection domain.");
+                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+                lambdaEllipsoid = 0d;
             }
 
             x = Adjust_lon(this.centralMeridian + lambdaEllipsoid);

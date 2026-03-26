@@ -134,7 +134,8 @@ internal sealed class IseaProjection : MapProjection
                 this.orientationLongitude = 0d;
                 break;
             default:
-                throw new ArgumentException("Invalid value for orient: only isea or pole are supported.");
+                ArgumentGuard.ThrowArgument("Invalid value for orient: only isea or pole are supported.");
+                break;
         }
 
         this.orientationAzimuth = DegreesToRadians(
@@ -156,12 +157,12 @@ internal sealed class IseaProjection : MapProjection
             ModeDi => IseaOutputMode.Di,
             ModeDd => IseaOutputMode.Dd,
             ModeHex => IseaOutputMode.Hex,
-            _ => throw new ArgumentException("Invalid value for mode: only plane, di, dd or hex are supported."),
+            _ => ArgumentGuard.ThrowArgument<IseaOutputMode>("Invalid value for mode: only plane, di, dd or hex are supported."),
         };
 
         if (this.outputMode != IseaOutputMode.Plane)
         {
-            throw new ArgumentException("ISEA mode is not supported in this wave. Only plane mode is currently implemented.");
+            ArgumentGuard.ThrowArgument("ISEA mode is not supported in this wave. Only plane mode is currently implemented.");
         }
 
         for (int i = 0; i < NumIcosahedronFaces; i++)
@@ -226,7 +227,7 @@ internal sealed class IseaProjection : MapProjection
             this.vertexLatSinCos,
             out GeoPoint geographicPoint))
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         x = Adjust_lon(geographicPoint.Lon);
@@ -237,13 +238,13 @@ internal sealed class IseaProjection : MapProjection
     {
         if (double.IsNaN(value) || double.IsInfinity(value))
         {
-            throw new ArgumentException("Invalid value for " + parameterName + ".");
+            ArgumentGuard.ThrowArgument("Invalid value for " + parameterName + ".");
         }
 
         int rounded = (int)Math.Round(value, MidpointRounding.AwayFromZero);
         if (Math.Abs(value - rounded) > 1e-12d)
         {
-            throw new ArgumentException("Invalid value for " + parameterName + ".");
+            ArgumentGuard.ThrowArgument("Invalid value for " + parameterName + ".");
         }
 
         return rounded;
@@ -324,7 +325,7 @@ internal sealed class IseaProjection : MapProjection
             1 => TableH,
             2 => -TableH,
             3 => -5d * TableH,
-            _ => throw new ArgumentException("Input data outside projection domain."),
+            _ => ArgumentGuard.ThrowArgument<double>("Input data outside projection domain."),
         };
 
         return new IseaPoint(x * RPrimeOverR, y * RPrimeOverR);
@@ -594,7 +595,9 @@ internal sealed class IseaProjection : MapProjection
             return i;
         }
 
-        throw new ArgumentException("Input data outside projection domain.");
+        ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+        output = default;
+        return -1;
     }
 
     private readonly struct GeoPoint(double lat, double lon)

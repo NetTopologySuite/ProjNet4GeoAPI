@@ -54,7 +54,7 @@ internal class SwissObliqueMercatorProjection : MapProjection
         double oneMinusEs = 1d - this.es;
         if (oneMinusEs <= 0d)
         {
-            throw new ArgumentException("Invalid ellipsoid eccentricity for Swiss Oblique Mercator projection.");
+            ArgumentGuard.ThrowArgument("Invalid ellipsoid eccentricity for Swiss Oblique Mercator projection.");
         }
 
         this.reciprocalOneMinusEs = 1d / oneMinusEs;
@@ -104,7 +104,7 @@ internal class SwissObliqueMercatorProjection : MapProjection
         double cosPhiDoublePrime = Math.Cos(phiDoublePrime);
         if (Math.Abs(cosPhiDoublePrime) <= Eps10)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double lambdaDoublePrime = Asinz((cosPhiPrime * Math.Sin(lambdaPrime)) / cosPhiDoublePrime);
@@ -123,7 +123,7 @@ internal class SwissObliqueMercatorProjection : MapProjection
         double cosPhiPrime = Math.Cos(phiPrime);
         if (Math.Abs(cosPhiPrime) <= Eps10)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         double lambdaPrime = Asinz((cosPhiDoublePrime * Math.Sin(lambdaDoublePrime)) / cosPhiPrime);
@@ -148,7 +148,7 @@ internal class SwissObliqueMercatorProjection : MapProjection
 
         if (!converged)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         x = Adjust_lon(this.centralMeridian + (lambdaPrime * this.reciprocalC));

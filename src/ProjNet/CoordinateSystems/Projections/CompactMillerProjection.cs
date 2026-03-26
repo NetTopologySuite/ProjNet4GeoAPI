@@ -104,7 +104,7 @@ internal class CompactMillerProjection : MapProjection
 
         if (!converged)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         x = Adjust_lon(this.centralMeridian + xx);

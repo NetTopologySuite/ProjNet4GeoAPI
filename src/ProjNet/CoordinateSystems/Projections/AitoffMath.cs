@@ -85,13 +85,13 @@ internal static class AitoffMath
                 double c = 1d - (value * value);
                 if (c <= Tolerance)
                 {
-                    throw new ArgumentException("Input data outside projection domain.");
+                    ArgumentGuard.ThrowArgument("Input data outside projection domain.");
                 }
 
                 double denominator = Math.Pow(c, 1.5d);
                 if (Math.Abs(denominator) <= JacobianTolerance)
                 {
-                    throw new ArgumentException("Input data outside projection domain.");
+                    ArgumentGuard.ThrowArgument("Input data outside projection domain.");
                 }
 
                 double d = Math.Acos(Clamp(value, -1d, 1d)) / denominator;
@@ -118,7 +118,7 @@ internal static class AitoffMath
                 double determinant = (f1p * f2l) - (f2p * f1l);
                 if (Math.Abs(determinant) <= JacobianTolerance)
                 {
-                    throw new ArgumentException("Input data outside projection domain.");
+                    ArgumentGuard.ThrowArgument("Input data outside projection domain.");
                 }
 
                 double deltaLambda = ((f2 * f1p) - (f1 * f2p)) / determinant;
@@ -158,7 +158,7 @@ internal static class AitoffMath
 
         if (!converged)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
     }
 

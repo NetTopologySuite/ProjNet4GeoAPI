@@ -65,12 +65,12 @@ internal abstract class AdamsProjectionBase : MapProjection
             this.scrollY = this.Parameters.GetOptionalParameterValue("scrolly", 0d);
             if (this.peirceShape == PeirceShape.Horizontal && Math.Abs(this.scrollX) > 1d)
             {
-                throw new ArgumentException("Invalid value for scrollx: |scrollx| should be between -1 and 1.");
+                ArgumentGuard.ThrowArgument("Invalid value for scrollx: |scrollx| should be between -1 and 1.");
             }
 
             if (this.peirceShape == PeirceShape.Vertical && Math.Abs(this.scrollY) > 1d)
             {
-                throw new ArgumentException("Invalid value for scrolly: |scrolly| should be between -1 and 1.");
+                ArgumentGuard.ThrowArgument("Invalid value for scrolly: |scrolly| should be between -1 and 1.");
             }
         }
         else
@@ -163,7 +163,7 @@ internal abstract class AdamsProjectionBase : MapProjection
 
         if (!success)
         {
-            throw new ArgumentException("Input data outside projection domain.");
+            ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
         x = Adjust_lon(this.centralMeridian + lambda);
@@ -175,7 +175,7 @@ internal abstract class AdamsProjectionBase : MapProjection
         int code = (int)Math.Round(shapeCode, MidpointRounding.AwayFromZero);
         if (Math.Abs(shapeCode - code) > 1e-12d)
         {
-            throw new ArgumentException("Invalid value for shape parameter.");
+            ArgumentGuard.ThrowArgument("Invalid value for shape parameter.");
         }
 
         return code switch
@@ -186,7 +186,7 @@ internal abstract class AdamsProjectionBase : MapProjection
             3 => PeirceShape.SHemisphere,
             4 => PeirceShape.Horizontal,
             5 => PeirceShape.Vertical,
-            _ => throw new ArgumentException("Invalid value for shape parameter."),
+            _ => ArgumentGuard.ThrowArgument<PeirceShape>("Invalid value for shape parameter."),
         };
     }
 
@@ -242,7 +242,7 @@ internal abstract class AdamsProjectionBase : MapProjection
             case AdamsMode.Guyou:
                 if ((Math.Abs(lambda) - Tolerance) > HalfPi)
                 {
-                    throw new ArgumentException("Input data outside projection domain.");
+                    ArgumentGuard.ThrowArgument("Input data outside projection domain.");
                 }
 
                 if (Math.Abs(Math.Abs(phi) - HalfPi) < Tolerance)
@@ -267,12 +267,12 @@ internal abstract class AdamsProjectionBase : MapProjection
             case AdamsMode.PeirceQ:
                 if (this.peirceShape == PeirceShape.NHemisphere && phi < -Tolerance)
                 {
-                    throw new ArgumentException("Input data outside projection domain.");
+                    ArgumentGuard.ThrowArgument("Input data outside projection domain.");
                 }
 
                 if (this.peirceShape == PeirceShape.SHemisphere && phi > -Tolerance)
                 {
-                    throw new ArgumentException("Input data outside projection domain.");
+                    ArgumentGuard.ThrowArgument("Input data outside projection domain.");
                 }
 
                 {
@@ -290,7 +290,7 @@ internal abstract class AdamsProjectionBase : MapProjection
             case AdamsMode.AdamsHemi:
                 if ((Math.Abs(lambda) - Tolerance) > HalfPi)
                 {
-                    throw new ArgumentException("Input data outside projection domain.");
+                    ArgumentGuard.ThrowArgument("Input data outside projection domain.");
                 }
 
                 {
