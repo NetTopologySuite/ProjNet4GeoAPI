@@ -1749,141 +1749,97 @@ internal sealed class DefModelMathTransform : MathTransform
     }
 
     [Serializable]
-    private readonly struct SpatialExtent
+    private readonly struct SpatialExtent(double minX, double minY, double maxX, double maxY)
     {
-        internal SpatialExtent(double minX, double minY, double maxX, double maxY)
-        {
-            this.MinX = minX;
-            this.MinY = minY;
-            this.MaxX = maxX;
-            this.MaxY = maxY;
-        }
+        internal double MinX { get; } = minX;
 
-        internal double MinX { get; }
+        internal double MinY { get; } = minY;
 
-        internal double MinY { get; }
+        internal double MaxX { get; } = maxX;
 
-        internal double MaxX { get; }
-
-        internal double MaxY { get; }
+        internal double MaxY { get; } = maxY;
     }
 
     [Serializable]
-    private readonly struct TimeExtent
+    private readonly struct TimeExtent(double first, double last)
     {
-        internal TimeExtent(double first, double last)
-        {
-            this.First = first;
-            this.Last = last;
-        }
+        internal double First { get; } = first;
 
-        internal double First { get; }
-
-        internal double Last { get; }
+        internal double Last { get; } = last;
     }
 
     [Serializable]
-    private readonly struct InterpolationCell
+    private readonly struct InterpolationCell(
+        int x0,
+        int y0,
+        int x1,
+        int y1,
+        double fractionX,
+        double fractionY,
+        double w00,
+        double w01,
+        double w10,
+        double w11)
     {
-        internal InterpolationCell(
-            int x0,
-            int y0,
-            int x1,
-            int y1,
-            double fractionX,
-            double fractionY,
-            double w00,
-            double w01,
-            double w10,
-            double w11)
-        {
-            this.X0 = x0;
-            this.Y0 = y0;
-            this.X1 = x1;
-            this.Y1 = y1;
-            this.FractionX = fractionX;
-            this.FractionY = fractionY;
-            this.W00 = w00;
-            this.W01 = w01;
-            this.W10 = w10;
-            this.W11 = w11;
-        }
+        internal int X0 { get; } = x0;
 
-        internal int X0 { get; }
+        internal int Y0 { get; } = y0;
 
-        internal int Y0 { get; }
+        internal int X1 { get; } = x1;
 
-        internal int X1 { get; }
+        internal int Y1 { get; } = y1;
 
-        internal int Y1 { get; }
+        internal double FractionX { get; } = fractionX;
 
-        internal double FractionX { get; }
+        internal double FractionY { get; } = fractionY;
 
-        internal double FractionY { get; }
+        internal double W00 { get; } = w00;
 
-        internal double W00 { get; }
+        internal double W01 { get; } = w01;
 
-        internal double W01 { get; }
+        internal double W10 { get; } = w10;
 
-        internal double W10 { get; }
-
-        internal double W11 { get; }
+        internal double W11 { get; } = w11;
     }
 
     [Serializable]
-    private readonly struct XyzCornerValues
+    private readonly struct XyzCornerValues(
+        double x00,
+        double x01,
+        double x10,
+        double x11,
+        double y00,
+        double y01,
+        double y10,
+        double y11,
+        double z00,
+        double z01,
+        double z10,
+        double z11)
     {
-        internal XyzCornerValues(
-            double x00,
-            double x01,
-            double x10,
-            double x11,
-            double y00,
-            double y01,
-            double y10,
-            double y11,
-            double z00,
-            double z01,
-            double z10,
-            double z11)
-        {
-            this.X00 = x00;
-            this.X01 = x01;
-            this.X10 = x10;
-            this.X11 = x11;
-            this.Y00 = y00;
-            this.Y01 = y01;
-            this.Y10 = y10;
-            this.Y11 = y11;
-            this.Z00 = z00;
-            this.Z01 = z01;
-            this.Z10 = z10;
-            this.Z11 = z11;
-        }
+        internal double X00 { get; } = x00;
 
-        internal double X00 { get; }
+        internal double X01 { get; } = x01;
 
-        internal double X01 { get; }
+        internal double X10 { get; } = x10;
 
-        internal double X10 { get; }
+        internal double X11 { get; } = x11;
 
-        internal double X11 { get; }
+        internal double Y00 { get; } = y00;
 
-        internal double Y00 { get; }
+        internal double Y01 { get; } = y01;
 
-        internal double Y01 { get; }
+        internal double Y10 { get; } = y10;
 
-        internal double Y10 { get; }
+        internal double Y11 { get; } = y11;
 
-        internal double Y11 { get; }
+        internal double Z00 { get; } = z00;
 
-        internal double Z00 { get; }
+        internal double Z01 { get; } = z01;
 
-        internal double Z01 { get; }
+        internal double Z10 { get; } = z10;
 
-        internal double Z10 { get; }
-
-        internal double Z11 { get; }
+        internal double Z11 { get; } = z11;
     }
 
     [Serializable]
@@ -2071,17 +2027,11 @@ internal sealed class DefModelMathTransform : MathTransform
         }
 
         [Serializable]
-        internal readonly struct EpochScaleTuple
+        internal readonly struct EpochScaleTuple(double epoch, double scaleFactor)
         {
-            internal EpochScaleTuple(double epoch, double scaleFactor)
-            {
-                this.Epoch = epoch;
-                this.ScaleFactor = scaleFactor;
-            }
+            internal double Epoch { get; } = epoch;
 
-            internal double Epoch { get; }
-
-            internal double ScaleFactor { get; }
+            internal double ScaleFactor { get; } = scaleFactor;
         }
     }
 

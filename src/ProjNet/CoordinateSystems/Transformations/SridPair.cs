@@ -8,28 +8,17 @@ using System;
 /// <summary>
 /// Represents a source/target SRID pair for dictionary lookups.
 /// </summary>
-internal readonly struct SridPair : IEquatable<SridPair>
+internal readonly struct SridPair(int sourceSrid, int targetSrid) : IEquatable<SridPair>
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SridPair"/> struct.
-    /// </summary>
-    /// <param name="sourceSrid">The source SRID.</param>
-    /// <param name="targetSrid">The target SRID.</param>
-    internal SridPair(int sourceSrid, int targetSrid)
-    {
-        this.SourceSrid = sourceSrid;
-        this.TargetSrid = targetSrid;
-    }
-
     /// <summary>
     /// Gets the source SRID.
     /// </summary>
-    internal int SourceSrid { get; }
+    internal int SourceSrid { get; } = sourceSrid;
 
     /// <summary>
     /// Gets the target SRID.
     /// </summary>
-    internal int TargetSrid { get; }
+    internal int TargetSrid { get; } = targetSrid;
 
     /// <summary>
     /// Compares this pair with another SRID pair.

@@ -867,200 +867,142 @@ internal static partial class GeoTiffGridLoader
         return true;
     }
 
-    private readonly struct GeoTransform
+    private readonly struct GeoTransform(
+        int width,
+        int height,
+        double a,
+        double b,
+        double c,
+        double d,
+        double e,
+        double f,
+        double determinant,
+        double west,
+        double east,
+        double south,
+        double north,
+        double area,
+        double epsilon)
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="GeoTransform"/> struct.
+        /// Gets the documented value.
         /// </summary>
-        /// <param name="width">The width value.</param>
-        /// <param name="height">The height value.</param>
-        /// <param name="a">The a value.</param>
-        /// <param name="b">The b value.</param>
-        /// <param name="c">The c value.</param>
-        /// <param name="d">The d value.</param>
-        /// <param name="e">The e value.</param>
-        /// <param name="f">The f value.</param>
-        /// <param name="determinant">The determinant value.</param>
-        /// <param name="west">The west value.</param>
-        /// <param name="east">The east value.</param>
-        /// <param name="south">The south value.</param>
-        /// <param name="north">The north value.</param>
-        /// <param name="area">The area value.</param>
-        /// <param name="epsilon">The epsilon value.</param>
-        internal GeoTransform(
-            int width,
-            int height,
-            double a,
-            double b,
-            double c,
-            double d,
-            double e,
-            double f,
-            double determinant,
-            double west,
-            double east,
-            double south,
-            double north,
-            double area,
-            double epsilon)
-        {
-            this.Width = width;
-            this.Height = height;
-            this.A = a;
-            this.B = b;
-            this.C = c;
-            this.D = d;
-            this.E = e;
-            this.F = f;
-            this.Determinant = determinant;
-            this.West = west;
-            this.East = east;
-            this.South = south;
-            this.North = north;
-            this.Area = area;
-            this.Epsilon = epsilon;
-        }
+        internal int Width { get; } = width;
 
         /// <summary>
         /// Gets the documented value.
         /// </summary>
-        internal int Width { get; }
+        internal int Height { get; } = height;
 
         /// <summary>
         /// Gets the documented value.
         /// </summary>
-        internal int Height { get; }
+        internal double A { get; } = a;
 
         /// <summary>
         /// Gets the documented value.
         /// </summary>
-        internal double A { get; }
+        internal double B { get; } = b;
 
         /// <summary>
         /// Gets the documented value.
         /// </summary>
-        internal double B { get; }
+        internal double C { get; } = c;
 
         /// <summary>
         /// Gets the documented value.
         /// </summary>
-        internal double C { get; }
+        internal double D { get; } = d;
 
         /// <summary>
         /// Gets the documented value.
         /// </summary>
-        internal double D { get; }
+        internal double E { get; } = e;
 
         /// <summary>
         /// Gets the documented value.
         /// </summary>
-        internal double E { get; }
+        internal double F { get; } = f;
 
         /// <summary>
         /// Gets the documented value.
         /// </summary>
-        internal double F { get; }
+        internal double Determinant { get; } = determinant;
 
         /// <summary>
         /// Gets the documented value.
         /// </summary>
-        internal double Determinant { get; }
+        internal double West { get; } = west;
 
         /// <summary>
         /// Gets the documented value.
         /// </summary>
-        internal double West { get; }
+        internal double East { get; } = east;
 
         /// <summary>
         /// Gets the documented value.
         /// </summary>
-        internal double East { get; }
+        internal double South { get; } = south;
 
         /// <summary>
         /// Gets the documented value.
         /// </summary>
-        internal double South { get; }
+        internal double North { get; } = north;
 
         /// <summary>
         /// Gets the documented value.
         /// </summary>
-        internal double North { get; }
+        internal double Area { get; } = area;
 
         /// <summary>
         /// Gets the documented value.
         /// </summary>
-        internal double Area { get; }
-
-        /// <summary>
-        /// Gets the documented value.
-        /// </summary>
-        internal double Epsilon { get; }
+        internal double Epsilon { get; } = epsilon;
     }
 
-    private readonly struct GeoMetadata
+    private readonly struct GeoMetadata(
+        IReadOnlyDictionary<int, string> descriptionsBySample,
+        IReadOnlyDictionary<int, string> positiveValueBySample,
+        IReadOnlyDictionary<int, double> scaleBySample,
+        IReadOnlyDictionary<int, double> offsetBySample,
+        double? noDataValue,
+        double angularScaleToDegree,
+        IReadOnlyDictionary<int, string> unitTypeBySample)
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="GeoMetadata"/> struct.
+        /// Gets the documented value.
         /// </summary>
-        /// <param name="descriptionsBySample">The descriptionsBySample value.</param>
-        /// <param name="positiveValueBySample">The positiveValueBySample value.</param>
-        /// <param name="scaleBySample">The scaleBySample value.</param>
-        /// <param name="offsetBySample">The offsetBySample value.</param>
-        /// <param name="noDataValue">The noDataValue value.</param>
-        /// <param name="angularScaleToDegree">The angularScaleToDegree value.</param>
-        /// <param name="unitTypeBySample">The unitTypeBySample value.</param>
-        internal GeoMetadata(
-            IReadOnlyDictionary<int, string> descriptionsBySample,
-            IReadOnlyDictionary<int, string> positiveValueBySample,
-            IReadOnlyDictionary<int, double> scaleBySample,
-            IReadOnlyDictionary<int, double> offsetBySample,
-            double? noDataValue,
-            double angularScaleToDegree,
-            IReadOnlyDictionary<int, string> unitTypeBySample)
-        {
-            this.DescriptionsBySample = descriptionsBySample;
-            this.PositiveValueBySample = positiveValueBySample;
-            this.ScaleBySample = scaleBySample;
-            this.OffsetBySample = offsetBySample;
-            this.NoDataValue = noDataValue;
-            this.AngularScaleToDegree = angularScaleToDegree;
-            this.UnitTypeBySample = unitTypeBySample;
-        }
+        internal IReadOnlyDictionary<int, string> DescriptionsBySample { get; } = descriptionsBySample;
 
         /// <summary>
         /// Gets the documented value.
         /// </summary>
-        internal IReadOnlyDictionary<int, string> DescriptionsBySample { get; }
+        internal IReadOnlyDictionary<int, string> PositiveValueBySample { get; } = positiveValueBySample;
 
         /// <summary>
         /// Gets the documented value.
         /// </summary>
-        internal IReadOnlyDictionary<int, string> PositiveValueBySample { get; }
+        internal IReadOnlyDictionary<int, double> ScaleBySample { get; } = scaleBySample;
 
         /// <summary>
         /// Gets the documented value.
         /// </summary>
-        internal IReadOnlyDictionary<int, double> ScaleBySample { get; }
+        internal IReadOnlyDictionary<int, double> OffsetBySample { get; } = offsetBySample;
 
         /// <summary>
         /// Gets the documented value.
         /// </summary>
-        internal IReadOnlyDictionary<int, double> OffsetBySample { get; }
+        internal double? NoDataValue { get; } = noDataValue;
 
         /// <summary>
         /// Gets the documented value.
         /// </summary>
-        internal double? NoDataValue { get; }
+        internal double AngularScaleToDegree { get; } = angularScaleToDegree;
 
         /// <summary>
         /// Gets the documented value.
         /// </summary>
-        internal double AngularScaleToDegree { get; }
-
-        /// <summary>
-        /// Gets the documented value.
-        /// </summary>
-        internal IReadOnlyDictionary<int, string> UnitTypeBySample { get; }
+        internal IReadOnlyDictionary<int, string> UnitTypeBySample { get; } = unitTypeBySample;
     }
 
     private sealed class LoadedPage
