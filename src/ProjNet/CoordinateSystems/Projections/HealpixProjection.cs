@@ -61,7 +61,7 @@ internal class HealpixProjection : MapProjection
         {
             this.oneEs = 0d;
             this.qp = 0d;
-            this.apa = default!;
+            this.apa = Array.Empty<double>();
         }
     }
 

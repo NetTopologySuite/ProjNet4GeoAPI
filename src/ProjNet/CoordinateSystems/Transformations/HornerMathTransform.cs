@@ -224,12 +224,12 @@ internal sealed class HornerMathTransform : MathTransform
             ? GetComplexCoefficientCount(degree)
             : GetRealCoefficientCount(degree);
 
-        double[] fwdU = default!;
-        double[] fwdV = default!;
-        double[] invU = default!;
-        double[] invV = default!;
-        double[] fwdC = default!;
-        double[] invC = default!;
+        double[] fwdU = Array.Empty<double>();
+        double[] fwdV = Array.Empty<double>();
+        double[] invU = Array.Empty<double>();
+        double[] invV = Array.Empty<double>();
+        double[] fwdC = Array.Empty<double>();
+        double[] invC = Array.Empty<double>();
 
         if (isComplex)
         {

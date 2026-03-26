@@ -546,7 +546,7 @@ internal static partial class GeoTiffGridLoader
             }
 
             sampleValueArrayPool.Return(sampleValues[i], clearArray: false);
-            sampleValues[i] = default!;
+            sampleValues[i] = null;
         }
     }
 
@@ -564,7 +564,7 @@ internal static partial class GeoTiffGridLoader
             ParseMetadataItems(sanitizedMetadata, samplesPerPixel, descriptionsBySample, positiveValueBySample, scaleBySample, offsetBySample, unitTypeBySample);
         }
 
-        double? noDataValue = default!;
+        double? noDataValue = default;
         if (TryGetStringField(tiff, (TiffTag)GdalNoDataTag, out string noDataText)
             && double.TryParse(
                 CleanMetadataValue(noDataText),
