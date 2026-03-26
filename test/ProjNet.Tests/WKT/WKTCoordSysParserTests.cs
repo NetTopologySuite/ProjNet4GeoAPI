@@ -139,6 +139,19 @@ public class WKTCoordSysParserTests
     }
 
     /// <summary>
+    /// Verifies that non-coordinate-system WKT returns <see langword="null"/> instead of throwing.
+    /// </summary>
+    [Xunit.Fact]
+    public void CreateFromWktReturnsNullForNonCoordinateSystemWkt()
+    {
+        const string wkt = "UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]]";
+
+        CoordinateSystem coordinateSystem = this.coordinateSystemFactory.CreateFromWkt(wkt);
+
+        Assert.Null(coordinateSystem);
+    }
+
+    /// <summary>
     /// This test reads in a file with 2671 pre-defined coordinate systems and projections,
     /// and tries to create a transformation with them.
     /// </summary>

@@ -48,16 +48,14 @@ public class CoordinateSystemFactory
     /// a <see cref="ProjectedCoordinateSystem"/>.
     /// </summary>
     /// <param name="wkt">The Well-known text representation for the spatial reference.</param>
-    /// <returns>The resulting spatial reference object.</returns>
-    public CoordinateSystem CreateFromWkt(string wkt)
+    /// <returns>
+    /// The resulting spatial reference object, or <see langword="null"/> when the WKT
+    /// does not describe a coordinate system.
+    /// </returns>
+    public CoordinateSystem? CreateFromWkt(string wkt)
     {
         var info = CoordinateSystemWktReader.Parse(wkt);
-        if (info is not CoordinateSystem)
-        {
-            ArgumentGuard.ThrowArgument("WKT did not resolve to a coordinate system.", nameof(wkt));
-        }
-
-        return (CoordinateSystem)info;
+        return info as CoordinateSystem;
     }
 
     /// <summary>

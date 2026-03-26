@@ -168,8 +168,8 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     /// </summary>
     /// <param name="authority">The authority for the coordinate system.</param>
     /// <param name="code">The code assigned to the coordinate system by <paramref name="authority" />.</param>
-    /// <returns>The coordinate system.</returns>
-    public CoordinateSystem GetCoordinateSystem(string authority, long code)
+    /// <returns>The coordinate system, or <see langword="null"/> when no entry is registered.</returns>
+    public CoordinateSystem? GetCoordinateSystem(string authority, long code)
     {
         int? srid = this.GetSRID(authority, code);
         if (srid.HasValue)
@@ -177,7 +177,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
             return this.GetCoordinateSystem(srid.Value);
         }
 
-        return default!;
+        return null;
     }
 
     /// <summary>
@@ -187,9 +187,9 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     /// <param name="code">The authority code.</param>
     /// <param name="coordinateSystem">The coordinate system if found; otherwise <see langword="null"/>.</param>
     /// <returns><see langword="true"/> if a coordinate system was found; otherwise <see langword="false"/>.</returns>
-    public bool TryGetCoordinateSystem(string authority, long code, out CoordinateSystem coordinateSystem)
+    public bool TryGetCoordinateSystem(string authority, long code, out CoordinateSystem? coordinateSystem)
     {
-        coordinateSystem = default!;
+        coordinateSystem = null;
         int? srid = this.GetSRID(authority, code);
         if (!srid.HasValue)
         {
@@ -226,7 +226,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
             return srid;
         }
 
-        return default!;
+        return null;
     }
 
     /// <summary>
@@ -331,7 +331,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
         this.csBySrid.Clear();
     }
 
-    private static CoordinateSystem CreateCoordinateSystem(CoordinateSystemFactory coordinateSystemFactory, string wkt)
+    private static CoordinateSystem? CreateCoordinateSystem(CoordinateSystemFactory coordinateSystemFactory, string wkt)
     {
         try
         {
@@ -340,7 +340,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
         catch (Exception)
         {
             // as a fallback we ignore projections not supported
-            return default!;
+            return null;
         }
     }
 

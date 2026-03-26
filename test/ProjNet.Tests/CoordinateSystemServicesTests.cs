@@ -76,6 +76,21 @@ public class CoordinateSystemServicesTests
     }
 
     /// <summary>
+    /// Ensures authority/code lookup returns null when the coordinate system is not registered.
+    /// </summary>
+    [Xunit.Fact]
+    public void GetCoordinateSystemByAuthorityCodeReturnsNullWhenMissing()
+    {
+        var css = new CoordinateSystemServices(
+            new CoordinateSystemFactory(),
+            new CoordinateTransformationFactory());
+
+        CoordinateSystem missing = css.GetCoordinateSystem("EPSG", -1);
+
+        Assert.Null(missing);
+    }
+
+    /// <summary>
     /// Performs the documented operation.
     /// </summary>
     [Xunit.Fact]

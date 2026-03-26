@@ -16,12 +16,12 @@ namespace ProjNet
         public ProjNet.CoordinateSystems.Transformations.ICoordinateTransformation CreateTransformation(int sourceSrid, int targetSrid) { }
         public int[] GetAvailableSridValues() { }
         public ProjNet.CoordinateSystems.CoordinateSystem GetCoordinateSystem(int srid) { }
-        public ProjNet.CoordinateSystems.CoordinateSystem GetCoordinateSystem(string authority, long code) { }
+        public ProjNet.CoordinateSystems.CoordinateSystem? GetCoordinateSystem(string authority, long code) { }
         public System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<int, ProjNet.CoordinateSystems.CoordinateSystem>> GetEnumerator() { }
         public int? GetSRID(string authority, long authorityCode) { }
         public bool RemoveCoordinateSystem(int srid) { }
         public bool TryGetCoordinateSystem(int srid, out ProjNet.CoordinateSystems.CoordinateSystem coordinateSystem) { }
-        public bool TryGetCoordinateSystem(string authority, long code, out ProjNet.CoordinateSystems.CoordinateSystem coordinateSystem) { }
+        public bool TryGetCoordinateSystem(string authority, long code, out ProjNet.CoordinateSystems.CoordinateSystem? coordinateSystem) { }
     }
 }
 namespace ProjNet.CoordinateSystems
@@ -84,7 +84,7 @@ namespace ProjNet.CoordinateSystems
         public ProjNet.CoordinateSystems.FittedCoordinateSystem CreateFittedCoordinateSystem(string name, ProjNet.CoordinateSystems.CoordinateSystem baseCoordinateSystem, ProjNet.CoordinateSystems.Transformations.MathTransform toBase, System.Collections.Generic.List<ProjNet.CoordinateSystems.AxisInfo> arAxes) { }
         public ProjNet.CoordinateSystems.FittedCoordinateSystem CreateFittedCoordinateSystem(string name, ProjNet.CoordinateSystems.CoordinateSystem baseCoordinateSystem, string toBaseWkt, System.Collections.Generic.List<ProjNet.CoordinateSystems.AxisInfo> arAxes) { }
         public ProjNet.CoordinateSystems.Ellipsoid CreateFlattenedSphere(string name, double semiMajorAxis, double inverseFlattening, ProjNet.CoordinateSystems.LinearUnit linearUnit) { }
-        public ProjNet.CoordinateSystems.CoordinateSystem CreateFromWkt(string wkt) { }
+        public ProjNet.CoordinateSystems.CoordinateSystem? CreateFromWkt(string wkt) { }
         public ProjNet.CoordinateSystems.CoordinateSystem CreateFromXml(string xml) { }
         public ProjNet.CoordinateSystems.GeocentricCoordinateSystem CreateGeocentricCoordinateSystem(string name, ProjNet.CoordinateSystems.HorizontalDatum datum, ProjNet.CoordinateSystems.LinearUnit linearUnit, ProjNet.CoordinateSystems.PrimeMeridian primeMeridian) { }
         public ProjNet.CoordinateSystems.GeographicCoordinateSystem CreateGeographicCoordinateSystem(string name, ProjNet.CoordinateSystems.AngularUnit angularUnit, ProjNet.CoordinateSystems.HorizontalDatum datum, ProjNet.CoordinateSystems.PrimeMeridian primeMeridian, ProjNet.CoordinateSystems.AxisInfo axis0, ProjNet.CoordinateSystems.AxisInfo axis1) { }
