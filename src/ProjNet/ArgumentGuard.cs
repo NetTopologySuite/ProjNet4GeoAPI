@@ -187,6 +187,7 @@ internal static class ArgumentGuard
     /// </summary>
     /// <typeparam name="T">Return type used by the caller expression.</typeparam>
     /// <param name="message">Exception message.</param>
+    /// <returns>This method always throws; no value is returned.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static T ThrowArgument<T>(string message)
     {
@@ -199,6 +200,7 @@ internal static class ArgumentGuard
     /// <typeparam name="T">Return type used by the caller expression.</typeparam>
     /// <param name="message">Exception message.</param>
     /// <param name="paramName">Parameter name for exception reporting.</param>
+    /// <returns>This method always throws; no value is returned.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static T ThrowArgument<T>(string message, string paramName)
     {

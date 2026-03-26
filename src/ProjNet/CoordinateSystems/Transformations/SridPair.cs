@@ -9,17 +9,7 @@ namespace ProjNet.CoordinateSystems.Transformations;
 internal readonly record struct SridPair
 {
     /// <summary>
-    /// Gets the source SRID.
-    /// </summary>
-    internal int SourceSrid { get; }
-
-    /// <summary>
-    /// Gets the target SRID.
-    /// </summary>
-    internal int TargetSrid { get; }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SridPair"/> record struct.
+    /// Initializes a new instance of the <see cref="SridPair"/> struct.
     /// </summary>
     /// <param name="sourceSrid">The source SRID.</param>
     /// <param name="targetSrid">The target SRID.</param>
@@ -28,4 +18,14 @@ internal readonly record struct SridPair
         this.SourceSrid = sourceSrid;
         this.TargetSrid = targetSrid;
     }
+
+    /// <summary>
+    /// Gets the source SRID.
+    /// </summary>
+    internal int SourceSrid { get; }
+
+    /// <summary>
+    /// Gets the target SRID.
+    /// </summary>
+    internal int TargetSrid { get; }
 }

@@ -863,13 +863,21 @@ internal static class ProjPipelineMathTransformFactory
         }
 
         string digits = zoneToken.Trim();
+        int zone = 0;
         int index = 0;
         while (index < digits.Length && char.IsDigit(digits[index]))
         {
+            int digit = digits[index] - '0';
+            if (zone > ((int.MaxValue - digit) / 10))
+            {
+                return false;
+            }
+
+            zone = (zone * 10) + digit;
             index++;
         }
 
-        if (index == 0 || !int.TryParse(digits.Substring(0, index), NumberStyles.Integer, CultureInfo.InvariantCulture, out int zone))
+        if (index == 0)
         {
             return false;
         }

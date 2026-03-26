@@ -13,40 +13,6 @@ using System.Collections.Generic;
 [Serializable]
 internal sealed class PipelineStackTransferMathTransform : MathTransform
 {
-    /// <summary>
-    /// Creates a runtime <c>push</c> stack transfer transform.
-    /// </summary>
-    /// <param name="args">Parsed PROJ argument dictionary.</param>
-    /// <param name="executionContext">Pipeline execution context.</param>
-    /// <param name="transform">Created transform instance on success.</param>
-    /// <param name="skipReason">Failure reason when creation is not possible.</param>
-    /// <returns><see langword="true"/> when a transform was created.</returns>
-    internal static bool TryCreatePush(
-        Dictionary<string, string> args,
-        PipelineExecutionContext executionContext,
-        out MathTransform transform,
-        out string skipReason)
-    {
-        return TryCreate(args, executionContext, isPush: true, out transform, out skipReason);
-    }
-
-    /// <summary>
-    /// Creates a runtime <c>pop</c> stack transfer transform.
-    /// </summary>
-    /// <param name="args">Parsed PROJ argument dictionary.</param>
-    /// <param name="executionContext">Pipeline execution context.</param>
-    /// <param name="transform">Created transform instance on success.</param>
-    /// <param name="skipReason">Failure reason when creation is not possible.</param>
-    /// <returns><see langword="true"/> when a transform was created.</returns>
-    internal static bool TryCreatePop(
-        Dictionary<string, string> args,
-        PipelineExecutionContext executionContext,
-        out MathTransform transform,
-        out string skipReason)
-    {
-        return TryCreate(args, executionContext, isPush: false, out transform, out skipReason);
-    }
-
     private readonly bool isPush;
     private readonly bool[] enabledOrdinateFlags;
     private readonly PipelineExecutionContext executionContext;
@@ -99,6 +65,40 @@ internal sealed class PipelineStackTransferMathTransform : MathTransform
     internal override void Transform(ref double x, ref double y, ref double z, ref double t)
     {
         this.TransformCore(ref x, ref y, ref z, ref t, includeTime: true);
+    }
+
+    /// <summary>
+    /// Creates a runtime <c>push</c> stack transfer transform.
+    /// </summary>
+    /// <param name="args">Parsed PROJ argument dictionary.</param>
+    /// <param name="executionContext">Pipeline execution context.</param>
+    /// <param name="transform">Created transform instance on success.</param>
+    /// <param name="skipReason">Failure reason when creation is not possible.</param>
+    /// <returns><see langword="true"/> when a transform was created.</returns>
+    internal static bool TryCreatePush(
+        Dictionary<string, string> args,
+        PipelineExecutionContext executionContext,
+        out MathTransform transform,
+        out string skipReason)
+    {
+        return TryCreate(args, executionContext, isPush: true, out transform, out skipReason);
+    }
+
+    /// <summary>
+    /// Creates a runtime <c>pop</c> stack transfer transform.
+    /// </summary>
+    /// <param name="args">Parsed PROJ argument dictionary.</param>
+    /// <param name="executionContext">Pipeline execution context.</param>
+    /// <param name="transform">Created transform instance on success.</param>
+    /// <param name="skipReason">Failure reason when creation is not possible.</param>
+    /// <returns><see langword="true"/> when a transform was created.</returns>
+    internal static bool TryCreatePop(
+        Dictionary<string, string> args,
+        PipelineExecutionContext executionContext,
+        out MathTransform transform,
+        out string skipReason)
+    {
+        return TryCreate(args, executionContext, isPush: false, out transform, out skipReason);
     }
 
     private static bool TryCreate(
