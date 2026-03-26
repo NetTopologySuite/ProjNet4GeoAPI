@@ -358,6 +358,80 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void AxisSwapWithAxisParameterParsesOrientationCodes()
+    {
+        const string operation = "+proj=axisswap +axis=wsu";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+
+        Assert.True(ok, skipReason);
+        double[] transformed = transform.Transform([2d, 3d, 4d]);
+
+        Assert.Equal(-2d, transformed[0], 12);
+        Assert.Equal(-3d, transformed[1], 12);
+        Assert.Equal(4d, transformed[2], 12);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void AxisSwapWithoutOrderAndAxisReturnsValidationFailure()
+    {
+        const string operation = "+proj=axisswap";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string skipReason);
+
+        Assert.False(ok);
+        Assert.Contains("exactly one of +order or +axis", skipReason, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void AxisSwapWithOrderAndAxisReturnsValidationFailure()
+    {
+        const string operation = "+proj=axisswap +order=1,2 +axis=en";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string skipReason);
+
+        Assert.False(ok);
+        Assert.Contains("exactly one of +order or +axis", skipReason, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void AxisSwapWithInvalidAxisTokenReturnsValidationFailure()
+    {
+        const string operation = "+proj=axisswap +axis=ee";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string skipReason);
+
+        Assert.False(ok);
+        Assert.Contains("+axis", skipReason, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
+    [Fact]
+    public void AxisSwapWithOutOfRangeOrderReferenceReturnsValidationFailure()
+    {
+        const string operation = "+proj=axisswap +order=3,1";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string skipReason);
+
+        Assert.False(ok);
+        Assert.Contains("out-of-range axis", skipReason, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
     /// Verifies 4D epoch propagation through composite pipelines with kinematic Helmert.
     /// </summary>
     [Fact]
