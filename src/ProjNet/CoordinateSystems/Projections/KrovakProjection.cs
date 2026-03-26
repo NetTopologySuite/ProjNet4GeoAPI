@@ -90,23 +90,6 @@ internal class KrovakProjection : MapProjection
         this.Authority = "EPSG";
         this.AuthorityCode = 9819;
 
-        // PROJCS["S-JTSK (Ferro) / Krovak",
-        // GEOGCS["S-JTSK (Ferro)",
-        //    DATUM["D_S_JTSK_Ferro",
-        //        SPHEROID["Bessel 1841",6377397.155,299.1528128]],
-        //    PRIMEM["Ferro",-17.66666666666667],
-        //    UNIT["degree",0.0174532925199433]],
-        // PROJECTION["Krovak"],
-        // PARAMETER["latitude_of_center",49.5],
-        // PARAMETER["longitude_of_center",42.5],
-        // PARAMETER["azimuth",30.28813972222222],
-        // PARAMETER["pseudo_standard_parallel_1",78.5],
-        // PARAMETER["scale_factor",0.9999],
-        // PARAMETER["false_easting",0],
-        // PARAMETER["false_northing",0],
-        // UNIT["metre",1]]
-
-        // Check for missing parameters
         this.azimuth = DegreesToRadians(this.Parameters.GetParameterValue("azimuth"));
         this.pseudoStandardParallel = DegreesToRadians(this.Parameters.GetParameterValue("pseudo_standard_parallel_1"));
 
@@ -116,21 +99,21 @@ internal class KrovakProjection : MapProjection
         this.n = Math.Sin(this.pseudoStandardParallel);
         this.tanS2 = Math.Tan((this.pseudoStandardParallel / 2) + S45);
 
-        double sinLat = Math.Sin(this.latOrigin);
-        double cosLat = Math.Cos(this.latOrigin);
-        double cosL2 = cosLat * cosLat;
-        this.alfa = Math.Sqrt(1 + ((this.es * (cosL2 * cosL2)) / (1 - this.es))); // parameter B
+        double sinLatitudeOrigin = Math.Sin(this.latOrigin);
+        double cosLatitudeOrigin = Math.Cos(this.latOrigin);
+        double cosLatitudeOriginSquared = cosLatitudeOrigin * cosLatitudeOrigin;
+        this.alfa = Math.Sqrt(1 + ((this.es * (cosLatitudeOriginSquared * cosLatitudeOriginSquared)) / (1 - this.es))); // parameter B
         this.hae = this.alfa * this.e / 2;
-        double u0 = Math.Asin(sinLat / this.alfa);
+        double u0 = Math.Asin(sinLatitudeOrigin / this.alfa);
 
-        double esl = this.e * sinLat;
-        double g = Math.Pow((1 - esl) / (1 + esl), (this.alfa * this.e) / 2);
+        double eccentricityLatitude = this.e * sinLatitudeOrigin;
+        double g = Math.Pow((1 - eccentricityLatitude) / (1 + eccentricityLatitude), (this.alfa * this.e) / 2);
         this.k1 = Math.Pow(Math.Tan((this.latOrigin / 2) + S45), this.alfa) * g / Math.Tan((u0 / 2) + S45);
         this.ka = Math.Pow(1 / this.k1, -1 / this.alfa);
 
-        double radius = Math.Sqrt(1 - this.es) / (1 - (this.es * (sinLat * sinLat)));
+        double meridionalRadius = Math.Sqrt(1 - this.es) / (1 - (this.es * (sinLatitudeOrigin * sinLatitudeOrigin)));
 
-        this.ro0 = this.scaleFactor * radius / Math.Tan(this.pseudoStandardParallel);
+        this.ro0 = this.scaleFactor * meridionalRadius / Math.Tan(this.pseudoStandardParallel);
         this.rop = this.ro0 * Math.Pow(this.tanS2, this.n);
 
         this.reciprocSemiMajor = 1 / this.semiMajor;
@@ -146,19 +129,19 @@ internal class KrovakProjection : MapProjection
         double lambda = lon - this.centralMeridian;
         double phi = lat;
 
-        double esp = this.e * Math.Sin(phi);
-        double gfi = Math.Pow((1.0 - esp) / (1.0 + esp), this.hae);
-        double u = 2 * (Math.Atan(Math.Pow(Math.Tan((phi / 2) + S45), this.alfa) / this.k1 * gfi) - S45);
-        double deltav = -lambda * this.alfa;
-        double cosU = Math.Cos(u);
-        double s = Math.Asin((this.cosAzim * Math.Sin(u)) + (this.sinAzim * cosU * Math.Cos(deltav)));
-        double d = Math.Asin(cosU * Math.Sin(deltav) / Math.Cos(s));
-        double eps = this.n * d;
-        double ro = this.rop / Math.Pow(Math.Tan((s / 2) + S45), this.n);
+        double eccentricitySinPhi = this.e * Math.Sin(phi);
+        double conformalScale = Math.Pow((1.0 - eccentricitySinPhi) / (1.0 + eccentricitySinPhi), this.hae);
+        double conformalLatitude = 2 * (Math.Atan(Math.Pow(Math.Tan((phi / 2) + S45), this.alfa) / this.k1 * conformalScale) - S45);
+        double deltaV = -lambda * this.alfa;
+        double cosConformalLatitude = Math.Cos(conformalLatitude);
+        double pseudoLatitude = Math.Asin((this.cosAzim * Math.Sin(conformalLatitude)) + (this.sinAzim * cosConformalLatitude * Math.Cos(deltaV)));
+        double pseudoLongitude = Math.Asin(cosConformalLatitude * Math.Sin(deltaV) / Math.Cos(pseudoLatitude));
+        double eps = this.n * pseudoLongitude;
+        double radialDistance = this.rop / Math.Pow(Math.Tan((pseudoLatitude / 2) + S45), this.n);
 
         // x and y are reverted
-        lat = -(ro * Math.Cos(eps)) * this.semiMajor;
-        lon = -(ro * Math.Sin(eps)) * this.semiMajor;
+        lat = -(radialDistance * Math.Cos(eps)) * this.semiMajor;
+        lon = -(radialDistance * Math.Sin(eps)) * this.semiMajor;
     }
 
     /// <summary>
@@ -172,15 +155,15 @@ internal class KrovakProjection : MapProjection
         y *= this.reciprocSemiMajor;
 
         // x -> southing, y -> westing
-        double ro = Math.Sqrt((x * x) + (y * y));
+        double radialDistance = Math.Sqrt((x * x) + (y * y));
         double eps = Math.Atan2(-x, -y);
-        double d = eps / this.n;
-        double s = 2 * (Math.Atan(Math.Pow(this.ro0 / ro, 1 / this.n) * this.tanS2) - S45);
-        double cs = Math.Cos(s);
-        double u = Math.Asin((this.cosAzim * Math.Sin(s)) - (this.sinAzim * cs * Math.Cos(d)));
-        double kau = this.ka * Math.Pow(Math.Tan((u / 2.0) + S45), 1 / this.alfa);
-        double deltav = Math.Asin((cs * Math.Sin(d)) / Math.Cos(u));
-        double lambda = -deltav / this.alfa;
+        double pseudoLongitude = eps / this.n;
+        double pseudoLatitude = 2 * (Math.Atan(Math.Pow(this.ro0 / radialDistance, 1 / this.n) * this.tanS2) - S45);
+        double cosPseudoLatitude = Math.Cos(pseudoLatitude);
+        double conformalLatitude = Math.Asin((this.cosAzim * Math.Sin(pseudoLatitude)) - (this.sinAzim * cosPseudoLatitude * Math.Cos(pseudoLongitude)));
+        double inverseConformalScale = this.ka * Math.Pow(Math.Tan((conformalLatitude / 2.0) + S45), 1 / this.alfa);
+        double deltaV = Math.Asin((cosPseudoLatitude * Math.Sin(pseudoLongitude)) / Math.Cos(conformalLatitude));
+        double lambda = -deltaV / this.alfa;
         double phi = 0d;
 
         // iteration calculation
@@ -188,7 +171,7 @@ internal class KrovakProjection : MapProjection
         {
             double fi1 = phi;
             double esf = this.e * Math.Sin(fi1);
-            phi = 2.0 * (Math.Atan(kau * Math.Pow((1.0 + esf) / (1.0 - esf), this.e / 2.0)) - S45);
+            phi = 2.0 * (Math.Atan(inverseConformalScale * Math.Pow((1.0 + esf) / (1.0 - esf), this.e / 2.0)) - S45);
             if (Math.Abs(fi1 - phi) <= IterationTolerance)
             {
                 break;
@@ -210,7 +193,7 @@ internal class KrovakProjection : MapProjection
     /// <returns>IMathTransform that is the reverse of the current projection.</returns>
     public override MathTransform Inverse()
     {
-        if (this.inverse == null)
+        if (this.inverse is null)
         {
             this.inverse = new KrovakProjection(this.Parameters.ToProjectionParameter(), this);
         }

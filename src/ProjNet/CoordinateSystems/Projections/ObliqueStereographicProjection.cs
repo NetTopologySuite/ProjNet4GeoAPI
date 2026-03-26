@@ -63,16 +63,16 @@ internal class ObliqueStereographicProjection : MapProjection
         this.globalScale = this.scaleFactor * this.semiMajor;
         this.reciprocGlobalScale = 1 / this.globalScale;
 
-        double sphi = Math.Sin(this.latOrigin);
-        double cphi = Math.Cos(this.latOrigin);
-        cphi *= cphi;
-        this.r2 = 2.0 * Math.Sqrt(1 - this.es) / (1 - (this.es * sphi * sphi));
-        this.c = Math.Sqrt(1.0 + (this.es * cphi * cphi / (1.0 - this.es)));
-        this.phic0 = Math.Asin(sphi / this.c);
+        double sinLatitudeOrigin = Math.Sin(this.latOrigin);
+        double cosLatitudeOrigin = Math.Cos(this.latOrigin);
+        double cosLatitudeOriginSquared = cosLatitudeOrigin * cosLatitudeOrigin;
+        this.r2 = 2.0 * Math.Sqrt(1 - this.es) / (1 - (this.es * sinLatitudeOrigin * sinLatitudeOrigin));
+        this.c = Math.Sqrt(1.0 + (this.es * cosLatitudeOriginSquared * cosLatitudeOriginSquared / (1.0 - this.es)));
+        this.phic0 = Math.Asin(sinLatitudeOrigin / this.c);
         this.sinc0 = Math.Sin(this.phic0);
         this.cosc0 = Math.Cos(this.phic0);
         this.ratexp = 0.5 * this.c * this.e;
-        this.k = Math.Tan((0.5 * this.phic0) + (Math.PI / 4)) / (Math.Pow(Math.Tan((0.5 * this.latOrigin) + (Math.PI / 4)), this.c) * this.Srat(this.e * sphi, this.ratexp));
+        this.k = Math.Tan((0.5 * this.phic0) + (Math.PI / 4)) / (Math.Pow(Math.Tan((0.5 * this.latOrigin) + (Math.PI / 4)), this.c) * this.Srat(this.e * sinLatitudeOrigin, this.ratexp));
     }
 
     /// <summary>
@@ -93,12 +93,12 @@ internal class ObliqueStereographicProjection : MapProjection
         }
         else
         {
-            double ce = 2.0 * Math.Atan2(rho, this.r2);
-            double sinc = Math.Sin(ce);
-            double cosc = Math.Cos(ce);
-            double denominator = (rho * this.cosc0 * cosc) - (y * this.sinc0 * sinc);
-            x = Math.Atan2(x * sinc, denominator);
-            y = (cosc * this.sinc0) + (y * sinc * this.cosc0 / rho);
+            double centralAngle = 2.0 * Math.Atan2(rho, this.r2);
+            double sinCentralAngle = Math.Sin(centralAngle);
+            double cosCentralAngle = Math.Cos(centralAngle);
+            double denominator = (rho * this.cosc0 * cosCentralAngle) - (y * this.sinc0 * sinCentralAngle);
+            x = Math.Atan2(x * sinCentralAngle, denominator);
+            y = (cosCentralAngle * this.sinc0) + (y * sinCentralAngle * this.cosc0 / rho);
 
             if (Math.Abs(y) >= 1.0)
             {
@@ -137,20 +137,20 @@ internal class ObliqueStereographicProjection : MapProjection
     /// <param name="lat">The latitude of the point in radians when entering, its y-ordinate in meters after exit.</param>
     protected override void RadiansToMeters(ref double lon, ref double lat)
     {
-        double x = lon - this.centralMeridian;
-        double y = lat;
+        double longitude = lon - this.centralMeridian;
+        double latitude = lat;
 
-        y = (2.0 * Math.Atan(this.k * Math.Pow(Math.Tan((0.5 * y) + (Math.PI / 4)), this.c)
-                               * this.Srat(this.e * Math.Sin(y), this.ratexp)))
+        latitude = (2.0 * Math.Atan(this.k * Math.Pow(Math.Tan((0.5 * latitude) + (Math.PI / 4)), this.c)
+                               * this.Srat(this.e * Math.Sin(latitude), this.ratexp)))
             - (Math.PI / 2);
-        x *= this.c;
-        double sinc = Math.Sin(y);
-        double cosc = Math.Cos(y);
-        double cosl = Math.Cos(x);
-        double k_ = this.r2 / (1.0 + (this.sinc0 * sinc) + (this.cosc0 * cosc * cosl));
+        longitude *= this.c;
+        double sinLatitude = Math.Sin(latitude);
+        double cosLatitude = Math.Cos(latitude);
+        double cosLongitude = Math.Cos(longitude);
+        double radialScale = this.r2 / (1.0 + (this.sinc0 * sinLatitude) + (this.cosc0 * cosLatitude * cosLongitude));
 
-        lon = k_ * cosc * Math.Sin(x) * this.globalScale;
-        lat = k_ * ((this.cosc0 * sinc) - (this.sinc0 * cosc * cosl)) * this.globalScale;
+        lon = radialScale * cosLatitude * Math.Sin(longitude) * this.globalScale;
+        lat = radialScale * ((this.cosc0 * sinLatitude) - (this.sinc0 * cosLatitude * cosLongitude)) * this.globalScale;
     }
 
     /// <summary>
@@ -159,7 +159,7 @@ internal class ObliqueStereographicProjection : MapProjection
     /// <returns>IMathTransform that is the reverse of the current projection.</returns>
     public override MathTransform Inverse()
     {
-        if (this.inverse == null)
+        if (this.inverse is null)
         {
             this.inverse = new ObliqueStereographicProjection(this.Parameters.ToProjectionParameter(), this);
         }
