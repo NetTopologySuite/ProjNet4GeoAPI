@@ -369,7 +369,7 @@ public class GieBuiltinsTheoryTests
         {
             if (!TryCreateTransform(testCase, out MathTransform transform, out string skipReason))
             {
-                Assert.Skip(conversionSkipReason ?? skipReason);
+                Assert.Skip(skipReason ?? conversionSkipReason);
             }
 
             try
@@ -563,7 +563,14 @@ public class GieBuiltinsTheoryTests
     private static bool TryCreateConversionTransform(string operation, out Func<double[], double[]> transform, out string skipReason)
     {
         transform = default!;
-        if (!CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform mathTransform, out skipReason))
+        if (operation is null)
+        {
+            skipReason = "Operation string was null.";
+            return false;
+        }
+
+        string normalizedOperation = NormalizeOperationForRuntime(operation);
+        if (!CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(normalizedOperation, out MathTransform mathTransform, out skipReason))
         {
             return false;
         }
@@ -576,6 +583,27 @@ public class GieBuiltinsTheoryTests
         };
 
         return true;
+    }
+
+    private static string NormalizeOperationForRuntime(string operation)
+    {
+        string[] tokens = operation.Split(OperationTokenSeparators, StringSplitOptions.RemoveEmptyEntries);
+        if (tokens.Length == 0)
+        {
+            return operation;
+        }
+
+        for (int i = 0; i < tokens.Length; i++)
+        {
+            if (tokens[i].Length == 0 || tokens[i][0] == '+')
+            {
+                continue;
+            }
+
+            tokens[i] = "+" + tokens[i];
+        }
+
+        return string.Join(" ", tokens);
     }
 
     private static bool TrySplitPipelineSteps(string operation, out IReadOnlyList<string> steps)
