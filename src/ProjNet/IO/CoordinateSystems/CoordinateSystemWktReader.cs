@@ -4,6 +4,8 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from GeoTools.NET.
 
+#nullable enable annotations
+
 namespace ProjNet.IO.CoordinateSystems;
 
 using System;

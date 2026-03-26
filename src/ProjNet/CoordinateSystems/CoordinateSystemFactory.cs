@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
+#nullable enable annotations
+
 namespace ProjNet.CoordinateSystems;
 
 using System;
@@ -50,7 +52,12 @@ public class CoordinateSystemFactory
     public CoordinateSystem CreateFromWkt(string wkt)
     {
         var info = CoordinateSystemWktReader.Parse(wkt);
-        return info as CoordinateSystem;
+        if (info is not CoordinateSystem)
+        {
+            ArgumentGuard.ThrowArgument("WKT did not resolve to a coordinate system.", nameof(wkt));
+        }
+
+        return (CoordinateSystem)info;
     }
 
     /// <summary>
@@ -174,23 +181,34 @@ public class CoordinateSystemFactory
 
         if (gcs is null)
         {
-            ArgumentGuard.ThrowArgument("Geographic coordinate system was null", nameof(gcs));
+            ArgumentGuard.ThrowIfNull(gcs, nameof(gcs));
         }
 
         if (projection is null)
         {
-            ArgumentGuard.ThrowArgument("Projection was null", nameof(projection));
+            ArgumentGuard.ThrowIfNull(projection, nameof(projection));
         }
 
         if (linearUnit is null)
         {
-            ArgumentGuard.ThrowArgument("Linear unit was null");
+            ArgumentGuard.ThrowIfNull(linearUnit, nameof(linearUnit));
         }
 
         var info = new List<AxisInfo>(2);
         info.Add(axis0);
         info.Add(axis1);
-        return new ProjectedCoordinateSystem(null, gcs, linearUnit, projection, info, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
+        return new ProjectedCoordinateSystem(
+            gcs.HorizontalDatum,
+            gcs,
+            linearUnit,
+            projection,
+            info,
+            name,
+            string.Empty,
+            -1,
+            string.Empty,
+            string.Empty,
+            string.Empty);
     }
 
     /// <summary>
@@ -238,7 +256,7 @@ public class CoordinateSystemFactory
 
         if (ellipsoid is null)
         {
-            ArgumentGuard.ThrowArgument("Ellipsoid was null");
+            ArgumentGuard.ThrowArgument("Ellipsoid was null", nameof(ellipsoid));
         }
 
         return new HorizontalDatum(ellipsoid, toWgs84, datumType, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
