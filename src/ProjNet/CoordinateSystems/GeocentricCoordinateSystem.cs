@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
+#nullable enable
+
 namespace ProjNet.CoordinateSystems;
 
 using System;
@@ -42,6 +44,10 @@ public class GeocentricCoordinateSystem : CoordinateSystem
         string abbreviation)
         : base(name, authority, code, alias, abbreviation, remarks)
     {
+        ArgumentGuard.ThrowIfNull(datum, nameof(datum));
+        ArgumentGuard.ThrowIfNull(linearUnit, nameof(linearUnit));
+        ArgumentGuard.ThrowIfNull(primeMeridian, nameof(primeMeridian));
+        ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo));
         this.HorizontalDatum = datum;
         this.LinearUnit = linearUnit;
         this.PrimeMeridian = primeMeridian;

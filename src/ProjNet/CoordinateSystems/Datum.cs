@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
+#nullable enable
+
 namespace ProjNet.CoordinateSystems;
 
 using System;
@@ -53,11 +55,11 @@ public abstract class Datum : Info
     /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
-        if (!(obj is Ellipsoid))
+        if (obj is not Datum datum)
         {
             return false;
         }
 
-        return (obj as Datum).DatumType == this.DatumType;
+        return datum.DatumType == this.DatumType;
     }
 }

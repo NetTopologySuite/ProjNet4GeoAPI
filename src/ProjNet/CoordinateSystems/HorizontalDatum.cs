@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
+#nullable enable
+
 namespace ProjNet.CoordinateSystems;
 
 using System;
@@ -28,7 +30,7 @@ public class HorizontalDatum : Datum
     /// <param name="remarks">Provider-supplied remarks.</param>
     internal HorizontalDatum(
         Ellipsoid ellipsoid,
-        Wgs84ConversionInfo toWgs84,
+        Wgs84ConversionInfo? toWgs84,
         DatumType type,
         string name,
         string authority,
@@ -169,7 +171,7 @@ public class HorizontalDatum : Datum
     /// <summary>
     /// Gets or sets preferred parameters for a Bursa Wolf transformation into WGS84.
     /// </summary>
-    public Wgs84ConversionInfo Wgs84Parameters { get; set; }
+    public Wgs84ConversionInfo? Wgs84Parameters { get; set; }
 
     /// <summary>
     /// Gets the Well-known text for this object

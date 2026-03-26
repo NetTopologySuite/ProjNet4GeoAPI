@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
+#nullable enable
+
 namespace ProjNet.CoordinateSystems;
 
 using System;
@@ -49,6 +51,7 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
     {
         this.AngularUnit = angularUnit;
         this.PrimeMeridian = primeMeridian;
+        this.WGS84ConversionInfo = [];
     }
 
     /// <summary>
@@ -181,29 +184,16 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
             return false;
         }
 
-        if (this.WGS84ConversionInfo is not null && gcs.WGS84ConversionInfo is null)
+        if (this.WGS84ConversionInfo.Count != gcs.WGS84ConversionInfo.Count)
         {
             return false;
         }
 
-        if (this.WGS84ConversionInfo is null && gcs.WGS84ConversionInfo is not null)
+        for (int i = 0; i < this.WGS84ConversionInfo.Count; i++)
         {
-            return false;
-        }
-
-        if (this.WGS84ConversionInfo is not null && gcs.WGS84ConversionInfo is not null)
-        {
-            if (this.WGS84ConversionInfo.Count != gcs.WGS84ConversionInfo.Count)
+            if (!gcs.WGS84ConversionInfo[i].Equals(this.WGS84ConversionInfo[i]))
             {
                 return false;
-            }
-
-            for (int i = 0; i < this.WGS84ConversionInfo.Count; i++)
-            {
-                if (!gcs.WGS84ConversionInfo[i].Equals(this.WGS84ConversionInfo[i]))
-                {
-                    return false;
-                }
             }
         }
 

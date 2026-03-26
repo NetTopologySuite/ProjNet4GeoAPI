@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
+#nullable enable
+
 namespace ProjNet.CoordinateSystems;
 
 using System;
@@ -28,8 +30,8 @@ using System.Globalization;
 [Serializable]
 public abstract class CoordinateSystem : Info
 {
-    private List<AxisInfo> axisInfo;
-    private double[] defaultEnvelope;
+    private List<AxisInfo> axisInfo = [];
+    private double[] defaultEnvelope = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CoordinateSystem"/> class.
@@ -58,8 +60,16 @@ public abstract class CoordinateSystem : Info
     /// </summary>
     internal List<AxisInfo> AxisInfo
     {
-        get { return this.axisInfo; }
-        set { this.axisInfo = value; }
+        get
+        {
+            return this.axisInfo;
+        }
+
+        set
+        {
+            ArgumentGuard.ThrowIfNull(value, nameof(value));
+            this.axisInfo = value;
+        }
     }
 
     /// <summary>

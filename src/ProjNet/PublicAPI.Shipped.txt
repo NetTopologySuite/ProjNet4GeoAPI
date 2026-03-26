@@ -186,7 +186,7 @@ namespace ProjNet.CoordinateSystems
     {
         public ProjNet.CoordinateSystems.Ellipsoid Ellipsoid { get; set; }
         public override string WKT { get; }
-        public ProjNet.CoordinateSystems.Wgs84ConversionInfo Wgs84Parameters { get; set; }
+        public ProjNet.CoordinateSystems.Wgs84ConversionInfo? Wgs84Parameters { get; set; }
         public override string XML { get; }
         public static ProjNet.CoordinateSystems.HorizontalDatum ED50 { get; }
         public static ProjNet.CoordinateSystems.HorizontalDatum ETRF89 { get; }
@@ -211,7 +211,7 @@ namespace ProjNet.CoordinateSystems
         string ClassName { get; }
         int NumParameters { get; }
         ProjNet.CoordinateSystems.ProjectionParameter GetParameter(int index);
-        ProjNet.CoordinateSystems.ProjectionParameter GetParameter(string name);
+        ProjNet.CoordinateSystems.ProjectionParameter? GetParameter(string name);
     }
     public interface IUnit : ProjNet.CoordinateSystems.IInfo { }
     [System.Serializable]
@@ -293,7 +293,7 @@ namespace ProjNet.CoordinateSystems
         public override string XML { get; }
         public override bool EqualParams(object obj) { }
         public ProjNet.CoordinateSystems.ProjectionParameter GetParameter(int index) { }
-        public ProjNet.CoordinateSystems.ProjectionParameter GetParameter(string name) { }
+        public ProjNet.CoordinateSystems.ProjectionParameter? GetParameter(string name) { }
     }
     [System.Serializable]
     public class ProjectionParameter

@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
+#nullable enable
+
 namespace ProjNet.CoordinateSystems;
 
 using System;
@@ -20,8 +22,8 @@ using System.Text;
 [Serializable]
 public class Projection : Info, IProjection
 {
+    private readonly string className;
     private List<ProjectionParameter> parameters;
-    private string className;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Projection"/> class.
@@ -123,7 +125,7 @@ public class Projection : Info, IProjection
     /// <remarks>The parameter name is case insensitive.</remarks>
     /// <param name="name">Name of the parameter to find.</param>
     /// <returns>The matching <see cref="ProjectionParameter"/>, or <see langword="null"/> if not found.</returns>
-    public ProjectionParameter GetParameter(string name)
+    public ProjectionParameter? GetParameter(string name)
     {
         foreach (var par in this.parameters)
         {
@@ -151,7 +153,7 @@ public class Projection : Info, IProjection
 
         for (int i = 0; i < this.parameters.Count; i++)
         {
-            ProjectionParameter param = this.GetParameter(projection.GetParameter(i).Name);
+            ProjectionParameter? param = this.GetParameter(projection.GetParameter(i).Name);
             if (param is null)
             {
                 return false;

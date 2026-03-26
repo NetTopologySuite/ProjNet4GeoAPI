@@ -2,6 +2,8 @@
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
+#nullable enable
+
 namespace ProjNet.CoordinateSystems;
 
 /// <summary>
@@ -37,5 +39,5 @@ public interface IProjection : IInfo
     /// <remarks>The parameter name is case insensitive.</remarks>
     /// <param name="name">Name of parameter.</param>
     /// <returns>parameter or null if not found.</returns>
-    ProjectionParameter GetParameter(string name);
+    ProjectionParameter? GetParameter(string name);
 }
