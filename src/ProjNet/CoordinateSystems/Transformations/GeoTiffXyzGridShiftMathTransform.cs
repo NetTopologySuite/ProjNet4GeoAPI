@@ -8,6 +8,7 @@ namespace ProjNet.CoordinateSystems.Transformations;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using ProjNet.CoordinateSystems;
 
@@ -309,7 +310,7 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
         z = candidateZ;
     }
 
-    private bool TryFindGridForPoint(double longitude, double latitude, out XyzGrid grid)
+    private bool TryFindGridForPoint(double longitude, double latitude, [NotNullWhen(true)] out XyzGrid? grid)
     {
         for (int i = 0; i < this.grids.Count; i++)
         {
@@ -320,7 +321,7 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
             }
         }
 
-        grid = default!;
+        grid = null;
         return false;
     }
 

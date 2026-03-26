@@ -8,6 +8,7 @@ namespace ProjNet.CoordinateSystems.Transformations;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -270,12 +271,12 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
         return normalized;
     }
 
-    private bool TryFindGridForPoint(double longitude, double latitude, out Ntv2Grid grid)
+    private bool TryFindGridForPoint(double longitude, double latitude, [NotNullWhen(true)] out Ntv2Grid? grid)
     {
-        grid = default!;
+        grid = null;
         for (int setIndex = 0; setIndex < this.gridSets.Count; setIndex++)
         {
-            if (this.gridSets[setIndex].TryFindGrid(longitude, latitude, out Ntv2Grid candidate))
+            if (this.gridSets[setIndex].TryFindGrid(longitude, latitude, out Ntv2Grid? candidate))
             {
                 grid = candidate;
                 return true;
@@ -422,9 +423,9 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
             return new Ntv2GridSet(new[] { path }, new ReadOnlyCollection<Ntv2Grid>(rootGrids));
         }
 
-        internal bool TryFindGrid(double longitude, double latitude, out Ntv2Grid grid)
+        internal bool TryFindGrid(double longitude, double latitude, [NotNullWhen(true)] out Ntv2Grid? grid)
         {
-            grid = default!;
+            grid = null;
             for (int i = 0; i < this.rootGrids.Count; i++)
             {
                 Ntv2Grid root = this.rootGrids[i];

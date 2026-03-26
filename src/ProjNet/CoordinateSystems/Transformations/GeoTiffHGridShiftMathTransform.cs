@@ -8,6 +8,7 @@ namespace ProjNet.CoordinateSystems.Transformations;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 /// <summary>
@@ -223,7 +224,7 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
         return normalized;
     }
 
-    private bool TryFindGridForPoint(double longitude, double latitude, out HorizontalGrid grid)
+    private bool TryFindGridForPoint(double longitude, double latitude, [NotNullWhen(true)] out HorizontalGrid? grid)
     {
         for (int i = 0; i < this.grids.Count; i++)
         {
@@ -234,7 +235,7 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
             }
         }
 
-        grid = default!;
+        grid = null;
         return false;
     }
 

@@ -8,6 +8,7 @@ namespace ProjNet.CoordinateSystems.Transformations;
 using System;
 using System.Buffers;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -146,9 +147,9 @@ internal static partial class GeoTiffGridLoader
         return pages;
     }
 
-    private static bool TryReadPage(string path, Tiff tiff, GridMode mode, bool requireMetreUnitsForXyz, ArrayPool<double> sampleValueArrayPool, out LoadedPage page)
+    private static bool TryReadPage(string path, Tiff tiff, GridMode mode, bool requireMetreUnitsForXyz, ArrayPool<double> sampleValueArrayPool, [NotNullWhen(true)] out LoadedPage? page)
     {
-        page = default!;
+        page = null;
         if (!TryGetIntField(tiff, TiffTag.IMAGEWIDTH, out int width)
             || !TryGetIntField(tiff, TiffTag.IMAGELENGTH, out int height)
             || width <= 1
@@ -813,9 +814,9 @@ internal static partial class GeoTiffGridLoader
         return true;
     }
 
-    private static bool TryGetStringField(Tiff tiff, TiffTag tag, out string value)
+    private static bool TryGetStringField(Tiff tiff, TiffTag tag, [NotNullWhen(true)] out string? value)
     {
-        value = default!;
+        value = null;
         FieldValue[] field = tiff.GetField(tag);
         if (field is null || field.Length == 0)
         {
@@ -828,7 +829,7 @@ internal static partial class GeoTiffGridLoader
             value = field[0].ToString();
         }
 
-        return !(value is null);
+        return value is not null;
     }
 
     private static bool TryGetDoubleArrayField(Tiff tiff, TiffTag tag, out double[] values)

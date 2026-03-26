@@ -7,6 +7,7 @@ namespace ProjNet.Resources;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 
 /// <summary>
@@ -45,7 +46,7 @@ internal sealed class GridResourceResolver
     /// <param name="gridName">The grid resource name or rooted file path to resolve.</param>
     /// <param name="resolvedPath">The absolute local path when resolution succeeds; otherwise <see langword="null"/>.</param>
     /// <returns><see langword="true"/> when the grid was located; otherwise <see langword="false"/>.</returns>
-    internal bool TryResolve(string gridName, out string resolvedPath)
+    internal bool TryResolve(string gridName, [NotNullWhen(true)] out string? resolvedPath)
     {
         if (string.IsNullOrWhiteSpace(gridName))
         {
@@ -69,7 +70,7 @@ internal sealed class GridResourceResolver
             return true;
         }
 
-        resolvedPath = default!;
+        resolvedPath = null;
         return false;
     }
 
@@ -81,7 +82,7 @@ internal sealed class GridResourceResolver
         }
     }
 
-    private bool TryResolveFromCache(string gridName, out string resolvedPath)
+    private bool TryResolveFromCache(string gridName, [NotNullWhen(true)] out string? resolvedPath)
     {
         lock (this.sync)
         {
@@ -96,11 +97,11 @@ internal sealed class GridResourceResolver
             }
         }
 
-        resolvedPath = default!;
+        resolvedPath = null;
         return false;
     }
 
-    private bool TryResolveFromLocalSources(string gridName, out string resolvedPath)
+    private bool TryResolveFromLocalSources(string gridName, [NotNullWhen(true)] out string? resolvedPath)
     {
         if (Path.IsPathRooted(gridName) && File.Exists(gridName))
         {
@@ -111,7 +112,7 @@ internal sealed class GridResourceResolver
         string fileName = Path.GetFileName(gridName);
         if (string.IsNullOrWhiteSpace(fileName))
         {
-            resolvedPath = default!;
+            resolvedPath = null;
             return false;
         }
 
@@ -127,15 +128,15 @@ internal sealed class GridResourceResolver
             return true;
         }
 
-        resolvedPath = default!;
+        resolvedPath = null;
         return false;
     }
 
-    private bool TryResolveFromNetwork(string gridName, out string resolvedPath)
+    private bool TryResolveFromNetwork(string gridName, [NotNullWhen(true)] out string? resolvedPath)
     {
         if (string.IsNullOrWhiteSpace(this.options.CacheDirectory))
         {
-            resolvedPath = default!;
+            resolvedPath = null;
             return false;
         }
 
@@ -143,7 +144,7 @@ internal sealed class GridResourceResolver
         string fileName = Path.GetFileName(gridName);
         if (string.IsNullOrWhiteSpace(fileName))
         {
-            resolvedPath = default!;
+            resolvedPath = null;
             return false;
         }
 
@@ -156,7 +157,7 @@ internal sealed class GridResourceResolver
 
         if (!this.fetchClient.TryFetch(gridName, targetPath) || !File.Exists(targetPath))
         {
-            resolvedPath = default!;
+            resolvedPath = null;
             return false;
         }
 

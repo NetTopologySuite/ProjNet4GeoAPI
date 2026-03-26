@@ -8,6 +8,7 @@ namespace ProjNet.CoordinateSystems.Transformations;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 
@@ -121,7 +122,7 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
         z -= value;
     }
 
-    private bool TryFindGridForPoint(double longitude, double latitude, out GtxGrid grid)
+    private bool TryFindGridForPoint(double longitude, double latitude, [NotNullWhen(true)] out GtxGrid? grid)
     {
         for (int i = 0; i < this.grids.Count; i++)
         {
@@ -132,7 +133,7 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
             }
         }
 
-        grid = default!;
+        grid = null;
         return false;
     }
 
