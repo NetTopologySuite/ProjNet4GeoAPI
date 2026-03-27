@@ -351,36 +351,17 @@ internal sealed class HelmertMathTransform : MathTransform
         HelmertParameterState staticState = hasKinematicRates
             ? EvaluateKinematicState(baseState, rateState, epochReference, epochReference)
             : baseState;
-        BuildRotationMatrix(
+        Matrix3x3 rotationMatrix = BuildRotationMatrix(
             staticState.RotationX,
             staticState.RotationY,
             staticState.RotationZ,
             exact,
-            isPositionVector,
-            out double r00,
-            out double r01,
-            out double r02,
-            out double r10,
-            out double r11,
-            out double r12,
-            out double r20,
-            out double r21,
-            out double r22);
+            isPositionVector);
         var runtimeState = new HelmertRuntimeState(
-            staticState.TranslationX,
-            staticState.TranslationY,
-            staticState.TranslationZ,
+            new Vector3D(staticState.TranslationX, staticState.TranslationY, staticState.TranslationZ),
             staticState.Scale,
             staticState.Theta,
-            r00,
-            r01,
-            r02,
-            r10,
-            r11,
-            r12,
-            r20,
-            r21,
-            r22,
+            rotationMatrix,
             hasKinematicRates ? MissingObservationEpoch : epochReference);
         transform = new HelmertMathTransform(
             baseState,
@@ -593,22 +574,14 @@ internal sealed class HelmertMathTransform : MathTransform
             baseState.Theta + (rateState.ThetaRate * dt));
     }
 
-    private static void BuildRotationMatrix(
+    private static Matrix3x3 BuildRotationMatrix(
         double rotationX,
         double rotationY,
         double rotationZ,
         bool exact,
-        bool isPositionVector,
-        out double r00,
-        out double r01,
-        out double r02,
-        out double r10,
-        out double r11,
-        out double r12,
-        out double r20,
-        out double r21,
-        out double r22)
+        bool isPositionVector)
     {
+        Matrix3x3 matrix;
         if (exact)
         {
             double cf = Math.Cos(rotationX);
@@ -618,44 +591,32 @@ internal sealed class HelmertMathTransform : MathTransform
             double cp = Math.Cos(rotationZ);
             double sp = Math.Sin(rotationZ);
 
-            r00 = ct * cp;
-            r01 = (cf * sp) + (sf * st * cp);
-            r02 = (sf * sp) - (cf * st * cp);
-            r10 = -ct * sp;
-            r11 = (cf * cp) - (sf * st * sp);
-            r12 = (sf * cp) + (cf * st * sp);
-            r20 = st;
-            r21 = -sf * ct;
-            r22 = cf * ct;
+            matrix = new Matrix3x3(
+                ct * cp,
+                (cf * sp) + (sf * st * cp),
+                (sf * sp) - (cf * st * cp),
+                -ct * sp,
+                (cf * cp) - (sf * st * sp),
+                (sf * cp) + (cf * st * sp),
+                st,
+                -sf * ct,
+                cf * ct);
         }
         else
         {
-            r00 = 1d;
-            r01 = rotationZ;
-            r02 = -rotationY;
-            r10 = -rotationZ;
-            r11 = 1d;
-            r12 = rotationX;
-            r20 = rotationY;
-            r21 = -rotationX;
-            r22 = 1d;
+            matrix = new Matrix3x3(
+                1d,
+                rotationZ,
+                -rotationY,
+                -rotationZ,
+                1d,
+                rotationX,
+                rotationY,
+                -rotationX,
+                1d);
         }
 
-        if (!isPositionVector)
-        {
-            return;
-        }
-
-        Swap(ref r01, ref r10);
-        Swap(ref r02, ref r20);
-        Swap(ref r12, ref r21);
-    }
-
-    private static void Swap(ref double left, ref double right)
-    {
-        double value = left;
-        left = right;
-        right = value;
+        return isPositionVector ? matrix.Transpose() : matrix;
     }
 
     private HelmertParameterState GetOrCreateStateForObservationEpoch(double observationEpoch)
@@ -677,34 +638,17 @@ internal sealed class HelmertMathTransform : MathTransform
         }
 
         HelmertParameterState dynamicState = EvaluateKinematicState(this.baseState, this.rateState, this.epochReference, normalizedEpoch);
-        BuildRotationMatrix(
+        Matrix3x3 rotationMatrix = BuildRotationMatrix(
             dynamicState.RotationX,
             dynamicState.RotationY,
             dynamicState.RotationZ,
             this.exact,
-            this.isPositionVector,
-            out double r00,
-            out double r01,
-            out double r02,
-            out double r10,
-            out double r11,
-            out double r12,
-            out double r20,
-            out double r21,
-            out double r22);
-        this.runtimeState.R00 = r00;
-        this.runtimeState.R01 = r01;
-        this.runtimeState.R02 = r02;
-        this.runtimeState.R10 = r10;
-        this.runtimeState.R11 = r11;
-        this.runtimeState.R12 = r12;
-        this.runtimeState.R20 = r20;
-        this.runtimeState.R21 = r21;
-        this.runtimeState.R22 = r22;
-
-        this.runtimeState.TranslationX = dynamicState.TranslationX;
-        this.runtimeState.TranslationY = dynamicState.TranslationY;
-        this.runtimeState.TranslationZ = dynamicState.TranslationZ;
+            this.isPositionVector);
+        this.runtimeState.RotationMatrix = rotationMatrix;
+        this.runtimeState.Translation = new Vector3D(
+            dynamicState.TranslationX,
+            dynamicState.TranslationY,
+            dynamicState.TranslationZ);
         this.runtimeState.Scale = dynamicState.Scale;
         this.runtimeState.Theta = dynamicState.Theta;
         this.runtimeState.ObservationEpoch = normalizedEpoch;
@@ -713,42 +657,44 @@ internal sealed class HelmertMathTransform : MathTransform
 
     private void TransformForward(ref double x, ref double y, ref double z, HelmertParameterState state)
     {
+        Vector3D translation = this.runtimeState.Translation;
+
         if (this.fourParameter)
         {
             double cosTheta = Math.Cos(state.Theta) * state.Scale;
             double sinTheta = Math.Sin(state.Theta) * state.Scale;
             double sourceX = x;
             double sourceY = y;
-            x = (cosTheta * sourceX) + (sinTheta * sourceY) + this.runtimeState.TranslationX;
-            y = (-sinTheta * sourceX) + (cosTheta * sourceY) + this.runtimeState.TranslationY;
+            x = (cosTheta * sourceX) + (sinTheta * sourceY) + translation.X;
+            y = (-sinTheta * sourceX) + (cosTheta * sourceY) + translation.Y;
             return;
         }
 
         if (this.noRotation && state.Scale == 0d)
         {
-            x += this.runtimeState.TranslationX;
-            y += this.runtimeState.TranslationY;
-            z += this.runtimeState.TranslationZ;
+            x += translation.X;
+            y += translation.Y;
+            z += translation.Z;
             return;
         }
 
         double scaleFactor = 1d + (state.Scale * 1e-6d);
-        double sourceX3 = x;
-        double sourceY3 = y;
-        double sourceZ3 = z;
-        x = (scaleFactor * ((this.runtimeState.R00 * sourceX3) + (this.runtimeState.R01 * sourceY3) + (this.runtimeState.R02 * sourceZ3))) + this.runtimeState.TranslationX;
-        y = (scaleFactor * ((this.runtimeState.R10 * sourceX3) + (this.runtimeState.R11 * sourceY3) + (this.runtimeState.R12 * sourceZ3))) + this.runtimeState.TranslationY;
-        z = (scaleFactor * ((this.runtimeState.R20 * sourceX3) + (this.runtimeState.R21 * sourceY3) + (this.runtimeState.R22 * sourceZ3))) + this.runtimeState.TranslationZ;
+        Vector3D transformed = ((this.runtimeState.RotationMatrix * new Vector3D(x, y, z)) * scaleFactor) + translation;
+        x = transformed.X;
+        y = transformed.Y;
+        z = transformed.Z;
     }
 
     private void TransformInverse(ref double x, ref double y, ref double z, HelmertParameterState state)
     {
+        Vector3D translation = this.runtimeState.Translation;
+
         if (this.fourParameter)
         {
             double cosTheta = Math.Cos(state.Theta) / state.Scale;
             double sinTheta = Math.Sin(state.Theta) / state.Scale;
-            double sourceX = x - this.runtimeState.TranslationX;
-            double sourceY = y - this.runtimeState.TranslationY;
+            double sourceX = x - translation.X;
+            double sourceY = y - translation.Y;
             x = (sourceX * cosTheta) - (sourceY * sinTheta);
             y = (sourceX * sinTheta) + (sourceY * cosTheta);
             return;
@@ -756,19 +702,18 @@ internal sealed class HelmertMathTransform : MathTransform
 
         if (this.noRotation && state.Scale == 0d)
         {
-            x -= this.runtimeState.TranslationX;
-            y -= this.runtimeState.TranslationY;
-            z -= this.runtimeState.TranslationZ;
+            x -= translation.X;
+            y -= translation.Y;
+            z -= translation.Z;
             return;
         }
 
         double scaleFactor = 1d + (state.Scale * 1e-6d);
-        double sourceX3 = (x - this.runtimeState.TranslationX) / scaleFactor;
-        double sourceY3 = (y - this.runtimeState.TranslationY) / scaleFactor;
-        double sourceZ3 = (z - this.runtimeState.TranslationZ) / scaleFactor;
-        x = (this.runtimeState.R00 * sourceX3) + (this.runtimeState.R10 * sourceY3) + (this.runtimeState.R20 * sourceZ3);
-        y = (this.runtimeState.R01 * sourceX3) + (this.runtimeState.R11 * sourceY3) + (this.runtimeState.R21 * sourceZ3);
-        z = (this.runtimeState.R02 * sourceX3) + (this.runtimeState.R12 * sourceY3) + (this.runtimeState.R22 * sourceZ3);
+        Vector3D source = (new Vector3D(x, y, z) - translation) / scaleFactor;
+        Vector3D transformed = this.runtimeState.RotationMatrix.Transpose() * source;
+        x = transformed.X;
+        y = transformed.Y;
+        z = transformed.Z;
     }
 
     [Serializable]
@@ -831,86 +776,36 @@ internal sealed class HelmertMathTransform : MathTransform
     private sealed class HelmertRuntimeState
     {
         internal HelmertRuntimeState(
-            double translationX,
-            double translationY,
-            double translationZ,
+            Vector3D translation,
             double scale,
             double theta,
-            double r00,
-            double r01,
-            double r02,
-            double r10,
-            double r11,
-            double r12,
-            double r20,
-            double r21,
-            double r22,
+            Matrix3x3 rotationMatrix,
             double observationEpoch)
         {
-            this.TranslationX = translationX;
-            this.TranslationY = translationY;
-            this.TranslationZ = translationZ;
+            this.Translation = translation;
             this.Scale = scale;
             this.Theta = theta;
-            this.R00 = r00;
-            this.R01 = r01;
-            this.R02 = r02;
-            this.R10 = r10;
-            this.R11 = r11;
-            this.R12 = r12;
-            this.R20 = r20;
-            this.R21 = r21;
-            this.R22 = r22;
+            this.RotationMatrix = rotationMatrix;
             this.ObservationEpoch = observationEpoch;
         }
 
-        internal double TranslationX { get; set; }
-
-        internal double TranslationY { get; set; }
-
-        internal double TranslationZ { get; set; }
+        internal Vector3D Translation { get; set; }
 
         internal double Scale { get; set; }
 
         internal double Theta { get; set; }
 
-        internal double R00 { get; set; }
-
-        internal double R01 { get; set; }
-
-        internal double R02 { get; set; }
-
-        internal double R10 { get; set; }
-
-        internal double R11 { get; set; }
-
-        internal double R12 { get; set; }
-
-        internal double R20 { get; set; }
-
-        internal double R21 { get; set; }
-
-        internal double R22 { get; set; }
+        internal Matrix3x3 RotationMatrix { get; set; }
 
         internal double ObservationEpoch { get; set; }
 
         internal HelmertRuntimeState Clone()
         {
             return new HelmertRuntimeState(
-                this.TranslationX,
-                this.TranslationY,
-                this.TranslationZ,
+                this.Translation,
                 this.Scale,
                 this.Theta,
-                this.R00,
-                this.R01,
-                this.R02,
-                this.R10,
-                this.R11,
-                this.R12,
-                this.R20,
-                this.R21,
-                this.R22,
+                this.RotationMatrix,
                 this.ObservationEpoch);
         }
     }
