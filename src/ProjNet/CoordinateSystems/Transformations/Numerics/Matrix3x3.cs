@@ -10,48 +10,17 @@ using System;
 /// Represents an immutable 3×3 matrix with <see cref="double"/> precision.
 /// </summary>
 [Serializable]
-internal readonly record struct Matrix3x3
+internal readonly record struct Matrix3x3(
+    double M00,
+    double M01,
+    double M02,
+    double M10,
+    double M11,
+    double M12,
+    double M20,
+    double M21,
+    double M22)
 {
-    internal Matrix3x3(
-        double m00,
-        double m01,
-        double m02,
-        double m10,
-        double m11,
-        double m12,
-        double m20,
-        double m21,
-        double m22)
-    {
-        this.M00 = m00;
-        this.M01 = m01;
-        this.M02 = m02;
-        this.M10 = m10;
-        this.M11 = m11;
-        this.M12 = m12;
-        this.M20 = m20;
-        this.M21 = m21;
-        this.M22 = m22;
-    }
-
-    internal double M00 { get; }
-
-    internal double M01 { get; }
-
-    internal double M02 { get; }
-
-    internal double M10 { get; }
-
-    internal double M11 { get; }
-
-    internal double M12 { get; }
-
-    internal double M20 { get; }
-
-    internal double M21 { get; }
-
-    internal double M22 { get; }
-
     internal static Matrix3x3 Identity { get; } = new Matrix3x3(
         1d,
         0d,
