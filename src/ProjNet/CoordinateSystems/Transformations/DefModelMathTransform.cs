@@ -40,7 +40,7 @@ internal sealed class DefModelMathTransform : MathTransform
     private readonly GeocentricTransform geocentricInverse;
 
     private bool isInverted;
-    private MathTransform inverse;
+    private MathTransform? inverse;
 
     private DefModelMathTransform(
         string modelPath,
@@ -135,12 +135,7 @@ internal sealed class DefModelMathTransform : MathTransform
     /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        if (this.inverse is null)
-        {
-            this.inverse = new DefModelMathTransform(this, !this.isInverted);
-        }
-
-        return this.inverse;
+        return this.inverse ??= new DefModelMathTransform(this, !this.isInverted);
     }
 
     /// <inheritdoc />
@@ -182,11 +177,13 @@ internal sealed class DefModelMathTransform : MathTransform
             return false;
         }
 
-        if (!TryResolveModelPath(modelToken, out string resolvedModelPath))
+        if (!TryResolveModelPath(modelToken, out string? resolvedModelPathCandidate))
         {
             skipReason = "Cannot open " + modelToken + ".";
             return false;
         }
+
+        string resolvedModelPath = ArgumentGuard.ThrowIfNull(resolvedModelPathCandidate, nameof(resolvedModelPathCandidate));
 
         if (!TryResolveEllipsoid(args, out double semiMajor, out double semiMinor, out skipReason))
         {
@@ -526,7 +523,7 @@ internal sealed class DefModelMathTransform : MathTransform
         }
 
         var services = new CoordinateSystemServices();
-        if (!services.TryGetCoordinateSystem(epsgCode, out CoordinateSystem coordinateSystem))
+        if (!services.TryGetCoordinateSystem(epsgCode, out CoordinateSystem? coordinateSystem))
         {
             return true;
         }
@@ -877,7 +874,7 @@ internal sealed class DefModelMathTransform : MathTransform
             throw new FormatException("\"" + propertyName + "\" must be a string.");
         }
 
-        string text = value.GetString();
+        string? text = value.GetString();
         if (text is null)
         {
             throw new FormatException("\"" + propertyName + "\" must not be null.");
@@ -1000,10 +997,12 @@ internal sealed class DefModelMathTransform : MathTransform
                 continue;
             }
 
-            if (!TryResolveComponentPath(component.SpatialModelFileName, modelDirectory, out string componentPath))
+            if (!TryResolveComponentPath(component.SpatialModelFileName, modelDirectory, out string? componentPathCandidate))
             {
                 throw new InvalidDataException("Cannot resolve deformation model component grid '" + component.SpatialModelFileName + "'.");
             }
+
+            string componentPath = ArgumentGuard.ThrowIfNull(componentPathCandidate, nameof(componentPathCandidate));
 
             if (component.DisplacementType == DisplacementType.Vertical)
             {
@@ -1598,11 +1597,12 @@ internal sealed class DefModelMathTransform : MathTransform
 
             if (component.Definition.DisplacementType == DisplacementType.Vertical)
             {
-                if (!TryFindVerticalGrid(component.VerticalGrids, xForGrid, yForGrid, out GeoTiffVGridShiftMathTransform.VerticalGrid verticalGrid))
+                if (!TryFindVerticalGrid(component.VerticalGrids, xForGrid, yForGrid, out GeoTiffVGridShiftMathTransform.VerticalGrid? verticalGridCandidate))
                 {
                     continue;
                 }
 
+                GeoTiffVGridShiftMathTransform.VerticalGrid verticalGrid = ArgumentGuard.ThrowIfNull(verticalGridCandidate, nameof(verticalGridCandidate));
                 if (!TryInterpolateVerticalShift(verticalGrid, xForGrid, yForGrid, out double verticalComponent))
                 {
                     return false;
@@ -1612,11 +1612,12 @@ internal sealed class DefModelMathTransform : MathTransform
                 continue;
             }
 
-            if (!TryFindXyzGrid(component.XyzGrids, xForGrid, yForGrid, out GeoTiffXyzGridShiftMathTransform.XyzGrid xyzGrid))
+            if (!TryFindXyzGrid(component.XyzGrids, xForGrid, yForGrid, out GeoTiffXyzGridShiftMathTransform.XyzGrid? xyzGridCandidate))
             {
                 continue;
             }
 
+            GeoTiffXyzGridShiftMathTransform.XyzGrid xyzGrid = ArgumentGuard.ThrowIfNull(xyzGridCandidate, nameof(xyzGridCandidate));
             if (!TryGetInterpolationCell(xyzGrid, xForGrid, yForGrid, out InterpolationCell cell))
             {
                 continue;
@@ -1847,33 +1848,33 @@ internal sealed class DefModelMathTransform : MathTransform
     [Serializable]
     private sealed class ModelDefinition
     {
-        internal string FileType { get; set; }
+        internal string FileType { get; set; } = string.Empty;
 
-        internal string FormatVersion { get; set; }
+        internal string FormatVersion { get; set; } = string.Empty;
 
-        internal string SourceCrs { get; set; }
+        internal string SourceCrs { get; set; } = string.Empty;
 
-        internal string TargetCrs { get; set; }
+        internal string TargetCrs { get; set; } = string.Empty;
 
-        internal string DefinitionCrs { get; set; }
+        internal string DefinitionCrs { get; set; } = string.Empty;
 
-        internal string HorizontalOffsetUnit { get; set; }
+        internal string HorizontalOffsetUnit { get; set; } = string.Empty;
 
-        internal string VerticalOffsetUnit { get; set; }
+        internal string VerticalOffsetUnit { get; set; } = string.Empty;
 
-        internal string HorizontalOffsetMethod { get; set; }
+        internal string HorizontalOffsetMethod { get; set; } = string.Empty;
 
         internal SpatialExtent Extent { get; set; }
 
         internal TimeExtent TimeExtent { get; set; }
 
-        internal ComponentDefinition[] Components { get; set; }
+        internal ComponentDefinition[] Components { get; set; } = [];
     }
 
     [Serializable]
     private sealed class ComponentDefinition
     {
-        internal string Description { get; set; }
+        internal string Description { get; set; } = string.Empty;
 
         internal DisplacementType DisplacementType { get; set; }
 
@@ -1881,9 +1882,9 @@ internal sealed class DefModelMathTransform : MathTransform
 
         internal SpatialExtent Extent { get; set; }
 
-        internal string SpatialModelFileName { get; set; }
+        internal string SpatialModelFileName { get; set; } = string.Empty;
 
-        internal ITimeFunction TimeFunction { get; set; }
+        internal ITimeFunction TimeFunction { get; set; } = ConstantTimeFunction.Instance;
     }
 
     [Serializable]
@@ -1891,8 +1892,8 @@ internal sealed class DefModelMathTransform : MathTransform
     {
         internal ComponentRuntime(
             ComponentDefinition definition,
-            IReadOnlyList<GeoTiffXyzGridShiftMathTransform.XyzGrid> xyzGrids,
-            IReadOnlyList<GeoTiffVGridShiftMathTransform.VerticalGrid> verticalGrids)
+            IReadOnlyList<GeoTiffXyzGridShiftMathTransform.XyzGrid>? xyzGrids,
+            IReadOnlyList<GeoTiffVGridShiftMathTransform.VerticalGrid>? verticalGrids)
         {
             this.Definition = definition;
             this.XyzGrids = xyzGrids ?? [];
