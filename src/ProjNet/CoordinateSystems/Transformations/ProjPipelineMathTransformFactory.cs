@@ -45,15 +45,19 @@ internal static class ProjPipelineMathTransformFactory
         }
 
         bool hasPipeline = ContainsPipelineProjection(operation);
-        IReadOnlyList<Dictionary<string, string>> pipelineStepArguments = [];
+        IReadOnlyList<Dictionary<string, string>>? pipelineStepArguments = null;
         if (hasPipeline
             && !TryParsePipelineStepArguments(operation, out pipelineStepArguments, out skipReason))
         {
             return false;
         }
 
+        IReadOnlyList<Dictionary<string, string>> parsedPipelineSteps = hasPipeline
+            ? ArgumentGuard.ThrowIfNull(pipelineStepArguments, nameof(pipelineStepArguments))
+            : [];
+
         int stepCount = hasPipeline
-            ? pipelineStepArguments.Count
+            ? parsedPipelineSteps.Count
             : 1;
         PipelineExecutionContext? executionContext = hasPipeline
             ? new PipelineExecutionContext()
@@ -62,18 +66,20 @@ internal static class ProjPipelineMathTransformFactory
         var stepTransforms = new List<MathTransform>(stepCount);
         for (int i = 0; i < stepCount; i++)
         {
+            MathTransform? stepTransformCandidate;
+            string? stepSkipReason;
             bool ok = hasPipeline
-                ? TryCreateStepTransform(pipelineStepArguments[i], executionContext, out MathTransform stepTransform, out string stepSkipReason)
-                : TryCreateStepTransform(operation, executionContext, out stepTransform, out stepSkipReason);
+                ? TryCreateStepTransform(parsedPipelineSteps[i], executionContext, out stepTransformCandidate, out stepSkipReason)
+                : TryCreateStepTransform(operation, executionContext, out stepTransformCandidate, out stepSkipReason);
             if (!ok)
             {
                 skipReason = hasPipeline
-                    ? "Pipeline step " + (i + 1).ToString(CultureInfo.InvariantCulture) + " failed: " + stepSkipReason
-                    : stepSkipReason;
+                    ? "Pipeline step " + (i + 1).ToString(CultureInfo.InvariantCulture) + " failed: " + (stepSkipReason ?? "unknown reason")
+                    : (stepSkipReason ?? "Unable to create transform.");
                 return false;
             }
 
-            stepTransforms.Add(stepTransform);
+            stepTransforms.Add(ArgumentGuard.ThrowIfNull(stepTransformCandidate, nameof(stepTransformCandidate)));
         }
 
         if (stepTransforms.Count == 0)
@@ -88,9 +94,16 @@ internal static class ProjPipelineMathTransformFactory
             return true;
         }
 
-        transform = hasPipeline
-            ? new PipelineCompositeMathTransform(stepTransforms, executionContext)
-            : new CompositeMathTransform(stepTransforms);
+        if (hasPipeline)
+        {
+            PipelineExecutionContext pipelineExecutionContext = ArgumentGuard.ThrowIfNull(executionContext, nameof(executionContext));
+            transform = new PipelineCompositeMathTransform(stepTransforms, pipelineExecutionContext);
+        }
+        else
+        {
+            transform = new CompositeMathTransform(stepTransforms);
+        }
+
         return true;
     }
 
@@ -437,8 +450,8 @@ internal static class ProjPipelineMathTransformFactory
         transform = null;
         skipReason = null;
 
-        bool hasOrder = args.TryGetValue("order", out string? orderToken) && !string.IsNullOrWhiteSpace(orderToken);
-        bool hasAxis = args.TryGetValue("axis", out string? axisToken) && !string.IsNullOrWhiteSpace(axisToken);
+        bool hasOrder = args.TryGetValue("order", out string? orderTokenCandidate) && !string.IsNullOrWhiteSpace(orderTokenCandidate);
+        bool hasAxis = args.TryGetValue("axis", out string? axisTokenCandidate) && !string.IsNullOrWhiteSpace(axisTokenCandidate);
         if (hasOrder == hasAxis)
         {
             skipReason = "Axisswap requires exactly one of +order or +axis.";
@@ -448,6 +461,7 @@ internal static class ProjPipelineMathTransformFactory
         int[] order;
         if (hasOrder)
         {
+            string orderToken = ArgumentGuard.ThrowIfNull(orderTokenCandidate, nameof(orderTokenCandidate));
             if (!TryParseAxisSwapOrder(orderToken, out order))
             {
                 skipReason = "Unable to parse +order parameter for axisswap.";
@@ -456,6 +470,7 @@ internal static class ProjPipelineMathTransformFactory
         }
         else
         {
+            string axisToken = ArgumentGuard.ThrowIfNull(axisTokenCandidate, nameof(axisTokenCandidate));
             if (!TryParseAxisOrder(axisToken, out order))
             {
                 skipReason = "Unable to parse +axis parameter for axisswap.";
@@ -593,10 +608,12 @@ internal static class ProjPipelineMathTransformFactory
         transform = null;
         skipReason = null;
 
-        if (!TryBuildProjectionStepParameters(args, projCode, out List<ProjectionParameter> parameters, out skipReason))
+        if (!TryBuildProjectionStepParameters(args, projCode, out List<ProjectionParameter>? parametersCandidate, out skipReason))
         {
             return false;
         }
+
+        List<ProjectionParameter> parameters = ArgumentGuard.ThrowIfNull(parametersCandidate, nameof(parametersCandidate));
 
         try
         {
@@ -989,10 +1006,12 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
-        if (!TryResolveGridPaths(gridsToken, out IReadOnlyList<string> gridPaths, out skipReason))
+        if (!TryResolveGridPaths(gridsToken, out IReadOnlyList<string>? gridPathsCandidate, out skipReason))
         {
             return false;
         }
+
+        IReadOnlyList<string> gridPaths = ArgumentGuard.ThrowIfNull(gridPathsCandidate, nameof(gridPathsCandidate));
 
         if (!TryValidateGridExtensions(gridPaths, HorizontalGridExtensions, "horizontal", out skipReason))
         {
@@ -1044,10 +1063,12 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
-        if (!TryResolveGridPaths(gridsToken, out IReadOnlyList<string> gridPaths, out skipReason))
+        if (!TryResolveGridPaths(gridsToken, out IReadOnlyList<string>? gridPathsCandidate, out skipReason))
         {
             return false;
         }
+
+        IReadOnlyList<string> gridPaths = ArgumentGuard.ThrowIfNull(gridPathsCandidate, nameof(gridPathsCandidate));
 
         if (!TryValidateGridExtensions(gridPaths, VerticalGridExtensions, "vertical", out skipReason))
         {
@@ -1113,10 +1134,12 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
-        if (!TryResolveGridPaths(gridsToken, out IReadOnlyList<string> gridPaths, out skipReason))
+        if (!TryResolveGridPaths(gridsToken, out IReadOnlyList<string>? gridPathsCandidate, out skipReason))
         {
             return false;
         }
+
+        IReadOnlyList<string> gridPaths = ArgumentGuard.ThrowIfNull(gridPathsCandidate, nameof(gridPathsCandidate));
 
         if (!TryValidateGridExtensions(gridPaths, XyzGridExtensions, "xyz", out skipReason))
         {
@@ -1272,9 +1295,9 @@ internal static class ProjPipelineMathTransformFactory
                 continue;
             }
 
-            if (CoordinateTransformationFactory.TryResolveGridResourcePath(gridName, out string resolvedPath))
+            if (CoordinateTransformationFactory.TryResolveGridResourcePath(gridName, out string? resolvedPathCandidate))
             {
-                resolved.Add(resolvedPath);
+                resolved.Add(ArgumentGuard.ThrowIfNull(resolvedPathCandidate, nameof(resolvedPathCandidate)));
                 continue;
             }
 
@@ -1447,15 +1470,17 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
+        string inUnitToken = ArgumentGuard.ThrowIfNull(inToken, nameof(inToken));
+        string outUnitToken = ArgumentGuard.ThrowIfNull(outToken, nameof(outToken));
         if (treatDegRadAsIdentity
-            && ((inToken.Equals("deg", StringComparison.OrdinalIgnoreCase) && outToken.Equals("rad", StringComparison.OrdinalIgnoreCase))
-                || (inToken.Equals("rad", StringComparison.OrdinalIgnoreCase) && outToken.Equals("deg", StringComparison.OrdinalIgnoreCase))))
+            && ((inUnitToken.Equals("deg", StringComparison.OrdinalIgnoreCase) && outUnitToken.Equals("rad", StringComparison.OrdinalIgnoreCase))
+                || (inUnitToken.Equals("rad", StringComparison.OrdinalIgnoreCase) && outUnitToken.Equals("deg", StringComparison.OrdinalIgnoreCase))))
         {
             scale = 1d;
             return true;
         }
 
-        if (!TryResolveUnitFactor(inToken, out double inFactor) || !TryResolveUnitFactor(outToken, out double outFactor))
+        if (!TryResolveUnitFactor(inUnitToken, out double inFactor) || !TryResolveUnitFactor(outUnitToken, out double outFactor))
         {
             return false;
         }
