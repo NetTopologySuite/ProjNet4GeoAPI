@@ -30,7 +30,7 @@ public class NearSidedPerspectiveLabordeProjectionTests
     [InlineData("Tilted_Perspective")]
     public void SupportsPerspectiveAliasesFromWkt(string projectionName)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildNsperProjectedWkt(projectionName, 6400000d, 1000000d, 0d, 0d, null, null));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildNsperProjectedWkt(projectionName, 6400000d, 1000000d, 0d, 0d, null, null));
         var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] result = transform.MathTransform.Transform(CreatePoint(2d, 1d));
 
@@ -58,7 +58,7 @@ public class NearSidedPerspectiveLabordeProjectionTests
         double expectedX,
         double expectedY)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildNsperProjectedWkt("nsper", 6400000d, 1000000d, 0d, 0d, null, null));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildNsperProjectedWkt("nsper", 6400000d, 1000000d, 0d, 0d, null, null));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
 
@@ -84,7 +84,7 @@ public class NearSidedPerspectiveLabordeProjectionTests
         double expectedLongitude,
         double expectedLatitude)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildNsperProjectedWkt("nsper", 6400000d, 1000000d, 0d, 0d, null, null));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildNsperProjectedWkt("nsper", 6400000d, 1000000d, 0d, 0d, null, null));
         var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
         double[] geographicPoint = inverse.MathTransform.Transform(CreatePoint(x, y));
 
@@ -111,7 +111,7 @@ public class NearSidedPerspectiveLabordeProjectionTests
         double expectedX,
         double expectedY)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildNsperProjectedWkt("nsper", 1d, 3d, latitudeOfOrigin, 0d, null, null));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildNsperProjectedWkt("nsper", 1d, 3d, latitudeOfOrigin, 0d, null, null));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
 
@@ -139,7 +139,7 @@ public class NearSidedPerspectiveLabordeProjectionTests
         double expectedX,
         double expectedY)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildNsperProjectedWkt("tpers", 6400000d, 1000000d, 0d, 0d, tilt, azimuth));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildNsperProjectedWkt("tpers", 6400000d, 1000000d, 0d, 0d, tilt, azimuth));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
 
@@ -156,7 +156,7 @@ public class NearSidedPerspectiveLabordeProjectionTests
     [InlineData("Laborde")]
     public void SupportsLabordeAliasesFromWkt(string projectionName)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildLabrdProjectedWkt(projectionName, 2d, 0.5d, 0d));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildLabrdProjectedWkt(projectionName, 2d, 0.5d, 0d));
         var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] result = transform.MathTransform.Transform(CreatePoint(2d, 1d));
 
@@ -184,7 +184,7 @@ public class NearSidedPerspectiveLabordeProjectionTests
         double expectedX,
         double expectedY)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildLabrdProjectedWkt("labrd", 2d, 0.5d, 0d));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildLabrdProjectedWkt("labrd", 2d, 0.5d, 0d));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
 
@@ -210,7 +210,7 @@ public class NearSidedPerspectiveLabordeProjectionTests
         double expectedLongitude,
         double expectedLatitude)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildLabrdProjectedWkt("labrd", 2d, 0.5d, 0d));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildLabrdProjectedWkt("labrd", 2d, 0.5d, 0d));
         var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
         double[] geographicPoint = inverse.MathTransform.Transform(CreatePoint(x, y));
 
@@ -230,7 +230,7 @@ public class NearSidedPerspectiveLabordeProjectionTests
         var exception = Assert.Throws<TargetInvocationException>(() =>
         {
             string wkt = BuildNsperProjectedWkt("nsper", 1d, h, 0d, 0d, null, null);
-            var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(wkt);
+            var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wkt);
             var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
             forward.MathTransform.Transform(CreatePoint(2d, 1d));
         });
@@ -247,7 +247,7 @@ public class NearSidedPerspectiveLabordeProjectionTests
         var exception = Assert.Throws<TargetInvocationException>(() =>
         {
             string wkt = BuildLabrdProjectedWkt("labrd", 0d, 0.5d, 0d);
-            var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(wkt);
+            var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wkt);
             var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
             forward.MathTransform.Transform(CreatePoint(2d, 1d));
         });

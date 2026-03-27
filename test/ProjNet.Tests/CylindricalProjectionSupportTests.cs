@@ -26,7 +26,7 @@ public class CylindricalProjectionSupportTests
     [InlineData("miller_cylindrical")]
     public void SupportsMillerProjectionAliasesFromWkt(string projectionName)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName));
         var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
         double[] result = transform.MathTransform.Transform(CreatePoint(1000d, 2000d));
 
@@ -46,7 +46,7 @@ public class CylindricalProjectionSupportTests
     [InlineData(17.45d, -23.1d, 1e-6d)]
     public void SupportsMillerProjectionRoundtrip(double longitude, double latitude, double tolerance)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt("mill"));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt("mill"));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(GeographicCoordinateSystem.WGS84, projected);
         var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
 
@@ -68,7 +68,7 @@ public class CylindricalProjectionSupportTests
     [InlineData("equirectangular")]
     public void SupportsEqcProjectionAliasesFromWkt(string projectionName)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName));
         var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
         double[] result = transform.MathTransform.Transform(CreatePoint(1000d, 2000d));
 
@@ -88,7 +88,7 @@ public class CylindricalProjectionSupportTests
     [InlineData(-11.25d, 31.8d, 1e-8d)]
     public void SupportsEqcProjectionRoundtrip(double longitude, double latitude, double tolerance)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt("eqc"));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt("eqc"));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(GeographicCoordinateSystem.WGS84, projected);
         var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
 
@@ -110,7 +110,7 @@ public class CylindricalProjectionSupportTests
     [InlineData("equal_area_cylindrical")]
     public void SupportsCeaProjectionAliasesFromWkt(string projectionName)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName));
         var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
         double[] result = transform.MathTransform.Transform(CreatePoint(1000d, 2000d));
 
@@ -130,7 +130,7 @@ public class CylindricalProjectionSupportTests
     [InlineData(42.6d, 14.2d, 1e-8d)]
     public void SupportsCeaProjectionRoundtrip(double longitude, double latitude, double tolerance)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt("cea"));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt("cea"));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(GeographicCoordinateSystem.WGS84, projected);
         var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
 
@@ -150,7 +150,7 @@ public class CylindricalProjectionSupportTests
     [InlineData("loximuthal")]
     public void SupportsLoximProjectionAliasesFromWkt(string projectionName)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName));
         var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
         double[] result = transform.MathTransform.Transform(CreatePoint(1000d, 2000d));
 
@@ -170,7 +170,7 @@ public class CylindricalProjectionSupportTests
     [InlineData(15.75d, -9.4d, 1e-8d)]
     public void SupportsLoximProjectionRoundtrip(double longitude, double latitude, double tolerance)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt("loxim"));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt("loxim"));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(GeographicCoordinateSystem.WGS84, projected);
         var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
 
@@ -189,7 +189,7 @@ public class CylindricalProjectionSupportTests
     [InlineData("patterson")]
     public void SupportsPattersonProjectionAliasesFromWkt(string projectionName)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName));
         var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
         double[] result = transform.MathTransform.Transform(CreatePoint(1000d, 2000d));
 
@@ -209,7 +209,7 @@ public class CylindricalProjectionSupportTests
     [InlineData(-98.2d, 37.9d, 1e-8d)]
     public void SupportsPattersonProjectionRoundtrip(double longitude, double latitude, double tolerance)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt("patterson"));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt("patterson"));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(GeographicCoordinateSystem.WGS84, projected);
         var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
 

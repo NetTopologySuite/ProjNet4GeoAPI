@@ -28,7 +28,7 @@ public class VanDerGrintenProjectionTests
     [InlineData("van_der_grinten")]
     public void SupportsVandgAliasesFromWkt(string projectionName)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, 6400000d));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, 6400000d));
         var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] result = transform.MathTransform.Transform(CreatePoint(2d, 1d));
 
@@ -51,7 +51,7 @@ public class VanDerGrintenProjectionTests
     [InlineData("VanDerGrinten", 30d, -20d, 2e-8)]
     public void SupportsVandgRoundtrip(string projectionName, double longitude, double latitude, double tolerance)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, 6400000d));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, 6400000d));
         var geographic = projected.GeographicCoordinateSystem;
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(geographic, projected);
         var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, geographic);
@@ -85,7 +85,7 @@ public class VanDerGrintenProjectionTests
         double expectedX,
         double expectedY)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, 6400000d));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, 6400000d));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
 
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
@@ -114,7 +114,7 @@ public class VanDerGrintenProjectionTests
         double expectedLongitude,
         double expectedLatitude)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, 6400000d));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, 6400000d));
         var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
 
         double[] geographicPoint = inverse.MathTransform.Transform(CreatePoint(x, y));

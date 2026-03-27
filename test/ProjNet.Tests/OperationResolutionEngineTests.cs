@@ -47,7 +47,7 @@ public class OperationResolutionEngineTests
     public void CreateFromCoordinateSystemsWithEquivalentGeographicCoordinateSystemsUsesIdentityTransform()
     {
         var source = GeographicCoordinateSystem.WGS84;
-        var target = (GeographicCoordinateSystem)this.coordinateSystemFactory.CreateFromWkt(source.WKT);
+        var target = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<GeographicCoordinateSystem>(this.coordinateSystemFactory, source.WKT);
         var transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
         double[] output = transformation.MathTransform.Transform(GeographicSamplePoint);
 
@@ -210,8 +210,8 @@ public class OperationResolutionEngineTests
                 && services.GetCoordinateSystem(definition.SourceSrid) is GeographicCoordinateSystem
                 && services.GetCoordinateSystem(definition.TargetSrid) is GeographicCoordinateSystem);
 
-        var source = (GeographicCoordinateSystem)services.GetCoordinateSystem(operation.SourceSrid);
-        var target = (GeographicCoordinateSystem)services.GetCoordinateSystem(operation.TargetSrid);
+        var source = Assert.IsType<GeographicCoordinateSystem>(services.GetCoordinateSystem(operation.SourceSrid));
+        var target = Assert.IsType<GeographicCoordinateSystem>(services.GetCoordinateSystem(operation.TargetSrid));
 
         var transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
 
@@ -245,10 +245,10 @@ public class OperationResolutionEngineTests
 
         foreach (var candidate in candidates)
         {
-            var sourceTemplate = (ProjectedCoordinateSystem)services.GetCoordinateSystem(candidate.SourceProjectedSrid);
-            var targetTemplate = (ProjectedCoordinateSystem)services.GetCoordinateSystem(candidate.TargetProjectedSrid);
-            var source = (ProjectedCoordinateSystem)this.coordinateSystemFactory.CreateFromWkt(sourceTemplate.WKT);
-            var target = (ProjectedCoordinateSystem)this.coordinateSystemFactory.CreateFromWkt(targetTemplate.WKT);
+            var sourceTemplate = Assert.IsType<ProjectedCoordinateSystem>(services.GetCoordinateSystem(candidate.SourceProjectedSrid));
+            var targetTemplate = Assert.IsType<ProjectedCoordinateSystem>(services.GetCoordinateSystem(candidate.TargetProjectedSrid));
+            var source = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(this.coordinateSystemFactory, sourceTemplate.WKT);
+            var target = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(this.coordinateSystemFactory, targetTemplate.WKT);
 
             source.Authority = string.Empty;
             source.AuthorityCode = -1;

@@ -115,7 +115,7 @@ public class GitHubIssueRegressionTests
         Assert.InRange(pt_3857.X, pt_3857ex.x - 0.015, pt_3857ex.x + 0.015);
         Assert.InRange(pt_3857.Y, pt_3857ex.y - 0.015, pt_3857ex.y + 0.015);
 
-        epsg_3857 = (ProjectedCoordinateSystem)css.GetCoordinateSystem(3857);
+        epsg_3857 = Assert.IsType<ProjectedCoordinateSystem>(css.GetCoordinateSystem(3857));
         Console.WriteLine(epsg_3857.Projection.ClassName);
         Console.WriteLine(epsg_3857.WKT);
 

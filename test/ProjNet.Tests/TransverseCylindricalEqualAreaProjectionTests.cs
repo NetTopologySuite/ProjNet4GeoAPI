@@ -27,7 +27,7 @@ public class TransverseCylindricalEqualAreaProjectionTests
     [InlineData("Transverse_Cylindrical_Equal_Area")]
     public void SupportsTceaAliasesFromWkt(string projectionName)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, 0d, 0d, 1d));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, 0d, 0d, 1d));
         var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, GeographicCoordinateSystem.WGS84);
         double[] result = transform.MathTransform.Transform(CreatePoint(120000d, 210000d));
 
@@ -60,7 +60,7 @@ public class TransverseCylindricalEqualAreaProjectionTests
         double scaleFactor,
         double tolerance)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, 
             BuildProjectedWkt(projectionName, latitudeOfOrigin, centralMeridian, scaleFactor));
 
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(GeographicCoordinateSystem.WGS84, projected);

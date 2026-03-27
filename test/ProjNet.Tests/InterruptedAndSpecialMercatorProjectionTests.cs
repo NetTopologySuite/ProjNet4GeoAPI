@@ -49,7 +49,7 @@ public class InterruptedAndSpecialMercatorProjectionTests
         ArgumentNullException.ThrowIfNull(projectionName);
         ArgumentNullException.ThrowIfNull(spheroidClause);
 
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, spheroidClause, extraParameters));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, spheroidClause, extraParameters));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(2d, 1d));
 
@@ -70,7 +70,7 @@ public class InterruptedAndSpecialMercatorProjectionTests
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildColUrbanWkt(projectionName));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildColUrbanWkt(projectionName));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(-74.25d, 4.8d));
 
@@ -112,7 +112,7 @@ public class InterruptedAndSpecialMercatorProjectionTests
         ArgumentNullException.ThrowIfNull(projectionName);
         ArgumentNullException.ThrowIfNull(spheroidClause);
 
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, spheroidClause, extraParameters));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, spheroidClause, extraParameters));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
 
@@ -129,7 +129,7 @@ public class InterruptedAndSpecialMercatorProjectionTests
         const double expectedX = 301.769827d;
         const double expectedY = -1567.849822d;
 
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildCalcofiCustomWkt());
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildCalcofiCustomWkt());
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(10d, 50d));
 
@@ -146,7 +146,7 @@ public class InterruptedAndSpecialMercatorProjectionTests
         const double expectedX = 80859.033d;
         const double expectedY = 122543.174d;
 
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildColUrbanWkt("col_urban"));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildColUrbanWkt("col_urban"));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(-74.25d, 4.8d));
 
@@ -186,7 +186,7 @@ public class InterruptedAndSpecialMercatorProjectionTests
         ArgumentNullException.ThrowIfNull(projectionName);
         ArgumentNullException.ThrowIfNull(spheroidClause);
 
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, spheroidClause, extraParameters));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, spheroidClause, extraParameters));
         var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
         double[] geographicPoint = inverse.MathTransform.Transform(CreatePoint(x, y));
 
@@ -220,7 +220,7 @@ public class InterruptedAndSpecialMercatorProjectionTests
         ArgumentNullException.ThrowIfNull(projectionName);
         ArgumentNullException.ThrowIfNull(spheroidClause);
 
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, spheroidClause, extraParameters));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, spheroidClause, extraParameters));
         var geographic = projected.GeographicCoordinateSystem;
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(geographic, projected);
         var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, geographic);
@@ -241,7 +241,7 @@ public class InterruptedAndSpecialMercatorProjectionTests
         const double longitude = -74.25d;
         const double latitude = 4.8d;
 
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildColUrbanWkt("col_urban"));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildColUrbanWkt("col_urban"));
         var geographic = projected.GeographicCoordinateSystem;
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(geographic, projected);
         var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, geographic);
@@ -262,7 +262,7 @@ public class InterruptedAndSpecialMercatorProjectionTests
     [InlineData(-90d)]
     public void ToblerMercatorRejectsPoles(double latitude)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt("tobmerc", Sphere6370997, null));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt("tobmerc", Sphere6370997, null));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         Assert.Throws<ArgumentException>(() => forward.MathTransform.Transform(CreatePoint(0d, latitude)));
     }
@@ -273,7 +273,7 @@ public class InterruptedAndSpecialMercatorProjectionTests
     [Fact]
     public void ToblerMercatorUnitSphereInverseNearZeroIsStable()
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt("tobmerc", Sphere1, null));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt("tobmerc", Sphere1, null));
         var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
         double[] geographicPoint = inverse.MathTransform.Transform(CreatePoint(0d, 1e-15d));
 

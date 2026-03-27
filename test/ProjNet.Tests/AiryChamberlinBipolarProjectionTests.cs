@@ -32,7 +32,7 @@ public class AiryChamberlinBipolarProjectionTests
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, GetDefaultProfile(projectionName)));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, GetDefaultProfile(projectionName)));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(2d, 1d));
 
@@ -67,7 +67,7 @@ public class AiryChamberlinBipolarProjectionTests
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, new ProjectionProfile(sphereRadius, extraParameters)));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, new ProjectionProfile(sphereRadius, extraParameters)));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
 
@@ -97,7 +97,7 @@ public class AiryChamberlinBipolarProjectionTests
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, new ProjectionProfile(sphereRadius, null)));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, new ProjectionProfile(sphereRadius, null)));
         var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
         double[] geographicPoint = inverse.MathTransform.Transform(CreatePoint(x, y));
 
@@ -116,7 +116,7 @@ public class AiryChamberlinBipolarProjectionTests
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt(projectionName, GetDefaultProfile(projectionName)));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, GetDefaultProfile(projectionName)));
         var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
 
         Assert.Throws<InvalidOperationException>(() => inverse.MathTransform.Transform(CreatePoint(200d, 100d)));
@@ -132,7 +132,7 @@ public class AiryChamberlinBipolarProjectionTests
     [InlineData(-2d, -1d)]
     public void SupportsBipcRoundtrip(double longitude, double latitude)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildProjectedWkt("bipc", new ProjectionProfile(6400000d, null)));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt("bipc", new ProjectionProfile(6400000d, null)));
         var geographic = projected.GeographicCoordinateSystem;
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(geographic, projected);
         var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, geographic);
@@ -150,7 +150,7 @@ public class AiryChamberlinBipolarProjectionTests
     [Fact]
     public void AiryPolarAndNoCutCasesMatchBuiltins()
     {
-        var northPole = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(
+        var northPole = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, 
             BuildProjectedWkt(
                 "airy",
                 new ProjectionProfile(
@@ -167,7 +167,7 @@ public class AiryChamberlinBipolarProjectionTests
         Assert.InRange(Math.Abs(northAtPole[1] - 0d), 0d, 1e-6);
         Assert.Throws<ArgumentException>(() => northForward.MathTransform.Transform(CreatePoint(0d, -90d)));
 
-        var noCut = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(
+        var noCut = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, 
             BuildProjectedWkt(
                 "airy",
                 new ProjectionProfile(

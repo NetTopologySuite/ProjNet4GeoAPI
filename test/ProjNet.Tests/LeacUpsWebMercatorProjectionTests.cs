@@ -41,7 +41,7 @@ public class LeacUpsWebMercatorProjectionTests
             wkt = BuildWebMercWkt(projectionName, Grs80);
         }
 
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(wkt);
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wkt);
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(2d, 1d));
 
@@ -71,7 +71,7 @@ public class LeacUpsWebMercatorProjectionTests
         double expectedY,
         double tolerance)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildLeacWkt("leac", spheroidClause, 0d, false));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildLeacWkt("leac", spheroidClause, 0d, false));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
 
@@ -99,7 +99,7 @@ public class LeacUpsWebMercatorProjectionTests
         double expectedLatitude,
         double tolerance)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildLeacWkt("leac", spheroidClause, 0d, false));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildLeacWkt("leac", spheroidClause, 0d, false));
         var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
         double[] geographicPoint = inverse.MathTransform.Transform(CreatePoint(x, y));
 
@@ -117,7 +117,7 @@ public class LeacUpsWebMercatorProjectionTests
     [InlineData(-2d, -1d, 1551250.881431801d, -10850493.419804076d, 1e-3d)]
     public void MatchesUpsForwardVectors(double longitude, double latitude, double expectedX, double expectedY, double tolerance)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildUpsWkt("ups", Grs80, false));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildUpsWkt("ups", Grs80, false));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
 
@@ -135,7 +135,7 @@ public class LeacUpsWebMercatorProjectionTests
     [InlineData(-200d, -100d, -45.001432287d, 64.914588378d, 2e-9d)]
     public void MatchesUpsInverseVectors(double x, double y, double expectedLongitude, double expectedLatitude, double tolerance)
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildUpsWkt("ups", Grs80, false));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildUpsWkt("ups", Grs80, false));
         var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
         double[] geographicPoint = inverse.MathTransform.Transform(CreatePoint(x, y));
 
@@ -151,7 +151,7 @@ public class LeacUpsWebMercatorProjectionTests
     {
         var exception = Assert.Throws<TargetInvocationException>(() =>
         {
-            var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildUpsWkt("ups", Sphere6400000, false));
+            var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildUpsWkt("ups", Sphere6400000, false));
             CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         });
 
@@ -164,7 +164,7 @@ public class LeacUpsWebMercatorProjectionTests
     [Fact]
     public void WebMercatorBatchTransformMatchesPointwiseTransform()
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildWebMercWkt("webmerc", Grs80));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildWebMercWkt("webmerc", Grs80));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
 
         double[] batchedLongitudes = [-170d, -120.5d, -45d, 0d, 37.5d, 89.9d, 120.25d, 170d];
@@ -192,7 +192,7 @@ public class LeacUpsWebMercatorProjectionTests
     [Fact]
     public void WebMercatorBatchTransformPropagatesNaNConsistently()
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildWebMercWkt("webmerc", Grs80));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildWebMercWkt("webmerc", Grs80));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
 
         double[] batchedLongitudes = [0d, double.NaN, 10d, 20d, double.NaN, -40d, 50d, 60d];
@@ -229,7 +229,7 @@ public class LeacUpsWebMercatorProjectionTests
     [Fact]
     public void WebMercatorBatchTransformRejectsPoleLatitude()
     {
-        var projected = (ProjectedCoordinateSystem)CoordinateSystemFactory.CreateFromWkt(BuildWebMercWkt("webmerc", Grs80));
+        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildWebMercWkt("webmerc", Grs80));
         var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
 
         double[] batchedLongitudes = [0d, 10d, 20d, 30d, 40d, 50d, 60d, 70d];
