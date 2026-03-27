@@ -25,19 +25,9 @@ internal sealed class SchMathTransform : MathTransform
     private readonly double semiMajorAxis;
     private readonly double radiusOfCurvature;
 
-    private readonly double offsetX;
-    private readonly double offsetY;
-    private readonly double offsetZ;
+    private readonly Vector3D offset;
 
-    private readonly double m00;
-    private readonly double m01;
-    private readonly double m02;
-    private readonly double m10;
-    private readonly double m11;
-    private readonly double m12;
-    private readonly double m20;
-    private readonly double m21;
-    private readonly double m22;
+    private readonly Matrix3x3 rotationMatrix;
 
     private bool isInverted;
     private MathTransform? inverse;
@@ -119,24 +109,26 @@ internal sealed class SchMathTransform : MathTransform
         this.sphereForward = new GeocentricTransform(sphereParameters, false);
         this.sphereInverse = (GeocentricTransform)this.sphereForward.Inverse();
 
-        this.m00 = cosPegLatitude * cosPegLongitude;
-        this.m01 = (-sinPegHeading * sinPegLongitude) - (sinPegLatitude * cosPegLongitude * cosPegHeading);
-        this.m02 = (sinPegLongitude * cosPegHeading) - (sinPegLatitude * cosPegLongitude * sinPegHeading);
-        this.m10 = cosPegLatitude * sinPegLongitude;
-        this.m11 = (cosPegLongitude * sinPegHeading) - (sinPegLatitude * sinPegLongitude * cosPegHeading);
-        this.m12 = (-cosPegLongitude * cosPegHeading) - (sinPegLatitude * sinPegLongitude * sinPegHeading);
-        this.m20 = sinPegLatitude;
-        this.m21 = cosPegLatitude * cosPegHeading;
-        this.m22 = cosPegLatitude * sinPegHeading;
+        this.rotationMatrix = new Matrix3x3(
+            cosPegLatitude * cosPegLongitude,
+            (-sinPegHeading * sinPegLongitude) - (sinPegLatitude * cosPegLongitude * cosPegHeading),
+            (sinPegLongitude * cosPegHeading) - (sinPegLatitude * cosPegLongitude * sinPegHeading),
+            cosPegLatitude * sinPegLongitude,
+            (cosPegLongitude * sinPegHeading) - (sinPegLatitude * sinPegLongitude * cosPegHeading),
+            (-cosPegLongitude * cosPegHeading) - (sinPegLatitude * sinPegLongitude * sinPegHeading),
+            sinPegLatitude,
+            cosPegLatitude * cosPegHeading,
+            cosPegLatitude * sinPegHeading);
 
         double pegLongitudeDegrees = RadiansToDegrees(pegLongitude);
         double pegLatitudeDegrees = RadiansToDegrees(pegLatitude);
         double pegZ = pegHeight;
         this.ellipsoidForward.Transform(ref pegLongitudeDegrees, ref pegLatitudeDegrees, ref pegZ);
 
-        this.offsetX = pegLongitudeDegrees - (this.radiusOfCurvature * cosPegLatitude * cosPegLongitude);
-        this.offsetY = pegLatitudeDegrees - (this.radiusOfCurvature * cosPegLatitude * sinPegLongitude);
-        this.offsetZ = pegZ - (this.radiusOfCurvature * sinPegLatitude);
+        this.offset = new Vector3D(
+            pegLongitudeDegrees - (this.radiusOfCurvature * cosPegLatitude * cosPegLongitude),
+            pegLatitudeDegrees - (this.radiusOfCurvature * cosPegLatitude * sinPegLongitude),
+            pegZ - (this.radiusOfCurvature * sinPegLatitude));
 
         this.isInverted = isInverted;
     }
@@ -151,19 +143,8 @@ internal sealed class SchMathTransform : MathTransform
         this.semiMajorAxis = source.semiMajorAxis;
         this.radiusOfCurvature = source.radiusOfCurvature;
 
-        this.offsetX = source.offsetX;
-        this.offsetY = source.offsetY;
-        this.offsetZ = source.offsetZ;
-
-        this.m00 = source.m00;
-        this.m01 = source.m01;
-        this.m02 = source.m02;
-        this.m10 = source.m10;
-        this.m11 = source.m11;
-        this.m12 = source.m12;
-        this.m20 = source.m20;
-        this.m21 = source.m21;
-        this.m22 = source.m22;
+        this.offset = source.offset;
+        this.rotationMatrix = source.rotationMatrix;
 
         this.isInverted = isInverted;
     }
@@ -412,13 +393,12 @@ internal sealed class SchMathTransform : MathTransform
         double height = double.IsNaN(z) ? 0d : z;
         this.ellipsoidForward.Transform(ref lon, ref lat, ref height);
 
-        lon -= this.offsetX;
-        lat -= this.offsetY;
-        height -= this.offsetZ;
+        Vector3D global = new Vector3D(lon, lat, height) - this.offset;
 
-        double localX = (this.m00 * lon) + (this.m10 * lat) + (this.m20 * height);
-        double localY = (this.m01 * lon) + (this.m11 * lat) + (this.m21 * height);
-        double localZ = (this.m02 * lon) + (this.m12 * lat) + (this.m22 * height);
+        Vector3D local = this.rotationMatrix.Transpose() * global;
+        double localX = local.X;
+        double localY = local.Y;
+        double localZ = local.Z;
 
         this.sphereInverse.Transform(ref localX, ref localY, ref localZ);
 
@@ -434,13 +414,10 @@ internal sealed class SchMathTransform : MathTransform
         double height = z;
         this.sphereForward.Transform(ref lon, ref lat, ref height);
 
-        double globalX = (this.m00 * lon) + (this.m01 * lat) + (this.m02 * height);
-        double globalY = (this.m10 * lon) + (this.m11 * lat) + (this.m12 * height);
-        double globalZ = (this.m20 * lon) + (this.m21 * lat) + (this.m22 * height);
-
-        globalX += this.offsetX;
-        globalY += this.offsetY;
-        globalZ += this.offsetZ;
+        Vector3D global = (this.rotationMatrix * new Vector3D(lon, lat, height)) + this.offset;
+        double globalX = global.X;
+        double globalY = global.Y;
+        double globalZ = global.Z;
 
         this.ellipsoidInverse.Transform(ref globalX, ref globalY, ref globalZ);
         x = globalX;

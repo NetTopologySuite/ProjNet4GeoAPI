@@ -15,19 +15,9 @@ using System.Globalization;
 [Serializable]
 internal sealed class AffineRuntimeMathTransform : MathTransform
 {
-    private readonly double xOffset;
-    private readonly double yOffset;
-    private readonly double zOffset;
+    private readonly Vector3D offset;
     private readonly double tOffset;
-    private readonly double s11;
-    private readonly double s12;
-    private readonly double s13;
-    private readonly double s21;
-    private readonly double s22;
-    private readonly double s23;
-    private readonly double s31;
-    private readonly double s32;
-    private readonly double s33;
+    private readonly Matrix3x3 spatialMatrix;
     private readonly double tScale;
     private MathTransform? inverse;
 
@@ -79,19 +69,9 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
         ArgumentGuard.ThrowIfNotFinite(s33, nameof(s33), "Affine parameters must be finite.");
         ArgumentGuard.ThrowIfNotFinite(tScale, nameof(tScale), "Affine parameters must be finite.");
 
-        this.xOffset = xOffset;
-        this.yOffset = yOffset;
-        this.zOffset = zOffset;
+        this.offset = new Vector3D(xOffset, yOffset, zOffset);
         this.tOffset = tOffset;
-        this.s11 = s11;
-        this.s12 = s12;
-        this.s13 = s13;
-        this.s21 = s21;
-        this.s22 = s22;
-        this.s23 = s23;
-        this.s31 = s31;
-        this.s32 = s32;
-        this.s33 = s33;
+        this.spatialMatrix = new Matrix3x3(s11, s12, s13, s21, s22, s23, s31, s32, s33);
         this.tScale = tScale;
     }
 
@@ -232,25 +212,9 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
         double m31,
         double m32,
         double m33,
-        out double i11,
-        out double i12,
-        out double i13,
-        out double i21,
-        out double i22,
-        out double i23,
-        out double i31,
-        out double i32,
-        out double i33)
+        out Matrix3x3 inverseMatrix)
     {
-        i11 = 0d;
-        i12 = 0d;
-        i13 = 0d;
-        i21 = 0d;
-        i22 = 0d;
-        i23 = 0d;
-        i31 = 0d;
-        i32 = 0d;
-        i33 = 0d;
+        inverseMatrix = Matrix3x3.Identity;
 
         double c11 = (m22 * m33) - (m23 * m32);
         double c12 = -((m21 * m33) - (m23 * m31));
@@ -269,15 +233,16 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
         }
 
         double inverseDeterminant = 1d / determinant;
-        i11 = c11 * inverseDeterminant;
-        i12 = c21 * inverseDeterminant;
-        i13 = c31 * inverseDeterminant;
-        i21 = c12 * inverseDeterminant;
-        i22 = c22 * inverseDeterminant;
-        i23 = c32 * inverseDeterminant;
-        i31 = c13 * inverseDeterminant;
-        i32 = c23 * inverseDeterminant;
-        i33 = c33 * inverseDeterminant;
+        inverseMatrix = new Matrix3x3(
+            c11 * inverseDeterminant,
+            c21 * inverseDeterminant,
+            c31 * inverseDeterminant,
+            c12 * inverseDeterminant,
+            c22 * inverseDeterminant,
+            c32 * inverseDeterminant,
+            c13 * inverseDeterminant,
+            c23 * inverseDeterminant,
+            c33 * inverseDeterminant);
         return true;
     }
 
@@ -289,30 +254,28 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
     /// <param name="z">Z ordinate to transform.</param>
     private void ApplySpatialTransform(ref double x, ref double y, ref double z)
     {
-        double sourceX = x;
-        double sourceY = y;
-        double sourceZ = z;
-        x = this.xOffset + (this.s11 * sourceX) + (this.s12 * sourceY) + (this.s13 * sourceZ);
-        y = this.yOffset + (this.s21 * sourceX) + (this.s22 * sourceY) + (this.s23 * sourceZ);
-        z = this.zOffset + (this.s31 * sourceX) + (this.s32 * sourceY) + (this.s33 * sourceZ);
+        Vector3D transformed = this.offset + (this.spatialMatrix * new Vector3D(x, y, z));
+        x = transformed.X;
+        y = transformed.Y;
+        z = transformed.Z;
     }
 
     /// <inheritdoc />
     public override bool Identity()
     {
-        return this.xOffset == 0d
-            && this.yOffset == 0d
-            && this.zOffset == 0d
+        return this.offset.X == 0d
+            && this.offset.Y == 0d
+            && this.offset.Z == 0d
             && this.tOffset == 0d
-            && this.s11 == 1d
-            && this.s12 == 0d
-            && this.s13 == 0d
-            && this.s21 == 0d
-            && this.s22 == 1d
-            && this.s23 == 0d
-            && this.s31 == 0d
-            && this.s32 == 0d
-            && this.s33 == 1d
+            && this.spatialMatrix.M00 == 1d
+            && this.spatialMatrix.M01 == 0d
+            && this.spatialMatrix.M02 == 0d
+            && this.spatialMatrix.M10 == 0d
+            && this.spatialMatrix.M11 == 1d
+            && this.spatialMatrix.M12 == 0d
+            && this.spatialMatrix.M20 == 0d
+            && this.spatialMatrix.M21 == 0d
+            && this.spatialMatrix.M22 == 1d
             && this.tScale == 1d;
     }
 
@@ -357,24 +320,16 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
         error = null;
 
         if (!TryInvertSpatialMatrix(
-                this.s11,
-                this.s12,
-                this.s13,
-                this.s21,
-                this.s22,
-                this.s23,
-                this.s31,
-                this.s32,
-                this.s33,
-                out double i11,
-                out double i12,
-                out double i13,
-                out double i21,
-                out double i22,
-                out double i23,
-                out double i31,
-                out double i32,
-                out double i33))
+                this.spatialMatrix.M00,
+                this.spatialMatrix.M01,
+                this.spatialMatrix.M02,
+                this.spatialMatrix.M10,
+                this.spatialMatrix.M11,
+                this.spatialMatrix.M12,
+                this.spatialMatrix.M20,
+                this.spatialMatrix.M21,
+                this.spatialMatrix.M22,
+                out Matrix3x3 inverseMatrix))
         {
             error = "affine: transformation matrix is not invertible.";
             return false;
@@ -386,26 +341,24 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
             return false;
         }
 
-        double inverseXOffset = -((i11 * this.xOffset) + (i12 * this.yOffset) + (i13 * this.zOffset));
-        double inverseYOffset = -((i21 * this.xOffset) + (i22 * this.yOffset) + (i23 * this.zOffset));
-        double inverseZOffset = -((i31 * this.xOffset) + (i32 * this.yOffset) + (i33 * this.zOffset));
+        Vector3D inverseOffset = -(inverseMatrix * this.offset);
         double inverseTScale = 1d / this.tScale;
         double inverseTOffset = -(this.tOffset * inverseTScale);
 
         inverseTransform = new AffineRuntimeMathTransform(
-            inverseXOffset,
-            inverseYOffset,
-            inverseZOffset,
+            inverseOffset.X,
+            inverseOffset.Y,
+            inverseOffset.Z,
             inverseTOffset,
-            i11,
-            i12,
-            i13,
-            i21,
-            i22,
-            i23,
-            i31,
-            i32,
-            i33,
+            inverseMatrix.M00,
+            inverseMatrix.M01,
+            inverseMatrix.M02,
+            inverseMatrix.M10,
+            inverseMatrix.M11,
+            inverseMatrix.M12,
+            inverseMatrix.M20,
+            inverseMatrix.M21,
+            inverseMatrix.M22,
             inverseTScale);
         return true;
     }
