@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-2.1-or-later
+﻿// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
@@ -164,10 +164,7 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
     /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        if (this.inverse is null)
-        {
-            this.inverse = new LambertAzimuthalEqualAreaProjection(this.Parameters.ToProjectionParameter(), this);
-        }
+        this.inverse ??= new LambertAzimuthalEqualAreaProjection(this.Parameters.ToProjectionParameter(), this);
 
         return this.inverse;
     }

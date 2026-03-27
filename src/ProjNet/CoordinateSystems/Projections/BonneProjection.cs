@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-2.1-or-later
+﻿// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -77,10 +77,7 @@ internal class BonneProjection : MapProjection
     /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        if (this.inverse is null)
-        {
-            this.inverse = new BonneProjection(this.Parameters.ToProjectionParameter(), this);
-        }
+        this.inverse ??= new BonneProjection(this.Parameters.ToProjectionParameter(), this);
 
         return this.inverse;
     }

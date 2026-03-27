@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-2.1-or-later
+﻿// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
@@ -209,7 +209,7 @@ public class HorizontalDatum : Datum
                 (int)this.DatumType,
                 this.InfoXml,
                 this.Ellipsoid.XML,
-                this.Wgs84Parameters is null ? string.Empty : this.Wgs84Parameters.XML);
+                this.Wgs84Parameters?.XML ?? string.Empty);
         }
     }
 

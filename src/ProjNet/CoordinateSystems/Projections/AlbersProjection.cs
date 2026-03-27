@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-2.1-or-later
+﻿// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2002 Urban Science Applications, Inc.
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
@@ -169,10 +169,7 @@ internal class AlbersProjection : MapProjection
     /// <returns>IMathTransform that is the reverse of the current projection.</returns>
     public override MathTransform Inverse()
     {
-        if (this.inverse is null)
-        {
-            this.inverse = new AlbersProjection(this.Parameters.ToProjectionParameter(), this);
-        }
+        this.inverse ??= new AlbersProjection(this.Parameters.ToProjectionParameter(), this);
 
         return this.inverse;
     }

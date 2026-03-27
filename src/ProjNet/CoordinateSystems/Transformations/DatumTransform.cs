@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-2.1-or-later
+﻿// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
@@ -61,10 +61,7 @@ internal class DatumTransform : MathTransform
     /// <remarks>This method may fail if the transform is not one to one. However, all cartographic projections should succeed.</remarks>
     public override MathTransform Inverse()
     {
-        if (this.inverse is null)
-        {
-            this.inverse = new DatumTransform(this.toWgs94, !this.isInverse);
-        }
+        this.inverse ??= new DatumTransform(this.toWgs94, !this.isInverse);
 
         return this.inverse;
     }

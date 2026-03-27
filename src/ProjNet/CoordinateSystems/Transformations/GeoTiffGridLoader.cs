@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: LGPL-2.1-or-later
+﻿// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -608,7 +608,7 @@ internal static partial class GeoTiffGridLoader
 
     private static string CleanMetadataValue(string value)
     {
-        return value is null ? string.Empty : value.Trim('\0', ' ', '\t', '\r', '\n');
+        return value?.Trim('\0', ' ', '\t', '\r', '\n') ?? string.Empty;
     }
 
     private static void ParseMetadataItems(
