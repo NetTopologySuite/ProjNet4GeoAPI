@@ -244,6 +244,24 @@ internal static class ArgumentGuard
     }
 
     /// <summary>
+    /// Throws when <paramref name="value"/> is not a finite number.
+    /// </summary>
+    /// <param name="value">Value to validate.</param>
+    /// <param name="paramName">Parameter name for exception reporting.</param>
+    /// <param name="message">Exception message when the value is not finite.</param>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static void ThrowIfNotFinite(
+        double value,
+        string paramName,
+        string message = "Value must be finite.")
+    {
+        if (double.IsNaN(value) || double.IsInfinity(value))
+        {
+            throw new ArgumentOutOfRangeException(paramName, value, message);
+        }
+    }
+
+    /// <summary>
     /// Throws an <see cref="ArgumentNullException"/>.
     /// </summary>
     /// <param name="paramName">Parameter name for exception reporting.</param>

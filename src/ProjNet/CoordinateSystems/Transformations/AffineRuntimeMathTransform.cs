@@ -65,20 +65,20 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
         double s33,
         double tScale)
     {
-        ValidateFiniteValue(xOffset, nameof(xOffset));
-        ValidateFiniteValue(yOffset, nameof(yOffset));
-        ValidateFiniteValue(zOffset, nameof(zOffset));
-        ValidateFiniteValue(tOffset, nameof(tOffset));
-        ValidateFiniteValue(s11, nameof(s11));
-        ValidateFiniteValue(s12, nameof(s12));
-        ValidateFiniteValue(s13, nameof(s13));
-        ValidateFiniteValue(s21, nameof(s21));
-        ValidateFiniteValue(s22, nameof(s22));
-        ValidateFiniteValue(s23, nameof(s23));
-        ValidateFiniteValue(s31, nameof(s31));
-        ValidateFiniteValue(s32, nameof(s32));
-        ValidateFiniteValue(s33, nameof(s33));
-        ValidateFiniteValue(tScale, nameof(tScale));
+        ArgumentGuard.ThrowIfNotFinite(xOffset, nameof(xOffset), "Affine parameters must be finite.");
+        ArgumentGuard.ThrowIfNotFinite(yOffset, nameof(yOffset), "Affine parameters must be finite.");
+        ArgumentGuard.ThrowIfNotFinite(zOffset, nameof(zOffset), "Affine parameters must be finite.");
+        ArgumentGuard.ThrowIfNotFinite(tOffset, nameof(tOffset), "Affine parameters must be finite.");
+        ArgumentGuard.ThrowIfNotFinite(s11, nameof(s11), "Affine parameters must be finite.");
+        ArgumentGuard.ThrowIfNotFinite(s12, nameof(s12), "Affine parameters must be finite.");
+        ArgumentGuard.ThrowIfNotFinite(s13, nameof(s13), "Affine parameters must be finite.");
+        ArgumentGuard.ThrowIfNotFinite(s21, nameof(s21), "Affine parameters must be finite.");
+        ArgumentGuard.ThrowIfNotFinite(s22, nameof(s22), "Affine parameters must be finite.");
+        ArgumentGuard.ThrowIfNotFinite(s23, nameof(s23), "Affine parameters must be finite.");
+        ArgumentGuard.ThrowIfNotFinite(s31, nameof(s31), "Affine parameters must be finite.");
+        ArgumentGuard.ThrowIfNotFinite(s32, nameof(s32), "Affine parameters must be finite.");
+        ArgumentGuard.ThrowIfNotFinite(s33, nameof(s33), "Affine parameters must be finite.");
+        ArgumentGuard.ThrowIfNotFinite(tScale, nameof(tScale), "Affine parameters must be finite.");
 
         this.xOffset = xOffset;
         this.yOffset = yOffset;
@@ -221,14 +221,6 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
             && double.TryParse(token, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value)
             && !double.IsNaN(value)
             && !double.IsInfinity(value);
-    }
-
-    private static void ValidateFiniteValue(double value, string parameterName)
-    {
-        if (double.IsNaN(value) || double.IsInfinity(value))
-        {
-            ArgumentGuard.ThrowArgumentOutOfRange(parameterName, value, "Affine parameters must be finite.");
-        }
     }
 
     private static bool TryInvertSpatialMatrix(

@@ -70,16 +70,16 @@ internal sealed class MolobadekasMathTransform : MathTransform
         bool isPositionVector,
         bool isInverted)
     {
-        ValidateFiniteValue(translationX, nameof(translationX));
-        ValidateFiniteValue(translationY, nameof(translationY));
-        ValidateFiniteValue(translationZ, nameof(translationZ));
-        ValidateFiniteValue(rotationXArcSeconds, nameof(rotationXArcSeconds));
-        ValidateFiniteValue(rotationYArcSeconds, nameof(rotationYArcSeconds));
-        ValidateFiniteValue(rotationZArcSeconds, nameof(rotationZArcSeconds));
-        ValidateFiniteValue(scalePpm, nameof(scalePpm));
-        ValidateFiniteValue(pivotX, nameof(pivotX));
-        ValidateFiniteValue(pivotY, nameof(pivotY));
-        ValidateFiniteValue(pivotZ, nameof(pivotZ));
+        ArgumentGuard.ThrowIfNotFinite(translationX, nameof(translationX), "Molobadekas parameters must be finite.");
+        ArgumentGuard.ThrowIfNotFinite(translationY, nameof(translationY), "Molobadekas parameters must be finite.");
+        ArgumentGuard.ThrowIfNotFinite(translationZ, nameof(translationZ), "Molobadekas parameters must be finite.");
+        ArgumentGuard.ThrowIfNotFinite(rotationXArcSeconds, nameof(rotationXArcSeconds), "Molobadekas parameters must be finite.");
+        ArgumentGuard.ThrowIfNotFinite(rotationYArcSeconds, nameof(rotationYArcSeconds), "Molobadekas parameters must be finite.");
+        ArgumentGuard.ThrowIfNotFinite(rotationZArcSeconds, nameof(rotationZArcSeconds), "Molobadekas parameters must be finite.");
+        ArgumentGuard.ThrowIfNotFinite(scalePpm, nameof(scalePpm), "Molobadekas parameters must be finite.");
+        ArgumentGuard.ThrowIfNotFinite(pivotX, nameof(pivotX), "Molobadekas parameters must be finite.");
+        ArgumentGuard.ThrowIfNotFinite(pivotY, nameof(pivotY), "Molobadekas parameters must be finite.");
+        ArgumentGuard.ThrowIfNotFinite(pivotZ, nameof(pivotZ), "Molobadekas parameters must be finite.");
 
         this.translationX = translationX;
         this.translationY = translationY;
@@ -361,14 +361,6 @@ internal sealed class MolobadekasMathTransform : MathTransform
         double value = left;
         left = right;
         right = value;
-    }
-
-    private static void ValidateFiniteValue(double value, string parameterName)
-    {
-        if (double.IsNaN(value) || double.IsInfinity(value))
-        {
-            ArgumentGuard.ThrowArgumentOutOfRange(parameterName, value, "Molobadekas parameters must be finite.");
-        }
     }
 
     private void TransformForward(ref double x, ref double y, ref double z)

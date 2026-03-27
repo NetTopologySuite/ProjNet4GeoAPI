@@ -40,9 +40,9 @@ internal sealed class GeogOffsetMathTransform : MathTransform
         double heightOffsetMeters,
         bool isInverted)
     {
-        ValidateFiniteValue(longitudeOffsetArcSeconds, nameof(longitudeOffsetArcSeconds));
-        ValidateFiniteValue(latitudeOffsetArcSeconds, nameof(latitudeOffsetArcSeconds));
-        ValidateFiniteValue(heightOffsetMeters, nameof(heightOffsetMeters));
+        ArgumentGuard.ThrowIfNotFinite(longitudeOffsetArcSeconds, nameof(longitudeOffsetArcSeconds), "Offset values must be finite.");
+        ArgumentGuard.ThrowIfNotFinite(latitudeOffsetArcSeconds, nameof(latitudeOffsetArcSeconds), "Offset values must be finite.");
+        ArgumentGuard.ThrowIfNotFinite(heightOffsetMeters, nameof(heightOffsetMeters), "Offset values must be finite.");
 
         this.longitudeOffsetDegrees = longitudeOffsetArcSeconds / ArcSecondsPerDegree;
         this.latitudeOffsetDegrees = latitudeOffsetArcSeconds / ArcSecondsPerDegree;
@@ -184,13 +184,5 @@ internal sealed class GeogOffsetMathTransform : MathTransform
             && double.TryParse(token, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value)
             && !double.IsNaN(value)
             && !double.IsInfinity(value);
-    }
-
-    private static void ValidateFiniteValue(double value, string parameterName)
-    {
-        if (double.IsNaN(value) || double.IsInfinity(value))
-        {
-            ArgumentGuard.ThrowArgumentOutOfRange(parameterName, value, "Offset values must be finite.");
-        }
     }
 }
