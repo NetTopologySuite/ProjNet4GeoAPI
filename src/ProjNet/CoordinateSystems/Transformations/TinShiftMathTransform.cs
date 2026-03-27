@@ -202,7 +202,12 @@ internal sealed class TinShiftMathTransform : MathTransform
                 throw new FormatException("fallback_strategy must be a string.");
             }
 
-            string fallbackText = fallbackElement.GetString();
+            string? fallbackText = fallbackElement.GetString();
+            if (fallbackText is null)
+            {
+                throw new FormatException("fallback_strategy must be a string.");
+            }
+
             if (string.Equals(fallbackText, "none", StringComparison.Ordinal))
             {
                 fallback = FallbackStrategy.None;
@@ -264,7 +269,12 @@ internal sealed class TinShiftMathTransform : MathTransform
                 throw new FormatException("transformed_components[] item is not a string.");
             }
 
-            string text = component.GetString();
+            string? text = component.GetString();
+            if (text is null)
+            {
+                throw new FormatException("transformed_components[] item is not a string.");
+            }
+
             if (string.Equals(text, "horizontal", StringComparison.Ordinal))
             {
                 transformHorizontal = true;
@@ -302,7 +312,12 @@ internal sealed class TinShiftMathTransform : MathTransform
                 throw new FormatException("vertices_columns[] item is not a string.");
             }
 
-            string name = column.GetString();
+            string? name = column.GetString();
+            if (name is null)
+            {
+                throw new FormatException("vertices_columns[] item is not a string.");
+            }
+
             if (name == "source_x")
             {
                 result.SourceX = index;
@@ -393,7 +408,12 @@ internal sealed class TinShiftMathTransform : MathTransform
                 throw new FormatException("triangles_columns[] item is not a string.");
             }
 
-            string name = column.GetString();
+            string? name = column.GetString();
+            if (name is null)
+            {
+                throw new FormatException("triangles_columns[] item is not a string.");
+            }
+
             if (name == "idx_vertex1")
             {
                 result.Index1 = index;
@@ -619,7 +639,7 @@ internal sealed class TinShiftMathTransform : MathTransform
             throw new FormatException("The value of \"" + propertyName + "\" should be a string.");
         }
 
-        string text = value.GetString();
+        string? text = value.GetString();
         if (text is null)
         {
             throw new FormatException("The value of \"" + propertyName + "\" should be a string.");
