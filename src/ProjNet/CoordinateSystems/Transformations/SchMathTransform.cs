@@ -41,7 +41,7 @@ internal sealed class SchMathTransform : MathTransform
     private readonly double m22;
 
     private bool isInverted;
-    private MathTransform inverse;
+    private MathTransform? inverse;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SchMathTransform"/> class.

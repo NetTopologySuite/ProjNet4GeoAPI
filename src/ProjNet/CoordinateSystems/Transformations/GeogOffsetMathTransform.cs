@@ -23,7 +23,7 @@ internal sealed class GeogOffsetMathTransform : MathTransform
     private readonly double heightOffsetMeters;
 
     private bool isInverted;
-    private MathTransform inverse;
+    private MathTransform? inverse;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GeogOffsetMathTransform"/> class.

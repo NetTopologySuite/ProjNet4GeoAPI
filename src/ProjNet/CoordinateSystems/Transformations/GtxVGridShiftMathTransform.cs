@@ -107,11 +107,12 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
     /// <inheritdoc />
     public override void Transform(ref double x, ref double y, ref double z)
     {
-        if (!this.TryFindGridForPoint(x, y, out GtxGrid selectedGrid))
+        if (!this.TryFindGridForPoint(x, y, out GtxGrid? selectedGridCandidate))
         {
             ArgumentGuard.ThrowArgument("Coordinate is outside the vertical grid extent.");
         }
 
+        GtxGrid selectedGrid = ArgumentGuard.ThrowIfNull(selectedGridCandidate, nameof(selectedGridCandidate));
         double value = InterpolateValue(selectedGrid, x, y, this.forwardMultiplier);
         if (!this.isInverted)
         {

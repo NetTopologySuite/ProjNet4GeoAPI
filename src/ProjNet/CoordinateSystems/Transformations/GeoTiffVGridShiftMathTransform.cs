@@ -107,11 +107,12 @@ internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
     /// <inheritdoc />
     public override void Transform(ref double x, ref double y, ref double z)
     {
-        if (!this.TryFindGridForPoint(x, y, out VerticalGrid grid))
+        if (!this.TryFindGridForPoint(x, y, out VerticalGrid? gridCandidate))
         {
             ArgumentGuard.ThrowArgument("Coordinate is outside the vertical GeoTIFF grid extent.");
         }
 
+        VerticalGrid grid = ArgumentGuard.ThrowIfNull(gridCandidate, nameof(gridCandidate));
         double shift = InterpolateValue(grid, x, y, this.forwardMultiplier);
         if (!this.isInverted)
         {

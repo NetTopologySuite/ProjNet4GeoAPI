@@ -67,7 +67,7 @@ internal class GeocentricTransform : MathTransform
     /// <summary>
     /// Cached inverse transform.
     /// </summary>
-    private MathTransform inverse;
+    private MathTransform? inverse;
 
     /// <summary>
     /// Projection parameters used to initialize the transform.
@@ -95,7 +95,7 @@ internal class GeocentricTransform : MathTransform
     internal GeocentricTransform(List<ProjectionParameter> parameters)
     {
         this.parameters = parameters;
-        this.semiMajor = this.parameters.Find(delegate(ProjectionParameter par)
+        ProjectionParameter? semiMajorParameterCandidate = this.parameters.Find(delegate(ProjectionParameter par)
         {
             // Do not remove the following lines containing "_Parameters = _Parameters;"
             // There is an issue deploying code with anonymous delegates to
@@ -111,15 +111,19 @@ internal class GeocentricTransform : MathTransform
 #pragma warning restore 1717
 
             return par.Name.Equals("semi_major", StringComparison.OrdinalIgnoreCase);
-        }).Value;
+        });
+        ProjectionParameter semiMajorParameter = ArgumentGuard.ThrowIfNull(semiMajorParameterCandidate, nameof(semiMajorParameterCandidate));
+        this.semiMajor = semiMajorParameter.Value;
 
-        this.semiMinor = this.parameters.Find(delegate(ProjectionParameter par)
+        ProjectionParameter? semiMinorParameterCandidate = this.parameters.Find(delegate(ProjectionParameter par)
         {
 #pragma warning disable 1717
             this.parameters = this.parameters; // See explanation above.
 #pragma warning restore 1717
             return par.Name.Equals("semi_minor", StringComparison.OrdinalIgnoreCase);
-        }).Value;
+        });
+        ProjectionParameter semiMinorParameter = ArgumentGuard.ThrowIfNull(semiMinorParameterCandidate, nameof(semiMinorParameterCandidate));
+        this.semiMinor = semiMinorParameter.Value;
 
         this.es = 1.0 - ((this.semiMinor * this.semiMinor) / (this.semiMajor * this.semiMajor)); // e^2
         this.ses = (Math.Pow(this.semiMajor, 2) - Math.Pow(this.semiMinor, 2)) / Math.Pow(this.semiMinor, 2);

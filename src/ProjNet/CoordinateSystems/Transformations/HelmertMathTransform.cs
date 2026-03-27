@@ -33,7 +33,7 @@ internal sealed class HelmertMathTransform : MathTransform
     private readonly HelmertRuntimeState runtimeState;
 
     private bool isInverted;
-    private MathTransform inverse;
+    private MathTransform? inverse;
 
     private HelmertMathTransform(
         HelmertParameterState baseState,

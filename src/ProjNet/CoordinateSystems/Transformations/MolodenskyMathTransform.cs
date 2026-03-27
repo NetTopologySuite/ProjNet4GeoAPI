@@ -28,7 +28,7 @@ internal sealed class MolodenskyMathTransform : MathTransform
     private readonly bool abridged;
 
     private bool isInverted;
-    private MathTransform inverse;
+    private MathTransform? inverse;
 
     private MolodenskyMathTransform(
         double semiMajor,

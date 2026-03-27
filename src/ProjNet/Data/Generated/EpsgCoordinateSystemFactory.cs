@@ -481,7 +481,7 @@ internal static class EpsgCoordinateSystemFactory
         return true;
     }
 
-    private static List<AxisInfo> GetAxes(int coordinateSystemCode, int expectedCount, bool includeAll = false)
+    private static List<AxisInfo>? GetAxes(int coordinateSystemCode, int expectedCount, bool includeAll = false)
     {
         if (!AxesByCoordinateSystemCode.Value.TryGetValue(coordinateSystemCode, out var orderedAxes))
         {

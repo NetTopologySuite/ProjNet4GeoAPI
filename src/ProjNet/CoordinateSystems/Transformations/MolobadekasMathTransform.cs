@@ -39,7 +39,7 @@ internal sealed class MolobadekasMathTransform : MathTransform
     private readonly double rotationM22;
 
     private bool isInverted;
-    private MathTransform inverse;
+    private MathTransform? inverse;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MolobadekasMathTransform"/> class.

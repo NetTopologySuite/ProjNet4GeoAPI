@@ -212,7 +212,8 @@ public class CoordinateSystemFactory
             ArgumentGuard.ThrowArgument("Invalid name");
         }
 
-        if (parameters is null || parameters.Count == 0)
+        parameters = ArgumentGuard.ThrowIfNull(parameters, nameof(parameters));
+        if (parameters.Count == 0)
         {
             ArgumentGuard.ThrowArgument("Invalid projection parameters");
         }
@@ -241,10 +242,7 @@ public class CoordinateSystemFactory
             ArgumentGuard.ThrowArgument("Invalid name");
         }
 
-        if (ellipsoid is null)
-        {
-            ArgumentGuard.ThrowArgument("Ellipsoid was null", nameof(ellipsoid));
-        }
+        ellipsoid = ArgumentGuard.ThrowIfNull(ellipsoid, nameof(ellipsoid));
 
         return new HorizontalDatum(ellipsoid, toWgs84, datumType, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
     }

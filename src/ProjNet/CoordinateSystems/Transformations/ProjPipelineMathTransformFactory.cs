@@ -201,7 +201,14 @@ internal static class ProjPipelineMathTransformFactory
 
         if (projCode.Equals("push", StringComparison.OrdinalIgnoreCase))
         {
-            if (!PipelineStackTransferMathTransform.TryCreatePush(args, executionContext, out transform, out skipReason))
+            PipelineExecutionContext? pushExecutionContext = executionContext;
+            if (pushExecutionContext is null)
+            {
+                skipReason = "push operation requires a pipeline execution context.";
+                return false;
+            }
+
+            if (!PipelineStackTransferMathTransform.TryCreatePush(args, pushExecutionContext, out transform, out skipReason))
             {
                 return false;
             }
@@ -212,7 +219,14 @@ internal static class ProjPipelineMathTransformFactory
 
         if (projCode.Equals("pop", StringComparison.OrdinalIgnoreCase))
         {
-            if (!PipelineStackTransferMathTransform.TryCreatePop(args, executionContext, out transform, out skipReason))
+            PipelineExecutionContext? popExecutionContext = executionContext;
+            if (popExecutionContext is null)
+            {
+                skipReason = "pop operation requires a pipeline execution context.";
+                return false;
+            }
+
+            if (!PipelineStackTransferMathTransform.TryCreatePop(args, popExecutionContext, out transform, out skipReason))
             {
                 return false;
             }

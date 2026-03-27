@@ -27,7 +27,7 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
     private readonly Mode mode;
     private readonly double qp;
     private readonly double oneEs;
-    private readonly double[] apa;
+    private readonly double[]? apa;
 
     private readonly double dd;
     private readonly double sinb1;
@@ -52,7 +52,7 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
     /// </summary>
     /// <param name="parameters">List of parameters to initialize the projection.</param>
     /// <param name="inverse">The inverse projection instance, or <see langword="null"/> for a forward projection.</param>
-    public LambertAzimuthalEqualAreaProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public LambertAzimuthalEqualAreaProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Lambert_Azimuthal_Equal_Area";
@@ -380,7 +380,7 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
         }
 
         x = x = Adjust_lon(Math.Atan2(x, y) + this.centralMeridian); // lam
-        y = Authlat(Math.Asin(ab), this.apa);                      // phi
+        y = Authlat(Math.Asin(ab), ArgumentGuard.ThrowIfNull(this.apa, nameof(this.apa)));                      // phi
     }
 
     private void SphericalMetersToRadians(ref double x, ref double y)
