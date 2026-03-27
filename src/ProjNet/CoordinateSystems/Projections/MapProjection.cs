@@ -332,19 +332,19 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <summary>
     /// Gets or sets the abbreviation of the object.
     /// </summary>
-    public string Abbreviation { get; set; }
+    public string Abbreviation { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the alias of the object.
     /// </summary>
-    public string Alias { get; set; }
+    public string Alias { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the authority name for this object, e.g., "EPSG",
     /// is this is a standard object with an authority specific
     /// identity code. Returns "CUSTOM" if this is a custom object.
     /// </summary>
-    public string Authority { get; set; }
+    public string Authority { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the authority specific identification code of the object.
@@ -354,12 +354,12 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <summary>
     /// Gets or sets the name of the object.
     /// </summary>
-    public string Name { get; set; }
+    public string Name { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the provider-supplied remarks for the object.
     /// </summary>
-    public string Remarks { get; set; }
+    public string Remarks { get; set; } = string.Empty;
 
     /// <summary>
     /// Calculates the UTM zone number for the given longitude.
@@ -490,7 +490,7 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <remarks>The parameter name is case insensitive.</remarks>
     /// <param name="name">Name of parameter.</param>
     /// <returns>The named <see cref="ProjectionParameter"/>, or <see langword="null"/> if not found.</returns>
-    public ProjectionParameter GetParameter(string name) => this.Parameters.Find(name);
+    public ProjectionParameter? GetParameter(string name) => this.Parameters.Find(name);
 
     /// <summary>
     /// Gets a value indicating whether this projection operates in the inverse direction.

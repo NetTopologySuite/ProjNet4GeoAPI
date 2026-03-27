@@ -233,32 +233,44 @@ internal sealed class HornerMathTransform : MathTransform
 
         if (isComplex)
         {
-            if (!TryParseCoefficientList(args, "fwd_c", coefficientCount, out fwdC, out skipReason))
+            if (!TryParseCoefficientList(args, "fwd_c", coefficientCount, out double[]? parsedFwdC, out skipReason))
             {
                 return false;
             }
 
-            if (hasExplicitInverse
-                && !TryParseCoefficientList(args, "inv_c", coefficientCount, out invC, out skipReason))
+            fwdC = ArgumentGuard.ThrowIfNull(parsedFwdC, nameof(parsedFwdC));
+
+            if (hasExplicitInverse)
             {
-                return false;
+                if (!TryParseCoefficientList(args, "inv_c", coefficientCount, out double[]? parsedInvC, out skipReason))
+                {
+                    return false;
+                }
+
+                invC = ArgumentGuard.ThrowIfNull(parsedInvC, nameof(parsedInvC));
             }
         }
         else
         {
-            if (!TryParseCoefficientList(args, "fwd_u", coefficientCount, out fwdU, out skipReason)
-                || !TryParseCoefficientList(args, "fwd_v", coefficientCount, out fwdV, out skipReason))
+            if (!TryParseCoefficientList(args, "fwd_u", coefficientCount, out double[]? parsedFwdU, out skipReason)
+                || !TryParseCoefficientList(args, "fwd_v", coefficientCount, out double[]? parsedFwdV, out skipReason))
             {
                 return false;
             }
 
+            fwdU = ArgumentGuard.ThrowIfNull(parsedFwdU, nameof(parsedFwdU));
+            fwdV = ArgumentGuard.ThrowIfNull(parsedFwdV, nameof(parsedFwdV));
+
             if (hasExplicitInverse)
             {
-                if (!TryParseCoefficientList(args, "inv_u", coefficientCount, out invU, out skipReason)
-                    || !TryParseCoefficientList(args, "inv_v", coefficientCount, out invV, out skipReason))
+                if (!TryParseCoefficientList(args, "inv_u", coefficientCount, out double[]? parsedInvU, out skipReason)
+                    || !TryParseCoefficientList(args, "inv_v", coefficientCount, out double[]? parsedInvV, out skipReason))
                 {
                     return false;
                 }
+
+                invU = ArgumentGuard.ThrowIfNull(parsedInvU, nameof(parsedInvU));
+                invV = ArgumentGuard.ThrowIfNull(parsedInvV, nameof(parsedInvV));
             }
         }
 
