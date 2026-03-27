@@ -4,8 +4,6 @@
 #if NETSTANDARD2_0
 namespace System;
 
-#nullable enable
-
 using System.Collections.Generic;
 
 /// <summary>
