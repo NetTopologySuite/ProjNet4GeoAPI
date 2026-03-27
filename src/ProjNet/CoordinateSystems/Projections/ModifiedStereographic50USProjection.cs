@@ -29,7 +29,7 @@ internal sealed class ModifiedStereographic50USProjection : ModifiedStereographi
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public ModifiedStereographic50USProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public ModifiedStereographic50USProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse, "Modified_Stereographic_Of_50_US")
     {
     }

@@ -41,7 +41,7 @@ internal class HealpixProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public HealpixProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public HealpixProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "HEALPix";

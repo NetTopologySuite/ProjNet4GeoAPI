@@ -22,7 +22,7 @@ using System.Globalization;
 [Serializable]
 public class ProjectionParameter
 {
-    private string name;
+    private string name = string.Empty;
     private double val;
 
     /// <summary>

@@ -39,7 +39,7 @@ internal class AiryProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public AiryProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public AiryProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Airy";

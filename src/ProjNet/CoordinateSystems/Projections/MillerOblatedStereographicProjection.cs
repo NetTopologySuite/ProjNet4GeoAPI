@@ -29,7 +29,7 @@ internal sealed class MillerOblatedStereographicProjection : ModifiedStereograph
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public MillerOblatedStereographicProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public MillerOblatedStereographicProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse, "Miller_Oblated_Stereographic")
     {
     }

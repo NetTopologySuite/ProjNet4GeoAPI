@@ -28,7 +28,7 @@ internal class ApianProjection : BaconProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public ApianProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public ApianProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse, bacon: false, ortelius: false, "Apian_Globular_I")
     {
     }

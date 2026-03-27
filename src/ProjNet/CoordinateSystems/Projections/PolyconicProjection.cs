@@ -54,7 +54,7 @@ internal class PolyconicProjection : MapProjection
     /// </summary>
     /// <param name="parameters">The parameter values in standard units.</param>
     /// <param name="inverse">The inverse projection instance, or <see langword="null"/> for a forward projection.</param>
-    protected PolyconicProjection(IEnumerable<ProjectionParameter> parameters, PolyconicProjection inverse)
+    protected PolyconicProjection(IEnumerable<ProjectionParameter> parameters, PolyconicProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Polyconic";

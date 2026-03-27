@@ -53,7 +53,7 @@ internal class PolarStereographicProjection : MapProjection
     /// </summary>
     /// <param name="parameters">List of parameters to initialize the projection.</param>
     /// <param name="inverse">The inverse projection instance, or <see langword="null"/> for a forward projection.</param>
-    public PolarStereographicProjection(IEnumerable<ProjectionParameter> parameters, PolarStereographicProjection inverse)
+    public PolarStereographicProjection(IEnumerable<ProjectionParameter> parameters, PolarStereographicProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Polar_Stereographic";

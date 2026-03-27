@@ -29,7 +29,7 @@ internal sealed class LambertEqualAreaConicProjection : AlbersProjection
     {
     }
 
-    private LambertEqualAreaConicProjection(IEnumerable<ProjectionParameter> parameters, LambertEqualAreaConicProjection inverse)
+    private LambertEqualAreaConicProjection(IEnumerable<ProjectionParameter> parameters, LambertEqualAreaConicProjection? inverse)
         : base(NormalizeParameters(parameters), inverse)
     {
         this.Name = "Lambert_Equal_Area_Conic";

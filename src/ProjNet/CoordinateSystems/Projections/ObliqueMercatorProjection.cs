@@ -35,7 +35,7 @@ internal class ObliqueMercatorProjection : HotineObliqueMercatorProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public ObliqueMercatorProjection(IEnumerable<ProjectionParameter> parameters, ObliqueMercatorProjection inverse)
+    public ObliqueMercatorProjection(IEnumerable<ProjectionParameter> parameters, ObliqueMercatorProjection? inverse)
         : base(parameters, inverse)
     {
         this.AuthorityCode = 9815;

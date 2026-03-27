@@ -29,7 +29,7 @@ internal sealed class McBrydeThomasFlatPolarSineProjection : StsProjectionBase
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public McBrydeThomasFlatPolarSineProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public McBrydeThomasFlatPolarSineProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse, "McBryde_Thomas_Flat_Polar_Sine", 1.48875d, 1.36509d, false)
     {
     }

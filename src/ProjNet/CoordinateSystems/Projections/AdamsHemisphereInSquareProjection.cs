@@ -29,7 +29,7 @@ internal sealed class AdamsHemisphereInSquareProjection : AdamsProjectionBase
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public AdamsHemisphereInSquareProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public AdamsHemisphereInSquareProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse, "Adams_Hemisphere_In_A_Square", AdamsMode.AdamsHemi)
     {
     }

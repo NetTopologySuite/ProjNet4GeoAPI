@@ -37,7 +37,7 @@ internal abstract class SimpleConicProjectionBase : MapProjection
     /// <param name="name">Projection name.</param>
     protected SimpleConicProjectionBase(
         IEnumerable<ProjectionParameter> parameters,
-        MapProjection inverse,
+        MapProjection? inverse,
         SimpleConicType type,
         string name)
         : base(parameters, inverse)

@@ -58,7 +58,7 @@ internal class Mercator : MapProjection
     /// <item><term>false_northing</term><description>Since the natural origin may be at or near the centre of the projection and under normal coordinate circumstances would thus give rise to negative coordinates over parts of the mapped area, this origin is usually given false coordinates which are large enough to avoid this inconvenience. The False Northing, FN, is the northing value assigned to the ordinate.</description></item>
     /// </list>
     /// </remarks>
-    protected Mercator(IEnumerable<ProjectionParameter> parameters, Mercator isInverse)
+    protected Mercator(IEnumerable<ProjectionParameter> parameters, Mercator? isInverse)
         : base(parameters, isInverse)
     {
         this.Authority = "EPSG";

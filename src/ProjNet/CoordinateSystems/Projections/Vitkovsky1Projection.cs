@@ -29,7 +29,7 @@ internal sealed class Vitkovsky1Projection : SimpleConicProjectionBase
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public Vitkovsky1Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public Vitkovsky1Projection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse, SimpleConicType.Vitkovsky1, "Vitkovsky_I")
     {
     }

@@ -15,7 +15,7 @@ using System.Globalization;
 [Serializable]
 public class AxisInfo
 {
-    private string name;
+    private string name = string.Empty;
     private AxisOrientationEnum orientation;
 
     /// <summary>

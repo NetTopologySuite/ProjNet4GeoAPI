@@ -41,7 +41,7 @@ internal class DenoyerProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public DenoyerProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public DenoyerProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Denoyer_Semi_Elliptical";

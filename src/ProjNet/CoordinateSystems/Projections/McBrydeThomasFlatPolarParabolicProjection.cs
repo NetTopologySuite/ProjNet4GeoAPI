@@ -39,7 +39,7 @@ internal class McBrydeThomasFlatPolarParabolicProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public McBrydeThomasFlatPolarParabolicProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public McBrydeThomasFlatPolarParabolicProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "McBryde_Thomas_Flat_Polar_Parabolic";

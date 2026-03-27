@@ -37,7 +37,7 @@ internal class Wagner2Projection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public Wagner2Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public Wagner2Projection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Wagner_II";

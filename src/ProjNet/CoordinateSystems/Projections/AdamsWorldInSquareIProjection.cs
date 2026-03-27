@@ -29,7 +29,7 @@ internal sealed class AdamsWorldInSquareIProjection : AdamsProjectionBase
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public AdamsWorldInSquareIProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public AdamsWorldInSquareIProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse, "Adams_World_In_A_Square_I", AdamsMode.AdamsWs1)
     {
     }

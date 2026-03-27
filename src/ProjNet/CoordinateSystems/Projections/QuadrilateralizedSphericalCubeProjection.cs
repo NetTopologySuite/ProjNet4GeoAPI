@@ -41,7 +41,7 @@ internal sealed class QuadrilateralizedSphericalCubeProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public QuadrilateralizedSphericalCubeProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public QuadrilateralizedSphericalCubeProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Quadrilateralized_Spherical_Cube";

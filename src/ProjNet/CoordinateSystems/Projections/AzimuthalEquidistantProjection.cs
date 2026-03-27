@@ -41,7 +41,7 @@ internal class AzimuthalEquidistantProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public AzimuthalEquidistantProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public AzimuthalEquidistantProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Azimuthal_Equidistant";

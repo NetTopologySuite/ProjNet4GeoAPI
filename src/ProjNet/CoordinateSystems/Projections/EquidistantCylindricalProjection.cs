@@ -38,7 +38,7 @@ internal class EquidistantCylindricalProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public EquidistantCylindricalProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public EquidistantCylindricalProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Equidistant_Cylindrical";

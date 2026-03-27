@@ -64,7 +64,7 @@ internal sealed class RoussilheStereographicProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public RoussilheStereographicProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public RoussilheStereographicProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Roussilhe_Stereographic";

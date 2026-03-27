@@ -47,7 +47,7 @@ internal class SwissObliqueMercatorProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public SwissObliqueMercatorProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public SwissObliqueMercatorProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Swiss_Oblique_Mercator";

@@ -52,7 +52,7 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public SpaceObliqueMercatorProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public SpaceObliqueMercatorProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(PrepareParameters(parameters), inverse)
     {
         this.Name = "Space_Oblique_Mercator";

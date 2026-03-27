@@ -35,7 +35,7 @@ internal class HammerProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public HammerProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public HammerProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Hammer";

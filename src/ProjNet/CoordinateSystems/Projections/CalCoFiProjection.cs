@@ -41,7 +41,7 @@ internal class CalCoFiProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public CalCoFiProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public CalCoFiProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(MergeParameters(parameters), inverse)
     {
         this.Name = "Cal_Coop_Ocean_Fish_Invest_Lines_Stations";

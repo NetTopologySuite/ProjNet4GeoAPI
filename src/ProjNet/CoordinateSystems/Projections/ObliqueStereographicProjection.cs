@@ -56,7 +56,7 @@ internal class ObliqueStereographicProjection : MapProjection
     /// </summary>
     /// <param name="parameters">List of parameters to initialize the projection.</param>
     /// <param name="inverse">The inverse projection instance, or <see langword="null"/> for a forward projection.</param>
-    public ObliqueStereographicProjection(IEnumerable<ProjectionParameter> parameters, ObliqueStereographicProjection inverse)
+    public ObliqueStereographicProjection(IEnumerable<ProjectionParameter> parameters, ObliqueStereographicProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Oblique_Stereographic";

@@ -29,7 +29,7 @@ internal sealed class PeirceQuincuncialProjection : AdamsProjectionBase
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public PeirceQuincuncialProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public PeirceQuincuncialProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse, "Peirce_Quincuncial", AdamsMode.PeirceQ)
     {
     }

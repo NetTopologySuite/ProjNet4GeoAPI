@@ -16,7 +16,7 @@ internal class DatumTransform : MathTransform
     private readonly Wgs84ConversionInfo toWgs94;
     private readonly double[] v;
 
-    private MathTransform inverse;
+    private MathTransform? inverse;
 
     private bool isInverse;
 

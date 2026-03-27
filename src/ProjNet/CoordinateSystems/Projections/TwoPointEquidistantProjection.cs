@@ -49,7 +49,7 @@ internal sealed class TwoPointEquidistantProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public TwoPointEquidistantProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public TwoPointEquidistantProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Two_Point_Equidistant";

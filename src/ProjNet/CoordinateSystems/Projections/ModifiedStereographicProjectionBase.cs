@@ -111,7 +111,7 @@ internal abstract class ModifiedStereographicProjectionBase : MapProjection
         "Usage",
         "CA2214:Do not call overridable methods in constructors",
         Justification = "Variant-specific constants must be provided by derived projection types during initialization.")]
-    protected ModifiedStereographicProjectionBase(IEnumerable<ProjectionParameter> parameters, MapProjection inverse, string name)
+    protected ModifiedStereographicProjectionBase(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse, string name)
         : base(parameters, inverse)
     {
         this.Name = name;

@@ -22,7 +22,7 @@ internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationC
     /// <summary>
     /// Cached inverse transform.
     /// </summary>
-    private ConcatenatedTransform inverse;
+    private ConcatenatedTransform? inverse;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ConcatenatedTransform"/> class.

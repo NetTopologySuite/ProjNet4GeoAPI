@@ -83,7 +83,7 @@ internal class KrovakProjection : MapProjection
     /// </summary>
     /// <param name="parameters">List of parameters to initialize the projection.</param>
     /// <param name="inverse">The inverse projection instance, or <see langword="null"/> for a forward projection.</param>
-    protected KrovakProjection(IEnumerable<ProjectionParameter> parameters, KrovakProjection inverse)
+    protected KrovakProjection(IEnumerable<ProjectionParameter> parameters, KrovakProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Krovak";

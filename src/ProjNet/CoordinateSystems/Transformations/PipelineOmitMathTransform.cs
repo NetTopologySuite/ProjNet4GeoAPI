@@ -16,7 +16,7 @@ internal sealed class PipelineOmitMathTransform : MathTransform
     private readonly MathTransform inner;
     private readonly bool skipForward;
     private readonly bool skipInverse;
-    private MathTransform inverse;
+    private MathTransform? inverse;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PipelineOmitMathTransform"/> class.

@@ -46,7 +46,7 @@ internal class PutninsP6Projection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public PutninsP6Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public PutninsP6Projection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Putnins_P6";

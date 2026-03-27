@@ -80,7 +80,7 @@ internal class NewZealandMapGridProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public NewZealandMapGridProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public NewZealandMapGridProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "New_Zealand_Map_Grid";

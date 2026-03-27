@@ -29,7 +29,7 @@ internal sealed class Murdoch2Projection : SimpleConicProjectionBase
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public Murdoch2Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public Murdoch2Projection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse, SimpleConicType.Murdoch2, "Murdoch_II")
     {
     }

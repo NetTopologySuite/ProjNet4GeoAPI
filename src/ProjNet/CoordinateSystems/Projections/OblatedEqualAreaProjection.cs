@@ -43,7 +43,7 @@ internal sealed class OblatedEqualAreaProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public OblatedEqualAreaProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public OblatedEqualAreaProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Oblated_Equal_Area";

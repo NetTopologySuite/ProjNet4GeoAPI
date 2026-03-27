@@ -41,7 +41,7 @@ internal class Eckert4Projection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public Eckert4Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public Eckert4Projection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Eckert_IV";

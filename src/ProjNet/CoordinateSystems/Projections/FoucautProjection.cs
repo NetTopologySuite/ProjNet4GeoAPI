@@ -29,7 +29,7 @@ internal sealed class FoucautProjection : StsProjectionBase
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public FoucautProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public FoucautProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse, "Foucaut", 2d, 2d, true)
     {
     }

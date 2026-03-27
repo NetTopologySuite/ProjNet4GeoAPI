@@ -29,7 +29,7 @@ internal class Wagner1Projection : UrmaevFlatPolarSinusoidalProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public Wagner1Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public Wagner1Projection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(MergeParameters(parameters), inverse)
     {
         this.Name = "Wagner_I";

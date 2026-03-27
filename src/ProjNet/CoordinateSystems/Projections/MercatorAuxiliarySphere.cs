@@ -36,7 +36,7 @@ internal class MercatorAuxiliarySphere : MapProjection
     /// </summary>
     /// <param name="parameters">List of projection parameters.</param>
     /// <param name="isInverse">Inverse transform instance when cloning.</param>
-    protected MercatorAuxiliarySphere(IEnumerable<ProjectionParameter> parameters, MercatorAuxiliarySphere isInverse)
+    protected MercatorAuxiliarySphere(IEnumerable<ProjectionParameter> parameters, MercatorAuxiliarySphere? isInverse)
         : base(parameters, isInverse)
     {
         this.Authority = "EPSG";

@@ -29,7 +29,7 @@ internal class Wagner6Projection : Eckert3Projection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public Wagner6Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public Wagner6Projection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(MergeParameters(parameters), inverse)
     {
         this.Name = "Wagner_VI";

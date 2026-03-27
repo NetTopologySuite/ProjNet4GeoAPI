@@ -36,7 +36,7 @@ internal class VanDerGrinten3Projection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public VanDerGrinten3Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public VanDerGrinten3Projection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Van_der_Grinten_III";

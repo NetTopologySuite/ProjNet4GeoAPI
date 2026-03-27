@@ -36,7 +36,7 @@ internal class MillerCylindricalProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public MillerCylindricalProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public MillerCylindricalProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Miller_Cylindrical";

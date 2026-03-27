@@ -29,7 +29,7 @@ internal class WerenskioldProjection : PutninsP4PProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public WerenskioldProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public WerenskioldProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(MergeParameters(parameters), inverse)
     {
         this.Name = "Werenskiold_I";

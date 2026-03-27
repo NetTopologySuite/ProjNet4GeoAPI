@@ -42,7 +42,7 @@ internal sealed class S2Projection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public S2Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public S2Projection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "S2";

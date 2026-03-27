@@ -336,11 +336,12 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
         double h = z;
         this.geocentricInverse.Transform(ref lon, ref lat, ref h);
 
-        if (!this.TryFindGridForPoint(lon, lat, out XyzGrid grid))
+        if (!this.TryFindGridForPoint(lon, lat, out XyzGrid? grid))
         {
             return false;
         }
 
+        grid = ArgumentGuard.ThrowIfNull(grid, nameof(grid));
         GeoTiffXyzGridShiftMathTransform.InterpolateShift(grid, lon, lat, out dx, out dy, out dz);
         dx *= this.multiplier;
         dy *= this.multiplier;

@@ -29,7 +29,7 @@ internal class Kavrayskiy7Projection : Eckert3Projection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public Kavrayskiy7Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public Kavrayskiy7Projection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(MergeParameters(parameters), inverse)
     {
         this.Name = "Kavrayskiy_VII";

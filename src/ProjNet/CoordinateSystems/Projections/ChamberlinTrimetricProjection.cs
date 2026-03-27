@@ -41,7 +41,7 @@ internal class ChamberlinTrimetricProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public ChamberlinTrimetricProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public ChamberlinTrimetricProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Chamberlin_Trimetric";

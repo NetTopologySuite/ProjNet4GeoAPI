@@ -24,7 +24,7 @@ internal sealed class UpsProjection : PolarStereographicProjection
     {
     }
 
-    private UpsProjection(IEnumerable<ProjectionParameter> parameters, UpsProjection inverse)
+    private UpsProjection(IEnumerable<ProjectionParameter> parameters, UpsProjection? inverse)
         : base(NormalizeParameters(parameters), inverse)
     {
         this.Name = "Universal_Polar_Stereographic";

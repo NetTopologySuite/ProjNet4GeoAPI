@@ -36,7 +36,7 @@ internal class TimesProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public TimesProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public TimesProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Times";

@@ -45,7 +45,7 @@ internal class NearSidedPerspectiveProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public NearSidedPerspectiveProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public NearSidedPerspectiveProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         double height = this.Parameters.GetParameterValue("h", "satellite_height");

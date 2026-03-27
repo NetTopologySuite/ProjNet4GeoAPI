@@ -37,7 +37,7 @@ internal sealed class RectangularPolyconicProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public RectangularPolyconicProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public RectangularPolyconicProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Rectangular_Polyconic";

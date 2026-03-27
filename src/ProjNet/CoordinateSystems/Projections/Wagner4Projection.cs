@@ -29,7 +29,7 @@ internal class Wagner4Projection : MollweideProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public Wagner4Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public Wagner4Projection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(MergeParameters(parameters), inverse)
     {
         this.Name = "Wagner_IV";

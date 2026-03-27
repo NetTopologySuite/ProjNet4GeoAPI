@@ -35,7 +35,7 @@ internal class NellHammerProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public NellHammerProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public NellHammerProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Nell_Hammer";

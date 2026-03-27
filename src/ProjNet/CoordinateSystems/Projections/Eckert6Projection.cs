@@ -29,7 +29,7 @@ internal class Eckert6Projection : GeneralSinusoidalProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public Eckert6Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public Eckert6Projection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(MergeParameters(parameters), inverse)
     {
         this.Name = "Eckert_VI";

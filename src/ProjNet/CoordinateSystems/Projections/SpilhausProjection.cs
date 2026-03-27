@@ -45,7 +45,7 @@ internal sealed class SpilhausProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public SpilhausProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public SpilhausProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Spilhaus";

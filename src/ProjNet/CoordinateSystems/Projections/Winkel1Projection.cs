@@ -33,7 +33,7 @@ internal class Winkel1Projection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public Winkel1Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public Winkel1Projection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Winkel_I";

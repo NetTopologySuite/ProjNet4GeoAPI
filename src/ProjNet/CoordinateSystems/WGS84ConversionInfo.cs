@@ -257,7 +257,7 @@ public class Wgs84ConversionInfo : IEquatable<Wgs84ConversionInfo>
     public override string ToString() => this.WKT;
 
     /// <inheritdoc />
-    public override bool Equals(object obj) => this.EqualsCore(obj as Wgs84ConversionInfo);
+    public override bool Equals(object? obj) => this.EqualsCore(obj as Wgs84ConversionInfo);
 
     /// <summary>
     /// Returns a hash code for the specified object.
@@ -273,7 +273,7 @@ public class Wgs84ConversionInfo : IEquatable<Wgs84ConversionInfo>
     /// </summary>
     /// <param name="obj">The <see cref="Wgs84ConversionInfo"/> instance to compare against.</param>
     /// <returns><see langword="true"/> if all seven parameter values are equal; otherwise, <see langword="false"/>.</returns>
-    public bool Equals(Wgs84ConversionInfo obj)
+    public bool Equals(Wgs84ConversionInfo? obj)
     {
         return this.EqualsCore(obj);
     }

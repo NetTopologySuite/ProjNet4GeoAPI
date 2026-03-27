@@ -75,7 +75,7 @@ internal class CassiniSoldnerProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public CassiniSoldnerProjection(IEnumerable<ProjectionParameter> parameters, CassiniSoldnerProjection inverse)
+    public CassiniSoldnerProjection(IEnumerable<ProjectionParameter> parameters, CassiniSoldnerProjection? inverse)
         : base(parameters, inverse)
     {
         this.Authority = "EPSG";

@@ -53,7 +53,7 @@ internal class RobinsonProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public RobinsonProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public RobinsonProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Robinson";

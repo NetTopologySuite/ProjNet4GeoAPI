@@ -29,7 +29,7 @@ internal class PutninsP3PrimeProjection : PutninsP3Projection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public PutninsP3PrimeProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public PutninsP3PrimeProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(MergeParameters(parameters), inverse)
     {
         this.Name = "Putnins_P3P";

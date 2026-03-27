@@ -45,7 +45,7 @@ internal class LaskowskiProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public LaskowskiProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public LaskowskiProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Laskowski";

@@ -32,7 +32,7 @@ internal class AitoffProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public AitoffProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public AitoffProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Aitoff";

@@ -32,7 +32,7 @@ internal abstract class StsProjectionBase : MapProjection
     /// <param name="tanMode">Indicates whether tan-mode equations are active.</param>
     protected StsProjectionBase(
         IEnumerable<ProjectionParameter> parameters,
-        MapProjection inverse,
+        MapProjection? inverse,
         string name,
         double p,
         double q,

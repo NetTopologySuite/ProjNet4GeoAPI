@@ -50,7 +50,7 @@ internal abstract class AdamsProjectionBase : MapProjection
     /// <param name="inverse">Inverse transform instance when cloning.</param>
     /// <param name="name">Projection name.</param>
     /// <param name="mode">Projection mode.</param>
-    protected AdamsProjectionBase(IEnumerable<ProjectionParameter> parameters, MapProjection inverse, string name, AdamsMode mode)
+    protected AdamsProjectionBase(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse, string name, AdamsMode mode)
         : base(parameters, inverse)
     {
         this.Name = name;

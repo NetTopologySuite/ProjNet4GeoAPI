@@ -41,7 +41,7 @@ internal class LabordeProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public LabordeProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public LabordeProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Laborde";

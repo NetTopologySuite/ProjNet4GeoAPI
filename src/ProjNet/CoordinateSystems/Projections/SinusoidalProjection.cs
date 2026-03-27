@@ -38,7 +38,7 @@ internal class SinusoidalProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public SinusoidalProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public SinusoidalProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Sinusoidal";

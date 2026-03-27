@@ -29,7 +29,7 @@ internal class McBrydeThomasFlatPolarSinusoidalProjection : GeneralSinusoidalPro
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public McBrydeThomasFlatPolarSinusoidalProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public McBrydeThomasFlatPolarSinusoidalProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(MergeParameters(parameters), inverse)
     {
         this.Name = "McBryde_Thomas_Flat_Polar_Sinusoidal";

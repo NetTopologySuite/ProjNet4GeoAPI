@@ -443,8 +443,8 @@ public class ProjectionsRegistry
     {
         string key = ProjectionNameToRegistryKey(className);
 
-        Type projectionType;
-        Type ci;
+        Type? projectionType;
+        Type? constructorParameterType;
 
         lock (RegistryLock)
         {
@@ -453,21 +453,21 @@ public class ProjectionsRegistry
                 throw new NotSupportedException($"Projection {className} is not supported.");
             }
 
-            ci = ConstructorRegistry[key];
+            if (!ConstructorRegistry.TryGetValue(key, out constructorParameterType))
+            {
+                throw new NotSupportedException($"Projection {className} has no registered constructor.");
+            }
         }
 
         projectionType = ArgumentGuard.ThrowIfNull(projectionType, nameof(projectionType));
-        ci = ArgumentGuard.ThrowIfNull(ci, nameof(ci));
-        if (!ci.IsInstanceOfType(parameters))
+        constructorParameterType = ArgumentGuard.ThrowIfNull(constructorParameterType, nameof(constructorParameterType));
+        if (!constructorParameterType.IsInstanceOfType(parameters))
         {
             parameters = new List<ProjectionParameter>(parameters);
         }
 
-        var res = Activator.CreateInstance(projectionType, parameters) as MathTransform;
-        if (res is null)
-        {
-            ArgumentGuard.ThrowArgument("Projection type did not produce a MathTransform instance.", nameof(projectionType));
-        }
+        MathTransform? res = Activator.CreateInstance(projectionType, parameters) as MathTransform;
+        res = ArgumentGuard.ThrowIfNull(res, nameof(projectionType));
 
         if (res is MapProjection mapProjection && !string.Equals(mapProjection.Name, className, StringComparison.OrdinalIgnoreCase))
         {

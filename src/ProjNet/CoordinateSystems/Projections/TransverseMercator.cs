@@ -109,7 +109,7 @@ internal class TransverseMercator : MapProjection
     /// <item><term>false_northing</term><description>Northing assigned to the natural origin.</description></item>
     /// </list>
     /// </remarks>
-    protected TransverseMercator(IEnumerable<ProjectionParameter> parameters, TransverseMercator inverse)
+    protected TransverseMercator(IEnumerable<ProjectionParameter> parameters, TransverseMercator? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Transverse_Mercator";

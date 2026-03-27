@@ -41,7 +41,7 @@ internal sealed class ObliqueCylindricalEqualAreaProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public ObliqueCylindricalEqualAreaProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public ObliqueCylindricalEqualAreaProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Oblique_Cylindrical_Equal_Area";

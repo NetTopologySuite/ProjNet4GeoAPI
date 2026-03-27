@@ -38,7 +38,7 @@ internal class Ginsburg8Projection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public Ginsburg8Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public Ginsburg8Projection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Ginsburg_VIII";

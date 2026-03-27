@@ -35,7 +35,7 @@ internal class UrmaevVProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public UrmaevVProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public UrmaevVProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Urmaev_V";

@@ -39,7 +39,7 @@ internal class BaconProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public BaconProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public BaconProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : this(parameters, inverse, bacon: true, ortelius: false, "Bacon_Globular")
     {
     }
@@ -54,7 +54,7 @@ internal class BaconProjection : MapProjection
     /// <param name="name">Projection display name.</param>
     protected BaconProjection(
         IEnumerable<ProjectionParameter> parameters,
-        MapProjection inverse,
+        MapProjection? inverse,
         bool bacon,
         bool ortelius,
         string name)

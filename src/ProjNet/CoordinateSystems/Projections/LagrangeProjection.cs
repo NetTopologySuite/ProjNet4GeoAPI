@@ -40,7 +40,7 @@ internal class LagrangeProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public LagrangeProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public LagrangeProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(MergeDefaults(parameters), inverse)
     {
         this.Name = "Lagrange";

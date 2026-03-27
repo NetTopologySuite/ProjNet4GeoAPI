@@ -28,7 +28,7 @@ internal class OrteliusProjection : BaconProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public OrteliusProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public OrteliusProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse, bacon: false, ortelius: true, "Ortelius_Oval")
     {
     }

@@ -29,7 +29,7 @@ internal sealed class EulerProjection : SimpleConicProjectionBase
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public EulerProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public EulerProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse, SimpleConicType.Euler, "Euler")
     {
     }

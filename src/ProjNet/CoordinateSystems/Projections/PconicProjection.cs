@@ -42,7 +42,7 @@ internal class PconicProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public PconicProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public PconicProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Perspective_Conic";

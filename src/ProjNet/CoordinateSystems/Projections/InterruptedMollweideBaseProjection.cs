@@ -19,7 +19,7 @@ internal abstract class InterruptedMollweideBaseProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    protected InterruptedMollweideBaseProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    protected InterruptedMollweideBaseProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
     }

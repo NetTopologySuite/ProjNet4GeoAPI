@@ -46,7 +46,7 @@ internal sealed class InternationalMapWorldPolyconicProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public InternationalMapWorldPolyconicProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public InternationalMapWorldPolyconicProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "International_Map_of_the_World_Polyconic";

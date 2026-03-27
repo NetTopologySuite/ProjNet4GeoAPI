@@ -43,7 +43,7 @@ internal class ColombiaUrbanProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public ColombiaUrbanProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public ColombiaUrbanProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(MergeParameters(parameters), inverse)
     {
         this.Name = "Colombia_Urban";

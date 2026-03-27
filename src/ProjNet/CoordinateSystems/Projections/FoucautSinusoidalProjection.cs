@@ -37,7 +37,7 @@ internal class FoucautSinusoidalProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public FoucautSinusoidalProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public FoucautSinusoidalProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Foucaut_Sinusoidal";

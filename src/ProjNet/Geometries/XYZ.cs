@@ -56,7 +56,7 @@ public struct XYZ : IEquatable<XYZ>
     public static bool operator !=(XYZ left, XYZ right) => !left.Equals(right);
 
     /// <inheritdoc />
-    public override bool Equals(object obj) => obj is XYZ other && this.Equals(other);
+    public override bool Equals(object? obj) => obj is XYZ other && this.Equals(other);
 
     /// <summary>
     /// Performs the documented operation.

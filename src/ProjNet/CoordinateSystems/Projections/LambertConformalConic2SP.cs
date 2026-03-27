@@ -79,7 +79,7 @@ internal class LambertConformalConic2SP : MapProjection
     /// </remarks>
     /// <param name="parameters">List of parameters to initialize the projection.</param>
     /// <param name="inverse">The inverse projection instance, or <see langword="null"/> for a forward projection.</param>
-    protected LambertConformalConic2SP(IEnumerable<ProjectionParameter> parameters, LambertConformalConic2SP inverse)
+    protected LambertConformalConic2SP(IEnumerable<ProjectionParameter> parameters, LambertConformalConic2SP? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Lambert_Conformal_Conic_2SP";

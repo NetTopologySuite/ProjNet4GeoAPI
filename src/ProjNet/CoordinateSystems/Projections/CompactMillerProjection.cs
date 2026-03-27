@@ -43,7 +43,7 @@ internal class CompactMillerProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public CompactMillerProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public CompactMillerProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Compact_Miller";

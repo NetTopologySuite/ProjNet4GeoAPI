@@ -51,7 +51,7 @@ internal class HotineObliqueMercatorProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public HotineObliqueMercatorProjection(IEnumerable<ProjectionParameter> parameters, HotineObliqueMercatorProjection inverse)
+    public HotineObliqueMercatorProjection(IEnumerable<ProjectionParameter> parameters, HotineObliqueMercatorProjection? inverse)
         : base(parameters, inverse)
     {
         this.Authority = "EPSG";

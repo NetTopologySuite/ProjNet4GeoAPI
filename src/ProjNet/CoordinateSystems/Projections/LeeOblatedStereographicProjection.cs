@@ -29,7 +29,7 @@ internal sealed class LeeOblatedStereographicProjection : ModifiedStereographicP
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public LeeOblatedStereographicProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public LeeOblatedStereographicProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse, "Lee_Oblated_Stereographic")
     {
     }

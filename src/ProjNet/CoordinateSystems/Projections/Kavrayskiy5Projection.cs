@@ -29,7 +29,7 @@ internal sealed class Kavrayskiy5Projection : StsProjectionBase
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public Kavrayskiy5Projection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public Kavrayskiy5Projection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse, "Kavrayskiy_V", 1.50488d, 1.35439d, false)
     {
     }
