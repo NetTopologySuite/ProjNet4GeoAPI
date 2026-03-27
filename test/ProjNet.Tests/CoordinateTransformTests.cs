@@ -5,6 +5,7 @@ using NUnit.Framework;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Projections;
 using ProjNet.CoordinateSystems.Transformations;
+using ProjNet.CoordinateSystems.Wkt2;
 using ProjNet.Geometries;
 using ProjNet.IO.CoordinateSystems;
 
@@ -1187,6 +1188,22 @@ namespace ProjNET.Tests
 
             double[] expected = new[] { 4098998.6422, -142387.5532 };
             Assert.IsTrue(ToleranceLessThan(pUtm, expected, 0.05), TransformationError("LambertConicConformal2SP", expected, pUtm));
+        }
+
+        [Test]
+        public void TestTransformationFromWkt2ToWkt1()
+        {
+            string sourceWkt = "GEOGCRS[\"WGS 84 (3D)\",DATUM[\"World Geodetic System 1984\",ELLIPSOID[\"WGS 84\",6378137,298.257223563,LENGTHUNIT[\"metre\",1]]],PRIMEM[\"Greenwich\",0,ANGLEUNIT[\"degree\",0.0174532925199433]],CS[ellipsoidal,3],AXIS[\"geodetic latitude (Lat)\",north,ORDER[1],ANGLEUNIT[\"degree minute second hemisphere\",0.0174532925199433]],AXIS[\"geodetic longitude (Long)\",east,ORDER[2],ANGLEUNIT[\"degree minute second hemisphere\",0.0174532925199433]],AXIS[\"ellipsoidal height (h)\",up,ORDER[3],LENGTHUNIT[\"metre\",1]],USAGE[SCOPE[\"unknown\"],AREA[\"World (by country)\"],BBOX[-90,-180,90,180]],ID[\"EPSG\",4329]]";
+            string targetWkt = "PROJCS[\"ED50-UTM32\",GEOGCS[\"LLERP50-W\",DATUM[\"ERP50-W\",SPHEROID[\"INTNL\",6378388.000,297.00000000]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"false_easting\",500000.000],PARAMETER[\"false_northing\",0.000],PARAMETER[\"central_meridian\",9.00000000000000],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"latitude_of_origin\",0.000],UNIT[\"Meter\",1.00000000000000]]";
+
+            var sourceCoordinateSystem = CoordinateSystemWkt2Reader.ParseCrs(sourceWkt);
+            Assert.NotNull(sourceCoordinateSystem);
+
+            var targetCoordinateSystem = GetCoordinateSystem(targetWkt);
+            Assert.NotNull(targetCoordinateSystem);
+
+            var transformation = GetTransformation(Wkt2Conversions.ToProjNetGeographicCoordinateSystem((Wkt2GeogCrs)sourceCoordinateSystem), targetCoordinateSystem);
+            Assert.NotNull(transformation);
         }
 
         internal static CoordinateSystem GetCoordinateSystem(string wkt)
