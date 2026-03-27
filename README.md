@@ -75,13 +75,14 @@ dotnet test .\test\ProjNet.Tests\ProjNET.Tests.csproj --tl:off -v minimal
 - Baseline regeneration (intentional API change only) is controlled by `PROJNET_UPDATE_PUBLIC_API_BASELINE=1`.
 - Modernization-wave verification artifacts (coverage baseline/delta, review/finalization/checkpoints) are tracked in `docs/modernization/`.
 
-## Phase 3 completion snapshot (current)
+## Phase 4 completion snapshot (current)
 
-- Final Release build: passed (`dotnet build src\ProjNet\ProjNET.csproj -c Release`).
-- Final full tests: `3834 total`, `3003 passed`, `0 failed`, `831 skipped`.
-- GIE builtins progress in M27: `2465 total`, `1664 passed`, `0 failed`, `801 skipped`.
+- Full solution Release build: passed (`dotnet build .\ProjNet4GeoAPI.sln -c Release`).
+- Final full tests: `3845 total`, `3012 passed`, `0 failed`, `833 skipped`.
+- Strict nullable verification (`-p:Nullable=enable`): library CS warnings `0`, test CS warnings `0`.
 - Benchmark validation: benchmark discovery run succeeds (`dotnet run -c Release -- --list flat` in `src\ProjNet.Benchmark`).
-- Public API baseline is synchronized with shipped surface (`Wgs84ConversionInfo` includes `IEquatable<Wgs84ConversionInfo>` in `PublicAPI.Shipped.txt`).
+- Public API baseline validation passes (`PublicApiBaselineTests`).
+- Nullable context is now fully enabled across library and tests (`<Nullable>enable</Nullable>` and `#nullable enable`).
 
 ## Transformation coverage summary
 
