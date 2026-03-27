@@ -79,7 +79,7 @@ dotnet test .\test\ProjNet.Tests\ProjNET.Tests.csproj --tl:off -v minimal
 ## Phase 5 completion snapshot (current)
 
 - Full solution Release build: passed (`dotnet build .\ProjNet4GeoAPI.sln -c Release`).
-- Full test-suite baseline: `3854 total`, `3019 passed`, `2 failed`, `833 skipped` (`CoordinateTransformTests.TestKrovakGreenwichProjection` and `CoordinateTransformTests.TestKrovakFerroProjection` remain known baseline failures).
+- Full test-suite baseline: `3854 total`, `3021 passed`, `0 failed`, `833 skipped`.
 - Public API baseline validation passes (`PublicApiBaselineTests`).
 - AOT/trimming hardening completed: net8 trim-analyzer build is IL-warning clean.
 - Catalog cold-start benchmark results: first EPSG lookup/transform initialization is approximately `1.10-1.14 s` with about `1.11-1.12 MB` managed allocations on first access.

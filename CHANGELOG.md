@@ -72,4 +72,4 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 
 - Package version line is aligned to `3.0.0` via shared build props (`src/Directory.Build.props`).
 - `PackageValidationBaselineVersion` remains `2.1.0` until `3.0.0` is published.
-- Current validation snapshot (Phase 5): full tests `3854 total / 3019 passed / 2 failed / 833 skipped` (known baseline: `CoordinateTransformTests.TestKrovakGreenwichProjection`, `CoordinateTransformTests.TestKrovakFerroProjection`); solution Release build and `PublicApiBaselineTests` pass.
+- Current validation snapshot (Phase 5): full tests `3854 total / 3021 passed / 0 failed / 833 skipped`; solution Release build and `PublicApiBaselineTests` pass.
