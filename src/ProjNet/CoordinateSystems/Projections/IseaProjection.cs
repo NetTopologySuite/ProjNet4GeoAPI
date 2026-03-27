@@ -98,7 +98,7 @@ internal sealed class IseaProjection : MapProjection
     [field: NonSerialized]
     private readonly IseaPlanarState planarState;
     [field: NonSerialized]
-    private readonly IseaPlanarInverseProjection planarInverseProjection;
+    private readonly IseaPlanarInverseProjection? planarInverseProjection;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="IseaProjection"/> class.
@@ -114,7 +114,7 @@ internal sealed class IseaProjection : MapProjection
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public IseaProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    public IseaProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Icosahedral_Snyder_Equal_Area";

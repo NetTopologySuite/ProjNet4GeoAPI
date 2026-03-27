@@ -100,10 +100,12 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
     /// <inheritdoc />
     public override void Transform(ref double x, ref double y, ref double z)
     {
-        if (!this.TryFindGridForPoint(x, y, out HorizontalGrid grid))
+        if (!this.TryFindGridForPoint(x, y, out HorizontalGrid? gridCandidate))
         {
             ArgumentGuard.ThrowArgument("Coordinate is outside the horizontal GeoTIFF grid extent.");
         }
+
+        HorizontalGrid grid = ArgumentGuard.ThrowIfNull(gridCandidate, nameof(gridCandidate));
 
         if (!this.isInverted)
         {

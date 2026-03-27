@@ -117,18 +117,23 @@ public static class MathTransformWktReader
         var paramInfo = ReadParameters(tokenizer);
 
         // manage required parameters - row, col
-        var rowParam = paramInfo.GetParameterByName("num_row");
-        var colParam = paramInfo.GetParameterByName("num_col");
+        Parameter? rowParamCandidate = paramInfo.GetParameterByName("num_row");
+        Parameter? colParamCandidate = paramInfo.GetParameterByName("num_col");
 
-        if (rowParam is null)
+        if (rowParamCandidate is null)
         {
             ArgumentGuard.ThrowArgument("Affine transform does not contain 'num_row' parameter", nameof(tokenizer));
         }
 
-        if (colParam is null)
+        if (colParamCandidate is null)
         {
             ArgumentGuard.ThrowArgument("Affine transform does not contain 'num_col' parameter", nameof(tokenizer));
         }
+
+        Parameter rowParam = ArgumentGuard.ThrowIfNull(rowParamCandidate, nameof(rowParamCandidate));
+        Parameter colParam = ArgumentGuard.ThrowIfNull(colParamCandidate, nameof(colParamCandidate));
+        IList<Parameter>? parametersCandidate = paramInfo.Parameters;
+        IList<Parameter> parameters = ArgumentGuard.ThrowIfNull(parametersCandidate, nameof(parametersCandidate));
 
         int rowVal = (int)rowParam.Value;
         int colVal = (int)colParam.Value;
@@ -147,7 +152,7 @@ public static class MathTransformWktReader
         double[,] matrix = new double[rowVal, colVal];
 
         // simply process matrix values - no elt_ROW_COL parsing
-        foreach (var param in paramInfo.Parameters)
+        foreach (Parameter? param in parameters)
         {
             if (param is null || param.Name is null)
             {

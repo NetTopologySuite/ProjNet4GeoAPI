@@ -30,7 +30,7 @@ internal sealed class ObTranMathTransform : MathTransform
     private readonly double cphip;
     private readonly bool isOblique;
     private bool isInverted;
-    private MathTransform inverse;
+    private MathTransform? inverse;
 
     private ObTranMathTransform(
         MathTransform childForward,
@@ -130,10 +130,13 @@ internal sealed class ObTranMathTransform : MathTransform
         }
 
         var childArgs = BuildChildProjectionArguments(args, childProjCode);
-        if (!TryCreateProjectionTransform(childArgs, out MathTransform childForward, out MathTransform childInverse, out bool childIsAngular, out skipReason))
+        if (!TryCreateProjectionTransform(childArgs, out MathTransform? childForwardCandidate, out MathTransform? childInverseCandidate, out bool childIsAngular, out skipReason))
         {
             return false;
         }
+
+        MathTransform childForward = ArgumentGuard.ThrowIfNull(childForwardCandidate, nameof(childForwardCandidate));
+        MathTransform childInverse = ArgumentGuard.ThrowIfNull(childInverseCandidate, nameof(childInverseCandidate));
 
         if (!TryResolveRotation(args, out double lamp, out double phip, out skipReason))
         {
