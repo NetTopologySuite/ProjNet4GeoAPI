@@ -37,7 +37,7 @@ internal static class EpsgCoordinateSystemFactory
             }
 
             var coordinateSystem = TryCreateCoordinateSystem(srid);
-            if (coordinateSystem == null)
+            if (coordinateSystem is null)
             {
                 continue;
             }
@@ -54,20 +54,20 @@ internal static class EpsgCoordinateSystemFactory
         }
 
         var cached = CoordinateSystemCache[cacheIndex];
-        if (cached != null)
+        if (cached is not null)
         {
             return cached;
         }
 
         var created = CreateCoordinateSystem(reference);
-        if (created == null)
+        if (created is null)
         {
             return null;
         }
 
         lock (CoordinateSystemCacheSync)
         {
-            if (CoordinateSystemCache[cacheIndex] == null)
+            if (CoordinateSystemCache[cacheIndex] is null)
             {
                 CoordinateSystemCache[cacheIndex] = created;
             }
@@ -138,7 +138,7 @@ internal static class EpsgCoordinateSystemFactory
         }
 
         var axes = GetAxes(record.CoordinateSystemCode, 2);
-        if (axes == null || axes.Count < 2)
+        if (axes is null || axes.Count < 2)
         {
             return null;
         }
@@ -179,7 +179,7 @@ internal static class EpsgCoordinateSystemFactory
         }
 
         var axes = GetAxes(record.CoordinateSystemCode, 3);
-        if (axes == null || axes.Count < 3)
+        if (axes is null || axes.Count < 3)
         {
             return null;
         }
@@ -205,7 +205,7 @@ internal static class EpsgCoordinateSystemFactory
     private static ProjectedCoordinateSystem? CreateProjected(EpsgProjectedCrsRecord record)
     {
         var baseCoordinateSystem = TryCreateCoordinateSystem(record.BaseSrid) as GeographicCoordinateSystem;
-        if (baseCoordinateSystem == null)
+        if (baseCoordinateSystem is null)
         {
             return null;
         }
@@ -235,7 +235,7 @@ internal static class EpsgCoordinateSystemFactory
         var projection = new Projection(projectionName, parameters, projectionName, "EPSG", record.ConversionCode, string.Empty, string.Empty, string.Empty);
 
         var axes = GetAxes(record.CoordinateSystemCode, 2);
-        if (axes == null || axes.Count < 2)
+        if (axes is null || axes.Count < 2)
         {
             return null;
         }
@@ -262,7 +262,7 @@ internal static class EpsgCoordinateSystemFactory
         }
 
         var axisInfo = GetAxes(record.CoordinateSystemCode, 1);
-        if (axisInfo == null || axisInfo.Count == 0)
+        if (axisInfo is null || axisInfo.Count == 0)
         {
             return null;
         }
@@ -361,7 +361,7 @@ internal static class EpsgCoordinateSystemFactory
     {
         var horizontal = TryCreateCoordinateSystem(record.HorizontalSrid);
         var vertical = TryCreateCoordinateSystem(record.VerticalSrid);
-        if (horizontal == null || vertical == null)
+        if (horizontal is null || vertical is null)
         {
             return null;
         }
