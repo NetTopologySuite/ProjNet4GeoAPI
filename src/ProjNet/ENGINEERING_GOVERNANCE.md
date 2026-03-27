@@ -51,6 +51,7 @@ Build policy is enforced in `src/ProjNet/ProjNET.csproj` via `ValidateTargetFram
 - File-header diagnostics `SA1633`-`SA1638` are intentionally disabled to allow provenance-specific SPDX headers.
 - `stylecop.json` keeps XML header enforcement disabled (`xmlHeader: false`) for variable attribution scenarios.
 - Null checks should use pattern-style comparisons (`is null` / `is not null`) in new and touched code.
+- `StringSyntaxAttribute` annotations should be added only when APIs accept caller-supplied regex or format strings; current handwritten code primarily uses inline patterns and `GeneratedRegex`.
 
 ## Documentation policy
 
