@@ -28,7 +28,7 @@ internal static class ArgumentGuard
     internal static T ThrowIfNull<T>(
         [NotNull] T? value,
 #if NET8_0_OR_GREATER
-        [CallerArgumentExpression(nameof(value))] string paramName = null)
+        [CallerArgumentExpression(nameof(value))] string? paramName = null)
         where T : class
     {
         ArgumentNullException.ThrowIfNull(value, paramName);
@@ -56,7 +56,7 @@ internal static class ArgumentGuard
     internal static void ThrowIfNull(
         object? value,
 #if NET8_0_OR_GREATER
-        [CallerArgumentExpression(nameof(value))] string paramName = null)
+        [CallerArgumentExpression(nameof(value))] string? paramName = null)
     {
         ArgumentNullException.ThrowIfNull(value, paramName);
     }
@@ -80,7 +80,7 @@ internal static class ArgumentGuard
     internal static string ThrowIfNullOrEmpty(
         string? value,
 #if NET8_0_OR_GREATER
-        [CallerArgumentExpression(nameof(value))] string paramName = null)
+        [CallerArgumentExpression(nameof(value))] string? paramName = null)
     {
         ArgumentException.ThrowIfNullOrEmpty(value, paramName);
         return value;
@@ -112,7 +112,7 @@ internal static class ArgumentGuard
     internal static string ThrowIfNullOrWhiteSpace(
         string? value,
 #if NET8_0_OR_GREATER
-        [CallerArgumentExpression(nameof(value))] string paramName = null)
+        [CallerArgumentExpression(nameof(value))] string? paramName = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(value, paramName);
         return value;
@@ -146,7 +146,7 @@ internal static class ArgumentGuard
     internal static TTarget ThrowIfNotType<TTarget>(
         object? value,
 #if NET8_0_OR_GREATER
-        [CallerArgumentExpression(nameof(value))] string paramName = null)
+        [CallerArgumentExpression(nameof(value))] string? paramName = null)
         where TTarget : class
     {
         if (value is null)
@@ -197,7 +197,7 @@ internal static class ArgumentGuard
         T min,
         T max,
 #if NET8_0_OR_GREATER
-        [CallerArgumentExpression(nameof(value))] string paramName = null)
+        [CallerArgumentExpression(nameof(value))] string? paramName = null)
 #else
         string paramName)
 #endif
@@ -228,7 +228,7 @@ internal static class ArgumentGuard
     internal static void ThrowIfNegative(
         double value,
 #if NET8_0_OR_GREATER
-        [CallerArgumentExpression(nameof(value))] string paramName = null)
+        [CallerArgumentExpression(nameof(value))] string? paramName = null)
 #else
         string paramName)
 #endif

@@ -16,7 +16,7 @@ internal sealed class PipelineCompositeMathTransform : MathTransform
 {
     private readonly MathTransform[] transforms;
     private readonly PipelineExecutionContext executionContext;
-    private MathTransform inverse;
+    private MathTransform? inverse;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PipelineCompositeMathTransform"/> class.
@@ -43,7 +43,6 @@ internal sealed class PipelineCompositeMathTransform : MathTransform
 
             this.transforms[i] = transforms[i];
         }
-
     }
 
     /// <inheritdoc />

@@ -25,7 +25,7 @@ internal readonly struct SampleData
     /// <param name="scaleBySample">The scaleBySample value.</param>
     /// <param name="offsetBySample">The offsetBySample value.</param>
     /// <param name="width">The width value.</param>
-    internal SampleData(double[][] valuesBySample, double[] scaleBySample = null, double[] offsetBySample = null, int width = 0)
+    internal SampleData(double[][] valuesBySample, double[]? scaleBySample = null, double[]? offsetBySample = null, int width = 0)
     {
         this.valuesBySample = valuesBySample;
         this.scaleBySample = scaleBySample ?? CreateConstant(valuesBySample?.Length ?? 0, 1d);

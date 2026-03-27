@@ -28,7 +28,7 @@ internal sealed class GridResourceResolver
     /// </summary>
     /// <param name="options">Resolution options including local search directories and cache settings.</param>
     /// <param name="fetchClient">Optional fetch client used for network retrieval; defaults to a no-op client when <see langword="null"/>.</param>
-    internal GridResourceResolver(GridResourceResolverOptions options, IGridResourceFetchClient fetchClient = null)
+    internal GridResourceResolver(GridResourceResolverOptions options, IGridResourceFetchClient? fetchClient = null)
     {
         this.options = ArgumentGuard.ThrowIfNull(options, nameof(options));
         this.fetchClient = fetchClient ?? DefaultFetchClient;

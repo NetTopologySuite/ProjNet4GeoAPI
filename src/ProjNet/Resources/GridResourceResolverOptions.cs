@@ -21,7 +21,7 @@ internal sealed class GridResourceResolverOptions
     /// <param name="localDirectories">Directories to search for grid files; blank or null entries are ignored.</param>
     /// <param name="cacheDirectory">Directory used to store network-fetched grid files; <see langword="null"/> or whitespace disables network caching.</param>
     /// <param name="mode">Resolution mode controlling whether network retrieval is attempted.</param>
-    internal GridResourceResolverOptions(IEnumerable<string> localDirectories, string cacheDirectory, GridResourceResolutionMode mode)
+    internal GridResourceResolverOptions(IEnumerable<string> localDirectories, string? cacheDirectory, GridResourceResolutionMode mode)
     {
         localDirectories = ArgumentGuard.ThrowIfNull(localDirectories, nameof(localDirectories));
         this.LocalDirectories = localDirectories
@@ -35,7 +35,7 @@ internal sealed class GridResourceResolverOptions
     /// <summary>
     /// Gets the absolute path of the directory used to cache network-fetched grid files, or <see langword="null"/> when network caching is disabled.
     /// </summary>
-    internal string CacheDirectory { get; }
+    internal string? CacheDirectory { get; }
 
     /// <summary>
     /// Gets the ordered list of absolute local directory paths searched during grid resolution.

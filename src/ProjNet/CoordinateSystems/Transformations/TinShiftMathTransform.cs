@@ -23,7 +23,7 @@ internal sealed class TinShiftMathTransform : MathTransform
 
     private readonly TinShiftModel model;
     private readonly bool isInverted;
-    private MathTransform inverse;
+    private MathTransform? inverse;
 
     private TinShiftMathTransform(TinShiftModel model, bool isInverted)
     {

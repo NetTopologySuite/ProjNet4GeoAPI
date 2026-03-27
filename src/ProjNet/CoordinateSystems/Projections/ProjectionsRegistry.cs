@@ -404,6 +404,7 @@ public class ProjectionsRegistry
                 ArgumentGuard.ThrowArgument("A different projection type has been registered with this name", nameof(name));
             }
 
+            ci = ArgumentGuard.ThrowIfNull(ci, nameof(ci));
             TypeRegistry.Add(key, type);
             ConstructorRegistry.Add(key, ci);
         }
@@ -428,7 +429,7 @@ public class ProjectionsRegistry
                 ArgumentGuard.ThrowArgument($"{existingName} is not a registered projection type");
             }
 
-            Register(aliasName, existingProjectionType);
+            Register(aliasName, ArgumentGuard.ThrowIfNull(existingProjectionType, nameof(existingProjectionType)));
         }
     }
 
@@ -455,12 +456,19 @@ public class ProjectionsRegistry
             ci = ConstructorRegistry[key];
         }
 
+        projectionType = ArgumentGuard.ThrowIfNull(projectionType, nameof(projectionType));
+        ci = ArgumentGuard.ThrowIfNull(ci, nameof(ci));
         if (!ci.IsInstanceOfType(parameters))
         {
             parameters = new List<ProjectionParameter>(parameters);
         }
 
-        var res = (MathTransform)Activator.CreateInstance(projectionType, parameters);
+        var res = Activator.CreateInstance(projectionType, parameters) as MathTransform;
+        if (res is null)
+        {
+            ArgumentGuard.ThrowArgument("Projection type did not produce a MathTransform instance.", nameof(projectionType));
+        }
+
         if (res is MapProjection mapProjection && !string.Equals(mapProjection.Name, className, StringComparison.OrdinalIgnoreCase))
         {
             mapProjection.Alias = mapProjection.Name;

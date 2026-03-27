@@ -40,7 +40,7 @@ public class AffineTransform : MathTransform
     /// <summary>
     /// Saved inverse transform.
     /// </summary>
-    private MathTransform inverse;
+    private MathTransform? inverse;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AffineTransform"/> class with a 2D affine transform.

@@ -27,7 +27,7 @@ internal sealed class TopocentricMathTransform : MathTransform
     private readonly double cosLam0;
 
     private bool isInverted;
-    private MathTransform inverse;
+    private MathTransform? inverse;
 
     private TopocentricMathTransform(
         double originX,

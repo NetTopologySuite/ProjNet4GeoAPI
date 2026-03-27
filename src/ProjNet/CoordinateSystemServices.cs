@@ -81,7 +81,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     public CoordinateSystemServices(
         CoordinateSystemFactory coordinateSystemFactory,
         CoordinateTransformationFactory coordinateTransformationFactory,
-        IEnumerable<KeyValuePair<int, string>> enumeration)
+        IEnumerable<KeyValuePair<int, string>>? enumeration)
         : this(coordinateSystemFactory, coordinateTransformationFactory, enumeration, null)
     {
     }
@@ -97,8 +97,8 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     public CoordinateSystemServices(
         CoordinateSystemFactory coordinateSystemFactory,
         CoordinateTransformationFactory coordinateTransformationFactory,
-        IEnumerable<KeyValuePair<int, string>> enumeration,
-        ICoordinateSystemDefinitionProvider definitionProvider)
+        IEnumerable<KeyValuePair<int, string>>? enumeration,
+        ICoordinateSystemDefinitionProvider? definitionProvider)
     {
         this.coordinateSystemFactory = ArgumentGuard.ThrowIfNull(coordinateSystemFactory, nameof(coordinateSystemFactory));
         this.ctFactory = ArgumentGuard.ThrowIfNull(coordinateTransformationFactory, nameof(coordinateTransformationFactory));
@@ -141,7 +141,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     /// </summary>
     /// <param name="srid">The SRID of the coordinate system.</param>
     /// <returns>The coordinate system, or <see langword="null"/> if not found.</returns>
-    public CoordinateSystem GetCoordinateSystem(int srid)
+    public CoordinateSystem? GetCoordinateSystem(int srid)
     {
         this.WaitForInitialization();
         return this.csBySrid.TryGetValue(srid, out var cs) ? cs : null;
@@ -232,7 +232,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     /// <param name="sourceSrid">The SRID of the source spatial reference system.</param>
     /// <param name="targetSrid">The SRID of the target spatial reference system.</param>
     /// <returns>A coordinate transformation, or <see langword="null"/> if no transformation could be created.</returns>
-    public ICoordinateTransformation CreateTransformation(int sourceSrid, int targetSrid)
+    public ICoordinateTransformation? CreateTransformation(int sourceSrid, int targetSrid)
     {
         return this.CreateTransformation(
             this.GetCoordinateSystem(sourceSrid),
@@ -245,7 +245,15 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     /// <param name="source">The source spatial reference system.</param>
     /// <param name="target">The target spatial reference system.</param>
     /// <returns>A coordinate transformation, or <see langword="null"/> if no transformation could be created.</returns>
-    public ICoordinateTransformation CreateTransformation(CoordinateSystem source, CoordinateSystem target) => this.ctFactory.CreateFromCoordinateSystems(source, target);
+    public ICoordinateTransformation? CreateTransformation(CoordinateSystem? source, CoordinateSystem? target)
+    {
+        if (source is null || target is null)
+        {
+            return null;
+        }
+
+        return this.ctFactory.CreateFromCoordinateSystems(source, target);
+    }
 
     /// <summary>
     /// This operation is not supported.
@@ -408,8 +416,18 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     private class CsEqualityComparer : EqualityComparer<IInfo>
     {
         /// <inheritdoc />
-        public override bool Equals(IInfo x, IInfo y)
+        public override bool Equals(IInfo? x, IInfo? y)
         {
+            if (ReferenceEquals(x, y))
+            {
+                return true;
+            }
+
+            if (x is null || y is null)
+            {
+                return false;
+            }
+
             return x.AuthorityCode == y.AuthorityCode &&
                 string.Equals(x.Authority, y.Authority, StringComparison.OrdinalIgnoreCase);
         }
@@ -430,7 +448,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     {
         public CoordinateSystemKey(string authority, long authorityCode)
         {
-            this.Authority = authority;
+            this.Authority = authority ?? string.Empty;
             this.AuthorityCode = authorityCode;
         }
 
@@ -440,32 +458,32 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
 
         public string Name
         {
-            get => null;
+            get => string.Empty;
         }
 
         public string Alias
         {
-            get => null;
+            get => string.Empty;
         }
 
         public string Abbreviation
         {
-            get => null;
+            get => string.Empty;
         }
 
         public string Remarks
         {
-            get => null;
+            get => string.Empty;
         }
 
         public string WKT
         {
-            get => null;
+            get => string.Empty;
         }
 
         public string XML
         {
-            get => null;
+            get => string.Empty;
         }
 
         public bool EqualParams(object obj)

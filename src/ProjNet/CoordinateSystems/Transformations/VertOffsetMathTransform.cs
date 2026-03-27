@@ -28,7 +28,7 @@ internal sealed class VertOffsetMathTransform : MathTransform
     private readonly double nu0;
 
     private bool isInverted;
-    private MathTransform inverse;
+    private MathTransform? inverse;
 
     private VertOffsetMathTransform(
         double semiMajor,

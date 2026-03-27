@@ -212,7 +212,7 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <summary>
     /// The inverse <see cref="MathTransform"/>.
     /// </summary>
-    protected MathTransform inverse;
+    protected MathTransform? inverse;
 
     /// <summary>
     /// Center longitude (projection center).
@@ -267,7 +267,7 @@ public abstract class MapProjection : MathTransform, IProjection
     /// </summary>
     /// <param name="parameters">An enumeration of projection parameters.</param>
     /// <param name="inverse">The paired inverse projection, or <see langword="null"/> if not yet available.</param>
-    protected MapProjection(IEnumerable<ProjectionParameter> parameters, MapProjection inverse)
+    protected MapProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : this(parameters)
     {
         this.inverse = inverse;

@@ -148,7 +148,7 @@ public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<Pro
     /// </summary>
     /// <param name="name">The name of the parameter.</param>
     /// <returns>The parameter if present; otherwise <see langword="null"/>.</returns>
-    public ProjectionParameter Find(string name)
+    public ProjectionParameter? Find(string name)
     {
         name = ArgumentGuard.ThrowIfNull(name, nameof(name));
 
@@ -178,7 +178,7 @@ public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<Pro
     /// </summary>
     /// <param name="other">The parameter set to compare with.</param>
     /// <returns><see langword="true"/> if both sets contain the same parameter names and values; otherwise <see langword="false"/>.</returns>
-    public bool Equals(ProjectionParameterSet other)
+    public bool Equals(ProjectionParameterSet? other)
     {
         if (other is null)
         {
@@ -208,7 +208,7 @@ public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<Pro
     }
 
     /// <inheritdoc />
-    public override bool Equals(object obj)
+    public override bool Equals(object? obj)
     {
         return obj is ProjectionParameterSet other && this.Equals(other);
     }
