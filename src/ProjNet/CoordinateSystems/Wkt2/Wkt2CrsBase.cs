@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace ProjNet.CoordinateSystems.Wkt2
 {
@@ -31,6 +32,11 @@ namespace ProjNet.CoordinateSystems.Wkt2
         /// Gets or sets an optional remark.
         /// </summary>
         public string Remark { get; set; }
+
+        /// <summary>
+        /// Gets the list of usage metadata for this CRS.
+        /// </summary>
+        public List<Wkt2Usage> Usages { get; } = new List<Wkt2Usage>();
 
         /// <summary>
         /// Serializes the model back to a WKT2 string.

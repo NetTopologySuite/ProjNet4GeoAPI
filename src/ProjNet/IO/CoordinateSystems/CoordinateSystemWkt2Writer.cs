@@ -49,6 +49,9 @@ namespace ProjNet.IO.CoordinateSystems
             sb.Append(',');
             sb.Append(WriteCs(crs.CoordinateSystem));
 
+            foreach (var usage in crs.Usages)
+                sb.Append($",{WriteUsage(usage)}");
+
             if (crs.Id != null)
             {
                 sb.Append(',');
@@ -73,6 +76,9 @@ namespace ProjNet.IO.CoordinateSystems
             sb.Append("[\"");
             sb.Append(EscapeQuotedText(datum.Name));
             sb.Append('"');
+
+            if (!string.IsNullOrWhiteSpace(datum.Anchor))
+                sb.Append($",ANCHOR[\"{EscapeQuotedText(datum.Anchor)}\"]");
 
             if (datum.Id != null)
             {
@@ -103,6 +109,9 @@ namespace ProjNet.IO.CoordinateSystems
             sb.Append(',');
             sb.Append(WriteCs(crs.CoordinateSystem));
 
+            foreach (var usage in crs.Usages)
+                sb.Append($",{WriteUsage(usage)}");
+
             if (crs.Id != null)
             {
                 sb.Append(',');
@@ -127,6 +136,9 @@ namespace ProjNet.IO.CoordinateSystems
             sb.Append("[\"");
             sb.Append(EscapeQuotedText(datum.Name));
             sb.Append('"');
+
+            if (!string.IsNullOrWhiteSpace(datum.Anchor))
+                sb.Append($",ANCHOR[\"{EscapeQuotedText(datum.Anchor)}\"]");
 
             if (datum.Id != null)
             {
@@ -162,6 +174,9 @@ namespace ProjNet.IO.CoordinateSystems
             sb.Append("],");
 
             sb.Append(WriteAbridgedTransformation(crs.Transformation));
+
+            foreach (var usage in crs.Usages)
+                sb.Append($",{WriteUsage(usage)}");
 
             if (crs.Id != null)
             {
@@ -227,6 +242,9 @@ namespace ProjNet.IO.CoordinateSystems
                 sb.Append(Write(component));
             }
 
+            foreach (var usage in crs.Usages)
+                sb.Append($",{WriteUsage(usage)}");
+
             if (crs.Id != null)
             {
                 sb.Append(',');
@@ -256,6 +274,9 @@ namespace ProjNet.IO.CoordinateSystems
             sb.Append(',');
             sb.Append(WriteCs(crs.CoordinateSystem));
 
+            foreach (var usage in crs.Usages)
+                sb.Append($",{WriteUsage(usage)}");
+
             if (crs.Id != null)
             {
                 sb.Append(',');
@@ -280,6 +301,9 @@ namespace ProjNet.IO.CoordinateSystems
             sb.Append("[\"");
             sb.Append(EscapeQuotedText(datum.Name));
             sb.Append("\"");
+
+            if (!string.IsNullOrWhiteSpace(datum.Anchor))
+                sb.Append($",ANCHOR[\"{EscapeQuotedText(datum.Anchor)}\"]");
 
             if (datum.Id != null)
             {
@@ -312,6 +336,9 @@ namespace ProjNet.IO.CoordinateSystems
             sb.Append(WriteConversion(crs.Conversion));
             sb.Append(',');
             sb.Append(WriteCs(crs.CoordinateSystem));
+
+            foreach (var usage in crs.Usages)
+                sb.Append($",{WriteUsage(usage)}");
 
             if (crs.Id != null)
             {
@@ -400,6 +427,9 @@ namespace ProjNet.IO.CoordinateSystems
             sb.Append(',');
             sb.Append(WriteCs(crs.CoordinateSystem));
 
+            foreach (var usage in crs.Usages)
+                sb.Append($",{WriteUsage(usage)}");
+
             if (crs.Id != null)
             {
                 sb.Append(',');
@@ -426,6 +456,9 @@ namespace ProjNet.IO.CoordinateSystems
             sb.Append(EscapeQuotedText(datum.Name));
             sb.Append("\",");
             sb.Append(WriteEllipsoid(datum.Ellipsoid));
+
+            if (!string.IsNullOrWhiteSpace(datum.Anchor))
+                sb.Append($",ANCHOR[\"{EscapeQuotedText(datum.Anchor)}\"]");
 
             if (datum.Id != null)
             {
@@ -595,6 +628,26 @@ namespace ProjNet.IO.CoordinateSystems
                 sb.Append("\"]");
             }
 
+            sb.Append(']');
+            return sb.ToString();
+        }
+
+        private static string WriteBBox(Wkt2BBox bbox)
+        {
+            return $"BBOX[{bbox.South.ToString("R", CultureInfo.InvariantCulture)},{bbox.West.ToString("R", CultureInfo.InvariantCulture)},{bbox.North.ToString("R", CultureInfo.InvariantCulture)},{bbox.East.ToString("R", CultureInfo.InvariantCulture)}]";
+        }
+
+        private static string WriteUsage(Wkt2Usage usage)
+        {
+            var sb = new StringBuilder("USAGE[");
+            var parts = new System.Collections.Generic.List<string>();
+            if (!string.IsNullOrWhiteSpace(usage.Scope))
+                parts.Add($"SCOPE[\"{EscapeQuotedText(usage.Scope)}\"]");
+            if (!string.IsNullOrWhiteSpace(usage.Area))
+                parts.Add($"AREA[\"{EscapeQuotedText(usage.Area)}\"]");
+            if (usage.BBox != null)
+                parts.Add(WriteBBox(usage.BBox));
+            sb.Append(string.Join(",", parts));
             sb.Append(']');
             return sb.ToString();
         }

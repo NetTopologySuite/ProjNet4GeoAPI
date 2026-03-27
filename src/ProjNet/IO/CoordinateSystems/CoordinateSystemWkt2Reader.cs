@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Wkt2;
@@ -81,6 +82,7 @@ namespace ProjNet.IO.CoordinateSystems
             Wkt2CoordinateSystem cs = null;
             Wkt2Id id = null;
             string remark = null;
+            var usages = new List<Wkt2Usage>();
 
             while (true)
             {
@@ -111,6 +113,31 @@ namespace ProjNet.IO.CoordinateSystems
                     case "ID":
                         id = ReadId(tokenizer);
                         break;
+                    case "USAGE":
+                        usages.Add(ReadUsage(tokenizer));
+                        break;
+                    case "SCOPE":
+                        {
+                            var scopeBracket = tokenizer.ReadOpener();
+                            var u = new Wkt2Usage { Scope = tokenizer.ReadDoubleQuotedWord() };
+                            tokenizer.ReadCloser(scopeBracket);
+                            usages.Add(u);
+                        }
+                        break;
+                    case "AREA":
+                        {
+                            var areaBracket = tokenizer.ReadOpener();
+                            var u = new Wkt2Usage { Area = tokenizer.ReadDoubleQuotedWord() };
+                            tokenizer.ReadCloser(areaBracket);
+                            usages.Add(u);
+                        }
+                        break;
+                    case "BBOX":
+                        {
+                            var u = new Wkt2Usage { BBox = ReadBBox(tokenizer) };
+                            usages.Add(u);
+                        }
+                        break;
                     case ",":
                         break;
                     case "]":
@@ -126,6 +153,8 @@ namespace ProjNet.IO.CoordinateSystems
                             Id = id,
                             Remark = remark
                         };
+                        foreach (var u in usages)
+                            crs.Usages.Add(u);
                         return crs;
                     default:
                         SkipUnknownElement(tokenizer);
@@ -137,12 +166,13 @@ namespace ProjNet.IO.CoordinateSystems
 
         private static Wkt2EngineeringDatum ReadEngineeringDatum(string keyword, WktStreamTokenizer tokenizer)
         {
-            // EDATUM/DATUM["name", ID[...], REMARK[...]]
+            // EDATUM/DATUM["name", ANCHOR[...], ID[...], REMARK[...]]
             var bracket = tokenizer.ReadOpener();
             string name = tokenizer.ReadDoubleQuotedWord();
 
             Wkt2Id id = null;
             string remark = null;
+            string anchor = null;
 
             tokenizer.NextToken();
             while (true)
@@ -150,6 +180,11 @@ namespace ProjNet.IO.CoordinateSystems
                 string element = tokenizer.GetStringValue();
                 switch (element.ToUpperInvariant())
                 {
+                    case "ANCHOR":
+                        var anchorBracket = tokenizer.ReadOpener();
+                        anchor = tokenizer.ReadDoubleQuotedWord();
+                        tokenizer.ReadCloser(anchorBracket);
+                        break;
                     case "ID":
                         id = ReadId(tokenizer);
                         break;
@@ -161,7 +196,7 @@ namespace ProjNet.IO.CoordinateSystems
                     case "]":
                     case ")":
                         tokenizer.CheckCloser(bracket);
-                        return new Wkt2EngineeringDatum(keyword, name) { Id = id, Remark = remark };
+                        return new Wkt2EngineeringDatum(keyword, name) { Id = id, Remark = remark, Anchor = anchor };
                     default:
                         SkipUnknownElement(tokenizer);
                         break;
@@ -183,6 +218,7 @@ namespace ProjNet.IO.CoordinateSystems
             Wkt2CoordinateSystem cs = null;
             Wkt2Id id = null;
             string remark = null;
+            var usages = new List<Wkt2Usage>();
 
             while (true)
             {
@@ -213,6 +249,31 @@ namespace ProjNet.IO.CoordinateSystems
                     case "ID":
                         id = ReadId(tokenizer);
                         break;
+                    case "USAGE":
+                        usages.Add(ReadUsage(tokenizer));
+                        break;
+                    case "SCOPE":
+                        {
+                            var scopeBracket = tokenizer.ReadOpener();
+                            var u = new Wkt2Usage { Scope = tokenizer.ReadDoubleQuotedWord() };
+                            tokenizer.ReadCloser(scopeBracket);
+                            usages.Add(u);
+                        }
+                        break;
+                    case "AREA":
+                        {
+                            var areaBracket = tokenizer.ReadOpener();
+                            var u = new Wkt2Usage { Area = tokenizer.ReadDoubleQuotedWord() };
+                            tokenizer.ReadCloser(areaBracket);
+                            usages.Add(u);
+                        }
+                        break;
+                    case "BBOX":
+                        {
+                            var u = new Wkt2Usage { BBox = ReadBBox(tokenizer) };
+                            usages.Add(u);
+                        }
+                        break;
                     case ",":
                         break;
                     case "]":
@@ -228,6 +289,8 @@ namespace ProjNet.IO.CoordinateSystems
                             Id = id,
                             Remark = remark
                         };
+                        foreach (var u in usages)
+                            crs.Usages.Add(u);
                         return crs;
                     default:
                         SkipUnknownElement(tokenizer);
@@ -239,12 +302,13 @@ namespace ProjNet.IO.CoordinateSystems
 
         private static Wkt2ParametricDatum ReadParametricDatum(string keyword, WktStreamTokenizer tokenizer)
         {
-            // PDATUM/DATUM["name", ID[...], REMARK[...]]
+            // PDATUM/DATUM["name", ANCHOR[...], ID[...], REMARK[...]]
             var bracket = tokenizer.ReadOpener();
             string name = tokenizer.ReadDoubleQuotedWord();
 
             Wkt2Id id = null;
             string remark = null;
+            string anchor = null;
 
             tokenizer.NextToken();
             while (true)
@@ -252,6 +316,11 @@ namespace ProjNet.IO.CoordinateSystems
                 string element = tokenizer.GetStringValue();
                 switch (element.ToUpperInvariant())
                 {
+                    case "ANCHOR":
+                        var anchorBracket = tokenizer.ReadOpener();
+                        anchor = tokenizer.ReadDoubleQuotedWord();
+                        tokenizer.ReadCloser(anchorBracket);
+                        break;
                     case "ID":
                         id = ReadId(tokenizer);
                         break;
@@ -263,7 +332,7 @@ namespace ProjNet.IO.CoordinateSystems
                     case "]":
                     case ")":
                         tokenizer.CheckCloser(bracket);
-                        return new Wkt2ParametricDatum(keyword, name) { Id = id, Remark = remark };
+                        return new Wkt2ParametricDatum(keyword, name) { Id = id, Remark = remark, Anchor = anchor };
                     default:
                         SkipUnknownElement(tokenizer);
                         break;
@@ -286,6 +355,7 @@ namespace ProjNet.IO.CoordinateSystems
             Wkt2AbridgedTransformation transformation = null;
             Wkt2Id id = null;
             string remark = null;
+            var usages = new List<Wkt2Usage>();
 
             while (true)
             {
@@ -307,6 +377,31 @@ namespace ProjNet.IO.CoordinateSystems
                     case "REMARK":
                         remark = ReadRemark(tokenizer);
                         break;
+                    case "USAGE":
+                        usages.Add(ReadUsage(tokenizer));
+                        break;
+                    case "SCOPE":
+                        {
+                            var scopeBracket = tokenizer.ReadOpener();
+                            var u = new Wkt2Usage { Scope = tokenizer.ReadDoubleQuotedWord() };
+                            tokenizer.ReadCloser(scopeBracket);
+                            usages.Add(u);
+                        }
+                        break;
+                    case "AREA":
+                        {
+                            var areaBracket = tokenizer.ReadOpener();
+                            var u = new Wkt2Usage { Area = tokenizer.ReadDoubleQuotedWord() };
+                            tokenizer.ReadCloser(areaBracket);
+                            usages.Add(u);
+                        }
+                        break;
+                    case "BBOX":
+                        {
+                            var u = new Wkt2Usage { BBox = ReadBBox(tokenizer) };
+                            usages.Add(u);
+                        }
+                        break;
                     case ",":
                         break;
                     case "]":
@@ -324,6 +419,8 @@ namespace ProjNet.IO.CoordinateSystems
                             Id = id,
                             Remark = remark
                         };
+                        foreach (var u in usages)
+                            crs.Usages.Add(u);
                         return crs;
                     default:
                         SkipUnknownElement(tokenizer);
@@ -447,6 +544,7 @@ namespace ProjNet.IO.CoordinateSystems
             var components = new System.Collections.Generic.List<Wkt2CrsBase>();
             Wkt2Id id = null;
             string remark = null;
+            var usages = new List<Wkt2Usage>();
 
             while (true)
             {
@@ -471,6 +569,31 @@ namespace ProjNet.IO.CoordinateSystems
                     case "REMARK":
                         remark = ReadRemark(tokenizer);
                         break;
+                    case "USAGE":
+                        usages.Add(ReadUsage(tokenizer));
+                        break;
+                    case "SCOPE":
+                        {
+                            var scopeBracket = tokenizer.ReadOpener();
+                            var u = new Wkt2Usage { Scope = tokenizer.ReadDoubleQuotedWord() };
+                            tokenizer.ReadCloser(scopeBracket);
+                            usages.Add(u);
+                        }
+                        break;
+                    case "AREA":
+                        {
+                            var areaBracket = tokenizer.ReadOpener();
+                            var u = new Wkt2Usage { Area = tokenizer.ReadDoubleQuotedWord() };
+                            tokenizer.ReadCloser(areaBracket);
+                            usages.Add(u);
+                        }
+                        break;
+                    case "BBOX":
+                        {
+                            var u = new Wkt2Usage { BBox = ReadBBox(tokenizer) };
+                            usages.Add(u);
+                        }
+                        break;
                     case ",":
                         break;
                     case "]":
@@ -484,6 +607,8 @@ namespace ProjNet.IO.CoordinateSystems
                             Id = id,
                             Remark = remark
                         };
+                        foreach (var u in usages)
+                            crs.Usages.Add(u);
                         return crs;
                     default:
                         SkipUnknownElement(tokenizer);
@@ -507,6 +632,7 @@ namespace ProjNet.IO.CoordinateSystems
             Wkt2CoordinateSystem cs = null;
             Wkt2Id id = null;
             string remark = null;
+            var usages = new List<Wkt2Usage>();
 
             while (true)
             {
@@ -537,6 +663,31 @@ namespace ProjNet.IO.CoordinateSystems
                     case "ID":
                         id = ReadId(tokenizer);
                         break;
+                    case "USAGE":
+                        usages.Add(ReadUsage(tokenizer));
+                        break;
+                    case "SCOPE":
+                        {
+                            var scopeBracket = tokenizer.ReadOpener();
+                            var u = new Wkt2Usage { Scope = tokenizer.ReadDoubleQuotedWord() };
+                            tokenizer.ReadCloser(scopeBracket);
+                            usages.Add(u);
+                        }
+                        break;
+                    case "AREA":
+                        {
+                            var areaBracket = tokenizer.ReadOpener();
+                            var u = new Wkt2Usage { Area = tokenizer.ReadDoubleQuotedWord() };
+                            tokenizer.ReadCloser(areaBracket);
+                            usages.Add(u);
+                        }
+                        break;
+                    case "BBOX":
+                        {
+                            var u = new Wkt2Usage { BBox = ReadBBox(tokenizer) };
+                            usages.Add(u);
+                        }
+                        break;
                     case ",":
                         break;
                     case "]":
@@ -553,6 +704,8 @@ namespace ProjNet.IO.CoordinateSystems
                             Id = id,
                             Remark = remark
                         };
+                        foreach (var u in usages)
+                            crs.Usages.Add(u);
                         return crs;
 
                     default:
@@ -566,12 +719,13 @@ namespace ProjNet.IO.CoordinateSystems
 
         private static Wkt2VerticalDatum ReadVerticalDatum(string keyword, WktStreamTokenizer tokenizer)
         {
-            // VDATUM/DATUM["name", ID[...], REMARK[...]]
+            // VDATUM/DATUM["name", ANCHOR[...], ID[...], REMARK[...]]
             var bracket = tokenizer.ReadOpener();
             string name = tokenizer.ReadDoubleQuotedWord();
 
             Wkt2Id id = null;
             string remark = null;
+            string anchor = null;
 
             tokenizer.NextToken();
             while (true)
@@ -579,6 +733,11 @@ namespace ProjNet.IO.CoordinateSystems
                 string element = tokenizer.GetStringValue();
                 switch (element.ToUpperInvariant())
                 {
+                    case "ANCHOR":
+                        var anchorBracket = tokenizer.ReadOpener();
+                        anchor = tokenizer.ReadDoubleQuotedWord();
+                        tokenizer.ReadCloser(anchorBracket);
+                        break;
                     case "ID":
                         id = ReadId(tokenizer);
                         break;
@@ -590,7 +749,7 @@ namespace ProjNet.IO.CoordinateSystems
                     case "]":
                     case ")":
                         tokenizer.CheckCloser(bracket);
-                        return new Wkt2VerticalDatum(keyword, name) { Id = id, Remark = remark };
+                        return new Wkt2VerticalDatum(keyword, name) { Id = id, Remark = remark, Anchor = anchor };
                     default:
                         SkipUnknownElement(tokenizer);
                         break;
@@ -613,6 +772,7 @@ namespace ProjNet.IO.CoordinateSystems
             Wkt2CoordinateSystem cs = null;
             Wkt2Id id = null;
             string remark = null;
+            var usages = new List<Wkt2Usage>();
 
             while (true)
             {
@@ -650,6 +810,31 @@ namespace ProjNet.IO.CoordinateSystems
                     case "ID":
                         id = ReadId(tokenizer);
                         break;
+                    case "USAGE":
+                        usages.Add(ReadUsage(tokenizer));
+                        break;
+                    case "SCOPE":
+                        {
+                            var scopeBracket = tokenizer.ReadOpener();
+                            var u = new Wkt2Usage { Scope = tokenizer.ReadDoubleQuotedWord() };
+                            tokenizer.ReadCloser(scopeBracket);
+                            usages.Add(u);
+                        }
+                        break;
+                    case "AREA":
+                        {
+                            var areaBracket = tokenizer.ReadOpener();
+                            var u = new Wkt2Usage { Area = tokenizer.ReadDoubleQuotedWord() };
+                            tokenizer.ReadCloser(areaBracket);
+                            usages.Add(u);
+                        }
+                        break;
+                    case "BBOX":
+                        {
+                            var u = new Wkt2Usage { BBox = ReadBBox(tokenizer) };
+                            usages.Add(u);
+                        }
+                        break;
                     case ",":
                         break;
                     case "]":
@@ -667,6 +852,8 @@ namespace ProjNet.IO.CoordinateSystems
                             Id = id,
                             Remark = remark
                         };
+                        foreach (var u in usages)
+                            crs.Usages.Add(u);
                         return crs;
                     default:
                         SkipUnknownElement(tokenizer);
@@ -871,6 +1058,7 @@ namespace ProjNet.IO.CoordinateSystems
             Wkt2CoordinateSystem cs = null;
             Wkt2Id id = null;
             string remark = null;
+            var usages = new List<Wkt2Usage>();
 
             while (true)
             {
@@ -914,6 +1102,35 @@ namespace ProjNet.IO.CoordinateSystems
                         id = ReadId(tokenizer);
                         break;
 
+                    case "USAGE":
+                        usages.Add(ReadUsage(tokenizer));
+                        break;
+
+                    case "SCOPE":
+                        {
+                            var scopeBracket = tokenizer.ReadOpener();
+                            var u = new Wkt2Usage { Scope = tokenizer.ReadDoubleQuotedWord() };
+                            tokenizer.ReadCloser(scopeBracket);
+                            usages.Add(u);
+                        }
+                        break;
+
+                    case "AREA":
+                        {
+                            var areaBracket = tokenizer.ReadOpener();
+                            var u = new Wkt2Usage { Area = tokenizer.ReadDoubleQuotedWord() };
+                            tokenizer.ReadCloser(areaBracket);
+                            usages.Add(u);
+                        }
+                        break;
+
+                    case "BBOX":
+                        {
+                            var u = new Wkt2Usage { BBox = ReadBBox(tokenizer) };
+                            usages.Add(u);
+                        }
+                        break;
+
                     case ",":
                         break;
 
@@ -933,6 +1150,8 @@ namespace ProjNet.IO.CoordinateSystems
                             Id = id,
                             Remark = remark
                         };
+                        foreach (var u in usages)
+                            crs.Usages.Add(u);
                         return crs;
 
                     default:
@@ -954,6 +1173,7 @@ namespace ProjNet.IO.CoordinateSystems
 
             Wkt2Ellipsoid ellipsoid = null;
             Wkt2Id id = null;
+            string anchor = null;
 
             while (true)
             {
@@ -963,6 +1183,11 @@ namespace ProjNet.IO.CoordinateSystems
                     case "ELLIPSOID":
                     case "SPHEROID":
                         ellipsoid = ReadEllipsoid(tokenizer);
+                        break;
+                    case "ANCHOR":
+                        var anchorBracket = tokenizer.ReadOpener();
+                        anchor = tokenizer.ReadDoubleQuotedWord();
+                        tokenizer.ReadCloser(anchorBracket);
                         break;
                     case "ID":
                         id = ReadId(tokenizer);
@@ -974,7 +1199,7 @@ namespace ProjNet.IO.CoordinateSystems
                         tokenizer.CheckCloser(bracket);
                         if (ellipsoid == null)
                             throw new ArgumentException("DATUM/TRF missing ELLIPSOID.");
-                        return new Wkt2GeodeticDatum(keyword, name, ellipsoid) { Id = id };
+                        return new Wkt2GeodeticDatum(keyword, name, ellipsoid) { Id = id, Anchor = anchor };
                     default:
                         SkipUnknownElement(tokenizer);
                         break;
@@ -1238,6 +1463,62 @@ namespace ProjNet.IO.CoordinateSystems
             string remark = tokenizer.ReadDoubleQuotedWord();
             tokenizer.ReadCloser(bracket);
             return remark;
+        }
+
+        private static Wkt2BBox ReadBBox(WktStreamTokenizer tokenizer)
+        {
+            var bracket = tokenizer.ReadOpener();
+            tokenizer.NextToken();
+            double south = tokenizer.GetNumericValue();
+            tokenizer.ReadToken(",");
+            tokenizer.NextToken();
+            double west = tokenizer.GetNumericValue();
+            tokenizer.ReadToken(",");
+            tokenizer.NextToken();
+            double north = tokenizer.GetNumericValue();
+            tokenizer.ReadToken(",");
+            tokenizer.NextToken();
+            double east = tokenizer.GetNumericValue();
+            tokenizer.ReadCloser(bracket);
+            return new Wkt2BBox(south, west, north, east);
+        }
+
+        private static Wkt2Usage ReadUsage(WktStreamTokenizer tokenizer)
+        {
+            var bracket = tokenizer.ReadOpener();
+            tokenizer.NextToken();
+            var usage = new Wkt2Usage();
+
+            while (true)
+            {
+                string element = tokenizer.GetStringValue();
+                switch (element.ToUpperInvariant())
+                {
+                    case "SCOPE":
+                        var scopeBracket = tokenizer.ReadOpener();
+                        usage.Scope = tokenizer.ReadDoubleQuotedWord();
+                        tokenizer.ReadCloser(scopeBracket);
+                        break;
+                    case "AREA":
+                        var areaBracket = tokenizer.ReadOpener();
+                        usage.Area = tokenizer.ReadDoubleQuotedWord();
+                        tokenizer.ReadCloser(areaBracket);
+                        break;
+                    case "BBOX":
+                        usage.BBox = ReadBBox(tokenizer);
+                        break;
+                    case ",":
+                        break;
+                    case "]":
+                    case ")":
+                        tokenizer.CheckCloser(bracket);
+                        return usage;
+                    default:
+                        SkipUnknownElement(tokenizer);
+                        break;
+                }
+                tokenizer.NextToken();
+            }
         }
 
         private static void SkipUnknownElement(WktStreamTokenizer tokenizer)
