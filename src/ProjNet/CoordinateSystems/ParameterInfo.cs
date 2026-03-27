@@ -17,18 +17,7 @@ internal class ParameterInfo
     /// <summary>
     /// Gets the number of parameters expected.
     /// </summary>
-    public int NumParameters
-    {
-        get
-        {
-            if (this.Parameters is not null)
-            {
-                return this.Parameters.Count;
-            }
-
-            return 0;
-        }
-    }
+    public int NumParameters => this.Parameters?.Count ?? 0;
 
     /// <summary>
     /// Gets or sets the parameters set for this projection.
