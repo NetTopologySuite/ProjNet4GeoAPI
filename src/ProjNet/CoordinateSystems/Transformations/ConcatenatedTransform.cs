@@ -97,8 +97,11 @@ internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationC
     /// <returns>A <see cref="MathTransform"/> that reverses this concatenated transform.</returns>
     public override MathTransform Inverse()
     {
-        this.inverse ??= this.Clone();
+        if (this.inverse is null)
+        {
+            this.inverse = this.Clone();
             this.inverse.Invert();
+        }
 
         return this.inverse;
     }
