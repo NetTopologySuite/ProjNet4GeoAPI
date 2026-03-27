@@ -57,7 +57,7 @@ internal static partial class GeoTiffGridLoader
     {
         return LoadCore(path, GridMode.Horizontal, requireMetreUnitsForXyz: true, sampleValueArrayPool)
             .Select(page => page.ToHorizontalGrid(path))
-            .Where(grid => !(grid is null))
+            .OfType<GeoTiffHGridShiftMathTransform.HorizontalGrid>()
             .ToArray();
     }
 
@@ -81,7 +81,7 @@ internal static partial class GeoTiffGridLoader
     {
         return LoadCore(path, GridMode.Vertical, requireMetreUnitsForXyz: true, sampleValueArrayPool)
             .Select(page => page.ToVerticalGrid(path))
-            .Where(grid => !(grid is null))
+            .OfType<GeoTiffVGridShiftMathTransform.VerticalGrid>()
             .ToArray();
     }
 
@@ -105,7 +105,7 @@ internal static partial class GeoTiffGridLoader
     {
         return LoadCore(path, GridMode.Xyz, requireMetreUnits, ArrayPool<double>.Shared)
             .Select(page => page.ToXyzGrid(path))
-            .Where(grid => !(grid is null))
+            .OfType<GeoTiffXyzGridShiftMathTransform.XyzGrid>()
             .ToArray();
     }
 
@@ -133,13 +133,13 @@ internal static partial class GeoTiffGridLoader
         short pageIndex = 0;
         do
         {
-            if (!TryReadPage(path, tiff, mode, requireMetreUnitsForXyz, sampleValueArrayPool, out LoadedPage page))
+            if (!TryReadPage(path, tiff, mode, requireMetreUnitsForXyz, sampleValueArrayPool, out LoadedPage? pageCandidate))
             {
                 pageIndex++;
                 continue;
             }
 
-            pages.Add(page);
+            pages.Add(ArgumentGuard.ThrowIfNull(pageCandidate, nameof(pageCandidate)));
             pageIndex++;
         }
         while (tiff.ReadDirectory());
@@ -333,17 +333,17 @@ internal static partial class GeoTiffGridLoader
             return true;
         }
 
-        string unit = unitType?.Trim();
+        string? unit = unitType?.Trim();
         if (string.IsNullOrWhiteSpace(unit))
         {
             return true;
         }
 
-        return unit.Equals("metre", StringComparison.OrdinalIgnoreCase)
-            || unit.Equals("meter", StringComparison.OrdinalIgnoreCase)
-            || unit.Equals("metres", StringComparison.OrdinalIgnoreCase)
-            || unit.Equals("meters", StringComparison.OrdinalIgnoreCase)
-            || unit.Equals("m", StringComparison.OrdinalIgnoreCase);
+        return string.Equals(unit, "metre", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(unit, "meter", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(unit, "metres", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(unit, "meters", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(unit, "m", StringComparison.OrdinalIgnoreCase);
     }
 
     private static bool ContainsOrdinalIgnoreCase(string value, string search)
@@ -546,7 +546,6 @@ internal static partial class GeoTiffGridLoader
             }
 
             sampleValueArrayPool.Return(sampleValues[i], clearArray: false);
-            sampleValues[i] = null;
         }
     }
 
@@ -558,16 +557,18 @@ internal static partial class GeoTiffGridLoader
         var offsetBySample = new Dictionary<int, double>();
         var unitTypeBySample = new Dictionary<int, string>();
 
-        if (TryGetStringField(tiff, (TiffTag)GdalMetadataTag, out string gdalMetadata) && !string.IsNullOrWhiteSpace(gdalMetadata))
+        if (TryGetStringField(tiff, (TiffTag)GdalMetadataTag, out string? gdalMetadataCandidate)
+            && !string.IsNullOrWhiteSpace(gdalMetadataCandidate))
         {
+            string gdalMetadata = ArgumentGuard.ThrowIfNull(gdalMetadataCandidate, nameof(gdalMetadataCandidate));
             string sanitizedMetadata = SanitizeXmlMetadata(gdalMetadata);
             ParseMetadataItems(sanitizedMetadata, samplesPerPixel, descriptionsBySample, positiveValueBySample, scaleBySample, offsetBySample, unitTypeBySample);
         }
 
         double? noDataValue = default;
-        if (TryGetStringField(tiff, (TiffTag)GdalNoDataTag, out string noDataText)
+        if (TryGetStringField(tiff, (TiffTag)GdalNoDataTag, out string? noDataTextCandidate)
             && double.TryParse(
-                CleanMetadataValue(noDataText),
+                CleanMetadataValue(ArgumentGuard.ThrowIfNull(noDataTextCandidate, nameof(noDataTextCandidate))),
                 NumberStyles.Float | NumberStyles.AllowThousands,
                 CultureInfo.InvariantCulture,
                 out double parsedNoData))
