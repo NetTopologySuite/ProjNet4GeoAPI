@@ -6,6 +6,7 @@ namespace ProjNet.CoordinateSystems.Projections;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
@@ -13,8 +14,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </summary>
 public class ProjectionsRegistry
 {
-    private static readonly Dictionary<string, Type> TypeRegistry = new();
-    private static readonly Dictionary<string, Type> ConstructorRegistry = new();
+    private static readonly Dictionary<string, ProjectionRegistration> TypeRegistry = new();
 
     private static readonly object RegistryLock = new();
 
@@ -370,14 +370,26 @@ public class ProjectionsRegistry
     /// Thrown when <paramref name="type"/> does not derive from <see cref="MathTransform"/>, lacks a required
     /// constructor, or a different type is already registered under <paramref name="name"/>.
     /// </exception>
-    public static void Register(string name, Type type)
+    public static void Register(
+        string name,
+#if NET5_0_OR_GREATER
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+#endif
+        Type type)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
             ArgumentGuard.ThrowIfNull(name, nameof(name));
         }
 
-        type = ArgumentGuard.ThrowIfNull(type, nameof(type));
+#if NET6_0_OR_GREATER
+        ArgumentNullException.ThrowIfNull(type);
+#else
+        if (type is null)
+        {
+            throw new ArgumentNullException(nameof(type));
+        }
+#endif
 
         if (!typeof(MathTransform).IsAssignableFrom(type))
         {
@@ -393,9 +405,9 @@ public class ProjectionsRegistry
         string key = ProjectionNameToRegistryKey(name);
         lock (RegistryLock)
         {
-            if (TypeRegistry.TryGetValue(key, out var registeredType))
+            if (TypeRegistry.TryGetValue(key, out var registration))
             {
-                if (ReferenceEquals(type, registeredType))
+                if (ReferenceEquals(type, registration.ProjectionType))
                 {
                     return;
                 }
@@ -404,8 +416,7 @@ public class ProjectionsRegistry
             }
 
             ci = ArgumentGuard.ThrowIfNull(ci, nameof(ci));
-            TypeRegistry.Add(key, type);
-            ConstructorRegistry.Add(key, ci);
+            TypeRegistry.Add(key, new ProjectionRegistration(type, ci));
         }
     }
 
@@ -423,12 +434,12 @@ public class ProjectionsRegistry
 
         lock (RegistryLock)
         {
-            if (!TypeRegistry.TryGetValue(ProjectionNameToRegistryKey(existingName), out var existingProjectionType))
+            if (!TypeRegistry.TryGetValue(ProjectionNameToRegistryKey(existingName), out var existingRegistration))
             {
                 ArgumentGuard.ThrowArgument($"{existingName} is not a registered projection type");
             }
 
-            Register(aliasName, ArgumentGuard.ThrowIfNull(existingProjectionType, nameof(existingProjectionType)));
+            Register(aliasName, ArgumentGuard.ThrowIfNull(existingRegistration, nameof(existingRegistration)).ProjectionType);
         }
     }
 
@@ -447,19 +458,25 @@ public class ProjectionsRegistry
 
         lock (RegistryLock)
         {
-            if (!TypeRegistry.TryGetValue(key, out projectionType))
+            if (!TypeRegistry.TryGetValue(key, out var registration))
             {
                 throw new NotSupportedException($"Projection {className} is not supported.");
             }
 
-            if (!ConstructorRegistry.TryGetValue(key, out constructorParameterType))
-            {
-                throw new NotSupportedException($"Projection {className} has no registered constructor.");
-            }
+            projectionType = registration.ProjectionType;
+            constructorParameterType = registration.ConstructorParameterType;
         }
 
-        projectionType = ArgumentGuard.ThrowIfNull(projectionType, nameof(projectionType));
-        constructorParameterType = ArgumentGuard.ThrowIfNull(constructorParameterType, nameof(constructorParameterType));
+        if (projectionType is null)
+        {
+            ArgumentGuard.ThrowArgument($"Projection {className} is not supported.");
+        }
+
+        if (constructorParameterType is null)
+        {
+            ArgumentGuard.ThrowArgument($"Projection {className} has no registered constructor.");
+        }
+
         if (!constructorParameterType.IsInstanceOfType(parameters))
         {
             parameters = new List<ProjectionParameter>(parameters);
@@ -482,7 +499,11 @@ public class ProjectionsRegistry
         return name.ToLowerInvariant().Replace(' ', '_').Replace('-', '_');
     }
 
-    private static Type? CheckConstructor(Type type)
+    private static Type? CheckConstructor(
+#if NET5_0_OR_GREATER
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+#endif
+        Type type)
     {
         // find a constructor that accepts exactly one parameter that's an
         // instance of List<ProjectionParameter>, and then return the exact
@@ -498,5 +519,26 @@ public class ProjectionsRegistry
         }
 
         return null;
+    }
+
+    private sealed class ProjectionRegistration
+    {
+        internal ProjectionRegistration(
+#if NET5_0_OR_GREATER
+            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+#endif
+            Type projectionType,
+            Type constructorParameterType)
+        {
+            this.ProjectionType = projectionType;
+            this.ConstructorParameterType = constructorParameterType;
+        }
+
+#if NET5_0_OR_GREATER
+        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)]
+#endif
+        internal Type ProjectionType { get; }
+
+        internal Type ConstructorParameterType { get; }
     }
 }
