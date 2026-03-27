@@ -31,11 +31,12 @@ dotnet add package ProjNET
 
 ```csharp
 using ProjNet;
+using ProjNet.Data;
 
 var services = new CoordinateSystemServices(new[]
 {
-    new KeyValuePair<int, string>(4326, GeographicCoordinateSystem.WGS84.WKT),
-    new KeyValuePair<int, string>(3857, ProjectedCoordinateSystem.WebMercator.WKT),
+    new CoordinateSystemDefinition(4326, GeographicCoordinateSystem.WGS84.WKT),
+    new CoordinateSystemDefinition(3857, ProjectedCoordinateSystem.WebMercator.WKT),
 });
 
 var transform = services.CreateTransformation(4326, 3857);

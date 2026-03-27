@@ -80,8 +80,8 @@ public class VerificationSuiteTests
     {
         return new CoordinateSystemServices(new[]
         {
-            new System.Collections.Generic.KeyValuePair<int, string>(4326, GeographicCoordinateSystem.WGS84.WKT),
-            new System.Collections.Generic.KeyValuePair<int, string>(3857, ProjectedCoordinateSystem.WebMercator.WKT),
+            new CoordinateSystemDefinition(4326, GeographicCoordinateSystem.WGS84.WKT),
+            new CoordinateSystemDefinition(3857, ProjectedCoordinateSystem.WebMercator.WKT),
         });
     }
 
