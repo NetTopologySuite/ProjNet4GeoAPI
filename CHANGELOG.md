@@ -51,6 +51,11 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 - Optimized selected hot internal paths using `stackalloc`, `ReadOnlySpan<T>/Span<T>`, and `ArrayPool<T>` to reduce transient allocations.
 - Improved GIE builtins conversion fallback handling by normalizing cs2cs-style operation tokens for runtime conversion attempts and prioritizing detailed transform skip reasons.
 - Enabled full nullable context across the codebase (`<Nullable>enable</Nullable>` in library and tests, `#nullable enable` directives in source files).
+- Replaced ambiguous coordinate-definition `KeyValuePair` contracts with explicit typed records in public/provider APIs:
+  - `CoordinateSystemDefinition` (`Srid`, `Wkt`)
+  - `CoordinateSystemEntry` (`Srid`, `CoordinateSystem`)
+  - `ICoordinateSystemDefinitionProvider.GetDefinitions()` now returns `IEnumerable<CoordinateSystemDefinition>`.
+  - `CoordinateSystemServices` constructor overloads and enumerator surface now use typed definition/entry models.
 
 ### Fixed
 
@@ -67,4 +72,4 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 
 - Package version line is aligned to `3.0.0` via shared build props (`src/Directory.Build.props`).
 - `PackageValidationBaselineVersion` remains `2.1.0` until `3.0.0` is published.
-- Current validation snapshot (Phase 4): full tests `3845 total / 3012 passed / 0 failed / 833 skipped`; strict nullable (`-p:Nullable=enable`) CS warnings `0` (library) and `0` (tests); benchmark discovery and API baseline validation pass.
+- Current validation snapshot (Phase 5): full tests `3854 total / 3019 passed / 2 failed / 833 skipped` (known baseline: `CoordinateTransformTests.TestKrovakGreenwichProjection`, `CoordinateTransformTests.TestKrovakFerroProjection`); solution Release build and `PublicApiBaselineTests` pass.

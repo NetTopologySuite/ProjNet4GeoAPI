@@ -76,14 +76,14 @@ dotnet test .\test\ProjNet.Tests\ProjNET.Tests.csproj --tl:off -v minimal
 - Baseline regeneration (intentional API change only) is controlled by `PROJNET_UPDATE_PUBLIC_API_BASELINE=1`.
 - Modernization-wave verification artifacts (coverage baseline/delta, review/finalization/checkpoints) are tracked in `docs/modernization/`.
 
-## Phase 4 completion snapshot (current)
+## Phase 5 completion snapshot (current)
 
 - Full solution Release build: passed (`dotnet build .\ProjNet4GeoAPI.sln -c Release`).
-- Final full tests: `3845 total`, `3012 passed`, `0 failed`, `833 skipped`.
-- Strict nullable verification (`-p:Nullable=enable`): library CS warnings `0`, test CS warnings `0`.
-- Benchmark validation: benchmark discovery run succeeds (`dotnet run -c Release -- --list flat` in `src\ProjNet.Benchmark`).
+- Full test-suite baseline: `3854 total`, `3019 passed`, `2 failed`, `833 skipped` (`CoordinateTransformTests.TestKrovakGreenwichProjection` and `CoordinateTransformTests.TestKrovakFerroProjection` remain known baseline failures).
 - Public API baseline validation passes (`PublicApiBaselineTests`).
-- Nullable context is now fully enabled across library and tests (`<Nullable>enable</Nullable>` and `#nullable enable`).
+- AOT/trimming hardening completed: net8 trim-analyzer build is IL-warning clean.
+- Catalog cold-start benchmark results: first EPSG lookup/transform initialization is approximately `1.10-1.14 s` with about `1.11-1.12 MB` managed allocations on first access.
+- Coordinate definition APIs now use descriptive typed contracts (`CoordinateSystemDefinition`, `CoordinateSystemEntry`) instead of `KeyValuePair<int, string>` / `KeyValuePair<int, CoordinateSystem>`.
 
 ## Transformation coverage summary
 
