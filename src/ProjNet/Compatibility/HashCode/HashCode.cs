@@ -4,7 +4,7 @@
 #if NETSTANDARD2_0
 namespace System;
 
-#nullable enable annotations
+#nullable enable
 
 using System.Collections.Generic;
 
