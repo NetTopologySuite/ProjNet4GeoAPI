@@ -17,25 +17,11 @@ internal sealed class MolobadekasMathTransform : MathTransform
 {
     private const double ArcSecondToRadians = Math.PI / (180d * 3600d);
 
-    private readonly double translationX;
-    private readonly double translationY;
-    private readonly double translationZ;
+    private readonly Vector3D translation;
     private readonly double scalePpm;
-    private readonly double pivotX;
-    private readonly double pivotY;
-    private readonly double pivotZ;
-    private readonly double rotationX;
-    private readonly double rotationY;
-    private readonly double rotationZ;
-    private readonly double rotationM00;
-    private readonly double rotationM01;
-    private readonly double rotationM02;
-    private readonly double rotationM10;
-    private readonly double rotationM11;
-    private readonly double rotationM12;
-    private readonly double rotationM20;
-    private readonly double rotationM21;
-    private readonly double rotationM22;
+    private readonly Vector3D pivot;
+    private readonly Vector3D rotationRadians;
+    private readonly Matrix3x3 rotationMatrix;
 
     private bool isInverted;
     private MathTransform? inverse;
@@ -80,32 +66,16 @@ internal sealed class MolobadekasMathTransform : MathTransform
         ArgumentGuard.ThrowIfNotFinite(pivotY, nameof(pivotY), "Molobadekas parameters must be finite.");
         ArgumentGuard.ThrowIfNotFinite(pivotZ, nameof(pivotZ), "Molobadekas parameters must be finite.");
 
-        this.translationX = translationX;
-        this.translationY = translationY;
-        this.translationZ = translationZ;
+        this.translation = new Vector3D(translationX, translationY, translationZ);
         this.scalePpm = scalePpm;
-        this.pivotX = pivotX;
-        this.pivotY = pivotY;
-        this.pivotZ = pivotZ;
-        this.rotationX = rotationXArcSeconds * ArcSecondToRadians;
-        this.rotationY = rotationYArcSeconds * ArcSecondToRadians;
-        this.rotationZ = rotationZArcSeconds * ArcSecondToRadians;
+        this.pivot = new Vector3D(pivotX, pivotY, pivotZ);
+        this.rotationRadians = new Vector3D(
+            rotationXArcSeconds * ArcSecondToRadians,
+            rotationYArcSeconds * ArcSecondToRadians,
+            rotationZArcSeconds * ArcSecondToRadians);
         this.isInverted = isInverted;
 
-        BuildRotationMatrix(
-            this.rotationX,
-            this.rotationY,
-            this.rotationZ,
-            isPositionVector,
-            out this.rotationM00,
-            out this.rotationM01,
-            out this.rotationM02,
-            out this.rotationM10,
-            out this.rotationM11,
-            out this.rotationM12,
-            out this.rotationM20,
-            out this.rotationM21,
-            out this.rotationM22);
+        this.rotationMatrix = BuildRotationMatrix(this.rotationRadians, isPositionVector);
     }
 
     /// <summary>
@@ -116,25 +86,11 @@ internal sealed class MolobadekasMathTransform : MathTransform
     /// <param name="isInverted">Whether to apply inverse direction in the clone.</param>
     private MolobadekasMathTransform(MolobadekasMathTransform source, bool isInverted)
     {
-        this.translationX = source.translationX;
-        this.translationY = source.translationY;
-        this.translationZ = source.translationZ;
+        this.translation = source.translation;
         this.scalePpm = source.scalePpm;
-        this.pivotX = source.pivotX;
-        this.pivotY = source.pivotY;
-        this.pivotZ = source.pivotZ;
-        this.rotationX = source.rotationX;
-        this.rotationY = source.rotationY;
-        this.rotationZ = source.rotationZ;
-        this.rotationM00 = source.rotationM00;
-        this.rotationM01 = source.rotationM01;
-        this.rotationM02 = source.rotationM02;
-        this.rotationM10 = source.rotationM10;
-        this.rotationM11 = source.rotationM11;
-        this.rotationM12 = source.rotationM12;
-        this.rotationM20 = source.rotationM20;
-        this.rotationM21 = source.rotationM21;
-        this.rotationM22 = source.rotationM22;
+        this.pivot = source.pivot;
+        this.rotationRadians = source.rotationRadians;
+        this.rotationMatrix = source.rotationMatrix;
         this.isInverted = isInverted;
     }
 
@@ -153,12 +109,12 @@ internal sealed class MolobadekasMathTransform : MathTransform
     /// <inheritdoc />
     public override bool Identity()
     {
-        return this.translationX == 0d
-            && this.translationY == 0d
-            && this.translationZ == 0d
-            && this.rotationX == 0d
-            && this.rotationY == 0d
-            && this.rotationZ == 0d
+        return this.translation.X == 0d
+            && this.translation.Y == 0d
+            && this.translation.Z == 0d
+            && this.rotationRadians.X == 0d
+            && this.rotationRadians.Y == 0d
+            && this.rotationRadians.Z == 0d
             && this.scalePpm == 0d;
     }
 
@@ -317,67 +273,39 @@ internal sealed class MolobadekasMathTransform : MathTransform
             && !double.IsInfinity(value);
     }
 
-    private static void BuildRotationMatrix(
-        double rotationX,
-        double rotationY,
-        double rotationZ,
-        bool isPositionVector,
-        out double r00,
-        out double r01,
-        out double r02,
-        out double r10,
-        out double r11,
-        out double r12,
-        out double r20,
-        out double r21,
-        out double r22)
+    private static Matrix3x3 BuildRotationMatrix(Vector3D rotation, bool isPositionVector)
     {
-        r00 = 1d;
-        r01 = rotationZ;
-        r02 = -rotationY;
-        r10 = -rotationZ;
-        r11 = 1d;
-        r12 = rotationX;
-        r20 = rotationY;
-        r21 = -rotationX;
-        r22 = 1d;
+        Matrix3x3 coordinateFrameMatrix = new Matrix3x3(
+            1d,
+            rotation.Z,
+            -rotation.Y,
+            -rotation.Z,
+            1d,
+            rotation.X,
+            rotation.Y,
+            -rotation.X,
+            1d);
 
-        if (!isPositionVector)
-        {
-            return;
-        }
-
-        Swap(ref r01, ref r10);
-        Swap(ref r02, ref r20);
-        Swap(ref r12, ref r21);
-    }
-
-    private static void Swap(ref double left, ref double right)
-    {
-        double value = left;
-        left = right;
-        right = value;
+        return isPositionVector ? coordinateFrameMatrix.Transpose() : coordinateFrameMatrix;
     }
 
     private void TransformForward(ref double x, ref double y, ref double z)
     {
-        double sourceX = x - this.pivotX;
-        double sourceY = y - this.pivotY;
-        double sourceZ = z - this.pivotZ;
+        Vector3D source = new Vector3D(x, y, z) - this.pivot;
         double scaleFactor = 1d + (this.scalePpm * 1e-6d);
-        x = this.translationX + this.pivotX + (scaleFactor * ((this.rotationM00 * sourceX) + (this.rotationM01 * sourceY) + (this.rotationM02 * sourceZ)));
-        y = this.translationY + this.pivotY + (scaleFactor * ((this.rotationM10 * sourceX) + (this.rotationM11 * sourceY) + (this.rotationM12 * sourceZ)));
-        z = this.translationZ + this.pivotZ + (scaleFactor * ((this.rotationM20 * sourceX) + (this.rotationM21 * sourceY) + (this.rotationM22 * sourceZ)));
+        Vector3D transformed = this.translation + this.pivot + ((this.rotationMatrix * source) * scaleFactor);
+        x = transformed.X;
+        y = transformed.Y;
+        z = transformed.Z;
     }
 
     private void TransformInverse(ref double x, ref double y, ref double z)
     {
         double scaleFactor = 1d + (this.scalePpm * 1e-6d);
-        double sourceX = (x - this.translationX - this.pivotX) / scaleFactor;
-        double sourceY = (y - this.translationY - this.pivotY) / scaleFactor;
-        double sourceZ = (z - this.translationZ - this.pivotZ) / scaleFactor;
-        x = this.pivotX + (this.rotationM00 * sourceX) + (this.rotationM10 * sourceY) + (this.rotationM20 * sourceZ);
-        y = this.pivotY + (this.rotationM01 * sourceX) + (this.rotationM11 * sourceY) + (this.rotationM21 * sourceZ);
-        z = this.pivotZ + (this.rotationM02 * sourceX) + (this.rotationM12 * sourceY) + (this.rotationM22 * sourceZ);
+        Vector3D source = (new Vector3D(x, y, z) - this.translation - this.pivot) / scaleFactor;
+        Vector3D transformed = this.pivot + (this.rotationMatrix.Transpose() * source);
+        x = transformed.X;
+        y = transformed.Y;
+        z = transformed.Z;
     }
 }
