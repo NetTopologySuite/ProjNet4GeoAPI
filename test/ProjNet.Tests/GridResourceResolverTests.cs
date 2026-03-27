@@ -31,9 +31,10 @@ public class GridResourceResolverTests
             var options = new GridResourceResolverOptions(new[] { localDirectory }, null, GridResourceResolutionMode.LocalOnly);
             var resolver = new GridResourceResolver(options, fetchClient);
 
-            bool resolved = resolver.TryResolve("sample.gsb", out string resolvedPath);
+            bool resolved = resolver.TryResolve("sample.gsb", out string? resolvedPath);
 
             Assert.True(resolved);
+            Assert.NotNull(resolvedPath);
             Assert.Equal(localGridPath, resolvedPath);
             Assert.Equal(0, fetchClient.Calls);
         }
@@ -56,7 +57,7 @@ public class GridResourceResolverTests
             var options = new GridResourceResolverOptions(new[] { localDirectory }, null, GridResourceResolutionMode.LocalOnly);
             var resolver = new GridResourceResolver(options, fetchClient);
 
-            bool resolved = resolver.TryResolve("missing.gsb", out string _);
+            bool resolved = resolver.TryResolve("missing.gsb", out string? _);
 
             Assert.False(resolved);
             Assert.Equal(0, fetchClient.Calls);
@@ -84,11 +85,13 @@ public class GridResourceResolverTests
             var options = new GridResourceResolverOptions(new[] { localDirectory }, cacheDirectory, GridResourceResolutionMode.LocalThenNetwork);
             var resolver = new GridResourceResolver(options, fetchClient);
 
-            bool firstResolved = resolver.TryResolve("network-grid.gsb", out string firstPath);
-            bool secondResolved = resolver.TryResolve("network-grid.gsb", out string secondPath);
+            bool firstResolved = resolver.TryResolve("network-grid.gsb", out string? firstPath);
+            bool secondResolved = resolver.TryResolve("network-grid.gsb", out string? secondPath);
 
             Assert.True(firstResolved);
             Assert.True(secondResolved);
+            Assert.NotNull(firstPath);
+            Assert.NotNull(secondPath);
             Assert.Equal(firstPath, secondPath);
             Assert.True(File.Exists(firstPath));
             Assert.Equal(1, fetchClient.Calls);
@@ -111,7 +114,7 @@ public class GridResourceResolverTests
     {
         internal int Calls { get; private set; }
 
-        internal Action<string> OnFetch { get; set; }
+        internal Action<string>? OnFetch { get; set; }
 
         public bool TryFetch(string gridName, string targetFilePath)
         {

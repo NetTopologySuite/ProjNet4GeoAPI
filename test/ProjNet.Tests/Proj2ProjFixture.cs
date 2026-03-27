@@ -23,10 +23,10 @@ public sealed class Proj2ProjFixture
     /// <summary>
     /// Gets or sets the generator identifier used to produce the fixture.
     /// </summary>
-    public string Generator { get; set; }
+    public string Generator { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the parity cases included in the fixture payload.
     /// </summary>
-    public List<Proj2ProjCase> Cases { get; set; }
+    public List<Proj2ProjCase> Cases { get; set; } = new List<Proj2ProjCase>();
 }

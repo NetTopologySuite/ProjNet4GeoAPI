@@ -28,7 +28,7 @@ public class VerificationSuiteTests
     public void Wgs84ToWebMercatorMatchesReferencePoints(double lon, double lat, double expectedX, double expectedY)
     {
         var services = CreateCanonicalServices();
-        var transform = services.CreateTransformation(4326, 3857);
+        var transform = Assert.IsAssignableFrom<ICoordinateTransformation>(services.CreateTransformation(4326, 3857));
         double[] result = transform.MathTransform.Transform(new[] { lon, lat });
 
         AssertCoordinate(expectedX, expectedY, result[0], result[1], 1e-6);
@@ -48,7 +48,7 @@ public class VerificationSuiteTests
     public void WebMercatorToWgs84MatchesReferencePoints(double x, double y, double expectedLon, double expectedLat)
     {
         var services = CreateCanonicalServices();
-        var transform = services.CreateTransformation(3857, 4326);
+        var transform = Assert.IsAssignableFrom<ICoordinateTransformation>(services.CreateTransformation(3857, 4326));
         double[] result = transform.MathTransform.Transform(new[] { x, y });
 
         AssertCoordinate(expectedLon, expectedLat, result[0], result[1], 1e-9);
@@ -62,8 +62,8 @@ public class VerificationSuiteTests
     {
         var services = CreateCanonicalServices();
 
-        var bySrid = services.GetCoordinateSystem(4326);
-        var byAuthority = services.GetCoordinateSystem("EPSG", 4326);
+        var bySrid = Assert.IsAssignableFrom<CoordinateSystem>(services.GetCoordinateSystem(4326));
+        var byAuthority = Assert.IsAssignableFrom<CoordinateSystem>(services.GetCoordinateSystem("EPSG", 4326));
         bool found = services.TryGetCoordinateSystem("EPSG", 4326, out var byTryGet);
         int? srid = services.GetSRID("EPSG", 4326);
 

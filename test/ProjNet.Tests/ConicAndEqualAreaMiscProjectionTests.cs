@@ -250,7 +250,7 @@ public class ConicAndEqualAreaMiscProjectionTests
         };
     }
 
-    private static string BuildProjectedWkt(string projectionName, string spheroidClause, string extraParameters)
+    private static string BuildProjectedWkt(string projectionName, string spheroidClause, string? extraParameters)
     {
         return string.Format(
             CultureInfo.InvariantCulture,

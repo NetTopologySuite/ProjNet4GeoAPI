@@ -128,7 +128,7 @@ public class SharpMapIssueRegressionTests : CoordinateTransformTestsBase
 
     private System.Type ReflectType(string typeName)
     {
-        var asm = Assembly.GetAssembly(typeof(ProjNet.CoordinateSystems.Projections.MapProjection));
+        Assembly asm = Assert.IsAssignableFrom<Assembly>(Assembly.GetAssembly(typeof(ProjNet.CoordinateSystems.Projections.MapProjection)));
         var res = asm.GetType(typeName);
         return Assert.IsAssignableFrom<System.Type>(res);
     }

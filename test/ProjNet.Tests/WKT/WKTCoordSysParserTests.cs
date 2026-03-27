@@ -577,7 +577,7 @@ public class WKTCoordSysParserTests
         return true;
     }
 
-    private static bool CheckUnit(IUnit unit, string name, double? value, string authority, long? code)
+    private static bool CheckUnit(IUnit unit, string name, double? value, string? authority, long? code)
     {
         Assert.NotNull(unit);
         Assert.True(CheckInfo(unit, name, authority, code));

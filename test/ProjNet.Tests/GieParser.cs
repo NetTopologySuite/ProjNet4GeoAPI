@@ -22,7 +22,7 @@ internal static class GieParser
     /// <param name="path">Path to the fixture file.</param>
     /// <param name="options">Optional parser behavior options.</param>
     /// <returns>Parsed GIE cases.</returns>
-    public static IReadOnlyList<GieCase> ParseFile(string path, GieParserOptions options = null)
+    public static IReadOnlyList<GieCase> ParseFile(string path, GieParserOptions? options = null)
     {
         ArgumentNullException.ThrowIfNull(path);
         return Parse(File.ReadAllText(path), options);
@@ -34,18 +34,18 @@ internal static class GieParser
     /// <param name="content">Fixture content text.</param>
     /// <param name="options">Optional parser behavior options.</param>
     /// <returns>Parsed GIE cases.</returns>
-    public static IReadOnlyList<GieCase> Parse(string content, GieParserOptions options = null)
+    public static IReadOnlyList<GieCase> Parse(string content, GieParserOptions? options = null)
     {
         ArgumentNullException.ThrowIfNull(content);
         options ??= new GieParserOptions();
 
         var parsedCases = new List<GieCase>();
-        string currentOperation = default!;
+        string? currentOperation = null;
         double currentToleranceValue = 0d;
         string currentToleranceUnit = "m";
         GieDirection currentDirection = GieDirection.Forward;
-        int? currentRoundtrip = default!;
-        double[] pendingAccept = default!;
+        int? currentRoundtrip = null;
+        double[]? pendingAccept = null;
 
         foreach (var logicalLine in EnumerateLogicalLines(content))
         {
@@ -71,8 +71,8 @@ internal static class GieParser
                 currentToleranceValue = 0d;
                 currentToleranceUnit = "m";
                 currentDirection = GieDirection.Forward;
-                currentRoundtrip = default!;
-                pendingAccept = default!;
+                currentRoundtrip = null;
+                pendingAccept = null;
             }
             else if (directive.Equals("tolerance", StringComparison.OrdinalIgnoreCase))
             {
@@ -102,17 +102,17 @@ internal static class GieParser
                         new GieCase
                         {
                             LineNumber = lineNumber,
-                            Operation = currentOperation,
+                            Operation = currentOperation ?? string.Empty,
                             ToleranceValue = currentToleranceValue,
                             ToleranceUnit = currentToleranceUnit,
                             Direction = currentDirection,
-                            Accept = pendingAccept,
+                            Accept = pendingAccept ?? Array.Empty<double>(),
                             Expect = Array.Empty<double>(),
                             ExpectsFailure = true,
                             ExpectedErrorCode = ParseExpectedErrorCode(payload),
                             RoundtripCount = currentRoundtrip,
                         });
-                    pendingAccept = default!;
+                    pendingAccept = null;
                     continue;
                 }
 
@@ -127,19 +127,20 @@ internal static class GieParser
                 }
 
                 var expected = ParseVector(payload, lineNumber, "expect");
+                double[] accepted = pendingAccept;
                 parsedCases.Add(
                     new GieCase
                     {
                         LineNumber = lineNumber,
-                        Operation = currentOperation,
+                        Operation = currentOperation ?? string.Empty,
                         ToleranceValue = currentToleranceValue,
                         ToleranceUnit = currentToleranceUnit,
                         Direction = currentDirection,
-                        Accept = pendingAccept,
+                        Accept = accepted,
                         Expect = expected,
                         RoundtripCount = currentRoundtrip,
                     });
-                pendingAccept = default!;
+                pendingAccept = null;
             }
             else if (!options.IgnoreUnknownDirectives)
             {
@@ -163,7 +164,7 @@ internal static class GieParser
     private static IEnumerable<LogicalLine> EnumerateLogicalLines(string content)
     {
         string[] lines = content.Replace("\r\n", "\n", StringComparison.Ordinal).Split('\n');
-        string current = default!;
+        string? current = null;
         int currentStartLine = 1;
 
         for (int i = 0; i < lines.Length; i++)
@@ -196,7 +197,7 @@ internal static class GieParser
             }
 
             yield return new LogicalLine(current, currentStartLine);
-            current = default!;
+            current = null;
         }
 
         if (current is not null)
@@ -364,7 +365,7 @@ internal static class GieParser
             "Failed to parse numeric value '" + token + "' in directive '" + directiveName + "' at line " + lineNumber.ToString(CultureInfo.InvariantCulture) + ".");
     }
 
-    private static void EnsureOperationDeclared(string operation, int lineNumber, string directive)
+    private static void EnsureOperationDeclared(string? operation, int lineNumber, string directive)
     {
         if (operation is null)
         {

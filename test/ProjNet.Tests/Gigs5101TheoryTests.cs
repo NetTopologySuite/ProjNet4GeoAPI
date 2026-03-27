@@ -213,15 +213,16 @@ public class Gigs5101TheoryTests
                 continue;
             }
 
-            if (!TryCreatePipelineTransform(testCase.Operation, out MathTransform transform))
+            if (!TryCreatePipelineTransform(testCase.Operation, out MathTransform? transform))
             {
                 continue;
             }
 
+            MathTransform pipelineTransform = Assert.IsAssignableFrom<MathTransform>(transform);
             double[] output;
             try
             {
-                output = transform.Transform(testCase.Accept);
+                output = pipelineTransform.Transform(testCase.Accept);
             }
             catch (ArgumentException)
             {
@@ -281,7 +282,7 @@ public class Gigs5101TheoryTests
     private static IEnumerable<GieCase> EnumerateFixtureCases(IReadOnlyList<string> fileNames)
     {
         string gigsDirectory = FindGigsDirectory();
-        if (gigsDirectory is null)
+        if (string.IsNullOrEmpty(gigsDirectory))
         {
             yield break;
         }
@@ -309,9 +310,9 @@ public class Gigs5101TheoryTests
         }
     }
 
-    private static bool TryCreatePipelineTransform(string operation, out MathTransform transform)
+    private static bool TryCreatePipelineTransform(string operation, out MathTransform? transform)
     {
-        transform = default!;
+        transform = null;
         if (string.IsNullOrWhiteSpace(operation))
         {
             return false;
@@ -333,15 +334,17 @@ public class Gigs5101TheoryTests
             return false;
         }
 
-        if (!TryResolveDeclaredCoordinateSystem(firstArgs, out CoordinateSystem source)
-            || !TryResolveDeclaredCoordinateSystem(secondArgs, out CoordinateSystem target))
+        if (!TryResolveDeclaredCoordinateSystem(firstArgs, out CoordinateSystem? source)
+            || !TryResolveDeclaredCoordinateSystem(secondArgs, out CoordinateSystem? target))
         {
             return false;
         }
 
+        CoordinateSystem sourceCoordinateSystem = Assert.IsAssignableFrom<CoordinateSystem>(source);
+        CoordinateSystem targetCoordinateSystem = Assert.IsAssignableFrom<CoordinateSystem>(target);
         try
         {
-            var coordinateTransformation = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
+            var coordinateTransformation = CoordinateTransformationFactory.CreateFromCoordinateSystems(sourceCoordinateSystem, targetCoordinateSystem);
             transform = coordinateTransformation.MathTransform;
             return transform is not null;
         }
@@ -411,9 +414,9 @@ public class Gigs5101TheoryTests
         return parsedSteps.Count > 0;
     }
 
-    private static bool TryResolveDeclaredCoordinateSystem(Dictionary<string, string> args, out CoordinateSystem coordinateSystem)
+    private static bool TryResolveDeclaredCoordinateSystem(Dictionary<string, string> args, out CoordinateSystem? coordinateSystem)
     {
-        coordinateSystem = default!;
+        coordinateSystem = null;
 
         if (args.TryGetValue("init", out string? initValue)
             && TryParseEpsgCode(initValue, out int srid))
@@ -433,7 +436,7 @@ public class Gigs5101TheoryTests
             return false;
         }
 
-        if (!TryCreateGeographicCoordinateSystem(args, out GeographicCoordinateSystem geographicCoordinateSystem))
+        if (!TryCreateGeographicCoordinateSystem(args, out GeographicCoordinateSystem? geographicCoordinateSystem))
         {
             return false;
         }
@@ -446,9 +449,10 @@ public class Gigs5101TheoryTests
         try
         {
             var projection = CoordinateSystemFactory.CreateProjection("GIGS " + projectionClassName, projectionClassName, parameters);
+            GeographicCoordinateSystem geographic = Assert.IsAssignableFrom<GeographicCoordinateSystem>(geographicCoordinateSystem);
             coordinateSystem = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
                 "GIGS projected",
-                geographicCoordinateSystem,
+                geographic,
                 projection,
                 LinearUnit.Metre,
                 new AxisInfo("East", AxisOrientationEnum.East),
@@ -491,11 +495,11 @@ public class Gigs5101TheoryTests
         return int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out srid);
     }
 
-    private static CoordinateSystem NormalizeAxisOrder(CoordinateSystem coordinateSystem)
+    private static CoordinateSystem? NormalizeAxisOrder(CoordinateSystem? coordinateSystem)
     {
         if (coordinateSystem is null)
         {
-            return default!;
+            return null;
         }
 
         var geographic = coordinateSystem as GeographicCoordinateSystem;
@@ -513,8 +517,7 @@ public class Gigs5101TheoryTests
         var projected = coordinateSystem as ProjectedCoordinateSystem;
         if (projected is not null)
         {
-            CoordinateSystem normalizedGeographic = NormalizeAxisOrder(projected.GeographicCoordinateSystem);
-            var normalizedProjectedGeographic = (GeographicCoordinateSystem)normalizedGeographic;
+            var normalizedProjectedGeographic = Assert.IsAssignableFrom<GeographicCoordinateSystem>(NormalizeAxisOrder(projected.GeographicCoordinateSystem));
             return CoordinateSystemFactory.CreateProjectedCoordinateSystem(
                 projected.Name,
                 normalizedProjectedGeographic,
@@ -527,9 +530,9 @@ public class Gigs5101TheoryTests
         return coordinateSystem;
     }
 
-    private static bool TryMapProjectionClass(string projCode, out string projectionClassName)
+    private static bool TryMapProjectionClass(string? projCode, out string projectionClassName)
     {
-        projectionClassName = default!;
+        projectionClassName = string.Empty;
         if (projCode is null)
         {
             return false;
@@ -557,16 +560,20 @@ public class Gigs5101TheoryTests
         return false;
     }
 
-    private static bool TryCreateGeographicCoordinateSystem(Dictionary<string, string> args, out GeographicCoordinateSystem gcs)
+    private static bool TryCreateGeographicCoordinateSystem(Dictionary<string, string> args, out GeographicCoordinateSystem? gcs)
     {
-        gcs = default!;
+        gcs = null;
 
-        if (!TryResolveEllipsoid(args, out Ellipsoid ellipsoid))
+        if (!TryResolveEllipsoid(args, out Ellipsoid? ellipsoid))
         {
             return false;
         }
 
-        var datum = CoordinateSystemFactory.CreateHorizontalDatum("GIGS datum", DatumType.HD_Geocentric, ellipsoid, null);
+        var datum = CoordinateSystemFactory.CreateHorizontalDatum(
+            "GIGS datum",
+            DatumType.HD_Geocentric,
+            Assert.IsAssignableFrom<Ellipsoid>(ellipsoid),
+            null);
         gcs = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "GIGS geographic",
             AngularUnit.Degrees,
@@ -577,9 +584,9 @@ public class Gigs5101TheoryTests
         return true;
     }
 
-    private static bool TryResolveEllipsoid(Dictionary<string, string> args, out Ellipsoid ellipsoid)
+    private static bool TryResolveEllipsoid(Dictionary<string, string> args, out Ellipsoid? ellipsoid)
     {
-        ellipsoid = default!;
+        ellipsoid = null;
         if (args.TryGetValue("ellps", out string? ellps))
         {
             if (ellps.Equals("wgs84", StringComparison.OrdinalIgnoreCase))
@@ -763,7 +770,7 @@ public class Gigs5101TheoryTests
             current = current.Parent;
         }
 
-        return default!;
+        return string.Empty;
     }
 
     private static double ToNumericTolerance(double value, string unit)

@@ -116,16 +116,16 @@ public class XyzGridShiftRuntimeTests
             operation = operation.Replace(GridPlaceholder, FindGridPath("subset_of_gr3df97a.tif"), StringComparison.Ordinal);
         }
 
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string skipReason);
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string? skipReason);
         Assert.False(ok);
-        Assert.Contains(expectedToken, skipReason, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(expectedToken, Assert.IsAssignableFrom<string>(skipReason), StringComparison.OrdinalIgnoreCase);
     }
 
     private static MathTransform CreateTransform(string operation)
     {
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
         Assert.True(ok, skipReason);
-        return transform;
+        return Assert.IsAssignableFrom<MathTransform>(transform);
     }
 
     private static string FindGridPath(string fileName)

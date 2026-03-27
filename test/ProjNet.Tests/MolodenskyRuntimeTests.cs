@@ -91,17 +91,17 @@ public class MolodenskyRuntimeTests
     [InlineData("+proj=molodensky +a=6378160 +rf=298.25 +dx=0 +dy=0 +dz=0 +da=0", "missing df")]
     public void MolodenskyCreationFailsWhenMandatoryParametersAreMissing(string operation, string expectedToken)
     {
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string skipReason);
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string? skipReason);
 
         Assert.False(ok);
-        Assert.Contains(expectedToken, skipReason, StringComparison.Ordinal);
+        Assert.Contains(expectedToken, Assert.IsAssignableFrom<string>(skipReason), StringComparison.Ordinal);
     }
 
     private static MathTransform CreateTransform(string operation)
     {
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
         Assert.True(ok, skipReason);
-        return transform;
+        return Assert.IsAssignableFrom<MathTransform>(transform);
     }
 
     private static double[] CreatePoint(double x, double y, double z) => [x, y, z];

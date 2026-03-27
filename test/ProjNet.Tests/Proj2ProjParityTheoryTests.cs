@@ -35,8 +35,8 @@ public class Proj2ProjParityTheoryTests
         var coordinateSystemFactory = new CoordinateSystemFactory();
         var transformationFactory = new CoordinateTransformationFactory();
 
-        var source = (CoordinateSystem)coordinateSystemFactory.CreateFromWkt(testCase.SourceWkt);
-        var target = (CoordinateSystem)coordinateSystemFactory.CreateFromWkt(testCase.TargetWkt);
+        var source = CoordinateSystemTestHelpers.RequireCoordinateSystem(coordinateSystemFactory, testCase.SourceWkt);
+        var target = CoordinateSystemTestHelpers.RequireCoordinateSystem(coordinateSystemFactory, testCase.TargetWkt);
         source.Authority = "EPSG";
         source.AuthorityCode = testCase.SourceSrid;
         target.Authority = "EPSG";
@@ -63,12 +63,12 @@ public class Proj2ProjParityTheoryTests
         Assert.True(File.Exists(fixturePath), "Fixture file not found: " + fixturePath);
 
         string json = File.ReadAllText(fixturePath);
-        var fixture = JsonSerializer.Deserialize<Proj2ProjFixture>(json, SerializerOptions);
+        Proj2ProjFixture fixture = Assert.IsType<Proj2ProjFixture>(JsonSerializer.Deserialize<Proj2ProjFixture>(json, SerializerOptions));
         Assert.NotNull(fixture);
-        Assert.NotNull(fixture.Cases);
+        List<Proj2ProjCase> cases = Assert.IsType<List<Proj2ProjCase>>(fixture.Cases);
         Assert.NotEmpty(fixture.Cases);
 
-        foreach (var item in fixture.Cases)
+        foreach (var item in cases)
         {
             yield return new object[] { item };
         }

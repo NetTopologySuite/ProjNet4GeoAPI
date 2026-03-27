@@ -4,6 +4,8 @@
 
 namespace ProjNET.Tests;
 
+using System;
+
 /// <summary>
 /// Represents the documented type.
 /// </summary>
@@ -17,7 +19,7 @@ internal sealed class GieCase
     /// <summary>
     /// Gets or sets the PROJ operation string associated with the case.
     /// </summary>
-    public string Operation { get; set; }
+    public string Operation { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the numeric tolerance value used for comparisons.
@@ -27,7 +29,7 @@ internal sealed class GieCase
     /// <summary>
     /// Gets or sets the tolerance unit token as parsed from the fixture.
     /// </summary>
-    public string ToleranceUnit { get; set; }
+    public string ToleranceUnit { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the transformation direction for the case.
@@ -37,12 +39,12 @@ internal sealed class GieCase
     /// <summary>
     /// Gets or sets the accepted input coordinate tuple.
     /// </summary>
-    public double[] Accept { get; set; }
+    public double[] Accept { get; set; } = Array.Empty<double>();
 
     /// <summary>
     /// Gets or sets the expected output coordinate tuple.
     /// </summary>
-    public double[] Expect { get; set; }
+    public double[] Expect { get; set; } = Array.Empty<double>();
 
     /// <summary>
     /// Gets or sets a value indicating whether the case expects a transformation failure.
@@ -52,7 +54,7 @@ internal sealed class GieCase
     /// <summary>
     /// Gets or sets the expected error code when a failure is expected.
     /// </summary>
-    public string ExpectedErrorCode { get; set; }
+    public string ExpectedErrorCode { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the optional roundtrip count for iterative validation.

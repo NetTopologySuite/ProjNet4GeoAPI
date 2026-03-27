@@ -85,7 +85,7 @@ public class CoordinateSystemServicesTests
             new CoordinateSystemFactory(),
             new CoordinateTransformationFactory());
 
-        CoordinateSystem missing = css.GetCoordinateSystem("EPSG", -1);
+        CoordinateSystem? missing = css.GetCoordinateSystem("EPSG", -1);
 
         Assert.Null(missing);
     }
@@ -201,7 +201,7 @@ public class CoordinateSystemServicesTests
     /// </summary>
     /// <param name="csvPath">Optional path to an external CSV file.</param>
     /// <returns>Sequence of SRID/WKT pairs.</returns>
-    internal static IEnumerable<KeyValuePair<int, string>> LoadCsv(string csvPath = null)
+    internal static IEnumerable<KeyValuePair<int, string>> LoadCsv(string? csvPath = null)
     {
         Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Reading '{0}'.", csvPath ?? "SRID.csv from resources stream"));
         var sw = new Stopwatch();
@@ -232,7 +232,8 @@ public class CoordinateSystemServicesTests
             if (sridElement is not null)
             {
                 int srid = int.Parse(sridElement.Value, CultureInfo.InvariantCulture);
-                yield return new KeyValuePair<int, string>(srid, node.LastNode.ToString());
+                var wktNode = Assert.IsAssignableFrom<XNode>(node.LastNode);
+                yield return new KeyValuePair<int, string>(srid, wktNode.ToString());
             }
         }
 

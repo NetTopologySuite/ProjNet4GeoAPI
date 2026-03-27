@@ -30,12 +30,12 @@ public sealed class Proj2ProjCase
     /// <summary>
     /// Gets or sets the source CRS WKT definition.
     /// </summary>
-    public string SourceWkt { get; set; }
+    public string SourceWkt { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the target CRS WKT definition.
     /// </summary>
-    public string TargetWkt { get; set; }
+    public string TargetWkt { get; set; } = string.Empty;
 
     /// <summary>
     /// Gets or sets the input x coordinate.

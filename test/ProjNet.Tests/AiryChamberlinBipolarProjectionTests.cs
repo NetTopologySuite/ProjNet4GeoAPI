@@ -219,6 +219,6 @@ public class AiryChamberlinBipolarProjectionTests
 
         public double SphereRadius { get; }
 
-        public string ExtraParameters { get; }
+        public string? ExtraParameters { get; }
     }
 }

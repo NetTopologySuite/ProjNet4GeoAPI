@@ -17,6 +17,8 @@ using Xunit;
 /// </summary>
 public class GieBuiltinsTheoryTests
 {
+    private static readonly object MissingCaseSentinel = new();
+
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
@@ -352,12 +354,13 @@ public class GieBuiltinsTheoryTests
             Assert.Skip("Case does not contain enough coordinates for 2D comparison.");
         }
 
-        double[] output = default!;
-        if (TryCreateConversionTransform(testCase.Operation, out Func<double[], double[]> conversionTransform, out string conversionSkipReason))
+        double[]? output = null;
+        if (TryCreateConversionTransform(testCase.Operation, out Func<double[], double[]>? conversionTransform, out string? conversionSkipReason))
         {
+            Func<double[], double[]> transform = Assert.IsAssignableFrom<Func<double[], double[]>>(conversionTransform);
             try
             {
-                output = conversionTransform(testCase.Accept);
+                output = transform(testCase.Accept);
             }
             catch (ArgumentException)
             {
@@ -367,14 +370,15 @@ public class GieBuiltinsTheoryTests
         }
         else
         {
-            if (!TryCreateTransform(testCase, out MathTransform transform, out string skipReason))
+            if (!TryCreateTransform(testCase, out MathTransform? transform, out string? skipReason))
             {
-                Assert.Skip(skipReason ?? conversionSkipReason);
+                Assert.Skip(skipReason ?? conversionSkipReason ?? "Transformation could not be created.");
             }
 
+            MathTransform mathTransform = Assert.IsAssignableFrom<MathTransform>(transform);
             try
             {
-                output = transform.Transform(testCase.Accept);
+                output = mathTransform.Transform(testCase.Accept);
             }
             catch (ArgumentException)
             {
@@ -388,8 +392,9 @@ public class GieBuiltinsTheoryTests
             Assert.Skip("Projection result is outside supported domain for this wave.");
         }
 
+        double[] evaluatedOutput = Assert.IsAssignableFrom<double[]>(output);
         double tolerance = Math.Max(ToNumericTolerance(testCase.ToleranceValue, testCase.ToleranceUnit), 1e-3d);
-        int dimensionsToCompare = Math.Min(output.Length, testCase.Expect.Length);
+        int dimensionsToCompare = Math.Min(evaluatedOutput.Length, testCase.Expect.Length);
         if (dimensionsToCompare < 2)
         {
             Assert.Skip("Case does not contain enough coordinates for comparison.");
@@ -397,7 +402,7 @@ public class GieBuiltinsTheoryTests
 
         for (int i = 0; i < dimensionsToCompare; i++)
         {
-            double delta = Math.Abs(output[i] - testCase.Expect[i]);
+            double delta = Math.Abs(evaluatedOutput[i] - testCase.Expect[i]);
             if (delta > tolerance)
             {
                 Assert.Skip("Case requires higher-fidelity GIE mapping (axis=" + i.ToString(CultureInfo.InvariantCulture) + ", delta=" + delta.ToString("R", CultureInfo.InvariantCulture) + ").");
@@ -410,7 +415,7 @@ public class GieBuiltinsTheoryTests
         string fixturePath = FindGiePath(fileName);
         if (fixturePath is null)
         {
-            yield return new object[] { null };
+            yield return new object[] { MissingCaseSentinel };
             yield break;
         }
 
@@ -434,7 +439,7 @@ public class GieBuiltinsTheoryTests
 
         if (parseFailed)
         {
-            yield return new object[] { null };
+            yield return new object[] { MissingCaseSentinel };
             yield break;
         }
 
@@ -446,7 +451,7 @@ public class GieBuiltinsTheoryTests
                 continue;
             }
 
-            if (!TryExtractProjCode(item.Operation, out string projCode))
+            if (!TryExtractProjCode(item.Operation, out string? projCode) || projCode is null)
             {
                 continue;
             }
@@ -471,14 +476,14 @@ public class GieBuiltinsTheoryTests
 
         if (emitted == 0)
         {
-            yield return new object[] { null };
+            yield return new object[] { MissingCaseSentinel };
         }
     }
 
-    private static bool TryCreateTransform(GieCase testCase, out MathTransform transform, out string skipReason)
+    private static bool TryCreateTransform(GieCase testCase, out MathTransform? transform, out string? skipReason)
     {
-        transform = default!;
-        skipReason = default!;
+        transform = null;
+        skipReason = null;
 
         if (!TryParseOperationArguments(testCase.Operation, out Dictionary<string, string> args))
         {
@@ -510,12 +515,13 @@ public class GieBuiltinsTheoryTests
             return false;
         }
 
-        if (!TryCreateGeographicCoordinateSystem(args, out GeographicCoordinateSystem gcs))
+        if (!TryCreateGeographicCoordinateSystem(args, out GeographicCoordinateSystem? gcs))
         {
             skipReason = "Could not construct geographic coordinate system from operation ellipsoid/datum parameters.";
             return false;
         }
 
+        GeographicCoordinateSystem geographicCoordinateSystem = Assert.IsAssignableFrom<GeographicCoordinateSystem>(gcs);
         if (!TryBuildProjectionParameters(args, out List<ProjectionParameter> parameters))
         {
             skipReason = "Could not build projection parameter list.";
@@ -527,15 +533,15 @@ public class GieBuiltinsTheoryTests
             var projection = CoordinateSystemFactory.CreateProjection("GIE " + projectionClass, projectionClass, parameters);
             var pcs = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
                 "GIE projected",
-                gcs,
+                geographicCoordinateSystem,
                 projection,
                 LinearUnit.Metre,
                 new AxisInfo("East", AxisOrientationEnum.East),
                 new AxisInfo("North", AxisOrientationEnum.North));
 
             transform = testCase.Direction == GieDirection.Forward
-                ? CoordinateTransformationFactory.CreateFromCoordinateSystems(gcs, pcs).MathTransform
-                : CoordinateTransformationFactory.CreateFromCoordinateSystems(pcs, gcs).MathTransform;
+                ? CoordinateTransformationFactory.CreateFromCoordinateSystems(geographicCoordinateSystem, pcs).MathTransform
+                : CoordinateTransformationFactory.CreateFromCoordinateSystems(pcs, geographicCoordinateSystem).MathTransform;
             return true;
         }
         catch (ArgumentException)
@@ -560,9 +566,9 @@ public class GieBuiltinsTheoryTests
         }
     }
 
-    private static bool TryCreateConversionTransform(string operation, out Func<double[], double[]> transform, out string skipReason)
+    private static bool TryCreateConversionTransform(string operation, out Func<double[], double[]>? transform, out string? skipReason)
     {
-        transform = default!;
+        transform = null;
         if (operation is null)
         {
             skipReason = "Operation string was null.";
@@ -570,16 +576,17 @@ public class GieBuiltinsTheoryTests
         }
 
         string normalizedOperation = NormalizeOperationForRuntime(operation);
-        if (!CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(normalizedOperation, out MathTransform mathTransform, out skipReason))
+        if (!CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(normalizedOperation, out MathTransform? mathTransform, out skipReason))
         {
             return false;
         }
 
+        MathTransform pipelineTransform = Assert.IsAssignableFrom<MathTransform>(mathTransform);
         transform = input =>
         {
             ArgumentNullException.ThrowIfNull(input);
 
-            return mathTransform.Transform(input);
+            return pipelineTransform.Transform(input);
         };
 
         return true;
@@ -661,7 +668,7 @@ public class GieBuiltinsTheoryTests
             return false;
         }
 
-        if (!TryExtractProjCode(operation, out string projCode))
+        if (!TryExtractProjCode(operation, out string? projCode) || projCode is null)
         {
             return false;
         }
@@ -697,16 +704,17 @@ public class GieBuiltinsTheoryTests
         return ProjectionClassByProjCode.ContainsKey(projCode) || ConversionProjCodes.Contains(projCode);
     }
 
-    private static bool TryCreateGeographicCoordinateSystem(Dictionary<string, string> args, out GeographicCoordinateSystem gcs)
+    private static bool TryCreateGeographicCoordinateSystem(Dictionary<string, string> args, out GeographicCoordinateSystem? gcs)
     {
-        gcs = default!;
+        gcs = null;
 
-        if (!TryResolveEllipsoid(args, out Ellipsoid ellipsoid))
+        if (!TryResolveEllipsoid(args, out Ellipsoid? ellipsoid))
         {
             return false;
         }
 
-        var datum = CoordinateSystemFactory.CreateHorizontalDatum("GIE datum", DatumType.HD_Geocentric, ellipsoid, null);
+        Ellipsoid geographicEllipsoid = Assert.IsAssignableFrom<Ellipsoid>(ellipsoid);
+        var datum = CoordinateSystemFactory.CreateHorizontalDatum("GIE datum", DatumType.HD_Geocentric, geographicEllipsoid, null);
         gcs = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "GIE geographic",
             AngularUnit.Degrees,
@@ -717,9 +725,9 @@ public class GieBuiltinsTheoryTests
         return true;
     }
 
-    private static bool TryResolveEllipsoid(Dictionary<string, string> args, out Ellipsoid ellipsoid)
+    private static bool TryResolveEllipsoid(Dictionary<string, string> args, out Ellipsoid? ellipsoid)
     {
-        ellipsoid = default!;
+        ellipsoid = null;
 
         if (TryGetDouble(args, "r", out double sphereRadius) && sphereRadius > 0d)
         {
@@ -1039,9 +1047,9 @@ public class GieBuiltinsTheoryTests
         return args.Count > 0;
     }
 
-    private static bool TryExtractProjCode(string operation, out string projCode)
+    private static bool TryExtractProjCode(string operation, out string? projCode)
     {
-        projCode = default!;
+        projCode = null;
         if (!TryParseOperationArguments(operation, out Dictionary<string, string> args))
         {
             return false;

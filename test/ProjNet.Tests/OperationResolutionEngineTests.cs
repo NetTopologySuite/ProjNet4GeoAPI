@@ -148,11 +148,11 @@ public class OperationResolutionEngineTests
         var source = ProjectedCoordinateSystem.WGS84_UTM(32, true);
         var target = ProjectedCoordinateSystem.WGS84_UTM(33, true);
         source.Authority = "EPSG";
-        source.AuthorityCode = gridOnlyPair[0].SourceSrid;
+        source.AuthorityCode = Assert.IsAssignableFrom<List<CoordinateOperationDefinition>>(gridOnlyPair)[0].SourceSrid;
         target.Authority = "EPSG";
-        target.AuthorityCode = gridOnlyPair[0].TargetSrid;
+        target.AuthorityCode = Assert.IsAssignableFrom<List<CoordinateOperationDefinition>>(gridOnlyPair)[0].TargetSrid;
 
-        string originalRequiredMode = Environment.GetEnvironmentVariable("PROJNET_GRID_REQUIRED");
+        string? originalRequiredMode = Environment.GetEnvironmentVariable("PROJNET_GRID_REQUIRED");
         try
         {
             Environment.SetEnvironmentVariable("PROJNET_GRID_REQUIRED", "true");

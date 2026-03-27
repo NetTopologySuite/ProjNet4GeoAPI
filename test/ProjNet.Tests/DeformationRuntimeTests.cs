@@ -82,9 +82,9 @@ public class DeformationRuntimeTests
     [MemberData(nameof(InvalidCreationCases))]
     public void DeformationCreationFailsForInvalidParameters(string operation, string expectedToken)
     {
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string skipReason);
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string? skipReason);
         Assert.False(ok);
-        Assert.Contains(expectedToken, skipReason, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(expectedToken, Assert.IsAssignableFrom<string>(skipReason), StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>
@@ -165,9 +165,9 @@ public class DeformationRuntimeTests
 
     private static MathTransform CreateTransform(string operation)
     {
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
         Assert.True(ok, skipReason);
-        return transform;
+        return Assert.IsAssignableFrom<MathTransform>(transform);
     }
 
     private static double[] CreateCartesianPoint(double x, double y, double z)

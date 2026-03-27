@@ -20,9 +20,9 @@ public class PostGisSpatialRefSysTableParserTests
     private static readonly Lazy<CoordinateSystemFactory> CoordinateSystemFactory =
         new Lazy<CoordinateSystemFactory>(() => new CoordinateSystemFactory());
 
-    private static string connectionString;
+    private static string? connectionString;
 
-    private static string ConnectionString
+    private static string? ConnectionString
     {
         get
         {
@@ -33,16 +33,26 @@ public class PostGisSpatialRefSysTableParserTests
 
             if (!File.Exists("appsettings.json"))
             {
-                return default!;
+                return null;
             }
 
-            JToken token = default!;
+            JToken? token = null;
             using (var jtr = new Newtonsoft.Json.JsonTextReader(new StreamReader("appsettings.json")))
             {
                 token = JToken.ReadFrom(jtr);
             }
 
-            string connectionString = (string)token["ConnectionString"];
+            if (token is null)
+            {
+                return null;
+            }
+
+            string? connectionString = (string?)token["ConnectionString"];
+            if (string.IsNullOrWhiteSpace(connectionString))
+            {
+                return null;
+            }
+
             try
             {
                 using (var cn = new NpgsqlConnection(connectionString))
@@ -52,7 +62,7 @@ public class PostGisSpatialRefSysTableParserTests
             }
             catch (Exception)
             {
-                return default!;
+                return null;
             }
 
             PostGisSpatialRefSysTableParserTests.connectionString = connectionString;

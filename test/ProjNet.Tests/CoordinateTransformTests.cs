@@ -918,8 +918,8 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     [Xunit.Fact]
     public void TestUnitTransforms()
     {
-        var nadUTM = SRIDReader.GetCSbyID(2868); // UTM Arizona Central State Plane using Feet as units
-        var wgs84GCS = SRIDReader.GetCSbyID(4326); // GCS WGS84
+        var nadUTM = Assert.IsAssignableFrom<CoordinateSystem>(SRIDReader.GetCSbyID(2868)); // UTM Arizona Central State Plane using Feet as units
+        var wgs84GCS = Assert.IsAssignableFrom<CoordinateSystem>(SRIDReader.GetCSbyID(4326)); // GCS WGS84
         var trans = new CoordinateTransformationFactory().CreateFromCoordinateSystems(wgs84GCS, nadUTM);
 
         double[] p0 = new[] { -111.89, 34.165 };
@@ -942,7 +942,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     [Xunit.Fact(DisplayName = "Accuracy very poor!")]
     public void TestPolyconicTransforms()
     {
-        var wgs84GCS = SRIDReader.GetCSbyID(4326); // GCS WGS84
+        var wgs84GCS = Assert.IsAssignableFrom<CoordinateSystem>(SRIDReader.GetCSbyID(4326)); // GCS WGS84
         string wkt =
 
               // "PROJCS[\"SAD69 / Brazil Polyconic (deprecated)\",GEOGCS[\"SAD69\",DATUM[\"South_American_Datum_1969\",SPHEROID[\"GRS 1967\",6378160,298.247167427,AUTHORITY[\"EPSG\",\"7036\"]],TOWGS84[-57,1,-41,0,0,0,0],AUTHORITY[\"EPSG\",\"6291\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9108\"]],AUTHORITY[\"EPSG\",\"4291\"]],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],PROJECTION[\"Polyconic\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",-54],PARAMETER[\"false_easting\",5000000],PARAMETER[\"false_northing\",10000000],AUTHORITY[\"EPSG\",\"29100\"],AXIS[\"X\",EAST],AXIS[\"Y\",NORTH]]";
@@ -1255,7 +1255,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     public void TestEPSG2056HotineObliqueMercatorAzimuthCenterSwitzerland()
     {
         var csSrc = GeographicCoordinateSystem.WGS84;
-        var csTgt = SRIDReader.GetCSbyID(2056); // CH1903+ / LV95
+        var csTgt = Assert.IsAssignableFrom<CoordinateSystem>(SRIDReader.GetCSbyID(2056)); // CH1903+ / LV95
         var transformer = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csSrc, csTgt);
         double x = 9.619803;
         double y = 47.408735;

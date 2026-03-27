@@ -26,9 +26,8 @@ internal sealed class SRIDReader
     /// <param name="id">EPSG ID.</param>
     /// <param name="file">(optional) path to CSV File with WKT definitions.</param>
     /// <returns>Coordinate system, or <value>null</value> if no entry with <paramref name="id"/> was not found.</returns>
-    public static CoordinateSystem GetCSbyID(int id, string file = null)
+    public static CoordinateSystem? GetCSbyID(int id, string? file = null)
     {
-        // ICoordinateSystemFactory factory = new CoordinateSystemFactory();
         foreach (var wkt in GetSrids(file))
         {
             if (wkt.WktId == id)
@@ -37,7 +36,7 @@ internal sealed class SRIDReader
             }
         }
 
-        return default!;
+        return null;
     }
 
     /// <summary>
@@ -45,17 +44,21 @@ internal sealed class SRIDReader
     /// </summary>
     /// <param name="filename">The filename value.</param>
     /// <returns>Enumerator.</returns>
-    public static IEnumerable<WktString> GetSrids(string filename = null)
+    public static IEnumerable<WktString> GetSrids(string? filename = null)
     {
-        var stream = string.IsNullOrWhiteSpace(filename)
+        Stream? stream = string.IsNullOrWhiteSpace(filename)
             ? Assembly.GetExecutingAssembly().GetManifestResourceStream("ProjNET.Tests.SRID.csv")
             : File.OpenRead(filename);
+        if (stream is null)
+        {
+            yield break;
+        }
 
         using (var sr = new StreamReader(stream, Encoding.UTF8))
         {
             while (!sr.EndOfStream)
             {
-                string line = sr.ReadLine();
+                string? line = sr.ReadLine();
                 if (string.IsNullOrWhiteSpace(line))
                 {
                     continue;
