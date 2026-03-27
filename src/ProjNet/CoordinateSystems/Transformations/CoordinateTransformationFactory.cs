@@ -50,7 +50,11 @@ public class CoordinateTransformationFactory
     /// <param name="sourceCS">Source coordinate system.</param>
     /// <param name="targetCS">Target coordinate system.</param>
     /// <returns>The coordinate transformation from <paramref name="sourceCS"/> to <paramref name="targetCS"/>.</returns>
-    public ICoordinateTransformation CreateFromCoordinateSystems(CoordinateSystem sourceCS, CoordinateSystem targetCS) => CoordinateOperationResolver.Resolve(sourceCS, targetCS, this.CreateFromCoordinateSystemsWithMetadata);
+    public ICoordinateTransformation CreateFromCoordinateSystems(CoordinateSystem sourceCS, CoordinateSystem targetCS)
+    {
+        return CoordinateOperationResolver.Resolve(sourceCS, targetCS, this.CreateFromCoordinateSystemsWithMetadata)
+            ?? throw new NotSupportedException("No support for transforming between the two specified coordinate systems");
+    }
 
     /// <summary>
     /// Attempts to create a projection pipeline math transform from a PROJ-style operation string.
@@ -71,7 +75,7 @@ public class CoordinateTransformationFactory
 
     private ICoordinateTransformation? CreateFromCoordinateSystemsWithMetadata(CoordinateSystem sourceCS, CoordinateSystem targetCS)
     {
-        if (TryGetDirectProjectedOperation(sourceCS, targetCS, out var operation, out string resolvedGridPath))
+        if (TryGetDirectProjectedOperation(sourceCS, targetCS, out var operation, out string? resolvedGridPath))
         {
             if (TryCreateExplicitOperationTransformation(sourceCS, targetCS, operation, resolvedGridPath, out var explicitTransformation))
             {
@@ -117,7 +121,7 @@ public class CoordinateTransformationFactory
         CoordinateSystem source,
         CoordinateSystem target,
         CoordinateOperationDefinition operation,
-        string resolvedGridPath,
+        string? resolvedGridPath,
         [NotNullWhen(true)] out ICoordinateTransformation? transformation)
     {
         transformation = null;
@@ -151,7 +155,7 @@ public class CoordinateTransformationFactory
         CoordinateSystem source,
         CoordinateSystem target,
         CoordinateOperationDefinition operation,
-        string resolvedGridPath,
+        string? resolvedGridPath,
         [NotNullWhen(true)] out ICoordinateTransformation? transformation)
     {
         transformation = null;
@@ -310,9 +314,9 @@ public class CoordinateTransformationFactory
 
     private ICoordinateTransformation CreateFromCoordinateSystemsCore(CoordinateSystem sourceCS, CoordinateSystem targetCS)
     {
-        if (TryCreateSimpleCoordinateSystemConversion(sourceCS, targetCS, out ICoordinateTransformation simpleConversion))
+        if (TryCreateSimpleCoordinateSystemConversion(sourceCS, targetCS, out ICoordinateTransformation? simpleConversionCandidate))
         {
-            return simpleConversion;
+            return ArgumentGuard.ThrowIfNull(simpleConversionCandidate, nameof(simpleConversionCandidate));
         }
 
         var sourceKind = GetCoordinateSystemRuntimeKind(sourceCS);
@@ -344,7 +348,9 @@ public class CoordinateTransformationFactory
             case 11: // Projected -> Projected
                 return Proj2Proj((ProjectedCoordinateSystem)sourceCS, (ProjectedCoordinateSystem)targetCS);
             case 33: // Geocentric -> Geocentric
-                return CreateGeoc2Geoc((GeocentricCoordinateSystem)sourceCS, (GeocentricCoordinateSystem)targetCS);
+                return ArgumentGuard.ThrowIfNull(
+                    CreateGeoc2Geoc((GeocentricCoordinateSystem)sourceCS, (GeocentricCoordinateSystem)targetCS),
+                    nameof(CreateGeoc2Geoc));
             case 22: // Geographic -> Geographic
                 return CreateGeog2Geog((GeographicCoordinateSystem)sourceCS, (GeographicCoordinateSystem)targetCS);
             default:
@@ -374,16 +380,18 @@ public class CoordinateTransformationFactory
             return false;
         }
 
-        if (!TryCreateAxisSwapConversionTransform(source, target, out MathTransform axisSwapTransform))
+        if (!TryCreateAxisSwapConversionTransform(source, target, out MathTransform? axisSwapTransformCandidate))
         {
             return false;
         }
 
-        if (!TryCreateUnitConversionTransform(source, target, out MathTransform unitConversionTransform))
+        if (!TryCreateUnitConversionTransform(source, target, out MathTransform? unitConversionTransformCandidate))
         {
             return false;
         }
 
+        MathTransform axisSwapTransform = ArgumentGuard.ThrowIfNull(axisSwapTransformCandidate, nameof(axisSwapTransformCandidate));
+        MathTransform unitConversionTransform = ArgumentGuard.ThrowIfNull(unitConversionTransformCandidate, nameof(unitConversionTransformCandidate));
         var transforms = new List<MathTransform>(2);
         if (!unitConversionTransform.Identity())
         {
@@ -568,15 +576,15 @@ public class CoordinateTransformationFactory
             return false;
         }
 
-        bool sourceHorizontalDatumIsNull = source.HorizontalDatum is null;
-        bool targetHorizontalDatumIsNull = target.HorizontalDatum is null;
-        if (sourceHorizontalDatumIsNull != targetHorizontalDatumIsNull)
+        HorizontalDatum? sourceHorizontalDatum = source.HorizontalDatum;
+        HorizontalDatum? targetHorizontalDatum = target.HorizontalDatum;
+        if ((sourceHorizontalDatum is null) != (targetHorizontalDatum is null))
         {
             return false;
         }
 
-        bool horizontalDatumsEqual = sourceHorizontalDatumIsNull
-            || source.HorizontalDatum.EqualParams(target.HorizontalDatum);
+        bool horizontalDatumsEqual = sourceHorizontalDatum is null
+            || sourceHorizontalDatum.EqualParams(ArgumentGuard.ThrowIfNull(targetHorizontalDatum, nameof(targetHorizontalDatum)));
 
         return horizontalDatumsEqual
             && source.Projection.EqualParams(target.Projection)
@@ -1056,7 +1064,7 @@ public class CoordinateTransformationFactory
         CoordinateSystem target,
         ICoordinateTransformation fallback,
         CoordinateOperationDefinition operation,
-        string resolvedGridPath)
+        string? resolvedGridPath)
     {
         string operationName = !string.IsNullOrWhiteSpace(operation.MethodName)
             ? operation.MethodName
@@ -1130,7 +1138,7 @@ public class CoordinateTransformationFactory
     private static GridResourceResolver CreateGridResolver()
     {
         string[] localDirectories = ReadGridDirectoriesFromEnvironment();
-        string cacheDirectory = Environment.GetEnvironmentVariable(GridCacheEnvironmentVariable);
+        string? cacheDirectory = Environment.GetEnvironmentVariable(GridCacheEnvironmentVariable);
         var mode = ParseGridResolutionMode(Environment.GetEnvironmentVariable(GridModeEnvironmentVariable));
 
         var options = new GridResourceResolverOptions(localDirectories, cacheDirectory, mode);
@@ -1139,7 +1147,7 @@ public class CoordinateTransformationFactory
 
     private static string[] ReadGridDirectoriesFromEnvironment()
     {
-        string configuredPaths = Environment.GetEnvironmentVariable(GridPathEnvironmentVariable);
+        string? configuredPaths = Environment.GetEnvironmentVariable(GridPathEnvironmentVariable);
         if (string.IsNullOrWhiteSpace(configuredPaths))
         {
             return [];
@@ -1148,7 +1156,7 @@ public class CoordinateTransformationFactory
         return configuredPaths.Split(new[] { ';', Path.PathSeparator }, StringSplitOptions.RemoveEmptyEntries);
     }
 
-    private static GridResourceResolutionMode ParseGridResolutionMode(string configuredMode)
+    private static GridResourceResolutionMode ParseGridResolutionMode(string? configuredMode)
     {
         if ("LocalThenNetwork".Equals(configuredMode, StringComparison.OrdinalIgnoreCase))
         {
@@ -1249,7 +1257,7 @@ public class CoordinateTransformationFactory
 
     private static bool IsGridRequiredModeEnabled()
     {
-        string configuredValue = Environment.GetEnvironmentVariable(GridRequiredEnvironmentVariable);
+        string? configuredValue = Environment.GetEnvironmentVariable(GridRequiredEnvironmentVariable);
         if (string.IsNullOrWhiteSpace(configuredValue))
         {
             return false;
@@ -1295,7 +1303,7 @@ public class CoordinateTransformationFactory
     {
         internal static readonly OperationDefinitionComparer Instance = new();
 
-        public int Compare(CoordinateOperationDefinition left, CoordinateOperationDefinition right)
+        public int Compare(CoordinateOperationDefinition? left, CoordinateOperationDefinition? right)
         {
             if (ReferenceEquals(left, right))
             {
