@@ -25,10 +25,10 @@ public class SchProjectionTests
     [InlineData("+proj=spherical_cross_track_height +datum=WGS84 +plat_0=30 +plon_0=45 +phdg_0=-12")]
     public void SupportsSchAliasesInRuntime(string operation)
     {
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
 
         Assert.True(ok, skipReason);
-        Assert.NotNull(transform);
+        Assert.IsAssignableFrom<MathTransform>(transform);
     }
 
     /// <summary>
@@ -104,7 +104,7 @@ public class SchProjectionTests
     [InlineData("+proj=sch +plat_0=30 +plon_0=45", "phdg_0")]
     public void SchCreationFailsWhenMandatoryParametersAreMissing(string operation, string expectedToken)
     {
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string skipReason);
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string? skipReason);
 
         Assert.False(ok);
         Assert.Contains(expectedToken, skipReason, StringComparison.Ordinal);
@@ -112,10 +112,11 @@ public class SchProjectionTests
 
     private static MathTransform CreateTransform(string operation)
     {
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
         Assert.True(ok, skipReason);
-        return transform;
+        return Assert.IsAssignableFrom<MathTransform>(transform);
     }
 
     private static double[] CreatePoint(double x, double y, double z) => [x, y, z];
 }
+

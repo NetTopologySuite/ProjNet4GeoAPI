@@ -29,10 +29,10 @@ public class HorizontalGridShiftRuntimeTests
         string gridPath = FindGridPath(gridFileName);
         string operation = "+proj=hgridshift +grids=" + gridPath;
 
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
 
         Assert.True(ok, skipReason);
-        double[] output = transform.Transform(HorizontalGridInput);
+        double[] output = Assert.IsAssignableFrom<MathTransform>(transform).Transform(HorizontalGridInput);
         Assert.Equal(5.875d, output[0], 9);
         Assert.Equal(55.375d, output[1], 9);
         Assert.Equal(0d, output[2], 9);
@@ -50,10 +50,10 @@ public class HorizontalGridShiftRuntimeTests
         string gridPath = FindGridPath(gridFileName);
         string operation = "+inv +proj=hgridshift +grids=" + gridPath;
 
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
 
         Assert.True(ok, skipReason);
-        Assert.Throws<ArgumentException>(() => transform.Transform(HorizontalGridInverseInput));
+        Assert.Throws<ArgumentException>(() => Assert.IsAssignableFrom<MathTransform>(transform).Transform(HorizontalGridInverseInput));
     }
 
     /// <summary>
@@ -68,10 +68,10 @@ public class HorizontalGridShiftRuntimeTests
         string gridPath = FindGridPath(gridFileName);
         string operation = "+proj=gridshift +grids=" + gridPath;
 
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
 
         Assert.True(ok, skipReason);
-        double[] output = transform.Transform(HorizontalGridInput);
+        double[] output = Assert.IsAssignableFrom<MathTransform>(transform).Transform(HorizontalGridInput);
         Assert.Equal(5.875d, output[0], 9);
         Assert.Equal(55.375d, output[1], 9);
     }
@@ -99,3 +99,4 @@ public class HorizontalGridShiftRuntimeTests
         throw new FileNotFoundException("Could not locate local test grid fixture under test\\ProjNet.Tests\\Fixtures\\grids.", fileName);
     }
 }
+

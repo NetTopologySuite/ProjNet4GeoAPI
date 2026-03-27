@@ -23,7 +23,7 @@ public class AxisOrderHelperTests
         CoordinateSystem source = null!;
         CoordinateSystem target = GeographicCoordinateSystem.WGS84;
 
-        bool ok = AxisOrderHelper.TryCreateAxisSwapTransform(source, target, out MathTransform transform);
+        bool ok = AxisOrderHelper.TryCreateAxisSwapTransform(source, target, out MathTransform? transform);
 
         Assert.False(ok);
         Assert.Null(transform as object);
@@ -38,7 +38,7 @@ public class AxisOrderHelperTests
         var source = CreateVerticalCoordinateSystem("Vertical source", AxisOrientationEnum.Up);
         var target = CreateVerticalCoordinateSystem("Vertical target", AxisOrientationEnum.Down);
 
-        bool ok = AxisOrderHelper.TryCreateAxisSwapTransform(source, target, out MathTransform transform);
+        bool ok = AxisOrderHelper.TryCreateAxisSwapTransform(source, target, out MathTransform? transform);
 
         Assert.False(ok);
         Assert.Null(transform as object);
@@ -64,7 +64,7 @@ public class AxisOrderHelperTests
             LinearUnit.Metre,
             PrimeMeridian.Greenwich);
 
-        bool ok = AxisOrderHelper.TryCreateAxisSwapTransform(source, target, out MathTransform transform);
+        bool ok = AxisOrderHelper.TryCreateAxisSwapTransform(source, target, out MathTransform? transform);
 
         Assert.False(ok);
         Assert.Null(transform as object);
@@ -96,7 +96,7 @@ public class AxisOrderHelperTests
         var source = CoordinateSystemFactory.CreateCompoundCoordinateSystem("Source", sourceHorizontal, vertical);
         var target = CoordinateSystemFactory.CreateCompoundCoordinateSystem("Target", targetHorizontal, vertical);
 
-        bool ok = AxisOrderHelper.TryCreateAxisSwapTransform(source, target, out MathTransform transform);
+        bool ok = AxisOrderHelper.TryCreateAxisSwapTransform(source, target, out MathTransform? transform);
 
         Assert.False(ok);
         Assert.Null(transform as object);
@@ -134,10 +134,10 @@ public class AxisOrderHelperTests
             targetHorizontal,
             CreateVerticalCoordinateSystem("Target down", AxisOrientationEnum.Down));
 
-        bool ok = AxisOrderHelper.TryCreateAxisSwapTransform(source, target, out MathTransform transform);
+        bool ok = AxisOrderHelper.TryCreateAxisSwapTransform(source, target, out MathTransform? transform);
 
         Assert.True(ok);
-        double[] transformed = transform.Transform([10d, 20d, 30d]);
+        double[] transformed = Assert.IsAssignableFrom<MathTransform>(transform).Transform([10d, 20d, 30d]);
 
         Assert.Equal(10d, transformed[0], 12);
         Assert.Equal(20d, transformed[1], 12);
@@ -150,3 +150,4 @@ public class AxisOrderHelperTests
         return CoordinateSystemFactory.CreateVerticalCoordinateSystem(name, datum, LinearUnit.Metre, new AxisInfo("V", orientation));
     }
 }
+

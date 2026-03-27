@@ -31,10 +31,10 @@ public class GeoTiffGridRuntimeTests
         string gridPath = FindGridPath(gridFileName);
         string operation = "+proj=hgridshift +grids=" + gridPath;
 
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
         Assert.True(ok, skipReason);
 
-        double[] output = transform.Transform(GeoTiffGridInput);
+        double[] output = Assert.IsAssignableFrom<MathTransform>(transform).Transform(GeoTiffGridInput);
         Assert.Equal(5.875d, output[0], 9);
         Assert.Equal(55.375d, output[1], 9);
     }
@@ -51,10 +51,10 @@ public class GeoTiffGridRuntimeTests
         string gridPath = FindGridPath(gridFileName);
         string operation = "+proj=vgridshift +grids=" + gridPath + " +multiplier=1";
 
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
         Assert.True(ok, skipReason);
 
-        double[] output = transform.Transform(GeoTiffGridInput);
+        double[] output = Assert.IsAssignableFrom<MathTransform>(transform).Transform(GeoTiffGridInput);
         Assert.Equal(4.5d, output[0], 9);
         Assert.Equal(52.5d, output[1], 9);
         Assert.Equal(11.5d, output[2], 9);
@@ -69,10 +69,10 @@ public class GeoTiffGridRuntimeTests
         string gridPath = FindGridPath("test_vgrid_nodata.tif");
         string operation = "+proj=vgridshift +grids=" + gridPath + " +multiplier=1";
 
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
         Assert.True(ok, skipReason);
 
-        double[] output = transform.Transform(GeoTiffNodataInput);
+        double[] output = Assert.IsAssignableFrom<MathTransform>(transform).Transform(GeoTiffNodataInput);
         Assert.Equal(10d, output[2], 7);
     }
 
@@ -183,3 +183,4 @@ public class GeoTiffGridRuntimeTests
         }
     }
 }
+

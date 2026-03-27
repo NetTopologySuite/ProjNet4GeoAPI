@@ -29,10 +29,10 @@ public class VerticalGridShiftRuntimeTests
         string gridPath = FindGridPath("egm96_15_downsampled.gtx");
         string operation = "+proj=vgridshift +grids=" + gridPath + multiplierToken;
 
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
 
         Assert.True(ok, skipReason);
-        double[] output = transform.Transform(VerticalGridInput);
+        double[] output = Assert.IsAssignableFrom<MathTransform>(transform).Transform(VerticalGridInput);
         Assert.Equal(12d, output[0], 12);
         Assert.Equal(56d, output[1], 12);
         Assert.Equal(expectedZ, output[2], 9);
@@ -48,14 +48,14 @@ public class VerticalGridShiftRuntimeTests
         string forwardOperation = "+proj=vgridshift +grids=" + gridPath;
         string inverseOperation = "+inv +proj=vgridshift +grids=" + gridPath;
 
-        bool forwardOk = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(forwardOperation, out MathTransform forward, out string forwardSkipReason);
-        bool inverseOk = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(inverseOperation, out MathTransform inverse, out string inverseSkipReason);
+        bool forwardOk = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(forwardOperation, out MathTransform? forward, out string? forwardSkipReason);
+        bool inverseOk = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(inverseOperation, out MathTransform? inverse, out string? inverseSkipReason);
 
         Assert.True(forwardOk, forwardSkipReason);
         Assert.True(inverseOk, inverseSkipReason);
 
-        double[] shifted = forward.Transform(VerticalGridInput);
-        double[] unshifted = inverse.Transform(shifted);
+        double[] shifted = Assert.IsAssignableFrom<MathTransform>(forward).Transform(VerticalGridInput);
+        double[] unshifted = Assert.IsAssignableFrom<MathTransform>(inverse).Transform(shifted);
 
         Assert.Equal(12d, unshifted[0], 10);
         Assert.Equal(56d, unshifted[1], 10);
@@ -71,10 +71,10 @@ public class VerticalGridShiftRuntimeTests
         string gridPath = FindGridPath("test_nodata.gtx");
         string operation = "+proj=vgridshift +grids=" + gridPath;
 
-        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform transform, out string skipReason);
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
         Assert.True(ok, skipReason);
 
-        Assert.Throws<ArgumentException>(() => transform.Transform(VerticalGridInput));
+        Assert.Throws<ArgumentException>(() => Assert.IsAssignableFrom<MathTransform>(transform).Transform(VerticalGridInput));
     }
 
     private static string FindGridPath(string fileName)
@@ -100,3 +100,4 @@ public class VerticalGridShiftRuntimeTests
         throw new FileNotFoundException("Could not locate local test grid fixture under test\\ProjNet.Tests\\Fixtures\\grids.", fileName);
     }
 }
+
