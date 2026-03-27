@@ -37,6 +37,16 @@ namespace ProjNet.CoordinateSystems.Wkt2
         public Wkt2Ellipsoid Ellipsoid { get; }
 
         /// <summary>
+        /// Gets or sets the optional anchor description for this datum.
+        /// </summary>
+        public string Anchor { get; set; }
+
+        /// <summary>
+        /// Gets or sets the optional frame reference epoch for dynamic datums.
+        /// </summary>
+        public double? FrameEpoch { get; set; }
+
+        /// <summary>
         /// Gets or sets an optional identifier.
         /// </summary>
         public Wkt2Id Id { get; set; }

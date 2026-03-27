@@ -49,6 +49,13 @@ namespace ProjNET.Tests.WKT
             Assert.That(pcs.AxisInfo, Has.Count.EqualTo(2));
             Assert.That(pcs.AxisInfo[0].Orientation, Is.EqualTo(AxisOrientationEnum.East));
             Assert.That(pcs.AxisInfo[1].Orientation, Is.EqualTo(AxisOrientationEnum.North));
+
+            // Verify projection parameters
+            Assert.That(pcs.Projection.ClassName, Does.Contain("Transverse_Mercator").IgnoreCase);
+            Assert.That(pcs.LinearUnit.MetersPerUnit, Is.EqualTo(1.0));
+            // Verify base geographic CS
+            Assert.That(pcs.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid.SemiMajorAxis, Is.EqualTo(6378137));
+            Assert.That(pcs.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid.InverseFlattening, Is.EqualTo(298.257223563));
         }
 
         [Test]
@@ -75,6 +82,15 @@ namespace ProjNET.Tests.WKT
             Assert.That(roundTripped.LinearUnit.EqualParams(original.LinearUnit), Is.True);
             Assert.That(roundTripped.Projection.ClassName, Is.EqualTo(original.Projection.ClassName));
             Assert.That(roundTripped.Projection.NumParameters, Is.EqualTo(original.Projection.NumParameters));
+
+            // Verify projection parameters individually
+            for (int i = 0; i < original.Projection.NumParameters && i < roundTripped.Projection.NumParameters; i++)
+            {
+                var origParam = original.Projection.GetParameter(i);
+                var rtParam = roundTripped.Projection.GetParameter(origParam.Name);
+                if (rtParam != null)
+                    Assert.That(rtParam.Value, Is.EqualTo(origParam.Value).Within(1e-10), $"Parameter '{origParam.Name}' differs");
+            }
         }
     }
 }

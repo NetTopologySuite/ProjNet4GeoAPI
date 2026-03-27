@@ -68,7 +68,7 @@ namespace ProjNet.CoordinateSystems.Wkt2
 
             var baseCrs = pcs.GeographicCoordinateSystem.FromProjNetGeographicCoordinateSystem();
 
-            var conversion = new Wkt2Conversion(pcs.Projection.Name, pcs.Projection.ClassName);
+            var conversion = new Wkt2Conversion(pcs.Projection.Name, MapProjNetToWkt2MethodName(pcs.Projection.ClassName));
             for (int i = 0; i < pcs.Projection.NumParameters; i++)
             {
                 var p = pcs.Projection.GetParameter(i);
@@ -211,20 +211,98 @@ namespace ProjNet.CoordinateSystems.Wkt2
             return crs;
         }
 
-        private static string MapProjectionMethodName(string wkt2Method)
+        private static readonly Dictionary<string, string> Wkt2ToProjNetMethodMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            // Transverse Mercator variants
+            { "Transverse Mercator", "Transverse_Mercator" },
+            { "Transverse Mercator (South Orientated)", "Transverse_Mercator" },
+            { "Gauss-Kruger", "Transverse_Mercator" },
+
+            // Mercator variants
+            { "Mercator", "Mercator_1SP" },
+            { "Mercator (variant A)", "Mercator_1SP" },
+            { "Mercator (1SP)", "Mercator_1SP" },
+            { "Mercator (variant B)", "Mercator_2SP" },
+            { "Mercator (2SP)", "Mercator_2SP" },
+            { "Mercator Auxiliary Sphere", "Mercator_Auxiliary_Sphere" },
+            { "Popular Visualisation Pseudo Mercator", "Popular_Visualisation_Pseudo_Mercator" },
+
+            // Lambert variants
+            { "Lambert Conic Conformal (2SP)", "lambert_conformal_conic_2sp" },
+            { "Lambert Conic Conformal (1SP)", "Lambert_Conformal_Conic" },
+            { "Lambert Azimuthal Equal Area", "Lambert_Azimuthal_Equal_Area" },
+
+            // Albers
+            { "Albers Equal Area", "Albers_Conic_Equal_Area" },
+            { "Albers", "Albers" },
+
+            // Stereographic variants
+            { "Oblique Stereographic", "Oblique_Stereographic" },
+            { "Polar Stereographic (variant A)", "Polar_Stereographic" },
+            { "Polar Stereographic (variant B)", "Polar_Stereographic" },
+            { "Polar Stereographic", "Polar_Stereographic" },
+
+            // Other projections
+            { "Hotine Oblique Mercator (variant A)", "Hotine_Oblique_Mercator" },
+            { "Hotine Oblique Mercator (variant B)", "Hotine_Oblique_Mercator" },
+            { "Hotine Oblique Mercator", "Hotine_Oblique_Mercator" },
+            { "Oblique Mercator", "Oblique_Mercator" },
+            { "Cassini-Soldner", "Cassini_Soldner" },
+            { "Krovak", "Krovak" },
+            { "Krovak (North Orientated)", "Krovak" },
+            { "American Polyconic", "Polyconic" },
+            { "Polyconic", "Polyconic" },
+            { "Orthographic", "Orthographic" },
+        };
+
+        internal static string MapProjectionMethodName(string wkt2Method)
         {
             if (string.IsNullOrWhiteSpace(wkt2Method))
                 return "";
 
             string m = wkt2Method.Trim();
+            return Wkt2ToProjNetMethodMap.TryGetValue(m, out string projNetName)
+                ? projNetName
+                : m;
+        }
 
-            // Most common mappings for EPSG exports.
-            if (m.Equals("Transverse Mercator", StringComparison.OrdinalIgnoreCase)) return "Transverse_Mercator";
-            if (m.Equals("Mercator", StringComparison.OrdinalIgnoreCase)) return "Mercator_1SP";
-            if (m.Equals("Lambert Conic Conformal (2SP)", StringComparison.OrdinalIgnoreCase)) return "lambert_conformal_conic_2sp";
+        private static readonly Dictionary<string, string> ProjNetToWkt2MethodMap = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        {
+            { "Transverse_Mercator", "Transverse Mercator" },
+            { "Mercator_1SP", "Mercator (variant A)" },
+            { "Mercator_2SP", "Mercator (variant B)" },
+            { "Mercator", "Mercator (variant A)" },
+            { "Mercator_Auxiliary_Sphere", "Mercator Auxiliary Sphere" },
+            { "Popular_Visualisation_Pseudo_Mercator", "Popular Visualisation Pseudo Mercator" },
+            { "Pseudo_Mercator", "Popular Visualisation Pseudo Mercator" },
+            { "Google_Mercator", "Popular Visualisation Pseudo Mercator" },
+            { "lambert_conformal_conic_2sp", "Lambert Conic Conformal (2SP)" },
+            { "Lambert_Conformal_Conic", "Lambert Conic Conformal (1SP)" },
+            { "Lambert_Conic_Conformal_(2SP)", "Lambert Conic Conformal (2SP)" },
+            { "Lambert_Azimuthal_Equal_Area", "Lambert Azimuthal Equal Area" },
+            { "Albers_Conic_Equal_Area", "Albers Equal Area" },
+            { "Albers", "Albers Equal Area" },
+            { "Oblique_Stereographic", "Oblique Stereographic" },
+            { "Polar_Stereographic", "Polar Stereographic (variant A)" },
+            { "Hotine_Oblique_Mercator", "Hotine Oblique Mercator (variant A)" },
+            { "Hotine_Oblique_Mercator_Azimuth_Center", "Hotine Oblique Mercator (variant A)" },
+            { "Oblique_Mercator", "Oblique Mercator" },
+            { "Cassini_Soldner", "Cassini-Soldner" },
+            { "Krovak", "Krovak" },
+            { "Polyconic", "American Polyconic" },
+            { "Orthographic", "Orthographic" },
+            { "Gauss_Kruger", "Transverse Mercator" },
+        };
 
-            // Fallback: keep original.
-            return m;
+        internal static string MapProjNetToWkt2MethodName(string projNetMethod)
+        {
+            if (string.IsNullOrWhiteSpace(projNetMethod))
+                return "";
+
+            string m = projNetMethod.Trim();
+            return ProjNetToWkt2MethodMap.TryGetValue(m, out string wkt2Name)
+                ? wkt2Name
+                : m;
         }
     }
 }

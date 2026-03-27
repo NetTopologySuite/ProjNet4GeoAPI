@@ -30,6 +30,11 @@ namespace ProjNet.CoordinateSystems.Wkt2
         public string Name { get; }
 
         /// <summary>
+        /// Gets or sets the optional anchor description for this datum.
+        /// </summary>
+        public string Anchor { get; set; }
+
+        /// <summary>
         /// Gets or sets an optional identifier.
         /// </summary>
         public Wkt2Id Id { get; set; }

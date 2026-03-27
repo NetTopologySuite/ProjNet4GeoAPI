@@ -49,6 +49,8 @@ namespace ProjNet.IO.CoordinateSystems
                         return ReadTimeCrs(rootKeyword, tokenizer);
                     case "DERIVEDGEOGCRS":
                         return ReadDerivedGeogCrs(rootKeyword, tokenizer);
+                    case "CONCATENATEDOPERATION":
+                        return ReadConcatenatedOperation(rootKeyword, tokenizer);
                     default:
                         throw new ArgumentException($"'{rootKeyword}' is not recognized as a supported WKT2 CRS.");
                 }
@@ -1853,6 +1855,207 @@ namespace ProjNet.IO.CoordinateSystems
                     }
                     tokenizer.CheckCloser(bracket);
                 }
+            }
+        }
+
+        private static Wkt2ConcatenatedOperation ReadConcatenatedOperation(string keyword, WktStreamTokenizer tokenizer)
+        {
+            var bracket = tokenizer.ReadOpener();
+            string name = tokenizer.ReadDoubleQuotedWord();
+
+            tokenizer.ReadToken(",");
+            tokenizer.NextToken();
+
+            string version = null;
+            Wkt2CrsBase sourceCrs = null;
+            Wkt2CrsBase targetCrs = null;
+            var steps = new List<Wkt2CoordinateOperation>();
+            double? operationAccuracy = null;
+            Wkt2Id id = null;
+            string remark = null;
+            var usages = new List<Wkt2Usage>();
+
+            while (true)
+            {
+                string element = tokenizer.GetStringValue();
+                switch (element.ToUpperInvariant())
+                {
+                    case "VERSION":
+                        {
+                            var vBracket = tokenizer.ReadOpener();
+                            version = tokenizer.ReadDoubleQuotedWord();
+                            tokenizer.ReadCloser(vBracket);
+                        }
+                        break;
+                    case "SOURCECRS":
+                        sourceCrs = ReadBoundCrsChildCrs(tokenizer);
+                        break;
+                    case "TARGETCRS":
+                        targetCrs = ReadBoundCrsChildCrs(tokenizer);
+                        break;
+                    case "STEP":
+                        steps.Add(ReadStepElement(tokenizer));
+                        break;
+                    case "OPERATIONACCURACY":
+                        {
+                            var aBracket = tokenizer.ReadOpener();
+                            tokenizer.NextToken();
+                            operationAccuracy = tokenizer.GetNumericValue();
+                            tokenizer.ReadCloser(aBracket);
+                        }
+                        break;
+                    case "REMARK":
+                        remark = ReadRemark(tokenizer);
+                        break;
+                    case "ID":
+                        id = ReadId(tokenizer);
+                        break;
+                    case "USAGE":
+                        usages.Add(ReadUsage(tokenizer));
+                        break;
+                    case "SCOPE":
+                        {
+                            var scopeBracket = tokenizer.ReadOpener();
+                            var u = new Wkt2Usage { Scope = tokenizer.ReadDoubleQuotedWord() };
+                            tokenizer.ReadCloser(scopeBracket);
+                            usages.Add(u);
+                        }
+                        break;
+                    case "AREA":
+                        {
+                            var areaBracket = tokenizer.ReadOpener();
+                            var u = new Wkt2Usage { Area = tokenizer.ReadDoubleQuotedWord() };
+                            tokenizer.ReadCloser(areaBracket);
+                            usages.Add(u);
+                        }
+                        break;
+                    case "BBOX":
+                        {
+                            var u = new Wkt2Usage { BBox = ReadBBox(tokenizer) };
+                            usages.Add(u);
+                        }
+                        break;
+                    case ",":
+                        break;
+                    case "]":
+                    case ")":
+                        tokenizer.CheckCloser(bracket);
+
+                        if (sourceCrs == null)
+                            throw new ArgumentException("CONCATENATEDOPERATION is missing SOURCECRS.");
+                        if (targetCrs == null)
+                            throw new ArgumentException("CONCATENATEDOPERATION is missing TARGETCRS.");
+                        if (steps.Count < 2)
+                            throw new ArgumentException("CONCATENATEDOPERATION must have at least two STEP elements.");
+
+                        var op = new Wkt2ConcatenatedOperation(name)
+                        {
+                            Version = version,
+                            SourceCrs = sourceCrs,
+                            TargetCrs = targetCrs,
+                            OperationAccuracy = operationAccuracy,
+                            Id = id,
+                            Remark = remark
+                        };
+                        foreach (var s in steps)
+                            op.Steps.Add(s);
+                        foreach (var u in usages)
+                            op.Usages.Add(u);
+                        return op;
+
+                    default:
+                        SkipUnknownElement(tokenizer);
+                        break;
+                }
+
+                tokenizer.NextToken();
+            }
+        }
+
+        private static Wkt2CoordinateOperation ReadStepElement(WktStreamTokenizer tokenizer)
+        {
+            var stepBracket = tokenizer.ReadOpener();
+            tokenizer.NextToken();
+            string childKeyword = tokenizer.GetStringValue();
+
+            var op = ReadCoordinateOperationStep(childKeyword, tokenizer);
+
+            tokenizer.ReadCloser(stepBracket);
+            return op;
+        }
+
+        private static Wkt2CoordinateOperation ReadCoordinateOperationStep(string keyword, WktStreamTokenizer tokenizer)
+        {
+            var bracket = tokenizer.ReadOpener();
+            string name = tokenizer.ReadDoubleQuotedWord();
+
+            tokenizer.ReadToken(",");
+            tokenizer.NextToken();
+
+            string method = null;
+            var parameters = new List<Wkt2Parameter>();
+            Wkt2CrsBase sourceCrs = null;
+            Wkt2CrsBase targetCrs = null;
+            double? operationAccuracy = null;
+            Wkt2Id id = null;
+            string remark = null;
+
+            while (true)
+            {
+                string element = tokenizer.GetStringValue();
+                switch (element.ToUpperInvariant())
+                {
+                    case "METHOD":
+                        method = ReadMethodName(tokenizer);
+                        break;
+                    case "PARAMETER":
+                        parameters.Add(ReadParameter(tokenizer));
+                        break;
+                    case "SOURCECRS":
+                        sourceCrs = ReadBoundCrsChildCrs(tokenizer);
+                        break;
+                    case "TARGETCRS":
+                        targetCrs = ReadBoundCrsChildCrs(tokenizer);
+                        break;
+                    case "OPERATIONACCURACY":
+                        {
+                            var aBracket = tokenizer.ReadOpener();
+                            tokenizer.NextToken();
+                            operationAccuracy = tokenizer.GetNumericValue();
+                            tokenizer.ReadCloser(aBracket);
+                        }
+                        break;
+                    case "ID":
+                        id = ReadId(tokenizer);
+                        break;
+                    case "REMARK":
+                        remark = ReadRemark(tokenizer);
+                        break;
+                    case ",":
+                        break;
+                    case "]":
+                    case ")":
+                        tokenizer.CheckCloser(bracket);
+
+                        var op = new Wkt2CoordinateOperation(keyword, name)
+                        {
+                            Method = method,
+                            SourceCrs = sourceCrs,
+                            TargetCrs = targetCrs,
+                            OperationAccuracy = operationAccuracy,
+                            Id = id,
+                            Remark = remark
+                        };
+                        foreach (var p in parameters)
+                            op.Parameters.Add(p);
+                        return op;
+
+                    default:
+                        SkipUnknownElement(tokenizer);
+                        break;
+                }
+
+                tokenizer.NextToken();
             }
         }
     }

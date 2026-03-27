@@ -37,6 +37,8 @@ namespace ProjNet.IO.CoordinateSystems
                 return WriteTimeCrs(time);
             if (crs is Wkt2DerivedGeogCrs derivedGeog)
                 return WriteDerivedGeogCrs(derivedGeog);
+            if (crs is Wkt2ConcatenatedOperation concat)
+                return WriteConcatenatedOperation(concat);
 
             throw new NotSupportedException($"WKT2 writer does not support '{crs.GetType().Name}'.");
         }
@@ -775,6 +777,127 @@ namespace ProjNet.IO.CoordinateSystems
             {
                 sb.Append(",REMARK[\"");
                 sb.Append(EscapeQuotedText(crs.Remark));
+                sb.Append("\"]");
+            }
+
+            sb.Append(']');
+            return sb.ToString();
+        }
+
+        private static string WriteConcatenatedOperation(Wkt2ConcatenatedOperation op)
+        {
+            var sb = new StringBuilder();
+            sb.Append("CONCATENATEDOPERATION[\"");
+            sb.Append(EscapeQuotedText(op.Name));
+            sb.Append("\"");
+
+            if (!string.IsNullOrWhiteSpace(op.Version))
+            {
+                sb.Append(",VERSION[\"");
+                sb.Append(EscapeQuotedText(op.Version));
+                sb.Append("\"]");
+            }
+
+            if (op.SourceCrs != null)
+            {
+                sb.Append(",SOURCECRS[");
+                sb.Append(Write(op.SourceCrs));
+                sb.Append(']');
+            }
+
+            if (op.TargetCrs != null)
+            {
+                sb.Append(",TARGETCRS[");
+                sb.Append(Write(op.TargetCrs));
+                sb.Append(']');
+            }
+
+            foreach (var step in op.Steps)
+            {
+                sb.Append(",STEP[");
+                sb.Append(WriteCoordinateOperation(step));
+                sb.Append(']');
+            }
+
+            if (op.OperationAccuracy.HasValue)
+            {
+                sb.Append(",OPERATIONACCURACY[");
+                sb.Append(op.OperationAccuracy.Value.ToString(CultureInfo.InvariantCulture));
+                sb.Append(']');
+            }
+
+            foreach (var usage in op.Usages)
+                sb.Append($",{WriteUsage(usage)}");
+
+            if (op.Id != null)
+            {
+                sb.Append(',');
+                sb.Append(WriteId(op.Id));
+            }
+
+            if (!string.IsNullOrWhiteSpace(op.Remark))
+            {
+                sb.Append(",REMARK[\"");
+                sb.Append(EscapeQuotedText(op.Remark));
+                sb.Append("\"]");
+            }
+
+            sb.Append(']');
+            return sb.ToString();
+        }
+
+        private static string WriteCoordinateOperation(Wkt2CoordinateOperation op)
+        {
+            var sb = new StringBuilder();
+            sb.Append(op.Keyword.ToUpperInvariant());
+            sb.Append("[\"");
+            sb.Append(EscapeQuotedText(op.Name));
+            sb.Append("\"");
+
+            if (op.SourceCrs != null)
+            {
+                sb.Append(",SOURCECRS[");
+                sb.Append(Write(op.SourceCrs));
+                sb.Append(']');
+            }
+
+            if (op.TargetCrs != null)
+            {
+                sb.Append(",TARGETCRS[");
+                sb.Append(Write(op.TargetCrs));
+                sb.Append(']');
+            }
+
+            if (!string.IsNullOrWhiteSpace(op.Method))
+            {
+                sb.Append(",METHOD[\"");
+                sb.Append(EscapeQuotedText(op.Method));
+                sb.Append("\"]");
+            }
+
+            foreach (var p in op.Parameters)
+            {
+                sb.Append(',');
+                sb.Append(WriteParameter(p));
+            }
+
+            if (op.OperationAccuracy.HasValue)
+            {
+                sb.Append(",OPERATIONACCURACY[");
+                sb.Append(op.OperationAccuracy.Value.ToString(CultureInfo.InvariantCulture));
+                sb.Append(']');
+            }
+
+            if (op.Id != null)
+            {
+                sb.Append(',');
+                sb.Append(WriteId(op.Id));
+            }
+
+            if (!string.IsNullOrWhiteSpace(op.Remark))
+            {
+                sb.Append(",REMARK[\"");
+                sb.Append(EscapeQuotedText(op.Remark));
                 sb.Append("\"]");
             }
 

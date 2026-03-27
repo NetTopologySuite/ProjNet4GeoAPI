@@ -91,6 +91,8 @@ namespace ProjNet.IO.CoordinateSystems
                         return CoordinateSystemWkt2Reader.Parse(wkt);
                     case "DERIVEDGEOGCRS":
                         return CoordinateSystemWkt2Reader.Parse(wkt);
+                    case "CONCATENATEDOPERATION":
+                        return CoordinateSystemWkt2Reader.Parse(wkt);
                     case "UNIT":
                         return ReadUnit(tokenizer);
                     case "SPHEROID":

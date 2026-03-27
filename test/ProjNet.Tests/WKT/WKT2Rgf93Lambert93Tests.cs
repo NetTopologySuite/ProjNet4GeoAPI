@@ -26,7 +26,7 @@ namespace ProjNET.Tests.WKT
                                                    "AXIS[\"easting (X)\",east,ORDER[1],LENGTHUNIT[\"metre\",1]]," +
                                                    "AXIS[\"northing (Y)\",north,ORDER[2],LENGTHUNIT[\"metre\",1]]," +
                                                    "USAGE[SCOPE[\"Engineering survey, topographic mapping.\"]," +
-                                                   "AREA[\"France - onshore and offshore, mainland and Corsica (France métropolitaine including Corsica).\"]," +
+                                                   "AREA[\"France - onshore and offshore, mainland and Corsica (France mï¿½tropolitaine including Corsica).\"]," +
                                                    "BBOX[41.15,-9.86,51.56,10.38]]," +
                                                    "ID[\"EPSG\",2154]]";
 
@@ -53,6 +53,11 @@ namespace ProjNET.Tests.WKT
             Assert.That(pcs.AxisInfo, Has.Count.EqualTo(2));
             Assert.That(pcs.AxisInfo[0].Orientation, Is.EqualTo(AxisOrientationEnum.East));
             Assert.That(pcs.AxisInfo[1].Orientation, Is.EqualTo(AxisOrientationEnum.North));
+
+            // Verify Lambert-93 parameters
+            Assert.That(pcs.Projection.ClassName, Does.Contain("lambert_conformal_conic").IgnoreCase);
+            Assert.That(pcs.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid.SemiMajorAxis, Is.EqualTo(6378137));
+            Assert.That(pcs.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid.InverseFlattening, Is.EqualTo(298.257222101));
         }
 
         [Test]

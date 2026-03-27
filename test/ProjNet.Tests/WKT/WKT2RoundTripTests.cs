@@ -40,6 +40,15 @@ namespace ProjNET.Tests.WKT
             Assert.That(gcs.AxisInfo, Has.Count.EqualTo(2));
             Assert.That(gcs.AxisInfo[0].Orientation, Is.EqualTo(AxisOrientationEnum.East));
             Assert.That(gcs.AxisInfo[1].Orientation, Is.EqualTo(AxisOrientationEnum.North));
+
+            // Verify datum and ellipsoid values
+            Assert.That(gcs.HorizontalDatum.Name, Does.Contain("World Geodetic System 1984"));
+            Assert.That(gcs.HorizontalDatum.Ellipsoid.SemiMajorAxis, Is.EqualTo(6378137));
+            Assert.That(gcs.HorizontalDatum.Ellipsoid.InverseFlattening, Is.EqualTo(298.257223563));
+            // Verify prime meridian
+            Assert.That(gcs.PrimeMeridian.Longitude, Is.EqualTo(0));
+            // Verify angular unit
+            Assert.That(gcs.AngularUnit.RadiansPerUnit, Is.EqualTo(0.0174532925199433).Within(1e-13));
         }
 
         [Test]
@@ -74,6 +83,12 @@ namespace ProjNET.Tests.WKT
             var roundTripped = Wkt2Conversions.ToProjNetGeographicCoordinateSystem(wkt2Model);
 
             Assert.That(roundTripped.EqualParams(original), Is.True);
+
+            // Verify detailed preservation
+            Assert.That(roundTripped.HorizontalDatum.Ellipsoid.SemiMajorAxis, Is.EqualTo(original.HorizontalDatum.Ellipsoid.SemiMajorAxis));
+            Assert.That(roundTripped.HorizontalDatum.Ellipsoid.InverseFlattening, Is.EqualTo(original.HorizontalDatum.Ellipsoid.InverseFlattening));
+            Assert.That(roundTripped.PrimeMeridian.Longitude, Is.EqualTo(original.PrimeMeridian.Longitude));
+            Assert.That(roundTripped.AngularUnit.RadiansPerUnit, Is.EqualTo(original.AngularUnit.RadiansPerUnit).Within(1e-13));
         }
     }
 }
