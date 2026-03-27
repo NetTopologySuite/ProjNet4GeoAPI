@@ -360,6 +360,13 @@ namespace ProjNet.IO.CoordinateSystems
                     case "COMPOUNDCRS":
                         crs = ReadCompoundCrs(element, tokenizer);
                         break;
+                    case "ENGCRS":
+                    case "ENGINEERINGCRS":
+                        crs = ReadEngCrs(element, tokenizer);
+                        break;
+                    case "PARAMETRICCRS":
+                        crs = ReadParametricCrs(element, tokenizer);
+                        break;
                     case ",":
                         break;
                     case "]":
@@ -386,7 +393,9 @@ namespace ProjNet.IO.CoordinateSystems
             tokenizer.NextToken();
 
             string methodName = null;
-            var transform = new Wkt2AbridgedTransformation(name, string.Empty);
+            var parameters = new System.Collections.Generic.List<Wkt2Parameter>();
+            Wkt2Id id = null;
+            string remark = null;
 
             while (true)
             {
@@ -395,24 +404,28 @@ namespace ProjNet.IO.CoordinateSystems
                 {
                     case "METHOD":
                         methodName = ReadMethodName(tokenizer);
-                        transform = new Wkt2AbridgedTransformation(name, methodName);
                         break;
                     case "PARAMETER":
-                        transform.Parameters.Add(ReadParameter(tokenizer));
+                        parameters.Add(ReadParameter(tokenizer));
                         break;
                     case "ID":
-                        transform.Id = ReadId(tokenizer);
+                        id = ReadId(tokenizer);
                         break;
                     case "REMARK":
-                        transform.Remark = ReadRemark(tokenizer);
+                        remark = ReadRemark(tokenizer);
                         break;
                     case ",":
                         break;
                     case "]":
                     case ")":
                         tokenizer.CheckCloser(bracket);
-                        if (string.IsNullOrWhiteSpace(transform.MethodName))
+                        if (string.IsNullOrWhiteSpace(methodName))
                             throw new ArgumentException("ABRIDGEDTRANSFORMATION is missing METHOD.");
+                        var transform = new Wkt2AbridgedTransformation(name, methodName);
+                        foreach (var p in parameters)
+                            transform.Parameters.Add(p);
+                        transform.Id = id;
+                        transform.Remark = remark;
                         return transform;
                     default:
                         SkipUnknownElement(tokenizer);
@@ -731,7 +744,9 @@ namespace ProjNet.IO.CoordinateSystems
             tokenizer.NextToken();
 
             string methodName = null;
-            var conversion = new Wkt2Conversion(name, string.Empty);
+            var parameters = new System.Collections.Generic.List<Wkt2Parameter>();
+            Wkt2Id id = null;
+            string remark = null;
 
             while (true)
             {
@@ -740,24 +755,28 @@ namespace ProjNet.IO.CoordinateSystems
                 {
                     case "METHOD":
                         methodName = ReadMethodName(tokenizer);
-                        conversion = new Wkt2Conversion(name, methodName);
                         break;
                     case "PARAMETER":
-                        conversion.Parameters.Add(ReadParameter(tokenizer));
+                        parameters.Add(ReadParameter(tokenizer));
                         break;
                     case "ID":
-                        conversion.Id = ReadId(tokenizer);
+                        id = ReadId(tokenizer);
                         break;
                     case "REMARK":
-                        conversion.Remark = ReadRemark(tokenizer);
+                        remark = ReadRemark(tokenizer);
                         break;
                     case ",":
                         break;
                     case "]":
                     case ")":
                         tokenizer.CheckCloser(bracket);
-                        if (string.IsNullOrWhiteSpace(conversion.MethodName))
+                        if (string.IsNullOrWhiteSpace(methodName))
                             throw new ArgumentException("CONVERSION is missing METHOD.");
+                        var conversion = new Wkt2Conversion(name, methodName);
+                        foreach (var p in parameters)
+                            conversion.Parameters.Add(p);
+                        conversion.Id = id;
+                        conversion.Remark = remark;
                         return conversion;
                     default:
                         SkipUnknownElement(tokenizer);

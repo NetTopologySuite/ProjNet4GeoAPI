@@ -61,6 +61,10 @@ namespace ProjNet.CoordinateSystems.Wkt2
         public static Wkt2ProjCrs FromProjNetProjectedCoordinateSystem(this ProjectedCoordinateSystem pcs)
         {
             if (pcs == null) throw new ArgumentNullException(nameof(pcs));
+            if (pcs.GeographicCoordinateSystem == null)
+                throw new ArgumentException("ProjectedCoordinateSystem.GeographicCoordinateSystem cannot be null.", nameof(pcs));
+            if (pcs.Projection == null)
+                throw new ArgumentException("ProjectedCoordinateSystem.Projection cannot be null.", nameof(pcs));
 
             var baseCrs = pcs.GeographicCoordinateSystem.FromProjNetGeographicCoordinateSystem();
 
@@ -177,6 +181,8 @@ namespace ProjNet.CoordinateSystems.Wkt2
         public static Wkt2GeogCrs FromProjNetGeographicCoordinateSystem(this GeographicCoordinateSystem gcs)
         {
             if (gcs == null) throw new ArgumentNullException(nameof(gcs));
+            if (gcs.HorizontalDatum?.Ellipsoid == null)
+                throw new ArgumentException("GeographicCoordinateSystem.HorizontalDatum.Ellipsoid cannot be null.", nameof(gcs));
 
             var unit = new Wkt2Unit("ANGLEUNIT", gcs.AngularUnit.Name, gcs.AngularUnit.RadiansPerUnit);
 
