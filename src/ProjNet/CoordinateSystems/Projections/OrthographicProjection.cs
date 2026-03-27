@@ -50,15 +50,15 @@ internal class OrthographicProjection : MapProjection
 
         if (Math.Abs(Math.Abs(this.Phi0) - HalfPi) <= Eps10)
         {
-            this.mode = this.Phi0 < 0.0 ? Mode.S_POLE : Mode.N_POLE;
+            this.mode = this.Phi0 < 0.0 ? Mode.SouthPole : Mode.NorthPole;
         }
         else if (Math.Abs(this.Phi0) > Eps10)
         {
-            this.mode = Mode.OBLIQ;
+            this.mode = Mode.Oblique;
         }
         else
         {
-            this.mode = Mode.EQUIT;
+            this.mode = Mode.Equatorial;
         }
 
         if (this.es > 0)
@@ -71,10 +71,25 @@ internal class OrthographicProjection : MapProjection
 
     private enum Mode
     {
-        N_POLE = 0,
-        S_POLE = 1,
-        EQUIT = 2,
-        OBLIQ = 3,
+        /// <summary>
+        /// Projection center is at the geographic north pole.
+        /// </summary>
+        NorthPole = 0,
+
+        /// <summary>
+        /// Projection center is at the geographic south pole.
+        /// </summary>
+        SouthPole = 1,
+
+        /// <summary>
+        /// Projection center lies on the equator.
+        /// </summary>
+        Equatorial = 2,
+
+        /// <summary>
+        /// Projection center is at an oblique (non-equatorial, non-polar) latitude.
+        /// </summary>
+        Oblique = 3,
     }
 
     /// <inheritdoc />
@@ -135,15 +150,15 @@ internal class OrthographicProjection : MapProjection
         {
             switch (this.mode)
             {
-                case Mode.N_POLE:
+                case Mode.NorthPole:
                     phi = Math.Asin(cosc);
                     lam = this.Lon_origin + Math.Atan2(x, -y);
                     break;
-                case Mode.S_POLE:
+                case Mode.SouthPole:
                     phi = -Math.Asin(cosc);
                     lam = this.Lon_origin + Math.Atan2(x, y);
                     break;
-                case Mode.EQUIT:
+                case Mode.Equatorial:
                     if (Math.Abs(y) >= this.semiMajor)
                     {
                         phi = y < 0.0 ? -HalfPi : HalfPi;
@@ -155,7 +170,7 @@ internal class OrthographicProjection : MapProjection
 
                     lam = this.Lon_origin + Math.Atan2(x / this.semiMajor, cosc);
                     break;
-                case Mode.OBLIQ:
+                case Mode.Oblique:
                     phi = Math.Asin((cosc * this.sinph0) + (y * this.cosph0 / this.semiMajor));
                     lam = this.Lon_origin + Math.Atan2(x * sinc, (rho * this.cosph0 * cosc) - (y * this.sinph0 * sinc));
                     break;
@@ -182,7 +197,7 @@ internal class OrthographicProjection : MapProjection
         double y_scaled = y / this.semiMajor;
         double phi;
         double lam;
-        if (this.mode == Mode.N_POLE || this.mode == Mode.S_POLE)
+        if (this.mode == Mode.NorthPole || this.mode == Mode.SouthPole)
         {
             // Polar case. Forward case equations can be simplified as:
             // x = nu * cosphi * sinlam
@@ -208,7 +223,7 @@ internal class OrthographicProjection : MapProjection
                 phi = Math.Acos(Math.Sqrt(rh2 * (1 - this.es) / (1 - (this.es * rh2)))) * Sign(this.latOrigin);
             }
         }
-        else if (this.mode == Mode.EQUIT)
+        else if (this.mode == Mode.Equatorial)
         {
             // Equatorial case. Forward case equations can be simplified as:
             // x = nu * cosphi * sinlam
@@ -336,7 +351,7 @@ internal class OrthographicProjection : MapProjection
         double sinphi;
         switch (this.mode)
         {
-            case Mode.EQUIT:
+            case Mode.Equatorial:
                 if (cosphi * coslam < -Eps10)
                 {
                     ArgumentGuard.ThrowArgumentOutOfRange($"Coordinate ({RadiansToDegrees(lam):F3}, {RadiansToDegrees(phi):F3}) is on the unprojected hemisphere");
@@ -344,7 +359,7 @@ internal class OrthographicProjection : MapProjection
 
                 y = this.semiMajor * Math.Sin(phi);
                 break;
-            case Mode.OBLIQ:
+            case Mode.Oblique:
                 sinphi = Math.Sin(phi);
 
                 // Is the point visible from the projection plane ?
@@ -360,7 +375,7 @@ internal class OrthographicProjection : MapProjection
 
                 y = this.semiMajor * ((this.cosph0 * sinphi) - (this.sinph0 * cosphi * coslam));
                 break;
-            case Mode.N_POLE:
+            case Mode.NorthPole:
                 coslam = -coslam;
                 if (Math.Abs(phi - this.Phi0) - Eps10 > HalfPi)
                 {
@@ -369,7 +384,7 @@ internal class OrthographicProjection : MapProjection
 
                 y = this.semiMajor * cosphi * coslam;
                 break;
-            case Mode.S_POLE:
+            case Mode.SouthPole:
                 if (Math.Abs(phi - this.Phi0) - Eps10 > HalfPi)
                 {
                     ArgumentGuard.ThrowArgumentOutOfRange($"Coordinate ({RadiansToDegrees(lam):F3}, {RadiansToDegrees(phi):F3}) is on the unprojected hemisphere");
