@@ -648,16 +648,6 @@ internal sealed class DeformationMathTransform : MathTransform
             && !double.IsInfinity(value);
     }
 
-    private static bool IsFinite(double value)
-    {
-        return !double.IsNaN(value) && !double.IsInfinity(value);
-    }
-
-    private static bool IsValidObservationEpoch(double epoch)
-    {
-        return IsFinite(epoch) && epoch != MissingObservationEpoch;
-    }
-
     private static bool TryNormalizeInterpolationCell(int size, ref int index, ref double fraction)
     {
         if (index < 0)
@@ -845,7 +835,7 @@ internal sealed class DeformationMathTransform : MathTransform
             return true;
         }
 
-        if (!IsValidObservationEpoch(observationEpoch))
+        if (!TransformationMath.IsValidObservationEpoch(observationEpoch, MissingObservationEpoch))
         {
             missingTime = true;
             deltaTime = 0d;
@@ -862,7 +852,7 @@ internal sealed class DeformationMathTransform : MathTransform
         shiftX = 0d;
         shiftY = 0d;
         shiftZ = 0d;
-        if (!IsFinite(x) || !IsFinite(y) || !IsFinite(z))
+        if (!TransformationMath.IsFinite(x) || !TransformationMath.IsFinite(y) || !TransformationMath.IsFinite(z))
         {
             return false;
         }
@@ -871,7 +861,7 @@ internal sealed class DeformationMathTransform : MathTransform
         double latitudeDegrees = y;
         double height = z;
         this.geocentricInverse.Transform(ref longitudeDegrees, ref latitudeDegrees, ref height);
-        if (!IsFinite(longitudeDegrees) || !IsFinite(latitudeDegrees))
+        if (!TransformationMath.IsFinite(longitudeDegrees) || !TransformationMath.IsFinite(latitudeDegrees))
         {
             return false;
         }
@@ -908,7 +898,7 @@ internal sealed class DeformationMathTransform : MathTransform
             out shiftX,
             out shiftY,
             out shiftZ);
-        return IsFinite(shiftX) && IsFinite(shiftY) && IsFinite(shiftZ);
+        return TransformationMath.IsFinite(shiftX) && TransformationMath.IsFinite(shiftY) && TransformationMath.IsFinite(shiftZ);
     }
 
     private bool TryInterpolateGeoTiffVelocity(
@@ -944,18 +934,18 @@ internal sealed class DeformationMathTransform : MathTransform
         double up01 = grid.GetZShift(cell.X0, cell.Y1);
         double up10 = grid.GetZShift(cell.X1, cell.Y0);
         double up11 = grid.GetZShift(cell.X1, cell.Y1);
-        if (!IsFinite(east00)
-            || !IsFinite(east01)
-            || !IsFinite(east10)
-            || !IsFinite(east11)
-            || !IsFinite(north00)
-            || !IsFinite(north01)
-            || !IsFinite(north10)
-            || !IsFinite(north11)
-            || !IsFinite(up00)
-            || !IsFinite(up01)
-            || !IsFinite(up10)
-            || !IsFinite(up11))
+        if (!TransformationMath.IsFinite(east00)
+            || !TransformationMath.IsFinite(east01)
+            || !TransformationMath.IsFinite(east10)
+            || !TransformationMath.IsFinite(east11)
+            || !TransformationMath.IsFinite(north00)
+            || !TransformationMath.IsFinite(north01)
+            || !TransformationMath.IsFinite(north10)
+            || !TransformationMath.IsFinite(north11)
+            || !TransformationMath.IsFinite(up00)
+            || !TransformationMath.IsFinite(up01)
+            || !TransformationMath.IsFinite(up10)
+            || !TransformationMath.IsFinite(up11))
         {
             return false;
         }
@@ -963,7 +953,7 @@ internal sealed class DeformationMathTransform : MathTransform
         eastVelocity = Bilinear(east00, east01, east10, east11, cell) / 1000d;
         northVelocity = Bilinear(north00, north01, north10, north11, cell) / 1000d;
         upVelocity = Bilinear(up00, up01, up10, up11, cell) / 1000d;
-        return IsFinite(eastVelocity) && IsFinite(northVelocity) && IsFinite(upVelocity);
+        return TransformationMath.IsFinite(eastVelocity) && TransformationMath.IsFinite(northVelocity) && TransformationMath.IsFinite(upVelocity);
     }
 
     private bool TryInterpolateLegacyVelocity(
@@ -1001,7 +991,7 @@ internal sealed class DeformationMathTransform : MathTransform
         eastVelocity = eastMmPerYear / 1000d;
         northVelocity = northMmPerYear / 1000d;
         upVelocity = upMmPerYear / 1000d;
-        return IsFinite(eastVelocity) && IsFinite(northVelocity) && IsFinite(upVelocity);
+        return TransformationMath.IsFinite(eastVelocity) && TransformationMath.IsFinite(northVelocity) && TransformationMath.IsFinite(upVelocity);
     }
 
     private bool TryReverseShift(
@@ -1152,10 +1142,10 @@ internal sealed class DeformationMathTransform : MathTransform
             double resolutionY = ReadDoubleLittleEndian(bytes, 120);
             int width = ReadInt32LittleEndian(bytes, 128);
             int height = ReadInt32LittleEndian(bytes, 132);
-            if (!IsFinite(west)
-                || !IsFinite(south)
-                || !IsFinite(resolutionX)
-                || !IsFinite(resolutionY)
+            if (!TransformationMath.IsFinite(west)
+                || !TransformationMath.IsFinite(south)
+                || !TransformationMath.IsFinite(resolutionX)
+                || !TransformationMath.IsFinite(resolutionY)
                 || width <= 0
                 || height <= 0
                 || Math.Abs(west) > (4d * Math.PI)
@@ -1247,7 +1237,7 @@ internal sealed class DeformationMathTransform : MathTransform
                 + (this.GetNorthValue(indexX2, indexY) * w10)
                 + (this.GetNorthValue(indexX, indexY2) * w01)
                 + (this.GetNorthValue(indexX2, indexY2) * w11);
-            return IsFinite(eastMmPerYear) && IsFinite(northMmPerYear);
+            return TransformationMath.IsFinite(eastMmPerYear) && TransformationMath.IsFinite(northMmPerYear);
         }
 
         private static int ReadInt32LittleEndian(byte[] bytes, int offset)
@@ -1495,7 +1485,7 @@ internal sealed class DeformationMathTransform : MathTransform
             if (validCount == 4)
             {
                 valueMmPerYear = (valueA * weightA) + (valueB * weightB) + (valueC * weightC) + (valueD * weightD);
-                return IsFinite(valueMmPerYear);
+                return TransformationMath.IsFinite(valueMmPerYear);
             }
 
             double weightedValue = 0d;
@@ -1530,7 +1520,7 @@ internal sealed class DeformationMathTransform : MathTransform
             }
 
             valueMmPerYear = weightedValue / totalWeight;
-            return IsFinite(valueMmPerYear);
+            return TransformationMath.IsFinite(valueMmPerYear);
         }
 
         private static bool IsNoData(float value, double multiplier)

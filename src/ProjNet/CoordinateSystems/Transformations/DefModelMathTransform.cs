@@ -255,7 +255,7 @@ internal sealed class DefModelMathTransform : MathTransform
     /// <inheritdoc />
     internal override void Transform(ref double x, ref double y, ref double z, ref double t)
     {
-        if (!IsValidObservationEpoch(t))
+        if (!TransformationMath.IsValidObservationEpoch(t, MissingObservationEpoch))
         {
             ArgumentGuard.ThrowArgument("defmodel requires a valid observation epoch.");
         }
@@ -1128,11 +1128,6 @@ internal sealed class DefModelMathTransform : MathTransform
         }
     }
 
-    private static bool IsValidObservationEpoch(double epoch)
-    {
-        return !double.IsNaN(epoch) && !double.IsInfinity(epoch) && epoch != MissingObservationEpoch;
-    }
-
     private static bool BboxCheck(
         ref double x,
         ref double y,
@@ -1379,23 +1374,18 @@ internal sealed class DefModelMathTransform : MathTransform
             grid.GetZShift(cell.X0, cell.Y1),
             grid.GetZShift(cell.X1, cell.Y0),
             grid.GetZShift(cell.X1, cell.Y1));
-        return IsFinite(values.X00)
-            && IsFinite(values.X01)
-            && IsFinite(values.X10)
-            && IsFinite(values.X11)
-            && IsFinite(values.Y00)
-            && IsFinite(values.Y01)
-            && IsFinite(values.Y10)
-            && IsFinite(values.Y11)
-            && IsFinite(values.Z00)
-            && IsFinite(values.Z01)
-            && IsFinite(values.Z10)
-            && IsFinite(values.Z11);
-    }
-
-    private static bool IsFinite(double value)
-    {
-        return !double.IsNaN(value) && !double.IsInfinity(value);
+        return TransformationMath.IsFinite(values.X00)
+            && TransformationMath.IsFinite(values.X01)
+            && TransformationMath.IsFinite(values.X10)
+            && TransformationMath.IsFinite(values.X11)
+            && TransformationMath.IsFinite(values.Y00)
+            && TransformationMath.IsFinite(values.Y01)
+            && TransformationMath.IsFinite(values.Y10)
+            && TransformationMath.IsFinite(values.Y11)
+            && TransformationMath.IsFinite(values.Z00)
+            && TransformationMath.IsFinite(values.Z01)
+            && TransformationMath.IsFinite(values.Z10)
+            && TransformationMath.IsFinite(values.Z11);
     }
 
     private static bool TryInterpolateGeocentricBilinear(

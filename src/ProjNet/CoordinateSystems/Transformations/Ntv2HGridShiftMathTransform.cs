@@ -141,7 +141,7 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
 
             if ((deltaLon * deltaLon) + (deltaLat * deltaLat) <= (InverseTolerance * InverseTolerance))
             {
-                longitude = NormalizeLongitude(tLon + initialGrid.West);
+                longitude = TransformationMath.NormalizeLongitudeDegrees(tLon + initialGrid.West);
                 latitude = tLat + initialGrid.South;
                 return;
             }
@@ -245,22 +245,6 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
             normalized += 360d;
         }
         else if (normalized - epsilon > east - west)
-        {
-            normalized -= 360d;
-        }
-
-        return normalized;
-    }
-
-    private static double NormalizeLongitude(double longitude)
-    {
-        double normalized = longitude;
-        while (normalized < -180d)
-        {
-            normalized += 360d;
-        }
-
-        while (normalized > 180d)
         {
             normalized -= 360d;
         }

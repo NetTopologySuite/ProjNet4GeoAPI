@@ -131,7 +131,7 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
             candidateLatitude -= deltaLatitude;
             if ((deltaLongitude * deltaLongitude) + (deltaLatitude * deltaLatitude) <= (InverseTolerance * InverseTolerance))
             {
-                longitude = NormalizeLongitude(candidateLongitude);
+                longitude = TransformationMath.NormalizeLongitudeDegrees(candidateLongitude);
                 latitude = candidateLatitude;
                 return;
             }
@@ -204,22 +204,6 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
         }
 
         ArgumentGuard.ThrowArgument("Coordinate is outside the horizontal GeoTIFF grid extent.");
-    }
-
-    private static double NormalizeLongitude(double longitude)
-    {
-        double normalized = longitude;
-        while (normalized < -180d)
-        {
-            normalized += 360d;
-        }
-
-        while (normalized > 180d)
-        {
-            normalized -= 360d;
-        }
-
-        return normalized;
     }
 
     private bool TryFindGridForPoint(double longitude, double latitude, [NotNullWhen(true)] out HorizontalGrid? grid)
