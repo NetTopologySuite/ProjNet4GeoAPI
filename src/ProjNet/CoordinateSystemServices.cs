@@ -265,13 +265,15 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     }
 
     /// <summary>
-    /// Returns an enumerator that iterates over all registered SRID–coordinate-system pairs.
+    /// Returns an enumerator that iterates over all registered coordinate system entries.
     /// </summary>
-    /// <returns>An enumerator over the registered SRID-to-coordinate-system mappings.</returns>
-    public IEnumerator<KeyValuePair<int, CoordinateSystem>> GetEnumerator()
+    /// <returns>An enumerator over the registered SRID-to-coordinate-system entries.</returns>
+    public IEnumerator<CoordinateSystemEntry> GetEnumerator()
     {
         this.WaitForInitialization();
-        return this.csBySrid.GetEnumerator();
+        return this.csBySrid
+            .Select(static pair => new CoordinateSystemEntry(pair.Key, pair.Value))
+            .GetEnumerator();
     }
 
     /// <summary>
@@ -381,6 +383,12 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
         if (enumeration is ICoordinateSystemDefinitionProvider provider)
         {
             FromEnumeration(this, provider.GetDefinitions());
+            return;
+        }
+
+        if (enumeration is IEnumerable<CoordinateSystemDefinition> definitionEnumeration)
+        {
+            FromEnumeration(this, definitionEnumeration);
             return;
         }
 
