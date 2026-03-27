@@ -968,20 +968,13 @@ internal sealed class TinShiftMathTransform : MathTransform
         y3 = this.model.GetVertexValue(triangle.Index3, yIndex);
     }
 
-    private struct TriangleIndices
+    private readonly struct TriangleIndices(int index1, int index2, int index3)
     {
-        internal TriangleIndices(int index1, int index2, int index3)
-        {
-            this.Index1 = index1;
-            this.Index2 = index2;
-            this.Index3 = index3;
-        }
+        internal int Index1 { get; } = index1;
 
-        internal int Index1 { get; }
+        internal int Index2 { get; } = index2;
 
-        internal int Index2 { get; }
-
-        internal int Index3 { get; }
+        internal int Index3 { get; } = index3;
     }
 
     private struct VerticesColumnMap

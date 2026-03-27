@@ -323,22 +323,14 @@ internal class InterruptedGoodeHomolosineOceanicProjection : MapProjection
         return value > maximum ? maximum : value;
     }
 
-    private sealed class ZoneDefinition
+    private readonly struct ZoneDefinition(bool isMollweide, double lambda0, double x0, double y0)
     {
-        public ZoneDefinition(bool isMollweide, double lambda0, double x0, double y0)
-        {
-            this.IsMollweide = isMollweide;
-            this.Lambda0 = lambda0;
-            this.X0 = x0;
-            this.Y0 = y0;
-        }
+        public bool IsMollweide { get; } = isMollweide;
 
-        public bool IsMollweide { get; }
+        public double Lambda0 { get; } = lambda0;
 
-        public double Lambda0 { get; }
+        public double X0 { get; } = x0;
 
-        public double X0 { get; }
-
-        public double Y0 { get; }
+        public double Y0 { get; } = y0;
     }
 }

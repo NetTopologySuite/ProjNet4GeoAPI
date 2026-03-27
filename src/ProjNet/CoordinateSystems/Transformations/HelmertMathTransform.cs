@@ -772,83 +772,59 @@ internal sealed class HelmertMathTransform : MathTransform
     }
 
     [Serializable]
-    private readonly struct HelmertParameterState
+    private readonly struct HelmertParameterState(
+        double translationX,
+        double translationY,
+        double translationZ,
+        double rotationX,
+        double rotationY,
+        double rotationZ,
+        double scale,
+        double theta)
     {
-        internal HelmertParameterState(
-            double translationX,
-            double translationY,
-            double translationZ,
-            double rotationX,
-            double rotationY,
-            double rotationZ,
-            double scale,
-            double theta)
-        {
-            this.TranslationX = translationX;
-            this.TranslationY = translationY;
-            this.TranslationZ = translationZ;
-            this.RotationX = rotationX;
-            this.RotationY = rotationY;
-            this.RotationZ = rotationZ;
-            this.Scale = scale;
-            this.Theta = theta;
-        }
+        internal double TranslationX { get; } = translationX;
 
-        internal double TranslationX { get; }
+        internal double TranslationY { get; } = translationY;
 
-        internal double TranslationY { get; }
+        internal double TranslationZ { get; } = translationZ;
 
-        internal double TranslationZ { get; }
+        internal double RotationX { get; } = rotationX;
 
-        internal double RotationX { get; }
+        internal double RotationY { get; } = rotationY;
 
-        internal double RotationY { get; }
+        internal double RotationZ { get; } = rotationZ;
 
-        internal double RotationZ { get; }
+        internal double Scale { get; } = scale;
 
-        internal double Scale { get; }
-
-        internal double Theta { get; }
+        internal double Theta { get; } = theta;
     }
 
     [Serializable]
-    private readonly struct HelmertRateState
+    private readonly struct HelmertRateState(
+        double translationRateX,
+        double translationRateY,
+        double translationRateZ,
+        double rotationRateX,
+        double rotationRateY,
+        double rotationRateZ,
+        double scaleRate,
+        double thetaRate)
     {
-        internal HelmertRateState(
-            double translationRateX,
-            double translationRateY,
-            double translationRateZ,
-            double rotationRateX,
-            double rotationRateY,
-            double rotationRateZ,
-            double scaleRate,
-            double thetaRate)
-        {
-            this.TranslationRateX = translationRateX;
-            this.TranslationRateY = translationRateY;
-            this.TranslationRateZ = translationRateZ;
-            this.RotationRateX = rotationRateX;
-            this.RotationRateY = rotationRateY;
-            this.RotationRateZ = rotationRateZ;
-            this.ScaleRate = scaleRate;
-            this.ThetaRate = thetaRate;
-        }
+        internal double TranslationRateX { get; } = translationRateX;
 
-        internal double TranslationRateX { get; }
+        internal double TranslationRateY { get; } = translationRateY;
 
-        internal double TranslationRateY { get; }
+        internal double TranslationRateZ { get; } = translationRateZ;
 
-        internal double TranslationRateZ { get; }
+        internal double RotationRateX { get; } = rotationRateX;
 
-        internal double RotationRateX { get; }
+        internal double RotationRateY { get; } = rotationRateY;
 
-        internal double RotationRateY { get; }
+        internal double RotationRateZ { get; } = rotationRateZ;
 
-        internal double RotationRateZ { get; }
+        internal double ScaleRate { get; } = scaleRate;
 
-        internal double ScaleRate { get; }
-
-        internal double ThetaRate { get; }
+        internal double ThetaRate { get; } = thetaRate;
     }
 
     [Serializable]

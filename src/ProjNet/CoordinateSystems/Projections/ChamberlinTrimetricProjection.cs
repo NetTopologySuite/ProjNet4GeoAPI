@@ -227,17 +227,11 @@ internal class ChamberlinTrimetricProjection : MapProjection
     }
 
     [Serializable]
-    private readonly struct Arc
+    private readonly struct Arc(double r, double az)
     {
-        public Arc(double r, double az)
-        {
-            this.R = r;
-            this.Az = az;
-        }
+        public double R { get; } = r;
 
-        public double R { get; }
-
-        public double Az { get; }
+        public double Az { get; } = az;
     }
 
     [Serializable]

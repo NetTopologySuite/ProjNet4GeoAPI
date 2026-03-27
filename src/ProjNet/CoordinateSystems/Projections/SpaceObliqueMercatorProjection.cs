@@ -451,22 +451,14 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
         c3 += fc * Math.Cos(3d * lam);
     }
 
-    private readonly struct SomSetupParameters
+    private readonly struct SomSetupParameters(double lam0, double alf, double p22, double rlm)
     {
-        public SomSetupParameters(double lam0, double alf, double p22, double rlm)
-        {
-            this.Lam0 = lam0;
-            this.Alf = alf;
-            this.P22 = p22;
-            this.Rlm = rlm;
-        }
+        public double Lam0 { get; } = lam0;
 
-        public double Lam0 { get; }
+        public double Alf { get; } = alf;
 
-        public double Alf { get; }
+        public double P22 { get; } = p22;
 
-        public double P22 { get; }
-
-        public double Rlm { get; }
+        public double Rlm { get; } = rlm;
     }
 }

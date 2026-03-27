@@ -1051,35 +1051,23 @@ internal sealed class DeformationMathTransform : MathTransform
     }
 
     [Serializable]
-    private readonly struct InterpolationCell
+    private readonly struct InterpolationCell(int x0, int y0, int x1, int y1, double w00, double w01, double w10, double w11)
     {
-        internal InterpolationCell(int x0, int y0, int x1, int y1, double w00, double w01, double w10, double w11)
-        {
-            this.X0 = x0;
-            this.Y0 = y0;
-            this.X1 = x1;
-            this.Y1 = y1;
-            this.W00 = w00;
-            this.W01 = w01;
-            this.W10 = w10;
-            this.W11 = w11;
-        }
+        internal int X0 { get; } = x0;
 
-        internal int X0 { get; }
+        internal int Y0 { get; } = y0;
 
-        internal int Y0 { get; }
+        internal int X1 { get; } = x1;
 
-        internal int X1 { get; }
+        internal int Y1 { get; } = y1;
 
-        internal int Y1 { get; }
+        internal double W00 { get; } = w00;
 
-        internal double W00 { get; }
+        internal double W01 { get; } = w01;
 
-        internal double W01 { get; }
+        internal double W10 { get; } = w10;
 
-        internal double W10 { get; }
-
-        internal double W11 { get; }
+        internal double W11 { get; } = w11;
     }
 
     [Serializable]
