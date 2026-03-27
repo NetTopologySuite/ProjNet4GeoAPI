@@ -6,6 +6,7 @@ namespace ProjNet.CoordinateSystems.Projections;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 
@@ -29,6 +30,10 @@ public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<Pro
         "Interoperability",
         "SYSLIB0051:Legacy serialization support APIs are obsolete",
         Justification = "Required for compatibility with serialized payloads.")]
+#if NET5_0_OR_GREATER
+    [RequiresUnreferencedCode("Formatter-based serialization APIs are not trimming-safe.")]
+    [RequiresDynamicCode("Formatter-based serialization APIs may require runtime code generation.")]
+#endif
     public ProjectionParameterSet(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
         : base(info, context)
     {
