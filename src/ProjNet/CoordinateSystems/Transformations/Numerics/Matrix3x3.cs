@@ -10,35 +10,47 @@ using System;
 /// Represents an immutable 3×3 matrix with <see cref="double"/> precision.
 /// </summary>
 [Serializable]
-internal readonly struct Matrix3x3(
-    double m00,
-    double m01,
-    double m02,
-    double m10,
-    double m11,
-    double m12,
-    double m20,
-    double m21,
-    double m22)
-    : IEquatable<Matrix3x3>
+internal readonly record struct Matrix3x3
 {
-    internal double M00 { get; } = m00;
+    internal Matrix3x3(
+        double m00,
+        double m01,
+        double m02,
+        double m10,
+        double m11,
+        double m12,
+        double m20,
+        double m21,
+        double m22)
+    {
+        this.M00 = m00;
+        this.M01 = m01;
+        this.M02 = m02;
+        this.M10 = m10;
+        this.M11 = m11;
+        this.M12 = m12;
+        this.M20 = m20;
+        this.M21 = m21;
+        this.M22 = m22;
+    }
 
-    internal double M01 { get; } = m01;
+    internal double M00 { get; }
 
-    internal double M02 { get; } = m02;
+    internal double M01 { get; }
 
-    internal double M10 { get; } = m10;
+    internal double M02 { get; }
 
-    internal double M11 { get; } = m11;
+    internal double M10 { get; }
 
-    internal double M12 { get; } = m12;
+    internal double M11 { get; }
 
-    internal double M20 { get; } = m20;
+    internal double M12 { get; }
 
-    internal double M21 { get; } = m21;
+    internal double M20 { get; }
 
-    internal double M22 { get; } = m22;
+    internal double M21 { get; }
+
+    internal double M22 { get; }
 
     internal static Matrix3x3 Identity { get; } = new Matrix3x3(
         1d,
@@ -62,9 +74,9 @@ internal readonly struct Matrix3x3(
         0d,
         0d);
 
-    internal bool IsIdentity => this.Equals(Identity);
+    internal bool IsIdentity => this == Identity;
 
-    internal bool IsZero => this.Equals(Zero);
+    internal bool IsZero => this == Zero;
 
     internal Matrix3x3 Transpose()
     {
@@ -94,57 +106,11 @@ internal readonly struct Matrix3x3(
             (left.M20 * right.M02) + (left.M21 * right.M12) + (left.M22 * right.M22));
     }
 
-    public static bool operator ==(Matrix3x3 left, Matrix3x3 right)
-    {
-        return left.Equals(right);
-    }
-
-    public static bool operator !=(Matrix3x3 left, Matrix3x3 right)
-    {
-        return !left.Equals(right);
-    }
-
     public static Vector3D operator *(Matrix3x3 matrix, Vector3D vector)
     {
         return new Vector3D(
             (matrix.M00 * vector.X) + (matrix.M01 * vector.Y) + (matrix.M02 * vector.Z),
             (matrix.M10 * vector.X) + (matrix.M11 * vector.Y) + (matrix.M12 * vector.Z),
             (matrix.M20 * vector.X) + (matrix.M21 * vector.Y) + (matrix.M22 * vector.Z));
-    }
-
-    public bool Equals(Matrix3x3 other)
-    {
-        return this.M00.Equals(other.M00)
-            && this.M01.Equals(other.M01)
-            && this.M02.Equals(other.M02)
-            && this.M10.Equals(other.M10)
-            && this.M11.Equals(other.M11)
-            && this.M12.Equals(other.M12)
-            && this.M20.Equals(other.M20)
-            && this.M21.Equals(other.M21)
-            && this.M22.Equals(other.M22);
-    }
-
-    public override bool Equals(object? obj)
-    {
-        return obj is Matrix3x3 other && this.Equals(other);
-    }
-
-    public override int GetHashCode()
-    {
-        unchecked
-        {
-            int hash = 17;
-            hash = (hash * 31) + this.M00.GetHashCode();
-            hash = (hash * 31) + this.M01.GetHashCode();
-            hash = (hash * 31) + this.M02.GetHashCode();
-            hash = (hash * 31) + this.M10.GetHashCode();
-            hash = (hash * 31) + this.M11.GetHashCode();
-            hash = (hash * 31) + this.M12.GetHashCode();
-            hash = (hash * 31) + this.M20.GetHashCode();
-            hash = (hash * 31) + this.M21.GetHashCode();
-            hash = (hash * 31) + this.M22.GetHashCode();
-            return hash;
-        }
     }
 }
