@@ -50,6 +50,17 @@ internal readonly struct Matrix3x3(
         0d,
         1d);
 
+    internal static Matrix3x3 Zero { get; } = new Matrix3x3(
+        0d,
+        0d,
+        0d,
+        0d,
+        0d,
+        0d,
+        0d,
+        0d,
+        0d);
+
     internal Matrix3x3 Transpose()
     {
         return new Matrix3x3(

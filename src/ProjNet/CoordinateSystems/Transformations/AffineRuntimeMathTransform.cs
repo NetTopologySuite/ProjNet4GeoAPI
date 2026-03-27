@@ -202,40 +202,21 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
             && !double.IsInfinity(value);
     }
 
-    private static bool TryInvertSpatialMatrix(
-        double m11,
-        double m12,
-        double m13,
-        double m21,
-        double m22,
-        double m23,
-        double m31,
-        double m32,
-        double m33,
-        out Matrix3x3 inverseMatrix)
+    private static bool TryInvertSpatialMatrix(in Matrix3x3 matrix, out Matrix3x3 inverseMatrix)
     {
-        inverseMatrix = new Matrix3x3(
-            0d,
-            0d,
-            0d,
-            0d,
-            0d,
-            0d,
-            0d,
-            0d,
-            0d);
+        inverseMatrix = Matrix3x3.Zero;
 
-        double c11 = (m22 * m33) - (m23 * m32);
-        double c12 = -((m21 * m33) - (m23 * m31));
-        double c13 = (m21 * m32) - (m22 * m31);
-        double c21 = -((m12 * m33) - (m13 * m32));
-        double c22 = (m11 * m33) - (m13 * m31);
-        double c23 = -((m11 * m32) - (m12 * m31));
-        double c31 = (m12 * m23) - (m13 * m22);
-        double c32 = -((m11 * m23) - (m13 * m21));
-        double c33 = (m11 * m22) - (m12 * m21);
+        double c11 = (matrix.M11 * matrix.M22) - (matrix.M12 * matrix.M21);
+        double c12 = -((matrix.M10 * matrix.M22) - (matrix.M12 * matrix.M20));
+        double c13 = (matrix.M10 * matrix.M21) - (matrix.M11 * matrix.M20);
+        double c21 = -((matrix.M01 * matrix.M22) - (matrix.M02 * matrix.M21));
+        double c22 = (matrix.M00 * matrix.M22) - (matrix.M02 * matrix.M20);
+        double c23 = -((matrix.M00 * matrix.M21) - (matrix.M01 * matrix.M20));
+        double c31 = (matrix.M01 * matrix.M12) - (matrix.M02 * matrix.M11);
+        double c32 = -((matrix.M00 * matrix.M12) - (matrix.M02 * matrix.M10));
+        double c33 = (matrix.M00 * matrix.M11) - (matrix.M01 * matrix.M10);
 
-        double determinant = (m11 * c11) + (m12 * c12) + (m13 * c13);
+        double determinant = (matrix.M00 * c11) + (matrix.M01 * c12) + (matrix.M02 * c13);
         if (Math.Abs(determinant) < 1e-30d || double.IsNaN(determinant) || double.IsInfinity(determinant))
         {
             return false;
@@ -328,17 +309,7 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
         inverseTransform = null;
         error = null;
 
-        if (!TryInvertSpatialMatrix(
-                this.spatialMatrix.M00,
-                this.spatialMatrix.M01,
-                this.spatialMatrix.M02,
-                this.spatialMatrix.M10,
-                this.spatialMatrix.M11,
-                this.spatialMatrix.M12,
-                this.spatialMatrix.M20,
-                this.spatialMatrix.M21,
-                this.spatialMatrix.M22,
-                out Matrix3x3 inverseMatrix))
+        if (!TryInvertSpatialMatrix(this.spatialMatrix, out Matrix3x3 inverseMatrix))
         {
             error = "affine: transformation matrix is not invertible.";
             return false;
