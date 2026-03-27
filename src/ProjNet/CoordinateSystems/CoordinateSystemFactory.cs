@@ -233,9 +233,9 @@ public class CoordinateSystemFactory
     /// <param name="name">Name of ellipsoid.</param>
     /// <param name="datumType">Type of datum.</param>
     /// <param name="ellipsoid">Ellipsoid.</param>
-    /// <param name="toWgs84">Wgs84 conversion parameters.</param>
+    /// <param name="toWgs84">Optional Wgs84 conversion parameters.</param>
     /// <returns>Horizontal datum.</returns>
-    public HorizontalDatum CreateHorizontalDatum(string name, DatumType datumType, Ellipsoid ellipsoid, Wgs84ConversionInfo toWgs84)
+    public HorizontalDatum CreateHorizontalDatum(string name, DatumType datumType, Ellipsoid ellipsoid, Wgs84ConversionInfo? toWgs84)
     {
         if (string.IsNullOrWhiteSpace(name))
         {

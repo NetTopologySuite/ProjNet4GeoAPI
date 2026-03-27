@@ -6,22 +6,22 @@ namespace ProjNet
         public CoordinateSystemServices(ProjNet.Data.ICoordinateSystemDefinitionProvider definitionProvider) { }
         public CoordinateSystemServices(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, string>> definitions) { }
         public CoordinateSystemServices(ProjNet.CoordinateSystems.CoordinateSystemFactory coordinateSystemFactory, ProjNet.CoordinateSystems.Transformations.CoordinateTransformationFactory coordinateTransformationFactory) { }
-        public CoordinateSystemServices(ProjNet.CoordinateSystems.CoordinateSystemFactory coordinateSystemFactory, ProjNet.CoordinateSystems.Transformations.CoordinateTransformationFactory coordinateTransformationFactory, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, string>> enumeration) { }
-        public CoordinateSystemServices(ProjNet.CoordinateSystems.CoordinateSystemFactory coordinateSystemFactory, ProjNet.CoordinateSystems.Transformations.CoordinateTransformationFactory coordinateTransformationFactory, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, string>> enumeration, ProjNet.Data.ICoordinateSystemDefinitionProvider definitionProvider) { }
+        public CoordinateSystemServices(ProjNet.CoordinateSystems.CoordinateSystemFactory coordinateSystemFactory, ProjNet.CoordinateSystems.Transformations.CoordinateTransformationFactory coordinateTransformationFactory, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, string>>? enumeration) { }
+        public CoordinateSystemServices(ProjNet.CoordinateSystems.CoordinateSystemFactory coordinateSystemFactory, ProjNet.CoordinateSystems.Transformations.CoordinateTransformationFactory coordinateTransformationFactory, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, string>>? enumeration, ProjNet.Data.ICoordinateSystemDefinitionProvider? definitionProvider) { }
         protected int Count { get; }
         protected virtual int AddCoordinateSystem(ProjNet.CoordinateSystems.CoordinateSystem coordinateSystem) { }
         protected void AddCoordinateSystem(int srid, ProjNet.CoordinateSystems.CoordinateSystem coordinateSystem) { }
         protected void Clear() { }
-        public ProjNet.CoordinateSystems.Transformations.ICoordinateTransformation CreateTransformation(ProjNet.CoordinateSystems.CoordinateSystem source, ProjNet.CoordinateSystems.CoordinateSystem target) { }
-        public ProjNet.CoordinateSystems.Transformations.ICoordinateTransformation CreateTransformation(int sourceSrid, int targetSrid) { }
+        public ProjNet.CoordinateSystems.Transformations.ICoordinateTransformation? CreateTransformation(ProjNet.CoordinateSystems.CoordinateSystem? source, ProjNet.CoordinateSystems.CoordinateSystem? target) { }
+        public ProjNet.CoordinateSystems.Transformations.ICoordinateTransformation? CreateTransformation(int sourceSrid, int targetSrid) { }
         public int[] GetAvailableSridValues() { }
-        public ProjNet.CoordinateSystems.CoordinateSystem GetCoordinateSystem(int srid) { }
+        public ProjNet.CoordinateSystems.CoordinateSystem? GetCoordinateSystem(int srid) { }
         public ProjNet.CoordinateSystems.CoordinateSystem? GetCoordinateSystem(string authority, long code) { }
         public System.Collections.Generic.IEnumerator<System.Collections.Generic.KeyValuePair<int, ProjNet.CoordinateSystems.CoordinateSystem>> GetEnumerator() { }
         public int? GetSRID(string authority, long authorityCode) { }
         public bool RemoveCoordinateSystem(int srid) { }
-        public bool TryGetCoordinateSystem(int srid, out ProjNet.CoordinateSystems.CoordinateSystem coordinateSystem) { }
-        public bool TryGetCoordinateSystem(string authority, long code, out ProjNet.CoordinateSystems.CoordinateSystem? coordinateSystem) { }
+        public bool TryGetCoordinateSystem(int srid, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out ProjNet.CoordinateSystems.CoordinateSystem? coordinateSystem) { }
+        public bool TryGetCoordinateSystem(string authority, long code, [System.Diagnostics.CodeAnalysis.NotNullWhen(true)] out ProjNet.CoordinateSystems.CoordinateSystem? coordinateSystem) { }
     }
 }
 namespace ProjNet.CoordinateSystems
@@ -88,7 +88,7 @@ namespace ProjNet.CoordinateSystems
         public ProjNet.CoordinateSystems.CoordinateSystem CreateFromXml(string xml) { }
         public ProjNet.CoordinateSystems.GeocentricCoordinateSystem CreateGeocentricCoordinateSystem(string name, ProjNet.CoordinateSystems.HorizontalDatum datum, ProjNet.CoordinateSystems.LinearUnit linearUnit, ProjNet.CoordinateSystems.PrimeMeridian primeMeridian) { }
         public ProjNet.CoordinateSystems.GeographicCoordinateSystem CreateGeographicCoordinateSystem(string name, ProjNet.CoordinateSystems.AngularUnit angularUnit, ProjNet.CoordinateSystems.HorizontalDatum datum, ProjNet.CoordinateSystems.PrimeMeridian primeMeridian, ProjNet.CoordinateSystems.AxisInfo axis0, ProjNet.CoordinateSystems.AxisInfo axis1) { }
-        public ProjNet.CoordinateSystems.HorizontalDatum CreateHorizontalDatum(string name, ProjNet.CoordinateSystems.DatumType datumType, ProjNet.CoordinateSystems.Ellipsoid ellipsoid, ProjNet.CoordinateSystems.Wgs84ConversionInfo toWgs84) { }
+        public ProjNet.CoordinateSystems.HorizontalDatum CreateHorizontalDatum(string name, ProjNet.CoordinateSystems.DatumType datumType, ProjNet.CoordinateSystems.Ellipsoid ellipsoid, ProjNet.CoordinateSystems.Wgs84ConversionInfo? toWgs84) { }
         public ProjNet.CoordinateSystems.PrimeMeridian CreatePrimeMeridian(string name, ProjNet.CoordinateSystems.AngularUnit angularUnit, double longitude) { }
         public ProjNet.CoordinateSystems.ProjectedCoordinateSystem CreateProjectedCoordinateSystem(string name, ProjNet.CoordinateSystems.GeographicCoordinateSystem gcs, ProjNet.CoordinateSystems.IProjection projection, ProjNet.CoordinateSystems.LinearUnit linearUnit, ProjNet.CoordinateSystems.AxisInfo axis0, ProjNet.CoordinateSystems.AxisInfo axis1) { }
         public ProjNet.CoordinateSystems.IProjection CreateProjection(string name, string wktProjectionClass, System.Collections.Generic.List<ProjNet.CoordinateSystems.ProjectionParameter> parameters) { }
@@ -349,8 +349,8 @@ namespace ProjNet.CoordinateSystems
         public bool HasZeroValuesOnly { get; }
         public string WKT { get; }
         public string XML { get; }
-        public bool Equals(ProjNet.CoordinateSystems.Wgs84ConversionInfo obj) { }
-        public override bool Equals(object obj) { }
+        public bool Equals(ProjNet.CoordinateSystems.Wgs84ConversionInfo? obj) { }
+        public override bool Equals(object? obj) { }
         public double[] GetAffineTransform() { }
         public override int GetHashCode() { }
         public override string ToString() { }
@@ -362,7 +362,7 @@ namespace ProjNet.CoordinateSystems.Projections
     public class LambertAzimuthalEqualAreaProjection : ProjNet.CoordinateSystems.Projections.MapProjection
     {
         public LambertAzimuthalEqualAreaProjection(System.Collections.Generic.IEnumerable<ProjNet.CoordinateSystems.ProjectionParameter> parameters) { }
-        public LambertAzimuthalEqualAreaProjection(System.Collections.Generic.IEnumerable<ProjNet.CoordinateSystems.ProjectionParameter> parameters, ProjNet.CoordinateSystems.Projections.MapProjection inverse) { }
+        public LambertAzimuthalEqualAreaProjection(System.Collections.Generic.IEnumerable<ProjNet.CoordinateSystems.ProjectionParameter> parameters, ProjNet.CoordinateSystems.Projections.MapProjection? inverse) { }
         public override ProjNet.CoordinateSystems.Transformations.MathTransform Inverse() { }
         protected override void MetersToRadians(ref double x, ref double y) { }
         protected override void RadiansToMeters(ref double lon, ref double lat) { }
@@ -420,7 +420,7 @@ namespace ProjNet.CoordinateSystems.Projections
         protected readonly double es;
         protected readonly double falseEasting;
         protected readonly double falseNorthing;
-        protected ProjNet.CoordinateSystems.Transformations.MathTransform inverse;
+        protected ProjNet.CoordinateSystems.Transformations.MathTransform? inverse;
         protected readonly double latOrigin;
         protected readonly double metersPerUnit;
         protected const double prjMAXLONG = 2147483647D;
@@ -429,7 +429,7 @@ namespace ProjNet.CoordinateSystems.Projections
         protected readonly double semiMajor;
         protected readonly double semiMinor;
         protected MapProjection(System.Collections.Generic.IEnumerable<ProjNet.CoordinateSystems.ProjectionParameter> parameters) { }
-        protected MapProjection(System.Collections.Generic.IEnumerable<ProjNet.CoordinateSystems.ProjectionParameter> parameters, ProjNet.CoordinateSystems.Projections.MapProjection inverse) { }
+        protected MapProjection(System.Collections.Generic.IEnumerable<ProjNet.CoordinateSystems.ProjectionParameter> parameters, ProjNet.CoordinateSystems.Projections.MapProjection? inverse) { }
         public string Abbreviation { get; set; }
         public string Alias { get; set; }
         public string Authority { get; set; }
@@ -462,7 +462,7 @@ namespace ProjNet.CoordinateSystems.Projections
         protected virtual void DegreesToTarget(System.Span<double> lons, System.Span<double> lats, int strideX, int strideY) { }
         public bool EqualParams(object obj) { }
         public ProjNet.CoordinateSystems.ProjectionParameter GetParameter(int index) { }
-        public ProjNet.CoordinateSystems.ProjectionParameter GetParameter(string name) { }
+        public ProjNet.CoordinateSystems.ProjectionParameter? GetParameter(string name) { }
         protected double Inv_mlfn(double arg) { }
         public override void Invert() { }
         protected void Invert(bool invertInverse) { }
@@ -516,9 +516,9 @@ namespace ProjNet.CoordinateSystems.Projections
         public ProjectionParameterSet(System.Collections.Generic.IEnumerable<ProjNet.CoordinateSystems.ProjectionParameter> parameters) { }
         [System.Obsolete("Formatter-based serialization constructor is retained for compatibility.")]
         public ProjectionParameterSet(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
-        public bool Equals(ProjNet.CoordinateSystems.Projections.ProjectionParameterSet other) { }
-        public override bool Equals(object obj) { }
-        public ProjNet.CoordinateSystems.ProjectionParameter Find(string name) { }
+        public bool Equals(ProjNet.CoordinateSystems.Projections.ProjectionParameterSet? other) { }
+        public override bool Equals(object? obj) { }
+        public ProjNet.CoordinateSystems.ProjectionParameter? Find(string name) { }
         public ProjNet.CoordinateSystems.ProjectionParameter GetAtIndex(int index) { }
         public override int GetHashCode() { }
         public double GetOptionalParameterValue(string name, double value, params string[] alternateNames) { }
@@ -676,7 +676,7 @@ namespace ProjNet.Geometries
         public double Y;
         public XY(double x, double y) { }
         public bool Equals(ProjNet.Geometries.XY other) { }
-        public override bool Equals(object obj) { }
+        public override bool Equals(object? obj) { }
         public override int GetHashCode() { }
         public override string ToString() { }
         public static bool operator !=(ProjNet.Geometries.XY left, ProjNet.Geometries.XY right) { }
@@ -689,7 +689,7 @@ namespace ProjNet.Geometries
         public double Z;
         public XYZ(double x, double y, double z) { }
         public bool Equals(ProjNet.Geometries.XYZ other) { }
-        public override bool Equals(object obj) { }
+        public override bool Equals(object? obj) { }
         public override int GetHashCode() { }
         public override string ToString() { }
         public static bool operator !=(ProjNet.Geometries.XYZ left, ProjNet.Geometries.XYZ right) { }

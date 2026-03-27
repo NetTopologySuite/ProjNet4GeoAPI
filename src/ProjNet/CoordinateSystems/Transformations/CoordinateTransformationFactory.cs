@@ -348,9 +348,12 @@ public class CoordinateTransformationFactory
             case 11: // Projected -> Projected
                 return Proj2Proj((ProjectedCoordinateSystem)sourceCS, (ProjectedCoordinateSystem)targetCS);
             case 33: // Geocentric -> Geocentric
-                return ArgumentGuard.ThrowIfNull(
-                    CreateGeoc2Geoc((GeocentricCoordinateSystem)sourceCS, (GeocentricCoordinateSystem)targetCS),
-                    nameof(CreateGeoc2Geoc));
+                return CreateGeoc2Geoc((GeocentricCoordinateSystem)sourceCS, (GeocentricCoordinateSystem)targetCS)
+                    ?? CreateTransform(
+                        sourceCS,
+                        targetCS,
+                        TransformType.Conversion,
+                        new IdentityMathTransform(Math.Max(sourceCS.Dimension, targetCS.Dimension)));
             case 22: // Geographic -> Geographic
                 return CreateGeog2Geog((GeographicCoordinateSystem)sourceCS, (GeographicCoordinateSystem)targetCS);
             default:
