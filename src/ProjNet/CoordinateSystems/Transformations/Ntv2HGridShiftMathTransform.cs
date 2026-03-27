@@ -103,10 +103,12 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
     /// <inheritdoc />
     public override void Transform(ref double x, ref double y, ref double z)
     {
-        if (!this.TryFindGridForPoint(x, y, out Ntv2Grid selectedGrid))
+        if (!this.TryFindGridForPoint(x, y, out Ntv2Grid? selectedGridCandidate))
         {
             ArgumentGuard.ThrowArgument("Coordinate is outside the horizontal grid extent.");
         }
+
+        Ntv2Grid selectedGrid = ArgumentGuard.ThrowIfNull(selectedGridCandidate, nameof(selectedGridCandidate));
 
         if (!this.isInverted)
         {
@@ -409,8 +411,9 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
             for (int i = 0; i < allGrids.Count; i++)
             {
                 Ntv2Grid grid = allGrids[i];
-                if (!string.IsNullOrWhiteSpace(grid.ParentName) && byName.TryGetValue(grid.ParentName, out Ntv2Grid parent))
+                if (!string.IsNullOrWhiteSpace(grid.ParentName) && byName.TryGetValue(grid.ParentName, out Ntv2Grid? parentCandidate))
                 {
+                    Ntv2Grid parent = ArgumentGuard.ThrowIfNull(parentCandidate, nameof(parentCandidate));
                     parent.AddChild(grid);
                 }
                 else
