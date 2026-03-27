@@ -248,6 +248,7 @@ internal static class ArgumentGuard
     /// </summary>
     /// <param name="paramName">Parameter name for exception reporting.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [DoesNotReturn]
     internal static void ThrowArgumentNull(string paramName)
     {
         throw new ArgumentNullException(paramName);
@@ -259,6 +260,7 @@ internal static class ArgumentGuard
     /// <param name="message">Exception message.</param>
     /// <param name="paramName">Parameter name for exception reporting.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [DoesNotReturn]
     internal static void ThrowArgument(string message, string paramName)
     {
         throw new ArgumentException(message, paramName);
@@ -269,6 +271,7 @@ internal static class ArgumentGuard
     /// </summary>
     /// <param name="message">Exception message.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [DoesNotReturn]
     internal static void ThrowArgument(string message)
     {
         throw new ArgumentException(message);
@@ -281,6 +284,7 @@ internal static class ArgumentGuard
     /// <param name="message">Exception message.</param>
     /// <returns>This method always throws; no value is returned.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [DoesNotReturn]
     internal static T ThrowArgument<T>(string message)
     {
         throw new ArgumentException(message);
@@ -294,6 +298,7 @@ internal static class ArgumentGuard
     /// <param name="paramName">Parameter name for exception reporting.</param>
     /// <returns>This method always throws; no value is returned.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [DoesNotReturn]
     internal static T ThrowArgument<T>(string message, string paramName)
     {
         throw new ArgumentException(message, paramName);
@@ -306,6 +311,7 @@ internal static class ArgumentGuard
     /// <param name="actualValue">Actual out-of-range value.</param>
     /// <param name="message">Exception message.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [DoesNotReturn]
     internal static void ThrowArgumentOutOfRange(string paramName, object actualValue, string message)
     {
         throw new ArgumentOutOfRangeException(paramName, actualValue, message);
@@ -316,6 +322,7 @@ internal static class ArgumentGuard
     /// </summary>
     /// <param name="paramName">Parameter name for exception reporting.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [DoesNotReturn]
     internal static void ThrowArgumentOutOfRange(string paramName)
     {
         throw new ArgumentOutOfRangeException(paramName);
@@ -327,6 +334,7 @@ internal static class ArgumentGuard
     /// <param name="paramName">Parameter name for exception reporting.</param>
     /// <param name="message">Exception message.</param>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    [DoesNotReturn]
     internal static void ThrowArgumentOutOfRange(string paramName, string message)
     {
         throw new ArgumentOutOfRangeException(paramName, message);
