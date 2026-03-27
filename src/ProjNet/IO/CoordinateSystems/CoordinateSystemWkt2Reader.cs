@@ -45,6 +45,10 @@ namespace ProjNet.IO.CoordinateSystems
                         return ReadEngCrs(rootKeyword, tokenizer);
                     case "PARAMETRICCRS":
                         return ReadParametricCrs(rootKeyword, tokenizer);
+                    case "TIMECRS":
+                        return ReadTimeCrs(rootKeyword, tokenizer);
+                    case "DERIVEDGEOGCRS":
+                        return ReadDerivedGeogCrs(rootKeyword, tokenizer);
                     default:
                         throw new ArgumentException($"'{rootKeyword}' is not recognized as a supported WKT2 CRS.");
                 }
@@ -102,6 +106,8 @@ namespace ProjNet.IO.CoordinateSystems
                         cs.Axes.Add(ReadAxis(tokenizer));
                         break;
                     case "LENGTHUNIT":
+                    case "SCALEUNIT":
+                    case "TIMEUNIT":
                     case "UNIT":
                         if (cs == null)
                             cs = new Wkt2CoordinateSystem("cartesian", 2);
@@ -238,6 +244,8 @@ namespace ProjNet.IO.CoordinateSystems
                         cs.Axes.Add(ReadAxis(tokenizer));
                         break;
                     case "PARAMETRICUNIT":
+                    case "SCALEUNIT":
+                    case "TIMEUNIT":
                     case "UNIT":
                         if (cs == null)
                             cs = new Wkt2CoordinateSystem("parametric", 1);
@@ -464,6 +472,12 @@ namespace ProjNet.IO.CoordinateSystems
                     case "PARAMETRICCRS":
                         crs = ReadParametricCrs(element, tokenizer);
                         break;
+                    case "TIMECRS":
+                        crs = ReadTimeCrs(element, tokenizer);
+                        break;
+                    case "DERIVEDGEOGCRS":
+                        crs = ReadDerivedGeogCrs(element, tokenizer);
+                        break;
                     case ",":
                         break;
                     case "]":
@@ -563,6 +577,19 @@ namespace ProjNet.IO.CoordinateSystems
                     case "VERTICALCRS":
                         components.Add(ReadVertCrs(element, tokenizer));
                         break;
+                    case "TIMECRS":
+                        components.Add(ReadTimeCrs(element, tokenizer));
+                        break;
+                    case "DERIVEDGEOGCRS":
+                        components.Add(ReadDerivedGeogCrs(element, tokenizer));
+                        break;
+                    case "ENGCRS":
+                    case "ENGINEERINGCRS":
+                        components.Add(ReadEngCrs(element, tokenizer));
+                        break;
+                    case "PARAMETRICCRS":
+                        components.Add(ReadParametricCrs(element, tokenizer));
+                        break;
                     case "ID":
                         id = ReadId(tokenizer);
                         break;
@@ -652,6 +679,8 @@ namespace ProjNet.IO.CoordinateSystems
                         cs.Axes.Add(ReadAxis(tokenizer));
                         break;
                     case "LENGTHUNIT":
+                    case "SCALEUNIT":
+                    case "TIMEUNIT":
                     case "UNIT":
                         if (cs == null)
                             cs = new Wkt2CoordinateSystem("vertical", 1);
@@ -799,6 +828,8 @@ namespace ProjNet.IO.CoordinateSystems
                         cs.Axes.Add(ReadAxis(tokenizer));
                         break;
                     case "LENGTHUNIT":
+                    case "SCALEUNIT":
+                    case "TIMEUNIT":
                     case "UNIT":
                         if (cs == null)
                             cs = new Wkt2CoordinateSystem("cartesian", 2);
@@ -885,6 +916,7 @@ namespace ProjNet.IO.CoordinateSystems
                     case "DATUM":
                     case "TRF":
                     case "GEODETICDATUM":
+                    case "DYNAMICDATUM":
                         datum = ReadGeodeticDatum(element, tokenizer);
                         break;
                     case "PRIMEM":
@@ -969,6 +1001,263 @@ namespace ProjNet.IO.CoordinateSystems
                         SkipUnknownElement(tokenizer);
                         break;
                 }
+                tokenizer.NextToken();
+            }
+        }
+
+        private static Wkt2TemporalDatum ReadTemporalDatum(string keyword, WktStreamTokenizer tokenizer)
+        {
+            // TDATUM/TIMEDATUM["name", CALENDAR[...], TIMEORIGIN[...], ID[...], REMARK[...]]
+            var bracket = tokenizer.ReadOpener();
+            string name = tokenizer.ReadDoubleQuotedWord();
+
+            Wkt2Id id = null;
+            string remark = null;
+            string calendar = null;
+            string timeOrigin = null;
+
+            tokenizer.NextToken();
+            while (true)
+            {
+                string element = tokenizer.GetStringValue();
+                switch (element.ToUpperInvariant())
+                {
+                    case "CALENDAR":
+                        var calBracket = tokenizer.ReadOpener();
+                        calendar = tokenizer.ReadDoubleQuotedWord();
+                        tokenizer.ReadCloser(calBracket);
+                        break;
+                    case "TIMEORIGIN":
+                        var origBracket = tokenizer.ReadOpener();
+                        timeOrigin = tokenizer.ReadDoubleQuotedWord();
+                        tokenizer.ReadCloser(origBracket);
+                        break;
+                    case "ID":
+                        id = ReadId(tokenizer);
+                        break;
+                    case "REMARK":
+                        remark = ReadRemark(tokenizer);
+                        break;
+                    case ",":
+                        break;
+                    case "]":
+                    case ")":
+                        tokenizer.CheckCloser(bracket);
+                        return new Wkt2TemporalDatum(keyword, name)
+                        {
+                            Calendar = calendar,
+                            TimeOrigin = timeOrigin,
+                            Id = id,
+                            Remark = remark
+                        };
+                    default:
+                        SkipUnknownElement(tokenizer);
+                        break;
+                }
+                tokenizer.NextToken();
+            }
+        }
+
+        private static Wkt2TimeCrs ReadTimeCrs(string keyword, WktStreamTokenizer tokenizer)
+        {
+            // TIMECRS["name", TDATUM/TIMEDATUM[...], CS[...], AXIS..., TIMEUNIT..., ID...]
+            var bracket = tokenizer.ReadOpener();
+            string name = tokenizer.ReadDoubleQuotedWord();
+
+            tokenizer.ReadToken(",");
+            tokenizer.NextToken();
+
+            Wkt2TemporalDatum datum = null;
+            Wkt2CoordinateSystem cs = null;
+            Wkt2Id id = null;
+            string remark = null;
+            var usages = new List<Wkt2Usage>();
+
+            while (true)
+            {
+                string element = tokenizer.GetStringValue();
+                switch (element.ToUpperInvariant())
+                {
+                    case "TDATUM":
+                    case "TIMEDATUM":
+                        datum = ReadTemporalDatum(element, tokenizer);
+                        break;
+                    case "CS":
+                        cs = ReadCoordinateSystem(tokenizer);
+                        break;
+                    case "AXIS":
+                        if (cs == null)
+                            cs = new Wkt2CoordinateSystem("temporal", 1);
+                        cs.Axes.Add(ReadAxis(tokenizer));
+                        break;
+                    case "TIMEUNIT":
+                    case "UNIT":
+                        if (cs == null)
+                            cs = new Wkt2CoordinateSystem("temporal", 1);
+                        cs.Unit = ReadUnit(element, tokenizer);
+                        break;
+                    case "REMARK":
+                        remark = ReadRemark(tokenizer);
+                        break;
+                    case "ID":
+                        id = ReadId(tokenizer);
+                        break;
+                    case "USAGE":
+                        usages.Add(ReadUsage(tokenizer));
+                        break;
+                    case "SCOPE":
+                        {
+                            var scopeBracket = tokenizer.ReadOpener();
+                            var u = new Wkt2Usage { Scope = tokenizer.ReadDoubleQuotedWord() };
+                            tokenizer.ReadCloser(scopeBracket);
+                            usages.Add(u);
+                        }
+                        break;
+                    case "AREA":
+                        {
+                            var areaBracket = tokenizer.ReadOpener();
+                            var u = new Wkt2Usage { Area = tokenizer.ReadDoubleQuotedWord() };
+                            tokenizer.ReadCloser(areaBracket);
+                            usages.Add(u);
+                        }
+                        break;
+                    case "BBOX":
+                        {
+                            var u = new Wkt2Usage { BBox = ReadBBox(tokenizer) };
+                            usages.Add(u);
+                        }
+                        break;
+                    case ",":
+                        break;
+                    case "]":
+                    case ")":
+                        tokenizer.CheckCloser(bracket);
+
+                        if (datum == null)
+                            throw new ArgumentException("TIMECRS is missing TDATUM/TIMEDATUM.");
+                        if (cs == null)
+                            cs = new Wkt2CoordinateSystem("temporal", 1);
+
+                        var crs = new Wkt2TimeCrs(keyword, name, datum, cs)
+                        {
+                            Id = id,
+                            Remark = remark
+                        };
+                        foreach (var u in usages)
+                            crs.Usages.Add(u);
+                        return crs;
+
+                    default:
+                        SkipUnknownElement(tokenizer);
+                        break;
+                }
+
+                tokenizer.NextToken();
+            }
+        }
+
+        private static Wkt2DerivedGeogCrs ReadDerivedGeogCrs(string keyword, WktStreamTokenizer tokenizer)
+        {
+            // DERIVEDGEOGCRS["name", BASEGEOGCRS[...], DERIVINGCONVERSION[...], CS[...], AXIS..., UNIT..., ID...]
+            var bracket = tokenizer.ReadOpener();
+            string name = tokenizer.ReadDoubleQuotedWord();
+
+            tokenizer.ReadToken(",");
+            tokenizer.NextToken();
+
+            Wkt2GeogCrs baseCrs = null;
+            Wkt2Conversion conversion = null;
+            Wkt2CoordinateSystem cs = null;
+            Wkt2Id id = null;
+            string remark = null;
+            var usages = new List<Wkt2Usage>();
+
+            while (true)
+            {
+                string element = tokenizer.GetStringValue();
+                switch (element.ToUpperInvariant())
+                {
+                    case "BASEGEOGCRS":
+                    case "BASEGEODCRS":
+                        baseCrs = ReadBaseGeogCrs(tokenizer);
+                        break;
+                    case "DERIVINGCONVERSION":
+                        conversion = ReadConversion(tokenizer);
+                        break;
+                    case "CS":
+                        cs = ReadCoordinateSystem(tokenizer);
+                        break;
+                    case "AXIS":
+                        if (cs == null)
+                            cs = new Wkt2CoordinateSystem("ellipsoidal", 2);
+                        cs.Axes.Add(ReadAxis(tokenizer));
+                        break;
+                    case "ANGLEUNIT":
+                    case "LENGTHUNIT":
+                    case "SCALEUNIT":
+                    case "UNIT":
+                        if (cs == null)
+                            cs = new Wkt2CoordinateSystem("ellipsoidal", 2);
+                        cs.Unit = ReadUnit(element, tokenizer);
+                        break;
+                    case "REMARK":
+                        remark = ReadRemark(tokenizer);
+                        break;
+                    case "ID":
+                        id = ReadId(tokenizer);
+                        break;
+                    case "USAGE":
+                        usages.Add(ReadUsage(tokenizer));
+                        break;
+                    case "SCOPE":
+                        {
+                            var scopeBracket = tokenizer.ReadOpener();
+                            var u = new Wkt2Usage { Scope = tokenizer.ReadDoubleQuotedWord() };
+                            tokenizer.ReadCloser(scopeBracket);
+                            usages.Add(u);
+                        }
+                        break;
+                    case "AREA":
+                        {
+                            var areaBracket = tokenizer.ReadOpener();
+                            var u = new Wkt2Usage { Area = tokenizer.ReadDoubleQuotedWord() };
+                            tokenizer.ReadCloser(areaBracket);
+                            usages.Add(u);
+                        }
+                        break;
+                    case "BBOX":
+                        {
+                            var u = new Wkt2Usage { BBox = ReadBBox(tokenizer) };
+                            usages.Add(u);
+                        }
+                        break;
+                    case ",":
+                        break;
+                    case "]":
+                    case ")":
+                        tokenizer.CheckCloser(bracket);
+
+                        if (baseCrs == null)
+                            throw new ArgumentException("DERIVEDGEOGCRS is missing BASEGEOGCRS.");
+                        if (conversion == null)
+                            throw new ArgumentException("DERIVEDGEOGCRS is missing DERIVINGCONVERSION.");
+                        if (cs == null)
+                            cs = new Wkt2CoordinateSystem("ellipsoidal", 2);
+
+                        var crs = new Wkt2DerivedGeogCrs(keyword, name, baseCrs, conversion, cs)
+                        {
+                            Id = id,
+                            Remark = remark
+                        };
+                        foreach (var u in usages)
+                            crs.Usages.Add(u);
+                        return crs;
+
+                    default:
+                        SkipUnknownElement(tokenizer);
+                        break;
+                }
+
                 tokenizer.NextToken();
             }
         }
@@ -1068,6 +1357,7 @@ namespace ProjNet.IO.CoordinateSystems
                     case "DATUM":
                     case "TRF":
                     case "GEODETICDATUM":
+                    case "DYNAMICDATUM":
                         datum = ReadGeodeticDatum(element, tokenizer);
                         break;
 
@@ -1088,6 +1378,8 @@ namespace ProjNet.IO.CoordinateSystems
 
                     case "ANGLEUNIT":
                     case "LENGTHUNIT":
+                    case "SCALEUNIT":
+                    case "TIMEUNIT":
                     case "UNIT":
                         if (cs == null)
                             cs = new Wkt2CoordinateSystem("ellipsoidal", 2);
@@ -1174,6 +1466,7 @@ namespace ProjNet.IO.CoordinateSystems
             Wkt2Ellipsoid ellipsoid = null;
             Wkt2Id id = null;
             string anchor = null;
+            double? frameEpoch = null;
 
             while (true)
             {
@@ -1189,6 +1482,12 @@ namespace ProjNet.IO.CoordinateSystems
                         anchor = tokenizer.ReadDoubleQuotedWord();
                         tokenizer.ReadCloser(anchorBracket);
                         break;
+                    case "FRAMEEPOCH":
+                        var epochBracket = tokenizer.ReadOpener();
+                        tokenizer.NextToken();
+                        frameEpoch = tokenizer.GetNumericValue();
+                        tokenizer.ReadCloser(epochBracket);
+                        break;
                     case "ID":
                         id = ReadId(tokenizer);
                         break;
@@ -1199,7 +1498,7 @@ namespace ProjNet.IO.CoordinateSystems
                         tokenizer.CheckCloser(bracket);
                         if (ellipsoid == null)
                             throw new ArgumentException("DATUM/TRF missing ELLIPSOID.");
-                        return new Wkt2GeodeticDatum(keyword, name, ellipsoid) { Id = id, Anchor = anchor };
+                        return new Wkt2GeodeticDatum(keyword, name, ellipsoid) { Id = id, Anchor = anchor, FrameEpoch = frameEpoch };
                     default:
                         SkipUnknownElement(tokenizer);
                         break;
@@ -1230,6 +1529,8 @@ namespace ProjNet.IO.CoordinateSystems
                 switch (element.ToUpperInvariant())
                 {
                     case "LENGTHUNIT":
+                    case "SCALEUNIT":
+                    case "TIMEUNIT":
                     case "UNIT":
                         lengthUnit = ReadUnit(element, tokenizer);
                         break;
@@ -1269,6 +1570,8 @@ namespace ProjNet.IO.CoordinateSystems
                 switch (element.ToUpperInvariant())
                 {
                     case "ANGLEUNIT":
+                    case "SCALEUNIT":
+                    case "TIMEUNIT":
                     case "UNIT":
                         unit = ReadUnit(element, tokenizer);
                         break;
@@ -1347,6 +1650,8 @@ namespace ProjNet.IO.CoordinateSystems
                         }
                     case "ANGLEUNIT":
                     case "LENGTHUNIT":
+                    case "SCALEUNIT":
+                    case "TIMEUNIT":
                     case "UNIT":
                         unit = ReadUnit(element, tokenizer);
                         break;

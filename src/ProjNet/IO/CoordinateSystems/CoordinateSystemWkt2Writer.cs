@@ -33,6 +33,10 @@ namespace ProjNet.IO.CoordinateSystems
                 return WriteEngCrs(eng);
             if (crs is Wkt2ParametricCrs param)
                 return WriteParametricCrs(param);
+            if (crs is Wkt2TimeCrs time)
+                return WriteTimeCrs(time);
+            if (crs is Wkt2DerivedGeogCrs derivedGeog)
+                return WriteDerivedGeogCrs(derivedGeog);
 
             throw new NotSupportedException($"WKT2 writer does not support '{crs.GetType().Name}'.");
         }
@@ -460,6 +464,9 @@ namespace ProjNet.IO.CoordinateSystems
             if (!string.IsNullOrWhiteSpace(datum.Anchor))
                 sb.Append($",ANCHOR[\"{EscapeQuotedText(datum.Anchor)}\"]");
 
+            if (datum.FrameEpoch.HasValue)
+                sb.Append($",FRAMEEPOCH[{datum.FrameEpoch.Value.ToString("R", CultureInfo.InvariantCulture)}]");
+
             if (datum.Id != null)
             {
                 sb.Append(',');
@@ -648,6 +655,129 @@ namespace ProjNet.IO.CoordinateSystems
             if (usage.BBox != null)
                 parts.Add(WriteBBox(usage.BBox));
             sb.Append(string.Join(",", parts));
+            sb.Append(']');
+            return sb.ToString();
+        }
+
+        private static string WriteTemporalDatum(Wkt2TemporalDatum datum)
+        {
+            var sb = new StringBuilder();
+            sb.Append(datum.Keyword.ToUpperInvariant());
+            sb.Append("[\"");
+            sb.Append(EscapeQuotedText(datum.Name));
+            sb.Append("\"");
+
+            if (!string.IsNullOrWhiteSpace(datum.Calendar))
+                sb.Append($",CALENDAR[\"{EscapeQuotedText(datum.Calendar)}\"]");
+
+            if (!string.IsNullOrWhiteSpace(datum.TimeOrigin))
+                sb.Append($",TIMEORIGIN[\"{EscapeQuotedText(datum.TimeOrigin)}\"]");
+
+            if (datum.Id != null)
+            {
+                sb.Append(',');
+                sb.Append(WriteId(datum.Id));
+            }
+
+            if (!string.IsNullOrWhiteSpace(datum.Remark))
+            {
+                sb.Append(",REMARK[\"");
+                sb.Append(EscapeQuotedText(datum.Remark));
+                sb.Append("\"]");
+            }
+
+            sb.Append(']');
+            return sb.ToString();
+        }
+
+        private static string WriteTimeCrs(Wkt2TimeCrs crs)
+        {
+            var sb = new StringBuilder();
+            sb.Append(crs.Keyword.ToUpperInvariant());
+            sb.Append("[\"");
+            sb.Append(EscapeQuotedText(crs.Name));
+            sb.Append("\",");
+
+            sb.Append(WriteTemporalDatum(crs.Datum));
+            sb.Append(',');
+            sb.Append(WriteCs(crs.CoordinateSystem));
+
+            foreach (var usage in crs.Usages)
+                sb.Append($",{WriteUsage(usage)}");
+
+            if (crs.Id != null)
+            {
+                sb.Append(',');
+                sb.Append(WriteId(crs.Id));
+            }
+
+            if (!string.IsNullOrWhiteSpace(crs.Remark))
+            {
+                sb.Append(",REMARK[\"");
+                sb.Append(EscapeQuotedText(crs.Remark));
+                sb.Append("\"]");
+            }
+
+            sb.Append(']');
+            return sb.ToString();
+        }
+
+        private static string WriteDerivedGeogCrs(Wkt2DerivedGeogCrs crs)
+        {
+            var sb = new StringBuilder();
+            sb.Append(crs.Keyword.ToUpperInvariant());
+            sb.Append("[\"");
+            sb.Append(EscapeQuotedText(crs.Name));
+            sb.Append("\",");
+
+            // Write base CRS wrapped in BASEGEOGCRS keyword.
+            sb.Append(WriteGeogCrs(crs.BaseCrs));
+            sb.Append(',');
+
+            // Write deriving conversion with DERIVINGCONVERSION keyword.
+            sb.Append("DERIVINGCONVERSION[\"");
+            sb.Append(EscapeQuotedText(crs.DerivingConversion.Name));
+            sb.Append("\",");
+            sb.Append("METHOD[\"");
+            sb.Append(EscapeQuotedText(crs.DerivingConversion.MethodName));
+            sb.Append("\"]");
+            foreach (var p in crs.DerivingConversion.Parameters)
+            {
+                sb.Append(',');
+                sb.Append(WriteParameter(p));
+            }
+            if (crs.DerivingConversion.Id != null)
+            {
+                sb.Append(',');
+                sb.Append(WriteId(crs.DerivingConversion.Id));
+            }
+            if (!string.IsNullOrWhiteSpace(crs.DerivingConversion.Remark))
+            {
+                sb.Append(",REMARK[\"");
+                sb.Append(EscapeQuotedText(crs.DerivingConversion.Remark));
+                sb.Append("\"]");
+            }
+            sb.Append(']');
+
+            sb.Append(',');
+            sb.Append(WriteCs(crs.CoordinateSystem));
+
+            foreach (var usage in crs.Usages)
+                sb.Append($",{WriteUsage(usage)}");
+
+            if (crs.Id != null)
+            {
+                sb.Append(',');
+                sb.Append(WriteId(crs.Id));
+            }
+
+            if (!string.IsNullOrWhiteSpace(crs.Remark))
+            {
+                sb.Append(",REMARK[\"");
+                sb.Append(EscapeQuotedText(crs.Remark));
+                sb.Append("\"]");
+            }
+
             sb.Append(']');
             return sb.ToString();
         }

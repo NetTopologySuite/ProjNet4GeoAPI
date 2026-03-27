@@ -87,6 +87,10 @@ namespace ProjNet.IO.CoordinateSystems
                         return CoordinateSystemWkt2Reader.Parse(wkt);
                     case "PARAMETRICCRS":
                         return CoordinateSystemWkt2Reader.Parse(wkt);
+                    case "TIMECRS":
+                        return CoordinateSystemWkt2Reader.Parse(wkt);
+                    case "DERIVEDGEOGCRS":
+                        return CoordinateSystemWkt2Reader.Parse(wkt);
                     case "UNIT":
                         return ReadUnit(tokenizer);
                     case "SPHEROID":
