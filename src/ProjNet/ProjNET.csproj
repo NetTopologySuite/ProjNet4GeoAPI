@@ -5,6 +5,8 @@
     <RootNamespace>ProjNet</RootNamespace>
     <TargetFrameworks>netstandard2.0;netstandard2.1;net8.0</TargetFrameworks>
     <Nullable>enable</Nullable>
+    <IsTrimmable Condition="'$(TargetFramework)' == 'net8.0'">true</IsTrimmable>
+    <EnableTrimAnalyzer Condition="'$(TargetFramework)' == 'net8.0'">true</EnableTrimAnalyzer>
     <SignAssembly>true</SignAssembly>
 	  <EnablePackageValidation>true</EnablePackageValidation>
 	  <PackageValidationBaselineVersion>2.1.0</PackageValidationBaselineVersion>
