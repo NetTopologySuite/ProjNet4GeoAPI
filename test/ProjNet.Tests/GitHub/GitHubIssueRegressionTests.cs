@@ -45,6 +45,44 @@ public class GitHubIssueRegressionTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
+    [Xunit.Fact(DisplayName = "Issue #10, Repeated Inverse() calls keep ConcatenatedTransform stable")]
+    public void TestConcatenatedTransformInverseIsStableAcrossRepeatedCalls()
+    {
+        var epsg31466 = Assert.IsAssignableFrom<CoordinateSystem>(Css.GetCoordinateSystem(31466));
+        var epsg25832 = Assert.IsAssignableFrom<CoordinateSystem>(Css.GetCoordinateSystem(25832));
+
+        var ctFwd = Assert.IsType<ConcatenatedTransform>(Assert.IsAssignableFrom<ICoordinateTransformation>(Css.CreateTransformation(epsg31466, epsg25832)).MathTransform);
+
+        (double X, double Y) source = (3500000d, 5640000d);
+        (double X, double Y) projected = ctFwd.Transform(source.X, source.Y);
+
+        var inverse1 = Assert.IsType<ConcatenatedTransform>(ctFwd.Inverse());
+        (double X, double Y) roundtrip1 = inverse1.Transform(projected.X, projected.Y);
+
+        var inverse2 = Assert.IsType<ConcatenatedTransform>(ctFwd.Inverse());
+        (double X, double Y) roundtrip2 = inverse2.Transform(projected.X, projected.Y);
+        (double X, double Y) projectedAgain = ctFwd.Transform(source.X, source.Y);
+
+        const double roundtripTolerance = 2d;
+        const double stabilityTolerance = 1e-12;
+
+        Assert.Same(inverse1, inverse2);
+
+        Assert.InRange(Math.Abs(roundtrip1.X - source.X), 0d, roundtripTolerance);
+        Assert.InRange(Math.Abs(roundtrip1.Y - source.Y), 0d, roundtripTolerance);
+
+        Assert.InRange(Math.Abs(roundtrip2.X - source.X), 0d, roundtripTolerance);
+        Assert.InRange(Math.Abs(roundtrip2.Y - source.Y), 0d, roundtripTolerance);
+
+        Assert.InRange(Math.Abs(roundtrip1.X - roundtrip2.X), 0d, stabilityTolerance);
+        Assert.InRange(Math.Abs(roundtrip1.Y - roundtrip2.Y), 0d, stabilityTolerance);
+        Assert.InRange(Math.Abs(projected.X - projectedAgain.X), 0d, stabilityTolerance);
+        Assert.InRange(Math.Abs(projected.Y - projectedAgain.Y), 0d, stabilityTolerance);
+    }
+
+    /// <summary>
+    /// Performs the documented operation.
+    /// </summary>
     [Xunit.Fact(DisplayName = "Issue #20, Math transform bug")]
     public void TestMathTransformBug()
     {
