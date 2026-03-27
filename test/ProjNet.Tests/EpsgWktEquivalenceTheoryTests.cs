@@ -28,8 +28,8 @@ public class EpsgWktEquivalenceTheoryTests
     private static readonly Lazy<IReadOnlyDictionary<int, string>> CatalogDefinitions = new(() =>
         new ManagedCoordinateSystemDefinitionProvider()
             .GetDefinitions()
-            .GroupBy(item => item.Key)
-            .ToDictionary(group => group.Key, group => group.Last().Value));
+            .GroupBy(item => item.Srid)
+            .ToDictionary(group => group.Key, group => group.Last().Wkt));
 
     /// <summary>
     /// Enumerates fixture rows used by the WKT equivalence theory.

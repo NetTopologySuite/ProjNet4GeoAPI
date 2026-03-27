@@ -26,11 +26,11 @@ public sealed class ManagedCoordinateSystemDefinitionProvider : ICoordinateSyste
     /// Performs the documented operation.
     /// </summary>
     /// <returns>The computed value.</returns>
-    public IEnumerable<KeyValuePair<int, string>> GetDefinitions()
+    public IEnumerable<CoordinateSystemDefinition> GetDefinitions()
     {
         foreach (var coordinateSystem in GetManagedCoordinateSystems())
         {
-            yield return new KeyValuePair<int, string>(coordinateSystem.Key, coordinateSystem.Value.WKT);
+            yield return new CoordinateSystemDefinition(coordinateSystem.Key, coordinateSystem.Value.WKT);
         }
     }
 

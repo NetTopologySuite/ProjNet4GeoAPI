@@ -14,5 +14,5 @@ public interface ICoordinateSystemDefinitionProvider
     /// Gets coordinate system definitions keyed by SRID.
     /// </summary>
     /// <returns>Coordinate system definitions.</returns>
-    IEnumerable<KeyValuePair<int, string>> GetDefinitions();
+    IEnumerable<CoordinateSystemDefinition> GetDefinitions();
 }

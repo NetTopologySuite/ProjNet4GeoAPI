@@ -116,8 +116,8 @@ public class CoordinateSystemServicesTests
         var definitions = provider.GetDefinitions().ToList();
 
         Assert.True(definitions.Count > 7000);
-        Assert.Contains(definitions, item => item.Key == 4326);
-        Assert.Contains(definitions, item => item.Key == 3857);
+        Assert.Contains(definitions, item => item.Srid == 4326);
+        Assert.Contains(definitions, item => item.Srid == 3857);
     }
 
     /// <summary>
@@ -201,7 +201,7 @@ public class CoordinateSystemServicesTests
     /// </summary>
     /// <param name="csvPath">Optional path to an external CSV file.</param>
     /// <returns>Sequence of SRID/WKT pairs.</returns>
-    internal static IEnumerable<KeyValuePair<int, string>> LoadCsv(string? csvPath = null)
+    internal static IEnumerable<CoordinateSystemDefinition> LoadCsv(string? csvPath = null)
     {
         Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Reading '{0}'.", csvPath ?? "SRID.csv from resources stream"));
         var sw = new Stopwatch();
@@ -209,14 +209,14 @@ public class CoordinateSystemServicesTests
 
         foreach (var sridWkt in SRIDReader.GetSrids(csvPath))
         {
-            yield return new KeyValuePair<int, string>(sridWkt.WktId, sridWkt.Wkt);
+            yield return new CoordinateSystemDefinition(sridWkt.WktId, sridWkt.Wkt);
         }
 
         sw.Stop();
         Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Read '{1}' in {0:N0}ms", sw.ElapsedMilliseconds, csvPath ?? "SRID.csv from resources stream"));
     }
 
-    private static IEnumerable<KeyValuePair<int, string>> LoadXml(string xmlPath)
+    private static IEnumerable<CoordinateSystemDefinition> LoadXml(string xmlPath)
     {
         Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Reading '{0}'.", xmlPath));
         var sw = new Stopwatch();
@@ -233,7 +233,7 @@ public class CoordinateSystemServicesTests
             {
                 int srid = int.Parse(sridElement.Value, CultureInfo.InvariantCulture);
                 var wktNode = Assert.IsAssignableFrom<XNode>(node.LastNode);
-                yield return new KeyValuePair<int, string>(srid, wktNode.ToString());
+                yield return new CoordinateSystemDefinition(srid, wktNode.ToString());
             }
         }
 
@@ -249,15 +249,15 @@ public class CoordinateSystemServicesTests
             yield return new KeyValuePair<int, CoordinateSystem>(3857, ProjectedCoordinateSystem.WebMercator);
         }
 
-        public IEnumerable<KeyValuePair<int, string>> GetDefinitions()
+        public IEnumerable<CoordinateSystemDefinition> GetDefinitions()
         {
-            yield return new KeyValuePair<int, string>(4326, "INVALID_WKT_SHOULD_NOT_BE_USED");
+            yield return new CoordinateSystemDefinition(4326, "INVALID_WKT_SHOULD_NOT_BE_USED");
         }
     }
 
     private sealed class ThrowingDefinitionProvider : ICoordinateSystemDefinitionProvider
     {
-        public IEnumerable<KeyValuePair<int, string>> GetDefinitions()
+        public IEnumerable<CoordinateSystemDefinition> GetDefinitions()
         {
             throw new InvalidOperationException("Synthetic provider failure.");
         }

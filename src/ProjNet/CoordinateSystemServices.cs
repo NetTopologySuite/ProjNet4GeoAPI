@@ -369,9 +369,30 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
         }
     }
 
+    private static IEnumerable<KeyValuePair<int, CoordinateSystem>> CreateCoordinateSystems(
+        CoordinateSystemFactory factory,
+        IEnumerable<CoordinateSystemDefinition> enumeration)
+    {
+        foreach (var definition in enumeration)
+        {
+            var cs = CreateCoordinateSystem(factory, definition.Wkt);
+            if (cs is not null)
+            {
+                yield return new KeyValuePair<int, CoordinateSystem>(definition.Srid, cs);
+            }
+        }
+    }
+
     private static void FromEnumeration(
         CoordinateSystemServices css,
         IEnumerable<KeyValuePair<int, string>> enumeration)
+    {
+        FromEnumeration(css, CreateCoordinateSystems(css.coordinateSystemFactory, enumeration));
+    }
+
+    private static void FromEnumeration(
+        CoordinateSystemServices css,
+        IEnumerable<CoordinateSystemDefinition> enumeration)
     {
         FromEnumeration(css, CreateCoordinateSystems(css.coordinateSystemFactory, enumeration));
     }
