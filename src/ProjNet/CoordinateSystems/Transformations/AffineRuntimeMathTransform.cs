@@ -30,7 +30,7 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
     private readonly double s32;
     private readonly double s33;
     private readonly double tScale;
-    private MathTransform inverse;
+    private MathTransform? inverse;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AffineRuntimeMathTransform"/> class.
@@ -171,12 +171,12 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
             && !transform.Identity()
             && transform is AffineRuntimeMathTransform affineTransform)
         {
-            if (!affineTransform.TryCreateInverse(out MathTransform inverseTransform, out skipReason))
+            if (!affineTransform.TryCreateInverse(out MathTransform? inverseTransformCandidate, out skipReason))
             {
                 return false;
             }
 
-            transform = inverseTransform;
+            transform = ArgumentGuard.ThrowIfNull(inverseTransformCandidate, nameof(inverseTransformCandidate));
         }
 
         return true;
@@ -330,15 +330,15 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
     {
         if (this.inverse is null)
         {
-            if (!this.TryCreateInverse(out MathTransform inverseTransform, out string error))
+            if (!this.TryCreateInverse(out MathTransform? inverseTransformCandidate, out string? error))
             {
                 throw new InvalidOperationException(error);
             }
 
-            this.inverse = inverseTransform;
+            this.inverse = ArgumentGuard.ThrowIfNull(inverseTransformCandidate, nameof(inverseTransformCandidate));
         }
 
-        return this.inverse;
+        return ArgumentGuard.ThrowIfNull(this.inverse, nameof(this.inverse));
     }
 
     /// <inheritdoc />
