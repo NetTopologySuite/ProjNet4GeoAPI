@@ -4,10 +4,10 @@ namespace ProjNet
     {
         public CoordinateSystemServices() { }
         public CoordinateSystemServices(ProjNet.Data.ICoordinateSystemDefinitionProvider definitionProvider) { }
-        public CoordinateSystemServices(System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, string>> definitions) { }
+        public CoordinateSystemServices(System.Collections.Generic.IEnumerable<ProjNet.Data.CoordinateSystemDefinition> definitions) { }
         public CoordinateSystemServices(ProjNet.CoordinateSystems.CoordinateSystemFactory coordinateSystemFactory, ProjNet.CoordinateSystems.Transformations.CoordinateTransformationFactory coordinateTransformationFactory) { }
-        public CoordinateSystemServices(ProjNet.CoordinateSystems.CoordinateSystemFactory coordinateSystemFactory, ProjNet.CoordinateSystems.Transformations.CoordinateTransformationFactory coordinateTransformationFactory, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, string>>? enumeration) { }
-        public CoordinateSystemServices(ProjNet.CoordinateSystems.CoordinateSystemFactory coordinateSystemFactory, ProjNet.CoordinateSystems.Transformations.CoordinateTransformationFactory coordinateTransformationFactory, System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, string>>? enumeration, ProjNet.Data.ICoordinateSystemDefinitionProvider? definitionProvider) { }
+        public CoordinateSystemServices(ProjNet.CoordinateSystems.CoordinateSystemFactory coordinateSystemFactory, ProjNet.CoordinateSystems.Transformations.CoordinateTransformationFactory coordinateTransformationFactory, System.Collections.Generic.IEnumerable<ProjNet.Data.CoordinateSystemDefinition>? enumeration) { }
+        public CoordinateSystemServices(ProjNet.CoordinateSystems.CoordinateSystemFactory coordinateSystemFactory, ProjNet.CoordinateSystems.Transformations.CoordinateTransformationFactory coordinateTransformationFactory, System.Collections.Generic.IEnumerable<ProjNet.Data.CoordinateSystemDefinition>? enumeration, ProjNet.Data.ICoordinateSystemDefinitionProvider? definitionProvider) { }
         protected int Count { get; }
         protected virtual int AddCoordinateSystem(ProjNet.CoordinateSystems.CoordinateSystem coordinateSystem) { }
         protected void AddCoordinateSystem(int srid, ProjNet.CoordinateSystems.CoordinateSystem coordinateSystem) { }
@@ -514,6 +514,8 @@ namespace ProjNet.CoordinateSystems.Projections
     public class ProjectionParameterSet : System.Collections.Generic.Dictionary<string, double>, System.IEquatable<ProjNet.CoordinateSystems.Projections.ProjectionParameterSet>
     {
         public ProjectionParameterSet(System.Collections.Generic.IEnumerable<ProjNet.CoordinateSystems.ProjectionParameter> parameters) { }
+        [System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Formatter-based serialization APIs may require runtime code generation.")]
+        [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Formatter-based serialization APIs are not trimming-safe.")]
         [System.Obsolete("Formatter-based serialization constructor is retained for compatibility.")]
         public ProjectionParameterSet(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
         public bool Equals(ProjNet.CoordinateSystems.Projections.ProjectionParameterSet? other) { }
@@ -528,7 +530,7 @@ namespace ProjNet.CoordinateSystems.Projections
     public class ProjectionsRegistry
     {
         public ProjectionsRegistry() { }
-        public static void Register(string name, System.Type type) { }
+        public static void Register(string name, [System.Diagnostics.CodeAnalysis.DynamicallyAccessedMembers(System.Diagnostics.CodeAnalysis.DynamicallyAccessedMemberTypes.PublicConstructors)] System.Type type) { }
         public static void RegisterAlias(string aliasName, string existingName) { }
     }
 }
@@ -657,15 +659,27 @@ namespace ProjNet.CoordinateSystems.Transformations
 }
 namespace ProjNet.Data
 {
+    public readonly struct CoordinateSystemDefinition : System.IEquatable<ProjNet.Data.CoordinateSystemDefinition>
+    {
+        public CoordinateSystemDefinition(int Srid, string Wkt) { }
+        public int Srid { get; init; }
+        public string Wkt { get; init; }
+    }
+    public readonly struct CoordinateSystemEntry : System.IEquatable<ProjNet.Data.CoordinateSystemEntry>
+    {
+        public CoordinateSystemEntry(int Srid, ProjNet.CoordinateSystems.CoordinateSystem CoordinateSystem) { }
+        public ProjNet.CoordinateSystems.CoordinateSystem CoordinateSystem { get; init; }
+        public int Srid { get; init; }
+    }
     public interface ICoordinateSystemDefinitionProvider
     {
-        System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, string>> GetDefinitions();
+        System.Collections.Generic.IEnumerable<ProjNet.Data.CoordinateSystemDefinition> GetDefinitions();
     }
     public sealed class ManagedCoordinateSystemDefinitionProvider : ProjNet.Data.ICoordinateSystemDefinitionProvider
     {
         public ManagedCoordinateSystemDefinitionProvider() { }
-        public System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, ProjNet.CoordinateSystems.CoordinateSystem>> GetCoordinateSystems() { }
-        public System.Collections.Generic.IEnumerable<System.Collections.Generic.KeyValuePair<int, string>> GetDefinitions() { }
+        public System.Collections.Generic.IEnumerable<ProjNet.Data.CoordinateSystemEntry> GetCoordinateSystems() { }
+        public System.Collections.Generic.IEnumerable<ProjNet.Data.CoordinateSystemDefinition> GetDefinitions() { }
     }
 }
 namespace ProjNet.Geometries
