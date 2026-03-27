@@ -214,7 +214,16 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
         double m33,
         out Matrix3x3 inverseMatrix)
     {
-        inverseMatrix = Matrix3x3.Identity;
+        inverseMatrix = new Matrix3x3(
+            0d,
+            0d,
+            0d,
+            0d,
+            0d,
+            0d,
+            0d,
+            0d,
+            0d);
 
         double c11 = (m22 * m33) - (m23 * m32);
         double c12 = -((m21 * m33) - (m23 * m31));
