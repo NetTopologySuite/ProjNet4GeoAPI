@@ -41,7 +41,7 @@ internal sealed class DeformationMathTransform : MathTransform
     private readonly GeocentricTransform geocentricInverse;
 
     private bool isInverted;
-    private MathTransform inverse;
+    private MathTransform? inverse;
 
     private DeformationMathTransform(
         IReadOnlyList<GeoTiffXyzGridShiftMathTransform.XyzGrid> velocityGrids,
@@ -107,12 +107,7 @@ internal sealed class DeformationMathTransform : MathTransform
     /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        if (this.inverse is null)
-        {
-            this.inverse = new DeformationMathTransform(this, !this.isInverted);
-        }
-
-        return this.inverse;
+        return this.inverse ??= new DeformationMathTransform(this, !this.isInverted);
     }
 
     /// <inheritdoc />
@@ -197,7 +192,8 @@ internal sealed class DeformationMathTransform : MathTransform
         double tEpoch = 0d;
         if (hasDt)
         {
-            if (!TryParseFiniteDouble(dtToken, out fixedDt))
+            string dtValue = dtToken ?? string.Empty;
+            if (!TryParseFiniteDouble(dtValue, out fixedDt))
             {
                 skipReason = "Unable to parse +dt parameter for deformation.";
                 return false;
@@ -207,7 +203,8 @@ internal sealed class DeformationMathTransform : MathTransform
         }
         else
         {
-            if (!TryParseFiniteDouble(epochToken, out tEpoch))
+            string epochValue = epochToken ?? string.Empty;
+            if (!TryParseFiniteDouble(epochValue, out tEpoch))
             {
                 skipReason = "Unable to parse +t_epoch parameter for deformation.";
                 return false;
@@ -227,7 +224,8 @@ internal sealed class DeformationMathTransform : MathTransform
 
             if (hasGenericGrids)
             {
-                if (!TryResolveGridPaths(genericGridToken, "grids", out IReadOnlyList<string> genericGridPaths, out skipReason))
+                string genericGridTokenValue = ArgumentGuard.ThrowIfNull(genericGridToken, nameof(genericGridToken));
+                if (!TryResolveGridPaths(genericGridTokenValue, "grids", out IReadOnlyList<string> genericGridPaths, out skipReason))
                 {
                     return false;
                 }
@@ -255,12 +253,14 @@ internal sealed class DeformationMathTransform : MathTransform
             }
             else
             {
-                if (!TryResolveGridPaths(horizontalGridToken, "xy_grids", out IReadOnlyList<string> horizontalGridPaths, out skipReason))
+                string horizontalGridTokenValue = ArgumentGuard.ThrowIfNull(horizontalGridToken, nameof(horizontalGridToken));
+                string verticalGridTokenValue = ArgumentGuard.ThrowIfNull(verticalGridToken, nameof(verticalGridToken));
+                if (!TryResolveGridPaths(horizontalGridTokenValue, "xy_grids", out IReadOnlyList<string> horizontalGridPaths, out skipReason))
                 {
                     return false;
                 }
 
-                if (!TryResolveGridPaths(verticalGridToken, "z_grids", out IReadOnlyList<string> verticalGridPaths, out skipReason))
+                if (!TryResolveGridPaths(verticalGridTokenValue, "z_grids", out IReadOnlyList<string> verticalGridPaths, out skipReason))
                 {
                     return false;
                 }
@@ -377,9 +377,9 @@ internal sealed class DeformationMathTransform : MathTransform
                 continue;
             }
 
-            if (TryResolveGridPath(gridName, out string resolvedPath))
+            if (TryResolveGridPath(gridName, out string? resolvedPathCandidate))
             {
-                resolved.Add(resolvedPath);
+                resolved.Add(ArgumentGuard.ThrowIfNull(resolvedPathCandidate, nameof(resolvedPathCandidate)));
                 continue;
             }
 
@@ -922,11 +922,12 @@ internal sealed class DeformationMathTransform : MathTransform
         eastVelocity = 0d;
         northVelocity = 0d;
         upVelocity = 0d;
-        if (!TryFindXyzGrid(this.velocityGrids, longitudeDegrees, latitudeDegrees, out GeoTiffXyzGridShiftMathTransform.XyzGrid grid))
+        if (!TryFindXyzGrid(this.velocityGrids, longitudeDegrees, latitudeDegrees, out GeoTiffXyzGridShiftMathTransform.XyzGrid? gridCandidate))
         {
             return false;
         }
 
+        GeoTiffXyzGridShiftMathTransform.XyzGrid grid = ArgumentGuard.ThrowIfNull(gridCandidate, nameof(gridCandidate));
         if (!TryGetInterpolationCell(grid, longitudeDegrees, latitudeDegrees, out InterpolationCell cell))
         {
             return false;
@@ -976,21 +977,23 @@ internal sealed class DeformationMathTransform : MathTransform
         eastVelocity = 0d;
         northVelocity = 0d;
         upVelocity = 0d;
-        if (!TryFindHorizontalGrid(this.horizontalGrids, longitudeRadians, latitudeRadians, out CTable2Grid horizontalGrid))
+        if (!TryFindHorizontalGrid(this.horizontalGrids, longitudeRadians, latitudeRadians, out CTable2Grid? horizontalGridCandidate))
         {
             return false;
         }
 
+        CTable2Grid horizontalGrid = ArgumentGuard.ThrowIfNull(horizontalGridCandidate, nameof(horizontalGridCandidate));
         if (!horizontalGrid.TryInterpolate(longitudeRadians, latitudeRadians, out double eastMmPerYear, out double northMmPerYear))
         {
             return false;
         }
 
-        if (!TryFindVerticalGrid(this.verticalGrids, longitudeRadians, latitudeRadians, out GtxGrid verticalGrid))
+        if (!TryFindVerticalGrid(this.verticalGrids, longitudeRadians, latitudeRadians, out GtxGrid? verticalGridCandidate))
         {
             return false;
         }
 
+        GtxGrid verticalGrid = ArgumentGuard.ThrowIfNull(verticalGridCandidate, nameof(verticalGridCandidate));
         if (!verticalGrid.TryInterpolate(longitudeRadians, latitudeRadians, out double upMmPerYear))
         {
             return false;
