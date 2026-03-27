@@ -52,6 +52,8 @@ Build policy is enforced in `src/ProjNet/ProjNET.csproj` via `ValidateTargetFram
 - `stylecop.json` keeps XML header enforcement disabled (`xmlHeader: false`) for variable attribution scenarios.
 - Null checks should use pattern-style comparisons (`is null` / `is not null`) in new and touched code.
 - `StringSyntaxAttribute` annotations should be added only when APIs accept caller-supplied regex or format strings; current handwritten code primarily uses inline patterns and `GeneratedRegex`.
+- Prefer nullable flow attributes (`NotNull`, `NotNullWhen`, `MemberNotNull`, etc.) and throw-flow attributes (`DoesNotReturn`, `DoesNotReturnIf`) on shared guard helpers where applicable.
+- Reflection/AOT-related attributes (`DynamicallyAccessedMembers`, `RequiresUnreferencedCode`, `RequiresDynamicCode`) are audited together with trim warnings in the dedicated AOT milestone.
 
 ## Documentation policy
 
