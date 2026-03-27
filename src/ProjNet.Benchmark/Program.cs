@@ -4,6 +4,7 @@
 
 namespace ProjNet.Benchmark;
 
+using System;
 using BenchmarkDotNet.Running;
 
 /// <summary>
@@ -17,9 +18,26 @@ internal static class Program
 {
     private static void Main(string[] args)
     {
-        PerformanceTests.Validate();
-        ProjParityBenchmarks.Validate();
+        if (!IsBenchmarkChildProcess(args))
+        {
+            PerformanceTests.Validate();
+            ProjParityBenchmarks.Validate();
+        }
+
         BenchmarkSwitcher.FromAssembly(typeof(Program).Assembly).Run(args);
+    }
+
+    private static bool IsBenchmarkChildProcess(string[] args)
+    {
+        for (int i = 0; i < args.Length; i++)
+        {
+            if (string.Equals(args[i], "--benchmarkName", StringComparison.Ordinal))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     // here's how I generated coords.dat.gz (set TestDataPath and add references + usings, of course):
