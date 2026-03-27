@@ -232,8 +232,9 @@ public static partial class CoordinateSystemWktReader
         }
     }
 
-    private static CoordinateSystem ReadCoordinateSystem(string coordinateSystem, WktTokenizer tokenizer)
+    private static CoordinateSystem ReadCoordinateSystem(string? coordinateSystem, WktTokenizer tokenizer)
     {
+        string coordinateSystemText = coordinateSystem ?? tokenizer.GetStringValue();
         switch (tokenizer.GetStringValue())
         {
             case "GEOGCS":
@@ -249,9 +250,9 @@ public static partial class CoordinateSystemWktReader
             case "VERT_CS":
                 return ReadVerticalCoordinateSystem(tokenizer);
             case "LOCAL_CS":
-                throw new NotSupportedException($"{coordinateSystem} coordinate system is not supported.");
+                throw new NotSupportedException($"{coordinateSystemText} coordinate system is not supported.");
             default:
-                throw new InvalidOperationException($"{coordinateSystem} coordinate system is not recognized.");
+                throw new InvalidOperationException($"{coordinateSystemText} coordinate system is not recognized.");
         }
     }
 
