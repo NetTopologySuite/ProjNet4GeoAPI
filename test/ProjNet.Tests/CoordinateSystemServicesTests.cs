@@ -243,10 +243,10 @@ public class CoordinateSystemServicesTests
 
     private sealed class TestManagedProvider : ICoordinateSystemDefinitionProvider, IManagedCoordinateSystemProvider
     {
-        public IEnumerable<KeyValuePair<int, CoordinateSystem>> GetCoordinateSystems()
+        public IEnumerable<CoordinateSystemEntry> GetCoordinateSystems()
         {
-            yield return new KeyValuePair<int, CoordinateSystem>(4326, GeographicCoordinateSystem.WGS84);
-            yield return new KeyValuePair<int, CoordinateSystem>(3857, ProjectedCoordinateSystem.WebMercator);
+            yield return new CoordinateSystemEntry(4326, GeographicCoordinateSystem.WGS84);
+            yield return new CoordinateSystemEntry(3857, ProjectedCoordinateSystem.WebMercator);
         }
 
         public IEnumerable<CoordinateSystemDefinition> GetDefinitions()

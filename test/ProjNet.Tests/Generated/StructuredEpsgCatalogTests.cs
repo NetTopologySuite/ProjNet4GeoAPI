@@ -77,8 +77,8 @@ public class StructuredEpsgCatalogTests
 
         var coordinateSystems = managedProvider.GetCoordinateSystems().ToList();
         Assert.True(coordinateSystems.Count > 7000);
-        Assert.Contains(coordinateSystems, item => item.Key == 4326);
-        Assert.Contains(coordinateSystems, item => item.Key == 3857);
+        Assert.Contains(coordinateSystems, item => item.Srid == 4326);
+        Assert.Contains(coordinateSystems, item => item.Srid == 3857);
     }
 
     /// <summary>

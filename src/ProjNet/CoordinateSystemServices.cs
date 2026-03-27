@@ -45,7 +45,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     /// pre-populated from the supplied SRID-to-WKT definition pairs.
     /// </summary>
     /// <param name="definitions">An enumeration of SRID-to-WKT coordinate system definitions.</param>
-    public CoordinateSystemServices(IEnumerable<KeyValuePair<int, string>> definitions)
+    public CoordinateSystemServices(IEnumerable<CoordinateSystemDefinition> definitions)
         : this(new CoordinateSystemFactory(), new CoordinateTransformationFactory(), definitions, null)
     {
     }
@@ -79,7 +79,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     public CoordinateSystemServices(
         CoordinateSystemFactory coordinateSystemFactory,
         CoordinateTransformationFactory coordinateTransformationFactory,
-        IEnumerable<KeyValuePair<int, string>>? enumeration)
+        IEnumerable<CoordinateSystemDefinition>? enumeration)
         : this(coordinateSystemFactory, coordinateTransformationFactory, enumeration, null)
     {
     }
@@ -95,7 +95,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     public CoordinateSystemServices(
         CoordinateSystemFactory coordinateSystemFactory,
         CoordinateTransformationFactory coordinateTransformationFactory,
-        IEnumerable<KeyValuePair<int, string>>? enumeration,
+        IEnumerable<CoordinateSystemDefinition>? enumeration,
         ICoordinateSystemDefinitionProvider? definitionProvider)
     {
         this.coordinateSystemFactory = ArgumentGuard.ThrowIfNull(coordinateSystemFactory, nameof(coordinateSystemFactory));
@@ -347,29 +347,15 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
 
     private static void FromEnumeration(
         CoordinateSystemServices css,
-        IEnumerable<KeyValuePair<int, CoordinateSystem>> enumeration)
+        IEnumerable<CoordinateSystemEntry> enumeration)
     {
-        foreach (var sridCs in enumeration)
+        foreach (var entry in enumeration)
         {
-            css.AddCoordinateSystem(sridCs.Key, sridCs.Value);
+            css.AddCoordinateSystem(entry.Srid, entry.CoordinateSystem);
         }
     }
 
-    private static IEnumerable<KeyValuePair<int, CoordinateSystem>> CreateCoordinateSystems(
-        CoordinateSystemFactory factory,
-        IEnumerable<KeyValuePair<int, string>> enumeration)
-    {
-        foreach (var sridWkt in enumeration)
-        {
-            var cs = CreateCoordinateSystem(factory, sridWkt.Value);
-            if (cs is not null)
-            {
-                yield return new KeyValuePair<int, CoordinateSystem>(sridWkt.Key, cs);
-            }
-        }
-    }
-
-    private static IEnumerable<KeyValuePair<int, CoordinateSystem>> CreateCoordinateSystems(
+    private static IEnumerable<CoordinateSystemEntry> CreateCoordinateSystems(
         CoordinateSystemFactory factory,
         IEnumerable<CoordinateSystemDefinition> enumeration)
     {
@@ -378,16 +364,9 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
             var cs = CreateCoordinateSystem(factory, definition.Wkt);
             if (cs is not null)
             {
-                yield return new KeyValuePair<int, CoordinateSystem>(definition.Srid, cs);
+                yield return new CoordinateSystemEntry(definition.Srid, cs);
             }
         }
-    }
-
-    private static void FromEnumeration(
-        CoordinateSystemServices css,
-        IEnumerable<KeyValuePair<int, string>> enumeration)
-    {
-        FromEnumeration(css, CreateCoordinateSystems(css.coordinateSystemFactory, enumeration));
     }
 
     private static void FromEnumeration(
@@ -405,13 +384,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
             return;
         }
 
-        if (enumeration is IEnumerable<KeyValuePair<int, string>> wktEnumeration)
-        {
-            FromEnumeration(this, wktEnumeration);
-            return;
-        }
-
-        if (enumeration is IEnumerable<KeyValuePair<int, CoordinateSystem>> coordinateSystemEnumeration)
+        if (enumeration is IEnumerable<CoordinateSystemEntry> coordinateSystemEnumeration)
         {
             FromEnumeration(this, coordinateSystemEnumeration);
             return;

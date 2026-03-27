@@ -6,8 +6,8 @@ namespace ProjNet.Data.Generated;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using ProjNet;
 using ProjNet.CoordinateSystems;
+using ProjNet.Data;
 
 /// <summary>
 /// Represents the documented type.
@@ -27,7 +27,7 @@ internal static class EpsgCoordinateSystemFactory
     /// Performs the documented operation.
     /// </summary>
     /// <returns>The computed value.</returns>
-    internal static IEnumerable<KeyValuePair<int, CoordinateSystem>> GetCoordinateSystems()
+    internal static IEnumerable<CoordinateSystemEntry> GetCoordinateSystems()
     {
         for (int cacheIndex = 0; cacheIndex < EpsgGeneratedCatalog.CoordinateReferenceCount; cacheIndex++)
         {
@@ -42,7 +42,7 @@ internal static class EpsgCoordinateSystemFactory
                 continue;
             }
 
-            yield return new KeyValuePair<int, CoordinateSystem>(srid, coordinateSystem);
+            yield return new CoordinateSystemEntry(srid, coordinateSystem);
         }
     }
 

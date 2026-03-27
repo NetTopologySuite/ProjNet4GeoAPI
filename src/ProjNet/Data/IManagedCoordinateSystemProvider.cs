@@ -4,7 +4,6 @@
 namespace ProjNet.Data;
 
 using System.Collections.Generic;
-using ProjNet.CoordinateSystems;
 
 /// <summary>
 /// Internal provider contract for managed coordinate systems emitted as structured objects.
@@ -15,5 +14,5 @@ internal interface IManagedCoordinateSystemProvider
     /// Gets coordinate system objects keyed by SRID.
     /// </summary>
     /// <returns>Coordinate system objects.</returns>
-    IEnumerable<KeyValuePair<int, CoordinateSystem>> GetCoordinateSystems();
+    IEnumerable<CoordinateSystemEntry> GetCoordinateSystems();
 }

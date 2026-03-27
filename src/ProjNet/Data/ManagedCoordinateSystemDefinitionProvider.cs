@@ -17,7 +17,7 @@ using ProjNet.Data.Generated;
 public sealed class ManagedCoordinateSystemDefinitionProvider : ICoordinateSystemDefinitionProvider, IManagedCoordinateSystemProvider
 {
     /// <inheritdoc/>
-    public IEnumerable<KeyValuePair<int, CoordinateSystem>> GetCoordinateSystems()
+    public IEnumerable<CoordinateSystemEntry> GetCoordinateSystems()
     {
         return GetManagedCoordinateSystems();
     }
@@ -28,23 +28,23 @@ public sealed class ManagedCoordinateSystemDefinitionProvider : ICoordinateSyste
     /// <returns>The computed value.</returns>
     public IEnumerable<CoordinateSystemDefinition> GetDefinitions()
     {
-        foreach (var coordinateSystem in GetManagedCoordinateSystems())
+        foreach (var entry in GetManagedCoordinateSystems())
         {
-            yield return new CoordinateSystemDefinition(coordinateSystem.Key, coordinateSystem.Value.WKT);
+            yield return new CoordinateSystemDefinition(entry.Srid, entry.CoordinateSystem.WKT);
         }
     }
 
-    private static IEnumerable<KeyValuePair<int, CoordinateSystem>> GetManagedCoordinateSystems()
+    private static IEnumerable<CoordinateSystemEntry> GetManagedCoordinateSystems()
     {
         var yieldedSrids = new HashSet<int>();
-        foreach (var coordinateSystem in EpsgCoordinateSystemFactory.GetCoordinateSystems())
+        foreach (var entry in EpsgCoordinateSystemFactory.GetCoordinateSystems())
         {
-            if (!yieldedSrids.Add(coordinateSystem.Key))
+            if (!yieldedSrids.Add(entry.Srid))
             {
                 continue;
             }
 
-            yield return coordinateSystem;
+            yield return entry;
         }
     }
 }
