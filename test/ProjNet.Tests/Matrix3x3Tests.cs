@@ -151,4 +151,60 @@ public class Matrix3x3Tests
         Assert.Equal(value.Y, result.Y, 12);
         Assert.Equal(value.Z, result.Z, 12);
     }
+
+    [Fact]
+    public void Matrix3x3Equality_GivenSameComponents_ReturnsTrue()
+    {
+        Matrix3x3 left = new Matrix3x3(
+            1d,
+            2d,
+            3d,
+            4d,
+            5d,
+            6d,
+            7d,
+            8d,
+            9d);
+        Matrix3x3 right = new Matrix3x3(
+            1d,
+            2d,
+            3d,
+            4d,
+            5d,
+            6d,
+            7d,
+            8d,
+            9d);
+
+        Assert.True(left.Equals(right));
+        Assert.True(left == right);
+        Assert.False(left != right);
+        Assert.Equal(left.GetHashCode(), right.GetHashCode());
+    }
+
+    [Fact]
+    public void Matrix3x3Flags_GivenKnownMatrices_ReportIdentityAndZeroCorrectly()
+    {
+        Matrix3x3 identity = Matrix3x3.Identity;
+        Matrix3x3 zero = Matrix3x3.Zero;
+        Matrix3x3 other = new Matrix3x3(
+            1d,
+            0d,
+            0d,
+            0d,
+            2d,
+            0d,
+            0d,
+            0d,
+            1d);
+
+        Assert.True(identity.IsIdentity);
+        Assert.False(identity.IsZero);
+
+        Assert.True(zero.IsZero);
+        Assert.False(zero.IsIdentity);
+
+        Assert.False(other.IsIdentity);
+        Assert.False(other.IsZero);
+    }
 }

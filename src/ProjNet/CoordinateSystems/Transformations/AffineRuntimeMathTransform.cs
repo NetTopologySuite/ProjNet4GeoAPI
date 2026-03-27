@@ -257,15 +257,7 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
             && this.offset.Y == 0d
             && this.offset.Z == 0d
             && this.tOffset == 0d
-            && this.spatialMatrix.M00 == 1d
-            && this.spatialMatrix.M01 == 0d
-            && this.spatialMatrix.M02 == 0d
-            && this.spatialMatrix.M10 == 0d
-            && this.spatialMatrix.M11 == 1d
-            && this.spatialMatrix.M12 == 0d
-            && this.spatialMatrix.M20 == 0d
-            && this.spatialMatrix.M21 == 0d
-            && this.spatialMatrix.M22 == 1d
+            && this.spatialMatrix.IsIdentity
             && this.tScale == 1d;
     }
 
