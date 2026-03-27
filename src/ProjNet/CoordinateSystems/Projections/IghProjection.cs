@@ -307,7 +307,7 @@ internal class IghProjection : MapProjection
 
     private static void MollweideInverseUnit(double x, double y, out double lambda, out double phi)
     {
-        double theta = Math.Asin(Clamp(y / Sqrt2, -1d, 1d));
+        double theta = Math.Asin(ProjectionConstants.Clamp(y / Sqrt2, -1d, 1d));
         double cosTheta = Math.Cos(theta);
         if (Math.Abs(cosTheta) <= Eps10)
         {
@@ -318,17 +318,7 @@ internal class IghProjection : MapProjection
             lambda = x * PI / (2d * Sqrt2 * cosTheta);
         }
 
-        phi = Math.Asin(Clamp(((2d * theta) + Math.Sin(2d * theta)) / PI, -1d, 1d));
-    }
-
-    private static double Clamp(double value, double minimum, double maximum)
-    {
-        if (value < minimum)
-        {
-            return minimum;
-        }
-
-        return value > maximum ? maximum : value;
+        phi = Math.Asin(ProjectionConstants.Clamp(((2d * theta) + Math.Sin(2d * theta)) / PI, -1d, 1d));
     }
 
     private readonly struct ZoneDefinition(bool isMollweide, double lambda0, double x0, double y0)

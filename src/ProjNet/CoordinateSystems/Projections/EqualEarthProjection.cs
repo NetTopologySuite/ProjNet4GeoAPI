@@ -64,7 +64,7 @@ internal class EqualEarthProjection : MapProjection
     {
         double lambda = Adjust_lon(lon - this.centralMeridian);
         double sinPhi = Math.Sin(lat);
-        double theta = Math.Asin(Clamp(M * sinPhi, -1d, 1d));
+        double theta = Math.Asin(ProjectionConstants.Clamp(M * sinPhi, -1d, 1d));
 
         double theta2 = theta * theta;
         double theta6 = theta2 * theta2 * theta2;
@@ -107,16 +107,7 @@ internal class EqualEarthProjection : MapProjection
             x = Adjust_lon(this.centralMeridian + ((x * this.inverseRadius) * M * denominatorFinal / cosTheta));
         }
 
-        y = Math.Asin(Clamp(Math.Sin(theta) / M, -1d, 1d));
+        y = Math.Asin(ProjectionConstants.Clamp(Math.Sin(theta) / M, -1d, 1d));
     }
 
-    private static double Clamp(double value, double minimum, double maximum)
-    {
-        if (value < minimum)
-        {
-            return minimum;
-        }
-
-        return value > maximum ? maximum : value;
-    }
 }

@@ -33,4 +33,41 @@ internal static class ProjectionConstants
     /// Shared 1e-12 tolerance.
     /// </summary>
     internal const double Tolerance1E12 = 1e-12d;
+
+    /// <summary>
+    /// Clamps <paramref name="value"/> to the inclusive range [<paramref name="minimum"/>, <paramref name="maximum"/>].
+    /// </summary>
+    /// <param name="value">Input value.</param>
+    /// <param name="minimum">Inclusive lower bound.</param>
+    /// <param name="maximum">Inclusive upper bound.</param>
+    /// <returns>The clamped value.</returns>
+    internal static double Clamp(double value, double minimum, double maximum)
+    {
+        if (value < minimum)
+        {
+            return minimum;
+        }
+
+        return value > maximum ? maximum : value;
+    }
+
+    /// <summary>
+    /// Clamps <paramref name="value"/> to the inclusive range [-1, 1].
+    /// </summary>
+    /// <param name="value">Input value.</param>
+    /// <returns>The clamped value.</returns>
+    internal static double ClampToUnit(double value)
+    {
+        if (value > 1d)
+        {
+            return 1d;
+        }
+
+        if (value < -1d)
+        {
+            return -1d;
+        }
+
+        return value;
+    }
 }

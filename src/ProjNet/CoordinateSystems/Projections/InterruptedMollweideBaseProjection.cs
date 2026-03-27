@@ -97,27 +97,10 @@ internal abstract class InterruptedMollweideBaseProjection : MapProjection
     protected static void MollweideInverseUnit(double x, double y, out double lambda, out double phi)
     {
         double sqrt2 = Math.Sqrt(2d);
-        double theta = Math.Asin(Clamp(y / sqrt2, -1d, 1d));
+        double theta = Math.Asin(ProjectionConstants.Clamp(y / sqrt2, -1d, 1d));
         double cosTheta = Math.Cos(theta);
         lambda = Math.Abs(cosTheta) <= Eps10 ? 0d : (x * PI / (2d * sqrt2 * cosTheta));
-        phi = Math.Asin(Clamp(((2d * theta) + Math.Sin(2d * theta)) / PI, -1d, 1d));
-    }
-
-    /// <summary>
-    /// Clamps a value to an inclusive range.
-    /// </summary>
-    /// <param name="value">Input value.</param>
-    /// <param name="minimum">Inclusive lower bound.</param>
-    /// <param name="maximum">Inclusive upper bound.</param>
-    /// <returns><paramref name="value"/> constrained to [<paramref name="minimum"/>, <paramref name="maximum"/>].</returns>
-    protected static double Clamp(double value, double minimum, double maximum)
-    {
-        if (value < minimum)
-        {
-            return minimum;
-        }
-
-        return value > maximum ? maximum : value;
+        phi = Math.Asin(ProjectionConstants.Clamp(((2d * theta) + Math.Sin(2d * theta)) / PI, -1d, 1d));
     }
 
     /// <summary>

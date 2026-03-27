@@ -215,16 +215,6 @@ internal abstract class AdamsProjectionBase : MapProjection
         return phi * ((y * d1) - d2 + (0.5d * c0));
     }
 
-    private static double Clamp(double value, double minimum, double maximum)
-    {
-        if (value < minimum)
-        {
-            return minimum;
-        }
-
-        return value > maximum ? maximum : value;
-    }
-
     private static bool IsApproximatelyZero(double value)
     {
         return Math.Abs(value) <= 1e-12d;
@@ -256,8 +246,8 @@ internal abstract class AdamsProjectionBase : MapProjection
                     double sl = Math.Sin(lambda);
                     double sp = Math.Sin(phi);
                     double cp = Math.Cos(phi);
-                    a = Math.Acos(Clamp(((cp * sl) - sp) * Rsqrt2, -1d, 1d));
-                    b = Math.Acos(Clamp(((cp * sl) + sp) * Rsqrt2, -1d, 1d));
+                    a = Math.Acos(ProjectionConstants.Clamp(((cp * sl) - sp) * Rsqrt2, -1d, 1d));
+                    b = Math.Acos(ProjectionConstants.Clamp(((cp * sl) + sp) * Rsqrt2, -1d, 1d));
                     sm = lambda < 0d;
                     sn = phi < 0d;
                 }
@@ -279,8 +269,8 @@ internal abstract class AdamsProjectionBase : MapProjection
                     double sl = Math.Sin(lambda);
                     double cl = Math.Cos(lambda);
                     double cp = Math.Cos(phi);
-                    a = Math.Acos(Clamp(cp * (sl + cl) * Rsqrt2, -1d, 1d));
-                    b = Math.Acos(Clamp(cp * (sl - cl) * Rsqrt2, -1d, 1d));
+                    a = Math.Acos(ProjectionConstants.Clamp(cp * (sl + cl) * Rsqrt2, -1d, 1d));
+                    b = Math.Acos(ProjectionConstants.Clamp(cp * (sl - cl) * Rsqrt2, -1d, 1d));
                     sm = sl < 0d;
                     sn = cl > 0d;
                 }
@@ -298,7 +288,7 @@ internal abstract class AdamsProjectionBase : MapProjection
                     a = Math.Cos(phi) * Math.Sin(lambda);
                     sm = (sp + a) < 0d;
                     sn = (sp - a) < 0d;
-                    a = Math.Acos(Clamp(a, -1d, 1d));
+                    a = Math.Acos(ProjectionConstants.Clamp(a, -1d, 1d));
                     b = HalfPi - phi;
                 }
 
@@ -308,8 +298,8 @@ internal abstract class AdamsProjectionBase : MapProjection
                 {
                     double sp = Math.Tan(0.5d * phi);
                     b = Math.Cos(Asinz(sp)) * Math.Sin(0.5d * lambda);
-                    a = Math.Acos(Clamp((b - sp) * Rsqrt2, -1d, 1d));
-                    b = Math.Acos(Clamp((b + sp) * Rsqrt2, -1d, 1d));
+                    a = Math.Acos(ProjectionConstants.Clamp((b - sp) * Rsqrt2, -1d, 1d));
+                    b = Math.Acos(ProjectionConstants.Clamp((b + sp) * Rsqrt2, -1d, 1d));
                     sm = lambda < 0d;
                     sn = phi < 0d;
                 }
@@ -322,8 +312,8 @@ internal abstract class AdamsProjectionBase : MapProjection
                     a = Math.Cos(Asinz(sp)) * Math.Sin(0.5d * lambda);
                     sm = (sp + a) < 0d;
                     sn = (sp - a) < 0d;
-                    b = Math.Acos(Clamp(sp, -1d, 1d));
-                    a = Math.Acos(Clamp(a, -1d, 1d));
+                    b = Math.Acos(ProjectionConstants.Clamp(sp, -1d, 1d));
+                    a = Math.Acos(ProjectionConstants.Clamp(a, -1d, 1d));
                 }
 
                 break;
@@ -444,10 +434,10 @@ internal abstract class AdamsProjectionBase : MapProjection
 
     private bool TryInverseAdamsWs2(double x, double y, out double lambda, out double phi)
     {
-        phi = Clamp(y / 2.62181347d, -1d, 1d) * HalfPi;
+        phi = ProjectionConstants.Clamp(y / 2.62181347d, -1d, 1d) * HalfPi;
         lambda = Math.Abs(phi) >= HalfPi
             ? 0d
-            : Clamp(x / 2.62205760d / Math.Cos(phi), -1d, 1d) * PI;
+            : ProjectionConstants.Clamp(x / 2.62205760d / Math.Cos(phi), -1d, 1d) * PI;
 
         return this.TryGenericInverse2D(x, y, lambda, phi, InverseTolerance, out lambda, out phi);
     }
@@ -606,13 +596,13 @@ internal abstract class AdamsProjectionBase : MapProjection
                 return false;
             }
 
-            double deltaLambda = Clamp((deltaX * derivLamX) + (deltaY * derivLamY), -StepClamp, StepClamp);
+            double deltaLambda = ProjectionConstants.Clamp((deltaX * derivLamX) + (deltaY * derivLamY), -StepClamp, StepClamp);
             lambda -= deltaLambda;
-            lambda = Clamp(lambda, -PI, PI);
+            lambda = ProjectionConstants.Clamp(lambda, -PI, PI);
 
-            double deltaPhi = Clamp((deltaX * derivPhiX) + (deltaY * derivPhiY), -StepClamp, StepClamp);
+            double deltaPhi = ProjectionConstants.Clamp((deltaX * derivPhiX) + (deltaY * derivPhiY), -StepClamp, StepClamp);
             phi -= deltaPhi;
-            phi = Clamp(phi, -HalfPi, HalfPi);
+            phi = ProjectionConstants.Clamp(phi, -HalfPi, HalfPi);
         }
 
         if (Math.Abs(lambda) < InitialGuessEpsilon)

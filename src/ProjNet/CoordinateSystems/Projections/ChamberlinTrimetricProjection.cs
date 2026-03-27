@@ -187,7 +187,7 @@ internal class ChamberlinTrimetricProjection : MapProjection
         double r;
         if (Math.Abs(dphi) > 1d || Math.Abs(dlam) > 1d)
         {
-            r = Math.Acos(ClampToUnit((s1 * s2) + (c1 * c2 * cdl)));
+            r = Math.Acos(ProjectionConstants.ClampToUnit((s1 * s2) + (c1 * c2 * cdl)));
         }
         else
         {
@@ -208,22 +208,7 @@ internal class ChamberlinTrimetricProjection : MapProjection
     private static double LawOfCosines(double b, double c, double a)
     {
         double value = 0.5d * ((b * b) + (c * c) - (a * a)) / (b * c);
-        return Math.Acos(ClampToUnit(value));
-    }
-
-    private static double ClampToUnit(double value)
-    {
-        if (value > 1d)
-        {
-            return 1d;
-        }
-
-        if (value < -1d)
-        {
-            return -1d;
-        }
-
-        return value;
+        return Math.Acos(ProjectionConstants.ClampToUnit(value));
     }
 
     [Serializable]

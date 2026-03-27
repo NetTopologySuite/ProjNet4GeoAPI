@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -383,21 +383,6 @@ internal sealed class IseaProjection : MapProjection
         return Math.Acos(value);
     }
 
-    private static double Clamp(double value, double minimum, double maximum)
-    {
-        if (value < minimum)
-        {
-            return minimum;
-        }
-
-        if (value > maximum)
-        {
-            return maximum;
-        }
-
-        return value;
-    }
-
     private static int ClampInt(int value, int minimum, int maximum)
     {
         if (value < minimum)
@@ -562,7 +547,7 @@ internal sealed class IseaProjection : MapProjection
                 continue;
             }
 
-            double h = Math.Acos(Clamp((sinAz * SinGcosSdc2VoS) - (cosAz * CosG), -1d, 1d));
+            double h = Math.Acos(ProjectionConstants.Clamp((sinAz * SinGcosSdc2VoS) - (cosAz * CosG), -1d, 1d));
             double area = azimuth + (36d * DegToRad) + h - Deg180;
             double azimuthPrime = Math.Atan2(
                 2d * area,
@@ -838,7 +823,7 @@ internal sealed class IseaProjection : MapProjection
             {
                 double sinAzEarth = Math.Sin(azEarth);
                 double cosAzEarth = Math.Cos(azEarth);
-                double h = Math.Acos(Clamp((sinAzEarth * SinGcosSdc2VoS) - (cosAzEarth * CosG), -1d, 1d));
+                double h = Math.Acos(ProjectionConstants.Clamp((sinAzEarth * SinGcosSdc2VoS) - (cosAzEarth * CosG), -1d, 1d));
                 double function = degAreaOverR2Plus180Minus36 - h - azEarth;
                 double derivativeDenominator = Math.Sin(h);
                 if (Math.Abs(derivativeDenominator) <= Eps10)
@@ -883,7 +868,7 @@ internal sealed class IseaProjection : MapProjection
                 return false;
             }
 
-            double z = 2d * Math.Asin(Clamp(rho / (state.RPrime2X * f), -1d, 1d));
+            double z = 2d * Math.Asin(ProjectionConstants.Clamp(rho / (state.RPrime2X * f), -1d, 1d));
 
             azEarth -= azAdjustment;
 

@@ -73,7 +73,7 @@ internal class PattersonProjection : MapProjection
     {
         x = Adjust_lon(this.centralMeridian + (x * this.inverseRadius));
 
-        double targetY = Clamp(y * this.inverseRadius, -this.maxY, this.maxY);
+        double targetY = ProjectionConstants.Clamp(y * this.inverseRadius, -this.maxY, this.maxY);
         double phi = targetY / K1;
 
         for (int i = 0; i < Iterations; i++)
@@ -88,7 +88,7 @@ internal class PattersonProjection : MapProjection
             }
         }
 
-        y = Clamp(phi, -HalfPi, HalfPi);
+        y = ProjectionConstants.Clamp(phi, -HalfPi, HalfPi);
     }
 
     private static double ForwardPolynomial(double phi)
@@ -111,13 +111,4 @@ internal class PattersonProjection : MapProjection
         return K1 + (5d * K2 * phi4) + (7d * K3 * phi6) + (9d * K4 * phi8);
     }
 
-    private static double Clamp(double value, double minimum, double maximum)
-    {
-        if (value < minimum)
-        {
-            return minimum;
-        }
-
-        return value > maximum ? maximum : value;
-    }
 }

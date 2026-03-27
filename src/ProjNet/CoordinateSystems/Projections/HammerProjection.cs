@@ -99,19 +99,10 @@ internal class HammerProjection : MapProjection
         }
 
         double lambda = Math.Atan2(this.w * xUnit * z, (2d * z * z) - 1d) / this.w;
-        double phi = Math.Asin(Clamp(z * yUnit, -1d, 1d));
+        double phi = Math.Asin(ProjectionConstants.Clamp(z * yUnit, -1d, 1d));
 
         x = Adjust_lon(this.centralMeridian + lambda);
         y = phi;
     }
 
-    private static double Clamp(double value, double minimum, double maximum)
-    {
-        if (value < minimum)
-        {
-            return minimum;
-        }
-
-        return value > maximum ? maximum : value;
-    }
 }

@@ -242,7 +242,7 @@ internal class BipolarConicProjection : MapProjection
         {
             z = 2d * Math.Atan(Math.Pow(r / F, 1d / N));
             double alCosArg = (Math.Pow(Math.Tan(0.5d * z), N) + Math.Pow(Math.Tan(0.5d * (R104 - z)), N)) / T;
-            alCosArg = ClampToUnit(alCosArg);
+            alCosArg = ProjectionConstants.ClampToUnit(alCosArg);
             double al = Math.Acos(alCosArg);
             if (absAz < al)
             {
@@ -278,18 +278,4 @@ internal class BipolarConicProjection : MapProjection
         y = phi;
     }
 
-    private static double ClampToUnit(double value)
-    {
-        if (value > 1d)
-        {
-            return 1d;
-        }
-
-        if (value < -1d)
-        {
-            return -1d;
-        }
-
-        return value;
-    }
 }

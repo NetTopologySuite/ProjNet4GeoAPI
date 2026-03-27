@@ -30,7 +30,7 @@ internal static class AitoffMath
     internal static void Forward(double lambda, double phi, bool winkelTripel, double cosphi1, out double x, out double y)
     {
         double c = 0.5d * lambda;
-        double d = Math.Acos(Clamp(Math.Cos(phi) * Math.Cos(c), -1d, 1d));
+        double d = Math.Acos(ProjectionConstants.Clamp(Math.Cos(phi) * Math.Cos(c), -1d, 1d));
         if (d == 0d)
         {
             x = 0d;
@@ -94,7 +94,7 @@ internal static class AitoffMath
                     ArgumentGuard.ThrowArgument("Input data outside projection domain.");
                 }
 
-                double d = Math.Acos(Clamp(value, -1d, 1d)) / denominator;
+                double d = Math.Acos(ProjectionConstants.Clamp(value, -1d, 1d)) / denominator;
                 double f1 = 2d * d * c * cp * sl;
                 double f2 = d * c * sp;
                 double f1p = 2d * (((sl * cl * sp * cp) / c) - (d * sp * sl));
@@ -162,13 +162,4 @@ internal static class AitoffMath
         }
     }
 
-    private static double Clamp(double value, double minimum, double maximum)
-    {
-        if (value < minimum)
-        {
-            return minimum;
-        }
-
-        return value > maximum ? maximum : value;
-    }
 }

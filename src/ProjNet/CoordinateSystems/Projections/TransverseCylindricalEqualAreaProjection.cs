@@ -65,17 +65,8 @@ internal class TransverseCylindricalEqualAreaProjection : MapProjection
         double xScaled = x * this.scaleFactor * this.inverseRadius;
         double t = Math.Sqrt(Math.Max(0d, 1d - (xScaled * xScaled)));
 
-        y = Math.Asin(Clamp(t * Math.Sin(phiPrime), -1d, 1d));
+        y = Math.Asin(ProjectionConstants.Clamp(t * Math.Sin(phiPrime), -1d, 1d));
         x = Adjust_lon(this.centralMeridian + Math.Atan2(xScaled, t * Math.Cos(phiPrime)));
     }
 
-    private static double Clamp(double value, double minimum, double maximum)
-    {
-        if (value < minimum)
-        {
-            return minimum;
-        }
-
-        return value > maximum ? maximum : value;
-    }
 }

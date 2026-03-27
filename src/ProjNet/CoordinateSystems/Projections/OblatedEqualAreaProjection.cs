@@ -88,7 +88,7 @@ internal sealed class OblatedEqualAreaProjection : MapProjection
         double sp = Math.Sin(lat);
         double cl = Math.Cos(lambda);
         double az = Math.Atan2(cp * Math.Sin(lambda), (this.cp0 * sp) - (this.sp0 * cp * cl)) + this.theta;
-        double cosCentral = Clamp((this.sp0 * sp) + (this.cp0 * cp * cl), -1d, 1d);
+        double cosCentral = ProjectionConstants.Clamp((this.sp0 * sp) + (this.cp0 * cp * cl), -1d, 1d);
         double shz = Math.Sin(0.5d * Math.Acos(cosCentral));
         double mAngle = Asinz(shz * Math.Sin(az));
 
@@ -118,7 +118,7 @@ internal sealed class OblatedEqualAreaProjection : MapProjection
         double xUnit = x * this.inverseRadius;
         double yUnit = y * this.inverseRadius;
 
-        double nArg = Clamp(yUnit * this.rn, -1d, 1d);
+        double nArg = ProjectionConstants.Clamp(yUnit * this.rn, -1d, 1d);
         double nAngle = this.hn * Math.Asin(nArg);
         double cosN = Math.Cos(nAngle);
         if (Math.Abs(cosN) <= Eps10)
@@ -126,7 +126,7 @@ internal sealed class OblatedEqualAreaProjection : MapProjection
             ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
-        double mArg = Clamp(xUnit * this.rm * Math.Cos(nAngle * this.twoRN) / cosN, -1d, 1d);
+        double mArg = ProjectionConstants.Clamp(xUnit * this.rm * Math.Cos(nAngle * this.twoRN) / cosN, -1d, 1d);
         double mAngle = this.hm * Math.Asin(mArg);
 
         double xp = 2d * Math.Sin(mAngle);
@@ -139,7 +139,7 @@ internal sealed class OblatedEqualAreaProjection : MapProjection
         double yp = 2d * Math.Sin(nAngle) * Math.Cos(mAngle * this.twoRM) / cosM;
         double az = Math.Atan2(xp, yp) - this.theta;
         double caz = Math.Cos(az);
-        double z = 2d * Math.Asin(Clamp(0.5d * Hypot(xp, yp), -1d, 1d));
+        double z = 2d * Math.Asin(ProjectionConstants.Clamp(0.5d * Hypot(xp, yp), -1d, 1d));
         double sz = Math.Sin(z);
         double cz = Math.Cos(z);
 
@@ -150,13 +150,4 @@ internal sealed class OblatedEqualAreaProjection : MapProjection
         y = phi;
     }
 
-    private static double Clamp(double value, double minimum, double maximum)
-    {
-        if (value < minimum)
-        {
-            return minimum;
-        }
-
-        return value > maximum ? maximum : value;
-    }
 }

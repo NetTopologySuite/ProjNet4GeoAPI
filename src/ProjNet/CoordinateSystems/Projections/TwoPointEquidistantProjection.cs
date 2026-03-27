@@ -116,8 +116,8 @@ internal sealed class TwoPointEquidistantProjection : MapProjection
         double cp = Math.Cos(phi);
         double dl1 = lambda + this.dlam2;
         double dl2 = lambda - this.dlam2;
-        double z1 = Math.Acos(Clamp((this.sp1 * sp) + (this.cp1 * cp * Math.Cos(dl1)), -1d, 1d));
-        double z2 = Math.Acos(Clamp((this.sp2 * sp) + (this.cp2 * cp * Math.Cos(dl2)), -1d, 1d));
+        double z1 = Math.Acos(ProjectionConstants.Clamp((this.sp1 * sp) + (this.cp1 * cp * Math.Cos(dl1)), -1d, 1d));
+        double z2 = Math.Acos(ProjectionConstants.Clamp((this.sp2 * sp) + (this.cp2 * cp * Math.Cos(dl2)), -1d, 1d));
         double z1Squared = z1 * z1;
         double z2Squared = z2 * z2;
 
@@ -151,7 +151,7 @@ internal sealed class TwoPointEquidistantProjection : MapProjection
         double s = cz1 + cz2;
         double d = cz1 - cz2;
         double lambda = -Math.Atan2(d, s * this.thz0);
-        double phi = Math.Acos(Clamp(Hypot(this.thz0 * s, d) * this.rhshz0, -1d, 1d));
+        double phi = Math.Acos(ProjectionConstants.Clamp(Hypot(this.thz0 * s, d) * this.rhshz0, -1d, 1d));
         if (yUnit < 0d)
         {
             phi = -phi;
@@ -168,13 +168,4 @@ internal sealed class TwoPointEquidistantProjection : MapProjection
         y = phiOut;
     }
 
-    private static double Clamp(double value, double minimum, double maximum)
-    {
-        if (value < minimum)
-        {
-            return minimum;
-        }
-
-        return value > maximum ? maximum : value;
-    }
 }

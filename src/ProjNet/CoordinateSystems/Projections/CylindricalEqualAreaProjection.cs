@@ -72,16 +72,7 @@ internal class CylindricalEqualAreaProjection : MapProjection
     protected override void MetersToRadians(ref double x, ref double y)
     {
         x = Adjust_lon(this.centralMeridian + ((x * this.inverseRadius) / this.cosStandardParallel));
-        y = Math.Asin(Clamp((y * this.cosStandardParallel) * this.inverseRadius, -1d, 1d));
+        y = Math.Asin(ProjectionConstants.Clamp((y * this.cosStandardParallel) * this.inverseRadius, -1d, 1d));
     }
 
-    private static double Clamp(double value, double minimum, double maximum)
-    {
-        if (value < minimum)
-        {
-            return minimum;
-        }
-
-        return value > maximum ? maximum : value;
-    }
 }

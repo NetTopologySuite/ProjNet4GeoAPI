@@ -66,7 +66,7 @@ internal class AzimuthalEquidistantProjection : MapProjection
         double cosLambda = Math.Cos(lambda);
 
         double cosC = (this.sinPhi0 * sinPhi) + (this.cosPhi0 * cosPhi * cosLambda);
-        double c = Math.Acos(Clamp(cosC, -1d, 1d));
+        double c = Math.Acos(ProjectionConstants.Clamp(cosC, -1d, 1d));
         double sinC = Math.Sin(c);
         double k = Math.Abs(sinC) <= Eps10 ? 1d : c / sinC;
 
@@ -89,20 +89,11 @@ internal class AzimuthalEquidistantProjection : MapProjection
         double sinC = Math.Sin(c);
         double cosC = Math.Cos(c);
 
-        double phi = Math.Asin(Clamp((cosC * this.sinPhi0) + ((y * sinC * this.cosPhi0) / rho), -1d, 1d));
+        double phi = Math.Asin(ProjectionConstants.Clamp((cosC * this.sinPhi0) + ((y * sinC * this.cosPhi0) / rho), -1d, 1d));
         double lambda = Math.Atan2(x * sinC, (rho * this.cosPhi0 * cosC) - (y * this.sinPhi0 * sinC));
 
         x = Adjust_lon(this.centralMeridian + lambda);
         y = phi;
     }
 
-    private static double Clamp(double value, double minimum, double maximum)
-    {
-        if (value < minimum)
-        {
-            return minimum;
-        }
-
-        return value > maximum ? maximum : value;
-    }
 }

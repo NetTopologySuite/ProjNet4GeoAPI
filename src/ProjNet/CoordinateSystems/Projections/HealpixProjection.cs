@@ -128,7 +128,7 @@ internal class HealpixProjection : MapProjection
         if (Math.Abs(y) <= QuarterPi)
         {
             lambda = x;
-            phi = Math.Asin(Clamp((8d * y) / (3d * PI), -1d, 1d));
+            phi = Math.Asin(ProjectionConstants.Clamp((8d * y) / (3d * PI), -1d, 1d));
             return;
         }
 
@@ -154,7 +154,7 @@ internal class HealpixProjection : MapProjection
             }
 
             lambda = xCenter + ((x - xCenter) / tau);
-            phi = Sign(y) * Math.Asin(Clamp(1d - ((tau * tau) / 3d), -1d, 1d));
+            phi = Sign(y) * Math.Asin(ProjectionConstants.Clamp(1d - ((tau * tau) / 3d), -1d, 1d));
             return;
         }
 
@@ -180,16 +180,7 @@ internal class HealpixProjection : MapProjection
     private double GeographicToAuthalic(double phi)
     {
         double q = Qsfn(Math.Sin(phi), this.e, this.oneEs);
-        return Math.Asin(Clamp(q / this.qp, -1d, 1d));
+        return Math.Asin(ProjectionConstants.Clamp(q / this.qp, -1d, 1d));
     }
 
-    private static double Clamp(double value, double minimum, double maximum)
-    {
-        if (value < minimum)
-        {
-            return minimum;
-        }
-
-        return value > maximum ? maximum : value;
-    }
 }
