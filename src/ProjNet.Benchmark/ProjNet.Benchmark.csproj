@@ -4,6 +4,7 @@
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net8</TargetFramework>
+    <Nullable>enable</Nullable>
     <NoWarn>$(NoWarn);1701;1702;1591</NoWarn>
 
     <IsPackable>false</IsPackable>
