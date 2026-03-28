@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
@@ -12,8 +12,11 @@ using Xunit;
 /// </summary>
 public class Matrix3x3Tests
 {
+    /// <summary>
+    /// Verifies vector addition returns the component-wise sum.
+    /// </summary>
     [Fact]
-    public void Vector3DAddition_GivenTwoVectors_ReturnsComponentWiseSum()
+    public void Vector3DAdditionGivenTwoVectorsReturnsComponentWiseSum()
     {
         Vector3D left = new Vector3D(1d, 2d, 3d);
         Vector3D right = new Vector3D(4d, 5d, 6d);
@@ -25,8 +28,11 @@ public class Matrix3x3Tests
         Assert.Equal(9d, result.Z, 12);
     }
 
+    /// <summary>
+    /// Verifies vector subtraction returns the component-wise difference.
+    /// </summary>
     [Fact]
-    public void Vector3DSubtraction_GivenTwoVectors_ReturnsComponentWiseDifference()
+    public void Vector3DSubtractionGivenTwoVectorsReturnsComponentWiseDifference()
     {
         Vector3D left = new Vector3D(10d, 8d, 6d);
         Vector3D right = new Vector3D(1d, 2d, 3d);
@@ -38,8 +44,11 @@ public class Matrix3x3Tests
         Assert.Equal(3d, result.Z, 12);
     }
 
+    /// <summary>
+    /// Verifies scaling and reciprocal scaling keep vector components consistent.
+    /// </summary>
     [Fact]
-    public void Vector3DScalarOperations_GivenScaleAndDivision_ReturnsExpectedValues()
+    public void Vector3DScalarOperationsGivenScaleAndDivisionReturnsExpectedValues()
     {
         Vector3D value = new Vector3D(2d, -4d, 6d);
 
@@ -54,8 +63,11 @@ public class Matrix3x3Tests
         Assert.Equal(value.Z, divided.Z, 12);
     }
 
+    /// <summary>
+    /// Verifies transposition swaps matrix rows and columns.
+    /// </summary>
     [Fact]
-    public void Matrix3x3Transpose_GivenMatrix_ReturnsSwappedRowsAndColumns()
+    public void Matrix3x3TransposeGivenMatrixReturnsSwappedRowsAndColumns()
     {
         Matrix3x3 matrix = new Matrix3x3(
             1d,
@@ -81,8 +93,11 @@ public class Matrix3x3Tests
         Assert.Equal(9d, transposed.M22, 12);
     }
 
+    /// <summary>
+    /// Verifies matrix-vector multiplication against a known expected product.
+    /// </summary>
     [Fact]
-    public void Matrix3x3MultiplyVector_GivenKnownInputs_ReturnsExpectedProduct()
+    public void Matrix3x3MultiplyVectorGivenKnownInputsReturnsExpectedProduct()
     {
         Matrix3x3 matrix = new Matrix3x3(
             1d,
@@ -103,8 +118,11 @@ public class Matrix3x3Tests
         Assert.Equal(17d, result.Z, 12);
     }
 
+    /// <summary>
+    /// Verifies matrix-matrix multiplication against a known expected composition.
+    /// </summary>
     [Fact]
-    public void Matrix3x3MultiplyMatrix_GivenTwoMatrices_ReturnsExpectedComposition()
+    public void Matrix3x3MultiplyMatrixGivenTwoMatricesReturnsExpectedComposition()
     {
         Matrix3x3 left = new Matrix3x3(
             1d,
@@ -140,8 +158,11 @@ public class Matrix3x3Tests
         Assert.Equal(90d, result.M22, 12);
     }
 
+    /// <summary>
+    /// Verifies identity matrix multiplication preserves vector values.
+    /// </summary>
     [Fact]
-    public void Matrix3x3Identity_GivenVector_LeavesVectorUnchanged()
+    public void Matrix3x3IdentityGivenVectorLeavesVectorUnchanged()
     {
         Vector3D value = new Vector3D(-3d, 4d, 12d);
 
@@ -152,8 +173,11 @@ public class Matrix3x3Tests
         Assert.Equal(value.Z, result.Z, 12);
     }
 
+    /// <summary>
+    /// Verifies value equality and hash-code parity for equivalent matrices.
+    /// </summary>
     [Fact]
-    public void Matrix3x3Equality_GivenSameComponents_ReturnsTrue()
+    public void Matrix3x3EqualityGivenSameComponentsReturnsTrue()
     {
         Matrix3x3 left = new Matrix3x3(
             1d,
@@ -182,8 +206,11 @@ public class Matrix3x3Tests
         Assert.Equal(left.GetHashCode(), right.GetHashCode());
     }
 
+    /// <summary>
+    /// Verifies identity and zero flags for representative matrix instances.
+    /// </summary>
     [Fact]
-    public void Matrix3x3Flags_GivenKnownMatrices_ReportIdentityAndZeroCorrectly()
+    public void Matrix3x3FlagsGivenKnownMatricesReportIdentityAndZeroCorrectly()
     {
         Matrix3x3 identity = Matrix3x3.Identity;
         Matrix3x3 zero = Matrix3x3.Zero;
