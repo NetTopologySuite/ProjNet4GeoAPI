@@ -18,8 +18,8 @@ public class Matrix3x3Tests
     [Fact]
     public void Vector3DAdditionGivenTwoVectorsReturnsComponentWiseSum()
     {
-        Vector3D left = new Vector3D(1d, 2d, 3d);
-        Vector3D right = new Vector3D(4d, 5d, 6d);
+        var left = new Vector3D(1d, 2d, 3d);
+        var right = new Vector3D(4d, 5d, 6d);
 
         Vector3D result = left + right;
 
@@ -34,8 +34,8 @@ public class Matrix3x3Tests
     [Fact]
     public void Vector3DSubtractionGivenTwoVectorsReturnsComponentWiseDifference()
     {
-        Vector3D left = new Vector3D(10d, 8d, 6d);
-        Vector3D right = new Vector3D(1d, 2d, 3d);
+        var left = new Vector3D(10d, 8d, 6d);
+        var right = new Vector3D(1d, 2d, 3d);
 
         Vector3D result = left - right;
 
@@ -50,7 +50,7 @@ public class Matrix3x3Tests
     [Fact]
     public void Vector3DScalarOperationsGivenScaleAndDivisionReturnsExpectedValues()
     {
-        Vector3D value = new Vector3D(2d, -4d, 6d);
+        var value = new Vector3D(2d, -4d, 6d);
 
         Vector3D multiplied = value * 3d;
         Vector3D divided = multiplied / 3d;
@@ -69,7 +69,7 @@ public class Matrix3x3Tests
     [Fact]
     public void Matrix3x3TransposeGivenMatrixReturnsSwappedRowsAndColumns()
     {
-        Matrix3x3 matrix = new Matrix3x3(
+        var matrix = new Matrix3x3(
             1d,
             2d,
             3d,
@@ -99,7 +99,7 @@ public class Matrix3x3Tests
     [Fact]
     public void Matrix3x3MultiplyVectorGivenKnownInputsReturnsExpectedProduct()
     {
-        Matrix3x3 matrix = new Matrix3x3(
+        var matrix = new Matrix3x3(
             1d,
             2d,
             3d,
@@ -109,7 +109,7 @@ public class Matrix3x3Tests
             5d,
             6d,
             0d);
-        Vector3D vector = new Vector3D(1d, 2d, 3d);
+        var vector = new Vector3D(1d, 2d, 3d);
 
         Vector3D result = matrix * vector;
 
@@ -124,7 +124,7 @@ public class Matrix3x3Tests
     [Fact]
     public void Matrix3x3MultiplyMatrixGivenTwoMatricesReturnsExpectedComposition()
     {
-        Matrix3x3 left = new Matrix3x3(
+        var left = new Matrix3x3(
             1d,
             2d,
             3d,
@@ -134,7 +134,7 @@ public class Matrix3x3Tests
             7d,
             8d,
             9d);
-        Matrix3x3 right = new Matrix3x3(
+        var right = new Matrix3x3(
             9d,
             8d,
             7d,
@@ -164,7 +164,7 @@ public class Matrix3x3Tests
     [Fact]
     public void Matrix3x3IdentityGivenVectorLeavesVectorUnchanged()
     {
-        Vector3D value = new Vector3D(-3d, 4d, 12d);
+        var value = new Vector3D(-3d, 4d, 12d);
 
         Vector3D result = Matrix3x3.Identity * value;
 
@@ -179,7 +179,7 @@ public class Matrix3x3Tests
     [Fact]
     public void Matrix3x3EqualityGivenSameComponentsReturnsTrue()
     {
-        Matrix3x3 left = new Matrix3x3(
+        var left = new Matrix3x3(
             1d,
             2d,
             3d,
@@ -189,7 +189,7 @@ public class Matrix3x3Tests
             7d,
             8d,
             9d);
-        Matrix3x3 right = new Matrix3x3(
+        var right = new Matrix3x3(
             1d,
             2d,
             3d,
@@ -214,7 +214,7 @@ public class Matrix3x3Tests
     {
         Matrix3x3 identity = Matrix3x3.Identity;
         Matrix3x3 zero = Matrix3x3.Zero;
-        Matrix3x3 other = new Matrix3x3(
+        var other = new Matrix3x3(
             1d,
             0d,
             0d,
