@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using System;
 using System.Collections.Generic;
@@ -344,7 +344,7 @@ public class Gigs5101TheoryTests
         CoordinateSystem targetCoordinateSystem = Assert.IsAssignableFrom<CoordinateSystem>(target);
         try
         {
-            var coordinateTransformation = CoordinateTransformationFactory.CreateFromCoordinateSystems(sourceCoordinateSystem, targetCoordinateSystem);
+            ICoordinateTransformation coordinateTransformation = CoordinateTransformationFactory.CreateFromCoordinateSystems(sourceCoordinateSystem, targetCoordinateSystem);
             transform = coordinateTransformation.MathTransform;
             return transform is not null;
         }
@@ -448,7 +448,7 @@ public class Gigs5101TheoryTests
 
         try
         {
-            var projection = CoordinateSystemFactory.CreateProjection("GIGS " + projectionClassName, projectionClassName, parameters);
+            IProjection projection = CoordinateSystemFactory.CreateProjection("GIGS " + projectionClassName, projectionClassName, parameters);
             GeographicCoordinateSystem geographic = Assert.IsAssignableFrom<GeographicCoordinateSystem>(geographicCoordinateSystem);
             coordinateSystem = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
                 "GIGS projected",
@@ -517,7 +517,7 @@ public class Gigs5101TheoryTests
         var projected = coordinateSystem as ProjectedCoordinateSystem;
         if (projected is not null)
         {
-            var normalizedProjectedGeographic = Assert.IsAssignableFrom<GeographicCoordinateSystem>(NormalizeAxisOrder(projected.GeographicCoordinateSystem));
+            GeographicCoordinateSystem normalizedProjectedGeographic = Assert.IsAssignableFrom<GeographicCoordinateSystem>(NormalizeAxisOrder(projected.GeographicCoordinateSystem));
             return CoordinateSystemFactory.CreateProjectedCoordinateSystem(
                 projected.Name,
                 normalizedProjectedGeographic,
@@ -569,7 +569,7 @@ public class Gigs5101TheoryTests
             return false;
         }
 
-        var datum = CoordinateSystemFactory.CreateHorizontalDatum(
+        HorizontalDatum datum = CoordinateSystemFactory.CreateHorizontalDatum(
             "GIGS datum",
             DatumType.HD_Geocentric,
             Assert.IsAssignableFrom<Ellipsoid>(ellipsoid),

@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using System;
 using System.Globalization;
@@ -51,8 +51,8 @@ public class ConicAndEqualAreaMiscProjectionTests
     public void SupportsConicAndEqualAreaMiscAliasesFromWkt(string projectionName)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildAliasWkt(projectionName));
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildAliasWkt(projectionName));
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(2d, 1d));
 
         Assert.NotNull(projected);
@@ -84,8 +84,8 @@ public class ConicAndEqualAreaMiscProjectionTests
     public void MatchesProjBuiltinsForwardVectors(string projectionName, double longitude, double latitude, double expectedX, double expectedY, double tolerance)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildCanonicalWkt(projectionName));
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildCanonicalWkt(projectionName));
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
 
         Assert.InRange(Math.Abs(projectedPoint[0] - expectedX), 0d, tolerance);
@@ -120,8 +120,8 @@ public class ConicAndEqualAreaMiscProjectionTests
         double tolerance)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildCanonicalWkt(projectionName));
-        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildCanonicalWkt(projectionName));
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
         double[] geographicPoint = inverse.MathTransform.Transform(CreatePoint(x, y));
 
         Assert.InRange(Math.Abs(geographicPoint[0] - expectedLongitude), 0d, tolerance);
@@ -147,10 +147,10 @@ public class ConicAndEqualAreaMiscProjectionTests
     public void SupportsConicAndEqualAreaMiscRoundtrip(string projectionName, double longitude, double latitude)
     {
         ArgumentNullException.ThrowIfNull(projectionName);
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildCanonicalWkt(projectionName));
-        var geographic = projected.GeographicCoordinateSystem;
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(geographic, projected);
-        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, geographic);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildCanonicalWkt(projectionName));
+        GeographicCoordinateSystem geographic = projected.GeographicCoordinateSystem;
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(geographic, projected);
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, geographic);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
         double[] roundtrip = inverse.MathTransform.Transform(projectedPoint);
 
@@ -164,7 +164,7 @@ public class ConicAndEqualAreaMiscProjectionTests
     [Fact]
     public void RectangularPolyconicDoesNotSupportInverse()
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildRpolyWkt("rpoly"));
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildRpolyWkt("rpoly"));
         Assert.Throws<InvalidOperationException>(
             () => CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem));
     }
@@ -175,8 +175,8 @@ public class ConicAndEqualAreaMiscProjectionTests
     [Fact]
     public void ObliqueCylindricalEqualAreaSupportsAlphaLoncMode()
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildOceaAlphaWkt("ocea"));
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildOceaAlphaWkt("ocea"));
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(2d, 1d));
 
         Assert.InRange(Math.Abs(projectedPoint[0] - 19994423.837934091687d), 0d, 1e-3d);
@@ -189,8 +189,8 @@ public class ConicAndEqualAreaMiscProjectionTests
     [Fact]
     public void TwoPointEquidistantRejectsDegeneratePolarControlPoints()
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildTpeqdDegenerateWkt());
-        var exception = Assert.Throws<TargetInvocationException>(
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildTpeqdDegenerateWkt());
+        TargetInvocationException exception = Assert.Throws<TargetInvocationException>(
             () => CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected));
         Assert.IsType<ArgumentException>(exception.InnerException);
     }

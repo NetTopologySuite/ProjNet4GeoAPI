@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-namespace ProjNET.Tests.Generated;
+namespace ProjNet.Tests.Generated;
 
 using System;
 using System.Collections.Generic;
@@ -23,7 +23,7 @@ public class StructuredEpsgCatalogTests
     [Fact]
     public void GeneratedCatalogShouldNotExposeExplicitStringPool()
     {
-        var stringPoolField = typeof(EpsgGeneratedCatalog).GetField("StringPool", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+        FieldInfo? stringPoolField = typeof(EpsgGeneratedCatalog).GetField("StringPool", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
         Assert.Null(stringPoolField);
     }
 
@@ -33,7 +33,7 @@ public class StructuredEpsgCatalogTests
     [Fact]
     public void GeneratedCatalogShouldExposeSwitchMappedSridLookup()
     {
-        bool found = EpsgGeneratedCatalog.TryGetCoordinateReference(4326, out var reference, out int cacheIndex);
+        bool found = EpsgGeneratedCatalog.TryGetCoordinateReference(4326, out EpsgCoordinateReferenceRecord reference, out int cacheIndex);
 
         Assert.True(found);
         Assert.Equal(4326, reference.Srid);
@@ -48,7 +48,7 @@ public class StructuredEpsgCatalogTests
     [Fact]
     public void GeneratedCatalogShouldNotExposeSridArray()
     {
-        var sridArrayField = typeof(EpsgGeneratedCatalog).GetField("CoordinateReferenceSrids", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+        FieldInfo? sridArrayField = typeof(EpsgGeneratedCatalog).GetField("CoordinateReferenceSrids", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
         Assert.Null(sridArrayField);
     }
 
@@ -73,7 +73,7 @@ public class StructuredEpsgCatalogTests
     public void ManagedProviderShouldExposeStructuredCoordinateSystems()
     {
         var provider = new ManagedCoordinateSystemDefinitionProvider();
-        var managedProvider = Assert.IsAssignableFrom<IManagedCoordinateSystemProvider>(provider);
+        IManagedCoordinateSystemProvider managedProvider = Assert.IsAssignableFrom<IManagedCoordinateSystemProvider>(provider);
 
         var coordinateSystems = managedProvider.GetCoordinateSystems().ToList();
         Assert.True(coordinateSystems.Count > 7000);
@@ -87,9 +87,9 @@ public class StructuredEpsgCatalogTests
     [Fact]
     public void GeneratedCatalogShouldNotExposeConversionAndExplicitOperationArrays()
     {
-        var conversionsField = typeof(EpsgGeneratedCatalog).GetField("Conversions", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
-        var conversionParametersField = typeof(EpsgGeneratedCatalog).GetField("ConversionParameters", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
-        var explicitOperationsField = typeof(EpsgGeneratedCatalog).GetField("ExplicitOperations", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+        FieldInfo? conversionsField = typeof(EpsgGeneratedCatalog).GetField("Conversions", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+        FieldInfo? conversionParametersField = typeof(EpsgGeneratedCatalog).GetField("ConversionParameters", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
+        FieldInfo? explicitOperationsField = typeof(EpsgGeneratedCatalog).GetField("ExplicitOperations", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
 
         Assert.Null(conversionsField);
         Assert.Null(conversionParametersField);
@@ -102,20 +102,20 @@ public class StructuredEpsgCatalogTests
     [Fact]
     public void GeneratedCatalogShouldExposeSwitchBasedConversionLookup()
     {
-        bool hasReference = EpsgGeneratedCatalog.TryGetCoordinateReference(3857, out var reference, out _);
+        bool hasReference = EpsgGeneratedCatalog.TryGetCoordinateReference(3857, out EpsgCoordinateReferenceRecord reference, out _);
         Assert.True(hasReference);
         Assert.Equal(2, (int)reference.Kind);
 
-        bool hasProjectedRecord = EpsgGeneratedCatalog.TryGetProjectedCrs(reference.RecordIndex, out var projectedRecord);
+        bool hasProjectedRecord = EpsgGeneratedCatalog.TryGetProjectedCrs(reference.RecordIndex, out EpsgProjectedCrsRecord projectedRecord);
         Assert.True(hasProjectedRecord);
 
-        bool hasConversion = EpsgGeneratedCatalog.TryGetConversion(projectedRecord.ConversionCode, out var conversion);
+        bool hasConversion = EpsgGeneratedCatalog.TryGetConversion(projectedRecord.ConversionCode, out EpsgConversionRecord conversion);
         Assert.True(hasConversion);
         Assert.True(conversion.ParameterCount > 0);
 
         for (int i = 0; i < conversion.ParameterCount; i++)
         {
-            bool hasParameter = EpsgGeneratedCatalog.TryGetConversionParameter(projectedRecord.ConversionCode, i, out var parameter);
+            bool hasParameter = EpsgGeneratedCatalog.TryGetConversionParameter(projectedRecord.ConversionCode, i, out EpsgConversionParameterRecord parameter);
             Assert.True(hasParameter);
             Assert.False(string.IsNullOrWhiteSpace(parameter.Name));
         }
@@ -133,19 +133,19 @@ public class StructuredEpsgCatalogTests
         for (int cacheIndex = 0; cacheIndex < EpsgGeneratedCatalog.CoordinateReferenceCount; cacheIndex++)
         {
             Assert.True(EpsgGeneratedCatalog.TryGetCoordinateSridByCacheIndex(cacheIndex, out int srid));
-            Assert.True(EpsgGeneratedCatalog.TryGetCoordinateReference(srid, out var reference, out _));
+            Assert.True(EpsgGeneratedCatalog.TryGetCoordinateReference(srid, out EpsgCoordinateReferenceRecord reference, out _));
 
             if (reference.Kind != EpsgCoordinateSystemKind.Projected)
             {
                 continue;
             }
 
-            Assert.True(EpsgGeneratedCatalog.TryGetProjectedCrs(reference.RecordIndex, out var projectedRecord));
-            Assert.True(EpsgGeneratedCatalog.TryGetConversion(projectedRecord.ConversionCode, out var conversion));
+            Assert.True(EpsgGeneratedCatalog.TryGetProjectedCrs(reference.RecordIndex, out EpsgProjectedCrsRecord projectedRecord));
+            Assert.True(EpsgGeneratedCatalog.TryGetConversion(projectedRecord.ConversionCode, out EpsgConversionRecord conversion));
 
             for (int parameterIndex = 0; parameterIndex < conversion.ParameterCount; parameterIndex++)
             {
-                Assert.True(EpsgGeneratedCatalog.TryGetConversionParameter(projectedRecord.ConversionCode, parameterIndex, out var parameter));
+                Assert.True(EpsgGeneratedCatalog.TryGetConversionParameter(projectedRecord.ConversionCode, parameterIndex, out EpsgConversionParameterRecord parameter));
                 Assert.False(string.IsNullOrWhiteSpace(parameter.Name));
             }
 
@@ -159,12 +159,12 @@ public class StructuredEpsgCatalogTests
     [Fact]
     public void GeneratedCatalogShouldExposeExplicitOperationFastPath()
     {
-        var explicitOperation = EpsgGeneratedCatalog.Operations.First(record =>
+        EpsgOperationRecord explicitOperation = EpsgGeneratedCatalog.Operations.First(record =>
             record.MethodName.Contains("Geocentric translations", StringComparison.OrdinalIgnoreCase)
             || record.MethodName.Contains("Position Vector transformation", StringComparison.OrdinalIgnoreCase)
             || record.MethodName.Contains("Coordinate Frame rotation", StringComparison.OrdinalIgnoreCase));
 
-        bool found = EpsgGeneratedCatalog.TryGetExplicitOperationParameters(explicitOperation.OperationCode, out var parameters);
+        bool found = EpsgGeneratedCatalog.TryGetExplicitOperationParameters(explicitOperation.OperationCode, out EpsgExplicitOperationRecord parameters);
 
         Assert.True(found);
         Assert.Equal(explicitOperation.OperationCode, parameters.OperationCode);

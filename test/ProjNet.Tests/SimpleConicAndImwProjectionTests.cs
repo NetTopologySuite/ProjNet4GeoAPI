@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using System;
 using System.Globalization;
@@ -43,8 +43,8 @@ public class SimpleConicAndImwProjectionTests
     [InlineData("Bertin_1953", Sphere6400000, null)]
     public void SupportsSimpleConicAndImwAliasesFromWkt(string projectionName, string spheroidClause, string? extraParameters)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, spheroidClause, extraParameters));
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, spheroidClause, extraParameters));
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(2d, 1d));
 
         Assert.NotNull(projected);
@@ -85,8 +85,8 @@ public class SimpleConicAndImwProjectionTests
         string? extraParameters,
         double tolerance)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, spheroidClause, extraParameters));
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, spheroidClause, extraParameters));
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
 
         Assert.InRange(Math.Abs(projectedPoint[0] - expectedX), 0d, tolerance);
@@ -123,8 +123,8 @@ public class SimpleConicAndImwProjectionTests
         string? extraParameters,
         double tolerance)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, spheroidClause, extraParameters));
-        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, spheroidClause, extraParameters));
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
         double[] geographicPoint = inverse.MathTransform.Transform(CreatePoint(x, y));
 
         Assert.InRange(Math.Abs(geographicPoint[0] - expectedLongitude), 0d, tolerance);
@@ -150,10 +150,10 @@ public class SimpleConicAndImwProjectionTests
     [InlineData("mbt_fps", Sphere6400000, 2d, 1d, null)]
     public void SupportsSimpleConicAndImwRoundtrip(string projectionName, string spheroidClause, double longitude, double latitude, string? extraParameters)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, spheroidClause, extraParameters));
-        var geographic = projected.GeographicCoordinateSystem;
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(geographic, projected);
-        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, geographic);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, spheroidClause, extraParameters));
+        GeographicCoordinateSystem geographic = projected.GeographicCoordinateSystem;
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(geographic, projected);
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, geographic);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
         double[] roundtrip = inverse.MathTransform.Transform(projectedPoint);
 
@@ -167,7 +167,7 @@ public class SimpleConicAndImwProjectionTests
     [Fact]
     public void Bertin1953DoesNotSupportInverse()
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt("bertin1953", Sphere6400000, null));
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt("bertin1953", Sphere6400000, null));
         Assert.Throws<InvalidOperationException>(
             () => CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem));
     }
@@ -178,10 +178,11 @@ public class SimpleConicAndImwProjectionTests
     [Fact]
     public void ImwPolyconicSupportsLat1ZeroBranch()
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, 
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
             BuildProjectedWkt("imw_p", Grs80, ",PARAMETER[\"lat_1\",0],PARAMETER[\"lat_2\",10]"));
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
-        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
 
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(0.000898315284d, 0d));
         double[] geographicPoint = inverse.MathTransform.Transform(CreatePoint(100d, 0d));
@@ -205,9 +206,10 @@ public class SimpleConicAndImwProjectionTests
     [InlineData("vitk1")]
     public void SimpleConicVariantsRejectDegenerateStandardParallels(string projectionName)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, 
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
             BuildProjectedWkt(projectionName, Sphere6400000, ",PARAMETER[\"lat_1\",1],PARAMETER[\"lat_2\",1]"));
-        var exception = Assert.Throws<TargetInvocationException>(
+        TargetInvocationException exception = Assert.Throws<TargetInvocationException>(
             () => CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected));
         Assert.IsType<ArgumentException>(exception.InnerException);
     }

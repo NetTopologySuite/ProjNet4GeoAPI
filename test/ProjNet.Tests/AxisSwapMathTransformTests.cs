@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using System;
 using ProjNet.CoordinateSystems.Transformations;
@@ -21,7 +21,7 @@ public class AxisSwapMathTransformTests
     [InlineData(5)]
     public void ConstructorWithInvalidDimensionThrowsArgumentOutOfRange(int dimension)
     {
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => new AxisSwapMathTransform(dimension, 0, 1, 1, 1, 2, 1, 3, 1));
+        ArgumentOutOfRangeException exception = Assert.Throws<ArgumentOutOfRangeException>(() => new AxisSwapMathTransform(dimension, 0, 1, 1, 1, 2, 1, 3, 1));
 
         Assert.Equal("dimension", exception.ParamName);
     }
@@ -34,7 +34,7 @@ public class AxisSwapMathTransformTests
     [InlineData(4)]
     public void ConstructorWithInvalidSourceIndexThrowsArgumentOutOfRange(int sourceIndex)
     {
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => new AxisSwapMathTransform(4, sourceIndex, 1, 1, 1, 2, 1, 3, 1));
+        ArgumentOutOfRangeException exception = Assert.Throws<ArgumentOutOfRangeException>(() => new AxisSwapMathTransform(4, sourceIndex, 1, 1, 1, 2, 1, 3, 1));
 
         Assert.Equal("xSourceIndex", exception.ParamName);
     }
@@ -48,7 +48,7 @@ public class AxisSwapMathTransformTests
     [InlineData(-2)]
     public void ConstructorWithInvalidSignThrowsArgumentOutOfRange(int sign)
     {
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => new AxisSwapMathTransform(4, 0, sign, 1, 1, 2, 1, 3, 1));
+        ArgumentOutOfRangeException exception = Assert.Throws<ArgumentOutOfRangeException>(() => new AxisSwapMathTransform(4, 0, sign, 1, 1, 2, 1, 3, 1));
 
         Assert.Equal("xSign", exception.ParamName);
     }

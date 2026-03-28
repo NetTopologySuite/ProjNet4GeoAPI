@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using System;
 using System.Globalization;
@@ -41,8 +41,8 @@ public class LeacUpsWebMercatorProjectionTests
             wkt = BuildWebMercWkt(projectionName, Grs80);
         }
 
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wkt);
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wkt);
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(2d, 1d));
 
         Assert.NotNull(projected);
@@ -71,8 +71,8 @@ public class LeacUpsWebMercatorProjectionTests
         double expectedY,
         double tolerance)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildLeacWkt("leac", spheroidClause, 0d, false));
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildLeacWkt("leac", spheroidClause, 0d, false));
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
 
         Assert.InRange(Math.Abs(projectedPoint[0] - expectedX), 0d, tolerance);
@@ -99,8 +99,8 @@ public class LeacUpsWebMercatorProjectionTests
         double expectedLatitude,
         double tolerance)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildLeacWkt("leac", spheroidClause, 0d, false));
-        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildLeacWkt("leac", spheroidClause, 0d, false));
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
         double[] geographicPoint = inverse.MathTransform.Transform(CreatePoint(x, y));
 
         Assert.InRange(Math.Abs(geographicPoint[0] - expectedLongitude), 0d, tolerance);
@@ -117,8 +117,8 @@ public class LeacUpsWebMercatorProjectionTests
     [InlineData(-2d, -1d, 1551250.881431801d, -10850493.419804076d, 1e-3d)]
     public void MatchesUpsForwardVectors(double longitude, double latitude, double expectedX, double expectedY, double tolerance)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildUpsWkt("ups", Grs80, false));
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildUpsWkt("ups", Grs80, false));
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
 
         Assert.InRange(Math.Abs(projectedPoint[0] - expectedX), 0d, tolerance);
@@ -135,8 +135,8 @@ public class LeacUpsWebMercatorProjectionTests
     [InlineData(-200d, -100d, -45.001432287d, 64.914588378d, 2e-9d)]
     public void MatchesUpsInverseVectors(double x, double y, double expectedLongitude, double expectedLatitude, double tolerance)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildUpsWkt("ups", Grs80, false));
-        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildUpsWkt("ups", Grs80, false));
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
         double[] geographicPoint = inverse.MathTransform.Transform(CreatePoint(x, y));
 
         Assert.InRange(Math.Abs(geographicPoint[0] - expectedLongitude), 0d, tolerance);
@@ -149,9 +149,9 @@ public class LeacUpsWebMercatorProjectionTests
     [Fact]
     public void UpsRejectsSphericalEllipsoid()
     {
-        var exception = Assert.Throws<TargetInvocationException>(() =>
+        TargetInvocationException exception = Assert.Throws<TargetInvocationException>(() =>
         {
-            var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildUpsWkt("ups", Sphere6400000, false));
+            ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildUpsWkt("ups", Sphere6400000, false));
             CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         });
 
@@ -164,8 +164,8 @@ public class LeacUpsWebMercatorProjectionTests
     [Fact]
     public void WebMercatorBatchTransformMatchesPointwiseTransform()
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildWebMercWkt("webmerc", Grs80));
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildWebMercWkt("webmerc", Grs80));
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
 
         double[] batchedLongitudes = [-170d, -120.5d, -45d, 0d, 37.5d, 89.9d, 120.25d, 170d];
         double[] batchedLatitudes = [-80d, -65d, -30.5d, -1d, 1d, 30.5d, 65d, 80d];
@@ -192,8 +192,8 @@ public class LeacUpsWebMercatorProjectionTests
     [Fact]
     public void WebMercatorBatchTransformPropagatesNaNConsistently()
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildWebMercWkt("webmerc", Grs80));
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildWebMercWkt("webmerc", Grs80));
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
 
         double[] batchedLongitudes = [0d, double.NaN, 10d, 20d, double.NaN, -40d, 50d, 60d];
         double[] batchedLatitudes = [0d, 5d, double.NaN, 15d, 20d, double.NaN, 30d, 40d];
@@ -229,8 +229,8 @@ public class LeacUpsWebMercatorProjectionTests
     [Fact]
     public void WebMercatorBatchTransformRejectsPoleLatitude()
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildWebMercWkt("webmerc", Grs80));
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildWebMercWkt("webmerc", Grs80));
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
 
         double[] batchedLongitudes = [0d, 10d, 20d, 30d, 40d, 50d, 60d, 70d];
         double[] batchedLatitudes = [0d, 10d, 20d, 30d, 40d, 50d, 60d, 90d];

@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using System;
 using System.Globalization;
@@ -27,8 +27,8 @@ public class SwissObliqueMercatorProjectionTests
     [InlineData("Swiss_Oblique_Mercator")]
     public void SupportsSomercAliasesFromWkt(string projectionName)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, false));
-        var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, false));
+        ICoordinateTransformation transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] result = transform.MathTransform.Transform(CreatePoint(2d, 1d));
 
         Assert.NotNull(projected);
@@ -50,10 +50,10 @@ public class SwissObliqueMercatorProjectionTests
     [InlineData("Swiss_Oblique_Mercator", 0.25d, -0.5d, 1e-9)]
     public void SupportsSomercRoundtrip(string projectionName, double longitude, double latitude, double tolerance)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, false));
-        var geographic = projected.GeographicCoordinateSystem;
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(geographic, projected);
-        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, geographic);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, false));
+        GeographicCoordinateSystem geographic = projected.GeographicCoordinateSystem;
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(geographic, projected);
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, geographic);
 
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
         double[] roundtrip = inverse.MathTransform.Transform(projectedPoint);
@@ -84,8 +84,8 @@ public class SwissObliqueMercatorProjectionTests
         double expectedX,
         double expectedY)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, useSphere));
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, useSphere));
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
 
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
 
@@ -115,8 +115,8 @@ public class SwissObliqueMercatorProjectionTests
         double expectedLongitude,
         double expectedLatitude)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, useSphere));
-        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, useSphere));
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
 
         double[] geographicPoint = inverse.MathTransform.Transform(CreatePoint(x, y));
 

@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using System;
 using ProjNet.CoordinateSystems.Transformations;
@@ -119,4 +119,3 @@ public class SchProjectionTests
 
     private static double[] CreatePoint(double x, double y, double z) => [x, y, z];
 }
-

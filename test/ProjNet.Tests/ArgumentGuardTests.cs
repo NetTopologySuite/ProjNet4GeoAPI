@@ -17,7 +17,7 @@ public class ArgumentGuardTests
     [Fact]
     public void ThrowIfNullGenericWithNonNullValueReturnsSameReference()
     {
-        var value = "projnet";
+        string value = "projnet";
 
         string result = ArgumentGuard.ThrowIfNull(value, nameof(value));
 
@@ -32,7 +32,7 @@ public class ArgumentGuardTests
     {
         string? value = null;
 
-        var exception = Assert.Throws<ArgumentNullException>(() => ArgumentGuard.ThrowIfNull(value, nameof(value)));
+        ArgumentNullException exception = Assert.Throws<ArgumentNullException>(() => ArgumentGuard.ThrowIfNull(value, nameof(value)));
 
         Assert.Equal(nameof(value), exception.ParamName);
     }
@@ -43,7 +43,7 @@ public class ArgumentGuardTests
     [Fact]
     public void ThrowIfNullOrEmptyWithNonEmptyValueReturnsSameReference()
     {
-        var value = "valid";
+        string value = "valid";
 
         string result = ArgumentGuard.ThrowIfNullOrEmpty(value, nameof(value));
 
@@ -56,9 +56,9 @@ public class ArgumentGuardTests
     [Fact]
     public void ThrowIfNullOrEmptyWithEmptyValueThrowsArgumentException()
     {
-        var value = string.Empty;
+        string value = string.Empty;
 
-        var exception = Assert.Throws<ArgumentException>(() => ArgumentGuard.ThrowIfNullOrEmpty(value, nameof(value)));
+        ArgumentException exception = Assert.Throws<ArgumentException>(() => ArgumentGuard.ThrowIfNullOrEmpty(value, nameof(value)));
 
         Assert.Equal(nameof(value), exception.ParamName);
     }
@@ -69,7 +69,7 @@ public class ArgumentGuardTests
     [Fact]
     public void ThrowIfNullOrWhiteSpaceWithContentReturnsSameReference()
     {
-        var value = "valid";
+        string value = "valid";
 
         string result = ArgumentGuard.ThrowIfNullOrWhiteSpace(value, nameof(value));
 
@@ -82,9 +82,9 @@ public class ArgumentGuardTests
     [Fact]
     public void ThrowIfNullOrWhiteSpaceWithWhitespaceThrowsArgumentException()
     {
-        var value = "  ";
+        string value = "  ";
 
-        var exception = Assert.Throws<ArgumentException>(() => ArgumentGuard.ThrowIfNullOrWhiteSpace(value, nameof(value)));
+        ArgumentException exception = Assert.Throws<ArgumentException>(() => ArgumentGuard.ThrowIfNullOrWhiteSpace(value, nameof(value)));
 
         Assert.Equal(nameof(value), exception.ParamName);
     }
@@ -110,7 +110,7 @@ public class ArgumentGuardTests
     {
         object? value = null;
 
-        var exception = Assert.Throws<ArgumentNullException>(() => ArgumentGuard.ThrowIfNotType<string>(value, nameof(value)));
+        ArgumentNullException exception = Assert.Throws<ArgumentNullException>(() => ArgumentGuard.ThrowIfNotType<string>(value, nameof(value)));
 
         Assert.Equal(nameof(value), exception.ParamName);
     }
@@ -123,7 +123,7 @@ public class ArgumentGuardTests
     {
         object value = 123;
 
-        var exception = Assert.Throws<ArgumentException>(() => ArgumentGuard.ThrowIfNotType<string>(value, nameof(value)));
+        ArgumentException exception = Assert.Throws<ArgumentException>(() => ArgumentGuard.ThrowIfNotType<string>(value, nameof(value)));
 
         Assert.Equal(nameof(value), exception.ParamName);
         Assert.Contains(Assert.IsAssignableFrom<string>(typeof(string).FullName), exception.Message, StringComparison.Ordinal);

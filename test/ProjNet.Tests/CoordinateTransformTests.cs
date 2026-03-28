@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using System;
 using System.Collections.Generic;
@@ -13,7 +13,7 @@ using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.Geometries;
 using ProjNet.IO.CoordinateSystems;
 using Xunit;
-using static ProjNET.Tests.CoordinateSystemTestHelpers;
+using static ProjNet.Tests.CoordinateSystemTestHelpers;
 
 /// <summary>
 /// Represents the documented type.
@@ -46,13 +46,13 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         var csFact = new CoordinateSystemFactory();
         var ctFact = new CoordinateTransformationFactory();
 
-        var utm35ETRS = RequireCoordinateSystem(
+        CoordinateSystem utm35ETRS = RequireCoordinateSystem(
             csFact,
-                "PROJCS[\"ETRS89 / ETRS-TM35\",GEOGCS[\"ETRS89\",DATUM[\"D_ETRS_1989\",SPHEROID[\"GRS_1980\",6378137,298.257222101]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",27],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"Meter\",1]]");
+            "PROJCS[\"ETRS89 / ETRS-TM35\",GEOGCS[\"ETRS89\",DATUM[\"D_ETRS_1989\",SPHEROID[\"GRS_1980\",6378137,298.257222101]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",27],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"Meter\",1]]");
 
         var utm33 = ProjectedCoordinateSystem.WGS84_UTM(33, true);
 
-        var trans = ctFact.CreateFromCoordinateSystems(utm35ETRS, utm33);
+        ICoordinateTransformation trans = ctFact.CreateFromCoordinateSystems(utm35ETRS, utm33);
 
         XY[] points =
         {
@@ -86,13 +86,13 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         var csFact = new CoordinateSystemFactory();
         var ctFact = new CoordinateTransformationFactory();
 
-        var utm35ETRS = RequireCoordinateSystem(
+        CoordinateSystem utm35ETRS = RequireCoordinateSystem(
             csFact,
-                "PROJCS[\"ETRS89 / ETRS-TM35\",GEOGCS[\"ETRS89\",DATUM[\"D_ETRS_1989\",SPHEROID[\"GRS_1980\",6378137,298.257222101]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",27],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"Meter\",1]]");
+            "PROJCS[\"ETRS89 / ETRS-TM35\",GEOGCS[\"ETRS89\",DATUM[\"D_ETRS_1989\",SPHEROID[\"GRS_1980\",6378137,298.257222101]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",27],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"Meter\",1]]");
 
         var utm33 = ProjectedCoordinateSystem.WGS84_UTM(33, true);
 
-        var trans = ctFact.CreateFromCoordinateSystems(utm35ETRS, utm33);
+        ICoordinateTransformation trans = ctFact.CreateFromCoordinateSystems(utm35ETRS, utm33);
 
         double[][] points =
         {
@@ -125,7 +125,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         const string strSouthPole = "PROJCS[\"South_Pole_Lambert_Azimuthal_Equal_Area\",GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Lambert_Azimuthal_Equal_Area\"],PARAMETER[\"False_Easting\",0],PARAMETER[\"False_Northing\",0],PARAMETER[\"Central_Meridian\",-127],PARAMETER[\"Latitude_Of_Origin\",-90],UNIT[\"Meter\",1]]";
 
         var pCoordSysFactory = new CoordinateSystemFactory();
-        var pSouthPole = RequireCoordinateSystem(pCoordSysFactory, strSouthPole);
+        CoordinateSystem pSouthPole = RequireCoordinateSystem(pCoordSysFactory, strSouthPole);
         Assert.NotNull(pSouthPole);
     }
 
@@ -135,10 +135,10 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     [Xunit.Fact]
     public void TestAlbersProjection()
     {
-        var ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Clarke 1866", 6378206.4, 294.9786982138982, LinearUnit.Metre);
+        Ellipsoid ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Clarke 1866", 6378206.4, 294.9786982138982, LinearUnit.Metre);
 
-        var datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Clarke 1866", DatumType.HD_Geocentric, ellipsoid, null);
-        var gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+        HorizontalDatum datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Clarke 1866", DatumType.HD_Geocentric, ellipsoid, null);
+        GeographicCoordinateSystem gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "Clarke 1866",
             AngularUnit.Degrees,
             datum,
@@ -154,12 +154,12 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
                                  new ProjectionParameter("false_easting", 0),
                                  new ProjectionParameter("false_northing", 0),
                              };
-        var projection = this.CoordinateSystemFactory.CreateProjection("Albers Conical Equal Area", "albers", parameters);
+        IProjection projection = this.CoordinateSystemFactory.CreateProjection("Albers Conical Equal Area", "albers", parameters);
 
-        var coordsys = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("Albers Conical Equal Area", gcs, projection, LinearUnit.Metre, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
+        ProjectedCoordinateSystem coordsys = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("Albers Conical Equal Area", gcs, projection, LinearUnit.Metre, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
 
-        var trans1 = new CoordinateTransformationFactory().CreateFromCoordinateSystems(gcs, coordsys);
-        var trans2 = new CoordinateTransformationFactory().CreateFromCoordinateSystems(coordsys, gcs);
+        ICoordinateTransformation trans1 = new CoordinateTransformationFactory().CreateFromCoordinateSystems(gcs, coordsys);
+        ICoordinateTransformation trans2 = new CoordinateTransformationFactory().CreateFromCoordinateSystems(coordsys, gcs);
 
         double[] pGeo = new double[] { -75, 35 };
         double[] pUtm = trans1.MathTransform.Transform(pGeo);
@@ -176,10 +176,10 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     [Xunit.Fact]
     public void TestAlbersProjectionFeet()
     {
-        var ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Clarke 1866", 6378206.4, 294.9786982138982, LinearUnit.Metre);
+        Ellipsoid ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Clarke 1866", 6378206.4, 294.9786982138982, LinearUnit.Metre);
 
-        var datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Clarke 1866", DatumType.HD_Geocentric, ellipsoid, null);
-        var gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+        HorizontalDatum datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Clarke 1866", DatumType.HD_Geocentric, ellipsoid, null);
+        GeographicCoordinateSystem gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "Clarke 1866",
             AngularUnit.Degrees,
             datum,
@@ -195,11 +195,11 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
                                  new ProjectionParameter("false_easting", 0),
                                  new ProjectionParameter("false_northing", 0),
                              };
-        var projection = this.CoordinateSystemFactory.CreateProjection("Albers Conical Equal Area", "albers", parameters);
+        IProjection projection = this.CoordinateSystemFactory.CreateProjection("Albers Conical Equal Area", "albers", parameters);
 
-        var coordsys = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("Albers Conical Equal Area", gcs, projection, LinearUnit.Foot, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
+        ProjectedCoordinateSystem coordsys = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("Albers Conical Equal Area", gcs, projection, LinearUnit.Foot, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
 
-        var trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(gcs, coordsys);
+        ICoordinateTransformation trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(gcs, coordsys);
 
         double[] pGeo = new double[] { -75, 35 };
         double[] pUtm = trans.MathTransform.Transform(pGeo);
@@ -216,10 +216,10 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     [Xunit.Fact]
     public void TestMercator1SPProjection()
     {
-        var ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Bessel 1840", 6377397.155, 299.15281, LinearUnit.Metre);
+        Ellipsoid ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Bessel 1840", 6377397.155, 299.15281, LinearUnit.Metre);
 
-        var datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Bessel 1840", DatumType.HD_Geocentric, ellipsoid, null);
-        var gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+        HorizontalDatum datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Bessel 1840", DatumType.HD_Geocentric, ellipsoid, null);
+        GeographicCoordinateSystem gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "Bessel 1840",
             AngularUnit.Degrees,
             datum,
@@ -234,11 +234,11 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
                                  new ProjectionParameter("false_easting", 3900000),
                                  new ProjectionParameter("false_northing", 900000),
                              };
-        var projection = this.CoordinateSystemFactory.CreateProjection("Mercator_1SP", "Mercator_1SP", parameters);
+        IProjection projection = this.CoordinateSystemFactory.CreateProjection("Mercator_1SP", "Mercator_1SP", parameters);
 
-        var coordsys = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("Makassar / NEIEZ", gcs, projection, LinearUnit.Metre, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
+        ProjectedCoordinateSystem coordsys = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("Makassar / NEIEZ", gcs, projection, LinearUnit.Metre, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
 
-        var trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(gcs, coordsys);
+        ICoordinateTransformation trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(gcs, coordsys);
 
         double[] pGeo = new double[] { 120, -3 };
         double[] pUtm = trans.MathTransform.Transform(pGeo);
@@ -255,10 +255,10 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     [Xunit.Fact]
     public void TestMercator1SPProjectionFeet()
     {
-        var ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Bessel 1840", 6377397.155, 299.15281, LinearUnit.Metre);
+        Ellipsoid ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Bessel 1840", 6377397.155, 299.15281, LinearUnit.Metre);
 
-        var datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Bessel 1840", DatumType.HD_Geocentric, ellipsoid, null);
-        var gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+        HorizontalDatum datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Bessel 1840", DatumType.HD_Geocentric, ellipsoid, null);
+        GeographicCoordinateSystem gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "Bessel 1840",
             AngularUnit.Degrees,
             datum,
@@ -273,11 +273,11 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
                                  new ProjectionParameter("false_easting", 3900000 / LinearUnit.Foot.MetersPerUnit),
                                  new ProjectionParameter("false_northing", 900000 / LinearUnit.Foot.MetersPerUnit),
                              };
-        var projection = this.CoordinateSystemFactory.CreateProjection("Mercator_1SP", "Mercator_1SP", parameters);
+        IProjection projection = this.CoordinateSystemFactory.CreateProjection("Mercator_1SP", "Mercator_1SP", parameters);
 
-        var coordsys = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("Makassar / NEIEZ", gcs, projection, LinearUnit.Foot, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
+        ProjectedCoordinateSystem coordsys = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("Makassar / NEIEZ", gcs, projection, LinearUnit.Foot, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
 
-        var trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(gcs, coordsys);
+        ICoordinateTransformation trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(gcs, coordsys);
 
         double[] pGeo = new[] { 120d, -3d };
         double[] pUtm = trans.MathTransform.Transform(pGeo);
@@ -294,10 +294,10 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     [Xunit.Fact]
     public void TestMercator2SPProjection()
     {
-        var ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Krassowski 1940", 6378245.0, 298.3, LinearUnit.Metre);
+        Ellipsoid ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Krassowski 1940", 6378245.0, 298.3, LinearUnit.Metre);
 
-        var datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Krassowski 1940", DatumType.HD_Geocentric, ellipsoid, null);
-        var gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+        HorizontalDatum datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Krassowski 1940", DatumType.HD_Geocentric, ellipsoid, null);
+        GeographicCoordinateSystem gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "Krassowski 1940",
             AngularUnit.Degrees,
             datum,
@@ -311,11 +311,11 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
                                  new ProjectionParameter("false_easting", 0),
                                  new ProjectionParameter("false_northing", 0),
                              };
-        var projection = this.CoordinateSystemFactory.CreateProjection("Mercator_2SP", "Mercator_2SP", parameters);
+        IProjection projection = this.CoordinateSystemFactory.CreateProjection("Mercator_2SP", "Mercator_2SP", parameters);
 
-        var coordsys = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("Pulkovo 1942 / Mercator Caspian Sea", gcs, projection, LinearUnit.Metre, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
+        ProjectedCoordinateSystem coordsys = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("Pulkovo 1942 / Mercator Caspian Sea", gcs, projection, LinearUnit.Metre, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
 
-        var trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(gcs, coordsys);
+        ICoordinateTransformation trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(gcs, coordsys);
 
         double[] pGeo = new[] { 53d, 53d };
         double[] pUtm = trans.MathTransform.Transform(pGeo);
@@ -332,10 +332,10 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     [Xunit.Fact]
     public void TestTransverseMercatorProjection()
     {
-        var ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Airy 1830", 6377563.396, 299.32496, LinearUnit.Metre);
+        Ellipsoid ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Airy 1830", 6377563.396, 299.32496, LinearUnit.Metre);
 
-        var datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Airy 1830", DatumType.HD_Geocentric, ellipsoid, null);
-        var gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+        HorizontalDatum datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Airy 1830", DatumType.HD_Geocentric, ellipsoid, null);
+        GeographicCoordinateSystem gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "Airy 1830",
             AngularUnit.Degrees,
             datum,
@@ -350,11 +350,11 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
                                  new ProjectionParameter("false_easting", 400000),
                                  new ProjectionParameter("false_northing", -100000),
                              };
-        var projection = this.CoordinateSystemFactory.CreateProjection("Transverse Mercator", "Transverse_Mercator", parameters);
+        IProjection projection = this.CoordinateSystemFactory.CreateProjection("Transverse Mercator", "Transverse_Mercator", parameters);
 
-        var coordsys = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("OSGB 1936 / British National Grid", gcs, projection, LinearUnit.Metre, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
+        ProjectedCoordinateSystem coordsys = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("OSGB 1936 / British National Grid", gcs, projection, LinearUnit.Metre, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
 
-        var trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(gcs, coordsys);
+        ICoordinateTransformation trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(gcs, coordsys);
 
         double[] pGeo = new[] { 0.5, 50.5 };
         double[] pUtm = trans.MathTransform.Transform(pGeo);
@@ -373,10 +373,10 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     public void TestLambertConicConformal2SPProjection()
     {
         // var ellipsoid = Ellipsoid.Clarke1866;
-        var ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Clarke 1866", 20925832.16, 294.97470, LinearUnit.USSurveyFoot);
+        Ellipsoid ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Clarke 1866", 20925832.16, 294.97470, LinearUnit.USSurveyFoot);
 
-        var datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Clarke 1866", DatumType.HD_Geocentric, ellipsoid, null);
-        var gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+        HorizontalDatum datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Clarke 1866", DatumType.HD_Geocentric, ellipsoid, null);
+        GeographicCoordinateSystem gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "Clarke 1866",
             AngularUnit.Degrees,
             datum,
@@ -392,11 +392,11 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
                                  new ProjectionParameter("false_easting", 2000000 / LinearUnit.USSurveyFoot.MetersPerUnit),
                                  new ProjectionParameter("false_northing", 0),
                              };
-        var projection = this.CoordinateSystemFactory.CreateProjection("Lambert Conic Conformal (2SP)", "lambert_conformal_conic_2sp", parameters);
+        IProjection projection = this.CoordinateSystemFactory.CreateProjection("Lambert Conic Conformal (2SP)", "lambert_conformal_conic_2sp", parameters);
 
-        var coordsys = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("NAD27 / Texas South Central", gcs, projection, LinearUnit.USSurveyFoot, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
+        ProjectedCoordinateSystem coordsys = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("NAD27 / Texas South Central", gcs, projection, LinearUnit.USSurveyFoot, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
 
-        var trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(gcs, coordsys);
+        ICoordinateTransformation trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(gcs, coordsys);
 
         double[] pGeo = new[] { -96, 28.5 };
         double[] pUtm = trans.MathTransform.Transform(pGeo);
@@ -409,23 +409,22 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
 
     private ICoordinateTransformation CreateGeo2Laea(double centralMeridian, double latitudeOfOrigin)
     {
-        var wgs84 = GeographicCoordinateSystem.WGS84;
+        GeographicCoordinateSystem wgs84 = GeographicCoordinateSystem.WGS84;
+        string laeaWkt =
+            "PROJCS[\"Lambert_Azimuthal_Equal_Area_Custom\"," +
+            "GEOGCS[\"GCS_WGS_1984\"," +
+            "DATUM[\"D_WGS_1984\"," +
+            "SPHEROID[\"WGS_1984\",6378137.0,298.257223563]]," +
+            "PRIMEM[\"Greenwich\",0.0]," +
+            "UNIT[\"Degree\",0.0174532925199433]]," +
+            "PROJECTION[\"Lambert_Azimuthal_Equal_Area\"]," +
+            "PARAMETER[\"False_Easting\",0.0]," +
+            "PARAMETER[\"False_Northing\",0.0]," +
+            $"PARAMETER[\"Central_Meridian\",{centralMeridian}]," +
+            $"PARAMETER[\"Latitude_Of_Origin\",{latitudeOfOrigin}]," +
+            "UNIT[\"Meter\",1.0]]";
 
-        var coordsys = RequireCoordinateSystem(
-            this.CoordinateSystemFactory,
-            string.Empty +
-                "PROJCS[\"Lambert_Azimuthal_Equal_Area_Custom\"," +
-                    "GEOGCS[\"GCS_WGS_1984\"," +
-                        "DATUM[\"D_WGS_1984\"," +
-                    "SPHEROID[\"WGS_1984\",6378137.0,298.257223563]]," +
-                        "PRIMEM[\"Greenwich\",0.0]," +
-                        "UNIT[\"Degree\",0.0174532925199433]]," +
-                    "PROJECTION[\"Lambert_Azimuthal_Equal_Area\"]," +
-                    "PARAMETER[\"False_Easting\",0.0]," +
-                    "PARAMETER[\"False_Northing\",0.0]," +
-                $"PARAMETER[\"Central_Meridian\",{centralMeridian}]," +
-                $"PARAMETER[\"Latitude_Of_Origin\",{latitudeOfOrigin}]," +
-                "UNIT[\"Meter\",1.0]]");
+        CoordinateSystem coordsys = RequireCoordinateSystem(this.CoordinateSystemFactory, laeaWkt);
 
         return this.CoordinateTransformationFactory.CreateFromCoordinateSystems(wgs84, coordsys);
     }
@@ -441,10 +440,10 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             double centralMeridian = this.Random.Next(-180, +180);
             double latitudeOfOrigin = this.Random.Next(-90, +90);
 
-            var trans = this.CreateGeo2Laea(centralMeridian, latitudeOfOrigin);
+            ICoordinateTransformation trans = this.CreateGeo2Laea(centralMeridian, latitudeOfOrigin);
 
-            var forward = trans.MathTransform;
-            var reverse = forward.Inverse();
+            MathTransform forward = trans.MathTransform;
+            MathTransform reverse = forward.Inverse();
 
             double[] pGeo = new[] { centralMeridian, latitudeOfOrigin };
 
@@ -475,10 +474,10 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             double centralMeridian = this.Random.Next(-150, +150);
             double latitudeOfOrigin = this.Random.Next(-70, +70);
 
-            var trans = this.CreateGeo2Laea(centralMeridian, latitudeOfOrigin);
+            ICoordinateTransformation trans = this.CreateGeo2Laea(centralMeridian, latitudeOfOrigin);
 
-            var forward = trans.MathTransform;
-            var reverse = forward.Inverse();
+            MathTransform forward = trans.MathTransform;
+            MathTransform reverse = forward.Inverse();
 
             double lat = latitudeOfOrigin + ((0.01 + this.Random.NextDouble()) * GetRandomSign());
             double lon = centralMeridian + ((0.01 + this.Random.NextDouble()) * GetRandomSign());
@@ -501,15 +500,15 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     [Xunit.Fact]
     public void TestGeocentric()
     {
-        var gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+        GeographicCoordinateSystem gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "ETRF89 Geographic",
             AngularUnit.Degrees,
             HorizontalDatum.ETRF89,
             PrimeMeridian.Greenwich,
             new AxisInfo("East", AxisOrientationEnum.East),
             new AxisInfo("North", AxisOrientationEnum.North));
-        var gcenCs = this.CoordinateSystemFactory.CreateGeocentricCoordinateSystem("ETRF89 Geocentric", HorizontalDatum.ETRF89, LinearUnit.Metre, PrimeMeridian.Greenwich);
-        var ct = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(gcs, gcenCs);
+        GeocentricCoordinateSystem gcenCs = this.CoordinateSystemFactory.CreateGeocentricCoordinateSystem("ETRF89 Geocentric", HorizontalDatum.ETRF89, LinearUnit.Metre, PrimeMeridian.Greenwich);
+        ICoordinateTransformation ct = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(gcs, gcenCs);
         double[] pExpected = new[] { 2 + (7.0 / 60) + (46.38 / 3600), 53 + (48.0 / 60) + (33.82 / 3600) }; // Point.FromDMS(2, 7, 46.38, 53, 48, 33.82);
         double[] pExpected3D = new[] { pExpected[0], pExpected[1], 73.0 };
         double[] p0 = new[] { 3771793.97, 140253.34, 5124304.35 };
@@ -526,9 +525,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     public void TestDatumTransform()
     {
         // Define datums, set parameters
-        var wgs72 = HorizontalDatum.WGS72;
+        HorizontalDatum wgs72 = HorizontalDatum.WGS72;
         wgs72.Wgs84Parameters = new Wgs84ConversionInfo(0, 0, 4.5, 0, 0, 0.554, 0.219);
-        var ed50 = HorizontalDatum.ED50;
+        HorizontalDatum ed50 = HorizontalDatum.ED50;
         ed50.Wgs84Parameters = new Wgs84ConversionInfo(
             -81.0703,
             -89.3603,
@@ -539,7 +538,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             -0.540645); // Parameters for Denmark
 
         // Define geographic coordinate systems
-        var gcsWGS72 = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+        GeographicCoordinateSystem gcsWGS72 = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "WGS72 Geographic",
             AngularUnit.Degrees,
             wgs72,
@@ -547,7 +546,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             new AxisInfo("East", AxisOrientationEnum.East),
             new AxisInfo("North", AxisOrientationEnum.North));
 
-        var gcsWGS84 = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+        GeographicCoordinateSystem gcsWGS84 = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "WGS84 Geographic",
             AngularUnit.Degrees,
             HorizontalDatum.WGS84,
@@ -555,7 +554,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             new AxisInfo("East", AxisOrientationEnum.East),
             new AxisInfo("North", AxisOrientationEnum.North));
 
-        var gcsED50 = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+        GeographicCoordinateSystem gcsED50 = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "ED50 Geographic",
             AngularUnit.Degrees,
             ed50,
@@ -564,9 +563,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             new AxisInfo("North", AxisOrientationEnum.North));
 
         // Define geocentric coordinate systems
-        var gcenCsWGS72 = this.CoordinateSystemFactory.CreateGeocentricCoordinateSystem("WGS72 Geocentric", wgs72, LinearUnit.Metre, PrimeMeridian.Greenwich);
-        var gcenCsWGS84 = this.CoordinateSystemFactory.CreateGeocentricCoordinateSystem("WGS84 Geocentric", HorizontalDatum.WGS84, LinearUnit.Metre, PrimeMeridian.Greenwich);
-        var gcenCsED50 = this.CoordinateSystemFactory.CreateGeocentricCoordinateSystem("ED50 Geocentric", ed50, LinearUnit.Metre, PrimeMeridian.Greenwich);
+        GeocentricCoordinateSystem gcenCsWGS72 = this.CoordinateSystemFactory.CreateGeocentricCoordinateSystem("WGS72 Geocentric", wgs72, LinearUnit.Metre, PrimeMeridian.Greenwich);
+        GeocentricCoordinateSystem gcenCsWGS84 = this.CoordinateSystemFactory.CreateGeocentricCoordinateSystem("WGS84 Geocentric", HorizontalDatum.WGS84, LinearUnit.Metre, PrimeMeridian.Greenwich);
+        GeocentricCoordinateSystem gcenCsED50 = this.CoordinateSystemFactory.CreateGeocentricCoordinateSystem("ED50 Geocentric", ed50, LinearUnit.Metre, PrimeMeridian.Greenwich);
 
         // Define projections
         var parameters = new List<ProjectionParameter>(5)
@@ -577,9 +576,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
                                  new ProjectionParameter("false_easting", 500000),
                                  new ProjectionParameter("false_northing", 0),
                              };
-        var projection = this.CoordinateSystemFactory.CreateProjection("Transverse Mercator", "Transverse_Mercator", parameters);
-        var utmED50 = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("ED50 UTM Zone 32N", gcsED50, projection, LinearUnit.Metre, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
-        var utmWGS84 = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("WGS84 UTM Zone 32N", gcsWGS84, projection, LinearUnit.Metre, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
+        IProjection projection = this.CoordinateSystemFactory.CreateProjection("Transverse Mercator", "Transverse_Mercator", parameters);
+        ProjectedCoordinateSystem utmED50 = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("ED50 UTM Zone 32N", gcsED50, projection, LinearUnit.Metre, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
+        ProjectedCoordinateSystem utmWGS84 = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("WGS84 UTM Zone 32N", gcsWGS84, projection, LinearUnit.Metre, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
 
         ////Set up coordinate transformations
         // var ctForw = _coordinateTransformationFactory.CreateFromCoordinateSystems(gcsWGS72, gcenCsWGS72); //Geographic->Geocentric (WGS72)
@@ -591,7 +590,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         // Test datum-shift from WGS72 to WGS84
         // Point3D pGeoCenWGS72 = ctForw.MathTransform.Transform(pLongLatWGS72) as Point3D;
         double[] pGeoCenWGS72 = new[] { 3657660.66, 255768.55, 5201382.11 };
-        var geocen_ed50_2_Wgs84 = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(gcenCsWGS72, gcenCsWGS84);
+        ICoordinateTransformation geocen_ed50_2_Wgs84 = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(gcenCsWGS72, gcenCsWGS84);
         double[] pGeoCenWGS84 = geocen_ed50_2_Wgs84.MathTransform.Transform(pGeoCenWGS72);
 
         // Point3D pGeoCenWGS84 = wgs72.Wgs84Parameters.Apply(pGeoCenWGS72);
@@ -602,7 +601,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         double[] pGeoCenWGS72calc = geocen_ed50_2_Wgs84.MathTransform.Inverse().Transform(pGeoCenWGS84);
         Assert.True(this.ToleranceLessThan(pGeoCenWGS72, pGeoCenWGS72calc, 0.001), this.TransformationError("Datum WGS84->WGS72", pGeoCenWGS72, pGeoCenWGS72calc));
 
-        var utm_ed50_2_Wgs84 = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(utmED50, utmWGS84);
+        ICoordinateTransformation utm_ed50_2_Wgs84 = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(utmED50, utmWGS84);
         double[] pUTMED50 = new double[] { 600000, 6100000 };
         double[] pUTMWGS84 = utm_ed50_2_Wgs84.MathTransform.Transform(pUTMED50);
         pExpected = new[] { 599928.6, 6099790.2 };
@@ -613,7 +612,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.True(this.ToleranceLessThan(pUTMED50, pUTMED50calc, 0.01), this.TransformationError("Datum WGS84->ED50", pUTMED50, pUTMED50calc));
 
         // Perform reverse
-        var utm_Wgs84_2_Ed50 = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(utmWGS84, utmED50);
+        ICoordinateTransformation utm_Wgs84_2_Ed50 = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(utmWGS84, utmED50);
         pUTMED50 = utm_Wgs84_2_Ed50.MathTransform.Transform(pUTMWGS84);
         pExpected = new double[] { 600000, 6100000 };
         Assert.True(this.ToleranceLessThan(pExpected, pUTMED50, 0.1), this.TransformationError("Datum", pExpected, pUTMED50));
@@ -634,7 +633,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     public void TestKrovakGreenwichProjection()
     {
         // test case for epsg 5514 (102067)
-        var gcsWGS84 = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+        GeographicCoordinateSystem gcsWGS84 = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "WGS84 Geographic",
             AngularUnit.Degrees,
             HorizontalDatum.WGS84,
@@ -642,12 +641,12 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             new AxisInfo("East", AxisOrientationEnum.East),
             new AxisInfo("North", AxisOrientationEnum.North));
 
-        var ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Bessel 1840", 6377397.155, 299.15281, LinearUnit.Metre);
+        Ellipsoid ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Bessel 1840", 6377397.155, 299.15281, LinearUnit.Metre);
 
-        var datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Bessel 1840", DatumType.HD_Geocentric, ellipsoid, null);
+        HorizontalDatum datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Bessel 1840", DatumType.HD_Geocentric, ellipsoid, null);
         datum.Wgs84Parameters = new Wgs84ConversionInfo(570.8, 85.7, 462.8, 4.998, 1.587, 5.261, 3.56);
 
-        var gcsKrovak = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+        GeographicCoordinateSystem gcsKrovak = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "Bessel 1840",
             AngularUnit.Degrees,
             datum,
@@ -665,12 +664,12 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
                                  new ProjectionParameter("false_easting", 0),
                                  new ProjectionParameter("false_northing", 0),
                              };
-        var projection = this.CoordinateSystemFactory.CreateProjection("Krovak", "Krovak", parameters);
+        IProjection projection = this.CoordinateSystemFactory.CreateProjection("Krovak", "Krovak", parameters);
 
-        var coordsys = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("Krovak", gcsKrovak, projection, LinearUnit.Metre, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
+        ProjectedCoordinateSystem coordsys = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("Krovak", gcsKrovak, projection, LinearUnit.Metre, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
 
-        var trans = new CoordinateTransformationFactory().CreateFromCoordinateSystems(gcsWGS84, coordsys);
-        var trans2 = new CoordinateTransformationFactory().CreateFromCoordinateSystems(gcsWGS84, coordsys);
+        ICoordinateTransformation trans = new CoordinateTransformationFactory().CreateFromCoordinateSystems(gcsWGS84, coordsys);
+        ICoordinateTransformation trans2 = new CoordinateTransformationFactory().CreateFromCoordinateSystems(gcsWGS84, coordsys);
 
         // test case 1
         double[] pGeo = new[] { 12d, 48d };
@@ -702,7 +701,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     public void TestKrovakFerroProjection()
     {
         // test case for epsg 2065 (prime meridian at Ferro)
-        var gcsWGS84 = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+        GeographicCoordinateSystem gcsWGS84 = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "WGS84 Geographic",
             AngularUnit.Degrees,
             HorizontalDatum.WGS84,
@@ -710,12 +709,12 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             new AxisInfo("East", AxisOrientationEnum.East),
             new AxisInfo("North", AxisOrientationEnum.North));
 
-        var ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Bessel 1840", 6377397.155, 299.15281, LinearUnit.Metre);
+        Ellipsoid ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Bessel 1840", 6377397.155, 299.15281, LinearUnit.Metre);
 
-        var datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Bessel 1840", DatumType.HD_Geocentric, ellipsoid, null);
+        HorizontalDatum datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Bessel 1840", DatumType.HD_Geocentric, ellipsoid, null);
         datum.Wgs84Parameters = new Wgs84ConversionInfo(570.8, 85.7, 462.8, 4.998, 1.587, 5.261, 3.56);
 
-        var gcsKrovak = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+        GeographicCoordinateSystem gcsKrovak = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "Bessel 1840",
             AngularUnit.Degrees,
             datum,
@@ -734,12 +733,12 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
                                  new ProjectionParameter("false_easting", 0),
                                  new ProjectionParameter("false_northing", 0),
                              };
-        var projection = this.CoordinateSystemFactory.CreateProjection("Krovak", "Krovak", parameters);
+        IProjection projection = this.CoordinateSystemFactory.CreateProjection("Krovak", "Krovak", parameters);
 
-        var coordsys = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("Krovak", gcsKrovak, projection, LinearUnit.Metre, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
+        ProjectedCoordinateSystem coordsys = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("Krovak", gcsKrovak, projection, LinearUnit.Metre, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
 
-        var trans = new CoordinateTransformationFactory().CreateFromCoordinateSystems(gcsWGS84, coordsys);
-        var trans2 = new CoordinateTransformationFactory().CreateFromCoordinateSystems(gcsWGS84, coordsys);
+        ICoordinateTransformation trans = new CoordinateTransformationFactory().CreateFromCoordinateSystems(gcsWGS84, coordsys);
+        ICoordinateTransformation trans2 = new CoordinateTransformationFactory().CreateFromCoordinateSystems(gcsWGS84, coordsys);
 
         // test case 1
         double[] pGeo = new[] { 12d, 48d };
@@ -777,18 +776,18 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         string wkt4326 = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]]";
         string wkt2171 = "PROJCS[\"Pulkovo 1942(58) / Poland zone I\",GEOGCS[\"Pulkovo 1942(58)\",DATUM[\"Pulkovo_1942_58\",SPHEROID[\"Krassowsky 1940\",6378245,298.3,AUTHORITY[\"EPSG\",\"7024\"]],TOWGS84[33.4,-146.6,-76.3,-0.359,-0.053,0.844,-0.84],AUTHORITY[\"EPSG\",\"6179\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4179\"]],PROJECTION[\"Oblique_Stereographic\"],PARAMETER[\"latitude_of_origin\",50.625],PARAMETER[\"central_meridian\",21.08333333333333],PARAMETER[\"scale_factor\",0.9998],PARAMETER[\"false_easting\",4637000],PARAMETER[\"false_northing\",5647000],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AUTHORITY[\"EPSG\",\"2171\"]]";
 
-        var cs1 = RequireCoordinateSystem(this.CoordinateSystemFactory, wkt4326);
-        var cs2 = RequireCoordinateSystem(this.CoordinateSystemFactory, wkt2171);
+        CoordinateSystem cs1 = RequireCoordinateSystem(this.CoordinateSystemFactory, wkt4326);
+        CoordinateSystem cs2 = RequireCoordinateSystem(this.CoordinateSystemFactory, wkt2171);
 
         var ctf = new CoordinateTransformationFactory();
-        var ict = ctf.CreateFromCoordinateSystems(cs2, cs1);
+        ICoordinateTransformation ict = ctf.CreateFromCoordinateSystems(cs2, cs1);
 
         double[] transformedCoord4326 = ict.MathTransform.Transform(coord2171);
 
         Assert.Equal(coord4326[0], transformedCoord4326[0], 0.01);
         Assert.Equal(coord4326[1], transformedCoord4326[1], 0.01);
 
-        var ict2 = ctf.CreateFromCoordinateSystems(cs1, cs2);
+        ICoordinateTransformation ict2 = ctf.CreateFromCoordinateSystems(cs1, cs2);
         double[] transformedCoord2171 = ict2.MathTransform.Transform(coord4326);
 
         Assert.Equal(coord2171[0], transformedCoord2171[0], 1);
@@ -839,12 +838,12 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             "AUTHORITY[\"EPSG\",\"9001\"]]," +
             "AUTHORITY[\"EPSG\",\"32661\"]]";
 
-        var cs1 = RequireCoordinateSystem(this.CoordinateSystemFactory, wkt4326);
-        var cs2 = RequireCoordinateSystem(this.CoordinateSystemFactory, wkt32661);
+        CoordinateSystem cs1 = RequireCoordinateSystem(this.CoordinateSystemFactory, wkt4326);
+        CoordinateSystem cs2 = RequireCoordinateSystem(this.CoordinateSystemFactory, wkt32661);
         var ctf = new CoordinateTransformationFactory();
 
-        var ict = ctf.CreateFromCoordinateSystems(cs2, cs1);
-        var ict2 = ctf.CreateFromCoordinateSystems(cs1, cs2);
+        ICoordinateTransformation ict = ctf.CreateFromCoordinateSystems(cs2, cs1);
+        ICoordinateTransformation ict2 = ctf.CreateFromCoordinateSystems(cs1, cs2);
         double[] transformedCoord4326 = ict.MathTransform.Transform(coord32661);
         double[] transformedCoord32661 = ict2.MathTransform.Transform(coord4326);
 
@@ -897,12 +896,12 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             "AUTHORITY[\"EPSG\",\"9001\"]]," +
             "AUTHORITY[\"EPSG\",\"3032\"]]";
 
-        var cs1 = RequireCoordinateSystem(this.CoordinateSystemFactory, wkt4326);
-        var cs2 = RequireCoordinateSystem(this.CoordinateSystemFactory, wkt3032);
+        CoordinateSystem cs1 = RequireCoordinateSystem(this.CoordinateSystemFactory, wkt4326);
+        CoordinateSystem cs2 = RequireCoordinateSystem(this.CoordinateSystemFactory, wkt3032);
         var ctf = new CoordinateTransformationFactory();
 
-        var ict = ctf.CreateFromCoordinateSystems(cs2, cs1);
-        var ict2 = ctf.CreateFromCoordinateSystems(cs1, cs2);
+        ICoordinateTransformation ict = ctf.CreateFromCoordinateSystems(cs2, cs1);
+        ICoordinateTransformation ict2 = ctf.CreateFromCoordinateSystems(cs1, cs2);
         double[] transformedCoord4326 = ict.MathTransform.Transform(coord3032);
         double[] transformedCoord3032 = ict2.MathTransform.Transform(coord4326);
 
@@ -918,9 +917,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     [Xunit.Fact]
     public void TestUnitTransforms()
     {
-        var nadUTM = Assert.IsAssignableFrom<CoordinateSystem>(SRIDReader.GetCSbyID(2868)); // UTM Arizona Central State Plane using Feet as units
-        var wgs84GCS = Assert.IsAssignableFrom<CoordinateSystem>(SRIDReader.GetCSbyID(4326)); // GCS WGS84
-        var trans = new CoordinateTransformationFactory().CreateFromCoordinateSystems(wgs84GCS, nadUTM);
+        CoordinateSystem nadUTM = Assert.IsAssignableFrom<CoordinateSystem>(SRIDReader.GetCSbyID(2868)); // UTM Arizona Central State Plane using Feet as units
+        CoordinateSystem wgs84GCS = Assert.IsAssignableFrom<CoordinateSystem>(SRIDReader.GetCSbyID(4326)); // GCS WGS84
+        ICoordinateTransformation trans = new CoordinateTransformationFactory().CreateFromCoordinateSystems(wgs84GCS, nadUTM);
 
         double[] p0 = new[] { -111.89, 34.165 };
 
@@ -942,15 +941,15 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     [Xunit.Fact(DisplayName = "Accuracy very poor!")]
     public void TestPolyconicTransforms()
     {
-        var wgs84GCS = Assert.IsAssignableFrom<CoordinateSystem>(SRIDReader.GetCSbyID(4326)); // GCS WGS84
+        CoordinateSystem wgs84GCS = Assert.IsAssignableFrom<CoordinateSystem>(SRIDReader.GetCSbyID(4326)); // GCS WGS84
         string wkt =
 
               // "PROJCS[\"SAD69 / Brazil Polyconic (deprecated)\",GEOGCS[\"SAD69\",DATUM[\"South_American_Datum_1969\",SPHEROID[\"GRS 1967\",6378160,298.247167427,AUTHORITY[\"EPSG\",\"7036\"]],TOWGS84[-57,1,-41,0,0,0,0],AUTHORITY[\"EPSG\",\"6291\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9108\"]],AUTHORITY[\"EPSG\",\"4291\"]],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],PROJECTION[\"Polyconic\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",-54],PARAMETER[\"false_easting\",5000000],PARAMETER[\"false_northing\",10000000],AUTHORITY[\"EPSG\",\"29100\"],AXIS[\"X\",EAST],AXIS[\"Y\",NORTH]]";
               // "PROJCS[\"SAD69 / Brazil Polyconic\",GEOGCS[\"SAD69\",DATUM[\"South_American_Datum_1969\",SPHEROID[\"GRS 1967 Modified\",6378160,298.25,AUTHORITY[\"EPSG\",\"7050\"]],TOWGS84[-57,1,-41,0,0,0,0],AUTHORITY[\"EPSG\",\"6618\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4618\"]],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],PROJECTION[\"Polyconic\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",-54],PARAMETER[\"false_easting\",5000000],PARAMETER[\"false_northing\",10000000],AUTHORITY[\"EPSG\",\"29101\"],AXIS[\"X\",EAST],AXIS[\"Y\",NORTH]]";
               "PROJCS[\"SAD69 / Brazil Polyconic\",GEOGCS[\"SAD69\",DATUM[\"South_American_Datum_1969\",SPHEROID[\"GRS 1967 (SAD69)\", 6378160, 298.25, AUTHORITY[\"EPSG\", \"7050\"]],AUTHORITY[\"EPSG\", \"6618\"]], PRIMEM[\"Greenwich\", 0, AUTHORITY[\"EPSG\", \"8901\"]],UNIT[\"degree\", 0.01745329251994328, AUTHORITY[\"EPSG\", \"9122\"]], AUTHORITY[\"EPSG\", \"4618\"]], PROJECTION[\"Polyconic\"],PARAMETER[\"latitude_of_origin\", 0], PARAMETER[\"central_meridian\", -54],PARAMETER[\"false_easting\", 5000000], PARAMETER[\"false_northing\", 10000000],UNIT[\"metre\", 1, AUTHORITY[\"EPSG\", \"9001\"]], AXIS[\"X\", EAST], AXIS[\"Y\", NORTH],AUTHORITY[\"EPSG\", \"29101\"]]";
-        var sad69 = RequireCoordinateSystem(this.CoordinateSystemFactory, wkt);
+        CoordinateSystem sad69 = RequireCoordinateSystem(this.CoordinateSystemFactory, wkt);
 
-        var trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(wgs84GCS, sad69);
+        ICoordinateTransformation trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(wgs84GCS, sad69);
         double[] p0 = new[] { -50.085, -14.32 };
         double[] expected = new[] { 5422386.5795, 8412674.8723 };
 
@@ -969,8 +968,8 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     [Xunit.Fact]
     public void TestCassiniSoldner()
     {
-        var csSource = GeographicCoordinateSystem.WGS84;
-        var csTarget = RequireCoordinateSystem(
+        GeographicCoordinateSystem csSource = GeographicCoordinateSystem.WGS84;
+        CoordinateSystem csTarget = RequireCoordinateSystem(
             this.CoordinateSystemFactory,
             "PROJCS[\"DHDN / Soldner Berlin\",GEOGCS[\"DHDN\",DATUM[\"Deutsches_Hauptdreiecksnetz\",SPHEROID[\"Bessel 1841\",6377397.155,299.1528128,AUTHORITY[\"EPSG\",\"7004\"]],TOWGS84[598.1,73.7,418.2,0.202,0.045,-2.455,6.7],AUTHORITY[\"EPSG\",\"6314\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4314\"]],PROJECTION[\"Cassini_Soldner\"],PARAMETER[\"latitude_of_origin\",52.41864827777778],PARAMETER[\"central_meridian\",13.62720366666667],PARAMETER[\"false_easting\",40000],PARAMETER[\"false_northing\",10000],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"x\",NORTH],AXIS[\"y\",EAST],AUTHORITY[\"EPSG\",\"3068\"]]");
 
@@ -1001,10 +1000,10 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     [Xunit.Fact]
     public void TestHotineObliqueMercator()
     {
-        var csSource = GeographicCoordinateSystem.WGS84;
-        var csTarget = RequireCoordinateSystem(
+        GeographicCoordinateSystem csSource = GeographicCoordinateSystem.WGS84;
+        CoordinateSystem csTarget = RequireCoordinateSystem(
             this.CoordinateSystemFactory,
-           "PROJCS[\"NAD83(NSRS2007) / Alaska zone 1\",GEOGCS[\"NAD83(NSRS2007)\",DATUM[\"NAD83_National_Spatial_Reference_System_2007\",SPHEROID[\"GRS 1980\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"7019\"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY[\"EPSG\",\"6759\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4759\"]],PROJECTION[\"Hotine_Oblique_Mercator\"],PARAMETER[\"latitude_of_center\",57],PARAMETER[\"longitude_of_center\",-133.6666666666667],PARAMETER[\"azimuth\",323.1301023611111],PARAMETER[\"rectified_grid_angle\",323.1301023611111],PARAMETER[\"scale_factor\",0.9999],PARAMETER[\"false_easting\",5000000],PARAMETER[\"false_northing\",-5000000],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"X\",EAST],AXIS[\"Y\",NORTH],AUTHORITY[\"EPSG\",\"3468\"]]");
+            "PROJCS[\"NAD83(NSRS2007) / Alaska zone 1\",GEOGCS[\"NAD83(NSRS2007)\",DATUM[\"NAD83_National_Spatial_Reference_System_2007\",SPHEROID[\"GRS 1980\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"7019\"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY[\"EPSG\",\"6759\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4759\"]],PROJECTION[\"Hotine_Oblique_Mercator\"],PARAMETER[\"latitude_of_center\",57],PARAMETER[\"longitude_of_center\",-133.6666666666667],PARAMETER[\"azimuth\",323.1301023611111],PARAMETER[\"rectified_grid_angle\",323.1301023611111],PARAMETER[\"scale_factor\",0.9999],PARAMETER[\"false_easting\",5000000],PARAMETER[\"false_northing\",-5000000],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"X\",EAST],AXIS[\"Y\",NORTH],AUTHORITY[\"EPSG\",\"3468\"]]");
 
         // 61.216667 deg, -149.883333 deg
         // "POINT(4136805.82642057 -4424019.78560519)"
@@ -1024,13 +1023,13 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     [Xunit.Fact]
     public void TestTransformListOnConcatenatedDoTransform()
     {
-        var utm35ETRS =
+        CoordinateSystem utm35ETRS =
           RequireCoordinateSystem(
               this.CoordinateSystemFactory,
               "PROJCS[\"ETRS89 / ETRS-TM35\",GEOGCS[\"ETRS89\",DATUM[\"D_ETRS_1989\",SPHEROID[\"GRS_1980\",6378137,298.257222101]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",27],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"Meter\",1]]");
 
         var utm33 = ProjectedCoordinateSystem.WGS84_UTM(33, true);
-        var trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(utm35ETRS, utm33);
+        ICoordinateTransformation trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(utm35ETRS, utm33);
 
         var coords = new XY[]
         {
@@ -1050,13 +1049,13 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     [Xunit.Fact]
     public void TestTransformListOnConcatenatedDoTransformDoubleArr()
     {
-        var utm35ETRS =
+        CoordinateSystem utm35ETRS =
           RequireCoordinateSystem(
               this.CoordinateSystemFactory,
               "PROJCS[\"ETRS89 / ETRS-TM35\",GEOGCS[\"ETRS89\",DATUM[\"D_ETRS_1989\",SPHEROID[\"GRS_1980\",6378137,298.257222101]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",27],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"Meter\",1]]");
 
         var utm33 = ProjectedCoordinateSystem.WGS84_UTM(33, true);
-        var trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(utm35ETRS, utm33);
+        ICoordinateTransformation trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(utm35ETRS, utm33);
 
         var coords = new List<double[]>
         {
@@ -1065,7 +1064,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             TransformListSamplePoint3,
         };
 
-        var transformedCoords = trans.MathTransform.TransformList(coords);
+        IList<double[]> transformedCoords = trans.MathTransform.TransformList(coords);
         Assert.NotEqual(290586.087, transformedCoords[0][0]);
         Assert.NotEqual(6714000, transformedCoords[0][1]);
     }
@@ -1143,7 +1142,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.Equal(3456926.640, outPt[0], 0.00000001);
         Assert.Equal(5481071.278, outPt[1], 0.00000001);
 
-        var invMt = mt.Inverse();
+        MathTransform invMt = mt.Inverse();
 
         double[] inPt = invMt.Transform(AffineTargetPoint);
 
@@ -1194,21 +1193,21 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
 
         // string gk_wkt = "PROJCS[\"DHDN / Gauss-Kruger zone 3\",GEOGCS[\"DHDN\",DATUM[\"Deutsches_Hauptdreiecksnetz\",SPHEROID[\"Bessel 1841\",6377397.155,299.1528128,AUTHORITY[\"EPSG\",\"7004\"]],AUTHORITY[\"EPSG\",\"6314\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4314\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",9],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",3500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AUTHORITY[\"EPSG\",\"31467\"]]";
         var fac = new CoordinateSystemFactory();
-        var fcs = RequireCoordinateSystem<FittedCoordinateSystem>(fac, ft_wkt);
+        FittedCoordinateSystem fcs = RequireCoordinateSystem<FittedCoordinateSystem>(fac, ft_wkt);
 
         // ICoordinateSystem gkcs = fac.CreateFromWkt (gk_wkt);
 
         // Transformation example (MNAU -> GK)
         // Start point (MNAU) X=2040,000m Y=1590,000m]
         // Target point (GK): X=3456926,640m Y=5481071,278m;
-        var trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(fcs, fcs.BaseCoordinateSystem);
+        ICoordinateTransformation trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(fcs, fcs.BaseCoordinateSystem);
 
         var coords = new List<double[]>
         {
             AffineTestPoint,
         };
 
-        var transformedCoords = trans.MathTransform.TransformList(coords);
+        IList<double[]> transformedCoords = trans.MathTransform.TransformList(coords);
         Assert.Equal(3456926.640, transformedCoords[0][0], 0.00000001);
         Assert.Equal(5481071.278, transformedCoords[0][1], 0.00000001);
     }
@@ -1226,10 +1225,10 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         double[] sourceCoord = new double[] { 160443.329034, 23582.55586 };
         double[] expectedTargetCoord = new double[] { 9.5553588867188, 47.145080566406 };
 
-        var cs1 = Assert.IsAssignableFrom<CoordinateSystem>(CoordinateSystemWktReader.Parse(wkt21780));
-        var cs2 = Assert.IsAssignableFrom<CoordinateSystem>(CoordinateSystemWktReader.Parse(wkt4326));
+        CoordinateSystem cs1 = Assert.IsAssignableFrom<CoordinateSystem>(CoordinateSystemWktReader.Parse(wkt21780));
+        CoordinateSystem cs2 = Assert.IsAssignableFrom<CoordinateSystem>(CoordinateSystemWktReader.Parse(wkt4326));
         var ctf = new CoordinateTransformationFactory();
-        var ict = ctf.CreateFromCoordinateSystems(cs1, cs2);
+        ICoordinateTransformation ict = ctf.CreateFromCoordinateSystems(cs1, cs2);
 
         double[] transformedCoord = ict.MathTransform.Transform(sourceCoord);
 
@@ -1238,7 +1237,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.Equal(expectedTargetCoord[1], transformedCoord[1], 0.001);
 
         // and back
-        var ictb = ctf.CreateFromCoordinateSystems(cs2, cs1);
+        ICoordinateTransformation ictb = ctf.CreateFromCoordinateSystems(cs2, cs1);
         transformedCoord = ictb.MathTransform.Transform(transformedCoord);
 
         Assert.True(transformedCoord.Length >= 2);
@@ -1254,9 +1253,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     [Xunit.Fact]
     public void TestEPSG2056HotineObliqueMercatorAzimuthCenterSwitzerland()
     {
-        var csSrc = GeographicCoordinateSystem.WGS84;
-        var csTgt = Assert.IsAssignableFrom<CoordinateSystem>(SRIDReader.GetCSbyID(2056)); // CH1903+ / LV95
-        var transformer = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csSrc, csTgt);
+        GeographicCoordinateSystem csSrc = GeographicCoordinateSystem.WGS84;
+        CoordinateSystem csTgt = Assert.IsAssignableFrom<CoordinateSystem>(SRIDReader.GetCSbyID(2056)); // CH1903+ / LV95
+        ICoordinateTransformation transformer = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csSrc, csTgt);
         double x = 9.619803;
         double y = 47.408735;
 
@@ -1274,7 +1273,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     public void TestEllipsoidalOrthographicTransform()
     {
         // Check equatorial projection
-        var csWgs84 = GeographicCoordinateSystem.WGS84;
+        GeographicCoordinateSystem csWgs84 = GeographicCoordinateSystem.WGS84;
         var parameters = new List<ProjectionParameter>(5)
                              {
                                  new ProjectionParameter("central_meridian", 0),
@@ -1283,9 +1282,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
                                  new ProjectionParameter("false_easting", 0),
                                  new ProjectionParameter("false_northing", 0),
                              };
-        var projection = this.CoordinateSystemFactory.CreateProjection("Orthographic", "Orthographic", parameters);
-        var orthographicSystem = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("Orthographic centered", csWgs84, projection, LinearUnit.Metre, new AxisInfo("X", AxisOrientationEnum.East), new AxisInfo("Y", AxisOrientationEnum.North));
-        var trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csWgs84, orthographicSystem);
+        IProjection projection = this.CoordinateSystemFactory.CreateProjection("Orthographic", "Orthographic", parameters);
+        ProjectedCoordinateSystem orthographicSystem = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("Orthographic centered", csWgs84, projection, LinearUnit.Metre, new AxisInfo("X", AxisOrientationEnum.East), new AxisInfo("Y", AxisOrientationEnum.North));
+        ICoordinateTransformation trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csWgs84, orthographicSystem);
 
         // Check origin remains in the same place
         double[] origin = new[] { 0.0, 0.0 };
@@ -1311,9 +1310,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
                                  new ProjectionParameter("false_easting", 0),
                                  new ProjectionParameter("false_northing", 0),
                              };
-        var projection2 = this.CoordinateSystemFactory.CreateProjection("Orthographic", "Orthographic", parameters2);
-        var orthoSystem2 = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("Orthographic", csWgs84, projection2, LinearUnit.Metre, new AxisInfo("X", AxisOrientationEnum.East), new AxisInfo("Y", AxisOrientationEnum.North));
-        var trans2 = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csWgs84, orthoSystem2);
+        IProjection projection2 = this.CoordinateSystemFactory.CreateProjection("Orthographic", "Orthographic", parameters2);
+        ProjectedCoordinateSystem orthoSystem2 = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("Orthographic", csWgs84, projection2, LinearUnit.Metre, new AxisInfo("X", AxisOrientationEnum.East), new AxisInfo("Y", AxisOrientationEnum.North));
+        ICoordinateTransformation trans2 = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csWgs84, orthoSystem2);
         double[] test2 = new[] { 2.1295499950867, 53.809394412498 };
         double[] expected2 = new[] { -189011.711, -128640.567 };
         double[] transTest2 = trans2.MathTransform.Transform(test2);
@@ -1336,17 +1335,17 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     public static void TestMercatorAuxilarySphereTransformation()
     {
         string sourceWkt = "PROJCS[\"WGS_1984_Web_Mercator_Auxiliary_Sphere\",GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Mercator_Auxiliary_Sphere\"],PARAMETER[\"False_Easting\",0.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",0.0],PARAMETER[\"Standard_Parallel_1\",0.0],PARAMETER[\"Auxiliary_Sphere_Type\",0.0],UNIT[\"Meter\",1.0]]";
-        var sourceCoordinateSystem = GetCoordinateSystem(sourceWkt);
+        CoordinateSystem sourceCoordinateSystem = GetCoordinateSystem(sourceWkt);
         Assert.NotNull(sourceCoordinateSystem);
 
         string targetWkt = "PROJCS[\"TX83-NCF\",GEOGCS[\"LL83\",DATUM[\"NAD83\",SPHEROID[\"GRS1980\",6378137.000,298.25722210]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Lambert_Conformal_Conic_2SP\"],PARAMETER[\"false_easting\",1968500.000],PARAMETER[\"false_northing\",6561666.667],PARAMETER[\"central_meridian\",-98.50000000000000],PARAMETER[\"latitude_of_origin\",31.66666666666666],PARAMETER[\"standard_parallel_1\",33.96666666666667],PARAMETER[\"standard_parallel_2\",32.13333333333333],UNIT[\"Foot_US\",0.30480060960122]]";
-        var targetCoordinateSystem = GetCoordinateSystem(targetWkt);
+        CoordinateSystem targetCoordinateSystem = GetCoordinateSystem(targetWkt);
         Assert.NotNull(targetCoordinateSystem);
 
-        var transformation = GetTransformation(sourceCoordinateSystem, targetCoordinateSystem);
+        ICoordinateTransformation transformation = GetTransformation(sourceCoordinateSystem, targetCoordinateSystem);
         Assert.NotNull(transformation);
 
-        var tranformedPoint = transformation.MathTransform.Transform(-10775704.511, 3865240.329);
+        (double X, double Y) tranformedPoint = transformation.MathTransform.Transform(-10775704.511, 3865240.329);
 
         Assert.Equal(2491034.95, tranformedPoint.X, 0.1);
         Assert.Equal(6968468.98, tranformedPoint.Y, 0.1);
@@ -1361,13 +1360,13 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         string sourceWkt = "GEOGCS[\"GCS_WGS_1984\", DATUM[\"D_WGS_1984\", SPHEROID[\"WGS_1984\",6378137.0,298.257223563]], PRIMEM[\"Greenwich\",0.0], UNIT[\"Degree\",0.0174532925199433]]";
         string targetWkt = "PROJCS[\"WGS84.PseudoMercator\",GEOGCS[\"LL84\",DATUM[\"WGS84\",SPHEROID[\"WGS84\",6378137.000,298.25722356]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Popular Visualisation Pseudo Mercator\"],PARAMETER[\"false_easting\",0.000],PARAMETER[\"false_northing\",0.000],PARAMETER[\"central_meridian\",0.00000000000000],UNIT[\"Meter\",1.00000000000000]]";
 
-        var sourceCoordinateSystem = GetCoordinateSystem(sourceWkt);
+        CoordinateSystem sourceCoordinateSystem = GetCoordinateSystem(sourceWkt);
         Assert.NotNull(sourceCoordinateSystem);
 
-        var targetCoordinateSystem = GetCoordinateSystem(targetWkt);
+        CoordinateSystem targetCoordinateSystem = GetCoordinateSystem(targetWkt);
         Assert.NotNull(targetCoordinateSystem);
 
-        var transformation = GetTransformation(sourceCoordinateSystem, targetCoordinateSystem);
+        ICoordinateTransformation transformation = GetTransformation(sourceCoordinateSystem, targetCoordinateSystem);
         Assert.NotNull(transformation);
     }
 
@@ -1380,13 +1379,13 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         string sourceWkt = "PROJCS[\"WORLD-LM-TAN\",GEOGCS[\"LL84\",DATUM[\"WGS84\",SPHEROID[\"WGS84\",6378137.000,298.25722356]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Lambert Tangential Conformal Conic Projection\"],PARAMETER[\"false_easting\",0.000],PARAMETER[\"false_northing\",0.000],PARAMETER[\"scale_factor\",1.000000000000],PARAMETER[\"central_meridian\",0.00000000000000],PARAMETER[\"latitude_of_origin\",1.00000000000000],UNIT[\"Meter\",1.00000000000000]]";
         string targetWkt = "PROJCS[\"WGS84.PseudoMercator\",GEOGCS[\"LL84\",DATUM[\"WGS84\",SPHEROID[\"WGS84\",6378137.000,298.25722356]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Popular Visualisation Pseudo Mercator\"],PARAMETER[\"false_easting\",0.000],PARAMETER[\"false_northing\",0.000],PARAMETER[\"central_meridian\",0.00000000000000],UNIT[\"Meter\",1.00000000000000]]";
 
-        var sourceCoordinateSystem = GetCoordinateSystem(sourceWkt);
+        CoordinateSystem sourceCoordinateSystem = GetCoordinateSystem(sourceWkt);
         Assert.NotNull(sourceCoordinateSystem);
 
-        var targetCoordinateSystem = GetCoordinateSystem(targetWkt);
+        CoordinateSystem targetCoordinateSystem = GetCoordinateSystem(targetWkt);
         Assert.NotNull(targetCoordinateSystem);
 
-        var transformation = GetTransformation(sourceCoordinateSystem, targetCoordinateSystem);
+        ICoordinateTransformation transformation = GetTransformation(sourceCoordinateSystem, targetCoordinateSystem);
         Assert.NotNull(transformation);
 
         // Test the transformation with a known points. Tested with AutoCAD map 3D

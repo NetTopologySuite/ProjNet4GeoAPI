@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using System;
 using System.Globalization;
@@ -30,8 +30,8 @@ public class AitoffWinkelProjectionTests
     [InlineData("winkel_tripel")]
     public void SupportsAliasesFromWkt(string projectionName)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, null));
-        var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, null));
+        ICoordinateTransformation transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] result = transform.MathTransform.Transform(CreatePoint(2d, 1d));
 
         Assert.NotNull(projected);
@@ -54,10 +54,10 @@ public class AitoffWinkelProjectionTests
     [InlineData("wintri", 0d, -2d, 1d, 1e-8)]
     public void SupportsRoundtrip(string projectionName, double? latitude1, double longitude, double latitude, double tolerance)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, latitude1));
-        var geographic = projected.GeographicCoordinateSystem;
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(geographic, projected);
-        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, geographic);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, latitude1));
+        GeographicCoordinateSystem geographic = projected.GeographicCoordinateSystem;
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(geographic, projected);
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, geographic);
 
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
         double[] roundtrip = inverse.MathTransform.Transform(projectedPoint);
@@ -80,8 +80,8 @@ public class AitoffWinkelProjectionTests
     [InlineData(179.999d, -89.999d, 10052657.852d, -10053040.641d)]
     public void WinkelIiMatchesProjBuiltinsForwardEdgeVectors(double longitude, double latitude, double expectedX, double expectedY)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt("wink2", 0.5d));
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt("wink2", 0.5d));
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
 
         Assert.InRange(Math.Abs(projectedPoint[0] - expectedX), 0d, 1e-3);
@@ -111,8 +111,8 @@ public class AitoffWinkelProjectionTests
         double expectedX,
         double expectedY)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, latitude1));
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, latitude1));
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
 
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
 
@@ -141,8 +141,8 @@ public class AitoffWinkelProjectionTests
         double expectedLongitude,
         double expectedLatitude)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, latitude1));
-        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, latitude1));
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
 
         double[] geographicPoint = inverse.MathTransform.Transform(CreatePoint(x, y));
 
@@ -160,8 +160,8 @@ public class AitoffWinkelProjectionTests
     [InlineData("winkel_ii")]
     public void SupportsWinkelIiAliasesFromWkt(string projectionName)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, 0.5d));
-        var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, 0.5d));
+        ICoordinateTransformation transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] result = transform.MathTransform.Transform(CreatePoint(2d, 1d));
 
         Assert.NotNull(projected);

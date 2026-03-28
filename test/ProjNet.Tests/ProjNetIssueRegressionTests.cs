@@ -2,11 +2,12 @@
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using System;
 using System.Collections.Generic;
 using ProjNet.CoordinateSystems;
+using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
@@ -14,6 +15,17 @@ using Xunit;
 /// </summary>
 public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
 {
+    private const string Discussion361248Wgs84Wkt = @"GEOGCS[""WGS 84"",
+    DATUM[""WGS_1984"",
+        SPHEROID[""WGS 84"",6378137,298.257223563,
+            AUTHORITY[""EPSG"",""7030""]],
+        AUTHORITY[""EPSG"",""6326""]],
+    PRIMEM[""Greenwich"",0,
+        AUTHORITY[""EPSG"",""8901""]],
+    UNIT[""degree"",0.01745329251994328,
+        AUTHORITY[""EPSG"",""9122""]],
+    AUTHORITY[""EPSG"",""4326""]]";
+
     private static readonly double[] TestDiscussion3612481Expected = { 2349315.05731837, 6524249.91789138 };
     private static readonly double[] TestDiscussion3612481Input = { 136d, -30d };
     private static readonly double[] TestDiscussion3612482Expected = { -77.191769, 38.101147 };
@@ -34,12 +46,13 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     public void TestIssue23773()
     {
         var csUtm18N = ProjectedCoordinateSystem.WGS84_UTM(18, true);
-        var csUtm18NWkt = CoordinateSystemTestHelpers.RequireCoordinateSystem(this.CoordinateSystemFactory, 
+        CoordinateSystem csUtm18NWkt = CoordinateSystemTestHelpers.RequireCoordinateSystem(
+            this.CoordinateSystemFactory,
             "PROJCS[\"WGS 84 / UTM zone 18N\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",-75],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],AUTHORITY[\"EPSG\",\"32618\"]]");
-        var csWgs84 = GeographicCoordinateSystem.WGS84;
+        GeographicCoordinateSystem csWgs84 = GeographicCoordinateSystem.WGS84;
 
-        var ct = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csUtm18N, csWgs84);
-        var ct2 = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csUtm18NWkt, csWgs84);
+        ICoordinateTransformation ct = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csUtm18N, csWgs84);
+        ICoordinateTransformation ct2 = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csUtm18NWkt, csWgs84);
 
         double[] putm = new[] { 307821.867d, 4219306.387d };
         double[] pgeo = ct.MathTransform.Transform(putm);
@@ -60,12 +73,14 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     [Xunit.Fact(DisplayName = "Proj.net reprojection problem, Discussion http://projnet.codeplex.com/discussions/351733")]
     public void TestDiscussion351733()
     {
-        var csSource = CoordinateSystemTestHelpers.RequireCoordinateSystem(this.CoordinateSystemFactory, 
+        CoordinateSystem csSource = CoordinateSystemTestHelpers.RequireCoordinateSystem(
+            this.CoordinateSystemFactory,
             "PROJCS[\"Pulkovo 1942 / Gauss-Kruger zone 14\",GEOGCS[\"Pulkovo 1942\",DATUM[\"Pulkovo_1942\",SPHEROID[\"Krassowsky 1940\",6378245,298.3,AUTHORITY[\"EPSG\",\"7024\"]],TOWGS84[23.92,-141.27,-80.9,-0,0.35,0.82,-0.12],AUTHORITY[\"EPSG\",\"6284\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4284\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",81],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",14500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"X\",NORTH],AXIS[\"Y\",EAST],AUTHORITY[\"EPSG\",\"28414\"]]\"");
-        var csTarget = CoordinateSystemTestHelpers.RequireCoordinateSystem(this.CoordinateSystemFactory, 
+        CoordinateSystem csTarget = CoordinateSystemTestHelpers.RequireCoordinateSystem(
+            this.CoordinateSystemFactory,
             "GEOGCS[\"Pulkovo 1942\",DATUM[\"Pulkovo_1942\",SPHEROID[\"Krassowsky 1940\",6378245,298.3,AUTHORITY[\"EPSG\",\"7024\"]],TOWGS84[23.92,-141.27,-80.9,-0,0.35,0.82,-0.12],AUTHORITY[\"EPSG\",\"6284\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4284\"]]\"");
 
-        var ct = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csSource, csTarget);
+        ICoordinateTransformation ct = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csSource, csTarget);
 
         double[] pp = new[] { 14181052.913, 6435927.692 };
         double[] pg = ct.MathTransform.Transform(pp);
@@ -87,8 +102,8 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     [Xunit.Fact(DisplayName = "Problem converting coordinates, Discussion http://projnet.codeplex.com/discussions/352813")]
     public void TestDiscussion352813()
     {
-        var csSource = GeographicCoordinateSystem.WGS84;
-        var csTarget = ProjectedCoordinateSystem.WebMercator;
+        GeographicCoordinateSystem csSource = GeographicCoordinateSystem.WGS84;
+        ProjectedCoordinateSystem csTarget = ProjectedCoordinateSystem.WebMercator;
 
         // CoordinateSystemFactory.CreateFromWkt(
         // "PROJCS[\"Popular Visualisation CRS / Mercator\"," +
@@ -116,7 +131,7 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
         // "AUTHORITY[\"EPSG\", \"3857\"]]");
 
         // "PROJCS["WGS 84 / Pseudo-Mercator",GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]],UNIT["metre",1,AUTHORITY["EPSG","9001"]],PROJECTION["Mercator_1SP"],PARAMETER["central_meridian",0],PARAMETER["scale_factor",1],PARAMETER["false_easting",0],PARAMETER["false_northing",0],EXTENSION["PROJ4","+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs"],AUTHORITY["EPSG","3857"],AXIS["X",EAST],AXIS["Y",NORTH]]"
-        var ct = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csSource, csTarget);
+        ICoordinateTransformation ct = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csSource, csTarget);
 
         // var ct2 = CoordinateTransformationFactory.CreateFromCoordinateSystems(csSource, csTarget2);
         this.Verbose = true;
@@ -145,19 +160,12 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     [Xunit.Fact(DisplayName = "Concerned about the accuracy, Discussion http://projnet.codeplex.com/discussions/361248")]
     public void TestDiscussion3612481()
     {
-        var csSource = CoordinateSystemTestHelpers.RequireCoordinateSystem(this.CoordinateSystemFactory, 
-@"GEOGCS[""WGS 84"",
-    DATUM[""WGS_1984"",
-        SPHEROID[""WGS 84"",6378137,298.257223563,
-            AUTHORITY[""EPSG"",""7030""]],
-        AUTHORITY[""EPSG"",""6326""]],
-    PRIMEM[""Greenwich"",0,
-        AUTHORITY[""EPSG"",""8901""]],
-    UNIT[""degree"",0.01745329251994328,
-        AUTHORITY[""EPSG"",""9122""]],
-    AUTHORITY[""EPSG"",""4326""]]");
+        CoordinateSystem csSource = CoordinateSystemTestHelpers.RequireCoordinateSystem(
+            this.CoordinateSystemFactory,
+            Discussion361248Wgs84Wkt);
 
-        var csTarget = CoordinateSystemTestHelpers.RequireCoordinateSystem(this.CoordinateSystemFactory, 
+        CoordinateSystem csTarget = CoordinateSystemTestHelpers.RequireCoordinateSystem(
+            this.CoordinateSystemFactory,
             "PROJCS[\"GDA94 / MGA zone 50\",GEOGCS[\"GDA94\",DATUM[\"Geocentric_Datum_of_Australia_1994\",SPHEROID[\"GRS 1980\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"7019\"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY[\"EPSG\",\"6283\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4283\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",117],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",10000000],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],AUTHORITY[\"EPSG\",\"28350\"]]");
 
         // Chose PostGis values
@@ -172,17 +180,9 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     {
         var csSource = ProjectedCoordinateSystem.WGS84_UTM(18, true);
 
-        var csTarget = CoordinateSystemTestHelpers.RequireCoordinateSystem(this.CoordinateSystemFactory, 
-@"GEOGCS[""WGS 84"",
-    DATUM[""WGS_1984"",
-        SPHEROID[""WGS 84"",6378137,298.257223563,
-            AUTHORITY[""EPSG"",""7030""]],
-        AUTHORITY[""EPSG"",""6326""]],
-    PRIMEM[""Greenwich"",0,
-        AUTHORITY[""EPSG"",""8901""]],
-    UNIT[""degree"",0.01745329251994328,
-        AUTHORITY[""EPSG"",""9122""]],
-    AUTHORITY[""EPSG"",""4326""]]");
+        CoordinateSystem csTarget = CoordinateSystemTestHelpers.RequireCoordinateSystem(
+            this.CoordinateSystemFactory,
+            Discussion361248Wgs84Wkt);
 
         this.Test("WGS84_UTM(18,N) -> WGS84", csSource, csTarget, TestDiscussion3612482Input, TestDiscussion3612482Expected, 1e-6);
     }
@@ -204,11 +204,11 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
         parameters.Add(new ProjectionParameter("false_northing", -4354009.816));
 
         var factory = new CoordinateSystemFactory();
-        var projection = factory.CreateProjection("Test Oblique", "oblique_mercator", parameters);
+        IProjection projection = factory.CreateProjection("Test Oblique", "oblique_mercator", parameters);
         Assert.NotNull(projection);
 
-        var wgs84 = GeographicCoordinateSystem.WGS84;
-        var dummy = factory.CreateProjectedCoordinateSystem(
+        GeographicCoordinateSystem wgs84 = GeographicCoordinateSystem.WGS84;
+        ProjectedCoordinateSystem dummy = factory.CreateProjectedCoordinateSystem(
             "dummy pcs",
             wgs84,
             projection,
@@ -217,11 +217,11 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
             new AxisInfo("Y", AxisOrientationEnum.North));
         Assert.NotNull(dummy);
 
-        var transform = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(wgs84, dummy);
+        ICoordinateTransformation transform = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(wgs84, dummy);
         Assert.NotNull(transform);
 
-        var mathTransform = transform.MathTransform;
-        var inverse = mathTransform.Inverse();
+        MathTransform mathTransform = transform.MathTransform;
+        MathTransform inverse = mathTransform.Inverse();
         Assert.NotNull(inverse);
     }
 
@@ -263,10 +263,10 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     public void TestGitHubIssue53()
     {
         // arrange
-        var csWgs84 = GeographicCoordinateSystem.WGS84;
+        GeographicCoordinateSystem csWgs84 = GeographicCoordinateSystem.WGS84;
         var csUtm35N = ProjectedCoordinateSystem.WGS84_UTM(35, true);
-        var csTrans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csWgs84, csUtm35N);
-        var csTransBack = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csUtm35N, csWgs84);
+        ICoordinateTransformation csTrans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csWgs84, csUtm35N);
+        ICoordinateTransformation csTransBack = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csUtm35N, csWgs84);
 
         // act
         double[] point = { 42.5, 24.5 };
@@ -285,7 +285,7 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     [Xunit.Trait("Category", "Issue")]
     public void TestGitHubIssue98()
     {
-        var cs = this.CoordinateSystemFactory.CreateFromWkt(
+        CoordinateSystem? cs = this.CoordinateSystemFactory.CreateFromWkt(
                 @"COMPD_CS[
 	                    ""SWEREF99 18 00 + RH2000 height"",
 	                    PROJCS[
@@ -358,9 +358,8 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     public void TestAuthorityNotLoadedIssue()
     {
         string wkt = "PROJCS[\"WGS 84 / Pseudo-Mercator\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"Mercator_1SP\"],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"X\",EAST],AXIS[\"Y\",NORTH],EXTENSION[\"PROJ4\",\"+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs\"],AUTHORITY[\"EPSG\",\"3857\"]]";
-        var coordinateSystem = this.CoordinateSystemFactory.CreateFromWkt(wkt);
+        CoordinateSystem? coordinateSystem = this.CoordinateSystemFactory.CreateFromWkt(wkt);
         Assert.NotNull(coordinateSystem);
         Assert.Equal(3857, coordinateSystem.AuthorityCode);
     }
 }
-

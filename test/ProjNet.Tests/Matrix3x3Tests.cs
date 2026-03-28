@@ -5,6 +5,7 @@
 namespace ProjNet.Tests;
 
 using ProjNet.CoordinateSystems.Transformations;
+using ProjNet.CoordinateSystems.Transformations.Numerics;
 using Xunit;
 
 /// <summary>

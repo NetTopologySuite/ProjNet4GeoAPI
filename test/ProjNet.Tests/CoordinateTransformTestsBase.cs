@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using System;
 using System.Globalization;
@@ -118,7 +118,7 @@ public class CoordinateTransformTestsBase
         double tolerance,
         double reverseTolerance = double.NaN)
     {
-        var ct = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
+        ICoordinateTransformation ct = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
 
         double[] forwardResult = ct.MathTransform.Transform(testPoint);
         double[] reverseResult = double.IsNaN(reverseTolerance)

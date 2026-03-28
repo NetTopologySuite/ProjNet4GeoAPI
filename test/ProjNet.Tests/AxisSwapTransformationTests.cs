@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using System.Collections.Generic;
 using ProjNet.CoordinateSystems;
@@ -28,7 +28,7 @@ public class AxisSwapTransformationTests
     [Fact]
     public void GeographicAxisSwapLonLatToLatLonSwapsCoordinates()
     {
-        var source = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+        GeographicCoordinateSystem source = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "Source EN",
             AngularUnit.Degrees,
             HorizontalDatum.WGS84,
@@ -36,7 +36,7 @@ public class AxisSwapTransformationTests
             new AxisInfo("Lon", AxisOrientationEnum.East),
             new AxisInfo("Lat", AxisOrientationEnum.North));
 
-        var target = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+        GeographicCoordinateSystem target = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "Target NE",
             AngularUnit.Degrees,
             HorizontalDatum.WGS84,
@@ -44,7 +44,7 @@ public class AxisSwapTransformationTests
             new AxisInfo("Lat", AxisOrientationEnum.North),
             new AxisInfo("Lon", AxisOrientationEnum.East));
 
-        var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target).MathTransform;
+        MathTransform transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target).MathTransform;
         double[] transformed = transform.Transform(GeographicAxisInput);
 
         Assert.Equal(55d, transformed[0], 12);
@@ -57,7 +57,7 @@ public class AxisSwapTransformationTests
     [Fact]
     public void GeographicAxisSwapEastNorthToWestSouthNegatesAxes()
     {
-        var source = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+        GeographicCoordinateSystem source = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "Source EN",
             AngularUnit.Degrees,
             HorizontalDatum.WGS84,
@@ -65,7 +65,7 @@ public class AxisSwapTransformationTests
             new AxisInfo("Lon", AxisOrientationEnum.East),
             new AxisInfo("Lat", AxisOrientationEnum.North));
 
-        var target = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+        GeographicCoordinateSystem target = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "Target WS",
             AngularUnit.Degrees,
             HorizontalDatum.WGS84,
@@ -73,7 +73,7 @@ public class AxisSwapTransformationTests
             new AxisInfo("Lon", AxisOrientationEnum.West),
             new AxisInfo("Lat", AxisOrientationEnum.South));
 
-        var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target).MathTransform;
+        MathTransform transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target).MathTransform;
         double[] transformed = transform.Transform(GeographicAxisInput);
 
         Assert.Equal(-12d, transformed[0], 12);
@@ -95,9 +95,9 @@ public class AxisSwapTransformationTests
             new ProjectionParameter("false_northing", 0d),
         };
 
-        var projection = CoordinateSystemFactory.CreateProjection("Mercator", "mercator", projectionParameters);
-        var geographic = GeographicCoordinateSystem.WGS84;
-        var source = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
+        IProjection projection = CoordinateSystemFactory.CreateProjection("Mercator", "mercator", projectionParameters);
+        GeographicCoordinateSystem geographic = GeographicCoordinateSystem.WGS84;
+        ProjectedCoordinateSystem source = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
             "Source EN",
             geographic,
             projection,
@@ -105,7 +105,7 @@ public class AxisSwapTransformationTests
             new AxisInfo("East", AxisOrientationEnum.East),
             new AxisInfo("North", AxisOrientationEnum.North));
 
-        var target = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
+        ProjectedCoordinateSystem target = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
             "Target NE",
             geographic,
             projection,
@@ -113,7 +113,7 @@ public class AxisSwapTransformationTests
             new AxisInfo("North", AxisOrientationEnum.North),
             new AxisInfo("East", AxisOrientationEnum.East));
 
-        var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target).MathTransform;
+        MathTransform transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target).MathTransform;
         double[] transformed = transform.Transform(ProjectedAxisInput);
 
         Assert.Equal(6100000d, transformed[0], 8);
@@ -126,7 +126,7 @@ public class AxisSwapTransformationTests
     [Fact]
     public void GeographicUnitConversionDegreesToRadiansConvertsCoordinates()
     {
-        var source = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+        GeographicCoordinateSystem source = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "Source Degrees",
             AngularUnit.Degrees,
             HorizontalDatum.WGS84,
@@ -134,7 +134,7 @@ public class AxisSwapTransformationTests
             new AxisInfo("Lon", AxisOrientationEnum.East),
             new AxisInfo("Lat", AxisOrientationEnum.North));
 
-        var target = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+        GeographicCoordinateSystem target = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "Target Radians",
             AngularUnit.Radian,
             HorizontalDatum.WGS84,
@@ -142,7 +142,7 @@ public class AxisSwapTransformationTests
             new AxisInfo("Lon", AxisOrientationEnum.East),
             new AxisInfo("Lat", AxisOrientationEnum.North));
 
-        var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target).MathTransform;
+        MathTransform transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target).MathTransform;
         double[] transformed = transform.Transform(RadianConversionInput);
 
         Assert.Equal(System.Math.PI, transformed[0], 12);
@@ -155,10 +155,10 @@ public class AxisSwapTransformationTests
     [Fact]
     public void ProjectedUnitConversionMetreToFootConvertsProjectedCoordinates()
     {
-        var projection = CreateMercatorProjection();
-        var geographic = GeographicCoordinateSystem.WGS84;
+        IProjection projection = CreateMercatorProjection();
+        GeographicCoordinateSystem geographic = GeographicCoordinateSystem.WGS84;
 
-        var source = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
+        ProjectedCoordinateSystem source = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
             "Source Metre",
             geographic,
             projection,
@@ -166,7 +166,7 @@ public class AxisSwapTransformationTests
             new AxisInfo("East", AxisOrientationEnum.East),
             new AxisInfo("North", AxisOrientationEnum.North));
 
-        var target = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
+        ProjectedCoordinateSystem target = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
             "Target Foot",
             geographic,
             projection,
@@ -174,7 +174,7 @@ public class AxisSwapTransformationTests
             new AxisInfo("East", AxisOrientationEnum.East),
             new AxisInfo("North", AxisOrientationEnum.North));
 
-        var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target).MathTransform;
+        MathTransform transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target).MathTransform;
         double[] transformed = transform.Transform(UnitConversionInput);
 
         Assert.Equal(328.0839895013123d, transformed[0], 9);
@@ -187,10 +187,10 @@ public class AxisSwapTransformationTests
     [Fact]
     public void ProjectedUnitAndAxisConversionMetreEastNorthToFootNorthEastConvertsAndSwaps()
     {
-        var projection = CreateMercatorProjection();
-        var geographic = GeographicCoordinateSystem.WGS84;
+        IProjection projection = CreateMercatorProjection();
+        GeographicCoordinateSystem geographic = GeographicCoordinateSystem.WGS84;
 
-        var source = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
+        ProjectedCoordinateSystem source = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
             "Source Metre EN",
             geographic,
             projection,
@@ -198,7 +198,7 @@ public class AxisSwapTransformationTests
             new AxisInfo("East", AxisOrientationEnum.East),
             new AxisInfo("North", AxisOrientationEnum.North));
 
-        var target = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
+        ProjectedCoordinateSystem target = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
             "Target Foot NE",
             geographic,
             projection,
@@ -206,7 +206,7 @@ public class AxisSwapTransformationTests
             new AxisInfo("North", AxisOrientationEnum.North),
             new AxisInfo("East", AxisOrientationEnum.East));
 
-        var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target).MathTransform;
+        MathTransform transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target).MathTransform;
         double[] transformed = transform.Transform(UnitConversionInput);
 
         Assert.Equal(656.1679790026246d, transformed[0], 9);

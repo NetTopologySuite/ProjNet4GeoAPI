@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using System;
 using System.Collections.Generic;
@@ -329,7 +329,7 @@ public class GieBuiltinsTheoryTests
     {
         foreach (string fileName in RemainingFixtureFiles)
         {
-            foreach (var item in GetCasesFromFixture(fileName, 300))
+            foreach (object[] item in GetCasesFromFixture(fileName, 300))
             {
                 yield return item;
             }
@@ -444,7 +444,7 @@ public class GieBuiltinsTheoryTests
         }
 
         int emitted = 0;
-        foreach (var item in parsed)
+        foreach (GieCase item in parsed)
         {
             if (item.ExpectsFailure || item.Accept is null || item.Expect is null)
             {
@@ -530,8 +530,8 @@ public class GieBuiltinsTheoryTests
 
         try
         {
-            var projection = CoordinateSystemFactory.CreateProjection("GIE " + projectionClass, projectionClass, parameters);
-            var pcs = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
+            IProjection projection = CoordinateSystemFactory.CreateProjection("GIE " + projectionClass, projectionClass, parameters);
+            ProjectedCoordinateSystem pcs = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
                 "GIE projected",
                 geographicCoordinateSystem,
                 projection,
@@ -714,7 +714,7 @@ public class GieBuiltinsTheoryTests
         }
 
         Ellipsoid geographicEllipsoid = Assert.IsAssignableFrom<Ellipsoid>(ellipsoid);
-        var datum = CoordinateSystemFactory.CreateHorizontalDatum("GIE datum", DatumType.HD_Geocentric, geographicEllipsoid, null);
+        HorizontalDatum datum = CoordinateSystemFactory.CreateHorizontalDatum("GIE datum", DatumType.HD_Geocentric, geographicEllipsoid, null);
         gcs = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "GIE geographic",
             AngularUnit.Degrees,

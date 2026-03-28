@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using System;
 using System.Globalization;
@@ -35,11 +35,13 @@ public class IcosahedralProjectionTests
     [InlineData("Icosahedral_Snyder_Equal_Area", true)]
     public void SupportsIcosahedralAliasesFromWkt(string projectionName, bool isIsea)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, 
-            isIsea
-                ? BuildIseaWkt(projectionName, Sphere6400000, 0d, 0d, 3d, 4d, 0d)
-                : BuildAiroceanWkt(projectionName, 0d));
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        string aliasWkt = isIsea
+            ? BuildIseaWkt(projectionName, Sphere6400000, 0d, 0d, 3d, 4d, 0d)
+            : BuildAiroceanWkt(projectionName, 0d);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
+            aliasWkt);
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(2d, 1d));
 
         Assert.NotNull(projected);
@@ -64,8 +66,8 @@ public class IcosahedralProjectionTests
         double expectedY,
         double tolerance)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildAiroceanWkt("airocean", orientCode));
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildAiroceanWkt("airocean", orientCode));
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
 
         Assert.InRange(Math.Abs(projectedPoint[0] - expectedX), 0d, tolerance);
@@ -88,8 +90,8 @@ public class IcosahedralProjectionTests
         double expectedLatitude,
         double tolerance)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildAiroceanWkt("airocean", orientCode));
-        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildAiroceanWkt("airocean", orientCode));
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
         double[] geographicPoint = inverse.MathTransform.Transform(CreatePoint(x, y));
 
         Assert.InRange(Math.Abs(geographicPoint[0] - expectedLongitude), 0d, tolerance);
@@ -106,10 +108,10 @@ public class IcosahedralProjectionTests
     [InlineData(1d, -109d, -46d)]
     public void SupportsAiroceanRoundtrip(double orientCode, double longitude, double latitude)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildAiroceanWkt("airocean", orientCode));
-        var geographic = projected.GeographicCoordinateSystem;
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(geographic, projected);
-        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, geographic);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildAiroceanWkt("airocean", orientCode));
+        GeographicCoordinateSystem geographic = projected.GeographicCoordinateSystem;
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(geographic, projected);
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, geographic);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
         double[] roundtrip = inverse.MathTransform.Transform(projectedPoint);
 
@@ -123,8 +125,8 @@ public class IcosahedralProjectionTests
     [Fact]
     public void AiroceanRejectsOutsideDomainInverseInput()
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildAiroceanWkt("airocean", 0d));
-        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildAiroceanWkt("airocean", 0d));
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
 
         Assert.Throws<ArgumentException>(() => inverse.MathTransform.Transform(CreatePoint(0d, 0d)));
     }
@@ -148,9 +150,10 @@ public class IcosahedralProjectionTests
         double expectedY,
         double tolerance)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, 
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
             BuildIseaWkt("isea", spheroidClause, orientCode, 0d, 3d, 4d, 0d));
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
 
         Assert.InRange(Math.Abs(projectedPoint[0] - expectedX), 0d, tolerance);
@@ -176,9 +179,10 @@ public class IcosahedralProjectionTests
         double expectedLatitude,
         double tolerance)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, 
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
             BuildIseaWkt("isea", spheroidClause, orientCode, 0d, 3d, 4d, 0d));
-        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
         double[] geographicPoint = inverse.MathTransform.Transform(CreatePoint(x, y));
 
         Assert.InRange(Math.Abs(geographicPoint[0] - expectedLongitude), 0d, tolerance);
@@ -200,11 +204,12 @@ public class IcosahedralProjectionTests
         double latitude,
         double tolerance)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, 
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
             BuildIseaWkt("isea", spheroidClause, orientCode, 0d, 3d, 4d, 0d));
-        var geographic = projected.GeographicCoordinateSystem;
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(geographic, projected);
-        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, geographic);
+        GeographicCoordinateSystem geographic = projected.GeographicCoordinateSystem;
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(geographic, projected);
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, geographic);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
         double[] roundtrip = inverse.MathTransform.Transform(projectedPoint);
 
@@ -221,9 +226,10 @@ public class IcosahedralProjectionTests
     [InlineData(3d, 3d, 31d)]
     public void IseaRejectsUnsupportedModes(double modeCode, double aperture, double resolution)
     {
-        var exception = Assert.Throws<TargetInvocationException>(() =>
+        TargetInvocationException exception = Assert.Throws<TargetInvocationException>(() =>
         {
-            var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, 
+            ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+                CoordinateSystemFactory,
                 BuildIseaWkt("isea", Sphere6400000, 0d, modeCode, aperture, resolution, 0d));
             CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         });
@@ -237,9 +243,10 @@ public class IcosahedralProjectionTests
     [Fact]
     public void IseaRejectsInverseOutsideSupportedPlanarSubset()
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, 
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
             BuildIseaWkt("isea", Sphere6400000, 0d, 0d, 3d, 5d, 0d));
-        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
 
         Assert.Throws<InvalidOperationException>(() => inverse.MathTransform.Transform(CreatePoint(100d, 100d)));
     }

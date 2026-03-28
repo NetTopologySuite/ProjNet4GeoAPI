@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using System;
 using System.Globalization;
@@ -28,8 +28,8 @@ public class GeostationaryProjectionTests
     [InlineData("Geostationary_Satellite")]
     public void SupportsGeosAliasesFromWkt(string projectionName)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, false, 6378137d, 298.257222101d, 35785831d));
-        var transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, false, 6378137d, 298.257222101d, 35785831d));
+        ICoordinateTransformation transform = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] result = transform.MathTransform.Transform(CreatePoint(2d, 1d));
 
         Assert.NotNull(projected);
@@ -53,11 +53,12 @@ public class GeostationaryProjectionTests
     public void SupportsGeosRoundtrip(string projectionName, bool useSphere, double longitude, double latitude, double tolerance)
     {
         double semiMajor = useSphere ? 6400000d : 6378137d;
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, 
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
             BuildProjectedWkt(projectionName, useSphere, semiMajor, 298.257222101d, 35785831d));
-        var geographic = projected.GeographicCoordinateSystem;
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(geographic, projected);
-        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, geographic);
+        GeographicCoordinateSystem geographic = projected.GeographicCoordinateSystem;
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(geographic, projected);
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, geographic);
 
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
         double[] roundtrip = inverse.MathTransform.Transform(projectedPoint);
@@ -89,9 +90,10 @@ public class GeostationaryProjectionTests
         double expectedY)
     {
         double semiMajor = useSphere ? 6400000d : 6378137d;
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, 
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
             BuildProjectedWkt(projectionName, useSphere, semiMajor, 298.257222101d, 35785831d));
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
 
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
 
@@ -122,9 +124,10 @@ public class GeostationaryProjectionTests
         double expectedLatitude)
     {
         double semiMajor = useSphere ? 6400000d : 6378137d;
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, 
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
             BuildProjectedWkt(projectionName, useSphere, semiMajor, 298.257222101d, 35785831d));
-        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
 
         double[] geographicPoint = inverse.MathTransform.Transform(CreatePoint(x, y));
 
@@ -141,11 +144,11 @@ public class GeostationaryProjectionTests
     [InlineData(1e11d)]
     public void RejectsInvalidHeightValues(double satelliteHeight)
     {
-        var exception = Assert.Throws<TargetInvocationException>(() =>
+        TargetInvocationException exception = Assert.Throws<TargetInvocationException>(() =>
         {
             string wkt = BuildProjectedWkt("geos", true, 1d, 0d, satelliteHeight);
-            var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wkt);
-            var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+            ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wkt);
+            ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
             forward.MathTransform.Transform(CreatePoint(2d, 1d));
         });
 
@@ -159,8 +162,8 @@ public class GeostationaryProjectionTests
     public void SupportsSweepXParameter()
     {
         string wkt = BuildProjectedWkt("geos", true, 6400000d, 0d, 35785831d, sweepX: true);
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wkt);
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wkt);
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(2d, 1d));
 
         Assert.NotNull(projectedPoint);

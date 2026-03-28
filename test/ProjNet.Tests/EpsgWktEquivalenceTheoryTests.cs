@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using System;
 using System.Collections.Generic;
@@ -99,7 +99,7 @@ public class EpsgWktEquivalenceTheoryTests
 
     private static long TryExtractSrid(string wkt)
     {
-        var matches = SrsIdRegex.Matches(wkt);
+        MatchCollection matches = SrsIdRegex.Matches(wkt);
         if (matches.Count == 0)
         {
             return -1;
@@ -146,8 +146,8 @@ public class EpsgWktEquivalenceTheoryTests
 
     private static bool EllipsoidMatches(string expectedWkt, string actualWkt)
     {
-        var expected = EllipsoidRegex.Match(expectedWkt);
-        var actual = EllipsoidRegex.Match(actualWkt);
+        Match expected = EllipsoidRegex.Match(expectedWkt);
+        Match actual = EllipsoidRegex.Match(actualWkt);
         if (!expected.Success || !actual.Success)
         {
             return true;
@@ -162,20 +162,20 @@ public class EpsgWktEquivalenceTheoryTests
 
     private static string ExtractMethodName(string wkt)
     {
-        var match = MethodRegex.Match(wkt);
+        Match match = MethodRegex.Match(wkt);
         return match.Success ? match.Groups["name"].Value : string.Empty;
     }
 
     private static bool ProjectionParametersMatch(string expectedWkt, string actualWkt)
     {
-        var expected = ParseParameters(expectedWkt);
+        Dictionary<string, double> expected = ParseParameters(expectedWkt);
         if (expected.Count == 0)
         {
             return true;
         }
 
-        var actual = ParseParameters(actualWkt);
-        foreach (var pair in expected)
+        Dictionary<string, double> actual = ParseParameters(actualWkt);
+        foreach (KeyValuePair<string, double> pair in expected)
         {
             if (!actual.TryGetValue(pair.Key, out double actualValue))
             {

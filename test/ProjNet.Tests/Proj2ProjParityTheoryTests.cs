@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using System;
 using System.Collections.Generic;
@@ -35,14 +35,14 @@ public class Proj2ProjParityTheoryTests
         var coordinateSystemFactory = new CoordinateSystemFactory();
         var transformationFactory = new CoordinateTransformationFactory();
 
-        var source = CoordinateSystemTestHelpers.RequireCoordinateSystem(coordinateSystemFactory, testCase.SourceWkt);
-        var target = CoordinateSystemTestHelpers.RequireCoordinateSystem(coordinateSystemFactory, testCase.TargetWkt);
+        CoordinateSystem source = CoordinateSystemTestHelpers.RequireCoordinateSystem(coordinateSystemFactory, testCase.SourceWkt);
+        CoordinateSystem target = CoordinateSystemTestHelpers.RequireCoordinateSystem(coordinateSystemFactory, testCase.TargetWkt);
         source.Authority = "EPSG";
         source.AuthorityCode = testCase.SourceSrid;
         target.Authority = "EPSG";
         target.AuthorityCode = testCase.TargetSrid;
 
-        var transformation = transformationFactory.CreateFromCoordinateSystems(source, target);
+        ICoordinateTransformation transformation = transformationFactory.CreateFromCoordinateSystems(source, target);
         double[] output = transformation.MathTransform.Transform([testCase.InputX, testCase.InputY]);
         double deltaX = Math.Abs(output[0] - testCase.ExpectedX);
         double deltaY = Math.Abs(output[1] - testCase.ExpectedY);
@@ -68,7 +68,7 @@ public class Proj2ProjParityTheoryTests
         List<Proj2ProjCase> cases = Assert.IsType<List<Proj2ProjCase>>(fixture.Cases);
         Assert.NotEmpty(fixture.Cases);
 
-        foreach (var item in cases)
+        foreach (Proj2ProjCase item in cases)
         {
             yield return new object[] { item };
         }

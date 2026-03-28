@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using System;
 using System.Collections.Generic;
@@ -262,8 +262,8 @@ public class DefModelRuntimeTests
         };
 
         IProjection projection = CoordinateSystemFactory.CreateProjection("Mercator", "mercator", projectionParameters);
-        var geographic = GeographicCoordinateSystem.WGS84;
-        var projected = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
+        GeographicCoordinateSystem geographic = GeographicCoordinateSystem.WGS84;
+        ProjectedCoordinateSystem projected = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
             "Mercator",
             geographic,
             projection,

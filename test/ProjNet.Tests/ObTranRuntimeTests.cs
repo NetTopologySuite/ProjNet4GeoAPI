@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using System;
 using ProjNet.CoordinateSystems.Transformations;
@@ -96,4 +96,3 @@ public class ObTranRuntimeTests
         Assert.Contains("Nested ob_tran", skipReason, StringComparison.Ordinal);
     }
 }
-

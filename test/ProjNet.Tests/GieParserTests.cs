@@ -2,9 +2,10 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using Xunit;
 
@@ -30,7 +31,7 @@ accept     496813.178 3358297.326
 expect     3 80
 ";
 
-        var parsed = GieParser.Parse(content);
+        IReadOnlyList<GieCase> parsed = GieParser.Parse(content);
 
         Assert.Equal(2, parsed.Count);
         Assert.Equal("+proj=tmerc +lat_0=49 +lon_0=-2 +k_0=0.9996 +ellps=WGS84", parsed[0].Operation);
@@ -57,7 +58,7 @@ accept 10 20 # inline comment
 expect 1000 2000
 ";
 
-        var parsed = GieParser.Parse(content);
+        IReadOnlyList<GieCase> parsed = GieParser.Parse(content);
 
         Assert.Single(parsed);
         Assert.Equal("+proj=eqearth +ellps=WGS84", parsed[0].Operation);
@@ -108,7 +109,7 @@ foobar 1 2
                              "expect 700 800\n";
             File.WriteAllText(filePath, content);
 
-            var parsed = GieParser.ParseFile(filePath);
+            IReadOnlyList<GieCase> parsed = GieParser.ParseFile(filePath);
 
             Assert.Single(parsed);
             Assert.Equal("+proj=gnom +ellps=WGS84", parsed[0].Operation);
@@ -136,7 +137,7 @@ accept 1 2
 expect 3 4
 ";
 
-        var parsed = GieParser.Parse(content);
+        IReadOnlyList<GieCase> parsed = GieParser.Parse(content);
 
         Assert.Single(parsed);
         Assert.Contains("+lat_0=0", parsed[0].Operation, StringComparison.Ordinal);
@@ -154,7 +155,7 @@ operation +proj=aea +lat_1=900
 expect failure errno invalid_op_illegal_arg_value
 ";
 
-        var parsed = GieParser.Parse(content);
+        IReadOnlyList<GieCase> parsed = GieParser.Parse(content);
 
         Assert.Single(parsed);
         Assert.True(parsed[0].ExpectsFailure);
@@ -174,7 +175,7 @@ accept 1 2
 expect 3 4
 ";
 
-        var parsed = GieParser.Parse(content, new GieParserOptions { IgnoreUnknownDirectives = true });
+        IReadOnlyList<GieCase> parsed = GieParser.Parse(content, new GieParserOptions { IgnoreUnknownDirectives = true });
 
         Assert.Single(parsed);
         Assert.False(parsed[0].ExpectsFailure);

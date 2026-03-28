@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using System;
 using System.Globalization;
@@ -32,8 +32,8 @@ public class AiryChamberlinBipolarProjectionTests
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, GetDefaultProfile(projectionName)));
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, GetDefaultProfile(projectionName)));
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(2d, 1d));
 
         Assert.NotNull(projected);
@@ -67,8 +67,8 @@ public class AiryChamberlinBipolarProjectionTests
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, new ProjectionProfile(sphereRadius, extraParameters)));
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, new ProjectionProfile(sphereRadius, extraParameters)));
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
 
         Assert.InRange(Math.Abs(projectedPoint[0] - expectedX), 0d, 1e-7);
@@ -97,8 +97,8 @@ public class AiryChamberlinBipolarProjectionTests
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, new ProjectionProfile(sphereRadius, null)));
-        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, new ProjectionProfile(sphereRadius, null)));
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
         double[] geographicPoint = inverse.MathTransform.Transform(CreatePoint(x, y));
 
         Assert.InRange(Math.Abs(geographicPoint[0] - expectedLongitude), 0d, 2e-9);
@@ -116,8 +116,8 @@ public class AiryChamberlinBipolarProjectionTests
     {
         ArgumentNullException.ThrowIfNull(projectionName);
 
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, GetDefaultProfile(projectionName)));
-        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, GetDefaultProfile(projectionName)));
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
 
         Assert.Throws<InvalidOperationException>(() => inverse.MathTransform.Transform(CreatePoint(200d, 100d)));
     }
@@ -132,10 +132,10 @@ public class AiryChamberlinBipolarProjectionTests
     [InlineData(-2d, -1d)]
     public void SupportsBipcRoundtrip(double longitude, double latitude)
     {
-        var projected = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt("bipc", new ProjectionProfile(6400000d, null)));
-        var geographic = projected.GeographicCoordinateSystem;
-        var forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(geographic, projected);
-        var inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, geographic);
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt("bipc", new ProjectionProfile(6400000d, null)));
+        GeographicCoordinateSystem geographic = projected.GeographicCoordinateSystem;
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(geographic, projected);
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, geographic);
 
         double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
         double[] roundtrip = inverse.MathTransform.Transform(projectedPoint);
@@ -150,13 +150,14 @@ public class AiryChamberlinBipolarProjectionTests
     [Fact]
     public void AiryPolarAndNoCutCasesMatchBuiltins()
     {
-        var northPole = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, 
+        ProjectedCoordinateSystem northPole = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
             BuildProjectedWkt(
                 "airy",
                 new ProjectionProfile(
                     1d,
                     ",PARAMETER[\"latitude_of_origin\",90]")));
-        var northForward = CoordinateTransformationFactory.CreateFromCoordinateSystems(northPole.GeographicCoordinateSystem, northPole);
+        ICoordinateTransformation northForward = CoordinateTransformationFactory.CreateFromCoordinateSystems(northPole.GeographicCoordinateSystem, northPole);
 
         double[] northZero = northForward.MathTransform.Transform(CreatePoint(0d, 0d));
         double[] northAtPole = northForward.MathTransform.Transform(CreatePoint(0d, 90d));
@@ -167,13 +168,14 @@ public class AiryChamberlinBipolarProjectionTests
         Assert.InRange(Math.Abs(northAtPole[1] - 0d), 0d, 1e-6);
         Assert.Throws<ArgumentException>(() => northForward.MathTransform.Transform(CreatePoint(0d, -90d)));
 
-        var noCut = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, 
+        ProjectedCoordinateSystem noCut = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
             BuildProjectedWkt(
                 "airy",
                 new ProjectionProfile(
                     1d,
                     ",PARAMETER[\"latitude_of_origin\",-90],PARAMETER[\"no_cut\",1]")));
-        var noCutForward = CoordinateTransformationFactory.CreateFromCoordinateSystems(noCut.GeographicCoordinateSystem, noCut);
+        ICoordinateTransformation noCutForward = CoordinateTransformationFactory.CreateFromCoordinateSystems(noCut.GeographicCoordinateSystem, noCut);
         double[] noCutProjected = noCutForward.MathTransform.Transform(CreatePoint(0d, 10d));
 
         Assert.InRange(Math.Abs(noCutProjected[0] - 0d), 0d, 1e-6);

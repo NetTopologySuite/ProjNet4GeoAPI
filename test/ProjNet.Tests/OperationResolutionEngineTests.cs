@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using System;
 using System.Collections.Generic;
@@ -32,7 +32,7 @@ public class OperationResolutionEngineTests
     public void CreateFromCoordinateSystemsWithSameProjectedCoordinateSystemUsesIdentityTransform()
     {
         var source = ProjectedCoordinateSystem.WGS84_UTM(32, true);
-        var transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, source);
+        ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, source);
         double[] output = transformation.MathTransform.Transform(UtmSamplePoint);
 
         Assert.True(transformation.MathTransform.Identity());
@@ -46,9 +46,9 @@ public class OperationResolutionEngineTests
     [Fact]
     public void CreateFromCoordinateSystemsWithEquivalentGeographicCoordinateSystemsUsesIdentityTransform()
     {
-        var source = GeographicCoordinateSystem.WGS84;
-        var target = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<GeographicCoordinateSystem>(this.coordinateSystemFactory, source.WKT);
-        var transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
+        GeographicCoordinateSystem source = GeographicCoordinateSystem.WGS84;
+        GeographicCoordinateSystem target = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<GeographicCoordinateSystem>(this.coordinateSystemFactory, source.WKT);
+        ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
         double[] output = transformation.MathTransform.Transform(GeographicSamplePoint);
 
         Assert.True(transformation.MathTransform.Identity());
@@ -69,7 +69,7 @@ public class OperationResolutionEngineTests
         target.Authority = "EPSG";
         target.AuthorityCode = 23031;
 
-        var metadataTransformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
+        ICoordinateTransformation metadataTransformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
         double[] metadataOutput = metadataTransformation.MathTransform.Transform(UtmSamplePoint);
 
         var fallbackSource = ProjectedCoordinateSystem.WGS84_UTM(32, true);
@@ -78,7 +78,7 @@ public class OperationResolutionEngineTests
         fallbackSource.AuthorityCode = -1;
         fallbackTarget.Authority = string.Empty;
         fallbackTarget.AuthorityCode = -1;
-        var fallbackTransformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(fallbackSource, fallbackTarget);
+        ICoordinateTransformation fallbackTransformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(fallbackSource, fallbackTarget);
         double[] fallbackOutput = fallbackTransformation.MathTransform.Transform(UtmSamplePoint);
 
         Assert.Equal("EPSG", metadataTransformation.Authority);
@@ -86,7 +86,7 @@ public class OperationResolutionEngineTests
         Assert.Equal(fallbackOutput[0], metadataOutput[0], 9);
         Assert.Equal(fallbackOutput[1], metadataOutput[1], 9);
 
-        var concatenated = Assert.IsType<ConcatenatedTransform>(metadataTransformation.MathTransform);
+        ConcatenatedTransform concatenated = Assert.IsType<ConcatenatedTransform>(metadataTransformation.MathTransform);
         Assert.Equal(2, concatenated.CoordinateTransformationList.Count);
         Assert.DoesNotContain(concatenated.CoordinateTransformationList, ContainsGeographicOrGeocentricCoordinateSystem);
     }
@@ -104,9 +104,9 @@ public class OperationResolutionEngineTests
         target.Authority = string.Empty;
         target.AuthorityCode = -1;
 
-        var transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
+        ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
 
-        var concatenated = Assert.IsType<ConcatenatedTransform>(transformation.MathTransform);
+        ConcatenatedTransform concatenated = Assert.IsType<ConcatenatedTransform>(transformation.MathTransform);
         Assert.Equal(2, concatenated.CoordinateTransformationList.Count);
         Assert.DoesNotContain(concatenated.CoordinateTransformationList, ContainsGeographicOrGeocentricCoordinateSystem);
     }
@@ -124,7 +124,7 @@ public class OperationResolutionEngineTests
         target.Authority = string.Empty;
         target.AuthorityCode = -1;
 
-        var transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
+        ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
 
         Assert.Equal(string.Empty, transformation.Authority);
         Assert.Equal(-1, transformation.AuthorityCode);
@@ -137,7 +137,7 @@ public class OperationResolutionEngineTests
     public void CreateFromCoordinateSystemsWithGridOnlyDirectOperationsThrowsDeterministicDataUnavailable()
     {
         var provider = new ManagedCoordinateOperationDefinitionProvider();
-        var gridOnlyPair = provider.GetDefinitions()
+        List<CoordinateOperationDefinition>? gridOnlyPair = provider.GetDefinitions()
             .Where(definition => definition.SourceSrid > 0 && definition.TargetSrid > 0 && definition.SourceSrid != definition.TargetSrid)
             .GroupBy(definition => new { definition.SourceSrid, definition.TargetSrid })
             .Select(group => group.ToList())
@@ -156,7 +156,7 @@ public class OperationResolutionEngineTests
         try
         {
             Environment.SetEnvironmentVariable("PROJNET_GRID_REQUIRED", "true");
-            var exception = Assert.Throws<InvalidOperationException>(() => this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target));
+            InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target));
             Assert.StartsWith("DataUnavailable:", exception.Message, StringComparison.Ordinal);
         }
         finally
@@ -172,7 +172,7 @@ public class OperationResolutionEngineTests
     public void CreateFromCoordinateSystemsWithMixedGridAndNonGridDirectOperationsFallsBackToAvailableMetadataOperation()
     {
         var provider = new ManagedCoordinateOperationDefinitionProvider();
-        var mixedPair = provider.GetDefinitions()
+        List<CoordinateOperationDefinition>? mixedPair = provider.GetDefinitions()
             .Where(definition => definition.SourceSrid > 0 && definition.TargetSrid > 0 && definition.SourceSrid != definition.TargetSrid)
             .GroupBy(definition => new { definition.SourceSrid, definition.TargetSrid })
             .Select(group => group.ToList())
@@ -189,7 +189,7 @@ public class OperationResolutionEngineTests
         target.Authority = "EPSG";
         target.AuthorityCode = mixedPair[0].TargetSrid;
 
-        var transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
+        ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
 
         Assert.Equal("EPSG", transformation.Authority);
         Assert.DoesNotContain("Grid:", transformation.Remarks ?? string.Empty, StringComparison.Ordinal);
@@ -203,17 +203,17 @@ public class OperationResolutionEngineTests
     {
         var provider = new ManagedCoordinateOperationDefinitionProvider();
         var services = new CoordinateSystemServices();
-        var operation = GetRankedOperations(provider)
+        CoordinateOperationDefinition operation = GetRankedOperations(provider)
             .First(definition =>
                 IsExplicitMethodSupported(definition.MethodName)
                 && string.IsNullOrWhiteSpace(definition.ParameterFileName)
                 && services.GetCoordinateSystem(definition.SourceSrid) is GeographicCoordinateSystem
                 && services.GetCoordinateSystem(definition.TargetSrid) is GeographicCoordinateSystem);
 
-        var source = Assert.IsType<GeographicCoordinateSystem>(services.GetCoordinateSystem(operation.SourceSrid));
-        var target = Assert.IsType<GeographicCoordinateSystem>(services.GetCoordinateSystem(operation.TargetSrid));
+        GeographicCoordinateSystem source = Assert.IsType<GeographicCoordinateSystem>(services.GetCoordinateSystem(operation.SourceSrid));
+        GeographicCoordinateSystem target = Assert.IsType<GeographicCoordinateSystem>(services.GetCoordinateSystem(operation.TargetSrid));
 
-        var transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
+        ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
 
         Assert.Equal("EPSG", transformation.Authority);
         Assert.True(IsExplicitMethodSupported(provider.GetDefinitions().First(definition => definition.OperationCode == transformation.AuthorityCode).MethodName));
@@ -245,10 +245,10 @@ public class OperationResolutionEngineTests
 
         foreach (var candidate in candidates)
         {
-            var sourceTemplate = Assert.IsType<ProjectedCoordinateSystem>(services.GetCoordinateSystem(candidate.SourceProjectedSrid));
-            var targetTemplate = Assert.IsType<ProjectedCoordinateSystem>(services.GetCoordinateSystem(candidate.TargetProjectedSrid));
-            var source = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(this.coordinateSystemFactory, sourceTemplate.WKT);
-            var target = ProjNET.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(this.coordinateSystemFactory, targetTemplate.WKT);
+            ProjectedCoordinateSystem sourceTemplate = Assert.IsType<ProjectedCoordinateSystem>(services.GetCoordinateSystem(candidate.SourceProjectedSrid));
+            ProjectedCoordinateSystem targetTemplate = Assert.IsType<ProjectedCoordinateSystem>(services.GetCoordinateSystem(candidate.TargetProjectedSrid));
+            ProjectedCoordinateSystem source = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(this.coordinateSystemFactory, sourceTemplate.WKT);
+            ProjectedCoordinateSystem target = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(this.coordinateSystemFactory, targetTemplate.WKT);
 
             source.Authority = string.Empty;
             source.AuthorityCode = -1;
@@ -259,7 +259,7 @@ public class OperationResolutionEngineTests
             target.GeographicCoordinateSystem.Authority = "EPSG";
             target.GeographicCoordinateSystem.AuthorityCode = candidate.operation.TargetSrid;
 
-            var transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
+            ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
             if (!"EPSG".Equals(transformation.Authority, StringComparison.Ordinal))
             {
                 continue;
@@ -300,19 +300,19 @@ public class OperationResolutionEngineTests
             { 0d, 0d, 1d },
         });
 
-        var sourceFitted = this.coordinateSystemFactory.CreateFittedCoordinateSystem(
+        FittedCoordinateSystem sourceFitted = this.coordinateSystemFactory.CreateFittedCoordinateSystem(
             "source-fitted",
             sourceBase,
             sourceToBase,
             new List<AxisInfo>());
-        var targetFitted = this.coordinateSystemFactory.CreateFittedCoordinateSystem(
+        FittedCoordinateSystem targetFitted = this.coordinateSystemFactory.CreateFittedCoordinateSystem(
             "target-fitted",
             targetBase,
             targetToBase,
             new List<AxisInfo>());
 
-        var transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(sourceFitted, targetFitted);
-        var baseTransformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(sourceBase, targetBase);
+        ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(sourceFitted, targetFitted);
+        ICoordinateTransformation baseTransformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(sourceBase, targetBase);
 
         double[] input = new[] { 500000d, 4649776.22482d };
         double[] transformed = transformation.MathTransform.Transform(input);
@@ -334,7 +334,7 @@ public class OperationResolutionEngineTests
                 continue;
             }
 
-            if (!EpsgGeneratedCatalog.TryGetCoordinateReference(srid, out var reference, out _))
+            if (!EpsgGeneratedCatalog.TryGetCoordinateReference(srid, out EpsgCoordinateReferenceRecord reference, out _))
             {
                 continue;
             }
@@ -344,7 +344,7 @@ public class OperationResolutionEngineTests
                 continue;
             }
 
-            if (EpsgGeneratedCatalog.TryGetProjectedCrs(reference.RecordIndex, out var projectedRecord))
+            if (EpsgGeneratedCatalog.TryGetProjectedCrs(reference.RecordIndex, out EpsgProjectedCrsRecord projectedRecord))
             {
                 yield return projectedRecord;
             }
@@ -365,7 +365,7 @@ public class OperationResolutionEngineTests
 
         if (transformation is ConcatenatedTransform nested)
         {
-            foreach (var item in nested.CoordinateTransformationList)
+            foreach (ICoordinateTransformationCore item in nested.CoordinateTransformationList)
             {
                 if (ContainsGeographicOrGeocentricCoordinateSystem(item))
                 {

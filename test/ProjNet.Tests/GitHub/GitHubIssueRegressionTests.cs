@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
-namespace ProjNET.Tests.GitHub;
+namespace ProjNet.Tests.GitHub;
 
 using System;
 using System.Collections.Generic;
@@ -25,14 +25,14 @@ public class GitHubIssueRegressionTests
     [Xunit.Fact(DisplayName = "Issue #10, ConcatenatedTransform.Inverse() method destroys the state of child transformations")]
     public void TestConcatenatedTransformInvert()
     {
-        var epsg31466 = Assert.IsAssignableFrom<CoordinateSystem>(Css.GetCoordinateSystem(31466));
-        var epsg25832 = Assert.IsAssignableFrom<CoordinateSystem>(Css.GetCoordinateSystem(25832));
+        CoordinateSystem epsg31466 = Assert.IsAssignableFrom<CoordinateSystem>(Css.GetCoordinateSystem(31466));
+        CoordinateSystem epsg25832 = Assert.IsAssignableFrom<CoordinateSystem>(Css.GetCoordinateSystem(25832));
 
-        var ctFwd = Assert.IsType<ConcatenatedTransform>(Assert.IsAssignableFrom<ICoordinateTransformation>(Css.CreateTransformation(epsg31466, epsg25832)).MathTransform);
+        ConcatenatedTransform ctFwd = Assert.IsType<ConcatenatedTransform>(Assert.IsAssignableFrom<ICoordinateTransformation>(Css.CreateTransformation(epsg31466, epsg25832)).MathTransform);
         var ctRev = (ConcatenatedTransform)ctFwd.Inverse();
 
-        var ctlFwd = ctFwd.CoordinateTransformationList;
-        var ctlRev = ctRev.CoordinateTransformationList;
+        IList<ICoordinateTransformationCore> ctlFwd = ctFwd.CoordinateTransformationList;
+        IList<ICoordinateTransformationCore> ctlRev = ctRev.CoordinateTransformationList;
 
         Assert.False(ReferenceEquals(ctlFwd, ctlRev));
         Assert.Equal(ctlRev.Count, ctlFwd.Count);
@@ -48,18 +48,18 @@ public class GitHubIssueRegressionTests
     [Xunit.Fact(DisplayName = "Issue #10, Repeated Inverse() calls keep ConcatenatedTransform stable")]
     public void TestConcatenatedTransformInverseIsStableAcrossRepeatedCalls()
     {
-        var epsg31466 = Assert.IsAssignableFrom<CoordinateSystem>(Css.GetCoordinateSystem(31466));
-        var epsg25832 = Assert.IsAssignableFrom<CoordinateSystem>(Css.GetCoordinateSystem(25832));
+        CoordinateSystem epsg31466 = Assert.IsAssignableFrom<CoordinateSystem>(Css.GetCoordinateSystem(31466));
+        CoordinateSystem epsg25832 = Assert.IsAssignableFrom<CoordinateSystem>(Css.GetCoordinateSystem(25832));
 
-        var ctFwd = Assert.IsType<ConcatenatedTransform>(Assert.IsAssignableFrom<ICoordinateTransformation>(Css.CreateTransformation(epsg31466, epsg25832)).MathTransform);
+        ConcatenatedTransform ctFwd = Assert.IsType<ConcatenatedTransform>(Assert.IsAssignableFrom<ICoordinateTransformation>(Css.CreateTransformation(epsg31466, epsg25832)).MathTransform);
 
         (double X, double Y) source = (3500000d, 5640000d);
         (double X, double Y) projected = ctFwd.Transform(source.X, source.Y);
 
-        var inverse1 = Assert.IsType<ConcatenatedTransform>(ctFwd.Inverse());
+        ConcatenatedTransform inverse1 = Assert.IsType<ConcatenatedTransform>(ctFwd.Inverse());
         (double X, double Y) roundtrip1 = inverse1.Transform(projected.X, projected.Y);
 
-        var inverse2 = Assert.IsType<ConcatenatedTransform>(ctFwd.Inverse());
+        ConcatenatedTransform inverse2 = Assert.IsType<ConcatenatedTransform>(ctFwd.Inverse());
         (double X, double Y) roundtrip2 = inverse2.Transform(projected.X, projected.Y);
         (double X, double Y) projectedAgain = ctFwd.Transform(source.X, source.Y);
 
@@ -97,13 +97,13 @@ public class GitHubIssueRegressionTests
             new ProjectionParameter("scale_factor", 1.0000067),
         };
 
-        var itmDatum = coordinateSystemFactory.CreateHorizontalDatum(
+        HorizontalDatum itmDatum = coordinateSystemFactory.CreateHorizontalDatum(
             "Isreal 1993",
             DatumType.HD_Geocentric,
             Ellipsoid.GRS80,
             new Wgs84ConversionInfo(-24.0024, -17.1032, -17.8444, -0.33077, -1.85269, 1.66969, 5.4248));
 
-        var itmGeo = coordinateSystemFactory.CreateGeographicCoordinateSystem(
+        GeographicCoordinateSystem itmGeo = coordinateSystemFactory.CreateGeographicCoordinateSystem(
             "ITM",
             AngularUnit.Degrees,
             itmDatum,
@@ -111,8 +111,8 @@ public class GitHubIssueRegressionTests
             new AxisInfo("East", AxisOrientationEnum.East),
             new AxisInfo("North", AxisOrientationEnum.North));
 
-        var itmProjection = coordinateSystemFactory.CreateProjection("Transverse_Mercator", "Transverse_Mercator", itmParameters);
-        var itm = coordinateSystemFactory.CreateProjectedCoordinateSystem(
+        IProjection itmProjection = coordinateSystemFactory.CreateProjection("Transverse_Mercator", "Transverse_Mercator", itmParameters);
+        ProjectedCoordinateSystem itm = coordinateSystemFactory.CreateProjectedCoordinateSystem(
             "ITM",
             itmGeo,
             itmProjection,
@@ -120,13 +120,13 @@ public class GitHubIssueRegressionTests
             new AxisInfo("East", AxisOrientationEnum.East),
             new AxisInfo("North", AxisOrientationEnum.North));
 
-        var wgs84 = ProjectedCoordinateSystem.WGS84_UTM(36, true).GeographicCoordinateSystem;
+        GeographicCoordinateSystem wgs84 = ProjectedCoordinateSystem.WGS84_UTM(36, true).GeographicCoordinateSystem;
 
-        var ctFwd = Assert.IsAssignableFrom<ICoordinateTransformation>(Css.CreateTransformation(itm, wgs84)).MathTransform;
-        var pt1a = (x: 200000.0, y: 600000.0);
-        var pt2a = ctFwd.Transform(pt1a.x, pt1a.y);
-        var pt1b = ctFwd.Inverse().Transform(pt2a.X, pt2a.Y);
-        var pt2b = ctFwd.Transform(pt1a.x, pt1a.y);
+        MathTransform ctFwd = Assert.IsAssignableFrom<ICoordinateTransformation>(Css.CreateTransformation(itm, wgs84)).MathTransform;
+        (double x, double y) pt1a = (x: 200000.0, y: 600000.0);
+        (double X, double Y) pt2a = ctFwd.Transform(pt1a.x, pt1a.y);
+        (double X, double Y) pt1b = ctFwd.Inverse().Transform(pt2a.X, pt2a.Y);
+        (double X, double Y) pt2b = ctFwd.Transform(pt1a.x, pt1a.y);
 
         Assert.InRange(pt1b.X, pt1a.x - 0.01, pt1a.x + 0.01);
         Assert.InRange(pt1b.Y, pt1a.y - 0.01, pt1a.y + 0.01);
@@ -139,17 +139,17 @@ public class GitHubIssueRegressionTests
     [Xunit.Fact]
     public void TestIssuesWith3857To25832()
     {
-        var epsg_3857 = ProjectedCoordinateSystem.WebMercator;
+        ProjectedCoordinateSystem epsg_3857 = ProjectedCoordinateSystem.WebMercator;
         Console.WriteLine(epsg_3857.Projection.ClassName);
         Console.WriteLine(epsg_3857.WKT);
 
-        var epsg25832 = Assert.IsAssignableFrom<CoordinateSystem>(Css.GetCoordinateSystem(25832));
+        CoordinateSystem epsg25832 = Assert.IsAssignableFrom<CoordinateSystem>(Css.GetCoordinateSystem(25832));
 
-        var mt1 = Assert.IsAssignableFrom<ICoordinateTransformation>(Css.CreateTransformation(epsg25832, epsg_3857)).MathTransform;
-        var pt25832 = (x: 702575, y: 6153153);
-        var pt_3857ex = (x: 1358761.89, y: 7456070.47);
+        MathTransform mt1 = Assert.IsAssignableFrom<ICoordinateTransformation>(Css.CreateTransformation(epsg25832, epsg_3857)).MathTransform;
+        (int x, int y) pt25832 = (x: 702575, y: 6153153);
+        (double x, double y) pt_3857ex = (x: 1358761.89, y: 7456070.47);
 
-        var pt_3857 = mt1.Transform(pt25832.x, pt25832.y);
+        (double X, double Y) pt_3857 = mt1.Transform(pt25832.x, pt25832.y);
         Assert.InRange(pt_3857.X, pt_3857ex.x - 0.015, pt_3857ex.x + 0.015);
         Assert.InRange(pt_3857.Y, pt_3857ex.y - 0.015, pt_3857ex.y + 0.015);
 
@@ -157,7 +157,7 @@ public class GitHubIssueRegressionTests
         Console.WriteLine(epsg_3857.Projection.ClassName);
         Console.WriteLine(epsg_3857.WKT);
 
-        var mt2 = Assert.IsAssignableFrom<ICoordinateTransformation>(Css.CreateTransformation(epsg25832, epsg_3857)).MathTransform;
+        MathTransform mt2 = Assert.IsAssignableFrom<ICoordinateTransformation>(Css.CreateTransformation(epsg25832, epsg_3857)).MathTransform;
         pt_3857 = mt2.Transform(pt25832.x, pt25832.y);
         Assert.InRange(pt_3857.X, pt_3857ex.x - 0.015, pt_3857ex.x + 0.015);
         Assert.InRange(pt_3857.Y, pt_3857ex.y - 0.015, pt_3857ex.y + 0.015);
@@ -169,13 +169,13 @@ public class GitHubIssueRegressionTests
     [Xunit.Fact(DisplayName = "Convert latitude/longitude to Canada grid NAD83 (epsg:26910)")]
     public void TestConvertWgs84ToEPSG26910()
     {
-        var epsg26910 = Assert.IsAssignableFrom<CoordinateSystem>(Css.GetCoordinateSystem("EPSG", 26910));
-        var epsg_4326 = Assert.IsAssignableFrom<CoordinateSystem>(Css.GetCoordinateSystem("EPSG", 4326));
+        CoordinateSystem epsg26910 = Assert.IsAssignableFrom<CoordinateSystem>(Css.GetCoordinateSystem("EPSG", 26910));
+        CoordinateSystem epsg_4326 = Assert.IsAssignableFrom<CoordinateSystem>(Css.GetCoordinateSystem("EPSG", 4326));
 
         double[] ptI = { 3523562.711189, 6246615.391161 };
 
-        var ct = Assert.IsAssignableFrom<ICoordinateTransformation>(Css.CreateTransformation(epsg26910, epsg_4326));
-        var pt1a = ct.MathTransform.Transform(ptI[0], ptI[1]);
+        ICoordinateTransformation ct = Assert.IsAssignableFrom<ICoordinateTransformation>(Css.CreateTransformation(epsg26910, epsg_4326));
+        (double X, double Y) pt1a = ct.MathTransform.Transform(ptI[0], ptI[1]);
         Assert.InRange(pt1a.X, -82.0479097 - 0.01, -82.0479097 + 0.01);
         Assert.InRange(pt1a.Y, 48.4185597 - 0.01, 48.4185597 + 0.01);
 
@@ -277,4 +277,3 @@ public class GitHubIssueRegressionTests
         Assert.Equal(remarks, projectedCoordinateSystem.Remarks);
     }
 }
-

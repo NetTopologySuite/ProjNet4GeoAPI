@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
-namespace ProjNET.Tests.WKT;
+namespace ProjNet.Tests.WKT;
 
 using System;
 using System.Data;
@@ -84,13 +84,13 @@ public class PostGisSpatialRefSysTableParserTests
         using (var cn = new NpgsqlConnection(ConnectionString))
         {
             cn.Open();
-            var cmd = cn.CreateCommand();
+            NpgsqlCommand cmd = cn.CreateCommand();
             cmd.CommandText = "SELECT \"srid\", \"srtext\" FROM \"public\".\"spatial_ref_sys\" ORDER BY \"srid\";";
 
             int counted = 0;
             int failed = 0;
             int tested = 0;
-            using (var r = cmd.ExecuteReader(CommandBehavior.CloseConnection))
+            using (NpgsqlDataReader? r = cmd.ExecuteReader(CommandBehavior.CloseConnection))
             {
                 if (r is not null)
                 {
@@ -143,9 +143,9 @@ public class PostGisSpatialRefSysTableParserTests
         using (var cn = new NpgsqlConnection(ConnectionString))
         {
             cn.Open();
-            var cm = cn.CreateCommand();
+            NpgsqlCommand cm = cn.CreateCommand();
             cm.CommandText = "SELECT \"srid\", \"srtext\" FROM \"public\".\"spatial_ref_sys\" ORDER BY srid;";
-            using (var dr = cm.ExecuteReader(CommandBehavior.SequentialAccess))
+            using (NpgsqlDataReader dr = cm.ExecuteReader(CommandBehavior.SequentialAccess))
             {
                 while (dr.Read())
                 {

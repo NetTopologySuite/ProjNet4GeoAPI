@@ -3,7 +3,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
 #if !NET7_0_OR_GREATER
-namespace ProjNET.Tests.Serialization
+namespace ProjNet.Tests.Serialization
 {
     using System;
     using System.IO;

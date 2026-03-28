@@ -2,8 +2,9 @@
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
+using System;
 using System.Reflection;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
@@ -32,8 +33,8 @@ public class SharpMapIssueRegressionTests : CoordinateTransformTestsBase
     [Xunit.Fact(DisplayName = "NAD83 (State Plane) projection to the WGS84 (Lat/Long), http://sharpmap.codeplex.com/discussions/435794")]
     public void TestNad83ToWGS84()
     {
-        var src = CoordinateSystemTestHelpers.RequireCoordinateSystem(this.CoordinateSystemFactory, this.wkt2236);
-        var tgt = CoordinateSystemTestHelpers.RequireCoordinateSystem(this.CoordinateSystemFactory, this.wkt8307);
+        CoordinateSystem src = CoordinateSystemTestHelpers.RequireCoordinateSystem(this.CoordinateSystemFactory, this.wkt2236);
+        CoordinateSystem tgt = CoordinateSystemTestHelpers.RequireCoordinateSystem(this.CoordinateSystemFactory, this.wkt8307);
 
         ProjNet.CoordinateSystems.Projections.ProjectionsRegistry.Register(
             "SPCS83 Florida East zone (US Survey feet) (EPSG OP 15318)",
@@ -52,8 +53,8 @@ public class SharpMapIssueRegressionTests : CoordinateTransformTestsBase
     [Xunit.Fact(DisplayName = "projection problem with Michigan GeoRef")]
     public void TestMichiganGeoRefToWebMercator()
     {
-        var src = CoordinateSystemTestHelpers.RequireCoordinateSystem(this.CoordinateSystemFactory, this.wkt7151);
-        var tgt = ProjNet.CoordinateSystems.ProjectedCoordinateSystem.WebMercator;
+        CoordinateSystem src = CoordinateSystemTestHelpers.RequireCoordinateSystem(this.CoordinateSystemFactory, this.wkt7151);
+        ProjectedCoordinateSystem tgt = ProjNet.CoordinateSystems.ProjectedCoordinateSystem.WebMercator;
 
         ICoordinateTransformation transform = default!;
         Assert.Null(Record.Exception(() => transform = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(src, tgt)));
@@ -112,10 +113,10 @@ public class SharpMapIssueRegressionTests : CoordinateTransformTestsBase
         const string Epsg3035 =
             @"PROJCS[""ETRS89 / ETRS-LAEA"",GEOGCS[""ETRS89"",DATUM[""European_Terrestrial_Reference_System_1989"",SPHEROID[""GRS 1980"",6378137,298.257222101,AUTHORITY[""EPSG"",""7019""]],AUTHORITY[""EPSG"",""6258""]],PRIMEM[""Greenwich"",0,AUTHORITY[""EPSG"",""8901""]],UNIT[""degree"",0.01745329251994328,AUTHORITY[""EPSG"",""9122""]],AUTHORITY[""EPSG"",""4258""]],PROJECTION[""Lambert_Azimuthal_Equal_Area""],PARAMETER[""latitude_of_center"",52],PARAMETER[""longitude_of_center"",10],PARAMETER[""false_easting"",4321000],PARAMETER[""false_northing"",3210000],UNIT[""metre"",1,AUTHORITY[""EPSG"",""9001""]],AXIS[""X"",EAST],AXIS[""Y"",NORTH],AUTHORITY[""EPSG"",""3035""]]";
 
-        var csSrc = GeographicCoordinateSystem.WGS84;
-        var csTgt = CoordinateSystemTestHelpers.RequireCoordinateSystem(this.CoordinateSystemFactory, Epsg3035);
+        GeographicCoordinateSystem csSrc = GeographicCoordinateSystem.WGS84;
+        CoordinateSystem csTgt = CoordinateSystemTestHelpers.RequireCoordinateSystem(this.CoordinateSystemFactory, Epsg3035);
 
-        var ct = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csSrc, csTgt);
+        ICoordinateTransformation ct = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csSrc, csTgt);
 
         (double resX, double resY) = ((MathTransform)ct.MathTransform).Transform(16.4, 48.2);
         Assert.InRange(resX, 4796297.431434812 - 1e-2, 4796297.431434812 + 1e-2);
@@ -129,8 +130,7 @@ public class SharpMapIssueRegressionTests : CoordinateTransformTestsBase
     private System.Type ReflectType(string typeName)
     {
         Assembly asm = Assert.IsAssignableFrom<Assembly>(Assembly.GetAssembly(typeof(ProjNet.CoordinateSystems.Projections.MapProjection)));
-        var res = asm.GetType(typeName);
+        Type? res = asm.GetType(typeName);
         return Assert.IsAssignableFrom<System.Type>(res);
     }
 }
-

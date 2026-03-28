@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using ProjNet;
 using ProjNet.CoordinateSystems;
@@ -28,8 +28,8 @@ public class VerificationSuiteTests
     [InlineData(-75d, 35d, -8348961.80949552d, 4163881.14406429d)]
     public void Wgs84ToWebMercatorMatchesReferencePoints(double lon, double lat, double expectedX, double expectedY)
     {
-        var services = CreateCanonicalServices();
-        var transform = Assert.IsAssignableFrom<ICoordinateTransformation>(services.CreateTransformation(4326, 3857));
+        CoordinateSystemServices services = CreateCanonicalServices();
+        ICoordinateTransformation transform = Assert.IsAssignableFrom<ICoordinateTransformation>(services.CreateTransformation(4326, 3857));
         double[] result = transform.MathTransform.Transform(new[] { lon, lat });
 
         AssertCoordinate(expectedX, expectedY, result[0], result[1], 1e-6);
@@ -48,8 +48,8 @@ public class VerificationSuiteTests
     [InlineData(-8348961.80949552d, 4163881.14406429d, -75d, 35d)]
     public void WebMercatorToWgs84MatchesReferencePoints(double x, double y, double expectedLon, double expectedLat)
     {
-        var services = CreateCanonicalServices();
-        var transform = Assert.IsAssignableFrom<ICoordinateTransformation>(services.CreateTransformation(3857, 4326));
+        CoordinateSystemServices services = CreateCanonicalServices();
+        ICoordinateTransformation transform = Assert.IsAssignableFrom<ICoordinateTransformation>(services.CreateTransformation(3857, 4326));
         double[] result = transform.MathTransform.Transform(new[] { x, y });
 
         AssertCoordinate(expectedLon, expectedLat, result[0], result[1], 1e-9);
@@ -61,11 +61,11 @@ public class VerificationSuiteTests
     [Fact]
     public void LegacyCoordinateSystemServicesLookupsRemainConsistent()
     {
-        var services = CreateCanonicalServices();
+        CoordinateSystemServices services = CreateCanonicalServices();
 
-        var bySrid = Assert.IsAssignableFrom<CoordinateSystem>(services.GetCoordinateSystem(4326));
-        var byAuthority = Assert.IsAssignableFrom<CoordinateSystem>(services.GetCoordinateSystem("EPSG", 4326));
-        bool found = services.TryGetCoordinateSystem("EPSG", 4326, out var byTryGet);
+        CoordinateSystem bySrid = Assert.IsAssignableFrom<CoordinateSystem>(services.GetCoordinateSystem(4326));
+        CoordinateSystem byAuthority = Assert.IsAssignableFrom<CoordinateSystem>(services.GetCoordinateSystem("EPSG", 4326));
+        bool found = services.TryGetCoordinateSystem("EPSG", 4326, out CoordinateSystem? byTryGet);
         int? srid = services.GetSRID("EPSG", 4326);
 
         Assert.NotNull(bySrid);

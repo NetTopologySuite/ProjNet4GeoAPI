@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
-namespace ProjNET.Tests.WKT;
+namespace ProjNet.Tests.WKT;
 
 using System;
 using System.Collections.Generic;
@@ -94,7 +94,7 @@ public class WKTCoordSysParserTests
 
         CheckInfo(pcs, "NAD83(HARN) / Texas Central (ftUS)", "EPSG", 2918);
 
-        var gcs = pcs.GeographicCoordinateSystem;
+        GeographicCoordinateSystem gcs = pcs.GeographicCoordinateSystem;
         CheckInfo(gcs, "NAD83(HARN)", "EPSG", 4152);
         CheckDatum(gcs.HorizontalDatum, "NAD83_High_Accuracy_Regional_Network", "EPSG", 6152);
         CheckEllipsoid(gcs.HorizontalDatum.Ellipsoid, "GRS 1980", 6378137, 298.257222101, "EPSG", 7019);
@@ -123,9 +123,9 @@ public class WKTCoordSysParserTests
     public void ParseAllWKTs()
     {
         int parseCount = 0;
-        foreach (var wkt in SRIDReader.GetSrids())
+        foreach (SRIDReader.WktString wkt in SRIDReader.GetSrids())
         {
-            var cs1 = this.coordinateSystemFactory.CreateFromWkt(wkt.Wkt);
+            CoordinateSystem? cs1 = this.coordinateSystemFactory.CreateFromWkt(wkt.Wkt);
             Assert.NotNull(cs1);
             CoordinateSystem cs2 = CoordinateSystemTestHelpers.RequireCoordinateSystem(
                 this.coordinateSystemFactory,
@@ -178,7 +178,7 @@ public class WKTCoordSysParserTests
                 if (split > -1)
                 {
                     string wkt = line.Substring(split + 1);
-                    var cs = fac.CreateFromWkt(wkt);
+                    CoordinateSystem? cs = fac.CreateFromWkt(wkt);
                     if (cs is null)
                     {
                         continue; // We check this in another test.
@@ -282,7 +282,7 @@ public class WKTCoordSysParserTests
 
         CheckInfo(pcs, "OSGB 1936 / British National Grid", "EPSG", 27700);
 
-        var gcs = pcs.GeographicCoordinateSystem;
+        GeographicCoordinateSystem gcs = pcs.GeographicCoordinateSystem;
         CheckInfo(gcs, "OSGB 1936", "EPSG", 4277);
         CheckDatum(gcs.HorizontalDatum, "OSGB_1936", "EPSG", 6277);
         CheckEllipsoid(gcs.HorizontalDatum.Ellipsoid, "Airy 1830", 6377563.396, 299.3249646, "EPSG", 7001);
@@ -481,7 +481,7 @@ public class WKTCoordSysParserTests
 
         var csFromSample = (CoordinateSystem)ProjNet.IO.CoordinateSystems.CoordinateSystemWktReader.Parse(sampleWKT);
         string wktFromProjNetCS = csFromSample.WKT;
-        var parsed = ProjNet.IO.CoordinateSystems.CoordinateSystemWktReader.Parse(wktFromProjNetCS);
+        IInfo parsed = ProjNet.IO.CoordinateSystems.CoordinateSystemWktReader.Parse(wktFromProjNetCS);
         Assert.IsType<ProjectedCoordinateSystem>(parsed);
         var projCS = (ProjectedCoordinateSystem)parsed;
         Assert.NotNull(projCS.LinearUnit);
@@ -669,4 +669,3 @@ public class WKTCoordSysParserTests
         }
     }
 }
-

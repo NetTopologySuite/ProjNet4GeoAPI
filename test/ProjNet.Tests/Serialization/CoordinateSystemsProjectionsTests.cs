@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
-namespace ProjNET.Tests.Serialization;
+namespace ProjNet.Tests.Serialization;
 
 using System;
 using ProjNet.CoordinateSystems;
@@ -44,7 +44,7 @@ public class CoordinateSystemsProjectionsTests
         string utm17n_wkt = utm17n_original.WKT;
 
         var utm17n_fromWKT = (ProjNet.CoordinateSystems.ProjectedCoordinateSystem)ProjNet.IO.CoordinateSystems.CoordinateSystemWktReader.Parse(utm17n_wkt);
-        var wgs84 = ProjNet.CoordinateSystems.GeographicCoordinateSystem.WGS84;
+        GeographicCoordinateSystem wgs84 = ProjNet.CoordinateSystems.GeographicCoordinateSystem.WGS84;
 
         var coordinateSystemServices = new ProjNet.CoordinateSystemServices();
         Assert.Null(Record.Exception(() => coordinateSystemServices.CreateTransformation(utm17n_fromWKT, wgs84)));

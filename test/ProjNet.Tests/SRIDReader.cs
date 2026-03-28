@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using System;
 using System.Collections.Generic;
@@ -28,7 +28,7 @@ internal sealed class SRIDReader
     /// <returns>Coordinate system, or <value>null</value> if no entry with <paramref name="id"/> was not found.</returns>
     public static CoordinateSystem? GetCSbyID(int id, string? file = null)
     {
-        foreach (var wkt in GetSrids(file))
+        foreach (WktString wkt in GetSrids(file))
         {
             if (wkt.WktId == id)
             {
@@ -46,37 +46,55 @@ internal sealed class SRIDReader
     /// <returns>Enumerator.</returns>
     public static IEnumerable<WktString> GetSrids(string? filename = null)
     {
-        Stream? stream = string.IsNullOrWhiteSpace(filename)
-            ? Assembly.GetExecutingAssembly().GetManifestResourceStream("ProjNET.Tests.SRID.csv")
-            : File.OpenRead(filename);
-        if (stream is null)
+        if (!string.IsNullOrWhiteSpace(filename))
+        {
+            using FileStream fileStream = File.OpenRead(filename);
+            foreach (WktString wkt in EnumerateSrids(fileStream))
+            {
+                yield return wkt;
+            }
+
+            yield break;
+        }
+
+        Stream? resourceStream = Assembly.GetExecutingAssembly().GetManifestResourceStream("ProjNET.Tests.SRID.csv");
+        if (resourceStream is null)
         {
             yield break;
         }
 
-        using (var sr = new StreamReader(stream, Encoding.UTF8))
+        using (resourceStream)
         {
-            while (!sr.EndOfStream)
+            foreach (WktString wkt in EnumerateSrids(resourceStream))
             {
-                string? line = sr.ReadLine();
-                if (string.IsNullOrWhiteSpace(line))
-                {
-                    continue;
-                }
-
-                int split = line.IndexOf(';', StringComparison.Ordinal);
-                if (split <= -1)
-                {
-                    continue;
-                }
-
-                var wkt = new WktString
-                {
-                    WktId = int.Parse(line.AsSpan(0, split), CultureInfo.InvariantCulture),
-                    Wkt = line.Substring(split + 1),
-                };
                 yield return wkt;
             }
+        }
+    }
+
+    private static IEnumerable<WktString> EnumerateSrids(Stream stream)
+    {
+        using var sr = new StreamReader(stream, Encoding.UTF8);
+        while (!sr.EndOfStream)
+        {
+            string? line = sr.ReadLine();
+            if (string.IsNullOrWhiteSpace(line))
+            {
+                continue;
+            }
+
+            int split = line.IndexOf(';', StringComparison.Ordinal);
+            if (split <= -1)
+            {
+                continue;
+            }
+
+            var wkt = new WktString
+            {
+                WktId = int.Parse(line.AsSpan(0, split), CultureInfo.InvariantCulture),
+                Wkt = line.Substring(split + 1),
+            };
+            yield return wkt;
         }
     }
 

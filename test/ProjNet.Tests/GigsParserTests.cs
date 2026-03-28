@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using System;
 using System.Collections.Generic;
@@ -72,7 +72,7 @@ public class GigsParserTests
             Assert.Skip("GIGS fixtures were not found under test\\ProjNet.Tests\\Fixtures\\gigs.");
         }
 
-        var files = Directory.GetFiles(gigsDirectory, "*.gie")
+        string[] files = Directory.GetFiles(gigsDirectory, "*.gie")
             .Where(path => !path.EndsWith(".failing", StringComparison.OrdinalIgnoreCase))
             .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
             .ToArray();
@@ -110,7 +110,7 @@ public class GigsParserTests
             Assert.Skip("GIGS fixtures were not found under test\\ProjNet.Tests\\Fixtures\\gigs.");
         }
 
-        var files = Directory.GetFiles(gigsDirectory, "*.gie")
+        string[] files = Directory.GetFiles(gigsDirectory, "*.gie")
             .Where(path => !path.EndsWith(".failing", StringComparison.OrdinalIgnoreCase))
             .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
             .ToArray();

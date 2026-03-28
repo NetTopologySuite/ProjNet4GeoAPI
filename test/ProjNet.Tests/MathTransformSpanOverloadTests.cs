@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using System;
+using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
@@ -22,7 +23,7 @@ public class MathTransformSpanOverloadTests
         double[] input = [12.5, -7.25];
 
         double[] expected = transform.Transform(input);
-        var actual = new double[expected.Length];
+        double[] actual = new double[expected.Length];
         transform.Transform(new ReadOnlySpan<double>(input), actual.AsSpan());
 
         Assert.Equal(expected, actual);
@@ -38,7 +39,7 @@ public class MathTransformSpanOverloadTests
         double[] input = [1.0, 2.0, 3.0, 4.0];
 
         double[] expected = transform.Transform(input);
-        var actual = new double[expected.Length];
+        double[] actual = new double[expected.Length];
         transform.Transform(new ReadOnlySpan<double>(input), actual.AsSpan());
 
         Assert.Equal(expected, actual);
@@ -54,7 +55,7 @@ public class MathTransformSpanOverloadTests
         double[] input = [11.0, -3.5, 4.25, 2026.0, 99.75];
 
         double[] expected = transform.Transform(input);
-        var actual = new double[expected.Length];
+        double[] actual = new double[expected.Length];
         transform.Transform(new ReadOnlySpan<double>(input), actual.AsSpan());
 
         Assert.Equal(expected, actual);
@@ -68,9 +69,9 @@ public class MathTransformSpanOverloadTests
     {
         MathTransform transform = new StubMathTransform();
         double[] input = [1.0, 2.0, 3.0, 4.0];
-        var destination = new double[3];
+        double[] destination = new double[3];
 
-        var exception = Assert.Throws<ArgumentException>(() => transform.Transform(new ReadOnlySpan<double>(input), destination.AsSpan()));
+        ArgumentException exception = Assert.Throws<ArgumentException>(() => transform.Transform(new ReadOnlySpan<double>(input), destination.AsSpan()));
         Assert.Equal("result", exception.ParamName);
     }
 
@@ -84,7 +85,7 @@ public class MathTransformSpanOverloadTests
         double[] input = [4.0, 5.0, 6.0];
         double[] expected = transform.Transform(input);
 
-        var actual = new double[6];
+        double[] actual = new double[6];
         for (int i = 0; i < actual.Length; i++)
         {
             actual[i] = -1.0;
@@ -112,8 +113,8 @@ public class MathTransformSpanOverloadTests
         var transform = new StubMathTransform();
         double[] ordinates = [10.0, 20.0, 30.0, 40.0];
 
-        var hullFromList = transform.GetCodomainConvexHull(new System.Collections.Generic.List<double>(ordinates));
-        var hullFromSpan = transform.GetCodomainConvexHull(ordinates.AsSpan());
+        List<double> hullFromList = transform.GetCodomainConvexHull(new System.Collections.Generic.List<double>(ordinates));
+        List<double> hullFromSpan = transform.GetCodomainConvexHull(ordinates.AsSpan());
         Assert.Equal(hullFromList, hullFromSpan);
 
         DomainFlags flagsFromList = transform.GetDomainFlags(new System.Collections.Generic.List<double>(ordinates));
@@ -130,8 +131,8 @@ public class MathTransformSpanOverloadTests
         var transform = new StubMathTransform();
         double[] ordinates = [];
 
-        var hullFromList = transform.GetCodomainConvexHull(new System.Collections.Generic.List<double>(ordinates));
-        var hullFromSpan = transform.GetCodomainConvexHull(ordinates.AsSpan());
+        List<double> hullFromList = transform.GetCodomainConvexHull(new System.Collections.Generic.List<double>(ordinates));
+        List<double> hullFromSpan = transform.GetCodomainConvexHull(ordinates.AsSpan());
         Assert.Equal(hullFromList, hullFromSpan);
 
         DomainFlags flagsFromList = transform.GetDomainFlags(new System.Collections.Generic.List<double>(ordinates));

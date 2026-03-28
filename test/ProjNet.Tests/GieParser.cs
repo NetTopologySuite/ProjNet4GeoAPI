@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using System;
 using System.Collections.Generic;
@@ -47,7 +47,7 @@ internal static class GieParser
         int? currentRoundtrip = null;
         double[]? pendingAccept = null;
 
-        foreach (var logicalLine in EnumerateLogicalLines(content))
+        foreach (LogicalLine logicalLine in EnumerateLogicalLines(content))
         {
             string stripped = logicalLine.Content;
             int lineNumber = logicalLine.LineNumber;
@@ -126,7 +126,7 @@ internal static class GieParser
                     throw new FormatException("Found 'expect' without preceding 'accept' at line " + lineNumber.ToString(CultureInfo.InvariantCulture) + ".");
                 }
 
-                var expected = ParseVector(payload, lineNumber, "expect");
+                double[] expected = ParseVector(payload, lineNumber, "expect");
                 double[] accepted = pendingAccept;
                 parsedCases.Add(
                     new GieCase
@@ -339,7 +339,7 @@ internal static class GieParser
                 "Directive '" + directiveName + "' requires at least two numeric values at line " + lineNumber.ToString(CultureInfo.InvariantCulture) + ".");
         }
 
-        var values = new double[tokens.Length];
+        double[] values = new double[tokens.Length];
         for (int i = 0; i < tokens.Length; i++)
         {
             values[i] = ParseNumber(tokens[i], lineNumber, directiveName);

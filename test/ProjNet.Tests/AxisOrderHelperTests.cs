@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
@@ -35,8 +35,8 @@ public class AxisOrderHelperTests
     [Fact]
     public void TryCreateAxisSwapTransformWithOneDimensionalSystemsReturnsFalse()
     {
-        var source = CreateVerticalCoordinateSystem("Vertical source", AxisOrientationEnum.Up);
-        var target = CreateVerticalCoordinateSystem("Vertical target", AxisOrientationEnum.Down);
+        VerticalCoordinateSystem source = CreateVerticalCoordinateSystem("Vertical source", AxisOrientationEnum.Up);
+        VerticalCoordinateSystem target = CreateVerticalCoordinateSystem("Vertical target", AxisOrientationEnum.Down);
 
         bool ok = AxisOrderHelper.TryCreateAxisSwapTransform(source, target, out MathTransform? transform);
 
@@ -50,7 +50,7 @@ public class AxisOrderHelperTests
     [Fact]
     public void TryCreateAxisSwapTransformWithUnsupportedTargetOrientationReturnsFalse()
     {
-        var source = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+        GeographicCoordinateSystem source = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "Source EN",
             AngularUnit.Degrees,
             HorizontalDatum.WGS84,
@@ -58,7 +58,7 @@ public class AxisOrderHelperTests
             new AxisInfo("Lon", AxisOrientationEnum.East),
             new AxisInfo("Lat", AxisOrientationEnum.North));
 
-        var target = CoordinateSystemFactory.CreateGeocentricCoordinateSystem(
+        GeocentricCoordinateSystem target = CoordinateSystemFactory.CreateGeocentricCoordinateSystem(
             "Target geocentric",
             HorizontalDatum.WGS84,
             LinearUnit.Metre,
@@ -76,7 +76,7 @@ public class AxisOrderHelperTests
     [Fact]
     public void TryCreateAxisSwapTransformWithMissingSourceRoleReturnsFalse()
     {
-        var sourceHorizontal = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+        GeographicCoordinateSystem sourceHorizontal = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "Source duplicate horizontal",
             AngularUnit.Degrees,
             HorizontalDatum.WGS84,
@@ -84,7 +84,7 @@ public class AxisOrderHelperTests
             new AxisInfo("Lon", AxisOrientationEnum.East),
             new AxisInfo("Lat", AxisOrientationEnum.East));
 
-        var targetHorizontal = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+        GeographicCoordinateSystem targetHorizontal = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "Target normal horizontal",
             AngularUnit.Degrees,
             HorizontalDatum.WGS84,
@@ -92,9 +92,9 @@ public class AxisOrderHelperTests
             new AxisInfo("Lon", AxisOrientationEnum.East),
             new AxisInfo("Lat", AxisOrientationEnum.North));
 
-        var vertical = CreateVerticalCoordinateSystem("Vertical", AxisOrientationEnum.Up);
-        var source = CoordinateSystemFactory.CreateCompoundCoordinateSystem("Source", sourceHorizontal, vertical);
-        var target = CoordinateSystemFactory.CreateCompoundCoordinateSystem("Target", targetHorizontal, vertical);
+        VerticalCoordinateSystem vertical = CreateVerticalCoordinateSystem("Vertical", AxisOrientationEnum.Up);
+        CompoundCoordinateSystem source = CoordinateSystemFactory.CreateCompoundCoordinateSystem("Source", sourceHorizontal, vertical);
+        CompoundCoordinateSystem target = CoordinateSystemFactory.CreateCompoundCoordinateSystem("Target", targetHorizontal, vertical);
 
         bool ok = AxisOrderHelper.TryCreateAxisSwapTransform(source, target, out MathTransform? transform);
 
@@ -108,7 +108,7 @@ public class AxisOrderHelperTests
     [Fact]
     public void TryCreateAxisSwapTransformWithUpToDownTargetCreatesVerticalSignFlip()
     {
-        var sourceHorizontal = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+        GeographicCoordinateSystem sourceHorizontal = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "Source EN",
             AngularUnit.Degrees,
             HorizontalDatum.WGS84,
@@ -116,7 +116,7 @@ public class AxisOrderHelperTests
             new AxisInfo("Lon", AxisOrientationEnum.East),
             new AxisInfo("Lat", AxisOrientationEnum.North));
 
-        var targetHorizontal = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+        GeographicCoordinateSystem targetHorizontal = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "Target EN",
             AngularUnit.Degrees,
             HorizontalDatum.WGS84,
@@ -124,12 +124,12 @@ public class AxisOrderHelperTests
             new AxisInfo("Lon", AxisOrientationEnum.East),
             new AxisInfo("Lat", AxisOrientationEnum.North));
 
-        var source = CoordinateSystemFactory.CreateCompoundCoordinateSystem(
+        CompoundCoordinateSystem source = CoordinateSystemFactory.CreateCompoundCoordinateSystem(
             "Source ENU",
             sourceHorizontal,
             CreateVerticalCoordinateSystem("Source up", AxisOrientationEnum.Up));
 
-        var target = CoordinateSystemFactory.CreateCompoundCoordinateSystem(
+        CompoundCoordinateSystem target = CoordinateSystemFactory.CreateCompoundCoordinateSystem(
             "Target END",
             targetHorizontal,
             CreateVerticalCoordinateSystem("Target down", AxisOrientationEnum.Down));
@@ -150,4 +150,3 @@ public class AxisOrderHelperTests
         return CoordinateSystemFactory.CreateVerticalCoordinateSystem(name, datum, LinearUnit.Metre, new AxisInfo("V", orientation));
     }
 }
-

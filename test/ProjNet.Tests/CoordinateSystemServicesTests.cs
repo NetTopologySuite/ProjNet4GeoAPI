@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
-namespace ProjNET.Tests;
+namespace ProjNet.Tests;
 
 using System;
 using System.Collections.Generic;
@@ -47,8 +47,8 @@ public class CoordinateSystemServicesTests
             new CoordinateSystemFactory(),
             new CoordinateTransformationFactory());
 
-        bool found = css.TryGetCoordinateSystem(4326, out var coordinateSystem);
-        bool missing = css.TryGetCoordinateSystem(999999, out var missingCoordinateSystem);
+        bool found = css.TryGetCoordinateSystem(4326, out CoordinateSystem? coordinateSystem);
+        bool missing = css.TryGetCoordinateSystem(999999, out CoordinateSystem? missingCoordinateSystem);
 
         Assert.True(found);
         Assert.NotNull(coordinateSystem);
@@ -66,8 +66,8 @@ public class CoordinateSystemServicesTests
             new CoordinateSystemFactory(),
             new CoordinateTransformationFactory());
 
-        bool found = css.TryGetCoordinateSystem("EPSG", 3857, out var coordinateSystem);
-        bool missing = css.TryGetCoordinateSystem("EPSG", -1, out var missingCoordinateSystem);
+        bool found = css.TryGetCoordinateSystem("EPSG", 3857, out CoordinateSystem? coordinateSystem);
+        bool missing = css.TryGetCoordinateSystem("EPSG", -1, out CoordinateSystem? missingCoordinateSystem);
 
         Assert.True(found);
         Assert.NotNull(coordinateSystem);
@@ -141,7 +141,7 @@ public class CoordinateSystemServicesTests
     {
         var css = new CoordinateSystemServices(new ThrowingDefinitionProvider());
 
-        var exception = Assert.Throws<InvalidOperationException>(() => css.GetCoordinateSystem(4326));
+        InvalidOperationException exception = Assert.Throws<InvalidOperationException>(() => css.GetCoordinateSystem(4326));
         Assert.NotNull(exception.InnerException);
         Assert.Equal("Coordinate system initialization failed.", exception.Message);
     }
@@ -207,7 +207,7 @@ public class CoordinateSystemServicesTests
         var sw = new Stopwatch();
         sw.Start();
 
-        foreach (var sridWkt in SRIDReader.GetSrids(csvPath))
+        foreach (SRIDReader.WktString sridWkt in SRIDReader.GetSrids(csvPath))
         {
             yield return new CoordinateSystemDefinition(sridWkt.WktId, sridWkt.Wkt);
         }
@@ -224,15 +224,15 @@ public class CoordinateSystemServicesTests
 
         var document = XDocument.Load(xmlPath);
 
-        var rs = from tmp in document.Elements("SpatialReference").Elements("ReferenceSystem") select tmp;
+        IEnumerable<XElement> rs = from tmp in document.Elements("SpatialReference").Elements("ReferenceSystem") select tmp;
 
-        foreach (var node in rs)
+        foreach (XElement? node in rs)
         {
-            var sridElement = node.Element("SRID");
+            XElement? sridElement = node.Element("SRID");
             if (sridElement is not null)
             {
                 int srid = int.Parse(sridElement.Value, CultureInfo.InvariantCulture);
-                var wktNode = Assert.IsAssignableFrom<XNode>(node.LastNode);
+                XNode wktNode = Assert.IsAssignableFrom<XNode>(node.LastNode);
                 yield return new CoordinateSystemDefinition(srid, wktNode.ToString());
             }
         }
