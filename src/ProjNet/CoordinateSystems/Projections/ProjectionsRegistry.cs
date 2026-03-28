@@ -482,7 +482,7 @@ public class ProjectionsRegistry
             parameters = new List<ProjectionParameter>(parameters);
         }
 
-        MathTransform? res = Activator.CreateInstance(projectionType, parameters) as MathTransform;
+        var res = Activator.CreateInstance(projectionType, parameters) as MathTransform;
         res = ArgumentGuard.ThrowIfNull(res, nameof(projectionType));
 
         if (res is MapProjection mapProjection && !string.Equals(mapProjection.Name, className, StringComparison.OrdinalIgnoreCase))

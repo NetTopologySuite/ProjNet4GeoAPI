@@ -275,7 +275,7 @@ internal sealed class MolobadekasMathTransform : MathTransform
 
     private static Matrix3x3 BuildRotationMatrix(Vector3D rotation, bool isPositionVector)
     {
-        Matrix3x3 coordinateFrameMatrix = new Matrix3x3(
+        var coordinateFrameMatrix = new Matrix3x3(
             1d,
             rotation.Z,
             -rotation.Y,

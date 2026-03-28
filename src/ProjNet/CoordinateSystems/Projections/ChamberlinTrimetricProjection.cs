@@ -105,7 +105,7 @@ internal class ChamberlinTrimetricProjection : MapProjection
         double lambda = Adjust_lon(lon - this.centralMeridian);
         double sinPhi = Math.Sin(lat);
         double cosPhi = Math.Cos(lat);
-        Arc[] v = new Arc[3];
+        var v = new Arc[3];
         int hitControl = -1;
 
         for (int i = 0; i < 3; i++)

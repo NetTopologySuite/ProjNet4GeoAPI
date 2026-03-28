@@ -123,7 +123,7 @@ internal static partial class GeoTiffGridLoader
         sampleValueArrayPool = ArgumentGuard.ThrowIfNull(sampleValueArrayPool, nameof(sampleValueArrayPool));
 
         var pages = new List<LoadedPage>();
-        using Tiff tiff = Tiff.Open(path, "r");
+        using var tiff = Tiff.Open(path, "r");
         if (tiff is null)
         {
             throw new InvalidDataException("Unable to open GeoTIFF grid.");
