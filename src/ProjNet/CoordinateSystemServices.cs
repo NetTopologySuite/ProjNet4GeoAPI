@@ -142,7 +142,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     public CoordinateSystem? GetCoordinateSystem(int srid)
     {
         this.WaitForInitialization();
-        return this.csBySrid.TryGetValue(srid, out var cs) ? cs : null;
+        return this.csBySrid.TryGetValue(srid, out CoordinateSystem? cs) ? cs : null;
     }
 
     /// <summary>
@@ -292,7 +292,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
                     return;
                 }
 
-                if (this.csBySrid.TryGetValue(srid, out var existingCoordinateSystem))
+                if (this.csBySrid.TryGetValue(srid, out CoordinateSystem? existingCoordinateSystem))
                 {
                     if (ReferenceEquals(coordinateSystem, existingCoordinateSystem))
                     {
@@ -351,7 +351,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
         CoordinateSystemServices css,
         IEnumerable<CoordinateSystemEntry> enumeration)
     {
-        foreach (var entry in enumeration)
+        foreach (CoordinateSystemEntry entry in enumeration)
         {
             css.AddCoordinateSystem(entry.Srid, entry.CoordinateSystem);
         }
@@ -361,9 +361,9 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
         CoordinateSystemFactory factory,
         IEnumerable<CoordinateSystemDefinition> enumeration)
     {
-        foreach (var definition in enumeration)
+        foreach (CoordinateSystemDefinition definition in enumeration)
         {
-            var cs = CreateCoordinateSystem(factory, definition.Wkt);
+            CoordinateSystem? cs = CreateCoordinateSystem(factory, definition.Wkt);
             if (cs is not null)
             {
                 yield return new CoordinateSystemEntry(definition.Srid, cs);

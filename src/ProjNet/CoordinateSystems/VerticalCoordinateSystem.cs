@@ -105,7 +105,7 @@ public class VerticalCoordinateSystem : CoordinateSystem
                 "<CS_CoordinateSystem Dimension=\"{0}\"><CS_VerticalCoordinateSystem>{1}",
                 this.Dimension,
                 this.InfoXml);
-            foreach (var ai in this.AxisInfo)
+            foreach (AxisInfo ai in this.AxisInfo)
             {
                 sb.Append(ai.XML);
             }

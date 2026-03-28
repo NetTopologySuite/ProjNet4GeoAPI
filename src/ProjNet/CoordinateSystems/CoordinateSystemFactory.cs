@@ -7,6 +7,7 @@ namespace ProjNet.CoordinateSystems;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.IO.CoordinateSystems;
 
 /// <summary>
@@ -52,7 +53,7 @@ public class CoordinateSystemFactory
     /// </returns>
     public CoordinateSystem? CreateFromWkt(string wkt)
     {
-        var info = CoordinateSystemWktReader.Parse(wkt);
+        IInfo info = CoordinateSystemWktReader.Parse(wkt);
         return info as CoordinateSystem;
     }
 
@@ -94,7 +95,7 @@ public class CoordinateSystemFactory
             ArgumentGuard.ThrowArgument("Invalid name");
         }
 
-        var toBaseTransform = MathTransformWktReader.Parse(toBaseWkt);
+        MathTransform toBaseTransform = MathTransformWktReader.Parse(toBaseWkt);
         return new FittedCoordinateSystem(baseCoordinateSystem, toBaseTransform, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
     }
 

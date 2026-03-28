@@ -193,7 +193,7 @@ internal sealed class AiroceanProjection : MapProjection
         var homogeneousPoint = new Vector3(point.X, point.Y, 1d);
         for (int i = 0; i < AiroceanFaces.Length; i++)
         {
-            var face = AiroceanFaces[i];
+            Face2D face = AiroceanFaces[i];
             var p1 = new Vector3(face.P1.X, face.P1.Y, 1d);
             var p2 = new Vector3(face.P2.X, face.P2.Y, 1d);
             var p3 = new Vector3(face.P3.X, face.P3.Y, 1d);

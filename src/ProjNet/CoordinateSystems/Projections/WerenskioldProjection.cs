@@ -36,7 +36,7 @@ internal class WerenskioldProjection : PutninsP4PProjection
 
     private static List<ProjectionParameter> MergeParameters(IEnumerable<ProjectionParameter> parameters)
     {
-        var merged = CloneParametersList(parameters);
+        List<ProjectionParameter> merged = CloneParametersList(parameters);
         ReplaceOrAdd(merged, "putp4p_cx", 1d);
         ReplaceOrAdd(merged, "putp4p_cy", 4.442882938d);
         return merged;

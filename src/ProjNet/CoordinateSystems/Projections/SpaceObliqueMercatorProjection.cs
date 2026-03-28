@@ -260,7 +260,7 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
     {
         parameters = ArgumentGuard.ThrowIfNull(parameters, nameof(parameters));
 
-        var merged = CloneParametersList(parameters);
+        List<ProjectionParameter> merged = CloneParametersList(parameters);
         ProjectionParameterSet input = new(merged);
 
         bool hasSom = input.ContainsKey("inc_angle") || input.ContainsKey("ps_rev") || input.ContainsKey("asc_lon");

@@ -185,7 +185,7 @@ internal sealed class TinShiftMathTransform : MathTransform
         }
 
         string formatVersion = GetRequiredString(root, "format_version");
-        var fallback = FallbackStrategy.None;
+        FallbackStrategy fallback = FallbackStrategy.None;
         if (root.TryGetProperty("fallback_strategy", out JsonElement fallbackElement))
         {
             if (!string.Equals(formatVersion, "1.1", StringComparison.Ordinal))
@@ -241,7 +241,7 @@ internal sealed class TinShiftMathTransform : MathTransform
         }
 
         JsonElement verticesArray = GetRequiredArray(root, "vertices");
-        var vertices = ParseVertices(verticesArray, verticesColumns.GetArrayLength(), vertexColumnCount, transformHorizontal, transformVertical, verticesMap);
+        double[] vertices = ParseVertices(verticesArray, verticesColumns.GetArrayLength(), vertexColumnCount, transformHorizontal, transformVertical, verticesMap);
         JsonElement trianglesArray = GetRequiredArray(root, "triangles");
         List<TriangleIndices> triangles = ParseTriangles(trianglesArray, trianglesColumns.GetArrayLength(), triangleMap, verticesArray.GetArrayLength());
 
@@ -452,7 +452,7 @@ internal sealed class TinShiftMathTransform : MathTransform
         bool transformVertical,
         VerticesColumnMap map)
     {
-        var vertices = new double[verticesArray.GetArrayLength() * runtimeVertexColumnCount];
+        double[] vertices = new double[verticesArray.GetArrayLength() * runtimeVertexColumnCount];
         int outputOffset = 0;
         foreach (JsonElement vertex in verticesArray.EnumerateArray())
         {

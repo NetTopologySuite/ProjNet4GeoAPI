@@ -7,6 +7,7 @@ namespace ProjNet.CoordinateSystems.Projections;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
@@ -396,7 +397,7 @@ public class ProjectionsRegistry
             ArgumentGuard.ThrowArgument("The provided type does not implement 'GeoAPI.CoordinateSystems.Transformations.IMathTransform'!", nameof(type));
         }
 
-        var ci = CheckConstructor(type);
+        Type? ci = CheckConstructor(type);
         if (ci is null)
         {
             ArgumentGuard.ThrowArgument("The provided type is lacking a suitable constructor", nameof(type));
@@ -405,7 +406,7 @@ public class ProjectionsRegistry
         string key = ProjectionNameToRegistryKey(name);
         lock (RegistryLock)
         {
-            if (TypeRegistry.TryGetValue(key, out var registration))
+            if (TypeRegistry.TryGetValue(key, out ProjectionRegistration? registration))
             {
                 if (ReferenceEquals(type, registration.ProjectionType))
                 {
@@ -434,7 +435,7 @@ public class ProjectionsRegistry
 
         lock (RegistryLock)
         {
-            if (!TypeRegistry.TryGetValue(ProjectionNameToRegistryKey(existingName), out var existingRegistration))
+            if (!TypeRegistry.TryGetValue(ProjectionNameToRegistryKey(existingName), out ProjectionRegistration? existingRegistration))
             {
                 ArgumentGuard.ThrowArgument($"{existingName} is not a registered projection type");
             }
@@ -458,7 +459,7 @@ public class ProjectionsRegistry
 
         lock (RegistryLock)
         {
-            if (!TypeRegistry.TryGetValue(key, out var registration))
+            if (!TypeRegistry.TryGetValue(key, out ProjectionRegistration? registration))
             {
                 throw new NotSupportedException($"Projection {className} is not supported.");
             }
@@ -509,9 +510,10 @@ public class ProjectionsRegistry
         // instance of List<ProjectionParameter>, and then return the exact
         // parameter type so that we can create instances of this type with
         // minimal copying in the future, when possible.
-        foreach (var c in type.GetConstructors())
+
+        foreach (ConstructorInfo c in type.GetConstructors())
         {
-            var parameters = c.GetParameters();
+            ParameterInfo[] parameters = c.GetParameters();
             if (parameters.Length == 1 && parameters[0].ParameterType.IsAssignableFrom(typeof(List<ProjectionParameter>)))
             {
                 return parameters[0].ParameterType;

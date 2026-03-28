@@ -28,7 +28,7 @@ public sealed class ManagedCoordinateSystemDefinitionProvider : ICoordinateSyste
     /// <returns>The computed value.</returns>
     public IEnumerable<CoordinateSystemDefinition> GetDefinitions()
     {
-        foreach (var entry in GetManagedCoordinateSystems())
+        foreach (CoordinateSystemEntry entry in GetManagedCoordinateSystems())
         {
             yield return new CoordinateSystemDefinition(entry.Srid, entry.CoordinateSystem.WKT);
         }
@@ -37,7 +37,7 @@ public sealed class ManagedCoordinateSystemDefinitionProvider : ICoordinateSyste
     private static IEnumerable<CoordinateSystemEntry> GetManagedCoordinateSystems()
     {
         var yieldedSrids = new HashSet<int>();
-        foreach (var entry in EpsgCoordinateSystemFactory.GetCoordinateSystems())
+        foreach (CoordinateSystemEntry entry in EpsgCoordinateSystemFactory.GetCoordinateSystems())
         {
             if (!yieldedSrids.Add(entry.Srid))
             {

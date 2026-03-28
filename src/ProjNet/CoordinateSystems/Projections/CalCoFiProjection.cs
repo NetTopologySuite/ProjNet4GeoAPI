@@ -108,7 +108,7 @@ internal class CalCoFiProjection : MapProjection
 
     private static List<ProjectionParameter> MergeParameters(IEnumerable<ProjectionParameter> parameters)
     {
-        var merged = CloneParametersList(parameters);
+        List<ProjectionParameter> merged = CloneParametersList(parameters);
         ReplaceOrAdd(merged, "central_meridian", 0d);
         ReplaceOrAdd(merged, "scale_factor", 1d);
         ReplaceOrAdd(merged, "false_easting", 0d);

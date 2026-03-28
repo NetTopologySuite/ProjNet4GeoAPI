@@ -144,7 +144,7 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
                 "<CS_CoordinateSystem Dimension=\"{0}\"><CS_GeographicCoordinateSystem>{1}",
                 this.Dimension,
                 this.InfoXml);
-            foreach (var ai in this.AxisInfo)
+            foreach (AxisInfo ai in this.AxisInfo)
             {
                 sb.Append(ai.XML);
             }

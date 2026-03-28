@@ -36,7 +36,7 @@ internal class McBrydeThomasFlatPolarSinusoidalProjection : GeneralSinusoidalPro
 
     private static List<ProjectionParameter> MergeParameters(IEnumerable<ProjectionParameter> parameters)
     {
-        var merged = CloneParametersList(parameters);
+        List<ProjectionParameter> merged = CloneParametersList(parameters);
         ReplaceOrAdd(merged, "m", 0.5d);
         ReplaceOrAdd(merged, "n", 1.785398163397448309615660845d);
         return merged;

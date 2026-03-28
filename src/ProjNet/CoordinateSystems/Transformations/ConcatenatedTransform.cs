@@ -85,7 +85,7 @@ internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationC
     /// <inheritdoc />
     public override void Transform(ref double x, ref double y, ref double z)
     {
-        foreach (var ctc in this.coordinateTransformationList)
+        foreach (ICoordinateTransformationCore ctc in this.coordinateTransformationList)
         {
             TransformCore(ctc, ref x, ref y, ref z);
         }
@@ -112,7 +112,7 @@ internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationC
     public override void Invert()
     {
         this.coordinateTransformationList.Reverse();
-        foreach (var ic in this.coordinateTransformationList)
+        foreach (ICoordinateTransformationCore ic in this.coordinateTransformationList)
         {
             if (ic is CoordinateTransformation ct)
             {
@@ -132,7 +132,7 @@ internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationC
     public ConcatenatedTransform Clone()
     {
         var clonedList = new List<ICoordinateTransformationCore>(this.coordinateTransformationList.Count);
-        foreach (var ct in this.coordinateTransformationList)
+        foreach (ICoordinateTransformationCore ct in this.coordinateTransformationList)
         {
             clonedList.Add(CloneCoordinateTransformation(ct));
         }
@@ -143,7 +143,7 @@ internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationC
     /// <inheritdoc />
     internal override void Transform(ref double x, ref double y, ref double z, ref double t)
     {
-        foreach (var ctc in this.coordinateTransformationList)
+        foreach (ICoordinateTransformationCore ctc in this.coordinateTransformationList)
         {
             TransformCore(ctc, ref x, ref y, ref z, ref t);
         }

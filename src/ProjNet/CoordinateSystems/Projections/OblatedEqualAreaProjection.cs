@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -149,5 +149,4 @@ internal sealed class OblatedEqualAreaProjection : MapProjection
         x = Adjust_lon(this.centralMeridian + lambda);
         y = phi;
     }
-
 }

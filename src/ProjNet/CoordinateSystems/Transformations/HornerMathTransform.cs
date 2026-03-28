@@ -396,7 +396,7 @@ internal sealed class HornerMathTransform : MathTransform
             return false;
         }
 
-        var values = new double[expectedCount];
+        double[] values = new double[expectedCount];
         CsvParseStatus parseStatus = TryParseCsvValues(token.AsSpan(), values, out int parsedCount);
         if (parseStatus != CsvParseStatus.Success || parsedCount != expectedCount)
         {

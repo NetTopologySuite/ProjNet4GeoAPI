@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -74,5 +74,4 @@ internal class CylindricalEqualAreaProjection : MapProjection
         x = Adjust_lon(this.centralMeridian + ((x * this.inverseRadius) / this.cosStandardParallel));
         y = Math.Asin(ProjectionConstants.Clamp((y * this.cosStandardParallel) * this.inverseRadius, -1d, 1d));
     }
-
 }

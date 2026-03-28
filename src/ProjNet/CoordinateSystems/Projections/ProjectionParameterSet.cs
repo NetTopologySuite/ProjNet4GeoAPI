@@ -48,7 +48,7 @@ public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<Pro
     {
         parameters = ArgumentGuard.ThrowIfNull(parameters, nameof(parameters));
 
-        foreach (var pp in parameters)
+        foreach (ProjectionParameter pp in parameters)
         {
             string key = pp.Name.ToLowerInvariant();
             this.originalNames.Add(key, pp.Name);
@@ -63,7 +63,7 @@ public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<Pro
     /// <returns>An enumeration of <see cref="ProjectionParameter"/>s in insertion order.</returns>
     public IEnumerable<ProjectionParameter> ToProjectionParameter()
     {
-        foreach (var oi in this.originalIndex)
+        foreach (KeyValuePair<int, string> oi in this.originalIndex)
         {
             yield return new ProjectionParameter(this.originalNames[oi.Value], this[oi.Value]);
         }
@@ -194,7 +194,7 @@ public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<Pro
             return false;
         }
 
-        foreach (var kvp in this)
+        foreach (KeyValuePair<string, double> kvp in this)
         {
             if (!other.ContainsKey(kvp.Key))
             {
@@ -221,7 +221,7 @@ public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<Pro
     public override int GetHashCode()
     {
         HashCode hashCode = default;
-        foreach (var kvp in this)
+        foreach (KeyValuePair<string, double> kvp in this)
         {
             hashCode.Add(kvp.Key, StringComparer.Ordinal);
             hashCode.Add(kvp.Value);

@@ -347,7 +347,7 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
                 throw new InvalidDataException("GTX file data is truncated.");
             }
 
-            var values = new float[rows * cols];
+            float[] values = new float[rows * cols];
             int offset = 40;
             for (int i = 0; i < values.Length; i++)
             {

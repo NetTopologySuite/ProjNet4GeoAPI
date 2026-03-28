@@ -102,7 +102,7 @@ internal class ColombiaUrbanProjection : MapProjection
 
     private static List<ProjectionParameter> MergeParameters(IEnumerable<ProjectionParameter> parameters)
     {
-        var merged = CloneParametersList(parameters);
+        List<ProjectionParameter> merged = CloneParametersList(parameters);
         if (!HasParameter(merged, "h_0"))
         {
             ArgumentGuard.ThrowArgument("Missing mandatory projection parameter 'h_0'.", nameof(parameters));

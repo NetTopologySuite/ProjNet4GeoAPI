@@ -164,7 +164,7 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
                 "<CS_CoordinateSystem Dimension=\"{0}\"><CS_ProjectedCoordinateSystem>{1}",
                 this.Dimension,
                 this.InfoXml);
-            foreach (var ai in this.AxisInfo)
+            foreach (AxisInfo ai in this.AxisInfo)
             {
                 sb.Append(ai.XML);
             }

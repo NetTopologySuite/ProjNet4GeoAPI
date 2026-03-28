@@ -794,10 +794,10 @@ public abstract class MapProjection : MathTransform, IProjection
         int capacity = projectionParameters is ICollection<ProjectionParameter> collection
             ? collection.Count
             : 0;
-        var res = capacity > 0
+        List<ProjectionParameter> res = capacity > 0
             ? new List<ProjectionParameter>(capacity)
             : new List<ProjectionParameter>();
-        foreach (var pp in projectionParameters)
+        foreach (ProjectionParameter pp in projectionParameters)
         {
             res.Add(new ProjectionParameter(pp.Name, pp.Value));
         }

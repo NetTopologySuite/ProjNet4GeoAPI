@@ -36,7 +36,7 @@ internal class Wagner1Projection : UrmaevFlatPolarSinusoidalProjection
 
     private static List<ProjectionParameter> MergeParameters(IEnumerable<ProjectionParameter> parameters)
     {
-        var merged = CloneParametersList(parameters);
+        List<ProjectionParameter> merged = CloneParametersList(parameters);
         ReplaceOrAdd(merged, "n", 0.8660254037844386467637231707d);
         return merged;
     }

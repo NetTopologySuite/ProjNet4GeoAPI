@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -109,5 +109,4 @@ internal class EqualEarthProjection : MapProjection
 
         y = Math.Asin(ProjectionConstants.Clamp(Math.Sin(theta) / M, -1d, 1d));
     }
-
 }

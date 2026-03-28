@@ -17,11 +17,11 @@ internal sealed class ManagedCoordinateOperationDefinitionProvider : ICoordinate
     /// <returns>The computed value.</returns>
     public IEnumerable<CoordinateOperationDefinition> GetDefinitions()
     {
-        var records = EpsgGeneratedCatalog.Operations;
+        EpsgOperationRecord[] records = EpsgGeneratedCatalog.Operations;
 
         for (int i = 0; i < records.Length; i++)
         {
-            var operation = records[i];
+            EpsgOperationRecord operation = records[i];
             yield return new CoordinateOperationDefinition(
                 (CoordinateOperationKind)operation.OperationType,
                 operation.OperationCode,

@@ -13,6 +13,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using ProjNet;
 using ProjNet.CoordinateSystems;
+using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
 /// Creates an object based on the supplied Well Known Text (WKT).
@@ -119,7 +120,7 @@ public static partial class CoordinateSystemWktReader
     /// <returns>An object that implements the IUnit interface.</returns>
     private static Unit ReadUnit(WktTokenizer tokenizer)
     {
-        var bracket = tokenizer.ReadOpener();
+        WktBracket bracket = tokenizer.ReadOpener();
         string unitName = tokenizer.ReadDoubleQuotedWord();
         tokenizer.ReadToken(",");
         tokenizer.NextToken();
@@ -147,7 +148,7 @@ public static partial class CoordinateSystemWktReader
     /// <returns>An object that implements the IUnit interface.</returns>
     private static LinearUnit ReadLinearUnit(WktTokenizer tokenizer)
     {
-        var bracket = tokenizer.ReadOpener();
+        WktBracket bracket = tokenizer.ReadOpener();
 
         string unitName = tokenizer.ReadDoubleQuotedWord();
         tokenizer.ReadToken(",");
@@ -176,7 +177,7 @@ public static partial class CoordinateSystemWktReader
     /// <returns>An object that implements the IUnit interface.</returns>
     private static AngularUnit ReadAngularUnit(WktTokenizer tokenizer)
     {
-        var bracket = tokenizer.ReadOpener();
+        WktBracket bracket = tokenizer.ReadOpener();
 
         string unitName = tokenizer.ReadDoubleQuotedWord();
         tokenizer.ReadToken(",");
@@ -210,7 +211,7 @@ public static partial class CoordinateSystemWktReader
             tokenizer.ReadToken("AXIS");
         }
 
-        var bracket = tokenizer.ReadOpener();
+        WktBracket bracket = tokenizer.ReadOpener();
         string axisName = tokenizer.ReadDoubleQuotedWord();
         tokenizer.ReadToken(",");
         tokenizer.NextToken();
@@ -258,7 +259,7 @@ public static partial class CoordinateSystemWktReader
     private static Wgs84ConversionInfo ReadWGS84ConversionInfo(WktTokenizer tokenizer)
     {
         // TOWGS84[0,0,0,0,0,0,0]
-        var bracket = tokenizer.ReadOpener();
+        WktBracket bracket = tokenizer.ReadOpener();
         var info = new Wgs84ConversionInfo();
         tokenizer.NextToken();
         info.Dx = tokenizer.GetNumericValue();
@@ -303,7 +304,7 @@ public static partial class CoordinateSystemWktReader
     private static Ellipsoid ReadEllipsoid(WktTokenizer tokenizer)
     {
         // SPHEROID["Airy 1830",6377563.396,299.3249646,AUTHORITY["EPSG","7001"]]
-        var bracket = tokenizer.ReadOpener();
+        WktBracket bracket = tokenizer.ReadOpener();
         string name = tokenizer.ReadDoubleQuotedWord();
         tokenizer.ReadToken(",");
         tokenizer.NextToken();
@@ -333,7 +334,7 @@ public static partial class CoordinateSystemWktReader
             tokenizer.ReadToken("PROJECTION");
         }
 
-        var bracket = tokenizer.ReadOpener();
+        WktBracket bracket = tokenizer.ReadOpener();
         string projectionName = tokenizer.ReadDoubleQuotedWord();
         string authority = string.Empty;
         long authorityCode = -1L;
@@ -401,11 +402,11 @@ public static partial class CoordinateSystemWktReader
         //     AXIS["Northing","NORTH"],
         //     AUTHORITY["EPSG","27700"]
         // ]
-        var bracket = tokenizer.ReadOpener();
+        WktBracket bracket = tokenizer.ReadOpener();
         string name = tokenizer.ReadDoubleQuotedWord();
         tokenizer.ReadToken(",");
         tokenizer.ReadToken("GEOGCS");
-        var geographicCS = ReadGeographicCoordinateSystem(tokenizer);
+        GeographicCoordinateSystem geographicCS = ReadGeographicCoordinateSystem(tokenizer);
         tokenizer.ReadToken(",");
         tokenizer.NextToken();
 
@@ -417,13 +418,13 @@ public static partial class CoordinateSystemWktReader
             tokenizer.ReadToken(",");
         }
 
-        var projection = ReadProjection(tokenizer);
-        var unit = linearUnit ?? ReadLinearUnit(tokenizer);
+        Projection projection = ReadProjection(tokenizer);
+        LinearUnit unit = linearUnit ?? ReadLinearUnit(tokenizer);
         var axisInfo = new List<AxisInfo>(2);
         string authority = string.Empty;
         long authorityCode = -1;
 
-        var ct = tokenizer.NextToken();
+        TokenType ct = tokenizer.NextToken();
         if (tokenizer.GetStringValue() == ",")
         {
             tokenizer.NextToken();
@@ -465,14 +466,14 @@ public static partial class CoordinateSystemWktReader
     private static VerticalCoordinateSystem ReadVerticalCoordinateSystem(WktTokenizer tokenizer)
     {
         // VERT_CS["<name>", <vert datum>, <linear unit>, {<axis>,} {,< authority >}]
-        var bracket = tokenizer.ReadOpener();
+        WktBracket bracket = tokenizer.ReadOpener();
         string name = tokenizer.ReadDoubleQuotedWord();
         tokenizer.ReadToken(",");
         tokenizer.ReadToken("VERT_DATUM");
-        var verticalDatum = ReadVerticalDatum(tokenizer);
+        VerticalDatum verticalDatum = ReadVerticalDatum(tokenizer);
         tokenizer.ReadToken(",");
         tokenizer.ReadToken("UNIT");
-        var linearUnit = ReadLinearUnit(tokenizer);
+        LinearUnit linearUnit = ReadLinearUnit(tokenizer);
 
         string authority = string.Empty;
         long authorityCode = -1;
@@ -512,19 +513,19 @@ public static partial class CoordinateSystemWktReader
     private static CompoundCoordinateSystem ReadCompoundCoordinateSystem(WktTokenizer tokenizer)
     {
         // <compd cs> = COMPD_CS["<name>", <head cs>, <tail cs> {,<authority>}]
-        var bracket = tokenizer.ReadOpener();
+        WktBracket bracket = tokenizer.ReadOpener();
         string name = tokenizer.ReadDoubleQuotedWord();
         tokenizer.ReadToken(",");
         tokenizer.NextToken();
-        var headcs = ReadCoordinateSystem(null, tokenizer);
+        CoordinateSystem headcs = ReadCoordinateSystem(null, tokenizer);
 
-        var ct = tokenizer.NextToken();
+        TokenType ct = tokenizer.NextToken();
         while (ct != TokenType.Eol && ct != TokenType.Eof && CompoundCoordinateSystemDelimiters.Contains(tokenizer.GetStringValue()))
         {
             ct = tokenizer.NextToken();
         }
 
-        var tailcs = ReadCoordinateSystem(null, tokenizer);
+        CoordinateSystem tailcs = ReadCoordinateSystem(null, tokenizer);
 
         string authority = string.Empty;
         long authorityCode = -1;
@@ -545,17 +546,17 @@ public static partial class CoordinateSystemWktReader
     private static GeocentricCoordinateSystem ReadGeocentricCoordinateSystem(WktTokenizer tokenizer)
     {
         // GEOCCS["<name>", <datum>, <prime meridian>, <linear unit> {,<axis>, <axis>, <axis>} {,<authority>}]
-        var bracket = tokenizer.ReadOpener();
+        WktBracket bracket = tokenizer.ReadOpener();
         string name = tokenizer.ReadDoubleQuotedWord();
         tokenizer.ReadToken(",");
         tokenizer.ReadToken("DATUM");
-        var horizontalDatum = ReadHorizontalDatum(tokenizer);
+        HorizontalDatum horizontalDatum = ReadHorizontalDatum(tokenizer);
         tokenizer.ReadToken(",");
         tokenizer.ReadToken("PRIMEM");
-        var primeMeridian = ReadPrimeMeridian(tokenizer);
+        PrimeMeridian primeMeridian = ReadPrimeMeridian(tokenizer);
         tokenizer.ReadToken(",");
         tokenizer.ReadToken("UNIT");
-        var linearUnit = ReadLinearUnit(tokenizer);
+        LinearUnit linearUnit = ReadLinearUnit(tokenizer);
 
         string authority = string.Empty;
         long authorityCode = -1;
@@ -617,17 +618,17 @@ public static partial class CoordinateSystemWktReader
         // AXIS["Geodetic longitude","EAST"]
         // AUTHORITY["EPSG","4277"]
         // ]
-        var bracket = tokenizer.ReadOpener();
+        WktBracket bracket = tokenizer.ReadOpener();
         string name = tokenizer.ReadDoubleQuotedWord();
         tokenizer.ReadToken(",");
         tokenizer.ReadToken("DATUM");
-        var horizontalDatum = ReadHorizontalDatum(tokenizer);
+        HorizontalDatum horizontalDatum = ReadHorizontalDatum(tokenizer);
         tokenizer.ReadToken(",");
         tokenizer.ReadToken("PRIMEM");
-        var primeMeridian = ReadPrimeMeridian(tokenizer);
+        PrimeMeridian primeMeridian = ReadPrimeMeridian(tokenizer);
         tokenizer.ReadToken(",");
         tokenizer.ReadToken("UNIT");
-        var angularUnit = ReadAngularUnit(tokenizer);
+        AngularUnit angularUnit = ReadAngularUnit(tokenizer);
 
         string authority = string.Empty;
         long authorityCode = -1;
@@ -686,11 +687,11 @@ public static partial class CoordinateSystemWktReader
         string authority = string.Empty;
         long authorityCode = -1;
 
-        var bracket = tokenizer.ReadOpener();
+        WktBracket bracket = tokenizer.ReadOpener();
         string name = tokenizer.ReadDoubleQuotedWord();
         tokenizer.ReadToken(",");
         tokenizer.ReadToken("SPHEROID");
-        var ellipsoid = ReadEllipsoid(tokenizer);
+        Ellipsoid ellipsoid = ReadEllipsoid(tokenizer);
         tokenizer.NextToken();
         while (tokenizer.GetStringValue() == ",")
         {
@@ -719,7 +720,7 @@ public static partial class CoordinateSystemWktReader
         string authority = string.Empty;
         long authorityCode = -1;
 
-        var bracket = tokenizer.ReadOpener();
+        WktBracket bracket = tokenizer.ReadOpener();
         string name = tokenizer.ReadDoubleQuotedWord();
         tokenizer.ReadToken(",");
         tokenizer.NextToken();
@@ -743,7 +744,7 @@ public static partial class CoordinateSystemWktReader
     private static PrimeMeridian ReadPrimeMeridian(WktTokenizer tokenizer)
     {
         // PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]]
-        var bracket = tokenizer.ReadOpener();
+        WktBracket bracket = tokenizer.ReadOpener();
         string name = tokenizer.ReadDoubleQuotedWord();
         tokenizer.ReadToken(",");
         tokenizer.NextToken();
@@ -787,19 +788,19 @@ public static partial class CoordinateSystemWktReader
         //     PROJCS["DHDN / Gauss-Kruger zone 3", GEOGCS["DHDN", DATUM["Deutsches_Hauptdreiecksnetz", SPHEROID["Bessel 1841", 6377397.155, 299.1528128, AUTHORITY["EPSG", "7004"]], TOWGS84[612.4, 77, 440.2, -0.054, 0.057, -2.797, 0.525975255930096], AUTHORITY["EPSG", "6314"]], PRIMEM["Greenwich", 0, AUTHORITY["EPSG", "8901"]], UNIT["degree", 0.0174532925199433, AUTHORITY["EPSG", "9122"]], AUTHORITY["EPSG", "4314"]], UNIT["metre", 1, AUTHORITY["EPSG", "9001"]], PROJECTION["Transverse_Mercator"], PARAMETER["latitude_of_origin", 0], PARAMETER["central_meridian", 9], PARAMETER["scale_factor", 1], PARAMETER["false_easting", 3500000], PARAMETER["false_northing", 0], AUTHORITY["EPSG", "31467"]]
         //     AUTHORITY["CUSTOM","12345"]
         // ]
-        var bracket = tokenizer.ReadOpener();
+        WktBracket bracket = tokenizer.ReadOpener();
         string name = tokenizer.ReadDoubleQuotedWord();
         tokenizer.ReadToken(",");
         tokenizer.ReadToken("PARAM_MT");
-        var toBaseTransform = MathTransformWktReader.ReadMathTransform(tokenizer);
+        MathTransform toBaseTransform = MathTransformWktReader.ReadMathTransform(tokenizer);
         tokenizer.ReadToken(",");
         tokenizer.NextToken();
-        var baseCS = ReadCoordinateSystem(null, tokenizer);
+        CoordinateSystem baseCS = ReadCoordinateSystem(null, tokenizer);
 
         string authority = string.Empty;
         long authorityCode = -1;
 
-        var ct = tokenizer.NextToken();
+        TokenType ct = tokenizer.NextToken();
         while (ct != TokenType.Eol && ct != TokenType.Eof)
         {
             switch (tokenizer.GetStringValue())

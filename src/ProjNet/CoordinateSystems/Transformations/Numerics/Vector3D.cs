@@ -2,7 +2,7 @@
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
-namespace ProjNet.CoordinateSystems.Transformations;
+namespace ProjNet.CoordinateSystems.Transformations.Numerics;
 
 using System;
 
@@ -12,10 +12,19 @@ using System;
 [Serializable]
 internal readonly struct Vector3D(double x, double y, double z)
 {
+    /// <summary>
+    /// Gets the X component.
+    /// </summary>
     internal double X { get; } = x;
 
+    /// <summary>
+    /// Gets the Y component.
+    /// </summary>
     internal double Y { get; } = y;
 
+    /// <summary>
+    /// Gets the Z component.
+    /// </summary>
     internal double Z { get; } = z;
 
     public static Vector3D operator +(Vector3D left, Vector3D right)

@@ -10,6 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Projections;
+using ProjNet.CoordinateSystems.Transformations.Numerics;
 
 /// <summary>
 /// Implements PROJ's <c>sch</c> (Spherical Cross-track Height) 3D runtime transform.

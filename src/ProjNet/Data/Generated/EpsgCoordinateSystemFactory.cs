@@ -36,7 +36,7 @@ internal static class EpsgCoordinateSystemFactory
                 continue;
             }
 
-            var coordinateSystem = TryCreateCoordinateSystem(srid);
+            CoordinateSystem? coordinateSystem = TryCreateCoordinateSystem(srid);
             if (coordinateSystem is null)
             {
                 continue;
@@ -48,18 +48,18 @@ internal static class EpsgCoordinateSystemFactory
 
     private static CoordinateSystem? TryCreateCoordinateSystem(int srid)
     {
-        if (!EpsgGeneratedCatalog.TryGetCoordinateReference(srid, out var reference, out int cacheIndex))
+        if (!EpsgGeneratedCatalog.TryGetCoordinateReference(srid, out EpsgCoordinateReferenceRecord reference, out int cacheIndex))
         {
             return null;
         }
 
-        var cached = CoordinateSystemCache[cacheIndex];
+        CoordinateSystem? cached = CoordinateSystemCache[cacheIndex];
         if (cached is not null)
         {
             return cached;
         }
 
-        var created = CreateCoordinateSystem(reference);
+        CoordinateSystem? created = CreateCoordinateSystem(reference);
         if (created is null)
         {
             return null;
@@ -81,35 +81,35 @@ internal static class EpsgCoordinateSystemFactory
         switch (reference.Kind)
         {
             case EpsgCoordinateSystemKind.Geographic2D:
-                if (EpsgGeneratedCatalog.TryGetGeographicCrs(reference.RecordIndex, out var geographicRecord))
+                if (EpsgGeneratedCatalog.TryGetGeographicCrs(reference.RecordIndex, out EpsgGeographicCrsRecord geographicRecord))
                 {
                     return CreateGeographic(geographicRecord);
                 }
 
                 return null;
             case EpsgCoordinateSystemKind.Geocentric:
-                if (EpsgGeneratedCatalog.TryGetGeocentricCrs(reference.RecordIndex, out var geocentricRecord))
+                if (EpsgGeneratedCatalog.TryGetGeocentricCrs(reference.RecordIndex, out EpsgGeocentricCrsRecord geocentricRecord))
                 {
                     return CreateGeocentric(geocentricRecord);
                 }
 
                 return null;
             case EpsgCoordinateSystemKind.Projected:
-                if (EpsgGeneratedCatalog.TryGetProjectedCrs(reference.RecordIndex, out var projectedRecord))
+                if (EpsgGeneratedCatalog.TryGetProjectedCrs(reference.RecordIndex, out EpsgProjectedCrsRecord projectedRecord))
                 {
                     return CreateProjected(projectedRecord);
                 }
 
                 return null;
             case EpsgCoordinateSystemKind.Vertical:
-                if (EpsgGeneratedCatalog.TryGetVerticalCrs(reference.RecordIndex, out var verticalRecord))
+                if (EpsgGeneratedCatalog.TryGetVerticalCrs(reference.RecordIndex, out EpsgVerticalCrsRecord verticalRecord))
                 {
                     return CreateVertical(verticalRecord);
                 }
 
                 return null;
             case EpsgCoordinateSystemKind.Compound:
-                if (EpsgGeneratedCatalog.TryGetCompoundCrs(reference.RecordIndex, out var compoundRecord))
+                if (EpsgGeneratedCatalog.TryGetCompoundCrs(reference.RecordIndex, out EpsgCompoundCrsRecord compoundRecord))
                 {
                     return CreateCompound(compoundRecord);
                 }
@@ -122,28 +122,28 @@ internal static class EpsgCoordinateSystemFactory
 
     private static GeographicCoordinateSystem? CreateGeographic(EpsgGeographicCrsRecord record)
     {
-        if (!TryCreateHorizontalDatum(record.DatumCode, out var datum))
+        if (!TryCreateHorizontalDatum(record.DatumCode, out HorizontalDatum? datum))
         {
             return null;
         }
 
-        if (!TryGetGeodeticDatumRecord(record.DatumCode, out var geodeticDatumRecord))
+        if (!TryGetGeodeticDatumRecord(record.DatumCode, out EpsgGeodeticDatumRecord geodeticDatumRecord))
         {
             return null;
         }
 
-        if (!TryCreatePrimeMeridian(geodeticDatumRecord.PrimeMeridianCode, out var primeMeridian))
+        if (!TryCreatePrimeMeridian(geodeticDatumRecord.PrimeMeridianCode, out PrimeMeridian? primeMeridian))
         {
             return null;
         }
 
-        var axes = GetAxes(record.CoordinateSystemCode, 2);
+        List<AxisInfo>? axes = GetAxes(record.CoordinateSystemCode, 2);
         if (axes is null || axes.Count < 2)
         {
             return null;
         }
 
-        if (!TryCreateAngularUnit(GetUnitCode(record.CoordinateSystemCode, 1), out var angularUnit))
+        if (!TryCreateAngularUnit(GetUnitCode(record.CoordinateSystemCode, 1), out AngularUnit? angularUnit))
         {
             return null;
         }
@@ -163,28 +163,28 @@ internal static class EpsgCoordinateSystemFactory
 
     private static GeocentricCoordinateSystem? CreateGeocentric(EpsgGeocentricCrsRecord record)
     {
-        if (!TryCreateHorizontalDatum(record.DatumCode, out var datum))
+        if (!TryCreateHorizontalDatum(record.DatumCode, out HorizontalDatum? datum))
         {
             return null;
         }
 
-        if (!TryGetGeodeticDatumRecord(record.DatumCode, out var geodeticDatumRecord))
+        if (!TryGetGeodeticDatumRecord(record.DatumCode, out EpsgGeodeticDatumRecord geodeticDatumRecord))
         {
             return null;
         }
 
-        if (!TryCreatePrimeMeridian(geodeticDatumRecord.PrimeMeridianCode, out var primeMeridian))
+        if (!TryCreatePrimeMeridian(geodeticDatumRecord.PrimeMeridianCode, out PrimeMeridian? primeMeridian))
         {
             return null;
         }
 
-        var axes = GetAxes(record.CoordinateSystemCode, 3);
+        List<AxisInfo>? axes = GetAxes(record.CoordinateSystemCode, 3);
         if (axes is null || axes.Count < 3)
         {
             return null;
         }
 
-        if (!TryCreateLinearUnit(GetUnitCode(record.CoordinateSystemCode, 1), out var linearUnit))
+        if (!TryCreateLinearUnit(GetUnitCode(record.CoordinateSystemCode, 1), out LinearUnit? linearUnit))
         {
             return null;
         }
@@ -210,12 +210,12 @@ internal static class EpsgCoordinateSystemFactory
             return null;
         }
 
-        if (!TryCreateLinearUnit(GetUnitCode(record.CoordinateSystemCode, 1), out var linearUnit))
+        if (!TryCreateLinearUnit(GetUnitCode(record.CoordinateSystemCode, 1), out LinearUnit? linearUnit))
         {
             return null;
         }
 
-        if (!EpsgGeneratedCatalog.TryGetConversion(record.ConversionCode, out var conversion))
+        if (!EpsgGeneratedCatalog.TryGetConversion(record.ConversionCode, out EpsgConversionRecord conversion))
         {
             return null;
         }
@@ -223,7 +223,7 @@ internal static class EpsgCoordinateSystemFactory
         var parameters = new List<ProjectionParameter>(conversion.ParameterCount);
         for (int i = 0; i < conversion.ParameterCount; i++)
         {
-            if (!EpsgGeneratedCatalog.TryGetConversionParameter(record.ConversionCode, i, out var parameter))
+            if (!EpsgGeneratedCatalog.TryGetConversionParameter(record.ConversionCode, i, out EpsgConversionParameterRecord parameter))
             {
                 return null;
             }
@@ -234,7 +234,7 @@ internal static class EpsgCoordinateSystemFactory
         string projectionName = NormalizeProjectionMethodName(conversion.MethodName);
         var projection = new Projection(projectionName, parameters, projectionName, "EPSG", record.ConversionCode, string.Empty, string.Empty, string.Empty);
 
-        var axes = GetAxes(record.CoordinateSystemCode, 2);
+        List<AxisInfo>? axes = GetAxes(record.CoordinateSystemCode, 2);
         if (axes is null || axes.Count < 2)
         {
             return null;
@@ -256,18 +256,18 @@ internal static class EpsgCoordinateSystemFactory
 
     private static VerticalCoordinateSystem? CreateVertical(EpsgVerticalCrsRecord record)
     {
-        if (!TryGetVerticalDatumRecord(record.DatumCode, out var datumRecord))
+        if (!TryGetVerticalDatumRecord(record.DatumCode, out EpsgVerticalDatumRecord datumRecord))
         {
             return null;
         }
 
-        var axisInfo = GetAxes(record.CoordinateSystemCode, 1);
+        List<AxisInfo>? axisInfo = GetAxes(record.CoordinateSystemCode, 1);
         if (axisInfo is null || axisInfo.Count == 0)
         {
             return null;
         }
 
-        if (!TryCreateLinearUnit(GetUnitCode(record.CoordinateSystemCode, 1), out var linearUnit))
+        if (!TryCreateLinearUnit(GetUnitCode(record.CoordinateSystemCode, 1), out LinearUnit? linearUnit))
         {
             return null;
         }
@@ -359,8 +359,8 @@ internal static class EpsgCoordinateSystemFactory
 
     private static CompoundCoordinateSystem? CreateCompound(EpsgCompoundCrsRecord record)
     {
-        var horizontal = TryCreateCoordinateSystem(record.HorizontalSrid);
-        var vertical = TryCreateCoordinateSystem(record.VerticalSrid);
+        CoordinateSystem? horizontal = TryCreateCoordinateSystem(record.HorizontalSrid);
+        CoordinateSystem? vertical = TryCreateCoordinateSystem(record.VerticalSrid);
         if (horizontal is null || vertical is null)
         {
             return null;
@@ -380,12 +380,12 @@ internal static class EpsgCoordinateSystemFactory
     private static bool TryCreateHorizontalDatum(int datumCode, [NotNullWhen(true)] out HorizontalDatum? datum)
     {
         datum = null;
-        if (!TryGetGeodeticDatumRecord(datumCode, out var datumRecord))
+        if (!TryGetGeodeticDatumRecord(datumCode, out EpsgGeodeticDatumRecord datumRecord))
         {
             return false;
         }
 
-        if (!TryCreateEllipsoid(datumRecord.EllipsoidCode, out var ellipsoid))
+        if (!TryCreateEllipsoid(datumRecord.EllipsoidCode, out Ellipsoid? ellipsoid))
         {
             return false;
         }
@@ -406,12 +406,12 @@ internal static class EpsgCoordinateSystemFactory
     private static bool TryCreateEllipsoid(int ellipsoidCode, [NotNullWhen(true)] out Ellipsoid? ellipsoid)
     {
         ellipsoid = null;
-        if (!TryGetEllipsoidRecord(ellipsoidCode, out var record))
+        if (!TryGetEllipsoidRecord(ellipsoidCode, out EpsgEllipsoidRecord record))
         {
             return false;
         }
 
-        if (!TryCreateLinearUnit(record.UnitCode, out var linearUnit))
+        if (!TryCreateLinearUnit(record.UnitCode, out LinearUnit? linearUnit))
         {
             return false;
         }
@@ -435,12 +435,12 @@ internal static class EpsgCoordinateSystemFactory
     private static bool TryCreatePrimeMeridian(int primeMeridianCode, [NotNullWhen(true)] out PrimeMeridian? primeMeridian)
     {
         primeMeridian = null;
-        if (!TryGetPrimeMeridianRecord(primeMeridianCode, out var record))
+        if (!TryGetPrimeMeridianRecord(primeMeridianCode, out EpsgPrimeMeridianRecord record))
         {
             return false;
         }
 
-        if (!TryCreateAngularUnit(record.UnitCode, out var angularUnit))
+        if (!TryCreateAngularUnit(record.UnitCode, out AngularUnit? angularUnit))
         {
             return false;
         }
@@ -460,7 +460,7 @@ internal static class EpsgCoordinateSystemFactory
     private static bool TryCreateLinearUnit(int unitCode, [NotNullWhen(true)] out LinearUnit? unit)
     {
         unit = null;
-        if (!TryGetUnitRecord(unitCode, out var record) || record.UnitType != 0)
+        if (!TryGetUnitRecord(unitCode, out EpsgUnitRecord record) || record.UnitType != 0)
         {
             return false;
         }
@@ -472,7 +472,7 @@ internal static class EpsgCoordinateSystemFactory
     private static bool TryCreateAngularUnit(int unitCode, [NotNullWhen(true)] out AngularUnit? unit)
     {
         unit = null;
-        if (!TryGetUnitRecord(unitCode, out var record) || record.UnitType != 1)
+        if (!TryGetUnitRecord(unitCode, out EpsgUnitRecord record) || record.UnitType != 1)
         {
             return false;
         }
@@ -483,7 +483,7 @@ internal static class EpsgCoordinateSystemFactory
 
     private static List<AxisInfo>? GetAxes(int coordinateSystemCode, int expectedCount, bool includeAll = false)
     {
-        if (!AxesByCoordinateSystemCode.Value.TryGetValue(coordinateSystemCode, out var orderedAxes))
+        if (!AxesByCoordinateSystemCode.Value.TryGetValue(coordinateSystemCode, out EpsgAxisRecord[]? orderedAxes))
         {
             return null;
         }
@@ -497,7 +497,7 @@ internal static class EpsgCoordinateSystemFactory
         var axes = new List<AxisInfo>(axisCount);
         for (int i = 0; i < axisCount; i++)
         {
-            var axis = orderedAxes[i];
+            EpsgAxisRecord axis = orderedAxes[i];
             axes.Add(new AxisInfo(axis.Name, (AxisOrientationEnum)axis.Orientation));
         }
 
@@ -506,12 +506,12 @@ internal static class EpsgCoordinateSystemFactory
 
     private static int GetUnitCode(int coordinateSystemCode, int axisOrder)
     {
-        if (!AxesByCoordinateSystemCode.Value.TryGetValue(coordinateSystemCode, out var axes))
+        if (!AxesByCoordinateSystemCode.Value.TryGetValue(coordinateSystemCode, out EpsgAxisRecord[]? axes))
         {
             return -1;
         }
 
-        foreach (var axis in axes)
+        foreach (EpsgAxisRecord axis in axes)
         {
             if (axis.AxisOrder == axisOrder)
             {
@@ -550,7 +550,7 @@ internal static class EpsgCoordinateSystemFactory
     private static Dictionary<int, EpsgUnitRecord> BuildUnitsByCode()
     {
         var dictionary = new Dictionary<int, EpsgUnitRecord>(EpsgGeneratedCatalog.Units.Length);
-        foreach (var item in EpsgGeneratedCatalog.Units)
+        foreach (EpsgUnitRecord item in EpsgGeneratedCatalog.Units)
         {
             dictionary[item.Code] = item;
         }
@@ -561,7 +561,7 @@ internal static class EpsgCoordinateSystemFactory
     private static Dictionary<int, EpsgEllipsoidRecord> BuildEllipsoidsByCode()
     {
         var dictionary = new Dictionary<int, EpsgEllipsoidRecord>(EpsgGeneratedCatalog.Ellipsoids.Length);
-        foreach (var item in EpsgGeneratedCatalog.Ellipsoids)
+        foreach (EpsgEllipsoidRecord item in EpsgGeneratedCatalog.Ellipsoids)
         {
             dictionary[item.Code] = item;
         }
@@ -572,7 +572,7 @@ internal static class EpsgCoordinateSystemFactory
     private static Dictionary<int, EpsgPrimeMeridianRecord> BuildPrimeMeridiansByCode()
     {
         var dictionary = new Dictionary<int, EpsgPrimeMeridianRecord>(EpsgGeneratedCatalog.PrimeMeridians.Length);
-        foreach (var item in EpsgGeneratedCatalog.PrimeMeridians)
+        foreach (EpsgPrimeMeridianRecord item in EpsgGeneratedCatalog.PrimeMeridians)
         {
             dictionary[item.Code] = item;
         }
@@ -583,7 +583,7 @@ internal static class EpsgCoordinateSystemFactory
     private static Dictionary<int, EpsgGeodeticDatumRecord> BuildGeodeticDatumsByCode()
     {
         var dictionary = new Dictionary<int, EpsgGeodeticDatumRecord>(EpsgGeneratedCatalog.GeodeticDatums.Length);
-        foreach (var item in EpsgGeneratedCatalog.GeodeticDatums)
+        foreach (EpsgGeodeticDatumRecord item in EpsgGeneratedCatalog.GeodeticDatums)
         {
             dictionary[item.Code] = item;
         }
@@ -594,7 +594,7 @@ internal static class EpsgCoordinateSystemFactory
     private static Dictionary<int, EpsgVerticalDatumRecord> BuildVerticalDatumsByCode()
     {
         var dictionary = new Dictionary<int, EpsgVerticalDatumRecord>(EpsgGeneratedCatalog.VerticalDatums.Length);
-        foreach (var item in EpsgGeneratedCatalog.VerticalDatums)
+        foreach (EpsgVerticalDatumRecord item in EpsgGeneratedCatalog.VerticalDatums)
         {
             dictionary[item.Code] = item;
         }
@@ -605,9 +605,9 @@ internal static class EpsgCoordinateSystemFactory
     private static Dictionary<int, EpsgAxisRecord[]> BuildAxesByCoordinateSystemCode()
     {
         var grouped = new Dictionary<int, List<EpsgAxisRecord>>();
-        foreach (var axis in EpsgGeneratedCatalog.Axes)
+        foreach (EpsgAxisRecord axis in EpsgGeneratedCatalog.Axes)
         {
-            if (!grouped.TryGetValue(axis.CoordinateSystemCode, out var axes))
+            if (!grouped.TryGetValue(axis.CoordinateSystemCode, out List<EpsgAxisRecord>? axes))
             {
                 axes = new List<EpsgAxisRecord>();
                 grouped[axis.CoordinateSystemCode] = axes;
@@ -617,7 +617,7 @@ internal static class EpsgCoordinateSystemFactory
         }
 
         var result = new Dictionary<int, EpsgAxisRecord[]>(grouped.Count);
-        foreach (var item in grouped)
+        foreach (KeyValuePair<int, List<EpsgAxisRecord>> item in grouped)
         {
             item.Value.Sort((left, right) => left.AxisOrder.CompareTo(right.AxisOrder));
             result[item.Key] = item.Value.ToArray();

@@ -30,7 +30,7 @@ internal static class CoordinateOperationResolver
         OperationCandidate? bestCandidate = null;
         bestCandidate = SelectHigherScore(bestCandidate, CreateIdentityCandidate(source, target));
 
-        var directCandidate = directResolver(source, target);
+        ICoordinateTransformation? directCandidate = directResolver(source, target);
         if (directCandidate is not null)
         {
             bestCandidate = SelectHigherScore(bestCandidate, new OperationCandidate(directCandidate, 0));

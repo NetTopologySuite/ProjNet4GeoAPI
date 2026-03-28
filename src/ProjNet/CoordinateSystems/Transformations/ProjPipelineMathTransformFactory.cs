@@ -1597,7 +1597,7 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
-        var parsed = new int[segments.Length];
+        int[] parsed = new int[segments.Length];
         var seen = new HashSet<int>();
         for (int i = 0; i < segments.Length; i++)
         {
@@ -1633,7 +1633,7 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
-        var parsed = new int[axis.Length];
+        int[] parsed = new int[axis.Length];
         var seen = new HashSet<int>();
         for (int i = 0; i < axis.Length; i++)
         {

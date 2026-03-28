@@ -74,19 +74,19 @@ public class CoordinateTransformationFactory
 
     private ICoordinateTransformation? CreateFromCoordinateSystemsWithMetadata(CoordinateSystem sourceCS, CoordinateSystem targetCS)
     {
-        if (TryGetDirectProjectedOperation(sourceCS, targetCS, out var operation, out string? resolvedGridPath))
+        if (TryGetDirectProjectedOperation(sourceCS, targetCS, out CoordinateOperationDefinition? operation, out string? resolvedGridPath))
         {
-            if (TryCreateExplicitOperationTransformation(sourceCS, targetCS, operation, resolvedGridPath, out var explicitTransformation))
+            if (TryCreateExplicitOperationTransformation(sourceCS, targetCS, operation, resolvedGridPath, out ICoordinateTransformation? explicitTransformation))
             {
                 return explicitTransformation;
             }
 
-            if (TryCreateDirectProjectedTransformation(sourceCS, targetCS, operation, resolvedGridPath, out var directTransformation))
+            if (TryCreateDirectProjectedTransformation(sourceCS, targetCS, operation, resolvedGridPath, out ICoordinateTransformation? directTransformation))
             {
                 return directTransformation;
             }
 
-            var fallbackWithMetadata = this.CreateFromCoordinateSystemsCore(sourceCS, targetCS);
+            ICoordinateTransformation? fallbackWithMetadata = this.CreateFromCoordinateSystemsCore(sourceCS, targetCS);
             if (fallbackWithMetadata is null)
             {
                 return null;
@@ -97,7 +97,7 @@ public class CoordinateTransformationFactory
 
         if (TryGetDirectOperation(sourceCS, targetCS, out operation, out resolvedGridPath))
         {
-            if (TryCreateExplicitOperationTransformation(sourceCS, targetCS, operation, resolvedGridPath, out var explicitTransformation))
+            if (TryCreateExplicitOperationTransformation(sourceCS, targetCS, operation, resolvedGridPath, out ICoordinateTransformation? explicitTransformation))
             {
                 return explicitTransformation;
             }
@@ -107,7 +107,7 @@ public class CoordinateTransformationFactory
             && targetCS is ProjectedCoordinateSystem targetProjected
             && TryGetDirectOperation(sourceProjected.GeographicCoordinateSystem, targetProjected.GeographicCoordinateSystem, out operation, out resolvedGridPath))
         {
-            if (TryCreateExplicitOperationTransformation(sourceCS, targetCS, operation, resolvedGridPath, out var explicitTransformation))
+            if (TryCreateExplicitOperationTransformation(sourceCS, targetCS, operation, resolvedGridPath, out ICoordinateTransformation? explicitTransformation))
             {
                 return explicitTransformation;
             }
@@ -127,7 +127,7 @@ public class CoordinateTransformationFactory
 
         if (source is GeographicCoordinateSystem sourceGeographic && target is GeographicCoordinateSystem targetGeographic)
         {
-            if (!TryCreateExplicitGeographicTransformation(sourceGeographic, targetGeographic, operation, out var geographicTransformation))
+            if (!TryCreateExplicitGeographicTransformation(sourceGeographic, targetGeographic, operation, out CoordinateTransformation? geographicTransformation))
             {
                 return false;
             }
@@ -138,7 +138,7 @@ public class CoordinateTransformationFactory
 
         if (source is ProjectedCoordinateSystem sourceProjected && target is ProjectedCoordinateSystem targetProjected)
         {
-            if (!TryCreateExplicitProjectedTransformation(sourceProjected, targetProjected, operation, out var projectedTransformation))
+            if (!TryCreateExplicitProjectedTransformation(sourceProjected, targetProjected, operation, out CoordinateTransformation? projectedTransformation))
             {
                 return false;
             }
@@ -164,7 +164,7 @@ public class CoordinateTransformationFactory
             return false;
         }
 
-        var fallback = CreateDirectProjectedTransform(sourceProjected, targetProjected);
+        CoordinateTransformation fallback = CreateDirectProjectedTransform(sourceProjected, targetProjected);
         transformation = CreateMetadataBackedTransformation(source, target, fallback, operation, resolvedGridPath);
         return true;
     }
@@ -177,7 +177,7 @@ public class CoordinateTransformationFactory
     {
         transformation = null;
 
-        if (!TryCreateBursaWolfParameters(operation, out var helmert))
+        if (!TryCreateBursaWolfParameters(operation, out Wgs84ConversionInfo? helmert))
         {
             return false;
         }
@@ -185,13 +185,13 @@ public class CoordinateTransformationFactory
         var ct = new ConcatenatedTransform();
         var csFactory = new CoordinateSystemFactory();
 
-        var sourceCentric = csFactory.CreateGeocentricCoordinateSystem(
+        GeocentricCoordinateSystem sourceCentric = csFactory.CreateGeocentricCoordinateSystem(
             source.HorizontalDatum.Name + " Geocentric",
             source.HorizontalDatum,
             LinearUnit.Metre,
             source.PrimeMeridian);
 
-        var targetCentric = csFactory.CreateGeocentricCoordinateSystem(
+        GeocentricCoordinateSystem targetCentric = csFactory.CreateGeocentricCoordinateSystem(
             target.HorizontalDatum.Name + " Geocentric",
             target.HorizontalDatum,
             LinearUnit.Metre,
@@ -238,7 +238,7 @@ public class CoordinateTransformationFactory
                 source.GeographicCoordinateSystem,
                 target.GeographicCoordinateSystem,
                 operation,
-                out var geographicTransformation))
+                out CoordinateTransformation? geographicTransformation))
         {
             return false;
         }
@@ -270,7 +270,7 @@ public class CoordinateTransformationFactory
             return false;
         }
 
-        if (!EpsgGeneratedCatalog.TryGetExplicitOperationParameters(operation.OperationCode, out var operationParameters))
+        if (!EpsgGeneratedCatalog.TryGetExplicitOperationParameters(operation.OperationCode, out EpsgExplicitOperationRecord operationParameters))
         {
             return false;
         }
@@ -318,8 +318,8 @@ public class CoordinateTransformationFactory
             return ArgumentGuard.ThrowIfNull(simpleConversionCandidate, nameof(simpleConversionCandidate));
         }
 
-        var sourceKind = GetCoordinateSystemRuntimeKind(sourceCS);
-        var targetKind = GetCoordinateSystemRuntimeKind(targetCS);
+        CoordinateSystemRuntimeKind sourceKind = GetCoordinateSystemRuntimeKind(sourceCS);
+        CoordinateSystemRuntimeKind targetKind = GetCoordinateSystemRuntimeKind(targetCS);
 
         // Fitted -> Any
         if (sourceKind == CoordinateSystemRuntimeKind.Fitted)
@@ -608,7 +608,7 @@ public class CoordinateTransformationFactory
 
     private static void SimplifyTrans(ConcatenatedTransform mtrans, ref List<ICoordinateTransformationCore> mts)
     {
-        foreach (var t in mtrans.CoordinateTransformationList)
+        foreach (ICoordinateTransformationCore t in mtrans.CoordinateTransformationList)
         {
             if (t is ConcatenatedTransform ct)
             {
@@ -623,7 +623,7 @@ public class CoordinateTransformationFactory
 
     private static CoordinateTransformation Geog2Geoc(GeographicCoordinateSystem source, GeocentricCoordinateSystem target)
     {
-        var geocMathTransform = CreateCoordinateOperation(target);
+        GeocentricTransform geocMathTransform = CreateCoordinateOperation(target);
         if (source.PrimeMeridian.EqualParams(target.PrimeMeridian))
         {
             return new CoordinateTransformation(source, target, TransformType.Conversion, geocMathTransform, string.Empty, string.Empty, -1, string.Empty, string.Empty);
@@ -637,7 +637,7 @@ public class CoordinateTransformationFactory
 
     private static CoordinateTransformation Geoc2Geog(GeocentricCoordinateSystem source, GeographicCoordinateSystem target)
     {
-        var geocMathTransform = CreateCoordinateOperation(source).Inverse();
+        MathTransform geocMathTransform = CreateCoordinateOperation(source).Inverse();
         if (source.PrimeMeridian.EqualParams(target.PrimeMeridian))
         {
             return new CoordinateTransformation(source, target, TransformType.Conversion, geocMathTransform, string.Empty, string.Empty, -1, string.Empty, string.Empty);
@@ -663,7 +663,7 @@ public class CoordinateTransformationFactory
         ct.CoordinateTransformationList.Add(ctFac.CreateFromCoordinateSystems(source, source.GeographicCoordinateSystem));
 
         // Transform geographic to geographic:
-        var geogToGeog = ctFac.CreateFromCoordinateSystems(
+        ICoordinateTransformation? geogToGeog = ctFac.CreateFromCoordinateSystems(
             source.GeographicCoordinateSystem,
             target.GeographicCoordinateSystem);
         if (geogToGeog is not null)
@@ -688,12 +688,12 @@ public class CoordinateTransformationFactory
 
     private static CoordinateTransformation CreateDirectProjectedTransform(ProjectedCoordinateSystem source, ProjectedCoordinateSystem target)
     {
-        var sourceInverseProjection = CreateCoordinateOperation(
+        MathTransform sourceInverseProjection = CreateCoordinateOperation(
             source.Projection,
             source.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid,
             source.LinearUnit).Inverse();
 
-        var targetForwardProjection = CreateCoordinateOperation(
+        MathTransform targetForwardProjection = CreateCoordinateOperation(
             target.Projection,
             target.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid,
             target.LinearUnit);
@@ -738,7 +738,7 @@ public class CoordinateTransformationFactory
     {
         if (source.EqualParams(target.GeographicCoordinateSystem))
         {
-            var mathTransform = CreateCoordinateOperation(
+            MathTransform mathTransform = CreateCoordinateOperation(
                 target.Projection,
                 target.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid,
                 target.LinearUnit);
@@ -775,7 +775,7 @@ public class CoordinateTransformationFactory
     {
         if (source.GeographicCoordinateSystem.EqualParams(target))
         {
-            var mathTransform = CreateCoordinateOperation(
+            MathTransform mathTransform = CreateCoordinateOperation(
                 source.Projection,
                 source.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid,
                 source.LinearUnit).Inverse();
@@ -838,12 +838,12 @@ public class CoordinateTransformationFactory
         // Convert to geocentric, perform shift and return to geographic
         var ctFac = new CoordinateTransformationFactory();
         var cFac = new CoordinateSystemFactory();
-        var sourceCentric = cFac.CreateGeocentricCoordinateSystem(
+        GeocentricCoordinateSystem sourceCentric = cFac.CreateGeocentricCoordinateSystem(
             source.HorizontalDatum.Name + " Geocentric",
             source.HorizontalDatum,
             LinearUnit.Metre,
             source.PrimeMeridian);
-        var targetCentric = cFac.CreateGeocentricCoordinateSystem(
+        GeocentricCoordinateSystem targetCentric = cFac.CreateGeocentricCoordinateSystem(
             target.HorizontalDatum.Name + " Geocentric",
             target.HorizontalDatum,
             LinearUnit.Metre,
@@ -948,7 +948,7 @@ public class CoordinateTransformationFactory
     private static CoordinateTransformation Fitt2Any(FittedCoordinateSystem source, CoordinateSystem target)
     {
         // transform from fitted to base system of fitted (which is equal to target)
-        var mt = CreateFittedTransform(source);
+        MathTransform mt = CreateFittedTransform(source);
 
         // case when target system is equal to base system of the fitted
         if (source.BaseCoordinateSystem.EqualParams(target))
@@ -977,7 +977,7 @@ public class CoordinateTransformationFactory
     private static CoordinateTransformation Any2Fitt(CoordinateSystem source, FittedCoordinateSystem target)
     {
         // Transform form base system of fitted to target coordinate system - use invered math transform
-        var invMt = CreateFittedTransform(target).Inverse();
+        MathTransform invMt = CreateFittedTransform(target).Inverse();
 
         // case when source system is equal to base system of the fitted
         if (target.BaseCoordinateSystem.EqualParams(source))
@@ -1020,7 +1020,7 @@ public class CoordinateTransformationFactory
     {
         var parameterList = new List<ProjectionParameter>(2);
 
-        var ellipsoid = geo.HorizontalDatum.Ellipsoid;
+        Ellipsoid ellipsoid = geo.HorizontalDatum.Ellipsoid;
 
         if (parameterList.Find((p) => p.Name.ToLowerInvariant().Replace(' ', '_').Equals("semi_major", StringComparison.Ordinal)) is null)
         {
@@ -1100,7 +1100,7 @@ public class CoordinateTransformationFactory
         var provider = new ManagedCoordinateOperationDefinitionProvider();
         var definitions = new Dictionary<SridPair, List<CoordinateOperationDefinition>>();
 
-        foreach (var definition in provider.GetDefinitions())
+        foreach (CoordinateOperationDefinition definition in provider.GetDefinitions())
         {
             if (definition.SourceSrid <= 0 || definition.TargetSrid <= 0)
             {
@@ -1118,7 +1118,7 @@ public class CoordinateTransformationFactory
             }
 
             var key = new SridPair(definition.SourceSrid, definition.TargetSrid);
-            if (!definitions.TryGetValue(key, out var operations))
+            if (!definitions.TryGetValue(key, out List<CoordinateOperationDefinition>? operations))
             {
                 operations = new List<CoordinateOperationDefinition>();
                 definitions[key] = operations;
@@ -1128,7 +1128,7 @@ public class CoordinateTransformationFactory
         }
 
         var result = new Dictionary<SridPair, IReadOnlyList<CoordinateOperationDefinition>>(definitions.Count);
-        foreach (var pair in definitions)
+        foreach (KeyValuePair<SridPair, List<CoordinateOperationDefinition>> pair in definitions)
         {
             pair.Value.Sort(OperationDefinitionComparer.Instance);
             result[pair.Key] = pair.Value;
@@ -1141,7 +1141,7 @@ public class CoordinateTransformationFactory
     {
         string[] localDirectories = ReadGridDirectoriesFromEnvironment();
         string? cacheDirectory = Environment.GetEnvironmentVariable(GridCacheEnvironmentVariable);
-        var mode = ParseGridResolutionMode(Environment.GetEnvironmentVariable(GridModeEnvironmentVariable));
+        GridResourceResolutionMode mode = ParseGridResolutionMode(Environment.GetEnvironmentVariable(GridModeEnvironmentVariable));
 
         var options = new GridResourceResolverOptions(localDirectories, cacheDirectory, mode);
         return new GridResourceResolver(options);
@@ -1218,13 +1218,13 @@ public class CoordinateTransformationFactory
         operation = null;
         resolvedGridPath = null;
 
-        if (!DirectOperationDefinitions.Value.TryGetValue(new SridPair(sourceSrid, targetSrid), out var operations))
+        if (!DirectOperationDefinitions.Value.TryGetValue(new SridPair(sourceSrid, targetSrid), out IReadOnlyList<CoordinateOperationDefinition>? operations))
         {
             return false;
         }
 
         string? missingGridFile = null;
-        foreach (var candidate in operations)
+        foreach (CoordinateOperationDefinition candidate in operations)
         {
             if (string.IsNullOrWhiteSpace(candidate.ParameterFileName))
             {

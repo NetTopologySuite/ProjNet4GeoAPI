@@ -112,7 +112,7 @@ public static class MathTransformWktReader
             tokenizer.ReadToken("PARAMETER");
         }
 
-        var paramInfo = ReadParameters(tokenizer);
+        ParameterInfo paramInfo = ReadParameters(tokenizer);
 
         // manage required parameters - row, col
         Parameter? rowParamCandidate = paramInfo.GetParameterByName("num_row");

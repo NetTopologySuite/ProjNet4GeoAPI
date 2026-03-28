@@ -220,7 +220,7 @@ public class Wgs84ConversionInfo : IEquatable<Wgs84ConversionInfo>
     /// <returns>An array of 7 Bursa-Wolf transformation coefficients [S, Ex*S, Ey*S, Ez*S, Dx, Dy, Dz], where S = 1 + Ppm/1,000,000.</returns>
     public double[] GetAffineTransform()
     {
-        var result = new double[7];
+        double[] result = new double[7];
         this.WriteAffineTransform(result);
         return result;
     }

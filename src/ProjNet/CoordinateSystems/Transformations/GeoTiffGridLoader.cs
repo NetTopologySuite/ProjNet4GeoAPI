@@ -430,8 +430,8 @@ internal static partial class GeoTiffGridLoader
         double e,
         double f)
     {
-        var xs = new[] { 0d, width - 1d, 0d, width - 1d };
-        var ys = new[] { 0d, 0d, height - 1d, height - 1d };
+        double[] xs = new[] { 0d, width - 1d, 0d, width - 1d };
+        double[] ys = new[] { 0d, 0d, height - 1d, height - 1d };
         double west = double.PositiveInfinity;
         double east = double.NegativeInfinity;
         double south = double.PositiveInfinity;
@@ -457,7 +457,7 @@ internal static partial class GeoTiffGridLoader
     {
         int scanlineSize = tiff.ScanlineSize();
         int valueCount = checked(width * height);
-        var sampleValues = new double[samplesPerPixel][];
+        double[][] sampleValues = new double[samplesPerPixel][];
 
         try
         {
@@ -524,10 +524,10 @@ internal static partial class GeoTiffGridLoader
 
     private static double[][] CopySampleBuffers(double[][] sampleValues, int valueCount)
     {
-        var copied = new double[sampleValues.Length][];
+        double[][] copied = new double[sampleValues.Length][];
         for (int i = 0; i < sampleValues.Length; i++)
         {
-            var destination = new double[valueCount];
+            double[] destination = new double[valueCount];
             Array.Copy(sampleValues[i], destination, valueCount);
             copied[i] = destination;
         }

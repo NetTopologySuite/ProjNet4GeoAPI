@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -110,5 +110,4 @@ internal class PattersonProjection : MapProjection
 
         return K1 + (5d * K2 * phi4) + (7d * K3 * phi6) + (9d * K4 * phi8);
     }
-
 }

@@ -125,7 +125,7 @@ internal sealed class ObTranMathTransform : MathTransform
             return false;
         }
 
-        var childArgs = BuildChildProjectionArguments(args, childProjCode);
+        Dictionary<string, string> childArgs = BuildChildProjectionArguments(args, childProjCode);
         if (!TryCreateProjectionTransform(childArgs, out MathTransform? childForwardCandidate, out MathTransform? childInverseCandidate, out bool childIsAngular, out skipReason))
         {
             return false;
@@ -159,7 +159,7 @@ internal sealed class ObTranMathTransform : MathTransform
         string childProjCode)
     {
         var childArgs = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-        foreach (var kvp in args)
+        foreach (KeyValuePair<string, string> kvp in args)
         {
             if (kvp.Key.StartsWith("o_", StringComparison.OrdinalIgnoreCase)
                 || kvp.Key.Equals("proj", StringComparison.OrdinalIgnoreCase)
@@ -292,7 +292,7 @@ internal sealed class ObTranMathTransform : MathTransform
             return true;
         }
 
-        var parameters = BuildProjectionParameters(args);
+        List<ProjectionParameter> parameters = BuildProjectionParameters(args);
         if (!TryResolveEllipsoid(args, out double semiMajor, out double semiMinor))
         {
             skipReason = "Unable to resolve ellipsoid for ob_tran child projection.";
@@ -406,7 +406,7 @@ internal sealed class ObTranMathTransform : MathTransform
             return;
         }
 
-        foreach (var parameter in parameters)
+        foreach (ProjectionParameter parameter in parameters)
         {
             if (parameter.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
             {

@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using ProjNet.CoordinateSystems.Transformations.Numerics;
 
 /// <summary>
 /// Implements PROJ's <c>affine</c> runtime transform.

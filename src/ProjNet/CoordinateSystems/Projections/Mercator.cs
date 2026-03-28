@@ -61,7 +61,7 @@ internal class Mercator : MapProjection
         : base(parameters, isInverse)
     {
         this.Authority = "EPSG";
-        var scaleFactor = this.GetParameter("scale_factor");
+        ProjectionParameter? scaleFactor = this.GetParameter("scale_factor");
 
         // This is a two standard parallel Mercator projection (2SP).
         if (scaleFactor is null)

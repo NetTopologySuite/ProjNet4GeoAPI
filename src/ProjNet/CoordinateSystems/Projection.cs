@@ -97,7 +97,7 @@ public class Projection : Info, IProjection
         {
             var sb = new StringBuilder();
             sb.AppendFormat(CultureInfo.InvariantCulture.NumberFormat, "<CS_Projection Classname=\"{0}\">{1}", this.ClassName, this.InfoXml);
-            foreach (var param in this.Parameters)
+            foreach (ProjectionParameter param in this.Parameters)
             {
                 sb.Append(param.XML);
             }
@@ -125,7 +125,7 @@ public class Projection : Info, IProjection
     /// <returns>The matching <see cref="ProjectionParameter"/>, or <see langword="null"/> if not found.</returns>
     public ProjectionParameter? GetParameter(string name)
     {
-        foreach (var par in this.parameters)
+        foreach (ProjectionParameter par in this.parameters)
         {
             if (par.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
             {

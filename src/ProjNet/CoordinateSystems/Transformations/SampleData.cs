@@ -44,7 +44,7 @@ internal readonly struct SampleData
             return this;
         }
 
-        var scaled = new double[this.valuesBySample.Length][];
+        double[][] scaled = new double[this.valuesBySample.Length][];
         for (int i = 0; i < scaled.Length; i++)
         {
             scaled[i] = this.valuesBySample[i];
@@ -75,7 +75,7 @@ internal readonly struct SampleData
             return this;
         }
 
-        var copiedValues = new double[this.valuesBySample.Length][];
+        double[][] copiedValues = new double[this.valuesBySample.Length][];
         for (int i = 0; i < copiedValues.Length; i++)
         {
             copiedValues[i] = this.valuesBySample[i];
@@ -119,7 +119,7 @@ internal readonly struct SampleData
 
     private static double[] CreateConstant(int count, double value)
     {
-        var result = new double[count];
+        double[] result = new double[count];
         for (int i = 0; i < count; i++)
         {
             result[i] = value;

@@ -112,7 +112,7 @@ public class AffineTransform : MathTransform
             sb.Append("PARAM_MT[\"Affine\"");
 
             // append parameters
-            foreach (var param in this.GetParameterValues())
+            foreach (ProjectionParameter param in this.GetParameterValues())
             {
                 sb.Append(',');
                 sb.Append(param.WKT);

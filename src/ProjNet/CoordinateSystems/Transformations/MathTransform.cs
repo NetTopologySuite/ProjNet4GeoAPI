@@ -176,12 +176,12 @@ public abstract class MathTransform
             Span<double> scratch = stackalloc double[4];
             Span<double> scratchResult = scratch.Slice(0, resultDimensions);
             this.TransformPoint(point, pointLength, scratchResult, resultDimensions);
-            var transformedSmall = new double[resultDimensions];
+            double[] transformedSmall = new double[resultDimensions];
             scratchResult.CopyTo(transformedSmall);
             return transformedSmall;
         }
 
-        var transformed = new double[resultDimensions];
+        double[] transformed = new double[resultDimensions];
         this.TransformPoint(point, pointLength, transformed, resultDimensions);
         return transformed;
     }
@@ -244,7 +244,7 @@ public abstract class MathTransform
             int resultDimensions = pointLength <= 3
                 ? minimumDimensions
                 : Math.Max(minimumDimensions, pointLength);
-            var transformed = new double[resultDimensions];
+            double[] transformed = new double[resultDimensions];
             this.TransformPoint(point, pointLength, transformed, resultDimensions);
             result.Add(transformed);
         }
@@ -384,9 +384,9 @@ public abstract class MathTransform
             }
         }
 
-        var read = MemoryMarshal.Cast<XY, double>(xys);
-        var inXs = read.Slice(0);
-        var inYs = read.Slice(1);
+        Span<double> read = MemoryMarshal.Cast<XY, double>(xys);
+        Span<double> inXs = read.Slice(0);
+        Span<double> inYs = read.Slice(1);
 
         if (zs.IsEmpty)
         {
@@ -405,10 +405,10 @@ public abstract class MathTransform
     /// <param name="xyzs">A series of <see cref="XYZ"/> points.</param>
     public void Transform(Span<XYZ> xyzs)
     {
-        var read = MemoryMarshal.Cast<XYZ, double>(xyzs);
-        var inXs = read.Slice(0); // , read.Length - 2);
-        var inYs = read.Slice(1); // , read.Length - 2);
-        var inZs = read.Slice(2); // , read.Length - 2);
+        Span<double> read = MemoryMarshal.Cast<XYZ, double>(xyzs);
+        Span<double> inXs = read.Slice(0); // , read.Length - 2);
+        Span<double> inYs = read.Slice(1); // , read.Length - 2);
+        Span<double> inZs = read.Slice(2); // , read.Length - 2);
 
         this.TransformCore(inXs, inYs, inZs, 3, 3, 3);
     }
@@ -505,7 +505,7 @@ public abstract class MathTransform
         int scalarStart = 0;
         if (Vector.IsHardwareAccelerated && stride == 1 && vals.Length >= Vector<double>.Count)
         {
-            var valsVector = MemoryMarshal.Cast<double, Vector<double>>(vals);
+            Span<Vector<double>> valsVector = MemoryMarshal.Cast<double, Vector<double>>(vals);
             var addendVector = new Vector<double>(addend);
             for (int i = 0; i < valsVector.Length; i++)
             {
@@ -543,7 +543,7 @@ public abstract class MathTransform
         int scalarStart = 0;
         if (Vector.IsHardwareAccelerated && stride == 1 && vals.Length >= Vector<double>.Count)
         {
-            var valsVector = MemoryMarshal.Cast<double, Vector<double>>(vals);
+            Span<Vector<double>> valsVector = MemoryMarshal.Cast<double, Vector<double>>(vals);
             var multiplierVector = new Vector<double>(multiplier);
             for (int i = 0; i < valsVector.Length; i++)
             {
@@ -589,7 +589,7 @@ public abstract class MathTransform
         int scalarStart = 0;
         if (Vector.IsHardwareAccelerated && stride == 1 && vals.Length >= Vector<double>.Count)
         {
-            var valsVector = MemoryMarshal.Cast<double, Vector<double>>(vals);
+            Span<Vector<double>> valsVector = MemoryMarshal.Cast<double, Vector<double>>(vals);
             var multiplierVector = new Vector<double>(multiplier);
             var addendVector = new Vector<double>(addend);
             for (int i = 0; i < valsVector.Length; i++)
@@ -636,7 +636,7 @@ public abstract class MathTransform
         int scalarStart = 0;
         if (Vector.IsHardwareAccelerated && stride == 1 && vals.Length >= Vector<double>.Count)
         {
-            var valsVector = MemoryMarshal.Cast<double, Vector<double>>(vals);
+            Span<Vector<double>> valsVector = MemoryMarshal.Cast<double, Vector<double>>(vals);
             var addendVector = new Vector<double>(addend);
             var multiplierVector = new Vector<double>(multiplier);
             for (int i = 0; i < valsVector.Length; i++)

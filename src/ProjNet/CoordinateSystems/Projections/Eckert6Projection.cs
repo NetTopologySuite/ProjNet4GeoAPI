@@ -36,7 +36,7 @@ internal class Eckert6Projection : GeneralSinusoidalProjection
 
     private static List<ProjectionParameter> MergeParameters(IEnumerable<ProjectionParameter> parameters)
     {
-        var merged = CloneParametersList(parameters);
+        List<ProjectionParameter> merged = CloneParametersList(parameters);
         ReplaceOrAdd(merged, "m", 1d);
         ReplaceOrAdd(merged, "n", 2.570796326794896619231321691d);
         return merged;

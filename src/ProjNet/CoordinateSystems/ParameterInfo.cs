@@ -44,7 +44,7 @@ internal class ParameterInfo
         if (this.Parameters is not null)
         {
             // search parameter collection by name
-            foreach (var param in this.Parameters)
+            foreach (Parameter? param in this.Parameters)
             {
                 if (param is not null && param.Name == name)
                 {

@@ -36,7 +36,7 @@ internal class Kavrayskiy7Projection : Eckert3Projection
 
     private static List<ProjectionParameter> MergeParameters(IEnumerable<ProjectionParameter> parameters)
     {
-        var merged = CloneParametersList(parameters);
+        List<ProjectionParameter> merged = CloneParametersList(parameters);
         ReplaceOrAdd(merged, "eck3_a", 0d);
         ReplaceOrAdd(merged, "eck3_b", 0.30396355092701331433d);
         ReplaceOrAdd(merged, "eck3_cx", 0.8660254037844d);

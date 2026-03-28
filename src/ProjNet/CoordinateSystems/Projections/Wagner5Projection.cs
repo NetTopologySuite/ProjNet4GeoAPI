@@ -36,7 +36,7 @@ internal class Wagner5Projection : MollweideProjection
 
     private static List<ProjectionParameter> MergeParameters(IEnumerable<ProjectionParameter> parameters)
     {
-        var merged = CloneParametersList(parameters);
+        List<ProjectionParameter> merged = CloneParametersList(parameters);
         ReplaceOrAdd(merged, "moll_cx", 0.90977d);
         ReplaceOrAdd(merged, "moll_cy", 1.65014d);
         ReplaceOrAdd(merged, "moll_cp", 3.00896d);

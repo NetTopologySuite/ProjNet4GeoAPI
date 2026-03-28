@@ -1162,8 +1162,8 @@ internal sealed class DeformationMathTransform : MathTransform
                 throw new InvalidDataException("CTABLE2 data is truncated.");
             }
 
-            var eastValues = new float[width * height];
-            var northValues = new float[width * height];
+            float[] eastValues = new float[width * height];
+            float[] northValues = new float[width * height];
             int offset = 160;
             for (int i = 0; i < eastValues.Length; i++)
             {
@@ -1375,7 +1375,7 @@ internal sealed class DeformationMathTransform : MathTransform
                 throw new InvalidDataException("GTX data is truncated.");
             }
 
-            var values = new float[rows * columns];
+            float[] values = new float[rows * columns];
             int offset = 40;
             for (int i = 0; i < values.Length; i++)
             {

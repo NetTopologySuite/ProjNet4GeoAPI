@@ -161,5 +161,4 @@ internal static class AitoffMath
             ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
     }
-
 }

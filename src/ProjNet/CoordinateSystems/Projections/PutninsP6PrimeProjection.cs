@@ -36,7 +36,7 @@ internal class PutninsP6PrimeProjection : PutninsP6Projection
 
     private static List<ProjectionParameter> MergeParameters(IEnumerable<ProjectionParameter> parameters)
     {
-        var merged = CloneParametersList(parameters);
+        List<ProjectionParameter> merged = CloneParametersList(parameters);
         ReplaceOrAdd(merged, "putp6_cx", 0.44329d);
         ReplaceOrAdd(merged, "putp6_cy", 0.80404d);
         ReplaceOrAdd(merged, "putp6_a", 6d);

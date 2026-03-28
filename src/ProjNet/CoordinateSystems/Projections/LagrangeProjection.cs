@@ -140,7 +140,7 @@ internal class LagrangeProjection : MapProjection
 
     private static List<ProjectionParameter> MergeDefaults(IEnumerable<ProjectionParameter> parameters)
     {
-        var merged = CloneParametersList(parameters);
+        List<ProjectionParameter> merged = CloneParametersList(parameters);
         bool hasLat1 = false;
         bool hasW = false;
         for (int i = 0; i < merged.Count; i++)
