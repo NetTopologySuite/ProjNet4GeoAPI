@@ -27,25 +27,25 @@ using ProjNet.Geometries;
 [SuppressMessage("Maintainability", "CA1515:Consider making public types internal", Justification = "Benchmark entry types are intentionally public for explicit invocation from Program and benchmark tooling stability.")]
 public class PerformanceTests
 {
-    private static readonly MathTransform WGS84ToWebMercator = new CoordinateTransformationFactory().CreateFromCoordinateSystems(GeographicCoordinateSystem.WGS84, ProjectedCoordinateSystem.WebMercator).MathTransform;
+    private static readonly MathTransform WGS84ToWebMercator = CreateWgs84ToWebMercator();
 
     private int cnt;
 
-    private double[] xs;
+    private double[] xs = Array.Empty<double>();
 
-    private double[] ys;
+    private double[] ys = Array.Empty<double>();
 
-    private XY[] xys;
+    private XY[] xys = Array.Empty<XY>();
 
-    private XYZ[] xyzs;
+    private XYZ[] xyzs = Array.Empty<XYZ>();
 
-    private double[] xsCopy;
+    private double[] xsCopy = Array.Empty<double>();
 
-    private double[] ysCopy;
+    private double[] ysCopy = Array.Empty<double>();
 
-    private XY[] xysCopy;
+    private XY[] xysCopy = Array.Empty<XY>();
 
-    private XYZ[] xyzsCopy;
+    private XYZ[] xyzsCopy = Array.Empty<XYZ>();
 
     /// <summary>
     /// Executes all benchmark entry points once and verifies numerical consistency across variants.
@@ -56,7 +56,7 @@ public class PerformanceTests
         instance.GlobalSetup();
 
         instance.SoAOneByOne();
-        var firstOutput = instance.xsCopy.Zip(instance.ysCopy, (x, y) => (x, y)).ToArray();
+        (double x, double y)[] firstOutput = instance.xsCopy.Zip(instance.ysCopy, (x, y) => (x, y)).ToArray();
 
         for (int i = 0; i < firstOutput.Length; i++)
         {
@@ -96,7 +96,13 @@ public class PerformanceTests
     [GlobalSetup]
     public void GlobalSetup()
     {
-        string currentFolderPath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        string? currentFolderPathCandidate = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+        if (currentFolderPathCandidate is null)
+        {
+            throw new InvalidOperationException("Unable to resolve benchmark assembly directory.");
+        }
+
+        string currentFolderPath = currentFolderPathCandidate;
         string fullPathToData = Path.Combine(currentFolderPath, "coords.dat.gz");
         using var reader = new BinaryReader(new GZipStream(File.OpenRead(fullPathToData), CompressionMode.Decompress));
         this.cnt = reader.ReadInt32();
@@ -196,5 +202,12 @@ public class PerformanceTests
     {
         this.xyzs.CopyTo(this.xyzsCopy.AsSpan());
         WGS84ToWebMercator.Transform(this.xyzsCopy);
+    }
+
+    private static MathTransform CreateWgs84ToWebMercator()
+    {
+        ICoordinateTransformation transformation = new CoordinateTransformationFactory()
+            .CreateFromCoordinateSystems(GeographicCoordinateSystem.WGS84, ProjectedCoordinateSystem.WebMercator);
+        return transformation.MathTransform;
     }
 }

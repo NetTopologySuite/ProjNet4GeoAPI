@@ -28,32 +28,39 @@ public class ProjParityBenchmarks
     private static readonly CoordinateSystemServices CoordinateSystemServices = new CoordinateSystemServices();
 
     private static readonly ICoordinateTransformation Wgs84ToWebMercator =
-        CoordinateSystemServices.CreateTransformation(4326, 3857);
+        CoordinateSystemServices.CreateTransformation(4326, 3857)
+        ?? throw new InvalidOperationException("EPSG:4326->3857 transformation lookup returned null.");
 
     private static readonly ICoordinateTransformation Wgs84ToUtm32N =
-        CoordinateSystemServices.CreateTransformation(4326, 32632);
+        CoordinateSystemServices.CreateTransformation(4326, 32632)
+        ?? throw new InvalidOperationException("EPSG:4326->32632 transformation lookup returned null.");
 
     private static readonly ICoordinateTransformation Wgs84ToUtm31N =
-        CoordinateSystemServices.CreateTransformation(4326, 32631);
+        CoordinateSystemServices.CreateTransformation(4326, 32631)
+        ?? throw new InvalidOperationException("EPSG:4326->32631 transformation lookup returned null.");
 
     private static readonly ICoordinateTransformation Utm31NToWgs84 =
-        CoordinateSystemServices.CreateTransformation(32631, 4326);
+        CoordinateSystemServices.CreateTransformation(32631, 4326)
+        ?? throw new InvalidOperationException("EPSG:32631->4326 transformation lookup returned null.");
 
     private static readonly ICoordinateTransformation Wgs84ToLambert93 =
-        CoordinateSystemServices.CreateTransformation(4326, 2154);
+        CoordinateSystemServices.CreateTransformation(4326, 2154)
+        ?? throw new InvalidOperationException("EPSG:4326->2154 transformation lookup returned null.");
 
     private static readonly ICoordinateTransformation Lambert93ToWgs84 =
-        CoordinateSystemServices.CreateTransformation(2154, 4326);
+        CoordinateSystemServices.CreateTransformation(2154, 4326)
+        ?? throw new InvalidOperationException("EPSG:2154->4326 transformation lookup returned null.");
 
     private static readonly ICoordinateTransformation WebMercatorToWgs84 =
-        CoordinateSystemServices.CreateTransformation(3857, 4326);
+        CoordinateSystemServices.CreateTransformation(3857, 4326)
+        ?? throw new InvalidOperationException("EPSG:3857->4326 transformation lookup returned null.");
 
-    private double[] longitudes;
-    private double[] latitudes;
-    private double[] xBuffer;
-    private double[] yBuffer;
-    private double[] noiseX;
-    private double[] noiseY;
+    private double[] longitudes = Array.Empty<double>();
+    private double[] latitudes = Array.Empty<double>();
+    private double[] xBuffer = Array.Empty<double>();
+    private double[] yBuffer = Array.Empty<double>();
+    private double[] noiseX = Array.Empty<double>();
+    private double[] noiseY = Array.Empty<double>();
 
     /// <summary>
     /// Gets or sets the number of coordinates processed per benchmark invocation.

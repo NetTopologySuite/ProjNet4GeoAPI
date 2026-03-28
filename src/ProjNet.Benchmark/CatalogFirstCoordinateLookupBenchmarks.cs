@@ -15,6 +15,7 @@ using ProjNet.CoordinateSystems;
 /// Measures cold-start latency for the first EPSG coordinate system lookup from the managed catalog.
 /// </summary>
 [SuppressMessage("Maintainability", "CA1515:Consider making public types internal", Justification = "Benchmark entry types are intentionally public for explicit invocation from Program and benchmark tooling stability.")]
+[SuppressMessage("Design", "CA1052:Static holder types should be static", Justification = "BenchmarkDotNet requires a non-static benchmark class type for discovery.")]
 [MemoryDiagnoser]
 [SimpleJob(RunStrategy.ColdStart, launchCount: 12, warmupCount: 0, iterationCount: 1)]
 public class CatalogFirstCoordinateLookupBenchmarks
