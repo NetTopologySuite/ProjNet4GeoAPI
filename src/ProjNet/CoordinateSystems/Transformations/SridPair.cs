@@ -6,17 +6,8 @@ namespace ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Represents a source/target SRID pair for dictionary lookups.
 /// </summary>
-/// <param name="sourceSrid">The source SRID.</param>
-/// <param name="targetSrid">The target SRID.</param>
-internal readonly record struct SridPair(int sourceSrid, int targetSrid)
+/// <param name="SourceSrid">The source SRID.</param>
+/// <param name="TargetSrid">The target SRID.</param>
+internal readonly record struct SridPair(int SourceSrid, int TargetSrid)
 {
-    /// <summary>
-    /// Gets the source SRID.
-    /// </summary>
-    internal int SourceSrid { get; } = sourceSrid;
-
-    /// <summary>
-    /// Gets the target SRID.
-    /// </summary>
-    internal int TargetSrid { get; } = targetSrid;
 }
