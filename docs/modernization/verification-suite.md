@@ -9,9 +9,8 @@
   - `GetCoordinateSystem(string,long)`,
   - `TryGetCoordinateSystem(string,long,...)`,
   - `GetSRID(string,long)`.
-- Added direct `proj2proj` parity theory suites backed by committed PROJ-derived fixtures:
-  - `Proj2ProjParityTheoryTests` (default/core lane),
-  - `Proj2ProjParityExhaustiveTheoryTests` (extended lane, opt-in with `PROJNET_RUN_EXHAUSTIVE=1`).
+- Added direct `proj2proj` parity theory suite backed by committed PROJ-derived fixtures:
+  - `Proj2ProjParityTheoryTests` (all parity cases run unconditionally).
 
 ## Why this matters
 - Provides a stable, low-noise regression anchor for core transform correctness.

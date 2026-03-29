@@ -41,8 +41,6 @@ Build policy is enforced in `src/ProjNet/ProjNET.csproj` via `ValidateTargetFram
 - Unit and integration tests run on xUnit v3.
 - Default validation command:
   - `dotnet test .\test\ProjNet.Tests\ProjNET.Tests.csproj --tl:off -v minimal`
-- Exhaustive parity lane is opt-in:
-  - `$env:PROJNET_RUN_EXHAUSTIVE='1'; dotnet test .\test\ProjNet.Tests\ProjNET.Tests.csproj --filter "Category=ExhaustiveValidation"; Remove-Item Env:PROJNET_RUN_EXHAUSTIVE -ErrorAction Ignore`
 
 ## Code style and analyzers
 

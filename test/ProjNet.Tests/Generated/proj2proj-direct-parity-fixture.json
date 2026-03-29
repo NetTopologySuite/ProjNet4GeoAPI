@@ -289,6 +289,30 @@
       "expectedX": 511968.8019588575,
       "expectedY": -4976193.543919171,
       "toleranceMeters": 475.0
+    },
+    {
+      "operationCode": 15862,
+      "sourceSrid": 3368,
+      "targetSrid": 32629,
+      "sourceWkt": "PROJCS[\"IGN Astro 1960 / UTM zone 29N\",GEOGCS[\"IGN Astro 1960\",DATUM[\"IGN_Astro_1960\",SPHEROID[\"Clarke 1880 (RGS)\",6378249.145,293.465,AUTHORITY[\"EPSG\",\"7012\"]],AUTHORITY[\"EPSG\",\"6700\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4700\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",-9],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],AUTHORITY[\"EPSG\",\"3368\"]]",
+      "targetWkt": "PROJCS[\"WGS 84 / UTM zone 29N\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",-9],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],AUTHORITY[\"EPSG\",\"32629\"]]",
+      "inputX": 512345.678,
+      "inputY": 23456.789,
+      "expectedX": 512027.8727011504,
+      "expectedY": 23325.217817420817,
+      "toleranceMeters": 399.0
+    },
+    {
+      "operationCode": 15950,
+      "sourceSrid": 3140,
+      "targetSrid": 3460,
+      "sourceWkt": "PROJCS[\"Viti Levu 1912 / Viti Levu Grid\",GEOGCS[\"Viti Levu 1912\",DATUM[\"Viti_Levu_1912\",SPHEROID[\"Clarke 1880 (international foot)\",6378306.3696,293.466307655635,AUTHORITY[\"EPSG\",\"7055\"]],AUTHORITY[\"EPSG\",\"6752\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4752\"]],PROJECTION[\"Cassini_Soldner\"],PARAMETER[\"latitude_of_origin\",-18],PARAMETER[\"central_meridian\",178],PARAMETER[\"false_easting\",544000],PARAMETER[\"false_northing\",704000],UNIT[\"link\",0.201168,AUTHORITY[\"EPSG\",\"9098\"]],AUTHORITY[\"EPSG\",\"3140\"]]",
+      "targetWkt": "PROJCS[\"Fiji 1986 / Fiji Map Grid\",GEOGCS[\"Fiji 1986\",DATUM[\"Fiji_Geodetic_Datum_1986\",SPHEROID[\"WGS 72\",6378135,298.26,AUTHORITY[\"EPSG\",\"7043\"]],AUTHORITY[\"EPSG\",\"6720\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4720\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",-17],PARAMETER[\"central_meridian\",178.75],PARAMETER[\"scale_factor\",0.99985],PARAMETER[\"false_easting\",2000000],PARAMETER[\"false_northing\",4000000],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],AUTHORITY[\"EPSG\",\"3460\"]]",
+      "inputX": 556345.678,
+      "inputY": 727456.789,
+      "expectedX": 1957193.4981927003,
+      "expectedY": 3859784.1782650417,
+      "toleranceMeters": 42915.0
     }
   ]
 }
