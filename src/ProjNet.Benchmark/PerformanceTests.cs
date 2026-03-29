@@ -56,7 +56,7 @@ public class PerformanceTests
         instance.GlobalSetup();
 
         instance.SoAOneByOne();
-        (double x, double y)[] firstOutput = instance.xsCopy.Zip(instance.ysCopy, (x, y) => (x, y)).ToArray();
+        (double X, double Y)[] firstOutput = instance.xsCopy.Zip(instance.ysCopy, (x, y) => (X: x, Y: y)).ToArray();
 
         for (int i = 0; i < firstOutput.Length; i++)
         {
@@ -67,7 +67,7 @@ public class PerformanceTests
         }
 
         instance.SoABatched();
-        Validate(instance.xsCopy.Zip(instance.ysCopy, (x, y) => (x, y)).ToArray());
+        Validate(instance.xsCopy.Zip(instance.ysCopy, (x, y) => (X: x, Y: y)).ToArray());
 
         instance.TightAoSOneByOne();
         Validate(Array.ConvertAll(instance.xysCopy, xy => (xy.X, xy.Y)));

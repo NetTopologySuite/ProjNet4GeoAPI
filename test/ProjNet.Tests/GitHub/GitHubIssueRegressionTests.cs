@@ -123,13 +123,13 @@ public class GitHubIssueRegressionTests
         GeographicCoordinateSystem wgs84 = ProjectedCoordinateSystem.WGS84_UTM(36, true).GeographicCoordinateSystem;
 
         MathTransform ctFwd = Assert.IsAssignableFrom<ICoordinateTransformation>(Css.CreateTransformation(itm, wgs84)).MathTransform;
-        (double x, double y) pt1a = (x: 200000.0, y: 600000.0);
-        (double X, double Y) pt2a = ctFwd.Transform(pt1a.x, pt1a.y);
+        (double X, double Y) pt1a = (X: 200000.0, Y: 600000.0);
+        (double X, double Y) pt2a = ctFwd.Transform(pt1a.X, pt1a.Y);
         (double X, double Y) pt1b = ctFwd.Inverse().Transform(pt2a.X, pt2a.Y);
-        (double X, double Y) pt2b = ctFwd.Transform(pt1a.x, pt1a.y);
+        (double X, double Y) pt2b = ctFwd.Transform(pt1a.X, pt1a.Y);
 
-        Assert.InRange(pt1b.X, pt1a.x - 0.01, pt1a.x + 0.01);
-        Assert.InRange(pt1b.Y, pt1a.y - 0.01, pt1a.y + 0.01);
+        Assert.InRange(pt1b.X, pt1a.X - 0.01, pt1a.X + 0.01);
+        Assert.InRange(pt1b.Y, pt1a.Y - 0.01, pt1a.Y + 0.01);
         Assert.Equal(pt2b, pt2a);
     }
 
@@ -146,21 +146,21 @@ public class GitHubIssueRegressionTests
         CoordinateSystem epsg25832 = Assert.IsAssignableFrom<CoordinateSystem>(Css.GetCoordinateSystem(25832));
 
         MathTransform mt1 = Assert.IsAssignableFrom<ICoordinateTransformation>(Css.CreateTransformation(epsg25832, epsg_3857)).MathTransform;
-        (int x, int y) pt25832 = (x: 702575, y: 6153153);
-        (double x, double y) pt_3857ex = (x: 1358761.89, y: 7456070.47);
+        (int X, int Y) pt25832 = (X: 702575, Y: 6153153);
+        (double X, double Y) pt_3857ex = (X: 1358761.89, Y: 7456070.47);
 
-        (double X, double Y) pt_3857 = mt1.Transform(pt25832.x, pt25832.y);
-        Assert.InRange(pt_3857.X, pt_3857ex.x - 0.015, pt_3857ex.x + 0.015);
-        Assert.InRange(pt_3857.Y, pt_3857ex.y - 0.015, pt_3857ex.y + 0.015);
+        (double X, double Y) pt_3857 = mt1.Transform(pt25832.X, pt25832.Y);
+        Assert.InRange(pt_3857.X, pt_3857ex.X - 0.015, pt_3857ex.X + 0.015);
+        Assert.InRange(pt_3857.Y, pt_3857ex.Y - 0.015, pt_3857ex.Y + 0.015);
 
         epsg_3857 = Assert.IsAssignableFrom<ProjectedCoordinateSystem>(Css.GetCoordinateSystem(3857));
         Console.WriteLine(epsg_3857.Projection.ClassName);
         Console.WriteLine(epsg_3857.WKT);
 
         MathTransform mt2 = Assert.IsAssignableFrom<ICoordinateTransformation>(Css.CreateTransformation(epsg25832, epsg_3857)).MathTransform;
-        pt_3857 = mt2.Transform(pt25832.x, pt25832.y);
-        Assert.InRange(pt_3857.X, pt_3857ex.x - 0.015, pt_3857ex.x + 0.015);
-        Assert.InRange(pt_3857.Y, pt_3857ex.y - 0.015, pt_3857ex.y + 0.015);
+        pt_3857 = mt2.Transform(pt25832.X, pt25832.Y);
+        Assert.InRange(pt_3857.X, pt_3857ex.X - 0.015, pt_3857ex.X + 0.015);
+        Assert.InRange(pt_3857.Y, pt_3857ex.Y - 0.015, pt_3857ex.Y + 0.015);
     }
 
     /// <summary>
