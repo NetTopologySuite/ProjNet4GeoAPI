@@ -7,7 +7,7 @@ namespace ProjNet.Tests.WKT;
 using System;
 using System.Data;
 using System.IO;
-using Newtonsoft.Json.Linq;
+using System.Text.Json;
 using Npgsql;
 using ProjNet.CoordinateSystems;
 using Xunit;
@@ -36,26 +36,26 @@ public class PostGisSpatialRefSysTableParserTests
                 return null;
             }
 
-            JToken? token = null;
-            using (var jtr = new Newtonsoft.Json.JsonTextReader(new StreamReader("appsettings.json")))
+            string? connStr;
+            using (FileStream fs = File.OpenRead("appsettings.json"))
+            using (JsonDocument doc = JsonDocument.Parse(fs))
             {
-                token = JToken.ReadFrom(jtr);
+                if (!doc.RootElement.TryGetProperty("ConnectionString", out JsonElement connElement))
+                {
+                    return null;
+                }
+
+                connStr = connElement.GetString();
             }
 
-            if (token is null)
-            {
-                return null;
-            }
-
-            string? connectionString = (string?)token["ConnectionString"];
-            if (string.IsNullOrWhiteSpace(connectionString))
+            if (string.IsNullOrWhiteSpace(connStr))
             {
                 return null;
             }
 
             try
             {
-                using (var cn = new NpgsqlConnection(connectionString))
+                using (var cn = new NpgsqlConnection(connStr))
                 {
                     cn.Open();
                 }
@@ -65,7 +65,7 @@ public class PostGisSpatialRefSysTableParserTests
                 return null;
             }
 
-            PostGisSpatialRefSysTableParserTests.connectionString = connectionString;
+            PostGisSpatialRefSysTableParserTests.connectionString = connStr;
             return PostGisSpatialRefSysTableParserTests.connectionString;
         }
     }

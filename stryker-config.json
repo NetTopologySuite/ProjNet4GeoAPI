@@ -5,17 +5,11 @@
     "test-projects": [
       "test/ProjNet.Tests/ProjNET.Tests.csproj"
     ],
-    "configuration": "Release",
-    "mutation-level": "Standard",
-    "coverage-analysis": "off",
-    "mutate": [
-      "**/CoordinateSystemServices.cs",
-      "**/CoordinateSystems/Transformations/CoordinateOperationResolver.cs",
-      "**/CoordinateSystems/Transformations/IdentityMathTransform.cs",
-      "**/Resources/GridResourceResolver.cs",
-      "**/IO/CoordinateSystems/CoordinateSystemWktReader.cs",
-      "!**/*.g.cs"
-    ],
+    "language-version": "Csharp12",
+    "configuration": "Debug",
+    "target-framework": "net8.0",
+    "mutation-level": "Complete",
+    "coverage-analysis": "perTest",
     "reporters": [
       "Progress",
       "Html",
