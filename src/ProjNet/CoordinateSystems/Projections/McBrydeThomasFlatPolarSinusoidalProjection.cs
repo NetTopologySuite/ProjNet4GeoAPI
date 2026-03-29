@@ -6,7 +6,6 @@ namespace ProjNet.CoordinateSystems.Projections;
 
 using System;
 using System.Collections.Generic;
-using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
 /// Implements the spherical McBryde-Thomas Flat-Polar Sinusoidal projection (<c>mbtfps</c>).

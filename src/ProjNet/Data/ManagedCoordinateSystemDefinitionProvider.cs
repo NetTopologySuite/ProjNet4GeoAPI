@@ -4,7 +4,6 @@
 namespace ProjNet.Data;
 
 using System.Collections.Generic;
-using ProjNet.CoordinateSystems;
 using ProjNet.Data.Generated;
 
 /// <summary>

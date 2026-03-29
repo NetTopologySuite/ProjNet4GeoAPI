@@ -6,7 +6,6 @@ namespace ProjNet.CoordinateSystems.Projections;
 
 using System;
 using System.Collections.Generic;
-using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
 /// Implements the spherical Putnins P3' projection (<c>putp3p</c>).

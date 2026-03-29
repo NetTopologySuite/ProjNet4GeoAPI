@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using ProjNet.CoordinateSystems;
-using ProjNet.CoordinateSystems.Projections;
 
 /// <summary>
 /// Implements PROJ's <c>topocentric</c> 3D runtime conversion.

@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ProjNet.CoordinateSystems;
-using ProjNet.CoordinateSystems.Projections;
 using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.Geometries;
 using ProjNet.IO.CoordinateSystems;

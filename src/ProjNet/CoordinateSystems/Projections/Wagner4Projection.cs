@@ -6,7 +6,6 @@ namespace ProjNet.CoordinateSystems.Projections;
 
 using System;
 using System.Collections.Generic;
-using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
 /// Implements the spherical Wagner IV projection (<c>wag4</c>).

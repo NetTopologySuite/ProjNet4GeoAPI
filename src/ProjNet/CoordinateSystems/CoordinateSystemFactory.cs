@@ -6,7 +6,6 @@ namespace ProjNet.CoordinateSystems;
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.IO.CoordinateSystems;
 

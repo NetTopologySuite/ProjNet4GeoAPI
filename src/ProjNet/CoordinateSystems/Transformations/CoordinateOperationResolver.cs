@@ -4,7 +4,6 @@
 namespace ProjNet.CoordinateSystems.Transformations;
 
 using System;
-using System.Collections.Generic;
 
 /// <summary>
 /// Resolves the best available coordinate operation candidate for a source/target pair.

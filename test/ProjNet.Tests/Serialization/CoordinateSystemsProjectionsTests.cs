@@ -4,7 +4,6 @@
 
 namespace ProjNet.Tests.Serialization;
 
-using System;
 using ProjNet.CoordinateSystems;
 using Xunit;
 

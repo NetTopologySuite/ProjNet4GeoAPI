@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Runtime.CompilerServices;
 using ProjNet.CoordinateSystems.Projections;
 using ProjNet.Data;
 using ProjNet.Data.Generated;

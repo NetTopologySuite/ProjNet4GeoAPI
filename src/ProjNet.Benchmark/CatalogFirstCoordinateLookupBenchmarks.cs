@@ -7,7 +7,6 @@ using System;
 using System.Diagnostics.CodeAnalysis;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Engines;
-using BenchmarkDotNet.Jobs;
 using ProjNet;
 using ProjNet.CoordinateSystems;
 
