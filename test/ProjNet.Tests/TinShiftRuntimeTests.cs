@@ -19,18 +19,18 @@ public class TinShiftRuntimeTests
     /// Gets invalid creation scenarios.
     /// </summary>
     /// <returns>Invalid case dataset.</returns>
-    public static IEnumerable<object[]> GetInvalidCreationCases()
+    public static IEnumerable<TheoryDataRow<string, string>> GetInvalidCreationCases()
     {
-        yield return new object[] { "+proj=tinshift", "+file" };
-        yield return new object[] { "+proj=tinshift +file=i_do_not_exist", "Cannot open" };
-        yield return new object[] { "+proj=tinshift +file=" + FindFixturePath(Path.Combine("Fixtures", "gie", "tinshift.gie")), "invalid model" };
+        yield return new TheoryDataRow<string, string>("+proj=tinshift", "+file");
+        yield return new TheoryDataRow<string, string>("+proj=tinshift +file=i_do_not_exist", "Cannot open");
+        yield return new TheoryDataRow<string, string>("+proj=tinshift +file=" + FindFixturePath(Path.Combine("Fixtures", "gie", "tinshift.gie")), "invalid model");
     }
 
     /// <summary>
     /// Gets forward vector scenarios from <c>tinshift.gie</c>.
     /// </summary>
     /// <returns>Forward case dataset.</returns>
-    public static IEnumerable<object[]> GetForwardCases()
+    public static IEnumerable<TheoryDataRow<string, double[], double[], double>> GetForwardCases()
     {
         yield return Case(
             BuildTinShiftOperation("tinshift_crs_implicit.json"),
@@ -67,7 +67,7 @@ public class TinShiftRuntimeTests
     /// Gets representative roundtrip scenarios.
     /// </summary>
     /// <returns>Roundtrip case dataset.</returns>
-    public static IEnumerable<object[]> GetRoundtripCases()
+    public static IEnumerable<TheoryDataRow<string, double[], double>> GetRoundtripCases()
     {
         yield return RoundtripCase(BuildTinShiftOperation("tinshift_crs_implicit.json"), CreatePoint(2d, 49d, 0d), 1e-9d);
         yield return RoundtripCase(BuildTinShiftOperation("tinshift_simplified_kkj_etrs.json"), CreatePoint(3210000d, 6700000d, 0d), 1e-6d);
@@ -80,7 +80,7 @@ public class TinShiftRuntimeTests
     /// Gets portable vectors harvested from PROJ <c>test_tinshift.cpp</c>.
     /// </summary>
     /// <returns>Forward case dataset.</returns>
-    public static IEnumerable<object[]> GetCppUnitForwardCases()
+    public static IEnumerable<TheoryDataRow<string, double[], double[], double>> GetCppUnitForwardCases()
     {
         yield return Case(
             BuildTinShiftOperation("tinshift_unit_basic_horizontal.json"),
@@ -141,7 +141,7 @@ public class TinShiftRuntimeTests
     /// Gets portable inverse vectors harvested from PROJ <c>test_tinshift.cpp</c>.
     /// </summary>
     /// <returns>Inverse case dataset.</returns>
-    public static IEnumerable<object[]> GetCppUnitInverseCases()
+    public static IEnumerable<TheoryDataRow<string, double[], double[], double>> GetCppUnitInverseCases()
     {
         yield return Case(
             BuildTinShiftOperation("tinshift_unit_basic_horizontal.json") + " +inv",
@@ -289,14 +289,14 @@ public class TinShiftRuntimeTests
         AssertCoordinateClose(output, expected, tolerance);
     }
 
-    private static object[] Case(string operation, double[] input, double[] expected, double tolerance)
+    private static TheoryDataRow<string, double[], double[], double> Case(string operation, double[] input, double[] expected, double tolerance)
     {
-        return new object[] { operation, input, expected, tolerance };
+        return new TheoryDataRow<string, double[], double[], double>(operation, input, expected, tolerance);
     }
 
-    private static object[] RoundtripCase(string operation, double[] input, double tolerance)
+    private static TheoryDataRow<string, double[], double> RoundtripCase(string operation, double[] input, double tolerance)
     {
-        return new object[] { operation, input, tolerance };
+        return new TheoryDataRow<string, double[], double>(operation, input, tolerance);
     }
 
     private static string BuildTinShiftOperation(string fileName)

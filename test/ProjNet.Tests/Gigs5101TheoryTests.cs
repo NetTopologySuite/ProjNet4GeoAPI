@@ -64,11 +64,11 @@ public class Gigs5101TheoryTests
     /// Gets coverage parameters for GIGS 5101 fixtures.
     /// </summary>
     /// <value>Coverage parameters.</value>
-    public static IEnumerable<object[]> Gigs5101CoverageData
+    public static IEnumerable<TheoryDataRow<string[], int, int, string, bool>> Gigs5101CoverageData
     {
         get
         {
-            yield return new object[] { Fixture5101Files, 50, 50, "5101", true };
+            yield return new TheoryDataRow<string[], int, int, string, bool>(Fixture5101Files, 50, 50, "5101", true);
         }
     }
 
@@ -76,11 +76,11 @@ public class Gigs5101TheoryTests
     /// Gets coverage parameters for GIGS 5102 and 5103 fixtures.
     /// </summary>
     /// <value>Coverage parameters.</value>
-    public static IEnumerable<object[]> Gigs5102And5103CoverageData
+    public static IEnumerable<TheoryDataRow<string[], int, int, string, bool>> Gigs5102And5103CoverageData
     {
         get
         {
-            yield return new object[] { Fixture5102And5103Files, 70, 0, "5102/5103", false };
+            yield return new TheoryDataRow<string[], int, int, string, bool>(Fixture5102And5103Files, 70, 0, "5102/5103", false);
         }
     }
 
@@ -88,11 +88,11 @@ public class Gigs5101TheoryTests
     /// Gets coverage parameters for GIGS 5104 through 5113 fixtures.
     /// </summary>
     /// <value>Coverage parameters.</value>
-    public static IEnumerable<object[]> Gigs5104To5113CoverageData
+    public static IEnumerable<TheoryDataRow<string[], int, int, string, bool>> Gigs5104To5113CoverageData
     {
         get
         {
-            yield return new object[] { Fixture5104To5113Files, 80, 0, "5104-5113", false };
+            yield return new TheoryDataRow<string[], int, int, string, bool>(Fixture5104To5113Files, 80, 0, "5104-5113", false);
         }
     }
 
@@ -100,11 +100,11 @@ public class Gigs5101TheoryTests
     /// Gets coverage parameters for GIGS 5200 fixtures.
     /// </summary>
     /// <value>Coverage parameters.</value>
-    public static IEnumerable<object[]> Gigs5200CoverageData
+    public static IEnumerable<TheoryDataRow<string[], int, int, string, bool>> Gigs5200CoverageData
     {
         get
         {
-            yield return new object[] { Fixture5200Files, 20, 0, "5200", false };
+            yield return new TheoryDataRow<string[], int, int, string, bool>(Fixture5200Files, 20, 0, "5200", false);
         }
     }
 

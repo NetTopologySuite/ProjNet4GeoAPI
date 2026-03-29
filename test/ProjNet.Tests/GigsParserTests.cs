@@ -19,7 +19,7 @@ public class GigsParserTests
     /// Gets local non-failing GIGS fixture files.
     /// </summary>
     /// <value>Fixture file entries with file name and full path.</value>
-    public static IEnumerable<object[]> NonFailingFixtureFiles
+    public static IEnumerable<TheoryDataRow<string, string>> NonFailingFixtureFiles
     {
         get
         {
@@ -33,7 +33,7 @@ public class GigsParserTests
                          .Where(path => !path.EndsWith(".failing", StringComparison.OrdinalIgnoreCase))
                          .OrderBy(path => path, StringComparer.OrdinalIgnoreCase))
             {
-                yield return new object[] { Path.GetFileName(file), file };
+                yield return new TheoryDataRow<string, string>(Path.GetFileName(file), file);
             }
         }
     }
