@@ -436,8 +436,8 @@ namespace ProjNet.CoordinateSystems.Projections
         public long AuthorityCode { get; set; }
         protected double Central_parallel { get; }
         public string ClassName { get; }
-        public virtual int DimSource { get; }
-        public virtual int DimTarget { get; }
+        public override sealed int DimSource { get; }
+        public override sealed int DimTarget { get; }
         protected bool IsInverse { get; }
         protected double Lon_origin { get; set; }
         public string Name { get; set; }
@@ -621,21 +621,21 @@ namespace ProjNet.CoordinateSystems.Transformations
         public virtual bool Identity() { }
         public abstract ProjNet.CoordinateSystems.Transformations.MathTransform Inverse();
         public abstract void Invert();
-        public double[] Transform(double[] point) { }
         public void Transform(System.Span<ProjNet.Geometries.XYZ> xyzs) { }
+        public double[] Transform(double[] point) { }
+        public void Transform(System.ReadOnlySpan<double> point, System.Span<double> result) { }
         [return: System.Runtime.CompilerServices.TupleElementNames(new string[] {
                 "X",
                 "Y"})]
         public System.ValueTuple<double, double> Transform(double x, double y) { }
         public void Transform(ref double x, ref double y) { }
-        public void Transform(System.ReadOnlySpan<double> point, System.Span<double> result) { }
+        public void Transform(System.Span<ProjNet.Geometries.XY> xys, System.Span<double> zs = default, int strideZ = 0) { }
         [return: System.Runtime.CompilerServices.TupleElementNames(new string[] {
                 "O1",
                 "O2",
                 "O3"})]
         public System.ValueTuple<double, double, double> Transform(double x, double y, double z) { }
         public abstract void Transform(ref double x, ref double y, ref double z);
-        public void Transform(System.Span<ProjNet.Geometries.XY> xys, System.Span<double> zs = default, int strideZ = 0) { }
         public void Transform(System.Span<double> xs, System.Span<double> ys, int strideX = 1, int strideY = 1) { }
         public void Transform(System.Span<double> xs, System.Span<double> ys, System.Span<double> zs, int strideX = 1, int strideY = 1, int strideZ = 1) { }
         protected virtual void TransformCore(System.Span<double> xs, System.Span<double> ys, System.Span<double> zs, int strideX, int strideY, int strideZ) { }
