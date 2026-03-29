@@ -7,7 +7,7 @@ namespace ProjNet.Tests;
 /// <summary>
 /// Represents the documented type.
 /// </summary>
-internal enum GieDirection
+public enum GieDirection
 {
     /// <summary>
     /// Executes the forward projection direction.

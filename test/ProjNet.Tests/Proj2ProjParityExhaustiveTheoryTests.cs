@@ -63,7 +63,7 @@ public class Proj2ProjParityExhaustiveTheoryTests
     /// Loads exhaustive proj2proj parity test cases from the generated fixture.
     /// </summary>
     /// <returns>Fixture rows for theory execution.</returns>
-    public static IEnumerable<object[]> GetParityCases()
+    public static IEnumerable<TheoryDataRow<Proj2ProjCase>> GetParityCases()
     {
         string fixturePath = Path.Combine(AppContext.BaseDirectory, "Generated", "proj2proj-direct-parity-exhaustive-fixture.json");
         Assert.True(File.Exists(fixturePath), "Fixture file not found: " + fixturePath);
@@ -76,7 +76,7 @@ public class Proj2ProjParityExhaustiveTheoryTests
 
         foreach (Proj2ProjCase item in cases)
         {
-            yield return new object[] { item };
+            yield return new TheoryDataRow<Proj2ProjCase>(item);
         }
     }
 

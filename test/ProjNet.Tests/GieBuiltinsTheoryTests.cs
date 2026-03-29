@@ -17,8 +17,6 @@ using Xunit;
 /// </summary>
 public class GieBuiltinsTheoryTests
 {
-    private static readonly object MissingCaseSentinel = new();
-
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
@@ -253,7 +251,7 @@ public class GieBuiltinsTheoryTests
     [Theory]
     [Trait("Category", "GieBuiltins")]
     [MemberData(nameof(GetBuiltinsCases))]
-    public void BuiltinsCasesForImplementedProjectionsStayWithinTolerance(object rawCase)
+    public void BuiltinsCasesForImplementedProjectionsStayWithinTolerance(GieCase? rawCase)
     {
         AssertCaseWithinTolerance(rawCase);
     }
@@ -265,7 +263,7 @@ public class GieBuiltinsTheoryTests
     [Theory]
     [Trait("Category", "GieBuiltins")]
     [MemberData(nameof(GetMoreBuiltinsCases))]
-    public void MoreBuiltinsCasesForImplementedProjectionsStayWithinTolerance(object rawCase)
+    public void MoreBuiltinsCasesForImplementedProjectionsStayWithinTolerance(GieCase? rawCase)
     {
         AssertCaseWithinTolerance(rawCase);
     }
@@ -277,7 +275,7 @@ public class GieBuiltinsTheoryTests
     [Theory]
     [Trait("Category", "GieBuiltins")]
     [MemberData(nameof(GetDhdnEtrs89Cases))]
-    public void DhdnEtrs89CasesForImplementedProjectionsStayWithinTolerance(object rawCase)
+    public void DhdnEtrs89CasesForImplementedProjectionsStayWithinTolerance(GieCase? rawCase)
     {
         AssertCaseWithinTolerance(rawCase);
     }
@@ -289,7 +287,7 @@ public class GieBuiltinsTheoryTests
     [Theory]
     [Trait("Category", "GieBuiltins")]
     [MemberData(nameof(GetRemainingGieCases))]
-    public void RemainingGieCasesForImplementedProjectionsStayWithinTolerance(object rawCase)
+    public void RemainingGieCasesForImplementedProjectionsStayWithinTolerance(GieCase? rawCase)
     {
         AssertCaseWithinTolerance(rawCase);
     }
@@ -298,7 +296,7 @@ public class GieBuiltinsTheoryTests
     /// Performs the documented operation.
     /// </summary>
     /// <returns>The computed value.</returns>
-    public static IEnumerable<object[]> GetBuiltinsCases()
+    public static IEnumerable<TheoryDataRow<GieCase?>> GetBuiltinsCases()
     {
         return GetCasesFromFixture("builtins.gie", 600);
     }
@@ -307,7 +305,7 @@ public class GieBuiltinsTheoryTests
     /// Performs the documented operation.
     /// </summary>
     /// <returns>The computed value.</returns>
-    public static IEnumerable<object[]> GetMoreBuiltinsCases()
+    public static IEnumerable<TheoryDataRow<GieCase?>> GetMoreBuiltinsCases()
     {
         return GetCasesFromFixture("more_builtins.gie", 300);
     }
@@ -316,7 +314,7 @@ public class GieBuiltinsTheoryTests
     /// Performs the documented operation.
     /// </summary>
     /// <returns>The computed value.</returns>
-    public static IEnumerable<object[]> GetDhdnEtrs89Cases()
+    public static IEnumerable<TheoryDataRow<GieCase?>> GetDhdnEtrs89Cases()
     {
         return GetCasesFromFixture("DHDN_ETRS89.gie", 400);
     }
@@ -325,42 +323,41 @@ public class GieBuiltinsTheoryTests
     /// Performs the documented operation.
     /// </summary>
     /// <returns>The computed value.</returns>
-    public static IEnumerable<object[]> GetRemainingGieCases()
+    public static IEnumerable<TheoryDataRow<GieCase?>> GetRemainingGieCases()
     {
         foreach (string fileName in RemainingFixtureFiles)
         {
-            foreach (object[] item in GetCasesFromFixture(fileName, 300))
+            foreach (TheoryDataRow<GieCase?> item in GetCasesFromFixture(fileName, 300))
             {
                 yield return item;
             }
         }
     }
 
-    private static void AssertCaseWithinTolerance(object rawCase)
+    private static void AssertCaseWithinTolerance(GieCase? rawCase)
     {
-        var testCase = rawCase as GieCase;
-        if (testCase is null)
+        if (rawCase is null)
         {
             Assert.Skip("No applicable GIE case was produced from local fixtures for this data row.");
         }
 
-        if (testCase.ExpectsFailure)
+        if (rawCase.ExpectsFailure)
         {
             Assert.Skip("Failure-expectation cases are tracked separately in a later wave.");
         }
 
-        if (testCase.Accept is null || testCase.Expect is null || testCase.Accept.Length < 2 || testCase.Expect.Length < 2)
+        if (rawCase.Accept is null || rawCase.Expect is null || rawCase.Accept.Length < 2 || rawCase.Expect.Length < 2)
         {
             Assert.Skip("Case does not contain enough coordinates for 2D comparison.");
         }
 
         double[]? output = null;
-        if (TryCreateConversionTransform(testCase.Operation, out Func<double[], double[]>? conversionTransform, out string? conversionSkipReason))
+        if (TryCreateConversionTransform(rawCase.Operation, out Func<double[], double[]>? conversionTransform, out string? conversionSkipReason))
         {
             Func<double[], double[]> transform = Assert.IsAssignableFrom<Func<double[], double[]>>(conversionTransform);
             try
             {
-                output = transform(testCase.Accept);
+                output = transform(rawCase.Accept);
             }
             catch (ArgumentException)
             {
@@ -370,7 +367,7 @@ public class GieBuiltinsTheoryTests
         }
         else
         {
-            if (!TryCreateTransform(testCase, out MathTransform? transform, out string? skipReason))
+            if (!TryCreateTransform(rawCase, out MathTransform? transform, out string? skipReason))
             {
                 Assert.Skip(skipReason ?? conversionSkipReason ?? "Transformation could not be created.");
             }
@@ -378,7 +375,7 @@ public class GieBuiltinsTheoryTests
             MathTransform mathTransform = Assert.IsAssignableFrom<MathTransform>(transform);
             try
             {
-                output = mathTransform.Transform(testCase.Accept);
+                output = mathTransform.Transform(rawCase.Accept);
             }
             catch (ArgumentException)
             {
@@ -393,8 +390,8 @@ public class GieBuiltinsTheoryTests
         }
 
         double[] evaluatedOutput = Assert.IsAssignableFrom<double[]>(output);
-        double tolerance = Math.Max(ToNumericTolerance(testCase.ToleranceValue, testCase.ToleranceUnit), 1e-3d);
-        int dimensionsToCompare = Math.Min(evaluatedOutput.Length, testCase.Expect.Length);
+        double tolerance = Math.Max(ToNumericTolerance(rawCase.ToleranceValue, rawCase.ToleranceUnit), 1e-3d);
+        int dimensionsToCompare = Math.Min(evaluatedOutput.Length, rawCase.Expect.Length);
         if (dimensionsToCompare < 2)
         {
             Assert.Skip("Case does not contain enough coordinates for comparison.");
@@ -402,7 +399,7 @@ public class GieBuiltinsTheoryTests
 
         for (int i = 0; i < dimensionsToCompare; i++)
         {
-            double delta = Math.Abs(evaluatedOutput[i] - testCase.Expect[i]);
+            double delta = Math.Abs(evaluatedOutput[i] - rawCase.Expect[i]);
             if (delta > tolerance)
             {
                 Assert.Skip("Case requires higher-fidelity GIE mapping (axis=" + i.ToString(CultureInfo.InvariantCulture) + ", delta=" + delta.ToString("R", CultureInfo.InvariantCulture) + ").");
@@ -410,12 +407,12 @@ public class GieBuiltinsTheoryTests
         }
     }
 
-    private static IEnumerable<object[]> GetCasesFromFixture(string fileName, int maxCount)
+    private static IEnumerable<TheoryDataRow<GieCase?>> GetCasesFromFixture(string fileName, int maxCount)
     {
         string fixturePath = FindGiePath(fileName);
         if (fixturePath is null)
         {
-            yield return new object[] { MissingCaseSentinel };
+            yield return new TheoryDataRow<GieCase?>((GieCase?)null);
             yield break;
         }
 
@@ -439,7 +436,7 @@ public class GieBuiltinsTheoryTests
 
         if (parseFailed)
         {
-            yield return new object[] { MissingCaseSentinel };
+            yield return new TheoryDataRow<GieCase?>((GieCase?)null);
             yield break;
         }
 
@@ -466,7 +463,7 @@ public class GieBuiltinsTheoryTests
                 continue;
             }
 
-            yield return new object[] { item };
+            yield return new TheoryDataRow<GieCase?>(item);
             emitted++;
             if (emitted >= maxCount)
             {
@@ -476,7 +473,7 @@ public class GieBuiltinsTheoryTests
 
         if (emitted == 0)
         {
-            yield return new object[] { MissingCaseSentinel };
+            yield return new TheoryDataRow<GieCase?>((GieCase?)null);
         }
     }
 

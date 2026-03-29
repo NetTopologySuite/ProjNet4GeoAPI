@@ -9,7 +9,7 @@ using System;
 /// <summary>
 /// Represents the documented type.
 /// </summary>
-internal sealed class GieCase
+public sealed class GieCase
 {
     /// <summary>
     /// Gets or sets the source line number of the parsed case.

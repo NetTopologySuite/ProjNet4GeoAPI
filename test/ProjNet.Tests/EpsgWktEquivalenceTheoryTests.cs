@@ -35,18 +35,16 @@ public class EpsgWktEquivalenceTheoryTests
     /// Enumerates fixture rows used by the WKT equivalence theory.
     /// </summary>
     /// <returns>SRID/WKT row pairs.</returns>
-    public static IEnumerable<object[]> EpsgFixtureRows()
+    public static IEnumerable<TheoryDataRow<int, string>> EpsgFixtureRows()
     {
         string fixturePath = Path.Combine(AppContext.BaseDirectory, FixtureRelativePath.Replace('/', Path.DirectorySeparatorChar));
         using var document = JsonDocument.Parse(File.ReadAllText(fixturePath));
 
         return document.RootElement
             .EnumerateArray()
-            .Select(item => new object[]
-            {
+            .Select(item => new TheoryDataRow<int, string>(
                 item.GetProperty("srid").GetInt32(),
-                item.GetProperty("wkt").GetString() ?? string.Empty,
-            })
+                item.GetProperty("wkt").GetString() ?? string.Empty))
             .ToArray();
     }
 
