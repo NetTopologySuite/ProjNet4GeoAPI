@@ -510,7 +510,6 @@ public class ProjectionsRegistry
         // instance of List<ProjectionParameter>, and then return the exact
         // parameter type so that we can create instances of this type with
         // minimal copying in the future, when possible.
-
         foreach (ConstructorInfo c in type.GetConstructors())
         {
             ParameterInfo[] parameters = c.GetParameters();

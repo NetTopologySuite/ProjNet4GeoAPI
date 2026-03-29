@@ -512,7 +512,7 @@ public static partial class CoordinateSystemWktReader
     private static CompoundCoordinateSystem ReadCompoundCoordinateSystem(WktTokenizer tokenizer)
     {
         // <compd cs> = COMPD_CS["<name>", <head cs>, <tail cs> {,<authority>}]
-        WktBracket bracket = tokenizer.ReadOpener();
+        _ = tokenizer.ReadOpener();
         string name = tokenizer.ReadDoubleQuotedWord();
         tokenizer.ReadToken(",");
         tokenizer.NextToken();

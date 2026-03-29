@@ -54,18 +54,18 @@ public struct XYZ : IEquatable<XYZ>
     public static bool operator !=(XYZ left, XYZ right) => !left.Equals(right);
 
     /// <inheritdoc />
-    public override bool Equals(object? obj) => obj is XYZ other && this.Equals(other);
+    public override readonly bool Equals(object? obj) => obj is XYZ other && this.Equals(other);
 
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
     /// <param name="other">The other value.</param>
     /// <returns>The computed value.</returns>
-    public bool Equals(XYZ other) => (this.X, this.Y, this.Z).Equals((other.X, other.Y, other.Z));
+    public readonly bool Equals(XYZ other) => (this.X, this.Y, this.Z).Equals((other.X, other.Y, other.Z));
 
     /// <inheritdoc />
-    public override int GetHashCode() => (this.X, this.Y, this.Z).GetHashCode();
+    public override readonly int GetHashCode() => (this.X, this.Y, this.Z).GetHashCode();
 
     /// <inheritdoc />
-    public override string ToString() => $"({this.X}, {this.Y}, {this.Z})";
+    public override readonly string ToString() => $"({this.X}, {this.Y}, {this.Z})";
 }

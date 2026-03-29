@@ -32,13 +32,11 @@ public static class MathTransformWktReader
         var tokenizer = new WktTokenizer(wkt);
         tokenizer.NextToken();
         string objectName = tokenizer.GetStringValue();
-        switch (objectName)
+        return objectName switch
         {
-            case "PARAM_MT":
-                return ReadMathTransform(tokenizer);
-            default:
-                return ArgumentGuard.ThrowArgument<MathTransform>($"'{objectName}' is not recognized.");
-        }
+            "PARAM_MT" => ReadMathTransform(tokenizer),
+            _ => ArgumentGuard.ThrowArgument<MathTransform>($"'{objectName}' is not recognized."),
+        };
     }
 
     /// <summary>
@@ -57,13 +55,11 @@ public static class MathTransformWktReader
         string transformName = tokenizer.ReadDoubleQuotedWord();
         tokenizer.ReadToken(",");
 
-        switch (transformName.ToUpperInvariant())
+        return transformName.ToUpperInvariant() switch
         {
-            case "AFFINE":
-                return ReadAffineTransform(tokenizer);
-            default:
-                throw new NotSupportedException("Transform not supported '" + transformName + "'");
-        }
+            "AFFINE" => ReadAffineTransform(tokenizer),
+            _ => throw new NotSupportedException("Transform not supported '" + transformName + "'"),
+        };
     }
 
     private static ParameterInfo ReadParameters(WktTokenizer tokenizer)
