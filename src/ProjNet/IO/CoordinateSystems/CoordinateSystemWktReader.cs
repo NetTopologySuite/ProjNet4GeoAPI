@@ -89,27 +89,16 @@ public static partial class CoordinateSystemWktReader
         var tokenizer = new WktTokenizer(normalizedWkt);
         tokenizer.NextToken();
         string objectName = tokenizer.GetStringValue();
-        switch (objectName)
+        return objectName switch
         {
-            case "UNIT":
-                return ReadUnit(tokenizer);
-            case "SPHEROID":
-                return ReadEllipsoid(tokenizer);
-            case "DATUM":
-                return ReadHorizontalDatum(tokenizer);
-            case "PRIMEM":
-                return ReadPrimeMeridian(tokenizer);
-            case "VERT_CS":
-            case "GEOGCS":
-            case "PROJCS":
-            case "COMPD_CS":
-            case "GEOCCS":
-            case "FITTED_CS":
-            case "LOCAL_CS":
-                return ReadCoordinateSystem(normalizedWkt, tokenizer);
-            default:
-                return ArgumentGuard.ThrowArgument<IInfo>($"'{objectName}' is not recognized.");
-        }
+            "UNIT" => ReadUnit(tokenizer),
+            "SPHEROID" => ReadEllipsoid(tokenizer),
+            "DATUM" => ReadHorizontalDatum(tokenizer),
+            "PRIMEM" => ReadPrimeMeridian(tokenizer),
+            "VERT_CS" or "GEOGCS" or "PROJCS" or "COMPD_CS" or "GEOCCS" or "FITTED_CS" or "LOCAL_CS"
+                => ReadCoordinateSystem(normalizedWkt, tokenizer),
+            _ => ArgumentGuard.ThrowArgument<IInfo>($"'{objectName}' is not recognized."),
+        };
     }
 
     /// <summary>
