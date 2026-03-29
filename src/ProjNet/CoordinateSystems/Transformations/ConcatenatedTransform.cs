@@ -14,7 +14,7 @@ using System.Collections.Generic;
 internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationCore
 {
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory =
-            new CoordinateTransformationFactory();
+            new();
 
     private readonly List<ICoordinateTransformationCore> coordinateTransformationList;
 
@@ -28,7 +28,7 @@ internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationC
     /// </summary>
     public ConcatenatedTransform()
     {
-        this.coordinateTransformationList = new List<ICoordinateTransformationCore>();
+        this.coordinateTransformationList = [];
     }
 
     /// <summary>

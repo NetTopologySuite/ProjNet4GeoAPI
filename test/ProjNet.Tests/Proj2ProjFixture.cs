@@ -28,5 +28,5 @@ public sealed class Proj2ProjFixture
     /// <summary>
     /// Gets or sets the parity cases included in the fixture payload.
     /// </summary>
-    public List<Proj2ProjCase> Cases { get; set; } = new List<Proj2ProjCase>();
+    public List<Proj2ProjCase> Cases { get; set; } = [];
 }

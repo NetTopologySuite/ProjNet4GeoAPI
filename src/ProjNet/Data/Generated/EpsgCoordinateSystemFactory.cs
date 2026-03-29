@@ -609,7 +609,7 @@ internal static class EpsgCoordinateSystemFactory
         {
             if (!grouped.TryGetValue(axis.CoordinateSystemCode, out List<EpsgAxisRecord>? axes))
             {
-                axes = new List<EpsgAxisRecord>();
+                axes = [];
                 grouped[axis.CoordinateSystemCode] = axes;
             }
 

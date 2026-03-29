@@ -15,7 +15,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </summary>
 public class ProjectionsRegistry
 {
-    private static readonly Dictionary<string, ProjectionRegistration> TypeRegistry = new();
+    private static readonly Dictionary<string, ProjectionRegistration> TypeRegistry = [];
 
     private static readonly object RegistryLock = new();
 

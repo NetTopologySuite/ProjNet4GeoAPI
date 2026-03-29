@@ -581,8 +581,8 @@ internal static class ProjPipelineMathTransformFactory
 
         var geocentricParameters = new List<ProjectionParameter>(2)
         {
-            new ProjectionParameter("semi_major", semiMajor),
-            new ProjectionParameter("semi_minor", semiMinor),
+            new("semi_major", semiMajor),
+            new("semi_minor", semiMinor),
         };
 
         transform = new GeocentricTransform(geocentricParameters, false);
@@ -680,14 +680,14 @@ internal static class ProjPipelineMathTransformFactory
 
         parameters = new List<ProjectionParameter>(10)
         {
-            new ProjectionParameter("latitude_of_origin", 0d),
-            new ProjectionParameter("central_meridian", 0d),
-            new ProjectionParameter("scale_factor", 1d),
-            new ProjectionParameter("false_easting", 0d),
-            new ProjectionParameter("false_northing", 0d),
-            new ProjectionParameter("semi_major", semiMajor),
-            new ProjectionParameter("semi_minor", semiMinor),
-            new ProjectionParameter("unit", unitFactor),
+            new("latitude_of_origin", 0d),
+            new("central_meridian", 0d),
+            new("scale_factor", 1d),
+            new("false_easting", 0d),
+            new("false_northing", 0d),
+            new("semi_major", semiMajor),
+            new("semi_minor", semiMinor),
+            new("unit", unitFactor),
         };
 
         if (!TryApplyOptionalProjectionParameter(args, "lat_0", "latitude_of_origin", parameters, out skipReason)

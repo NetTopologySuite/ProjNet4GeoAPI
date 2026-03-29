@@ -35,7 +35,7 @@ public class CompoundCoordinateSystem : CoordinateSystem
     {
         this.headCoordinateSystem = headcs;
         this.tailCoordinateSystem = tailcs;
-        this.AxisInfo = new List<AxisInfo>();
+        this.AxisInfo = [];
         this.AxisInfo.AddRange(this.HeadCoordinateSystem.AxisInfo);
         this.AxisInfo.AddRange(this.TailCoordinateSystem.AxisInfo);
     }

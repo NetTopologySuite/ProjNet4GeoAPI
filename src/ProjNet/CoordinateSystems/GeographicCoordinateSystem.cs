@@ -59,9 +59,11 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
     {
         get
         {
-            var axes = new List<AxisInfo>(2);
-            axes.Add(new AxisInfo("Lon", AxisOrientationEnum.East));
-            axes.Add(new AxisInfo("Lat", AxisOrientationEnum.North));
+            var axes = new List<AxisInfo>(2)
+            {
+                new AxisInfo("Lon", AxisOrientationEnum.East),
+                new AxisInfo("Lat", AxisOrientationEnum.North)
+            };
             return new GeographicCoordinateSystem(
                 CoordinateSystems.AngularUnit.Degrees,
                 CoordinateSystems.HorizontalDatum.WGS84,

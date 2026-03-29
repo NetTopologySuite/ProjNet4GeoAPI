@@ -39,7 +39,7 @@ public class VerticalCoordinateSystem : CoordinateSystem
         : base(name, authority, authorityCode, alias, abbreviation, remarks)
     {
         this.VerticalDatum = ArgumentGuard.ThrowIfNull(verticalDatum, nameof(verticalDatum));
-        this.AxisInfo = new List<AxisInfo>() { ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo)) };
+        this.AxisInfo = [ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo))];
         this.LinearUnit = ArgumentGuard.ThrowIfNull(linearUnit, nameof(linearUnit));
     }
 
@@ -57,7 +57,7 @@ public class VerticalCoordinateSystem : CoordinateSystem
     /// Gets creates a meter unit coordinate system with <see cref="VerticalDatum.ODN"/>.
     /// </summary>
     public static VerticalCoordinateSystem ODN =>
-        new VerticalCoordinateSystem(
+        new(
             new LinearUnit(1, "metre", "EPSG", 9001, string.Empty, "m", string.Empty),
             VerticalDatum.ODN,
             new AxisInfo("Up", AxisOrientationEnum.Up),

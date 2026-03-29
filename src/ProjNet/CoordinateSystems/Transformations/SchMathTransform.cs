@@ -73,8 +73,8 @@ internal sealed class SchMathTransform : MathTransform
 
         var ellipsoidParameters = new List<ProjectionParameter>
         {
-            new ProjectionParameter("semi_major", this.semiMajorAxis),
-            new ProjectionParameter("semi_minor", semiMinorAxis),
+            new("semi_major", this.semiMajorAxis),
+            new("semi_minor", semiMinorAxis),
         };
 
         this.ellipsoidForward = new GeocentricTransform(ellipsoidParameters, false);
@@ -103,8 +103,8 @@ internal sealed class SchMathTransform : MathTransform
 
         var sphereParameters = new List<ProjectionParameter>
         {
-            new ProjectionParameter("semi_major", this.radiusOfCurvature),
-            new ProjectionParameter("semi_minor", this.radiusOfCurvature),
+            new("semi_major", this.radiusOfCurvature),
+            new("semi_minor", this.radiusOfCurvature),
         };
 
         this.sphereForward = new GeocentricTransform(sphereParameters, false);
@@ -242,12 +242,12 @@ internal sealed class SchMathTransform : MathTransform
 
         var parameters = new List<ProjectionParameter>
         {
-            new ProjectionParameter("plat_0", Parse(args["plat_0"])),
-            new ProjectionParameter("plon_0", Parse(args["plon_0"])),
-            new ProjectionParameter("phdg_0", Parse(args["phdg_0"])),
-            new ProjectionParameter("h_0", pegHeight),
-            new ProjectionParameter("semi_major", semiMajor),
-            new ProjectionParameter("semi_minor", semiMinor),
+            new("plat_0", Parse(args["plat_0"])),
+            new("plon_0", Parse(args["plon_0"])),
+            new("phdg_0", Parse(args["phdg_0"])),
+            new("h_0", pegHeight),
+            new("semi_major", semiMajor),
+            new("semi_minor", semiMinor),
         };
 
         try

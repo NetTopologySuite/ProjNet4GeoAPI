@@ -17,8 +17,8 @@ using System.Text;
 [Serializable]
 public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<ProjectionParameterSet>
 {
-    private readonly Dictionary<string, string> originalNames = new Dictionary<string, string>();
-    private readonly Dictionary<int, string> originalIndex = new Dictionary<int, string>();
+    private readonly Dictionary<string, string> originalNames = [];
+    private readonly Dictionary<int, string> originalIndex = [];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ProjectionParameterSet"/> class for deserialization.

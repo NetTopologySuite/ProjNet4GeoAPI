@@ -17,7 +17,7 @@ using Xunit;
 /// </summary>
 public class Proj2ProjParityTheoryTests
 {
-    private static readonly JsonSerializerOptions SerializerOptions = new JsonSerializerOptions
+    private static readonly JsonSerializerOptions SerializerOptions = new()
     {
         PropertyNameCaseInsensitive = true,
     };

@@ -91,8 +91,8 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
 
         var parameters = new List<ProjectionParameter>
         {
-            new ProjectionParameter("semi_major", semiMajor),
-            new ProjectionParameter("semi_minor", semiMinor),
+            new("semi_major", semiMajor),
+            new("semi_minor", semiMinor),
         };
         var geocentricForward = new GeocentricTransform(parameters, false);
         this.geocentricInverse = (GeocentricTransform)geocentricForward.Inverse();

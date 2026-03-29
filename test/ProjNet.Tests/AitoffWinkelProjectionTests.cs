@@ -15,8 +15,8 @@ using Xunit;
 /// </summary>
 public class AitoffWinkelProjectionTests
 {
-    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
-    private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
+    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new();
+    private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new();
 
     /// <summary>
     /// Verifies that Aitoff and Winkel aliases resolve from WKT.

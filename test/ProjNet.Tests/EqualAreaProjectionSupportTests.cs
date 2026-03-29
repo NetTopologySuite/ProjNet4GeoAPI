@@ -13,8 +13,8 @@ using Xunit;
 /// </summary>
 public class EqualAreaProjectionSupportTests
 {
-    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
-    private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
+    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new();
+    private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new();
 
     /// <summary>
     /// Verifies that hammer projection aliases can be parsed from WKT.

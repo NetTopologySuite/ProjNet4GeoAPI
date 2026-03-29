@@ -16,9 +16,9 @@ using Xunit;
 /// </summary>
 public class DefModelRuntimeTests
 {
-    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
-    private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
-    private static readonly Lazy<MathTransform> MercatorInverseTransform = new Lazy<MathTransform>(CreateMercatorInverseTransform);
+    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new();
+    private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new();
+    private static readonly Lazy<MathTransform> MercatorInverseTransform = new(CreateMercatorInverseTransform);
 
     /// <summary>
     /// Gets invalid creation scenarios.
@@ -254,11 +254,11 @@ public class DefModelRuntimeTests
     {
         var projectionParameters = new List<ProjectionParameter>
         {
-            new ProjectionParameter("latitude_of_origin", 0d),
-            new ProjectionParameter("central_meridian", 0d),
-            new ProjectionParameter("scale_factor", 1d),
-            new ProjectionParameter("false_easting", 0d),
-            new ProjectionParameter("false_northing", 0d),
+            new("latitude_of_origin", 0d),
+            new("central_meridian", 0d),
+            new("scale_factor", 1d),
+            new("false_easting", 0d),
+            new("false_northing", 0d),
         };
 
         IProjection projection = CoordinateSystemFactory.CreateProjection("Mercator", "mercator", projectionParameters);

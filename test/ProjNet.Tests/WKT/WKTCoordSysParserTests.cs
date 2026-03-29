@@ -18,7 +18,7 @@ using Xunit;
 /// </summary>
 public class WKTCoordSysParserTests
 {
-    private readonly CoordinateSystemFactory coordinateSystemFactory = new CoordinateSystemFactory();
+    private readonly CoordinateSystemFactory coordinateSystemFactory = new();
 
     /// <summary>
     /// Parses a coordinate system WKT.

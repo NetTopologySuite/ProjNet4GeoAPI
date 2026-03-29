@@ -18,7 +18,7 @@ using ProjNet.CoordinateSystems;
 internal sealed class SRIDReader
 {
     private static readonly Lazy<CoordinateSystemFactory> CoordinateSystemFactory =
-        new Lazy<CoordinateSystemFactory>(() => new CoordinateSystemFactory());
+        new(() => new CoordinateSystemFactory());
 
     /// <summary>
     /// Gets a coordinate system from the SRID.csv file.

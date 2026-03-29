@@ -1119,7 +1119,7 @@ public class CoordinateTransformationFactory
             var key = new SridPair(definition.SourceSrid, definition.TargetSrid);
             if (!definitions.TryGetValue(key, out List<CoordinateOperationDefinition>? operations))
             {
-                operations = new List<CoordinateOperationDefinition>();
+                operations = [];
                 definitions[key] = operations;
             }
 

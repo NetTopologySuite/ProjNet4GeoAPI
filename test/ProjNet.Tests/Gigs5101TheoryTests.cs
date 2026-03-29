@@ -54,11 +54,11 @@ public class Gigs5101TheoryTests
         "5208.gie",
     ];
 
-    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
-    private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
+    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new();
+    private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new();
 
     private static readonly char[] OperationTokenSeparators = [' ', '\t'];
-    private static readonly CoordinateSystemServices CoordinateSystemServices = new CoordinateSystemServices();
+    private static readonly CoordinateSystemServices CoordinateSystemServices = new();
 
     /// <summary>
     /// Gets coverage parameters for GIGS 5101 fixtures.
@@ -608,14 +608,14 @@ public class Gigs5101TheoryTests
 
     private static bool TryBuildProjectionParameters(Dictionary<string, string> args, out List<ProjectionParameter> parameters)
     {
-        parameters = new List<ProjectionParameter>
-        {
-            new ProjectionParameter("latitude_of_origin", 0d),
-            new ProjectionParameter("central_meridian", 0d),
-            new ProjectionParameter("scale_factor", 1d),
-            new ProjectionParameter("false_easting", 0d),
-            new ProjectionParameter("false_northing", 0d),
-        };
+        parameters =
+        [
+            new("latitude_of_origin", 0d),
+            new("central_meridian", 0d),
+            new("scale_factor", 1d),
+            new("false_easting", 0d),
+            new("false_northing", 0d),
+        ];
 
         if (TryGetDouble(args, "lat_0", out double lat0))
         {

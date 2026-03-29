@@ -17,8 +17,8 @@ public class ProjectionKernelAlignmentTests
     private static readonly double[] MercatorAliasInput = [1000d, 2000d];
     private static readonly double[] TransverseMercatorAliasInput = [500000d, 4649776.22482d];
 
-    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
-    private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
+    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new();
+    private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new();
 
     /// <summary>
     /// Validates Mercator family aliases against the projection registry.

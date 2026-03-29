@@ -22,8 +22,8 @@ public class OperationResolutionEngineTests
     private static readonly double[] GeographicSamplePoint = [13.1234d, 52.9876d];
     private static readonly double[] UtmSamplePoint = [500000d, 4649776.22482d];
 
-    private readonly CoordinateTransformationFactory coordinateTransformationFactory = new CoordinateTransformationFactory();
-    private readonly CoordinateSystemFactory coordinateSystemFactory = new CoordinateSystemFactory();
+    private readonly CoordinateTransformationFactory coordinateTransformationFactory = new();
+    private readonly CoordinateSystemFactory coordinateSystemFactory = new();
 
     /// <summary>
     /// Performs the documented operation.
@@ -304,12 +304,12 @@ public class OperationResolutionEngineTests
             "source-fitted",
             sourceBase,
             sourceToBase,
-            new List<AxisInfo>());
+            []);
         FittedCoordinateSystem targetFitted = this.coordinateSystemFactory.CreateFittedCoordinateSystem(
             "target-fitted",
             targetBase,
             targetToBase,
-            new List<AxisInfo>());
+            []);
 
         ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(sourceFitted, targetFitted);
         ICoordinateTransformation baseTransformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(sourceBase, targetBase);

@@ -13,8 +13,8 @@ using Xunit;
 /// </summary>
 public class ConicProjectionSupportTests
 {
-    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
-    private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
+    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new();
+    private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new();
 
     /// <summary>
     /// Validates that Equidistant Conic aliases resolve from WKT and produce usable transforms.

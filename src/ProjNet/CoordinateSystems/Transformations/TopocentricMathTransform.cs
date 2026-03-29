@@ -160,8 +160,8 @@ internal sealed class TopocentricMathTransform : MathTransform
 
         var ellipsoidParameters = new List<ProjectionParameter>
         {
-            new ProjectionParameter("semi_major", semiMajor),
-            new ProjectionParameter("semi_minor", semiMinor),
+            new("semi_major", semiMajor),
+            new("semi_minor", semiMinor),
         };
 
         var geocForward = new GeocentricTransform(ellipsoidParameters, false);

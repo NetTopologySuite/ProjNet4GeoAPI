@@ -184,8 +184,8 @@ public class DeformationRuntimeTests
     {
         var parameters = new List<ProjectionParameter>
         {
-            new ProjectionParameter("semi_major", Ellipsoid.GRS80.SemiMajorAxis),
-            new ProjectionParameter("semi_minor", Ellipsoid.GRS80.SemiMinorAxis),
+            new("semi_major", Ellipsoid.GRS80.SemiMajorAxis),
+            new("semi_minor", Ellipsoid.GRS80.SemiMinorAxis),
         };
         var transform = new GeocentricTransform(parameters, false);
         double x = longitudeDegrees;

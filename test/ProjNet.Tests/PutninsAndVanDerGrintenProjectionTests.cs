@@ -17,8 +17,8 @@ public class PutninsAndVanDerGrintenProjectionTests
 {
     private const string Sphere6400000 = "SPHEROID[\"Sphere\",6400000,0]";
 
-    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
-    private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
+    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new();
+    private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new();
 
     /// <summary>
     /// Verifies aliases resolve from WKT for Putnins and Van der Grinten projection families.

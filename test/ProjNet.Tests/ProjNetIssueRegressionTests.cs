@@ -194,14 +194,16 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     [Fact(DisplayName = "ObliqueMercatorProjection.Inverse() wrong null check")]
     public void TestNtsIssue191()
     {
-        var parameters = new List<ProjectionParameter>();
-        parameters.Add(new ProjectionParameter("latitude_of_center", 45.30916666666666));
-        parameters.Add(new ProjectionParameter("longitude_of_center", -86));
-        parameters.Add(new ProjectionParameter("azimuth", 337.25556));
-        parameters.Add(new ProjectionParameter("rectified_grid_angle", 337.25556));
-        parameters.Add(new ProjectionParameter("scale_factor", 0.9996));
-        parameters.Add(new ProjectionParameter("false_easting", 2546731.496));
-        parameters.Add(new ProjectionParameter("false_northing", -4354009.816));
+        var parameters = new List<ProjectionParameter>
+        {
+            new ProjectionParameter("latitude_of_center", 45.30916666666666),
+            new ProjectionParameter("longitude_of_center", -86),
+            new ProjectionParameter("azimuth", 337.25556),
+            new ProjectionParameter("rectified_grid_angle", 337.25556),
+            new ProjectionParameter("scale_factor", 0.9996),
+            new ProjectionParameter("false_easting", 2546731.496),
+            new ProjectionParameter("false_northing", -4354009.816)
+        };
 
         var factory = new CoordinateSystemFactory();
         IProjection projection = factory.CreateProjection("Test Oblique", "oblique_mercator", parameters);

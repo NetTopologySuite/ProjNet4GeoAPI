@@ -146,12 +146,12 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             new AxisInfo("Lat", AxisOrientationEnum.North));
         var parameters = new List<ProjectionParameter>(5)
                              {
-                                 new ProjectionParameter("central_meridian", -96),
-                                 new ProjectionParameter("latitude_of_center", 23),
-                                 new ProjectionParameter("standard_parallel_1", 29.5),
-                                 new ProjectionParameter("standard_parallel_2", 45.5),
-                                 new ProjectionParameter("false_easting", 0),
-                                 new ProjectionParameter("false_northing", 0),
+                                 new("central_meridian", -96),
+                                 new("latitude_of_center", 23),
+                                 new("standard_parallel_1", 29.5),
+                                 new("standard_parallel_2", 45.5),
+                                 new("false_easting", 0),
+                                 new("false_northing", 0),
                              };
         IProjection projection = this.CoordinateSystemFactory.CreateProjection("Albers Conical Equal Area", "albers", parameters);
 
@@ -187,12 +187,12 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             new AxisInfo("Lat", AxisOrientationEnum.North));
         var parameters = new List<ProjectionParameter>(5)
                              {
-                                 new ProjectionParameter("central_meridian", -96),
-                                 new ProjectionParameter("latitude_of_center", 23),
-                                 new ProjectionParameter("standard_parallel_1", 29.5),
-                                 new ProjectionParameter("standard_parallel_2", 45.5),
-                                 new ProjectionParameter("false_easting", 0),
-                                 new ProjectionParameter("false_northing", 0),
+                                 new("central_meridian", -96),
+                                 new("latitude_of_center", 23),
+                                 new("standard_parallel_1", 29.5),
+                                 new("standard_parallel_2", 45.5),
+                                 new("false_easting", 0),
+                                 new("false_northing", 0),
                              };
         IProjection projection = this.CoordinateSystemFactory.CreateProjection("Albers Conical Equal Area", "albers", parameters);
 
@@ -227,11 +227,11 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             new AxisInfo("Lat", AxisOrientationEnum.North));
         var parameters = new List<ProjectionParameter>(5)
                              {
-                                 new ProjectionParameter("latitude_of_origin", 0),
-                                 new ProjectionParameter("central_meridian", 110),
-                                 new ProjectionParameter("scale_factor", 0.997),
-                                 new ProjectionParameter("false_easting", 3900000),
-                                 new ProjectionParameter("false_northing", 900000),
+                                 new("latitude_of_origin", 0),
+                                 new("central_meridian", 110),
+                                 new("scale_factor", 0.997),
+                                 new("false_easting", 3900000),
+                                 new("false_northing", 900000),
                              };
         IProjection projection = this.CoordinateSystemFactory.CreateProjection("Mercator_1SP", "Mercator_1SP", parameters);
 
@@ -266,11 +266,11 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             new AxisInfo("Lat", AxisOrientationEnum.North));
         var parameters = new List<ProjectionParameter>(5)
                              {
-                                 new ProjectionParameter("latitude_of_origin", 0),
-                                 new ProjectionParameter("central_meridian", 110),
-                                 new ProjectionParameter("scale_factor", 0.997),
-                                 new ProjectionParameter("false_easting", 3900000 / LinearUnit.Foot.MetersPerUnit),
-                                 new ProjectionParameter("false_northing", 900000 / LinearUnit.Foot.MetersPerUnit),
+                                 new("latitude_of_origin", 0),
+                                 new("central_meridian", 110),
+                                 new("scale_factor", 0.997),
+                                 new("false_easting", 3900000 / LinearUnit.Foot.MetersPerUnit),
+                                 new("false_northing", 900000 / LinearUnit.Foot.MetersPerUnit),
                              };
         IProjection projection = this.CoordinateSystemFactory.CreateProjection("Mercator_1SP", "Mercator_1SP", parameters);
 
@@ -305,10 +305,10 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             new AxisInfo("Lat", AxisOrientationEnum.North));
         var parameters = new List<ProjectionParameter>(5)
                              {
-                                 new ProjectionParameter("latitude_of_origin", 42),
-                                 new ProjectionParameter("central_meridian", 51),
-                                 new ProjectionParameter("false_easting", 0),
-                                 new ProjectionParameter("false_northing", 0),
+                                 new("latitude_of_origin", 42),
+                                 new("central_meridian", 51),
+                                 new("false_easting", 0),
+                                 new("false_northing", 0),
                              };
         IProjection projection = this.CoordinateSystemFactory.CreateProjection("Mercator_2SP", "Mercator_2SP", parameters);
 
@@ -343,11 +343,11 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             new AxisInfo("Lat", AxisOrientationEnum.North));
         var parameters = new List<ProjectionParameter>(5)
                              {
-                                 new ProjectionParameter("latitude_of_origin", 49),
-                                 new ProjectionParameter("central_meridian", -2),
-                                 new ProjectionParameter("scale_factor", 0.9996012717), // 0.9996
-                                 new ProjectionParameter("false_easting", 400000),
-                                 new ProjectionParameter("false_northing", -100000),
+                                 new("latitude_of_origin", 49),
+                                 new("central_meridian", -2),
+                                 new("scale_factor", 0.9996012717), // 0.9996
+                                 new("false_easting", 400000),
+                                 new("false_northing", -100000),
                              };
         IProjection projection = this.CoordinateSystemFactory.CreateProjection("Transverse Mercator", "Transverse_Mercator", parameters);
 
@@ -384,12 +384,12 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             new AxisInfo("Lat", AxisOrientationEnum.North));
         var parameters = new List<ProjectionParameter>(5)
                              {
-                                 new ProjectionParameter("latitude_of_origin", 27.833333333),
-                                 new ProjectionParameter("central_meridian", -99),
-                                 new ProjectionParameter("standard_parallel_1", 28.3833333333),
-                                 new ProjectionParameter("standard_parallel_2", 30.2833333333),
-                                 new ProjectionParameter("false_easting", 2000000 / LinearUnit.USSurveyFoot.MetersPerUnit),
-                                 new ProjectionParameter("false_northing", 0),
+                                 new("latitude_of_origin", 27.833333333),
+                                 new("central_meridian", -99),
+                                 new("standard_parallel_1", 28.3833333333),
+                                 new("standard_parallel_2", 30.2833333333),
+                                 new("false_easting", 2000000 / LinearUnit.USSurveyFoot.MetersPerUnit),
+                                 new("false_northing", 0),
                              };
         IProjection projection = this.CoordinateSystemFactory.CreateProjection("Lambert Conic Conformal (2SP)", "lambert_conformal_conic_2sp", parameters);
 
@@ -569,11 +569,11 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         // Define projections
         var parameters = new List<ProjectionParameter>(5)
                              {
-                                 new ProjectionParameter("latitude_of_origin", 0),
-                                 new ProjectionParameter("central_meridian", 9),
-                                 new ProjectionParameter("scale_factor", 0.9996),
-                                 new ProjectionParameter("false_easting", 500000),
-                                 new ProjectionParameter("false_northing", 0),
+                                 new("latitude_of_origin", 0),
+                                 new("central_meridian", 9),
+                                 new("scale_factor", 0.9996),
+                                 new("false_easting", 500000),
+                                 new("false_northing", 0),
                              };
         IProjection projection = this.CoordinateSystemFactory.CreateProjection("Transverse Mercator", "Transverse_Mercator", parameters);
         ProjectedCoordinateSystem utmED50 = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("ED50 UTM Zone 32N", gcsED50, projection, LinearUnit.Metre, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
@@ -655,13 +655,13 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
 
         var parameters = new List<ProjectionParameter>(5)
                              {
-                                 new ProjectionParameter("latitude_of_center", 49.5),
-                                 new ProjectionParameter("longitude_of_center", 24.83333333333333),
-                                 new ProjectionParameter("azimuth", 30.28813972222222),
-                                 new ProjectionParameter("pseudo_standard_parallel_1", 78.5),
-                                 new ProjectionParameter("scale_factor", 0.9999),
-                                 new ProjectionParameter("false_easting", 0),
-                                 new ProjectionParameter("false_northing", 0),
+                                 new("latitude_of_center", 49.5),
+                                 new("longitude_of_center", 24.83333333333333),
+                                 new("azimuth", 30.28813972222222),
+                                 new("pseudo_standard_parallel_1", 78.5),
+                                 new("scale_factor", 0.9999),
+                                 new("false_easting", 0),
+                                 new("false_northing", 0),
                              };
         IProjection projection = this.CoordinateSystemFactory.CreateProjection("Krovak", "Krovak", parameters);
 
@@ -724,13 +724,13 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
 
         var parameters = new List<ProjectionParameter>(5)
                              {
-                                 new ProjectionParameter("latitude_of_center", 49.5),
-                                 new ProjectionParameter("longitude_of_center", 42.5),
-                                 new ProjectionParameter("azimuth", 30.28813972222222),
-                                 new ProjectionParameter("pseudo_standard_parallel_1", 78.5),
-                                 new ProjectionParameter("scale_factor", 0.9999),
-                                 new ProjectionParameter("false_easting", 0),
-                                 new ProjectionParameter("false_northing", 0),
+                                 new("latitude_of_center", 49.5),
+                                 new("longitude_of_center", 42.5),
+                                 new("azimuth", 30.28813972222222),
+                                 new("pseudo_standard_parallel_1", 78.5),
+                                 new("scale_factor", 0.9999),
+                                 new("false_easting", 0),
+                                 new("false_northing", 0),
                              };
         IProjection projection = this.CoordinateSystemFactory.CreateProjection("Krovak", "Krovak", parameters);
 
@@ -1032,9 +1032,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
 
         var coords = new XY[]
         {
-            new XY(290586.087, 6714000),
-            new XY(290586.392, 6713996.224),
-            new XY(290590.133, 6713973.772),
+            new(290586.087, 6714000),
+            new(290586.392, 6713996.224),
+            new(290590.133, 6713973.772),
         };
 
         trans.MathTransform.Transform(coords);
@@ -1275,11 +1275,11 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         GeographicCoordinateSystem csWgs84 = GeographicCoordinateSystem.WGS84;
         var parameters = new List<ProjectionParameter>(5)
                              {
-                                 new ProjectionParameter("central_meridian", 0),
-                                 new ProjectionParameter("latitude_of_origin", 0),
-                                 new ProjectionParameter("scale_factor", 1),
-                                 new ProjectionParameter("false_easting", 0),
-                                 new ProjectionParameter("false_northing", 0),
+                                 new("central_meridian", 0),
+                                 new("latitude_of_origin", 0),
+                                 new("scale_factor", 1),
+                                 new("false_easting", 0),
+                                 new("false_northing", 0),
                              };
         IProjection projection = this.CoordinateSystemFactory.CreateProjection("Orthographic", "Orthographic", parameters);
         ProjectedCoordinateSystem orthographicSystem = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("Orthographic centered", csWgs84, projection, LinearUnit.Metre, new AxisInfo("X", AxisOrientationEnum.East), new AxisInfo("Y", AxisOrientationEnum.North));
@@ -1303,11 +1303,11 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         // Check from guidance 7.2
         var parameters2 = new List<ProjectionParameter>(5)
                              {
-                                 new ProjectionParameter("central_meridian", 5.0),
-                                 new ProjectionParameter("latitude_of_origin", 55.0),
-                                 new ProjectionParameter("scale_factor", 1),
-                                 new ProjectionParameter("false_easting", 0),
-                                 new ProjectionParameter("false_northing", 0),
+                                 new("central_meridian", 5.0),
+                                 new("latitude_of_origin", 55.0),
+                                 new("scale_factor", 1),
+                                 new("false_easting", 0),
+                                 new("false_northing", 0),
                              };
         IProjection projection2 = this.CoordinateSystemFactory.CreateProjection("Orthographic", "Orthographic", parameters2);
         ProjectedCoordinateSystem orthoSystem2 = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("Orthographic", csWgs84, projection2, LinearUnit.Metre, new AxisInfo("X", AxisOrientationEnum.East), new AxisInfo("Y", AxisOrientationEnum.North));

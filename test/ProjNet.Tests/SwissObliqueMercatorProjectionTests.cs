@@ -15,8 +15,8 @@ using Xunit;
 /// </summary>
 public class SwissObliqueMercatorProjectionTests
 {
-    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
-    private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
+    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new();
+    private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new();
 
     /// <summary>
     /// Verifies that somerc aliases resolve from WKT and produce usable transforms.

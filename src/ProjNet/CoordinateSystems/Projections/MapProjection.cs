@@ -796,7 +796,7 @@ public abstract class MapProjection : MathTransform, IProjection
             : 0;
         List<ProjectionParameter> res = capacity > 0
             ? new List<ProjectionParameter>(capacity)
-            : new List<ProjectionParameter>();
+            : [];
         foreach (ProjectionParameter pp in projectionParameters)
         {
             res.Add(new ProjectionParameter(pp.Name, pp.Value));

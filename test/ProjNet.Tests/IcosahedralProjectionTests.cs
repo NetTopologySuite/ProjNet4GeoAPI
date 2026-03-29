@@ -20,8 +20,8 @@ public class IcosahedralProjectionTests
     private const string Sphere6400000 = "SPHEROID[\"Sphere\",6400000,0]";
     private const string Sphere637100718091875 = "SPHEROID[\"Sphere\",6371007.18091875,0]";
 
-    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
-    private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
+    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new();
+    private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new();
 
     /// <summary>
     /// Verifies aliases resolve from WKT for icosahedral projection variants.

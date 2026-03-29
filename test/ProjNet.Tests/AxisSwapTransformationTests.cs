@@ -19,8 +19,8 @@ public class AxisSwapTransformationTests
     private static readonly double[] UnitConversionInput = [100d, 200d];
     private static readonly double[] RadianConversionInput = [180d, 90d];
 
-    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
-    private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
+    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new();
+    private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new();
 
     /// <summary>
     /// Performs the documented operation.
@@ -88,11 +88,11 @@ public class AxisSwapTransformationTests
     {
         var projectionParameters = new List<ProjectionParameter>
         {
-            new ProjectionParameter("latitude_of_origin", 0d),
-            new ProjectionParameter("central_meridian", 0d),
-            new ProjectionParameter("scale_factor", 1d),
-            new ProjectionParameter("false_easting", 0d),
-            new ProjectionParameter("false_northing", 0d),
+            new("latitude_of_origin", 0d),
+            new("central_meridian", 0d),
+            new("scale_factor", 1d),
+            new("false_easting", 0d),
+            new("false_northing", 0d),
         };
 
         IProjection projection = CoordinateSystemFactory.CreateProjection("Mercator", "mercator", projectionParameters);
@@ -217,11 +217,11 @@ public class AxisSwapTransformationTests
     {
         var projectionParameters = new List<ProjectionParameter>
         {
-            new ProjectionParameter("latitude_of_origin", 0d),
-            new ProjectionParameter("central_meridian", 0d),
-            new ProjectionParameter("scale_factor", 1d),
-            new ProjectionParameter("false_easting", 0d),
-            new ProjectionParameter("false_northing", 0d),
+            new("latitude_of_origin", 0d),
+            new("central_meridian", 0d),
+            new("scale_factor", 1d),
+            new("false_easting", 0d),
+            new("false_northing", 0d),
         };
 
         return CoordinateSystemFactory.CreateProjection("Mercator", "mercator", projectionParameters);

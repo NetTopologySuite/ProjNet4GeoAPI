@@ -90,11 +90,11 @@ public class GitHubIssueRegressionTests
         var coordinateSystemFactory = new CoordinateSystemFactory();
         var itmParameters = new List<ProjectionParameter>
         {
-            new ProjectionParameter("latitude_of_origin", 31.734393611111109123611111111111),
-            new ProjectionParameter("central_meridian", 35.204516944444442572222222222222),
-            new ProjectionParameter("false_northing", 626907.390),
-            new ProjectionParameter("false_easting", 219529.584),
-            new ProjectionParameter("scale_factor", 1.0000067),
+            new("latitude_of_origin", 31.734393611111109123611111111111),
+            new("central_meridian", 35.204516944444442572222222222222),
+            new("false_northing", 626907.390),
+            new("false_easting", 219529.584),
+            new("scale_factor", 1.0000067),
         };
 
         HorizontalDatum itmDatum = coordinateSystemFactory.CreateHorizontalDatum(
@@ -194,9 +194,11 @@ public class GitHubIssueRegressionTests
         string remarks = "This is a test remark.";
 
         // construct a GeographicCoordinateSystem to test
-        var gcsAxes = new List<AxisInfo>(2);
-        gcsAxes.Add(new AxisInfo("Lon", AxisOrientationEnum.East));
-        gcsAxes.Add(new AxisInfo("Lat", AxisOrientationEnum.North));
+        var gcsAxes = new List<AxisInfo>(2)
+        {
+            new AxisInfo("Lon", AxisOrientationEnum.East),
+            new AxisInfo("Lat", AxisOrientationEnum.North)
+        };
 
         var geographicCoordinateSystem =
             new GeographicCoordinateSystem(
@@ -217,10 +219,10 @@ public class GitHubIssueRegressionTests
         // construct a ProjectedCoordinateSystem to test
         var pInfo = new List<ProjectionParameter>
         {
-            new ProjectionParameter("latitude_of_origin", 0.0),
-            new ProjectionParameter("central_meridian", 0.0),
-            new ProjectionParameter("false_easting", 0.0),
-            new ProjectionParameter("false_northing", 0.0),
+            new("latitude_of_origin", 0.0),
+            new("central_meridian", 0.0),
+            new("false_easting", 0.0),
+            new("false_northing", 0.0),
         };
 
         var proj = new Projection(
@@ -235,8 +237,8 @@ public class GitHubIssueRegressionTests
 
         var pcsAxes = new List<AxisInfo>
             {
-                new AxisInfo("East", AxisOrientationEnum.East),
-                new AxisInfo("North", AxisOrientationEnum.North),
+                new("East", AxisOrientationEnum.East),
+                new("North", AxisOrientationEnum.North),
             };
 
         var projectedCoordinateSystem =

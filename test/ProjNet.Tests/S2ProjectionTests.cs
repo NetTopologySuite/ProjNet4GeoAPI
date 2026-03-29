@@ -18,8 +18,8 @@ public class S2ProjectionTests
 {
     private const string Wgs84 = "SPHEROID[\"WGS 84\",6378137,298.257223563]";
 
-    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
-    private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
+    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new();
+    private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new();
 
     /// <summary>
     /// Verifies aliases resolve from WKT for S2 projection variants.

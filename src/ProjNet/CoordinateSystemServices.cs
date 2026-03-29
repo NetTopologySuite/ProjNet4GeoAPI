@@ -102,7 +102,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
         this.ctFactory = ArgumentGuard.ThrowIfNull(coordinateTransformationFactory, nameof(coordinateTransformationFactory));
         this.definitionProvider = definitionProvider ?? new ManagedCoordinateSystemDefinitionProvider();
 
-        this.csBySrid = new();
+        this.csBySrid = [];
         this.sridByCs = new(new CsEqualityComparer());
 
         object enumObj;

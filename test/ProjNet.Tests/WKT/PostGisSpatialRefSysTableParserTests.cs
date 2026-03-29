@@ -18,7 +18,7 @@ using Xunit;
 public class PostGisSpatialRefSysTableParserTests
 {
     private static readonly Lazy<CoordinateSystemFactory> CoordinateSystemFactory =
-        new Lazy<CoordinateSystemFactory>(() => new CoordinateSystemFactory());
+        new(() => new CoordinateSystemFactory());
 
     private static string? connectionString;
 

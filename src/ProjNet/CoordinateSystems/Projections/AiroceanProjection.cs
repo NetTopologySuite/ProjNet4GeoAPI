@@ -601,14 +601,14 @@ internal sealed class AiroceanProjection : MapProjection
     ];
 
     private static readonly Matrix4x4 HorizontalTransform =
-        new Matrix4x4(
+        new(
             0.0d, -1.0d, 0.0d, 5.7830422333104696d,
             1.0d, 0.0d, 0.0d, 0.0d,
             0.0d, 0.0d, 1.0d, 0.0d,
             0.0d, 0.0d, 0.0d, 1.0d);
 
     private static readonly Matrix4x4 HorizontalInverseTransform =
-        new Matrix4x4(
+        new(
             0.0d, 1.0d, 0.0d, 0.0d,
             -1.0d, -0.0d, -0.0d, 5.7830422333104696d,
             0.0d, 0.0d, 1.0d, 0.0d,

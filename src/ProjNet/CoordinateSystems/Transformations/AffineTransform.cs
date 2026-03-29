@@ -182,9 +182,11 @@ public class AffineTransform : MathTransform
     {
         int rowCnt = this.transformMatrix.GetLength(0);
         int colCnt = this.transformMatrix.GetLength(1);
-        var pInfo = new List<ProjectionParameter>();
-        pInfo.Add(new ProjectionParameter("num_row", rowCnt));
-        pInfo.Add(new ProjectionParameter("num_col", colCnt));
+        var pInfo = new List<ProjectionParameter>
+        {
+            new ProjectionParameter("num_row", rowCnt),
+            new ProjectionParameter("num_col", colCnt)
+        };
 
         // fill matrix values
         for (int row = 0; row < rowCnt; row++)

@@ -12,7 +12,7 @@ using Xunit;
 /// </summary>
 public class AxisOrderHelperTests
 {
-    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
+    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new();
 
     /// <summary>
     /// Performs the documented operation.

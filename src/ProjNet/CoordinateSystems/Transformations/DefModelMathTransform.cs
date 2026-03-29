@@ -63,8 +63,8 @@ internal sealed class DefModelMathTransform : MathTransform
 
         var parameters = new List<ProjectionParameter>
         {
-            new ProjectionParameter("semi_major", semiMajor),
-            new ProjectionParameter("semi_minor", semiMinor),
+            new("semi_major", semiMajor),
+            new("semi_minor", semiMinor),
         };
         this.geocentricForward = new GeocentricTransform(parameters, false);
         this.geocentricInverse = (GeocentricTransform)this.geocentricForward.Inverse();

@@ -25,7 +25,7 @@ public class ProjParityBenchmarks
     private const double NoiseXDegrees = 1e-4;
     private const double NoiseYDegrees = 1e-4;
 
-    private static readonly CoordinateSystemServices CoordinateSystemServices = new CoordinateSystemServices();
+    private static readonly CoordinateSystemServices CoordinateSystemServices = new();
 
     private static readonly ICoordinateTransformation Wgs84ToWebMercator =
         CoordinateSystemServices.CreateTransformation(4326, 3857)

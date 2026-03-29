@@ -179,9 +179,11 @@ public class CoordinateSystemFactory
         projection = ArgumentGuard.ThrowIfNull(projection, nameof(projection));
         linearUnit = ArgumentGuard.ThrowIfNull(linearUnit, nameof(linearUnit));
 
-        var info = new List<AxisInfo>(2);
-        info.Add(axis0);
-        info.Add(axis1);
+        var info = new List<AxisInfo>(2)
+        {
+            axis0,
+            axis1
+        };
         return new ProjectedCoordinateSystem(
             gcs.HorizontalDatum,
             gcs,
@@ -279,9 +281,11 @@ public class CoordinateSystemFactory
             ArgumentGuard.ThrowArgument("Invalid name");
         }
 
-        var info = new List<AxisInfo>(2);
-        info.Add(axis0);
-        info.Add(axis1);
+        var info = new List<AxisInfo>(2)
+        {
+            axis0,
+            axis1
+        };
         return new GeographicCoordinateSystem(angularUnit, datum, primeMeridian, info, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
     }
 
@@ -335,10 +339,12 @@ public class CoordinateSystemFactory
             ArgumentGuard.ThrowArgument("Invalid name");
         }
 
-        var info = new List<AxisInfo>(3);
-        info.Add(new AxisInfo("X", AxisOrientationEnum.Other));
-        info.Add(new AxisInfo("Y", AxisOrientationEnum.Other));
-        info.Add(new AxisInfo("Z", AxisOrientationEnum.Other));
+        var info = new List<AxisInfo>(3)
+        {
+            new AxisInfo("X", AxisOrientationEnum.Other),
+            new AxisInfo("Y", AxisOrientationEnum.Other),
+            new AxisInfo("Z", AxisOrientationEnum.Other)
+        };
         return new GeocentricCoordinateSystem(datum, linearUnit, primeMeridian, info, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
     }
 }

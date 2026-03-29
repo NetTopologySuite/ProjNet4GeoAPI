@@ -657,7 +657,7 @@ public abstract class MathTransform
     {
         if (points.IsEmpty)
         {
-            return new List<double>();
+            return [];
         }
 
         var list = new List<double>(points.Length);

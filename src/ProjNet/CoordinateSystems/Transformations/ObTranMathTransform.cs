@@ -320,11 +320,11 @@ internal sealed class ObTranMathTransform : MathTransform
     {
         var parameters = new List<ProjectionParameter>
         {
-            new ProjectionParameter("latitude_of_origin", 0d),
-            new ProjectionParameter("central_meridian", 0d),
-            new ProjectionParameter("scale_factor", 1d),
-            new ProjectionParameter("false_easting", 0d),
-            new ProjectionParameter("false_northing", 0d),
+            new("latitude_of_origin", 0d),
+            new("central_meridian", 0d),
+            new("scale_factor", 1d),
+            new("false_easting", 0d),
+            new("false_northing", 0d),
         };
 
         AddOptionalParameter(parameters, args, "lat_0", "latitude_of_origin");

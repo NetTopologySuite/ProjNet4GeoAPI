@@ -57,10 +57,10 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
         {
             var pInfo = new List<ProjectionParameter>
                 {
-                    new ProjectionParameter("latitude_of_origin", 0.0),
-                    new ProjectionParameter("central_meridian", 0.0),
-                    new ProjectionParameter("false_easting", 0.0),
-                    new ProjectionParameter("false_northing", 0.0),
+                    new("latitude_of_origin", 0.0),
+                    new("central_meridian", 0.0),
+                    new("false_easting", 0.0),
+                    new("false_northing", 0.0),
                 };
 
             var proj = new Projection(
@@ -75,8 +75,8 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
 
             var axes = new List<AxisInfo>
             {
-                new AxisInfo("East", AxisOrientationEnum.East),
-                new AxisInfo("North", AxisOrientationEnum.North),
+                new("East", AxisOrientationEnum.East),
+                new("North", AxisOrientationEnum.North),
             };
 
             const string remarks = "Certain Web mapping and visualisation applications. " +
@@ -187,12 +187,14 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
     /// <returns>UTM/WGS84 coordsys.</returns>
     public static ProjectedCoordinateSystem WGS84_UTM(int zone, bool zoneIsNorth)
     {
-        var pInfo = new List<ProjectionParameter>();
-        pInfo.Add(new ProjectionParameter("latitude_of_origin", 0));
-        pInfo.Add(new ProjectionParameter("central_meridian", (zone * 6) - 183));
-        pInfo.Add(new ProjectionParameter("scale_factor", 0.9996));
-        pInfo.Add(new ProjectionParameter("false_easting", 500000));
-        pInfo.Add(new ProjectionParameter("false_northing", zoneIsNorth ? 0 : 10000000));
+        var pInfo = new List<ProjectionParameter>
+        {
+            new ProjectionParameter("latitude_of_origin", 0),
+            new ProjectionParameter("central_meridian", (zone * 6) - 183),
+            new ProjectionParameter("scale_factor", 0.9996),
+            new ProjectionParameter("false_easting", 500000),
+            new ProjectionParameter("false_northing", zoneIsNorth ? 0 : 10000000)
+        };
 
         // IProjection projection = cFac.CreateProjection("UTM" + Zone.ToString() + (ZoneIsNorth ? "N" : "S"), "Transverse_Mercator", parameters);
         var proj = new Projection(
@@ -206,8 +208,8 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
             string.Empty);
         var axes = new List<AxisInfo>
             {
-                new AxisInfo("East", AxisOrientationEnum.East),
-                new AxisInfo("North", AxisOrientationEnum.North),
+                new("East", AxisOrientationEnum.East),
+                new("North", AxisOrientationEnum.North),
             };
         return new ProjectedCoordinateSystem(
             CoordinateSystems.HorizontalDatum.WGS84,

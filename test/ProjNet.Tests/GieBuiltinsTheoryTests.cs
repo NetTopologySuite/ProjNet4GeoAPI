@@ -17,12 +17,12 @@ using Xunit;
 /// </summary>
 public class GieBuiltinsTheoryTests
 {
-    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
-    private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
+    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new();
+    private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new();
 
     private static readonly char[] OperationTokenSeparators = [' ', '\t'];
 
-    private static readonly Dictionary<string, string> ProjectionClassByProjCode = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+    private static readonly Dictionary<string, string> ProjectionClassByProjCode = new(StringComparer.OrdinalIgnoreCase)
     {
         ["adams_hemi"] = "adams_hemisphere_in_a_square",
         ["adams_ws1"] = "adams_world_in_a_square_i",
@@ -178,7 +178,7 @@ public class GieBuiltinsTheoryTests
         ["ups"] = "ups",
     };
 
-    private static readonly HashSet<string> ConversionProjCodes = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+    private static readonly HashSet<string> ConversionProjCodes = new(StringComparer.OrdinalIgnoreCase)
     {
         "axisswap",
         "unitconvert",
@@ -195,7 +195,7 @@ public class GieBuiltinsTheoryTests
         "tinshift",
     };
 
-    private static readonly HashSet<string> ProjectionsWithoutInverse = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+    private static readonly HashSet<string> ProjectionsWithoutInverse = new(StringComparer.OrdinalIgnoreCase)
     {
         "wink2",
         "wag7",
@@ -792,14 +792,14 @@ public class GieBuiltinsTheoryTests
 
     private static bool TryBuildProjectionParameters(Dictionary<string, string> args, out List<ProjectionParameter> parameters)
     {
-        parameters = new List<ProjectionParameter>
-        {
-            new ProjectionParameter("latitude_of_origin", 0d),
-            new ProjectionParameter("central_meridian", 0d),
-            new ProjectionParameter("scale_factor", 1d),
-            new ProjectionParameter("false_easting", 0d),
-            new ProjectionParameter("false_northing", 0d),
-        };
+        parameters =
+        [
+            new("latitude_of_origin", 0d),
+            new("central_meridian", 0d),
+            new("scale_factor", 1d),
+            new("false_easting", 0d),
+            new("false_northing", 0d),
+        ];
 
         if (TryGetDouble(args, "lat_0", out double lat0))
         {

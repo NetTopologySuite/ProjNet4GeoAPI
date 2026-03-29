@@ -15,9 +15,9 @@ using Xunit;
 /// </summary>
 public class CoordinateTransformTestsBase
 {
-    private readonly CoordinateSystemFactory coordinateSystemFactory = new CoordinateSystemFactory();
-    private readonly CoordinateTransformationFactory coordinateTransformationFactory = new CoordinateTransformationFactory();
-    private readonly Random random = new Random();
+    private readonly CoordinateSystemFactory coordinateSystemFactory = new();
+    private readonly CoordinateTransformationFactory coordinateTransformationFactory = new();
+    private readonly Random random = new();
 
     /// <summary>
     /// Gets the shared coordinate system factory used by transformation tests.
