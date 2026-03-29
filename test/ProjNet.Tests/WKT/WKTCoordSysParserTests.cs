@@ -65,7 +65,7 @@ public class WKTCoordSysParserTests
     ///     AUTHORITY["EPSG","2918"]
     /// ]
     /// </code></remarks>
-    [Xunit.Fact]
+    [Fact]
     public void TestProjectedCoordinateSystemEPSG2918()
     {
         const string wkt = "PROJCS[\"NAD83(HARN) / Texas Central (ftUS)\", " +
@@ -102,15 +102,17 @@ public class WKTCoordSysParserTests
         this.CheckPrimem(gcs.PrimeMeridian, "Greenwich", 0, "EPSG", 8901);
         CheckUnit(gcs.AngularUnit, "degree", 0.0174532925199433, "EPSG", 9122);
 
-        CheckProjection(pcs.Projection, "Lambert_Conformal_Conic_2SP", new[]
-        {
+        CheckProjection(
+            pcs.Projection,
+            "Lambert_Conformal_Conic_2SP",
+            [
             Tuple.Create("standard_parallel_1", 31.883333333333),
             Tuple.Create("standard_parallel_2", 30.1166666667),
             Tuple.Create("latitude_of_origin", 29.6666666667),
             Tuple.Create("central_meridian", -100.333333333333),
             Tuple.Create("false_easting", 2296583.333),
             Tuple.Create("false_northing", 9842500d),
-        });
+        ]);
 
         CheckUnit(pcs.LinearUnit, "US survey foot", 0.304800609601219, "EPSG", 9003);
     }
@@ -119,7 +121,7 @@ public class WKTCoordSysParserTests
     /// This test reads in a file with 2671 pre-defined coordinate systems and projections,
     /// and tries to parse them.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void ParseAllWKTs()
     {
         int parseCount = 0;
@@ -140,7 +142,7 @@ public class WKTCoordSysParserTests
     /// <summary>
     /// Verifies that non-coordinate-system WKT returns <see langword="null"/> instead of throwing.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void CreateFromWktReturnsNullForNonCoordinateSystemWkt()
     {
         const string wkt = "UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]]";
@@ -154,7 +156,7 @@ public class WKTCoordSysParserTests
     /// This test reads in a file with 2671 pre-defined coordinate systems and projections,
     /// and tries to create a transformation with them.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestCreateCoordinateTransformationForWktInCsv()
     {
         // GeographicCoordinateSystem.WGS84
@@ -162,7 +164,7 @@ public class WKTCoordSysParserTests
         int parseCount = 0;
         int failedCss = 0;
         var failedProjections = new HashSet<string>();
-        using Stream stream = Assert.IsAssignableFrom<Stream>(Assembly.GetExecutingAssembly().GetManifestResourceStream("ProjNET.Tests.SRID.csv"));
+        using Stream stream = Assert.IsType<Stream>(Assembly.GetExecutingAssembly().GetManifestResourceStream("ProjNET.Tests.SRID.csv"), exactMatch: false);
         using (var sr = new StreamReader(stream, Encoding.UTF8))
         {
             var ctFactory = new CoordinateTransformationFactory();
@@ -253,7 +255,7 @@ public class WKTCoordSysParserTests
     /// <summary>
     /// Test parsing of a <see cref="ProjectedCoordinateSystem"/> from WKT.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestProjectedCoordinateSystemEPSG27700UnitBeforeProjection()
     {
         const string wkt = "PROJCS[\"OSGB 1936 / British National Grid\"," +
@@ -290,14 +292,16 @@ public class WKTCoordSysParserTests
         CheckUnit(gcs.AngularUnit, "degree", 0.0174532925199433, "EPSG", 9122);
 
         Assert.Equal("Transverse_Mercator", pcs.Projection.ClassName);
-        CheckProjection(pcs.Projection, "Transverse_Mercator", new[]
-        {
+        CheckProjection(
+            pcs.Projection,
+            "Transverse_Mercator",
+            [
             Tuple.Create("latitude_of_origin", 49d),
             Tuple.Create("central_meridian", -2d),
             Tuple.Create("scale_factor", 0.9996012717),
             Tuple.Create("false_easting", 400000d),
             Tuple.Create("false_northing", -100000d),
-        });
+        ]);
 
         CheckUnit(pcs.LinearUnit, "metre", 1d, "EPSG", 9001);
 
@@ -308,7 +312,7 @@ public class WKTCoordSysParserTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestParseSrOrg()
     {
         Assert.Null(Record.Exception(() => this.coordinateSystemFactory.CreateFromWkt(
@@ -325,7 +329,7 @@ public class WKTCoordSysParserTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestProjNetIssues()
     {
         Assert.Null(Record.Exception(() => this.coordinateSystemFactory.CreateFromWkt(
@@ -368,7 +372,7 @@ public class WKTCoordSysParserTests
     /// <summary>
     /// Test parsing of a <see cref="FittedCoordinateSystem"/> from WKT.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestFittedCoordinateSystemWkt()
     {
         var fac = new CoordinateSystemFactory();
@@ -419,7 +423,7 @@ public class WKTCoordSysParserTests
     /// <summary>
     /// Test parsing of a <see cref="GeocentricCoordinateSystem"/> from WKT.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestGeocentricCoordinateSystem()
     {
         var fac = new CoordinateSystemFactory();
@@ -458,7 +462,7 @@ public class WKTCoordSysParserTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void ParseWktCreatedByCoordinateSystem()
     {
         // Sample WKT from an external source.
@@ -492,7 +496,7 @@ public class WKTCoordSysParserTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void ParseProjectedCrsWithWkt2LikeRootAndIdentifiers()
     {
         const string wkt =
@@ -507,7 +511,7 @@ public class WKTCoordSysParserTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void ParseGeodCrsWithEllipsoidAndIdTokens()
     {
         const string wkt =
@@ -524,7 +528,7 @@ public class WKTCoordSysParserTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void ParseProjectedCrsWithSpacedIdTokens()
     {
         const string wkt =
@@ -539,7 +543,7 @@ public class WKTCoordSysParserTests
     /// <summary>
     /// Verifies that span-based WKT parsing returns the same coordinate system metadata as string parsing.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void ParseReadOnlySpanWktMatchesStringParse()
     {
         const string wkt =
@@ -558,7 +562,7 @@ public class WKTCoordSysParserTests
     /// <summary>
     /// Verifies that whitespace-only span input is rejected by the span-based parser overload.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void ParseReadOnlySpanWhitespaceThrowsArgumentNullException()
     {
         const string whitespaceWkt = "   \t\r\n";
@@ -663,7 +667,7 @@ public class WKTCoordSysParserTests
 
         for (int i = 0; i < pp.Length; i++)
         {
-            ProjectionParameter par = Assert.IsAssignableFrom<ProjectionParameter>(projection.GetParameter(pp[i].Item1));
+            ProjectionParameter par = Assert.IsType<ProjectionParameter>(projection.GetParameter(pp[i].Item1));
             Assert.Equal(pp[i].Item1, par.Name);
             Assert.Equal(pp[i].Item2, par.Value);
         }

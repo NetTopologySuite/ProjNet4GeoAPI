@@ -13,7 +13,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </summary>
 /// <remarks>
 /// The inverse transformation is not supported. Transforming coordinates via the inverse
-/// projection will throw an <see cref="System.InvalidOperationException"/>.
+/// projection will throw an <see cref="InvalidOperationException"/>.
 /// </remarks>
 [Serializable]
 internal class TransverseCentralCylindricalProjection : MapProjection

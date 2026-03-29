@@ -118,14 +118,14 @@ public class XyzGridShiftRuntimeTests
 
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string? skipReason);
         Assert.False(ok);
-        Assert.Contains(expectedToken, Assert.IsAssignableFrom<string>(skipReason), StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(expectedToken, Assert.IsType<string>(skipReason), StringComparison.OrdinalIgnoreCase);
     }
 
     private static MathTransform CreateTransform(string operation)
     {
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
         Assert.True(ok, skipReason);
-        return Assert.IsAssignableFrom<MathTransform>(transform);
+        return Assert.IsType<MathTransform>(transform, exactMatch: false);
     }
 
     private static string FindGridPath(string fileName)

@@ -26,7 +26,7 @@ public class CoordinateSystemServicesTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestConstructor()
     {
         var css = new CoordinateSystemServices(
@@ -40,7 +40,7 @@ public class CoordinateSystemServicesTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestTryGetCoordinateSystemBySrid()
     {
         var css = new CoordinateSystemServices(
@@ -59,7 +59,7 @@ public class CoordinateSystemServicesTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestTryGetCoordinateSystemByAuthorityCode()
     {
         var css = new CoordinateSystemServices(
@@ -78,7 +78,7 @@ public class CoordinateSystemServicesTests
     /// <summary>
     /// Ensures authority/code lookup returns null when the coordinate system is not registered.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void GetCoordinateSystemByAuthorityCodeReturnsNullWhenMissing()
     {
         var css = new CoordinateSystemServices(
@@ -93,7 +93,7 @@ public class CoordinateSystemServicesTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestGetAvailableSridValues()
     {
         var css = new CoordinateSystemServices(
@@ -109,7 +109,7 @@ public class CoordinateSystemServicesTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestManagedProviderIncludesFullGeneratedCatalog()
     {
         var provider = new ManagedCoordinateSystemDefinitionProvider();
@@ -123,7 +123,7 @@ public class CoordinateSystemServicesTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestManagedObjectProviderBypassesWktParsing()
     {
         var provider = new TestManagedProvider();
@@ -136,7 +136,7 @@ public class CoordinateSystemServicesTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestInitializationFailurePropagatesAsInvalidOperationException()
     {
         var css = new CoordinateSystemServices(new ThrowingDefinitionProvider());
@@ -150,8 +150,8 @@ public class CoordinateSystemServicesTests
     /// Validates XML-backed constructor loading for coordinate system definitions.
     /// </summary>
     /// <param name="xmlPath">Path to the XML definition file.</param>
-    [Xunit.Theory]
-    [Xunit.InlineData(@"D:\temp\ConsoleApplication9\SpatialRefSys.xml")]
+    [Theory]
+    [InlineData(@"D:\temp\ConsoleApplication9\SpatialRefSys.xml")]
     public void TestConstructorLoadXml(string xmlPath)
     {
         if (!File.Exists(xmlPath))
@@ -173,8 +173,8 @@ public class CoordinateSystemServicesTests
     /// Validates CSV-backed constructor loading for coordinate system definitions.
     /// </summary>
     /// <param name="csvPath">Path to the CSV definition file, or empty for embedded defaults.</param>
-    [Xunit.Theory]
-    [Xunit.InlineData(@"")]
+    [Theory]
+    [InlineData(@"")]
     public void TestConstructorLoadCsv(string csvPath)
     {
         if (!string.IsNullOrWhiteSpace(csvPath))
@@ -232,7 +232,7 @@ public class CoordinateSystemServicesTests
             if (sridElement is not null)
             {
                 int srid = int.Parse(sridElement.Value, CultureInfo.InvariantCulture);
-                XNode wktNode = Assert.IsAssignableFrom<XNode>(node.LastNode);
+                XNode wktNode = Assert.IsType<XNode>(node.LastNode, exactMatch: false);
                 yield return new CoordinateSystemDefinition(srid, wktNode.ToString());
             }
         }

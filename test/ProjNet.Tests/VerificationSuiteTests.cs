@@ -29,8 +29,8 @@ public class VerificationSuiteTests
     public void Wgs84ToWebMercatorMatchesReferencePoints(double lon, double lat, double expectedX, double expectedY)
     {
         CoordinateSystemServices services = CreateCanonicalServices();
-        ICoordinateTransformation transform = Assert.IsAssignableFrom<ICoordinateTransformation>(services.CreateTransformation(4326, 3857));
-        double[] result = transform.MathTransform.Transform(new[] { lon, lat });
+        ICoordinateTransformation transform = Assert.IsType<ICoordinateTransformation>(services.CreateTransformation(4326, 3857), exactMatch: false);
+        double[] result = transform.MathTransform.Transform([lon, lat]);
 
         AssertCoordinate(expectedX, expectedY, result[0], result[1], 1e-6);
     }
@@ -49,8 +49,8 @@ public class VerificationSuiteTests
     public void WebMercatorToWgs84MatchesReferencePoints(double x, double y, double expectedLon, double expectedLat)
     {
         CoordinateSystemServices services = CreateCanonicalServices();
-        ICoordinateTransformation transform = Assert.IsAssignableFrom<ICoordinateTransformation>(services.CreateTransformation(3857, 4326));
-        double[] result = transform.MathTransform.Transform(new[] { x, y });
+        ICoordinateTransformation transform = Assert.IsType<ICoordinateTransformation>(services.CreateTransformation(3857, 4326), exactMatch: false);
+        double[] result = transform.MathTransform.Transform([x, y]);
 
         AssertCoordinate(expectedLon, expectedLat, result[0], result[1], 1e-9);
     }
@@ -63,8 +63,8 @@ public class VerificationSuiteTests
     {
         CoordinateSystemServices services = CreateCanonicalServices();
 
-        CoordinateSystem bySrid = Assert.IsAssignableFrom<CoordinateSystem>(services.GetCoordinateSystem(4326));
-        CoordinateSystem byAuthority = Assert.IsAssignableFrom<CoordinateSystem>(services.GetCoordinateSystem("EPSG", 4326));
+        CoordinateSystem bySrid = Assert.IsType<CoordinateSystem>(services.GetCoordinateSystem(4326), exactMatch: false);
+        CoordinateSystem byAuthority = Assert.IsType<CoordinateSystem>(services.GetCoordinateSystem("EPSG", 4326), exactMatch: false);
         bool found = services.TryGetCoordinateSystem("EPSG", 4326, out CoordinateSystem? byTryGet);
         int? srid = services.GetSRID("EPSG", 4326);
 

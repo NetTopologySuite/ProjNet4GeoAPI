@@ -14,7 +14,7 @@ using Xunit;
 /// </summary>
 public class VerticalGridShiftRuntimeTests
 {
-    private static readonly double[] VerticalGridInput = { 12d, 56d, 0d };
+    private static readonly double[] VerticalGridInput = [12d, 56d, 0d];
 
     /// <summary>
     /// Performs the documented operation.
@@ -32,7 +32,7 @@ public class VerticalGridShiftRuntimeTests
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
 
         Assert.True(ok, skipReason);
-        double[] output = Assert.IsAssignableFrom<MathTransform>(transform).Transform(VerticalGridInput);
+        double[] output = Assert.IsType<MathTransform>(transform, exactMatch: false).Transform(VerticalGridInput);
         Assert.Equal(12d, output[0], 12);
         Assert.Equal(56d, output[1], 12);
         Assert.Equal(expectedZ, output[2], 9);
@@ -54,8 +54,8 @@ public class VerticalGridShiftRuntimeTests
         Assert.True(forwardOk, forwardSkipReason);
         Assert.True(inverseOk, inverseSkipReason);
 
-        double[] shifted = Assert.IsAssignableFrom<MathTransform>(forward).Transform(VerticalGridInput);
-        double[] unshifted = Assert.IsAssignableFrom<MathTransform>(inverse).Transform(shifted);
+        double[] shifted = Assert.IsType<MathTransform>(forward, exactMatch: false).Transform(VerticalGridInput);
+        double[] unshifted = Assert.IsType<MathTransform>(inverse, exactMatch: false).Transform(shifted);
 
         Assert.Equal(12d, unshifted[0], 10);
         Assert.Equal(56d, unshifted[1], 10);
@@ -74,7 +74,7 @@ public class VerticalGridShiftRuntimeTests
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
         Assert.True(ok, skipReason);
 
-        Assert.Throws<ArgumentException>(() => Assert.IsAssignableFrom<MathTransform>(transform).Transform(VerticalGridInput));
+        Assert.Throws<ArgumentException>(() => Assert.IsType<MathTransform>(transform, exactMatch: false).Transform(VerticalGridInput));
     }
 
     private static string FindGridPath(string fileName)

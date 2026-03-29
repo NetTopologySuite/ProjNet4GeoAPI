@@ -21,7 +21,7 @@ public static class MathTransformWktReader
     /// </summary>
     /// <param name="wkt">String containing WKT.</param>
     /// <returns>Object representation of the WKT.</returns>
-    /// <exception cref="System.ArgumentException">If a token is not recognised.</exception>
+    /// <exception cref="ArgumentException">If a token is not recognised.</exception>
     public static MathTransform Parse(string wkt)
     {
         if (string.IsNullOrWhiteSpace(wkt))

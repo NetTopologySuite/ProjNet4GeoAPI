@@ -73,7 +73,7 @@ public class StructuredEpsgCatalogTests
     public void ManagedProviderShouldExposeStructuredCoordinateSystems()
     {
         var provider = new ManagedCoordinateSystemDefinitionProvider();
-        IManagedCoordinateSystemProvider managedProvider = Assert.IsAssignableFrom<IManagedCoordinateSystemProvider>(provider);
+        IManagedCoordinateSystemProvider managedProvider = Assert.IsType<IManagedCoordinateSystemProvider>(provider, exactMatch: false);
 
         var coordinateSystems = managedProvider.GetCoordinateSystems().ToList();
         Assert.True(coordinateSystems.Count > 7000);

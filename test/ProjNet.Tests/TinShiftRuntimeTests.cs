@@ -179,7 +179,7 @@ public class TinShiftRuntimeTests
     {
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string? skipReason);
         Assert.False(ok);
-        Assert.Contains(expectedToken, Assert.IsAssignableFrom<string>(skipReason), StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(expectedToken, Assert.IsType<string>(skipReason), StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>
@@ -336,12 +336,12 @@ public class TinShiftRuntimeTests
     {
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
         Assert.True(ok, skipReason);
-        return Assert.IsAssignableFrom<MathTransform>(transform);
+        return Assert.IsType<MathTransform>(transform, exactMatch: false);
     }
 
     private static double[] CreatePoint(double x, double y, double z)
     {
-        return new[] { x, y, z };
+        return [x, y, z];
     }
 
     private static void AssertCoordinateClose(double[] actual, double[] expected, double tolerance)

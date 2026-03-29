@@ -16,8 +16,8 @@ using Xunit;
 /// </summary>
 public class GeoTiffGridRuntimeTests
 {
-    private static readonly double[] GeoTiffGridInput = { 4.5d, 52.5d, 0d };
-    private static readonly double[] GeoTiffNodataInput = { 4.05d, 52.1d, 0d };
+    private static readonly double[] GeoTiffGridInput = [4.5d, 52.5d, 0d];
+    private static readonly double[] GeoTiffNodataInput = [4.05d, 52.1d, 0d];
 
     /// <summary>
     /// Performs the documented operation.
@@ -34,7 +34,7 @@ public class GeoTiffGridRuntimeTests
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
         Assert.True(ok, skipReason);
 
-        double[] output = Assert.IsAssignableFrom<MathTransform>(transform).Transform(GeoTiffGridInput);
+        double[] output = Assert.IsType<MathTransform>(transform, exactMatch: false).Transform(GeoTiffGridInput);
         Assert.Equal(5.875d, output[0], 9);
         Assert.Equal(55.375d, output[1], 9);
     }
@@ -54,7 +54,7 @@ public class GeoTiffGridRuntimeTests
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
         Assert.True(ok, skipReason);
 
-        double[] output = Assert.IsAssignableFrom<MathTransform>(transform).Transform(GeoTiffGridInput);
+        double[] output = Assert.IsType<MathTransform>(transform, exactMatch: false).Transform(GeoTiffGridInput);
         Assert.Equal(4.5d, output[0], 9);
         Assert.Equal(52.5d, output[1], 9);
         Assert.Equal(11.5d, output[2], 9);
@@ -72,7 +72,7 @@ public class GeoTiffGridRuntimeTests
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
         Assert.True(ok, skipReason);
 
-        double[] output = Assert.IsAssignableFrom<MathTransform>(transform).Transform(GeoTiffNodataInput);
+        double[] output = Assert.IsType<MathTransform>(transform, exactMatch: false).Transform(GeoTiffNodataInput);
         Assert.Equal(10d, output[2], 7);
     }
 

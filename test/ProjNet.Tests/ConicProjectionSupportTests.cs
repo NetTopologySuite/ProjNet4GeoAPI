@@ -144,6 +144,6 @@ public class ConicProjectionSupportTests
 
     private static double[] CreatePoint(double x, double y)
     {
-        return new[] { x, y };
+        return [x, y];
     }
 }

@@ -951,8 +951,8 @@ internal sealed class DefModelMathTransform : MathTransform
 
         bool isLeapYear = ((year % 4) == 0 && (year % 100) != 0) || ((year % 400) == 0);
         int[] monthLengths = isLeapYear
-            ? new[] { 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 }
-            : new[] { 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
+            ? [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+            : [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
         if (day > monthLengths[month - 1])
         {
             throw new FormatException("Wrong formatting / invalid date-time for " + value + ".");

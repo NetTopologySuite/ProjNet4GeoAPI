@@ -20,7 +20,7 @@ public class GieBuiltinsTheoryTests
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
-    private static readonly char[] OperationTokenSeparators = { ' ', '\t' };
+    private static readonly char[] OperationTokenSeparators = [' ', '\t'];
 
     private static readonly Dictionary<string, string> ProjectionClassByProjCode = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
     {
@@ -224,7 +224,7 @@ public class GieBuiltinsTheoryTests
     };
 
     private static readonly string[] RemainingFixtureFiles =
-    {
+    [
         "4D-API_cs2cs-style.gie",
         "adams_hemi.gie",
         "adams_ws1.gie",
@@ -242,7 +242,7 @@ public class GieBuiltinsTheoryTests
         "spilhaus.gie",
         "tinshift.gie",
         "unitconvert.gie",
-    };
+    ];
 
     /// <summary>
     /// Validates builtins fixture cases for currently implemented projections against declared tolerances.
@@ -354,7 +354,7 @@ public class GieBuiltinsTheoryTests
         double[]? output = null;
         if (TryCreateConversionTransform(rawCase.Operation, out Func<double[], double[]>? conversionTransform, out string? conversionSkipReason))
         {
-            Func<double[], double[]> transform = Assert.IsAssignableFrom<Func<double[], double[]>>(conversionTransform);
+            Func<double[], double[]> transform = Assert.IsType<Func<double[], double[]>>(conversionTransform);
             try
             {
                 output = transform(rawCase.Accept);
@@ -372,7 +372,7 @@ public class GieBuiltinsTheoryTests
                 Assert.Skip(skipReason ?? conversionSkipReason ?? "Transformation could not be created.");
             }
 
-            MathTransform mathTransform = Assert.IsAssignableFrom<MathTransform>(transform);
+            MathTransform mathTransform = Assert.IsType<MathTransform>(transform, exactMatch: false);
             try
             {
                 output = mathTransform.Transform(rawCase.Accept);
@@ -389,7 +389,7 @@ public class GieBuiltinsTheoryTests
             Assert.Skip("Projection result is outside supported domain for this wave.");
         }
 
-        double[] evaluatedOutput = Assert.IsAssignableFrom<double[]>(output);
+        double[] evaluatedOutput = Assert.IsType<double[]>(output);
         double tolerance = Math.Max(ToNumericTolerance(rawCase.ToleranceValue, rawCase.ToleranceUnit), 1e-3d);
         int dimensionsToCompare = Math.Min(evaluatedOutput.Length, rawCase.Expect.Length);
         if (dimensionsToCompare < 2)
@@ -518,7 +518,7 @@ public class GieBuiltinsTheoryTests
             return false;
         }
 
-        GeographicCoordinateSystem geographicCoordinateSystem = Assert.IsAssignableFrom<GeographicCoordinateSystem>(gcs);
+        GeographicCoordinateSystem geographicCoordinateSystem = Assert.IsType<GeographicCoordinateSystem>(gcs);
         if (!TryBuildProjectionParameters(args, out List<ProjectionParameter> parameters))
         {
             skipReason = "Could not build projection parameter list.";
@@ -578,7 +578,7 @@ public class GieBuiltinsTheoryTests
             return false;
         }
 
-        MathTransform pipelineTransform = Assert.IsAssignableFrom<MathTransform>(mathTransform);
+        MathTransform pipelineTransform = Assert.IsType<MathTransform>(mathTransform, exactMatch: false);
         transform = input =>
         {
             ArgumentNullException.ThrowIfNull(input);
@@ -710,7 +710,7 @@ public class GieBuiltinsTheoryTests
             return false;
         }
 
-        Ellipsoid geographicEllipsoid = Assert.IsAssignableFrom<Ellipsoid>(ellipsoid);
+        Ellipsoid geographicEllipsoid = Assert.IsType<Ellipsoid>(ellipsoid);
         HorizontalDatum datum = CoordinateSystemFactory.CreateHorizontalDatum("GIE datum", DatumType.HD_Geocentric, geographicEllipsoid, null);
         gcs = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "GIE geographic",

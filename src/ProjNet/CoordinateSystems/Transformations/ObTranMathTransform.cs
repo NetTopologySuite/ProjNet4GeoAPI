@@ -630,8 +630,8 @@ internal sealed class ObTranMathTransform : MathTransform
         RotateForward(ref lam, ref phi, this.lamp, this.sphip, this.cphip, this.isOblique);
 
         double[] childInput = this.childIsAngular
-            ? new[] { lam, phi }
-            : new[] { ToDegrees(lam), ToDegrees(phi) };
+            ? [lam, phi]
+            : [ToDegrees(lam), ToDegrees(phi)];
         double[] childOutput = this.childForward.Transform(childInput);
         x = childOutput[0];
         y = childOutput[1];
@@ -639,7 +639,7 @@ internal sealed class ObTranMathTransform : MathTransform
 
     private void TransformInverse(ref double x, ref double y)
     {
-        double[] childInput = { x, y };
+        double[] childInput = [x, y];
         double[] rotated = this.childInverse.Transform(childInput);
         double lam = this.childIsAngular ? rotated[0] : ToRadians(rotated[0]);
         double phi = this.childIsAngular ? rotated[1] : ToRadians(rotated[1]);

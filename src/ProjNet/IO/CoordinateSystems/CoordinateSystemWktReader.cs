@@ -19,7 +19,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </summary>
 public static partial class CoordinateSystemWktReader
 {
-    private static readonly string[] CompoundCoordinateSystemDelimiters = { ",", "]" };
+    private static readonly string[] CompoundCoordinateSystemDelimiters = [",", "]"];
 #if !NET8_0_OR_GREATER
     private static readonly Regex Wkt2IdRegex = new(@"\bID\s*\[(?=\s*"")", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
 #endif
@@ -29,7 +29,7 @@ public static partial class CoordinateSystemWktReader
     /// </summary>
     /// <param name="wkt">String containing WKT.</param>
     /// <returns>Object representation of the WKT.</returns>
-    /// <exception cref="System.ArgumentException">If a token is not recognized.</exception>
+    /// <exception cref="ArgumentException">If a token is not recognized.</exception>
     public static IInfo Parse(string wkt) => Parse(wkt.AsSpan());
 
     /// <summary>
@@ -37,7 +37,7 @@ public static partial class CoordinateSystemWktReader
     /// </summary>
     /// <param name="wkt">Character span containing WKT.</param>
     /// <returns>Object representation of the WKT.</returns>
-    /// <exception cref="System.ArgumentException">If a token is not recognized.</exception>
+    /// <exception cref="ArgumentException">If a token is not recognized.</exception>
     public static IInfo Parse(ReadOnlySpan<char> wkt)
     {
         if (wkt.IsEmpty || IsWhitespaceOnly(wkt))

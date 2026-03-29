@@ -84,7 +84,7 @@ public class DeformationRuntimeTests
     {
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string? skipReason);
         Assert.False(ok);
-        Assert.Contains(expectedToken, Assert.IsAssignableFrom<string>(skipReason), StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(expectedToken, Assert.IsType<string>(skipReason), StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>
@@ -167,17 +167,17 @@ public class DeformationRuntimeTests
     {
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
         Assert.True(ok, skipReason);
-        return Assert.IsAssignableFrom<MathTransform>(transform);
+        return Assert.IsType<MathTransform>(transform, exactMatch: false);
     }
 
     private static double[] CreateCartesianPoint(double x, double y, double z)
     {
-        return new[] { x, y, z };
+        return [x, y, z];
     }
 
     private static double[] CreateCartesianPointWithTime(double x, double y, double z, double t)
     {
-        return new[] { x, y, z, t };
+        return [x, y, z, t];
     }
 
     private static double[] GeographicToCartesian(double longitudeDegrees, double latitudeDegrees, double ellipsoidalHeight)
@@ -192,7 +192,7 @@ public class DeformationRuntimeTests
         double y = latitudeDegrees;
         double z = ellipsoidalHeight;
         transform.Transform(ref x, ref y, ref z);
-        return new[] { x, y, z };
+        return [x, y, z];
     }
 
     private static void AssertCoordinateClose(double[] actual, double[] expected, double tolerance)

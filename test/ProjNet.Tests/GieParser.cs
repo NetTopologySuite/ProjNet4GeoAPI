@@ -14,7 +14,7 @@ using System.IO;
 /// </summary>
 internal static class GieParser
 {
-    private static readonly char[] WhiteSpaceSeparators = { ' ', '\t' };
+    private static readonly char[] WhiteSpaceSeparators = [' ', '\t'];
 
     /// <summary>
     /// Parses a GIE fixture file from disk.

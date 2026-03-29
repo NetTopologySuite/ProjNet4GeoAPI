@@ -18,15 +18,15 @@ public class PublicApiBaselineTests
     private const string BaselineFileName = "PublicAPI.Shipped.txt";
     private const string UpdateBaselineEnvironmentVariable = "PROJNET_UPDATE_PUBLIC_API_BASELINE";
     private static readonly string[] ExcludedPublicApiAttributes =
-    {
+    [
         "System.Runtime.Versioning.TargetFrameworkAttribute",
         "System.Reflection.AssemblyMetadataAttribute",
-    };
+    ];
 
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void PublicApiMatchesBaseline()
     {
         string baselinePath = GetBaselinePath();

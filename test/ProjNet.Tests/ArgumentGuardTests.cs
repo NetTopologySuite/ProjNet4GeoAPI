@@ -126,6 +126,6 @@ public class ArgumentGuardTests
         ArgumentException exception = Assert.Throws<ArgumentException>(() => ArgumentGuard.ThrowIfNotType<string>(value, nameof(value)));
 
         Assert.Equal(nameof(value), exception.ParamName);
-        Assert.Contains(Assert.IsAssignableFrom<string>(typeof(string).FullName), exception.Message, StringComparison.Ordinal);
+        Assert.Contains(Assert.IsType<string>(typeof(string).FullName), exception.Message, StringComparison.Ordinal);
     }
 }

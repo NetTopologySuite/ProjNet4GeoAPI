@@ -26,10 +26,10 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
         AUTHORITY[""EPSG"",""9122""]],
     AUTHORITY[""EPSG"",""4326""]]";
 
-    private static readonly double[] TestDiscussion3612481Expected = { 2349315.05731837, 6524249.91789138 };
-    private static readonly double[] TestDiscussion3612481Input = { 136d, -30d };
-    private static readonly double[] TestDiscussion3612482Expected = { -77.191769, 38.101147 };
-    private static readonly double[] TestDiscussion3612482Input = { 307821.867, 4219306.387 };
+    private static readonly double[] TestDiscussion3612481Expected = [2349315.05731837, 6524249.91789138];
+    private static readonly double[] TestDiscussion3612481Input = [136d, -30d];
+    private static readonly double[] TestDiscussion3612482Expected = [-77.191769, 38.101147];
+    private static readonly double[] TestDiscussion3612482Input = [307821.867, 4219306.387];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ProjNetIssueRegressionTests"/> class.
@@ -42,7 +42,7 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact(DisplayName = "WGS_84UTM to WGS_84 is inaccurate")]
+    [Fact(DisplayName = "WGS_84UTM to WGS_84 is inaccurate")]
     public void TestIssue23773()
     {
         var csUtm18N = ProjectedCoordinateSystem.WGS84_UTM(18, true);
@@ -54,10 +54,10 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
         ICoordinateTransformation ct = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csUtm18N, csWgs84);
         ICoordinateTransformation ct2 = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csUtm18NWkt, csWgs84);
 
-        double[] putm = new[] { 307821.867d, 4219306.387d };
+        double[] putm = [307821.867d, 4219306.387d];
         double[] pgeo = ct.MathTransform.Transform(putm);
         double[] pgeoWkt = ct2.MathTransform.Transform(putm);
-        double[] pExpected = new[] { -77.191769, 38.101147d };
+        double[] pExpected = [-77.191769, 38.101147d];
 
         Assert.True(
             this.ToleranceLessThan(pgeoWkt, pExpected, 0.00001d),
@@ -70,7 +70,7 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact(DisplayName = "Proj.net reprojection problem, Discussion http://projnet.codeplex.com/discussions/351733")]
+    [Fact(DisplayName = "Proj.net reprojection problem, Discussion http://projnet.codeplex.com/discussions/351733")]
     public void TestDiscussion351733()
     {
         CoordinateSystem csSource = CoordinateSystemTestHelpers.RequireCoordinateSystem(
@@ -82,9 +82,9 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
 
         ICoordinateTransformation ct = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csSource, csTarget);
 
-        double[] pp = new[] { 14181052.913, 6435927.692 };
+        double[] pp = [14181052.913, 6435927.692];
         double[] pg = ct.MathTransform.Transform(pp);
-        double[] pExpected = new[] { 75.613911283608331, 57.926509119323505 };
+        double[] pExpected = [75.613911283608331, 57.926509119323505];
         double[] pp2 = ct.MathTransform.Inverse().Transform(pg);
 
         this.Verbose = true;
@@ -99,7 +99,7 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact(DisplayName = "Problem converting coordinates, Discussion http://projnet.codeplex.com/discussions/352813")]
+    [Fact(DisplayName = "Problem converting coordinates, Discussion http://projnet.codeplex.com/discussions/352813")]
     public void TestDiscussion352813()
     {
         GeographicCoordinateSystem csSource = GeographicCoordinateSystem.WGS84;
@@ -136,10 +136,10 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
         // var ct2 = CoordinateTransformationFactory.CreateFromCoordinateSystems(csSource, csTarget2);
         this.Verbose = true;
 
-        double[] pg1 = new[] { 23.57892d, 37.94712d };
+        double[] pg1 = [23.57892d, 37.94712d];
 
         // src DotSpatial.Projections
-        double[] pExpected = new[] { 2624793.3678553337, 4571958.333297424 };
+        double[] pExpected = [2624793.3678553337, 4571958.333297424];
 
         double[] pp = ct.MathTransform.Transform(pg1);
         Console.WriteLine(this.TransformationError("EPSG 4326 -> EPSG 3857", pExpected, pp));
@@ -157,7 +157,7 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact(DisplayName = "Concerned about the accuracy, Discussion http://projnet.codeplex.com/discussions/361248")]
+    [Fact(DisplayName = "Concerned about the accuracy, Discussion http://projnet.codeplex.com/discussions/361248")]
     public void TestDiscussion3612481()
     {
         CoordinateSystem csSource = CoordinateSystemTestHelpers.RequireCoordinateSystem(
@@ -175,7 +175,7 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact(DisplayName = "Concerned about the accuracy, Discussion http://projnet.codeplex.com/discussions/361248")]
+    [Fact(DisplayName = "Concerned about the accuracy, Discussion http://projnet.codeplex.com/discussions/361248")]
     public void TestDiscussion3612482()
     {
         var csSource = ProjectedCoordinateSystem.WGS84_UTM(18, true);
@@ -191,7 +191,7 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     /// Wrong <c>null</c> check in ObliqueMercatorProjection.Inverse() method.
     /// </summary>
     /// <seealso href="https://code.google.com/p/nettopologysuite/issues/detail?id=191"/>
-    [Xunit.Fact(DisplayName = "ObliqueMercatorProjection.Inverse() wrong null check")]
+    [Fact(DisplayName = "ObliqueMercatorProjection.Inverse() wrong null check")]
     public void TestNtsIssue191()
     {
         var parameters = new List<ProjectionParameter>();
@@ -228,7 +228,7 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     /// <summary>
     /// Wrong AngularUnits.EqualParams implementation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestAngularUnitsEqualParamsIssue()
     {
         // string sourceWkt = " UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]";
@@ -258,8 +258,8 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact(DisplayName = "transformation somehow is wrong")]
-    [Xunit.Trait("Category", "Question")]
+    [Fact(DisplayName = "transformation somehow is wrong")]
+    [Trait("Category", "Question")]
     public void TestGitHubIssue53()
     {
         // arrange
@@ -269,7 +269,7 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
         ICoordinateTransformation csTransBack = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csUtm35N, csWgs84);
 
         // act
-        double[] point = { 42.5, 24.5 };
+        double[] point = [42.5, 24.5];
         double[] r = csTrans.MathTransform.Transform(point);
         double[] rBack = csTransBack.MathTransform.Transform(r);
 
@@ -281,8 +281,8 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact(DisplayName = "Coordinate system isn't supported")]
-    [Xunit.Trait("Category", "Issue")]
+    [Fact(DisplayName = "Coordinate system isn't supported")]
+    [Trait("Category", "Issue")]
     public void TestGitHubIssue98()
     {
         CoordinateSystem? cs = this.CoordinateSystemFactory.CreateFromWkt(
@@ -354,7 +354,7 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     /// This test ensures that the WKT parsing functionality of the CoordinateSystemFactory
     /// correctly initializes the coordinate system and its associated metadata, such as the authority code.
     /// </remarks>
-    [Xunit.Fact]
+    [Fact]
     public void TestAuthorityNotLoadedIssue()
     {
         string wkt = "PROJCS[\"WGS 84 / Pseudo-Mercator\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"Mercator_1SP\"],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"X\",EAST],AXIS[\"Y\",NORTH],EXTENSION[\"PROJ4\",\"+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs\"],AUTHORITY[\"EPSG\",\"3857\"]]";

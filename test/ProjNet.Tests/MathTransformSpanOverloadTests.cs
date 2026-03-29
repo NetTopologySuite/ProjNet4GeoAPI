@@ -113,11 +113,11 @@ public class MathTransformSpanOverloadTests
         var transform = new StubMathTransform();
         double[] ordinates = [10.0, 20.0, 30.0, 40.0];
 
-        List<double> hullFromList = transform.GetCodomainConvexHull(new System.Collections.Generic.List<double>(ordinates));
+        List<double> hullFromList = transform.GetCodomainConvexHull(new List<double>(ordinates));
         List<double> hullFromSpan = transform.GetCodomainConvexHull(ordinates.AsSpan());
         Assert.Equal(hullFromList, hullFromSpan);
 
-        DomainFlags flagsFromList = transform.GetDomainFlags(new System.Collections.Generic.List<double>(ordinates));
+        DomainFlags flagsFromList = transform.GetDomainFlags(new List<double>(ordinates));
         DomainFlags flagsFromSpan = transform.GetDomainFlags(ordinates.AsSpan());
         Assert.Equal(flagsFromList, flagsFromSpan);
     }
@@ -131,11 +131,11 @@ public class MathTransformSpanOverloadTests
         var transform = new StubMathTransform();
         double[] ordinates = [];
 
-        List<double> hullFromList = transform.GetCodomainConvexHull(new System.Collections.Generic.List<double>(ordinates));
+        List<double> hullFromList = transform.GetCodomainConvexHull(new List<double>(ordinates));
         List<double> hullFromSpan = transform.GetCodomainConvexHull(ordinates.AsSpan());
         Assert.Equal(hullFromList, hullFromSpan);
 
-        DomainFlags flagsFromList = transform.GetDomainFlags(new System.Collections.Generic.List<double>(ordinates));
+        DomainFlags flagsFromList = transform.GetDomainFlags(new List<double>(ordinates));
         DomainFlags flagsFromSpan = transform.GetDomainFlags(ordinates.AsSpan());
         Assert.Equal(flagsFromList, flagsFromSpan);
     }
@@ -162,12 +162,12 @@ public class MathTransformSpanOverloadTests
         {
         }
 
-        public override System.Collections.Generic.List<double> GetCodomainConvexHull(System.Collections.Generic.List<double> points)
+        public override List<double> GetCodomainConvexHull(List<double> points)
         {
-            return new System.Collections.Generic.List<double>(points);
+            return new List<double>(points);
         }
 
-        public override DomainFlags GetDomainFlags(System.Collections.Generic.List<double> points)
+        public override DomainFlags GetDomainFlags(List<double> points)
         {
             return points.Count == 0 ? DomainFlags.Outside : DomainFlags.Inside;
         }

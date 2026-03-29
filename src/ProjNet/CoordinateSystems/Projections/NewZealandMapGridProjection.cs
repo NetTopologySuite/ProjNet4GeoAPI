@@ -24,17 +24,17 @@ internal class NewZealandMapGridProjection : MapProjection
     private const double RadToSec5 = 2.062648062470963551564733573d;
 
     private static readonly ComplexNumber[] Bf =
-    {
+    [
         new ComplexNumber(0.7557853228d, 0d),
         new ComplexNumber(0.249204646d, 0.003371507d),
         new ComplexNumber(-0.001541739d, 0.041058560d),
         new ComplexNumber(-0.10162907d, 0.01727609d),
         new ComplexNumber(-0.26623489d, -0.36249218d),
         new ComplexNumber(-0.6870983d, -1.1651967d),
-    };
+    ];
 
     private static readonly double[] Tpsi =
-    {
+    [
         0.6399175073d,
         -0.1358797613d,
         0.063294409d,
@@ -45,10 +45,10 @@ internal class NewZealandMapGridProjection : MapProjection
         -0.001333d,
         0.00067d,
         -0.00034d,
-    };
+    ];
 
     private static readonly double[] Tphi =
-    {
+    [
         1.5627014243d,
         0.5185406398d,
         -0.03333098d,
@@ -58,7 +58,7 @@ internal class NewZealandMapGridProjection : MapProjection
         0.01220d,
         0.00394d,
         -0.0013d,
-    };
+    ];
 
     private readonly double latitudeOfOrigin;
     private readonly double centralMeridianNz;

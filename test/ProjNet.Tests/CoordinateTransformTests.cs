@@ -19,14 +19,14 @@ using static ProjNet.Tests.CoordinateSystemTestHelpers;
 /// </summary>
 public class CoordinateTransformTests : CoordinateTransformTestsBase
 {
-    private static readonly double[] AffineTargetPoint = { 3456926.640, 5481071.278 };
-    private static readonly double[] AffineTestPoint = { 2040.0, 1590.0 };
-    private static readonly double[] CassiniSoldnerExpected = { 25244.540, 21300.969 };
-    private static readonly double[] CassiniSoldnerInput = { 13.408055555556, 52.518611111111 };
-    private static readonly double[] TransformListSamplePoint1 = { 290586.087, 6714000 };
-    private static readonly double[] TransformListSamplePoint2 = { 290586.392, 6713996.224 };
-    private static readonly double[] TransformListSamplePoint3 = { 290590.133, 6713973.772 };
-    private static readonly double[] OrthographicHorizonTestPoint = { 180.0, 0.0 };
+    private static readonly double[] AffineTargetPoint = [3456926.640, 5481071.278];
+    private static readonly double[] AffineTestPoint = [2040.0, 1590.0];
+    private static readonly double[] CassiniSoldnerExpected = [25244.540, 21300.969];
+    private static readonly double[] CassiniSoldnerInput = [13.408055555556, 52.518611111111];
+    private static readonly double[] TransformListSamplePoint1 = [290586.087, 6714000];
+    private static readonly double[] TransformListSamplePoint2 = [290586.392, 6713996.224];
+    private static readonly double[] TransformListSamplePoint3 = [290590.133, 6713973.772];
+    private static readonly double[] OrthographicHorizonTestPoint = [180.0, 0.0];
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CoordinateTransformTests"/> class.
@@ -39,7 +39,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestTransformListOfCoordinates()
     {
         var csFact = new CoordinateSystemFactory();
@@ -54,11 +54,11 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         ICoordinateTransformation trans = ctFact.CreateFromCoordinateSystems(utm35ETRS, utm33);
 
         XY[] points =
-        {
+        [
             new XY(290586.087, 6714000), new XY(290586.392, 6713996.224),
             new XY(290590.133, 6713973.772), new XY(290594.111, 6713957.416),
             new XY(290596.615, 6713943.567), new XY(290596.701, 6713939.485),
-        };
+        ];
 
         var tpoints = (XY[])points.Clone();
         trans.MathTransform.Transform(tpoints);
@@ -79,7 +79,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestTransformListOfDoubleArray()
     {
         var csFact = new CoordinateSystemFactory();
@@ -94,11 +94,11 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         ICoordinateTransformation trans = ctFact.CreateFromCoordinateSystems(utm35ETRS, utm33);
 
         double[][] points =
-        {
-            new[] { 290586.087, 6714000 }, new[] { 90586.392, 6713996.224 },
-            new[] { 290590.133, 6713973.772 }, new[] { 290594.111, 6713957.416 },
-            new[] { 290596.615, 6713943.567 }, new[] { 290596.701, 6713939.485 },
-        };
+        [
+            [290586.087, 6714000], [90586.392, 6713996.224],
+            [290590.133, 6713973.772], [290594.111, 6713957.416],
+            [290596.615, 6713943.567], [290596.701, 6713939.485],
+        ];
 
         double[][] tpoints = trans.MathTransform.TransformList(points).ToArray();
         for (int i = 0; i < points.Length; i++)
@@ -118,7 +118,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestCentralMeridianParse()
     {
         const string strSouthPole = "PROJCS[\"South_Pole_Lambert_Azimuthal_Equal_Area\",GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Lambert_Azimuthal_Equal_Area\"],PARAMETER[\"False_Easting\",0],PARAMETER[\"False_Northing\",0],PARAMETER[\"Central_Meridian\",-127],PARAMETER[\"Latitude_Of_Origin\",-90],UNIT[\"Meter\",1]]";
@@ -131,7 +131,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestAlbersProjection()
     {
         Ellipsoid ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Clarke 1866", 6378206.4, 294.9786982138982, LinearUnit.Metre);
@@ -160,11 +160,11 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         ICoordinateTransformation trans1 = new CoordinateTransformationFactory().CreateFromCoordinateSystems(gcs, coordsys);
         ICoordinateTransformation trans2 = new CoordinateTransformationFactory().CreateFromCoordinateSystems(coordsys, gcs);
 
-        double[] pGeo = new double[] { -75, 35 };
+        double[] pGeo = [-75, 35];
         double[] pUtm = trans1.MathTransform.Transform(pGeo);
         double[] pGeo2 = trans2.MathTransform.Transform(pUtm);
 
-        double[] expected = new[] { 1885472.7, 1535925 };
+        double[] expected = [1885472.7, 1535925];
         Assert.True(this.ToleranceLessThan(pUtm, expected, 0.05), this.TransformationError("Albers", expected, pUtm, false));
         Assert.True(this.ToleranceLessThan(pGeo, pGeo2, 0.0000001), this.TransformationError("Albers", pGeo, pGeo2, true));
     }
@@ -172,7 +172,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestAlbersProjectionFeet()
     {
         Ellipsoid ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Clarke 1866", 6378206.4, 294.9786982138982, LinearUnit.Metre);
@@ -200,11 +200,11 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
 
         ICoordinateTransformation trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(gcs, coordsys);
 
-        double[] pGeo = new double[] { -75, 35 };
+        double[] pGeo = [-75, 35];
         double[] pUtm = trans.MathTransform.Transform(pGeo);
         double[] pGeo2 = trans.MathTransform.Inverse().Transform(pUtm);
 
-        double[] expected = new[] { 1885472.7 / LinearUnit.Foot.MetersPerUnit, 1535925 / LinearUnit.Foot.MetersPerUnit };
+        double[] expected = [1885472.7 / LinearUnit.Foot.MetersPerUnit, 1535925 / LinearUnit.Foot.MetersPerUnit];
         Assert.True(this.ToleranceLessThan(pUtm, expected, 0.1), this.TransformationError("Albers", expected, pUtm, false));
         Assert.True(this.ToleranceLessThan(pGeo, pGeo2, 0.0000001), this.TransformationError("Albers", pGeo, pGeo2, true));
     }
@@ -212,7 +212,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestMercator1SPProjection()
     {
         Ellipsoid ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Bessel 1840", 6377397.155, 299.15281, LinearUnit.Metre);
@@ -239,11 +239,11 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
 
         ICoordinateTransformation trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(gcs, coordsys);
 
-        double[] pGeo = new double[] { 120, -3 };
+        double[] pGeo = [120, -3];
         double[] pUtm = trans.MathTransform.Transform(pGeo);
         double[] pGeo2 = trans.MathTransform.Inverse().Transform(pUtm);
 
-        double[] expected = new[] { 5009726.58, 569150.82 };
+        double[] expected = [5009726.58, 569150.82];
         Assert.True(this.ToleranceLessThan(pUtm, expected, 0.02), this.TransformationError("Mercator_1SP", expected, pUtm, false));
         Assert.True(this.ToleranceLessThan(pGeo, pGeo2, 0.0000001), this.TransformationError("Mercator_1SP", pGeo, pGeo2, true));
     }
@@ -251,7 +251,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestMercator1SPProjectionFeet()
     {
         Ellipsoid ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Bessel 1840", 6377397.155, 299.15281, LinearUnit.Metre);
@@ -278,11 +278,11 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
 
         ICoordinateTransformation trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(gcs, coordsys);
 
-        double[] pGeo = new[] { 120d, -3d };
+        double[] pGeo = [120d, -3d];
         double[] pUtm = trans.MathTransform.Transform(pGeo);
         double[] pGeo2 = trans.MathTransform.Inverse().Transform(pUtm);
 
-        double[] expected = new[] { 5009726.58 / LinearUnit.Foot.MetersPerUnit, 569150.82 / LinearUnit.Foot.MetersPerUnit };
+        double[] expected = [5009726.58 / LinearUnit.Foot.MetersPerUnit, 569150.82 / LinearUnit.Foot.MetersPerUnit];
         Assert.True(this.ToleranceLessThan(pUtm, expected, 0.02), this.TransformationError("Mercator_1SP", expected, pUtm, false));
         Assert.True(this.ToleranceLessThan(pGeo, pGeo2, 0.0000001), this.TransformationError("Mercator_1SP", pGeo, pGeo2, true));
     }
@@ -290,7 +290,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestMercator2SPProjection()
     {
         Ellipsoid ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Krassowski 1940", 6378245.0, 298.3, LinearUnit.Metre);
@@ -316,11 +316,11 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
 
         ICoordinateTransformation trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(gcs, coordsys);
 
-        double[] pGeo = new[] { 53d, 53d };
+        double[] pGeo = [53d, 53d];
         double[] pUtm = trans.MathTransform.Transform(pGeo);
         double[] pGeo2 = trans.MathTransform.Inverse().Transform(pUtm);
 
-        double[] expected = new[] { 165704.29, 5171848.07 };
+        double[] expected = [165704.29, 5171848.07];
         Assert.True(this.ToleranceLessThan(pUtm, expected, 0.02), this.TransformationError("Mercator_2SP", expected, pUtm, false));
         Assert.True(this.ToleranceLessThan(pGeo, pGeo2, 0.0000001), this.TransformationError("Mercator_2SP", pGeo, pGeo2, true));
     }
@@ -328,7 +328,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestTransverseMercatorProjection()
     {
         Ellipsoid ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Airy 1830", 6377563.396, 299.32496, LinearUnit.Metre);
@@ -355,12 +355,12 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
 
         ICoordinateTransformation trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(gcs, coordsys);
 
-        double[] pGeo = new[] { 0.5, 50.5 };
+        double[] pGeo = [0.5, 50.5];
         double[] pUtm = trans.MathTransform.Transform(pGeo);
         double[] pGeo2 = trans.MathTransform.Inverse().Transform(pUtm);
 
         // "POINT(577393.372775651 69673.621953601)"
-        double[] expected = new[] { 577274.98, 69740.49 };
+        double[] expected = [577274.98, 69740.49];
         Assert.True(this.ToleranceLessThan(pUtm, expected, 0.01), this.TransformationError("TransverseMercator", expected, pUtm));
         Assert.True(this.ToleranceLessThan(pGeo, pGeo2, 1E-6), this.TransformationError("TransverseMercator", pGeo, pGeo2, true));
     }
@@ -368,7 +368,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestLambertConicConformal2SPProjection()
     {
         // var ellipsoid = Ellipsoid.Clarke1866;
@@ -397,11 +397,11 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
 
         ICoordinateTransformation trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(gcs, coordsys);
 
-        double[] pGeo = new[] { -96, 28.5 };
+        double[] pGeo = [-96, 28.5];
         double[] pUtm = trans.MathTransform.Transform(pGeo);
         double[] pGeo2 = trans.MathTransform.Inverse().Transform(pUtm);
 
-        double[] expected = new[] { 2963503.91 / LinearUnit.USSurveyFoot.MetersPerUnit, 254759.80 / LinearUnit.USSurveyFoot.MetersPerUnit };
+        double[] expected = [2963503.91 / LinearUnit.USSurveyFoot.MetersPerUnit, 254759.80 / LinearUnit.USSurveyFoot.MetersPerUnit];
         Assert.True(this.ToleranceLessThan(pUtm, expected, 0.05), this.TransformationError("LambertConicConformal2SP", expected, pUtm));
         Assert.True(this.ToleranceLessThan(pGeo, pGeo2, 0.0000001), this.TransformationError("LambertConicConformal2SP", pGeo, pGeo2, true));
     }
@@ -431,7 +431,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestLambertAzimuthalEqualAreaProjectionRoundTripOnOrigin()
     {
         for (int i = 0; i < 1000; i++)
@@ -444,13 +444,13 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             MathTransform forward = trans.MathTransform;
             MathTransform reverse = forward.Inverse();
 
-            double[] pGeo = new[] { centralMeridian, latitudeOfOrigin };
+            double[] pGeo = [centralMeridian, latitudeOfOrigin];
 
             double[] pLaea = forward.Transform(pGeo);
 
             double[] pGeo2 = reverse.Transform(pLaea);
 
-            double[] expectedPLaea = new double[2] { 0, 0 };
+            double[] expectedPLaea = [0, 0];
 
             Assert.True(this.ToleranceLessThan(pLaea, expectedPLaea, 0.05), this.TransformationError("Lambert_Azimuthal_Equal_Area", expectedPLaea, pLaea));
             Assert.True(this.ToleranceLessThan(pGeo, pGeo2, 0.0000001), this.TransformationError("Lambert_Azimuthal_Equal_Area", pGeo, pGeo2, true));
@@ -460,7 +460,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestLambertAzimuthalEqualAreaProjectionRoundTripOnArbitraryPoint()
     {
         int GetRandomSign()
@@ -481,7 +481,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             double lat = latitudeOfOrigin + ((0.01 + this.Random.NextDouble()) * GetRandomSign());
             double lon = centralMeridian + ((0.01 + this.Random.NextDouble()) * GetRandomSign());
 
-            double[] pGeo = new[] { lon, lat };
+            double[] pGeo = [lon, lat];
 
             double[] pLaea = forward.Transform(pGeo);
 
@@ -496,7 +496,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestGeocentric()
     {
         GeographicCoordinateSystem gcs = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
@@ -508,9 +508,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             new AxisInfo("North", AxisOrientationEnum.North));
         GeocentricCoordinateSystem gcenCs = this.CoordinateSystemFactory.CreateGeocentricCoordinateSystem("ETRF89 Geocentric", HorizontalDatum.ETRF89, LinearUnit.Metre, PrimeMeridian.Greenwich);
         ICoordinateTransformation ct = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(gcs, gcenCs);
-        double[] pExpected = new[] { 2 + (7.0 / 60) + (46.38 / 3600), 53 + (48.0 / 60) + (33.82 / 3600) }; // Point.FromDMS(2, 7, 46.38, 53, 48, 33.82);
-        double[] pExpected3D = new[] { pExpected[0], pExpected[1], 73.0 };
-        double[] p0 = new[] { 3771793.97, 140253.34, 5124304.35 };
+        double[] pExpected = [2 + (7.0 / 60) + (46.38 / 3600), 53 + (48.0 / 60) + (33.82 / 3600)]; // Point.FromDMS(2, 7, 46.38, 53, 48, 33.82);
+        double[] pExpected3D = [pExpected[0], pExpected[1], 73.0];
+        double[] p0 = [3771793.97, 140253.34, 5124304.35];
         double[] p1 = ct.MathTransform.Transform(pExpected3D);
         double[] p2 = ct.MathTransform.Inverse().Transform(p1);
         Assert.True(this.ToleranceLessThan(p1, p0, 0.01));
@@ -520,7 +520,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestDatumTransform()
     {
         // Define datums, set parameters
@@ -588,12 +588,12 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
 
         // Test datum-shift from WGS72 to WGS84
         // Point3D pGeoCenWGS72 = ctForw.MathTransform.Transform(pLongLatWGS72) as Point3D;
-        double[] pGeoCenWGS72 = new[] { 3657660.66, 255768.55, 5201382.11 };
+        double[] pGeoCenWGS72 = [3657660.66, 255768.55, 5201382.11];
         ICoordinateTransformation geocen_ed50_2_Wgs84 = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(gcenCsWGS72, gcenCsWGS84);
         double[] pGeoCenWGS84 = geocen_ed50_2_Wgs84.MathTransform.Transform(pGeoCenWGS72);
 
         // Point3D pGeoCenWGS84 = wgs72.Wgs84Parameters.Apply(pGeoCenWGS72);
-        double[] pExpected = new[] { 3657660.78, 255778.43, 5201387.75 };
+        double[] pExpected = [3657660.78, 255778.43, 5201387.75];
         Assert.True(this.ToleranceLessThan(pExpected, pGeoCenWGS84, 0.01), this.TransformationError("Datum WGS72->WGS84", pExpected, pGeoCenWGS84));
 
         // and inverse
@@ -601,9 +601,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.True(this.ToleranceLessThan(pGeoCenWGS72, pGeoCenWGS72calc, 0.001), this.TransformationError("Datum WGS84->WGS72", pGeoCenWGS72, pGeoCenWGS72calc));
 
         ICoordinateTransformation utm_ed50_2_Wgs84 = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(utmED50, utmWGS84);
-        double[] pUTMED50 = new double[] { 600000, 6100000 };
+        double[] pUTMED50 = [600000, 6100000];
         double[] pUTMWGS84 = utm_ed50_2_Wgs84.MathTransform.Transform(pUTMED50);
-        pExpected = new[] { 599928.6, 6099790.2 };
+        pExpected = [599928.6, 6099790.2];
         Assert.True(this.ToleranceLessThan(pExpected, pUTMWGS84, 0.1), this.TransformationError("Datum ED50->WGS84", pExpected, pUTMWGS84));
 
         // and inverse
@@ -613,7 +613,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         // Perform reverse
         ICoordinateTransformation utm_Wgs84_2_Ed50 = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(utmWGS84, utmED50);
         pUTMED50 = utm_Wgs84_2_Ed50.MathTransform.Transform(pUTMWGS84);
-        pExpected = new double[] { 600000, 6100000 };
+        pExpected = [600000, 6100000];
         Assert.True(this.ToleranceLessThan(pExpected, pUTMED50, 0.1), this.TransformationError("Datum", pExpected, pUTMED50));
 
         // and inverse
@@ -628,7 +628,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestKrovakGreenwichProjection()
     {
         // test case for epsg 5514 (102067)
@@ -671,8 +671,8 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         ICoordinateTransformation trans2 = new CoordinateTransformationFactory().CreateFromCoordinateSystems(gcsWGS84, coordsys);
 
         // test case 1
-        double[] pGeo = new[] { 12d, 48d };
-        double[] expected = new[] { -953116.2548718402, -1245513.5788112187 };
+        double[] pGeo = [12d, 48d];
+        double[] expected = [-953116.2548718402, -1245513.5788112187];
 
         double[] pUtm = trans.MathTransform.Transform(pGeo);
 
@@ -683,8 +683,8 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.True(this.ToleranceLessThan(pGeo, pGeo2, 0.001), this.TransformationError("Krovak", pGeo, pGeo2, true));
 
         // test case 2
-        pGeo = new double[] { 18, 49 };
-        expected = new double[] { -499143.4909304862, -1192340.009253714 };
+        pGeo = [18, 49];
+        expected = [-499143.4909304862, -1192340.009253714];
 
         pUtm = trans.MathTransform.Transform(pGeo);
         pGeo2 = trans2.MathTransform.Inverse().Transform(pUtm);
@@ -696,7 +696,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestKrovakFerroProjection()
     {
         // test case for epsg 2065 (prime meridian at Ferro)
@@ -740,8 +740,8 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         ICoordinateTransformation trans2 = new CoordinateTransformationFactory().CreateFromCoordinateSystems(gcsWGS84, coordsys);
 
         // test case 1
-        double[] pGeo = new[] { 12d, 48d };
-        double[] expected = new[] { -953116.2548718402, -1245513.5788112187 };
+        double[] pGeo = [12d, 48d];
+        double[] expected = [-953116.2548718402, -1245513.5788112187];
 
         double[] pUtm = trans.MathTransform.Transform(pGeo);
 
@@ -752,8 +752,8 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.True(this.ToleranceLessThan(pGeo, pGeo2, 0.001), this.TransformationError("Krovak", pGeo, pGeo2, true));
 
         // test case 2
-        pGeo = new double[] { 18, 49 };
-        expected = new double[] { -499143.4909304862, -1192340.009253714 };
+        pGeo = [18, 49];
+        expected = [-499143.4909304862, -1192340.009253714];
 
         pUtm = trans.MathTransform.Transform(pGeo);
         pGeo2 = trans2.MathTransform.Inverse().Transform(pUtm);
@@ -765,12 +765,12 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestObliqueStereographicProjection()
     {
         // test data from http://www.spatialreference.org/ref/epsg/2171/
-        double[] coord2171 = new double[] { 4615496.325851, 5605702.221723 };
-        double[] coord4326 = new double[] { 20.78002815042, 50.25299100927 };
+        double[] coord2171 = [4615496.325851, 5605702.221723];
+        double[] coord4326 = [20.78002815042, 50.25299100927];
 
         string wkt4326 = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]]";
         string wkt2171 = "PROJCS[\"Pulkovo 1942(58) / Poland zone I\",GEOGCS[\"Pulkovo 1942(58)\",DATUM[\"Pulkovo_1942_58\",SPHEROID[\"Krassowsky 1940\",6378245,298.3,AUTHORITY[\"EPSG\",\"7024\"]],TOWGS84[33.4,-146.6,-76.3,-0.359,-0.053,0.844,-0.84],AUTHORITY[\"EPSG\",\"6179\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4179\"]],PROJECTION[\"Oblique_Stereographic\"],PARAMETER[\"latitude_of_origin\",50.625],PARAMETER[\"central_meridian\",21.08333333333333],PARAMETER[\"scale_factor\",0.9998],PARAMETER[\"false_easting\",4637000],PARAMETER[\"false_northing\",5647000],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AUTHORITY[\"EPSG\",\"2171\"]]";
@@ -796,12 +796,12 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestUniversalPolarStereographicProjection()
     {
         // test data from http://epsg.io/transform
-        double[] coord4326 = new double[] { 15.00, 73.00 };
-        double[] coord32661 = new double[] { 2491967.01029204, 163954.12194234435 };
+        double[] coord4326 = [15.00, 73.00];
+        double[] coord32661 = [2491967.01029204, 163954.12194234435];
 
         string wkt4326 = string.Empty +
             "GEOGCS[\"WGS 84\"," +
@@ -855,12 +855,12 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestAustralianAntarcticPolarStereographicProjection()
     {
         // test data from http://epsg.io/transform
-        double[] coord4326 = new double[] { 15.00, -73.00 };
-        double[] coord3032 = new double[] { 4476201.247377692, 7066975.373300694 };
+        double[] coord4326 = [15.00, -73.00];
+        double[] coord3032 = [4476201.247377692, 7066975.373300694];
 
         string wkt4326 = string.Empty +
             "GEOGCS[\"WGS 84\"," +
@@ -913,17 +913,17 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestUnitTransforms()
     {
-        CoordinateSystem nadUTM = Assert.IsAssignableFrom<CoordinateSystem>(SRIDReader.GetCSbyID(2868)); // UTM Arizona Central State Plane using Feet as units
-        CoordinateSystem wgs84GCS = Assert.IsAssignableFrom<CoordinateSystem>(SRIDReader.GetCSbyID(4326)); // GCS WGS84
+        CoordinateSystem nadUTM = Assert.IsType<CoordinateSystem>(SRIDReader.GetCSbyID(2868), exactMatch: false); // UTM Arizona Central State Plane using Feet as units
+        CoordinateSystem wgs84GCS = Assert.IsType<CoordinateSystem>(SRIDReader.GetCSbyID(4326), exactMatch: false); // GCS WGS84
         ICoordinateTransformation trans = new CoordinateTransformationFactory().CreateFromCoordinateSystems(wgs84GCS, nadUTM);
 
-        double[] p0 = new[] { -111.89, 34.165 };
+        double[] p0 = [-111.89, 34.165];
 
         // var expected = new[] { 708066.19058, 1151461.51413 };
-        double[] expected = new[] { 708066.19057935325, 1151426.4460563776 };
+        double[] expected = [708066.19057935325, 1151426.4460563776];
 
         double[] p1 = trans.MathTransform.Transform(p0);
         double[] p2 = trans.MathTransform.Inverse().Transform(p1);
@@ -937,10 +937,10 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact(DisplayName = "Accuracy very poor!")]
+    [Fact(DisplayName = "Accuracy very poor!")]
     public void TestPolyconicTransforms()
     {
-        CoordinateSystem wgs84GCS = Assert.IsAssignableFrom<CoordinateSystem>(SRIDReader.GetCSbyID(4326)); // GCS WGS84
+        CoordinateSystem wgs84GCS = Assert.IsType<CoordinateSystem>(SRIDReader.GetCSbyID(4326), exactMatch: false); // GCS WGS84
         string wkt =
 
               // "PROJCS[\"SAD69 / Brazil Polyconic (deprecated)\",GEOGCS[\"SAD69\",DATUM[\"South_American_Datum_1969\",SPHEROID[\"GRS 1967\",6378160,298.247167427,AUTHORITY[\"EPSG\",\"7036\"]],TOWGS84[-57,1,-41,0,0,0,0],AUTHORITY[\"EPSG\",\"6291\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9108\"]],AUTHORITY[\"EPSG\",\"4291\"]],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],PROJECTION[\"Polyconic\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",-54],PARAMETER[\"false_easting\",5000000],PARAMETER[\"false_northing\",10000000],AUTHORITY[\"EPSG\",\"29100\"],AXIS[\"X\",EAST],AXIS[\"Y\",NORTH]]";
@@ -949,8 +949,8 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         CoordinateSystem sad69 = RequireCoordinateSystem(this.CoordinateSystemFactory, wkt);
 
         ICoordinateTransformation trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(wgs84GCS, sad69);
-        double[] p0 = new[] { -50.085, -14.32 };
-        double[] expected = new[] { 5422386.5795, 8412674.8723 };
+        double[] p0 = [-50.085, -14.32];
+        double[] expected = [5422386.5795, 8412674.8723];
 
         // "POINT(5422386.57956145 8412722.92229278)"
         double[] p1 = trans.MathTransform.Transform(p0);
@@ -964,7 +964,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestCassiniSoldner()
     {
         GeographicCoordinateSystem csSource = GeographicCoordinateSystem.WGS84;
@@ -996,7 +996,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestHotineObliqueMercator()
     {
         GeographicCoordinateSystem csSource = GeographicCoordinateSystem.WGS84;
@@ -1010,8 +1010,8 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             "HotineObliqueMercator",
             csSource,
             csTarget,
-            new[] { -149.883333, 61.216667 },
-            new[] { 4136805.826, -4424019.786 },
+            [-149.883333, 61.216667],
+            [4136805.826, -4424019.786],
             0.01,
             1.0E-5);
     }
@@ -1019,7 +1019,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestTransformListOnConcatenatedDoTransform()
     {
         CoordinateSystem utm35ETRS =
@@ -1045,7 +1045,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestTransformListOnConcatenatedDoTransformDoubleArr()
     {
         CoordinateSystem utm35ETRS =
@@ -1071,7 +1071,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Test transformation for affine transformation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void AffineTransformationTest()
     {
         // Local coordinate system MNAU (Kraftwerk Maeuserich) (based on Gauss-Krueger using affine transformation)
@@ -1107,7 +1107,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Test inverse transformation for affine transformation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void InverseAffineTransformationTest()
     {
         // Local coordinate system MNAU (Kraftwerk Maeuserich) (based on Gauss-Krueger using affine transformation)
@@ -1160,7 +1160,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Coordinate transformation test for fitted coordinate system - test CS - local coordinate system MNAU.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestTransformOnFittedCoordinateSystem()
     {
         // Local coordinate system MNAU (Kraftwerk Maeuserich) (based on Gauss-Krueger using affine transformation)
@@ -1214,18 +1214,18 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// test for epsg 21780 projection (different prime meridian).
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestEPSG21780PrimeMeredianTransformation()
     {
         string wkt4326 = "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]]";
         string wkt21780 = "PROJCS[\"Bern 1898 (Bern) / LV03C\",GEOGCS[\"Bern 1898 (Bern)\",DATUM[\"CH1903_Bern\",SPHEROID[\"Bessel 1841\",6377397.155,299.1528128,AUTHORITY[\"EPSG\",\"7004\"]],AUTHORITY[\"EPSG\",\"6801\"]],PRIMEM[\"Bern\",7.439583333333333,AUTHORITY[\"EPSG\",\"8907\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4801\"]],PROJECTION[\"Hotine_Oblique_Mercator\"],PARAMETER[\"latitude_of_center\",46.95240555555556],PARAMETER[\"longitude_of_center\",0],PARAMETER[\"azimuth\",90],PARAMETER[\"rectified_grid_angle\",90],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AUTHORITY[\"EPSG\",\"21780\"]]";
 
         // test data from http://spatialreference.org/ref/epsg/21780/
-        double[] sourceCoord = new double[] { 160443.329034, 23582.55586 };
-        double[] expectedTargetCoord = new double[] { 9.5553588867188, 47.145080566406 };
+        double[] sourceCoord = [160443.329034, 23582.55586];
+        double[] expectedTargetCoord = [9.5553588867188, 47.145080566406];
 
-        CoordinateSystem cs1 = Assert.IsAssignableFrom<CoordinateSystem>(CoordinateSystemWktReader.Parse(wkt21780));
-        CoordinateSystem cs2 = Assert.IsAssignableFrom<CoordinateSystem>(CoordinateSystemWktReader.Parse(wkt4326));
+        CoordinateSystem cs1 = Assert.IsType<CoordinateSystem>(CoordinateSystemWktReader.Parse(wkt21780), exactMatch: false);
+        CoordinateSystem cs2 = Assert.IsType<CoordinateSystem>(CoordinateSystemWktReader.Parse(wkt4326), exactMatch: false);
         var ctf = new CoordinateTransformationFactory();
         ICoordinateTransformation ict = ctf.CreateFromCoordinateSystems(cs1, cs2);
 
@@ -1249,11 +1249,11 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestEPSG2056HotineObliqueMercatorAzimuthCenterSwitzerland()
     {
         GeographicCoordinateSystem csSrc = GeographicCoordinateSystem.WGS84;
-        CoordinateSystem csTgt = Assert.IsAssignableFrom<CoordinateSystem>(SRIDReader.GetCSbyID(2056)); // CH1903+ / LV95
+        CoordinateSystem csTgt = Assert.IsType<CoordinateSystem>(SRIDReader.GetCSbyID(2056), exactMatch: false); // CH1903+ / LV95
         ICoordinateTransformation transformer = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csSrc, csTgt);
         double x = 9.619803;
         double y = 47.408735;
@@ -1268,7 +1268,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestEllipsoidalOrthographicTransform()
     {
         // Check equatorial projection
@@ -1286,15 +1286,15 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         ICoordinateTransformation trans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csWgs84, orthographicSystem);
 
         // Check origin remains in the same place
-        double[] origin = new[] { 0.0, 0.0 };
+        double[] origin = [0.0, 0.0];
         double[] transformedOrigin = trans.MathTransform.Transform(origin);
         double[] inverseTransformedOrigin = trans.MathTransform.Inverse().Transform(transformedOrigin);
         Assert.True(this.ToleranceLessThan(origin, transformedOrigin, 0.00001), this.TransformationError("Orthographic", origin, transformedOrigin));
         Assert.True(this.ToleranceLessThan(origin, inverseTransformedOrigin, 0.00001), this.TransformationError("Orthograhpic", origin, inverseTransformedOrigin, true));
 
         // Check projection works as expected away from origin
-        double[] testEastWgs = new[] { 0.001, 0.0 };
-        double[] expectedXOrtho = new[] { 111, 0.0 }; // We should expect that .001 degrees is equal to 111 meters at origin
+        double[] testEastWgs = [0.001, 0.0];
+        double[] expectedXOrtho = [111, 0.0]; // We should expect that .001 degrees is equal to 111 meters at origin
         double[] transEastWgs = trans.MathTransform.Transform(testEastWgs);
         double[] invTransEastWgs = trans.MathTransform.Inverse().Transform(transEastWgs);
         Assert.True(this.ToleranceLessThan(expectedXOrtho, transEastWgs, 1.0), this.TransformationError("Orthographic", expectedXOrtho, transEastWgs));
@@ -1312,8 +1312,8 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         IProjection projection2 = this.CoordinateSystemFactory.CreateProjection("Orthographic", "Orthographic", parameters2);
         ProjectedCoordinateSystem orthoSystem2 = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("Orthographic", csWgs84, projection2, LinearUnit.Metre, new AxisInfo("X", AxisOrientationEnum.East), new AxisInfo("Y", AxisOrientationEnum.North));
         ICoordinateTransformation trans2 = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csWgs84, orthoSystem2);
-        double[] test2 = new[] { 2.1295499950867, 53.809394412498 };
-        double[] expected2 = new[] { -189011.711, -128640.567 };
+        double[] test2 = [2.1295499950867, 53.809394412498];
+        double[] expected2 = [-189011.711, -128640.567];
         double[] transTest2 = trans2.MathTransform.Transform(test2);
         double[] invTransTest2 = trans2.MathTransform.Inverse().Transform(transTest2);
         Assert.True(this.ToleranceLessThan(expected2, transTest2, 1.0), this.TransformationError("Orthographic", expected2, transTest2));
@@ -1330,7 +1330,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public static void TestMercatorAuxilarySphereTransformation()
     {
         string sourceWkt = "PROJCS[\"WGS_1984_Web_Mercator_Auxiliary_Sphere\",GEOGCS[\"GCS_WGS_1984\",DATUM[\"D_WGS_1984\",SPHEROID[\"WGS_1984\",6378137.0,298.257223563]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Mercator_Auxiliary_Sphere\"],PARAMETER[\"False_Easting\",0.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",0.0],PARAMETER[\"Standard_Parallel_1\",0.0],PARAMETER[\"Auxiliary_Sphere_Type\",0.0],UNIT[\"Meter\",1.0]]";
@@ -1353,7 +1353,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestPopularVisualizationPseudoMercatorProjectionRegistry()
     {
         string sourceWkt = "GEOGCS[\"GCS_WGS_1984\", DATUM[\"D_WGS_1984\", SPHEROID[\"WGS_1984\",6378137.0,298.257223563]], PRIMEM[\"Greenwich\",0.0], UNIT[\"Degree\",0.0174532925199433]]";
@@ -1372,7 +1372,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestLamberTangentialConformalConicProjectionRegistryAndTransformation()
     {
         string sourceWkt = "PROJCS[\"WORLD-LM-TAN\",GEOGCS[\"LL84\",DATUM[\"WGS84\",SPHEROID[\"WGS84\",6378137.000,298.25722356]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.017453292519943295]],PROJECTION[\"Lambert Tangential Conformal Conic Projection\"],PARAMETER[\"false_easting\",0.000],PARAMETER[\"false_northing\",0.000],PARAMETER[\"scale_factor\",1.000000000000],PARAMETER[\"central_meridian\",0.00000000000000],PARAMETER[\"latitude_of_origin\",1.00000000000000],UNIT[\"Meter\",1.00000000000000]]";
@@ -1388,10 +1388,10 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         Assert.NotNull(transformation);
 
         // Test the transformation with a known points. Tested with AutoCAD map 3D
-        double[] pGeo = new[] { 4101119.6855, -229063.8661 }; // Nairobi, Kenya
+        double[] pGeo = [4101119.6855, -229063.8661]; // Nairobi, Kenya
         double[] pUtm = transformation.MathTransform.Transform(pGeo);
 
-        double[] expected = new[] { 4098998.6422, -142387.5532 };
+        double[] expected = [4098998.6422, -142387.5532];
         Assert.True(this.ToleranceLessThan(pUtm, expected, 0.05), this.TransformationError("LambertConicConformal2SP", expected, pUtm));
     }
 
@@ -1415,8 +1415,8 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     internal static ICoordinateTransformation GetTransformation(CoordinateSystem sourceCoordinateSystem, CoordinateSystem targetCoordinateSystem)
     {
         var coordinateSystemFactory = new CoordinateSystemFactory();
-        var coordinateService = new ProjNet.CoordinateSystemServices(coordinateSystemFactory, new CoordinateTransformationFactory());
+        var coordinateService = new CoordinateSystemServices(coordinateSystemFactory, new CoordinateTransformationFactory());
         ICoordinateTransformation? transformation = coordinateService.CreateTransformation(sourceCoordinateSystem, targetCoordinateSystem);
-        return Assert.IsAssignableFrom<ICoordinateTransformation>(transformation);
+        return Assert.IsType<ICoordinateTransformation>(transformation, exactMatch: false);
     }
 }

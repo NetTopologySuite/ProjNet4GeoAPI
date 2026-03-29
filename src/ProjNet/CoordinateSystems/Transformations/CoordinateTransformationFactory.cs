@@ -1154,7 +1154,7 @@ public class CoordinateTransformationFactory
             return [];
         }
 
-        return configuredPaths.Split(new[] { ';', Path.PathSeparator }, StringSplitOptions.RemoveEmptyEntries);
+        return configuredPaths.Split([';', Path.PathSeparator], StringSplitOptions.RemoveEmptyEntries);
     }
 
     private static GridResourceResolutionMode ParseGridResolutionMode(string? configuredMode)

@@ -140,8 +140,8 @@ internal class IghProjection : MapProjection
 
     private static ZoneDefinition[] CreateZones(double dy0)
     {
-        return new[]
-        {
+        return
+        [
             new ZoneDefinition(true, -D100, -D100, dy0),  // 1
             new ZoneDefinition(true, D30, D30, dy0),      // 2
             new ZoneDefinition(false, -D100, -D100, 0d),  // 3
@@ -154,7 +154,7 @@ internal class IghProjection : MapProjection
             new ZoneDefinition(true, -D60, -D60, -dy0),   // 10
             new ZoneDefinition(true, D20, D20, -dy0),     // 11
             new ZoneDefinition(true, D140, D140, -dy0),   // 12
-        };
+        ];
     }
 
     private static int DetermineForwardZone(double phi, double lambda)

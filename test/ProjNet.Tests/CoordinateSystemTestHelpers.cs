@@ -24,7 +24,7 @@ internal static class CoordinateSystemTestHelpers
         ArgumentNullException.ThrowIfNull(wkt);
 
         CoordinateSystem? coordinateSystem = factory.CreateFromWkt(wkt);
-        return Assert.IsAssignableFrom<CoordinateSystem>(coordinateSystem);
+        return Assert.IsType<CoordinateSystem>(coordinateSystem, exactMatch: false);
     }
 
     /// <summary>

@@ -14,8 +14,8 @@ using Xunit;
 /// </summary>
 public class HorizontalGridShiftRuntimeTests
 {
-    private static readonly double[] HorizontalGridInput = { 4.5d, 52.5d, 0d };
-    private static readonly double[] HorizontalGridInverseInput = { 5.875d, 55.375d, 0d };
+    private static readonly double[] HorizontalGridInput = [4.5d, 52.5d, 0d];
+    private static readonly double[] HorizontalGridInverseInput = [5.875d, 55.375d, 0d];
 
     /// <summary>
     /// Performs the documented operation.
@@ -32,7 +32,7 @@ public class HorizontalGridShiftRuntimeTests
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
 
         Assert.True(ok, skipReason);
-        double[] output = Assert.IsAssignableFrom<MathTransform>(transform).Transform(HorizontalGridInput);
+        double[] output = Assert.IsType<MathTransform>(transform, exactMatch: false).Transform(HorizontalGridInput);
         Assert.Equal(5.875d, output[0], 9);
         Assert.Equal(55.375d, output[1], 9);
         Assert.Equal(0d, output[2], 9);
@@ -53,7 +53,7 @@ public class HorizontalGridShiftRuntimeTests
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
 
         Assert.True(ok, skipReason);
-        Assert.Throws<ArgumentException>(() => Assert.IsAssignableFrom<MathTransform>(transform).Transform(HorizontalGridInverseInput));
+        Assert.Throws<ArgumentException>(() => Assert.IsType<MathTransform>(transform, exactMatch: false).Transform(HorizontalGridInverseInput));
     }
 
     /// <summary>
@@ -71,7 +71,7 @@ public class HorizontalGridShiftRuntimeTests
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
 
         Assert.True(ok, skipReason);
-        double[] output = Assert.IsAssignableFrom<MathTransform>(transform).Transform(HorizontalGridInput);
+        double[] output = Assert.IsType<MathTransform>(transform, exactMatch: false).Transform(HorizontalGridInput);
         Assert.Equal(5.875d, output[0], 9);
         Assert.Equal(55.375d, output[1], 9);
     }

@@ -36,7 +36,7 @@ public class ObTranRuntimeTests
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
 
         Assert.True(ok, skipReason);
-        double[] projected = Assert.IsAssignableFrom<MathTransform>(transform).Transform([inputX, inputY]);
+        double[] projected = Assert.IsType<MathTransform>(transform, exactMatch: false).Transform([inputX, inputY]);
         Assert.InRange(Math.Abs(projected[0] - expectedX), 0d, 1e-9);
         Assert.InRange(Math.Abs(projected[1] - expectedY), 0d, 1e-9);
     }
@@ -51,7 +51,7 @@ public class ObTranRuntimeTests
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
 
         Assert.True(ok, skipReason);
-        double[] projected = Assert.IsAssignableFrom<MathTransform>(transform).Transform([10d, 20d]);
+        double[] projected = Assert.IsType<MathTransform>(transform, exactMatch: false).Transform([10d, 20d]);
         Assert.InRange(Math.Abs(projected[0] - (-1384841.18787d)), 0d, 1e-5);
         Assert.InRange(Math.Abs(projected[1] - 7581707.88240d), 0d, 1e-5);
     }
@@ -78,7 +78,7 @@ public class ObTranRuntimeTests
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
 
         Assert.True(ok, skipReason);
-        double[] projected = Assert.IsAssignableFrom<MathTransform>(transform).Transform([inputX, inputY]);
+        double[] projected = Assert.IsType<MathTransform>(transform, exactMatch: false).Transform([inputX, inputY]);
         Assert.InRange(Math.Abs(projected[0] - expectedX), 0d, 1e-6);
         Assert.InRange(Math.Abs(projected[1] - expectedY), 0d, 1e-6);
     }

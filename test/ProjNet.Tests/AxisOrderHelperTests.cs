@@ -137,7 +137,7 @@ public class AxisOrderHelperTests
         bool ok = AxisOrderHelper.TryCreateAxisSwapTransform(source, target, out MathTransform? transform);
 
         Assert.True(ok);
-        double[] transformed = Assert.IsAssignableFrom<MathTransform>(transform).Transform([10d, 20d, 30d]);
+        double[] transformed = Assert.IsType<MathTransform>(transform, exactMatch: false).Transform([10d, 20d, 30d]);
 
         Assert.Equal(10d, transformed[0], 12);
         Assert.Equal(20d, transformed[1], 12);

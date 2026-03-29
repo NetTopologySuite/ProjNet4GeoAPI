@@ -19,8 +19,8 @@ using Xunit;
 /// </summary>
 public class OperationResolutionEngineTests
 {
-    private static readonly double[] GeographicSamplePoint = { 13.1234d, 52.9876d };
-    private static readonly double[] UtmSamplePoint = { 500000d, 4649776.22482d };
+    private static readonly double[] GeographicSamplePoint = [13.1234d, 52.9876d];
+    private static readonly double[] UtmSamplePoint = [500000d, 4649776.22482d];
 
     private readonly CoordinateTransformationFactory coordinateTransformationFactory = new CoordinateTransformationFactory();
     private readonly CoordinateSystemFactory coordinateSystemFactory = new CoordinateSystemFactory();
@@ -148,9 +148,9 @@ public class OperationResolutionEngineTests
         var source = ProjectedCoordinateSystem.WGS84_UTM(32, true);
         var target = ProjectedCoordinateSystem.WGS84_UTM(33, true);
         source.Authority = "EPSG";
-        source.AuthorityCode = Assert.IsAssignableFrom<List<CoordinateOperationDefinition>>(gridOnlyPair)[0].SourceSrid;
+        source.AuthorityCode = Assert.IsType<List<CoordinateOperationDefinition>>(gridOnlyPair)[0].SourceSrid;
         target.Authority = "EPSG";
-        target.AuthorityCode = Assert.IsAssignableFrom<List<CoordinateOperationDefinition>>(gridOnlyPair)[0].TargetSrid;
+        target.AuthorityCode = Assert.IsType<List<CoordinateOperationDefinition>>(gridOnlyPair)[0].TargetSrid;
 
         string? originalRequiredMode = Environment.GetEnvironmentVariable("PROJNET_GRID_REQUIRED");
         try
@@ -314,7 +314,7 @@ public class OperationResolutionEngineTests
         ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(sourceFitted, targetFitted);
         ICoordinateTransformation baseTransformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(sourceBase, targetBase);
 
-        double[] input = new[] { 500000d, 4649776.22482d };
+        double[] input = [500000d, 4649776.22482d];
         double[] transformed = transformation.MathTransform.Transform(input);
 
         double[] baseInput = sourceToBase.Transform(input);

@@ -234,7 +234,7 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
         private readonly double longitudeUnitScale;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GeoTiffHGridShiftMathTransform.HorizontalGrid"/> class.
+        /// Initializes a new instance of the <see cref="HorizontalGrid"/> class.
         /// </summary>
         /// <param name="sourcePath">Path of the source GeoTIFF file.</param>
         /// <param name="width">Number of grid columns.</param>

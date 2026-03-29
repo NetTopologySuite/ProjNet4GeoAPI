@@ -42,10 +42,10 @@ internal static class AxisOrderHelper
             return false;
         }
 
-        int[] sourceIndexByRole = { -1, -1, -1 };
-        int[] sourceSignByRole = { 1, 1, 1 };
-        int[] targetIndexByRole = { -1, -1, -1 };
-        int[] targetSignByRole = { 1, 1, 1 };
+        int[] sourceIndexByRole = [-1, -1, -1];
+        int[] sourceSignByRole = [1, 1, 1];
+        int[] targetIndexByRole = [-1, -1, -1];
+        int[] targetSignByRole = [1, 1, 1];
 
         for (int i = 0; i < dimension; i++)
         {
@@ -67,8 +67,8 @@ internal static class AxisOrderHelper
             targetSignByRole[targetRole] = targetSign;
         }
 
-        int[] sourceIndices = { 0, 1, 2 };
-        int[] signs = { 1, 1, 1 };
+        int[] sourceIndices = [0, 1, 2];
+        int[] signs = [1, 1, 1];
         bool changed = false;
 
         for (int role = 0; role < 3; role++)

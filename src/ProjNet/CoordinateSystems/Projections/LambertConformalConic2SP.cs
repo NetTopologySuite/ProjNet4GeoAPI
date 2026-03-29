@@ -23,7 +23,7 @@ using ProjNet.CoordinateSystems.Transformations;
 [Serializable]
 internal class LambertConformalConic2SP : MapProjection
 {
-    private static readonly string[] LatitudeOfOriginFallback = { "latitude_of_origin" };
+    private static readonly string[] LatitudeOfOriginFallback = ["latitude_of_origin"];
 
     /// <summary>
     /// Ratio of angular change between meridians.

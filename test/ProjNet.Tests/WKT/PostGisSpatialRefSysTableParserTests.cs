@@ -73,7 +73,7 @@ public class PostGisSpatialRefSysTableParserTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void TestParsePostgisDefinitions()
     {
         if (string.IsNullOrWhiteSpace(ConnectionString))
@@ -126,7 +126,7 @@ public class PostGisSpatialRefSysTableParserTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact] // Ignore("Only run this if you want a new SRID.csv file")
+    [Fact] // Ignore("Only run this if you want a new SRID.csv file")
     public void TestCreateSridCsv()
     {
         if (string.IsNullOrWhiteSpace(ConnectionString))

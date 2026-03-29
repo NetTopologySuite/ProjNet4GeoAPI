@@ -132,7 +132,7 @@ public class DefModelRuntimeTests
     {
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string? skipReason);
         Assert.False(ok);
-        Assert.Contains(expectedToken, Assert.IsAssignableFrom<string>(skipReason), StringComparison.OrdinalIgnoreCase);
+        Assert.Contains(expectedToken, Assert.IsType<string>(skipReason), StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>
@@ -236,17 +236,17 @@ public class DefModelRuntimeTests
     {
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
         Assert.True(ok, skipReason);
-        return Assert.IsAssignableFrom<MathTransform>(transform);
+        return Assert.IsType<MathTransform>(transform, exactMatch: false);
     }
 
     private static double[] CreatePoint(double x, double y, double z, double t)
     {
-        return new[] { x, y, z, t };
+        return [x, y, z, t];
     }
 
     private static double[] ConvertMercatorProjectedPointToGeographic(double[] point)
     {
-        double[] geographic = MercatorInverseTransform.Value.Transform(new[] { point[0], point[1] });
+        double[] geographic = MercatorInverseTransform.Value.Transform([point[0], point[1]]);
         return CreatePoint(geographic[0], geographic[1], point[2], point[3]);
     }
 

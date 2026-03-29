@@ -109,7 +109,7 @@ public class CoordinateSystemFactory
     /// <param name="toBase">Math transform to the base coordinate system.</param>
     /// <param name="arAxes">Axes of the fitted coordinate system.</param>
     /// <returns>A new <see cref="FittedCoordinateSystem"/>.</returns>
-    public FittedCoordinateSystem CreateFittedCoordinateSystem(string name, CoordinateSystem baseCoordinateSystem, Transformations.MathTransform toBase, List<AxisInfo> arAxes)
+    public FittedCoordinateSystem CreateFittedCoordinateSystem(string name, CoordinateSystem baseCoordinateSystem, MathTransform toBase, List<AxisInfo> arAxes)
     {
         if (string.IsNullOrWhiteSpace(name))
         {

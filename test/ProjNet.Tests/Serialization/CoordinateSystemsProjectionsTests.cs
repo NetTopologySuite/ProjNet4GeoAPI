@@ -36,16 +36,16 @@ public class CoordinateSystemsProjectionsTests
     /// <summary>
     /// Performs the documented operation.
     /// </summary>
-    [Xunit.Fact]
+    [Fact]
     public void CreateTransformationFromCoordinateSystemDeserializedFromWKT()
     {
         var utm17n_original = ProjNet.CoordinateSystems.ProjectedCoordinateSystem.WGS84_UTM(17, true);
         string utm17n_wkt = utm17n_original.WKT;
 
-        var utm17n_fromWKT = (ProjNet.CoordinateSystems.ProjectedCoordinateSystem)ProjNet.IO.CoordinateSystems.CoordinateSystemWktReader.Parse(utm17n_wkt);
+        var utm17n_fromWKT = (ProjectedCoordinateSystem)ProjNet.IO.CoordinateSystems.CoordinateSystemWktReader.Parse(utm17n_wkt);
         GeographicCoordinateSystem wgs84 = ProjNet.CoordinateSystems.GeographicCoordinateSystem.WGS84;
 
-        var coordinateSystemServices = new ProjNet.CoordinateSystemServices();
+        var coordinateSystemServices = new CoordinateSystemServices();
         Assert.Null(Record.Exception(() => coordinateSystemServices.CreateTransformation(utm17n_fromWKT, wgs84)));
     }
 }

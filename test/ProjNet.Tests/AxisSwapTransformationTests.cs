@@ -14,10 +14,10 @@ using Xunit;
 /// </summary>
 public class AxisSwapTransformationTests
 {
-    private static readonly double[] GeographicAxisInput = { 12d, 55d };
-    private static readonly double[] ProjectedAxisInput = { 500000d, 6100000d };
-    private static readonly double[] UnitConversionInput = { 100d, 200d };
-    private static readonly double[] RadianConversionInput = { 180d, 90d };
+    private static readonly double[] GeographicAxisInput = [12d, 55d];
+    private static readonly double[] ProjectedAxisInput = [500000d, 6100000d];
+    private static readonly double[] UnitConversionInput = [100d, 200d];
+    private static readonly double[] RadianConversionInput = [180d, 90d];
 
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();

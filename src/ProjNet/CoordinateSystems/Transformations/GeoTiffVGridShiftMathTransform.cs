@@ -250,7 +250,7 @@ internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
         private readonly double? noDataValue;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="GeoTiffVGridShiftMathTransform.VerticalGrid"/> class.
+        /// Initializes a new instance of the <see cref="VerticalGrid"/> class.
         /// </summary>
         /// <param name="sourcePath">Path of the source GeoTIFF file.</param>
         /// <param name="width">Number of grid columns.</param>

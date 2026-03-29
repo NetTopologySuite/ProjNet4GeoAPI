@@ -96,7 +96,7 @@ public class TopocentricRuntimeTests
     {
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
         Assert.True(ok, skipReason);
-        return Assert.IsAssignableFrom<MathTransform>(transform);
+        return Assert.IsType<MathTransform>(transform, exactMatch: false);
     }
 
     private static double[] CreatePoint(double x, double y, double z) => [x, y, z];

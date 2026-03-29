@@ -430,8 +430,8 @@ internal static partial class GeoTiffGridLoader
         double e,
         double f)
     {
-        double[] xs = new[] { 0d, width - 1d, 0d, width - 1d };
-        double[] ys = new[] { 0d, 0d, height - 1d, height - 1d };
+        double[] xs = [0d, width - 1d, 0d, width - 1d];
+        double[] ys = [0d, 0d, height - 1d, height - 1d];
         double west = double.PositiveInfinity;
         double east = double.NegativeInfinity;
         double south = double.PositiveInfinity;

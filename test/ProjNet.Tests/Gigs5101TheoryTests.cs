@@ -19,24 +19,24 @@ using Xunit;
 public class Gigs5101TheoryTests
 {
     private static readonly string[] Fixture5101Files =
-    {
+    [
         "5101.1-jhs.gie",
         "5101.2-jhs.gie",
         "5101.3-jhs.gie",
         "5101.4-jhs-etmerc.gie",
-    };
+    ];
 
     private static readonly string[] Fixture5102And5103Files =
-    {
+    [
         "5102.1.gie",
         "5102.2.gie",
         "5103.1.gie",
         "5103.2.gie",
         "5103.3.gie",
-    };
+    ];
 
     private static readonly string[] Fixture5104To5113Files =
-    {
+    [
         "5104.gie",
         "5105.2.gie",
         "5106.gie",
@@ -46,18 +46,18 @@ public class Gigs5101TheoryTests
         "5111.1.gie",
         "5112.gie",
         "5113.gie",
-    };
+    ];
 
     private static readonly string[] Fixture5200Files =
-    {
+    [
         "5201.gie",
         "5208.gie",
-    };
+    ];
 
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new CoordinateSystemFactory();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new CoordinateTransformationFactory();
 
-    private static readonly char[] OperationTokenSeparators = { ' ', '\t' };
+    private static readonly char[] OperationTokenSeparators = [' ', '\t'];
     private static readonly CoordinateSystemServices CoordinateSystemServices = new CoordinateSystemServices();
 
     /// <summary>
@@ -218,7 +218,7 @@ public class Gigs5101TheoryTests
                 continue;
             }
 
-            MathTransform pipelineTransform = Assert.IsAssignableFrom<MathTransform>(transform);
+            MathTransform pipelineTransform = Assert.IsType<MathTransform>(transform, exactMatch: false);
             double[] output;
             try
             {
@@ -340,10 +340,10 @@ public class Gigs5101TheoryTests
             return false;
         }
 
-        CoordinateSystem sourceCoordinateSystem = Assert.IsAssignableFrom<CoordinateSystem>(source);
-        CoordinateSystem targetCoordinateSystem = Assert.IsAssignableFrom<CoordinateSystem>(target);
+        CoordinateSystem targetCoordinateSystem = Assert.IsType<CoordinateSystem>(target, exactMatch: false);
         try
         {
+            CoordinateSystem sourceCoordinateSystem = Assert.IsType<CoordinateSystem>(source, exactMatch: false);
             ICoordinateTransformation coordinateTransformation = CoordinateTransformationFactory.CreateFromCoordinateSystems(sourceCoordinateSystem, targetCoordinateSystem);
             transform = coordinateTransformation.MathTransform;
             return transform is not null;
@@ -449,7 +449,7 @@ public class Gigs5101TheoryTests
         try
         {
             IProjection projection = CoordinateSystemFactory.CreateProjection("GIGS " + projectionClassName, projectionClassName, parameters);
-            GeographicCoordinateSystem geographic = Assert.IsAssignableFrom<GeographicCoordinateSystem>(geographicCoordinateSystem);
+            GeographicCoordinateSystem geographic = Assert.IsType<GeographicCoordinateSystem>(geographicCoordinateSystem);
             coordinateSystem = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
                 "GIGS projected",
                 geographic,
@@ -517,7 +517,7 @@ public class Gigs5101TheoryTests
         var projected = coordinateSystem as ProjectedCoordinateSystem;
         if (projected is not null)
         {
-            GeographicCoordinateSystem normalizedProjectedGeographic = Assert.IsAssignableFrom<GeographicCoordinateSystem>(NormalizeAxisOrder(projected.GeographicCoordinateSystem));
+            GeographicCoordinateSystem normalizedProjectedGeographic = Assert.IsType<GeographicCoordinateSystem>(NormalizeAxisOrder(projected.GeographicCoordinateSystem));
             return CoordinateSystemFactory.CreateProjectedCoordinateSystem(
                 projected.Name,
                 normalizedProjectedGeographic,
@@ -572,7 +572,7 @@ public class Gigs5101TheoryTests
         HorizontalDatum datum = CoordinateSystemFactory.CreateHorizontalDatum(
             "GIGS datum",
             DatumType.HD_Geocentric,
-            Assert.IsAssignableFrom<Ellipsoid>(ellipsoid),
+            Assert.IsType<Ellipsoid>(ellipsoid),
             null);
         gcs = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "GIGS geographic",
