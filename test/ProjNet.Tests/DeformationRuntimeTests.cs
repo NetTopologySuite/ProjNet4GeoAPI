@@ -19,17 +19,17 @@ public class DeformationRuntimeTests
     /// Gets invalid creation scenarios.
     /// </summary>
     /// <returns>Invalid case dataset.</returns>
-    public static IEnumerable<object[]> InvalidCreationCases
+    public static IEnumerable<TheoryDataRow<string, string>> InvalidCreationCases
     {
         get
         {
-            yield return new object[] { "+proj=deformation +dt=1 +ellps=GRS80", "xy_grids" };
-            yield return new object[] { "+proj=deformation +xy_grids=alaska +dt=1 +ellps=GRS80", "z_grids" };
-            yield return new object[] { "+proj=deformation +z_grids=egm96_15.gtx +dt=1 +ellps=GRS80", "xy_grids" };
-            yield return new object[] { "+proj=deformation +xy_grids=alaska +z_grids=egm96_15.gtx +ellps=GRS80", "+dt or +t_epoch" };
-            yield return new object[] { "+proj=deformation +xy_grids=alaska +z_grids=egm96_15.gtx +dt=1 +t_epoch=2016 +ellps=GRS80", "mutually exclusive" };
-            yield return new object[] { "+proj=deformation +xy_grids=nonexisting +z_grids=egm96_15.gtx +dt=1 +ellps=GRS80", "Required grid" };
-            yield return new object[] { "+proj=deformation +xy_grids=alaska +z_grids=nonexisting +dt=1 +ellps=GRS80", "Required grid" };
+            yield return new TheoryDataRow<string, string>("+proj=deformation +dt=1 +ellps=GRS80", "xy_grids");
+            yield return new TheoryDataRow<string, string>("+proj=deformation +xy_grids=alaska +dt=1 +ellps=GRS80", "z_grids");
+            yield return new TheoryDataRow<string, string>("+proj=deformation +z_grids=egm96_15.gtx +dt=1 +ellps=GRS80", "xy_grids");
+            yield return new TheoryDataRow<string, string>("+proj=deformation +xy_grids=alaska +z_grids=egm96_15.gtx +ellps=GRS80", "+dt or +t_epoch");
+            yield return new TheoryDataRow<string, string>("+proj=deformation +xy_grids=alaska +z_grids=egm96_15.gtx +dt=1 +t_epoch=2016 +ellps=GRS80", "mutually exclusive");
+            yield return new TheoryDataRow<string, string>("+proj=deformation +xy_grids=nonexisting +z_grids=egm96_15.gtx +dt=1 +ellps=GRS80", "Required grid");
+            yield return new TheoryDataRow<string, string>("+proj=deformation +xy_grids=alaska +z_grids=nonexisting +dt=1 +ellps=GRS80", "Required grid");
         }
     }
 
@@ -37,7 +37,7 @@ public class DeformationRuntimeTests
     /// Gets forward vector scenarios from <c>deformation.gie</c>.
     /// </summary>
     /// <returns>Forward case dataset.</returns>
-    public static IEnumerable<object[]> ForwardCases
+    public static IEnumerable<TheoryDataRow<string, double[], double[], double>> ForwardCases
     {
         get
         {
@@ -61,7 +61,7 @@ public class DeformationRuntimeTests
     /// Gets inverse 4D scenarios that rely on <c>+t_epoch</c>.
     /// </summary>
     /// <returns>Inverse case dataset.</returns>
-    public static IEnumerable<object[]> InverseCases
+    public static IEnumerable<TheoryDataRow<string, double[], double[], double>> InverseCases
     {
         get
         {
@@ -158,9 +158,9 @@ public class DeformationRuntimeTests
         AssertCoordinateClose(recovered, input, 2e-4d);
     }
 
-    private static object[] Case(string operation, double[] input, double[] expected, double tolerance)
+    private static TheoryDataRow<string, double[], double[], double> Case(string operation, double[] input, double[] expected, double tolerance)
     {
-        return new object[] { operation, input, expected, tolerance };
+        return new TheoryDataRow<string, double[], double[], double>(operation, input, expected, tolerance);
     }
 
     private static MathTransform CreateTransform(string operation)

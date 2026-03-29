@@ -24,18 +24,18 @@ public class DefModelRuntimeTests
     /// Gets invalid creation scenarios.
     /// </summary>
     /// <returns>Invalid case dataset.</returns>
-    public static IEnumerable<object[]> GetInvalidCreationCases()
+    public static IEnumerable<TheoryDataRow<string, string>> GetInvalidCreationCases()
     {
-        yield return new object[] { "+proj=defmodel", "+model" };
-        yield return new object[] { "+proj=defmodel +model=i_do_not_exist", "Cannot open" };
-        yield return new object[] { "+proj=defmodel +model=" + FindFixturePath(Path.Combine("Fixtures", "gie", "defmodel.gie")), "invalid model" };
+        yield return new TheoryDataRow<string, string>("+proj=defmodel", "+model");
+        yield return new TheoryDataRow<string, string>("+proj=defmodel +model=i_do_not_exist", "Cannot open");
+        yield return new TheoryDataRow<string, string>("+proj=defmodel +model=" + FindFixturePath(Path.Combine("Fixtures", "gie", "defmodel.gie")), "invalid model");
     }
 
     /// <summary>
     /// Gets forward vector scenarios from <c>defmodel.gie</c>.
     /// </summary>
     /// <returns>Forward case dataset.</returns>
-    public static IEnumerable<object[]> GetForwardCases()
+    public static IEnumerable<TheoryDataRow<string, double[], double[], double>> GetForwardCases()
     {
         yield return Case(
             BuildDefModelOperation("simple_model_degree_horizontal.json"),
@@ -109,7 +109,7 @@ public class DefModelRuntimeTests
     /// Gets representative roundtrip scenarios.
     /// </summary>
     /// <returns>Roundtrip case dataset.</returns>
-    public static IEnumerable<object[]> GetRoundtripCases()
+    public static IEnumerable<TheoryDataRow<string, double[], double>> GetRoundtripCases()
     {
         yield return RoundtripCase(BuildDefModelOperation("simple_model_degree_horizontal.json"), CreatePoint(2d, 49d, 30d, 2020d), 1e-8d);
         yield return RoundtripCase(BuildDefModelOperation("simple_model_degree_3d.json"), CreatePoint(2d, 49d, 30d, 2020d), 1e-8d);
@@ -189,14 +189,14 @@ public class DefModelRuntimeTests
         AssertCoordinateClose(recovered, input, tolerance);
     }
 
-    private static object[] Case(string operation, double[] input, double[] expected, double tolerance)
+    private static TheoryDataRow<string, double[], double[], double> Case(string operation, double[] input, double[] expected, double tolerance)
     {
-        return new object[] { operation, input, expected, tolerance };
+        return new TheoryDataRow<string, double[], double[], double>(operation, input, expected, tolerance);
     }
 
-    private static object[] RoundtripCase(string operation, double[] input, double tolerance)
+    private static TheoryDataRow<string, double[], double> RoundtripCase(string operation, double[] input, double tolerance)
     {
-        return new object[] { operation, input, tolerance };
+        return new TheoryDataRow<string, double[], double>(operation, input, tolerance);
     }
 
     private static string BuildDefModelOperation(string modelFileName)
