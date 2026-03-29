@@ -62,7 +62,7 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
             var axes = new List<AxisInfo>(2)
             {
                 new AxisInfo("Lon", AxisOrientationEnum.East),
-                new AxisInfo("Lat", AxisOrientationEnum.North)
+                new AxisInfo("Lat", AxisOrientationEnum.North),
             };
             return new GeographicCoordinateSystem(
                 CoordinateSystems.AngularUnit.Degrees,

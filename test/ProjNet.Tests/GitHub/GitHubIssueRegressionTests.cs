@@ -197,7 +197,7 @@ public class GitHubIssueRegressionTests
         var gcsAxes = new List<AxisInfo>(2)
         {
             new AxisInfo("Lon", AxisOrientationEnum.East),
-            new AxisInfo("Lat", AxisOrientationEnum.North)
+            new AxisInfo("Lat", AxisOrientationEnum.North),
         };
 
         var geographicCoordinateSystem =

@@ -202,7 +202,7 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
             new ProjectionParameter("rectified_grid_angle", 337.25556),
             new ProjectionParameter("scale_factor", 0.9996),
             new ProjectionParameter("false_easting", 2546731.496),
-            new ProjectionParameter("false_northing", -4354009.816)
+            new ProjectionParameter("false_northing", -4354009.816),
         };
 
         var factory = new CoordinateSystemFactory();

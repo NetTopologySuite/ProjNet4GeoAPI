@@ -38,9 +38,9 @@ public class PostGisSpatialRefSysTableParserTests
 
             string? connStr;
             using (FileStream fs = File.OpenRead("appsettings.json"))
-            using (JsonDocument doc = JsonDocument.Parse(fs))
+            using (var doc = JsonDocument.Parse(fs))
             {
-                if (!doc.RootElement.TryGetProperty("ConnectionString", out JsonElement connElement))
+                if (!doc.RootElement.TryGetProperty(nameof(ConnectionString), out JsonElement connElement))
                 {
                     return null;
                 }

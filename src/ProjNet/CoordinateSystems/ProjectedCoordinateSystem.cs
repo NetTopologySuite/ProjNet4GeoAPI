@@ -193,7 +193,7 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
             new ProjectionParameter("central_meridian", (zone * 6) - 183),
             new ProjectionParameter("scale_factor", 0.9996),
             new ProjectionParameter("false_easting", 500000),
-            new ProjectionParameter("false_northing", zoneIsNorth ? 0 : 10000000)
+            new ProjectionParameter("false_northing", zoneIsNorth ? 0 : 10000000),
         };
 
         // IProjection projection = cFac.CreateProjection("UTM" + Zone.ToString() + (ZoneIsNorth ? "N" : "S"), "Transverse_Mercator", parameters);

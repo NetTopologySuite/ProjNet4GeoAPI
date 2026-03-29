@@ -182,7 +182,7 @@ public class CoordinateSystemFactory
         var info = new List<AxisInfo>(2)
         {
             axis0,
-            axis1
+            axis1,
         };
         return new ProjectedCoordinateSystem(
             gcs.HorizontalDatum,
@@ -284,7 +284,7 @@ public class CoordinateSystemFactory
         var info = new List<AxisInfo>(2)
         {
             axis0,
-            axis1
+            axis1,
         };
         return new GeographicCoordinateSystem(angularUnit, datum, primeMeridian, info, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
     }
@@ -343,7 +343,7 @@ public class CoordinateSystemFactory
         {
             new AxisInfo("X", AxisOrientationEnum.Other),
             new AxisInfo("Y", AxisOrientationEnum.Other),
-            new AxisInfo("Z", AxisOrientationEnum.Other)
+            new AxisInfo("Z", AxisOrientationEnum.Other),
         };
         return new GeocentricCoordinateSystem(datum, linearUnit, primeMeridian, info, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
     }

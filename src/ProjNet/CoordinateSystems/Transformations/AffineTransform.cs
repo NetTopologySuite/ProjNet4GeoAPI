@@ -185,7 +185,7 @@ public class AffineTransform : MathTransform
         var pInfo = new List<ProjectionParameter>
         {
             new ProjectionParameter("num_row", rowCnt),
-            new ProjectionParameter("num_col", colCnt)
+            new ProjectionParameter("num_col", colCnt),
         };
 
         // fill matrix values
