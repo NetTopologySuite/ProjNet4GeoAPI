@@ -8,7 +8,7 @@ using ProjNet.CoordinateSystems;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Tests for coordinate system projection serialization and transformation.
 /// </summary>
 public class CoordinateSystemsProjectionsTests
 #if !NET7_0_OR_GREATER
@@ -34,7 +34,7 @@ public class CoordinateSystemsProjectionsTests
 #endif
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a coordinate transformation can be created from a coordinate system deserialized from its WKT representation.
     /// </summary>
     [Fact]
     public void CreateTransformationFromCoordinateSystemDeserializedFromWKT()

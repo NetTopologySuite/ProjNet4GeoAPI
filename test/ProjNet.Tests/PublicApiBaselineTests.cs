@@ -11,7 +11,7 @@ using PublicApiGenerator;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Tests that verify the public API surface of the ProjNet assembly matches the committed baseline.
 /// </summary>
 public class PublicApiBaselineTests
 {
@@ -24,7 +24,7 @@ public class PublicApiBaselineTests
     ];
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the current public API of the ProjNet assembly matches the committed baseline file.
     /// </summary>
     [Fact]
     public void PublicApiMatchesBaseline()

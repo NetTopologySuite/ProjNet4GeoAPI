@@ -13,7 +13,7 @@ using System.Text;
 using ProjNet.CoordinateSystems;
 
 /// <summary>
-/// Represents the documented type.
+/// Reads EPSG coordinate system definitions from a semicolon-delimited SRID CSV file.
 /// </summary>
 internal sealed class SRIDReader
 {
@@ -99,7 +99,7 @@ internal sealed class SRIDReader
     }
 
     /// <summary>
-    /// Represents the documented type.
+    /// Holds an SRID entry read from the CSV file, consisting of a numeric identifier and its WKT definition.
     /// </summary>
     public struct WktString
     {
