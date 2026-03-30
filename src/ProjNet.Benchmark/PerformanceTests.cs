@@ -31,21 +31,21 @@ public class PerformanceTests
 
     private int cnt;
 
-    private double[] xs = Array.Empty<double>();
+    private double[] xs = [];
 
-    private double[] ys = Array.Empty<double>();
+    private double[] ys = [];
 
-    private XY[] xys = Array.Empty<XY>();
+    private XY[] xys = [];
 
-    private XYZ[] xyzs = Array.Empty<XYZ>();
+    private XYZ[] xyzs = [];
 
-    private double[] xsCopy = Array.Empty<double>();
+    private double[] xsCopy = [];
 
-    private double[] ysCopy = Array.Empty<double>();
+    private double[] ysCopy = [];
 
-    private XY[] xysCopy = Array.Empty<XY>();
+    private XY[] xysCopy = [];
 
-    private XYZ[] xyzsCopy = Array.Empty<XYZ>();
+    private XYZ[] xyzsCopy = [];
 
     /// <summary>
     /// Executes all benchmark entry points once and verifies numerical consistency across variants.
@@ -56,7 +56,7 @@ public class PerformanceTests
         instance.GlobalSetup();
 
         instance.SoAOneByOne();
-        (double X, double Y)[] firstOutput = instance.xsCopy.Zip(instance.ysCopy, (x, y) => (X: x, Y: y)).ToArray();
+        (double X, double Y)[] firstOutput = [.. instance.xsCopy.Zip(instance.ysCopy, (x, y) => (X: x, Y: y))];
 
         for (int i = 0; i < firstOutput.Length; i++)
         {

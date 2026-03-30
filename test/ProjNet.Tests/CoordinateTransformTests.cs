@@ -100,7 +100,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             [290596.615, 6713943.567], [290596.701, 6713939.485],
         ];
 
-        double[][] tpoints = trans.MathTransform.TransformList(points).ToArray();
+        double[][] tpoints = [.. trans.MathTransform.TransformList(points)];
         for (int i = 0; i < points.Length; i++)
         {
             double expectedX = points[i][0];
@@ -536,7 +536,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             -0.540645); // Parameters for Denmark
 
         // Define geographic coordinate systems
-        GeographicCoordinateSystem gcsWGS72 = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+        _ = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "WGS72 Geographic",
             AngularUnit.Degrees,
             wgs72,
@@ -563,7 +563,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         // Define geocentric coordinate systems
         GeocentricCoordinateSystem gcenCsWGS72 = this.CoordinateSystemFactory.CreateGeocentricCoordinateSystem("WGS72 Geocentric", wgs72, LinearUnit.Metre, PrimeMeridian.Greenwich);
         GeocentricCoordinateSystem gcenCsWGS84 = this.CoordinateSystemFactory.CreateGeocentricCoordinateSystem("WGS84 Geocentric", HorizontalDatum.WGS84, LinearUnit.Metre, PrimeMeridian.Greenwich);
-        GeocentricCoordinateSystem gcenCsED50 = this.CoordinateSystemFactory.CreateGeocentricCoordinateSystem("ED50 Geocentric", ed50, LinearUnit.Metre, PrimeMeridian.Greenwich);
+        _ = this.CoordinateSystemFactory.CreateGeocentricCoordinateSystem("ED50 Geocentric", ed50, LinearUnit.Metre, PrimeMeridian.Greenwich);
 
         // Define projections
         var parameters = new List<ProjectionParameter>(5)

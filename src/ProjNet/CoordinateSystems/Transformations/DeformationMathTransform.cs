@@ -54,9 +54,9 @@ internal sealed class DeformationMathTransform : MathTransform
         bool isInverted)
     {
         this.velocityGrids = new ReadOnlyCollection<GeoTiffXyzGridShiftMathTransform.XyzGrid>(
-            (velocityGrids ?? []).ToArray());
-        this.horizontalGrids = new ReadOnlyCollection<CTable2Grid>((horizontalGrids ?? []).ToArray());
-        this.verticalGrids = new ReadOnlyCollection<GtxGrid>((verticalGrids ?? []).ToArray());
+            [.. velocityGrids ?? []]);
+        this.horizontalGrids = new ReadOnlyCollection<CTable2Grid>([.. horizontalGrids ?? []]);
+        this.verticalGrids = new ReadOnlyCollection<GtxGrid>([.. verticalGrids ?? []]);
         this.hasFixedDt = hasFixedDt;
         this.fixedDt = fixedDt;
         this.tEpoch = tEpoch;
@@ -370,7 +370,7 @@ internal sealed class DeformationMathTransform : MathTransform
             }
 
             bool isOptional = token[0] == '@';
-            string gridName = isOptional ? token.Substring(1) : token;
+            string gridName = isOptional ? token[1..] : token;
             if (string.IsNullOrWhiteSpace(gridName))
             {
                 continue;
@@ -438,13 +438,8 @@ internal sealed class DeformationMathTransform : MathTransform
             return true;
         }
 
-        if (!string.IsNullOrWhiteSpace(fileName)
-            && CoordinateTransformationFactory.TryResolveGridResourcePath(fileName, out resolvedPath))
-        {
-            return true;
-        }
-
-        return false;
+        return !string.IsNullOrWhiteSpace(fileName)
+            && CoordinateTransformationFactory.TryResolveGridResourcePath(fileName, out resolvedPath);
     }
 
     private static bool TryGetExistingPath(string candidate, [NotNullWhen(true)] out string? resolvedPath)
@@ -683,7 +678,7 @@ internal sealed class DeformationMathTransform : MathTransform
         double latitudeDegrees,
         out InterpolationCell cell)
     {
-        cell = default(InterpolationCell);
+        cell = default;
         if (!grid.TryMapToGridCoordinates(longitudeDegrees, latitudeDegrees, out double gridX, out double gridY))
         {
             return false;

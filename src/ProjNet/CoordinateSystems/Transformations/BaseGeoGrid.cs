@@ -191,12 +191,7 @@ internal abstract class BaseGeoGrid
             return true;
         }
 
-        if (this.TryMapRaw(longitude - 360d, latitude, out gridX, out gridY) && BaseGeoGrid.IsWithinGrid(gridX, gridY))
-        {
-            return true;
-        }
-
-        return false;
+        return this.TryMapRaw(longitude - 360d, latitude, out gridX, out gridY) && BaseGeoGrid.IsWithinGrid(gridX, gridY);
     }
 
     /// <summary>

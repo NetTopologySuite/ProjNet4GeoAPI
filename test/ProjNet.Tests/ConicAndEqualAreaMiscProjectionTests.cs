@@ -227,13 +227,10 @@ public class ConicAndEqualAreaMiscProjectionTests
             return BuildRpolyWkt(projectionName);
         }
 
-        if (projectionName.Equals("tpeqd", StringComparison.OrdinalIgnoreCase)
-            || projectionName.Equals("two_point_equidistant", StringComparison.OrdinalIgnoreCase))
-        {
-            return BuildTpeqdWkt(projectionName);
-        }
-
-        return BuildProjectedWkt(projectionName, Grs80, null);
+        return projectionName.Equals("tpeqd", StringComparison.OrdinalIgnoreCase)
+            || projectionName.Equals("two_point_equidistant", StringComparison.OrdinalIgnoreCase)
+            ? BuildTpeqdWkt(projectionName)
+            : BuildProjectedWkt(projectionName, Grs80, null);
     }
 
     private static string BuildCanonicalWkt(string projectionName)

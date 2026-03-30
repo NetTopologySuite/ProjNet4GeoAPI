@@ -238,7 +238,7 @@ public class Gigs5101TheoryTests
             double tolerance = Math.Max(ToNumericTolerance(testCase.ToleranceValue, testCase.ToleranceUnit), 1e-3d);
             if (LooksLikeGeographicExpect(testCase.Expect))
             {
-                tolerance = tolerance / 111319.49079327358d;
+                tolerance /= 111319.49079327358d;
             }
 
             double deltaX = Math.Abs(output[0] - testCase.Expect[0]);
@@ -376,7 +376,7 @@ public class Gigs5101TheoryTests
         foreach (string token in tokens)
         {
             string normalized = token.StartsWith('+')
-                ? token.Substring(1)
+                ? token[1..]
                 : token;
 
             if (normalized.Equals("proj=pipeline", StringComparison.OrdinalIgnoreCase))
@@ -489,7 +489,7 @@ public class Gigs5101TheoryTests
         const string epsgPrefix = "epsg:";
         if (value.StartsWith(epsgPrefix, StringComparison.OrdinalIgnoreCase))
         {
-            value = value.Substring(epsgPrefix.Length);
+            value = value[epsgPrefix.Length..];
         }
 
         return int.TryParse(value, NumberStyles.Integer, CultureInfo.InvariantCulture, out srid);
@@ -586,7 +586,6 @@ public class Gigs5101TheoryTests
 
     private static bool TryResolveEllipsoid(Dictionary<string, string> args, out Ellipsoid? ellipsoid)
     {
-        ellipsoid = null;
         if (args.TryGetValue("ellps", out string? ellps))
         {
             if (ellps.Equals("wgs84", StringComparison.OrdinalIgnoreCase))
@@ -690,12 +689,7 @@ public class Gigs5101TheoryTests
     private static bool TryGetDouble(Dictionary<string, string> args, string key, out double value)
     {
         value = 0d;
-        if (!args.TryGetValue(key, out string? raw) || string.IsNullOrWhiteSpace(raw))
-        {
-            return false;
-        }
-
-        return double.TryParse(raw, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value);
+        return args.TryGetValue(key, out string? raw) && !string.IsNullOrWhiteSpace(raw) && double.TryParse(raw, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value);
     }
 
     private static void ReplaceParameter(List<ProjectionParameter> parameters, string name, double value)
@@ -724,7 +718,7 @@ public class Gigs5101TheoryTests
         foreach (string token in tokens)
         {
             string body = token.Length > 0 && token[0] == '+'
-                ? token.Substring(1)
+                ? token[1..]
                 : token;
 
             if (body.Length == 0
@@ -741,8 +735,8 @@ public class Gigs5101TheoryTests
             }
             else
             {
-                string key = body.Substring(0, index);
-                string value = body.Substring(index + 1);
+                string key = body[..index];
+                string value = body[(index + 1)..];
                 args[key] = value;
             }
         }
@@ -790,21 +784,11 @@ public class Gigs5101TheoryTests
             return value / 100d;
         }
 
-        if (unit.Equals("nm", StringComparison.OrdinalIgnoreCase))
-        {
-            return value * 1e-9d;
-        }
-
-        return value;
+        return unit.Equals("nm", StringComparison.OrdinalIgnoreCase) ? value * 1e-9d : value;
     }
 
     private static bool LooksLikeGeographicExpect(double[] expect)
     {
-        if (expect is null || expect.Length < 2)
-        {
-            return false;
-        }
-
-        return Math.Abs(expect[0]) <= 360d && Math.Abs(expect[1]) <= 90d;
+        return expect is not null && expect.Length >= 2 && Math.Abs(expect[0]) <= 360d && Math.Abs(expect[1]) <= 90d;
     }
 }

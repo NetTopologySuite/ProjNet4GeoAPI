@@ -412,7 +412,7 @@ public class GieBuiltinsTheoryTests
         string fixturePath = FindGiePath(fileName);
         if (fixturePath is null)
         {
-            yield return new TheoryDataRow<GieCase?>((GieCase?)null);
+            yield return new TheoryDataRow<GieCase?>(null);
             yield break;
         }
 
@@ -430,13 +430,13 @@ public class GieBuiltinsTheoryTests
         }
         catch (FormatException)
         {
-            parsed = Array.Empty<GieCase>();
+            parsed = [];
             parseFailed = true;
         }
 
         if (parseFailed)
         {
-            yield return new TheoryDataRow<GieCase?>((GieCase?)null);
+            yield return new TheoryDataRow<GieCase?>(null);
             yield break;
         }
 
@@ -473,7 +473,7 @@ public class GieBuiltinsTheoryTests
 
         if (emitted == 0)
         {
-            yield return new TheoryDataRow<GieCase?>((GieCase?)null);
+            yield return new TheoryDataRow<GieCase?>(null);
         }
     }
 
@@ -620,7 +620,7 @@ public class GieBuiltinsTheoryTests
         foreach (string token in tokens)
         {
             string normalized = token.StartsWith('+')
-                ? token.Substring(1)
+                ? token[1..]
                 : token;
 
             if (normalized.Equals("proj=pipeline", StringComparison.OrdinalIgnoreCase))
@@ -724,8 +724,6 @@ public class GieBuiltinsTheoryTests
 
     private static bool TryResolveEllipsoid(Dictionary<string, string> args, out Ellipsoid? ellipsoid)
     {
-        ellipsoid = null;
-
         if (TryGetDouble(args, "r", out double sphereRadius) && sphereRadius > 0d)
         {
             ellipsoid = CoordinateSystemFactory.CreateEllipsoid("GIE sphere", sphereRadius, sphereRadius, LinearUnit.Metre);
@@ -1027,7 +1025,7 @@ public class GieBuiltinsTheoryTests
                 continue;
             }
 
-            string body = token[0] == '+' ? token.Substring(1) : token;
+            string body = token[0] == '+' ? token[1..] : token;
             int index = body.IndexOf('=', StringComparison.Ordinal);
             if (index < 0)
             {
@@ -1035,8 +1033,8 @@ public class GieBuiltinsTheoryTests
             }
             else
             {
-                string key = body.Substring(0, index);
-                string value = body.Substring(index + 1);
+                string key = body[..index];
+                string value = body[(index + 1)..];
                 args[key] = value;
             }
         }
@@ -1047,12 +1045,7 @@ public class GieBuiltinsTheoryTests
     private static bool TryExtractProjCode(string operation, out string? projCode)
     {
         projCode = null;
-        if (!TryParseOperationArguments(operation, out Dictionary<string, string> args))
-        {
-            return false;
-        }
-
-        return args.TryGetValue("proj", out projCode);
+        return TryParseOperationArguments(operation, out Dictionary<string, string> args) && args.TryGetValue("proj", out projCode);
     }
 
     private static bool ContainsUnsupportedRuntimeTokens(Dictionary<string, string> args)
@@ -1114,12 +1107,7 @@ public class GieBuiltinsTheoryTests
             return true;
         }
 
-        if (args.TryGetValue("units", out string? units) && !units.Equals("m", StringComparison.OrdinalIgnoreCase))
-        {
-            return true;
-        }
-
-        return false;
+        return args.TryGetValue("units", out string? units) && !units.Equals("m", StringComparison.OrdinalIgnoreCase);
     }
 
     private static bool TryGetDouble(Dictionary<string, string> args, string key, out double value)
@@ -1144,7 +1132,7 @@ public class GieBuiltinsTheoryTests
 
         if (radiansSuffix)
         {
-            value = value * (180d / Math.PI);
+            value *= 180d / Math.PI;
         }
 
         return true;
@@ -1314,11 +1302,6 @@ public class GieBuiltinsTheoryTests
             return value / 100d;
         }
 
-        if (unit.Equals("nm", StringComparison.OrdinalIgnoreCase))
-        {
-            return value * 1e-9d;
-        }
-
-        return value;
+        return unit.Equals("nm", StringComparison.OrdinalIgnoreCase) ? value * 1e-9d : value;
     }
 }

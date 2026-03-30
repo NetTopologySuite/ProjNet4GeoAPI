@@ -45,7 +45,7 @@ Proj.NET performs point-to-point coordinate conversions between geodetic coordin
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="System.Memory" />
-	<!--<PackageReference Include="System.Numerics.Vectors" />-->
+    <PackageReference Include="Microsoft.Bcl.Memory" />
   </ItemGroup>
 
   <ItemGroup>

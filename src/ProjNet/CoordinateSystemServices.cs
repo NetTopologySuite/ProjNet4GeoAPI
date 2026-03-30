@@ -166,12 +166,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     public CoordinateSystem? GetCoordinateSystem(string authority, long code)
     {
         int? srid = this.GetSRID(authority, code);
-        if (srid.HasValue)
-        {
-            return this.GetCoordinateSystem(srid.Value);
-        }
-
-        return null;
+        return srid.HasValue ? this.GetCoordinateSystem(srid.Value) : null;
     }
 
     /// <summary>
@@ -201,7 +196,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     public int[] GetAvailableSridValues()
     {
         this.WaitForInitialization();
-        return this.csBySrid.Keys.OrderBy(v => v).ToArray();
+        return [.. this.csBySrid.Keys.OrderBy(v => v)];
     }
 
     /// <summary>
@@ -215,12 +210,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
         var key = new CoordinateSystemKey(authority, authorityCode);
         int srid;
         this.WaitForInitialization();
-        if (this.sridByCs.TryGetValue(key, out srid))
-        {
-            return srid;
-        }
-
-        return null;
+        return this.sridByCs.TryGetValue(key, out srid) ? srid : null;
     }
 
     /// <summary>
@@ -245,12 +235,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     /// <returns>A coordinate transformation, or <see langword="null"/> if no transformation could be created.</returns>
     public ICoordinateTransformation? CreateTransformation(CoordinateSystem? source, CoordinateSystem? target)
     {
-        if (source is null || target is null)
-        {
-            return null;
-        }
-
-        return this.ctFactory.CreateFromCoordinateSystems(source, target);
+        return source is null || target is null ? null : this.ctFactory.CreateFromCoordinateSystems(source, target);
     }
 
     /// <summary>
@@ -423,24 +408,16 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
                 return true;
             }
 
-            if (x is null || y is null)
-            {
-                return false;
-            }
-
-            return x.AuthorityCode == y.AuthorityCode &&
+            return x is not null && y is not null && x.AuthorityCode == y.AuthorityCode &&
                 string.Equals(x.Authority, y.Authority, StringComparison.OrdinalIgnoreCase);
         }
 
         /// <inheritdoc />
         public override int GetHashCode(IInfo obj)
         {
-            if (obj is null)
-            {
-                return 0;
-            }
-
-            return Convert.ToInt32(obj.AuthorityCode) + (obj.Authority is not null ? StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Authority) : 0);
+            return obj is null
+                ? 0
+                : Convert.ToInt32(obj.AuthorityCode) + (obj.Authority is not null ? StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Authority) : 0);
         }
     }
 

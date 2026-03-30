@@ -58,12 +58,7 @@ internal sealed class UnitConvertMathTransform : MathTransform
     public override bool Identity()
     {
         bool xyIdentity = this.xyScale.Equals(1d);
-        if (this.dimension < 3)
-        {
-            return xyIdentity;
-        }
-
-        return xyIdentity && this.zScale.Equals(1d);
+        return this.dimension < 3 ? xyIdentity : xyIdentity && this.zScale.Equals(1d);
     }
 
     /// <inheritdoc />

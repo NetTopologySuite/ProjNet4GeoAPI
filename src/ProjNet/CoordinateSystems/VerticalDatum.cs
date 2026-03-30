@@ -71,11 +71,6 @@ public class VerticalDatum : Datum
     /// <inheritdoc/>
     public override bool EqualParams(object obj)
     {
-        if (obj is VerticalDatum vertDatum)
-        {
-            return base.EqualParams(vertDatum);
-        }
-
-        return false;
+        return obj is VerticalDatum vertDatum && base.EqualParams(vertDatum);
     }
 }

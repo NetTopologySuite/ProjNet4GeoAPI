@@ -108,12 +108,7 @@ internal class RobinsonProjection : MapProjection
         }
 
         int index = (int)Math.Floor(phiAbs * 36d / PI);
-        if (index < 0)
-        {
-            return 0;
-        }
-
-        return index >= CoeffX.Length - 1 ? CoeffX.Length - 2 : index;
+        return index < 0 ? 0 : index >= CoeffX.Length - 1 ? CoeffX.Length - 2 : index;
     }
 
     private static int FindLatitudeBand(double yNormalized)
@@ -123,7 +118,7 @@ internal class RobinsonProjection : MapProjection
             return 0;
         }
 
-        if (yNormalized >= CoeffY[CoeffY.Length - 1])
+        if (yNormalized >= CoeffY[^1])
         {
             return CoeffY.Length - 2;
         }

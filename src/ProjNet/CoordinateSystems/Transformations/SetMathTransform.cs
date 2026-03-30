@@ -104,8 +104,6 @@ internal sealed class SetMathTransform : MathTransform
         out string? skipReason)
     {
         transform = null;
-        skipReason = null;
-
         if (args is null)
         {
             skipReason = "set arguments were null.";

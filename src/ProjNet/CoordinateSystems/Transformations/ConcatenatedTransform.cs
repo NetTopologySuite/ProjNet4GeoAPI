@@ -56,7 +56,7 @@ internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationC
     public override int DimSource => this.coordinateTransformationList[0].SourceCS.Dimension;
 
     /// <inheritdoc/>
-    public override int DimTarget => this.coordinateTransformationList[this.coordinateTransformationList.Count - 1].TargetCS.Dimension;
+    public override int DimTarget => this.coordinateTransformationList[^1].TargetCS.Dimension;
 
     /// <inheritdoc/>
     public CoordinateSystem SourceCS { get => this.CoordinateTransformationList[0].SourceCS; }

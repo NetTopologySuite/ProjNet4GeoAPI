@@ -468,12 +468,7 @@ public abstract class MapProjection : MathTransform, IProjection
             return false;
         }
 
-        if (!this.Parameters.Equals(projection.Parameters))
-        {
-            return false;
-        }
-
-        return this.IsInverse == projection.IsInverse;
+        return this.Parameters.Equals(projection.Parameters) && this.IsInverse == projection.IsInverse;
     }
 
     /// <summary>
@@ -866,14 +861,7 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <returns>1 if <paramref name="x"/> is non-negative; otherwise -1.</returns>
     protected static double Sign(double x)
     {
-        if (x < 0.0)
-        {
-            return -1;
-        }
-        else
-        {
-            return 1;
-        }
+        return x < 0.0 ? -1 : 1;
     }
 
     /// <summary>
@@ -892,23 +880,23 @@ public abstract class MapProjection : MathTransform, IProjection
             }
             else if (((long)Math.Abs(x / Math.PI)) < 2)
             {
-                x = x - (Sign(x) * TwoPi);
+                x -= Sign(x) * TwoPi;
             }
             else if (((long)Math.Abs(x / TwoPi)) < prjMAXLONG)
             {
-                x = x - (((long)(x / TwoPi)) * TwoPi);
+                x -= ((long)(x / TwoPi)) * TwoPi;
             }
             else if (((long)Math.Abs(x / (prjMAXLONG * TwoPi))) < prjMAXLONG)
             {
-                x = x - (((long)(x / (prjMAXLONG * TwoPi))) * (TwoPi * prjMAXLONG));
+                x -= ((long)(x / (prjMAXLONG * TwoPi))) * (TwoPi * prjMAXLONG);
             }
             else if (((long)Math.Abs(x / (DblLong * TwoPi))) < prjMAXLONG)
             {
-                x = x - (((long)(x / (DblLong * TwoPi))) * (TwoPi * DblLong));
+                x -= ((long)(x / (DblLong * TwoPi))) * (TwoPi * DblLong);
             }
             else
             {
-                x = x - (Sign(x) * TwoPi);
+                x -= Sign(x) * TwoPi;
             }
 
             count++;
@@ -970,12 +958,7 @@ public abstract class MapProjection : MathTransform, IProjection
             double div2 = 1.0 + con;
 
             // avoid zero division, fail gracefully
-            if (div1 == 0.0 || div2 == 0.0)
-            {
-                return HugeVal;
-            }
-
-            return one_es * ((sinphi / div1) - ((.5 / eccent) * Math.Log((1.0 - con) / div2)));
+            return div1 == 0.0 || div2 == 0.0 ? HugeVal : one_es * ((sinphi / div1) - ((.5 / eccent) * Math.Log((1.0 - con) / div2)));
         }
         else
         {
@@ -1046,7 +1029,7 @@ public abstract class MapProjection : MathTransform, IProjection
             com = 1.0 - (con * con);
             dphi = .5 * com * com / cospi * ((qs / (1.0 - eccnts)) - (sinpi / com) +
                                      (.5 / eccent * Math.Log((1.0 - con) / (1.0 + con))));
-            phi = phi + dphi;
+            phi += dphi;
             if (Math.Abs(dphi) <= 1e-7)
             {
                 return phi;

@@ -319,11 +319,6 @@ internal sealed class S2Projection : MapProjection
             return Face.Front;
         }
 
-        if (Math.Abs(lam0) <= HalfPi + FortPi)
-        {
-            return lam0 > 0d ? Face.Right : Face.Left;
-        }
-
-        return Face.Back;
+        return Math.Abs(lam0) <= HalfPi + FortPi ? lam0 > 0d ? Face.Right : Face.Left : Face.Back;
     }
 }

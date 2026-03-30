@@ -205,42 +205,33 @@ public static partial class CoordinateSystemWktReader
         tokenizer.NextToken();
         string unitname = tokenizer.GetStringValue();
         tokenizer.ReadCloser(bracket);
-        switch (unitname.ToUpperInvariant())
+        return unitname.ToUpperInvariant() switch
         {
-            case "DOWN": return new AxisInfo(axisName, AxisOrientationEnum.Down);
-            case "EAST": return new AxisInfo(axisName, AxisOrientationEnum.East);
-            case "NORTH": return new AxisInfo(axisName, AxisOrientationEnum.North);
-            case "OTHER": return new AxisInfo(axisName, AxisOrientationEnum.Other);
-            case "SOUTH": return new AxisInfo(axisName, AxisOrientationEnum.South);
-            case "UP": return new AxisInfo(axisName, AxisOrientationEnum.Up);
-            case "WEST": return new AxisInfo(axisName, AxisOrientationEnum.West);
-            default:
-                return ArgumentGuard.ThrowArgument<AxisInfo>("Invalid axis name '" + unitname + "' in WKT");
-        }
+            "DOWN" => new AxisInfo(axisName, AxisOrientationEnum.Down),
+            "EAST" => new AxisInfo(axisName, AxisOrientationEnum.East),
+            "NORTH" => new AxisInfo(axisName, AxisOrientationEnum.North),
+            "OTHER" => new AxisInfo(axisName, AxisOrientationEnum.Other),
+            "SOUTH" => new AxisInfo(axisName, AxisOrientationEnum.South),
+            "UP" => new AxisInfo(axisName, AxisOrientationEnum.Up),
+            "WEST" => new AxisInfo(axisName, AxisOrientationEnum.West),
+            _ => ArgumentGuard.ThrowArgument<AxisInfo>("Invalid axis name '" + unitname + "' in WKT"),
+        };
     }
 
     private static CoordinateSystem ReadCoordinateSystem(string? coordinateSystem, WktTokenizer tokenizer)
     {
         string coordinateSystemText = coordinateSystem ?? tokenizer.GetStringValue();
-        switch (tokenizer.GetStringValue())
+        return tokenizer.GetStringValue() switch
         {
-            case "GEOGCS":
-                return ReadGeographicCoordinateSystem(tokenizer);
-            case "PROJCS":
-                return ReadProjectedCoordinateSystem(tokenizer);
-            case "FITTED_CS":
-                return ReadFittedCoordinateSystem(tokenizer);
-            case "GEOCCS":
-                return ReadGeocentricCoordinateSystem(tokenizer);
-            case "COMPD_CS":
-                return ReadCompoundCoordinateSystem(tokenizer);
-            case "VERT_CS":
-                return ReadVerticalCoordinateSystem(tokenizer);
-            case "LOCAL_CS":
-                throw new NotSupportedException($"{coordinateSystemText} coordinate system is not supported.");
-            default:
-                throw new InvalidOperationException($"{coordinateSystemText} coordinate system is not recognized.");
-        }
+            "GEOGCS" => ReadGeographicCoordinateSystem(tokenizer),
+            "PROJCS" => ReadProjectedCoordinateSystem(tokenizer),
+            "FITTED_CS" => ReadFittedCoordinateSystem(tokenizer),
+            "GEOCCS" => ReadGeocentricCoordinateSystem(tokenizer),
+            "COMPD_CS" => ReadCompoundCoordinateSystem(tokenizer),
+            "VERT_CS" => ReadVerticalCoordinateSystem(tokenizer),
+            "LOCAL_CS" => throw new NotSupportedException($"{coordinateSystemText} coordinate system is not supported."),
+            _ => throw new InvalidOperationException($"{coordinateSystemText} coordinate system is not recognized."),
+        };
     }
 
     // Reads either 3, 6 or 7 parameter Bursa-Wolf values from TOWGS84 token
@@ -390,7 +381,7 @@ public static partial class CoordinateSystemWktReader
         //     AXIS["Northing","NORTH"],
         //     AUTHORITY["EPSG","27700"]
         // ]
-        WktBracket bracket = tokenizer.ReadOpener();
+        _ = tokenizer.ReadOpener();
         string name = tokenizer.ReadDoubleQuotedWord();
         tokenizer.ReadToken(",");
         tokenizer.ReadToken("GEOGCS");
@@ -447,7 +438,7 @@ public static partial class CoordinateSystemWktReader
             axisInfo.Add(new AxisInfo("Y", AxisOrientationEnum.North));
         }
 
-        var projectedCS = new ProjectedCoordinateSystem(geographicCS.HorizontalDatum, geographicCS, unit as LinearUnit, projection, axisInfo, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+        var projectedCS = new ProjectedCoordinateSystem(geographicCS.HorizontalDatum, geographicCS, unit, projection, axisInfo, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
         return projectedCS;
     }
 
@@ -489,10 +480,7 @@ public static partial class CoordinateSystemWktReader
         }
 
         // This is default axis values if not specified.
-        if (info is null)
-        {
-            info = new AxisInfo("Up", AxisOrientationEnum.Up);
-        }
+        info ??= new AxisInfo("Up", AxisOrientationEnum.Up);
 
         var verticalCs = new VerticalCoordinateSystem(linearUnit, verticalDatum, info, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
         return verticalCs;

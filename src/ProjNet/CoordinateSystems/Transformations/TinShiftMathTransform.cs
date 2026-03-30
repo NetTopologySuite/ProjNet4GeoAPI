@@ -435,12 +435,7 @@ internal sealed class TinShiftMathTransform : MathTransform
             throw new FormatException("idx_vertex2 must be specified in triangles_columns[].");
         }
 
-        if (result.Index3 < 0)
-        {
-            throw new FormatException("idx_vertex3 must be specified in triangles_columns[].");
-        }
-
-        return result;
+        return result.Index3 < 0 ? throw new FormatException("idx_vertex3 must be specified in triangles_columns[].") : result;
     }
 
     private static double[] ParseVertices(
@@ -614,12 +609,9 @@ internal sealed class TinShiftMathTransform : MathTransform
             throw new FormatException("Missing \"" + propertyName + "\" key.");
         }
 
-        if (value.ValueKind != JsonValueKind.Array)
-        {
-            throw new FormatException("The value of \"" + propertyName + "\" should be a array.");
-        }
-
-        return value;
+        return value.ValueKind != JsonValueKind.Array
+            ? throw new FormatException("The value of \"" + propertyName + "\" should be a array.")
+            : value;
     }
 
     private static string GetRequiredString(JsonElement parent, string propertyName)
@@ -635,34 +627,21 @@ internal sealed class TinShiftMathTransform : MathTransform
         }
 
         string? text = value.GetString();
-        if (text is null)
-        {
-            throw new FormatException("The value of \"" + propertyName + "\" should be a string.");
-        }
-
-        return text;
+        return text is null ? throw new FormatException("The value of \"" + propertyName + "\" should be a string.") : text;
     }
 
     private static double ReadNumber(JsonElement array, int index, string errorMessage)
     {
         JsonElement value = array[index];
-        if (value.ValueKind != JsonValueKind.Number)
-        {
-            throw new FormatException(errorMessage);
-        }
-
-        return value.GetDouble();
+        return value.ValueKind != JsonValueKind.Number ? throw new FormatException(errorMessage) : value.GetDouble();
     }
 
     private static int ReadNonNegativeInteger(JsonElement array, int index, string errorMessage)
     {
         JsonElement value = array[index];
-        if (value.ValueKind != JsonValueKind.Number || !value.TryGetInt32(out int intValue) || intValue < 0)
-        {
-            throw new FormatException(errorMessage);
-        }
-
-        return intValue;
+        return value.ValueKind != JsonValueKind.Number || !value.TryGetInt32(out int intValue) || intValue < 0
+            ? throw new FormatException(errorMessage)
+            : intValue;
     }
 
     private static bool TryComputeBarycentricCoordinates(

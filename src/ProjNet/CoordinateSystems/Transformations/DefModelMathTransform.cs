@@ -162,8 +162,6 @@ internal sealed class DefModelMathTransform : MathTransform
         out string? skipReason)
     {
         transform = null;
-        skipReason = null;
-
         if (args is null)
         {
             skipReason = "defmodel arguments were null.";
@@ -522,12 +520,7 @@ internal sealed class DefModelMathTransform : MathTransform
         }
 
         var services = new CoordinateSystemServices();
-        if (!services.TryGetCoordinateSystem(epsgCode, out CoordinateSystem? coordinateSystem))
-        {
-            return true;
-        }
-
-        return coordinateSystem is GeographicCoordinateSystem;
+        return !services.TryGetCoordinateSystem(epsgCode, out CoordinateSystem? coordinateSystem) || coordinateSystem is GeographicCoordinateSystem;
     }
 
     private static bool TryParseEpsgCode(string crsToken, out int epsgCode)
@@ -544,7 +537,7 @@ internal sealed class DefModelMathTransform : MathTransform
             return false;
         }
 
-        string suffix = crsToken.Substring(prefix.Length).Trim();
+        string suffix = crsToken[prefix.Length..].Trim();
         return int.TryParse(suffix, NumberStyles.Integer, CultureInfo.InvariantCulture, out epsgCode)
             && epsgCode > 0;
     }
@@ -677,7 +670,7 @@ internal sealed class DefModelMathTransform : MathTransform
             index++;
         }
 
-        return components.ToArray();
+        return [.. components];
     }
 
     private static DisplacementType ParseDisplacementType(string token)
@@ -753,7 +746,7 @@ internal sealed class DefModelMathTransform : MathTransform
                     GetRequiredDouble(tupleElement, "scale_factor")));
             }
 
-            return new PiecewiseTimeFunction(beforeFirst, afterLast, tuples.ToArray());
+            return new PiecewiseTimeFunction(beforeFirst, afterLast, [.. tuples]);
         }
 
         if (timeFunctionType == "EXPONENTIAL")
@@ -761,15 +754,12 @@ internal sealed class DefModelMathTransform : MathTransform
             double referenceEpoch = ParseIso8601ToDecimalYear(GetRequiredString(parameters, "reference_epoch"));
             string endEpochString = GetOptionalString(parameters, "end_epoch");
             double? endEpoch = string.IsNullOrWhiteSpace(endEpochString)
-                ? (double?)null
+                ? null
                 : ParseIso8601ToDecimalYear(endEpochString);
             double relaxationConstant = GetRequiredDouble(parameters, "relaxation_constant");
-            if (relaxationConstant <= 0d)
-            {
-                throw new FormatException("Invalid value for relaxation_constant.");
-            }
-
-            return new ExponentialTimeFunction(
+            return relaxationConstant <= 0d
+                ? throw new FormatException("Invalid value for relaxation_constant.")
+                : (ITimeFunction)new ExponentialTimeFunction(
                 referenceEpoch,
                 endEpoch,
                 relaxationConstant,
@@ -785,12 +775,9 @@ internal sealed class DefModelMathTransform : MathTransform
     {
         double first = ParseIso8601ToDecimalYear(GetRequiredString(timeExtentObject, "first"));
         double last = ParseIso8601ToDecimalYear(GetRequiredString(timeExtentObject, "last"));
-        if (last < first)
-        {
-            throw new FormatException("time_extent.last must be greater than or equal to time_extent.first.");
-        }
-
-        return new TimeExtent(first, last);
+        return last < first
+            ? throw new FormatException("time_extent.last must be greater than or equal to time_extent.first.")
+            : new TimeExtent(first, last);
     }
 
     private static SpatialExtent ParseSpatialExtent(JsonElement extentObject, string context)
@@ -812,23 +799,17 @@ internal sealed class DefModelMathTransform : MathTransform
         double minY = GetArrayDouble(bboxArray, 1, context);
         double maxX = GetArrayDouble(bboxArray, 2, context);
         double maxY = GetArrayDouble(bboxArray, 3, context);
-        if (maxX < minX || maxY < minY)
-        {
-            throw new FormatException(context + ".parameters.bbox has invalid ordering.");
-        }
-
-        return new SpatialExtent(minX, minY, maxX, maxY);
+        return maxX < minX || maxY < minY
+            ? throw new FormatException(context + ".parameters.bbox has invalid ordering.")
+            : new SpatialExtent(minX, minY, maxX, maxY);
     }
 
     private static double GetArrayDouble(JsonElement arrayElement, int index, string context)
     {
         JsonElement value = arrayElement[index];
-        if (value.ValueKind != JsonValueKind.Number)
-        {
-            throw new FormatException(context + ".parameters.bbox contains a non-numeric value.");
-        }
-
-        return value.GetDouble();
+        return value.ValueKind != JsonValueKind.Number
+            ? throw new FormatException(context + ".parameters.bbox contains a non-numeric value.")
+            : value.GetDouble();
     }
 
     private static JsonElement GetRequiredObject(JsonElement parent, string propertyName)
@@ -838,12 +819,7 @@ internal sealed class DefModelMathTransform : MathTransform
             throw new FormatException("Missing \"" + propertyName + "\" key.");
         }
 
-        if (value.ValueKind != JsonValueKind.Object)
-        {
-            throw new FormatException("\"" + propertyName + "\" must be an object.");
-        }
-
-        return value;
+        return value.ValueKind != JsonValueKind.Object ? throw new FormatException("\"" + propertyName + "\" must be an object.") : value;
     }
 
     private static JsonElement GetRequiredArray(JsonElement parent, string propertyName)
@@ -853,12 +829,7 @@ internal sealed class DefModelMathTransform : MathTransform
             throw new FormatException("Missing \"" + propertyName + "\" key.");
         }
 
-        if (value.ValueKind != JsonValueKind.Array)
-        {
-            throw new FormatException("\"" + propertyName + "\" must be an array.");
-        }
-
-        return value;
+        return value.ValueKind != JsonValueKind.Array ? throw new FormatException("\"" + propertyName + "\" must be an array.") : value;
     }
 
     private static string GetRequiredString(JsonElement parent, string propertyName)
@@ -874,12 +845,7 @@ internal sealed class DefModelMathTransform : MathTransform
         }
 
         string? text = value.GetString();
-        if (text is null)
-        {
-            throw new FormatException("\"" + propertyName + "\" must not be null.");
-        }
-
-        return text;
+        return text ?? throw new FormatException("\"" + propertyName + "\" must not be null.");
     }
 
     private static string GetOptionalString(JsonElement parent, string propertyName)
@@ -889,12 +855,9 @@ internal sealed class DefModelMathTransform : MathTransform
             return string.Empty;
         }
 
-        if (value.ValueKind != JsonValueKind.String)
-        {
-            throw new FormatException("\"" + propertyName + "\" must be a string.");
-        }
-
-        return value.GetString() ?? string.Empty;
+        return value.ValueKind != JsonValueKind.String
+            ? throw new FormatException("\"" + propertyName + "\" must be a string.")
+            : value.GetString() ?? string.Empty;
     }
 
     private static double GetRequiredDouble(JsonElement parent, string propertyName)
@@ -904,12 +867,9 @@ internal sealed class DefModelMathTransform : MathTransform
             throw new FormatException("Missing \"" + propertyName + "\" key.");
         }
 
-        if (value.ValueKind != JsonValueKind.Number)
-        {
-            throw new FormatException("\"" + propertyName + "\" must be numeric.");
-        }
-
-        return value.GetDouble();
+        return value.ValueKind != JsonValueKind.Number
+            ? throw new FormatException("\"" + propertyName + "\" must be numeric.")
+            : value.GetDouble();
     }
 
     private static string NormalizeOptionalString(string text)
@@ -1014,7 +974,7 @@ internal sealed class DefModelMathTransform : MathTransform
                 loaded.Add(new ComponentRuntime(
                     component,
                     null,
-                    vertical.OrderBy(grid => grid.Area, Comparer<double>.Default).ToArray()));
+                    [.. vertical.OrderBy(grid => grid.Area, Comparer<double>.Default)]));
                 continue;
             }
 
@@ -1027,11 +987,11 @@ internal sealed class DefModelMathTransform : MathTransform
 
             loaded.Add(new ComponentRuntime(
                 component,
-                xyz.OrderBy(grid => grid.Area, Comparer<double>.Default).ToArray(),
+                [.. xyz.OrderBy(grid => grid.Area, Comparer<double>.Default)],
                 null));
         }
 
-        return loaded.ToArray();
+        return [.. loaded];
     }
 
     private static bool TryResolveComponentPath(string fileName, string modelDirectory, [NotNullWhen(true)] out string? resolvedPath)
@@ -1186,12 +1146,7 @@ internal sealed class DefModelMathTransform : MathTransform
 
     private static double Clamp(double value, double minimum, double maximum)
     {
-        if (value < minimum)
-        {
-            return minimum;
-        }
-
-        return value > maximum ? maximum : value;
+        return value < minimum ? minimum : value > maximum ? maximum : value;
     }
 
     private static bool TryFindXyzGrid(
@@ -1300,7 +1255,7 @@ internal sealed class DefModelMathTransform : MathTransform
         double y,
         out InterpolationCell cell)
     {
-        cell = default(InterpolationCell);
+        cell = default;
         if (!grid.TryMapToGridCoordinates(x, y, out double gridX, out double gridY))
         {
             return false;
@@ -1976,12 +1931,9 @@ internal sealed class DefModelMathTransform : MathTransform
                 double f1 = this.model[0].ScaleFactor;
                 double secondEpoch = this.model[1].Epoch;
                 double f2 = this.model[1].ScaleFactor;
-                if (firstEpoch == secondEpoch)
-                {
-                    return f1;
-                }
-
-                return ((f1 * (secondEpoch - observationEpoch)) + (f2 * (observationEpoch - firstEpoch))) / (secondEpoch - firstEpoch);
+                return firstEpoch == secondEpoch
+                    ? f1
+                    : ((f1 * (secondEpoch - observationEpoch)) + (f2 * (observationEpoch - firstEpoch))) / (secondEpoch - firstEpoch);
             }
 
             for (int i = 1; i < this.model.Length; i++)
@@ -2003,19 +1955,16 @@ internal sealed class DefModelMathTransform : MathTransform
 
             if (this.afterLast == "CONSTANT" || this.model.Length == 1)
             {
-                return this.model[this.model.Length - 1].ScaleFactor;
+                return this.model[^1].ScaleFactor;
             }
 
-            double previousEpoch = this.model[this.model.Length - 2].Epoch;
-            double previousFactor = this.model[this.model.Length - 2].ScaleFactor;
-            double lastEpoch = this.model[this.model.Length - 1].Epoch;
-            double lastFactor = this.model[this.model.Length - 1].ScaleFactor;
-            if (previousEpoch == lastEpoch)
-            {
-                return lastFactor;
-            }
-
-            return ((previousFactor * (lastEpoch - observationEpoch)) + (lastFactor * (observationEpoch - previousEpoch))) / (lastEpoch - previousEpoch);
+            double previousEpoch = this.model[^2].Epoch;
+            double previousFactor = this.model[^2].ScaleFactor;
+            double lastEpoch = this.model[^1].Epoch;
+            double lastFactor = this.model[^1].ScaleFactor;
+            return previousEpoch == lastEpoch
+                ? lastFactor
+                : ((previousFactor * (lastEpoch - observationEpoch)) + (lastFactor * (observationEpoch - previousEpoch))) / (lastEpoch - previousEpoch);
         }
 
         [Serializable]

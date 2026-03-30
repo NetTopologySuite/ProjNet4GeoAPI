@@ -134,20 +134,10 @@ internal class InterruptedMollweideOceanicProjection : InterruptedMollweideBaseP
     {
         if (phi >= 0d)
         {
-            if (lambda <= -D90)
-            {
-                return 1;
-            }
-
-            return lambda >= D60 ? 3 : 2;
+            return lambda <= -D90 ? 1 : lambda >= D60 ? 3 : 2;
         }
 
-        if (lambda <= -D60)
-        {
-            return 4;
-        }
-
-        return lambda >= D90 ? 6 : 5;
+        return lambda <= -D60 ? 4 : lambda >= D90 ? 6 : 5;
     }
 
     private static int DetermineInverseZone(
@@ -166,19 +156,9 @@ internal class InterruptedMollweideOceanicProjection : InterruptedMollweideBaseP
 
         if (y >= 0d)
         {
-            if (x <= seam12)
-            {
-                return 1;
-            }
-
-            return x >= seam23 ? 3 : 2;
+            return x <= seam12 ? 1 : x >= seam23 ? 3 : 2;
         }
 
-        if (x <= seam45)
-        {
-            return 4;
-        }
-
-        return x >= seam56 ? 6 : 5;
+        return x <= seam45 ? 4 : x >= seam56 ? 6 : 5;
     }
 }

@@ -63,7 +63,7 @@ internal class GoodeProjection : MapProjection
         {
             this.oneEs = 0d;
             this.qp = 0d;
-            this.apa = Array.Empty<double>();
+            this.apa = [];
         }
     }
 

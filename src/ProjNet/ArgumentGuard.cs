@@ -36,12 +36,7 @@ internal static class ArgumentGuard
         string paramName)
         where T : class
     {
-        if (value is null)
-        {
-            throw new ArgumentNullException(paramName);
-        }
-
-        return value;
+        return value is null ? throw new ArgumentNullException(paramName) : value;
     }
 #endif
 
@@ -91,12 +86,7 @@ internal static class ArgumentGuard
             throw new ArgumentNullException(paramName);
         }
 
-        if (value.Length == 0)
-        {
-            throw new ArgumentException("Value cannot be empty.", paramName);
-        }
-
-        return value;
+        return value.Length == 0 ? throw new ArgumentException("Value cannot be empty.", paramName) : value;
     }
 #endif
 
@@ -123,12 +113,7 @@ internal static class ArgumentGuard
             throw new ArgumentNullException(paramName);
         }
 
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            throw new ArgumentException("Value cannot be empty or whitespace.", paramName);
-        }
-
-        return value;
+        return string.IsNullOrWhiteSpace(value) ? throw new ArgumentException("Value cannot be empty or whitespace.", paramName) : value;
     }
 #endif
 
@@ -152,12 +137,9 @@ internal static class ArgumentGuard
             throw new ArgumentNullException(paramName);
         }
 
-        if (value is TTarget typed)
-        {
-            return typed;
-        }
-
-        throw new ArgumentException(
+        return value is TTarget typed
+            ? typed
+            : throw new ArgumentException(
             $"Value must be of type {typeof(TTarget).FullName}.",
             paramName);
     }
@@ -170,12 +152,9 @@ internal static class ArgumentGuard
             throw new ArgumentNullException(paramName);
         }
 
-        if (value is TTarget typed)
-        {
-            return typed;
-        }
-
-        throw new ArgumentException(
+        return value is TTarget typed
+            ? typed
+            : throw new ArgumentException(
             $"Value must be of type {typeof(TTarget).FullName}.",
             paramName);
     }

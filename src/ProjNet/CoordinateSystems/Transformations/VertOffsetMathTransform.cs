@@ -144,8 +144,6 @@ internal sealed class VertOffsetMathTransform : MathTransform
         out string? skipReason)
     {
         transform = null;
-        skipReason = null;
-
         if (args is null)
         {
             skipReason = "vertoffset arguments were null.";
@@ -221,9 +219,6 @@ internal sealed class VertOffsetMathTransform : MathTransform
         out double semiMajor,
         out double semiMinor)
     {
-        semiMajor = 0d;
-        semiMinor = 0d;
-
         if (args.TryGetValue("r", out string? radiusToken)
             && TryParseFiniteDouble(radiusToken, out double radius)
             && radius > 0d)

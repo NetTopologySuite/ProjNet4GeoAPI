@@ -75,7 +75,7 @@ internal class VanDerGrinten4Projection : MapProjection
             double ct = 0.5d * ((bt * (8d - (bt * (2d + bt2)))) - 5d) / (bt2 * (bt - 1d));
             double ct2 = ct * ct;
             double dt = (2d / PI) * lambda;
-            dt = dt + (1d / dt);
+            dt += 1d / dt;
             dt = Math.Sqrt((dt * dt) - 4d);
             if ((Math.Abs(lambda) - HalfPi) < 0d)
             {

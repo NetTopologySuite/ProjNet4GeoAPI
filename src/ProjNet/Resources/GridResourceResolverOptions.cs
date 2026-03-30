@@ -21,10 +21,9 @@ internal sealed class GridResourceResolverOptions
     internal GridResourceResolverOptions(IEnumerable<string> localDirectories, string? cacheDirectory, GridResourceResolutionMode mode)
     {
         localDirectories = ArgumentGuard.ThrowIfNull(localDirectories, nameof(localDirectories));
-        this.LocalDirectories = localDirectories
+        this.LocalDirectories = [.. localDirectories
             .Where(path => !string.IsNullOrWhiteSpace(path))
-            .Select(Path.GetFullPath)
-            .ToArray();
+            .Select(Path.GetFullPath)];
         this.CacheDirectory = string.IsNullOrWhiteSpace(cacheDirectory) ? null : Path.GetFullPath(cacheDirectory);
         this.Mode = mode;
     }

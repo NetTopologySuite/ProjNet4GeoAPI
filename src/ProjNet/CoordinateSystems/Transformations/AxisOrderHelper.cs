@@ -36,8 +36,8 @@ internal static class AxisOrderHelper
             return false;
         }
 
-        if (!TryGetRoleByOrientation(source, dimension, out int[] sourceRoles)
-            || !TryGetRoleByOrientation(target, dimension, out int[] targetRoles))
+        if (!TryGetRoleByOrientation(source, dimension, out _)
+            || !TryGetRoleByOrientation(target, dimension, out _))
         {
             return false;
         }

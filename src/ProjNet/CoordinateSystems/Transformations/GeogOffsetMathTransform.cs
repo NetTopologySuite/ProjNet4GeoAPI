@@ -124,8 +124,6 @@ internal sealed class GeogOffsetMathTransform : MathTransform
         out string? skipReason)
     {
         transform = null;
-        skipReason = null;
-
         if (args is null)
         {
             skipReason = "geogoffset arguments were null.";

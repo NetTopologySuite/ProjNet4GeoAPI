@@ -158,8 +158,6 @@ internal sealed class MolobadekasMathTransform : MathTransform
         out string? skipReason)
     {
         transform = null;
-        skipReason = null;
-
         if (args is null)
         {
             skipReason = "molobadekas arguments were null.";

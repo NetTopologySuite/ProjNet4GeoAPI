@@ -111,8 +111,6 @@ internal sealed class ObTranMathTransform : MathTransform
         out string? skipReason)
     {
         transform = null;
-        skipReason = null;
-
         if (!args.TryGetValue("o_proj", out string? childProjCode) || string.IsNullOrWhiteSpace(childProjCode))
         {
             skipReason = "ob_tran requires +o_proj.";
@@ -423,9 +421,6 @@ internal sealed class ObTranMathTransform : MathTransform
         out double semiMajor,
         out double semiMinor)
     {
-        semiMajor = 0d;
-        semiMinor = 0d;
-
         if (TryGetFromArgs(args, "r", out double radius) && radius > 0d)
         {
             semiMajor = radius;
@@ -521,12 +516,7 @@ internal sealed class ObTranMathTransform : MathTransform
     private static bool TryGetFromArgs(Dictionary<string, string> args, string key, out double value)
     {
         value = 0d;
-        if (!args.TryGetValue(key, out string? token) || string.IsNullOrWhiteSpace(token))
-        {
-            return false;
-        }
-
-        return TryGetDouble(token, out value);
+        return args.TryGetValue(key, out string? token) && !string.IsNullOrWhiteSpace(token) && TryGetDouble(token, out value);
     }
 
     private static bool TryGetDouble(string token, out double value)

@@ -109,11 +109,6 @@ public class AngularUnit : Info, IUnit
     /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
-        if (obj is not AngularUnit angularUnit)
-        {
-            return false;
-        }
-
-        return Math.Abs(angularUnit.RadiansPerUnit - this.RadiansPerUnit) < EqualityTolerance;
+        return obj is AngularUnit angularUnit && Math.Abs(angularUnit.RadiansPerUnit - this.RadiansPerUnit) < EqualityTolerance;
     }
 }

@@ -39,12 +39,12 @@ public sealed class GieCase
     /// <summary>
     /// Gets or sets the accepted input coordinate tuple.
     /// </summary>
-    public double[] Accept { get; set; } = Array.Empty<double>();
+    public double[] Accept { get; set; } = [];
 
     /// <summary>
     /// Gets or sets the expected output coordinate tuple.
     /// </summary>
-    public double[] Expect { get; set; } = Array.Empty<double>();
+    public double[] Expect { get; set; } = [];
 
     /// <summary>
     /// Gets or sets a value indicating whether the case expects a transformation failure.

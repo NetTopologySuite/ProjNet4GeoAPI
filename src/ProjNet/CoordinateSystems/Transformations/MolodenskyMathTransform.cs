@@ -224,9 +224,6 @@ internal sealed class MolodenskyMathTransform : MathTransform
         out double semiMajor,
         out double semiMinor)
     {
-        semiMajor = 0d;
-        semiMinor = 0d;
-
         if (TryGetOptionalDouble(args, "r", out double radius) && radius > 0d)
         {
             semiMajor = radius;
@@ -414,12 +411,9 @@ internal sealed class MolodenskyMathTransform : MathTransform
     private double ComputeRn(double phi)
     {
         double sinPhi = Math.Sin(phi);
-        if (this.eccentricitySquared == 0d)
-        {
-            return this.semiMajor;
-        }
-
-        return this.semiMajor / Math.Sqrt(1d - (this.eccentricitySquared * sinPhi * sinPhi));
+        return this.eccentricitySquared == 0d
+            ? this.semiMajor
+            : this.semiMajor / Math.Sqrt(1d - (this.eccentricitySquared * sinPhi * sinPhi));
     }
 
     private double ComputeRm(double phi)
@@ -435,12 +429,9 @@ internal sealed class MolodenskyMathTransform : MathTransform
             return this.semiMajor * (1d - this.eccentricitySquared);
         }
 
-        if (Math.Abs(phi) == (Math.PI * 0.5d))
-        {
-            return this.semiMajor / Math.Sqrt(1d - this.eccentricitySquared);
-        }
-
-        return (this.semiMajor * (1d - this.eccentricitySquared))
+        return Math.Abs(phi) == (Math.PI * 0.5d)
+            ? this.semiMajor / Math.Sqrt(1d - this.eccentricitySquared)
+            : (this.semiMajor * (1d - this.eccentricitySquared))
             / Math.Pow(1d - (this.eccentricitySquared * sinPhi * sinPhi), 1.5d);
     }
 }

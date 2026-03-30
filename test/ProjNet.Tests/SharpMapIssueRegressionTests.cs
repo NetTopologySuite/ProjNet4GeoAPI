@@ -75,9 +75,9 @@ public class SharpMapIssueRegressionTests : CoordinateTransformTestsBase
     public void TestAuthorityCodeParsing()
     {
         const string wkt1 = "PROJCS[\"NAD_1983_BC_Environment_Albers\",GEOGCS[\"GCS_North_American_1983\",DATUM[\"D_North_American_1983\",SPHEROID[\"GRS_1980\",6378137.0,298.257222101]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Albers\"],PARAMETER[\"False_Easting\",1000000.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",-126.0],PARAMETER[\"Standard_Parallel_1\",50.0],PARAMETER[\"Standard_Parallel_2\",58.5],PARAMETER[\"Latitude_Of_Origin\",45.0],UNIT[\"Meter\",1.0],AUTHORITY[\"EPSG\",\"3005\"]]";
-        CoordinateSystem cs1 = CoordinateSystemTestHelpers.RequireCoordinateSystem(this.CoordinateSystemFactory, wkt1), cs2 = null!;
+        CoordinateSystem cs1 = CoordinateSystemTestHelpers.RequireCoordinateSystem(this.CoordinateSystemFactory, wkt1);
         const string wkt2 = "PROJCS[\"NAD_1983_BC_Environment_Albers\",GEOGCS[\"GCS_North_American_1983\",DATUM[\"D_North_American_1983\",SPHEROID[\"GRS_1980\",6378137.0,298.257222101]],PRIMEM[\"Greenwich\",0.0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Albers\"],PARAMETER[\"False_Easting\",1000000.0],PARAMETER[\"False_Northing\",0.0],PARAMETER[\"Central_Meridian\",-126.0],PARAMETER[\"Standard_Parallel_1\",50.0],PARAMETER[\"Standard_Parallel_2\",58.5],PARAMETER[\"Latitude_Of_Origin\",45.0],UNIT[\"Meter\",1.0],AUTHORITY[\"EPSG\",3005]]";
-        cs2 = CoordinateSystemTestHelpers.RequireCoordinateSystem(this.CoordinateSystemFactory, wkt2);
+        CoordinateSystem cs2 = CoordinateSystemTestHelpers.RequireCoordinateSystem(this.CoordinateSystemFactory, wkt2);
 
         // Assert.Equal(cs1, cs2);
         Assert.True(cs1.EqualParams(cs2));
@@ -123,11 +123,11 @@ public class SharpMapIssueRegressionTests : CoordinateTransformTestsBase
 
         ICoordinateTransformation ct = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csSrc, csTgt);
 
-        (double resX, double resY) = ((MathTransform)ct.MathTransform).Transform(16.4, 48.2);
+        (double resX, double resY) = ct.MathTransform.Transform(16.4, 48.2);
         Assert.InRange(resX, 4796297.431434812 - 1e-2, 4796297.431434812 + 1e-2);
         Assert.InRange(resY, 2807999.1539475969 - 1e-2, 2807999.1539475969 + 1e-2);
 
-        (double origX, double origY) = ((MathTransform)ct.MathTransform.Inverse()).Transform(resX, resY);
+        (double origX, double origY) = ct.MathTransform.Inverse().Transform(resX, resY);
         Assert.InRange(origX, 16.4 - 1e-2, 16.4 + 1e-2);
         Assert.InRange(origY, 48.2 - 1e-2, 48.2 + 1e-2);
     }

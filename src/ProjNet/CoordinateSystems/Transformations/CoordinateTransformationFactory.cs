@@ -86,12 +86,9 @@ public class CoordinateTransformationFactory
             }
 
             ICoordinateTransformation? fallbackWithMetadata = this.CreateFromCoordinateSystemsCore(sourceCS, targetCS);
-            if (fallbackWithMetadata is null)
-            {
-                return null;
-            }
-
-            return CreateMetadataBackedTransformation(sourceCS, targetCS, fallbackWithMetadata, operation, resolvedGridPath);
+            return fallbackWithMetadata is null
+                ? null
+                : (ICoordinateTransformation)CreateMetadataBackedTransformation(sourceCS, targetCS, fallbackWithMetadata, operation, resolvedGridPath);
         }
 
         if (TryGetDirectOperation(sourceCS, targetCS, out operation, out resolvedGridPath))
@@ -158,7 +155,7 @@ public class CoordinateTransformationFactory
     {
         transformation = null;
 
-        if (!(source is ProjectedCoordinateSystem sourceProjected) || !(target is ProjectedCoordinateSystem targetProjected))
+        if (source is not ProjectedCoordinateSystem sourceProjected || target is not ProjectedCoordinateSystem targetProjected)
         {
             return false;
         }
@@ -302,12 +299,7 @@ public class CoordinateTransformationFactory
             return CoordinateSystemRuntimeKind.Geocentric;
         }
 
-        if (coordinateSystem is FittedCoordinateSystem)
-        {
-            return CoordinateSystemRuntimeKind.Fitted;
-        }
-
-        return CoordinateSystemRuntimeKind.Unknown;
+        return coordinateSystem is FittedCoordinateSystem ? CoordinateSystemRuntimeKind.Fitted : CoordinateSystemRuntimeKind.Unknown;
     }
 
     private ICoordinateTransformation CreateFromCoordinateSystemsCore(CoordinateSystem sourceCS, CoordinateSystem targetCS)
@@ -333,30 +325,35 @@ public class CoordinateTransformationFactory
         }
 
         int route = ((int)sourceKind * 10) + (int)targetKind;
-        switch (route)
+        return route switch
         {
-            case 12: // Projected -> Geographic
-                return Proj2Geog((ProjectedCoordinateSystem)sourceCS, (GeographicCoordinateSystem)targetCS);
-            case 21: // Geographic -> Projected
-                return Geog2Proj((GeographicCoordinateSystem)sourceCS, (ProjectedCoordinateSystem)targetCS);
-            case 23: // Geographic -> Geocentric
-                return Geog2Geoc((GeographicCoordinateSystem)sourceCS, (GeocentricCoordinateSystem)targetCS);
-            case 32: // Geocentric -> Geographic
-                return Geoc2Geog((GeocentricCoordinateSystem)sourceCS, (GeographicCoordinateSystem)targetCS);
-            case 11: // Projected -> Projected
-                return Proj2Proj((ProjectedCoordinateSystem)sourceCS, (ProjectedCoordinateSystem)targetCS);
-            case 33: // Geocentric -> Geocentric
-                return CreateGeoc2Geoc((GeocentricCoordinateSystem)sourceCS, (GeocentricCoordinateSystem)targetCS)
-                    ?? CreateTransform(
-                        sourceCS,
-                        targetCS,
-                        TransformType.Conversion,
-                        new IdentityMathTransform(Math.Max(sourceCS.Dimension, targetCS.Dimension)));
-            case 22: // Geographic -> Geographic
-                return CreateGeog2Geog((GeographicCoordinateSystem)sourceCS, (GeographicCoordinateSystem)targetCS);
-            default:
-                throw new NotSupportedException("No support for transforming between the two specified coordinate systems");
-        }
+            // Projected -> Geographic
+            12 => Proj2Geog((ProjectedCoordinateSystem)sourceCS, (GeographicCoordinateSystem)targetCS),
+
+            // Geographic -> Projected
+            21 => Geog2Proj((GeographicCoordinateSystem)sourceCS, (ProjectedCoordinateSystem)targetCS),
+
+            // Geographic -> Geocentric
+            23 => Geog2Geoc((GeographicCoordinateSystem)sourceCS, (GeocentricCoordinateSystem)targetCS),
+
+            // Geocentric -> Geographic
+            32 => Geoc2Geog((GeocentricCoordinateSystem)sourceCS, (GeographicCoordinateSystem)targetCS),
+
+            // Projected -> Projected
+            11 => Proj2Proj((ProjectedCoordinateSystem)sourceCS, (ProjectedCoordinateSystem)targetCS),
+
+            // Geocentric -> Geocentric
+            33 => CreateGeoc2Geoc((GeocentricCoordinateSystem)sourceCS, (GeocentricCoordinateSystem)targetCS)
+                                ?? CreateTransform(
+                                    sourceCS,
+                                    targetCS,
+                                    TransformType.Conversion,
+                                    new IdentityMathTransform(Math.Max(sourceCS.Dimension, targetCS.Dimension))),
+
+            // Geographic -> Geographic
+            22 => CreateGeog2Geog((GeographicCoordinateSystem)sourceCS, (GeographicCoordinateSystem)targetCS),
+            _ => throw new NotSupportedException("No support for transforming between the two specified coordinate systems"),
+        };
     }
 
     private static bool TryCreateSimpleCoordinateSystemConversion(
@@ -547,24 +544,14 @@ public class CoordinateTransformationFactory
             return HaveEquivalentDefinitionsIgnoringAxisAndUnits(sourceProjected, targetProjected);
         }
 
-        if (source is GeocentricCoordinateSystem sourceGeocentric && target is GeocentricCoordinateSystem targetGeocentric)
-        {
-            return HaveEquivalentDefinitionsIgnoringAxisAndUnits(sourceGeocentric, targetGeocentric);
-        }
-
-        return false;
+        return source is GeocentricCoordinateSystem sourceGeocentric && target is GeocentricCoordinateSystem targetGeocentric && HaveEquivalentDefinitionsIgnoringAxisAndUnits(sourceGeocentric, targetGeocentric);
     }
 
     private static bool HaveEquivalentDefinitionsIgnoringAxisAndUnits(
         GeographicCoordinateSystem source,
         GeographicCoordinateSystem target)
     {
-        if (source.Dimension != target.Dimension)
-        {
-            return false;
-        }
-
-        return source.HorizontalDatum.EqualParams(target.HorizontalDatum)
+        return source.Dimension == target.Dimension && source.HorizontalDatum.EqualParams(target.HorizontalDatum)
             && source.PrimeMeridian.EqualParams(target.PrimeMeridian);
     }
 
@@ -596,12 +583,7 @@ public class CoordinateTransformationFactory
         GeocentricCoordinateSystem source,
         GeocentricCoordinateSystem target)
     {
-        if (source.Dimension != target.Dimension)
-        {
-            return false;
-        }
-
-        return source.HorizontalDatum.EqualParams(target.HorizontalDatum)
+        return source.Dimension == target.Dimension && source.HorizontalDatum.EqualParams(target.HorizontalDatum)
             && source.PrimeMeridian.EqualParams(target.PrimeMeridian);
     }
 
@@ -921,9 +903,8 @@ public class CoordinateTransformationFactory
         }
 
         // If we only have one shift, lets just return the datumshift from/to wgs84
-        if (ct.CoordinateTransformationList.Count == 1)
-        {
-            return new CoordinateTransformation(
+        return ct.CoordinateTransformationList.Count == 1
+            ? new CoordinateTransformation(
                 source,
                 target,
                 TransformType.ConversionAndTransformation,
@@ -932,10 +913,8 @@ public class CoordinateTransformationFactory
                 string.Empty,
                 -1,
                 string.Empty,
-                string.Empty);
-        }
-
-        return new CoordinateTransformation(source, target, TransformType.ConversionAndTransformation, ct, string.Empty, string.Empty, -1, string.Empty, string.Empty);
+                string.Empty)
+            : new CoordinateTransformation(source, target, TransformType.ConversionAndTransformation, ct, string.Empty, string.Empty, -1, string.Empty, string.Empty);
     }
 
     /// <summary>
@@ -1149,22 +1128,16 @@ public class CoordinateTransformationFactory
     private static string[] ReadGridDirectoriesFromEnvironment()
     {
         string? configuredPaths = Environment.GetEnvironmentVariable(GridPathEnvironmentVariable);
-        if (string.IsNullOrWhiteSpace(configuredPaths))
-        {
-            return [];
-        }
-
-        return configuredPaths.Split([';', Path.PathSeparator], StringSplitOptions.RemoveEmptyEntries);
+        return string.IsNullOrWhiteSpace(configuredPaths)
+            ? []
+            : configuredPaths.Split([';', Path.PathSeparator], StringSplitOptions.RemoveEmptyEntries);
     }
 
     private static GridResourceResolutionMode ParseGridResolutionMode(string? configuredMode)
     {
-        if ("LocalThenNetwork".Equals(configuredMode, StringComparison.OrdinalIgnoreCase))
-        {
-            return GridResourceResolutionMode.LocalThenNetwork;
-        }
-
-        return GridResourceResolutionMode.LocalOnly;
+        return "LocalThenNetwork".Equals(configuredMode, StringComparison.OrdinalIgnoreCase)
+            ? GridResourceResolutionMode.LocalThenNetwork
+            : GridResourceResolutionMode.LocalOnly;
     }
 
     private static double NormalizeAccuracy(double accuracy) => accuracy > 0d ? accuracy : double.MaxValue;
@@ -1178,17 +1151,12 @@ public class CoordinateTransformationFactory
         operation = null;
         resolvedGridPath = null;
 
-        if (!(source is ProjectedCoordinateSystem) || !(target is ProjectedCoordinateSystem))
+        if (source is not ProjectedCoordinateSystem || target is not ProjectedCoordinateSystem)
         {
             return false;
         }
 
-        if (!TryGetEpsgCode(source, out int sourceSrid) || !TryGetEpsgCode(target, out int targetSrid))
-        {
-            return false;
-        }
-
-        return TryGetDirectOperationBySridPair(sourceSrid, targetSrid, out operation, out resolvedGridPath);
+        return TryGetEpsgCode(source, out int sourceSrid) && TryGetEpsgCode(target, out int targetSrid) && TryGetDirectOperationBySridPair(sourceSrid, targetSrid, out operation, out resolvedGridPath);
     }
 
     private static bool TryGetDirectOperation(
@@ -1200,12 +1168,7 @@ public class CoordinateTransformationFactory
         operation = null;
         resolvedGridPath = null;
 
-        if (!TryGetEpsgCode(source, out int sourceSrid) || !TryGetEpsgCode(target, out int targetSrid))
-        {
-            return false;
-        }
-
-        return TryGetDirectOperationBySridPair(sourceSrid, targetSrid, out operation, out resolvedGridPath);
+        return TryGetEpsgCode(source, out int sourceSrid) && TryGetEpsgCode(target, out int targetSrid) && TryGetDirectOperationBySridPair(sourceSrid, targetSrid, out operation, out resolvedGridPath);
     }
 
     private static bool TryGetDirectOperationBySridPair(
@@ -1237,20 +1200,14 @@ public class CoordinateTransformationFactory
                 return true;
             }
 
-            if (missingGridFile is null)
-            {
-                missingGridFile = candidate.ParameterFileName;
-            }
+            missingGridFile ??= candidate.ParameterFileName;
         }
 
         if (!string.IsNullOrWhiteSpace(missingGridFile))
         {
-            if (IsGridRequiredModeEnabled())
-            {
-                throw new InvalidOperationException("DataUnavailable: Required grid resource '" + missingGridFile + "' was not found.");
-            }
-
-            return false;
+            return IsGridRequiredModeEnabled()
+                ? throw new InvalidOperationException("DataUnavailable: Required grid resource '" + missingGridFile + "' was not found.")
+                : false;
         }
 
         return false;
@@ -1269,12 +1226,7 @@ public class CoordinateTransformationFactory
             return true;
         }
 
-        if ("true".Equals(configuredValue, StringComparison.OrdinalIgnoreCase))
-        {
-            return true;
-        }
-
-        return "yes".Equals(configuredValue, StringComparison.OrdinalIgnoreCase);
+        return "true".Equals(configuredValue, StringComparison.OrdinalIgnoreCase) || "yes".Equals(configuredValue, StringComparison.OrdinalIgnoreCase);
     }
 
     private static bool TryGetEpsgCode(CoordinateSystem coordinateSystem, out int srid)
@@ -1336,12 +1288,7 @@ public class CoordinateTransformationFactory
 
             bool leftHasMethod = !string.IsNullOrWhiteSpace(left.MethodName);
             bool rightHasMethod = !string.IsNullOrWhiteSpace(right.MethodName);
-            if (leftHasMethod != rightHasMethod)
-            {
-                return leftHasMethod ? -1 : 1;
-            }
-
-            return left.OperationCode.CompareTo(right.OperationCode);
+            return leftHasMethod != rightHasMethod ? leftHasMethod ? -1 : 1 : left.OperationCode.CompareTo(right.OperationCode);
         }
     }
 }

@@ -375,7 +375,7 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
                 break;
         }
 
-        x = x = Adjust_lon(Math.Atan2(x, y) + this.centralMeridian); // lam
+        x = _ = Adjust_lon(Math.Atan2(x, y) + this.centralMeridian); // lam
         y = Authlat(Math.Asin(ab), ArgumentGuard.ThrowIfNull(this.apa, nameof(this.apa)));                      // phi
     }
 

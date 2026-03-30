@@ -152,12 +152,7 @@ public class GeocentricCoordinateSystem : CoordinateSystem
     /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
-        if (!(obj is GeocentricCoordinateSystem gcc))
-        {
-            return false;
-        }
-
-        return gcc.HorizontalDatum.EqualParams(this.HorizontalDatum) &&
+        return obj is GeocentricCoordinateSystem gcc && gcc.HorizontalDatum.EqualParams(this.HorizontalDatum) &&
             gcc.LinearUnit.EqualParams(this.LinearUnit) &&
             gcc.PrimeMeridian.EqualParams(this.PrimeMeridian);
     }

@@ -48,7 +48,7 @@ internal sealed class PipelineCompositeMathTransform : MathTransform
     public override int DimSource => this.transforms[0].DimSource;
 
     /// <inheritdoc />
-    public override int DimTarget => this.transforms[this.transforms.Length - 1].DimTarget;
+    public override int DimTarget => this.transforms[^1].DimTarget;
 
     /// <inheritdoc />
     public override string WKT => throw new NotImplementedException();
@@ -73,7 +73,7 @@ internal sealed class PipelineCompositeMathTransform : MathTransform
     /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        if (!(this.inverse is null))
+        if (this.inverse is not null)
         {
             return this.inverse;
         }

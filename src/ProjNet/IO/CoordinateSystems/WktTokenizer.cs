@@ -128,12 +128,9 @@ internal sealed class WktTokenizer
             ArgumentGuard.ThrowArgument($"The token '{this.GetTokenString()}' is not a number at line {this.LineNumber} column {this.Column}.");
         }
 
-        if (this.TryGetNumericValue(out double value))
-        {
-            return value;
-        }
-
-        throw new FormatException($"The token '{this.GetTokenString()}' is not a valid number at line {this.LineNumber} column {this.Column}.");
+        return this.TryGetNumericValue(out double value)
+            ? value
+            : throw new FormatException($"The token '{this.GetTokenString()}' is not a valid number at line {this.LineNumber} column {this.Column}.");
     }
 
     /// <summary>

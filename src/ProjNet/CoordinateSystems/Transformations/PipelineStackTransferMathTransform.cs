@@ -110,8 +110,6 @@ internal sealed class PipelineStackTransferMathTransform : MathTransform
         out string? skipReason)
     {
         transform = null;
-        skipReason = null;
-
         if (args is null)
         {
             skipReason = "Pipeline stack transfer arguments were null.";

@@ -176,12 +176,7 @@ internal class IghProjection : MapProjection
                 return 4;
             }
 
-            if (lambda <= -D20)
-            {
-                return 5;
-            }
-
-            return lambda <= D80 ? 6 : 7;
+            return lambda <= -D20 ? 5 : lambda <= D80 ? 6 : 7;
         }
 
         if (lambda <= -D100)
@@ -189,12 +184,7 @@ internal class IghProjection : MapProjection
             return 8;
         }
 
-        if (lambda <= -D20)
-        {
-            return 9;
-        }
-
-        return lambda <= D80 ? 10 : 11;
+        return lambda <= -D20 ? 9 : lambda <= D80 ? 10 : 11;
     }
 
     private static int DetermineInverseZone(double x, double y, double dy0)
@@ -222,12 +212,7 @@ internal class IghProjection : MapProjection
                 return 4;
             }
 
-            if (x <= -D20)
-            {
-                return 5;
-            }
-
-            return x <= D80 ? 6 : 7;
+            return x <= -D20 ? 5 : x <= D80 ? 6 : 7;
         }
 
         if (x <= -D100)
@@ -235,47 +220,29 @@ internal class IghProjection : MapProjection
             return 8;
         }
 
-        if (x <= -D20)
-        {
-            return 9;
-        }
-
-        return x <= D80 ? 10 : 11;
+        return x <= -D20 ? 9 : x <= D80 ? 10 : 11;
     }
 
     private static bool IsPointInZone(int zoneIndex, double lambda, double phi)
     {
-        switch (zoneIndex)
+        return zoneIndex switch
         {
-            case 0:
-                return ((lambda >= -D180 - EpsLn) && (lambda <= -D40 + EpsLn))
-                    || (((lambda >= -D40 - EpsLn) && (lambda <= -DegreesToRadians(10d) + EpsLn))
-                        && ((phi >= D60 - EpsLn) && (phi <= HalfPi + EpsLn)));
-            case 1:
-                return ((lambda >= -D40 - EpsLn) && (lambda <= D180 + EpsLn))
-                    || (((lambda >= -D180 - EpsLn) && (lambda <= -D160 + EpsLn))
-                        && ((phi >= D50 - EpsLn) && (phi <= HalfPi + EpsLn)))
-                    || (((lambda >= -DegreesToRadians(50d) - EpsLn) && (lambda <= -D40 + EpsLn))
-                        && ((phi >= D60 - EpsLn) && (phi <= HalfPi + EpsLn)));
-            case 2:
-                return (lambda >= -D180 - EpsLn) && (lambda <= -D40 + EpsLn);
-            case 3:
-                return (lambda >= -D40 - EpsLn) && (lambda <= D180 + EpsLn);
-            case 4:
-            case 8:
-                return (lambda >= -D180 - EpsLn) && (lambda <= -D100 + EpsLn);
-            case 5:
-            case 9:
-                return (lambda >= -D100 - EpsLn) && (lambda <= -D20 + EpsLn);
-            case 6:
-            case 10:
-                return (lambda >= -D20 - EpsLn) && (lambda <= D80 + EpsLn);
-            case 7:
-            case 11:
-                return (lambda >= D80 - EpsLn) && (lambda <= D180 + EpsLn);
-            default:
-                return false;
-        }
+            0 => ((lambda >= -D180 - EpsLn) && (lambda <= -D40 + EpsLn))
+                                || (((lambda >= -D40 - EpsLn) && (lambda <= -DegreesToRadians(10d) + EpsLn))
+                                    && ((phi >= D60 - EpsLn) && (phi <= HalfPi + EpsLn))),
+            1 => ((lambda >= -D40 - EpsLn) && (lambda <= D180 + EpsLn))
+                                || (((lambda >= -D180 - EpsLn) && (lambda <= -D160 + EpsLn))
+                                    && ((phi >= D50 - EpsLn) && (phi <= HalfPi + EpsLn)))
+                                || (((lambda >= -DegreesToRadians(50d) - EpsLn) && (lambda <= -D40 + EpsLn))
+                                    && ((phi >= D60 - EpsLn) && (phi <= HalfPi + EpsLn))),
+            2 => (lambda >= -D180 - EpsLn) && (lambda <= -D40 + EpsLn),
+            3 => (lambda >= -D40 - EpsLn) && (lambda <= D180 + EpsLn),
+            4 or 8 => (lambda >= -D180 - EpsLn) && (lambda <= -D100 + EpsLn),
+            5 or 9 => (lambda >= -D100 - EpsLn) && (lambda <= -D20 + EpsLn),
+            6 or 10 => (lambda >= -D20 - EpsLn) && (lambda <= D80 + EpsLn),
+            7 or 11 => (lambda >= D80 - EpsLn) && (lambda <= D180 + EpsLn),
+            _ => false,
+        };
     }
 
     private static void MollweideForwardUnit(double lambda, double phi, out double x, out double y)

@@ -179,7 +179,7 @@ public class WKTCoordSysParserTests
                 int split = line.IndexOf(';', StringComparison.Ordinal);
                 if (split > -1)
                 {
-                    string wkt = line.Substring(split + 1);
+                    string wkt = line[(split + 1)..];
                     CoordinateSystem? cs = fac.CreateFromWkt(wkt);
                     if (cs is null)
                     {

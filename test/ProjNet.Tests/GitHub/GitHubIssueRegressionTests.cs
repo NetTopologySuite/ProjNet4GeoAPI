@@ -89,7 +89,7 @@ public class GitHubIssueRegressionTests
     [Fact(DisplayName = "Issue #20, Math transform bug")]
     public void TestMathTransformBug()
     {
-        var coordinateTransformFactory = new CoordinateTransformationFactory();
+        _ = new CoordinateTransformationFactory();
         var coordinateSystemFactory = new CoordinateSystemFactory();
         var itmParameters = new List<ProjectionParameter>
         {
@@ -199,8 +199,8 @@ public class GitHubIssueRegressionTests
         // construct a GeographicCoordinateSystem to test
         var gcsAxes = new List<AxisInfo>(2)
         {
-            new AxisInfo("Lon", AxisOrientationEnum.East),
-            new AxisInfo("Lat", AxisOrientationEnum.North),
+            new("Lon", AxisOrientationEnum.East),
+            new("Lat", AxisOrientationEnum.North),
         };
 
         var geographicCoordinateSystem =

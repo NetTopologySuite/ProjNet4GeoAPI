@@ -341,9 +341,9 @@ public class CoordinateSystemFactory
 
         var info = new List<AxisInfo>(3)
         {
-            new AxisInfo("X", AxisOrientationEnum.Other),
-            new AxisInfo("Y", AxisOrientationEnum.Other),
-            new AxisInfo("Z", AxisOrientationEnum.Other),
+            new("X", AxisOrientationEnum.Other),
+            new("Y", AxisOrientationEnum.Other),
+            new("Z", AxisOrientationEnum.Other),
         };
         return new GeocentricCoordinateSystem(datum, linearUnit, primeMeridian, info, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
     }

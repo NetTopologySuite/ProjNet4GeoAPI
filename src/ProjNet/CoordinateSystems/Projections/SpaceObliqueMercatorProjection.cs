@@ -110,9 +110,8 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
         double lampp = phi >= 0d ? HalfPi : PI + HalfPi;
         double lamdp = 0d;
         double lamt = 0d;
-        int l = 0;
-
         int nn = 0;
+        int l;
         while (true)
         {
             double sav = lampp;
@@ -192,9 +191,8 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
         y *= this.inverseRadius;
 
         double lamdp = x / this.b;
-        double s = 0d;
-
         int nn = 50;
+        double s;
         do
         {
             double sav = lamdp;

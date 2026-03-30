@@ -86,12 +86,9 @@ internal sealed class AxisSwapMathTransform : MathTransform
             && this.zSourceIndex == 2
             && this.zSign == 1;
 
-        if (this.dimension < 4)
-        {
-            return xyzIdentity;
-        }
-
-        return xyzIdentity
+        return this.dimension < 4
+            ? xyzIdentity
+            : xyzIdentity
             && this.tSourceIndex == 3
             && this.tSign == 1;
     }

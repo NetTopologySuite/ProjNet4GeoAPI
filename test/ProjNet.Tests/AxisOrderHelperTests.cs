@@ -27,7 +27,7 @@ public class AxisOrderHelperTests
         bool ok = AxisOrderHelper.TryCreateAxisSwapTransform(source, target, out MathTransform? transform);
 
         Assert.False(ok);
-        Assert.Null(transform as object);
+        Assert.Null(transform);
     }
 
     /// <summary>
@@ -43,7 +43,7 @@ public class AxisOrderHelperTests
         bool ok = AxisOrderHelper.TryCreateAxisSwapTransform(source, target, out MathTransform? transform);
 
         Assert.False(ok);
-        Assert.Null(transform as object);
+        Assert.Null(transform);
     }
 
     /// <summary>
@@ -71,7 +71,7 @@ public class AxisOrderHelperTests
         bool ok = AxisOrderHelper.TryCreateAxisSwapTransform(source, target, out MathTransform? transform);
 
         Assert.False(ok);
-        Assert.Null(transform as object);
+        Assert.Null(transform);
     }
 
     /// <summary>
@@ -105,7 +105,7 @@ public class AxisOrderHelperTests
         bool ok = AxisOrderHelper.TryCreateAxisSwapTransform(source, target, out MathTransform? transform);
 
         Assert.False(ok);
-        Assert.Null(transform as object);
+        Assert.Null(transform);
     }
 
     /// <summary>

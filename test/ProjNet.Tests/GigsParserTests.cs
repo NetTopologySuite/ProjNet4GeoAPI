@@ -70,10 +70,9 @@ public class GigsParserTests
             Assert.Skip("GIGS fixtures were not found under test\\ProjNet.Tests\\Fixtures\\gigs.");
         }
 
-        string[] files = Directory.GetFiles(gigsDirectory, "*.gie")
+        string[] files = [.. Directory.GetFiles(gigsDirectory, "*.gie")
             .Where(path => !path.EndsWith(".failing", StringComparison.OrdinalIgnoreCase))
-            .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
-            .ToArray();
+            .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)];
 
         Assert.NotEmpty(files);
 
@@ -108,10 +107,9 @@ public class GigsParserTests
             Assert.Skip("GIGS fixtures were not found under test\\ProjNet.Tests\\Fixtures\\gigs.");
         }
 
-        string[] files = Directory.GetFiles(gigsDirectory, "*.gie")
+        string[] files = [.. Directory.GetFiles(gigsDirectory, "*.gie")
             .Where(path => !path.EndsWith(".failing", StringComparison.OrdinalIgnoreCase))
-            .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)
-            .ToArray();
+            .OrderBy(path => path, StringComparer.OrdinalIgnoreCase)];
 
         int pipelineCaseCount = 0;
         foreach (string file in files)

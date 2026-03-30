@@ -230,9 +230,6 @@ internal sealed class TopocentricMathTransform : MathTransform
         out double semiMajor,
         out double semiMinor)
     {
-        semiMajor = 0d;
-        semiMinor = 0d;
-
         if (TryGetOptionalDouble(args, "r", out double radius) && radius > 0d)
         {
             semiMajor = radius;

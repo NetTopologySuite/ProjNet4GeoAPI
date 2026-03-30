@@ -157,7 +157,7 @@ public class PostGisSpatialRefSysTableParserTests
                         continue;
                     }
 
-                    switch (srtext.Substring(0, bracketIndex))
+                    switch (srtext[..bracketIndex])
                     {
                         case "PROJCS":
                         case "GEOGCS":

@@ -100,7 +100,7 @@ internal class HotineObliqueMercatorProjection : MapProjection
 
         double g = .5 * (f - (1.0 / f));
         double gama = Asinz(Math.Sin(this.azimuth) / this.d);
-        this.Lon_origin = this.Lon_origin - (Asinz(g * Math.Tan(gama)) / this.bl);
+        this.Lon_origin -= Asinz(g * Math.Tan(gama)) / this.bl;
 
         con = Math.Abs(this.latOrigin);
         if ((con > Epsln) && (Math.Abs(con - HalfPi) > Epsln))
@@ -178,7 +178,7 @@ internal class HotineObliqueMercatorProjection : MapProjection
                 us = this.al * Math.Atan(((s * this.cosgam) + (vl * this.singam)) / con) / this.bl;
                 if (con < 0)
                 {
-                    us = us + (PI * this.al / this.bl);
+                    us += PI * this.al / this.bl;
                 }
             }
         }
@@ -204,7 +204,7 @@ internal class HotineObliqueMercatorProjection : MapProjection
         double vs = .5 * this.al * Math.Log((1.0 - ul) / (1.0 + ul)) / this.bl;
         if (!this.NaturalOriginOffsets)
         {
-            us = us - this.u;
+            us -= this.u;
         }
 
         lon = (vs * this.cosgrid) + (us * this.singrid);
@@ -220,7 +220,7 @@ internal class HotineObliqueMercatorProjection : MapProjection
         double us = (y * this.cosgrid) + (x * this.singrid);
         if (!this.NaturalOriginOffsets)
         {
-            us = us + this.u;
+            us += this.u;
         }
 
         double q = Math.Exp(-this.bl * vs / this.al);
@@ -237,8 +237,7 @@ internal class HotineObliqueMercatorProjection : MapProjection
         {
             double con = 1.0 / this.bl;
             double ts1 = Math.Pow(this.el / Math.Sqrt((1.0 + ul) / (1.0 - ul)), con);
-            long flag;
-            y = Phi2z(this.e, ts1, out flag);
+            y = Phi2z(this.e, ts1, out _);
             con = Math.Cos(this.bl * us / this.al);
             double theta = this.Lon_origin - (Math.Atan2((s * this.cosgam) - (vl * this.singam), con) / this.bl);
             x = Adjust_lon(theta);

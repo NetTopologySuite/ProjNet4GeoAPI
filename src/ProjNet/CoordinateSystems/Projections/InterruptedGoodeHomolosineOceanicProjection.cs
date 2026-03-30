@@ -160,40 +160,20 @@ internal class InterruptedGoodeHomolosineOceanicProjection : MapProjection
     {
         if (phi >= PhiBoundary)
         {
-            if (lambda <= -D90)
-            {
-                return 1;
-            }
-
-            return lambda >= D60 ? 3 : 2;
+            return lambda <= -D90 ? 1 : lambda >= D60 ? 3 : 2;
         }
 
         if (phi >= 0d)
         {
-            if (lambda <= -D90)
-            {
-                return 4;
-            }
-
-            return lambda >= D60 ? 6 : 5;
+            return lambda <= -D90 ? 4 : lambda >= D60 ? 6 : 5;
         }
 
         if (phi >= -PhiBoundary)
         {
-            if (lambda <= -D60)
-            {
-                return 7;
-            }
-
-            return lambda >= D90 ? 9 : 8;
+            return lambda <= -D60 ? 7 : lambda >= D90 ? 9 : 8;
         }
 
-        if (lambda <= -D60)
-        {
-            return 10;
-        }
-
-        return lambda >= D90 ? 12 : 11;
+        return lambda <= -D60 ? 10 : lambda >= D90 ? 12 : 11;
     }
 
     private static int DetermineInverseZone(double x, double y, double dy0)
@@ -206,76 +186,43 @@ internal class InterruptedGoodeHomolosineOceanicProjection : MapProjection
 
         if (y >= PhiBoundary)
         {
-            if (x <= -D90)
-            {
-                return 1;
-            }
-
-            return x >= D60 ? 3 : 2;
+            return x <= -D90 ? 1 : x >= D60 ? 3 : 2;
         }
 
         if (y >= 0d)
         {
-            if (x <= -D90)
-            {
-                return 4;
-            }
-
-            return x >= D60 ? 6 : 5;
+            return x <= -D90 ? 4 : x >= D60 ? 6 : 5;
         }
 
         if (y >= -PhiBoundary)
         {
-            if (x <= -D60)
-            {
-                return 7;
-            }
-
-            return x >= D90 ? 9 : 8;
+            return x <= -D60 ? 7 : x >= D90 ? 9 : 8;
         }
 
-        if (x <= -D60)
-        {
-            return 10;
-        }
-
-        return x >= D90 ? 12 : 11;
+        return x <= -D60 ? 10 : x >= D90 ? 12 : 11;
     }
 
     private static bool IsInZone(int zone, double lambda, double phi)
     {
-        switch (zone)
+        return zone switch
         {
-            case 1:
-                return (lambda >= -D180 - SeamSlack && lambda <= -D90 + SeamSlack)
-                    || (lambda >= D160 - SeamSlack && lambda <= D180 + SeamSlack && phi >= D50 - SeamSlack && phi <= D90 + SeamSlack);
-            case 2:
-                return lambda >= -D90 - SeamSlack && lambda <= D60 + SeamSlack;
-            case 3:
-                return (lambda >= D60 - SeamSlack && lambda <= D180 + SeamSlack)
-                    || (lambda >= -D180 - SeamSlack && lambda <= -D160 + SeamSlack && phi >= D50 - SeamSlack && phi <= D90 + SeamSlack);
-            case 4:
-                return lambda >= -D180 - SeamSlack && lambda <= -D90 + SeamSlack;
-            case 5:
-                return lambda >= -D90 - SeamSlack && lambda <= D60 + SeamSlack;
-            case 6:
-                return lambda >= D60 - SeamSlack && lambda <= D180 + SeamSlack;
-            case 7:
-                return lambda >= -D180 - SeamSlack && lambda <= -D60 + SeamSlack;
-            case 8:
-                return lambda >= -D60 - SeamSlack && lambda <= D90 + SeamSlack;
-            case 9:
-                return lambda >= D90 - SeamSlack && lambda <= D180 + SeamSlack;
-            case 10:
-                return lambda >= -D180 - SeamSlack && lambda <= -D60 + SeamSlack;
-            case 11:
-                return (lambda >= -D60 - SeamSlack && lambda <= D90 + SeamSlack)
-                    || (lambda >= D90 - SeamSlack && lambda <= D100 + SeamSlack && phi >= -D90 - SeamSlack && phi <= -D40 + SeamSlack);
-            case 12:
-                return lambda >= D90 - SeamSlack && lambda <= D180 + SeamSlack;
-            default:
-                return false;
-        }
+            1 => (lambda >= -D180 - SeamSlack && lambda <= -D90 + SeamSlack)
+                                || (lambda >= D160 - SeamSlack && lambda <= D180 + SeamSlack && phi >= D50 - SeamSlack && phi <= D90 + SeamSlack),
+            2 => lambda >= -D90 - SeamSlack && lambda <= D60 + SeamSlack,
+            3 => (lambda >= D60 - SeamSlack && lambda <= D180 + SeamSlack)
+                                || (lambda >= -D180 - SeamSlack && lambda <= -D160 + SeamSlack && phi >= D50 - SeamSlack && phi <= D90 + SeamSlack),
+            4 => lambda >= -D180 - SeamSlack && lambda <= -D90 + SeamSlack,
+            5 => lambda >= -D90 - SeamSlack && lambda <= D60 + SeamSlack,
+            6 => lambda >= D60 - SeamSlack && lambda <= D180 + SeamSlack,
+            7 => lambda >= -D180 - SeamSlack && lambda <= -D60 + SeamSlack,
+            8 => lambda >= -D60 - SeamSlack && lambda <= D90 + SeamSlack,
+            9 => lambda >= D90 - SeamSlack && lambda <= D180 + SeamSlack,
+            10 => lambda >= -D180 - SeamSlack && lambda <= -D60 + SeamSlack,
+            11 => (lambda >= -D60 - SeamSlack && lambda <= D90 + SeamSlack)
+                                || (lambda >= D90 - SeamSlack && lambda <= D100 + SeamSlack && phi >= -D90 - SeamSlack && phi <= -D40 + SeamSlack),
+            12 => lambda >= D90 - SeamSlack && lambda <= D180 + SeamSlack,
+            _ => false,
+        };
     }
 
     private static void MollweideForwardUnit(double lambda, double phi, out double x, out double y)

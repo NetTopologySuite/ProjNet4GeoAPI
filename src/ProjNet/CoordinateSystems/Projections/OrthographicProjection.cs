@@ -339,7 +339,6 @@ internal class OrthographicProjection : MapProjection
     /// <param name="phi">The latitude of the point in radians when entering, its y-ordinate in meters after exit.</param>
     private void OrthoSForward(ref double lam, ref double phi)
     {
-        double x = HugeVal;
         double y = HugeVal;
 
         double cosphi = Math.Cos(phi);
@@ -390,7 +389,7 @@ internal class OrthographicProjection : MapProjection
                 break;
         }
 
-        x = this.semiMajor * cosphi * Math.Sin(lam - this.Lon_origin);
+        double x = this.semiMajor * cosphi * Math.Sin(lam - this.Lon_origin);
 
         // Set the variables to return
         lam = x;

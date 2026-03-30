@@ -40,12 +40,11 @@ public class EpsgWktEquivalenceTheoryTests
         string fixturePath = Path.Combine(AppContext.BaseDirectory, FixtureRelativePath.Replace('/', Path.DirectorySeparatorChar));
         using var document = JsonDocument.Parse(File.ReadAllText(fixturePath));
 
-        return document.RootElement
+        return [.. document.RootElement
             .EnumerateArray()
             .Select(item => new TheoryDataRow<int, string>(
                 item.GetProperty("srid").GetInt32(),
-                item.GetProperty("wkt").GetString() ?? string.Empty))
-            .ToArray();
+                item.GetProperty("wkt").GetString() ?? string.Empty))];
     }
 
     /// <summary>
@@ -85,12 +84,7 @@ public class EpsgWktEquivalenceTheoryTests
             return false;
         }
 
-        if (NormalizeProjectionMethodName(ExtractMethodName(expectedWkt)) != NormalizeProjectionMethodName(ExtractMethodName(actualWkt)))
-        {
-            return false;
-        }
-
-        return ProjectionParametersMatch(expectedWkt, actualWkt);
+        return NormalizeProjectionMethodName(ExtractMethodName(expectedWkt)) == NormalizeProjectionMethodName(ExtractMethodName(actualWkt)) && ProjectionParametersMatch(expectedWkt, actualWkt);
     }
 
     private static string Normalize(string wkt) => string.Concat(wkt.Where(c => !char.IsWhiteSpace(c)));
@@ -131,12 +125,9 @@ public class EpsgWktEquivalenceTheoryTests
                 return "vertical";
             }
 
-            if (wkt.StartsWith("COMPOUNDCRS[", StringComparison.OrdinalIgnoreCase) || wkt.StartsWith("COMPD_CS[", StringComparison.OrdinalIgnoreCase))
-            {
-                return "compound";
-            }
-
-            return "unknown";
+            return wkt.StartsWith("COMPOUNDCRS[", StringComparison.OrdinalIgnoreCase) || wkt.StartsWith("COMPD_CS[", StringComparison.OrdinalIgnoreCase)
+                ? "compound"
+                : "unknown";
         }
 
         return string.Equals(Root(expectedWkt), Root(actualWkt), StringComparison.Ordinal);

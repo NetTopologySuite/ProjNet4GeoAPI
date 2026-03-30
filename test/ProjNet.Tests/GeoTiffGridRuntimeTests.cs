@@ -174,12 +174,7 @@ public class GeoTiffGridRuntimeTests
         public override double[] Rent(int minimumLength)
         {
             this.rentCount++;
-            if (this.rentCount > 1)
-            {
-                throw new InvalidOperationException("Simulated rent failure");
-            }
-
-            return base.Rent(minimumLength);
+            return this.rentCount > 1 ? throw new InvalidOperationException("Simulated rent failure") : base.Rent(minimumLength);
         }
     }
 }

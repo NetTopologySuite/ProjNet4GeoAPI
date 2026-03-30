@@ -278,12 +278,7 @@ public class Wgs84ConversionInfo : IEquatable<Wgs84ConversionInfo>
 
     private bool EqualsCore(Wgs84ConversionInfo? obj)
     {
-        if (obj is null)
-        {
-            return false;
-        }
-
-        return obj.Dx == this.Dx && obj.Dy == this.Dy && obj.Dz == this.Dz &&
+        return obj is not null && obj.Dx == this.Dx && obj.Dy == this.Dy && obj.Dz == this.Dz &&
             obj.Ex == this.Ex && obj.Ey == this.Ey && obj.Ez == this.Ez && obj.Ppm == this.Ppm;
     }
 }

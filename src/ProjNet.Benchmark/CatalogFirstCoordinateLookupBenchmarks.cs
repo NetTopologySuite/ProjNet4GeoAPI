@@ -28,11 +28,6 @@ public class CatalogFirstCoordinateLookupBenchmarks
     {
         var services = new CoordinateSystemServices();
         CoordinateSystem? coordinateSystem = services.GetCoordinateSystem(4326);
-        if (coordinateSystem is null)
-        {
-            throw new InvalidOperationException("EPSG:4326 lookup returned null.");
-        }
-
-        return coordinateSystem;
+        return coordinateSystem is null ? throw new InvalidOperationException("EPSG:4326 lookup returned null.") : coordinateSystem;
     }
 }

@@ -99,15 +99,12 @@ internal sealed class HelmertMathTransform : MathTransform
     public override bool Identity()
     {
         HelmertParameterState state = this.staticState;
-        if (this.fourParameter)
-        {
-            return state.TranslationX == 0d
+        return this.fourParameter
+            ? state.TranslationX == 0d
                 && state.TranslationY == 0d
                 && state.Theta == 0d
-                && state.Scale == 1d;
-        }
-
-        return state.TranslationX == 0d
+                && state.Scale == 1d
+            : state.TranslationX == 0d
             && state.TranslationY == 0d
             && state.TranslationZ == 0d
             && this.noRotation
@@ -155,8 +152,6 @@ internal sealed class HelmertMathTransform : MathTransform
         out string? skipReason)
     {
         transform = null;
-        skipReason = null;
-
         if (args is null)
         {
             skipReason = "helmert arguments were null.";
@@ -457,7 +452,7 @@ internal sealed class HelmertMathTransform : MathTransform
                 continue;
             }
 
-            ReadOnlySpan<char> segment = TrimWhitespace(token.Slice(segmentStart, i - segmentStart));
+            ReadOnlySpan<char> segment = TrimWhitespace(token[segmentStart..i]);
             if (!segment.IsEmpty)
             {
                 if (parsedCount >= destination.Length)
@@ -554,7 +549,7 @@ internal sealed class HelmertMathTransform : MathTransform
             end--;
         }
 
-        return end < start ? ReadOnlySpan<char>.Empty : value.Slice(start, (end - start) + 1);
+        return end < start ? [] : value.Slice(start, (end - start) + 1);
     }
 
     private static HelmertParameterState EvaluateKinematicState(

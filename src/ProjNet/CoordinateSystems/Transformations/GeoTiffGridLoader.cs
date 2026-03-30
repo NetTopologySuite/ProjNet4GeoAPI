@@ -54,10 +54,9 @@ internal static partial class GeoTiffGridLoader
     /// <returns>The list of horizontal grid shift grids parsed from the file.</returns>
     internal static IReadOnlyList<GeoTiffHGridShiftMathTransform.HorizontalGrid> LoadHorizontal(string path, ArrayPool<double> sampleValueArrayPool)
     {
-        return LoadCore(path, GridMode.Horizontal, requireMetreUnitsForXyz: true, sampleValueArrayPool)
+        return [.. LoadCore(path, GridMode.Horizontal, requireMetreUnitsForXyz: true, sampleValueArrayPool)
             .Select(page => page.ToHorizontalGrid(path))
-            .OfType<GeoTiffHGridShiftMathTransform.HorizontalGrid>()
-            .ToArray();
+            .OfType<GeoTiffHGridShiftMathTransform.HorizontalGrid>()];
     }
 
     /// <summary>
@@ -78,10 +77,9 @@ internal static partial class GeoTiffGridLoader
     /// <returns>The list of vertical grid shift grids parsed from the file.</returns>
     internal static IReadOnlyList<GeoTiffVGridShiftMathTransform.VerticalGrid> LoadVertical(string path, ArrayPool<double> sampleValueArrayPool)
     {
-        return LoadCore(path, GridMode.Vertical, requireMetreUnitsForXyz: true, sampleValueArrayPool)
+        return [.. LoadCore(path, GridMode.Vertical, requireMetreUnitsForXyz: true, sampleValueArrayPool)
             .Select(page => page.ToVerticalGrid(path))
-            .OfType<GeoTiffVGridShiftMathTransform.VerticalGrid>()
-            .ToArray();
+            .OfType<GeoTiffVGridShiftMathTransform.VerticalGrid>()];
     }
 
     /// <summary>
@@ -102,10 +100,9 @@ internal static partial class GeoTiffGridLoader
     /// <returns>The list of XYZ grid shift grids parsed from the file.</returns>
     internal static IReadOnlyList<GeoTiffXyzGridShiftMathTransform.XyzGrid> LoadXyz(string path, bool requireMetreUnits)
     {
-        return LoadCore(path, GridMode.Xyz, requireMetreUnits, ArrayPool<double>.Shared)
+        return [.. LoadCore(path, GridMode.Xyz, requireMetreUnits, ArrayPool<double>.Shared)
             .Select(page => page.ToXyzGrid(path))
-            .OfType<GeoTiffXyzGridShiftMathTransform.XyzGrid>()
-            .ToArray();
+            .OfType<GeoTiffXyzGridShiftMathTransform.XyzGrid>()];
     }
 
 #if NET8_0_OR_GREATER
@@ -314,15 +311,12 @@ internal static partial class GeoTiffGridLoader
             }
         }
 
-        if (requireMetreUnits
+        return requireMetreUnits
             && (!IsUnitMetreOrEmpty(metadata, sampleX)
             || !IsUnitMetreOrEmpty(metadata, sampleY)
-            || !IsUnitMetreOrEmpty(metadata, sampleZ)))
-        {
-            throw new InvalidDataException("xyzgridshift only supports unit=metre for XYZ samples.");
-        }
-
-        return true;
+            || !IsUnitMetreOrEmpty(metadata, sampleZ))
+            ? throw new InvalidDataException("xyzgridshift only supports unit=metre for XYZ samples.")
+            : true;
     }
 
     private static bool IsUnitMetreOrEmpty(GeoMetadata metadata, int sampleIndex)
@@ -333,12 +327,7 @@ internal static partial class GeoTiffGridLoader
         }
 
         string? unit = unitType?.Trim();
-        if (string.IsNullOrWhiteSpace(unit))
-        {
-            return true;
-        }
-
-        return string.Equals(unit, "metre", StringComparison.OrdinalIgnoreCase)
+        return string.IsNullOrWhiteSpace(unit) || string.Equals(unit, "metre", StringComparison.OrdinalIgnoreCase)
             || string.Equals(unit, "meter", StringComparison.OrdinalIgnoreCase)
             || string.Equals(unit, "metres", StringComparison.OrdinalIgnoreCase)
             || string.Equals(unit, "meters", StringComparison.OrdinalIgnoreCase)
@@ -368,12 +357,7 @@ internal static partial class GeoTiffGridLoader
             double d = matrix[4];
             double e = matrix[5];
             double f = matrix[7] + (pixelOffset * matrix[4]) + (pixelOffset * matrix[5]);
-            if (!TryCreateGeoTransform(width, height, a, b, c, d, e, f, out transform))
-            {
-                return false;
-            }
-
-            return true;
+            return TryCreateGeoTransform(width, height, a, b, c, d, e, f, out transform);
         }
 
         if (!TryGetDoubleArrayField(tiff, (TiffTag)ModelPixelScaleTag, out double[] pixelScale) || pixelScale.Length < 2)
@@ -594,13 +578,13 @@ internal static partial class GeoTiffGridLoader
 #endif
         if (firstTag > 0)
         {
-            sanitized = sanitized.Substring(firstTag);
+            sanitized = sanitized[firstTag..];
         }
 
         int lastTag = sanitized.LastIndexOf('>');
         if (lastTag >= 0 && lastTag + 1 < sanitized.Length)
         {
-            sanitized = sanitized.Substring(0, lastTag + 1);
+            sanitized = sanitized[..(lastTag + 1)];
         }
 
         return sanitized;
@@ -734,17 +718,13 @@ internal static partial class GeoTiffGridLoader
             }
 
             int angularCode = tiffTagLocation == 0 ? valueOffset : 9102;
-            switch (angularCode)
+            return angularCode switch
             {
-                case 9101:
-                    return 180d / Math.PI;
-                case 9102:
-                    return 1d;
-                case 9105:
-                    return 0.9d;
-                default:
-                    return 1d;
-            }
+                9101 => 180d / Math.PI,
+                9102 => 1d,
+                9105 => 0.9d,
+                _ => 1d,
+            };
         }
 
         return 1d;
@@ -781,7 +761,7 @@ internal static partial class GeoTiffGridLoader
     private static bool TryGetSampleEncoding(Tiff tiff, out SampleEncoding encoding)
     {
         encoding = default;
-        int bitsPerSample = 0;
+        int bitsPerSample;
         if (!TryGetIntField(tiff, TiffTag.BITSPERSAMPLE, out bitsPerSample))
         {
             return false;
@@ -793,12 +773,7 @@ internal static partial class GeoTiffGridLoader
             sampleFormat = (SampleFormat)sampleFormatRaw;
         }
 
-        if (!SampleEncoding.TryCreate(bitsPerSample, sampleFormat, out encoding))
-        {
-            return false;
-        }
-
-        return true;
+        return SampleEncoding.TryCreate(bitsPerSample, sampleFormat, out encoding);
     }
 
     private static bool TryGetIntField(Tiff tiff, TiffTag tag, out int value)
@@ -823,7 +798,7 @@ internal static partial class GeoTiffGridLoader
             return false;
         }
 
-        value = field[field.Length - 1].ToString();
+        value = field[^1].ToString();
         if (string.IsNullOrEmpty(value) && field.Length > 1)
         {
             value = field[0].ToString();
@@ -841,7 +816,7 @@ internal static partial class GeoTiffGridLoader
             return false;
         }
 
-        double[] candidate = field[field.Length - 1].ToDoubleArray();
+        double[] candidate = field[^1].ToDoubleArray();
         if (candidate is null || candidate.Length == 0)
         {
             return false;
@@ -860,7 +835,7 @@ internal static partial class GeoTiffGridLoader
             return false;
         }
 
-        short[] candidate = field[field.Length - 1].ToShortArray();
+        short[] candidate = field[^1].ToShortArray();
         if (candidate is null || candidate.Length == 0)
         {
             return false;
@@ -1142,12 +1117,9 @@ internal static partial class GeoTiffGridLoader
         /// <returns>The computed value.</returns>
         internal GeoTiffVGridShiftMathTransform.VerticalGrid? ToVerticalGrid(string sourcePath)
         {
-            if (this.mode != GridMode.Vertical)
-            {
-                return null;
-            }
-
-            return new GeoTiffVGridShiftMathTransform.VerticalGrid(
+            return this.mode != GridMode.Vertical
+                ? null
+                : new GeoTiffVGridShiftMathTransform.VerticalGrid(
                 sourcePath,
                 this.transform.Width,
                 this.transform.Height,
@@ -1175,12 +1147,9 @@ internal static partial class GeoTiffGridLoader
         /// <returns>The computed value.</returns>
         internal GeoTiffXyzGridShiftMathTransform.XyzGrid? ToXyzGrid(string sourcePath)
         {
-            if (this.mode != GridMode.Xyz)
-            {
-                return null;
-            }
-
-            return new GeoTiffXyzGridShiftMathTransform.XyzGrid(
+            return this.mode != GridMode.Xyz
+                ? null
+                : new GeoTiffXyzGridShiftMathTransform.XyzGrid(
                 sourcePath,
                 this.transform.Width,
                 this.transform.Height,

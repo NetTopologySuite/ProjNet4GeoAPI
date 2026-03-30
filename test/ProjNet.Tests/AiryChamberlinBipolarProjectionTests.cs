@@ -200,13 +200,10 @@ public class AiryChamberlinBipolarProjectionTests
 
     private static ProjectionProfile GetDefaultProfile(string projectionName)
     {
-        if (projectionName.Equals("chamb", StringComparison.OrdinalIgnoreCase) ||
-            projectionName.Equals("chamberlin_trimetric", StringComparison.OrdinalIgnoreCase))
-        {
-            return new ProjectionProfile(6400000d, ",PARAMETER[\"lat_1\",0.5],PARAMETER[\"lat_2\",2]");
-        }
-
-        return new ProjectionProfile(6400000d, null);
+        return projectionName.Equals("chamb", StringComparison.OrdinalIgnoreCase) ||
+            projectionName.Equals("chamberlin_trimetric", StringComparison.OrdinalIgnoreCase)
+            ? new ProjectionProfile(6400000d, ",PARAMETER[\"lat_1\",0.5],PARAMETER[\"lat_2\",2]")
+            : new ProjectionProfile(6400000d, null);
     }
 
     private static double[] CreatePoint(double x, double y) => [x, y];

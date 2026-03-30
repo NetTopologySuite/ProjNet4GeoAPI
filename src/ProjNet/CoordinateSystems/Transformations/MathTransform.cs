@@ -174,7 +174,7 @@ public abstract class MathTransform
         if (resultDimensions <= 4)
         {
             Span<double> scratch = stackalloc double[4];
-            Span<double> scratchResult = scratch.Slice(0, resultDimensions);
+            Span<double> scratchResult = scratch[..resultDimensions];
             this.TransformPoint(point, pointLength, scratchResult, resultDimensions);
             double[] transformedSmall = new double[resultDimensions];
             scratchResult.CopyTo(transformedSmall);
@@ -385,8 +385,8 @@ public abstract class MathTransform
         }
 
         Span<double> read = MemoryMarshal.Cast<XY, double>(xys);
-        Span<double> inXs = read.Slice(0);
-        Span<double> inYs = read.Slice(1);
+        Span<double> inXs = read[..];
+        Span<double> inYs = read[1..];
 
         if (zs.IsEmpty)
         {
@@ -406,9 +406,9 @@ public abstract class MathTransform
     public void Transform(Span<XYZ> xyzs)
     {
         Span<double> read = MemoryMarshal.Cast<XYZ, double>(xyzs);
-        Span<double> inXs = read.Slice(0); // , read.Length - 2);
-        Span<double> inYs = read.Slice(1); // , read.Length - 2);
-        Span<double> inZs = read.Slice(2); // , read.Length - 2);
+        Span<double> inXs = read[..]; // , read.Length - 2);
+        Span<double> inYs = read[1..]; // , read.Length - 2);
+        Span<double> inZs = read[2..]; // , read.Length - 2);
 
         this.TransformCore(inXs, inYs, inZs, 3, 3, 3);
     }
@@ -704,7 +704,7 @@ public abstract class MathTransform
             result[3] = t;
             if (resultDimensions > 4)
             {
-                point.Slice(4, resultDimensions - 4).CopyTo(result.Slice(4));
+                point[4..resultDimensions].CopyTo(result[4..]);
             }
         }
     }

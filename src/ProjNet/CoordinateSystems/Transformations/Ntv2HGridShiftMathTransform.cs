@@ -125,16 +125,14 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
 
         double tLon = tbLon - firstLongShift;
         double tLat = tbLat - firstLatShift;
-        double deltaLon = double.MaxValue;
-        double deltaLat = double.MaxValue;
         int iterations = MaxInverseIterations;
 
         while (iterations-- > 0)
         {
             (double iterLongShift, double iterLatShift) = InterpolateNormalized(initialGrid, tLon, tLat, true);
 
-            deltaLon = tLon + iterLongShift - tbLon;
-            deltaLat = tLat + iterLatShift - tbLat;
+            double deltaLon = tLon + iterLongShift - tbLon;
+            double deltaLat = tLat + iterLatShift - tbLat;
             tLon -= deltaLon;
             tLat -= deltaLat;
 
@@ -424,12 +422,9 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
 
         private static int ReadInt32(byte[] bytes, int offset, bool littleEndian)
         {
-            if (littleEndian == BitConverter.IsLittleEndian)
-            {
-                return BitConverter.ToInt32(bytes, offset);
-            }
-
-            return (bytes[offset] << 24)
+            return littleEndian == BitConverter.IsLittleEndian
+                ? BitConverter.ToInt32(bytes, offset)
+                : (bytes[offset] << 24)
                 | (bytes[offset + 1] << 16)
                 | (bytes[offset + 2] << 8)
                 | bytes[offset + 3];

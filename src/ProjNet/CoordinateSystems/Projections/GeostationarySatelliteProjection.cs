@@ -127,12 +127,7 @@ internal class GeostationarySatelliteProjection : MapProjection
             return this.Parameters.GetParameterValue("sweep_x") != 0d;
         }
 
-        if (this.Parameters.ContainsKey("sweep_angle_axis"))
-        {
-            return this.Parameters.GetParameterValue("sweep_angle_axis") != 0d;
-        }
-
-        return false;
+        return this.Parameters.ContainsKey("sweep_angle_axis") && this.Parameters.GetParameterValue("sweep_angle_axis") != 0d;
     }
 
     private void ForwardSpherical(double lambda, double phi, out double x, out double y)

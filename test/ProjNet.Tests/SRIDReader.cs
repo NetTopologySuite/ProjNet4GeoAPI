@@ -92,7 +92,7 @@ internal sealed class SRIDReader
             var wkt = new WktString
             {
                 WktId = int.Parse(line.AsSpan(0, split), CultureInfo.InvariantCulture),
-                Wkt = line.Substring(split + 1),
+                Wkt = line[(split + 1)..],
             };
             yield return wkt;
         }

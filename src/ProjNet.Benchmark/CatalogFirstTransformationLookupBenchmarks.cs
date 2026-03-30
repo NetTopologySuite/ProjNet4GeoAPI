@@ -28,11 +28,8 @@ public class CatalogFirstTransformationLookupBenchmarks
     {
         var services = new CoordinateSystemServices();
         ICoordinateTransformation? transformation = services.CreateTransformation(4326, 3857);
-        if (transformation is null)
-        {
-            throw new InvalidOperationException("EPSG:4326->3857 transformation lookup returned null.");
-        }
-
-        return transformation;
+        return transformation is null
+            ? throw new InvalidOperationException("EPSG:4326->3857 transformation lookup returned null.")
+            : transformation;
     }
 }

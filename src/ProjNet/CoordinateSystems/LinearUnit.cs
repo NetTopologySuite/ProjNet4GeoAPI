@@ -99,11 +99,6 @@ public class LinearUnit : Info, IUnit
     /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
-        if (obj is not LinearUnit linearUnit)
-        {
-            return false;
-        }
-
-        return linearUnit.MetersPerUnit == this.MetersPerUnit;
+        return obj is LinearUnit linearUnit && linearUnit.MetersPerUnit == this.MetersPerUnit;
     }
 }

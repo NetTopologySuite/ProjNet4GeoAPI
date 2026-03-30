@@ -108,12 +108,7 @@ public class CompoundCoordinateSystem : CoordinateSystem
     /// <inheritdoc/>
     public override bool EqualParams(object obj)
     {
-        if (obj is CompoundCoordinateSystem compdCs)
-        {
-            return this.HeadCoordinateSystem.EqualParams(compdCs.HeadCoordinateSystem) && this.TailCoordinateSystem.EqualParams(compdCs.TailCoordinateSystem);
-        }
-
-        return false;
+        return obj is CompoundCoordinateSystem compdCs && this.HeadCoordinateSystem.EqualParams(compdCs.HeadCoordinateSystem) && this.TailCoordinateSystem.EqualParams(compdCs.TailCoordinateSystem);
     }
 
     /// <inheritdoc/>
@@ -124,11 +119,8 @@ public class CompoundCoordinateSystem : CoordinateSystem
             ArgumentGuard.ThrowArgument("Dimension not valid", nameof(dimension));
         }
 
-        if (dimension < this.HeadCoordinateSystem.Dimension)
-        {
-            return this.HeadCoordinateSystem.GetUnits(dimension);
-        }
-
-        return this.TailCoordinateSystem.GetUnits(dimension - this.HeadCoordinateSystem.Dimension);
+        return dimension < this.HeadCoordinateSystem.Dimension
+            ? this.HeadCoordinateSystem.GetUnits(dimension)
+            : this.TailCoordinateSystem.GetUnits(dimension - this.HeadCoordinateSystem.Dimension);
     }
 }

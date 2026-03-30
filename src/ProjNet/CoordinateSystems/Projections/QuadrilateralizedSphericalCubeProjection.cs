@@ -435,11 +435,6 @@ internal sealed class QuadrilateralizedSphericalCubeProjection : MapProjection
             return Face.Front;
         }
 
-        if (Math.Abs(lam0) <= HalfPiPlusQuarterPi)
-        {
-            return lam0 > 0d ? Face.Right : Face.Left;
-        }
-
-        return Face.Back;
+        return Math.Abs(lam0) <= HalfPiPlusQuarterPi ? lam0 > 0d ? Face.Right : Face.Left : Face.Back;
     }
 }

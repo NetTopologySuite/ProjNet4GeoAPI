@@ -66,12 +66,7 @@ internal static class CoordinateOperationResolver
             return left;
         }
 
-        if (left is null)
-        {
-            return right;
-        }
-
-        return right.Score > left.Score ? right : left;
+        return left is null ? right : right.Score > left.Score ? right : left;
     }
 
     private sealed class OperationCandidate(ICoordinateTransformation transformation, int score)

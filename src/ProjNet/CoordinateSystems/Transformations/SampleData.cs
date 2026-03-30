@@ -86,13 +86,13 @@ internal readonly struct SampleData
         for (int i = 0; i < this.scaleBySample.Length; i++)
         {
             double scaleFactor = 1d;
-            if (!(scaleBySample is null) && scaleBySample.TryGetValue(i, out double parsedScale))
+            if (scaleBySample is not null && scaleBySample.TryGetValue(i, out double parsedScale))
             {
                 scaleFactor = parsedScale;
             }
 
             double offsetValue = 0d;
-            if (!(offsetBySample is null) && offsetBySample.TryGetValue(i, out double parsedOffset))
+            if (offsetBySample is not null && offsetBySample.TryGetValue(i, out double parsedOffset))
             {
                 offsetValue = parsedOffset;
             }

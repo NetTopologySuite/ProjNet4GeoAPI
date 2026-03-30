@@ -335,12 +335,7 @@ internal sealed class IseaProjection : MapProjection
             return PI;
         }
 
-        if (triangle >= 17)
-        {
-            return -PI;
-        }
-
-        return 0d;
+        return triangle >= 17 ? -PI : 0d;
     }
 
     private static double SafeArcSin(double value)
@@ -355,12 +350,7 @@ internal sealed class IseaProjection : MapProjection
             return HalfPi;
         }
 
-        if (Math.Abs(value + 1d) < SafeArcEpsilon)
-        {
-            return -HalfPi;
-        }
-
-        return Math.Asin(value);
+        return Math.Abs(value + 1d) < SafeArcEpsilon ? -HalfPi : Math.Asin(value);
     }
 
     private static double SafeArcCos(double value)
@@ -375,12 +365,7 @@ internal sealed class IseaProjection : MapProjection
             return PI;
         }
 
-        if (Math.Abs(value - 1d) < SafeArcEpsilon)
-        {
-            return 0d;
-        }
-
-        return Math.Acos(value);
+        return Math.Abs(value - 1d) < SafeArcEpsilon ? 0d : Math.Acos(value);
     }
 
     private static int ClampInt(int value, int minimum, int maximum)
@@ -390,12 +375,7 @@ internal sealed class IseaProjection : MapProjection
             return minimum;
         }
 
-        if (value > maximum)
-        {
-            return maximum;
-        }
-
-        return value;
+        return value > maximum ? maximum : value;
     }
 
     private static double NormalizeLongitude(double longitude)
@@ -430,12 +410,9 @@ internal sealed class IseaProjection : MapProjection
             return new IseaPlanarInverseProjection(StandardInverseOrientationLat, StandardInverseOrientationLon);
         }
 
-        if (IsNearlyEqual(this.orientationLatitude, HalfPi) && IsNearlyEqual(this.orientationLongitude, 0d))
-        {
-            return new IseaPlanarInverseProjection(0d, 0d);
-        }
-
-        return null;
+        return IsNearlyEqual(this.orientationLatitude, HalfPi) && IsNearlyEqual(this.orientationLongitude, 0d)
+            ? new IseaPlanarInverseProjection(0d, 0d)
+            : null;
     }
 
     private IseaPlanarState CreatePlanarState()

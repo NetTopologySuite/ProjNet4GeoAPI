@@ -53,11 +53,6 @@ public abstract class Datum : Info
     /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
-        if (obj is not Datum datum)
-        {
-            return false;
-        }
-
-        return datum.DatumType == this.DatumType;
+        return obj is Datum datum && datum.DatumType == this.DatumType;
     }
 }

@@ -55,12 +55,12 @@ public class ProjParityBenchmarks
         CoordinateSystemServices.CreateTransformation(3857, 4326)
         ?? throw new InvalidOperationException("EPSG:3857->4326 transformation lookup returned null.");
 
-    private double[] longitudes = Array.Empty<double>();
-    private double[] latitudes = Array.Empty<double>();
-    private double[] xBuffer = Array.Empty<double>();
-    private double[] yBuffer = Array.Empty<double>();
-    private double[] noiseX = Array.Empty<double>();
-    private double[] noiseY = Array.Empty<double>();
+    private double[] longitudes = [];
+    private double[] latitudes = [];
+    private double[] xBuffer = [];
+    private double[] yBuffer = [];
+    private double[] noiseX = [];
+    private double[] noiseY = [];
 
     /// <summary>
     /// Gets or sets the number of coordinates processed per benchmark invocation.

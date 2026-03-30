@@ -49,7 +49,7 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
         }
 
         this.grids = new ReadOnlyCollection<HorizontalGrid>(
-            loadedGrids.OrderBy(grid => grid.Area, Comparer<double>.Default).ToArray());
+            [.. loadedGrids.OrderBy(grid => grid.Area, Comparer<double>.Default)]);
     }
 
     private GeoTiffHGridShiftMathTransform(GeoTiffHGridShiftMathTransform source, bool isInverted)

@@ -38,7 +38,7 @@ internal sealed class SchMathTransform : MathTransform
     /// </summary>
     /// <param name="parameters">Projection parameters that include SCH and ellipsoid values.</param>
     public SchMathTransform(List<ProjectionParameter> parameters)
-        : this((IEnumerable<ProjectionParameter>)parameters, false)
+        : this(parameters, false)
     {
     }
 
@@ -272,9 +272,6 @@ internal sealed class SchMathTransform : MathTransform
         out double semiMajor,
         out double semiMinor)
     {
-        semiMajor = 0d;
-        semiMinor = 0d;
-
         if (TryGetFromArgs(args, "r", out double radius) && radius > 0d)
         {
             semiMajor = radius;
@@ -372,12 +369,7 @@ internal sealed class SchMathTransform : MathTransform
     private static bool TryGetFromArgs(Dictionary<string, string> args, string key, out double value)
     {
         value = 0d;
-        if (!args.TryGetValue(key, out string? token) || string.IsNullOrWhiteSpace(token))
-        {
-            return false;
-        }
-
-        return double.TryParse(token, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value)
+        return args.TryGetValue(key, out string? token) && !string.IsNullOrWhiteSpace(token) && double.TryParse(token, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value)
             && !double.IsNaN(value)
             && !double.IsInfinity(value);
     }

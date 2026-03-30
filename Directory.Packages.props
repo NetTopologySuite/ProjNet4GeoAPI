@@ -13,7 +13,8 @@
   <!-- Centrally managed package versions -->
   <ItemGroup Label="Library Packages">
     <PackageVersion Include="BitMiracle.LibTiff.NET" Version="2.4.660" />
-    <PackageVersion Include="System.Memory" Version="4.6.0" />
+    <PackageVersion Include="Microsoft.Bcl.Memory" Version="10.0.5" />
+    <PackageVersion Include="System.Memory" Version="4.6.3" />
     <PackageVersion Include="System.Text.Json" Version="8.0.5" />
   </ItemGroup>
 

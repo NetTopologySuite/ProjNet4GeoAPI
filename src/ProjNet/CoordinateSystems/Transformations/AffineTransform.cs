@@ -182,11 +182,11 @@ public class AffineTransform : MathTransform
     {
         int rowCnt = this.transformMatrix.GetLength(0);
         int colCnt = this.transformMatrix.GetLength(1);
-        var pInfo = new List<ProjectionParameter>
-        {
-            new ProjectionParameter("num_row", rowCnt),
-            new ProjectionParameter("num_col", colCnt),
-        };
+        List<ProjectionParameter> pInfo =
+        [
+            new("num_row", rowCnt),
+            new("num_col", colCnt),
+        ];
 
         // fill matrix values
         for (int row = 0; row < rowCnt; row++)
@@ -227,9 +227,9 @@ public class AffineTransform : MathTransform
             ArgumentGuard.ThrowArgument("Solution buffer is too short.", nameof(solution));
         }
 
-        Span<double> xSpan = solution.Slice(0, dimension);
+        Span<double> xSpan = solution[..dimension];
         Span<double> yBuffer = dimension <= 128 ? stackalloc double[128] : new double[dimension];
-        Span<double> ySpan = yBuffer.Slice(0, dimension);
+        Span<double> ySpan = yBuffer[..dimension];
 
         // Solve for y using formward substitution
         for (int i = 0; i <= n; i++)
@@ -362,8 +362,8 @@ public class AffineTransform : MathTransform
         double[,] lU = a;
         Span<double> eBuffer = m <= 128 ? stackalloc double[128] : new double[m];
         Span<double> solveBuffer = m <= 128 ? stackalloc double[128] : new double[m];
-        Span<double> e = eBuffer.Slice(0, m);
-        Span<double> solve = solveBuffer.Slice(0, m);
+        Span<double> e = eBuffer[..m];
+        Span<double> solve = solveBuffer[..m];
 
         // Solve AX = e for each column ei of the identity matrix using LUP decomposition
         for (int i = 0; i < n; i++)
@@ -391,30 +391,8 @@ public class AffineTransform : MathTransform
     private (double X, double Y, double Z) TransformAffine(double x, double y, double z)
     {
         // check source dimensionality - allow coordinate clipping, if source dimensionality is greater then expected source dimensionality of affine transformation
-        Span<double> point = stackalloc double[0];
-        switch (this.dimSource)
-        {
-            case 0:
-                point = default;
-                break;
-
-            case 1:
-                point = stackalloc double[] { x };
-                break;
-
-            case 2:
-                point = stackalloc double[] { x, y };
-                break;
-
-            case 3:
-                point = stackalloc double[] { x, y, z };
-                break;
-
-            default:
-                throw new NotSupportedException();
-        }
-
-        if (this.dimTarget > 3)
+        Span<double> point = [x, y, z];
+        if (this.dimSource > 3 || this.dimTarget > 3)
         {
             throw new NotSupportedException();
         }

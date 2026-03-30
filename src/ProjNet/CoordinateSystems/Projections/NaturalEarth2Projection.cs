@@ -61,7 +61,7 @@ internal class NaturalEarth2Projection : MapProjection
         double phi = lat;
         double phi2 = phi * phi;
         double phi4 = phi2 * phi2;
-        double phi6 = phi4 * phi2;
+        _ = phi4 * phi2;
         double phi8 = phi4 * phi4;
         double phi10 = phi8 * phi2;
         double phi12 = phi10 * phi2;
@@ -85,7 +85,7 @@ internal class NaturalEarth2Projection : MapProjection
         {
             double phi2 = phi * phi;
             double phi4 = phi2 * phi2;
-            double phi6 = phi4 * phi2;
+            _ = phi4 * phi2;
             double phi8 = phi4 * phi4;
             double phi10 = phi8 * phi2;
             double phi12 = phi10 * phi2;

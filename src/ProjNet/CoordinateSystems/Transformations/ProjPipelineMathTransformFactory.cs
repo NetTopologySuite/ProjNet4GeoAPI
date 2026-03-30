@@ -112,8 +112,6 @@ internal static class ProjPipelineMathTransformFactory
         out string? skipReason)
     {
         transform = null;
-        skipReason = null;
-
         if (!TryParseOperationArguments(operation, out Dictionary<string, string> args))
         {
             skipReason = "Unable to parse operation parameters.";
@@ -557,8 +555,6 @@ internal static class ProjPipelineMathTransformFactory
         out string? skipReason)
     {
         transform = null;
-        skipReason = null;
-
         if (!TryResolveEllipsoid(args, out double semiMajor, out double semiMinor, out skipReason))
         {
             return false;
@@ -600,8 +596,6 @@ internal static class ProjPipelineMathTransformFactory
         out string? skipReason)
     {
         transform = null;
-        skipReason = null;
-
         if (!TryResolveEllipsoid(args, out double semiMajor, out double semiMinor, out skipReason))
         {
             return false;
@@ -618,8 +612,6 @@ internal static class ProjPipelineMathTransformFactory
         out string? skipReason)
     {
         transform = null;
-        skipReason = null;
-
         if (!TryBuildProjectionStepParameters(args, projCode, out List<ProjectionParameter>? parametersCandidate, out skipReason))
         {
             return false;
@@ -666,8 +658,6 @@ internal static class ProjPipelineMathTransformFactory
         out string? skipReason)
     {
         parameters = null;
-        skipReason = null;
-
         if (!TryResolveProjectionEllipsoid(args, out double semiMajor, out double semiMinor, out skipReason))
         {
             return false;
@@ -822,8 +812,6 @@ internal static class ProjPipelineMathTransformFactory
         out double semiMinor,
         out string? skipReason)
     {
-        semiMajor = 0d;
-        semiMinor = 0d;
         skipReason = null;
 
         if (args.TryGetValue("r", out string? radiusToken)
@@ -981,8 +969,8 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
-        string numeratorToken = token.Substring(0, slashIndex).Trim();
-        string denominatorToken = token.Substring(slashIndex + 1).Trim();
+        string numeratorToken = token[..slashIndex].Trim();
+        string denominatorToken = token[(slashIndex + 1)..].Trim();
         if (!double.TryParse(numeratorToken, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out double numerator)
             || !double.TryParse(denominatorToken, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out double denominator))
         {
@@ -1010,8 +998,6 @@ internal static class ProjPipelineMathTransformFactory
         out string? skipReason)
     {
         transform = null;
-        skipReason = null;
-
         if (!args.TryGetValue("grids", out string? gridsToken) || string.IsNullOrWhiteSpace(gridsToken))
         {
             skipReason = "Horizontal grid shift requires +grids.";
@@ -1034,7 +1020,7 @@ internal static class ProjPipelineMathTransformFactory
         {
             bool hasGeoTiff = ContainsGeoTiffGrid(gridPaths);
             transform = hasGeoTiff
-                ? (MathTransform)new GeoTiffHGridShiftMathTransform(gridPaths)
+                ? new GeoTiffHGridShiftMathTransform(gridPaths)
                 : new Ntv2HGridShiftMathTransform(gridPaths);
         }
         catch (IOException ioException)
@@ -1067,8 +1053,6 @@ internal static class ProjPipelineMathTransformFactory
         out string? skipReason)
     {
         transform = null;
-        skipReason = null;
-
         if (!args.TryGetValue("grids", out string? gridsToken) || string.IsNullOrWhiteSpace(gridsToken))
         {
             skipReason = "Vertical grid shift requires +grids.";
@@ -1105,7 +1089,7 @@ internal static class ProjPipelineMathTransformFactory
         {
             bool hasGeoTiff = ContainsGeoTiffGrid(gridPaths);
             transform = hasGeoTiff
-                ? (MathTransform)new GeoTiffVGridShiftMathTransform(gridPaths, multiplier)
+                ? new GeoTiffVGridShiftMathTransform(gridPaths, multiplier)
                 : new GtxVGridShiftMathTransform(gridPaths, multiplier);
         }
         catch (IOException ioException)
@@ -1138,8 +1122,6 @@ internal static class ProjPipelineMathTransformFactory
         out string? skipReason)
     {
         transform = null;
-        skipReason = null;
-
         if (!args.TryGetValue("grids", out string? gridsToken) || string.IsNullOrWhiteSpace(gridsToken))
         {
             skipReason = "Geocentric grid shift requires +grids.";
@@ -1301,7 +1283,7 @@ internal static class ProjPipelineMathTransformFactory
             }
 
             bool isOptional = token.Length > 0 && token[0] == '@';
-            string gridName = isOptional ? token.Substring(1) : token;
+            string gridName = isOptional ? token[1..] : token;
             if (string.IsNullOrWhiteSpace(gridName))
             {
                 continue;
@@ -1685,7 +1667,7 @@ internal static class ProjPipelineMathTransformFactory
         foreach (string token in tokens)
         {
             string normalized = token.Length > 0 && token[0] == '+'
-                ? token.Substring(1)
+                ? token[1..]
                 : token;
 
             if (normalized.Equals("proj=pipeline", StringComparison.OrdinalIgnoreCase))
@@ -1739,7 +1721,7 @@ internal static class ProjPipelineMathTransformFactory
                 continue;
             }
 
-            string body = token.Substring(1);
+            string body = token[1..];
             if (body.Equals("proj=pipeline", StringComparison.OrdinalIgnoreCase))
             {
                 return true;
@@ -1779,7 +1761,7 @@ internal static class ProjPipelineMathTransformFactory
                 continue;
             }
 
-            string body = token.Substring(1);
+            string body = token[1..];
 #if NET8_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
             int separatorIndex = body.IndexOf('=', StringComparison.Ordinal);
 #else
@@ -1787,10 +1769,10 @@ internal static class ProjPipelineMathTransformFactory
 #endif
             string key = separatorIndex < 0
                 ? body
-                : body.Substring(0, separatorIndex);
+                : body[..separatorIndex];
             string value = separatorIndex < 0
                 ? "true"
-                : body.Substring(separatorIndex + 1);
+                : body[(separatorIndex + 1)..];
             if (key.Equals("proj", StringComparison.OrdinalIgnoreCase)
                 && value.Equals("pipeline", StringComparison.OrdinalIgnoreCase))
             {
@@ -1902,7 +1884,7 @@ internal static class ProjPipelineMathTransformFactory
                 continue;
             }
 
-            string body = token.Substring(1);
+            string body = token[1..];
 #if NET8_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
             int index = body.IndexOf('=', StringComparison.Ordinal);
 #else
@@ -1914,8 +1896,8 @@ internal static class ProjPipelineMathTransformFactory
             }
             else
             {
-                string key = body.Substring(0, index);
-                string value = body.Substring(index + 1);
+                string key = body[..index];
+                string value = body[(index + 1)..];
                 args[key] = value;
             }
         }

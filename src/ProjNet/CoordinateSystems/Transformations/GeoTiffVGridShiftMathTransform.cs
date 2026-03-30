@@ -54,7 +54,7 @@ internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
         }
 
         this.grids = new ReadOnlyCollection<VerticalGrid>(
-            loadedGrids.OrderBy(grid => grid.Area, Comparer<double>.Default).ToArray());
+            [.. loadedGrids.OrderBy(grid => grid.Area, Comparer<double>.Default)]);
         this.forwardMultiplier = forwardMultiplier;
     }
 
@@ -313,12 +313,7 @@ internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
         /// <returns><see langword="true"/> when <paramref name="value"/> matches the no-data value; otherwise <see langword="false"/>.</returns>
         internal bool IsNoData(double value)
         {
-            if (!this.noDataValue.HasValue)
-            {
-                return false;
-            }
-
-            return Math.Abs(value - this.noDataValue.Value) <= 1e-4d;
+            return this.noDataValue.HasValue && Math.Abs(value - this.noDataValue.Value) <= 1e-4d;
         }
     }
 }

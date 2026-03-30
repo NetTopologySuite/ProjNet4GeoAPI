@@ -199,8 +199,6 @@ internal sealed class HornerMathTransform : MathTransform
         out string? skipReason)
     {
         transform = null;
-        skipReason = null;
-
         if (args is null)
         {
             skipReason = "horner arguments were null.";
@@ -220,12 +218,12 @@ internal sealed class HornerMathTransform : MathTransform
             ? GetComplexCoefficientCount(degree)
             : GetRealCoefficientCount(degree);
 
-        double[] fwdU = Array.Empty<double>();
-        double[] fwdV = Array.Empty<double>();
-        double[] invU = Array.Empty<double>();
-        double[] invV = Array.Empty<double>();
-        double[] fwdC = Array.Empty<double>();
-        double[] invC = Array.Empty<double>();
+        double[] fwdU = [];
+        double[] fwdV = [];
+        double[] invU = [];
+        double[] invV = [];
+        double[] fwdC = [];
+        double[] invC = [];
 
         if (isComplex)
         {
@@ -417,8 +415,6 @@ internal sealed class HornerMathTransform : MathTransform
     {
         x = 0d;
         y = 0d;
-        skipReason = null;
-
         if (!TryParseCoefficientList(args, key, 2, out double[]? values, out skipReason))
         {
             return false;
@@ -486,7 +482,7 @@ internal sealed class HornerMathTransform : MathTransform
                 continue;
             }
 
-            ReadOnlySpan<char> segment = TrimWhitespace(token.Slice(segmentStart, i - segmentStart));
+            ReadOnlySpan<char> segment = TrimWhitespace(token[segmentStart..i]);
             if (!segment.IsEmpty)
             {
                 if (parsedCount >= destination.Length)
@@ -522,7 +518,7 @@ internal sealed class HornerMathTransform : MathTransform
             end--;
         }
 
-        return end < start ? ReadOnlySpan<char>.Empty : value.Slice(start, (end - start) + 1);
+        return end < start ? [] : value.Slice(start, (end - start) + 1);
     }
 
     private static (double E, double N) EvaluateReal(
@@ -617,8 +613,6 @@ internal sealed class HornerMathTransform : MathTransform
         double deltaN = n - this.fwdV[0];
         double x0 = 0d;
         double y0 = 0d;
-        bool converged = false;
-
         for (int i = 0; i < MaxInverseIterations; i++)
         {
             (double mb, double mc) = EvaluateReal(this.degree, this.fwdU, this.fwdV, x0, y0, 1);
@@ -634,9 +628,8 @@ internal sealed class HornerMathTransform : MathTransform
             double inverseDeterminant = 1d / determinant;
             double nextX = inverseDeterminant * ((md * deltaE) - (mb * deltaN));
             double nextY = inverseDeterminant * ((ma * deltaN) - (mc * deltaE));
-            converged = Math.Abs(nextX - x0) < this.inverseTolerance
-                && Math.Abs(nextY - y0) < this.inverseTolerance;
-
+            bool converged = Math.Abs(nextX - x0) < this.inverseTolerance
+        && Math.Abs(nextY - y0) < this.inverseTolerance;
             x0 = nextX;
             y0 = nextY;
             if (converged)
@@ -700,8 +693,6 @@ internal sealed class HornerMathTransform : MathTransform
         double dzImaginary = e - this.fwdC[1];
         double w0Real = 0d;
         double w0Imaginary = 0d;
-        bool converged = false;
-
         for (int i = 0; i < MaxInverseIterations; i++)
         {
             (double derivativeE, double derivativeN) = EvaluateComplex(this.degree, this.fwdC, w0Imaginary, w0Real, 1);
@@ -716,9 +707,8 @@ internal sealed class HornerMathTransform : MathTransform
             double nextReal = ((dzReal * detReal) + (dzImaginary * detImaginary)) / denominator;
             double nextImaginary = ((dzImaginary * detReal) - (dzReal * detImaginary)) / denominator;
 
-            converged = Math.Abs(nextReal - w0Real) < this.inverseTolerance
-                && Math.Abs(nextImaginary - w0Imaginary) < this.inverseTolerance;
-
+            bool converged = Math.Abs(nextReal - w0Real) < this.inverseTolerance
+        && Math.Abs(nextImaginary - w0Imaginary) < this.inverseTolerance;
             w0Real = nextReal;
             w0Imaginary = nextImaginary;
             if (converged)

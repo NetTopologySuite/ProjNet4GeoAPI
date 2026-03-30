@@ -443,12 +443,9 @@ internal abstract class AdamsProjectionBase : MapProjection
 
     private bool TryInversePeirce(double x, double y, out double lambda, out double phi)
     {
-        if (this.peirceShape == PeirceShape.Square)
-        {
-            return this.TryInversePeirceSquare(x, y, out lambda, out phi);
-        }
-
-        return this.TryInversePeirceDiamond(x, y, out lambda, out phi);
+        return this.peirceShape == PeirceShape.Square
+            ? this.TryInversePeirceSquare(x, y, out lambda, out phi)
+            : this.TryInversePeirceDiamond(x, y, out lambda, out phi);
     }
 
     private bool TryInversePeirceSquare(double x, double y, out double lambda, out double phi)

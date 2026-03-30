@@ -101,8 +101,6 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
         out string? skipReason)
     {
         transform = null;
-        skipReason = null;
-
         if (args is null)
         {
             skipReason = "affine arguments were null.";

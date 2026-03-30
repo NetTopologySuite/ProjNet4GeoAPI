@@ -106,8 +106,8 @@ internal static class GieParser
                             ToleranceValue = currentToleranceValue,
                             ToleranceUnit = currentToleranceUnit,
                             Direction = currentDirection,
-                            Accept = pendingAccept ?? Array.Empty<double>(),
-                            Expect = Array.Empty<double>(),
+                            Accept = pendingAccept ?? [],
+                            Expect = [],
                             ExpectsFailure = true,
                             ExpectedErrorCode = ParseExpectedErrorCode(payload),
                             RoundtripCount = currentRoundtrip,
@@ -150,12 +150,9 @@ internal static class GieParser
 
         if (pendingAccept is not null)
         {
-            if (options.IgnoreUnknownDirectives)
-            {
-                return parsedCases;
-            }
-
-            throw new FormatException("Dangling 'accept' without matching 'expect' at end of input.");
+            return options.IgnoreUnknownDirectives
+                ? (IReadOnlyList<GieCase>)parsedCases
+                : throw new FormatException("Dangling 'accept' without matching 'expect' at end of input.");
         }
 
         return parsedCases;
@@ -178,7 +175,7 @@ internal static class GieParser
             bool hasContinuation = stripped.EndsWith('\\');
             if (hasContinuation)
             {
-                stripped = stripped.Substring(0, stripped.Length - 1).TrimEnd();
+                stripped = stripped[..^1].TrimEnd();
             }
 
             if (current is null)
@@ -243,7 +240,7 @@ internal static class GieParser
         }
 
         int commentIndex = line.IndexOf('#', StringComparison.Ordinal);
-        return commentIndex < 0 ? line : line.Substring(0, commentIndex);
+        return commentIndex < 0 ? line : line[..commentIndex];
     }
 
     private static void SplitDirective(string line, out string directive, out string payload)
@@ -256,8 +253,8 @@ internal static class GieParser
             return;
         }
 
-        directive = line.Substring(0, splitIndex);
-        payload = line.Substring(splitIndex + 1).Trim();
+        directive = line[..splitIndex];
+        payload = line[(splitIndex + 1)..].Trim();
     }
 
     private static int ParseRoundtrip(string payload, int lineNumber)
@@ -301,13 +298,10 @@ internal static class GieParser
             return GieDirection.Forward;
         }
 
-        if (normalized.Equals("inverse", StringComparison.OrdinalIgnoreCase)
-            || normalized.Equals("reverse", StringComparison.OrdinalIgnoreCase))
-        {
-            return GieDirection.Inverse;
-        }
-
-        throw new FormatException("Unsupported direction '" + payload + "' at line " + lineNumber.ToString(CultureInfo.InvariantCulture) + ".");
+        return normalized.Equals("inverse", StringComparison.OrdinalIgnoreCase)
+            || normalized.Equals("reverse", StringComparison.OrdinalIgnoreCase)
+            ? GieDirection.Inverse
+            : throw new FormatException("Unsupported direction '" + payload + "' at line " + lineNumber.ToString(CultureInfo.InvariantCulture) + ".");
     }
 
     private static bool IsFailureExpectation(string payload)
@@ -356,12 +350,9 @@ internal static class GieParser
             return value;
         }
 
-        if (TryParseDmsCoordinate(normalizedToken, out value))
-        {
-            return value;
-        }
-
-        throw new FormatException(
+        return TryParseDmsCoordinate(normalizedToken, out value)
+            ? value
+            : throw new FormatException(
             "Failed to parse numeric value '" + token + "' in directive '" + directiveName + "' at line " + lineNumber.ToString(CultureInfo.InvariantCulture) + ".");
     }
 
@@ -415,8 +406,8 @@ internal static class GieParser
             return false;
         }
 
-        string numberPart = token.Substring(0, index);
-        string unitPart = token.Substring(index);
+        string numberPart = token[..index];
+        string unitPart = token[index..];
         if (!double.TryParse(numberPart, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value))
         {
             return false;
@@ -441,21 +432,21 @@ internal static class GieParser
         if (last == 'W' || last == 'w' || last == 'S' || last == 's')
         {
             sign = -1;
-            text = text.Substring(0, text.Length - 1);
+            text = text[..^1];
         }
         else if (last == 'E' || last == 'e' || last == 'N' || last == 'n')
         {
-            text = text.Substring(0, text.Length - 1);
+            text = text[..^1];
         }
 
         if (text.StartsWith('-'))
         {
             sign *= -1;
-            text = text.Substring(1);
+            text = text[1..];
         }
         else if (text.StartsWith('+'))
         {
-            text = text.Substring(1);
+            text = text[1..];
         }
 
         int dIndex = text.IndexOf('d', StringComparison.Ordinal);
@@ -470,7 +461,7 @@ internal static class GieParser
             return false;
         }
 
-        string degreesToken = text.Substring(0, dIndex);
+        string degreesToken = text[..dIndex];
         string minutesToken = text.Substring(dIndex + 1, mIndex - dIndex - 1);
         if (!double.TryParse(degreesToken, NumberStyles.Float, CultureInfo.InvariantCulture, out double degrees))
         {

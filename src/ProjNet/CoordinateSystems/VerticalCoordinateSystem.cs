@@ -121,7 +121,7 @@ public class VerticalCoordinateSystem : CoordinateSystem
     /// <inheritdoc/>
     public override bool EqualParams(object obj)
     {
-        if (!(obj is VerticalCoordinateSystem vcs))
+        if (obj is not VerticalCoordinateSystem vcs)
         {
             return false;
         }

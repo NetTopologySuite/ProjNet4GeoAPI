@@ -142,12 +142,7 @@ internal class InterruptedMollweideProjection : InterruptedMollweideBaseProjecti
             return 3;
         }
 
-        if (lambda <= -D20)
-        {
-            return 4;
-        }
-
-        return lambda <= D80 ? 5 : 6;
+        return lambda <= -D20 ? 4 : lambda <= D80 ? 5 : 6;
     }
 
     private static int DetermineInverseZone(
@@ -174,11 +169,6 @@ internal class InterruptedMollweideProjection : InterruptedMollweideBaseProjecti
             return 3;
         }
 
-        if (x <= seam45)
-        {
-            return 4;
-        }
-
-        return x <= seam56 ? 5 : 6;
+        return x <= seam45 ? 4 : x <= seam56 ? 5 : 6;
     }
 }

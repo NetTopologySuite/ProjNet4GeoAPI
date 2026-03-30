@@ -61,8 +61,8 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
         {
             var axes = new List<AxisInfo>(2)
             {
-                new AxisInfo("Lon", AxisOrientationEnum.East),
-                new AxisInfo("Lat", AxisOrientationEnum.North),
+                new("Lon", AxisOrientationEnum.East),
+                new("Lat", AxisOrientationEnum.North),
             };
             return new GeographicCoordinateSystem(
                 CoordinateSystems.AngularUnit.Degrees,
@@ -174,7 +174,7 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
     /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
-        if (!(obj is GeographicCoordinateSystem gcs))
+        if (obj is not GeographicCoordinateSystem gcs)
         {
             return false;
         }

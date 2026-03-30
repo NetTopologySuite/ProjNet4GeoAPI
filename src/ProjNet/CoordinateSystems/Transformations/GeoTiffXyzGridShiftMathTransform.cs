@@ -83,7 +83,7 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
         }
 
         this.grids = new ReadOnlyCollection<XyzGrid>(
-            loadedGrids.OrderBy(grid => grid.Area, Comparer<double>.Default).ToArray());
+            [.. loadedGrids.OrderBy(grid => grid.Area, Comparer<double>.Default)]);
         this.semiMajor = semiMajor;
         this.semiMinor = semiMinor;
         this.multiplier = multiplier;

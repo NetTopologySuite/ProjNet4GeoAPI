@@ -143,12 +143,9 @@ internal static class EpsgCoordinateSystemFactory
             return null;
         }
 
-        if (!TryCreateAngularUnit(GetUnitCode(record.CoordinateSystemCode, 1), out AngularUnit? angularUnit))
-        {
-            return null;
-        }
-
-        return new GeographicCoordinateSystem(
+        return !TryCreateAngularUnit(GetUnitCode(record.CoordinateSystemCode, 1), out AngularUnit? angularUnit)
+            ? null
+            : new GeographicCoordinateSystem(
             angularUnit,
             datum,
             primeMeridian,
@@ -184,12 +181,9 @@ internal static class EpsgCoordinateSystemFactory
             return null;
         }
 
-        if (!TryCreateLinearUnit(GetUnitCode(record.CoordinateSystemCode, 1), out LinearUnit? linearUnit))
-        {
-            return null;
-        }
-
-        return new GeocentricCoordinateSystem(
+        return !TryCreateLinearUnit(GetUnitCode(record.CoordinateSystemCode, 1), out LinearUnit? linearUnit)
+            ? null
+            : new GeocentricCoordinateSystem(
             datum,
             linearUnit,
             primeMeridian,
@@ -235,12 +229,9 @@ internal static class EpsgCoordinateSystemFactory
         var projection = new Projection(projectionName, parameters, projectionName, "EPSG", record.ConversionCode, string.Empty, string.Empty, string.Empty);
 
         List<AxisInfo>? axes = GetAxes(record.CoordinateSystemCode, 2);
-        if (axes is null || axes.Count < 2)
-        {
-            return null;
-        }
-
-        return new ProjectedCoordinateSystem(
+        return axes is null || axes.Count < 2
+            ? null
+            : new ProjectedCoordinateSystem(
             baseCoordinateSystem.HorizontalDatum,
             baseCoordinateSystem,
             linearUnit,
@@ -302,14 +293,11 @@ internal static class EpsgCoordinateSystemFactory
         normalized = StringCompatibility.ReplaceOrdinal(normalized, ".", "_");
         normalized = StringCompatibility.ReplaceOrdinal(normalized, "__", "_");
 
-        switch (normalized)
+        return normalized switch
         {
-            case "polar_stereographic_variant_a":
-            case "polar_stereographic_variant_b":
-                return "Polar Stereographic";
-            default:
-                return methodName;
-        }
+            "polar_stereographic_variant_a" or "polar_stereographic_variant_b" => "Polar Stereographic",
+            _ => methodName,
+        };
     }
 
     private static string NormalizeProjectionParameterName(string parameterName)
@@ -328,45 +316,26 @@ internal static class EpsgCoordinateSystemFactory
         normalized = StringCompatibility.ReplaceOrdinal(normalized, ".", "_");
         normalized = StringCompatibility.ReplaceOrdinal(normalized, "__", "_");
 
-        switch (normalized)
+        return normalized switch
         {
-            case "longitude_of_natural_origin":
-            case "longitude_of_false_origin":
-            case "longitude_of_projection_centre":
-                return "central_meridian";
-            case "latitude_of_natural_origin":
-            case "latitude_of_false_origin":
-            case "latitude_of_projection_centre":
-                return "latitude_of_origin";
-            case "scale_factor_at_natural_origin":
-            case "scale_factor_at_projection_centre":
-            case "scale_factor_on_initial_line":
-                return "scale_factor";
-            case "easting_at_false_origin":
-            case "easting_at_projection_centre":
-                return "false_easting";
-            case "northing_at_false_origin":
-            case "northing_at_projection_centre":
-                return "false_northing";
-            case "latitude_of_1st_standard_parallel":
-                return "standard_parallel_1";
-            case "latitude_of_2nd_standard_parallel":
-                return "standard_parallel_2";
-            default:
-                return normalized;
-        }
+            "longitude_of_natural_origin" or "longitude_of_false_origin" or "longitude_of_projection_centre" => "central_meridian",
+            "latitude_of_natural_origin" or "latitude_of_false_origin" or "latitude_of_projection_centre" => "latitude_of_origin",
+            "scale_factor_at_natural_origin" or "scale_factor_at_projection_centre" or "scale_factor_on_initial_line" => "scale_factor",
+            "easting_at_false_origin" or "easting_at_projection_centre" => "false_easting",
+            "northing_at_false_origin" or "northing_at_projection_centre" => "false_northing",
+            "latitude_of_1st_standard_parallel" => "standard_parallel_1",
+            "latitude_of_2nd_standard_parallel" => "standard_parallel_2",
+            _ => normalized,
+        };
     }
 
     private static CompoundCoordinateSystem? CreateCompound(EpsgCompoundCrsRecord record)
     {
         CoordinateSystem? horizontal = TryCreateCoordinateSystem(record.HorizontalSrid);
         CoordinateSystem? vertical = TryCreateCoordinateSystem(record.VerticalSrid);
-        if (horizontal is null || vertical is null)
-        {
-            return null;
-        }
-
-        return new CompoundCoordinateSystem(
+        return horizontal is null || vertical is null
+            ? null
+            : new CompoundCoordinateSystem(
             horizontal,
             vertical,
             record.Name,
@@ -620,7 +589,7 @@ internal static class EpsgCoordinateSystemFactory
         foreach (KeyValuePair<int, List<EpsgAxisRecord>> item in grouped)
         {
             item.Value.Sort((left, right) => left.AxisOrder.CompareTo(right.AxisOrder));
-            result[item.Key] = item.Value.ToArray();
+            result[item.Key] = [.. item.Value];
         }
 
         return result;

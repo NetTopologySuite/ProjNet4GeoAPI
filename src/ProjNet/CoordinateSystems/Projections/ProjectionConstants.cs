@@ -43,12 +43,7 @@ internal static class ProjectionConstants
     /// <returns>The clamped value.</returns>
     internal static double Clamp(double value, double minimum, double maximum)
     {
-        if (value < minimum)
-        {
-            return minimum;
-        }
-
-        return value > maximum ? maximum : value;
+        return value < minimum ? minimum : value > maximum ? maximum : value;
     }
 
     /// <summary>
@@ -63,11 +58,6 @@ internal static class ProjectionConstants
             return 1d;
         }
 
-        if (value < -1d)
-        {
-            return -1d;
-        }
-
-        return value;
+        return value < -1d ? -1d : value;
     }
 }

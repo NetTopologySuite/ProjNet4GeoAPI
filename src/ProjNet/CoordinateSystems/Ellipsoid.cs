@@ -314,12 +314,7 @@ public class Ellipsoid : Info
     /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
-        if (obj is not Ellipsoid ellipsoid)
-        {
-            return false;
-        }
-
-        return ellipsoid.InverseFlattening == this.InverseFlattening &&
+        return obj is Ellipsoid ellipsoid && ellipsoid.InverseFlattening == this.InverseFlattening &&
                 ellipsoid.IsIvfDefinitive == this.IsIvfDefinitive &&
                 ellipsoid.SemiMajorAxis == this.SemiMajorAxis &&
                 ellipsoid.SemiMinorAxis == this.SemiMinorAxis &&

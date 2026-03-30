@@ -384,12 +384,7 @@ public class OperationResolutionEngineTests
             return true;
         }
 
-        if (mathTransform is ConcatenatedTransform concatenated)
-        {
-            return concatenated.CoordinateTransformationList.Any(ContainsDatumTransform);
-        }
-
-        return false;
+        return mathTransform is ConcatenatedTransform concatenated && concatenated.CoordinateTransformationList.Any(ContainsDatumTransform);
     }
 
     private static bool ContainsDatumTransform(ICoordinateTransformationCore transformation)
@@ -399,12 +394,7 @@ public class OperationResolutionEngineTests
             return ContainsDatumTransform(coordinateTransformation.MathTransform);
         }
 
-        if (transformation is ConcatenatedTransform concatenated)
-        {
-            return concatenated.CoordinateTransformationList.Any(ContainsDatumTransform);
-        }
-
-        return false;
+        return transformation is ConcatenatedTransform concatenated && concatenated.CoordinateTransformationList.Any(ContainsDatumTransform);
     }
 
     private static bool IsExplicitMethodSupported(string methodName)
@@ -418,12 +408,9 @@ public class OperationResolutionEngineTests
 
     private static string NormalizeMethodName(string value)
     {
-        if (string.IsNullOrWhiteSpace(value))
-        {
-            return string.Empty;
-        }
-
-        return new string(value.Where(char.IsLetterOrDigit).Select(char.ToLowerInvariant).ToArray());
+        return string.IsNullOrWhiteSpace(value)
+            ? string.Empty
+            : new string([.. value.Where(char.IsLetterOrDigit).Select(char.ToLowerInvariant)]);
     }
 
     private static IOrderedEnumerable<CoordinateOperationDefinition> GetRankedOperations(ManagedCoordinateOperationDefinitionProvider provider)

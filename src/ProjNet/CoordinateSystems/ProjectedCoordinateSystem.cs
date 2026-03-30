@@ -189,11 +189,11 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
     {
         var pInfo = new List<ProjectionParameter>
         {
-            new ProjectionParameter("latitude_of_origin", 0),
-            new ProjectionParameter("central_meridian", (zone * 6) - 183),
-            new ProjectionParameter("scale_factor", 0.9996),
-            new ProjectionParameter("false_easting", 500000),
-            new ProjectionParameter("false_northing", zoneIsNorth ? 0 : 10000000),
+            new("latitude_of_origin", 0),
+            new("central_meridian", (zone * 6) - 183),
+            new("scale_factor", 0.9996),
+            new("false_easting", 500000),
+            new("false_northing", zoneIsNorth ? 0 : 10000000),
         };
 
         // IProjection projection = cFac.CreateProjection("UTM" + Zone.ToString() + (ZoneIsNorth ? "N" : "S"), "Transverse_Mercator", parameters);
@@ -231,7 +231,7 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
     /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
-        if (!(obj is ProjectedCoordinateSystem pcs))
+        if (obj is not ProjectedCoordinateSystem pcs)
         {
             return false;
         }
