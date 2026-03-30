@@ -11,7 +11,7 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Regression tests for issues reported in the SharpMap project.
 /// </summary>
 public class SharpMapIssueRegressionTests : CoordinateTransformTestsBase
 {
@@ -28,7 +28,8 @@ public class SharpMapIssueRegressionTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a NAD83 State Plane (Florida East, US survey feet) to WGS84 coordinate
+    /// transformation can be created without error.
     /// </summary>
     [Fact(DisplayName = "NAD83 (State Plane) projection to the WGS84 (Lat/Long), http://sharpmap.codeplex.com/discussions/435794")]
     public void TestNad83ToWGS84()
@@ -48,7 +49,8 @@ public class SharpMapIssueRegressionTests : CoordinateTransformTestsBase
     // projection problem with Michigan GeoRef
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a Michigan GeoRef (Hotine Oblique Mercator) to Web Mercator transformation
+    /// can be created and applied to a coordinate without error.
     /// </summary>
     [Fact(DisplayName = "projection problem with Michigan GeoRef")]
     public void TestMichiganGeoRefToWebMercator()
@@ -66,7 +68,8 @@ public class SharpMapIssueRegressionTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the WKT parser accepts an authority code written as either a quoted string
+    /// or an unquoted integer and produces equivalent coordinate systems in both cases.
     /// </summary>
     [Fact(DisplayName = "Parse AUTHORITY with unqouted AuthorityCode")]
     public void TestAuthorityCodeParsing()
@@ -81,7 +84,8 @@ public class SharpMapIssueRegressionTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that coordinate transformations between EPSG 25832 (UTM zone 32N) and
+    /// EPSG 3857 (Web Mercator) can be created successfully in both directions.
     /// </summary>
     [Fact]
     public void Test25832To3857()
@@ -105,7 +109,8 @@ public class SharpMapIssueRegressionTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a Lambert Azimuthal Equal Area (EPSG 3035) transformation produces
+    /// accurate forward and inverse results.
     /// </summary>
     [Fact]
     public void TestLaea()

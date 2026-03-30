@@ -12,7 +12,7 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Regression tests for issues reported on the GitHub issue tracker.
 /// </summary>
 [Trait("Category", "GitHub Issue")]
 public class GitHubIssueRegressionTests
@@ -20,7 +20,8 @@ public class GitHubIssueRegressionTests
     private static readonly CoordinateSystemServices Css = new(CoordinateSystemServicesTests.LoadCsv());
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that GitHub issue #10 is fixed: <see cref="ConcatenatedTransform.Inverse"/> creates a new
+    /// child transformation list and does not mutate the forward transform's state.
     /// </summary>
     [Fact(DisplayName = "Issue #10, ConcatenatedTransform.Inverse() method destroys the state of child transformations")]
     public void TestConcatenatedTransformInvert()
@@ -43,7 +44,8 @@ public class GitHubIssueRegressionTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that GitHub issue #10 is fixed: repeated calls to <see cref="ConcatenatedTransform.Inverse"/>
+    /// return the same cached instance and produce consistent round-trip results.
     /// </summary>
     [Fact(DisplayName = "Issue #10, Repeated Inverse() calls keep ConcatenatedTransform stable")]
     public void TestConcatenatedTransformInverseIsStableAcrossRepeatedCalls()
@@ -81,7 +83,8 @@ public class GitHubIssueRegressionTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that GitHub issue #20 is fixed: calling <see cref="MathTransform.Inverse"/> does not corrupt
+    /// subsequent results of the forward transform.
     /// </summary>
     [Fact(DisplayName = "Issue #20, Math transform bug")]
     public void TestMathTransformBug()
@@ -134,7 +137,8 @@ public class GitHubIssueRegressionTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that transformations between EPSG 25832 (UTM zone 32N) and EPSG 3857 (Web Mercator)
+    /// produce accurate results regardless of how the Web Mercator system is obtained.
     /// </summary>
     [Fact]
     public void TestIssuesWith3857To25832()
@@ -164,7 +168,8 @@ public class GitHubIssueRegressionTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that transforming coordinates from EPSG 26910 (NAD83 / UTM zone 10N) to
+    /// EPSG 4326 (WGS 84 geographic) produces accurate results.
     /// </summary>
     [Fact(DisplayName = "Convert latitude/longitude to Canada grid NAD83 (epsg:26910)")]
     public void TestConvertWgs84ToEPSG26910()
@@ -185,7 +190,9 @@ public class GitHubIssueRegressionTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that GitHub issue #64 is fixed: <see cref="GeographicCoordinateSystem"/> and
+    /// <see cref="ProjectedCoordinateSystem"/> correctly store abbreviation and remarks
+    /// passed to their constructors.
     /// </summary>
     [Fact(DisplayName = "Issue #64, Wrong parameter order when calling base constructor (in systems extending HorizontalCoordinateSystem)")]
     public void TestHorizontalCoordinateSystemImplementationsAbbreviationAndRemarks()

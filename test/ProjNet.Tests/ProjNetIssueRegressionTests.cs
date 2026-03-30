@@ -11,7 +11,7 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Regression tests for issues reported in the ProjNet issue tracker.
 /// </summary>
 public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
 {
@@ -40,7 +40,8 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies ProjNet issue 23773: WGS84 UTM zone 18N to WGS84 geographic transformation
+    /// produces accurate results both from a programmatic and WKT-defined coordinate system.
     /// </summary>
     [Fact(DisplayName = "WGS_84UTM to WGS_84 is inaccurate")]
     public void TestIssue23773()
@@ -68,7 +69,8 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies reprojection from EPSG 28414 (Pulkovo 1942 / Gauss-Kruger zone 14) to
+    /// EPSG 4284 (Pulkovo 1942 geographic), per CodePlex discussion 351733.
     /// </summary>
     [Fact(DisplayName = "Proj.net reprojection problem, Discussion http://projnet.codeplex.com/discussions/351733")]
     public void TestDiscussion351733()
@@ -97,7 +99,8 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies coordinate conversion from WGS84 (EPSG 4326) to Web Mercator (EPSG 3857)
+    /// and back, per CodePlex discussion 352813.
     /// </summary>
     [Fact(DisplayName = "Problem converting coordinates, Discussion http://projnet.codeplex.com/discussions/352813")]
     public void TestDiscussion352813()
@@ -155,7 +158,8 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies WGS84 to GDA94/MGA zone 50 (EPSG 28350) coordinate accuracy,
+    /// per CodePlex discussion 361248.
     /// </summary>
     [Fact(DisplayName = "Concerned about the accuracy, Discussion http://projnet.codeplex.com/discussions/361248")]
     public void TestDiscussion3612481()
@@ -173,7 +177,8 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies WGS84 UTM zone 18N to WGS84 geographic coordinate accuracy,
+    /// per CodePlex discussion 361248.
     /// </summary>
     [Fact(DisplayName = "Concerned about the accuracy, Discussion http://projnet.codeplex.com/discussions/361248")]
     public void TestDiscussion3612482()
@@ -258,7 +263,8 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that GitHub issue #53 is fixed: a WGS84 to UTM zone 35N forward transformation
+    /// followed by the inverse round-trips back to the original coordinates within tolerance.
     /// </summary>
     [Fact(DisplayName = "transformation somehow is wrong")]
     [Trait("Category", "Question")]
@@ -281,7 +287,9 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that GitHub issue #98 is fixed: a compound coordinate system combining a
+    /// projected CRS and a vertical CRS can be parsed from WKT and exposes the correct
+    /// authority, dimension, and component systems.
     /// </summary>
     [Fact(DisplayName = "Coordinate system isn't supported")]
     [Trait("Category", "Issue")]
