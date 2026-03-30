@@ -13,7 +13,6 @@ using System.Text;
 /// <summary>
 /// A named collection of projection parameters, supporting case-insensitive key lookup and insertion-order enumeration.
 /// </summary>
-// TODO: KeyedCollection<string, double>
 [Serializable]
 public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<ProjectionParameterSet>
 {

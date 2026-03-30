@@ -22,7 +22,6 @@ public class WKTMathTransformParserTests
     [Fact]
     public void ParseAffineTransformWkt()
     {
-        // TODO MathTransformFactory fac = new MathTransformFactory ();
         MathTransform mt = default!;
         string wkt = "PARAM_MT[\"Affine\"," +
                         "PARAMETER[\"num_row\",3]," +
@@ -37,7 +36,6 @@ public class WKTMathTransformParserTests
 
         try
         {
-            // TODO replace with MathTransformFactory implementation
             mt = MathTransformWktReader.Parse(wkt);
         }
         catch (Exception ex)
@@ -74,7 +72,6 @@ public class WKTMathTransformParserTests
 
         try
         {
-            // TODO replace with MathTransformFactory implementation
             mt = MathTransformWktReader.Parse(wkt);
         }
         catch (ArgumentException ex)
