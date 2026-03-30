@@ -10,12 +10,12 @@ using System.IO;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Contains unit tests for the GieParser class.
 /// </summary>
 public class GieParserTests
 {
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that parsing content with forward and inverse direction pairs produces correctly populated cases.
     /// </summary>
     [Fact]
     public void ParseWithForwardAndInversePairsProducesExpectedCases()
@@ -44,7 +44,7 @@ expect     3 80
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that comment lines and XML-style tags are ignored during parsing.
     /// </summary>
     [Fact]
     public void ParseIgnoresCommentsAndTags()
@@ -66,7 +66,7 @@ expect 1000 2000
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that an <c>expect</c> directive without a preceding <c>accept</c> directive throws a <see cref="System.FormatException"/>.
     /// </summary>
     [Fact]
     public void ParseWithoutAcceptBeforeExpectThrowsFormatException()
@@ -80,7 +80,7 @@ expect 1 2
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that an unknown directive throws a <see cref="System.FormatException"/>.
     /// </summary>
     [Fact]
     public void ParseUnknownDirectiveThrowsFormatException()
@@ -95,7 +95,7 @@ foobar 1 2
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that parsing a GIE fixture written to a temporary file produces the expected cases.
     /// </summary>
     [Fact]
     public void ParseFileWithTemporaryInputProducesCases()
@@ -125,7 +125,7 @@ foobar 1 2
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a backslash continuation line is appended to the preceding operation string.
     /// </summary>
     [Fact]
     public void ParseWithContinuationLineAppendsOperation()
@@ -145,7 +145,7 @@ expect 3 4
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a failure expectation directive sets the failure flag and error code on the parsed case.
     /// </summary>
     [Fact]
     public void ParseWithFailureExpectationSetsFailureMetadata()
@@ -163,7 +163,7 @@ expect failure errno invalid_op_illegal_arg_value
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that unknown directives are skipped without error when <see cref="GieParserOptions.IgnoreUnknownDirectives"/> is enabled.
     /// </summary>
     [Fact]
     public void ParseWithIgnoreUnknownDirectivesEnabledSkipsUnknownDirective()

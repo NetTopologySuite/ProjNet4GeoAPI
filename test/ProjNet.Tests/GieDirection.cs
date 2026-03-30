@@ -5,7 +5,7 @@
 namespace ProjNet.Tests;
 
 /// <summary>
-/// Represents the documented type.
+/// Specifies the direction of a coordinate transformation.
 /// </summary>
 public enum GieDirection
 {

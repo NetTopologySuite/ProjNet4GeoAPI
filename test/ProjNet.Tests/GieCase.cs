@@ -7,7 +7,7 @@ namespace ProjNet.Tests;
 using System;
 
 /// <summary>
-/// Represents the documented type.
+/// Represents a single GIE fixture test case, including the operation string, tolerance, input and expected coordinates, and transformation direction.
 /// </summary>
 public sealed class GieCase
 {

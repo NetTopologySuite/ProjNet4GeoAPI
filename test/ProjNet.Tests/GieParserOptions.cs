@@ -5,7 +5,7 @@
 namespace ProjNet.Tests;
 
 /// <summary>
-/// Represents the documented type.
+/// Provides options that control how GIE fixture content is parsed.
 /// </summary>
 internal sealed class GieParserOptions
 {

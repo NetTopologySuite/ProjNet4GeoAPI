@@ -13,7 +13,7 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Contains xUnit theory tests that run PROJ GIE built-in fixture cases against ProjNet coordinate transformations.
 /// </summary>
 public class GieBuiltinsTheoryTests
 {
@@ -293,7 +293,7 @@ public class GieBuiltinsTheoryTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Returns theory data rows sourced from the <c>builtins.gie</c> fixture file.
     /// </summary>
     /// <returns>The computed value.</returns>
     public static IEnumerable<TheoryDataRow<GieCase?>> GetBuiltinsCases()
@@ -302,7 +302,7 @@ public class GieBuiltinsTheoryTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Returns theory data rows sourced from the <c>more_builtins.gie</c> fixture file.
     /// </summary>
     /// <returns>The computed value.</returns>
     public static IEnumerable<TheoryDataRow<GieCase?>> GetMoreBuiltinsCases()
@@ -311,7 +311,7 @@ public class GieBuiltinsTheoryTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Returns theory data rows sourced from the <c>DHDN_ETRS89.gie</c> fixture file.
     /// </summary>
     /// <returns>The computed value.</returns>
     public static IEnumerable<TheoryDataRow<GieCase?>> GetDhdnEtrs89Cases()
@@ -320,7 +320,7 @@ public class GieBuiltinsTheoryTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Returns theory data rows sourced from the remaining selected GIE fixture files.
     /// </summary>
     /// <returns>The computed value.</returns>
     public static IEnumerable<TheoryDataRow<GieCase?>> GetRemainingGieCases()
