@@ -11,7 +11,6 @@ using System.Text;
 /// <summary>
 /// Definition of linear units.
 /// </summary>
-[Serializable]
 public class LinearUnit : Info, IUnit
 {
     /// <summary>

@@ -11,7 +11,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Oblated Equal Area projection (<c>oea</c>).
 /// </summary>
-[Serializable]
 internal sealed class OblatedEqualAreaProjection : MapProjection
 {
     private readonly double radius;

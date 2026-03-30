@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -16,7 +16,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// (LV03 and LV95). The inverse transform applies an iterative Newton-Raphson algorithm
 /// to recover geodetic latitude from projected northing.
 /// </remarks>
-[Serializable]
 internal class SwissObliqueMercatorProjection : MapProjection
 {
     private const int MaximumIterations = 6;

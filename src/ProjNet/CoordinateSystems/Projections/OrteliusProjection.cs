@@ -10,7 +10,6 @@ using System.Collections.Generic;
 /// <summary>
 /// Implements the spherical Ortelius Oval projection (<c>ortel</c>).
 /// </summary>
-[Serializable]
 internal class OrteliusProjection : BaconProjection
 {
     /// <summary>

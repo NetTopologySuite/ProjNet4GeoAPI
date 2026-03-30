@@ -9,7 +9,6 @@ using System;
 /// <summary>
 /// Represents an immutable 3×3 matrix with <see cref="double"/> precision.
 /// </summary>
-[Serializable]
 internal readonly record struct Matrix3x3(
     double M00,
     double M01,

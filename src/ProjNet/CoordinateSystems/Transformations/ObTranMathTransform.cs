@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -14,7 +14,6 @@ using ProjNet.CoordinateSystems.Projections;
 /// <summary>
 /// Implements PROJ's <c>ob_tran</c> runtime transform by rotating geographic coordinates and delegating to a child projection.
 /// </summary>
-[Serializable]
 internal sealed class ObTranMathTransform : MathTransform
 {
     private const double Tolerance = 1e-10d;

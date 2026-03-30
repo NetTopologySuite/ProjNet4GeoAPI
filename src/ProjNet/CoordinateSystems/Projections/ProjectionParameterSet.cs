@@ -6,37 +6,16 @@ namespace ProjNet.CoordinateSystems.Projections;
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
 
 /// <summary>
 /// A named collection of projection parameters, supporting case-insensitive key lookup and insertion-order enumeration.
 /// </summary>
-[Serializable]
 public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<ProjectionParameterSet>
 {
     private readonly Dictionary<string, string> originalNames = [];
     private readonly Dictionary<int, string> originalIndex = [];
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ProjectionParameterSet"/> class for deserialization.
-    /// </summary>
-    /// <param name="info">The serialization data.</param>
-    /// <param name="context">The serialization context.</param>
-    [Obsolete("Formatter-based serialization constructor is retained for compatibility.")]
-    [SuppressMessage(
-        "Interoperability",
-        "SYSLIB0051:Legacy serialization support APIs are obsolete",
-        Justification = "Required for compatibility with serialized payloads.")]
-#if NET5_0_OR_GREATER
-    [RequiresUnreferencedCode("Formatter-based serialization APIs are not trimming-safe.")]
-    [RequiresDynamicCode("Formatter-based serialization APIs may require runtime code generation.")]
-#endif
-    public ProjectionParameterSet(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context)
-        : base(info, context)
-    {
-    }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ProjectionParameterSet"/> class from an enumeration of projection parameters.

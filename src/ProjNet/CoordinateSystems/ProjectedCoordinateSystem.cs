@@ -12,7 +12,6 @@ using System.Text;
 /// <summary>
 /// A 2D cartographic coordinate system.
 /// </summary>
-[Serializable]
 public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
 {
     /// <summary>

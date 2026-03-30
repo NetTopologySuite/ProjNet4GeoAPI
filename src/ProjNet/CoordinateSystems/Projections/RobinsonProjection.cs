@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -16,7 +16,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// x- and y-scale coefficients at 5° latitude intervals, with linear interpolation between
 /// tabulated values. The inverse reads back from the table using the same interpolation.
 /// </remarks>
-[Serializable]
 internal class RobinsonProjection : MapProjection
 {
     private const double XScale = 0.8487;

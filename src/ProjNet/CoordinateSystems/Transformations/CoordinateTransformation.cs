@@ -11,7 +11,6 @@ using System;
 /// coordinate transformation, it does not actually perform the transform
 /// operation on points. To transform points you must use a <see cref="MathTransform"/>.
 /// </summary>
-[Serializable]
 public class CoordinateTransformation : ICoordinateTransformation
 {
     /// <summary>

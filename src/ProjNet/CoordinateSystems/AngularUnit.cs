@@ -11,7 +11,6 @@ using System.Text;
 /// <summary>
 /// Definition of angular units.
 /// </summary>
-[Serializable]
 public class AngularUnit : Info, IUnit
 {
     /// <summary>

@@ -10,7 +10,6 @@ using System.Collections.Generic;
 /// <summary>
 /// Implements the spherical Wagner VI projection (<c>wag6</c>).
 /// </summary>
-[Serializable]
 internal class Wagner6Projection : Eckert3Projection
 {
     /// <summary>

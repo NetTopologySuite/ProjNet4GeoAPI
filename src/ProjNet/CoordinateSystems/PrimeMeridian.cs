@@ -11,7 +11,6 @@ using System.Text;
 /// <summary>
 /// A meridian used to take longitude measurements from.
 /// </summary>
-[Serializable]
 public class PrimeMeridian : Info
 {
     /// <summary>

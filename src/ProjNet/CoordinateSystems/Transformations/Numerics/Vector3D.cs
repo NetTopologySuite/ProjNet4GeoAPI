@@ -9,7 +9,6 @@ using System;
 /// <summary>
 /// Represents an immutable 3D vector with <see cref="double"/> precision.
 /// </summary>
-[Serializable]
 internal readonly struct Vector3D(double x, double y, double z)
 {
     /// <summary>

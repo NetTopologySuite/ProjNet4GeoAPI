@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2002 Urban Science Applications, Inc.
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
@@ -24,7 +24,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <para>Reference: John P. Snyder, Map Projections — A Working Manual,
 /// U.S. Geological Survey Professional Paper 1395, 1987.</para>
 /// </remarks>
-[Serializable]
 internal class TransverseMercator : MapProjection
 {
     // Maximum difference allowed when comparing real numbers.

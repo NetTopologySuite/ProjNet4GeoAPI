@@ -10,7 +10,6 @@ using System.Collections.Generic;
 /// <summary>
 /// Implements the spherical Apian Globular I projection (<c>apian</c>).
 /// </summary>
-[Serializable]
 internal class ApianProjection : BaconProjection
 {
     /// <summary>

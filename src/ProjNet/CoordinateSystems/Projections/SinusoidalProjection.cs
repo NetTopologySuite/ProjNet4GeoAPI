@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -16,7 +16,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// are evenly spaced straight lines and meridians are sinusoidal curves. Both spherical and
 /// ellipsoidal modes are supported.
 /// </remarks>
-[Serializable]
 internal class SinusoidalProjection : MapProjection
 {
     private readonly double radius;

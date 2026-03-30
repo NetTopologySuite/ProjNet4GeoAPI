@@ -10,7 +10,6 @@ using System.Collections.Generic;
 /// <summary>
 /// Implements the spherical Wagner V projection (<c>wag5</c>).
 /// </summary>
-[Serializable]
 internal class Wagner5Projection : MollweideProjection
 {
     /// <summary>

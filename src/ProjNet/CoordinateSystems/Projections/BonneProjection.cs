@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -17,7 +17,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Both spherical and ellipsoidal forms are supported. The standard parallel <c>lat_1</c>
 /// must be non-zero; at ±90° the projection degenerates to a Werner projection.
 /// </remarks>
-[Serializable]
 internal class BonneProjection : MapProjection
 {
     private readonly double radius;

@@ -19,7 +19,6 @@ using ProjNet.CoordinateSystems;
 /// <summary>
 /// Implements PROJ's <c>deformation</c> runtime transform.
 /// </summary>
-[Serializable]
 internal sealed class DeformationMathTransform : MathTransform
 {
     private const double RelativeTolerance = 1e-5d;
@@ -1035,7 +1034,6 @@ internal sealed class DeformationMathTransform : MathTransform
         return true;
     }
 
-    [Serializable]
     private readonly struct InterpolationCell(int x0, int y0, int x1, int y1, double w00, double w01, double w10, double w11)
     {
         internal int X0 { get; } = x0;
@@ -1055,7 +1053,6 @@ internal sealed class DeformationMathTransform : MathTransform
         internal double W11 { get; } = w11;
     }
 
-    [Serializable]
     private sealed class CTable2Grid
     {
         private readonly float[] eastValues;
@@ -1267,7 +1264,6 @@ internal sealed class DeformationMathTransform : MathTransform
         }
     }
 
-    [Serializable]
     private sealed class GtxGrid
     {
         private readonly float[] values;

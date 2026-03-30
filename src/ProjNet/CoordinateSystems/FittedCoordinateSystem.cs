@@ -15,7 +15,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// coordinate system can be rotated and shifted, or use any other math transform
 /// to inject itself into the base coordinate system.
 /// </summary>
-[Serializable]
 public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSystem
 {
     /// <summary>

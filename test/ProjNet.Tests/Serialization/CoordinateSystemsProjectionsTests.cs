@@ -11,28 +11,7 @@ using Xunit;
 /// Tests for coordinate system projection serialization and transformation.
 /// </summary>
 public class CoordinateSystemsProjectionsTests
-#if !NET7_0_OR_GREATER
-    : BaseSerializationTest
 {
-    [Xunit.Fact, Obsolete("ISerializable is deprecated")]
-    public void TestProjectionParameterSet()
-    {
-        var ps = new ProjNet.CoordinateSystems.Projections.ProjectionParameterSet(
-            new[]
-                {
-                    new ProjectionParameter("latitude_of_origin", 0),
-                    new ProjectionParameter("false_easting", 500)
-                }
-            );
-
-        var psD = SanD(ps, GetFormatter());
-
-        Assert.Equal(ps, psD);
-    }
-#else
-{
-#endif
-
     /// <summary>
     /// Verifies that a coordinate transformation can be created from a coordinate system deserialized from its WKT representation.
     /// </summary>

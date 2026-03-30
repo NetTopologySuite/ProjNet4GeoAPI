@@ -19,7 +19,6 @@ using ProjNet.Geometries;
 /// <see cref="CoordinateTransformation"/> object, and use the contained
 /// math transform object whenever it wishes to perform a transform.
 /// </remarks>
-[Serializable]
 public abstract class MathTransform
 {
     /// <summary>

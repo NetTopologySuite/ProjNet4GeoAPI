@@ -9,7 +9,6 @@ using System;
 /// <summary>
 /// Applies linear unit-conversion scale factors to the X, Y, and optionally Z ordinates of a coordinate.
 /// </summary>
-[Serializable]
 internal sealed class UnitConvertMathTransform : MathTransform
 {
     private readonly int dimension;

@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
@@ -16,7 +16,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// the sphere radius and forcing the scale factor to 1. Geodetic latitude is projected
 /// without ellipsoidal correction, producing the projection used by most web mapping services.
 /// </remarks>
-[Serializable]
 internal class PseudoMercator : Mercator
 {
     /// <summary>

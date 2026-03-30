@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -12,7 +12,6 @@ using System.Globalization;
 /// <summary>
 /// Implements PROJ's <c>geogoffset</c> runtime transform (geographic offsets).
 /// </summary>
-[Serializable]
 internal sealed class GeogOffsetMathTransform : MathTransform
 {
     private const double ArcSecondsPerDegree = 3600d;

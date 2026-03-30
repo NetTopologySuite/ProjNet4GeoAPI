@@ -31,7 +31,6 @@ using System.Globalization;
 /// </remarks>
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1051:Do not declare visible instance fields", Justification = "Legacy Bursa-Wolf parameter fields are part of the long-standing public API.")]
 [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Legacy Bursa-Wolf parameter fields are part of the long-standing public API.")]
-[Serializable]
 public class Wgs84ConversionInfo : IEquatable<Wgs84ConversionInfo>
 {
     /// <summary>

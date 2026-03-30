@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -17,7 +17,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// landmasses. The projection uses 12 zones: two Mollweide and two sinusoidal zones in the
 /// northern hemisphere, and four sinusoidal and four Mollweide zones in the southern hemisphere.
 /// </remarks>
-[Serializable]
 internal class IghProjection : MapProjection
 {
     private const double EpsLn = 1e-10;

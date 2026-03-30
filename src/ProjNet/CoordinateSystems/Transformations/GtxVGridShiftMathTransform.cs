@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -13,7 +13,6 @@ using System.IO;
 /// <summary>
 /// Applies vertical datum shifts using one or more GTX grid files.
 /// </summary>
-[Serializable]
 internal sealed class GtxVGridShiftMathTransform : MathTransform
 {
     private const double RelativeTolerance = 1e-5d;
@@ -254,7 +253,6 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
         return scaled > 1000d || scaled < -1000d || value == -88.88880f;
     }
 
-    [Serializable]
     private sealed class GtxGrid
     {
         private readonly float[] values;

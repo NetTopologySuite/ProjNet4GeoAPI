@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -13,7 +13,6 @@ using System.Linq;
 /// <summary>
 /// Applies horizontal grid-shift corrections loaded from GeoTIFF grids.
 /// </summary>
-[Serializable]
 internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
 {
     private const double RelativeTolerance = 1e-5d;
@@ -224,7 +223,6 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
     /// <summary>
     /// Represents a single horizontal-shift grid loaded from a GeoTIFF file.
     /// </summary>
-    [Serializable]
     internal sealed class HorizontalGrid : BaseGeoGrid
     {
         private readonly int latitudeSampleIndex;

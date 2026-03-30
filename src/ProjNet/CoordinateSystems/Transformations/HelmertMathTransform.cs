@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -13,7 +13,6 @@ using ProjNet.CoordinateSystems.Transformations.Numerics;
 /// <summary>
 /// Implements PROJ's <c>helmert</c> runtime transform for static and kinematic operations.
 /// </summary>
-[Serializable]
 internal sealed class HelmertMathTransform : MathTransform
 {
     private const double ArcSecondToRadians = Math.PI / (180d * 3600d);
@@ -712,7 +711,6 @@ internal sealed class HelmertMathTransform : MathTransform
         z = transformed.Z;
     }
 
-    [Serializable]
     private readonly struct HelmertParameterState(
         double translationX,
         double translationY,
@@ -740,7 +738,6 @@ internal sealed class HelmertMathTransform : MathTransform
         internal double Theta { get; } = theta;
     }
 
-    [Serializable]
     private readonly struct HelmertRateState(
         double translationRateX,
         double translationRateY,
@@ -768,7 +765,6 @@ internal sealed class HelmertMathTransform : MathTransform
         internal double ThetaRate { get; } = thetaRate;
     }
 
-    [Serializable]
     private sealed class HelmertRuntimeState
     {
         internal HelmertRuntimeState(

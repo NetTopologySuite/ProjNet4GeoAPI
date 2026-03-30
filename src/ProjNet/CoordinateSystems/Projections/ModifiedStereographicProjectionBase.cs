@@ -10,7 +10,6 @@ using System.Collections.Generic;
 /// <summary>
 /// Provides the shared implementation of the modified stereographic projection family.
 /// </summary>
-[Serializable]
 internal abstract class ModifiedStereographicProjectionBase : MapProjection
 {
     private const int MaximumNewtonIterations = 20;

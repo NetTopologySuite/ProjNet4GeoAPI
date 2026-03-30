@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2002 Urban Science Applications, Inc.
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
@@ -13,7 +13,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the American Polyconic map projection.
 /// </summary>
-[Serializable]
 internal class PolyconicProjection : MapProjection
 {
     /// <summary>

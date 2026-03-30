@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
@@ -18,7 +18,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// oblique extent. It is a conformal projection. False easting and northing are
 /// applied relative to the centre of the initial line.</para>
 /// </remarks>
-[Serializable]
 internal class HotineObliqueMercatorProjection : MapProjection
 {
     private readonly double azimuth;

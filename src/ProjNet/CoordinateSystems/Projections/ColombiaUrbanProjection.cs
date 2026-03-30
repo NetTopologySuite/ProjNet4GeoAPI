@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -16,7 +16,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// (height in meters above the ellipsoid), which scales coordinates to account for
 /// terrain elevation and is intended for large-scale urban surveys in Colombia.
 /// </remarks>
-[Serializable]
 internal class ColombiaUrbanProjection : MapProjection
 {
     private readonly double h0;

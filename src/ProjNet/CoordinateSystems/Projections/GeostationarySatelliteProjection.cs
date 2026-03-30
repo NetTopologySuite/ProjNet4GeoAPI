@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -11,7 +11,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the geostationary satellite projection (<c>geos</c>).
 /// </summary>
-[Serializable]
 internal class GeostationarySatelliteProjection : MapProjection
 {
     private const double MaximumHeightRatio = 1e10;

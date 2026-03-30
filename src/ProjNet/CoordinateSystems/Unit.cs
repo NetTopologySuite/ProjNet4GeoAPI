@@ -11,7 +11,6 @@ using System.Text;
 /// <summary>
 /// Class for defining units.
 /// </summary>
-[Serializable]
 public class Unit : Info, IUnit
 {
     /// <summary>

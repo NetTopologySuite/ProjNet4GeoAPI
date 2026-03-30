@@ -16,7 +16,6 @@ using ProjNet.CoordinateSystems;
 /// <summary>
 /// Implements PROJ's <c>defmodel</c> runtime transform.
 /// </summary>
-[Serializable]
 internal sealed class DefModelMathTransform : MathTransform
 {
     private const int MaximumModelSizeInBytes = 10 * 1024 * 1024;
@@ -1695,7 +1694,6 @@ internal sealed class DefModelMathTransform : MathTransform
         return false;
     }
 
-    [Serializable]
     private readonly struct SpatialExtent(double minX, double minY, double maxX, double maxY)
     {
         internal double MinX { get; } = minX;
@@ -1707,7 +1705,6 @@ internal sealed class DefModelMathTransform : MathTransform
         internal double MaxY { get; } = maxY;
     }
 
-    [Serializable]
     private readonly struct TimeExtent(double first, double last)
     {
         internal double First { get; } = first;
@@ -1715,7 +1712,6 @@ internal sealed class DefModelMathTransform : MathTransform
         internal double Last { get; } = last;
     }
 
-    [Serializable]
     private readonly struct InterpolationCell(
         int x0,
         int y0,
@@ -1749,7 +1745,6 @@ internal sealed class DefModelMathTransform : MathTransform
         internal double W11 { get; } = w11;
     }
 
-    [Serializable]
     private readonly struct XyzCornerValues(
         double x00,
         double x01,
@@ -1789,7 +1784,6 @@ internal sealed class DefModelMathTransform : MathTransform
         internal double Z11 { get; } = z11;
     }
 
-    [Serializable]
     private sealed class ModelDefinition
     {
         internal string FileType { get; set; } = string.Empty;
@@ -1815,7 +1809,6 @@ internal sealed class DefModelMathTransform : MathTransform
         internal ComponentDefinition[] Components { get; set; } = [];
     }
 
-    [Serializable]
     private sealed class ComponentDefinition
     {
         internal string Description { get; set; } = string.Empty;
@@ -1831,7 +1824,6 @@ internal sealed class DefModelMathTransform : MathTransform
         internal ITimeFunction TimeFunction { get; set; } = ConstantTimeFunction.Instance;
     }
 
-    [Serializable]
     private sealed class ComponentRuntime
     {
         internal ComponentRuntime(
@@ -1851,7 +1843,6 @@ internal sealed class DefModelMathTransform : MathTransform
         internal IReadOnlyList<GeoTiffVGridShiftMathTransform.VerticalGrid> VerticalGrids { get; }
     }
 
-    [Serializable]
     private sealed class ConstantTimeFunction : ITimeFunction
     {
         internal static readonly ConstantTimeFunction Instance = new();
@@ -1867,7 +1858,6 @@ internal sealed class DefModelMathTransform : MathTransform
         }
     }
 
-    [Serializable]
     private sealed class VelocityTimeFunction(double referenceEpoch) : ITimeFunction
     {
         public double Evaluate(double observationEpoch)
@@ -1876,7 +1866,6 @@ internal sealed class DefModelMathTransform : MathTransform
         }
     }
 
-    [Serializable]
     private sealed class StepTimeFunction(double stepEpoch) : ITimeFunction
     {
         public double Evaluate(double observationEpoch)
@@ -1885,7 +1874,6 @@ internal sealed class DefModelMathTransform : MathTransform
         }
     }
 
-    [Serializable]
     private sealed class ReverseStepTimeFunction(double stepEpoch) : ITimeFunction
     {
         public double Evaluate(double observationEpoch)
@@ -1894,7 +1882,6 @@ internal sealed class DefModelMathTransform : MathTransform
         }
     }
 
-    [Serializable]
     private sealed class PiecewiseTimeFunction : ITimeFunction
     {
         private readonly string beforeFirst;
@@ -1967,7 +1954,6 @@ internal sealed class DefModelMathTransform : MathTransform
                 : ((previousFactor * (lastEpoch - observationEpoch)) + (lastFactor * (observationEpoch - previousEpoch))) / (lastEpoch - previousEpoch);
         }
 
-        [Serializable]
         internal readonly struct EpochScaleTuple(double epoch, double scaleFactor)
         {
             internal double Epoch { get; } = epoch;
@@ -1976,7 +1962,6 @@ internal sealed class DefModelMathTransform : MathTransform
         }
     }
 
-    [Serializable]
     private sealed class ExponentialTimeFunction : ITimeFunction
     {
         private readonly double referenceEpoch;

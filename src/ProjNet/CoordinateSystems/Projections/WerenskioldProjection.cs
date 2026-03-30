@@ -10,7 +10,6 @@ using System.Collections.Generic;
 /// <summary>
 /// Implements the spherical Werenskiold I projection (<c>weren</c>).
 /// </summary>
-[Serializable]
 internal class WerenskioldProjection : PutninsP4PProjection
 {
     /// <summary>

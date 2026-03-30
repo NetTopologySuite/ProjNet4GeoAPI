@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
@@ -17,7 +17,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// rather than to the centre of the initial line. This variant corresponds to EPSG
 /// method 9815.</para>
 /// </remarks>
-[Serializable]
 internal class ObliqueMercatorProjection : HotineObliqueMercatorProjection
 {
     /// <summary>

@@ -10,7 +10,6 @@ using System.Collections.Generic;
 /// <summary>
 /// Shared implementation for the spherical STS projection family (<c>kav5</c>, <c>qua_aut</c>, <c>fouc</c>, <c>mbt_s</c>).
 /// </summary>
-[Serializable]
 internal abstract class StsProjectionBase : MapProjection
 {
     private readonly double radius;

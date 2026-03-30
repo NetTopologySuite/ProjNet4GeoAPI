@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2002 Urban Science Applications, Inc.
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
@@ -20,7 +20,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// which are perpendicular to one another on the earth's surface, are also perpendicular
 /// to one another in the projected domain.</para>
 /// </remarks>
-[Serializable]
 internal class LambertConformalConic2SP : MapProjection
 {
     private static readonly string[] LatitudeOfOriginFallback = ["latitude_of_origin"];

@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -14,7 +14,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <remarks>
 /// Inverse projection is not supported.
 /// </remarks>
-[Serializable]
 internal class LarriveeProjection : MapProjection
 {
     private const double Sixth = 0.16666666666666666d;

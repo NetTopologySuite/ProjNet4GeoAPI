@@ -10,7 +10,6 @@ using System.Collections.Generic;
 /// <summary>
 /// Implements the spherical Wagner I projection (<c>wag1</c>).
 /// </summary>
-[Serializable]
 internal class Wagner1Projection : UrmaevFlatPolarSinusoidalProjection
 {
     /// <summary>

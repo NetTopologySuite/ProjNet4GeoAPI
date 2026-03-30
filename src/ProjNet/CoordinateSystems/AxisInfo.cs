@@ -10,7 +10,6 @@ using System.Globalization;
 /// <summary>
 /// Details of axis. This is used to label axes, and indicate the orientation.
 /// </summary>
-[Serializable]
 public class AxisInfo
 {
     private string name = string.Empty;

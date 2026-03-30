@@ -14,7 +14,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <remarks>
 /// Inverse projection is not supported.
 /// </remarks>
-[Serializable]
 internal sealed class RectangularPolyconicProjection : MapProjection
 {
     private readonly double radius;

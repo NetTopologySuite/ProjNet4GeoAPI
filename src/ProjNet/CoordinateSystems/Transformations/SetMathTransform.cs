@@ -12,7 +12,6 @@ using System.Globalization;
 /// <summary>
 /// Implements PROJ's <c>set</c> runtime conversion by overriding selected coordinate components.
 /// </summary>
-[Serializable]
 internal sealed class SetMathTransform : MathTransform
 {
     private static readonly MathTransform SharedIdentityInverse = new IdentityMathTransform(3);

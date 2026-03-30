@@ -9,7 +9,6 @@ using System;
 /// <summary>
 /// Represents a pass-through transform that leaves all ordinates unchanged.
 /// </summary>
-[Serializable]
 internal sealed class IdentityMathTransform : MathTransform
 {
     private readonly int dimension;

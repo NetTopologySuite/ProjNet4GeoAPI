@@ -17,7 +17,6 @@ using System.Globalization;
 /// system is based on. (Notice that this is different from <see cref="Parameter"/>,
 /// where the units are always meters and degrees.)
 /// </remarks>
-[Serializable]
 public class ProjectionParameter
 {
     private string name = string.Empty;

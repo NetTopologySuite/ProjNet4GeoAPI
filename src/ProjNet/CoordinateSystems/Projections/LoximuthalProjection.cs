@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -16,7 +16,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// emanating from a user-defined reference latitude (<c>lat_1</c>). The reference latitude must
 /// not be at the poles.
 /// </remarks>
-[Serializable]
 internal class LoximuthalProjection : MapProjection
 {
     private readonly double radius;

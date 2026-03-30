@@ -10,7 +10,6 @@ using System.Collections.Generic;
 /// <summary>
 /// Implements the spherical Kavrayskiy VII projection (<c>kav7</c>).
 /// </summary>
-[Serializable]
 internal class Kavrayskiy7Projection : Eckert3Projection
 {
     /// <summary>

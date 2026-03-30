@@ -18,7 +18,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// correctly represented. The spherical formulation is used for both forward and inverse
 /// transformations.</para>
 /// </remarks>
-[Serializable]
 internal class AzimuthalEquidistantProjection : MapProjection
 {
     private readonly double radius;

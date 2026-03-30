@@ -9,7 +9,6 @@ using System;
 /// <summary>
 /// Adjusts target Prime Meridian.
 /// </summary>
-[Serializable]
 internal class PrimeMeridianTransform : MathTransform
 {
     private readonly PrimeMeridian source;

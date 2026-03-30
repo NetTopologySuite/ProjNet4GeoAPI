@@ -10,7 +10,6 @@ using System.Collections.Generic;
 /// <summary>
 /// Implements the spherical Putnins P5' projection (<c>putp5p</c>).
 /// </summary>
-[Serializable]
 internal class PutninsP5PrimeProjection : PutninsP5Projection
 {
     /// <summary>

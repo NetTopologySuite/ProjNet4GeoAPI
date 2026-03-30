@@ -9,7 +9,6 @@ using System;
 /// <summary>
 /// Reorders and optionally flips coordinate ordinates according to axis mapping rules.
 /// </summary>
-[Serializable]
 internal sealed class AxisSwapMathTransform : MathTransform
 {
     private readonly int dimension;

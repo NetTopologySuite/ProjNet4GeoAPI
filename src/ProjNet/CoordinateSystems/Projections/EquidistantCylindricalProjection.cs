@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -16,7 +16,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// linearly from the origin latitude. When the standard parallel is at the equator this
 /// is equivalent to the Plate Carrée projection.
 /// </remarks>
-[Serializable]
 internal class EquidistantCylindricalProjection : MapProjection
 {
     private readonly double radius;

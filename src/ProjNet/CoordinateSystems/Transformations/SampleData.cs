@@ -9,7 +9,6 @@ using System.Collections.Generic;
 /// <summary>
 /// Holds raw grid sample arrays together with per-sample scale and offset factors for decoding grid shift values.
 /// </summary>
-[Serializable]
 internal readonly struct SampleData
 {
     private readonly double[][] valuesBySample;

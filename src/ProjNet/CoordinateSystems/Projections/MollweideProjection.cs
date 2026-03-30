@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -17,7 +17,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// an optional pole parameter (<c>moll_p</c>, in degrees; default 90°) for parameterised variants
 /// such as Wagner IV and Wagner V.
 /// </remarks>
-[Serializable]
 internal class MollweideProjection : MapProjection
 {
     private const int Iterations = 30;

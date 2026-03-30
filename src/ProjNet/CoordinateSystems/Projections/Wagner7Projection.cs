@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -15,7 +15,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Wagner VII is an equal-area polyconic projection with curved meridians and parallels.
 /// Inverse projection is not supported.
 /// </remarks>
-[Serializable]
 internal class Wagner7Projection : MapProjection
 {
     private const double YPreFactor = 0.90630778703664996d;

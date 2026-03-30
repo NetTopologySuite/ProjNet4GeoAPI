@@ -16,7 +16,6 @@ using System.Collections.Generic;
 /// differently for each variant. The Murdoch II variant uses a tangent-based radial
 /// distance rather than the linear distance used by the other variants.
 /// </remarks>
-[Serializable]
 internal abstract class SimpleConicProjectionBase : MapProjection
 {
     private readonly double radius;

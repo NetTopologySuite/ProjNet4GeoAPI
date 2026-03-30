@@ -19,7 +19,6 @@ using System;
 /// of the datum may also include the temporal behavior (such as the rate of change of
 /// the orientation of the coordinate axes).
 /// </remarks>
-[Serializable]
 public abstract class Datum : Info
 {
     /// <summary>

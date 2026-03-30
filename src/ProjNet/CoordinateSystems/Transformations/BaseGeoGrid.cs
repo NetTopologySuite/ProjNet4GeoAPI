@@ -10,7 +10,6 @@ using System;
 /// Abstract base class for a geo-referenced raster grid that maps geographic coordinates
 /// to grid pixel coordinates using an affine transformation.
 /// </summary>
-[Serializable]
 internal abstract class BaseGeoGrid
 {
     private readonly SampleData sampleData;

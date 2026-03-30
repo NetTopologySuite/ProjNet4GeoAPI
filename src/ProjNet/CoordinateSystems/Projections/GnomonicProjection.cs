@@ -17,7 +17,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Points at or beyond 90° angular distance from the projection center cannot be projected
 /// and produce <see cref="double.NaN"/> output coordinates.
 /// </remarks>
-[Serializable]
 internal class GnomonicProjection : MapProjection
 {
     private readonly double radius;

@@ -14,7 +14,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <remarks>
 /// Inverse projection is not supported.
 /// </remarks>
-[Serializable]
 internal sealed class Bertin1953Projection : MapProjection
 {
     private const double Fu = 1.4d;

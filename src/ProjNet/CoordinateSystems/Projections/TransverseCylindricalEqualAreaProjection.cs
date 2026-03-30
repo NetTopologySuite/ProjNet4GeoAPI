@@ -11,7 +11,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Transverse Cylindrical Equal Area projection (<c>tcea</c>).
 /// </summary>
-[Serializable]
 internal class TransverseCylindricalEqualAreaProjection : MapProjection
 {
     private readonly double radius;

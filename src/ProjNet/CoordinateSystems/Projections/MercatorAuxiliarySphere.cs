@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
@@ -15,7 +15,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Applies a spherical Mercator formula using the semi-major axis as the sphere radius,
 /// without ellipsoidal correction. This is the projection used by most web mapping services.
 /// </remarks>
-[Serializable]
 internal class MercatorAuxiliarySphere : MapProjection
 {
     // Scale factor – for the spherical (auxiliary) Mercator this is 1.

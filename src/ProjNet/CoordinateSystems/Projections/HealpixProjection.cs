@@ -11,7 +11,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the HEALPix (Hierarchical Equal Area isoLatitude Pixelization) projection (<c>healpix</c>).
 /// </summary>
-[Serializable]
 internal class HealpixProjection : MapProjection
 {
     private static readonly double Phi0Limit = Math.Asin(2d / 3d);

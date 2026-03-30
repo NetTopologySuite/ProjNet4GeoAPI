@@ -17,7 +17,6 @@ using System.Text;
 /// interest, e.g., Transverse Mercator, Lambert, will be implemented as a class of
 /// type Projection, supporting the IProjection interface.
 /// </summary>
-[Serializable]
 public class Projection : Info, IProjection
 {
     private readonly string className;

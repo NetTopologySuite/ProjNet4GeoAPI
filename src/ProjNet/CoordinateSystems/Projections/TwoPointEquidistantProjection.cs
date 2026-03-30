@@ -11,7 +11,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Two Point Equidistant projection (<c>tpeqd</c>).
 /// </summary>
-[Serializable]
 internal sealed class TwoPointEquidistantProjection : MapProjection
 {
     private readonly double radius;

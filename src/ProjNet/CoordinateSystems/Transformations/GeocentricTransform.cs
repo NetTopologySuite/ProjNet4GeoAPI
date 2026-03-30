@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
@@ -25,7 +25,6 @@ using System.Collections.Generic;
 /// if the ellipsoid axis dimensions are given in another linear unit they should first be converted
 /// to metres.</para>
 /// </remarks>
-[Serializable]
 internal class GeocentricTransform : MathTransform
 {
     /// <summary>

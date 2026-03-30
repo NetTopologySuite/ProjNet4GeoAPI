@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -16,7 +16,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// which must be non-zero). Graticule lines are constructed by central (gnomonic)
 /// projection onto the cone. Only spherical input is supported.
 /// </remarks>
-[Serializable]
 internal sealed class CentralConicProjection : MapProjection
 {
     private readonly double radius;

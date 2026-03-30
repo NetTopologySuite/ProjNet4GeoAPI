@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -11,7 +11,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical McBryde-Thomas Flat-Polar Parabolic projection (<c>mbtfpp</c>).
 /// </summary>
-[Serializable]
 internal class McBrydeThomasFlatPolarParabolicProjection : MapProjection
 {
     private const double Csy = 0.95257934441568037152d;

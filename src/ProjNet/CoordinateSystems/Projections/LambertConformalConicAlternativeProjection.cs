@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -17,7 +17,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// parallels. The inverse transform uses Newton–Raphson iteration (up to 10 steps) to
 /// recover the meridian arc length.
 /// </remarks>
-[Serializable]
 internal sealed class LambertConformalConicAlternativeProjection : MapProjection
 {
     private const int MaximumIterations = 10;

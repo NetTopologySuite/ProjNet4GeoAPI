@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -9,7 +9,6 @@ using System;
 /// <summary>
 /// Wraps a pipeline step and conditionally omits it for forward and inverse traversal.
 /// </summary>
-[Serializable]
 internal sealed class PipelineOmitMathTransform : MathTransform
 {
     private readonly MathTransform inner;

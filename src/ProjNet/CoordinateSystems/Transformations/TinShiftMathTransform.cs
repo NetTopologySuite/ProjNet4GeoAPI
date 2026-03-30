@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -13,7 +13,6 @@ using System.Text.Json;
 /// <summary>
 /// Implements PROJ's <c>tinshift</c> runtime transform.
 /// </summary>
-[Serializable]
 internal sealed class TinShiftMathTransform : MathTransform
 {
     private const int MaximumModelSizeInBytes = 100 * 1024 * 1024;
@@ -973,7 +972,6 @@ internal sealed class TinShiftMathTransform : MathTransform
         internal int Index3;
     }
 
-    [Serializable]
     private sealed class TinShiftModel
     {
         internal TinShiftModel(

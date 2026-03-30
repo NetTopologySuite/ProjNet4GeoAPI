@@ -10,7 +10,6 @@ using System.Collections.Generic;
 /// <summary>
 /// Shared implementation for Adams/Guyou/Peirce quincuncial projections.
 /// </summary>
-[Serializable]
 internal abstract class AdamsProjectionBase : MapProjection
 {
     private const double Tolerance = 1e-9d;

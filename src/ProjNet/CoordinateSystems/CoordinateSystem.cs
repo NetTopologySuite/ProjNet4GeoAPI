@@ -25,7 +25,6 @@ using System.Globalization;
 /// position (lat, long) corresponds to a location on the surface of the Earth. This
 /// mapping from the mathematical space into real-world locations is called a Datum.</para>
 /// </remarks>
-[Serializable]
 public abstract class CoordinateSystem : Info
 {
     private List<AxisInfo> axisInfo = [];

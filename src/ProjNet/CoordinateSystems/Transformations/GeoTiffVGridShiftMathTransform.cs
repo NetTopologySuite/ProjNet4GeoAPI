@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -13,7 +13,6 @@ using System.Linq;
 /// <summary>
 /// Applies vertical datum shifts loaded from GeoTIFF grid files.
 /// </summary>
-[Serializable]
 internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
 {
     private const double RelativeTolerance = 1e-5d;
@@ -243,7 +242,6 @@ internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
     /// <summary>
     /// Represents a single vertical-shift band loaded from a GeoTIFF grid file.
     /// </summary>
-    [Serializable]
     internal sealed class VerticalGrid : BaseGeoGrid
     {
         private readonly int sampleIndex;

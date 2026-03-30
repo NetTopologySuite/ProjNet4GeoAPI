@@ -16,7 +16,6 @@ using System.Text;
 /// The +1 in the matrix dimensions allows the matrix to do a shift, as well as a rotation.
 /// The [M][j] element of the matrix will be the j'th ordinate of the moved origin.
 /// The [i][N] element of the matrix will be 0 for i less than M, and 1 for i equals M.</remarks>
-[Serializable]
 public class AffineTransform : MathTransform
 {
     /// <summary>

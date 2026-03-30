@@ -11,7 +11,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Hammer projection (<c>hammer</c>).
 /// </summary>
-[Serializable]
 internal class HammerProjection : MapProjection
 {
     private readonly double radius;

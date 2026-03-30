@@ -11,7 +11,6 @@ using System.Text;
 /// <summary>
 /// Defines the standard information stored with an ellipsoid used as the reference surface for a geodetic datum.
 /// </summary>
-[Serializable]
 public class Ellipsoid : Info
 {
     /// <summary>

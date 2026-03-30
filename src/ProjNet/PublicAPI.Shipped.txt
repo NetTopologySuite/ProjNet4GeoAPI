@@ -26,7 +26,6 @@ namespace ProjNet
 }
 namespace ProjNet.CoordinateSystems
 {
-    [System.Serializable]
     public class AngularUnit : ProjNet.CoordinateSystems.Info, ProjNet.CoordinateSystems.IInfo, ProjNet.CoordinateSystems.IUnit
     {
         public AngularUnit(double radiansPerUnit) { }
@@ -39,7 +38,6 @@ namespace ProjNet.CoordinateSystems
         public static ProjNet.CoordinateSystems.AngularUnit Radian { get; }
         public override bool EqualParams(object obj) { }
     }
-    [System.Serializable]
     public class AxisInfo
     {
         public AxisInfo(string name, ProjNet.CoordinateSystems.AxisOrientationEnum orientation) { }
@@ -68,7 +66,6 @@ namespace ProjNet.CoordinateSystems
         public override bool EqualParams(object obj) { }
         public override ProjNet.CoordinateSystems.IUnit GetUnits(int dimension) { }
     }
-    [System.Serializable]
     public abstract class CoordinateSystem : ProjNet.CoordinateSystems.Info
     {
         public double[] DefaultEnvelope { get; set; }
@@ -95,7 +92,6 @@ namespace ProjNet.CoordinateSystems
         public ProjNet.CoordinateSystems.VerticalCoordinateSystem CreateVerticalCoordinateSystem(string name, ProjNet.CoordinateSystems.VerticalDatum datum, ProjNet.CoordinateSystems.LinearUnit verticalUnit, ProjNet.CoordinateSystems.AxisInfo axis) { }
         public ProjNet.CoordinateSystems.VerticalDatum CreateVerticalDatum(string name, ProjNet.CoordinateSystems.DatumType datumType) { }
     }
-    [System.Serializable]
     public abstract class Datum : ProjNet.CoordinateSystems.Info
     {
         public ProjNet.CoordinateSystems.DatumType DatumType { get; set; }
@@ -120,7 +116,6 @@ namespace ProjNet.CoordinateSystems
         LD_Min = 10000,
         LD_Max = 32767,
     }
-    [System.Serializable]
     public class Ellipsoid : ProjNet.CoordinateSystems.Info
     {
         public ProjNet.CoordinateSystems.LinearUnit AxisUnit { get; set; }
@@ -139,7 +134,6 @@ namespace ProjNet.CoordinateSystems
         public static ProjNet.CoordinateSystems.Ellipsoid WGS84 { get; }
         public override bool EqualParams(object obj) { }
     }
-    [System.Serializable]
     public class FittedCoordinateSystem : ProjNet.CoordinateSystems.CoordinateSystem
     {
         protected FittedCoordinateSystem(ProjNet.CoordinateSystems.CoordinateSystem baseSystem, ProjNet.CoordinateSystems.Transformations.MathTransform transform, string name, string authority, long code, string alias, string remarks, string abbreviation) { }
@@ -151,7 +145,6 @@ namespace ProjNet.CoordinateSystems
         public override ProjNet.CoordinateSystems.IUnit GetUnits(int dimension) { }
         public string ToBase() { }
     }
-    [System.Serializable]
     public class GeocentricCoordinateSystem : ProjNet.CoordinateSystems.CoordinateSystem
     {
         public ProjNet.CoordinateSystems.HorizontalDatum HorizontalDatum { get; set; }
@@ -163,7 +156,6 @@ namespace ProjNet.CoordinateSystems
         public override bool EqualParams(object obj) { }
         public override ProjNet.CoordinateSystems.IUnit GetUnits(int dimension) { }
     }
-    [System.Serializable]
     public class GeographicCoordinateSystem : ProjNet.CoordinateSystems.HorizontalCoordinateSystem
     {
         public ProjNet.CoordinateSystems.AngularUnit AngularUnit { get; set; }
@@ -176,12 +168,10 @@ namespace ProjNet.CoordinateSystems
         public override ProjNet.CoordinateSystems.IUnit GetUnits(int dimension) { }
         public ProjNet.CoordinateSystems.Wgs84ConversionInfo GetWgs84ConversionInfo(int index) { }
     }
-    [System.Serializable]
     public abstract class HorizontalCoordinateSystem : ProjNet.CoordinateSystems.CoordinateSystem
     {
         public ProjNet.CoordinateSystems.HorizontalDatum HorizontalDatum { get; set; }
     }
-    [System.Serializable]
     public class HorizontalDatum : ProjNet.CoordinateSystems.Datum
     {
         public ProjNet.CoordinateSystems.Ellipsoid Ellipsoid { get; set; }
@@ -214,7 +204,6 @@ namespace ProjNet.CoordinateSystems
         ProjNet.CoordinateSystems.ProjectionParameter? GetParameter(string name);
     }
     public interface IUnit : ProjNet.CoordinateSystems.IInfo { }
-    [System.Serializable]
     public abstract class Info : ProjNet.CoordinateSystems.IInfo
     {
         public string Abbreviation { get; set; }
@@ -228,7 +217,6 @@ namespace ProjNet.CoordinateSystems
         public abstract bool EqualParams(object obj);
         public override string ToString() { }
     }
-    [System.Serializable]
     public class LinearUnit : ProjNet.CoordinateSystems.Info, ProjNet.CoordinateSystems.IInfo, ProjNet.CoordinateSystems.IUnit
     {
         public LinearUnit(double metersPerUnit, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks) { }
@@ -242,14 +230,12 @@ namespace ProjNet.CoordinateSystems
         public static ProjNet.CoordinateSystems.LinearUnit USSurveyFoot { get; }
         public override bool EqualParams(object obj) { }
     }
-    [System.Serializable]
     public class Parameter
     {
         public Parameter(string name, double value) { }
         public string Name { get; set; }
         public double Value { get; set; }
     }
-    [System.Serializable]
     public class PrimeMeridian : ProjNet.CoordinateSystems.Info
     {
         public ProjNet.CoordinateSystems.AngularUnit AngularUnit { get; set; }
@@ -271,7 +257,6 @@ namespace ProjNet.CoordinateSystems
         public static ProjNet.CoordinateSystems.PrimeMeridian Stockholm { get; }
         public override bool EqualParams(object obj) { }
     }
-    [System.Serializable]
     public class ProjectedCoordinateSystem : ProjNet.CoordinateSystems.HorizontalCoordinateSystem
     {
         public ProjNet.CoordinateSystems.GeographicCoordinateSystem GeographicCoordinateSystem { get; set; }
@@ -284,7 +269,6 @@ namespace ProjNet.CoordinateSystems
         public override ProjNet.CoordinateSystems.IUnit GetUnits(int dimension) { }
         public static ProjNet.CoordinateSystems.ProjectedCoordinateSystem WGS84_UTM(int zone, bool zoneIsNorth) { }
     }
-    [System.Serializable]
     public class Projection : ProjNet.CoordinateSystems.Info, ProjNet.CoordinateSystems.IInfo, ProjNet.CoordinateSystems.IProjection
     {
         public string ClassName { get; }
@@ -295,7 +279,6 @@ namespace ProjNet.CoordinateSystems
         public ProjNet.CoordinateSystems.ProjectionParameter GetParameter(int index) { }
         public ProjNet.CoordinateSystems.ProjectionParameter? GetParameter(string name) { }
     }
-    [System.Serializable]
     public class ProjectionParameter
     {
         public ProjectionParameter(string name, double value) { }
@@ -305,7 +288,6 @@ namespace ProjNet.CoordinateSystems
         public string XML { get; }
         public override string ToString() { }
     }
-    [System.Serializable]
     public class Unit : ProjNet.CoordinateSystems.Info, ProjNet.CoordinateSystems.IInfo, ProjNet.CoordinateSystems.IUnit
     {
         public double ConversionFactor { get; set; }
@@ -332,7 +314,6 @@ namespace ProjNet.CoordinateSystems
         public static ProjNet.CoordinateSystems.VerticalDatum ODN { get; }
         public override bool EqualParams(object obj) { }
     }
-    [System.Serializable]
     public class Wgs84ConversionInfo : System.IEquatable<ProjNet.CoordinateSystems.Wgs84ConversionInfo>
     {
         public string AreaOfUse;
@@ -367,7 +348,6 @@ namespace ProjNet.CoordinateSystems.Projections
         protected override void MetersToRadians(ref double x, ref double y) { }
         protected override void RadiansToMeters(ref double lon, ref double lat) { }
     }
-    [System.Serializable]
     public abstract class MapProjection : ProjNet.CoordinateSystems.Transformations.MathTransform, ProjNet.CoordinateSystems.IInfo, ProjNet.CoordinateSystems.IProjection
     {
         [System.Obsolete("Use DblLong instead.")]
@@ -510,14 +490,9 @@ namespace ProjNet.CoordinateSystems.Projections
         protected static void Sincos(double val, out double sin_val, out double cos_val) { }
         protected static double Tsfnz(double eccent, double phi, double sinphi) { }
     }
-    [System.Serializable]
     public class ProjectionParameterSet : System.Collections.Generic.Dictionary<string, double>, System.IEquatable<ProjNet.CoordinateSystems.Projections.ProjectionParameterSet>
     {
         public ProjectionParameterSet(System.Collections.Generic.IEnumerable<ProjNet.CoordinateSystems.ProjectionParameter> parameters) { }
-        [System.Diagnostics.CodeAnalysis.RequiresDynamicCode("Formatter-based serialization APIs may require runtime code generation.")]
-        [System.Diagnostics.CodeAnalysis.RequiresUnreferencedCode("Formatter-based serialization APIs are not trimming-safe.")]
-        [System.Obsolete("Formatter-based serialization constructor is retained for compatibility.")]
-        public ProjectionParameterSet(System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context) { }
         public bool Equals(ProjNet.CoordinateSystems.Projections.ProjectionParameterSet? other) { }
         public override bool Equals(object? obj) { }
         public ProjNet.CoordinateSystems.ProjectionParameter? Find(string name) { }
@@ -536,7 +511,6 @@ namespace ProjNet.CoordinateSystems.Projections
 }
 namespace ProjNet.CoordinateSystems.Transformations
 {
-    [System.Serializable]
     public class AffineTransform : ProjNet.CoordinateSystems.Transformations.MathTransform
     {
         public AffineTransform(double[] matrix) { }
@@ -550,7 +524,6 @@ namespace ProjNet.CoordinateSystems.Transformations
         public override void Invert() { }
         public override void Transform(ref double x, ref double y, ref double z) { }
     }
-    [System.Serializable]
     public class CoordinateTransformation : ProjNet.CoordinateSystems.Transformations.ICoordinateTransformation, ProjNet.CoordinateSystems.Transformations.ICoordinateTransformationCore
     {
         public string AreaOfUse { get; }
@@ -576,7 +549,6 @@ namespace ProjNet.CoordinateSystems.Transformations
         Outside = 2,
         Discontinuous = 4,
     }
-    [System.Serializable]
     public class GeographicTransform : ProjNet.CoordinateSystems.Transformations.MathTransform
     {
         public override int DimSource { get; }
@@ -604,7 +576,6 @@ namespace ProjNet.CoordinateSystems.Transformations
         ProjNet.CoordinateSystems.CoordinateSystem SourceCS { get; }
         ProjNet.CoordinateSystems.CoordinateSystem TargetCS { get; }
     }
-    [System.Serializable]
     public abstract class MathTransform
     {
         protected const double D2R = 0.017453292519943295D;

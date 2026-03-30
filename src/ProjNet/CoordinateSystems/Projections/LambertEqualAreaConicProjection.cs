@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -16,7 +16,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// user-supplied <c>lat_1</c> as the second. Set the <c>south</c> parameter to a non-zero
 /// value to select the southern hemisphere variant.
 /// </remarks>
-[Serializable]
 internal sealed class LambertEqualAreaConicProjection : AlbersProjection
 {
     /// <summary>

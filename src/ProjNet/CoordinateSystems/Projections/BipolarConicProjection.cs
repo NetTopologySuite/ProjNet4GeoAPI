@@ -11,7 +11,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical bipolar conic projection of the western hemisphere (<c>bipc</c>).
 /// </summary>
-[Serializable]
 internal class BipolarConicProjection : MapProjection
 {
     private const double Epsilon = 1e-10d;

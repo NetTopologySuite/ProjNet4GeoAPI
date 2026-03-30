@@ -11,7 +11,6 @@ using System.Diagnostics.CodeAnalysis;
 /// <summary>
 /// Implements PROJ pipeline stack transfer steps (<c>push</c> and <c>pop</c>).
 /// </summary>
-[Serializable]
 internal sealed class PipelineStackTransferMathTransform : MathTransform
 {
     private readonly bool isPush;

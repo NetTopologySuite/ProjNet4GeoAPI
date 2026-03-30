@@ -11,7 +11,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the Icosahedral Snyder Equal Area projection (<c>isea</c>).
 /// </summary>
-[Serializable]
 internal sealed class IseaProjection : MapProjection
 {
     private const int NumIcosahedronFaces = 20;

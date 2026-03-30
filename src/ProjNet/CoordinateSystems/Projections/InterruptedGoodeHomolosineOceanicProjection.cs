@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -17,7 +17,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// oceanic regions appear continuous. The projection uses 12 zones arranged in three
 /// longitudinal panels per hemisphere.
 /// </remarks>
-[Serializable]
 internal class InterruptedGoodeHomolosineOceanicProjection : MapProjection
 {
     private const int MollweideIterations = 12;

@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -17,7 +17,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// parallel is specified via <c>standard_parallel_1</c>, the cone constant is set to
 /// the sine of that parallel.
 /// </remarks>
-[Serializable]
 internal class EquidistantConicProjection : MapProjection
 {
     private readonly double radius;

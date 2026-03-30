@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -14,7 +14,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <remarks>
 /// Inverse projection is not supported.
 /// </remarks>
-[Serializable]
 internal class ChamberlinTrimetricProjection : MapProjection
 {
     private const double Third = 0.333333333333333333d;
@@ -211,7 +210,6 @@ internal class ChamberlinTrimetricProjection : MapProjection
         return Math.Acos(ProjectionConstants.ClampToUnit(value));
     }
 
-    [Serializable]
     private readonly struct Arc(double r, double az)
     {
         public double R { get; } = r;
@@ -219,7 +217,6 @@ internal class ChamberlinTrimetricProjection : MapProjection
         public double Az { get; } = az;
     }
 
-    [Serializable]
     private sealed class ControlPoint
     {
         public double Phi { get; set; }
@@ -235,7 +232,6 @@ internal class ChamberlinTrimetricProjection : MapProjection
         public Point Projected { get; } = new();
     }
 
-    [Serializable]
     private sealed class Point
     {
         public double X { get; set; }

@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -15,7 +15,6 @@ using ProjNet.CoordinateSystems.Transformations.Numerics;
 /// <summary>
 /// Implements PROJ's <c>sch</c> (Spherical Cross-track Height) 3D runtime transform.
 /// </summary>
-[Serializable]
 internal sealed class SchMathTransform : MathTransform
 {
     private readonly GeocentricTransform ellipsoidForward;

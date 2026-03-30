@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -15,7 +15,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// A compromise cylindrical projection that reduces the high-latitude area exaggeration
 /// of the Mercator projection by compressing the latitude formula. Poles cannot be projected.
 /// </remarks>
-[Serializable]
 internal class MillerCylindricalProjection : MapProjection
 {
     private readonly double radius;

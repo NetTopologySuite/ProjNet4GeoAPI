@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -15,7 +15,6 @@ using System.Text;
 /// <summary>
 /// Applies horizontal datum shifts using one or more NTv2 grid files.
 /// </summary>
-[Serializable]
 internal sealed class Ntv2HGridShiftMathTransform : MathTransform
 {
     private const double ArcSecondToDegree = 1d / 3600d;
@@ -264,7 +263,6 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
         return false;
     }
 
-    [Serializable]
     private sealed class Ntv2GridSet
     {
         private readonly IReadOnlyList<Ntv2Grid> rootGrids;
@@ -460,7 +458,6 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
         }
     }
 
-    [Serializable]
     private sealed class Ntv2Grid
     {
         private readonly List<Ntv2Grid> children = [];

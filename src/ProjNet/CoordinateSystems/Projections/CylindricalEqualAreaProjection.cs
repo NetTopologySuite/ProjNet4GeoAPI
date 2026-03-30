@@ -16,7 +16,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// standard parallel. When the standard parallel is at the equator this is equivalent
 /// to the Lambert Cylindrical Equal Area projection.
 /// </remarks>
-[Serializable]
 internal class CylindricalEqualAreaProjection : MapProjection
 {
     private readonly double radius;

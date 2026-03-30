@@ -12,7 +12,6 @@ using System.Text;
 /// <summary>
 /// A 3D coordinate system, with its origin at the center of the Earth.
 /// </summary>
-[Serializable]
 public class GeocentricCoordinateSystem : CoordinateSystem
 {
     /// <summary>

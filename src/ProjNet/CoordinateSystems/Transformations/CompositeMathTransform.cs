@@ -9,7 +9,6 @@ using System.Collections.Generic;
 /// <summary>
 /// Composes multiple math transforms into a single sequential transform.
 /// </summary>
-[Serializable]
 internal sealed class CompositeMathTransform : MathTransform
 {
     private MathTransform[] transforms;

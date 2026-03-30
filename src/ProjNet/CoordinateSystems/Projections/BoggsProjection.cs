@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -15,7 +15,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// The Boggs Eumorphic projection is a compromise pseudocylindrical projection combining
 /// properties of the sinusoidal and Mollweide projections. Inverse projection is not supported.
 /// </remarks>
-[Serializable]
 internal class BoggsProjection : MapProjection
 {
     private const int Iterations = 20;

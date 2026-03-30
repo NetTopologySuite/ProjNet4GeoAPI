@@ -15,7 +15,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Equal Earth is an equal-area pseudocylindrical projection with curved parallels and
 /// a polynomial forward formula. The inverse is solved iteratively.
 /// </remarks>
-[Serializable]
 internal class EqualEarthProjection : MapProjection
 {
     private const double A1 = 1.340264;

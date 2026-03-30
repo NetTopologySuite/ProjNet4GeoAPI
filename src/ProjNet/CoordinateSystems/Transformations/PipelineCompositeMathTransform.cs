@@ -10,7 +10,6 @@ using System.Collections.Generic;
 /// <summary>
 /// Executes a PROJ pipeline chain while preserving shared pipeline state between steps.
 /// </summary>
-[Serializable]
 internal sealed class PipelineCompositeMathTransform : MathTransform
 {
     private readonly MathTransform[] transforms;

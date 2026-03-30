@@ -10,7 +10,6 @@ using System.Collections.Generic;
 /// <summary>
 /// Provides shared Mollweide helper logic for interrupted Mollweide-family projections.
 /// </summary>
-[Serializable]
 internal abstract class InterruptedMollweideBaseProjection : MapProjection
 {
     /// <summary>

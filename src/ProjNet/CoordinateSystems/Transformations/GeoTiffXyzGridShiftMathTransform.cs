@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -14,7 +14,6 @@ using ProjNet.CoordinateSystems;
 /// <summary>
 /// Applies geocentric XYZ grid-shift corrections loaded from GeoTIFF grids.
 /// </summary>
-[Serializable]
 internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
 {
     private const double RelativeTolerance = 1e-5d;
@@ -348,7 +347,6 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
     /// <summary>
     /// Represents an XYZ shift page loaded from a GeoTIFF.
     /// </summary>
-    [Serializable]
     internal sealed class XyzGrid : BaseGeoGrid
     {
         private readonly int sampleX;

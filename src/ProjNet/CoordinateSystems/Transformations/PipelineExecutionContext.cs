@@ -10,7 +10,6 @@ using System.Collections.Generic;
 /// <summary>
 /// Holds pipeline execution state shared by stack-aware runtime steps.
 /// </summary>
-[Serializable]
 internal sealed class PipelineExecutionContext
 {
     private readonly Stack<double>[] stacks =

@@ -16,7 +16,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// a polynomial formula designed for a visually balanced appearance. The inverse is solved
 /// iteratively via Newton–Raphson iteration.
 /// </remarks>
-[Serializable]
 internal class PattersonProjection : MapProjection
 {
     private const double K1 = 1.0148d;

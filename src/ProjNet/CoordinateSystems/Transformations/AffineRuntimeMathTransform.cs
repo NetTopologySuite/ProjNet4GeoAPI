@@ -13,7 +13,6 @@ using ProjNet.CoordinateSystems.Transformations.Numerics;
 /// <summary>
 /// Implements PROJ's <c>affine</c> runtime transform.
 /// </summary>
-[Serializable]
 internal sealed class AffineRuntimeMathTransform : MathTransform
 {
     private readonly Vector3D offset;

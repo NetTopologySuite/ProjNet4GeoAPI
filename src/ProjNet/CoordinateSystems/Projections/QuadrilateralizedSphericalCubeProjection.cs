@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 // Derived from PROJ (https://proj.org), MIT license.
 
@@ -11,7 +11,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the Quadrilateralized Spherical Cube projection (<c>qsc</c>).
 /// </summary>
-[Serializable]
 internal sealed class QuadrilateralizedSphericalCubeProjection : MapProjection
 {
     private const double Epsilon = 1e-10d;
