@@ -9,7 +9,7 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Tests that the projection kernel correctly resolves well-known projection name aliases.
 /// </summary>
 public class ProjectionKernelAlignmentTests
 {

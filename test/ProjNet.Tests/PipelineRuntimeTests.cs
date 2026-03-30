@@ -9,7 +9,7 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Tests for the PROJ pipeline math transform runtime, covering step execution, parameter parsing, and validation.
 /// </summary>
 public class PipelineRuntimeTests
 {
@@ -28,7 +28,7 @@ public class PipelineRuntimeTests
     private static readonly double[] PipelineSwapInput = [100d, 200d];
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a pipeline combining unit conversion and axis swap correctly converts and reorders the output ordinates.
     /// </summary>
     [Fact]
     public void PipelineWithUnitConvertAndAxisSwapConvertsAndSwaps()
@@ -43,7 +43,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a pipeline with a noop, a set step, and unit conversion applies the set value override to the third ordinate.
     /// </summary>
     [Fact]
     public void PipelineWithNoopSetAndUnitConvertAppliesSetOverride()
@@ -59,7 +59,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a 4D axis swap step with negated indices correctly reorders and flips all four ordinates.
     /// </summary>
     [Fact]
     public void PipelineWith4DAxisSwapReordersAndFlipsAllOrdinates()
@@ -76,7 +76,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that push and pop steps correctly save and restore the first ordinate across intermediate transform steps.
     /// </summary>
     [Fact]
     public void PipelineWithPushAndPopRestoresSavedHorizontalComponent()
@@ -93,7 +93,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that global ellipsoid parameters are shared across all pipeline steps.
     /// </summary>
     [Fact]
     public void PipelineUsesGlobalEllipsoidParametersAcrossSteps()
@@ -109,7 +109,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a UTM step in a pipeline inherits the global ellipsoid parameter.
     /// </summary>
     [Fact]
     public void PipelineWithUtmStepUsesGlobalEllipsoid()
@@ -124,7 +124,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a transverse Mercator step round-trips correctly using the specified projection parameters.
     /// </summary>
     [Fact]
     public void PipelineWithTmercStepRoundTripsUsingProjectionParameters()
@@ -139,7 +139,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a pushed value is not restored when no corresponding pop step is present.
     /// </summary>
     [Fact]
     public void PipelineWithPushWithoutPopKeepsChangedValue()
@@ -156,7 +156,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a pop step with no prior push for the same component leaves the current ordinate value unchanged.
     /// </summary>
     [Fact]
     public void PipelineWithPopFromEmptyStackKeepsCurrentValue()
@@ -173,7 +173,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that push and pop correctly save and restore the time component across an affine transform step.
     /// </summary>
     [Fact]
     public void PipelineWithPushAndPopOnTimeComponentRestoresEpoch()
@@ -190,7 +190,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that multiple push and pop steps for the same component follow last-in, first-out order.
     /// </summary>
     [Fact]
     public void PipelineWithMultiplePushesAndPopsUsesLifoPerComponent()
@@ -207,7 +207,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the omit_inv flag causes a pipeline step to be applied in the forward direction but skipped in the inverse direction.
     /// </summary>
     [Fact]
     public void PipelineWithOmitInvSkipsStepOnlyInInverseDirection()
@@ -225,7 +225,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the omit_fwd flag causes a pipeline step to be skipped in the forward direction but applied in the inverse direction.
     /// </summary>
     [Fact]
     public void PipelineWithOmitFwdSkipsStepOnlyInForwardDirection()
@@ -243,7 +243,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a push step without an ordinate flag produces a validation failure.
     /// </summary>
     [Fact]
     public void PipelinePushWithoutOrdinateFlagReturnsValidationFailure()
@@ -255,7 +255,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a transverse Mercator step with a non-numeric parameter value produces a validation failure.
     /// </summary>
     [Fact]
     public void PipelineWithInvalidTmercParameterReturnsValidationFailure()
@@ -267,7 +267,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that an unsupported projection name produces a validation failure referencing the current builtins wave.
     /// </summary>
     [Fact]
     public void PipelineWithUnsupportedProjectionKeepsBuiltinsWaveError()
@@ -279,7 +279,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that an invalid UTM zone number produces a validation failure.
     /// </summary>
     [Fact]
     public void PipelineWithInvalidUtmZoneReturnsValidationFailure()
@@ -291,7 +291,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a standalone push or pop step without a matching counterpart leaves all ordinates unchanged.
     /// </summary>
     [Theory]
     [InlineData("+proj=push +v_3")]
@@ -308,7 +308,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that an axis swap step with duplicate axis indices in the order parameter produces a validation failure.
     /// </summary>
     [Fact]
     public void PipelineInvalidAxisSwapOrderReturnsValidationFailure()
@@ -320,7 +320,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that an axis swap using the +axis parameter correctly interprets compass and vertical orientation codes.
     /// </summary>
     [Fact]
     public void AxisSwapWithAxisParameterParsesOrientationCodes()
@@ -336,7 +336,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that an axis swap step without either +order or +axis produces a validation failure.
     /// </summary>
     [Fact]
     public void AxisSwapWithoutOrderAndAxisReturnsValidationFailure()
@@ -348,7 +348,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that specifying both +order and +axis on an axis swap step produces a validation failure.
     /// </summary>
     [Fact]
     public void AxisSwapWithOrderAndAxisReturnsValidationFailure()
@@ -360,7 +360,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that an axis swap step with an invalid character in the +axis value produces a validation failure.
     /// </summary>
     [Fact]
     public void AxisSwapWithInvalidAxisTokenReturnsValidationFailure()
@@ -372,7 +372,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that an axis swap step referencing an ordinate index beyond the input dimension produces a validation failure.
     /// </summary>
     [Fact]
     public void AxisSwapWithOutOfRangeOrderReferenceReturnsValidationFailure()
@@ -401,7 +401,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a geocentric conversion followed by its inverse round-trips geodetic coordinates to the expected precision.
     /// </summary>
     [Fact]
     public void PipelineWithGeocentAndInverseRoundTripsGeodeticCoordinates()
@@ -417,7 +417,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the geoc alias step converts geodetic latitude to geocentric latitude.
     /// </summary>
     [Fact]
     public void PipelineWithGeocAliasConvertsGeodeticToGeocentricLatitude()
@@ -432,7 +432,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the inverse geoc alias step converts geocentric latitude back to geodetic latitude.
     /// </summary>
     [Fact]
     public void PipelineWithGeocAliasInverseConvertsGeocentricToGeodeticLatitude()
@@ -447,7 +447,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the cart alias step respects the +to_meter scaling parameter when converting to Cartesian coordinates.
     /// </summary>
     [Fact]
     public void PipelineWithCartAliasAndToMeterScalesCartesianOutputUnits()
@@ -463,7 +463,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the geogoffset step adds the configured arc-second longitude, latitude, and height offsets to both 2D and 3D input.
     /// </summary>
     [Fact]
     public void PipelineWithGeogOffsetAddsConfiguredArcSecondAndHeightOffsets()
@@ -482,7 +482,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the inverse geogoffset step subtracts the configured offsets.
     /// </summary>
     [Fact]
     public void PipelineWithGeogOffsetInverseSubtractsConfiguredOffsets()
@@ -498,7 +498,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a geogoffset step without any configured offsets acts as an identity transform.
     /// </summary>
     [Fact]
     public void PipelineWithGeogOffsetWithoutOffsetsActsAsIdentity()
@@ -514,7 +514,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the molobadekas step correctly applies coordinate frame rotation parameters to the input geocentric coordinates.
     /// </summary>
     [Fact]
     public void PipelineWithMolobadekasAppliesCoordinateFrameParameters()
@@ -531,7 +531,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a molobadekas step without a +convention parameter produces a validation failure.
     /// </summary>
     [Fact]
     public void PipelineWithMolobadekasMissingConventionReturnsValidationFailure()
@@ -543,7 +543,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that an affine step with default parameters leaves all ordinates unchanged.
     /// </summary>
     [Fact]
     public void PipelineWithAffineIdentityLeavesCoordinatesUnchanged()
@@ -560,7 +560,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that an affine step applies the configured offset and matrix coefficients to all four input ordinates.
     /// </summary>
     [Fact]
     public void PipelineWithAffineAppliesConfiguredSpatialAndTemporalTerms()
@@ -577,7 +577,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that an affine transform and its inverse correctly round-trip all four input ordinates.
     /// </summary>
     [Fact]
     public void PipelineWithAffineInverseRoundTrips()
@@ -595,7 +595,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that an affine step with a non-invertible matrix produces a validation failure when inverted.
     /// </summary>
     [Fact]
     public void PipelineWithAffineNonInvertibleMatrixRejectsInverse()
@@ -607,7 +607,7 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that an affine step with a zero time scale produces a validation failure when inverted.
     /// </summary>
     [Fact]
     public void PipelineWithAffineZeroTimeScaleRejectsInverse()

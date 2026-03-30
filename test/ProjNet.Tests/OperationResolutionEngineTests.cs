@@ -15,7 +15,7 @@ using ProjNet.Data.Generated;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Tests for the coordinate operation resolution engine and transformation factory.
 /// </summary>
 public class OperationResolutionEngineTests
 {
@@ -26,7 +26,7 @@ public class OperationResolutionEngineTests
     private readonly CoordinateSystemFactory coordinateSystemFactory = new();
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that creating a transformation between identical projected coordinate systems produces an identity transform.
     /// </summary>
     [Fact]
     public void CreateFromCoordinateSystemsWithSameProjectedCoordinateSystemUsesIdentityTransform()
@@ -41,7 +41,7 @@ public class OperationResolutionEngineTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that creating a transformation between equivalent geographic coordinate systems parsed from WKT produces an identity transform.
     /// </summary>
     [Fact]
     public void CreateFromCoordinateSystemsWithEquivalentGeographicCoordinateSystemsUsesIdentityTransform()
@@ -57,7 +57,7 @@ public class OperationResolutionEngineTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that when projected coordinate systems carry EPSG authority codes, the engine selects the highest-ranked catalogued operation over the fallback path.
     /// </summary>
     [Fact]
     public void CreateFromCoordinateSystemsWithProjectedPairHavingDirectMetadataPrefersMetadataCandidate()
@@ -92,7 +92,7 @@ public class OperationResolutionEngineTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that projected coordinate systems without EPSG authority codes produce a direct projected-to-projected transformation without intermediate geographic steps.
     /// </summary>
     [Fact]
     public void CreateFromCoordinateSystemsWithProjectedFallbackPairUsesDirectProj2ProjCorePath()
@@ -112,7 +112,7 @@ public class OperationResolutionEngineTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that projected coordinate systems without an EPSG authority fall back to a transformation with an empty authority and a code of -1.
     /// </summary>
     [Fact]
     public void CreateFromCoordinateSystemsWithProjectedPairWithoutEpsgAuthorityUsesLegacyFallback()
@@ -131,7 +131,7 @@ public class OperationResolutionEngineTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that when only grid-based operations exist for a coordinate pair and PROJNET_GRID_REQUIRED is set, creating the transformation throws an <see cref="InvalidOperationException"/> with a DataUnavailable prefix.
     /// </summary>
     [Fact]
     public void CreateFromCoordinateSystemsWithGridOnlyDirectOperationsThrowsDeterministicDataUnavailable()
@@ -166,7 +166,7 @@ public class OperationResolutionEngineTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that when a coordinate pair has both grid-based and parameter-based catalogued operations, the engine selects a non-grid operation.
     /// </summary>
     [Fact]
     public void CreateFromCoordinateSystemsWithMixedGridAndNonGridDirectOperationsFallsBackToAvailableMetadataOperation()
@@ -196,7 +196,7 @@ public class OperationResolutionEngineTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a geographic-to-geographic transformation using a supported EPSG datum operation includes an explicit datum transform step.
     /// </summary>
     [Fact]
     public void CreateFromCoordinateSystemsWithSupportedGeographicEpsgOperationUsesExplicitDatumTransform()
@@ -221,7 +221,7 @@ public class OperationResolutionEngineTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a projected-to-projected transformation whose base geographic coordinate systems have a supported EPSG datum operation includes an explicit datum transform step.
     /// </summary>
     [Fact]
     public void CreateFromCoordinateSystemsWithProjectedPairUsingSupportedBaseGeographicOperationUsesExplicitDatumTransform()
@@ -278,7 +278,7 @@ public class OperationResolutionEngineTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a transformation between fitted coordinate systems is correctly composed by routing through the base coordinate systems.
     /// </summary>
     [Fact]
     public void CreateFromCoordinateSystemsWithFittedSourceAndTargetComposesViaBaseCoordinateSystems()

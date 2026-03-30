@@ -9,12 +9,12 @@ using ProjNet.Data;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Tests for the coordinate operation catalog provider.
 /// </summary>
 public class OperationCatalogProviderTests
 {
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the managed provider loads the generated operation catalog with a sufficient number of well-formed definitions.
     /// </summary>
     [Fact]
     public void ManagedOperationProviderLoadsGeneratedOperationCatalog()
