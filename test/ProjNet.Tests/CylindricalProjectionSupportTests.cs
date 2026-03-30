@@ -9,7 +9,7 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Tests support for cylindrical map projections, verifying alias resolution from WKT and forward/inverse coordinate roundtrip accuracy.
 /// </summary>
 public class CylindricalProjectionSupportTests
 {
@@ -37,7 +37,7 @@ public class CylindricalProjectionSupportTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the Miller cylindrical projection supports a forward/inverse coordinate roundtrip within the expected tolerance.
     /// </summary>
     /// <param name="longitude">Input longitude in degrees.</param>
     /// <param name="latitude">Input latitude in degrees.</param>
@@ -79,7 +79,7 @@ public class CylindricalProjectionSupportTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the Equidistant Cylindrical projection supports a forward/inverse coordinate roundtrip within the expected tolerance.
     /// </summary>
     /// <param name="longitude">Input longitude in degrees.</param>
     /// <param name="latitude">Input latitude in degrees.</param>
@@ -121,7 +121,7 @@ public class CylindricalProjectionSupportTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the Cylindrical Equal Area projection supports a forward/inverse coordinate roundtrip within the expected tolerance.
     /// </summary>
     /// <param name="longitude">Input longitude in degrees.</param>
     /// <param name="latitude">Input latitude in degrees.</param>
@@ -161,7 +161,7 @@ public class CylindricalProjectionSupportTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the Loximuthal projection supports a forward/inverse coordinate roundtrip within the expected tolerance.
     /// </summary>
     /// <param name="longitude">Input longitude in degrees.</param>
     /// <param name="latitude">Input latitude in degrees.</param>
@@ -200,7 +200,7 @@ public class CylindricalProjectionSupportTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the Patterson projection supports a forward/inverse coordinate roundtrip within the expected tolerance.
     /// </summary>
     /// <param name="longitude">Input longitude in degrees.</param>
     /// <param name="latitude">Input latitude in degrees.</param>

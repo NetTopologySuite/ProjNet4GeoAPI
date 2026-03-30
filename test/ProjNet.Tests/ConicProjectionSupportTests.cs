@@ -9,7 +9,7 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Tests support for conic map projections, verifying alias resolution from WKT and forward/inverse coordinate roundtrip accuracy.
 /// </summary>
 public class ConicProjectionSupportTests
 {
@@ -37,7 +37,7 @@ public class ConicProjectionSupportTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Validates that the Equidistant Conic projection supports a forward/inverse coordinate roundtrip within the expected tolerance.
     /// </summary>
     /// <param name="longitude">Input longitude in degrees.</param>
     /// <param name="latitude">Input latitude in degrees.</param>
@@ -76,7 +76,7 @@ public class ConicProjectionSupportTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Validates that the Bonne projection supports a forward/inverse coordinate roundtrip within the expected tolerance.
     /// </summary>
     /// <param name="longitude">Input longitude in degrees.</param>
     /// <param name="latitude">Input latitude in degrees.</param>
@@ -116,7 +116,7 @@ public class ConicProjectionSupportTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Validates that the Perspective Conic projection supports a forward/inverse coordinate roundtrip within the expected tolerance.
     /// </summary>
     /// <param name="longitude">Input longitude in degrees.</param>
     /// <param name="latitude">Input latitude in degrees.</param>

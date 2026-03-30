@@ -9,7 +9,7 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Tests support for equal-area map projections, verifying alias resolution from WKT and forward/inverse coordinate roundtrip accuracy.
 /// </summary>
 public class EqualAreaProjectionSupportTests
 {
@@ -35,7 +35,7 @@ public class EqualAreaProjectionSupportTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the Hammer projection supports a forward/inverse coordinate roundtrip within the expected tolerance.
     /// </summary>
     /// <param name="longitude">Input longitude in degrees.</param>
     /// <param name="latitude">Input latitude in degrees.</param>
@@ -75,7 +75,7 @@ public class EqualAreaProjectionSupportTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the Sinusoidal projection supports a forward/inverse coordinate roundtrip within the expected tolerance.
     /// </summary>
     /// <param name="longitude">Input longitude in degrees.</param>
     /// <param name="latitude">Input latitude in degrees.</param>
@@ -115,7 +115,7 @@ public class EqualAreaProjectionSupportTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the Goode Homolosine projection supports a forward/inverse coordinate roundtrip within the expected tolerance.
     /// </summary>
     /// <param name="longitude">Input longitude in degrees.</param>
     /// <param name="latitude">Input latitude in degrees.</param>
@@ -155,7 +155,7 @@ public class EqualAreaProjectionSupportTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the Interrupted Goode Homolosine projection supports a forward/inverse coordinate roundtrip within the expected tolerance.
     /// </summary>
     /// <param name="longitude">Input longitude in degrees.</param>
     /// <param name="latitude">Input latitude in degrees.</param>
@@ -194,7 +194,7 @@ public class EqualAreaProjectionSupportTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the HEALPix projection supports a forward/inverse coordinate roundtrip within the expected tolerance.
     /// </summary>
     /// <param name="longitude">Input longitude in degrees.</param>
     /// <param name="latitude">Input latitude in degrees.</param>
