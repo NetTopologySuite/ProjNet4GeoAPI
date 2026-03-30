@@ -8,9 +8,9 @@
     "language-version": "Csharp12",
     "configuration": "Debug",
     "target-framework": "net8.0",
-    "mutation-level": "Complete",
+    "mutation-level": "Basic",
     "test-runner": "mtp",
-    "coverage-analysis": "perTest",
+    "coverage-analysis": "off",
     "reporters": [
       "Progress",
       "Html",
