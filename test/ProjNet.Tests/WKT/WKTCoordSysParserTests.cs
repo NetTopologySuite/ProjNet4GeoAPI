@@ -14,7 +14,7 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Tests for parsing WKT coordinate system definitions.
 /// </summary>
 public class WKTCoordSysParserTests
 {
@@ -310,7 +310,7 @@ public class WKTCoordSysParserTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a WGS 84 Pseudo-Mercator WKT definition sourced from spatialreference.org can be parsed without errors.
     /// </summary>
     [Fact]
     public void TestParseSrOrg()
@@ -327,7 +327,7 @@ public class WKTCoordSysParserTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that known problematic WKT definitions can be parsed without errors.
     /// </summary>
     [Fact]
     public void TestProjNetIssues()
@@ -460,7 +460,7 @@ public class WKTCoordSysParserTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that WKT produced by a coordinate system object can be round-tripped back into an equivalent projected coordinate system.
     /// </summary>
     [Fact]
     public void ParseWktCreatedByCoordinateSystem()
@@ -494,7 +494,7 @@ public class WKTCoordSysParserTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a <c>PROJECTEDCRS</c> WKT using WKT2-style root and <c>ID</c> tokens can be parsed into a projected coordinate system with correct authority metadata.
     /// </summary>
     [Fact]
     public void ParseProjectedCrsWithWkt2LikeRootAndIdentifiers()
@@ -509,7 +509,7 @@ public class WKTCoordSysParserTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a <c>GEODCRS</c> WKT using <c>ELLIPSOID</c> and <c>ID</c> tokens can be parsed into a geographic coordinate system with correct datum and ellipsoid.
     /// </summary>
     [Fact]
     public void ParseGeodCrsWithEllipsoidAndIdTokens()
@@ -526,7 +526,7 @@ public class WKTCoordSysParserTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a <c>PROJECTEDCRS</c> WKT using the <c>GEODETICCRS</c> keyword and space-separated <c>ID</c> tokens can be parsed with correct authority metadata.
     /// </summary>
     [Fact]
     public void ParseProjectedCrsWithSpacedIdTokens()

@@ -10,7 +10,7 @@ using ProjNet.IO.CoordinateSystems;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Tests for parsing WKT math transform definitions.
 /// </summary>
 public class WKTMathTransformParserTests
 {

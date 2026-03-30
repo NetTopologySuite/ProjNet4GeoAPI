@@ -13,7 +13,7 @@ using ProjNet.CoordinateSystems;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Tests for parsing WKT coordinate system definitions from a PostGIS <c>spatial_ref_sys</c> table.
 /// </summary>
 public class PostGisSpatialRefSysTableParserTests
 {
@@ -71,7 +71,7 @@ public class PostGisSpatialRefSysTableParserTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that all WKT definitions in the PostGIS <c>spatial_ref_sys</c> table can be parsed without errors.
     /// </summary>
     [Fact]
     public void TestParsePostgisDefinitions()
@@ -124,7 +124,7 @@ public class PostGisSpatialRefSysTableParserTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Generates a <c>SRID.csv</c> file containing SRID and WKT pairs from the PostGIS <c>spatial_ref_sys</c> table.
     /// </summary>
     [Fact] // Ignore("Only run this if you want a new SRID.csv file")
     public void TestCreateSridCsv()
