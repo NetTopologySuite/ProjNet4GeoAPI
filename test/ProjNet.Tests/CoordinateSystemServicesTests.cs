@@ -11,7 +11,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Xml.Linq;
+
 using ProjNet;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
@@ -147,29 +147,6 @@ public class CoordinateSystemServicesTests
     }
 
     /// <summary>
-    /// Validates XML-backed constructor loading for coordinate system definitions.
-    /// </summary>
-    /// <param name="xmlPath">Path to the XML definition file.</param>
-    [Theory]
-    [InlineData(@"D:\temp\ConsoleApplication9\SpatialRefSys.xml")]
-    public void TestConstructorLoadXml(string xmlPath)
-    {
-        if (!File.Exists(xmlPath))
-        {
-            Xunit.Assert.Skip("Specified file not found");
-        }
-
-        var css = new CoordinateSystemServices(
-            new CoordinateSystemFactory(),
-            new CoordinateTransformationFactory(),
-            LoadXml(xmlPath));
-
-        Assert.NotNull(css.GetCoordinateSystem(4326));
-        Assert.NotNull(css.GetCoordinateSystem("EPSG", 4326));
-        Assert.True(ReferenceEquals(css.GetCoordinateSystem("EPSG", 4326), css.GetCoordinateSystem(4326)));
-    }
-
-    /// <summary>
     /// Validates CSV-backed constructor loading for coordinate system definitions.
     /// </summary>
     /// <param name="csvPath">Path to the CSV definition file, or empty for embedded defaults.</param>
@@ -214,31 +191,6 @@ public class CoordinateSystemServicesTests
 
         sw.Stop();
         Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Read '{1}' in {0:N0}ms", sw.ElapsedMilliseconds, csvPath ?? "SRID.csv from resources stream"));
-    }
-
-    private static IEnumerable<CoordinateSystemDefinition> LoadXml(string xmlPath)
-    {
-        Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Reading '{0}'.", xmlPath));
-        var sw = new Stopwatch();
-        sw.Start();
-
-        var document = XDocument.Load(xmlPath);
-
-        IEnumerable<XElement> rs = from tmp in document.Elements("SpatialReference").Elements("ReferenceSystem") select tmp;
-
-        foreach (XElement? node in rs)
-        {
-            XElement? sridElement = node.Element("SRID");
-            if (sridElement is not null)
-            {
-                int srid = int.Parse(sridElement.Value, CultureInfo.InvariantCulture);
-                XNode wktNode = Assert.IsType<XNode>(node.LastNode, exactMatch: false);
-                yield return new CoordinateSystemDefinition(srid, wktNode.ToString());
-            }
-        }
-
-        sw.Stop();
-        Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Read '{1}' in {0:N0}ms", sw.ElapsedMilliseconds, xmlPath));
     }
 
     private sealed class TestManagedProvider : ICoordinateSystemDefinitionProvider, IManagedCoordinateSystemProvider
