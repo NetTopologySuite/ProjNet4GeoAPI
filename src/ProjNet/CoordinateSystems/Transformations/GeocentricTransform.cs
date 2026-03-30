@@ -104,7 +104,6 @@ internal class GeocentricTransform : MathTransform
             // _Parameters field inside the anonymous delegate code making
             // the compiler generates a private nested class with a function
             // that is used as the delegate.
-            // For details, see http://www.hedgate.net/articles/2006/01/27/troubles-with-shared-state-and-anonymous-delegates-in-sqlclr
 #pragma warning disable 1717
             this.parameters = this.parameters;
 #pragma warning restore 1717

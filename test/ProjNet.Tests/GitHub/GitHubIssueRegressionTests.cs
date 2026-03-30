@@ -183,10 +183,6 @@ public class GitHubIssueRegressionTests
         (double x, double y) = ct.MathTransform.Transform(ptI[0], ptI[1]);
         Assert.InRange(x, -82.0479097 - 0.01, -82.0479097 + 0.01);
         Assert.InRange(y, 48.4185597 - 0.01, 48.4185597 + 0.01);
-
-        // var pt1b = ct.MathTransform.Inverse().Transform(pt1a);
-        // Assert.InRange(pt1b[0], 3523562.711189 - 0.01, 3523562.711189 + 0.01);
-        // Assert.InRange(pt1b[1], 6246615.391161 - 0.01, 6246615.391161 + 0.01);
     }
 
     /// <summary>

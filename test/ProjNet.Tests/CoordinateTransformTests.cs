@@ -371,7 +371,6 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     [Fact]
     public void TestLambertConicConformal2SPProjection()
     {
-        // var ellipsoid = Ellipsoid.Clarke1866;
         Ellipsoid ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Clarke 1866", 20925832.16, 294.97470, LinearUnit.USSurveyFoot);
 
         HorizontalDatum datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Clarke 1866", DatumType.HD_Geocentric, ellipsoid, null);
@@ -579,20 +578,11 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         ProjectedCoordinateSystem utmED50 = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("ED50 UTM Zone 32N", gcsED50, projection, LinearUnit.Metre, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
         ProjectedCoordinateSystem utmWGS84 = this.CoordinateSystemFactory.CreateProjectedCoordinateSystem("WGS84 UTM Zone 32N", gcsWGS84, projection, LinearUnit.Metre, new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North));
 
-        ////Set up coordinate transformations
-        // var ctForw = _coordinateTransformationFactory.CreateFromCoordinateSystems(gcsWGS72, gcenCsWGS72); //Geographic->Geocentric (WGS72)
-        // var ctWGS84_Gcen2Geo = _coordinateTransformationFactory.CreateFromCoordinateSystems(gcenCsWGS84, gcsWGS84);  //Geocentric->Geographic (WGS84)
-        // var ctWGS84_Geo2UTM = _coordinateTransformationFactory.CreateFromCoordinateSystems(gcsWGS84, utmWGS84);  //UTM ->Geographic (WGS84)
-        // var ctED50_UTM2Geo = _coordinateTransformationFactory.CreateFromCoordinateSystems(utmED50, gcsED50);  //UTM ->Geographic (ED50)
-        // var ctED50_Geo2Gcen = _coordinateTransformationFactory.CreateFromCoordinateSystems(gcsED50, gcenCsED50); //Geographic->Geocentric (ED50)
-
         // Test datum-shift from WGS72 to WGS84
-        // Point3D pGeoCenWGS72 = ctForw.MathTransform.Transform(pLongLatWGS72) as Point3D;
         double[] pGeoCenWGS72 = [3657660.66, 255768.55, 5201382.11];
         ICoordinateTransformation geocen_ed50_2_Wgs84 = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(gcenCsWGS72, gcenCsWGS84);
         double[] pGeoCenWGS84 = geocen_ed50_2_Wgs84.MathTransform.Transform(pGeoCenWGS72);
 
-        // Point3D pGeoCenWGS84 = wgs72.Wgs84Parameters.Apply(pGeoCenWGS72);
         double[] pExpected = [3657660.78, 255778.43, 5201387.75];
         Assert.True(this.ToleranceLessThan(pExpected, pGeoCenWGS84, 0.01), this.TransformationError("Datum WGS72->WGS84", pExpected, pGeoCenWGS84));
 
@@ -922,7 +912,6 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
 
         double[] p0 = [-111.89, 34.165];
 
-        // var expected = new[] { 708066.19058, 1151461.51413 };
         double[] expected = [708066.19057935325, 1151426.4460563776];
 
         double[] p1 = trans.MathTransform.Transform(p0);
@@ -980,17 +969,6 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             CassiniSoldnerExpected,
             0.3,
             1.0E-5);
-
-        // var ct = CoordinateTransformationFactory.CreateFromCoordinateSystems(csSource, csTarget);
-        // var pgeo = new[] {13.408055555556, 52.518611111111};
-        // var pcs = ct.MathTransform.Transform(pgeo);
-        //
-        // Evaluated using DotSpatial.Projections
-        // var pcsExpected = new[] {25244.540, 21300.969};
-        //
-        // Assert.True(ToleranceLessThan(pcsExpected, pcs, 0.3), TransformationError("CassiniSoldner", pcsExpected, pcs));
-        // var pgeo2 = ct.MathTransform.Inverse().Transform(pcs);
-        // Assert.True(ToleranceLessThan(pgeo, pgeo2, 1.0E-5), TransformationError("CassiniSoldner", pgeo, pgeo2));
     }
 
     /// <summary>
@@ -1079,8 +1057,6 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         // 1) Offset: X=-3454886,640m Y=-5479481,278m;
         // 2)Rotation: 332,0657, Rotation point  X=3456926,640m Y=5481071,278m;
         // 3) Scale: 1.0
-
-        // TODO MathTransformFactory fac = new MathTransformFactory ();
         double[,] matrix = new double[,]
         {
             { 0.883485346527455, -0.468458794848877, 3455869.17937689 },
@@ -1115,8 +1091,6 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         // 1) Offset: X=-3454886,640m Y=-5479481,278m;
         // 2)Rotation: 332,0657, Rotation point  X=3456926,640m Y=5481071,278m;
         // 3) Scale: 1.0
-
-        // TODO MathTransformFactory fac = new MathTransformFactory ();
         double[,] matrix = new double[,]
         {
             { 0.883485346527455, -0.468458794848877, 3455869.17937689 },
