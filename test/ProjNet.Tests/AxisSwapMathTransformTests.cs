@@ -9,12 +9,13 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Tests for <see cref="AxisSwapMathTransform"/>.
 /// </summary>
 public class AxisSwapMathTransformTests
 {
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the constructor throws <see cref="System.ArgumentOutOfRangeException"/> when the
+    /// dimension argument is not 2, 3, or 4.
     /// </summary>
     [Theory]
     [InlineData(1)]
@@ -27,7 +28,8 @@ public class AxisSwapMathTransformTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the constructor throws <see cref="System.ArgumentOutOfRangeException"/> when an
+    /// x-axis source index is outside the valid range for the given dimension.
     /// </summary>
     [Theory]
     [InlineData(-1)]
@@ -40,7 +42,8 @@ public class AxisSwapMathTransformTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the constructor throws <see cref="System.ArgumentOutOfRangeException"/> when a sign
+    /// argument is not exactly <c>1</c> or <c>-1</c>.
     /// </summary>
     [Theory]
     [InlineData(0)]
@@ -54,7 +57,8 @@ public class AxisSwapMathTransformTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that <see cref="AxisSwapMathTransform.Identity"/> returns <see langword="true"/> when the
+    /// transform maps each 4D axis to itself with a positive sign.
     /// </summary>
     [Fact]
     public void IdentityReturnsTrueForCanonical4DMapping()
@@ -65,7 +69,8 @@ public class AxisSwapMathTransformTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that <see cref="AxisSwapMathTransform.Identity"/> returns <see langword="false"/> when
+    /// at least one axis in the 4D mapping has a negative sign.
     /// </summary>
     [Fact]
     public void IdentityReturnsFalseWhen4DMappingChangesSign()
@@ -76,7 +81,8 @@ public class AxisSwapMathTransformTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that applying <see cref="AxisSwapMathTransform.Inverse"/> and then transforming a 4D point
+    /// recovers the original coordinates.
     /// </summary>
     [Fact]
     public void InverseRoundTrips4DPoint()
@@ -99,7 +105,8 @@ public class AxisSwapMathTransformTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that <see cref="AxisSwapMathTransform.Invert"/> mutates the transform in place so that
+    /// a subsequent transform call applies the inverse mapping, recovering the original coordinates.
     /// </summary>
     [Fact]
     public void InvertMutatesIntoInverseMapping()
@@ -118,7 +125,7 @@ public class AxisSwapMathTransformTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a 2D transform that remaps X and Y leaves the Z coordinate unchanged.
     /// </summary>
     [Fact]
     public void TwoDimensionalTransformLeavesZUntouched()
@@ -136,7 +143,7 @@ public class AxisSwapMathTransformTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a 3D transform that remaps X, Y, and Z leaves the time coordinate unchanged.
     /// </summary>
     [Fact]
     public void ThreeDimensionalTransformLeavesTimeUntouched()
@@ -156,7 +163,8 @@ public class AxisSwapMathTransformTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the <see cref="AxisSwapMathTransform.WKT"/> and <see cref="AxisSwapMathTransform.XML"/>
+    /// properties each throw <see cref="NotImplementedException"/>.
     /// </summary>
     [Fact]
     public void WktAndXmlPropertiesThrowNotImplementedException()

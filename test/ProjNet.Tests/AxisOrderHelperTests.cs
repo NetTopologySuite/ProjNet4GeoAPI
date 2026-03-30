@@ -8,14 +8,15 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Tests for <see cref="AxisOrderHelper"/>.
 /// </summary>
 public class AxisOrderHelperTests
 {
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new();
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that <see cref="AxisOrderHelper.TryCreateAxisSwapTransform"/> returns <see langword="false"/>
+    /// and outputs <see langword="null"/> when the source coordinate system is <see langword="null"/>.
     /// </summary>
     [Fact]
     public void TryCreateAxisSwapTransformWithNullSourceReturnsFalse()
@@ -30,7 +31,8 @@ public class AxisOrderHelperTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that <see cref="AxisOrderHelper.TryCreateAxisSwapTransform"/> returns <see langword="false"/>
+    /// and outputs <see langword="null"/> when both coordinate systems are one-dimensional (vertical).
     /// </summary>
     [Fact]
     public void TryCreateAxisSwapTransformWithOneDimensionalSystemsReturnsFalse()
@@ -45,7 +47,9 @@ public class AxisOrderHelperTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that <see cref="AxisOrderHelper.TryCreateAxisSwapTransform"/> returns <see langword="false"/>
+    /// and outputs <see langword="null"/> when the target coordinate system uses an unsupported axis orientation
+    /// (geocentric).
     /// </summary>
     [Fact]
     public void TryCreateAxisSwapTransformWithUnsupportedTargetOrientationReturnsFalse()
@@ -71,7 +75,9 @@ public class AxisOrderHelperTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that <see cref="AxisOrderHelper.TryCreateAxisSwapTransform"/> returns <see langword="false"/>
+    /// and outputs <see langword="null"/> when the source coordinate system has a duplicated axis role that
+    /// prevents an unambiguous mapping.
     /// </summary>
     [Fact]
     public void TryCreateAxisSwapTransformWithMissingSourceRoleReturnsFalse()
@@ -103,7 +109,9 @@ public class AxisOrderHelperTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that <see cref="AxisOrderHelper.TryCreateAxisSwapTransform"/> returns <see langword="true"/>
+    /// and produces a transform that negates the vertical coordinate when the source vertical axis is
+    /// <see cref="AxisOrientationEnum.Up"/> and the target is <see cref="AxisOrientationEnum.Down"/>.
     /// </summary>
     [Fact]
     public void TryCreateAxisSwapTransformWithUpToDownTargetCreatesVerticalSignFlip()

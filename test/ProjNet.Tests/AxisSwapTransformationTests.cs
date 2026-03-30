@@ -10,7 +10,8 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Tests for axis-swap and unit-conversion behavior in coordinate transformations built by
+/// <see cref="CoordinateTransformationFactory"/>.
 /// </summary>
 public class AxisSwapTransformationTests
 {
@@ -23,7 +24,8 @@ public class AxisSwapTransformationTests
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new();
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a transformation from a Lon/Lat (East/North) to a Lat/Lon (North/East) geographic
+    /// coordinate system swaps the two coordinate values.
     /// </summary>
     [Fact]
     public void GeographicAxisSwapLonLatToLatLonSwapsCoordinates()
@@ -52,7 +54,8 @@ public class AxisSwapTransformationTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a transformation from an East/North to a West/South geographic coordinate system
+    /// negates both coordinate values.
     /// </summary>
     [Fact]
     public void GeographicAxisSwapEastNorthToWestSouthNegatesAxes()
@@ -81,7 +84,8 @@ public class AxisSwapTransformationTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a transformation from an East/North to a North/East projected coordinate system
+    /// swaps the easting and northing values.
     /// </summary>
     [Fact]
     public void ProjectedAxisSwapEastNorthToNorthEastSwapsProjectedAxes()
@@ -121,7 +125,8 @@ public class AxisSwapTransformationTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a transformation between two geographic coordinate systems that share the same axes
+    /// but differ only in angular unit converts degree values to the equivalent radian values.
     /// </summary>
     [Fact]
     public void GeographicUnitConversionDegreesToRadiansConvertsCoordinates()
@@ -150,7 +155,8 @@ public class AxisSwapTransformationTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a transformation between two projected coordinate systems that share the same axes
+    /// but differ only in linear unit converts metre values to the equivalent foot values.
     /// </summary>
     [Fact]
     public void ProjectedUnitConversionMetreToFootConvertsProjectedCoordinates()
@@ -182,7 +188,8 @@ public class AxisSwapTransformationTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a transformation from a metre East/North to a foot North/East projected coordinate
+    /// system simultaneously converts units from metres to feet and swaps the axis order.
     /// </summary>
     [Fact]
     public void ProjectedUnitAndAxisConversionMetreEastNorthToFootNorthEastConvertsAndSwaps()
