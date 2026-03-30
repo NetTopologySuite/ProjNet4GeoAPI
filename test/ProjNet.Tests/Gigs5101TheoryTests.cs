@@ -14,7 +14,7 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Contains theory tests for GIGS 5101 through 5200 coordinate transformation fixtures.
 /// </summary>
 public class Gigs5101TheoryTests
 {
@@ -109,7 +109,7 @@ public class Gigs5101TheoryTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that supported GIGS 5101 pipeline cases execute and produce results within the declared tolerance.
     /// </summary>
     /// <param name="fixtureFiles">Fixture file names to parse.</param>
     /// <param name="minTransformed">Minimum transformed case count expected.</param>
@@ -130,7 +130,7 @@ public class Gigs5101TheoryTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a substantial number of supported GIGS 5102 and 5103 pipeline cases execute successfully.
     /// </summary>
     /// <param name="fixtureFiles">Fixture file names to parse.</param>
     /// <param name="minTransformed">Minimum transformed case count expected.</param>
@@ -152,7 +152,7 @@ public class Gigs5101TheoryTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a substantial number of supported GIGS 5104 through 5113 pipeline cases execute successfully.
     /// </summary>
     /// <param name="fixtureFiles">Fixture file names to parse.</param>
     /// <param name="minTransformed">Minimum transformed case count expected.</param>
@@ -174,7 +174,7 @@ public class Gigs5101TheoryTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a substantial number of supported GIGS 5200 pipeline cases execute successfully.
     /// </summary>
     /// <param name="fixtureFiles">Fixture file names to parse.</param>
     /// <param name="minTransformed">Minimum transformed case count expected.</param>

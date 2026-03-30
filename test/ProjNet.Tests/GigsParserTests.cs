@@ -11,7 +11,7 @@ using System.Linq;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Contains tests for the GIE fixture file parser against GIGS fixture data.
 /// </summary>
 public class GigsParserTests
 {
@@ -39,10 +39,8 @@ public class GigsParserTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that parsing a GIGS fixture file produces a non-empty collection of test cases.
     /// </summary>
-    /// <param name="fileName">Fixture file name.</param>
-    /// <param name="filePath">Fixture file full path.</param>
     [Theory]
     [MemberData(nameof(NonFailingFixtureFiles))]
     public void ParseGigsFixtureFileProducesCases(string fileName, string filePath)
@@ -61,7 +59,7 @@ public class GigsParserTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that all non-failing GIGS fixture files parse successfully and together yield a substantial number of test cases.
     /// </summary>
     [Fact]
     public void ParseGigsFixturesParsesAllNonFailingFiles()
@@ -99,7 +97,7 @@ public class GigsParserTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that at least one pipeline operation is present among all parsed non-failing GIGS fixture cases.
     /// </summary>
     [Fact]
     public void ParseGigsFixturesPreservesPipelineOperations()
