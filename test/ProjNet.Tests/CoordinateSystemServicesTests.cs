@@ -19,12 +19,12 @@ using ProjNet.Data;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Tests for <see cref="CoordinateSystemServices"/>.
 /// </summary>
 public class CoordinateSystemServicesTests
 {
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the default constructor initializes the service with EPSG 4326 and EPSG 3857 coordinate systems.
     /// </summary>
     [Fact]
     public void TestConstructor()
@@ -38,7 +38,7 @@ public class CoordinateSystemServicesTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that <c>TryGetCoordinateSystem</c> by SRID returns <see langword="true"/> and a non-null system for a known SRID, and <see langword="false"/> with <see langword="null"/> for an unknown SRID.
     /// </summary>
     [Fact]
     public void TestTryGetCoordinateSystemBySrid()
@@ -57,7 +57,7 @@ public class CoordinateSystemServicesTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that <c>TryGetCoordinateSystem</c> by authority and code returns <see langword="true"/> for a known entry and <see langword="false"/> for an unknown code.
     /// </summary>
     [Fact]
     public void TestTryGetCoordinateSystemByAuthorityCode()
@@ -91,7 +91,7 @@ public class CoordinateSystemServicesTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that <c>GetAvailableSridValues</c> returns a non-empty array that includes well-known SRIDs such as 4326 and 3857.
     /// </summary>
     [Fact]
     public void TestGetAvailableSridValues()
@@ -107,7 +107,7 @@ public class CoordinateSystemServicesTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the managed provider exposes more than 7000 definitions and includes EPSG 4326 and EPSG 3857.
     /// </summary>
     [Fact]
     public void TestManagedProviderIncludesFullGeneratedCatalog()
@@ -121,7 +121,7 @@ public class CoordinateSystemServicesTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that an <see cref="ProjNet.Data.IManagedCoordinateSystemProvider"/> is consumed directly without invoking WKT parsing.
     /// </summary>
     [Fact]
     public void TestManagedObjectProviderBypassesWktParsing()
@@ -134,7 +134,7 @@ public class CoordinateSystemServicesTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that an exception thrown by a provider during initialization is wrapped in an <see cref="InvalidOperationException"/>.
     /// </summary>
     [Fact]
     public void TestInitializationFailurePropagatesAsInvalidOperationException()

@@ -11,7 +11,7 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Base class providing shared factory instances and helper methods for coordinate transformation tests.
 /// </summary>
 public class CoordinateTransformTestsBase
 {

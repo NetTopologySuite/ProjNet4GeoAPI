@@ -15,7 +15,7 @@ using Xunit;
 using static ProjNet.Tests.CoordinateSystemTestHelpers;
 
 /// <summary>
-/// Represents the documented type.
+/// Tests for coordinate system transformations across various projection types and datum shifts.
 /// </summary>
 public class CoordinateTransformTests : CoordinateTransformTestsBase
 {
@@ -37,7 +37,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that transforming an array of <see cref="XY"/> coordinates produces the same results as transforming each coordinate individually.
     /// </summary>
     [Fact]
     public void TestTransformListOfCoordinates()
@@ -77,7 +77,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that <c>TransformList</c> for double-array inputs produces the same results as individual point transforms.
     /// </summary>
     [Fact]
     public void TestTransformListOfDoubleArray()
@@ -116,7 +116,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a Lambert Azimuthal Equal Area WKT containing a negative central meridian is parsed without error.
     /// </summary>
     [Fact]
     public void TestCentralMeridianParse()
@@ -129,7 +129,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies forward and inverse Albers Conical Equal Area projection using the Clarke 1866 ellipsoid with metre output units.
     /// </summary>
     [Fact]
     public void TestAlbersProjection()
@@ -170,7 +170,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies forward and inverse Albers Conical Equal Area projection using the Clarke 1866 ellipsoid with feet output units.
     /// </summary>
     [Fact]
     public void TestAlbersProjectionFeet()
@@ -210,7 +210,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies forward and inverse Mercator 1SP projection using the Bessel 1840 ellipsoid with metre output units.
     /// </summary>
     [Fact]
     public void TestMercator1SPProjection()
@@ -249,7 +249,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies forward and inverse Mercator 1SP projection using the Bessel 1840 ellipsoid with feet output units.
     /// </summary>
     [Fact]
     public void TestMercator1SPProjectionFeet()
@@ -288,7 +288,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies forward and inverse Mercator 2SP (Caspian Sea) projection using the Krassowski 1940 ellipsoid.
     /// </summary>
     [Fact]
     public void TestMercator2SPProjection()
@@ -326,7 +326,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies forward and inverse Transverse Mercator projection for the OSGB 1936 British National Grid.
     /// </summary>
     [Fact]
     public void TestTransverseMercatorProjection()
@@ -366,7 +366,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies forward and inverse Lambert Conic Conformal 2SP projection for the NAD27 / Texas South Central system.
     /// </summary>
     [Fact]
     public void TestLambertConicConformal2SPProjection()
@@ -429,7 +429,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that forward and inverse Lambert Azimuthal Equal Area transforms round-trip to the projection origin across 1000 random projection centers.
     /// </summary>
     [Fact]
     public void TestLambertAzimuthalEqualAreaProjectionRoundTripOnOrigin()
@@ -458,7 +458,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that forward and inverse Lambert Azimuthal Equal Area transforms round-trip correctly for 1000 random off-origin points.
     /// </summary>
     [Fact]
     public void TestLambertAzimuthalEqualAreaProjectionRoundTripOnArbitraryPoint()
@@ -494,7 +494,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies the geographic-to-geocentric coordinate transformation and its inverse using the ETRF89 datum.
     /// </summary>
     [Fact]
     public void TestGeocentric()
@@ -518,7 +518,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies datum shift transformations between WGS72, WGS84, and ED50 in both geocentric and projected (UTM) coordinate spaces.
     /// </summary>
     [Fact]
     public void TestDatumTransform()
@@ -626,7 +626,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies forward and inverse Krovak projection referenced to the Greenwich meridian (EPSG 5514 / 102067).
     /// </summary>
     [Fact]
     public void TestKrovakGreenwichProjection()
@@ -694,7 +694,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies forward and inverse Krovak projection referenced to the Ferro prime meridian (EPSG 2065).
     /// </summary>
     [Fact]
     public void TestKrovakFerroProjection()
@@ -763,7 +763,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies forward and inverse Oblique Stereographic projection for EPSG 2171 (Pulkovo 1942(58) / Poland zone I).
     /// </summary>
     [Fact]
     public void TestObliqueStereographicProjection()
@@ -794,7 +794,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies forward and inverse Universal Polar Stereographic (UPS North) projection for EPSG 32661.
     /// </summary>
     [Fact]
     public void TestUniversalPolarStereographicProjection()
@@ -853,7 +853,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies forward and inverse Australian Antarctic Polar Stereographic projection for EPSG 3032.
     /// </summary>
     [Fact]
     public void TestAustralianAntarcticPolarStereographicProjection()
@@ -911,7 +911,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a feet-based projected system (EPSG 2868, Arizona Central State Plane) transforms correctly from WGS84 geographic coordinates.
     /// </summary>
     [Fact]
     public void TestUnitTransforms()
@@ -935,7 +935,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies the Polyconic projection (SAD69 / Brazil Polyconic, EPSG 29101) forward and inverse transforms.
     /// </summary>
     [Fact(DisplayName = "Accuracy very poor!")]
     public void TestPolyconicTransforms()
@@ -962,7 +962,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies forward and inverse Cassini-Soldner projection for DHDN / Soldner Berlin (EPSG 3068).
     /// </summary>
     [Fact]
     public void TestCassiniSoldner()
@@ -994,7 +994,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies forward and inverse Hotine Oblique Mercator projection for NAD83(NSRS2007) / Alaska zone 1 (EPSG 3468).
     /// </summary>
     [Fact]
     public void TestHotineObliqueMercator()
@@ -1017,7 +1017,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a concatenated transform correctly modifies an <see cref="XY"/> array in-place.
     /// </summary>
     [Fact]
     public void TestTransformListOnConcatenatedDoTransform()
@@ -1043,7 +1043,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a concatenated transform correctly converts a list of double-array coordinates.
     /// </summary>
     [Fact]
     public void TestTransformListOnConcatenatedDoTransformDoubleArr()
@@ -1212,7 +1212,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// test for epsg 21780 projection (different prime meridian).
+    /// Tests the EPSG 21780 (Bern 1898 (Bern) / LV03C) projection with a non-Greenwich prime meridian.
     /// </summary>
     [Fact]
     public void TestEPSG21780PrimeMeredianTransformation()
@@ -1247,7 +1247,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     // https://github.com/NetTopologySuite/ProjNet4GeoAPI/issues/48
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies the Hotine Oblique Mercator transformation for EPSG 2056 (CH1903+ / LV95, Switzerland).
     /// </summary>
     [Fact]
     public void TestEPSG2056HotineObliqueMercatorAzimuthCenterSwitzerland()
@@ -1266,7 +1266,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies forward and inverse ellipsoidal Orthographic projection, including detection of points beyond the visible hemisphere.
     /// </summary>
     [Fact]
     public void TestEllipsoidalOrthographicTransform()
@@ -1328,7 +1328,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies transformation from WGS 1984 Web Mercator Auxiliary Sphere to a Lambert Conformal Conic state plane system.
     /// </summary>
     [Fact]
     public static void TestMercatorAuxilarySphereTransformation()
@@ -1351,7 +1351,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the Popular Visualisation Pseudo Mercator projection is recognized and a transformation can be created.
     /// </summary>
     [Fact]
     public void TestPopularVisualizationPseudoMercatorProjectionRegistry()
@@ -1370,7 +1370,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the Lambert Tangential Conformal Conic projection is registered and that the transformation to Pseudo Mercator is within tolerance.
     /// </summary>
     [Fact]
     public void TestLamberTangentialConformalConicProjectionRegistryAndTransformation()
