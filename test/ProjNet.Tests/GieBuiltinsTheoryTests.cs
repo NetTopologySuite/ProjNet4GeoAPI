@@ -402,7 +402,7 @@ public class GieBuiltinsTheoryTests
             double delta = Math.Abs(evaluatedOutput[i] - rawCase.Expect[i]);
             if (delta > tolerance)
             {
-                Assert.Skip("Case requires higher-fidelity GIE mapping (axis=" + i.ToString(CultureInfo.InvariantCulture) + ", delta=" + delta.ToString("R", CultureInfo.InvariantCulture) + ").");
+                Assert.Skip($"Case requires higher-fidelity GIE mapping (axis={i.ToString(CultureInfo.InvariantCulture)}, delta={delta.ToString("R", CultureInfo.InvariantCulture)}).");
             }
         }
     }
@@ -496,13 +496,13 @@ public class GieBuiltinsTheoryTests
 
         if (!ProjectionClassByProjCode.TryGetValue(projCode, out string? projectionClass))
         {
-            skipReason = "Projection '" + projCode + "' is not part of the current builtins wave.";
+            skipReason = $"Projection '{projCode}' is not part of the current builtins wave.";
             return false;
         }
 
         if (testCase.Direction == GieDirection.Inverse && ProjectionsWithoutInverse.Contains(projCode))
         {
-            skipReason = "Projection '" + projCode + "' has no inverse in PROJ and is skipped for inverse direction.";
+            skipReason = $"Projection '{projCode}' has no inverse in PROJ and is skipped for inverse direction.";
             return false;
         }
 
@@ -527,7 +527,7 @@ public class GieBuiltinsTheoryTests
 
         try
         {
-            IProjection projection = CoordinateSystemFactory.CreateProjection("GIE " + projectionClass, projectionClass, parameters);
+            IProjection projection = CoordinateSystemFactory.CreateProjection($"GIE {projectionClass}", projectionClass, parameters);
             ProjectedCoordinateSystem pcs = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
                 "GIE projected",
                 geographicCoordinateSystem,
@@ -604,7 +604,7 @@ public class GieBuiltinsTheoryTests
                 continue;
             }
 
-            tokens[i] = "+" + tokens[i];
+            tokens[i] = $"+{tokens[i]}";
         }
 
         return string.Join(" ", tokens);

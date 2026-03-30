@@ -249,57 +249,32 @@ public class ConicAndEqualAreaMiscProjectionTests
 
     private static string BuildProjectedWkt(string projectionName, string spheroidClause, string? extraParameters)
     {
-        return string.Format(
-            CultureInfo.InvariantCulture,
-            "PROJCS[\"Specialty-C-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{2},UNIT[\"metre\",1]]",
-            projectionName,
-            spheroidClause,
-            extraParameters ?? string.Empty);
+        return FormattableString.Invariant($"PROJCS[\"Specialty-C-{projectionName}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{spheroidClause}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{extraParameters ?? string.Empty},UNIT[\"metre\",1]]");
     }
 
     private static string BuildCconWkt(string projectionName)
     {
-        return string.Format(
-            CultureInfo.InvariantCulture,
-            "PROJCS[\"Specialty-C-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",52],PARAMETER[\"central_meridian\",19],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",330000],PARAMETER[\"false_northing\",-350000],PARAMETER[\"lat_1\",52],UNIT[\"metre\",1]]",
-            projectionName,
-            Sphere6390000);
+        return FormattableString.Invariant($"PROJCS[\"Specialty-C-{projectionName}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{Sphere6390000}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",52],PARAMETER[\"central_meridian\",19],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",330000],PARAMETER[\"false_northing\",-350000],PARAMETER[\"lat_1\",52],UNIT[\"metre\",1]]");
     }
 
     private static string BuildLccaWkt(string projectionName)
     {
-        return string.Format(
-            CultureInfo.InvariantCulture,
-            "PROJCS[\"Specialty-C-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",1],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"lat_1\",0.5],PARAMETER[\"lat_2\",2],UNIT[\"metre\",1]]",
-            projectionName,
-            Grs80);
+        return FormattableString.Invariant($"PROJCS[\"Specialty-C-{projectionName}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{Grs80}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",1],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"lat_1\",0.5],PARAMETER[\"lat_2\",2],UNIT[\"metre\",1]]");
     }
 
     private static string BuildOceaTwoPointWkt(string projectionName)
     {
-        return string.Format(
-            CultureInfo.InvariantCulture,
-            "PROJCS[\"Specialty-C-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"lat_1\",0.5],PARAMETER[\"lat_2\",2],PARAMETER[\"lon_1\",0],PARAMETER[\"lon_2\",0],UNIT[\"metre\",1]]",
-            projectionName,
-            Sphere6400000);
+        return FormattableString.Invariant($"PROJCS[\"Specialty-C-{projectionName}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{Sphere6400000}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"lat_1\",0.5],PARAMETER[\"lat_2\",2],PARAMETER[\"lon_1\",0],PARAMETER[\"lon_2\",0],UNIT[\"metre\",1]]");
     }
 
     private static string BuildOceaAlphaWkt(string projectionName)
     {
-        return string.Format(
-            CultureInfo.InvariantCulture,
-            "PROJCS[\"Specialty-C-{0}-alpha\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",45],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"alpha\",0],PARAMETER[\"lonc\",0],UNIT[\"metre\",1]]",
-            projectionName,
-            Sphere6400000);
+        return FormattableString.Invariant($"PROJCS[\"Specialty-C-{projectionName}-alpha\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{Sphere6400000}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",45],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"alpha\",0],PARAMETER[\"lonc\",0],UNIT[\"metre\",1]]");
     }
 
     private static string BuildOeaWkt(string projectionName)
     {
-        return string.Format(
-            CultureInfo.InvariantCulture,
-            "PROJCS[\"Specialty-C-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"n\",1],PARAMETER[\"m\",2],PARAMETER[\"theta\",3],UNIT[\"metre\",1]]",
-            projectionName,
-            Sphere6400000);
+        return FormattableString.Invariant($"PROJCS[\"Specialty-C-{projectionName}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{Sphere6400000}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"n\",1],PARAMETER[\"m\",2],PARAMETER[\"theta\",3],UNIT[\"metre\",1]]");
     }
 
     private static string BuildRpolyWkt(string projectionName)
@@ -309,11 +284,7 @@ public class ConicAndEqualAreaMiscProjectionTests
 
     private static string BuildTpeqdWkt(string projectionName)
     {
-        return string.Format(
-            CultureInfo.InvariantCulture,
-            "PROJCS[\"Specialty-C-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"lat_1\",0.5],PARAMETER[\"lat_2\",2],PARAMETER[\"lon_1\",0],PARAMETER[\"lon_2\",0],UNIT[\"metre\",1]]",
-            projectionName,
-            Grs80);
+        return FormattableString.Invariant($"PROJCS[\"Specialty-C-{projectionName}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{Grs80}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"lat_1\",0.5],PARAMETER[\"lat_2\",2],PARAMETER[\"lon_1\",0],PARAMETER[\"lon_2\",0],UNIT[\"metre\",1]]");
     }
 
     private static string BuildTpeqdDegenerateWkt()

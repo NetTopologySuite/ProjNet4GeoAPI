@@ -189,13 +189,7 @@ public class AiryChamberlinBipolarProjectionTests
         ProjectionProfile effectiveProfile = profile ?? new ProjectionProfile(6400000d, null);
         bool hasLatitudeOfOrigin = effectiveProfile.ExtraParameters?.IndexOf("latitude_of_origin", StringComparison.OrdinalIgnoreCase) >= 0;
         string latitudeOfOriginParameter = hasLatitudeOfOrigin ? string.Empty : ",PARAMETER[\"latitude_of_origin\",0]";
-        return string.Format(
-            CultureInfo.InvariantCulture,
-            "PROJCS[\"Projection-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",SPHEROID[\"Sphere\",{1},0]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"]{2},PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{3},UNIT[\"metre\",1]]",
-            projectionName,
-            effectiveProfile.SphereRadius.ToString("R", CultureInfo.InvariantCulture),
-            latitudeOfOriginParameter,
-            effectiveProfile.ExtraParameters ?? string.Empty);
+        return FormattableString.Invariant($"PROJCS[\"Projection-{projectionName}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",SPHEROID[\"Sphere\",{effectiveProfile.SphereRadius:R},0]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"]{latitudeOfOriginParameter},PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{effectiveProfile.ExtraParameters ?? string.Empty},UNIT[\"metre\",1]]");
     }
 
     private static ProjectionProfile GetDefaultProfile(string projectionName)

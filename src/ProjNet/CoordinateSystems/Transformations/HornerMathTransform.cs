@@ -371,7 +371,7 @@ internal sealed class HornerMathTransform : MathTransform
 
         if (degree is < 0 or > MaximumSupportedDegree)
         {
-            skipReason = "Degree is unreasonable: " + degree.ToString(CultureInfo.InvariantCulture);
+            skipReason = $"Degree is unreasonable: {degree.ToString(CultureInfo.InvariantCulture)}";
             return false;
         }
 
@@ -390,7 +390,7 @@ internal sealed class HornerMathTransform : MathTransform
 
         if (!args.TryGetValue(key, out string? token) || string.IsNullOrWhiteSpace(token))
         {
-            skipReason = "missing " + key;
+            skipReason = $"missing {key}";
             return false;
         }
 
@@ -398,7 +398,7 @@ internal sealed class HornerMathTransform : MathTransform
         CsvParseStatus parseStatus = TryParseCsvValues(token.AsSpan(), values, out int parsedCount);
         if (parseStatus != CsvParseStatus.Success || parsedCount != expectedCount)
         {
-            skipReason = "Malformed polynomium set " + key + ". need " + expectedCount.ToString(CultureInfo.InvariantCulture) + " coefs";
+            skipReason = $"Malformed polynomium set {key}. need {expectedCount.ToString(CultureInfo.InvariantCulture)} coefs";
             return false;
         }
 
@@ -444,7 +444,7 @@ internal sealed class HornerMathTransform : MathTransform
         CsvParseStatus parseStatus = TryParseCsvValues(token.AsSpan(), parsed, out int parsedCount);
         if (parseStatus != CsvParseStatus.Success || parsedCount != 1)
         {
-            skipReason = "Invalid value for +" + key + ".";
+            skipReason = $"Invalid value for +{key}.";
             return false;
         }
 

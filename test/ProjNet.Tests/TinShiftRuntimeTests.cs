@@ -23,7 +23,7 @@ public class TinShiftRuntimeTests
     {
         yield return new TheoryDataRow<string, string>("+proj=tinshift", "+file");
         yield return new TheoryDataRow<string, string>("+proj=tinshift +file=i_do_not_exist", "Cannot open");
-        yield return new TheoryDataRow<string, string>("+proj=tinshift +file=" + FindFixturePath(Path.Combine("Fixtures", "gie", "tinshift.gie")), "invalid model");
+        yield return new TheoryDataRow<string, string>($"+proj=tinshift +file={FindFixturePath(Path.Combine("Fixtures", "gie", "tinshift.gie"))}", "invalid model");
     }
 
     /// <summary>
@@ -144,25 +144,25 @@ public class TinShiftRuntimeTests
     public static IEnumerable<TheoryDataRow<string, double[], double[], double>> GetCppUnitInverseCases()
     {
         yield return Case(
-            BuildTinShiftOperation("tinshift_unit_basic_horizontal.json") + " +inv",
+            $"{BuildTinShiftOperation("tinshift_unit_basic_horizontal.json")} +inv",
             CreatePoint(100.25d, 100.5d, 1000d),
             CreatePoint(0.5d, 0.75d, 1000d),
             1e-12d);
 
         yield return Case(
-            BuildTinShiftOperation("tinshift_unit_vertical_source_target.json") + " +inv",
+            $"{BuildTinShiftOperation("tinshift_unit_vertical_source_target.json")} +inv",
             CreatePoint(0.5d, 0.75d, 1000.325d),
             CreatePoint(0.5d, 0.75d, 1000d),
             1e-12d);
 
         yield return Case(
-            BuildTinShiftOperation("tinshift_unit_vertical_offset.json") + " +inv",
+            $"{BuildTinShiftOperation("tinshift_unit_vertical_offset.json")} +inv",
             CreatePoint(0.5d, 0.75d, 1000.325d),
             CreatePoint(0.5d, 0.75d, 1000d),
             1e-12d);
 
         yield return Case(
-            BuildTinShiftOperation("tinshift_unit_horizontal_vertical.json") + " +inv",
+            $"{BuildTinShiftOperation("tinshift_unit_horizontal_vertical.json")} +inv",
             CreatePoint(100.25d, 100.5d, 1000.325d),
             CreatePoint(0.5d, 0.75d, 1000d),
             1e-12d);
@@ -301,7 +301,7 @@ public class TinShiftRuntimeTests
 
     private static string BuildTinShiftOperation(string fileName)
     {
-        return "+proj=tinshift +file=" + FindTinShiftPath(fileName);
+        return $"+proj=tinshift +file={FindTinShiftPath(fileName)}";
     }
 
     private static string FindTinShiftPath(string fileName)

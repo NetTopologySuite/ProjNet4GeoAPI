@@ -29,7 +29,7 @@ public class GeoTiffGridRuntimeTests
     public void HgridshiftWithGeoTiffGridAppliesExpectedShift(string gridFileName)
     {
         string gridPath = FindGridPath(gridFileName);
-        string operation = "+proj=hgridshift +grids=" + gridPath;
+        string operation = $"+proj=hgridshift +grids={gridPath}";
 
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
         Assert.True(ok, skipReason);
@@ -49,7 +49,7 @@ public class GeoTiffGridRuntimeTests
     public void VgridshiftWithGeoTiffGridAppliesExpectedDefaultShift(string gridFileName)
     {
         string gridPath = FindGridPath(gridFileName);
-        string operation = "+proj=vgridshift +grids=" + gridPath + " +multiplier=1";
+        string operation = $"+proj=vgridshift +grids={gridPath} +multiplier=1";
 
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
         Assert.True(ok, skipReason);
@@ -67,7 +67,7 @@ public class GeoTiffGridRuntimeTests
     public void VgridshiftWithGeoTiffNodataPerformsWeightedInterpolation()
     {
         string gridPath = FindGridPath("test_vgrid_nodata.tif");
-        string operation = "+proj=vgridshift +grids=" + gridPath + " +multiplier=1";
+        string operation = $"+proj=vgridshift +grids={gridPath} +multiplier=1";
 
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
         Assert.True(ok, skipReason);

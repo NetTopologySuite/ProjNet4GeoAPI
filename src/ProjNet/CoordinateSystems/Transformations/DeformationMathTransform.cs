@@ -235,7 +235,7 @@ internal sealed class DeformationMathTransform : MathTransform
                     if (!extension.Equals(".tif", StringComparison.OrdinalIgnoreCase)
                         && !extension.Equals(".tiff", StringComparison.OrdinalIgnoreCase))
                     {
-                        skipReason = "Grid '" + Path.GetFileName(genericGridPaths[i]) + "' is not a supported deformation velocity grid format (.tif/.tiff).";
+                        skipReason = $"Grid '{Path.GetFileName(genericGridPaths[i])}' is not a supported deformation velocity grid format (.tif/.tiff).";
                         return false;
                     }
 
@@ -303,22 +303,22 @@ internal sealed class DeformationMathTransform : MathTransform
         }
         catch (IOException exception)
         {
-            skipReason = "Unable to read deformation grid: " + exception.Message;
+            skipReason = $"Unable to read deformation grid: {exception.Message}";
             return false;
         }
         catch (UnauthorizedAccessException exception)
         {
-            skipReason = "Unable to read deformation grid: " + exception.Message;
+            skipReason = $"Unable to read deformation grid: {exception.Message}";
             return false;
         }
         catch (InvalidDataException exception)
         {
-            skipReason = "Invalid deformation grid: " + exception.Message;
+            skipReason = $"Invalid deformation grid: {exception.Message}";
             return false;
         }
         catch (ArgumentException exception)
         {
-            skipReason = "Invalid deformation configuration: " + exception.Message;
+            skipReason = $"Invalid deformation configuration: {exception.Message}";
             return false;
         }
     }
@@ -349,14 +349,14 @@ internal sealed class DeformationMathTransform : MathTransform
         skipReason = null;
         if (string.IsNullOrWhiteSpace(gridsToken))
         {
-            skipReason = "deformation requires +" + parameterName + ".";
+            skipReason = $"deformation requires +{parameterName}.";
             return false;
         }
 
         string[] entries = gridsToken.Split([','], StringSplitOptions.RemoveEmptyEntries);
         if (entries.Length == 0)
         {
-            skipReason = "deformation requires at least one grid in +" + parameterName + ".";
+            skipReason = $"deformation requires at least one grid in +{parameterName}.";
             return false;
         }
 
@@ -384,14 +384,14 @@ internal sealed class DeformationMathTransform : MathTransform
 
             if (!isOptional)
             {
-                skipReason = "Required grid '" + gridName + "' was not found.";
+                skipReason = $"Required grid '{gridName}' was not found.";
                 return false;
             }
         }
 
         if (resolved.Count == 0)
         {
-            skipReason = "No grid from +" + parameterName + " could be resolved.";
+            skipReason = $"No grid from +{parameterName} could be resolved.";
             return false;
         }
 

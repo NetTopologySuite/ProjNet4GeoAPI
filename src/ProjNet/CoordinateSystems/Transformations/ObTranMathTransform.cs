@@ -309,7 +309,7 @@ internal sealed class ObTranMathTransform : MathTransform
         }
         catch (Exception exception) when (exception is ArgumentException || exception is NotSupportedException || exception is InvalidOperationException || exception is System.Reflection.TargetInvocationException)
         {
-            skipReason = "Unable to create ob_tran child projection '" + projCode + "': " + exception.Message;
+            skipReason = $"Unable to create ob_tran child projection '{projCode}': {exception.Message}";
             return false;
         }
     }

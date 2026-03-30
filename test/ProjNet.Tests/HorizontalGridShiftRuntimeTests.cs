@@ -27,7 +27,7 @@ public class HorizontalGridShiftRuntimeTests
     public void HgridshiftWithNtv2GridAppliesExpectedShift(string gridFileName)
     {
         string gridPath = FindGridPath(gridFileName);
-        string operation = "+proj=hgridshift +grids=" + gridPath;
+        string operation = $"+proj=hgridshift +grids={gridPath}";
 
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
 
@@ -48,7 +48,7 @@ public class HorizontalGridShiftRuntimeTests
     public void HgridshiftWithInverseFlagForSyntheticFixtureSignalsOutsideGrid(string gridFileName)
     {
         string gridPath = FindGridPath(gridFileName);
-        string operation = "+inv +proj=hgridshift +grids=" + gridPath;
+        string operation = $"+inv +proj=hgridshift +grids={gridPath}";
 
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
 
@@ -66,7 +66,7 @@ public class HorizontalGridShiftRuntimeTests
     public void GridshiftWithNtv2GridUsesHorizontalShiftImplementation(string gridFileName)
     {
         string gridPath = FindGridPath(gridFileName);
-        string operation = "+proj=gridshift +grids=" + gridPath;
+        string operation = $"+proj=gridshift +grids={gridPath}";
 
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
 

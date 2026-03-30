@@ -154,7 +154,7 @@ public class AxisOrderHelperTests
 
     private static VerticalCoordinateSystem CreateVerticalCoordinateSystem(string name, AxisOrientationEnum orientation)
     {
-        VerticalDatum datum = CoordinateSystemFactory.CreateVerticalDatum(name + " datum", DatumType.VD_Other);
+        VerticalDatum datum = CoordinateSystemFactory.CreateVerticalDatum($"{name} datum", DatumType.VD_Other);
         return CoordinateSystemFactory.CreateVerticalCoordinateSystem(name, datum, LinearUnit.Metre, new AxisInfo("V", orientation));
     }
 }

@@ -63,7 +63,7 @@ public class ProjectionParameter
     /// </summary>
     public string WKT
     {
-        get => string.Format(CultureInfo.InvariantCulture.NumberFormat, "PARAMETER[\"{0}\", {1}]", this.Name, this.Value);
+        get => FormattableString.Invariant($"PARAMETER[\"{this.Name}\", {this.Value}]");
     }
 
     /// <summary>
@@ -73,7 +73,7 @@ public class ProjectionParameter
     {
         get
         {
-            return string.Format(CultureInfo.InvariantCulture.NumberFormat, "<CS_ProjectionParameter Name=\"{0}\" Value=\"{1}\"/>", this.Name, this.Value);
+            return FormattableString.Invariant($"<CS_ProjectionParameter Name=\"{this.Name}\" Value=\"{this.Value}\"/>");
         }
     }
 

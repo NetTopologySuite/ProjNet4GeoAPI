@@ -102,7 +102,7 @@ public class AngularUnit : Info, IUnit
     {
         get
         {
-            return string.Format(CultureInfo.InvariantCulture.NumberFormat, "<CS_AngularUnit RadiansPerUnit=\"{0}\">{1}</CS_AngularUnit>", this.RadiansPerUnit, this.InfoXml);
+            return FormattableString.Invariant($"<CS_AngularUnit RadiansPerUnit=\"{this.RadiansPerUnit}\">{this.InfoXml}</CS_AngularUnit>");
         }
     }
 

@@ -253,12 +253,7 @@ public class IcosahedralProjectionTests
 
     private static string BuildAiroceanWkt(string projectionName, double orientCode)
     {
-        return string.Format(
-            CultureInfo.InvariantCulture,
-            "PROJCS[\"Specialty-D8-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"orient\",{2}],UNIT[\"metre\",1]]",
-            projectionName,
-            Grs80,
-            orientCode.ToString("R", CultureInfo.InvariantCulture));
+        return FormattableString.Invariant($"PROJCS[\"Specialty-D8-{projectionName}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{Grs80}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"orient\",{orientCode.ToString("R", CultureInfo.InvariantCulture)}],UNIT[\"metre\",1]]");
     }
 
     private static string BuildIseaWkt(
@@ -270,16 +265,7 @@ public class IcosahedralProjectionTests
         double resolution,
         double azimuth)
     {
-        return string.Format(
-            CultureInfo.InvariantCulture,
-            "PROJCS[\"Specialty-D8-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"orient\",{2}],PARAMETER[\"mode\",{3}],PARAMETER[\"aperture\",{4}],PARAMETER[\"resolution\",{5}],PARAMETER[\"azi\",{6}],UNIT[\"metre\",1]]",
-            projectionName,
-            spheroidClause,
-            orientCode.ToString("R", CultureInfo.InvariantCulture),
-            modeCode.ToString("R", CultureInfo.InvariantCulture),
-            aperture.ToString("R", CultureInfo.InvariantCulture),
-            resolution.ToString("R", CultureInfo.InvariantCulture),
-            azimuth.ToString("R", CultureInfo.InvariantCulture));
+        return FormattableString.Invariant($"PROJCS[\"Specialty-D8-{projectionName}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{spheroidClause}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"orient\",{orientCode.ToString("R", CultureInfo.InvariantCulture)}],PARAMETER[\"mode\",{modeCode.ToString("R", CultureInfo.InvariantCulture)}],PARAMETER[\"aperture\",{aperture.ToString("R", CultureInfo.InvariantCulture)}],PARAMETER[\"resolution\",{resolution.ToString("R", CultureInfo.InvariantCulture)}],PARAMETER[\"azi\",{azimuth.ToString("R", CultureInfo.InvariantCulture)}],UNIT[\"metre\",1]]");
     }
 
     private static double[] CreatePoint(double x, double y) => [x, y];

@@ -27,7 +27,7 @@ public class VerticalGridShiftRuntimeTests
     public void VgridshiftWithGtxGridAppliesExpectedVerticalShift(string multiplierToken, double expectedZ)
     {
         string gridPath = FindGridPath("egm96_15_downsampled.gtx");
-        string operation = "+proj=vgridshift +grids=" + gridPath + multiplierToken;
+        string operation = $"+proj=vgridshift +grids={gridPath}{multiplierToken}";
 
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
 
@@ -45,8 +45,8 @@ public class VerticalGridShiftRuntimeTests
     public void VgridshiftWithInverseFlagRoundtripsSinglePoint()
     {
         string gridPath = FindGridPath("egm96_15_downsampled.gtx");
-        string forwardOperation = "+proj=vgridshift +grids=" + gridPath;
-        string inverseOperation = "+inv +proj=vgridshift +grids=" + gridPath;
+        string forwardOperation = $"+proj=vgridshift +grids={gridPath}";
+        string inverseOperation = $"+inv +proj=vgridshift +grids={gridPath}";
 
         bool forwardOk = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(forwardOperation, out MathTransform? forward, out string? forwardSkipReason);
         bool inverseOk = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(inverseOperation, out MathTransform? inverse, out string? inverseSkipReason);
@@ -69,7 +69,7 @@ public class VerticalGridShiftRuntimeTests
     public void VgridshiftOutsideGridExtentThrowsArgumentException()
     {
         string gridPath = FindGridPath("test_nodata.gtx");
-        string operation = "+proj=vgridshift +grids=" + gridPath;
+        string operation = $"+proj=vgridshift +grids={gridPath}";
 
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
         Assert.True(ok, skipReason);

@@ -180,7 +180,7 @@ public class CoordinateSystemServicesTests
     /// <returns>Sequence of SRID/WKT pairs.</returns>
     internal static IEnumerable<CoordinateSystemDefinition> LoadCsv(string? csvPath = null)
     {
-        Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Reading '{0}'.", csvPath ?? "SRID.csv from resources stream"));
+        Debug.WriteLine(FormattableString.Invariant($"Reading '{csvPath ?? "SRID.csv from resources stream"}'."));
         var sw = new Stopwatch();
         sw.Start();
 
@@ -190,7 +190,7 @@ public class CoordinateSystemServicesTests
         }
 
         sw.Stop();
-        Debug.WriteLine(string.Format(CultureInfo.InvariantCulture, "Read '{1}' in {0:N0}ms", sw.ElapsedMilliseconds, csvPath ?? "SRID.csv from resources stream"));
+        Debug.WriteLine(FormattableString.Invariant($"Read '{csvPath ?? "SRID.csv from resources stream"}' in {sw.ElapsedMilliseconds:N0}ms"));
     }
 
     private sealed class TestManagedProvider : ICoordinateSystemDefinitionProvider, IManagedCoordinateSystemProvider

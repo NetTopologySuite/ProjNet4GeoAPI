@@ -488,7 +488,7 @@ internal sealed class HelmertMathTransform : MathTransform
 
         if (!TryParseFiniteDouble(token, out target))
         {
-            skipReason = "Invalid value for +" + key + ".";
+            skipReason = $"Invalid value for +{key}.";
             return false;
         }
 
@@ -509,7 +509,7 @@ internal sealed class HelmertMathTransform : MathTransform
 
         if (!TryParseFiniteDouble(token, out double value))
         {
-            skipReason = "Invalid value for +" + key + ".";
+            skipReason = $"Invalid value for +{key}.";
             return false;
         }
 

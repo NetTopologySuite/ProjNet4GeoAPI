@@ -240,33 +240,17 @@ public class LeacUpsWebMercatorProjectionTests
 
     private static string BuildLeacWkt(string projectionName, string spheroidClause, double standardParallel1, bool south)
     {
-        return string.Format(
-            CultureInfo.InvariantCulture,
-            "PROJCS[\"Specialty-D9-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"standard_parallel_1\",{2}],PARAMETER[\"south\",{3}],UNIT[\"metre\",1]]",
-            projectionName,
-            spheroidClause,
-            standardParallel1.ToString("R", CultureInfo.InvariantCulture),
-            south ? "1" : "0");
+        return FormattableString.Invariant($"PROJCS[\"Specialty-D9-{projectionName}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{spheroidClause}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"standard_parallel_1\",{standardParallel1.ToString("R", CultureInfo.InvariantCulture)}],PARAMETER[\"south\",{(south ? "1" : "0")}],UNIT[\"metre\",1]]");
     }
 
     private static string BuildUpsWkt(string projectionName, string spheroidClause, bool south)
     {
-        return string.Format(
-            CultureInfo.InvariantCulture,
-            "PROJCS[\"Specialty-D9-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",{2}],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"south\",{3}],UNIT[\"metre\",1]]",
-            projectionName,
-            spheroidClause,
-            south ? "-90" : "90",
-            south ? "1" : "0");
+        return FormattableString.Invariant($"PROJCS[\"Specialty-D9-{projectionName}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{spheroidClause}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",{(south ? "-90" : "90")}],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"south\",{(south ? "1" : "0")}],UNIT[\"metre\",1]]");
     }
 
     private static string BuildWebMercWkt(string projectionName, string spheroidClause)
     {
-        return string.Format(
-            CultureInfo.InvariantCulture,
-            "PROJCS[\"Specialty-D9-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1]]",
-            projectionName,
-            spheroidClause);
+        return FormattableString.Invariant($"PROJCS[\"Specialty-D9-{projectionName}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{spheroidClause}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1]]");
     }
 
     private static double[] CreatePoint(double x, double y) => [x, y];

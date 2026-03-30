@@ -4,6 +4,7 @@
 
 namespace ProjNet.CoordinateSystems;
 
+using System;
 using System.Globalization;
 using System.Text;
 
@@ -60,11 +61,7 @@ public class VerticalDatum : Datum
     {
         get
         {
-            return string.Format(
-                CultureInfo.InvariantCulture.NumberFormat,
-                "<CS_VerticalDatum DatumType=\"{0}\">{1}</CS_VerticalDatum>",
-                (int)this.DatumType,
-                this.InfoXml);
+            return FormattableString.Invariant($"<CS_VerticalDatum DatumType=\"{(int)this.DatumType}\">{this.InfoXml}</CS_VerticalDatum>");
         }
     }
 

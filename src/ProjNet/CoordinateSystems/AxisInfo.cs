@@ -64,12 +64,7 @@ public class AxisInfo
     {
         get
         {
-            return string.Format(
-                CultureInfo.InvariantCulture.NumberFormat,
-                "<CS_AxisInfo Name=\"{0}\" Orientation=\"{1}\"/>",
-                this.Name,
-                this.Orientation.ToString()
-                .ToUpperInvariant());
+            return FormattableString.Invariant($"<CS_AxisInfo Name=\"{this.Name}\" Orientation=\"{this.Orientation.ToString().ToUpperInvariant()}\"/>");
         }
     }
 }

@@ -176,11 +176,7 @@ public class AitoffWinkelProjectionTests
             ? $",PARAMETER[\"standard_parallel_1\",{latitude1.Value.ToString(CultureInfo.InvariantCulture)}]"
             : string.Empty;
 
-        return string.Format(
-            CultureInfo.InvariantCulture,
-            "PROJCS[\"Projection-{0}\",GEOGCS[\"Sphere\",DATUM[\"Sphere_Datum\",SPHEROID[\"Sphere\",6400000,0]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{1},UNIT[\"metre\",1]]",
-            projectionName,
-            lat1Parameter);
+        return FormattableString.Invariant($"PROJCS[\"Projection-{projectionName}\",GEOGCS[\"Sphere\",DATUM[\"Sphere_Datum\",SPHEROID[\"Sphere\",6400000,0]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{lat1Parameter},UNIT[\"metre\",1]]");
     }
 
     private static double[] CreatePoint(double x, double y) => [x, y];

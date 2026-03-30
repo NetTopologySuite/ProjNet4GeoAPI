@@ -283,21 +283,12 @@ public class InterruptedAndSpecialMercatorProjectionTests
 
     private static string BuildProjectedWkt(string projectionName, string spheroidClause, string? extraParameters)
     {
-        return string.Format(
-            CultureInfo.InvariantCulture,
-            "PROJCS[\"Specialty-B-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{2},UNIT[\"metre\",1]]",
-            projectionName,
-            spheroidClause,
-            extraParameters ?? string.Empty);
+        return FormattableString.Invariant($"PROJCS[\"Specialty-B-{projectionName}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{spheroidClause}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{extraParameters ?? string.Empty},UNIT[\"metre\",1]]");
     }
 
     private static string BuildColUrbanWkt(string projectionName)
     {
-        return string.Format(
-            CultureInfo.InvariantCulture,
-            "PROJCS[\"Specialty-B-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",4.68048611111111],PARAMETER[\"central_meridian\",-74.1465916666667],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",92334.879],PARAMETER[\"false_northing\",109320.965],PARAMETER[\"h_0\",2550],UNIT[\"metre\",1]]",
-            projectionName,
-            Grs80);
+        return FormattableString.Invariant($"PROJCS[\"Specialty-B-{projectionName}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{Grs80}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",4.68048611111111],PARAMETER[\"central_meridian\",-74.1465916666667],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",92334.879],PARAMETER[\"false_northing\",109320.965],PARAMETER[\"h_0\",2550],UNIT[\"metre\",1]]");
     }
 
     private static string BuildCalcofiCustomWkt()

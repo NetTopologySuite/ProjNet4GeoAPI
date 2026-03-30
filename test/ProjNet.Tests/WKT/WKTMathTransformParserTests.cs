@@ -40,7 +40,7 @@ public class WKTMathTransformParserTests
         }
         catch (Exception ex)
         {
-            Assert.Fail("Could not create affine math transformation from:\r\n" + wkt + "\r\n" + ex.Message);
+            Assert.Fail($"Could not create affine math transformation from:\r\n{wkt}\r\n{ex.Message}");
         }
 
         Assert.NotNull(mt);
@@ -76,11 +76,11 @@ public class WKTMathTransformParserTests
         }
         catch (ArgumentException ex)
         {
-            Assert.Fail("Failed to parse WKT of affine math transformation from:\r\n" + wkt + "\r\n" + ex.Message);
+            Assert.Fail($"Failed to parse WKT of affine math transformation from:\r\n{wkt}\r\n{ex.Message}");
         }
         catch (Exception e)
         {
-            Assert.Fail("Could not create affine math transformation from:\r\n" + wkt + "\r\n" + e.Message);
+            Assert.Fail($"Could not create affine math transformation from:\r\n{wkt}\r\n{e.Message}");
         }
 
         Assert.NotNull(mt);

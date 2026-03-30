@@ -249,33 +249,15 @@ public class Gigs5101TheoryTests
             }
         }
 
-        Assert.True(parsedCases > 0, "Expected parsed GIGS " + label + " cases.");
+        Assert.True(parsedCases > 0, $"Expected parsed GIGS {label} cases.");
         Assert.True(
             transformedCases > minTransformed,
-            string.Concat(
-                "Expected to execute a substantial subset of GIGS ",
-                label,
-                " cases. transformed=",
-                transformedCases.ToString(CultureInfo.InvariantCulture),
-                ", min=",
-                minTransformed.ToString(CultureInfo.InvariantCulture),
-                ", parsed=",
-                parsedCases.ToString(CultureInfo.InvariantCulture),
-                "."));
+            FormattableString.Invariant($"Expected to execute a substantial subset of GIGS {label} cases. transformed={transformedCases}, min={minTransformed}, parsed={parsedCases}."));
         if (requireToleranceMatch)
         {
             Assert.True(
                 withinToleranceCases > minWithinTolerance,
-                string.Concat(
-                    "Expected a substantial subset of executed GIGS ",
-                    label,
-                    " cases to match tolerance. within=",
-                    withinToleranceCases.ToString(CultureInfo.InvariantCulture),
-                    ", min=",
-                    minWithinTolerance.ToString(CultureInfo.InvariantCulture),
-                    ", transformed=",
-                    transformedCases.ToString(CultureInfo.InvariantCulture),
-                    "."));
+                FormattableString.Invariant($"Expected a substantial subset of executed GIGS {label} cases to match tolerance. within={withinToleranceCases}, min={minWithinTolerance}, transformed={transformedCases}."));
         }
     }
 
@@ -448,7 +430,7 @@ public class Gigs5101TheoryTests
 
         try
         {
-            IProjection projection = CoordinateSystemFactory.CreateProjection("GIGS " + projectionClassName, projectionClassName, parameters);
+            IProjection projection = CoordinateSystemFactory.CreateProjection($"GIGS {projectionClassName}", projectionClassName, parameters);
             GeographicCoordinateSystem geographic = Assert.IsType<GeographicCoordinateSystem>(geographicCoordinateSystem);
             coordinateSystem = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
                 "GIGS projected",

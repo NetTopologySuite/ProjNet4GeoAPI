@@ -682,7 +682,7 @@ internal static partial class GeoTiffGridLoader
 
         Match match = Regex.Match(
             attrs,
-            "\\b" + Regex.Escape(attributeName) + "\\s*=\\s*\"(?<value>[^\"]*)\"",
+            $"\\b{Regex.Escape(attributeName)}\\s*=\\s*\"(?<value>[^\"]*)\"",
             RegexOptions.IgnoreCase | RegexOptions.Singleline);
         if (!match.Success)
         {

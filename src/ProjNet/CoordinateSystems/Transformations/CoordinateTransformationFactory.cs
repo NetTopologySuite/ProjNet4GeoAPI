@@ -182,13 +182,13 @@ public class CoordinateTransformationFactory
         var csFactory = new CoordinateSystemFactory();
 
         GeocentricCoordinateSystem sourceCentric = csFactory.CreateGeocentricCoordinateSystem(
-            source.HorizontalDatum.Name + " Geocentric",
+            $"{source.HorizontalDatum.Name} Geocentric",
             source.HorizontalDatum,
             LinearUnit.Metre,
             source.PrimeMeridian);
 
         GeocentricCoordinateSystem targetCentric = csFactory.CreateGeocentricCoordinateSystem(
-            target.HorizontalDatum.Name + " Geocentric",
+            $"{target.HorizontalDatum.Name} Geocentric",
             target.HorizontalDatum,
             LinearUnit.Metre,
             target.PrimeMeridian);
@@ -820,12 +820,12 @@ public class CoordinateTransformationFactory
         var ctFac = new CoordinateTransformationFactory();
         var cFac = new CoordinateSystemFactory();
         GeocentricCoordinateSystem sourceCentric = cFac.CreateGeocentricCoordinateSystem(
-            source.HorizontalDatum.Name + " Geocentric",
+            $"{source.HorizontalDatum.Name} Geocentric",
             source.HorizontalDatum,
             LinearUnit.Metre,
             source.PrimeMeridian);
         GeocentricCoordinateSystem targetCentric = cFac.CreateGeocentricCoordinateSystem(
-            target.HorizontalDatum.Name + " Geocentric",
+            $"{target.HorizontalDatum.Name} Geocentric",
             target.HorizontalDatum,
             LinearUnit.Metre,
             source.PrimeMeridian);
@@ -1054,11 +1054,11 @@ public class CoordinateTransformationFactory
         if (!string.IsNullOrWhiteSpace(operation.ParameterFileName))
         {
             string gridReference = !string.IsNullOrWhiteSpace(resolvedGridPath)
-                ? operation.ParameterFileName + " (" + resolvedGridPath + ")"
+                ? $"{operation.ParameterFileName} ({resolvedGridPath})"
                 : operation.ParameterFileName;
             remarks = string.IsNullOrWhiteSpace(remarks)
-                ? "Grid: " + gridReference
-                : remarks + "; Grid: " + gridReference;
+                ? $"Grid: {gridReference}"
+                : $"{remarks}; Grid: {gridReference}";
         }
 
         return new CoordinateTransformation(
@@ -1206,7 +1206,7 @@ public class CoordinateTransformationFactory
         if (!string.IsNullOrWhiteSpace(missingGridFile))
         {
             return IsGridRequiredModeEnabled()
-                ? throw new InvalidOperationException("DataUnavailable: Required grid resource '" + missingGridFile + "' was not found.")
+                ? throw new InvalidOperationException($"DataUnavailable: Required grid resource '{missingGridFile}' was not found.")
                 : false;
         }
 

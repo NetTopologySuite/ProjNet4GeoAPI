@@ -178,17 +178,10 @@ public class S2ProjectionTests
     private static string BuildProjectedWkt(string projectionName, double lat0, double lon0, double? uvToSt)
     {
         string uvParameter = uvToSt.HasValue
-            ? string.Format(CultureInfo.InvariantCulture, ",PARAMETER[\"uv_to_st\",{0}]", uvToSt.Value.ToString("R", CultureInfo.InvariantCulture))
+            ? FormattableString.Invariant($",PARAMETER[\"uv_to_st\",{uvToSt.Value.ToString("R", CultureInfo.InvariantCulture)}]")
             : string.Empty;
 
-        return string.Format(
-            CultureInfo.InvariantCulture,
-            "PROJCS[\"Specialty-D3-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",{2}],PARAMETER[\"central_meridian\",{3}],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{4},UNIT[\"metre\",1]]",
-            projectionName,
-            Wgs84,
-            lat0.ToString("R", CultureInfo.InvariantCulture),
-            lon0.ToString("R", CultureInfo.InvariantCulture),
-            uvParameter);
+        return FormattableString.Invariant($"PROJCS[\"Specialty-D3-{projectionName}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{Wgs84}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",{lat0.ToString("R", CultureInfo.InvariantCulture)}],PARAMETER[\"central_meridian\",{lon0.ToString("R", CultureInfo.InvariantCulture)}],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{uvParameter},UNIT[\"metre\",1]]");
     }
 
     private static double[] CreatePoint(double x, double y) => [x, y];

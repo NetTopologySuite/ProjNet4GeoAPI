@@ -405,7 +405,7 @@ public class WKTCoordSysParserTests
         }
         catch (Exception ex)
         {
-            Assert.Fail("Could not create fitted coordinate system from:\r\n" + wkt + "\r\n" + ex.Message);
+            Assert.Fail($"Could not create fitted coordinate system from:\r\n{wkt}\r\n{ex.Message}");
         }
 
         Assert.NotNull(fcs);
@@ -444,7 +444,7 @@ public class WKTCoordSysParserTests
         }
         catch (Exception ex)
         {
-            Assert.Fail("Could not create geocentric coordinate system from:\r\n" + wkt + "\r\n" + ex.Message);
+            Assert.Fail($"Could not create geocentric coordinate system from:\r\n{wkt}\r\n{ex.Message}");
         }
 
         Assert.NotNull(fcs);

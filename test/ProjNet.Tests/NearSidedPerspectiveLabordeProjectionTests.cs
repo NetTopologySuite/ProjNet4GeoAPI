@@ -265,33 +265,18 @@ public class NearSidedPerspectiveLabordeProjectionTests
         double? azimuth)
     {
         string tiltParameter = tilt.HasValue
-            ? string.Format(CultureInfo.InvariantCulture, ",PARAMETER[\"tilt\",{0}]", tilt.Value)
+            ? FormattableString.Invariant($",PARAMETER[\"tilt\",{tilt.Value}]")
             : string.Empty;
         string azimuthParameter = azimuth.HasValue
-            ? string.Format(CultureInfo.InvariantCulture, ",PARAMETER[\"azi\",{0}]", azimuth.Value)
+            ? FormattableString.Invariant($",PARAMETER[\"azi\",{azimuth.Value}]")
             : string.Empty;
 
-        return string.Format(
-            CultureInfo.InvariantCulture,
-            "PROJCS[\"Projection-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",SPHEROID[\"Sphere\",{1},0]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",{2}],PARAMETER[\"central_meridian\",{3}],PARAMETER[\"h\",{4}],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{5}{6},UNIT[\"metre\",1]]",
-            projectionName,
-            semiMajor.ToString("R", CultureInfo.InvariantCulture),
-            latitudeOfOrigin.ToString("R", CultureInfo.InvariantCulture),
-            centralMeridian.ToString("R", CultureInfo.InvariantCulture),
-            height.ToString("R", CultureInfo.InvariantCulture),
-            tiltParameter,
-            azimuthParameter);
+        return FormattableString.Invariant($"PROJCS[\"Projection-{projectionName}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",SPHEROID[\"Sphere\",{semiMajor.ToString("R", CultureInfo.InvariantCulture)},0]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",{latitudeOfOrigin.ToString("R", CultureInfo.InvariantCulture)}],PARAMETER[\"central_meridian\",{centralMeridian.ToString("R", CultureInfo.InvariantCulture)}],PARAMETER[\"h\",{height.ToString("R", CultureInfo.InvariantCulture)}],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{tiltParameter}{azimuthParameter},UNIT[\"metre\",1]]");
     }
 
     private static string BuildLabrdProjectedWkt(string projectionName, double latitudeOfOrigin, double centralMeridian, double azimuth)
     {
-        return string.Format(
-            CultureInfo.InvariantCulture,
-            "PROJCS[\"Projection-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",SPHEROID[\"GRS 80\",6378137,298.257222101]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",{1}],PARAMETER[\"central_meridian\",{2}],PARAMETER[\"azi\",{3}],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1]]",
-            projectionName,
-            latitudeOfOrigin.ToString("R", CultureInfo.InvariantCulture),
-            centralMeridian.ToString("R", CultureInfo.InvariantCulture),
-            azimuth.ToString("R", CultureInfo.InvariantCulture));
+        return FormattableString.Invariant($"PROJCS[\"Projection-{projectionName}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",SPHEROID[\"GRS 80\",6378137,298.257222101]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",{latitudeOfOrigin.ToString("R", CultureInfo.InvariantCulture)}],PARAMETER[\"central_meridian\",{centralMeridian.ToString("R", CultureInfo.InvariantCulture)}],PARAMETER[\"azi\",{azimuth.ToString("R", CultureInfo.InvariantCulture)}],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1]]");
     }
 
     private static double[] CreatePoint(double x, double y) => [x, y];

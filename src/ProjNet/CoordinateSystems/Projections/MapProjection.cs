@@ -1209,7 +1209,7 @@ public abstract class MapProjection : MathTransform, IProjection
             return DegreesToRadians(x);
         }
 
-        string longitudeMessage = x.ToString(CultureInfo.InvariantCulture) + " not a valid longitude in degrees.";
+        string longitudeMessage = $"{x.ToString(CultureInfo.InvariantCulture)} not a valid longitude in degrees.";
         ArgumentGuard.ThrowArgumentOutOfRange(nameof(x), longitudeMessage);
         return 0d;
     }
@@ -1227,7 +1227,7 @@ public abstract class MapProjection : MathTransform, IProjection
             return DegreesToRadians(y);
         }
 
-        string latitudeMessage = y.ToString(CultureInfo.InvariantCulture) + " not a valid latitude in degrees.";
+        string latitudeMessage = $"{y.ToString(CultureInfo.InvariantCulture)} not a valid latitude in degrees.";
         ArgumentGuard.ThrowArgumentOutOfRange(nameof(y), latitudeMessage);
         return 0d;
     }

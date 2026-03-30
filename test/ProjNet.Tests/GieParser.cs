@@ -58,7 +58,7 @@ internal static class GieParser
 
             if (options.AllowOperationContinuation && currentOperation is not null && stripped.StartsWith('+'))
             {
-                currentOperation += " " + stripped;
+                currentOperation += $" {stripped}";
                 continue;
             }
 
@@ -123,7 +123,7 @@ internal static class GieParser
                         continue;
                     }
 
-                    throw new FormatException("Found 'expect' without preceding 'accept' at line " + lineNumber.ToString(CultureInfo.InvariantCulture) + ".");
+                    throw new FormatException($"Found 'expect' without preceding 'accept' at line {lineNumber.ToString(CultureInfo.InvariantCulture)}.");
                 }
 
                 double[] expected = ParseVector(payload, lineNumber, "expect");
@@ -144,7 +144,7 @@ internal static class GieParser
             }
             else if (!options.IgnoreUnknownDirectives)
             {
-                throw new FormatException("Unsupported GIE directive '" + directive + "' at line " + lineNumber.ToString(CultureInfo.InvariantCulture) + ".");
+                throw new FormatException($"Unsupported GIE directive '{directive}' at line {lineNumber.ToString(CultureInfo.InvariantCulture)}.");
             }
         }
 
@@ -185,7 +185,7 @@ internal static class GieParser
             }
             else
             {
-                current += " " + stripped;
+                current += $" {stripped}";
             }
 
             if (hasContinuation)
@@ -270,7 +270,7 @@ internal static class GieParser
         string[] tokens = payload.Split(WhiteSpaceSeparators, StringSplitOptions.RemoveEmptyEntries);
         if (tokens.Length == 0)
         {
-            throw new FormatException("Missing tolerance value at line " + lineNumber.ToString(CultureInfo.InvariantCulture) + ".");
+            throw new FormatException($"Missing tolerance value at line {lineNumber.ToString(CultureInfo.InvariantCulture)}.");
         }
 
         string firstToken = tokens[0];
@@ -301,7 +301,7 @@ internal static class GieParser
         return normalized.Equals("inverse", StringComparison.OrdinalIgnoreCase)
             || normalized.Equals("reverse", StringComparison.OrdinalIgnoreCase)
             ? GieDirection.Inverse
-            : throw new FormatException("Unsupported direction '" + payload + "' at line " + lineNumber.ToString(CultureInfo.InvariantCulture) + ".");
+            : throw new FormatException($"Unsupported direction '{payload}' at line {lineNumber.ToString(CultureInfo.InvariantCulture)}.");
     }
 
     private static bool IsFailureExpectation(string payload)
@@ -330,7 +330,7 @@ internal static class GieParser
         if (tokens.Length < 2)
         {
             throw new FormatException(
-                "Directive '" + directiveName + "' requires at least two numeric values at line " + lineNumber.ToString(CultureInfo.InvariantCulture) + ".");
+                $"Directive '{directiveName}' requires at least two numeric values at line {lineNumber.ToString(CultureInfo.InvariantCulture)}.");
         }
 
         double[] values = new double[tokens.Length];
@@ -353,7 +353,7 @@ internal static class GieParser
         return TryParseDmsCoordinate(normalizedToken, out value)
             ? value
             : throw new FormatException(
-            "Failed to parse numeric value '" + token + "' in directive '" + directiveName + "' at line " + lineNumber.ToString(CultureInfo.InvariantCulture) + ".");
+            $"Failed to parse numeric value '{token}' in directive '{directiveName}' at line {lineNumber.ToString(CultureInfo.InvariantCulture)}.");
     }
 
     private static void EnsureOperationDeclared(string? operation, int lineNumber, string directive)
@@ -361,7 +361,7 @@ internal static class GieParser
         if (operation is null)
         {
             throw new FormatException(
-                "Found '" + directive + "' before any 'operation' declaration at line " + lineNumber.ToString(CultureInfo.InvariantCulture) + ".");
+                $"Found '{directive}' before any 'operation' declaration at line {lineNumber.ToString(CultureInfo.InvariantCulture)}.");
         }
     }
 
@@ -369,7 +369,7 @@ internal static class GieParser
     {
         if (string.IsNullOrWhiteSpace(payload))
         {
-            throw new FormatException("Directive '" + directiveName + "' is missing payload at line " + lineNumber.ToString(CultureInfo.InvariantCulture) + ".");
+            throw new FormatException($"Directive '{directiveName}' is missing payload at line {lineNumber.ToString(CultureInfo.InvariantCulture)}.");
         }
     }
 

@@ -133,16 +133,7 @@ public class Wgs84ConversionInfo : IEquatable<Wgs84ConversionInfo>
     {
         get
         {
-            return string.Format(
-                CultureInfo.InvariantCulture.NumberFormat,
-                "TOWGS84[{0}, {1}, {2}, {3}, {4}, {5}, {6}]",
-                this.Dx,
-                this.Dy,
-                this.Dz,
-                this.Ex,
-                this.Ey,
-                this.Ez,
-                this.Ppm);
+            return FormattableString.Invariant($"TOWGS84[{this.Dx}, {this.Dy}, {this.Dz}, {this.Ex}, {this.Ey}, {this.Ez}, {this.Ppm}]");
         }
     }
 
@@ -153,16 +144,7 @@ public class Wgs84ConversionInfo : IEquatable<Wgs84ConversionInfo>
     {
         get
         {
-            return string.Format(
-                CultureInfo.InvariantCulture.NumberFormat,
-                "<CS_WGS84ConversionInfo Dx=\"{0}\" Dy=\"{1}\" Dz=\"{2}\" Ex=\"{3}\" Ey=\"{4}\" Ez=\"{5}\" Ppm=\"{6}\" />",
-                this.Dx,
-                this.Dy,
-                this.Dz,
-                this.Ex,
-                this.Ey,
-                this.Ez,
-                this.Ppm);
+            return FormattableString.Invariant($"<CS_WGS84ConversionInfo Dx=\"{this.Dx}\" Dy=\"{this.Dy}\" Dz=\"{this.Dz}\" Ex=\"{this.Ex}\" Ey=\"{this.Ey}\" Ez=\"{this.Ez}\" Ppm=\"{this.Ppm}\" />");
         }
     }
 

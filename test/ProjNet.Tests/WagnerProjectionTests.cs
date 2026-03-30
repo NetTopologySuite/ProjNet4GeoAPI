@@ -164,14 +164,10 @@ public class WagnerProjectionTests
     private static string BuildProjectedWkt(string projectionName, double? latTs)
     {
         string latTsParameter = latTs.HasValue
-            ? string.Format(CultureInfo.InvariantCulture, ",PARAMETER[\"lat_ts\",{0}]", latTs.Value)
+            ? FormattableString.Invariant($",PARAMETER[\"lat_ts\",{latTs.Value}]")
             : string.Empty;
 
-        return string.Format(
-            CultureInfo.InvariantCulture,
-            "PROJCS[\"Projection-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",SPHEROID[\"Sphere\",6400000,0]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{1},UNIT[\"metre\",1]]",
-            projectionName,
-            latTsParameter);
+        return FormattableString.Invariant($"PROJCS[\"Projection-{projectionName}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",SPHEROID[\"Sphere\",6400000,0]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{latTsParameter},UNIT[\"metre\",1]]");
     }
 
     private static double[] CreatePoint(double x, double y) => [x, y];

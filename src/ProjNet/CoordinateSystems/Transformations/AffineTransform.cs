@@ -193,7 +193,7 @@ public class AffineTransform : MathTransform
         {
             for (int col = 0; col < colCnt; col++)
             {
-                string name = string.Format(CultureInfo.InvariantCulture.NumberFormat, "elt_{0}_{1}", row, col);
+                string name = FormattableString.Invariant($"elt_{row}_{col}");
                 pInfo.Add(new ProjectionParameter(name, this.transformMatrix[row, col]));
             }
         }

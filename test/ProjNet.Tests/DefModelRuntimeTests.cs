@@ -28,7 +28,7 @@ public class DefModelRuntimeTests
     {
         yield return new TheoryDataRow<string, string>("+proj=defmodel", "+model");
         yield return new TheoryDataRow<string, string>("+proj=defmodel +model=i_do_not_exist", "Cannot open");
-        yield return new TheoryDataRow<string, string>("+proj=defmodel +model=" + FindFixturePath(Path.Combine("Fixtures", "gie", "defmodel.gie")), "invalid model");
+        yield return new TheoryDataRow<string, string>($"+proj=defmodel +model={FindFixturePath(Path.Combine("Fixtures", "gie", "defmodel.gie"))}", "invalid model");
     }
 
     /// <summary>
@@ -201,7 +201,7 @@ public class DefModelRuntimeTests
 
     private static string BuildDefModelOperation(string modelFileName)
     {
-        return "+proj=defmodel +model=" + FindDefModelPath(modelFileName);
+        return $"+proj=defmodel +model={FindDefModelPath(modelFileName)}";
     }
 
     private static string FindDefModelPath(string modelFileName)

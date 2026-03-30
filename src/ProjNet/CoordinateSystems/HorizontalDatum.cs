@@ -203,13 +203,7 @@ public class HorizontalDatum : Datum
     {
         get
         {
-            return string.Format(
-                CultureInfo.InvariantCulture.NumberFormat,
-                "<CS_HorizontalDatum DatumType=\"{0}\">{1}{2}{3}</CS_HorizontalDatum>",
-                (int)this.DatumType,
-                this.InfoXml,
-                this.Ellipsoid.XML,
-                this.Wgs84Parameters?.XML ?? string.Empty);
+            return FormattableString.Invariant($"<CS_HorizontalDatum DatumType=\"{(int)this.DatumType}\">{this.InfoXml}{this.Ellipsoid.XML}{this.Wgs84Parameters?.XML ?? string.Empty}</CS_HorizontalDatum>");
         }
     }
 

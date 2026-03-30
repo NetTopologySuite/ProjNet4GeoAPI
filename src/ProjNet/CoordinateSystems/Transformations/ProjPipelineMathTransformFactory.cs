@@ -72,7 +72,7 @@ internal static class ProjPipelineMathTransformFactory
             if (!ok)
             {
                 skipReason = hasPipeline
-                    ? "Pipeline step " + (i + 1).ToString(CultureInfo.InvariantCulture) + " failed: " + (stepSkipReason ?? "unknown reason")
+                    ? $"Pipeline step {(i + 1).ToString(CultureInfo.InvariantCulture)} failed: {stepSkipReason ?? "unknown reason"}"
                     : (stepSkipReason ?? "Unable to create transform.");
                 return false;
             }
@@ -441,7 +441,7 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
-        skipReason = "Projection '" + projCode + "' is not part of the current builtins wave.";
+        skipReason = $"Projection '{projCode}' is not part of the current builtins wave.";
         return false;
     }
 
@@ -629,17 +629,17 @@ internal static class ProjPipelineMathTransformFactory
         }
         catch (ArgumentException)
         {
-            skipReason = projCode + " projection could not be created with the parsed parameter set.";
+            skipReason = $"{projCode} projection could not be created with the parsed parameter set.";
             return false;
         }
         catch (InvalidOperationException)
         {
-            skipReason = projCode + " projection operation could not be constructed for this step.";
+            skipReason = $"{projCode} projection operation could not be constructed for this step.";
             return false;
         }
         catch (TargetInvocationException)
         {
-            skipReason = projCode + " projection constructor rejected the current parameter set.";
+            skipReason = $"{projCode} projection constructor rejected the current parameter set.";
             return false;
         }
 
@@ -781,7 +781,7 @@ internal static class ProjPipelineMathTransformFactory
 
         if (!TryParseFiniteDouble(token, out double value))
         {
-            skipReason = "Invalid value for +" + sourceKey + ".";
+            skipReason = $"Invalid value for +{sourceKey}.";
             return false;
         }
 
@@ -1025,17 +1025,17 @@ internal static class ProjPipelineMathTransformFactory
         }
         catch (IOException ioException)
         {
-            skipReason = "Unable to read horizontal grid: " + ioException.Message;
+            skipReason = $"Unable to read horizontal grid: {ioException.Message}";
             return false;
         }
         catch (InvalidDataException dataException)
         {
-            skipReason = "Invalid horizontal grid data: " + dataException.Message;
+            skipReason = $"Invalid horizontal grid data: {dataException.Message}";
             return false;
         }
         catch (ArgumentException argumentException)
         {
-            skipReason = "Invalid grid parameters: " + argumentException.Message;
+            skipReason = $"Invalid grid parameters: {argumentException.Message}";
             return false;
         }
 
@@ -1094,17 +1094,17 @@ internal static class ProjPipelineMathTransformFactory
         }
         catch (IOException ioException)
         {
-            skipReason = "Unable to read vertical grid: " + ioException.Message;
+            skipReason = $"Unable to read vertical grid: {ioException.Message}";
             return false;
         }
         catch (InvalidDataException dataException)
         {
-            skipReason = "Invalid vertical grid data: " + dataException.Message;
+            skipReason = $"Invalid vertical grid data: {dataException.Message}";
             return false;
         }
         catch (ArgumentException argumentException)
         {
-            skipReason = "Invalid grid parameters: " + argumentException.Message;
+            skipReason = $"Invalid grid parameters: {argumentException.Message}";
             return false;
         }
 
@@ -1183,17 +1183,17 @@ internal static class ProjPipelineMathTransformFactory
         }
         catch (IOException ioException)
         {
-            skipReason = "Unable to read xyz grid: " + ioException.Message;
+            skipReason = $"Unable to read xyz grid: {ioException.Message}";
             return false;
         }
         catch (InvalidDataException dataException)
         {
-            skipReason = "Invalid xyz grid data: " + dataException.Message;
+            skipReason = $"Invalid xyz grid data: {dataException.Message}";
             return false;
         }
         catch (ArgumentException argumentException)
         {
-            skipReason = "Invalid xyz grid parameters: " + argumentException.Message;
+            skipReason = $"Invalid xyz grid parameters: {argumentException.Message}";
             return false;
         }
 
@@ -1218,7 +1218,7 @@ internal static class ProjPipelineMathTransformFactory
             string path = gridPaths[i];
             if (!IsPathWithAnyExtension(path, allowedExtensions))
             {
-                skipReason = "Grid '" + Path.GetFileName(path) + "' is not a supported " + gridFamilyName + " grid format (" + allowedList + ").";
+                skipReason = $"Grid '{Path.GetFileName(path)}' is not a supported {gridFamilyName} grid format ({allowedList}).";
                 return false;
             }
         }
@@ -1297,7 +1297,7 @@ internal static class ProjPipelineMathTransformFactory
 
             if (!isOptional)
             {
-                skipReason = "Required grid '" + gridName + "' was not found.";
+                skipReason = $"Required grid '{gridName}' was not found.";
                 return false;
             }
         }

@@ -175,21 +175,15 @@ public class GeostationaryProjectionTests
     private static string BuildProjectedWkt(string projectionName, bool useSphere, double semiMajor, double inverseFlattening, double satelliteHeight, bool sweepX = false)
     {
         string spheroid = useSphere
-            ? string.Format(CultureInfo.InvariantCulture, "SPHEROID[\"Sphere\",{0},0]", semiMajor)
-            : string.Format(CultureInfo.InvariantCulture, "SPHEROID[\"GRS 80\",{0},{1}]", semiMajor, inverseFlattening);
+            ? FormattableString.Invariant($"SPHEROID[\"Sphere\",{semiMajor},0]")
+            : FormattableString.Invariant($"SPHEROID[\"GRS 80\",{semiMajor},{inverseFlattening}]");
 
         string hText = satelliteHeight.ToString(CultureInfo.InvariantCulture);
         string sweepParameter = sweepX
             ? ",PARAMETER[\"sweep_x\",1]"
             : string.Empty;
 
-        return string.Format(
-            CultureInfo.InvariantCulture,
-            "PROJCS[\"Projection-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"h\",{2}],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{3},UNIT[\"metre\",1]]",
-            projectionName,
-            spheroid,
-            hText,
-            sweepParameter);
+        return FormattableString.Invariant($"PROJCS[\"Projection-{projectionName}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{spheroid}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"h\",{hText}],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{sweepParameter},UNIT[\"metre\",1]]");
     }
 
     private static double[] CreatePoint(double x, double y) => [x, y];

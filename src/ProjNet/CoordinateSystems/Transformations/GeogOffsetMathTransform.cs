@@ -164,7 +164,7 @@ internal sealed class GeogOffsetMathTransform : MathTransform
 
         if (!TryParseFiniteDouble(token, out value))
         {
-            skipReason = "Invalid value for +" + key + ".";
+            skipReason = $"Invalid value for +{key}.";
             return false;
         }
 

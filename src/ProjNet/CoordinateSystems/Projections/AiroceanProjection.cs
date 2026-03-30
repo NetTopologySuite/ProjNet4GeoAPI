@@ -163,13 +163,13 @@ internal sealed class AiroceanProjection : MapProjection
     {
         if (double.IsNaN(value) || double.IsInfinity(value))
         {
-            ArgumentGuard.ThrowArgument("Invalid value for " + parameterName + ".");
+            ArgumentGuard.ThrowArgument($"Invalid value for {parameterName}.");
         }
 
         int rounded = (int)Math.Round(value, MidpointRounding.AwayFromZero);
         if (Math.Abs(value - rounded) > 1e-12d)
         {
-            ArgumentGuard.ThrowArgument("Invalid value for " + parameterName + ".");
+            ArgumentGuard.ThrowArgument($"Invalid value for {parameterName}.");
         }
 
         return rounded;

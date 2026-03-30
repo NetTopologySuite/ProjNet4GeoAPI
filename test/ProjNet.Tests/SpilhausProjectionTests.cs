@@ -120,16 +120,7 @@ public class SpilhausProjectionTests
 
     private static string BuildProjectedWkt(string projectionName, double lat0, double lon0, double azi, double rot, double k0)
     {
-        return string.Format(
-            CultureInfo.InvariantCulture,
-            "PROJCS[\"Specialty-D7-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",{2}],PARAMETER[\"central_meridian\",{3}],PARAMETER[\"scale_factor\",{4}],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"azi\",{5}],PARAMETER[\"rot\",{6}],UNIT[\"metre\",1]]",
-            projectionName,
-            Wgs84,
-            lat0.ToString("R", CultureInfo.InvariantCulture),
-            lon0.ToString("R", CultureInfo.InvariantCulture),
-            k0.ToString("R", CultureInfo.InvariantCulture),
-            azi.ToString("R", CultureInfo.InvariantCulture),
-            rot.ToString("R", CultureInfo.InvariantCulture));
+        return FormattableString.Invariant($"PROJCS[\"Specialty-D7-{projectionName}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{Wgs84}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",{lat0.ToString("R", CultureInfo.InvariantCulture)}],PARAMETER[\"central_meridian\",{lon0.ToString("R", CultureInfo.InvariantCulture)}],PARAMETER[\"scale_factor\",{k0.ToString("R", CultureInfo.InvariantCulture)}],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],PARAMETER[\"azi\",{azi.ToString("R", CultureInfo.InvariantCulture)}],PARAMETER[\"rot\",{rot.ToString("R", CultureInfo.InvariantCulture)}],UNIT[\"metre\",1]]");
     }
 
     private static double[] CreatePoint(double x, double y) => [x, y];

@@ -256,7 +256,7 @@ internal sealed class MolobadekasMathTransform : MathTransform
 
         if (!TryParseFiniteDouble(token, out value))
         {
-            skipReason = "Invalid value for +" + key + ".";
+            skipReason = $"Invalid value for +{key}.";
             return false;
         }
 

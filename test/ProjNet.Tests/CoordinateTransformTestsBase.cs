@@ -86,17 +86,7 @@ public class CoordinateTransformTestsBase
         ArgumentNullException.ThrowIfNull(pExpected);
         ArgumentNullException.ThrowIfNull(pResult);
 
-        return string.Format(
-            CultureInfo.InvariantCulture,
-            "{6} {7} transformation outside tolerance!\n\tExpected [{0}, {1}],\n\tgot      [{2}, {3}],\n\tdelta    [{4}, {5}]",
-            pExpected[0],
-            pExpected[1],
-            pResult[0],
-            pResult[1],
-            pExpected[0] - pResult[0],
-            pExpected[1] - pResult[1],
-            projection,
-            reverse ? "reverse" : "forward");
+        return FormattableString.Invariant($"{projection} {(reverse ? "reverse" : "forward")} transformation outside tolerance!\n\tExpected [{pExpected[0]}, {pExpected[1]}],\n\tgot      [{pResult[0]}, {pResult[1]}],\n\tdelta    [{pExpected[0] - pResult[0]}, {pExpected[1] - pResult[1]}]");
     }
 
     /// <summary>

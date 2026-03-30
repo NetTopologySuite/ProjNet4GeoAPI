@@ -58,7 +58,7 @@ public static class MathTransformWktReader
         return transformName.ToUpperInvariant() switch
         {
             "AFFINE" => ReadAffineTransform(tokenizer),
-            _ => throw new NotSupportedException("Transform not supported '" + transformName + "'"),
+            _ => throw new NotSupportedException($"Transform not supported '{transformName}'"),
         };
     }
 

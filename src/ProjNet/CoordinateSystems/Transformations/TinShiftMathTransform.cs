@@ -107,7 +107,7 @@ internal sealed class TinShiftMathTransform : MathTransform
 
         if (!TryResolveFilePath(fileToken, out string? resolvedPath))
         {
-            skipReason = "Cannot open " + fileToken + ".";
+            skipReason = $"Cannot open {fileToken}.";
             return false;
         }
 
@@ -117,13 +117,13 @@ internal sealed class TinShiftMathTransform : MathTransform
             var fileInfo = new FileInfo(resolvedPath);
             if (!fileInfo.Exists)
             {
-                skipReason = "Cannot open " + fileToken + ".";
+                skipReason = $"Cannot open {fileToken}.";
                 return false;
             }
 
             if (fileInfo.Length > MaximumModelSizeInBytes)
             {
-                skipReason = "File " + fileToken + " too large.";
+                skipReason = $"File {fileToken} too large.";
                 return false;
             }
 
@@ -131,12 +131,12 @@ internal sealed class TinShiftMathTransform : MathTransform
         }
         catch (IOException exception)
         {
-            skipReason = "Cannot read " + fileToken + ": " + exception.Message;
+            skipReason = $"Cannot read {fileToken}: {exception.Message}";
             return false;
         }
         catch (UnauthorizedAccessException exception)
         {
-            skipReason = "Cannot read " + fileToken + ": " + exception.Message;
+            skipReason = $"Cannot read {fileToken}: {exception.Message}";
             return false;
         }
 
@@ -153,17 +153,17 @@ internal sealed class TinShiftMathTransform : MathTransform
         }
         catch (FormatException exception)
         {
-            skipReason = "invalid model: " + exception.Message;
+            skipReason = $"invalid model: {exception.Message}";
             return false;
         }
         catch (JsonException exception)
         {
-            skipReason = "invalid model: " + exception.Message;
+            skipReason = $"invalid model: {exception.Message}";
             return false;
         }
         catch (ArgumentException exception)
         {
-            skipReason = "invalid model: " + exception.Message;
+            skipReason = $"invalid model: {exception.Message}";
             return false;
         }
     }
@@ -280,7 +280,7 @@ internal sealed class TinShiftMathTransform : MathTransform
             }
             else
             {
-                throw new FormatException("transformed_components[] = " + text + " is not handled.");
+                throw new FormatException($"transformed_components[] = {text} is not handled.");
             }
         }
 
@@ -606,11 +606,11 @@ internal sealed class TinShiftMathTransform : MathTransform
     {
         if (!parent.TryGetProperty(propertyName, out JsonElement value))
         {
-            throw new FormatException("Missing \"" + propertyName + "\" key.");
+            throw new FormatException($"Missing \"{propertyName}\" key.");
         }
 
         return value.ValueKind != JsonValueKind.Array
-            ? throw new FormatException("The value of \"" + propertyName + "\" should be a array.")
+            ? throw new FormatException($"The value of \"{propertyName}\" should be a array.")
             : value;
     }
 
@@ -618,16 +618,16 @@ internal sealed class TinShiftMathTransform : MathTransform
     {
         if (!parent.TryGetProperty(propertyName, out JsonElement value))
         {
-            throw new FormatException("Missing \"" + propertyName + "\" key.");
+            throw new FormatException($"Missing \"{propertyName}\" key.");
         }
 
         if (value.ValueKind != JsonValueKind.String)
         {
-            throw new FormatException("The value of \"" + propertyName + "\" should be a string.");
+            throw new FormatException($"The value of \"{propertyName}\" should be a string.");
         }
 
         string? text = value.GetString();
-        return text is null ? throw new FormatException("The value of \"" + propertyName + "\" should be a string.") : text;
+        return text is null ? throw new FormatException($"The value of \"{propertyName}\" should be a string.") : text;
     }
 
     private static double ReadNumber(JsonElement array, int index, string errorMessage)

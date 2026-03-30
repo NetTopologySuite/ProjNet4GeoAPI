@@ -120,10 +120,7 @@ public class NewZealandMapGridProjectionTests
 
     private static string BuildProjectedWkt(string projectionName)
     {
-        return string.Format(
-            CultureInfo.InvariantCulture,
-            "PROJCS[\"Projection-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",SPHEROID[\"GRS 80\",6378137,298.257222101]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",-41],PARAMETER[\"central_meridian\",173],PARAMETER[\"false_easting\",2510000],PARAMETER[\"false_northing\",6023150],UNIT[\"metre\",1]]",
-            projectionName);
+        return FormattableString.Invariant($"PROJCS[\"Projection-{projectionName}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",SPHEROID[\"GRS 80\",6378137,298.257222101]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",-41],PARAMETER[\"central_meridian\",173],PARAMETER[\"false_easting\",2510000],PARAMETER[\"false_northing\",6023150],UNIT[\"metre\",1]]");
     }
 
     private static double[] CreatePoint(double x, double y) => [x, y];

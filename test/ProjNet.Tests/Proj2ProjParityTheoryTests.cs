@@ -60,7 +60,7 @@ public class Proj2ProjParityTheoryTests
     public static IEnumerable<TheoryDataRow<Proj2ProjCase>> GetParityCases()
     {
         string fixturePath = Path.Combine(AppContext.BaseDirectory, "Generated", "proj2proj-direct-parity-fixture.json");
-        Assert.True(File.Exists(fixturePath), "Fixture file not found: " + fixturePath);
+        Assert.True(File.Exists(fixturePath), $"Fixture file not found: {fixturePath}");
 
         string json = File.ReadAllText(fixturePath);
         Proj2ProjFixture fixture = Assert.IsType<Proj2ProjFixture>(JsonSerializer.Deserialize<Proj2ProjFixture>(json, SerializerOptions));

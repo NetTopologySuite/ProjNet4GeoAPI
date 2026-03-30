@@ -92,7 +92,7 @@ public class LinearUnit : Info, IUnit
     {
         get
         {
-            return string.Format(CultureInfo.InvariantCulture.NumberFormat, "<CS_LinearUnit MetersPerUnit=\"{0}\">{1}</CS_LinearUnit>", this.MetersPerUnit, this.InfoXml);
+            return FormattableString.Invariant($"<CS_LinearUnit MetersPerUnit=\"{this.MetersPerUnit}\">{this.InfoXml}</CS_LinearUnit>");
         }
     }
 

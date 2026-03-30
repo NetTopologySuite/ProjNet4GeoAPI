@@ -176,7 +176,7 @@ internal sealed class DefModelMathTransform : MathTransform
 
         if (!TryResolveModelPath(modelToken, out string? resolvedModelPathCandidate))
         {
-            skipReason = "Cannot open " + modelToken + ".";
+            skipReason = $"Cannot open {modelToken}.";
             return false;
         }
 
@@ -193,13 +193,13 @@ internal sealed class DefModelMathTransform : MathTransform
             var fileInfo = new FileInfo(resolvedModelPath);
             if (!fileInfo.Exists)
             {
-                skipReason = "Cannot open " + modelToken + ".";
+                skipReason = $"Cannot open {modelToken}.";
                 return false;
             }
 
             if (fileInfo.Length > MaximumModelSizeInBytes)
             {
-                skipReason = "File " + modelToken + " is too large.";
+                skipReason = $"File {modelToken} is too large.";
                 return false;
             }
 
@@ -207,12 +207,12 @@ internal sealed class DefModelMathTransform : MathTransform
         }
         catch (IOException exception)
         {
-            skipReason = "Cannot read " + modelToken + ": " + exception.Message;
+            skipReason = $"Cannot read {modelToken}: {exception.Message}";
             return false;
         }
         catch (UnauthorizedAccessException exception)
         {
-            skipReason = "Cannot read " + modelToken + ": " + exception.Message;
+            skipReason = $"Cannot read {modelToken}: {exception.Message}";
             return false;
         }
 
@@ -230,22 +230,22 @@ internal sealed class DefModelMathTransform : MathTransform
         }
         catch (FormatException exception)
         {
-            skipReason = "invalid model: " + exception.Message;
+            skipReason = $"invalid model: {exception.Message}";
             return false;
         }
         catch (JsonException exception)
         {
-            skipReason = "invalid model: " + exception.Message;
+            skipReason = $"invalid model: {exception.Message}";
             return false;
         }
         catch (InvalidDataException exception)
         {
-            skipReason = "invalid model: " + exception.Message;
+            skipReason = $"invalid model: {exception.Message}";
             return false;
         }
         catch (ArgumentException exception)
         {
-            skipReason = "invalid model: " + exception.Message;
+            skipReason = $"invalid model: {exception.Message}";
             return false;
         }
     }
@@ -645,7 +645,7 @@ internal sealed class DefModelMathTransform : MathTransform
         {
             if (componentElement.ValueKind != JsonValueKind.Object)
             {
-                throw new FormatException("components[" + index.ToString(CultureInfo.InvariantCulture) + "] must be an object.");
+                throw new FormatException($"components[{index.ToString(CultureInfo.InvariantCulture)}] must be an object.");
             }
 
             string displacementTypeToken = NormalizeOptionalString(GetRequiredString(componentElement, "displacement_type"));
@@ -662,7 +662,7 @@ internal sealed class DefModelMathTransform : MathTransform
                 Description = GetOptionalString(componentElement, "description"),
                 DisplacementType = displacementType,
                 InterpolationMethod = interpolationMethod,
-                Extent = ParseSpatialExtent(GetRequiredObject(componentElement, "extent"), "components[" + index.ToString(CultureInfo.InvariantCulture) + "].extent"),
+                Extent = ParseSpatialExtent(GetRequiredObject(componentElement, "extent"), $"components[{index.ToString(CultureInfo.InvariantCulture)}].extent"),
                 SpatialModelFileName = GetRequiredString(GetRequiredObject(componentElement, "spatial_model"), "filename"),
                 TimeFunction = timeFunction,
             };
@@ -768,7 +768,7 @@ internal sealed class DefModelMathTransform : MathTransform
                 GetRequiredDouble(parameters, "final_scale_factor"));
         }
 
-        throw new FormatException("Unsupported type of time function: " + timeFunctionType + ".");
+        throw new FormatException($"Unsupported type of time function: {timeFunctionType}.");
     }
 
     private static TimeExtent ParseTimeExtent(JsonElement timeExtentObject)
@@ -785,14 +785,14 @@ internal sealed class DefModelMathTransform : MathTransform
         string type = NormalizeOptionalString(GetRequiredString(extentObject, "type"));
         if (type != "BBOX")
         {
-            throw new FormatException(context + " only supports type=bbox.");
+            throw new FormatException($"{context} only supports type=bbox.");
         }
 
         JsonElement parametersObject = GetRequiredObject(extentObject, "parameters");
         JsonElement bboxArray = GetRequiredArray(parametersObject, "bbox");
         if (bboxArray.GetArrayLength() != 4)
         {
-            throw new FormatException(context + ".parameters.bbox must contain exactly 4 numeric values.");
+            throw new FormatException($"{context}.parameters.bbox must contain exactly 4 numeric values.");
         }
 
         double minX = GetArrayDouble(bboxArray, 0, context);
@@ -800,7 +800,7 @@ internal sealed class DefModelMathTransform : MathTransform
         double maxX = GetArrayDouble(bboxArray, 2, context);
         double maxY = GetArrayDouble(bboxArray, 3, context);
         return maxX < minX || maxY < minY
-            ? throw new FormatException(context + ".parameters.bbox has invalid ordering.")
+            ? throw new FormatException($"{context}.parameters.bbox has invalid ordering.")
             : new SpatialExtent(minX, minY, maxX, maxY);
     }
 
@@ -808,7 +808,7 @@ internal sealed class DefModelMathTransform : MathTransform
     {
         JsonElement value = arrayElement[index];
         return value.ValueKind != JsonValueKind.Number
-            ? throw new FormatException(context + ".parameters.bbox contains a non-numeric value.")
+            ? throw new FormatException($"{context}.parameters.bbox contains a non-numeric value.")
             : value.GetDouble();
     }
 
@@ -816,36 +816,36 @@ internal sealed class DefModelMathTransform : MathTransform
     {
         if (!parent.TryGetProperty(propertyName, out JsonElement value))
         {
-            throw new FormatException("Missing \"" + propertyName + "\" key.");
+            throw new FormatException($"Missing \"{propertyName}\" key.");
         }
 
-        return value.ValueKind != JsonValueKind.Object ? throw new FormatException("\"" + propertyName + "\" must be an object.") : value;
+        return value.ValueKind != JsonValueKind.Object ? throw new FormatException($"\"{propertyName}\" must be an object.") : value;
     }
 
     private static JsonElement GetRequiredArray(JsonElement parent, string propertyName)
     {
         if (!parent.TryGetProperty(propertyName, out JsonElement value))
         {
-            throw new FormatException("Missing \"" + propertyName + "\" key.");
+            throw new FormatException($"Missing \"{propertyName}\" key.");
         }
 
-        return value.ValueKind != JsonValueKind.Array ? throw new FormatException("\"" + propertyName + "\" must be an array.") : value;
+        return value.ValueKind != JsonValueKind.Array ? throw new FormatException($"\"{propertyName}\" must be an array.") : value;
     }
 
     private static string GetRequiredString(JsonElement parent, string propertyName)
     {
         if (!parent.TryGetProperty(propertyName, out JsonElement value))
         {
-            throw new FormatException("Missing \"" + propertyName + "\" key.");
+            throw new FormatException($"Missing \"{propertyName}\" key.");
         }
 
         if (value.ValueKind != JsonValueKind.String)
         {
-            throw new FormatException("\"" + propertyName + "\" must be a string.");
+            throw new FormatException($"\"{propertyName}\" must be a string.");
         }
 
         string? text = value.GetString();
-        return text ?? throw new FormatException("\"" + propertyName + "\" must not be null.");
+        return text ?? throw new FormatException($"\"{propertyName}\" must not be null.");
     }
 
     private static string GetOptionalString(JsonElement parent, string propertyName)
@@ -856,7 +856,7 @@ internal sealed class DefModelMathTransform : MathTransform
         }
 
         return value.ValueKind != JsonValueKind.String
-            ? throw new FormatException("\"" + propertyName + "\" must be a string.")
+            ? throw new FormatException($"\"{propertyName}\" must be a string.")
             : value.GetString() ?? string.Empty;
     }
 
@@ -864,11 +864,11 @@ internal sealed class DefModelMathTransform : MathTransform
     {
         if (!parent.TryGetProperty(propertyName, out JsonElement value))
         {
-            throw new FormatException("Missing \"" + propertyName + "\" key.");
+            throw new FormatException($"Missing \"{propertyName}\" key.");
         }
 
         return value.ValueKind != JsonValueKind.Number
-            ? throw new FormatException("\"" + propertyName + "\" must be numeric.")
+            ? throw new FormatException($"\"{propertyName}\" must be numeric.")
             : value.GetDouble();
     }
 
@@ -883,7 +883,7 @@ internal sealed class DefModelMathTransform : MathTransform
     {
         if (string.IsNullOrWhiteSpace(value))
         {
-            throw new FormatException("Wrong formatting / invalid date-time for " + value + ".");
+            throw new FormatException($"Wrong formatting / invalid date-time for {value}.");
         }
 
         if (value.Length != 20
@@ -894,7 +894,7 @@ internal sealed class DefModelMathTransform : MathTransform
             || value[16] != ':'
             || value[19] != 'Z')
         {
-            throw new FormatException("Wrong formatting / invalid date-time for " + value + ".");
+            throw new FormatException($"Wrong formatting / invalid date-time for {value}.");
         }
 
         int year = ParseEpochPart(value, 0, 4);
@@ -906,7 +906,7 @@ internal sealed class DefModelMathTransform : MathTransform
 
         if (year < 1582 || month < 1 || month > 12 || day < 1 || hour < 0 || hour >= 24 || minute < 0 || minute >= 60 || second < 0 || second >= 61)
         {
-            throw new FormatException("Wrong formatting / invalid date-time for " + value + ".");
+            throw new FormatException($"Wrong formatting / invalid date-time for {value}.");
         }
 
         bool isLeapYear = ((year % 4) == 0 && (year % 100) != 0) || ((year % 400) == 0);
@@ -915,7 +915,7 @@ internal sealed class DefModelMathTransform : MathTransform
             : [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
         if (day > monthLengths[month - 1])
         {
-            throw new FormatException("Wrong formatting / invalid date-time for " + value + ".");
+            throw new FormatException($"Wrong formatting / invalid date-time for {value}.");
         }
 
         int dayInYear = day - 1;
@@ -937,7 +937,7 @@ internal sealed class DefModelMathTransform : MathTransform
         if (!int.TryParse(value.AsSpan(startIndex, length), NumberStyles.None, CultureInfo.InvariantCulture, out int parsed))
 #endif
         {
-            throw new FormatException("Wrong formatting / invalid date-time for " + value + ".");
+            throw new FormatException($"Wrong formatting / invalid date-time for {value}.");
         }
 
         return parsed;
@@ -958,7 +958,7 @@ internal sealed class DefModelMathTransform : MathTransform
 
             if (!TryResolveComponentPath(component.SpatialModelFileName, modelDirectory, out string? componentPathCandidate))
             {
-                throw new InvalidDataException("Cannot resolve deformation model component grid '" + component.SpatialModelFileName + "'.");
+                throw new InvalidDataException($"Cannot resolve deformation model component grid '{component.SpatialModelFileName}'.");
             }
 
             string componentPath = ArgumentGuard.ThrowIfNull(componentPathCandidate, nameof(componentPathCandidate));
@@ -968,7 +968,7 @@ internal sealed class DefModelMathTransform : MathTransform
                 IReadOnlyList<GeoTiffVGridShiftMathTransform.VerticalGrid> vertical = GeoTiffGridLoader.LoadVertical(componentPath);
                 if (vertical.Count == 0)
                 {
-                    throw new InvalidDataException("No vertical grid data found in '" + component.SpatialModelFileName + "'.");
+                    throw new InvalidDataException($"No vertical grid data found in '{component.SpatialModelFileName}'.");
                 }
 
                 loaded.Add(new ComponentRuntime(
@@ -982,7 +982,7 @@ internal sealed class DefModelMathTransform : MathTransform
             IReadOnlyList<GeoTiffXyzGridShiftMathTransform.XyzGrid> xyz = GeoTiffGridLoader.LoadXyz(componentPath, requireMetreUnits);
             if (xyz.Count == 0)
             {
-                throw new InvalidDataException("No XYZ grid data found in '" + component.SpatialModelFileName + "'.");
+                throw new InvalidDataException($"No XYZ grid data found in '{component.SpatialModelFileName}'.");
             }
 
             loaded.Add(new ComponentRuntime(

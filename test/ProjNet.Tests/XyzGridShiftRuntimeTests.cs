@@ -28,8 +28,8 @@ public class XyzGridShiftRuntimeTests
     public void XyzGridShiftCanBeCreatedAndShiftsCoordinates(string gridRef)
     {
         string gridPath = FindGridPath("subset_of_gr3df97a.tif");
-        string operation = "+proj=xyzgridshift +grids=" + gridPath + " +grid_ref=" + gridRef + " +ellps=GRS80";
-        string noShiftOperation = operation + " +multiplier=0";
+        string operation = $"+proj=xyzgridshift +grids={gridPath} +grid_ref={gridRef} +ellps=GRS80";
+        string noShiftOperation = $"{operation} +multiplier=0";
         MathTransform transform = CreateTransform(operation);
         MathTransform noShiftTransform = CreateTransform(noShiftOperation);
 
@@ -55,8 +55,8 @@ public class XyzGridShiftRuntimeTests
     public void XyzGridShiftMultiplierScalesShiftLinearly()
     {
         string gridPath = FindGridPath("subset_of_gr3df97a.tif");
-        MathTransform half = CreateTransform("+proj=xyzgridshift +grids=" + gridPath + " +grid_ref=input_crs +ellps=GRS80 +multiplier=0.5");
-        MathTransform full = CreateTransform("+proj=xyzgridshift +grids=" + gridPath + " +grid_ref=input_crs +ellps=GRS80 +multiplier=1");
+        MathTransform half = CreateTransform($"+proj=xyzgridshift +grids={gridPath} +grid_ref=input_crs +ellps=GRS80 +multiplier=0.5");
+        MathTransform full = CreateTransform($"+proj=xyzgridshift +grids={gridPath} +grid_ref=input_crs +ellps=GRS80 +multiplier=1");
 
         double[] input = CreateSampleInputPoint(gridPath);
         double[] outputHalf = half.Transform(input);
@@ -84,9 +84,9 @@ public class XyzGridShiftRuntimeTests
     public void XyzGridShiftRoundtripRecoversInput(string gridRef)
     {
         string gridPath = FindGridPath("subset_of_gr3df97a.tif");
-        string baseOperation = "+proj=xyzgridshift +grids=" + gridPath + " +grid_ref=" + gridRef + " +ellps=GRS80";
+        string baseOperation = $"+proj=xyzgridshift +grids={gridPath} +grid_ref={gridRef} +ellps=GRS80";
         MathTransform forward = CreateTransform(baseOperation);
-        MathTransform inverse = CreateTransform(baseOperation + " +inv");
+        MathTransform inverse = CreateTransform($"{baseOperation} +inv");
 
         double[] input = CreateSampleInputPoint(gridPath);
         double[] projected = forward.Transform(input);

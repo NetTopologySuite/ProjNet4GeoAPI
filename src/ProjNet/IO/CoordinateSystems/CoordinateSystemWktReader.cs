@@ -214,7 +214,7 @@ public static partial class CoordinateSystemWktReader
             "SOUTH" => new AxisInfo(axisName, AxisOrientationEnum.South),
             "UP" => new AxisInfo(axisName, AxisOrientationEnum.Up),
             "WEST" => new AxisInfo(axisName, AxisOrientationEnum.West),
-            _ => ArgumentGuard.ThrowArgument<AxisInfo>("Invalid axis name '" + unitname + "' in WKT"),
+            _ => ArgumentGuard.ThrowArgument<AxisInfo>($"Invalid axis name '{unitname}' in WKT"),
         };
     }
 

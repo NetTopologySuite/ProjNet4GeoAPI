@@ -212,12 +212,7 @@ public class GlobularAndMiscProjectionTests
         string spheroidClause = useWgs84
             ? "SPHEROID[\"WGS 84\",6378137,298.257223563]"
             : "SPHEROID[\"Sphere\",6400000,0]";
-        return string.Format(
-            CultureInfo.InvariantCulture,
-            "PROJCS[\"Specialty-{0}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{1}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{0}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{2},UNIT[\"metre\",1]]",
-            projectionName,
-            spheroidClause,
-            extraParameters ?? string.Empty);
+        return FormattableString.Invariant($"PROJCS[\"Specialty-{projectionName}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{spheroidClause}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{extraParameters ?? string.Empty},UNIT[\"metre\",1]]");
     }
 
     private static double[] CreatePoint(double x, double y) => [x, y];

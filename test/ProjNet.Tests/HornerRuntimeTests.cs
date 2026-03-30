@@ -31,7 +31,7 @@ public class HornerRuntimeTests
         Assert.False(double.IsNaN(forward[0]) || double.IsInfinity(forward[0]));
         Assert.False(double.IsNaN(forward[1]) || double.IsInfinity(forward[1]));
 
-        MathTransform inverse = CreateTransform(Tc32Utm32Operation + " +inv");
+        MathTransform inverse = CreateTransform($"{Tc32Utm32Operation} +inv");
         double[] backward = inverse.Transform(forward);
         double planarDistance = Math.Sqrt(
             ((backward[0] - source[0]) * (backward[0] - source[0]))
@@ -50,7 +50,7 @@ public class HornerRuntimeTests
         Assert.InRange(Math.Abs(forward[0] - 620000d), 0d, 1e-3);
         Assert.InRange(Math.Abs(forward[1] - 6130000d), 0d, 1e-3);
 
-        MathTransform inverse = CreateTransform(SbUtm32Operation + " +inv");
+        MathTransform inverse = CreateTransform($"{SbUtm32Operation} +inv");
         double[] backward = inverse.Transform(forward);
         Assert.InRange(Math.Abs(backward[0] - 495136.8544d), 0d, 1e-3);
         Assert.InRange(Math.Abs(backward[1] - 6130821.2945d), 0d, 1e-3);
@@ -71,7 +71,7 @@ public class HornerRuntimeTests
         MathTransform forward = CreateTransform(operation);
         double[] projected = forward.Transform(CreatePoint(sourceX, sourceY, 0d));
 
-        MathTransform inverse = CreateTransform(operation + " +inv");
+        MathTransform inverse = CreateTransform($"{operation} +inv");
         double[] recovered = inverse.Transform(projected);
         Assert.InRange(Math.Abs(recovered[0] - sourceX), 0d, tolerance);
         Assert.InRange(Math.Abs(recovered[1] - sourceY), 0d, tolerance);
@@ -88,7 +88,7 @@ public class HornerRuntimeTests
         Assert.InRange(Math.Abs(projected[0] - 620000d), 0d, 1e-3);
         Assert.InRange(Math.Abs(projected[1] - 6130000d), 0d, 1e-3);
 
-        MathTransform inverse = CreateTransform(SbUtm32ForwardOnlyOperation + " +inv");
+        MathTransform inverse = CreateTransform($"{SbUtm32ForwardOnlyOperation} +inv");
         double[] recovered = inverse.Transform(projected);
         Assert.InRange(Math.Abs(recovered[0] - 495136.8544d), 0d, 1e-2);
         Assert.InRange(Math.Abs(recovered[1] - 6130821.2945d), 0d, 1e-2);

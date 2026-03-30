@@ -36,7 +36,7 @@ public class VertOffsetRuntimeTests
     public void VertOffsetInverseRecoversInputHeight()
     {
         MathTransform forward = CreateTransform(BuiltinsOperation);
-        MathTransform inverse = CreateTransform(BuiltinsOperation + " +inv");
+        MathTransform inverse = CreateTransform($"{BuiltinsOperation} +inv");
 
         double[] source = CreatePoint(9.666666666666666d, 47.333333333333336d, 473.0d);
         double[] transformed = forward.Transform(source);

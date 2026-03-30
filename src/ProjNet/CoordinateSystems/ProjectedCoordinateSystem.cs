@@ -200,7 +200,7 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
         var proj = new Projection(
             "Transverse_Mercator",
             pInfo,
-            "UTM" + zone.ToString(CultureInfo.InvariantCulture) + (zoneIsNorth ? "N" : "S"),
+            $"UTM{zone.ToString(CultureInfo.InvariantCulture)}{(zoneIsNorth ? "N" : "S")}",
             "EPSG",
             32600 + zone + (zoneIsNorth ? 0 : 100),
             string.Empty,
@@ -217,7 +217,7 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
             CoordinateSystems.LinearUnit.Metre,
             proj,
             axes,
-            "WGS 84 / UTM zone " + zone.ToString(CultureInfo.InvariantCulture) + (zoneIsNorth ? "N" : "S"),
+            $"WGS 84 / UTM zone {zone.ToString(CultureInfo.InvariantCulture)}{(zoneIsNorth ? "N" : "S")}",
             "EPSG",
             32600 + zone + (zoneIsNorth ? 0 : 100),
             string.Empty,

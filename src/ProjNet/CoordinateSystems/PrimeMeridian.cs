@@ -142,12 +142,7 @@ public class PrimeMeridian : Info
     {
         get
         {
-            return string.Format(
-                CultureInfo.InvariantCulture.NumberFormat,
-                "<CS_PrimeMeridian Longitude=\"{0}\" >{1}{2}</CS_PrimeMeridian>",
-                this.Longitude,
-                this.InfoXml,
-                this.AngularUnit.XML);
+            return FormattableString.Invariant($"<CS_PrimeMeridian Longitude=\"{this.Longitude}\" >{this.InfoXml}{this.AngularUnit.XML}</CS_PrimeMeridian>");
         }
     }
 

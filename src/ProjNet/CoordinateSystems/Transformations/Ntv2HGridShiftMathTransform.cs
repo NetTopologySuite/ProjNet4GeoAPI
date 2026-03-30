@@ -366,7 +366,7 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
                 }
 
                 var grid = new Ntv2Grid(
-                    string.IsNullOrWhiteSpace(subName) ? "GRID_" + gridIndex.ToString(CultureInfo.InvariantCulture) : subName,
+                    string.IsNullOrWhiteSpace(subName) ? $"GRID_{gridIndex.ToString(CultureInfo.InvariantCulture)}" : subName,
                     parentName,
                     west,
                     east,
