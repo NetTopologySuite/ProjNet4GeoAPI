@@ -13,12 +13,12 @@ using ProjNet.Data.Generated;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Tests for the structured EPSG catalog, covering generated lookup behaviour, cache layout, and provider contracts.
 /// </summary>
 public class StructuredEpsgCatalogTests
 {
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that <c>EpsgGeneratedCatalog</c> does not expose a <c>StringPool</c> field.
     /// </summary>
     [Fact]
     public void GeneratedCatalogShouldNotExposeExplicitStringPool()
@@ -28,7 +28,7 @@ public class StructuredEpsgCatalogTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that <c>EpsgGeneratedCatalog</c> resolves SRID 4326 through a switch-mapped lookup and that the returned cache index round-trips correctly.
     /// </summary>
     [Fact]
     public void GeneratedCatalogShouldExposeSwitchMappedSridLookup()
@@ -43,7 +43,7 @@ public class StructuredEpsgCatalogTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that <c>EpsgGeneratedCatalog</c> does not expose a <c>CoordinateReferenceSrids</c> array field.
     /// </summary>
     [Fact]
     public void GeneratedCatalogShouldNotExposeSridArray()
@@ -53,7 +53,7 @@ public class StructuredEpsgCatalogTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that <c>EpsgCoordinateSystemFactory</c> holds no static <c>Dictionary&lt;,&gt;</c> fields, confirming it does not rely on dictionary-based lookup caches.
     /// </summary>
     [Fact]
     public void CoordinateSystemFactoryShouldNotUseDictionaryLookupCaches()
@@ -67,7 +67,7 @@ public class StructuredEpsgCatalogTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that <c>ManagedCoordinateSystemDefinitionProvider</c> implements <c>IManagedCoordinateSystemProvider</c> and exposes more than 7,000 coordinate systems, including SRID 4326 and 3857.
     /// </summary>
     [Fact]
     public void ManagedProviderShouldExposeStructuredCoordinateSystems()
@@ -82,7 +82,7 @@ public class StructuredEpsgCatalogTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that <c>EpsgGeneratedCatalog</c> does not expose <c>Conversions</c>, <c>ConversionParameters</c>, or <c>ExplicitOperations</c> array fields.
     /// </summary>
     [Fact]
     public void GeneratedCatalogShouldNotExposeConversionAndExplicitOperationArrays()
@@ -97,7 +97,7 @@ public class StructuredEpsgCatalogTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that <c>EpsgGeneratedCatalog</c> resolves the projected CRS for SRID 3857 through a switch-based conversion lookup and that all associated conversion parameters are present and named.
     /// </summary>
     [Fact]
     public void GeneratedCatalogShouldExposeSwitchBasedConversionLookup()
@@ -125,7 +125,7 @@ public class StructuredEpsgCatalogTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that every projected coordinate reference in the catalog has a consistent conversion record with valid, named parameters.
     /// </summary>
     [Fact]
     public void GeneratedCatalogProjectedConversionsShouldBeConsistentAcrossCatalog()
@@ -154,7 +154,7 @@ public class StructuredEpsgCatalogTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that <c>EpsgGeneratedCatalog</c> resolves explicit operation parameters via a fast-path lookup and that the returned translation values are valid numbers.
     /// </summary>
     [Fact]
     public void GeneratedCatalogShouldExposeExplicitOperationFastPath()
@@ -174,7 +174,7 @@ public class StructuredEpsgCatalogTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that <c>TryGetExplicitOperationParameters</c> returns <see langword="false"/> for an unknown operation code.
     /// </summary>
     [Fact]
     public void GeneratedCatalogShouldReturnFalseForUnknownExplicitOperationCode()
