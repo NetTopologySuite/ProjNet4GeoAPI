@@ -12,7 +12,7 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Tests for GeoTIFF-based horizontal and vertical grid shift operations at runtime.
 /// </summary>
 public class GeoTiffGridRuntimeTests
 {
@@ -20,7 +20,7 @@ public class GeoTiffGridRuntimeTests
     private static readonly double[] GeoTiffNodataInput = [4.05d, 52.1d, 0d];
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a <c>hgridshift</c> operation backed by a GeoTIFF horizontal grid file applies the expected coordinate shift.
     /// </summary>
     /// <param name="gridFileName">GeoTIFF horizontal grid fixture file name.</param>
     [Theory]
@@ -40,7 +40,7 @@ public class GeoTiffGridRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a <c>vgridshift</c> operation backed by a GeoTIFF vertical grid file applies the expected vertical shift and leaves horizontal coordinates unchanged.
     /// </summary>
     /// <param name="gridFileName">GeoTIFF vertical grid fixture file name.</param>
     [Theory]
@@ -61,7 +61,7 @@ public class GeoTiffGridRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a <c>vgridshift</c> operation backed by a GeoTIFF grid with nodata cells performs weighted interpolation to produce the expected Z value.
     /// </summary>
     [Fact]
     public void VgridshiftWithGeoTiffNodataPerformsWeightedInterpolation()

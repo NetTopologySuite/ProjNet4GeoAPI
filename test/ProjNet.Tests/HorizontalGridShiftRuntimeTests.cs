@@ -10,7 +10,7 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Tests for horizontal grid shift operations at runtime using NTv2 grid files.
 /// </summary>
 public class HorizontalGridShiftRuntimeTests
 {
@@ -18,7 +18,7 @@ public class HorizontalGridShiftRuntimeTests
     private static readonly double[] HorizontalGridInverseInput = [5.875d, 55.375d, 0d];
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a <c>hgridshift</c> operation backed by an NTv2 grid file applies the expected coordinate shift.
     /// </summary>
     /// <param name="gridFileName">NTv2 grid fixture file name.</param>
     [Theory]
@@ -39,7 +39,7 @@ public class HorizontalGridShiftRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that the inverse <c>hgridshift</c> operation on the synthetic fixture input signals that the point lies outside the grid.
     /// </summary>
     /// <param name="gridFileName">NTv2 grid fixture file name.</param>
     [Theory]
@@ -57,7 +57,7 @@ public class HorizontalGridShiftRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a <c>gridshift</c> operation backed by an NTv2 grid file delegates to the horizontal shift implementation and produces the expected output.
     /// </summary>
     /// <param name="gridFileName">NTv2 grid fixture file name.</param>
     [Theory]

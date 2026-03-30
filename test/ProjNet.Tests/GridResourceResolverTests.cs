@@ -10,12 +10,12 @@ using ProjNet.Resources;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Tests for the <see cref="GridResourceResolver"/> resolution and caching behavior.
 /// </summary>
 public class GridResourceResolverTests
 {
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that <c>TryResolve</c> returns the local file path and makes no network calls when the requested grid file exists in a local search directory.
     /// </summary>
     [Fact]
     public void TryResolveWithLocalGridFileResolvesWithoutNetwork()
@@ -44,7 +44,7 @@ public class GridResourceResolverTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that <c>TryResolve</c> returns <see langword="false"/> and does not invoke the network fetcher when configured with <c>LocalOnly</c> mode and the grid file is absent locally.
     /// </summary>
     [Fact]
     public void TryResolveWithLocalOnlyModeDoesNotCallNetworkFetcher()
@@ -68,7 +68,7 @@ public class GridResourceResolverTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that <c>TryResolve</c> downloads the grid to the cache directory on the first call and reuses the cached file on subsequent calls without fetching again.
     /// </summary>
     [Fact]
     public void TryResolveWithNetworkModeDownloadsToCacheAndReusesCachedFile()

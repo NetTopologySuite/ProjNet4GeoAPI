@@ -10,14 +10,14 @@ using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
-/// Represents the documented type.
+/// Tests for vertical grid shift operations at runtime using GTX grid files.
 /// </summary>
 public class VerticalGridShiftRuntimeTests
 {
     private static readonly double[] VerticalGridInput = [12d, 56d, 0d];
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that a <c>vgridshift</c> operation backed by a GTX grid file applies the expected vertical shift, respecting the <c>+multiplier</c> option.
     /// </summary>
     /// <param name="multiplierToken">Multiplier token appended to operation.</param>
     /// <param name="expectedZ">Expected transformed Z value.</param>
@@ -39,7 +39,7 @@ public class VerticalGridShiftRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that applying the forward then inverse <c>vgridshift</c> operations round-trips a single point back to its original coordinates.
     /// </summary>
     [Fact]
     public void VgridshiftWithInverseFlagRoundtripsSinglePoint()
@@ -63,7 +63,7 @@ public class VerticalGridShiftRuntimeTests
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Verifies that transforming a coordinate that falls outside the grid extent throws an <see cref="ArgumentException"/>.
     /// </summary>
     [Fact]
     public void VgridshiftOutsideGridExtentThrowsArgumentException()
