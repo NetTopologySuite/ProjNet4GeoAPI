@@ -7,7 +7,7 @@ namespace ProjNet.CoordinateSystems.Transformations;
 using System;
 
 /// <summary>
-/// Represents the documented type.
+/// Applies linear unit-conversion scale factors to the X, Y, and optionally Z ordinates of a coordinate.
 /// </summary>
 [Serializable]
 internal sealed class UnitConvertMathTransform : MathTransform

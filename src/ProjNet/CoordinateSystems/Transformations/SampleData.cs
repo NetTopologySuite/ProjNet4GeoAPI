@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 
 /// <summary>
-/// Represents a documented type.
+/// Holds raw grid sample arrays together with per-sample scale and offset factors for decoding grid shift values.
 /// </summary>
 [Serializable]
 internal readonly struct SampleData
@@ -33,7 +33,7 @@ internal readonly struct SampleData
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Returns a new <see cref="SampleData"/> with the scale and offset of every sample multiplied by <paramref name="angularScaleToDegree"/>.
     /// </summary>
     /// <param name="angularScaleToDegree">The angularScaleToDegree value.</param>
     /// <returns>The computed value.</returns>
@@ -62,7 +62,7 @@ internal readonly struct SampleData
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Returns a new <see cref="SampleData"/> with per-sample scale and offset overrides applied on top of the existing factors.
     /// </summary>
     /// <param name="scaleBySample">The scaleBySample value.</param>
     /// <param name="offsetBySample">The offsetBySample value.</param>
@@ -105,7 +105,7 @@ internal readonly struct SampleData
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Returns the decoded value for the specified sample at grid column <paramref name="x"/> and row <paramref name="y"/>.
     /// </summary>
     /// <param name="sample">The sample value.</param>
     /// <param name="x">The x value.</param>

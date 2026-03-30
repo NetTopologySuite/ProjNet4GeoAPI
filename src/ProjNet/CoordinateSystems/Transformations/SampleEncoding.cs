@@ -7,7 +7,7 @@ using System;
 using BitMiracle.LibTiff.Classic;
 
 /// <summary>
-/// Represents a documented type.
+/// Describes the binary encoding of a single TIFF sample, capturing the byte width and the delegate used to decode a value from a buffer.
 /// </summary>
 internal readonly struct SampleEncoding
 {
@@ -20,7 +20,7 @@ internal readonly struct SampleEncoding
     }
 
     /// <summary>
-    /// Represents a documented type.
+    /// Represents a method that reads a double-precision value from a byte buffer at the specified byte offset.
     /// </summary>
     /// <param name="buffer">The buffer value.</param>
     /// <param name="offset">The offset value.</param>
@@ -28,12 +28,12 @@ internal readonly struct SampleEncoding
     internal delegate double ValueReader(byte[] buffer, int offset);
 
     /// <summary>
-    /// Gets the documented value.
+    /// Gets the number of bytes occupied by one sample value in the raw buffer.
     /// </summary>
     internal int BytesPerSample { get; }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Attempts to create a <see cref="SampleEncoding"/> for the given bits-per-sample count and TIFF sample format.
     /// </summary>
     /// <param name="bitsPerSample">The bitsPerSample value.</param>
     /// <param name="sampleFormat">The sampleFormat value.</param>
@@ -92,7 +92,7 @@ internal readonly struct SampleEncoding
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Reads a sample value from <paramref name="buffer"/> starting at the given byte <paramref name="offset"/>.
     /// </summary>
     /// <param name="buffer">The buffer value.</param>
     /// <param name="offset">The offset value.</param>

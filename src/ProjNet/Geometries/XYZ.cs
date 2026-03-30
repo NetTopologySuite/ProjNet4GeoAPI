@@ -56,11 +56,7 @@ public struct XYZ : IEquatable<XYZ>
     /// <inheritdoc />
     public override readonly bool Equals(object? obj) => obj is XYZ other && this.Equals(other);
 
-    /// <summary>
-    /// Performs the documented operation.
-    /// </summary>
-    /// <param name="other">The other value.</param>
-    /// <returns>The computed value.</returns>
+    /// <inheritdoc />
     public readonly bool Equals(XYZ other) => (this.X, this.Y, this.Z).Equals((other.X, other.Y, other.Z));
 
     /// <inheritdoc />

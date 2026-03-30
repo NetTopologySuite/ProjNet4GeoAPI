@@ -888,77 +888,77 @@ internal static partial class GeoTiffGridLoader
         double epsilon)
     {
         /// <summary>
-        /// Gets the documented value.
+        /// Gets the grid width in pixels.
         /// </summary>
         internal int Width { get; } = width;
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets the grid height in pixels.
         /// </summary>
         internal int Height { get; } = height;
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets the column scale coefficient of the affine transform (map units per pixel column).
         /// </summary>
         internal double A { get; } = a;
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets the row rotation coefficient of the affine transform for the X axis (zero for north-up grids).
         /// </summary>
         internal double B { get; } = b;
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets the X translation coefficient of the affine transform (easting of the upper-left origin).
         /// </summary>
         internal double C { get; } = c;
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets the column rotation coefficient of the affine transform for the Y axis (zero for north-up grids).
         /// </summary>
         internal double D { get; } = d;
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets the row scale coefficient of the affine transform (map units per pixel row, typically negative for north-up grids).
         /// </summary>
         internal double E { get; } = e;
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets the Y translation coefficient of the affine transform (northing of the upper-left origin).
         /// </summary>
         internal double F { get; } = f;
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets the determinant of the 2×2 rotation/scale sub-matrix of the affine transform.
         /// </summary>
         internal double Determinant { get; } = determinant;
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets the western boundary of the grid coverage in map units.
         /// </summary>
         internal double West { get; } = west;
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets the eastern boundary of the grid coverage in map units.
         /// </summary>
         internal double East { get; } = east;
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets the southern boundary of the grid coverage in map units.
         /// </summary>
         internal double South { get; } = south;
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets the northern boundary of the grid coverage in map units.
         /// </summary>
         internal double North { get; } = north;
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets the approximate geographic area spanned by the grid, used for ordering overlapping grids.
         /// </summary>
         internal double Area { get; } = area;
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets the positional tolerance used for boundary containment checks.
         /// </summary>
         internal double Epsilon { get; } = epsilon;
     }
@@ -973,37 +973,37 @@ internal static partial class GeoTiffGridLoader
         IReadOnlyDictionary<int, string> unitTypeBySample)
     {
         /// <summary>
-        /// Gets the documented value.
+        /// Gets the human-readable description string keyed by sample index.
         /// </summary>
         internal IReadOnlyDictionary<int, string> DescriptionsBySample { get; } = descriptionsBySample;
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets the positive-direction label keyed by sample index.
         /// </summary>
         internal IReadOnlyDictionary<int, string> PositiveValueBySample { get; } = positiveValueBySample;
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets the scale factor keyed by sample index.
         /// </summary>
         internal IReadOnlyDictionary<int, double> ScaleBySample { get; } = scaleBySample;
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets the additive offset keyed by sample index.
         /// </summary>
         internal IReadOnlyDictionary<int, double> OffsetBySample { get; } = offsetBySample;
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets the no-data sentinel value, or <see langword="null"/> if the file does not define one.
         /// </summary>
         internal double? NoDataValue { get; } = noDataValue;
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets the scale factor used to convert angular sample values to degrees.
         /// </summary>
         internal double AngularScaleToDegree { get; } = angularScaleToDegree;
 
         /// <summary>
-        /// Gets the documented value.
+        /// Gets the unit type name keyed by sample index.
         /// </summary>
         internal IReadOnlyDictionary<int, string> UnitTypeBySample { get; } = unitTypeBySample;
     }
@@ -1049,14 +1049,8 @@ internal static partial class GeoTiffGridLoader
         }
 
         /// <summary>
-        /// Performs the documented operation.
+        /// Creates a <see cref="LoadedPage"/> representing a horizontal (latitude/longitude shift) grid page.
         /// </summary>
-        /// <param name="transform">The transform value.</param>
-        /// <param name="sampleData">The sampleData value.</param>
-        /// <param name="metadata">The metadata value.</param>
-        /// <param name="latitudeSample">The latitudeSample value.</param>
-        /// <param name="longitudeSample">The longitudeSample value.</param>
-        /// <param name="longitudePositiveWest">The longitudePositiveWest value.</param>
         /// <returns>The computed value.</returns>
         internal static LoadedPage CreateHorizontal(
             GeoTransform transform,
@@ -1070,12 +1064,8 @@ internal static partial class GeoTiffGridLoader
         }
 
         /// <summary>
-        /// Performs the documented operation.
+        /// Creates a <see cref="LoadedPage"/> representing a vertical (height shift) grid page.
         /// </summary>
-        /// <param name="transform">The transform value.</param>
-        /// <param name="sampleData">The sampleData value.</param>
-        /// <param name="metadata">The metadata value.</param>
-        /// <param name="verticalSample">The verticalSample value.</param>
         /// <returns>The computed value.</returns>
         internal static LoadedPage CreateVertical(
             GeoTransform transform,
@@ -1087,7 +1077,7 @@ internal static partial class GeoTiffGridLoader
         }
 
         /// <summary>
-        /// Performs the documented operation.
+        /// Creates a <see cref="LoadedPage"/> representing an XYZ geocentric shift grid page.
         /// </summary>
         /// <param name="transform">The transform value.</param>
         /// <param name="sampleData">The sampleData value.</param>
@@ -1108,7 +1098,7 @@ internal static partial class GeoTiffGridLoader
         }
 
         /// <summary>
-        /// Performs the documented operation.
+        /// Converts this page to a horizontal grid, or returns <see langword="null"/> if the page mode is not horizontal.
         /// </summary>
         /// <param name="sourcePath">The sourcePath value.</param>
         /// <returns>The computed value.</returns>
@@ -1146,7 +1136,7 @@ internal static partial class GeoTiffGridLoader
         }
 
         /// <summary>
-        /// Performs the documented operation.
+        /// Converts this page to a vertical grid, or returns <see langword="null"/> if the page mode is not vertical.
         /// </summary>
         /// <param name="sourcePath">The sourcePath value.</param>
         /// <returns>The computed value.</returns>
@@ -1179,7 +1169,7 @@ internal static partial class GeoTiffGridLoader
         }
 
         /// <summary>
-        /// Performs the documented operation.
+        /// Converts this page to an XYZ geocentric grid, or returns <see langword="null"/> if the page mode is not XYZ.
         /// </summary>
         /// <param name="sourcePath">The sourcePath value.</param>
         /// <returns>The computed value.</returns>

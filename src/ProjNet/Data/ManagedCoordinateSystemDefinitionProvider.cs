@@ -22,9 +22,9 @@ public sealed class ManagedCoordinateSystemDefinitionProvider : ICoordinateSyste
     }
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Enumerates all coordinate system definitions as WKT-encoded <see cref="CoordinateSystemDefinition"/> instances.
     /// </summary>
-    /// <returns>The computed value.</returns>
+    /// <returns>A sequence of <see cref="CoordinateSystemDefinition"/> instances for all known coordinate systems.</returns>
     public IEnumerable<CoordinateSystemDefinition> GetDefinitions()
     {
         foreach (CoordinateSystemEntry entry in GetManagedCoordinateSystems())

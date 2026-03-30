@@ -10,7 +10,7 @@ using ProjNet.CoordinateSystems;
 using ProjNet.Data;
 
 /// <summary>
-/// Represents the documented type.
+/// Provides factory methods for building <see cref="CoordinateSystem"/> instances from the generated EPSG catalog data.
 /// </summary>
 internal static class EpsgCoordinateSystemFactory
 {
@@ -24,9 +24,9 @@ internal static class EpsgCoordinateSystemFactory
     private static readonly Lazy<Dictionary<int, EpsgAxisRecord[]>> AxesByCoordinateSystemCode = new(BuildAxesByCoordinateSystemCode, true);
 
     /// <summary>
-    /// Performs the documented operation.
+    /// Enumerates all coordinate systems from the generated EPSG catalog as <see cref="CoordinateSystemEntry"/> instances.
     /// </summary>
-    /// <returns>The computed value.</returns>
+    /// <returns>A sequence of <see cref="CoordinateSystemEntry"/> instances from the EPSG catalog.</returns>
     internal static IEnumerable<CoordinateSystemEntry> GetCoordinateSystems()
     {
         for (int cacheIndex = 0; cacheIndex < EpsgGeneratedCatalog.CoordinateReferenceCount; cacheIndex++)

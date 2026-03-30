@@ -12,9 +12,9 @@ using ProjNet.Data.Generated;
 internal sealed class ManagedCoordinateOperationDefinitionProvider : ICoordinateOperationDefinitionProvider
 {
     /// <summary>
-    /// Performs the documented operation.
+    /// Enumerates all coordinate operation definitions from the generated EPSG catalog.
     /// </summary>
-    /// <returns>The computed value.</returns>
+    /// <returns>A sequence of <see cref="CoordinateOperationDefinition"/> instances from the EPSG catalog.</returns>
     public IEnumerable<CoordinateOperationDefinition> GetDefinitions()
     {
         EpsgOperationRecord[] records = EpsgGeneratedCatalog.Operations;
