@@ -269,18 +269,15 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     [Trait("Category", "Question")]
     public void TestGitHubIssue53()
     {
-        // arrange
         GeographicCoordinateSystem csWgs84 = GeographicCoordinateSystem.WGS84;
         var csUtm35N = ProjectedCoordinateSystem.WGS84_UTM(35, true);
         ICoordinateTransformation csTrans = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csWgs84, csUtm35N);
         ICoordinateTransformation csTransBack = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csUtm35N, csWgs84);
 
-        // act
         double[] point = [42.5, 24.5];
         double[] r = csTrans.MathTransform.Transform(point);
         double[] rBack = csTransBack.MathTransform.Transform(r);
 
-        // assert
         Assert.Equal(point[0], rBack[0], 1e-5);
         Assert.Equal(point[1], rBack[1], 1e-5);
     }
