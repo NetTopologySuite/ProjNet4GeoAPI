@@ -6,7 +6,7 @@ namespace ProjNet.Resources;
 /// <summary>
 /// Specifies how grid resources are resolved by <see cref="GridResourceResolver"/>.
 /// </summary>
-internal enum GridResourceResolutionMode
+public enum GridResourceResolutionMode
 {
     /// <summary>
     /// Resolves grids only from locally available files.

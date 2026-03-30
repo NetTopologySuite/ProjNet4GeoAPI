@@ -567,6 +567,7 @@ namespace ProjNet.CoordinateSystems.Transformations
     {
         public CoordinateTransformationFactory() { }
         public ProjNet.CoordinateSystems.Transformations.ICoordinateTransformation CreateFromCoordinateSystems(ProjNet.CoordinateSystems.CoordinateSystem sourceCS, ProjNet.CoordinateSystems.CoordinateSystem targetCS) { }
+        public static void ConfigureGridResolution(ProjNet.Resources.IGridResourceFetchClient? fetchClient = null, System.Collections.Generic.IEnumerable<string>? localDirectories = null, string? cacheDirectory = null, ProjNet.Resources.GridResourceResolutionMode mode = 0) { }
     }
     [System.Flags]
     public enum DomainFlags
@@ -720,5 +721,24 @@ namespace ProjNet.IO.CoordinateSystems
     public static class MathTransformWktReader
     {
         public static ProjNet.CoordinateSystems.Transformations.MathTransform Parse(string wkt) { }
+    }
+}
+namespace ProjNet.Resources
+{
+    public enum GridResourceResolutionMode
+    {
+        LocalOnly = 0,
+        LocalThenNetwork = 1,
+    }
+    public interface IGridResourceFetchClient
+    {
+        bool TryFetch(string gridName, string targetFilePath);
+        System.Threading.Tasks.Task<bool> TryFetchAsync(string gridName, string targetFilePath, System.Threading.CancellationToken cancellationToken = default);
+    }
+    public sealed class NoOpGridResourceFetchClient : ProjNet.Resources.IGridResourceFetchClient
+    {
+        public NoOpGridResourceFetchClient() { }
+        public bool TryFetch(string gridName, string targetFilePath) { }
+        public System.Threading.Tasks.Task<bool> TryFetchAsync(string gridName, string targetFilePath, System.Threading.CancellationToken cancellationToken = default) { }
     }
 }

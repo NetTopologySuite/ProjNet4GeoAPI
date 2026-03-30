@@ -6,6 +6,8 @@ namespace ProjNet.Tests;
 
 using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using ProjNet.Resources;
 using Xunit;
 
@@ -120,6 +122,11 @@ public class GridResourceResolverTests
             this.Calls++;
             this.OnFetch?.Invoke(targetFilePath);
             return this.OnFetch is not null;
+        }
+
+        public Task<bool> TryFetchAsync(string gridName, string targetFilePath, CancellationToken cancellationToken = default)
+        {
+            return Task.FromResult(this.TryFetch(gridName, targetFilePath));
         }
     }
 }

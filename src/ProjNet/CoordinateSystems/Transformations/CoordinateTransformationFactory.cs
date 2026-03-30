@@ -8,6 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using ProjNet.CoordinateSystems.Projections;
 using ProjNet.Data;
 using ProjNet.Data.Generated;
@@ -26,7 +29,8 @@ public class CoordinateTransformationFactory
     private static readonly Lazy<Dictionary<SridPair, IReadOnlyList<CoordinateOperationDefinition>>> DirectOperationDefinitions =
         new(LoadDirectOperationDefinitions, true);
 
-    private static readonly Lazy<GridResourceResolver> GridResolver = new(CreateGridResolver, true);
+    private static readonly object GridResolverSync = new();
+    private static GridResourceResolver gridResolverInstance = CreateGridResolver();
 
     private enum CoordinateSystemRuntimeKind : byte
     {
@@ -55,6 +59,43 @@ public class CoordinateTransformationFactory
     }
 
     /// <summary>
+    /// Configures the grid resource resolution subsystem with a custom fetch client and search paths.
+    /// </summary>
+    /// <remarks>
+    /// Calling this method replaces the current grid resolver instance. When no parameters are supplied,
+    /// a default resolver is created using environment-variable configuration. This method is thread-safe.
+    /// </remarks>
+    /// <param name="fetchClient">
+    /// Custom fetch client used for network retrieval; <see langword="null"/> disables network fetching.
+    /// </param>
+    /// <param name="localDirectories">
+    /// Directories to search for grid files; <see langword="null"/> falls back to directories configured
+    /// via the <c>PROJNET_GRID_PATHS</c> environment variable.
+    /// </param>
+    /// <param name="cacheDirectory">
+    /// Directory used to store network-fetched grid files; <see langword="null"/> falls back to the
+    /// <c>PROJNET_GRID_CACHE</c> environment variable.
+    /// </param>
+    /// <param name="mode">Resolution mode controlling whether network retrieval is attempted.</param>
+    public static void ConfigureGridResolution(
+        IGridResourceFetchClient? fetchClient = null,
+        IEnumerable<string>? localDirectories = null,
+        string? cacheDirectory = null,
+        GridResourceResolutionMode mode = GridResourceResolutionMode.LocalOnly)
+    {
+        string[] dirs = localDirectories?.ToArray() ?? ReadGridDirectoriesFromEnvironment();
+        string? cache = cacheDirectory ?? Environment.GetEnvironmentVariable(GridCacheEnvironmentVariable);
+
+        var options = new GridResourceResolverOptions(dirs, cache, mode);
+        var resolver = new GridResourceResolver(options, fetchClient);
+
+        lock (GridResolverSync)
+        {
+            gridResolverInstance = resolver;
+        }
+    }
+
+    /// <summary>
     /// Attempts to create a projection pipeline math transform from a PROJ-style operation string.
     /// </summary>
     /// <param name="operation">Operation string in pipeline syntax.</param>
@@ -69,7 +110,15 @@ public class CoordinateTransformationFactory
     /// <param name="gridName">Grid resource name or path token.</param>
     /// <param name="resolvedPath">Resolved local file path when available.</param>
     /// <returns><see langword="true"/> when resolution succeeded; otherwise <see langword="false"/>.</returns>
-    internal static bool TryResolveGridResourcePath(string gridName, [NotNullWhen(true)] out string? resolvedPath) => GridResolver.Value.TryResolve(gridName, out resolvedPath);
+    internal static bool TryResolveGridResourcePath(string gridName, [NotNullWhen(true)] out string? resolvedPath) => GetGridResolver().TryResolve(gridName, out resolvedPath);
+
+    /// <summary>
+    /// Asynchronously attempts to resolve a grid resource name to a concrete file path.
+    /// </summary>
+    /// <param name="gridName">Grid resource name or path token.</param>
+    /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+    /// <returns>The resolved local file path when available; otherwise <see langword="null"/>.</returns>
+    internal static Task<string?> TryResolveGridResourcePathAsync(string gridName, CancellationToken cancellationToken = default) => GetGridResolver().TryResolveAsync(gridName, cancellationToken);
 
     private ICoordinateTransformation? CreateFromCoordinateSystemsWithMetadata(CoordinateSystem sourceCS, CoordinateSystem targetCS)
     {
@@ -1115,6 +1164,14 @@ public class CoordinateTransformationFactory
         return result;
     }
 
+    private static GridResourceResolver GetGridResolver()
+    {
+        lock (GridResolverSync)
+        {
+            return gridResolverInstance;
+        }
+    }
+
     private static GridResourceResolver CreateGridResolver()
     {
         string[] localDirectories = ReadGridDirectoriesFromEnvironment();
@@ -1194,7 +1251,7 @@ public class CoordinateTransformationFactory
                 return true;
             }
 
-            if (GridResolver.Value.TryResolve(candidate.ParameterFileName, out resolvedGridPath))
+            if (GetGridResolver().TryResolve(candidate.ParameterFileName, out resolvedGridPath))
             {
                 operation = candidate;
                 return true;

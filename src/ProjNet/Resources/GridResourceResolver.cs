@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 /// <summary>
 /// Resolves named grid resources to local file paths, searching local directories first
@@ -69,6 +71,49 @@ internal sealed class GridResourceResolver
 
         resolvedPath = null;
         return false;
+    }
+
+    /// <summary>
+    /// Asynchronously attempts to resolve a named grid resource to an absolute local file path.
+    /// </summary>
+    /// <remarks>
+    /// Resolution order: in-memory cache, local file system (rooted path or configured directories),
+    /// and network retrieval via <see cref="IGridResourceFetchClient.TryFetchAsync"/> when
+    /// <see cref="GridResourceResolutionMode.LocalThenNetwork"/> is active.
+    /// Successful resolutions are cached for subsequent calls.
+    /// </remarks>
+    /// <param name="gridName">The grid resource name or rooted file path to resolve.</param>
+    /// <param name="cancellationToken">A token to monitor for cancellation requests.</param>
+    /// <returns>The absolute local path when resolution succeeds; otherwise <see langword="null"/>.</returns>
+    internal async Task<string?> TryResolveAsync(string gridName, CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(gridName))
+        {
+            ArgumentGuard.ThrowArgument("Grid name must not be empty.", nameof(gridName));
+        }
+
+        if (this.TryResolveFromCache(gridName, out string? resolvedPath))
+        {
+            return resolvedPath;
+        }
+
+        if (this.TryResolveFromLocalSources(gridName, out resolvedPath))
+        {
+            this.RememberResolvedPath(gridName, resolvedPath);
+            return resolvedPath;
+        }
+
+        if (this.options.Mode == GridResourceResolutionMode.LocalThenNetwork)
+        {
+            resolvedPath = await this.TryResolveFromNetworkAsync(gridName, cancellationToken).ConfigureAwait(false);
+            if (resolvedPath is not null)
+            {
+                this.RememberResolvedPath(gridName, resolvedPath);
+                return resolvedPath;
+            }
+        }
+
+        return null;
     }
 
     private void RememberResolvedPath(string gridName, string resolvedPath)
@@ -160,5 +205,33 @@ internal sealed class GridResourceResolver
 
         resolvedPath = targetPath;
         return true;
+    }
+
+    private async Task<string?> TryResolveFromNetworkAsync(string gridName, CancellationToken cancellationToken)
+    {
+        if (string.IsNullOrWhiteSpace(this.options.CacheDirectory))
+        {
+            return null;
+        }
+
+        Directory.CreateDirectory(this.options.CacheDirectory);
+        string fileName = Path.GetFileName(gridName);
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            return null;
+        }
+
+        string targetPath = Path.Combine(this.options.CacheDirectory, fileName);
+        if (File.Exists(targetPath))
+        {
+            return targetPath;
+        }
+
+        if (!await this.fetchClient.TryFetchAsync(gridName, targetPath, cancellationToken).ConfigureAwait(false) || !File.Exists(targetPath))
+        {
+            return null;
+        }
+
+        return targetPath;
     }
 }
