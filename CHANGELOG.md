@@ -15,6 +15,8 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 - Added structured modernization audit/finalization artifacts under `docs/modernization/` for parity, generator, style, license, test, and documentation waves.
 - Added `LICENSES/` folder and `NOTICE.md` for consolidated attribution and licensing context.
 - Added broad projection and transformation runtime verification coverage, including direct proj2proj parity fixtures.
+- Added public grid resource API (`IGridResourceFetchClient`, `GridResourceResolutionMode`, `NoOpGridResourceFetchClient`) with async `TryFetchAsync` support and programmatic configuration via `CoordinateTransformationFactory.ConfigureGridResolution`.
+- Added `IXunitSerializable` implementation on `GieCase` and `Proj2ProjCase` for proper xUnit v3 TheoryData serialization.
 - Added additive span-based public API overloads for key transformation and WKT parsing workflows:
   - `MathTransform.Transform(ReadOnlySpan<double>, Span<double>)`
   - `MathTransform.GetCodomainConvexHull(ReadOnlySpan<double>)`
@@ -32,6 +34,10 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
   - replaced large eager arrays with on-demand switch-based lookup paths where applicable,
   - split generated catalog into focused partial files.
 - Migrated the test stack fully to xUnit v3 and removed NUnit compatibility usage.
+- Migrated NuGet package management to Central Package Management (`Directory.Packages.props`), with GitVersioning and StyleCop as global package references.
+- Replaced `Newtonsoft.Json` dependency in tests with `System.Text.Json`.
+- Replaced string concatenation and `string.Format` calls with string interpolation across the codebase.
+- Replaced 242 placeholder XML documentation comments with meaningful summaries across 43 source and test files.
 - Renamed phase-prefixed test files/classes to descriptive names that reflect tested behavior.
 - Performed structural cleanup:
   - one top-level type per file in targeted areas,
@@ -51,6 +57,7 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 - Optimized selected hot internal paths using `stackalloc`, `ReadOnlySpan<T>/Span<T>`, and `ArrayPool<T>` to reduce transient allocations.
 - Improved GIE builtins conversion fallback handling by normalizing cs2cs-style operation tokens for runtime conversion attempts and prioritizing detailed transform skip reasons.
 - Enabled full nullable context across the codebase (`<Nullable>enable</Nullable>` in library and tests, `#nullable enable` directives in source files).
+- Enabled `EnforceCodeStyleInBuild` and resolved all SA1413 trailing comma warnings.
 - Replaced ambiguous coordinate-definition `KeyValuePair` contracts with explicit typed records in public/provider APIs:
   - `CoordinateSystemDefinition` (`Srid`, `Wkt`)
   - `CoordinateSystemEntry` (`Srid`, `CoordinateSystem`)
@@ -61,8 +68,13 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 
 - Corrected outdated and inconsistent file attribution headers by adopting SPDX-style per-file headers based on provenance categories.
 - Removed dead/commented legacy code found during structural cleanup.
+- Removed stale TODO comments, bare AAA test markers, and commented-out code blocks.
 - Fixed multiple legacy naming inconsistencies in projection class families and their registry references.
 - Fixed pooled-buffer lifecycle coverage by adding explicit success/failure-path tests for `GeoTiffGridLoader` pool rental/return behavior.
+
+### Removed
+
+- Removed `[Serializable]` attribute from all types; WKT is the supported serialization mechanism. BinaryFormatter infrastructure and serialization tests have been deleted.
 
 ### Deprecated
 
@@ -72,4 +84,3 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 
 - Package version line is aligned to `3.0.0` via shared build props (`src/Directory.Build.props`).
 - `PackageValidationBaselineVersion` remains `2.1.0` until `3.0.0` is published.
-- Current validation snapshot (Phase 5): full tests `3854 total / 3021 passed / 0 failed / 833 skipped`; solution Release build and `PublicApiBaselineTests` pass.
