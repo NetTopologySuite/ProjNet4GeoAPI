@@ -6,6 +6,7 @@ namespace ProjNet.CoordinateSystems;
 
 using System;
 using System.Globalization;
+using ProjNet.IO.Wkt;
 
 /// <summary>
 /// Parameters for a geographic transformation into WGS84. The Bursa Wolf parameters should be applied
@@ -156,6 +157,23 @@ public class Wgs84ConversionInfo : IEquatable<Wgs84ConversionInfo>
         {
             return !(this.Dx != 0 || this.Dy != 0 || this.Dz != 0 || this.Ex != 0 || this.Ey != 0 || this.Ez != 0 || this.Ppm != 0);
         }
+    }
+
+    /// <summary>
+    /// Converts this WGS84 conversion info to a WKT syntax tree node.
+    /// </summary>
+    /// <returns>A <see cref="WktNode"/> representing this WGS84 conversion info.</returns>
+    public WktNode ToWktNode()
+    {
+        return new WktKeywordNode(
+            "TOWGS84",
+            new WktNumber(this.Dx),
+            new WktNumber(this.Dy),
+            new WktNumber(this.Dz),
+            new WktNumber(this.Ex),
+            new WktNumber(this.Ey),
+            new WktNumber(this.Ez),
+            new WktNumber(this.Ppm));
     }
 
     /// <summary>

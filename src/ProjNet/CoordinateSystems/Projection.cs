@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using ProjNet.IO.Wkt;
 
 /// <summary>
 /// The Projection class defines the standard information stored with a projection
@@ -104,6 +105,28 @@ public class Projection : Info, IProjection
             sb.Append("</CS_Projection>");
             return sb.ToString();
         }
+    }
+
+    /// <summary>
+    /// Converts this projection to a WKT syntax tree node.
+    /// </summary>
+    /// <returns>A <see cref="WktNode"/> representing this projection.</returns>
+    public WktNode ToWktNode()
+    {
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(this.ClassName),
+        };
+
+        if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
+        {
+            children.Add(new WktKeywordNode(
+                "AUTHORITY",
+                new WktQuotedString(this.Authority),
+                new WktQuotedString(this.AuthorityCode.ToString(CultureInfo.InvariantCulture))));
+        }
+
+        return new WktKeywordNode("PROJECTION", children);
     }
 
     /// <summary>

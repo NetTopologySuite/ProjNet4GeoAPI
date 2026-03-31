@@ -5,8 +5,10 @@
 namespace ProjNet.CoordinateSystems;
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using ProjNet.IO.Wkt;
 
 /// <summary>
 /// Defines the standard information stored with an ellipsoid used as the reference surface for a geodetic datum.
@@ -300,6 +302,30 @@ public class Ellipsoid : Info
         {
             return FormattableString.Invariant($"<CS_Ellipsoid SemiMajorAxis=\"{this.SemiMajorAxis}\" SemiMinorAxis=\"{this.SemiMinorAxis}\" InverseFlattening=\"{this.InverseFlattening}\" IvfDefinitive=\"{(this.IsIvfDefinitive ? 1 : 0)}\">{this.InfoXml}{this.AxisUnit.XML}</CS_Ellipsoid>");
         }
+    }
+
+    /// <summary>
+    /// Converts this ellipsoid to a WKT syntax tree node.
+    /// </summary>
+    /// <returns>A <see cref="WktNode"/> representing this ellipsoid.</returns>
+    public WktNode ToWktNode()
+    {
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(this.Name),
+            new WktNumber(this.SemiMajorAxis),
+            new WktNumber(this.InverseFlattening),
+        };
+
+        if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
+        {
+            children.Add(new WktKeywordNode(
+                "AUTHORITY",
+                new WktQuotedString(this.Authority),
+                new WktQuotedString(this.AuthorityCode.ToString(CultureInfo.InvariantCulture))));
+        }
+
+        return new WktKeywordNode("SPHEROID", children);
     }
 
     /// <inheritdoc />

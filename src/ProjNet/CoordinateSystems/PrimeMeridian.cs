@@ -5,8 +5,10 @@
 namespace ProjNet.CoordinateSystems;
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using ProjNet.IO.Wkt;
 
 /// <summary>
 /// A meridian used to take longitude measurements from.
@@ -143,6 +145,29 @@ public class PrimeMeridian : Info
         {
             return FormattableString.Invariant($"<CS_PrimeMeridian Longitude=\"{this.Longitude}\" >{this.InfoXml}{this.AngularUnit.XML}</CS_PrimeMeridian>");
         }
+    }
+
+    /// <summary>
+    /// Converts this prime meridian to a WKT syntax tree node.
+    /// </summary>
+    /// <returns>A <see cref="WktNode"/> representing this prime meridian.</returns>
+    public WktNode ToWktNode()
+    {
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(this.Name),
+            new WktNumber(this.Longitude),
+        };
+
+        if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
+        {
+            children.Add(new WktKeywordNode(
+                "AUTHORITY",
+                new WktQuotedString(this.Authority),
+                new WktQuotedString(this.AuthorityCode.ToString(CultureInfo.InvariantCulture))));
+        }
+
+        return new WktKeywordNode("PRIMEM", children);
     }
 
     /// <inheritdoc />

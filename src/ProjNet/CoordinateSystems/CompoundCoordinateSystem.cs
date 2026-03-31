@@ -7,6 +7,7 @@ namespace ProjNet.CoordinateSystems;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using ProjNet.IO.Wkt;
 
 /// <summary>
 /// This is a compound coordinate system, which combines the coordinate of two other coordinate systems.
@@ -103,6 +104,27 @@ public class CompoundCoordinateSystem : CoordinateSystem
     public CoordinateSystem TailCoordinateSystem
     {
         get => this.tailCoordinateSystem; set { this.tailCoordinateSystem = value; }
+    }
+
+    /// <inheritdoc />
+    public override WktNode ToWktNode()
+    {
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(this.Name),
+            this.HeadCoordinateSystem.ToWktNode(),
+            this.TailCoordinateSystem.ToWktNode(),
+        };
+
+        if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
+        {
+            children.Add(new WktKeywordNode(
+                "AUTHORITY",
+                new WktQuotedString(this.Authority),
+                new WktQuotedString(this.AuthorityCode.ToString(CultureInfo.InvariantCulture))));
+        }
+
+        return new WktKeywordNode("COMPD_CS", children);
     }
 
     /// <inheritdoc/>

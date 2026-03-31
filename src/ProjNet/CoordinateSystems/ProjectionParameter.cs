@@ -6,6 +6,7 @@ namespace ProjNet.CoordinateSystems;
 
 using System;
 using System.Globalization;
+using ProjNet.IO.Wkt;
 
 /// <summary>
 /// A named projection parameter value.
@@ -74,6 +75,18 @@ public class ProjectionParameter
         {
             return FormattableString.Invariant($"<CS_ProjectionParameter Name=\"{this.Name}\" Value=\"{this.Value}\"/>");
         }
+    }
+
+    /// <summary>
+    /// Converts this projection parameter to a WKT syntax tree node.
+    /// </summary>
+    /// <returns>A <see cref="WktNode"/> representing this projection parameter.</returns>
+    public WktNode ToWktNode()
+    {
+        return new WktKeywordNode(
+            "PARAMETER",
+            new WktQuotedString(this.Name),
+            new WktNumber(this.Value));
     }
 
     /// <summary>

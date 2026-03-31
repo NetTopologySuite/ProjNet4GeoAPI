@@ -5,8 +5,10 @@
 namespace ProjNet.CoordinateSystems;
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using ProjNet.IO.Wkt;
 
 /// <summary>
 /// Definition of linear units.
@@ -93,6 +95,29 @@ public class LinearUnit : Info, IUnit
         {
             return FormattableString.Invariant($"<CS_LinearUnit MetersPerUnit=\"{this.MetersPerUnit}\">{this.InfoXml}</CS_LinearUnit>");
         }
+    }
+
+    /// <summary>
+    /// Converts this linear unit to a WKT syntax tree node.
+    /// </summary>
+    /// <returns>A <see cref="WktNode"/> representing this linear unit.</returns>
+    public WktNode ToWktNode()
+    {
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(this.Name),
+            new WktNumber(this.MetersPerUnit),
+        };
+
+        if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
+        {
+            children.Add(new WktKeywordNode(
+                "AUTHORITY",
+                new WktQuotedString(this.Authority),
+                new WktQuotedString(this.AuthorityCode.ToString(CultureInfo.InvariantCulture))));
+        }
+
+        return new WktKeywordNode("UNIT", children);
     }
 
     /// <inheritdoc />

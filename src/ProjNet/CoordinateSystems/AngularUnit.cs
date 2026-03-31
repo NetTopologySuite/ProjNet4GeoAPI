@@ -5,8 +5,10 @@
 namespace ProjNet.CoordinateSystems;
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using ProjNet.IO.Wkt;
 
 /// <summary>
 /// Definition of angular units.
@@ -103,6 +105,29 @@ public class AngularUnit : Info, IUnit
         {
             return FormattableString.Invariant($"<CS_AngularUnit RadiansPerUnit=\"{this.RadiansPerUnit}\">{this.InfoXml}</CS_AngularUnit>");
         }
+    }
+
+    /// <summary>
+    /// Converts this angular unit to a WKT syntax tree node.
+    /// </summary>
+    /// <returns>A <see cref="WktNode"/> representing this angular unit.</returns>
+    public WktNode ToWktNode()
+    {
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(this.Name),
+            new WktNumber(this.RadiansPerUnit),
+        };
+
+        if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
+        {
+            children.Add(new WktKeywordNode(
+                "AUTHORITY",
+                new WktQuotedString(this.Authority),
+                new WktQuotedString(this.AuthorityCode.ToString(CultureInfo.InvariantCulture))));
+        }
+
+        return new WktKeywordNode("UNIT", children);
     }
 
     /// <inheritdoc />

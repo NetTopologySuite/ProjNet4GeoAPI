@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
 using ProjNet.CoordinateSystems.Transformations;
+using ProjNet.IO.Wkt;
 
 /// <summary>
 /// A coordinate system which sits inside another coordinate system. The fitted
@@ -83,6 +84,16 @@ public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSys
         {
             throw new NotImplementedException();
         }
+    }
+
+    /// <inheritdoc />
+    public override WktNode ToWktNode()
+    {
+        return new WktKeywordNode(
+            "FITTED_CS",
+            new WktQuotedString(this.Name),
+            new WktIdentifier(this.ToBaseTransform.WKT),
+            this.BaseCoordinateSystem.ToWktNode());
     }
 
     /// <summary>

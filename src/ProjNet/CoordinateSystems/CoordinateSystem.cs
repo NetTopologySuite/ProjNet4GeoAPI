@@ -7,6 +7,7 @@ namespace ProjNet.CoordinateSystems;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using ProjNet.IO.Wkt;
 
 /// <summary>
 /// Base interface for all coordinate systems.
@@ -91,6 +92,12 @@ public abstract class CoordinateSystem : Info
     /// <param name="dimension">Zero-based index of the dimension.</param>
     /// <returns>The unit for the specified dimension.</returns>
     public abstract IUnit GetUnits(int dimension);
+
+    /// <summary>
+    /// Converts this coordinate system to a WKT syntax tree node.
+    /// </summary>
+    /// <returns>A <see cref="WktNode"/> representing this coordinate system.</returns>
+    public virtual WktNode ToWktNode() => new WktIdentifier(this.WKT);
 
     /// <summary>
     /// Gets axis details for dimension within coordinate system.

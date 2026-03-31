@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using ProjNet.IO.Wkt;
 
 /// <summary>
 /// A 2D cartographic coordinate system.
@@ -226,6 +227,56 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
 
     /// <inheritdoc />
     public override IUnit GetUnits(int dimension) => this.LinearUnit;
+
+    /// <inheritdoc />
+    public override WktNode ToWktNode()
+    {
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(this.Name),
+            this.GeographicCoordinateSystem.ToWktNode(),
+        };
+
+        if (this.Projection is Projection proj)
+        {
+            children.Add(proj.ToWktNode());
+            for (int i = 0; i < proj.NumParameters; i++)
+            {
+                children.Add(proj.GetParameter(i).ToWktNode());
+            }
+        }
+        else
+        {
+            children.Add(new WktIdentifier(this.Projection.WKT));
+            for (int i = 0; i < this.Projection.NumParameters; i++)
+            {
+                children.Add(this.Projection.GetParameter(i).ToWktNode());
+            }
+        }
+
+        children.Add(this.LinearUnit.ToWktNode());
+
+        // Skip axis info if they contain default values
+        if (this.AxisInfo.Count != 2 ||
+            this.AxisInfo[0].Name != "X" || this.AxisInfo[0].Orientation != AxisOrientationEnum.East ||
+            this.AxisInfo[1].Name != "Y" || this.AxisInfo[1].Orientation != AxisOrientationEnum.North)
+        {
+            for (int i = 0; i < this.AxisInfo.Count; i++)
+            {
+                children.Add(this.GetAxis(i).ToWktNode());
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
+        {
+            children.Add(new WktKeywordNode(
+                "AUTHORITY",
+                new WktQuotedString(this.Authority),
+                new WktQuotedString(this.AuthorityCode.ToString(CultureInfo.InvariantCulture))));
+        }
+
+        return new WktKeywordNode("PROJCS", children);
+    }
 
     /// <inheritdoc />
     public override bool EqualParams(object obj)

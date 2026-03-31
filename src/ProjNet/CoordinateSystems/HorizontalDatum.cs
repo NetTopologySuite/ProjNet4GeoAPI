@@ -5,8 +5,10 @@
 namespace ProjNet.CoordinateSystems;
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using ProjNet.IO.Wkt;
 
 /// <summary>
 /// Horizontal datum defining the standard datum information.
@@ -204,6 +206,34 @@ public class HorizontalDatum : Datum
         {
             return FormattableString.Invariant($"<CS_HorizontalDatum DatumType=\"{(int)this.DatumType}\">{this.InfoXml}{this.Ellipsoid.XML}{this.Wgs84Parameters?.XML ?? string.Empty}</CS_HorizontalDatum>");
         }
+    }
+
+    /// <summary>
+    /// Converts this horizontal datum to a WKT syntax tree node.
+    /// </summary>
+    /// <returns>A <see cref="WktNode"/> representing this horizontal datum.</returns>
+    public WktNode ToWktNode()
+    {
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(this.Name),
+            this.Ellipsoid.ToWktNode(),
+        };
+
+        if (this.Wgs84Parameters is not null)
+        {
+            children.Add(this.Wgs84Parameters.ToWktNode());
+        }
+
+        if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
+        {
+            children.Add(new WktKeywordNode(
+                "AUTHORITY",
+                new WktQuotedString(this.Authority),
+                new WktQuotedString(this.AuthorityCode.ToString(CultureInfo.InvariantCulture))));
+        }
+
+        return new WktKeywordNode("DATUM", children);
     }
 
     /// <inheritdoc />

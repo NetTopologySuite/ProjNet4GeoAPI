@@ -7,6 +7,7 @@ namespace ProjNet.CoordinateSystems;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using ProjNet.IO.Wkt;
 
 /// <summary>
 /// A 1D coordinate system suitable vertical coordinates.
@@ -157,5 +158,33 @@ public class VerticalCoordinateSystem : CoordinateSystem
         }
 
         return this.LinearUnit;
+    }
+
+    /// <inheritdoc />
+    public override WktNode ToWktNode()
+    {
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(this.Name),
+            this.VerticalDatum.ToWktNode(),
+            this.LinearUnit.ToWktNode(),
+        };
+
+        // Skip axis info if they contain default values
+        if (this.AxisInfo.Count != 1 ||
+            this.AxisInfo[0].Name != "Up" || this.AxisInfo[0].Orientation != AxisOrientationEnum.Up)
+        {
+            children.Add(this.GetAxis(0).ToWktNode());
+        }
+
+        if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
+        {
+            children.Add(new WktKeywordNode(
+                "AUTHORITY",
+                new WktQuotedString(this.Authority),
+                new WktQuotedString(this.AuthorityCode.ToString(CultureInfo.InvariantCulture))));
+        }
+
+        return new WktKeywordNode("VERT_CS", children);
     }
 }

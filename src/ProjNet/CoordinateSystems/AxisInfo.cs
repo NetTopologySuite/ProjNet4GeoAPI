@@ -6,6 +6,7 @@ namespace ProjNet.CoordinateSystems;
 
 using System;
 using System.Globalization;
+using ProjNet.IO.Wkt;
 
 /// <summary>
 /// Details of axis. This is used to label axes, and indicate the orientation.
@@ -65,5 +66,17 @@ public class AxisInfo
         {
             return FormattableString.Invariant($"<CS_AxisInfo Name=\"{this.Name}\" Orientation=\"{this.Orientation.ToString().ToUpperInvariant()}\"/>");
         }
+    }
+
+    /// <summary>
+    /// Converts this axis info to a WKT syntax tree node.
+    /// </summary>
+    /// <returns>A <see cref="WktNode"/> representing this axis info.</returns>
+    public WktNode ToWktNode()
+    {
+        return new WktKeywordNode(
+            "AXIS",
+            new WktQuotedString(this.Name),
+            new WktIdentifier(this.Orientation.ToString().ToUpperInvariant()));
     }
 }
