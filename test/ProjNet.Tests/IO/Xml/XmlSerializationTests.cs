@@ -16,16 +16,10 @@ using Xunit;
 public class XmlSerializationTests
 {
     /// <summary>
-    /// Normalizes XML string by removing insignificant whitespace differences.
-    /// XElement may add or omit a space before self-closing element markers (<c>/&gt;</c>)
-    /// and the existing StringBuilder-based XML properties may have a trailing space before
-    /// the closing <c>&gt;</c> of opening tags. Both are valid XML; this helper makes them identical.
+    /// Verifies that <see cref="AxisInfo.ToXml"/> produces a <c>CS_AxisInfo</c> element
+    /// with the correct <c>Name</c> and <c>Orientation</c> attributes and that its serialized
+    /// form matches the output of the <c>XML</c> property.
     /// </summary>
-    private static string NormalizeXml(string xml)
-    {
-        return xml.Replace(" />", "/>").Replace(" >", ">");
-    }
-
     [Fact]
     public void AxisInfo_ToXml_MatchesXmlProperty()
     {
@@ -39,6 +33,11 @@ public class XmlSerializationTests
         Assert.Equal(NormalizeXml(axis.XML), NormalizeXml(element.ToString(SaveOptions.DisableFormatting)));
     }
 
+    /// <summary>
+    /// Verifies that <see cref="ProjectionParameter.ToXml"/> produces a <c>CS_ProjectionParameter</c>
+    /// element with the correct <c>Name</c> and <c>Value</c> attributes and that its serialized
+    /// form matches the output of the <c>XML</c> property.
+    /// </summary>
     [Fact]
     public void ProjectionParameter_ToXml_MatchesXmlProperty()
     {
@@ -52,6 +51,11 @@ public class XmlSerializationTests
         Assert.Equal(NormalizeXml(param.XML), NormalizeXml(element.ToString(SaveOptions.DisableFormatting)));
     }
 
+    /// <summary>
+    /// Verifies that <see cref="Wgs84ConversionInfo.ToXml"/> produces a <c>CS_WGS84ConversionInfo</c>
+    /// element with the correct translation and rotation attributes (<c>Dx</c>, <c>Dy</c>, <c>Dz</c>,
+    /// <c>Ex</c>, <c>Ppm</c>) and that its serialized form matches the output of the <c>XML</c> property.
+    /// </summary>
     [Fact]
     public void Wgs84ConversionInfo_ToXml_MatchesXmlProperty()
     {
@@ -68,6 +72,11 @@ public class XmlSerializationTests
         Assert.Equal(NormalizeXml(info.XML), NormalizeXml(element.ToString(SaveOptions.DisableFormatting)));
     }
 
+    /// <summary>
+    /// Verifies that <see cref="AngularUnit.ToXml"/> for the degree unit produces a
+    /// <c>CS_AngularUnit</c> element with a <c>RadiansPerUnit</c> attribute and that its
+    /// serialized form matches the output of the <c>XML</c> property.
+    /// </summary>
     [Fact]
     public void AngularUnit_ToXml_MatchesXmlProperty()
     {
@@ -80,6 +89,11 @@ public class XmlSerializationTests
         Assert.Equal(NormalizeXml(unit.XML), NormalizeXml(element.ToString(SaveOptions.DisableFormatting)));
     }
 
+    /// <summary>
+    /// Verifies that <see cref="LinearUnit.ToXml"/> for the metre unit produces a
+    /// <c>CS_LinearUnit</c> element with a <c>MetersPerUnit</c> attribute and that its
+    /// serialized form matches the output of the <c>XML</c> property.
+    /// </summary>
     [Fact]
     public void LinearUnit_ToXml_MatchesXmlProperty()
     {
@@ -92,6 +106,12 @@ public class XmlSerializationTests
         Assert.Equal(NormalizeXml(unit.XML), NormalizeXml(element.ToString(SaveOptions.DisableFormatting)));
     }
 
+    /// <summary>
+    /// Verifies that <see cref="Ellipsoid.ToXml"/> for the WGS84 ellipsoid produces a
+    /// <c>CS_Ellipsoid</c> element with <c>SemiMajorAxis</c>, <c>SemiMinorAxis</c>,
+    /// <c>InverseFlattening</c>, and <c>IvfDefinitive</c> attributes and that its serialized
+    /// form matches the output of the <c>XML</c> property.
+    /// </summary>
     [Fact]
     public void Ellipsoid_ToXml_MatchesXmlProperty()
     {
@@ -107,6 +127,11 @@ public class XmlSerializationTests
         Assert.Equal(NormalizeXml(ellipsoid.XML), NormalizeXml(element.ToString(SaveOptions.DisableFormatting)));
     }
 
+    /// <summary>
+    /// Verifies that <see cref="PrimeMeridian.ToXml"/> for the Greenwich meridian produces
+    /// a <c>CS_PrimeMeridian</c> element with a <c>Longitude</c> attribute and the required
+    /// <c>CS_Info</c> and <c>CS_AngularUnit</c> child elements.
+    /// </summary>
     [Fact]
     public void PrimeMeridian_ToXml_MatchesXmlProperty()
     {
@@ -124,6 +149,12 @@ public class XmlSerializationTests
         Assert.NotNull(element.Element("CS_AngularUnit"));
     }
 
+    /// <summary>
+    /// Verifies that <see cref="HorizontalDatum.ToXml"/> for the WGS84 datum (which has no
+    /// WGS84 conversion parameters) produces a <c>CS_HorizontalDatum</c> element with a
+    /// <c>DatumType</c> attribute and the required <c>CS_Info</c> and <c>CS_Ellipsoid</c>
+    /// child elements, and that its serialized form matches the output of the <c>XML</c> property.
+    /// </summary>
     [Fact]
     public void HorizontalDatum_ToXml_MatchesXmlProperty()
     {
@@ -138,6 +169,11 @@ public class XmlSerializationTests
         Assert.Equal(NormalizeXml(datum.XML), NormalizeXml(element.ToString(SaveOptions.DisableFormatting)));
     }
 
+    /// <summary>
+    /// Verifies that <see cref="HorizontalDatum.ToXml"/> for the ED50 datum (which carries
+    /// WGS84 conversion parameters) emits a <c>CS_WGS84ConversionInfo</c> child element and
+    /// that its serialized form matches the output of the <c>XML</c> property.
+    /// </summary>
     [Fact]
     public void HorizontalDatum_WithWgs84Parameters_ToXml_MatchesXmlProperty()
     {
@@ -150,6 +186,11 @@ public class XmlSerializationTests
         Assert.Equal(NormalizeXml(datum.XML), NormalizeXml(element.ToString(SaveOptions.DisableFormatting)));
     }
 
+    /// <summary>
+    /// Verifies that <see cref="VerticalDatum.ToXml"/> for the ODN datum produces a
+    /// <c>CS_VerticalDatum</c> element with a <c>DatumType</c> attribute and a <c>CS_Info</c>
+    /// child element, and that its serialized form matches the output of the <c>XML</c> property.
+    /// </summary>
     [Fact]
     public void VerticalDatum_ToXml_MatchesXmlProperty()
     {
@@ -163,6 +204,12 @@ public class XmlSerializationTests
         Assert.Equal(NormalizeXml(datum.XML), NormalizeXml(element.ToString(SaveOptions.DisableFormatting)));
     }
 
+    /// <summary>
+    /// Verifies that <see cref="Projection.ToXml"/> produces a <c>CS_Projection</c> element
+    /// with the correct <c>Classname</c> attribute, a <c>CS_Info</c> child element, one
+    /// <c>CS_ProjectionParameter</c> child element per parameter, and that its serialized
+    /// form matches the output of the <c>XML</c> property.
+    /// </summary>
     [Fact]
     public void Projection_ToXml_MatchesXmlProperty()
     {
@@ -197,6 +244,13 @@ public class XmlSerializationTests
         Assert.Equal(NormalizeXml(projection.XML), NormalizeXml(element.ToString(SaveOptions.DisableFormatting)));
     }
 
+    /// <summary>
+    /// Verifies that <see cref="GeographicCoordinateSystem.ToXml"/> for the WGS84 geographic
+    /// coordinate system produces an outer <c>CS_CoordinateSystem</c> element with a
+    /// <c>Dimension</c> attribute wrapping a <c>CS_GeographicCoordinateSystem</c> element
+    /// that contains <c>CS_Info</c>, <c>CS_HorizontalDatum</c>, <c>CS_AngularUnit</c>, and
+    /// <c>CS_PrimeMeridian</c> child elements.
+    /// </summary>
     [Fact]
     public void GeographicCoordinateSystem_ToXml_MatchesXmlProperty()
     {
@@ -215,6 +269,13 @@ public class XmlSerializationTests
         Assert.NotNull(inner.Element("CS_PrimeMeridian"));
     }
 
+    /// <summary>
+    /// Verifies that <see cref="ProjectedCoordinateSystem.ToXml"/> for a UTM zone 32 north
+    /// projection produces an outer <c>CS_CoordinateSystem</c> element with
+    /// <c>Dimension</c> set to <c>2</c>, wrapping a <c>CS_ProjectedCoordinateSystem</c>
+    /// element that contains <c>CS_Info</c>, a nested <c>CS_CoordinateSystem</c> (geographic),
+    /// <c>CS_LinearUnit</c>, and <c>CS_Projection</c> child elements.
+    /// </summary>
     [Fact]
     public void ProjectedCoordinateSystem_ToXml_ProducesCorrectStructure()
     {
@@ -233,6 +294,13 @@ public class XmlSerializationTests
         Assert.NotNull(inner.Element("CS_Projection"));
     }
 
+    /// <summary>
+    /// Verifies that <see cref="GeocentricCoordinateSystem.ToXml"/> for the WGS84 geocentric
+    /// coordinate system produces an outer <c>CS_CoordinateSystem</c> element with
+    /// <c>Dimension</c> set to <c>3</c>, wrapping a <c>CS_GeocentricCoordinateSystem</c>
+    /// element that contains <c>CS_Info</c>, <c>CS_HorizontalDatum</c>, <c>CS_LinearUnit</c>,
+    /// and <c>CS_PrimeMeridian</c> child elements.
+    /// </summary>
     [Fact]
     public void GeocentricCoordinateSystem_ToXml_ProducesCorrectStructure()
     {
@@ -251,6 +319,13 @@ public class XmlSerializationTests
         Assert.NotNull(inner.Element("CS_PrimeMeridian"));
     }
 
+    /// <summary>
+    /// Verifies that <see cref="VerticalCoordinateSystem.ToXml"/> for the ODN vertical
+    /// coordinate system produces an outer <c>CS_CoordinateSystem</c> element with
+    /// <c>Dimension</c> set to <c>1</c>, wrapping a <c>CS_VerticalCoordinateSystem</c>
+    /// element that contains <c>CS_Info</c>, <c>CS_VerticalDatum</c>, and <c>CS_LinearUnit</c>
+    /// child elements, and that its serialized form matches the output of the <c>XML</c> property.
+    /// </summary>
     [Fact]
     public void VerticalCoordinateSystem_ToXml_MatchesXmlProperty()
     {
@@ -270,6 +345,13 @@ public class XmlSerializationTests
         Assert.Equal(NormalizeXml(vcs.XML), NormalizeXml(element.ToString(SaveOptions.DisableFormatting)));
     }
 
+    /// <summary>
+    /// Verifies that <see cref="CompoundCoordinateSystem.ToXml"/> produces an outer
+    /// <c>CS_CoordinateSystem</c> element wrapping a <c>CS_CompoundCoordinateSystem</c>
+    /// element that contains a <c>CS_Info</c> child element and exactly two nested
+    /// <c>CS_CoordinateSystem</c> elements representing the head and tail coordinate systems,
+    /// and that its serialized form matches the output of the <c>XML</c> property.
+    /// </summary>
     [Fact]
     public void CompoundCoordinateSystem_ToXml_ProducesCorrectStructure()
     {
@@ -292,6 +374,11 @@ public class XmlSerializationTests
         Assert.Equal(NormalizeXml(compound.XML), NormalizeXml(element.ToString(SaveOptions.DisableFormatting)));
     }
 
+    /// <summary>
+    /// Verifies that <see cref="FittedCoordinateSystem.ToXml"/> throws a
+    /// <see cref="NotImplementedException"/>, consistent with the <c>XML</c> property on
+    /// the same type.
+    /// </summary>
     [Fact]
     public void FittedCoordinateSystem_ToXml_ThrowsNotImplementedException()
     {
@@ -300,7 +387,14 @@ public class XmlSerializationTests
         var fcs = new FittedCoordinateSystem(
             gcs,
             new ProjNet.CoordinateSystems.Transformations.AffineTransform(
-                new double[,] { { 1, 0, 0 }, { 0, 1, 0 }, { 0, 0, 1 } }),
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+                new double[,]
+                {
+                    { 1, 0, 0 },
+                    { 0, 1, 0 },
+                    { 0, 0, 1 },
+                }),
+#pragma warning restore CA1814
             "TestFitted",
             string.Empty,
             -1,
@@ -311,6 +405,11 @@ public class XmlSerializationTests
         Assert.Throws<NotImplementedException>(() => fcs.ToXml());
     }
 
+    /// <summary>
+    /// Verifies that the <see cref="System.Xml.Linq.XElement"/> returned by <c>ToXml()</c>
+    /// serializes to a well-formed XML string that can be parsed back by
+    /// <see cref="XElement.Parse(string)"/> and produces a structurally identical element.
+    /// </summary>
     [Fact]
     public void ToXml_RoundTrip_ParseBackToXElement()
     {
@@ -323,6 +422,10 @@ public class XmlSerializationTests
         Assert.Equal(element.ToString(), reparsed.ToString());
     }
 
+    /// <summary>
+    /// Verifies that <see cref="AngularUnit.ToXml"/> for the radian unit produces output
+    /// whose serialized form matches the output of the <c>XML</c> property.
+    /// </summary>
     [Fact]
     public void AngularUnit_Radian_ToXml_MatchesXmlProperty()
     {
@@ -333,6 +436,10 @@ public class XmlSerializationTests
         Assert.Equal(NormalizeXml(unit.XML), NormalizeXml(element.ToString(SaveOptions.DisableFormatting)));
     }
 
+    /// <summary>
+    /// Verifies that <see cref="LinearUnit.ToXml"/> for the foot unit produces output
+    /// whose serialized form matches the output of the <c>XML</c> property.
+    /// </summary>
     [Fact]
     public void LinearUnit_Foot_ToXml_MatchesXmlProperty()
     {
@@ -343,6 +450,12 @@ public class XmlSerializationTests
         Assert.Equal(NormalizeXml(unit.XML), NormalizeXml(element.ToString(SaveOptions.DisableFormatting)));
     }
 
+    /// <summary>
+    /// Verifies that <see cref="Ellipsoid.ToXml"/> for the Clarke 1866 ellipsoid, which is
+    /// not IVF-definitive and carries a <see cref="double.PositiveInfinity"/> inverse
+    /// flattening value, emits <c>IvfDefinitive</c> as <c>0</c> and that its serialized form
+    /// matches the output of the <c>XML</c> property.
+    /// </summary>
     [Fact]
     public void Ellipsoid_Clarke1866_ToXml_MatchesXmlProperty()
     {
@@ -355,6 +468,11 @@ public class XmlSerializationTests
         Assert.Equal(NormalizeXml(ellipsoid.XML), NormalizeXml(element.ToString(SaveOptions.DisableFormatting)));
     }
 
+    /// <summary>
+    /// Verifies that <see cref="Wgs84ConversionInfo.ToXml"/> for a default instance (all
+    /// parameters zero) produces output whose serialized form matches the output of the
+    /// <c>XML</c> property.
+    /// </summary>
     [Fact]
     public void Wgs84ConversionInfo_ZeroValues_ToXml_MatchesXmlProperty()
     {
@@ -363,5 +481,16 @@ public class XmlSerializationTests
         XElement element = info.ToXml();
 
         Assert.Equal(NormalizeXml(info.XML), NormalizeXml(element.ToString(SaveOptions.DisableFormatting)));
+    }
+
+    /// <summary>
+    /// Normalizes XML string by removing insignificant whitespace differences.
+    /// XElement may add or omit a space before self-closing element markers (<c>/&gt;</c>)
+    /// and the existing StringBuilder-based XML properties may have a trailing space before
+    /// the closing <c>&gt;</c> of opening tags. Both are valid XML; this helper makes them identical.
+    /// </summary>
+    private static string NormalizeXml(string xml)
+    {
+        return xml.Replace(" />", "/>", StringComparison.Ordinal).Replace(" >", ">", StringComparison.Ordinal);
     }
 }

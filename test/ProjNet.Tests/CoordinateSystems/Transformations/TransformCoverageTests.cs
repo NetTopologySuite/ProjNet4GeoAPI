@@ -17,6 +17,18 @@ using Xunit;
 /// </summary>
 public class TransformCoverageTests
 {
+    private const double ParisLongitude = 2.5969213;
+
+    private static readonly double[] OriginPoint = [0d, 0d];
+    private static readonly double[] LonLat1045 = [10d, 45d];
+    private static readonly double[] LonLat2060 = [20d, 60d];
+    private static readonly double[] LonLat1552 = [15d, 52d];
+    private static readonly double[] LonLat1653 = [16d, 53d];
+    private static readonly double[] LonLat1020 = [10d, 20d];
+    private static readonly double[] LonLat2030 = [20d, 30d];
+    private static readonly double[] LonLatAlt00100 = [0d, 0d, 100d];
+    private static readonly double[] LonLatAlt1045200 = [10d, 45d, 200d];
+
     // ──────────────────────────────────────────────────────────────────────
     //  1. GeocentricLatitudeMathTransform  (43.3 %)
     // ──────────────────────────────────────────────────────────────────────
@@ -245,9 +257,9 @@ public class TransformCoverageTests
         MathTransform transform = CreateGeocTransform("+proj=geoc +ellps=WGS84");
         IList<double[]> points = new List<double[]>
         {
-            new[] { 0d, 0d },
-            new[] { 10d, 45d },
-            new[] { 20d, 60d },
+            OriginPoint,
+            LonLat1045,
+            LonLat2060,
         };
 
         IList<double[]> results = transform.TransformList(points);
@@ -395,8 +407,8 @@ public class TransformCoverageTests
         ICoordinateTransformation ct = ctFactory.CreateFromCoordinateSystems(wgs84, utm33);
         IList<double[]> points = new List<double[]>
         {
-            new[] { 15d, 52d },
-            new[] { 16d, 53d },
+            LonLat1552,
+            LonLat1653,
         };
 
         IList<double[]> results = ct.MathTransform.TransformList(points);
@@ -506,8 +518,8 @@ public class TransformCoverageTests
 
         IList<double[]> points = new List<double[]>
         {
-            new[] { 10d, 20d },
-            new[] { 20d, 30d },
+            LonLat1020,
+            LonLat2030,
         };
 
         IList<double[]> results = transform.TransformList(points);
@@ -643,8 +655,8 @@ public class TransformCoverageTests
 
         IList<double[]> points = new List<double[]>
         {
-            new[] { 0d, 0d, 100d },
-            new[] { 10d, 45d, 200d },
+            LonLatAlt00100,
+            LonLatAlt1045200,
         };
 
         IList<double[]> results = transform.TransformList(points);
@@ -819,9 +831,6 @@ public class TransformCoverageTests
     // ──────────────────────────────────────────────────────────────────────
     //  Helpers
     // ──────────────────────────────────────────────────────────────────────
-
-    private const double ParisLongitude = 2.5969213;
-
     private static MathTransform CreatePipelineTransform(string operation)
     {
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(

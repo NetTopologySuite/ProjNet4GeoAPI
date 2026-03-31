@@ -23,8 +23,15 @@ public class VerticalCoordinateSystemTests
         var axis = new AxisInfo("Up", AxisOrientationEnum.Up);
 
         var vcs = new VerticalCoordinateSystem(
-            linearUnit, datum, axis,
-            "TestVCS", "TEST", 1234, "alias", "abbr", "remarks");
+            linearUnit,
+            datum,
+            axis,
+            "TestVCS",
+            "TEST",
+            1234,
+            "alias",
+            "abbr",
+            "remarks");
 
         Assert.Equal("TestVCS", vcs.Name);
         Assert.Equal("TEST", vcs.Authority);
@@ -113,7 +120,7 @@ public class VerticalCoordinateSystemTests
     {
         string wkt = VerticalCoordinateSystem.ODN.WKT;
 
-        Assert.StartsWith("VERT_CS[\"Newlyn\"", wkt);
+        Assert.StartsWith("VERT_CS[\"Newlyn\"", wkt, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -124,7 +131,7 @@ public class VerticalCoordinateSystemTests
     {
         string wkt = VerticalCoordinateSystem.ODN.WKT;
 
-        Assert.Contains("DATUM[\"Ordnance Datum Newlyn\"", wkt);
+        Assert.Contains("DATUM[\"Ordnance Datum Newlyn\"", wkt, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -135,7 +142,7 @@ public class VerticalCoordinateSystemTests
     {
         string wkt = VerticalCoordinateSystem.ODN.WKT;
 
-        Assert.Contains("UNIT[\"metre\", 1", wkt);
+        Assert.Contains("UNIT[\"metre\", 1", wkt, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -146,7 +153,7 @@ public class VerticalCoordinateSystemTests
     {
         string wkt = VerticalCoordinateSystem.ODN.WKT;
 
-        Assert.Contains("AUTHORITY[\"EPSG\", \"5701\"]", wkt);
+        Assert.Contains("AUTHORITY[\"EPSG\", \"5701\"]", wkt, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -157,7 +164,7 @@ public class VerticalCoordinateSystemTests
     {
         string wkt = VerticalCoordinateSystem.ODN.WKT;
 
-        Assert.DoesNotContain("AXIS[", wkt);
+        Assert.DoesNotContain("AXIS[", wkt, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -170,11 +177,16 @@ public class VerticalCoordinateSystemTests
             LinearUnit.Metre,
             VerticalDatum.ODN,
             new AxisInfo("Height", AxisOrientationEnum.North),
-            "Custom", string.Empty, -1, string.Empty, string.Empty, string.Empty);
+            "Custom",
+            string.Empty,
+            -1,
+            string.Empty,
+            string.Empty,
+            string.Empty);
 
         string wkt = vcs.WKT;
 
-        Assert.Contains("AXIS[", wkt);
+        Assert.Contains("AXIS[", wkt, StringComparison.Ordinal);
     }
 
     // ---- XML ----
@@ -187,10 +199,10 @@ public class VerticalCoordinateSystemTests
     {
         string xml = VerticalCoordinateSystem.ODN.XML;
 
-        Assert.Contains("CS_CoordinateSystem", xml);
-        Assert.Contains("CS_VerticalCoordinateSystem", xml);
-        Assert.Contains("CS_VerticalDatum", xml);
-        Assert.Contains("CS_LinearUnit", xml);
+        Assert.Contains("CS_CoordinateSystem", xml, StringComparison.Ordinal);
+        Assert.Contains("CS_VerticalCoordinateSystem", xml, StringComparison.Ordinal);
+        Assert.Contains("CS_VerticalDatum", xml, StringComparison.Ordinal);
+        Assert.Contains("CS_LinearUnit", xml, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -201,7 +213,7 @@ public class VerticalCoordinateSystemTests
     {
         string xml = VerticalCoordinateSystem.ODN.XML;
 
-        Assert.Contains("Dimension=\"1\"", xml);
+        Assert.Contains("Dimension=\"1\"", xml, StringComparison.Ordinal);
     }
 
     // ---- EqualParams ----
@@ -229,7 +241,12 @@ public class VerticalCoordinateSystemTests
             LinearUnit.Foot,
             VerticalDatum.ODN,
             new AxisInfo("Up", AxisOrientationEnum.Up),
-            "Newlyn", "EPSG", 5701, string.Empty, string.Empty, string.Empty);
+            "Newlyn",
+            "EPSG",
+            5701,
+            string.Empty,
+            string.Empty,
+            string.Empty);
 
         Assert.False(a.EqualParams(b));
     }
@@ -265,8 +282,13 @@ public class VerticalCoordinateSystemTests
     {
         VerticalCoordinateSystem vcs = VerticalCoordinateSystem.ODN;
         var newDatum = new VerticalDatum(
-            DatumType.VD_GeoidModelDerived, "Custom", "TEST", 9999,
-            string.Empty, string.Empty, string.Empty);
+            DatumType.VD_GeoidModelDerived,
+            "Custom",
+            "TEST",
+            9999,
+            string.Empty,
+            string.Empty,
+            string.Empty);
         vcs.VerticalDatum = newDatum;
 
         Assert.Same(newDatum, vcs.VerticalDatum);

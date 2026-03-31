@@ -94,9 +94,9 @@ public class UnitTests
     {
         string wkt = LinearUnit.Metre.WKT;
 
-        Assert.Contains("UNIT[", wkt);
-        Assert.Contains("\"metre\"", wkt);
-        Assert.Contains("1", wkt);
+        Assert.Contains("UNIT[", wkt, StringComparison.Ordinal);
+        Assert.Contains("\"metre\"", wkt, StringComparison.Ordinal);
+        Assert.Contains("1", wkt, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -107,7 +107,7 @@ public class UnitTests
     {
         string wkt = LinearUnit.Metre.WKT;
 
-        Assert.Contains("AUTHORITY[\"EPSG\", \"9001\"]", wkt);
+        Assert.Contains("AUTHORITY[\"EPSG\", \"9001\"]", wkt, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -119,7 +119,7 @@ public class UnitTests
         var unit = new LinearUnit(1.0, "test", string.Empty, -1, string.Empty, string.Empty, string.Empty);
         string wkt = unit.WKT;
 
-        Assert.DoesNotContain("AUTHORITY", wkt);
+        Assert.DoesNotContain("AUTHORITY", wkt, StringComparison.Ordinal);
     }
 
     // ---- LinearUnit XML ----
@@ -132,8 +132,8 @@ public class UnitTests
     {
         string xml = LinearUnit.Metre.XML;
 
-        Assert.Contains("CS_LinearUnit", xml);
-        Assert.Contains("MetersPerUnit=\"1\"", xml);
+        Assert.Contains("CS_LinearUnit", xml, StringComparison.Ordinal);
+        Assert.Contains("MetersPerUnit=\"1\"", xml, StringComparison.Ordinal);
     }
 
     // ---- LinearUnit EqualParams ----
@@ -241,8 +241,8 @@ public class UnitTests
     {
         string wkt = AngularUnit.Degrees.WKT;
 
-        Assert.Contains("UNIT[", wkt);
-        Assert.Contains("\"degree\"", wkt);
+        Assert.Contains("UNIT[", wkt, StringComparison.Ordinal);
+        Assert.Contains("\"degree\"", wkt, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -253,7 +253,7 @@ public class UnitTests
     {
         string wkt = AngularUnit.Degrees.WKT;
 
-        Assert.Contains("AUTHORITY[\"EPSG\", \"9102\"]", wkt);
+        Assert.Contains("AUTHORITY[\"EPSG\", \"9102\"]", wkt, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -265,7 +265,7 @@ public class UnitTests
         var unit = new AngularUnit(0.5);
         string wkt = unit.WKT;
 
-        Assert.DoesNotContain("AUTHORITY", wkt);
+        Assert.DoesNotContain("AUTHORITY", wkt, StringComparison.Ordinal);
     }
 
     // ---- AngularUnit XML ----
@@ -278,8 +278,8 @@ public class UnitTests
     {
         string xml = AngularUnit.Radian.XML;
 
-        Assert.Contains("CS_AngularUnit", xml);
-        Assert.Contains("RadiansPerUnit=\"1\"", xml);
+        Assert.Contains("CS_AngularUnit", xml, StringComparison.Ordinal);
+        Assert.Contains("RadiansPerUnit=\"1\"", xml, StringComparison.Ordinal);
     }
 
     // ---- AngularUnit EqualParams ----

@@ -747,7 +747,6 @@ public class ProjectionCoverageTests
     // ------------------------------------------------------------------
     //  WKT builder and helpers
     // ------------------------------------------------------------------
-
     private static string BuildProjectedWkt(string projectionName, string spheroidClause, double latitudeOfOrigin, double centralMeridian, string? extraParameters)
     {
         return FormattableString.Invariant(

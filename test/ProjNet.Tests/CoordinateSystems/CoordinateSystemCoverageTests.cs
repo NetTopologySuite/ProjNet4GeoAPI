@@ -72,7 +72,7 @@ public class CoordinateSystemCoverageTests
         GeocentricCoordinateSystem gcs = Factory.CreateGeocentricCoordinateSystem(
             "WGS84 Geocentric", HorizontalDatum.WGS84, LinearUnit.Metre, PrimeMeridian.Greenwich);
 
-        Assert.StartsWith("GEOCCS[\"WGS84 Geocentric\"", gcs.WKT);
+        Assert.StartsWith("GEOCCS[\"WGS84 Geocentric\"", gcs.WKT, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -85,9 +85,9 @@ public class CoordinateSystemCoverageTests
             "WGS84 Geocentric", HorizontalDatum.WGS84, LinearUnit.Metre, PrimeMeridian.Greenwich);
         string wkt = gcs.WKT;
 
-        Assert.Contains("DATUM[", wkt);
-        Assert.Contains("PRIMEM[", wkt);
-        Assert.Contains("UNIT[", wkt);
+        Assert.Contains("DATUM[", wkt, StringComparison.Ordinal);
+        Assert.Contains("PRIMEM[", wkt, StringComparison.Ordinal);
+        Assert.Contains("UNIT[", wkt, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -100,10 +100,10 @@ public class CoordinateSystemCoverageTests
             "WGS84 Geocentric", HorizontalDatum.WGS84, LinearUnit.Metre, PrimeMeridian.Greenwich);
         string xml = gcs.XML;
 
-        Assert.Contains("CS_GeocentricCoordinateSystem", xml);
-        Assert.Contains("CS_HorizontalDatum", xml);
-        Assert.Contains("CS_LinearUnit", xml);
-        Assert.Contains("CS_PrimeMeridian", xml);
+        Assert.Contains("CS_GeocentricCoordinateSystem", xml, StringComparison.Ordinal);
+        Assert.Contains("CS_HorizontalDatum", xml, StringComparison.Ordinal);
+        Assert.Contains("CS_LinearUnit", xml, StringComparison.Ordinal);
+        Assert.Contains("CS_PrimeMeridian", xml, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -115,7 +115,7 @@ public class CoordinateSystemCoverageTests
         GeocentricCoordinateSystem gcs = Factory.CreateGeocentricCoordinateSystem(
             "WGS84 Geocentric", HorizontalDatum.WGS84, LinearUnit.Metre, PrimeMeridian.Greenwich);
 
-        Assert.Contains("Dimension=\"3\"", gcs.XML);
+        Assert.Contains("Dimension=\"3\"", gcs.XML, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -310,9 +310,9 @@ public class CoordinateSystemCoverageTests
             "WGS84 + ODN", geoCs, vertCs);
         string wkt = compound.WKT;
 
-        Assert.StartsWith("COMPD_CS[\"WGS84 + ODN\"", wkt);
-        Assert.Contains("GEOGCS[", wkt);
-        Assert.Contains("VERT_CS[", wkt);
+        Assert.StartsWith("COMPD_CS[\"WGS84 + ODN\"", wkt, StringComparison.Ordinal);
+        Assert.Contains("GEOGCS[", wkt, StringComparison.Ordinal);
+        Assert.Contains("VERT_CS[", wkt, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -328,8 +328,8 @@ public class CoordinateSystemCoverageTests
             "WGS84 + ODN", geoCs, vertCs);
         string xml = compound.XML;
 
-        Assert.Contains("CS_CompoundCoordinateSystem", xml);
-        Assert.Contains("CS_CoordinateSystem", xml);
+        Assert.Contains("CS_CompoundCoordinateSystem", xml, StringComparison.Ordinal);
+        Assert.Contains("CS_CoordinateSystem", xml, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -386,9 +386,15 @@ public class CoordinateSystemCoverageTests
     {
         VerticalCoordinateSystem tailA = VerticalCoordinateSystem.ODN;
         var tailB = new VerticalCoordinateSystem(
-            LinearUnit.Foot, VerticalDatum.ODN,
+            LinearUnit.Foot,
+            VerticalDatum.ODN,
             new AxisInfo("Up", AxisOrientationEnum.Up),
-            "Different", string.Empty, -1, string.Empty, string.Empty, string.Empty);
+            "Different",
+            string.Empty,
+            -1,
+            string.Empty,
+            string.Empty,
+            string.Empty);
 
         CompoundCoordinateSystem a = Factory.CreateCompoundCoordinateSystem(
             "CS1", GeographicCoordinateSystem.WGS84, tailA);
@@ -420,9 +426,15 @@ public class CoordinateSystemCoverageTests
             "WGS84+ODN", GeographicCoordinateSystem.WGS84, VerticalCoordinateSystem.ODN);
 
         var newTail = new VerticalCoordinateSystem(
-            LinearUnit.Foot, VerticalDatum.ODN,
+            LinearUnit.Foot,
+            VerticalDatum.ODN,
             new AxisInfo("Up", AxisOrientationEnum.Up),
-            "Foot", string.Empty, -1, string.Empty, string.Empty, string.Empty);
+            "Foot",
+            string.Empty,
+            -1,
+            string.Empty,
+            string.Empty,
+            string.Empty);
 
         compound.TailCoordinateSystem = newTail;
 
@@ -482,7 +494,8 @@ public class CoordinateSystemCoverageTests
         };
 
         FittedCoordinateSystem fitted = Factory.CreateFittedCoordinateSystem(
-            "Fitted WGS84", baseCs,
+            "Fitted WGS84",
+            baseCs,
             "PARAM_MT[\"Affine\", PARAMETER[\"num_row\", 3], PARAMETER[\"num_col\", 3], PARAMETER[\"elt_0_0\", 1], PARAMETER[\"elt_0_1\", 0], PARAMETER[\"elt_0_2\", 0], PARAMETER[\"elt_1_0\", 0], PARAMETER[\"elt_1_1\", 1], PARAMETER[\"elt_1_2\", 0], PARAMETER[\"elt_2_0\", 0], PARAMETER[\"elt_2_1\", 0], PARAMETER[\"elt_2_2\", 1]]",
             axes);
 
@@ -504,7 +517,8 @@ public class CoordinateSystemCoverageTests
         };
 
         FittedCoordinateSystem fitted = Factory.CreateFittedCoordinateSystem(
-            "Fitted WGS84", baseCs,
+            "Fitted WGS84",
+            baseCs,
             "PARAM_MT[\"Affine\", PARAMETER[\"num_row\", 3], PARAMETER[\"num_col\", 3], PARAMETER[\"elt_0_0\", 1], PARAMETER[\"elt_0_1\", 0], PARAMETER[\"elt_0_2\", 0], PARAMETER[\"elt_1_0\", 0], PARAMETER[\"elt_1_1\", 1], PARAMETER[\"elt_1_2\", 0], PARAMETER[\"elt_2_0\", 0], PARAMETER[\"elt_2_1\", 0], PARAMETER[\"elt_2_2\", 1]]",
             axes);
 
@@ -525,7 +539,8 @@ public class CoordinateSystemCoverageTests
         };
 
         FittedCoordinateSystem fitted = Factory.CreateFittedCoordinateSystem(
-            "Fitted WGS84", baseCs,
+            "Fitted WGS84",
+            baseCs,
             "PARAM_MT[\"Affine\", PARAMETER[\"num_row\", 3], PARAMETER[\"num_col\", 3], PARAMETER[\"elt_0_0\", 1], PARAMETER[\"elt_0_1\", 0], PARAMETER[\"elt_0_2\", 0], PARAMETER[\"elt_1_0\", 0], PARAMETER[\"elt_1_1\", 1], PARAMETER[\"elt_1_2\", 0], PARAMETER[\"elt_2_0\", 0], PARAMETER[\"elt_2_1\", 0], PARAMETER[\"elt_2_2\", 1]]",
             axes);
 
@@ -546,7 +561,8 @@ public class CoordinateSystemCoverageTests
         };
 
         FittedCoordinateSystem fitted = Factory.CreateFittedCoordinateSystem(
-            "Fitted WGS84", baseCs,
+            "Fitted WGS84",
+            baseCs,
             "PARAM_MT[\"Affine\", PARAMETER[\"num_row\", 3], PARAMETER[\"num_col\", 3], PARAMETER[\"elt_0_0\", 1], PARAMETER[\"elt_0_1\", 0], PARAMETER[\"elt_0_2\", 0], PARAMETER[\"elt_1_0\", 0], PARAMETER[\"elt_1_1\", 1], PARAMETER[\"elt_1_2\", 0], PARAMETER[\"elt_2_0\", 0], PARAMETER[\"elt_2_1\", 0], PARAMETER[\"elt_2_2\", 1]]",
             axes);
 
@@ -570,13 +586,14 @@ public class CoordinateSystemCoverageTests
         };
 
         FittedCoordinateSystem fitted = Factory.CreateFittedCoordinateSystem(
-            "Fitted WGS84", baseCs,
+            "Fitted WGS84",
+            baseCs,
             "PARAM_MT[\"Affine\", PARAMETER[\"num_row\", 3], PARAMETER[\"num_col\", 3], PARAMETER[\"elt_0_0\", 1], PARAMETER[\"elt_0_1\", 0], PARAMETER[\"elt_0_2\", 0], PARAMETER[\"elt_1_0\", 0], PARAMETER[\"elt_1_1\", 1], PARAMETER[\"elt_1_2\", 0], PARAMETER[\"elt_2_0\", 0], PARAMETER[\"elt_2_1\", 0], PARAMETER[\"elt_2_2\", 1]]",
             axes);
         string wkt = fitted.WKT;
 
-        Assert.StartsWith("FITTED_CS[\"Fitted WGS84\"", wkt);
-        Assert.Contains("GEOGCS[", wkt);
+        Assert.StartsWith("FITTED_CS[\"Fitted WGS84\"", wkt, StringComparison.Ordinal);
+        Assert.Contains("GEOGCS[", wkt, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -593,7 +610,8 @@ public class CoordinateSystemCoverageTests
         };
 
         FittedCoordinateSystem fitted = Factory.CreateFittedCoordinateSystem(
-            "Fitted WGS84", baseCs,
+            "Fitted WGS84",
+            baseCs,
             "PARAM_MT[\"Affine\", PARAMETER[\"num_row\", 3], PARAMETER[\"num_col\", 3], PARAMETER[\"elt_0_0\", 1], PARAMETER[\"elt_0_1\", 0], PARAMETER[\"elt_0_2\", 0], PARAMETER[\"elt_1_0\", 0], PARAMETER[\"elt_1_1\", 1], PARAMETER[\"elt_1_2\", 0], PARAMETER[\"elt_2_0\", 0], PARAMETER[\"elt_2_1\", 0], PARAMETER[\"elt_2_2\", 1]]",
             axes);
 
@@ -616,7 +634,8 @@ public class CoordinateSystemCoverageTests
         };
 
         FittedCoordinateSystem fitted = Factory.CreateFittedCoordinateSystem(
-            "Fitted WGS84", baseCs,
+            "Fitted WGS84",
+            baseCs,
             "PARAM_MT[\"Affine\", PARAMETER[\"num_row\", 3], PARAMETER[\"num_col\", 3], PARAMETER[\"elt_0_0\", 1], PARAMETER[\"elt_0_1\", 0], PARAMETER[\"elt_0_2\", 0], PARAMETER[\"elt_1_0\", 0], PARAMETER[\"elt_1_1\", 1], PARAMETER[\"elt_1_2\", 0], PARAMETER[\"elt_2_0\", 0], PARAMETER[\"elt_2_1\", 0], PARAMETER[\"elt_2_2\", 1]]",
             axes);
 
@@ -659,7 +678,8 @@ public class CoordinateSystemCoverageTests
         };
 
         FittedCoordinateSystem fitted = Factory.CreateFittedCoordinateSystem(
-            "Fitted WGS84", baseCs,
+            "Fitted WGS84",
+            baseCs,
             "PARAM_MT[\"Affine\", PARAMETER[\"num_row\", 3], PARAMETER[\"num_col\", 3], PARAMETER[\"elt_0_0\", 1], PARAMETER[\"elt_0_1\", 0], PARAMETER[\"elt_0_2\", 0], PARAMETER[\"elt_1_0\", 0], PARAMETER[\"elt_1_1\", 1], PARAMETER[\"elt_1_2\", 0], PARAMETER[\"elt_2_0\", 0], PARAMETER[\"elt_2_1\", 0], PARAMETER[\"elt_2_2\", 1]]",
             axes);
 
@@ -782,8 +802,8 @@ public class CoordinateSystemCoverageTests
     {
         string wkt = PrimeMeridian.Greenwich.WKT;
 
-        Assert.StartsWith("PRIMEM[\"Greenwich\"", wkt);
-        Assert.Contains("AUTHORITY[\"EPSG\", \"8901\"]", wkt);
+        Assert.StartsWith("PRIMEM[\"Greenwich\"", wkt, StringComparison.Ordinal);
+        Assert.Contains("AUTHORITY[\"EPSG\", \"8901\"]", wkt, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -794,8 +814,8 @@ public class CoordinateSystemCoverageTests
     {
         string xml = PrimeMeridian.Greenwich.XML;
 
-        Assert.Contains("CS_PrimeMeridian", xml);
-        Assert.Contains("Longitude=\"0\"", xml);
+        Assert.Contains("CS_PrimeMeridian", xml, StringComparison.Ordinal);
+        Assert.Contains("Longitude=\"0\"", xml, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -889,8 +909,8 @@ public class CoordinateSystemCoverageTests
     {
         string wkt = PrimeMeridian.Paris.WKT;
 
-        Assert.Contains("Paris", wkt);
-        Assert.Contains("2.5969213", wkt);
+        Assert.Contains("Paris", wkt, StringComparison.Ordinal);
+        Assert.Contains("2.5969213", wkt, StringComparison.Ordinal);
     }
 
     /// <summary>
@@ -901,8 +921,8 @@ public class CoordinateSystemCoverageTests
     {
         string xml = PrimeMeridian.Rome.XML;
 
-        Assert.Contains("CS_PrimeMeridian", xml);
-        Assert.Contains("12.27084", xml);
+        Assert.Contains("CS_PrimeMeridian", xml, StringComparison.Ordinal);
+        Assert.Contains("12.27084", xml, StringComparison.Ordinal);
     }
 
     // ========================================================================
@@ -1108,7 +1128,7 @@ public class CoordinateSystemCoverageTests
 
         IProjection projection = Factory.CreateProjection("test", "transverse_mercator", parameters);
 
-        ProjectionParameter param = projection.GetParameter("central_meridian");
+        ProjectionParameter param = projection.GetParameter("central_meridian")!;
         Assert.Equal(-93.0, param.Value);
     }
 

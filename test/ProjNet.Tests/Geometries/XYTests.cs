@@ -29,7 +29,7 @@ public class XYTests
     [Fact]
     public void XY_DefaultConstructor_InitializesToZero()
     {
-        var xy = new XY();
+        XY xy = default;
 
         Assert.Equal(0.0, xy.X);
         Assert.Equal(0.0, xy.Y);
@@ -209,7 +209,7 @@ public class XYTests
     [Fact]
     public void XYZ_DefaultConstructor_InitializesToZero()
     {
-        var xyz = new XYZ();
+        XYZ xyz = default;
 
         Assert.Equal(0.0, xyz.X);
         Assert.Equal(0.0, xyz.Y);

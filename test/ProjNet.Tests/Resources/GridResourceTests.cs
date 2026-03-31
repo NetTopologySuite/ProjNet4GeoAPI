@@ -33,12 +33,13 @@ public class GridResourceTests
     /// <summary>
     /// Verifies that <see cref="NoOpGridResourceFetchClient.TryFetchAsync"/> always returns <see langword="false"/>.
     /// </summary>
+    /// <returns>A <see cref="Task"/> representing the asynchronous test operation.</returns>
     [Fact]
     public async Task NoOpFetchClient_TryFetchAsync_ReturnsFalse()
     {
         var client = new NoOpGridResourceFetchClient();
 
-        bool result = await client.TryFetchAsync("some-grid.gsb", @"C:\target\some-grid.gsb");
+        bool result = await client.TryFetchAsync("some-grid.gsb", @"C:\target\some-grid.gsb", TestContext.Current.CancellationToken);
 
         Assert.False(result);
     }
@@ -46,6 +47,8 @@ public class GridResourceTests
     /// <summary>
     /// Verifies that <see cref="NoOpGridResourceFetchClient.TryFetchAsync"/> returns false regardless of grid name.
     /// </summary>
+    /// <param name="gridName">The grid name passed to the fetch client.</param>
+    /// <returns>A <see cref="Task"/> representing the asynchronous test operation.</returns>
     [Theory]
     [InlineData("grid1.gsb")]
     [InlineData("grid2.tif")]
@@ -54,7 +57,7 @@ public class GridResourceTests
     {
         var client = new NoOpGridResourceFetchClient();
 
-        bool result = await client.TryFetchAsync(gridName, "target-path");
+        bool result = await client.TryFetchAsync(gridName, "target-path", TestContext.Current.CancellationToken);
 
         Assert.False(result);
     }
@@ -62,6 +65,7 @@ public class GridResourceTests
     /// <summary>
     /// Verifies that <see cref="NoOpGridResourceFetchClient.TryFetchAsync"/> completes synchronously.
     /// </summary>
+    /// <returns>A <see cref="Task"/> representing the asynchronous test operation.</returns>
     [Fact]
     public async Task NoOpFetchClient_TryFetchAsync_WithCancellationToken_CompletesSynchronously()
     {
@@ -71,7 +75,9 @@ public class GridResourceTests
         Task<bool> task = client.TryFetchAsync("grid.gsb", "path", cts.Token);
 
         Assert.True(task.IsCompleted);
+#pragma warning disable CA2007 // Consider calling ConfigureAwait on the awaited task — test code
         Assert.False(await task);
+#pragma warning restore CA2007
     }
 
     // ---- GridResourceResolver async tests ----
@@ -79,6 +85,7 @@ public class GridResourceTests
     /// <summary>
     /// Verifies that <see cref="GridResourceResolver.TryResolveAsync"/> returns the path when a local file exists.
     /// </summary>
+    /// <returns>A <see cref="Task"/> representing the asynchronous test operation.</returns>
     [Fact]
     public async Task TryResolveAsync_WithLocalFile_ReturnsPath()
     {
@@ -86,13 +93,13 @@ public class GridResourceTests
         try
         {
             string localGridPath = Path.Combine(localDirectory, "sample.gsb");
-            File.WriteAllText(localGridPath, "local-grid");
+            await File.WriteAllTextAsync(localGridPath, "local-grid", TestContext.Current.CancellationToken);
 
             var options = new GridResourceResolverOptions(
                 [localDirectory], null, GridResourceResolutionMode.LocalOnly);
             var resolver = new GridResourceResolver(options, new NoOpGridResourceFetchClient());
 
-            string? resolvedPath = await resolver.TryResolveAsync("sample.gsb");
+            string? resolvedPath = await resolver.TryResolveAsync("sample.gsb", TestContext.Current.CancellationToken);
 
             Assert.NotNull(resolvedPath);
             Assert.Equal(localGridPath, resolvedPath);
@@ -106,6 +113,7 @@ public class GridResourceTests
     /// <summary>
     /// Verifies that <see cref="GridResourceResolver.TryResolveAsync"/> returns null when no file exists.
     /// </summary>
+    /// <returns>A <see cref="Task"/> representing the asynchronous test operation.</returns>
     [Fact]
     public async Task TryResolveAsync_WithNoFile_ReturnsNull()
     {
@@ -116,7 +124,7 @@ public class GridResourceTests
                 [localDirectory], null, GridResourceResolutionMode.LocalOnly);
             var resolver = new GridResourceResolver(options, new NoOpGridResourceFetchClient());
 
-            string? resolvedPath = await resolver.TryResolveAsync("missing.gsb");
+            string? resolvedPath = await resolver.TryResolveAsync("missing.gsb", TestContext.Current.CancellationToken);
 
             Assert.Null(resolvedPath);
         }
@@ -129,6 +137,7 @@ public class GridResourceTests
     /// <summary>
     /// Verifies that <see cref="GridResourceResolver.TryResolveAsync"/> with cancellation token completes normally.
     /// </summary>
+    /// <returns>A <see cref="Task"/> representing the asynchronous test operation.</returns>
     [Fact]
     public async Task TryResolveAsync_WithCancellationToken_Completes()
     {
@@ -136,14 +145,13 @@ public class GridResourceTests
         try
         {
             string localGridPath = Path.Combine(localDirectory, "test.gsb");
-            await File.WriteAllTextAsync(localGridPath, "data");
+            await File.WriteAllTextAsync(localGridPath, "data", TestContext.Current.CancellationToken);
 
             var options = new GridResourceResolverOptions(
                 [localDirectory], null, GridResourceResolutionMode.LocalOnly);
             var resolver = new GridResourceResolver(options, new NoOpGridResourceFetchClient());
 
-            using var cts = new CancellationTokenSource();
-            string? resolvedPath = await resolver.TryResolveAsync("test.gsb", cts.Token);
+            string? resolvedPath = await resolver.TryResolveAsync("test.gsb", TestContext.Current.CancellationToken);
 
             Assert.NotNull(resolvedPath);
         }
