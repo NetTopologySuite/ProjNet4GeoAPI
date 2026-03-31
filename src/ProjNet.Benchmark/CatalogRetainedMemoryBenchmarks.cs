@@ -17,7 +17,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// This benchmark complements MemoryDiagnoser allocation metrics with a coarse retained-heap delta.
 /// </remarks>
 [SuppressMessage("Maintainability", "CA1515:Consider making public types internal", Justification = "Benchmark entry types are intentionally public for explicit invocation from Program and benchmark tooling stability.")]
-[SuppressMessage("Design", "CA1052:Static holder types should be static", Justification = "BenchmarkDotNet requires a non-static benchmark class type for discovery.")]
 [MemoryDiagnoser]
 [SimpleJob(RunStrategy.ColdStart, launchCount: 12, warmupCount: 0, iterationCount: 1)]
 public class CatalogRetainedMemoryBenchmarks
@@ -27,7 +26,7 @@ public class CatalogRetainedMemoryBenchmarks
     /// </summary>
     /// <returns>Estimated retained managed bytes after first lookup.</returns>
     [Benchmark(Baseline = true)]
-    public static long ManagedHeapIncreaseAfterFirstTransformationLookup()
+    public long ManagedHeapIncreaseAfterFirstTransformationLookup()
     {
         ForceFullCollection();
         long before = GC.GetTotalMemory(forceFullCollection: true);

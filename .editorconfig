@@ -32,3 +32,6 @@ dotnet_diagnostic.CA1707.severity = none
 [src/ProjNet/CoordinateSystems/Projections/AiroceanProjection.cs]
 dotnet_diagnostic.SA1117.severity = none
 dotnet_diagnostic.SA1201.severity = none
+
+[{src/ProjNet.Benchmark/*.cs,src/ProjNet.Benchmark/**/*.cs}]
+dotnet_diagnostic.CA1822.severity = none

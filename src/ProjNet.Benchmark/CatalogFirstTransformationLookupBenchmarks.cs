@@ -14,7 +14,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Measures cold-start latency for first-time EPSG operation-resolution paths that can touch operation catalogs.
 /// </summary>
 [SuppressMessage("Maintainability", "CA1515:Consider making public types internal", Justification = "Benchmark entry types are intentionally public for explicit invocation from Program and benchmark tooling stability.")]
-[SuppressMessage("Design", "CA1052:Static holder types should be static", Justification = "BenchmarkDotNet requires a non-static benchmark class type for discovery.")]
 [MemoryDiagnoser]
 [SimpleJob(RunStrategy.ColdStart, launchCount: 12, warmupCount: 0, iterationCount: 1)]
 public class CatalogFirstTransformationLookupBenchmarks
@@ -24,7 +23,7 @@ public class CatalogFirstTransformationLookupBenchmarks
     /// </summary>
     /// <returns>The resolved transformation.</returns>
     [Benchmark(Baseline = true)]
-    public static ICoordinateTransformation FirstCreateTransformation4326To3857()
+    public ICoordinateTransformation FirstCreateTransformation4326To3857()
     {
         var services = new CoordinateSystemServices();
         ICoordinateTransformation? transformation = services.CreateTransformation(4326, 3857);
