@@ -355,7 +355,9 @@ public class GieBuiltinsTheoryTests
         }
 
         double[]? output = null;
-        if (TryCreateConversionTransform(rawCase.Operation, out Func<double[], double[]>? conversionTransform, out string? conversionSkipReason))
+        string? conversionSkipReason = null;
+        bool isGeographicDatumShift = HasGeographicDatumShift(rawCase.Operation);
+        if (!isGeographicDatumShift && TryCreateConversionTransform(rawCase.Operation, out Func<double[], double[]>? conversionTransform, out conversionSkipReason))
         {
             Func<double[], double[]> transform = Assert.IsType<Func<double[], double[]>>(conversionTransform);
             try
@@ -497,18 +499,6 @@ public class GieBuiltinsTheoryTests
             return false;
         }
 
-        if (!ProjectionClassByProjCode.TryGetValue(projCode, out string? projectionClass))
-        {
-            skipReason = $"Projection '{projCode}' is not part of the current builtins wave.";
-            return false;
-        }
-
-        if (testCase.Direction == GieDirection.Inverse && ProjectionsWithoutInverse.Contains(projCode))
-        {
-            skipReason = $"Projection '{projCode}' has no inverse in PROJ and is skipped for inverse direction.";
-            return false;
-        }
-
         if (ContainsUnsupportedRuntimeTokens(args))
         {
             skipReason = "Operation uses runtime features not included in this builtins wave.";
@@ -522,6 +512,60 @@ public class GieBuiltinsTheoryTests
         }
 
         GeographicCoordinateSystem geographicCoordinateSystem = Assert.IsType<GeographicCoordinateSystem>(gcs);
+
+        // Handle proj=latlong/longlat as a geographic-to-geographic datum shift when +towgs84 is present.
+        if (projCode.Equals("latlong", StringComparison.OrdinalIgnoreCase)
+            || projCode.Equals("longlat", StringComparison.OrdinalIgnoreCase)
+            || projCode.Equals("latlon", StringComparison.OrdinalIgnoreCase)
+            || projCode.Equals("lonlat", StringComparison.OrdinalIgnoreCase))
+        {
+            if (!args.ContainsKey("towgs84"))
+            {
+                skipReason = "Geographic identity operation (no datum shift) is not testable.";
+                return false;
+            }
+
+            try
+            {
+                HorizontalDatum wgs84Datum = CoordinateSystemFactory.CreateHorizontalDatum(
+                    "WGS84", DatumType.HD_Geocentric, Ellipsoid.WGS84, null);
+                GeographicCoordinateSystem wgs84Gcs = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+                    "WGS84 GCS",
+                    AngularUnit.Degrees,
+                    wgs84Datum,
+                    PrimeMeridian.Greenwich,
+                    new AxisInfo("Lon", AxisOrientationEnum.East),
+                    new AxisInfo("Lat", AxisOrientationEnum.North));
+
+                transform = testCase.Direction == GieDirection.Forward
+                    ? CoordinateTransformationFactory.CreateFromCoordinateSystems(wgs84Gcs, geographicCoordinateSystem).MathTransform
+                    : CoordinateTransformationFactory.CreateFromCoordinateSystems(geographicCoordinateSystem, wgs84Gcs).MathTransform;
+                return true;
+            }
+            catch (ArgumentException)
+            {
+                skipReason = "Datum shift could not be created with the parsed parameter set.";
+                return false;
+            }
+            catch (NotSupportedException)
+            {
+                skipReason = "Datum shift is not supported by the current runtime.";
+                return false;
+            }
+        }
+
+        if (!ProjectionClassByProjCode.TryGetValue(projCode, out string? projectionClass))
+        {
+            skipReason = $"Projection '{projCode}' is not part of the current builtins wave.";
+            return false;
+        }
+
+        if (testCase.Direction == GieDirection.Inverse && ProjectionsWithoutInverse.Contains(projCode))
+        {
+            skipReason = $"Projection '{projCode}' has no inverse in PROJ and is skipped for inverse direction.";
+            return false;
+        }
+
         if (!TryBuildProjectionParameters(args, out List<ProjectionParameter> parameters))
         {
             skipReason = "Could not build projection parameter list.";
@@ -550,9 +594,23 @@ public class GieBuiltinsTheoryTests
                 new AxisInfo("East", AxisOrientationEnum.East),
                 new AxisInfo("North", AxisOrientationEnum.North));
 
+            GeographicCoordinateSystem sourceGcs = geographicCoordinateSystem;
+            if (args.ContainsKey("towgs84"))
+            {
+                HorizontalDatum wgs84Datum = CoordinateSystemFactory.CreateHorizontalDatum(
+                    "WGS84", DatumType.HD_Geocentric, Ellipsoid.WGS84, null);
+                sourceGcs = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+                    "WGS84 GCS",
+                    AngularUnit.Degrees,
+                    wgs84Datum,
+                    PrimeMeridian.Greenwich,
+                    new AxisInfo("Lon", AxisOrientationEnum.East),
+                    new AxisInfo("Lat", AxisOrientationEnum.North));
+            }
+
             transform = testCase.Direction == GieDirection.Forward
-                ? CoordinateTransformationFactory.CreateFromCoordinateSystems(geographicCoordinateSystem, pcs).MathTransform
-                : CoordinateTransformationFactory.CreateFromCoordinateSystems(pcs, geographicCoordinateSystem).MathTransform;
+                ? CoordinateTransformationFactory.CreateFromCoordinateSystems(sourceGcs, pcs).MathTransform
+                : CoordinateTransformationFactory.CreateFromCoordinateSystems(pcs, sourceGcs).MathTransform;
             return true;
         }
         catch (ArgumentException)
@@ -731,7 +789,30 @@ public class GieBuiltinsTheoryTests
         }
 
         Ellipsoid geographicEllipsoid = Assert.IsType<Ellipsoid>(ellipsoid);
-        HorizontalDatum datum = CoordinateSystemFactory.CreateHorizontalDatum("GIE datum", DatumType.HD_Geocentric, geographicEllipsoid, null);
+
+        Wgs84ConversionInfo? toWgs84 = null;
+        if (args.TryGetValue("towgs84", out string? towgs84Value) && !string.IsNullOrEmpty(towgs84Value))
+        {
+            string[] parts = towgs84Value.Split(',');
+            if (parts.Length >= 3
+                && double.TryParse(parts[0], NumberStyles.Float, CultureInfo.InvariantCulture, out double dx)
+                && double.TryParse(parts[1], NumberStyles.Float, CultureInfo.InvariantCulture, out double dy)
+                && double.TryParse(parts[2], NumberStyles.Float, CultureInfo.InvariantCulture, out double dz))
+            {
+                double rx = 0, ry = 0, rz = 0, ppm = 0;
+                if (parts.Length >= 7)
+                {
+                    double.TryParse(parts[3], NumberStyles.Float, CultureInfo.InvariantCulture, out rx);
+                    double.TryParse(parts[4], NumberStyles.Float, CultureInfo.InvariantCulture, out ry);
+                    double.TryParse(parts[5], NumberStyles.Float, CultureInfo.InvariantCulture, out rz);
+                    double.TryParse(parts[6], NumberStyles.Float, CultureInfo.InvariantCulture, out ppm);
+                }
+
+                toWgs84 = new Wgs84ConversionInfo(dx, dy, dz, rx, ry, rz, ppm);
+            }
+        }
+
+        HorizontalDatum datum = CoordinateSystemFactory.CreateHorizontalDatum("GIE datum", DatumType.HD_Geocentric, geographicEllipsoid, toWgs84);
         gcs = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "GIE geographic",
             AngularUnit.Degrees,
@@ -1511,5 +1592,29 @@ public class GieBuiltinsTheoryTests
         }
 
         return unit.Equals("nm", StringComparison.OrdinalIgnoreCase) ? value * 1e-9d : value;
+    }
+
+    private static bool HasGeographicDatumShift(string operation)
+    {
+        if (!operation.Contains("towgs84", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        string[] tokens = operation.Split(OperationTokenSeparators, StringSplitOptions.RemoveEmptyEntries);
+        for (int i = 0; i < tokens.Length; i++)
+        {
+            string token = tokens[i].StartsWith('+') ? tokens[i][1..] : tokens[i];
+            if (token.StartsWith("proj=", StringComparison.OrdinalIgnoreCase))
+            {
+                string projCode = token["proj=".Length..];
+                return projCode.Equals("latlong", StringComparison.OrdinalIgnoreCase)
+                    || projCode.Equals("longlat", StringComparison.OrdinalIgnoreCase)
+                    || projCode.Equals("latlon", StringComparison.OrdinalIgnoreCase)
+                    || projCode.Equals("lonlat", StringComparison.OrdinalIgnoreCase);
+            }
+        }
+
+        return false;
     }
 }
