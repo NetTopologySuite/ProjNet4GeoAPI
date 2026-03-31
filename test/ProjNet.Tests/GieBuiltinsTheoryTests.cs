@@ -97,6 +97,7 @@ public class GieBuiltinsTheoryTests
         ["mbtfpq"] = "mcbryde_thomas_flat_polar_quartic",
         ["mbt_fps"] = "mcbryde_thomas_flat_pole_sine",
         ["tcc"] = "transverse_central_cylindrical",
+        ["tcea"] = "transverse_cylindrical_equal_area",
         ["tobmerc"] = "tobler_mercator",
         ["gall"] = "gall",
         ["gn_sinu"] = "general_sinusoidal",
@@ -166,10 +167,12 @@ public class GieBuiltinsTheoryTests
         ["sterea"] = "oblique_stereographic",
         ["stere"] = "polar_stereographic",
         ["sinu"] = "sinusoidal",
+        ["somerc"] = "swiss_oblique_mercator",
         ["aitoff"] = "aitoff",
         ["wink1"] = "winkel_i",
         ["wink2"] = "winkel_ii",
         ["wintri"] = "winkel_tripel",
+        ["vandg"] = "van_der_grinten",
         ["vandg2"] = "van_der_grinten_ii",
         ["vandg3"] = "van_der_grinten_iii",
         ["vandg4"] = "van_der_grinten_iv",
@@ -528,11 +531,22 @@ public class GieBuiltinsTheoryTests
         try
         {
             IProjection projection = CoordinateSystemFactory.CreateProjection($"GIE {projectionClass}", projectionClass, parameters);
+
+            LinearUnit linearUnit = LinearUnit.Metre;
+            if (TryGetDouble(args, "to_meter", out double toMeter) && Math.Abs(toMeter - 1d) > 1e-12)
+            {
+                linearUnit = new LinearUnit(toMeter, "GIE custom unit", string.Empty, -1, string.Empty, string.Empty, string.Empty);
+            }
+            else if (args.TryGetValue("units", out string? unitsToken))
+            {
+                linearUnit = ResolveLinearUnit(unitsToken);
+            }
+
             ProjectedCoordinateSystem pcs = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
                 "GIE projected",
                 geographicCoordinateSystem,
                 projection,
-                LinearUnit.Metre,
+                linearUnit,
                 new AxisInfo("East", AxisOrientationEnum.East),
                 new AxisInfo("North", AxisOrientationEnum.North));
 
@@ -710,13 +724,19 @@ public class GieBuiltinsTheoryTests
             return false;
         }
 
+        PrimeMeridian primeMeridian = PrimeMeridian.Greenwich;
+        if (args.TryGetValue("pm", out string? pmValue))
+        {
+            primeMeridian = ResolvePrimeMeridian(pmValue);
+        }
+
         Ellipsoid geographicEllipsoid = Assert.IsType<Ellipsoid>(ellipsoid);
         HorizontalDatum datum = CoordinateSystemFactory.CreateHorizontalDatum("GIE datum", DatumType.HD_Geocentric, geographicEllipsoid, null);
         gcs = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "GIE geographic",
             AngularUnit.Degrees,
             datum,
-            PrimeMeridian.Greenwich,
+            primeMeridian,
             new AxisInfo("Lon", AxisOrientationEnum.East),
             new AxisInfo("Lat", AxisOrientationEnum.North));
         return true;
@@ -780,6 +800,156 @@ public class GieBuiltinsTheoryTests
             if (ellps.Equals("sphere", StringComparison.OrdinalIgnoreCase))
             {
                 ellipsoid = Ellipsoid.Sphere;
+                return true;
+            }
+
+            if (ellps.Equals("bessel", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Bessel 1841", 6377397.155, 299.1528128, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("airy", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Airy 1830", 6377563.396, 299.3249646, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("krass", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Krassowsky 1940", 6378245.0, 298.3, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("GRS67", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("GRS 1967", 6378160.0, 298.247167427, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("evrst30", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Everest 1830", 6377276.345, 300.8017, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("evrst69", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Everest 1969", 6377295.664, 300.8017255, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("aust_SA", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Australian National", 6378160.0, 298.25, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("bess_nam", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Bessel Namibia", 6377483.865, 299.1528128, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("clrk80ign", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Clarke 1880 (IGN)", 6378249.2, 293.4660212936269, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("mod_airy", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Modified Airy", 6377340.189, 299.3249646, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("andrae", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Andrae 1876", 6377104.43, 300.0, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("danish", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Danish 1876", 6377019.2563, 300.0, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("helmert", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Helmert 1906", 6378200.0, 298.3, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("fschr60", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Fischer 1960", 6378166.0, 298.3, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("fschr68", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Fischer 1968", 6378150.0, 298.3, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("fschr60m", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Fischer 1960 Modified", 6378155.0, 298.3, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("hough", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Hough", 6378270.0, 297.0, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("kaula", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Kaula 1961", 6378163.0, 298.24, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("lerch", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Lerch 1979", 6378139.0, 298.257, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("mprts", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Maupertuis 1738", 6397300.0, 191.0, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("plessis", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Plessis 1817", 6376523.0, 308.64, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("SEasia", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Southeast Asia", 6378155.0, 298.3, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("walbeck", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Walbeck", 6376896.0, 302.78, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("NWL9D", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("NWL-9D", 6378145.0, 298.25, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("IAU76", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("IAU 1976", 6378140.0, 298.257, LinearUnit.Metre);
                 return true;
             }
         }
@@ -1060,22 +1230,19 @@ public class GieBuiltinsTheoryTests
             return true;
         }
 
-        if (args.ContainsKey("gamma") || args.ContainsKey("pm"))
+        if (args.ContainsKey("gamma"))
         {
             return true;
         }
 
         if (args.ContainsKey("alpha"))
         {
-            if (!args.TryGetValue("proj", out string? projCode) || !projCode.Equals("ocea", StringComparison.OrdinalIgnoreCase))
+            if (!args.TryGetValue("proj", out string? projCode)
+                || (!projCode.Equals("ocea", StringComparison.OrdinalIgnoreCase)
+                    && !projCode.Equals("omerc", StringComparison.OrdinalIgnoreCase)))
             {
                 return true;
             }
-        }
-
-        if (args.ContainsKey("zone"))
-        {
-            return true;
         }
 
         if (args.ContainsKey("north_square") || args.ContainsKey("south_square"))
@@ -1102,12 +1269,53 @@ public class GieBuiltinsTheoryTests
             return true;
         }
 
-        if (args.ContainsKey("to_meter") && (!TryGetDouble(args, "to_meter", out double meterFactor) || Math.Abs(meterFactor - 1d) > 1e-12))
+        return false;
+    }
+
+    private static LinearUnit ResolveLinearUnit(string unitToken) => unitToken.ToUpperInvariant() switch
+    {
+        "M" => LinearUnit.Metre,
+        "FT" => new LinearUnit(0.3048, "International Foot", string.Empty, -1, string.Empty, string.Empty, string.Empty),
+        "US-FT" => new LinearUnit(0.3048006096012192, "US Survey Foot", string.Empty, -1, string.Empty, string.Empty, string.Empty),
+        "KM" => new LinearUnit(1000.0, "Kilometer", string.Empty, -1, string.Empty, string.Empty, string.Empty),
+        "MM" => new LinearUnit(0.001, "Millimeter", string.Empty, -1, string.Empty, string.Empty, string.Empty),
+        "CM" => new LinearUnit(0.01, "Centimeter", string.Empty, -1, string.Empty, string.Empty, string.Empty),
+        "YD" => new LinearUnit(0.9144, "International Yard", string.Empty, -1, string.Empty, string.Empty, string.Empty),
+        "FATH" => new LinearUnit(1.8288, "International Fathom", string.Empty, -1, string.Empty, string.Empty, string.Empty),
+        "KMI" => new LinearUnit(1852.0, "International Nautical Mile", string.Empty, -1, string.Empty, string.Empty, string.Empty),
+        "US-CH" => new LinearUnit(20.11684023368047, "US Survey Chain", string.Empty, -1, string.Empty, string.Empty, string.Empty),
+        "US-MI" => new LinearUnit(1609.347218694437, "US Survey Mile", string.Empty, -1, string.Empty, string.Empty, string.Empty),
+        "IND-FT" => new LinearUnit(0.30479841, "Indian Foot", string.Empty, -1, string.Empty, string.Empty, string.Empty),
+        "IND-YD" => new LinearUnit(0.91439523, "Indian Yard", string.Empty, -1, string.Empty, string.Empty, string.Empty),
+        "LINK" => new LinearUnit(0.201168, "International Link", string.Empty, -1, string.Empty, string.Empty, string.Empty),
+        "CH" => new LinearUnit(20.1168, "International Chain", string.Empty, -1, string.Empty, string.Empty, string.Empty),
+        _ => LinearUnit.Metre,
+    };
+
+    private static PrimeMeridian ResolvePrimeMeridian(string pmValue)
+    {
+        if (double.TryParse(pmValue, NumberStyles.Float, CultureInfo.InvariantCulture, out double longitude))
         {
-            return true;
+            return new PrimeMeridian(longitude, AngularUnit.Degrees, "GIE pm", string.Empty, -1, string.Empty, string.Empty, string.Empty);
         }
 
-        return args.TryGetValue("units", out string? units) && !units.Equals("m", StringComparison.OrdinalIgnoreCase);
+        return pmValue.ToUpperInvariant() switch
+        {
+            "GREENWICH" => PrimeMeridian.Greenwich,
+            "LISBON" => PrimeMeridian.Lisbon,
+            "PARIS" => PrimeMeridian.Paris,
+            "BOGOTA" => PrimeMeridian.Bogota,
+            "MADRID" => PrimeMeridian.Madrid,
+            "ROME" => PrimeMeridian.Rome,
+            "BERN" => PrimeMeridian.Bern,
+            "JAKARTA" => PrimeMeridian.Jakarta,
+            "FERRO" => PrimeMeridian.Ferro,
+            "BRUSSELS" => PrimeMeridian.Brussels,
+            "STOCKHOLM" => PrimeMeridian.Stockholm,
+            "ATHENS" => PrimeMeridian.Athens,
+            "OSLO" => PrimeMeridian.Oslo,
+            _ => PrimeMeridian.Greenwich,
+        };
     }
 
     private static bool TryGetDouble(Dictionary<string, string> args, string key, out double value)
