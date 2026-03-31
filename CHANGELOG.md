@@ -17,6 +17,8 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 - Added broad projection and transformation runtime verification coverage, including direct proj2proj parity fixtures.
 - Added public grid resource API (`IGridResourceFetchClient`, `GridResourceResolutionMode`, `NoOpGridResourceFetchClient`) with async `TryFetchAsync` support and programmatic configuration via `CoordinateTransformationFactory.ConfigureGridResolution`.
 - Added `IXunitSerializable` implementation on `GieCase` and `Proj2ProjCase` for proper xUnit v3 TheoryData serialization.
+- Added strongly-typed WKT object model (`ProjNet.IO.Wkt` namespace) with `WktNode`, `WktKeywordNode`, `WktQuotedString`, `WktNumber`, `WktInteger`, `WktIdentifier` types, supporting compact and pretty-print formatting. All 17 coordinate system types expose `ToWktNode()`.
+- Added strongly-typed XML serialization via `XElement ToXml()` on all coordinate system types, providing structured XML output alongside the existing `string XML` property.
 - Added additive span-based public API overloads for key transformation and WKT parsing workflows:
   - `MathTransform.Transform(ReadOnlySpan<double>, Span<double>)`
   - `MathTransform.GetCodomainConvexHull(ReadOnlySpan<double>)`
@@ -67,6 +69,7 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 ### Fixed
 
 - Corrected outdated and inconsistent file attribution headers by adopting SPDX-style per-file headers based on provenance categories.
+- Corrected `VerticalDatum.WKT` to use `VERT_DATUM` keyword per OGC WKT specification (was incorrectly using `DATUM`).
 - Removed dead/commented legacy code found during structural cleanup.
 - Removed stale TODO comments, bare AAA test markers, and commented-out code blocks.
 - Fixed multiple legacy naming inconsistencies in projection class families and their registry references.
