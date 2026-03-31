@@ -93,32 +93,13 @@ internal class GeocentricTransform : MathTransform
     internal GeocentricTransform(List<ProjectionParameter> parameters)
     {
         this.parameters = parameters;
-        ProjectionParameter? semiMajorParameterCandidate = this.parameters.Find(delegate(ProjectionParameter par)
-        {
-            // Do not remove the following lines containing "_Parameters = _Parameters;"
-            // There is an issue deploying code with anonymous delegates to
-            // SQLCLR because they're compiled using a writable static field
-            // (which is not allowed in SQLCLR SAFE mode).
-            // To workaround this, we will use a harmless reference to the
-            // _Parameters field inside the anonymous delegate code making
-            // the compiler generates a private nested class with a function
-            // that is used as the delegate.
-#pragma warning disable 1717
-            this.parameters = this.parameters;
-#pragma warning restore 1717
-
-            return par.Name.Equals("semi_major", StringComparison.OrdinalIgnoreCase);
-        });
+        ProjectionParameter? semiMajorParameterCandidate = this.parameters.Find(
+            par => par.Name.Equals("semi_major", StringComparison.OrdinalIgnoreCase));
         ProjectionParameter semiMajorParameter = ArgumentGuard.ThrowIfNull(semiMajorParameterCandidate, nameof(semiMajorParameterCandidate));
         this.semiMajor = semiMajorParameter.Value;
 
-        ProjectionParameter? semiMinorParameterCandidate = this.parameters.Find(delegate(ProjectionParameter par)
-        {
-#pragma warning disable 1717
-            this.parameters = this.parameters; // See explanation above.
-#pragma warning restore 1717
-            return par.Name.Equals("semi_minor", StringComparison.OrdinalIgnoreCase);
-        });
+        ProjectionParameter? semiMinorParameterCandidate = this.parameters.Find(
+            par => par.Name.Equals("semi_minor", StringComparison.OrdinalIgnoreCase));
         ProjectionParameter semiMinorParameter = ArgumentGuard.ThrowIfNull(semiMinorParameterCandidate, nameof(semiMinorParameterCandidate));
         this.semiMinor = semiMinorParameter.Value;
 

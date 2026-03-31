@@ -28,6 +28,7 @@ dotnet_diagnostic.SA1638.severity = none
 [{test/ProjNet.Tests/*.cs,test/ProjNet.Tests/**/*.cs}]
 dotnet_diagnostic.SA1611.severity = none
 dotnet_diagnostic.CA1707.severity = none
+dotnet_diagnostic.CS1591.severity = none
 
 [src/ProjNet/CoordinateSystems/Projections/AiroceanProjection.cs]
 dotnet_diagnostic.SA1117.severity = none
@@ -35,3 +36,4 @@ dotnet_diagnostic.SA1201.severity = none
 
 [{src/ProjNet.Benchmark/*.cs,src/ProjNet.Benchmark/**/*.cs}]
 dotnet_diagnostic.CA1822.severity = none
+dotnet_diagnostic.CS1591.severity = none
