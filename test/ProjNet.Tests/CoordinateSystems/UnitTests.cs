@@ -1,0 +1,324 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
+
+namespace ProjNet.Tests;
+
+using System;
+using ProjNet.CoordinateSystems;
+using Xunit;
+
+/// <summary>
+/// Tests for <see cref="LinearUnit"/> and <see cref="AngularUnit"/>.
+/// </summary>
+public class UnitTests
+{
+    // ---- LinearUnit predefined constants ----
+
+    /// <summary>
+    /// Verifies that the metre constant has a conversion factor of 1.
+    /// </summary>
+    [Fact]
+    public void LinearUnit_Metre_MetersPerUnitIsOne()
+    {
+        Assert.Equal(1.0, LinearUnit.Metre.MetersPerUnit);
+    }
+
+    /// <summary>
+    /// Verifies that the foot constant has the correct conversion factor.
+    /// </summary>
+    [Fact]
+    public void LinearUnit_Foot_MetersPerUnitIsCorrect()
+    {
+        Assert.Equal(0.3048, LinearUnit.Foot.MetersPerUnit, 12);
+    }
+
+    /// <summary>
+    /// Verifies that the US survey foot constant has the correct conversion factor.
+    /// </summary>
+    [Fact]
+    public void LinearUnit_USSurveyFoot_MetersPerUnitIsCorrect()
+    {
+        Assert.Equal(0.304800609601219, LinearUnit.USSurveyFoot.MetersPerUnit, 12);
+    }
+
+    /// <summary>
+    /// Verifies that the nautical mile constant has a conversion factor of 1852.
+    /// </summary>
+    [Fact]
+    public void LinearUnit_NauticalMile_MetersPerUnitIsCorrect()
+    {
+        Assert.Equal(1852.0, LinearUnit.NauticalMile.MetersPerUnit);
+    }
+
+    /// <summary>
+    /// Verifies that Clarke's foot constant has the correct conversion factor.
+    /// </summary>
+    [Fact]
+    public void LinearUnit_ClarkesFoot_MetersPerUnitIsCorrect()
+    {
+        Assert.Equal(0.3047972654, LinearUnit.ClarkesFoot.MetersPerUnit, 12);
+    }
+
+    // ---- LinearUnit construction ----
+
+    /// <summary>
+    /// Verifies that the constructor sets MetersPerUnit.
+    /// </summary>
+    [Fact]
+    public void LinearUnit_Constructor_SetsMetersPerUnit()
+    {
+        var unit = new LinearUnit(0.9144, "yard", "EPSG", 9096, "yd", string.Empty, string.Empty);
+
+        Assert.Equal(0.9144, unit.MetersPerUnit, 12);
+    }
+
+    /// <summary>
+    /// Verifies that MetersPerUnit can be updated via its setter.
+    /// </summary>
+    [Fact]
+    public void LinearUnit_MetersPerUnit_CanBeSet()
+    {
+        var unit = new LinearUnit(1.0, "test", string.Empty, -1, string.Empty, string.Empty, string.Empty);
+        unit.MetersPerUnit = 2.5;
+
+        Assert.Equal(2.5, unit.MetersPerUnit);
+    }
+
+    // ---- LinearUnit WKT ----
+
+    /// <summary>
+    /// Verifies that WKT output contains unit name and conversion factor.
+    /// </summary>
+    [Fact]
+    public void LinearUnit_WKT_ContainsNameAndMetersPerUnit()
+    {
+        string wkt = LinearUnit.Metre.WKT;
+
+        Assert.Contains("UNIT[", wkt);
+        Assert.Contains("\"metre\"", wkt);
+        Assert.Contains("1", wkt);
+    }
+
+    /// <summary>
+    /// Verifies that WKT output includes authority when set.
+    /// </summary>
+    [Fact]
+    public void LinearUnit_WKT_WithAuthority_ContainsAuthority()
+    {
+        string wkt = LinearUnit.Metre.WKT;
+
+        Assert.Contains("AUTHORITY[\"EPSG\", \"9001\"]", wkt);
+    }
+
+    /// <summary>
+    /// Verifies that WKT output omits authority when not set.
+    /// </summary>
+    [Fact]
+    public void LinearUnit_WKT_WithoutAuthority_OmitsAuthority()
+    {
+        var unit = new LinearUnit(1.0, "test", string.Empty, -1, string.Empty, string.Empty, string.Empty);
+        string wkt = unit.WKT;
+
+        Assert.DoesNotContain("AUTHORITY", wkt);
+    }
+
+    // ---- LinearUnit XML ----
+
+    /// <summary>
+    /// Verifies that XML output contains the MetersPerUnit attribute.
+    /// </summary>
+    [Fact]
+    public void LinearUnit_XML_ContainsMetersPerUnit()
+    {
+        string xml = LinearUnit.Metre.XML;
+
+        Assert.Contains("CS_LinearUnit", xml);
+        Assert.Contains("MetersPerUnit=\"1\"", xml);
+    }
+
+    // ---- LinearUnit EqualParams ----
+
+    /// <summary>
+    /// Verifies that EqualParams returns true for units with the same conversion factor.
+    /// </summary>
+    [Fact]
+    public void LinearUnit_EqualParams_SameMetersPerUnit_ReturnsTrue()
+    {
+        var a = new LinearUnit(1.0, "metre", "EPSG", 9001, string.Empty, string.Empty, string.Empty);
+        var b = new LinearUnit(1.0, "meter", "OTHER", 1, string.Empty, string.Empty, string.Empty);
+
+        Assert.True(a.EqualParams(b));
+    }
+
+    /// <summary>
+    /// Verifies that EqualParams returns false for units with different conversion factors.
+    /// </summary>
+    [Fact]
+    public void LinearUnit_EqualParams_DifferentMetersPerUnit_ReturnsFalse()
+    {
+        Assert.False(LinearUnit.Metre.EqualParams(LinearUnit.Foot));
+    }
+
+    /// <summary>
+    /// Verifies that EqualParams returns false for a different type.
+    /// </summary>
+    [Fact]
+    public void LinearUnit_EqualParams_DifferentType_ReturnsFalse()
+    {
+        Assert.False(LinearUnit.Metre.EqualParams("not a unit"));
+    }
+
+    // ---- AngularUnit predefined constants ----
+
+    /// <summary>
+    /// Verifies that the radian constant has a conversion factor of 1.
+    /// </summary>
+    [Fact]
+    public void AngularUnit_Radian_RadiansPerUnitIsOne()
+    {
+        Assert.Equal(1.0, AngularUnit.Radian.RadiansPerUnit);
+    }
+
+    /// <summary>
+    /// Verifies that the degree constant has the correct conversion factor.
+    /// </summary>
+    [Fact]
+    public void AngularUnit_Degrees_RadiansPerUnitIsCorrect()
+    {
+        Assert.Equal(Math.PI / 180.0, AngularUnit.Degrees.RadiansPerUnit, 15);
+    }
+
+    /// <summary>
+    /// Verifies that the grad constant has the correct conversion factor.
+    /// </summary>
+    [Fact]
+    public void AngularUnit_Grad_RadiansPerUnitIsCorrect()
+    {
+        Assert.Equal(Math.PI / 200.0, AngularUnit.Grad.RadiansPerUnit, 15);
+    }
+
+    /// <summary>
+    /// Verifies that the gon constant has the correct conversion factor (equal to grad).
+    /// </summary>
+    [Fact]
+    public void AngularUnit_Gon_RadiansPerUnitEqualsGrad()
+    {
+        Assert.Equal(AngularUnit.Grad.RadiansPerUnit, AngularUnit.Gon.RadiansPerUnit);
+    }
+
+    // ---- AngularUnit construction ----
+
+    /// <summary>
+    /// Verifies that the public constructor sets RadiansPerUnit.
+    /// </summary>
+    [Fact]
+    public void AngularUnit_Constructor_SetsRadiansPerUnit()
+    {
+        var unit = new AngularUnit(0.5);
+
+        Assert.Equal(0.5, unit.RadiansPerUnit);
+    }
+
+    /// <summary>
+    /// Verifies that RadiansPerUnit can be updated via its setter.
+    /// </summary>
+    [Fact]
+    public void AngularUnit_RadiansPerUnit_CanBeSet()
+    {
+        var unit = new AngularUnit(1.0);
+        unit.RadiansPerUnit = 2.0;
+
+        Assert.Equal(2.0, unit.RadiansPerUnit);
+    }
+
+    // ---- AngularUnit WKT ----
+
+    /// <summary>
+    /// Verifies that WKT output contains unit name and radians per unit.
+    /// </summary>
+    [Fact]
+    public void AngularUnit_WKT_ContainsNameAndRadiansPerUnit()
+    {
+        string wkt = AngularUnit.Degrees.WKT;
+
+        Assert.Contains("UNIT[", wkt);
+        Assert.Contains("\"degree\"", wkt);
+    }
+
+    /// <summary>
+    /// Verifies that WKT output includes authority when set.
+    /// </summary>
+    [Fact]
+    public void AngularUnit_WKT_WithAuthority_ContainsAuthority()
+    {
+        string wkt = AngularUnit.Degrees.WKT;
+
+        Assert.Contains("AUTHORITY[\"EPSG\", \"9102\"]", wkt);
+    }
+
+    /// <summary>
+    /// Verifies that WKT output omits authority for a simple instance.
+    /// </summary>
+    [Fact]
+    public void AngularUnit_WKT_PublicConstructor_OmitsAuthority()
+    {
+        var unit = new AngularUnit(0.5);
+        string wkt = unit.WKT;
+
+        Assert.DoesNotContain("AUTHORITY", wkt);
+    }
+
+    // ---- AngularUnit XML ----
+
+    /// <summary>
+    /// Verifies that XML output contains the RadiansPerUnit attribute.
+    /// </summary>
+    [Fact]
+    public void AngularUnit_XML_ContainsRadiansPerUnit()
+    {
+        string xml = AngularUnit.Radian.XML;
+
+        Assert.Contains("CS_AngularUnit", xml);
+        Assert.Contains("RadiansPerUnit=\"1\"", xml);
+    }
+
+    // ---- AngularUnit EqualParams ----
+
+    /// <summary>
+    /// Verifies that EqualParams returns true for units with the same radians per unit.
+    /// </summary>
+    [Fact]
+    public void AngularUnit_EqualParams_SameRadiansPerUnit_ReturnsTrue()
+    {
+        var a = new AngularUnit(Math.PI / 180.0);
+
+        Assert.True(AngularUnit.Degrees.EqualParams(a));
+    }
+
+    /// <summary>
+    /// Verifies that EqualParams returns false for units with different radians per unit.
+    /// </summary>
+    [Fact]
+    public void AngularUnit_EqualParams_DifferentRadiansPerUnit_ReturnsFalse()
+    {
+        Assert.False(AngularUnit.Degrees.EqualParams(AngularUnit.Radian));
+    }
+
+    /// <summary>
+    /// Verifies that EqualParams returns false for a different type.
+    /// </summary>
+    [Fact]
+    public void AngularUnit_EqualParams_DifferentType_ReturnsFalse()
+    {
+        Assert.False(AngularUnit.Degrees.EqualParams("not a unit"));
+    }
+
+    /// <summary>
+    /// Verifies that EqualParams returns false when comparing AngularUnit to LinearUnit.
+    /// </summary>
+    [Fact]
+    public void AngularUnit_EqualParams_LinearUnit_ReturnsFalse()
+    {
+        Assert.False(AngularUnit.Radian.EqualParams(LinearUnit.Metre));
+    }
+}
