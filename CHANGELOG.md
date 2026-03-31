@@ -26,6 +26,10 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
   - `CoordinateSystemWktReader.Parse(ReadOnlySpan<char>)`
   - `Wgs84ConversionInfo.WriteAffineTransform(Span<double>)`
 - Added benchmark scenarios aligned to relevant PROJ `bench_proj_trans` patterns, including deterministic noise-based runs and additional CRS pair coverage.
+- Added WKT parsing, per-projection transform throughput, and transformation factory benchmarks for comprehensive performance coverage.
+- Added `+towgs84` datum shift pipeline support to GIE test harness via `Wgs84ConversionInfo` integration with `CoordinateTransformationFactory`.
+- Added `TryResolveDatum` with 8 named datum definitions (potsdam, NAD27, NAD83, nzgd49, ire65, GGRS87, OSGB36, WGS84) for GIE test harness.
+- Added 9 additional ellipsoid definitions (everest, evrst48, evrst56, clrk58, engelis, CPM, delmbr, fschr68m) to GIE test harness.
 - Added 4D `+proj=axisswap` runtime support (including sign-aware time ordinate handling) in pipeline execution paths.
 - Added focused axisswap coverage with new `AxisSwapMathTransformTests` and `AxisOrderHelperTests`, plus expanded pipeline validation scenarios for `+axis` / `+order` combinations.
 
@@ -58,6 +62,9 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 - Renamed opaque `SpecialtyProjectionBatch*` tests into descriptive projection-family-focused test classes.
 - Optimized selected hot internal paths using `stackalloc`, `ReadOnlySpan<T>/Span<T>`, and `ArrayPool<T>` to reduce transient allocations.
 - Improved GIE builtins conversion fallback handling by normalizing cs2cs-style operation tokens for runtime conversion attempts and prioritizing detailed transform skip reasons.
+- Unblocked `+gamma` and `+czech` parameters in GIE test harness, enabling omerc and Krovak projection test cases.
+- Removed legacy SQLCLR self-assignment workaround in `GeocentricTransform`, replacing anonymous delegates with lambdas.
+- Moved CS1591 (missing XML docs) suppression from `.csproj` `<NoWarn>` to `.editorconfig` for consistent suppression management.
 - Enabled full nullable context across the codebase (`<Nullable>enable</Nullable>` in library and tests, `#nullable enable` directives in source files).
 - Enabled `EnforceCodeStyleInBuild` and resolved all SA1413 trailing comma warnings.
 - Replaced ambiguous coordinate-definition `KeyValuePair` contracts with explicit typed records in public/provider APIs:
@@ -74,6 +81,7 @@ The format is based on Keep a Changelog and this project follows Semantic Versio
 - Removed stale TODO comments, bare AAA test markers, and commented-out code blocks.
 - Fixed multiple legacy naming inconsistencies in projection class families and their registry references.
 - Fixed pooled-buffer lifecycle coverage by adding explicit success/failure-path tests for `GeoTiffGridLoader` pool rental/return behavior.
+- Fixed 3 benchmark methods marked as `static` that prevented BenchmarkDotNet discovery (CatalogFirstCoordinateLookup, CatalogFirstTransformationLookup, CatalogRetainedMemory).
 
 ### Removed
 
