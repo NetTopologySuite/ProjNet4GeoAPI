@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using System.Xml.Linq;
 using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.IO.Wkt;
 
@@ -84,6 +85,16 @@ public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSys
         {
             throw new NotImplementedException();
         }
+    }
+
+    /// <summary>
+    /// Returns an XML representation of this fitted coordinate system as an <see cref="XElement"/>.
+    /// </summary>
+    /// <returns>Not implemented; always throws <see cref="NotImplementedException"/>.</returns>
+    /// <exception cref="NotImplementedException">Always thrown because XML serialization is not supported for fitted coordinate systems.</exception>
+    public override XElement ToXml()
+    {
+        throw new NotImplementedException();
     }
 
     /// <inheritdoc />

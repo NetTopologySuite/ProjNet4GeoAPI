@@ -6,6 +6,7 @@ namespace ProjNet.CoordinateSystems;
 
 using System;
 using System.Globalization;
+using System.Xml.Linq;
 using ProjNet.IO.Wkt;
 
 /// <summary>
@@ -66,6 +67,17 @@ public class AxisInfo
         {
             return FormattableString.Invariant($"<CS_AxisInfo Name=\"{this.Name}\" Orientation=\"{this.Orientation.ToString().ToUpperInvariant()}\"/>");
         }
+    }
+
+    /// <summary>
+    /// Returns an XML representation of this axis info as an <see cref="XElement"/>.
+    /// </summary>
+    /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
+    public XElement ToXml()
+    {
+        return new XElement("CS_AxisInfo",
+            new XAttribute("Name", this.Name),
+            new XAttribute("Orientation", this.Orientation.ToString().ToUpperInvariant()));
     }
 
     /// <summary>

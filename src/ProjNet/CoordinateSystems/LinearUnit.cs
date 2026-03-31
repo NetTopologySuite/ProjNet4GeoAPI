@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using System.Xml.Linq;
 using ProjNet.IO.Wkt;
 
 /// <summary>
@@ -95,6 +96,18 @@ public class LinearUnit : Info, IUnit
         {
             return FormattableString.Invariant($"<CS_LinearUnit MetersPerUnit=\"{this.MetersPerUnit}\">{this.InfoXml}</CS_LinearUnit>");
         }
+    }
+
+    /// <summary>
+    /// Returns an XML representation of this linear unit as an <see cref="XElement"/>.
+    /// </summary>
+    /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
+    public XElement ToXml()
+    {
+        var element = new XElement("CS_LinearUnit",
+            new XAttribute("MetersPerUnit", this.MetersPerUnit.ToString(CultureInfo.InvariantCulture)));
+        element.Add(this.InfoXmlElement);
+        return element;
     }
 
     /// <summary>

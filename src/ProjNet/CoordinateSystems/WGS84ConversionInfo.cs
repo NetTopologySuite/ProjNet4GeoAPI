@@ -6,6 +6,7 @@ namespace ProjNet.CoordinateSystems;
 
 using System;
 using System.Globalization;
+using System.Xml.Linq;
 using ProjNet.IO.Wkt;
 
 /// <summary>
@@ -146,6 +147,22 @@ public class Wgs84ConversionInfo : IEquatable<Wgs84ConversionInfo>
         {
             return FormattableString.Invariant($"<CS_WGS84ConversionInfo Dx=\"{this.Dx}\" Dy=\"{this.Dy}\" Dz=\"{this.Dz}\" Ex=\"{this.Ex}\" Ey=\"{this.Ey}\" Ez=\"{this.Ez}\" Ppm=\"{this.Ppm}\" />");
         }
+    }
+
+    /// <summary>
+    /// Returns an XML representation of this WGS84 conversion info as an <see cref="XElement"/>.
+    /// </summary>
+    /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
+    public XElement ToXml()
+    {
+        return new XElement("CS_WGS84ConversionInfo",
+            new XAttribute("Dx", this.Dx.ToString(CultureInfo.InvariantCulture)),
+            new XAttribute("Dy", this.Dy.ToString(CultureInfo.InvariantCulture)),
+            new XAttribute("Dz", this.Dz.ToString(CultureInfo.InvariantCulture)),
+            new XAttribute("Ex", this.Ex.ToString(CultureInfo.InvariantCulture)),
+            new XAttribute("Ey", this.Ey.ToString(CultureInfo.InvariantCulture)),
+            new XAttribute("Ez", this.Ez.ToString(CultureInfo.InvariantCulture)),
+            new XAttribute("Ppm", this.Ppm.ToString(CultureInfo.InvariantCulture)));
     }
 
     /// <summary>

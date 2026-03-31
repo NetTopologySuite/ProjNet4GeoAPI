@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using System.Xml.Linq;
 using ProjNet.IO.Wkt;
 
 /// <summary>
@@ -177,6 +178,31 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
                 this.Projection.XML);
             return sb.ToString();
         }
+    }
+
+    /// <summary>
+    /// Returns an XML representation of this projected coordinate system as an <see cref="XElement"/>.
+    /// </summary>
+    /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
+    public override XElement ToXml()
+    {
+        var innerElement = new XElement("CS_ProjectedCoordinateSystem");
+        innerElement.Add(this.InfoXmlElement);
+        foreach (AxisInfo ai in this.AxisInfo)
+        {
+            innerElement.Add(ai.ToXml());
+        }
+
+        innerElement.Add(this.GeographicCoordinateSystem.ToXml());
+        innerElement.Add(this.LinearUnit.ToXml());
+        if (this.Projection is Projection projection)
+        {
+            innerElement.Add(projection.ToXml());
+        }
+
+        return new XElement("CS_CoordinateSystem",
+            new XAttribute("Dimension", this.Dimension.ToString(CultureInfo.InvariantCulture)),
+            innerElement);
     }
 
     /// <summary>

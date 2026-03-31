@@ -7,6 +7,7 @@ namespace ProjNet.CoordinateSystems;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using System.Xml.Linq;
 using ProjNet.IO.Wkt;
 
 /// <summary>
@@ -117,6 +118,27 @@ public class VerticalCoordinateSystem : CoordinateSystem
                 this.LinearUnit.XML);
             return sb.ToString();
         }
+    }
+
+    /// <summary>
+    /// Returns an XML representation of this vertical coordinate system as an <see cref="XElement"/>.
+    /// </summary>
+    /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
+    public override XElement ToXml()
+    {
+        var innerElement = new XElement("CS_VerticalCoordinateSystem");
+        innerElement.Add(this.InfoXmlElement);
+        foreach (AxisInfo ai in this.AxisInfo)
+        {
+            innerElement.Add(ai.ToXml());
+        }
+
+        innerElement.Add(this.VerticalDatum.ToXml());
+        innerElement.Add(this.LinearUnit.ToXml());
+
+        return new XElement("CS_CoordinateSystem",
+            new XAttribute("Dimension", this.Dimension.ToString(CultureInfo.InvariantCulture)),
+            innerElement);
     }
 
     /// <inheritdoc/>

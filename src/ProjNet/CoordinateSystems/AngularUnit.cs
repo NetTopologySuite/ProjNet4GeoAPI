@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using System.Xml.Linq;
 using ProjNet.IO.Wkt;
 
 /// <summary>
@@ -105,6 +106,18 @@ public class AngularUnit : Info, IUnit
         {
             return FormattableString.Invariant($"<CS_AngularUnit RadiansPerUnit=\"{this.RadiansPerUnit}\">{this.InfoXml}</CS_AngularUnit>");
         }
+    }
+
+    /// <summary>
+    /// Returns an XML representation of this angular unit as an <see cref="XElement"/>.
+    /// </summary>
+    /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
+    public XElement ToXml()
+    {
+        var element = new XElement("CS_AngularUnit",
+            new XAttribute("RadiansPerUnit", this.RadiansPerUnit.ToString(CultureInfo.InvariantCulture)));
+        element.Add(this.InfoXmlElement);
+        return element;
     }
 
     /// <summary>

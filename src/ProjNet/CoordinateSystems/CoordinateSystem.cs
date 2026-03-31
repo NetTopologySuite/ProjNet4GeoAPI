@@ -7,6 +7,7 @@ namespace ProjNet.CoordinateSystems;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Xml.Linq;
 using ProjNet.IO.Wkt;
 
 /// <summary>
@@ -98,6 +99,12 @@ public abstract class CoordinateSystem : Info
     /// </summary>
     /// <returns>A <see cref="WktNode"/> representing this coordinate system.</returns>
     public virtual WktNode ToWktNode() => new WktIdentifier(this.WKT);
+
+    /// <summary>
+    /// Returns an XML representation of this coordinate system as an <see cref="XElement"/>.
+    /// </summary>
+    /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
+    public virtual XElement ToXml() => throw new NotImplementedException();
 
     /// <summary>
     /// Gets axis details for dimension within coordinate system.

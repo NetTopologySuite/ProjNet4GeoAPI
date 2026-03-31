@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using System.Xml.Linq;
 using ProjNet.IO.Wkt;
 
 /// <summary>
@@ -65,6 +66,18 @@ public class VerticalDatum : Datum
         {
             return FormattableString.Invariant($"<CS_VerticalDatum DatumType=\"{(int)this.DatumType}\">{this.InfoXml}</CS_VerticalDatum>");
         }
+    }
+
+    /// <summary>
+    /// Returns an XML representation of this vertical datum as an <see cref="XElement"/>.
+    /// </summary>
+    /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
+    public XElement ToXml()
+    {
+        var element = new XElement("CS_VerticalDatum",
+            new XAttribute("DatumType", ((int)this.DatumType).ToString(CultureInfo.InvariantCulture)));
+        element.Add(this.InfoXmlElement);
+        return element;
     }
 
     /// <summary>

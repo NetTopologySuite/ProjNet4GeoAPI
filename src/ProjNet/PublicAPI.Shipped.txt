@@ -38,6 +38,7 @@ namespace ProjNet.CoordinateSystems
         public static ProjNet.CoordinateSystems.AngularUnit Radian { get; }
         public override bool EqualParams(object obj) { }
         public ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public System.Xml.Linq.XElement ToXml() { }
     }
     public class AxisInfo
     {
@@ -47,6 +48,7 @@ namespace ProjNet.CoordinateSystems
         public string WKT { get; }
         public string XML { get; }
         public ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public System.Xml.Linq.XElement ToXml() { }
     }
     public enum AxisOrientationEnum : short
     {
@@ -68,6 +70,7 @@ namespace ProjNet.CoordinateSystems
         public override bool EqualParams(object obj) { }
         public override ProjNet.CoordinateSystems.IUnit GetUnits(int dimension) { }
         public override ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public override System.Xml.Linq.XElement ToXml() { }
     }
     public abstract class CoordinateSystem : ProjNet.CoordinateSystems.Info
     {
@@ -76,6 +79,7 @@ namespace ProjNet.CoordinateSystems
         public ProjNet.CoordinateSystems.AxisInfo GetAxis(int dimension) { }
         public abstract ProjNet.CoordinateSystems.IUnit GetUnits(int dimension);
         public virtual ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public virtual System.Xml.Linq.XElement ToXml() { }
     }
     public class CoordinateSystemFactory
     {
@@ -138,6 +142,7 @@ namespace ProjNet.CoordinateSystems
         public static ProjNet.CoordinateSystems.Ellipsoid WGS84 { get; }
         public override bool EqualParams(object obj) { }
         public ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public System.Xml.Linq.XElement ToXml() { }
     }
     public class FittedCoordinateSystem : ProjNet.CoordinateSystems.CoordinateSystem
     {
@@ -150,6 +155,7 @@ namespace ProjNet.CoordinateSystems
         public override ProjNet.CoordinateSystems.IUnit GetUnits(int dimension) { }
         public string ToBase() { }
         public override ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public override System.Xml.Linq.XElement ToXml() { }
     }
     public class GeocentricCoordinateSystem : ProjNet.CoordinateSystems.CoordinateSystem
     {
@@ -162,6 +168,7 @@ namespace ProjNet.CoordinateSystems
         public override bool EqualParams(object obj) { }
         public override ProjNet.CoordinateSystems.IUnit GetUnits(int dimension) { }
         public override ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public override System.Xml.Linq.XElement ToXml() { }
     }
     public class GeographicCoordinateSystem : ProjNet.CoordinateSystems.HorizontalCoordinateSystem
     {
@@ -175,6 +182,7 @@ namespace ProjNet.CoordinateSystems
         public override ProjNet.CoordinateSystems.IUnit GetUnits(int dimension) { }
         public ProjNet.CoordinateSystems.Wgs84ConversionInfo GetWgs84ConversionInfo(int index) { }
         public override ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public override System.Xml.Linq.XElement ToXml() { }
     }
     public abstract class HorizontalCoordinateSystem : ProjNet.CoordinateSystems.CoordinateSystem
     {
@@ -192,6 +200,7 @@ namespace ProjNet.CoordinateSystems
         public static ProjNet.CoordinateSystems.HorizontalDatum WGS84 { get; }
         public override bool EqualParams(object obj) { }
         public ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public System.Xml.Linq.XElement ToXml() { }
     }
     public interface IInfo
     {
@@ -239,6 +248,7 @@ namespace ProjNet.CoordinateSystems
         public static ProjNet.CoordinateSystems.LinearUnit USSurveyFoot { get; }
         public override bool EqualParams(object obj) { }
         public ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public System.Xml.Linq.XElement ToXml() { }
     }
     public class Parameter
     {
@@ -267,6 +277,7 @@ namespace ProjNet.CoordinateSystems
         public static ProjNet.CoordinateSystems.PrimeMeridian Stockholm { get; }
         public override bool EqualParams(object obj) { }
         public ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public System.Xml.Linq.XElement ToXml() { }
     }
     public class ProjectedCoordinateSystem : ProjNet.CoordinateSystems.HorizontalCoordinateSystem
     {
@@ -279,6 +290,7 @@ namespace ProjNet.CoordinateSystems
         public override bool EqualParams(object obj) { }
         public override ProjNet.CoordinateSystems.IUnit GetUnits(int dimension) { }
         public override ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public override System.Xml.Linq.XElement ToXml() { }
         public static ProjNet.CoordinateSystems.ProjectedCoordinateSystem WGS84_UTM(int zone, bool zoneIsNorth) { }
     }
     public class Projection : ProjNet.CoordinateSystems.Info, ProjNet.CoordinateSystems.IInfo, ProjNet.CoordinateSystems.IProjection
@@ -291,6 +303,7 @@ namespace ProjNet.CoordinateSystems
         public ProjNet.CoordinateSystems.ProjectionParameter GetParameter(int index) { }
         public ProjNet.CoordinateSystems.ProjectionParameter? GetParameter(string name) { }
         public ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public System.Xml.Linq.XElement ToXml() { }
     }
     public class ProjectionParameter
     {
@@ -301,6 +314,7 @@ namespace ProjNet.CoordinateSystems
         public string XML { get; }
         public override string ToString() { }
         public ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public System.Xml.Linq.XElement ToXml() { }
     }
     public class Unit : ProjNet.CoordinateSystems.Info, ProjNet.CoordinateSystems.IInfo, ProjNet.CoordinateSystems.IUnit
     {
@@ -308,6 +322,7 @@ namespace ProjNet.CoordinateSystems
         public override string WKT { get; }
         public override string XML { get; }
         public override bool EqualParams(object obj) { }
+        public System.Xml.Linq.XElement ToXml() { }
     }
     public class VerticalCoordinateSystem : ProjNet.CoordinateSystems.CoordinateSystem
     {
@@ -320,6 +335,7 @@ namespace ProjNet.CoordinateSystems
         public override bool EqualParams(object obj) { }
         public override ProjNet.CoordinateSystems.IUnit GetUnits(int dimension) { }
         public override ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public override System.Xml.Linq.XElement ToXml() { }
     }
     public class VerticalDatum : ProjNet.CoordinateSystems.Datum
     {
@@ -329,6 +345,7 @@ namespace ProjNet.CoordinateSystems
         public static ProjNet.CoordinateSystems.VerticalDatum ODN { get; }
         public override bool EqualParams(object obj) { }
         public ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public System.Xml.Linq.XElement ToXml() { }
     }
     public class Wgs84ConversionInfo : System.IEquatable<ProjNet.CoordinateSystems.Wgs84ConversionInfo>
     {
@@ -352,6 +369,7 @@ namespace ProjNet.CoordinateSystems
         public override int GetHashCode() { }
         public override string ToString() { }
         public ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public System.Xml.Linq.XElement ToXml() { }
         public void WriteAffineTransform(System.Span<double> destination) { }
     }
 }

@@ -6,6 +6,7 @@ namespace ProjNet.CoordinateSystems;
 
 using System;
 using System.Globalization;
+using System.Xml.Linq;
 using ProjNet.IO.Wkt;
 
 /// <summary>
@@ -75,6 +76,17 @@ public class ProjectionParameter
         {
             return FormattableString.Invariant($"<CS_ProjectionParameter Name=\"{this.Name}\" Value=\"{this.Value}\"/>");
         }
+    }
+
+    /// <summary>
+    /// Returns an XML representation of this projection parameter as an <see cref="XElement"/>.
+    /// </summary>
+    /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
+    public XElement ToXml()
+    {
+        return new XElement("CS_ProjectionParameter",
+            new XAttribute("Name", this.Name),
+            new XAttribute("Value", this.Value.ToString(CultureInfo.InvariantCulture)));
     }
 
     /// <summary>

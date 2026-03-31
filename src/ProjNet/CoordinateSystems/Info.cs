@@ -7,6 +7,7 @@ namespace ProjNet.CoordinateSystems;
 using System;
 using System.Globalization;
 using System.Text;
+using System.Xml.Linq;
 
 /// <summary>
 /// The Info object defines the standard information
@@ -125,6 +126,38 @@ public abstract class Info : IInfo
 
             sb.Append("/>");
             return sb.ToString();
+        }
+    }
+
+    /// <summary>
+    /// Gets an XML element of the info object.
+    /// </summary>
+    internal XElement InfoXmlElement
+    {
+        get
+        {
+            var element = new XElement("CS_Info");
+            if (this.AuthorityCode > 0)
+            {
+                element.Add(new XAttribute("AuthorityCode", this.AuthorityCode.ToString(CultureInfo.InvariantCulture)));
+            }
+
+            if (!string.IsNullOrWhiteSpace(this.Abbreviation))
+            {
+                element.Add(new XAttribute("Abbreviation", this.Abbreviation));
+            }
+
+            if (!string.IsNullOrWhiteSpace(this.Authority))
+            {
+                element.Add(new XAttribute("Authority", this.Authority));
+            }
+
+            if (!string.IsNullOrWhiteSpace(this.Name))
+            {
+                element.Add(new XAttribute("Name", this.Name));
+            }
+
+            return element;
         }
     }
 

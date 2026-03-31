@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using System.Xml.Linq;
 using ProjNet.IO.Wkt;
 
 /// <summary>
@@ -144,6 +145,28 @@ public class GeocentricCoordinateSystem : CoordinateSystem
                 this.PrimeMeridian.XML);
             return sb.ToString();
         }
+    }
+
+    /// <summary>
+    /// Returns an XML representation of this geocentric coordinate system as an <see cref="XElement"/>.
+    /// </summary>
+    /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
+    public override XElement ToXml()
+    {
+        var innerElement = new XElement("CS_GeocentricCoordinateSystem");
+        innerElement.Add(this.InfoXmlElement);
+        foreach (AxisInfo ai in this.AxisInfo)
+        {
+            innerElement.Add(ai.ToXml());
+        }
+
+        innerElement.Add(this.HorizontalDatum.ToXml());
+        innerElement.Add(this.LinearUnit.ToXml());
+        innerElement.Add(this.PrimeMeridian.ToXml());
+
+        return new XElement("CS_CoordinateSystem",
+            new XAttribute("Dimension", this.Dimension.ToString(CultureInfo.InvariantCulture)),
+            innerElement);
     }
 
     /// <inheritdoc />

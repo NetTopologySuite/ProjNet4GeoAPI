@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using System.Xml.Linq;
 using ProjNet.IO.Wkt;
 
 /// <summary>
@@ -105,6 +106,23 @@ public class Projection : Info, IProjection
             sb.Append("</CS_Projection>");
             return sb.ToString();
         }
+    }
+
+    /// <summary>
+    /// Returns an XML representation of this projection as an <see cref="XElement"/>.
+    /// </summary>
+    /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
+    public XElement ToXml()
+    {
+        var element = new XElement("CS_Projection",
+            new XAttribute("Classname", this.ClassName));
+        element.Add(this.InfoXmlElement);
+        foreach (ProjectionParameter param in this.Parameters)
+        {
+            element.Add(param.ToXml());
+        }
+
+        return element;
     }
 
     /// <summary>

@@ -7,6 +7,7 @@ namespace ProjNet.CoordinateSystems;
 using System;
 using System.Globalization;
 using System.Text;
+using System.Xml.Linq;
 
 /// <summary>
 /// Class for defining units.
@@ -73,6 +74,16 @@ public class Unit : Info, IUnit
         {
             throw new NotImplementedException();
         }
+    }
+
+    /// <summary>
+    /// Returns an XML representation of this unit as an <see cref="XElement"/> [NOT IMPLEMENTED].
+    /// </summary>
+    /// <returns>Not implemented; always throws <see cref="NotImplementedException"/>.</returns>
+    /// <exception cref="NotImplementedException">Always thrown because XML serialization is not supported for generic units.</exception>
+    public XElement ToXml()
+    {
+        throw new NotImplementedException();
     }
 
     /// <inheritdoc />

@@ -7,6 +7,7 @@ namespace ProjNet.CoordinateSystems;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using System.Xml.Linq;
 using ProjNet.IO.Wkt;
 
 /// <summary>
@@ -88,6 +89,27 @@ public class CompoundCoordinateSystem : CoordinateSystem
             sb.Append("</CS_CompoundCoordinateSystem></CS_CoordinateSystem>");
             return sb.ToString();
         }
+    }
+
+    /// <summary>
+    /// Returns an XML representation of this compound coordinate system as an <see cref="XElement"/>.
+    /// </summary>
+    /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
+    public override XElement ToXml()
+    {
+        var innerElement = new XElement("CS_CompoundCoordinateSystem");
+        innerElement.Add(this.InfoXmlElement);
+        foreach (AxisInfo ai in this.AxisInfo)
+        {
+            innerElement.Add(ai.ToXml());
+        }
+
+        innerElement.Add(this.HeadCoordinateSystem.ToXml());
+        innerElement.Add(this.TailCoordinateSystem.ToXml());
+
+        return new XElement("CS_CoordinateSystem",
+            new XAttribute("Dimension", this.Dimension.ToString(CultureInfo.InvariantCulture)),
+            innerElement);
     }
 
     /// <summary>

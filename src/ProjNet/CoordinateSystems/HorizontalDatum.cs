@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using System.Xml.Linq;
 using ProjNet.IO.Wkt;
 
 /// <summary>
@@ -206,6 +207,24 @@ public class HorizontalDatum : Datum
         {
             return FormattableString.Invariant($"<CS_HorizontalDatum DatumType=\"{(int)this.DatumType}\">{this.InfoXml}{this.Ellipsoid.XML}{this.Wgs84Parameters?.XML ?? string.Empty}</CS_HorizontalDatum>");
         }
+    }
+
+    /// <summary>
+    /// Returns an XML representation of this horizontal datum as an <see cref="XElement"/>.
+    /// </summary>
+    /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
+    public XElement ToXml()
+    {
+        var element = new XElement("CS_HorizontalDatum",
+            new XAttribute("DatumType", ((int)this.DatumType).ToString(CultureInfo.InvariantCulture)));
+        element.Add(this.InfoXmlElement);
+        element.Add(this.Ellipsoid.ToXml());
+        if (this.Wgs84Parameters is not null)
+        {
+            element.Add(this.Wgs84Parameters.ToXml());
+        }
+
+        return element;
     }
 
     /// <summary>

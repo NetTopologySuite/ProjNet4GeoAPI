@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using System.Xml.Linq;
 using ProjNet.IO.Wkt;
 
 /// <summary>
@@ -302,6 +303,22 @@ public class Ellipsoid : Info
         {
             return FormattableString.Invariant($"<CS_Ellipsoid SemiMajorAxis=\"{this.SemiMajorAxis}\" SemiMinorAxis=\"{this.SemiMinorAxis}\" InverseFlattening=\"{this.InverseFlattening}\" IvfDefinitive=\"{(this.IsIvfDefinitive ? 1 : 0)}\">{this.InfoXml}{this.AxisUnit.XML}</CS_Ellipsoid>");
         }
+    }
+
+    /// <summary>
+    /// Returns an XML representation of this ellipsoid as an <see cref="XElement"/>.
+    /// </summary>
+    /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
+    public XElement ToXml()
+    {
+        var element = new XElement("CS_Ellipsoid",
+            new XAttribute("SemiMajorAxis", this.SemiMajorAxis.ToString(CultureInfo.InvariantCulture)),
+            new XAttribute("SemiMinorAxis", this.SemiMinorAxis.ToString(CultureInfo.InvariantCulture)),
+            new XAttribute("InverseFlattening", this.InverseFlattening.ToString(CultureInfo.InvariantCulture)),
+            new XAttribute("IvfDefinitive", this.IsIvfDefinitive ? "1" : "0"));
+        element.Add(this.InfoXmlElement);
+        element.Add(this.AxisUnit.ToXml());
+        return element;
     }
 
     /// <summary>

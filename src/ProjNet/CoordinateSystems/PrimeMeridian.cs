@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using System.Xml.Linq;
 using ProjNet.IO.Wkt;
 
 /// <summary>
@@ -145,6 +146,19 @@ public class PrimeMeridian : Info
         {
             return FormattableString.Invariant($"<CS_PrimeMeridian Longitude=\"{this.Longitude}\" >{this.InfoXml}{this.AngularUnit.XML}</CS_PrimeMeridian>");
         }
+    }
+
+    /// <summary>
+    /// Returns an XML representation of this prime meridian as an <see cref="XElement"/>.
+    /// </summary>
+    /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
+    public XElement ToXml()
+    {
+        var element = new XElement("CS_PrimeMeridian",
+            new XAttribute("Longitude", this.Longitude.ToString(CultureInfo.InvariantCulture)));
+        element.Add(this.InfoXmlElement);
+        element.Add(this.AngularUnit.ToXml());
+        return element;
     }
 
     /// <summary>
