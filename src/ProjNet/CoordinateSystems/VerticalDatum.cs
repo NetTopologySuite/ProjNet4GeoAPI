@@ -45,7 +45,7 @@ public class VerticalDatum : Datum
         get
         {
             var sb = new StringBuilder();
-            sb.AppendFormat(CultureInfo.InvariantCulture, "DATUM[\"{0}\", {1}", this.Name, (int)this.DatumType);
+            sb.AppendFormat(CultureInfo.InvariantCulture, "VERT_DATUM[\"{0}\", {1}", this.Name, (int)this.DatumType);
             if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
             {
                 sb.AppendFormat(CultureInfo.InvariantCulture, ", AUTHORITY[\"{0}\", \"{1}\"]", this.Authority, this.AuthorityCode);
