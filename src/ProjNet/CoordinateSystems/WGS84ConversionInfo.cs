@@ -150,22 +150,6 @@ public class Wgs84ConversionInfo : IEquatable<Wgs84ConversionInfo>
     }
 
     /// <summary>
-    /// Returns an XML representation of this WGS84 conversion info as an <see cref="XElement"/>.
-    /// </summary>
-    /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
-    public XElement ToXml()
-    {
-        return new XElement("CS_WGS84ConversionInfo",
-            new XAttribute("Dx", this.Dx.ToString(CultureInfo.InvariantCulture)),
-            new XAttribute("Dy", this.Dy.ToString(CultureInfo.InvariantCulture)),
-            new XAttribute("Dz", this.Dz.ToString(CultureInfo.InvariantCulture)),
-            new XAttribute("Ex", this.Ex.ToString(CultureInfo.InvariantCulture)),
-            new XAttribute("Ey", this.Ey.ToString(CultureInfo.InvariantCulture)),
-            new XAttribute("Ez", this.Ez.ToString(CultureInfo.InvariantCulture)),
-            new XAttribute("Ppm", this.Ppm.ToString(CultureInfo.InvariantCulture)));
-    }
-
-    /// <summary>
     /// Gets a value indicating whether all seven Bursa-Wolf parameter values are zero.
     /// </summary>
     public bool HasZeroValuesOnly
@@ -174,6 +158,23 @@ public class Wgs84ConversionInfo : IEquatable<Wgs84ConversionInfo>
         {
             return !(this.Dx != 0 || this.Dy != 0 || this.Dz != 0 || this.Ex != 0 || this.Ey != 0 || this.Ez != 0 || this.Ppm != 0);
         }
+    }
+
+    /// <summary>
+    /// Returns an XML representation of this WGS84 conversion info as an <see cref="XElement"/>.
+    /// </summary>
+    /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
+    public XElement ToXml()
+    {
+        return new XElement(
+            "CS_WGS84ConversionInfo",
+            new XAttribute("Dx", this.Dx.ToString(CultureInfo.InvariantCulture)),
+            new XAttribute("Dy", this.Dy.ToString(CultureInfo.InvariantCulture)),
+            new XAttribute("Dz", this.Dz.ToString(CultureInfo.InvariantCulture)),
+            new XAttribute("Ex", this.Ex.ToString(CultureInfo.InvariantCulture)),
+            new XAttribute("Ey", this.Ey.ToString(CultureInfo.InvariantCulture)),
+            new XAttribute("Ez", this.Ez.ToString(CultureInfo.InvariantCulture)),
+            new XAttribute("Ppm", this.Ppm.ToString(CultureInfo.InvariantCulture)));
     }
 
     /// <summary>

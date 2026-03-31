@@ -104,7 +104,8 @@ public class LinearUnit : Info, IUnit
     /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
     public XElement ToXml()
     {
-        var element = new XElement("CS_LinearUnit",
+        var element = new XElement(
+            "CS_LinearUnit",
             new XAttribute("MetersPerUnit", this.MetersPerUnit.ToString(CultureInfo.InvariantCulture)));
         element.Add(this.InfoXmlElement);
         return element;

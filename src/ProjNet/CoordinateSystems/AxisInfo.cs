@@ -75,7 +75,8 @@ public class AxisInfo
     /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
     public XElement ToXml()
     {
-        return new XElement("CS_AxisInfo",
+        return new XElement(
+            "CS_AxisInfo",
             new XAttribute("Name", this.Name),
             new XAttribute("Orientation", this.Orientation.ToString().ToUpperInvariant()));
     }

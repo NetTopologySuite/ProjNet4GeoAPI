@@ -136,7 +136,8 @@ public class VerticalCoordinateSystem : CoordinateSystem
         innerElement.Add(this.VerticalDatum.ToXml());
         innerElement.Add(this.LinearUnit.ToXml());
 
-        return new XElement("CS_CoordinateSystem",
+        return new XElement(
+            "CS_CoordinateSystem",
             new XAttribute("Dimension", this.Dimension.ToString(CultureInfo.InvariantCulture)),
             innerElement);
     }

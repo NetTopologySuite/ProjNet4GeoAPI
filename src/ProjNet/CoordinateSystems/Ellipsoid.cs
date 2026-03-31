@@ -311,7 +311,8 @@ public class Ellipsoid : Info
     /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
     public XElement ToXml()
     {
-        var element = new XElement("CS_Ellipsoid",
+        var element = new XElement(
+            "CS_Ellipsoid",
             new XAttribute("SemiMajorAxis", this.SemiMajorAxis.ToString(CultureInfo.InvariantCulture)),
             new XAttribute("SemiMinorAxis", this.SemiMinorAxis.ToString(CultureInfo.InvariantCulture)),
             new XAttribute("InverseFlattening", this.InverseFlattening.ToString(CultureInfo.InvariantCulture)),

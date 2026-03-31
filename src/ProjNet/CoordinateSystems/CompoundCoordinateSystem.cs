@@ -42,6 +42,22 @@ public class CompoundCoordinateSystem : CoordinateSystem
         this.AxisInfo.AddRange(this.TailCoordinateSystem.AxisInfo);
     }
 
+    /// <summary>
+    /// Gets or sets the head coordinate system.
+    /// </summary>
+    public CoordinateSystem HeadCoordinateSystem
+    {
+        get => this.headCoordinateSystem; set { this.headCoordinateSystem = value; }
+    }
+
+    /// <summary>
+    /// Gets or sets the tail coordinate system.
+    /// </summary>
+    public CoordinateSystem TailCoordinateSystem
+    {
+        get => this.tailCoordinateSystem; set { this.tailCoordinateSystem = value; }
+    }
+
     /// <inheritdoc/>
     public override string WKT
     {
@@ -107,25 +123,10 @@ public class CompoundCoordinateSystem : CoordinateSystem
         innerElement.Add(this.HeadCoordinateSystem.ToXml());
         innerElement.Add(this.TailCoordinateSystem.ToXml());
 
-        return new XElement("CS_CoordinateSystem",
+        return new XElement(
+            "CS_CoordinateSystem",
             new XAttribute("Dimension", this.Dimension.ToString(CultureInfo.InvariantCulture)),
             innerElement);
-    }
-
-    /// <summary>
-    /// Gets or sets the head coordinate system.
-    /// </summary>
-    public CoordinateSystem HeadCoordinateSystem
-    {
-        get => this.headCoordinateSystem; set { this.headCoordinateSystem = value; }
-    }
-
-    /// <summary>
-    /// Gets or sets the tail coordinate system.
-    /// </summary>
-    public CoordinateSystem TailCoordinateSystem
-    {
-        get => this.tailCoordinateSystem; set { this.tailCoordinateSystem = value; }
     }
 
     /// <inheritdoc />

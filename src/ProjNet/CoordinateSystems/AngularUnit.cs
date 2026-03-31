@@ -114,7 +114,8 @@ public class AngularUnit : Info, IUnit
     /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
     public XElement ToXml()
     {
-        var element = new XElement("CS_AngularUnit",
+        var element = new XElement(
+            "CS_AngularUnit",
             new XAttribute("RadiansPerUnit", this.RadiansPerUnit.ToString(CultureInfo.InvariantCulture)));
         element.Add(this.InfoXmlElement);
         return element;

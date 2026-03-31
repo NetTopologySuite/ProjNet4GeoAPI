@@ -114,7 +114,8 @@ public class Projection : Info, IProjection
     /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
     public XElement ToXml()
     {
-        var element = new XElement("CS_Projection",
+        var element = new XElement(
+            "CS_Projection",
             new XAttribute("Classname", this.ClassName));
         element.Add(this.InfoXmlElement);
         foreach (ProjectionParameter param in this.Parameters)

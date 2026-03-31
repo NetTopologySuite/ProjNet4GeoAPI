@@ -84,7 +84,8 @@ public class ProjectionParameter
     /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
     public XElement ToXml()
     {
-        return new XElement("CS_ProjectionParameter",
+        return new XElement(
+            "CS_ProjectionParameter",
             new XAttribute("Name", this.Name),
             new XAttribute("Value", this.Value.ToString(CultureInfo.InvariantCulture)));
     }

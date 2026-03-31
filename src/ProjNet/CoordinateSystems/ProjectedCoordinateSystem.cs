@@ -181,31 +181,6 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
     }
 
     /// <summary>
-    /// Returns an XML representation of this projected coordinate system as an <see cref="XElement"/>.
-    /// </summary>
-    /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
-    public override XElement ToXml()
-    {
-        var innerElement = new XElement("CS_ProjectedCoordinateSystem");
-        innerElement.Add(this.InfoXmlElement);
-        foreach (AxisInfo ai in this.AxisInfo)
-        {
-            innerElement.Add(ai.ToXml());
-        }
-
-        innerElement.Add(this.GeographicCoordinateSystem.ToXml());
-        innerElement.Add(this.LinearUnit.ToXml());
-        if (this.Projection is Projection projection)
-        {
-            innerElement.Add(projection.ToXml());
-        }
-
-        return new XElement("CS_CoordinateSystem",
-            new XAttribute("Dimension", this.Dimension.ToString(CultureInfo.InvariantCulture)),
-            innerElement);
-    }
-
-    /// <summary>
     /// Universal Transverse Mercator - WGS84.
     /// </summary>
     /// <param name="zone">UTM zone.</param>
@@ -249,6 +224,32 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
             string.Empty,
             "Large and medium scale topographic mapping and engineering survey.",
             string.Empty);
+    }
+
+    /// <summary>
+    /// Returns an XML representation of this projected coordinate system as an <see cref="XElement"/>.
+    /// </summary>
+    /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
+    public override XElement ToXml()
+    {
+        var innerElement = new XElement("CS_ProjectedCoordinateSystem");
+        innerElement.Add(this.InfoXmlElement);
+        foreach (AxisInfo ai in this.AxisInfo)
+        {
+            innerElement.Add(ai.ToXml());
+        }
+
+        innerElement.Add(this.GeographicCoordinateSystem.ToXml());
+        innerElement.Add(this.LinearUnit.ToXml());
+        if (this.Projection is Projection projection)
+        {
+            innerElement.Add(projection.ToXml());
+        }
+
+        return new XElement(
+            "CS_CoordinateSystem",
+            new XAttribute("Dimension", this.Dimension.ToString(CultureInfo.InvariantCulture)),
+            innerElement);
     }
 
     /// <inheritdoc />

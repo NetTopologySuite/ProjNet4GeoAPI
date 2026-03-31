@@ -74,7 +74,8 @@ public class VerticalDatum : Datum
     /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
     public XElement ToXml()
     {
-        var element = new XElement("CS_VerticalDatum",
+        var element = new XElement(
+            "CS_VerticalDatum",
             new XAttribute("DatumType", ((int)this.DatumType).ToString(CultureInfo.InvariantCulture)));
         element.Add(this.InfoXmlElement);
         return element;

@@ -215,7 +215,8 @@ public class HorizontalDatum : Datum
     /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
     public XElement ToXml()
     {
-        var element = new XElement("CS_HorizontalDatum",
+        var element = new XElement(
+            "CS_HorizontalDatum",
             new XAttribute("DatumType", ((int)this.DatumType).ToString(CultureInfo.InvariantCulture)));
         element.Add(this.InfoXmlElement);
         element.Add(this.Ellipsoid.ToXml());

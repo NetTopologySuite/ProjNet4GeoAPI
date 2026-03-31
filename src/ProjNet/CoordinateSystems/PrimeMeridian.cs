@@ -154,7 +154,8 @@ public class PrimeMeridian : Info
     /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
     public XElement ToXml()
     {
-        var element = new XElement("CS_PrimeMeridian",
+        var element = new XElement(
+            "CS_PrimeMeridian",
             new XAttribute("Longitude", this.Longitude.ToString(CultureInfo.InvariantCulture)));
         element.Add(this.InfoXmlElement);
         element.Add(this.AngularUnit.ToXml());

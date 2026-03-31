@@ -179,7 +179,8 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
         innerElement.Add(this.AngularUnit.ToXml());
         innerElement.Add(this.PrimeMeridian.ToXml());
 
-        return new XElement("CS_CoordinateSystem",
+        return new XElement(
+            "CS_CoordinateSystem",
             new XAttribute("Dimension", this.Dimension.ToString(CultureInfo.InvariantCulture)),
             innerElement);
     }
