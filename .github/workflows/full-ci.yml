@@ -48,7 +48,7 @@ jobs:
       shell: bash
 
     - name: Pack
-      run: dotnet pack -c Release --no-build -o artifacts -p:NoWarn=NU5105
+      run: dotnet pack -c Release --no-build -o artifacts
 
     - name: Upload
       uses: actions/upload-artifact@v4

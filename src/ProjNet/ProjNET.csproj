@@ -41,6 +41,10 @@
 Proj.NET performs point-to-point coordinate conversions between geodetic coordinate systems for use in fx. Geographic Information Systems (GIS) or GPS applications. The spatial reference model used adheres to the Simple Features specification.
     </PackageDescription>
     <PackageTags>OGC;SFS;Projection</PackageTags>
+    <PackageProjectUrl>https://github.com/NetTopologySuite/ProjNet4GeoAPI</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/NetTopologySuite/ProjNet4GeoAPI.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
@@ -51,6 +55,10 @@ Proj.NET performs point-to-point coordinate conversions between geodetic coordin
   <ItemGroup>
     <PackageReference Include="BitMiracle.LibTiff.NET" />
     <PackageReference Include="System.Text.Json" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 
   <ItemGroup>

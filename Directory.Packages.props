@@ -6,6 +6,7 @@
 
   <!-- Global tool packages applied to all projects -->
   <ItemGroup Label="Global Package References">
+    <GlobalPackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" />
     <GlobalPackageReference Include="Nerdbank.GitVersioning" Version="3.9.50" />
     <GlobalPackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.556" />
   </ItemGroup>
