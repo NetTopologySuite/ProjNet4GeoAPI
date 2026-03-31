@@ -513,13 +513,13 @@ public class GieBuiltinsTheoryTests
 
         GeographicCoordinateSystem geographicCoordinateSystem = Assert.IsType<GeographicCoordinateSystem>(gcs);
 
-        // Handle proj=latlong/longlat as a geographic-to-geographic datum shift when +towgs84 is present.
+        // Handle proj=latlong/longlat as a geographic-to-geographic datum shift when +towgs84 or +datum is present.
         if (projCode.Equals("latlong", StringComparison.OrdinalIgnoreCase)
             || projCode.Equals("longlat", StringComparison.OrdinalIgnoreCase)
             || projCode.Equals("latlon", StringComparison.OrdinalIgnoreCase)
             || projCode.Equals("lonlat", StringComparison.OrdinalIgnoreCase))
         {
-            if (!args.ContainsKey("towgs84"))
+            if (!args.ContainsKey("towgs84") && !args.ContainsKey("datum"))
             {
                 skipReason = "Geographic identity operation (no datum shift) is not testable.";
                 return false;
@@ -595,7 +595,7 @@ public class GieBuiltinsTheoryTests
                 new AxisInfo("North", AxisOrientationEnum.North));
 
             GeographicCoordinateSystem sourceGcs = geographicCoordinateSystem;
-            if (args.ContainsKey("towgs84"))
+            if (args.ContainsKey("towgs84") || args.ContainsKey("datum"))
             {
                 HorizontalDatum wgs84Datum = CoordinateSystemFactory.CreateHorizontalDatum(
                     "WGS84", DatumType.HD_Geocentric, Ellipsoid.WGS84, null);
@@ -811,6 +811,10 @@ public class GieBuiltinsTheoryTests
                 toWgs84 = new Wgs84ConversionInfo(dx, dy, dz, rx, ry, rz, ppm);
             }
         }
+        else if (args.TryGetValue("datum", out string? datumName) && !string.IsNullOrEmpty(datumName))
+        {
+            TryResolveDatum(datumName, out toWgs84);
+        }
 
         HorizontalDatum datum = CoordinateSystemFactory.CreateHorizontalDatum("GIE datum", DatumType.HD_Geocentric, geographicEllipsoid, toWgs84);
         gcs = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
@@ -821,6 +825,76 @@ public class GieBuiltinsTheoryTests
             new AxisInfo("Lon", AxisOrientationEnum.East),
             new AxisInfo("Lat", AxisOrientationEnum.North));
         return true;
+    }
+
+    /// <summary>
+    /// Attempts to resolve a PROJ <c>+datum=</c> token to its corresponding <see cref="Wgs84ConversionInfo"/> parameters.
+    /// </summary>
+    /// <param name="datumName">The datum name from the <c>+datum=</c> token.</param>
+    /// <param name="conversionInfo">
+    /// When this method returns <see langword="true"/>, contains the resolved WGS 84 conversion parameters;
+    /// otherwise <see langword="null"/>.
+    /// </param>
+    /// <returns><see langword="true"/> if the datum was resolved; otherwise <see langword="false"/>.</returns>
+    private static bool TryResolveDatum(string datumName, out Wgs84ConversionInfo? conversionInfo)
+    {
+        conversionInfo = null;
+        if (string.IsNullOrWhiteSpace(datumName))
+        {
+            return false;
+        }
+
+        // Well-known PROJ datum definitions mapped to their Bursa-Wolf (towgs84) parameters.
+        if (datumName.Equals("potsdam", StringComparison.OrdinalIgnoreCase))
+        {
+            conversionInfo = new Wgs84ConversionInfo(598.1, 73.7, 418.2, 0.202, 0.045, -2.455, 6.7);
+            return true;
+        }
+
+        if (datumName.Equals("NAD27", StringComparison.OrdinalIgnoreCase))
+        {
+            conversionInfo = new Wgs84ConversionInfo(-8, 160, 176, 0, 0, 0, 0);
+            return true;
+        }
+
+        if (datumName.Equals("NAD83", StringComparison.OrdinalIgnoreCase))
+        {
+            conversionInfo = new Wgs84ConversionInfo(0, 0, 0, 0, 0, 0, 0);
+            return true;
+        }
+
+        if (datumName.Equals("nzgd49", StringComparison.OrdinalIgnoreCase))
+        {
+            conversionInfo = new Wgs84ConversionInfo(59.47, -5.04, 187.44, 0.47, -0.1, 1.024, -4.5993);
+            return true;
+        }
+
+        if (datumName.Equals("ire65", StringComparison.OrdinalIgnoreCase))
+        {
+            conversionInfo = new Wgs84ConversionInfo(482.530, -130.596, 564.557, -1.042, -0.214, -0.631, 8.15);
+            return true;
+        }
+
+        if (datumName.Equals("GGRS87", StringComparison.OrdinalIgnoreCase))
+        {
+            conversionInfo = new Wgs84ConversionInfo(-199.87, 74.79, 246.02, 0, 0, 0, 0);
+            return true;
+        }
+
+        if (datumName.Equals("OSGB36", StringComparison.OrdinalIgnoreCase))
+        {
+            conversionInfo = new Wgs84ConversionInfo(446.448, -125.157, 542.060, 0.1502, 0.2470, 0.8421, -20.4894);
+            return true;
+        }
+
+        if (datumName.Equals("WGS84", StringComparison.OrdinalIgnoreCase))
+        {
+            // WGS 84 is the target datum, so the shift is zero.
+            conversionInfo = new Wgs84ConversionInfo(0, 0, 0, 0, 0, 0, 0);
+            return true;
+        }
+
+        return false;
     }
 
     private static bool TryResolveEllipsoid(Dictionary<string, string> args, out Ellipsoid? ellipsoid)
@@ -1033,6 +1107,54 @@ public class GieBuiltinsTheoryTests
                 ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("IAU 1976", 6378140.0, 298.257, LinearUnit.Metre);
                 return true;
             }
+
+            if (ellps.Equals("everest", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Everest 1830", 6377276.345, 300.8017, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("evrst48", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Everest 1948", 6377304.063, 300.8017, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("evrst56", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Everest 1956", 6377301.243, 300.8017, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("clrk58", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Clarke 1858", 6378293.645208759, 294.2606763692654, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("engelis", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Engelis 1985", 6378136.05, 298.2566, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("CPM", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Comm. des Poids et Mesures 1799", 6375738.7, 334.29, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("delmbr", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Delambre 1810", 6376428.0, 311.5, LinearUnit.Metre);
+                return true;
+            }
+
+            if (ellps.Equals("fschr68m", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Fischer 1968 Modified", 6378155.0, 298.3, LinearUnit.Metre);
+                return true;
+            }
         }
 
         ellipsoid = Ellipsoid.WGS84;
@@ -1091,6 +1213,7 @@ public class GieBuiltinsTheoryTests
         AddOptionalParameter(parameters, args, "lon_3", "lon_3");
         AddOptionalParameter(parameters, args, "lat_b", "lat_b");
         AddOptionalParameter(parameters, args, "alpha", "azimuth");
+        AddOptionalParameter(parameters, args, "gamma", "rectified_grid_angle");
         AddOptionalParameter(parameters, args, "azi", "azi");
         AddOptionalParameter(parameters, args, "tilt", "tilt");
         AddOptionalParameter(parameters, args, "lonc", "longitude_of_center");
@@ -1207,6 +1330,13 @@ public class GieBuiltinsTheoryTests
             {
                 ReplaceParameter(parameters, "south", 1d);
             }
+
+            if ((projectionCode.Equals("krovak", StringComparison.OrdinalIgnoreCase)
+                 || projectionCode.Equals("mod_krovak", StringComparison.OrdinalIgnoreCase))
+                && args.ContainsKey("czech"))
+            {
+                ReplaceParameter(parameters, "czech", 1d);
+            }
         }
 
         if (args.ContainsKey("no_cut"))
@@ -1311,11 +1441,6 @@ public class GieBuiltinsTheoryTests
             return true;
         }
 
-        if (args.ContainsKey("gamma"))
-        {
-            return true;
-        }
-
         if (args.ContainsKey("alpha"))
         {
             if (!args.TryGetValue("proj", out string? projCode)
@@ -1343,11 +1468,6 @@ public class GieBuiltinsTheoryTests
             {
                 return true;
             }
-        }
-
-        if (args.ContainsKey("czech"))
-        {
-            return true;
         }
 
         return false;
@@ -1596,7 +1716,9 @@ public class GieBuiltinsTheoryTests
 
     private static bool HasGeographicDatumShift(string operation)
     {
-        if (!operation.Contains("towgs84", StringComparison.OrdinalIgnoreCase))
+        bool hasDatumInfo = operation.Contains("towgs84", StringComparison.OrdinalIgnoreCase)
+                            || operation.Contains("datum=", StringComparison.Ordinal);
+        if (!hasDatumInfo)
         {
             return false;
         }
