@@ -110,6 +110,7 @@ internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationC
     /// </summary>
     public override void Invert()
     {
+        this.inverse = null;
         this.coordinateTransformationList.Reverse();
         foreach (ICoordinateTransformationCore ic in this.coordinateTransformationList)
         {
