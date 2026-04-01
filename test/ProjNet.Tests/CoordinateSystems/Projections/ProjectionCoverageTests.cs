@@ -171,6 +171,40 @@ public class ProjectionCoverageTests
     }
 
     /// <summary>
+    /// Verifies ellipsoidal HEALPix forward output matches the corresponding authalic-sphere projection.
+    /// </summary>
+    [Fact]
+    public void HealpixEllipsoidalForwardMatchesAuthalicSphereScale()
+    {
+        const double semiMajor = 6378137d;
+        const double inverseFlattening = 298.257223563d;
+        const double longitude = 45d;
+        const double latitude = 35d;
+        double flattening = 1d / inverseFlattening;
+        double eccentricitySquared = (2d * flattening) - (flattening * flattening);
+        double eccentricity = Math.Sqrt(eccentricitySquared);
+        double oneEs = 1d - eccentricitySquared;
+        double qp = QsfnForTests(1d, eccentricity, oneEs);
+        double authalicRadius = semiMajor * Math.Sqrt(0.5d * qp);
+        double phi = latitude * (Math.PI / 180d);
+        double q = QsfnForTests(Math.Sin(phi), eccentricity, oneEs);
+        double authalicLatitude = Math.Asin(Math.Max(-1d, Math.Min(1d, q / qp))) * (180d / Math.PI);
+        string sphericalClause = FormattableString.Invariant($"SPHEROID[\"Authalic Sphere\",{authalicRadius},0]");
+        string ellipsoidalWkt = BuildProjectedWkt("healpix", Wgs84, 0d, 0d, null);
+        string sphericalWkt = BuildProjectedWkt("healpix", sphericalClause, 0d, 0d, null);
+        ProjectedCoordinateSystem ellipsoidalProjected = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, ellipsoidalWkt);
+        ProjectedCoordinateSystem sphericalProjected = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, sphericalWkt);
+        ICoordinateTransformation ellipsoidalForward = CoordinateTransformationFactory.CreateFromCoordinateSystems(ellipsoidalProjected.GeographicCoordinateSystem, ellipsoidalProjected);
+        ICoordinateTransformation sphericalForward = CoordinateTransformationFactory.CreateFromCoordinateSystems(sphericalProjected.GeographicCoordinateSystem, sphericalProjected);
+
+        double[] actual = ellipsoidalForward.MathTransform.Transform(CreatePoint(longitude, latitude));
+        double[] expected = sphericalForward.MathTransform.Transform(CreatePoint(longitude, authalicLatitude));
+
+        Assert.InRange(Math.Abs(actual[0] - expected[0]), 0d, 1e-6);
+        Assert.InRange(Math.Abs(actual[1] - expected[1]), 0d, 1e-6);
+    }
+
+    /// <summary>
     /// Verifies HEALPix forward produces finite results.
     /// </summary>
     /// <param name="spheroidClause">Spheroid clause.</param>
@@ -975,6 +1009,25 @@ public class ProjectionCoverageTests
         }
 
         throw new InvalidOperationException("Transverse Mercator inverse meridional iteration did not converge.");
+    }
+
+    private static double QsfnForTests(double sinphi, double eccent, double oneEs)
+    {
+        const double eps7 = 1e-7;
+        if (eccent < eps7)
+        {
+            return sinphi + sinphi;
+        }
+
+        double con = eccent * sinphi;
+        double div1 = 1d - (con * con);
+        double div2 = 1d + con;
+        if (div1 == 0d || div2 == 0d)
+        {
+            throw new InvalidOperationException("Singular authalic q computation for HEALPix test.");
+        }
+
+        return oneEs * ((sinphi / div1) - ((0.5d / eccent) * Math.Log((1d - con) / div2)));
     }
 
     private static string BuildProjectedWkt(string projectionName, string spheroidClause, double latitudeOfOrigin, double centralMeridian, string? extraParameters)
