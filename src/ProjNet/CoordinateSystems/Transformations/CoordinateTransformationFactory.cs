@@ -1345,7 +1345,13 @@ public class CoordinateTransformationFactory
 
             bool leftHasMethod = !string.IsNullOrWhiteSpace(left.MethodName);
             bool rightHasMethod = !string.IsNullOrWhiteSpace(right.MethodName);
-            return leftHasMethod != rightHasMethod ? leftHasMethod ? -1 : 1 : left.OperationCode.CompareTo(right.OperationCode);
+            if (leftHasMethod != rightHasMethod)
+            {
+                return leftHasMethod ? -1 : 1;
+            }
+
+            int areaComparison = left.GetApproximateAreaOfUseCoverage().CompareTo(right.GetApproximateAreaOfUseCoverage());
+            return areaComparison != 0 ? areaComparison : left.OperationCode.CompareTo(right.OperationCode);
         }
     }
 }

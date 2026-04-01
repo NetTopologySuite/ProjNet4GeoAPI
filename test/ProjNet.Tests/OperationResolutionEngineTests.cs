@@ -7,6 +7,7 @@ namespace ProjNet.Tests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using ProjNet;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
@@ -128,6 +129,43 @@ public class OperationResolutionEngineTests
 
         Assert.Equal(string.Empty, transformation.Authority);
         Assert.Equal(-1, transformation.AuthorityCode);
+    }
+
+    /// <summary>
+    /// Verifies that operation ranking prefers the smaller area-of-use candidate when all other ranking inputs are equal.
+    /// </summary>
+    [Fact]
+    public void OperationDefinitionComparerWithSameAccuracyGridAndMethodPrefersSmallerAreaOfUse()
+    {
+        var provider = new ManagedCoordinateOperationDefinitionProvider();
+        CoordinateOperationDefinition largeAreaCandidate = provider.GetDefinitions().Single(definition => definition.OperationCode == 10392);
+        CoordinateOperationDefinition smallAreaCandidate = provider.GetDefinitions().Single(definition => definition.OperationCode == 10393);
+
+        Assert.Equal(largeAreaCandidate.SourceSrid, smallAreaCandidate.SourceSrid);
+        Assert.Equal(largeAreaCandidate.TargetSrid, smallAreaCandidate.TargetSrid);
+        Assert.Equal(string.IsNullOrWhiteSpace(largeAreaCandidate.ParameterFileName), string.IsNullOrWhiteSpace(smallAreaCandidate.ParameterFileName));
+        Assert.Equal(string.IsNullOrWhiteSpace(largeAreaCandidate.MethodName), string.IsNullOrWhiteSpace(smallAreaCandidate.MethodName));
+        Assert.Equal(
+            largeAreaCandidate.Accuracy > 0d ? largeAreaCandidate.Accuracy : double.MaxValue,
+            smallAreaCandidate.Accuracy > 0d ? smallAreaCandidate.Accuracy : double.MaxValue);
+
+        MethodInfo getCoverageMethod = typeof(CoordinateOperationDefinition).GetMethod("GetApproximateAreaOfUseCoverage", BindingFlags.Instance | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("CoordinateOperationDefinition.GetApproximateAreaOfUseCoverage is required for area-aware ranking.");
+        double largeAreaCoverage = Assert.IsType<double>(getCoverageMethod.Invoke(largeAreaCandidate, []));
+        double smallAreaCoverage = Assert.IsType<double>(getCoverageMethod.Invoke(smallAreaCandidate, []));
+        Assert.True(largeAreaCoverage > smallAreaCoverage);
+
+        Type comparerType = typeof(CoordinateTransformationFactory).GetNestedType("OperationDefinitionComparer", BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("OperationDefinitionComparer type was not found.");
+        FieldInfo instanceField = comparerType.GetField("Instance", BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("OperationDefinitionComparer.Instance field was not found.");
+        object comparer = instanceField.GetValue(null)
+            ?? throw new InvalidOperationException("OperationDefinitionComparer.Instance is null.");
+        MethodInfo compareMethod = comparerType.GetMethod("Compare", BindingFlags.Instance | BindingFlags.Public)
+            ?? throw new InvalidOperationException("OperationDefinitionComparer.Compare method was not found.");
+        int comparison = Assert.IsType<int>(compareMethod.Invoke(comparer, [smallAreaCandidate, largeAreaCandidate]));
+
+        Assert.True(comparison < 0);
     }
 
     /// <summary>

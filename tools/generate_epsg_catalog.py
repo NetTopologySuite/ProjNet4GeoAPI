@@ -897,6 +897,95 @@ def extract_operation_data(zip_path: Path):
             i += 1
         return None
 
+    extent_bounds = {}
+    usage_extents_by_operation = {}
+
+    extent_insert_pattern = re.compile(
+        r"INSERT INTO \"extent\" VALUES\('EPSG','([^']+)','[^']*','[^']*',([^,]+),([^,]+),([^,]+),([^,]+),")
+    usage_insert_pattern = re.compile(
+        r"INSERT INTO \"usage\" VALUES\('[^']*','[^']*','([^']+)','([^']+)','([^']+)','([^']+)','([^']+)','[^']+','[^']+'\)")
+    transform_sql_files = (
+        'helmert_transformation.sql',
+        'grid_transformation.sql',
+        'other_transformation.sql',
+        'concatenated_operation.sql',
+    )
+
+    proj_sql_root = zip_path.resolve().parent.parent / 'PROJ' / 'data' / 'sql'
+    extent_sql_path = proj_sql_root / 'extent.sql'
+    if extent_sql_path.exists():
+        for line in extent_sql_path.read_text(encoding='utf-8').splitlines():
+            extent_match = extent_insert_pattern.search(line)
+            if not extent_match:
+                continue
+
+            try:
+                extent_code = int(extent_match.group(1))
+            except ValueError:
+                continue
+
+            south_value = extent_match.group(2)
+            north_value = extent_match.group(3)
+            west_value = extent_match.group(4)
+            east_value = extent_match.group(5)
+            if south_value == 'NULL' or north_value == 'NULL' or west_value == 'NULL' or east_value == 'NULL':
+                continue
+
+            try:
+                south = float(south_value)
+                north = float(north_value)
+                west = float(west_value)
+                east = float(east_value)
+            except ValueError:
+                continue
+
+            extent_bounds[extent_code] = (south, north, west, east)
+
+    if proj_sql_root.exists():
+        for sql_name in transform_sql_files:
+            sql_path = proj_sql_root / sql_name
+            if not sql_path.exists():
+                continue
+
+            for line in sql_path.read_text(encoding='utf-8').splitlines():
+                usage_match = usage_insert_pattern.search(line)
+                if not usage_match:
+                    continue
+
+                object_table_name = usage_match.group(1)
+                operation_auth = usage_match.group(2)
+                try:
+                    operation_code = int(usage_match.group(3))
+                except ValueError:
+                    continue
+                extent_auth = usage_match.group(4)
+                try:
+                    extent_code = int(usage_match.group(5))
+                except ValueError:
+                    continue
+
+                if operation_auth != 'EPSG' or extent_auth != 'EPSG':
+                    continue
+
+                if object_table_name not in ('helmert_transformation', 'grid_transformation', 'other_transformation', 'concatenated_operation'):
+                    continue
+
+                usage_extents_by_operation.setdefault(operation_code, set()).add(extent_code)
+
+    def merge_operation_bounds(operation_code: int):
+        extents = [
+            extent_bounds[extent_code]
+            for extent_code in usage_extents_by_operation.get(operation_code, set())
+            if extent_code in extent_bounds]
+        if not extents:
+            return float('nan'), float('nan'), float('nan'), float('nan')
+
+        south = min(value[0] for value in extents)
+        north = max(value[1] for value in extents)
+        west = min(value[2] for value in extents)
+        east = max(value[3] for value in extents)
+        return south, north, west, east
+
     parsed_operations = []
     with zipfile.ZipFile(zip_path, 'r') as zf:
         for info in sorted(zf.infolist(), key=lambda i: i.filename):
@@ -942,6 +1031,8 @@ def extract_operation_data(zip_path: Path):
             parameter_file_name = pf_match.group(1) if pf_match else ''
             parameters = [(m.group(1), float(m.group(2))) for m in parameter_pattern.finditer(text)]
 
+            area_south_latitude, area_north_latitude, area_west_longitude, area_east_longitude = merge_operation_bounds(operation_code)
+
             parsed_operations.append({
                 'operation_type': operation_type,
                 'operation_code': operation_code,
@@ -951,6 +1042,10 @@ def extract_operation_data(zip_path: Path):
                 'method_name': method_name,
                 'parameter_file_name': parameter_file_name,
                 'parameters': parameters,
+                'area_south_latitude': area_south_latitude,
+                'area_north_latitude': area_north_latitude,
+                'area_west_longitude': area_west_longitude,
+                'area_east_longitude': area_east_longitude,
             })
 
     parsed_operations.sort(key=lambda r: (r['operation_type'], r['operation_code']))
@@ -975,6 +1070,10 @@ def extract_operation_data(zip_path: Path):
             record['accuracy'],
             record['method_name'],
             record['parameter_file_name'],
+            record['area_south_latitude'],
+            record['area_north_latitude'],
+            record['area_west_longitude'],
+            record['area_east_longitude'],
             parameter_start_index,
             parameter_count,
         ))
@@ -1230,7 +1329,7 @@ def emit(output_path: Path, zip_name: str, catalog, operations, operation_parame
         'EpsgVerticalDatumRecord': 'int code, string name',
         'EpsgConversionRecord': 'int code, string methodName, int parameterCount',
         'EpsgConversionParameterRecord': 'string name, double value',
-        'EpsgOperationRecord': 'EpsgOperationType operationType, int operationCode, int sourceSrid, int targetSrid, double accuracy, string methodName, string parameterFileName, int parameterStartIndex, int parameterCount',
+        'EpsgOperationRecord': 'EpsgOperationType operationType, int operationCode, int sourceSrid, int targetSrid, double accuracy, string methodName, string parameterFileName, double areaSouthLatitude, double areaNorthLatitude, double areaWestLongitude, double areaEastLongitude, int parameterStartIndex, int parameterCount',
         'EpsgOperationParameterRecord': 'int operationCode, string name, double value',
         'EpsgExplicitOperationRecord': 'int operationCode, double dx, double dy, double dz, double ex, double ey, double ez, double ppm',
     }
@@ -1414,9 +1513,13 @@ def emit(output_path: Path, zip_name: str, catalog, operations, operation_parame
 
     def fmt_operation(value):
         accuracy = 'double.NaN' if math.isnan(value[4]) else f'{repr(value[4])}d'
+        area_south_latitude = 'double.NaN' if math.isnan(value[7]) else f'{repr(value[7])}d'
+        area_north_latitude = 'double.NaN' if math.isnan(value[8]) else f'{repr(value[8])}d'
+        area_west_longitude = 'double.NaN' if math.isnan(value[9]) else f'{repr(value[9])}d'
+        area_east_longitude = 'double.NaN' if math.isnan(value[10]) else f'{repr(value[10])}d'
         return (
             f"(EpsgOperationType){value[0]}, {value[1]}, {value[2]}, {value[3]}, {accuracy}, "
-            f"\"{esc(value[5])}\", \"{esc(value[6])}\", {value[7]}, {value[8]}"
+            f"\"{esc(value[5])}\", \"{esc(value[6])}\", {area_south_latitude}, {area_north_latitude}, {area_west_longitude}, {area_east_longitude}, {value[11]}, {value[12]}"
         )
 
     types_lines = create_file_lines()

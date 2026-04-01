@@ -234,7 +234,7 @@ namespace ProjNet.Data.Generated
 
     internal readonly struct EpsgOperationRecord
     {
-        internal EpsgOperationRecord(EpsgOperationType operationType, int operationCode, int sourceSrid, int targetSrid, double accuracy, string methodName, string parameterFileName, int parameterStartIndex, int parameterCount)
+        internal EpsgOperationRecord(EpsgOperationType operationType, int operationCode, int sourceSrid, int targetSrid, double accuracy, string methodName, string parameterFileName, double areaSouthLatitude, double areaNorthLatitude, double areaWestLongitude, double areaEastLongitude, int parameterStartIndex, int parameterCount)
         {
             OperationType = operationType;
             OperationCode = operationCode;
@@ -243,6 +243,10 @@ namespace ProjNet.Data.Generated
             Accuracy = accuracy;
             MethodName = methodName;
             ParameterFileName = parameterFileName;
+            AreaSouthLatitude = areaSouthLatitude;
+            AreaNorthLatitude = areaNorthLatitude;
+            AreaWestLongitude = areaWestLongitude;
+            AreaEastLongitude = areaEastLongitude;
             ParameterStartIndex = parameterStartIndex;
             ParameterCount = parameterCount;
         }
@@ -254,6 +258,10 @@ namespace ProjNet.Data.Generated
         internal double Accuracy { get; }
         internal string MethodName { get; }
         internal string ParameterFileName { get; }
+        internal double AreaSouthLatitude { get; }
+        internal double AreaNorthLatitude { get; }
+        internal double AreaWestLongitude { get; }
+        internal double AreaEastLongitude { get; }
         internal int ParameterStartIndex { get; }
         internal int ParameterCount { get; }
     }

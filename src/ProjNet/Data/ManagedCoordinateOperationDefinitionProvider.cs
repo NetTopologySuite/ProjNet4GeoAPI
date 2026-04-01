@@ -29,7 +29,11 @@ internal sealed class ManagedCoordinateOperationDefinitionProvider : ICoordinate
                 operation.TargetSrid,
                 operation.Accuracy,
                 operation.MethodName,
-                operation.ParameterFileName);
+                operation.ParameterFileName,
+                operation.AreaSouthLatitude,
+                operation.AreaNorthLatitude,
+                operation.AreaWestLongitude,
+                operation.AreaEastLongitude);
         }
     }
 }
