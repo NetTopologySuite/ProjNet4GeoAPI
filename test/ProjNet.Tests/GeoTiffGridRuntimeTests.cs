@@ -122,6 +122,31 @@ public class GeoTiffGridRuntimeTests
         Assert.Same(pool.RentedArrays[0], pool.ReturnedArrays[0]);
     }
 
+    /// <summary>
+    /// Verifies raw grid coordinates beyond the last interpolable cell are rejected before interpolation can address cells outside the raster.
+    /// </summary>
+    [Fact]
+    public void TryMapToGridCoordinatesRejectsUpperBoundBeyondLastInterpolableCell()
+    {
+        var sampleData = new SampleData([[0d, 0d, 0d, 0d]], width: 2);
+        var grid = new TestGeoGrid(
+            width: 2,
+            height: 2,
+            a: 1d,
+            b: 0d,
+            c: 0d,
+            d: 0d,
+            e: 1d,
+            f: 0d,
+            sampleData: sampleData);
+
+        bool inside = grid.TryMapToGridCoordinates(1.5d, 0.5d, out double gridX, out double gridY);
+
+        Assert.False(inside);
+        Assert.True(gridX > 1d);
+        Assert.InRange(gridY, 0d, 1d);
+    }
+
     private static string FindGridPath(string fileName)
     {
         string direct = Path.Combine(AppContext.BaseDirectory, "Fixtures", "grids", fileName);
@@ -175,6 +200,23 @@ public class GeoTiffGridRuntimeTests
         {
             this.rentCount++;
             return this.rentCount > 1 ? throw new InvalidOperationException("Simulated rent failure") : base.Rent(minimumLength);
+        }
+    }
+
+    private sealed class TestGeoGrid : BaseGeoGrid
+    {
+        internal TestGeoGrid(
+            int width,
+            int height,
+            double a,
+            double b,
+            double c,
+            double d,
+            double e,
+            double f,
+            SampleData sampleData)
+            : base("test", width, height, area: width * height, epsilon: 0d, west: c, east: c + ((width - 1) * a), south: f, north: f + ((height - 1) * e), a, b, c, d, e, f, sampleData)
+        {
         }
     }
 }
