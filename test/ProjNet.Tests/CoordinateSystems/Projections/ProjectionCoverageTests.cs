@@ -596,6 +596,34 @@ public class ProjectionCoverageTests
         Assert.True(Math.Abs(geographicPoint[1] - legacyLatitude) > 1e-3);
     }
 
+    /// <summary>
+    /// Verifies Albers inverse fails near the cone apex because <c>Math.Atan</c> cannot resolve the quadrant.
+    /// </summary>
+    [Fact]
+    public void AlbersInverseNearApexHasQuadrantError()
+    {
+        const double longitude = 120d;
+        const double latitude = 30d;
+        const double latitudeOfOrigin = 0d;
+        const double standardParallel1 = 90d;
+        const double standardParallel2 = 60d;
+        string wkt = BuildProjectedWkt(
+            "albers",
+            Sphere6400000,
+            latitudeOfOrigin,
+            0d,
+            FormattableString.Invariant($",PARAMETER[\"standard_parallel_1\",{standardParallel1}],PARAMETER[\"standard_parallel_2\",{standardParallel2}]"));
+        ProjectedCoordinateSystem projected = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wkt);
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
+
+        double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
+        double[] roundtrip = inverse.MathTransform.Transform(projectedPoint);
+
+        Assert.InRange(Math.Abs(roundtrip[0] - longitude), 0d, 1e-6);
+        Assert.InRange(Math.Abs(roundtrip[1] - latitude), 0d, 1e-6);
+    }
+
     // ------------------------------------------------------------------
     //  MercatorAuxiliarySphere (mercator_auxiliary_sphere) – 59.3 % coverage
     // ------------------------------------------------------------------
