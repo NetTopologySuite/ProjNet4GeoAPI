@@ -176,6 +176,24 @@ public class HelmertRuntimeTests
         Assert.Contains("scale", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// Verifies kinematic 4D calls do not leak observation-epoch state into 3D transforms.
+    /// </summary>
+    [Fact]
+    public void HelmertKinematicThreeOrdinateTransformIsStableAfterEpochSpecificCall()
+    {
+        const string operation = "+proj=helmert +x=0 +y=0 +z=0 +dx=1000 +dy=0 +dz=0 +t_epoch=0";
+        MathTransform transform = CreateTransform(operation);
+
+        double[] first3D = transform.Transform(CreatePoint(10d, 20d, 30d));
+        double[] epochSpecific = transform.Transform(CreatePoint(10d, 20d, 30d, 2d));
+        double[] second3D = transform.Transform(CreatePoint(10d, 20d, 30d));
+
+        Assert.InRange(Math.Abs(first3D[0] - 10d), 0d, 1e-9d);
+        Assert.InRange(Math.Abs(second3D[0] - 10d), 0d, 1e-9d);
+        Assert.InRange(Math.Abs(epochSpecific[0] - 2010d), 0d, 1e-9d);
+    }
+
     private static MathTransform CreateTransform(string operation)
     {
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
