@@ -132,6 +132,10 @@ public class GeoTiffGridRuntimeTests
         var grid = new TestGeoGrid(
             width: 2,
             height: 2,
+            west: 0d,
+            east: 2d,
+            south: 0d,
+            north: 1d,
             a: 1d,
             b: 0d,
             c: 0d,
@@ -142,9 +146,10 @@ public class GeoTiffGridRuntimeTests
 
         bool inside = grid.TryMapToGridCoordinates(1.5d, 0.5d, out double gridX, out double gridY);
 
+        Assert.True(grid.Contains(1.5d, 0.5d));
         Assert.False(inside);
-        Assert.True(gridX > 1d);
-        Assert.InRange(gridY, 0d, 1d);
+        Assert.True(double.IsFinite(gridX));
+        Assert.True(double.IsFinite(gridY));
     }
 
     private static string FindGridPath(string fileName)
@@ -208,6 +213,10 @@ public class GeoTiffGridRuntimeTests
         internal TestGeoGrid(
             int width,
             int height,
+            double west,
+            double east,
+            double south,
+            double north,
             double a,
             double b,
             double c,
@@ -215,7 +224,7 @@ public class GeoTiffGridRuntimeTests
             double e,
             double f,
             SampleData sampleData)
-            : base("test", width, height, area: width * height, epsilon: 0d, west: c, east: c + ((width - 1) * a), south: f, north: f + ((height - 1) * e), a, b, c, d, e, f, sampleData)
+            : base("test", width, height, area: width * height, epsilon: 0d, west, east, south, north, a, b, c, d, e, f, sampleData)
         {
         }
     }

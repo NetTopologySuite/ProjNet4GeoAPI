@@ -180,17 +180,17 @@ internal abstract class BaseGeoGrid
     /// <returns><see langword="true"/> when the mapping succeeds; otherwise <see langword="false"/>.</returns>
     internal bool TryMapToGridCoordinates(double longitude, double latitude, out double gridX, out double gridY)
     {
-        if (this.TryMapRaw(longitude, latitude, out gridX, out gridY) && BaseGeoGrid.IsWithinGrid(gridX, gridY))
+        if (this.TryMapRaw(longitude, latitude, out gridX, out gridY) && this.IsWithinGrid(gridX, gridY))
         {
             return true;
         }
 
-        if (this.TryMapRaw(longitude + 360d, latitude, out gridX, out gridY) && BaseGeoGrid.IsWithinGrid(gridX, gridY))
+        if (this.TryMapRaw(longitude + 360d, latitude, out gridX, out gridY) && this.IsWithinGrid(gridX, gridY))
         {
             return true;
         }
 
-        return this.TryMapRaw(longitude - 360d, latitude, out gridX, out gridY) && BaseGeoGrid.IsWithinGrid(gridX, gridY);
+        return this.TryMapRaw(longitude - 360d, latitude, out gridX, out gridY) && this.IsWithinGrid(gridX, gridY);
     }
 
     /// <summary>
@@ -205,9 +205,13 @@ internal abstract class BaseGeoGrid
         return this.sampleData.GetValue(sampleIndex, x, y);
     }
 
-    private static bool IsWithinGrid(double x, double y)
+    private bool IsWithinGrid(double x, double y)
     {
-        return x >= -1e-8d && y >= -1e-8d;
+        const double epsilon = 1e-8d;
+        return x >= -epsilon
+            && y >= -epsilon
+            && x <= (this.Width - 1) + epsilon
+            && y <= (this.Height - 1) + epsilon;
     }
 
     private bool TryMapRaw(double longitude, double latitude, out double x, out double y)
