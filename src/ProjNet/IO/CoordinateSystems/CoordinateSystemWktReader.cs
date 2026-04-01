@@ -101,6 +101,15 @@ public static partial class CoordinateSystemWktReader
         };
     }
 
+    private static void ReadAuthorityWithUnknownCode(WktTokenizer tokenizer, out string authority, out long authorityCode)
+    {
+        tokenizer.ReadAuthority(out authority, out authorityCode, out bool hasNumericAuthorityCode);
+        if (!hasNumericAuthorityCode)
+        {
+            authorityCode = -1;
+        }
+    }
+
     /// <summary>
     /// Returns a IUnit given a piece of WKT.
     /// </summary>
@@ -118,7 +127,7 @@ public static partial class CoordinateSystemWktReader
         tokenizer.NextToken();
         if (tokenizer.GetStringValue() == ",")
         {
-            tokenizer.ReadAuthority(out authority, out authorityCode);
+            ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
             tokenizer.ReadCloser(bracket);
         }
         else
@@ -147,7 +156,7 @@ public static partial class CoordinateSystemWktReader
         tokenizer.NextToken();
         if (tokenizer.GetStringValue() == ",")
         {
-            tokenizer.ReadAuthority(out authority, out authorityCode);
+            ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
             tokenizer.ReadCloser(bracket);
         }
         else
@@ -176,7 +185,7 @@ public static partial class CoordinateSystemWktReader
         tokenizer.NextToken();
         if (tokenizer.GetStringValue() == ",")
         {
-            tokenizer.ReadAuthority(out authority, out authorityCode);
+            ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
             tokenizer.ReadCloser(bracket);
         }
         else
@@ -298,7 +307,7 @@ public static partial class CoordinateSystemWktReader
         // Read authority.
         if (tokenizer.GetStringValue() == ",")
         {
-            tokenizer.ReadAuthority(out authority, out authorityCode);
+            ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
             tokenizer.ReadCloser(bracket);
         }
         else
@@ -325,7 +334,7 @@ public static partial class CoordinateSystemWktReader
         tokenizer.NextToken(true);
         if (tokenizer.GetStringValue() == ",")
         {
-            tokenizer.ReadAuthority(out authority, out authorityCode);
+            ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
             tokenizer.ReadCloser(bracket);
         }
         else
@@ -425,7 +434,7 @@ public static partial class CoordinateSystemWktReader
             {
                 if (tokenizer.GetStringValue() == "AUTHORITY")
                 {
-                    tokenizer.ReadAuthority(out authority, out authorityCode);
+                    ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
                     break;
                 }
                 else
@@ -478,7 +487,7 @@ public static partial class CoordinateSystemWktReader
 
             if (tokenizer.GetStringValue() == "AUTHORITY")
             {
-                tokenizer.ReadAuthority(out authority, out authorityCode);
+                ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
                 tokenizer.ReadCloser(bracket);
             }
         }
@@ -516,7 +525,7 @@ public static partial class CoordinateSystemWktReader
             tokenizer.NextToken();
             if (tokenizer.GetStringValue() == "AUTHORITY")
             {
-                tokenizer.ReadAuthority(out authority, out authorityCode);
+                ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
             }
         }
 
@@ -563,7 +572,7 @@ public static partial class CoordinateSystemWktReader
 
             if (tokenizer.GetStringValue() == "AUTHORITY")
             {
-                tokenizer.ReadAuthority(out authority, out authorityCode);
+                ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
                 tokenizer.ReadCloser(bracket);
             }
         }
@@ -634,7 +643,7 @@ public static partial class CoordinateSystemWktReader
 
             if (tokenizer.GetStringValue() == "AUTHORITY")
             {
-                tokenizer.ReadAuthority(out authority, out authorityCode);
+                ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
                 tokenizer.ReadCloser(bracket);
             }
         }
@@ -683,7 +692,7 @@ public static partial class CoordinateSystemWktReader
             }
             else if (tokenizer.GetStringValue() == "AUTHORITY")
             {
-                tokenizer.ReadAuthority(out authority, out authorityCode);
+                ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
                 tokenizer.ReadCloser(bracket);
             }
         }
@@ -711,7 +720,7 @@ public static partial class CoordinateSystemWktReader
             tokenizer.NextToken();
             if (tokenizer.GetStringValue() == "AUTHORITY")
             {
-                tokenizer.ReadAuthority(out authority, out authorityCode);
+                ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
                 tokenizer.ReadCloser(bracket);
             }
         }
@@ -735,7 +744,7 @@ public static partial class CoordinateSystemWktReader
         long authorityCode = -1;
         if (tokenizer.GetStringValue() == ",")
         {
-            tokenizer.ReadAuthority(out authority, out authorityCode);
+            ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
             tokenizer.ReadCloser(bracket);
         }
         else
@@ -793,7 +802,7 @@ public static partial class CoordinateSystemWktReader
 
                     break;
                 case "AUTHORITY":
-                    tokenizer.ReadAuthority(out authority, out authorityCode);
+                    ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
 
                     // tokenizer.ReadCloser(bracket);
                     break;

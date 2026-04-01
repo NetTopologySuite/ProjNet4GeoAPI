@@ -283,6 +283,19 @@ internal sealed class WktTokenizer
     /// <param name="authorityCode">Parsed authority code.</param>
     internal void ReadAuthority(out string authority, out long authorityCode)
     {
+        this.ReadAuthority(out authority, out authorityCode, out _);
+    }
+
+    /// <summary>
+    /// Reads an AUTHORITY token block and reports whether the authority code token was numeric.
+    /// </summary>
+    /// <param name="authority">Parsed authority name.</param>
+    /// <param name="authorityCode">Parsed authority code.</param>
+    /// <param name="hasNumericAuthorityCode">
+    /// <see langword="true"/> when the authority code token was numeric or parseable as integer; otherwise <see langword="false"/>.
+    /// </param>
+    internal void ReadAuthority(out string authority, out long authorityCode, out bool hasNumericAuthorityCode)
+    {
         if (!this.IsCurrentToken("AUTHORITY".AsSpan()))
         {
             this.ReadToken("AUTHORITY");
@@ -296,10 +309,11 @@ internal sealed class WktTokenizer
         if (this.tokenType == TokenType.Number)
         {
             authorityCode = (long)this.GetNumericValue();
+            hasNumericAuthorityCode = true;
         }
         else
         {
-            long.TryParse(
+            hasNumericAuthorityCode = long.TryParse(
                 this.ReadDoubleQuotedWord(),
                 NumberStyles.Any,
                 CultureInfo.InvariantCulture,
