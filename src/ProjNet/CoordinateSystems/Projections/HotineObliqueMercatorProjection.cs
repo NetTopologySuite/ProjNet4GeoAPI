@@ -34,6 +34,8 @@ internal class HotineObliqueMercatorProjection : MapProjection
     private readonly double sinaz;
     private readonly double cosaz;
     private readonly double u;
+    private readonly double vPoleNorth;
+    private readonly double vPoleSouth;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="HotineObliqueMercatorProjection"/> class.
@@ -100,6 +102,10 @@ internal class HotineObliqueMercatorProjection : MapProjection
         double g = .5 * (f - (1.0 / f));
         double gama = Asinz(Math.Sin(this.azimuth) / this.d);
         this.Lon_origin -= Asinz(g * Math.Tan(gama)) / this.bl;
+        double arB = this.al / this.bl;
+        double halfGamma = .5 * gama;
+        this.vPoleNorth = arB * Math.Log(Math.Tan(FortPi - halfGamma));
+        this.vPoleSouth = arB * Math.Log(Math.Tan(FortPi + halfGamma));
 
         con = Math.Abs(this.latOrigin);
         if ((con > Epsln) && (Math.Abs(con - HalfPi) > Epsln))
@@ -153,7 +159,9 @@ internal class HotineObliqueMercatorProjection : MapProjection
     /// <inheritdoc/>
     protected override void RadiansToMeters(ref double lon, ref double lat)
     {
-        double us, ul;
+        double us;
+        double ul;
+        double vs;
 
         // Forward equations
         // -----------------
@@ -180,16 +188,20 @@ internal class HotineObliqueMercatorProjection : MapProjection
                     us += PI * this.al / this.bl;
                 }
             }
+
+            vs = .5 * this.al * Math.Log((1.0 - ul) / (1.0 + ul)) / this.bl;
         }
         else
         {
             if (lat >= 0)
             {
                 ul = this.singam;
+                vs = this.vPoleNorth;
             }
             else
             {
                 ul = -this.singam;
+                vs = this.vPoleSouth;
             }
 
             us = this.al * lat / this.bl;
@@ -200,7 +212,6 @@ internal class HotineObliqueMercatorProjection : MapProjection
             throw new InvalidOperationException("Point projects into infinity");
         }
 
-        double vs = .5 * this.al * Math.Log((1.0 - ul) / (1.0 + ul)) / this.bl;
         if (!this.NaturalOriginOffsets)
         {
             us -= this.u;
