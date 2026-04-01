@@ -281,9 +281,66 @@ public class InterruptedAndSpecialMercatorProjectionTests
         Assert.InRange(Math.Abs(geographicPoint[1] - 1e-15d), 0d, 1e-13);
     }
 
+    /// <summary>
+    /// Verifies Tobler-Mercator forward projection uses the longitude relative to the central meridian.
+    /// </summary>
+    [Fact]
+    public void ToblerMercatorForwardRespectsCentralMeridianOffset()
+    {
+        ProjectedCoordinateSystem centeredAtGreenwich = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
+            BuildProjectedWkt("tobmerc", Sphere6370997, null));
+        ProjectedCoordinateSystem centeredAtTenDegrees = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
+            BuildProjectedWkt("tobmerc", Sphere6370997, null, 10d));
+        ICoordinateTransformation forwardGreenwich = CoordinateTransformationFactory.CreateFromCoordinateSystems(
+            centeredAtGreenwich.GeographicCoordinateSystem,
+            centeredAtGreenwich);
+        ICoordinateTransformation forwardTenDegrees = CoordinateTransformationFactory.CreateFromCoordinateSystems(
+            centeredAtTenDegrees.GeographicCoordinateSystem,
+            centeredAtTenDegrees);
+
+        double[] greenwichPoint = forwardGreenwich.MathTransform.Transform(CreatePoint(2d, 30d));
+        double[] shiftedPoint = forwardTenDegrees.MathTransform.Transform(CreatePoint(12d, 30d));
+
+        Assert.InRange(Math.Abs(shiftedPoint[0] - greenwichPoint[0]), 0d, 1e-9);
+        Assert.InRange(Math.Abs(shiftedPoint[1] - greenwichPoint[1]), 0d, 1e-9);
+    }
+
+    /// <summary>
+    /// Verifies Tobler-Mercator inverse projection re-applies the central meridian after recovering longitude.
+    /// </summary>
+    [Fact]
+    public void ToblerMercatorInverseReappliesCentralMeridianOffset()
+    {
+        ProjectedCoordinateSystem centeredAtGreenwich = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
+            BuildProjectedWkt("tobmerc", Sphere6370997, null));
+        ProjectedCoordinateSystem centeredAtTenDegrees = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
+            BuildProjectedWkt("tobmerc", Sphere6370997, null, 10d));
+        ICoordinateTransformation forwardGreenwich = CoordinateTransformationFactory.CreateFromCoordinateSystems(
+            centeredAtGreenwich.GeographicCoordinateSystem,
+            centeredAtGreenwich);
+        ICoordinateTransformation inverseTenDegrees = CoordinateTransformationFactory.CreateFromCoordinateSystems(
+            centeredAtTenDegrees,
+            centeredAtTenDegrees.GeographicCoordinateSystem);
+
+        double[] projectedPoint = forwardGreenwich.MathTransform.Transform(CreatePoint(2d, 30d));
+        double[] shiftedGeographicPoint = inverseTenDegrees.MathTransform.Transform(projectedPoint);
+
+        Assert.InRange(Math.Abs(shiftedGeographicPoint[0] - 12d), 0d, 1e-9);
+        Assert.InRange(Math.Abs(shiftedGeographicPoint[1] - 30d), 0d, 1e-9);
+    }
+
     private static string BuildProjectedWkt(string projectionName, string spheroidClause, string? extraParameters)
     {
-        return FormattableString.Invariant($"PROJCS[\"Specialty-B-{projectionName}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{spheroidClause}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{extraParameters ?? string.Empty},UNIT[\"metre\",1]]");
+        return BuildProjectedWkt(projectionName, spheroidClause, extraParameters, 0d);
+    }
+
+    private static string BuildProjectedWkt(string projectionName, string spheroidClause, string? extraParameters, double centralMeridian)
+    {
+        return FormattableString.Invariant($"PROJCS[\"Specialty-B-{projectionName}\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{spheroidClause}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",{centralMeridian.ToString(CultureInfo.InvariantCulture)}],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0]{extraParameters ?? string.Empty},UNIT[\"metre\",1]]");
     }
 
     private static string BuildColUrbanWkt(string projectionName)
