@@ -217,7 +217,7 @@ internal sealed class WktTokenizer
                 return builder.ToString();
             }
 
-            builder.Append(this.GetTokenSpan());
+            builder.Append(this.GetTokenString());
             this.NextToken(false);
         }
     }
