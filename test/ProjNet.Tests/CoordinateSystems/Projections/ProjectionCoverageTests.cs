@@ -556,6 +556,46 @@ public class ProjectionCoverageTests
         Assert.InRange(Math.Abs(projectedPoint[0] - analyticalEasting), 0d, 1e-6);
     }
 
+    /// <summary>
+    /// Verifies Transverse Mercator inverse latitude uses Snyder coefficient 1575 in the t^4 term.
+    /// </summary>
+    [Fact]
+    public void TransverseMercatorInverseLatitudeUsesSnyderCoefficient1575()
+    {
+        const double semiMajor = 6377563.396d;
+        const double inverseFlattening = 299.32496d;
+        const double latitudeOfOrigin = 49d;
+        const double centralMeridian = -2d;
+        const double scaleFactor = 0.9996012717d;
+        const double easting = -4370667.706314864d;
+        const double northing = 1991695.1549298093d;
+        string wkt = FormattableString.Invariant(
+            $"PROJCS[\"Coverage-transverse_mercator\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",SPHEROID[\"Airy 1830\",{semiMajor},{inverseFlattening}]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"transverse_mercator\"],PARAMETER[\"latitude_of_origin\",{latitudeOfOrigin}],PARAMETER[\"central_meridian\",{centralMeridian}],PARAMETER[\"scale_factor\",{scaleFactor}],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1]]");
+        ProjectedCoordinateSystem projected = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wkt);
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
+
+        double[] geographicPoint = inverse.MathTransform.Transform(CreatePoint(easting, northing));
+        double expectedLatitude = ComputeTransverseMercatorInverseLatitude(
+            easting,
+            northing,
+            semiMajor,
+            inverseFlattening,
+            scaleFactor,
+            latitudeOfOrigin,
+            1575d);
+        double legacyLatitude = ComputeTransverseMercatorInverseLatitude(
+            easting,
+            northing,
+            semiMajor,
+            inverseFlattening,
+            scaleFactor,
+            latitudeOfOrigin,
+            1574d);
+
+        Assert.InRange(Math.Abs(geographicPoint[1] - expectedLatitude), 0d, 1e-8);
+        Assert.True(Math.Abs(geographicPoint[1] - legacyLatitude) > 1e-3);
+    }
+
     // ------------------------------------------------------------------
     //  MercatorAuxiliarySphere (mercator_auxiliary_sphere) – 59.3 % coverage
     // ------------------------------------------------------------------
@@ -802,6 +842,81 @@ public class ProjectionCoverageTests
     // ------------------------------------------------------------------
     //  WKT builder and helpers
     // ------------------------------------------------------------------
+    private static double ComputeTransverseMercatorInverseLatitude(
+        double xMeters,
+        double yMeters,
+        double semiMajor,
+        double inverseFlattening,
+        double scaleFactor,
+        double latitudeOfOriginDegrees,
+        double coefficient)
+    {
+        const double epsilon = 1e-6;
+        double flattening = 1d / inverseFlattening;
+        double eccentricitySquared = (2d * flattening) - (flattening * flattening);
+        double esp = eccentricitySquared / (1d - eccentricitySquared);
+        double e0 = E0fn(eccentricitySquared);
+        double e1 = E1fn(eccentricitySquared);
+        double e2 = E2fn(eccentricitySquared);
+        double e3 = E3fn(eccentricitySquared);
+        double latitudeOfOrigin = latitudeOfOriginDegrees * (Math.PI / 180d);
+        double ml0 = Mlfn(e0, e1, e2, e3, latitudeOfOrigin);
+        double x = xMeters / semiMajor;
+        double y = yMeters / semiMajor;
+        double phi = InvMlfn(ml0 + (y / scaleFactor), eccentricitySquared, e0, e1, e2, e3);
+
+        if (Math.Abs(phi) >= Math.PI / 2d)
+        {
+            return y < 0d ? -90d : 90d;
+        }
+
+        double sinphi = Math.Sin(phi);
+        double cosphi = Math.Cos(phi);
+        double t = Math.Abs(cosphi) > epsilon ? sinphi / cosphi : 0d;
+        double n = esp * cosphi * cosphi;
+        double con = 1d - (eccentricitySquared * sinphi * sinphi);
+        double d = x * Math.Sqrt(con) / scaleFactor;
+        con *= t;
+        t *= t;
+        double ds = d * d;
+        double innerMost = 1385d + (t * (3633d + (t * (4095d + (coefficient * t)))));
+        double sixthTerm = 61d + (t * (90d - (252d * n) + (45d * t))) + (46d * n) - ((ds / 56d) * innerMost);
+        double fourthTerm = 5d + (t * (3d - (9d * n))) + (n * (1d - (4d * n))) - ((ds / 30d) * sixthTerm);
+        double latitudeRadians = phi - ((con * ds / (1d - eccentricitySquared)) * 0.5d * (1d - ((ds / 12d) * fourthTerm)));
+
+        return latitudeRadians * (180d / Math.PI);
+    }
+
+    private static double E0fn(double x) => 1d - (0.25d * x * (1d + ((x / 16d) * (3d + (1.25d * x)))));
+
+    private static double E1fn(double x) => 0.375d * x * (1d + (0.25d * x * (1d + (0.46875d * x))));
+
+    private static double E2fn(double x) => 0.05859375d * x * x * (1d + (0.75d * x));
+
+    private static double E3fn(double x) => x * x * x * (35d / 3072d);
+
+    private static double Mlfn(double e0, double e1, double e2, double e3, double phi) =>
+        (e0 * phi) - (e1 * Math.Sin(2d * phi)) + (e2 * Math.Sin(4d * phi)) - (e3 * Math.Sin(6d * phi));
+
+    private static double InvMlfn(double arg, double eccentricitySquared, double e0, double e1, double e2, double e3)
+    {
+        double phi = arg;
+        double k = 1d / (1d - eccentricitySquared);
+        for (int i = 0; i < 20; i++)
+        {
+            double sinPhi = Math.Sin(phi);
+            double t = 1d - (eccentricitySquared * sinPhi * sinPhi);
+            t = (Mlfn(e0, e1, e2, e3, phi) - arg) * (t * Math.Sqrt(t)) * k;
+            phi -= t;
+            if (Math.Abs(t) < 1e-11d)
+            {
+                return phi;
+            }
+        }
+
+        throw new InvalidOperationException("Transverse Mercator inverse meridional iteration did not converge.");
+    }
+
     private static string BuildProjectedWkt(string projectionName, string spheroidClause, double latitudeOfOrigin, double centralMeridian, string? extraParameters)
     {
         return FormattableString.Invariant(
