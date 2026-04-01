@@ -43,9 +43,6 @@ internal class HealpixProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "HEALPix";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
-
         this.rotationRadians = DegreesToRadians(this.Parameters.GetOptionalParameterValue("rot_xy", 0d));
         this.isEllipsoidal = this.es > 0d;
 
@@ -61,6 +58,10 @@ internal class HealpixProjection : MapProjection
             this.qp = 0d;
             this.apa = [];
         }
+
+        double authalicScale = this.isEllipsoidal ? Math.Sqrt(0.5d * this.qp) : 1d;
+        this.radius = this.semiMajor * this.scaleFactor * authalicScale;
+        this.inverseRadius = 1d / this.radius;
     }
 
     /// <inheritdoc />
