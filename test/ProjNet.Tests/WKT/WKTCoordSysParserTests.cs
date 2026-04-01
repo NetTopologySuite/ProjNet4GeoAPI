@@ -153,6 +153,21 @@ public class WKTCoordSysParserTests
     }
 
     /// <summary>
+    /// Verifies mixed-case WKT2 keywords are normalized and parsed correctly.
+    /// </summary>
+    [Fact]
+    public void CreateFromWktParsesMixedCaseGeodeticCrsAndEllipsoid()
+    {
+        const string wkt = "geodeticcrs[\"WGS 84\",DATUM[\"WGS_1984\",Ellipsoid[\"WGS 84\",6378137,298.257223563],id[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,id[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,id[\"EPSG\",\"9122\"]],id[\"EPSG\",\"4326\"]]";
+
+        GeographicCoordinateSystem coordinateSystem = CoordinateSystemTestHelpers.RequireCoordinateSystem<GeographicCoordinateSystem>(this.coordinateSystemFactory, wkt);
+
+        CheckInfo(coordinateSystem, "WGS 84", "EPSG", 4326);
+        CheckDatum(coordinateSystem.HorizontalDatum, "WGS_1984", "EPSG", 6326);
+        CheckEllipsoid(coordinateSystem.HorizontalDatum.Ellipsoid, "WGS 84", 6378137, 298.257223563, string.Empty, -1);
+    }
+
+    /// <summary>
     /// This test reads in a file with 2671 pre-defined coordinate systems and projections,
     /// and tries to create a transformation with them.
     /// </summary>
