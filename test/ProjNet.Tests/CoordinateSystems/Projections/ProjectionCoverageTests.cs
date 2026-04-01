@@ -624,6 +624,26 @@ public class ProjectionCoverageTests
         Assert.InRange(Math.Abs(roundtrip[1] - latitude), 0d, 1e-6);
     }
 
+    /// <summary>
+    /// Verifies Polar Stereographic UPS north applies <c>scale_factor</c> consistently.
+    /// </summary>
+    [Fact]
+    public void PolarStereographicUpsNorthMatchesReferenceCoordinate()
+    {
+        const double longitude = 15d;
+        const double latitude = 73d;
+        const double expectedEasting = 2491967.01029204d;
+        const double expectedNorthing = 163954.12194234435d;
+        string wkt = "PROJCS[\"Coverage-UPS-North\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",SPHEROID[\"WGS 84\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"Polar_Stereographic\"],PARAMETER[\"latitude_of_origin\",90],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",0.994],PARAMETER[\"false_easting\",2000000],PARAMETER[\"false_northing\",2000000],UNIT[\"metre\",1]]";
+        ProjectedCoordinateSystem projected = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wkt);
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+
+        double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
+
+        Assert.InRange(Math.Abs(projectedPoint[0] - expectedEasting), 0d, 1d);
+        Assert.InRange(Math.Abs(projectedPoint[1] - expectedNorthing), 0d, 1d);
+    }
+
     // ------------------------------------------------------------------
     //  MercatorAuxiliarySphere (mercator_auxiliary_sphere) – 59.3 % coverage
     // ------------------------------------------------------------------
