@@ -19,8 +19,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 internal class EquidistantConicProjection : MapProjection
 {
+    private const double Epsilon = 1e-10d;
+
     private readonly double radius;
     private readonly double inverseRadius;
+    private readonly bool ellipsoidal;
     private readonly double n;
     private readonly double g;
     private readonly double rho0;
@@ -45,26 +48,55 @@ internal class EquidistantConicProjection : MapProjection
         this.Name = "Equidistant_Conic";
         this.radius = this.semiMajor * this.scaleFactor;
         this.inverseRadius = 1d / this.radius;
+        this.ellipsoidal = this.es > 0d;
 
         double standardParallel1 = DegreesToRadians(this.Parameters.GetParameterValue("standard_parallel_1", "lat_1"));
         double standardParallel2 = DegreesToRadians(this.Parameters.GetOptionalParameterValue("standard_parallel_2", RadiansToDegrees(standardParallel1), "lat_2"));
 
-        if (Math.Abs(standardParallel1 - standardParallel2) <= Eps10)
+        bool secant = Math.Abs(standardParallel1 - standardParallel2) >= Epsilon;
+        double sinParallel1 = Math.Sin(standardParallel1);
+        this.n = sinParallel1;
+        if (this.ellipsoidal)
         {
-            this.n = Math.Sin(standardParallel1);
+            double cosParallel1 = Math.Cos(standardParallel1);
+            double m1 = Msfnz(this.e, sinParallel1, cosParallel1);
+            double ml1 = this.Mlfn(standardParallel1, sinParallel1, cosParallel1);
+            if (secant)
+            {
+                double sinParallel2 = Math.Sin(standardParallel2);
+                double cosParallel2 = Math.Cos(standardParallel2);
+                double ml2 = this.Mlfn(standardParallel2, sinParallel2, cosParallel2);
+                if (ml1 == ml2)
+                {
+                    ArgumentGuard.ThrowArgument("Invalid standard parallels for equidistant conic projection.");
+                }
+
+                this.n = (m1 - Msfnz(this.e, sinParallel2, cosParallel2)) / (ml2 - ml1);
+            }
+
+            if (Math.Abs(this.n) <= Eps10)
+            {
+                ArgumentGuard.ThrowArgument("Invalid standard parallels for equidistant conic projection.");
+            }
+
+            this.g = ml1 + (m1 / this.n);
+            this.rho0 = this.g - this.Mlfn(this.latOrigin, Math.Sin(this.latOrigin), Math.Cos(this.latOrigin));
         }
         else
         {
-            this.n = (Math.Cos(standardParallel1) - Math.Cos(standardParallel2)) / (standardParallel2 - standardParallel1);
-        }
+            if (secant)
+            {
+                this.n = (Math.Cos(standardParallel1) - Math.Cos(standardParallel2)) / (standardParallel2 - standardParallel1);
+            }
 
-        if (Math.Abs(this.n) <= Eps10)
-        {
-            ArgumentGuard.ThrowArgument("Invalid standard parallels for equidistant conic projection.");
-        }
+            if (Math.Abs(this.n) <= Eps10)
+            {
+                ArgumentGuard.ThrowArgument("Invalid standard parallels for equidistant conic projection.");
+            }
 
-        this.g = (Math.Cos(standardParallel1) / this.n) + standardParallel1;
-        this.rho0 = this.g - this.latOrigin;
+            this.g = (Math.Cos(standardParallel1) / this.n) + standardParallel1;
+            this.rho0 = this.g - this.latOrigin;
+        }
     }
 
     /// <inheritdoc />
@@ -79,7 +111,10 @@ internal class EquidistantConicProjection : MapProjection
     protected override void RadiansToMeters(ref double lon, ref double lat)
     {
         double theta = this.n * Adjust_lon(lon - this.centralMeridian);
-        double rho = this.g - lat;
+        double rho = this.g
+            - (this.ellipsoidal
+                ? this.Mlfn(lat, Math.Sin(lat), Math.Cos(lat))
+                : lat);
 
         lon = this.radius * rho * Math.Sin(theta);
         lat = this.radius * (this.rho0 - (rho * Math.Cos(theta)));
@@ -100,6 +135,6 @@ internal class EquidistantConicProjection : MapProjection
         }
 
         x = Adjust_lon(this.centralMeridian + (theta / this.n));
-        y = this.g - rho;
+        y = this.ellipsoidal ? this.Inv_mlfn(this.g - rho) : this.g - rho;
     }
 }
