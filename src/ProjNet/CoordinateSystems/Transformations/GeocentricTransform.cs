@@ -238,6 +238,39 @@ internal class GeocentricTransform : MathTransform
         if (!at_Pole)
         {
             lat = Math.Atan(sin_p1 / cos_p1);
+            if (Math.Abs(height) > 50000d)
+            {
+                const double convergenceTolerance = 1e-12;
+                for (int i = 0; i < 10; i++)
+                {
+                    double sinphi = Math.Sin(lat);
+                    rn = this.semiMajor / Math.Sqrt(1.0 - (this.es * sinphi * sinphi));
+                    double nextLatitude = Math.Atan2(z + (this.es * rn * sinphi), w);
+                    if (Math.Abs(nextLatitude - lat) < convergenceTolerance)
+                    {
+                        lat = nextLatitude;
+                        break;
+                    }
+
+                    lat = nextLatitude;
+                }
+
+                double sinLatitude = Math.Sin(lat);
+                double cosLatitude = Math.Cos(lat);
+                rn = this.semiMajor / Math.Sqrt(1.0 - (this.es * sinLatitude * sinLatitude));
+                if (cosLatitude >= COS67P5)
+                {
+                    height = (w / cosLatitude) - rn;
+                }
+                else if (cosLatitude <= -COS67P5)
+                {
+                    height = (w / -cosLatitude) - rn;
+                }
+                else
+                {
+                    height = (z / sinLatitude) + (rn * (this.es - 1.0));
+                }
+            }
         }
 
         x = RadiansToDegrees(lon);

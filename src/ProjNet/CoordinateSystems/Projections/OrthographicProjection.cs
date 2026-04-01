@@ -23,6 +23,8 @@ internal class OrthographicProjection : MapProjection
     private readonly double nu0;
     private readonly double yShift;
     private readonly double yScale;
+    private readonly double sinalpha;
+    private readonly double cosalpha;
     private readonly Mode mode;
 
     /// <summary>
@@ -43,6 +45,9 @@ internal class OrthographicProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Orthographic";
+        double alpha = DegreesToRadians(this.Parameters.GetOptionalParameterValue("alpha", 0d, "azimuth"));
+        this.sinalpha = Math.Sin(alpha);
+        this.cosalpha = Math.Cos(alpha);
 
         Sincos(this.Phi0, out this.sinph0, out this.cosph0);
 
@@ -118,6 +123,11 @@ internal class OrthographicProjection : MapProjection
     /// <param name="y">The y-ordinate in meters when entering, latitude in radians after exit.</param>
     private void OrthoSInverse(ref double x, ref double y)
     {
+        double xf = x;
+        double yf = y;
+        x = ((this.cosalpha * xf) + (this.sinalpha * yf)) / this.scaleFactor;
+        y = ((-this.sinalpha * xf) + (this.cosalpha * yf)) / this.scaleFactor;
+
         // Using the algorithm in Map projections: A working manual, by John Snyder pg 150
         double rho = Hypot(x, y);
         if (rho > this.semiMajor)
@@ -187,6 +197,11 @@ internal class OrthographicProjection : MapProjection
     private void OrthoEInverse(ref double x, ref double y)
     {
         Func<double, double> sQ = (a) => a * a;
+
+        double xf = x;
+        double yf = y;
+        x = ((this.cosalpha * xf) + (this.sinalpha * yf)) / this.scaleFactor;
+        y = ((-this.sinalpha * xf) + (this.cosalpha * yf)) / this.scaleFactor;
 
         double x_scaled = x / this.semiMajor;
         double y_scaled = y / this.semiMajor;
@@ -389,6 +404,10 @@ internal class OrthographicProjection : MapProjection
         }
 
         double x = this.semiMajor * cosphi * Math.Sin(lam - this.Lon_origin);
+        double xp = x;
+        double yp = y;
+        x = ((xp * this.cosalpha) - (yp * this.sinalpha)) * this.scaleFactor;
+        y = ((xp * this.sinalpha) + (yp * this.cosalpha)) * this.scaleFactor;
 
         // Set the variables to return
         lam = x;
@@ -417,6 +436,10 @@ internal class OrthographicProjection : MapProjection
         double x = nu * cosphi * sinlam;
         double y = (nu * ((sinphi * this.cosph0) - (cosphi * this.sinph0 * coslam))) +
             (this.es * ((this.nu0 * this.sinph0) - (nu * sinphi)) * this.cosph0);
+        double xp = x;
+        double yp = y;
+        x = ((xp * this.cosalpha) - (yp * this.sinalpha)) * this.scaleFactor;
+        y = ((xp * this.sinalpha) + (yp * this.cosalpha)) * this.scaleFactor;
 
         lam = x;
         phi = y;
