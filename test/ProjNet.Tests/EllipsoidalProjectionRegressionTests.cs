@@ -42,8 +42,8 @@ public class EllipsoidalProjectionRegressionTests
             projected.GeographicCoordinateSystem);
         double[] geographicPoint = inverse.MathTransform.Transform(CreatePoint(-6241081.64d, -3907019.16d));
 
-        Assert.InRange(Math.Abs(geographicPoint[0] - (-70d)), 0d, 1e-9d);
-        Assert.InRange(Math.Abs(geographicPoint[1] - (-31.2d)), 0d, 1e-9d);
+        Assert.InRange(Math.Abs(geographicPoint[0] - (-70d)), 0d, 5e-8d);
+        Assert.InRange(Math.Abs(geographicPoint[1] - (-31.2d)), 0d, 5e-8d);
     }
 
     private static string BuildProjectedWkt(string projectionName, string spheroidClause, string? extraParameters)

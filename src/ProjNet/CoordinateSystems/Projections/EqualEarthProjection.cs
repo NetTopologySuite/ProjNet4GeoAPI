@@ -22,11 +22,16 @@ internal class EqualEarthProjection : MapProjection
     private const double A3 = 0.000893;
     private const double A4 = 0.003796;
     private const int Iterations = 12;
+    private const double MaxY = 1.3173627591574d;
 
     private static readonly double M = Math.Sqrt(3.0) * 0.5;
 
     private readonly double radius;
     private readonly double inverseRadius;
+    private readonly bool isEllipsoidal;
+    private readonly double oneEs;
+    private readonly double qp;
+    private readonly double[] apa;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="EqualEarthProjection"/> class.
@@ -46,7 +51,22 @@ internal class EqualEarthProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Equal_Earth";
-        this.radius = this.semiMajor * this.scaleFactor;
+        this.isEllipsoidal = this.es > 0d;
+        if (this.isEllipsoidal)
+        {
+            this.oneEs = 1d - this.es;
+            this.qp = Qsfn(1d, this.e, this.oneEs);
+            this.apa = Authset(this.es);
+        }
+        else
+        {
+            this.oneEs = 0d;
+            this.qp = 0d;
+            this.apa = [];
+        }
+
+        double authalicScale = this.isEllipsoidal ? Math.Sqrt(0.5d * this.qp) : 1d;
+        this.radius = this.semiMajor * this.scaleFactor * authalicScale;
         this.inverseRadius = 1.0 / this.radius;
     }
 
@@ -63,6 +83,12 @@ internal class EqualEarthProjection : MapProjection
     {
         double lambda = Adjust_lon(lon - this.centralMeridian);
         double sinPhi = Math.Sin(lat);
+        if (this.isEllipsoidal)
+        {
+            double q = Qsfn(sinPhi, this.e, this.oneEs);
+            sinPhi = ProjectionConstants.Clamp(q / this.qp, -1d, 1d);
+        }
+
         double theta = Math.Asin(ProjectionConstants.Clamp(M * sinPhi, -1d, 1d));
 
         double theta2 = theta * theta;
@@ -77,7 +103,16 @@ internal class EqualEarthProjection : MapProjection
     protected override void MetersToRadians(ref double x, ref double y)
     {
         double theta = y * this.inverseRadius;
+        if (theta > MaxY)
+        {
+            theta = MaxY;
+        }
+        else if (theta < -MaxY)
+        {
+            theta = -MaxY;
+        }
 
+        bool converged = false;
         for (int i = 0; i < Iterations; i++)
         {
             double theta2 = theta * theta;
@@ -88,8 +123,14 @@ internal class EqualEarthProjection : MapProjection
             theta -= delta;
             if (Math.Abs(delta) < 1e-12)
             {
+                converged = true;
                 break;
             }
+        }
+
+        if (!converged)
+        {
+            ArgumentGuard.ThrowArgumentOutOfRange(nameof(y), "Equal Earth inverse did not converge.");
         }
 
         double theta2Final = theta * theta;
@@ -106,6 +147,7 @@ internal class EqualEarthProjection : MapProjection
             x = Adjust_lon(this.centralMeridian + ((x * this.inverseRadius) * M * denominatorFinal / cosTheta));
         }
 
-        y = Math.Asin(ProjectionConstants.Clamp(Math.Sin(theta) / M, -1d, 1d));
+        double beta = Math.Asin(ProjectionConstants.Clamp(Math.Sin(theta) / M, -1d, 1d));
+        y = this.isEllipsoidal ? Authlat(beta, this.apa) : beta;
     }
 }
