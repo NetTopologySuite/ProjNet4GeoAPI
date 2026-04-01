@@ -18,9 +18,15 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 internal class CylindricalEqualAreaProjection : MapProjection
 {
+    private const double Epsilon = 1e-10d;
+
     private readonly double radius;
     private readonly double inverseRadius;
     private readonly double cosStandardParallel;
+    private readonly bool isEllipsoidal;
+    private readonly double oneEs;
+    private readonly double qp;
+    private readonly double[] apa;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CylindricalEqualAreaProjection"/> class.
@@ -40,8 +46,7 @@ internal class CylindricalEqualAreaProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Cylindrical_Equal_Area";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
+        this.isEllipsoidal = this.es > 0d;
 
         double standardParallel = DegreesToRadians(this.Parameters.GetOptionalParameterValue("standard_parallel_1", 0d, "lat_ts"));
         this.cosStandardParallel = Math.Cos(standardParallel);
@@ -49,6 +54,24 @@ internal class CylindricalEqualAreaProjection : MapProjection
         {
             ArgumentGuard.ThrowArgument("The standard parallel cannot be at the poles.");
         }
+
+        if (this.isEllipsoidal)
+        {
+            this.oneEs = 1d - this.es;
+            double sinStandardParallel = Math.Sin(standardParallel);
+            this.cosStandardParallel /= Math.Sqrt(1d - (this.es * sinStandardParallel * sinStandardParallel));
+            this.qp = Qsfn(1d, this.e, this.oneEs);
+            this.apa = Authset(this.es);
+        }
+        else
+        {
+            this.oneEs = 0d;
+            this.qp = 0d;
+            this.apa = [];
+        }
+
+        this.radius = this.semiMajor * this.scaleFactor;
+        this.inverseRadius = 1d / this.radius;
     }
 
     /// <inheritdoc />
@@ -64,13 +87,44 @@ internal class CylindricalEqualAreaProjection : MapProjection
     {
         double lambda = Adjust_lon(lon - this.centralMeridian);
         lon = this.radius * lambda * this.cosStandardParallel;
-        lat = this.radius * Math.Sin(lat) / this.cosStandardParallel;
+
+        if (this.isEllipsoidal)
+        {
+            lat = this.radius * (0.5d * Qsfn(Math.Sin(lat), this.e, this.oneEs)) / this.cosStandardParallel;
+        }
+        else
+        {
+            lat = this.radius * Math.Sin(lat) / this.cosStandardParallel;
+        }
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
         x = Adjust_lon(this.centralMeridian + ((x * this.inverseRadius) / this.cosStandardParallel));
-        y = Math.Asin(ProjectionConstants.Clamp((y * this.cosStandardParallel) * this.inverseRadius, -1d, 1d));
+
+        double normalized = (y * this.cosStandardParallel) * this.inverseRadius;
+        if (this.isEllipsoidal)
+        {
+            double betaArgument = ProjectionConstants.Clamp((2d * normalized) / this.qp, -1d, 1d);
+            y = Authlat(Math.Asin(betaArgument), this.apa);
+            return;
+        }
+
+        if (Math.Abs(normalized) - Epsilon <= 1d)
+        {
+            if (Math.Abs(normalized) >= 1d)
+            {
+                y = normalized < 0d ? -HalfPi : HalfPi;
+            }
+            else
+            {
+                y = Math.Asin(normalized);
+            }
+        }
+        else
+        {
+            ArgumentGuard.ThrowArgumentOutOfRange(nameof(y), "Coordinate is outside the valid Cylindrical Equal Area domain.");
+        }
     }
 }
