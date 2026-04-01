@@ -212,6 +212,20 @@ public class WKTCoordSysParserTests
     }
 
     /// <summary>
+    /// Verifies projected coordinate systems without PARAMETER entries parse successfully.
+    /// </summary>
+    [Fact]
+    public void CreateFromWktParsesProjectedCoordinateSystemWithoutParameters()
+    {
+        const string wkt =
+            "PROJCS[\"Custom\",GEOGCS[\"Custom GCS\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"Mercator_1SP\"],UNIT[\"metre\",1]]";
+
+        ProjectedCoordinateSystem coordinateSystem = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(this.coordinateSystemFactory, wkt);
+        Assert.Equal("Mercator_1SP", coordinateSystem.Projection.ClassName);
+        Assert.Equal(0, coordinateSystem.Projection.NumParameters);
+    }
+
+    /// <summary>
     /// This test reads in a file with 2671 pre-defined coordinate systems and projections,
     /// and tries to create a transformation with them.
     /// </summary>
