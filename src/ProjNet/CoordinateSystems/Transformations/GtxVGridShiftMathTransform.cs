@@ -16,6 +16,11 @@ using System.IO;
 internal sealed class GtxVGridShiftMathTransform : MathTransform
 {
     private const double RelativeTolerance = 1e-5d;
+
+    /// <summary>
+    /// Sentinel value used by GTX grids for nodata samples (matches PROJ <c>gtx.cpp</c> behavior).
+    /// </summary>
+    private const float GtxNoDataSentinel = -88.88880f;
     private readonly ReadOnlyCollection<GtxGrid> grids;
     private readonly double forwardMultiplier;
     private bool isInverted;
@@ -250,7 +255,7 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
     private static bool IsNoData(float value, double multiplier)
     {
         double scaled = value * multiplier;
-        return scaled > 1000d || scaled < -1000d || value == -88.88880f;
+        return scaled > 1000d || scaled < -1000d || value == GtxNoDataSentinel;
     }
 
     private sealed class GtxGrid
