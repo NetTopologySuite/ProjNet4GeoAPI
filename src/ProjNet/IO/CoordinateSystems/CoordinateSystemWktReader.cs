@@ -334,17 +334,25 @@ public static partial class CoordinateSystemWktReader
         tokenizer.NextToken(true);
         if (tokenizer.GetStringValue() == ",")
         {
-            ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
-            tokenizer.ReadCloser(bracket);
+            tokenizer.NextToken();
+            if (tokenizer.GetStringValue() == "AUTHORITY")
+            {
+                ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
+                tokenizer.ReadCloser(bracket);
+            }
+            else
+            {
+                tokenizer.CheckCloser(bracket);
+            }
         }
         else
         {
             tokenizer.CheckCloser(bracket);
         }
 
-        tokenizer.ReadToken(","); // ,
-        tokenizer.ReadToken("PARAMETER");
+        tokenizer.ReadToken(",");
         var paramList = new List<ProjectionParameter>();
+        tokenizer.NextToken();
         while (tokenizer.GetStringValue() == "PARAMETER")
         {
             bracket = tokenizer.ReadOpener();
