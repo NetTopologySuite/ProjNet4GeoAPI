@@ -100,6 +100,41 @@ public class GitHubIssueRegressionTests
     }
 
     /// <summary>
+    /// Verifies that <see cref="DatumTransform"/> applies the scale factor only once to rotation terms.
+    /// </summary>
+    [Fact(DisplayName = "DatumTransform applies single scale factor on rotation terms")]
+    public void DatumTransformRotationTermsUseSingleScaleFactor()
+    {
+        const double secondsToRadians = 4.84813681109535993589914102357e-6;
+        const double dx = -81.0703;
+        const double dy = -89.3603;
+        const double dz = -115.7526;
+        const double ex = -0.48488;
+        const double ey = -0.02436;
+        const double ez = -0.41321;
+        const double ppm = -540.645;
+        const double x = 3657660.66;
+        const double y = 255768.55;
+        const double z = 5201382.11;
+
+        double scale = 1d + (ppm * 0.000001d);
+        double rx = ex * secondsToRadians;
+        double ry = ey * secondsToRadians;
+        double rz = ez * secondsToRadians;
+
+        double expectedX = (scale * x) - (scale * rz * y) + (scale * ry * z) + dx;
+        double expectedY = (scale * rz * x) + (scale * y) - (scale * rx * z) + dy;
+        double expectedZ = (-scale * ry * x) + (scale * rx * y) + (scale * z) + dz;
+
+        var transform = new DatumTransform(new Wgs84ConversionInfo(dx, dy, dz, ex, ey, ez, ppm));
+        double[] actual = transform.Transform([x, y, z]);
+
+        Assert.Equal(expectedX, actual[0], 9);
+        Assert.Equal(expectedY, actual[1], 9);
+        Assert.Equal(expectedZ, actual[2], 9);
+    }
+
+    /// <summary>
     /// Verifies that GitHub issue #20 is fixed: calling <see cref="MathTransform.Inverse"/> does not corrupt
     /// subsequent results of the forward transform.
     /// </summary>
