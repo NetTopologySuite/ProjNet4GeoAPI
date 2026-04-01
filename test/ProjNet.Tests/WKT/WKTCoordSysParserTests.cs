@@ -168,6 +168,32 @@ public class WKTCoordSysParserTests
     }
 
     /// <summary>
+    /// Verifies SPHEROID parsing succeeds when AUTHORITY is omitted.
+    /// </summary>
+    [Fact]
+    public void CreateFromWktParsesSpheroidWithoutAuthority()
+    {
+        const string wkt = "GEOGCS[\"Custom\",DATUM[\"Custom_Datum\",SPHEROID[\"Custom Spheroid\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]]";
+
+        GeographicCoordinateSystem coordinateSystem = CoordinateSystemTestHelpers.RequireCoordinateSystem<GeographicCoordinateSystem>(this.coordinateSystemFactory, wkt);
+
+        CheckInfo(coordinateSystem, "Custom", string.Empty, -1);
+        CheckDatum(coordinateSystem.HorizontalDatum, "Custom_Datum", string.Empty, -1);
+        CheckEllipsoid(coordinateSystem.HorizontalDatum.Ellipsoid, "Custom Spheroid", 6378137, 298.257223563, string.Empty, -1);
+    }
+
+    /// <summary>
+    /// Verifies malformed SPHEROID definitions without AUTHORITY are rejected when bracket types do not match.
+    /// </summary>
+    [Fact]
+    public void ParseSpheroidWithoutAuthorityRejectsMismatchedBrackets()
+    {
+        const string malformedWkt = "SPHEROID(\"WGS 84\",6378137,298.257223563]";
+
+        Assert.Throws<ArgumentException>(() => ProjNet.IO.CoordinateSystems.CoordinateSystemWktReader.Parse(malformedWkt));
+    }
+
+    /// <summary>
     /// This test reads in a file with 2671 pre-defined coordinate systems and projections,
     /// and tries to create a transformation with them.
     /// </summary>
