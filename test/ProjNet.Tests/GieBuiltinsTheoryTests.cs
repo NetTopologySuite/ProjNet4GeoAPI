@@ -1534,16 +1534,133 @@ public class GieBuiltinsTheoryTests
             token = token[..^1];
         }
 
-        if (!double.TryParse(token, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value))
+        if (TryParseNumericToken(token, out value))
+        {
+            if (radiansSuffix)
+            {
+                value *= 180d / Math.PI;
+            }
+
+            return true;
+        }
+
+        if (TryParseDmsToken(token, out value))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool TryParseNumericToken(string token, out double value)
+    {
+        value = 0d;
+        if (string.IsNullOrWhiteSpace(token))
         {
             return false;
         }
 
-        if (radiansSuffix)
+        if (double.TryParse(token, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value))
         {
-            value *= 180d / Math.PI;
+            return true;
         }
 
+        // Support simple ratio expressions used in GIE fixtures, e.g. "2.0/0.2".
+        int slashIndex = token.IndexOf('/', StringComparison.Ordinal);
+        if (slashIndex <= 0 || slashIndex >= token.Length - 1)
+        {
+            return false;
+        }
+
+        string numeratorToken = token[..slashIndex].Trim();
+        string denominatorToken = token[(slashIndex + 1)..].Trim();
+        if (!double.TryParse(numeratorToken, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out double numerator))
+        {
+            return false;
+        }
+
+        if (!double.TryParse(denominatorToken, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out double denominator))
+        {
+            return false;
+        }
+
+        if (Math.Abs(denominator) <= 0d)
+        {
+            return false;
+        }
+
+        value = numerator / denominator;
+        return true;
+    }
+
+    private static bool TryParseDmsToken(string token, out double value)
+    {
+        value = 0d;
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return false;
+        }
+
+        string text = token.Trim();
+        int sign = 1;
+
+        char last = text[text.Length - 1];
+        if (last == 'W' || last == 'w' || last == 'S' || last == 's')
+        {
+            sign = -1;
+            text = text[..^1];
+        }
+        else if (last == 'E' || last == 'e' || last == 'N' || last == 'n')
+        {
+            text = text[..^1];
+        }
+
+        if (text.StartsWith('-'))
+        {
+            sign *= -1;
+            text = text[1..];
+        }
+        else if (text.StartsWith('+'))
+        {
+            text = text[1..];
+        }
+
+        int dIndex = text.IndexOf('d', StringComparison.Ordinal);
+        if (dIndex < 0)
+        {
+            dIndex = text.IndexOf('D', StringComparison.Ordinal);
+        }
+
+        int mIndex = text.IndexOf('\'', StringComparison.Ordinal);
+        if (dIndex <= 0 || mIndex <= dIndex)
+        {
+            return false;
+        }
+
+        string degreesToken = text[..dIndex];
+        string minutesToken = text.Substring(dIndex + 1, mIndex - dIndex - 1);
+        if (!double.TryParse(degreesToken, NumberStyles.Float, CultureInfo.InvariantCulture, out double degrees))
+        {
+            return false;
+        }
+
+        if (!double.TryParse(minutesToken, NumberStyles.Float, CultureInfo.InvariantCulture, out double minutes))
+        {
+            return false;
+        }
+
+        double seconds = 0d;
+        int secondsMarker = text.IndexOf('"', StringComparison.Ordinal);
+        if (secondsMarker > mIndex + 1)
+        {
+            string secondsToken = text.Substring(mIndex + 1, secondsMarker - mIndex - 1);
+            if (!double.TryParse(secondsToken, NumberStyles.Float, CultureInfo.InvariantCulture, out seconds))
+            {
+                return false;
+            }
+        }
+
+        value = sign * (degrees + (minutes / 60d) + (seconds / 3600d));
         return true;
     }
 
