@@ -301,6 +301,10 @@ public static partial class CoordinateSystemWktReader
             tokenizer.ReadAuthority(out authority, out authorityCode);
             tokenizer.ReadCloser(bracket);
         }
+        else
+        {
+            tokenizer.CheckCloser(bracket);
+        }
 
         var ellipsoid = new Ellipsoid(majorAxis, 0.0, e, true, LinearUnit.Metre, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
         return ellipsoid;
