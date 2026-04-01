@@ -6,6 +6,7 @@ namespace ProjNet.Data.Generated;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Threading;
 using ProjNet.CoordinateSystems;
 using ProjNet.Data;
 
@@ -53,7 +54,7 @@ internal static class EpsgCoordinateSystemFactory
             return null;
         }
 
-        CoordinateSystem? cached = CoordinateSystemCache[cacheIndex];
+        CoordinateSystem? cached = Volatile.Read(ref CoordinateSystemCache[cacheIndex]);
         if (cached is not null)
         {
             return cached;
