@@ -70,17 +70,17 @@ public static partial class CoordinateSystemWktReader
     private static string NormalizeWkt(string wkt)
     {
         string normalized = wkt;
-        normalized = StringCompatibility.ReplaceOrdinal(normalized, "ELLIPSOID", "SPHEROID");
+        normalized = StringCompatibility.ReplaceOrdinalIgnoreCase(normalized, "ELLIPSOID", "SPHEROID");
 #if NET8_0_OR_GREATER
         normalized = Wkt2IdRegex().Replace(normalized, "AUTHORITY[");
 #else
         normalized = Wkt2IdRegex.Replace(normalized, "AUTHORITY[");
 #endif
-        normalized = StringCompatibility.ReplaceOrdinal(normalized, "GEODETICCRS[", "GEOGCS[");
-        normalized = StringCompatibility.ReplaceOrdinal(normalized, "GEODCRS[", "GEOGCS[");
-        normalized = StringCompatibility.ReplaceOrdinal(normalized, "BASEGEODCRS[", "GEOGCS[");
-        normalized = StringCompatibility.ReplaceOrdinal(normalized, "BASEGEOGCRS[", "GEOGCS[");
-        normalized = StringCompatibility.ReplaceOrdinal(normalized, "PROJECTEDCRS[", "PROJCS[");
+        normalized = StringCompatibility.ReplaceOrdinalIgnoreCase(normalized, "GEODETICCRS[", "GEOGCS[");
+        normalized = StringCompatibility.ReplaceOrdinalIgnoreCase(normalized, "GEODCRS[", "GEOGCS[");
+        normalized = StringCompatibility.ReplaceOrdinalIgnoreCase(normalized, "BASEGEODCRS[", "GEOGCS[");
+        normalized = StringCompatibility.ReplaceOrdinalIgnoreCase(normalized, "BASEGEOGCRS[", "GEOGCS[");
+        normalized = StringCompatibility.ReplaceOrdinalIgnoreCase(normalized, "PROJECTEDCRS[", "PROJCS[");
         return normalized;
     }
 
