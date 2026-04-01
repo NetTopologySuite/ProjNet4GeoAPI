@@ -21,6 +21,12 @@ using ProjNet.CoordinateSystems.Transformations;
 /// the central meridian. The Transverse Mercator projection is appropriate for
 /// regions which have a greater extent north-south than east-west.</para>
 ///
+/// <para>This implementation follows the Snyder series approximation and is
+/// optimized for standard mapping workflows near the central meridian. It does
+/// not implement the full Poder/Engsager exact formulation used by modern PROJ.
+/// For wide offsets from the central meridian, this can introduce small
+/// additional error compared to exact TM kernels.</para>
+///
 /// <para>Reference: John P. Snyder, Map Projections — A Working Manual,
 /// U.S. Geological Survey Professional Paper 1395, 1987.</para>
 /// </remarks>
