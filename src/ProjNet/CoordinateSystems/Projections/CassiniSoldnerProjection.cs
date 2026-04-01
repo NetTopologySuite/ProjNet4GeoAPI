@@ -111,7 +111,7 @@ internal class CassiniSoldnerProjection : MapProjection
         double a2 = a1 * a1;
         double c = this.cFactor * Math.Pow(cosPhi, 2.0d);
 
-        double x = n * a1 * (1.0d - (a2 * t * (One6th - ((8.0d - t + (8.0d * c)) * a2 * One120th))));
+        double x = n * a1 * (1.0d - (a2 * t * (One6th + ((8.0d - t + (8.0d * c)) * a2 * One120th))));
         y -= this.m0 - (n * tn * a2 * (0.5d + ((5.0d - t + (6.0d * c)) * a2 * One24th)));
 
         lon = x * this.semiMajor;
