@@ -1005,24 +1005,23 @@ internal sealed class DeformationMathTransform : MathTransform
             return false;
         }
 
-        double z0 = firstDeltaZ;
         outputX = inputX - (deltaTime * firstDeltaX);
         outputY = inputY - (deltaTime * firstDeltaY);
-        outputZ = inputZ + (deltaTime * firstDeltaZ);
+        outputZ = inputZ - (deltaTime * firstDeltaZ);
 
         for (int i = 0; i < MaxInverseIterations; i++)
         {
             if (!this.TryGetGridShift(outputX, outputY, outputZ, out double deltaX, out double deltaY, out double deltaZ))
             {
-                break;
+                return false;
             }
 
             double differenceX = outputX + (deltaTime * deltaX) - inputX;
             double differenceY = outputY + (deltaTime * deltaY) - inputY;
-            double differenceZ = outputZ - (deltaTime * deltaZ) - inputZ;
-            outputX += differenceX;
-            outputY += differenceY;
-            outputZ += differenceZ;
+            double differenceZ = outputZ + (deltaTime * deltaZ) - inputZ;
+            outputX -= differenceX;
+            outputY -= differenceY;
+            outputZ -= differenceZ;
 
             if (Math.Sqrt((differenceX * differenceX) + (differenceY * differenceY)) <= InverseTolerance)
             {
@@ -1030,7 +1029,6 @@ internal sealed class DeformationMathTransform : MathTransform
             }
         }
 
-        outputZ = inputZ - (deltaTime * z0);
         return true;
     }
 
