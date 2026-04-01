@@ -54,8 +54,9 @@ internal class ToblerMercatorProjection : MapProjection
             ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
+        double lambda = Adjust_lon(lon - this.centralMeridian);
         double cosPhi = Math.Cos(lat);
-        lon = this.radius * lon * cosPhi * cosPhi;
+        lon = this.radius * lambda * cosPhi * cosPhi;
         lat = this.radius * Math.Log(Math.Tan(FortPi + (0.5d * lat)));
     }
 
@@ -64,6 +65,6 @@ internal class ToblerMercatorProjection : MapProjection
     {
         y = Math.Atan(Math.Sinh(y * this.inverseRadius));
         double cosPhi = Math.Cos(y);
-        x = (x * this.inverseRadius) / (cosPhi * cosPhi);
+        x = Adjust_lon(this.centralMeridian + ((x * this.inverseRadius) / (cosPhi * cosPhi)));
     }
 }
