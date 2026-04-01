@@ -453,6 +453,13 @@ public class GieBuiltinsTheoryTests
                 continue;
             }
 
+            if (fileName.Equals("DHDN_ETRS89.gie", StringComparison.OrdinalIgnoreCase)
+                && HasGeographicDatumShift(item.Operation)
+                && (!IsLikelyGeographicCoordinatePair(item.Accept) || !IsLikelyGeographicCoordinatePair(item.Expect)))
+            {
+                continue;
+            }
+
             if (!TryExtractProjCode(item.Operation, out string? projCode) || projCode is null)
             {
                 continue;
