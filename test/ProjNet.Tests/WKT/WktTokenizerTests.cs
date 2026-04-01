@@ -181,6 +181,19 @@ public class WktTokenizerTests
     }
 
     /// <summary>
+    /// Verifies WKT2 escaped double quotes (<c>""</c>) inside quoted values are unescaped.
+    /// </summary>
+    [Fact]
+    public void ReadDoubleQuotedWordUnescapesDoubledQuotes()
+    {
+        var tokenizer = new WktTokenizer("\"He said \"\"Hello\"\"\"");
+
+        string parsedValue = tokenizer.ReadDoubleQuotedWord();
+
+        Assert.Equal("He said \"Hello\"", parsedValue);
+    }
+
+    /// <summary>
     /// Verifies malformed WKT with a missing closing bracket throws for both string and span parse paths.
     /// </summary>
     [Fact]
