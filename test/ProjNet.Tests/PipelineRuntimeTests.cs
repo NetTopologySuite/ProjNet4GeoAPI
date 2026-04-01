@@ -5,6 +5,7 @@
 namespace ProjNet.Tests;
 
 using System;
+using ProjNet.CoordinateSystems.Projections;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
@@ -288,6 +289,30 @@ public class PipelineRuntimeTests
 
         string skipReason = RequirePipelineValidationFailure(operation);
         Assert.Contains("zone", skipReason, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Verifies that +lat_ts is mapped to a single projection parameter entry.
+    /// </summary>
+    [Fact]
+    public void PipelineProjectionStepWithLatTsDoesNotCreateDuplicateAliases()
+    {
+        const string operation = "+proj=wink1 +lat_ts=30";
+
+        MathTransform transform = RequirePipelineMathTransform(operation);
+        MapProjection projection = Assert.IsAssignableFrom<MapProjection>(transform);
+        int latTsParameterCount = 0;
+        for (int i = 0; i < projection.NumParameters; i++)
+        {
+            string name = projection.GetParameter(i).Name;
+            if (name.Equals("lat_ts", StringComparison.OrdinalIgnoreCase)
+                || name.Equals("latitude_true_scale", StringComparison.OrdinalIgnoreCase))
+            {
+                latTsParameterCount++;
+            }
+        }
+
+        Assert.Equal(1, latTsParameterCount);
     }
 
     /// <summary>
