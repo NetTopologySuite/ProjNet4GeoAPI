@@ -81,6 +81,10 @@ public static partial class CoordinateSystemWktReader
         normalized = StringCompatibility.ReplaceOrdinalIgnoreCase(normalized, "BASEGEODCRS[", "GEOGCS[");
         normalized = StringCompatibility.ReplaceOrdinalIgnoreCase(normalized, "BASEGEOGCRS[", "GEOGCS[");
         normalized = StringCompatibility.ReplaceOrdinalIgnoreCase(normalized, "PROJECTEDCRS[", "PROJCS[");
+        normalized = StringCompatibility.ReplaceOrdinalIgnoreCase(normalized, "PROJCRS[", "PROJCS[");
+        normalized = StringCompatibility.ReplaceOrdinalIgnoreCase(normalized, "VERTCRS[", "VERT_CS[");
+        normalized = StringCompatibility.ReplaceOrdinalIgnoreCase(normalized, "COMPOUNDCRS[", "COMPD_CS[");
+        normalized = StringCompatibility.ReplaceOrdinalIgnoreCase(normalized, "BOUNDCRS[", "BOUNDCRS[");
         return normalized;
     }
 
@@ -97,6 +101,7 @@ public static partial class CoordinateSystemWktReader
             "PRIMEM" => ReadPrimeMeridian(tokenizer),
             "VERT_CS" or "GEOGCS" or "PROJCS" or "COMPD_CS" or "GEOCCS" or "FITTED_CS" or "LOCAL_CS"
                 => ReadCoordinateSystem(normalizedWkt, tokenizer),
+            "BOUNDCRS" => throw new NotSupportedException("BOUNDCRS coordinate system is not supported."),
             _ => ArgumentGuard.ThrowArgument<IInfo>($"'{objectName}' is not recognized."),
         };
     }
