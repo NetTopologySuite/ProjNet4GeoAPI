@@ -7,6 +7,7 @@ namespace ProjNet.IO.CoordinateSystems;
 using System;
 using System.Globalization;
 using System.IO;
+using System.Text;
 
 /// <summary>
 /// Tokenizes a buffered Well Known Text (WKT) input stream.
@@ -192,10 +193,10 @@ internal sealed class WktTokenizer
             this.ReadToken("\"");
         }
 
-        int valueStart = this.index;
+        var builder = new StringBuilder();
         this.NextToken(false);
 
-        while (!this.IsCurrentSymbol('"'))
+        while (true)
         {
             if (this.tokenType == TokenType.Eof)
             {
@@ -203,11 +204,22 @@ internal sealed class WktTokenizer
                     $"Unterminated quoted string at line {this.LineNumber} column {this.Column}.");
             }
 
+            if (this.IsCurrentSymbol('"'))
+            {
+                if (this.index < this.source.Length && this.source[this.index] == '"')
+                {
+                    this.NextToken(false);
+                    builder.Append('"');
+                    this.NextToken(false);
+                    continue;
+                }
+
+                return builder.ToString();
+            }
+
+            builder.Append(this.GetTokenSpan());
             this.NextToken(false);
         }
-
-        int valueLength = this.tokenStartIndex - valueStart;
-        return valueLength <= 0 ? string.Empty : this.source.Substring(valueStart, valueLength);
     }
 
     /// <summary>
