@@ -26,7 +26,6 @@ internal class CylindricalEqualAreaProjection : MapProjection
     private readonly bool isEllipsoidal;
     private readonly double oneEs;
     private readonly double qp;
-    private readonly double[] apa;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CylindricalEqualAreaProjection"/> class.
@@ -61,13 +60,11 @@ internal class CylindricalEqualAreaProjection : MapProjection
             double sinStandardParallel = Math.Sin(standardParallel);
             this.cosStandardParallel /= Math.Sqrt(1d - (this.es * sinStandardParallel * sinStandardParallel));
             this.qp = Qsfn(1d, this.e, this.oneEs);
-            this.apa = Authset(this.es);
         }
         else
         {
             this.oneEs = 0d;
             this.qp = 0d;
-            this.apa = [];
         }
 
         this.radius = this.semiMajor * this.scaleFactor;
@@ -106,8 +103,8 @@ internal class CylindricalEqualAreaProjection : MapProjection
         double normalized = (y * this.cosStandardParallel) * this.inverseRadius;
         if (this.isEllipsoidal)
         {
-            double betaArgument = ProjectionConstants.Clamp((2d * normalized) / this.qp, -1d, 1d);
-            y = Authlat(Math.Asin(betaArgument), this.apa);
+            double q = ProjectionConstants.Clamp(2d * normalized, -this.qp, this.qp);
+            y = Phi1z(this.e, q, out long _);
             return;
         }
 
