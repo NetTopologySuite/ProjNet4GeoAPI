@@ -501,6 +501,26 @@ public class ProjectionCoverageTests
         Assert.False(double.IsNaN(result[1]));
     }
 
+    /// <summary>
+    /// Verifies LAEA spherical equatorial forward northing against the analytical formula.
+    /// </summary>
+    [Fact]
+    public void LaeaSphericalEquatorialForwardMatchesAnalyticalNorthing()
+    {
+        const double radius = 6400000d;
+        const double latitude = 5d;
+        string wkt = BuildProjectedWkt("laea", Sphere6400000, 0d, 0d, null);
+        ProjectedCoordinateSystem projected = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wkt);
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+
+        double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(0d, latitude));
+        double phi = latitude * (Math.PI / 180d);
+        double expectedNorthing = radius * Math.Sqrt(2d / (1d + Math.Cos(phi))) * Math.Sin(phi);
+
+        Assert.InRange(Math.Abs(projectedPoint[0]), 0d, 1e-9);
+        Assert.InRange(Math.Abs(projectedPoint[1] - expectedNorthing), 0d, 1e-6);
+    }
+
     // ------------------------------------------------------------------
     //  MercatorAuxiliarySphere (mercator_auxiliary_sphere) – 59.3 % coverage
     // ------------------------------------------------------------------
