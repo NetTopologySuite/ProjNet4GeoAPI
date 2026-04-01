@@ -234,7 +234,7 @@ public class Wgs84ConversionInfo : IEquatable<Wgs84ConversionInfo>
     /// to obtain the correct scale in the target coordinate system. M = (1 + dS*10-6), whereby dS is the scale
     /// correction expressed in parts per million.</para>
     /// </remarks>
-    /// <returns>An array of 7 Bursa-Wolf transformation coefficients [S, Ex*S, Ey*S, Ez*S, Dx, Dy, Dz], where S = 1 + Ppm/1,000,000.</returns>
+    /// <returns>An array of 7 Bursa-Wolf transformation coefficients [S, Ex, Ey, Ez, Dx, Dy, Dz], where S = 1 + Ppm/1,000,000 and rotations are in radians.</returns>
     public double[] GetAffineTransform()
     {
         double[] result = new double[7];
@@ -245,7 +245,7 @@ public class Wgs84ConversionInfo : IEquatable<Wgs84ConversionInfo>
     /// <summary>
     /// Writes affine Bursa-Wolf transformation coefficients into the supplied destination span.
     /// </summary>
-    /// <param name="destination">Destination span for 7 Bursa-Wolf coefficients [S, Ex*S, Ey*S, Ez*S, Dx, Dy, Dz].</param>
+    /// <param name="destination">Destination span for 7 Bursa-Wolf coefficients [S, Ex, Ey, Ez, Dx, Dy, Dz], where rotations are in radians.</param>
     /// <exception cref="ArgumentException">Thrown when <paramref name="destination"/> has fewer than 7 elements.</exception>
     public void WriteAffineTransform(Span<double> destination)
     {
@@ -256,9 +256,9 @@ public class Wgs84ConversionInfo : IEquatable<Wgs84ConversionInfo>
 
         double rS = 1 + (this.Ppm * 0.000001);
         destination[0] = rS;
-        destination[1] = this.Ex * SecondsToRadians * rS;
-        destination[2] = this.Ey * SecondsToRadians * rS;
-        destination[3] = this.Ez * SecondsToRadians * rS;
+        destination[1] = this.Ex * SecondsToRadians;
+        destination[2] = this.Ey * SecondsToRadians;
+        destination[3] = this.Ez * SecondsToRadians;
         destination[4] = this.Dx;
         destination[5] = this.Dy;
         destination[6] = this.Dz;
