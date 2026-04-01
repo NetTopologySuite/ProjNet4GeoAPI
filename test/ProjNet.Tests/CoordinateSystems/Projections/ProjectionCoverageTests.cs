@@ -852,18 +852,34 @@ public class ProjectionCoverageTests
         double coefficient)
     {
         const double epsilon = 1e-6;
+        const double c00 = 1d;
+        const double c02 = 0.25d;
+        const double c04 = 0.046875d;
+        const double c06 = 0.01953125d;
+        const double c08 = 0.01068115234375d;
+        const double c22 = 0.75d;
+        const double c44 = 0.46875d;
+        const double c46 = 0.01302083333333333333d;
+        const double c48 = 0.00712076822916666666d;
+        const double c66 = 0.36458333333333333333d;
+        const double c68 = 0.00569661458333333333d;
+        const double c88 = 0.3076171875d;
         double flattening = 1d / inverseFlattening;
         double eccentricitySquared = (2d * flattening) - (flattening * flattening);
         double esp = eccentricitySquared / (1d - eccentricitySquared);
-        double e0 = E0fn(eccentricitySquared);
-        double e1 = E1fn(eccentricitySquared);
-        double e2 = E2fn(eccentricitySquared);
-        double e3 = E3fn(eccentricitySquared);
+        double en0 = c00 - (eccentricitySquared * (c02 + (eccentricitySquared *
+                    (c04 + (eccentricitySquared * (c06 + (eccentricitySquared * c08)))))));
+        double en1 = eccentricitySquared * (c22 - (eccentricitySquared *
+                    (c04 + (eccentricitySquared * (c06 + (eccentricitySquared * c08))))));
+        double tSeries = eccentricitySquared * eccentricitySquared;
+        double en2 = tSeries * (c44 - (eccentricitySquared * (c46 + (eccentricitySquared * c48))));
+        double en3 = (tSeries *= eccentricitySquared) * (c66 - (eccentricitySquared * c68));
+        double en4 = tSeries * eccentricitySquared * c88;
         double latitudeOfOrigin = latitudeOfOriginDegrees * (Math.PI / 180d);
-        double ml0 = Mlfn(e0, e1, e2, e3, latitudeOfOrigin);
+        double ml0 = Mlfn(en0, en1, en2, en3, en4, latitudeOfOrigin, Math.Sin(latitudeOfOrigin), Math.Cos(latitudeOfOrigin));
         double x = xMeters / semiMajor;
         double y = yMeters / semiMajor;
-        double phi = InvMlfn(ml0 + (y / scaleFactor), eccentricitySquared, e0, e1, e2, e3);
+        double phi = InvMlfn(ml0 + (y / scaleFactor), eccentricitySquared, en0, en1, en2, en3, en4);
 
         if (Math.Abs(phi) >= Math.PI / 2d)
         {
@@ -887,18 +903,14 @@ public class ProjectionCoverageTests
         return latitudeRadians * (180d / Math.PI);
     }
 
-    private static double E0fn(double x) => 1d - (0.25d * x * (1d + ((x / 16d) * (3d + (1.25d * x)))));
+    private static double Mlfn(double en0, double en1, double en2, double en3, double en4, double phi, double sinPhi, double cosPhi)
+    {
+        cosPhi *= sinPhi;
+        sinPhi *= sinPhi;
+        return (en0 * phi) - (cosPhi * (en1 + (sinPhi * (en2 + (sinPhi * (en3 + (sinPhi * en4)))))));
+    }
 
-    private static double E1fn(double x) => 0.375d * x * (1d + (0.25d * x * (1d + (0.46875d * x))));
-
-    private static double E2fn(double x) => 0.05859375d * x * x * (1d + (0.75d * x));
-
-    private static double E3fn(double x) => x * x * x * (35d / 3072d);
-
-    private static double Mlfn(double e0, double e1, double e2, double e3, double phi) =>
-        (e0 * phi) - (e1 * Math.Sin(2d * phi)) + (e2 * Math.Sin(4d * phi)) - (e3 * Math.Sin(6d * phi));
-
-    private static double InvMlfn(double arg, double eccentricitySquared, double e0, double e1, double e2, double e3)
+    private static double InvMlfn(double arg, double eccentricitySquared, double en0, double en1, double en2, double en3, double en4)
     {
         double phi = arg;
         double k = 1d / (1d - eccentricitySquared);
@@ -906,7 +918,7 @@ public class ProjectionCoverageTests
         {
             double sinPhi = Math.Sin(phi);
             double t = 1d - (eccentricitySquared * sinPhi * sinPhi);
-            t = (Mlfn(e0, e1, e2, e3, phi) - arg) * (t * Math.Sqrt(t)) * k;
+            t = (Mlfn(en0, en1, en2, en3, en4, phi, sinPhi, Math.Cos(phi)) - arg) * (t * Math.Sqrt(t)) * k;
             phi -= t;
             if (Math.Abs(t) < 1e-11d)
             {
