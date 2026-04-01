@@ -521,6 +521,41 @@ public class ProjectionCoverageTests
         Assert.InRange(Math.Abs(projectedPoint[1] - expectedNorthing), 0d, 1e-6);
     }
 
+    /// <summary>
+    /// Verifies Cassini-Soldner easting against the analytical 4th-order polynomial expansion.
+    /// </summary>
+    [Fact]
+    public void CassiniSoldnerForwardMatchesAnalyticalEasting()
+    {
+        const double latitude = 52.518611111111d;
+        const double longitude = 20d;
+        const double semiMajor = 6378137d;
+        const double inverseFlattening = 298.257223563d;
+        const double expectedEasting = 1340021.76450623d;
+        string wkt = BuildProjectedWkt("cass", "SPHEROID[\"WGS 84\",6378137,298.257223563]", 0d, 0d, null);
+        ProjectedCoordinateSystem projected = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wkt);
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+
+        double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
+        double flattening = 1d / inverseFlattening;
+        double eccentricitySquared = (2d * flattening) - (flattening * flattening);
+        double cFactor = eccentricitySquared / (1d - eccentricitySquared);
+        double phi = latitude * (Math.PI / 180d);
+        double lambda = longitude * (Math.PI / 180d);
+        double sinPhi = Math.Sin(phi);
+        double cosPhi = Math.Cos(phi);
+        double n = 1d / Math.Sqrt(1d - (eccentricitySquared * sinPhi * sinPhi));
+        double tanPhi = Math.Tan(phi);
+        double t = tanPhi * tanPhi;
+        double a1 = lambda * cosPhi;
+        double a2 = a1 * a1;
+        double c = cFactor * cosPhi * cosPhi;
+        double analyticalEasting = semiMajor * n * a1 * (1d - (a2 * t * ((1d / 6d) + (((8d - t + (8d * c)) * a2) / 120d))));
+
+        Assert.InRange(Math.Abs(analyticalEasting - expectedEasting), 0d, 1e-6);
+        Assert.InRange(Math.Abs(projectedPoint[0] - analyticalEasting), 0d, 1e-6);
+    }
+
     // ------------------------------------------------------------------
     //  MercatorAuxiliarySphere (mercator_auxiliary_sphere) – 59.3 % coverage
     // ------------------------------------------------------------------
