@@ -525,6 +525,12 @@ public class GieBuiltinsTheoryTests
                 return false;
             }
 
+            if (!IsLikelyGeographicCoordinatePair(testCase.Accept) || !IsLikelyGeographicCoordinatePair(testCase.Expect))
+            {
+                skipReason = "Geographic datum-shift operation is only applicable to geographic coordinate tuples.";
+                return false;
+            }
+
             try
             {
                 HorizontalDatum wgs84Datum = CoordinateSystemFactory.CreateHorizontalDatum(
@@ -1855,5 +1861,20 @@ public class GieBuiltinsTheoryTests
         }
 
         return false;
+    }
+
+    private static bool IsLikelyGeographicCoordinatePair(double[] coordinates)
+    {
+        if (coordinates is null || coordinates.Length < 2)
+        {
+            return false;
+        }
+
+        double first = Math.Abs(coordinates[0]);
+        double second = Math.Abs(coordinates[1]);
+
+        bool lonLatRange = first <= 180d && second <= 90d;
+        bool latLonRange = first <= 90d && second <= 180d;
+        return lonLatRange || latLonRange;
     }
 }

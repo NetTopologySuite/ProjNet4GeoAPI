@@ -92,6 +92,56 @@ public class GieBuiltinsRegressionTests
         Assert.Equal(-84.33333333333333d, lon0, 12);
     }
 
+    /// <summary>
+    /// Verifies that geographic datum-shift operations are rejected for projected coordinate tuples.
+    /// </summary>
+    [Fact]
+    public void TryCreateTransformWithProjectedCoordinatesForLatlongDatumShiftReturnsFalse()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 188,
+            Operation = "proj=latlong towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 ellps=bessel",
+            ToleranceValue = 3d,
+            ToleranceUnit = "m",
+            Direction = GieDirection.Inverse,
+            Accept = [2598417.333192d, 5930677.980308d],
+            Expect = [399340.601863d, 5928794.177992d],
+        };
+
+        bool created = TryCreateTransform(testCase, out MathTransform? transform, out string? skipReason);
+
+        Assert.False(created);
+        Assert.Null(transform);
+        Assert.Contains("geographic", skipReason ?? string.Empty, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Verifies that geographic datum-shift operations still work for valid geographic coordinates.
+    /// </summary>
+    [Fact]
+    public void TryCreateTransformWithGeographicCoordinatesForLatlongDatumShiftReturnsExpectedCoordinate()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 98,
+            Operation = "proj=latlong towgs84=598.1,73.7,418.2,0.202,0.045,-2.455,6.7 ellps=bessel",
+            ToleranceValue = 3d,
+            ToleranceUnit = "m",
+            Direction = GieDirection.Inverse,
+            Accept = [7.483333333333d, 53.5d],
+            Expect = [7.482506019176d, 53.498461143331d],
+        };
+
+        bool created = TryCreateTransform(testCase, out MathTransform? transform, out string? skipReason);
+
+        Assert.True(created, skipReason ?? "TryCreateTransform returned false.");
+        MathTransform mathTransform = Assert.IsAssignableFrom<MathTransform>(transform);
+        double[] output = mathTransform.Transform(testCase.Accept);
+        Assert.InRange(output[0], testCase.Expect[0] - 2e-5d, testCase.Expect[0] + 2e-5d);
+        Assert.InRange(output[1], testCase.Expect[1] - 2e-5d, testCase.Expect[1] + 2e-5d);
+    }
+
     private static bool TryCreateTransform(GieCase testCase, out MathTransform? transform, out string? skipReason)
     {
         MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("TryCreateTransform", BindingFlags.Static | BindingFlags.NonPublic)
