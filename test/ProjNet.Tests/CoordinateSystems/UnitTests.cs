@@ -321,4 +321,130 @@ public class UnitTests
     {
         Assert.False(AngularUnit.Radian.EqualParams(LinearUnit.Metre));
     }
+
+    // ---- Generic Unit ----
+
+    /// <summary>
+    /// Verifies that the full constructor sets conversion factor and metadata.
+    /// </summary>
+    [Fact]
+    public void Unit_Constructor_SetsConversionFactorAndMetadata()
+    {
+        var unit = new Unit(2.5, "custom", "TEST", 42, "alias", "abbr", "remarks");
+
+        Assert.Equal(2.5, unit.ConversionFactor);
+        Assert.Equal("custom", unit.Name);
+        Assert.Equal("TEST", unit.Authority);
+        Assert.Equal(42, unit.AuthorityCode);
+        Assert.Equal("alias", unit.Alias);
+        Assert.Equal("abbr", unit.Abbreviation);
+        Assert.Equal("remarks", unit.Remarks);
+    }
+
+    /// <summary>
+    /// Verifies that the simplified constructor sets name and conversion factor.
+    /// </summary>
+    [Fact]
+    public void Unit_SimpleConstructor_SetsNameAndConversionFactor()
+    {
+        var unit = new Unit("fathom", 1.8288);
+
+        Assert.Equal("fathom", unit.Name);
+        Assert.Equal(1.8288, unit.ConversionFactor, 12);
+    }
+
+    /// <summary>
+    /// Verifies that the conversion factor can be updated via the setter.
+    /// </summary>
+    [Fact]
+    public void Unit_ConversionFactor_CanBeSet()
+    {
+        var unit = new Unit("custom", 1d);
+        unit.ConversionFactor = 3.5d;
+
+        Assert.Equal(3.5d, unit.ConversionFactor);
+    }
+
+    /// <summary>
+    /// Verifies that WKT output includes authority information when present.
+    /// </summary>
+    [Fact]
+    public void Unit_WKT_WithAuthority_ContainsAuthority()
+    {
+        var unit = new Unit(2.5, "custom", "TEST", 42, string.Empty, string.Empty, string.Empty);
+        string wkt = unit.WKT;
+
+        Assert.Contains("UNIT[\"custom\", 2.5", wkt, StringComparison.Ordinal);
+        Assert.Contains("AUTHORITY[\"TEST\", \"42\"]", wkt, StringComparison.Ordinal);
+        Assert.Equal(wkt, unit.ToString());
+    }
+
+    /// <summary>
+    /// Verifies that WKT output omits authority information when not set.
+    /// </summary>
+    [Fact]
+    public void Unit_WKT_WithoutAuthority_OmitsAuthority()
+    {
+        var unit = new Unit("custom", 2.5);
+        string wkt = unit.WKT;
+
+        Assert.DoesNotContain("AUTHORITY", wkt, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Verifies that XML serialization is not implemented for generic units.
+    /// </summary>
+    [Fact]
+    public void Unit_XML_ThrowsNotImplementedException()
+    {
+        var unit = new Unit("custom", 2.5);
+
+        Assert.Throws<NotImplementedException>(() => _ = unit.XML);
+    }
+
+    /// <summary>
+    /// Verifies that XML element serialization is not implemented for generic units.
+    /// </summary>
+    [Fact]
+    public void Unit_ToXml_ThrowsNotImplementedException()
+    {
+        var unit = new Unit("custom", 2.5);
+
+        Assert.Throws<NotImplementedException>(() => unit.ToXml());
+    }
+
+    /// <summary>
+    /// Verifies that EqualParams returns true for generic units with the same conversion factor.
+    /// </summary>
+    [Fact]
+    public void Unit_EqualParams_SameConversionFactor_ReturnsTrue()
+    {
+        var a = new Unit(2.5, "custom-a", "TEST", 1, string.Empty, string.Empty, string.Empty);
+        var b = new Unit(2.5, "custom-b", "OTHER", 2, string.Empty, string.Empty, string.Empty);
+
+        Assert.True(a.EqualParams(b));
+    }
+
+    /// <summary>
+    /// Verifies that EqualParams returns false for generic units with different conversion factors.
+    /// </summary>
+    [Fact]
+    public void Unit_EqualParams_DifferentConversionFactor_ReturnsFalse()
+    {
+        var a = new Unit("custom-a", 2.5);
+        var b = new Unit("custom-b", 3.5);
+
+        Assert.False(a.EqualParams(b));
+    }
+
+    /// <summary>
+    /// Verifies that EqualParams returns false for a different type.
+    /// </summary>
+    [Fact]
+    public void Unit_EqualParams_DifferentType_ReturnsFalse()
+    {
+        var unit = new Unit("custom", 2.5);
+
+        Assert.False(unit.EqualParams("not a unit"));
+    }
 }

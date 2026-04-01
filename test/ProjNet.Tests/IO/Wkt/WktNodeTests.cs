@@ -35,6 +35,16 @@ public class WktNodeTests
     }
 
     /// <summary>
+    /// Verifies that <see cref="WktQuotedString.ToFormattedString"/> matches the compact representation for a leaf node.
+    /// </summary>
+    [Fact]
+    public void WktQuotedString_ToFormattedString_ReturnsQuotedValue()
+    {
+        var node = new WktQuotedString("WGS 84");
+        Assert.Equal("\"WGS 84\"", node.ToFormattedString());
+    }
+
+    /// <summary>
     /// Verifies that <see cref="WktNumber.ToString"/> formats a positive integer value without a decimal point.
     /// </summary>
     [Fact]
@@ -97,6 +107,26 @@ public class WktNodeTests
     }
 
     /// <summary>
+    /// Verifies that <see cref="WktNumber.Value"/> returns the original numeric value.
+    /// </summary>
+    [Fact]
+    public void WktNumber_Value_ReturnsOriginalValue()
+    {
+        var node = new WktNumber(298.257223563);
+        Assert.Equal(298.257223563, node.Value, 12);
+    }
+
+    /// <summary>
+    /// Verifies that <see cref="WktNumber.ToFormattedString"/> matches the compact representation for a leaf node.
+    /// </summary>
+    [Fact]
+    public void WktNumber_ToFormattedString_MatchesToString()
+    {
+        var node = new WktNumber(298.257223563);
+        Assert.Equal(node.ToString(), node.ToFormattedString());
+    }
+
+    /// <summary>
     /// Verifies that <see cref="WktInteger.ToString"/> formats a positive integer value correctly.
     /// </summary>
     [Fact]
@@ -127,6 +157,26 @@ public class WktNodeTests
     }
 
     /// <summary>
+    /// Verifies that <see cref="WktInteger.Value"/> returns the original integer value.
+    /// </summary>
+    [Fact]
+    public void WktInteger_Value_ReturnsOriginalValue()
+    {
+        var node = new WktInteger(4326);
+        Assert.Equal(4326, node.Value);
+    }
+
+    /// <summary>
+    /// Verifies that <see cref="WktInteger.ToFormattedString"/> matches the compact representation for a leaf node.
+    /// </summary>
+    [Fact]
+    public void WktInteger_ToFormattedString_MatchesToString()
+    {
+        var node = new WktInteger(4326);
+        Assert.Equal(node.ToString(), node.ToFormattedString());
+    }
+
+    /// <summary>
     /// Verifies that <see cref="WktIdentifier.ToString"/> returns the identifier name without any quoting or modification.
     /// </summary>
     [Fact]
@@ -134,6 +184,26 @@ public class WktNodeTests
     {
         var node = new WktIdentifier("NORTH");
         Assert.Equal("NORTH", node.ToString());
+    }
+
+    /// <summary>
+    /// Verifies that <see cref="WktIdentifier.Name"/> returns the original identifier text.
+    /// </summary>
+    [Fact]
+    public void WktIdentifier_Name_ReturnsOriginalText()
+    {
+        var node = new WktIdentifier("NORTH");
+        Assert.Equal("NORTH", node.Name);
+    }
+
+    /// <summary>
+    /// Verifies that <see cref="WktIdentifier.ToFormattedString"/> matches the compact representation for a leaf node.
+    /// </summary>
+    [Fact]
+    public void WktIdentifier_ToFormattedString_MatchesToString()
+    {
+        var node = new WktIdentifier("NORTH");
+        Assert.Equal(node.ToString(), node.ToFormattedString());
     }
 
     /// <summary>
