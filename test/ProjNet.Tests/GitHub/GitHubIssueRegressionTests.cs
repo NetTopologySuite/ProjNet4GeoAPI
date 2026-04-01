@@ -83,6 +83,30 @@ public class GitHubIssueRegressionTests
     }
 
     /// <summary>
+    /// Verifies that inverting a concatenated transform invalidates any previously cached inverse instance.
+    /// </summary>
+    [Fact(DisplayName = "ConcatenatedTransform.Invert clears stale inverse cache")]
+    public void TestConcatenatedTransformInvertInvalidatesCachedInverse()
+    {
+        CoordinateSystem epsg31466 = Assert.IsType<CoordinateSystem>(Css.GetCoordinateSystem(31466), exactMatch: false);
+        CoordinateSystem epsg25832 = Assert.IsType<CoordinateSystem>(Css.GetCoordinateSystem(25832), exactMatch: false);
+
+        ConcatenatedTransform forward = Assert.IsType<ConcatenatedTransform>(Assert.IsType<ICoordinateTransformation>(Css.CreateTransformation(epsg31466, epsg25832), exactMatch: false).MathTransform);
+        (double X, double Y) source = (3500000d, 5640000d);
+        (double X, double Y) projected = forward.Transform(source.X, source.Y);
+
+        MathTransform cachedInverse = forward.Inverse();
+        forward.Invert();
+        MathTransform inverseAfterInvert = forward.Inverse();
+        (double X, double Y) projectedFromInverse = inverseAfterInvert.Transform(source.X, source.Y);
+
+        const double tolerance = 1e-3;
+        Assert.NotSame(cachedInverse, inverseAfterInvert);
+        Assert.InRange(Math.Abs(projectedFromInverse.X - projected.X), 0d, tolerance);
+        Assert.InRange(Math.Abs(projectedFromInverse.Y - projected.Y), 0d, tolerance);
+    }
+
+    /// <summary>
     /// Verifies that GitHub issue #20 is fixed: calling <see cref="MathTransform.Inverse"/> does not corrupt
     /// subsequent results of the forward transform.
     /// </summary>
