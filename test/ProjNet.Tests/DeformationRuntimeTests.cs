@@ -158,6 +158,22 @@ public class DeformationRuntimeTests
         AssertCoordinateClose(recovered, input, 2e-4d);
     }
 
+    /// <summary>
+    /// Verifies iterative deformation inverse remains stable for larger fixed delta-time values.
+    /// </summary>
+    [Fact]
+    public void DeformationInverseRoundtripWithLargeDeltaTimeRecoversInput()
+    {
+        MathTransform forward = CreateTransform("+proj=deformation +xy_grids=alaska +z_grids=egm96_15.gtx +ellps=GRS80 +dt=4096");
+        MathTransform inverse = forward.Inverse();
+        double[] input = CreateCartesianPoint(-3004295.5882503074d, -1093474.1690603832d, 5500477.1338251457d);
+
+        double[] projected = forward.Transform(input);
+        double[] recovered = inverse.Transform(projected);
+
+        AssertCoordinateClose(recovered, input, 1e-3d);
+    }
+
     private static TheoryDataRow<string, double[], double[], double> Case(string operation, double[] input, double[] expected, double tolerance)
     {
         return new TheoryDataRow<string, double[], double[], double>(operation, input, expected, tolerance);
