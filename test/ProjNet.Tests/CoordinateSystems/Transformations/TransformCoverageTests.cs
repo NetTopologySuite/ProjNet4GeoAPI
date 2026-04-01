@@ -233,6 +233,29 @@ public class TransformCoverageTests
     }
 
     /// <summary>
+    /// Prime meridian transforms reject mixed angular units.
+    /// </summary>
+    [Fact]
+    public void PrimeMeridianTransformWithDifferentAngularUnitsThrowsNotImplementedException()
+    {
+        var gradMeridian = new PrimeMeridian(2.5969213, AngularUnit.Grad, "Paris grad", "TEST", 1, string.Empty, string.Empty, string.Empty);
+
+        Assert.Throws<NotImplementedException>(() => new PrimeMeridianTransform(PrimeMeridian.Greenwich, gradMeridian));
+    }
+
+    /// <summary>
+    /// The unimplemented serialization APIs throw as documented.
+    /// </summary>
+    [Fact]
+    public void PrimeMeridianTransformUnimplementedSerializationMembersThrowNotImplementedException()
+    {
+        var transform = new PrimeMeridianTransform(PrimeMeridian.Greenwich, PrimeMeridian.Paris);
+
+        Assert.Throws<NotImplementedException>(() => _ = transform.WKT);
+        Assert.Throws<NotImplementedException>(() => _ = transform.XML);
+    }
+
+    /// <summary>
     /// Tests various well-known prime meridians for correct longitude offset.
     /// </summary>
     /// <param name="expectedLongitude">Expected resulting longitude.</param>
@@ -259,6 +282,26 @@ public class TransformCoverageTests
         transform.Transform(xs.AsSpan(), ys.AsSpan(), zs.AsSpan());
 
         double expectedShift = PrimeMeridian.Greenwich.Longitude - PrimeMeridian.Paris.Longitude;
+        Assert.Equal(0d + expectedShift, xs[0], 10);
+        Assert.Equal(10d + expectedShift, xs[1], 10);
+        Assert.Equal(20d + expectedShift, xs[2], 10);
+    }
+
+    /// <summary>
+    /// Batch transform via span-based API respects inverted direction.
+    /// </summary>
+    [Fact]
+    public void PrimeMeridianSpanBatchTransformAfterInvertUsesReverseShift()
+    {
+        var transform = new PrimeMeridianTransform(PrimeMeridian.Greenwich, PrimeMeridian.Paris);
+        double[] xs = [0d, 10d, 20d];
+        double[] ys = [50d, 51d, 52d];
+        double[] zs = [0d, 0d, 0d];
+
+        transform.Invert();
+        transform.Transform(xs.AsSpan(), ys.AsSpan(), zs.AsSpan());
+
+        double expectedShift = PrimeMeridian.Paris.Longitude - PrimeMeridian.Greenwich.Longitude;
         Assert.Equal(0d + expectedShift, xs[0], 10);
         Assert.Equal(10d + expectedShift, xs[1], 10);
         Assert.Equal(20d + expectedShift, xs[2], 10);
