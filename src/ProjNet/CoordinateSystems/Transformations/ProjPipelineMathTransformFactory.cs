@@ -687,7 +687,6 @@ internal static class ProjPipelineMathTransformFactory
             || !TryApplyOptionalProjectionParameter(args, "lat_1", "standard_parallel_1", parameters, out skipReason)
             || !TryApplyOptionalProjectionParameter(args, "lat_2", "standard_parallel_2", parameters, out skipReason)
             || !TryApplyOptionalProjectionParameter(args, "lonc", "longitude_of_center", parameters, out skipReason)
-            || !TryApplyOptionalProjectionParameter(args, "lat_ts", "latitude_true_scale", parameters, out skipReason)
             || !TryApplyOptionalProjectionParameter(args, "lat_ts", "lat_ts", parameters, out skipReason))
         {
             return false;
