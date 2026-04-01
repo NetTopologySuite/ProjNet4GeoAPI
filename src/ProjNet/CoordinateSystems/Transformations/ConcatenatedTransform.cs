@@ -52,16 +52,16 @@ internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationC
     public IList<ICoordinateTransformationCore> CoordinateTransformationList => this.coordinateTransformationList;
 
     /// <inheritdoc/>
-    public override int DimSource => this.coordinateTransformationList[0].SourceCS.Dimension;
+    public override int DimSource => this.GetFirstTransform().SourceCS.Dimension;
 
     /// <inheritdoc/>
-    public override int DimTarget => this.coordinateTransformationList[^1].TargetCS.Dimension;
+    public override int DimTarget => this.GetLastTransform().TargetCS.Dimension;
 
     /// <inheritdoc/>
-    public CoordinateSystem SourceCS { get => this.CoordinateTransformationList[0].SourceCS; }
+    public CoordinateSystem SourceCS { get => this.GetFirstTransform().SourceCS; }
 
     /// <inheritdoc/>
-    public CoordinateSystem TargetCS { get => this.CoordinateTransformationList[this.CoordinateTransformationList.Count - 1].TargetCS; }
+    public CoordinateSystem TargetCS { get => this.GetLastTransform().TargetCS; }
 
     /// <summary>
     /// Gets a Well-Known Text representation of this object.
@@ -176,5 +176,25 @@ internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationC
         {
             concatenatedTransform.Transform(ref x, ref y, ref z, ref t);
         }
+    }
+
+    private ICoordinateTransformationCore GetFirstTransform()
+    {
+        if (this.coordinateTransformationList.Count == 0)
+        {
+            throw new InvalidOperationException("Concatenated transform does not contain any child transformations.");
+        }
+
+        return this.coordinateTransformationList[0];
+    }
+
+    private ICoordinateTransformationCore GetLastTransform()
+    {
+        if (this.coordinateTransformationList.Count == 0)
+        {
+            throw new InvalidOperationException("Concatenated transform does not contain any child transformations.");
+        }
+
+        return this.coordinateTransformationList[^1];
     }
 }
