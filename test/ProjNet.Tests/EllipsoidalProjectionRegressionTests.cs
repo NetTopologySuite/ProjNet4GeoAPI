@@ -75,6 +75,33 @@ public class EllipsoidalProjectionRegressionTests
         Assert.InRange(Math.Abs(geographicPoint[1] - 0.000904369d), 0d, 1e-9d);
     }
 
+    /// <summary>
+    /// Verifies Cylindrical Equal Area ellipsoidal vectors from PROJ builtins.
+    /// </summary>
+    [Fact]
+    public void CylindricalEqualAreaEllipsoidalMatchesProjBuiltinsVectors()
+    {
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
+            BuildProjectedWkt("cea", Grs80, null));
+
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(
+            projected.GeographicCoordinateSystem,
+            projected);
+        double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(2d, 1d));
+
+        Assert.InRange(Math.Abs(projectedPoint[0] - 222638.981586547d), 0d, 1e-4d);
+        Assert.InRange(Math.Abs(projectedPoint[1] - 110568.812396267d), 0d, 1e-4d);
+
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(
+            projected,
+            projected.GeographicCoordinateSystem);
+        double[] geographicPoint = inverse.MathTransform.Transform(CreatePoint(16697923.6190d, 4865983.5552d));
+
+        Assert.InRange(Math.Abs(geographicPoint[0] - 150d), 0d, 1e-8d);
+        Assert.InRange(Math.Abs(geographicPoint[1] - 50d), 0d, 1e-8d);
+    }
+
     private static string BuildProjectedWkt(string projectionName, string spheroidClause, string? extraParameters)
     {
         return FormattableString.Invariant(
