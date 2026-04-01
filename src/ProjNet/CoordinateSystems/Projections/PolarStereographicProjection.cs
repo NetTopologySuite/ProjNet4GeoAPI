@@ -56,7 +56,8 @@ internal class PolarStereographicProjection : MapProjection
     {
         this.Name = "Polar_Stereographic";
 
-        this.globalScale = this.scaleFactor * this.semiMajor;
+        // Keep k0 in akm1 (matching PROJ's stere setup) and only apply semi-major scale here.
+        this.globalScale = this.semiMajor;
         this.reciprocGlobalScale = 1.0 / this.globalScale;
 
         if (this.e == 0.0)
@@ -73,13 +74,13 @@ internal class PolarStereographicProjection : MapProjection
             double one_m_e = 1.0 - this.e;
             double pow_p = Math.Pow(one_p_e, one_p_e);
             double pow_m = Math.Pow(one_m_e, one_m_e);
-            this.akm1 = 2.0 / Math.Sqrt(pow_p * pow_m);
+            this.akm1 = (2.0 * this.scaleFactor) / Math.Sqrt(pow_p * pow_m);
         }
         else
         {
             double sinphits = Math.Sin(this.phits);
             double cosphits = Math.Cos(this.phits);
-            this.akm1 = cosphits / this.Tsfn(cosphits, sinphits, this.e);
+            this.akm1 = (this.scaleFactor * cosphits) / this.Tsfn(cosphits, sinphits, this.e);
 
             double t = this.e * sinphits;
             this.akm1 /= Math.Sqrt(1.0 - (t * t));
