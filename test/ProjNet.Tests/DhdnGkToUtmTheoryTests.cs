@@ -50,8 +50,9 @@ public sealed class DhdnGkToUtmTheoryTests
     public void ProjectedFixtureSectionContainsNinetyFourCases()
     {
         int caseCount = 0;
-        foreach (ProjectedFixtureCase _ in ParseProjectedCases())
+        foreach (ProjectedFixtureCase projectedFixtureCase in ParseProjectedCases())
         {
+            _ = projectedFixtureCase;
             caseCount++;
         }
 
@@ -130,7 +131,7 @@ public sealed class DhdnGkToUtmTheoryTests
                 continue;
             }
 
-            if (trimmed.Length == 0 || trimmed.StartsWith("-", StringComparison.Ordinal))
+            if (trimmed.Length == 0 || trimmed.StartsWith('-'))
             {
                 continue;
             }

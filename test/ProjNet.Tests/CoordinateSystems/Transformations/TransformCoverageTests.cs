@@ -849,6 +849,294 @@ public class TransformCoverageTests
     }
 
     // ──────────────────────────────────────────────────────────────────────
+    //  8. UnitConvertMathTransform  (62.2 %)
+    // ──────────────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Two-dimensional unit conversion scales only X/Y and leaves Z unchanged.
+    /// </summary>
+    [Fact]
+    public void UnitConvertTwoDimensionalTransformLeavesZUnchanged()
+    {
+        var transform = new UnitConvertMathTransform(2, 2d, 5d);
+        double x = 3d;
+        double y = 4d;
+        double z = 7d;
+
+        transform.Transform(ref x, ref y, ref z);
+
+        Assert.Equal(6d, x, 12);
+        Assert.Equal(8d, y, 12);
+        Assert.Equal(7d, z, 12);
+    }
+
+    /// <summary>
+    /// Two-dimensional identity detection ignores the Z scale factor.
+    /// </summary>
+    [Fact]
+    public void UnitConvertTwoDimensionalIdentityIgnoresZScale()
+    {
+        var transform = new UnitConvertMathTransform(2, 1d, 5d);
+
+        Assert.True(transform.Identity());
+    }
+
+    /// <summary>
+    /// The inverse transform uses the reciprocal XY/Z scale factors.
+    /// </summary>
+    [Fact]
+    public void UnitConvertInverseReturnsReciprocalTransform()
+    {
+        var transform = new UnitConvertMathTransform(3, 2d, 4d);
+        MathTransform inverse = transform.Inverse();
+
+        double[] result = inverse.Transform([8d, 12d, 20d]);
+
+        Assert.Equal(4d, result[0], 12);
+        Assert.Equal(6d, result[1], 12);
+        Assert.Equal(5d, result[2], 12);
+    }
+
+    /// <summary>
+    /// In-place inversion mutates the conversion scale factors.
+    /// </summary>
+    [Fact]
+    public void UnitConvertInvertMutatesScaleFactors()
+    {
+        var transform = new UnitConvertMathTransform(3, 2d, 4d);
+
+        transform.Invert();
+
+        double[] result = transform.Transform([8d, 12d, 20d]);
+        Assert.Equal(4d, result[0], 12);
+        Assert.Equal(6d, result[1], 12);
+        Assert.Equal(5d, result[2], 12);
+    }
+
+    /// <summary>
+    /// Invalid dimensions are rejected.
+    /// </summary>
+    [Fact]
+    public void UnitConvertInvalidDimensionThrowsArgumentOutOfRangeException()
+    {
+        ArgumentOutOfRangeException exception = Assert.Throws<ArgumentOutOfRangeException>(
+            () => new UnitConvertMathTransform(4, 1d, 1d));
+
+        Assert.Equal("dimension", exception.ParamName);
+    }
+
+    /// <summary>
+    /// Invalid XY scales are rejected.
+    /// </summary>
+    /// <param name="xyScale">Invalid XY scale.</param>
+    [Theory]
+    [InlineData(0d)]
+    [InlineData(-1d)]
+    [InlineData(double.NaN)]
+    [InlineData(double.PositiveInfinity)]
+    public void UnitConvertInvalidXyScaleThrowsArgumentOutOfRangeException(double xyScale)
+    {
+        ArgumentOutOfRangeException exception = Assert.Throws<ArgumentOutOfRangeException>(
+            () => new UnitConvertMathTransform(3, xyScale, 1d));
+
+        Assert.Equal("xyScale", exception.ParamName);
+    }
+
+    /// <summary>
+    /// Invalid Z scales are rejected.
+    /// </summary>
+    /// <param name="zScale">Invalid Z scale.</param>
+    [Theory]
+    [InlineData(0d)]
+    [InlineData(-1d)]
+    [InlineData(double.NaN)]
+    [InlineData(double.PositiveInfinity)]
+    public void UnitConvertInvalidZScaleThrowsArgumentOutOfRangeException(double zScale)
+    {
+        ArgumentOutOfRangeException exception = Assert.Throws<ArgumentOutOfRangeException>(
+            () => new UnitConvertMathTransform(3, 1d, zScale));
+
+        Assert.Equal("zScale", exception.ParamName);
+    }
+
+    // ──────────────────────────────────────────────────────────────────────
+    //  9. PipelineOmitMathTransform  (54.8 %)
+    // ──────────────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Forward omission bypasses the wrapped transform for 3D coordinates.
+    /// </summary>
+    [Fact]
+    public void PipelineOmitSkipForwardBypassesInnerTransform()
+    {
+        var transform = new PipelineOmitMathTransform(new TrackingMathTransform(2d, 5d), skipForward: true, skipInverse: false);
+        double x = 1d;
+        double y = 2d;
+        double z = 3d;
+
+        transform.Transform(ref x, ref y, ref z);
+
+        Assert.Equal(1d, x, 12);
+        Assert.Equal(2d, y, 12);
+        Assert.Equal(3d, z, 12);
+    }
+
+    /// <summary>
+    /// When forward omission is disabled, the wrapped transform is executed.
+    /// </summary>
+    [Fact]
+    public void PipelineOmitWithoutSkipForwardExecutesInnerTransform()
+    {
+        var transform = new PipelineOmitMathTransform(new TrackingMathTransform(2d, 5d), skipForward: false, skipInverse: false);
+        double x = 1d;
+        double y = 2d;
+        double z = 3d;
+
+        transform.Transform(ref x, ref y, ref z);
+
+        Assert.Equal(3d, x, 12);
+        Assert.Equal(4d, y, 12);
+        Assert.Equal(5d, z, 12);
+    }
+
+    /// <summary>
+    /// A skipped forward step reports itself as an identity transform.
+    /// </summary>
+    [Fact]
+    public void PipelineOmitIdentityReturnsTrueWhenForwardIsSkipped()
+    {
+        var transform = new PipelineOmitMathTransform(new TrackingMathTransform(2d, 5d), skipForward: true, skipInverse: false);
+
+        Assert.True(transform.Identity());
+    }
+
+    /// <summary>
+    /// The inverse is cached and swaps the forward/inverse omission flags.
+    /// </summary>
+    [Fact]
+    public void PipelineOmitInverseCachesAndSwapsSkipFlags()
+    {
+        var transform = new PipelineOmitMathTransform(new TrackingMathTransform(2d, 5d), skipForward: true, skipInverse: false);
+        MathTransform inverse = transform.Inverse();
+
+        Assert.Same(inverse, transform.Inverse());
+
+        double x = 1d;
+        double y = 2d;
+        double z = 3d;
+        double t = 4d;
+        inverse.Transform(ref x, ref y, ref z, ref t);
+
+        Assert.Equal(-1d, x, 12);
+        Assert.Equal(0d, y, 12);
+        Assert.Equal(1d, z, 12);
+        Assert.Equal(-1d, t, 12);
+    }
+
+    /// <summary>
+    /// Forward omission bypasses the wrapped transform for 4D coordinates as well.
+    /// </summary>
+    [Fact]
+    public void PipelineOmitSkipForwardBypassesInnerTransformForFourDimensions()
+    {
+        var transform = new PipelineOmitMathTransform(new TrackingMathTransform(2d, 5d), skipForward: true, skipInverse: false);
+        double x = 1d;
+        double y = 2d;
+        double z = 3d;
+        double t = 4d;
+
+        transform.Transform(ref x, ref y, ref z, ref t);
+
+        Assert.Equal(1d, x, 12);
+        Assert.Equal(2d, y, 12);
+        Assert.Equal(3d, z, 12);
+        Assert.Equal(4d, t, 12);
+    }
+
+    /// <summary>
+    /// In-place inversion is intentionally not supported.
+    /// </summary>
+    [Fact]
+    public void PipelineOmitInvertThrowsNotSupportedException()
+    {
+        var transform = new PipelineOmitMathTransform(new TrackingMathTransform(2d, 5d), skipForward: true, skipInverse: false);
+
+        Assert.Throws<NotSupportedException>(() => transform.Invert());
+    }
+
+    // ──────────────────────────────────────────────────────────────────────
+    //  10. GeographicTransform  (60.0 %)
+    // ──────────────────────────────────────────────────────────────────────
+
+    /// <summary>
+    /// Greenwich-to-Paris shifts the longitude by the Paris prime meridian offset.
+    /// </summary>
+    [Fact]
+    public void GeographicTransformGreenwichToParisShiftsLongitudeInDegrees()
+    {
+        GeographicCoordinateSystem source = CreateGeographicCoordinateSystem(PrimeMeridian.Greenwich);
+        GeographicCoordinateSystem target = CreateGeographicCoordinateSystem(PrimeMeridian.Paris);
+        var transform = new GeographicTransform(source, target);
+        double x = 0d;
+        double y = 1d;
+        double z = 2d;
+
+        transform.Transform(ref x, ref y, ref z);
+
+        Assert.Equal(PrimeMeridian.Paris.Longitude, x, 12);
+        Assert.Equal(1d, y, 12);
+        Assert.Equal(2d, z, 12);
+    }
+
+    /// <summary>
+    /// Paris-to-Greenwich removes the Paris prime meridian offset.
+    /// </summary>
+    [Fact]
+    public void GeographicTransformParisToGreenwichRemovesPrimeMeridianOffset()
+    {
+        GeographicCoordinateSystem source = CreateGeographicCoordinateSystem(PrimeMeridian.Paris);
+        GeographicCoordinateSystem target = CreateGeographicCoordinateSystem(PrimeMeridian.Greenwich);
+        var transform = new GeographicTransform(source, target);
+        double x = 10d;
+        double y = 0d;
+        double z = 0d;
+
+        transform.Transform(ref x, ref y, ref z);
+
+        Assert.Equal(10d - PrimeMeridian.Paris.Longitude, x, 12);
+    }
+
+    /// <summary>
+    /// Source and target dimensions mirror the wrapped geographic coordinate systems.
+    /// </summary>
+    [Fact]
+    public void GeographicTransformDimensionsMatchCoordinateSystems()
+    {
+        GeographicCoordinateSystem source = CreateGeographicCoordinateSystem(PrimeMeridian.Greenwich);
+        GeographicCoordinateSystem target = CreateGeographicCoordinateSystem(PrimeMeridian.Paris);
+        var transform = new GeographicTransform(source, target);
+
+        Assert.Equal(source.Dimension, transform.DimSource);
+        Assert.Equal(target.Dimension, transform.DimTarget);
+    }
+
+    /// <summary>
+    /// The unimplemented WKT/XML and inversion APIs throw as documented.
+    /// </summary>
+    [Fact]
+    public void GeographicTransformUnimplementedMembersThrowNotImplementedException()
+    {
+        GeographicCoordinateSystem source = CreateGeographicCoordinateSystem(PrimeMeridian.Greenwich);
+        GeographicCoordinateSystem target = CreateGeographicCoordinateSystem(PrimeMeridian.Paris);
+        var transform = new GeographicTransform(source, target);
+
+        Assert.Throws<NotImplementedException>(() => _ = transform.WKT);
+        Assert.Throws<NotImplementedException>(() => _ = transform.XML);
+        Assert.Throws<NotImplementedException>(() => transform.Inverse());
+        Assert.Throws<NotImplementedException>(() => transform.Invert());
+    }
+
+    // ──────────────────────────────────────────────────────────────────────
     //  Helpers
     // ──────────────────────────────────────────────────────────────────────
     private static MathTransform CreatePipelineTransform(string operation)
@@ -862,5 +1150,65 @@ public class TransformCoverageTests
     private static MathTransform CreateGeocTransform(string operation)
     {
         return CreatePipelineTransform(operation);
+    }
+
+    private static GeographicCoordinateSystem CreateGeographicCoordinateSystem(PrimeMeridian primeMeridian)
+    {
+        var coordinateSystemFactory = new CoordinateSystemFactory();
+        return coordinateSystemFactory.CreateGeographicCoordinateSystem(
+            $"{primeMeridian.Name} test GCS",
+            AngularUnit.Degrees,
+            HorizontalDatum.WGS84,
+            primeMeridian,
+            new AxisInfo("Lon", AxisOrientationEnum.East),
+            new AxisInfo("Lat", AxisOrientationEnum.North));
+    }
+
+    private sealed class TrackingMathTransform : MathTransform
+    {
+        private readonly double xyzDelta;
+        private readonly double timeDelta;
+
+        internal TrackingMathTransform(double xyzDelta, double timeDelta)
+        {
+            this.xyzDelta = xyzDelta;
+            this.timeDelta = timeDelta;
+        }
+
+        public override int DimSource => 3;
+
+        public override int DimTarget => 3;
+
+        public override string WKT => string.Empty;
+
+        public override string XML => string.Empty;
+
+        public override bool Identity()
+        {
+            return this.xyzDelta == 0d && this.timeDelta == 0d;
+        }
+
+        public override MathTransform Inverse()
+        {
+            return new TrackingMathTransform(-this.xyzDelta, -this.timeDelta);
+        }
+
+        public override void Invert()
+        {
+            throw new NotSupportedException();
+        }
+
+        public override void Transform(ref double x, ref double y, ref double z)
+        {
+            x += this.xyzDelta;
+            y += this.xyzDelta;
+            z += this.xyzDelta;
+        }
+
+        internal override void Transform(ref double x, ref double y, ref double z, ref double t)
+        {
+            this.Transform(ref x, ref y, ref z);
+            t += this.timeDelta;
+        }
     }
 }
