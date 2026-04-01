@@ -163,6 +163,19 @@ public class HelmertRuntimeTests
         Assert.InRange(Math.Abs(recovered[3] - source[3]), 0d, 1e-12d);
     }
 
+    /// <summary>
+    /// Verifies that inverse 4-parameter Helmert rejects zero scale at observation epoch.
+    /// </summary>
+    [Fact]
+    public void HelmertKinematicFourParameterInverseWithZeroScaleAtEpochThrows()
+    {
+        const string inverseOperation = "+proj=helmert +x=5 +y=-3 +theta=1 +s=1 +ds=-1 +t_epoch=2000 +inv";
+        MathTransform inverse = CreateTransform(inverseOperation);
+
+        ArgumentException exception = Assert.Throws<ArgumentException>(() => inverse.Transform(CreatePoint(100d, 200d, 0d, 2001d)));
+        Assert.Contains("scale", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
     private static MathTransform CreateTransform(string operation)
     {
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
