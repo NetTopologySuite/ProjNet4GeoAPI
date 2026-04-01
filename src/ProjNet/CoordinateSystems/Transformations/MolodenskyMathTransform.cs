@@ -390,7 +390,13 @@ internal sealed class MolodenskyMathTransform : MathTransform
             - (this.dy * sinPhi * sinLam)
             + (this.dz * cosPhi)
             + (adffda * Math.Sin(2d * phi));
-        dPhi /= this.ComputeRm(phi);
+        double dPhiDenominator = this.ComputeRm(phi);
+        if (dPhiDenominator == 0d)
+        {
+            ArgumentGuard.ThrowArgument("Molodensky abridged produced invalid denominator for dphi.");
+        }
+
+        dPhi /= dPhiDenominator;
 
         double dLamDenominator = this.ComputeRn(phi) * cosPhi;
         if (dLamDenominator == 0d)
