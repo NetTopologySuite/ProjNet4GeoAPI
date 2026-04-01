@@ -127,8 +127,17 @@ internal class AlbersProjection : MapProjection
     /// <param name="y">The y-ordinate of the point in meters when entering, its latitude in radians after exit.</param>
     protected sealed override void MetersToRadians(ref double x, ref double y)
     {
-        double theta = Math.Atan(x / (this.ro0 - y));
-        double ro = Math.Sqrt(Math.Pow(x, 2) + Math.Pow(this.ro0 - y, 2));
+        double deltaY = this.ro0 - y;
+        double theta = Math.Atan2(x, deltaY);
+        double ro = Math.Sqrt((x * x) + (deltaY * deltaY));
+        if (this.n < 0.0)
+        {
+            ro = -ro;
+            x = -x;
+            deltaY = -deltaY;
+            theta = Math.Atan2(x, deltaY);
+        }
+
         double q = (this.c - (Math.Pow(ro, 2) * Math.Pow(this.n, 2) / Math.Pow(this.semiMajor, 2))) / this.n;
 
         double lat;
