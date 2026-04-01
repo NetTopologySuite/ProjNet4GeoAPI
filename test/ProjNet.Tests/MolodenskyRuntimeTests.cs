@@ -79,6 +79,19 @@ public class MolodenskyRuntimeTests
     }
 
     /// <summary>
+    /// Verifies abridged Molodensky rejects degenerate ellipsoid inputs that collapse Rm to zero.
+    /// </summary>
+    [Fact]
+    public void MolodenskyAbridgedThrowsWhenMeridionalRadiusIsZero()
+    {
+        const string operation = "+proj=molodensky +a=6378137 +b=1e-200 +da=0 +df=0 +dx=0 +dy=0 +dz=1 +abridged";
+        MathTransform transform = CreateTransform(operation);
+
+        ArgumentException exception = Assert.Throws<ArgumentException>(() => transform.Transform(CreatePoint(0d, 0d, 0d)));
+        Assert.Contains("dphi", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
     /// Verifies required-parameter validation paths for Molodensky.
     /// </summary>
     /// <param name="operation">Operation text.</param>
