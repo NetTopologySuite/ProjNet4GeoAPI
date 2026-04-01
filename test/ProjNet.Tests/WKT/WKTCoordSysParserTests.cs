@@ -226,6 +226,40 @@ public class WKTCoordSysParserTests
     }
 
     /// <summary>
+    /// Verifies WKT2 root keyword aliases are normalized to equivalent WKT1 coordinate system roots.
+    /// </summary>
+    [Fact]
+    public void CreateFromWktParsesWkt2RootKeywordAliases()
+    {
+        const string projectedWkt =
+            "PROJCRS[\"Custom Projected\",GEOGCS[\"Custom GCS\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"Mercator_1SP\"],UNIT[\"metre\",1]]";
+        const string verticalWkt =
+            "VERTCRS[\"Custom Height\",VERT_DATUM[\"Custom Vertical Datum\",2005],UNIT[\"metre\",1],AXIS[\"Up\",UP]]";
+        const string compoundWkt =
+            "COMPOUNDCRS[\"Compound\",GEOGCS[\"Custom GCS\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],VERT_CS[\"Custom Height\",VERT_DATUM[\"Custom Vertical Datum\",2005],UNIT[\"metre\",1],AXIS[\"Up\",UP]]]";
+
+        ProjectedCoordinateSystem projected = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(this.coordinateSystemFactory, projectedWkt);
+        VerticalCoordinateSystem vertical = CoordinateSystemTestHelpers.RequireCoordinateSystem<VerticalCoordinateSystem>(this.coordinateSystemFactory, verticalWkt);
+        CompoundCoordinateSystem compound = CoordinateSystemTestHelpers.RequireCoordinateSystem<CompoundCoordinateSystem>(this.coordinateSystemFactory, compoundWkt);
+
+        Assert.Equal("Custom Projected", projected.Name);
+        Assert.Equal("Custom Height", vertical.Name);
+        Assert.Equal("Compound", compound.Name);
+    }
+
+    /// <summary>
+    /// Verifies BOUNDCRS roots are surfaced as explicitly unsupported instead of unrecognized.
+    /// </summary>
+    [Fact]
+    public void CreateFromWktBoundCrsThrowsNotSupported()
+    {
+        const string wkt = "BoundCrs[]";
+
+        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => this.coordinateSystemFactory.CreateFromWkt(wkt));
+        Assert.Contains("BOUNDCRS", exception.Message, StringComparison.Ordinal);
+    }
+
+    /// <summary>
     /// This test reads in a file with 2671 pre-defined coordinate systems and projections,
     /// and tries to create a transformation with them.
     /// </summary>
