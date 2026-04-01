@@ -686,6 +686,11 @@ internal sealed class HelmertMathTransform : MathTransform
 
         if (this.fourParameter)
         {
+            if (state.Scale == 0d)
+            {
+                ArgumentGuard.ThrowArgument("helmert: inverse 4-parameter transform requires non-zero scale.", nameof(state));
+            }
+
             double cosTheta = Math.Cos(state.Theta) / state.Scale;
             double sinTheta = Math.Sin(state.Theta) / state.Scale;
             double sourceX = x - translation.X;
