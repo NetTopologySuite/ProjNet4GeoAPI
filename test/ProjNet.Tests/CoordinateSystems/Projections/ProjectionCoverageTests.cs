@@ -921,6 +921,32 @@ public class ProjectionCoverageTests
         Assert.InRange(Math.Abs(result[1]), 0d, 1e-3);
     }
 
+    /// <summary>
+    /// Verifies Orthographic honors the optional <c>alpha</c> rotation parameter.
+    /// </summary>
+    [Fact]
+    public void OrthoAlphaRotationChangesProjectedCoordinate()
+    {
+        const double longitude = -122d;
+        const double latitude = 38d;
+        string wktNoAlpha = BuildProjectedWkt("ortho", Wgs84, 37.628969166666664d, -122.39394166666668d, null);
+        string wktWithAlpha = BuildProjectedWkt(
+            "ortho",
+            Wgs84,
+            37.628969166666664d,
+            -122.39394166666668d,
+            ",PARAMETER[\"alpha\",27.7927777777777]");
+        ProjectedCoordinateSystem projectedNoAlpha = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wktNoAlpha);
+        ProjectedCoordinateSystem projectedWithAlpha = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wktWithAlpha);
+        ICoordinateTransformation forwardNoAlpha = CoordinateTransformationFactory.CreateFromCoordinateSystems(projectedNoAlpha.GeographicCoordinateSystem, projectedNoAlpha);
+        ICoordinateTransformation forwardWithAlpha = CoordinateTransformationFactory.CreateFromCoordinateSystems(projectedWithAlpha.GeographicCoordinateSystem, projectedWithAlpha);
+
+        double[] noAlpha = forwardNoAlpha.MathTransform.Transform(CreatePoint(longitude, latitude));
+        double[] withAlpha = forwardWithAlpha.MathTransform.Transform(CreatePoint(longitude, latitude));
+
+        Assert.True(Math.Abs(noAlpha[0] - withAlpha[0]) > 1d || Math.Abs(noAlpha[1] - withAlpha[1]) > 1d);
+    }
+
     // ------------------------------------------------------------------
     //  WKT builder and helpers
     // ------------------------------------------------------------------

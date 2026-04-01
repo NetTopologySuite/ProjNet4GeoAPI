@@ -135,6 +135,26 @@ public class TransformCoverageTests
         Assert.True(double.IsNaN(result[1]));
     }
 
+    /// <summary>
+    /// Verifies geocentric cartesian inverse has measurable high-altitude residual with single-step Bowring.
+    /// </summary>
+    [Fact]
+    public void GeocentricCartesianHighAltitudeRoundTripShowsSingleStepResidual()
+    {
+        MathTransform forward = CreatePipelineTransform("+proj=cart +ellps=WGS84");
+        MathTransform inverse = forward.Inverse();
+
+        double[] source = [12d, 45d, 30000000d];
+        double[] cartesian = forward.Transform(source);
+        double[] roundtrip = inverse.Transform(cartesian);
+
+        double latitudeError = Math.Abs(roundtrip[1] - source[1]);
+        double heightError = Math.Abs(roundtrip[2] - source[2]);
+
+        Assert.InRange(latitudeError, 0d, 1e-8);
+        Assert.InRange(heightError, 0d, 0.05d);
+    }
+
     // ──────────────────────────────────────────────────────────────────────
     //  2. PrimeMeridianTransform  (50.0 %)
     // ──────────────────────────────────────────────────────────────────────
