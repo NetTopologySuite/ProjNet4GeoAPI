@@ -100,6 +100,27 @@ public class GitHubIssueRegressionTests
     }
 
     /// <summary>
+    /// Verifies that empty concatenated transforms fail with a clear exception instead of index errors.
+    /// </summary>
+    [Fact(DisplayName = "ConcatenatedTransform empty chain throws clear exception on metadata access")]
+    public void ConcatenatedTransformEmptyChainThrowsClearException()
+    {
+        var transform = new ConcatenatedTransform();
+
+        const string expectedMessage = "Concatenated transform does not contain any child transformations.";
+
+        InvalidOperationException dimSourceException = Assert.Throws<InvalidOperationException>(() => _ = transform.DimSource);
+        InvalidOperationException dimTargetException = Assert.Throws<InvalidOperationException>(() => _ = transform.DimTarget);
+        InvalidOperationException sourceCsException = Assert.Throws<InvalidOperationException>(() => _ = transform.SourceCS);
+        InvalidOperationException targetCsException = Assert.Throws<InvalidOperationException>(() => _ = transform.TargetCS);
+
+        Assert.Equal(expectedMessage, dimSourceException.Message);
+        Assert.Equal(expectedMessage, dimTargetException.Message);
+        Assert.Equal(expectedMessage, sourceCsException.Message);
+        Assert.Equal(expectedMessage, targetCsException.Message);
+    }
+
+    /// <summary>
     /// Verifies that <see cref="DatumTransform"/> applies the scale factor only once to rotation terms.
     /// </summary>
     [Fact(DisplayName = "DatumTransform applies single scale factor on rotation terms")]
