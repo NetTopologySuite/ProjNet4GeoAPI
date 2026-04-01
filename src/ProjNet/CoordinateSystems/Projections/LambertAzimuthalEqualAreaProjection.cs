@@ -260,7 +260,7 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
 
         double sinphi = Math.Sin(phi);
         double cosphi = Math.Cos(phi);
-        double coslam = Math.Sin(lam);
+        double coslam = Math.Cos(lam);
 
         double x = HugeVal;
         double y = HugeVal;
