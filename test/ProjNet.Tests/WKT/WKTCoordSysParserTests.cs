@@ -194,6 +194,24 @@ public class WKTCoordSysParserTests
     }
 
     /// <summary>
+    /// Verifies non-numeric AUTHORITY codes are represented as unknown authority code <c>-1</c>.
+    /// </summary>
+    [Fact]
+    public void CreateFromWktUsesMinusOneForNonNumericAuthorityCodes()
+    {
+        const string wkt =
+            "GEOGCS[\"Custom\",DATUM[\"Custom_Datum\",SPHEROID[\"Custom Spheroid\",6378137,298.257223563,AUTHORITY[\"LOCAL\",\"abc\"]],AUTHORITY[\"LOCAL\",\"abc\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"LOCAL\",\"abc\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"LOCAL\",\"abc\"]],AUTHORITY[\"LOCAL\",\"abc\"]]";
+
+        GeographicCoordinateSystem coordinateSystem = CoordinateSystemTestHelpers.RequireCoordinateSystem<GeographicCoordinateSystem>(this.coordinateSystemFactory, wkt);
+
+        Assert.Equal(-1, coordinateSystem.AuthorityCode);
+        Assert.Equal(-1, coordinateSystem.HorizontalDatum.AuthorityCode);
+        Assert.Equal(-1, coordinateSystem.HorizontalDatum.Ellipsoid.AuthorityCode);
+        Assert.Equal(-1, coordinateSystem.PrimeMeridian.AuthorityCode);
+        Assert.Equal(-1, coordinateSystem.AngularUnit.AuthorityCode);
+    }
+
+    /// <summary>
     /// This test reads in a file with 2671 pre-defined coordinate systems and projections,
     /// and tries to create a transformation with them.
     /// </summary>
