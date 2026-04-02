@@ -14,9 +14,11 @@ using ProjNet.CoordinateSystems;
 /// Implements PROJ's (abridged) <c>molodensky</c> runtime transform.
 /// </summary>
 /// <remarks>
-/// The abridged branch was independently verified against EPSG method 9605. In particular,
-/// the combined ellipsoid-difference term follows <c>a * df + f * da</c> in the latitude
-/// and height corrections.
+/// The abridged branch was independently verified against IOGP, "Geomatics Guidance
+/// Note 7, part 2: Coordinate Conversions and Transformations including Formulas"
+/// (publication 373-7-2, 2019), EPSG method 9605, Abridged Molodensky. In particular,
+/// the combined ellipsoid-difference term follows <c>a * df + f * da</c> in the
+/// latitude and height corrections, matching the published method.
 /// </remarks>
 internal sealed class MolodenskyMathTransform : MathTransform
 {
