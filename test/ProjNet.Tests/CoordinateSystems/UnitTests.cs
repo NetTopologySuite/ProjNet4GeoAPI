@@ -4,7 +4,9 @@
 namespace ProjNet.Tests;
 
 using System;
+using System.Xml.Linq;
 using ProjNet.CoordinateSystems;
+using ProjNet.IO.Wkt;
 using Xunit;
 
 /// <summary>
@@ -134,6 +136,44 @@ public class UnitTests
 
         Assert.Contains("CS_LinearUnit", xml, StringComparison.Ordinal);
         Assert.Contains("MetersPerUnit=\"1\"", xml, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Verifies that <see cref="LinearUnit.ToXml"/> matches the XML property.
+    /// </summary>
+    [Fact]
+    public void LinearUnit_ToXml_MatchesXmlProperty()
+    {
+        LinearUnit unit = LinearUnit.USSurveyFoot;
+        XElement element = unit.ToXml();
+
+        Assert.True(XNode.DeepEquals(XElement.Parse(unit.XML), element));
+    }
+
+    /// <summary>
+    /// Verifies that the linear unit WKT node includes authority information when it is available.
+    /// </summary>
+    [Fact]
+    public void LinearUnit_ToWktNode_WithAuthority_IncludesAuthorityNode()
+    {
+        LinearUnit unit = LinearUnit.Metre;
+        WktKeywordNode node = Assert.IsType<WktKeywordNode>(unit.ToWktNode());
+
+        Assert.Equal("UNIT", node.Keyword);
+        Assert.Equal(3, node.Children.Count);
+        Assert.Equal("AUTHORITY", Assert.IsType<WktKeywordNode>(node.Children[2]).Keyword);
+    }
+
+    /// <summary>
+    /// Verifies that the linear unit WKT node omits authority information when it is unavailable.
+    /// </summary>
+    [Fact]
+    public void LinearUnit_ToWktNode_WithoutAuthority_OmitsAuthorityNode()
+    {
+        LinearUnit unit = new(1.0, "test", string.Empty, -1, string.Empty, string.Empty, string.Empty);
+        WktKeywordNode node = Assert.IsType<WktKeywordNode>(unit.ToWktNode());
+
+        Assert.Equal(2, node.Children.Count);
     }
 
     // ---- LinearUnit EqualParams ----
@@ -280,6 +320,44 @@ public class UnitTests
 
         Assert.Contains("CS_AngularUnit", xml, StringComparison.Ordinal);
         Assert.Contains("RadiansPerUnit=\"1\"", xml, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Verifies that <see cref="AngularUnit.ToXml"/> matches the XML property.
+    /// </summary>
+    [Fact]
+    public void AngularUnit_ToXml_MatchesXmlProperty()
+    {
+        AngularUnit unit = AngularUnit.Grad;
+        XElement element = unit.ToXml();
+
+        Assert.True(XNode.DeepEquals(XElement.Parse(unit.XML), element));
+    }
+
+    /// <summary>
+    /// Verifies that the angular unit WKT node includes authority information when it is available.
+    /// </summary>
+    [Fact]
+    public void AngularUnit_ToWktNode_WithAuthority_IncludesAuthorityNode()
+    {
+        AngularUnit unit = AngularUnit.Degrees;
+        WktKeywordNode node = Assert.IsType<WktKeywordNode>(unit.ToWktNode());
+
+        Assert.Equal("UNIT", node.Keyword);
+        Assert.Equal(3, node.Children.Count);
+        Assert.Equal("AUTHORITY", Assert.IsType<WktKeywordNode>(node.Children[2]).Keyword);
+    }
+
+    /// <summary>
+    /// Verifies that the angular unit WKT node omits authority information when it is unavailable.
+    /// </summary>
+    [Fact]
+    public void AngularUnit_ToWktNode_WithoutAuthority_OmitsAuthorityNode()
+    {
+        AngularUnit unit = new(0.5);
+        WktKeywordNode node = Assert.IsType<WktKeywordNode>(unit.ToWktNode());
+
+        Assert.Equal(2, node.Children.Count);
     }
 
     // ---- AngularUnit EqualParams ----
