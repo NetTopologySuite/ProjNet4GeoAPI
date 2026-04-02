@@ -19,6 +19,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// This projection is "conformal" in the sense that lines of latitude and longitude,
 /// which are perpendicular to one another on the earth's surface, are also perpendicular
 /// to one another in the projected domain.</para>
+/// <para>The 2SP formulation was independently verified against IOGP, "Geomatics Guidance
+/// Note 7, part 2: Coordinate Conversions and Transformations including Formulas"
+/// (publication 373-7-2, 2019), EPSG method 9802, Lambert Conic Conformal (2SP).
+/// The defining <c>n</c>, <c>F</c>, <c>r</c>, and <c>theta</c> relationships match
+/// the implementation here.</para>
 /// </remarks>
 internal class LambertConformalConic2SP : MapProjection
 {
