@@ -16,6 +16,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// false easting and northing are referenced to the natural origin of the projection
 /// rather than to the centre of the initial line. This variant corresponds to EPSG
 /// method 9815.</para>
+/// <para>The formulation was independently verified against IOGP, "Geomatics Guidance
+/// Note 7, part 2: Coordinate Conversions and Transformations including Formulas"
+/// (publication 373-7-2, 2019), EPSG method 9815, Hotine Oblique Mercator (variant B).
+/// The natural-origin coordinate convention and the omission of the <c>u0</c> offset
+/// used by variant A match the implementation here.</para>
 /// </remarks>
 internal class ObliqueMercatorProjection : HotineObliqueMercatorProjection
 {
