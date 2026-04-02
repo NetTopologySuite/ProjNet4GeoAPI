@@ -17,6 +17,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// respect to the Earth's axis, making it suitable for regions with a predominant
 /// oblique extent. It is a conformal projection. False easting and northing are
 /// applied relative to the centre of the initial line.</para>
+/// <para>The formulation was independently verified against IOGP, "Geomatics Guidance
+/// Note 7, part 2: Coordinate Conversions and Transformations including Formulas"
+/// (publication 373-7-2, 2019), EPSG method 9812, Hotine Oblique Mercator (variant A).
+/// The <c>u0</c> offset at the intersection of the central line and aposphere equator
+/// and the rectified-skew rotation by <c>gamma</c> match the implementation here.</para>
 /// </remarks>
 internal class HotineObliqueMercatorProjection : MapProjection
 {
