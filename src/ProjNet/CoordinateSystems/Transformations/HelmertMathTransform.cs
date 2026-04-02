@@ -18,6 +18,12 @@ using ProjNet.CoordinateSystems.Transformations.Numerics;
 /// 19111:2019, <i>Geographic information - Referencing by coordinates</i>. The scale
 /// factor multiplies the fully rotated vector before translation, matching the standard
 /// <c>T + (1 + s) * R * X</c> form implemented here.
+/// The position-vector and coordinate-frame rotation conventions were independently
+/// verified against IOGP, "Geomatics Guidance Note 7, part 2: Coordinate Conversions
+/// and Transformations including Formulas" (publication 373-7-2, 2019), EPSG methods
+/// 1033 and 1032. Those methods differ only in the sign convention for the rotation
+/// parameters, and the matrix transposition used here for position-vector mode matches
+/// that published relationship.
 /// </remarks>
 internal sealed class HelmertMathTransform : MathTransform
 {
