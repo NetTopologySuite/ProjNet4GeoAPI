@@ -14,9 +14,12 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the Polar Stereographic Projection.
 /// </summary>
 /// <remarks>
-/// Independently verified against EPSG method 9810. In particular, the ellipsoidal polar
-/// formulation keeps the natural-origin scale factor <c>k0</c> in the numerator of the
-/// <c>rho</c> expression, matching the EPSG guidance and the PROJ stereographic setup.
+/// <para>Independently verified against IOGP, "Geomatics Guidance Note 7, part 2:
+/// Coordinate Conversions and Transformations including Formulas" (publication
+/// 373-7-2, 2019), EPSG method 9810, Polar Stereographic (variant A). The
+/// ellipsoidal polar formulation keeps the natural-origin scale factor <c>k0</c>
+/// in the numerator of the <c>rho</c> expression, matching the published method
+/// and the implementation here.</para>
 /// </remarks>
 internal class PolarStereographicProjection : MapProjection
 {
