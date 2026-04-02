@@ -28,6 +28,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Formulas" (publication 373-7-2, 2019), EPSG method 9804, Mercator (variant A).
 /// The forward northing and easting equations match the published <c>a * k0 * ln(...)</c>
 /// and <c>a * k0 * (lon - lon0)</c> form.</para>
+/// <para>The ellipsoidal 2SP formulation was independently verified against IOGP, "Geomatics
+/// Guidance Note 7, part 2: Coordinate Conversions and Transformations including
+/// Formulas" (publication 373-7-2, 2019), EPSG method 9805, Mercator (variant B).
+/// The scale factor computation <c>cos(latSP) / sqrt(1 - e^2 * sin^2(latSP))</c> and its
+/// reuse in the forward easting and northing equations match the implementation here.</para>
 /// </remarks>
 internal class Mercator : MapProjection
 {
