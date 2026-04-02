@@ -17,9 +17,12 @@ using ProjNet.CoordinateSystems.Transformations;
 /// preserving distances along lines perpendicular to the central meridian. Scale is true
 /// along the central meridian and along lines perpendicular to it, but distortion increases
 /// with distance from the central meridian.</para>
-/// <para>The forward easting series was independently verified against EPSG method 9806 and
-/// Snyder's published formulation. The third- and fifth-order <c>T</c> terms are subtractive,
-/// which matches the polynomial implemented here.</para>
+/// <para>The forward easting series was independently verified against IOGP, "Geomatics
+/// Guidance Note 7, part 2: Coordinate Conversions and Transformations including
+/// Formulas" (publication 373-7-2, 2019), EPSG method 9806, and John P. Snyder,
+/// <i>Map Projections - A Working Manual</i>, U.S. Geological Survey Professional
+/// Paper 1395 (1987). The third- and fifth-order <c>T</c> terms are subtractive,
+/// matching the polynomial implemented here.</para>
 /// </remarks>
 internal class CassiniSoldnerProjection : MapProjection
 {
