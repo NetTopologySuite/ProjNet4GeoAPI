@@ -20,6 +20,10 @@ using ProjNet.CoordinateSystems.Transformations;
 /// of the cone is normal to the ellipsoid at a defined location and its extension
 /// cuts the minor axis at a defined angle. This projection is used in the Czech Republic
 /// and Slovakia under the name "Krovak" projection.</para>
+/// <para>The formulation was independently verified against IOGP, "Geomatics Guidance
+/// Note 7, part 2: Coordinate Conversions and Transformations including Formulas"
+/// (publication 373-7-2, 2019), EPSG method 9819, Krovak. The oblique-conic setup on
+/// the conformal sphere and the resulting parameter usage match the implementation here.</para>
 /// </remarks>
 internal class KrovakProjection : MapProjection
 {
