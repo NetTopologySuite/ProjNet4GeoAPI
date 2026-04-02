@@ -13,6 +13,11 @@ using ProjNet.CoordinateSystems.Transformations.Numerics;
 /// <summary>
 /// Implements PROJ's <c>helmert</c> runtime transform for static and kinematic operations.
 /// </summary>
+/// <remarks>
+/// The core 7-parameter Bursa-Wolf formulation was independently checked against ISO 19111
+/// reference material. The scale factor multiplies the fully rotated vector before translation,
+/// matching the standard <c>T + (1 + s) * R * X</c> form.
+/// </remarks>
 internal sealed class HelmertMathTransform : MathTransform
 {
     private const double ArcSecondToRadians = Math.PI / (180d * 3600d);

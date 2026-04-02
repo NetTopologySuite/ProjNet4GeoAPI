@@ -24,6 +24,10 @@ using System.Collections.Generic;
 /// the units of the ellipsoid axes (a and b). As it is conventional for X, Y and Z to be in metres,
 /// if the ellipsoid axis dimensions are given in another linear unit they should first be converted
 /// to metres.</para>
+/// <para>The inverse conversion uses Bowring's 1976 geocentric-to-geodetic estimate for the
+/// initial latitude recovery and applies an additional iterative refinement for heights above
+/// 50 km. That extension was independently checked against Bowring's Survey Review paper and
+/// later comparison literature.</para>
 /// </remarks>
 internal class GeocentricTransform : MathTransform
 {

@@ -15,6 +15,12 @@ using System.Text;
 /// <summary>
 /// Applies horizontal datum shifts using one or more NTv2 grid files.
 /// </summary>
+/// <remarks>
+/// NTv2 stores longitudes using the historical positive-west / negative-east convention, and
+/// grid rows are encoded south-to-north with samples ordered east-to-west. This implementation
+/// normalizes the data back to conventional east-positive longitude handling by negating the
+/// stored longitudes and mirroring the X index during sample lookup.
+/// </remarks>
 internal sealed class Ntv2HGridShiftMathTransform : MathTransform
 {
     private const double ArcSecondToDegree = 1d / 3600d;

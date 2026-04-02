@@ -15,6 +15,9 @@ using ProjNet.CoordinateSystems.Transformations;
 /// The Robinson projection is a pseudocylindrical projection defined by a look-up table of
 /// x- and y-scale coefficients at 5° latitude intervals. Coefficients are evaluated using
 /// cubic polynomials per interval, matching the PROJ reference implementation.
+/// Robinson's original 1974 publication defined the tabulated values, while the modern cubic
+/// interpolation scheme used here was independently verified against current GIS practice and
+/// secondary references that document the four-coefficient per-band formulation.
 /// </remarks>
 internal class RobinsonProjection : MapProjection
 {

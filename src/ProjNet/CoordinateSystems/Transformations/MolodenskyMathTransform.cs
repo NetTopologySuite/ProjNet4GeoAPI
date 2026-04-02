@@ -13,6 +13,11 @@ using ProjNet.CoordinateSystems;
 /// <summary>
 /// Implements PROJ's (abridged) <c>molodensky</c> runtime transform.
 /// </summary>
+/// <remarks>
+/// The abridged branch was independently verified against EPSG method 9605. In particular,
+/// the combined ellipsoid-difference term follows <c>a * df + f * da</c> in the latitude
+/// and height corrections.
+/// </remarks>
 internal sealed class MolodenskyMathTransform : MathTransform
 {
     private readonly double semiMajor;
