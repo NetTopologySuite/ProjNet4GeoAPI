@@ -15,8 +15,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Equal Earth is an equal-area pseudocylindrical projection with curved parallels and
 /// a polynomial forward formula. The inverse is solved iteratively.
 /// The coefficient set and authalic-latitude relation were independently verified against
-/// Savric, Patterson, and Jenny (2018), including <c>A1</c> through <c>A4</c> and
-/// <c>sin(theta) = (sqrt(3) / 2) * sin(phi)</c>.
+/// Bojan Savric, Tom Patterson, and Bernhard Jenny, "The Equal Earth map projection,"
+/// <i>International Journal of Geographical Information Science</i>, vol. 33, no. 3,
+/// pp. 454-465, 2018, doi:10.1080/13658816.2018.1504949. The published <c>A1</c>
+/// through <c>A4</c> coefficients and <c>sin(theta) = (sqrt(3) / 2) * sin(phi)</c>
+/// relation match the implementation here.
 /// </remarks>
 internal class EqualEarthProjection : MapProjection
 {
