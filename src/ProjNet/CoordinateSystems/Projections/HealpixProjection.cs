@@ -11,6 +11,18 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the HEALPix (Hierarchical Equal Area isoLatitude Pixelization) projection (<c>healpix</c>).
 /// </summary>
+/// <remarks>
+/// <para>HEALPix is an equal-area pseudocylindrical projection that combines an
+/// equatorial Lambert cylindrical equal-area zone with polar regions based on an
+/// interrupted Collignon construction.</para>
+/// <para>The formulation was independently verified against K. M. Gorski et al.,
+/// "HEALPix: A Framework for High-Resolution Discretization and Fast Analysis of
+/// Data Distributed on the Sphere," <i>Astrophysical Journal</i>, vol. 622, no. 2,
+/// pp. 759-771, 2005. The equatorial relation
+/// <c>y = 3 * pi / 8 * sin(phi)</c> and the polar
+/// <c>sigma = sqrt(3 * (1 - abs(sin(phi))))</c> construction match the
+/// implementation here.</para>
+/// </remarks>
 internal class HealpixProjection : MapProjection
 {
     private static readonly double Phi0Limit = Math.Asin(2d / 3d);
