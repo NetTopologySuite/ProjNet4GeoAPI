@@ -23,6 +23,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// appear disproportionately large. On a Mercator projection, for example, the landmass of Greenland appears to be
 /// greater than that of the continent of South America; in actual area, Greenland is smaller than the Arabian Peninsula.
 /// </para>
+/// <para>The ellipsoidal 1SP formulation was independently verified against IOGP, "Geomatics
+/// Guidance Note 7, part 2: Coordinate Conversions and Transformations including
+/// Formulas" (publication 373-7-2, 2019), EPSG method 9804, Mercator (variant A).
+/// The forward northing and easting equations match the published <c>a * k0 * ln(...)</c>
+/// and <c>a * k0 * (lon - lon0)</c> form.</para>
 /// </remarks>
 internal class Mercator : MapProjection
 {
