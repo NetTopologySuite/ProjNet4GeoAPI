@@ -26,7 +26,7 @@ internal sealed class SpilhausProjection : MapProjection
     private readonly double cosRot;
     private readonly double sinRot;
     private readonly double lon0;
-    private readonly AdamsWorldInSquareIIProjection adamsWs2;
+    private readonly AdamsWorldInSquare2Projection adamsWs2;
     private readonly MapProjection adamsWs2Inverse;
 
     /// <summary>
@@ -70,7 +70,7 @@ internal sealed class SpilhausProjection : MapProjection
             Math.Sqrt(1d - (this.es * sinPhi0 * sinPhi0)) /
             Math.Cos(conformalLatCenter);
 
-        this.adamsWs2 = new AdamsWorldInSquareIIProjection(CreateUnitAdamsParameters());
+        this.adamsWs2 = new AdamsWorldInSquare2Projection(CreateUnitAdamsParameters());
         this.adamsWs2Inverse = (MapProjection)this.adamsWs2.Inverse();
     }
 

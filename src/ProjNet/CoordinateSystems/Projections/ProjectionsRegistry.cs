@@ -237,8 +237,8 @@ public class ProjectionsRegistry
         Register("nell_hammer", typeof(NellHammerProjection));
         Register("nicol", typeof(NicolosiProjection));
         Register("nicolosi_globular", typeof(NicolosiProjection));
-        Register("urm5", typeof(UrmaevVProjection));
-        Register("urmaev_v", typeof(UrmaevVProjection));
+        Register("urm5", typeof(Urmaev5Projection));
+        Register("urmaev_v", typeof(Urmaev5Projection));
         Register("urmfps", typeof(UrmaevFlatPolarSinusoidalProjection));
         Register("urmaev_flat_polar_sinusoidal", typeof(UrmaevFlatPolarSinusoidalProjection));
         Register("times", typeof(TimesProjection));
@@ -332,10 +332,10 @@ public class ProjectionsRegistry
         Register("peirce_quincuncial", typeof(PeirceQuincuncialProjection));
         Register("adams_hemi", typeof(AdamsHemisphereInSquareProjection));
         Register("adams_hemisphere_in_a_square", typeof(AdamsHemisphereInSquareProjection));
-        Register("adams_ws1", typeof(AdamsWorldInSquareIProjection));
-        Register("adams_world_in_a_square_i", typeof(AdamsWorldInSquareIProjection));
-        Register("adams_ws2", typeof(AdamsWorldInSquareIIProjection));
-        Register("adams_world_in_a_square_ii", typeof(AdamsWorldInSquareIIProjection));
+        Register("adams_ws1", typeof(AdamsWorldInSquare1Projection));
+        Register("adams_world_in_a_square_i", typeof(AdamsWorldInSquare1Projection));
+        Register("adams_ws2", typeof(AdamsWorldInSquare2Projection));
+        Register("adams_world_in_a_square_ii", typeof(AdamsWorldInSquare2Projection));
         Register("spilhaus", typeof(SpilhausProjection));
         Register("airocean", typeof(AiroceanProjection));
         Register("isea", typeof(IseaProjection));

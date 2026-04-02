@@ -11,7 +11,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Urmaev V projection (<c>urm5</c>, no inverse).
 /// </summary>
-internal class UrmaevVProjection : MapProjection
+internal class Urmaev5Projection : MapProjection
 {
     private readonly double radius;
     private readonly double n;
@@ -20,20 +20,20 @@ internal class UrmaevVProjection : MapProjection
     private readonly double q3;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="UrmaevVProjection"/> class.
+    /// Initializes a new instance of the <see cref="Urmaev5Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
-    public UrmaevVProjection(IEnumerable<ProjectionParameter> parameters)
+    public Urmaev5Projection(IEnumerable<ProjectionParameter> parameters)
         : this(parameters, null)
     {
     }
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="UrmaevVProjection"/> class.
+    /// Initializes a new instance of the <see cref="Urmaev5Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    public UrmaevVProjection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
+    public Urmaev5Projection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Urmaev_V";
@@ -62,7 +62,7 @@ internal class UrmaevVProjection : MapProjection
     /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        this.inverse ??= new UrmaevVProjection(this.Parameters.ToProjectionParameter(), this);
+        this.inverse ??= new Urmaev5Projection(this.Parameters.ToProjectionParameter(), this);
 
         return this.inverse;
     }
