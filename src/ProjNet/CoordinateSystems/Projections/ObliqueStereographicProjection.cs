@@ -13,6 +13,13 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the Oblique Stereographic Projection.
 /// </summary>
+/// <remarks>
+/// The formulation was independently verified against IOGP, "Geomatics Guidance Note 7,
+/// part 2: Coordinate Conversions and Transformations including Formulas" (publication
+/// 373-7-2, 2019), EPSG method 9809, and Apache SIS projection notes. The
+/// implementation follows the documented Gauss-conformal plus stereographic double
+/// projection, including recovery of conformal latitude and conformal sphere radius.
+/// </remarks>
 internal class ObliqueStereographicProjection : MapProjection
 {
     private readonly double globalScale;
