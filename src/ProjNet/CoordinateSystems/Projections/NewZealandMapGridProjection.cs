@@ -11,6 +11,15 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the New Zealand Map Grid projection (<c>nzmg</c>).
 /// </summary>
+/// <remarks>
+/// The projection was independently verified against IOGP, "Geomatics Guidance Note 7,
+/// part 2: Coordinate Conversions and Transformations including Formulas" (publication
+/// 373-7-2, 2019), EPSG method 9811, and LINZ's New Zealand Map Grid specification,
+/// including Technical Report TR04 on conversion between latitude/longitude and NZMG.
+/// NZMG is implemented as a sixth-order complex polynomial with the standard
+/// <c>lat0</c>, <c>lon0</c>, <c>false easting</c>, and <c>false northing</c> parameters,
+/// and the coefficient sets used here match the published formulation.
+/// </remarks>
 internal class NewZealandMapGridProjection : MapProjection
 {
     private const double ProjectionSemiMajor = 6378388d;
