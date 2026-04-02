@@ -14,9 +14,10 @@ using ProjNet.CoordinateSystems.Transformations.Numerics;
 /// Implements PROJ's <c>helmert</c> runtime transform for static and kinematic operations.
 /// </summary>
 /// <remarks>
-/// The core 7-parameter Bursa-Wolf formulation was independently checked against ISO 19111
-/// reference material. The scale factor multiplies the fully rotated vector before translation,
-/// matching the standard <c>T + (1 + s) * R * X</c> form.
+/// The core 7-parameter Bursa-Wolf formulation was independently checked against ISO
+/// 19111:2019, <i>Geographic information - Referencing by coordinates</i>. The scale
+/// factor multiplies the fully rotated vector before translation, matching the standard
+/// <c>T + (1 + s) * R * X</c> form implemented here.
 /// </remarks>
 internal sealed class HelmertMathTransform : MathTransform
 {
