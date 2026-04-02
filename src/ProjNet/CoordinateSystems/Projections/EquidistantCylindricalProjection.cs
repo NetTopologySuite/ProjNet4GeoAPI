@@ -15,6 +15,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Maps longitude linearly scaled by the cosine of the standard parallel and latitude
 /// linearly from the origin latitude. When the standard parallel is at the equator this
 /// is equivalent to the Plate Carrée projection.
+/// The spherical formulation was independently verified against IOGP, "Geomatics Guidance
+/// Note 7, part 2: Coordinate Conversions and Transformations including Formulas"
+/// (publication 373-7-2, 2019), EPSG methods 1029 and 1028. The easting and northing
+/// equations <c>E = a * cos(latSP) * lambda</c> and <c>N = a * phi</c> match the
+/// implementation here.
 /// </remarks>
 internal class EquidistantCylindricalProjection : MapProjection
 {
