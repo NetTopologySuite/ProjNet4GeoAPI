@@ -26,8 +26,9 @@ using System.Collections.Generic;
 /// to metres.</para>
 /// <para>The inverse conversion uses Bowring's 1976 geocentric-to-geodetic estimate for the
 /// initial latitude recovery and applies an additional iterative refinement for heights above
-/// 50 km. That extension was independently checked against Bowring's Survey Review paper and
-/// later comparison literature.</para>
+/// 50 km. That extension was independently checked against B. R. Bowring,
+/// "Transformation from spatial to geographical coordinates," <i>Survey Review</i>,
+/// vol. 23, no. 181, pp. 323-327, 1976, and later comparison literature.</para>
 /// </remarks>
 internal class GeocentricTransform : MathTransform
 {
