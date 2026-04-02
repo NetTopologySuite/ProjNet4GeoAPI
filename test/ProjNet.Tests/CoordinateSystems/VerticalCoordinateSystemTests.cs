@@ -4,7 +4,10 @@
 namespace ProjNet.Tests;
 
 using System;
+using System.Collections.Generic;
+using System.Xml.Linq;
 using ProjNet.CoordinateSystems;
+using ProjNet.IO.Wkt;
 using Xunit;
 
 /// <summary>
@@ -216,6 +219,101 @@ public class VerticalCoordinateSystemTests
         Assert.Contains("Dimension=\"1\"", xml, StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies that <see cref="VerticalCoordinateSystem.ToXml"/> matches the XML property.
+    /// </summary>
+    [Fact]
+    public void ToXml_MatchesXmlProperty()
+    {
+        VerticalCoordinateSystem vcs = VerticalCoordinateSystem.ODN;
+        XElement element = vcs.ToXml();
+
+        Assert.True(XNode.DeepEquals(XElement.Parse(vcs.XML), element));
+    }
+
+    /// <summary>
+    /// Verifies that the WKT node omits the default axis node when the default Up axis is used.
+    /// </summary>
+    [Fact]
+    public void ToWktNode_WithDefaultAxis_OmitsAxisNode()
+    {
+        VerticalCoordinateSystem vcs = VerticalCoordinateSystem.ODN;
+        WktKeywordNode node = Assert.IsType<WktKeywordNode>(vcs.ToWktNode());
+
+        Assert.Equal("VERT_CS", node.Keyword);
+        Assert.Equal(4, node.Children.Count);
+        Assert.Equal("AUTHORITY", Assert.IsType<WktKeywordNode>(node.Children[3]).Keyword);
+    }
+
+    /// <summary>
+    /// Verifies that the WKT node omits authority information when the authority name is blank.
+    /// </summary>
+    [Fact]
+    public void ToWktNode_WithoutAuthority_OmitsAuthorityNode()
+    {
+        VerticalCoordinateSystem vcs = CreateVerticalCoordinateSystem(new AxisInfo("Up", AxisOrientationEnum.Up), string.Empty, -1);
+        WktKeywordNode node = Assert.IsType<WktKeywordNode>(vcs.ToWktNode());
+
+        Assert.Equal(3, node.Children.Count);
+    }
+
+    /// <summary>
+    /// Verifies that the WKT node omits authority information when the code is not positive.
+    /// </summary>
+    [Fact]
+    public void ToWktNode_WithAuthorityButWithoutPositiveCode_OmitsAuthorityNode()
+    {
+        VerticalCoordinateSystem vcs = CreateVerticalCoordinateSystem(new AxisInfo("Up", AxisOrientationEnum.Up), "TEST", -1);
+        WktKeywordNode node = Assert.IsType<WktKeywordNode>(vcs.ToWktNode());
+
+        Assert.Equal(3, node.Children.Count);
+    }
+
+    /// <summary>
+    /// Verifies that the WKT node includes an axis node when the axis collection count differs from the default.
+    /// </summary>
+    [Fact]
+    public void ToWktNode_WithMultipleAxes_IncludesFirstAxisNode()
+    {
+        VerticalCoordinateSystem vcs = CreateVerticalCoordinateSystem(new AxisInfo("Up", AxisOrientationEnum.Up), string.Empty, -1);
+        vcs.AxisInfo =
+        [
+            new AxisInfo("Primary", AxisOrientationEnum.Up),
+            new AxisInfo("Secondary", AxisOrientationEnum.Down),
+        ];
+
+        WktKeywordNode node = Assert.IsType<WktKeywordNode>(vcs.ToWktNode());
+
+        Assert.Equal(4, node.Children.Count);
+        Assert.Equal("AXIS", Assert.IsType<WktKeywordNode>(node.Children[3]).Keyword);
+    }
+
+    /// <summary>
+    /// Verifies that the WKT node includes an axis node when the axis name differs from the default.
+    /// </summary>
+    [Fact]
+    public void ToWktNode_WithNonDefaultAxisName_IncludesAxisNode()
+    {
+        VerticalCoordinateSystem vcs = CreateVerticalCoordinateSystem(new AxisInfo("Height", AxisOrientationEnum.Up), string.Empty, -1);
+        WktKeywordNode node = Assert.IsType<WktKeywordNode>(vcs.ToWktNode());
+
+        Assert.Equal(4, node.Children.Count);
+        Assert.Equal("AXIS", Assert.IsType<WktKeywordNode>(node.Children[3]).Keyword);
+    }
+
+    /// <summary>
+    /// Verifies that the WKT node includes an axis node when the axis orientation differs from the default.
+    /// </summary>
+    [Fact]
+    public void ToWktNode_WithNonDefaultAxisOrientation_IncludesAxisNode()
+    {
+        VerticalCoordinateSystem vcs = CreateVerticalCoordinateSystem(new AxisInfo("Up", AxisOrientationEnum.Down), string.Empty, -1);
+        WktKeywordNode node = Assert.IsType<WktKeywordNode>(vcs.ToWktNode());
+
+        Assert.Equal(4, node.Children.Count);
+        Assert.Equal("AXIS", Assert.IsType<WktKeywordNode>(node.Children[3]).Keyword);
+    }
+
     // ---- EqualParams ----
 
     /// <summary>
@@ -249,6 +347,35 @@ public class VerticalCoordinateSystemTests
             string.Empty);
 
         Assert.False(a.EqualParams(b));
+    }
+
+    /// <summary>
+    /// Verifies that EqualParams returns false when the systems have different dimensions.
+    /// </summary>
+    [Fact]
+    public void EqualParams_DifferentDimension_ReturnsFalse()
+    {
+        VerticalCoordinateSystem first = CreateVerticalCoordinateSystem(new AxisInfo("Up", AxisOrientationEnum.Up));
+        VerticalCoordinateSystem second = CreateVerticalCoordinateSystem(new AxisInfo("Up", AxisOrientationEnum.Up));
+        second.AxisInfo =
+        [
+            new AxisInfo("Up", AxisOrientationEnum.Up),
+            new AxisInfo("Down", AxisOrientationEnum.Down),
+        ];
+
+        Assert.False(first.EqualParams(second));
+    }
+
+    /// <summary>
+    /// Verifies that EqualParams returns false when the axis orientation differs.
+    /// </summary>
+    [Fact]
+    public void EqualParams_DifferentAxisOrientation_ReturnsFalse()
+    {
+        VerticalCoordinateSystem first = CreateVerticalCoordinateSystem(new AxisInfo("Up", AxisOrientationEnum.Up));
+        VerticalCoordinateSystem second = CreateVerticalCoordinateSystem(new AxisInfo("Up", AxisOrientationEnum.Down));
+
+        Assert.False(first.EqualParams(second));
     }
 
     /// <summary>
@@ -292,5 +419,19 @@ public class VerticalCoordinateSystemTests
         vcs.VerticalDatum = newDatum;
 
         Assert.Same(newDatum, vcs.VerticalDatum);
+    }
+
+    private static VerticalCoordinateSystem CreateVerticalCoordinateSystem(AxisInfo axisInfo, string authority = "TEST", long authorityCode = 1234)
+    {
+        return new VerticalCoordinateSystem(
+            LinearUnit.Metre,
+            VerticalDatum.ODN,
+            axisInfo,
+            "Custom",
+            authority,
+            authorityCode,
+            string.Empty,
+            string.Empty,
+            string.Empty);
     }
 }

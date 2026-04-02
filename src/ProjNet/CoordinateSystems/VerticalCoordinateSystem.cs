@@ -155,11 +155,6 @@ public class VerticalCoordinateSystem : CoordinateSystem
             return false;
         }
 
-        if (this.AxisInfo.Count != vcs.AxisInfo.Count)
-        {
-            return false;
-        }
-
         for (int i = 0; i < vcs.AxisInfo.Count; i++)
         {
             if (vcs.AxisInfo[i].Orientation != this.AxisInfo[i].Orientation)
