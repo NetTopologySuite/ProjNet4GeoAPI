@@ -24,6 +24,12 @@ using System.Collections.Generic;
 /// the units of the ellipsoid axes (a and b). As it is conventional for X, Y and Z to be in metres,
 /// if the ellipsoid axis dimensions are given in another linear unit they should first be converted
 /// to metres.</para>
+/// <para>The forward geographic-to-geocentric conversion was independently verified against IOGP,
+/// "Geomatics Guidance Note 7, part 2: Coordinate Conversions and Transformations including
+/// Formulas" (publication 373-7-2, 2019), EPSG method 9602, Geographic/geocentric conversions.
+/// The cartesian coordinate equations <c>X = (nu + h) * cos(phi) * cos(lambda)</c>,
+/// <c>Y = (nu + h) * cos(phi) * sin(lambda)</c>, and
+/// <c>Z = ((1 - e^2) * nu + h) * sin(phi)</c> match the implementation here.</para>
 /// <para>The inverse conversion uses Bowring's 1976 geocentric-to-geodetic estimate for the
 /// initial latitude recovery and applies an additional iterative refinement for heights above
 /// 50 km. That extension was independently verified against B. R. Bowring,
