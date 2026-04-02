@@ -22,6 +22,11 @@ using System.Text;
 /// products originally use a <c>west</c> positive-value convention. This implementation
 /// therefore negates stored longitudes and mirrors the X index during sample lookup to
 /// restore conventional east-positive handling from the original east-to-west row order.
+/// The horizontal shift algorithm was independently verified against IOGP, "Geomatics
+/// Guidance Note 7, part 2: Coordinate Conversions and Transformations including
+/// Formulas" (publication 373-7-2, 2019), EPSG method 9615, NTv2. The bilinear
+/// interpolation of grid offsets in the forward path and the iterative inverse recovery
+/// by repeated subtraction of interpolated shifts match the implementation here.
 /// </remarks>
 internal sealed class Ntv2HGridShiftMathTransform : MathTransform
 {
