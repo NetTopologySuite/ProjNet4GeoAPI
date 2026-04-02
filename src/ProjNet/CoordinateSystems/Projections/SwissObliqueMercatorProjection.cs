@@ -15,6 +15,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// An ellipsoidal oblique Mercator projection used for the Swiss national coordinate systems
 /// (LV03 and LV95). The inverse transform applies an iterative Newton-Raphson algorithm
 /// to recover geodetic latitude from projected northing.
+/// The formulation was independently verified against Swisstopo, "Swiss Map Projections,"
+/// and the PROJ <c>somerc</c> documentation. The double projection from the ellipsoid to
+/// a conformal sphere and then to an oblique Mercator plane, including the Rosenmund 1903
+/// conformal-sphere construction and Bolliger 1967 polynomial terms, matches the
+/// implementation here.
 /// </remarks>
 internal class SwissObliqueMercatorProjection : MapProjection
 {
