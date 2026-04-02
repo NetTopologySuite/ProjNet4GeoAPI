@@ -23,6 +23,12 @@ using ProjNet.CoordinateSystems.Transformations;
 ///     image of those parallels and meridians in the projected domain, that is,
 ///     the projection preserves the correct area of the earth though distorts
 ///     direction, distance and shape somewhat.</para>
+///
+///     <para>The ellipsoidal formulation was independently verified against IOGP,
+///     "Geomatics Guidance Note 7, part 2: Coordinate Conversions and
+///     Transformations including Formulas" (publication 373-7-2, 2019), EPSG
+///     method 9822, Albers Equal Area. The authalic <c>q</c>-function and
+///     derived <c>rho</c> relationships match the implementation here.</para>
 /// </remarks>
 internal class AlbersProjection : MapProjection
 {
