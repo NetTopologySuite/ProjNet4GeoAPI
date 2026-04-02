@@ -11,6 +11,13 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the Lambert Azimuthal Equal Area projection for spherical and ellipsoidal models.
 /// </summary>
+/// <remarks>
+/// The ellipsoidal formulation was independently verified against IOGP, "Geomatics Guidance
+/// Note 7, part 2: Coordinate Conversions and Transformations including Formulas"
+/// (publication 373-7-2, 2019), EPSG method 9820, Lambert Azimuthal Equal Area. The
+/// <c>q</c>, <c>qP</c>, <c>beta</c>, and <c>Rq</c> relationships match the implementation
+/// here.
+/// </remarks>
 public class LambertAzimuthalEqualAreaProjection : MapProjection
 {
     /// <summary>
