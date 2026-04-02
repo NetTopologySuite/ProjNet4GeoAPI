@@ -16,7 +16,7 @@ using System.Text;
 /// Applies horizontal datum shifts using one or more NTv2 grid files.
 /// </summary>
 /// <remarks>
-/// NTv2 longitude handling was independently checked against published EPSG NTv2 remarks
+/// NTv2 longitude handling was independently verified against published EPSG NTv2 remarks
 /// and the PROJ GeoTIFF grid specification. EPSG transformation records explicitly note
 /// that NTv2 input expects longitudes to be positive west, and PROJ documents that NTv2
 /// products originally use a <c>west</c> positive-value convention. This implementation
