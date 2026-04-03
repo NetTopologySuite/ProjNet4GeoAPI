@@ -11,6 +11,14 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Eckert V projection (<c>eck5</c>).
 /// </summary>
+/// <remarks>
+/// Eckert V is a spherical pseudocylindrical projection with sinusoidal meridians and
+/// evenly spaced straight parallels. The formulation was independently verified against
+/// John P. Snyder, <i>Map Projections - A Working Manual</i>
+/// (USGS Professional Paper 1395, 1987) and Max Eckert's 1906 description of the family.
+/// The forward equations <c>x = Xf * (1 + cos(phi)) * lambda</c> and <c>y = Yf * phi</c>
+/// match the implementation here.
+/// </remarks>
 internal class Eckert5Projection : MapProjection
 {
     private const double Xf = 0.44101277172455148219d;

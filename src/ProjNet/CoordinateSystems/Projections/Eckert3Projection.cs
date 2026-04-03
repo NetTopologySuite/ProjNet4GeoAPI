@@ -11,6 +11,14 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Eckert III projection (<c>eck3</c>).
 /// </summary>
+/// <remarks>
+/// Eckert III is a spherical pseudocylindrical projection with elliptical meridians.
+/// The formulation was independently verified against John P. Snyder,
+/// <i>Map Projections - A Working Manual</i> (USGS Professional Paper 1395, 1987),
+/// section 32, and Max Eckert's 1906 description of the family. The forward relation
+/// <c>x = Cx * lambda * (a + sqrt(1 - b * phi^2))</c> together with the linear
+/// <c>y = Cy * phi</c> term matches the implementation here.
+/// </remarks>
 internal class Eckert3Projection : MapProjection
 {
     private const double DefaultCx = 0.42223820031577120149d;

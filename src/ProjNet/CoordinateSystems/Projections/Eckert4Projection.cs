@@ -11,6 +11,15 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Eckert IV projection (<c>eck4</c>).
 /// </summary>
+/// <remarks>
+/// Eckert IV is a spherical equal-area pseudocylindrical projection whose forward path
+/// solves an auxiliary angle iteratively. The formulation was independently verified
+/// against the Wikipedia article "Eckert IV projection" and Eric W. Weisstein's
+/// MathWorld entry "Eckert IV Projection". The Newton iteration for
+/// <c>theta + sin(theta) * (cos(theta) + 2) = (2 + pi / 2) * sin(phi)</c> and the resulting
+/// <c>x = Cx * lambda * (1 + cos(theta))</c>, <c>y = Cy * sin(theta)</c> equations match the
+/// implementation here.
+/// </remarks>
 internal class Eckert4Projection : MapProjection
 {
     private const double OneTol = 1.00000000000001d;

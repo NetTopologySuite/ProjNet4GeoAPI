@@ -11,6 +11,14 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Eckert I projection (<c>eck1</c>).
 /// </summary>
+/// <remarks>
+/// Eckert I is a spherical pseudocylindrical projection with straight parallels and a linear
+/// reduction of the meridian lengths toward the poles. The formulation was independently
+/// verified against the modern summary in the Wikipedia article "Eckert projection" and
+/// Max Eckert's 1906 description of the family. The scale term
+/// <c>x = 0.9213177319 * lambda * (1 - |phi| / pi)</c> together with
+/// <c>y = 0.9213177319 * phi</c> matches the implementation here.
+/// </remarks>
 internal class Eckert1Projection : MapProjection
 {
     private const double Fc = 0.92131773192356127802d;
