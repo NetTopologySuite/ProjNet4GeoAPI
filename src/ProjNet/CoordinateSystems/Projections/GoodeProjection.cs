@@ -12,11 +12,20 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the Goode Homolosine projection (<c>goode</c>).
 /// </summary>
 /// <remarks>
-/// The Goode Homolosine projection combines the sinusoidal projection for latitudes within
-/// approximately ±40.7° and the Mollweide projection for higher latitudes, providing an
-/// equal-area representation with interrupted distortion at the seam. Both spherical and
-/// ellipsoidal modes are supported.
+/// <para>The Goode Homolosine projection combines the sinusoidal projection for
+/// latitudes within approximately ±40.7 degrees and the Mollweide projection for
+/// higher latitudes, providing an equal-area representation with interrupted
+/// distortion at the seam. Both spherical and ellipsoidal modes are supported.</para>
+/// <para>The composite construction was independently verified against the published
+/// Goode homolosine transition latitude of 40 degrees 44 minutes 11.8 seconds
+/// (0.7109307819 rad) and the
+/// PROJ <c>goode</c> documentation. The implementation switches at
+/// <c>PhiLim = 0.71093078197902358062</c>, uses a sinusoidal branch below that
+/// latitude, and applies the Mollweide branch with the standard <c>YCor = 0.05280</c>
+/// seam correction above it, matching the established Goode formulation.</para>
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/projections/goode.html">PROJ documentation: Goode Homolosine.</seealso>
+/// <seealso href="https://en.wikipedia.org/wiki/Goode_homolosine_projection">Wikipedia: Goode homolosine projection.</seealso>
 internal class GoodeProjection : MapProjection
 {
     private const int MollweideIterations = 12;
