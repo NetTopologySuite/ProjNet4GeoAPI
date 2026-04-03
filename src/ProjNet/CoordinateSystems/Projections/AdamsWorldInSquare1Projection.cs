@@ -14,7 +14,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <remarks>
 /// Adams World in a Square I is the first full-world specialization of
 /// <see cref="AdamsProjectionBase"/>. It applies Adams' conformal square construction to the
-/// entire world with the World-in-a-Square I arrangement.
+/// entire world with the World-in-a-Square I arrangement. Inverse projection is not
+/// supported in this implementation.
 /// </remarks>
 internal sealed class AdamsWorldInSquare1Projection : AdamsProjectionBase
 {
