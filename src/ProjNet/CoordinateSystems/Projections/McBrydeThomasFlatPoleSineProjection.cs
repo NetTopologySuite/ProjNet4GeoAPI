@@ -11,6 +11,12 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical McBryde-Thomas Flat-Pole Sine (No. 2) projection (<c>mbt_fps</c>).
 /// </summary>
+/// <remarks>
+/// McBryde-Thomas Flat-Pole Sine (No. 2) is the second sine-based spherical member of the
+/// McBryde-Thomas family. The implementation iteratively solves the auxiliary latitude used
+/// by the original formulation and then applies the published flat-pole sine scaling
+/// constants.
+/// </remarks>
 internal sealed class McBrydeThomasFlatPoleSineProjection : MapProjection
 {
     private const int MaximumIterations = 10;

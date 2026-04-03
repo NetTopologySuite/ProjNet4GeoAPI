@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical McBryde-Thomas Flat-Polar Sine (No. 1) projection (<c>mbt_s</c>).
 /// </summary>
+/// <remarks>
+/// McBryde-Thomas Flat-Polar Sine (No. 1) is the STS-family member of the McBryde-Thomas
+/// series. Its numerical behavior is provided by <see cref="StsProjectionBase"/> with the
+/// McBryde-Thomas constants for the first flat-polar sine variant.
+/// </remarks>
 internal sealed class McBrydeThomasFlatPolarSineProjection : StsProjectionBase
 {
     /// <summary>

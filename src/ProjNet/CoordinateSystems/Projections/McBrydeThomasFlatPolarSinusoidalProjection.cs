@@ -10,6 +10,12 @@ using System.Collections.Generic;
 /// <summary>
 /// Implements the spherical McBryde-Thomas Flat-Polar Sinusoidal projection (<c>mbtfps</c>).
 /// </summary>
+/// <remarks>
+/// McBryde-Thomas Flat-Polar Sinusoidal specializes
+/// <see cref="GeneralSinusoidalProjection"/> with the parameter set used for the
+/// McBryde-Thomas sinusoidal variant. Its numerical behavior therefore follows the verified
+/// parameterized sinusoidal base formulation.
+/// </remarks>
 internal class McBrydeThomasFlatPolarSinusoidalProjection : GeneralSinusoidalProjection
 {
     /// <summary>

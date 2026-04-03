@@ -11,6 +11,12 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical McBryde-Thomas Flat-Polar Quartic projection (<c>mbtfpq</c>).
 /// </summary>
+/// <remarks>
+/// McBryde-Thomas Flat-Polar Quartic is one of the spherical pseudocylindrical projections
+/// developed by McBryde and Thomas in the mid-20th century. This variant solves its
+/// auxiliary latitude iteratively and then applies the quartic family's characteristic
+/// half-angle x/y scaling.
+/// </remarks>
 internal class McBrydeThomasFlatPolarQuarticProjection : MapProjection
 {
     private const int Iterations = 20;
