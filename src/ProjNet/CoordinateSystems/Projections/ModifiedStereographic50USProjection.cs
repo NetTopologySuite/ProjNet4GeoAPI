@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the modified stereographic projection of the 50 U.S. (<c>gs50</c>).
 /// </summary>
+/// <remarks>
+/// Modified Stereographic of 50 U.S. is a Snyder-era regional specialization of
+/// <see cref="ModifiedStereographicProjectionBase"/>. It switches between the spherical and
+/// ellipsoidal coefficient sets defined for the 50-state composite layout.
+/// </remarks>
 internal sealed class ModifiedStereographic50USProjection : ModifiedStereographicProjectionBase
 {
     /// <summary>

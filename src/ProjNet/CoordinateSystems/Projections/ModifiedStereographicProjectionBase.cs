@@ -10,6 +10,12 @@ using System.Collections.Generic;
 /// <summary>
 /// Provides the shared implementation of the modified stereographic projection family.
 /// </summary>
+/// <remarks>
+/// ModifiedStereographicProjectionBase implements Snyder's modified stereographic family,
+/// where a stereographic conformal sphere is followed by a complex polynomial correction.
+/// The shared algorithm applies the forward projection by evaluating the configured complex
+/// coefficient series and recovers the inverse by Newton iteration over the same polynomial.
+/// </remarks>
 internal abstract class ModifiedStereographicProjectionBase : MapProjection
 {
     private const int MaximumNewtonIterations = 20;

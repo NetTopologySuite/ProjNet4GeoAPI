@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the modified stereographic projection of the 48 U.S. (<c>gs48</c>).
 /// </summary>
+/// <remarks>
+/// Modified Stereographic of 48 U.S. is a Snyder-era regional specialization of
+/// <see cref="ModifiedStereographicProjectionBase"/>. It uses the shared complex polynomial
+/// correction with the coefficient set published for the contiguous United States.
+/// </remarks>
 internal sealed class ModifiedStereographic48USProjection : ModifiedStereographicProjectionBase
 {
     /// <summary>

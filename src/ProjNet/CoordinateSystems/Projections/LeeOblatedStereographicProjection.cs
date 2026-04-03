@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the Lee Oblated Stereographic projection (<c>lee_os</c>).
 /// </summary>
+/// <remarks>
+/// Lee Oblated Stereographic is a two-coefficient specialization of
+/// <see cref="ModifiedStereographicProjectionBase"/> attributed to Lee. It uses the shared
+/// modified-stereographic polynomial correction with Lee's coefficient set and origin.
+/// </remarks>
 internal sealed class LeeOblatedStereographicProjection : ModifiedStereographicProjectionBase
 {
     /// <summary>

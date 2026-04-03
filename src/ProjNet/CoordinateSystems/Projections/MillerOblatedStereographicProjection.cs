@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the Miller Oblated Stereographic projection (<c>mil_os</c>).
 /// </summary>
+/// <remarks>
+/// Miller Oblated Stereographic is a two-coefficient specialization of
+/// <see cref="ModifiedStereographicProjectionBase"/> attributed to Miller. It reuses the
+/// shared modified-stereographic workflow with the Miller-specific polynomial coefficients.
+/// </remarks>
 internal sealed class MillerOblatedStereographicProjection : ModifiedStereographicProjectionBase
 {
     /// <summary>

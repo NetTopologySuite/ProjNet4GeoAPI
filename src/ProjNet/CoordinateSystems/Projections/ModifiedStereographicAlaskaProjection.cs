@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the modified stereographic projection of Alaska (<c>alsk</c>).
 /// </summary>
+/// <remarks>
+/// Modified Stereographic of Alaska is the Alaska specialization of
+/// <see cref="ModifiedStereographicProjectionBase"/>. It uses the shared complex polynomial
+/// workflow with separate spherical and ellipsoidal coefficient sets for the Alaska map.
+/// </remarks>
 internal sealed class ModifiedStereographicAlaskaProjection : ModifiedStereographicProjectionBase
 {
     /// <summary>
