@@ -12,10 +12,19 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the Cylindrical Equal Area projection (<c>cea</c>).
 /// </summary>
 /// <remarks>
-/// Preserves area by mapping latitude to y = R·sin(φ) / cos(φ₁), where φ₁ is the
-/// standard parallel. When the standard parallel is at the equator this is equivalent
-/// to the Lambert Cylindrical Equal Area projection.
+/// <para>Preserves area by mapping latitude to <c>y = R * sin(phi) / cos(phi1)</c>, where
+/// <c>phi1</c> is the standard parallel. When the standard parallel is at the equator
+/// this is equivalent to the Lambert Cylindrical Equal Area projection.</para>
+/// <para>The ellipsoidal formulation was independently verified against EPSG method 9835,
+/// Lambert Cylindrical Equal Area, and Snyder, "Map Projections - A Working Manual"
+/// (USGS Professional Paper 1395, 1987), section 10. The published authalic
+/// <c>q</c>-function and polar limit <c>qP</c> match the ellipsoidal branch here,
+/// where <see cref="MapProjection.Qsfn(double, double, double)"/> and <c>qp</c> are
+/// used to correct the earlier spherical-only implementation.</para>
 /// </remarks>
+/// <seealso href="https://epsg.io/9835-method">EPSG method 9835: Lambert Cylindrical Equal Area.</seealso>
+/// <seealso href="https://pubs.usgs.gov/publication/pp1395">USGS Professional Paper 1395: Map Projections - A Working Manual.</seealso>
+/// <seealso href="https://en.wikipedia.org/wiki/Cylindrical_equal-area_projection">Wikipedia: Cylindrical equal-area projection.</seealso>
 internal class CylindricalEqualAreaProjection : MapProjection
 {
     private const double Epsilon = 1e-10d;
