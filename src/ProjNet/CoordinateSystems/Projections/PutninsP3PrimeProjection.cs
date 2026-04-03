@@ -10,6 +10,10 @@ using System.Collections.Generic;
 /// <summary>
 /// Implements the spherical Putnins P3' projection (<c>putp3p</c>).
 /// </summary>
+/// <remarks>
+/// This projection specializes <see cref="PutninsP3Projection"/> with the Putnins P3'
+/// parameter set, so its numerical behavior follows the same verified base formulation.
+/// </remarks>
 internal class PutninsP3PrimeProjection : PutninsP3Projection
 {
     /// <summary>
