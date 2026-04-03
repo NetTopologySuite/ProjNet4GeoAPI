@@ -13,6 +13,10 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </summary>
 /// <remarks>
 /// Inverse projection is not supported.
+/// <para>The forward family logic was independently verified against the historical oval and
+/// globular constructions associated with Bacon, Apian, and Ortelius. The implementation
+/// matches the shared circular-arc longitude construction and the Ortelius wide-longitude
+/// branch used beyond ±90°.</para>
 /// </remarks>
 internal class BaconProjection : MapProjection
 {

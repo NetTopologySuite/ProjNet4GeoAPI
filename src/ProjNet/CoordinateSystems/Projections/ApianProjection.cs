@@ -10,6 +10,11 @@ using System.Collections.Generic;
 /// <summary>
 /// Implements the spherical Apian Globular I projection (<c>apian</c>).
 /// </summary>
+/// <remarks>
+/// Apian Globular I is a historical sixteenth-century member of the
+/// <see cref="BaconProjection"/> family. It reuses the shared globular construction without
+/// Bacon latitude scaling and without the Ortelius wide-longitude branch.
+/// </remarks>
 internal class ApianProjection : BaconProjection
 {
     /// <summary>

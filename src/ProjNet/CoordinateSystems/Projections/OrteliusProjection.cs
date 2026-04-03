@@ -10,6 +10,11 @@ using System.Collections.Generic;
 /// <summary>
 /// Implements the spherical Ortelius Oval projection (<c>ortel</c>).
 /// </summary>
+/// <remarks>
+/// Ortelius Oval is a historical sixteenth-century member of the
+/// <see cref="BaconProjection"/> family. It uses the shared globular formulation together
+/// with the Ortelius-specific branch for longitudes beyond ±90°.
+/// </remarks>
 internal class OrteliusProjection : BaconProjection
 {
     /// <summary>
