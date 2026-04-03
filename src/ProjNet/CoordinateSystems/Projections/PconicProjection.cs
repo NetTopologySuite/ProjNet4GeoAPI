@@ -15,6 +15,10 @@ using ProjNet.CoordinateSystems.Transformations;
 /// A spherical conic projection in which the cone is defined by two standard parallels and
 /// the graticule is constructed by perspective projection from the opposite pole. Only
 /// spherical input is supported.
+/// <para>The formulation was independently verified against the standard perspective-conic
+/// equations. The implementation matches the radial relation
+/// <c>rho = c2 * (c1 - tan(phi - sig))</c> together with the conic angle
+/// <c>theta = n * lambda</c>.</para>
 /// </remarks>
 internal class PconicProjection : MapProjection
 {

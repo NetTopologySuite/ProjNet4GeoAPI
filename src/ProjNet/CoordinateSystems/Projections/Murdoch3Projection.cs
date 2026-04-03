@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Murdoch III projection (<c>murd3</c>).
 /// </summary>
+/// <remarks>
+/// Murdoch III is a simple spherical conic specialization of
+/// <see cref="SimpleConicProjectionBase"/>. Its numerical behavior follows the shared
+/// simple-conic equations with the Murdoch III cone construction.
+/// </remarks>
 internal sealed class Murdoch3Projection : SimpleConicProjectionBase
 {
     /// <summary>

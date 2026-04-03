@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Vitkovsky I projection (<c>vitk1</c>).
 /// </summary>
+/// <remarks>
+/// Vitkovsky I is a simple spherical conic specialization of
+/// <see cref="SimpleConicProjectionBase"/>. Its numerical behavior follows the shared
+/// simple-conic equations with the Vitkovsky-specific tangent-derived cone constant.
+/// </remarks>
 internal sealed class Vitkovsky1Projection : SimpleConicProjectionBase
 {
     /// <summary>

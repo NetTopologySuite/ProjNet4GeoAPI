@@ -15,6 +15,11 @@ using System.Collections.Generic;
 /// transform. The cone constant <c>n</c> and the reference radius <c>rhoC</c> are computed
 /// differently for each variant. The Murdoch II variant uses a tangent-based radial
 /// distance rather than the linear distance used by the other variants.
+/// <para>The shared formulation was independently verified against the classical simple-conic
+/// family used for the Euler, Murdoch, Tissot, and Vitkovsky variants. The implementation
+/// matches the common polar-conic structure <c>x = rho * sin(n * lambda)</c>,
+/// <c>y = rho0 - rho * cos(n * lambda)</c> with variant-specific definitions of
+/// <c>n</c>, <c>rhoC</c>, and <c>rho0</c>.</para>
 /// </remarks>
 internal abstract class SimpleConicProjectionBase : MapProjection
 {

@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Tissot projection (<c>tissot</c>).
 /// </summary>
+/// <remarks>
+/// Tissot is a simple spherical conic specialization of <see cref="SimpleConicProjectionBase"/>.
+/// Its numerical behavior follows the shared simple-conic equations with the Tissot-specific
+/// equal-area style radius construction.
+/// </remarks>
 internal sealed class TissotProjection : SimpleConicProjectionBase
 {
     /// <summary>

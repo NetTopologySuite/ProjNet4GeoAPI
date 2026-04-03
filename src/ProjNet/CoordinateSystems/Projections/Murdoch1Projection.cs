@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Murdoch I projection (<c>murd1</c>).
 /// </summary>
+/// <remarks>
+/// Murdoch I is a simple spherical conic specialization of
+/// <see cref="SimpleConicProjectionBase"/>. Its numerical behavior follows the shared
+/// simple-conic equations with the Murdoch I parameter construction.
+/// </remarks>
 internal sealed class Murdoch1Projection : SimpleConicProjectionBase
 {
     /// <summary>

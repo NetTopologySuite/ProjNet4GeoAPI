@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Murdoch II projection (<c>murd2</c>).
 /// </summary>
+/// <remarks>
+/// Murdoch II is a simple spherical conic specialization of
+/// <see cref="SimpleConicProjectionBase"/>. It is the family member that switches the
+/// shared radial distance from a linear expression to the tangent-based Murdoch II form.
+/// </remarks>
 internal sealed class Murdoch2Projection : SimpleConicProjectionBase
 {
     /// <summary>

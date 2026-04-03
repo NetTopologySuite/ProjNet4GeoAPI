@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Euler projection (<c>euler</c>).
 /// </summary>
+/// <remarks>
+/// Euler is a simple spherical conic specialization of <see cref="SimpleConicProjectionBase"/>.
+/// Its numerical behavior is fully determined by the shared simple-conic equations together
+/// with the Euler-specific cone constant and reference-radius terms.
+/// </remarks>
 internal sealed class EulerProjection : SimpleConicProjectionBase
 {
     /// <summary>
