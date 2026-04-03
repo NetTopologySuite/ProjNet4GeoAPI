@@ -23,6 +23,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// scale factors through <c>Mlfn</c> and <c>Msfnz</c>, which corrects the earlier
 /// spherical-only implementation.</para>
 /// </remarks>
+/// <seealso href="https://epsg.io/1119-method">EPSG method 1119: Equidistant Conic.</seealso>
 /// <seealso href="https://pubs.usgs.gov/publication/pp1395">USGS Professional Paper 1395: Map Projections - A Working Manual.</seealso>
 /// <seealso href="https://proj.org/en/stable/operations/projections/eqdc.html">PROJ documentation: Equidistant Conic.</seealso>
 /// <seealso href="https://en.wikipedia.org/wiki/Equidistant_conic_projection">Wikipedia: Equidistant conic projection.</seealso>
