@@ -10,6 +10,12 @@ using System.Collections.Generic;
 /// <summary>
 /// Executes a PROJ pipeline chain while preserving shared pipeline state between steps.
 /// </summary>
+/// <remarks>
+/// This composite variant executes a pipeline step chain against a shared
+/// <see cref="PipelineExecutionContext"/> so stack-based and stateful steps can
+/// communicate across the pipeline. Each invocation clears the shared context
+/// before replaying the ordered step list.
+/// </remarks>
 internal sealed class PipelineCompositeMathTransform : MathTransform
 {
     private readonly MathTransform[] transforms;

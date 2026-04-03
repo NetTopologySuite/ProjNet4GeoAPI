@@ -9,6 +9,11 @@ using System.Collections.Generic;
 /// <summary>
 /// Composes multiple math transforms into a single sequential transform.
 /// </summary>
+/// <remarks>
+/// Composite transforms execute a fixed ordered chain of child transforms. The
+/// inverse is built by reversing the chain and inverting each child, and the
+/// cached inverse is invalidated whenever the composite is inverted in place.
+/// </remarks>
 internal sealed class CompositeMathTransform : MathTransform
 {
     private MathTransform[] transforms;

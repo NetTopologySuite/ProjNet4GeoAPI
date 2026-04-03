@@ -10,6 +10,12 @@ using System.Collections.Generic;
 /// <summary>
 /// Represents a transformation that executes a sequence of coordinate transformations in order.
 /// </summary>
+/// <remarks>
+/// Concatenated transforms model a chained coordinate-operation pipeline over
+/// resolved <see cref="ICoordinateTransformationCore"/> instances. The inverse
+/// cache is intentionally cleared during in-place inversion so reversed child
+/// transforms are rebuilt from the updated traversal order.
+/// </remarks>
 internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationCore
 {
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory =
