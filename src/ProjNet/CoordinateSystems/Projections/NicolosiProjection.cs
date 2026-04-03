@@ -24,9 +24,6 @@ internal class NicolosiProjection : MapProjection
 
     private readonly double radius;
 
-    /// <inheritdoc />
-    protected override bool HasInverseSupport => false;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="NicolosiProjection"/> class.
     /// </summary>
@@ -47,6 +44,9 @@ internal class NicolosiProjection : MapProjection
         this.Name = "Nicolosi";
         this.radius = this.semiMajor * this.scaleFactor;
     }
+
+    /// <inheritdoc />
+    protected override bool HasInverseSupport => false;
 
     /// <inheritdoc />
     public override MathTransform Inverse()

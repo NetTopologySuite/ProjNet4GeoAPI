@@ -26,9 +26,6 @@ internal class AiryProjection : MapProjection
     private readonly bool noCut;
     private readonly Mode mode;
 
-    /// <inheritdoc />
-    protected override bool HasInverseSupport => false;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="AiryProjection"/> class.
     /// </summary>
@@ -87,6 +84,9 @@ internal class AiryProjection : MapProjection
         Equatorial = 2,
         Oblique = 3,
     }
+
+    /// <inheritdoc />
+    protected override bool HasInverseSupport => false;
 
     /// <inheritdoc />
     public override MathTransform Inverse()

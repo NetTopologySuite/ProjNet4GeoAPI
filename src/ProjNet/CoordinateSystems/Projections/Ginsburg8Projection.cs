@@ -26,9 +26,6 @@ internal class Ginsburg8Projection : MapProjection
 
     private readonly double radius;
 
-    /// <inheritdoc />
-    protected override bool HasInverseSupport => false;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="Ginsburg8Projection"/> class.
     /// </summary>
@@ -49,6 +46,9 @@ internal class Ginsburg8Projection : MapProjection
         this.Name = "Ginsburg_VIII";
         this.radius = this.semiMajor * this.scaleFactor;
     }
+
+    /// <inheritdoc />
+    protected override bool HasInverseSupport => false;
 
     /// <inheritdoc />
     public override MathTransform Inverse()

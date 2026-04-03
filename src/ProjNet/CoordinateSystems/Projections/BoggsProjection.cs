@@ -30,9 +30,6 @@ internal class BoggsProjection : MapProjection
 
     private readonly double radius;
 
-    /// <inheritdoc />
-    protected override bool HasInverseSupport => false;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="BoggsProjection"/> class.
     /// </summary>
@@ -53,6 +50,9 @@ internal class BoggsProjection : MapProjection
         this.Name = "Boggs";
         this.radius = this.semiMajor * this.scaleFactor;
     }
+
+    /// <inheritdoc />
+    protected override bool HasInverseSupport => false;
 
     /// <inheritdoc />
     public override MathTransform Inverse()

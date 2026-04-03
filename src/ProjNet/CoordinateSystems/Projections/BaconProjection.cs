@@ -27,9 +27,6 @@ internal class BaconProjection : MapProjection
     private readonly bool bacon;
     private readonly bool ortelius;
 
-    /// <inheritdoc />
-    protected override bool HasInverseSupport => false;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="BaconProjection"/> class.
     /// </summary>
@@ -70,6 +67,9 @@ internal class BaconProjection : MapProjection
         this.bacon = bacon;
         this.ortelius = ortelius;
     }
+
+    /// <inheritdoc />
+    protected override bool HasInverseSupport => false;
 
     /// <inheritdoc />
     public override MathTransform Inverse()

@@ -28,9 +28,6 @@ internal class ChamberlinTrimetricProjection : MapProjection
     private readonly double beta1;
     private readonly double beta2;
 
-    /// <inheritdoc />
-    protected override bool HasInverseSupport => false;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="ChamberlinTrimetricProjection"/> class.
     /// </summary>
@@ -95,6 +92,9 @@ internal class ChamberlinTrimetricProjection : MapProjection
         this.control[2].Projected.X = this.control[0].Projected.X + (this.control[2].Arc.R * Math.Cos(beta0));
         this.meanPoint.X = this.control[2].Projected.X;
     }
+
+    /// <inheritdoc />
+    protected override bool HasInverseSupport => false;
 
     /// <inheritdoc />
     public override MathTransform Inverse()

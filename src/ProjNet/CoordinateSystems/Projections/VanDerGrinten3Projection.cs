@@ -23,9 +23,6 @@ internal class VanDerGrinten3Projection : MapProjection
 
     private readonly double radius;
 
-    /// <inheritdoc />
-    protected override bool HasInverseSupport => false;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="VanDerGrinten3Projection"/> class.
     /// </summary>
@@ -46,6 +43,9 @@ internal class VanDerGrinten3Projection : MapProjection
         this.Name = "Van_der_Grinten_III";
         this.radius = this.semiMajor * this.scaleFactor;
     }
+
+    /// <inheritdoc />
+    protected override bool HasInverseSupport => false;
 
     /// <inheritdoc />
     public override MathTransform Inverse()

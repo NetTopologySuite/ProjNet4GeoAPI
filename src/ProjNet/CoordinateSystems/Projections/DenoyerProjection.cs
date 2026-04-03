@@ -29,9 +29,6 @@ internal class DenoyerProjection : MapProjection
 
     private readonly double radius;
 
-    /// <inheritdoc />
-    protected override bool HasInverseSupport => false;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="DenoyerProjection"/> class.
     /// </summary>
@@ -52,6 +49,9 @@ internal class DenoyerProjection : MapProjection
         this.Name = "Denoyer_Semi_Elliptical";
         this.radius = this.semiMajor * this.scaleFactor;
     }
+
+    /// <inheritdoc />
+    protected override bool HasInverseSupport => false;
 
     /// <inheritdoc />
     public override MathTransform Inverse()

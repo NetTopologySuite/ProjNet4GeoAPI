@@ -25,9 +25,6 @@ internal class Urmaev5Projection : MapProjection
     private readonly double rmn;
     private readonly double q3;
 
-    /// <inheritdoc />
-    protected override bool HasInverseSupport => false;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="Urmaev5Projection"/> class.
     /// </summary>
@@ -67,6 +64,9 @@ internal class Urmaev5Projection : MapProjection
         this.m = Math.Cos(alpha) / denom;
         this.rmn = 1d / (this.m * this.n);
     }
+
+    /// <inheritdoc />
+    protected override bool HasInverseSupport => false;
 
     /// <inheritdoc />
     public override MathTransform Inverse()
