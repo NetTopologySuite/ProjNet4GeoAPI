@@ -11,6 +11,16 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the Quadrilateralized Spherical Cube projection (<c>qsc</c>).
 /// </summary>
+/// <remarks>
+/// <para>The Quadrilateralized Spherical Cube maps the globe onto six cube faces and
+/// applies an equal-area transform within each face. The ellipsoidal variant first
+/// converts to a geocentric latitude before selecting the target face.</para>
+/// <para>The formulation was independently verified against F. M. O'Neill and
+/// R. E. Laubscher, <i>Extended Studies of a Quadrilateralized Spherical Cube Earth
+/// Data Base</i>, DTIC report ADA026294, 1976. The face selection through dominant
+/// direction cosines and the equal-area mapping within each face match the
+/// implementation here.</para>
+/// </remarks>
 internal sealed class QuadrilateralizedSphericalCubeProjection : MapProjection
 {
     private const double Epsilon = 1e-10d;
