@@ -10,6 +10,12 @@ using ProjNet.CoordinateSystems;
 /// <summary>
 /// Creates axis-order correction transforms between source and target coordinate systems.
 /// </summary>
+/// <remarks>
+/// Axis-order resolution classifies coordinate-system axes by semantic role
+/// (east/west, north/south, up/down), derives the corresponding source-to-target
+/// permutation, and emits either an <see cref="AxisSwapMathTransform"/> or an
+/// identity transform when both systems already use the same orientation order.
+/// </remarks>
 internal static class AxisOrderHelper
 {
     /// <summary>

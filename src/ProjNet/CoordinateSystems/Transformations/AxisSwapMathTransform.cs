@@ -9,6 +9,12 @@ using System;
 /// <summary>
 /// Reorders and optionally flips coordinate ordinates according to axis mapping rules.
 /// </summary>
+/// <remarks>
+/// This transform is a pure signed permutation of the input ordinates. Each
+/// output axis selects one source ordinate and optionally multiplies it by
+/// <c>-1</c>, so the overall mapping is equivalent to a permutation matrix with
+/// diagonal sign changes.
+/// </remarks>
 internal sealed class AxisSwapMathTransform : MathTransform
 {
     private readonly int dimension;
