@@ -11,6 +11,13 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements PROJ's <c>ups</c> projection with fixed UPS defaults.
 /// </summary>
+/// <remarks>
+/// <para>This projection is a parameter-normalized specialization of
+/// <see cref="PolarStereographicProjection"/> for the Universal Polar
+/// Stereographic grid. Its numerical behavior is therefore covered by the
+/// independently verified polar stereographic formulation implemented in the
+/// base class.</para>
+/// </remarks>
 internal sealed class UpsProjection : PolarStereographicProjection
 {
     /// <summary>

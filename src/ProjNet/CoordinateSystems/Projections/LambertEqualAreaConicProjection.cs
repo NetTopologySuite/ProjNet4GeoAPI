@@ -15,6 +15,9 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Maps the appropriate pole (north or south) as the first Albers standard parallel and the
 /// user-supplied <c>lat_1</c> as the second. Set the <c>south</c> parameter to a non-zero
 /// value to select the southern hemisphere variant.
+/// This class delegates its numerical work to <see cref="AlbersProjection"/> after
+/// normalizing the pole and standard-parallel parameters, so its behavior is covered by
+/// the independently verified Albers equal-area formulation implemented there.
 /// </remarks>
 internal sealed class LambertEqualAreaConicProjection : AlbersProjection
 {
