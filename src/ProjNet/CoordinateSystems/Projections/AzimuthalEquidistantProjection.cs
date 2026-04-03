@@ -21,11 +21,12 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Projections - A Working Manual" (USGS Professional Paper 1395, 1987), section 25,
 /// Azimuthal Equidistant. The published forward scale factor <c>k = c / sin(c)</c> and
 /// inverse recovery from <c>c = rho / R</c> match the equatorial, oblique, and polar
-/// aspect branches implemented here. The ellipsoidal extension uses Vincenty direct and
-/// inverse geodesic solvers for the general case together with meridional-arc handling
-/// for polar aspects, matching the forward and inverse ellipsoidal forms documented by
-/// PROJ for <c>aeqd</c>.</para>
+/// aspect branches implemented here. The ellipsoidal extension uses direct and inverse
+/// geodesic solvers for the general case together with meridional-arc handling for
+/// polar aspects, matching the rigorous azimuthal-equidistant geodesic method carried
+/// by EPSG method 1125 and documented by PROJ for <c>aeqd</c>.</para>
 /// </remarks>
+/// <seealso href="https://epsg.io/1125-method">EPSG method 1125: Azimuthal Equidistant.</seealso>
 /// <seealso href="https://pubs.usgs.gov/publication/pp1395">USGS Professional Paper 1395: Map Projections - A Working Manual.</seealso>
 /// <seealso href="https://proj.org/en/stable/operations/projections/aeqd.html">PROJ documentation: Azimuthal Equidistant.</seealso>
 /// <seealso href="https://en.wikipedia.org/wiki/Azimuthal_equidistant_projection">Wikipedia: Azimuthal equidistant projection.</seealso>
