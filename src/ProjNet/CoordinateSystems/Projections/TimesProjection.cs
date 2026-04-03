@@ -12,11 +12,16 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical Times projection (<c>times</c>).
 /// </summary>
 /// <remarks>
-/// The Times projection is a spherical compromise projection popularized by
+/// <para>The Times projection is a spherical compromise projection popularized by
 /// <i>The Times Atlas</i>. It combines the substitution <c>t = tan(phi / 2)</c> with a
 /// polynomial longitude scale <c>x = lambda * (X0 - X1 * sin(pi / 4 * t)^2)</c> and the
-/// simple latitude relation <c>y = Y0 * t</c>.
+/// simple latitude relation <c>y = Y0 * t</c>.</para>
+/// <para>The polynomial formulation was independently checked against PROJ's
+/// <c>times</c> documentation, which cites Snyder's <i>Flattening the Earth</i>
+/// (1993, pp. 213-214). The implementation uses the published fixed coefficients
+/// <c>X0</c>, <c>X1</c>, and <c>Y0</c> for the standard Times Atlas variant.</para>
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/projections/times.html">PROJ documentation: Times projection.</seealso>
 internal class TimesProjection : MapProjection
 {
     private const double X0 = 0.74482d;

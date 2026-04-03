@@ -12,11 +12,16 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical Urmaev V projection (<c>urm5</c>, no inverse).
 /// </summary>
 /// <remarks>
-/// Urmaev V is a forward-only spherical projection associated with Urmaev. It combines the
-/// parameterized <c>asin(n * sin(phi))</c> auxiliary latitude with an additional cubic
-/// y-scaling term controlled by <c>q</c>. Inverse projection is not supported in this
-/// implementation.
+/// <para>Urmaev V is a forward-only spherical projection associated with Urmaev. It
+/// combines the parameterized <c>asin(n * sin(phi))</c> auxiliary latitude with an
+/// additional cubic y-scaling term controlled by <c>q</c>. Inverse projection is not
+/// supported in this implementation.</para>
+/// <para>This implementation matches PROJ's <c>urm5</c> parameterization with explicit
+/// <c>n</c>, <c>q</c>, and <c>alpha</c> constants. It belongs to the Urmaev family of
+/// pseudocylindrical projections and retains the historical forward-only behavior of the
+/// published Urmaev V form.</para>
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/projections/urm5.html">PROJ documentation: Urmaev V.</seealso>
 internal class Urmaev5Projection : MapProjection
 {
     private readonly double radius;

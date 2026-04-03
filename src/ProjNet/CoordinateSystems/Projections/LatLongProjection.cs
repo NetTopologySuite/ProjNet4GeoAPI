@@ -12,11 +12,15 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Represents the geographic identity projection used by PROJ's latlong/longlat aliases.
 /// </summary>
 /// <remarks>
-/// This projection is the geographic identity mapping: longitude and latitude are passed
-/// through unchanged except for the configured central-meridian and latitude-of-origin
-/// offsets. It therefore corresponds to the trivial relation <c>x = lon</c>,
-/// <c>y = lat</c> in normalized geographic coordinates.
+/// <para>This projection is the geographic identity mapping: longitude and latitude are
+/// passed through unchanged except for the configured central-meridian and
+/// latitude-of-origin offsets. It therefore corresponds to the trivial relation
+/// <c>x = lon</c>, <c>y = lat</c> in normalized geographic coordinates.</para>
+/// <para>It serves as the managed equivalent of PROJ's <c>latlong</c>/<c>longlat</c>
+/// aliases and is the degenerate plate carrée identity case commonly used for geographic
+/// coordinate display and raster indexing rather than for distortion control.</para>
 /// </remarks>
+/// <seealso href="https://en.wikipedia.org/wiki/Equirectangular_projection">Wikipedia: Equirectangular projection.</seealso>
 internal class LatLongProjection : MapProjection
 {
     /// <summary>

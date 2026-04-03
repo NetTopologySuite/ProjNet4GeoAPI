@@ -12,11 +12,17 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical Central Cylindrical projection (<c>cc</c>).
 /// </summary>
 /// <remarks>
-/// Central Cylindrical is a spherical perspective cylindrical projection obtained by
-/// projecting from the center of the sphere onto a tangent cylinder. Its compact forward
-/// form is <c>x = lambda</c>, <c>y = tan(phi)</c>, so the poles are outside the projection
-/// domain.
+/// <para>Central Cylindrical is a spherical perspective cylindrical projection obtained
+/// by projecting from the center of the sphere onto a tangent cylinder. Its compact
+/// forward form is <c>x = lambda</c>, <c>y = tan(phi)</c>, so the poles are outside the
+/// projection domain.</para>
+/// <para>The projection is mathematically trivial and was independently checked against
+/// PROJ's <c>cc</c> description and standard cartographic references. It is neither
+/// conformal nor equal-area and is primarily useful as a didactic perspective
+/// construction rather than as a practical mapping method.</para>
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/projections/cc.html">PROJ documentation: Central Cylindrical.</seealso>
+/// <seealso href="https://en.wikipedia.org/wiki/Central_cylindrical_projection">Wikipedia: Central cylindrical projection.</seealso>
 internal class CentralCylindricalProjection : MapProjection
 {
     private readonly double radius;

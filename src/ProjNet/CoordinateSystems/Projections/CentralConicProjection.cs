@@ -12,10 +12,15 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical Central Conic projection (<c>ccon</c>).
 /// </summary>
 /// <remarks>
-/// A perspective conic projection defined by a single standard parallel (<c>lat_1</c>,
-/// which must be non-zero). Graticule lines are constructed by central (gnomonic)
-/// projection onto the cone. Only spherical input is supported.
+/// <para>A perspective conic projection defined by a single standard parallel
+/// (<c>lat_1</c>, which must be non-zero). Graticule lines are constructed by central
+/// (gnomonic) projection onto the cone. Only spherical input is supported.</para>
+/// <para>This simple historical projection corresponds to PROJ's <c>ccon</c>
+/// implementation, described there as a central (centrographic) projection onto a cone
+/// tangent at the standard parallel. It is neither conformal, equal-area, nor
+/// equidistant, and is mainly retained for compatibility with historical grid systems.</para>
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/projections/ccon.html">PROJ documentation: Central Conic.</seealso>
 internal sealed class CentralConicProjection : MapProjection
 {
     private readonly double radius;
