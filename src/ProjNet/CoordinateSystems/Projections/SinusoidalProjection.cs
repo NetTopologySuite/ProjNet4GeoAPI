@@ -15,6 +15,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// The Sinusoidal projection is an equal-area pseudocylindrical projection in which parallels
 /// are evenly spaced straight lines and meridians are sinusoidal curves. Both spherical and
 /// ellipsoidal modes are supported.
+/// <para>The formulation was independently verified against the Wikipedia article
+/// "Sinusoidal projection". The spherical equations <c>x = lambda * cos(phi)</c>,
+/// <c>y = phi</c> and the ellipsoidal branch that combines the meridian arc
+/// <c>Mlfn(phi)</c> with the longitude scaling
+/// <c>cos(phi) / sqrt(1 - e^2 * sin^2(phi))</c> match the implementation here.</para>
 /// </remarks>
 internal class SinusoidalProjection : MapProjection
 {

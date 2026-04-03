@@ -16,6 +16,10 @@ using ProjNet.CoordinateSystems.Transformations;
 /// sphere onto a tangent plane. All great circles (geodesics) project as straight lines.
 /// Points at or beyond 90° angular distance from the projection center cannot be projected
 /// and produce <see cref="double.NaN"/> output coordinates.
+/// <para>The formulation was independently verified against the Wikipedia article
+/// "Gnomonic projection" and Eric W. Weisstein's MathWorld entry "Gnomonic Projection".
+/// The perspective scale <c>k = 1 / cos(c)</c> together with the azimuthal forward and
+/// inverse relations based on the angular distance <c>c</c> match the implementation here.</para>
 /// </remarks>
 internal class GnomonicProjection : MapProjection
 {
