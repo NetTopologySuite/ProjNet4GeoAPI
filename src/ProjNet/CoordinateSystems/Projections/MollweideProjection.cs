@@ -16,6 +16,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// outline. The forward formula solves an auxiliary angle iteratively. The projection supports
 /// an optional pole parameter (<c>moll_p</c>, in degrees; default 90°) for parameterised variants
 /// such as Wagner IV and Wagner V.
+/// <para>The formulation was independently verified against the Wikipedia article
+/// "Mollweide projection" and Eric W. Weisstein's MathWorld entry "Mollweide Projection".
+/// The auxiliary-angle equation <c>2 * theta + sin(2 * theta) = cp * sin(phi)</c> together
+/// with the forward relations <c>x = cx * lambda * cos(theta)</c> and
+/// <c>y = cy * sin(theta)</c> match the implementation here.</para>
 /// </remarks>
 internal class MollweideProjection : MapProjection
 {
