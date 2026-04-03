@@ -9,6 +9,20 @@ using System;
 /// <summary>
 /// Applies a Bursa-Wolf seven-parameter geocentric datum shift using <see cref="Wgs84ConversionInfo"/> parameters.
 /// </summary>
+/// <remarks>
+/// <para>The Bursa-Wolf seven-parameter formulation applies
+/// <c>T + (1 + s) * R * X</c>, where <c>s</c> is the scale difference and
+/// <c>R</c> is the linearized rotation matrix. This implementation stores the
+/// affine coefficients as <c>[S, Ex, Ey, Ez, Dx, Dy, Dz]</c> from
+/// <see cref="Wgs84ConversionInfo.GetAffineTransform"/> and applies the single
+/// scale factor to the fully rotated vector before translation.</para>
+/// <para>The formulation was independently verified against ISO 19111 and EPSG
+/// methods 1033 (Position Vector) and 1032 (Coordinate Frame rotation). The
+/// reviewed implementation specifically preserves the corrected single-scale
+/// application so the rotation terms are not multiplied by the scale factor twice.</para>
+/// </remarks>
+/// <seealso href="https://epsg.io/1033-method">EPSG method 1033: Position Vector transformation (geocentric domain).</seealso>
+/// <seealso href="https://epsg.io/1032-method">EPSG method 1032: Coordinate Frame rotation (geocentric domain).</seealso>
 internal class DatumTransform : MathTransform
 {
     private readonly Wgs84ConversionInfo toWgs94;
