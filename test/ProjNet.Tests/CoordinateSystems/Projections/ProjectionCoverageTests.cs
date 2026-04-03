@@ -369,9 +369,8 @@ public class ProjectionCoverageTests
     {
         string wkt = BuildProjectedWkt("wink2", Sphere6400000, 0d, 0d, null);
         ProjectedCoordinateSystem projected = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wkt);
-        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
-
-        Assert.Throws<InvalidOperationException>(() => inverse.MathTransform.Transform(CreatePoint(200d, 100d)));
+        Assert.Throws<NotSupportedException>(
+            () => CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem));
     }
 
     /// <summary>

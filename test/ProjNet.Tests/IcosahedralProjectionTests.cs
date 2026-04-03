@@ -246,9 +246,8 @@ public class IcosahedralProjectionTests
         ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
             CoordinateSystemFactory,
             BuildIseaWkt("isea", Sphere6400000, 0d, 0d, 3d, 5d, 0d));
-        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
-
-        Assert.Throws<InvalidOperationException>(() => inverse.MathTransform.Transform(CreatePoint(100d, 100d)));
+        Assert.Throws<NotSupportedException>(
+            () => CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem));
     }
 
     private static string BuildAiroceanWkt(string projectionName, double orientCode)

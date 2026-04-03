@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
-/// <summary>
+    /// <summary>
 /// Implements the Bertin 1953 projection (<c>bertin1953</c>).
 /// </summary>
 /// <remarks>
@@ -29,15 +29,22 @@ internal sealed class Bertin1953Projection : MapProjection
     private readonly double cosDeltaGamma;
     private readonly double sinDeltaGamma;
 
-    /// <inheritdoc />
-    protected override bool HasInverseSupport => false;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="Bertin1953Projection"/> class.
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     public Bertin1953Projection(IEnumerable<ProjectionParameter> parameters)
-        : base(parameters, null)
+        : this(parameters, null)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="Bertin1953Projection"/> class.
+    /// </summary>
+    /// <param name="parameters">Projection parameters.</param>
+    /// <param name="inverse">Inverse transform instance when cloning.</param>
+    public Bertin1953Projection(IEnumerable<ProjectionParameter> parameters, MapProjection? inverse)
+        : base(parameters, inverse)
     {
         this.Name = "Bertin_1953";
         this.radius = this.semiMajor * this.scaleFactor;
@@ -46,6 +53,9 @@ internal sealed class Bertin1953Projection : MapProjection
         this.cosDeltaGamma = Math.Cos(DeltaGamma);
         this.sinDeltaGamma = Math.Sin(DeltaGamma);
     }
+
+    /// <inheritdoc />
+    protected override bool HasInverseSupport => false;
 
     /// <inheritdoc />
     public override MathTransform Inverse()

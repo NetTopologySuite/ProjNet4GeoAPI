@@ -453,6 +453,7 @@ namespace ProjNet.CoordinateSystems.Projections
         public string ClassName { get; }
         public override sealed int DimSource { get; }
         public override sealed int DimTarget { get; }
+        protected virtual bool HasInverseSupport { get; }
         protected bool IsInverse { get; }
         protected double Lon_origin { get; set; }
         public string Name { get; set; }
@@ -476,6 +477,7 @@ namespace ProjNet.CoordinateSystems.Projections
         protected virtual void DegreesToTarget(ref double lon, ref double lat) { }
         protected virtual void DegreesToTarget(System.Span<double> lons, System.Span<double> lats, int strideX, int strideY) { }
         public bool EqualParams(object obj) { }
+        protected ProjNet.CoordinateSystems.Transformations.MathTransform GetOrCreateInverse(System.Func<ProjNet.CoordinateSystems.Projections.MapProjection> createInverse) { }
         public ProjNet.CoordinateSystems.ProjectionParameter GetParameter(int index) { }
         public ProjNet.CoordinateSystems.ProjectionParameter? GetParameter(string name) { }
         protected double Inv_mlfn(double arg) { }

@@ -86,6 +86,12 @@ internal abstract class AdamsProjectionBase : MapProjection
         }
     }
 
+    /// <inheritdoc />
+    protected override bool HasInverseSupport =>
+        this.mode == AdamsMode.AdamsWs2
+        || (this.mode == AdamsMode.PeirceQ
+            && (this.peirceShape == PeirceShape.Square || this.peirceShape == PeirceShape.Diamond));
+
     /// <summary>
     /// Enumerates supported Adams-family projection modes.
     /// </summary>

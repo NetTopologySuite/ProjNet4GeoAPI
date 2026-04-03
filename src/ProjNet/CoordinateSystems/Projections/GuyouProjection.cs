@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
-/// <summary>
+    /// <summary>
 /// Implements the Guyou projection (<c>guyou</c>).
 /// </summary>
 /// <remarks>
@@ -39,10 +39,11 @@ internal sealed class GuyouProjection : AdamsProjectionBase
     }
 
     /// <inheritdoc />
+    protected override bool HasInverseSupport => false;
+
+    /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        this.inverse ??= new GuyouProjection(this.Parameters.ToProjectionParameter(), this);
-
-        return this.inverse;
+        return this.GetOrCreateInverse(() => new GuyouProjection(this.Parameters.ToProjectionParameter(), this));
     }
 }

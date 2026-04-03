@@ -8,14 +8,14 @@ using System;
 using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
-/// <summary>
+    /// <summary>
 /// Implements the Icosahedral Snyder Equal Area projection (<c>isea</c>).
 /// </summary>
 /// <remarks>
 /// <para>The Icosahedral Snyder Equal Area projection distributes the globe over the
 /// twenty faces of an icosahedron and applies a modified Lambert azimuthal equal-area
-/// construction within each triangular face. Inverse projection is not supported in this
-/// implementation.</para>
+/// construction within each triangular face. Inverse projection is available only for
+/// the supported planar parameter subset implemented here.</para>
 /// <para>The formulation was independently verified against John P. Snyder,
 /// "An equal-area map projection for polyhedral globes," <i>Cartographica</i>,
 /// vol. 29, no. 1, pp. 10-21, 1992. The face subdivision into isosceles triangles and
@@ -193,11 +193,12 @@ internal sealed class IseaProjection : MapProjection
     }
 
     /// <inheritdoc />
+    protected override bool HasInverseSupport => this.planarInverseProjection is not null;
+
+    /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        this.inverse ??= new IseaProjection(this.Parameters.ToProjectionParameter(), this);
-
-        return this.inverse;
+        return this.GetOrCreateInverse(() => new IseaProjection(this.Parameters.ToProjectionParameter(), this));
     }
 
     /// <inheritdoc />

@@ -165,7 +165,7 @@ public class ConicAndEqualAreaMiscProjectionTests
     public void RectangularPolyconicDoesNotSupportInverse()
     {
         ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildRpolyWkt("rpoly"));
-        Assert.Throws<InvalidOperationException>(
+        Assert.Throws<NotSupportedException>(
             () => CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem));
     }
 

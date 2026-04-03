@@ -168,7 +168,7 @@ public class SimpleConicAndImwProjectionTests
     public void Bertin1953DoesNotSupportInverse()
     {
         ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt("bertin1953", Sphere6400000, null));
-        Assert.Throws<InvalidOperationException>(
+        Assert.Throws<NotSupportedException>(
             () => CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem));
     }
 

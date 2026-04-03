@@ -117,9 +117,8 @@ public class AiryChamberlinBipolarProjectionTests
         ArgumentNullException.ThrowIfNull(projectionName);
 
         ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt(projectionName, GetDefaultProfile(projectionName)));
-        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
-
-        Assert.Throws<InvalidOperationException>(() => inverse.MathTransform.Transform(CreatePoint(200d, 100d)));
+        Assert.Throws<NotSupportedException>(
+            () => CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem));
     }
 
     /// <summary>

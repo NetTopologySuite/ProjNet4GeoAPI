@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
-/// <summary>
+    /// <summary>
 /// Implements the Adams World in a Square I projection (<c>adams_ws1</c>).
 /// </summary>
 /// <remarks>
@@ -39,10 +39,11 @@ internal sealed class AdamsWorldInSquare1Projection : AdamsProjectionBase
     }
 
     /// <inheritdoc />
+    protected override bool HasInverseSupport => false;
+
+    /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        this.inverse ??= new AdamsWorldInSquare1Projection(this.Parameters.ToProjectionParameter(), this);
-
-        return this.inverse;
+        return this.GetOrCreateInverse(() => new AdamsWorldInSquare1Projection(this.Parameters.ToProjectionParameter(), this));
     }
 }

@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
-/// <summary>
+    /// <summary>
 /// Implements the spherical Winkel II projection (<c>wink2</c>).
 /// </summary>
 /// <remarks>
@@ -49,11 +49,12 @@ internal class Winkel2Projection : MapProjection
     }
 
     /// <inheritdoc />
+    protected override bool HasInverseSupport => false;
+
+    /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        this.inverse ??= new Winkel2Projection(this.Parameters.ToProjectionParameter(), this);
-
-        return this.inverse;
+        return this.GetOrCreateInverse(() => new Winkel2Projection(this.Parameters.ToProjectionParameter(), this));
     }
 
     /// <inheritdoc />

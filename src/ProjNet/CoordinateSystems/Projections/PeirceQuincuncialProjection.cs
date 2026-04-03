@@ -42,8 +42,6 @@ internal sealed class PeirceQuincuncialProjection : AdamsProjectionBase
     /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        this.inverse ??= new PeirceQuincuncialProjection(this.Parameters.ToProjectionParameter(), this);
-
-        return this.inverse;
+        return this.GetOrCreateInverse(() => new PeirceQuincuncialProjection(this.Parameters.ToProjectionParameter(), this));
     }
 }

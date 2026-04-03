@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
-/// <summary>
+    /// <summary>
 /// Implements the Adams Hemisphere in a Square projection (<c>adams_hemi</c>).
 /// </summary>
 /// <remarks>
@@ -39,10 +39,11 @@ internal sealed class AdamsHemisphereInSquareProjection : AdamsProjectionBase
     }
 
     /// <inheritdoc />
+    protected override bool HasInverseSupport => false;
+
+    /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        this.inverse ??= new AdamsHemisphereInSquareProjection(this.Parameters.ToProjectionParameter(), this);
-
-        return this.inverse;
+        return this.GetOrCreateInverse(() => new AdamsHemisphereInSquareProjection(this.Parameters.ToProjectionParameter(), this));
     }
 }

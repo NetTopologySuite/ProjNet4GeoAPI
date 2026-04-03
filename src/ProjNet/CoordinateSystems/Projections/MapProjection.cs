@@ -544,7 +544,7 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <exception cref="NotSupportedException">Thrown when the projection does not support inverse transformation.</exception>
     protected MathTransform GetOrCreateInverse(Func<MapProjection> createInverse)
     {
-        ArgumentNullException.ThrowIfNull(createInverse);
+        ArgumentGuard.ThrowIfNull(createInverse, nameof(createInverse));
 
         if (!this.HasInverseSupport)
         {
