@@ -15,7 +15,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Airocean is an icosahedral world map inspired by Buckminster Fuller's Dymaxion concept.
 /// The implementation projects the geographic position onto a selected icosahedron face,
 /// transforms that face into the unfolded Airocean layout, and optionally rotates the final
-/// arrangement between vertical and horizontal orientations.
+/// arrangement between vertical and horizontal orientations. Inverse projection is
+/// supported for both orientations in this implementation.
 /// </remarks>
 internal sealed class AiroceanProjection : MapProjection
 {
