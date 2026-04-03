@@ -14,7 +14,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <remarks>
 /// <para>The Icosahedral Snyder Equal Area projection distributes the globe over the
 /// twenty faces of an icosahedron and applies a modified Lambert azimuthal equal-area
-/// construction within each triangular face.</para>
+/// construction within each triangular face. Inverse projection is not supported in this
+/// implementation.</para>
 /// <para>The formulation was independently verified against John P. Snyder,
 /// "An equal-area map projection for polyhedral globes," <i>Cartographica</i>,
 /// vol. 29, no. 1, pp. 10-21, 1992. The face subdivision into isosceles triangles and
