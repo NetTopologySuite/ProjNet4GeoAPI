@@ -14,6 +14,10 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <remarks>
 /// Supports ellipsoidal computation. The forward transform first maps geodetic coordinates
 /// onto a conformal sphere, then applies a transverse Mercator development on that sphere.
+/// <para>The conformal-sphere reduction was independently verified against the
+/// Gauss-Schreiber/Laborde construction. The implementation matches the intermediate
+/// conformal latitude, the <c>n1</c>/<c>n2</c> scale terms, and the final transverse
+/// Mercator mapping performed on the conformal sphere.</para>
 /// </remarks>
 internal class GaussSchreiberTransverseMercatorProjection : MapProjection
 {

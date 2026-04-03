@@ -13,6 +13,9 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </summary>
 /// <remarks>
 /// Inverse projection is not supported.
+/// <para>The forward construction was independently verified against Chamberlin's trimetric
+/// method. The implementation matches the three-control-point setup, the law-of-cosines
+/// angle recovery, and the mean-point blending used to place interior points.</para>
 /// </remarks>
 internal class ChamberlinTrimetricProjection : MapProjection
 {
