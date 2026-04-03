@@ -24,6 +24,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Paper 1395 (1987). The third- and fifth-order <c>T</c> terms are subtractive,
 /// matching the polynomial implemented here.</para>
 /// </remarks>
+/// <seealso href="https://epsg.io/9806-method">EPSG method 9806: Cassini-Soldner.</seealso>
 internal class CassiniSoldnerProjection : MapProjection
 {
     /// <summary>

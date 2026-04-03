@@ -28,6 +28,9 @@ using System.Text;
 /// interpolation of grid offsets in the forward path and the iterative inverse recovery
 /// by repeated subtraction of interpolated shifts match the implementation here.
 /// </remarks>
+/// <seealso href="https://en.wikipedia.org/wiki/NTv2">Wikipedia: NTv2.</seealso>
+/// <seealso href="https://github.com/Esri/ntv2-file-routines">Esri NTv2 file routines reference implementation.</seealso>
+/// <seealso href="https://epsg.io/9615-method">EPSG method 9615: NTv2.</seealso>
 internal sealed class Ntv2HGridShiftMathTransform : MathTransform
 {
     private const double ArcSecondToDegree = 1d / 3600d;

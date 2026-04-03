@@ -20,6 +20,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// normalized <c>u</c>/<c>v</c> coordinate construction, and the subsequent ST-space
 /// conversion used for Hilbert-style cell addressing match the implementation here.</para>
 /// </remarks>
+/// <seealso href="https://s2geometry.io/devguide/s2cell_hierarchy.html">S2Geometry developer guide: S2 cell hierarchy.</seealso>
+/// <seealso href="https://blog.christianperone.com/2015/08/googles-s2-geometry-on-the-sphere-cells-and-hilbert-curve/">Background overview of Google's S2 geometry.</seealso>
 internal sealed class S2Projection : MapProjection
 {
     private const double HalfPiMinusFortPiHalf = HalfPi - (FortPi * 0.5d);

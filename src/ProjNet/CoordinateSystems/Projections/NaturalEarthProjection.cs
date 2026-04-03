@@ -20,6 +20,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// The published x/y scaling polynomials and the Newton iteration used to recover
 /// <c>phi</c> from the northing polynomial match the implementation here.</para>
 /// </remarks>
+/// <seealso href="https://www.tandfonline.com/doi/abs/10.1559/15230406384363">Natural Earth projection paper.</seealso>
+/// <seealso href="https://en.wikipedia.org/wiki/Natural_Earth_projection">Wikipedia: Natural Earth projection.</seealso>
 internal class NaturalEarthProjection : MapProjection
 {
     private const int Iterations = 12;

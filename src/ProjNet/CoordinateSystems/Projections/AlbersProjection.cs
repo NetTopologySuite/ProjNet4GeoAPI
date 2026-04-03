@@ -30,6 +30,7 @@ using ProjNet.CoordinateSystems.Transformations;
 ///     method 9822, Albers Equal Area. The authalic <c>q</c>-function and
 ///     derived <c>rho</c> relationships match the implementation here.</para>
 /// </remarks>
+/// <seealso href="https://epsg.io/9822-method">EPSG method 9822: Albers Equal Area.</seealso>
 internal class AlbersProjection : MapProjection
 {
     /// <summary>

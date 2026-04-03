@@ -20,6 +20,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>lat0</c>, <c>lon0</c>, <c>false easting</c>, and <c>false northing</c> parameters,
 /// and the coefficient sets used here match the published formulation.
 /// </remarks>
+/// <seealso href="https://www.linz.govt.nz/guidance/geodetic-system/coordinate-systems-used-new-zealand/projections/new-zealand-map-grid-nzmg">LINZ: New Zealand Map Grid specification.</seealso>
+/// <seealso href="https://www.linz.govt.nz/sites/default/files/cust/tr04-conversion-between-latitude-longitude-nzmg-2003.pdf">LINZ TR04: Conversion between latitude/longitude and NZMG.</seealso>
 internal class NewZealandMapGridProjection : MapProjection
 {
     private const double ProjectionSemiMajor = 6378388d;

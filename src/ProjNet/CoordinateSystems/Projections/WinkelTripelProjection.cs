@@ -18,6 +18,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// The averaged forward relations <c>0.5 * (xAitoff + lambda * cos(phi1))</c> and
 /// <c>0.5 * (yAitoff + phi)</c> match the implementation here.
 /// </remarks>
+/// <seealso href="https://en.wikipedia.org/wiki/Winkel_tripel_projection">Wikipedia: Winkel tripel projection.</seealso>
 internal class WinkelTripelProjection : MapProjection
 {
     /// <summary>

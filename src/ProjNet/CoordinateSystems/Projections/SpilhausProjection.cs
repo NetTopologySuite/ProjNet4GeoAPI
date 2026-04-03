@@ -22,6 +22,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// together with the fixed <c>lon0</c>, <c>lat0</c>, <c>azimuth</c>, and
 /// <c>rotation</c> parameters matches the implementation here.</para>
 /// </remarks>
+/// <seealso href="https://blog.map-projections.net/spilhaus-projections-a-quintet-of-world-ocean-maps">Map Projections blog: Spilhaus projections.</seealso>
+/// <seealso href="https://www.nature.com/articles/s41597-023-02309-6">Scientific Data (2023): Spilhaus ocean maps.</seealso>
 internal sealed class SpilhausProjection : MapProjection
 {
     private const double DefaultLon0Degrees = 66.94970198d;

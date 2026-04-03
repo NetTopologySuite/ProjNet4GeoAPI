@@ -19,6 +19,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>d = acos(cos(phi) * cos(lambda / 2))</c> together with the normalized forward
 /// relations used by <see cref="AitoffMath"/> matches the implementation here.
 /// </remarks>
+/// <seealso href="https://en.wikipedia.org/wiki/Aitoff_projection">Wikipedia: Aitoff projection.</seealso>
 internal class AitoffProjection : MapProjection
 {
     private readonly double radius;

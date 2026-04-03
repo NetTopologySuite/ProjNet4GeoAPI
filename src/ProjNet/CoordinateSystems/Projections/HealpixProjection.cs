@@ -23,6 +23,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>sigma = sqrt(3 * (1 - abs(sin(phi))))</c> construction match the
 /// implementation here.</para>
 /// </remarks>
+/// <seealso href="https://en.wikipedia.org/wiki/HEALPix">Wikipedia: HEALPix.</seealso>
 internal class HealpixProjection : MapProjection
 {
     private static readonly double Phi0Limit = Math.Asin(2d / 3d);

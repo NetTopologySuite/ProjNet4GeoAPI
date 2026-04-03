@@ -21,6 +21,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// height term, the switch between the sweep-X and sweep-Y conventions, and the
 /// ellipsoidal geocentric-radius path match the implementation here.</para>
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/projections/geos.html">PROJ documentation: Geostationary Satellite View.</seealso>
 internal class GeostationarySatelliteProjection : MapProjection
 {
     private const double MaximumHeightRatio = 1e10;

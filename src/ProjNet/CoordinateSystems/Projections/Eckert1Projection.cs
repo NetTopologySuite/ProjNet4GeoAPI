@@ -19,6 +19,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>x = 0.9213177319 * lambda * (1 - |phi| / pi)</c> together with
 /// <c>y = 0.9213177319 * phi</c> matches the implementation here.
 /// </remarks>
+/// <seealso href="https://en.wikipedia.org/wiki/Eckert_projection">Wikipedia: Eckert projection family.</seealso>
 internal class Eckert1Projection : MapProjection
 {
     private const double Fc = 0.92131773192356127802d;

@@ -20,6 +20,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>x = Cx * lambda * (1 + cos(theta))</c>, <c>y = Cy * sin(theta)</c> equations match the
 /// implementation here.
 /// </remarks>
+/// <seealso href="https://en.wikipedia.org/wiki/Eckert_IV_projection">Wikipedia: Eckert IV projection.</seealso>
+/// <seealso href="https://mathworld.wolfram.com/EckertIVProjection.html">MathWorld: Eckert IV Projection.</seealso>
 internal class Eckert4Projection : MapProjection
 {
     private const double OneTol = 1.00000000000001d;

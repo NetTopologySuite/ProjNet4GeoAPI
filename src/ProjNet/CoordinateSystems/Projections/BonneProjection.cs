@@ -22,6 +22,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>a * m0 / sin(lat0) + M0 - M</c> and the associated easting and northing equations
 /// using the meridian arc <c>M</c> match the implementation here.
 /// </remarks>
+/// <seealso href="https://epsg.io/9827-method">EPSG method 9827: Bonne.</seealso>
 internal class BonneProjection : MapProjection
 {
     private readonly double radius;

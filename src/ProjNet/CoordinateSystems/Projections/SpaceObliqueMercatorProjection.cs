@@ -22,6 +22,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// derive the Fourier coefficients and the Landsat-specific orbital parameter handling
 /// match the implementation here.</para>
 /// </remarks>
+/// <seealso href="https://pubs.usgs.gov/bul/1518/report.pdf">USGS Bulletin 1518: Space Oblique Mercator Projection - Mathematical Development.</seealso>
+/// <seealso href="https://landsat.gsfc.nasa.gov/about/space-oblique-mercator-projection/">NASA Landsat: Space Oblique Mercator projection overview.</seealso>
 internal sealed class SpaceObliqueMercatorProjection : MapProjection
 {
     private const double Tolerance = 1e-7d;

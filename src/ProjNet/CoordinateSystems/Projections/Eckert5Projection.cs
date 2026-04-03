@@ -19,6 +19,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// The forward equations <c>x = Xf * (1 + cos(phi)) * lambda</c> and <c>y = Yf * phi</c>
 /// match the implementation here.
 /// </remarks>
+/// <seealso href="https://en.wikipedia.org/wiki/Eckert_projection">Wikipedia: Eckert projection family.</seealso>
 internal class Eckert5Projection : MapProjection
 {
     private const double Xf = 0.44101277172455148219d;

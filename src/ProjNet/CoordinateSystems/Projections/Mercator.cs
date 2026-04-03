@@ -34,6 +34,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// The scale factor computation <c>cos(latSP) / sqrt(1 - e^2 * sin^2(latSP))</c> and its
 /// reuse in the forward easting and northing equations match the implementation here.</para>
 /// </remarks>
+/// <seealso href="https://epsg.io/9804-method">EPSG method 9804: Mercator (variant A).</seealso>
+/// <seealso href="https://epsg.io/9805-method">EPSG method 9805: Mercator (variant B).</seealso>
 internal class Mercator : MapProjection
 {
     /// <summary>

@@ -21,6 +21,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// direction cosines and the equal-area mapping within each face match the
 /// implementation here.</para>
 /// </remarks>
+/// <seealso href="https://apps.dtic.mil/sti/tr/pdf/ADA026294.pdf">DTIC report ADA026294: Quadrilateralized Spherical Cube.</seealso>
+/// <seealso href="https://grokipedia.com/page/quadrilateralized_spherical_cube">Background overview of the quadrilateralized spherical cube projection.</seealso>
 internal sealed class QuadrilateralizedSphericalCubeProjection : MapProjection
 {
     private const double Epsilon = 1e-10d;

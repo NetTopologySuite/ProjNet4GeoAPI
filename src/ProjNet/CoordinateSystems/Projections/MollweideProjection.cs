@@ -22,6 +22,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// with the forward relations <c>x = cx * lambda * cos(theta)</c> and
 /// <c>y = cy * sin(theta)</c> match the implementation here.</para>
 /// </remarks>
+/// <seealso href="https://en.wikipedia.org/wiki/Mollweide_projection">Wikipedia: Mollweide projection.</seealso>
+/// <seealso href="https://mathworld.wolfram.com/MollweideProjection.html">MathWorld: Mollweide Projection.</seealso>
 internal class MollweideProjection : MapProjection
 {
     private const int Iterations = 30;

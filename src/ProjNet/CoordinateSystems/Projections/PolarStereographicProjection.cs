@@ -21,6 +21,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// in the numerator of the <c>rho</c> expression, matching the published method
 /// and the implementation here.</para>
 /// </remarks>
+/// <seealso href="https://epsg.io/9810-method">EPSG method 9810: Polar Stereographic (variant A).</seealso>
 internal class PolarStereographicProjection : MapProjection
 {
     private readonly double globalScale;

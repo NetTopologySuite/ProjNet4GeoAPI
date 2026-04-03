@@ -21,6 +21,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// equations <c>E = a * cos(latSP) * lambda</c> and <c>N = a * phi</c> match the
 /// implementation here.
 /// </remarks>
+/// <seealso href="https://epsg.io/1029-method">EPSG method 1029: Equidistant Cylindrical (spherical).</seealso>
+/// <seealso href="https://epsg.io/1028-method">EPSG method 1028: Equidistant Cylindrical (ellipsoidal).</seealso>
 internal class EquidistantCylindricalProjection : MapProjection
 {
     private readonly double radius;

@@ -23,6 +23,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// vol. 29, no. 1, pp. 10-21, 1992. The face subdivision into isosceles triangles and
 /// the Snyder forward equations used within each face match the implementation here.</para>
 /// </remarks>
+/// <seealso href="https://en.wikipedia.org/wiki/Snyder_equal-area_projection">Wikipedia: Snyder equal-area projection.</seealso>
 internal sealed class IseaProjection : MapProjection
 {
     private const int NumIcosahedronFaces = 20;

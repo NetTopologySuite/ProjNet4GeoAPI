@@ -23,6 +23,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// The <c>u0</c> offset at the intersection of the central line and aposphere equator
 /// and the rectified-skew rotation by <c>gamma</c> match the implementation here.</para>
 /// </remarks>
+/// <seealso href="https://epsg.io/9812-method">EPSG method 9812: Hotine Oblique Mercator (variant A).</seealso>
 internal class HotineObliqueMercatorProjection : MapProjection
 {
     private readonly double azimuth;

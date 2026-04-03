@@ -21,6 +21,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// through <c>A4</c> coefficients and <c>sin(theta) = (sqrt(3) / 2) * sin(phi)</c>
 /// relation match the implementation here.
 /// </remarks>
+/// <seealso href="https://en.wikipedia.org/wiki/Equal_Earth_projection">Wikipedia: Equal Earth projection.</seealso>
+/// <seealso href="https://doi.org/10.1080/13658816.2018.1504949">Savric, Patterson, Jenny (2018): The Equal Earth map projection.</seealso>
 internal class EqualEarthProjection : MapProjection
 {
     private const double A1 = 1.340264;

@@ -25,6 +25,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// (publication 373-7-2, 2019), EPSG method 9819, Krovak. The oblique-conic setup on
 /// the conformal sphere and the resulting parameter usage match the implementation here.</para>
 /// </remarks>
+/// <seealso href="https://epsg.io/9819-method">EPSG method 9819: Krovak.</seealso>
 internal class KrovakProjection : MapProjection
 {
     // Maximum number of iterations for iterative computations.

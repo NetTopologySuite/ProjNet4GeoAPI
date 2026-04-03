@@ -20,6 +20,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// cubic interpolation scheme used here was independently verified against current GIS
 /// practice and secondary references that document the four-coefficient per-band formulation.
 /// </remarks>
+/// <seealso href="https://en.wikipedia.org/wiki/Robinson_projection">Wikipedia: Robinson projection.</seealso>
 internal class RobinsonProjection : MapProjection
 {
     private const int Nodes = 18;

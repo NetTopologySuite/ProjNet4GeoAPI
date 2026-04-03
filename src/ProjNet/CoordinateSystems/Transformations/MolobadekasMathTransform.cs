@@ -23,6 +23,8 @@ using ProjNet.CoordinateSystems.Transformations.Numerics;
 /// <c>X' = T + P + (1 + s) * R * (X - P)</c> structure, including the explicit pivot
 /// point translation, matches the implementation here.</para>
 /// </remarks>
+/// <seealso href="https://epsg.io/1034-method">EPSG method 1034: Molodensky-Badekas (geocentric domain).</seealso>
+/// <seealso href="https://epsg.io/1061-method">EPSG method 1061: Molodensky-Badekas (geographic domain).</seealso>
 internal sealed class MolobadekasMathTransform : MathTransform
 {
     private const double ArcSecondToRadians = Math.PI / (180d * 3600d);

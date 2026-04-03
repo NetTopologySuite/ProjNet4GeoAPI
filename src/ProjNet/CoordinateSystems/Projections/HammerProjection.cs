@@ -20,6 +20,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>sqrt(2 / (1 + cos(phi) * cos(w * lambda)))</c> and the resulting scaled forward
 /// equations match the implementation here.
 /// </remarks>
+/// <seealso href="https://en.wikipedia.org/wiki/Hammer_projection">Wikipedia: Hammer projection.</seealso>
+/// <seealso href="https://mathworld.wolfram.com/Hammer-AitoffEqual-AreaProjection.html">MathWorld: Hammer-Aitoff Equal-Area Projection.</seealso>
 internal class HammerProjection : MapProjection
 {
     private readonly double radius;

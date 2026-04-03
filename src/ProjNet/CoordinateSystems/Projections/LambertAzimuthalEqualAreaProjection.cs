@@ -18,6 +18,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>q</c>, <c>qP</c>, <c>beta</c>, and <c>Rq</c> relationships match the implementation
 /// here.
 /// </remarks>
+/// <seealso href="https://epsg.io/9820-method">EPSG method 9820: Lambert Azimuthal Equal Area.</seealso>
 public class LambertAzimuthalEqualAreaProjection : MapProjection
 {
     /// <summary>

@@ -21,6 +21,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// conformal-sphere construction and Bolliger 1967 polynomial terms, matches the
 /// implementation here.
 /// </remarks>
+/// <seealso href="https://www.swisstopo.admin.ch/en/swiss-map-projections">Swisstopo: Swiss map projections.</seealso>
+/// <seealso href="https://proj.org/en/stable/operations/projections/somerc.html">PROJ documentation: Swiss Oblique Mercator.</seealso>
 internal class SwissObliqueMercatorProjection : MapProjection
 {
     private const int MaximumIterations = 6;

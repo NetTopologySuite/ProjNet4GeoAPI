@@ -36,6 +36,8 @@ using System.Collections.Generic;
 /// "Transformation from spatial to geographical coordinates," <i>Survey Review</i>,
 /// vol. 23, no. 181, pp. 323-327, 1976, and later comparison literature.</para>
 /// </remarks>
+/// <seealso href="https://epsg.io/9602-method">EPSG method 9602: Geographic/geocentric conversions.</seealso>
+/// <seealso href="https://www.researchgate.net/publication/233681872">Research comparison of Bowring-style geocentric to geodetic conversion methods.</seealso>
 internal class GeocentricTransform : MathTransform
 {
     /// <summary>

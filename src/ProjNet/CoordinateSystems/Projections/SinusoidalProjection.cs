@@ -21,6 +21,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>Mlfn(phi)</c> with the longitude scaling
 /// <c>cos(phi) / sqrt(1 - e^2 * sin^2(phi))</c> match the implementation here.</para>
 /// </remarks>
+/// <seealso href="https://en.wikipedia.org/wiki/Sinusoidal_projection">Wikipedia: Sinusoidal projection.</seealso>
 internal class SinusoidalProjection : MapProjection
 {
     private readonly double radius;

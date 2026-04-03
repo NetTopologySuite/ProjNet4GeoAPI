@@ -25,6 +25,9 @@ using ProjNet.CoordinateSystems.Transformations.Numerics;
 /// parameters, and the matrix transposition used here for position-vector mode matches
 /// that published relationship.
 /// </remarks>
+/// <seealso href="https://en.wikipedia.org/wiki/Helmert_transformation">Wikipedia: Helmert transformation.</seealso>
+/// <seealso href="https://epsg.io/1033-method">EPSG method 1033: Position Vector transformation (geocentric domain).</seealso>
+/// <seealso href="https://epsg.io/1032-method">EPSG method 1032: Coordinate Frame rotation (geocentric domain).</seealso>
 internal sealed class HelmertMathTransform : MathTransform
 {
     private const double ArcSecondToRadians = Math.PI / (180d * 3600d);

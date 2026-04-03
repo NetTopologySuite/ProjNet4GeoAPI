@@ -18,6 +18,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// term <c>sqrt(4 - 3 * sin(|phi|))</c> used in both the forward equations and the inverse
 /// recovery of <c>phi</c> matches the implementation here.
 /// </remarks>
+/// <seealso href="https://en.wikipedia.org/wiki/Eckert_II_projection">Wikipedia: Eckert II projection.</seealso>
 internal class Eckert2Projection : MapProjection
 {
     private const double Fxc = 0.46065886596178063902d;

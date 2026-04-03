@@ -19,6 +19,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>x = Cx * lambda * (a + sqrt(1 - b * phi^2))</c> together with the linear
 /// <c>y = Cy * phi</c> term matches the implementation here.
 /// </remarks>
+/// <seealso href="https://neacsu.net/geodesy/snyder/7-pseudocylindrical/sect_32/">Snyder section 32: pseudocylindrical projections.</seealso>
 internal class Eckert3Projection : MapProjection
 {
     private const double DefaultCx = 0.42223820031577120149d;

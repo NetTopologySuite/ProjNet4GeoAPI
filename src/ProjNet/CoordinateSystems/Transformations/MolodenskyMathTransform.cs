@@ -20,6 +20,7 @@ using ProjNet.CoordinateSystems;
 /// the combined ellipsoid-difference term follows <c>a * df + f * da</c> in the
 /// latitude and height corrections, matching the published method.
 /// </remarks>
+/// <seealso href="https://epsg.io/9605-method">EPSG method 9605: Abridged Molodensky.</seealso>
 internal sealed class MolodenskyMathTransform : MathTransform
 {
     private readonly double semiMajor;

@@ -20,6 +20,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// central meridian, and general case together with the published auxiliary terms
 /// <c>al</c>, <c>g</c>, and <c>p</c> matches the implementation here.
 /// </remarks>
+/// <seealso href="https://en.wikipedia.org/wiki/Van_der_Grinten_projection">Wikipedia: Van der Grinten projection.</seealso>
 internal class VanDerGrintenProjection : MapProjection
 {
     private const double Tolerance = 1e-10;

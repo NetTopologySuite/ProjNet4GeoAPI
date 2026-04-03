@@ -22,6 +22,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// The natural-origin coordinate convention and the omission of the <c>u0</c> offset
 /// used by variant A match the implementation here.</para>
 /// </remarks>
+/// <seealso href="https://epsg.io/9815-method">EPSG method 9815: Hotine Oblique Mercator (variant B).</seealso>
 internal class ObliqueMercatorProjection : HotineObliqueMercatorProjection
 {
     /// <summary>

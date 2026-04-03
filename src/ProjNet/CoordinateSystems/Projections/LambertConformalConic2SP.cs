@@ -25,6 +25,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// The defining <c>n</c>, <c>F</c>, <c>r</c>, and <c>theta</c> relationships match
 /// the implementation here.</para>
 /// </remarks>
+/// <seealso href="https://epsg.io/9802-method">EPSG method 9802: Lambert Conic Conformal (2SP).</seealso>
 internal class LambertConformalConic2SP : MapProjection
 {
     private static readonly string[] LatitudeOfOriginFallback = ["latitude_of_origin"];

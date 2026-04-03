@@ -21,6 +21,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// The perspective scale <c>k = 1 / cos(c)</c> together with the azimuthal forward and
 /// inverse relations based on the angular distance <c>c</c> match the implementation here.</para>
 /// </remarks>
+/// <seealso href="https://en.wikipedia.org/wiki/Gnomonic_projection">Wikipedia: Gnomonic projection.</seealso>
+/// <seealso href="https://mathworld.wolfram.com/GnomonicProjection.html">MathWorld: Gnomonic Projection.</seealso>
 internal class GnomonicProjection : MapProjection
 {
     private readonly double radius;
