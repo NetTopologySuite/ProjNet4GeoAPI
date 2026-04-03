@@ -14,7 +14,9 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <remarks>
 /// Peirce quincuncial is the quincuncial specialization of <see cref="AdamsProjectionBase"/>
 /// attributed to Charles Sanders Peirce. It reuses the shared conformal square machinery
-/// and exposes the Peirce-specific shape and scroll parameters.
+/// and exposes the Peirce-specific shape and scroll parameters. Inverse projection is
+/// supported for the square and diamond shapes, but not for the hemisphere, horizontal,
+/// or vertical shape variants.
 /// </remarks>
 internal sealed class PeirceQuincuncialProjection : AdamsProjectionBase
 {
