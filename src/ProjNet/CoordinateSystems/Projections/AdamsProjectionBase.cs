@@ -10,6 +10,13 @@ using System.Collections.Generic;
 /// <summary>
 /// Shared implementation for Adams/Guyou/Peirce quincuncial projections.
 /// </summary>
+/// <remarks>
+/// AdamsProjectionBase implements the conformal square family associated with Adams and the
+/// closely related Guyou and Peirce variants. Each mode converts the spherical input to a
+/// pair of auxiliary angles, evaluates the quarter-period elliptic integral used by the
+/// square construction, and then arranges the result into a hemisphere, world-in-a-square,
+/// or quincuncial layout.
+/// </remarks>
 internal abstract class AdamsProjectionBase : MapProjection
 {
     private const double Tolerance = 1e-9d;
