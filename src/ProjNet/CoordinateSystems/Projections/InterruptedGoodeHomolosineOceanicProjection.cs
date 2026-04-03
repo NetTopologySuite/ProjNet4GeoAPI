@@ -12,11 +12,18 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the interrupted Goode Homolosine oceanic projection (<c>igh_o</c>).
 /// </summary>
 /// <remarks>
-/// Uses the same sinusoidal/Mollweide blend as the standard Interrupted Goode Homolosine
-/// projection, but with interruptions placed over the continental landmasses so that the
-/// oceanic regions appear continuous. The projection uses 12 zones arranged in three
-/// longitudinal panels per hemisphere.
+/// <para>Uses the same sinusoidal/Mollweide blend as the standard Interrupted Goode
+/// Homolosine projection, but with interruptions placed over the continental landmasses
+/// so that the oceanic regions appear continuous. The projection uses 12 zones arranged
+/// in three longitudinal panels per hemisphere.</para>
+/// <para>This ocean-centered variant matches PROJ's <c>igh_o</c> definition. It keeps
+/// the standard Goode homolosine transition latitude of 40 degrees 44 minutes 11.8
+/// seconds while shifting the lobes to emphasize the continuity of the world's oceans,
+/// especially when used with a central longitude near -160 degrees.</para>
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/projections/igh_o.html">PROJ documentation: Interrupted Goode Homolosine (Oceanic View).</seealso>
+/// <seealso href="https://doi.org/10.2307/2560812">Goode, J.P. (1925): The Homolosine projection.</seealso>
+/// <seealso href="https://en.wikipedia.org/wiki/Goode_homolosine_projection">Wikipedia: Goode homolosine projection.</seealso>
 internal class InterruptedGoodeHomolosineOceanicProjection : MapProjection
 {
     private const int MollweideIterations = 12;

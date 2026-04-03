@@ -11,6 +11,19 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the interrupted Mollweide Oceanic projection (<c>imoll_o</c>).
 /// </summary>
+/// <remarks>
+/// <para>The interrupted Mollweide Oceanic projection is a six-lobe equal-area
+/// Mollweide variant arranged to keep the major ocean basins visually continuous. In
+/// contrast with the interrupted Goode homolosine oceanic projection, it keeps the
+/// Mollweide construction at all latitudes and therefore omits the sinusoidal transition
+/// latitude.</para>
+/// <para>This implementation matches PROJ's <c>imoll_o</c> definition for the
+/// ocean-centered interrupted Mollweide arrangement, also attributed to J. P. Goode's
+/// 1919 interrupted homolographic work. The six zone definitions encode the standard
+/// oceanic interruption pattern recommended for central longitude near -160 degrees.</para>
+/// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/projections/imoll_o.html">PROJ documentation: Interrupted Mollweide Oceanic View.</seealso>
+/// <seealso href="https://en.wikipedia.org/wiki/Mollweide_projection">Wikipedia: Mollweide projection.</seealso>
 internal class InterruptedMollweideOceanicProjection : InterruptedMollweideBaseProjection
 {
     private const double SeamSlack = 1e-10;

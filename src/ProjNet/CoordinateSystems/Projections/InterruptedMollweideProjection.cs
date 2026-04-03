@@ -11,6 +11,18 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the interrupted Mollweide projection (<c>imoll</c>).
 /// </summary>
+/// <remarks>
+/// <para>The interrupted Mollweide projection is an equal-area pseudocylindrical world
+/// map formed from six separate Mollweide lobes. Unlike the Goode homolosine family it
+/// does not switch to a sinusoidal formula at low latitudes, so it offers more lobe
+/// continuity at the cost of greater equatorial distortion.</para>
+/// <para>This implementation matches PROJ's <c>imoll</c> definition for the land-focused
+/// interrupted Mollweide arrangement first published by J. P. Goode in 1919. The six
+/// zone definitions and seam boundaries encode the standard land-oriented interruption
+/// pattern.</para>
+/// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/projections/imoll.html">PROJ documentation: Interrupted Mollweide.</seealso>
+/// <seealso href="https://en.wikipedia.org/wiki/Mollweide_projection">Wikipedia: Mollweide projection.</seealso>
 internal class InterruptedMollweideProjection : InterruptedMollweideBaseProjection
 {
     private const double SeamSlack = 1e-10;

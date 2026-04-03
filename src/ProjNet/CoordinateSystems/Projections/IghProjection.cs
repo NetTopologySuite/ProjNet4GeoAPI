@@ -12,11 +12,20 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the Interrupted Goode Homolosine projection (<c>igh</c>).
 /// </summary>
 /// <remarks>
-/// Combines the sinusoidal projection for latitudes within approximately ±40°44′12″ and the
-/// Mollweide projection for higher latitudes, with interruptions optimised for the continental
-/// landmasses. The projection uses 12 zones: two Mollweide and two sinusoidal zones in the
-/// northern hemisphere, and four sinusoidal and four Mollweide zones in the southern hemisphere.
+/// <para>Combines the sinusoidal projection for latitudes within approximately
+/// ±40°44′12″ and the Mollweide projection for higher latitudes, with interruptions
+/// optimised for the continental landmasses. The projection uses 12 zones: two
+/// Mollweide and two sinusoidal zones in the northern hemisphere, and four
+/// sinusoidal and four Mollweide zones in the southern hemisphere.</para>
+/// <para>This interrupted equal-area projection matches PROJ's <c>igh</c> definition
+/// and the standard Goode homolosine construction first published by J. P. Goode in
+/// 1925. The implementation uses the published transition latitude of
+/// 40 degrees 44 minutes 11.8 seconds and an explicit 12-zone land-oriented lobe
+/// arrangement.</para>
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/projections/igh.html">PROJ documentation: Interrupted Goode Homolosine.</seealso>
+/// <seealso href="https://doi.org/10.2307/2560812">Goode, J.P. (1925): The Homolosine projection.</seealso>
+/// <seealso href="https://en.wikipedia.org/wiki/Goode_homolosine_projection">Wikipedia: Goode homolosine projection.</seealso>
 internal class IghProjection : MapProjection
 {
     private const double EpsLn = 1e-10;
