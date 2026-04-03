@@ -12,8 +12,16 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the Bertin 1953 projection (<c>bertin1953</c>).
 /// </summary>
 /// <remarks>
-/// Inverse projection is not supported in this implementation.
+/// <para>The Bertin 1953 projection is a spherical world map projection derived from the
+/// historical design introduced by Jacques Bertin in 1953. This implementation follows
+/// the fixed-parameter computational formulation documented by PROJ and Philippe Riviere
+/// (2017), using the published constants <c>Fu = 1.4</c>, <c>K = 12</c>, <c>W = 1.68</c>,
+/// a latitude rotation of -42 degrees, and a longitude offset of -16.5 degrees before
+/// the final warping step.</para>
+/// <para>Inverse projection is not supported in this implementation.</para>
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/projections/bertin1953.html">PROJ documentation: Bertin 1953.</seealso>
+/// <seealso href="https://visionscarto.net/bertin-projection-1953">Philippe Riviere (2017): Bertin Projection (1953).</seealso>
 internal sealed class Bertin1953Projection : MapProjection
 {
     private const double Fu = 1.4d;
