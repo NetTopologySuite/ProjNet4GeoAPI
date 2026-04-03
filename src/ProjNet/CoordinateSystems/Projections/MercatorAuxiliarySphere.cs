@@ -14,6 +14,9 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <remarks>
 /// Applies a spherical Mercator formula using the semi-major axis as the sphere radius,
 /// without ellipsoidal correction. This is the projection used by most web mapping services.
+/// This class implements the spherical special case of <see cref="Mercator"/>, so its
+/// core longitude and logarithmic latitude mapping is covered by the independently
+/// verified Mercator formulation documented there.
 /// </remarks>
 internal class MercatorAuxiliarySphere : MapProjection
 {
