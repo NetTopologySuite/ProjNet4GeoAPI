@@ -13,6 +13,12 @@ using ProjNet.CoordinateSystems;
 /// <summary>
 /// Implements PROJ's <c>vertoffset</c> runtime transform (Vertical Offset and Slope).
 /// </summary>
+/// <remarks>
+/// This runtime applies the EPSG Vertical Offset and Slope model: a constant
+/// vertical offset plus latitude- and longitude-dependent slope terms scaled by
+/// the local meridional and prime-vertical radii of curvature at the origin.
+/// </remarks>
+/// <seealso href="https://epsg.io/9657-method">EPSG method 9657: Vertical Offset and Slope.</seealso>
 internal sealed class VertOffsetMathTransform : MathTransform
 {
     private const double ArcSecondToRadians = Math.PI / (180d * 3600d);

@@ -9,6 +9,12 @@ using System;
 /// <summary>
 /// Adjusts target Prime Meridian.
 /// </summary>
+/// <remarks>
+/// Prime-meridian adjustment is a simple longitude translation by the angular
+/// difference between the source and target prime meridians:
+/// <c>x += source.Longitude - target.Longitude</c>. The inverse applies the
+/// same difference with reversed sign.
+/// </remarks>
 internal class PrimeMeridianTransform : MathTransform
 {
     private readonly PrimeMeridian source;

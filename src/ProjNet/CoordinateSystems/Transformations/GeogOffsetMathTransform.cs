@@ -12,6 +12,11 @@ using System.Globalization;
 /// <summary>
 /// Implements PROJ's <c>geogoffset</c> runtime transform (geographic offsets).
 /// </summary>
+/// <remarks>
+/// Geographic offsets are a trivial additive transform:
+/// <c>x += dlon</c>, <c>y += dlat</c>, and <c>z += dh</c>, with longitude and
+/// latitude offsets converted from arc-seconds to degrees during construction.
+/// </remarks>
 internal sealed class GeogOffsetMathTransform : MathTransform
 {
     private const double ArcSecondsPerDegree = 3600d;
