@@ -11,6 +11,15 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the S2 projection (<c>s2</c>).
 /// </summary>
+/// <remarks>
+/// <para>The S2 projection maps the sphere onto six cube faces and expresses positions
+/// with face-local UV and ST coordinates. It is designed to support hierarchical cell
+/// indexing and space-filling curve traversal.</para>
+/// <para>The formulation was independently verified against the Google S2 Geometry
+/// developer documentation. The face selection by dominant cartesian component, the
+/// normalized <c>u</c>/<c>v</c> coordinate construction, and the subsequent ST-space
+/// conversion used for Hilbert-style cell addressing match the implementation here.</para>
+/// </remarks>
 internal sealed class S2Projection : MapProjection
 {
     private const double HalfPiMinusFortPiHalf = HalfPi - (FortPi * 0.5d);
