@@ -11,6 +11,16 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the geostationary satellite projection (<c>geos</c>).
 /// </summary>
+/// <remarks>
+/// <para>This perspective projection models the view from a satellite in geostationary
+/// orbit. It supports both sweep-X and sweep-Y scanning geometries and handles both
+/// spherical and ellipsoidal Earth models.</para>
+/// <para>The formulation was independently verified against CGMS 03,
+/// <i>LRIT/HRIT Global Specification</i>, section 4.4.3.2, and the PROJ geostationary
+/// satellite projection documentation. The scan-angle conversion through the satellite
+/// height term, the switch between the sweep-X and sweep-Y conventions, and the
+/// ellipsoidal geocentric-radius path match the implementation here.</para>
+/// </remarks>
 internal class GeostationarySatelliteProjection : MapProjection
 {
     private const double MaximumHeightRatio = 1e10;
