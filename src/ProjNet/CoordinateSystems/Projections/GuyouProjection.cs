@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the Guyou projection (<c>guyou</c>).
 /// </summary>
+/// <remarks>
+/// Guyou is the historical conformal square projection derived from
+/// <see cref="AdamsProjectionBase"/>. This implementation uses the shared Adams-family
+/// square construction with the Guyou-specific domain and orientation.
+/// </remarks>
 internal sealed class GuyouProjection : AdamsProjectionBase
 {
     /// <summary>
