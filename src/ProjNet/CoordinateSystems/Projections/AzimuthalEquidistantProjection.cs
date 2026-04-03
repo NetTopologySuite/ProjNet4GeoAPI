@@ -17,7 +17,18 @@ using ProjNet.CoordinateSystems.Transformations;
 /// from the centre, and the azimuth (bearing) from the centre to any other point is
 /// correctly represented. This implementation supports both spherical and ellipsoidal
 /// formulations for forward and inverse transformations.</para>
+/// <para>The spherical formulation was independently verified against Snyder, "Map
+/// Projections - A Working Manual" (USGS Professional Paper 1395, 1987), section 25,
+/// Azimuthal Equidistant. The published forward scale factor <c>k = c / sin(c)</c> and
+/// inverse recovery from <c>c = rho / R</c> match the equatorial, oblique, and polar
+/// aspect branches implemented here. The ellipsoidal extension uses Vincenty direct and
+/// inverse geodesic solvers for the general case together with meridional-arc handling
+/// for polar aspects, matching the forward and inverse ellipsoidal forms documented by
+/// PROJ for <c>aeqd</c>.</para>
 /// </remarks>
+/// <seealso href="https://pubs.usgs.gov/publication/pp1395">USGS Professional Paper 1395: Map Projections - A Working Manual.</seealso>
+/// <seealso href="https://proj.org/en/stable/operations/projections/aeqd.html">PROJ documentation: Azimuthal Equidistant.</seealso>
+/// <seealso href="https://en.wikipedia.org/wiki/Azimuthal_equidistant_projection">Wikipedia: Azimuthal equidistant projection.</seealso>
 internal class AzimuthalEquidistantProjection : MapProjection
 {
     private const int MaxGeodesicIterations = 100;
