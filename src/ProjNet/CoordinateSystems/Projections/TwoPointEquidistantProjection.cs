@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Two Point Equidistant projection (<c>tpeqd</c>).
 /// </summary>
+/// <remarks>
+/// Two Point Equidistant is Snyder's spherical construction that preserves distances from two
+/// control points. The implementation precomputes the geometry of the control-point pair and
+/// then solves the forward and inverse forms from the two geodesic distances.
+/// </remarks>
 internal sealed class TwoPointEquidistantProjection : MapProjection
 {
     private readonly double radius;

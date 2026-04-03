@@ -11,6 +11,12 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Transverse Cylindrical Equal Area projection (<c>tcea</c>).
 /// </summary>
+/// <remarks>
+/// Transverse Cylindrical Equal Area is Snyder's transverse form of cylindrical equal area.
+/// The implementation uses the standard spherical relations
+/// <c>x = cos(phi) * sin(lambda) / k0</c> and
+/// <c>y = k0 * (atan2(tan(phi), cos(lambda)) - phi0)</c>.
+/// </remarks>
 internal class TransverseCylindricalEqualAreaProjection : MapProjection
 {
     private readonly double radius;

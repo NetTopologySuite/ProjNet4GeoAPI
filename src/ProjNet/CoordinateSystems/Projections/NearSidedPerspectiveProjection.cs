@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the near-sided and tilted perspective projections (<c>nsper</c>, <c>tpers</c>).
 /// </summary>
+/// <remarks>
+/// NearSidedPerspectiveProjection implements Snyder's near-sided perspective family. The
+/// shared code supports polar, equatorial, and oblique viewpoints and optionally applies
+/// the additional tilt rotation used by the tilted-perspective variant.
+/// </remarks>
 internal class NearSidedPerspectiveProjection : MapProjection
 {
     private readonly double radius;
