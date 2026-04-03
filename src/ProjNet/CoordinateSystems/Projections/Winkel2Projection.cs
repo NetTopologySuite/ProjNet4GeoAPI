@@ -14,7 +14,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <remarks>
 /// Winkel II is Oswald Winkel's 1918 compromise projection. The implementation iteratively
 /// solves the Mollweide-like auxiliary latitude and then combines that result with the
-/// Winkel horizontal averaging term.
+/// Winkel horizontal averaging term. Inverse projection is not supported in this
+/// implementation.
 /// </remarks>
 internal class Winkel2Projection : MapProjection
 {
