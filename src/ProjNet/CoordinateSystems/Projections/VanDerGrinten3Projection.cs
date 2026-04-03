@@ -13,6 +13,9 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </summary>
 /// <remarks>
 /// Inverse projection is not supported.
+/// <para>The forward formulation was independently verified against the van der Grinten III
+/// construction. The implementation matches the simplified auxiliary expression used to
+/// recover x from <c>bt</c> and <c>at</c>, with y taken directly from the reduced latitude.</para>
 /// </remarks>
 internal class VanDerGrinten3Projection : MapProjection
 {

@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Winkel II projection (<c>wink2</c>).
 /// </summary>
+/// <remarks>
+/// Winkel II is Oswald Winkel's 1918 compromise projection. The implementation iteratively
+/// solves the Mollweide-like auxiliary latitude and then combines that result with the
+/// Winkel horizontal averaging term.
+/// </remarks>
 internal class Winkel2Projection : MapProjection
 {
     private const int MaximumIterations = 10;

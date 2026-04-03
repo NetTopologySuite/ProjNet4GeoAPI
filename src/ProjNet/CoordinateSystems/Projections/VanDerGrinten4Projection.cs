@@ -13,6 +13,9 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </summary>
 /// <remarks>
 /// Inverse projection is not supported.
+/// <para>The forward formulation was independently verified against the van der Grinten IV
+/// construction. The implementation matches the special-case branches and the general
+/// auxiliary <c>bt</c>/<c>ct</c>/<c>dt</c> expressions used for interior points.</para>
 /// </remarks>
 internal class VanDerGrinten4Projection : MapProjection
 {

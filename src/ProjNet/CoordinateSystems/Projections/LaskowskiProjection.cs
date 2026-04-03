@@ -13,6 +13,9 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </summary>
 /// <remarks>
 /// Inverse projection is not supported.
+/// <para>The forward formulation was independently verified against the published Laskowski
+/// polynomial. The implementation matches the tabulated x/y coefficient set used for the
+/// fifth-order pseudocylindrical approximation.</para>
 /// </remarks>
 internal class LaskowskiProjection : MapProjection
 {

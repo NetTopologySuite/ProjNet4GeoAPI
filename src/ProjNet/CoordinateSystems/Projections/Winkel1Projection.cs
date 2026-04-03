@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Winkel I projection (<c>wink1</c>).
 /// </summary>
+/// <remarks>
+/// Winkel I is the 1914 projection introduced by Oswald Winkel. The implementation applies
+/// the classic averaged longitude scale <c>0.5 * lambda * (cos(phi1) + cos(phi))</c> with
+/// the configurable true-scale latitude parameter.
+/// </remarks>
 internal class Winkel1Projection : MapProjection
 {
     private readonly double radius;
