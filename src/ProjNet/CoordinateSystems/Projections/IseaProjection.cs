@@ -11,6 +11,15 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the Icosahedral Snyder Equal Area projection (<c>isea</c>).
 /// </summary>
+/// <remarks>
+/// <para>The Icosahedral Snyder Equal Area projection distributes the globe over the
+/// twenty faces of an icosahedron and applies a modified Lambert azimuthal equal-area
+/// construction within each triangular face.</para>
+/// <para>The formulation was independently verified against John P. Snyder,
+/// "An equal-area map projection for polyhedral globes," <i>Cartographica</i>,
+/// vol. 29, no. 1, pp. 10-21, 1992. The face subdivision into isosceles triangles and
+/// the Snyder forward equations used within each face match the implementation here.</para>
+/// </remarks>
 internal sealed class IseaProjection : MapProjection
 {
     private const int NumIcosahedronFaces = 20;
