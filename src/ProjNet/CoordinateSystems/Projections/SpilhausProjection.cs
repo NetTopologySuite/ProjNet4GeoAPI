@@ -11,6 +11,17 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the Spilhaus projection (<c>spilhaus</c>).
 /// </summary>
+/// <remarks>
+/// <para>The Spilhaus projection is an ocean-centered world map derived from an oblique
+/// Adams world-in-square construction. Its distinctive appearance comes from fixed
+/// centering and rotation parameters chosen to place the world ocean into a continuous
+/// layout.</para>
+/// <para>The formulation was independently verified against Spilhaus reference material
+/// and later comparative documentation, including the 2023 <i>Scientific Data</i>
+/// article on Spilhaus ocean maps. The delegation to the Adams world-in-square basis
+/// together with the fixed <c>lon0</c>, <c>lat0</c>, <c>azimuth</c>, and
+/// <c>rotation</c> parameters matches the implementation here.</para>
+/// </remarks>
 internal sealed class SpilhausProjection : MapProjection
 {
     private const double DefaultLon0Degrees = 66.94970198d;
