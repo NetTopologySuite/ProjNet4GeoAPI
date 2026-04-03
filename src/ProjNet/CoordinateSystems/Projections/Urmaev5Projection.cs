@@ -25,6 +25,9 @@ internal class Urmaev5Projection : MapProjection
     private readonly double rmn;
     private readonly double q3;
 
+    /// <inheritdoc />
+    protected override bool HasInverseSupport => false;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Urmaev5Projection"/> class.
     /// </summary>
@@ -68,9 +71,7 @@ internal class Urmaev5Projection : MapProjection
     /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        this.inverse ??= new Urmaev5Projection(this.Parameters.ToProjectionParameter(), this);
-
-        return this.inverse;
+        return this.GetOrCreateInverse(() => new Urmaev5Projection(this.Parameters.ToProjectionParameter(), this));
     }
 
     /// <inheritdoc />

@@ -32,6 +32,9 @@ internal class LaskowskiProjection : MapProjection
 
     private readonly double radius;
 
+    /// <inheritdoc />
+    protected override bool HasInverseSupport => false;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="LaskowskiProjection"/> class.
     /// </summary>
@@ -56,9 +59,7 @@ internal class LaskowskiProjection : MapProjection
     /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        this.inverse ??= new LaskowskiProjection(this.Parameters.ToProjectionParameter(), this);
-
-        return this.inverse;
+        return this.GetOrCreateInverse(() => new LaskowskiProjection(this.Parameters.ToProjectionParameter(), this));
     }
 
     /// <inheritdoc />

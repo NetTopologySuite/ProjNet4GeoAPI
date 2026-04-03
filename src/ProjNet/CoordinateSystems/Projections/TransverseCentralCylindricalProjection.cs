@@ -23,6 +23,9 @@ internal class TransverseCentralCylindricalProjection : MapProjection
 {
     private readonly double radius;
 
+    /// <inheritdoc />
+    protected override bool HasInverseSupport => false;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="TransverseCentralCylindricalProjection"/> class.
     /// </summary>
@@ -47,9 +50,7 @@ internal class TransverseCentralCylindricalProjection : MapProjection
     /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        this.inverse ??= new TransverseCentralCylindricalProjection(this.Parameters.ToProjectionParameter(), this);
-
-        return this.inverse;
+        return this.GetOrCreateInverse(() => new TransverseCentralCylindricalProjection(this.Parameters.ToProjectionParameter(), this));
     }
 
     /// <inheritdoc />

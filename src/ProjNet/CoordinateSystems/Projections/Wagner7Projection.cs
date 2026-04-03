@@ -28,6 +28,9 @@ internal class Wagner7Projection : MapProjection
     private readonly double radius;
     private readonly double inverseRadius;
 
+    /// <inheritdoc />
+    protected override bool HasInverseSupport => false;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Wagner7Projection"/> class.
     /// </summary>
@@ -53,9 +56,7 @@ internal class Wagner7Projection : MapProjection
     /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        this.inverse ??= new Wagner7Projection(this.Parameters.ToProjectionParameter(), this);
-
-        return this.inverse;
+        return this.GetOrCreateInverse(() => new Wagner7Projection(this.Parameters.ToProjectionParameter(), this));
     }
 
     /// <inheritdoc />

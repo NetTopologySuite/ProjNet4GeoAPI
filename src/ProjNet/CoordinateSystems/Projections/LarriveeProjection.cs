@@ -24,6 +24,9 @@ internal class LarriveeProjection : MapProjection
 
     private readonly double radius;
 
+    /// <inheritdoc />
+    protected override bool HasInverseSupport => false;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="LarriveeProjection"/> class.
     /// </summary>
@@ -48,9 +51,7 @@ internal class LarriveeProjection : MapProjection
     /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        this.inverse ??= new LarriveeProjection(this.Parameters.ToProjectionParameter(), this);
-
-        return this.inverse;
+        return this.GetOrCreateInverse(() => new LarriveeProjection(this.Parameters.ToProjectionParameter(), this));
     }
 
     /// <inheritdoc />

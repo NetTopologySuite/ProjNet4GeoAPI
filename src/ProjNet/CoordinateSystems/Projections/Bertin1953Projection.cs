@@ -29,6 +29,9 @@ internal sealed class Bertin1953Projection : MapProjection
     private readonly double cosDeltaGamma;
     private readonly double sinDeltaGamma;
 
+    /// <inheritdoc />
+    protected override bool HasInverseSupport => false;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="Bertin1953Projection"/> class.
     /// </summary>
@@ -47,7 +50,7 @@ internal sealed class Bertin1953Projection : MapProjection
     /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        throw new InvalidOperationException("Bertin 1953 does not support inverse projection in this wave.");
+        return this.GetOrCreateInverse(() => new Bertin1953Projection(this.Parameters.ToProjectionParameter(), this));
     }
 
     /// <inheritdoc />

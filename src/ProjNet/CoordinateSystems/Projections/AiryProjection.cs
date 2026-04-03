@@ -26,6 +26,9 @@ internal class AiryProjection : MapProjection
     private readonly bool noCut;
     private readonly Mode mode;
 
+    /// <inheritdoc />
+    protected override bool HasInverseSupport => false;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="AiryProjection"/> class.
     /// </summary>
@@ -88,9 +91,7 @@ internal class AiryProjection : MapProjection
     /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        this.inverse ??= new AiryProjection(this.Parameters.ToProjectionParameter(), this);
-
-        return this.inverse;
+        return this.GetOrCreateInverse(() => new AiryProjection(this.Parameters.ToProjectionParameter(), this));
     }
 
     /// <inheritdoc />

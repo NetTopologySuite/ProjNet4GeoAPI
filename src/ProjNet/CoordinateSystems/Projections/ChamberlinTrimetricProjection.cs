@@ -28,6 +28,9 @@ internal class ChamberlinTrimetricProjection : MapProjection
     private readonly double beta1;
     private readonly double beta2;
 
+    /// <inheritdoc />
+    protected override bool HasInverseSupport => false;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ChamberlinTrimetricProjection"/> class.
     /// </summary>
@@ -96,9 +99,7 @@ internal class ChamberlinTrimetricProjection : MapProjection
     /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        this.inverse ??= new ChamberlinTrimetricProjection(this.Parameters.ToProjectionParameter(), this);
-
-        return this.inverse;
+        return this.GetOrCreateInverse(() => new ChamberlinTrimetricProjection(this.Parameters.ToProjectionParameter(), this));
     }
 
     /// <inheritdoc />

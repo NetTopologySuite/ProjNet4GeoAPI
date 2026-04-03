@@ -23,6 +23,9 @@ internal class VanDerGrinten4Projection : MapProjection
 
     private readonly double radius;
 
+    /// <inheritdoc />
+    protected override bool HasInverseSupport => false;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="VanDerGrinten4Projection"/> class.
     /// </summary>
@@ -47,9 +50,7 @@ internal class VanDerGrinten4Projection : MapProjection
     /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        this.inverse ??= new VanDerGrinten4Projection(this.Parameters.ToProjectionParameter(), this);
-
-        return this.inverse;
+        return this.GetOrCreateInverse(() => new VanDerGrinten4Projection(this.Parameters.ToProjectionParameter(), this));
     }
 
     /// <inheritdoc />

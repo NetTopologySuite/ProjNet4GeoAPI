@@ -25,6 +25,9 @@ internal sealed class RectangularPolyconicProjection : MapProjection
     private readonly double modeFxb;
     private readonly bool mode;
 
+    /// <inheritdoc />
+    protected override bool HasInverseSupport => false;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="RectangularPolyconicProjection"/> class.
     /// </summary>
@@ -57,7 +60,7 @@ internal sealed class RectangularPolyconicProjection : MapProjection
     /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        throw new InvalidOperationException("Rectangular Polyconic does not support inverse projection in this wave.");
+        return this.GetOrCreateInverse(() => new RectangularPolyconicProjection(this.Parameters.ToProjectionParameter(), this));
     }
 
     /// <inheritdoc />
