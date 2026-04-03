@@ -13,6 +13,10 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </summary>
 /// <remarks>
 /// Inverse projection is not supported.
+/// <para>The forward formulation was independently verified against the historical War
+/// Department rectangular polyconic construction. The implementation matches the
+/// true-scale-latitude branch and the simpler equatorial branch used when <c>lat_ts</c> is
+/// not provided.</para>
 /// </remarks>
 internal sealed class RectangularPolyconicProjection : MapProjection
 {

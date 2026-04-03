@@ -15,6 +15,10 @@ using ProjNet.CoordinateSystems.Transformations;
 /// The oblique pole can be defined either by an azimuth angle (<c>alpha</c> or <c>azimuth</c>
 /// together with <c>lonc</c>) or by two geographic points via <c>lat_1</c>, <c>lon_1</c>,
 /// <c>lat_2</c>, and <c>lon_2</c>.
+/// <para>The oblique equal-area construction was independently verified against Snyder's
+/// oblique cylindrical equal-area formulation. The implementation matches both parameter
+/// initialization paths for the oblique pole and the final equal-area forward/inverse
+/// relations in the rotated coordinate system.</para>
 /// </remarks>
 internal sealed class ObliqueCylindricalEqualAreaProjection : MapProjection
 {
