@@ -14,6 +14,10 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <remarks>
 /// A compromise cylindrical projection that reduces the high-latitude area exaggeration
 /// of the Mercator projection by compressing the latitude formula. Poles cannot be projected.
+/// <para>The formulation was independently verified against the Wikipedia article
+/// "Miller cylindrical projection". The forward northing
+/// <c>1.25 * ln(tan(pi / 4 + 0.4 * phi))</c> and its inverse recovery
+/// <c>2.5 * (atan(exp(0.8 * y)) - pi / 4)</c> match the implementation here.</para>
 /// </remarks>
 internal class MillerCylindricalProjection : MapProjection
 {

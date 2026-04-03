@@ -11,6 +11,15 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the van der Grinten I projection (<c>vandg</c>).
 /// </summary>
+/// <remarks>
+/// Van der Grinten I maps the world into a circle by combining circular-arc construction
+/// steps with polynomial and radical terms away from the equator and central meridian.
+/// The formulation was independently verified against the Wikipedia article
+/// "Van der Grinten projection" and John P. Snyder, <i>Map Projections - A Working Manual</i>
+/// (USGS Professional Paper 1395, 1987), section 29. The branch structure for the equator,
+/// central meridian, and general case together with the published auxiliary terms
+/// <c>al</c>, <c>g</c>, and <c>p</c> matches the implementation here.
+/// </remarks>
 internal class VanDerGrintenProjection : MapProjection
 {
     private const double Tolerance = 1e-10;
