@@ -10,6 +10,11 @@ using System.Collections.Generic;
 /// <summary>
 /// Implements the spherical Eckert VI projection (<c>eck6</c>).
 /// </summary>
+/// <remarks>
+/// This projection specializes <see cref="GeneralSinusoidalProjection"/> with the
+/// fixed Eckert VI parameter set, so its numerical behavior follows the verified
+/// generalized sinusoidal formulation used by the base class.
+/// </remarks>
 internal class Eckert6Projection : GeneralSinusoidalProjection
 {
     /// <summary>
