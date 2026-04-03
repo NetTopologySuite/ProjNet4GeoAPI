@@ -13,6 +13,16 @@ using ProjNet.CoordinateSystems.Transformations.Numerics;
 /// <summary>
 /// Implements PROJ's <c>molobadekas</c> runtime transform.
 /// </summary>
+/// <remarks>
+/// <para>Molodensky-Badekas is a 10-parameter similarity transform that augments the
+/// standard Helmert model with a rotation pivot. It is commonly used when rotations are
+/// defined about a local network centroid rather than the geocentric origin.</para>
+/// <para>The formulation was independently verified against IOGP, "Geomatics Guidance
+/// Note 7, part 2: Coordinate Conversions and Transformations including Formulas"
+/// (publication 373-7-2, 2019), EPSG methods 1034 and 1061. The
+/// <c>X' = T + P + (1 + s) * R * (X - P)</c> structure, including the explicit pivot
+/// point translation, matches the implementation here.</para>
+/// </remarks>
 internal sealed class MolobadekasMathTransform : MathTransform
 {
     private const double ArcSecondToRadians = Math.PI / (180d * 3600d);
