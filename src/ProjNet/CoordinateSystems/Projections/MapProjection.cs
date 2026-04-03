@@ -494,6 +494,12 @@ public abstract class MapProjection : MathTransform, IProjection
     /// </remarks>
     protected internal bool IsInverse { get; private set; }
 
+    /// <summary>
+    /// Gets a value indicating whether this projection can create a usable inverse transform
+    /// for the current parameter set.
+    /// </summary>
+    protected virtual bool HasInverseSupport => true;
+
     /// <inheritdoc />
     protected sealed override void TransformCore(Span<double> xs, Span<double> ys, Span<double> zs, int strideX, int strideY, int strideZ)
     {
@@ -527,6 +533,26 @@ public abstract class MapProjection : MathTransform, IProjection
         {
             this.RadiansToMeters(ref lons[i], ref lats[j]);
         }
+    }
+
+    /// <summary>
+    /// Returns the cached inverse transform or creates it after verifying that inverse support
+    /// is available for the current parameter set.
+    /// </summary>
+    /// <param name="createInverse">Factory that creates the inverse transform.</param>
+    /// <returns>The cached or newly created inverse transform.</returns>
+    /// <exception cref="NotSupportedException">Thrown when the projection does not support inverse transformation.</exception>
+    protected MathTransform GetOrCreateInverse(Func<MapProjection> createInverse)
+    {
+        ArgumentNullException.ThrowIfNull(createInverse);
+
+        if (!this.HasInverseSupport)
+        {
+            throw new NotSupportedException($"{this.Name} does not support inverse projection.");
+        }
+
+        this.inverse ??= createInverse();
+        return this.inverse;
     }
 
     /// <summary>

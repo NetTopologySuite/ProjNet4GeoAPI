@@ -44,9 +44,7 @@ internal class AugustProjection : MapProjection
     /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        this.inverse ??= new AugustProjection(this.Parameters.ToProjectionParameter(), this);
-
-        return this.inverse;
+        return this.GetOrCreateInverse(() => new AugustProjection(this.Parameters.ToProjectionParameter(), this));
     }
 
     /// <inheritdoc />
