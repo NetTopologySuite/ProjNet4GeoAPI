@@ -11,10 +11,17 @@ using System.Collections.Generic;
 /// Implements the spherical Ortelius Oval projection (<c>ortel</c>).
 /// </summary>
 /// <remarks>
-/// Ortelius Oval is a historical sixteenth-century member of the
-/// <see cref="BaconProjection"/> family. It uses the shared globular formulation together
-/// with the Ortelius-specific branch for longitudes beyond ±90°.
+/// <para>Ortelius Oval is a historical sixteenth-century member of the
+/// <see cref="BaconProjection"/> family. It uses the shared globular formulation
+/// together with the Ortelius-specific branch for longitudes beyond ±90°.</para>
+/// <para>This derived class represents Abraham Ortelius's oval world-map style,
+/// popularized in <i>Theatrum Orbis Terrarum</i> from 1570 onward, and delegates the
+/// shared front-hemisphere construction to <see cref="BaconProjection"/> while
+/// enabling the wide-longitude branch that distinguishes the Ortelius variant from
+/// the Apian form.</para>
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/projections/ortel.html">PROJ documentation: Ortelius Oval.</seealso>
+/// <seealso href="https://en.wikipedia.org/wiki/Ortelius_oval_projection">Wikipedia: Ortelius oval projection.</seealso>
 internal class OrteliusProjection : BaconProjection
 {
     /// <summary>

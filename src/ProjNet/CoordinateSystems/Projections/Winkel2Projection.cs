@@ -12,11 +12,16 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical Winkel II projection (<c>wink2</c>).
 /// </summary>
 /// <remarks>
-/// Winkel II is Oswald Winkel's 1918 compromise projection. The implementation iteratively
-/// solves the Mollweide-like auxiliary latitude and then combines that result with the
-/// Winkel horizontal averaging term. The inverse transform follows PROJ's spherical
-/// <c>wink2_s_inverse</c> behavior via a numerical inverse over the same forward equations.
+/// <para>Winkel II is Oswald Winkel's 1918 compromise projection. The
+/// implementation iteratively solves the Mollweide-like auxiliary latitude and then
+/// combines that result with the Winkel horizontal averaging term.</para>
+/// <para>This implementation matches PROJ's <c>wink2</c> formulation for the
+/// arithmetic mean of the Mollweide and equidistant cylindrical projections. The
+/// inverse transform follows PROJ's spherical <c>wink2_s_inverse</c> behavior via
+/// a numerical inverse over the same forward equations.</para>
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/projections/wink2.html">PROJ documentation: Winkel II.</seealso>
+/// <seealso href="https://desktop.arcgis.com/en/arcmap/latest/map/projections/winkel-ii.htm">ArcGIS projection reference: Winkel II.</seealso>
 internal class Winkel2Projection : MapProjection
 {
     private const int MaximumIterations = 10;

@@ -12,10 +12,20 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the CalCOFI line/station projection (<c>calcofi</c>).
 /// </summary>
 /// <remarks>
-/// CalCOFI is the historical line/station indexing projection used by the California
-/// Cooperative Oceanic Fisheries Investigations. The implementation derives line and station
-/// coordinates from a rotated Mercator construction anchored at the published CalCOFI origin.
+/// <para>CalCOFI is the historical line/station indexing projection used by the
+/// California Cooperative Oceanic Fisheries Investigations. The implementation
+/// derives line and station coordinates from a rotated Mercator construction
+/// anchored at the published CalCOFI origin.</para>
+/// <para>This implementation matches PROJ's <c>calcofi</c> formulation and the
+/// conversion algorithms published by L. E. Eber and Roger P. Hewitt,
+/// <i>Conversion algorithms for the CalCOFI station grid</i>,
+/// <i>California Cooperative Oceanic Fisheries Investigations Reports</i> 20,
+/// 1979. It uses the historical line 80 / station 60 origin at 34.15 degrees N,
+/// 121.15 degrees W, the -30 degree coastline rotation, and the Clarke 1866
+/// ellipsoid convention described for the CalCOFI grid.</para>
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/projections/calcofi.html">PROJ documentation: CalCOFI.</seealso>
+/// <seealso href="http://www.calcofi.org/publications/calcofireports/v20/Vol_20_Eber___Hewitt.pdf">Eber and Hewitt (1979): Conversion algorithms for the CalCOFI station grid.</seealso>
 internal class CalCoFiProjection : MapProjection
 {
     private const double DegToLine = 5d;

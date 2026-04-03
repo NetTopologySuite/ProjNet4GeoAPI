@@ -11,6 +11,19 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the International Map of the World Polyconic projection (<c>imw_p</c>).
 /// </summary>
+/// <remarks>
+/// <para>The International Map of the World Polyconic projection is the modified
+/// polyconic sheet projection adopted for the 1:1,000,000 International Map of the
+/// World series. This implementation supports spherical and ellipsoidal forward and
+/// inverse forms for the standard IMW quadrangle layout.</para>
+/// <para>This implementation matches PROJ's <c>imw_p</c> formulation and Snyder's
+/// summary of the Charles Lallemand 1909 modification approved for the IMW program
+/// proposed by Albrecht Penck in 1891. The constructor reproduces the IMW sheet
+/// logic with two standard parallels and latitude-zone-dependent standard meridians
+/// at ±2, ±4, or ±8 degrees, while the forward and inverse paths use meridian-arc
+/// evaluation with iterative longitude and latitude recovery.</para>
+/// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/projections/imw_p.html">PROJ documentation: International Map of the World Polyconic.</seealso>
 internal sealed class InternationalMapWorldPolyconicProjection : MapProjection
 {
     private const int MaximumIterations = 1000;

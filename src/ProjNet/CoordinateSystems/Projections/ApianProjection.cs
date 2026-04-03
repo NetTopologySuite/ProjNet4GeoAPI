@@ -11,10 +11,14 @@ using System.Collections.Generic;
 /// Implements the spherical Apian Globular I projection (<c>apian</c>).
 /// </summary>
 /// <remarks>
-/// Apian Globular I is a historical sixteenth-century member of the
-/// <see cref="BaconProjection"/> family. It reuses the shared globular construction without
-/// Bacon latitude scaling and without the Ortelius wide-longitude branch.
+/// <para>Apian Globular I is a historical sixteenth-century member of the
+/// <see cref="BaconProjection"/> family. It reuses the shared globular construction
+/// without Bacon latitude scaling and without the Ortelius wide-longitude branch.</para>
+/// <para>This derived class represents Petrus Apianus's 1524 first globular world
+/// projection and delegates the shared circular-arc meridian construction to
+/// <see cref="BaconProjection"/> with the Bacon and Ortelius special cases disabled.</para>
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/projections/apian.html">PROJ documentation: Apian Globular I.</seealso>
 internal class ApianProjection : BaconProjection
 {
     /// <summary>
