@@ -13,6 +13,17 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the American Polyconic map projection.
 /// </summary>
+/// <remarks>
+/// <para>The American Polyconic represents each parallel by its own circular arc while
+/// preserving true scale along the central meridian. The ellipsoidal form depends on the
+/// meridian arc and the cotangent of latitude.</para>
+/// <para>The formulation was independently verified against IOGP, "Geomatics Guidance
+/// Note 7, part 2: Coordinate Conversions and Transformations including Formulas"
+/// (publication 373-7-2, 2019), EPSG method 9818, American Polyconic, and John P.
+/// Snyder, <i>Map Projections - A Working Manual</i>, USGS Professional Paper 1395,
+/// section 18. The forward easting and northing equations using the meridian arc
+/// through <c>Mlfn</c>/<c>Inv_mlfn</c> match the implementation here.</para>
+/// </remarks>
 internal class PolyconicProjection : MapProjection
 {
     /// <summary>
