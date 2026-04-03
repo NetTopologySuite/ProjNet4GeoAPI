@@ -13,6 +13,13 @@ using ProjNet.CoordinateSystems.Transformations.Numerics;
 /// <summary>
 /// Implements PROJ's <c>affine</c> runtime transform.
 /// </summary>
+/// <remarks>
+/// This runtime applies a full 3D affine mapping with translation and optional
+/// temporal scaling. The inverse is derived analytically from the 3x3 spatial
+/// matrix using the adjugate/cofactor form, and inverse creation is rejected
+/// when the determinant magnitude falls below <c>1e-30</c> or when
+/// <c>+tscale</c> is zero.
+/// </remarks>
 internal sealed class AffineRuntimeMathTransform : MathTransform
 {
     private readonly Vector3D offset;

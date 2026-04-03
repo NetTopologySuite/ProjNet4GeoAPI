@@ -12,10 +12,12 @@ using System.Text;
 /// <summary>
 /// Represents an affine math transform that transforms input coordinates to target coordinates using an affine transformation matrix. Dimensionality may change.
 /// </summary>
-/// <remarks>If the transform's input dimension is M, and output dimension is N, then the matrix will have size [N+1][M+1].
-/// The +1 in the matrix dimensions allows the matrix to do a shift, as well as a rotation.
-/// The [M][j] element of the matrix will be the j'th ordinate of the moved origin.
-/// The [i][N] element of the matrix will be 0 for i less than M, and 1 for i equals M.</remarks>
+/// <remarks>
+/// If the transform's input dimension is M, and output dimension is N, then the
+/// matrix has size <c>[N+1][M+1]</c>. The extra row and column encode the affine
+/// translation terms in homogeneous coordinates. Inverse creation uses standard
+/// LUP decomposition with partial pivoting to solve for the inverse matrix.
+/// </remarks>
 public class AffineTransform : MathTransform
 {
     /// <summary>
@@ -67,8 +69,12 @@ public class AffineTransform : MathTransform
     /// <summary>
     /// Initializes a new instance of the <see cref="AffineTransform"/> class using the specified transformation matrix.
     /// </summary>
-    /// <remarks>If the transform's input dimension is M, and output dimension is N, then the matrix will have size [N+1][M+1].
-    /// The +1 in the matrix dimensions allows the matrix to do a shift, as well as a rotation. The [M][j] element of the matrix will be the j'th ordinate of the moved origin. The [i][N] element of the matrix will be 0 for i less than M, and 1 for i equals M.</remarks>
+    /// <remarks>
+    /// If the transform's input dimension is M, and output dimension is N, then
+    /// the matrix has size <c>[N+1][M+1]</c>. The inverse matrix is obtained
+    /// with the same LUP decomposition with partial pivoting used by
+    /// <see cref="Inverse()"/>.
+    /// </remarks>
     ///
     /// <param name="matrix">Matrix used to create the affine transform.</param>
     public AffineTransform(double[,] matrix)
