@@ -14,7 +14,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <remarks>
 /// Adams Hemisphere in a Square is the hemispherical specialization of
 /// <see cref="AdamsProjectionBase"/>. It uses the common Adams conformal square machinery
-/// but restricts the domain to a single hemisphere arranged in a square.
+/// but restricts the domain to a single hemisphere arranged in a square. Inverse
+/// projection is not supported in this implementation.
 /// </remarks>
 internal sealed class AdamsHemisphereInSquareProjection : AdamsProjectionBase
 {
