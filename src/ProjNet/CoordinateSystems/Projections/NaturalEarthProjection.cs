@@ -14,6 +14,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <remarks>
 /// The Natural Earth projection is a pseudocylindrical projection with polynomial scaling
 /// functions for x and y. The inverse is solved iteratively via Newton–Raphson iteration.
+/// <para>The formulation was independently verified against Bojan Savric, Bernhard Jenny,
+/// and Tom Patterson, "A Polynomial Equation for the Natural Earth Projection",
+/// <i>Cartography and Geographic Information Science</i>, vol. 38, no. 4, pp. 363-372, 2011.
+/// The published x/y scaling polynomials and the Newton iteration used to recover
+/// <c>phi</c> from the northing polynomial match the implementation here.</para>
 /// </remarks>
 internal class NaturalEarthProjection : MapProjection
 {

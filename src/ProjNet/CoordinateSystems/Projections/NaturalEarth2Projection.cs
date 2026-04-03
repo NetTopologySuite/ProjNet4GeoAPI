@@ -15,6 +15,10 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Natural Earth II is an updated pseudocylindrical projection with revised polynomial
 /// scaling coefficients for a smoother visual appearance. The inverse is solved iteratively
 /// via Newton–Raphson iteration.
+/// <para>The formulation was independently verified against Bojan Savric, Tom Patterson,
+/// and Bernhard Jenny, "The Natural Earth II map projection", 2015. The revised
+/// x/y scaling polynomials and the Newton iteration used to recover <c>phi</c> from the
+/// northing polynomial match the implementation here.</para>
 /// </remarks>
 internal class NaturalEarth2Projection : MapProjection
 {
