@@ -11,6 +11,12 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Fahey projection (<c>fahey</c>).
 /// </summary>
+/// <remarks>
+/// Fahey is a spherical pseudocylindrical compromise projection commonly associated with
+/// Fahey's modern atlas usage. The implementation uses the half-angle substitution
+/// <c>t = tan(phi / 2)</c>, followed by the compact relations
+/// <c>x = XFactor * lambda * sqrt(1 - t^2)</c> and <c>y = YFactor * t</c>.
+/// </remarks>
 internal class FaheyProjection : MapProjection
 {
     private const double Tolerance = 1e-6d;

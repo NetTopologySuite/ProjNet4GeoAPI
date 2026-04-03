@@ -11,6 +11,12 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Nell projection (<c>nell</c>).
 /// </summary>
+/// <remarks>
+/// Nell is a spherical pseudocylindrical projection with straight parallels and curved
+/// meridians. The implementation solves the auxiliary relation
+/// <c>phi' + sin(phi') = 2 * sin(phi)</c> and then evaluates
+/// <c>x = 0.5 * lambda * (1 + cos(phi'))</c>, <c>y = phi'</c>.
+/// </remarks>
 internal class NellProjection : MapProjection
 {
     private const int Iterations = 10;

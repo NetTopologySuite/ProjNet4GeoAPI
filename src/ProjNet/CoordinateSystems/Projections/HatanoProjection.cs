@@ -11,6 +11,12 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Hatano Asymmetrical Equal Area projection (<c>hatano</c>).
 /// </summary>
+/// <remarks>
+/// Hatano Asymmetrical Equal Area is a spherical equal-area pseudocylindrical projection
+/// introduced by Masataka Hatano in 1972. The northern and southern hemispheres use
+/// distinct constants, and the implementation solves <c>phi + sin(phi) = c * sin(lat)</c>
+/// iteratively before applying the final half-angle scaling.
+/// </remarks>
 internal class HatanoProjection : MapProjection
 {
     private const int Iterations = 20;
