@@ -12,11 +12,20 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the Equidistant Conic projection (<c>eqdc</c>).
 /// </summary>
 /// <remarks>
-/// Distances along all meridians and along the two standard parallels are preserved.
-/// Supports both one-standard-parallel and two-standard-parallel forms; when a single
-/// parallel is specified via <c>standard_parallel_1</c>, the cone constant is set to
-/// the sine of that parallel.
+/// <para>Distances along all meridians and along the two standard parallels are
+/// preserved. Supports both one-standard-parallel and two-standard-parallel forms;
+/// when a single parallel is specified via <c>standard_parallel_1</c>, the cone
+/// constant is set to the sine of that parallel.</para>
+/// <para>The spherical and ellipsoidal formulations were independently verified against
+/// Snyder, "Map Projections - A Working Manual" (USGS Professional Paper 1395, 1987),
+/// section 16, Equidistant Conic, and the PROJ <c>eqdc</c> documentation. The
+/// ellipsoidal branch matches the published use of meridional distances and parallel
+/// scale factors through <c>Mlfn</c> and <c>Msfnz</c>, which corrects the earlier
+/// spherical-only implementation.</para>
 /// </remarks>
+/// <seealso href="https://pubs.usgs.gov/publication/pp1395">USGS Professional Paper 1395: Map Projections - A Working Manual.</seealso>
+/// <seealso href="https://proj.org/en/stable/operations/projections/eqdc.html">PROJ documentation: Equidistant Conic.</seealso>
+/// <seealso href="https://en.wikipedia.org/wiki/Equidistant_conic_projection">Wikipedia: Equidistant conic projection.</seealso>
 internal class EquidistantConicProjection : MapProjection
 {
     private const double Epsilon = 1e-10d;
