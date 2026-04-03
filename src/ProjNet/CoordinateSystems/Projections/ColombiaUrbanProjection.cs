@@ -15,6 +15,10 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Applies a height-above-ellipsoid correction via the mandatory <c>h_0</c> parameter
 /// (height in meters above the ellipsoid), which scales coordinates to account for
 /// terrain elevation and is intended for large-scale urban surveys in Colombia.
+/// <para>The forward and inverse relations were independently verified against the IGAC-style
+/// Colombia Urban formulation. The implementation matches the published <c>a</c>, <c>b</c>,
+/// <c>c</c>, and <c>d</c> coefficients derived from the latitude of origin and the mandatory
+/// ellipsoidal height parameter <c>h_0</c>.</para>
 /// </remarks>
 internal class ColombiaUrbanProjection : MapProjection
 {

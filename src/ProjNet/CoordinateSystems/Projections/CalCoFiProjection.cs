@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the CalCOFI line/station projection (<c>calcofi</c>).
 /// </summary>
+/// <remarks>
+/// CalCOFI is the historical line/station indexing projection used by the California
+/// Cooperative Oceanic Fisheries Investigations. The implementation derives line and station
+/// coordinates from a rotated Mercator construction anchored at the published CalCOFI origin.
+/// </remarks>
 internal class CalCoFiProjection : MapProjection
 {
     private const double DegToLine = 5d;
