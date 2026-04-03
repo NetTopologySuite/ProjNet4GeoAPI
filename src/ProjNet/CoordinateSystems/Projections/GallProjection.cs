@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Gall (Gall Stereographic) projection (<c>gall</c>).
 /// </summary>
+/// <remarks>
+/// Gall Stereographic is a cylindrical compromise projection introduced by James Gall in
+/// 1855. In normalized form it scales longitude by <c>cos(pi / 4) / sqrt(2)</c> and uses the
+/// latitude relation <c>y = (1 + sqrt(2)) * tan(phi / 2)</c>.
+/// </remarks>
 internal class GallProjection : MapProjection
 {
     private const double Yf = 1.70710678118654752440d;

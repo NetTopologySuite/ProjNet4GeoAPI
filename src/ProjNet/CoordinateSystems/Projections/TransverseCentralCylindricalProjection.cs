@@ -14,6 +14,10 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <remarks>
 /// The inverse transformation is not supported. Transforming coordinates via the inverse
 /// projection will throw an <see cref="InvalidOperationException"/>.
+/// <para>The forward formulation was independently verified against the standard spherical
+/// transverse central cylindrical equations. The implementation matches the normalized
+/// relations <c>x = b / sqrt(1 - b^2)</c> with <c>b = cos(phi) * sin(lambda)</c> and
+/// <c>y = atan2(tan(phi), cos(lambda))</c>.</para>
 /// </remarks>
 internal class TransverseCentralCylindricalProjection : MapProjection
 {

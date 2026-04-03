@@ -11,6 +11,12 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Represents the geographic identity projection used by PROJ's latlong/longlat aliases.
 /// </summary>
+/// <remarks>
+/// This projection is the geographic identity mapping: longitude and latitude are passed
+/// through unchanged except for the configured central-meridian and latitude-of-origin
+/// offsets. It therefore corresponds to the trivial relation <c>x = lon</c>,
+/// <c>y = lat</c> in normalized geographic coordinates.
+/// </remarks>
 internal class LatLongProjection : MapProjection
 {
     /// <summary>
