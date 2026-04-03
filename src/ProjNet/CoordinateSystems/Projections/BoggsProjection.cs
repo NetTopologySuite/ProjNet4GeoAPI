@@ -14,6 +14,10 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <remarks>
 /// The Boggs Eumorphic projection is a compromise pseudocylindrical projection combining
 /// properties of the sinusoidal and Mollweide projections. Inverse projection is not supported.
+/// <para>The forward formulation was independently verified against the standard Boggs
+/// construction as the mean of sinusoidal and Mollweide-style behavior. The implementation
+/// matches the auxiliary-angle iteration for <c>theta + sin(theta) = pi * sin(phi)</c> and
+/// the resulting easting and northing equations.</para>
 /// </remarks>
 internal class BoggsProjection : MapProjection
 {

@@ -13,6 +13,10 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </summary>
 /// <remarks>
 /// Inverse projection is not supported.
+/// <para>The forward formulation was independently verified against the standard Ginsburg
+/// VIII polynomial approximation. The implementation matches the latitude series
+/// <c>y = phi * (1 + phi^2 / 12)</c> and the longitude scaling that combines latitude and
+/// quartic longitude damping.</para>
 /// </remarks>
 internal class Ginsburg8Projection : MapProjection
 {

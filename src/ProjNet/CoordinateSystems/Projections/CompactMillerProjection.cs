@@ -11,6 +11,12 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Compact Miller projection (<c>comill</c>).
 /// </summary>
+/// <remarks>
+/// Compact Miller is a cylindrical compromise projection published by Tom Patterson in the
+/// course of refining the Miller family for atlas use. The implementation keeps longitude
+/// linear and evaluates latitude with the odd polynomial
+/// <c>y = phi * (K1 + K2 * phi^2 + K3 * phi^4)</c>, using Newton iteration for the inverse.
+/// </remarks>
 internal class CompactMillerProjection : MapProjection
 {
     private const double K1 = 0.9902d;

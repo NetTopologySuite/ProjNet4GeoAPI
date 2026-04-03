@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Tobler-Mercator projection (<c>tobmerc</c>).
 /// </summary>
+/// <remarks>
+/// Tobler-Mercator is a modified spherical Mercator projection proposed by Waldo Tobler to
+/// temper high-latitude east-west exaggeration. The implementation keeps the Mercator
+/// northing <c>ln(tan(pi / 4 + phi / 2))</c> but scales longitude by <c>cos(phi)^2</c>.
+/// </remarks>
 internal class ToblerMercatorProjection : MapProjection
 {
     private readonly double radius;

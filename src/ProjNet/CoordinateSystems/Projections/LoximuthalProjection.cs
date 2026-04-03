@@ -15,6 +15,9 @@ using ProjNet.CoordinateSystems.Transformations;
 /// The Loximuthal projection preserves the shape of loxodromes (rhumb lines) as straight lines
 /// emanating from a user-defined reference latitude (<c>lat_1</c>). The reference latitude must
 /// not be at the poles.
+/// <para>The forward formulation was independently verified against the standard loximuthal
+/// relation <c>x = lambda * (phi - phi1) / ln(tan(pi / 4 + phi / 2) / tan(pi / 4 + phi1 / 2))</c>,
+/// including the limiting case <c>x = lambda * cos(phi1)</c> at the reference latitude.</para>
 /// </remarks>
 internal class LoximuthalProjection : MapProjection
 {
