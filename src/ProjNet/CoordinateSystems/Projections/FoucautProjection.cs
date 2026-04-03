@@ -11,6 +11,12 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Foucaut projection (<c>fouc</c>).
 /// </summary>
+/// <remarks>
+/// Foucaut is a spherical member of the STS family implemented by
+/// <see cref="StsProjectionBase"/>. This specialization fixes the family constants to
+/// <c>p = 2</c> and <c>q = 2</c> with tangent-mode scaling, producing the compact Foucaut
+/// forward and inverse relations used in atlas practice.
+/// </remarks>
 internal sealed class FoucautProjection : StsProjectionBase
 {
     /// <summary>

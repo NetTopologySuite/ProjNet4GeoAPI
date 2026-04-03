@@ -11,6 +11,12 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Quartic Authalic projection (<c>qua_aut</c>).
 /// </summary>
+/// <remarks>
+/// Quartic Authalic is a spherical equal-area member of the STS family implemented by
+/// <see cref="StsProjectionBase"/>. This specialization fixes the family constants to
+/// <c>p = 2</c> and <c>q = 2</c> with sine-mode scaling, yielding the quartic-authalic
+/// relations commonly listed in Snyder's survey of pseudocylindrical projections.
+/// </remarks>
 internal sealed class QuarticAuthalicProjection : StsProjectionBase
 {
     /// <summary>
