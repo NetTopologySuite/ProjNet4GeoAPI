@@ -362,15 +362,18 @@ public class ProjectionCoverageTests
     }
 
     /// <summary>
-    /// Verifies Winkel II does not support inverse projection.
+    /// Verifies Winkel II inverse projection is available.
     /// </summary>
     [Fact]
-    public void Winkel2RejectsInverse()
+    public void Winkel2SupportsInverse()
     {
         string wkt = BuildProjectedWkt("wink2", Sphere6400000, 0d, 0d, null);
         ProjectedCoordinateSystem projected = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wkt);
-        Assert.Throws<NotSupportedException>(
-            () => CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem));
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
+        double[] result = inverse.MathTransform.Transform(CreatePoint(200d, 100d));
+
+        Assert.False(double.IsNaN(result[0]));
+        Assert.False(double.IsNaN(result[1]));
     }
 
     /// <summary>

@@ -8,19 +8,23 @@ using System;
 using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
-    /// <summary>
+/// <summary>
 /// Implements the spherical Winkel II projection (<c>wink2</c>).
 /// </summary>
 /// <remarks>
 /// Winkel II is Oswald Winkel's 1918 compromise projection. The implementation iteratively
 /// solves the Mollweide-like auxiliary latitude and then combines that result with the
-/// Winkel horizontal averaging term. Inverse projection is not supported in this
-/// implementation.
+/// Winkel horizontal averaging term. The inverse transform follows PROJ's spherical
+/// <c>wink2_s_inverse</c> behavior via a numerical inverse over the same forward equations.
 /// </remarks>
 internal class Winkel2Projection : MapProjection
 {
     private const int MaximumIterations = 10;
     private const double LoopTolerance = 1e-7;
+    private const int InverseMaximumIterations = 15;
+    private const double InverseTolerance = 1e-10d;
+    private const double FiniteDifferenceStep = 1e-8d;
+    private const double MaximumCorrection = 0.3d;
 
     private readonly double radius;
     private readonly double cosphi1;
@@ -47,9 +51,6 @@ internal class Winkel2Projection : MapProjection
         double lat1Degrees = this.Parameters.GetOptionalParameterValue("lat_1", RadiansToDegrees(this.latOrigin), "standard_parallel_1");
         this.cosphi1 = Math.Cos(DegreesToRadians(lat1Degrees));
     }
-
-    /// <inheritdoc />
-    protected override bool HasInverseSupport => false;
 
     /// <inheritdoc />
     public override MathTransform Inverse()
@@ -85,10 +86,80 @@ internal class Winkel2Projection : MapProjection
     }
 
     /// <inheritdoc />
-    /// <exception cref="InvalidOperationException">Always thrown; the Winkel II projection does not support inverse transformation.</exception>
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        throw new InvalidOperationException("Winkel II does not support inverse projection in this wave.");
+        double targetX = x / this.radius;
+        double targetY = y / this.radius;
+
+        double lambda = targetX;
+        double phi = targetY;
+        double derivLamX = 0d;
+        double derivLamY = 0d;
+        double derivPhiX = 0d;
+        double derivPhiY = 0d;
+
+        for (int i = 0; i < InverseMaximumIterations; i++)
+        {
+            this.ForwardNormalized(lambda, phi, out double approxX, out double approxY);
+            double errorX = approxX - targetX;
+            double errorY = approxY - targetY;
+            if (Math.Abs(errorX) <= InverseTolerance && Math.Abs(errorY) <= InverseTolerance)
+            {
+                x = Adjust_lon(this.centralMeridian + lambda);
+                y = phi;
+                return;
+            }
+
+            if (i == 0 || Math.Abs(errorX) > 1e-6d || Math.Abs(errorY) > 1e-6d)
+            {
+                double deltaLambdaStep = lambda > 0d ? -FiniteDifferenceStep : FiniteDifferenceStep;
+                this.ForwardNormalized(lambda + deltaLambdaStep, phi, out double xLambda, out double yLambda);
+                double derivXLambda = (xLambda - approxX) / deltaLambdaStep;
+                double derivYLambda = (yLambda - approxY) / deltaLambdaStep;
+
+                double deltaPhiStep = phi > 0d ? -FiniteDifferenceStep : FiniteDifferenceStep;
+                this.ForwardNormalized(lambda, phi + deltaPhiStep, out double xPhi, out double yPhi);
+                double derivXPhi = (xPhi - approxX) / deltaPhiStep;
+                double derivYPhi = (yPhi - approxY) / deltaPhiStep;
+
+                double determinant = (derivXLambda * derivYPhi) - (derivXPhi * derivYLambda);
+                if (determinant == 0d)
+                {
+                    ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+                }
+
+                derivLamX = derivYPhi / determinant;
+                derivLamY = -derivXPhi / determinant;
+                derivPhiX = -derivYLambda / determinant;
+                derivPhiY = derivXLambda / determinant;
+            }
+
+            double deltaLambda = Math.Max(Math.Min((errorX * derivLamX) + (errorY * derivLamY), MaximumCorrection), -MaximumCorrection);
+            double deltaPhi = Math.Max(Math.Min((errorX * derivPhiX) + (errorY * derivPhiY), MaximumCorrection), -MaximumCorrection);
+
+            lambda -= deltaLambda;
+            phi -= deltaPhi;
+
+            if (lambda < -PI)
+            {
+                lambda = -PI;
+            }
+            else if (lambda > PI)
+            {
+                lambda = PI;
+            }
+
+            if (phi < -HalfPi)
+            {
+                phi = -HalfPi;
+            }
+            else if (phi > HalfPi)
+            {
+                phi = HalfPi;
+            }
+        }
+
+        ArgumentGuard.ThrowArgument("Input data outside projection domain.");
     }
 
     private void ForwardNormalized(double lambda, double phi, out double x, out double y)

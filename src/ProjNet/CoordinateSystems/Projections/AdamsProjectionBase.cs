@@ -86,12 +86,6 @@ internal abstract class AdamsProjectionBase : MapProjection
         }
     }
 
-    /// <inheritdoc />
-    protected override bool HasInverseSupport =>
-        this.mode == AdamsMode.AdamsWs2
-        || (this.mode == AdamsMode.PeirceQ
-            && (this.peirceShape == PeirceShape.Square || this.peirceShape == PeirceShape.Diamond));
-
     /// <summary>
     /// Enumerates supported Adams-family projection modes.
     /// </summary>
@@ -132,6 +126,12 @@ internal abstract class AdamsProjectionBase : MapProjection
         Horizontal = 4,
         Vertical = 5,
     }
+
+    /// <inheritdoc />
+    protected override bool HasInverseSupport =>
+        this.mode == AdamsMode.AdamsWs2
+        || (this.mode == AdamsMode.PeirceQ
+            && (this.peirceShape == PeirceShape.Square || this.peirceShape == PeirceShape.Diamond));
 
     /// <inheritdoc />
     protected override void RadiansToMeters(ref double lon, ref double lat)

@@ -152,6 +152,27 @@ public class AitoffWinkelProjectionTests
     }
 
     /// <summary>
+    /// Verifies Winkel II roundtrip stability now that inverse support is implemented.
+    /// </summary>
+    [Theory]
+    [InlineData(0.5d, 2d, 1d, 2e-8d)]
+    [InlineData(0.5d, -2d, -1d, 2e-8d)]
+    [InlineData(50.467d, 10d, 20d, 2e-8d)]
+    public void SupportsWinkelIiRoundtrip(double latitude1, double longitude, double latitude, double tolerance)
+    {
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, BuildProjectedWkt("wink2", latitude1));
+        GeographicCoordinateSystem geographic = projected.GeographicCoordinateSystem;
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(geographic, projected);
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, geographic);
+
+        double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
+        double[] roundtrip = inverse.MathTransform.Transform(projectedPoint);
+
+        Assert.InRange(Math.Abs(roundtrip[0] - longitude), 0d, tolerance);
+        Assert.InRange(Math.Abs(roundtrip[1] - latitude), 0d, tolerance);
+    }
+
+    /// <summary>
     /// Verifies that Winkel II aliases resolve when required lat_1 is provided.
     /// </summary>
     /// <param name="projectionName">Projection alias to validate.</param>
