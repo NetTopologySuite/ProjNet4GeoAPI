@@ -12,11 +12,21 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the Lambert Conformal Conic Alternative projection (<c>lcca</c>).
 /// </summary>
 /// <remarks>
-/// Differs from the standard Lambert Conformal Conic in that it is defined by a single
-/// latitude of origin (<c>lat_0</c>, which must be non-zero) rather than two standard
-/// parallels. The inverse transform uses Newton–Raphson iteration (up to 10 steps) to
-/// recover the meridian arc length.
+/// <para>Differs from the standard Lambert Conformal Conic in that it is defined by a
+/// single latitude of origin (<c>lat_0</c>, which must be non-zero) rather than two
+/// standard parallels. The inverse transform uses Newton-Raphson iteration (up to
+/// 10 steps) to recover the meridian arc length.</para>
+/// <para>This historical alternative variant was independently verified against PROJ's
+/// <c>lcca</c> implementation and the general Lambert conformal conic treatment in
+/// Snyder, "Map Projections - A Working Manual" (USGS Professional Paper 1395, 1987).
+/// The forward path applies the same cubic radial correction <c>f(S) = S * (1 + S^2 * C)</c>
+/// as the PROJ reference, and the inverse path uses Newton-Raphson iteration on that
+/// correction before <c>Inv_mlfn</c>, matching the implementation here. This
+/// alternative projection has no dedicated EPSG method; EPSG method 9826 is Lambert
+/// Conic Conformal (West Orientated) and is not the same operation.</para>
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/projections/lcca.html">PROJ documentation: Lambert Conformal Conic Alternative.</seealso>
+/// <seealso href="https://pubs.usgs.gov/publication/pp1395">USGS Professional Paper 1395: Map Projections - A Working Manual.</seealso>
 internal sealed class LambertConformalConicAlternativeProjection : MapProjection
 {
     private const int MaximumIterations = 10;
