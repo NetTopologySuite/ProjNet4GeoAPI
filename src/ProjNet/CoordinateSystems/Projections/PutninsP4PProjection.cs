@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Putnins P4' projection (<c>putp4p</c>).
 /// </summary>
+/// <remarks>
+/// Putnins P4' is the equal-area Putnins family member published by Reinholds Putnins in
+/// 1934. The implementation uses the characteristic pre- and post-<c>asin</c> scaling with
+/// a one-third angle step for the final y coordinate.
+/// </remarks>
 internal class PutninsP4PProjection : MapProjection
 {
     private const double PreAsinFactor = 0.883883476d;

@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Kavrayskiy V projection (<c>kav5</c>).
 /// </summary>
+/// <remarks>
+/// Kavrayskiy V is an STS-family specialization attributed to Kavrayskiy in the early 1930s.
+/// Its numerical behavior is provided by <see cref="StsProjectionBase"/> with the
+/// Kavrayskiy-specific <c>p</c> and <c>q</c> constants.
+/// </remarks>
 internal sealed class Kavrayskiy5Projection : StsProjectionBase
 {
     /// <summary>

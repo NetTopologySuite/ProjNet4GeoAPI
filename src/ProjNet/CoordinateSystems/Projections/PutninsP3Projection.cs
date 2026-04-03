@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Putnins P3 projection (<c>putp3</c>).
 /// </summary>
+/// <remarks>
+/// Putnins P3 is one of the spherical projections published by Reinholds Putnins in 1934.
+/// It is a parameterized cylindrical-like form with the fixed coefficient
+/// <c>C = 0.79788456</c> and a configurable quadratic latitude damping term.
+/// </remarks>
 internal class PutninsP3Projection : MapProjection
 {
     private const double C = 0.79788456d;

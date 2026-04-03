@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Putnins P6 projection (<c>putp6</c>).
 /// </summary>
+/// <remarks>
+/// Putnins P6 is one of the spherical projections published by Reinholds Putnins in 1934.
+/// The implementation iteratively solves the logarithmic auxiliary equation used by the
+/// original formulation and then applies the configurable Putnins P6 x/y scaling constants.
+/// </remarks>
 internal class PutninsP6Projection : MapProjection
 {
     private const double DefaultCx = 1.01346d;

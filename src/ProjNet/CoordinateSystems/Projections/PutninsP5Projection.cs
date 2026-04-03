@@ -11,6 +11,12 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Putnins P5 projection (<c>putp5</c>).
 /// </summary>
+/// <remarks>
+/// Putnins P5 is one of the spherical projections published by Reinholds Putnins in 1934.
+/// Its longitude scale follows the family form
+/// <c>A - B * sqrt(1 + D * phi^2)</c>, with parameter values that can also be specialized
+/// for the prime variant.
+/// </remarks>
 internal class PutninsP5Projection : MapProjection
 {
     private const double C = 1.01346d;

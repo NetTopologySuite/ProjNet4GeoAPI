@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Putnins P1 projection (<c>putp1</c>).
 /// </summary>
+/// <remarks>
+/// Putnins P1 is one of the spherical projections published by Reinholds Putnins in 1934.
+/// It uses an Eckert-III-like square-root longitude scale with the fixed parameter
+/// <c>A = -0.5</c>.
+/// </remarks>
 internal class PutninsP1Projection : MapProjection
 {
     private const double Cx = 1.89490d;

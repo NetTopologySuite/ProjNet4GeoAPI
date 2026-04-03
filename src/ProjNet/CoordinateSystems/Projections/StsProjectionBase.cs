@@ -10,6 +10,13 @@ using System.Collections.Generic;
 /// <summary>
 /// Shared implementation for the spherical STS projection family (<c>kav5</c>, <c>qua_aut</c>, <c>fouc</c>, <c>mbt_s</c>).
 /// </summary>
+/// <remarks>
+/// STS ("sine/tangent series") is a shared spherical pseudocylindrical base used for
+/// several projections that differ only by the family constants <c>p</c>, <c>q</c>, and
+/// by whether the latitude branch is evaluated in sine- or tangent-mode. The common
+/// formulation scales longitude by <c>cos(phi)</c> and then applies either the tangent or
+/// sine branch controlled by <c>tanMode</c>.
+/// </remarks>
 internal abstract class StsProjectionBase : MapProjection
 {
     private readonly double radius;

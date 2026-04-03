@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Putnins P2 projection (<c>putp2</c>).
 /// </summary>
+/// <remarks>
+/// Putnins P2 is one of the spherical projections published by Reinholds Putnins in 1934.
+/// The implementation iteratively solves the auxiliary latitude used by the original
+/// formulation and then applies the characteristic Putnins P2 cosine-shifted x scaling.
+/// </remarks>
 internal class PutninsP2Projection : MapProjection
 {
     private const double Cx = 1.89490d;
