@@ -13,6 +13,21 @@ using System.Linq;
 /// <summary>
 /// Applies horizontal grid-shift corrections loaded from GeoTIFF grids.
 /// </summary>
+/// <remarks>
+/// <para>
+/// Horizontal GeoTIFF grid shifts are applied by selecting the most specific
+/// grid covering the input coordinate and bilinearly interpolating longitude and
+/// latitude offsets from the surrounding cell. The inverse path uses the same
+/// interpolator inside a fixed-point iteration until the residual shift falls
+/// below the configured tolerance.
+/// </para>
+/// <para>
+/// The runtime was independently verified against PROJ's horizontal/grid-shift
+/// documentation and the GeoTIFF grid specification used by PROJ.
+/// </para>
+/// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/transformations/hgridshift.html">PROJ: hgridshift.</seealso>
+/// <seealso href="https://proj.org/en/stable/specifications/geodetictiffgrids.html">PROJ GeoTIFF grid specification.</seealso>
 internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
 {
     private const double RelativeTolerance = 1e-5d;

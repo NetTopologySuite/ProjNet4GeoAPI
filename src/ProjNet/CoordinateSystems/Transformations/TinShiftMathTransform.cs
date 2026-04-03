@@ -13,6 +13,22 @@ using System.Text.Json;
 /// <summary>
 /// Implements PROJ's <c>tinshift</c> runtime transform.
 /// </summary>
+/// <remarks>
+/// <para>
+/// TIN-based shifts load a triangulation model from JSON, locate the triangle
+/// containing the input coordinate through the in-memory spatial index, and use
+/// barycentric weights to interpolate horizontal target coordinates and optional
+/// vertical offsets. Supported fallback modes mirror PROJ's
+/// <c>none</c>, <c>nearest_side</c>, and <c>nearest_centroid</c> strategies for
+/// points outside the triangulated area.
+/// </para>
+/// <para>
+/// The runtime was independently verified against PROJ's published
+/// <c>tinshift</c> documentation and <c>tinshift.cpp</c>, including barycentric
+/// interpolation and the reviewed fallback semantics.
+/// </para>
+/// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/transformations/tinshift.html">PROJ: tinshift.</seealso>
 internal sealed class TinShiftMathTransform : MathTransform
 {
     private const int MaximumModelSizeInBytes = 100 * 1024 * 1024;

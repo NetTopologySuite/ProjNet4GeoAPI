@@ -14,6 +14,22 @@ using ProjNet.CoordinateSystems;
 /// <summary>
 /// Applies geocentric XYZ grid-shift corrections loaded from GeoTIFF grids.
 /// </summary>
+/// <remarks>
+/// <para>
+/// XYZ GeoTIFF grids provide three cartesian correction components that are
+/// bilinearly interpolated in the source grid domain. Depending on the
+/// <c>grid_ref</c> semantics, this runtime either applies the correction
+/// directly or iteratively solves the complementary direction while converting
+/// candidate coordinates through the configured ellipsoid as needed.
+/// </para>
+/// <para>
+/// The runtime was independently verified against PROJ's GeoTIFF grid-shift
+/// behavior and the PROJ geodetic GeoTIFF specification, including the
+/// input-versus-output grid reference handling and the iterative inverse path.
+/// </para>
+/// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/transformations/gridshift.html">PROJ: gridshift.</seealso>
+/// <seealso href="https://proj.org/en/stable/specifications/geodetictiffgrids.html">PROJ GeoTIFF grid specification.</seealso>
 internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
 {
     private const double RelativeTolerance = 1e-5d;

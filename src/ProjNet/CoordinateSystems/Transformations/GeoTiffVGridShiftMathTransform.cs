@@ -13,6 +13,21 @@ using System.Linq;
 /// <summary>
 /// Applies vertical datum shifts loaded from GeoTIFF grid files.
 /// </summary>
+/// <remarks>
+/// <para>
+/// Vertical GeoTIFF shifts are evaluated by bilinearly interpolating the grid
+/// value at the input horizontal coordinate and applying the configured forward
+/// multiplier. When one or more corner samples are nodata, the implementation
+/// renormalizes the remaining bilinear weights instead of silently treating
+/// nodata as zero.
+/// </para>
+/// <para>
+/// The runtime was independently verified against PROJ's vertical/grid-shift
+/// documentation and the GeoTIFF grid specification used for geodetic grids.
+/// </para>
+/// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/transformations/vgridshift.html">PROJ: vgridshift.</seealso>
+/// <seealso href="https://proj.org/en/stable/specifications/geodetictiffgrids.html">PROJ GeoTIFF grid specification.</seealso>
 internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
 {
     private const double RelativeTolerance = 1e-5d;

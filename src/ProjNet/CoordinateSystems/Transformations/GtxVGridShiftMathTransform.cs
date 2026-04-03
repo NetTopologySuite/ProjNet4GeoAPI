@@ -13,6 +13,20 @@ using System.IO;
 /// <summary>
 /// Applies vertical datum shifts using one or more GTX grid files.
 /// </summary>
+/// <remarks>
+/// <para>
+/// GTX-based vertical shifts are applied by selecting the first grid covering
+/// the input coordinate and bilinearly interpolating the surrounding raster
+/// samples. The implementation preserves the historical PROJ convention that
+/// the default forward multiplier is <c>-1</c> and mirrors PROJ's nodata
+/// sentinel handling for GTX cells.
+/// </para>
+/// <para>
+/// The runtime was independently verified against PROJ's published
+/// <c>vgridshift</c> documentation and <c>vgridshift.cpp</c>.
+/// </para>
+/// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/transformations/vgridshift.html">PROJ: vgridshift.</seealso>
 internal sealed class GtxVGridShiftMathTransform : MathTransform
 {
     private const double RelativeTolerance = 1e-5d;
