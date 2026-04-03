@@ -11,6 +11,15 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Hammer projection (<c>hammer</c>).
 /// </summary>
+/// <remarks>
+/// Hammer is an equal-area pseudocylindrical projection derived from the Lambert azimuthal
+/// equal-area construction and parameterized here through the optional <c>w</c> and <c>m</c>
+/// scale factors. The formulation was independently verified against the Wikipedia article
+/// "Hammer projection" and Eric W. Weisstein's MathWorld entry
+/// "Hammer-Aitoff Equal-Area Projection". The normalized factor
+/// <c>sqrt(2 / (1 + cos(phi) * cos(w * lambda)))</c> and the resulting scaled forward
+/// equations match the implementation here.
+/// </remarks>
 internal class HammerProjection : MapProjection
 {
     private readonly double radius;

@@ -11,6 +11,13 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Winkel Tripel projection (<c>wintri</c>).
 /// </summary>
+/// <remarks>
+/// Winkel Tripel blends the Aitoff projection with an equirectangular projection at a
+/// standard parallel whose cosine defaults to <c>2 / pi</c>. The formulation was
+/// independently verified against the Wikipedia article "Winkel tripel projection".
+/// The averaged forward relations <c>0.5 * (xAitoff + lambda * cos(phi1))</c> and
+/// <c>0.5 * (yAitoff + phi)</c> match the implementation here.
+/// </remarks>
 internal class WinkelTripelProjection : MapProjection
 {
     /// <summary>

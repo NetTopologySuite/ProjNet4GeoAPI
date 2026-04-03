@@ -11,6 +11,14 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Aitoff projection (<c>aitoff</c>).
 /// </summary>
+/// <remarks>
+/// Aitoff is a spherical compromise projection obtained by applying the azimuthal
+/// equidistant construction to halved longitudes and then doubling the horizontal result.
+/// The formulation was independently verified against the Wikipedia article
+/// "Aitoff projection". The auxiliary angle
+/// <c>d = acos(cos(phi) * cos(lambda / 2))</c> together with the normalized forward
+/// relations used by <see cref="AitoffMath"/> matches the implementation here.
+/// </remarks>
 internal class AitoffProjection : MapProjection
 {
     private readonly double radius;
