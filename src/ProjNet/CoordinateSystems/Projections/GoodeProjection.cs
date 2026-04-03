@@ -22,9 +22,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// PROJ <c>goode</c> documentation. The implementation switches at
 /// <c>PhiLim = 0.71093078197902358062</c>, uses a sinusoidal branch below that
 /// latitude, and applies the Mollweide branch with the standard <c>YCor = 0.05280</c>
-/// seam correction above it, matching the established Goode formulation.</para>
+/// seam correction above it, matching the established Goode formulation first
+/// published by J. Paul Goode in 1925.</para>
 /// </remarks>
 /// <seealso href="https://proj.org/en/stable/operations/projections/goode.html">PROJ documentation: Goode Homolosine.</seealso>
+/// <seealso href="https://doi.org/10.2307/2560812">Goode, J.P. (1925): The Homolosine projection.</seealso>
 /// <seealso href="https://en.wikipedia.org/wiki/Goode_homolosine_projection">Wikipedia: Goode homolosine projection.</seealso>
 internal class GoodeProjection : MapProjection
 {
