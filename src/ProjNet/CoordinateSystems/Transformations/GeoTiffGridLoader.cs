@@ -17,6 +17,16 @@ using BitMiracle.LibTiff.Classic;
 /// <summary>
 /// Loads grid shift data from GeoTIFF files for use in coordinate transformations.
 /// </summary>
+/// <remarks>
+/// PROJ's geodetic GeoTIFF profile was used as the primary verification source
+/// for this loader. The implementation accepts both affine
+/// <c>ModelTransformationTag</c> georeferencing and the
+/// <c>ModelTiePointTag</c>/<c>ModelPixelScaleTag</c> path, derives bounds from
+/// the resolved raster-to-model transform, and applies the half-pixel origin
+/// offset required when <c>GTRasterTypeGeoKey</c> indicates PixelIsArea instead
+/// of PixelIsPoint.
+/// </remarks>
+/// <seealso href="https://proj.org/en/stable/specifications/geodetictiffgrids.html">PROJ GeoTIFF grid specification.</seealso>
 internal static partial class GeoTiffGridLoader
 {
     private const int ModelPixelScaleTag = 33550;
