@@ -19,6 +19,22 @@ using ProjNet.CoordinateSystems;
 /// <summary>
 /// Implements PROJ's <c>deformation</c> runtime transform.
 /// </summary>
+/// <remarks>
+/// <para>
+/// This implementation follows PROJ's <c>deformation</c> operation for
+/// time-dependent datum correction: ENU velocities are interpolated from GeoTIFF
+/// XYZ grids or legacy CTable2/GTX grids, converted to geocentric XYZ shift
+/// components, and then applied in cartesian space as <c>(t_obs - t_c) * V</c>.
+/// </para>
+/// <para>
+/// The runtime was independently verified against PROJ's published
+/// <c>deformation</c> documentation and <c>deformation.cpp</c>. The reviewed
+/// inverse implementation preserves the corrected Newton-style residual update in
+/// all three components, including Z, so the reverse path converges to the same
+/// fixed point as the upstream algorithm.
+/// </para>
+/// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/transformations/deformation.html">PROJ: deformation.</seealso>
 internal sealed class DeformationMathTransform : MathTransform
 {
     private const double RelativeTolerance = 1e-5d;
