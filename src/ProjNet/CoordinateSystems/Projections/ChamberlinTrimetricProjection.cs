@@ -12,7 +12,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical Chamberlin Trimetric projection (<c>chamb</c>).
 /// </summary>
 /// <remarks>
-/// Inverse projection is not supported.
+/// Inverse projection is not supported in this implementation.
 /// <para>The forward construction was independently verified against Chamberlin's trimetric
 /// method. The implementation matches the three-control-point setup, the law-of-cosines
 /// angle recovery, and the mean-point blending used to place interior points.</para>

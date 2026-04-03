@@ -12,7 +12,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical van der Grinten IV projection (<c>vandg4</c>).
 /// </summary>
 /// <remarks>
-/// Inverse projection is not supported.
+/// Inverse projection is not supported in this implementation.
 /// <para>The forward formulation was independently verified against the van der Grinten IV
 /// construction. The implementation matches the special-case branches and the general
 /// auxiliary <c>bt</c>/<c>ct</c>/<c>dt</c> expressions used for interior points.</para>

@@ -12,7 +12,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical Nicolosi Globular projection (<c>nicol</c>).
 /// </summary>
 /// <remarks>
-/// Inverse projection is not supported.
+/// Inverse projection is not supported in this implementation.
 /// <para>The forward formulation was independently verified against the classical Nicolosi
 /// globular construction. The implementation matches the special-case branches for the
 /// central meridian, equator, poles, and ±90° meridians before evaluating the general

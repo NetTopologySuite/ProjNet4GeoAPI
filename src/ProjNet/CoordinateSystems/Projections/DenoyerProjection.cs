@@ -13,7 +13,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </summary>
 /// <remarks>
 /// The Denoyer Semi-Elliptical projection is a compromise pseudocylindrical projection
-/// intended for atlas use. Inverse projection is not supported.
+/// intended for atlas use.
+/// Inverse projection is not supported in this implementation.
 /// <para>The forward formulation was independently verified against the standard Denoyer
 /// semi-elliptical equation. The implementation matches the cosine longitude scaling with
 /// the published polynomial-in-<c>|lambda|</c> and latitude modulation terms.</para>

@@ -12,7 +12,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical van der Grinten II projection (<c>vandg2</c>).
 /// </summary>
 /// <remarks>
-/// Inverse projection is not supported.
+/// Inverse projection is not supported in this implementation.
 /// <para>The forward formulation was independently verified against the van der Grinten II
 /// construction. The implementation matches the reduced-latitude term <c>bt</c>, the
 /// auxiliary quantity <c>at</c>, and the resulting circular-arc placement.</para>

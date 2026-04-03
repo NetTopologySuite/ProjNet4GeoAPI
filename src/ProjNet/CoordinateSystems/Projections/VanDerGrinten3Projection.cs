@@ -12,7 +12,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical van der Grinten III projection (<c>vandg3</c>).
 /// </summary>
 /// <remarks>
-/// Inverse projection is not supported.
+/// Inverse projection is not supported in this implementation.
 /// <para>The forward formulation was independently verified against the van der Grinten III
 /// construction. The implementation matches the simplified auxiliary expression used to
 /// recover x from <c>bt</c> and <c>at</c>, with y taken directly from the reduced latitude.</para>

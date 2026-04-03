@@ -12,7 +12,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical Ginsburg VIII projection (<c>gins8</c>).
 /// </summary>
 /// <remarks>
-/// Inverse projection is not supported.
+/// Inverse projection is not supported in this implementation.
 /// <para>The forward formulation was independently verified against the standard Ginsburg
 /// VIII polynomial approximation. The implementation matches the latitude series
 /// <c>y = phi * (1 + phi^2 / 12)</c> and the longitude scaling that combines latitude and

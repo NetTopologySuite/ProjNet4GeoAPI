@@ -11,6 +11,9 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Airy projection (<c>airy</c>).
 /// </summary>
+/// <remarks>
+/// Inverse projection is not supported in this implementation.
+/// </remarks>
 internal class AiryProjection : MapProjection
 {
     private const double Epsilon = 1e-10d;

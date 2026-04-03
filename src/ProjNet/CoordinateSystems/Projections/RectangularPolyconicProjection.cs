@@ -12,7 +12,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical Rectangular Polyconic projection (<c>rpoly</c>).
 /// </summary>
 /// <remarks>
-/// Inverse projection is not supported.
+/// Inverse projection is not supported in this implementation.
 /// <para>The forward formulation was independently verified against the historical War
 /// Department rectangular polyconic construction. The implementation matches the
 /// true-scale-latitude branch and the simpler equatorial branch used when <c>lat_ts</c> is

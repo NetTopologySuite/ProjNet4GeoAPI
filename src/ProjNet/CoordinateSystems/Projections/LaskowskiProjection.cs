@@ -12,7 +12,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical Laskowski projection (<c>lask</c>).
 /// </summary>
 /// <remarks>
-/// Inverse projection is not supported.
+/// Inverse projection is not supported in this implementation.
 /// <para>The forward formulation was independently verified against the published Laskowski
 /// polynomial. The implementation matches the tabulated x/y coefficient set used for the
 /// fifth-order pseudocylindrical approximation.</para>

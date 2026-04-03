@@ -12,7 +12,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the Bertin 1953 projection (<c>bertin1953</c>).
 /// </summary>
 /// <remarks>
-/// Inverse projection is not supported.
+/// Inverse projection is not supported in this implementation.
 /// </remarks>
 internal sealed class Bertin1953Projection : MapProjection
 {

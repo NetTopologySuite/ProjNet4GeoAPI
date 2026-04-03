@@ -13,7 +13,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </summary>
 /// <remarks>
 /// Wagner VII is an equal-area polyconic projection with curved meridians and parallels.
-/// Inverse projection is not supported.
+/// Inverse projection is not supported in this implementation.
 /// <para>The forward formulation was independently verified against the standard Wagner VII
 /// construction. The implementation matches the auxiliary latitude
 /// <c>theta = asin(0.9063077870 * sin(phi))</c>, the one-third longitude step, and the final

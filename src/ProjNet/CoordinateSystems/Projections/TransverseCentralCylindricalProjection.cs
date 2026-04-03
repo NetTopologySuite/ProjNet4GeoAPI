@@ -12,7 +12,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical Transverse Central Cylindrical projection (<c>tcc</c>).
 /// </summary>
 /// <remarks>
-/// The inverse transformation is not supported. Transforming coordinates via the inverse
+/// The inverse transformation is not supported in this implementation. Transforming coordinates via the inverse
 /// projection will throw an <see cref="InvalidOperationException"/>.
 /// <para>The forward formulation was independently verified against the standard spherical
 /// transverse central cylindrical equations. The implementation matches the normalized

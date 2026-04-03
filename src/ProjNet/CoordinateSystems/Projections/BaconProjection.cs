@@ -12,7 +12,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical Bacon / Apian / Ortelius globular projections.
 /// </summary>
 /// <remarks>
-/// Inverse projection is not supported.
+/// Inverse projection is not supported in this implementation.
 /// <para>The forward family logic was independently verified against the historical oval and
 /// globular constructions associated with Bacon, Apian, and Ortelius. The implementation
 /// matches the shared circular-arc longitude construction and the Ortelius wide-longitude

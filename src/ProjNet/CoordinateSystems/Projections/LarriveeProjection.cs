@@ -12,7 +12,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical Larrivee projection (<c>larr</c>).
 /// </summary>
 /// <remarks>
-/// Inverse projection is not supported.
+/// Inverse projection is not supported in this implementation.
 /// <para>The forward formulation was independently verified against the published Larrivee
 /// equations. The implementation matches the characteristic
 /// <c>x = 0.5 * lambda * (1 + sqrt(cos(phi)))</c> term and the denominator used for the

@@ -14,7 +14,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <remarks>
 /// Urmaev V is a forward-only spherical projection associated with Urmaev. It combines the
 /// parameterized <c>asin(n * sin(phi))</c> auxiliary latitude with an additional cubic
-/// y-scaling term controlled by <c>q</c>.
+/// y-scaling term controlled by <c>q</c>. Inverse projection is not supported in this
+/// implementation.
 /// </remarks>
 internal class Urmaev5Projection : MapProjection
 {
