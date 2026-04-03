@@ -14,6 +14,22 @@ using ProjNet.CoordinateSystems.Projections;
 /// <summary>
 /// Implements PROJ's <c>ob_tran</c> runtime transform by rotating geographic coordinates and delegating to a child projection.
 /// </summary>
+/// <remarks>
+/// <para>
+/// The general oblique transformation rotates geographic coordinates into a
+/// derived pole or equator definition and then delegates the rotated
+/// coordinates to a child projection. This implementation supports PROJ's three
+/// standard rotation parameterizations: new-pole, rotate-about-point, and
+/// two-point new-equator modes.
+/// </para>
+/// <para>
+/// The runtime was independently verified against PROJ's published
+/// <c>ob_tran</c> documentation and <c>ob_tran.cpp</c>. The forward and inverse
+/// paths preserve the reviewed oblique/transverse rotation logic before and
+/// after the delegated child projection step.
+/// </para>
+/// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/projections/ob_tran.html">PROJ: ob_tran.</seealso>
 internal sealed class ObTranMathTransform : MathTransform
 {
     private const double Tolerance = 1e-10d;

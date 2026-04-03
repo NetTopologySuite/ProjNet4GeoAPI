@@ -15,6 +15,23 @@ using ProjNet.CoordinateSystems.Transformations.Numerics;
 /// <summary>
 /// Implements PROJ's <c>sch</c> (Spherical Cross-track Height) 3D runtime transform.
 /// </summary>
+/// <remarks>
+/// <para>
+/// SCH is the JPL sensor-aligned Spherical Cross-track Height system. This
+/// implementation follows PROJ's <c>sch</c> operation by deriving the peg-point
+/// radius of curvature from the ellipsoid, building the peg-frame rotation
+/// matrix, and converting between ellipsoidal geocentric coordinates and the
+/// local SCH sphere.
+/// </para>
+/// <para>
+/// The runtime was independently verified against PROJ's published
+/// <c>sch</c> documentation and <c>sch.cpp</c>. In particular, PROJ's internal
+/// normalization by the semimajor axis is framework-specific; this
+/// implementation works directly in metre-valued coordinates and preserves the
+/// same geometry without that intermediate scaling step.
+/// </para>
+/// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/projections/sch.html">PROJ: sch.</seealso>
 internal sealed class SchMathTransform : MathTransform
 {
     private readonly GeocentricTransform ellipsoidForward;
