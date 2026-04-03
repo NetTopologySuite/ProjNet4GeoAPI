@@ -10,6 +10,11 @@ using System.Collections.Generic;
 /// <summary>
 /// Implements the spherical Wagner VI projection (<c>wag6</c>).
 /// </summary>
+/// <remarks>
+/// This projection specializes <see cref="Eckert3Projection"/> with the Wagner VI
+/// coefficient set, so its numerical behavior follows the same verified Eckert III
+/// style base formulation.
+/// </remarks>
 internal class Wagner6Projection : Eckert3Projection
 {
     /// <summary>

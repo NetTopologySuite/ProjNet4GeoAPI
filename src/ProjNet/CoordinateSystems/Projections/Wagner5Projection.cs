@@ -10,6 +10,11 @@ using System.Collections.Generic;
 /// <summary>
 /// Implements the spherical Wagner V projection (<c>wag5</c>).
 /// </summary>
+/// <remarks>
+/// This projection specializes <see cref="MollweideProjection"/> through fixed
+/// coefficient overrides, so its numerical behavior follows the verified Mollweide
+/// base formulation.
+/// </remarks>
 internal class Wagner5Projection : MollweideProjection
 {
     /// <summary>

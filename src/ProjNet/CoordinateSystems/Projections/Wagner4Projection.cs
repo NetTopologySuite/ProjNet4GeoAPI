@@ -10,6 +10,11 @@ using System.Collections.Generic;
 /// <summary>
 /// Implements the spherical Wagner IV projection (<c>wag4</c>).
 /// </summary>
+/// <remarks>
+/// This projection specializes <see cref="MollweideProjection"/> through a fixed
+/// auxiliary-angle parameter set, so its numerical behavior follows the verified
+/// Mollweide base formulation.
+/// </remarks>
 internal class Wagner4Projection : MollweideProjection
 {
     /// <summary>

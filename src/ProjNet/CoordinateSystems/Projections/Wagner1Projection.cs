@@ -10,6 +10,11 @@ using System.Collections.Generic;
 /// <summary>
 /// Implements the spherical Wagner I projection (<c>wag1</c>).
 /// </summary>
+/// <remarks>
+/// This projection specializes <see cref="UrmaevFlatPolarSinusoidalProjection"/> with
+/// the Wagner I parameter set, so its numerical behavior follows the verified flat-polar
+/// sinusoidal base formulation.
+/// </remarks>
 internal class Wagner1Projection : UrmaevFlatPolarSinusoidalProjection
 {
     /// <summary>
