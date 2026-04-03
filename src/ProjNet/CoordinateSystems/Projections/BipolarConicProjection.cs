@@ -11,6 +11,12 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical bipolar conic projection of the western hemisphere (<c>bipc</c>).
 /// </summary>
+/// <remarks>
+/// Bipolar Conic is the spherical western-hemisphere projection described by Snyder. The
+/// implementation switches between the two cone centers, evaluates the shared bipolar-conic
+/// radius and azimuth relations, and optionally applies the historical <c>noskew</c>
+/// presentation used by PROJ.
+/// </remarks>
 internal class BipolarConicProjection : MapProjection
 {
     private const double Epsilon = 1e-10d;

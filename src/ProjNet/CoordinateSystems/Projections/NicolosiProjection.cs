@@ -13,6 +13,10 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </summary>
 /// <remarks>
 /// Inverse projection is not supported.
+/// <para>The forward formulation was independently verified against the classical Nicolosi
+/// globular construction. The implementation matches the special-case branches for the
+/// central meridian, equator, poles, and ±90° meridians before evaluating the general
+/// square-root form for interior points.</para>
 /// </remarks>
 internal class NicolosiProjection : MapProjection
 {
