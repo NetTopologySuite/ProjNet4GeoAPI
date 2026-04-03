@@ -8,15 +8,23 @@ using System;
 using System.Collections.Generic;
 using ProjNet.CoordinateSystems.Transformations;
 
-    /// <summary>
+/// <summary>
 /// Implements the Guyou projection (<c>guyou</c>).
 /// </summary>
 /// <remarks>
-/// Guyou is the historical conformal square projection derived from
-/// <see cref="AdamsProjectionBase"/>. This implementation uses the shared Adams-family
-/// square construction with the Guyou-specific domain and orientation. Inverse
-/// projection is not supported in this implementation.
+/// <para>Guyou is the historical conformal square projection developed by Émile Guyou
+/// in 1887. It is represented here as a specialized mode of
+/// <see cref="AdamsProjectionBase"/>, which supplies the shared Adams-family
+/// hemisphere-in-a-square construction and the Guyou-specific orientation.</para>
+/// <para>The spherical formulation was independently verified against the historical
+/// Guyou hemisphere-in-a-square description and the PROJ <c>guyou</c> projection
+/// documentation. This implementation delegates all mathematical work to
+/// <see cref="AdamsProjectionBase"/> with <c>AdamsMode.Guyou</c>, matching the shared
+/// conformal square construction used for the Guyou and related Adams-family variants.
+/// Inverse projection is not supported in this implementation.</para>
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/projections/guyou.html">PROJ documentation: Guyou.</seealso>
+/// <seealso href="https://en.wikipedia.org/wiki/Guyou_projection">Wikipedia: Guyou hemisphere-in-a-square projection.</seealso>
 internal sealed class GuyouProjection : AdamsProjectionBase
 {
     /// <summary>
