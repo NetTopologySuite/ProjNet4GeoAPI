@@ -12,6 +12,22 @@ using System.Globalization;
 /// <summary>
 /// Implements PROJ's <c>horner</c> polynomial runtime transform.
 /// </summary>
+/// <remarks>
+/// <para>
+/// Horner polynomial transforms evaluate either real polynomial coefficient
+/// fields or complex polynomial series around configured origins to model local
+/// frame distortions. This implementation supports explicit inverse
+/// coefficients when provided and otherwise falls back to the reviewed
+/// iterative inverse solver.
+/// </para>
+/// <para>
+/// The runtime was independently verified against PROJ's published
+/// <c>horner</c> documentation and <c>horner.cpp</c>, including the coefficient
+/// ordering, complex-polynomial handling, and the iterative inverse path for
+/// cases where only forward coefficients are available.
+/// </para>
+/// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/transformations/horner.html">PROJ: horner.</seealso>
 internal sealed class HornerMathTransform : MathTransform
 {
     private const int MaximumSupportedDegree = 10000;

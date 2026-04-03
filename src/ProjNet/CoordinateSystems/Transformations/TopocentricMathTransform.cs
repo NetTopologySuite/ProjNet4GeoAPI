@@ -13,6 +13,23 @@ using ProjNet.CoordinateSystems;
 /// <summary>
 /// Implements PROJ's <c>topocentric</c> 3D runtime conversion.
 /// </summary>
+/// <remarks>
+/// <para>
+/// This runtime converts between geocentric XYZ coordinates and a local
+/// topocentric east-north-up frame anchored at a specified origin. The origin
+/// can be supplied directly in geocentric coordinates or derived from
+/// geographic <c>lon_0</c>, <c>lat_0</c>, and <c>h_0</c> parameters through the
+/// companion geocentric conversion.
+/// </para>
+/// <para>
+/// The formulas and axis orientation were independently verified against PROJ's
+/// published <c>topocentric</c> documentation, which ties the operation to the
+/// IOGP geocentric/topocentric formulas and EPSG methods 9836 and 9837.
+/// </para>
+/// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/conversions/topocentric.html">PROJ: topocentric.</seealso>
+/// <seealso href="https://epsg.io/9836-method">EPSG method 9836: Geocentric/topocentric conversions.</seealso>
+/// <seealso href="https://epsg.io/9837-method">EPSG method 9837: Geographic/topocentric conversions.</seealso>
 internal sealed class TopocentricMathTransform : MathTransform
 {
     private readonly double originX;
