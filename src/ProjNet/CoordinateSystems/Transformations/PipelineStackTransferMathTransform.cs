@@ -11,6 +11,12 @@ using System.Diagnostics.CodeAnalysis;
 /// <summary>
 /// Implements PROJ pipeline stack transfer steps (<c>push</c> and <c>pop</c>).
 /// </summary>
+/// <remarks>
+/// Stack-transfer steps move selected ordinates between the live coordinate
+/// tuple and the shared pipeline execution stack. <c>push</c> stores enabled
+/// ordinates for later reuse, while <c>pop</c> restores them, matching PROJ's
+/// pipeline context transfer model.
+/// </remarks>
 internal sealed class PipelineStackTransferMathTransform : MathTransform
 {
     private readonly bool isPush;

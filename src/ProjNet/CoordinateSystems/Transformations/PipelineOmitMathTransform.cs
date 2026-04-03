@@ -9,6 +9,12 @@ using System;
 /// <summary>
 /// Wraps a pipeline step and conditionally omits it for forward and inverse traversal.
 /// </summary>
+/// <remarks>
+/// Pipeline omission wraps an inner step but can turn that step into an
+/// effective identity in the forward direction, the inverse direction, or both.
+/// As a result, <see cref="Identity()"/> is intentionally direction-dependent
+/// and reflects whether the current forward traversal skips the wrapped step.
+/// </remarks>
 internal sealed class PipelineOmitMathTransform : MathTransform
 {
     private readonly MathTransform inner;
