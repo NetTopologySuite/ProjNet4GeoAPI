@@ -12,8 +12,18 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical August Epicycloidal projection (<c>august</c>).
 /// </summary>
 /// <remarks>
-/// Inverse projection is not supported in this implementation.
+/// <para>The August Epicycloidal projection is a spherical conformal world-map
+/// construction that transforms the reduced longitude and latitude through an
+/// epicycloidal polynomial form. This implementation follows PROJ's
+/// <c>august</c> formulation and uses the standard 4/3 scale factor in the
+/// forward equations.</para>
+/// <para>Snyder catalogs it as F. W. O. August's conformal epicycloidal world
+/// projection, whose 180-degree meridians form a two-cusped epicycloid while the
+/// equator and central meridian remain straight.</para>
+/// <para>This projection remains forward-only in PROJ and in this implementation, so
+/// inverse projection is not supported.</para>
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/projections/august.html">PROJ documentation: August Epicycloidal.</seealso>
 internal class AugustProjection : MapProjection
 {
     private const double M = 1.333333333333333d;

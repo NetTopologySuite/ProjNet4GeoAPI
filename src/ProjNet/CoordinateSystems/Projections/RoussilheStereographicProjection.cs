@@ -12,10 +12,18 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the Roussilhe stereographic projection (<c>rouss</c>).
 /// </summary>
 /// <remarks>
-/// Roussilhe Stereographic is a historical French geodetic approximation to oblique
-/// stereographic. The implementation precomputes the coefficient set for the Roussilhe
-/// Taylor-series expansion and uses those coefficients for the forward and inverse forms.
+/// <para>Roussilhe Stereographic is a historical French geodetic approximation to
+/// oblique stereographic. The implementation precomputes the coefficient set for the
+/// Roussilhe Taylor-series expansion and uses those coefficients for the forward and
+/// inverse forms.</para>
+/// <para>This implementation matches PROJ's <c>rouss</c> formulation and the
+/// Roussilhe stereographic description summarized by Snyder for Henri Roussilhe's
+/// 1922 quasistereographic conformal projection of the ellipsoid. The forward and
+/// inverse paths evaluate the precomputed coefficient families, including the
+/// eleven-term inverse series, that approximate the underlying double-conformal
+/// ellipsoid-to-sphere then stereographic construction.</para>
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/projections/rouss.html">PROJ documentation: Roussilhe Stereographic.</seealso>
 internal sealed class RoussilheStereographicProjection : MapProjection
 {
     private readonly double s0;

@@ -12,12 +12,22 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the Airocean projection (<c>airocean</c>).
 /// </summary>
 /// <remarks>
-/// Airocean is an icosahedral world map inspired by Buckminster Fuller's Dymaxion concept.
-/// The implementation projects the geographic position onto a selected icosahedron face,
-/// transforms that face into the unfolded Airocean layout, and optionally rotates the final
-/// arrangement between vertical and horizontal orientations. Inverse projection is
-/// supported for both orientations in this implementation.
+/// <para>Airocean is an icosahedral world map inspired by Buckminster Fuller's
+/// Dymaxion concept. The implementation projects the geographic position onto a
+/// selected icosahedron face, transforms that face into the unfolded Airocean
+/// layout, and optionally rotates the final arrangement between vertical and
+/// horizontal orientations. Inverse projection is supported for both orientations
+/// in this implementation.</para>
+/// <para>This implementation follows PROJ's <c>airocean</c> formulation for the
+/// Fuller/Sadao icosahedral world-map concept: Buckminster Fuller introduced the
+/// Dymaxion world map in 1943, Fuller and Shoji Sadao moved the layout to an
+/// icosahedral Airocean form in 1954, and Robert W. Gray later published exact
+/// transformation equations in <i>Cartographica</i> 32(3), 1995,
+/// doi:10.3138/1677-3273-Q862-1885.</para>
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/projections/airocean.html">PROJ documentation: Airocean.</seealso>
+/// <seealso href="https://doi.org/10.3138/1677-3273-Q862-1885">Gray, R.W. (1995): Exact Transformation Equations for Fuller's World Map.</seealso>
+/// <seealso href="https://en.wikipedia.org/wiki/Dymaxion_map">Wikipedia: Dymaxion map.</seealso>
 internal sealed class AiroceanProjection : MapProjection
 {
     private const int OrientationVertical = 0;

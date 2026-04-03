@@ -12,8 +12,18 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the spherical Airy projection (<c>airy</c>).
 /// </summary>
 /// <remarks>
-/// Inverse projection is not supported in this implementation.
+/// <para>The Airy projection is a spherical azimuthal minimum-error construction for
+/// the region bounded by an angular distance from the tangency point. This
+/// implementation follows PROJ's <c>airy</c> formulation, including the
+/// aspect-dependent forward equations, the optional <c>lat_b</c> minimum-error
+/// radius parameter, and the <c>no_cut</c> option for hemisphere clipping.</para>
+/// <para>George Biddell Airy introduced this minimum-error azimuthal projection in
+/// 1861. Snyder's summary notes that the construction approaches azimuthal
+/// equidistant behaviour for beta values up to 90 degrees. Inverse projection is
+/// not supported in this implementation.</para>
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/projections/airy.html">PROJ documentation: Airy.</seealso>
+/// <seealso href="https://mathworld.wolfram.com/AiryProjection.html">MathWorld: Airy Projection.</seealso>
 internal class AiryProjection : MapProjection
 {
     private const double Epsilon = 1e-10d;
