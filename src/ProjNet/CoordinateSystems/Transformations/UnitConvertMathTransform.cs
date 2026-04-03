@@ -9,6 +9,11 @@ using System;
 /// <summary>
 /// Applies linear unit-conversion scale factors to the X, Y, and optionally Z ordinates of a coordinate.
 /// </summary>
+/// <remarks>
+/// Unit conversion is a pure scaling transform: <c>x *= scale</c>,
+/// <c>y *= scale</c>, and for 3D coordinates <c>z *= zScale</c>. Construction
+/// rejects non-positive or non-finite scale factors so the inverse always exists.
+/// </remarks>
 internal sealed class UnitConvertMathTransform : MathTransform
 {
     private readonly int dimension;

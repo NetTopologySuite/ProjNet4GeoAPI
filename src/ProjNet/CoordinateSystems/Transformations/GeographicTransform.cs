@@ -64,7 +64,13 @@ public class GeographicTransform : MathTransform
     /// Creates the inverse transform of this object.
     /// </summary>
     /// <returns>A <see cref="MathTransform"/> that reverses this geographic transformation.</returns>
-    /// <remarks>This method may fail if the transform is not one to one. However, all cartographic projections should succeed.</remarks>
+    /// <remarks>
+    /// This transform applies only the prime-meridian longitude shift between
+    /// the two geographic coordinate systems. The longitude is first normalized
+    /// with the source angular unit and then restored using the target prime-
+    /// meridian longitude, while unit conversion itself remains the caller's
+    /// responsibility in the broader transformation chain.
+    /// </remarks>
     public override MathTransform Inverse()
     {
         throw new NotImplementedException();

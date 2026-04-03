@@ -8,6 +8,12 @@ using System;
 /// <summary>
 /// Resolves the best available coordinate operation candidate for a source/target pair.
 /// </summary>
+/// <remarks>
+/// Resolution is intentionally lightweight: it scores at most two candidates,
+/// an identity operation when source and target are parameter-equivalent, and a
+/// direct non-identity operation returned by the supplied resolver. The higher
+/// score wins, so exact identity is preferred whenever it is valid.
+/// </remarks>
 internal static class CoordinateOperationResolver
 {
     /// <summary>

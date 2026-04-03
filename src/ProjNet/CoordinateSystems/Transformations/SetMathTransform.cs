@@ -12,6 +12,12 @@ using System.Globalization;
 /// <summary>
 /// Implements PROJ's <c>set</c> runtime conversion by overriding selected coordinate components.
 /// </summary>
+/// <remarks>
+/// The <c>set</c> operation replaces selected coordinate components with fixed
+/// constants and leaves all other ordinates unchanged. This behavior is
+/// intentionally idempotent, so PROJ's self-inverse convention is preserved for
+/// non-identity instances.
+/// </remarks>
 internal sealed class SetMathTransform : MathTransform
 {
     private static readonly MathTransform SharedIdentityInverse = new IdentityMathTransform(3);

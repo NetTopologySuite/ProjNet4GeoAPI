@@ -9,6 +9,10 @@ using System;
 /// <summary>
 /// Represents a pass-through transform that leaves all ordinates unchanged.
 /// </summary>
+/// <remarks>
+/// Identity is the mathematical no-op transform: all ordinates pass through
+/// unchanged, and the transform is its own inverse.
+/// </remarks>
 internal sealed class IdentityMathTransform : MathTransform
 {
     private readonly int dimension;
