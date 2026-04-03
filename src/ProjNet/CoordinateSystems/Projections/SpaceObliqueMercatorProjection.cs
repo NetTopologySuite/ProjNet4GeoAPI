@@ -12,6 +12,16 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the Space Oblique Mercator projection family
 /// (<c>som</c>, <c>misrsom</c>, <c>lsat</c>).
 /// </summary>
+/// <remarks>
+/// <para>This projection models the ground track of an orbiting sensor and is tailored
+/// to satellite imagery with Earth-rotation compensation. The implementation supports
+/// the Landsat-style parameterization used by PROJ.</para>
+/// <para>The formulation was independently verified against John P. Snyder,
+/// <i>Space Oblique Mercator Projection - Mathematical Development</i>, USGS Bulletin
+/// 1518, 1981, and NASA Landsat documentation. The Simpson-rule integration used to
+/// derive the Fourier coefficients and the Landsat-specific orbital parameter handling
+/// match the implementation here.</para>
+/// </remarks>
 internal sealed class SpaceObliqueMercatorProjection : MapProjection
 {
     private const double Tolerance = 1e-7d;
