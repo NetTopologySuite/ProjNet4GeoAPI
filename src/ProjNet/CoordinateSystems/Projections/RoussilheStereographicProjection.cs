@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the Roussilhe stereographic projection (<c>rouss</c>).
 /// </summary>
+/// <remarks>
+/// Roussilhe Stereographic is a historical French geodetic approximation to oblique
+/// stereographic. The implementation precomputes the coefficient set for the Roussilhe
+/// Taylor-series expansion and uses those coefficients for the forward and inverse forms.
+/// </remarks>
 internal sealed class RoussilheStereographicProjection : MapProjection
 {
     private readonly double s0;

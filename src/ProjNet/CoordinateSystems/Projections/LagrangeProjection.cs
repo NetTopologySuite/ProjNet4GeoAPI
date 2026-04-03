@@ -11,6 +11,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the spherical Lagrange projection (<c>lagrng</c>).
 /// </summary>
+/// <remarks>
+/// Lagrange is the conformal spherical projection associated with Lambert and Lagrange in
+/// the eighteenth century. The implementation uses the parameter <c>W</c> and the reference
+/// latitude <c>lat_1</c> to build the classic circular conformal mapping.
+/// </remarks>
 internal class LagrangeProjection : MapProjection
 {
     private const double Tolerance = 1e-10d;

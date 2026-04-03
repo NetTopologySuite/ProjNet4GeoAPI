@@ -11,6 +11,12 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Implements the Laborde projection (<c>labrd</c>).
 /// </summary>
+/// <remarks>
+/// Laborde is the oblique conformal projection introduced for Madagascar by Jean Laborde in
+/// 1928. The implementation follows the classical conformal-sphere setup and then applies
+/// the Laborde polynomial correction terms that distinguish this projection from standard
+/// oblique Mercator forms.
+/// </remarks>
 internal class LabordeProjection : MapProjection
 {
     private const int MaximumIterations = 20;
