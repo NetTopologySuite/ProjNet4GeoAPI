@@ -14,7 +14,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <remarks>
 /// Adams World in a Square II is the second full-world specialization of
 /// <see cref="AdamsProjectionBase"/>. It uses the alternate Adams world-in-a-square layout
-/// that also supports the corresponding inverse routine in this implementation.
+/// that also supports the corresponding inverse routine in this implementation for the
+/// full-world Adams WS2 mode.
 /// </remarks>
 internal sealed class AdamsWorldInSquare2Projection : AdamsProjectionBase
 {
