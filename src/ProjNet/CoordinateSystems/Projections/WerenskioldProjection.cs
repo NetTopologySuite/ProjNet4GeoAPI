@@ -10,6 +10,11 @@ using System.Collections.Generic;
 /// <summary>
 /// Implements the spherical Werenskiold I projection (<c>weren</c>).
 /// </summary>
+/// <remarks>
+/// This projection specializes <see cref="PutninsP4PProjection"/> with the
+/// Werenskiold coefficient set, so its numerical behavior follows the same verified
+/// base formulation.
+/// </remarks>
 internal class WerenskioldProjection : PutninsP4PProjection
 {
     /// <summary>

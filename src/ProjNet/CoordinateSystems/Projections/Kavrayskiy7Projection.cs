@@ -10,6 +10,11 @@ using System.Collections.Generic;
 /// <summary>
 /// Implements the spherical Kavrayskiy VII projection (<c>kav7</c>).
 /// </summary>
+/// <remarks>
+/// This projection specializes <see cref="Eckert3Projection"/> with the Kavrayskiy VII
+/// coefficient set, so its numerical behavior follows the same verified Eckert III style
+/// base formulation.
+/// </remarks>
 internal class Kavrayskiy7Projection : Eckert3Projection
 {
     /// <summary>
