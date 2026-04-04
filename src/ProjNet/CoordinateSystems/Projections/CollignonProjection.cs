@@ -14,8 +14,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <remarks>
 /// Collignon is a spherical equal-area pseudocylindrical projection, historically used for
 /// triangular world maps after its introduction by Edouard Collignon in 1865. The
-/// forward equations use the auxiliary term <c>sqrt(1 - sin(phi))</c> to produce the compact
-/// relation <c>x ~ lambda * sqrt(1 - sin(phi))</c> and a linearized polar distance in
+/// forward equations use the auxiliary term <c>sqrt(1 - sin(φ))</c> to produce the compact
+/// relation <c>x ~ λ * sqrt(1 - sin(φ))</c> and a linearized polar distance in
 /// <c>y</c>.
 /// </remarks>
 internal class CollignonProjection : MapProjection

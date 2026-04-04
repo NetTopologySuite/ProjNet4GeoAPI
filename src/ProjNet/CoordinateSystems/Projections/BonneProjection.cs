@@ -18,7 +18,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// must be non-zero; at ±90° the projection degenerates to a Werner projection.
 /// The formulation was independently verified against IOGP, "Geomatics Guidance Note 7,
 /// part 2: Coordinate Conversions and Transformations including Formulas" (publication
-/// 373-7-2, 2019), EPSG method 9827, Bonne. The <c>rho</c> computation
+/// 373-7-2, 2019), EPSG method 9827, Bonne. The <c>ρ</c> computation
 /// <c>a * m0 / sin(lat0) + M0 - M</c> and the associated easting and northing equations
 /// using the meridian arc <c>M</c> match the implementation here.
 /// </remarks>

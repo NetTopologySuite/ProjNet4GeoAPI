@@ -17,7 +17,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Inverse projection is not supported in this implementation.
 /// <para>The forward formulation was independently verified against the standard Boggs
 /// construction as the mean of sinusoidal and Mollweide-style behavior. The implementation
-/// matches the auxiliary-angle iteration for <c>theta + sin(theta) = pi * sin(phi)</c> and
+/// matches the auxiliary-angle iteration for <c>θ + sin(θ) = π * sin(φ)</c> and
 /// the resulting easting and northing equations.</para>
 /// </remarks>
 internal class BoggsProjection : MapProjection
