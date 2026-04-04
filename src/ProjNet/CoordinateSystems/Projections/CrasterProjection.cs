@@ -14,8 +14,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <remarks>
 /// Craster Parabolic is a spherical equal-area pseudocylindrical projection introduced by
 /// J. E. E. Craster in 1929. The implementation uses the one-third latitude form
-/// <c>x = Xm * lambda * (2 * cos(2 * phi / 3) - 1)</c> and
-/// <c>y = Ym * sin(phi / 3)</c>.
+/// <c>x = Xm * λ * (2 * cos(2 * φ / 3) - 1)</c> and
+/// <c>y = Ym * sin(φ / 3)</c>.
 /// </remarks>
 internal class CrasterProjection : MapProjection
 {
