@@ -28,7 +28,7 @@ using ProjNet.CoordinateSystems.Transformations;
 ///     "Geomatics Guidance Note 7, part 2: Coordinate Conversions and
 ///     Transformations including Formulas" (publication 373-7-2, 2019), EPSG
 ///     method 9822, Albers Equal Area. The authalic <c>q</c>-function and
-///     derived <c>rho</c> relationships match the implementation here.</para>
+///     derived <c>ρ</c> relationships match the implementation here.</para>
 /// </remarks>
 /// <seealso href="https://epsg.io/9822-method">EPSG method 9822: Albers Equal Area.</seealso>
 internal class AlbersProjection : MapProjection
