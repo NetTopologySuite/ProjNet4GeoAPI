@@ -14,10 +14,10 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <remarks>
 /// General Sinusoidal is a parameterized spherical pseudocylindrical base described by
 /// Snyder for several related map projections. The parameters <c>m</c> and <c>n</c> control
-/// whether the auxiliary latitude is obtained directly through <c>asin(n * sin(phi))</c>
-/// or by solving <c>m * phi' + sin(phi') = n * sin(phi)</c> iteratively, after which the
+/// whether the auxiliary latitude is obtained directly through <c>asin(n * sin(φ))</c>
+/// or by solving <c>m * φ' + sin(φ') = n * sin(φ)</c> iteratively, after which the
 /// implementation applies the scaled relations
-/// <c>x = cX * lambda * (m + cos(phi'))</c> and <c>y = cY * phi'</c>.
+/// <c>x = cX * λ * (m + cos(φ'))</c> and <c>y = cY * φ'</c>.
 /// </remarks>
 internal class GeneralSinusoidalProjection : MapProjection
 {

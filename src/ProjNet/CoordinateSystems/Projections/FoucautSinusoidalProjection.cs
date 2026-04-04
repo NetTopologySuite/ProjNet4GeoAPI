@@ -15,8 +15,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Foucaut Sinusoidal is a spherical pseudocylindrical projection that blends sinusoidal
 /// behavior with a configurable Foucaut weighting parameter <c>n</c> in the range
 /// <c>[0, 1]</c>. The implementation evaluates
-/// <c>x = lambda * cos(phi) / (n + (1 - n) * cos(phi))</c> and
-/// <c>y = n * phi + (1 - n) * sin(phi)</c>, with an iterative inverse when
+/// <c>x = λ * cos(φ) / (n + (1 - n) * cos(φ))</c> and
+/// <c>y = n * φ + (1 - n) * sin(φ)</c>, with an iterative inverse when
 /// <c>n != 0</c>.
 /// </remarks>
 internal class FoucautSinusoidalProjection : MapProjection
