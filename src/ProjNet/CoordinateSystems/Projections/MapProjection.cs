@@ -37,7 +37,7 @@ public abstract class MapProjection : MathTransform, IProjection
     protected const double HugeVal = double.NaN;
 
     /// <summary>
-    /// The constant pi, equal to <see cref="Math.PI"/>.
+    /// The constant π, equal to <see cref="Math.PI"/>.
     /// </summary>
     protected const double PI = Math.PI;
 
@@ -62,7 +62,7 @@ public abstract class MapProjection : MathTransform, IProjection
     protected const double Epsln = Eps10;
 
     /// <summary>
-    /// Conversion factor from arc-seconds to radians (pi / 648000 ~= 4.848e-6).
+    /// Conversion factor from arc-seconds to radians (π / 648000 ~= 4.848e-6).
     /// </summary>
     protected const double S2R = 4.848136811095359e-6;
 
@@ -890,10 +890,10 @@ public abstract class MapProjection : MathTransform, IProjection
     }
 
     /// <summary>
-    /// Normalises a longitude angle into the canonical interval [-pi, pi].
+    /// Normalises a longitude angle into the canonical interval [-π, π].
     /// </summary>
     /// <param name="x">The longitude in radians to normalise.</param>
-    /// <returns>The normalised longitude in radians, within [-pi, pi].</returns>
+    /// <returns>The normalised longitude in radians, within [-π, π].</returns>
     protected static double Adjust_lon(double x)
     {
         long count = 0;
@@ -935,12 +935,12 @@ public abstract class MapProjection : MathTransform, IProjection
     }
 
     /// <summary>
-    /// Computes the small m function: the radius of a parallel of latitude phi divided by the semi-major axis.
+    /// Computes the small m function: the radius of a parallel of latitude φ divided by the semi-major axis.
     /// </summary>
     /// <param name="eccent">The ellipsoid eccentricity.</param>
     /// <param name="sinphi">The sine of the latitude angle phi.</param>
     /// <param name="cosphi">The cosine of the latitude angle phi.</param>
-    /// <returns>The value of the small m function for latitude phi.</returns>
+    /// <returns>The value of the small m function for latitude φ.</returns>
     protected static double Msfnz(double eccent, double sinphi, double cosphi)
     {
         double con;
@@ -954,7 +954,7 @@ public abstract class MapProjection : MathTransform, IProjection
     /// </summary>
     /// <param name="sinphi">The sine of the latitude angle phi.</param>
     /// <param name="eccent">The ellipsoid eccentricity.</param>
-    /// <returns>The value of the small q function for latitude phi.</returns>
+    /// <returns>The value of the small q function for latitude φ.</returns>
     protected static double Qsfnz(double sinphi, double eccent)
     {
         if (eccent > 1.0e-7)
@@ -968,12 +968,12 @@ public abstract class MapProjection : MathTransform, IProjection
     }
 
     /// <summary>
-    /// Computes the small q function with an explicit (1 - e^2) factor supplied by the caller.
+    /// Computes the small q function with an explicit (1 - e²) factor supplied by the caller.
     /// </summary>
     /// <param name="sinphi">The sine of the latitude angle phi.</param>
     /// <param name="eccent">The ellipsoid eccentricity.</param>
     /// <param name="one_es">One minus the square of the eccentricity (1 - e^2).</param>
-    /// <returns>The value of the small q function for latitude phi, or <see cref="HugeVal"/> on a singularity.</returns>
+    /// <returns>The value of the small q function for latitude φ, or <see cref="HugeVal"/> on a singularity.</returns>
     protected static double Qsfn(double sinphi, double eccent, double one_es)
     {
         if (eccent >= Eps7)
@@ -1163,7 +1163,7 @@ public abstract class MapProjection : MathTransform, IProjection
     }
 
     /// <summary>
-    /// Computes the meridian distance M from the equator to latitude phi using a four-coefficient series.
+    /// Computes the meridian distance M from the equator to latitude φ using a four-coefficient series.
     /// </summary>
     /// <param name="e0">The meridional arc coefficient e0.</param>
     /// <param name="e1">The meridional arc coefficient e1.</param>
@@ -1190,8 +1190,8 @@ public abstract class MapProjection : MathTransform, IProjection
     }
 
     /// <summary>
-    /// Calculates the latitude (phi) from a meridian distance.
-    /// Determines phi to TOL (1e-11) radians, about 1e-6 seconds.
+    /// Calculates the latitude (φ) from a meridian distance.
+    /// Determines φ to TOL (1e-11) radians, about 1e-6 seconds.
     /// </summary>
     /// <param name="arg">The meridional distance.</param>
     /// <returns>The latitude in radians corresponding to meridian distance <paramref name="arg"/>.</returns>
@@ -1308,7 +1308,7 @@ public abstract class MapProjection : MathTransform, IProjection
     private static double FlatteningFactor(double equatorialRadius, double polarRadius) => (equatorialRadius - polarRadius) / equatorialRadius;
 
     /// <summary>
-    /// Calculates the square of eccentricity according to es = (2f - f^2) where f is the <see cref="FlatteningFactor">flattening factor</see>.
+    /// Calculates the square of eccentricity according to es = (2f - f²) where f is the <see cref="FlatteningFactor">flattening factor</see>.
     /// </summary>
     /// <param name="equatorialRadius">The radius of the equator.</param>
     /// <param name="polarRadius">The radius of a circle touching the poles.</param>
