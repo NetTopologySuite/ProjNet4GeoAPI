@@ -18,9 +18,9 @@ using ProjNet.CoordinateSystems.Transformations;
 /// such as Wagner IV and Wagner V.
 /// <para>The formulation was independently verified against the Wikipedia article
 /// "Mollweide projection" and Eric W. Weisstein's MathWorld entry "Mollweide Projection".
-/// The auxiliary-angle equation <c>2 * theta + sin(2 * theta) = cp * sin(phi)</c> together
-/// with the forward relations <c>x = cx * lambda * cos(theta)</c> and
-/// <c>y = cy * sin(theta)</c> match the implementation here.</para>
+/// The auxiliary-angle equation <c>2 * θ + sin(2 * θ) = cp * sin(φ)</c> together
+/// with the forward relations <c>x = cx * λ * cos(θ)</c> and
+/// <c>y = cy * sin(θ)</c> match the implementation here.</para>
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Mollweide_projection">Wikipedia: Mollweide projection.</seealso>
 /// <seealso href="https://mathworld.wolfram.com/MollweideProjection.html">MathWorld: Mollweide Projection.</seealso>

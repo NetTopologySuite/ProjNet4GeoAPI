@@ -14,7 +14,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <remarks>
 /// McBryde-Thomas Flat-Polar Parabolic is one of the spherical pseudocylindrical projections
 /// developed by McBryde and Thomas in the mid-20th century. This variant uses the
-/// authalic-latitude substitution <c>asin(Csy * sin(phi))</c> together with the parabolic
+/// authalic-latitude substitution <c>asin(Csy * sin(φ))</c> together with the parabolic
 /// x/y scaling that distinguishes the family member.
 /// </remarks>
 internal class McBrydeThomasFlatPolarParabolicProjection : MapProjection

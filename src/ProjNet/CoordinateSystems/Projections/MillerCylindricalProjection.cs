@@ -16,8 +16,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// of the Mercator projection by compressing the latitude formula. Poles cannot be projected.
 /// <para>The formulation was independently verified against the Wikipedia article
 /// "Miller cylindrical projection". The forward northing
-/// <c>1.25 * ln(tan(pi / 4 + 0.4 * phi))</c> and its inverse recovery
-/// <c>2.5 * (atan(exp(0.8 * y)) - pi / 4)</c> match the implementation here.</para>
+/// <c>1.25 * ln(tan(π / 4 + 0.4 * φ))</c> and its inverse recovery
+/// <c>2.5 * (atan(exp(0.8 * y)) - π / 4)</c> match the implementation here.</para>
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Miller_cylindrical_projection">Wikipedia: Miller cylindrical projection.</seealso>
 internal class MillerCylindricalProjection : MapProjection
