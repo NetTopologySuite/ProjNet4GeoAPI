@@ -13,7 +13,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </summary>
 /// <remarks>
 /// Oblated Equal Area is Snyder's parameterized equal-area azimuthal transformation. The
-/// implementation rotates the central azimuth by <c>theta</c> and then applies the paired
+/// implementation rotates the central azimuth by <c>θ</c> and then applies the paired
 /// <c>m</c>/<c>n</c> angular distortions that create the oblated equal-area layout.
 /// </remarks>
 internal sealed class OblatedEqualAreaProjection : MapProjection

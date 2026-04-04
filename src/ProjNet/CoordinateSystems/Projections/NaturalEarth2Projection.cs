@@ -17,7 +17,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// via Newton–Raphson iteration.
 /// <para>The formulation was independently verified against Bojan Savric, Tom Patterson,
 /// and Bernhard Jenny, "The Natural Earth II map projection", 2015. The revised
-/// x/y scaling polynomials and the Newton iteration used to recover <c>phi</c> from the
+/// x/y scaling polynomials and the Newton iteration used to recover <c>φ</c> from the
 /// northing polynomial match the implementation here.</para>
 /// </remarks>
 /// <seealso href="https://berniejenny.info/pdf/2016_Savric_etal_NaturalEarthII.pdf">Natural Earth II projection paper.</seealso>

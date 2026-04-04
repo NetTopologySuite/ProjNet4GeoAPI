@@ -18,7 +18,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// and Tom Patterson, "A Polynomial Equation for the Natural Earth Projection",
 /// <i>Cartography and Geographic Information Science</i>, vol. 38, no. 4, pp. 363-372, 2011.
 /// The published x/y scaling polynomials and the Newton iteration used to recover
-/// <c>phi</c> from the northing polynomial match the implementation here.</para>
+/// <c>φ</c> from the northing polynomial match the implementation here.</para>
 /// </remarks>
 /// <seealso href="https://www.tandfonline.com/doi/abs/10.1559/15230406384363">Natural Earth projection paper.</seealso>
 /// <seealso href="https://en.wikipedia.org/wiki/Natural_Earth_projection">Wikipedia: Natural Earth projection.</seealso>

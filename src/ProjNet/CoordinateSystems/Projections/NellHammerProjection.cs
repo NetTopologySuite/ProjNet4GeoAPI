@@ -14,8 +14,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <remarks>
 /// Nell-Hammer is a spherical pseudocylindrical compromise projection that combines the
 /// Nell longitude scale with a Hammer-style latitude spacing. Its forward form is
-/// <c>x = 0.5 * lambda * (1 + cos(phi))</c>,
-/// <c>y = 2 * (phi - tan(phi / 2))</c>, and the inverse recovers <c>phi</c> by Newton
+/// <c>x = 0.5 * λ * (1 + cos(φ))</c>,
+/// <c>y = 2 * (φ - tan(φ / 2))</c>, and the inverse recovers <c>φ</c> by Newton
 /// iteration.
 /// </remarks>
 internal class NellHammerProjection : MapProjection
