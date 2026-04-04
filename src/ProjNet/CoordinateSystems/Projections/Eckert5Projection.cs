@@ -16,7 +16,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// evenly spaced straight parallels. The formulation was independently verified against
 /// John P. Snyder, <i>Map Projections - A Working Manual</i>
 /// (USGS Professional Paper 1395, 1987) and Max Eckert's 1906 description of the family.
-/// The forward equations <c>x = Xf * (1 + cos(phi)) * lambda</c> and <c>y = Yf * phi</c>
+/// The forward equations <c>x = Xf * (1 + cos(φ)) * λ</c> and <c>y = Yf * φ</c>
 /// match the implementation here.
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Eckert_projection">Wikipedia: Eckert projection family.</seealso>

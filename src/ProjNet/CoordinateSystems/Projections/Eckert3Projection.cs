@@ -16,8 +16,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// The formulation was independently verified against John P. Snyder,
 /// <i>Map Projections - A Working Manual</i> (USGS Professional Paper 1395, 1987),
 /// section 32, and Max Eckert's 1906 description of the family. The forward relation
-/// <c>x = Cx * lambda * (a + sqrt(1 - b * phi^2))</c> together with the linear
-/// <c>y = Cy * phi</c> term matches the implementation here.
+/// <c>x = Cx * λ * (a + sqrt(1 - b * φ²))</c> together with the linear
+/// <c>y = Cy * φ</c> term matches the implementation here.
 /// </remarks>
 /// <seealso href="https://neacsu.net/geodesy/snyder/7-pseudocylindrical/sect_32/">Snyder section 32: pseudocylindrical projections.</seealso>
 internal class Eckert3Projection : MapProjection

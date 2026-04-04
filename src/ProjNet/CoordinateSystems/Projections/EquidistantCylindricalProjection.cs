@@ -18,7 +18,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// The spherical formulation was independently verified against IOGP, "Geomatics Guidance
 /// Note 7, part 2: Coordinate Conversions and Transformations including Formulas"
 /// (publication 373-7-2, 2019), EPSG methods 1029 and 1028. The easting and northing
-/// equations <c>E = a * cos(latSP) * lambda</c> and <c>N = a * phi</c> match the
+/// equations <c>E = a * cos(latSP) * λ</c> and <c>N = a * φ</c> match the
 /// implementation here.
 /// </remarks>
 /// <seealso href="https://epsg.io/1029-method">EPSG method 1029: Equidistant Cylindrical (spherical).</seealso>

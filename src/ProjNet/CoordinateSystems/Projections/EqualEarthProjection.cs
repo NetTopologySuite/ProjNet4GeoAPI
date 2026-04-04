@@ -18,7 +18,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Bojan Savric, Tom Patterson, and Bernhard Jenny, "The Equal Earth map projection,"
 /// <i>International Journal of Geographical Information Science</i>, vol. 33, no. 3,
 /// pp. 454-465, 2018, doi:10.1080/13658816.2018.1504949. The published <c>A1</c>
-/// through <c>A4</c> coefficients and <c>sin(theta) = (sqrt(3) / 2) * sin(phi)</c>
+/// through <c>A4</c> coefficients and <c>sin(θ) = (sqrt(3) / 2) * sin(φ)</c>
 /// relation match the implementation here.
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Equal_Earth_projection">Wikipedia: Equal Earth projection.</seealso>

@@ -16,8 +16,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// solves an auxiliary angle iteratively. The formulation was independently verified
 /// against the Wikipedia article "Eckert IV projection" and Eric W. Weisstein's
 /// MathWorld entry "Eckert IV Projection". The Newton iteration for
-/// <c>theta + sin(theta) * (cos(theta) + 2) = (2 + pi / 2) * sin(phi)</c> and the resulting
-/// <c>x = Cx * lambda * (1 + cos(theta))</c>, <c>y = Cy * sin(theta)</c> equations match the
+/// <c>θ + sin(θ) * (cos(θ) + 2) = (2 + π / 2) * sin(φ)</c> and the resulting
+/// <c>x = Cx * λ * (1 + cos(θ))</c>, <c>y = Cy * sin(θ)</c> equations match the
 /// implementation here.
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Eckert_IV_projection">Wikipedia: Eckert IV projection.</seealso>
