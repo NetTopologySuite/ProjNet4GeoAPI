@@ -69,7 +69,7 @@ public enum DatumType : int
     /// approximations of orthometric heights obtained with the help of a barometer or
     /// a barometric altimeter. These values are usually expressed in one of the
     /// following units: meters, feet, millibars (used to measure pressure levels), or
-    /// theta value (units used to measure geopotential height).
+    /// θ value (units used to measure geopotential height).
     /// </summary>
     VD_AltitudeBarometric = 2003,
 

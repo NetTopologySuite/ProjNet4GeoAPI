@@ -11,7 +11,7 @@ using System;
 /// </summary>
 /// <remarks>
 /// The forward relation is the textbook latitude conversion
-/// <c>phi_c = atan((b^2 / a^2) * tan(phi_g))</c>. The inverse path applies the
+/// <c>phi_c = atan((b² / a²) * tan(phi_g))</c>. The inverse path applies the
 /// reciprocal factor, so the transform remains a simple one-parameter angular
 /// scaling in tangent space.
 /// </remarks>
