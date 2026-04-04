@@ -27,9 +27,9 @@ using System.Collections.Generic;
 /// <para>The forward geographic-to-geocentric conversion was independently verified against IOGP,
 /// "Geomatics Guidance Note 7, part 2: Coordinate Conversions and Transformations including
 /// Formulas" (publication 373-7-2, 2019), EPSG method 9602, Geographic/geocentric conversions.
-/// The cartesian coordinate equations <c>X = (nu + h) * cos(phi) * cos(lambda)</c>,
-/// <c>Y = (nu + h) * cos(phi) * sin(lambda)</c>, and
-/// <c>Z = ((1 - e^2) * nu + h) * sin(phi)</c> match the implementation here.</para>
+/// The cartesian coordinate equations <c>X = (ν + h) * cos(φ) * cos(λ)</c>,
+/// <c>Y = (ν + h) * cos(φ) * sin(λ)</c>, and
+/// <c>Z = ((1 - e²) * ν + h) * sin(φ)</c> match the implementation here.</para>
 /// <para>The inverse conversion uses Bowring's 1976 geocentric-to-geodetic estimate for the
 /// initial latitude recovery and applies an additional iterative refinement for heights above
 /// 50 km. That extension was independently verified against B. R. Bowring,
@@ -51,7 +51,7 @@ internal class GeocentricTransform : MathTransform
     private const double ADC = 1.0026000;
 
     /// <summary>
-    /// Eccentricity squared : (a^2 - b^2)/a^2.
+    /// Eccentricity squared : (a² - b²)/a².
     /// </summary>
     private readonly double es;
 
