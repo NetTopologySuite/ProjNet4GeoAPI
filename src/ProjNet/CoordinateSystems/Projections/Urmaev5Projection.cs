@@ -13,11 +13,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </summary>
 /// <remarks>
 /// <para>Urmaev V is a forward-only spherical projection associated with Urmaev. It
-/// combines the parameterized <c>asin(n * sin(phi))</c> auxiliary latitude with an
+/// combines the parameterized <c>asin(n * sin(φ))</c> auxiliary latitude with an
 /// additional cubic y-scaling term controlled by <c>q</c>. Inverse projection is not
 /// supported in this implementation.</para>
 /// <para>This implementation matches PROJ's <c>urm5</c> parameterization with explicit
-/// <c>n</c>, <c>q</c>, and <c>alpha</c> constants. It belongs to the Urmaev family of
+/// <c>n</c>, <c>q</c>, and <c>α</c> constants. It belongs to the Urmaev family of
 /// pseudocylindrical projections and retains the historical forward-only behavior of the
 /// published Urmaev V form.</para>
 /// </remarks>

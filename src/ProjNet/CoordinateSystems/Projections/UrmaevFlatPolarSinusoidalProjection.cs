@@ -14,7 +14,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <remarks>
 /// Urmaev Flat-Polar Sinusoidal is a parameterized spherical pseudocylindrical projection
 /// associated with Urmaev. The implementation uses the defining relation
-/// <c>phi' = asin(n * sin(phi))</c> and then applies the flat-polar sinusoidal scaling
+/// <c>φ' = asin(n * sin(φ))</c> and then applies the flat-polar sinusoidal scaling
 /// constants, making it the verified base for delegated variants such as Wagner I.
 /// </remarks>
 internal class UrmaevFlatPolarSinusoidalProjection : MapProjection

@@ -14,8 +14,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <remarks>
 /// Transverse Cylindrical Equal Area is Snyder's transverse form of cylindrical equal area.
 /// The implementation uses the standard spherical relations
-/// <c>x = cos(phi) * sin(lambda) / k0</c> and
-/// <c>y = k0 * (atan2(tan(phi), cos(lambda)) - phi0)</c>.
+/// <c>x = cos(φ) * sin(λ) / k0</c> and
+/// <c>y = k0 * (atan2(tan(φ), cos(λ)) - phi0)</c>.
 /// </remarks>
 internal class TransverseCylindricalEqualAreaProjection : MapProjection
 {

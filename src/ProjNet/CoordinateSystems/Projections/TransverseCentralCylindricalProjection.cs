@@ -16,8 +16,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// projection will throw an <see cref="InvalidOperationException"/>.
 /// <para>The forward formulation was independently verified against the standard spherical
 /// transverse central cylindrical equations. The implementation matches the normalized
-/// relations <c>x = b / sqrt(1 - b^2)</c> with <c>b = cos(phi) * sin(lambda)</c> and
-/// <c>y = atan2(tan(phi), cos(lambda))</c>.</para>
+/// relations <c>x = b / sqrt(1 - b²)</c> with <c>b = cos(φ) * sin(λ)</c> and
+/// <c>y = atan2(tan(φ), cos(λ))</c>.</para>
 /// </remarks>
 internal class TransverseCentralCylindricalProjection : MapProjection
 {
