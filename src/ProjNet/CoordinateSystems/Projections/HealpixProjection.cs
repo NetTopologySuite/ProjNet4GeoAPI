@@ -19,8 +19,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// "HEALPix: A Framework for High-Resolution Discretization and Fast Analysis of
 /// Data Distributed on the Sphere," <i>Astrophysical Journal</i>, vol. 622, no. 2,
 /// pp. 759-771, 2005. The equatorial relation
-/// <c>y = 3 * pi / 8 * sin(phi)</c> and the polar
-/// <c>sigma = sqrt(3 * (1 - abs(sin(phi))))</c> construction match the
+/// <c>y = 3 * π / 8 * sin(φ)</c> and the polar
+/// <c>σ = sqrt(3 * (1 - abs(sin(φ))))</c> construction match the
 /// implementation here.</para>
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/HEALPix">Wikipedia: HEALPix.</seealso>

@@ -17,7 +17,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// scale factors. The formulation was independently verified against the Wikipedia article
 /// "Hammer projection" and Eric W. Weisstein's MathWorld entry
 /// "Hammer-Aitoff Equal-Area Projection". The normalized factor
-/// <c>sqrt(2 / (1 + cos(phi) * cos(w * lambda)))</c> and the resulting scaled forward
+/// <c>sqrt(2 / (1 + cos(φ) * cos(w * λ)))</c> and the resulting scaled forward
 /// equations match the implementation here.
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Hammer_projection">Wikipedia: Hammer projection.</seealso>
