@@ -145,7 +145,7 @@ internal abstract class InterruptedMollweideBaseProjection : MapProjection
     /// <param name="lambda">Seam longitude sample in radians.</param>
     /// <param name="phi1">Latitude sample for zone 1 in radians.</param>
     /// <param name="phi2">Latitude sample for zone 2 in radians.</param>
-    /// <returns>The x-offset delta that aligns zone 1 with zone 2 at the seam.</returns>
+    /// <returns>The x-offset δ that aligns zone 1 with zone 2 at the seam.</returns>
     protected static double ComputeZoneOffset(IReadOnlyList<MollweideZoneDefinition> zones, int zone1, int zone2, double lambda, double phi1, double phi2)
     {
         MollweideForward(zones, zone1, lambda, phi1, out double x1, out _);
