@@ -12,7 +12,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Implements the Cylindrical Equal Area projection (<c>cea</c>).
 /// </summary>
 /// <remarks>
-/// <para>Preserves area by mapping latitude to <c>y = R * sin(phi) / cos(phi1)</c>, where
+/// <para>Preserves area by mapping latitude to <c>y = R * sin(φ) / cos(phi1)</c>, where
 /// <c>phi1</c> is the standard parallel. When the standard parallel is at the equator
 /// this is equivalent to the Lambert Cylindrical Equal Area projection.</para>
 /// <para>The ellipsoidal formulation was independently verified against EPSG method 9835,

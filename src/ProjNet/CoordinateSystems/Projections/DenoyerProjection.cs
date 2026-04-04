@@ -17,7 +17,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Inverse projection is not supported in this implementation.
 /// <para>The forward formulation was independently verified against the standard Denoyer
 /// semi-elliptical equation. The implementation matches the cosine longitude scaling with
-/// the published polynomial-in-<c>|lambda|</c> and latitude modulation terms.</para>
+/// the published polynomial-in-<c>|λ|</c> and latitude modulation terms.</para>
 /// </remarks>
 internal class DenoyerProjection : MapProjection
 {

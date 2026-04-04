@@ -16,8 +16,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// reduction of the meridian lengths toward the poles. The formulation was independently
 /// verified against the modern summary in the Wikipedia article "Eckert projection" and
 /// Max Eckert's 1906 description of the family. The scale term
-/// <c>x = 0.9213177319 * lambda * (1 - |phi| / pi)</c> together with
-/// <c>y = 0.9213177319 * phi</c> matches the implementation here.
+/// <c>x = 0.9213177319 * λ * (1 - |φ| / π)</c> together with
+/// <c>y = 0.9213177319 * φ</c> matches the implementation here.
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Eckert_projection">Wikipedia: Eckert projection family.</seealso>
 internal class Eckert1Projection : MapProjection

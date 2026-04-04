@@ -15,8 +15,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Eckert II is a spherical equal-area pseudocylindrical projection with shortened, broken
 /// meridians. The formulation was independently verified against the Wikipedia article
 /// "Eckert II projection" and Max Eckert's 1906 description of the family. The auxiliary
-/// term <c>sqrt(4 - 3 * sin(|phi|))</c> used in both the forward equations and the inverse
-/// recovery of <c>phi</c> matches the implementation here.
+/// term <c>sqrt(4 - 3 * sin(|φ|))</c> used in both the forward equations and the inverse
+/// recovery of <c>φ</c> matches the implementation here.
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Eckert_II_projection">Wikipedia: Eckert II projection.</seealso>
 internal class Eckert2Projection : MapProjection
