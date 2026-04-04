@@ -212,7 +212,7 @@ public class AffineTransform : MathTransform
     /// Returns the solution as a <see cref="double"/> array.
     /// LU will be a n+1 x m+1 matrix where the first row and columns are zero.
     /// This is for ease of computation and consistency with Cormen et al. pseudocode.
-    /// The pi array represents the permutation matrix.
+    /// The π array represents the permutation matrix.
     /// </summary>
     /// <param name="lu">The lu parameter.</param>
     /// <param name="pi">The pi parameter.</param>

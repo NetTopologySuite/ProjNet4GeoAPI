@@ -19,7 +19,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <para>This historical alternative variant was independently verified against PROJ's
 /// <c>lcca</c> implementation and the general Lambert conformal conic treatment in
 /// Snyder, "Map Projections - A Working Manual" (USGS Professional Paper 1395, 1987).
-/// The forward path applies the same cubic radial correction <c>f(S) = S * (1 + S^2 * C)</c>
+/// The forward path applies the same cubic radial correction <c>f(S) = S * (1 + S² * C)</c>
 /// as the PROJ reference, and the inverse path uses Newton-Raphson iteration on that
 /// correction before <c>Inv_mlfn</c>, matching the implementation here. This
 /// alternative projection has no dedicated EPSG method; EPSG method 9826 is Lambert
