@@ -15,7 +15,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Wagner III is one of Karl Wagner's spherical pseudocylindrical projections from the
 /// 1930s. It derives its longitude scale from the true-scale latitude parameter through
 /// <c>cx = cos(ts) / cos(2 * ts / 3)</c> and then applies the family form
-/// <c>x = cx * lambda * cos(2 * phi / 3)</c>.
+/// <c>x = cx * λ * cos(2 * φ / 3)</c>.
 /// </remarks>
 internal class Wagner3Projection : MapProjection
 {

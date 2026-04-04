@@ -14,7 +14,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <remarks>
 /// Wagner II is one of Karl Wagner's spherical pseudocylindrical projections from the
 /// 1930s. The implementation uses Wagner's characteristic double-latitude sine transform
-/// <c>asin(Cp1 * sin(Cp2 * phi))</c> before applying the final x/y scaling constants.
+/// <c>asin(Cp1 * sin(Cp2 * φ))</c> before applying the final x/y scaling constants.
 /// </remarks>
 internal class Wagner2Projection : MapProjection
 {

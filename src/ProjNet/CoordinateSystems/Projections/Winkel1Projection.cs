@@ -14,7 +14,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <remarks>
 /// <para>Winkel I is the 1914 projection introduced by Oswald Winkel. The
 /// implementation applies the classic averaged longitude scale
-/// <c>0.5 * lambda * (cos(phi1) + cos(phi))</c> with the configurable true-scale
+/// <c>0.5 * λ * (cos(phi1) + cos(φ))</c> with the configurable true-scale
 /// latitude parameter.</para>
 /// <para>This implementation matches PROJ's <c>wink1</c> formulation for the
 /// arithmetic mean of the sinusoidal and equidistant cylindrical projections, with
