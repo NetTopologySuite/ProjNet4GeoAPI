@@ -10,6 +10,13 @@ using System;
 /// The GeographicTransform class is implemented on geographic transformation objects and
 /// implements datum transformations between geographic coordinate systems.
 /// </summary>
+/// <remarks>
+/// When the source and target geographic coordinate systems share the same
+/// horizontal datum, this transform represents only the prime-meridian
+/// conversion between them. It adjusts the longitude ordinate by removing the
+/// source prime-meridian offset and applying the target prime-meridian offset,
+/// while leaving latitude and height unchanged.
+/// </remarks>
 public class GeographicTransform : MathTransform
 {
     /// <summary>
