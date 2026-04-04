@@ -20,7 +20,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <para>The spherical formulation was independently verified against Snyder, "Map
 /// Projections - A Working Manual" (USGS Professional Paper 1395, 1987), section 25,
 /// Azimuthal Equidistant. The published forward scale factor <c>k = c / sin(c)</c> and
-/// inverse recovery from <c>c = rho / R</c> match the equatorial, oblique, and polar
+/// inverse recovery from <c>c = ρ / R</c> match the equatorial, oblique, and polar
 /// aspect branches implemented here. The ellipsoidal extension uses direct and inverse
 /// geodesic solvers for the general case together with meridional-arc handling for
 /// polar aspects, matching the rigorous azimuthal-equidistant geodesic method carried

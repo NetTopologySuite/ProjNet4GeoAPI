@@ -16,7 +16,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// equidistant construction to halved longitudes and then doubling the horizontal result.
 /// The formulation was independently verified against the Wikipedia article
 /// "Aitoff projection". The auxiliary angle
-/// <c>d = acos(cos(phi) * cos(lambda / 2))</c> together with the normalized forward
+/// <c>d = acos(cos(φ) * cos(λ / 2))</c> together with the normalized forward
 /// relations used by <see cref="AitoffMath"/> matches the implementation here.
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Aitoff_projection">Wikipedia: Aitoff projection.</seealso>

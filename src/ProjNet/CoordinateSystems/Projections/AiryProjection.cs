@@ -19,7 +19,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// radius parameter, and the <c>no_cut</c> option for hemisphere clipping.</para>
 /// <para>George Biddell Airy introduced this minimum-error azimuthal projection in
 /// 1861. Snyder's summary notes that the construction approaches azimuthal
-/// equidistant behaviour for beta values up to 90 degrees. Inverse projection is
+/// equidistant behaviour for β values up to 90 degrees. Inverse projection is
 /// not supported in this implementation.</para>
 /// </remarks>
 /// <seealso href="https://proj.org/en/stable/operations/projections/airy.html">PROJ documentation: Airy.</seealso>
