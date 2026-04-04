@@ -17,7 +17,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// iteratively via Newton–Raphson iteration.
 /// <para>The formulation was independently verified against Patterson's published polynomial
 /// coefficient set. The implementation matches the forward polynomial in odd powers of
-/// <c>phi</c> and the Newton iteration driven by its analytical derivative.</para>
+/// <c>φ</c> and the Newton iteration driven by its analytical derivative.</para>
 /// </remarks>
 internal class PattersonProjection : MapProjection
 {

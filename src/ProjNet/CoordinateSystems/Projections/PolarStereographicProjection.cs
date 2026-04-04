@@ -18,7 +18,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Coordinate Conversions and Transformations including Formulas" (publication
 /// 373-7-2, 2019), EPSG method 9810, Polar Stereographic (variant A). The
 /// ellipsoidal polar formulation keeps the natural-origin scale factor <c>k0</c>
-/// in the numerator of the <c>rho</c> expression, matching the published method
+/// in the numerator of the <c>ρ</c> expression, matching the published method
 /// and the implementation here.</para>
 /// </remarks>
 /// <seealso href="https://epsg.io/9810-method">EPSG method 9810: Polar Stereographic (variant A).</seealso>

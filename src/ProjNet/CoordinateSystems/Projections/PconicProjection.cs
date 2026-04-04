@@ -17,8 +17,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// spherical input is supported.
 /// <para>The formulation was independently verified against the standard perspective-conic
 /// equations. The implementation matches the radial relation
-/// <c>rho = c2 * (c1 - tan(phi - sig))</c> together with the conic angle
-/// <c>theta = n * lambda</c>.</para>
+/// <c>ρ = c2 * (c1 - tan(φ - sig))</c> together with the conic angle
+/// <c>θ = n * λ</c>.</para>
 /// </remarks>
 internal class PconicProjection : MapProjection
 {
