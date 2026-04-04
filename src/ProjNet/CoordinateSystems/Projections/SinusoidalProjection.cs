@@ -16,10 +16,10 @@ using ProjNet.CoordinateSystems.Transformations;
 /// are evenly spaced straight lines and meridians are sinusoidal curves. Both spherical and
 /// ellipsoidal modes are supported.
 /// <para>The formulation was independently verified against the Wikipedia article
-/// "Sinusoidal projection". The spherical equations <c>x = lambda * cos(phi)</c>,
-/// <c>y = phi</c> and the ellipsoidal branch that combines the meridian arc
-/// <c>Mlfn(phi)</c> with the longitude scaling
-/// <c>cos(phi) / sqrt(1 - e^2 * sin^2(phi))</c> match the implementation here.</para>
+/// "Sinusoidal projection". The spherical equations <c>x = λ * cos(φ)</c>,
+/// <c>y = φ</c> and the ellipsoidal branch that combines the meridian arc
+/// <c>Mlfn(φ)</c> with the longitude scaling
+/// <c>cos(φ) / sqrt(1 - e² * sin²(φ))</c> match the implementation here.</para>
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Sinusoidal_projection">Wikipedia: Sinusoidal projection.</seealso>
 internal class SinusoidalProjection : MapProjection
