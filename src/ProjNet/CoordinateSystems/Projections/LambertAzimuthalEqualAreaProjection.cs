@@ -15,7 +15,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// The ellipsoidal formulation was independently verified against IOGP, "Geomatics Guidance
 /// Note 7, part 2: Coordinate Conversions and Transformations including Formulas"
 /// (publication 373-7-2, 2019), EPSG method 9820, Lambert Azimuthal Equal Area. The
-/// <c>q</c>, <c>qP</c>, <c>beta</c>, and <c>Rq</c> relationships match the implementation
+/// <c>q</c>, <c>qP</c>, <c>β</c>, and <c>Rq</c> relationships match the implementation
 /// here.
 /// </remarks>
 /// <seealso href="https://epsg.io/9820-method">EPSG method 9820: Lambert Azimuthal Equal Area.</seealso>

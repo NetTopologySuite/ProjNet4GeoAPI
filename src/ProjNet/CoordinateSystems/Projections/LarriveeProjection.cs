@@ -15,7 +15,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Inverse projection is not supported in this implementation.
 /// <para>The forward formulation was independently verified against the published Larrivee
 /// equations. The implementation matches the characteristic
-/// <c>x = 0.5 * lambda * (1 + sqrt(cos(phi)))</c> term and the denominator used for the
+/// <c>x = 0.5 * λ * (1 + sqrt(cos(φ)))</c> term and the denominator used for the
 /// corresponding y coordinate.</para>
 /// </remarks>
 internal class LarriveeProjection : MapProjection

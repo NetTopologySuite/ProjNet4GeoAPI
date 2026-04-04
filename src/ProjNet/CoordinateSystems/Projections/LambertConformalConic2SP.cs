@@ -22,7 +22,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <para>The 2SP formulation was independently verified against IOGP, "Geomatics Guidance
 /// Note 7, part 2: Coordinate Conversions and Transformations including Formulas"
 /// (publication 373-7-2, 2019), EPSG method 9802, Lambert Conic Conformal (2SP).
-/// The defining <c>n</c>, <c>F</c>, <c>r</c>, and <c>theta</c> relationships match
+/// The defining <c>n</c>, <c>F</c>, <c>r</c>, and <c>θ</c> relationships match
 /// the implementation here.</para>
 /// </remarks>
 /// <seealso href="https://epsg.io/9802-method">EPSG method 9802: Lambert Conic Conformal (2SP).</seealso>
