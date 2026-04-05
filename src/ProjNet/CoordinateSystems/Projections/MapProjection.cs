@@ -88,6 +88,7 @@ public abstract class MapProjection : MathTransform, IProjection
 #pragma warning disable SA1303 // Const field names should begin with upper-case letter
 #pragma warning disable SA1307 // Accessible fields should begin with upper-case letter
 #pragma warning disable SA1310 // Field names should not contain underscore
+    // ReSharper disable InconsistentNaming
 #pragma warning disable SA1600 // Elements should be documented
     [Obsolete("Use FortPi instead.")]
     protected const double FORTPI = FortPi;
@@ -121,11 +122,11 @@ public abstract class MapProjection : MathTransform, IProjection
 #pragma warning restore SA1307
 #pragma warning restore SA1303
 #pragma warning restore SA1300
+    // ReSharper restore InconsistentNaming
 #pragma warning restore CA1707
 #pragma warning restore CS1591
 #pragma warning restore SA1600
 
-    // ReSharper disable InconsistentNaming
 
     /// <summary>
     /// Eccentricity.
@@ -315,7 +316,6 @@ public abstract class MapProjection : MathTransform, IProjection
         this.en4 = t * this.es * C88;
     }
 
-    // ReSharper restore InconsistentNaming
 
     /// <summary>
     /// Gets the projection classification name (e.g. 'Transverse_Mercator').
@@ -767,6 +767,7 @@ public abstract class MapProjection : MathTransform, IProjection
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 #pragma warning disable CA1707 // Identifiers should not contain underscores
 #pragma warning disable SA1300 // Element should begin with upper-case letter
+#pragma warning disable IDE1006 // Naming Styles
 #pragma warning disable SA1600 // Elements should be documented
     [Obsolete("Use centralMeridian instead.")]
     protected double central_meridian
@@ -787,6 +788,7 @@ public abstract class MapProjection : MathTransform, IProjection
     [Obsolete("Use scaleFactor instead.")]
     protected double scale_factor => this.scaleFactor;
 #pragma warning restore SA1300
+#pragma warning restore IDE1006
 #pragma warning restore CA1707
 #pragma warning restore CS1591
 #pragma warning restore SA1600
