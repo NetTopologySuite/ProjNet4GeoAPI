@@ -30,13 +30,13 @@ internal class ObliqueStereographicProjection : MapProjection
     private const double iterationTolerance = 1E-14;
     private const int maximumIterations = 15;
     private const double epsilon = 1E-6;
-    private double c;
-    private double k;
-    private double ratexp;
-    private double phic0;
-    private double cosc0;
-    private double sinc0;
-    private double r2;
+    private readonly double c;
+    private readonly double k;
+    private readonly double ratexp;
+    private readonly double phic0;
+    private readonly double cosc0;
+    private readonly double sinc0;
+    private readonly double r2;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ObliqueStereographicProjection"/> class.
