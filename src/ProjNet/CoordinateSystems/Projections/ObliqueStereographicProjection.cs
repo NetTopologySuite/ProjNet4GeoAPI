@@ -27,9 +27,9 @@ internal class ObliqueStereographicProjection : MapProjection
     private readonly double globalScale;
     private readonly double reciprocGlobalScale;
 
-    private static double iterationTolerance = 1E-14;
-    private static int maximumIterations = 15;
-    private static double epsilon = 1E-6;
+    private const double iterationTolerance = 1E-14;
+    private const int maximumIterations = 15;
+    private const double epsilon = 1E-6;
     private double c;
     private double k;
     private double ratexp;
