@@ -84,22 +84,15 @@ internal class BipolarConicProjection : MapProjection
         double cdlam = Math.Cos(sdlam);
         sdlam = Math.Sin(sdlam);
 
-        double az;
         bool atPole = Math.Abs(Math.Abs(lat) - HalfPi) < Epsilon10;
-        if (atPole)
-        {
-            az = lat < 0d ? PI : 0d;
-        }
-        else
-        {
-            double tphi = sphi / cphi;
-            az = Math.Atan2(sdlam, Cos45 * (tphi - cdlam));
-        }
+        double az = atPole
+            ? (lat < 0d ? PI : 0d)
+            : Math.Atan2(sdlam, Cos45 * ((sphi / cphi) - cdlam));
 
         bool tag = az > Azba;
-        double y;
-        double z;
-        double av;
+        double y = tag ? Rhoc : -Rhoc;
+        double av = tag ? Azab : Azba;
+        double z = 0d;
         if (tag)
         {
             sdlam = lambda + R110;
@@ -125,9 +118,6 @@ internal class BipolarConicProjection : MapProjection
                 double tphi = sphi / cphi;
                 az = Math.Atan2(sdlam, (Cos20 * tphi) - (Sin20 * cdlam));
             }
-
-            av = Azab;
-            y = Rhoc;
         }
         else
         {
@@ -146,8 +136,6 @@ internal class BipolarConicProjection : MapProjection
                 z = Math.Acos(z);
             }
 
-            av = Azba;
-            y = -Rhoc;
         }
 
         if (z < 0d)
@@ -217,22 +205,16 @@ internal class BipolarConicProjection : MapProjection
         }
 
         bool neg = xx < 0d;
-        double s;
-        double c;
-        double av;
+        double s = neg ? Sin20 : Sin45;
+        double c = neg ? Cos20 : Cos45;
+        double av = neg ? Azab : Azba;
         if (neg)
         {
             yy = Rhoc - yy;
-            s = Sin20;
-            c = Cos20;
-            av = Azab;
         }
         else
         {
             yy += Rhoc;
-            s = Sin45;
-            c = Cos45;
-            av = Azba;
         }
 
         double r = Hypot(xx, yy);

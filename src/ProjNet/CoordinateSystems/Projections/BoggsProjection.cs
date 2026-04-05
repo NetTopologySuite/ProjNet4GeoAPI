@@ -65,12 +65,8 @@ internal class BoggsProjection : MapProjection
     {
         double lambda = Adjust_lon(lon - this.centralMeridian);
         double theta = lat;
-        double x;
-        if (Math.Abs(Math.Abs(lat) - HalfPi) < Epsilon)
-        {
-            x = 0d;
-        }
-        else
+        double x = 0d;
+        if (Math.Abs(Math.Abs(lat) - HalfPi) >= Epsilon)
         {
             double c = Math.Sin(theta) * PI;
             for (int i = Iterations; i > 0; i--)

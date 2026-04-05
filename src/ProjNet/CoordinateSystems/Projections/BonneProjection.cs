@@ -142,12 +142,8 @@ internal class BonneProjection : MapProjection
                 ArgumentGuard.ThrowArgument("Input data outside projection domain.");
             }
 
-            double lambdaSphere;
-            if (HalfPi - absPhiSphere <= Eps10)
-            {
-                lambdaSphere = 0d;
-            }
-            else
+            double lambdaSphere = 0d;
+            if (HalfPi - absPhiSphere > Eps10)
             {
                 double scale = rhoSphere / Math.Cos(phiSphere);
                 lambdaSphere = this.standardParallel > 0d
