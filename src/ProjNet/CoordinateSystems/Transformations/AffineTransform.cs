@@ -279,6 +279,7 @@ public class AffineTransform : MathTransform
         // whose value indicates which column the 1 would appear.  We use it to avoid
         // dividing by zero or small numbers.
         int[] pi = new int[n + 1];
+
         // Initialize the permutation matrix, will be the identity matrix
         for (int j = 0; j <= n; j++)
         {
