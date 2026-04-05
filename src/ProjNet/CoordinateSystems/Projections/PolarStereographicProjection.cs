@@ -31,9 +31,9 @@ internal class PolarStereographicProjection : MapProjection
     private const double iterationTolerance = 1E-14;
     private const double eps15 = 1E-15;
     private const double mhalfPi = 0.5 * Math.PI;
-    private double phits;
-    private double akm1;
-    private bool npole;
+    private readonly double phits;
+    private readonly double akm1;
+    private readonly bool npole;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PolarStereographicProjection"/> class.
