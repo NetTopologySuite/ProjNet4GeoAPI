@@ -1013,10 +1013,8 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <returns>The small t value for the given latitude.</returns>
     protected static double Tsfnz(double eccent, double phi, double sinphi)
     {
-        double con;
-        double com;
-        con = eccent * sinphi;
-        com = .5 * eccent;
+        double con = eccent * sinphi;
+        double com = .5 * eccent;
         con = Math.Pow((1.0 - con) / (1.0 + con), com);
         return Math.Tan(.5 * (HalfPi - phi)) / con;
     }
