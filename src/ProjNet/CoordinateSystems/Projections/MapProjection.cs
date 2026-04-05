@@ -1181,8 +1181,8 @@ public abstract class MapProjection : MathTransform, IProjection
     {
         const double MLFN_TOL = 1E-11;
         const int MAXIMUM_ITERATIONS = 20;
-        double s, t, phi, k = 1.0 / (1.0 - this.es);
-        phi = arg;
+        double k = 1.0 / (1.0 - this.es);
+        double phi = arg;
         int i = MAXIMUM_ITERATIONS;
         while (true)
         {
@@ -1192,8 +1192,8 @@ public abstract class MapProjection : MathTransform, IProjection
                 throw new InvalidOperationException("No convergence");
             }
 
-            s = Math.Sin(phi);
-            t = 1.0 - (this.es * s * s);
+            double s = Math.Sin(phi);
+            double t = 1.0 - (this.es * s * s);
             t = (this.Mlfn(phi, s, Math.Cos(phi)) - arg) * (t * Math.Sqrt(t)) * k;
             phi -= t;
             if (Math.Abs(t) < MLFN_TOL)
