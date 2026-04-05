@@ -133,7 +133,7 @@ public abstract class MapProjection : MathTransform, IProjection
     protected readonly double e;
 
     /// <summary>
-    /// Eccentricity squared <c>_e * _e</c>.
+    /// Square of <see cref="e"/>.
     /// </summary>
     protected readonly double es;
 
