@@ -126,7 +126,7 @@ public abstract class MapProjection : MathTransform, IProjection
 #pragma warning restore CA1707
 #pragma warning restore CS1591
 #pragma warning restore SA1600
-    // ReSharper disable InconsistentNaming
+#pragma warning disable IDE1006 // Naming Styles
     /// <summary>
     /// Eccentricity.
     /// </summary>
