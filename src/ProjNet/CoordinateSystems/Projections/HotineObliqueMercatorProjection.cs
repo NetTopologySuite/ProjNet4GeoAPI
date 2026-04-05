@@ -73,13 +73,12 @@ internal class HotineObliqueMercatorProjection : MapProjection
         this.bl = Math.Sqrt(1.0 + (this.es * Math.Pow(this.cosP20, 4.0) / (1.0 - this.es)));
         this.al = this.semiMajor * this.bl * this.scaleFactor * com / con;
 
-        double f;
+        double f = 1.0;
         if (Math.Abs(this.latOrigin) < Epsln)
         {
             // ts = 1.0;
             this.d = 1.0;
             this.el = 1.0;
-            f = 1.0;
         }
         else
         {
@@ -188,7 +187,6 @@ internal class HotineObliqueMercatorProjection : MapProjection
             }
             else
             {
-                us = this.al * Math.Atan(((s * this.cosgam) + (vl * this.singam)) / con) / this.bl;
                 if (con < 0)
                 {
                     us += PI * this.al / this.bl;

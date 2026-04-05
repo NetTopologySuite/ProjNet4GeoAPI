@@ -192,17 +192,15 @@ internal class GeostationarySatelliteProjection : MapProjection
     private void InverseSpherical(double x, double y, out double lambda, out double phi)
     {
         double vx = -1d;
-        double vy;
-        double vz;
+        double vy = Math.Tan(x / this.radiusG1);
+        double vz = Math.Tan(y / this.radiusG1);
 
         if (this.flipAxis)
         {
-            vz = Math.Tan(y / this.radiusG1);
             vy = Math.Tan(x / this.radiusG1) * Math.Sqrt(1d + (vz * vz));
         }
         else
         {
-            vy = Math.Tan(x / this.radiusG1);
             vz = Math.Tan(y / this.radiusG1) * Math.Sqrt(1d + (vy * vy));
         }
 
@@ -226,17 +224,15 @@ internal class GeostationarySatelliteProjection : MapProjection
     private void InverseEllipsoidal(double x, double y, out double lambda, out double phi)
     {
         double vx = -1d;
-        double vy;
-        double vz;
+        double vy = Math.Tan(x / this.radiusG1);
+        double vz = Math.Tan(y / this.radiusG1);
 
         if (this.flipAxis)
         {
-            vz = Math.Tan(y / this.radiusG1);
             vy = Math.Tan(x / this.radiusG1) * Hypot(1d, vz);
         }
         else
         {
-            vy = Math.Tan(x / this.radiusG1);
             vz = Math.Tan(y / this.radiusG1) * Hypot(1d, vy);
         }
 

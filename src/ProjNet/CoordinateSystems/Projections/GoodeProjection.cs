@@ -91,15 +91,9 @@ internal class GoodeProjection : MapProjection
         double lambda = Adjust_lon(lon - this.centralMeridian);
         double phi = this.isEllipsoidal ? this.GeographicToAuthalic(lat) : lat;
 
-        double xUnit;
-        double yUnit;
-
-        if (Math.Abs(phi) <= PhiLim)
-        {
-            xUnit = lambda * Math.Cos(phi);
-            yUnit = phi;
-        }
-        else
+        double xUnit = lambda * Math.Cos(phi);
+        double yUnit = phi;
+        if (Math.Abs(phi) > PhiLim)
         {
             MollweideForwardUnit(lambda, phi, out xUnit, out yUnit);
             yUnit -= phi >= 0d ? YCor : -YCor;
@@ -115,15 +109,10 @@ internal class GoodeProjection : MapProjection
         double xUnit = x * this.inverseRadius;
         double yUnit = y * this.inverseRadius;
 
-        double lambda;
-        double phi;
-        if (Math.Abs(yUnit) <= PhiLim)
-        {
-            phi = yUnit;
-            double cosPhi = Math.Cos(phi);
-            lambda = Math.Abs(cosPhi) <= Eps10 ? 0d : (xUnit / cosPhi);
-        }
-        else
+        double phi = yUnit;
+        double cosPhi = Math.Cos(phi);
+        double lambda = Math.Abs(cosPhi) <= Eps10 ? 0d : (xUnit / cosPhi);
+        if (Math.Abs(yUnit) > PhiLim)
         {
             double correctedY = yUnit + (yUnit >= 0d ? YCor : -YCor);
             MollweideInverseUnit(xUnit, correctedY, out lambda, out phi);
@@ -135,12 +124,8 @@ internal class GoodeProjection : MapProjection
 
     private static void MollweideForwardUnit(double lambda, double phi, out double x, out double y)
     {
-        double theta;
-        if (Math.Abs(Math.Abs(phi) - HalfPi) < 1e-12)
-        {
-            theta = Sign(phi) * HalfPi;
-        }
-        else
+        double theta = Sign(phi) * HalfPi;
+        if (Math.Abs(Math.Abs(phi) - HalfPi) >= 1e-12)
         {
             theta = phi;
             double target = PI * Math.Sin(phi);
