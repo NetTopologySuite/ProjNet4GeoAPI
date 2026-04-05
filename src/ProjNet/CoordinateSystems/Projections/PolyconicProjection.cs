@@ -81,18 +81,13 @@ internal class PolyconicProjection : MapProjection
 
         double delta_lam = Adjust_lon(lam - this.centralMeridian);
 
-        double x, y;
-
-        if (Math.Abs(phi) <= Epsilon)
-        {
-            x = delta_lam; // lam;
-            y = -this.ml0;
-        }
-        else
+        double x = delta_lam; // lam;
+        double y = -this.ml0;
+        if (Math.Abs(phi) > Epsilon)
         {
             double sp = Math.Sin(phi);
-            double cp;
-            double ms = Math.Abs(cp = Math.Cos(phi)) > Epsilon ? this.Msfn(sp, cp) / sp : 0.0;
+            double cp = Math.Cos(phi);
+            double ms = Math.Abs(cp) > Epsilon ? this.Msfn(sp, cp) / sp : 0.0;
 
             // lam =
             delta_lam *= sp;
@@ -110,13 +105,11 @@ internal class PolyconicProjection : MapProjection
         x *= this.reciprocSemiMajorTimesScaleFactor;
         y *= this.reciprocSemiMajorTimesScaleFactor;
 
-        double lam, phi;
-
         y += this.ml0;
+        double lam = x;
+        double phi = 0.0;
         if (Math.Abs(y) <= Epsilon)
         {
-            lam = x;
-            phi = 0.0;
         }
         else
         {

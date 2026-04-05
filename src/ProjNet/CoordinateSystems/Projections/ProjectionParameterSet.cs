@@ -65,8 +65,7 @@ public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<Pro
         {
             foreach (string alternateName in alternateNames)
             {
-                double res;
-                if (this.TryGetValue(alternateName.ToLowerInvariant(), out res))
+                if (this.TryGetValue(alternateName.ToLowerInvariant(), out double res))
                 {
                     return res;
                 }
@@ -111,8 +110,7 @@ public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<Pro
         {
             foreach (string alternateName in alternateNames)
             {
-                double res;
-                if (this.TryGetValue(alternateName.ToLowerInvariant(), out res))
+                if (this.TryGetValue(alternateName.ToLowerInvariant(), out double res))
                 {
                     return res;
                 }

@@ -95,15 +95,10 @@ internal class PutninsP6Projection : MapProjection
             }
         }
 
-        double sqrtOnePlusPhiSquared;
+        double sqrtOnePlusPhiSquared = i == 0 ? 2d : Math.Sqrt(1d + (phi * phi));
         if (i == 0)
         {
             phi = p < 0d ? -PoleValue : PoleValue;
-            sqrtOnePlusPhiSquared = 2d;
-        }
-        else
-        {
-            sqrtOnePlusPhiSquared = Math.Sqrt(1d + (phi * phi));
         }
 
         double x = this.cx * lambda * (this.d - sqrtOnePlusPhiSquared);
