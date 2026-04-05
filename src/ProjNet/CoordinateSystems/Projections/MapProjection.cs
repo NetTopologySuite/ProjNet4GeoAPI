@@ -1028,30 +1028,20 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <returns>The latitude in radians corresponding to the given q value.</returns>
     protected static double Phi1z(double eccent, double qs, out long flag)
     {
-        double eccnts;
-        double dphi;
-        double con;
-        double com;
-        double sinpi;
-        double cospi;
-        double phi;
         flag = 0;
-
-        long i;
-
-        phi = Asinz(.5 * qs);
+        double phi = Asinz(.5 * qs);
         if (eccent < Epsln)
         {
             return phi;
         }
 
-        eccnts = eccent * eccent;
-        for (i = 1; i <= 25; i++)
+        double eccnts = eccent * eccent;
+        for (int i = 1; i <= 25; i++)
         {
-            Sincos(phi, out sinpi, out cospi);
-            con = eccent * sinpi;
-            com = 1.0 - (con * con);
-            dphi = .5 * com * com / cospi * ((qs / (1.0 - eccnts)) - (sinpi / com) +
+            Sincos(phi, out double sinpi, out double cospi);
+            double con = eccent * sinpi;
+            double com = 1.0 - (con * con);
+            double dphi = .5 * com * com / cospi * ((qs / (1.0 - eccnts)) - (sinpi / com) +
                                      (.5 / eccent * Math.Log((1.0 - con) / (1.0 + con))));
             phi += dphi;
             if (Math.Abs(dphi) <= 1e-7)
