@@ -108,8 +108,8 @@ internal sealed class LambertConformalConicAlternativeProjection : MapProjection
         double lambda = theta / this.l;
 
         double s = dr;
-        int i;
-        for (i = 0; i < MaximumIterations; i++)
+        int iteration = 0;
+        for (; iteration < MaximumIterations; iteration++)
         {
             double diff = (Fs(s, this.c) - dr) / Fsp(s, this.c);
             s -= diff;
@@ -119,7 +119,7 @@ internal sealed class LambertConformalConicAlternativeProjection : MapProjection
             }
         }
 
-        if (i == MaximumIterations)
+        if (iteration == MaximumIterations)
         {
             ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }

@@ -97,20 +97,12 @@ internal class LoximuthalProjection : MapProjection
         double lat = this.referenceLatitude + (y * this.inverseRadius);
         double deltaPhi = lat - this.referenceLatitude;
 
-        double lambda;
-        if (Math.Abs(deltaPhi) <= Eps10)
-        {
-            lambda = x * this.inverseRadius / this.cosReferenceLatitude;
-        }
-        else
+        double lambda = x * this.inverseRadius / this.cosReferenceLatitude;
+        if (Math.Abs(deltaPhi) > Eps10)
         {
             double mercatorTerm = Math.Log(Math.Tan(FortPi + (0.5d * lat)));
             double numerator = mercatorTerm - this.referenceMercatorTerm;
-            if (Math.Abs(numerator) <= Eps10)
-            {
-                lambda = x * this.inverseRadius / this.cosReferenceLatitude;
-            }
-            else
+            if (Math.Abs(numerator) > Eps10)
             {
                 lambda = (x * this.inverseRadius) * numerator / deltaPhi;
             }

@@ -93,7 +93,7 @@ internal class McBrydeThomasFlatPolarQuarticProjection : MapProjection
         double yy = y * this.inverseRadius;
 
         double phi = Ryc * yy;
-        double t;
+        double t = phi;
         if (Math.Abs(phi) > 1d)
         {
             if (Math.Abs(phi) > OneTol)
@@ -114,7 +114,6 @@ internal class McBrydeThomasFlatPolarQuarticProjection : MapProjection
         }
         else
         {
-            t = phi;
             phi = 2d * Math.Asin(phi);
         }
 
