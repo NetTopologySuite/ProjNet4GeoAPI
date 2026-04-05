@@ -276,7 +276,7 @@ public abstract class MapProjection : MathTransform, IProjection
         }
     }
 
-    // ReSharper restore InconsistentNaming
+#pragma warning restore IDE1006
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MapProjection"/> class from a set of projection parameters.
