@@ -317,7 +317,6 @@ public abstract class MapProjection : MathTransform, IProjection
         this.en4 = t * this.es * C88;
     }
 
-
     /// <summary>
     /// Gets the projection classification name (e.g. 'Transverse_Mercator').
     /// </summary>
