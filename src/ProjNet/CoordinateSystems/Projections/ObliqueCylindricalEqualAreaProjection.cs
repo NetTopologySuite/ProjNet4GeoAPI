@@ -52,8 +52,8 @@ internal sealed class ObliqueCylindricalEqualAreaProjection : MapProjection
         this.rtk = this.scaleFactor;
         this.rok = 1d / this.scaleFactor;
 
-        double lamP;
-        double phiP;
+        double lamP = 0d;
+        double phiP = 0d;
         if (this.Parameters.ContainsKey("alpha") || this.Parameters.ContainsKey("azimuth"))
         {
             double alpha = PI + DegreesToRadians(this.Parameters.GetOptionalParameterValue("alpha", this.Parameters.GetOptionalParameterValue("azimuth", 0d)));

@@ -115,7 +115,7 @@ internal class PolarStereographicProjection : MapProjection
         double phi_l = HalfPi - (2.0 * Math.Atan(tp));
         double halfe = -0.5 * this.e;
 
-        double lp_phi;
+        double lp_phi = phi_l;
         for (int iter = MaximumIterations; ;)
         {
             double sinphi = this.e * Math.Sin(phi_l);

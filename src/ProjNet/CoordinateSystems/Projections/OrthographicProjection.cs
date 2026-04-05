@@ -144,14 +144,9 @@ internal class OrthographicProjection : MapProjection
 
         double cosc = Math.Sqrt(1.0 - (sinc * sinc)); // in this range OK
 
-        double phi;
-        double lam;
-        if (Math.Abs(rho) <= Eps10)
-        {
-            phi = this.latOrigin;
-            lam = this.Lon_origin;
-        }
-        else
+        double phi = this.latOrigin;
+        double lam = this.Lon_origin;
+        if (Math.Abs(rho) > Eps10)
         {
             switch (this.mode)
             {
@@ -205,8 +200,8 @@ internal class OrthographicProjection : MapProjection
 
         double x_scaled = x / this.semiMajor;
         double y_scaled = y / this.semiMajor;
-        double phi;
-        double lam;
+        double phi = this.latOrigin;
+        double lam = this.Lon_origin;
         if (this.mode == Mode.NorthPole || this.mode == Mode.SouthPole)
         {
             // Polar case. Forward case equations can be simplified as:
@@ -357,7 +352,6 @@ internal class OrthographicProjection : MapProjection
 
         double cosphi = Math.Cos(phi);
         double coslam = Math.Cos(lam - this.Lon_origin);
-        double sinphi;
         switch (this.mode)
         {
             case Mode.Equatorial:
@@ -369,7 +363,7 @@ internal class OrthographicProjection : MapProjection
                 y = this.semiMajor * Math.Sin(phi);
                 break;
             case Mode.Oblique:
-                sinphi = Math.Sin(phi);
+                double sinphi = Math.Sin(phi);
 
                 // Is the point visible from the projection plane ?
                 // From https://lists.osgeo.org/pipermail/proj/2020-September/009831.html
