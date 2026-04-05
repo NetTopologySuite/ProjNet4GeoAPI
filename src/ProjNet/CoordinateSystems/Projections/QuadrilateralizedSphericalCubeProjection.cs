@@ -100,9 +100,9 @@ internal sealed class QuadrilateralizedSphericalCubeProjection : MapProjection
             : lat;
 
         double longitude = lon;
-        Area area;
-        double theta;
-        double phi;
+        Area area = Area.Zero;
+        double theta = 0d;
+        double phi = 0d;
 
         if (this.face == Face.Top)
         {
@@ -261,8 +261,8 @@ internal sealed class QuadrilateralizedSphericalCubeProjection : MapProjection
             cosPhi = 1d;
         }
 
-        double lambda;
-        double phi;
+        double lambda = 0d;
+        double phi = 0d;
 
         if (this.face == Face.Top)
         {

@@ -69,15 +69,10 @@ internal sealed class RectangularPolyconicProjection : MapProjection
         double lambda = Adjust_lon(lon - this.centralMeridian);
         double phi = lat;
         double fa = this.mode ? Math.Tan(lambda * this.modeFxb) * this.modeFxa : 0.5d * lambda;
-        double xUnit;
-        double yUnit;
+        double xUnit = fa + fa;
+        double yUnit = -this.latOrigin;
 
-        if (Math.Abs(phi) < 1e-9d)
-        {
-            xUnit = fa + fa;
-            yUnit = -this.latOrigin;
-        }
-        else
+        if (Math.Abs(phi) >= 1e-9d)
         {
             yUnit = 1d / Math.Tan(phi);
             fa = 2d * Math.Atan(fa * Math.Sin(phi));

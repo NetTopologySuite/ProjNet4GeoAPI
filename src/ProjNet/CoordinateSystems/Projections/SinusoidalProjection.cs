@@ -88,21 +88,16 @@ internal class SinusoidalProjection : MapProjection
         {
             double phiEllipsoid = this.Inv_mlfn(yUnit);
             double absPhi = Math.Abs(phiEllipsoid);
-            double lambdaEllipsoid;
+            double lambdaEllipsoid = 0d;
 
             if (absPhi < HalfPi)
             {
                 double sinPhi = Math.Sin(phiEllipsoid);
                 lambdaEllipsoid = xUnit * Math.Sqrt(1d - (this.es * sinPhi * sinPhi)) / Math.Cos(phiEllipsoid);
             }
-            else if ((absPhi - Eps10) < HalfPi)
-            {
-                lambdaEllipsoid = 0d;
-            }
-            else
+            else if ((absPhi - Eps10) >= HalfPi)
             {
                 ArgumentGuard.ThrowArgument("Input data outside projection domain.");
-                lambdaEllipsoid = 0d;
             }
 
             x = Adjust_lon(this.centralMeridian + lambdaEllipsoid);
