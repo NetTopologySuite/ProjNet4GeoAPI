@@ -92,16 +92,11 @@ internal class IghProjection : MapProjection
         ZoneDefinition zone = this.zones[zoneIndex];
 
         double localLambda = lambda - zone.Lambda0;
-        double xUnit;
-        double yUnit;
+        double xUnit = localLambda * Math.Cos(lat);
+        double yUnit = lat;
         if (zone.IsMollweide)
         {
             MollweideForwardUnit(localLambda, lat, out xUnit, out yUnit);
-        }
-        else
-        {
-            xUnit = localLambda * Math.Cos(lat);
-            yUnit = lat;
         }
 
         lon = this.radius * (zone.X0 + xUnit);
@@ -123,17 +118,12 @@ internal class IghProjection : MapProjection
         double localX = xUnit - zone.X0;
         double localY = yUnit - zone.Y0;
 
-        double lambdaLocal;
-        double phi;
+        double phi = localY;
+        double cosPhi = Math.Cos(phi);
+        double lambdaLocal = Math.Abs(cosPhi) <= Eps10 ? 0d : (localX / cosPhi);
         if (zone.IsMollweide)
         {
             MollweideInverseUnit(localX, localY, out lambdaLocal, out phi);
-        }
-        else
-        {
-            phi = localY;
-            double cosPhi = Math.Cos(phi);
-            lambdaLocal = Math.Abs(cosPhi) <= Eps10 ? 0d : (localX / cosPhi);
         }
 
         double lambda = lambdaLocal + zone.Lambda0;
@@ -255,12 +245,8 @@ internal class IghProjection : MapProjection
 
     private static void MollweideForwardUnit(double lambda, double phi, out double x, out double y)
     {
-        double theta;
-        if (Math.Abs(Math.Abs(phi) - HalfPi) < 1e-12)
-        {
-            theta = Sign(phi) * HalfPi;
-        }
-        else
+        double theta = Sign(phi) * HalfPi;
+        if (Math.Abs(Math.Abs(phi) - HalfPi) >= 1e-12)
         {
             theta = phi;
             double target = PI * Math.Sin(phi);

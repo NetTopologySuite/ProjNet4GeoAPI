@@ -186,27 +186,18 @@ internal sealed class InternationalMapWorldPolyconicProjection : MapProjection
 
         c += ya - r;
 
-        double xb;
-        double yb;
-        if (this.phi2 == 0d)
-        {
-            xb = lambda;
-            yb = this.c2;
-        }
-        else
+        double xb = lambda;
+        double yb = this.c2;
+        if (this.phi2 != 0d)
         {
             double t = lambda * this.sinPhi2;
             xb = this.r2 * Math.Sin(t);
             yb = this.c2 + (this.r2 * (1d - Math.Cos(t)));
         }
 
-        double xc;
-        if (this.phi1 == 0d)
-        {
-            xc = lambda;
-            yc = 0d;
-        }
-        else
+        double xc = lambda;
+        yc = 0d;
+        if (this.phi1 != 0d)
         {
             double t = lambda * this.sinPhi1;
             xc = this.r1 * Math.Sin(t);
