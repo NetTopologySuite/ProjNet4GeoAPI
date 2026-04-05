@@ -160,25 +160,25 @@ internal abstract class AdamsProjectionBase : MapProjection
             throw new InvalidOperationException($"{this.Name} does not support inverse projection in this wave.");
         }
 
-        double lambda;
-        double phi;
-        bool success;
         if (this.mode == AdamsMode.AdamsWs2)
         {
-            success = this.TryInverseAdamsWs2(xUnit, yUnit, out lambda, out phi);
-        }
-        else
-        {
-            success = this.TryInversePeirce(xUnit, yUnit, out lambda, out phi);
+            if (!this.TryInverseAdamsWs2(xUnit, yUnit, out double lambda, out double phi))
+            {
+                ArgumentGuard.ThrowArgument("Input data outside projection domain.");
+            }
+
+            x = Adjust_lon(this.centralMeridian + lambda);
+            y = phi;
+            return;
         }
 
-        if (!success)
+        if (!this.TryInversePeirce(xUnit, yUnit, out double peirceLambda, out double peircePhi))
         {
             ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
-        x = Adjust_lon(this.centralMeridian + lambda);
-        y = phi;
+        x = Adjust_lon(this.centralMeridian + peirceLambda);
+        y = peircePhi;
     }
 
     private static PeirceShape ParsePeirceShape(double shapeCode)

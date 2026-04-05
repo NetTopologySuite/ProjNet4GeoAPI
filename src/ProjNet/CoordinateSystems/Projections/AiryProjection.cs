@@ -108,8 +108,6 @@ internal class AiryProjection : MapProjection
     protected override void RadiansToMeters(ref double lon, ref double lat)
     {
         double lambda = Adjust_lon(lon - this.centralMeridian);
-        double x;
-        double y;
         double sinLam = Math.Sin(lambda);
         double cosLam = Math.Cos(lambda);
 
@@ -148,10 +146,12 @@ internal class AiryProjection : MapProjection
                     kRho = 0.5d - this.cb;
                 }
 
-                x = kRho * cosPhi * sinLam;
-                y = this.mode == Mode.Oblique
+                double x = kRho * cosPhi * sinLam;
+                double y = this.mode == Mode.Oblique
                     ? kRho * ((this.cosPhi0 * sinPhi) - (this.sinPhi0 * cosPhi * cosLam))
                     : kRho * sinPhi;
+                lon = this.radius * x;
+                lat = this.radius * y;
                 break;
             }
 
@@ -170,25 +170,25 @@ internal class AiryProjection : MapProjection
                 {
                     double t = Math.Tan(phi);
                     double kRho = -2d * ((Math.Log(Math.Cos(phi)) / t) + (t * this.cb));
-                    x = kRho * sinLam;
-                    y = kRho * cosLam;
+                    double x = kRho * sinLam;
+                    double y = kRho * cosLam;
                     if (this.mode == Mode.NorthPole)
                     {
                         y = -y;
                     }
+
+                    lon = this.radius * x;
+                    lat = this.radius * y;
                 }
                 else
                 {
-                    x = 0d;
-                    y = 0d;
+                    lon = 0d;
+                    lat = 0d;
                 }
 
                 break;
             }
         }
-
-        lon = this.radius * x;
-        lat = this.radius * y;
     }
 
     /// <inheritdoc />
