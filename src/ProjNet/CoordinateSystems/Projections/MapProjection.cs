@@ -1085,19 +1085,14 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <returns>The latitude phi2 in radians.</returns>
     protected static double Phi2z(double eccent, double ts, out long flag)
     {
-        double con;
-        double dphi;
-        double sinpi;
-        long i;
-
         flag = 0;
         double eccnth = .5 * eccent;
         double chi = HalfPi - (2 * Math.Atan(ts));
-        for (i = 0; i <= 15; i++)
+        for (int i = 0; i <= 15; i++)
         {
-            sinpi = Math.Sin(chi);
-            con = eccent * sinpi;
-            dphi = HalfPi - (2 * Math.Atan(ts * Math.Pow((1.0 - con) / (1.0 + con), eccnth))) - chi;
+            double sinpi = Math.Sin(chi);
+            double con = eccent * sinpi;
+            double dphi = HalfPi - (2 * Math.Atan(ts * Math.Pow((1.0 - con) / (1.0 + con), eccnth))) - chi;
             chi += dphi;
             if (Math.Abs(dphi) <= .0000000001)
             {
