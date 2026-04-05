@@ -58,20 +58,15 @@ internal class VanDerGrinten4Projection : MapProjection
     {
         double lambda = Adjust_lon(lon - this.centralMeridian);
         double phi = lat;
-        double x;
-        double y;
+        double x = lambda;
+        double y = 0d;
 
-        if (Math.Abs(phi) < Tolerance)
-        {
-            x = lambda;
-            y = 0d;
-        }
-        else if (Math.Abs(lambda) < Tolerance || Math.Abs(Math.Abs(phi) - HalfPi) < Tolerance)
+        if (Math.Abs(phi) >= Tolerance && (Math.Abs(lambda) < Tolerance || Math.Abs(Math.Abs(phi) - HalfPi) < Tolerance))
         {
             x = 0d;
             y = phi;
         }
-        else
+        else if (Math.Abs(phi) >= Tolerance)
         {
             double bt = Math.Abs((2d / PI) * phi);
             double bt2 = bt * bt;

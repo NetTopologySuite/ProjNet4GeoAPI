@@ -80,15 +80,9 @@ internal class VanDerGrintenProjection : MapProjection
             p2 = 1d;
         }
 
-        double x;
-        double y;
-
-        if (Math.Abs(lat) <= Tolerance)
-        {
-            x = lambda;
-            y = 0d;
-        }
-        else if (Math.Abs(lambda) <= Tolerance || Math.Abs(p2 - 1d) < Tolerance)
+        double x = lambda;
+        double y = 0d;
+        if (Math.Abs(lat) > Tolerance && (Math.Abs(lambda) <= Tolerance || Math.Abs(p2 - 1d) < Tolerance))
         {
             x = 0d;
             y = PI * Math.Tan(0.5d * Math.Asin(p2));
@@ -97,7 +91,7 @@ internal class VanDerGrintenProjection : MapProjection
                 y = -y;
             }
         }
-        else
+        else if (Math.Abs(lat) > Tolerance)
         {
             double al = 0.5d * Math.Abs((PI / lambda) - (lambda / PI));
             double al2 = al * al;

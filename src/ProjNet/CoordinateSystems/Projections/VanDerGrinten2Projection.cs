@@ -68,14 +68,9 @@ internal class VanDerGrinten2Projection : MapProjection
             ct = Math.Sqrt(ct);
         }
 
-        double x;
-        double y;
-        if (Math.Abs(lambda) < Tolerance)
-        {
-            x = 0d;
-            y = PI * (lat < 0d ? -bt : bt) / (1d + ct);
-        }
-        else
+        double x = 0d;
+        double y = PI * (lat < 0d ? -bt : bt) / (1d + ct);
+        if (Math.Abs(lambda) >= Tolerance)
         {
             double at = 0.5d * Math.Abs((PI / lambda) - (lambda / PI));
             double x1 = ((ct * Math.Sqrt(1d + (at * at))) - (at * ct * ct)) / (1d + ((at * at) * (bt * bt)));

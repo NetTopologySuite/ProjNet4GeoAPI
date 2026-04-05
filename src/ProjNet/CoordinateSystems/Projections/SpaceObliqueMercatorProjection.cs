@@ -203,7 +203,7 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
 
         double lamdp = x / this.b;
         int nn = 50;
-        double s;
+        double s = 0d;
         do
         {
             double sav = lamdp;
