@@ -27,10 +27,10 @@ internal class PolarStereographicProjection : MapProjection
     private readonly double globalScale;
     private readonly double reciprocGlobalScale;
 
-    private static int maximumIterations = 15;
-    private static double iterationTolerance = 1E-14;
-    private static double eps15 = 1E-15;
-    private static double mhalfPi = 0.5 * Math.PI;
+    private const int maximumIterations = 15;
+    private const double iterationTolerance = 1E-14;
+    private const double eps15 = 1E-15;
+    private const double mhalfPi = 0.5 * Math.PI;
     private double phits;
     private double akm1;
     private bool npole;
