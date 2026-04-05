@@ -1154,10 +1154,8 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <returns>The coefficient e4.</returns>
     protected static double E4fn(double x)
     {
-        double con;
-        double com;
-        con = 1.0 + x;
-        com = 1.0 - x;
+        double con = 1.0 + x;
+        double com = 1.0 - x;
         return Math.Sqrt(Math.Pow(con, con) * Math.Pow(com, com));
     }
 
