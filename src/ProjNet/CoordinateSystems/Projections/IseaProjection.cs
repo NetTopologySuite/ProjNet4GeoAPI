@@ -430,17 +430,13 @@ internal sealed class IseaProjection : MapProjection
 
     private IseaPlanarState CreatePlanarState()
     {
-        double normalizedR2;
+        double normalizedR2 = 1d;
         if (this.e > Eps10)
         {
             double bOverA = this.semiMinor / this.semiMajor;
             double bOverASquared = bOverA * bOverA;
             double log1pe1me = Math.Log((1d + this.e) / (1d - this.e));
             normalizedR2 = 0.5d + ((bOverASquared * log1pe1me) / (4d * this.e));
-        }
-        else
-        {
-            normalizedR2 = 1d;
         }
 
         double rPrime = RPrimeOverR * Math.Sqrt(normalizedR2);

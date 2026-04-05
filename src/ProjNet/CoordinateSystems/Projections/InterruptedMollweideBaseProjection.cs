@@ -61,12 +61,8 @@ internal abstract class InterruptedMollweideBaseProjection : MapProjection
         const int mollweideIterations = 12;
         double sqrt2 = Math.Sqrt(2d);
 
-        double theta;
-        if (Math.Abs(Math.Abs(phi) - HalfPi) < 1e-12)
-        {
-            theta = Sign(phi) * HalfPi;
-        }
-        else
+        double theta = Sign(phi) * HalfPi;
+        if (Math.Abs(Math.Abs(phi) - HalfPi) >= 1e-12)
         {
             theta = phi;
             double target = PI * Math.Sin(phi);
