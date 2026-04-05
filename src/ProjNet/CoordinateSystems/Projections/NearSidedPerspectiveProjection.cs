@@ -175,15 +175,9 @@ internal class NearSidedPerspectiveProjection : MapProjection
         }
 
         double rh = Hypot(xValue, yValue);
-        double lambda;
-        double phi;
-
-        if (Math.Abs(rh) <= Eps10)
-        {
-            lambda = 0d;
-            phi = this.latOrigin;
-        }
-        else
+        double lambda = 0d;
+        double phi = this.latOrigin;
+        if (Math.Abs(rh) > Eps10)
         {
             double sinz = 1d - ((rh * rh) * this.pfact);
             if (sinz < 0d)

@@ -58,13 +58,11 @@ internal class NicolosiProjection : MapProjection
     protected override void RadiansToMeters(ref double lon, ref double lat)
     {
         double lambda = Adjust_lon(lon - this.centralMeridian);
-        double x;
-        double y;
+        double x = 0d;
+        double y = lat;
 
         if (Math.Abs(lambda) < Epsilon)
         {
-            x = 0d;
-            y = lat;
         }
         else if (Math.Abs(lat) < Epsilon)
         {

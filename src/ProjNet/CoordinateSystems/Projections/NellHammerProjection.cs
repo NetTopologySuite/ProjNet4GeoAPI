@@ -74,8 +74,8 @@ internal class NellHammerProjection : MapProjection
 
         double p = 0.5d * yy;
         double phi = 0d;
-        int i = Iterations;
-        for (; i > 0; i--)
+        int iteration = Iterations;
+        for (; iteration > 0; iteration--)
         {
             double c = Math.Cos(0.5d * phi);
             double denominator = 1d - (0.5d / (c * c));
@@ -92,21 +92,18 @@ internal class NellHammerProjection : MapProjection
             }
         }
 
-        double lambda;
-        if (i == 0)
+        double lambda = (2d * xx) / (1d + Math.Cos(phi));
+        if (iteration == 0)
         {
             phi = p < 0d ? -HalfPi : HalfPi;
             lambda = 2d * xx;
         }
         else
         {
-            double denominator = 1d + Math.Cos(phi);
-            if (Math.Abs(denominator) <= Eps10)
+            if (Math.Abs(1d + Math.Cos(phi)) <= Eps10)
             {
                 ArgumentGuard.ThrowArgument("Input data outside projection domain.");
             }
-
-            lambda = (2d * xx) / denominator;
         }
 
         x = Adjust_lon(this.centralMeridian + lambda);
