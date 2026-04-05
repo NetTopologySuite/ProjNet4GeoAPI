@@ -86,7 +86,7 @@ internal class FoucautSinusoidalProjection : MapProjection
     {
         double xx = x * this.inverseRadius;
         double yy = y * this.inverseRadius;
-        double phi;
+        double phi = Asinz(yy);
         if (this.n != 0d)
         {
             phi = yy;
@@ -113,10 +113,6 @@ internal class FoucautSinusoidalProjection : MapProjection
             {
                 phi = yy < 0d ? -HalfPi : HalfPi;
             }
-        }
-        else
-        {
-            phi = Asinz(yy);
         }
 
         double cos = Math.Cos(phi);

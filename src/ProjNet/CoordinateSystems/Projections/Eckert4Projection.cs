@@ -87,18 +87,12 @@ internal class Eckert4Projection : MapProjection
             }
         }
 
-        double x;
-        double y;
-        if (i == 0)
-        {
-            x = Cx * lambda;
-            y = theta < 0d ? -Cy : Cy;
-        }
-        else
-        {
-            x = Cx * lambda * (1d + Math.Cos(theta));
-            y = Cy * Math.Sin(theta);
-        }
+        double x = i == 0
+            ? Cx * lambda
+            : Cx * lambda * (1d + Math.Cos(theta));
+        double y = i == 0
+            ? (theta < 0d ? -Cy : Cy)
+            : Cy * Math.Sin(theta);
 
         lon = this.radius * x;
         lat = this.radius * y;
@@ -117,15 +111,9 @@ internal class Eckert4Projection : MapProjection
         }
 
         double oneMinusAbs = 1d - Math.Abs(sinTheta);
-        double lambda;
-        double phi;
-
-        if (oneMinusAbs >= 0d && oneMinusAbs <= 1e-12d)
-        {
-            lambda = xx / Cx;
-            phi = sinTheta > 0d ? HalfPi : -HalfPi;
-        }
-        else
+        double lambda = xx / Cx;
+        double phi = sinTheta > 0d ? HalfPi : -HalfPi;
+        if (oneMinusAbs < 0d || oneMinusAbs > 1e-12d)
         {
             double theta = Asinz(sinTheta);
             double cosTheta = Math.Cos(theta);

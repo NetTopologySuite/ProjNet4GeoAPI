@@ -85,8 +85,7 @@ internal class GaussSchreiberTransverseMercatorProjection : MapProjection
         double lc = Math.Log(Tsfnz(0d, -Asinz(sinC), -sinC));
         double lambda = l / this.n1;
 
-        long flag;
-        double phi = -Phi2z(this.e, Math.Exp((lc - this.c) / this.n1), out flag);
+        double phi = -Phi2z(this.e, Math.Exp((lc - this.c) / this.n1), out long flag);
         if (flag != 0)
         {
             ArgumentGuard.ThrowArgument("Input data outside projection domain.");
