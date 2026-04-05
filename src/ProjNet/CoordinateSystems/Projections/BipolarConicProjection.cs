@@ -135,7 +135,6 @@ internal class BipolarConicProjection : MapProjection
             {
                 z = Math.Acos(z);
             }
-
         }
 
         if (z < 0d)

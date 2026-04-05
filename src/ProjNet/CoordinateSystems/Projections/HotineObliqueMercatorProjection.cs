@@ -187,6 +187,7 @@ internal class HotineObliqueMercatorProjection : MapProjection
             }
             else
             {
+                us = this.al * Math.Atan(((s * this.cosgam) + (vl * this.singam)) / con) / this.bl;
                 if (con < 0)
                 {
                     us += PI * this.al / this.bl;

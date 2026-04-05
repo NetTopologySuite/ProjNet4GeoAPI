@@ -24,12 +24,12 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://sis.apache.org/apidocs/org.apache.sis.referencing/org/apache/sis/referencing/operation/projection/ObliqueStereographic.html">Apache SIS: Oblique stereographic projection notes.</seealso>
 internal class ObliqueStereographicProjection : MapProjection
 {
+    private const double IterationTolerance = 1E-14;
+    private const int MaximumIterations = 15;
+    private const double Epsilon = 1E-6;
+
     private readonly double globalScale;
     private readonly double reciprocGlobalScale;
-
-    private const double iterationTolerance = 1E-14;
-    private const int maximumIterations = 15;
-    private const double epsilon = 1E-6;
     private readonly double c;
     private readonly double k;
     private readonly double ratexp;
@@ -94,7 +94,7 @@ internal class ObliqueStereographicProjection : MapProjection
         y *= this.reciprocGlobalScale;
 
         double rho = Math.Sqrt((x * x) + (y * y));
-        if (Math.Abs(rho) < epsilon)
+        if (Math.Abs(rho) < Epsilon)
         {
             x = 0.0;
             y = this.phic0;
@@ -120,10 +120,10 @@ internal class ObliqueStereographicProjection : MapProjection
 
         x /= this.c;
         double num = Math.Pow(Math.Tan((0.5 * y) + (Math.PI / 4.0)) / this.k, 1.0 / this.c);
-        for (int iter = maximumIterations; ;)
+        for (int iter = MaximumIterations; ;)
         {
             double phi = (2.0 * Math.Atan(num * this.Srat(this.e * Math.Sin(y), -0.5 * this.e))) - (Math.PI / 2.0);
-            if (Math.Abs(phi - y) < iterationTolerance)
+            if (Math.Abs(phi - y) < IterationTolerance)
             {
                 break;
             }

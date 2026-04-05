@@ -24,13 +24,12 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://epsg.io/9810-method">EPSG method 9810: Polar Stereographic (variant A).</seealso>
 internal class PolarStereographicProjection : MapProjection
 {
+    private const int MaximumIterations = 15;
+    private const double IterationTolerance = 1E-14;
+    private const double Eps15 = 1E-15;
+
     private readonly double globalScale;
     private readonly double reciprocGlobalScale;
-
-    private const int maximumIterations = 15;
-    private const double iterationTolerance = 1E-14;
-    private const double eps15 = 1E-15;
-    private const double mhalfPi = 0.5 * Math.PI;
     private readonly double phits;
     private readonly double akm1;
     private readonly bool npole;
@@ -77,7 +76,7 @@ internal class PolarStereographicProjection : MapProjection
         this.npole = this.latOrigin > 0.0; // N or S hemisphere
         this.phits = Math.Abs(this.latOrigin);
 
-        if (Math.Abs(this.phits - mhalfPi) < Eps10)
+        if (Math.Abs(this.phits - HalfPi) < Eps10)
         {
             double one_p_e = 1.0 + this.e;
             double one_m_e = 1.0 - this.e;
@@ -113,17 +112,17 @@ internal class PolarStereographicProjection : MapProjection
 
         double rho = Math.Sqrt((x * x) + (y * y));
         double tp = -rho / this.akm1;
-        double phi_l = mhalfPi - (2.0 * Math.Atan(tp));
+        double phi_l = HalfPi - (2.0 * Math.Atan(tp));
         double halfe = -0.5 * this.e;
 
         double lp_phi;
-        for (int iter = maximumIterations; ;)
+        for (int iter = MaximumIterations; ;)
         {
             double sinphi = this.e * Math.Sin(phi_l);
             double one_p_sinphi = 1.0 + sinphi;
             double one_m_sinphi = 1.0 - sinphi;
-            lp_phi = (2.0 * Math.Atan(tp * Math.Pow(one_p_sinphi / one_m_sinphi, halfe))) + mhalfPi;
-            if (Math.Abs(phi_l - lp_phi) < iterationTolerance)
+            lp_phi = (2.0 * Math.Atan(tp * Math.Pow(one_p_sinphi / one_m_sinphi, halfe))) + HalfPi;
+            if (Math.Abs(phi_l - lp_phi) < IterationTolerance)
             {
                 break;
             }
@@ -168,7 +167,7 @@ internal class PolarStereographicProjection : MapProjection
         double sinphi = Math.Sin(lp_phi);
         double cosphi = Math.Cos(lp_phi);
 
-        double x = (Math.Abs(lp_phi - mhalfPi) < eps15) ? 0.0 : this.akm1 * this.Tsfn(cosphi, sinphi, this.e);
+        double x = (Math.Abs(lp_phi - HalfPi) < Eps15) ? 0.0 : this.akm1 * this.Tsfn(cosphi, sinphi, this.e);
         lon = x * sinlam * this.globalScale;
         lat = -x * coslam * this.globalScale;
     }
