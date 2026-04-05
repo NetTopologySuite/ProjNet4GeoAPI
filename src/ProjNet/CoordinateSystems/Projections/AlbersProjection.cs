@@ -147,14 +147,11 @@ internal class AlbersProjection : MapProjection
 
         double q = (this.c - (Math.Pow(ro, 2) * Math.Pow(this.n, 2) / Math.Pow(this.semiMajor, 2))) / this.n;
 
-        double lat;
-        if (this.es <= Eps10)
+        double lat = this.es <= Eps10
+            ? Asinz(q * 0.5)
+            : Math.Asin(q * 0.5);
+        if (this.es > Eps10)
         {
-            lat = Asinz(q * 0.5);
-        }
-        else
-        {
-            lat = Math.Asin(q * 0.5);
             double preLat = double.MaxValue;
             int iterationCounter = 0;
             while (Math.Abs(lat - preLat) > 0.000001)

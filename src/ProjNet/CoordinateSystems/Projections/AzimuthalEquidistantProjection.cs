@@ -382,13 +382,6 @@ internal class AzimuthalEquidistantProjection : MapProjection
 
         double l = NormalizeLongitude(longitude2 - longitude1);
         double lambda = l;
-        double lambdaPrevious;
-        double sinSigma = 0d;
-        double cosSigma = 0d;
-        double sigma = 0d;
-        double sinAlpha = 0d;
-        double cosSqAlpha = 0d;
-        double cos2SigmaM = 0d;
 
         for (int iteration = 0; iteration < MaxGeodesicIterations; iteration++)
         {
@@ -397,22 +390,22 @@ internal class AzimuthalEquidistantProjection : MapProjection
 
             double term1 = cosU2 * sinLambda;
             double term2 = (cosU1 * sinU2) - (sinU1 * cosU2 * cosLambda);
-            sinSigma = Math.Sqrt((term1 * term1) + (term2 * term2));
+            double sinSigma = Math.Sqrt((term1 * term1) + (term2 * term2));
             if (sinSigma < GeodesicTolerance)
             {
                 return true;
             }
 
-            cosSigma = (sinU1 * sinU2) + (cosU1 * cosU2 * cosLambda);
-            sigma = Math.Atan2(sinSigma, cosSigma);
-            sinAlpha = (cosU1 * cosU2 * sinLambda) / sinSigma;
-            cosSqAlpha = 1d - (sinAlpha * sinAlpha);
-            cos2SigmaM = cosSqAlpha < GeodesicTolerance
+            double cosSigma = (sinU1 * sinU2) + (cosU1 * cosU2 * cosLambda);
+            double sigma = Math.Atan2(sinSigma, cosSigma);
+            double sinAlpha = (cosU1 * cosU2 * sinLambda) / sinSigma;
+            double cosSqAlpha = 1d - (sinAlpha * sinAlpha);
+            double cos2SigmaM = cosSqAlpha < GeodesicTolerance
                 ? 0d
                 : cosSigma - ((2d * sinU1 * sinU2) / cosSqAlpha);
 
             double c = (this.flattening / 16d) * cosSqAlpha * (4d + (this.flattening * (4d - (3d * cosSqAlpha))));
-            lambdaPrevious = lambda;
+            double lambdaPrevious = lambda;
             lambda = l + ((1d - c) * this.flattening * sinAlpha * (sigma + (c * sinSigma * (cos2SigmaM + (c * cosSigma * (-1d + (2d * cos2SigmaM * cos2SigmaM)))))));
             if (Math.Abs(lambda - lambdaPrevious) <= GeodesicTolerance)
             {
@@ -453,18 +446,13 @@ internal class AzimuthalEquidistantProjection : MapProjection
         double bCoeff = (uSq / 1024d) * (256d + (uSq * (-128d + (uSq * (74d - (47d * uSq))))));
 
         double sigma = distance / (this.semiMinor * aCoeff);
-        double sigmaPrevious;
-        double cos2SigmaM;
-        double sinSigma;
-        double cosSigma;
-
         for (int iteration = 0; iteration < MaxGeodesicIterations; iteration++)
         {
-            cos2SigmaM = Math.Cos((2d * sigma1) + sigma);
-            sinSigma = Math.Sin(sigma);
-            cosSigma = Math.Cos(sigma);
+            double cos2SigmaM = Math.Cos((2d * sigma1) + sigma);
+            double sinSigma = Math.Sin(sigma);
+            double cosSigma = Math.Cos(sigma);
             double deltaSigma = ComputeDeltaSigma(bCoeff, sinSigma, cosSigma, cos2SigmaM);
-            sigmaPrevious = sigma;
+            double sigmaPrevious = sigma;
             sigma = (distance / (this.semiMinor * aCoeff)) + deltaSigma;
             if (Math.Abs(sigma - sigmaPrevious) <= GeodesicTolerance)
             {
