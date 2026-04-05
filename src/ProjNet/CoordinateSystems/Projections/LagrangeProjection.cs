@@ -82,14 +82,9 @@ internal class LagrangeProjection : MapProjection
     {
         double lambda = Adjust_lon(lon - this.centralMeridian);
         double sinPhi = Math.Sin(lat);
-        double x;
-        double y;
-        if (Math.Abs(Math.Abs(sinPhi) - 1d) < Tolerance)
-        {
-            x = 0d;
-            y = lat < 0d ? -2d : 2d;
-        }
-        else
+        double x = 0d;
+        double y = lat < 0d ? -2d : 2d;
+        if (Math.Abs(Math.Abs(sinPhi) - 1d) >= Tolerance)
         {
             double v = this.a1 * Math.Pow((1d + sinPhi) / (1d - sinPhi), this.hrw);
             double lambdaScaled = lambda * this.rw;
@@ -112,14 +107,9 @@ internal class LagrangeProjection : MapProjection
     {
         double xx = x * this.inverseRadius;
         double yy = y * this.inverseRadius;
-        double lambda;
-        double phi;
-        if (Math.Abs(Math.Abs(yy) - 2d) < Tolerance)
-        {
-            phi = yy < 0d ? -HalfPi : HalfPi;
-            lambda = 0d;
-        }
-        else
+        double phi = yy < 0d ? -HalfPi : HalfPi;
+        double lambda = 0d;
+        if (Math.Abs(Math.Abs(yy) - 2d) >= Tolerance)
         {
             double x2 = xx * xx;
             double y2p = 2d + yy;

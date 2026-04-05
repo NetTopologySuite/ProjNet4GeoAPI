@@ -187,7 +187,9 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
 
     private void EllipsoidalRadiansToMeters(ref double lon, ref double lat)
     {
-        double sinb = 0.0, cosb = 0.0, b = 0.0;
+        double sinb = 0.0;
+        double cosb = 0.0;
+        double b = 0.0;
 
         double lam = Adjust_lon(lon - this.centralMeridian);
         double phi = lat;
@@ -327,7 +329,7 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
 
     private void EllipsoidalMetersToRadians(ref double x, ref double y)
     {
-        double cCe, sCe, q, rho, ab = 0.0;
+        double ab = 0.0;
 
         switch (this.mode)
         {
@@ -335,7 +337,7 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
             case Mode.OBLIQ:
                 x /= this.dd;
                 y *= this.dd;
-                rho = Hypot(x, y);
+                double rho = Hypot(x, y);
                 if (rho < Eps10)
                 {
                     x = this.centralMeridian; // lam
@@ -343,8 +345,8 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
                     return;
                 }
 
-                sCe = 2.0 * Math.Asin(0.5 * rho / this.rq);
-                cCe = Math.Cos(sCe);
+                double sCe = 2.0 * Math.Asin(0.5 * rho / this.rq);
+                double cCe = Math.Cos(sCe);
                 sCe = Math.Sin(sCe);
                 x *= sCe;
                 if (this.mode == Mode.OBLIQ)
@@ -366,7 +368,7 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
             // -fallthrough
             case Mode.S_POLE:
             continue_S_POLE:
-                q = (x * x) + (y * y);
+                double q = (x * x) + (y * y);
                 if (q == 0.0)
                 {
                     x = this.centralMeridian;          // lam
@@ -389,10 +391,10 @@ public class LambertAzimuthalEqualAreaProjection : MapProjection
 
     private void SphericalMetersToRadians(ref double x, ref double y)
     {
-        double cosz = 0.0, rh, sinz = 0.0;
-
-        rh = Hypot(x, y);
+        double rh = Hypot(x, y);
         double phi = rh * .5;
+        double cosz = 0.0;
+        double sinz = 0.0;
         if (phi > 1.0)
         {
             x = 0; // lam

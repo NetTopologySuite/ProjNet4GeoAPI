@@ -133,7 +133,7 @@ internal class LambertConformalConic2SP : MapProjection
     {
         double longitude = lon;
         double latitude = lat;
-        double radialDistance;
+        double radialDistance = 0d;
 
         double latitudeDistanceFromPole = Math.Abs(Math.Abs(latitude) - HalfPi);
         if (latitudeDistanceFromPole > Epsln)
@@ -168,19 +168,8 @@ internal class LambertConformalConic2SP : MapProjection
     {
         double dX = x;
         double dY = this.rh - y;
-        double sign;
-        double radialDistance;
-
-        if (this.ns > 0)
-        {
-            radialDistance = Math.Sqrt((dX * dX) + (dY * dY));
-            sign = 1.0;
-        }
-        else
-        {
-            radialDistance = -Math.Sqrt((dX * dX) + (dY * dY));
-            sign = -1.0;
-        }
+        double sign = this.ns > 0 ? 1.0 : -1.0;
+        double radialDistance = sign * Math.Sqrt((dX * dX) + (dY * dY));
 
         double theta = radialDistance != 0 ? Math.Atan2(sign * dX, sign * dY) : 0.0;
 
