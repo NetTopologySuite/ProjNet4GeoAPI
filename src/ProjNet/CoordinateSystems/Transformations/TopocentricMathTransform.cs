@@ -182,18 +182,11 @@ internal sealed class TopocentricMathTransform : MathTransform
 
         var geocForward = new GeocentricTransform(ellipsoidParameters, false);
         var geocInverse = (GeocentricTransform)geocForward.Inverse();
-
-        double originX;
-        double originY;
-        double originZ;
-        double phi0;
-        double lam0;
-
         if (hasX0)
         {
-            if (!TryGetRequiredDouble(args, "X_0", out originX)
-                || !TryGetRequiredDouble(args, "Y_0", out originY)
-                || !TryGetRequiredDouble(args, "Z_0", out originZ))
+            if (!TryGetRequiredDouble(args, "X_0", out double originX)
+                || !TryGetRequiredDouble(args, "Y_0", out double originY)
+                || !TryGetRequiredDouble(args, "Z_0", out double originZ))
             {
                 skipReason = "Unable to parse X_0/Y_0/Z_0 for topocentric.";
                 return false;
@@ -204,8 +197,13 @@ internal sealed class TopocentricMathTransform : MathTransform
             double h0 = originZ;
             geocInverse.Transform(ref lon0Degrees, ref lat0Degrees, ref h0);
 
-            lam0 = DegreesToRadians(lon0Degrees);
-            phi0 = DegreesToRadians(lat0Degrees);
+            transform = new TopocentricMathTransform(
+                originX,
+                originY,
+                originZ,
+                DegreesToRadians(lat0Degrees),
+                DegreesToRadians(lon0Degrees),
+                false);
         }
         else
         {
@@ -223,16 +221,20 @@ internal sealed class TopocentricMathTransform : MathTransform
                 return false;
             }
 
-            originX = lon0Degrees;
-            originY = lat0Degrees;
-            originZ = h0;
+            double originX = lon0Degrees;
+            double originY = lat0Degrees;
+            double originZ = h0;
             geocForward.Transform(ref originX, ref originY, ref originZ);
 
-            lam0 = DegreesToRadians(lon0Degrees);
-            phi0 = DegreesToRadians(lat0Degrees);
+            transform = new TopocentricMathTransform(
+                originX,
+                originY,
+                originZ,
+                DegreesToRadians(lat0Degrees),
+                DegreesToRadians(lon0Degrees),
+                false);
         }
 
-        transform = new TopocentricMathTransform(originX, originY, originZ, phi0, lam0, false);
         if (args.ContainsKey("inv"))
         {
             transform = transform.Inverse();

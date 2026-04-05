@@ -126,7 +126,6 @@ internal sealed class TinShiftMathTransform : MathTransform
             return false;
         }
 
-        string jsonText;
         try
         {
             var fileInfo = new FileInfo(resolvedPath);
@@ -142,7 +141,33 @@ internal sealed class TinShiftMathTransform : MathTransform
                 return false;
             }
 
-            jsonText = File.ReadAllText(resolvedPath);
+            string jsonText = File.ReadAllText(resolvedPath);
+            try
+            {
+                TinShiftModel model = ParseModel(jsonText);
+                transform = new TinShiftMathTransform(model, false);
+                if (args.ContainsKey("inv"))
+                {
+                    transform = transform.Inverse();
+                }
+
+                return true;
+            }
+            catch (FormatException exception)
+            {
+                skipReason = $"invalid model: {exception.Message}";
+                return false;
+            }
+            catch (JsonException exception)
+            {
+                skipReason = $"invalid model: {exception.Message}";
+                return false;
+            }
+            catch (ArgumentException exception)
+            {
+                skipReason = $"invalid model: {exception.Message}";
+                return false;
+            }
         }
         catch (IOException exception)
         {
@@ -152,33 +177,6 @@ internal sealed class TinShiftMathTransform : MathTransform
         catch (UnauthorizedAccessException exception)
         {
             skipReason = $"Cannot read {fileToken}: {exception.Message}";
-            return false;
-        }
-
-        try
-        {
-            TinShiftModel model = ParseModel(jsonText);
-            transform = new TinShiftMathTransform(model, false);
-            if (args.ContainsKey("inv"))
-            {
-                transform = transform.Inverse();
-            }
-
-            return true;
-        }
-        catch (FormatException exception)
-        {
-            skipReason = $"invalid model: {exception.Message}";
-            return false;
-        }
-        catch (JsonException exception)
-        {
-            skipReason = $"invalid model: {exception.Message}";
-            return false;
-        }
-        catch (ArgumentException exception)
-        {
-            skipReason = $"invalid model: {exception.Message}";
             return false;
         }
     }
@@ -855,19 +853,13 @@ internal sealed class TinShiftMathTransform : MathTransform
                 continue;
             }
 
-            double distanceSquared;
-            if (this.model.Fallback == FallbackStrategy.NearestSide)
-            {
-                distanceSquared = DistancePointSegmentSquared(x, y, x1, y1, x2, y2, d12);
-                distanceSquared = Math.Min(distanceSquared, DistancePointSegmentSquared(x, y, x2, y2, x3, y3, d23));
-                distanceSquared = Math.Min(distanceSquared, DistancePointSegmentSquared(x, y, x1, y1, x3, y3, d13));
-            }
-            else
-            {
-                double centroidX = (x1 + x2 + x3) / 3d;
-                double centroidY = (y1 + y2 + y3) / 3d;
-                distanceSquared = SquaredDistance(x, y, centroidX, centroidY);
-            }
+            double distanceSquared = this.model.Fallback == FallbackStrategy.NearestSide
+                ? Math.Min(
+                    DistancePointSegmentSquared(x, y, x1, y1, x2, y2, d12),
+                    Math.Min(
+                        DistancePointSegmentSquared(x, y, x2, y2, x3, y3, d23),
+                        DistancePointSegmentSquared(x, y, x1, y1, x3, y3, d13)))
+                : SquaredDistance(x, y, (x1 + x2 + x3) / 3d, (y1 + y2 + y3) / 3d);
 
             if (distanceSquared < bestDistanceSquared)
             {
