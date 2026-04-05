@@ -946,9 +946,7 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <returns>The value of the small m function for latitude φ.</returns>
     protected static double Msfnz(double eccent, double sinphi, double cosphi)
     {
-        double con;
-
-        con = eccent * sinphi;
+        double con = eccent * sinphi;
         return cosphi / Math.Sqrt(1.0 - (con * con));
     }
 
