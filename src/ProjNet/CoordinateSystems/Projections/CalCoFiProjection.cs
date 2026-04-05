@@ -87,15 +87,9 @@ internal class CalCoFiProjection : MapProjection
         double l1 = (yMercator - oYMercator) * Math.Tan(RotationAngle);
         double l2 = -xMercator - l1 + PointOLambda;
         double rYMercator = (l2 * Math.Cos(RotationAngle) * Math.Sin(RotationAngle)) + yMercator;
-        double ry;
-        if (this.isEllipsoidal)
-        {
-            ry = Phi2z(this.e, Math.Exp(-rYMercator), out _);
-        }
-        else
-        {
-            ry = HalfPi - (2d * Math.Atan(Math.Exp(-rYMercator)));
-        }
+        double ry = this.isEllipsoidal
+            ? Phi2z(this.e, Math.Exp(-rYMercator), out _)
+            : HalfPi - (2d * Math.Atan(Math.Exp(-rYMercator)));
 
         lon = PointOLine - (RadiansToDegrees(ry - PointOPhi) * DegToLine / Math.Cos(RotationAngle));
         lat = PointOStation + (RadiansToDegrees(ry - lat) * DegToStation / Math.Sin(RotationAngle));

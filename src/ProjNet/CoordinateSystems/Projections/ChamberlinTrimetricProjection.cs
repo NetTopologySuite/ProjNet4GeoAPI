@@ -130,18 +130,10 @@ internal class ChamberlinTrimetricProjection : MapProjection
             v[i] = new Arc(v[i].R, Adjust_lon(v[i].Az - this.control[i].Arc.Az));
         }
 
-        double x;
-        double y;
-        if (hitControl >= 0)
+        double x = hitControl >= 0 ? this.control[hitControl].Projected.X : this.meanPoint.X;
+        double y = hitControl >= 0 ? this.control[hitControl].Projected.Y : this.meanPoint.Y;
+        if (hitControl < 0)
         {
-            x = this.control[hitControl].Projected.X;
-            y = this.control[hitControl].Projected.Y;
-        }
-        else
-        {
-            x = this.meanPoint.X;
-            y = this.meanPoint.Y;
-
             for (int i = 0; i < 3; i++)
             {
                 int j = i == 2 ? 0 : i + 1;

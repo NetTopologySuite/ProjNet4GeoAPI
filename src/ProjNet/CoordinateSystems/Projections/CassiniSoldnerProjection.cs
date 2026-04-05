@@ -107,8 +107,7 @@ internal class CassiniSoldnerProjection : MapProjection
         double lambda = lon - this.centralMeridian;
         double phi = lat;
 
-        double sinPhi, cosPhi; // sin and cos value
-        Sincos(phi, out sinPhi, out cosPhi);
+        Sincos(phi, out double sinPhi, out double cosPhi);
 
         double y = this.Mlfn(phi, sinPhi, cosPhi);
         double n = 1.0d / Math.Sqrt(1 - (this.es * sinPhi * sinPhi));
