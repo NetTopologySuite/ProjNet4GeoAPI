@@ -178,14 +178,9 @@ internal class GeocentricTransform : MathTransform
     {
         bool at_Pole = false; // indicates whether location is in polar region
 
-        double lon;
+        double lon = x != 0.0 ? Math.Atan2(y, x) : 0.0;
         double lat = 0;
-        double height;
-        if (x != 0.0)
-        {
-            lon = Math.Atan2(y, x);
-        }
-        else
+        if (x == 0.0)
         {
             if (y > 0)
             {
@@ -235,18 +230,11 @@ internal class GeocentricTransform : MathTransform
         double sin_p1 = t1 / s1; // sin(phi1), phi1 is estimated latitude
         double cos_p1 = sum / s1; // cos(phi1)
         double rn = this.semiMajor / Math.Sqrt(1.0 - (this.es * sin_p1 * sin_p1)); // Earth radius at location
-        if (cos_p1 >= COS67P5)
-        {
-            height = (w / cos_p1) - rn;
-        }
-        else if (cos_p1 <= -COS67P5)
-        {
-            height = (w / -cos_p1) - rn;
-        }
-        else
-        {
-            height = (z / sin_p1) + (rn * (this.es - 1.0));
-        }
+        double height = cos_p1 >= COS67P5
+            ? (w / cos_p1) - rn
+            : cos_p1 <= -COS67P5
+                ? (w / -cos_p1) - rn
+                : (z / sin_p1) + (rn * (this.es - 1.0));
 
         if (!at_Pole)
         {

@@ -245,16 +245,7 @@ public class AffineTransform : MathTransform
                 // Since we've taken L and U as a singular matrix as an input
                 // the value for L at index i and j will be 1 when i equals j, not LU[i][j], since
                 // the diagonal values are all 1 for L.
-                double lij;
-                if (i == j)
-                {
-                    lij = 1;
-                }
-                else
-                {
-                    lij = lu[i, j];
-                }
-
+                double lij = i == j ? 1d : lu[i, j];
                 suml += lij * ySpan[j];
             }
 
@@ -288,8 +279,6 @@ public class AffineTransform : MathTransform
         // whose value indicates which column the 1 would appear.  We use it to avoid
         // dividing by zero or small numbers.
         int[] pi = new int[n + 1];
-        int kp = 0;
-
         // Initialize the permutation matrix, will be the identity matrix
         for (int j = 0; j <= n; j++)
         {
@@ -298,6 +287,8 @@ public class AffineTransform : MathTransform
 
         for (int k = 0; k <= n; k++)
         {
+            int kp = k;
+
             // In finding the permutation matrix p that avoids dividing by zero
             // we take a slightly different approach.  For numerical stability
             // We find the element with the largest
