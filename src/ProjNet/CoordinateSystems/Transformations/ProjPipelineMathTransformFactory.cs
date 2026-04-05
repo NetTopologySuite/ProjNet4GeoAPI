@@ -1618,29 +1618,20 @@ internal static class ProjPipelineMathTransformFactory
         for (int i = 0; i < axis.Length; i++)
         {
             char c = char.ToLowerInvariant(axis[i]);
-            int mapped;
-            switch (c)
+            int mapped = c switch
             {
-                case 'e':
-                    mapped = 1;
-                    break;
-                case 'w':
-                    mapped = -1;
-                    break;
-                case 'n':
-                    mapped = 2;
-                    break;
-                case 's':
-                    mapped = -2;
-                    break;
-                case 'u':
-                    mapped = 3;
-                    break;
-                case 'd':
-                    mapped = -3;
-                    break;
-                default:
-                    return false;
+                'e' => 1,
+                'w' => -1,
+                'n' => 2,
+                's' => -2,
+                'u' => 3,
+                'd' => -3,
+                _ => 0,
+            };
+
+            if (mapped == 0)
+            {
+                return false;
             }
 
             int absMapped = Math.Abs(mapped);

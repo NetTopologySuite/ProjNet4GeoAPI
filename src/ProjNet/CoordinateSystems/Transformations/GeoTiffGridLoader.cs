@@ -771,8 +771,7 @@ internal static partial class GeoTiffGridLoader
     private static bool TryGetSampleEncoding(Tiff tiff, out SampleEncoding encoding)
     {
         encoding = default;
-        int bitsPerSample;
-        if (!TryGetIntField(tiff, TiffTag.BITSPERSAMPLE, out bitsPerSample))
+        if (!TryGetIntField(tiff, TiffTag.BITSPERSAMPLE, out int bitsPerSample))
         {
             return false;
         }

@@ -670,18 +670,8 @@ internal sealed class HornerMathTransform : MathTransform
 
     private void TransformComplexDefault(ref double x, ref double y, bool forward)
     {
-        double e;
-        double n;
-        if (forward)
-        {
-            e = x - this.fwdOriginX;
-            n = y - this.fwdOriginY;
-        }
-        else
-        {
-            e = x - this.invOriginX;
-            n = y - this.invOriginY;
-        }
+        double e = forward ? x - this.fwdOriginX : x - this.invOriginX;
+        double n = forward ? y - this.fwdOriginY : y - this.invOriginY;
 
         if (this.uneg)
         {
