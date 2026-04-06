@@ -1242,249 +1242,301 @@ public class GieBuiltinsTheoryTests
                 return true;
             }
 
+            if (TryGetDouble(args, "f", out double flattening) && flattening > 0d && flattening < 1d)
+            {
+                ellipsoid = CoordinateSystemFactory.CreateEllipsoid("GIE ellipsoid", semiMajor, (1d - flattening) * semiMajor, LinearUnit.Metre);
+                return true;
+            }
+
+            if (TryGetDouble(args, "es", out double eccentricitySquared) && eccentricitySquared >= 0d && eccentricitySquared < 1d)
+            {
+                ellipsoid = CoordinateSystemFactory.CreateEllipsoid("GIE ellipsoid", semiMajor, semiMajor * Math.Sqrt(1d - eccentricitySquared), LinearUnit.Metre);
+                return true;
+            }
+
             ellipsoid = CoordinateSystemFactory.CreateEllipsoid("GIE sphere", semiMajor, semiMajor, LinearUnit.Metre);
             return true;
         }
 
-        if (args.TryGetValue("ellps", out string? ellps))
+        if (args.TryGetValue("ellps", out string? ellps)
+            && !string.IsNullOrWhiteSpace(ellps)
+            && TryResolveKnownEllipsoidToken(ellps, out Ellipsoid? knownEllipsoid))
         {
-            if (ellps.Equals("wgs84", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = Ellipsoid.WGS84;
-                return true;
-            }
-
-            if (ellps.Equals("grs80", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = Ellipsoid.GRS80;
-                return true;
-            }
-
-            if (ellps.Equals("clrk66", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = Ellipsoid.Clarke1866;
-                return true;
-            }
-
-            if (ellps.Equals("clrk80", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Clarke 1880 (RGS)", 6378249.145, 293.4663, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("intl", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = Ellipsoid.International1924;
-                return true;
-            }
-
-            if (ellps.Equals("sphere", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = Ellipsoid.Sphere;
-                return true;
-            }
-
-            if (ellps.Equals("bessel", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Bessel 1841", 6377397.155, 299.1528128, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("airy", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Airy 1830", 6377563.396, 299.3249646, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("krass", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Krassowsky 1940", 6378245.0, 298.3, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("GRS67", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("GRS 1967", 6378160.0, 298.247167427, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("evrst30", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Everest 1830", 6377276.345, 300.8017, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("evrst69", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Everest 1969", 6377295.664, 300.8017255, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("aust_SA", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Australian National", 6378160.0, 298.25, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("bess_nam", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Bessel Namibia", 6377483.865, 299.1528128, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("clrk80ign", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Clarke 1880 (IGN)", 6378249.2, 293.4660212936269, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("mod_airy", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Modified Airy", 6377340.189, 299.3249646, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("andrae", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Andrae 1876", 6377104.43, 300.0, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("danish", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Danish 1876", 6377019.2563, 300.0, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("helmert", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Helmert 1906", 6378200.0, 298.3, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("fschr60", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Fischer 1960", 6378166.0, 298.3, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("fschr68", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Fischer 1968", 6378150.0, 298.3, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("fschr60m", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Fischer 1960 Modified", 6378155.0, 298.3, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("hough", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Hough", 6378270.0, 297.0, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("kaula", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Kaula 1961", 6378163.0, 298.24, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("lerch", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Lerch 1979", 6378139.0, 298.257, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("mprts", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Maupertuis 1738", 6397300.0, 191.0, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("plessis", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Plessis 1817", 6376523.0, 308.64, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("SEasia", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Southeast Asia", 6378155.0, 298.3, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("walbeck", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Walbeck", 6376896.0, 302.78, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("NWL9D", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("NWL-9D", 6378145.0, 298.25, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("IAU76", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("IAU 1976", 6378140.0, 298.257, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("everest", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Everest 1830", 6377276.345, 300.8017, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("evrst48", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Everest 1948", 6377304.063, 300.8017, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("evrst56", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Everest 1956", 6377301.243, 300.8017, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("clrk58", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Clarke 1858", 6378293.645208759, 294.2606763692654, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("engelis", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Engelis 1985", 6378136.05, 298.2566, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("CPM", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Comm. des Poids et Mesures 1799", 6375738.7, 334.29, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("delmbr", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Delambre 1810", 6376428.0, 311.5, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("fschr68m", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Fischer 1968 Modified", 6378155.0, 298.3, LinearUnit.Metre);
-                return true;
-            }
+            return TryCreateEllipsoidWithExplicitShapeOverrides(args, knownEllipsoid, out ellipsoid);
         }
 
-        ellipsoid = Ellipsoid.WGS84;
+        if (args.TryGetValue("datum", out string? datumToken)
+            && !string.IsNullOrWhiteSpace(datumToken)
+            && ProjEllipsoidResolver.TryResolveKnownEllipsoid(datumToken, allowClarke1880Ign: true, allowBessel: true, out double datumSemiMajor, out double datumSemiMinor))
+        {
+            Ellipsoid datumEllipsoid = CoordinateSystemFactory.CreateEllipsoid($"GIE datum ellipsoid ({datumToken})", datumSemiMajor, datumSemiMinor, LinearUnit.Metre);
+            return TryCreateEllipsoidWithExplicitShapeOverrides(args, datumEllipsoid, out ellipsoid);
+        }
+
+        return TryCreateEllipsoidWithExplicitShapeOverrides(args, Ellipsoid.WGS84, out ellipsoid);
+    }
+
+    private static bool TryCreateEllipsoidWithExplicitShapeOverrides(
+        Dictionary<string, string> args,
+        Ellipsoid baseEllipsoid,
+        out Ellipsoid? ellipsoid)
+    {
+        if (!args.ContainsKey("b") && !args.ContainsKey("rf") && !args.ContainsKey("f") && !args.ContainsKey("es"))
+        {
+            ellipsoid = baseEllipsoid;
+            return true;
+        }
+
+        double semiMajor = baseEllipsoid.SemiMajorAxis;
+        double semiMinor = baseEllipsoid.SemiMinorAxis;
+        if (!ProjEllipsoidResolver.TryApplyExplicitShapeOverrides(args, ref semiMajor, ref semiMinor, out _))
+        {
+            ellipsoid = null;
+            return false;
+        }
+
+        ellipsoid = CoordinateSystemFactory.CreateEllipsoid(baseEllipsoid.Name, semiMajor, semiMinor, LinearUnit.Metre);
         return true;
+    }
+
+    private static bool TryResolveKnownEllipsoidToken(string ellps, [NotNullWhen(true)] out Ellipsoid? ellipsoid)
+    {
+        if (ellps.Equals("wgs84", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = Ellipsoid.WGS84;
+            return true;
+        }
+
+        if (ellps.Equals("grs80", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = Ellipsoid.GRS80;
+            return true;
+        }
+
+        if (ellps.Equals("clrk66", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = Ellipsoid.Clarke1866;
+            return true;
+        }
+
+        if (ellps.Equals("clrk80", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Clarke 1880 (RGS)", 6378249.145, 293.4663, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("intl", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = Ellipsoid.International1924;
+            return true;
+        }
+
+        if (ellps.Equals("sphere", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = Ellipsoid.Sphere;
+            return true;
+        }
+
+        if (ellps.Equals("bessel", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Bessel 1841", 6377397.155, 299.1528128, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("airy", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Airy 1830", 6377563.396, 299.3249646, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("krass", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Krassowsky 1940", 6378245.0, 298.3, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("GRS67", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("GRS 1967", 6378160.0, 298.247167427, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("evrst30", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Everest 1830", 6377276.345, 300.8017, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("evrst69", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Everest 1969", 6377295.664, 300.8017255, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("aust_SA", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Australian National", 6378160.0, 298.25, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("bess_nam", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Bessel Namibia", 6377483.865, 299.1528128, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("clrk80ign", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Clarke 1880 (IGN)", 6378249.2, 293.4660212936269, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("mod_airy", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Modified Airy", 6377340.189, 299.3249646, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("andrae", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Andrae 1876", 6377104.43, 300.0, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("danish", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Danish 1876", 6377019.2563, 300.0, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("helmert", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Helmert 1906", 6378200.0, 298.3, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("fschr60", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Fischer 1960", 6378166.0, 298.3, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("fschr68", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Fischer 1968", 6378150.0, 298.3, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("fschr60m", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Fischer 1960 Modified", 6378155.0, 298.3, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("hough", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Hough", 6378270.0, 297.0, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("kaula", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Kaula 1961", 6378163.0, 298.24, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("lerch", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Lerch 1979", 6378139.0, 298.257, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("mprts", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Maupertuis 1738", 6397300.0, 191.0, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("plessis", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Plessis 1817", 6376523.0, 308.64, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("SEasia", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Southeast Asia", 6378155.0, 298.3, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("walbeck", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Walbeck", 6376896.0, 302.78, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("NWL9D", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("NWL-9D", 6378145.0, 298.25, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("IAU76", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("IAU 1976", 6378140.0, 298.257, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("everest", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Everest 1830", 6377276.345, 300.8017, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("evrst48", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Everest 1948", 6377304.063, 300.8017, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("evrst56", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Everest 1956", 6377301.243, 300.8017, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("clrk58", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Clarke 1858", 6378293.645208759, 294.2606763692654, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("engelis", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Engelis 1985", 6378136.05, 298.2566, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("CPM", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Comm. des Poids et Mesures 1799", 6375738.7, 334.29, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("delmbr", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Delambre 1810", 6376428.0, 311.5, LinearUnit.Metre);
+            return true;
+        }
+
+        if (ellps.Equals("fschr68m", StringComparison.OrdinalIgnoreCase))
+        {
+            ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Fischer 1968 Modified", 6378155.0, 298.3, LinearUnit.Metre);
+            return true;
+        }
+
+        ellipsoid = null;
+        return false;
     }
 
     private static bool TryBuildProjectionParameters(Dictionary<string, string> args, out List<ProjectionParameter> parameters)

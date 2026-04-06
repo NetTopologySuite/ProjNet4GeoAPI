@@ -1035,31 +1035,15 @@ internal static class ProjPipelineMathTransformFactory
             && major > 0d)
         {
             semiMajor = major;
-            if (args.TryGetValue("b", out string? minorToken)
-                && TryParseFiniteDouble(minorToken, out double minor)
-                && minor > 0d)
-            {
-                semiMinor = minor;
-                return true;
-            }
-
-            if (args.TryGetValue("rf", out string? inverseFlatteningToken)
-                && TryParseFiniteDouble(inverseFlatteningToken, out double inverseFlattening)
-                && inverseFlattening > 0d)
-            {
-                semiMinor = (1d - (1d / inverseFlattening)) * major;
-                return true;
-            }
-
             semiMinor = major;
-            return true;
+            return ProjEllipsoidResolver.TryApplyExplicitShapeOverrides(args, ref semiMajor, ref semiMinor, out skipReason);
         }
 
         if (args.TryGetValue("ellps", out string? ellps) && !string.IsNullOrWhiteSpace(ellps))
         {
             if (TryResolveKnownEllipsoid(ellps, out semiMajor, out semiMinor))
             {
-                return true;
+                return ProjEllipsoidResolver.TryApplyExplicitShapeOverrides(args, ref semiMajor, ref semiMinor, out skipReason);
             }
 
             skipReason = "utm received unsupported +ellps value.";
@@ -1070,7 +1054,7 @@ internal static class ProjPipelineMathTransformFactory
         {
             if (TryResolveKnownEllipsoid(datum, out semiMajor, out semiMinor))
             {
-                return true;
+                return ProjEllipsoidResolver.TryApplyExplicitShapeOverrides(args, ref semiMajor, ref semiMinor, out skipReason);
             }
 
             skipReason = "utm received unsupported +datum value.";
@@ -1079,7 +1063,7 @@ internal static class ProjPipelineMathTransformFactory
 
         semiMajor = Ellipsoid.WGS84.SemiMajorAxis;
         semiMinor = Ellipsoid.WGS84.SemiMinorAxis;
-        return true;
+        return ProjEllipsoidResolver.TryApplyExplicitShapeOverrides(args, ref semiMajor, ref semiMinor, out skipReason);
     }
 
     private static bool TryGetZoneCentralMeridian(Dictionary<string, string> args, out double centralMeridian)
@@ -1543,31 +1527,15 @@ internal static class ProjPipelineMathTransformFactory
             && major > 0d)
         {
             semiMajor = major;
-            if (args.TryGetValue("b", out string? minorToken)
-                && TryParseFiniteDouble(minorToken, out double minor)
-                && minor > 0d)
-            {
-                semiMinor = minor;
-                return true;
-            }
-
-            if (args.TryGetValue("rf", out string? inverseFlatteningToken)
-                && TryParseFiniteDouble(inverseFlatteningToken, out double inverseFlattening)
-                && inverseFlattening > 0d)
-            {
-                semiMinor = (1d - (1d / inverseFlattening)) * major;
-                return true;
-            }
-
             semiMinor = major;
-            return true;
+            return ProjEllipsoidResolver.TryApplyExplicitShapeOverrides(args, ref semiMajor, ref semiMinor, out skipReason);
         }
 
         if (args.TryGetValue("ellps", out string? ellps) && !string.IsNullOrWhiteSpace(ellps))
         {
             if (TryResolveKnownEllipsoid(ellps, out semiMajor, out semiMinor))
             {
-                return true;
+                return ProjEllipsoidResolver.TryApplyExplicitShapeOverrides(args, ref semiMajor, ref semiMinor, out skipReason);
             }
 
             skipReason = "xyzgridshift received unsupported +ellps value.";
@@ -1578,14 +1546,14 @@ internal static class ProjPipelineMathTransformFactory
         {
             if (TryResolveKnownEllipsoid(datum, out semiMajor, out semiMinor))
             {
-                return true;
+                return ProjEllipsoidResolver.TryApplyExplicitShapeOverrides(args, ref semiMajor, ref semiMinor, out skipReason);
             }
 
             skipReason = "xyzgridshift received unsupported +datum value.";
             return false;
         }
 
-        skipReason = "xyzgridshift requires ellipsoid definition (+ellps, +datum, +r, +a/+b, or +a/+rf).";
+        skipReason = "xyzgridshift requires ellipsoid definition (+ellps, +datum, +r, or +a with optional +b/+rf/+f/+es).";
         return false;
     }
 

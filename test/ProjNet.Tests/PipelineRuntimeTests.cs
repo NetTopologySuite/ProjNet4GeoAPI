@@ -142,6 +142,48 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
+    /// Verifies that explicit ellipsoid shape overrides are applied after resolving a named ellipsoid for UTM steps.
+    /// </summary>
+    /// <param name="operation">UTM operation under test.</param>
+    /// <param name="equivalentOperation">Equivalent UTM operation with the ellipsoid shape specified directly.</param>
+    /// <param name="baselineOperation">UTM operation that keeps the original named ellipsoid without an explicit shape override.</param>
+    [Theory]
+    [InlineData("+proj=utm +ellps=GRS80 +zone=32 +b=6000000", "+proj=utm +a=6378137 +zone=32 +b=6000000", "+proj=utm +ellps=GRS80 +zone=32")]
+    [InlineData("+proj=utm +ellps=GRS80 +zone=32 +rf=300", "+proj=utm +a=6378137 +zone=32 +rf=300", "+proj=utm +ellps=GRS80 +zone=32")]
+    [InlineData("+proj=utm +ellps=GRS80 +zone=32 +f=0.00333333333333", "+proj=utm +a=6378137 +zone=32 +f=0.00333333333333", "+proj=utm +ellps=GRS80 +zone=32")]
+    public void PipelineWithUtmStepHonorsExplicitEllipsoidShapeOverrides(
+        string operation,
+        string equivalentOperation,
+        string baselineOperation)
+    {
+        MathTransform transform = RequirePipelineMathTransform(operation);
+        MathTransform equivalentTransform = RequirePipelineMathTransform(equivalentOperation);
+        MathTransform baselineTransform = RequirePipelineMathTransform(baselineOperation);
+        double[] output = transform.Transform([12d, 55d]);
+        double[] equivalentOutput = equivalentTransform.Transform([12d, 55d]);
+        double[] baselineOutput = baselineTransform.Transform([12d, 55d]);
+
+        Assert.Equal(equivalentOutput[0], output[0], 12);
+        Assert.Equal(equivalentOutput[1], output[1], 12);
+        Assert.NotEqual(baselineOutput[0], output[0], 9);
+        Assert.NotEqual(baselineOutput[1], output[1], 9);
+    }
+
+    /// <summary>
+    /// Verifies that invalid explicit ellipsoid shape overrides are rejected even when a named ellipsoid provides the base axes.
+    /// </summary>
+    /// <param name="operation">Invalid UTM operation under test.</param>
+    /// <param name="expectedToken">Expected token mentioned in the validation message.</param>
+    [Theory]
+    [InlineData("+proj=utm +ellps=GRS80 +zone=32 +b=0", "+b")]
+    [InlineData("+proj=utm +ellps=GRS80 +zone=32 +es=1", "+es")]
+    public void PipelineWithUtmStepRejectsInvalidExplicitEllipsoidShapeOverrides(string operation, string expectedToken)
+    {
+        string skipReason = RequirePipelineValidationFailure(operation);
+        Assert.Contains(expectedToken, skipReason, StringComparison.Ordinal);
+    }
+
+    /// <summary>
     /// Verifies that a global pipeline <c>+inv</c> flag reverses the step order and toggles each step inversion.
     /// </summary>
     [Fact]

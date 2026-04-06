@@ -5,6 +5,8 @@
 namespace ProjNet.CoordinateSystems.Transformations;
 
 using System;
+using System.Collections.Generic;
+using System.Globalization;
 using ProjNet.CoordinateSystems;
 
 /// <summary>
@@ -105,8 +107,90 @@ internal static class ProjEllipsoidResolver
         return false;
     }
 
+    /// <summary>
+    /// Applies explicit PROJ ellipsoid shape overrides to previously resolved semi-axis values.
+    /// </summary>
+    /// <param name="args">The PROJ argument dictionary.</param>
+    /// <param name="semiMajor">The resolved semi-major axis in metres.</param>
+    /// <param name="semiMinor">The resolved semi-minor axis in metres.</param>
+    /// <param name="errorMessage">An error message when an override token is invalid.</param>
+    /// <returns><see langword="true"/> when the override set is valid.</returns>
+    internal static bool TryApplyExplicitShapeOverrides(
+        IReadOnlyDictionary<string, string> args,
+        ref double semiMajor,
+        ref double semiMinor,
+        out string? errorMessage)
+    {
+        errorMessage = null;
+
+        if (args.TryGetValue("b", out string? minorToken) && !string.IsNullOrWhiteSpace(minorToken))
+        {
+            if (!TryParseFiniteDouble(minorToken, out double explicitMinor) || explicitMinor <= 0d)
+            {
+                errorMessage = "Ellipsoid +b override must be finite and positive.";
+                return false;
+            }
+
+            semiMinor = explicitMinor;
+            return true;
+        }
+
+        if (args.TryGetValue("rf", out string? inverseFlatteningToken) && !string.IsNullOrWhiteSpace(inverseFlatteningToken))
+        {
+            if (!TryParseFiniteDouble(inverseFlatteningToken, out double inverseFlattening) || inverseFlattening <= 0d)
+            {
+                errorMessage = "Ellipsoid +rf override must be finite and positive.";
+                return false;
+            }
+
+            semiMinor = ComputeSemiMinorAxis(semiMajor, inverseFlattening);
+            if (semiMinor <= 0d || double.IsNaN(semiMinor) || double.IsInfinity(semiMinor))
+            {
+                errorMessage = "Ellipsoid +rf override must resolve to a finite positive semi-minor axis.";
+                return false;
+            }
+
+            return true;
+        }
+
+        if (args.TryGetValue("f", out string? flatteningToken) && !string.IsNullOrWhiteSpace(flatteningToken))
+        {
+            if (!TryParseFiniteDouble(flatteningToken, out double flattening) || flattening <= 0d || flattening >= 1d)
+            {
+                errorMessage = "Ellipsoid +f override must be finite and satisfy 0 < f < 1.";
+                return false;
+            }
+
+            semiMinor = (1d - flattening) * semiMajor;
+            return true;
+        }
+
+        if (args.TryGetValue("es", out string? eccentricitySquaredToken) && !string.IsNullOrWhiteSpace(eccentricitySquaredToken))
+        {
+            if (!TryParseFiniteDouble(eccentricitySquaredToken, out double eccentricitySquared) || eccentricitySquared < 0d || eccentricitySquared >= 1d)
+            {
+                errorMessage = "Ellipsoid +es override must be finite and satisfy 0 <= es < 1.";
+                return false;
+            }
+
+            semiMinor = semiMajor * Math.Sqrt(1d - eccentricitySquared);
+            return true;
+        }
+
+        return true;
+    }
+
     private static double ComputeSemiMinorAxis(double semiMajor, double inverseFlattening)
     {
         return (1d - (1d / inverseFlattening)) * semiMajor;
+    }
+
+    private static bool TryParseFiniteDouble(string token, out double value)
+    {
+        value = 0d;
+        return !string.IsNullOrWhiteSpace(token)
+            && double.TryParse(token, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value)
+            && !double.IsNaN(value)
+            && !double.IsInfinity(value);
     }
 }

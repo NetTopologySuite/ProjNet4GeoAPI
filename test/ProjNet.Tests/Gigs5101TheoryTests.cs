@@ -568,22 +568,71 @@ public class Gigs5101TheoryTests
 
     private static bool TryResolveEllipsoid(Dictionary<string, string> args, out Ellipsoid? ellipsoid)
     {
-        if (args.TryGetValue("ellps", out string? ellps))
+        if (TryGetDouble(args, "r", out double sphereRadius) && sphereRadius > 0d)
         {
-            if (ellps.Equals("wgs84", StringComparison.OrdinalIgnoreCase))
+            ellipsoid = CoordinateSystemFactory.CreateEllipsoid("GIGS sphere", sphereRadius, sphereRadius, LinearUnit.Metre);
+            return true;
+        }
+
+        if (TryGetDouble(args, "a", out double semiMajor) && semiMajor > 0d)
+        {
+            if (TryGetDouble(args, "b", out double semiMinor) && semiMinor > 0d)
             {
-                ellipsoid = Ellipsoid.WGS84;
+                ellipsoid = CoordinateSystemFactory.CreateEllipsoid("GIGS ellipsoid", semiMajor, semiMinor, LinearUnit.Metre);
                 return true;
             }
 
+            if (TryGetDouble(args, "rf", out double inverseFlattening) && inverseFlattening > 0d)
+            {
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("GIGS ellipsoid", semiMajor, inverseFlattening, LinearUnit.Metre);
+                return true;
+            }
+
+            if (TryGetDouble(args, "f", out double flattening) && flattening > 0d && flattening < 1d)
+            {
+                ellipsoid = CoordinateSystemFactory.CreateEllipsoid("GIGS ellipsoid", semiMajor, (1d - flattening) * semiMajor, LinearUnit.Metre);
+                return true;
+            }
+
+            if (TryGetDouble(args, "es", out double eccentricitySquared) && eccentricitySquared >= 0d && eccentricitySquared < 1d)
+            {
+                ellipsoid = CoordinateSystemFactory.CreateEllipsoid("GIGS ellipsoid", semiMajor, semiMajor * Math.Sqrt(1d - eccentricitySquared), LinearUnit.Metre);
+                return true;
+            }
+
+            ellipsoid = CoordinateSystemFactory.CreateEllipsoid("GIGS sphere", semiMajor, semiMajor, LinearUnit.Metre);
+            return true;
+        }
+
+        Ellipsoid baseEllipsoid = Ellipsoid.WGS84;
+        if (args.TryGetValue("ellps", out string? ellps) && !string.IsNullOrWhiteSpace(ellps))
+        {
             if (ellps.Equals("grs80", StringComparison.OrdinalIgnoreCase))
             {
-                ellipsoid = Ellipsoid.GRS80;
-                return true;
+                baseEllipsoid = Ellipsoid.GRS80;
+            }
+            else if (!ellps.Equals("wgs84", StringComparison.OrdinalIgnoreCase))
+            {
+                ellipsoid = null;
+                return false;
             }
         }
 
-        ellipsoid = Ellipsoid.WGS84;
+        if (!args.ContainsKey("b") && !args.ContainsKey("rf") && !args.ContainsKey("f") && !args.ContainsKey("es"))
+        {
+            ellipsoid = baseEllipsoid;
+            return true;
+        }
+
+        double resolvedSemiMajor = baseEllipsoid.SemiMajorAxis;
+        double resolvedSemiMinor = baseEllipsoid.SemiMinorAxis;
+        if (!ProjEllipsoidResolver.TryApplyExplicitShapeOverrides(args, ref resolvedSemiMajor, ref resolvedSemiMinor, out _))
+        {
+            ellipsoid = null;
+            return false;
+        }
+
+        ellipsoid = CoordinateSystemFactory.CreateEllipsoid(baseEllipsoid.Name, resolvedSemiMajor, resolvedSemiMinor, LinearUnit.Metre);
         return true;
     }
 

@@ -195,6 +195,31 @@ public class GieBuiltinsRegressionTests
     }
 
     /// <summary>
+    /// Verifies that the builtins harness applies explicit ellipsoid shape overrides after resolving a named ellipsoid.
+    /// </summary>
+    /// <param name="operation">UTM operation under test.</param>
+    /// <param name="equivalentOperation">Equivalent UTM operation with the ellipsoid shape specified directly.</param>
+    /// <param name="baselineOperation">UTM operation that keeps the original named ellipsoid without an explicit shape override.</param>
+    [Theory]
+    [InlineData("proj=utm ellps=GRS80 zone=32 b=6000000", "proj=utm a=6378137 zone=32 b=6000000", "proj=utm ellps=GRS80 zone=32")]
+    [InlineData("proj=utm ellps=GRS80 zone=32 rf=300", "proj=utm a=6378137 zone=32 rf=300", "proj=utm ellps=GRS80 zone=32")]
+    [InlineData("proj=utm ellps=GRS80 zone=32 f=0.00333333333333", "proj=utm a=6378137 zone=32 f=0.00333333333333", "proj=utm ellps=GRS80 zone=32")]
+    public void TryCreateTransformWithUtmEllipsoidOverridesReturnsExpectedProjectedCoordinate(
+        string operation,
+        string equivalentOperation,
+        string baselineOperation)
+    {
+        double[] output = RequireBuiltinsProjectedOutput(operation);
+        double[] equivalentOutput = RequireBuiltinsProjectedOutput(equivalentOperation);
+        double[] baselineOutput = RequireBuiltinsProjectedOutput(baselineOperation);
+
+        Assert.Equal(equivalentOutput[0], output[0], 12);
+        Assert.Equal(equivalentOutput[1], output[1], 12);
+        Assert.NotEqual(baselineOutput[0], output[0], 9);
+        Assert.NotEqual(baselineOutput[1], output[1], 9);
+    }
+
+    /// <summary>
     /// Verifies that DMS projection parameters are parsed for builtins cases.
     /// </summary>
     [Fact]
@@ -551,5 +576,24 @@ public class GieBuiltinsRegressionTests
         transform = args[2] as Func<double[], double[]>;
         skipReason = args[3] as string;
         return created;
+    }
+
+    private static double[] RequireBuiltinsProjectedOutput(string operation)
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 157,
+            Operation = operation,
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [12d, 55d],
+            Expect = [0d, 0d],
+        };
+
+        bool created = TryCreateTransform(testCase, out MathTransform? transform, out string? skipReason);
+        Assert.True(created, skipReason ?? "TryCreateTransform returned false.");
+        MathTransform mathTransform = Assert.IsAssignableFrom<MathTransform>(transform);
+        return mathTransform.Transform(testCase.Accept);
     }
 }
