@@ -125,6 +125,72 @@ public class CylindricalProjectionSupportTests
     }
 
     /// <summary>
+    /// Verifies PROJ builtins forward vectors for the ellipsoidal EQC path.
+    /// </summary>
+    /// <param name="standardParallel">The latitude of true scale in degrees.</param>
+    /// <param name="latitudeOfOrigin">The latitude of natural origin in degrees.</param>
+    /// <param name="longitude">Input longitude in degrees.</param>
+    /// <param name="latitude">Input latitude in degrees.</param>
+    /// <param name="expectedX">Expected easting in metres.</param>
+    /// <param name="expectedY">Expected northing in metres.</param>
+    /// <param name="tolerance">Allowed absolute tolerance in metres.</param>
+    [Theory]
+    [InlineData(0d, 0d, 10d, 55d, 1113194.91d, 6097230.31d, 0.05d)]
+    [InlineData(45d, 0d, 2d, 49d, 157693.670d, 5429627.632d, 0.05d)]
+    [InlineData(30d, 45d, 0d, 60d, 0d, 1669128.442d, 0.05d)]
+    public void MatchesEqcEllipsoidalForwardVectors(
+        double standardParallel,
+        double latitudeOfOrigin,
+        double longitude,
+        double latitude,
+        double expectedX,
+        double expectedY,
+        double tolerance)
+    {
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
+            BuildEqcProjectedWkt(true, "lat_ts", standardParallel, latitudeOfOrigin));
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
+
+        Assert.InRange(System.Math.Abs(projectedPoint[0] - expectedX), 0d, tolerance);
+        Assert.InRange(System.Math.Abs(projectedPoint[1] - expectedY), 0d, tolerance);
+    }
+
+    /// <summary>
+    /// Verifies PROJ builtins inverse vectors for the ellipsoidal EQC path.
+    /// </summary>
+    /// <param name="standardParallel">The latitude of true scale in degrees.</param>
+    /// <param name="latitudeOfOrigin">The latitude of natural origin in degrees.</param>
+    /// <param name="x">Input easting in metres.</param>
+    /// <param name="y">Input northing in metres.</param>
+    /// <param name="expectedLongitude">Expected longitude in degrees.</param>
+    /// <param name="expectedLatitude">Expected latitude in degrees.</param>
+    /// <param name="tolerance">Allowed absolute tolerance in degrees.</param>
+    [Theory]
+    [InlineData(0d, 0d, 1113194.91d, 6097230.31d, 10d, 55d, 1e-7d)]
+    [InlineData(45d, 0d, 157693.670d, 5429627.632d, 2d, 49d, 1e-7d)]
+    [InlineData(30d, 45d, 0d, 1669128.442d, 0d, 60d, 1e-7d)]
+    public void MatchesEqcEllipsoidalInverseVectors(
+        double standardParallel,
+        double latitudeOfOrigin,
+        double x,
+        double y,
+        double expectedLongitude,
+        double expectedLatitude,
+        double tolerance)
+    {
+        ProjectedCoordinateSystem projected = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
+            BuildEqcProjectedWkt(true, "lat_ts", standardParallel, latitudeOfOrigin));
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
+        double[] geographicPoint = inverse.MathTransform.Transform(CreatePoint(x, y));
+
+        Assert.InRange(System.Math.Abs(geographicPoint[0] - expectedLongitude), 0d, tolerance);
+        Assert.InRange(System.Math.Abs(geographicPoint[1] - expectedLatitude), 0d, tolerance);
+    }
+
+    /// <summary>
     /// Verifies that CEA projection aliases can be parsed from WKT.
     /// </summary>
     /// <param name="projectionName">The projection alias under test.</param>
@@ -253,8 +319,16 @@ public class CylindricalProjectionSupportTests
 
     private static string BuildEqcAliasWkt(string parameterName)
     {
-        return
-            $"PROJCS[\"Projection-eqc-alias\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",SPHEROID[\"Sphere\",6400000,0]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"eqc\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"{parameterName}\",45],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1]]";
+        return BuildEqcProjectedWkt(false, parameterName, 45d, 0d);
+    }
+
+    private static string BuildEqcProjectedWkt(bool useWgs84, string standardParallelParameterName, double standardParallelDegrees, double latitudeOfOriginDegrees)
+    {
+        string spheroidClause = useWgs84
+            ? "SPHEROID[\"WGS 84\",6378137,298.257223563]"
+            : "SPHEROID[\"Sphere\",6400000,0]";
+        return System.FormattableString.Invariant(
+            $"PROJCS[\"Projection-eqc\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",{spheroidClause}],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"eqc\"],PARAMETER[\"latitude_of_origin\",{latitudeOfOriginDegrees}],PARAMETER[\"central_meridian\",0],PARAMETER[\"{standardParallelParameterName}\",{standardParallelDegrees}],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1]]");
     }
 
     private static double[] CreatePoint(double x, double y)
