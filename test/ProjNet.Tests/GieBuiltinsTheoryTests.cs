@@ -1682,11 +1682,21 @@ public class GieBuiltinsTheoryTests
                 return false;
             }
 
+            double unitFactor = 1d;
+            if (TryGetDouble(args, "to_meter", out double toMeter) && toMeter > 0d)
+            {
+                unitFactor = toMeter;
+            }
+            else if (args.TryGetValue("units", out string? unitsToken))
+            {
+                unitFactor = ResolveLinearUnit(unitsToken).MetersPerUnit;
+            }
+
             ReplaceParameter(parameters, "latitude_of_origin", 0d);
             ReplaceParameter(parameters, "central_meridian", utmCentralMeridian);
             ReplaceParameter(parameters, "scale_factor", 0.9996d);
-            ReplaceParameter(parameters, "false_easting", 500000d);
-            ReplaceParameter(parameters, "false_northing", args.ContainsKey("south") ? 10000000d : 0d);
+            ReplaceParameter(parameters, "false_easting", 500000d / unitFactor);
+            ReplaceParameter(parameters, "false_northing", (args.ContainsKey("south") ? 10000000d : 0d) / unitFactor);
         }
 
         return true;

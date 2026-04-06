@@ -166,6 +166,35 @@ public class GieBuiltinsRegressionTests
     }
 
     /// <summary>
+    /// Verifies that synthetic UTM false offsets are expressed in the configured output units in the GIE builtins harness.
+    /// </summary>
+    /// <param name="operation">UTM operation under test.</param>
+    [Theory]
+    [InlineData("proj=utm ellps=GRS80 zone=32 to_meter=10")]
+    [InlineData("proj=utm ellps=GRS80 zone=32 to_meter=2.0/0.2")]
+    public void TryCreateTransformWithUtmCustomOutputUnitsReturnsExpectedProjectedCoordinate(string operation)
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 518,
+            Operation = operation,
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [12d, 55d],
+            Expect = [69187.5632d, 609890.7825d],
+        };
+
+        bool created = TryCreateTransform(testCase, out MathTransform? transform, out string? skipReason);
+        Assert.True(created, skipReason ?? "TryCreateTransform returned false.");
+
+        MathTransform mathTransform = Assert.IsAssignableFrom<MathTransform>(transform);
+        double[] output = mathTransform.Transform(testCase.Accept);
+        Assert.Equal(testCase.Expect[0], output[0], 4);
+        Assert.Equal(testCase.Expect[1], output[1], 4);
+    }
+
+    /// <summary>
     /// Verifies that DMS projection parameters are parsed for builtins cases.
     /// </summary>
     [Fact]

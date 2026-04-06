@@ -780,8 +780,8 @@ internal static class ProjPipelineMathTransformFactory
         SetOrAddProjectionParameter(parameters, "latitude_of_origin", 0d);
         SetOrAddProjectionParameter(parameters, "central_meridian", centralMeridian);
         SetOrAddProjectionParameter(parameters, "scale_factor", 0.9996d);
-        SetOrAddProjectionParameter(parameters, "false_easting", 500000d);
-        SetOrAddProjectionParameter(parameters, "false_northing", args.ContainsKey("south") ? 10000000d : 0d);
+        SetOrAddProjectionParameter(parameters, "false_easting", 500000d / unitFactor);
+        SetOrAddProjectionParameter(parameters, "false_northing", (args.ContainsKey("south") ? 10000000d : 0d) / unitFactor);
 
         return true;
     }

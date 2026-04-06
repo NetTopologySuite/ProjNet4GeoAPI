@@ -126,6 +126,22 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
+    /// Verifies that synthetic UTM false offsets are expressed in the configured output units.
+    /// </summary>
+    /// <param name="operation">UTM operation under test.</param>
+    [Theory]
+    [InlineData("+proj=utm +ellps=GRS80 +zone=32 +to_meter=10")]
+    [InlineData("+proj=utm +ellps=GRS80 +zone=32 +to_meter=2.0/0.2")]
+    public void PipelineWithUtmStepHonorsCustomOutputUnitsForSyntheticOffsets(string operation)
+    {
+        MathTransform transform = RequirePipelineMathTransform(operation);
+        double[] output = transform.Transform([12d, 55d]);
+
+        Assert.Equal(69187.5632d, output[0], 4);
+        Assert.Equal(609890.7825d, output[1], 4);
+    }
+
+    /// <summary>
     /// Verifies that a global pipeline <c>+inv</c> flag reverses the step order and toggles each step inversion.
     /// </summary>
     [Fact]
