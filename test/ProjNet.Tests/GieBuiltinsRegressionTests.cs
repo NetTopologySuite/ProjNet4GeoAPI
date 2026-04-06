@@ -41,6 +41,58 @@ public class GieBuiltinsRegressionTests
     }
 
     /// <summary>
+    /// Verifies that inverse projection cases executed through the conversion harness apply inverse direction semantics.
+    /// </summary>
+    /// <param name="operation">Projection operation under test.</param>
+    /// <param name="x">Projected X coordinate.</param>
+    /// <param name="y">Projected Y coordinate.</param>
+    /// <param name="expectedLongitude">Expected longitude in degrees.</param>
+    /// <param name="expectedLatitude">Expected latitude in degrees.</param>
+    /// <param name="tolerance">Allowed inverse tolerance.</param>
+    [Theory]
+    [InlineData("+proj=aea +ellps=GRS80 +lat_1=0 +lat_2=2", 16468399.3582d, 5275043.9815d, 150d, 50d, 5e-8d)]
+    [InlineData("+proj=cea +ellps=GRS80", 16697923.6190d, 4865983.5552d, 150d, 50d, 1e-8d)]
+    public void TryCreateConversionTransformForDirectionWithInverseProjectionCaseReturnsExpectedCoordinate(
+        string operation,
+        double x,
+        double y,
+        double expectedLongitude,
+        double expectedLatitude,
+        double tolerance)
+    {
+        bool created = TryCreateConversionTransformForDirection(operation, GieDirection.Inverse, out Func<double[], double[]>? transform, out string? skipReason);
+
+        Assert.True(created, skipReason ?? "TryCreateConversionTransformForDirection returned false.");
+        double[] output = Assert.IsType<Func<double[], double[]>>(transform)([x, y]);
+        Assert.InRange(Math.Abs(output[0] - expectedLongitude), 0d, tolerance);
+        Assert.InRange(Math.Abs(output[1] - expectedLatitude), 0d, tolerance);
+    }
+
+    /// <summary>
+    /// Verifies that inverse Albers builtins rows no longer skip because the conversion path now respects the GIE direction.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithInverseAlbersBuiltinsCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 60,
+            Operation = "+proj=aea +ellps=GRS80 +lat_1=0 +lat_2=2",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Inverse,
+            Accept = [16468399.3582d, 5275043.9815d],
+            Expect = [150d, 50d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
     /// Verifies that <c>to_meter</c> ratio expressions are honored by the builtins harness.
     /// </summary>
     [Fact]
@@ -342,6 +394,21 @@ public class GieBuiltinsRegressionTests
         bool created = Assert.IsType<bool>(method.Invoke(null, args));
         transform = args[1] as Func<double[], double[]>;
         skipReason = args[2] as string;
+        return created;
+    }
+
+    private static bool TryCreateConversionTransformForDirection(
+        string operation,
+        GieDirection direction,
+        out Func<double[], double[]>? transform,
+        out string? skipReason)
+    {
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("TryCreateConversionTransformForDirection", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.TryCreateConversionTransformForDirection.");
+        object?[] args = [operation, direction, null, null];
+        bool created = Assert.IsType<bool>(method.Invoke(null, args));
+        transform = args[2] as Func<double[], double[]>;
+        skipReason = args[3] as string;
         return created;
     }
 }

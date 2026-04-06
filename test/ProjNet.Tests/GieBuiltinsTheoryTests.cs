@@ -384,7 +384,7 @@ public class GieBuiltinsTheoryTests
         double[]? output = null;
         string? conversionSkipReason = null;
         bool isGeographicDatumShift = HasGeographicDatumShift(rawCase.Operation);
-        if (!isGeographicDatumShift && TryCreateConversionTransform(rawCase.Operation, out Func<double[], double[]>? conversionTransform, out conversionSkipReason))
+        if (!isGeographicDatumShift && TryCreateConversionTransformForDirection(rawCase.Operation, rawCase.Direction, out Func<double[], double[]>? conversionTransform, out conversionSkipReason))
         {
             Func<double[], double[]> transform = Assert.IsType<Func<double[], double[]>>(conversionTransform);
             try
@@ -687,6 +687,15 @@ public class GieBuiltinsTheoryTests
 
     private static bool TryCreateConversionTransform(string operation, out Func<double[], double[]>? transform, out string? skipReason)
     {
+        return TryCreateConversionTransformForDirection(operation, GieDirection.Forward, out transform, out skipReason);
+    }
+
+    private static bool TryCreateConversionTransformForDirection(
+        string operation,
+        GieDirection direction,
+        out Func<double[], double[]>? transform,
+        out string? skipReason)
+    {
         transform = null;
         if (operation is null)
         {
@@ -715,6 +724,24 @@ public class GieBuiltinsTheoryTests
         }
 
         MathTransform pipelineTransform = Assert.IsType<MathTransform>(mathTransform, exactMatch: false);
+        if (direction == GieDirection.Inverse)
+        {
+            try
+            {
+                pipelineTransform = pipelineTransform.Inverse();
+            }
+            catch (NotSupportedException)
+            {
+                skipReason = "Operation does not support inverse direction in the current runtime.";
+                return false;
+            }
+            catch (InvalidOperationException)
+            {
+                skipReason = "Operation inverse could not be constructed for this case.";
+                return false;
+            }
+        }
+
         transform = input =>
         {
             ArgumentNullException.ThrowIfNull(input);
