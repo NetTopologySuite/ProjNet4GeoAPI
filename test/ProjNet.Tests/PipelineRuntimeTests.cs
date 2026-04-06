@@ -727,6 +727,34 @@ public class PipelineRuntimeTests
         Assert.Contains("tscale", skipReason, StringComparison.OrdinalIgnoreCase);
     }
 
+    /// <summary>
+    /// Verifies that geographic identity steps honor vertical unit scaling.
+    /// </summary>
+    [Fact]
+    public void PipelineWithLonglatVerticalUnitsScalesZ()
+    {
+        MathTransform transform = RequirePipelineMathTransform("+proj=longlat +a=1 +b=1 +vto_meter=1000");
+        double[] output = transform.Transform([0d, 0d, 1000d]);
+
+        Assert.Equal(0d, output[0], 12);
+        Assert.Equal(0d, output[1], 12);
+        Assert.Equal(1d, output[2], 12);
+    }
+
+    /// <summary>
+    /// Verifies that projected steps honor vertical unit scaling independently from XY projection units.
+    /// </summary>
+    [Fact]
+    public void PipelineWithMercatorVerticalUnitsScalesZ()
+    {
+        MathTransform transform = RequirePipelineMathTransform("+proj=merc +a=1 +b=1 +vunits=km");
+        double[] output = transform.Transform([0d, 0d, 1000d]);
+
+        Assert.Equal(0d, output[0], 12);
+        Assert.Equal(0d, output[1], 12);
+        Assert.Equal(1d, output[2], 12);
+    }
+
     private static MathTransform RequirePipelineMathTransform(string operation)
     {
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);

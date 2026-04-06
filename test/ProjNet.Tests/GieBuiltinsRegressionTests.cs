@@ -369,6 +369,38 @@ public class GieBuiltinsRegressionTests
     }
 
     /// <summary>
+    /// Verifies that standalone geographic identity conversion cases honor <c>+vto_meter</c>.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformWithLonglatVtoMeterScalesThirdOrdinate()
+    {
+        const string operation = "+proj=longlat +a=1 +b=1 +vto_meter=1000";
+
+        bool created = TryCreateConversionTransform(operation, out Func<double[], double[]>? transform, out string? skipReason);
+
+        Assert.True(created, skipReason ?? "TryCreateConversionTransform returned false.");
+        double[] output = Assert.IsType<Func<double[], double[]>>(transform)([0d, 0d, 1000d]);
+        Assert.Equal([0d, 0d, 1d], output);
+    }
+
+    /// <summary>
+    /// Verifies that projected conversion cases honor <c>+vunits</c> for the third ordinate.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformWithMercatorVunitsScalesThirdOrdinate()
+    {
+        const string operation = "+proj=merc +a=1 +b=1 +vunits=km";
+
+        bool created = TryCreateConversionTransform(operation, out Func<double[], double[]>? transform, out string? skipReason);
+
+        Assert.True(created, skipReason ?? "TryCreateConversionTransform returned false.");
+        double[] output = Assert.IsType<Func<double[], double[]>>(transform)([0d, 0d, 1000d]);
+        Assert.Equal(0d, output[0], 12);
+        Assert.InRange(output[1], -1e-12d, 1e-12d);
+        Assert.Equal(1d, output[2], 12);
+    }
+
+    /// <summary>
     /// Verifies that loose GIE-style assignment syntax with semicolon separators is normalized for runtime pipeline execution.
     /// </summary>
     [Fact]

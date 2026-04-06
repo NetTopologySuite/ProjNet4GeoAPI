@@ -653,11 +653,20 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
-        if (args.ContainsKey("inv"))
+        if (!TryApplyOptionalVerticalUnitScale(args, ArgumentGuard.ThrowIfNull(transform, nameof(transform)), out MathTransform? verticallyScaledTransform, out skipReason))
         {
-            transform = transform.Inverse();
+            transform = null;
+            return false;
         }
 
+        MathTransform currentTransform = ArgumentGuard.ThrowIfNull(verticallyScaledTransform, nameof(verticallyScaledTransform));
+
+        if (args.ContainsKey("inv"))
+        {
+            currentTransform = currentTransform.Inverse();
+        }
+
+        transform = currentTransform;
         return true;
     }
 
@@ -785,13 +794,22 @@ internal static class ProjPipelineMathTransformFactory
         transform = new IdentityMathTransform(3);
         skipReason = null;
 
+        if (!TryApplyOptionalVerticalUnitScale(args, ArgumentGuard.ThrowIfNull(transform, nameof(transform)), out MathTransform? verticallyScaledIdentityTransform, out skipReason))
+        {
+            transform = null;
+            return false;
+        }
+
+        MathTransform currentTransform = ArgumentGuard.ThrowIfNull(verticallyScaledIdentityTransform, nameof(verticallyScaledIdentityTransform));
+
         if (!args.TryGetValue("pm", out string? pmToken) || string.IsNullOrWhiteSpace(pmToken))
         {
             if (args.ContainsKey("inv"))
             {
-                transform = transform.Inverse();
+                currentTransform = currentTransform.Inverse();
             }
 
+            transform = currentTransform;
             return true;
         }
 
@@ -811,12 +829,47 @@ internal static class ProjPipelineMathTransformFactory
             string.Empty,
             string.Empty,
             string.Empty);
-        transform = new PrimeMeridianTransform(PrimeMeridian.Greenwich, customPrimeMeridian);
-        if (args.ContainsKey("inv"))
+        currentTransform = new PrimeMeridianTransform(PrimeMeridian.Greenwich, customPrimeMeridian);
+        if (!TryApplyOptionalVerticalUnitScale(args, currentTransform, out MathTransform? verticallyScaledPrimeMeridianTransform, out skipReason))
         {
-            transform = transform.Inverse();
+            transform = null;
+            return false;
         }
 
+        currentTransform = ArgumentGuard.ThrowIfNull(verticallyScaledPrimeMeridianTransform, nameof(verticallyScaledPrimeMeridianTransform));
+
+        if (args.ContainsKey("inv"))
+        {
+            currentTransform = currentTransform.Inverse();
+        }
+
+        transform = currentTransform;
+        return true;
+    }
+
+    private static bool TryApplyOptionalVerticalUnitScale(
+        Dictionary<string, string> args,
+        MathTransform transform,
+        [NotNullWhen(true)] out MathTransform? result,
+        out string? skipReason)
+    {
+        if (!TryResolveVerticalUnitFactor(args, out double verticalUnitFactor, out skipReason))
+        {
+            result = null;
+            return false;
+        }
+
+        if (verticalUnitFactor.Equals(1d))
+        {
+            result = transform;
+            return true;
+        }
+
+        result = new CompositeMathTransform(
+        [
+            transform,
+            new UnitConvertMathTransform(3, 1d, 1d / verticalUnitFactor),
+        ]);
         return true;
     }
 
@@ -841,6 +894,33 @@ internal static class ProjPipelineMathTransformFactory
             && !TryResolveUnitFactor(unitsToken, out unitFactor))
         {
             skipReason = "Unable to parse +units parameter for projection step.";
+            return false;
+        }
+
+        return true;
+    }
+
+    private static bool TryResolveVerticalUnitFactor(
+        Dictionary<string, string> args,
+        out double unitFactor,
+        out string? skipReason)
+    {
+        unitFactor = 1d;
+        skipReason = null;
+
+        if (args.TryGetValue("vto_meter", out string? vtoMeterToken) && !string.IsNullOrWhiteSpace(vtoMeterToken))
+        {
+            if (!TryParsePositiveScaleFactor(vtoMeterToken, out unitFactor))
+            {
+                skipReason = "Unable to parse +vto_meter parameter for projection step.";
+                return false;
+            }
+        }
+        else if (args.TryGetValue("vunits", out string? vunitsToken)
+            && !string.IsNullOrWhiteSpace(vunitsToken)
+            && !TryResolveUnitFactor(vunitsToken, out unitFactor))
+        {
+            skipReason = "Unable to parse +vunits parameter for projection step.";
             return false;
         }
 
