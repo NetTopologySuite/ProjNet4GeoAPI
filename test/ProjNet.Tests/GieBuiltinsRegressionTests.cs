@@ -93,6 +93,30 @@ public class GieBuiltinsRegressionTests
     }
 
     /// <summary>
+    /// Verifies that inverse geographic outputs comparing <c>-180</c> and <c>180</c> no longer skip as a false 360-degree delta.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithInverseEqearthAntimeridianCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 659,
+            Operation = "+proj=eqearth +R=6378137",
+            ToleranceValue = 1d,
+            ToleranceUnit = "cm",
+            Direction = GieDirection.Inverse,
+            Accept = [14795421.79d, 5486671.72d],
+            Expect = [180d, 45d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
     /// Verifies that <c>to_meter</c> ratio expressions are honored by the builtins harness.
     /// </summary>
     [Fact]

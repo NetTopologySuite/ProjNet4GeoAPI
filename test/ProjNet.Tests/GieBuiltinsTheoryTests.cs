@@ -431,7 +431,7 @@ public class GieBuiltinsTheoryTests
 
         for (int i = 0; i < dimensionsToCompare; i++)
         {
-            double delta = Math.Abs(evaluatedOutput[i] - rawCase.Expect[i]);
+            double delta = GetComparisonDelta(evaluatedOutput, rawCase.Expect, i);
             if (delta > tolerance)
             {
                 Assert.Skip($"Case requires higher-fidelity GIE mapping (axis={i.ToString(CultureInfo.InvariantCulture)}, delta={delta.ToString("R", CultureInfo.InvariantCulture)}).");
@@ -2205,5 +2205,19 @@ public class GieBuiltinsTheoryTests
         bool lonLatRange = first <= 180d && second <= 90d;
         bool latLonRange = first <= 90d && second <= 180d;
         return lonLatRange || latLonRange;
+    }
+
+    private static double GetComparisonDelta(double[] actual, double[] expected, int axis)
+    {
+        double delta = Math.Abs(actual[axis] - expected[axis]);
+        if (axis != 0 || !IsLikelyGeographicCoordinatePair(actual) || !IsLikelyGeographicCoordinatePair(expected))
+        {
+            return delta;
+        }
+
+        double normalizedActual = TransformationMath.NormalizeLongitudeDegrees(actual[axis]);
+        double normalizedExpected = TransformationMath.NormalizeLongitudeDegrees(expected[axis]);
+        double normalizedDelta = Math.Abs(normalizedActual - normalizedExpected);
+        return Math.Min(normalizedDelta, 360d - normalizedDelta);
     }
 }
