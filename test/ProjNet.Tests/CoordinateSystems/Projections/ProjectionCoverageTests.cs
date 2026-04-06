@@ -661,6 +661,38 @@ public class ProjectionCoverageTests
     }
 
     /// <summary>
+    /// Verifies Albers handles tangent cones where both standard parallels are equal.
+    /// </summary>
+    /// <param name="spheroidClause">Spheroid clause.</param>
+    [Theory]
+    [InlineData(Sphere6400000)]
+    [InlineData(Wgs84)]
+    public void AlbersTangentParallelsRoundTrip(string spheroidClause)
+    {
+        const double longitude = -75d;
+        const double latitude = 35d;
+        string wkt = BuildProjectedWkt(
+            "albers",
+            spheroidClause,
+            23d,
+            -96d,
+            ",PARAMETER[\"standard_parallel_1\",29.5],PARAMETER[\"standard_parallel_2\",29.5]");
+        ProjectedCoordinateSystem projected = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wkt);
+        ICoordinateTransformation forward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected.GeographicCoordinateSystem, projected);
+        ICoordinateTransformation inverse = CoordinateTransformationFactory.CreateFromCoordinateSystems(projected, projected.GeographicCoordinateSystem);
+
+        double[] projectedPoint = forward.MathTransform.Transform(CreatePoint(longitude, latitude));
+        double[] roundtrip = inverse.MathTransform.Transform(projectedPoint);
+
+        Assert.False(double.IsNaN(projectedPoint[0]));
+        Assert.False(double.IsNaN(projectedPoint[1]));
+        Assert.False(double.IsInfinity(projectedPoint[0]));
+        Assert.False(double.IsInfinity(projectedPoint[1]));
+        Assert.InRange(Math.Abs(roundtrip[0] - longitude), 0d, 1e-6);
+        Assert.InRange(Math.Abs(roundtrip[1] - latitude), 0d, 1e-6);
+    }
+
+    /// <summary>
     /// Verifies Polar Stereographic UPS north applies <c>scale_factor</c> consistently.
     /// </summary>
     [Fact]

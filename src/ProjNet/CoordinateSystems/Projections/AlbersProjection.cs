@@ -95,19 +95,29 @@ internal class AlbersProjection : MapProjection
         double lat1 = DegreesToRadians(this.Parameters.GetParameterValue("standard_parallel_1"));
         double lat2 = DegreesToRadians(this.Parameters.GetParameterValue("standard_parallel_2"));
 
-        if (Math.Abs(lat1 + lat2) < double.Epsilon)
+        if (Math.Abs(lat1 + lat2) < Eps10)
         {
             ArgumentGuard.ThrowArgument("Equal latitudes for standard parallels on opposite sides of Equator.");
         }
 
         double alpha1 = this.Alpha(lat1);
-        double alpha2 = this.Alpha(lat2);
+        double sinLat1 = Math.Sin(lat1);
+        double cosLat1 = Math.Cos(lat1);
+        double m1 = Msfnz(this.e, sinLat1, cosLat1);
+        bool secant = Math.Abs(lat1 - lat2) >= Eps10;
 
-        double m1 = Math.Cos(lat1) / Math.Sqrt(1 - (this.es * Math.Pow(Math.Sin(lat1), 2)));
-        double m2 = Math.Cos(lat2) / Math.Sqrt(1 - (this.es * Math.Pow(Math.Sin(lat2), 2)));
+        this.n = sinLat1;
+        if (secant)
+        {
+            double alpha2 = this.Alpha(lat2);
+            double sinLat2 = Math.Sin(lat2);
+            double cosLat2 = Math.Cos(lat2);
+            double m2 = Msfnz(this.e, sinLat2, cosLat2);
 
-        this.n = (Math.Pow(m1, 2) - Math.Pow(m2, 2)) / (alpha2 - alpha1);
-        this.c = Math.Pow(m1, 2) + (this.n * alpha1);
+            this.n = ((m1 * m1) - (m2 * m2)) / (alpha2 - alpha1);
+        }
+
+        this.c = (m1 * m1) + (this.n * alpha1);
 
         this.ro0 = this.Ro(this.Alpha(lat0));
     }
