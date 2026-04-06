@@ -1704,6 +1704,11 @@ public class GieBuiltinsTheoryTests
                 ReplaceParameter(parameters, "south", 1d);
             }
 
+            if (projectionCode.Equals("aeqd", StringComparison.OrdinalIgnoreCase) && args.ContainsKey("guam"))
+            {
+                ReplaceParameter(parameters, "guam", 1d);
+            }
+
             if (projectionCode.Equals("ups", StringComparison.OrdinalIgnoreCase) && args.ContainsKey("south"))
             {
                 ReplaceParameter(parameters, "south", 1d);
@@ -1836,7 +1841,7 @@ public class GieBuiltinsTheoryTests
             return true;
         }
 
-        if (args.ContainsKey("guam") || args.ContainsKey("hyperbolic"))
+        if (args.ContainsKey("hyperbolic"))
         {
             return true;
         }

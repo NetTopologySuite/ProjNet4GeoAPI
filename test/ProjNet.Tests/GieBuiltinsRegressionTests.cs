@@ -117,6 +117,78 @@ public class GieBuiltinsRegressionTests
     }
 
     /// <summary>
+    /// Verifies that the builtins harness no longer skips the near-center spherical Azimuthal Equidistant case.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithForwardAeqdNearCenterCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 163,
+            Operation = "+proj=aeqd +a=6371008.771415 +b=6371008.771415 +lat_0=30.2345 +lon_0=-120.2345",
+            ToleranceValue = 1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [-120.234501d, 30.234501d],
+            Expect = [-0.096d, 0.111d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
+    /// Verifies that the builtins harness no longer skips the Guam-specific Azimuthal Equidistant forward case.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithForwardAeqdGuamCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 205,
+            Operation = "+proj=aeqd +guam +ellps=clrk66 +x_0=50000.00 +y_0=50000.00 +lon_0=144.74875069444445 +lat_0=13.47246633333333",
+            ToleranceValue = 1d,
+            ToleranceUnit = "cm",
+            Direction = GieDirection.Forward,
+            Accept = [144.63533129166666d, 13.33903846111111d],
+            Expect = [37712.48d, 35242.00d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
+    /// Verifies that the builtins harness no longer skips the Guam-specific Azimuthal Equidistant inverse case.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithInverseAeqdGuamCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 209,
+            Operation = "+proj=aeqd +guam +ellps=clrk66 +x_0=50000.00 +y_0=50000.00 +lon_0=144.74875069444445 +lat_0=13.47246633333333",
+            ToleranceValue = 1d,
+            ToleranceUnit = "cm",
+            Direction = GieDirection.Inverse,
+            Accept = [37712.48d, 35242.00d],
+            Expect = [144.63533129166666d, 13.33903846111111d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
     /// Verifies that spherical builtins operations using only <c>+a</c> keep that radius instead of falling back to WGS 84.
     /// </summary>
     [Fact]

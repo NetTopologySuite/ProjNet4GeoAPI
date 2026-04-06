@@ -742,6 +742,11 @@ internal static class ProjPipelineMathTransformFactory
             SetOrAddProjectionParameter(parameters, "south", 1d);
         }
 
+        if (projCode.Equals("aeqd", StringComparison.OrdinalIgnoreCase) && args.ContainsKey("guam"))
+        {
+            SetOrAddProjectionParameter(parameters, "guam", 1d);
+        }
+
         if (projCode.Equals("urm5", StringComparison.OrdinalIgnoreCase))
         {
             if (!args.TryGetValue("n", out string? nToken) || string.IsNullOrWhiteSpace(nToken))

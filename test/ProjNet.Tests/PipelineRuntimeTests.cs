@@ -827,6 +827,36 @@ public class PipelineRuntimeTests
         Assert.Equal(0d, output[2], 12);
     }
 
+    /// <summary>
+    /// Verifies that spherical Azimuthal Equidistant keeps sub-metre near-center offsets instead of collapsing to the origin.
+    /// </summary>
+    [Fact]
+    public void PipelineWithAeqdStepNearCenterOnSphereMatchesProjReference()
+    {
+        const string operation = "+proj=aeqd +a=6371008.771415 +b=6371008.771415 +lat_0=30.2345 +lon_0=-120.2345";
+
+        MathTransform transform = RequirePipelineMathTransform(operation);
+        double[] output = transform.Transform([-120.234501d, 30.234501d]);
+
+        Assert.InRange(Math.Abs(output[0] - (-0.096d)), 0d, 1e-3d);
+        Assert.InRange(Math.Abs(output[1] - 0.111d), 0d, 1e-3d);
+    }
+
+    /// <summary>
+    /// Verifies that Azimuthal Equidistant pipeline steps honor the PROJ <c>+guam</c> flag.
+    /// </summary>
+    [Fact]
+    public void PipelineWithAeqdGuamStepMatchesProjReference()
+    {
+        const string operation = "+proj=aeqd +guam +ellps=clrk66 +x_0=50000 +y_0=50000 +lon_0=144.74875069444445 +lat_0=13.47246633333333";
+
+        MathTransform transform = RequirePipelineMathTransform(operation);
+        double[] output = transform.Transform([144.63533129166666d, 13.33903846111111d]);
+
+        Assert.InRange(Math.Abs(output[0] - 37712.48d), 0d, 1e-2d);
+        Assert.InRange(Math.Abs(output[1] - 35242.00d), 0d, 1e-2d);
+    }
+
     private static MathTransform RequirePipelineMathTransform(string operation)
     {
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);

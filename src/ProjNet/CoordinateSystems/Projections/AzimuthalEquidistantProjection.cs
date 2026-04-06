@@ -37,11 +37,13 @@ internal class AzimuthalEquidistantProjection : MapProjection
     private const double PathologicalTolerance = 1e-14;
 
     private readonly bool ellipsoidal;
+    private readonly bool guam;
     private readonly ProjectionMode mode;
     private readonly double radius;
     private readonly double inverseRadius;
     private readonly double sinPhi0;
     private readonly double cosPhi0;
+    private readonly double meridionalOriginDistance;
     private readonly double meridionalPoleDistance;
     private readonly double flattening;
     private readonly double eccentricityPrimeSquared;
@@ -65,12 +67,17 @@ internal class AzimuthalEquidistantProjection : MapProjection
     {
         this.Name = "Azimuthal_Equidistant";
         this.ellipsoidal = this.es > 0d;
+        this.guam = this.ellipsoidal && Math.Abs(this.Parameters.GetOptionalParameterValue("guam", 0d)) > 0d;
         this.mode = DetermineMode(this.latOrigin);
         this.radius = this.semiMajor * this.scaleFactor;
         this.inverseRadius = 1.0 / this.radius;
         Sincos(this.latOrigin, out this.sinPhi0, out this.cosPhi0);
         this.flattening = (this.semiMajor - this.semiMinor) / this.semiMajor;
         this.eccentricityPrimeSquared = ((this.semiMajor * this.semiMajor) - (this.semiMinor * this.semiMinor)) / (this.semiMinor * this.semiMinor);
+        if (this.guam)
+        {
+            this.meridionalOriginDistance = this.Mlfn(this.latOrigin, this.sinPhi0, this.cosPhi0);
+        }
 
         if (this.ellipsoidal && (this.mode == ProjectionMode.NorthPole || this.mode == ProjectionMode.SouthPole))
         {
@@ -103,6 +110,12 @@ internal class AzimuthalEquidistantProjection : MapProjection
 
         if (this.ellipsoidal)
         {
+            if (this.guam)
+            {
+                this.ForwardEllipsoidalGuam(lambda, lat, out lon, out lat);
+                return;
+            }
+
             if (this.mode == ProjectionMode.NorthPole || this.mode == ProjectionMode.SouthPole)
             {
                 this.ForwardEllipsoidalPolar(this.mode, lambda, lat, out lon, out lat);
@@ -121,6 +134,12 @@ internal class AzimuthalEquidistantProjection : MapProjection
     {
         if (this.ellipsoidal)
         {
+            if (this.guam)
+            {
+                this.InverseEllipsoidalGuam(x, y, out x, out y);
+                return;
+            }
+
             if (this.mode == ProjectionMode.NorthPole || this.mode == ProjectionMode.SouthPole)
             {
                 this.InverseEllipsoidalPolar(this.mode, x, y, out x, out y);
@@ -201,8 +220,7 @@ internal class AzimuthalEquidistantProjection : MapProjection
                     ArgumentGuard.ThrowArgumentOutOfRange(nameof(phi), "Coordinate is outside the valid Azimuthal Equidistant domain.");
                 }
 
-                x = 0d;
-                y = 0d;
+                this.ForwardEllipsoidalGeneral(lambda, phi, out x, out y);
                 return;
             }
 
@@ -222,8 +240,7 @@ internal class AzimuthalEquidistantProjection : MapProjection
                 ArgumentGuard.ThrowArgumentOutOfRange(nameof(phi), "Coordinate is outside the valid Azimuthal Equidistant domain.");
             }
 
-            x = 0d;
-            y = 0d;
+            this.ForwardEllipsoidalGeneral(lambda, phi, out x, out y);
             return;
         }
 
@@ -301,6 +318,15 @@ internal class AzimuthalEquidistantProjection : MapProjection
         y = this.radius * rho * cosineLambda;
     }
 
+    private void ForwardEllipsoidalGuam(double lambda, double phi, out double x, out double y)
+    {
+        double cosPhi = Math.Cos(phi);
+        double sinPhi = Math.Sin(phi);
+        double t = 1d / Math.Sqrt(1d - (this.es * sinPhi * sinPhi));
+        x = this.radius * lambda * cosPhi * t;
+        y = this.radius * ((this.Mlfn(phi, sinPhi, cosPhi) - this.meridionalOriginDistance) + (0.5d * lambda * lambda * cosPhi * sinPhi * t));
+    }
+
     private void InverseEllipsoidalPolar(ProjectionMode polarMode, double xMeter, double yMeter, out double lon, out double lat)
     {
         double x = xMeter * this.inverseRadius;
@@ -313,6 +339,28 @@ internal class AzimuthalEquidistantProjection : MapProjection
                 : this.meridionalPoleDistance + rho);
 
         lon = Adjust_lon(this.centralMeridian + Math.Atan2(x, polarMode == ProjectionMode.NorthPole ? -y : y));
+    }
+
+    private void InverseEllipsoidalGuam(double xMeter, double yMeter, out double lon, out double lat)
+    {
+        if (this.scaleFactor == 0d)
+        {
+            ArgumentGuard.ThrowArgument("Scale factor must be non-zero for Guam Azimuthal Equidistant inverse.");
+        }
+
+        double x = xMeter * this.inverseRadius;
+        double y = yMeter * this.inverseRadius;
+        double xSquaredHalf = 0.5d * x * x;
+        lat = this.latOrigin;
+        double t = 0d;
+        for (int i = 0; i < 3; i++)
+        {
+            t = this.e * Math.Sin(lat);
+            t = Math.Sqrt(1d - (t * t));
+            lat = this.Inv_mlfn(this.meridionalOriginDistance + y - (xSquaredHalf * Math.Tan(lat) * t));
+        }
+
+        lon = Adjust_lon(this.centralMeridian + ((x * t) / Math.Cos(lat)));
     }
 
     private void ForwardEllipsoidalGeneral(double lambda, double phi, out double x, out double y)
