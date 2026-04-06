@@ -117,6 +117,32 @@ public class GieBuiltinsRegressionTests
     }
 
     /// <summary>
+    /// Verifies that spherical builtins operations using only <c>+a</c> keep that radius instead of falling back to WGS 84.
+    /// </summary>
+    [Fact]
+    public void TryCreateTransformWithGnSinuSemiMajorOnlyCaseReturnsExpectedProjectedCoordinate()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 2223,
+            Operation = "+proj=gn_sinu +a=6400000 +m=1 +n=2",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [2d, 1d],
+            Expect = [223385.132504696d, 111698.236447187d],
+        };
+
+        bool created = TryCreateTransform(testCase, out MathTransform? transform, out string? skipReason);
+        Assert.True(created, skipReason ?? "TryCreateTransform returned false.");
+
+        MathTransform mathTransform = Assert.IsAssignableFrom<MathTransform>(transform);
+        double[] output = mathTransform.Transform(testCase.Accept);
+        Assert.Equal(testCase.Expect[0], output[0], 9);
+        Assert.Equal(testCase.Expect[1], output[1], 9);
+    }
+
+    /// <summary>
     /// Verifies that <c>to_meter</c> ratio expressions are honored by the builtins harness.
     /// </summary>
     [Fact]

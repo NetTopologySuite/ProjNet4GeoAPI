@@ -1241,6 +1241,9 @@ public class GieBuiltinsTheoryTests
                 ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("GIE ellipsoid", semiMajor, inverseFlattening, LinearUnit.Metre);
                 return true;
             }
+
+            ellipsoid = CoordinateSystemFactory.CreateEllipsoid("GIE sphere", semiMajor, semiMajor, LinearUnit.Metre);
+            return true;
         }
 
         if (args.TryGetValue("ellps", out string? ellps))
