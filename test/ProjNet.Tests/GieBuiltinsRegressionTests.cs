@@ -401,6 +401,21 @@ public class GieBuiltinsRegressionTests
     }
 
     /// <summary>
+    /// Verifies that standalone geographic identity conversion cases honor <c>+lon_wrap</c>.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformWithLonglatLonWrapNormalizesLongitude()
+    {
+        const string operation = "+proj=longlat +ellps=WGS84 +lon_wrap=180";
+
+        bool created = TryCreateConversionTransform(operation, out Func<double[], double[]>? transform, out string? skipReason);
+
+        Assert.True(created, skipReason ?? "TryCreateConversionTransform returned false.");
+        double[] output = Assert.IsType<Func<double[], double[]>>(transform)([-1d, 10d, 0d]);
+        Assert.Equal([359d, 10d, 0d], output);
+    }
+
+    /// <summary>
     /// Verifies that loose GIE-style assignment syntax with semicolon separators is normalized for runtime pipeline execution.
     /// </summary>
     [Fact]

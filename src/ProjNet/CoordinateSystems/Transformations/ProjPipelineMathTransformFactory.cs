@@ -791,52 +791,59 @@ internal static class ProjPipelineMathTransformFactory
         [NotNullWhen(true)] out MathTransform? transform,
         out string? skipReason)
     {
-        transform = new IdentityMathTransform(3);
         skipReason = null;
-
-        if (!TryApplyOptionalVerticalUnitScale(args, ArgumentGuard.ThrowIfNull(transform, nameof(transform)), out MathTransform? verticallyScaledIdentityTransform, out skipReason))
+        var transforms = new List<MathTransform>(3)
         {
-            transform = null;
-            return false;
-        }
+            new IdentityMathTransform(3),
+        };
 
-        MathTransform currentTransform = ArgumentGuard.ThrowIfNull(verticallyScaledIdentityTransform, nameof(verticallyScaledIdentityTransform));
-
-        if (!args.TryGetValue("pm", out string? pmToken) || string.IsNullOrWhiteSpace(pmToken))
+        if (args.TryGetValue("pm", out string? pmToken) && !string.IsNullOrWhiteSpace(pmToken))
         {
-            if (args.ContainsKey("inv"))
+            if (!TryResolveProjPrimeMeridianLongitudeDegrees(pmToken, out double primeMeridianLongitudeDegrees))
             {
-                currentTransform = currentTransform.Inverse();
+                skipReason = "Unable to parse +pm value for geographic identity step.";
+                transform = null;
+                return false;
             }
 
-            transform = currentTransform;
-            return true;
+            var customPrimeMeridian = new PrimeMeridian(
+                primeMeridianLongitudeDegrees,
+                AngularUnit.Degrees,
+                "PROJ pipeline pm",
+                string.Empty,
+                -1,
+                string.Empty,
+                string.Empty,
+                string.Empty);
+            transforms.Add(new PrimeMeridianTransform(PrimeMeridian.Greenwich, customPrimeMeridian));
         }
 
-        if (!TryResolveProjPrimeMeridianLongitudeDegrees(pmToken, out double primeMeridianLongitudeDegrees))
+        if (args.TryGetValue("lon_wrap", out string? lonWrapToken) && !string.IsNullOrWhiteSpace(lonWrapToken))
         {
-            skipReason = "Unable to parse +pm value for geographic identity step.";
+            if (!TryParseFiniteDouble(lonWrapToken, out double wrapCenterDegrees))
+            {
+                skipReason = "Unable to parse +lon_wrap value for geographic identity step.";
+                transform = null;
+                return false;
+            }
+
+            transforms.Add(new LongitudeWrapMathTransform(wrapCenterDegrees));
+        }
+
+        if (!TryResolveVerticalUnitFactor(args, out double verticalUnitFactor, out skipReason))
+        {
             transform = null;
             return false;
         }
 
-        var customPrimeMeridian = new PrimeMeridian(
-            primeMeridianLongitudeDegrees,
-            AngularUnit.Degrees,
-            "PROJ pipeline pm",
-            string.Empty,
-            -1,
-            string.Empty,
-            string.Empty,
-            string.Empty);
-        currentTransform = new PrimeMeridianTransform(PrimeMeridian.Greenwich, customPrimeMeridian);
-        if (!TryApplyOptionalVerticalUnitScale(args, currentTransform, out MathTransform? verticallyScaledPrimeMeridianTransform, out skipReason))
+        if (!verticalUnitFactor.Equals(1d))
         {
-            transform = null;
-            return false;
+            transforms.Add(new UnitConvertMathTransform(3, 1d, 1d / verticalUnitFactor));
         }
 
-        currentTransform = ArgumentGuard.ThrowIfNull(verticallyScaledPrimeMeridianTransform, nameof(verticallyScaledPrimeMeridianTransform));
+        MathTransform currentTransform = transforms.Count == 1
+            ? transforms[0]
+            : new CompositeMathTransform(transforms);
 
         if (args.ContainsKey("inv"))
         {

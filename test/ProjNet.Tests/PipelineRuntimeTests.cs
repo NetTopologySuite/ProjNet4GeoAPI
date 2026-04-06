@@ -755,6 +755,20 @@ public class PipelineRuntimeTests
         Assert.Equal(1d, output[2], 12);
     }
 
+    /// <summary>
+    /// Verifies that geographic identity steps honor longitude wrapping.
+    /// </summary>
+    [Fact]
+    public void PipelineWithLonglatLongitudeWrapNormalizesLongitude()
+    {
+        MathTransform transform = RequirePipelineMathTransform("+proj=longlat +ellps=WGS84 +lon_wrap=180");
+        double[] output = transform.Transform([-1d, 10d, 0d]);
+
+        Assert.Equal(359d, output[0], 12);
+        Assert.Equal(10d, output[1], 12);
+        Assert.Equal(0d, output[2], 12);
+    }
+
     private static MathTransform RequirePipelineMathTransform(string operation)
     {
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
