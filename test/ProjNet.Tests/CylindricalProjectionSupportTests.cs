@@ -100,6 +100,31 @@ public class CylindricalProjectionSupportTests
     }
 
     /// <summary>
+    /// Verifies that EQC honors true-scale latitude aliases instead of silently falling back to the equatorial default.
+    /// </summary>
+    [Theory]
+    [InlineData("lat_ts")]
+    [InlineData("latitude_true_scale")]
+    [InlineData("latitude_of_true_scale")]
+    public void SupportsEqcTrueScaleLatitudeAliases(string parameterName)
+    {
+        ProjectedCoordinateSystem projectedWithAlias = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
+            BuildEqcAliasWkt(parameterName));
+        ProjectedCoordinateSystem projectedWithCanonicalParameter = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
+            BuildEqcAliasWkt("standard_parallel_1"));
+        ICoordinateTransformation aliasForward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projectedWithAlias.GeographicCoordinateSystem, projectedWithAlias);
+        ICoordinateTransformation canonicalForward = CoordinateTransformationFactory.CreateFromCoordinateSystems(projectedWithCanonicalParameter.GeographicCoordinateSystem, projectedWithCanonicalParameter);
+
+        double[] aliasPoint = aliasForward.MathTransform.Transform(CreatePoint(2d, 0d));
+        double[] canonicalPoint = canonicalForward.MathTransform.Transform(CreatePoint(2d, 0d));
+
+        Assert.InRange(System.Math.Abs(aliasPoint[0] - canonicalPoint[0]), 0d, 1e-9d);
+        Assert.InRange(System.Math.Abs(aliasPoint[1] - canonicalPoint[1]), 0d, 1e-12d);
+    }
+
+    /// <summary>
     /// Verifies that CEA projection aliases can be parsed from WKT.
     /// </summary>
     /// <param name="projectionName">The projection alias under test.</param>
@@ -224,6 +249,12 @@ public class CylindricalProjectionSupportTests
     {
         return
             $"PROJCS[\"Projection-{projectionName}\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"{projectionName}\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1]]";
+    }
+
+    private static string BuildEqcAliasWkt(string parameterName)
+    {
+        return
+            $"PROJCS[\"Projection-eqc-alias\",GEOGCS[\"GIE\",DATUM[\"GIE_Datum\",SPHEROID[\"Sphere\",6400000,0]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"eqc\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",0],PARAMETER[\"{parameterName}\",45],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1]]";
     }
 
     private static double[] CreatePoint(double x, double y)

@@ -50,7 +50,7 @@ internal class EquidistantCylindricalProjection : MapProjection
         this.radius = this.semiMajor * this.scaleFactor;
         this.inverseRadius = 1d / this.radius;
 
-        double standardParallel = DegreesToRadians(this.Parameters.GetOptionalParameterValue("standard_parallel_1", 0d, "latitude_of_true_scale"));
+        double standardParallel = DegreesToRadians(this.Parameters.GetOptionalParameterValue("standard_parallel_1", 0d, "lat_ts", "latitude_true_scale", "latitude_of_true_scale"));
         this.cosStandardParallel = Math.Cos(standardParallel);
         if (Math.Abs(this.cosStandardParallel) <= Eps10)
         {
