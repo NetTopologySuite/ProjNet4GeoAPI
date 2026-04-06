@@ -599,59 +599,12 @@ internal sealed class DeformationMathTransform : MathTransform
 
     private static bool TryResolveKnownEllipsoid(string token, out double semiMajor, out double semiMinor)
     {
-        semiMajor = 0d;
-        semiMinor = 0d;
-        if (string.IsNullOrWhiteSpace(token))
-        {
-            return false;
-        }
-
-        if (token.Equals("wgs84", StringComparison.OrdinalIgnoreCase))
-        {
-            semiMajor = Ellipsoid.WGS84.SemiMajorAxis;
-            semiMinor = Ellipsoid.WGS84.SemiMinorAxis;
-            return true;
-        }
-
-        if (token.Equals("grs80", StringComparison.OrdinalIgnoreCase)
-            || token.Equals("nad83", StringComparison.OrdinalIgnoreCase))
-        {
-            semiMajor = Ellipsoid.GRS80.SemiMajorAxis;
-            semiMinor = Ellipsoid.GRS80.SemiMinorAxis;
-            return true;
-        }
-
-        if (token.Equals("clrk66", StringComparison.OrdinalIgnoreCase)
-            || token.Equals("nad27", StringComparison.OrdinalIgnoreCase))
-        {
-            semiMajor = Ellipsoid.Clarke1866.SemiMajorAxis;
-            semiMinor = Ellipsoid.Clarke1866.SemiMinorAxis;
-            return true;
-        }
-
-        if (token.Equals("clrk80", StringComparison.OrdinalIgnoreCase)
-            || token.Equals("clrk80ign", StringComparison.OrdinalIgnoreCase))
-        {
-            semiMajor = Ellipsoid.Clarke1880.SemiMajorAxis;
-            semiMinor = Ellipsoid.Clarke1880.SemiMinorAxis;
-            return true;
-        }
-
-        if (token.Equals("intl", StringComparison.OrdinalIgnoreCase))
-        {
-            semiMajor = Ellipsoid.International1924.SemiMajorAxis;
-            semiMinor = Ellipsoid.International1924.SemiMinorAxis;
-            return true;
-        }
-
-        if (token.Equals("sphere", StringComparison.OrdinalIgnoreCase))
-        {
-            semiMajor = Ellipsoid.Sphere.SemiMajorAxis;
-            semiMinor = Ellipsoid.Sphere.SemiMinorAxis;
-            return true;
-        }
-
-        return false;
+        return ProjEllipsoidResolver.TryResolveKnownEllipsoid(
+            token,
+            allowClarke1880Ign: true,
+            allowBessel: false,
+            out semiMajor,
+            out semiMinor);
     }
 
     private static bool TryParseFiniteDouble(string token, out double value)

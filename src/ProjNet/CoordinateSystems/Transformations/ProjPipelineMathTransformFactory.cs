@@ -45,7 +45,7 @@ internal static class ProjPipelineMathTransformFactory
         bool hasPipeline = ContainsPipelineProjection(operation);
         IReadOnlyList<Dictionary<string, string>>? pipelineStepArguments = null;
         if (hasPipeline
-            && !TryParsePipelineStepArguments(operation, out pipelineStepArguments, out skipReason))
+            && !TryParsePipelineStepArguments(operation, out pipelineStepArguments, out _, out skipReason))
         {
             return false;
         }
@@ -142,8 +142,18 @@ internal static class ProjPipelineMathTransformFactory
         if (projCode.Equals("latlong", StringComparison.OrdinalIgnoreCase)
             || projCode.Equals("longlat", StringComparison.OrdinalIgnoreCase)
             || projCode.Equals("latlon", StringComparison.OrdinalIgnoreCase)
-            || projCode.Equals("lonlat", StringComparison.OrdinalIgnoreCase)
-            || projCode.Equals("noop", StringComparison.OrdinalIgnoreCase))
+            || projCode.Equals("lonlat", StringComparison.OrdinalIgnoreCase))
+        {
+            if (!TryCreateGeographicIdentityTransform(args, out transform, out skipReason))
+            {
+                return false;
+            }
+
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            return true;
+        }
+
+        if (projCode.Equals("noop", StringComparison.OrdinalIgnoreCase))
         {
             transform = new IdentityMathTransform(3);
             transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
@@ -692,6 +702,11 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
+        if (!TryApplyPrimeMeridianOffset(args, parameters, out skipReason))
+        {
+            return false;
+        }
+
         if (args.TryGetValue("k_0", out string? k0Token) && !string.IsNullOrWhiteSpace(k0Token))
         {
             if (!TryParseFiniteDouble(k0Token, out double k0))
@@ -718,6 +733,30 @@ internal static class ProjPipelineMathTransformFactory
             SetOrAddProjectionParameter(parameters, "south", 1d);
         }
 
+        if (projCode.Equals("urm5", StringComparison.OrdinalIgnoreCase))
+        {
+            if (!args.TryGetValue("n", out string? nToken) || string.IsNullOrWhiteSpace(nToken))
+            {
+                skipReason = "urm5 step requires +n parameter.";
+                return false;
+            }
+
+            if (!TryParseFiniteDouble(nToken, out double n))
+            {
+                skipReason = "Invalid value for +n.";
+                return false;
+            }
+
+            SetOrAddProjectionParameter(parameters, "n", n);
+            if (!TryApplyOptionalProjectionParameter(args, "q", "q", parameters, out skipReason)
+                || !TryApplyOptionalProjectionParameter(args, "alpha", "alpha", parameters, out skipReason))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
         if (!projCode.Equals("utm", StringComparison.OrdinalIgnoreCase))
         {
             return true;
@@ -734,6 +773,49 @@ internal static class ProjPipelineMathTransformFactory
         SetOrAddProjectionParameter(parameters, "scale_factor", 0.9996d);
         SetOrAddProjectionParameter(parameters, "false_easting", 500000d);
         SetOrAddProjectionParameter(parameters, "false_northing", args.ContainsKey("south") ? 10000000d : 0d);
+
+        return true;
+    }
+
+    private static bool TryCreateGeographicIdentityTransform(
+        Dictionary<string, string> args,
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
+    {
+        transform = new IdentityMathTransform(3);
+        skipReason = null;
+
+        if (!args.TryGetValue("pm", out string? pmToken) || string.IsNullOrWhiteSpace(pmToken))
+        {
+            if (args.ContainsKey("inv"))
+            {
+                transform = transform.Inverse();
+            }
+
+            return true;
+        }
+
+        if (!TryResolveProjPrimeMeridianLongitudeDegrees(pmToken, out double primeMeridianLongitudeDegrees))
+        {
+            skipReason = "Unable to parse +pm value for geographic identity step.";
+            transform = null;
+            return false;
+        }
+
+        var customPrimeMeridian = new PrimeMeridian(
+            primeMeridianLongitudeDegrees,
+            AngularUnit.Degrees,
+            "PROJ pipeline pm",
+            string.Empty,
+            -1,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+        transform = new PrimeMeridianTransform(PrimeMeridian.Greenwich, customPrimeMeridian);
+        if (args.ContainsKey("inv"))
+        {
+            transform = transform.Inverse();
+        }
 
         return true;
     }
@@ -803,6 +885,45 @@ internal static class ProjPipelineMathTransformFactory
         }
 
         parameters.Add(new ProjectionParameter(name, value));
+    }
+
+    private static bool TryApplyPrimeMeridianOffset(
+        Dictionary<string, string> args,
+        List<ProjectionParameter> parameters,
+        out string? skipReason)
+    {
+        skipReason = null;
+        if (!args.TryGetValue("pm", out string? pmToken) || string.IsNullOrWhiteSpace(pmToken))
+        {
+            return true;
+        }
+
+        if (!TryResolvePrimeMeridianLongitudeDegrees(pmToken, out double primeMeridianLongitudeDegrees))
+        {
+            skipReason = "Invalid or unsupported value for +pm.";
+            return false;
+        }
+
+        AddProjectionLongitudeOffset(parameters, "central_meridian", primeMeridianLongitudeDegrees);
+        AddProjectionLongitudeOffset(parameters, "longitude_of_center", primeMeridianLongitudeDegrees);
+        return true;
+    }
+
+    private static void AddProjectionLongitudeOffset(
+        List<ProjectionParameter> parameters,
+        string name,
+        double offsetDegrees)
+    {
+        for (int i = 0; i < parameters.Count; i++)
+        {
+            if (parameters[i].Name.Equals(name, StringComparison.OrdinalIgnoreCase))
+            {
+                parameters[i] = new ProjectionParameter(name, parameters[i].Value + offsetDegrees);
+                return;
+            }
+        }
+
+        parameters.Add(new ProjectionParameter(name, offsetDegrees));
     }
 
     private static bool TryResolveProjectionEllipsoid(
@@ -1383,55 +1504,12 @@ internal static class ProjPipelineMathTransformFactory
 
     private static bool TryResolveKnownEllipsoid(string token, out double semiMajor, out double semiMinor)
     {
-        semiMajor = 0d;
-        semiMinor = 0d;
-
-        if (token.Equals("wgs84", StringComparison.OrdinalIgnoreCase))
-        {
-            semiMajor = Ellipsoid.WGS84.SemiMajorAxis;
-            semiMinor = Ellipsoid.WGS84.SemiMinorAxis;
-            return true;
-        }
-
-        if (token.Equals("grs80", StringComparison.OrdinalIgnoreCase)
-            || token.Equals("nad83", StringComparison.OrdinalIgnoreCase))
-        {
-            semiMajor = Ellipsoid.GRS80.SemiMajorAxis;
-            semiMinor = Ellipsoid.GRS80.SemiMinorAxis;
-            return true;
-        }
-
-        if (token.Equals("clrk66", StringComparison.OrdinalIgnoreCase)
-            || token.Equals("nad27", StringComparison.OrdinalIgnoreCase))
-        {
-            semiMajor = Ellipsoid.Clarke1866.SemiMajorAxis;
-            semiMinor = Ellipsoid.Clarke1866.SemiMinorAxis;
-            return true;
-        }
-
-        if (token.Equals("clrk80", StringComparison.OrdinalIgnoreCase)
-            || token.Equals("clrk80ign", StringComparison.OrdinalIgnoreCase))
-        {
-            semiMajor = Ellipsoid.Clarke1880.SemiMajorAxis;
-            semiMinor = Ellipsoid.Clarke1880.SemiMinorAxis;
-            return true;
-        }
-
-        if (token.Equals("intl", StringComparison.OrdinalIgnoreCase))
-        {
-            semiMajor = Ellipsoid.International1924.SemiMajorAxis;
-            semiMinor = Ellipsoid.International1924.SemiMinorAxis;
-            return true;
-        }
-
-        if (token.Equals("sphere", StringComparison.OrdinalIgnoreCase))
-        {
-            semiMajor = Ellipsoid.Sphere.SemiMajorAxis;
-            semiMinor = Ellipsoid.Sphere.SemiMinorAxis;
-            return true;
-        }
-
-        return false;
+        return ProjEllipsoidResolver.TryResolveKnownEllipsoid(
+            token,
+            allowClarke1880Ign: true,
+            allowBessel: true,
+            out semiMajor,
+            out semiMinor);
     }
 
     private static bool TryParseFiniteDouble(string token, out double value)
@@ -1441,6 +1519,133 @@ internal static class ProjPipelineMathTransformFactory
             && double.TryParse(token, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value)
             && !double.IsNaN(value)
             && !double.IsInfinity(value);
+    }
+
+    private static bool TryResolvePrimeMeridianLongitudeDegrees(string token, out double longitudeDegrees)
+    {
+        longitudeDegrees = 0d;
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return false;
+        }
+
+        string normalized = token.Trim();
+        bool radiansSuffix = normalized.Length > 0 && (normalized[^1] == 'r' || normalized[^1] == 'R');
+        if (radiansSuffix)
+        {
+            normalized = normalized[..^1];
+        }
+
+        if (TryParseFiniteDouble(normalized, out longitudeDegrees))
+        {
+            if (radiansSuffix)
+            {
+                longitudeDegrees *= 180d / Math.PI;
+            }
+
+            return true;
+        }
+
+        if (TryParsePrimeMeridianDmsToken(normalized, out longitudeDegrees))
+        {
+            return true;
+        }
+
+        longitudeDegrees = normalized.ToUpperInvariant() switch
+        {
+            "GREENWICH" => 0d,
+            "LISBON" => -(9d + (7d / 60d) + (54.862d / 3600d)),
+            "PARIS" => 2d + (20d / 60d) + (14.025d / 3600d),
+            "BOGOTA" => -(74d + (4d / 60d) + (51.3d / 3600d)),
+            "MADRID" => -(3d + (41d / 60d) + (16.58d / 3600d)),
+            "ROME" => 12d + (27d / 60d) + (8.4d / 3600d),
+            "BERN" => 7d + (26d / 60d) + (22.5d / 3600d),
+            "JAKARTA" => 106d + (48d / 60d) + (27.79d / 3600d),
+            "FERRO" => -(17d + (40d / 60d)),
+            "BRUSSELS" => 4d + (22d / 60d) + (4.71d / 3600d),
+            "STOCKHOLM" => 18d + (3d / 60d) + (29.8d / 3600d),
+            "ATHENS" => 23d + (42d / 60d) + (58.815d / 3600d),
+            "OSLO" => 10d + (43d / 60d) + (22.5d / 3600d),
+            _ => double.NaN,
+        };
+
+        return !double.IsNaN(longitudeDegrees);
+    }
+
+    private static bool TryResolveProjPrimeMeridianLongitudeDegrees(string token, out double longitudeDegrees)
+    {
+        return TryResolvePrimeMeridianLongitudeDegrees(token, out longitudeDegrees);
+    }
+
+    private static bool TryParsePrimeMeridianDmsToken(string token, out double value)
+    {
+        value = 0d;
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return false;
+        }
+
+        string text = token.Trim()
+            .Replace('°', 'd')
+            .Replace('º', 'd');
+        int sign = 1;
+
+        char last = text[text.Length - 1];
+        if (last == 'W' || last == 'w' || last == 'S' || last == 's')
+        {
+            sign = -1;
+            text = text[..^1];
+        }
+        else if (last == 'E' || last == 'e' || last == 'N' || last == 'n')
+        {
+            text = text[..^1];
+        }
+
+        if (text.Length > 0 && text[0] == '-')
+        {
+            sign *= -1;
+            text = text[1..];
+        }
+        else if (text.Length > 0 && text[0] == '+')
+        {
+            text = text[1..];
+        }
+
+#pragma warning disable CA1307, CA1865 // netstandard2.0 lacks char+StringComparison overload; char search is ordinal here.
+        int dIndex = text.IndexOf('d');
+        if (dIndex < 0)
+        {
+            dIndex = text.IndexOf('D');
+        }
+
+        int mIndex = text.IndexOf('\'');
+        if (dIndex <= 0 || mIndex <= dIndex)
+        {
+            return false;
+        }
+
+        string degreesToken = text[..dIndex];
+        string minutesToken = text.Substring(dIndex + 1, mIndex - dIndex - 1);
+        if (!double.TryParse(degreesToken, NumberStyles.Float, CultureInfo.InvariantCulture, out double degrees)
+            || !double.TryParse(minutesToken, NumberStyles.Float, CultureInfo.InvariantCulture, out double minutes))
+        {
+            return false;
+        }
+
+        double seconds = 0d;
+        int secondsMarker = text.IndexOf('"');
+#pragma warning restore CA1307, CA1865
+        if (secondsMarker > mIndex + 1)
+        {
+            string secondsToken = text.Substring(mIndex + 1, secondsMarker - mIndex - 1);
+            if (!double.TryParse(secondsToken, NumberStyles.Float, CultureInfo.InvariantCulture, out seconds))
+            {
+                return false;
+            }
+        }
+
+        value = sign * (degrees + (minutes / 60d) + (seconds / 3600d));
+        return true;
     }
 
     private static bool TryResolveUnitScale(
@@ -1539,6 +1744,12 @@ internal static class ProjPipelineMathTransformFactory
         if (token.Equals("ft", StringComparison.OrdinalIgnoreCase))
         {
             factor = 0.3048d;
+            return true;
+        }
+
+        if (token.Equals("us-ft", StringComparison.OrdinalIgnoreCase))
+        {
+            factor = 0.3048006096012192d;
             return true;
         }
 
@@ -1724,9 +1935,11 @@ internal static class ProjPipelineMathTransformFactory
     private static bool TryParsePipelineStepArguments(
         string operation,
         [NotNullWhen(true)] out IReadOnlyList<Dictionary<string, string>>? steps,
+        out bool invertPipeline,
         out string? skipReason)
     {
         steps = null;
+        invertPipeline = false;
         skipReason = null;
 
         if (operation is null)
@@ -1818,6 +2031,7 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
+        invertPipeline = globalArgs.Remove("inv");
         if (currentStepArgs.Count > 0)
         {
             parsedSteps.Add(BuildPipelineStepArguments(globalArgs, currentStepArgs));
@@ -1834,15 +2048,47 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
+        if (invertPipeline)
+        {
+            parsedSteps = BuildInvertedPipelineSteps(parsedSteps);
+        }
+
         steps = parsedSteps;
         return true;
+    }
+
+    private static List<Dictionary<string, string>> BuildInvertedPipelineSteps(List<Dictionary<string, string>> parsedSteps)
+    {
+        var invertedSteps = new List<Dictionary<string, string>>(parsedSteps.Count);
+        for (int i = parsedSteps.Count - 1; i >= 0; i--)
+        {
+            var invertedStep = new Dictionary<string, string>(parsedSteps[i], StringComparer.OrdinalIgnoreCase);
+            if (!invertedStep.Remove("inv"))
+            {
+                invertedStep["inv"] = "true";
+            }
+
+            invertedSteps.Add(invertedStep);
+        }
+
+        return invertedSteps;
     }
 
     private static Dictionary<string, string> BuildPipelineStepArguments(
         Dictionary<string, string> globalArgs,
         Dictionary<string, string> stepArgs)
     {
-        var merged = new Dictionary<string, string>(globalArgs, StringComparer.OrdinalIgnoreCase);
+        var merged = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        foreach (KeyValuePair<string, string> globalArg in globalArgs)
+        {
+            if (globalArg.Key.Equals("inv", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            merged[globalArg.Key] = globalArg.Value;
+        }
+
         foreach (KeyValuePair<string, string> step in stepArgs)
         {
             merged[step.Key] = step.Value;

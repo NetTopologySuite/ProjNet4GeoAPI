@@ -142,6 +142,187 @@ public class GieBuiltinsRegressionTests
         Assert.InRange(output[1], testCase.Expect[1] - 2e-5d, testCase.Expect[1] + 2e-5d);
     }
 
+    /// <summary>
+    /// Verifies that the builtins harness recognizes legacy <c>+init=</c> pipeline steps after runtime normalization.
+    /// </summary>
+    /// <param name="operation">Pipeline operation containing legacy init references.</param>
+    [Theory]
+    [InlineData("+proj=pipeline +step +init=epsg:26915 +inv +step +init=epsg:3857")]
+    [InlineData("+proj=pipeline +step +init=epsg:25832 +inv +step +init=epsg:25833 +step +init=epsg:25833 +inv +step +init=epsg:25832")]
+    [InlineData("+proj=pipeline +step +proj=latlong +datum=NAD27 +inv +step +units=us-ft +init=nad27:3901")]
+    public void TryIsRuntimeOperationSupportedRecognizesLegacyInitPipelines(string operation)
+    {
+        Assert.True(TryIsRuntimeOperationSupported(operation));
+    }
+
+    /// <summary>
+    /// Verifies that legacy EPSG init pipeline steps can be executed through the conversion harness.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformWithLegacyEpsgInitPipelineReturnsExpectedCoordinate()
+    {
+        const string operation = "+proj=pipeline +step +init=epsg:26915 +inv +step +init=epsg:3857";
+
+        bool created = TryCreateConversionTransform(operation, out Func<double[], double[]>? transform, out string? skipReason);
+
+        Assert.True(created, skipReason ?? "TryCreateConversionTransform returned false.");
+        double[] output = Assert.IsType<Func<double[], double[]>>(transform)([487147.594520173d, 4934316.46263998d]);
+        Assert.InRange(output[0], -10370728.80d - 0.2d, -10370728.80d + 0.2d);
+        Assert.InRange(output[1], 5552839.74d - 0.2d, 5552839.74d + 0.2d);
+    }
+
+    /// <summary>
+    /// Verifies that legacy NAD27 init pipeline steps can be executed through the conversion harness.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformWithLegacyNad27InitPipelineReturnsExpectedCoordinate()
+    {
+        const string operation = "+proj=pipeline +step +proj=latlong +datum=NAD27 +inv +step +units=us-ft +init=nad27:3901";
+
+        bool created = TryCreateConversionTransform(operation, out Func<double[], double[]>? transform, out string? skipReason);
+
+        Assert.True(created, skipReason ?? "TryCreateConversionTransform returned false.");
+        double[] output = Assert.IsType<Func<double[], double[]>>(transform)([-80.54166666666667d, 34.54166666666667d, 0d]);
+        Assert.InRange(output[0], 2138028.224d - 1e-3d, 2138028.224d + 1e-3d);
+        Assert.InRange(output[1], 561330.721d - 1e-3d, 561330.721d + 1e-3d);
+    }
+
+    /// <summary>
+    /// Verifies that runtime support now includes the former Bessel-based pipeline cases and the xyzgridshift test-grid case.
+    /// </summary>
+    /// <param name="operation">Pipeline operation to probe.</param>
+    [Theory]
+    [InlineData("+proj=pipeline +step +proj=cart +ellps=WGS84 +step +proj=helmert +x=674.374 +y=15.056 +z=405.346 +inv +step +proj=cart +ellps=bessel +inv +step +proj=somerc +lat_0=46.95240555555556 +lon_0=7.439583333333333 +k_0=1 +x_0=2600000 +y_0=1200000 +ellps=bessel +units=m")]
+    [InlineData("+proj=pipeline +step +proj=krovak +lat_0=49.5 +lon_0=24.8333333333333 +alpha=30.2881397527778 +k=0.9999 +x_0=0 +y_0=0 +ellps=bessel +step +proj=gridshift +grids=tests/test_gridshift_projected.tif +step +inv +proj=mod_krovak +lat_0=49.5 +lon_0=24.8333333333333 +alpha=30.2881397222222 +k=0.9999 +x_0=5000000 +y_0=5000000 +ellps=bessel")]
+    [InlineData("+proj=pipeline +step +inv +proj=lcc +lat_1=46.8 +lat_0=46.8 +lon_0=0 +k_0=0.99987742 +x_0=600000 +y_0=2200000 +ellps=clrk80ign +pm=paris +step +proj=push +v_3 +step +proj=cart +ellps=clrk80ign +step +proj=xyzgridshift +grids=tests/subset_of_gr3df97a.tif +grid_ref=output_crs +ellps=GRS80 +step +proj=cart +ellps=GRS80 +inv +step +proj=pop +v_3 +step +proj=lcc +lat_0=46.5 +lon_0=3 +lat_1=49 +lat_2=44 +x_0=700000 +y_0=6600000 +ellps=GRS80")]
+    public void TryIsRuntimeOperationSupportedRecognizesRemainingRuntimeFeaturePipelines(string operation)
+    {
+        Assert.True(TryIsRuntimeOperationSupported(operation));
+    }
+
+    /// <summary>
+    /// Verifies that the GIE conversion path resolves known <c>tests/...</c> grid tokens to local fixtures.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformWithKnownTestGridTokenReturnsExpectedCoordinate()
+    {
+        const string operation = "+proj=pipeline +step +inv +proj=lcc +lat_1=46.8 +lat_0=46.8 +lon_0=0 +k_0=0.99987742 +x_0=600000 +y_0=2200000 +ellps=clrk80ign +pm=paris +step +proj=push +v_3 +step +proj=cart +ellps=clrk80ign +step +proj=xyzgridshift +grids=tests/subset_of_gr3df97a.tif +grid_ref=output_crs +ellps=GRS80 +step +proj=cart +ellps=GRS80 +inv +step +proj=pop +v_3 +step +proj=lcc +lat_0=46.5 +lon_0=3 +lat_1=49 +lat_2=44 +x_0=700000 +y_0=6600000 +ellps=GRS80";
+
+        bool created = TryCreateConversionTransform(operation, out Func<double[], double[]>? transform, out string? skipReason);
+
+        Assert.True(created, skipReason ?? "TryCreateConversionTransform returned false.");
+        double[] output = Assert.IsType<Func<double[], double[]>>(transform)([814149.529d, 1887019.768d, 0d]);
+        Assert.InRange(output[0], 860690.804d - 1e-3d, 860690.804d + 1e-3d);
+        Assert.InRange(output[1], 6319036.849d - 1e-3d, 6319036.849d + 1e-3d);
+        if (output.Length > 2)
+        {
+            Assert.InRange(output[2], -1e-6d, 1e-6d);
+        }
+    }
+
+    /// <summary>
+    /// Verifies that the builtins harness recognizes the conversion operations needed by the former no-applicable fixtures.
+    /// </summary>
+    /// <param name="operation">Operation to probe.</param>
+    [Theory]
+    [InlineData("+proj=defmodel +model=tests/simple_model_degree_horizontal.json")]
+    [InlineData("+proj=deformation +xy_grids=alaska +z_grids=egm96_15.gtx +t_epoch=2016.0 +ellps=GRS80")]
+    [InlineData("proj=helmert convention=coordinate_frame x=0.06155 y=-0.01087 z=-0.04019 rx=-0.0394924 ry=-0.0327221 rz=-0.0328979 s=-0.009994")]
+    [InlineData("proj = pipeline ellps=GRS80; step proj = cart; step proj = helmert convention=coordinate_frame x = 0.06155 y = -0.01087 z = -0.04019 rx = -0.0394924 ry = -0.0327221 rz = -0.0328979 s = -0.009994; step proj = cart inv;")]
+    public void TryIsRuntimeOperationSupportedRecognizesNoApplicableQuickWins(string operation)
+    {
+        Assert.True(TryIsRuntimeOperationSupported(operation));
+    }
+
+    /// <summary>
+    /// Verifies that standalone Helmert conversion cases execute through the builtins conversion path.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformWithStandaloneHelmertReturnsExpectedCoordinate()
+    {
+        const string operation = "proj=helmert convention=coordinate_frame x=0.06155 y=-0.01087 z=-0.04019 rx=-0.0394924 ry=-0.0327221 rz=-0.0328979 s=-0.009994";
+
+        bool created = TryCreateConversionTransform(operation, out Func<double[], double[]>? transform, out string? skipReason);
+
+        Assert.True(created, skipReason ?? "TryCreateConversionTransform returned false.");
+        double[] output = Assert.IsType<Func<double[], double[]>>(transform)([-4052051.7643d, 4212836.2017d, -2545106.0245d]);
+        Assert.InRange(output[0], -4052052.7379d - 1e-4d, -4052052.7379d + 1e-4d);
+        Assert.InRange(output[1], 4212835.9897d - 1e-4d, 4212835.9897d + 1e-4d);
+        Assert.InRange(output[2], -2545104.5898d - 1e-4d, -2545104.5898d + 1e-4d);
+    }
+
+    /// <summary>
+    /// Verifies that loose GIE-style assignment syntax with semicolon separators is normalized for runtime pipeline execution.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformWithLooseAssignmentPipelineReturnsExpectedCoordinate()
+    {
+        const string operation = "proj = pipeline ellps=GRS80; step proj = cart; step proj = helmert convention=coordinate_frame x = 0.06155 y = -0.01087 z = -0.04019 rx = -0.0394924 ry = -0.0327221 rz = -0.0328979 s = -0.009994; step proj = cart inv;";
+
+        bool created = TryCreateConversionTransform(operation, out Func<double[], double[]>? transform, out string? skipReason);
+
+        Assert.True(created, skipReason ?? "TryCreateConversionTransform returned false.");
+        double[] output = Assert.IsType<Func<double[], double[]>>(transform)([133.88551329d, -23.67012389d, 603.3466d, 0d]);
+        Assert.InRange(output[0], 133.8855216d - 1e-6d, 133.8855216d + 1e-6d);
+        Assert.InRange(output[1], -23.67011014d - 1e-6d, -23.67011014d + 1e-6d);
+        Assert.InRange(output[2], 603.2489d - 1e-3d, 603.2489d + 1e-3d);
+        Assert.InRange(output[3], -1e-9d, 1e-9d);
+    }
+
+    /// <summary>
+    /// Verifies that URN-based coordinate operations surface a specific unsupported reason instead of collapsing into a null GIE row.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformWithCoordinateOperationUrnReturnsSpecificSkipReason()
+    {
+        const string operation = "urn:ogc:def:coordinateOperation:NKG::ITRF2000_TO_DK";
+
+        bool created = TryCreateConversionTransform(operation, out Func<double[], double[]>? transform, out string? skipReason);
+
+        Assert.False(created);
+        Assert.Null(transform);
+        Assert.Contains("URN-based", skipReason ?? string.Empty, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Verifies that the former no-applicable fixtures now emit concrete theory rows instead of null placeholders.
+    /// </summary>
+    /// <param name="fixtureName">Fixture name to inspect.</param>
+    [Theory]
+    [InlineData("defmodel.gie")]
+    [InlineData("deformation.gie")]
+    [InlineData("ellipsoid.gie")]
+    [InlineData("GDA.gie")]
+    [InlineData("nkg.gie")]
+    public void GetCasesFromFixtureForFormerNoApplicableFixturesReturnsConcreteRow(string fixtureName)
+    {
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("GetCasesFromFixture", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.GetCasesFromFixture.");
+
+        var rows = new List<object>();
+        foreach (object row in Assert.IsAssignableFrom<System.Collections.IEnumerable>(method.Invoke(null, [fixtureName, 300])))
+        {
+            rows.Add(row);
+        }
+
+        Assert.NotEmpty(rows);
+
+        PropertyInfo dataProperty = rows[0].GetType().GetProperty("Data", BindingFlags.Instance | BindingFlags.Public)
+            ?? throw new InvalidOperationException("Could not locate TheoryDataRow.Data.");
+        var firstCase = dataProperty.GetValue(rows[0]) as GieCase;
+
+        Assert.NotNull(firstCase);
+        Assert.NotNull(firstCase!.Operation);
+        Assert.NotEmpty(firstCase.Operation);
+    }
+
+    private static bool TryIsRuntimeOperationSupported(string operation)
+    {
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("TryIsRuntimeOperationSupported", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.TryIsRuntimeOperationSupported.");
+        return Assert.IsType<bool>(method.Invoke(null, [operation]));
+    }
+
     private static bool TryCreateTransform(GieCase testCase, out MathTransform? transform, out string? skipReason)
     {
         MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("TryCreateTransform", BindingFlags.Static | BindingFlags.NonPublic)
@@ -149,6 +330,17 @@ public class GieBuiltinsRegressionTests
         object?[] args = [testCase, null, null];
         bool created = Assert.IsType<bool>(method.Invoke(null, args));
         transform = args[1] as MathTransform;
+        skipReason = args[2] as string;
+        return created;
+    }
+
+    private static bool TryCreateConversionTransform(string operation, out Func<double[], double[]>? transform, out string? skipReason)
+    {
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("TryCreateConversionTransform", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.TryCreateConversionTransform.");
+        object?[] args = [operation, null, null];
+        bool created = Assert.IsType<bool>(method.Invoke(null, args));
+        transform = args[1] as Func<double[], double[]>;
         skipReason = args[2] as string;
         return created;
     }

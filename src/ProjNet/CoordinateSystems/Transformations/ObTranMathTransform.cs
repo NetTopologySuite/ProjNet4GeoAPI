@@ -465,45 +465,13 @@ internal sealed class ObTranMathTransform : MathTransform
 
         if (args.TryGetValue("ellps", out string? ellps) && !string.IsNullOrWhiteSpace(ellps))
         {
-            if (ellps.Equals("wgs84", StringComparison.OrdinalIgnoreCase))
+            if (ProjEllipsoidResolver.TryResolveKnownEllipsoid(
+                ellps,
+                allowClarke1880Ign: false,
+                allowBessel: false,
+                out semiMajor,
+                out semiMinor))
             {
-                semiMajor = Ellipsoid.WGS84.SemiMajorAxis;
-                semiMinor = Ellipsoid.WGS84.SemiMinorAxis;
-                return true;
-            }
-
-            if (ellps.Equals("grs80", StringComparison.OrdinalIgnoreCase))
-            {
-                semiMajor = Ellipsoid.GRS80.SemiMajorAxis;
-                semiMinor = Ellipsoid.GRS80.SemiMinorAxis;
-                return true;
-            }
-
-            if (ellps.Equals("clrk66", StringComparison.OrdinalIgnoreCase))
-            {
-                semiMajor = Ellipsoid.Clarke1866.SemiMajorAxis;
-                semiMinor = Ellipsoid.Clarke1866.SemiMinorAxis;
-                return true;
-            }
-
-            if (ellps.Equals("clrk80", StringComparison.OrdinalIgnoreCase))
-            {
-                semiMajor = Ellipsoid.Clarke1880.SemiMajorAxis;
-                semiMinor = Ellipsoid.Clarke1880.SemiMinorAxis;
-                return true;
-            }
-
-            if (ellps.Equals("intl", StringComparison.OrdinalIgnoreCase))
-            {
-                semiMajor = Ellipsoid.International1924.SemiMajorAxis;
-                semiMinor = Ellipsoid.International1924.SemiMinorAxis;
-                return true;
-            }
-
-            if (ellps.Equals("sphere", StringComparison.OrdinalIgnoreCase))
-            {
-                semiMajor = Ellipsoid.Sphere.SemiMajorAxis;
-                semiMinor = Ellipsoid.Sphere.SemiMinorAxis;
                 return true;
             }
         }

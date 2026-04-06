@@ -6,6 +6,7 @@ namespace ProjNet.Tests;
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using ProjNet.CoordinateSystems;
@@ -20,6 +21,7 @@ public class GieBuiltinsTheoryTests
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new();
 
+    private static readonly char[] CommaSeparator = [','];
     private static readonly char[] OperationTokenSeparators = [' ', '\t'];
 
     private static readonly Dictionary<string, string> ProjectionClassByProjCode = new(StringComparer.OrdinalIgnoreCase)
@@ -184,6 +186,9 @@ public class GieBuiltinsTheoryTests
     private static readonly HashSet<string> ConversionProjCodes = new(StringComparer.OrdinalIgnoreCase)
     {
         "axisswap",
+        "cart",
+        "geocent",
+        "helmert",
         "unitconvert",
         "pipeline",
         "latlong",
@@ -194,6 +199,8 @@ public class GieBuiltinsTheoryTests
         "set",
         "push",
         "pop",
+        "defmodel",
+        "deformation",
         "xyzgridshift",
         "tinshift",
     };
@@ -466,6 +473,7 @@ public class GieBuiltinsTheoryTests
         }
 
         int emitted = 0;
+        GieCase? firstFilteredCase = null;
         foreach (GieCase item in parsed)
         {
             if (item.ExpectsFailure || item.Accept is null || item.Expect is null)
@@ -477,21 +485,25 @@ public class GieBuiltinsTheoryTests
                 && HasGeographicDatumShift(item.Operation)
                 && (!IsLikelyGeographicCoordinatePair(item.Accept) || !IsLikelyGeographicCoordinatePair(item.Expect)))
             {
+                firstFilteredCase ??= item;
                 continue;
             }
 
             if (!TryExtractProjCode(item.Operation, out string? projCode) || projCode is null)
             {
+                firstFilteredCase ??= item;
                 continue;
             }
 
             if (!ProjectionClassByProjCode.ContainsKey(projCode) && !ConversionProjCodes.Contains(projCode))
             {
+                firstFilteredCase ??= item;
                 continue;
             }
 
             if (!TryIsRuntimeOperationSupported(item.Operation))
             {
+                firstFilteredCase ??= item;
                 continue;
             }
 
@@ -505,7 +517,7 @@ public class GieBuiltinsTheoryTests
 
         if (emitted == 0)
         {
-            yield return new TheoryDataRow<GieCase?>(null);
+            yield return new TheoryDataRow<GieCase?>(firstFilteredCase);
         }
     }
 
@@ -513,6 +525,11 @@ public class GieBuiltinsTheoryTests
     {
         transform = null;
         skipReason = null;
+
+        if (TryGetKnownUnsupportedOperationSkipReason(testCase.Operation, out skipReason))
+        {
+            return false;
+        }
 
         if (!TryParseOperationArguments(testCase.Operation, out Dictionary<string, string> args))
         {
@@ -677,6 +694,11 @@ public class GieBuiltinsTheoryTests
             return false;
         }
 
+        if (TryGetKnownUnsupportedOperationSkipReason(operation, out skipReason))
+        {
+            return false;
+        }
+
         string normalizedOperation = NormalizeOperationForRuntime(operation);
         if (!CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(normalizedOperation, out MathTransform? mathTransform, out skipReason))
         {
@@ -705,7 +727,7 @@ public class GieBuiltinsTheoryTests
 
     private static string NormalizeOperationForRuntime(string operation)
     {
-        string[] tokens = operation.Split(OperationTokenSeparators, StringSplitOptions.RemoveEmptyEntries);
+        string[] tokens = TokenizeOperation(operation);
         if (tokens.Length == 0)
         {
             return operation;
@@ -721,7 +743,218 @@ public class GieBuiltinsTheoryTests
             tokens[i] = $"+{tokens[i]}";
         }
 
-        return string.Join(" ", tokens);
+        string normalizedOperation = ExpandLegacyInitDefinitions(string.Join(" ", tokens));
+        return ResolveKnownTestGridPaths(normalizedOperation);
+    }
+
+    private static string[] TokenizeOperation(string operation)
+    {
+        if (string.IsNullOrWhiteSpace(operation))
+        {
+            return [];
+        }
+
+        string sanitizedOperation = operation.Replace(';', ' ');
+        string[] rawTokens = sanitizedOperation.Split(OperationTokenSeparators, StringSplitOptions.RemoveEmptyEntries);
+        if (rawTokens.Length == 0)
+        {
+            return [];
+        }
+
+        var tokens = new List<string>(rawTokens.Length);
+        for (int i = 0; i < rawTokens.Length; i++)
+        {
+            string token = rawTokens[i];
+            if (token.Equals("=", StringComparison.Ordinal))
+            {
+                if (tokens.Count == 0 || i + 1 >= rawTokens.Length)
+                {
+                    continue;
+                }
+
+                tokens[^1] = $"{tokens[^1]}={rawTokens[++i]}";
+                continue;
+            }
+
+            if (i + 2 < rawTokens.Length && rawTokens[i + 1].Equals("=", StringComparison.Ordinal))
+            {
+                tokens.Add($"{token}={rawTokens[i + 2]}");
+                i += 2;
+                continue;
+            }
+
+            tokens.Add(token);
+        }
+
+        return [.. tokens];
+    }
+
+    private static string ExpandLegacyInitDefinitions(string operation)
+    {
+        string[] tokens = operation.Split(OperationTokenSeparators, StringSplitOptions.RemoveEmptyEntries);
+        if (tokens.Length == 0)
+        {
+            return operation;
+        }
+
+        var expandedTokens = new List<string>(tokens.Length);
+        bool changed = false;
+        foreach (string token in tokens)
+        {
+            if (TryGetLegacyInitReplacement(token, out string[]? replacementTokens))
+            {
+                expandedTokens.AddRange(Assert.IsType<string[]>(replacementTokens));
+                changed = true;
+            }
+            else
+            {
+                expandedTokens.Add(token);
+            }
+        }
+
+        return changed ? string.Join(" ", expandedTokens) : operation;
+    }
+
+    private static bool TryGetLegacyInitReplacement(string token, [NotNullWhen(true)] out string[]? replacementTokens)
+    {
+        replacementTokens = null;
+        if (!token.StartsWith("+init=", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        string initToken = token[6..];
+        string[]? replacement = initToken.ToUpperInvariant() switch
+        {
+            "EPSG:26915" => ["+proj=utm", "+zone=15", "+datum=NAD83", "+units=m"],
+            "EPSG:3857" => ["+proj=webmerc", "+datum=WGS84", "+units=m"],
+            "EPSG:25832" => ["+proj=utm", "+zone=32", "+ellps=GRS80", "+units=m"],
+            "EPSG:25833" => ["+proj=utm", "+zone=33", "+ellps=GRS80", "+units=m"],
+            "NAD27:3901" =>
+            [
+                "+proj=lcc",
+                "+datum=NAD27",
+                "+lon_0=-81",
+                "+lat_1=34.96666666666667",
+                "+lat_2=33.76666666666667",
+                "+lat_0=33",
+                "+x_0=2000000",
+                "+y_0=0",
+                "+units=us-ft",
+            ],
+            _ => null,
+        };
+
+        if (replacement is null)
+        {
+            return false;
+        }
+
+        replacementTokens = replacement;
+        return true;
+    }
+
+    private static string ResolveKnownTestGridPaths(string operation)
+    {
+        string[] tokens = operation.Split(OperationTokenSeparators, StringSplitOptions.RemoveEmptyEntries);
+        if (tokens.Length == 0)
+        {
+            return operation;
+        }
+
+        bool changed = false;
+        for (int i = 0; i < tokens.Length; i++)
+        {
+            if (!tokens[i].StartsWith("+grids=", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            string[] gridEntries = tokens[i][7..].Split(CommaSeparator, StringSplitOptions.RemoveEmptyEntries);
+            bool tokenChanged = false;
+            for (int j = 0; j < gridEntries.Length; j++)
+            {
+                string gridEntry = gridEntries[j].Trim();
+                bool isOptional = gridEntry.Length > 0 && gridEntry[0] == '@';
+                string gridToken = isOptional ? gridEntry[1..] : gridEntry;
+                if (!TryResolveKnownTestGridToken(gridToken, out string? resolvedPath))
+                {
+                    continue;
+                }
+
+                gridEntries[j] = isOptional
+                    ? $"@{resolvedPath}"
+                    : resolvedPath;
+                tokenChanged = true;
+                changed = true;
+            }
+
+            if (tokenChanged)
+            {
+                tokens[i] = $"+grids={string.Join(",", gridEntries)}";
+            }
+        }
+
+        return changed ? string.Join(" ", tokens) : operation;
+    }
+
+    private static bool TryResolveKnownTestGridToken(string gridToken, [NotNullWhen(true)] out string? resolvedPath)
+    {
+        resolvedPath = null;
+        if (string.IsNullOrWhiteSpace(gridToken))
+        {
+            return false;
+        }
+
+        string normalizedToken = gridToken.Replace('/', '\\');
+        if (!normalizedToken.StartsWith("tests\\", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        string fileName = Path.GetFileName(normalizedToken);
+        if (string.IsNullOrWhiteSpace(fileName))
+        {
+            return false;
+        }
+
+        string? fixtureGridPath = FindRepositoryFile("test", "ProjNet.Tests", "Fixtures", "grids", fileName);
+        if (fixtureGridPath is not null)
+        {
+            resolvedPath = fixtureGridPath;
+            return true;
+        }
+
+        string? projDataGridPath = FindRepositoryFile("spec", "PROJ", "data", "tests", fileName);
+        if (projDataGridPath is not null)
+        {
+            resolvedPath = projDataGridPath;
+            return true;
+        }
+
+        return false;
+    }
+
+    private static string? FindRepositoryFile(params string[] relativeSegments)
+    {
+        var current = new DirectoryInfo(AppContext.BaseDirectory);
+        while (current is not null)
+        {
+            string candidate = current.FullName;
+            for (int i = 0; i < relativeSegments.Length; i++)
+            {
+                candidate = Path.Combine(candidate, relativeSegments[i]);
+            }
+
+            if (File.Exists(candidate))
+            {
+                return candidate;
+            }
+
+            current = current.Parent;
+        }
+
+        return null;
     }
 
     private static bool TryWrapStandaloneStackTransferOperation(string operation, out string? wrappedOperation)
@@ -799,14 +1032,15 @@ public class GieBuiltinsTheoryTests
             return false;
         }
 
-        if (!TryExtractProjCode(operation, out string? projCode) || projCode is null)
+        string normalizedOperation = NormalizeOperationForRuntime(operation);
+        if (!TryExtractProjCode(normalizedOperation, out string? projCode) || projCode is null)
         {
             return false;
         }
 
         if (projCode.Equals("pipeline", StringComparison.OrdinalIgnoreCase))
         {
-            if (!TrySplitPipelineSteps(operation, out IReadOnlyList<string> steps))
+            if (!TrySplitPipelineSteps(normalizedOperation, out IReadOnlyList<string> steps))
             {
                 return false;
             }
@@ -1004,7 +1238,7 @@ public class GieBuiltinsTheoryTests
 
             if (ellps.Equals("clrk80", StringComparison.OrdinalIgnoreCase))
             {
-                ellipsoid = Ellipsoid.Clarke1880;
+                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("Clarke 1880 (RGS)", 6378249.145, 293.4663, LinearUnit.Metre);
                 return true;
             }
 
@@ -1460,7 +1694,7 @@ public class GieBuiltinsTheoryTests
             return false;
         }
 
-        string[] tokens = operation.Split(OperationTokenSeparators, StringSplitOptions.RemoveEmptyEntries);
+        string[] tokens = TokenizeOperation(operation);
         foreach (string token in tokens)
         {
             if (token.Length == 0)
@@ -1483,6 +1717,18 @@ public class GieBuiltinsTheoryTests
         }
 
         return args.Count > 0;
+    }
+
+    private static bool TryGetKnownUnsupportedOperationSkipReason(string operation, out string? skipReason)
+    {
+        skipReason = null;
+        if (operation.StartsWith("urn:ogc:def:coordinateOperation:", StringComparison.OrdinalIgnoreCase))
+        {
+            skipReason = "URN-based coordinate operations are not mapped in the current builtins wave.";
+            return true;
+        }
+
+        return false;
     }
 
     private static bool TryExtractProjCode(string operation, out string? projCode)

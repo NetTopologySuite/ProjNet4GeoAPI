@@ -163,6 +163,48 @@ expect failure errno invalid_op_illegal_arg_value
     }
 
     /// <summary>
+    /// Verifies that GIE numeric sentinels used in failure-expectation cases do not abort parsing.
+    /// </summary>
+    [Fact]
+    public void ParseWithHugeValSentinelParsesFailureCase()
+    {
+        const string content = @"
+operation +proj=defmodel +model=tests/simple_model_degree_horizontal.json
+accept 2 49 30 HUGE_VAL
+expect failure errno coord_transfm_missing_time
+";
+
+        IReadOnlyList<GieCase> parsed = GieParser.Parse(content);
+
+        Assert.Single(parsed);
+        Assert.True(parsed[0].ExpectsFailure);
+        Assert.Equal(4, parsed[0].Accept.Length);
+        Assert.True(double.IsPositiveInfinity(parsed[0].Accept[3]));
+    }
+
+    /// <summary>
+    /// Verifies that a blank <c>operation</c> directive can still be represented for failure-expectation rows.
+    /// </summary>
+    [Fact]
+    public void ParseWithBlankOperationFailureCasePreservesFollowingOperations()
+    {
+        const string content = @"
+operation
+expect failure
+operation cobra
+expect failure
+";
+
+        IReadOnlyList<GieCase> parsed = GieParser.Parse(content);
+
+        Assert.Equal(2, parsed.Count);
+        Assert.Equal(string.Empty, parsed[0].Operation);
+        Assert.True(parsed[0].ExpectsFailure);
+        Assert.Equal("cobra", parsed[1].Operation);
+        Assert.True(parsed[1].ExpectsFailure);
+    }
+
+    /// <summary>
     /// Verifies that unknown directives are skipped without error when <see cref="GieParserOptions.IgnoreUnknownDirectives"/> is enabled.
     /// </summary>
     [Fact]

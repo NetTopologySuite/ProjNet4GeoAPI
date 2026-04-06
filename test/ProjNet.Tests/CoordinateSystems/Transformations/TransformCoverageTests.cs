@@ -136,10 +136,25 @@ public class TransformCoverageTests
     }
 
     /// <summary>
-    /// Verifies geocentric cartesian inverse has measurable high-altitude residual with single-step Bowring.
+    /// Verifies that the cartesian inverse follows the PROJ Bowring-style formulation for a traced grid-shift intermediate.
     /// </summary>
     [Fact]
-    public void GeocentricCartesianHighAltitudeRoundTripShowsSingleStepResidual()
+    public void GeocentricCartesianInverseMatchesProjReferenceForFrenchGridIntermediate()
+    {
+        MathTransform inverse = CreatePipelineTransform("+proj=cart +ellps=GRS80 +inv");
+
+        double[] geographic = inverse.Transform([4581694.457606088d, 401007.47987491556d, 4404282.691540252d]);
+
+        Assert.Equal(5.001999989309562d, geographic[0], 12);
+        Assert.Equal(43.95199999107799d, geographic[1], 12);
+        Assert.Equal(41.97526777628809d, geographic[2], 8);
+    }
+
+    /// <summary>
+    /// Verifies that the cartesian inverse remains accurate for very high-altitude round-trips.
+    /// </summary>
+    [Fact]
+    public void GeocentricCartesianHighAltitudeRoundTripRemainsAccurate()
     {
         MathTransform forward = CreatePipelineTransform("+proj=cart +ellps=WGS84");
         MathTransform inverse = forward.Inverse();

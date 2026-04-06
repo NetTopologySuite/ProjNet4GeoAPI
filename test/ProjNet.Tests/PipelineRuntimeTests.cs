@@ -5,6 +5,7 @@
 namespace ProjNet.Tests;
 
 using System;
+using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Projections;
 using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
@@ -125,6 +126,56 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
+    /// Verifies that a global pipeline <c>+inv</c> flag reverses the step order and toggles each step inversion.
+    /// </summary>
+    [Fact]
+    public void PipelineWithGlobalInvInvertsWholePipeline()
+    {
+        const string operation = "+proj=pipeline +inv +step +proj=affine +xoff=1 +step +proj=affine +xoff=2";
+
+        MathTransform transform = RequirePipelineMathTransform(operation);
+        double[] transformed = transform.Transform([10d, 20d]);
+
+        Assert.Equal(7d, transformed[0], 12);
+        Assert.Equal(20d, transformed[1], 12);
+    }
+
+    /// <summary>
+    /// Verifies that <c>urm5</c> pipeline steps accept the required <c>n</c> parameter and optional shape parameters.
+    /// </summary>
+    [Fact]
+    public void PipelineWithUrm5StepAcceptsProjectionSpecificParameters()
+    {
+        const string operation = "+proj=urm5 +ellps=WGS84 +n=0.5 +q=0.2 +alpha=10";
+
+        MathTransform transform = RequirePipelineMathTransform(operation);
+        double[] transformed = transform.Transform([12d, 56d]);
+
+        Assert.False(double.IsNaN(transformed[0]) || double.IsInfinity(transformed[0]));
+        Assert.False(double.IsNaN(transformed[1]) || double.IsInfinity(transformed[1]));
+    }
+
+    /// <summary>
+    /// Verifies that <c>+pm</c> shifts the longitude reference before the projection step is applied.
+    /// </summary>
+    [Fact]
+    public void PipelineProjectionStepWithPrimeMeridianUsesLocalLongitudeReference()
+    {
+        const string operation = "+proj=latlong +pm=paris";
+        const double projParisLongitude = 2d + (20d / 60d) + (14.025d / 3600d);
+
+        MathTransform transform = RequirePipelineMathTransform(operation);
+        double[] input = [projParisLongitude, 48d];
+        double[] forward = transform.Transform(input);
+        double[] inverse = transform.Inverse().Transform(forward);
+
+        Assert.Equal(0d, forward[0], 12);
+        Assert.Equal(48d, forward[1], 12);
+        Assert.Equal(projParisLongitude, inverse[0], 12);
+        Assert.Equal(48d, inverse[1], 10);
+    }
+
+    /// <summary>
     /// Verifies that a transverse Mercator step round-trips correctly using the specified projection parameters.
     /// </summary>
     [Fact]
@@ -137,6 +188,21 @@ public class PipelineRuntimeTests
 
         Assert.Equal(GeocForwardInput[0], transformed[0], 7);
         Assert.Equal(GeocForwardInput[1], transformed[1], 7);
+    }
+
+    /// <summary>
+    /// Verifies that an LCC step respects the configured scale factor in both forward and inverse directions.
+    /// </summary>
+    [Fact]
+    public void PipelineWithLccStepRoundTripsUsingScaleFactor()
+    {
+        const string operation = "+proj=pipeline +step +proj=lcc +lon_0=0 +lat_0=46.8 +lat_1=46.8 +k_0=0.99987742 +x_0=600000 +y_0=2200000 +ellps=clrk80ign +pm=paris +step +proj=lcc +lon_0=0 +lat_0=46.8 +lat_1=46.8 +k_0=0.99987742 +x_0=600000 +y_0=2200000 +ellps=clrk80ign +pm=paris +inv";
+
+        MathTransform transform = RequirePipelineMathTransform(operation);
+        double[] transformed = transform.Transform([2.5969213d, 48d]);
+
+        Assert.Equal(2.5969213d, transformed[0], 7);
+        Assert.Equal(48d, transformed[1], 7);
     }
 
     /// <summary>
@@ -484,6 +550,24 @@ public class PipelineRuntimeTests
 
         Assert.Equal(0d, transformed[0], 12);
         Assert.Equal(1d, transformed[1], 12);
+        Assert.Equal(0d, transformed[2], 12);
+    }
+
+    /// <summary>
+    /// Verifies that Clarke 1880 PROJ ellipsoid tokens resolve to metric axes in cartesian runtime steps.
+    /// </summary>
+    /// <param name="ellipsoidToken">The PROJ ellipsoid token.</param>
+    /// <param name="expectedSemiMajorAxis">The expected semi-major axis in metres.</param>
+    [Theory]
+    [InlineData("clrk80", 6378249.145d)]
+    [InlineData("clrk80ign", 6378249.2d)]
+    public void PipelineWithCartStepUsesMetricClarke1880TokenAxes(string ellipsoidToken, double expectedSemiMajorAxis)
+    {
+        MathTransform transform = RequirePipelineMathTransform($"+proj=cart +ellps={ellipsoidToken}");
+        double[] transformed = transform.Transform([0d, 0d, 0d]);
+
+        Assert.Equal(expectedSemiMajorAxis, transformed[0], 9);
+        Assert.Equal(0d, transformed[1], 12);
         Assert.Equal(0d, transformed[2], 12);
     }
 

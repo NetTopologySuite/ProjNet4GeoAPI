@@ -155,8 +155,8 @@ internal class LambertConformalConic2SP : MapProjection
 
         double theta = this.ns * Adjust_lon(longitude - this.centralMeridian);
 
-        lon = radialDistance * Math.Sin(theta);
-        lat = this.rh - (radialDistance * Math.Cos(theta));
+        lon = this.scaleFactor * radialDistance * Math.Sin(theta);
+        lat = this.scaleFactor * (this.rh - (radialDistance * Math.Cos(theta)));
     }
 
     /// <summary>
@@ -166,8 +166,8 @@ internal class LambertConformalConic2SP : MapProjection
     /// <param name="y">The y-ordinate when entering, the latitude value upon exit.</param>
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double dX = x;
-        double dY = this.rh - y;
+        double dX = x / this.scaleFactor;
+        double dY = this.rh - (y / this.scaleFactor);
         double sign = this.ns > 0 ? 1.0 : -1.0;
         double radialDistance = sign * Math.Sqrt((dX * dX) + (dY * dY));
 

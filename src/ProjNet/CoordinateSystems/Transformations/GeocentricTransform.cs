@@ -30,25 +30,23 @@ using System.Collections.Generic;
 /// The cartesian coordinate equations <c>X = (ν + h) * cos(φ) * cos(λ)</c>,
 /// <c>Y = (ν + h) * cos(φ) * sin(λ)</c>, and
 /// <c>Z = ((1 - e²) * ν + h) * sin(φ)</c> match the implementation here.</para>
-/// <para>The inverse conversion uses Bowring's 1976 geocentric-to-geodetic estimate for the
-/// initial latitude recovery and applies an additional iterative refinement for heights above
-/// 50 km. That extension was independently verified against B. R. Bowring,
-/// "Transformation from spatial to geographical coordinates," <i>Survey Review</i>,
-/// vol. 23, no. 181, pp. 323-327, 1976, and later comparison literature.</para>
+/// <para>The inverse conversion follows the Bowring-style cartesian-to-geodetic formulation
+/// used by PROJ's <c>cart.cpp</c>. It derives the latitude estimate from the normalized
+/// auxiliary quantities <c>xφ</c> and <c>yφ</c>, switches to a geocentric-radius-based
+/// height approximation near the poles to avoid division by zero, and retains an additional
+/// iterative refinement only for very high altitudes to preserve round-trip accuracy there.
+/// That formulation was independently verified against B. R. Bowring, "Transformation from
+/// spatial to geographical coordinates," <i>Survey Review</i>, vol. 23, no. 181, pp. 323-327,
+/// 1976, and later comparison literature.</para>
 /// </remarks>
 /// <seealso href="https://epsg.io/9602-method">EPSG method 9602: Geographic/geocentric conversions.</seealso>
 /// <seealso href="https://www.researchgate.net/publication/233681872">Research comparison of Bowring-style geocentric to geodetic conversion methods.</seealso>
 internal class GeocentricTransform : MathTransform
 {
     /// <summary>
-    /// Cosine of 67.5 degrees, used in geocentric inverse iteration bounds.
+    /// Cosine threshold used to switch to the polar height approximation near the poles.
     /// </summary>
-    private const double COS67P5 = 0.38268343236508977;
-
-    /// <summary>
-    /// Toms region-1 threshold constant for inverse conversion branching.
-    /// </summary>
-    private const double ADC = 1.0026000;
+    private const double PolarCosphiThreshold = 1e-6;
 
     /// <summary>
     /// Eccentricity squared : (a² - b²)/a².
@@ -148,6 +146,39 @@ internal class GeocentricTransform : MathTransform
     }
 
     /// <summary>
+    /// Computes the normal radius of curvature at a latitude.
+    /// </summary>
+    /// <param name="semiMajorAxis">The semi-major axis.</param>
+    /// <param name="eccentricitySquared">The ellipsoid eccentricity squared.</param>
+    /// <param name="sinPhi">The sine of the geodetic latitude.</param>
+    /// <returns>The normal radius of curvature.</returns>
+    private static double GetNormalRadiusOfCurvature(double semiMajorAxis, double eccentricitySquared, double sinPhi)
+    {
+        return eccentricitySquared == 0d
+            ? semiMajorAxis
+            : semiMajorAxis / Math.Sqrt(1d - (eccentricitySquared * sinPhi * sinPhi));
+    }
+
+    /// <summary>
+    /// Computes the geocentric radius used by the polar height approximation.
+    /// </summary>
+    /// <param name="semiMajorAxis">The semi-major axis.</param>
+    /// <param name="semiMinorOverSemiMajor">The semi-minor to semi-major axis ratio.</param>
+    /// <param name="cosPhi">The cosine of the geodetic latitude.</param>
+    /// <param name="sinPhi">The sine of the geodetic latitude.</param>
+    /// <returns>The geocentric radius at the latitude.</returns>
+    private static double GetGeocentricRadius(double semiMajorAxis, double semiMinorOverSemiMajor, double cosPhi, double sinPhi)
+    {
+        double cosPhiSquared = cosPhi * cosPhi;
+        double sinPhiSquared = sinPhi * sinPhi;
+        double semiMinorOverSemiMajorSquared = semiMinorOverSemiMajor * semiMinorOverSemiMajor;
+        double weightedSinPhiSquared = semiMinorOverSemiMajorSquared * sinPhiSquared;
+        return semiMajorAxis * Math.Sqrt(
+            (cosPhiSquared + (semiMinorOverSemiMajorSquared * weightedSinPhiSquared)) /
+            (cosPhiSquared + weightedSinPhiSquared));
+    }
+
+    /// <summary>
     /// Converts a point (lon, lat, z) in degrees to (x, y, z) in meters.
     /// </summary>
     /// <param name="lon">The longitude in degree.</param>
@@ -176,101 +207,100 @@ internal class GeocentricTransform : MathTransform
     /// <param name="z">The z-ordinate value.</param>
     private void MetersToDegrees(ref double x, ref double y, ref double z)
     {
-        bool at_Pole = false; // indicates whether location is in polar region
+        double xDivA = x / this.semiMajor;
+        double yDivA = y / this.semiMajor;
+        double zDivA = z / this.semiMajor;
+        double pDivA = Math.Sqrt((xDivA * xDivA) + (yDivA * yDivA));
+        double semiMinorOverSemiMajor = this.semiMinor / this.semiMajor;
+        double scaledPDivA = pDivA * semiMinorOverSemiMajor;
+        double norm = Math.Sqrt((zDivA * zDivA) + (scaledPDivA * scaledPDivA));
 
-        double lon = x != 0.0 ? Math.Atan2(y, x) : 0.0;
-        double lat = 0;
-        if (x == 0.0)
+        double c;
+        double s;
+        if (norm != 0d)
         {
-            if (y > 0)
+            double inverseNorm = 1d / norm;
+            c = scaledPDivA * inverseNorm;
+            s = zDivA * inverseNorm;
+        }
+        else
+        {
+            c = 1d;
+            s = 0d;
+        }
+
+        double yPhi = zDivA + (this.ses * semiMinorOverSemiMajor * s * s * s);
+        double xPhi = pDivA - (this.es * c * c * c);
+        double normPhi = Math.Sqrt((yPhi * yPhi) + (xPhi * xPhi));
+
+        double cosPhi;
+        double sinPhi;
+        if (normPhi != 0d)
+        {
+            double inverseNormPhi = 1d / normPhi;
+            cosPhi = xPhi * inverseNormPhi;
+            sinPhi = yPhi * inverseNormPhi;
+        }
+        else
+        {
+            cosPhi = 1d;
+            sinPhi = 0d;
+        }
+
+        double lat;
+        if (xPhi <= 0d)
+        {
+            lat = z >= 0d ? Math.PI * 0.5 : -Math.PI * 0.5;
+            cosPhi = 0d;
+            sinPhi = z >= 0d ? 1d : -1d;
+        }
+        else
+        {
+            lat = Math.Atan(yPhi / xPhi);
+        }
+
+        double lon = Math.Atan2(yDivA, xDivA);
+        double height;
+        if (cosPhi < PolarCosphiThreshold)
+        {
+            double radius = GetGeocentricRadius(this.semiMajor, semiMinorOverSemiMajor, cosPhi, sinPhi);
+            height = Math.Abs(z) - radius;
+        }
+        else
+        {
+            double normalRadius = GetNormalRadiusOfCurvature(this.semiMajor, this.es, sinPhi);
+            height = (this.semiMajor * pDivA / cosPhi) - normalRadius;
+        }
+
+        if (Math.Abs(height) > 50000d && xPhi > 0d)
+        {
+            const double convergenceTolerance = 1e-12;
+            for (int i = 0; i < 10; i++)
             {
-                lon = Math.PI / 2;
+                sinPhi = Math.Sin(lat);
+                double normalRadius = GetNormalRadiusOfCurvature(this.semiMajor, this.es, sinPhi);
+                double nextLatitude = Math.Atan2(z + (this.es * normalRadius * sinPhi), Math.Sqrt((x * x) + (y * y)));
+                if (Math.Abs(nextLatitude - lat) < convergenceTolerance)
+                {
+                    lat = nextLatitude;
+                    break;
+                }
+
+                lat = nextLatitude;
             }
-            else if (y < 0)
+
+            sinPhi = Math.Sin(lat);
+            cosPhi = Math.Cos(lat);
+            if (cosPhi < PolarCosphiThreshold)
             {
-                lon = -Math.PI * 0.5;
+                double radius = GetGeocentricRadius(this.semiMajor, semiMinorOverSemiMajor, cosPhi, sinPhi);
+                height = Math.Abs(z) - radius;
             }
             else
             {
-                at_Pole = true;
-                lon = 0.0;
-                if (z > 0.0)
-                {
-                    // north pole
-                    lat = Math.PI * 0.5;
-                }
-                else if (z < 0.0)
-                {
-                    // south pole
-                    lat = -Math.PI * 0.5;
-                }
-                else
-                {
-                    // center of earth
-                    lon = RadiansToDegrees(lon);
-                    lat = RadiansToDegrees(Math.PI * 0.5);
-                    x = lon;
-                    y = lat;
-                    z = -this.semiMinor;
-                    return;
-                }
-            }
-        }
-
-        double w2 = (x * x) + (y * y); // Square of distance from Z axis
-        double w = Math.Sqrt(w2); // distance from Z axis
-        double t0 = z * ADC; // initial estimate of vertical component
-        double s0 = Math.Sqrt((t0 * t0) + w2); // initial estimate of horizontal component
-        double sin_B0 = t0 / s0; // sin(B0), B0 is estimate of Bowring aux variable
-        double cos_B0 = w / s0; // cos(B0)
-        double sin3_B0 = Math.Pow(sin_B0, 3);
-        double t1 = z + (this.semiMinor * this.ses * sin3_B0); // corrected estimate of vertical component
-        double sum = w - (this.semiMajor * this.es * cos_B0 * cos_B0 * cos_B0); // numerator of cos(phi1)
-        double s1 = Math.Sqrt((t1 * t1) + (sum * sum)); // corrected estimate of horizontal component
-        double sin_p1 = t1 / s1; // sin(phi1), phi1 is estimated latitude
-        double cos_p1 = sum / s1; // cos(phi1)
-        double rn = this.semiMajor / Math.Sqrt(1.0 - (this.es * sin_p1 * sin_p1)); // Earth radius at location
-        double height = cos_p1 >= COS67P5
-            ? (w / cos_p1) - rn
-            : cos_p1 <= -COS67P5
-                ? (w / -cos_p1) - rn
-                : (z / sin_p1) + (rn * (this.es - 1.0));
-
-        if (!at_Pole)
-        {
-            lat = Math.Atan(sin_p1 / cos_p1);
-            if (Math.Abs(height) > 50000d)
-            {
-                const double convergenceTolerance = 1e-12;
-                for (int i = 0; i < 10; i++)
-                {
-                    double sinphi = Math.Sin(lat);
-                    rn = this.semiMajor / Math.Sqrt(1.0 - (this.es * sinphi * sinphi));
-                    double nextLatitude = Math.Atan2(z + (this.es * rn * sinphi), w);
-                    if (Math.Abs(nextLatitude - lat) < convergenceTolerance)
-                    {
-                        lat = nextLatitude;
-                        break;
-                    }
-
-                    lat = nextLatitude;
-                }
-
-                double sinLatitude = Math.Sin(lat);
-                double cosLatitude = Math.Cos(lat);
-                rn = this.semiMajor / Math.Sqrt(1.0 - (this.es * sinLatitude * sinLatitude));
-                if (cosLatitude >= COS67P5)
-                {
-                    height = (w / cosLatitude) - rn;
-                }
-                else if (cosLatitude <= -COS67P5)
-                {
-                    height = (w / -cosLatitude) - rn;
-                }
-                else
-                {
-                    height = (z / sinLatitude) + (rn * (this.es - 1.0));
-                }
+                double normalRadius = GetNormalRadiusOfCurvature(this.semiMajor, this.es, sinPhi);
+                double radialDistance = Math.Sqrt((x * x) + (y * y));
+                height = (radialDistance / cosPhi) - normalRadius;
             }
         }
 

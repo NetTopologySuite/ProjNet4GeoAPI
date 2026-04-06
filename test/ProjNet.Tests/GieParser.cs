@@ -66,7 +66,6 @@ internal static class GieParser
 
             if (directive.Equals("operation", StringComparison.OrdinalIgnoreCase))
             {
-                EnsurePayload(payload, "operation", lineNumber);
                 currentOperation = payload;
                 currentToleranceValue = 0d;
                 currentToleranceUnit = "m";
@@ -345,6 +344,11 @@ internal static class GieParser
     private static double ParseNumber(string token, int lineNumber, string directiveName)
     {
         string normalizedToken = token.Replace("_", string.Empty, StringComparison.Ordinal);
+        if (TryParseSpecialNumber(normalizedToken, out double specialValue))
+        {
+            return specialValue;
+        }
+
         if (double.TryParse(normalizedToken, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out double value))
         {
             return value;
@@ -354,6 +358,33 @@ internal static class GieParser
             ? value
             : throw new FormatException(
             $"Failed to parse numeric value '{token}' in directive '{directiveName}' at line {lineNumber.ToString(CultureInfo.InvariantCulture)}.");
+    }
+
+    private static bool TryParseSpecialNumber(string token, out double value)
+    {
+        switch (token.ToUpperInvariant())
+        {
+            case "HUGEVAL":
+            case "HUGEVALF":
+            case "INF":
+            case "+INF":
+            case "INFINITY":
+            case "+INFINITY":
+                value = double.PositiveInfinity;
+                return true;
+            case "-INF":
+            case "-INFINITY":
+                value = double.NegativeInfinity;
+                return true;
+            case "NAN":
+            case "+NAN":
+            case "-NAN":
+                value = double.NaN;
+                return true;
+            default:
+                value = 0d;
+                return false;
+        }
     }
 
     private static void EnsureOperationDeclared(string? operation, int lineNumber, string directive)
