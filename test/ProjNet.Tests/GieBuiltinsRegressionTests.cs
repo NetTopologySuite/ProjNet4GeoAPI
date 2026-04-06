@@ -354,6 +354,21 @@ public class GieBuiltinsRegressionTests
     }
 
     /// <summary>
+    /// Verifies that standalone <c>set</c> conversion cases override the 4th ordinate.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformWithSetV4ReturnsExpectedFourthOrdinate()
+    {
+        const string operation = "+proj=set +v_1=10 +v_2=20 +v_3=30 +v_4=40";
+
+        bool created = TryCreateConversionTransform(operation, out Func<double[], double[]>? transform, out string? skipReason);
+
+        Assert.True(created, skipReason ?? "TryCreateConversionTransform returned false.");
+        double[] output = Assert.IsType<Func<double[], double[]>>(transform)([1d, 2d, 3d, 4d]);
+        Assert.Equal([10d, 20d, 30d, 40d], output);
+    }
+
+    /// <summary>
     /// Verifies that loose GIE-style assignment syntax with semicolon separators is normalized for runtime pipeline execution.
     /// </summary>
     [Fact]

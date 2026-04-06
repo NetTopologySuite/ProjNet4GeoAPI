@@ -25,10 +25,12 @@ internal sealed class SetMathTransform : MathTransform
     private readonly bool hasV1;
     private readonly bool hasV2;
     private readonly bool hasV3;
+    private readonly bool hasV4;
 
     private readonly double v1;
     private readonly double v2;
     private readonly double v3;
+    private readonly double v4;
 
     private SetMathTransform(
         bool hasV1,
@@ -36,7 +38,9 @@ internal sealed class SetMathTransform : MathTransform
         bool hasV2,
         double v2,
         bool hasV3,
-        double v3)
+        double v3,
+        bool hasV4,
+        double v4)
     {
         this.hasV1 = hasV1;
         this.v1 = v1;
@@ -44,6 +48,8 @@ internal sealed class SetMathTransform : MathTransform
         this.v2 = v2;
         this.hasV3 = hasV3;
         this.v3 = v3;
+        this.hasV4 = hasV4;
+        this.v4 = v4;
     }
 
     /// <inheritdoc />
@@ -61,7 +67,7 @@ internal sealed class SetMathTransform : MathTransform
     /// <inheritdoc />
     public override bool Identity()
     {
-        return !this.hasV1 && !this.hasV2 && !this.hasV3;
+        return !this.hasV1 && !this.hasV2 && !this.hasV3 && !this.hasV4;
     }
 
     /// <inheritdoc />
@@ -133,17 +139,27 @@ internal sealed class SetMathTransform : MathTransform
             return false;
         }
 
-        if (args.TryGetValue("v_4", out string? v4Token)
-            && !TryParseFiniteDouble(v4Token, out _))
+        bool hasV4 = TryGetOptionalValue(args, "v_4", out double v4, out skipReason);
+        if (skipReason is not null)
         {
-            skipReason = "Invalid value for +v_4.";
             return false;
         }
 
-        transform = hasV1 || hasV2 || hasV3
-            ? new SetMathTransform(hasV1, v1, hasV2, v2, hasV3, v3)
+        transform = hasV1 || hasV2 || hasV3 || hasV4
+            ? new SetMathTransform(hasV1, v1, hasV2, v2, hasV3, v3, hasV4, v4)
             : new IdentityMathTransform(3);
         return true;
+    }
+
+    /// <inheritdoc />
+    internal override void Transform(ref double x, ref double y, ref double z, ref double t)
+    {
+        this.Transform(ref x, ref y, ref z);
+
+        if (this.hasV4)
+        {
+            t = this.v4;
+        }
     }
 
     private static bool TryGetOptionalValue(

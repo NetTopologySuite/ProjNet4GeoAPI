@@ -56,6 +56,21 @@ public class SetRuntimeTests
     }
 
     /// <summary>
+    /// Verifies coordinate component overrides also apply to the 4th ordinate.
+    /// </summary>
+    [Fact]
+    public void SetOverridesFourthComponentForFourDimensionalInput()
+    {
+        MathTransform transform = CreateTransform("+proj=set +v_1=10 +v_2=20 +v_3=30 +v_4=40");
+        double[] output = transform.Transform([1d, 2d, 3d, 4d]);
+
+        Assert.Equal(10d, output[0], 12);
+        Assert.Equal(20d, output[1], 12);
+        Assert.Equal(30d, output[2], 12);
+        Assert.Equal(40d, output[3], 12);
+    }
+
+    /// <summary>
     /// Verifies partial override semantics.
     /// </summary>
     /// <param name="operation">Operation text.</param>
