@@ -296,6 +296,26 @@ public class GieBuiltinsTheoryTests
     }
 
     /// <summary>
+    /// Verifies that standalone <c>push</c> and <c>pop</c> conversion cases are normalized through the GIE harness as single-step pipelines.
+    /// </summary>
+    /// <param name="operation">Standalone PROJ operation.</param>
+    [Theory]
+    [InlineData("+proj=push +v_3")]
+    [InlineData("+proj=pop +v_3")]
+    public void StandalonePushPopConversionCasesRunThroughHarnessConversionPath(string operation)
+    {
+        bool ok = TryCreateConversionTransform(operation, out Func<double[], double[]>? transform, out string? skipReason);
+
+        Assert.True(ok, skipReason);
+
+        double[] result = Assert.IsType<Func<double[], double[]>>(transform)([12d, 56d, 0d, 2020d]);
+        Assert.Equal(12d, result[0], 12);
+        Assert.Equal(56d, result[1], 12);
+        Assert.Equal(0d, result[2], 12);
+        Assert.Equal(2020d, result[3], 12);
+    }
+
+    /// <summary>
     /// Returns theory data rows sourced from the <c>builtins.gie</c> fixture file.
     /// </summary>
     /// <returns>The computed value.</returns>
@@ -660,7 +680,16 @@ public class GieBuiltinsTheoryTests
         string normalizedOperation = NormalizeOperationForRuntime(operation);
         if (!CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(normalizedOperation, out MathTransform? mathTransform, out skipReason))
         {
-            return false;
+            if (!TryWrapStandaloneStackTransferOperation(normalizedOperation, out string? wrappedOperation))
+            {
+                return false;
+            }
+
+            string wrappedOperationValue = Assert.IsType<string>(wrappedOperation);
+            if (!CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(wrappedOperationValue, out mathTransform, out skipReason))
+            {
+                return false;
+            }
         }
 
         MathTransform pipelineTransform = Assert.IsType<MathTransform>(mathTransform, exactMatch: false);
@@ -693,6 +722,26 @@ public class GieBuiltinsTheoryTests
         }
 
         return string.Join(" ", tokens);
+    }
+
+    private static bool TryWrapStandaloneStackTransferOperation(string operation, out string? wrappedOperation)
+    {
+        wrappedOperation = null;
+        if (operation.Contains("proj=pipeline", StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        if (!TryParseOperationArguments(operation, out Dictionary<string, string> args)
+            || !args.TryGetValue("proj", out string? projCode)
+            || (!projCode.Equals("push", StringComparison.OrdinalIgnoreCase)
+                && !projCode.Equals("pop", StringComparison.OrdinalIgnoreCase)))
+        {
+            return false;
+        }
+
+        wrappedOperation = $"+proj=pipeline +step {operation}";
+        return true;
     }
 
     private static bool TrySplitPipelineSteps(string operation, out IReadOnlyList<string> steps)
