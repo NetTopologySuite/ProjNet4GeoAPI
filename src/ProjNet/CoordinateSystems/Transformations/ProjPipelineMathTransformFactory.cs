@@ -763,6 +763,26 @@ internal static class ProjPipelineMathTransformFactory
             SetOrAddProjectionParameter(parameters, "airocean_orient", orientationCode);
         }
 
+        if (projCode.Equals("peirce_q", StringComparison.OrdinalIgnoreCase))
+        {
+            if (args.TryGetValue("shape", out string? peirceShapeToken) && !string.IsNullOrWhiteSpace(peirceShapeToken))
+            {
+                if (!TryResolvePeirceShapeCode(peirceShapeToken, out double peirceShapeCode))
+                {
+                    skipReason = "Invalid value for +shape on peirce_q step.";
+                    return false;
+                }
+
+                SetOrAddProjectionParameter(parameters, "shape", peirceShapeCode);
+            }
+
+            if (!TryApplyOptionalProjectionParameter(args, "scrollx", "scrollx", parameters, out skipReason)
+                || !TryApplyOptionalProjectionParameter(args, "scrolly", "scrolly", parameters, out skipReason))
+            {
+                return false;
+            }
+        }
+
         if (projCode.Equals("urm5", StringComparison.OrdinalIgnoreCase))
         {
             if (!args.TryGetValue("n", out string? nToken) || string.IsNullOrWhiteSpace(nToken))
@@ -805,6 +825,34 @@ internal static class ProjPipelineMathTransformFactory
         SetOrAddProjectionParameter(parameters, "false_northing", (args.ContainsKey("south") ? 10000000d : 0d) / unitFactor);
 
         return true;
+    }
+
+    private static bool TryResolvePeirceShapeCode(string token, out double shapeCode)
+    {
+        shapeCode = 0d;
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return false;
+        }
+
+        string normalized = token.Trim();
+        if (TryParseFiniteDouble(normalized, out shapeCode))
+        {
+            return true;
+        }
+
+        shapeCode = normalized.ToUpperInvariant() switch
+        {
+            "SQUARE" => 0d,
+            "DIAMOND" => 1d,
+            "NHEMISPHERE" => 2d,
+            "SHEMISPHERE" => 3d,
+            "HORIZONTAL" => 4d,
+            "VERTICAL" => 5d,
+            _ => double.NaN,
+        };
+
+        return !double.IsNaN(shapeCode);
     }
 
     private static bool TryCreateGeographicIdentityTransform(

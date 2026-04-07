@@ -366,6 +366,54 @@ public class GieBuiltinsRegressionTests
     }
 
     /// <summary>
+    /// Verifies that horizontal Peirce quincuncial builtins cases preserve shape-specific pipeline behavior.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithForwardPeirceHorizontalScrolledCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 414,
+            Operation = "+proj=peirce_q +R=6370997 +shape=horizontal +scrollx=0.75",
+            ToleranceValue = 10d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [-159.2003712209d, -89.5537263306d],
+            Expect = [17621.38d, 46389.53d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
+    /// Verifies that vertical Peirce quincuncial builtins cases preserve shape-specific pipeline behavior.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithForwardPeirceVerticalScrolledCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 666,
+            Operation = "+proj=peirce_q +R=6370997 +shape=vertical +scrolly=-0.25",
+            ToleranceValue = 10d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [-159.2003712209d, -89.5537263306d],
+            Expect = [-17621.38d, -46389.53d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
     /// Verifies that Mercator builtins cases distinguish PROJ's case-sensitive spherification flags.
     /// </summary>
     [Fact]
