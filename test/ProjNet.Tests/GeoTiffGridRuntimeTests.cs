@@ -18,6 +18,7 @@ public class GeoTiffGridRuntimeTests
 {
     private static readonly double[] GeoTiffGridInput = [4.5d, 52.5d, 0d];
     private static readonly double[] GeoTiffNodataInput = [4.05d, 52.1d, 0d];
+    private static readonly double[] ProjectedGeoTiffGridInput = [-598000d, -1160019.9999d, 0d];
 
     /// <summary>
     /// Verifies that a <c>hgridshift</c> operation backed by a GeoTIFF horizontal grid file applies the expected coordinate shift.
@@ -37,6 +38,42 @@ public class GeoTiffGridRuntimeTests
         double[] output = Assert.IsType<MathTransform>(transform, exactMatch: false).Transform(GeoTiffGridInput);
         Assert.Equal(5.875d, output[0], 9);
         Assert.Equal(55.375d, output[1], 9);
+    }
+
+    /// <summary>
+    /// Verifies that a projected GeoTIFF <c>gridshift</c> grid applies both the raster delta and the metadata-defined constant offsets in projected coordinates.
+    /// </summary>
+    [Fact]
+    public void GridshiftWithProjectedGeoTiffGridAppliesProjectedShift()
+    {
+        string gridPath = FindGridPath("test_gridshift_projected.tif");
+        string operation = $"+proj=gridshift +grids={gridPath}";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
+        Assert.True(ok, skipReason);
+
+        double[] output = Assert.IsType<MathTransform>(transform, exactMatch: false).Transform(ProjectedGeoTiffGridInput);
+        Assert.InRange(output[0], -5597999.884994847700000d - 1e-9d, -5597999.884994847700000d + 1e-9d);
+        Assert.InRange(output[1], -6160019.977750200778246d - 1e-9d, -6160019.977750200778246d + 1e-9d);
+        Assert.Equal(0d, output[2], 12);
+    }
+
+    /// <summary>
+    /// Verifies that a projected GeoTIFF <c>gridshift</c> grid can force PROJ-style bilinear interpolation explicitly.
+    /// </summary>
+    [Fact]
+    public void GridshiftWithProjectedGeoTiffGridCanForceBilinearInterpolation()
+    {
+        string gridPath = FindGridPath("test_gridshift_projected.tif");
+        string operation = $"+proj=gridshift +grids={gridPath} +interpolation=bilinear";
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
+        Assert.True(ok, skipReason);
+
+        double[] output = Assert.IsType<MathTransform>(transform, exactMatch: false).Transform(ProjectedGeoTiffGridInput);
+        Assert.InRange(output[0], -5597999.884979997761548d - 1e-9d, -5597999.884979997761548d + 1e-9d);
+        Assert.InRange(output[1], -6160019.977770000696182d - 1e-9d, -6160019.977770000696182d + 1e-9d);
+        Assert.Equal(0d, output[2], 12);
     }
 
     /// <summary>
@@ -169,10 +206,16 @@ public class GeoTiffGridRuntimeTests
                 return candidate;
             }
 
+            string projCandidate = Path.Combine(current.FullName, "spec", "PROJ", "data", "tests", fileName);
+            if (File.Exists(projCandidate))
+            {
+                return projCandidate;
+            }
+
             current = current.Parent;
         }
 
-        throw new FileNotFoundException("Could not locate local test grid fixture under test\\ProjNet.Tests\\Fixtures\\grids.", fileName);
+        throw new FileNotFoundException("Could not locate a GeoTIFF grid fixture under test\\ProjNet.Tests\\Fixtures\\grids or spec\\PROJ\\data\\tests.", fileName);
     }
 
     private class TrackingDoubleArrayPool : ArrayPool<double>

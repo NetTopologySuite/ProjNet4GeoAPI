@@ -34,6 +34,9 @@ internal class KrovakProjection : MapProjection
     // When to stop the iteration.
     private const double IterationTolerance = 1E-11;
 
+    private const double DefaultAzimuthDegrees = 30.2881397527778d;
+    private const double DefaultPseudoStandardParallelDegrees = 78.5d;
+
     // Azimuth of the centre line passing through the centre of the projection.
     // This is equals to the co-latitude of the cone axis at point of intersection
     // with the ellipsoid.
@@ -55,6 +58,7 @@ internal class KrovakProjection : MapProjection
     private readonly double rop;
 
     private readonly double reciprocSemiMajor;
+    private readonly bool eastingNorthing;
 
     // Useful constant - 45° in radians.
     private const double S45 = 0.785398163397448;
@@ -94,8 +98,9 @@ internal class KrovakProjection : MapProjection
         this.Authority = "EPSG";
         this.AuthorityCode = 9819;
 
-        this.azimuth = DegreesToRadians(this.Parameters.GetParameterValue("azimuth"));
-        this.pseudoStandardParallel = DegreesToRadians(this.Parameters.GetParameterValue("pseudo_standard_parallel_1"));
+        this.eastingNorthing = this.Parameters.GetOptionalParameterValue("czech", 0d) == 0d;
+        this.azimuth = DegreesToRadians(this.Parameters.GetOptionalParameterValue("azimuth", DefaultAzimuthDegrees));
+        this.pseudoStandardParallel = DegreesToRadians(this.Parameters.GetOptionalParameterValue("pseudo_standard_parallel_1", DefaultPseudoStandardParallelDegrees));
 
         // Calculates useful constants.
         this.sinAzim = Math.Sin(this.azimuth);
@@ -121,6 +126,41 @@ internal class KrovakProjection : MapProjection
         this.rop = this.ro0 * Math.Pow(this.tanS2, this.n);
 
         this.reciprocSemiMajor = 1 / this.semiMajor;
+    }
+
+    /// <inheritdoc />
+    protected override void DegreesToTarget(ref double lon, ref double lat)
+    {
+        this.DegreesToMeters(ref lon, ref lat);
+        this.MetersToKrovakTarget(ref lon, ref lat);
+    }
+
+    /// <inheritdoc />
+    protected override void DegreesToTarget(Span<double> lons, Span<double> lats, int strideX, int strideY)
+    {
+        this.DegreesToMeters(lons, lats, strideX, strideY);
+        for (int i = 0, j = 0; i < lons.Length; i += strideX, j += strideY)
+        {
+            this.MetersToKrovakTarget(ref lons[i], ref lats[j]);
+        }
+    }
+
+    /// <inheritdoc />
+    protected override void SourceToDegrees(ref double x, ref double y)
+    {
+        this.KrovakTargetToMeters(ref x, ref y);
+        this.MetersToDegrees(ref x, ref y);
+    }
+
+    /// <inheritdoc />
+    protected override void SourceToDegrees(Span<double> xs, Span<double> ys, int strideX, int strideY)
+    {
+        for (int i = 0, j = 0; i < xs.Length; i += strideX, j += strideY)
+        {
+            this.KrovakTargetToMeters(ref xs[i], ref ys[j]);
+        }
+
+        this.MetersToDegrees(xs, ys, strideX, strideY);
     }
 
     /// <summary>
@@ -197,8 +237,86 @@ internal class KrovakProjection : MapProjection
     /// <returns>IMathTransform that is the reverse of the current projection.</returns>
     public override MathTransform Inverse()
     {
-        this.inverse ??= new KrovakProjection(this.Parameters.ToProjectionParameter(), this);
+        this.inverse ??= this.CreateInverseProjection();
 
         return this.inverse;
+    }
+
+    /// <summary>
+    /// Creates the cached inverse projection instance for the current variant.
+    /// </summary>
+    /// <returns>The inverse projection instance.</returns>
+    protected virtual KrovakProjection CreateInverseProjection() => new(this.Parameters.ToProjectionParameter(), this);
+
+    /// <summary>
+    /// Computes the modified Krovak correction terms for the current variant.
+    /// </summary>
+    /// <param name="southing">The southing in metres.</param>
+    /// <param name="westing">The westing in metres.</param>
+    /// <param name="deltaSouthing">Receives the correction term for the southing component.</param>
+    /// <param name="deltaWesting">Receives the correction term for the westing component.</param>
+    /// <returns><see langword="true"/> when the current variant applies a modified Krovak correction; otherwise <see langword="false"/>.</returns>
+    protected virtual bool TryComputeModifiedDelta(
+        double southing,
+        double westing,
+        out double deltaSouthing,
+        out double deltaWesting)
+    {
+        deltaSouthing = 0d;
+        deltaWesting = 0d;
+        return false;
+    }
+
+    private void MetersToKrovakTarget(ref double x, ref double y)
+    {
+        double southing = -y;
+        double westing = -x;
+        if (this.TryComputeModifiedDelta(southing, westing, out double deltaSouthing, out double deltaWesting))
+        {
+            southing -= deltaSouthing;
+            westing -= deltaWesting;
+        }
+
+        if (this.eastingNorthing)
+        {
+            x = -westing - this.falseEasting;
+            y = -southing - this.falseNorthing;
+        }
+        else
+        {
+            x = westing + this.falseEasting;
+            y = southing + this.falseNorthing;
+        }
+
+        x *= this.reciprocalMetersPerUnit;
+        y *= this.reciprocalMetersPerUnit;
+    }
+
+    private void KrovakTargetToMeters(ref double x, ref double y)
+    {
+        x *= this.metersPerUnit;
+        y *= this.metersPerUnit;
+
+        double southing;
+        double westing;
+        if (this.eastingNorthing)
+        {
+            westing = -x - this.falseEasting;
+            southing = -y - this.falseNorthing;
+        }
+        else
+        {
+            westing = x - this.falseEasting;
+            southing = y - this.falseNorthing;
+        }
+
+        if (this.TryComputeModifiedDelta(southing, westing, out double deltaSouthing, out double deltaWesting))
+        {
+            southing += deltaSouthing;
+            westing += deltaWesting;
+        }
+
+        x = -westing;
+        y = -southing;
     }
 }

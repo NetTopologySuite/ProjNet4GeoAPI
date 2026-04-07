@@ -526,6 +526,73 @@ public class GieBuiltinsRegressionTests
     }
 
     /// <summary>
+    /// Verifies that the projected Krovak gridshift runtime path binds the Krovak-specific parameters that PROJ defaults for legacy pipelines.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformWithProjectedKrovakGridShiftPipelineReturnsExpectedCoordinate()
+    {
+        const string operation = "+proj=pipeline +step +proj=krovak +lat_0=49.5 +lon_0=24.8333333333333 +alpha=30.2881397527778 +k=0.9999 +x_0=0 +y_0=0 +ellps=bessel +step +proj=gridshift +grids=tests/test_gridshift_projected.tif +step +inv +proj=mod_krovak +lat_0=49.5 +lon_0=24.8333333333333 +alpha=30.2881397222222 +k=0.9999 +x_0=5000000 +y_0=5000000 +ellps=bessel";
+
+        double[] output = RequireBuiltinsRuntimeProjectedOutput(operation, 16.610452439d, 49.202425040d, 0d);
+
+        Assert.InRange(output[0], 16.610455233081716d - 1e-8d, 16.610455233081716d + 1e-8d);
+        Assert.InRange(output[1], 49.202425036121703d - 5e-8d, 49.202425036121703d + 5e-8d);
+        Assert.InRange(output.Length, 2, 3);
+        if (output.Length == 3)
+        {
+            Assert.InRange(output[2], -1e-9d, 1e-9d);
+        }
+    }
+
+    /// <summary>
+    /// Verifies that the builtins Krovak gridshift row now executes instead of skipping as an unsupported runtime feature.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithProjectedKrovakGridShiftCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 264,
+            Operation = "+proj=pipeline +step +proj=krovak +lat_0=49.5 +lon_0=24.8333333333333 +alpha=30.2881397527778 +k=0.9999 +x_0=0 +y_0=0 +ellps=bessel +step +proj=gridshift +grids=tests/test_gridshift_projected.tif +step +inv +proj=mod_krovak +lat_0=49.5 +lon_0=24.8333333333333 +alpha=30.2881397222222 +k=0.9999 +x_0=5000000 +y_0=5000000 +ellps=bessel",
+            ToleranceValue = 0.5d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [16.610452439d, 49.202425040d, 0d],
+            Expect = [16.610455233d, 49.202425034d, 0d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
+    /// Verifies that the standalone Modified Krovak builtins case uses the PROJ-compatible false-origin and correction semantics.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithModifiedKrovakBuiltinsCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 3381,
+            Operation = "+proj=mod_krovak +lat_0=49.5 +lon_0=42.5 +k=0.9999 +x_0=5000000 +y_0=5000000 +ellps=bessel",
+            ToleranceValue = 1d,
+            ToleranceUnit = "cm",
+            Direction = GieDirection.Forward,
+            Accept = [34.51643861111111d, 50.20901166666667d],
+            Expect = [-5568990.91d, -6050538.71d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
     /// Verifies that the runtime <c>+proj=utm +approx</c> path still uses the approximate Snyder-based kernel instead of the exact ETMERC path.
     /// </summary>
     [Fact]

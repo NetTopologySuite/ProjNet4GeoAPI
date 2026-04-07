@@ -79,7 +79,7 @@ public class ProjectionsRegistry
         Register("leac", typeof(LambertEqualAreaConicProjection));
 
         Register("krovak", typeof(KrovakProjection));
-        Register("mod_krovak", typeof(KrovakProjection));
+        Register("mod_krovak", typeof(ModifiedKrovakProjection));
 
         Register("polyconic", typeof(PolyconicProjection));
         Register("poly", typeof(PolyconicProjection));

@@ -186,12 +186,12 @@ internal static partial class GeoTiffGridLoader
         switch (mode)
         {
             case GridMode.Horizontal:
-                if (!TryResolveHorizontalSampleIndices(samplesPerPixel, metadata, out int latitudeSample, out int longitudeSample, out bool positiveWest))
+                if (!TryResolveHorizontalSampleIndices(samplesPerPixel, metadata, out int latitudeSample, out int longitudeSample, out bool positiveWest, out bool projectedOffsets))
                 {
                     return false;
                 }
 
-                page = LoadedPage.CreateHorizontal(transform, sampleData, metadata, latitudeSample, longitudeSample, positiveWest);
+                page = LoadedPage.CreateHorizontal(transform, sampleData, metadata, latitudeSample, longitudeSample, positiveWest, projectedOffsets);
                 return true;
             case GridMode.Vertical:
                 if (!TryResolveVerticalSampleIndex(samplesPerPixel, metadata, out int sampleIndex))
@@ -215,11 +215,12 @@ internal static partial class GeoTiffGridLoader
         }
     }
 
-    private static bool TryResolveHorizontalSampleIndices(int samplesPerPixel, GeoMetadata metadata, out int latitudeSample, out int longitudeSample, out bool positiveWest)
+    private static bool TryResolveHorizontalSampleIndices(int samplesPerPixel, GeoMetadata metadata, out int latitudeSample, out int longitudeSample, out bool positiveWest, out bool projectedOffsets)
     {
         latitudeSample = -1;
         longitudeSample = -1;
         positiveWest = false;
+        projectedOffsets = false;
         for (int i = 0; i < samplesPerPixel; i++)
         {
             if (!metadata.DescriptionsBySample.TryGetValue(i, out string? description))
@@ -231,9 +232,19 @@ internal static partial class GeoTiffGridLoader
             {
                 latitudeSample = i;
             }
+            else if (ContainsOrdinalIgnoreCase(description, "northing_offset"))
+            {
+                latitudeSample = i;
+                projectedOffsets = true;
+            }
             else if (ContainsOrdinalIgnoreCase(description, "longitude_offset"))
             {
                 longitudeSample = i;
+            }
+            else if (ContainsOrdinalIgnoreCase(description, "easting_offset"))
+            {
+                longitudeSample = i;
+                projectedOffsets = true;
             }
         }
 
@@ -549,13 +560,14 @@ internal static partial class GeoTiffGridLoader
         var scaleBySample = new Dictionary<int, double>();
         var offsetBySample = new Dictionary<int, double>();
         var unitTypeBySample = new Dictionary<int, string>();
+        bool useBiquadraticInterpolation = false;
 
         if (TryGetStringField(tiff, (TiffTag)GdalMetadataTag, out string? gdalMetadataCandidate)
             && !string.IsNullOrWhiteSpace(gdalMetadataCandidate))
         {
             string gdalMetadata = ArgumentGuard.ThrowIfNull(gdalMetadataCandidate, nameof(gdalMetadataCandidate));
             string sanitizedMetadata = SanitizeXmlMetadata(gdalMetadata);
-            ParseMetadataItems(sanitizedMetadata, samplesPerPixel, descriptionsBySample, positiveValueBySample, scaleBySample, offsetBySample, unitTypeBySample);
+            ParseMetadataItems(sanitizedMetadata, samplesPerPixel, descriptionsBySample, positiveValueBySample, scaleBySample, offsetBySample, unitTypeBySample, ref useBiquadraticInterpolation);
         }
 
         double? noDataValue = default;
@@ -570,7 +582,7 @@ internal static partial class GeoTiffGridLoader
         }
 
         double angularScaleToDegree = ResolveAngularScaleToDegree(tiff);
-        return new GeoMetadata(descriptionsBySample, positiveValueBySample, scaleBySample, offsetBySample, noDataValue, angularScaleToDegree, unitTypeBySample);
+        return new GeoMetadata(descriptionsBySample, positiveValueBySample, scaleBySample, offsetBySample, noDataValue, angularScaleToDegree, unitTypeBySample, useBiquadraticInterpolation);
     }
 
     private static string SanitizeXmlMetadata(string metadata)
@@ -612,7 +624,8 @@ internal static partial class GeoTiffGridLoader
         Dictionary<int, string> positiveValueBySample,
         Dictionary<int, double> scaleBySample,
         Dictionary<int, double> offsetBySample,
-        Dictionary<int, string> unitTypeBySample)
+        Dictionary<int, string> unitTypeBySample,
+        ref bool useBiquadraticInterpolation)
     {
         if (string.IsNullOrWhiteSpace(metadata))
         {
@@ -639,6 +652,22 @@ internal static partial class GeoTiffGridLoader
 
             string attrs = attrsGroup.Value;
             string name = ExtractAttribute(attrs, "name");
+            string value = CleanMetadataValue(valueGroup.Value);
+            if (name.Equals("interpolation_method", StringComparison.OrdinalIgnoreCase)
+                || name.Equals("recommended_interpolation_method", StringComparison.OrdinalIgnoreCase))
+            {
+                if (value.EndsWith("biquadratic", StringComparison.OrdinalIgnoreCase))
+                {
+                    useBiquadraticInterpolation = true;
+                }
+                else if (!value.EndsWith("bilinear", StringComparison.OrdinalIgnoreCase))
+                {
+                    throw new InvalidDataException("Unsupported GeoTIFF interpolation_method metadata value.");
+                }
+
+                continue;
+            }
+
             string sampleValue = ExtractAttribute(attrs, "sample");
             if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(sampleValue))
             {
@@ -652,7 +681,6 @@ internal static partial class GeoTiffGridLoader
                 continue;
             }
 
-            string value = CleanMetadataValue(valueGroup.Value);
             if (string.IsNullOrWhiteSpace(name) || string.IsNullOrWhiteSpace(value))
             {
                 continue;
@@ -671,7 +699,8 @@ internal static partial class GeoTiffGridLoader
             {
                 scaleBySample[sample] = scale;
             }
-            else if (name.Equals("OFFSET", StringComparison.OrdinalIgnoreCase)
+            else if ((name.Equals("OFFSET", StringComparison.OrdinalIgnoreCase)
+                || name.Equals("constant_offset", StringComparison.OrdinalIgnoreCase))
                 && double.TryParse(value, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out double offset))
             {
                 offsetBySample[sample] = offset;
@@ -954,7 +983,8 @@ internal static partial class GeoTiffGridLoader
         IReadOnlyDictionary<int, double> offsetBySample,
         double? noDataValue,
         double angularScaleToDegree,
-        IReadOnlyDictionary<int, string> unitTypeBySample)
+        IReadOnlyDictionary<int, string> unitTypeBySample,
+        bool useBiquadraticInterpolation)
     {
         /// <summary>
         /// Gets the human-readable description string keyed by sample index.
@@ -990,6 +1020,11 @@ internal static partial class GeoTiffGridLoader
         /// Gets the unit type name keyed by sample index.
         /// </summary>
         internal IReadOnlyDictionary<int, string> UnitTypeBySample { get; } = unitTypeBySample;
+
+        /// <summary>
+        /// Gets a value indicating whether the grid metadata requests biquadratic interpolation.
+        /// </summary>
+        internal bool UseBiquadraticInterpolation { get; } = useBiquadraticInterpolation;
     }
 
     private sealed class LoadedPage
@@ -1004,7 +1039,9 @@ internal static partial class GeoTiffGridLoader
         private readonly int ySample;
         private readonly int zSample;
         private readonly bool longitudePositiveWest;
+        private readonly bool projectedOffsets;
         private readonly GridMode mode;
+        private readonly bool useBiquadraticInterpolation;
 
         private LoadedPage(
             GeoTransform transform,
@@ -1017,7 +1054,9 @@ internal static partial class GeoTiffGridLoader
             int ySample,
             int zSample,
             bool longitudePositiveWest,
-            GridMode mode)
+            bool projectedOffsets,
+            GridMode mode,
+            bool useBiquadraticInterpolation)
         {
             this.transform = transform;
             this.sampleData = sampleData;
@@ -1029,7 +1068,9 @@ internal static partial class GeoTiffGridLoader
             this.ySample = ySample;
             this.zSample = zSample;
             this.longitudePositiveWest = longitudePositiveWest;
+            this.projectedOffsets = projectedOffsets;
             this.mode = mode;
+            this.useBiquadraticInterpolation = useBiquadraticInterpolation;
         }
 
         /// <summary>
@@ -1042,9 +1083,10 @@ internal static partial class GeoTiffGridLoader
             GeoMetadata metadata,
             int latitudeSample,
             int longitudeSample,
-            bool longitudePositiveWest)
+            bool longitudePositiveWest,
+            bool projectedOffsets)
         {
-            return new LoadedPage(transform, sampleData, metadata, latitudeSample, longitudeSample, -1, -1, -1, -1, longitudePositiveWest, GridMode.Horizontal);
+            return new LoadedPage(transform, sampleData, metadata, latitudeSample, longitudeSample, -1, -1, -1, -1, longitudePositiveWest, projectedOffsets, GridMode.Horizontal, metadata.UseBiquadraticInterpolation);
         }
 
         /// <summary>
@@ -1057,7 +1099,7 @@ internal static partial class GeoTiffGridLoader
             GeoMetadata metadata,
             int verticalSample)
         {
-            return new LoadedPage(transform, sampleData, metadata, -1, -1, verticalSample, -1, -1, -1, false, GridMode.Vertical);
+            return new LoadedPage(transform, sampleData, metadata, -1, -1, verticalSample, -1, -1, -1, false, false, GridMode.Vertical, false);
         }
 
         /// <summary>
@@ -1078,7 +1120,7 @@ internal static partial class GeoTiffGridLoader
             int ySample,
             int zSample)
         {
-            return new LoadedPage(transform, sampleData, metadata, -1, -1, -1, xSample, ySample, zSample, false, GridMode.Xyz);
+            return new LoadedPage(transform, sampleData, metadata, -1, -1, -1, xSample, ySample, zSample, false, false, GridMode.Xyz, false);
         }
 
         /// <summary>
@@ -1093,8 +1135,8 @@ internal static partial class GeoTiffGridLoader
                 return null;
             }
 
-            double latitudeScale = ResolveHorizontalShiftScaleToDegree(this.metadata, this.latitudeSample);
-            double longitudeScale = ResolveHorizontalShiftScaleToDegree(this.metadata, this.longitudeSample);
+            double latitudeScale = ResolveHorizontalShiftScale(this.metadata, this.latitudeSample, this.projectedOffsets);
+            double longitudeScale = ResolveHorizontalShiftScale(this.metadata, this.longitudeSample, this.projectedOffsets);
             return new GeoTiffHGridShiftMathTransform.HorizontalGrid(
                 sourcePath,
                 this.transform.Width,
@@ -1116,7 +1158,9 @@ internal static partial class GeoTiffGridLoader
                 this.longitudeSample,
                 this.longitudePositiveWest,
                 latitudeScale,
-                longitudeScale);
+                longitudeScale,
+                !this.projectedOffsets,
+                this.useBiquadraticInterpolation);
         }
 
         /// <summary>
@@ -1180,7 +1224,7 @@ internal static partial class GeoTiffGridLoader
                 this.zSample);
         }
 
-        private static double ResolveHorizontalShiftScaleToDegree(GeoMetadata metadata, int sampleIndex)
+        private static double ResolveHorizontalShiftScale(GeoMetadata metadata, int sampleIndex, bool projectedOffsets)
         {
             if (metadata.UnitTypeBySample.TryGetValue(sampleIndex, out string? unitType))
             {
@@ -1211,8 +1255,9 @@ internal static partial class GeoTiffGridLoader
                 }
             }
 
-            // PROJ hgridshift defaults to arc-second offsets when unit metadata is absent.
-            return 1d / 3600d;
+            // PROJ hgridshift defaults to arc-second offsets for geographic grids,
+            // while projected grids use their native planar coordinate units.
+            return projectedOffsets ? 1d : 1d / 3600d;
         }
     }
 }

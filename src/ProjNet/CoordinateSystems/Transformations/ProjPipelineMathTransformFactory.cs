@@ -274,10 +274,30 @@ internal static class ProjPipelineMathTransformFactory
             return true;
         }
 
-        if (projCode.Equals("hgridshift", StringComparison.OrdinalIgnoreCase)
-            || projCode.Equals("gridshift", StringComparison.OrdinalIgnoreCase))
+        if (projCode.Equals("hgridshift", StringComparison.OrdinalIgnoreCase))
         {
-            if (!TryCreateHorizontalGridShiftTransform(args, out transform, out skipReason))
+            if (!TryCreateHorizontalGridShiftTransform(
+                args,
+                useGridMetadataInterpolation: false,
+                allowBiquadraticInterpolation: false,
+                out transform,
+                out skipReason))
+            {
+                return false;
+            }
+
+            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            return true;
+        }
+
+        if (projCode.Equals("gridshift", StringComparison.OrdinalIgnoreCase))
+        {
+            if (!TryCreateHorizontalGridShiftTransform(
+                args,
+                useGridMetadataInterpolation: true,
+                allowBiquadraticInterpolation: true,
+                out transform,
+                out skipReason))
             {
                 return false;
             }
@@ -901,6 +921,35 @@ internal static class ProjPipelineMathTransformFactory
                 || !TryApplyOptionalProjectionParameter(args, "scrolly", "scrolly", parameters, out skipReason))
             {
                 return false;
+            }
+        }
+
+        if (projCode.Equals("krovak", StringComparison.OrdinalIgnoreCase)
+            || projCode.Equals("mod_krovak", StringComparison.OrdinalIgnoreCase))
+        {
+            if (args.TryGetValue("lat_1", out string? pseudoStandardParallelToken) && !string.IsNullOrWhiteSpace(pseudoStandardParallelToken))
+            {
+                if (!TryParseFiniteDouble(pseudoStandardParallelToken, out double pseudoStandardParallel))
+                {
+                    skipReason = "Invalid value for +lat_1 on krovak step.";
+                    return false;
+                }
+
+                SetOrAddProjectionParameter(parameters, "pseudo_standard_parallel_1", pseudoStandardParallel);
+            }
+            else
+            {
+                SetOrAddProjectionParameter(parameters, "pseudo_standard_parallel_1", 78.5d);
+            }
+
+            if (!TryApplyOptionalProjectionParameter(args, "alpha", "azimuth", parameters, out skipReason))
+            {
+                return false;
+            }
+
+            if (args.ContainsKey("czech"))
+            {
+                SetOrAddProjectionParameter(parameters, "czech", 1d);
             }
         }
 
@@ -1604,8 +1653,77 @@ internal static class ProjPipelineMathTransformFactory
         return true;
     }
 
+    private static bool TryResolveGeoTiffHorizontalInterpolationOverride(
+        Dictionary<string, string> args,
+        bool useGridMetadataInterpolation,
+        bool allowBiquadraticInterpolation,
+        out bool? biquadraticInterpolationOverride,
+        out string? skipReason)
+    {
+        biquadraticInterpolationOverride = useGridMetadataInterpolation ? null : false;
+        if (!args.TryGetValue("interpolation", out string? interpolationToken) || string.IsNullOrWhiteSpace(interpolationToken))
+        {
+            skipReason = null;
+            return true;
+        }
+
+        if (interpolationToken.Equals("bilinear", StringComparison.OrdinalIgnoreCase))
+        {
+            biquadraticInterpolationOverride = false;
+            skipReason = null;
+            return true;
+        }
+
+        if (interpolationToken.Equals("biquadratic", StringComparison.OrdinalIgnoreCase))
+        {
+            if (!allowBiquadraticInterpolation)
+            {
+                skipReason = "The hgridshift operation only supports bilinear interpolation for GeoTIFF grids.";
+                return false;
+            }
+
+            biquadraticInterpolationOverride = true;
+            skipReason = null;
+            return true;
+        }
+
+        skipReason = "Horizontal GeoTIFF grid shift interpolation must be bilinear or biquadratic.";
+        return false;
+    }
+
+    private static bool TryValidateNtv2HorizontalInterpolation(
+        Dictionary<string, string> args,
+        bool allowBiquadraticInterpolation,
+        out string? skipReason)
+    {
+        if (!args.TryGetValue("interpolation", out string? interpolationToken) || string.IsNullOrWhiteSpace(interpolationToken))
+        {
+            skipReason = null;
+            return true;
+        }
+
+        if (interpolationToken.Equals("bilinear", StringComparison.OrdinalIgnoreCase))
+        {
+            skipReason = null;
+            return true;
+        }
+
+        if (interpolationToken.Equals("biquadratic", StringComparison.OrdinalIgnoreCase))
+        {
+            skipReason = allowBiquadraticInterpolation
+                ? "Biquadratic interpolation is only supported for GeoTIFF gridshift inputs."
+                : "The hgridshift operation only supports bilinear interpolation for NTv2 grids.";
+            return false;
+        }
+
+        skipReason = "Horizontal grid shift interpolation must be bilinear or biquadratic.";
+        return false;
+    }
+
     private static bool TryCreateHorizontalGridShiftTransform(
         Dictionary<string, string> args,
+        bool useGridMetadataInterpolation,
+        bool allowBiquadraticInterpolation,
         [NotNullWhen(true)] out MathTransform? transform,
         out string? skipReason)
     {
@@ -1631,9 +1749,29 @@ internal static class ProjPipelineMathTransformFactory
         try
         {
             bool hasGeoTiff = ContainsGeoTiffGrid(gridPaths);
-            transform = hasGeoTiff
-                ? new GeoTiffHGridShiftMathTransform(gridPaths)
-                : new Ntv2HGridShiftMathTransform(gridPaths);
+            if (hasGeoTiff)
+            {
+                if (!TryResolveGeoTiffHorizontalInterpolationOverride(
+                    args,
+                    useGridMetadataInterpolation,
+                    allowBiquadraticInterpolation,
+                    out bool? biquadraticInterpolationOverride,
+                    out skipReason))
+                {
+                    return false;
+                }
+
+                transform = new GeoTiffHGridShiftMathTransform(gridPaths, biquadraticInterpolationOverride);
+            }
+            else
+            {
+                if (!TryValidateNtv2HorizontalInterpolation(args, allowBiquadraticInterpolation, out skipReason))
+                {
+                    return false;
+                }
+
+                transform = new Ntv2HGridShiftMathTransform(gridPaths);
+            }
         }
         catch (IOException ioException)
         {

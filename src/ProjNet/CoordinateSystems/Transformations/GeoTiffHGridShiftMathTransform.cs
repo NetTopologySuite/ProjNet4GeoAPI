@@ -16,10 +16,12 @@ using System.Linq;
 /// <remarks>
 /// <para>
 /// Horizontal GeoTIFF grid shifts are applied by selecting the most specific
-/// grid covering the input coordinate and bilinearly interpolating longitude and
-/// latitude offsets from the surrounding cell. The inverse path uses the same
-/// interpolator inside a fixed-point iteration until the residual shift falls
-/// below the configured tolerance.
+/// grid covering the input coordinate and interpolating longitude and latitude
+/// offsets from the grid samples. The <c>hgridshift</c> path uses bilinear
+/// interpolation, while the general <c>gridshift</c> path can honor GeoTIFF
+/// metadata that requests biquadratic interpolation. Bilinear grids use a
+/// fixed-point inverse iteration; biquadratic grids follow PROJ's
+/// NOAA-compatible first-approximation reverse path.
 /// </para>
 /// <para>
 /// The runtime was independently verified against PROJ's horizontal/grid-shift
@@ -34,6 +36,7 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
     private const double InverseTolerance = 1e-12d;
     private const int MaxInverseIterations = 10;
     private readonly ReadOnlyCollection<HorizontalGrid> grids;
+    private readonly bool? biquadraticInterpolationOverride;
     private bool isInverted;
     private MathTransform? inverse;
 
@@ -41,9 +44,14 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
     /// Initializes a new instance of the <see cref="GeoTiffHGridShiftMathTransform"/> class.
     /// </summary>
     /// <param name="gridPaths">Ordered GeoTIFF grid file paths to load.</param>
-    internal GeoTiffHGridShiftMathTransform(IReadOnlyList<string> gridPaths)
+    /// <param name="biquadraticInterpolationOverride">
+    /// Overrides the interpolation mode when <see langword="true"/> forces biquadratic interpolation,
+    /// <see langword="false"/> forces bilinear interpolation, and <see langword="null"/> honors the grid metadata.
+    /// </param>
+    internal GeoTiffHGridShiftMathTransform(IReadOnlyList<string> gridPaths, bool? biquadraticInterpolationOverride = null)
     {
         gridPaths = ArgumentGuard.ThrowIfNull(gridPaths, nameof(gridPaths));
+        this.biquadraticInterpolationOverride = biquadraticInterpolationOverride;
 
         var loadedGrids = new List<HorizontalGrid>(gridPaths.Count);
         for (int i = 0; i < gridPaths.Count; i++)
@@ -71,6 +79,7 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
         source = ArgumentGuard.ThrowIfNull(source, nameof(source));
 
         this.grids = source.grids;
+        this.biquadraticInterpolationOverride = source.biquadraticInterpolationOverride;
         this.isInverted = isInverted;
     }
 
@@ -119,33 +128,41 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
 
         if (!this.isInverted)
         {
-            (double lonShift, double latShift) = InterpolateShift(grid, x, y);
+            (double lonShift, double latShift) = this.InterpolateShift(grid, x, y);
             x += lonShift;
             y += latShift;
             return;
         }
 
-        InverseTransform(ref x, ref y, grid);
+        this.InverseTransform(ref x, ref y, grid);
     }
 
-    private static void InverseTransform(ref double longitude, ref double latitude, HorizontalGrid initialGrid)
+    private void InverseTransform(ref double longitude, ref double latitude, HorizontalGrid initialGrid)
     {
-        (double firstLonShift, double firstLatShift) = InterpolateShift(initialGrid, longitude, latitude);
+        (double firstLonShift, double firstLatShift) = this.InterpolateShift(initialGrid, longitude, latitude);
         double targetLongitude = longitude;
         double targetLatitude = latitude;
         double candidateLongitude = targetLongitude - firstLonShift;
         double candidateLatitude = targetLatitude - firstLatShift;
+        if (this.ShouldUseBiquadraticInterpolation(initialGrid))
+        {
+            // PROJ follows NOAA NCAT here and uses the first approximation for biquadratic reverse shifts.
+            longitude = initialGrid.NormalizeFirstAxis(candidateLongitude);
+            latitude = candidateLatitude;
+            return;
+        }
+
         int iterations = MaxInverseIterations;
         while (iterations-- > 0)
         {
-            (double iterLonShift, double iterLatShift) = InterpolateShift(initialGrid, candidateLongitude, candidateLatitude);
+            (double iterLonShift, double iterLatShift) = this.InterpolateShift(initialGrid, candidateLongitude, candidateLatitude);
             double deltaLongitude = candidateLongitude + iterLonShift - targetLongitude;
             double deltaLatitude = candidateLatitude + iterLatShift - targetLatitude;
             candidateLongitude -= deltaLongitude;
             candidateLatitude -= deltaLatitude;
             if ((deltaLongitude * deltaLongitude) + (deltaLatitude * deltaLatitude) <= (InverseTolerance * InverseTolerance))
             {
-                longitude = TransformationMath.NormalizeLongitudeDegrees(candidateLongitude);
+                longitude = initialGrid.NormalizeFirstAxis(candidateLongitude);
                 latitude = candidateLatitude;
                 return;
             }
@@ -154,70 +171,26 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
         ArgumentGuard.ThrowArgument("Inverse horizontal GeoTIFF grid shift did not converge.");
     }
 
-    private static (double LonShift, double LatShift) InterpolateShift(HorizontalGrid grid, double longitude, double latitude)
+    private (double LonShift, double LatShift) InterpolateShift(HorizontalGrid grid, double longitude, double latitude)
     {
         if (!grid.TryMapToGridCoordinates(longitude, latitude, out double gridX, out double gridY))
         {
             ArgumentGuard.ThrowArgument("Coordinate is outside the horizontal GeoTIFF grid extent.");
         }
 
-        int indexX = (int)Math.Floor(gridX);
-        int indexY = (int)Math.Floor(gridY);
-        double fractionX = gridX - indexX;
-        double fractionY = gridY - indexY;
-        NormalizeInterpolationCell(grid.Width, ref indexX, ref fractionX);
-        NormalizeInterpolationCell(grid.Height, ref indexY, ref fractionY);
-
-        int indexX2 = indexX + 1;
-        int indexY2 = indexY + 1;
-        double latA = grid.GetLatitudeShift(indexX, indexY);
-        double latB = grid.GetLatitudeShift(indexX2, indexY);
-        double latC = grid.GetLatitudeShift(indexX, indexY2);
-        double latD = grid.GetLatitudeShift(indexX2, indexY2);
-
-        double lonA = grid.GetLongitudeShift(indexX, indexY);
-        double lonB = grid.GetLongitudeShift(indexX2, indexY);
-        double lonC = grid.GetLongitudeShift(indexX, indexY2);
-        double lonD = grid.GetLongitudeShift(indexX2, indexY2);
-
-        double xy = fractionX * fractionY;
-        double wA = 1d - fractionX - fractionY + xy;
-        double wB = fractionX - xy;
-        double wC = fractionY - xy;
-        double wD = xy;
-
-        double latitudeShift = (latA * wA) + (latB * wB) + (latC * wC) + (latD * wD);
-        double longitudeShift = (lonA * wA) + (lonB * wB) + (lonC * wC) + (lonD * wD);
-        return (longitudeShift, latitudeShift);
+        return this.ShouldUseBiquadraticInterpolation(grid)
+            ? InterpolationMath.InterpolateBiquadraticShift(grid, gridX, gridY)
+            : InterpolationMath.InterpolateBilinearShift(grid, gridX, gridY);
     }
 
-    private static void NormalizeInterpolationCell(int size, ref int index, ref double fraction)
+    private bool ShouldUseBiquadraticInterpolation(HorizontalGrid grid)
     {
-        if (index < 0)
+        if (grid.Width < 3 || grid.Height < 3)
         {
-            if (index == -1 && fraction > 1d - (10d * RelativeTolerance))
-            {
-                index = 0;
-                fraction = 0d;
-                return;
-            }
-
-            ArgumentGuard.ThrowArgument("Coordinate is outside the horizontal GeoTIFF grid extent.");
+            return false;
         }
 
-        if (index + 1 < size)
-        {
-            return;
-        }
-
-        if (index + 1 == size && fraction < 10d * RelativeTolerance)
-        {
-            index = size - 2;
-            fraction = 1d;
-            return;
-        }
-
-        ArgumentGuard.ThrowArgument("Coordinate is outside the horizontal GeoTIFF grid extent.");
+        return this.biquadraticInterpolationOverride ?? grid.UsesBiquadraticInterpolation;
     }
 
     private bool TryFindGridForPoint(double longitude, double latitude, [NotNullWhen(true)] out HorizontalGrid? grid)
@@ -236,6 +209,137 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
     }
 
     /// <summary>
+    /// Provides bilinear and biquadratic interpolation helpers for horizontal GeoTIFF grid samples.
+    /// </summary>
+    internal static class InterpolationMath
+    {
+        /// <summary>
+        /// Interpolates a shift from the surrounding four grid samples.
+        /// </summary>
+        /// <param name="grid">The grid supplying the shift samples.</param>
+        /// <param name="gridX">The fractional grid x-coordinate.</param>
+        /// <param name="gridY">The fractional grid y-coordinate.</param>
+        /// <returns>The interpolated longitude and latitude shift.</returns>
+        internal static (double LonShift, double LatShift) InterpolateBilinearShift(HorizontalGrid grid, double gridX, double gridY)
+        {
+            int indexX = (int)Math.Floor(gridX);
+            int indexY = (int)Math.Floor(gridY);
+            double fractionX = gridX - indexX;
+            double fractionY = gridY - indexY;
+            NormalizeInterpolationCell(grid.Width, ref indexX, ref fractionX);
+            NormalizeInterpolationCell(grid.Height, ref indexY, ref fractionY);
+
+            int indexX2 = indexX + 1;
+            int indexY2 = indexY + 1;
+            double latA = grid.GetLatitudeShift(indexX, indexY);
+            double latB = grid.GetLatitudeShift(indexX2, indexY);
+            double latC = grid.GetLatitudeShift(indexX, indexY2);
+            double latD = grid.GetLatitudeShift(indexX2, indexY2);
+
+            double lonA = grid.GetLongitudeShift(indexX, indexY);
+            double lonB = grid.GetLongitudeShift(indexX2, indexY);
+            double lonC = grid.GetLongitudeShift(indexX, indexY2);
+            double lonD = grid.GetLongitudeShift(indexX2, indexY2);
+
+            double xy = fractionX * fractionY;
+            double wA = 1d - fractionX - fractionY + xy;
+            double wB = fractionX - xy;
+            double wC = fractionY - xy;
+            double wD = xy;
+
+            double latitudeShift = (latA * wA) + (latB * wB) + (latC * wC) + (latD * wD);
+            double longitudeShift = (lonA * wA) + (lonB * wB) + (lonC * wC) + (lonD * wD);
+            return (longitudeShift, latitudeShift);
+        }
+
+        /// <summary>
+        /// Interpolates a shift from the surrounding nine grid samples using PROJ's biquadratic window.
+        /// </summary>
+        /// <param name="grid">The grid supplying the shift samples.</param>
+        /// <param name="gridX">The fractional grid x-coordinate.</param>
+        /// <param name="gridY">The fractional grid y-coordinate.</param>
+        /// <returns>The interpolated longitude and latitude shift.</returns>
+        internal static (double LonShift, double LatShift) InterpolateBiquadraticShift(HorizontalGrid grid, double gridX, double gridY)
+        {
+            int indexX = (int)Math.Floor(gridX);
+            int indexY = (int)Math.Floor(gridY);
+            double fractionX = gridX - indexX;
+            double fractionY = gridY - indexY;
+            NormalizeInterpolationCell(grid.Width, ref indexX, ref fractionX);
+            NormalizeInterpolationCell(grid.Height, ref indexY, ref fractionY);
+            NormalizeBiquadraticWindow(grid.Width, ref indexX, ref fractionX);
+            NormalizeBiquadraticWindow(grid.Height, ref indexY, ref fractionY);
+
+            double[] latitudeShiftByRow = new double[3];
+            double[] longitudeShiftByRow = new double[3];
+            for (int rowOffset = 0; rowOffset < 3; rowOffset++)
+            {
+                int sampleY = indexY + rowOffset;
+                latitudeShiftByRow[rowOffset] = QuadraticInterpolate(
+                    fractionX,
+                    grid.GetLatitudeShift(indexX, sampleY),
+                    grid.GetLatitudeShift(indexX + 1, sampleY),
+                    grid.GetLatitudeShift(indexX + 2, sampleY));
+                longitudeShiftByRow[rowOffset] = QuadraticInterpolate(
+                    fractionX,
+                    grid.GetLongitudeShift(indexX, sampleY),
+                    grid.GetLongitudeShift(indexX + 1, sampleY),
+                    grid.GetLongitudeShift(indexX + 2, sampleY));
+            }
+
+            return (
+                QuadraticInterpolate(fractionY, longitudeShiftByRow[0], longitudeShiftByRow[1], longitudeShiftByRow[2]),
+                QuadraticInterpolate(fractionY, latitudeShiftByRow[0], latitudeShiftByRow[1], latitudeShiftByRow[2]));
+        }
+
+        private static void NormalizeInterpolationCell(int size, ref int index, ref double fraction)
+        {
+            if (index < 0)
+            {
+                if (index == -1 && fraction > 1d - (10d * GeoTiffHGridShiftMathTransform.RelativeTolerance))
+                {
+                    index = 0;
+                    fraction = 0d;
+                    return;
+                }
+
+                ArgumentGuard.ThrowArgument("Coordinate is outside the horizontal GeoTIFF grid extent.");
+            }
+
+            if (index + 1 < size)
+            {
+                return;
+            }
+
+            if (index + 1 == size && fraction < 10d * GeoTiffHGridShiftMathTransform.RelativeTolerance)
+            {
+                index = size - 2;
+                fraction = 1d;
+                return;
+            }
+
+            ArgumentGuard.ThrowArgument("Coordinate is outside the horizontal GeoTIFF grid extent.");
+        }
+
+        private static void NormalizeBiquadraticWindow(int size, ref int index, ref double fraction)
+        {
+            if ((fraction <= 0.5d && index > 0) || (index + 2 == size))
+            {
+                index -= 1;
+                fraction += 1d;
+            }
+        }
+
+        private static double QuadraticInterpolate(double xToInterpolate, double f0, double f1, double f2)
+        {
+            double delta0 = f1 - f0;
+            double delta1 = f2 - f1;
+            double secondDelta0 = delta1 - delta0;
+            return f0 + (xToInterpolate * delta0) + (0.5d * xToInterpolate * (xToInterpolate - 1d) * secondDelta0);
+        }
+    }
+
+    /// <summary>
     /// Represents a single horizontal-shift grid loaded from a GeoTIFF file.
     /// </summary>
     internal sealed class HorizontalGrid : BaseGeoGrid
@@ -245,6 +349,8 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
         private readonly bool longitudeIsPositiveWest;
         private readonly double latitudeUnitScale;
         private readonly double longitudeUnitScale;
+        private readonly bool normalizeFirstAxis;
+        private readonly bool usesBiquadraticInterpolation;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="HorizontalGrid"/> class.
@@ -271,8 +377,14 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
         /// <see langword="true"/> when the longitude shift values are stored with positive-west convention
         /// and must be negated before use.
         /// </param>
-        /// <param name="latitudeUnitScale">Scale factor to convert the raw latitude-shift sample to degrees.</param>
-        /// <param name="longitudeUnitScale">Scale factor to convert the raw longitude-shift sample to degrees.</param>
+        /// <param name="latitudeUnitScale">Scale factor to convert the raw second-axis shift sample to runtime coordinate units.</param>
+        /// <param name="longitudeUnitScale">Scale factor to convert the raw first-axis shift sample to runtime coordinate units.</param>
+        /// <param name="normalizeFirstAxis">
+        /// <see langword="true"/> when the first axis represents wrapped longitudes and inverse results should be normalized.
+        /// </param>
+        /// <param name="usesBiquadraticInterpolation">
+        /// <see langword="true"/> when the grid metadata requests biquadratic interpolation instead of bilinear interpolation.
+        /// </param>
         internal HorizontalGrid(
             string sourcePath,
             int width,
@@ -294,7 +406,9 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
             int longitudeSampleIndex,
             bool longitudeIsPositiveWest,
             double latitudeUnitScale,
-            double longitudeUnitScale)
+            double longitudeUnitScale,
+            bool normalizeFirstAxis,
+            bool usesBiquadraticInterpolation)
             : base(sourcePath, width, height, area, epsilon, west, east, south, north, a, b, c, d, e, f, sampleData)
         {
             this.latitudeSampleIndex = latitudeSampleIndex;
@@ -302,7 +416,14 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
             this.longitudeIsPositiveWest = longitudeIsPositiveWest;
             this.latitudeUnitScale = latitudeUnitScale;
             this.longitudeUnitScale = longitudeUnitScale;
+            this.normalizeFirstAxis = normalizeFirstAxis;
+            this.usesBiquadraticInterpolation = usesBiquadraticInterpolation;
         }
+
+        /// <summary>
+        /// Gets a value indicating whether this grid uses biquadratic interpolation.
+        /// </summary>
+        internal bool UsesBiquadraticInterpolation => this.usesBiquadraticInterpolation;
 
         /// <summary>
         /// Gets the latitude shift in degrees at the specified grid cell.
@@ -325,6 +446,16 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
         {
             double value = this.GetSampleValue(this.longitudeSampleIndex, x, y) * this.longitudeUnitScale;
             return this.longitudeIsPositiveWest ? -value : value;
+        }
+
+        /// <summary>
+        /// Normalizes the first-axis result when the grid operates in wrapped-longitude space.
+        /// </summary>
+        /// <param name="value">The first-axis value produced by inverse interpolation.</param>
+        /// <returns>The normalized first-axis value.</returns>
+        internal double NormalizeFirstAxis(double value)
+        {
+            return this.normalizeFirstAxis ? TransformationMath.NormalizeLongitudeDegrees(value) : value;
         }
     }
 }
