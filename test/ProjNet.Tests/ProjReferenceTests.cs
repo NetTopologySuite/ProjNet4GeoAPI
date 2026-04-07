@@ -454,7 +454,7 @@ public class ProjReferenceTests
             int index = body.IndexOf('=', StringComparison.Ordinal);
             if (index < 0)
             {
-                args[body] = "true";
+                args[body] = body;
             }
             else
             {
@@ -507,28 +507,49 @@ public class ProjReferenceTests
             return true;
         }
 
+        if (TryGetDouble(args, "a", out double semiMajor) && semiMajor > 0d)
+        {
+            double resolvedSemiMajor = semiMajor;
+            double resolvedSemiMinor = semiMajor;
+            if (!ProjEllipsoidResolver.TryApplyExplicitShapeOverrides(args, ref resolvedSemiMajor, ref resolvedSemiMinor, out _))
+            {
+                ellipsoid = null;
+                return false;
+            }
+
+            ellipsoid = CsFactory.CreateEllipsoid("GIE ellipsoid", resolvedSemiMajor, resolvedSemiMinor, LinearUnit.Metre);
+            return true;
+        }
+
         if (args.TryGetValue("ellps", out string? ellps))
         {
-            if (ellps.Equals("wgs84", StringComparison.OrdinalIgnoreCase))
+            if (ProjEllipsoidResolver.TryResolveKnownEllipsoid(
+                ellps,
+                allowClarke1880Ign: true,
+                allowBessel: true,
+                out double resolvedSemiMajor,
+                out double resolvedSemiMinor))
             {
-                ellipsoid = Ellipsoid.WGS84;
-                return true;
-            }
+                if (!ProjEllipsoidResolver.TryApplyExplicitShapeOverrides(args, ref resolvedSemiMajor, ref resolvedSemiMinor, out _))
+                {
+                    ellipsoid = null;
+                    return false;
+                }
 
-            if (ellps.Equals("bessel", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = CsFactory.CreateFlattenedSphere("Bessel 1841", 6377397.155, 299.1528128, LinearUnit.Metre);
-                return true;
-            }
-
-            if (ellps.Equals("grs80", StringComparison.OrdinalIgnoreCase))
-            {
-                ellipsoid = Ellipsoid.GRS80;
+                ellipsoid = CsFactory.CreateEllipsoid("GIE ellipsoid", resolvedSemiMajor, resolvedSemiMinor, LinearUnit.Metre);
                 return true;
             }
         }
 
-        ellipsoid = Ellipsoid.WGS84;
+        double defaultSemiMajor = Ellipsoid.WGS84.SemiMajorAxis;
+        double defaultSemiMinor = Ellipsoid.WGS84.SemiMinorAxis;
+        if (!ProjEllipsoidResolver.TryApplyExplicitShapeOverrides(args, ref defaultSemiMajor, ref defaultSemiMinor, out _))
+        {
+            ellipsoid = null;
+            return false;
+        }
+
+        ellipsoid = CsFactory.CreateEllipsoid("GIE ellipsoid", defaultSemiMajor, defaultSemiMinor, LinearUnit.Metre);
         return true;
     }
 

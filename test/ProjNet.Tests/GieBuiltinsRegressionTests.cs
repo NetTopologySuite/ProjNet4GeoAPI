@@ -14,6 +14,8 @@ using Xunit;
 /// </summary>
 public class GieBuiltinsRegressionTests
 {
+    private const double MercatorLatitudeSpherificationTolerance = 1e-8d;
+
     /// <summary>
     /// Verifies that inverse Equal Earth cases execute via inverse transform semantics instead of being skipped.
     /// </summary>
@@ -361,6 +363,90 @@ public class GieBuiltinsRegressionTests
         Assert.Equal(equivalentOutput[1], output[1], 12);
         Assert.NotEqual(baselineOutput[0], output[0], 9);
         Assert.NotEqual(baselineOutput[1], output[1], 9);
+    }
+
+    /// <summary>
+    /// Verifies that Mercator builtins cases distinguish PROJ's case-sensitive spherification flags.
+    /// </summary>
+    [Fact]
+    public void TryCreateTransformWithMercatorRadiusSpherificationFlagsReturnsDistinctProjectedCoordinates()
+    {
+        double[] areaEquivalentOutput = RequireBuiltinsProjectedOutput("proj=merc ellps=GRS80 R_A");
+        double[] arithmeticMeanOutput = RequireBuiltinsProjectedOutput("proj=merc ellps=GRS80 R_a");
+        double[] geometricMeanOutput = RequireBuiltinsProjectedOutput("proj=merc ellps=GRS80 R_g");
+        double[] harmonicMeanOutput = RequireBuiltinsProjectedOutput("proj=merc ellps=GRS80 R_h");
+
+        Assert.Equal(1334340.6237297705d, areaEquivalentOutput[0], 9);
+        Assert.Equal(7353636.6296552019d, areaEquivalentOutput[1], 9);
+        Assert.Equal(1333594.4904527504d, arithmeticMeanOutput[0], 9);
+        Assert.Equal(7349524.6413825499d, arithmeticMeanOutput[1], 9);
+        Assert.Equal(1333592.6102291327d, geometricMeanOutput[0], 9);
+        Assert.Equal(7349514.2793497816d, geometricMeanOutput[1], 9);
+        Assert.Equal(1333590.7300081658d, harmonicMeanOutput[0], 9);
+        Assert.Equal(7349503.9173316229d, harmonicMeanOutput[1], 9);
+
+        Assert.NotEqual(areaEquivalentOutput[0], arithmeticMeanOutput[0], 9);
+        Assert.NotEqual(geometricMeanOutput[0], harmonicMeanOutput[0], 9);
+    }
+
+    /// <summary>
+    /// Verifies that Mercator builtins cases honor latitude-based PROJ spherification flags.
+    /// </summary>
+    [Theory]
+    [InlineData("proj=merc ellps=GRS80 R_lat_a=60", 1338073.7436268919d, 7374210.0924803326d)]
+    [InlineData("proj=merc ellps=GRS80 R_lat_g=60", 1338073.2696101593d, 7374207.4801437631d)]
+    [InlineData("+proj=merc +R_C +ellps=WGS84 +lat_0=45", 1331355.0914081715d, 7337183.169834906d)]
+    public void TryCreateTransformWithMercatorLatitudeSpherificationReturnsExpectedProjectedCoordinate(
+        string operation,
+        double expectedX,
+        double expectedY)
+    {
+        double[] output = RequireBuiltinsProjectedOutput(operation);
+
+        Assert.InRange(Math.Abs(output[0] - expectedX), 0d, MercatorLatitudeSpherificationTolerance);
+        Assert.InRange(Math.Abs(output[1] - expectedY), 0d, MercatorLatitudeSpherificationTolerance);
+    }
+
+    /// <summary>
+    /// Verifies that invalid Mercator spherification and eccentricity overrides are rejected.
+    /// </summary>
+    [Theory]
+    [InlineData("+proj=merc +R_a +a=2 +f=2", "+f")]
+    [InlineData("proj=merc a=1E77 R_lat_a=90 b=1", "R_lat_a")]
+    [InlineData("proj=utm zone=32 ellps=GRS80 e=-0.5", "+e")]
+    [InlineData("proj=utm zone=32 ellps=GRS80 e=1", "+e")]
+    public void TryCreateConversionTransformWithInvalidEllipsoidOverridesReturnsValidationReason(string operation, string expectedToken)
+    {
+        bool created = TryCreateConversionTransform(operation, out Func<double[], double[]>? transform, out string? skipReason);
+
+        Assert.False(created);
+        Assert.Null(transform);
+        Assert.Contains(expectedToken, skipReason ?? string.Empty, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Verifies that flattening can be set to zero explicitly for Mercator builtins cases.
+    /// </summary>
+    [Fact]
+    public void TryCreateTransformWithMercatorZeroFlatteningReturnsExpectedProjectedCoordinate()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 181,
+            Operation = "proj=merc +a=1.0 +f=0.0",
+            ToleranceValue = 10d,
+            ToleranceUnit = "nm",
+            Direction = GieDirection.Forward,
+            Accept = [12d, 56d],
+            Expect = [0.20944d, 1.18505d],
+        };
+
+        bool created = TryCreateTransform(testCase, out MathTransform? transform, out string? skipReason);
+        Assert.True(created, skipReason ?? "TryCreateTransform returned false.");
+
+        double[] output = Assert.IsAssignableFrom<MathTransform>(transform).Transform(testCase.Accept);
+        Assert.Equal(testCase.Expect[0], output[0], 5);
+        Assert.Equal(testCase.Expect[1], output[1], 5);
     }
 
     /// <summary>

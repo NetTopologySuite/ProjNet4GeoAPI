@@ -549,9 +549,9 @@ public class GieBuiltinsTheoryTests
             return false;
         }
 
-        if (!TryCreateGeographicCoordinateSystem(args, out GeographicCoordinateSystem? gcs))
+        if (!TryCreateGeographicCoordinateSystem(args, out GeographicCoordinateSystem? gcs, out string? ellipsoidError))
         {
-            skipReason = "Could not construct geographic coordinate system from operation ellipsoid/datum parameters.";
+            skipReason = ellipsoidError ?? "Could not construct geographic coordinate system from operation ellipsoid/datum parameters.";
             return false;
         }
 
@@ -1132,11 +1132,15 @@ public class GieBuiltinsTheoryTests
         return ProjectionClassByProjCode.ContainsKey(projCode) || ConversionProjCodes.Contains(projCode);
     }
 
-    private static bool TryCreateGeographicCoordinateSystem(Dictionary<string, string> args, out GeographicCoordinateSystem? gcs)
+    private static bool TryCreateGeographicCoordinateSystem(
+        Dictionary<string, string> args,
+        out GeographicCoordinateSystem? gcs,
+        out string? skipReason)
     {
         gcs = null;
+        skipReason = null;
 
-        if (!TryResolveEllipsoid(args, out Ellipsoid? ellipsoid))
+        if (!TryResolveEllipsoid(args, out Ellipsoid? ellipsoid, out skipReason))
         {
             return false;
         }
@@ -1256,8 +1260,9 @@ public class GieBuiltinsTheoryTests
         return false;
     }
 
-    private static bool TryResolveEllipsoid(Dictionary<string, string> args, out Ellipsoid? ellipsoid)
+    private static bool TryResolveEllipsoid(Dictionary<string, string> args, out Ellipsoid? ellipsoid, out string? skipReason)
     {
+        skipReason = null;
         if (TryGetDouble(args, "r", out double sphereRadius) && sphereRadius > 0d)
         {
             ellipsoid = CoordinateSystemFactory.CreateEllipsoid("GIE sphere", sphereRadius, sphereRadius, LinearUnit.Metre);
@@ -1266,31 +1271,15 @@ public class GieBuiltinsTheoryTests
 
         if (TryGetDouble(args, "a", out double semiMajor) && semiMajor > 0d)
         {
-            if (TryGetDouble(args, "b", out double semiMinor) && semiMinor > 0d)
+            double resolvedSemiMajor = semiMajor;
+            double resolvedSemiMinor = semiMajor;
+            if (!ProjEllipsoidResolver.TryApplyExplicitShapeOverrides(args, ref resolvedSemiMajor, ref resolvedSemiMinor, out skipReason))
             {
-                ellipsoid = CoordinateSystemFactory.CreateEllipsoid("GIE ellipsoid", semiMajor, semiMinor, LinearUnit.Metre);
-                return true;
+                ellipsoid = null;
+                return false;
             }
 
-            if (TryGetDouble(args, "rf", out double inverseFlattening) && inverseFlattening > 0d)
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("GIE ellipsoid", semiMajor, inverseFlattening, LinearUnit.Metre);
-                return true;
-            }
-
-            if (TryGetDouble(args, "f", out double flattening) && flattening > 0d && flattening < 1d)
-            {
-                ellipsoid = CoordinateSystemFactory.CreateEllipsoid("GIE ellipsoid", semiMajor, (1d - flattening) * semiMajor, LinearUnit.Metre);
-                return true;
-            }
-
-            if (TryGetDouble(args, "es", out double eccentricitySquared) && eccentricitySquared >= 0d && eccentricitySquared < 1d)
-            {
-                ellipsoid = CoordinateSystemFactory.CreateEllipsoid("GIE ellipsoid", semiMajor, semiMajor * Math.Sqrt(1d - eccentricitySquared), LinearUnit.Metre);
-                return true;
-            }
-
-            ellipsoid = CoordinateSystemFactory.CreateEllipsoid("GIE sphere", semiMajor, semiMajor, LinearUnit.Metre);
+            ellipsoid = CoordinateSystemFactory.CreateEllipsoid("GIE ellipsoid", resolvedSemiMajor, resolvedSemiMinor, LinearUnit.Metre);
             return true;
         }
 
@@ -1298,7 +1287,7 @@ public class GieBuiltinsTheoryTests
             && !string.IsNullOrWhiteSpace(ellps)
             && TryResolveKnownEllipsoidToken(ellps, out Ellipsoid? knownEllipsoid))
         {
-            return TryCreateEllipsoidWithExplicitShapeOverrides(args, knownEllipsoid, out ellipsoid);
+            return TryCreateEllipsoidWithExplicitShapeOverrides(args, knownEllipsoid, out ellipsoid, out skipReason);
         }
 
         if (args.TryGetValue("datum", out string? datumToken)
@@ -1306,18 +1295,20 @@ public class GieBuiltinsTheoryTests
             && ProjEllipsoidResolver.TryResolveKnownEllipsoid(datumToken, allowClarke1880Ign: true, allowBessel: true, out double datumSemiMajor, out double datumSemiMinor))
         {
             Ellipsoid datumEllipsoid = CoordinateSystemFactory.CreateEllipsoid($"GIE datum ellipsoid ({datumToken})", datumSemiMajor, datumSemiMinor, LinearUnit.Metre);
-            return TryCreateEllipsoidWithExplicitShapeOverrides(args, datumEllipsoid, out ellipsoid);
+            return TryCreateEllipsoidWithExplicitShapeOverrides(args, datumEllipsoid, out ellipsoid, out skipReason);
         }
 
-        return TryCreateEllipsoidWithExplicitShapeOverrides(args, Ellipsoid.WGS84, out ellipsoid);
+        return TryCreateEllipsoidWithExplicitShapeOverrides(args, Ellipsoid.WGS84, out ellipsoid, out skipReason);
     }
 
     private static bool TryCreateEllipsoidWithExplicitShapeOverrides(
         Dictionary<string, string> args,
         Ellipsoid baseEllipsoid,
-        out Ellipsoid? ellipsoid)
+        out Ellipsoid? ellipsoid,
+        out string? skipReason)
     {
-        if (!args.ContainsKey("b") && !args.ContainsKey("rf") && !args.ContainsKey("f") && !args.ContainsKey("es"))
+        skipReason = null;
+        if (!HasExplicitShapeOverride(args))
         {
             ellipsoid = baseEllipsoid;
             return true;
@@ -1325,7 +1316,7 @@ public class GieBuiltinsTheoryTests
 
         double semiMajor = baseEllipsoid.SemiMajorAxis;
         double semiMinor = baseEllipsoid.SemiMinorAxis;
-        if (!ProjEllipsoidResolver.TryApplyExplicitShapeOverrides(args, ref semiMajor, ref semiMinor, out _))
+        if (!ProjEllipsoidResolver.TryApplyExplicitShapeOverrides(args, ref semiMajor, ref semiMinor, out skipReason))
         {
             ellipsoid = null;
             return false;
@@ -1333,6 +1324,23 @@ public class GieBuiltinsTheoryTests
 
         ellipsoid = CoordinateSystemFactory.CreateEllipsoid(baseEllipsoid.Name, semiMajor, semiMinor, LinearUnit.Metre);
         return true;
+    }
+
+    private static bool HasExplicitShapeOverride(Dictionary<string, string> args)
+    {
+        return args.ContainsKey("b")
+            || args.ContainsKey("rf")
+            || args.ContainsKey("f")
+            || args.ContainsKey("es")
+            || args.ContainsKey("e")
+            || args.ContainsKey("R_A")
+            || args.ContainsKey("R_V")
+            || args.ContainsKey("R_a")
+            || args.ContainsKey("R_g")
+            || args.ContainsKey("R_h")
+            || args.ContainsKey("R_lat_a")
+            || args.ContainsKey("R_lat_g")
+            || args.ContainsKey("R_C");
     }
 
     private static bool TryResolveKnownEllipsoidToken(string ellps, [NotNullWhen(true)] out Ellipsoid? ellipsoid)
@@ -1858,7 +1866,7 @@ public class GieBuiltinsTheoryTests
             int index = body.IndexOf('=', StringComparison.Ordinal);
             if (index < 0)
             {
-                args[body] = "true";
+                args[body] = body;
             }
             else
             {

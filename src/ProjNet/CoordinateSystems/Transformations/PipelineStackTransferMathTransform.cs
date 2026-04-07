@@ -144,25 +144,25 @@ internal sealed class PipelineStackTransferMathTransform : MathTransform
         enabledOrdinateFlags = [false, false, false, false];
         skipReason = null;
 
-        if (args.TryGetValue("v_1", out string? v1Token) && !IsBooleanFlag(v1Token))
+        if (args.TryGetValue("v_1", out string? v1Token) && !IsBooleanFlag("v_1", v1Token))
         {
             skipReason = "push/pop does not accept values for +v_1; use +v_1 as a flag.";
             return false;
         }
 
-        if (args.TryGetValue("v_2", out string? v2Token) && !IsBooleanFlag(v2Token))
+        if (args.TryGetValue("v_2", out string? v2Token) && !IsBooleanFlag("v_2", v2Token))
         {
             skipReason = "push/pop does not accept values for +v_2; use +v_2 as a flag.";
             return false;
         }
 
-        if (args.TryGetValue("v_3", out string? v3Token) && !IsBooleanFlag(v3Token))
+        if (args.TryGetValue("v_3", out string? v3Token) && !IsBooleanFlag("v_3", v3Token))
         {
             skipReason = "push/pop does not accept values for +v_3; use +v_3 as a flag.";
             return false;
         }
 
-        if (args.TryGetValue("v_4", out string? v4Token) && !IsBooleanFlag(v4Token))
+        if (args.TryGetValue("v_4", out string? v4Token) && !IsBooleanFlag("v_4", v4Token))
         {
             skipReason = "push/pop does not accept values for +v_4; use +v_4 as a flag.";
             return false;
@@ -182,10 +182,11 @@ internal sealed class PipelineStackTransferMathTransform : MathTransform
         return true;
     }
 
-    private static bool IsBooleanFlag(string token)
+    private static bool IsBooleanFlag(string key, string token)
     {
         return string.IsNullOrEmpty(token)
-            || token.Equals("true", StringComparison.OrdinalIgnoreCase);
+            || token.Equals("true", StringComparison.OrdinalIgnoreCase)
+            || token.Equals(key, StringComparison.Ordinal);
     }
 
     private void TransformCore(ref double x, ref double y, ref double z, ref double t, bool includeTime)

@@ -2228,7 +2228,7 @@ internal static class ProjPipelineMathTransformFactory
 #endif
             if (index < 0)
             {
-                args[body] = "true";
+                args[body] = body;
             }
             else
             {

@@ -581,31 +581,15 @@ public class Gigs5101TheoryTests
 
         if (TryGetDouble(args, "a", out double semiMajor) && semiMajor > 0d)
         {
-            if (TryGetDouble(args, "b", out double semiMinor) && semiMinor > 0d)
+            double explicitSemiMajor = semiMajor;
+            double explicitSemiMinor = semiMajor;
+            if (!ProjEllipsoidResolver.TryApplyExplicitShapeOverrides(args, ref explicitSemiMajor, ref explicitSemiMinor, out _))
             {
-                ellipsoid = CoordinateSystemFactory.CreateEllipsoid("GIGS ellipsoid", semiMajor, semiMinor, LinearUnit.Metre);
-                return true;
+                ellipsoid = null;
+                return false;
             }
 
-            if (TryGetDouble(args, "rf", out double inverseFlattening) && inverseFlattening > 0d)
-            {
-                ellipsoid = CoordinateSystemFactory.CreateFlattenedSphere("GIGS ellipsoid", semiMajor, inverseFlattening, LinearUnit.Metre);
-                return true;
-            }
-
-            if (TryGetDouble(args, "f", out double flattening) && flattening > 0d && flattening < 1d)
-            {
-                ellipsoid = CoordinateSystemFactory.CreateEllipsoid("GIGS ellipsoid", semiMajor, (1d - flattening) * semiMajor, LinearUnit.Metre);
-                return true;
-            }
-
-            if (TryGetDouble(args, "es", out double eccentricitySquared) && eccentricitySquared >= 0d && eccentricitySquared < 1d)
-            {
-                ellipsoid = CoordinateSystemFactory.CreateEllipsoid("GIGS ellipsoid", semiMajor, semiMajor * Math.Sqrt(1d - eccentricitySquared), LinearUnit.Metre);
-                return true;
-            }
-
-            ellipsoid = CoordinateSystemFactory.CreateEllipsoid("GIGS sphere", semiMajor, semiMajor, LinearUnit.Metre);
+            ellipsoid = CoordinateSystemFactory.CreateEllipsoid("GIGS ellipsoid", explicitSemiMajor, explicitSemiMinor, LinearUnit.Metre);
             return true;
         }
 
@@ -623,7 +607,7 @@ public class Gigs5101TheoryTests
             }
         }
 
-        if (!args.ContainsKey("b") && !args.ContainsKey("rf") && !args.ContainsKey("f") && !args.ContainsKey("es"))
+        if (!HasExplicitShapeOverride(args))
         {
             ellipsoid = baseEllipsoid;
             return true;
@@ -639,6 +623,23 @@ public class Gigs5101TheoryTests
 
         ellipsoid = CoordinateSystemFactory.CreateEllipsoid(baseEllipsoid.Name, resolvedSemiMajor, resolvedSemiMinor, LinearUnit.Metre);
         return true;
+    }
+
+    private static bool HasExplicitShapeOverride(Dictionary<string, string> args)
+    {
+        return args.ContainsKey("b")
+            || args.ContainsKey("rf")
+            || args.ContainsKey("f")
+            || args.ContainsKey("es")
+            || args.ContainsKey("e")
+            || args.ContainsKey("R_A")
+            || args.ContainsKey("R_V")
+            || args.ContainsKey("R_a")
+            || args.ContainsKey("R_g")
+            || args.ContainsKey("R_h")
+            || args.ContainsKey("R_lat_a")
+            || args.ContainsKey("R_lat_g")
+            || args.ContainsKey("R_C");
     }
 
     private static bool TryBuildProjectionParameters(Dictionary<string, string> args, out List<ProjectionParameter> parameters)
@@ -811,7 +812,7 @@ public class Gigs5101TheoryTests
             int index = body.IndexOf('=', StringComparison.Ordinal);
             if (index < 0)
             {
-                args[body] = "true";
+                args[body] = body;
             }
             else
             {

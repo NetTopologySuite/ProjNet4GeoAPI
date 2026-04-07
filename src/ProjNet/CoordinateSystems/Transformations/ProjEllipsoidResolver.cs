@@ -20,6 +20,12 @@ internal static class ProjEllipsoidResolver
     private const double Clarke1880IgnInverseFlattening = 293.4660212936269d;
     private const double BesselSemiMajorAxis = 6377397.155d;
     private const double BesselSemiMinorAxis = 6356078.962818189d;
+    private const double Sixth = 1d / 6d;
+    private const double Ra4 = 17d / 360d;
+    private const double Ra6 = 67d / 3024d;
+    private const double Rv4 = 5d / 72d;
+    private const double Rv6 = 55d / 1296d;
+    private static readonly string[] SpherificationKeys = ["R_A", "R_V", "R_a", "R_g", "R_h", "R_lat_a", "R_lat_g", "R_C"];
 
     /// <summary>
     /// Tries to resolve a supported PROJ ellipsoid token to metric semi-axis values.
@@ -122,20 +128,24 @@ internal static class ProjEllipsoidResolver
         out string? errorMessage)
     {
         errorMessage = null;
+        return TryApplyExplicitShapeParameters(args, ref semiMajor, ref semiMinor, out errorMessage)
+            && TryApplySpherification(args, ref semiMajor, ref semiMinor, out errorMessage);
+    }
 
-        if (args.TryGetValue("b", out string? minorToken) && !string.IsNullOrWhiteSpace(minorToken))
-        {
-            if (!TryParseFiniteDouble(minorToken, out double explicitMinor) || explicitMinor <= 0d)
-            {
-                errorMessage = "Ellipsoid +b override must be finite and positive.";
-                return false;
-            }
+    private static double ComputeSemiMinorAxis(double semiMajor, double inverseFlattening)
+    {
+        return (1d - (1d / inverseFlattening)) * semiMajor;
+    }
 
-            semiMinor = explicitMinor;
-            return true;
-        }
+    private static bool TryApplyExplicitShapeParameters(
+        IReadOnlyDictionary<string, string> args,
+        ref double semiMajor,
+        ref double semiMinor,
+        out string? errorMessage)
+    {
+        errorMessage = null;
 
-        if (args.TryGetValue("rf", out string? inverseFlatteningToken) && !string.IsNullOrWhiteSpace(inverseFlatteningToken))
+        if (TryGetNonEmptyToken(args, "rf", out string inverseFlatteningToken))
         {
             if (!TryParseFiniteDouble(inverseFlatteningToken, out double inverseFlattening) || inverseFlattening <= 0d)
             {
@@ -144,28 +154,22 @@ internal static class ProjEllipsoidResolver
             }
 
             semiMinor = ComputeSemiMinorAxis(semiMajor, inverseFlattening);
-            if (semiMinor <= 0d || double.IsNaN(semiMinor) || double.IsInfinity(semiMinor))
-            {
-                errorMessage = "Ellipsoid +rf override must resolve to a finite positive semi-minor axis.";
-                return false;
-            }
-
-            return true;
+            return TryValidateResolvedAxes(semiMajor, semiMinor, "+rf", out errorMessage);
         }
 
-        if (args.TryGetValue("f", out string? flatteningToken) && !string.IsNullOrWhiteSpace(flatteningToken))
+        if (TryGetNonEmptyToken(args, "f", out string flatteningToken))
         {
-            if (!TryParseFiniteDouble(flatteningToken, out double flattening) || flattening <= 0d || flattening >= 1d)
+            if (!TryParseFiniteDouble(flatteningToken, out double flattening) || flattening < 0d || flattening >= 1d)
             {
-                errorMessage = "Ellipsoid +f override must be finite and satisfy 0 < f < 1.";
+                errorMessage = "Ellipsoid +f override must be finite and satisfy 0 <= f < 1.";
                 return false;
             }
 
             semiMinor = (1d - flattening) * semiMajor;
-            return true;
+            return TryValidateResolvedAxes(semiMajor, semiMinor, "+f", out errorMessage);
         }
 
-        if (args.TryGetValue("es", out string? eccentricitySquaredToken) && !string.IsNullOrWhiteSpace(eccentricitySquaredToken))
+        if (TryGetNonEmptyToken(args, "es", out string eccentricitySquaredToken))
         {
             if (!TryParseFiniteDouble(eccentricitySquaredToken, out double eccentricitySquared) || eccentricitySquared < 0d || eccentricitySquared >= 1d)
             {
@@ -174,15 +178,448 @@ internal static class ProjEllipsoidResolver
             }
 
             semiMinor = semiMajor * Math.Sqrt(1d - eccentricitySquared);
-            return true;
+            return TryValidateResolvedAxes(semiMajor, semiMinor, "+es", out errorMessage);
+        }
+
+        if (TryGetNonEmptyToken(args, "e", out string eccentricityToken))
+        {
+            if (!TryParseFiniteDouble(eccentricityToken, out double eccentricity) || eccentricity < 0d || eccentricity >= 1d)
+            {
+                errorMessage = "Ellipsoid +e override must be finite and satisfy 0 <= e < 1.";
+                return false;
+            }
+
+            semiMinor = semiMajor * Math.Sqrt(1d - (eccentricity * eccentricity));
+            return TryValidateResolvedAxes(semiMajor, semiMinor, "+e", out errorMessage);
+        }
+
+        if (TryGetNonEmptyToken(args, "b", out string minorToken))
+        {
+            if (!TryParseFiniteDouble(minorToken, out double explicitMinor) || explicitMinor <= 0d)
+            {
+                errorMessage = "Ellipsoid +b override must be finite and positive.";
+                return false;
+            }
+
+            semiMinor = explicitMinor;
+            return TryValidateResolvedAxes(semiMajor, semiMinor, "+b", out errorMessage);
         }
 
         return true;
     }
 
-    private static double ComputeSemiMinorAxis(double semiMajor, double inverseFlattening)
+    private static bool TryApplySpherification(
+        IReadOnlyDictionary<string, string> args,
+        ref double semiMajor,
+        ref double semiMinor,
+        out string? errorMessage)
     {
-        return (1d - (1d / inverseFlattening)) * semiMajor;
+        errorMessage = null;
+        if (!TryFindSpherificationOverride(args, out string? spherificationKey, out string? spherificationValue))
+        {
+            return true;
+        }
+
+        if (!TryComputeEccentricitySquared(semiMajor, semiMinor, out double eccentricitySquared))
+        {
+            errorMessage = $"Ellipsoid +{spherificationKey} override produced an invalid eccentricity.";
+            return false;
+        }
+
+        switch (spherificationKey)
+        {
+            case "R_A":
+                semiMajor *= 1d - (eccentricitySquared * (Sixth + (eccentricitySquared * (Ra4 + (eccentricitySquared * Ra6)))));
+                break;
+
+            case "R_V":
+                semiMajor *= 1d - (eccentricitySquared * (Sixth + (eccentricitySquared * (Rv4 + (eccentricitySquared * Rv6)))));
+                break;
+
+            case "R_a":
+                semiMajor = (semiMajor + semiMinor) / 2d;
+                break;
+
+            case "R_g":
+                semiMajor = Math.Sqrt(semiMajor * semiMinor);
+                break;
+
+            case "R_h":
+                if ((semiMajor + semiMinor) == 0d)
+                {
+                    errorMessage = "Ellipsoid +R_h override requires a + b to be non-zero.";
+                    return false;
+                }
+
+                semiMajor = (2d * semiMajor * semiMinor) / (semiMajor + semiMinor);
+                break;
+
+            case "R_lat_a":
+            case "R_lat_g":
+                if (!TryParseSpherificationLatitudeDegrees(spherificationKey, spherificationValue, out double latitudeDegrees, out errorMessage))
+                {
+                    return false;
+                }
+
+                if (!TryComputeLatitudeSpherificationRadius(
+                    spherificationKey,
+                    semiMajor,
+                    eccentricitySquared,
+                    latitudeDegrees,
+                    out semiMajor,
+                    out errorMessage))
+                {
+                    return false;
+                }
+
+                break;
+
+            case "R_C":
+                if (!TryGetConformalSphereLatitudeDegrees(args, out double conformalLatitudeDegrees, out errorMessage))
+                {
+                    return false;
+                }
+
+                if (!TryComputeConformalSphereRadius(
+                    semiMajor,
+                    eccentricitySquared,
+                    conformalLatitudeDegrees,
+                    out semiMajor,
+                    out errorMessage))
+                {
+                    return false;
+                }
+
+                break;
+
+            default:
+                errorMessage = $"Unsupported ellipsoid spherification override '+{spherificationKey}'.";
+                return false;
+        }
+
+        if (!TryValidateResolvedRadius(semiMajor, $"+{spherificationKey}", out errorMessage))
+        {
+            return false;
+        }
+
+        semiMinor = semiMajor;
+        return true;
+    }
+
+    private static bool TryFindSpherificationOverride(
+        IReadOnlyDictionary<string, string> args,
+        out string? key,
+        out string? value)
+    {
+        key = null;
+        value = null;
+        for (int i = 0; i < SpherificationKeys.Length; i++)
+        {
+            string expectedKey = SpherificationKeys[i];
+            foreach (KeyValuePair<string, string> arg in args)
+            {
+                if (arg.Key.Equals(expectedKey, StringComparison.Ordinal))
+                {
+                    key = expectedKey;
+                    value = arg.Value;
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private static bool TryGetConformalSphereLatitudeDegrees(
+        IReadOnlyDictionary<string, string> args,
+        out double latitudeDegrees,
+        out string? errorMessage)
+    {
+        errorMessage = null;
+        latitudeDegrees = 0d;
+        if (!TryGetNonEmptyToken(args, "lat_0", out string latitudeToken))
+        {
+            return true;
+        }
+
+        if (!TryParseAngleDegreesToken(latitudeToken, out double parsedLatitudeDegrees))
+        {
+            errorMessage = "Ellipsoid +R_C override requires +lat_0 to be a finite angular value.";
+            return false;
+        }
+
+        if (Math.Abs(parsedLatitudeDegrees) > 90d)
+        {
+            errorMessage = "Ellipsoid +R_C override requires +lat_0 to satisfy |lat_0| <= 90°.";
+            return false;
+        }
+
+        if (TryGetNonEmptyToken(args, "proj", out string projectionToken)
+            && projectionToken.Equals("merc", StringComparison.OrdinalIgnoreCase))
+        {
+            // PROJ validates +lat_0 for merc +R_C, but the conformal sphere radius
+            // still behaves like the equatorial case unless +lat_ts changes k0.
+            return true;
+        }
+
+        latitudeDegrees = parsedLatitudeDegrees;
+        return true;
+    }
+
+    private static bool TryParseSpherificationLatitudeDegrees(
+        string key,
+        string? token,
+        out double latitudeDegrees,
+        out string? errorMessage)
+    {
+        errorMessage = null;
+        latitudeDegrees = 0d;
+        if (!TryParseAngleDegreesToken(token ?? string.Empty, out latitudeDegrees))
+        {
+            errorMessage = $"Ellipsoid +{key} override latitude must be a finite angular value.";
+            return false;
+        }
+
+        if (Math.Abs(latitudeDegrees) > 90d)
+        {
+            errorMessage = $"Ellipsoid +{key} override latitude must satisfy |lat| <= 90°.";
+            return false;
+        }
+
+        return true;
+    }
+
+    private static bool TryComputeLatitudeSpherificationRadius(
+        string key,
+        double semiMajor,
+        double eccentricitySquared,
+        double latitudeDegrees,
+        out double radius,
+        out string? errorMessage)
+    {
+        errorMessage = null;
+        double latitudeRadians = latitudeDegrees * Math.PI / 180d;
+        double t = 1d - (eccentricitySquared * Math.Sin(latitudeRadians) * Math.Sin(latitudeRadians));
+        if (t == 0d)
+        {
+            radius = 0d;
+            errorMessage = $"Ellipsoid +{key} override produced a singular radius at the specified latitude.";
+            return false;
+        }
+
+        if (key.Equals("R_lat_a", StringComparison.Ordinal))
+        {
+            radius = semiMajor * ((1d - eccentricitySquared + t) / (2d * t * Math.Sqrt(t)));
+            return true;
+        }
+
+        radius = semiMajor * (Math.Sqrt(1d - eccentricitySquared) / t);
+        return true;
+    }
+
+    private static bool TryComputeConformalSphereRadius(
+        double semiMajor,
+        double eccentricitySquared,
+        double latitudeDegrees,
+        out double radius,
+        out string? errorMessage)
+    {
+        errorMessage = null;
+        double latitudeRadians = latitudeDegrees * Math.PI / 180d;
+        double t = 1d - (eccentricitySquared * Math.Sin(latitudeRadians) * Math.Sin(latitudeRadians));
+        if (t == 0d)
+        {
+            radius = 0d;
+            errorMessage = "Ellipsoid +R_C override produced a singular radius at the specified latitude.";
+            return false;
+        }
+
+        radius = semiMajor * (Math.Sqrt(1d - eccentricitySquared) / t);
+        return true;
+    }
+
+    private static bool TryValidateResolvedAxes(double semiMajor, double semiMinor, string parameterName, out string? errorMessage)
+    {
+        if (!TryValidateResolvedRadius(semiMajor, parameterName, out errorMessage))
+        {
+            return false;
+        }
+
+        if (!TryValidateResolvedRadius(semiMinor, parameterName, out errorMessage))
+        {
+            errorMessage = $"Ellipsoid {parameterName} override must resolve to a finite positive semi-minor axis.";
+            return false;
+        }
+
+        if (!TryComputeEccentricitySquared(semiMajor, semiMinor, out _))
+        {
+            errorMessage = $"Ellipsoid {parameterName} override produced an invalid eccentricity.";
+            return false;
+        }
+
+        return true;
+    }
+
+    private static bool TryValidateResolvedRadius(double radius, string parameterName, out string? errorMessage)
+    {
+        errorMessage = null;
+        if (radius <= 0d || double.IsNaN(radius) || double.IsInfinity(radius))
+        {
+            errorMessage = $"Ellipsoid {parameterName} override must resolve to a finite positive radius.";
+            return false;
+        }
+
+        return true;
+    }
+
+    private static bool TryComputeEccentricitySquared(double semiMajor, double semiMinor, out double eccentricitySquared)
+    {
+        eccentricitySquared = double.NaN;
+        if (semiMajor <= 0d || semiMinor <= 0d || double.IsNaN(semiMajor) || double.IsNaN(semiMinor) || double.IsInfinity(semiMajor) || double.IsInfinity(semiMinor))
+        {
+            return false;
+        }
+
+        double axisRatio = semiMinor / semiMajor;
+        eccentricitySquared = 1d - (axisRatio * axisRatio);
+        return !double.IsNaN(eccentricitySquared)
+            && !double.IsInfinity(eccentricitySquared)
+            && eccentricitySquared >= 0d;
+    }
+
+    private static bool TryGetNonEmptyToken(IReadOnlyDictionary<string, string> args, string key, out string token)
+    {
+        if (args.TryGetValue(key, out string? rawToken) && !string.IsNullOrWhiteSpace(rawToken))
+        {
+            token = rawToken;
+            return true;
+        }
+
+        token = string.Empty;
+        return false;
+    }
+
+    private static bool TryParseAngleDegreesToken(string token, out double value)
+    {
+        value = 0d;
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return false;
+        }
+
+        string normalized = token.Trim();
+        bool radiansSuffix = normalized.Length > 0 && (normalized[^1] == 'r' || normalized[^1] == 'R');
+        if (radiansSuffix)
+        {
+            normalized = normalized[..^1];
+        }
+
+        if (TryParseNumericToken(normalized, out value))
+        {
+            if (radiansSuffix)
+            {
+                value *= 180d / Math.PI;
+            }
+
+            return true;
+        }
+
+        return TryParseDmsToken(normalized, out value);
+    }
+
+    private static bool TryParseNumericToken(string token, out double value)
+    {
+        value = 0d;
+        if (!TryParseFiniteDouble(token, out value))
+        {
+            int slashIndex = token.IndexOf('/', StringComparison.Ordinal);
+            if (slashIndex <= 0 || slashIndex >= token.Length - 1)
+            {
+                return false;
+            }
+
+            string numeratorToken = token[..slashIndex].Trim();
+            string denominatorToken = token[(slashIndex + 1)..].Trim();
+            if (!TryParseFiniteDouble(numeratorToken, out double numerator)
+                || !TryParseFiniteDouble(denominatorToken, out double denominator)
+                || denominator == 0d)
+            {
+                return false;
+            }
+
+            value = numerator / denominator;
+        }
+
+        return !double.IsNaN(value) && !double.IsInfinity(value);
+    }
+
+    private static bool TryParseDmsToken(string token, out double value)
+    {
+        value = 0d;
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return false;
+        }
+
+        string text = token.Trim()
+            .Replace('°', 'd')
+            .Replace('º', 'd');
+        int sign = 1;
+
+        char last = text[text.Length - 1];
+        if (last == 'W' || last == 'w' || last == 'S' || last == 's')
+        {
+            sign = -1;
+            text = text[..^1];
+        }
+        else if (last == 'E' || last == 'e' || last == 'N' || last == 'n')
+        {
+            text = text[..^1];
+        }
+
+        if (text.Length > 0 && text[0] == '-')
+        {
+            sign *= -1;
+            text = text[1..];
+        }
+        else if (text.Length > 0 && text[0] == '+')
+        {
+            text = text[1..];
+        }
+
+        int dIndex = text.IndexOf('d', StringComparison.Ordinal);
+        if (dIndex < 0)
+        {
+            dIndex = text.IndexOf('D', StringComparison.Ordinal);
+        }
+
+        int mIndex = text.IndexOf('\'', StringComparison.Ordinal);
+        if (dIndex <= 0 || mIndex <= dIndex)
+        {
+            return false;
+        }
+
+        string degreesToken = text[..dIndex];
+        string minutesToken = text.Substring(dIndex + 1, mIndex - dIndex - 1);
+        if (!TryParseFiniteDouble(degreesToken, out double degrees)
+            || !TryParseFiniteDouble(minutesToken, out double minutes))
+        {
+            return false;
+        }
+
+        double seconds = 0d;
+        int secondsMarker = text.IndexOf('"', StringComparison.Ordinal);
+        if (secondsMarker > mIndex + 1)
+        {
+            string secondsToken = text.Substring(mIndex + 1, secondsMarker - mIndex - 1);
+            if (!TryParseFiniteDouble(secondsToken, out seconds))
+            {
+                return false;
+            }
+        }
+
+        value = sign * (degrees + (minutes / 60d) + (seconds / 3600d));
+        return true;
     }
 
     private static bool TryParseFiniteDouble(string token, out double value)
