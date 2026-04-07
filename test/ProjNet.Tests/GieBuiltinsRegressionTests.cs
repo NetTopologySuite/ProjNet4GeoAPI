@@ -671,6 +671,23 @@ public class GieBuiltinsRegressionTests
     }
 
     /// <summary>
+    /// Verifies that the builtins operation tokenizer preserves GIE-style assignments where a negative value is attached to the equals sign token.
+    /// </summary>
+    [Fact]
+    public void TryParseOperationArgumentsPreservesNegativeAssignmentValuesAfterDetachedEquals()
+    {
+        MethodInfo parseOperationArgumentsMethod = typeof(GieBuiltinsTheoryTests).GetMethod("TryParseOperationArguments", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.TryParseOperationArguments.");
+        object?[] parseArgs = ["proj=helmert convention=position_vector x = 0.01270 y = 0.00650 z =-0.0209 dz =-0.0006", null];
+        bool parsed = Assert.IsType<bool>(parseOperationArgumentsMethod.Invoke(null, parseArgs));
+        Assert.True(parsed);
+
+        Dictionary<string, string> operationArgs = Assert.IsType<Dictionary<string, string>>(parseArgs[1]);
+        Assert.Equal("-0.0209", operationArgs["z"]);
+        Assert.Equal("-0.0006", operationArgs["dz"]);
+    }
+
+    /// <summary>
     /// Verifies that builtins LCC cases treat explicit false offsets as meters even when the projection outputs US survey feet.
     /// </summary>
     [Fact]
@@ -1101,6 +1118,90 @@ public class GieBuiltinsRegressionTests
         Assert.InRange(output[0], -4052052.7379d - 1e-4d, -4052052.7379d + 1e-4d);
         Assert.InRange(output[1], 4212835.9897d - 1e-4d, 4212835.9897d + 1e-4d);
         Assert.InRange(output[2], -2545104.5898d - 1e-4d, -2545104.5898d + 1e-4d);
+    }
+
+    /// <summary>
+    /// Verifies that standalone kinematic Helmert conversion cases execute through the builtins conversion path even when GIE uses detached equals tokens.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformWithStandaloneKinematicHelmertReturnsExpectedCoordinate()
+    {
+        const string operation = "proj=helmert convention=position_vector x = 0.01270  dx =-0.0029  rx =-0.00039  drx =-0.00011 y = 0.00650  dy =-0.0002  ry = 0.00080  dry =-0.00019 z =-0.0209   dz =-0.0006  rz =-0.00114  drz = 0.00007 s = 0.00195  ds = 0.00001 t_epoch=1988.0";
+
+        bool created = TryCreateConversionTransform(operation, out Func<double[], double[]>? transform, out string? skipReason);
+
+        Assert.True(created, skipReason ?? "TryCreateConversionTransform returned false.");
+        double[] output = Assert.IsType<Func<double[], double[]>>(transform)([3370658.378d, 711877.314d, 5349787.086d, 2018d]);
+        Assert.InRange(output[0], 3370658.18087d - 1e-4d, 3370658.18087d + 1e-4d);
+        Assert.InRange(output[1], 711877.42750d - 1e-4d, 711877.42750d + 1e-4d);
+        Assert.InRange(output[2], 5349787.12648d - 1e-4d, 5349787.12648d + 1e-4d);
+        Assert.InRange(output[3], 2018d - 1e-12d, 2018d + 1e-12d);
+    }
+
+    /// <summary>
+    /// Verifies that the builtins harness no longer skips the standalone kinematic Helmert GIE rows.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithForwardKinematicHelmertCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 416,
+            Operation = "proj=helmert convention=position_vector x = 0.01270  dx =-0.0029  rx =-0.00039  drx =-0.00011 y = 0.00650  dy =-0.0002  ry = 0.00080  dry =-0.00019 z =-0.0209   dz =-0.0006  rz =-0.00114  drz = 0.00007 s = 0.00195  ds = 0.00001 t_epoch=1988.0",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [3370658.378d, 711877.314d, 5349787.086d, 2018d],
+            Expect = [3370658.18087d, 711877.42750d, 5349787.12648d, 2018d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
+    /// Verifies that standalone geographic identity conversion cases honor the legacy <c>+geoc</c> flag using PROJ's longlat semantics.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformWithLonglatGeocAndInverseReturnsGeocentricLatitude()
+    {
+        const string operation = "proj=pipeline step proj=longlat ellps=GRS80 geoc inv";
+
+        bool created = TryCreateConversionTransform(operation, out Func<double[], double[]>? transform, out string? skipReason);
+
+        Assert.True(created, skipReason ?? "TryCreateConversionTransform returned false.");
+        double[] output = Assert.IsType<Func<double[], double[]>>(transform)([12d, 55d, 0d, 0d]);
+        Assert.Equal(12d, output[0], 12);
+        Assert.Equal(54.818973308324573d, output[1], 12);
+        Assert.Equal(0d, output[2], 12);
+        Assert.Equal(0d, output[3], 12);
+    }
+
+    /// <summary>
+    /// Verifies that the builtins harness no longer skips the old <c>+geoc</c> flag pipeline row.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithLegacyGeocLonglatCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 506,
+            Operation = "proj=pipeline step proj=longlat ellps=GRS80 geoc inv",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "m",
+            Direction = GieDirection.Forward,
+            Accept = [12d, 55d, 0d, 0d],
+            Expect = [12d, 54.818973308324573d, 0d, 0d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
     }
 
     /// <summary>

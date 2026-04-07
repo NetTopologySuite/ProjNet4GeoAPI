@@ -596,6 +596,23 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
+    /// Verifies that a legacy <c>longlat +geoc</c> pipeline step follows PROJ's spherical-ocentric semantics.
+    /// </summary>
+    [Fact]
+    public void PipelineWithLonglatGeocAndInverseConvertsGeodeticToGeocentricLatitude()
+    {
+        const string operation = "+proj=pipeline +step +proj=longlat +ellps=GRS80 +geoc +inv";
+
+        MathTransform transform = RequirePipelineMathTransform(operation);
+        double[] transformed = transform.Transform([12d, 55d, 0d, 0d]);
+
+        Assert.Equal(12d, transformed[0], 12);
+        Assert.Equal(54.818973308324573d, transformed[1], 12);
+        Assert.Equal(0d, transformed[2], 12);
+        Assert.Equal(0d, transformed[3], 12);
+    }
+
+    /// <summary>
     /// Verifies that the cart alias step respects the +to_meter scaling parameter when converting to Cartesian coordinates.
     /// </summary>
     [Fact]

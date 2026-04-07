@@ -898,6 +898,19 @@ internal static class ProjPipelineMathTransformFactory
             new IdentityMathTransform(3),
         };
 
+        if (args.ContainsKey("geoc"))
+        {
+            if (!TryResolveEllipsoid(args, out double semiMajor, out double semiMinor, out skipReason))
+            {
+                transform = null;
+                return false;
+            }
+
+            // PROJ's legacy +proj=longlat/+proj=latlong +geoc flag behaves like the
+            // inverse of the dedicated geoc step, and +inv toggles it back again.
+            transforms.Add(new GeocentricLatitudeMathTransform(semiMajor, semiMinor, isInverse: true));
+        }
+
         if (args.TryGetValue("pm", out string? pmToken) && !string.IsNullOrWhiteSpace(pmToken))
         {
             if (!TryResolveProjPrimeMeridianLongitudeDegrees(pmToken, out double primeMeridianLongitudeDegrees))

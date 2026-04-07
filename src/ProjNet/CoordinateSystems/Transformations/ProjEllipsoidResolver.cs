@@ -570,7 +570,7 @@ internal static class ProjEllipsoidResolver
         value = 0d;
         if (!TryParseFiniteDouble(token, out value))
         {
-            int slashIndex = token.IndexOf('/', StringComparison.Ordinal);
+            int slashIndex = IndexOfOrdinal(token, '/');
             if (slashIndex <= 0 || slashIndex >= token.Length - 1)
             {
                 return false;
@@ -625,13 +625,13 @@ internal static class ProjEllipsoidResolver
             text = text[1..];
         }
 
-        int dIndex = text.IndexOf('d', StringComparison.Ordinal);
+        int dIndex = IndexOfOrdinal(text, 'd');
         if (dIndex < 0)
         {
-            dIndex = text.IndexOf('D', StringComparison.Ordinal);
+            dIndex = IndexOfOrdinal(text, 'D');
         }
 
-        int mIndex = text.IndexOf('\'', StringComparison.Ordinal);
+        int mIndex = IndexOfOrdinal(text, '\'');
         if (dIndex <= 0 || mIndex <= dIndex)
         {
             return false;
@@ -646,7 +646,7 @@ internal static class ProjEllipsoidResolver
         }
 
         double seconds = 0d;
-        int secondsMarker = text.IndexOf('"', StringComparison.Ordinal);
+        int secondsMarker = IndexOfOrdinal(text, '"');
         if (secondsMarker > mIndex + 1)
         {
             string secondsToken = text.Substring(mIndex + 1, secondsMarker - mIndex - 1);
@@ -658,6 +658,15 @@ internal static class ProjEllipsoidResolver
 
         value = sign * (degrees + (minutes / 60d) + (seconds / 3600d));
         return true;
+    }
+
+    private static int IndexOfOrdinal(string text, char value)
+    {
+#if NETSTANDARD2_0
+        return text.IndexOf(value);
+#else
+        return text.IndexOf(value, StringComparison.Ordinal);
+#endif
     }
 
     private static bool TryParseFiniteDouble(string token, out double value)

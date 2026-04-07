@@ -839,6 +839,17 @@ public class GieBuiltinsTheoryTests
                 continue;
             }
 
+            if (token.Length > 1 && token[0] == '=')
+            {
+                if (tokens.Count == 0)
+                {
+                    continue;
+                }
+
+                tokens[^1] = $"{tokens[^1]}{token}";
+                continue;
+            }
+
             if (i + 2 < rawTokens.Length && rawTokens[i + 1].Equals("=", StringComparison.Ordinal))
             {
                 tokens.Add($"{token}={rawTokens[i + 2]}");
