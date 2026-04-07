@@ -814,6 +814,21 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
+    /// Verifies that PROJ-style ellipsoid precedence treats <c>+ellps</c> as the base definition and applies <c>+a</c> as a later size override.
+    /// </summary>
+    [Fact]
+    public void PipelineWithHealpixEllipsoidAndSemiMajorOverridePreservesEllipsoidShape()
+    {
+        const string operation = "+proj=healpix +a=1 +ellps=WGS84 +lon_0=0";
+
+        MathTransform transform = RequirePipelineMathTransform(operation);
+        double[] output = transform.Transform([-90d, 0d]);
+
+        Assert.Equal(-1.569040407531329d, output[0], 12);
+        Assert.Equal(0d, output[1], 12);
+    }
+
+    /// <summary>
     /// Verifies that geographic identity steps honor longitude wrapping.
     /// </summary>
     [Fact]

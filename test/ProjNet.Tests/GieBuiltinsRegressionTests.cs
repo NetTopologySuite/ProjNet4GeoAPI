@@ -510,6 +510,54 @@ public class GieBuiltinsRegressionTests
     }
 
     /// <summary>
+    /// Verifies that HEALPix builtins cases preserve ellipsoid shape when <c>+a</c> overrides the semimajor axis.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithForwardHealpixEllipsoidSemiMajorOverrideCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 130,
+            Operation = "proj=healpix a=1 lon_0=0 ellps=WGS84",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [-90d, 0d],
+            Expect = [-1.56904d, 0d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
+    /// Verifies that HEALPix builtins authalic output remains consistent when ellipsoid shape is preserved under <c>+a</c>.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithForwardHealpixAuthalicLatitudeCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 128,
+            Operation = "proj=healpix a=1 lon_0=0 ellps=WGS84",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [0d, 41.937853904844985d],
+            Expect = [0d, 0.78452d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
     /// Verifies that Mercator builtins cases distinguish PROJ's case-sensitive spherification flags.
     /// </summary>
     [Fact]

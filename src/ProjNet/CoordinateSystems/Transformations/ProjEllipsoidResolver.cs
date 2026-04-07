@@ -132,6 +132,44 @@ internal static class ProjEllipsoidResolver
             && TryApplySpherification(args, ref semiMajor, ref semiMinor, out errorMessage);
     }
 
+    /// <summary>
+    /// Applies an explicit <c>+a</c> size override while preserving the currently resolved ellipsoid shape.
+    /// </summary>
+    /// <param name="args">The PROJ argument dictionary.</param>
+    /// <param name="semiMajor">The resolved semi-major axis in metres.</param>
+    /// <param name="semiMinor">The resolved semi-minor axis in metres.</param>
+    /// <param name="errorMessage">An error message when the override token is invalid.</param>
+    /// <returns><see langword="true"/> when the override set is valid.</returns>
+    internal static bool TryApplySemiMajorOverride(
+        IReadOnlyDictionary<string, string> args,
+        ref double semiMajor,
+        ref double semiMinor,
+        out string? errorMessage)
+    {
+        errorMessage = null;
+        if (!TryGetNonEmptyToken(args, "a", out string majorToken))
+        {
+            return true;
+        }
+
+        if (!TryParseFiniteDouble(majorToken, out double explicitSemiMajor) || explicitSemiMajor <= 0d)
+        {
+            errorMessage = "Ellipsoid +a override must be finite and positive.";
+            return false;
+        }
+
+        if (semiMajor <= 0d || semiMinor <= 0d)
+        {
+            errorMessage = "Ellipsoid +a override requires a previously resolved positive ellipsoid shape.";
+            return false;
+        }
+
+        double scale = explicitSemiMajor / semiMajor;
+        semiMajor = explicitSemiMajor;
+        semiMinor *= scale;
+        return TryValidateResolvedAxes(semiMajor, semiMinor, "+a", out errorMessage);
+    }
+
     private static double ComputeSemiMinorAxis(double semiMajor, double inverseFlattening)
     {
         return (1d - (1d / inverseFlattening)) * semiMajor;
