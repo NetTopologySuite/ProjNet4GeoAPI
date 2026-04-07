@@ -189,6 +189,54 @@ public class GieBuiltinsRegressionTests
     }
 
     /// <summary>
+    /// Verifies that the ellipsoidal equatorial gnomonic builtins hotspot no longer skips.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithForwardEllipsoidalGnomonicEquatorialCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 2302,
+            Operation = "+proj=gnom +a=1 +rf=200",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [10d, 80d],
+            Expect = [0.1763d, 5.7232d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
+    /// Verifies that the ellipsoidal north-polar gnomonic builtins hotspot no longer skips.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithForwardEllipsoidalGnomonicPolarCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 2364,
+            Operation = "+proj=gnom +a=1 +rf=200 +lat_0=90",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [45d, 45d],
+            Expect = [0.7079d, -0.7079d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
     /// Verifies that the builtins harness no longer skips horizontal ellipsoidal Airocean forward cases.
     /// </summary>
     [Fact]

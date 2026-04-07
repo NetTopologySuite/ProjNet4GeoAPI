@@ -32,8 +32,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://en.wikipedia.org/wiki/Azimuthal_equidistant_projection">Wikipedia: Azimuthal equidistant projection.</seealso>
 internal class AzimuthalEquidistantProjection : MapProjection
 {
-    private const int MaxGeodesicIterations = 100;
-    private const double GeodesicTolerance = 1e-12;
     private const double PathologicalTolerance = 1e-14;
 
     private readonly bool ellipsoidal;
@@ -153,16 +151,6 @@ internal class AzimuthalEquidistantProjection : MapProjection
         this.InverseSpherical(x, y, out x, out y);
     }
 
-    private static double ComputeDeltaSigma(double bCoeff, double sinSigma, double cosSigma, double cos2SigmaM)
-    {
-        double cos2SigmaMSquared = cos2SigmaM * cos2SigmaM;
-        double sinSigmaSquared = sinSigma * sinSigma;
-        double firstTerm = cosSigma * (-1d + (2d * cos2SigmaMSquared));
-        double secondTerm = (bCoeff / 6d) * cos2SigmaM * (-3d + (4d * sinSigmaSquared)) * (-3d + (4d * cos2SigmaMSquared));
-        double bracket = cos2SigmaM + ((bCoeff / 4d) * (firstTerm - secondTerm));
-        return bCoeff * sinSigma * bracket;
-    }
-
     private static ProjectionMode DetermineMode(double latitudeOfOrigin)
     {
         if (Math.Abs(Math.Abs(latitudeOfOrigin) - HalfPi) < Eps10)
@@ -176,11 +164,6 @@ internal class AzimuthalEquidistantProjection : MapProjection
         }
 
         return ProjectionMode.Oblique;
-    }
-
-    private static double NormalizeLongitude(double longitude)
-    {
-        return Math.Atan2(Math.Sin(longitude), Math.Cos(longitude));
     }
 
     private void ForwardSpherical(double lambda, double phi, out double x, out double y)
@@ -372,7 +355,7 @@ internal class AzimuthalEquidistantProjection : MapProjection
             return;
         }
 
-        if (!this.TryVincentyInverse(this.latOrigin, 0d, phi, lambda, out double distance, out double azimuth))
+        if (!EllipsoidalGeodesic.TryVincentyInverse(this.semiMinor, this.flattening, this.eccentricityPrimeSquared, this.latOrigin, 0d, phi, lambda, out double distance, out double azimuth))
         {
             ArgumentGuard.ThrowArgumentOutOfRange(nameof(phi), "Coordinate is outside the valid Azimuthal Equidistant domain.");
         }
@@ -399,130 +382,12 @@ internal class AzimuthalEquidistantProjection : MapProjection
 
         double azimuth = Math.Atan2(xMeter, yMeter);
         double distance = rho / this.scaleFactor;
-        if (!this.TryVincentyDirect(this.latOrigin, 0d, azimuth, distance, out double phi, out double lambda))
+        if (!EllipsoidalGeodesic.TryVincentyDirect(this.semiMinor, this.flattening, this.eccentricityPrimeSquared, this.latOrigin, 0d, azimuth, distance, out double phi, out double lambda))
         {
             ArgumentGuard.ThrowArgumentOutOfRange(nameof(xMeter), "Coordinate is outside the valid Azimuthal Equidistant domain.");
         }
 
         lon = Adjust_lon(this.centralMeridian + lambda);
         lat = phi;
-    }
-
-    private bool TryVincentyInverse(double latitude1, double longitude1, double latitude2, double longitude2, out double distance, out double azimuth)
-    {
-        distance = 0d;
-        azimuth = 0d;
-
-        if (Math.Abs(latitude1 - latitude2) < GeodesicTolerance && Math.Abs(longitude1 - longitude2) < GeodesicTolerance)
-        {
-            return true;
-        }
-
-        double oneMinusF = 1d - this.flattening;
-        double tanU1 = oneMinusF * Math.Tan(latitude1);
-        double tanU2 = oneMinusF * Math.Tan(latitude2);
-        double u1 = Math.Atan(tanU1);
-        double u2 = Math.Atan(tanU2);
-        double sinU1 = Math.Sin(u1);
-        double cosU1 = Math.Cos(u1);
-        double sinU2 = Math.Sin(u2);
-        double cosU2 = Math.Cos(u2);
-
-        double l = NormalizeLongitude(longitude2 - longitude1);
-        double lambda = l;
-
-        for (int iteration = 0; iteration < MaxGeodesicIterations; iteration++)
-        {
-            double sinLambda = Math.Sin(lambda);
-            double cosLambda = Math.Cos(lambda);
-
-            double term1 = cosU2 * sinLambda;
-            double term2 = (cosU1 * sinU2) - (sinU1 * cosU2 * cosLambda);
-            double sinSigma = Math.Sqrt((term1 * term1) + (term2 * term2));
-            if (sinSigma < GeodesicTolerance)
-            {
-                return true;
-            }
-
-            double cosSigma = (sinU1 * sinU2) + (cosU1 * cosU2 * cosLambda);
-            double sigma = Math.Atan2(sinSigma, cosSigma);
-            double sinAlpha = (cosU1 * cosU2 * sinLambda) / sinSigma;
-            double cosSqAlpha = 1d - (sinAlpha * sinAlpha);
-            double cos2SigmaM = cosSqAlpha < GeodesicTolerance
-                ? 0d
-                : cosSigma - ((2d * sinU1 * sinU2) / cosSqAlpha);
-
-            double c = (this.flattening / 16d) * cosSqAlpha * (4d + (this.flattening * (4d - (3d * cosSqAlpha))));
-            double lambdaPrevious = lambda;
-            lambda = l + ((1d - c) * this.flattening * sinAlpha * (sigma + (c * sinSigma * (cos2SigmaM + (c * cosSigma * (-1d + (2d * cos2SigmaM * cos2SigmaM)))))));
-            if (Math.Abs(lambda - lambdaPrevious) <= GeodesicTolerance)
-            {
-                double uSq = cosSqAlpha * this.eccentricityPrimeSquared;
-                double aCoeff = 1d + ((uSq / 16384d) * (4096d + (uSq * (-768d + (uSq * (320d - (175d * uSq)))))));
-                double bCoeff = (uSq / 1024d) * (256d + (uSq * (-128d + (uSq * (74d - (47d * uSq))))));
-                double deltaSigma = ComputeDeltaSigma(bCoeff, sinSigma, cosSigma, cos2SigmaM);
-
-                distance = this.semiMinor * aCoeff * (sigma - deltaSigma);
-                azimuth = Math.Atan2(
-                    cosU2 * Math.Sin(lambda),
-                    (cosU1 * sinU2) - (sinU1 * cosU2 * Math.Cos(lambda)));
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    private bool TryVincentyDirect(double latitude1, double longitude1, double azimuth1, double distance, out double latitude2, out double longitude2)
-    {
-        latitude2 = latitude1;
-        longitude2 = longitude1;
-
-        double oneMinusF = 1d - this.flattening;
-        double tanU1 = oneMinusF * Math.Tan(latitude1);
-        double u1 = Math.Atan(tanU1);
-        double sinU1 = Math.Sin(u1);
-        double cosU1 = Math.Cos(u1);
-        double sinAlpha1 = Math.Sin(azimuth1);
-        double cosAlpha1 = Math.Cos(azimuth1);
-
-        double sigma1 = Math.Atan2(tanU1, cosAlpha1);
-        double sinAlpha = cosU1 * sinAlpha1;
-        double cosSqAlpha = 1d - (sinAlpha * sinAlpha);
-        double uSq = cosSqAlpha * this.eccentricityPrimeSquared;
-        double aCoeff = 1d + ((uSq / 16384d) * (4096d + (uSq * (-768d + (uSq * (320d - (175d * uSq)))))));
-        double bCoeff = (uSq / 1024d) * (256d + (uSq * (-128d + (uSq * (74d - (47d * uSq))))));
-
-        double sigma = distance / (this.semiMinor * aCoeff);
-        for (int iteration = 0; iteration < MaxGeodesicIterations; iteration++)
-        {
-            double cos2SigmaM = Math.Cos((2d * sigma1) + sigma);
-            double sinSigma = Math.Sin(sigma);
-            double cosSigma = Math.Cos(sigma);
-            double deltaSigma = ComputeDeltaSigma(bCoeff, sinSigma, cosSigma, cos2SigmaM);
-            double sigmaPrevious = sigma;
-            sigma = (distance / (this.semiMinor * aCoeff)) + deltaSigma;
-            if (Math.Abs(sigma - sigmaPrevious) <= GeodesicTolerance)
-            {
-                double sinSigmaFinal = Math.Sin(sigma);
-                double cosSigmaFinal = Math.Cos(sigma);
-                double tmp = (sinU1 * sinSigmaFinal) - (cosU1 * cosSigmaFinal * cosAlpha1);
-
-                latitude2 = Math.Atan2(
-                    (sinU1 * cosSigmaFinal) + (cosU1 * sinSigmaFinal * cosAlpha1),
-                    oneMinusF * Math.Sqrt((sinAlpha * sinAlpha) + (tmp * tmp)));
-
-                double lambda = Math.Atan2(
-                    sinSigmaFinal * sinAlpha1,
-                    (cosU1 * cosSigmaFinal) - (sinU1 * sinSigmaFinal * cosAlpha1));
-
-                double c = (this.flattening / 16d) * cosSqAlpha * (4d + (this.flattening * (4d - (3d * cosSqAlpha))));
-                double l = lambda - ((1d - c) * this.flattening * sinAlpha * (sigma + (c * sinSigmaFinal * (cos2SigmaM + (c * cosSigmaFinal * (-1d + (2d * cos2SigmaM * cos2SigmaM)))))));
-                longitude2 = NormalizeLongitude(longitude1 + l);
-                return true;
-            }
-        }
-
-        return false;
     }
 }
