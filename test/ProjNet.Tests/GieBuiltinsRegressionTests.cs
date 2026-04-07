@@ -431,6 +431,101 @@ public class GieBuiltinsRegressionTests
     }
 
     /// <summary>
+    /// Verifies that legacy non-pipeline <c>geoidgrids</c> operations are normalized into executable runtime pipelines.
+    /// </summary>
+    /// <param name="operation">Legacy geoidgrids operation under test.</param>
+    [Theory]
+    [InlineData("proj=latlong geoidgrids=egm96_15.gtx ellps=GRS80")]
+    [InlineData("proj=merc geoidgrids=egm96_15.gtx axis=sue ellps=GRS80")]
+    [InlineData("+proj=latlong +ellps=WGS84 +geoidgrids=tests/test_nodata.gtx")]
+    public void TryIsRuntimeOperationSupportedRecognizesLegacyGeoidGridOperations(string operation)
+    {
+        Assert.True(TryIsRuntimeOperationSupported(operation));
+    }
+
+    /// <summary>
+    /// Verifies that legacy geographic <c>geoidgrids</c> operations apply the expected forward vertical shift.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformWithLegacyLatlongGeoidGridsReturnsExpectedVerticalShift()
+    {
+        double[] output = RequireBuiltinsRuntimeProjectedOutput("proj=latlong geoidgrids=egm96_15.gtx ellps=GRS80", 12.5d, 55.5d, 0d);
+
+        Assert.InRange(output[0], 12.5d - 1e-12d, 12.5d + 1e-12d);
+        Assert.InRange(output[1], 55.5d - 1e-12d, 55.5d + 1e-12d);
+        Assert.InRange(output[2], -36.3941d - 1e-4d, -36.3941d + 1e-4d);
+    }
+
+    /// <summary>
+    /// Verifies that legacy geographic <c>geoidgrids</c> operations also preserve the inverse vertical path.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformForDirectionWithLegacyLatlongGeoidGridsInverseReturnsExpectedVerticalShift()
+    {
+        bool created = TryCreateConversionTransformForDirection(
+            "proj=latlong geoidgrids=egm96_15.gtx ellps=GRS80",
+            GieDirection.Inverse,
+            out Func<double[], double[]>? transform,
+            out string? skipReason);
+
+        Assert.True(created, skipReason ?? "TryCreateConversionTransform returned false.");
+        double[] output = Assert.IsType<Func<double[], double[]>>(transform)([12.5d, 55.5d, -36.3941d]);
+        Assert.InRange(output[0], 12.5d - 1e-12d, 12.5d + 1e-12d);
+        Assert.InRange(output[1], 55.5d - 1e-12d, 55.5d + 1e-12d);
+        Assert.InRange(output[2], -1e-4d, 1e-4d);
+    }
+
+    /// <summary>
+    /// Verifies that projected legacy <c>geoidgrids</c> operations keep the vertical component alongside the projected ordinates.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformWithLegacyMercGeoidGridsReturnsExpectedProjectedAndVerticalOutput()
+    {
+        double[] output = RequireBuiltinsRuntimeProjectedOutput("proj=merc geoidgrids=egm96_15.gtx ellps=GRS80", 12.5d, 55.5d, 0d);
+
+        Assert.InRange(output[0], 1391493.63492d - 1e-4d, 1391493.63492d + 1e-4d);
+        Assert.InRange(output[1], 7424275.19462d - 1e-4d, 7424275.19462d + 1e-4d);
+        Assert.InRange(output[2], -36.3941d - 1e-4d, -36.3941d + 1e-4d);
+    }
+
+    /// <summary>
+    /// Verifies that legacy <c>geoidgrids</c> operations still respect nodata cells when rewritten for the runtime path.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformWithLegacyLatlongGeoidGridsNodataReturnsExpectedVerticalShift()
+    {
+        double[] output = RequireBuiltinsRuntimeProjectedOutput("+proj=latlong +ellps=WGS84 +geoidgrids=tests/test_nodata.gtx", 4.05d, 52.1d, 0d);
+
+        Assert.InRange(output[0], 4.05d - 1e-12d, 4.05d + 1e-12d);
+        Assert.InRange(output[1], 52.1d - 1e-12d, 52.1d + 1e-12d);
+        Assert.InRange(output[2], -10d - 1e-6d, -10d + 1e-6d);
+    }
+
+    /// <summary>
+    /// Verifies that the axis-aware projected geoidgrid builtins row now executes instead of skipping.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithLegacyMercGeoidGridsAxisCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 147,
+            Operation = "proj=merc geoidgrids=egm96_15.gtx axis=sue ellps=GRS80",
+            ToleranceValue = 15d,
+            ToleranceUnit = "cm",
+            Direction = GieDirection.Forward,
+            Accept = [12.5d, 55.5d, 0d],
+            Expect = [-7424275.1946d, -36.3941d, 1391493.6349d, 0d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
     /// Verifies that the runtime <c>+proj=utm +approx</c> path still uses the approximate Snyder-based kernel instead of the exact ETMERC path.
     /// </summary>
     [Fact]

@@ -771,7 +771,79 @@ public class GieBuiltinsTheoryTests
 
         string normalizedOperation = NormalizeExplicitFalseOffsetsForRuntime(string.Join(" ", tokens));
         normalizedOperation = ExpandLegacyInitDefinitions(normalizedOperation);
+        normalizedOperation = RewriteLegacyGeoidGridOperation(normalizedOperation);
         return ResolveKnownTestGridPaths(normalizedOperation);
+    }
+
+    private static string RewriteLegacyGeoidGridOperation(string operation)
+    {
+        if (!TryParseOperationArguments(operation, out Dictionary<string, string> args)
+            || args.ContainsKey("step")
+            || !args.TryGetValue("proj", out string? projCode)
+            || string.IsNullOrWhiteSpace(projCode)
+            || projCode.Equals("pipeline", StringComparison.OrdinalIgnoreCase)
+            || !args.TryGetValue("geoidgrids", out string? geoidGridToken)
+            || string.IsNullOrWhiteSpace(geoidGridToken))
+        {
+            return operation;
+        }
+
+        string[] tokens = operation.Split(OperationTokenSeparators, StringSplitOptions.RemoveEmptyEntries);
+        var projectionStepTokens = new List<string>(tokens.Length);
+        string? axisToken = null;
+        foreach (string token in tokens)
+        {
+            if (token.StartsWith("+geoidgrids=", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            if (token.StartsWith("+axis=", StringComparison.OrdinalIgnoreCase))
+            {
+                axisToken = token[6..];
+                continue;
+            }
+
+            projectionStepTokens.Add(token);
+        }
+
+        if (projectionStepTokens.Count == 0)
+        {
+            return operation;
+        }
+
+        var rewrittenTokens = new List<string>(projectionStepTokens.Count + 9)
+        {
+            "+proj=pipeline",
+            "+step",
+            "+proj=vgridshift",
+            $"+grids={geoidGridToken}",
+            "+step",
+        };
+        rewrittenTokens.AddRange(projectionStepTokens);
+
+        if (!string.IsNullOrWhiteSpace(axisToken))
+        {
+            rewrittenTokens.Add("+step");
+            rewrittenTokens.Add("+proj=axisswap");
+            rewrittenTokens.Add($"+axis={axisToken}");
+        }
+        else if (!IsGeographicIdentityProjectionCode(projCode))
+        {
+            // Keep the vertical component visible in the array-returning transform path.
+            rewrittenTokens.Add("+step");
+            rewrittenTokens.Add("+proj=noop");
+        }
+
+        return string.Join(" ", rewrittenTokens);
+    }
+
+    private static bool IsGeographicIdentityProjectionCode(string projCode)
+    {
+        return projCode.Equals("latlong", StringComparison.OrdinalIgnoreCase)
+            || projCode.Equals("longlat", StringComparison.OrdinalIgnoreCase)
+            || projCode.Equals("latlon", StringComparison.OrdinalIgnoreCase)
+            || projCode.Equals("lonlat", StringComparison.OrdinalIgnoreCase);
     }
 
     private static string NormalizeExplicitFalseOffsetsForRuntime(string operation)
@@ -980,7 +1052,8 @@ public class GieBuiltinsTheoryTests
         }
 
         string normalizedToken = gridToken.Replace('/', '\\');
-        if (!normalizedToken.StartsWith("tests\\", StringComparison.OrdinalIgnoreCase))
+        bool isRelativeTestToken = normalizedToken.StartsWith("tests\\", StringComparison.OrdinalIgnoreCase);
+        if (!isRelativeTestToken && normalizedToken.Contains('\\', StringComparison.Ordinal))
         {
             return false;
         }
@@ -998,7 +1071,9 @@ public class GieBuiltinsTheoryTests
             return true;
         }
 
-        string? projDataGridPath = FindRepositoryFile("spec", "PROJ", "data", "tests", fileName);
+        string? projDataGridPath = isRelativeTestToken
+            ? FindRepositoryFile("spec", "PROJ", "data", "tests", fileName)
+            : FindRepositoryFile("spec", "PROJ", "data", fileName);
         if (projDataGridPath is not null)
         {
             resolvedPath = projDataGridPath;
