@@ -407,6 +407,30 @@ public class GieBuiltinsRegressionTests
     }
 
     /// <summary>
+    /// Verifies that geographic datum-aware pipeline steps execute through the runtime conversion path instead of being skipped.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithGgrs87LonglatDatumPipelineDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 253,
+            Operation = "+proj=pipeline +step +proj=longlat +datum=GGRS87 +inv +step +proj=longlat +datum=WGS84",
+            ToleranceValue = 20d,
+            ToleranceUnit = "cm",
+            Direction = GieDirection.Forward,
+            Accept = [23.7275d, 37.9838d, 0d],
+            Expect = [23.72919487318d, 37.986398897578d, 31.289740102d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
     /// Verifies that the runtime <c>+proj=utm +approx</c> path still uses the approximate Snyder-based kernel instead of the exact ETMERC path.
     /// </summary>
     [Fact]

@@ -383,8 +383,7 @@ public class GieBuiltinsTheoryTests
 
         double[]? output = null;
         string? conversionSkipReason = null;
-        bool isGeographicDatumShift = HasGeographicDatumShift(rawCase.Operation);
-        if (!isGeographicDatumShift && TryCreateConversionTransformForDirection(rawCase.Operation, rawCase.Direction, out Func<double[], double[]>? conversionTransform, out conversionSkipReason))
+        if (TryCreateConversionTransformForDirection(rawCase.Operation, rawCase.Direction, out Func<double[], double[]>? conversionTransform, out conversionSkipReason))
         {
             Func<double[], double[]> transform = Assert.IsType<Func<double[], double[]>>(conversionTransform);
             try

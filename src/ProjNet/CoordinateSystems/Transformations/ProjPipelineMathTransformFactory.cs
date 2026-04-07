@@ -630,7 +630,7 @@ internal static class ProjPipelineMathTransformFactory
         List<ProjectionParameter> parameters = ArgumentGuard.ThrowIfNull(parametersCandidate, nameof(parametersCandidate));
         string projectionImplementationCode = ResolveProjectionImplementationCode(args, projCode);
 
-        if (RequiresDatumAwareProjectedStep(args))
+        if (RequiresDatumAwareCrsStep(args))
         {
             if (!TryCreateDatumAwareProjectedStepTransform(args, projectionImplementationCode, parameters, out transform, out skipReason))
             {
@@ -695,7 +695,7 @@ internal static class ProjPipelineMathTransformFactory
         return projCode;
     }
 
-    private static bool RequiresDatumAwareProjectedStep(Dictionary<string, string> args)
+    private static bool RequiresDatumAwareCrsStep(Dictionary<string, string> args)
     {
         return args.ContainsKey("towgs84") || args.ContainsKey("datum");
     }
@@ -726,16 +726,7 @@ internal static class ProjPipelineMathTransformFactory
         }
 
         var csFactory = new CoordinateSystemFactory();
-
-        Ellipsoid ellipsoid = csFactory.CreateEllipsoid("PROJ pipeline ellipsoid", semiMajor, semiMinor, LinearUnit.Metre);
-        HorizontalDatum localDatum = csFactory.CreateHorizontalDatum("PROJ pipeline datum", DatumType.HD_Geocentric, ellipsoid, toWgs84);
-        GeographicCoordinateSystem localGeographic = csFactory.CreateGeographicCoordinateSystem(
-            "PROJ pipeline geographic",
-            AngularUnit.Degrees,
-            localDatum,
-            PrimeMeridian.Greenwich,
-            new AxisInfo("Lon", AxisOrientationEnum.East),
-            new AxisInfo("Lat", AxisOrientationEnum.North));
+        GeographicCoordinateSystem localGeographic = CreatePipelineGeographicCoordinateSystem(csFactory, semiMajor, semiMinor, toWgs84);
 
         IProjection projection = csFactory.CreateProjection("PROJ pipeline projection", projectionImplementationCode, parameters);
         LinearUnit linearUnit = CreateProjectionLinearUnit(unitFactor);
@@ -747,14 +738,7 @@ internal static class ProjPipelineMathTransformFactory
             new AxisInfo("East", AxisOrientationEnum.East),
             new AxisInfo("North", AxisOrientationEnum.North));
 
-        HorizontalDatum wgs84Datum = csFactory.CreateHorizontalDatum("WGS84", DatumType.HD_Geocentric, Ellipsoid.WGS84, null);
-        GeographicCoordinateSystem wgs84Geographic = csFactory.CreateGeographicCoordinateSystem(
-            "WGS84 GCS",
-            AngularUnit.Degrees,
-            wgs84Datum,
-            PrimeMeridian.Greenwich,
-            new AxisInfo("Lon", AxisOrientationEnum.East),
-            new AxisInfo("Lat", AxisOrientationEnum.North));
+        GeographicCoordinateSystem wgs84Geographic = CreateWgs84GeographicCoordinateSystem(csFactory);
 
         try
         {
@@ -776,6 +760,35 @@ internal static class ProjPipelineMathTransformFactory
             skipReason = $"{projectionImplementationCode} projected datum step could not be constructed for this step.";
             return false;
         }
+    }
+
+    private static GeographicCoordinateSystem CreatePipelineGeographicCoordinateSystem(
+        CoordinateSystemFactory csFactory,
+        double semiMajor,
+        double semiMinor,
+        Wgs84ConversionInfo? toWgs84)
+    {
+        Ellipsoid ellipsoid = csFactory.CreateEllipsoid("PROJ pipeline ellipsoid", semiMajor, semiMinor, LinearUnit.Metre);
+        HorizontalDatum localDatum = csFactory.CreateHorizontalDatum("PROJ pipeline datum", DatumType.HD_Geocentric, ellipsoid, toWgs84);
+        return csFactory.CreateGeographicCoordinateSystem(
+            "PROJ pipeline geographic",
+            AngularUnit.Degrees,
+            localDatum,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("Lon", AxisOrientationEnum.East),
+            new AxisInfo("Lat", AxisOrientationEnum.North));
+    }
+
+    private static GeographicCoordinateSystem CreateWgs84GeographicCoordinateSystem(CoordinateSystemFactory csFactory)
+    {
+        HorizontalDatum wgs84Datum = csFactory.CreateHorizontalDatum("WGS84", DatumType.HD_Geocentric, Ellipsoid.WGS84, null);
+        return csFactory.CreateGeographicCoordinateSystem(
+            "WGS84 GCS",
+            AngularUnit.Degrees,
+            wgs84Datum,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("Lon", AxisOrientationEnum.East),
+            new AxisInfo("Lat", AxisOrientationEnum.North));
     }
 
     private static bool TryBuildProjectionStepParameters(
@@ -1001,10 +1014,22 @@ internal static class ProjPipelineMathTransformFactory
         out string? skipReason)
     {
         skipReason = null;
-        var transforms = new List<MathTransform>(3)
+        var transforms = new List<MathTransform>(4);
+
+        if (RequiresDatumAwareCrsStep(args))
         {
-            new IdentityMathTransform(3),
-        };
+            if (!TryCreateDatumAwareGeographicStepTransform(args, out MathTransform? datumAwareTransform, out skipReason))
+            {
+                transform = null;
+                return false;
+            }
+
+            transforms.Add(ArgumentGuard.ThrowIfNull(datumAwareTransform, nameof(datumAwareTransform)));
+        }
+        else
+        {
+            transforms.Add(new IdentityMathTransform(3));
+        }
 
         if (args.ContainsKey("geoc"))
         {
@@ -1074,6 +1099,50 @@ internal static class ProjPipelineMathTransformFactory
 
         transform = currentTransform;
         return true;
+    }
+
+    private static bool TryCreateDatumAwareGeographicStepTransform(
+        Dictionary<string, string> args,
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
+    {
+        transform = null;
+        skipReason = null;
+
+        if (!TryResolveProjectionEllipsoid(args, out double semiMajor, out double semiMinor, out skipReason))
+        {
+            return false;
+        }
+
+        if (!TryResolveDatumToWgs84Parameters(args, out Wgs84ConversionInfo? toWgs84, out skipReason))
+        {
+            return false;
+        }
+
+        var csFactory = new CoordinateSystemFactory();
+        GeographicCoordinateSystem localGeographic = CreatePipelineGeographicCoordinateSystem(csFactory, semiMajor, semiMinor, toWgs84);
+        GeographicCoordinateSystem wgs84Geographic = CreateWgs84GeographicCoordinateSystem(csFactory);
+
+        try
+        {
+            transform = new CoordinateTransformationFactory().CreateFromCoordinateSystems(wgs84Geographic, localGeographic).MathTransform;
+            return true;
+        }
+        catch (ArgumentException)
+        {
+            skipReason = "Geographic datum step could not be created with the parsed parameter set.";
+            return false;
+        }
+        catch (NotSupportedException)
+        {
+            skipReason = "Geographic datum step is not supported by the current runtime.";
+            return false;
+        }
+        catch (InvalidOperationException)
+        {
+            skipReason = "Geographic datum step could not be constructed for this step.";
+            return false;
+        }
     }
 
     private static bool TryApplyOptionalVerticalUnitScale(
@@ -1384,7 +1453,7 @@ internal static class ProjPipelineMathTransformFactory
                 return ProjEllipsoidResolver.TryApplyExplicitShapeOverrides(args, ref semiMajor, ref semiMinor, out skipReason);
             }
 
-            skipReason = "utm received unsupported +ellps value.";
+            skipReason = "Projection step received unsupported +ellps value.";
             return false;
         }
 
@@ -1400,7 +1469,7 @@ internal static class ProjPipelineMathTransformFactory
                 return ProjEllipsoidResolver.TryApplyExplicitShapeOverrides(args, ref semiMajor, ref semiMinor, out skipReason);
             }
 
-            skipReason = "utm received unsupported +datum value.";
+            skipReason = "Projection step received unsupported +datum value.";
             return false;
         }
 
