@@ -783,6 +783,25 @@ internal static class ProjPipelineMathTransformFactory
             }
         }
 
+        if (projCode.Equals("spilhaus", StringComparison.OrdinalIgnoreCase))
+        {
+            if (!args.ContainsKey("lat_0"))
+            {
+                SetOrAddProjectionParameter(parameters, "latitude_of_origin", -49.56371678d);
+            }
+
+            if (!args.ContainsKey("lon_0"))
+            {
+                SetOrAddProjectionParameter(parameters, "central_meridian", 66.94970198d);
+            }
+
+            if (!TryApplyOptionalProjectionParameter(args, "azi", "azi", parameters, out skipReason)
+                || !TryApplyOptionalProjectionParameter(args, "rot", "rot", parameters, out skipReason))
+            {
+                return false;
+            }
+        }
+
         if (projCode.Equals("urm5", StringComparison.OrdinalIgnoreCase))
         {
             if (!args.TryGetValue("n", out string? nToken) || string.IsNullOrWhiteSpace(nToken))

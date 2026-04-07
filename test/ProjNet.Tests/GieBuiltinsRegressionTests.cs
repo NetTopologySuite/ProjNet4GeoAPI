@@ -414,6 +414,54 @@ public class GieBuiltinsRegressionTests
     }
 
     /// <summary>
+    /// Verifies that Spilhaus builtins cases preserve the PROJ azimuth parameter through the pipeline path.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithForwardSpilhausAzimuthCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 404,
+            Operation = "+proj=spilhaus +azi=9.1",
+            ToleranceValue = 1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [130.4d, -16.2d],
+            Expect = [3061806.4542d, -1678791.7428d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
+    /// Verifies that Spilhaus builtins cases preserve the PROJ rotation parameter through the pipeline path.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithForwardSpilhausRotationCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 411,
+            Operation = "+proj=spilhaus +rot=40.1",
+            ToleranceValue = 1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [130.4d, -16.2d],
+            Expect = [3720561.6630d, 309609.603620d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
     /// Verifies that Mercator builtins cases distinguish PROJ's case-sensitive spherification flags.
     /// </summary>
     [Fact]
