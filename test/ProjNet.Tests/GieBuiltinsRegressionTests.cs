@@ -462,6 +462,54 @@ public class GieBuiltinsRegressionTests
     }
 
     /// <summary>
+    /// Verifies that Airy builtins cases preserve the <c>+no_cut</c> flag through the pipeline path.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithForwardAiryNoCutCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 428,
+            Operation = "+proj=airy +R=1 +lat_0=-90 +no_cut",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [0d, 10d],
+            Expect = [0d, 1.5677d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
+    /// Verifies that Airy builtins cases preserve the <c>+lat_b</c> parameter through the pipeline path.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithForwardAiryLatBCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 447,
+            Operation = "+proj=airy +R=1 +lat_b=30",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [25d, 25d],
+            Expect = [0.3821d, 0.4216d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
     /// Verifies that Mercator builtins cases distinguish PROJ's case-sensitive spherification flags.
     /// </summary>
     [Fact]

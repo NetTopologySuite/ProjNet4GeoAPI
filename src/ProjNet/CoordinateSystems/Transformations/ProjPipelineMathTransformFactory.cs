@@ -802,6 +802,19 @@ internal static class ProjPipelineMathTransformFactory
             }
         }
 
+        if (projCode.Equals("airy", StringComparison.OrdinalIgnoreCase))
+        {
+            if (!TryApplyOptionalProjectionParameter(args, "lat_b", "lat_b", parameters, out skipReason))
+            {
+                return false;
+            }
+
+            if (args.ContainsKey("no_cut"))
+            {
+                SetOrAddProjectionParameter(parameters, "no_cut", 1d);
+            }
+        }
+
         if (projCode.Equals("urm5", StringComparison.OrdinalIgnoreCase))
         {
             if (!args.TryGetValue("n", out string? nToken) || string.IsNullOrWhiteSpace(nToken))
