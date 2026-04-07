@@ -520,8 +520,13 @@ public class Gigs5101TheoryTests
             return false;
         }
 
-        if (projCode.Equals("etmerc", StringComparison.OrdinalIgnoreCase)
-            || projCode.Equals("tmerc", StringComparison.OrdinalIgnoreCase))
+        if (projCode.Equals("etmerc", StringComparison.OrdinalIgnoreCase))
+        {
+            projectionClassName = "etmerc";
+            return true;
+        }
+
+        if (projCode.Equals("tmerc", StringComparison.OrdinalIgnoreCase))
         {
             projectionClassName = "transverse_mercator";
             return true;

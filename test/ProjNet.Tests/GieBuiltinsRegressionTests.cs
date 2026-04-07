@@ -459,6 +459,54 @@ public class GieBuiltinsRegressionTests
     }
 
     /// <summary>
+    /// Verifies that the wide-offset ETMERC builtins hotspot no longer skips.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithEtmercWideOffsetCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 1945,
+            Operation = "+proj=etmerc   +ellps=GRS80",
+            ToleranceValue = 50d,
+            ToleranceUnit = "nm",
+            Direction = GieDirection.Forward,
+            Accept = [44.69d, 35.37d],
+            Expect = [4168136.489446198d, 4985511.302287407d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
+    /// Verifies that the inverse wide-offset ETMERC builtins hotspot no longer skips.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithInverseEtmercWideOffsetCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 1961,
+            Operation = "+proj=etmerc   +ellps=GRS80",
+            ToleranceValue = 50d,
+            ToleranceUnit = "nm",
+            Direction = GieDirection.Inverse,
+            Accept = [4168136.489446198d, 4985511.302287407d],
+            Expect = [44.69d, 35.37d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
     /// Verifies that geographic datum-shift operations are rejected for projected coordinate tuples.
     /// </summary>
     [Fact]

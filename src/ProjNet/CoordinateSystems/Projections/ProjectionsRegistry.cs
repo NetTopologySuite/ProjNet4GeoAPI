@@ -68,8 +68,8 @@ public class ProjectionsRegistry
         Register("transverse_mercator_south_oriented", typeof(TransverseMercator));
         Register("gauss_kruger", typeof(TransverseMercator));
         Register("utm", typeof(TransverseMercator));
-        Register("etmerc", typeof(TransverseMercator));
-        Register("extended_transverse_mercator", typeof(TransverseMercator));
+        Register("etmerc", typeof(ExtendedTransverseMercator));
+        Register("extended_transverse_mercator", typeof(ExtendedTransverseMercator));
         Register("swiss_oblique_mercator", typeof(SwissObliqueMercatorProjection));
         Register("somerc", typeof(SwissObliqueMercatorProjection));
 
