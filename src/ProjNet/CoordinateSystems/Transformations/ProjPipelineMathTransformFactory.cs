@@ -747,6 +747,17 @@ internal static class ProjPipelineMathTransformFactory
             SetOrAddProjectionParameter(parameters, "guam", 1d);
         }
 
+        if (projCode.Equals("airocean", StringComparison.OrdinalIgnoreCase) && args.TryGetValue("orient", out string? airoceanOrientation))
+        {
+            if (!TryResolveAiroceanOrientationCode(airoceanOrientation, out double orientationCode))
+            {
+                skipReason = "Invalid value for +orient on airocean step.";
+                return false;
+            }
+
+            SetOrAddProjectionParameter(parameters, "airocean_orient", orientationCode);
+        }
+
         if (projCode.Equals("urm5", StringComparison.OrdinalIgnoreCase))
         {
             if (!args.TryGetValue("n", out string? nToken) || string.IsNullOrWhiteSpace(nToken))
@@ -1579,6 +1590,30 @@ internal static class ProjPipelineMathTransformFactory
             && double.TryParse(token, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value)
             && !double.IsNaN(value)
             && !double.IsInfinity(value);
+    }
+
+    private static bool TryResolveAiroceanOrientationCode(string token, out double orientationCode)
+    {
+        orientationCode = 0d;
+        if (string.IsNullOrWhiteSpace(token))
+        {
+            return false;
+        }
+
+        string normalized = token.Trim();
+        if (TryParseFiniteDouble(normalized, out orientationCode))
+        {
+            return orientationCode == 0d || orientationCode == 1d;
+        }
+
+        orientationCode = normalized.ToUpperInvariant() switch
+        {
+            "VERTICAL" => 0d,
+            "HORIZONTAL" => 1d,
+            _ => double.NaN,
+        };
+
+        return !double.IsNaN(orientationCode);
     }
 
     private static bool TryResolvePrimeMeridianLongitudeDegrees(string token, out double longitudeDegrees)

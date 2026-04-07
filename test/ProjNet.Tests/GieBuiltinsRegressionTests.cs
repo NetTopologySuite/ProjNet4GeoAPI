@@ -189,6 +189,30 @@ public class GieBuiltinsRegressionTests
     }
 
     /// <summary>
+    /// Verifies that the builtins harness no longer skips horizontal ellipsoidal Airocean forward cases.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithForwardAiroceanHorizontalCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 1301,
+            Operation = "+proj=airocean +orient=horizontal +ellps=GRS80",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [23d, 28d],
+            Expect = [13391387.087562159d, 13572113.73386754d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
     /// Verifies that spherical builtins operations using only <c>+a</c> keep that radius instead of falling back to WGS 84.
     /// </summary>
     [Fact]

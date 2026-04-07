@@ -857,6 +857,21 @@ public class PipelineRuntimeTests
         Assert.InRange(Math.Abs(output[1] - 35242.00d), 0d, 1e-2d);
     }
 
+    /// <summary>
+    /// Verifies that Airocean pipeline steps honor the horizontal orientation flag.
+    /// </summary>
+    [Fact]
+    public void PipelineWithAiroceanHorizontalOrientationMatchesProjReference()
+    {
+        const string operation = "+proj=airocean +orient=horizontal +ellps=GRS80";
+
+        MathTransform transform = RequirePipelineMathTransform(operation);
+        double[] output = transform.Transform([23d, 28d]);
+
+        Assert.InRange(Math.Abs(output[0] - 13391387.087562159d), 0d, 1e-3d);
+        Assert.InRange(Math.Abs(output[1] - 13572113.73386754d), 0d, 1e-3d);
+    }
+
     private static MathTransform RequirePipelineMathTransform(string operation)
     {
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out MathTransform? transform, out string? skipReason);
