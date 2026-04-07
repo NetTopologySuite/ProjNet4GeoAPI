@@ -507,6 +507,118 @@ public class GieBuiltinsRegressionTests
     }
 
     /// <summary>
+    /// Verifies that Hyperbolic Cassini direct-transform cases bind the runtime flag and return the expected projected coordinate.
+    /// </summary>
+    [Fact]
+    public void TryCreateTransformWithHyperbolicCassCaseReturnsExpectedProjectedCoordinate()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 924,
+            Operation = "+proj=cass +hyperbolic +a=6378306.376305601 +rf=293.466307 +lat_0=-16.25 +lon_0=179.33333333333333 +to_meter=20.1168 +x_0=251727.9155424 +y_0=334519.953768",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [179.99433652777776d, -16.841456527777776d],
+            Expect = [16015.28901692d, 13369.66005367d],
+        };
+
+        bool created = TryCreateTransform(testCase, out MathTransform? transform, out string? skipReason);
+        Assert.True(created, skipReason ?? "TryCreateTransform returned false.");
+
+        double[] output = Assert.IsAssignableFrom<MathTransform>(transform).Transform(testCase.Accept);
+        Assert.Equal(testCase.Expect[0], output[0], 6);
+        Assert.Equal(testCase.Expect[1], output[1], 6);
+    }
+
+    /// <summary>
+    /// Verifies that Hyperbolic Cassini conversion cases execute through the pipeline runtime with the expected projected coordinate.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformWithHyperbolicCassCaseReturnsExpectedProjectedCoordinate()
+    {
+        const string operation = "+proj=cass +hyperbolic +a=6378306.376305601 +rf=293.466307 +lat_0=-16.25 +lon_0=179.33333333333333 +to_meter=20.1168 +x_0=251727.9155424 +y_0=334519.953768";
+
+        bool created = TryCreateConversionTransform(operation, out Func<double[], double[]>? transform, out string? skipReason);
+        Assert.True(created, skipReason ?? "TryCreateConversionTransform returned false.");
+
+        double[] output = Assert.IsType<Func<double[], double[]>>(transform)([179.99433652777776d, -16.841456527777776d]);
+        Assert.Equal(16015.28901692d, output[0], 6);
+        Assert.Equal(13369.66005367d, output[1], 6);
+    }
+
+    /// <summary>
+    /// Verifies that Hyperbolic Cassini inverse-transform cases recover the expected geographic coordinate.
+    /// </summary>
+    [Fact]
+    public void TryCreateTransformWithInverseHyperbolicCassCaseReturnsExpectedGeographicCoordinate()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 924,
+            Operation = "+proj=cass +hyperbolic +a=6378306.376305601 +rf=293.466307 +lat_0=-16.25 +lon_0=179.33333333333333 +to_meter=20.1168 +x_0=251727.9155424 +y_0=334519.953768",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Inverse,
+            Accept = [16015.28901692d, 13369.66005367d],
+            Expect = [179.99433652777776d, -16.841456527777776d],
+        };
+
+        bool created = TryCreateTransform(testCase, out MathTransform? transform, out string? skipReason);
+        Assert.True(created, skipReason ?? "TryCreateTransform returned false.");
+
+        double[] output = Assert.IsAssignableFrom<MathTransform>(transform).Transform(testCase.Accept);
+        Assert.InRange(Math.Abs(output[0] - testCase.Expect[0]), 0d, 1e-9d);
+        Assert.InRange(Math.Abs(output[1] - testCase.Expect[1]), 0d, 1e-9d);
+    }
+
+    /// <summary>
+    /// Verifies that Hyperbolic Cassini conversion cases roundtrip through the inverse pipeline runtime.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformWithHyperbolicCassCaseRoundtripsProjectedCoordinate()
+    {
+        const string operation = "+proj=cass +hyperbolic +a=6378306.376305601 +rf=293.466307 +lat_0=-16.25 +lon_0=179.33333333333333 +to_meter=20.1168 +x_0=251727.9155424 +y_0=334519.953768";
+        double[] geographic = [179.99433652777776d, -16.841456527777776d];
+
+        bool createdForward = TryCreateConversionTransform(operation, out Func<double[], double[]>? forwardTransform, out string? forwardSkipReason);
+        Assert.True(createdForward, forwardSkipReason ?? "TryCreateConversionTransform returned false.");
+
+        bool createdInverse = TryCreateConversionTransformForDirection(operation, GieDirection.Inverse, out Func<double[], double[]>? inverseTransform, out string? inverseSkipReason);
+        Assert.True(createdInverse, inverseSkipReason ?? "TryCreateConversionTransformForDirection returned false.");
+
+        double[] projected = Assert.IsType<Func<double[], double[]>>(forwardTransform)(geographic);
+        double[] roundtripped = Assert.IsType<Func<double[], double[]>>(inverseTransform)(projected);
+
+        Assert.InRange(Math.Abs(roundtripped[0] - geographic[0]), 0d, 1e-9d);
+        Assert.InRange(Math.Abs(roundtripped[1] - geographic[1]), 0d, 1e-9d);
+    }
+
+    /// <summary>
+    /// Verifies that the Hyperbolic Cassini builtins hotspot no longer skips.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithHyperbolicCassCaseDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 924,
+            Operation = "+proj=cass +hyperbolic +a=6378306.376305601 +rf=293.466307 +lat_0=-16.25 +lon_0=179.33333333333333 +to_meter=20.1168 +x_0=251727.9155424 +y_0=334519.953768",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [179.99433652777776d, -16.841456527777776d],
+            Expect = [16015.28901692d, 13369.66005367d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
     /// Verifies that geographic datum-shift operations are rejected for projected coordinate tuples.
     /// </summary>
     [Fact]

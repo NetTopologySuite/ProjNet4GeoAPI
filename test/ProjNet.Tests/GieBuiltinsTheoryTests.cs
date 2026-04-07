@@ -1700,6 +1700,11 @@ public class GieBuiltinsTheoryTests
 
         if (args.TryGetValue("proj", out string? projectionCode))
         {
+            if (projectionCode.Equals("cass", StringComparison.OrdinalIgnoreCase) && args.ContainsKey("hyperbolic"))
+            {
+                ReplaceParameter(parameters, "hyperbolic", 1d);
+            }
+
             if (projectionCode.Equals("airocean", StringComparison.OrdinalIgnoreCase) && args.TryGetValue("orient", out string? airoceanOrientation))
             {
                 if (!TryGetAiroceanOrientationCode(airoceanOrientation, out double orientationCode))
@@ -1891,7 +1896,9 @@ public class GieBuiltinsTheoryTests
             return true;
         }
 
-        if (args.ContainsKey("hyperbolic"))
+        if (args.ContainsKey("hyperbolic")
+            && (!args.TryGetValue("proj", out string? hyperbolicProjCode)
+                || !hyperbolicProjCode.Equals("cass", StringComparison.OrdinalIgnoreCase)))
         {
             return true;
         }

@@ -683,6 +683,11 @@ public class Gigs5101TheoryTests
             ReplaceParameter(parameters, "false_northing", y0 / linearUnitFactor);
         }
 
+        if (args.TryGetValue("proj", out string? projectionCode) && projectionCode.Equals("cass", StringComparison.OrdinalIgnoreCase) && args.ContainsKey("hyperbolic"))
+        {
+            ReplaceParameter(parameters, "hyperbolic", 1d);
+        }
+
         if (args.TryGetValue("proj", out string? projCode) && projCode.Equals("utm", StringComparison.OrdinalIgnoreCase))
         {
             if (!TryGetZoneCentralMeridian(args, out double utmCentralMeridian))

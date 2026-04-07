@@ -52,6 +52,13 @@ internal class CassiniSoldnerProjection : MapProjection
     /// </summary>
     private const double One15th = 0.06666666666666666666d;
 
+    private const int InverseRefinementIterations = 15;
+    private const double InverseRefinementTolerance = 1e-12d;
+    private const double InverseJacobianTolerance = 1e-18d;
+    private const double InverseFiniteDifferenceStep = 1e-6d;
+    private const double InverseStepClamp = 0.3d;
+    private const double InversePoleClamp = HalfPi - 1e-10d;
+
     /// <summary>
     /// Ellipsoid eccentricity helper factor <c>e² / (1 - e²)</c>.
     /// </summary>
@@ -66,6 +73,11 @@ internal class CassiniSoldnerProjection : MapProjection
     /// Reciprocal of the semi-major axis length.
     /// </summary>
     private readonly double reciprocalSemiMajor;
+
+    /// <summary>
+    /// Indicates whether the Hyperbolic Cassini-Soldner forward correction is enabled.
+    /// </summary>
+    private readonly bool hyperbolic;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CassiniSoldnerProjection"/> class.
@@ -91,6 +103,7 @@ internal class CassiniSoldnerProjection : MapProjection
         this.cFactor = this.es / (1 - this.es);
         this.m0 = this.Mlfn(this.latOrigin, Math.Sin(this.latOrigin), Math.Cos(this.latOrigin));
         this.reciprocalSemiMajor = 1d / this.semiMajor;
+        this.hyperbolic = Math.Abs(this.Parameters.GetOptionalParameterValue("hyperbolic", 0d)) > 0d;
     }
 
     /// <inheritdoc/>
@@ -106,20 +119,7 @@ internal class CassiniSoldnerProjection : MapProjection
     {
         double lambda = lon - this.centralMeridian;
         double phi = lat;
-
-        Sincos(phi, out double sinPhi, out double cosPhi);
-
-        double y = this.Mlfn(phi, sinPhi, cosPhi);
-        double n = 1.0d / Math.Sqrt(1 - (this.es * sinPhi * sinPhi));
-        double tn = Math.Tan(phi);
-        double t = tn * tn;
-        double a1 = lambda * cosPhi;
-        double a2 = a1 * a1;
-        double c = this.cFactor * Math.Pow(cosPhi, 2.0d);
-
-        double x = n * a1 * (1.0d - (a2 * t * (One6th + ((8.0d - t + (8.0d * c)) * a2 * One120th))));
-        y -= this.m0 - (n * tn * a2 * (0.5d + ((5.0d - t + (6.0d * c)) * a2 * One24th)));
-
+        this.ForwardNormalized(lambda, phi, out double x, out double y);
         lon = x * this.semiMajor;
         lat = y * this.semiMajor;
     }
@@ -129,7 +129,9 @@ internal class CassiniSoldnerProjection : MapProjection
     {
         x *= this.reciprocalSemiMajor;
         y *= this.reciprocalSemiMajor;
-        double phi1 = this.Phi1(this.m0 + y);
+        double targetX = x;
+        double targetY = y;
+        double phi1 = this.Phi1(this.m0 + targetY);
 
         double tn = Math.Tan(phi1);
         double t = tn * tn;
@@ -137,12 +139,19 @@ internal class CassiniSoldnerProjection : MapProjection
         double r = 1.0d / (1.0d - (this.es * n * n));
         n = Math.Sqrt(r);
         r *= (1.0d - this.es) * n;
-        double dd = x / n;
+        double dd = targetX / n;
         double d2 = dd * dd;
 
-        y = phi1 - ((n * tn / r) * d2 * (.5 - ((1.0 + (3.0 * t)) * d2 * One24th)));
+        double phi = phi1 - ((n * tn / r) * d2 * (.5 - ((1.0 + (3.0 * t)) * d2 * One24th)));
         double lambda = dd * (1.0 + (t * d2 * (-One3rd + ((1.0 + (3.0 * t)) * d2 * One15th)))) / Math.Cos(phi1);
+
+        if (this.hyperbolic && !this.TryRefineInverseNormalized(targetX, targetY, ref lambda, ref phi))
+        {
+            ArgumentGuard.ThrowArgument("Convergence error.");
+        }
+
         x = Adjust_lon(lambda + this.centralMeridian);
+        y = phi;
     }
 
     private double Phi1(double arg)
@@ -167,5 +176,120 @@ internal class CassiniSoldnerProjection : MapProjection
 
         ArgumentGuard.ThrowArgument("Convergence error.");
         return 0d;
+    }
+
+    private void ForwardNormalized(double lambda, double phi, out double x, out double y)
+    {
+        Sincos(phi, out double sinPhi, out double cosPhi);
+
+        y = this.Mlfn(phi, sinPhi, cosPhi);
+        double n = 1.0d / Math.Sqrt(1 - (this.es * sinPhi * sinPhi));
+        double tn = Math.Tan(phi);
+        double t = tn * tn;
+        double a1 = lambda * cosPhi;
+        double a2 = a1 * a1;
+        double c = this.cFactor * Math.Pow(cosPhi, 2.0d);
+
+        x = n * a1 * (1.0d - (a2 * t * (One6th + ((8.0d - t + (8.0d * c)) * a2 * One120th))));
+        y -= this.m0 - (n * tn * a2 * (0.5d + ((5.0d - t + (6.0d * c)) * a2 * One24th)));
+
+        if (this.hyperbolic)
+        {
+            double rho = (n * n) * (1.0d - this.es) * n;
+            y -= (y * y * y) / (6.0d * rho * n);
+        }
+    }
+
+    private bool TryRefineInverseNormalized(double targetX, double targetY, ref double lambda, ref double phi)
+    {
+        for (int i = 0; i < InverseRefinementIterations; i++)
+        {
+            if (!this.TryForwardNormalized(lambda, phi, out double approxX, out double approxY))
+            {
+                return false;
+            }
+
+            double deltaX = approxX - targetX;
+            double deltaY = approxY - targetY;
+            if (Math.Abs(deltaX) < InverseRefinementTolerance && Math.Abs(deltaY) < InverseRefinementTolerance)
+            {
+                return true;
+            }
+
+            if (!this.TryComputeInverseJacobian(lambda, phi, approxX, approxY, out double derivLamX, out double derivLamY, out double derivPhiX, out double derivPhiY))
+            {
+                return false;
+            }
+
+            double deltaLambda = ProjectionConstants.Clamp((deltaX * derivLamX) + (deltaY * derivLamY), -InverseStepClamp, InverseStepClamp);
+            lambda = Adjust_lon(lambda - deltaLambda);
+
+            double deltaPhi = ProjectionConstants.Clamp((deltaX * derivPhiX) + (deltaY * derivPhiY), -InverseStepClamp, InverseStepClamp);
+            phi = ProjectionConstants.Clamp(phi - deltaPhi, -InversePoleClamp, InversePoleClamp);
+        }
+
+        return false;
+    }
+
+    private bool TryComputeInverseJacobian(
+        double lambda,
+        double phi,
+        double approxX,
+        double approxY,
+        out double derivLamX,
+        out double derivLamY,
+        out double derivPhiX,
+        out double derivPhiY)
+    {
+        derivLamX = 0d;
+        derivLamY = 0d;
+        derivPhiX = 0d;
+        derivPhiY = 0d;
+
+        double dLam = lambda > 0d ? -InverseFiniteDifferenceStep : InverseFiniteDifferenceStep;
+        double lambdaOffset = Adjust_lon(lambda + dLam);
+        dLam = lambdaOffset - lambda;
+        if (Math.Abs(dLam) < Eps10 || !this.TryForwardNormalized(lambdaOffset, phi, out double xLam, out double yLam))
+        {
+            return false;
+        }
+
+        double derivXLam = (xLam - approxX) / dLam;
+        double derivYLam = (yLam - approxY) / dLam;
+
+        double dPhi = phi > 0d ? -InverseFiniteDifferenceStep : InverseFiniteDifferenceStep;
+        double phiOffset = ProjectionConstants.Clamp(phi + dPhi, -InversePoleClamp, InversePoleClamp);
+        dPhi = phiOffset - phi;
+        if (Math.Abs(dPhi) < Eps10 || !this.TryForwardNormalized(lambda, phiOffset, out double xPhi, out double yPhi))
+        {
+            return false;
+        }
+
+        double derivXPhi = (xPhi - approxX) / dPhi;
+        double derivYPhi = (yPhi - approxY) / dPhi;
+        double det = (derivXLam * derivYPhi) - (derivXPhi * derivYLam);
+        if (Math.Abs(det) <= InverseJacobianTolerance)
+        {
+            return false;
+        }
+
+        derivLamX = derivYPhi / det;
+        derivLamY = -derivXPhi / det;
+        derivPhiX = -derivYLam / det;
+        derivPhiY = derivXLam / det;
+        return true;
+    }
+
+    private bool TryForwardNormalized(double lambda, double phi, out double x, out double y)
+    {
+        x = 0d;
+        y = 0d;
+        if (Math.Abs(phi) >= InversePoleClamp)
+        {
+            return false;
+        }
+
+        this.ForwardNormalized(lambda, phi, out x, out y);
+        return !(double.IsNaN(x) || double.IsInfinity(x) || double.IsNaN(y) || double.IsInfinity(y));
     }
 }

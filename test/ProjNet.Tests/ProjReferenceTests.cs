@@ -620,6 +620,11 @@ public class ProjReferenceTests
             ReplaceParameter(parameters, "false_northing", y0 / linearUnitFactor);
         }
 
+        if (args.TryGetValue("proj", out string? projectionCode) && projectionCode.Equals("cass", StringComparison.OrdinalIgnoreCase) && args.ContainsKey("hyperbolic"))
+        {
+            ReplaceParameter(parameters, "hyperbolic", 1d);
+        }
+
         AddOptionalParameter(parameters, args, "lat_1", "standard_parallel_1");
         AddOptionalParameter(parameters, args, "lat_2", "standard_parallel_2");
         AddOptionalParameter(parameters, args, "lat_ts", "lat_ts");

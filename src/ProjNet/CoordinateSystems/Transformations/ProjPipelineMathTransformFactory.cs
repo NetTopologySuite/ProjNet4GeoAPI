@@ -742,6 +742,11 @@ internal static class ProjPipelineMathTransformFactory
             SetOrAddProjectionParameter(parameters, "south", 1d);
         }
 
+        if (projCode.Equals("cass", StringComparison.OrdinalIgnoreCase) && args.ContainsKey("hyperbolic"))
+        {
+            SetOrAddProjectionParameter(parameters, "hyperbolic", 1d);
+        }
+
         if (projCode.Equals("aeqd", StringComparison.OrdinalIgnoreCase) && args.ContainsKey("guam"))
         {
             SetOrAddProjectionParameter(parameters, "guam", 1d);
