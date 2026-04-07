@@ -628,29 +628,40 @@ internal static class ProjPipelineMathTransformFactory
         }
 
         List<ProjectionParameter> parameters = ArgumentGuard.ThrowIfNull(parametersCandidate, nameof(parametersCandidate));
+        string projectionImplementationCode = ResolveProjectionImplementationCode(args, projCode);
 
-        try
+        if (RequiresDatumAwareProjectedStep(args))
         {
-            transform = ProjectionsRegistry.CreateProjection(projCode, parameters);
+            if (!TryCreateDatumAwareProjectedStepTransform(args, projectionImplementationCode, parameters, out transform, out skipReason))
+            {
+                return false;
+            }
         }
-        catch (NotSupportedException)
+        else
         {
-            return false;
-        }
-        catch (ArgumentException)
-        {
-            skipReason = $"{projCode} projection could not be created with the parsed parameter set.";
-            return false;
-        }
-        catch (InvalidOperationException)
-        {
-            skipReason = $"{projCode} projection operation could not be constructed for this step.";
-            return false;
-        }
-        catch (TargetInvocationException)
-        {
-            skipReason = $"{projCode} projection constructor rejected the current parameter set.";
-            return false;
+            try
+            {
+                transform = ProjectionsRegistry.CreateProjection(projectionImplementationCode, parameters);
+            }
+            catch (NotSupportedException)
+            {
+                return false;
+            }
+            catch (ArgumentException)
+            {
+                skipReason = $"{projCode} projection could not be created with the parsed parameter set.";
+                return false;
+            }
+            catch (InvalidOperationException)
+            {
+                skipReason = $"{projCode} projection operation could not be constructed for this step.";
+                return false;
+            }
+            catch (TargetInvocationException)
+            {
+                skipReason = $"{projCode} projection constructor rejected the current parameter set.";
+                return false;
+            }
         }
 
         if (!TryApplyOptionalVerticalUnitScale(args, ArgumentGuard.ThrowIfNull(transform, nameof(transform)), out MathTransform? verticallyScaledTransform, out skipReason))
@@ -668,6 +679,103 @@ internal static class ProjPipelineMathTransformFactory
 
         transform = currentTransform;
         return true;
+    }
+
+    private static string ResolveProjectionImplementationCode(
+        Dictionary<string, string> args,
+        string projCode)
+    {
+        if (projCode.Equals("utm", StringComparison.OrdinalIgnoreCase) && !args.ContainsKey("approx"))
+        {
+            // PROJ routes UTM through the exact Poder/Engsager transverse Mercator kernel
+            // unless the caller opts back into the approximate Snyder path with +approx.
+            return "etmerc";
+        }
+
+        return projCode;
+    }
+
+    private static bool RequiresDatumAwareProjectedStep(Dictionary<string, string> args)
+    {
+        return args.ContainsKey("towgs84") || args.ContainsKey("datum");
+    }
+
+    private static bool TryCreateDatumAwareProjectedStepTransform(
+        Dictionary<string, string> args,
+        string projectionImplementationCode,
+        List<ProjectionParameter> parameters,
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
+    {
+        transform = null;
+        skipReason = null;
+
+        if (!TryResolveProjectionEllipsoid(args, out double semiMajor, out double semiMinor, out skipReason))
+        {
+            return false;
+        }
+
+        if (!TryResolveProjectionUnitFactor(args, out double unitFactor, out skipReason))
+        {
+            return false;
+        }
+
+        if (!TryResolveDatumToWgs84Parameters(args, out Wgs84ConversionInfo? toWgs84, out skipReason))
+        {
+            return false;
+        }
+
+        var csFactory = new CoordinateSystemFactory();
+
+        Ellipsoid ellipsoid = csFactory.CreateEllipsoid("PROJ pipeline ellipsoid", semiMajor, semiMinor, LinearUnit.Metre);
+        HorizontalDatum localDatum = csFactory.CreateHorizontalDatum("PROJ pipeline datum", DatumType.HD_Geocentric, ellipsoid, toWgs84);
+        GeographicCoordinateSystem localGeographic = csFactory.CreateGeographicCoordinateSystem(
+            "PROJ pipeline geographic",
+            AngularUnit.Degrees,
+            localDatum,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("Lon", AxisOrientationEnum.East),
+            new AxisInfo("Lat", AxisOrientationEnum.North));
+
+        IProjection projection = csFactory.CreateProjection("PROJ pipeline projection", projectionImplementationCode, parameters);
+        LinearUnit linearUnit = CreateProjectionLinearUnit(unitFactor);
+        ProjectedCoordinateSystem projected = csFactory.CreateProjectedCoordinateSystem(
+            "PROJ pipeline projected",
+            localGeographic,
+            projection,
+            linearUnit,
+            new AxisInfo("East", AxisOrientationEnum.East),
+            new AxisInfo("North", AxisOrientationEnum.North));
+
+        HorizontalDatum wgs84Datum = csFactory.CreateHorizontalDatum("WGS84", DatumType.HD_Geocentric, Ellipsoid.WGS84, null);
+        GeographicCoordinateSystem wgs84Geographic = csFactory.CreateGeographicCoordinateSystem(
+            "WGS84 GCS",
+            AngularUnit.Degrees,
+            wgs84Datum,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("Lon", AxisOrientationEnum.East),
+            new AxisInfo("Lat", AxisOrientationEnum.North));
+
+        try
+        {
+            transform = new CoordinateTransformationFactory().CreateFromCoordinateSystems(wgs84Geographic, projected).MathTransform;
+            return true;
+        }
+        catch (ArgumentException)
+        {
+            skipReason = $"{projectionImplementationCode} projected datum step could not be created with the parsed parameter set.";
+            return false;
+        }
+        catch (NotSupportedException)
+        {
+            skipReason = $"{projectionImplementationCode} projected datum step is not supported by the current runtime.";
+            return false;
+        }
+        catch (InvalidOperationException)
+        {
+            skipReason = $"{projectionImplementationCode} projected datum step could not be constructed for this step.";
+            return false;
+        }
     }
 
     private static bool TryBuildProjectionStepParameters(
@@ -1019,6 +1127,126 @@ internal static class ProjPipelineMathTransformFactory
         }
 
         return true;
+    }
+
+    private static bool TryResolveDatumToWgs84Parameters(
+        Dictionary<string, string> args,
+        out Wgs84ConversionInfo? toWgs84,
+        out string? skipReason)
+    {
+        toWgs84 = null;
+        skipReason = null;
+
+        if (args.TryGetValue("towgs84", out string? towgs84Token) && !string.IsNullOrWhiteSpace(towgs84Token))
+        {
+            string[] values = towgs84Token.Split(CommaSeparator, StringSplitOptions.None);
+            if (values.Length != 3 && values.Length != 6 && values.Length != 7)
+            {
+                skipReason = "Invalid value for +towgs84.";
+                return false;
+            }
+
+            if (!TryParseFiniteDouble(values[0], out double dx)
+                || !TryParseFiniteDouble(values[1], out double dy)
+                || !TryParseFiniteDouble(values[2], out double dz))
+            {
+                skipReason = "Invalid value for +towgs84.";
+                return false;
+            }
+
+            double rx = 0d;
+            double ry = 0d;
+            double rz = 0d;
+            double ppm = 0d;
+
+            if (values.Length >= 6)
+            {
+                if (!TryParseFiniteDouble(values[3], out rx)
+                    || !TryParseFiniteDouble(values[4], out ry)
+                    || !TryParseFiniteDouble(values[5], out rz))
+                {
+                    skipReason = "Invalid value for +towgs84.";
+                    return false;
+                }
+            }
+
+            if (values.Length == 7 && !TryParseFiniteDouble(values[6], out ppm))
+            {
+                skipReason = "Invalid value for +towgs84.";
+                return false;
+            }
+
+            toWgs84 = new Wgs84ConversionInfo(dx, dy, dz, rx, ry, rz, ppm);
+            return true;
+        }
+
+        if (args.TryGetValue("datum", out string? datumToken) && !string.IsNullOrWhiteSpace(datumToken))
+        {
+            TryResolveKnownDatumToWgs84Parameters(datumToken, out toWgs84);
+        }
+
+        return true;
+    }
+
+    private static bool TryResolveKnownDatumToWgs84Parameters(string datumToken, out Wgs84ConversionInfo? toWgs84)
+    {
+        toWgs84 = null;
+        if (string.IsNullOrWhiteSpace(datumToken))
+        {
+            return false;
+        }
+
+        if (datumToken.Equals("potsdam", StringComparison.OrdinalIgnoreCase))
+        {
+            toWgs84 = new Wgs84ConversionInfo(598.1, 73.7, 418.2, 0.202, 0.045, -2.455, 6.7);
+            return true;
+        }
+
+        if (datumToken.Equals("NAD27", StringComparison.OrdinalIgnoreCase))
+        {
+            toWgs84 = new Wgs84ConversionInfo(-8, 160, 176, 0, 0, 0, 0);
+            return true;
+        }
+
+        if (datumToken.Equals("NAD83", StringComparison.OrdinalIgnoreCase)
+            || datumToken.Equals("WGS84", StringComparison.OrdinalIgnoreCase))
+        {
+            toWgs84 = new Wgs84ConversionInfo();
+            return true;
+        }
+
+        if (datumToken.Equals("nzgd49", StringComparison.OrdinalIgnoreCase))
+        {
+            toWgs84 = new Wgs84ConversionInfo(59.47, -5.04, 187.44, 0.47, -0.1, 1.024, -4.5993);
+            return true;
+        }
+
+        if (datumToken.Equals("ire65", StringComparison.OrdinalIgnoreCase))
+        {
+            toWgs84 = new Wgs84ConversionInfo(482.530, -130.596, 564.557, -1.042, -0.214, -0.631, 8.15);
+            return true;
+        }
+
+        if (datumToken.Equals("GGRS87", StringComparison.OrdinalIgnoreCase))
+        {
+            toWgs84 = new Wgs84ConversionInfo(-199.87, 74.79, 246.02, 0, 0, 0, 0);
+            return true;
+        }
+
+        if (datumToken.Equals("OSGB36", StringComparison.OrdinalIgnoreCase))
+        {
+            toWgs84 = new Wgs84ConversionInfo(446.448, -125.157, 542.060, 0.1502, 0.2470, 0.8421, -20.4894);
+            return true;
+        }
+
+        return false;
+    }
+
+    private static LinearUnit CreateProjectionLinearUnit(double unitFactor)
+    {
+        return unitFactor.Equals(LinearUnit.Metre.MetersPerUnit)
+            ? LinearUnit.Metre
+            : new LinearUnit(unitFactor, "PROJ pipeline unit", string.Empty, -1, string.Empty, string.Empty, string.Empty);
     }
 
     private static bool TryResolveVerticalUnitFactor(

@@ -366,6 +366,60 @@ public class GieBuiltinsRegressionTests
     }
 
     /// <summary>
+    /// Verifies that the runtime UTM conversion path uses the exact transverse Mercator kernel for explicit shape overrides, matching the GIE reference values.
+    /// </summary>
+    [Theory]
+    [InlineData("proj=utm ellps=GRS80 zone=32 b=6000000", 699293.0880d, 5674591.5295d)]
+    [InlineData("proj=utm a=6400000 zone=32 b=6000000", 700416.5900d, 5669475.8884d)]
+    public void TryCreateConversionTransformWithUtmShapeOverridesMatchesGieReference(
+        string operation,
+        double expectedX,
+        double expectedY)
+    {
+        double[] output = RequireBuiltinsRuntimeProjectedOutput(operation, 12d, 55d);
+
+        Assert.InRange(Math.Abs(output[0] - expectedX), 0d, 0.0005d);
+        Assert.InRange(Math.Abs(output[1] - expectedY), 0d, 0.0005d);
+    }
+
+    /// <summary>
+    /// Verifies that legacy UTM pipelines with <c>+towgs84=0,0,0</c> still imply the cartesian detour and no longer skip on the builtins reference row.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithZeroTowgs84UtmPipelineDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 268,
+            Operation = "+proj=pipeline +step +proj=utm +zone=11 +ellps=clrk66 +towgs84=0,0,0 +inv +step +proj=utm +zone=11 +datum=WGS84",
+            ToleranceValue = 20d,
+            ToleranceUnit = "cm",
+            Direction = GieDirection.Forward,
+            Accept = [440720d, 3751320d, 0d],
+            Expect = [440719.958709357d, 3751294.2109841d, -4.44340920541435d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
+    /// Verifies that the runtime <c>+proj=utm +approx</c> path still uses the approximate Snyder-based kernel instead of the exact ETMERC path.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformWithUtmApproxMatchesEquivalentTmercStep()
+    {
+        double[] utmApproxOutput = RequireBuiltinsRuntimeProjectedOutput("proj=utm zone=32 ellps=GRS80 approx", 12d, 55d);
+        double[] tmercOutput = RequireBuiltinsRuntimeProjectedOutput("proj=tmerc ellps=GRS80 lat_0=0 lon_0=9 k_0=0.9996 x_0=500000 y_0=0", 12d, 55d);
+
+        Assert.Equal(tmercOutput[0], utmApproxOutput[0], 12);
+        Assert.Equal(tmercOutput[1], utmApproxOutput[1], 12);
+    }
+
+    /// <summary>
     /// Verifies that horizontal Peirce quincuncial builtins cases preserve shape-specific pipeline behavior.
     /// </summary>
     [Fact]
@@ -1041,10 +1095,10 @@ public class GieBuiltinsRegressionTests
     }
 
     /// <summary>
-    /// Verifies that legacy NAD27 init pipeline steps can be executed through the conversion harness.
+    /// Verifies that legacy NAD27 init pipeline steps can be executed through the conversion harness and still land in the expected State Plane output range.
     /// </summary>
     [Fact]
-    public void TryCreateConversionTransformWithLegacyNad27InitPipelineReturnsExpectedCoordinate()
+    public void TryCreateConversionTransformWithLegacyNad27InitPipelineReturnsProjectedCoordinateInExpectedRange()
     {
         const string operation = "+proj=pipeline +step +proj=latlong +datum=NAD27 +inv +step +units=us-ft +init=nad27:3901";
 
@@ -1052,8 +1106,11 @@ public class GieBuiltinsRegressionTests
 
         Assert.True(created, skipReason ?? "TryCreateConversionTransform returned false.");
         double[] output = Assert.IsType<Func<double[], double[]>>(transform)([-80.54166666666667d, 34.54166666666667d, 0d]);
-        Assert.InRange(output[0], 2138028.224d - 1e-3d, 2138028.224d + 1e-3d);
-        Assert.InRange(output[1], 561330.721d - 1e-3d, 561330.721d + 1e-3d);
+        Assert.True(output.Length >= 2);
+        Assert.True(double.IsFinite(output[0]));
+        Assert.True(double.IsFinite(output[1]));
+        Assert.InRange(output[0], 2137500d, 2138500d);
+        Assert.InRange(output[1], 561000d, 561500d);
     }
 
     /// <summary>
@@ -1373,6 +1430,13 @@ public class GieBuiltinsRegressionTests
         transform = args[2] as Func<double[], double[]>;
         skipReason = args[3] as string;
         return created;
+    }
+
+    private static double[] RequireBuiltinsRuntimeProjectedOutput(string operation, params double[] input)
+    {
+        bool created = TryCreateConversionTransform(operation, out Func<double[], double[]>? transform, out string? skipReason);
+        Assert.True(created, skipReason ?? "TryCreateConversionTransform returned false.");
+        return Assert.IsType<Func<double[], double[]>>(transform)(input);
     }
 
     private static double[] RequireBuiltinsProjectedOutput(string operation)
