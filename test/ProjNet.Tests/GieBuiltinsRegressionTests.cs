@@ -345,6 +345,120 @@ public class GieBuiltinsRegressionTests
     }
 
     /// <summary>
+    /// Verifies that builtins LCC cases treat explicit false offsets as meters even when the projection outputs US survey feet.
+    /// </summary>
+    [Fact]
+    public void TryCreateTransformWithLccUsFootOffsetsInMetersReturnsExpectedProjectedCoordinate()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 320,
+            Operation = "+proj=lcc +ellps=clrk66 +lat_1=44d11'N +lat_2=45d42'N +x_0=609601.2192 +lon_0=84d20'W +lat_0=43d19'N +k_0=1.0000382 +units=us-ft",
+            ToleranceValue = 5d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [-83.16666666666667d, 43.75d],
+            Expect = [2308335.75d, 160210.48d],
+        };
+
+        bool created = TryCreateTransform(testCase, out MathTransform? transform, out string? skipReason);
+        Assert.True(created, skipReason ?? "TryCreateTransform returned false.");
+
+        double[] output = Assert.IsAssignableFrom<MathTransform>(transform).Transform(testCase.Accept);
+        Assert.Equal(testCase.Expect[0], output[0], 2);
+        Assert.Equal(testCase.Expect[1], output[1], 2);
+    }
+
+    /// <summary>
+    /// Verifies that the original LCC GIE row no longer skips through the conversion path when its explicit false offsets are normalized from meters to US survey feet.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithLccUsFootOffsetsInMetersDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 320,
+            Operation = "+proj=lcc +ellps=clrk66 +lat_1=44d11'N +lat_2=45d42'N +x_0=609601.2192 +lon_0=84d20'W +lat_0=43d19'N +k_0=1.0000382 +units=us-ft",
+            ToleranceValue = 5d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [-83.16666666666667d, 43.75d],
+            Expect = [2308335.75d, 160210.48d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
+    /// Verifies that builtins Cassini cases treat explicit false offsets as meters when <c>+to_meter</c> defines a non-metric output unit.
+    /// </summary>
+    [Fact]
+    public void TryCreateTransformWithCassToMeterOffsetsInMetersReturnsExpectedProjectedCoordinate()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 912,
+            Operation = "+proj=cass +lat_0=10.4416666666667 +lon_0=-61.3333333333333 +x_0=86501.46392052 +y_0=65379.0134283 +a=6378293.64520876 +b=6356617.98767984 +to_meter=0.201166195164",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [-62d, 10d],
+            Expect = [66644.94040882d, 82536.21873655d],
+        };
+
+        bool created = TryCreateTransform(testCase, out MathTransform? transform, out string? skipReason);
+        Assert.True(created, skipReason ?? "TryCreateTransform returned false.");
+
+        double[] output = Assert.IsAssignableFrom<MathTransform>(transform).Transform(testCase.Accept);
+        Assert.Equal(testCase.Expect[0], output[0], 6);
+        Assert.Equal(testCase.Expect[1], output[1], 6);
+    }
+
+    /// <summary>
+    /// Verifies that the GIE conversion path normalizes explicit Cassini false offsets from meters to the declared output unit.
+    /// </summary>
+    [Fact]
+    public void TryCreateConversionTransformWithCassToMeterOffsetsInMetersReturnsExpectedProjectedCoordinate()
+    {
+        const string operation = "+proj=cass +lat_0=10.4416666666667 +lon_0=-61.3333333333333 +x_0=86501.46392052 +y_0=65379.0134283 +a=6378293.64520876 +b=6356617.98767984 +to_meter=0.201166195164";
+
+        bool created = TryCreateConversionTransform(operation, out Func<double[], double[]>? transform, out string? skipReason);
+        Assert.True(created, skipReason ?? "TryCreateConversionTransform returned false.");
+
+        double[] output = Assert.IsType<Func<double[], double[]>>(transform)([-62d, 10d]);
+        Assert.Equal(66644.94040882d, output[0], 6);
+        Assert.Equal(82536.21873655d, output[1], 6);
+    }
+
+    /// <summary>
+    /// Verifies that the original Cassini GIE row no longer skips through the conversion path when its explicit false offsets are normalized from meters to the declared output unit.
+    /// </summary>
+    [Fact]
+    public void AssertCaseWithinToleranceWithCassOffsetsInMetersDoesNotSkip()
+    {
+        var testCase = new GieCase
+        {
+            LineNumber = 912,
+            Operation = "+proj=cass +lat_0=10.4416666666667 +lon_0=-61.3333333333333 +x_0=86501.46392052 +y_0=65379.0134283 +a=6378293.64520876 +b=6356617.98767984 +to_meter=0.201166195164",
+            ToleranceValue = 0.1d,
+            ToleranceUnit = "mm",
+            Direction = GieDirection.Forward,
+            Accept = [-62d, 10d],
+            Expect = [66644.94040882d, 82536.21873655d],
+        };
+
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("AssertCaseWithinTolerance", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.AssertCaseWithinTolerance.");
+
+        Exception? exception = Record.Exception(() => method.Invoke(null, [testCase]));
+        Assert.Null(exception);
+    }
+
+    /// <summary>
     /// Verifies that geographic datum-shift operations are rejected for projected coordinate tuples.
     /// </summary>
     [Fact]

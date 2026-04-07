@@ -589,6 +589,8 @@ public class ProjReferenceTests
             new("false_northing", 0d),
         ];
 
+        double linearUnitFactor = ResolveProjectionLinearUnitFactor(args);
+
         if (TryGetDouble(args, "lat_0", out double lat0))
         {
             ReplaceParameter(parameters, "latitude_of_origin", lat0);
@@ -610,12 +612,12 @@ public class ProjReferenceTests
 
         if (TryGetDouble(args, "x_0", out double x0))
         {
-            ReplaceParameter(parameters, "false_easting", x0);
+            ReplaceParameter(parameters, "false_easting", x0 / linearUnitFactor);
         }
 
         if (TryGetDouble(args, "y_0", out double y0))
         {
-            ReplaceParameter(parameters, "false_northing", y0);
+            ReplaceParameter(parameters, "false_northing", y0 / linearUnitFactor);
         }
 
         AddOptionalParameter(parameters, args, "lat_1", "standard_parallel_1");
@@ -624,6 +626,27 @@ public class ProjReferenceTests
         AddOptionalParameter(parameters, args, "h", "h");
 
         return true;
+    }
+
+    private static double ResolveProjectionLinearUnitFactor(Dictionary<string, string> args)
+    {
+        if (TryGetDouble(args, "to_meter", out double toMeter) && toMeter > 0d)
+        {
+            return toMeter;
+        }
+
+        if (args.TryGetValue("units", out string? unitsToken))
+        {
+            return unitsToken.ToUpperInvariant() switch
+            {
+                "M" => LinearUnit.Metre.MetersPerUnit,
+                "FT" => LinearUnit.Foot.MetersPerUnit,
+                "US-FT" => LinearUnit.USSurveyFoot.MetersPerUnit,
+                _ => 1d,
+            };
+        }
+
+        return 1d;
     }
 
     private static bool TryGetDouble(Dictionary<string, string> args, string key, out double value)

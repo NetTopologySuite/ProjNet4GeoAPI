@@ -770,8 +770,44 @@ public class GieBuiltinsTheoryTests
             tokens[i] = $"+{tokens[i]}";
         }
 
-        string normalizedOperation = ExpandLegacyInitDefinitions(string.Join(" ", tokens));
+        string normalizedOperation = NormalizeExplicitFalseOffsetsForRuntime(string.Join(" ", tokens));
+        normalizedOperation = ExpandLegacyInitDefinitions(normalizedOperation);
         return ResolveKnownTestGridPaths(normalizedOperation);
+    }
+
+    private static string NormalizeExplicitFalseOffsetsForRuntime(string operation)
+    {
+        if (!TryParseOperationArguments(operation, out Dictionary<string, string> args)
+            || args.ContainsKey("step")
+            || (args.TryGetValue("proj", out string? projCode)
+                && projCode.Equals("pipeline", StringComparison.OrdinalIgnoreCase)))
+        {
+            return operation;
+        }
+
+        double linearUnitFactor = ResolveProjectionLinearUnitFactor(args);
+        bool changed = false;
+        string[] tokens = operation.Split(OperationTokenSeparators, StringSplitOptions.RemoveEmptyEntries);
+        for (int i = 0; i < tokens.Length; i++)
+        {
+            changed |= TryRewriteExplicitFalseOffsetToken(tokens, i, "x_0", linearUnitFactor);
+            changed |= TryRewriteExplicitFalseOffsetToken(tokens, i, "y_0", linearUnitFactor);
+        }
+
+        return changed ? string.Join(" ", tokens) : operation;
+    }
+
+    private static bool TryRewriteExplicitFalseOffsetToken(string[] tokens, int index, string key, double linearUnitFactor)
+    {
+        string prefix = $"+{key}=";
+        if (!tokens[index].StartsWith(prefix, StringComparison.OrdinalIgnoreCase)
+            || !TryParseNumericToken(tokens[index][prefix.Length..], out double value))
+        {
+            return false;
+        }
+
+        tokens[index] = FormattableString.Invariant($"{prefix}{value / linearUnitFactor:R}");
+        return true;
     }
 
     private static string[] TokenizeOperation(string operation)
@@ -1550,6 +1586,8 @@ public class GieBuiltinsTheoryTests
             new("false_northing", 0d),
         ];
 
+        double linearUnitFactor = ResolveProjectionLinearUnitFactor(args);
+
         if (TryGetDouble(args, "lat_0", out double lat0))
         {
             ReplaceParameter(parameters, "latitude_of_origin", lat0);
@@ -1571,12 +1609,12 @@ public class GieBuiltinsTheoryTests
 
         if (TryGetDouble(args, "x_0", out double x0))
         {
-            ReplaceParameter(parameters, "false_easting", x0);
+            ReplaceParameter(parameters, "false_easting", x0 / linearUnitFactor);
         }
 
         if (TryGetDouble(args, "y_0", out double y0))
         {
-            ReplaceParameter(parameters, "false_northing", y0);
+            ReplaceParameter(parameters, "false_northing", y0 / linearUnitFactor);
         }
 
         AddOptionalParameter(parameters, args, "lat_1", "standard_parallel_1");
@@ -1757,6 +1795,18 @@ public class GieBuiltinsTheoryTests
         }
 
         return true;
+    }
+
+    private static double ResolveProjectionLinearUnitFactor(Dictionary<string, string> args)
+    {
+        if (TryGetDouble(args, "to_meter", out double toMeter) && toMeter > 0d)
+        {
+            return toMeter;
+        }
+
+        return args.TryGetValue("units", out string? unitsToken)
+            ? ResolveLinearUnit(unitsToken).MetersPerUnit
+            : 1d;
     }
 
     private static bool TryGetZoneCentralMeridian(Dictionary<string, string> args, out double centralMeridian)
