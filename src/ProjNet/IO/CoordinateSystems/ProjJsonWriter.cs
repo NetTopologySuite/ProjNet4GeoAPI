@@ -54,8 +54,17 @@ public static class ProjJsonWriter
             case GeographicCoordinateSystem geographicCoordinateSystem:
                 WriteGeographicCoordinateSystem(writer, geographicCoordinateSystem);
                 break;
+            case GeocentricCoordinateSystem geocentricCoordinateSystem:
+                WriteGeocentricCoordinateSystem(writer, geocentricCoordinateSystem);
+                break;
             case ProjectedCoordinateSystem projectedCoordinateSystem:
                 WriteProjectedCoordinateSystem(writer, projectedCoordinateSystem);
+                break;
+            case VerticalCoordinateSystem verticalCoordinateSystem:
+                WriteVerticalCoordinateSystem(writer, verticalCoordinateSystem);
+                break;
+            case CompoundCoordinateSystem compoundCoordinateSystem:
+                WriteCompoundCoordinateSystem(writer, compoundCoordinateSystem);
                 break;
             default:
                 throw new NotSupportedException($"PROJJSON writing is not supported for coordinate system type '{coordinateSystem.GetType().Name}'.");
@@ -64,6 +73,8 @@ public static class ProjJsonWriter
 
     private static void WriteGeographicCoordinateSystem(Utf8JsonWriter writer, GeographicCoordinateSystem coordinateSystem)
     {
+        ThrowIfBoundHorizontalDatumRequiresBoundCrs(coordinateSystem.HorizontalDatum, nameof(GeographicCoordinateSystem));
+
         writer.WriteStartObject();
         writer.WriteString("type", "GeographicCRS");
         writer.WriteString("name", coordinateSystem.Name);
@@ -81,8 +92,31 @@ public static class ProjJsonWriter
         writer.WriteEndObject();
     }
 
+    private static void WriteGeocentricCoordinateSystem(Utf8JsonWriter writer, GeocentricCoordinateSystem coordinateSystem)
+    {
+        ThrowIfBoundHorizontalDatumRequiresBoundCrs(coordinateSystem.HorizontalDatum, nameof(GeocentricCoordinateSystem));
+
+        writer.WriteStartObject();
+        writer.WriteString("type", "GeodeticCRS");
+        writer.WriteString("name", coordinateSystem.Name);
+
+        writer.WritePropertyName("datum");
+        WriteHorizontalDatum(writer, coordinateSystem.HorizontalDatum);
+
+        writer.WritePropertyName("prime_meridian");
+        WritePrimeMeridian(writer, coordinateSystem.PrimeMeridian);
+
+        writer.WritePropertyName("coordinate_system");
+        WriteCoordinateSystemDefinition(writer, "Cartesian", coordinateSystem);
+
+        WriteIdentifier(writer, coordinateSystem);
+        writer.WriteEndObject();
+    }
+
     private static void WriteProjectedCoordinateSystem(Utf8JsonWriter writer, ProjectedCoordinateSystem coordinateSystem)
     {
+        ThrowIfBoundHorizontalDatumRequiresBoundCrs(coordinateSystem.GeographicCoordinateSystem.HorizontalDatum, nameof(ProjectedCoordinateSystem));
+
         writer.WriteStartObject();
         writer.WriteString("type", "ProjectedCRS");
         writer.WriteString("name", coordinateSystem.Name);
@@ -104,6 +138,39 @@ public static class ProjJsonWriter
         writer.WriteEndObject();
     }
 
+    private static void WriteVerticalCoordinateSystem(Utf8JsonWriter writer, VerticalCoordinateSystem coordinateSystem)
+    {
+        ThrowIfBoundVerticalMetadataRequiresBoundCrs(coordinateSystem);
+
+        writer.WriteStartObject();
+        writer.WriteString("type", "VerticalCRS");
+        writer.WriteString("name", coordinateSystem.Name);
+
+        writer.WritePropertyName("datum");
+        WriteVerticalDatum(writer, coordinateSystem.VerticalDatum);
+
+        writer.WritePropertyName("coordinate_system");
+        WriteCoordinateSystemDefinition(writer, "vertical", coordinateSystem);
+
+        WriteIdentifier(writer, coordinateSystem);
+        writer.WriteEndObject();
+    }
+
+    private static void WriteCompoundCoordinateSystem(Utf8JsonWriter writer, CompoundCoordinateSystem coordinateSystem)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("type", "CompoundCRS");
+        writer.WriteString("name", coordinateSystem.Name);
+
+        writer.WritePropertyName("components");
+        writer.WriteStartArray();
+        WriteCompoundComponents(writer, coordinateSystem);
+        writer.WriteEndArray();
+
+        WriteIdentifier(writer, coordinateSystem);
+        writer.WriteEndObject();
+    }
+
     private static void WriteCoordinateSystemDefinition(Utf8JsonWriter writer, string subtype, CoordinateSystem coordinateSystem)
     {
         writer.WriteStartObject();
@@ -112,18 +179,18 @@ public static class ProjJsonWriter
         writer.WriteStartArray();
         for (int i = 0; i < coordinateSystem.Dimension; i++)
         {
-            WriteAxis(writer, coordinateSystem.GetAxis(i), coordinateSystem.GetUnits(i));
+            WriteAxis(writer, coordinateSystem, i, coordinateSystem.GetAxis(i), coordinateSystem.GetUnits(i));
         }
 
         writer.WriteEndArray();
         writer.WriteEndObject();
     }
 
-    private static void WriteAxis(Utf8JsonWriter writer, AxisInfo axisInfo, IUnit unit)
+    private static void WriteAxis(Utf8JsonWriter writer, CoordinateSystem coordinateSystem, int axisIndex, AxisInfo axisInfo, IUnit unit)
     {
         writer.WriteStartObject();
         writer.WriteString("name", axisInfo.Name);
-        writer.WriteString("direction", GetAxisDirection(axisInfo.Orientation));
+        writer.WriteString("direction", GetAxisDirection(coordinateSystem, axisIndex, axisInfo.Orientation));
         writer.WritePropertyName("unit");
         WriteUnit(writer, unit);
         writer.WriteEndObject();
@@ -169,6 +236,15 @@ public static class ProjJsonWriter
         writer.WritePropertyName("unit");
         WriteAngularUnit(writer, primeMeridian.AngularUnit);
         WriteIdentifier(writer, primeMeridian);
+        writer.WriteEndObject();
+    }
+
+    private static void WriteVerticalDatum(Utf8JsonWriter writer, VerticalDatum verticalDatum)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("type", "VerticalReferenceFrame");
+        writer.WriteString("name", verticalDatum.Name);
+        WriteIdentifier(writer, verticalDatum);
         writer.WriteEndObject();
     }
 
@@ -280,6 +356,39 @@ public static class ProjJsonWriter
         writer.WriteEndObject();
     }
 
+    private static void WriteCompoundComponents(Utf8JsonWriter writer, CompoundCoordinateSystem coordinateSystem)
+    {
+        WriteCompoundComponent(writer, coordinateSystem.HeadCoordinateSystem);
+        WriteCompoundComponent(writer, coordinateSystem.TailCoordinateSystem);
+    }
+
+    private static void WriteCompoundComponent(Utf8JsonWriter writer, CoordinateSystem coordinateSystem)
+    {
+        if (coordinateSystem is CompoundCoordinateSystem nested)
+        {
+            WriteCompoundComponents(writer, nested);
+            return;
+        }
+
+        WriteCoordinateSystem(writer, coordinateSystem);
+    }
+
+    private static void ThrowIfBoundHorizontalDatumRequiresBoundCrs(HorizontalDatum horizontalDatum, string coordinateSystemTypeName)
+    {
+        if (horizontalDatum.Wgs84Parameters is not null)
+        {
+            throw new NotSupportedException($"PROJJSON writing for '{coordinateSystemTypeName}' with retained WGS84 conversion metadata is not implemented. A BoundCRS writer is required to preserve that transformation.");
+        }
+    }
+
+    private static void ThrowIfBoundVerticalMetadataRequiresBoundCrs(VerticalCoordinateSystem coordinateSystem)
+    {
+        if (coordinateSystem.BoundGridTransformation is not null)
+        {
+            throw new NotSupportedException("PROJJSON writing for vertical coordinate systems with retained bound-grid metadata is not implemented. A BoundCRS writer is required to preserve that transformation.");
+        }
+    }
+
     private static void WriteIdentifier(Utf8JsonWriter writer, IInfo info)
     {
         if (string.IsNullOrWhiteSpace(info.Authority) || info.AuthorityCode <= 0)
@@ -294,8 +403,19 @@ public static class ProjJsonWriter
         writer.WriteEndObject();
     }
 
-    private static string GetAxisDirection(AxisOrientationEnum orientation)
+    private static string GetAxisDirection(CoordinateSystem coordinateSystem, int axisIndex, AxisOrientationEnum orientation)
     {
+        if (coordinateSystem is GeocentricCoordinateSystem)
+        {
+            return axisIndex switch
+            {
+                0 => "geocentricX",
+                1 => "geocentricY",
+                2 => "geocentricZ",
+                _ => throw new NotSupportedException($"PROJJSON writing is not supported for geocentric axis index '{axisIndex}'."),
+            };
+        }
+
         return orientation switch
         {
             AxisOrientationEnum.North => "north",
