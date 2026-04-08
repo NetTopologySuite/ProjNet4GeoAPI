@@ -20,16 +20,17 @@ public class GieParserTests
     [Fact]
     public void ParseWithForwardAndInversePairsProducesExpectedCases()
     {
-        const string content = @"
-<gie-strict>
-operation  +proj=tmerc +lat_0=49 +lon_0=-2 +k_0=0.9996 +ellps=WGS84
-tolerance  0.03 m
-accept     3 80
-expect     496813.178 3358297.326
-direction  inverse
-accept     496813.178 3358297.326
-expect     3 80
-";
+        const string content =
+            """
+            <gie-strict>
+            operation  +proj=tmerc +lat_0=49 +lon_0=-2 +k_0=0.9996 +ellps=WGS84
+            tolerance  0.03 m
+            accept     3 80
+            expect     496813.178 3358297.326
+            direction  inverse
+            accept     496813.178 3358297.326
+            expect     3 80
+            """;
 
         IReadOnlyList<GieCase> parsed = GieParser.Parse(content);
 
@@ -49,14 +50,15 @@ expect     3 80
     [Fact]
     public void ParseIgnoresCommentsAndTags()
     {
-        const string content = @"
-<gie-strict>
-# comment line
-operation +proj=eqearth +ellps=WGS84
-tolerance 10 m
-accept 10 20 # inline comment
-expect 1000 2000
-";
+        const string content =
+            """
+            <gie-strict>
+            # comment line
+            operation +proj=eqearth +ellps=WGS84
+            tolerance 10 m
+            accept 10 20 # inline comment
+            expect 1000 2000
+            """;
 
         IReadOnlyList<GieCase> parsed = GieParser.Parse(content);
 
@@ -71,10 +73,11 @@ expect 1000 2000
     [Fact]
     public void ParseWithoutAcceptBeforeExpectThrowsFormatException()
     {
-        const string content = @"
-operation +proj=moll +ellps=WGS84
-expect 1 2
-";
+        const string content =
+            """
+            operation +proj=moll +ellps=WGS84
+            expect 1 2
+            """;
 
         Assert.Throws<FormatException>(() => GieParser.Parse(content));
     }
@@ -85,11 +88,12 @@ expect 1 2
     [Fact]
     public void ParseUnknownDirectiveThrowsFormatException()
     {
-        const string content = @"
-operation +proj=aeqd +ellps=WGS84
-tolerance 1 m
-foobar 1 2
-";
+        const string content =
+            """
+            operation +proj=aeqd +ellps=WGS84
+            tolerance 1 m
+            foobar 1 2
+            """;
 
         Assert.Throws<FormatException>(() => GieParser.Parse(content));
     }
@@ -103,10 +107,13 @@ foobar 1 2
         string filePath = Path.GetTempFileName();
         try
         {
-            string content = "operation +proj=gnom +ellps=WGS84\n" +
-                             "tolerance 0.5 m\n" +
-                             "accept 7 8\n" +
-                             "expect 700 800\n";
+            string content =
+                """
+                operation +proj=gnom +ellps=WGS84
+                tolerance 0.5 m
+                accept 7 8
+                expect 700 800
+                """;
             File.WriteAllText(filePath, content);
 
             IReadOnlyList<GieCase> parsed = GieParser.ParseFile(filePath);
@@ -130,12 +137,13 @@ foobar 1 2
     [Fact]
     public void ParseWithContinuationLineAppendsOperation()
     {
-        const string content = @"
-operation +proj=tmerc +ellps=WGS84 \
-          +lat_0=0 +lon_0=9
-accept 1 2
-expect 3 4
-";
+        const string content =
+            """
+            operation +proj=tmerc +ellps=WGS84 \
+                      +lat_0=0 +lon_0=9
+            accept 1 2
+            expect 3 4
+            """;
 
         IReadOnlyList<GieCase> parsed = GieParser.Parse(content);
 
@@ -150,10 +158,11 @@ expect 3 4
     [Fact]
     public void ParseWithFailureExpectationSetsFailureMetadata()
     {
-        const string content = @"
-operation +proj=aea +lat_1=900
-expect failure errno invalid_op_illegal_arg_value
-";
+        const string content =
+            """
+            operation +proj=aea +lat_1=900
+            expect failure errno invalid_op_illegal_arg_value
+            """;
 
         IReadOnlyList<GieCase> parsed = GieParser.Parse(content);
 
@@ -168,11 +177,12 @@ expect failure errno invalid_op_illegal_arg_value
     [Fact]
     public void ParseWithHugeValSentinelParsesFailureCase()
     {
-        const string content = @"
-operation +proj=defmodel +model=tests/simple_model_degree_horizontal.json
-accept 2 49 30 HUGE_VAL
-expect failure errno coord_transfm_missing_time
-";
+        const string content =
+            """
+            operation +proj=defmodel +model=tests/simple_model_degree_horizontal.json
+            accept 2 49 30 HUGE_VAL
+            expect failure errno coord_transfm_missing_time
+            """;
 
         IReadOnlyList<GieCase> parsed = GieParser.Parse(content);
 
@@ -188,12 +198,13 @@ expect failure errno coord_transfm_missing_time
     [Fact]
     public void ParseWithBlankOperationFailureCasePreservesFollowingOperations()
     {
-        const string content = @"
-operation
-expect failure
-operation cobra
-expect failure
-";
+        const string content =
+            """
+            operation
+            expect failure
+            operation cobra
+            expect failure
+            """;
 
         IReadOnlyList<GieCase> parsed = GieParser.Parse(content);
 
@@ -210,12 +221,13 @@ expect failure
     [Fact]
     public void ParseWithIgnoreUnknownDirectivesEnabledSkipsUnknownDirective()
     {
-        const string content = @"
-operation +proj=merc +ellps=WGS84
-foobar this should be ignored
-accept 1 2
-expect 3 4
-";
+        const string content =
+            """
+            operation +proj=merc +ellps=WGS84
+            foobar this should be ignored
+            accept 1 2
+            expect 3 4
+            """;
 
         IReadOnlyList<GieCase> parsed = GieParser.Parse(content, new GieParserOptions { IgnoreUnknownDirectives = true });
 
@@ -229,11 +241,12 @@ expect 3 4
     [Fact]
     public void ParseWithUnquotedDmsSecondsPreservesSeconds()
     {
-        const string content = @"
-operation +proj=latlong +datum=NAD27
-accept -80d32'30.000 34d32'30.000 0.0
-expect 1 2 3
-";
+        const string content =
+            """
+            operation +proj=latlong +datum=NAD27
+            accept -80d32'30.000 34d32'30.000 0.0
+            expect 1 2 3
+            """;
 
         IReadOnlyList<GieCase> parsed = GieParser.Parse(content);
 
@@ -248,11 +261,12 @@ expect 1 2 3
     [Fact]
     public void ParseWithUnquotedDmsSecondsAndHemispherePreservesSign()
     {
-        const string content = @"
-operation +proj=latlong +datum=WGS84
-accept 1d2'3.5W 4d5'6.25S
-expect 1 2
-";
+        const string content =
+            """
+            operation +proj=latlong +datum=WGS84
+            accept 1d2'3.5W 4d5'6.25S
+            expect 1 2
+            """;
 
         IReadOnlyList<GieCase> parsed = GieParser.Parse(content);
 
