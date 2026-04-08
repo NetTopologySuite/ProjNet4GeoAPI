@@ -208,6 +208,66 @@ public class GeocentricCoordinateSystem : CoordinateSystem
     }
 
     /// <inheritdoc />
+    public override WktNode ToWktNode(WktVersion version)
+    {
+        WktVersionSupport.ThrowIfUnknown(version);
+        if (version == WktVersion.Wkt1)
+        {
+            return this.ToWktNode();
+        }
+
+        if (this.Dimension != 3)
+        {
+            throw new NotSupportedException("WKT2 GEODCRS output currently supports only three-dimensional geocentric coordinate systems.");
+        }
+
+        if (this.AxisInfo.Count != this.Dimension)
+        {
+            ArgumentGuard.ThrowArgument($"Geocentric coordinate system '{this.Name}' declared dimension {this.Dimension}, but provides {this.AxisInfo.Count} axes.");
+        }
+
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(this.Name),
+            this.HorizontalDatum.ToWktNode(version),
+        };
+
+        if (!this.PrimeMeridian.EqualParams(PrimeMeridian.Greenwich))
+        {
+            children.Add(this.PrimeMeridian.ToWktNode(version));
+        }
+
+        children.Add(new WktKeywordNode(
+            "CS",
+            new WktIdentifier("Cartesian"),
+            new WktInteger(this.Dimension)));
+
+        for (int i = 0; i < this.AxisInfo.Count; i++)
+        {
+            children.Add(new WktKeywordNode(
+                "AXIS",
+                new WktQuotedString(this.GetAxis(i).Name),
+                new WktIdentifier(i switch
+                {
+                    0 => "geocentricX",
+                    1 => "geocentricY",
+                    2 => "geocentricZ",
+                    _ => throw new NotSupportedException("WKT2 GEODCRS output currently supports only X, Y, and Z geocentric axes."),
+                })));
+        }
+
+        children.Add(this.LinearUnit.ToWktNode(version));
+
+        WktKeywordNode? idNode = WktVersionSupport.CreateIdNode(this.Authority, this.AuthorityCode);
+        if (idNode is not null)
+        {
+            children.Add(idNode);
+        }
+
+        return new WktKeywordNode("GEODCRS", children);
+    }
+
+    /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
         return obj is GeocentricCoordinateSystem gcc && gcc.HorizontalDatum.EqualParams(this.HorizontalDatum) &&

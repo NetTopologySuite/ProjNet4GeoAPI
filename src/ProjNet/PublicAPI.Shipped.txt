@@ -72,6 +72,7 @@ namespace ProjNet.CoordinateSystems
         public override bool EqualParams(object obj) { }
         public override ProjNet.CoordinateSystems.IUnit GetUnits(int dimension) { }
         public override ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public override ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public override System.Xml.Linq.XElement ToXml() { }
     }
     public abstract class CoordinateSystem : ProjNet.CoordinateSystems.Info
@@ -159,6 +160,7 @@ namespace ProjNet.CoordinateSystems
         public override ProjNet.CoordinateSystems.IUnit GetUnits(int dimension) { }
         public string ToBase() { }
         public override ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public override ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public override System.Xml.Linq.XElement ToXml() { }
     }
     public class GeocentricCoordinateSystem : ProjNet.CoordinateSystems.CoordinateSystem
@@ -172,6 +174,7 @@ namespace ProjNet.CoordinateSystems
         public override bool EqualParams(object obj) { }
         public override ProjNet.CoordinateSystems.IUnit GetUnits(int dimension) { }
         public override ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public override ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public override System.Xml.Linq.XElement ToXml() { }
     }
     public class GeographicCoordinateSystem : ProjNet.CoordinateSystems.HorizontalCoordinateSystem
@@ -346,6 +349,7 @@ namespace ProjNet.CoordinateSystems
         public override bool EqualParams(object obj) { }
         public override ProjNet.CoordinateSystems.IUnit GetUnits(int dimension) { }
         public override ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public override ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public override System.Xml.Linq.XElement ToXml() { }
     }
     public class VerticalDatum : ProjNet.CoordinateSystems.Datum

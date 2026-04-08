@@ -211,6 +211,9 @@ public static partial class CoordinateSystemWktReader
                 case "ANGLEUNIT":
                     angularUnit = ReadWkt2AngularUnit(tokenizer);
                     break;
+                case "LENGTHUNIT":
+                    linearUnit = ReadWkt2LinearUnit(tokenizer);
+                    break;
                 case "ID":
                     ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
                     break;

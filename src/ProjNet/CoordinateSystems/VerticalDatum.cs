@@ -112,9 +112,23 @@ public class VerticalDatum : Datum
     public WktNode ToWktNode(WktVersion version)
     {
         WktVersionSupport.ThrowIfUnknown(version);
-        return version == WktVersion.Wkt1
-            ? this.ToWktNode()
-            : throw WktVersionSupport.CreateNotSupportedException(nameof(VerticalDatum), version);
+        if (version == WktVersion.Wkt1)
+        {
+            return this.ToWktNode();
+        }
+
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(this.Name),
+        };
+
+        WktKeywordNode? idNode = WktVersionSupport.CreateIdNode(this.Authority, this.AuthorityCode);
+        if (idNode is not null)
+        {
+            children.Add(idNode);
+        }
+
+        return new WktKeywordNode("VDATUM", children);
     }
 
     /// <inheritdoc/>

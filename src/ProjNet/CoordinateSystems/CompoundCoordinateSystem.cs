@@ -150,6 +150,31 @@ public class CompoundCoordinateSystem : CoordinateSystem
         return new WktKeywordNode("COMPD_CS", children);
     }
 
+    /// <inheritdoc />
+    public override WktNode ToWktNode(WktVersion version)
+    {
+        WktVersionSupport.ThrowIfUnknown(version);
+        if (version == WktVersion.Wkt1)
+        {
+            return this.ToWktNode();
+        }
+
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(this.Name),
+            this.HeadCoordinateSystem.ToWktNode(version),
+            this.TailCoordinateSystem.ToWktNode(version),
+        };
+
+        WktKeywordNode? idNode = WktVersionSupport.CreateIdNode(this.Authority, this.AuthorityCode);
+        if (idNode is not null)
+        {
+            children.Add(idNode);
+        }
+
+        return new WktKeywordNode("COMPOUNDCRS", children);
+    }
+
     /// <inheritdoc/>
     public override bool EqualParams(object obj)
     {

@@ -4,6 +4,7 @@
 
 namespace ProjNet.CoordinateSystems;
 
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
@@ -209,5 +210,45 @@ public class VerticalCoordinateSystem : CoordinateSystem
         }
 
         return new WktKeywordNode("VERT_CS", children);
+    }
+
+    /// <inheritdoc />
+    public override WktNode ToWktNode(WktVersion version)
+    {
+        WktVersionSupport.ThrowIfUnknown(version);
+        if (version == WktVersion.Wkt1)
+        {
+            return this.ToWktNode();
+        }
+
+        if (this.BoundGridTransformation is not null)
+        {
+            throw new NotSupportedException("WKT2 VERTCRS output for coordinate systems with retained bound-grid metadata is not implemented. A BOUNDCRS writer is required to preserve that transformation.");
+        }
+
+        if (this.AxisInfo.Count != 1)
+        {
+            ArgumentGuard.ThrowArgument($"Vertical coordinate system '{this.Name}' must provide exactly one axis for WKT2 output.");
+        }
+
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(this.Name),
+            this.VerticalDatum.ToWktNode(version),
+            new WktKeywordNode(
+                "CS",
+                new WktIdentifier("vertical"),
+                new WktInteger(this.Dimension)),
+            this.GetAxis(0).ToWktNode(version),
+            this.LinearUnit.ToWktNode(version),
+        };
+
+        WktKeywordNode? idNode = WktVersionSupport.CreateIdNode(this.Authority, this.AuthorityCode);
+        if (idNode is not null)
+        {
+            children.Add(idNode);
+        }
+
+        return new WktKeywordNode("VERTCRS", children);
     }
 }

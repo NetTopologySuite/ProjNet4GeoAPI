@@ -516,20 +516,7 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
             return string.Empty;
         }
 
-        string normalized = className
-            .ToUpperInvariant()
-            .Trim();
-        normalized = normalized.Replace("(", string.Empty);
-        normalized = normalized.Replace(")", string.Empty);
-        normalized = normalized.Replace("-", "_");
-        normalized = normalized.Replace("/", "_");
-        normalized = normalized.Replace(" ", "_");
-
-        while (normalized.IndexOf("__", StringComparison.Ordinal) >= 0)
-        {
-            normalized = normalized.Replace("__", "_");
-        }
-
+        string normalized = NormalizeProjectionKey(className, replacePeriods: false);
         return normalized switch
         {
             "LAMBERT_CONIC_CONFORMAL_1SP" => "LAMBERT_CONFORMAL_CONIC_1SP",
@@ -547,21 +534,48 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
             return string.Empty;
         }
 
-        string normalized = parameterName
+        return NormalizeProjectionKey(parameterName, replacePeriods: true);
+    }
+
+    private static string NormalizeProjectionKey(string value, bool replacePeriods)
+    {
+        string normalizedValue = value
             .ToUpperInvariant()
             .Trim();
-        normalized = normalized.Replace("(", string.Empty);
-        normalized = normalized.Replace(")", string.Empty);
-        normalized = normalized.Replace("-", "_");
-        normalized = normalized.Replace("/", "_");
-        normalized = normalized.Replace(" ", "_");
-        normalized = normalized.Replace(".", "_");
+        var builder = new StringBuilder(normalizedValue.Length);
+        bool previousWasUnderscore = false;
 
-        while (normalized.IndexOf("__", StringComparison.Ordinal) >= 0)
+        foreach (char character in normalizedValue)
         {
-            normalized = normalized.Replace("__", "_");
+            if (character == '(' || character == ')')
+            {
+                continue;
+            }
+
+            char normalizedCharacter = character switch
+            {
+                '-' or '/' or ' ' => '_',
+                '.' when replacePeriods => '_',
+                _ => character,
+            };
+
+            if (normalizedCharacter == '_')
+            {
+                if (previousWasUnderscore)
+                {
+                    continue;
+                }
+
+                previousWasUnderscore = true;
+            }
+            else
+            {
+                previousWasUnderscore = false;
+            }
+
+            builder.Append(normalizedCharacter);
         }
 
-        return normalized;
+        return builder.ToString();
     }
 }

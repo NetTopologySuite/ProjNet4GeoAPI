@@ -5,7 +5,9 @@ namespace ProjNet.Tests.IO.Wkt;
 
 using System;
 using System.Collections.Generic;
+using ProjNet;
 using ProjNet.CoordinateSystems;
+using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.IO.Wkt;
 using Xunit;
 
@@ -14,6 +16,8 @@ using Xunit;
 /// </summary>
 public class WktNodeTests
 {
+    private static readonly CoordinateSystemServices CoordinateSystemServices = new();
+
     /// <summary>
     /// Verifies that <see cref="WktQuotedString.ToString"/> wraps the stored value in double quotes.
     /// </summary>
@@ -795,6 +799,183 @@ public class WktNodeTests
     }
 
     /// <summary>
+    /// Verifies that WKT2 <c>GEODCRS</c> output roundtrips a geocentric coordinate system through the native WKT2 reader.
+    /// </summary>
+    [Fact]
+    public void GeocentricCoordinateSystem_ToWktNode_WithWkt22019_RoundTripsWgs84()
+    {
+        CoordinateSystemFactory factory = new();
+        GeocentricCoordinateSystem original = factory.CreateGeocentricCoordinateSystem(
+            "WGS 84 geocentric",
+            HorizontalDatum.WGS84,
+            LinearUnit.Metre,
+            PrimeMeridian.Greenwich);
+
+        string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
+        GeocentricCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<GeocentricCoordinateSystem>(factory, wkt);
+
+        Assert.StartsWith("GEODCRS[", wkt, StringComparison.Ordinal);
+        Assert.Contains("AXIS[\"X\", geocentricX]", wkt, StringComparison.Ordinal);
+        Assert.Contains("AXIS[\"Y\", geocentricY]", wkt, StringComparison.Ordinal);
+        Assert.Contains("AXIS[\"Z\", geocentricZ]", wkt, StringComparison.Ordinal);
+        Assert.True(original.EqualParams(parsed));
+    }
+
+    /// <summary>
+    /// Verifies that WKT2 <c>VERTCRS</c> output roundtrips a vertical coordinate system through the native WKT2 reader.
+    /// </summary>
+    [Fact]
+    public void VerticalCoordinateSystem_ToWktNode_WithWkt22019_RoundTripsOdn()
+    {
+        CoordinateSystemFactory factory = new();
+        VerticalCoordinateSystem original = VerticalCoordinateSystem.ODN;
+
+        string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
+        VerticalCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<VerticalCoordinateSystem>(factory, wkt);
+
+        Assert.StartsWith("VERTCRS[", wkt, StringComparison.Ordinal);
+        Assert.Contains("VDATUM[", wkt, StringComparison.Ordinal);
+        Assert.True(original.EqualParams(parsed));
+    }
+
+    /// <summary>
+    /// Verifies that WKT2 <c>COMPOUNDCRS</c> output roundtrips a compound coordinate system through the native WKT2 reader.
+    /// </summary>
+    [Fact]
+    public void CompoundCoordinateSystem_ToWktNode_WithWkt22019_RoundTripsGeographicAndVerticalComponents()
+    {
+        CoordinateSystemFactory factory = new();
+        GeographicCoordinateSystem geographic = factory.CreateGeographicCoordinateSystem(
+            "WGS 84",
+            AngularUnit.Degrees,
+            HorizontalDatum.WGS84,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("Lon", AxisOrientationEnum.East),
+            new AxisInfo("Lat", AxisOrientationEnum.North));
+        CompoundCoordinateSystem original = factory.CreateCompoundCoordinateSystem("WGS 84 + ODN", geographic, VerticalCoordinateSystem.ODN);
+
+        string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
+        CompoundCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<CompoundCoordinateSystem>(factory, wkt);
+
+        Assert.StartsWith("COMPOUNDCRS[", wkt, StringComparison.Ordinal);
+        Assert.Contains("GEOGCRS[", wkt, StringComparison.Ordinal);
+        Assert.Contains("VERTCRS[", wkt, StringComparison.Ordinal);
+        Assert.True(original.EqualParams(parsed));
+    }
+
+    /// <summary>
+    /// Verifies that WKT2 output for fitted coordinate systems remains explicitly unsupported until a derived-CRS writer exists.
+    /// </summary>
+    [Fact]
+    public void FittedCoordinateSystem_ToWktNode_WithWkt22019_ThrowsNotSupportedException()
+    {
+        CoordinateSystemFactory factory = new();
+        FittedCoordinateSystem original = factory.CreateFittedCoordinateSystem(
+            "Fitted test",
+            GeographicCoordinateSystem.WGS84,
+            new AffineTransform(1, 0, 0, 0, 1, 0),
+            new List<AxisInfo>
+            {
+                new("Lon", AxisOrientationEnum.East),
+                new("Lat", AxisOrientationEnum.North),
+            });
+
+        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => original.ToWktNode(WktVersion.Wkt22019));
+
+        Assert.Contains("derived", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Verifies that a catalog geographic CRS can roundtrip through WKT1 parsing and WKT2 writing without losing parameters.
+    /// </summary>
+    /// <param name="srid">The EPSG SRID to validate.</param>
+    [Theory]
+    [InlineData(4326)]
+    public void GeographicCoordinateSystem_ToWktNode_WithWkt22019_RoundTripsCatalogWkt1(int srid)
+    {
+        CoordinateSystemFactory factory = new();
+        GeographicCoordinateSystem original = ParseCatalogWkt1<GeographicCoordinateSystem>(factory, srid);
+
+        string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
+        GeographicCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<GeographicCoordinateSystem>(factory, wkt);
+
+        Assert.StartsWith("GEOGCRS[", wkt, StringComparison.Ordinal);
+        Assert.True(original.EqualParams(parsed));
+    }
+
+    /// <summary>
+    /// Verifies that a catalog geocentric CRS can roundtrip through WKT1 parsing and WKT2 writing without losing parameters.
+    /// </summary>
+    /// <param name="srid">The EPSG SRID to validate.</param>
+    [Theory]
+    [InlineData(4978)]
+    public void GeocentricCoordinateSystem_ToWktNode_WithWkt22019_RoundTripsCatalogWkt1(int srid)
+    {
+        CoordinateSystemFactory factory = new();
+        GeocentricCoordinateSystem original = ParseCatalogWkt1<GeocentricCoordinateSystem>(factory, srid);
+
+        string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
+        GeocentricCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<GeocentricCoordinateSystem>(factory, wkt);
+
+        Assert.StartsWith("GEODCRS[", wkt, StringComparison.Ordinal);
+        Assert.True(original.EqualParams(parsed));
+    }
+
+    /// <summary>
+    /// Verifies that a catalog projected CRS can roundtrip through WKT1 parsing and WKT2 writing while preserving the projection definition.
+    /// </summary>
+    /// <param name="srid">The EPSG SRID to validate.</param>
+    [Theory]
+    [InlineData(32632)]
+    public void ProjectedCoordinateSystem_ToWktNode_WithWkt22019_RoundTripsCatalogWkt1(int srid)
+    {
+        CoordinateSystemFactory factory = new();
+        ProjectedCoordinateSystem original = ParseCatalogWkt1<ProjectedCoordinateSystem>(factory, srid);
+
+        string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
+        ProjectedCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(factory, wkt);
+
+        Assert.StartsWith("PROJCRS[", wkt, StringComparison.Ordinal);
+        AssertProjectedRoundTripEquivalent(original, parsed);
+    }
+
+    /// <summary>
+    /// Verifies that a catalog vertical CRS can roundtrip through WKT1 parsing and WKT2 writing without losing parameters.
+    /// </summary>
+    /// <param name="srid">The EPSG SRID to validate.</param>
+    [Theory]
+    [InlineData(5701)]
+    public void VerticalCoordinateSystem_ToWktNode_WithWkt22019_RoundTripsCatalogWkt1(int srid)
+    {
+        CoordinateSystemFactory factory = new();
+        VerticalCoordinateSystem original = ParseCatalogWkt1<VerticalCoordinateSystem>(factory, srid);
+
+        string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
+        VerticalCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<VerticalCoordinateSystem>(factory, wkt);
+
+        Assert.StartsWith("VERTCRS[", wkt, StringComparison.Ordinal);
+        Assert.True(original.EqualParams(parsed));
+    }
+
+    /// <summary>
+    /// Verifies that a catalog compound CRS can roundtrip through WKT1 parsing and WKT2 writing without losing parameters.
+    /// </summary>
+    /// <param name="srid">The EPSG SRID to validate.</param>
+    [Theory]
+    [InlineData(9518)]
+    public void CompoundCoordinateSystem_ToWktNode_WithWkt22019_RoundTripsCatalogWkt1(int srid)
+    {
+        CoordinateSystemFactory factory = new();
+        CompoundCoordinateSystem original = ParseCatalogWkt1<CompoundCoordinateSystem>(factory, srid);
+
+        string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
+        CompoundCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<CompoundCoordinateSystem>(factory, wkt);
+
+        Assert.StartsWith("COMPOUNDCRS[", wkt, StringComparison.Ordinal);
+        Assert.True(original.EqualParams(parsed));
+    }
+
+    /// <summary>
     /// Verifies that <c>GeographicCoordinateSystem.ToWktNode()</c> returns a <see cref="WktKeywordNode"/>
     /// with the <c>GEOGCS</c> keyword and a quoted system name as its first child.
     /// </summary>
@@ -868,5 +1049,31 @@ public class WktNodeTests
 
         // Formatted version should have newlines when there are keyword children
         Assert.Contains("\n", formatted, StringComparison.Ordinal);
+    }
+
+    private static TCoordinateSystem ParseCatalogWkt1<TCoordinateSystem>(CoordinateSystemFactory factory, int srid)
+        where TCoordinateSystem : CoordinateSystem
+    {
+        CoordinateSystem coordinateSystem = Assert.IsAssignableFrom<CoordinateSystem>(CoordinateSystemServices.GetCoordinateSystem(srid));
+        return CoordinateSystemTestHelpers.RequireCoordinateSystem<TCoordinateSystem>(factory, coordinateSystem.WKT);
+    }
+
+    private static void AssertProjectedRoundTripEquivalent(ProjectedCoordinateSystem original, ProjectedCoordinateSystem parsed)
+    {
+        Assert.Equal(original.Name, parsed.Name);
+        Assert.Equal(original.Authority, parsed.Authority);
+        Assert.Equal(original.AuthorityCode, parsed.AuthorityCode);
+        Assert.True(original.LinearUnit.EqualParams(parsed.LinearUnit));
+        Assert.True(original.Projection.EqualParams(parsed.Projection));
+        Assert.True(original.GeographicCoordinateSystem.HorizontalDatum.EqualParams(parsed.GeographicCoordinateSystem.HorizontalDatum));
+        Assert.True(original.GeographicCoordinateSystem.AngularUnit.EqualParams(parsed.GeographicCoordinateSystem.AngularUnit));
+        Assert.True(original.GeographicCoordinateSystem.PrimeMeridian.EqualParams(parsed.GeographicCoordinateSystem.PrimeMeridian));
+        Assert.Equal(original.AxisInfo.Count, parsed.AxisInfo.Count);
+
+        for (int i = 0; i < original.AxisInfo.Count; i++)
+        {
+            Assert.Equal(original.AxisInfo[i].Name, parsed.AxisInfo[i].Name);
+            Assert.Equal(original.AxisInfo[i].Orientation, parsed.AxisInfo[i].Orientation);
+        }
     }
 }

@@ -107,6 +107,15 @@ public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSys
             this.BaseCoordinateSystem.ToWktNode());
     }
 
+    /// <inheritdoc />
+    public override WktNode ToWktNode(WktVersion version)
+    {
+        WktVersionSupport.ThrowIfUnknown(version);
+        return version == WktVersion.Wkt1
+            ? this.ToWktNode()
+            : throw new NotSupportedException("WKT2 output for fitted coordinate systems is not implemented because the current model does not expose a WKT2 derived-CRS / deriving-conversion writer for arbitrary base transforms.");
+    }
+
     /// <summary>
     /// Gets the Well-Known Text of the math transform to the base coordinate system.
     /// </summary>
