@@ -58,6 +58,34 @@ public class CoordinateSystemWktReaderWkt2Tests
     }
 
     /// <summary>
+    /// Provides WKT2 vertical CRS examples copied from <c>spec\epsg\EPSG-v12_053-WKT.Zip</c>.
+    /// </summary>
+    /// <returns>SRID/WKT pairs that should parse successfully.</returns>
+    public static IEnumerable<TheoryDataRow<int, string>> SupportedWkt2VerticalRows()
+    {
+        return
+        [
+            new TheoryDataRow<int, string>(10150, """VERTCRS["MSL UK & Ireland VORF08 depth",VDATUM["Mean Sea Level UK & Ireland VORF08",ID["EPSG",1330]],CS[vertical,1,ID["EPSG",6498]],AXIS["Depth (D)",down],LENGTHUNIT["metre",1,ID["EPSG",9001]],GEOIDMODEL["ETRS89 to MSL UK & Ireland VORF08 depth (1)",ID["EPSG",10154]],ID["EPSG",10150]]"""),
+            new TheoryDataRow<int, string>(10190, """VERTCRS["NGA 2022 height",VDATUM["Nivellement General de l'Algerie 2022",ID["EPSG",1354]],CS[vertical,1,ID["EPSG",6499]],AXIS["Gravity-related height (H)",up],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",10190]]"""),
+            new TheoryDataRow<int, string>(10352, """VERTCRS["Formentera height",VDATUM["Formentera",ID["EPSG",1362]],CS[vertical,1,ID["EPSG",6499]],AXIS["Gravity-related height (H)",up],LENGTHUNIT["metre",1,ID["EPSG",9001]],GEOIDMODEL["ETRS89-ESP [REGENTE] to Formentera height (1)",ID["EPSG",10358]],ID["EPSG",10352]]"""),
+        ];
+    }
+
+    /// <summary>
+    /// Provides datum-backed WKT2 compound CRS examples copied from <c>spec\epsg\EPSG-v12_053-WKT.Zip</c>.
+    /// </summary>
+    /// <returns>SRID/WKT pairs that should parse successfully.</returns>
+    public static IEnumerable<TheoryDataRow<int, string>> SupportedWkt2CompoundRows()
+    {
+        return
+        [
+            new TheoryDataRow<int, string>(10162, """COMPOUNDCRS["JGD2011 / Japan Plane Rectangular CS I + JGD2011 (vertical) height",PROJCRS["JGD2011 / Japan Plane Rectangular CS I",BASEGEOGCRS["JGD2011",DATUM["Japanese Geodetic Datum 2011",ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7019]],ID["EPSG",1128]],ID["EPSG",6668]],CONVERSION["Japan Plane Rectangular CS zone I",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",33,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",129.5,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.9999,SCALEUNIT["unity",1,ID["EPSG",9201]],ID["EPSG",8805]],PARAMETER["False easting",0,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8806]],PARAMETER["False northing",0,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8807]],ID["EPSG",17801]],CS[Cartesian,2,ID["EPSG",4530]],AXIS["Northing (X)",north],AXIS["Easting (Y)",east],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",6669]],VERTCRS["JGD2011 (vertical) height",VDATUM["Japanese Geodetic Datum 2011 (vertical)",ID["EPSG",1131]],CS[vertical,1,ID["EPSG",6499]],AXIS["Gravity-related height (H)",up],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",6695]],ID["EPSG",10162]]"""),
+            new TheoryDataRow<int, string>(10163, """COMPOUNDCRS["JGD2011 / Japan Plane Rectangular CS II + JGD2011 (vertical) height",PROJCRS["JGD2011 / Japan Plane Rectangular CS II",BASEGEOGCRS["JGD2011",DATUM["Japanese Geodetic Datum 2011",ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7019]],ID["EPSG",1128]],ID["EPSG",6668]],CONVERSION["Japan Plane Rectangular CS zone II",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",33,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",131,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.9999,SCALEUNIT["unity",1,ID["EPSG",9201]],ID["EPSG",8805]],PARAMETER["False easting",0,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8806]],PARAMETER["False northing",0,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8807]],ID["EPSG",17802]],CS[Cartesian,2,ID["EPSG",4530]],AXIS["Northing (X)",north],AXIS["Easting (Y)",east],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",6670]],VERTCRS["JGD2011 (vertical) height",VDATUM["Japanese Geodetic Datum 2011 (vertical)",ID["EPSG",1131]],CS[vertical,1,ID["EPSG",6499]],AXIS["Gravity-related height (H)",up],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",6695]],ID["EPSG",10163]]"""),
+            new TheoryDataRow<int, string>(10164, """COMPOUNDCRS["JGD2011 / Japan Plane Rectangular CS III + JGD2011 (vertical) height",PROJCRS["JGD2011 / Japan Plane Rectangular CS III",BASEGEOGCRS["JGD2011",DATUM["Japanese Geodetic Datum 2011",ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7019]],ID["EPSG",1128]],ID["EPSG",6668]],CONVERSION["Japan Plane Rectangular CS zone III",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",36,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",132.166666666667,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.9999,SCALEUNIT["unity",1,ID["EPSG",9201]],ID["EPSG",8805]],PARAMETER["False easting",0,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8806]],PARAMETER["False northing",0,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8807]],ID["EPSG",17803]],CS[Cartesian,2,ID["EPSG",4530]],AXIS["Northing (X)",north],AXIS["Easting (Y)",east],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",6671]],VERTCRS["JGD2011 (vertical) height",VDATUM["Japanese Geodetic Datum 2011 (vertical)",ID["EPSG",1131]],CS[vertical,1,ID["EPSG",6499]],AXIS["Gravity-related height (H)",up],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",6695]],ID["EPSG",10164]]"""),
+        ];
+    }
+
+    /// <summary>
     /// Verifies supported WKT2 CRS parse to the same semantic model as the committed catalog reference.
     /// </summary>
     /// <param name="srid">Expected EPSG SRID.</param>
@@ -92,6 +120,44 @@ public class CoordinateSystemWktReaderWkt2Tests
             GetCatalogWkt(srid));
 
         Assert.True(parsed.EqualParams(reference), $"WKT2 projected CRS parse mismatch for EPSG:{srid}.");
+        Assert.Equal("EPSG", parsed.Authority);
+        Assert.Equal(srid, parsed.AuthorityCode);
+    }
+
+    /// <summary>
+    /// Verifies supported WKT2 vertical CRS parse to the same semantic model as the committed catalog reference.
+    /// </summary>
+    /// <param name="srid">Expected EPSG SRID.</param>
+    /// <param name="wkt">WKT2 vertical CRS from the EPSG export.</param>
+    [Theory]
+    [MemberData(nameof(SupportedWkt2VerticalRows))]
+    public void CreateFromWkt_ParsesSupportedWkt2VerticalCrsEquivalentToCatalogReference(int srid, string wkt)
+    {
+        VerticalCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<VerticalCoordinateSystem>(CoordinateSystemFactory, wkt);
+        VerticalCoordinateSystem reference = CoordinateSystemTestHelpers.RequireCoordinateSystem<VerticalCoordinateSystem>(
+            CoordinateSystemFactory,
+            GetCatalogWkt(srid));
+
+        Assert.True(parsed.EqualParams(reference), $"WKT2 vertical CRS parse mismatch for EPSG:{srid}.");
+        Assert.Equal("EPSG", parsed.Authority);
+        Assert.Equal(srid, parsed.AuthorityCode);
+    }
+
+    /// <summary>
+    /// Verifies supported WKT2 compound CRS parse to the same semantic model as the committed catalog reference.
+    /// </summary>
+    /// <param name="srid">Expected EPSG SRID.</param>
+    /// <param name="wkt">WKT2 compound CRS from the EPSG export.</param>
+    [Theory]
+    [MemberData(nameof(SupportedWkt2CompoundRows))]
+    public void CreateFromWkt_ParsesSupportedWkt2CompoundCrsEquivalentToCatalogReference(int srid, string wkt)
+    {
+        CompoundCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<CompoundCoordinateSystem>(CoordinateSystemFactory, wkt);
+        CompoundCoordinateSystem reference = CoordinateSystemTestHelpers.RequireCoordinateSystem<CompoundCoordinateSystem>(
+            CoordinateSystemFactory,
+            GetCatalogWkt(srid));
+
+        Assert.True(parsed.EqualParams(reference), $"WKT2 compound CRS parse mismatch for EPSG:{srid}.");
         Assert.Equal("EPSG", parsed.Authority);
         Assert.Equal(srid, parsed.AuthorityCode);
     }

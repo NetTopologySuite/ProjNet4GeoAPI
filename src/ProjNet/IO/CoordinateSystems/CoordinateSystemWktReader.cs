@@ -100,6 +100,18 @@ public static partial class CoordinateSystemWktReader
 
                 info = ReadWkt2ProjectedCoordinateSystem(tokenizer);
                 return true;
+            case "VERTCRS":
+                if (!ContainsKeywordBlock(wkt, "VDATUM") || !ContainsKeywordBlock(wkt, "CS"))
+                {
+                    info = null;
+                    return false;
+                }
+
+                info = ReadWkt2VerticalCoordinateSystem(tokenizer);
+                return true;
+            case "COMPOUNDCRS":
+                info = ReadWkt2CompoundCoordinateSystem(tokenizer);
+                return true;
             default:
                 info = null;
                 return false;
@@ -738,6 +750,7 @@ public static partial class CoordinateSystemWktReader
             or "BBOX"
             or "DEFININGTRANSFORMATION"
             or "DYNAMIC"
+            or "GEOIDMODEL"
             or "MERIDIAN"
             or "ORDER"
             or "REMARK"
@@ -1190,6 +1203,216 @@ public static partial class CoordinateSystemWktReader
         };
     }
 
+    private static VerticalCoordinateSystem ReadWkt2VerticalCoordinateSystem(WktTokenizer tokenizer)
+    {
+        const string rootKeyword = "VERTCRS";
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        string name = tokenizer.ReadDoubleQuotedWord();
+
+        VerticalDatum? verticalDatum = null;
+        LinearUnit? linearUnit = null;
+        string? coordinateSystemType = null;
+        int coordinateSystemDimension = 0;
+        string authority = string.Empty;
+        long authorityCode = -1;
+        var axisInfo = new List<AxisInfo>();
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            switch (tokenizer.GetStringValue())
+            {
+                case "VDATUM":
+                    verticalDatum = ReadWkt2VerticalDatum(tokenizer);
+                    break;
+                case "CS":
+                    (coordinateSystemType, coordinateSystemDimension) = ReadWkt2CoordinateSystemDefinition(tokenizer);
+                    break;
+                case "AXIS":
+                    axisInfo.Add(ReadWkt2Axis(tokenizer, out _, out LinearUnit? axisLinearUnit));
+                    linearUnit = MergeAxisLinearUnit(linearUnit, axisLinearUnit);
+                    break;
+                case "LENGTHUNIT":
+                    linearUnit = ReadWkt2LinearUnit(tokenizer);
+                    break;
+                case "ID":
+                    ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+                    break;
+                default:
+                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    {
+                        SkipKeywordNode(tokenizer);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"WKT2 keyword '{tokenizer.GetStringValue()}' is not supported in {rootKeyword}.");
+                    }
+
+                    break;
+            }
+
+            tokenizer.NextToken();
+        }
+
+        if (verticalDatum is null)
+        {
+            ArgumentGuard.ThrowArgument("WKT2 vertical CRS is missing a VDATUM block.");
+        }
+
+        if (string.IsNullOrWhiteSpace(coordinateSystemType))
+        {
+            ArgumentGuard.ThrowArgument("WKT2 vertical CRS is missing a CS block.");
+        }
+
+        if (!string.Equals(coordinateSystemType, "vertical", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new NotSupportedException($"WKT2 vertical coordinate system type '{coordinateSystemType}' is not supported.");
+        }
+
+        if (coordinateSystemDimension != 1)
+        {
+            throw new NotSupportedException("WKT2 vertical CRS dimensions other than 1 are not supported.");
+        }
+
+        if (linearUnit is null)
+        {
+            ArgumentGuard.ThrowArgument("WKT2 vertical CRS is missing a LENGTHUNIT block.");
+        }
+
+        if (axisInfo.Count != coordinateSystemDimension)
+        {
+            ArgumentGuard.ThrowArgument($"WKT2 vertical CRS declared dimension {coordinateSystemDimension}, but provided {axisInfo.Count} AXIS blocks.");
+        }
+
+        verticalDatum = ArgumentGuard.ThrowIfNull(verticalDatum, nameof(verticalDatum));
+        linearUnit = ArgumentGuard.ThrowIfNull(linearUnit, nameof(linearUnit));
+        return new VerticalCoordinateSystem(
+            linearUnit,
+            verticalDatum,
+            axisInfo[0],
+            name,
+            authority,
+            authorityCode,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
+    private static VerticalDatum ReadWkt2VerticalDatum(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "VDATUM")
+        {
+            tokenizer.ReadToken("VDATUM");
+        }
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        string name = tokenizer.ReadDoubleQuotedWord();
+        string authority = string.Empty;
+        long authorityCode = -1;
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            if (tokenizer.GetStringValue() == "ID")
+            {
+                ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+            }
+            else if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+            {
+                SkipKeywordNode(tokenizer);
+            }
+            else
+            {
+                throw new NotSupportedException($"WKT2 VDATUM keyword '{tokenizer.GetStringValue()}' is not supported.");
+            }
+
+            tokenizer.NextToken();
+        }
+
+        return new VerticalDatum(DatumType.VD_GeoidModelDerived, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
+
+    private static CompoundCoordinateSystem ReadWkt2CompoundCoordinateSystem(WktTokenizer tokenizer)
+    {
+        const string rootKeyword = "COMPOUNDCRS";
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        string name = tokenizer.ReadDoubleQuotedWord();
+
+        CoordinateSystem? headCoordinateSystem = null;
+        CoordinateSystem? tailCoordinateSystem = null;
+        string authority = string.Empty;
+        long authorityCode = -1;
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            if (headCoordinateSystem is null)
+            {
+                headCoordinateSystem = ReadCoordinateSystem(null, tokenizer);
+            }
+            else if (tailCoordinateSystem is null)
+            {
+                tailCoordinateSystem = ReadCoordinateSystem(null, tokenizer);
+            }
+            else if (tokenizer.GetStringValue() == "ID")
+            {
+                ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+            }
+            else if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+            {
+                SkipKeywordNode(tokenizer);
+            }
+            else
+            {
+                throw new NotSupportedException($"WKT2 keyword '{tokenizer.GetStringValue()}' is not supported in {rootKeyword}.");
+            }
+
+            tokenizer.NextToken();
+        }
+
+        headCoordinateSystem = ArgumentGuard.ThrowIfNull(headCoordinateSystem, nameof(headCoordinateSystem));
+        tailCoordinateSystem = ArgumentGuard.ThrowIfNull(tailCoordinateSystem, nameof(tailCoordinateSystem));
+        return new CompoundCoordinateSystem(headCoordinateSystem, tailCoordinateSystem, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
+
     private static string NormalizeWkt(string wkt)
     {
         string normalized = wkt;
@@ -1360,12 +1583,17 @@ public static partial class CoordinateSystemWktReader
         string coordinateSystemText = coordinateSystem ?? tokenizer.GetStringValue();
         return tokenizer.GetStringValue() switch
         {
+            "GEOGCRS" or "GEODCRS" or "GEODETICCRS" => ReadWkt2GeodeticCoordinateReferenceSystem(tokenizer),
+            "PROJCRS" => ReadWkt2ProjectedCoordinateSystem(tokenizer),
+            "VERTCRS" => ReadWkt2VerticalCoordinateSystem(tokenizer),
+            "COMPOUNDCRS" => ReadWkt2CompoundCoordinateSystem(tokenizer),
             "GEOGCS" => ReadGeographicCoordinateSystem(tokenizer),
             "PROJCS" => ReadProjectedCoordinateSystem(tokenizer),
             "FITTED_CS" => ReadFittedCoordinateSystem(tokenizer),
             "GEOCCS" => ReadGeocentricCoordinateSystem(tokenizer),
             "COMPD_CS" => ReadCompoundCoordinateSystem(tokenizer),
             "VERT_CS" => ReadVerticalCoordinateSystem(tokenizer),
+            "BOUNDCRS" => throw new NotSupportedException($"{coordinateSystemText} coordinate system is not supported."),
             "LOCAL_CS" => throw new NotSupportedException($"{coordinateSystemText} coordinate system is not supported."),
             _ => throw new InvalidOperationException($"{coordinateSystemText} coordinate system is not recognized."),
         };
