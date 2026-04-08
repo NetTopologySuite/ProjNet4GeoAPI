@@ -16,6 +16,7 @@ using System.Collections.Generic;
 /// communicate across the pipeline. Each invocation clears the shared context
 /// before replaying the ordered step list.
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/pipeline.html">PROJ: pipeline operator.</seealso>
 internal sealed class PipelineCompositeMathTransform : MathTransform
 {
     private readonly MathTransform[] transforms;

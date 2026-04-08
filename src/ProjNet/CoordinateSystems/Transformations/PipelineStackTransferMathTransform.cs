@@ -17,6 +17,8 @@ using System.Diagnostics.CodeAnalysis;
 /// ordinates for later reuse, while <c>pop</c> restores them, matching PROJ's
 /// pipeline context transfer model.
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/conversions/push.html">PROJ: push coordinate value to pipeline stack.</seealso>
+/// <seealso href="https://proj.org/en/stable/operations/conversions/pop.html">PROJ: pop coordinate value from pipeline stack.</seealso>
 internal sealed class PipelineStackTransferMathTransform : MathTransform
 {
     private readonly bool isPush;

@@ -15,6 +15,7 @@ using System;
 /// As a result, <see cref="Identity()"/> is intentionally direction-dependent
 /// and reflects whether the current forward traversal skips the wrapped step.
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/pipeline.html">PROJ: pipeline operator.</seealso>
 internal sealed class PipelineOmitMathTransform : MathTransform
 {
     private readonly MathTransform inner;

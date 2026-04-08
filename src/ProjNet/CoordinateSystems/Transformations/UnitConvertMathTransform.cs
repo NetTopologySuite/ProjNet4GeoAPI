@@ -14,6 +14,7 @@ using System;
 /// <c>y *= scale</c>, and for 3D coordinates <c>z *= zScale</c>. Construction
 /// rejects non-positive or non-finite scale factors so the inverse always exists.
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/conversions/unitconvert.html">PROJ: unit conversion.</seealso>
 internal sealed class UnitConvertMathTransform : MathTransform
 {
     private readonly int dimension;

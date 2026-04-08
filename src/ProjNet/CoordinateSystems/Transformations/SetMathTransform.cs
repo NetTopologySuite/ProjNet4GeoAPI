@@ -18,6 +18,7 @@ using System.Globalization;
 /// intentionally idempotent, so PROJ's self-inverse convention is preserved for
 /// non-identity instances.
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/conversions/set.html">PROJ: set coordinate value.</seealso>
 internal sealed class SetMathTransform : MathTransform
 {
     private static readonly MathTransform SharedIdentityInverse = new IdentityMathTransform(3);
