@@ -149,6 +149,19 @@ public class Projection : Info, IProjection
     }
 
     /// <summary>
+    /// Converts this projection to a WKT syntax tree node for the requested WKT version.
+    /// </summary>
+    /// <param name="version">The WKT dialect to emit.</param>
+    /// <returns>A <see cref="WktNode"/> representing this projection in the requested WKT version.</returns>
+    public WktNode ToWktNode(WktVersion version)
+    {
+        WktVersionSupport.ThrowIfUnknown(version);
+        return version == WktVersion.Wkt1
+            ? this.ToWktNode()
+            : throw WktVersionSupport.CreateNotSupportedException(nameof(Projection), version);
+    }
+
+    /// <summary>
     /// Gets an indexed parameter of the projection.
     /// </summary>
     /// <param name="index">Index of parameter.</param>

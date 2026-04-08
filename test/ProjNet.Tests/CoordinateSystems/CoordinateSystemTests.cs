@@ -52,7 +52,7 @@ public class CoordinateSystemTests
     }
 
     /// <summary>
-    /// Verifies that <see cref="CoordinateSystem.ToWktNode"/> uses the WKT string by default.
+    /// Verifies that <see cref="CoordinateSystem.ToWktNode()"/> uses the WKT string by default.
     /// </summary>
     [Fact]
     public void ToWktNode_DefaultImplementation_ReturnsIdentifier()

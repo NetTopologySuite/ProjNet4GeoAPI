@@ -245,7 +245,7 @@ public class ProjectedCoordinateSystemTests
     }
 
     /// <summary>
-    /// Verifies that <see cref="ProjectedCoordinateSystem.ToWktNode"/> matches WKT when default axes are used.
+    /// Verifies that <see cref="ProjectedCoordinateSystem.ToWktNode()"/> matches WKT when default axes are used.
     /// </summary>
     [Fact]
     public void ToWktNode_WithDefaultAxes_MatchesWkt()
@@ -258,7 +258,7 @@ public class ProjectedCoordinateSystemTests
     }
 
     /// <summary>
-    /// Verifies that <see cref="ProjectedCoordinateSystem.ToWktNode"/> uses an identifier node when the projection is not a <see cref="Projection"/> instance.
+    /// Verifies that <see cref="ProjectedCoordinateSystem.ToWktNode()"/> uses an identifier node when the projection is not a <see cref="Projection"/> instance.
     /// </summary>
     [Fact]
     public void ToWktNode_WithNonProjectionInstance_UsesIdentifierNode()
@@ -273,7 +273,7 @@ public class ProjectedCoordinateSystemTests
     }
 
     /// <summary>
-    /// Verifies that <see cref="ProjectedCoordinateSystem.ToWktNode"/> includes an authority node when metadata is present.
+    /// Verifies that <see cref="ProjectedCoordinateSystem.ToWktNode()"/> includes an authority node when metadata is present.
     /// </summary>
     [Fact]
     public void ToWktNode_WithAuthority_IncludesAuthorityNode()
@@ -288,7 +288,7 @@ public class ProjectedCoordinateSystemTests
     }
 
     /// <summary>
-    /// Verifies that <see cref="ProjectedCoordinateSystem.ToWktNode"/> includes custom axis nodes when the axes differ from the defaults.
+    /// Verifies that <see cref="ProjectedCoordinateSystem.ToWktNode()"/> includes custom axis nodes when the axes differ from the defaults.
     /// </summary>
     [Fact]
     public void ToWktNode_WithCustomAxes_IncludesAxisNodes()
@@ -307,7 +307,7 @@ public class ProjectedCoordinateSystemTests
     }
 
     /// <summary>
-    /// Verifies that <see cref="ProjectedCoordinateSystem.ToWktNode"/> includes axis nodes when only the first axis name differs from the defaults.
+    /// Verifies that <see cref="ProjectedCoordinateSystem.ToWktNode()"/> includes axis nodes when only the first axis name differs from the defaults.
     /// </summary>
     [Fact]
     public void ToWktNode_WithFirstAxisNameChanged_IncludesAxisNodes()

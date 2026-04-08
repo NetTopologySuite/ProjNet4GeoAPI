@@ -120,7 +120,7 @@ public class FittedCoordinateSystemTests
     }
 
     /// <summary>
-    /// Verifies that <see cref="FittedCoordinateSystem.ToWktNode"/> exposes the fitted coordinate system structure.
+    /// Verifies that <see cref="FittedCoordinateSystem.ToWktNode()"/> exposes the fitted coordinate system structure.
     /// </summary>
     [Fact]
     public void ToWktNode_ReturnsExpectedStructure()

@@ -103,6 +103,19 @@ public class ProjectionParameter
     }
 
     /// <summary>
+    /// Converts this projection parameter to a WKT syntax tree node for the requested WKT version.
+    /// </summary>
+    /// <param name="version">The WKT dialect to emit.</param>
+    /// <returns>A <see cref="WktNode"/> representing this projection parameter in the requested WKT version.</returns>
+    public WktNode ToWktNode(WktVersion version)
+    {
+        WktVersionSupport.ThrowIfUnknown(version);
+        return version == WktVersion.Wkt1
+            ? this.ToWktNode()
+            : throw WktVersionSupport.CreateNotSupportedException(nameof(ProjectionParameter), version);
+    }
+
+    /// <summary>
     /// Returns a string representation of this projection parameter.
     /// </summary>
     /// <returns>A string in the format <c>ProjectionParameter 'name': value</c>.</returns>

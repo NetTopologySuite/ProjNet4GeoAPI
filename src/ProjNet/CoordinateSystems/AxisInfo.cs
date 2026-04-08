@@ -92,4 +92,32 @@ public class AxisInfo
             new WktQuotedString(this.Name),
             new WktIdentifier(this.Orientation.ToString().ToUpperInvariant()));
     }
+
+    /// <summary>
+    /// Converts this axis info to a WKT syntax tree node for the requested WKT version.
+    /// </summary>
+    /// <param name="version">The WKT dialect to emit.</param>
+    /// <returns>A <see cref="WktNode"/> representing this axis info in the requested WKT version.</returns>
+    public WktNode ToWktNode(WktVersion version)
+    {
+        WktVersionSupport.ThrowIfUnknown(version);
+        return version switch
+        {
+            WktVersion.Wkt1 => this.ToWktNode(),
+            WktVersion.Wkt22019 => new WktKeywordNode(
+                "AXIS",
+                new WktQuotedString(this.Name),
+                new WktIdentifier(this.Orientation switch
+                {
+                    AxisOrientationEnum.North => "north",
+                    AxisOrientationEnum.South => "south",
+                    AxisOrientationEnum.East => "east",
+                    AxisOrientationEnum.West => "west",
+                    AxisOrientationEnum.Up => "up",
+                    AxisOrientationEnum.Down => "down",
+                    _ => "other",
+                })),
+            _ => throw WktVersionSupport.CreateNotSupportedException(nameof(AxisInfo), version),
+        };
+    }
 }

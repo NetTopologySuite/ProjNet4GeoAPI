@@ -321,6 +321,29 @@ public class WktNodeTests
     }
 
     /// <summary>
+    /// Verifies that helper objects keep their existing WKT1 node output when routed through the versioned API.
+    /// </summary>
+    [Fact]
+    public void HelperObjects_ToWktNode_WithWkt1Version_MatchesParameterlessOutput()
+    {
+        AxisInfo axis = new("Lon", AxisOrientationEnum.East);
+        Projection projection = Assert.IsType<Projection>(ProjectedCoordinateSystem.WebMercator.Projection);
+        ProjectionParameter parameter = new("central_meridian", 15d);
+        Wgs84ConversionInfo wgs84 = new(-87, -98, -121, 0, 0, 0, 0);
+
+        Assert.Equal(AngularUnit.Degrees.ToWktNode().ToString(), AngularUnit.Degrees.ToWktNode(WktVersion.Wkt1).ToString());
+        Assert.Equal(LinearUnit.Metre.ToWktNode().ToString(), LinearUnit.Metre.ToWktNode(WktVersion.Wkt1).ToString());
+        Assert.Equal(Ellipsoid.WGS84.ToWktNode().ToString(), Ellipsoid.WGS84.ToWktNode(WktVersion.Wkt1).ToString());
+        Assert.Equal(PrimeMeridian.Greenwich.ToWktNode().ToString(), PrimeMeridian.Greenwich.ToWktNode(WktVersion.Wkt1).ToString());
+        Assert.Equal(HorizontalDatum.WGS84.ToWktNode().ToString(), HorizontalDatum.WGS84.ToWktNode(WktVersion.Wkt1).ToString());
+        Assert.Equal(VerticalDatum.ODN.ToWktNode().ToString(), VerticalDatum.ODN.ToWktNode(WktVersion.Wkt1).ToString());
+        Assert.Equal(axis.ToWktNode().ToString(), axis.ToWktNode(WktVersion.Wkt1).ToString());
+        Assert.Equal(projection.ToWktNode().ToString(), projection.ToWktNode(WktVersion.Wkt1).ToString());
+        Assert.Equal(parameter.ToWktNode().ToString(), parameter.ToWktNode(WktVersion.Wkt1).ToString());
+        Assert.Equal(wgs84.ToWktNode().ToString(), wgs84.ToWktNode(WktVersion.Wkt1).ToString());
+    }
+
+    /// <summary>
     /// Verifies that <c>LinearUnit.ToWktNode()</c> produces a node whose compact string representation
     /// matches the <c>WKT</c> property of the unit.
     /// </summary>
@@ -524,6 +547,251 @@ public class WktNodeTests
         GeocentricCoordinateSystem gcc = GeocentricCoordinateSystem.WGS84;
         var node = gcc.ToWktNode();
         Assert.Equal(gcc.WKT, node.ToString());
+    }
+
+    /// <summary>
+    /// Verifies that coordinate systems keep their existing WKT1 node output when routed through the versioned API.
+    /// </summary>
+    [Fact]
+    public void CoordinateSystems_ToWktNode_WithWkt1Version_MatchesParameterlessOutput()
+    {
+        GeographicCoordinateSystem geographic = GeographicCoordinateSystem.WGS84;
+        ProjectedCoordinateSystem projected = ProjectedCoordinateSystem.WebMercator;
+        VerticalCoordinateSystem vertical = VerticalCoordinateSystem.ODN;
+        GeocentricCoordinateSystem geocentric = GeocentricCoordinateSystem.WGS84;
+        CompoundCoordinateSystem compound = new CoordinateSystemFactory().CreateCompoundCoordinateSystem("WGS84 + ODN", geographic, vertical);
+
+        Assert.Equal(geographic.ToWktNode().ToString(), geographic.ToWktNode(WktVersion.Wkt1).ToString());
+        Assert.Equal(projected.ToWktNode().ToString(), projected.ToWktNode(WktVersion.Wkt1).ToString());
+        Assert.Equal(vertical.ToWktNode().ToString(), vertical.ToWktNode(WktVersion.Wkt1).ToString());
+        Assert.Equal(geocentric.ToWktNode().ToString(), geocentric.ToWktNode(WktVersion.Wkt1).ToString());
+        Assert.Equal(compound.ToWktNode().ToString(), compound.ToWktNode(WktVersion.Wkt1).ToString());
+    }
+
+    /// <summary>
+    /// Verifies that <c>GEOGCRS</c> WKT2 output for WGS84 roundtrips through the native WKT2 reader without changing parameters.
+    /// </summary>
+    [Fact]
+    public void GeographicCoordinateSystem_ToWktNode_WithWkt22019_RoundTripsWgs84()
+    {
+        CoordinateSystemFactory factory = new();
+        GeographicCoordinateSystem original = GeographicCoordinateSystem.WGS84;
+
+        string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
+        GeographicCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<GeographicCoordinateSystem>(factory, wkt);
+
+        Assert.StartsWith("GEOGCRS[", wkt, StringComparison.Ordinal);
+        Assert.DoesNotContain("PRIMEM[", wkt, StringComparison.Ordinal);
+        Assert.True(original.EqualParams(parsed));
+    }
+
+    /// <summary>
+    /// Verifies that WKT2 <c>GEOGCRS</c> output preserves non-Greenwich prime meridians and roundtrips through the reader.
+    /// </summary>
+    [Fact]
+    public void GeographicCoordinateSystem_ToWktNode_WithWkt22019_RoundTripsCustomPrimeMeridian()
+    {
+        CoordinateSystemFactory factory = new();
+        GeographicCoordinateSystem original = factory.CreateGeographicCoordinateSystem(
+            "Custom Paris geographic",
+            AngularUnit.Degrees,
+            HorizontalDatum.WGS84,
+            PrimeMeridian.Paris,
+            new AxisInfo("Lat", AxisOrientationEnum.North),
+            new AxisInfo("Lon", AxisOrientationEnum.East));
+
+        string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
+        GeographicCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<GeographicCoordinateSystem>(factory, wkt);
+
+        Assert.Contains("PRIMEM[", wkt, StringComparison.Ordinal);
+        Assert.True(original.EqualParams(parsed));
+    }
+
+    /// <summary>
+    /// Verifies that datum shifts encoded as WGS84 conversion parameters are rejected until a dedicated WKT2 <c>BOUNDCRS</c> writer exists.
+    /// </summary>
+    [Fact]
+    public void GeographicCoordinateSystem_ToWktNode_WithWkt22019AndWgs84Parameters_ThrowsNotSupportedException()
+    {
+        CoordinateSystemFactory factory = new();
+        GeographicCoordinateSystem original = factory.CreateGeographicCoordinateSystem(
+            "ED50 test",
+            AngularUnit.Degrees,
+            HorizontalDatum.ED50,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("Lon", AxisOrientationEnum.East),
+            new AxisInfo("Lat", AxisOrientationEnum.North));
+
+        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => original.ToWktNode(WktVersion.Wkt22019));
+
+        Assert.Contains("BOUNDCRS", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Verifies that WKT2 <c>PROJCRS</c> output roundtrips a transverse Mercator projected CRS through the native WKT2 reader.
+    /// </summary>
+    [Fact]
+    public void ProjectedCoordinateSystem_ToWktNode_WithWkt22019_RoundTripsTransverseMercator()
+    {
+        CoordinateSystemFactory factory = new();
+        GeographicCoordinateSystem geographic = factory.CreateGeographicCoordinateSystem(
+            "WGS 84",
+            AngularUnit.Degrees,
+            HorizontalDatum.WGS84,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("Geodetic latitude (Lat)", AxisOrientationEnum.North),
+            new AxisInfo("Geodetic longitude (Lon)", AxisOrientationEnum.East));
+        IProjection projection = factory.CreateProjection(
+            "UTM zone 33N",
+            "Transverse_Mercator",
+            new List<ProjectionParameter>
+            {
+                new("latitude_of_origin", 0),
+                new("central_meridian", 15),
+                new("scale_factor", 0.9996),
+                new("false_easting", 500000),
+                new("false_northing", 0),
+            });
+        ProjectedCoordinateSystem original = factory.CreateProjectedCoordinateSystem(
+            "WGS 84 / UTM zone 33N",
+            geographic,
+            projection,
+            LinearUnit.Metre,
+            new AxisInfo("Easting", AxisOrientationEnum.East),
+            new AxisInfo("Northing", AxisOrientationEnum.North));
+
+        string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
+        ProjectedCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(factory, wkt);
+
+        Assert.StartsWith("PROJCRS[", wkt, StringComparison.Ordinal);
+        Assert.Contains("BASEGEOGCRS[", wkt, StringComparison.Ordinal);
+        Assert.Contains("METHOD[\"Transverse Mercator\"]", wkt, StringComparison.Ordinal);
+        Assert.DoesNotContain("GEOGCS[", wkt, StringComparison.Ordinal);
+        Assert.True(original.EqualParams(parsed));
+    }
+
+    /// <summary>
+    /// Verifies that WKT2 <c>PROJCRS</c> output uses method-specific false-origin parameter names for Lambert Conic Conformal (2SP).
+    /// </summary>
+    [Fact]
+    public void ProjectedCoordinateSystem_ToWktNode_WithWkt22019_UsesLambert2SpFalseOriginParameterNames()
+    {
+        CoordinateSystemFactory factory = new();
+        GeographicCoordinateSystem geographic = factory.CreateGeographicCoordinateSystem(
+            "BD72 geographic",
+            AngularUnit.Degrees,
+            HorizontalDatum.WGS84,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("Geodetic latitude (Lat)", AxisOrientationEnum.North),
+            new AxisInfo("Geodetic longitude (Lon)", AxisOrientationEnum.East));
+        IProjection projection = factory.CreateProjection(
+            "Belgian Lambert 72",
+            "Lambert_Conformal_Conic_2SP",
+            new List<ProjectionParameter>
+            {
+                new("latitude_of_origin", 90),
+                new("central_meridian", 4.36748666666694),
+                new("standard_parallel_1", 51.1666672333336),
+                new("standard_parallel_2", 49.8333339000003),
+                new("false_easting", 150000.013),
+                new("false_northing", 5400088.438),
+            });
+        ProjectedCoordinateSystem original = factory.CreateProjectedCoordinateSystem(
+            "BD72 / Belgian Lambert 72",
+            geographic,
+            projection,
+            LinearUnit.Metre,
+            new AxisInfo("Easting", AxisOrientationEnum.East),
+            new AxisInfo("Northing", AxisOrientationEnum.North));
+
+        string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
+        ProjectedCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(factory, wkt);
+
+        Assert.Contains("METHOD[\"Lambert Conic Conformal (2SP)\"]", wkt, StringComparison.Ordinal);
+        Assert.Contains("PARAMETER[\"Latitude of false origin\"", wkt, StringComparison.Ordinal);
+        Assert.Contains("PARAMETER[\"Longitude of false origin\"", wkt, StringComparison.Ordinal);
+        Assert.Contains("PARAMETER[\"Easting at false origin\"", wkt, StringComparison.Ordinal);
+        Assert.Contains("PARAMETER[\"Northing at false origin\"", wkt, StringComparison.Ordinal);
+        Assert.True(original.EqualParams(parsed));
+    }
+
+    /// <summary>
+    /// Verifies that WKT2 <c>PROJCRS</c> output preserves non-Greenwich prime meridians and non-degree parameter units.
+    /// </summary>
+    [Fact]
+    public void ProjectedCoordinateSystem_ToWktNode_WithWkt22019_RoundTripsCustomPrimeMeridianAndGradParameters()
+    {
+        CoordinateSystemFactory factory = new();
+        GeographicCoordinateSystem geographic = factory.CreateGeographicCoordinateSystem(
+            "NTF (Paris)",
+            AngularUnit.Grad,
+            HorizontalDatum.WGS84,
+            PrimeMeridian.Paris,
+            new AxisInfo("Geodetic latitude (Lat)", AxisOrientationEnum.North),
+            new AxisInfo("Geodetic longitude (Lon)", AxisOrientationEnum.East));
+        IProjection projection = factory.CreateProjection(
+            "Lambert Nord France",
+            "Lambert_Conformal_Conic_1SP",
+            new List<ProjectionParameter>
+            {
+                new("latitude_of_origin", 55),
+                new("central_meridian", 0),
+                new("scale_factor", 0.999877341),
+                new("false_easting", 600000),
+                new("false_northing", 200000),
+            });
+        ProjectedCoordinateSystem original = factory.CreateProjectedCoordinateSystem(
+            "NTF (Paris) / Lambert Nord France",
+            geographic,
+            projection,
+            LinearUnit.Metre,
+            new AxisInfo("Easting", AxisOrientationEnum.East),
+            new AxisInfo("Northing", AxisOrientationEnum.North));
+
+        string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
+        ProjectedCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(factory, wkt);
+
+        Assert.Contains("PRIMEM[\"Paris\"", wkt, StringComparison.Ordinal);
+        Assert.Contains("ANGLEUNIT[\"grad\"", wkt, StringComparison.Ordinal);
+        Assert.True(original.EqualParams(parsed));
+    }
+
+    /// <summary>
+    /// Verifies that WKT2 <c>PROJCRS</c> output rejects projected CRSs whose base datum would require a dedicated <c>BOUNDCRS</c> writer.
+    /// </summary>
+    [Fact]
+    public void ProjectedCoordinateSystem_ToWktNode_WithWkt22019AndWgs84Parameters_ThrowsNotSupportedException()
+    {
+        CoordinateSystemFactory factory = new();
+        GeographicCoordinateSystem geographic = factory.CreateGeographicCoordinateSystem(
+            "ED50 test",
+            AngularUnit.Degrees,
+            HorizontalDatum.ED50,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("Geodetic latitude (Lat)", AxisOrientationEnum.North),
+            new AxisInfo("Geodetic longitude (Lon)", AxisOrientationEnum.East));
+        IProjection projection = factory.CreateProjection(
+            "ED50 TM",
+            "Transverse_Mercator",
+            new List<ProjectionParameter>
+            {
+                new("latitude_of_origin", 0),
+                new("central_meridian", 9),
+                new("scale_factor", 0.9996),
+                new("false_easting", 500000),
+                new("false_northing", 0),
+            });
+        ProjectedCoordinateSystem original = factory.CreateProjectedCoordinateSystem(
+            "ED50 / TM test",
+            geographic,
+            projection,
+            LinearUnit.Metre,
+            new AxisInfo("Easting", AxisOrientationEnum.East),
+            new AxisInfo("Northing", AxisOrientationEnum.North));
+
+        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => original.ToWktNode(WktVersion.Wkt22019));
+
+        Assert.Contains("BOUNDCRS", exception.Message, StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>

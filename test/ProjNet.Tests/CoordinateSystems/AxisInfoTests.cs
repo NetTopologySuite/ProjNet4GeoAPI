@@ -79,7 +79,7 @@ public class AxisInfoTests
     }
 
     /// <summary>
-    /// Verifies that <see cref="AxisInfo.ToWktNode"/> returns the expected node structure.
+    /// Verifies that <see cref="AxisInfo.ToWktNode()"/> returns the expected node structure.
     /// </summary>
     [Fact]
     public void ToWktNode_ReturnsExpectedKeywordNode()

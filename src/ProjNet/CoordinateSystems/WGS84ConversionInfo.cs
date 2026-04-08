@@ -195,6 +195,19 @@ public class Wgs84ConversionInfo : IEquatable<Wgs84ConversionInfo>
     }
 
     /// <summary>
+    /// Converts this WGS84 conversion info to a WKT syntax tree node for the requested WKT version.
+    /// </summary>
+    /// <param name="version">The WKT dialect to emit.</param>
+    /// <returns>A <see cref="WktNode"/> representing this WGS84 conversion info in the requested WKT version.</returns>
+    public WktNode ToWktNode(WktVersion version)
+    {
+        WktVersionSupport.ThrowIfUnknown(version);
+        return version == WktVersion.Wkt1
+            ? this.ToWktNode()
+            : throw WktVersionSupport.CreateNotSupportedException(nameof(Wgs84ConversionInfo), version);
+    }
+
+    /// <summary>
     /// Affine Bursa-Wolf matrix transformation.
     /// </summary>
     /// <remarks>

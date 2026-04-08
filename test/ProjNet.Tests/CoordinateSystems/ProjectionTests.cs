@@ -128,7 +128,7 @@ public class ProjectionTests
     }
 
     /// <summary>
-    /// Verifies that <see cref="Projection.ToWktNode"/> returns a projection node without authority when metadata is absent.
+    /// Verifies that <see cref="Projection.ToWktNode()"/> returns a projection node without authority when metadata is absent.
     /// </summary>
     [Fact]
     public void ToWktNode_WithoutAuthority_ReturnsKeywordNode()
@@ -142,7 +142,7 @@ public class ProjectionTests
     }
 
     /// <summary>
-    /// Verifies that <see cref="Projection.ToWktNode"/> omits authority when the code is not positive.
+    /// Verifies that <see cref="Projection.ToWktNode()"/> omits authority when the code is not positive.
     /// </summary>
     [Fact]
     public void ToWktNode_WithAuthorityNameButNonPositiveCode_OmitsAuthorityNode()
@@ -155,7 +155,7 @@ public class ProjectionTests
     }
 
     /// <summary>
-    /// Verifies that <see cref="Projection.ToWktNode"/> includes authority metadata when present.
+    /// Verifies that <see cref="Projection.ToWktNode()"/> includes authority metadata when present.
     /// </summary>
     [Fact]
     public void ToWktNode_WithAuthority_IncludesAuthorityNode()

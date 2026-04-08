@@ -185,6 +185,35 @@ public class PrimeMeridian : Info
         return new WktKeywordNode("PRIMEM", children);
     }
 
+    /// <summary>
+    /// Converts this prime meridian to a WKT syntax tree node for the requested WKT version.
+    /// </summary>
+    /// <param name="version">The WKT dialect to emit.</param>
+    /// <returns>A <see cref="WktNode"/> representing this prime meridian in the requested WKT version.</returns>
+    public WktNode ToWktNode(WktVersion version)
+    {
+        WktVersionSupport.ThrowIfUnknown(version);
+        if (version == WktVersion.Wkt1)
+        {
+            return this.ToWktNode();
+        }
+
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(this.Name),
+            new WktNumber(this.Longitude),
+            this.AngularUnit.ToWktNode(version),
+        };
+
+        WktKeywordNode? idNode = WktVersionSupport.CreateIdNode(this.Authority, this.AuthorityCode);
+        if (idNode is not null)
+        {
+            children.Add(idNode);
+        }
+
+        return new WktKeywordNode("PRIMEM", children);
+    }
+
     /// <inheritdoc />
     public override bool EqualParams(object obj)
     {

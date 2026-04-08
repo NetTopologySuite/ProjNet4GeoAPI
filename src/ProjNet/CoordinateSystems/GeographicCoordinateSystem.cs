@@ -221,6 +221,99 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
         return new WktKeywordNode("GEOGCS", children);
     }
 
+    /// <inheritdoc />
+    public override WktNode ToWktNode(WktVersion version)
+    {
+        WktVersionSupport.ThrowIfUnknown(version);
+        if (version == WktVersion.Wkt1)
+        {
+            return this.ToWktNode();
+        }
+
+        if (this.Dimension != 2)
+        {
+            throw new NotSupportedException("WKT2 GEOGCRS output currently supports only two-dimensional geographic coordinate systems.");
+        }
+
+        if (this.WGS84ConversionInfo.Count > 0 || this.HorizontalDatum.Wgs84Parameters is not null)
+        {
+            throw new NotSupportedException("WKT2 GEOGCRS output for coordinate systems with WGS84 conversion parameters is not implemented. A BOUNDCRS writer is required to preserve those transformations.");
+        }
+
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(this.Name),
+            this.HorizontalDatum.ToWktNode(version),
+        };
+
+        if (!this.PrimeMeridian.EqualParams(PrimeMeridian.Greenwich))
+        {
+            children.Add(this.PrimeMeridian.ToWktNode(version));
+        }
+
+        children.Add(new WktKeywordNode(
+            "CS",
+            new WktIdentifier("ellipsoidal"),
+            new WktInteger(this.Dimension)));
+
+        for (int i = 0; i < this.AxisInfo.Count; i++)
+        {
+            children.Add(this.GetAxis(i).ToWktNode(version));
+        }
+
+        children.Add(this.AngularUnit.ToWktNode(version));
+
+        WktKeywordNode? idNode = WktVersionSupport.CreateIdNode(this.Authority, this.AuthorityCode);
+        if (idNode is not null)
+        {
+            children.Add(idNode);
+        }
+
+        return new WktKeywordNode("GEOGCRS", children);
+    }
+
+    /// <summary>
+    /// Creates a WKT2 base geographic CRS node for use inside compound WKT2 coordinate-system constructs.
+    /// </summary>
+    /// <param name="keyword">The WKT2 keyword to emit, for example <c>BASEGEOGCRS</c>.</param>
+    /// <returns>A WKT2 geographic base node without the top-level <c>CS</c>, <c>AXIS</c>, and root angle-unit blocks.</returns>
+    internal WktKeywordNode CreateWkt2BaseNode(string keyword)
+    {
+        if (string.IsNullOrWhiteSpace(keyword))
+        {
+            ArgumentGuard.ThrowArgument("Invalid WKT2 base keyword.", nameof(keyword));
+        }
+
+        if (this.Dimension != 2)
+        {
+            throw new NotSupportedException("WKT2 geographic base output currently supports only two-dimensional geographic coordinate systems.");
+        }
+
+        if (this.WGS84ConversionInfo.Count > 0 || this.HorizontalDatum.Wgs84Parameters is not null)
+        {
+            throw new NotSupportedException("WKT2 geographic base output for coordinate systems with WGS84 conversion parameters is not implemented. A BOUNDCRS writer is required to preserve those transformations.");
+        }
+
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(this.Name),
+            this.HorizontalDatum.ToWktNode(WktVersion.Wkt22019),
+        };
+
+        if (!this.PrimeMeridian.EqualParams(PrimeMeridian.Greenwich))
+        {
+            children.Add(this.PrimeMeridian.ToWktNode(WktVersion.Wkt22019));
+        }
+
+        WktKeywordNode? idNode = WktVersionSupport.CreateIdNode(this.Authority, this.AuthorityCode);
+        if (idNode is not null)
+        {
+            children.Add(idNode);
+        }
+
+        return new WktKeywordNode(keyword, children);
+    }
+
     /// <summary>
     /// Gets details on a conversion to WGS84.
     /// </summary>

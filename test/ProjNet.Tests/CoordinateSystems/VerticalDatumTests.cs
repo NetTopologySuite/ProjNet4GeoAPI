@@ -135,7 +135,7 @@ public class VerticalDatumTests
     }
 
     /// <summary>
-    /// Verifies that <see cref="VerticalDatum.ToWktNode"/> returns the expected node structure.
+    /// Verifies that <see cref="VerticalDatum.ToWktNode()"/> returns the expected node structure.
     /// </summary>
     [Fact]
     public void ToWktNode_WithAuthority_ReturnsExpectedKeywordNode()

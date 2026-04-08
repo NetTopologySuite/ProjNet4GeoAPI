@@ -256,6 +256,39 @@ public class HorizontalDatum : Datum
         return new WktKeywordNode("DATUM", children);
     }
 
+    /// <summary>
+    /// Converts this horizontal datum to a WKT syntax tree node for the requested WKT version.
+    /// </summary>
+    /// <param name="version">The WKT dialect to emit.</param>
+    /// <returns>A <see cref="WktNode"/> representing this horizontal datum in the requested WKT version.</returns>
+    public WktNode ToWktNode(WktVersion version)
+    {
+        WktVersionSupport.ThrowIfUnknown(version);
+        if (version == WktVersion.Wkt1)
+        {
+            return this.ToWktNode();
+        }
+
+        if (this.Wgs84Parameters is not null)
+        {
+            throw new NotSupportedException("WKT2 DATUM output for horizontal datums with WGS84 conversion parameters is not implemented. A BOUNDCRS writer is required to preserve those transformations.");
+        }
+
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(this.Name),
+            this.Ellipsoid.ToWktNode(version),
+        };
+
+        WktKeywordNode? idNode = WktVersionSupport.CreateIdNode(this.Authority, this.AuthorityCode);
+        if (idNode is not null)
+        {
+            children.Add(idNode);
+        }
+
+        return new WktKeywordNode("DATUM", children);
+    }
+
     /// <inheritdoc />
     public override bool EqualParams(object obj)
     {

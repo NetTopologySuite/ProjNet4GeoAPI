@@ -101,6 +101,19 @@ public abstract class CoordinateSystem : Info
     public virtual WktNode ToWktNode() => new WktIdentifier(this.WKT);
 
     /// <summary>
+    /// Converts this coordinate system to a WKT syntax tree node for the requested WKT version.
+    /// </summary>
+    /// <param name="version">The WKT dialect to emit.</param>
+    /// <returns>A <see cref="WktNode"/> representing this coordinate system in the requested WKT version.</returns>
+    public virtual WktNode ToWktNode(WktVersion version)
+    {
+        WktVersionSupport.ThrowIfUnknown(version);
+        return version == WktVersion.Wkt1
+            ? this.ToWktNode()
+            : throw WktVersionSupport.CreateNotSupportedException(this.GetType().Name, version);
+    }
+
+    /// <summary>
     /// Returns an XML representation of this coordinate system as an <see cref="XElement"/>.
     /// </summary>
     /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>

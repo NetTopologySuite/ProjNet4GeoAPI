@@ -168,7 +168,7 @@ public class CompoundCoordinateSystemTests
     }
 
     /// <summary>
-    /// Verifies that <see cref="CompoundCoordinateSystem.ToWktNode"/> matches WKT when no authority metadata is present.
+    /// Verifies that <see cref="CompoundCoordinateSystem.ToWktNode()"/> matches WKT when no authority metadata is present.
     /// </summary>
     [Fact]
     public void ToWktNode_WithoutAuthority_MatchesWkt()
@@ -184,7 +184,7 @@ public class CompoundCoordinateSystemTests
     }
 
     /// <summary>
-    /// Verifies that <see cref="CompoundCoordinateSystem.ToWktNode"/> omits authority when the code is not positive.
+    /// Verifies that <see cref="CompoundCoordinateSystem.ToWktNode()"/> omits authority when the code is not positive.
     /// </summary>
     [Fact]
     public void ToWktNode_WithAuthorityNameButNonPositiveCode_OmitsAuthorityNode()
@@ -199,7 +199,7 @@ public class CompoundCoordinateSystemTests
     }
 
     /// <summary>
-    /// Verifies that <see cref="CompoundCoordinateSystem.ToWktNode"/> includes an authority node when metadata is present.
+    /// Verifies that <see cref="CompoundCoordinateSystem.ToWktNode()"/> includes an authority node when metadata is present.
     /// </summary>
     [Fact]
     public void ToWktNode_WithAuthority_IncludesAuthorityNode()

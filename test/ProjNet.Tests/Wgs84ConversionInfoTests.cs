@@ -135,7 +135,7 @@ public class Wgs84ConversionInfoTests
     }
 
     /// <summary>
-    /// Verifies that <see cref="Wgs84ConversionInfo.ToWktNode"/> matches the WKT property.
+    /// Verifies that <see cref="Wgs84ConversionInfo.ToWktNode()"/> matches the WKT property.
     /// </summary>
     [Fact]
     public void ToWktNode_MatchesWkt()

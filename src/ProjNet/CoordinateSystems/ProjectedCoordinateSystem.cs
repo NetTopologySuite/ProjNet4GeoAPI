@@ -306,6 +306,52 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
     }
 
     /// <inheritdoc />
+    public override WktNode ToWktNode(WktVersion version)
+    {
+        WktVersionSupport.ThrowIfUnknown(version);
+        if (version == WktVersion.Wkt1)
+        {
+            return this.ToWktNode();
+        }
+
+        if (this.Dimension != 2)
+        {
+            throw new NotSupportedException("WKT2 PROJCRS output currently supports only two-dimensional projected coordinate systems.");
+        }
+
+        if (this.AxisInfo.Count != this.Dimension)
+        {
+            ArgumentGuard.ThrowArgument($"Projected coordinate system '{this.Name}' declared dimension {this.Dimension}, but provides {this.AxisInfo.Count} axes.");
+        }
+
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(this.Name),
+            this.GeographicCoordinateSystem.CreateWkt2BaseNode("BASEGEOGCRS"),
+            CreateWkt2ConversionNode(this.Projection, this.GeographicCoordinateSystem.AngularUnit, this.LinearUnit),
+            new WktKeywordNode(
+                "CS",
+                new WktIdentifier("Cartesian"),
+                new WktInteger(this.Dimension)),
+        };
+
+        for (int i = 0; i < this.AxisInfo.Count; i++)
+        {
+            children.Add(this.GetAxis(i).ToWktNode(version));
+        }
+
+        children.Add(this.LinearUnit.ToWktNode(version));
+
+        WktKeywordNode? idNode = WktVersionSupport.CreateIdNode(this.Authority, this.AuthorityCode);
+        if (idNode is not null)
+        {
+            children.Add(idNode);
+        }
+
+        return new WktKeywordNode("PROJCRS", children);
+    }
+
+    /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
         if (obj is not ProjectedCoordinateSystem pcs)
@@ -335,5 +381,187 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
                 pcs.HorizontalDatum.EqualParams(this.HorizontalDatum) &&
                 pcs.LinearUnit.EqualParams(this.LinearUnit) &&
                 pcs.Projection.EqualParams(this.Projection);
+    }
+
+    private static WktKeywordNode CreateWkt2ConversionNode(IProjection projection, AngularUnit angularUnit, LinearUnit linearUnit)
+    {
+        string methodKey = NormalizeProjectionMethodKey(projection.ClassName);
+        string methodName = GetWkt2ProjectionMethodName(projection.ClassName);
+        string conversionName = string.IsNullOrWhiteSpace(projection.Name) ? methodName : projection.Name;
+
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(conversionName),
+            new WktKeywordNode(
+                "METHOD",
+                new WktQuotedString(methodName)),
+        };
+
+        for (int i = 0; i < projection.NumParameters; i++)
+        {
+            children.Add(CreateWkt2ProjectionParameterNode(methodKey, projection.GetParameter(i), angularUnit, linearUnit));
+        }
+
+        return new WktKeywordNode("CONVERSION", children);
+    }
+
+    private static WktKeywordNode CreateWkt2ProjectionParameterNode(string methodKey, ProjectionParameter parameter, AngularUnit angularUnit, LinearUnit linearUnit)
+    {
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(GetWkt2ProjectionParameterName(methodKey, parameter.Name)),
+            new WktNumber(parameter.Value),
+        };
+
+        WktNode? unitNode = CreateWkt2ProjectionParameterUnitNode(parameter.Name, angularUnit, linearUnit);
+        if (unitNode is not null)
+        {
+            children.Add(unitNode);
+        }
+
+        return new WktKeywordNode("PARAMETER", children);
+    }
+
+    private static WktNode? CreateWkt2ProjectionParameterUnitNode(string parameterName, AngularUnit angularUnit, LinearUnit linearUnit)
+    {
+        string parameterKey = NormalizeProjectionParameterKey(parameterName);
+        return parameterKey switch
+        {
+            "LATITUDE_OF_ORIGIN" or
+            "LONGITUDE_OF_ORIGIN" or
+            "CENTRAL_MERIDIAN" or
+            "STANDARD_PARALLEL_1" or
+            "STANDARD_PARALLEL_2" or
+            "LATITUDE_OF_CENTER" or
+            "LONGITUDE_OF_CENTER" or
+            "LATITUDE_OF_PROJECTION_CENTER" or
+            "LONGITUDE_OF_PROJECTION_CENTER" or
+            "AZIMUTH" or
+            "RECTIFIED_GRID_ANGLE" => angularUnit.ToWktNode(WktVersion.Wkt22019),
+            "FALSE_EASTING" or
+            "FALSE_NORTHING" or
+            "EASTING" or
+            "NORTHING" or
+            "SEMI_MAJOR" or
+            "SEMI_MINOR" => linearUnit.ToWktNode(WktVersion.Wkt22019),
+            "SCALE_FACTOR" => new WktKeywordNode(
+                "SCALEUNIT",
+                new WktQuotedString("unity"),
+                new WktNumber(1)),
+            _ => null,
+        };
+    }
+
+    private static string GetWkt2ProjectionMethodName(string className)
+    {
+        return NormalizeProjectionMethodKey(className) switch
+        {
+            "TRANSVERSE_MERCATOR" => "Transverse Mercator",
+            "LAMBERT_CONFORMAL_CONIC_1SP" => "Lambert Conic Conformal (1SP)",
+            "LAMBERT_CONFORMAL_CONIC_2SP" => "Lambert Conic Conformal (2SP)",
+            "MERCATOR_1SP" => "Mercator (variant A)",
+            "MERCATOR_2SP" => "Mercator (variant B)",
+            "CASSINI_SOLDNER" => "Cassini-Soldner",
+            "ALBERS_CONIC_EQUAL_AREA" => "Albers Equal Area",
+            "OBLIQUE_STEREOGRAPHIC" => "Oblique Stereographic",
+            "LAMBERT_AZIMUTHAL_EQUAL_AREA" => "Lambert Azimuthal Equal Area",
+            "KROVAK" => "Krovak",
+            "POPULAR_VISUALISATION_PSEUDO_MERCATOR" => "Popular Visualisation Pseudo Mercator",
+            _ => className,
+        };
+    }
+
+    private static string GetWkt2ProjectionParameterName(string methodKey, string parameterName)
+    {
+        string parameterKey = NormalizeProjectionParameterKey(parameterName);
+        return methodKey switch
+        {
+            "LAMBERT_CONFORMAL_CONIC_2SP" => parameterKey switch
+            {
+                "LATITUDE_OF_ORIGIN" => "Latitude of false origin",
+                "CENTRAL_MERIDIAN" => "Longitude of false origin",
+                "STANDARD_PARALLEL_1" => "Latitude of 1st standard parallel",
+                "STANDARD_PARALLEL_2" => "Latitude of 2nd standard parallel",
+                "FALSE_EASTING" => "Easting at false origin",
+                "FALSE_NORTHING" => "Northing at false origin",
+                _ => GetDefaultWkt2ProjectionParameterName(parameterKey, parameterName),
+            },
+            _ => GetDefaultWkt2ProjectionParameterName(parameterKey, parameterName),
+        };
+    }
+
+    private static string GetDefaultWkt2ProjectionParameterName(string parameterKey, string parameterName)
+    {
+        return parameterKey switch
+        {
+            "LATITUDE_OF_ORIGIN" => "Latitude of natural origin",
+            "LONGITUDE_OF_ORIGIN" or "CENTRAL_MERIDIAN" => "Longitude of natural origin",
+            "STANDARD_PARALLEL_1" => "Latitude of 1st standard parallel",
+            "STANDARD_PARALLEL_2" => "Latitude of 2nd standard parallel",
+            "FALSE_EASTING" => "False easting",
+            "FALSE_NORTHING" => "False northing",
+            "SCALE_FACTOR" => "Scale factor at natural origin",
+            "LATITUDE_OF_CENTER" or "LATITUDE_OF_PROJECTION_CENTER" => "Latitude of projection centre",
+            "LONGITUDE_OF_CENTER" or "LONGITUDE_OF_PROJECTION_CENTER" => "Longitude of projection centre",
+            "AZIMUTH" => "Azimuth of initial line",
+            "RECTIFIED_GRID_ANGLE" => "Angle from Rectified to Skew Grid",
+            _ => parameterName,
+        };
+    }
+
+    private static string NormalizeProjectionMethodKey(string className)
+    {
+        if (string.IsNullOrWhiteSpace(className))
+        {
+            return string.Empty;
+        }
+
+        string normalized = className
+            .ToUpperInvariant()
+            .Trim();
+        normalized = normalized.Replace("(", string.Empty);
+        normalized = normalized.Replace(")", string.Empty);
+        normalized = normalized.Replace("-", "_");
+        normalized = normalized.Replace("/", "_");
+        normalized = normalized.Replace(" ", "_");
+
+        while (normalized.IndexOf("__", StringComparison.Ordinal) >= 0)
+        {
+            normalized = normalized.Replace("__", "_");
+        }
+
+        return normalized switch
+        {
+            "LAMBERT_CONIC_CONFORMAL_1SP" => "LAMBERT_CONFORMAL_CONIC_1SP",
+            "LAMBERT_CONIC_CONFORMAL_2SP" => "LAMBERT_CONFORMAL_CONIC_2SP",
+            "MERCATOR_VARIANT_A" => "MERCATOR_1SP",
+            "MERCATOR_VARIANT_B" => "MERCATOR_2SP",
+            _ => normalized,
+        };
+    }
+
+    private static string NormalizeProjectionParameterKey(string parameterName)
+    {
+        if (string.IsNullOrWhiteSpace(parameterName))
+        {
+            return string.Empty;
+        }
+
+        string normalized = parameterName
+            .ToUpperInvariant()
+            .Trim();
+        normalized = normalized.Replace("(", string.Empty);
+        normalized = normalized.Replace(")", string.Empty);
+        normalized = normalized.Replace("-", "_");
+        normalized = normalized.Replace("/", "_");
+        normalized = normalized.Replace(" ", "_");
+        normalized = normalized.Replace(".", "_");
+
+        while (normalized.IndexOf("__", StringComparison.Ordinal) >= 0)
+        {
+            normalized = normalized.Replace("__", "_");
+        }
+
+        return normalized;
     }
 }

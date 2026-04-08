@@ -120,7 +120,7 @@ public class ParameterTests
     }
 
     /// <summary>
-    /// Verifies that <see cref="ProjectionParameter.ToWktNode"/> returns the expected node structure.
+    /// Verifies that <see cref="ProjectionParameter.ToWktNode()"/> returns the expected node structure.
     /// </summary>
     [Fact]
     public void ProjectionParameter_ToWktNode_ReturnsKeywordNode()

@@ -144,6 +144,34 @@ public class AngularUnit : Info, IUnit
         return new WktKeywordNode("UNIT", children);
     }
 
+    /// <summary>
+    /// Converts this angular unit to a WKT syntax tree node for the requested WKT version.
+    /// </summary>
+    /// <param name="version">The WKT dialect to emit.</param>
+    /// <returns>A <see cref="WktNode"/> representing this angular unit in the requested WKT version.</returns>
+    public WktNode ToWktNode(WktVersion version)
+    {
+        WktVersionSupport.ThrowIfUnknown(version);
+        if (version == WktVersion.Wkt1)
+        {
+            return this.ToWktNode();
+        }
+
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(this.Name),
+            new WktNumber(this.RadiansPerUnit),
+        };
+
+        WktKeywordNode? idNode = WktVersionSupport.CreateIdNode(this.Authority, this.AuthorityCode);
+        if (idNode is not null)
+        {
+            children.Add(idNode);
+        }
+
+        return new WktKeywordNode("ANGLEUNIT", children);
+    }
+
     /// <inheritdoc />
     public override bool EqualParams(object obj)
     {
