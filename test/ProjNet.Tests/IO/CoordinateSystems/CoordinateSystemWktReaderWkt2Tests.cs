@@ -42,6 +42,22 @@ public class CoordinateSystemWktReaderWkt2Tests
     }
 
     /// <summary>
+    /// Provides datum-backed WKT2 projected CRS examples copied from <c>spec\epsg\EPSG-v12_053-WKT.Zip</c>.
+    /// </summary>
+    /// <returns>SRID/WKT pairs that should parse successfully.</returns>
+    public static IEnumerable<TheoryDataRow<int, string>> SupportedWkt2ProjectedRows()
+    {
+        return
+        [
+            new TheoryDataRow<int, string>(27700, """PROJCRS["OSGB36 / British National Grid",BASEGEOGCRS["OSGB36",DATUM["Ordnance Survey of Great Britain 1936",ELLIPSOID["Airy 1830",6377563.396,299.3249646,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7001]],ID["EPSG",6277]],ID["EPSG",4277]],CONVERSION["British National Grid",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",49,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",-2,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.9996012717,SCALEUNIT["unity",1,ID["EPSG",9201]],ID["EPSG",8805]],PARAMETER["False easting",400000,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8806]],PARAMETER["False northing",-100000,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8807]],ID["EPSG",19916]],CS[Cartesian,2,ID["EPSG",4499]],AXIS["Easting (E)",east],AXIS["Northing (N)",north],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",27700]]"""),
+            new TheoryDataRow<int, string>(31370, """PROJCRS["BD72 / Belgian Lambert 72",BASEGEOGCRS["BD72",DATUM["Reseau National Belge 1972",ELLIPSOID["International 1924",6378388,297,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7022]],ID["EPSG",6313]],ID["EPSG",4313]],CONVERSION["Belgian Lambert 72",METHOD["Lambert Conic Conformal (2SP)",ID["EPSG",9802]],PARAMETER["Latitude of false origin",90,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8821]],PARAMETER["Longitude of false origin",4.36748666666694,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8822]],PARAMETER["Latitude of 1st standard parallel",51.1666672333336,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8823]],PARAMETER["Latitude of 2nd standard parallel",49.8333339000003,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8824]],PARAMETER["Easting at false origin",150000.013,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8826]],PARAMETER["Northing at false origin",5400088.438,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8827]],ID["EPSG",19961]],CS[Cartesian,2,ID["EPSG",4499]],AXIS["Easting (X)",east],AXIS["Northing (Y)",north],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",31370]]"""),
+            new TheoryDataRow<int, string>(2169, """PROJCRS["LUREF / Luxembourg TM",BASEGEOGCRS["LUREF",DATUM["Luxembourg Reference Frame",ELLIPSOID["International 1924",6378388,297,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7022]],ID["EPSG",6181]],ID["EPSG",4181]],CONVERSION["Luxembourg TM",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",49.8333333333336,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",6.16666666666694,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",1,SCALEUNIT["unity",1,ID["EPSG",9201]],ID["EPSG",8805]],PARAMETER["False easting",80000,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8806]],PARAMETER["False northing",100000,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8807]],ID["EPSG",19966]],CS[Cartesian,2,ID["EPSG",4530]],AXIS["Northing (X)",north],AXIS["Easting (Y)",east],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",2169]]"""),
+            new TheoryDataRow<int, string>(23032, """PROJCRS["ED50 / UTM zone 32N",BASEGEOGCRS["ED50",DATUM["European Datum 1950",ELLIPSOID["International 1924",6378388,297,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7022]],ID["EPSG",6230]],ID["EPSG",4230]],CONVERSION["UTM zone 32N",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",9,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.9996,SCALEUNIT["unity",1,ID["EPSG",9201]],ID["EPSG",8805]],PARAMETER["False easting",500000,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8806]],PARAMETER["False northing",0,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8807]],ID["EPSG",16032]],CS[Cartesian,2,ID["EPSG",4400]],AXIS["Easting (E)",east],AXIS["Northing (N)",north],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",23032]]"""),
+            new TheoryDataRow<int, string>(31467, """PROJCRS["DHDN / 3-degree Gauss-Kruger zone 3",BASEGEOGCRS["DHDN",DATUM["Deutsches Hauptdreiecksnetz",ELLIPSOID["Bessel 1841",6377397.155,299.1528128,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7004]],ID["EPSG",6314]],ID["EPSG",4314]],CONVERSION["3-degree Gauss-Kruger zone 3",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",9,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",1,SCALEUNIT["unity",1,ID["EPSG",9201]],ID["EPSG",8805]],PARAMETER["False easting",3500000,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8806]],PARAMETER["False northing",0,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8807]],ID["EPSG",16263]],CS[Cartesian,2,ID["EPSG",4530]],AXIS["Northing (X)",north],AXIS["Easting (Y)",east],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",31467]]"""),
+        ];
+    }
+
+    /// <summary>
     /// Verifies supported WKT2 CRS parse to the same semantic model as the committed catalog reference.
     /// </summary>
     /// <param name="srid">Expected EPSG SRID.</param>
@@ -57,6 +73,25 @@ public class CoordinateSystemWktReaderWkt2Tests
 
         Assert.IsType(reference.GetType(), parsed);
         Assert.True(parsed.EqualParams(reference), $"WKT2 parse mismatch for EPSG:{srid}.");
+        Assert.Equal("EPSG", parsed.Authority);
+        Assert.Equal(srid, parsed.AuthorityCode);
+    }
+
+    /// <summary>
+    /// Verifies supported WKT2 projected CRS parse to the same semantic model as the committed catalog reference.
+    /// </summary>
+    /// <param name="srid">Expected EPSG SRID.</param>
+    /// <param name="wkt">WKT2 projected CRS from the EPSG export.</param>
+    [Theory]
+    [MemberData(nameof(SupportedWkt2ProjectedRows))]
+    public void CreateFromWkt_ParsesSupportedWkt2ProjectedCrsEquivalentToCatalogReference(int srid, string wkt)
+    {
+        ProjectedCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wkt);
+        ProjectedCoordinateSystem reference = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
+            GetCatalogWkt(srid));
+
+        Assert.True(parsed.EqualParams(reference), $"WKT2 projected CRS parse mismatch for EPSG:{srid}.");
         Assert.Equal("EPSG", parsed.Authority);
         Assert.Equal(srid, parsed.AuthorityCode);
     }
@@ -88,12 +123,54 @@ public class CoordinateSystemWktReaderWkt2Tests
     }
 
     /// <summary>
+    /// Verifies projected WKT2 parsing preserves base-CRS angular units and explicit prime-meridian units.
+    /// </summary>
+    [Fact]
+    public void CreateFromWkt_ParsesProjectedCrsBasePrimeMeridianAndAngularUnit()
+    {
+        const string wkt = """PROJCRS["NTF (Paris) / Lambert Nord France",BASEGEOGCRS["NTF (Paris)",DATUM["Nouvelle Triangulation Francaise (Paris)",ELLIPSOID["Clarke 1880 (IGN)",6378249.2,293.466021293627,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7011]],ID["EPSG",6807]],PRIMEM["Paris",0.040792344,ANGLEUNIT["radian",1,ID["EPSG",9101]],ID["EPSG",8903]],ID["EPSG",4807]],CONVERSION["Lambert Nord France",METHOD["Lambert Conic Conformal (1SP)",ID["EPSG",9801]],PARAMETER["Latitude of natural origin",55,ANGLEUNIT["grad",0.015707963267949,ID["EPSG",9105]],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",0,ANGLEUNIT["grad",0.015707963267949,ID["EPSG",9105]],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.999877341,SCALEUNIT["unity",1,ID["EPSG",9201]],ID["EPSG",8805]],PARAMETER["False easting",600000,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8806]],PARAMETER["False northing",200000,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8807]],ID["EPSG",18091]],CS[Cartesian,2,ID["EPSG",4499]],AXIS["Easting (X)",east],AXIS["Northing (Y)",north],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",27561]]""";
+
+        ProjectedCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wkt);
+
+        Assert.Equal("NTF (Paris) / Lambert Nord France", parsed.Name);
+        Assert.Equal("EPSG", parsed.Authority);
+        Assert.Equal(27561, parsed.AuthorityCode);
+        Assert.Equal("grad", parsed.GeographicCoordinateSystem.AngularUnit.Name);
+        Assert.Equal("EPSG", parsed.GeographicCoordinateSystem.AngularUnit.Authority);
+        Assert.Equal(9105, parsed.GeographicCoordinateSystem.AngularUnit.AuthorityCode);
+        Assert.Equal("Paris", parsed.GeographicCoordinateSystem.PrimeMeridian.Name);
+        Assert.True(parsed.GeographicCoordinateSystem.PrimeMeridian.AngularUnit.EqualParams(AngularUnit.Radian));
+        Assert.Equal(0.040792344d, parsed.GeographicCoordinateSystem.PrimeMeridian.Longitude);
+        Assert.Equal("Lambert Conic Conformal (1SP)", parsed.Projection.ClassName);
+        Assert.Equal("EPSG", parsed.Projection.Authority);
+        Assert.Equal(18091, parsed.Projection.AuthorityCode);
+        Assert.Equal(55d, parsed.Projection.GetParameter("latitude_of_origin")?.Value);
+        Assert.Equal(0d, parsed.Projection.GetParameter("central_meridian")?.Value);
+        Assert.Equal(0.999877341d, parsed.Projection.GetParameter("scale_factor")?.Value);
+        Assert.Equal(600000d, parsed.Projection.GetParameter("false_easting")?.Value);
+        Assert.Equal(200000d, parsed.Projection.GetParameter("false_northing")?.Value);
+    }
+
+    /// <summary>
     /// Verifies ensemble-backed WKT2 geographic CRS still report the current unsupported boundary explicitly.
     /// </summary>
     [Fact]
     public void CreateFromWkt_WithDatumEnsemble_ThrowsNotSupportedException()
     {
         const string wkt = """GEOGCRS["WGS 84",ENSEMBLE["World Geodetic System 1984 ensemble",MEMBER["World Geodetic System 1984 (Transit)",ID["EPSG",1166]],MEMBER["World Geodetic System 1984 (G730)",ID["EPSG",1152]],MEMBER["World Geodetic System 1984 (G873)",ID["EPSG",1153]],MEMBER["World Geodetic System 1984 (G1150)",ID["EPSG",1154]],MEMBER["World Geodetic System 1984 (G1674)",ID["EPSG",1155]],MEMBER["World Geodetic System 1984 (G1762)",ID["EPSG",1156]],MEMBER["World Geodetic System 1984 (G2139)",ID["EPSG",1309]],MEMBER["World Geodetic System 1984 (G2296)",ID["EPSG",1383]],ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7030]],ENSEMBLEACCURACY[2],ID["EPSG",6326]],CS[ellipsoidal,3,ID["EPSG",6423]],AXIS["Geodetic latitude (Lat)",north,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]]],AXIS["Geodetic longitude (Lon)",east,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]]],AXIS["Ellipsoidal height (h)",up,LENGTHUNIT["metre",1,ID["EPSG",9001]]],ID["EPSG",4979]]""";
+
+        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => CoordinateSystemFactory.CreateFromWkt(wkt));
+
+        Assert.Contains("ensembles", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Verifies ensemble-backed projected WKT2 CRS still report the current unsupported boundary explicitly.
+    /// </summary>
+    [Fact]
+    public void CreateFromWkt_WithEnsembleBasedProjCrs_ThrowsNotSupportedException()
+    {
+        const string wkt = """PROJCRS["WGS 84 / UTM zone 32N",BASEGEOGCRS["WGS 84",ENSEMBLE["World Geodetic System 1984 ensemble",MEMBER["World Geodetic System 1984 (Transit)",ID["EPSG",1166]],MEMBER["World Geodetic System 1984 (G730)",ID["EPSG",1152]],MEMBER["World Geodetic System 1984 (G873)",ID["EPSG",1153]],MEMBER["World Geodetic System 1984 (G1150)",ID["EPSG",1154]],MEMBER["World Geodetic System 1984 (G1674)",ID["EPSG",1155]],MEMBER["World Geodetic System 1984 (G1762)",ID["EPSG",1156]],MEMBER["World Geodetic System 1984 (G2139)",ID["EPSG",1309]],MEMBER["World Geodetic System 1984 (G2296)",ID["EPSG",1383]],ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7030]],ENSEMBLEACCURACY[2],ID["EPSG",6326]],ID["EPSG",4326]],CONVERSION["UTM zone 32N",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",9,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.9996,SCALEUNIT["unity",1,ID["EPSG",9201]],ID["EPSG",8805]],PARAMETER["False easting",500000,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8806]],PARAMETER["False northing",0,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8807]],ID["EPSG",16032]],CS[Cartesian,2,ID["EPSG",4400]],AXIS["Easting (E)",east],AXIS["Northing (N)",north],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",32632]]""";
 
         NotSupportedException exception = Assert.Throws<NotSupportedException>(() => CoordinateSystemFactory.CreateFromWkt(wkt));
 
