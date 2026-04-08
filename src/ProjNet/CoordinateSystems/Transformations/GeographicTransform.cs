@@ -17,6 +17,7 @@ using System;
 /// source prime-meridian offset and applying the target prime-meridian offset,
 /// while leaving latitude and height unchanged.
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/glossary.html">PROJ glossary: ballpark transformation.</seealso>
 public class GeographicTransform : MathTransform
 {
     /// <summary>

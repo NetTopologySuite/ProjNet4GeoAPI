@@ -15,6 +15,7 @@ using System;
 /// <c>x += source.Longitude - target.Longitude</c>. The inverse applies the
 /// same difference with reversed sign.
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/usage/projections.html">PROJ usage: prime meridian and axis orientation.</seealso>
 internal class PrimeMeridianTransform : MathTransform
 {
     private readonly PrimeMeridian source;

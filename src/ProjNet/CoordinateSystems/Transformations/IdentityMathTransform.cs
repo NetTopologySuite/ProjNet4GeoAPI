@@ -13,6 +13,7 @@ using System;
 /// Identity is the mathematical no-op transform: all ordinates pass through
 /// unchanged, and the transform is its own inverse.
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/conversions/noop.html">PROJ: no operation.</seealso>
 internal sealed class IdentityMathTransform : MathTransform
 {
     private readonly int dimension;

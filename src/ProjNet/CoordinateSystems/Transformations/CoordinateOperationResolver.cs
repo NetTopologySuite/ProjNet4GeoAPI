@@ -14,6 +14,7 @@ using System;
 /// direct non-identity operation returned by the supplied resolver. The higher
 /// score wins, so exact identity is preferred whenever it is valid.
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/operations_computation.html">PROJ: computation of coordinate operations between two CRS.</seealso>
 internal static class CoordinateOperationResolver
 {
     /// <summary>

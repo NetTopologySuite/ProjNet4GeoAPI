@@ -15,6 +15,7 @@ using System;
 /// reciprocal factor, so the transform remains a simple one-parameter angular
 /// scaling in tangent space.
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/conversions/geoc.html">PROJ: geocentric latitude.</seealso>
 internal sealed class GeocentricLatitudeMathTransform : MathTransform
 {
     private readonly double geodeticToGeocentricFactor;

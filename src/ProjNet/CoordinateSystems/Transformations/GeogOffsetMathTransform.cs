@@ -17,6 +17,7 @@ using System.Globalization;
 /// <c>x += dlon</c>, <c>y += dlat</c>, and <c>z += dh</c>, with longitude and
 /// latitude offsets converted from arc-seconds to degrees during construction.
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/transformations/geogoffset.html">PROJ: geographic offset transformation.</seealso>
 internal sealed class GeogOffsetMathTransform : MathTransform
 {
     private const double ArcSecondsPerDegree = 3600d;
