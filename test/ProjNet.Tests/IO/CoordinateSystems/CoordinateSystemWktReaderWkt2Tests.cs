@@ -11,7 +11,7 @@ using ProjNet.Data;
 using Xunit;
 
 /// <summary>
-/// Verifies native WKT2 coordinate-system parsing against real EPSG export examples.
+/// Verifies native WKT2 coordinate-system parsing against real EPSG export examples and PROJ test fixtures.
 /// </summary>
 public class CoordinateSystemWktReaderWkt2Tests
 {
@@ -82,6 +82,128 @@ public class CoordinateSystemWktReaderWkt2Tests
             new TheoryDataRow<int, string>(10162, """COMPOUNDCRS["JGD2011 / Japan Plane Rectangular CS I + JGD2011 (vertical) height",PROJCRS["JGD2011 / Japan Plane Rectangular CS I",BASEGEOGCRS["JGD2011",DATUM["Japanese Geodetic Datum 2011",ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7019]],ID["EPSG",1128]],ID["EPSG",6668]],CONVERSION["Japan Plane Rectangular CS zone I",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",33,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",129.5,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.9999,SCALEUNIT["unity",1,ID["EPSG",9201]],ID["EPSG",8805]],PARAMETER["False easting",0,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8806]],PARAMETER["False northing",0,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8807]],ID["EPSG",17801]],CS[Cartesian,2,ID["EPSG",4530]],AXIS["Northing (X)",north],AXIS["Easting (Y)",east],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",6669]],VERTCRS["JGD2011 (vertical) height",VDATUM["Japanese Geodetic Datum 2011 (vertical)",ID["EPSG",1131]],CS[vertical,1,ID["EPSG",6499]],AXIS["Gravity-related height (H)",up],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",6695]],ID["EPSG",10162]]"""),
             new TheoryDataRow<int, string>(10163, """COMPOUNDCRS["JGD2011 / Japan Plane Rectangular CS II + JGD2011 (vertical) height",PROJCRS["JGD2011 / Japan Plane Rectangular CS II",BASEGEOGCRS["JGD2011",DATUM["Japanese Geodetic Datum 2011",ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7019]],ID["EPSG",1128]],ID["EPSG",6668]],CONVERSION["Japan Plane Rectangular CS zone II",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",33,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",131,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.9999,SCALEUNIT["unity",1,ID["EPSG",9201]],ID["EPSG",8805]],PARAMETER["False easting",0,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8806]],PARAMETER["False northing",0,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8807]],ID["EPSG",17802]],CS[Cartesian,2,ID["EPSG",4530]],AXIS["Northing (X)",north],AXIS["Easting (Y)",east],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",6670]],VERTCRS["JGD2011 (vertical) height",VDATUM["Japanese Geodetic Datum 2011 (vertical)",ID["EPSG",1131]],CS[vertical,1,ID["EPSG",6499]],AXIS["Gravity-related height (H)",up],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",6695]],ID["EPSG",10163]]"""),
             new TheoryDataRow<int, string>(10164, """COMPOUNDCRS["JGD2011 / Japan Plane Rectangular CS III + JGD2011 (vertical) height",PROJCRS["JGD2011 / Japan Plane Rectangular CS III",BASEGEOGCRS["JGD2011",DATUM["Japanese Geodetic Datum 2011",ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7019]],ID["EPSG",1128]],ID["EPSG",6668]],CONVERSION["Japan Plane Rectangular CS zone III",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",36,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",132.166666666667,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.9999,SCALEUNIT["unity",1,ID["EPSG",9201]],ID["EPSG",8805]],PARAMETER["False easting",0,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8806]],PARAMETER["False northing",0,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8807]],ID["EPSG",17803]],CS[Cartesian,2,ID["EPSG",4530]],AXIS["Northing (X)",north],AXIS["Easting (Y)",east],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",6671]],VERTCRS["JGD2011 (vertical) height",VDATUM["Japanese Geodetic Datum 2011 (vertical)",ID["EPSG",1131]],CS[vertical,1,ID["EPSG",6499]],AXIS["Gravity-related height (H)",up],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",6695]],ID["EPSG",10164]]"""),
+        ];
+    }
+
+    /// <summary>
+    /// Provides real <c>BOUNDCRS</c> fixtures extracted from the checked-in PROJ test suite.
+    /// </summary>
+    /// <returns>Fixture source labels and WKT2 strings that should remain explicitly unsupported.</returns>
+    public static IEnumerable<TheoryDataRow<string, string>> UnsupportedProjBoundCrsRows()
+    {
+        string projectedBoundCrs = """
+            BOUNDCRS[
+                SOURCECRS[
+                    PROJCRS["NAD83 / California zone 3 (ftUS)",
+                        BASEGEODCRS["NAD83",
+                            DATUM["North American Datum 1983",
+                                ELLIPSOID["GRS 1980",6378137,298.257222101,
+                                    LENGTHUNIT["metre",1]]],
+                            PRIMEM["Greenwich",0,
+                                ANGLEUNIT["degree",0.0174532925199433]]],
+                        CONVERSION["SPCS83 California zone 3 (US Survey feet)",
+                            METHOD["Lambert Conic Conformal (2SP)",
+                                ID["EPSG",9802]],
+                            PARAMETER["Latitude of false origin",36.5,
+                                ANGLEUNIT["degree",0.0174532925199433],
+                                ID["EPSG",8821]],
+                            PARAMETER["Longitude of false origin",-120.5,
+                                ANGLEUNIT["degree",0.0174532925199433],
+                                ID["EPSG",8822]],
+                            PARAMETER["Latitude of 1st standard parallel",38.4333333333333,
+                                ANGLEUNIT["degree",0.0174532925199433],
+                                ID["EPSG",8823]],
+                            PARAMETER["Latitude of 2nd standard parallel",37.0666666666667,
+                                ANGLEUNIT["degree",0.0174532925199433],
+                                ID["EPSG",8824]],
+                            PARAMETER["Easting at false origin",6561666.667,
+                                LENGTHUNIT["US survey foot",0.304800609601219],
+                                ID["EPSG",8826]],
+                            PARAMETER["Northing at false origin",1640416.667,
+                                LENGTHUNIT["US survey foot",0.304800609601219],
+                                ID["EPSG",8827]]],
+                        CS[Cartesian,2],
+                            AXIS["easting (X)",east,
+                                ORDER[1],
+                                LENGTHUNIT["US survey foot",0.304800609601219]],
+                            AXIS["northing (Y)",north,
+                                ORDER[2],
+                                LENGTHUNIT["US survey foot",0.304800609601219]],
+                        SCOPE["unknown"],
+                        AREA["USA - California - SPCS - 3"],
+                        BBOX[36.73,-123.02,38.71,-117.83],
+                        ID["EPSG",2227]]],
+                TARGETCRS[
+                    GEODCRS["WGS 84",
+                        DATUM["World Geodetic System 1984",
+                            ELLIPSOID["WGS 84",6378137,298.257223563,
+                                LENGTHUNIT["metre",1]]],
+                        PRIMEM["Greenwich",0,
+                            ANGLEUNIT["degree",0.0174532925199433]],
+                        CS[ellipsoidal,2],
+                            AXIS["latitude",north,
+                                ORDER[1],
+                                ANGLEUNIT["degree",0.0174532925199433]],
+                            AXIS["longitude",east,
+                                ORDER[2],
+                                ANGLEUNIT["degree",0.0174532925199433]],
+                        ID["EPSG",4326]]],
+                ABRIDGEDTRANSFORMATION["NAD83 to WGS 84 (1)",
+                    METHOD["Geocentric translations (geog2D domain)",
+                        ID["EPSG",9603]],
+                    PARAMETER["X-axis translation",0,
+                        ID["EPSG",8605]],
+                    PARAMETER["Y-axis translation",0,
+                        ID["EPSG",8606]],
+                    PARAMETER["Z-axis translation",0,
+                        ID["EPSG",8607]],
+                    SCOPE["unknown"],
+                    AREA["North America - Canada and USA (CONUS, Alaska mainland)"],
+                    BBOX[23.81,-172.54,86.46,-47.74],
+                    ID["EPSG",1188]]]
+            """;
+
+        string verticalBoundCrs = """
+            BOUNDCRS[
+                SOURCECRS[
+                    VERTCRS["EGM96 height",
+                        VDATUM["EGM96 geoid"],
+                        CS[vertical,1],
+                            AXIS["gravity-related height (H)",up,
+                                LENGTHUNIT["metre",1]],
+                        USAGE[
+                            SCOPE["Geodesy."],
+                            AREA["World."],
+                            BBOX[-90,-180,90,180]],
+                        ID["EPSG",5773]]],
+                TARGETCRS[
+                    GEOGCRS["WGS 84",
+                        DATUM["World Geodetic System 1984",
+                            ELLIPSOID["WGS 84",6378137,298.257223563,
+                                LENGTHUNIT["metre",1]]],
+                        PRIMEM["Greenwich",0,
+                            ANGLEUNIT["degree",0.0174532925199433]],
+                        CS[ellipsoidal,3],
+                            AXIS["latitude",north,
+                                ORDER[1],
+                                ANGLEUNIT["degree",0.0174532925199433]],
+                            AXIS["longitude",east,
+                                ORDER[2],
+                                ANGLEUNIT["degree",0.0174532925199433]],
+                            AXIS["ellipsoidal height",up,
+                                ORDER[3],
+                                LENGTHUNIT["metre",1]],
+                        ID["EPSG",4979]]],
+                ABRIDGEDTRANSFORMATION["WGS 84 to EGM96 height (1)",
+                    METHOD["Geographic3D to GravityRelatedHeight (EGM)",
+                        ID["EPSG",9661]],
+                    PARAMETERFILE["Geoid (height correction) model file","us_nga_egm96_15.tif"]]]
+            """;
+
+        return
+        [
+            new TheoryDataRow<string, string>(@"spec\PROJ\test\unit\test_operationfactory.cpp:3815", projectedBoundCrs),
+            new TheoryDataRow<string, string>(@"spec\PROJ\test\unit\test_operationfactory.cpp:9132", verticalBoundCrs),
         ];
     }
 
@@ -241,6 +363,21 @@ public class CoordinateSystemWktReaderWkt2Tests
         NotSupportedException exception = Assert.Throws<NotSupportedException>(() => CoordinateSystemFactory.CreateFromWkt(wkt));
 
         Assert.Contains("ensembles", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Verifies real <c>BOUNDCRS</c> examples from the checked-in PROJ tests remain surfaced as an explicit unsupported boundary.
+    /// </summary>
+    /// <param name="fixtureSource">Source file and line for the extracted fixture.</param>
+    /// <param name="wkt">BOUNDCRS WKT2 example from the PROJ test corpus.</param>
+    [Theory]
+    [MemberData(nameof(UnsupportedProjBoundCrsRows))]
+    public void CreateFromWkt_WithProjBoundCrsFixture_ThrowsNotSupportedException(string fixtureSource, string wkt)
+    {
+        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => CoordinateSystemFactory.CreateFromWkt(wkt));
+
+        Assert.Contains("BOUNDCRS", exception.Message, StringComparison.Ordinal);
+        Assert.False(string.IsNullOrWhiteSpace(fixtureSource));
     }
 
     private static string GetCatalogWkt(int srid)
