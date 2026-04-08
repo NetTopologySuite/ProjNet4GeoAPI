@@ -16,6 +16,7 @@ using ProjNet.CoordinateSystems;
 /// permutation, and emits either an <see cref="AxisSwapMathTransform"/> or an
 /// identity transform when both systems already use the same orientation order.
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/faq.html#why-is-the-axis-ordering-in-proj-not-consistent">PROJ FAQ: axis ordering.</seealso>
 internal static class AxisOrderHelper
 {
     /// <summary>

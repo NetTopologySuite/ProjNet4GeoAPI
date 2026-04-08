@@ -15,6 +15,7 @@ using System;
 /// <c>-1</c>, so the overall mapping is equivalent to a permutation matrix with
 /// diagonal sign changes.
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/conversions/axisswap.html">PROJ: axis swap.</seealso>
 internal sealed class AxisSwapMathTransform : MathTransform
 {
     private readonly int dimension;

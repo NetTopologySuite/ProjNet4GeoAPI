@@ -14,6 +14,7 @@ using System.Collections.Generic;
 /// inverse is built by reversing the chain and inverting each child, and the
 /// cached inverse is invalidated whenever the composite is inverted in place.
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/pipeline.html">PROJ: pipeline operator.</seealso>
 internal sealed class CompositeMathTransform : MathTransform
 {
     private MathTransform[] transforms;

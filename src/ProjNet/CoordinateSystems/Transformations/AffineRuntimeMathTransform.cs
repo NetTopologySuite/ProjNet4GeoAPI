@@ -20,6 +20,7 @@ using ProjNet.CoordinateSystems.Transformations.Numerics;
 /// when the determinant magnitude falls below <c>1e-30</c> or when
 /// <c>+tscale</c> is zero.
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/transformations/affine.html">PROJ: affine transformation.</seealso>
 internal sealed class AffineRuntimeMathTransform : MathTransform
 {
     private readonly Vector3D offset;

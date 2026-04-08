@@ -16,6 +16,7 @@ using System.Collections.Generic;
 /// cache is intentionally cleared during in-place inversion so reversed child
 /// transforms are rebuilt from the updated traversal order.
 /// </remarks>
+/// <seealso href="https://proj.org/en/stable/operations/operations_computation.html">PROJ: computation of coordinate operations between two CRS.</seealso>
 internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationCore
 {
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory =

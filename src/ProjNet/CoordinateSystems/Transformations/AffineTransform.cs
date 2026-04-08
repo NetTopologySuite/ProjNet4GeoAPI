@@ -18,6 +18,7 @@ using System.Text;
 /// translation terms in homogeneous coordinates. Inverse creation uses standard
 /// LUP decomposition with partial pivoting to solve for the inverse matrix.
 /// </remarks>
+/// <seealso href="https://en.wikipedia.org/wiki/Affine_transformation">Affine transformation.</seealso>
 public class AffineTransform : MathTransform
 {
     /// <summary>
