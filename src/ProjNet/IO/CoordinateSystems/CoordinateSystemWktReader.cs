@@ -8,6 +8,7 @@ namespace ProjNet.IO.CoordinateSystems;
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ProjNet;
@@ -45,7 +46,13 @@ public static partial class CoordinateSystemWktReader
             ArgumentGuard.ThrowArgumentNull(nameof(wkt));
         }
 
-        string normalizedWkt = NormalizeWkt(wkt.ToString());
+        string wktText = wkt.ToString();
+        if (TryParseNativeWkt2(wktText, out IInfo? nativeWkt2Info))
+        {
+            return ArgumentGuard.ThrowIfNull(nativeWkt2Info, nameof(nativeWkt2Info));
+        }
+
+        string normalizedWkt = NormalizeWkt(wktText);
         return ParseNormalizedWkt(normalizedWkt);
     }
 
@@ -65,6 +72,698 @@ public static partial class CoordinateSystemWktReader
         }
 
         return true;
+    }
+
+    private static bool TryParseNativeWkt2(string wkt, out IInfo? info)
+    {
+        var tokenizer = new WktTokenizer(wkt);
+        tokenizer.NextToken();
+        switch (tokenizer.GetStringValue())
+        {
+            case "GEOGCRS":
+            case "GEODCRS":
+            case "GEODETICCRS":
+                if (!ContainsKeywordBlock(wkt, "CS"))
+                {
+                    info = null;
+                    return false;
+                }
+
+                info = ReadWkt2GeodeticCoordinateReferenceSystem(tokenizer);
+                return true;
+            default:
+                info = null;
+                return false;
+        }
+    }
+
+    private static bool ContainsKeywordBlock(string wkt, string keyword)
+    {
+        int index = wkt.IndexOf(keyword, StringComparison.OrdinalIgnoreCase);
+        while (index >= 0)
+        {
+            int probeIndex = index + keyword.Length;
+            while (probeIndex < wkt.Length && char.IsWhiteSpace(wkt[probeIndex]))
+            {
+                probeIndex++;
+            }
+
+            if (probeIndex < wkt.Length && wkt[probeIndex] == '[')
+            {
+                return true;
+            }
+
+            index = wkt.IndexOf(keyword, index + 1, StringComparison.OrdinalIgnoreCase);
+        }
+
+        return false;
+    }
+
+    private static CoordinateSystem ReadWkt2GeodeticCoordinateReferenceSystem(WktTokenizer tokenizer)
+    {
+        string rootKeyword = tokenizer.GetStringValue();
+        WktBracket bracket = tokenizer.ReadOpener();
+        string name = tokenizer.ReadDoubleQuotedWord();
+
+        HorizontalDatum? horizontalDatum = null;
+        PrimeMeridian? primeMeridian = null;
+        AngularUnit? angularUnit = null;
+        LinearUnit? linearUnit = null;
+        string? coordinateSystemType = null;
+        int coordinateSystemDimension = 0;
+        string authority = string.Empty;
+        long authorityCode = -1;
+        var axisInfo = new List<AxisInfo>();
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            switch (tokenizer.GetStringValue())
+            {
+                case "DATUM":
+                    horizontalDatum = ReadWkt2HorizontalDatum(tokenizer);
+                    break;
+                case "PRIMEM":
+                    primeMeridian = ReadWkt2PrimeMeridian(tokenizer);
+                    break;
+                case "CS":
+                    (coordinateSystemType, coordinateSystemDimension) = ReadWkt2CoordinateSystemDefinition(tokenizer);
+                    break;
+                case "AXIS":
+                    axisInfo.Add(ReadWkt2Axis(tokenizer, out AngularUnit? axisAngularUnit, out LinearUnit? axisLinearUnit));
+                    angularUnit = MergeAxisAngularUnit(angularUnit, axisAngularUnit);
+                    linearUnit = MergeAxisLinearUnit(linearUnit, axisLinearUnit);
+                    break;
+                case "ANGLEUNIT":
+                    angularUnit = ReadWkt2AngularUnit(tokenizer);
+                    break;
+                case "ID":
+                    ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+                    break;
+                case "ENSEMBLE":
+                    throw new NotSupportedException("WKT2 datum ensembles are not supported.");
+                default:
+                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    {
+                        SkipKeywordNode(tokenizer);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"WKT2 keyword '{tokenizer.GetStringValue()}' is not supported in {rootKeyword}.");
+                    }
+
+                    break;
+            }
+
+            tokenizer.NextToken();
+        }
+
+        if (horizontalDatum is null)
+        {
+            ArgumentGuard.ThrowArgument("WKT2 geodetic CRS is missing a DATUM block.");
+        }
+
+        if (string.IsNullOrWhiteSpace(coordinateSystemType))
+        {
+            ArgumentGuard.ThrowArgument("WKT2 geodetic CRS is missing a CS block.");
+        }
+
+        if (axisInfo.Count != coordinateSystemDimension)
+        {
+            ArgumentGuard.ThrowArgument($"WKT2 geodetic CRS declared dimension {coordinateSystemDimension}, but provided {axisInfo.Count} AXIS blocks.");
+        }
+
+        if (string.Equals(coordinateSystemType, "ellipsoidal", StringComparison.OrdinalIgnoreCase))
+        {
+            if (coordinateSystemDimension != 2)
+            {
+                throw new NotSupportedException("WKT2 ellipsoidal CRS dimensions other than 2 are not supported.");
+            }
+
+            if (angularUnit is null)
+            {
+                ArgumentGuard.ThrowArgument("WKT2 ellipsoidal CRS is missing ANGLEUNIT metadata.");
+            }
+
+            primeMeridian ??= PrimeMeridian.Greenwich;
+            return new GeographicCoordinateSystem(
+                angularUnit,
+                horizontalDatum,
+                primeMeridian,
+                axisInfo,
+                name,
+                authority,
+                authorityCode,
+                string.Empty,
+                string.Empty,
+                string.Empty);
+        }
+
+        if (string.Equals(coordinateSystemType, "cartesian", StringComparison.OrdinalIgnoreCase))
+        {
+            if (coordinateSystemDimension != 3)
+            {
+                throw new NotSupportedException("WKT2 cartesian geodetic CRS dimensions other than 3 are not supported.");
+            }
+
+            if (linearUnit is null)
+            {
+                ArgumentGuard.ThrowArgument("WKT2 cartesian geodetic CRS is missing LENGTHUNIT metadata.");
+            }
+
+            primeMeridian ??= PrimeMeridian.Greenwich;
+            return new GeocentricCoordinateSystem(
+                horizontalDatum,
+                linearUnit,
+                primeMeridian,
+                axisInfo,
+                name,
+                authority,
+                authorityCode,
+                string.Empty,
+                string.Empty,
+                string.Empty);
+        }
+
+        throw new NotSupportedException($"WKT2 coordinate system type '{coordinateSystemType}' is not supported.");
+    }
+
+    private static (string Type, int Dimension) ReadWkt2CoordinateSystemDefinition(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "CS")
+        {
+            tokenizer.ReadToken("CS");
+        }
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        tokenizer.NextToken();
+        string coordinateSystemType = tokenizer.GetStringValue();
+        tokenizer.ReadToken(",");
+        tokenizer.NextToken();
+        int dimension = (int)tokenizer.GetNumericValue();
+        tokenizer.NextToken();
+
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            if (tokenizer.GetStringValue() == "ID" || ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+            {
+                SkipKeywordNode(tokenizer);
+                tokenizer.NextToken();
+                continue;
+            }
+
+            throw new NotSupportedException($"WKT2 CS keyword '{tokenizer.GetStringValue()}' is not supported.");
+        }
+
+        return (coordinateSystemType, dimension);
+    }
+
+    private static AxisInfo ReadWkt2Axis(WktTokenizer tokenizer, out AngularUnit? angularUnit, out LinearUnit? linearUnit)
+    {
+        if (tokenizer.GetStringValue() != "AXIS")
+        {
+            tokenizer.ReadToken("AXIS");
+        }
+
+        angularUnit = null;
+        linearUnit = null;
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        string axisName = tokenizer.ReadDoubleQuotedWord();
+        tokenizer.ReadToken(",");
+        tokenizer.NextToken();
+        AxisOrientationEnum orientation = ParseWkt2AxisOrientation(tokenizer.GetStringValue());
+        tokenizer.NextToken();
+
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            switch (tokenizer.GetStringValue())
+            {
+                case "ANGLEUNIT":
+                    angularUnit = ReadWkt2AngularUnit(tokenizer);
+                    break;
+                case "LENGTHUNIT":
+                    linearUnit = ReadWkt2LinearUnit(tokenizer);
+                    break;
+                case "ID":
+                    SkipKeywordNode(tokenizer);
+                    break;
+                default:
+                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    {
+                        SkipKeywordNode(tokenizer);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"WKT2 AXIS keyword '{tokenizer.GetStringValue()}' is not supported.");
+                    }
+
+                    break;
+            }
+
+            tokenizer.NextToken();
+        }
+
+        return new AxisInfo(axisName, orientation);
+    }
+
+    private static AxisOrientationEnum ParseWkt2AxisOrientation(string orientationToken)
+    {
+        return orientationToken.ToUpperInvariant() switch
+        {
+            "NORTH" => AxisOrientationEnum.North,
+            "SOUTH" => AxisOrientationEnum.South,
+            "EAST" => AxisOrientationEnum.East,
+            "WEST" => AxisOrientationEnum.West,
+            "UP" => AxisOrientationEnum.Up,
+            "DOWN" => AxisOrientationEnum.Down,
+            "GEOCENTRICX" => AxisOrientationEnum.Other,
+            "GEOCENTRICY" => AxisOrientationEnum.East,
+            "GEOCENTRICZ" => AxisOrientationEnum.North,
+            _ => ArgumentGuard.ThrowArgument<AxisOrientationEnum>($"Invalid WKT2 axis orientation '{orientationToken}'."),
+        };
+    }
+
+    private static HorizontalDatum ReadWkt2HorizontalDatum(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "DATUM")
+        {
+            tokenizer.ReadToken("DATUM");
+        }
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        string name = tokenizer.ReadDoubleQuotedWord();
+        string authority = string.Empty;
+        long authorityCode = -1;
+        Ellipsoid? ellipsoid = null;
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            switch (tokenizer.GetStringValue())
+            {
+                case "ELLIPSOID":
+                    ellipsoid = ReadWkt2Ellipsoid(tokenizer);
+                    break;
+                case "ID":
+                    ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+                    break;
+                default:
+                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    {
+                        SkipKeywordNode(tokenizer);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"WKT2 DATUM keyword '{tokenizer.GetStringValue()}' is not supported.");
+                    }
+
+                    break;
+            }
+
+            tokenizer.NextToken();
+        }
+
+        if (ellipsoid is null)
+        {
+            ArgumentGuard.ThrowArgument("WKT2 DATUM is missing an ELLIPSOID block.");
+        }
+
+        return new HorizontalDatum(ellipsoid, null, DatumType.HD_Geocentric, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
+
+    private static Ellipsoid ReadWkt2Ellipsoid(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "ELLIPSOID")
+        {
+            tokenizer.ReadToken("ELLIPSOID");
+        }
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        string name = tokenizer.ReadDoubleQuotedWord();
+        tokenizer.ReadToken(",");
+        tokenizer.NextToken();
+        double semiMajorAxis = tokenizer.GetNumericValue();
+        tokenizer.ReadToken(",");
+        tokenizer.NextToken();
+        double inverseFlattening = tokenizer.GetNumericValue();
+
+        string authority = string.Empty;
+        long authorityCode = -1;
+        LinearUnit? axisUnit = null;
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            switch (tokenizer.GetStringValue())
+            {
+                case "LENGTHUNIT":
+                    axisUnit = ReadWkt2LinearUnit(tokenizer);
+                    break;
+                case "ID":
+                    ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+                    break;
+                default:
+                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    {
+                        SkipKeywordNode(tokenizer);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"WKT2 ELLIPSOID keyword '{tokenizer.GetStringValue()}' is not supported.");
+                    }
+
+                    break;
+            }
+
+            tokenizer.NextToken();
+        }
+
+        if (axisUnit is null)
+        {
+            ArgumentGuard.ThrowArgument("WKT2 ELLIPSOID is missing a LENGTHUNIT block.");
+        }
+
+        return new Ellipsoid(semiMajorAxis, 0d, inverseFlattening, true, axisUnit, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
+
+    private static PrimeMeridian ReadWkt2PrimeMeridian(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "PRIMEM")
+        {
+            tokenizer.ReadToken("PRIMEM");
+        }
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        string name = tokenizer.ReadDoubleQuotedWord();
+        tokenizer.ReadToken(",");
+        tokenizer.NextToken();
+        double longitude = tokenizer.GetNumericValue();
+
+        string authority = string.Empty;
+        long authorityCode = -1;
+        AngularUnit angularUnit = AngularUnit.Degrees;
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            switch (tokenizer.GetStringValue())
+            {
+                case "ANGLEUNIT":
+                    angularUnit = ReadWkt2AngularUnit(tokenizer);
+                    break;
+                case "ID":
+                    ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+                    break;
+                default:
+                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    {
+                        SkipKeywordNode(tokenizer);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"WKT2 PRIMEM keyword '{tokenizer.GetStringValue()}' is not supported.");
+                    }
+
+                    break;
+            }
+
+            tokenizer.NextToken();
+        }
+
+        return new PrimeMeridian(longitude, angularUnit, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
+
+    private static AngularUnit ReadWkt2AngularUnit(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "ANGLEUNIT")
+        {
+            tokenizer.ReadToken("ANGLEUNIT");
+        }
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        string name = tokenizer.ReadDoubleQuotedWord();
+        tokenizer.ReadToken(",");
+        tokenizer.NextToken();
+        double radiansPerUnit = tokenizer.GetNumericValue();
+
+        string authority = string.Empty;
+        long authorityCode = -1;
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            if (tokenizer.GetStringValue() == "ID")
+            {
+                ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+            }
+            else if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+            {
+                SkipKeywordNode(tokenizer);
+            }
+            else
+            {
+                throw new NotSupportedException($"WKT2 ANGLEUNIT keyword '{tokenizer.GetStringValue()}' is not supported.");
+            }
+
+            tokenizer.NextToken();
+        }
+
+        return new AngularUnit(radiansPerUnit, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
+
+    private static LinearUnit ReadWkt2LinearUnit(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "LENGTHUNIT")
+        {
+            tokenizer.ReadToken("LENGTHUNIT");
+        }
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        string name = tokenizer.ReadDoubleQuotedWord();
+        tokenizer.ReadToken(",");
+        tokenizer.NextToken();
+        double metersPerUnit = tokenizer.GetNumericValue();
+
+        string authority = string.Empty;
+        long authorityCode = -1;
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            if (tokenizer.GetStringValue() == "ID")
+            {
+                ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+            }
+            else if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+            {
+                SkipKeywordNode(tokenizer);
+            }
+            else
+            {
+                throw new NotSupportedException($"WKT2 LENGTHUNIT keyword '{tokenizer.GetStringValue()}' is not supported.");
+            }
+
+            tokenizer.NextToken();
+        }
+
+        return new LinearUnit(metersPerUnit, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
+
+    private static void ReadIdentifierWithUnknownCode(WktTokenizer tokenizer, out string authority, out long authorityCode)
+    {
+        if (tokenizer.GetStringValue() != "ID")
+        {
+            tokenizer.ReadToken("ID");
+        }
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        authority = tokenizer.ReadDoubleQuotedWord();
+        tokenizer.ReadToken(",");
+        tokenizer.NextToken();
+        if (tokenizer.GetTokenType() == TokenType.Number)
+        {
+            authorityCode = (long)tokenizer.GetNumericValue();
+        }
+        else if (tokenizer.GetTokenType() == TokenType.Word)
+        {
+            authorityCode = long.TryParse(tokenizer.GetStringValue(), NumberStyles.Any, CultureInfo.InvariantCulture, out long parsedCode)
+                ? parsedCode
+                : -1;
+        }
+        else
+        {
+            authorityCode = long.TryParse(tokenizer.ReadDoubleQuotedWord(), NumberStyles.Any, CultureInfo.InvariantCulture, out long parsedCode)
+                ? parsedCode
+                : -1;
+        }
+
+        tokenizer.ReadCloser(bracket);
+    }
+
+    private static void SkipKeywordNode(WktTokenizer tokenizer)
+    {
+        _ = tokenizer.ReadOpener();
+        int depth = 1;
+        while (depth > 0)
+        {
+            TokenType tokenType = tokenizer.NextToken(false);
+            if (tokenType == TokenType.Eof)
+            {
+                ArgumentGuard.ThrowArgument("Unexpected end of input while skipping WKT2 metadata node.");
+            }
+
+            string token = tokenizer.GetStringValue();
+            if (token is "[" or "(")
+            {
+                depth++;
+            }
+            else if (token is "]" or ")")
+            {
+                depth--;
+            }
+        }
+    }
+
+    private static bool ShouldSkipWkt2MetadataNode(string keyword)
+    {
+        return keyword is "ANCHOR"
+            or "ANCHOREPOCH"
+            or "AREA"
+            or "BBOX"
+            or "DEFININGTRANSFORMATION"
+            or "DYNAMIC"
+            or "MERIDIAN"
+            or "ORDER"
+            or "REMARK"
+            or "SCOPE"
+            or "USAGE";
+    }
+
+    private static AngularUnit? MergeAxisAngularUnit(AngularUnit? current, AngularUnit? candidate)
+    {
+        if (candidate is null)
+        {
+            return current;
+        }
+
+        if (current is null || current.EqualParams(candidate))
+        {
+            return candidate;
+        }
+
+        throw new NotSupportedException("WKT2 axis-specific ANGLEUNIT values must match within the same CRS.");
+    }
+
+    private static LinearUnit? MergeAxisLinearUnit(LinearUnit? current, LinearUnit? candidate)
+    {
+        if (candidate is null)
+        {
+            return current;
+        }
+
+        if (current is null || current.EqualParams(candidate))
+        {
+            return candidate;
+        }
+
+        throw new NotSupportedException("WKT2 axis-specific LENGTHUNIT values must match within the same CRS.");
     }
 
     private static string NormalizeWkt(string wkt)
