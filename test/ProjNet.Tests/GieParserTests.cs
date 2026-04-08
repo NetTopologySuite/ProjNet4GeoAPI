@@ -222,4 +222,42 @@ expect 3 4
         Assert.Single(parsed);
         Assert.False(parsed[0].ExpectsFailure);
     }
+
+    /// <summary>
+    /// Verifies that DMS coordinates with seconds but without a trailing quote preserve the seconds component.
+    /// </summary>
+    [Fact]
+    public void ParseWithUnquotedDmsSecondsPreservesSeconds()
+    {
+        const string content = @"
+operation +proj=latlong +datum=NAD27
+accept -80d32'30.000 34d32'30.000 0.0
+expect 1 2 3
+";
+
+        IReadOnlyList<GieCase> parsed = GieParser.Parse(content);
+
+        Assert.Single(parsed);
+        Assert.Equal(-80.54166666666667d, parsed[0].Accept[0], 12);
+        Assert.Equal(34.54166666666667d, parsed[0].Accept[1], 12);
+    }
+
+    /// <summary>
+    /// Verifies that hemisphere suffices still combine correctly with unquoted DMS seconds.
+    /// </summary>
+    [Fact]
+    public void ParseWithUnquotedDmsSecondsAndHemispherePreservesSign()
+    {
+        const string content = @"
+operation +proj=latlong +datum=WGS84
+accept 1d2'3.5W 4d5'6.25S
+expect 1 2
+";
+
+        IReadOnlyList<GieCase> parsed = GieParser.Parse(content);
+
+        Assert.Single(parsed);
+        Assert.Equal(-(1d + (2d / 60d) + (3.5d / 3600d)), parsed[0].Accept[0], 12);
+        Assert.Equal(-(4d + (5d / 60d) + (6.25d / 3600d)), parsed[0].Accept[1], 12);
+    }
 }

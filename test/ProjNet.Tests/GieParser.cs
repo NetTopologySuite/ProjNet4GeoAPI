@@ -505,10 +505,16 @@ internal static class GieParser
         }
 
         double seconds = 0d;
-        int secondsMarker = text.IndexOf('"', StringComparison.Ordinal);
-        if (secondsMarker > mIndex + 1)
+        int secondsStart = mIndex + 1;
+        if (secondsStart < text.Length)
         {
-            string secondsToken = text.Substring(mIndex + 1, secondsMarker - mIndex - 1);
+            int secondsMarker = text.IndexOf('"', secondsStart);
+            if (secondsMarker < 0)
+            {
+                secondsMarker = text.Length;
+            }
+
+            string secondsToken = text.Substring(secondsStart, secondsMarker - secondsStart);
             if (!double.TryParse(secondsToken, NumberStyles.Float, CultureInfo.InvariantCulture, out seconds))
             {
                 return false;
