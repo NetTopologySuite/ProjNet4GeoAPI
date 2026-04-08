@@ -296,6 +296,42 @@ public class CoordinateSystemWktReaderWkt2Tests
     }
 
     /// <summary>
+    /// Verifies direct optional metadata blocks are tolerated on projected WKT2 nodes.
+    /// </summary>
+    [Fact]
+    public void CreateFromWkt_ParsesProjectedCrsWithDirectOptionalMetadataBlocksEquivalentToCatalogReference()
+    {
+        const string wkt = """PROJCRS["OSGB36 / British National Grid",BASEGEOGCRS["OSGB36",DATUM["Ordnance Survey of Great Britain 1936",REMARK["datum remark"],ELLIPSOID["Airy 1830",6377563.396,299.3249646,LENGTHUNIT["metre",1,REMARK["ellipsoid unit remark"],ID["EPSG",9001]],REMARK["ellipsoid remark"],ID["EPSG",7001]],ID["EPSG",6277]],ID["EPSG",4277]],CONVERSION["British National Grid",REMARK["conversion remark"],METHOD["Transverse Mercator",REMARK["method remark"],ID["EPSG",9807]],PARAMETER["Latitude of natural origin",49,ANGLEUNIT["degree",0.0174532925199433,REMARK["angle remark"],ID["EPSG",9102]],REMARK["latitude parameter remark"],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",-2,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.9996012717,SCALEUNIT["unity",1,REMARK["scale unit remark"],ID["EPSG",9201]],ID["EPSG",8805]],PARAMETER["False easting",400000,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8806]],PARAMETER["False northing",-100000,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8807]],ID["EPSG",19916]],CS[Cartesian,2,ID["EPSG",4499]],AXIS["Easting (E)",east,ORDER[1]],AXIS["Northing (N)",north,ORDER[2]],LENGTHUNIT["metre",1,REMARK["root unit remark"],ID["EPSG",9001]],REMARK["projected root remark"],SCOPE["Engineering survey, topographic mapping."],AREA["United Kingdom (UK) - offshore to boundary of UKCS within 49°45'N to 61°N and 9°W to 2°E; onshore Great Britain (England, Wales and Scotland). Isle of Man onshore."],BBOX[49.75,-9.01,61.01,2.01],ID["EPSG",27700]]""";
+
+        ProjectedCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wkt);
+        ProjectedCoordinateSystem reference = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
+            GetCatalogWkt(27700));
+
+        Assert.True(parsed.EqualParams(reference));
+        Assert.Equal("EPSG", parsed.Authority);
+        Assert.Equal(27700, parsed.AuthorityCode);
+    }
+
+    /// <summary>
+    /// Verifies <c>USAGE</c>-wrapped optional metadata blocks are tolerated on vertical WKT2 nodes.
+    /// </summary>
+    [Fact]
+    public void CreateFromWkt_ParsesVerticalCrsWithUsageMetadataEquivalentToCatalogReference()
+    {
+        const string wkt = """VERTCRS["NGA 2022 height",REMARK["vertical root remark"],VDATUM["Nivellement General de l'Algerie 2022",REMARK["vertical datum remark"],ID["EPSG",1354]],CS[vertical,1,ID["EPSG",6499]],AXIS["Gravity-related height (H)",up,ORDER[1]],LENGTHUNIT["metre",1,REMARK["vertical unit remark"],ID["EPSG",9001]],USAGE[SCOPE["Geodesy."],AREA["Algeria - onshore."],BBOX[18.97,-8.67,37.09,11.99]],ID["EPSG",10190]]""";
+
+        VerticalCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<VerticalCoordinateSystem>(CoordinateSystemFactory, wkt);
+        VerticalCoordinateSystem reference = CoordinateSystemTestHelpers.RequireCoordinateSystem<VerticalCoordinateSystem>(
+            CoordinateSystemFactory,
+            GetCatalogWkt(10190));
+
+        Assert.True(parsed.EqualParams(reference));
+        Assert.Equal("EPSG", parsed.Authority);
+        Assert.Equal(10190, parsed.AuthorityCode);
+    }
+
+    /// <summary>
     /// Verifies explicit prime-meridian units and non-degree angular units survive native WKT2 parsing.
     /// </summary>
     [Fact]
