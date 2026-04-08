@@ -20,6 +20,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </summary>
 public static partial class CoordinateSystemWktReader
 {
+    private const double RadiansPerArcSecond = 4.84813681109535993589914102357e-6;
     private static readonly string[] CompoundCoordinateSystemDelimiters = [",", "]"];
 #if !NET8_0_OR_GREATER
     private static readonly Regex Wkt2IdRegex = new(@"\bID\s*\[(?=\s*"")", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
@@ -112,6 +113,15 @@ public static partial class CoordinateSystemWktReader
             case "COMPOUNDCRS":
                 info = ReadWkt2CompoundCoordinateSystem(tokenizer);
                 return true;
+            case "BOUNDCRS":
+                if (!HasCompleteWkt2BoundCoordinateSystemBlocks(wkt))
+                {
+                    info = null;
+                    return false;
+                }
+
+                info = ReadWkt2BoundCoordinateSystem(tokenizer);
+                return true;
             default:
                 info = null;
                 return false;
@@ -138,6 +148,13 @@ public static partial class CoordinateSystemWktReader
         }
 
         return false;
+    }
+
+    private static bool HasCompleteWkt2BoundCoordinateSystemBlocks(string wkt)
+    {
+        return ContainsKeywordBlock(wkt, "SOURCECRS")
+            && ContainsKeywordBlock(wkt, "TARGETCRS")
+            && ContainsKeywordBlock(wkt, "ABRIDGEDTRANSFORMATION");
     }
 
     private static CoordinateSystem ReadWkt2GeodeticCoordinateReferenceSystem(WktTokenizer tokenizer)
@@ -1413,6 +1430,477 @@ public static partial class CoordinateSystemWktReader
         return new CompoundCoordinateSystem(headCoordinateSystem, tailCoordinateSystem, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
     }
 
+    private static CoordinateSystem ReadWkt2BoundCoordinateSystem(WktTokenizer tokenizer)
+    {
+        const string rootKeyword = "BOUNDCRS";
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        CoordinateSystem? sourceCoordinateSystem = null;
+        CoordinateSystem? targetCoordinateSystem = null;
+        Wgs84ConversionInfo? wgs84Parameters = null;
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            switch (tokenizer.GetStringValue())
+            {
+                case "SOURCECRS":
+                    sourceCoordinateSystem = ReadWkt2BoundCoordinateSystemComponent(tokenizer);
+                    EnsureSupportedWkt2BoundSourceCoordinateSystem(sourceCoordinateSystem);
+                    break;
+                case "TARGETCRS":
+                    targetCoordinateSystem = ReadWkt2BoundCoordinateSystemComponent(tokenizer);
+                    break;
+                case "ABRIDGEDTRANSFORMATION":
+                    wgs84Parameters = ReadWkt2AbridgedTransformationToWgs84Parameters(tokenizer);
+                    break;
+                default:
+                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    {
+                        SkipKeywordNode(tokenizer);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"WKT2 keyword '{tokenizer.GetStringValue()}' is not supported in {rootKeyword}.");
+                    }
+
+                    break;
+            }
+
+            tokenizer.NextToken();
+        }
+
+        sourceCoordinateSystem = ArgumentGuard.ThrowIfNull(sourceCoordinateSystem, nameof(sourceCoordinateSystem));
+        targetCoordinateSystem = ArgumentGuard.ThrowIfNull(targetCoordinateSystem, nameof(targetCoordinateSystem));
+        wgs84Parameters = ArgumentGuard.ThrowIfNull(wgs84Parameters, nameof(wgs84Parameters));
+
+        return ApplyWkt2BoundCoordinateSystemToSource(sourceCoordinateSystem, targetCoordinateSystem, wgs84Parameters);
+    }
+
+    private static CoordinateSystem ReadWkt2BoundCoordinateSystemComponent(WktTokenizer tokenizer)
+    {
+        WktBracket bracket = tokenizer.ReadOpener();
+        tokenizer.NextToken();
+        CoordinateSystem coordinateSystem = ReadCoordinateSystem(null, tokenizer);
+        tokenizer.NextToken();
+        tokenizer.CheckCloser(bracket);
+        return coordinateSystem;
+    }
+
+    private static void EnsureSupportedWkt2BoundSourceCoordinateSystem(CoordinateSystem coordinateSystem)
+    {
+        if (coordinateSystem is GeographicCoordinateSystem or ProjectedCoordinateSystem or GeocentricCoordinateSystem)
+        {
+            return;
+        }
+
+        throw new NotSupportedException(
+            $"WKT2 BOUNDCRS source coordinate system type '{GetCoordinateSystemKeyword(coordinateSystem)}' is not supported.");
+    }
+
+    // The current object model can only retain BOUNDCRS semantics by attaching a source->WGS84 Bursa-Wolf transform.
+    private static CoordinateSystem ApplyWkt2BoundCoordinateSystemToSource(
+        CoordinateSystem sourceCoordinateSystem,
+        CoordinateSystem targetCoordinateSystem,
+        Wgs84ConversionInfo wgs84Parameters)
+    {
+        if (!TryGetHorizontalDatum(sourceCoordinateSystem, out HorizontalDatum? sourceDatum))
+        {
+            throw new NotSupportedException(
+                $"WKT2 BOUNDCRS source coordinate system type '{GetCoordinateSystemKeyword(sourceCoordinateSystem)}' is not supported.");
+        }
+
+        if (!TryGetHorizontalDatum(targetCoordinateSystem, out HorizontalDatum? targetDatum))
+        {
+            throw new NotSupportedException("WKT2 BOUNDCRS targets other than WGS 84 are not supported.");
+        }
+
+        sourceDatum = ArgumentGuard.ThrowIfNull(sourceDatum, nameof(sourceDatum));
+        targetDatum = ArgumentGuard.ThrowIfNull(targetDatum, nameof(targetDatum));
+
+        if (!targetDatum.EqualParams(HorizontalDatum.WGS84))
+        {
+            throw new NotSupportedException("WKT2 BOUNDCRS targets other than WGS 84 are not supported.");
+        }
+
+        if (sourceDatum.Wgs84Parameters is not null && !sourceDatum.Wgs84Parameters.Equals(wgs84Parameters))
+        {
+            throw new NotSupportedException("WKT2 BOUNDCRS source CRS already defines a conflicting WGS 84 transformation.");
+        }
+
+        sourceDatum.Wgs84Parameters ??= wgs84Parameters;
+        return sourceCoordinateSystem;
+    }
+
+    private static Wgs84ConversionInfo ReadWkt2AbridgedTransformationToWgs84Parameters(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "ABRIDGEDTRANSFORMATION")
+        {
+            tokenizer.ReadToken("ABRIDGEDTRANSFORMATION");
+        }
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        _ = tokenizer.ReadDoubleQuotedWord();
+
+        string methodName = string.Empty;
+        string parameterFileName = string.Empty;
+        var parameters = new Wgs84ConversionInfo();
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            switch (tokenizer.GetStringValue())
+            {
+                case "METHOD":
+                    methodName = ReadWkt2ProjectionMethod(tokenizer);
+                    break;
+                case "PARAMETER":
+                    ReadWkt2AbridgedTransformationParameter(tokenizer, parameters);
+                    break;
+                case "PARAMETERFILE":
+                    parameterFileName = ReadWkt2AbridgedTransformationParameterFile(tokenizer);
+                    break;
+                case "ID":
+                    SkipKeywordNode(tokenizer);
+                    break;
+                default:
+                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    {
+                        SkipKeywordNode(tokenizer);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"WKT2 ABRIDGEDTRANSFORMATION keyword '{tokenizer.GetStringValue()}' is not supported.");
+                    }
+
+                    break;
+            }
+
+            tokenizer.NextToken();
+        }
+
+        if (string.IsNullOrWhiteSpace(methodName))
+        {
+            ArgumentGuard.ThrowArgument("WKT2 ABRIDGEDTRANSFORMATION is missing a METHOD block.");
+        }
+
+        if (!string.IsNullOrWhiteSpace(parameterFileName))
+        {
+            throw new NotSupportedException("WKT2 BOUNDCRS abridged transformations with PARAMETERFILE are not supported.");
+        }
+
+        if (IsWkt2CoordinateFrameRotationMethod(methodName))
+        {
+            parameters.Ex = -parameters.Ex;
+            parameters.Ey = -parameters.Ey;
+            parameters.Ez = -parameters.Ez;
+            return parameters;
+        }
+
+        if (IsWkt2GeocentricTranslationsMethod(methodName) || IsWkt2PositionVectorMethod(methodName))
+        {
+            return parameters;
+        }
+
+        throw new NotSupportedException($"WKT2 BOUNDCRS abridged transformation method '{methodName}' is not supported.");
+    }
+
+    private static void ReadWkt2AbridgedTransformationParameter(WktTokenizer tokenizer, Wgs84ConversionInfo parameters)
+    {
+        if (tokenizer.GetStringValue() != "PARAMETER")
+        {
+            tokenizer.ReadToken("PARAMETER");
+        }
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        string parameterName = NormalizeWkt2BoundTransformationParameterName(tokenizer.ReadDoubleQuotedWord());
+        tokenizer.ReadToken(",");
+        tokenizer.NextToken();
+        double value = tokenizer.GetNumericValue();
+
+        AngularUnit? angularUnit = null;
+        LinearUnit? linearUnit = null;
+        double? scaleUnitFactor = null;
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            switch (tokenizer.GetStringValue())
+            {
+                case "ANGLEUNIT":
+                    angularUnit = ReadWkt2AngularUnit(tokenizer);
+                    break;
+                case "LENGTHUNIT":
+                    linearUnit = ReadWkt2LinearUnit(tokenizer);
+                    break;
+                case "SCALEUNIT":
+                    scaleUnitFactor = ReadWkt2ScaleUnitFactor(tokenizer);
+                    break;
+                case "ID":
+                    SkipKeywordNode(tokenizer);
+                    break;
+                default:
+                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    {
+                        SkipKeywordNode(tokenizer);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"WKT2 ABRIDGEDTRANSFORMATION parameter keyword '{tokenizer.GetStringValue()}' is not supported.");
+                    }
+
+                    break;
+            }
+
+            tokenizer.NextToken();
+        }
+
+        ApplyWkt2BoundTransformationParameter(
+            parameters,
+            parameterName,
+            NormalizeWkt2BoundTransformationParameterValue(parameterName, value, angularUnit, linearUnit, scaleUnitFactor));
+    }
+
+    private static string ReadWkt2AbridgedTransformationParameterFile(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "PARAMETERFILE")
+        {
+            tokenizer.ReadToken("PARAMETERFILE");
+        }
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        _ = tokenizer.ReadDoubleQuotedWord();
+        tokenizer.ReadToken(",");
+        string parameterFileName = tokenizer.ReadDoubleQuotedWord();
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            if (tokenizer.GetStringValue() == "ID" || ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+            {
+                SkipKeywordNode(tokenizer);
+            }
+            else
+            {
+                throw new NotSupportedException($"WKT2 PARAMETERFILE keyword '{tokenizer.GetStringValue()}' is not supported.");
+            }
+
+            tokenizer.NextToken();
+        }
+
+        return parameterFileName;
+    }
+
+    private static double ReadWkt2ScaleUnitFactor(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "SCALEUNIT")
+        {
+            tokenizer.ReadToken("SCALEUNIT");
+        }
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        _ = tokenizer.ReadDoubleQuotedWord();
+        tokenizer.ReadToken(",");
+        tokenizer.NextToken();
+        double unitFactor = tokenizer.GetNumericValue();
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            if (tokenizer.GetStringValue() == "ID" || ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+            {
+                SkipKeywordNode(tokenizer);
+            }
+            else
+            {
+                throw new NotSupportedException($"WKT2 SCALEUNIT keyword '{tokenizer.GetStringValue()}' is not supported.");
+            }
+
+            tokenizer.NextToken();
+        }
+
+        return unitFactor;
+    }
+
+    private static string NormalizeWkt2BoundTransformationParameterName(string parameterName)
+    {
+        if (string.IsNullOrWhiteSpace(parameterName))
+        {
+            return string.Empty;
+        }
+
+        string normalized = parameterName
+            .ToUpperInvariant()
+            .Trim();
+        normalized = StringCompatibility.ReplaceOrdinal(normalized, "(", string.Empty);
+        normalized = StringCompatibility.ReplaceOrdinal(normalized, ")", string.Empty);
+        normalized = StringCompatibility.ReplaceOrdinal(normalized, "-", "_");
+        normalized = StringCompatibility.ReplaceOrdinal(normalized, "/", "_");
+        normalized = StringCompatibility.ReplaceOrdinal(normalized, " ", "_");
+        normalized = StringCompatibility.ReplaceOrdinal(normalized, ".", "_");
+        normalized = StringCompatibility.ReplaceOrdinal(normalized, "__", "_");
+
+        return normalized switch
+        {
+            "X_AXIS_TRANSLATION" => "dx",
+            "Y_AXIS_TRANSLATION" => "dy",
+            "Z_AXIS_TRANSLATION" => "dz",
+            "X_AXIS_ROTATION" => "ex",
+            "Y_AXIS_ROTATION" => "ey",
+            "Z_AXIS_ROTATION" => "ez",
+            "SCALE_DIFFERENCE" => "ppm",
+            _ => normalized,
+        };
+    }
+
+    private static double NormalizeWkt2BoundTransformationParameterValue(
+        string parameterName,
+        double value,
+        AngularUnit? angularUnit,
+        LinearUnit? linearUnit,
+        double? scaleUnitFactor)
+    {
+        return parameterName switch
+        {
+            "dx" or "dy" or "dz" => linearUnit is null ? value : value * linearUnit.MetersPerUnit,
+            "ex" or "ey" or "ez" => angularUnit is null ? value : (value * angularUnit.RadiansPerUnit) / RadiansPerArcSecond,
+            "ppm" => scaleUnitFactor.HasValue ? value * scaleUnitFactor.Value * 1000000d : value,
+            _ => throw new NotSupportedException($"WKT2 BOUNDCRS transformation parameter '{parameterName}' is not supported."),
+        };
+    }
+
+    private static void ApplyWkt2BoundTransformationParameter(Wgs84ConversionInfo parameters, string parameterName, double value)
+    {
+        switch (parameterName)
+        {
+            case "dx":
+                parameters.Dx = value;
+                break;
+            case "dy":
+                parameters.Dy = value;
+                break;
+            case "dz":
+                parameters.Dz = value;
+                break;
+            case "ex":
+                parameters.Ex = value;
+                break;
+            case "ey":
+                parameters.Ey = value;
+                break;
+            case "ez":
+                parameters.Ez = value;
+                break;
+            case "ppm":
+                parameters.Ppm = value;
+                break;
+            default:
+                throw new NotSupportedException($"WKT2 BOUNDCRS transformation parameter '{parameterName}' is not supported.");
+        }
+    }
+
+    private static bool IsWkt2GeocentricTranslationsMethod(string methodName)
+        => methodName.StartsWith("Geocentric translations", StringComparison.OrdinalIgnoreCase);
+
+    private static bool IsWkt2PositionVectorMethod(string methodName)
+        => methodName.StartsWith("Position Vector transformation", StringComparison.OrdinalIgnoreCase);
+
+    private static bool IsWkt2CoordinateFrameRotationMethod(string methodName)
+        => methodName.StartsWith("Coordinate Frame rotation", StringComparison.OrdinalIgnoreCase);
+
+    private static bool TryGetHorizontalDatum(CoordinateSystem coordinateSystem, out HorizontalDatum? horizontalDatum)
+    {
+        switch (coordinateSystem)
+        {
+            case GeographicCoordinateSystem geographicCoordinateSystem:
+                horizontalDatum = geographicCoordinateSystem.HorizontalDatum;
+                return true;
+            case ProjectedCoordinateSystem projectedCoordinateSystem:
+                horizontalDatum = projectedCoordinateSystem.HorizontalDatum;
+                return true;
+            case GeocentricCoordinateSystem geocentricCoordinateSystem:
+                horizontalDatum = geocentricCoordinateSystem.HorizontalDatum;
+                return true;
+            default:
+                horizontalDatum = null;
+                return false;
+        }
+    }
+
+    private static string GetCoordinateSystemKeyword(CoordinateSystem coordinateSystem)
+    {
+        return coordinateSystem switch
+        {
+            GeographicCoordinateSystem => "GEOGCRS",
+            ProjectedCoordinateSystem => "PROJCRS",
+            GeocentricCoordinateSystem => "GEODCRS",
+            VerticalCoordinateSystem => "VERTCRS",
+            CompoundCoordinateSystem => "COMPOUNDCRS",
+            FittedCoordinateSystem => "FITTED_CS",
+            _ => coordinateSystem.GetType().Name,
+        };
+    }
+
     private static string NormalizeWkt(string wkt)
     {
         string normalized = wkt;
@@ -1447,6 +1935,7 @@ public static partial class CoordinateSystemWktReader
             "PRIMEM" => ReadPrimeMeridian(tokenizer),
             "VERT_CS" or "GEOGCS" or "PROJCS" or "COMPD_CS" or "GEOCCS" or "FITTED_CS" or "LOCAL_CS"
                 => ReadCoordinateSystem(normalizedWkt, tokenizer),
+            "BOUNDCRS" when HasCompleteWkt2BoundCoordinateSystemBlocks(normalizedWkt) => ReadWkt2BoundCoordinateSystem(tokenizer),
             "BOUNDCRS" => throw new NotSupportedException("BOUNDCRS coordinate system is not supported."),
             _ => ArgumentGuard.ThrowArgument<IInfo>($"'{objectName}' is not recognized."),
         };
@@ -1593,7 +2082,7 @@ public static partial class CoordinateSystemWktReader
             "GEOCCS" => ReadGeocentricCoordinateSystem(tokenizer),
             "COMPD_CS" => ReadCompoundCoordinateSystem(tokenizer),
             "VERT_CS" => ReadVerticalCoordinateSystem(tokenizer),
-            "BOUNDCRS" => throw new NotSupportedException($"{coordinateSystemText} coordinate system is not supported."),
+            "BOUNDCRS" => ReadWkt2BoundCoordinateSystem(tokenizer),
             "LOCAL_CS" => throw new NotSupportedException($"{coordinateSystemText} coordinate system is not supported."),
             _ => throw new InvalidOperationException($"{coordinateSystemText} coordinate system is not recognized."),
         };
