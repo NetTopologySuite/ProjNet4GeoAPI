@@ -54,6 +54,9 @@ public static class ProjJsonWriter
             case GeographicCoordinateSystem geographicCoordinateSystem:
                 WriteGeographicCoordinateSystem(writer, geographicCoordinateSystem);
                 break;
+            case ProjectedCoordinateSystem projectedCoordinateSystem:
+                WriteProjectedCoordinateSystem(writer, projectedCoordinateSystem);
+                break;
             default:
                 throw new NotSupportedException($"PROJJSON writing is not supported for coordinate system type '{coordinateSystem.GetType().Name}'.");
         }
@@ -73,6 +76,29 @@ public static class ProjJsonWriter
 
         writer.WritePropertyName("coordinate_system");
         WriteCoordinateSystemDefinition(writer, "ellipsoidal", coordinateSystem);
+
+        WriteIdentifier(writer, coordinateSystem);
+        writer.WriteEndObject();
+    }
+
+    private static void WriteProjectedCoordinateSystem(Utf8JsonWriter writer, ProjectedCoordinateSystem coordinateSystem)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("type", "ProjectedCRS");
+        writer.WriteString("name", coordinateSystem.Name);
+
+        writer.WritePropertyName("base_crs");
+        WriteGeographicCoordinateSystem(writer, coordinateSystem.GeographicCoordinateSystem);
+
+        writer.WritePropertyName("conversion");
+        WriteConversion(
+            writer,
+            coordinateSystem.Projection,
+            coordinateSystem.GeographicCoordinateSystem.AngularUnit,
+            coordinateSystem.LinearUnit);
+
+        writer.WritePropertyName("coordinate_system");
+        WriteCoordinateSystemDefinition(writer, "Cartesian", coordinateSystem);
 
         WriteIdentifier(writer, coordinateSystem);
         writer.WriteEndObject();
@@ -146,6 +172,65 @@ public static class ProjJsonWriter
         writer.WriteEndObject();
     }
 
+    private static void WriteConversion(Utf8JsonWriter writer, IProjection projection, AngularUnit angularUnit, LinearUnit linearUnit)
+    {
+        string methodKey = ProjectionSerializationSupport.NormalizeMethodKey(projection.ClassName);
+        string methodName = ProjectionSerializationSupport.GetMethodName(projection.ClassName);
+        string conversionName = string.IsNullOrWhiteSpace(projection.Name) || projection.Name.Equals(projection.ClassName, StringComparison.OrdinalIgnoreCase)
+            ? methodName
+            : projection.Name;
+
+        writer.WriteStartObject();
+        writer.WriteString("type", "Conversion");
+        writer.WriteString("name", conversionName);
+
+        writer.WritePropertyName("method");
+        WriteMethod(writer, methodName);
+
+        writer.WritePropertyName("parameters");
+        writer.WriteStartArray();
+        for (int i = 0; i < projection.NumParameters; i++)
+        {
+            WriteProjectionParameter(writer, methodKey, projection.GetParameter(i), angularUnit, linearUnit);
+        }
+
+        writer.WriteEndArray();
+        WriteIdentifier(writer, projection);
+        writer.WriteEndObject();
+    }
+
+    private static void WriteMethod(Utf8JsonWriter writer, string methodName)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("name", methodName);
+        writer.WriteEndObject();
+    }
+
+    private static void WriteProjectionParameter(Utf8JsonWriter writer, string methodKey, ProjectionParameter parameter, AngularUnit angularUnit, LinearUnit linearUnit)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("name", ProjectionSerializationSupport.GetParameterName(methodKey, parameter.Name));
+        writer.WriteNumber("value", parameter.Value);
+
+        if (ProjectionSerializationSupport.ParameterUsesAngularUnit(parameter.Name))
+        {
+            writer.WritePropertyName("unit");
+            WriteAngularUnit(writer, angularUnit);
+        }
+        else if (ProjectionSerializationSupport.ParameterUsesLinearUnit(parameter.Name))
+        {
+            writer.WritePropertyName("unit");
+            WriteLinearUnit(writer, linearUnit);
+        }
+        else if (ProjectionSerializationSupport.ParameterUsesScaleUnit(parameter.Name))
+        {
+            writer.WritePropertyName("unit");
+            WriteScaleUnit(writer);
+        }
+
+        writer.WriteEndObject();
+    }
+
     private static void WriteUnit(Utf8JsonWriter writer, IUnit unit)
     {
         switch (unit)
@@ -178,6 +263,20 @@ public static class ProjJsonWriter
         writer.WriteString("name", linearUnit.Name);
         writer.WriteNumber("conversion_factor", linearUnit.MetersPerUnit);
         WriteIdentifier(writer, linearUnit);
+        writer.WriteEndObject();
+    }
+
+    private static void WriteScaleUnit(Utf8JsonWriter writer)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("type", "ScaleUnit");
+        writer.WriteString("name", "unity");
+        writer.WriteNumber("conversion_factor", 1);
+        writer.WritePropertyName("id");
+        writer.WriteStartObject();
+        writer.WriteString("authority", "EPSG");
+        writer.WriteNumber("code", 9201);
+        writer.WriteEndObject();
         writer.WriteEndObject();
     }
 

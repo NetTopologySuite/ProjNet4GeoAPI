@@ -15,7 +15,7 @@ using ProjNet.IO.CoordinateSystems;
 using Xunit;
 
 /// <summary>
-/// Verifies native PROJJSON coordinate-system writing for the first supported CRS slice.
+/// Verifies native PROJJSON coordinate-system writing for the currently supported CRS slices.
 /// </summary>
 public class ProjJsonWriterTests
 {
@@ -43,6 +43,22 @@ public class ProjJsonWriterTests
     }
 
     /// <summary>
+    /// Provides EPSG projected CRS examples that should roundtrip through the projected PROJJSON writer slice.
+    /// </summary>
+    /// <returns>EPSG SRIDs for supported projected CRS roundtrip coverage.</returns>
+    public static IEnumerable<TheoryDataRow<int>> SupportedProjectedWriterRows()
+    {
+        return
+        [
+            new TheoryDataRow<int>(27700),
+            new TheoryDataRow<int>(31370),
+            new TheoryDataRow<int>(2169),
+            new TheoryDataRow<int>(23032),
+            new TheoryDataRow<int>(31467),
+        ];
+    }
+
+    /// <summary>
     /// Verifies the initial PROJJSON writer slice roundtrips supported geographic CRS back to the same semantic model.
     /// </summary>
     /// <param name="srid">Expected EPSG SRID.</param>
@@ -58,6 +74,26 @@ public class ProjJsonWriterTests
         GeographicCoordinateSystem reparsed = Assert.IsType<GeographicCoordinateSystem>(ProjJsonReader.Parse(json));
 
         Assert.True(reparsed.EqualParams(reference), $"PROJJSON geographic CRS write/read mismatch for EPSG:{srid}.");
+        Assert.Equal(reference.Authority, reparsed.Authority);
+        Assert.Equal(reference.AuthorityCode, reparsed.AuthorityCode);
+    }
+
+    /// <summary>
+    /// Verifies the projected PROJJSON writer slice roundtrips supported projected CRS back to the same semantic model.
+    /// </summary>
+    /// <param name="srid">Expected EPSG SRID.</param>
+    [Theory]
+    [MemberData(nameof(SupportedProjectedWriterRows))]
+    public void ToJson_RoundtripsSupportedProjectedCrsEquivalentToCatalogReference(int srid)
+    {
+        ProjectedCoordinateSystem reference = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
+            GetCatalogWkt(srid));
+
+        string json = ProjJsonWriter.ToJson(reference);
+        ProjectedCoordinateSystem reparsed = Assert.IsType<ProjectedCoordinateSystem>(ProjJsonReader.Parse(json));
+
+        Assert.True(reparsed.EqualParams(reference), $"PROJJSON projected CRS write/read mismatch for EPSG:{srid}.");
         Assert.Equal(reference.Authority, reparsed.Authority);
         Assert.Equal(reference.AuthorityCode, reparsed.AuthorityCode);
     }
@@ -99,6 +135,46 @@ public class ProjJsonWriterTests
     }
 
     /// <summary>
+    /// Verifies <see cref="ProjJsonWriter.WriteTo(Utf8JsonWriter, CoordinateSystem)"/> emits the expected PROJJSON object shape for a projected CRS.
+    /// </summary>
+    [Fact]
+    public void WriteTo_WritesProjectedCrsWithExpectedProjJsonShape()
+    {
+        ProjectedCoordinateSystem reference = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
+            GetCatalogWkt(27700));
+
+        string json;
+        using (var stream = new MemoryStream())
+        {
+            using (var writer = new Utf8JsonWriter(stream))
+            {
+                ProjJsonWriter.WriteTo(writer, reference);
+                writer.Flush();
+            }
+
+            json = Encoding.UTF8.GetString(stream.ToArray());
+        }
+
+        using var document = JsonDocument.Parse(json);
+        JsonElement root = document.RootElement;
+        JsonElement parameters = root.GetProperty("conversion").GetProperty("parameters");
+        JsonElement scaleFactorParameter = parameters.EnumerateArray()
+            .Single(element => string.Equals(element.GetProperty("name").GetString(), "Scale factor at natural origin", StringComparison.Ordinal));
+
+        Assert.Equal("ProjectedCRS", root.GetProperty("type").GetString());
+        Assert.Equal("OSGB36 / British National Grid", root.GetProperty("name").GetString());
+        Assert.Equal("GeographicCRS", root.GetProperty("base_crs").GetProperty("type").GetString());
+        Assert.Equal("Conversion", root.GetProperty("conversion").GetProperty("type").GetString());
+        Assert.Equal("Transverse Mercator", root.GetProperty("conversion").GetProperty("method").GetProperty("name").GetString());
+        Assert.Equal(5, parameters.GetArrayLength());
+        Assert.Equal("ScaleUnit", scaleFactorParameter.GetProperty("unit").GetProperty("type").GetString());
+        Assert.Equal("Cartesian", root.GetProperty("coordinate_system").GetProperty("subtype").GetString());
+        Assert.Equal("EPSG", root.GetProperty("id").GetProperty("authority").GetString());
+        Assert.Equal(27700, root.GetProperty("id").GetProperty("code").GetInt32());
+    }
+
+    /// <summary>
     /// Verifies null JSON writers are rejected.
     /// </summary>
     [Fact]
@@ -136,13 +212,13 @@ public class ProjJsonWriterTests
     [Fact]
     public void ToJson_WithUnsupportedCoordinateSystem_ThrowsNotSupportedException()
     {
-        ProjectedCoordinateSystem projected = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+        VerticalCoordinateSystem vertical = CoordinateSystemTestHelpers.RequireCoordinateSystem<VerticalCoordinateSystem>(
             CoordinateSystemFactory,
-            GetCatalogWkt(27700));
+            GetCatalogWkt(5701));
 
-        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => ProjJsonWriter.ToJson(projected));
+        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => ProjJsonWriter.ToJson(vertical));
 
-        Assert.Contains(nameof(ProjectedCoordinateSystem), exception.Message, StringComparison.Ordinal);
+        Assert.Contains(nameof(VerticalCoordinateSystem), exception.Message, StringComparison.Ordinal);
     }
 
     private static string GetCatalogWkt(int srid)
