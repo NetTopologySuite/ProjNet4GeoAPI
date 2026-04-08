@@ -332,6 +332,27 @@ public class CoordinateSystemWktReaderWkt2Tests
     }
 
     /// <summary>
+    /// Verifies legacy hybrid <c>GEODCRS</c> definitions without <c>CS[...]</c> still fall back to the older normalization path.
+    /// </summary>
+    [Fact]
+    public void CreateFromWkt_FallsBackForLegacyHybridGeodCrsWithoutCoordinateSystemBlock()
+    {
+        const string wkt = """GEODCRS["WGS 84",DATUM["WGS_1984",ELLIPSOID["WGS 84",6378137,298.257223563,ID["EPSG","7030"]],ID["EPSG","6326"]],PRIMEM["Greenwich",0,ID["EPSG","8901"]],UNIT["degree",0.0174532925199433,ID["EPSG","9122"]],ID["EPSG","4326"]]""";
+
+        GeographicCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<GeographicCoordinateSystem>(CoordinateSystemFactory, wkt);
+        Assert.Equal("EPSG", parsed.Authority);
+        Assert.Equal(4326, parsed.AuthorityCode);
+        Assert.Equal("EPSG", parsed.HorizontalDatum.Authority);
+        Assert.Equal(6326, parsed.HorizontalDatum.AuthorityCode);
+        Assert.Equal("EPSG", parsed.HorizontalDatum.Ellipsoid.Authority);
+        Assert.Equal(7030, parsed.HorizontalDatum.Ellipsoid.AuthorityCode);
+        Assert.Equal("EPSG", parsed.PrimeMeridian.Authority);
+        Assert.Equal(8901, parsed.PrimeMeridian.AuthorityCode);
+        Assert.Equal("EPSG", parsed.AngularUnit.Authority);
+        Assert.Equal(9122, parsed.AngularUnit.AuthorityCode);
+    }
+
+    /// <summary>
     /// Verifies explicit prime-meridian units and non-degree angular units survive native WKT2 parsing.
     /// </summary>
     [Fact]
