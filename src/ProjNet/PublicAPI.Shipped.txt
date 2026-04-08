@@ -816,6 +816,13 @@ namespace ProjNet.Resources
         LocalOnly = 0,
         LocalThenNetwork = 1,
     }
+    public sealed class HttpGridResourceFetchClient : ProjNet.Resources.IGridResourceFetchClient
+    {
+        public HttpGridResourceFetchClient(System.Uri baseUri, System.Net.Http.HttpClient? httpClient = null) { }
+        public HttpGridResourceFetchClient(string baseUrl, System.Net.Http.HttpClient? httpClient = null) { }
+        public bool TryFetch(string gridName, string targetFilePath) { }
+        public System.Threading.Tasks.Task<bool> TryFetchAsync(string gridName, string targetFilePath, System.Threading.CancellationToken cancellationToken = default) { }
+    }
     public interface IGridResourceFetchClient
     {
         bool TryFetch(string gridName, string targetFilePath);

@@ -193,12 +193,18 @@ internal sealed class GridResourceResolver
         string targetPath = Path.Combine(this.options.CacheDirectory, fileName);
         if (File.Exists(targetPath))
         {
-            resolvedPath = targetPath;
-            return true;
+            if (GridResourceCacheManifest.IsValid(targetPath))
+            {
+                resolvedPath = targetPath;
+                return true;
+            }
+
+            GridResourceCacheManifest.DeleteArtifacts(targetPath);
         }
 
-        if (!this.fetchClient.TryFetch(gridName, targetPath) || !File.Exists(targetPath))
+        if (!this.fetchClient.TryFetch(gridName, targetPath) || !GridResourceCacheManifest.IsValid(targetPath))
         {
+            GridResourceCacheManifest.DeleteArtifacts(targetPath);
             resolvedPath = null;
             return false;
         }
@@ -224,11 +230,17 @@ internal sealed class GridResourceResolver
         string targetPath = Path.Combine(this.options.CacheDirectory, fileName);
         if (File.Exists(targetPath))
         {
-            return targetPath;
+            if (GridResourceCacheManifest.IsValid(targetPath))
+            {
+                return targetPath;
+            }
+
+            GridResourceCacheManifest.DeleteArtifacts(targetPath);
         }
 
-        if (!await this.fetchClient.TryFetchAsync(gridName, targetPath, cancellationToken).ConfigureAwait(false) || !File.Exists(targetPath))
+        if (!await this.fetchClient.TryFetchAsync(gridName, targetPath, cancellationToken).ConfigureAwait(false) || !GridResourceCacheManifest.IsValid(targetPath))
         {
+            GridResourceCacheManifest.DeleteArtifacts(targetPath);
             return null;
         }
 

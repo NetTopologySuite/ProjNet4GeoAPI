@@ -104,6 +104,42 @@ public class GridResourceResolverTests
         }
     }
 
+    /// <summary>
+    /// Verifies that an invalid cached manifest forces the resolver to discard the stale file and fetch a fresh copy.
+    /// </summary>
+    [Fact]
+    public void TryResolveWithInvalidCachedManifestRefetchesNetworkArtifact()
+    {
+        string localDirectory = CreateTemporaryDirectory();
+        string cacheDirectory = CreateTemporaryDirectory();
+        try
+        {
+            string cachedGridPath = Path.Combine(cacheDirectory, "network-grid.gsb");
+            File.WriteAllText(cachedGridPath, "stale-grid");
+            GridResourceCacheManifest.Write(cachedGridPath, "https://example.test/grids/network-grid.gsb");
+            File.WriteAllText(cachedGridPath, "tampered-grid");
+
+            var fetchClient = new RecordingFetchClient
+            {
+                OnFetch = path => File.WriteAllText(path, "fresh-grid"),
+            };
+            var options = new GridResourceResolverOptions(new[] { localDirectory }, cacheDirectory, GridResourceResolutionMode.LocalThenNetwork);
+            var resolver = new GridResourceResolver(options, fetchClient);
+
+            bool resolved = resolver.TryResolve("network-grid.gsb", out string? resolvedPath);
+
+            Assert.True(resolved);
+            Assert.NotNull(resolvedPath);
+            Assert.Equal("fresh-grid", File.ReadAllText(resolvedPath));
+            Assert.Equal(1, fetchClient.Calls);
+        }
+        finally
+        {
+            Directory.Delete(localDirectory, true);
+            Directory.Delete(cacheDirectory, true);
+        }
+    }
+
     private static string CreateTemporaryDirectory()
     {
         string path = Path.Combine(Path.GetTempPath(), "projnet-grid-tests", Guid.NewGuid().ToString("N"));

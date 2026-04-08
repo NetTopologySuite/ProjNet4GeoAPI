@@ -22,6 +22,7 @@ using ProjNet.Resources;
 public class CoordinateTransformationFactory
 {
     private const string GridCacheEnvironmentVariable = "PROJNET_GRID_CACHE";
+    private const string GridBaseUrlEnvironmentVariable = "PROJNET_GRID_BASE_URL";
     private const string GridModeEnvironmentVariable = "PROJNET_GRID_MODE";
     private const string GridPathEnvironmentVariable = "PROJNET_GRID_PATHS";
     private const string GridRequiredEnvironmentVariable = "PROJNET_GRID_REQUIRED";
@@ -83,6 +84,19 @@ public class CoordinateTransformationFactory
         string? cacheDirectory = null,
         GridResourceResolutionMode mode = GridResourceResolutionMode.LocalOnly)
     {
+        if (fetchClient is null
+            && localDirectories is null
+            && cacheDirectory is null
+            && mode == GridResourceResolutionMode.LocalOnly)
+        {
+            lock (GridResolverSync)
+            {
+                gridResolverInstance = CreateGridResolver();
+            }
+
+            return;
+        }
+
         string[] dirs = localDirectories?.ToArray() ?? ReadGridDirectoriesFromEnvironment();
         string? cache = cacheDirectory ?? Environment.GetEnvironmentVariable(GridCacheEnvironmentVariable);
 
@@ -1252,9 +1266,10 @@ public class CoordinateTransformationFactory
         string[] localDirectories = ReadGridDirectoriesFromEnvironment();
         string? cacheDirectory = Environment.GetEnvironmentVariable(GridCacheEnvironmentVariable);
         GridResourceResolutionMode mode = ParseGridResolutionMode(Environment.GetEnvironmentVariable(GridModeEnvironmentVariable));
+        IGridResourceFetchClient? fetchClient = CreateGridFetchClientFromEnvironment(mode);
 
         var options = new GridResourceResolverOptions(localDirectories, cacheDirectory, mode);
-        return new GridResourceResolver(options);
+        return new GridResourceResolver(options, fetchClient);
     }
 
     private static string[] ReadGridDirectoriesFromEnvironment()
@@ -1268,8 +1283,22 @@ public class CoordinateTransformationFactory
     private static GridResourceResolutionMode ParseGridResolutionMode(string? configuredMode)
     {
         return "LocalThenNetwork".Equals(configuredMode, StringComparison.OrdinalIgnoreCase)
+            || "network".Equals(configuredMode, StringComparison.OrdinalIgnoreCase)
             ? GridResourceResolutionMode.LocalThenNetwork
             : GridResourceResolutionMode.LocalOnly;
+    }
+
+    private static HttpGridResourceFetchClient? CreateGridFetchClientFromEnvironment(GridResourceResolutionMode mode)
+    {
+        if (mode != GridResourceResolutionMode.LocalThenNetwork)
+        {
+            return null;
+        }
+
+        string? baseUrl = Environment.GetEnvironmentVariable(GridBaseUrlEnvironmentVariable);
+        return string.IsNullOrWhiteSpace(baseUrl)
+            ? null
+            : new HttpGridResourceFetchClient(baseUrl);
     }
 
     private static double NormalizeAccuracy(double accuracy) => accuracy > 0d ? accuracy : double.MaxValue;
