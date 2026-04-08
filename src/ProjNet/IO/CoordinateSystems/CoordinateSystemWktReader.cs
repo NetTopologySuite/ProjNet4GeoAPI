@@ -9,6 +9,7 @@ namespace ProjNet.IO.CoordinateSystems;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using ProjNet;
@@ -158,6 +159,9 @@ public static partial class CoordinateSystemWktReader
     }
 
     private static CoordinateSystem ReadWkt2GeodeticCoordinateReferenceSystem(WktTokenizer tokenizer)
+        => ReadWkt2GeodeticCoordinateReferenceSystem(tokenizer, allowOperationalEllipsoidal3DCompound: false);
+
+    private static CoordinateSystem ReadWkt2GeodeticCoordinateReferenceSystem(WktTokenizer tokenizer, bool allowOperationalEllipsoidal3DCompound)
     {
         string rootKeyword = tokenizer.GetStringValue();
         WktBracket bracket = tokenizer.ReadOpener();
@@ -245,6 +249,29 @@ public static partial class CoordinateSystemWktReader
 
         if (string.Equals(coordinateSystemType, "ellipsoidal", StringComparison.OrdinalIgnoreCase))
         {
+            if (coordinateSystemDimension == 3 && allowOperationalEllipsoidal3DCompound)
+            {
+                if (angularUnit is null)
+                {
+                    ArgumentGuard.ThrowArgument("WKT2 ellipsoidal CRS is missing ANGLEUNIT metadata.");
+                }
+
+                if (linearUnit is null)
+                {
+                    ArgumentGuard.ThrowArgument("WKT2 three-dimensional ellipsoidal CRS is missing LENGTHUNIT metadata.");
+                }
+
+                primeMeridian ??= PrimeMeridian.Greenwich;
+                return CreateOperationalWkt2EllipsoidalHeightCompoundCoordinateSystem(
+                    name,
+                    authority,
+                    authorityCode,
+                    horizontalDatum,
+                    primeMeridian,
+                    angularUnit,
+                    linearUnit);
+            }
+
             if (coordinateSystemDimension != 2)
             {
                 throw new NotSupportedException("WKT2 ellipsoidal CRS dimensions other than 2 are not supported.");
@@ -296,6 +323,41 @@ public static partial class CoordinateSystemWktReader
         }
 
         throw new NotSupportedException($"WKT2 coordinate system type '{coordinateSystemType}' is not supported.");
+    }
+
+    private static CompoundCoordinateSystem CreateOperationalWkt2EllipsoidalHeightCompoundCoordinateSystem(
+        string name,
+        string authority,
+        long authorityCode,
+        HorizontalDatum horizontalDatum,
+        PrimeMeridian primeMeridian,
+        AngularUnit angularUnit,
+        LinearUnit linearUnit)
+    {
+        var head = new GeographicCoordinateSystem(
+            angularUnit,
+            horizontalDatum,
+            primeMeridian,
+            [new AxisInfo("Longitude", AxisOrientationEnum.East), new AxisInfo("Latitude", AxisOrientationEnum.North)],
+            name,
+            string.Empty,
+            -1,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+
+        var tail = new VerticalCoordinateSystem(
+            linearUnit,
+            new VerticalDatum(DatumType.VD_Ellipsoidal, "Ellipsoidal height datum", string.Empty, -1, string.Empty, string.Empty, string.Empty),
+            new AxisInfo("Ellipsoidal height", AxisOrientationEnum.Up),
+            "Ellipsoidal height",
+            string.Empty,
+            -1,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+
+        return new CompoundCoordinateSystem(head, tail, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
     }
 
     private static (string Type, int Dimension) ReadWkt2CoordinateSystemDefinition(WktTokenizer tokenizer)
@@ -1437,7 +1499,7 @@ public static partial class CoordinateSystemWktReader
         WktBracket bracket = tokenizer.ReadOpener();
         CoordinateSystem? sourceCoordinateSystem = null;
         CoordinateSystem? targetCoordinateSystem = null;
-        Wgs84ConversionInfo? wgs84Parameters = null;
+        Wkt2BoundTransformationDefinition? transformationDefinition = null;
 
         tokenizer.NextToken();
         while (true)
@@ -1464,7 +1526,7 @@ public static partial class CoordinateSystemWktReader
                     targetCoordinateSystem = ReadWkt2BoundCoordinateSystemComponent(tokenizer);
                     break;
                 case "ABRIDGEDTRANSFORMATION":
-                    wgs84Parameters = ReadWkt2AbridgedTransformationToWgs84Parameters(tokenizer);
+                    transformationDefinition = ReadWkt2AbridgedTransformationDefinition(tokenizer);
                     break;
                 default:
                     if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
@@ -1484,16 +1546,20 @@ public static partial class CoordinateSystemWktReader
 
         sourceCoordinateSystem = ArgumentGuard.ThrowIfNull(sourceCoordinateSystem, nameof(sourceCoordinateSystem));
         targetCoordinateSystem = ArgumentGuard.ThrowIfNull(targetCoordinateSystem, nameof(targetCoordinateSystem));
-        wgs84Parameters = ArgumentGuard.ThrowIfNull(wgs84Parameters, nameof(wgs84Parameters));
+        transformationDefinition = ArgumentGuard.ThrowIfNull(transformationDefinition, nameof(transformationDefinition));
 
-        return ApplyWkt2BoundCoordinateSystemToSource(sourceCoordinateSystem, targetCoordinateSystem, wgs84Parameters);
+        return ApplyWkt2BoundCoordinateSystemToSource(sourceCoordinateSystem, targetCoordinateSystem, transformationDefinition);
     }
 
     private static CoordinateSystem ReadWkt2BoundCoordinateSystemComponent(WktTokenizer tokenizer)
     {
         WktBracket bracket = tokenizer.ReadOpener();
         tokenizer.NextToken();
-        CoordinateSystem coordinateSystem = ReadCoordinateSystem(null, tokenizer);
+        CoordinateSystem coordinateSystem = tokenizer.GetStringValue() switch
+        {
+            "GEOGCRS" or "GEODCRS" or "GEODETICCRS" => ReadWkt2GeodeticCoordinateReferenceSystem(tokenizer, allowOperationalEllipsoidal3DCompound: true),
+            _ => ReadCoordinateSystem(null, tokenizer),
+        };
         tokenizer.NextToken();
         tokenizer.CheckCloser(bracket);
         return coordinateSystem;
@@ -1501,7 +1567,7 @@ public static partial class CoordinateSystemWktReader
 
     private static void EnsureSupportedWkt2BoundSourceCoordinateSystem(CoordinateSystem coordinateSystem)
     {
-        if (coordinateSystem is GeographicCoordinateSystem or ProjectedCoordinateSystem or GeocentricCoordinateSystem)
+        if (coordinateSystem is GeographicCoordinateSystem or ProjectedCoordinateSystem or GeocentricCoordinateSystem or VerticalCoordinateSystem)
         {
             return;
         }
@@ -1512,6 +1578,33 @@ public static partial class CoordinateSystemWktReader
 
     // The current object model can only retain BOUNDCRS semantics by attaching a source->WGS84 Bursa-Wolf transform.
     private static CoordinateSystem ApplyWkt2BoundCoordinateSystemToSource(
+        CoordinateSystem sourceCoordinateSystem,
+        CoordinateSystem targetCoordinateSystem,
+        Wkt2BoundTransformationDefinition transformationDefinition)
+    {
+        if (transformationDefinition.Wgs84Parameters is not null)
+        {
+            return ApplyWkt2HorizontalBoundCoordinateSystemToSource(
+                sourceCoordinateSystem,
+                targetCoordinateSystem,
+                transformationDefinition.Wgs84Parameters);
+        }
+
+        if (sourceCoordinateSystem is VerticalCoordinateSystem verticalCoordinateSystem)
+        {
+            return ApplyWkt2VerticalBoundCoordinateSystemToSource(
+                verticalCoordinateSystem,
+                targetCoordinateSystem,
+                transformationDefinition.MethodName,
+                transformationDefinition.ParameterFileName);
+        }
+
+        throw new NotSupportedException(
+            $"WKT2 BOUNDCRS source coordinate system type '{GetCoordinateSystemKeyword(sourceCoordinateSystem)}' is not supported.");
+    }
+
+    // The current object model can only retain BOUNDCRS semantics by attaching a source->WGS84 Bursa-Wolf transform.
+    private static CoordinateSystem ApplyWkt2HorizontalBoundCoordinateSystemToSource(
         CoordinateSystem sourceCoordinateSystem,
         CoordinateSystem targetCoordinateSystem,
         Wgs84ConversionInfo wgs84Parameters)
@@ -1544,7 +1637,57 @@ public static partial class CoordinateSystemWktReader
         return sourceCoordinateSystem;
     }
 
-    private static Wgs84ConversionInfo ReadWkt2AbridgedTransformationToWgs84Parameters(WktTokenizer tokenizer)
+    private static VerticalCoordinateSystem ApplyWkt2VerticalBoundCoordinateSystemToSource(
+        VerticalCoordinateSystem sourceCoordinateSystem,
+        CoordinateSystem targetCoordinateSystem,
+        string methodName,
+        string parameterFileName)
+    {
+        if (targetCoordinateSystem is not CompoundCoordinateSystem hubCoordinateSystem
+            || hubCoordinateSystem.HeadCoordinateSystem is not GeographicCoordinateSystem hubHorizontal
+            || hubCoordinateSystem.TailCoordinateSystem is not VerticalCoordinateSystem hubVertical)
+        {
+            throw new NotSupportedException("WKT2 vertical BOUNDCRS targets must be ellipsoidal 3D geographic CRS definitions.");
+        }
+
+        if (!TryGetHorizontalDatum(hubHorizontal, out HorizontalDatum? targetDatum))
+        {
+            throw new NotSupportedException("WKT2 vertical BOUNDCRS targets other than WGS 84 are not supported.");
+        }
+
+        targetDatum = ArgumentGuard.ThrowIfNull(targetDatum, nameof(targetDatum));
+        if (!targetDatum.EqualParams(HorizontalDatum.WGS84))
+        {
+            throw new NotSupportedException("WKT2 vertical BOUNDCRS targets other than WGS 84 are not supported.");
+        }
+
+        if (hubVertical.VerticalDatum.DatumType != DatumType.VD_Ellipsoidal)
+        {
+            throw new NotSupportedException("WKT2 vertical BOUNDCRS targets must expose an ellipsoidal height axis.");
+        }
+
+        if (!IsWkt2Geographic3DToGravityRelatedHeightMethod(methodName))
+        {
+            throw new NotSupportedException($"WKT2 BOUNDCRS abridged transformation method '{methodName}' is not supported.");
+        }
+
+        if (string.IsNullOrWhiteSpace(parameterFileName))
+        {
+            throw new NotSupportedException("WKT2 vertical BOUNDCRS abridged transformations require a PARAMETERFILE.");
+        }
+
+        if (sourceCoordinateSystem.BoundGridTransformation is not null
+            && (!AreEquivalentParameterFileReferences(sourceCoordinateSystem.BoundGridTransformation.ParameterFileName, parameterFileName)
+                || !sourceCoordinateSystem.BoundGridTransformation.HubCoordinateSystem.EqualParams(hubCoordinateSystem)))
+        {
+            throw new NotSupportedException("WKT2 vertical BOUNDCRS source CRS already defines a conflicting grid transformation.");
+        }
+
+        sourceCoordinateSystem.BoundGridTransformation ??= new VerticalBoundGridTransformation(methodName, parameterFileName, hubCoordinateSystem);
+        return sourceCoordinateSystem;
+    }
+
+    private static Wkt2BoundTransformationDefinition ReadWkt2AbridgedTransformationDefinition(WktTokenizer tokenizer)
     {
         if (tokenizer.GetStringValue() != "ABRIDGEDTRANSFORMATION")
         {
@@ -1608,25 +1751,61 @@ public static partial class CoordinateSystemWktReader
             ArgumentGuard.ThrowArgument("WKT2 ABRIDGEDTRANSFORMATION is missing a METHOD block.");
         }
 
-        if (!string.IsNullOrWhiteSpace(parameterFileName))
-        {
-            throw new NotSupportedException("WKT2 BOUNDCRS abridged transformations with PARAMETERFILE are not supported.");
-        }
-
         if (IsWkt2CoordinateFrameRotationMethod(methodName))
         {
             parameters.Ex = -parameters.Ex;
             parameters.Ey = -parameters.Ey;
             parameters.Ez = -parameters.Ez;
-            return parameters;
+            return new Wkt2BoundTransformationDefinition(methodName, parameters, parameterFileName);
         }
 
         if (IsWkt2GeocentricTranslationsMethod(methodName) || IsWkt2PositionVectorMethod(methodName))
         {
-            return parameters;
+            if (!string.IsNullOrWhiteSpace(parameterFileName))
+            {
+                throw new NotSupportedException("WKT2 BOUNDCRS Bursa-Wolf-style abridged transformations do not support PARAMETERFILE.");
+            }
+
+            return new Wkt2BoundTransformationDefinition(methodName, parameters, parameterFileName);
+        }
+
+        if (IsWkt2Geographic3DToGravityRelatedHeightMethod(methodName))
+        {
+            return new Wkt2BoundTransformationDefinition(methodName, null, parameterFileName);
         }
 
         throw new NotSupportedException($"WKT2 BOUNDCRS abridged transformation method '{methodName}' is not supported.");
+    }
+
+    private static bool AreEquivalentParameterFileReferences(string left, string right)
+    {
+        StringComparison comparison = Path.DirectorySeparatorChar == '\\'
+            ? StringComparison.OrdinalIgnoreCase
+            : StringComparison.Ordinal;
+
+        return NormalizeParameterFileReference(left).Equals(NormalizeParameterFileReference(right), comparison);
+    }
+
+    private static string NormalizeParameterFileReference(string parameterFileName)
+    {
+        string normalized = parameterFileName.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+        if (!Path.IsPathRooted(normalized))
+        {
+            return normalized;
+        }
+
+        try
+        {
+            return Path.GetFullPath(normalized);
+        }
+        catch (ArgumentException)
+        {
+            return normalized;
+        }
+        catch (NotSupportedException)
+        {
+            return normalized;
+        }
     }
 
     private static void ReadWkt2AbridgedTransformationParameter(WktTokenizer tokenizer, Wgs84ConversionInfo parameters)
@@ -1864,6 +2043,9 @@ public static partial class CoordinateSystemWktReader
 
     private static bool IsWkt2PositionVectorMethod(string methodName)
         => methodName.StartsWith("Position Vector transformation", StringComparison.OrdinalIgnoreCase);
+
+    private static bool IsWkt2Geographic3DToGravityRelatedHeightMethod(string methodName)
+        => methodName.Equals("Geographic3D to GravityRelatedHeight (EGM)", StringComparison.OrdinalIgnoreCase);
 
     private static bool IsWkt2CoordinateFrameRotationMethod(string methodName)
         => methodName.StartsWith("Coordinate Frame rotation", StringComparison.OrdinalIgnoreCase);
@@ -2666,5 +2848,21 @@ public static partial class CoordinateSystemWktReader
 
         var fittedCS = new FittedCoordinateSystem(baseCS, toBaseTransform, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
         return fittedCS;
+    }
+
+    private sealed class Wkt2BoundTransformationDefinition
+    {
+        internal Wkt2BoundTransformationDefinition(string methodName, Wgs84ConversionInfo? wgs84Parameters, string parameterFileName)
+        {
+            this.MethodName = methodName;
+            this.Wgs84Parameters = wgs84Parameters;
+            this.ParameterFileName = parameterFileName;
+        }
+
+        internal string MethodName { get; }
+
+        internal string ParameterFileName { get; }
+
+        internal Wgs84ConversionInfo? Wgs84Parameters { get; }
     }
 }

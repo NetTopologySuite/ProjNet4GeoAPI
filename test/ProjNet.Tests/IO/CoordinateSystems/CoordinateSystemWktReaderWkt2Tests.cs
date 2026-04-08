@@ -207,10 +207,10 @@ public class CoordinateSystemWktReaderWkt2Tests
     }
 
     /// <summary>
-    /// Provides real unsupported <c>BOUNDCRS</c> fixtures extracted from the checked-in PROJ test suite.
+    /// Provides real supported vertical <c>BOUNDCRS</c> fixtures extracted from the checked-in PROJ test suite.
     /// </summary>
-    /// <returns>Fixture source labels and WKT2 strings that should remain explicitly unsupported.</returns>
-    public static IEnumerable<TheoryDataRow<string, string>> UnsupportedProjBoundCrsRows()
+    /// <returns>Fixture source labels and WKT2 strings that should parse onto the current source-CRS model.</returns>
+    public static IEnumerable<TheoryDataRow<string, string>> SupportedVerticalBoundCrsRows()
     {
         return
         [
@@ -460,23 +460,74 @@ public class CoordinateSystemWktReaderWkt2Tests
     }
 
     /// <summary>
-    /// Verifies unsupported real <c>BOUNDCRS</c> examples from the checked-in PROJ tests remain surfaced as an explicit boundary.
+    /// Verifies vertical <c>BOUNDCRS</c> examples from the checked-in PROJ tests parse onto the source vertical CRS model.
     /// </summary>
     /// <param name="fixtureSource">Source file and line for the extracted fixture.</param>
     /// <param name="wkt">BOUNDCRS WKT2 example from the PROJ test corpus.</param>
     [Theory]
-    [MemberData(nameof(UnsupportedProjBoundCrsRows))]
-    public void CreateFromWkt_WithUnsupportedProjBoundCrsFixture_ThrowsNotSupportedException(string fixtureSource, string wkt)
+    [MemberData(nameof(SupportedVerticalBoundCrsRows))]
+    public void CreateFromWkt_WithSupportedVerticalBoundCrsFixture_ParsesSourceVerticalCrs(string fixtureSource, string wkt)
     {
-        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => CoordinateSystemFactory.CreateFromWkt(wkt));
+        VerticalCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<VerticalCoordinateSystem>(CoordinateSystemFactory, wkt);
 
-        Assert.Contains("BOUNDCRS", exception.Message, StringComparison.Ordinal);
+        Assert.Equal("EGM96 height", parsed.Name);
+        Assert.Equal("EPSG", parsed.Authority);
+        Assert.Equal(5773, parsed.AuthorityCode);
+        Assert.Equal("EGM96 geoid", parsed.VerticalDatum.Name);
+        Assert.Equal(DatumType.VD_GeoidModelDerived, parsed.VerticalDatum.DatumType);
+        Assert.Equal("metre", parsed.LinearUnit.Name);
         Assert.False(string.IsNullOrWhiteSpace(fixtureSource));
+    }
+
+    /// <summary>
+    /// Verifies equivalent <c>PARAMETERFILE</c> paths on repeated vertical <c>BOUNDCRS</c> wrappers do not report a false conflict.
+    /// </summary>
+    [Fact]
+    public void CreateFromWkt_WithEquivalentVerticalBoundParameterFilePaths_DoesNotReportConflict()
+    {
+        string nested = CreateNestedVerticalBoundCrs(@"grids\us_nga_egm96_15.tif", "GRIDS/us_nga_egm96_15.tif");
+
+        VerticalCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<VerticalCoordinateSystem>(CoordinateSystemFactory, nested);
+
+        Assert.Equal("EGM96 height", parsed.Name);
+        Assert.NotNull(parsed.BoundGridTransformation);
     }
 
     private static string GetCatalogWkt(int srid)
     {
         Assert.True(CatalogDefinitions.Value.TryGetValue(srid, out string? wkt), $"SRID {srid} not found in managed EPSG catalog.");
         return wkt ?? string.Empty;
+    }
+
+    private static string CreateNestedVerticalBoundCrs(string innerParameterFileName, string outerParameterFileName)
+    {
+        string inner = VerticalProjBoundCrs.Replace("us_nga_egm96_15.tif", innerParameterFileName, StringComparison.Ordinal);
+        return $$"""
+            BOUNDCRS[
+                SOURCECRS[
+                    {{inner}}],
+                TARGETCRS[
+                    GEOGCRS["WGS 84",
+                        DATUM["World Geodetic System 1984",
+                            ELLIPSOID["WGS 84",6378137,298.257223563,
+                                LENGTHUNIT["metre",1]]],
+                        PRIMEM["Greenwich",0,
+                            ANGLEUNIT["degree",0.0174532925199433]],
+                        CS[ellipsoidal,3],
+                            AXIS["latitude",north,
+                                ORDER[1],
+                                ANGLEUNIT["degree",0.0174532925199433]],
+                            AXIS["longitude",east,
+                                ORDER[2],
+                                ANGLEUNIT["degree",0.0174532925199433]],
+                            AXIS["ellipsoidal height",up,
+                                ORDER[3],
+                                LENGTHUNIT["metre",1]],
+                        ID["EPSG",4979]]],
+                ABRIDGEDTRANSFORMATION["WGS 84 to EGM96 height (1)",
+                    METHOD["Geographic3D to GravityRelatedHeight (EGM)",
+                        ID["EPSG",9661]],
+                    PARAMETERFILE["Geoid (height correction) model file","{{outerParameterFileName}}"]]]
+            """;
     }
 }

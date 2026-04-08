@@ -121,6 +121,11 @@ public class VerticalCoordinateSystem : CoordinateSystem
     }
 
     /// <summary>
+    /// Gets or sets the retained WKT2 vertical <c>BOUNDCRS</c> grid-binding metadata when available.
+    /// </summary>
+    internal VerticalBoundGridTransformation? BoundGridTransformation { get; set; }
+
+    /// <summary>
     /// Returns an XML representation of this vertical coordinate system as an <see cref="XElement"/>.
     /// </summary>
     /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>

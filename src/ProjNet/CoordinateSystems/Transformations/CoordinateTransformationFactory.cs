@@ -122,6 +122,11 @@ public class CoordinateTransformationFactory
 
     private ICoordinateTransformation? CreateFromCoordinateSystemsWithMetadata(CoordinateSystem sourceCS, CoordinateSystem targetCS)
     {
+        if (TryCreateVerticalBoundCompoundTransformation(sourceCS, targetCS, out ICoordinateTransformation? verticalBoundTransformation))
+        {
+            return verticalBoundTransformation;
+        }
+
         if (TryGetDirectProjectedOperation(sourceCS, targetCS, out CoordinateOperationDefinition? operation, out string? resolvedGridPath))
         {
             if (TryCreateExplicitOperationTransformation(sourceCS, targetCS, operation, resolvedGridPath, out ICoordinateTransformation? explicitTransformation))
@@ -303,6 +308,76 @@ public class CoordinateTransformationFactory
             -1,
             string.Empty,
             string.Empty);
+        return true;
+    }
+
+    private static bool TryCreateVerticalBoundCompoundTransformation(
+        CoordinateSystem source,
+        CoordinateSystem target,
+        [NotNullWhen(true)] out ICoordinateTransformation? transformation)
+    {
+        transformation = null;
+
+        if (source is CompoundCoordinateSystem sourceCompound
+            && target is CompoundCoordinateSystem targetCompound
+            && sourceCompound.TailCoordinateSystem is VerticalCoordinateSystem sourceVertical
+            && sourceVertical.BoundGridTransformation is VerticalBoundGridTransformation sourceBinding
+            && sourceCompound.HeadCoordinateSystem.EqualParams(sourceBinding.HubCoordinateSystem.HeadCoordinateSystem)
+            && targetCompound.EqualParams(sourceBinding.HubCoordinateSystem))
+        {
+            if (!TryCreateVerticalBoundGridMathTransform(sourceBinding.ParameterFileName, out MathTransform? gridMathTransform))
+            {
+                return false;
+            }
+
+            transformation = CreateTransform(source, target, TransformType.Transformation, gridMathTransform.Inverse());
+            return true;
+        }
+
+        if (source is CompoundCoordinateSystem sourceHubCompound
+            && target is CompoundCoordinateSystem targetBoundCompound
+            && targetBoundCompound.TailCoordinateSystem is VerticalCoordinateSystem targetVertical
+            && targetVertical.BoundGridTransformation is VerticalBoundGridTransformation targetBinding
+            && targetBoundCompound.HeadCoordinateSystem.EqualParams(targetBinding.HubCoordinateSystem.HeadCoordinateSystem)
+            && sourceHubCompound.EqualParams(targetBinding.HubCoordinateSystem))
+        {
+            if (!TryCreateVerticalBoundGridMathTransform(targetBinding.ParameterFileName, out MathTransform? gridMathTransform))
+            {
+                return false;
+            }
+
+            transformation = CreateTransform(source, target, TransformType.Transformation, gridMathTransform);
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool TryCreateVerticalBoundGridMathTransform(string parameterFileName, [NotNullWhen(true)] out MathTransform? transform)
+    {
+        transform = null;
+
+        if (string.IsNullOrWhiteSpace(parameterFileName))
+        {
+            return false;
+        }
+
+        if (!GetGridResolver().TryResolve(parameterFileName, out string? resolvedGridPath))
+        {
+            if (IsGridRequiredModeEnabled())
+            {
+                throw new InvalidOperationException($"DataUnavailable: Required grid resource '{parameterFileName}' was not found.");
+            }
+
+            return false;
+        }
+
+        string gridPath = ArgumentGuard.ThrowIfNull(resolvedGridPath, nameof(resolvedGridPath));
+        string[] gridPaths = [gridPath];
+        string extension = Path.GetExtension(gridPath);
+        transform = extension.Equals(".tif", StringComparison.OrdinalIgnoreCase) || extension.Equals(".tiff", StringComparison.OrdinalIgnoreCase)
+            ? new GeoTiffVGridShiftMathTransform(gridPaths, -1d)
+            : new GtxVGridShiftMathTransform(gridPaths);
         return true;
     }
 
