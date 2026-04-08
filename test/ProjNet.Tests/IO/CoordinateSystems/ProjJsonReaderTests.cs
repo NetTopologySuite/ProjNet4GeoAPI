@@ -1,0 +1,776 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
+
+namespace ProjNet.Tests.IO.CoordinateSystems;
+
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text.Json;
+using ProjNet.CoordinateSystems;
+using ProjNet.Data;
+using ProjNet.IO.CoordinateSystems;
+using Xunit;
+
+/// <summary>
+/// Verifies native PROJJSON coordinate-system parsing against EPSG-backed catalog references.
+/// </summary>
+public class ProjJsonReaderTests
+{
+    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new();
+    private static readonly Lazy<IReadOnlyDictionary<int, string>> CatalogDefinitions = new(() =>
+        new ManagedCoordinateSystemDefinitionProvider()
+            .GetDefinitions()
+            .GroupBy(item => item.Srid)
+            .ToDictionary(group => group.Key, group => group.Last().Wkt));
+
+    /// <summary>
+    /// Provides PROJJSON geographic CRS examples aligned with real EPSG catalog entries.
+    /// </summary>
+    /// <returns>SRID/PROJJSON pairs that should parse successfully.</returns>
+    public static IEnumerable<TheoryDataRow<int, string>> SupportedGeographicRows()
+    {
+        object degreeUnit = "degree";
+        object gradUnit = AngularUnitObject("grad", 0.015707963267949d, 9105);
+        object metreUnit = "metre";
+
+        return
+        [
+            new TheoryDataRow<int, string>(
+                4230,
+                Serialize(
+                    GeographicCrsObject(
+                        4230,
+                        "ED50",
+                        GeodeticDatumObject("European Datum 1950", EllipsoidObject("International 1924", 6378388d, 297d, metreUnit, 7022), 6230),
+                        GreenwichPrimeMeridianObject(),
+                        degreeUnit,
+                        ("Geodetic latitude", "Lat", "north"),
+                        ("Geodetic longitude", "Lon", "east")))),
+            new TheoryDataRow<int, string>(
+                4277,
+                Serialize(
+                    GeographicCrsObject(
+                        4277,
+                        "OSGB36",
+                        GeodeticDatumObject("Ordnance Survey of Great Britain 1936", EllipsoidObject("Airy 1830", 6377563.396d, 299.3249646d, metreUnit, 7001), 6277),
+                        GreenwichPrimeMeridianObject(),
+                        degreeUnit,
+                        ("Geodetic latitude", "Lat", "north"),
+                        ("Geodetic longitude", "Lon", "east")))),
+            new TheoryDataRow<int, string>(
+                4314,
+                Serialize(
+                    GeographicCrsObject(
+                        4314,
+                        "DHDN",
+                        GeodeticDatumObject("Deutsches Hauptdreiecksnetz", EllipsoidObject("Bessel 1841", 6377397.155d, 299.1528128d, metreUnit, 7004), 6314),
+                        GreenwichPrimeMeridianObject(),
+                        degreeUnit,
+                        ("Geodetic latitude", "Lat", "north"),
+                        ("Geodetic longitude", "Lon", "east")))),
+            new TheoryDataRow<int, string>(
+                4322,
+                Serialize(
+                    GeographicCrsObject(
+                        4322,
+                        "WGS 72",
+                        GeodeticDatumObject("World Geodetic System 1972", EllipsoidObject("WGS 72", 6378135d, 298.26d, metreUnit, 7043), 6322),
+                        GreenwichPrimeMeridianObject(),
+                        degreeUnit,
+                        ("Geodetic latitude", "Lat", "north"),
+                        ("Geodetic longitude", "Lon", "east")))),
+            new TheoryDataRow<int, string>(
+                4807,
+                Serialize(
+                    GeographicCrsObject(
+                        4807,
+                        "NTF (Paris)",
+                        GeodeticDatumObject("Nouvelle Triangulation Francaise (Paris)", EllipsoidObject("Clarke 1880 (IGN)", 6378249.2d, 293.466021293627d, metreUnit, 7011), 6807),
+                        PrimeMeridianObject("Paris", 0.040792344d, degreeUnit, 8903, useIds: true, stringCode: true),
+                        gradUnit,
+                        ("Geodetic latitude (Lat)", "Lat", "north"),
+                        ("Geodetic longitude (Lon)", "Lon", "east"),
+                        useIds: true))),
+        ];
+    }
+
+    /// <summary>
+    /// Provides PROJJSON projected CRS examples aligned with real EPSG catalog entries.
+    /// </summary>
+    /// <returns>SRID/PROJJSON pairs that should parse successfully.</returns>
+    public static IEnumerable<TheoryDataRow<int, string>> SupportedProjectedRows()
+    {
+        object degreeUnit = "degree";
+        object metreUnit = "metre";
+        object unityUnit = ScaleUnitObject();
+
+        return
+        [
+            new TheoryDataRow<int, string>(
+                27700,
+                Serialize(
+                    ProjectedCrsObject(
+                        27700,
+                        "OSGB36 / British National Grid",
+                        GeographicCrsObject(
+                            4277,
+                            "OSGB36",
+                            GeodeticDatumObject("Ordnance Survey of Great Britain 1936", EllipsoidObject("Airy 1830", 6377563.396d, 299.3249646d, metreUnit, 7001), 6277),
+                            GreenwichPrimeMeridianObject(),
+                            degreeUnit,
+                            ("Geodetic latitude", "Lat", "north"),
+                            ("Geodetic longitude", "Lon", "east")),
+                        ConversionObject(
+                            "British National Grid",
+                            "Transverse Mercator",
+                            19916,
+                            ProjectionParameterObject("Latitude of natural origin", 49d, degreeUnit, 8801),
+                            ProjectionParameterObject("Longitude of natural origin", -2d, degreeUnit, 8802),
+                            ProjectionParameterObject("Scale factor at natural origin", 0.9996012717d, unityUnit, 8805),
+                            ProjectionParameterObject("False easting", 400000d, metreUnit, 8806),
+                            ProjectionParameterObject("False northing", -100000d, metreUnit, 8807)),
+                        metreUnit,
+                        ("Easting", "E", "east"),
+                        ("Northing", "N", "north")))),
+            new TheoryDataRow<int, string>(
+                31370,
+                Serialize(
+                    ProjectedCrsObject(
+                        31370,
+                        "BD72 / Belgian Lambert 72",
+                        GeographicCrsObject(
+                            4313,
+                            "BD72",
+                            GeodeticDatumObject("Reseau National Belge 1972", EllipsoidObject("International 1924", 6378388d, 297d, metreUnit, 7022), 6313),
+                            GreenwichPrimeMeridianObject(),
+                            degreeUnit,
+                            ("Geodetic latitude", "Lat", "north"),
+                            ("Geodetic longitude", "Lon", "east")),
+                        ConversionObject(
+                            "Belgian Lambert 72",
+                            "Lambert Conic Conformal (2SP)",
+                            19961,
+                            ProjectionParameterObject("Latitude of false origin", 90d, degreeUnit, 8821),
+                            ProjectionParameterObject("Longitude of false origin", 4.36748666666694d, degreeUnit, 8822),
+                            ProjectionParameterObject("Latitude of 1st standard parallel", 51.1666672333336d, degreeUnit, 8823),
+                            ProjectionParameterObject("Latitude of 2nd standard parallel", 49.8333339000003d, degreeUnit, 8824),
+                            ProjectionParameterObject("Easting at false origin", 150000.013d, metreUnit, 8826),
+                            ProjectionParameterObject("Northing at false origin", 5400088.438d, metreUnit, 8827)),
+                        metreUnit,
+                        ("Easting", "X", "east"),
+                        ("Northing", "Y", "north")))),
+            new TheoryDataRow<int, string>(
+                2169,
+                Serialize(
+                    ProjectedCrsObject(
+                        2169,
+                        "LUREF / Luxembourg TM",
+                        GeographicCrsObject(
+                            4181,
+                            "LUREF",
+                            GeodeticDatumObject("Luxembourg Reference Frame", EllipsoidObject("International 1924", 6378388d, 297d, metreUnit, 7022), 6181),
+                            GreenwichPrimeMeridianObject(),
+                            degreeUnit,
+                            ("Geodetic latitude", "Lat", "north"),
+                            ("Geodetic longitude", "Lon", "east")),
+                        ConversionObject(
+                            "Luxembourg TM",
+                            "Transverse Mercator",
+                            19966,
+                            ProjectionParameterObject("Latitude of natural origin", 49.8333333333336d, degreeUnit, 8801),
+                            ProjectionParameterObject("Longitude of natural origin", 6.16666666666694d, degreeUnit, 8802),
+                            ProjectionParameterObject("Scale factor at natural origin", 1d, unityUnit, 8805),
+                            ProjectionParameterObject("False easting", 80000d, metreUnit, 8806),
+                            ProjectionParameterObject("False northing", 100000d, metreUnit, 8807)),
+                        metreUnit,
+                        ("Northing", "X", "north"),
+                        ("Easting", "Y", "east")))),
+            new TheoryDataRow<int, string>(
+                23032,
+                Serialize(
+                    ProjectedCrsObject(
+                        23032,
+                        "ED50 / UTM zone 32N",
+                        GeographicCrsObject(
+                            4230,
+                            "ED50",
+                            GeodeticDatumObject("European Datum 1950", EllipsoidObject("International 1924", 6378388d, 297d, metreUnit, 7022), 6230),
+                            GreenwichPrimeMeridianObject(),
+                            degreeUnit,
+                            ("Geodetic latitude", "Lat", "north"),
+                            ("Geodetic longitude", "Lon", "east")),
+                        ConversionObject(
+                            "UTM zone 32N",
+                            "Transverse Mercator",
+                            16032,
+                            ProjectionParameterObject("Latitude of natural origin", 0d, degreeUnit, 8801),
+                            ProjectionParameterObject("Longitude of natural origin", 9d, degreeUnit, 8802),
+                            ProjectionParameterObject("Scale factor at natural origin", 0.9996d, unityUnit, 8805),
+                            ProjectionParameterObject("False easting", 500000d, metreUnit, 8806),
+                            ProjectionParameterObject("False northing", 0d, metreUnit, 8807)),
+                        metreUnit,
+                        ("Easting", "E", "east"),
+                        ("Northing", "N", "north")))),
+            new TheoryDataRow<int, string>(
+                31467,
+                Serialize(
+                    ProjectedCrsObject(
+                        31467,
+                        "DHDN / 3-degree Gauss-Kruger zone 3",
+                        GeographicCrsObject(
+                            4314,
+                            "DHDN",
+                            GeodeticDatumObject("Deutsches Hauptdreiecksnetz", EllipsoidObject("Bessel 1841", 6377397.155d, 299.1528128d, metreUnit, 7004), 6314),
+                            GreenwichPrimeMeridianObject(),
+                            degreeUnit,
+                            ("Geodetic latitude", "Lat", "north"),
+                            ("Geodetic longitude", "Lon", "east")),
+                        ConversionObject(
+                            "3-degree Gauss-Kruger zone 3",
+                            "Transverse Mercator",
+                            16263,
+                            ProjectionParameterObject("Latitude of natural origin", 0d, degreeUnit, 8801),
+                            ProjectionParameterObject("Longitude of natural origin", 9d, degreeUnit, 8802),
+                            ProjectionParameterObject("Scale factor at natural origin", 1d, unityUnit, 8805),
+                            ProjectionParameterObject("False easting", 3500000d, metreUnit, 8806),
+                            ProjectionParameterObject("False northing", 0d, metreUnit, 8807)),
+                        metreUnit,
+                        ("Northing", "X", "north"),
+                        ("Easting", "Y", "east")))),
+        ];
+    }
+
+    /// <summary>
+    /// Provides PROJJSON geocentric, vertical, and compound CRS examples aligned with real EPSG catalog entries.
+    /// </summary>
+    /// <returns>SRID/PROJJSON pairs that should parse successfully.</returns>
+    public static IEnumerable<TheoryDataRow<int, string, Type>> SupportedRemainingRows()
+    {
+        object degreeUnit = "degree";
+        object metreUnit = "metre";
+
+        return
+        [
+            new TheoryDataRow<int, string, Type>(
+                4978,
+                Serialize(
+                    GeocentricCrsObject(
+                        4978,
+                        "WGS 84",
+                        GeodeticDatumObject("World Geodetic System 1984", EllipsoidObject("WGS 84", 6378137d, 298.257223563d, metreUnit, 7030), 6326),
+                        GreenwichPrimeMeridianObject(),
+                        metreUnit)),
+                typeof(GeocentricCoordinateSystem)),
+            new TheoryDataRow<int, string, Type>(
+                5701,
+                Serialize(
+                    VerticalCrsObject(
+                        5701,
+                        "Newlyn",
+                        VerticalDatumObject("Ordnance Datum Newlyn", 5101),
+                        metreUnit,
+                        "Up",
+                        "up")),
+                typeof(VerticalCoordinateSystem)),
+            new TheoryDataRow<int, string, Type>(
+                9518,
+                Serialize(
+                    CompoundCrsObject(
+                        9518,
+                        "WGS 84 + EGM96 height",
+                        GeographicCrsObject(
+                            4326,
+                            "WGS 84",
+                            GeodeticDatumObject("World Geodetic System 1984", EllipsoidObject("WGS 84", 6378137d, 298.257223563d, metreUnit, 7030), 6326),
+                            GreenwichPrimeMeridianObject(),
+                            degreeUnit,
+                            ("Geodetic latitude", "Lat", "north"),
+                            ("Geodetic longitude", "Lon", "east")),
+                        VerticalCrsObject(
+                            5773,
+                            "EGM96 height",
+                            VerticalDatumObject("EGM96 geoid", -1),
+                            metreUnit,
+                            "Gravity-related height",
+                            "up"))),
+                typeof(CompoundCoordinateSystem)),
+        ];
+    }
+
+    /// <summary>
+    /// Verifies supported PROJJSON geographic CRS parse to the same semantic model as the committed catalog reference.
+    /// </summary>
+    /// <param name="srid">Expected EPSG SRID.</param>
+    /// <param name="json">PROJJSON CRS definition.</param>
+    [Theory]
+    [MemberData(nameof(SupportedGeographicRows))]
+    public void Parse_ParsesSupportedGeographicCrsEquivalentToCatalogReference(int srid, string json)
+    {
+        GeographicCoordinateSystem parsed = Assert.IsType<GeographicCoordinateSystem>(ProjJsonReader.Parse(json));
+        GeographicCoordinateSystem reference = CoordinateSystemTestHelpers.RequireCoordinateSystem<GeographicCoordinateSystem>(
+            CoordinateSystemFactory,
+            GetCatalogWkt(srid));
+
+        Assert.True(parsed.EqualParams(reference), $"PROJJSON geographic CRS parse mismatch for EPSG:{srid}.");
+        Assert.Equal("EPSG", parsed.Authority);
+        Assert.Equal(srid, parsed.AuthorityCode);
+    }
+
+    /// <summary>
+    /// Verifies supported PROJJSON projected CRS parse to the same semantic model as the committed catalog reference.
+    /// </summary>
+    /// <param name="srid">Expected EPSG SRID.</param>
+    /// <param name="json">PROJJSON CRS definition.</param>
+    [Theory]
+    [MemberData(nameof(SupportedProjectedRows))]
+    public void Parse_ParsesSupportedProjectedCrsEquivalentToCatalogReference(int srid, string json)
+    {
+        ProjectedCoordinateSystem parsed = Assert.IsType<ProjectedCoordinateSystem>(ProjJsonReader.Parse(json));
+        ProjectedCoordinateSystem reference = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
+            GetCatalogWkt(srid));
+
+        Assert.True(parsed.EqualParams(reference), $"PROJJSON projected CRS parse mismatch for EPSG:{srid}.");
+        Assert.Equal("EPSG", parsed.Authority);
+        Assert.Equal(srid, parsed.AuthorityCode);
+    }
+
+    /// <summary>
+    /// Verifies supported remaining PROJJSON CRS types parse to the same semantic model as the committed catalog reference.
+    /// </summary>
+    /// <param name="srid">Expected EPSG SRID.</param>
+    /// <param name="json">PROJJSON CRS definition.</param>
+    /// <param name="expectedType">Expected coordinate system type.</param>
+    [Theory]
+    [MemberData(nameof(SupportedRemainingRows))]
+    public void Parse_ParsesSupportedRemainingCrsEquivalentToCatalogReference(int srid, string json, Type expectedType)
+    {
+        CoordinateSystem parsed = Assert.IsType<CoordinateSystem>(ProjJsonReader.Parse(json), exactMatch: false);
+        CoordinateSystem reference = CoordinateSystemTestHelpers.RequireCoordinateSystem(
+            CoordinateSystemFactory,
+            GetCatalogWkt(srid));
+
+        Assert.Equal(expectedType, parsed.GetType());
+        Assert.Equal(expectedType, reference.GetType());
+        Assert.True(parsed.EqualParams(reference), $"PROJJSON remaining CRS parse mismatch for EPSG:{srid}.");
+        Assert.Equal("EPSG", parsed.Authority);
+        Assert.Equal(srid, parsed.AuthorityCode);
+    }
+
+    /// <summary>
+    /// Verifies projected PROJJSON parsing preserves base CRS prime meridian and angular unit semantics.
+    /// </summary>
+    [Fact]
+    public void Parse_ParsesProjectedCrsBasePrimeMeridianAndAngularUnit()
+    {
+        object metreUnit = "metre";
+        object gradUnit = AngularUnitObject("grad", 0.015707963267949d, 9105);
+        string json = Serialize(
+            ProjectedCrsObject(
+                27561,
+                "NTF (Paris) / Lambert Nord France",
+                GeographicCrsObject(
+                    4807,
+                    "NTF (Paris)",
+                    GeodeticDatumObject("Nouvelle Triangulation Francaise (Paris)", EllipsoidObject("Clarke 1880 (IGN)", 6378249.2d, 293.466021293627d, metreUnit, 7011), 6807),
+                    PrimeMeridianObject("Paris", 0.040792344d, AngularUnitObject("radian", 1d, 9101), 8903),
+                    gradUnit,
+                    ("Geodetic latitude", "Lat", "north"),
+                    ("Geodetic longitude", "Lon", "east")),
+                ConversionObject(
+                    "Lambert Nord France",
+                    "Lambert Conic Conformal (1SP)",
+                    18091,
+                    ProjectionParameterObject("Latitude of natural origin", 55d, gradUnit, 8801),
+                    ProjectionParameterObject("Longitude of natural origin", 0d, gradUnit, 8802),
+                    ProjectionParameterObject("Scale factor at natural origin", 0.999877341d, ScaleUnitObject(), 8805),
+                    ProjectionParameterObject("False easting", 600000d, metreUnit, 8806),
+                    ProjectionParameterObject("False northing", 200000d, metreUnit, 8807)),
+                metreUnit,
+                ("Easting", "X", "east"),
+                ("Northing", "Y", "north")));
+
+        ProjectedCoordinateSystem parsed = Assert.IsType<ProjectedCoordinateSystem>(ProjJsonReader.Parse(json));
+
+        Assert.Equal("NTF (Paris) / Lambert Nord France", parsed.Name);
+        Assert.Equal("EPSG", parsed.Authority);
+        Assert.Equal(27561, parsed.AuthorityCode);
+        Assert.Equal("grad", parsed.GeographicCoordinateSystem.AngularUnit.Name);
+        Assert.Equal("EPSG", parsed.GeographicCoordinateSystem.AngularUnit.Authority);
+        Assert.Equal(9105, parsed.GeographicCoordinateSystem.AngularUnit.AuthorityCode);
+        Assert.Equal("Paris", parsed.GeographicCoordinateSystem.PrimeMeridian.Name);
+        Assert.True(parsed.GeographicCoordinateSystem.PrimeMeridian.AngularUnit.EqualParams(AngularUnit.Radian));
+        Assert.Equal(0.040792344d, parsed.GeographicCoordinateSystem.PrimeMeridian.Longitude);
+        Assert.Equal("Lambert Conic Conformal (1SP)", parsed.Projection.ClassName);
+        Assert.Equal("EPSG", parsed.Projection.Authority);
+        Assert.Equal(18091, parsed.Projection.AuthorityCode);
+        Assert.Equal(55d, parsed.Projection.GetParameter("latitude_of_origin")?.Value);
+        Assert.Equal(0d, parsed.Projection.GetParameter("central_meridian")?.Value);
+        Assert.Equal(0.999877341d, parsed.Projection.GetParameter("scale_factor")?.Value);
+        Assert.Equal(600000d, parsed.Projection.GetParameter("false_easting")?.Value);
+        Assert.Equal(200000d, parsed.Projection.GetParameter("false_northing")?.Value);
+    }
+
+    /// <summary>
+    /// Verifies PROJJSON identifiers can be sourced from an <c>ids</c> array and prefer the EPSG identifier.
+    /// </summary>
+    [Fact]
+    public void Parse_WithIdsArray_PrefersEpsgIdentifier()
+    {
+        object[] ids =
+        [
+            IdObject("IGNF", "NTFP"),
+            IdObject("EPSG", 4807),
+        ];
+
+        string json = Serialize(
+            Obj(
+                ("type", "GeographicCRS"),
+                ("name", "NTF (Paris)"),
+                ("datum", GeodeticDatumObject("Nouvelle Triangulation Francaise (Paris)", EllipsoidObject("Clarke 1880 (IGN)", 6378249.2d, 293.466021293627d, "metre", 7011), 6807)),
+                ("prime_meridian", PrimeMeridianObject("Paris", 0.040792344d, AngularUnitObject("radian", 1d, 9101), 8903, useIds: true, stringCode: true)),
+                ("coordinate_system", CoordinateSystemObject("ellipsoidal", AxisObject("Geodetic latitude", "Lat", "north", "degree"), AxisObject("Geodetic longitude", "Lon", "east", "degree"))),
+                ("ids", ids)));
+
+        GeographicCoordinateSystem parsed = Assert.IsType<GeographicCoordinateSystem>(ProjJsonReader.Parse(json));
+
+        Assert.Equal("EPSG", parsed.Authority);
+        Assert.Equal(4807, parsed.AuthorityCode);
+        Assert.Equal("EPSG", parsed.PrimeMeridian.Authority);
+        Assert.Equal(8903, parsed.PrimeMeridian.AuthorityCode);
+    }
+
+    /// <summary>
+    /// Verifies optional usage metadata blocks are tolerated on PROJJSON CRS objects.
+    /// </summary>
+    [Fact]
+    public void Parse_ParsesProjectedCrsWithUsageMetadataEquivalentToCatalogReference()
+    {
+        Dictionary<string, object?> baseCrs = GeographicCrsObject(
+            4277,
+            "OSGB36",
+            GeodeticDatumObject("Ordnance Survey of Great Britain 1936", EllipsoidObject("Airy 1830", 6377563.396d, 299.3249646d, "metre", 7001), 6277),
+            GreenwichPrimeMeridianObject(),
+            "degree",
+            ("Geodetic latitude", "Lat", "north"),
+            ("Geodetic longitude", "Lon", "east"));
+
+        Dictionary<string, object?> conversion = ConversionObject(
+            "British National Grid",
+            "Transverse Mercator",
+            19916,
+            ProjectionParameterObject("Latitude of natural origin", 49d, "degree", 8801),
+            ProjectionParameterObject("Longitude of natural origin", -2d, "degree", 8802),
+            ProjectionParameterObject("Scale factor at natural origin", 0.9996012717d, ScaleUnitObject(), 8805),
+            ProjectionParameterObject("False easting", 400000d, "metre", 8806),
+            ProjectionParameterObject("False northing", -100000d, "metre", 8807));
+
+        object[] usages =
+        [
+            Obj(
+                ("scope", "Topographic mapping."),
+                ("area", "United Kingdom."),
+                ("bbox", Obj(("south_latitude", 49.75d), ("west_longitude", -9.01d), ("north_latitude", 61.01d), ("east_longitude", 2.01d)))),
+        ];
+
+        string json = Serialize(
+            Obj(
+                ("type", "ProjectedCRS"),
+                ("name", "OSGB36 / British National Grid"),
+                ("base_crs", baseCrs),
+                ("conversion", conversion),
+                ("coordinate_system", CoordinateSystemObject("Cartesian", AxisObject("Easting", "E", "east", "metre"), AxisObject("Northing", "N", "north", "metre"))),
+                ("scope", "Engineering survey, topographic mapping."),
+                ("area", "United Kingdom."),
+                ("bbox", Obj(("south_latitude", 49.75d), ("west_longitude", -9.01d), ("north_latitude", 61.01d), ("east_longitude", 2.01d))),
+                ("remarks", "metadata remark"),
+                ("usages", usages),
+                ("id", IdObject("EPSG", 27700))));
+
+        ProjectedCoordinateSystem parsed = Assert.IsType<ProjectedCoordinateSystem>(ProjJsonReader.Parse(json));
+        ProjectedCoordinateSystem reference = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
+            GetCatalogWkt(27700));
+
+        Assert.True(parsed.EqualParams(reference));
+        Assert.Equal("EPSG", parsed.Authority);
+        Assert.Equal(27700, parsed.AuthorityCode);
+    }
+
+    /// <summary>
+    /// Verifies datum-ensemble backed PROJJSON remains an explicit unsupported boundary.
+    /// </summary>
+    [Fact]
+    public void Parse_WithDatumEnsemble_ThrowsNotSupportedException()
+    {
+        object[] members =
+        [
+            Obj(("name", "World Geodetic System 1984 (Transit)"), ("id", IdObject("EPSG", 1166))),
+        ];
+
+        Dictionary<string, object?> datumEnsemble = Obj(
+            ("type", "DatumEnsemble"),
+            ("name", "World Geodetic System 1984 ensemble"),
+            ("members", members),
+            ("ellipsoid", EllipsoidObject("WGS 84", 6378137d, 298.257223563d, "metre", 7030)),
+            ("accuracy", "2.0"),
+            ("id", IdObject("EPSG", 6326)));
+
+        string json = Serialize(
+            Obj(
+                ("type", "GeographicCRS"),
+                ("name", "WGS 84"),
+                ("datum_ensemble", datumEnsemble),
+                ("coordinate_system", CoordinateSystemObject("ellipsoidal", AxisObject("Geodetic latitude", "Lat", "north", "degree"), AxisObject("Geodetic longitude", "Lon", "east", "degree"))),
+                ("id", IdObject("EPSG", 4326))));
+
+        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => ProjJsonReader.Parse(json));
+
+        Assert.Contains("ensembles", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static string GetCatalogWkt(int srid)
+    {
+        if (!CatalogDefinitions.Value.TryGetValue(srid, out string? wkt))
+        {
+            throw new InvalidOperationException($"No catalog definition found for EPSG:{srid}.");
+        }
+
+        return wkt;
+    }
+
+    private static string Serialize(object value) => JsonSerializer.Serialize(value);
+
+    private static Dictionary<string, object?> GeographicCrsObject(
+        int srid,
+        string name,
+        Dictionary<string, object?> datum,
+        Dictionary<string, object?> primeMeridian,
+        object angularUnit,
+        (string Name, string Abbreviation, string Direction) axis1,
+        (string Name, string Abbreviation, string Direction) axis2,
+        bool useIds = false)
+    {
+        Dictionary<string, object?> coordinateSystem = CoordinateSystemObject(
+            "ellipsoidal",
+            AxisObject(axis1.Name, axis1.Abbreviation, axis1.Direction, angularUnit),
+            AxisObject(axis2.Name, axis2.Abbreviation, axis2.Direction, angularUnit));
+
+        if (useIds)
+        {
+            object[] ids =
+            [
+                IdObject("ESRI", $"GCS_{name.Replace(" ", "_", StringComparison.Ordinal)}"),
+                IdObject("EPSG", srid),
+            ];
+
+            return Obj(
+                ("type", "GeographicCRS"),
+                ("name", name),
+                ("datum", datum),
+                ("prime_meridian", primeMeridian),
+                ("coordinate_system", coordinateSystem),
+                ("ids", ids));
+        }
+
+        return Obj(
+            ("type", "GeographicCRS"),
+            ("name", name),
+            ("datum", datum),
+            ("prime_meridian", primeMeridian),
+            ("coordinate_system", coordinateSystem),
+            ("id", IdObject("EPSG", srid)));
+    }
+
+    private static Dictionary<string, object?> ProjectedCrsObject(
+        int srid,
+        string name,
+        Dictionary<string, object?> baseCrs,
+        Dictionary<string, object?> conversion,
+        object linearUnit,
+        (string Name, string Abbreviation, string Direction) axis1,
+        (string Name, string Abbreviation, string Direction) axis2)
+    {
+        Dictionary<string, object?> coordinateSystem = CoordinateSystemObject(
+            "Cartesian",
+            AxisObject(axis1.Name, axis1.Abbreviation, axis1.Direction, linearUnit),
+            AxisObject(axis2.Name, axis2.Abbreviation, axis2.Direction, linearUnit));
+
+        return Obj(
+            ("type", "ProjectedCRS"),
+            ("name", name),
+            ("base_crs", baseCrs),
+            ("conversion", conversion),
+            ("coordinate_system", coordinateSystem),
+            ("id", IdObject("EPSG", srid)));
+    }
+
+    private static Dictionary<string, object?> GeocentricCrsObject(
+        int srid,
+        string name,
+        Dictionary<string, object?> datum,
+        Dictionary<string, object?> primeMeridian,
+        object linearUnit)
+    {
+        Dictionary<string, object?> coordinateSystem = CoordinateSystemObject(
+            "Cartesian",
+            AxisObject("Geocentric X", "X", "geocentricX", linearUnit),
+            AxisObject("Geocentric Y", "Y", "geocentricY", linearUnit),
+            AxisObject("Geocentric Z", "Z", "geocentricZ", linearUnit));
+
+        return Obj(
+            ("type", "GeodeticCRS"),
+            ("name", name),
+            ("datum", datum),
+            ("prime_meridian", primeMeridian),
+            ("coordinate_system", coordinateSystem),
+            ("id", IdObject("EPSG", srid)));
+    }
+
+    private static Dictionary<string, object?> VerticalCrsObject(
+        int srid,
+        string name,
+        Dictionary<string, object?> datum,
+        object linearUnit,
+        string axisName,
+        string axisDirection)
+    {
+        return Obj(
+            ("type", "VerticalCRS"),
+            ("name", name),
+            ("datum", datum),
+            ("coordinate_system", CoordinateSystemObject("vertical", AxisObject(axisName, "H", axisDirection, linearUnit))),
+            ("id", IdObject("EPSG", srid)));
+    }
+
+    private static Dictionary<string, object?> CompoundCrsObject(int srid, string name, params Dictionary<string, object?>[] components)
+    {
+        return Obj(
+            ("type", "CompoundCRS"),
+            ("name", name),
+            ("components", components.Cast<object>().ToArray()),
+            ("id", IdObject("EPSG", srid)));
+    }
+
+    private static Dictionary<string, object?> GeodeticDatumObject(string name, Dictionary<string, object?> ellipsoid, int code)
+    {
+        return Obj(
+            ("type", "GeodeticReferenceFrame"),
+            ("name", name),
+            ("ellipsoid", ellipsoid),
+            ("id", IdObject("EPSG", code)));
+    }
+
+    private static Dictionary<string, object?> VerticalDatumObject(string name, int code)
+    {
+        return Obj(
+            ("type", "VerticalReferenceFrame"),
+            ("name", name),
+            code > 0 ? ("id", IdObject("EPSG", code)) : ("id", null));
+    }
+
+    private static Dictionary<string, object?> EllipsoidObject(string name, double semiMajorAxis, double inverseFlattening, object unit, int code)
+    {
+        return Obj(
+            ("type", "Ellipsoid"),
+            ("name", name),
+            ("semi_major_axis", semiMajorAxis),
+            ("inverse_flattening", inverseFlattening),
+            ("unit", unit),
+            ("id", IdObject("EPSG", code)));
+    }
+
+    private static Dictionary<string, object?> PrimeMeridianObject(string name, double longitude, object unit, int code, bool useIds = false, bool stringCode = false)
+    {
+        object codeValue = stringCode ? code.ToString(CultureInfo.InvariantCulture) : code;
+        return useIds
+            ? Obj(
+                ("name", name),
+                ("longitude", longitude),
+                ("unit", unit),
+                ("ids", new object[] { IdObject("IGNF", name.ToUpperInvariant()), IdObject("EPSG", codeValue) }))
+            : Obj(
+                ("name", name),
+                ("longitude", longitude),
+                ("unit", unit),
+                ("id", IdObject("EPSG", codeValue)));
+    }
+
+    private static Dictionary<string, object?> GreenwichPrimeMeridianObject() => PrimeMeridianObject("Greenwich", 0d, "degree", 8901);
+
+    private static Dictionary<string, object?> CoordinateSystemObject(string subtype, params Dictionary<string, object?>[] axes)
+    {
+        return Obj(
+            ("subtype", subtype),
+            ("axis", axes.Cast<object>().ToArray()));
+    }
+
+    private static Dictionary<string, object?> AxisObject(string name, string abbreviation, string direction, object unit)
+    {
+        return Obj(
+            ("name", name),
+            ("abbreviation", abbreviation),
+            ("direction", direction),
+            ("unit", unit));
+    }
+
+    private static Dictionary<string, object?> ConversionObject(string name, string methodName, int conversionCode, params Dictionary<string, object?>[] parameters)
+    {
+        return Obj(
+            ("type", "Conversion"),
+            ("name", name),
+            ("method", Obj(("name", methodName))),
+            ("parameters", parameters.Cast<object>().ToArray()),
+            ("id", IdObject("EPSG", conversionCode)));
+    }
+
+    private static Dictionary<string, object?> ProjectionParameterObject(string name, double value, object unit, int code)
+    {
+        return Obj(
+            ("name", name),
+            ("value", value),
+            ("unit", unit),
+            ("id", IdObject("EPSG", code)));
+    }
+
+    private static Dictionary<string, object?> AngularUnitObject(string name, double conversionFactor, int code)
+    {
+        return Obj(
+            ("type", "AngularUnit"),
+            ("name", name),
+            ("conversion_factor", conversionFactor),
+            ("id", IdObject("EPSG", code)));
+    }
+
+    private static Dictionary<string, object?> ScaleUnitObject()
+    {
+        return Obj(
+            ("type", "ScaleUnit"),
+            ("name", "unity"),
+            ("conversion_factor", 1d),
+            ("id", IdObject("EPSG", 9201)));
+    }
+
+    private static Dictionary<string, object?> IdObject(string authority, object code)
+    {
+        return Obj(
+            ("authority", authority),
+            ("code", code));
+    }
+
+    private static Dictionary<string, object?> Obj(params (string Key, object? Value)[] members)
+    {
+        var result = new Dictionary<string, object?>(StringComparer.Ordinal);
+        foreach ((string key, object? value) in members)
+        {
+            if (value is not null)
+            {
+                result[key] = value;
+            }
+        }
+
+        return result;
+    }
+}

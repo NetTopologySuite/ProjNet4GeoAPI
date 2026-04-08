@@ -1245,45 +1245,7 @@ public static partial class CoordinateSystemWktReader
         return new ProjectionParameter(parameterName, value);
     }
 
-    private static string NormalizeWkt2ProjectionParameterName(string parameterName)
-    {
-        if (string.IsNullOrWhiteSpace(parameterName))
-        {
-            return string.Empty;
-        }
-
-        string normalized = parameterName
-            .ToUpperInvariant()
-            .Trim();
-        normalized = StringCompatibility.ReplaceOrdinal(normalized, "(", string.Empty);
-        normalized = StringCompatibility.ReplaceOrdinal(normalized, ")", string.Empty);
-        normalized = StringCompatibility.ReplaceOrdinal(normalized, "-", "_");
-        normalized = StringCompatibility.ReplaceOrdinal(normalized, "/", "_");
-        normalized = StringCompatibility.ReplaceOrdinal(normalized, " ", "_");
-        normalized = StringCompatibility.ReplaceOrdinal(normalized, ".", "_");
-        normalized = StringCompatibility.ReplaceOrdinal(normalized, "__", "_");
-
-        return normalized switch
-        {
-            "LONGITUDE_OF_NATURAL_ORIGIN" => "central_meridian",
-            "LONGITUDE_OF_FALSE_ORIGIN" => "central_meridian",
-            "LONGITUDE_OF_PROJECTION_CENTRE" => "central_meridian",
-            "LONGITUDE_OF_ORIGIN" => "central_meridian",
-            "LATITUDE_OF_NATURAL_ORIGIN" => "latitude_of_origin",
-            "LATITUDE_OF_FALSE_ORIGIN" => "latitude_of_origin",
-            "LATITUDE_OF_PROJECTION_CENTRE" => "latitude_of_origin",
-            "SCALE_FACTOR_AT_NATURAL_ORIGIN" => "scale_factor",
-            "SCALE_FACTOR_AT_PROJECTION_CENTRE" => "scale_factor",
-            "SCALE_FACTOR_ON_INITIAL_LINE" => "scale_factor",
-            "EASTING_AT_FALSE_ORIGIN" => "false_easting",
-            "EASTING_AT_PROJECTION_CENTRE" => "false_easting",
-            "NORTHING_AT_FALSE_ORIGIN" => "false_northing",
-            "NORTHING_AT_PROJECTION_CENTRE" => "false_northing",
-            "LATITUDE_OF_1ST_STANDARD_PARALLEL" => "standard_parallel_1",
-            "LATITUDE_OF_2ND_STANDARD_PARALLEL" => "standard_parallel_2",
-            _ => normalized,
-        };
-    }
+    private static string NormalizeWkt2ProjectionParameterName(string parameterName) => ProjectionParameterNameNormalizer.Normalize(parameterName);
 
     private static VerticalCoordinateSystem ReadWkt2VerticalCoordinateSystem(WktTokenizer tokenizer)
     {
