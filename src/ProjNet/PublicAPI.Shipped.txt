@@ -752,6 +752,11 @@ namespace ProjNet.IO.CoordinateSystems
         public static ProjNet.CoordinateSystems.IInfo Parse(System.ReadOnlySpan<char> json) { }
         public static ProjNet.CoordinateSystems.IInfo Parse(string json) { }
     }
+    public static class ProjJsonWriter
+    {
+        public static string ToJson(ProjNet.CoordinateSystems.CoordinateSystem coordinateSystem) { }
+        public static void WriteTo(System.Text.Json.Utf8JsonWriter writer, ProjNet.CoordinateSystems.CoordinateSystem coordinateSystem) { }
+    }
 }
 namespace ProjNet.IO.Wkt
 {

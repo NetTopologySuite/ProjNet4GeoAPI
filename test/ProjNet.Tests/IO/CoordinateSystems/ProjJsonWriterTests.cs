@@ -1,0 +1,157 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
+
+namespace ProjNet.Tests.IO.CoordinateSystems;
+
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Text.Json;
+using ProjNet.CoordinateSystems;
+using ProjNet.Data;
+using ProjNet.IO.CoordinateSystems;
+using Xunit;
+
+/// <summary>
+/// Verifies native PROJJSON coordinate-system writing for the first supported CRS slice.
+/// </summary>
+public class ProjJsonWriterTests
+{
+    private static readonly CoordinateSystemFactory CoordinateSystemFactory = new();
+    private static readonly Lazy<IReadOnlyDictionary<int, string>> CatalogDefinitions = new(() =>
+        new ManagedCoordinateSystemDefinitionProvider()
+            .GetDefinitions()
+            .GroupBy(item => item.Srid)
+            .ToDictionary(group => group.Key, group => group.Last().Wkt));
+
+    /// <summary>
+    /// Provides EPSG geographic CRS examples that should roundtrip through the initial PROJJSON writer slice.
+    /// </summary>
+    /// <returns>EPSG SRIDs for supported geographic CRS roundtrip coverage.</returns>
+    public static IEnumerable<TheoryDataRow<int>> SupportedGeographicWriterRows()
+    {
+        return
+        [
+            new TheoryDataRow<int>(4230),
+            new TheoryDataRow<int>(4277),
+            new TheoryDataRow<int>(4314),
+            new TheoryDataRow<int>(4322),
+            new TheoryDataRow<int>(4807),
+        ];
+    }
+
+    /// <summary>
+    /// Verifies the initial PROJJSON writer slice roundtrips supported geographic CRS back to the same semantic model.
+    /// </summary>
+    /// <param name="srid">Expected EPSG SRID.</param>
+    [Theory]
+    [MemberData(nameof(SupportedGeographicWriterRows))]
+    public void ToJson_RoundtripsSupportedGeographicCrsEquivalentToCatalogReference(int srid)
+    {
+        GeographicCoordinateSystem reference = CoordinateSystemTestHelpers.RequireCoordinateSystem<GeographicCoordinateSystem>(
+            CoordinateSystemFactory,
+            GetCatalogWkt(srid));
+
+        string json = ProjJsonWriter.ToJson(reference);
+        GeographicCoordinateSystem reparsed = Assert.IsType<GeographicCoordinateSystem>(ProjJsonReader.Parse(json));
+
+        Assert.True(reparsed.EqualParams(reference), $"PROJJSON geographic CRS write/read mismatch for EPSG:{srid}.");
+        Assert.Equal(reference.Authority, reparsed.Authority);
+        Assert.Equal(reference.AuthorityCode, reparsed.AuthorityCode);
+    }
+
+    /// <summary>
+    /// Verifies <see cref="ProjJsonWriter.WriteTo(Utf8JsonWriter, CoordinateSystem)"/> emits the expected PROJJSON object shape for a geographic CRS.
+    /// </summary>
+    [Fact]
+    public void WriteTo_WritesGeographicCrsWithExpectedProjJsonShape()
+    {
+        GeographicCoordinateSystem reference = CoordinateSystemTestHelpers.RequireCoordinateSystem<GeographicCoordinateSystem>(
+            CoordinateSystemFactory,
+            GetCatalogWkt(4807));
+
+        string json;
+        using (var stream = new MemoryStream())
+        {
+            using (var writer = new Utf8JsonWriter(stream))
+            {
+                ProjJsonWriter.WriteTo(writer, reference);
+                writer.Flush();
+            }
+
+            json = Encoding.UTF8.GetString(stream.ToArray());
+        }
+
+        using var document = JsonDocument.Parse(json);
+        JsonElement root = document.RootElement;
+
+        Assert.Equal("GeographicCRS", root.GetProperty("type").GetString());
+        Assert.Equal("NTF (Paris)", root.GetProperty("name").GetString());
+        Assert.Equal("Nouvelle Triangulation Francaise (Paris)", root.GetProperty("datum").GetProperty("name").GetString());
+        Assert.Equal("Clarke 1880 (IGN)", root.GetProperty("datum").GetProperty("ellipsoid").GetProperty("name").GetString());
+        Assert.Equal("Paris", root.GetProperty("prime_meridian").GetProperty("name").GetString());
+        Assert.Equal("ellipsoidal", root.GetProperty("coordinate_system").GetProperty("subtype").GetString());
+        Assert.Equal(2, root.GetProperty("coordinate_system").GetProperty("axis").GetArrayLength());
+        Assert.Equal("EPSG", root.GetProperty("id").GetProperty("authority").GetString());
+        Assert.Equal(4807, root.GetProperty("id").GetProperty("code").GetInt32());
+    }
+
+    /// <summary>
+    /// Verifies null JSON writers are rejected.
+    /// </summary>
+    [Fact]
+    public void WriteTo_WithNullWriter_ThrowsArgumentNullException()
+    {
+        GeographicCoordinateSystem reference = GeographicCoordinateSystem.WGS84;
+
+        Assert.Throws<ArgumentNullException>(() => ProjJsonWriter.WriteTo(null!, reference));
+    }
+
+    /// <summary>
+    /// Verifies null coordinate systems are rejected by <see cref="ProjJsonWriter.WriteTo(Utf8JsonWriter, CoordinateSystem)"/>.
+    /// </summary>
+    [Fact]
+    public void WriteTo_WithNullCoordinateSystem_ThrowsArgumentNullException()
+    {
+        using var stream = new MemoryStream();
+        using var writer = new Utf8JsonWriter(stream);
+
+        Assert.Throws<ArgumentNullException>(() => ProjJsonWriter.WriteTo(writer, null!));
+    }
+
+    /// <summary>
+    /// Verifies null coordinate systems are rejected by <see cref="ProjJsonWriter.ToJson(CoordinateSystem)"/>.
+    /// </summary>
+    [Fact]
+    public void ToJson_WithNullCoordinateSystem_ThrowsArgumentNullException()
+    {
+        Assert.Throws<ArgumentNullException>(() => ProjJsonWriter.ToJson(null!));
+    }
+
+    /// <summary>
+    /// Verifies unsupported coordinate-system types stay an explicit boundary until later M38 slices.
+    /// </summary>
+    [Fact]
+    public void ToJson_WithUnsupportedCoordinateSystem_ThrowsNotSupportedException()
+    {
+        ProjectedCoordinateSystem projected = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(
+            CoordinateSystemFactory,
+            GetCatalogWkt(27700));
+
+        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => ProjJsonWriter.ToJson(projected));
+
+        Assert.Contains(nameof(ProjectedCoordinateSystem), exception.Message, StringComparison.Ordinal);
+    }
+
+    private static string GetCatalogWkt(int srid)
+    {
+        if (!CatalogDefinitions.Value.TryGetValue(srid, out string? wkt))
+        {
+            throw new InvalidOperationException($"No catalog definition found for EPSG:{srid}.");
+        }
+
+        return wkt;
+    }
+}
