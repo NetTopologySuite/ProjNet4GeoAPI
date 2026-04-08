@@ -74,6 +74,30 @@ public class ProjJsonWriterTests
     }
 
     /// <summary>
+    /// Provides EPSG CRS examples that should survive a WKT1 -> PROJJSON -> WKT1 cross-format roundtrip.
+    /// </summary>
+    /// <returns>EPSG SRIDs for supported cross-format writer coverage.</returns>
+    public static IEnumerable<TheoryDataRow<int>> SupportedCrossFormatWriterRows()
+    {
+        return
+        [
+            new TheoryDataRow<int>(4230),
+            new TheoryDataRow<int>(4277),
+            new TheoryDataRow<int>(4314),
+            new TheoryDataRow<int>(4322),
+            new TheoryDataRow<int>(4807),
+            new TheoryDataRow<int>(27700),
+            new TheoryDataRow<int>(31370),
+            new TheoryDataRow<int>(2169),
+            new TheoryDataRow<int>(23032),
+            new TheoryDataRow<int>(31467),
+            new TheoryDataRow<int>(4978),
+            new TheoryDataRow<int>(5701),
+            new TheoryDataRow<int>(9518),
+        ];
+    }
+
+    /// <summary>
     /// Verifies the initial PROJJSON writer slice roundtrips supported geographic CRS back to the same semantic model.
     /// </summary>
     /// <param name="srid">Expected EPSG SRID.</param>
@@ -133,6 +157,31 @@ public class ProjJsonWriterTests
         Assert.True(reparsed.EqualParams(reference), $"PROJJSON remaining CRS write/read mismatch for EPSG:{srid}.");
         Assert.Equal(reference.Authority, reparsed.Authority);
         Assert.Equal(reference.AuthorityCode, reparsed.AuthorityCode);
+    }
+
+    /// <summary>
+    /// Verifies supported CRS survive a WKT1 -> PROJJSON -> WKT1 cross-format roundtrip without semantic drift.
+    /// </summary>
+    /// <param name="srid">Expected EPSG SRID.</param>
+    [Theory]
+    [MemberData(nameof(SupportedCrossFormatWriterRows))]
+    public void ToJson_RoundtripsSupportedCrsAcrossWkt1AndProjJsonWithoutSemanticDrift(int srid)
+    {
+        CoordinateSystem reference = CoordinateSystemTestHelpers.RequireCoordinateSystem(
+            CoordinateSystemFactory,
+            GetCatalogWkt(srid));
+
+        string json = ProjJsonWriter.ToJson(reference);
+        CoordinateSystem fromProjJson = Assert.IsAssignableFrom<CoordinateSystem>(ProjJsonReader.Parse(json));
+        CoordinateSystem roundTrippedFromWkt = CoordinateSystemTestHelpers.RequireCoordinateSystem(
+            CoordinateSystemFactory,
+            fromProjJson.WKT);
+
+        Assert.IsType(fromProjJson.GetType(), roundTrippedFromWkt);
+        Assert.True(fromProjJson.EqualParams(roundTrippedFromWkt), $"WKT1 cross-format roundtrip mismatch for EPSG:{srid}.");
+        Assert.True(reference.EqualParams(roundTrippedFromWkt), $"Reference mismatch after WKT1 -> PROJJSON -> WKT1 roundtrip for EPSG:{srid}.");
+        Assert.Equal(reference.Authority, roundTrippedFromWkt.Authority);
+        Assert.Equal(reference.AuthorityCode, roundTrippedFromWkt.AuthorityCode);
     }
 
     /// <summary>
