@@ -1528,18 +1528,62 @@ public class GieBuiltinsRegressionTests
     }
 
     /// <summary>
-    /// Verifies that URN-based coordinate operations surface a specific unsupported reason instead of collapsing into a null GIE row.
+    /// Verifies that mapped NKG URNs execute through the builtins conversion path, including the Norway-specific xyzgridshift case.
     /// </summary>
-    [Fact]
-    public void TryCreateConversionTransformWithCoordinateOperationUrnReturnsSpecificSkipReason()
+    [Theory]
+    [InlineData(
+        "urn:ogc:def:coordinateOperation:NKG::ITRF2000_TO_DK",
+        3541657.3778d,
+        948984.2343d,
+        5201383.5231d,
+        2020.5d,
+        3541657.9362d,
+        948983.7825d,
+        5201383.2292d,
+        2020.5d,
+        1e-3d)]
+    [InlineData(
+        "urn:ogc:def:coordinateOperation:NKG::ITRF2014_TO_NO",
+        3275753.4135d,
+        321111.2481d,
+        5445042.2134d,
+        2020.0d,
+        3275753.9094d,
+        321110.8626d,
+        5445041.8818d,
+        2020.0d,
+        1e-4d)]
+    public void TryCreateConversionTransformWithCoordinateOperationUrnReturnsExpectedCoordinate(
+        string operation,
+        double x,
+        double y,
+        double z,
+        double epoch,
+        double expectedX,
+        double expectedY,
+        double expectedZ,
+        double expectedEpoch,
+        double tolerance)
     {
-        const string operation = "urn:ogc:def:coordinateOperation:NKG::ITRF2000_TO_DK";
-
         bool created = TryCreateConversionTransform(operation, out Func<double[], double[]>? transform, out string? skipReason);
 
-        Assert.False(created);
-        Assert.Null(transform);
-        Assert.Contains("URN-based", skipReason ?? string.Empty, StringComparison.OrdinalIgnoreCase);
+        Assert.True(created, skipReason ?? "TryCreateConversionTransform returned false.");
+        double[] output = Assert.IsType<Func<double[], double[]>>(transform)([x, y, z, epoch]);
+        Assert.InRange(Math.Abs(output[0] - expectedX), 0d, tolerance);
+        Assert.InRange(Math.Abs(output[1] - expectedY), 0d, tolerance);
+        Assert.InRange(Math.Abs(output[2] - expectedZ), 0d, tolerance);
+        Assert.InRange(Math.Abs(output[3] - expectedEpoch), 0d, 1e-9d);
+    }
+
+    /// <summary>
+    /// Verifies that the NKG fixture now emits its mapped rows instead of falling back to a single placeholder case.
+    /// </summary>
+    [Fact]
+    public void GetCasesFromFixtureWithNkgFixtureReturnsMappedTheoryRows()
+    {
+        List<object> rows = GetCasesFromFixtureRows("nkg.gie", 300);
+
+        Assert.True(rows.Count > 20, $"Expected mapped NKG rows, but found only {rows.Count}.");
     }
 
     /// <summary>
@@ -1554,14 +1598,7 @@ public class GieBuiltinsRegressionTests
     [InlineData("nkg.gie")]
     public void GetCasesFromFixtureForFormerNoApplicableFixturesReturnsConcreteRow(string fixtureName)
     {
-        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("GetCasesFromFixture", BindingFlags.Static | BindingFlags.NonPublic)
-            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.GetCasesFromFixture.");
-
-        var rows = new List<object>();
-        foreach (object row in Assert.IsAssignableFrom<System.Collections.IEnumerable>(method.Invoke(null, [fixtureName, 300])))
-        {
-            rows.Add(row);
-        }
+        List<object> rows = GetCasesFromFixtureRows(fixtureName, 300);
 
         Assert.NotEmpty(rows);
 
@@ -1616,6 +1653,20 @@ public class GieBuiltinsRegressionTests
         transform = args[2] as Func<double[], double[]>;
         skipReason = args[3] as string;
         return created;
+    }
+
+    private static List<object> GetCasesFromFixtureRows(string fixtureName, int maxCount)
+    {
+        MethodInfo method = typeof(GieBuiltinsTheoryTests).GetMethod("GetCasesFromFixture", BindingFlags.Static | BindingFlags.NonPublic)
+            ?? throw new InvalidOperationException("Could not locate GieBuiltinsTheoryTests.GetCasesFromFixture.");
+
+        var rows = new List<object>();
+        foreach (object row in Assert.IsAssignableFrom<System.Collections.IEnumerable>(method.Invoke(null, [fixtureName, maxCount])))
+        {
+            rows.Add(row);
+        }
+
+        return rows;
     }
 
     private static double[] RequireBuiltinsRuntimeProjectedOutput(string operation, params double[] input)

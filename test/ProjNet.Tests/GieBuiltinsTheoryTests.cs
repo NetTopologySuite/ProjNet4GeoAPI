@@ -18,11 +18,13 @@ using Xunit;
 /// </summary>
 public class GieBuiltinsTheoryTests
 {
+    private const string NkgCoordinateOperationUrnPrefix = "urn:ogc:def:coordinateOperation:NKG::";
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new();
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory = new();
 
     private static readonly char[] CommaSeparator = [','];
     private static readonly char[] OperationTokenSeparators = [' ', '\t'];
+    private static readonly char[] PipelineWhitespaceSeparators = [' ', '\t', '\r', '\n'];
 
     private static readonly Dictionary<string, string> ProjectionClassByProjCode = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -181,6 +183,150 @@ public class GieBuiltinsTheoryTests
         ["tmerc"] = "transverse_mercator",
         ["utm"] = "utm",
         ["ups"] = "ups",
+    };
+
+    private static readonly string NkgItrf2000ToNkgEtrf00Pipeline = CreateNkgOperationPipeline(
+        """
+        +step +proj=helmert +x=0.054 +y=0.051 +z=-0.048 +rx=0.000891 +ry=0.00539
+              +rz=-0.008712 +s=0 +dx=0 +dy=0 +dz=0 +drx=8.1e-05 +dry=0.00049
+              +drz=-0.000792 +ds=0 +t_epoch=2000 +convention=position_vector
+        +step +inv +proj=deformation +t_epoch=2000.0
+              +grids=eur_nkg_nkgrf03vel_realigned.tif
+        """);
+
+    private static readonly string NkgItrf2014ToNkgEtrf14Pipeline = CreateNkgOperationPipeline(
+        """
+        +step +proj=helmert +x=0 +y=0 +z=0 +rx=0 +ry=0 +rz=0 +s=0 +dx=0 +dy=0 +dz=0
+              +drx=8.5e-05 +dry=0.000531 +drz=-0.00077 +ds=0 +t_epoch=1989
+              +convention=position_vector
+        +step +inv +proj=deformation +t_epoch=2000.0 +grids=eur_nkg_nkgrf17vel.tif
+        """);
+
+    private static readonly string NkgEtrf00ToDkSteps = NormalizeOperationWhitespace(
+        """
+        +step +proj=helmert +x=0.03863 +y=0.147 +z=0.02776 +rx=0.00617753 +ry=5.064e-05
+              +rz=4.729e-05 +s=-0.00942 +convention=position_vector
+        +step +proj=deformation +dt=-5.296 +grids=eur_nkg_nkgrf03vel_realigned.tif
+        """);
+
+    private static readonly string NkgEtrf00ToEeSteps = NormalizeOperationWhitespace(
+        """
+        +step +proj=helmert +x=0.12194 +y=0.02225 +z=-0.03541 +rx=0.00227196
+              +ry=-0.00323934 +rz=0.00247008 +s=-0.005626 +convention=position_vector
+        +step +proj=deformation +dt=-2.44 +grids=eur_nkg_nkgrf03vel_realigned.tif
+        """);
+
+    private static readonly string NkgEtrf00ToFiSteps = NormalizeOperationWhitespace(
+        """
+        +step +proj=helmert +x=0.07251 +y=-0.13019 +z=-0.11323 +rx=-0.00157399
+              +ry=-0.00308833 +rz=0.00410332 +s=0.013012 +convention=position_vector
+        +step +proj=deformation +dt=-3.0 +grids=eur_nkg_nkgrf03vel_realigned.tif
+        """);
+
+    private static readonly string NkgEtrf00ToLvSteps = NormalizeOperationWhitespace(
+        """
+        +step +proj=helmert +x=0.41812 +y=-0.78105 +z=-0.01335 +rx=-0.0216436
+              +ry=-0.0115184 +rz=0.01719911 +s=0.000757 +convention=position_vector
+        +step +proj=deformation +dt=-7.25 +grids=eur_nkg_nkgrf03vel_realigned.tif
+        """);
+
+    private static readonly string NkgEtrf00ToLtSteps = NormalizeOperationWhitespace(
+        """
+        +step +proj=helmert +x=0.05692 +y=0.115495 +z=-0.00078 +rx=0.00314291
+              +ry=-0.00147975 +rz=-0.00134758 +s=-0.006182 +convention=position_vector
+        +step +proj=deformation +dt=3.75 +grids=eur_nkg_nkgrf03vel_realigned.tif
+        """);
+
+    private static readonly string NkgEtrf00ToNoSteps = NormalizeOperationWhitespace(
+        """
+        +step +proj=helmert +x=-0.13116 +y=-0.02817 +z=0.02036 +rx=-0.00038674
+              +ry=0.00408947 +rz=0.00103588 +s=0.006569 +convention=position_vector
+        +step +proj=deformation +dt=-5 +grids=eur_nkg_nkgrf03vel_realigned.tif
+        """);
+
+    private static readonly string NkgEtrf00ToSeSteps = NormalizeOperationWhitespace(
+        """
+        +step +proj=helmert +x=-0.01642 +y=-0.00064 +z=-0.0305 +rx=0.00187431
+              +ry=0.00046382 +rz=0.00228487 +s=0.001861 +convention=position_vector
+        +step +proj=deformation +dt=-0.5 +grids=eur_nkg_nkgrf03vel_realigned.tif
+        """);
+
+    private static readonly string NkgEtrf14ToDkSteps = NormalizeOperationWhitespace(
+        """
+        +step +proj=helmert +x=0.66818 +y=0.04453 +z=-0.45049 +rx=0.00312883
+              +ry=-0.02373423 +rz=0.00442969 +s=-0.003136 +convention=position_vector
+        +step +proj=deformation +dt=15.829 +grids=eur_nkg_nkgrf17vel.tif
+        """);
+
+    private static readonly string NkgEtrf14ToEeSteps = NormalizeOperationWhitespace(
+        """
+        +step +proj=helmert +x=-0.05027 +y=-0.11595 +z=0.03012 +rx=-0.00310814
+              +ry=0.00457237 +rz=0.00472406 +s=0.003191 +convention=position_vector
+        +step +proj=deformation +dt=-2.44 +grids=eur_nkg_nkgrf17vel.tif
+        """);
+
+    private static readonly string NkgEtrf14ToFiSteps = NormalizeOperationWhitespace(
+        """
+        +step +proj=helmert +x=0.15651 +y=-0.10993 +z=-0.10935 +rx=-0.00312861
+              +ry=-0.00378935 +rz=0.00403512 +s=0.00529 +convention=position_vector
+        +step +proj=deformation +dt=-3 +grids=eur_nkg_nkgrf17vel.tif
+        """);
+
+    private static readonly string NkgEtrf14ToLvSteps = NormalizeOperationWhitespace(
+        """
+        +step +proj=helmert +x=0.09745 +y=-0.69388 +z=0.52901 +rx=-0.0192069
+              +ry=0.01043272 +rz=0.02327169 +s=-0.049663 +convention=position_vector
+        +step +proj=deformation +dt=-7.25 +grids=eur_nkg_nkgrf17vel.tif
+        """);
+
+    private static readonly string NkgEtrf14ToLtSteps = NormalizeOperationWhitespace(
+        """
+        +step +proj=helmert +x=0.36749 +y=0.14351 +z=-0.18472 +rx=0.0047914
+              +ry=-0.01027566 +rz=0.00276102 +s=-0.003684 +convention=position_vector
+        +step +proj=deformation +dt=3.75 +grids=eur_nkg_nkgrf17vel.tif
+        """);
+
+    private static readonly string NkgEtrf14ToNoSteps = NormalizeOperationWhitespace(
+        """
+        +step +proj=xyzgridshift +grids=no_kv_NKGETRF14_EPSG7922_2000.tif
+        +step +proj=deformation +dt=-5 +grids=eur_nkg_nkgrf17vel.tif
+        """);
+
+    private static readonly string NkgEtrf14ToSeSteps = NormalizeOperationWhitespace(
+        """
+        +step +proj=helmert +x=0.03054 +y=0.04606 +z=-0.07944 +rx=0.00141958
+              +ry=0.00015132 +rz=0.00150337 +s=0.003002 +convention=position_vector
+        +step +proj=deformation +dt=-0.5 +grids=eur_nkg_nkgrf17vel.tif
+        """);
+
+    private static readonly Dictionary<string, string> NkgCoordinateOperationPipelineByCode = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["ITRF2000_TO_NKG_ETRF00"] = NkgItrf2000ToNkgEtrf00Pipeline,
+        ["ITRF2000_TO_DK"] = AppendNkgOperationPipeline(NkgItrf2000ToNkgEtrf00Pipeline, NkgEtrf00ToDkSteps),
+        ["ETRF00_TO_DK"] = CreateNkgOperationPipeline(NkgEtrf00ToDkSteps),
+        ["ITRF2014_TO_DK"] = AppendNkgOperationPipeline(NkgItrf2014ToNkgEtrf14Pipeline, NkgEtrf14ToDkSteps),
+        ["ITRF2014_TO_NKG_ETRF14"] = NkgItrf2014ToNkgEtrf14Pipeline,
+        ["ETRF14_TO_DK"] = CreateNkgOperationPipeline(NkgEtrf14ToDkSteps),
+        ["ITRF2000_TO_EE"] = AppendNkgOperationPipeline(NkgItrf2000ToNkgEtrf00Pipeline, NkgEtrf00ToEeSteps),
+        ["ETRF00_TO_EE"] = CreateNkgOperationPipeline(NkgEtrf00ToEeSteps),
+        ["ITRF2014_TO_EE"] = AppendNkgOperationPipeline(NkgItrf2014ToNkgEtrf14Pipeline, NkgEtrf14ToEeSteps),
+        ["ITRF2000_TO_FI"] = AppendNkgOperationPipeline(NkgItrf2000ToNkgEtrf00Pipeline, NkgEtrf00ToFiSteps),
+        ["ITRF2000_TO_FI_EUREF-FIN"] = AppendNkgOperationPipeline(NkgItrf2000ToNkgEtrf00Pipeline, NkgEtrf00ToFiSteps),
+        ["ETRF00_TO_FI"] = CreateNkgOperationPipeline(NkgEtrf00ToFiSteps),
+        ["ITRF2014_TO_FI"] = AppendNkgOperationPipeline(NkgItrf2014ToNkgEtrf14Pipeline, NkgEtrf14ToFiSteps),
+        ["ITRF2014_TO_FI_EUREF-FIN"] = AppendNkgOperationPipeline(NkgItrf2014ToNkgEtrf14Pipeline, NkgEtrf14ToFiSteps),
+        ["ITRF2000_TO_LV"] = AppendNkgOperationPipeline(NkgItrf2000ToNkgEtrf00Pipeline, NkgEtrf00ToLvSteps),
+        ["ETRF00_TO_LV"] = CreateNkgOperationPipeline(NkgEtrf00ToLvSteps),
+        ["ITRF2014_TO_LV"] = AppendNkgOperationPipeline(NkgItrf2014ToNkgEtrf14Pipeline, NkgEtrf14ToLvSteps),
+        ["ITRF2000_TO_LT"] = AppendNkgOperationPipeline(NkgItrf2000ToNkgEtrf00Pipeline, NkgEtrf00ToLtSteps),
+        ["ETRF00_TO_LT"] = CreateNkgOperationPipeline(NkgEtrf00ToLtSteps),
+        ["ITRF2014_TO_LT"] = AppendNkgOperationPipeline(NkgItrf2014ToNkgEtrf14Pipeline, NkgEtrf14ToLtSteps),
+        ["ITRF2000_TO_NO"] = AppendNkgOperationPipeline(NkgItrf2000ToNkgEtrf00Pipeline, NkgEtrf00ToNoSteps),
+        ["ETRF00_TO_NO"] = CreateNkgOperationPipeline(NkgEtrf00ToNoSteps),
+        ["ITRF2014_TO_NO"] = AppendNkgOperationPipeline(NkgItrf2014ToNkgEtrf14Pipeline, NkgEtrf14ToNoSteps),
+        ["ITRF2000_TO_SE"] = AppendNkgOperationPipeline(NkgItrf2000ToNkgEtrf00Pipeline, NkgEtrf00ToSeSteps),
+        ["ETRF00_TO_SE"] = CreateNkgOperationPipeline(NkgEtrf00ToSeSteps),
+        ["ITRF2014_TO_SE"] = AppendNkgOperationPipeline(NkgItrf2014ToNkgEtrf14Pipeline, NkgEtrf14ToSeSteps),
     };
 
     private static readonly HashSet<string> ConversionProjCodes = new(StringComparer.OrdinalIgnoreCase)
@@ -480,6 +626,8 @@ public class GieBuiltinsTheoryTests
                 continue;
             }
 
+            string normalizedOperation = NormalizeOperationForRuntime(item.Operation);
+
             if (fileName.Equals("DHDN_ETRS89.gie", StringComparison.OrdinalIgnoreCase)
                 && HasGeographicDatumShift(item.Operation)
                 && (!IsLikelyGeographicCoordinatePair(item.Accept) || !IsLikelyGeographicCoordinatePair(item.Expect)))
@@ -488,7 +636,7 @@ public class GieBuiltinsTheoryTests
                 continue;
             }
 
-            if (!TryExtractProjCode(item.Operation, out string? projCode) || projCode is null)
+            if (!TryExtractProjCode(normalizedOperation, out string? projCode) || projCode is null)
             {
                 firstFilteredCase ??= item;
                 continue;
@@ -500,7 +648,7 @@ public class GieBuiltinsTheoryTests
                 continue;
             }
 
-            if (!TryIsRuntimeOperationSupported(item.Operation))
+            if (!TryIsRuntimeOperationSupported(normalizedOperation))
             {
                 firstFilteredCase ??= item;
                 continue;
@@ -753,6 +901,11 @@ public class GieBuiltinsTheoryTests
 
     private static string NormalizeOperationForRuntime(string operation)
     {
+        if (TryExpandKnownCoordinateOperationUrn(operation, out string? expandedOperation))
+        {
+            operation = expandedOperation;
+        }
+
         string[] tokens = TokenizeOperation(operation);
         if (tokens.Length == 0)
         {
@@ -773,6 +926,25 @@ public class GieBuiltinsTheoryTests
         normalizedOperation = ExpandLegacyInitDefinitions(normalizedOperation);
         normalizedOperation = RewriteLegacyGeoidGridOperation(normalizedOperation);
         return ResolveKnownTestGridPaths(normalizedOperation);
+    }
+
+    private static bool TryExpandKnownCoordinateOperationUrn(string operation, [NotNullWhen(true)] out string? expandedOperation)
+    {
+        expandedOperation = null;
+        if (string.IsNullOrWhiteSpace(operation)
+            || !operation.StartsWith(NkgCoordinateOperationUrnPrefix, StringComparison.OrdinalIgnoreCase))
+        {
+            return false;
+        }
+
+        string code = operation[NkgCoordinateOperationUrnPrefix.Length..];
+        if (!NkgCoordinateOperationPipelineByCode.TryGetValue(code, out string? pipeline))
+        {
+            return false;
+        }
+
+        expandedOperation = pipeline;
+        return true;
     }
 
     private static string RewriteLegacyGeoidGridOperation(string operation)
@@ -1967,13 +2139,33 @@ public class GieBuiltinsTheoryTests
     private static bool TryGetKnownUnsupportedOperationSkipReason(string operation, out string? skipReason)
     {
         skipReason = null;
+        if (TryExpandKnownCoordinateOperationUrn(operation, out _))
+        {
+            return false;
+        }
+
         if (operation.StartsWith("urn:ogc:def:coordinateOperation:", StringComparison.OrdinalIgnoreCase))
         {
-            skipReason = "URN-based coordinate operations are not mapped in the current builtins wave.";
+            skipReason = "URN-based coordinate operations are not mapped by the current builtins harness.";
             return true;
         }
 
         return false;
+    }
+
+    private static string CreateNkgOperationPipeline(string steps)
+    {
+        return NormalizeOperationWhitespace($"+proj=pipeline +ellps=GRS80 {steps}");
+    }
+
+    private static string AppendNkgOperationPipeline(string prefixPipeline, string steps)
+    {
+        return NormalizeOperationWhitespace($"{prefixPipeline} {steps}");
+    }
+
+    private static string NormalizeOperationWhitespace(string operation)
+    {
+        return string.Join(" ", operation.Split(PipelineWhitespaceSeparators, StringSplitOptions.RemoveEmptyEntries));
     }
 
     private static bool TryExtractProjCode(string operation, out string? projCode)

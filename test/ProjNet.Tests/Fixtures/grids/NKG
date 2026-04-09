@@ -1,0 +1,186 @@
+################################################################################
+#
+#
+#                       NKG Common Nordic Reference Frame
+#
+#   Transformations to and from the common Nordic referenc frame NKG_ETRF00.
+#   This init-file describes transformations between global reference frames
+#   and NKG_ETRF00 as well as transformations from NKG_ERTF00 to the local
+#   realisations of ETRS89 in each of the countries involved with NKG.
+#
+#   All transformations in this init-file uses the common Nordic frame as a
+#   pivot datum. Exempt from this dogma are transformations with labels
+#   starting with "_". Those transformations are "private" to this file and are
+#   only used as steps in more complicated transformations.
+#
+#   Sources:
+#
+#   [0] Häkli, P. et al, 2016, The NKG2008 GPS Campaign - final transformation
+#       results and a new common Nordic reference frame.
+#       https://www.degruyter.com/downloadpdf/j/jogs.2016.6.issue-1/jogs-2016-0001/jogs-2016-0001.pdf
+#
+#   [1] Häkli, P., 2019, ETRS89 Transformations in Fennoscandia (NKG transformation),
+#       EUREF2019 Tutorial.
+#       http://www.euref.eu/documentation/Tutorial2019/t-03-Hakli.pdf
+###############################################################################
+
+###############################################################################
+#
+#                                   Global Frames
+#
+#   Input:  Cartesian coordinates
+#   Output: Cartesian coordinates
+#
+###############################################################################
+
+# NKG_ETRF00 -> ITRF2008
+<ITRF2008>  proj = pipeline ellps = GRS80
+
+    # NKG_ETRF00@2000.0 -> ETRF00@t_obs
+    step    proj = deformation t_epoch = 2000.0
+            grids = eur_nkg_nkgrf03vel_realigned.tif
+
+
+    # ETRF00@t_obs -> ITRF2000@t_obs
+    step    init = NKG:ITRF2000_ETRF2000 inv
+
+    # ITRF2000@t_obs -> ITRF2008@t_obs
+    step    init = ITRF2008:ITRF2000 inv
+
+
+# NKG_ETRF00 -> ITRF2014
+<ITRF2014>  proj = pipeline ellps = GRS80
+
+    # NKG_ETRF00@2000.0 -> ETRF00@t_obs
+    step    proj = deformation t_epoch = 2000.0
+            grids = eur_nkg_nkgrf03vel_realigned.tif
+
+    # ETRF00@t_obs -> ITRF2000@t_obs
+    step    init = NKG:ITRF2000_ETRF2000 inv
+
+    # ITRF2000@t_obs -> ITRF2014@t_obs
+    step    init = ITRF2014:ITRF2000 inv
+
+# ITRF2000 -> ETRF2000
+# Source: Specifications for reference frame fixing in the analysis of a
+#         EUREF GPS campaign - http://etrs89.ensg.ign.fr/memo-V8.pdf
+<ITRF2000_ETRF2000> proj=helmert x=0.054 +y=0.051 z=-0.048 rx=0.000891 ry=0.00539 rz=-0.008712
+                                 drx=8.1e-05 dry=0.00049 drz=-0.000792 t_epoch=2000.0 convention=position_vector
+
+
+###############################################################################
+#
+#                       National ETRS89 Realizations
+#
+#   Input:  Cartesian coordinates
+#   Output: Geodetic coordinates
+#
+###############################################################################
+
+# NKG_ETRF00 -> ETRS89(DK) [ETRF92@1994.704]
+<DK> proj = pipeline ellps=GRS80
+
+     step init = NKG:_P1DK
+
+     step proj = deformation dt = -5.296
+          grids = eur_nkg_nkgrf03vel_realigned.tif
+
+     step proj=cart inv
+
+# NKG_ETRF00 -> ETRS89(EE) [ETRF96@1997.56]
+<EE> proj = pipeline ellps = GRS80
+
+     step init = NKG:_P1EE
+
+     step proj = deformation dt = -2.44
+          grids = eur_nkg_nkgrf03vel_realigned.tif
+
+     step proj = cart inv
+
+# The Faroese Islands are outside the defined area for the uplift model and
+# should be treated accordingly.
+# # NKG_ETRF00 -> ETRS89(FO) [ETRS2000@2008.75]
+# <FO>
+
+# NKG_ETRF00 -> ETRS89(FI) [ETRF96@1997.0]
+<FI> proj = pipeline ellps = GRS80
+
+     step init = NKG:_P1FI
+
+     step proj = deformation dt = -3
+          grids = eur_nkg_nkgrf03vel_realigned.tif
+
+    step proj=cart inv
+
+# NKG_ETRF00 -> ETRS89(LV) [ETRF89@1992.75]
+<LV> proj = pipeline ellps = GRS80
+
+     step init = NKG:_P1LV
+
+     step proj = deformation dt = -7.25
+          grids = eur_nkg_nkgrf03vel_realigned.tif
+
+     step proj = cart inv
+
+# NKG_ETRF00 -> ETRS89(LT) [ETRF2000@2003.75]
+<LT> proj = pipeline ellps = GRS80
+
+     step init = NKG:_P1LT
+
+     step proj = deformation  dt = 3.75
+          grids = eur_nkg_nkgrf03vel_realigned.tif
+
+    step proj=cart inv
+
+# NKG_ETRF00 -> ETRS89(NO) [ETRF93@1995.0]
+<NO> proj = pipeline ellps = GRS80
+
+     step init = NKG:_P1NO
+
+     step proj = deformation  dt = -5
+          grids = eur_nkg_nkgrf03vel_realigned.tif
+
+    step proj=cart inv
+
+# NKG_ETRF00 -> ETRS89(SE) [ETRF97@1999.5]
+<SE> proj = pipeline ellps = GRS80
+
+     step init = NKG:_P1SE
+
+     step proj = deformation -0.5
+          grids = eur_nkg_nkgrf03vel_realigned.tif
+
+     step proj = cart inv
+
+
+###############################################################################
+#
+#                           "Private" transformations
+#
+###############################################################################
+
+# The Helmert definitions below are taken from table 8 in [0]. The table lists
+# parameters for Helmert transformations between NKG_ERTF00@2000.0 and the
+# local realisation of ETRS89 at epoch 2000.0. Transformations starting with
+# "_P1" are only to be used with the realigned velocity model, whereas
+# transformations starting with "_P2" are to be used with the original velocity
+# model of 2003.
+
+<_P1DK> proj=helmert convention=position_vector x= 0.03863 y= 0.147   z= 0.02776 s=-0.009420 rx= 0.00617753 ry= 5.064e-05  rz= 4.729e-05
+<_P1EE> proj=helmert convention=position_vector x= 0.12194 y= 0.02225 z=-0.03541 s=-0.005626 rx= 0.00227196 ry=-0.00323934 rz= 0.00247008
+<_P1FO> proj=helmert convention=position_vector x=-0.10947 y= 0.235   z= 0.09432 s=-0.002626 rx= 0.00734019 ry= 0.00454595 rz=-0.00253141
+<_P1FI> proj=helmert convention=position_vector x= 0.07251 y=-0.13019 z=-0.11323 s= 0.013012 rx=-0.00157399 ry=-0.00308833 rz= 0.00410332
+<_P1LV> proj=helmert convention=position_vector x= 0.41812 y=-0.78105 z=-0.01335 s= 0.000757 rx=-0.0216436  ry=-0.0115184  rz= 0.01719911
+<_P1LT> proj=helmert convention=position_vector x= 0.05692 y= 0.11549 z=-0.00078 s=-0.006182 rx= 0.00314291 ry=-0.00147975 rz=-0.00134758
+<_P1NO> proj=helmert convention=position_vector x=-0.13116 y=-0.02817 z=0.02036  s= 0.006569 rx=-0.00038674 ry= 0.00408947 rz= 0.00103588
+<_P1SE> proj=helmert convention=position_vector x=-0.01642 y=-0.00064 z=-0.0305  s= 0.001861 rx= 0.00187431 ry= 0.00046382 rz= 0.00228487
+
+
+<_P2DK> proj=helmert convention=position_vector x= 0.02746 y= 0.14404 z= 0.02104 s=-0.006958 rx= 0.00609221 ry= 0.00021292 rz=-2.866e-05
+<_P2EE> proj=helmert convention=position_vector x= 0.1168  y= 0.02088 z=-0.03851 s= 0.004492 rx= 0.00223263 ry=-0.00316453 rz= 0.00243507
+<_P2FO> proj=helmert convention=position_vector x=-0.10947 y= 0.235   z= 0.09432 s=-0.002626 rx= 0.00734019 ry= 0.00454595 rz=-0.00253141
+<_P2FI> proj=helmert convention=position_vector x= 0.06618 y=-0.13187 z=-0.11704 s= 0.14407  rx=-0.00162235 ry=-0.00299635 rz= 0.00406027
+<_P2LV> proj=helmert convention=position_vector x= 0.40283 y=-0.78511 z=-0.02256 s= 0.004128 rx=-0.02176047 ry=-0.01129611 rz= 0.01709507
+<_P2LT> proj=helmert convention=position_vector x= 0.06483 y= 0.11759 z= 0.00398 s=-0.007925 rx= 0.00320336 ry=-0.00159472 rz=-0.00129376
+<_P2NO> proj=helmert convention=position_vector x=-0.14171 y=-0.03097 z= 0.01401 s= 0.008894 rx=-0.00046734 ry= 0.00424277 rz= 0.00096413
+<_P2SE> proj=helmert convention=position_vector x=-0.01748 y=-0.00092 z=-0.03114 s= 2.093    rx= 0.00186625 ry= 0.00047915 rz= 0.00227769
