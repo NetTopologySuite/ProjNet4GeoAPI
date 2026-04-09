@@ -191,13 +191,8 @@ public class ProjReferenceTests
         double forwardDeltaX = Math.Abs(forwardResult[0] - testCase.ForwardX);
         double forwardDeltaY = Math.Abs(forwardResult[1] - testCase.ForwardY);
 
-        // Cross-library forward comparison: skip if ProjNet result diverges too far from PROJ
-        // (e.g., for coordinates far outside the valid projection domain).
-        if (forwardDeltaX > testCase.ToleranceMeters || forwardDeltaY > testCase.ToleranceMeters)
-        {
-            Assert.Skip($"Forward delta ({forwardDeltaX.ToString("R", CultureInfo.InvariantCulture)}, {forwardDeltaY.ToString("R", CultureInfo.InvariantCulture)}) exceeds tolerance {testCase.ToleranceMeters.ToString("R", CultureInfo.InvariantCulture)} m — coordinate may be outside valid projection zone.");
-            return;
-        }
+        Assert.InRange(forwardDeltaX, 0d, testCase.ToleranceMeters);
+        Assert.InRange(forwardDeltaY, 0d, testCase.ToleranceMeters);
 
         ICoordinateTransformation inverseTransformation;
         try
