@@ -8,7 +8,7 @@ namespace ProjNet.Tests.IO.CoordinateSystems;
 /// </summary>
 /// <param name="Keyword">The WKT2 keyword.</param>
 /// <param name="Status">The current support classification.</param>
-/// <param name="Reference">The primary reader reference for that classification.</param>
+/// <param name="Reference">The primary reader symbol reference for that classification.</param>
 /// <param name="Notes">A short explanation of the current behavior.</param>
 internal sealed record Wkt2KeywordCoverageRow(
     string Keyword,

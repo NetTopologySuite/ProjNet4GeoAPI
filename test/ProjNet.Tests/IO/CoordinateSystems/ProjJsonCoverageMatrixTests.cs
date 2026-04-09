@@ -74,8 +74,8 @@ public class ProjJsonCoverageMatrixTests
             ProjJsonCoverageMatrix.Rows,
             row =>
             {
-                Assert.False(string.IsNullOrWhiteSpace(row.ReaderReference));
-                Assert.False(string.IsNullOrWhiteSpace(row.WriterReference));
+                CoverageReferenceAssert.AssertSymbolReferenceList(row.ReaderReference);
+                CoverageReferenceAssert.AssertSymbolReferenceList(row.WriterReference);
                 Assert.False(string.IsNullOrWhiteSpace(row.Notes));
             });
     }

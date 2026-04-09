@@ -6,35 +6,38 @@ namespace ProjNet.Tests.IO.CoordinateSystems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ProjNet.IO.CoordinateSystems;
 
 /// <summary>
 /// Provides the milestone-40 PROJJSON coverage matrix across reader and writer surfaces.
 /// </summary>
 internal static class ProjJsonCoverageMatrix
 {
-    private const string ReaderRootReference = "ProjJsonReader.cs:59-87";
-    private const string ReaderGeographicReference = "ProjJsonReader.cs:90-135";
-    private const string ReaderGeodeticReference = "ProjJsonReader.cs:137-199";
-    private const string ReaderProjectedReference = "ProjJsonReader.cs:201-243";
-    private const string ReaderVerticalReference = "ProjJsonReader.cs:245-284";
-    private const string ReaderCompoundReference = "ProjJsonReader.cs:286-321";
-    private const string ReaderConversionReference = "ProjJsonReader.cs:323-346";
-    private const string ReaderCoordinateSystemReference = "ProjJsonReader.cs:348-397";
-    private const string ReaderDatumReference = "ProjJsonReader.cs:399-425";
-    private const string ReaderUnitReference = "ProjJsonReader.cs:473-521";
-    private const string ReaderIdentifierReference = "ProjJsonReader.cs:523-555";
-    private const string ReaderEnsembleReference = "ProjJsonReader.cs:630-635";
-    private const string WriterRootReference = "ProjJsonWriter.cs:50-70";
-    private const string WriterGeographicReference = "ProjJsonWriter.cs:74-93";
-    private const string WriterGeocentricReference = "ProjJsonWriter.cs:95-114";
-    private const string WriterProjectedReference = "ProjJsonWriter.cs:116-139";
-    private const string WriterVerticalReference = "ProjJsonWriter.cs:141-157";
-    private const string WriterCompoundReference = "ProjJsonWriter.cs:159-172";
-    private const string WriterAxisReference = "ProjJsonWriter.cs:174-197, 406-428";
-    private const string WriterDatumReference = "ProjJsonWriter.cs:199-249";
-    private const string WriterConversionReference = "ProjJsonWriter.cs:251-357";
-    private const string WriterBoundReference = "ProjJsonWriter.cs:376-389";
-    private const string WriterIdentifierReference = "ProjJsonWriter.cs:392-404";
+    private const string Reader = nameof(ProjJsonReader);
+    private const string Writer = nameof(ProjJsonWriter);
+    private const string ReaderRootReference = Reader + ".Parse, " + Reader + ".ReadInfo";
+    private const string ReaderGeographicReference = Reader + ".ReadGeographicCoordinateSystem";
+    private const string ReaderGeodeticReference = Reader + ".ReadGeodeticCoordinateSystem, " + Reader + ".ReadGeocentricCoordinateSystem";
+    private const string ReaderProjectedReference = Reader + ".ReadProjectedCoordinateSystem";
+    private const string ReaderVerticalReference = Reader + ".ReadVerticalCoordinateSystem";
+    private const string ReaderCompoundReference = Reader + ".ReadCompoundCoordinateSystem";
+    private const string ReaderConversionReference = Reader + ".ReadConversion, " + Reader + ".NormalizeProjectionParameterName";
+    private const string ReaderCoordinateSystemReference = Reader + ".ReadCoordinateSystemDefinition, " + Reader + ".ReadAxis, " + Reader + ".ParseAxisOrientation";
+    private const string ReaderDatumReference = Reader + ".ReadHorizontalDatum, " + Reader + ".ReadVerticalDatum, " + Reader + ".ReadEllipsoid";
+    private const string ReaderUnitReference = Reader + ".ReadAngularUnit, " + Reader + ".ReadLinearUnit, " + Reader + ".IsAngularUnit, " + Reader + ".IsLinearUnit";
+    private const string ReaderIdentifierReference = Reader + ".ReadIdentifier, " + Reader + ".ReadSingleIdentifier";
+    private const string ReaderEnsembleReference = Reader + ".EnsureNoDatumEnsemble";
+    private const string WriterRootReference = Writer + ".ToJson, " + Writer + ".WriteTo, " + Writer + ".WriteCoordinateSystem";
+    private const string WriterGeographicReference = Writer + ".WriteGeographicCoordinateSystem";
+    private const string WriterGeocentricReference = Writer + ".WriteGeocentricCoordinateSystem";
+    private const string WriterProjectedReference = Writer + ".WriteProjectedCoordinateSystem";
+    private const string WriterVerticalReference = Writer + ".WriteVerticalCoordinateSystem";
+    private const string WriterCompoundReference = Writer + ".WriteCompoundCoordinateSystem, " + Writer + ".WriteCompoundComponents, " + Writer + ".WriteCompoundComponent";
+    private const string WriterAxisReference = Writer + ".WriteCoordinateSystemDefinition, " + Writer + ".WriteAxis, " + Writer + ".GetAxisDirection";
+    private const string WriterDatumReference = Writer + ".WriteHorizontalDatum, " + Writer + ".WriteEllipsoid, " + Writer + ".WritePrimeMeridian, " + Writer + ".WriteVerticalDatum";
+    private const string WriterConversionReference = Writer + ".WriteConversion, " + Writer + ".WriteMethod, " + Writer + ".WriteProjectionParameter, " + Writer + ".WriteUnit, " + Writer + ".WriteAngularUnit, " + Writer + ".WriteLinearUnit, " + Writer + ".WriteScaleUnit";
+    private const string WriterBoundReference = Writer + ".ThrowIfBoundHorizontalDatumRequiresBoundCrs, " + Writer + ".ThrowIfBoundVerticalMetadataRequiresBoundCrs";
+    private const string WriterIdentifierReference = Writer + ".WriteIdentifier";
 
     /// <summary>
     /// Gets the current milestone-40 PROJJSON coverage rows.
@@ -194,9 +197,9 @@ internal static class ProjJsonCoverageMatrix
             Row(
                 "prime_meridian",
                 ProjJsonCoverageStatus.Supported,
-                "ProjJsonReader.cs:96-98, 160-162, 461-470",
+                Reader + ".ReadGeographicCoordinateSystem, " + Reader + ".ReadGeodeticCoordinateSystem, " + Reader + ".ReadPrimeMeridian",
                 ProjJsonCoverageStatus.Supported,
-                "ProjJsonWriter.cs:85-86, 106-107, 231-239",
+                Writer + ".WriteGeographicCoordinateSystem, " + Writer + ".WriteGeocentricCoordinateSystem, " + Writer + ".WritePrimeMeridian",
                 "Prime meridians are parsed and emitted natively."),
             Row(
                 "ProjectedCRS",

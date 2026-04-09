@@ -8,9 +8,9 @@ namespace ProjNet.Tests.IO.CoordinateSystems;
 /// </summary>
 /// <param name="Feature">The tracked PROJJSON type or structural feature.</param>
 /// <param name="ReaderStatus">The current reader support status.</param>
-/// <param name="ReaderReference">The primary reader code reference.</param>
+/// <param name="ReaderReference">The primary reader symbol reference.</param>
 /// <param name="WriterStatus">The current writer support status.</param>
-/// <param name="WriterReference">The primary writer code reference.</param>
+/// <param name="WriterReference">The primary writer symbol reference.</param>
 /// <param name="Notes">A short explanation of the current behavior.</param>
 internal sealed record ProjJsonCoverageRow(
     string Feature,

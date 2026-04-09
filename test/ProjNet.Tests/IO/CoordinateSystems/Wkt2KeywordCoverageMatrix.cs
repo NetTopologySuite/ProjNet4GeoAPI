@@ -6,32 +6,34 @@ namespace ProjNet.Tests.IO.CoordinateSystems;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ProjNet.IO.CoordinateSystems;
 
 /// <summary>
 /// Provides the milestone-40 WKT2 keyword coverage matrix.
 /// </summary>
 internal static class Wkt2KeywordCoverageMatrix
 {
-    private const string RootDispatchReference = "CoordinateSystemWktReader.cs:79-129";
-    private const string GeodeticReference = "CoordinateSystemWktReader.cs:161-326";
-    private const string CoordinateSystemReference = "CoordinateSystemWktReader.cs:401-441";
-    private const string AxisReference = "CoordinateSystemWktReader.cs:443-518";
-    private const string HorizontalDatumReference = "CoordinateSystemWktReader.cs:521-579";
-    private const string EllipsoidReference = "CoordinateSystemWktReader.cs:581-646";
-    private const string PrimeMeridianReference = "CoordinateSystemWktReader.cs:648-705";
-    private const string AngularUnitReference = "CoordinateSystemWktReader.cs:707-755";
-    private const string LinearUnitReference = "CoordinateSystemWktReader.cs:757-838";
-    private const string MetadataSkipReference = "CoordinateSystemWktReader.cs:862-877";
-    private const string ProjectedReference = "CoordinateSystemWktReader.cs:909-1038";
-    private const string BaseGeographicReference = "CoordinateSystemWktReader.cs:1040-1117";
-    private const string ConversionReference = "CoordinateSystemWktReader.cs:1119-1284";
-    private const string VerticalReference = "CoordinateSystemWktReader.cs:1286-1438";
-    private const string CompoundReference = "CoordinateSystemWktReader.cs:1440-1494";
-    private const string BoundReference = "CoordinateSystemWktReader.cs:1496-1915";
-    private const string IdentifierReference = "CoordinateSystemWktReader.cs:214-215, 482-485, 554-557, 621-624, 685-688, 961-964, 1331-1332, 1475-1477, 1734-1735";
-    private const string DefaultUnsupportedReference = "CoordinateSystemWktReader.cs:192-226, 943-965, 1316-1341, 1522-1539";
-    private const string UnsupportedTopLevelReference = "CoordinateSystemWktReader.cs:79-129, 2118-2128";
-    private const string NormalizationReference = "CoordinateSystemWktReader.cs:2092-2129";
+    private const string WktReader = nameof(CoordinateSystemWktReader);
+    private const string RootDispatchReference = WktReader + ".Parse, " + WktReader + ".TryParseNativeWkt2";
+    private const string GeodeticReference = WktReader + ".ReadWkt2GeodeticCoordinateReferenceSystem";
+    private const string CoordinateSystemReference = WktReader + ".ReadWkt2CoordinateSystemDefinition";
+    private const string AxisReference = WktReader + ".ReadWkt2Axis, " + WktReader + ".ParseWkt2AxisOrientation";
+    private const string HorizontalDatumReference = WktReader + ".ReadWkt2HorizontalDatum";
+    private const string EllipsoidReference = WktReader + ".ReadWkt2Ellipsoid";
+    private const string PrimeMeridianReference = WktReader + ".ReadWkt2PrimeMeridian";
+    private const string AngularUnitReference = WktReader + ".ReadWkt2AngularUnit";
+    private const string LinearUnitReference = WktReader + ".ReadWkt2LinearUnit";
+    private const string MetadataSkipReference = WktReader + ".ShouldSkipWkt2MetadataNode, " + WktReader + ".SkipKeywordNode";
+    private const string ProjectedReference = WktReader + ".ReadWkt2ProjectedCoordinateSystem";
+    private const string BaseGeographicReference = WktReader + ".ReadWkt2BaseGeographicCoordinateSystem";
+    private const string ConversionReference = WktReader + ".ReadWkt2Conversion, " + WktReader + ".ReadWkt2ProjectionMethod, " + WktReader + ".ReadWkt2ProjectionParameter, " + WktReader + ".NormalizeWkt2ProjectionParameterName";
+    private const string VerticalReference = WktReader + ".ReadWkt2VerticalCoordinateSystem, " + WktReader + ".ReadWkt2VerticalDatum";
+    private const string CompoundReference = WktReader + ".ReadWkt2CompoundCoordinateSystem";
+    private const string BoundReference = WktReader + ".ReadWkt2BoundCoordinateSystem, " + WktReader + ".ReadWkt2AbridgedTransformationDefinition, " + WktReader + ".ApplyWkt2HorizontalBoundCoordinateSystemToSource, " + WktReader + ".ApplyWkt2VerticalBoundCoordinateSystemToSource";
+    private const string IdentifierReference = WktReader + ".ReadWkt2Axis, " + WktReader + ".ReadWkt2HorizontalDatum, " + WktReader + ".ReadWkt2Ellipsoid, " + WktReader + ".ReadWkt2PrimeMeridian, " + WktReader + ".ReadWkt2ProjectedCoordinateSystem, " + WktReader + ".ReadWkt2VerticalCoordinateSystem, " + WktReader + ".ReadWkt2CompoundCoordinateSystem, " + WktReader + ".ReadWkt2AbridgedTransformationDefinition, " + WktReader + ".ReadIdentifierWithUnknownCode";
+    private const string DefaultUnsupportedReference = WktReader + ".ReadWkt2GeodeticCoordinateReferenceSystem, " + WktReader + ".ReadWkt2ProjectedCoordinateSystem, " + WktReader + ".ReadWkt2VerticalCoordinateSystem, " + WktReader + ".ReadWkt2BoundCoordinateSystemComponent, " + WktReader + ".ParseNormalizedWkt";
+    private const string UnsupportedTopLevelReference = WktReader + ".Parse, " + WktReader + ".TryParseNativeWkt2, " + WktReader + ".ParseNormalizedWkt";
+    private const string NormalizationReference = WktReader + ".NormalizeWkt, " + WktReader + ".ParseNormalizedWkt";
 
     /// <summary>
     /// Gets the current WKT2 coverage rows for all tracked milestone-40 keywords.

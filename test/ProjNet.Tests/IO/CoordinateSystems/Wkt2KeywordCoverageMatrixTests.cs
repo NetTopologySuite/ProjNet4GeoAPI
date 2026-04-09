@@ -42,7 +42,7 @@ public class Wkt2KeywordCoverageMatrixTests
             Wkt2KeywordCoverageMatrix.Rows,
             row =>
             {
-                Assert.False(string.IsNullOrWhiteSpace(row.Reference));
+                CoverageReferenceAssert.AssertSymbolReferenceList(row.Reference);
                 Assert.False(string.IsNullOrWhiteSpace(row.Notes));
             });
     }
