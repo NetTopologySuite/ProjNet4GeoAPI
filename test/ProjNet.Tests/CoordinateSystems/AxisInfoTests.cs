@@ -26,6 +26,21 @@ public class AxisInfoTests
     }
 
     /// <summary>
+    /// Verifies that the copy constructor duplicates the source values into a distinct instance.
+    /// </summary>
+    [Fact]
+    public void CopyConstructor_CopiesValuesIntoNewInstance()
+    {
+        var source = new AxisInfo("Longitude", AxisOrientationEnum.East);
+
+        var copy = new AxisInfo(source);
+
+        Assert.NotSame(source, copy);
+        Assert.Equal(source.Name, copy.Name);
+        Assert.Equal(source.Orientation, copy.Orientation);
+    }
+
+    /// <summary>
     /// Verifies that both properties can be updated after construction.
     /// </summary>
     [Fact]

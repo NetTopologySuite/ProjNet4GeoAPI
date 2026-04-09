@@ -9,11 +9,9 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Linq;
 using System.Text.Json;
 using Npgsql;
 using ProjNet.CoordinateSystems;
-using ProjNet.Data;
 using Xunit;
 
 /// <summary>
@@ -24,10 +22,8 @@ public class PostGisSpatialRefSysTableParserTests
     private static readonly Lazy<CoordinateSystemFactory> CoordinateSystemFactory =
         new(() => new CoordinateSystemFactory());
 
-    private static readonly Lazy<IReadOnlyDictionary<int, string>> ManagedCoordinateSystemWkts =
-        new(() => new ManagedCoordinateSystemDefinitionProvider()
-            .GetDefinitions()
-            .ToDictionary(definition => definition.Srid, definition => definition.Wkt));
+    private static readonly Lazy<string> TrackedWebMercatorWkt =
+        new(() => ProjectedCoordinateSystem.WebMercator.WKT);
 
     private static string? connectionString;
 
@@ -134,7 +130,7 @@ public class PostGisSpatialRefSysTableParserTests
 
     /// <summary>
     /// Generates the tracked <c>SRID.csv</c> file containing SRID and WKT pairs from the PostGIS <c>spatial_ref_sys</c> table.
-    /// Known problematic EPSG rows are normalized back to the managed catalog WKT so legacy PostGIS spellings do not regress semantics.
+    /// Known problematic EPSG rows are normalized back to the tracked canonical WKT so legacy PostGIS spellings do not regress semantics.
     /// </summary>
     [Fact] // Ignore("Only run this if you want a new SRID.csv file")
     public void TestCreateSridCsv()
@@ -190,17 +186,17 @@ public class PostGisSpatialRefSysTableParserTests
     }
 
     /// <summary>
-    /// Verifies that the legacy PostGIS EPSG:3857 row is normalized to the managed catalog WKT.
+    /// Verifies that the legacy PostGIS EPSG:3857 row is normalized to the tracked Web Mercator WKT.
     /// </summary>
     [Fact]
-    public void GetTrackedSridCsvWkt_WithDifferentManagedDefinition_PrefersManagedCatalogWkt()
+    public void GetTrackedSridCsvWkt_WithDifferentManagedDefinition_PrefersTrackedWebMercatorWkt()
     {
         const string legacyPseudoMercator = """PROJCS["WGS 84 / Pseudo-Mercator",GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]],PROJECTION["Mercator_1SP"],PARAMETER["central_meridian",0],PARAMETER["scale_factor",1],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["X",EAST],AXIS["Y",NORTH],EXTENSION["PROJ4","+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs"],AUTHORITY["EPSG","3857"]]""";
         CoordinateSystem parsed = CreateRequiredCoordinateSystem(legacyPseudoMercator);
 
         string normalized = GetTrackedSridCsvWkt(3857, legacyPseudoMercator, parsed);
 
-        Assert.Equal(ManagedCoordinateSystemWkts.Value[3857], normalized);
+        Assert.Equal(TrackedWebMercatorWkt.Value, normalized);
         Assert.NotEqual(legacyPseudoMercator, normalized);
         Assert.DoesNotContain("Mercator_1SP", normalized, StringComparison.Ordinal);
     }
@@ -237,13 +233,12 @@ public class PostGisSpatialRefSysTableParserTests
         if (srid != 3857
             || parsedCoordinateSystem is not ProjectedCoordinateSystem projectedCoordinateSystem
             || string.Equals(projectedCoordinateSystem.Projection.ClassName, "Popular Visualisation Pseudo-Mercator", StringComparison.Ordinal)
-            || !ManagedCoordinateSystemWkts.Value.TryGetValue(srid, out string? managedWkt)
-            || string.IsNullOrWhiteSpace(managedWkt))
+            || string.IsNullOrWhiteSpace(TrackedWebMercatorWkt.Value))
         {
             return srtext;
         }
 
-        return managedWkt;
+        return TrackedWebMercatorWkt.Value;
     }
 
     private static CoordinateSystem CreateRequiredCoordinateSystem(string wkt)

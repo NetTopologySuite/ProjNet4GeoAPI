@@ -43,6 +43,7 @@ namespace ProjNet.CoordinateSystems
     }
     public class AxisInfo
     {
+        public AxisInfo(ProjNet.CoordinateSystems.AxisInfo axisInfo) { }
         public AxisInfo(string name, ProjNet.CoordinateSystems.AxisOrientationEnum orientation) { }
         public string Name { get; set; }
         public ProjNet.CoordinateSystems.AxisOrientationEnum Orientation { get; set; }

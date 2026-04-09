@@ -29,6 +29,17 @@ public class AxisInfo
     }
 
     /// <summary>
+    /// Initializes a new instance of the <see cref="AxisInfo"/> class by copying an existing axis definition.
+    /// </summary>
+    /// <param name="axisInfo">The axis definition to copy.</param>
+    public AxisInfo(AxisInfo axisInfo)
+    {
+        axisInfo = ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo));
+        this.Name = axisInfo.Name;
+        this.Orientation = axisInfo.Orientation;
+    }
+
+    /// <summary>
     /// Gets or sets human readable name for axis. Possible values are X, Y, Long, Lat or any other short string.
     /// </summary>
     public string Name
