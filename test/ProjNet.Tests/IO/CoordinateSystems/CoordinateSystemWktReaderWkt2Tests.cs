@@ -217,6 +217,23 @@ public class CoordinateSystemWktReaderWkt2Tests
     }
 
     /// <summary>
+    /// Provides representative unsupported top-level WKT2 roots that are intentionally outside the current native or normalized reader surface.
+    /// </summary>
+    /// <returns>Keyword/WKT pairs that should still be rejected explicitly.</returns>
+    public static IEnumerable<TheoryDataRow<string, string, string>> UnsupportedTopLevelWkt2Rows()
+    {
+        return
+        [
+            new TheoryDataRow<string, string, string>("ENGCRS", """ENGCRS["Engineering example"]""", "ENGCRS"),
+            new TheoryDataRow<string, string, string>("PARAMETRICCRS", """PARAMETRICCRS["Parametric example"]""", "PARAMETRICCRS"),
+            new TheoryDataRow<string, string, string>("TIMECRS", """TIMECRS["Temporal example"]""", "TIMECRS"),
+            new TheoryDataRow<string, string, string>("COORDINATEMETADATA", """COORDINATEMETADATA["Metadata example"]""", "COORDINATEMETADATA"),
+            new TheoryDataRow<string, string, string>("DERIVEDPROJCRS", """DERIVEDPROJCRS["Derived projected example"]""", "DERIVEDPROJCS"),
+            new TheoryDataRow<string, string, string>("COORDINATEOPERATION", """COORDINATEOPERATION["Operation example"]""", "COORDINATEOPERATION"),
+        ];
+    }
+
+    /// <summary>
     /// Provides real supported <c>BOUNDCRS</c> fixtures extracted from the checked-in PROJ test suite.
     /// </summary>
     /// <returns>Fixture source labels and WKT2 strings that should parse onto the current source-CRS model.</returns>
@@ -478,6 +495,23 @@ public class CoordinateSystemWktReaderWkt2Tests
         NotSupportedException exception = Assert.Throws<NotSupportedException>(() => CoordinateSystemFactory.CreateFromWkt(wkt));
 
         Assert.Contains("ensembles", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Verifies representative unsupported WKT2 root keywords remain rejected instead of silently normalizing to an unrelated WKT1 path.
+    /// </summary>
+    /// <param name="keyword">The unsupported top-level WKT2 keyword.</param>
+    /// <param name="wkt">The representative WKT2 input.</param>
+    /// <param name="expectedMessageFragment">The keyword fragment currently surfaced by the reader path.</param>
+    [Theory]
+    [MemberData(nameof(UnsupportedTopLevelWkt2Rows))]
+    public void CreateFromWkt_WithUnsupportedTopLevelWkt2Keyword_ThrowsArgumentException(string keyword, string wkt, string expectedMessageFragment)
+    {
+        ArgumentException exception = Assert.Throws<ArgumentException>(() => CoordinateSystemFactory.CreateFromWkt(wkt));
+
+        Assert.True(
+            exception.Message.Contains(expectedMessageFragment, StringComparison.OrdinalIgnoreCase),
+            $"Expected the current reader boundary for {keyword} to surface '{expectedMessageFragment}', but got '{exception.Message}'.");
     }
 
     /// <summary>

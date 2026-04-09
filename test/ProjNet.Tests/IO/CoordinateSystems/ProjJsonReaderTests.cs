@@ -300,6 +300,24 @@ public class ProjJsonReaderTests
     }
 
     /// <summary>
+    /// Provides representative unsupported top-level PROJJSON type values from the milestone-40 coverage matrix.
+    /// </summary>
+    /// <returns>Type values that should still report the current unsupported boundary explicitly.</returns>
+    public static IEnumerable<TheoryDataRow<string>> UnsupportedTopLevelTypeRows()
+    {
+        return
+        [
+            new TheoryDataRow<string>("BoundCRS"),
+            new TheoryDataRow<string>("CoordinateMetadata"),
+            new TheoryDataRow<string>("EngineeringCRS"),
+            new TheoryDataRow<string>("ParametricCRS"),
+            new TheoryDataRow<string>("TimeCRS"),
+            new TheoryDataRow<string>("DerivedProjectedCRS"),
+            new TheoryDataRow<string>("ConcatenatedOperation"),
+        ];
+    }
+
+    /// <summary>
     /// Verifies supported PROJJSON geographic CRS parse to the same semantic model as the committed catalog reference.
     /// </summary>
     /// <param name="srid">Expected EPSG SRID.</param>
@@ -529,6 +547,21 @@ public class ProjJsonReaderTests
         NotSupportedException exception = Assert.Throws<NotSupportedException>(() => ProjJsonReader.Parse(json));
 
         Assert.Contains("ensembles", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Verifies representative unsupported top-level PROJJSON types remain explicit reader boundaries.
+    /// </summary>
+    /// <param name="type">The unsupported PROJJSON <c>type</c> value.</param>
+    [Theory]
+    [MemberData(nameof(UnsupportedTopLevelTypeRows))]
+    public void Parse_WithUnsupportedTopLevelType_ThrowsNotSupportedException(string type)
+    {
+        string json = Serialize(Obj(("type", type), ("name", "Unsupported test object")));
+
+        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => ProjJsonReader.Parse(json));
+
+        Assert.Contains(type, exception.Message, StringComparison.Ordinal);
     }
 
     private static string GetCatalogWkt(int srid)

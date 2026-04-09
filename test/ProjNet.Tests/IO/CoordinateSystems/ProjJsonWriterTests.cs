@@ -309,6 +309,76 @@ public class ProjJsonWriterTests
         Assert.Contains(nameof(FittedCoordinateSystem), exception.Message, StringComparison.Ordinal);
     }
 
+    /// <summary>
+    /// Verifies geographic CRS with retained WGS84 conversion metadata still report the current <c>BoundCRS</c> writer boundary explicitly.
+    /// </summary>
+    [Fact]
+    public void ToJson_WithGeographicCoordinateSystemUsingBoundMetadata_ThrowsNotSupportedException()
+    {
+        GeographicCoordinateSystem geographic = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+            "ED50 test",
+            AngularUnit.Degrees,
+            HorizontalDatum.ED50,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("Lon", AxisOrientationEnum.East),
+            new AxisInfo("Lat", AxisOrientationEnum.North));
+
+        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => ProjJsonWriter.ToJson(geographic));
+
+        Assert.Contains("BoundCRS", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Verifies projected CRS whose base datum retains WGS84 conversion metadata still report the current <c>BoundCRS</c> writer boundary explicitly.
+    /// </summary>
+    [Fact]
+    public void ToJson_WithProjectedCoordinateSystemUsingBoundMetadata_ThrowsNotSupportedException()
+    {
+        GeographicCoordinateSystem geographic = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+            "ED50 test",
+            AngularUnit.Degrees,
+            HorizontalDatum.ED50,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("Geodetic latitude (Lat)", AxisOrientationEnum.North),
+            new AxisInfo("Geodetic longitude (Lon)", AxisOrientationEnum.East));
+        IProjection projection = CoordinateSystemFactory.CreateProjection(
+            "ED50 TM",
+            "Transverse_Mercator",
+            new List<ProjectionParameter>
+            {
+                new("latitude_of_origin", 0),
+                new("central_meridian", 9),
+                new("scale_factor", 0.9996),
+                new("false_easting", 500000),
+                new("false_northing", 0),
+            });
+        ProjectedCoordinateSystem projected = CoordinateSystemFactory.CreateProjectedCoordinateSystem(
+            "ED50 / TM test",
+            geographic,
+            projection,
+            LinearUnit.Metre,
+            new AxisInfo("Easting", AxisOrientationEnum.East),
+            new AxisInfo("Northing", AxisOrientationEnum.North));
+
+        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => ProjJsonWriter.ToJson(projected));
+
+        Assert.Contains("BoundCRS", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Verifies vertical CRS with retained bound-grid metadata still report the current <c>BoundCRS</c> writer boundary explicitly.
+    /// </summary>
+    [Fact]
+    public void ToJson_WithVerticalCoordinateSystemUsingBoundGridMetadata_ThrowsNotSupportedException()
+    {
+        VerticalCoordinateSystem vertical = CreateBoundVerticalCoordinateSystem();
+
+        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => ProjJsonWriter.ToJson(vertical));
+
+        Assert.Contains("bound-grid", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("BoundCRS", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
     private static string GetCatalogWkt(int srid)
     {
         if (!CatalogDefinitions.Value.TryGetValue(srid, out string? wkt))
@@ -317,5 +387,34 @@ public class ProjJsonWriterTests
         }
 
         return wkt;
+    }
+
+    private static VerticalCoordinateSystem CreateBoundVerticalCoordinateSystem()
+    {
+        VerticalCoordinateSystem vertical = CoordinateSystemFactory.CreateVerticalCoordinateSystem(
+            "EGM96 height",
+            CoordinateSystemFactory.CreateVerticalDatum("EGM96 geoid", DatumType.VD_GeoidModelDerived),
+            LinearUnit.Metre,
+            new AxisInfo("gravity-related height (H)", AxisOrientationEnum.Up));
+        CompoundCoordinateSystem hub = CoordinateSystemFactory.CreateCompoundCoordinateSystem(
+            "WGS 84 + ellipsoidal height",
+            GeographicCoordinateSystem.WGS84,
+            CreateEllipsoidalHeightVerticalCoordinateSystem());
+
+        vertical.BoundGridTransformation = new VerticalBoundGridTransformation(
+            "Geographic3D to GravityRelatedHeight (EGM)",
+            "egm96_15.gtx",
+            hub);
+
+        return vertical;
+    }
+
+    private static VerticalCoordinateSystem CreateEllipsoidalHeightVerticalCoordinateSystem()
+    {
+        return CoordinateSystemFactory.CreateVerticalCoordinateSystem(
+            "Ellipsoidal height",
+            CoordinateSystemFactory.CreateVerticalDatum("Ellipsoidal height datum", DatumType.VD_Ellipsoidal),
+            LinearUnit.Metre,
+            new AxisInfo("Ellipsoidal height", AxisOrientationEnum.Up));
     }
 }

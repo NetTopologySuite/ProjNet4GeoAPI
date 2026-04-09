@@ -839,6 +839,19 @@ public class WktNodeTests
     }
 
     /// <summary>
+    /// Verifies that WKT2 <c>VERTCRS</c> output rejects retained bound-grid metadata until a dedicated <c>BOUNDCRS</c> writer exists.
+    /// </summary>
+    [Fact]
+    public void VerticalCoordinateSystem_ToWktNode_WithWkt22019AndBoundGridTransformation_ThrowsNotSupportedException()
+    {
+        VerticalCoordinateSystem original = CreateBoundVerticalCoordinateSystem();
+
+        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => original.ToWktNode(WktVersion.Wkt22019));
+
+        Assert.Contains("BOUNDCRS", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
     /// Verifies that WKT2 <c>COMPOUNDCRS</c> output roundtrips a compound coordinate system through the native WKT2 reader.
     /// </summary>
     [Fact]
@@ -1075,5 +1088,35 @@ public class WktNodeTests
             Assert.Equal(original.AxisInfo[i].Name, parsed.AxisInfo[i].Name);
             Assert.Equal(original.AxisInfo[i].Orientation, parsed.AxisInfo[i].Orientation);
         }
+    }
+
+    private static VerticalCoordinateSystem CreateBoundVerticalCoordinateSystem()
+    {
+        CoordinateSystemFactory factory = new();
+        VerticalCoordinateSystem vertical = factory.CreateVerticalCoordinateSystem(
+            "EGM96 height",
+            factory.CreateVerticalDatum("EGM96 geoid", DatumType.VD_GeoidModelDerived),
+            LinearUnit.Metre,
+            new AxisInfo("gravity-related height (H)", AxisOrientationEnum.Up));
+        CompoundCoordinateSystem hub = factory.CreateCompoundCoordinateSystem(
+            "WGS 84 + ellipsoidal height",
+            GeographicCoordinateSystem.WGS84,
+            CreateEllipsoidalHeightVerticalCoordinateSystem(factory));
+
+        vertical.BoundGridTransformation = new VerticalBoundGridTransformation(
+            "Geographic3D to GravityRelatedHeight (EGM)",
+            "egm96_15.gtx",
+            hub);
+
+        return vertical;
+    }
+
+    private static VerticalCoordinateSystem CreateEllipsoidalHeightVerticalCoordinateSystem(CoordinateSystemFactory factory)
+    {
+        return factory.CreateVerticalCoordinateSystem(
+            "Ellipsoidal height",
+            factory.CreateVerticalDatum("Ellipsoidal height datum", DatumType.VD_Ellipsoidal),
+            LinearUnit.Metre,
+            new AxisInfo("Ellipsoidal height", AxisOrientationEnum.Up));
     }
 }
