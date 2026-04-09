@@ -5,11 +5,15 @@
 namespace ProjNet.Tests.WKT;
 
 using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 using Npgsql;
 using ProjNet.CoordinateSystems;
+using ProjNet.Data;
 using Xunit;
 
 /// <summary>
@@ -19,6 +23,11 @@ public class PostGisSpatialRefSysTableParserTests
 {
     private static readonly Lazy<CoordinateSystemFactory> CoordinateSystemFactory =
         new(() => new CoordinateSystemFactory());
+
+    private static readonly Lazy<IReadOnlyDictionary<int, string>> ManagedCoordinateSystemWkts =
+        new(() => new ManagedCoordinateSystemDefinitionProvider()
+            .GetDefinitions()
+            .ToDictionary(definition => definition.Srid, definition => definition.Wkt));
 
     private static string? connectionString;
 
@@ -124,7 +133,8 @@ public class PostGisSpatialRefSysTableParserTests
     }
 
     /// <summary>
-    /// Generates a <c>SRID.csv</c> file containing SRID and WKT pairs from the PostGIS <c>spatial_ref_sys</c> table.
+    /// Generates the tracked <c>SRID.csv</c> file containing SRID and WKT pairs from the PostGIS <c>spatial_ref_sys</c> table.
+    /// Known problematic EPSG rows are normalized back to the managed catalog WKT so legacy PostGIS spellings do not regress semantics.
     /// </summary>
     [Fact] // Ignore("Only run this if you want a new SRID.csv file")
     public void TestCreateSridCsv()
@@ -134,12 +144,14 @@ public class PostGisSpatialRefSysTableParserTests
             Xunit.Assert.Skip("No Connection string provided or provided connection string invalid.");
         }
 
-        if (File.Exists("SRID.csv"))
+        string outputPath = GetTrackedTestFilePath("SRID.csv");
+
+        if (File.Exists(outputPath))
         {
-            File.Delete("SRID.csv");
+            File.Delete(outputPath);
         }
 
-        using (var sw = new StreamWriter(File.OpenWrite("SRID.csv")))
+        using (var sw = new StreamWriter(File.OpenWrite(outputPath)))
         using (var cn = new NpgsqlConnection(ConnectionString))
         {
             cn.Open();
@@ -150,26 +162,137 @@ public class PostGisSpatialRefSysTableParserTests
                 while (dr.Read())
                 {
                     int srid = dr.GetInt32(0);
-                    string srtext = dr.GetString(1);
-                    int bracketIndex = srtext.IndexOf('[', StringComparison.Ordinal);
-                    if (bracketIndex < 0)
+                    if (dr.IsDBNull(1))
                     {
                         continue;
                     }
 
-                    switch (srtext[..bracketIndex])
+                    string srtext = dr.GetString(1);
+                    if (string.IsNullOrWhiteSpace(srtext))
                     {
-                        case "PROJCS":
-                        case "GEOGCS":
-                        case "GEOCCS":
-                            sw.WriteLine($"{srid};{srtext}");
-                            break;
+                        continue;
+                    }
+
+                    if (!TryCreateCoordinateSystem(srtext, out CoordinateSystem? coordinateSystem))
+                    {
+                        continue;
+                    }
+
+                    if (ShouldIncludeInTrackedSridCsv(coordinateSystem))
+                    {
+                        sw.WriteLine($"{srid};{GetTrackedSridCsvWkt(srid, srtext, coordinateSystem)}");
                     }
                 }
             }
 
             cm.Dispose();
         }
+    }
+
+    /// <summary>
+    /// Verifies that the legacy PostGIS EPSG:3857 row is normalized to the managed catalog WKT.
+    /// </summary>
+    [Fact]
+    public void GetTrackedSridCsvWkt_WithDifferentManagedDefinition_PrefersManagedCatalogWkt()
+    {
+        const string legacyPseudoMercator = """PROJCS["WGS 84 / Pseudo-Mercator",GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]],PROJECTION["Mercator_1SP"],PARAMETER["central_meridian",0],PARAMETER["scale_factor",1],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["X",EAST],AXIS["Y",NORTH],EXTENSION["PROJ4","+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs"],AUTHORITY["EPSG","3857"]]""";
+        CoordinateSystem parsed = CreateRequiredCoordinateSystem(legacyPseudoMercator);
+
+        string normalized = GetTrackedSridCsvWkt(3857, legacyPseudoMercator, parsed);
+
+        Assert.Equal(ManagedCoordinateSystemWkts.Value[3857], normalized);
+        Assert.NotEqual(legacyPseudoMercator, normalized);
+        Assert.DoesNotContain("Mercator_1SP", normalized, StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Verifies that semantically equivalent managed definitions keep the original PostGIS WKT in the tracked export.
+    /// </summary>
+    [Fact]
+    public void GetTrackedSridCsvWkt_WithEquivalentManagedDefinition_PreservesOriginalWkt()
+    {
+        const string wgs84 = """GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]]""";
+        CoordinateSystem parsed = CreateRequiredCoordinateSystem(wgs84);
+
+        Assert.Equal(wgs84, GetTrackedSridCsvWkt(4326, wgs84, parsed));
+    }
+
+    /// <summary>
+    /// Verifies that SRIDs not present in the managed catalog keep their original WKT unchanged.
+    /// </summary>
+    [Fact]
+    public void GetTrackedSridCsvWkt_WithoutManagedDefinition_PreservesOriginalWkt()
+    {
+        const string customWkt = """GEOGCS["Custom CRS",DATUM["Custom datum",SPHEROID["WGS 84",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]]""";
+        CoordinateSystem parsed = CreateRequiredCoordinateSystem(customWkt);
+
+        Assert.Equal(customWkt, GetTrackedSridCsvWkt(999999, customWkt, parsed));
+    }
+
+    private static bool ShouldIncludeInTrackedSridCsv(CoordinateSystem coordinateSystem)
+        => coordinateSystem is GeographicCoordinateSystem or ProjectedCoordinateSystem or GeocentricCoordinateSystem;
+
+    private static string GetTrackedSridCsvWkt(int srid, string srtext, CoordinateSystem parsedCoordinateSystem)
+    {
+        if (srid != 3857
+            || parsedCoordinateSystem is not ProjectedCoordinateSystem projectedCoordinateSystem
+            || string.Equals(projectedCoordinateSystem.Projection.ClassName, "Popular Visualisation Pseudo-Mercator", StringComparison.Ordinal)
+            || !ManagedCoordinateSystemWkts.Value.TryGetValue(srid, out string? managedWkt)
+            || string.IsNullOrWhiteSpace(managedWkt))
+        {
+            return srtext;
+        }
+
+        return managedWkt;
+    }
+
+    private static CoordinateSystem CreateRequiredCoordinateSystem(string wkt)
+        => CoordinateSystemFactory.Value.CreateFromWkt(wkt)
+            ?? throw new InvalidOperationException("Expected WKT to parse into a coordinate system.");
+
+    private static bool TryCreateCoordinateSystem(string srtext, [NotNullWhen(true)] out CoordinateSystem? coordinateSystem)
+    {
+        try
+        {
+            coordinateSystem = CoordinateSystemFactory.Value.CreateFromWkt(srtext);
+            return coordinateSystem is not null;
+        }
+        catch (ArgumentException)
+        {
+            coordinateSystem = null;
+            return false;
+        }
+        catch (FormatException)
+        {
+            coordinateSystem = null;
+            return false;
+        }
+        catch (InvalidOperationException)
+        {
+            coordinateSystem = null;
+            return false;
+        }
+        catch (NotSupportedException)
+        {
+            coordinateSystem = null;
+            return false;
+        }
+    }
+
+    private static string GetTrackedTestFilePath(string fileName)
+    {
+        string? directory = AppContext.BaseDirectory;
+        while (!string.IsNullOrWhiteSpace(directory))
+        {
+            if (File.Exists(Path.Combine(directory, "ProjNET.Tests.csproj")))
+            {
+                return Path.Combine(directory, fileName);
+            }
+
+            directory = Path.GetDirectoryName(directory);
+        }
+
+        throw new InvalidOperationException("Unable to locate the ProjNET.Tests project directory.");
     }
 
     private static bool TestParse(int srid, string srtext)

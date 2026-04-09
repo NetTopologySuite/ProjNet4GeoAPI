@@ -159,9 +159,6 @@ public static partial class CoordinateSystemWktReader
     }
 
     private static CoordinateSystem ReadWkt2GeodeticCoordinateReferenceSystem(WktTokenizer tokenizer)
-        => ReadWkt2GeodeticCoordinateReferenceSystem(tokenizer, allowOperationalEllipsoidal3DCompound: false);
-
-    private static CoordinateSystem ReadWkt2GeodeticCoordinateReferenceSystem(WktTokenizer tokenizer, bool allowOperationalEllipsoidal3DCompound)
     {
         string rootKeyword = tokenizer.GetStringValue();
         WktBracket bracket = tokenizer.ReadOpener();
@@ -252,7 +249,7 @@ public static partial class CoordinateSystemWktReader
 
         if (string.Equals(coordinateSystemType, "ellipsoidal", StringComparison.OrdinalIgnoreCase))
         {
-            if (coordinateSystemDimension == 3 && allowOperationalEllipsoidal3DCompound)
+            if (coordinateSystemDimension == 3)
             {
                 if (angularUnit is null)
                 {
@@ -272,7 +269,8 @@ public static partial class CoordinateSystemWktReader
                     horizontalDatum,
                     primeMeridian,
                     angularUnit,
-                    linearUnit);
+                    linearUnit,
+                    axisInfo);
             }
 
             if (coordinateSystemDimension != 2)
@@ -335,13 +333,14 @@ public static partial class CoordinateSystemWktReader
         HorizontalDatum horizontalDatum,
         PrimeMeridian primeMeridian,
         AngularUnit angularUnit,
-        LinearUnit linearUnit)
+        LinearUnit linearUnit,
+        List<AxisInfo> axisInfo)
     {
         var head = new GeographicCoordinateSystem(
             angularUnit,
             horizontalDatum,
             primeMeridian,
-            [new AxisInfo("Longitude", AxisOrientationEnum.East), new AxisInfo("Latitude", AxisOrientationEnum.North)],
+            [new AxisInfo(axisInfo[0].Name, axisInfo[0].Orientation), new AxisInfo(axisInfo[1].Name, axisInfo[1].Orientation)],
             name,
             string.Empty,
             -1,
@@ -352,8 +351,8 @@ public static partial class CoordinateSystemWktReader
         var tail = new VerticalCoordinateSystem(
             linearUnit,
             new VerticalDatum(DatumType.VD_Ellipsoidal, "Ellipsoidal height datum", string.Empty, -1, string.Empty, string.Empty, string.Empty),
-            new AxisInfo("Ellipsoidal height", AxisOrientationEnum.Up),
-            "Ellipsoidal height",
+            new AxisInfo(axisInfo[2].Name, axisInfo[2].Orientation),
+            axisInfo[2].Name,
             string.Empty,
             -1,
             string.Empty,
@@ -361,6 +360,42 @@ public static partial class CoordinateSystemWktReader
             string.Empty);
 
         return new CompoundCoordinateSystem(head, tail, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
+
+    private static CompoundCoordinateSystem CreateRuntimeCompatibleVerticalBoundHubCoordinateSystem(CompoundCoordinateSystem parsedHubCoordinateSystem)
+    {
+        if (parsedHubCoordinateSystem.TailCoordinateSystem is not VerticalCoordinateSystem parsedVerticalCoordinateSystem)
+        {
+            throw new NotSupportedException("WKT2 vertical BOUNDCRS targets must be ellipsoidal 3D geographic CRS definitions.");
+        }
+
+        var runtimeVerticalCoordinateSystem = new VerticalCoordinateSystem(
+            parsedVerticalCoordinateSystem.LinearUnit,
+            new VerticalDatum(
+                DatumType.VD_Ellipsoidal,
+                parsedVerticalCoordinateSystem.VerticalDatum.Name,
+                string.Empty,
+                -1,
+                string.Empty,
+                string.Empty,
+                string.Empty),
+            new AxisInfo(parsedVerticalCoordinateSystem.GetAxis(0).Name, parsedVerticalCoordinateSystem.GetAxis(0).Orientation),
+            parsedVerticalCoordinateSystem.Name,
+            parsedVerticalCoordinateSystem.Authority,
+            parsedVerticalCoordinateSystem.AuthorityCode,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+
+        return new CompoundCoordinateSystem(
+            GeographicCoordinateSystem.WGS84,
+            runtimeVerticalCoordinateSystem,
+            parsedHubCoordinateSystem.Name,
+            parsedHubCoordinateSystem.Authority,
+            parsedHubCoordinateSystem.AuthorityCode,
+            string.Empty,
+            string.Empty,
+            string.Empty);
     }
 
     private static (string Type, int Dimension) ReadWkt2CoordinateSystemDefinition(WktTokenizer tokenizer)
@@ -837,6 +872,7 @@ public static partial class CoordinateSystemWktReader
             or "ORDER"
             or "REMARK"
             or "SCOPE"
+            or "VERSION"
             or "USAGE";
     }
 
@@ -1522,7 +1558,7 @@ public static partial class CoordinateSystemWktReader
         tokenizer.NextToken();
         CoordinateSystem coordinateSystem = tokenizer.GetStringValue() switch
         {
-            "GEOGCRS" or "GEODCRS" or "GEODETICCRS" => ReadWkt2GeodeticCoordinateReferenceSystem(tokenizer, allowOperationalEllipsoidal3DCompound: true),
+            "GEOGCRS" or "GEODCRS" or "GEODETICCRS" => ReadWkt2GeodeticCoordinateReferenceSystem(tokenizer),
             _ => ReadCoordinateSystem(null, tokenizer),
         };
         tokenizer.NextToken();
@@ -1532,7 +1568,7 @@ public static partial class CoordinateSystemWktReader
 
     private static void EnsureSupportedWkt2BoundSourceCoordinateSystem(CoordinateSystem coordinateSystem)
     {
-        if (coordinateSystem is GeographicCoordinateSystem or ProjectedCoordinateSystem or GeocentricCoordinateSystem or VerticalCoordinateSystem)
+        if (coordinateSystem is VerticalCoordinateSystem || TryGetHorizontalDatum(coordinateSystem, out _))
         {
             return;
         }
@@ -1641,14 +1677,17 @@ public static partial class CoordinateSystemWktReader
             throw new NotSupportedException("WKT2 vertical BOUNDCRS abridged transformations require a PARAMETERFILE.");
         }
 
+        // The runtime compound/grid route expects the canonical WGS84 Lon/Lat/Up convention.
+        CompoundCoordinateSystem runtimeHubCoordinateSystem = CreateRuntimeCompatibleVerticalBoundHubCoordinateSystem(hubCoordinateSystem);
+
         if (sourceCoordinateSystem.BoundGridTransformation is not null
             && (!AreEquivalentParameterFileReferences(sourceCoordinateSystem.BoundGridTransformation.ParameterFileName, parameterFileName)
-                || !sourceCoordinateSystem.BoundGridTransformation.HubCoordinateSystem.EqualParams(hubCoordinateSystem)))
+                || !sourceCoordinateSystem.BoundGridTransformation.HubCoordinateSystem.EqualParams(runtimeHubCoordinateSystem)))
         {
             throw new NotSupportedException("WKT2 vertical BOUNDCRS source CRS already defines a conflicting grid transformation.");
         }
 
-        sourceCoordinateSystem.BoundGridTransformation ??= new VerticalBoundGridTransformation(methodName, parameterFileName, hubCoordinateSystem);
+        sourceCoordinateSystem.BoundGridTransformation ??= new VerticalBoundGridTransformation(methodName, parameterFileName, runtimeHubCoordinateSystem);
         return sourceCoordinateSystem;
     }
 
@@ -2028,6 +2067,8 @@ public static partial class CoordinateSystemWktReader
             case GeocentricCoordinateSystem geocentricCoordinateSystem:
                 horizontalDatum = geocentricCoordinateSystem.HorizontalDatum;
                 return true;
+            case CompoundCoordinateSystem compoundCoordinateSystem when compoundCoordinateSystem.TailCoordinateSystem is VerticalCoordinateSystem:
+                return TryGetHorizontalDatum(compoundCoordinateSystem.HeadCoordinateSystem, out horizontalDatum);
             default:
                 horizontalDatum = null;
                 return false;

@@ -124,6 +124,15 @@ public class CoordinateSystemWktReaderWkt2Tests
                 PARAMETERFILE["Geoid (height correction) model file","us_nga_egm96_15.tif"]]]
         """;
 
+    private const string EllipsoidalHeightBoundCrs = """
+        BOUNDCRS[
+            SOURCECRS[
+                GEOGCRS["TWD97",DATUM["Taiwan Datum 1997",ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT["metre",1]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],CS[ellipsoidal,3],AXIS["geodetic latitude (Lat)",north,ORDER[1],ANGLEUNIT["degree",0.0174532925199433]],AXIS["geodetic longitude (Lon)",east,ORDER[2],ANGLEUNIT["degree",0.0174532925199433]],AXIS["ellipsoidal height (h)",up,ORDER[3],LENGTHUNIT["metre",1]],USAGE[SCOPE["unknown"],AREA["Taiwan"],BBOX[17.36,114.32,26.96,123.61]],ID["EPSG",3823]]],
+            TARGETCRS[
+                GEOGCRS["WGS 84",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],CS[ellipsoidal,2],AXIS["latitude",north,ORDER[1],ANGLEUNIT["degree",0.0174532925199433]],AXIS["longitude",east,ORDER[2],ANGLEUNIT["degree",0.0174532925199433]],ID["EPSG",4326]]],
+            ABRIDGEDTRANSFORMATION["TWD97 to WGS 84 (1)",VERSION["OGP-Twn"],METHOD["Geocentric translations (geog2D domain)",ID["EPSG",9603]],PARAMETER["X-axis translation",0,ID["EPSG",8605]],PARAMETER["Y-axis translation",0,ID["EPSG",8606]],PARAMETER["Z-axis translation",0,ID["EPSG",8607]],USAGE[SCOPE["unknown"],AREA["Taiwan"],BBOX[17.36,114.32,26.96,123.61]],ID["DERIVED_FROM(EPSG)",3830]]]
+        """;
+
     private static readonly CoordinateSystemFactory CoordinateSystemFactory = new();
     private static readonly Lazy<IReadOnlyDictionary<int, string>> CatalogDefinitions = new(() =>
         new ManagedCoordinateSystemDefinitionProvider()
@@ -147,6 +156,19 @@ public class CoordinateSystemWktReaderWkt2Tests
             new TheoryDataRow<int, string>(4322, """GEOGCRS["WGS 72",DYNAMIC[FRAMEEPOCH[1972.0]],DATUM["World Geodetic System 1972",ELLIPSOID["WGS 72",6378135,298.26,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7043]],ID["EPSG",6322]],CS[ellipsoidal,2,ID["EPSG",6422]],AXIS["Geodetic latitude (Lat)",north],AXIS["Geodetic longitude (Lon)",east],ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",4322]]"""),
             new TheoryDataRow<int, string>(10176, """GEODCRS["IGS20",DYNAMIC[FRAMEEPOCH[2015.0]],DATUM["IGS20",ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7019]],ID["EPSG",1333]],CS[Cartesian,3,ID["EPSG",6500]],AXIS["Geocentric X (X)",geocentricX,LENGTHUNIT["metre",1,ID["EPSG",9001]]],AXIS["Geocentric Y (Y)",geocentricY,LENGTHUNIT["metre",1,ID["EPSG",9001]]],AXIS["Geocentric Z (Z)",geocentricZ,LENGTHUNIT["metre",1,ID["EPSG",9001]]],ID["EPSG",10176]]"""),
             new TheoryDataRow<int, string>(10412, """GEODCRS["NAD83(CSRS)v8",DATUM["North American Datum of 1983 (CSRS) version 8",ELLIPSOID["GRS 1980",6378137,298.257222101,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7019]],ANCHOREPOCH[2010],ID["EPSG",1365]],CS[Cartesian,3,ID["EPSG",6500]],AXIS["Geocentric X (X)",geocentricX,LENGTHUNIT["metre",1,ID["EPSG",9001]]],AXIS["Geocentric Y (Y)",geocentricY,LENGTHUNIT["metre",1,ID["EPSG",9001]]],AXIS["Geocentric Z (Z)",geocentricZ,LENGTHUNIT["metre",1,ID["EPSG",9001]]],DEFININGTRANSFORMATION["ITRF2020 to NAD83(CSRS)v8 (1)",ID["EPSG",10415]],ID["EPSG",10412]]"""),
+        ];
+    }
+
+    /// <summary>
+    /// Provides representative top-level ellipsoidal 3D WKT2 geographic CRS examples from the PostGIS failure set.
+    /// </summary>
+    /// <returns>SRID/WKT pairs that should now parse successfully as operational compounds.</returns>
+    public static IEnumerable<TheoryDataRow<int, string>> SupportedWkt2Ellipsoidal3dRows()
+    {
+        return
+        [
+            new TheoryDataRow<int, string>(4329, """GEOGCRS["WGS 84 (3D)",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],CS[ellipsoidal,3],AXIS["geodetic latitude (Lat)",north,ORDER[1],ANGLEUNIT["degree minute second hemisphere",0.0174532925199433]],AXIS["geodetic longitude (Long)",east,ORDER[2],ANGLEUNIT["degree minute second hemisphere",0.0174532925199433]],AXIS["ellipsoidal height (h)",up,ORDER[3],LENGTHUNIT["metre",1]],USAGE[SCOPE["unknown"],AREA["World (by country)"],BBOX[-90,-180,90,180]],ID["EPSG",4329]]"""),
+            new TheoryDataRow<int, string>(4979, """GEOGCRS["WGS 84",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],PRIMEM["Greenwich",0,ANGLEUNIT["degree",0.0174532925199433]],CS[ellipsoidal,3],AXIS["geodetic latitude (Lat)",north,ORDER[1],ANGLEUNIT["degree",0.0174532925199433]],AXIS["geodetic longitude (Lon)",east,ORDER[2],ANGLEUNIT["degree",0.0174532925199433]],AXIS["ellipsoidal height (h)",up,ORDER[3],LENGTHUNIT["metre",1]],USAGE[SCOPE["unknown"],AREA["World (by country)"],BBOX[-90,-180,90,180]],ID["EPSG",4979]]"""),
         ];
     }
 
@@ -293,6 +315,31 @@ public class CoordinateSystemWktReaderWkt2Tests
         Assert.True(parsed.EqualParams(reference), $"WKT2 compound CRS parse mismatch for EPSG:{srid}.");
         Assert.Equal("EPSG", parsed.Authority);
         Assert.Equal(srid, parsed.AuthorityCode);
+    }
+
+    /// <summary>
+    /// Verifies top-level ellipsoidal 3D WKT2 geographic CRS now parse through the existing operational compound representation.
+    /// </summary>
+    /// <param name="srid">Expected EPSG SRID.</param>
+    /// <param name="wkt">WKT2 geographic CRS from the PostGIS failure set.</param>
+    [Theory]
+    [MemberData(nameof(SupportedWkt2Ellipsoidal3dRows))]
+    public void CreateFromWkt_ParsesTopLevelEllipsoidal3dGeographicCrsAsOperationalCompound(int srid, string wkt)
+    {
+        CompoundCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<CompoundCoordinateSystem>(CoordinateSystemFactory, wkt);
+        GeographicCoordinateSystem horizontal = Assert.IsType<GeographicCoordinateSystem>(parsed.HeadCoordinateSystem);
+        VerticalCoordinateSystem vertical = Assert.IsType<VerticalCoordinateSystem>(parsed.TailCoordinateSystem);
+
+        Assert.Equal("EPSG", parsed.Authority);
+        Assert.Equal(srid, parsed.AuthorityCode);
+        Assert.Equal(3, parsed.Dimension);
+        Assert.Equal(AxisOrientationEnum.North, parsed.GetAxis(0).Orientation);
+        Assert.Equal(AxisOrientationEnum.East, parsed.GetAxis(1).Orientation);
+        Assert.Equal(AxisOrientationEnum.Up, parsed.GetAxis(2).Orientation);
+        Assert.Equal("World Geodetic System 1984", horizontal.HorizontalDatum.Name);
+        Assert.True(horizontal.HorizontalDatum.Ellipsoid.EqualParams(Ellipsoid.WGS84));
+        Assert.Equal(DatumType.VD_Ellipsoidal, vertical.VerticalDatum.DatumType);
+        Assert.Equal("metre", vertical.LinearUnit.Name);
     }
 
     /// <summary>
@@ -457,6 +504,31 @@ public class CoordinateSystemWktReaderWkt2Tests
         Assert.Equal(1640416.667d, parsed.Projection.GetParameter("false_northing")?.Value);
         Assert.Contains("TOWGS84[0, 0, 0, 0, 0, 0, 0]", parsed.WKT, StringComparison.Ordinal);
         Assert.False(string.IsNullOrWhiteSpace(fixtureSource));
+    }
+
+    /// <summary>
+    /// Verifies horizontal <c>BOUNDCRS</c> examples with an ellipsoidal 3D source now parse via the same operational compound path as live PostGIS rows.
+    /// </summary>
+    [Fact]
+    public void CreateFromWkt_WithEllipsoidal3dSourceBoundCrs_ParsesOperationalSourceCrsWithWgs84Parameters()
+    {
+        CompoundCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<CompoundCoordinateSystem>(CoordinateSystemFactory, EllipsoidalHeightBoundCrs);
+        GeographicCoordinateSystem horizontal = Assert.IsType<GeographicCoordinateSystem>(parsed.HeadCoordinateSystem);
+        VerticalCoordinateSystem vertical = Assert.IsType<VerticalCoordinateSystem>(parsed.TailCoordinateSystem);
+        Wgs84ConversionInfo parameters = Assert.IsType<Wgs84ConversionInfo>(horizontal.HorizontalDatum.Wgs84Parameters);
+
+        Assert.Equal("TWD97", parsed.Name);
+        Assert.Equal("EPSG", parsed.Authority);
+        Assert.Equal(3823, parsed.AuthorityCode);
+        Assert.Equal(AxisOrientationEnum.North, parsed.GetAxis(0).Orientation);
+        Assert.Equal(AxisOrientationEnum.East, parsed.GetAxis(1).Orientation);
+        Assert.Equal(AxisOrientationEnum.Up, parsed.GetAxis(2).Orientation);
+        Assert.Equal("Taiwan Datum 1997", horizontal.HorizontalDatum.Name);
+        Assert.True(horizontal.HorizontalDatum.Ellipsoid.EqualParams(Ellipsoid.GRS80));
+        Assert.Equal(new Wgs84ConversionInfo(0, 0, 0, 0, 0, 0, 0), parameters);
+        Assert.Equal(DatumType.VD_Ellipsoidal, vertical.VerticalDatum.DatumType);
+        Assert.Equal("ellipsoidal height (h)", vertical.Name);
+        Assert.Contains("TOWGS84[0, 0, 0, 0, 0, 0, 0]", parsed.WKT, StringComparison.Ordinal);
     }
 
     /// <summary>
