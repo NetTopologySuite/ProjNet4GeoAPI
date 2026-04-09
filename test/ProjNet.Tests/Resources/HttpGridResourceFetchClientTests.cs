@@ -18,6 +18,7 @@ using Xunit;
 /// <summary>
 /// Tests for <see cref="HttpGridResourceFetchClient"/> and environment-driven network resolution.
 /// </summary>
+[Collection(GlobalEnvironmentTestIsolation.Name)]
 public sealed class HttpGridResourceFetchClientTests
 {
     /// <summary>

@@ -18,6 +18,7 @@ using Xunit;
 /// <summary>
 /// Tests for the coordinate operation resolution engine and transformation factory.
 /// </summary>
+[Collection(GlobalEnvironmentTestIsolation.Name)]
 public class OperationResolutionEngineTests
 {
     private static readonly double[] GeographicSamplePoint = [13.1234d, 52.9876d];
