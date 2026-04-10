@@ -24,14 +24,14 @@ public class GeocentricCoordinateSystemTests
     {
         GeocentricCoordinateSystem system = GeocentricCoordinateSystem.WGS84;
 
-        Assert.Equal("WGS84 Geocentric", system.Name);
+        Assert.Equal("WGS 84", system.Name);
         Assert.Equal(3, system.Dimension);
         Assert.True(system.HorizontalDatum.EqualParams(HorizontalDatum.WGS84));
         Assert.True(system.LinearUnit.EqualParams(LinearUnit.Metre));
         Assert.True(system.PrimeMeridian.EqualParams(PrimeMeridian.Greenwich));
-        Assert.Equal("X", system.GetAxis(0).Name);
-        Assert.Equal("Y", system.GetAxis(1).Name);
-        Assert.Equal("Z", system.GetAxis(2).Name);
+        Assert.Equal("Geocentric X (X)", system.GetAxis(0).Name);
+        Assert.Equal("Geocentric Y (Y)", system.GetAxis(1).Name);
+        Assert.Equal("Geocentric Z (Z)", system.GetAxis(2).Name);
     }
 
     /// <summary>

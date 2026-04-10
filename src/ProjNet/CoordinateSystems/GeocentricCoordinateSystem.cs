@@ -15,6 +15,9 @@ using ProjNet.IO.Wkt;
 /// </summary>
 public class GeocentricCoordinateSystem : CoordinateSystem
 {
+    private static readonly Lazy<string> Wgs84CoordinateSystemWkt =
+        new(() => ResolveWgs84CoordinateSystem().WKT, true);
+
     /// <summary>
     /// Initializes a new instance of the <see cref="GeocentricCoordinateSystem"/> class.
     /// </summary>
@@ -58,14 +61,7 @@ public class GeocentricCoordinateSystem : CoordinateSystem
     /// </summary>
     public static GeocentricCoordinateSystem WGS84
     {
-        get
-        {
-            return new CoordinateSystemFactory().CreateGeocentricCoordinateSystem(
-                "WGS84 Geocentric",
-                HorizontalDatum.WGS84,
-                LinearUnit.Metre,
-                PrimeMeridian.Greenwich);
-        }
+        get { return CreateWgs84CoordinateSystem(); }
     }
 
     /// <summary>
@@ -222,5 +218,25 @@ public class GeocentricCoordinateSystem : CoordinateSystem
         return obj is GeocentricCoordinateSystem gcc && gcc.HorizontalDatum.EqualParams(this.HorizontalDatum) &&
             gcc.LinearUnit.EqualParams(this.LinearUnit) &&
             gcc.PrimeMeridian.EqualParams(this.PrimeMeridian);
+    }
+
+    private static GeocentricCoordinateSystem CreateWgs84CoordinateSystem()
+    {
+        CoordinateSystem? coordinateSystem = new CoordinateSystemFactory().CreateFromWkt(Wgs84CoordinateSystemWkt.Value);
+        return coordinateSystem as GeocentricCoordinateSystem
+            ?? throw new InvalidOperationException("The WGS84 geocentric catalog entry did not resolve to a geocentric coordinate system.");
+    }
+
+    private static GeocentricCoordinateSystem ResolveWgs84CoordinateSystem()
+    {
+        return Wgs84CatalogBootstrap.TryGetCoordinateSystem(
+            Wgs84CatalogBootstrap.Wgs84GeocentricSrid,
+            out GeocentricCoordinateSystem? coordinateSystem)
+            ? coordinateSystem
+            : new CoordinateSystemFactory().CreateGeocentricCoordinateSystem(
+                "WGS84 Geocentric",
+                HorizontalDatum.WGS84,
+                LinearUnit.Metre,
+                PrimeMeridian.Greenwich);
     }
 }
