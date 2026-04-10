@@ -113,7 +113,7 @@ public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSys
         WktVersionSupport.ThrowIfUnknown(version);
         return version == WktVersion.Wkt1
             ? this.ToWktNode()
-            : throw new NotSupportedException("WKT2 output for fitted coordinate systems is not implemented because the current model does not expose a WKT2 derived-CRS / deriving-conversion writer for arbitrary base transforms.");
+            : this.CreateWkt2Node();
     }
 
     /// <summary>
@@ -134,6 +134,24 @@ public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSys
         var fcs = obj as FittedCoordinateSystem;
         if (fcs is not null)
         {
+            if (fcs.Dimension != this.Dimension)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < fcs.Dimension; i++)
+            {
+                if (fcs.GetAxis(i).Orientation != this.GetAxis(i).Orientation)
+                {
+                    return false;
+                }
+
+                if (!fcs.GetUnits(i).EqualParams(this.GetUnits(i)))
+                {
+                    return false;
+                }
+            }
+
             if (fcs.BaseCoordinateSystem.EqualParams(this.BaseCoordinateSystem))
             {
                 string fcsToBase = fcs.ToBase();
@@ -150,4 +168,127 @@ public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSys
 
     /// <inheritdoc />
     public override IUnit GetUnits(int dimension) => this.BaseCoordinateSystem.GetUnits(dimension);
+
+    private WktKeywordNode CreateWkt2Node()
+    {
+        Projection derivingConversion = DerivedCoordinateSystemSupport.CreateAffineConversion(this.ToBaseTransform, DerivedCoordinateSystemSupport.DefaultDerivingConversionName);
+        return this.BaseCoordinateSystem switch
+        {
+            GeographicCoordinateSystem geographicCoordinateSystem => this.CreateWkt2DerivedGeographicNode(geographicCoordinateSystem, derivingConversion),
+            ProjectedCoordinateSystem projectedCoordinateSystem => this.CreateWkt2DerivedProjectedNode(projectedCoordinateSystem, derivingConversion),
+            _ => throw new NotSupportedException("WKT2 output for fitted coordinate systems currently supports only affine transforms based on two-dimensional geographic or projected coordinate systems."),
+        };
+    }
+
+    private WktKeywordNode CreateWkt2DerivedGeographicNode(GeographicCoordinateSystem baseCoordinateSystem, IProjection derivingConversion)
+    {
+        if (this.Dimension != 2 || this.AxisInfo.Count != this.Dimension)
+        {
+            throw new NotSupportedException("WKT2 output for fitted geographic coordinate systems currently supports only two axes.");
+        }
+
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(this.Name),
+            baseCoordinateSystem.CreateWkt2BaseNode("BASEGEOGCRS"),
+            CreateWkt2DerivingConversionNode(derivingConversion, baseCoordinateSystem.AngularUnit.ToWktNode(WktVersion.Wkt22019)),
+            new WktKeywordNode(
+                "CS",
+                new WktIdentifier("ellipsoidal"),
+                new WktInteger(this.Dimension)),
+        };
+
+        for (int i = 0; i < this.AxisInfo.Count; i++)
+        {
+            children.Add(this.GetAxis(i).ToWktNode(WktVersion.Wkt22019));
+        }
+
+        children.Add(baseCoordinateSystem.AngularUnit.ToWktNode(WktVersion.Wkt22019));
+
+        WktKeywordNode? idNode = WktVersionSupport.CreateIdNode(this.Authority, this.AuthorityCode);
+        if (idNode is not null)
+        {
+            children.Add(idNode);
+        }
+
+        return new WktKeywordNode("GEOGCRS", children);
+    }
+
+    private WktKeywordNode CreateWkt2DerivedProjectedNode(ProjectedCoordinateSystem baseCoordinateSystem, IProjection derivingConversion)
+    {
+        if (this.Dimension != 2 || this.AxisInfo.Count != this.Dimension)
+        {
+            throw new NotSupportedException("WKT2 output for fitted projected coordinate systems currently supports only two axes.");
+        }
+
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(this.Name),
+            baseCoordinateSystem.CreateWkt2BaseNode("BASEPROJCRS"),
+            CreateWkt2DerivingConversionNode(derivingConversion, baseCoordinateSystem.LinearUnit.ToWktNode(WktVersion.Wkt22019)),
+            new WktKeywordNode(
+                "CS",
+                new WktIdentifier("Cartesian"),
+                new WktInteger(this.Dimension)),
+        };
+
+        for (int i = 0; i < this.AxisInfo.Count; i++)
+        {
+            children.Add(this.GetAxis(i).ToWktNode(WktVersion.Wkt22019));
+        }
+
+        children.Add(baseCoordinateSystem.LinearUnit.ToWktNode(WktVersion.Wkt22019));
+
+        WktKeywordNode? idNode = WktVersionSupport.CreateIdNode(this.Authority, this.AuthorityCode);
+        if (idNode is not null)
+        {
+            children.Add(idNode);
+        }
+
+        return new WktKeywordNode("DERIVEDPROJCRS", children);
+    }
+
+    private static WktKeywordNode CreateWkt2DerivingConversionNode(IProjection derivingConversion, WktNode translationUnitNode)
+    {
+        string conversionName = string.IsNullOrWhiteSpace(derivingConversion.Name)
+            ? DerivedCoordinateSystemSupport.DefaultDerivingConversionName
+            : derivingConversion.Name;
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(conversionName),
+            new WktKeywordNode(
+                "METHOD",
+                new WktQuotedString(derivingConversion.ClassName)),
+        };
+
+        for (int i = 0; i < derivingConversion.NumParameters; i++)
+        {
+            children.Add(CreateWkt2DerivingParameterNode(derivingConversion.GetParameter(i), translationUnitNode));
+        }
+
+        return new WktKeywordNode("DERIVINGCONVERSION", children);
+    }
+
+    private static WktKeywordNode CreateWkt2DerivingParameterNode(ProjectionParameter parameter, WktNode translationUnitNode)
+    {
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(parameter.Name),
+            new WktNumber(parameter.Value),
+        };
+
+        if (parameter.Name is "A0" or "B0")
+        {
+            children.Add(translationUnitNode);
+        }
+        else
+        {
+            children.Add(new WktKeywordNode(
+                "SCALEUNIT",
+                new WktQuotedString("unity"),
+                new WktNumber(1)));
+        }
+
+        return new WktKeywordNode("PARAMETER", children);
+    }
 }

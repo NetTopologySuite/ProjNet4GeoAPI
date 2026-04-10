@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Text.Json;
 using ProjNet;
 using ProjNet.CoordinateSystems;
+using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
 /// Creates an object based on the supplied PROJJSON text.
@@ -72,6 +73,17 @@ public static class ProjJsonReader
         if (string.Equals(type, "ProjectedCRS", StringComparison.OrdinalIgnoreCase))
         {
             return ReadProjectedCoordinateSystem(element);
+        }
+
+        if (string.Equals(type, "DerivedGeographicCRS", StringComparison.OrdinalIgnoreCase)
+            || string.Equals(type, "DerivedGeodeticCRS", StringComparison.OrdinalIgnoreCase))
+        {
+            return ReadDerivedGeodeticCoordinateSystem(element);
+        }
+
+        if (string.Equals(type, "DerivedProjectedCRS", StringComparison.OrdinalIgnoreCase))
+        {
+            return ReadDerivedProjectedCoordinateSystem(element);
         }
 
         if (string.Equals(type, "BoundCRS", StringComparison.OrdinalIgnoreCase))
@@ -241,6 +253,84 @@ public static class ProjJsonReader
             string.Empty,
             string.Empty,
             string.Empty);
+    }
+
+    private static FittedCoordinateSystem ReadDerivedGeodeticCoordinateSystem(JsonElement element)
+    {
+        string name = GetRequiredString(element, "name");
+        CoordinateSystem baseCoordinateSystem = ReadCoordinateSystemElement(GetRequiredProperty(element, "base_crs"), "base_crs");
+        if (baseCoordinateSystem is not GeographicCoordinateSystem baseGeographicCoordinateSystem)
+        {
+            throw new NotSupportedException("PROJJSON derived geodetic CRS currently supports only geographic base CRS definitions.");
+        }
+
+        Projection conversion = ReadConversion(GetRequiredProperty(element, "conversion"));
+        AffineTransform transform = DerivedCoordinateSystemSupport.CreateAffineTransform(conversion);
+
+        ReadCoordinateSystemDefinition(
+            GetRequiredProperty(element, "coordinate_system"),
+            out string coordinateSystemType,
+            out int coordinateSystemDimension,
+            out List<AxisInfo> axisInfo,
+            out AngularUnit? angularUnit,
+            out _);
+
+        if (!string.Equals(coordinateSystemType, "ellipsoidal", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new NotSupportedException($"PROJJSON derived geodetic coordinate-system subtype '{coordinateSystemType}' is not supported.");
+        }
+
+        if (coordinateSystemDimension != 2)
+        {
+            throw new NotSupportedException("PROJJSON derived geodetic CRS dimensions other than 2 are not supported.");
+        }
+
+        if (angularUnit is null)
+        {
+            ArgumentGuard.ThrowArgument("PROJJSON derived geodetic CRS is missing axis angular units.");
+        }
+
+        ReadIdentifier(element, out string authority, out long authorityCode);
+        return CreateDerivedCoordinateSystem(name, baseGeographicCoordinateSystem, transform, axisInfo, authority, authorityCode);
+    }
+
+    private static FittedCoordinateSystem ReadDerivedProjectedCoordinateSystem(JsonElement element)
+    {
+        string name = GetRequiredString(element, "name");
+        CoordinateSystem baseCoordinateSystem = ReadCoordinateSystemElement(GetRequiredProperty(element, "base_crs"), "base_crs");
+        if (baseCoordinateSystem is not ProjectedCoordinateSystem baseProjectedCoordinateSystem)
+        {
+            throw new NotSupportedException("PROJJSON derived projected CRS currently supports only projected base CRS definitions.");
+        }
+
+        Projection conversion = ReadConversion(GetRequiredProperty(element, "conversion"));
+        AffineTransform transform = DerivedCoordinateSystemSupport.CreateAffineTransform(conversion);
+
+        ReadCoordinateSystemDefinition(
+            GetRequiredProperty(element, "coordinate_system"),
+            out string coordinateSystemType,
+            out int coordinateSystemDimension,
+            out List<AxisInfo> axisInfo,
+            out _,
+            out LinearUnit? linearUnit);
+
+        if (!string.Equals(coordinateSystemType, "cartesian", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new NotSupportedException($"PROJJSON derived projected coordinate-system subtype '{coordinateSystemType}' is not supported.");
+        }
+
+        if (coordinateSystemDimension != 2)
+        {
+            throw new NotSupportedException("PROJJSON derived projected CRS dimensions other than 2 are not supported.");
+        }
+
+        if (linearUnit is null)
+        {
+            ArgumentGuard.ThrowArgument("PROJJSON derived projected CRS is missing axis linear units.");
+        }
+
+        ReadIdentifier(element, out string authority, out long authorityCode);
+        return CreateDerivedCoordinateSystem(name, baseProjectedCoordinateSystem, transform, axisInfo, authority, authorityCode);
     }
 
     private static BoundCoordinateSystem ReadBoundCoordinateSystem(JsonElement element)
@@ -434,6 +524,27 @@ public static class ProjJsonReader
         }
 
         return coordinateSystem;
+    }
+
+    private static FittedCoordinateSystem CreateDerivedCoordinateSystem(
+        string name,
+        CoordinateSystem baseCoordinateSystem,
+        AffineTransform transform,
+        List<AxisInfo> axisInfo,
+        string authority,
+        long authorityCode)
+    {
+        var fittedCoordinateSystem = new FittedCoordinateSystem(
+            baseCoordinateSystem,
+            transform,
+            name,
+            authority,
+            authorityCode,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+        fittedCoordinateSystem.AxisInfo = new List<AxisInfo>(axisInfo);
+        return fittedCoordinateSystem;
     }
 
     private static void ReadCoordinateSystemDefinition(

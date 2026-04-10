@@ -126,7 +126,9 @@ public class CoordinateSystemFactory
         }
 
         MathTransform toBaseTransform = MathTransformWktReader.Parse(toBaseWkt);
-        return new FittedCoordinateSystem(baseCoordinateSystem, toBaseTransform, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
+        var fittedCoordinateSystem = new FittedCoordinateSystem(baseCoordinateSystem, toBaseTransform, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
+        ApplyFittedAxisInfo(fittedCoordinateSystem, arAxes);
+        return fittedCoordinateSystem;
     }
 
     /// <summary>
@@ -147,7 +149,26 @@ public class CoordinateSystemFactory
             ArgumentGuard.ThrowArgument("Invalid name");
         }
 
-        return new FittedCoordinateSystem(baseCoordinateSystem, toBase, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
+        var fittedCoordinateSystem = new FittedCoordinateSystem(baseCoordinateSystem, toBase, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
+        ApplyFittedAxisInfo(fittedCoordinateSystem, arAxes);
+        return fittedCoordinateSystem;
+    }
+
+    private static void ApplyFittedAxisInfo(FittedCoordinateSystem fittedCoordinateSystem, List<AxisInfo> axisInfo)
+    {
+        ArgumentGuard.ThrowIfNull(fittedCoordinateSystem, nameof(fittedCoordinateSystem));
+        axisInfo = ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo));
+        if (axisInfo.Count == 0)
+        {
+            return;
+        }
+
+        if (axisInfo.Count != fittedCoordinateSystem.Dimension)
+        {
+            ArgumentGuard.ThrowArgument($"Fitted coordinate system '{fittedCoordinateSystem.Name}' expects {fittedCoordinateSystem.Dimension} axes but received {axisInfo.Count}.");
+        }
+
+        fittedCoordinateSystem.AxisInfo = new List<AxisInfo>(axisInfo);
     }
 
     /// <summary>

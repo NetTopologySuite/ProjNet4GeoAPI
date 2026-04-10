@@ -102,6 +102,15 @@ public static partial class CoordinateSystemWktReader
 
                 info = ReadWkt2ProjectedCoordinateSystem(tokenizer);
                 return true;
+            case "DERIVEDPROJCRS":
+                if (!ContainsKeywordBlock(wkt, "DERIVINGCONVERSION") || !ContainsKeywordBlock(wkt, "CS"))
+                {
+                    info = null;
+                    return false;
+                }
+
+                info = ReadWkt2DerivedProjectedCoordinateSystem(tokenizer);
+                return true;
             case "VERTCRS":
                 if ((!ContainsKeywordBlock(wkt, "VDATUM") && !ContainsKeywordBlock(wkt, "ENSEMBLE")) || !ContainsKeywordBlock(wkt, "CS"))
                 {
@@ -165,6 +174,8 @@ public static partial class CoordinateSystemWktReader
         string name = tokenizer.ReadDoubleQuotedWord();
 
         HorizontalDatum? horizontalDatum = null;
+        GeographicCoordinateSystem? baseGeographicCoordinateSystem = null;
+        Projection? derivingConversion = null;
         PrimeMeridian? primeMeridian = null;
         AngularUnit? angularUnit = null;
         LinearUnit? linearUnit = null;
@@ -196,6 +207,14 @@ public static partial class CoordinateSystemWktReader
                     break;
                 case "ENSEMBLE":
                     horizontalDatum = ReadWkt2HorizontalDatumEnsemble(tokenizer);
+                    break;
+                case "BASEGEOGCRS":
+                case "BASEGEODCRS":
+                    baseGeographicCoordinateSystem = ReadWkt2BaseGeographicCoordinateSystem(tokenizer);
+                    break;
+                case "DERIVINGCONVERSION":
+                    derivingConversion = ReadWkt2DerivingConversion(tokenizer, out AngularUnit? derivingAngularUnit);
+                    angularUnit = MergeAxisAngularUnit(angularUnit, derivingAngularUnit);
                     break;
                 case "PRIMEM":
                     primeMeridian = ReadWkt2PrimeMeridian(tokenizer);
@@ -231,6 +250,63 @@ public static partial class CoordinateSystemWktReader
             }
 
             tokenizer.NextToken();
+        }
+
+        bool isDerived = baseGeographicCoordinateSystem is not null || derivingConversion is not null;
+        if (isDerived)
+        {
+            if (horizontalDatum is not null)
+            {
+                ArgumentGuard.ThrowArgument("WKT2 derived geodetic CRS must use BASEGEOGCRS or BASEGEODCRS instead of a top-level DATUM block.");
+            }
+
+            if (baseGeographicCoordinateSystem is null)
+            {
+                ArgumentGuard.ThrowArgument("WKT2 derived geodetic CRS is missing a BASEGEOGCRS or BASEGEODCRS block.");
+            }
+
+            if (derivingConversion is null)
+            {
+                ArgumentGuard.ThrowArgument("WKT2 derived geodetic CRS is missing a DERIVINGCONVERSION block.");
+            }
+
+            if (string.IsNullOrWhiteSpace(coordinateSystemType))
+            {
+                ArgumentGuard.ThrowArgument("WKT2 derived geodetic CRS is missing a CS block.");
+            }
+
+            if (!string.Equals(coordinateSystemType, "ellipsoidal", StringComparison.OrdinalIgnoreCase))
+            {
+                throw new NotSupportedException($"WKT2 derived geodetic coordinate system type '{coordinateSystemType}' is not supported.");
+            }
+
+            if (coordinateSystemDimension != 2)
+            {
+                throw new NotSupportedException("WKT2 derived geodetic CRS dimensions other than 2 are not supported.");
+            }
+
+            if (axisInfo.Count != coordinateSystemDimension)
+            {
+                ArgumentGuard.ThrowArgument($"WKT2 derived geodetic CRS declared dimension {coordinateSystemDimension}, but provided {axisInfo.Count} AXIS blocks.");
+            }
+
+            if (angularUnit is null)
+            {
+                ArgumentGuard.ThrowArgument("WKT2 derived geodetic CRS is missing an ANGLEUNIT block.");
+            }
+
+            AffineTransform transform = DerivedCoordinateSystemSupport.CreateAffineTransform(derivingConversion);
+            var fittedCoordinateSystem = new FittedCoordinateSystem(
+                baseGeographicCoordinateSystem,
+                transform,
+                name,
+                authority,
+                authorityCode,
+                string.Empty,
+                string.Empty,
+                string.Empty);
+            fittedCoordinateSystem.AxisInfo = axisInfo;
+            return fittedCoordinateSystem;
         }
 
         if (horizontalDatum is null)
@@ -1151,6 +1227,252 @@ public static partial class CoordinateSystemWktReader
             string.Empty);
     }
 
+    private static FittedCoordinateSystem ReadWkt2DerivedProjectedCoordinateSystem(WktTokenizer tokenizer)
+    {
+        const string rootKeyword = "DERIVEDPROJCRS";
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        string name = tokenizer.ReadDoubleQuotedWord();
+
+        ProjectedCoordinateSystem? baseProjectedCoordinateSystem = null;
+        Projection? derivingConversion = null;
+        LinearUnit? linearUnit = null;
+        string? coordinateSystemType = null;
+        int coordinateSystemDimension = 0;
+        string authority = string.Empty;
+        long authorityCode = -1;
+        var axisInfo = new List<AxisInfo>();
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            switch (tokenizer.GetStringValue())
+            {
+                case "BASEPROJCRS":
+                    baseProjectedCoordinateSystem = ReadWkt2BaseProjectedCoordinateSystem(tokenizer);
+                    break;
+                case "DERIVINGCONVERSION":
+                    derivingConversion = ReadWkt2DerivingConversion(tokenizer, out _);
+                    break;
+                case "CS":
+                    (coordinateSystemType, coordinateSystemDimension) = ReadWkt2CoordinateSystemDefinition(tokenizer);
+                    break;
+                case "AXIS":
+                    axisInfo.Add(ReadWkt2Axis(tokenizer, out _, out LinearUnit? axisLinearUnit));
+                    linearUnit = MergeAxisLinearUnit(linearUnit, axisLinearUnit);
+                    break;
+                case "LENGTHUNIT":
+                    linearUnit = ReadWkt2LinearUnit(tokenizer);
+                    break;
+                case "ID":
+                    ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+                    break;
+                default:
+                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    {
+                        SkipKeywordNode(tokenizer);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"WKT2 keyword '{tokenizer.GetStringValue()}' is not supported in {rootKeyword}.");
+                    }
+
+                    break;
+            }
+
+            tokenizer.NextToken();
+        }
+
+        if (baseProjectedCoordinateSystem is null)
+        {
+            ArgumentGuard.ThrowArgument("WKT2 derived projected CRS is missing a BASEPROJCRS block.");
+        }
+
+        if (derivingConversion is null)
+        {
+            ArgumentGuard.ThrowArgument("WKT2 derived projected CRS is missing a DERIVINGCONVERSION block.");
+        }
+
+        if (string.IsNullOrWhiteSpace(coordinateSystemType))
+        {
+            ArgumentGuard.ThrowArgument("WKT2 derived projected CRS is missing a CS block.");
+        }
+
+        if (!string.Equals(coordinateSystemType, "cartesian", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new NotSupportedException($"WKT2 derived projected coordinate system type '{coordinateSystemType}' is not supported.");
+        }
+
+        if (coordinateSystemDimension != 2)
+        {
+            throw new NotSupportedException("WKT2 derived projected CRS dimensions other than 2 are not supported.");
+        }
+
+        if (linearUnit is null)
+        {
+            ArgumentGuard.ThrowArgument("WKT2 derived projected CRS is missing a LENGTHUNIT block.");
+        }
+
+        if (axisInfo.Count != coordinateSystemDimension)
+        {
+            ArgumentGuard.ThrowArgument($"WKT2 derived projected CRS declared dimension {coordinateSystemDimension}, but provided {axisInfo.Count} AXIS blocks.");
+        }
+
+        AffineTransform transform = DerivedCoordinateSystemSupport.CreateAffineTransform(derivingConversion);
+        var fittedCoordinateSystem = new FittedCoordinateSystem(
+            baseProjectedCoordinateSystem,
+            transform,
+            name,
+            authority,
+            authorityCode,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+        fittedCoordinateSystem.AxisInfo = axisInfo;
+        return fittedCoordinateSystem;
+    }
+
+    private static ProjectedCoordinateSystem ReadWkt2BaseProjectedCoordinateSystem(WktTokenizer tokenizer)
+    {
+        const string rootKeyword = "BASEPROJCRS";
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        string name = tokenizer.ReadDoubleQuotedWord();
+
+        GeographicCoordinateSystem? geographicCS = null;
+        Projection? projection = null;
+        AngularUnit? baseAngularUnit = null;
+        LinearUnit? linearUnit = null;
+        string? coordinateSystemType = null;
+        int coordinateSystemDimension = 0;
+        string authority = string.Empty;
+        long authorityCode = -1;
+        var axisInfo = new List<AxisInfo>();
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            switch (tokenizer.GetStringValue())
+            {
+                case "BASEGEOGCRS":
+                case "BASEGEODCRS":
+                    geographicCS = ReadWkt2BaseGeographicCoordinateSystem(tokenizer);
+                    break;
+                case "CONVERSION":
+                    projection = ReadWkt2Conversion(tokenizer, out AngularUnit? conversionAngularUnit);
+                    baseAngularUnit = MergeAxisAngularUnit(baseAngularUnit, conversionAngularUnit);
+                    break;
+                case "CS":
+                    (coordinateSystemType, coordinateSystemDimension) = ReadWkt2CoordinateSystemDefinition(tokenizer);
+                    break;
+                case "AXIS":
+                    axisInfo.Add(ReadWkt2Axis(tokenizer, out _, out LinearUnit? axisLinearUnit));
+                    linearUnit = MergeAxisLinearUnit(linearUnit, axisLinearUnit);
+                    break;
+                case "LENGTHUNIT":
+                    linearUnit = ReadWkt2LinearUnit(tokenizer);
+                    break;
+                case "ID":
+                    ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+                    break;
+                default:
+                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    {
+                        SkipKeywordNode(tokenizer);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"WKT2 keyword '{tokenizer.GetStringValue()}' is not supported in {rootKeyword}.");
+                    }
+
+                    break;
+            }
+
+            tokenizer.NextToken();
+        }
+
+        if (geographicCS is null)
+        {
+            ArgumentGuard.ThrowArgument("WKT2 base projected CRS is missing a BASEGEOGCRS block.");
+        }
+
+        if (projection is null)
+        {
+            ArgumentGuard.ThrowArgument("WKT2 base projected CRS is missing a CONVERSION block.");
+        }
+
+        if (string.IsNullOrWhiteSpace(coordinateSystemType))
+        {
+            ArgumentGuard.ThrowArgument("WKT2 base projected CRS is missing a CS block.");
+        }
+
+        if (!string.Equals(coordinateSystemType, "cartesian", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new NotSupportedException($"WKT2 base projected coordinate system type '{coordinateSystemType}' is not supported.");
+        }
+
+        if (coordinateSystemDimension != 2)
+        {
+            throw new NotSupportedException("WKT2 base projected CRS dimensions other than 2 are not supported.");
+        }
+
+        if (linearUnit is null)
+        {
+            ArgumentGuard.ThrowArgument("WKT2 base projected CRS is missing a LENGTHUNIT block.");
+        }
+
+        if (axisInfo.Count != coordinateSystemDimension)
+        {
+            ArgumentGuard.ThrowArgument($"WKT2 base projected CRS declared dimension {coordinateSystemDimension}, but provided {axisInfo.Count} AXIS blocks.");
+        }
+
+        geographicCS = ArgumentGuard.ThrowIfNull(geographicCS, nameof(geographicCS));
+        projection = ArgumentGuard.ThrowIfNull(projection, nameof(projection));
+        linearUnit = ArgumentGuard.ThrowIfNull(linearUnit, nameof(linearUnit));
+
+        if (baseAngularUnit is not null)
+        {
+            geographicCS.AngularUnit = baseAngularUnit;
+        }
+
+        return new ProjectedCoordinateSystem(
+            geographicCS.HorizontalDatum,
+            geographicCS,
+            linearUnit,
+            projection,
+            axisInfo,
+            name,
+            authority,
+            authorityCode,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
     private static GeographicCoordinateSystem ReadWkt2BaseGeographicCoordinateSystem(WktTokenizer tokenizer)
     {
         string rootKeyword = tokenizer.GetStringValue();
@@ -1231,11 +1553,17 @@ public static partial class CoordinateSystemWktReader
             string.Empty);
     }
 
-    private static Projection ReadWkt2Conversion(WktTokenizer tokenizer, out AngularUnit? angularUnit)
+    private static Projection ReadWkt2Conversion(WktTokenizer tokenizer, out AngularUnit? angularUnit) =>
+        ReadWkt2Conversion(tokenizer, "CONVERSION", out angularUnit);
+
+    private static Projection ReadWkt2DerivingConversion(WktTokenizer tokenizer, out AngularUnit? angularUnit) =>
+        ReadWkt2Conversion(tokenizer, "DERIVINGCONVERSION", out angularUnit);
+
+    private static Projection ReadWkt2Conversion(WktTokenizer tokenizer, string keyword, out AngularUnit? angularUnit)
     {
-        if (tokenizer.GetStringValue() != "CONVERSION")
+        if (tokenizer.GetStringValue() != keyword)
         {
-            tokenizer.ReadToken("CONVERSION");
+            tokenizer.ReadToken(keyword);
         }
 
         WktBracket bracket = tokenizer.ReadOpener();
@@ -1281,7 +1609,7 @@ public static partial class CoordinateSystemWktReader
                     }
                     else
                     {
-                        throw new NotSupportedException($"WKT2 CONVERSION keyword '{tokenizer.GetStringValue()}' is not supported.");
+                        throw new NotSupportedException($"WKT2 {keyword} keyword '{tokenizer.GetStringValue()}' is not supported.");
                     }
 
                     break;
@@ -1292,7 +1620,7 @@ public static partial class CoordinateSystemWktReader
 
         if (string.IsNullOrWhiteSpace(methodName))
         {
-            ArgumentGuard.ThrowArgument("WKT2 CONVERSION is missing a METHOD block.");
+            ArgumentGuard.ThrowArgument($"WKT2 {keyword} is missing a METHOD block.");
         }
 
         return new Projection(methodName, parameters, conversionName, authority, authorityCode, string.Empty, string.Empty, string.Empty);
@@ -2167,6 +2495,7 @@ public static partial class CoordinateSystemWktReader
         {
             "GEOGCRS" or "GEODCRS" or "GEODETICCRS" => ReadWkt2GeodeticCoordinateReferenceSystem(tokenizer),
             "PROJCRS" => ReadWkt2ProjectedCoordinateSystem(tokenizer),
+            "DERIVEDPROJCRS" => ReadWkt2DerivedProjectedCoordinateSystem(tokenizer),
             "VERTCRS" => ReadWkt2VerticalCoordinateSystem(tokenizer),
             "COMPOUNDCRS" => ReadWkt2CompoundCoordinateSystem(tokenizer),
             "GEOGCS" => ReadGeographicCoordinateSystem(tokenizer),

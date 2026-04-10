@@ -26,12 +26,15 @@ internal static class Wkt2KeywordCoverageMatrix
     private const string LinearUnitReference = WktReader + ".ReadWkt2LinearUnit";
     private const string MetadataSkipReference = WktReader + ".ShouldSkipWkt2MetadataNode, " + WktReader + ".SkipKeywordNode";
     private const string ProjectedReference = WktReader + ".ReadWkt2ProjectedCoordinateSystem";
+    private const string DerivedProjectedReference = WktReader + ".ReadWkt2DerivedProjectedCoordinateSystem";
     private const string BaseGeographicReference = WktReader + ".ReadWkt2BaseGeographicCoordinateSystem";
+    private const string BaseProjectedReference = WktReader + ".ReadWkt2BaseProjectedCoordinateSystem";
     private const string ConversionReference = WktReader + ".ReadWkt2Conversion, " + WktReader + ".ReadWkt2ProjectionMethod, " + WktReader + ".ReadWkt2ProjectionParameter, " + WktReader + ".NormalizeWkt2ProjectionParameterName";
+    private const string DerivingConversionReference = WktReader + ".ReadWkt2DerivingConversion, " + WktReader + ".ReadWkt2ProjectionMethod, " + WktReader + ".ReadWkt2ProjectionParameter, " + WktReader + ".NormalizeWkt2ProjectionParameterName";
     private const string VerticalReference = WktReader + ".ReadWkt2VerticalCoordinateSystem, " + WktReader + ".ReadWkt2VerticalDatum";
     private const string CompoundReference = WktReader + ".ReadWkt2CompoundCoordinateSystem";
     private const string BoundReference = WktReader + ".ReadWkt2BoundCoordinateSystem, " + WktReader + ".ReadWkt2AbridgedTransformationDefinition, " + WktReader + ".ReadWkt2AbridgedTransformationParameter, " + WktReader + ".ReadWkt2AbridgedTransformationParameterFile, BoundCoordinateSystemSupport.CreateBoundTransformation, BoundCoordinateSystemSupport.AssignTransformationParameter";
-    private const string IdentifierReference = WktReader + ".ReadWkt2Axis, " + WktReader + ".ReadWkt2HorizontalDatum, " + WktReader + ".ReadWkt2HorizontalDatumEnsemble, " + WktReader + ".ReadWkt2DatumEnsemble, " + WktReader + ".ReadWkt2DatumEnsembleMember, " + WktReader + ".ReadWkt2Ellipsoid, " + WktReader + ".ReadWkt2PrimeMeridian, " + WktReader + ".ReadWkt2ProjectedCoordinateSystem, " + WktReader + ".ReadWkt2VerticalCoordinateSystem, " + WktReader + ".ReadWkt2VerticalDatumEnsemble, " + WktReader + ".ReadWkt2CompoundCoordinateSystem, " + WktReader + ".ReadWkt2AbridgedTransformationDefinition, " + WktReader + ".ReadIdentifierWithUnknownCode";
+    private const string IdentifierReference = WktReader + ".ReadWkt2Axis, " + WktReader + ".ReadWkt2HorizontalDatum, " + WktReader + ".ReadWkt2HorizontalDatumEnsemble, " + WktReader + ".ReadWkt2DatumEnsemble, " + WktReader + ".ReadWkt2DatumEnsembleMember, " + WktReader + ".ReadWkt2Ellipsoid, " + WktReader + ".ReadWkt2PrimeMeridian, " + WktReader + ".ReadWkt2ProjectedCoordinateSystem, " + WktReader + ".ReadWkt2DerivedProjectedCoordinateSystem, " + WktReader + ".ReadWkt2BaseProjectedCoordinateSystem, " + WktReader + ".ReadWkt2VerticalCoordinateSystem, " + WktReader + ".ReadWkt2VerticalDatumEnsemble, " + WktReader + ".ReadWkt2CompoundCoordinateSystem, " + WktReader + ".ReadWkt2AbridgedTransformationDefinition, " + WktReader + ".ReadIdentifierWithUnknownCode";
     private const string DefaultUnsupportedReference = WktReader + ".ReadWkt2GeodeticCoordinateReferenceSystem, " + WktReader + ".ReadWkt2ProjectedCoordinateSystem, " + WktReader + ".ReadWkt2VerticalCoordinateSystem, " + WktReader + ".ReadWkt2BoundCoordinateSystemComponent, " + WktReader + ".ParseNormalizedWkt";
     private const string UnsupportedTopLevelReference = WktReader + ".Parse, " + WktReader + ".TryParseNativeWkt2, " + WktReader + ".ParseNormalizedWkt";
     private const string NormalizationReference = WktReader + ".NormalizeWkt, " + WktReader + ".ParseNormalizedWkt";
@@ -53,10 +56,10 @@ internal static class Wkt2KeywordCoverageMatrix
         Unsupported("AXISMAXVALUE", AxisReference, "No native axis-range branch exists."),
         Unsupported("AXISMINVALUE", AxisReference, "No native axis-range branch exists."),
         Unsupported("BASEENGCRS", UnsupportedTopLevelReference, "No engineering CRS reader path exists yet."),
-        Native("BASEGEODCRS", $"{ProjectedReference}, {BaseGeographicReference}", "Handled as a native projected-base geodetic CRS block."),
-        Native("BASEGEOGCRS", $"{ProjectedReference}, {BaseGeographicReference}", "Handled as a native projected-base geographic CRS block."),
+        Native("BASEGEODCRS", $"{GeodeticReference}, {ProjectedReference}, {BaseGeographicReference}", "Handled natively for supported derived geodetic and projected CRS definitions."),
+        Native("BASEGEOGCRS", $"{GeodeticReference}, {ProjectedReference}, {BaseGeographicReference}", "Handled natively for supported derived geodetic and projected CRS definitions."),
         Unsupported("BASEPARAMCRS", UnsupportedTopLevelReference, "No parametric CRS reader path exists yet."),
-        Unsupported("BASEPROJCRS", UnsupportedTopLevelReference, "No derived projected CRS reader path exists yet."),
+        Native("BASEPROJCRS", $"{DerivedProjectedReference}, {BaseProjectedReference}", "Handled natively inside the supported affine derived projected CRS slice."),
         Unsupported("BASETIMECRS", UnsupportedTopLevelReference, "No temporal CRS reader path exists yet."),
         Unsupported("BASEVERTCRS", UnsupportedTopLevelReference, "No derived vertical CRS reader path exists yet."),
         Ignored("BBOX", MetadataSkipReference, "Accepted as non-operational metadata and skipped."),
@@ -73,8 +76,8 @@ internal static class Wkt2KeywordCoverageMatrix
         Native("CS", CoordinateSystemReference, "Parsed directly by the native coordinate-system definition reader."),
         Native("DATUM", HorizontalDatumReference, "Parsed directly by the native horizontal-datum reader."),
         Ignored("DEFININGTRANSFORMATION", MetadataSkipReference, "Accepted as non-operational metadata and skipped."),
-        Unsupported("DERIVEDPROJCRS", UnsupportedTopLevelReference, "No derived projected CRS reader path exists yet."),
-        Unsupported("DERIVINGCONVERSION", UnsupportedTopLevelReference, "No derived CRS reader path consumes deriving conversions yet."),
+        Native("DERIVEDPROJCRS", $"{RootDispatchReference}, {DerivedProjectedReference}", "Handled natively for the supported affine derived projected CRS slice."),
+        Native("DERIVINGCONVERSION", $"{GeodeticReference}, {DerivedProjectedReference}, {DerivingConversionReference}", "Handled natively for supported affine derived geographic and projected CRS definitions."),
         Ignored("DYNAMIC", MetadataSkipReference, "Accepted as non-operational metadata and skipped."),
         Unsupported("EDATUM", UnsupportedTopLevelReference, "No engineering datum reader path exists yet."),
         Native("ELLIPSOID", EllipsoidReference, "Parsed directly by the native ellipsoid reader."),

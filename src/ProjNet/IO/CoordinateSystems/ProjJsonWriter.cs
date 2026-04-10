@@ -72,6 +72,9 @@ public static class ProjJsonWriter
             case CompoundCoordinateSystem compoundCoordinateSystem:
                 WriteCompoundCoordinateSystem(writer, compoundCoordinateSystem);
                 break;
+            case FittedCoordinateSystem fittedCoordinateSystem:
+                WriteDerivedCoordinateSystem(writer, fittedCoordinateSystem);
+                break;
             default:
                 throw new NotSupportedException($"PROJJSON writing is not supported for coordinate system type '{coordinateSystem.GetType().Name}'.");
         }
@@ -149,6 +152,55 @@ public static class ProjJsonWriter
 
         WriteIdentifier(writer, coordinateSystem);
         writer.WriteEndObject();
+    }
+
+    private static void WriteDerivedCoordinateSystem(Utf8JsonWriter writer, FittedCoordinateSystem coordinateSystem)
+    {
+        Projection derivingConversion = DerivedCoordinateSystemSupport.CreateAffineConversion(
+            coordinateSystem.ToBaseTransform,
+            DerivedCoordinateSystemSupport.DefaultDerivingConversionName);
+
+        switch (coordinateSystem.BaseCoordinateSystem)
+        {
+            case GeographicCoordinateSystem geographicCoordinateSystem:
+                if (BoundCoordinateSystemSupport.CreateLegacyBoundCoordinateSystemForSerialization(geographicCoordinateSystem) is not null)
+                {
+                    throw new NotSupportedException("PROJJSON derived geographic CRS output does not support base CRS definitions that expand to BoundCRS.");
+                }
+
+                writer.WriteStartObject();
+                writer.WriteString("type", "DerivedGeographicCRS");
+                writer.WriteString("name", coordinateSystem.Name);
+                writer.WritePropertyName("base_crs");
+                WriteGeographicCoordinateSystem(writer, geographicCoordinateSystem);
+                writer.WritePropertyName("conversion");
+                WriteDerivedAffineConversion(writer, derivingConversion, geographicCoordinateSystem.AngularUnit, null);
+                writer.WritePropertyName("coordinate_system");
+                WriteCoordinateSystemDefinition(writer, "ellipsoidal", coordinateSystem);
+                WriteIdentifier(writer, coordinateSystem);
+                writer.WriteEndObject();
+                break;
+            case ProjectedCoordinateSystem projectedCoordinateSystem:
+                if (BoundCoordinateSystemSupport.CreateLegacyBoundCoordinateSystemForSerialization(projectedCoordinateSystem) is not null)
+                {
+                    throw new NotSupportedException("PROJJSON derived projected CRS output does not support base CRS definitions that expand to BoundCRS.");
+                }
+
+                writer.WriteStartObject();
+                writer.WriteString("type", "DerivedProjectedCRS");
+                writer.WriteString("name", coordinateSystem.Name);
+                writer.WritePropertyName("base_crs");
+                WriteProjectedCoordinateSystem(writer, projectedCoordinateSystem);
+                writer.WritePropertyName("conversion");
+                WriteDerivedAffineConversion(writer, derivingConversion, null, projectedCoordinateSystem.LinearUnit);
+                writer.WritePropertyName("coordinate_system");
+                WriteCoordinateSystemDefinition(writer, "Cartesian", coordinateSystem);
+                WriteIdentifier(writer, coordinateSystem);
+                writer.WriteEndObject();
+                break;
+            default:
+                throw new NotSupportedException("PROJJSON derived CRS writing currently supports only affine transforms based on two-dimensional geographic or projected coordinate systems.");
+        }
     }
 
     private static void WriteVerticalCoordinateSystem(Utf8JsonWriter writer, VerticalCoordinateSystem coordinateSystem)
@@ -490,6 +542,29 @@ public static class ProjJsonWriter
         writer.WriteEndObject();
     }
 
+    private static void WriteDerivedAffineConversion(Utf8JsonWriter writer, IProjection conversion, AngularUnit? angularUnit, LinearUnit? linearUnit)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("type", "Conversion");
+        writer.WriteString(
+            "name",
+            string.IsNullOrWhiteSpace(conversion.Name) ? DerivedCoordinateSystemSupport.DefaultDerivingConversionName : conversion.Name);
+
+        writer.WritePropertyName("method");
+        WriteMethod(writer, conversion.ClassName);
+
+        writer.WritePropertyName("parameters");
+        writer.WriteStartArray();
+        for (int i = 0; i < conversion.NumParameters; i++)
+        {
+            WriteDerivedAffineParameter(writer, conversion.GetParameter(i), angularUnit, linearUnit);
+        }
+
+        writer.WriteEndArray();
+        WriteIdentifier(writer, conversion);
+        writer.WriteEndObject();
+    }
+
     private static void WriteMethod(Utf8JsonWriter writer, string methodName)
     {
         writer.WriteStartObject();
@@ -516,6 +591,36 @@ public static class ProjJsonWriter
         else if (ProjectionSerializationSupport.ParameterUsesScaleUnit(parameter.Name))
         {
             writer.WritePropertyName("unit");
+            WriteScaleUnit(writer, "unity", 1d, "EPSG", 9201);
+        }
+
+        writer.WriteEndObject();
+    }
+
+    private static void WriteDerivedAffineParameter(Utf8JsonWriter writer, ProjectionParameter parameter, AngularUnit? angularUnit, LinearUnit? linearUnit)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("name", parameter.Name);
+        writer.WriteNumber("value", parameter.Value);
+
+        writer.WritePropertyName("unit");
+        if (parameter.Name is "A0" or "B0")
+        {
+            if (angularUnit is not null)
+            {
+                WriteAngularUnit(writer, angularUnit);
+            }
+            else if (linearUnit is not null)
+            {
+                WriteLinearUnit(writer, linearUnit);
+            }
+            else
+            {
+                throw new NotSupportedException("Derived affine conversion parameters require either an angular or linear translation unit.");
+            }
+        }
+        else
+        {
             WriteScaleUnit(writer, "unity", 1d, "EPSG", 9201);
         }
 

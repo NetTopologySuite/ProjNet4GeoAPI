@@ -909,25 +909,36 @@ public class WktNodeTests
     }
 
     /// <summary>
-    /// Verifies that WKT2 output for fitted coordinate systems remains explicitly unsupported until a derived-CRS writer exists.
+    /// Verifies affine fitted coordinate systems now emit WKT2 derived geographic CRS output and roundtrip back to the same semantic model.
     /// </summary>
     [Fact]
-    public void FittedCoordinateSystem_ToWktNode_WithWkt22019_ThrowsNotSupportedException()
+    public void FittedCoordinateSystem_ToWktNode_WithWkt22019_RoundTripsAffineDerivedGeographicCrs()
     {
         CoordinateSystemFactory factory = new();
         FittedCoordinateSystem original = factory.CreateFittedCoordinateSystem(
             "Fitted test",
             GeographicCoordinateSystem.WGS84,
-            new AffineTransform(1, 0, 0, 0, 1, 0),
+            new AffineTransform(1, 0, 0.5, 0, 1, 1.5),
             new List<AxisInfo>
             {
-                new("Lon", AxisOrientationEnum.East),
-                new("Lat", AxisOrientationEnum.North),
+                new("Local latitude", AxisOrientationEnum.North),
+                new("Local longitude", AxisOrientationEnum.East),
             });
 
-        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => original.ToWktNode(WktVersion.Wkt22019));
+        string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
+        FittedCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<FittedCoordinateSystem>(factory, wkt);
+        GeographicCoordinateSystem parsedBase = Assert.IsType<GeographicCoordinateSystem>(parsed.BaseCoordinateSystem);
+        GeographicCoordinateSystem originalBase = Assert.IsType<GeographicCoordinateSystem>(original.BaseCoordinateSystem);
 
-        Assert.Contains("derived", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.StartsWith("GEOGCRS[", wkt, StringComparison.Ordinal);
+        Assert.Contains("BASEGEOGCRS[", wkt, StringComparison.Ordinal);
+        Assert.Contains("DERIVINGCONVERSION[", wkt, StringComparison.Ordinal);
+        Assert.Equal(original.ToBase(), parsed.ToBase());
+        Assert.True(parsedBase.HorizontalDatum.EqualParams(originalBase.HorizontalDatum));
+        Assert.True(parsedBase.PrimeMeridian.EqualParams(originalBase.PrimeMeridian));
+        Assert.True(parsedBase.AngularUnit.EqualParams(originalBase.AngularUnit));
+        Assert.Equal("Local latitude", parsed.GetAxis(0).Name);
+        Assert.Equal("Local longitude", parsed.GetAxis(1).Name);
     }
 
     /// <summary>

@@ -389,6 +389,55 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
                 pcs.Projection.EqualParams(this.Projection);
     }
 
+    internal WktKeywordNode CreateWkt2BaseNode(string keyword)
+    {
+        if (string.IsNullOrWhiteSpace(keyword))
+        {
+            ArgumentGuard.ThrowArgument("Invalid WKT2 base keyword.", nameof(keyword));
+        }
+
+        if (this.Dimension != 2)
+        {
+            throw new NotSupportedException("WKT2 projected base output currently supports only two-dimensional projected coordinate systems.");
+        }
+
+        if (this.AxisInfo.Count != this.Dimension)
+        {
+            ArgumentGuard.ThrowArgument($"Projected coordinate system '{this.Name}' declared dimension {this.Dimension}, but provides {this.AxisInfo.Count} axes.");
+        }
+
+        if (BoundCoordinateSystemSupport.CreateLegacyBoundCoordinateSystemForSerialization(this) is not null)
+        {
+            throw new NotSupportedException("WKT2 projected base output for coordinate systems with retained bound metadata is not supported inside BASEPROJCRS. Serialize the top-level CRS as BOUNDCRS instead.");
+        }
+
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(this.Name),
+            this.GeographicCoordinateSystem.CreateWkt2BaseNode("BASEGEOGCRS"),
+            CreateWkt2ConversionNode(this.Projection, this.GeographicCoordinateSystem.AngularUnit, this.LinearUnit),
+            new WktKeywordNode(
+                "CS",
+                new WktIdentifier("Cartesian"),
+                new WktInteger(this.Dimension)),
+        };
+
+        for (int i = 0; i < this.AxisInfo.Count; i++)
+        {
+            children.Add(this.GetAxis(i).ToWktNode(WktVersion.Wkt22019));
+        }
+
+        children.Add(this.LinearUnit.ToWktNode(WktVersion.Wkt22019));
+
+        WktKeywordNode? idNode = WktVersionSupport.CreateIdNode(this.Authority, this.AuthorityCode);
+        if (idNode is not null)
+        {
+            children.Add(idNode);
+        }
+
+        return new WktKeywordNode(keyword, children);
+    }
+
     private static WktKeywordNode CreateWkt2ConversionNode(IProjection projection, AngularUnit angularUnit, LinearUnit linearUnit)
     {
         string methodKey = ProjectionSerializationSupport.NormalizeMethodKey(projection.ClassName);

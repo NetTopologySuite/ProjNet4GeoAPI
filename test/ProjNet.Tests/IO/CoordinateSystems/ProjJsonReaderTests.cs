@@ -311,7 +311,7 @@ public class ProjJsonReaderTests
             new TheoryDataRow<string>("EngineeringCRS"),
             new TheoryDataRow<string>("ParametricCRS"),
             new TheoryDataRow<string>("TimeCRS"),
-            new TheoryDataRow<string>("DerivedProjectedCRS"),
+            new TheoryDataRow<string>("DerivedVerticalCRS"),
             new TheoryDataRow<string>("ConcatenatedOperation"),
         ];
     }
@@ -718,6 +718,91 @@ public class ProjJsonReaderTests
     }
 
     /// <summary>
+    /// Verifies derived geographic PROJJSON objects map onto <see cref="FittedCoordinateSystem"/> with preserved axis metadata.
+    /// </summary>
+    [Fact]
+    public void Parse_WithDerivedGeographicCrs_ReturnsFittedCoordinateSystem()
+    {
+        string json = Serialize(
+            DerivedGeographicCrsObject(
+                2001,
+                "Local WGS 84",
+                GeographicCrsObject(
+                    4326,
+                    "WGS 84",
+                    GeodeticDatumObject("World Geodetic System 1984", EllipsoidObject("WGS 84", 6378137d, 298.257223563d, "metre", 7030), 6326),
+                    GreenwichPrimeMeridianObject(),
+                    "degree",
+                    ("Geodetic latitude", "Lat", "north"),
+                    ("Geodetic longitude", "Lon", "east")),
+                AffineConversionObject("unnamed", "degree", 0.5d, 1d, 0d, 1.5d, 0d, 1d),
+                "degree",
+                ("Local latitude", "Lat", "north"),
+                ("Local longitude", "Lon", "east")));
+
+        FittedCoordinateSystem parsed = Assert.IsType<FittedCoordinateSystem>(ProjJsonReader.Parse(json));
+        GeographicCoordinateSystem baseCoordinateSystem = Assert.IsType<GeographicCoordinateSystem>(parsed.BaseCoordinateSystem);
+
+        Assert.Equal("Local WGS 84", parsed.Name);
+        Assert.Equal("TEST", parsed.Authority);
+        Assert.Equal(2001, parsed.AuthorityCode);
+        Assert.Equal("WGS 84", baseCoordinateSystem.Name);
+        Assert.Equal("Local latitude", parsed.GetAxis(0).Name);
+        Assert.Equal("Local longitude", parsed.GetAxis(1).Name);
+        Assert.StartsWith("PARAM_MT[\"Affine\"", parsed.ToBase(), StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Verifies derived projected PROJJSON objects map onto <see cref="FittedCoordinateSystem"/> with a projected base CRS.
+    /// </summary>
+    [Fact]
+    public void Parse_WithDerivedProjectedCrs_ReturnsFittedCoordinateSystem()
+    {
+        string json = Serialize(
+            DerivedProjectedCrsObject(
+                3001,
+                "Local projected",
+                ProjectedCrsObject(
+                    32632,
+                    "WGS 84 / UTM zone 32N",
+                    GeographicCrsObject(
+                        4326,
+                        "WGS 84",
+                        GeodeticDatumObject("World Geodetic System 1984", EllipsoidObject("WGS 84", 6378137d, 298.257223563d, "metre", 7030), 6326),
+                        GreenwichPrimeMeridianObject(),
+                        "degree",
+                        ("Geodetic latitude", "Lat", "north"),
+                        ("Geodetic longitude", "Lon", "east")),
+                    ConversionObject(
+                        "UTM zone 32N",
+                        "Transverse Mercator",
+                        16032,
+                        ProjectionParameterObject("Latitude of natural origin", 0d, "degree", 8801),
+                        ProjectionParameterObject("Longitude of natural origin", 9d, "degree", 8802),
+                        ProjectionParameterObject("Scale factor at natural origin", 0.9996d, ScaleUnitObject(), 8805),
+                        ProjectionParameterObject("False easting", 500000d, "metre", 8806),
+                        ProjectionParameterObject("False northing", 0d, "metre", 8807)),
+                    "metre",
+                    ("Easting", "E", "east"),
+                    ("Northing", "N", "north")),
+                AffineConversionObject("unnamed", "metre", 100d, 1d, 0d, -50d, 0d, 1d),
+                "metre",
+                ("Local easting", "X", "east"),
+                ("Local northing", "Y", "north")));
+
+        FittedCoordinateSystem parsed = Assert.IsType<FittedCoordinateSystem>(ProjJsonReader.Parse(json));
+        ProjectedCoordinateSystem baseCoordinateSystem = Assert.IsType<ProjectedCoordinateSystem>(parsed.BaseCoordinateSystem);
+
+        Assert.Equal("Local projected", parsed.Name);
+        Assert.Equal("TEST", parsed.Authority);
+        Assert.Equal(3001, parsed.AuthorityCode);
+        Assert.Equal("WGS 84 / UTM zone 32N", baseCoordinateSystem.Name);
+        Assert.Equal("Local easting", parsed.GetAxis(0).Name);
+        Assert.Equal("Local northing", parsed.GetAxis(1).Name);
+        Assert.StartsWith("PARAM_MT[\"Affine\"", parsed.ToBase(), StringComparison.Ordinal);
+    }
+
+    /// <summary>
     /// Verifies representative unsupported top-level PROJJSON types remain explicit reader boundaries.
     /// </summary>
     /// <param name="type">The unsupported PROJJSON <c>type</c> value.</param>
@@ -806,6 +891,52 @@ public class ProjJsonReaderTests
             ("conversion", conversion),
             ("coordinate_system", coordinateSystem),
             ("id", IdObject("EPSG", srid)));
+    }
+
+    private static Dictionary<string, object?> DerivedGeographicCrsObject(
+        int code,
+        string name,
+        Dictionary<string, object?> baseCrs,
+        Dictionary<string, object?> conversion,
+        object angularUnit,
+        (string Name, string Abbreviation, string Direction) axis1,
+        (string Name, string Abbreviation, string Direction) axis2)
+    {
+        Dictionary<string, object?> coordinateSystem = CoordinateSystemObject(
+            "ellipsoidal",
+            AxisObject(axis1.Name, axis1.Abbreviation, axis1.Direction, angularUnit),
+            AxisObject(axis2.Name, axis2.Abbreviation, axis2.Direction, angularUnit));
+
+        return Obj(
+            ("type", "DerivedGeographicCRS"),
+            ("name", name),
+            ("base_crs", baseCrs),
+            ("conversion", conversion),
+            ("coordinate_system", coordinateSystem),
+            ("id", IdObject("TEST", code)));
+    }
+
+    private static Dictionary<string, object?> DerivedProjectedCrsObject(
+        int code,
+        string name,
+        Dictionary<string, object?> baseCrs,
+        Dictionary<string, object?> conversion,
+        object linearUnit,
+        (string Name, string Abbreviation, string Direction) axis1,
+        (string Name, string Abbreviation, string Direction) axis2)
+    {
+        Dictionary<string, object?> coordinateSystem = CoordinateSystemObject(
+            "Cartesian",
+            AxisObject(axis1.Name, axis1.Abbreviation, axis1.Direction, linearUnit),
+            AxisObject(axis2.Name, axis2.Abbreviation, axis2.Direction, linearUnit));
+
+        return Obj(
+            ("type", "DerivedProjectedCRS"),
+            ("name", name),
+            ("base_crs", baseCrs),
+            ("conversion", conversion),
+            ("coordinate_system", coordinateSystem),
+            ("id", IdObject("TEST", code)));
     }
 
     private static Dictionary<string, object?> GeocentricCrsObject(
@@ -972,6 +1103,20 @@ public class ProjJsonReaderTests
             ("method", Obj(("name", methodName))),
             ("parameters", parameters.Cast<object>().ToArray()),
             ("id", IdObject("EPSG", conversionCode)));
+    }
+
+    private static Dictionary<string, object?> AffineConversionObject(string name, object translationUnit, double a0, double a1, double a2, double b0, double b1, double b2)
+    {
+        return ConversionObject(
+            name,
+            "Affine parametric transformation",
+            9624,
+            ProjectionParameterObject("A0", a0, translationUnit, 8623),
+            ProjectionParameterObject("A1", a1, ScaleUnitObject(), 8624),
+            ProjectionParameterObject("A2", a2, ScaleUnitObject(), 8625),
+            ProjectionParameterObject("B0", b0, translationUnit, 8639),
+            ProjectionParameterObject("B1", b1, ScaleUnitObject(), 8640),
+            ProjectionParameterObject("B2", b2, ScaleUnitObject(), 8641));
     }
 
     private static Dictionary<string, object?> AbridgedTransformationObject(string name, string methodName, params Dictionary<string, object?>[] parameters)

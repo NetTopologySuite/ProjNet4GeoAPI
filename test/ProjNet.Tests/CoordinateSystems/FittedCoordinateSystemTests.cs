@@ -85,6 +85,31 @@ public class FittedCoordinateSystemTests
     }
 
     /// <summary>
+    /// Verifies the factory preserves explicit fitted-axis metadata when it is supplied.
+    /// </summary>
+    [Fact]
+    public void Factory_WithCustomAxes_PreservesSuppliedAxisInfo()
+    {
+        CoordinateSystemFactory factory = new();
+        List<AxisInfo> fittedAxes =
+        [
+            new AxisInfo("Local latitude", AxisOrientationEnum.North),
+            new AxisInfo("Local longitude", AxisOrientationEnum.East),
+        ];
+
+        FittedCoordinateSystem system = factory.CreateFittedCoordinateSystem(
+            "Custom fitted",
+            GeographicCoordinateSystem.WGS84,
+            CreateTransform(),
+            fittedAxes);
+
+        Assert.Equal("Local latitude", system.GetAxis(0).Name);
+        Assert.Equal(AxisOrientationEnum.North, system.GetAxis(0).Orientation);
+        Assert.Equal("Local longitude", system.GetAxis(1).Name);
+        Assert.Equal(AxisOrientationEnum.East, system.GetAxis(1).Orientation);
+    }
+
+    /// <summary>
     /// Verifies that WKT contains the fitted keyword, transform, and base coordinate system.
     /// </summary>
     [Fact]
@@ -202,6 +227,28 @@ public class FittedCoordinateSystemTests
         GeographicCoordinateSystem baseCoordinateSystem = CreateBaseCoordinateSystem();
         FittedCoordinateSystem first = CreateSystem(baseCoordinateSystem, CreateTransform(translationX: 10, translationY: 20));
         FittedCoordinateSystem second = CreateSystem(baseCoordinateSystem, CreateTransform(translationX: 30, translationY: 40));
+
+        Assert.False(first.EqualParams(second));
+    }
+
+    /// <summary>
+    /// Verifies that a different fitted-axis orientation causes equality to fail.
+    /// </summary>
+    [Fact]
+    public void EqualParams_DifferentAxisOrientation_ReturnsFalse()
+    {
+        CoordinateSystemFactory factory = new();
+        GeographicCoordinateSystem baseCoordinateSystem = CreateBaseCoordinateSystem();
+        FittedCoordinateSystem first = factory.CreateFittedCoordinateSystem(
+            "First",
+            baseCoordinateSystem,
+            CreateTransform(),
+            [new AxisInfo("Latitude", AxisOrientationEnum.North), new AxisInfo("Longitude", AxisOrientationEnum.East)]);
+        FittedCoordinateSystem second = factory.CreateFittedCoordinateSystem(
+            "Second",
+            baseCoordinateSystem,
+            CreateTransform(),
+            [new AxisInfo("Latitude", AxisOrientationEnum.East), new AxisInfo("Longitude", AxisOrientationEnum.North)]);
 
         Assert.False(first.EqualParams(second));
     }

@@ -294,20 +294,51 @@ public class ProjJsonWriterTests
     }
 
     /// <summary>
-    /// Verifies unsupported coordinate-system types stay an explicit boundary until later M38 slices.
+    /// Verifies affine fitted coordinate systems with geographic bases serialize as PROJJSON derived geographic CRS objects.
     /// </summary>
     [Fact]
-    public void ToJson_WithUnsupportedCoordinateSystem_ThrowsNotSupportedException()
+    public void ToJson_WithDerivedGeographicCoordinateSystem_EmitsDerivedGeographicCrs()
     {
-        FittedCoordinateSystem fitted = CoordinateSystemFactory.CreateFittedCoordinateSystem(
-            "Fitted WGS 84",
-            GeographicCoordinateSystem.WGS84,
-            new AffineTransform(1, 0, 0, 0, 1, 0),
-            []);
+        FittedCoordinateSystem fitted = CreateDerivedGeographicCoordinateSystem();
 
-        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => ProjJsonWriter.ToJson(fitted));
+        string json = ProjJsonWriter.ToJson(fitted);
+        FittedCoordinateSystem parsed = Assert.IsType<FittedCoordinateSystem>(ProjJsonReader.Parse(json));
 
-        Assert.Contains(nameof(FittedCoordinateSystem), exception.Message, StringComparison.Ordinal);
+        using var document = JsonDocument.Parse(json);
+        JsonElement root = document.RootElement;
+
+        Assert.Equal("DerivedGeographicCRS", root.GetProperty("type").GetString());
+        Assert.Equal("GeographicCRS", root.GetProperty("base_crs").GetProperty("type").GetString());
+        Assert.Equal("Affine parametric transformation", root.GetProperty("conversion").GetProperty("method").GetProperty("name").GetString());
+        Assert.Equal("Local latitude", root.GetProperty("coordinate_system").GetProperty("axis")[0].GetProperty("name").GetString());
+        Assert.Equal("Local longitude", root.GetProperty("coordinate_system").GetProperty("axis")[1].GetProperty("name").GetString());
+        Assert.True(parsed.EqualParams(fitted));
+        Assert.Equal("Local latitude", parsed.GetAxis(0).Name);
+        Assert.Equal("Local longitude", parsed.GetAxis(1).Name);
+    }
+
+    /// <summary>
+    /// Verifies affine fitted coordinate systems with projected bases serialize as PROJJSON derived projected CRS objects.
+    /// </summary>
+    [Fact]
+    public void ToJson_WithDerivedProjectedCoordinateSystem_EmitsDerivedProjectedCrs()
+    {
+        FittedCoordinateSystem fitted = CreateDerivedProjectedCoordinateSystem();
+
+        string json = ProjJsonWriter.ToJson(fitted);
+        FittedCoordinateSystem parsed = Assert.IsType<FittedCoordinateSystem>(ProjJsonReader.Parse(json));
+
+        using var document = JsonDocument.Parse(json);
+        JsonElement root = document.RootElement;
+
+        Assert.Equal("DerivedProjectedCRS", root.GetProperty("type").GetString());
+        Assert.Equal("ProjectedCRS", root.GetProperty("base_crs").GetProperty("type").GetString());
+        Assert.Equal("Affine parametric transformation", root.GetProperty("conversion").GetProperty("method").GetProperty("name").GetString());
+        Assert.Equal("Local easting", root.GetProperty("coordinate_system").GetProperty("axis")[0].GetProperty("name").GetString());
+        Assert.Equal("Local northing", root.GetProperty("coordinate_system").GetProperty("axis")[1].GetProperty("name").GetString());
+        Assert.True(parsed.EqualParams(fitted));
+        Assert.Equal("Local easting", parsed.GetAxis(0).Name);
+        Assert.Equal("Local northing", parsed.GetAxis(1).Name);
     }
 
     /// <summary>
@@ -580,6 +611,31 @@ public class ProjJsonWriterTests
         }
 
         return wkt;
+    }
+
+    private static FittedCoordinateSystem CreateDerivedGeographicCoordinateSystem()
+    {
+        return CoordinateSystemFactory.CreateFittedCoordinateSystem(
+            "Local WGS 84",
+            GeographicCoordinateSystem.WGS84,
+            new AffineTransform(1, 0, 0.5, 0, 1, 1.5),
+            [
+                new AxisInfo("Local latitude", AxisOrientationEnum.North),
+                new AxisInfo("Local longitude", AxisOrientationEnum.East),
+            ]);
+    }
+
+    private static FittedCoordinateSystem CreateDerivedProjectedCoordinateSystem()
+    {
+        var baseCoordinateSystem = ProjectedCoordinateSystem.WGS84_UTM(32, true);
+        return CoordinateSystemFactory.CreateFittedCoordinateSystem(
+            "Local projected",
+            baseCoordinateSystem,
+            new AffineTransform(1, 0, 100, 0, 1, -50),
+            [
+                new AxisInfo("Local easting", AxisOrientationEnum.East),
+                new AxisInfo("Local northing", AxisOrientationEnum.North),
+            ]);
     }
 
     private static VerticalCoordinateSystem CreateBoundVerticalCoordinateSystem()

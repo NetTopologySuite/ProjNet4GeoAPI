@@ -228,7 +228,6 @@ public class CoordinateSystemWktReaderWkt2Tests
             new TheoryDataRow<string, string, string>("PARAMETRICCRS", """PARAMETRICCRS["Parametric example"]""", "PARAMETRICCRS"),
             new TheoryDataRow<string, string, string>("TIMECRS", """TIMECRS["Temporal example"]""", "TIMECRS"),
             new TheoryDataRow<string, string, string>("COORDINATEMETADATA", """COORDINATEMETADATA["Metadata example"]""", "COORDINATEMETADATA"),
-            new TheoryDataRow<string, string, string>("DERIVEDPROJCRS", """DERIVEDPROJCRS["Derived projected example"]""", "DERIVEDPROJCS"),
             new TheoryDataRow<string, string, string>("COORDINATEOPERATION", """COORDINATEOPERATION["Operation example"]""", "COORDINATEOPERATION"),
         ];
     }
@@ -393,6 +392,48 @@ public class CoordinateSystemWktReaderWkt2Tests
         Assert.True(parsed.EqualParams(reference));
         Assert.Equal("EPSG", parsed.Authority);
         Assert.Equal(10190, parsed.AuthorityCode);
+    }
+
+    /// <summary>
+    /// Verifies affine derived geographic WKT2 definitions parse onto <see cref="FittedCoordinateSystem"/> and retain the fitted axis metadata.
+    /// </summary>
+    [Fact]
+    public void CreateFromWkt_WithDerivedGeographicCrs_ParsesFittedCoordinateSystemAndRetainsAxisMetadata()
+    {
+        const string wkt = """GEOGCRS["Local WGS 84",BASEGEOGCRS["WGS 84",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]],ID["EPSG",6326]],ID["EPSG",4326]],DERIVINGCONVERSION["unnamed",METHOD["Affine parametric transformation"],PARAMETER["A0",0.5,ANGLEUNIT["degree",0.0174532925199433]],PARAMETER["A1",1,SCALEUNIT["unity",1]],PARAMETER["A2",0,SCALEUNIT["unity",1]],PARAMETER["B0",1.5,ANGLEUNIT["degree",0.0174532925199433]],PARAMETER["B1",0,SCALEUNIT["unity",1]],PARAMETER["B2",1,SCALEUNIT["unity",1]]],CS[ellipsoidal,2],AXIS["Local latitude",north,ORDER[1]],AXIS["Local longitude",east,ORDER[2]],ANGLEUNIT["degree",0.0174532925199433],ID["TEST",2001]]""";
+
+        FittedCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<FittedCoordinateSystem>(CoordinateSystemFactory, wkt);
+        GeographicCoordinateSystem baseCoordinateSystem = Assert.IsType<GeographicCoordinateSystem>(parsed.BaseCoordinateSystem);
+
+        Assert.Equal("Local WGS 84", parsed.Name);
+        Assert.Equal("TEST", parsed.Authority);
+        Assert.Equal(2001, parsed.AuthorityCode);
+        Assert.Equal("WGS 84", baseCoordinateSystem.Name);
+        Assert.Equal("Local latitude", parsed.GetAxis(0).Name);
+        Assert.Equal(AxisOrientationEnum.North, parsed.GetAxis(0).Orientation);
+        Assert.Equal("Local longitude", parsed.GetAxis(1).Name);
+        Assert.Equal(AxisOrientationEnum.East, parsed.GetAxis(1).Orientation);
+        Assert.StartsWith("PARAM_MT[\"Affine\"", parsed.ToBase(), StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Verifies affine derived projected WKT2 definitions parse onto <see cref="FittedCoordinateSystem"/> and retain the base projected CRS.
+    /// </summary>
+    [Fact]
+    public void CreateFromWkt_WithDerivedProjectedCrs_ParsesFittedCoordinateSystemAndRetainsBaseProjectedCrs()
+    {
+        const string wkt = """DERIVEDPROJCRS["Local projected",BASEPROJCRS["WGS 84 / UTM zone 32N",BASEGEOGCRS["WGS 84",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]],ID["EPSG",6326]],ID["EPSG",4326]],CONVERSION["UTM zone 32N",METHOD["Transverse Mercator"],PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.0174532925199433]],PARAMETER["Longitude of natural origin",9,ANGLEUNIT["degree",0.0174532925199433]],PARAMETER["Scale factor at natural origin",0.9996,SCALEUNIT["unity",1]],PARAMETER["False easting",500000,LENGTHUNIT["metre",1]],PARAMETER["False northing",0,LENGTHUNIT["metre",1]]],CS[Cartesian,2],AXIS["Easting",east,ORDER[1]],AXIS["Northing",north,ORDER[2]],LENGTHUNIT["metre",1],ID["EPSG",32632]],DERIVINGCONVERSION["unnamed",METHOD["Affine parametric transformation"],PARAMETER["A0",100,LENGTHUNIT["metre",1]],PARAMETER["A1",1,SCALEUNIT["unity",1]],PARAMETER["A2",0,SCALEUNIT["unity",1]],PARAMETER["B0",-50,LENGTHUNIT["metre",1]],PARAMETER["B1",0,SCALEUNIT["unity",1]],PARAMETER["B2",1,SCALEUNIT["unity",1]]],CS[Cartesian,2],AXIS["Local easting",east,ORDER[1]],AXIS["Local northing",north,ORDER[2]],LENGTHUNIT["metre",1],ID["TEST",3001]]""";
+
+        FittedCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<FittedCoordinateSystem>(CoordinateSystemFactory, wkt);
+        ProjectedCoordinateSystem baseCoordinateSystem = Assert.IsType<ProjectedCoordinateSystem>(parsed.BaseCoordinateSystem);
+
+        Assert.Equal("Local projected", parsed.Name);
+        Assert.Equal("TEST", parsed.Authority);
+        Assert.Equal(3001, parsed.AuthorityCode);
+        Assert.Equal("WGS 84 / UTM zone 32N", baseCoordinateSystem.Name);
+        Assert.Equal("Local easting", parsed.GetAxis(0).Name);
+        Assert.Equal("Local northing", parsed.GetAxis(1).Name);
+        Assert.StartsWith("PARAM_MT[\"Affine\"", parsed.ToBase(), StringComparison.Ordinal);
     }
 
     /// <summary>

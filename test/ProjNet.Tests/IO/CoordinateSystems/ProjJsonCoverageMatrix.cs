@@ -19,6 +19,7 @@ internal static class ProjJsonCoverageMatrix
     private const string ReaderGeographicReference = Reader + ".ReadGeographicCoordinateSystem";
     private const string ReaderGeodeticReference = Reader + ".ReadGeodeticCoordinateSystem, " + Reader + ".ReadGeocentricCoordinateSystem";
     private const string ReaderProjectedReference = Reader + ".ReadProjectedCoordinateSystem";
+    private const string ReaderDerivedReference = Reader + ".ReadDerivedGeodeticCoordinateSystem, " + Reader + ".ReadDerivedProjectedCoordinateSystem, " + Reader + ".CreateDerivedCoordinateSystem";
     private const string ReaderBoundReference = Reader + ".ReadBoundCoordinateSystem, " + Reader + ".ReadBoundTransformation, " + Reader + ".ReadCoordinateSystemElement";
     private const string ReaderVerticalReference = Reader + ".ReadVerticalCoordinateSystem";
     private const string ReaderCompoundReference = Reader + ".ReadCompoundCoordinateSystem";
@@ -32,6 +33,7 @@ internal static class ProjJsonCoverageMatrix
     private const string WriterGeographicReference = Writer + ".WriteGeographicCoordinateSystem";
     private const string WriterGeocentricReference = Writer + ".WriteGeocentricCoordinateSystem";
     private const string WriterProjectedReference = Writer + ".WriteProjectedCoordinateSystem";
+    private const string WriterDerivedReference = Writer + ".WriteDerivedCoordinateSystem, " + Writer + ".WriteDerivedAffineConversion, " + Writer + ".WriteDerivedAffineParameter";
     private const string WriterVerticalReference = Writer + ".WriteVerticalCoordinateSystem";
     private const string WriterCompoundReference = Writer + ".WriteCompoundCoordinateSystem, " + Writer + ".WriteCompoundComponents, " + Writer + ".WriteCompoundComponent";
     private const string WriterAxisReference = Writer + ".WriteCoordinateSystemDefinition, " + Writer + ".WriteAxis, " + Writer + ".GetAxisDirection";
@@ -65,10 +67,10 @@ internal static class ProjJsonCoverageMatrix
             Row(
                 "conversion",
                 ProjJsonCoverageStatus.Supported,
-                ReaderConversionReference,
+                $"{ReaderConversionReference}, {ReaderDerivedReference}",
                 ProjJsonCoverageStatus.Supported,
-                WriterConversionReference,
-                "Nested conversion objects are parsed and emitted natively for projected CRS."),
+                $"{WriterConversionReference}, {WriterDerivedReference}",
+                "Nested conversion objects are parsed and emitted natively for projected CRS and the supported affine derived CRS slice."),
             Row(
                 "conversion.parameters[].unit",
                 ProjJsonCoverageStatus.Ignored,
@@ -141,11 +143,11 @@ internal static class ProjJsonCoverageMatrix
                 "Reader and writer retain datum_ensemble metadata for supported geodetic and vertical CRS definitions."),
             Row(
                 "DerivedCRS/FittedCoordinateSystem",
-                ProjJsonCoverageStatus.Unsupported,
-                ReaderRootReference,
-                ProjJsonCoverageStatus.Unsupported,
-                WriterRootReference,
-                "No derived CRS PROJJSON path exists and FittedCoordinateSystem still falls into the writer default throw."),
+                ProjJsonCoverageStatus.Supported,
+                $"{ReaderRootReference}, {ReaderDerivedReference}",
+                ProjJsonCoverageStatus.Supported,
+                $"{WriterRootReference}, {WriterDerivedReference}",
+                "Derived geographic and projected CRS now roundtrip onto FittedCoordinateSystem for the supported affine 2D slice."),
             Row(
                 "EngineeringCRS",
                 ProjJsonCoverageStatus.Unsupported,
