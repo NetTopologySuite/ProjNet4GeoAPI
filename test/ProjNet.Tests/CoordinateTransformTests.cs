@@ -11,6 +11,7 @@ using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.Geometries;
 using ProjNet.IO.CoordinateSystems;
+using ProjNet.IO.Wkt;
 using Xunit;
 using static ProjNet.Tests.CoordinateSystemTestHelpers;
 
@@ -1186,6 +1187,74 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     }
 
     /// <summary>
+    /// Verifies WKT2-derived geographic CRS definitions integrate with the fitted runtime path when transforming to the parsed base CRS.
+    /// </summary>
+    [Fact]
+    public void TestTransformFromDerivedGeographicWkt2ToBaseCoordinateSystem()
+    {
+        var coordinateSystemFactory = new CoordinateSystemFactory();
+        string wkt = CreateDerivedGeographicRuntimeCoordinateSystem().ToWktNode(WktVersion.Wkt22019).ToString();
+        FittedCoordinateSystem derived = RequireCoordinateSystem<FittedCoordinateSystem>(coordinateSystemFactory, wkt);
+        GeographicCoordinateSystem baseCoordinateSystem = Assert.IsType<GeographicCoordinateSystem>(derived.BaseCoordinateSystem);
+
+        ICoordinateTransformation transformation = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(derived, baseCoordinateSystem);
+
+        double[] localPoint = [12.5, 55.25];
+        double[] expected = derived.ToBaseTransform.Transform(localPoint);
+        double[] actual = transformation.MathTransform.Transform(localPoint);
+        double[] roundTripped = transformation.MathTransform.Inverse().Transform(actual);
+
+        Assert.Equal(expected[0], actual[0], 12);
+        Assert.Equal(expected[1], actual[1], 12);
+        Assert.Equal(localPoint[0], roundTripped[0], 12);
+        Assert.Equal(localPoint[1], roundTripped[1], 12);
+    }
+
+    /// <summary>
+    /// Verifies WKT2-derived projected CRS definitions compose through the fitted runtime path when transforming to another projected CRS.
+    /// </summary>
+    [Fact]
+    public void TestTransformFromDerivedProjectedWkt2ToDifferentProjectedCoordinateSystem()
+    {
+        var coordinateSystemFactory = new CoordinateSystemFactory();
+        string wkt = CreateDerivedProjectedRuntimeCoordinateSystem().ToWktNode(WktVersion.Wkt22019).ToString();
+        FittedCoordinateSystem derived = RequireCoordinateSystem<FittedCoordinateSystem>(coordinateSystemFactory, wkt);
+        ProjectedCoordinateSystem baseCoordinateSystem = Assert.IsType<ProjectedCoordinateSystem>(derived.BaseCoordinateSystem);
+        var targetCoordinateSystem = ProjectedCoordinateSystem.WGS84_UTM(33, true);
+
+        ICoordinateTransformation transformation = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(derived, targetCoordinateSystem);
+        ICoordinateTransformation baseTransformation = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(baseCoordinateSystem, targetCoordinateSystem);
+
+        double[] localPoint = [450000d, 6200000d];
+        double[] expected = baseTransformation.MathTransform.Transform(derived.ToBaseTransform.Transform(localPoint));
+        double[] actual = transformation.MathTransform.Transform(localPoint);
+
+        Assert.Equal(expected[0], actual[0], 8);
+        Assert.Equal(expected[1], actual[1], 8);
+    }
+
+    /// <summary>
+    /// Verifies PROJJSON-derived projected CRS definitions compose through the fitted runtime path when transforming from another projected CRS.
+    /// </summary>
+    [Fact]
+    public void TestTransformFromDifferentProjectedCoordinateSystemToDerivedProjectedProjJson()
+    {
+        FittedCoordinateSystem derived = Assert.IsType<FittedCoordinateSystem>(ProjJsonReader.Parse(ProjJsonWriter.ToJson(CreateDerivedProjectedRuntimeCoordinateSystem())));
+        var sourceCoordinateSystem = ProjectedCoordinateSystem.WGS84_UTM(33, true);
+        ProjectedCoordinateSystem baseCoordinateSystem = Assert.IsType<ProjectedCoordinateSystem>(derived.BaseCoordinateSystem);
+
+        ICoordinateTransformation transformation = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(sourceCoordinateSystem, derived);
+        ICoordinateTransformation sourceToBaseTransformation = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(sourceCoordinateSystem, baseCoordinateSystem);
+
+        double[] sourcePoint = [500000d, 6100000d];
+        double[] expected = derived.ToBaseTransform.Inverse().Transform(sourceToBaseTransformation.MathTransform.Transform(sourcePoint));
+        double[] actual = transformation.MathTransform.Transform(sourcePoint);
+
+        Assert.Equal(expected[0], actual[0], 8);
+        Assert.Equal(expected[1], actual[1], 8);
+    }
+
+    /// <summary>
     /// Tests the EPSG 21780 (Bern 1898 (Bern) / LV03C) projection with a non-Greenwich prime meridian.
     /// </summary>
     [Fact]
@@ -1392,5 +1461,31 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
         var coordinateService = new CoordinateSystemServices(coordinateSystemFactory, new CoordinateTransformationFactory());
         ICoordinateTransformation? transformation = coordinateService.CreateTransformation(sourceCoordinateSystem, targetCoordinateSystem);
         return Assert.IsType<ICoordinateTransformation>(transformation, exactMatch: false);
+    }
+
+    private static FittedCoordinateSystem CreateDerivedGeographicRuntimeCoordinateSystem()
+    {
+        GeographicCoordinateSystem baseCoordinateSystem = GeographicCoordinateSystem.WGS84;
+        return new CoordinateSystemFactory().CreateFittedCoordinateSystem(
+            "Runtime derived geographic",
+            baseCoordinateSystem,
+            new AffineTransform(1, 0, 0.5, 0, 1, 1.5),
+            [
+                new AxisInfo(baseCoordinateSystem.GetAxis(0).Name, baseCoordinateSystem.GetAxis(0).Orientation),
+                new AxisInfo(baseCoordinateSystem.GetAxis(1).Name, baseCoordinateSystem.GetAxis(1).Orientation),
+            ]);
+    }
+
+    private static FittedCoordinateSystem CreateDerivedProjectedRuntimeCoordinateSystem()
+    {
+        var baseCoordinateSystem = ProjectedCoordinateSystem.WGS84_UTM(32, true);
+        return new CoordinateSystemFactory().CreateFittedCoordinateSystem(
+            "Runtime derived projected",
+            baseCoordinateSystem,
+            new AffineTransform(1, 0, 100, 0, 1, -50),
+            [
+                new AxisInfo(baseCoordinateSystem.GetAxis(0).Name, baseCoordinateSystem.GetAxis(0).Orientation),
+                new AxisInfo(baseCoordinateSystem.GetAxis(1).Name, baseCoordinateSystem.GetAxis(1).Orientation),
+            ]);
     }
 }
