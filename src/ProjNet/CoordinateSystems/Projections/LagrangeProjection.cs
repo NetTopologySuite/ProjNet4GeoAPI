@@ -16,7 +16,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// the eighteenth century. The implementation uses the parameter <c>W</c> and the reference
 /// latitude <c>lat_1</c> to build the classic circular conformal mapping.
 /// </remarks>
-internal class LagrangeProjection : MapProjection
+internal sealed class LagrangeProjection : MapProjection
 {
     private const double Tolerance = 1e-10d;
 

@@ -17,7 +17,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// polynomial. The implementation matches the tabulated x/y coefficient set used for the
 /// fifth-order pseudocylindrical approximation.</para>
 /// </remarks>
-internal class LaskowskiProjection : MapProjection
+internal sealed class LaskowskiProjection : MapProjection
 {
     private const double A10 = 0.975534d;
     private const double A12 = -0.119161d;

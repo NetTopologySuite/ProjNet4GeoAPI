@@ -31,7 +31,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 /// <seealso href="https://epsg.io/9802-method">EPSG method 9802: Lambert Conic Conformal (2SP).</seealso>
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 3, Sect. 3.1.2, pp. 90-93.</seealso>
-internal class LambertConformalConic2SP : MapProjection
+internal sealed class LambertConformalConic2SP : MapProjection
 {
     private static readonly string[] LatitudeOfOriginFallback = ["latitude_of_origin"];
 
@@ -88,7 +88,7 @@ internal class LambertConformalConic2SP : MapProjection
     /// </remarks>
     /// <param name="parameters">List of parameters to initialize the projection.</param>
     /// <param name="inverse">The inverse projection instance, or <see langword="null"/> for a forward projection.</param>
-    protected LambertConformalConic2SP(IEnumerable<ProjectionParameter> parameters, LambertConformalConic2SP? inverse)
+    private LambertConformalConic2SP(IEnumerable<ProjectionParameter> parameters, LambertConformalConic2SP? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Lambert_Conformal_Conic_2SP";

@@ -24,7 +24,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Miller_cylindrical_projection">Wikipedia: Miller cylindrical projection.</seealso>
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 6, Sect. 6.3.8, pp. 182-184.</seealso>
-internal class MillerCylindricalProjection : MapProjection
+internal sealed class MillerCylindricalProjection : MapProjection
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="MillerCylindricalProjection"/> class.

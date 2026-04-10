@@ -17,7 +17,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// authalic-latitude substitution <c>asin(Csy * sin(φ))</c> together with the parabolic
 /// x/y scaling that distinguishes the family member.
 /// </remarks>
-internal class McBrydeThomasFlatPolarParabolicProjection : MapProjection
+internal sealed class McBrydeThomasFlatPolarParabolicProjection : MapProjection
 {
     private const double Csy = 0.95257934441568037152d;
     private const double Fxc = 0.92582009977255146156d;

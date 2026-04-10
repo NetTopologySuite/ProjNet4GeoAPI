@@ -16,7 +16,7 @@ using System.Collections.Generic;
 /// McBryde-Thomas sinusoidal variant. Its numerical behavior therefore follows the verified
 /// parameterized sinusoidal base formulation.
 /// </remarks>
-internal class McBrydeThomasFlatPolarSinusoidalProjection : GeneralSinusoidalProjection
+internal sealed class McBrydeThomasFlatPolarSinusoidalProjection : GeneralSinusoidalProjection
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="McBrydeThomasFlatPolarSinusoidalProjection"/> class.

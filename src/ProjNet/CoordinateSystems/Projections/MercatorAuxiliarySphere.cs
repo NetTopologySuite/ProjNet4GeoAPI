@@ -18,7 +18,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// core longitude and logarithmic latitude mapping is covered by the independently
 /// verified Mercator formulation documented there.
 /// </remarks>
-internal class MercatorAuxiliarySphere : MapProjection
+internal sealed class MercatorAuxiliarySphere : MapProjection
 {
     // Scale factor – for the spherical (auxiliary) Mercator this is 1.
     private const double k0 = 1.0;
@@ -37,7 +37,7 @@ internal class MercatorAuxiliarySphere : MapProjection
     /// </summary>
     /// <param name="parameters">List of projection parameters.</param>
     /// <param name="isInverse">Inverse transform instance when cloning.</param>
-    protected MercatorAuxiliarySphere(IEnumerable<ProjectionParameter> parameters, MercatorAuxiliarySphere? isInverse)
+    private MercatorAuxiliarySphere(IEnumerable<ProjectionParameter> parameters, MercatorAuxiliarySphere? isInverse)
         : base(parameters, isInverse)
     {
         this.Authority = "EPSG";

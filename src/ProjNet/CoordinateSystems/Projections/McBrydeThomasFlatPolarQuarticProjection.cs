@@ -17,7 +17,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// auxiliary latitude iteratively and then applies the quartic family's characteristic
 /// half-angle x/y scaling.
 /// </remarks>
-internal class McBrydeThomasFlatPolarQuarticProjection : MapProjection
+internal sealed class McBrydeThomasFlatPolarQuarticProjection : MapProjection
 {
     private const int Iterations = 20;
     private const double IterationTolerance = 1e-7d;

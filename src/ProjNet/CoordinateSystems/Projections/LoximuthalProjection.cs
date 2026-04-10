@@ -19,7 +19,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// relation <c>x = λ * (φ - phi1) / ln(tan(π / 4 + φ / 2) / tan(π / 4 + phi1 / 2))</c>,
 /// including the limiting case <c>x = λ * cos(phi1)</c> at the reference latitude.</para>
 /// </remarks>
-internal class LoximuthalProjection : MapProjection
+internal sealed class LoximuthalProjection : MapProjection
 {
     private readonly double referenceLatitude;
     private readonly double referenceMercatorTerm;

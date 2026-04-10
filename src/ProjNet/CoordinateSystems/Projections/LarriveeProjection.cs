@@ -18,7 +18,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>x = 0.5 * λ * (1 + sqrt(cos(φ)))</c> term and the denominator used for the
 /// corresponding y coordinate.</para>
 /// </remarks>
-internal class LarriveeProjection : MapProjection
+internal sealed class LarriveeProjection : MapProjection
 {
     private const double Sixth = 0.16666666666666666d;
 
