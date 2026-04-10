@@ -398,7 +398,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
         }
     }
 
-    private class CsEqualityComparer : EqualityComparer<IInfo>
+    private sealed class CsEqualityComparer : EqualityComparer<IInfo>
     {
         /// <inheritdoc />
         public override bool Equals(IInfo? x, IInfo? y)
@@ -421,7 +421,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
         }
     }
 
-    private class CoordinateSystemKey : IInfo
+    private sealed class CoordinateSystemKey : IInfo
     {
         public CoordinateSystemKey(string authority, long authorityCode)
         {
