@@ -31,7 +31,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// U.S. Geological Survey Professional Paper 1395, 1987.</para>
 /// </remarks>
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 5, Sect. 5.1.3, pp. 159-162.</seealso>
-internal class TransverseMercator : MapProjection
+internal sealed class TransverseMercator : MapProjection
 {
     // Maximum difference allowed when comparing real numbers.
     private const double EPSILON = 1E-6;
@@ -114,7 +114,7 @@ internal class TransverseMercator : MapProjection
     /// <item><term>false_northing</term><description>Northing assigned to the natural origin.</description></item>
     /// </list>
     /// </remarks>
-    protected TransverseMercator(IEnumerable<ProjectionParameter> parameters, TransverseMercator? inverse)
+    private TransverseMercator(IEnumerable<ProjectionParameter> parameters, TransverseMercator? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Transverse_Mercator";

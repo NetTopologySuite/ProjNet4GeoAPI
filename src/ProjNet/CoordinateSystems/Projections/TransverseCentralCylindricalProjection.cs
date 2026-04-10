@@ -19,7 +19,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// relations <c>x = b / sqrt(1 - b²)</c> with <c>b = cos(φ) * sin(λ)</c> and
 /// <c>y = atan2(tan(φ), cos(λ))</c>.</para>
 /// </remarks>
-internal class TransverseCentralCylindricalProjection : MapProjection
+internal sealed class TransverseCentralCylindricalProjection : MapProjection
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="TransverseCentralCylindricalProjection"/> class.

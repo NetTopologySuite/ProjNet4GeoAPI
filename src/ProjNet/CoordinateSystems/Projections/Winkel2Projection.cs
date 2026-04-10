@@ -22,7 +22,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 /// <seealso href="https://proj.org/en/stable/operations/projections/wink2.html">PROJ documentation: Winkel II.</seealso>
 /// <seealso href="https://desktop.arcgis.com/en/arcmap/latest/map/projections/winkel-ii.htm">ArcGIS projection reference: Winkel II.</seealso>
-internal class Winkel2Projection : MapProjection
+internal sealed class Winkel2Projection : MapProjection
 {
     private const int MaximumIterations = 10;
     private const double LoopTolerance = 1e-7;

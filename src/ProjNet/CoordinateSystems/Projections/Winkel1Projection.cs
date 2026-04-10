@@ -23,7 +23,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 /// <seealso href="https://proj.org/en/stable/operations/projections/wink1.html">PROJ documentation: Winkel I.</seealso>
 /// <seealso href="https://desktop.arcgis.com/en/arcmap/latest/map/projections/winkel-i.htm">ArcGIS projection reference: Winkel I.</seealso>
-internal class Winkel1Projection : MapProjection
+internal sealed class Winkel1Projection : MapProjection
 {
     private readonly double cosphi1;
 

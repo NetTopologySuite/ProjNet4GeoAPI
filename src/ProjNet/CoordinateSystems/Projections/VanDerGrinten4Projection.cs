@@ -17,7 +17,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// construction. The implementation matches the special-case branches and the general
 /// auxiliary <c>bt</c>/<c>ct</c>/<c>dt</c> expressions used for interior points.</para>
 /// </remarks>
-internal class VanDerGrinten4Projection : MapProjection
+internal sealed class VanDerGrinten4Projection : MapProjection
 {
     private const double Tolerance = 1e-10d;
 

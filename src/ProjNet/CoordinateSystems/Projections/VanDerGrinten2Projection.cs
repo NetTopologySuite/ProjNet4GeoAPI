@@ -17,7 +17,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// construction. The implementation matches the reduced-latitude term <c>bt</c>, the
 /// auxiliary quantity <c>at</c>, and the resulting circular-arc placement.</para>
 /// </remarks>
-internal class VanDerGrinten2Projection : MapProjection
+internal sealed class VanDerGrinten2Projection : MapProjection
 {
     private const double Tolerance = 1e-10d;
 

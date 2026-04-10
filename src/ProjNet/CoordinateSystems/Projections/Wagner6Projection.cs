@@ -15,7 +15,7 @@ using System.Collections.Generic;
 /// coefficient set, so its numerical behavior follows the same verified Eckert III
 /// style base formulation.
 /// </remarks>
-internal class Wagner6Projection : Eckert3Projection
+internal sealed class Wagner6Projection : Eckert3Projection
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Wagner6Projection"/> class.

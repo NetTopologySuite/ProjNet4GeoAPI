@@ -22,7 +22,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// published Urmaev V form.</para>
 /// </remarks>
 /// <seealso href="https://proj.org/en/stable/operations/projections/urm5.html">PROJ documentation: Urmaev V.</seealso>
-internal class Urmaev5Projection : MapProjection
+internal sealed class Urmaev5Projection : MapProjection
 {
     private readonly double n;
     private readonly double m;

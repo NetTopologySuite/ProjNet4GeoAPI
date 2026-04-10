@@ -19,7 +19,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>θ = asin(0.9063077870 * sin(φ))</c>, the one-third longitude step, and the final
 /// Hammer-like normalization factor.</para>
 /// </remarks>
-internal class Wagner7Projection : MapProjection
+internal sealed class Wagner7Projection : MapProjection
 {
     private const double YPreFactor = 0.90630778703664996d;
     private const double XFactor = 2.66723d;

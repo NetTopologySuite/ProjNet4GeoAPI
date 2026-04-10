@@ -16,7 +16,7 @@ using System.Collections.Generic;
 /// sinusoidal base formulation.
 /// </remarks>
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 2, Sect. 2.2.2, pp. 71-72.</seealso>
-internal class Wagner1Projection : UrmaevFlatPolarSinusoidalProjection
+internal sealed class Wagner1Projection : UrmaevFlatPolarSinusoidalProjection
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Wagner1Projection"/> class.

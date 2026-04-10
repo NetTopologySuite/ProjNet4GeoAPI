@@ -22,7 +22,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>X0</c>, <c>X1</c>, and <c>Y0</c> for the standard Times Atlas variant.</para>
 /// </remarks>
 /// <seealso href="https://proj.org/en/stable/operations/projections/times.html">PROJ documentation: Times projection.</seealso>
-internal class TimesProjection : MapProjection
+internal sealed class TimesProjection : MapProjection
 {
     private const double X0 = 0.74482d;
     private const double X1 = 0.34588d;

@@ -19,7 +19,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>0.5 * (yAitoff + φ)</c> match the implementation here.
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Winkel_tripel_projection">Wikipedia: Winkel tripel projection.</seealso>
-internal class WinkelTripelProjection : MapProjection
+internal sealed class WinkelTripelProjection : MapProjection
 {
     /// <summary>
     /// Default cosine of the standard parallel (approximately 50°28').

@@ -21,7 +21,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>al</c>, <c>g</c>, and <c>p</c> matches the implementation here.
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Van_der_Grinten_projection">Wikipedia: Van der Grinten projection.</seealso>
-internal class VanDerGrintenProjection : MapProjection
+internal sealed class VanDerGrintenProjection : MapProjection
 {
     private const double Tolerance = 1e-10;
     private const double Third = 1d / 3d;

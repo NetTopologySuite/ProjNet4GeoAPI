@@ -15,7 +15,7 @@ using System.Collections.Generic;
 /// Werenskiold coefficient set, so its numerical behavior follows the same verified
 /// base formulation.
 /// </remarks>
-internal class WerenskioldProjection : PutninsP4PProjection
+internal sealed class WerenskioldProjection : PutninsP4PProjection
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="WerenskioldProjection"/> class.

@@ -15,7 +15,7 @@ using System.Collections.Generic;
 /// coefficient overrides, so its numerical behavior follows the verified Mollweide
 /// base formulation.
 /// </remarks>
-internal class Wagner5Projection : MollweideProjection
+internal sealed class Wagner5Projection : MollweideProjection
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Wagner5Projection"/> class.

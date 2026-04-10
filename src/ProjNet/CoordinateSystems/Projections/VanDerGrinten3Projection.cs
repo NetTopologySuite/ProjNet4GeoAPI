@@ -17,7 +17,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// construction. The implementation matches the simplified auxiliary expression used to
 /// recover x from <c>bt</c> and <c>at</c>, with y taken directly from the reduced latitude.</para>
 /// </remarks>
-internal class VanDerGrinten3Projection : MapProjection
+internal sealed class VanDerGrinten3Projection : MapProjection
 {
     private const double Tolerance = 1e-10d;
 

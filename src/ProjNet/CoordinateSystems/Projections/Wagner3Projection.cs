@@ -17,7 +17,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>cx = cos(ts) / cos(2 * ts / 3)</c> and then applies the family form
 /// <c>x = cx * λ * cos(2 * φ / 3)</c>.
 /// </remarks>
-internal class Wagner3Projection : MapProjection
+internal sealed class Wagner3Projection : MapProjection
 {
     private const double TwoThird = 0.6666666666666666666667d;
 

@@ -16,7 +16,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// temper high-latitude east-west exaggeration. The implementation keeps the Mercator
 /// northing <c>ln(tan(π / 4 + φ / 2))</c> but scales longitude by <c>cos(φ)²</c>.
 /// </remarks>
-internal class ToblerMercatorProjection : MapProjection
+internal sealed class ToblerMercatorProjection : MapProjection
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="ToblerMercatorProjection"/> class.

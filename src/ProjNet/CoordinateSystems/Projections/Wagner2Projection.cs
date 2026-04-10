@@ -16,7 +16,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// 1930s. The implementation uses Wagner's characteristic double-latitude sine transform
 /// <c>asin(Cp1 * sin(Cp2 * φ))</c> before applying the final x/y scaling constants.
 /// </remarks>
-internal class Wagner2Projection : MapProjection
+internal sealed class Wagner2Projection : MapProjection
 {
     private const double Cx = 0.92483d;
     private const double Cy = 1.38725d;

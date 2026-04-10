@@ -17,7 +17,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>x = cos(φ) * sin(λ) / k0</c> and
 /// <c>y = k0 * (atan2(tan(φ), cos(λ)) - phi0)</c>.
 /// </remarks>
-internal class TransverseCylindricalEqualAreaProjection : MapProjection
+internal sealed class TransverseCylindricalEqualAreaProjection : MapProjection
 {
     private readonly double radius;
     private readonly double inverseRadius;
