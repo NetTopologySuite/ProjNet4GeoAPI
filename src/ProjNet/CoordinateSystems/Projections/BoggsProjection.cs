@@ -20,7 +20,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// matches the auxiliary-angle iteration for <c>θ + sin(θ) = π * sin(φ)</c> and
 /// the resulting easting and northing equations.</para>
 /// </remarks>
-internal class BoggsProjection : MapProjection
+internal sealed class BoggsProjection : MapProjection
 {
     private const int Iterations = 20;
     private const double Epsilon = 1e-7d;

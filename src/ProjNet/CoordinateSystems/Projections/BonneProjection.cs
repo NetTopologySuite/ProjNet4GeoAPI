@@ -27,7 +27,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 /// <seealso href="https://epsg.io/9827-method">EPSG method 9827: Bonne.</seealso>
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 3, Sect. 3.4.2, pp. 126-127.</seealso>
-internal class BonneProjection : MapProjection
+internal sealed class BonneProjection : MapProjection
 {
     private readonly double standardParallel;
     private readonly double sineStandardParallel;

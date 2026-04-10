@@ -20,7 +20,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// relations used by <see cref="AitoffMath"/> matches the implementation here.
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Aitoff_projection">Wikipedia: Aitoff projection.</seealso>
-internal class AitoffProjection : MapProjection
+internal sealed class AitoffProjection : MapProjection
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="AitoffProjection"/> class.

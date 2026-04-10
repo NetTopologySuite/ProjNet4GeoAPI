@@ -17,7 +17,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// linear and evaluates latitude with the odd polynomial
 /// <c>y = φ * (K1 + K2 * φ² + K3 * φ⁴)</c>, using Newton iteration for the inverse.
 /// </remarks>
-internal class CompactMillerProjection : MapProjection
+internal sealed class CompactMillerProjection : MapProjection
 {
     private const double K1 = 0.9902d;
     private const double K2 = 0.1604d;

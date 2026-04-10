@@ -18,7 +18,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// relation <c>x ~ λ * sqrt(1 - sin(φ))</c> and a linearized polar distance in
 /// <c>y</c>.
 /// </remarks>
-internal class CollignonProjection : MapProjection
+internal sealed class CollignonProjection : MapProjection
 {
     private const double Fxc = 1.12837916709551257390d;
     private const double Fyc = 1.77245385090551602729d;

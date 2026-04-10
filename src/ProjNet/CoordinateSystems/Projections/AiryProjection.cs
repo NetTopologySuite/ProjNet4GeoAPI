@@ -24,7 +24,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 /// <seealso href="https://proj.org/en/stable/operations/projections/airy.html">PROJ documentation: Airy.</seealso>
 /// <seealso href="https://mathworld.wolfram.com/AiryProjection.html">MathWorld: Airy Projection.</seealso>
-internal class AiryProjection : MapProjection
+internal sealed class AiryProjection : MapProjection
 {
     private const double Epsilon = 1e-10d;
 

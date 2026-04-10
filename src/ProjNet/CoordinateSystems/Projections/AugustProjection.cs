@@ -24,7 +24,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// inverse projection is not supported.</para>
 /// </remarks>
 /// <seealso href="https://proj.org/en/stable/operations/projections/august.html">PROJ documentation: August Epicycloidal.</seealso>
-internal class AugustProjection : MapProjection
+internal sealed class AugustProjection : MapProjection
 {
     private const double M = 1.333333333333333d;
 

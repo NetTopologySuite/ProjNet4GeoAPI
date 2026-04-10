@@ -17,7 +17,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// method. The implementation matches the three-control-point setup, the law-of-cosines
 /// angle recovery, and the mean-point blending used to place interior points.</para>
 /// </remarks>
-internal class ChamberlinTrimetricProjection : MapProjection
+internal sealed class ChamberlinTrimetricProjection : MapProjection
 {
     private const double Third = 0.333333333333333333d;
     private const double Tolerance = 1e-9d;

@@ -31,7 +31,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://proj.org/en/stable/operations/projections/aeqd.html">PROJ documentation: Azimuthal Equidistant.</seealso>
 /// <seealso href="https://en.wikipedia.org/wiki/Azimuthal_equidistant_projection">Wikipedia: Azimuthal equidistant projection.</seealso>
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 3, Sect. 3.2.4, pp. 105-107.</seealso>
-internal class AzimuthalEquidistantProjection : MapProjection
+internal sealed class AzimuthalEquidistantProjection : MapProjection
 {
     private const double PathologicalTolerance = 1e-14;
 

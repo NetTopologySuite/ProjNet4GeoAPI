@@ -23,7 +23,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 /// <seealso href="https://proj.org/en/stable/operations/projections/cc.html">PROJ documentation: Central Cylindrical.</seealso>
 /// <seealso href="https://en.wikipedia.org/wiki/Central_cylindrical_projection">Wikipedia: Central cylindrical projection.</seealso>
-internal class CentralCylindricalProjection : MapProjection
+internal sealed class CentralCylindricalProjection : MapProjection
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="CentralCylindricalProjection"/> class.

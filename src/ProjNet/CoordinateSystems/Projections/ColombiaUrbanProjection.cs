@@ -20,7 +20,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>c</c>, and <c>d</c> coefficients derived from the latitude of origin and the mandatory
 /// ellipsoidal height parameter <c>h_0</c>.</para>
 /// </remarks>
-internal class ColombiaUrbanProjection : MapProjection
+internal sealed class ColombiaUrbanProjection : MapProjection
 {
     private readonly double h0;
     private readonly double rho0;

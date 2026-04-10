@@ -25,7 +25,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// matching the polynomial implemented here.</para>
 /// </remarks>
 /// <seealso href="https://epsg.io/9806-method">EPSG method 9806: Cassini-Soldner.</seealso>
-internal class CassiniSoldnerProjection : MapProjection
+internal sealed class CassiniSoldnerProjection : MapProjection
 {
     /// <summary>
     /// Fraction constant 1/6 used in polynomial terms.

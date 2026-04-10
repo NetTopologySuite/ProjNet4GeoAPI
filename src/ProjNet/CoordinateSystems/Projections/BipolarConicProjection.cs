@@ -17,7 +17,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// radius and azimuth relations, and optionally applies the historical <c>noskew</c>
 /// presentation used by PROJ.
 /// </remarks>
-internal class BipolarConicProjection : MapProjection
+internal sealed class BipolarConicProjection : MapProjection
 {
     private const double Epsilon = 1e-10d;
     private const double Epsilon10 = 1e-10d;

@@ -26,7 +26,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 /// <seealso href="https://proj.org/en/stable/operations/projections/calcofi.html">PROJ documentation: CalCOFI.</seealso>
 /// <seealso href="http://www.calcofi.org/publications/calcofireports/v20/Vol_20_Eber___Hewitt.pdf">Eber and Hewitt (1979): Conversion algorithms for the CalCOFI station grid.</seealso>
-internal class CalCoFiProjection : MapProjection
+internal sealed class CalCoFiProjection : MapProjection
 {
     private const double DegToLine = 5d;
     private const double DegToStation = 15d;
