@@ -5,6 +5,8 @@ namespace ProjNet.Tests;
 
 using System;
 using ProjNet.CoordinateSystems;
+using ProjNet.CoordinateSystems.Projections;
+using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
@@ -90,5 +92,79 @@ public class CoordinateSystemUtilitiesTests
     public void LatitudeToRadians_WithOutOfRangeValue_ThrowsArgumentOutOfRangeException(double latitude, bool edge)
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => CoordinateSystemUtilities.LatitudeToRadians(latitude, edge));
+    }
+
+    /// <summary>
+    /// Verifies that the obsolete <see cref="MapProjection.CalcUtmZone"/> helper forwards to <see cref="CoordinateSystemUtilities"/>.
+    /// </summary>
+    [Fact]
+    public void ObsoleteCalcUtmZone_MatchesCoordinateSystemUtilities()
+    {
+        Assert.Equal(
+            CoordinateSystemUtilities.CalcUtmZone(15d),
+            CompatibilityProjection.ForwardCalcUtmZone(15d));
+    }
+
+    /// <summary>
+    /// Verifies that the obsolete <see cref="MapProjection"/> angle helpers forward to <see cref="CoordinateSystemUtilities"/>.
+    /// </summary>
+    [Fact]
+    public void ObsoleteAngleHelpers_MatchCoordinateSystemUtilities()
+    {
+        _ = new CompatibilityProjection();
+
+        Assert.Equal(
+            CoordinateSystemUtilities.LongitudeToRadians(45d, edge: false),
+            CompatibilityProjection.ForwardLongitudeToRadians(45d, edge: false),
+            12);
+        Assert.Equal(
+            CoordinateSystemUtilities.LatitudeToRadians(-30d, edge: true),
+            CompatibilityProjection.ForwardLatitudeToRadians(-30d, edge: true),
+            12);
+    }
+
+    private sealed class CompatibilityProjection : MapProjection
+    {
+        internal CompatibilityProjection()
+            : base(
+                [
+                    new ProjectionParameter("semi_major", 6378137d),
+                    new ProjectionParameter("semi_minor", 6356752.314245179d),
+                    new ProjectionParameter("unit", 1d),
+                    new ProjectionParameter("central_meridian", 0d),
+                ])
+        {
+        }
+
+        public override MathTransform Inverse() => this;
+
+        internal static long ForwardCalcUtmZone(double longitude)
+        {
+#pragma warning disable CS0618
+            return CalcUtmZone(longitude);
+#pragma warning restore CS0618
+        }
+
+        internal static double ForwardLongitudeToRadians(double longitude, bool edge)
+        {
+#pragma warning disable CS0618
+            return LongitudeToRadians(longitude, edge);
+#pragma warning restore CS0618
+        }
+
+        internal static double ForwardLatitudeToRadians(double latitude, bool edge)
+        {
+#pragma warning disable CS0618
+            return LatitudeToRadians(latitude, edge);
+#pragma warning restore CS0618
+        }
+
+        protected override void MetersToRadians(ref double x, ref double y)
+        {
+        }
+
+        protected override void RadiansToMeters(ref double lon, ref double lat)
+        {
+        }
     }
 }
