@@ -23,7 +23,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// used by variant A match the implementation here.</para>
 /// </remarks>
 /// <seealso href="https://epsg.io/9815-method">EPSG method 9815: Hotine Oblique Mercator (variant B).</seealso>
-internal class ObliqueMercatorProjection : HotineObliqueMercatorProjection
+internal sealed class ObliqueMercatorProjection : HotineObliqueMercatorProjection
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="ObliqueMercatorProjection"/> class.

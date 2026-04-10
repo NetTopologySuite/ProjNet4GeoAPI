@@ -21,7 +21,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// northing polynomial match the implementation here.</para>
 /// </remarks>
 /// <seealso href="https://berniejenny.info/pdf/2016_Savric_etal_NaturalEarthII.pdf">Natural Earth II projection paper.</seealso>
-internal class NaturalEarth2Projection : MapProjection
+internal sealed class NaturalEarth2Projection : MapProjection
 {
     private const int Iterations = 12;
 

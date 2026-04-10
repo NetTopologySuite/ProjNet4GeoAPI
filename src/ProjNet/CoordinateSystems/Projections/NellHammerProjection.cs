@@ -18,7 +18,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>y = 2 * (φ - tan(φ / 2))</c>, and the inverse recovers <c>φ</c> by Newton
 /// iteration.
 /// </remarks>
-internal class NellHammerProjection : MapProjection
+internal sealed class NellHammerProjection : MapProjection
 {
     private const int Iterations = 9;
     private const double Epsilon = 1e-7d;

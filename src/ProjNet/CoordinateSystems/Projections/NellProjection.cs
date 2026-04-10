@@ -17,7 +17,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>φ' + sin(φ') = 2 * sin(φ)</c> and then evaluates
 /// <c>x = 0.5 * λ * (1 + cos(φ'))</c>, <c>y = φ'</c>.
 /// </remarks>
-internal class NellProjection : MapProjection
+internal sealed class NellProjection : MapProjection
 {
     private const int Iterations = 10;
     private const double LoopTolerance = 1e-7d;

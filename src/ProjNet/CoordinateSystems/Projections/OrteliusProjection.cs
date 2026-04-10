@@ -22,7 +22,7 @@ using System.Collections.Generic;
 /// </remarks>
 /// <seealso href="https://proj.org/en/stable/operations/projections/ortel.html">PROJ documentation: Ortelius Oval.</seealso>
 /// <seealso href="https://en.wikipedia.org/wiki/Ortelius_oval_projection">Wikipedia: Ortelius oval projection.</seealso>
-internal class OrteliusProjection : BaconProjection
+internal sealed class OrteliusProjection : BaconProjection
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="OrteliusProjection"/> class.

@@ -22,7 +22,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 /// <seealso href="https://www.tandfonline.com/doi/abs/10.1559/15230406384363">Natural Earth projection paper.</seealso>
 /// <seealso href="https://en.wikipedia.org/wiki/Natural_Earth_projection">Wikipedia: Natural Earth projection.</seealso>
-internal class NaturalEarthProjection : MapProjection
+internal sealed class NaturalEarthProjection : MapProjection
 {
     private const int Iterations = 12;
 

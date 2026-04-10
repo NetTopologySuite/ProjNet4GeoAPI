@@ -17,7 +17,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// and ellipsoidal models are supported.
 /// </remarks>
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 3, Sect. 3.3.1, pp. 109-115.</seealso>
-internal class OrthographicProjection : MapProjection
+internal sealed class OrthographicProjection : MapProjection
 {
     private readonly double sinph0;
     private readonly double cosph0;

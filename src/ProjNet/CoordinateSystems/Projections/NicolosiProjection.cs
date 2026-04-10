@@ -18,7 +18,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// central meridian, equator, poles, and ±90° meridians before evaluating the general
 /// square-root form for interior points.</para>
 /// </remarks>
-internal class NicolosiProjection : MapProjection
+internal sealed class NicolosiProjection : MapProjection
 {
     private const double Epsilon = 1e-10d;
 

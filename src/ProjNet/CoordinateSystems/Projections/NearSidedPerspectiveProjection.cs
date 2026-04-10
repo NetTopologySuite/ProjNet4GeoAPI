@@ -17,7 +17,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// the additional tilt rotation used by the tilted-perspective variant.
 /// </remarks>
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 3, Sect. 3.3.2, pp. 116-121.</seealso>
-internal class NearSidedPerspectiveProjection : MapProjection
+internal sealed class NearSidedPerspectiveProjection : MapProjection
 {
     private readonly double sinph0;
     private readonly double cosph0;

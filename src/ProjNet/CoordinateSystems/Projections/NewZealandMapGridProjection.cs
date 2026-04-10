@@ -22,7 +22,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 /// <seealso href="https://www.linz.govt.nz/guidance/geodetic-system/coordinate-systems-used-new-zealand/projections/new-zealand-map-grid-nzmg">LINZ: New Zealand Map Grid specification.</seealso>
 /// <seealso href="https://www.linz.govt.nz/sites/default/files/cust/tr04-conversion-between-latitude-longitude-nzmg-2003.pdf">LINZ TR04: Conversion between latitude/longitude and NZMG.</seealso>
-internal class NewZealandMapGridProjection : MapProjection
+internal sealed class NewZealandMapGridProjection : MapProjection
 {
     private const double ProjectionSemiMajor = 6378388d;
     private const int Nbf = 5;
