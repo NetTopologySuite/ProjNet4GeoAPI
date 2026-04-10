@@ -381,6 +381,7 @@ public static class ProjJsonReader
             ArgumentGuard.ThrowArgument("PROJJSON VerticalCRS is missing axis linear units.");
         }
 
+        verticalDatum = ApplyVerticalDatumTypeForAxis(verticalDatum, axisInfo[0]);
         ReadIdentifier(element, out string authority, out long authorityCode);
         return new VerticalCoordinateSystem(
             linearUnit,
@@ -671,6 +672,31 @@ public static class ProjJsonReader
         return new VerticalDatum(DatumType.VD_GeoidModelDerived, ensemble.Name, ensemble.Authority, ensemble.AuthorityCode, string.Empty, string.Empty, string.Empty)
         {
             Ensemble = ensemble,
+        };
+    }
+
+    private static VerticalDatum ApplyVerticalDatumTypeForAxis(VerticalDatum verticalDatum, AxisInfo axisInfo)
+    {
+        axisInfo = ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo));
+
+        DatumType datumType = axisInfo.Orientation == AxisOrientationEnum.Down
+            ? DatumType.VD_Depth
+            : DatumType.VD_GeoidModelDerived;
+        if (verticalDatum.DatumType == datumType)
+        {
+            return verticalDatum;
+        }
+
+        return new VerticalDatum(
+            datumType,
+            verticalDatum.Name,
+            verticalDatum.Authority,
+            verticalDatum.AuthorityCode,
+            verticalDatum.Alias,
+            verticalDatum.Remarks,
+            verticalDatum.Abbreviation)
+        {
+            Ensemble = verticalDatum.Ensemble,
         };
     }
 

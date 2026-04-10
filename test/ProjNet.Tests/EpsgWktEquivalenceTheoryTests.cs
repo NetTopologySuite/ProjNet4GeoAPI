@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using ProjNet.Data;
+using ProjNet.Data.Generated;
 using Xunit;
 
 /// <summary>
@@ -24,6 +25,7 @@ public class EpsgWktEquivalenceTheoryTests
     private static readonly Regex EllipsoidRegex = new("ELLIPSOID\\[\"[^\"]+\",\\s*(?<semiMajor>[-+0-9.Ee]+),\\s*(?<inverseFlattening>[-+0-9.Ee]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
     private static readonly Regex MethodRegex = new("(?:PROJECTION|METHOD)\\[\"(?<name>[^\"]+)\"", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
     private static readonly Regex ParameterRegex = new("PARAMETER\\[\"(?<name>[^\"]+)\",\\s*(?<value>[-+0-9.Ee]+)", RegexOptions.Compiled | RegexOptions.CultureInvariant | RegexOptions.IgnoreCase);
+    private static readonly Lazy<IReadOnlyList<EpsgFixtureRow>> FixtureRows = new(LoadFixtureRows);
 
     private static readonly Lazy<IReadOnlyDictionary<int, string>> CatalogDefinitions = new(() =>
         new ManagedCoordinateSystemDefinitionProvider()
@@ -37,14 +39,28 @@ public class EpsgWktEquivalenceTheoryTests
     /// <returns>SRID/WKT row pairs.</returns>
     public static IEnumerable<TheoryDataRow<int, string>> EpsgFixtureRows()
     {
-        string fixturePath = Path.Combine(AppContext.BaseDirectory, FixtureRelativePath.Replace('/', Path.DirectorySeparatorChar));
-        using var document = JsonDocument.Parse(File.ReadAllText(fixturePath));
+        return [.. FixtureRows.Value.Select(row => new TheoryDataRow<int, string>(row.Srid, row.Wkt))];
+    }
 
-        return [.. document.RootElement
-            .EnumerateArray()
-            .Select(item => new TheoryDataRow<int, string>(
-                item.GetProperty("srid").GetInt32(),
-                item.GetProperty("wkt").GetString() ?? string.Empty))];
+    /// <summary>
+    /// Verifies that the committed EPSG WKT fixture covers at least 50 representative SRIDs with 10 examples per supported CRS kind.
+    /// </summary>
+    [Fact]
+    public void EpsgFixtureShouldCoverFiftyRepresentativeCoordinateSystemsAcrossAllKinds()
+    {
+        IReadOnlyList<EpsgFixtureRow> rows = FixtureRows.Value;
+        Assert.True(rows.Count >= 50, $"Expected at least 50 EPSG WKT fixture rows, but found {rows.Count}.");
+        Assert.Equal(rows.Count, rows.Select(row => row.Srid).Distinct().Count());
+
+        var counts = rows
+            .GroupBy(row => GetCoordinateSystemKind(row.Srid))
+            .ToDictionary(group => group.Key, group => group.Count());
+
+        Assert.Equal(10, GetKindCount(counts, EpsgCoordinateSystemKind.Geographic2D));
+        Assert.Equal(10, GetKindCount(counts, EpsgCoordinateSystemKind.Projected));
+        Assert.Equal(10, GetKindCount(counts, EpsgCoordinateSystemKind.Geocentric));
+        Assert.Equal(10, GetKindCount(counts, EpsgCoordinateSystemKind.Vertical));
+        Assert.Equal(10, GetKindCount(counts, EpsgCoordinateSystemKind.Compound));
     }
 
     /// <summary>
@@ -113,6 +129,11 @@ public class EpsgWktEquivalenceTheoryTests
             if (wkt.StartsWith("GEOGCRS[", StringComparison.OrdinalIgnoreCase) || wkt.StartsWith("GEOGCS[", StringComparison.OrdinalIgnoreCase))
             {
                 return "geographic";
+            }
+
+            if (wkt.StartsWith("GEODCRS[", StringComparison.OrdinalIgnoreCase) || wkt.StartsWith("GEODETICCRS[", StringComparison.OrdinalIgnoreCase))
+            {
+                return wkt.Contains("CS[Cartesian", StringComparison.OrdinalIgnoreCase) ? "geocentric" : "geographic";
             }
 
             if (wkt.StartsWith("GEOCCRS[", StringComparison.OrdinalIgnoreCase) || wkt.StartsWith("GEOCCS[", StringComparison.OrdinalIgnoreCase))
@@ -265,4 +286,29 @@ public class EpsgWktEquivalenceTheoryTests
     {
         return Math.Abs(left - right) <= 1e-9;
     }
+
+    private static IReadOnlyList<EpsgFixtureRow> LoadFixtureRows()
+    {
+        string fixturePath = Path.Combine(AppContext.BaseDirectory, FixtureRelativePath.Replace('/', Path.DirectorySeparatorChar));
+        using var document = JsonDocument.Parse(File.ReadAllText(fixturePath));
+
+        return [.. document.RootElement
+            .EnumerateArray()
+            .Select(item => new EpsgFixtureRow(
+                item.GetProperty("srid").GetInt32(),
+                item.GetProperty("wkt").GetString() ?? string.Empty))];
+    }
+
+    private static EpsgCoordinateSystemKind GetCoordinateSystemKind(int srid)
+    {
+        Assert.True(EpsgGeneratedCatalog.TryGetCoordinateReference(srid, out EpsgCoordinateReferenceRecord reference, out _), $"SRID {srid} not found in managed EPSG catalog.");
+        return reference.Kind;
+    }
+
+    private static int GetKindCount(Dictionary<EpsgCoordinateSystemKind, int> counts, EpsgCoordinateSystemKind kind)
+    {
+        return counts.TryGetValue(kind, out int count) ? count : 0;
+    }
+
+    private readonly record struct EpsgFixtureRow(int Srid, string Wkt);
 }

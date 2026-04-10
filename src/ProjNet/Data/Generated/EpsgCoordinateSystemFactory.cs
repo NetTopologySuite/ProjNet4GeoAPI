@@ -264,7 +264,10 @@ internal static class EpsgCoordinateSystemFactory
             return null;
         }
 
-        var datum = new VerticalDatum(DatumType.VD_GeoidModelDerived, datumRecord.Name, "EPSG", datumRecord.Code, string.Empty, string.Empty, string.Empty);
+        DatumType datumType = axisInfo[0].Orientation == AxisOrientationEnum.Down
+            ? DatumType.VD_Depth
+            : DatumType.VD_GeoidModelDerived;
+        var datum = new VerticalDatum(datumType, datumRecord.Name, "EPSG", datumRecord.Code, string.Empty, string.Empty, string.Empty);
 
         return new VerticalCoordinateSystem(
             linearUnit,

@@ -1823,7 +1823,7 @@ public static partial class CoordinateSystemWktReader
             ArgumentGuard.ThrowArgument($"WKT2 vertical CRS declared dimension {coordinateSystemDimension}, but provided {axisInfo.Count} AXIS blocks.");
         }
 
-        verticalDatum = ArgumentGuard.ThrowIfNull(verticalDatum, nameof(verticalDatum));
+        verticalDatum = ApplyVerticalDatumTypeForAxis(ArgumentGuard.ThrowIfNull(verticalDatum, nameof(verticalDatum)), axisInfo[0]);
         linearUnit = ArgumentGuard.ThrowIfNull(linearUnit, nameof(linearUnit));
         return new VerticalCoordinateSystem(
             linearUnit,
@@ -1889,6 +1889,31 @@ public static partial class CoordinateSystemWktReader
         return new VerticalDatum(DatumType.VD_GeoidModelDerived, ensemble.Name, ensemble.Authority, ensemble.AuthorityCode, string.Empty, string.Empty, string.Empty)
         {
             Ensemble = ensemble,
+        };
+    }
+
+    private static VerticalDatum ApplyVerticalDatumTypeForAxis(VerticalDatum verticalDatum, AxisInfo axisInfo)
+    {
+        axisInfo = ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo));
+
+        DatumType datumType = axisInfo.Orientation == AxisOrientationEnum.Down
+            ? DatumType.VD_Depth
+            : DatumType.VD_GeoidModelDerived;
+        if (verticalDatum.DatumType == datumType)
+        {
+            return verticalDatum;
+        }
+
+        return new VerticalDatum(
+            datumType,
+            verticalDatum.Name,
+            verticalDatum.Authority,
+            verticalDatum.AuthorityCode,
+            verticalDatum.Alias,
+            verticalDatum.Remarks,
+            verticalDatum.Abbreviation)
+        {
+            Ensemble = verticalDatum.Ensemble,
         };
     }
 
