@@ -29,7 +29,7 @@ internal static class Wkt2KeywordCoverageMatrix
     private const string ConversionReference = WktReader + ".ReadWkt2Conversion, " + WktReader + ".ReadWkt2ProjectionMethod, " + WktReader + ".ReadWkt2ProjectionParameter, " + WktReader + ".NormalizeWkt2ProjectionParameterName";
     private const string VerticalReference = WktReader + ".ReadWkt2VerticalCoordinateSystem, " + WktReader + ".ReadWkt2VerticalDatum";
     private const string CompoundReference = WktReader + ".ReadWkt2CompoundCoordinateSystem";
-    private const string BoundReference = WktReader + ".ReadWkt2BoundCoordinateSystem, " + WktReader + ".ReadWkt2AbridgedTransformationDefinition, " + WktReader + ".ApplyWkt2HorizontalBoundCoordinateSystemToSource, " + WktReader + ".ApplyWkt2VerticalBoundCoordinateSystemToSource";
+    private const string BoundReference = WktReader + ".ReadWkt2BoundCoordinateSystem, " + WktReader + ".ReadWkt2AbridgedTransformationDefinition, " + WktReader + ".ReadWkt2AbridgedTransformationParameter, " + WktReader + ".ReadWkt2AbridgedTransformationParameterFile, BoundCoordinateSystemSupport.CreateBoundTransformation, BoundCoordinateSystemSupport.AssignTransformationParameter";
     private const string IdentifierReference = WktReader + ".ReadWkt2Axis, " + WktReader + ".ReadWkt2HorizontalDatum, " + WktReader + ".ReadWkt2Ellipsoid, " + WktReader + ".ReadWkt2PrimeMeridian, " + WktReader + ".ReadWkt2ProjectedCoordinateSystem, " + WktReader + ".ReadWkt2VerticalCoordinateSystem, " + WktReader + ".ReadWkt2CompoundCoordinateSystem, " + WktReader + ".ReadWkt2AbridgedTransformationDefinition, " + WktReader + ".ReadIdentifierWithUnknownCode";
     private const string DefaultUnsupportedReference = WktReader + ".ReadWkt2GeodeticCoordinateReferenceSystem, " + WktReader + ".ReadWkt2ProjectedCoordinateSystem, " + WktReader + ".ReadWkt2VerticalCoordinateSystem, " + WktReader + ".ReadWkt2BoundCoordinateSystemComponent, " + WktReader + ".ParseNormalizedWkt";
     private const string UnsupportedTopLevelReference = WktReader + ".Parse, " + WktReader + ".TryParseNativeWkt2, " + WktReader + ".ParseNormalizedWkt";
@@ -43,7 +43,7 @@ internal static class Wkt2KeywordCoverageMatrix
     private static Wkt2KeywordCoverageRow[] CreateRows() =>
         new Wkt2KeywordCoverageRow[]
     {
-        Native("ABRIDGEDTRANSFORMATION", BoundReference, "Parsed by the retained BoundCRS transformation reader."),
+        Native("ABRIDGEDTRANSFORMATION", BoundReference, "Parsed by the first-class BoundCRS transformation reader."),
         Ignored("ANCHOR", MetadataSkipReference, "Accepted as non-operational metadata and skipped."),
         Ignored("ANCHOREPOCH", MetadataSkipReference, "Accepted as non-operational metadata and skipped."),
         Native("ANGLEUNIT", AngularUnitReference, "Parsed directly at CRS, axis, and parameter sites."),
@@ -60,7 +60,7 @@ internal static class Wkt2KeywordCoverageMatrix
         Unsupported("BASEVERTCRS", UnsupportedTopLevelReference, "No derived vertical CRS reader path exists yet."),
         Ignored("BBOX", MetadataSkipReference, "Accepted as non-operational metadata and skipped."),
         Unsupported("BEARING", PrimeMeridianReference, "The prime-meridian reader has no BEARING branch."),
-        Native("BOUNDCRS", $"{RootDispatchReference}, {BoundReference}", "Handled natively for the currently supported BoundCRS subset."),
+        Native("BOUNDCRS", $"{RootDispatchReference}, {BoundReference}", "Handled natively and retained as a first-class bound coordinate system for the currently supported subset."),
         Unsupported("CALENDAR", UnsupportedTopLevelReference, "Temporal datum and temporal CRS parsing are not implemented."),
         Unsupported("CITATION", DefaultUnsupportedReference, "The native reader does not classify CITATION as skippable metadata."),
         Native("COMPOUNDCRS", $"{RootDispatchReference}, {CompoundReference}", "Handled natively by the compound CRS reader."),
@@ -100,7 +100,7 @@ internal static class Wkt2KeywordCoverageMatrix
         Unsupported("OPERATIONACCURACY", BoundReference, "The abridged transformation reader does not consume operation-accuracy nodes."),
         Ignored("ORDER", MetadataSkipReference, "Accepted as non-operational metadata and skipped."),
         Native("PARAMETER", ConversionReference, "Parsed directly in projection and abridged-transformation blocks."),
-        Native("PARAMETERFILE", BoundReference, "Parsed directly for supported vertical BoundCRS transformations."),
+        Native("PARAMETERFILE", BoundReference, "Parsed directly for supported BoundCRS parameter-file transformations."),
         Unsupported("PARAMETRICCRS", UnsupportedTopLevelReference, "No parametric CRS root reader path exists yet."),
         Unsupported("PARAMETRICDATUM", UnsupportedTopLevelReference, "No parametric datum reader path exists yet."),
         Unsupported("PARAMETRICUNIT", UnsupportedTopLevelReference, "No parametric unit reader path exists yet."),

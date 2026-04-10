@@ -63,6 +63,33 @@ namespace ProjNet.CoordinateSystems
         Up = 5,
         Down = 6,
     }
+    public class BoundCoordinateSystem : ProjNet.CoordinateSystems.CoordinateSystem
+    {
+        protected BoundCoordinateSystem(ProjNet.CoordinateSystems.CoordinateSystem sourceCoordinateSystem, ProjNet.CoordinateSystems.CoordinateSystem targetCoordinateSystem, ProjNet.CoordinateSystems.BoundTransformation transformation, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks) { }
+        public ProjNet.CoordinateSystems.CoordinateSystem SourceCoordinateSystem { get; }
+        public ProjNet.CoordinateSystems.CoordinateSystem TargetCoordinateSystem { get; }
+        public ProjNet.CoordinateSystems.BoundTransformation Transformation { get; }
+        public override string WKT { get; }
+        public override string XML { get; }
+        public override bool EqualParams(object obj) { }
+        public override ProjNet.CoordinateSystems.IUnit GetUnits(int dimension) { }
+        public override ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public override ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
+        public override System.Xml.Linq.XElement ToXml() { }
+    }
+    public class BoundTransformation : System.IEquatable<ProjNet.CoordinateSystems.BoundTransformation>
+    {
+        public BoundTransformation(string methodName, ProjNet.CoordinateSystems.Wgs84ConversionInfo wgs84Parameters) { }
+        public BoundTransformation(string methodName, string parameterFileName) { }
+        public string MethodName { get; }
+        public string? ParameterFileName { get; }
+        public bool UsesParameterFile { get; }
+        public bool UsesWgs84Parameters { get; }
+        public ProjNet.CoordinateSystems.Wgs84ConversionInfo? Wgs84Parameters { get; }
+        public bool Equals(ProjNet.CoordinateSystems.BoundTransformation? other) { }
+        public override bool Equals(object? obj) { }
+        public override int GetHashCode() { }
+    }
     public class CompoundCoordinateSystem : ProjNet.CoordinateSystems.CoordinateSystem
     {
         public CompoundCoordinateSystem(ProjNet.CoordinateSystems.CoordinateSystem headcs, ProjNet.CoordinateSystems.CoordinateSystem tailcs, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks) { }
@@ -89,6 +116,7 @@ namespace ProjNet.CoordinateSystems
     public class CoordinateSystemFactory
     {
         public CoordinateSystemFactory() { }
+        public ProjNet.CoordinateSystems.BoundCoordinateSystem CreateBoundCoordinateSystem(string name, ProjNet.CoordinateSystems.CoordinateSystem sourceCoordinateSystem, ProjNet.CoordinateSystems.CoordinateSystem targetCoordinateSystem, ProjNet.CoordinateSystems.BoundTransformation transformation) { }
         public ProjNet.CoordinateSystems.CompoundCoordinateSystem CreateCompoundCoordinateSystem(string name, ProjNet.CoordinateSystems.CoordinateSystem head, ProjNet.CoordinateSystems.CoordinateSystem tail) { }
         public ProjNet.CoordinateSystems.Ellipsoid CreateEllipsoid(string name, double semiMajorAxis, double semiMinorAxis, ProjNet.CoordinateSystems.LinearUnit linearUnit) { }
         public ProjNet.CoordinateSystems.FittedCoordinateSystem CreateFittedCoordinateSystem(string name, ProjNet.CoordinateSystems.CoordinateSystem baseCoordinateSystem, ProjNet.CoordinateSystems.Transformations.MathTransform toBase, System.Collections.Generic.List<ProjNet.CoordinateSystems.AxisInfo> arAxes) { }

@@ -24,7 +24,7 @@ public class VerticalBoundCoordinateTransformationTests
     public void CreateFromCoordinateSystems_WithVerticalBoundCompoundSource_TransformsGravityRelatedHeightToEllipsoidalHeight()
     {
         string gridPath = FindGridPath("egm96_15_downsampled.gtx");
-        VerticalCoordinateSystem boundVertical = CoordinateSystemTestHelpers.RequireCoordinateSystem<VerticalCoordinateSystem>(
+        BoundCoordinateSystem boundVertical = CoordinateSystemTestHelpers.RequireCoordinateSystem<BoundCoordinateSystem>(
             CoordinateSystemFactory,
             CreateVerticalBoundWkt(gridPath));
 
@@ -40,6 +40,8 @@ public class VerticalBoundCoordinateTransformationTests
         ICoordinateTransformation transformation = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
         double[] output = transformation.MathTransform.Transform([12d, 56d, 0d]);
 
+        Assert.Same(source, transformation.SourceCS);
+        Assert.Same(target, transformation.TargetCS);
         Assert.Equal(12d, output[0], 12);
         Assert.Equal(56d, output[1], 12);
         Assert.Equal(36.9959410718d, output[2], 9);
@@ -52,7 +54,7 @@ public class VerticalBoundCoordinateTransformationTests
     public void CreateFromCoordinateSystems_WithEllipsoidalHeightCompoundSource_TransformsEllipsoidalHeightToBoundVerticalHeight()
     {
         string gridPath = FindGridPath("egm96_15_downsampled.gtx");
-        VerticalCoordinateSystem boundVertical = CoordinateSystemTestHelpers.RequireCoordinateSystem<VerticalCoordinateSystem>(
+        BoundCoordinateSystem boundVertical = CoordinateSystemTestHelpers.RequireCoordinateSystem<BoundCoordinateSystem>(
             CoordinateSystemFactory,
             CreateVerticalBoundWkt(gridPath));
 
@@ -68,6 +70,8 @@ public class VerticalBoundCoordinateTransformationTests
         ICoordinateTransformation transformation = CoordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
         double[] output = transformation.MathTransform.Transform([12d, 56d, 0d]);
 
+        Assert.Same(source, transformation.SourceCS);
+        Assert.Same(target, transformation.TargetCS);
         Assert.Equal(12d, output[0], 12);
         Assert.Equal(56d, output[1], 12);
         Assert.Equal(-36.9959410718d, output[2], 9);

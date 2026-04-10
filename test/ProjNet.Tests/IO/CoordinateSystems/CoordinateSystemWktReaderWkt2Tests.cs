@@ -515,73 +515,89 @@ public class CoordinateSystemWktReaderWkt2Tests
     }
 
     /// <summary>
-    /// Verifies projected <c>BOUNDCRS</c> examples map onto the existing source-CRS plus WGS84-parameters model.
+    /// Verifies projected <c>BOUNDCRS</c> examples now retain first-class bound metadata.
     /// </summary>
     /// <param name="fixtureSource">Source file and line for the extracted fixture.</param>
     /// <param name="wkt">BOUNDCRS WKT2 example from the PROJ test corpus.</param>
     [Theory]
     [MemberData(nameof(SupportedProjBoundCrsRows))]
-    public void CreateFromWkt_WithSupportedProjBoundCrsFixture_ParsesSourceCrsWithWgs84Parameters(string fixtureSource, string wkt)
+    public void CreateFromWkt_WithSupportedProjBoundCrsFixture_ParsesBoundCoordinateSystem(string fixtureSource, string wkt)
     {
-        ProjectedCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wkt);
-        Wgs84ConversionInfo parameters = Assert.IsType<Wgs84ConversionInfo>(parsed.GeographicCoordinateSystem.HorizontalDatum.Wgs84Parameters);
+        BoundCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<BoundCoordinateSystem>(CoordinateSystemFactory, wkt);
+        ProjectedCoordinateSystem source = Assert.IsType<ProjectedCoordinateSystem>(parsed.SourceCoordinateSystem);
+        GeographicCoordinateSystem target = Assert.IsType<GeographicCoordinateSystem>(parsed.TargetCoordinateSystem);
+        Wgs84ConversionInfo parameters = Assert.IsType<Wgs84ConversionInfo>(parsed.Transformation.Wgs84Parameters);
 
         Assert.Equal("NAD83 / California zone 3 (ftUS)", parsed.Name);
         Assert.Equal("EPSG", parsed.Authority);
         Assert.Equal(2227, parsed.AuthorityCode);
-        Assert.Equal("NAD83", parsed.GeographicCoordinateSystem.Name);
-        Assert.Equal("North American Datum 1983", parsed.GeographicCoordinateSystem.HorizontalDatum.Name);
+        Assert.Equal("NAD83", source.GeographicCoordinateSystem.Name);
+        Assert.Equal("North American Datum 1983", source.GeographicCoordinateSystem.HorizontalDatum.Name);
+        Assert.Null(source.GeographicCoordinateSystem.HorizontalDatum.Wgs84Parameters);
         Assert.Equal(new Wgs84ConversionInfo(0, 0, 0, 0, 0, 0, 0), parameters);
-        Assert.Same(parsed.HorizontalDatum, parsed.GeographicCoordinateSystem.HorizontalDatum);
-        Assert.Equal("Lambert Conic Conformal (2SP)", parsed.Projection.ClassName);
-        Assert.Equal(6561666.667d, parsed.Projection.GetParameter("false_easting")?.Value);
-        Assert.Equal(1640416.667d, parsed.Projection.GetParameter("false_northing")?.Value);
-        Assert.Contains("TOWGS84[0, 0, 0, 0, 0, 0, 0]", parsed.WKT, StringComparison.Ordinal);
+        Assert.Equal("Lambert Conic Conformal (2SP)", source.Projection.ClassName);
+        Assert.Equal(6561666.667d, source.Projection.GetParameter("false_easting")?.Value);
+        Assert.Equal(1640416.667d, source.Projection.GetParameter("false_northing")?.Value);
+        Assert.Equal("WGS 84", target.Name);
+        Assert.True(target.HorizontalDatum.EqualParams(HorizontalDatum.WGS84));
+        Assert.True(target.PrimeMeridian.EqualParams(PrimeMeridian.Greenwich));
+        Assert.True(target.AngularUnit.EqualParams(AngularUnit.Degrees));
+        Assert.Equal(AxisOrientationEnum.North, target.GetAxis(0).Orientation);
+        Assert.Equal(AxisOrientationEnum.East, target.GetAxis(1).Orientation);
+        Assert.True(parsed.Transformation.UsesWgs84Parameters);
         Assert.False(string.IsNullOrWhiteSpace(fixtureSource));
     }
 
     /// <summary>
-    /// Verifies horizontal <c>BOUNDCRS</c> examples with an ellipsoidal 3D source now parse via the same operational compound path as live PostGIS rows.
+    /// Verifies horizontal <c>BOUNDCRS</c> examples with an ellipsoidal 3D source retain a bound wrapper instead of flattening onto the source CRS.
     /// </summary>
     [Fact]
-    public void CreateFromWkt_WithEllipsoidal3dSourceBoundCrs_ParsesOperationalSourceCrsWithWgs84Parameters()
+    public void CreateFromWkt_WithEllipsoidal3dSourceBoundCrs_ParsesBoundCoordinateSystem()
     {
-        CompoundCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<CompoundCoordinateSystem>(CoordinateSystemFactory, EllipsoidalHeightBoundCrs);
-        GeographicCoordinateSystem horizontal = Assert.IsType<GeographicCoordinateSystem>(parsed.HeadCoordinateSystem);
-        VerticalCoordinateSystem vertical = Assert.IsType<VerticalCoordinateSystem>(parsed.TailCoordinateSystem);
-        Wgs84ConversionInfo parameters = Assert.IsType<Wgs84ConversionInfo>(horizontal.HorizontalDatum.Wgs84Parameters);
+        BoundCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<BoundCoordinateSystem>(CoordinateSystemFactory, EllipsoidalHeightBoundCrs);
+        CompoundCoordinateSystem source = Assert.IsType<CompoundCoordinateSystem>(parsed.SourceCoordinateSystem);
+        GeographicCoordinateSystem horizontal = Assert.IsType<GeographicCoordinateSystem>(source.HeadCoordinateSystem);
+        VerticalCoordinateSystem vertical = Assert.IsType<VerticalCoordinateSystem>(source.TailCoordinateSystem);
+        Wgs84ConversionInfo parameters = Assert.IsType<Wgs84ConversionInfo>(parsed.Transformation.Wgs84Parameters);
 
         Assert.Equal("TWD97", parsed.Name);
         Assert.Equal("EPSG", parsed.Authority);
         Assert.Equal(3823, parsed.AuthorityCode);
-        Assert.Equal(AxisOrientationEnum.North, parsed.GetAxis(0).Orientation);
-        Assert.Equal(AxisOrientationEnum.East, parsed.GetAxis(1).Orientation);
-        Assert.Equal(AxisOrientationEnum.Up, parsed.GetAxis(2).Orientation);
+        Assert.Equal(AxisOrientationEnum.North, source.GetAxis(0).Orientation);
+        Assert.Equal(AxisOrientationEnum.East, source.GetAxis(1).Orientation);
+        Assert.Equal(AxisOrientationEnum.Up, source.GetAxis(2).Orientation);
         Assert.Equal("Taiwan Datum 1997", horizontal.HorizontalDatum.Name);
         Assert.True(horizontal.HorizontalDatum.Ellipsoid.EqualParams(Ellipsoid.GRS80));
+        Assert.Null(horizontal.HorizontalDatum.Wgs84Parameters);
         Assert.Equal(new Wgs84ConversionInfo(0, 0, 0, 0, 0, 0, 0), parameters);
         Assert.Equal(DatumType.VD_Ellipsoidal, vertical.VerticalDatum.DatumType);
         Assert.Equal("ellipsoidal height (h)", vertical.Name);
-        Assert.Contains("TOWGS84[0, 0, 0, 0, 0, 0, 0]", parsed.WKT, StringComparison.Ordinal);
+        Assert.True(parsed.Transformation.UsesWgs84Parameters);
     }
 
     /// <summary>
-    /// Verifies vertical <c>BOUNDCRS</c> examples from the checked-in PROJ tests parse onto the source vertical CRS model.
+    /// Verifies vertical <c>BOUNDCRS</c> examples from the checked-in PROJ tests parse as first-class bound coordinate systems.
     /// </summary>
     /// <param name="fixtureSource">Source file and line for the extracted fixture.</param>
     /// <param name="wkt">BOUNDCRS WKT2 example from the PROJ test corpus.</param>
     [Theory]
     [MemberData(nameof(SupportedVerticalBoundCrsRows))]
-    public void CreateFromWkt_WithSupportedVerticalBoundCrsFixture_ParsesSourceVerticalCrs(string fixtureSource, string wkt)
+    public void CreateFromWkt_WithSupportedVerticalBoundCrsFixture_ParsesBoundCoordinateSystem(string fixtureSource, string wkt)
     {
-        VerticalCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<VerticalCoordinateSystem>(CoordinateSystemFactory, wkt);
+        BoundCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<BoundCoordinateSystem>(CoordinateSystemFactory, wkt);
+        VerticalCoordinateSystem source = Assert.IsType<VerticalCoordinateSystem>(parsed.SourceCoordinateSystem);
+        CompoundCoordinateSystem target = Assert.IsType<CompoundCoordinateSystem>(parsed.TargetCoordinateSystem);
 
         Assert.Equal("EGM96 height", parsed.Name);
         Assert.Equal("EPSG", parsed.Authority);
         Assert.Equal(5773, parsed.AuthorityCode);
-        Assert.Equal("EGM96 geoid", parsed.VerticalDatum.Name);
-        Assert.Equal(DatumType.VD_GeoidModelDerived, parsed.VerticalDatum.DatumType);
-        Assert.Equal("metre", parsed.LinearUnit.Name);
+        Assert.Equal("EGM96 geoid", source.VerticalDatum.Name);
+        Assert.Equal(DatumType.VD_GeoidModelDerived, source.VerticalDatum.DatumType);
+        Assert.Equal("metre", source.LinearUnit.Name);
+        Assert.Null(source.BoundGridTransformation);
+        Assert.True(parsed.Transformation.UsesParameterFile);
+        Assert.Equal("us_nga_egm96_15.tif", parsed.Transformation.ParameterFileName);
+        Assert.Equal(3, target.Dimension);
         Assert.False(string.IsNullOrWhiteSpace(fixtureSource));
     }
 
@@ -593,10 +609,12 @@ public class CoordinateSystemWktReaderWkt2Tests
     {
         string nested = CreateNestedVerticalBoundCrs(@"grids\us_nga_egm96_15.tif", "GRIDS/us_nga_egm96_15.tif");
 
-        VerticalCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<VerticalCoordinateSystem>(CoordinateSystemFactory, nested);
+        BoundCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<BoundCoordinateSystem>(CoordinateSystemFactory, nested);
+        BoundCoordinateSystem inner = Assert.IsType<BoundCoordinateSystem>(parsed.SourceCoordinateSystem);
 
         Assert.Equal("EGM96 height", parsed.Name);
-        Assert.NotNull(parsed.BoundGridTransformation);
+        Assert.Equal(@"grids\us_nga_egm96_15.tif", inner.Transformation.ParameterFileName);
+        Assert.Equal("GRIDS/us_nga_egm96_15.tif", parsed.Transformation.ParameterFileName);
     }
 
     private static string GetCatalogWkt(int srid)

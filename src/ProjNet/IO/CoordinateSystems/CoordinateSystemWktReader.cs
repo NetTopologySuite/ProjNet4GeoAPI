@@ -362,42 +362,6 @@ public static partial class CoordinateSystemWktReader
         return new CompoundCoordinateSystem(head, tail, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
     }
 
-    private static CompoundCoordinateSystem CreateRuntimeCompatibleVerticalBoundHubCoordinateSystem(CompoundCoordinateSystem parsedHubCoordinateSystem)
-    {
-        if (parsedHubCoordinateSystem.TailCoordinateSystem is not VerticalCoordinateSystem parsedVerticalCoordinateSystem)
-        {
-            throw new NotSupportedException("WKT2 vertical BOUNDCRS targets must be ellipsoidal 3D geographic CRS definitions.");
-        }
-
-        var runtimeVerticalCoordinateSystem = new VerticalCoordinateSystem(
-            parsedVerticalCoordinateSystem.LinearUnit,
-            new VerticalDatum(
-                DatumType.VD_Ellipsoidal,
-                parsedVerticalCoordinateSystem.VerticalDatum.Name,
-                string.Empty,
-                -1,
-                string.Empty,
-                string.Empty,
-                string.Empty),
-            new AxisInfo(parsedVerticalCoordinateSystem.GetAxis(0)),
-            parsedVerticalCoordinateSystem.Name,
-            parsedVerticalCoordinateSystem.Authority,
-            parsedVerticalCoordinateSystem.AuthorityCode,
-            string.Empty,
-            string.Empty,
-            string.Empty);
-
-        return new CompoundCoordinateSystem(
-            GeographicCoordinateSystem.WGS84,
-            runtimeVerticalCoordinateSystem,
-            parsedHubCoordinateSystem.Name,
-            parsedHubCoordinateSystem.Authority,
-            parsedHubCoordinateSystem.AuthorityCode,
-            string.Empty,
-            string.Empty,
-            string.Empty);
-    }
-
     private static (string Type, int Dimension) ReadWkt2CoordinateSystemDefinition(WktTokenizer tokenizer)
     {
         if (tokenizer.GetStringValue() != "CS")
@@ -1493,14 +1457,14 @@ public static partial class CoordinateSystemWktReader
         return new CompoundCoordinateSystem(headCoordinateSystem, tailCoordinateSystem, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
     }
 
-    private static CoordinateSystem ReadWkt2BoundCoordinateSystem(WktTokenizer tokenizer)
+    private static BoundCoordinateSystem ReadWkt2BoundCoordinateSystem(WktTokenizer tokenizer)
     {
         const string rootKeyword = "BOUNDCRS";
 
         WktBracket bracket = tokenizer.ReadOpener();
         CoordinateSystem? sourceCoordinateSystem = null;
         CoordinateSystem? targetCoordinateSystem = null;
-        Wkt2BoundTransformationDefinition? transformationDefinition = null;
+        BoundTransformation? transformation = null;
 
         tokenizer.NextToken();
         while (true)
@@ -1527,7 +1491,7 @@ public static partial class CoordinateSystemWktReader
                     targetCoordinateSystem = ReadWkt2BoundCoordinateSystemComponent(tokenizer);
                     break;
                 case "ABRIDGEDTRANSFORMATION":
-                    transformationDefinition = ReadWkt2AbridgedTransformationDefinition(tokenizer);
+                    transformation = ReadWkt2AbridgedTransformationDefinition(tokenizer);
                     break;
                 default:
                     if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
@@ -1547,9 +1511,18 @@ public static partial class CoordinateSystemWktReader
 
         sourceCoordinateSystem = ArgumentGuard.ThrowIfNull(sourceCoordinateSystem, nameof(sourceCoordinateSystem));
         targetCoordinateSystem = ArgumentGuard.ThrowIfNull(targetCoordinateSystem, nameof(targetCoordinateSystem));
-        transformationDefinition = ArgumentGuard.ThrowIfNull(transformationDefinition, nameof(transformationDefinition));
+        transformation = ArgumentGuard.ThrowIfNull(transformation, nameof(transformation));
 
-        return ApplyWkt2BoundCoordinateSystemToSource(sourceCoordinateSystem, targetCoordinateSystem, transformationDefinition);
+        return new BoundCoordinateSystem(
+            sourceCoordinateSystem,
+            targetCoordinateSystem,
+            transformation,
+            sourceCoordinateSystem.Name,
+            sourceCoordinateSystem.Authority,
+            sourceCoordinateSystem.AuthorityCode,
+            sourceCoordinateSystem.Alias,
+            sourceCoordinateSystem.Abbreviation,
+            sourceCoordinateSystem.Remarks);
     }
 
     private static CoordinateSystem ReadWkt2BoundCoordinateSystemComponent(WktTokenizer tokenizer)
@@ -1568,130 +1541,22 @@ public static partial class CoordinateSystemWktReader
 
     private static void EnsureSupportedWkt2BoundSourceCoordinateSystem(CoordinateSystem coordinateSystem)
     {
-        if (coordinateSystem is VerticalCoordinateSystem || TryGetHorizontalDatum(coordinateSystem, out _))
+        if (coordinateSystem is BoundCoordinateSystem boundCoordinateSystem)
+        {
+            EnsureSupportedWkt2BoundSourceCoordinateSystem(boundCoordinateSystem.SourceCoordinateSystem);
+            return;
+        }
+
+        if (coordinateSystem is VerticalCoordinateSystem || BoundCoordinateSystemSupport.TryGetHorizontalDatum(coordinateSystem, out _))
         {
             return;
         }
 
         throw new NotSupportedException(
-            $"WKT2 BOUNDCRS source coordinate system type '{GetCoordinateSystemKeyword(coordinateSystem)}' is not supported.");
+            $"WKT2 BOUNDCRS source coordinate system type '{BoundCoordinateSystemSupport.GetCoordinateSystemKeyword(coordinateSystem)}' is not supported.");
     }
 
-    // The current object model can only retain BOUNDCRS semantics by attaching a source->WGS84 Bursa-Wolf transform.
-    private static CoordinateSystem ApplyWkt2BoundCoordinateSystemToSource(
-        CoordinateSystem sourceCoordinateSystem,
-        CoordinateSystem targetCoordinateSystem,
-        Wkt2BoundTransformationDefinition transformationDefinition)
-    {
-        if (transformationDefinition.Wgs84Parameters is not null)
-        {
-            return ApplyWkt2HorizontalBoundCoordinateSystemToSource(
-                sourceCoordinateSystem,
-                targetCoordinateSystem,
-                transformationDefinition.Wgs84Parameters);
-        }
-
-        if (sourceCoordinateSystem is VerticalCoordinateSystem verticalCoordinateSystem)
-        {
-            return ApplyWkt2VerticalBoundCoordinateSystemToSource(
-                verticalCoordinateSystem,
-                targetCoordinateSystem,
-                transformationDefinition.MethodName,
-                transformationDefinition.ParameterFileName);
-        }
-
-        throw new NotSupportedException(
-            $"WKT2 BOUNDCRS source coordinate system type '{GetCoordinateSystemKeyword(sourceCoordinateSystem)}' is not supported.");
-    }
-
-    // The current object model can only retain BOUNDCRS semantics by attaching a source->WGS84 Bursa-Wolf transform.
-    private static CoordinateSystem ApplyWkt2HorizontalBoundCoordinateSystemToSource(
-        CoordinateSystem sourceCoordinateSystem,
-        CoordinateSystem targetCoordinateSystem,
-        Wgs84ConversionInfo wgs84Parameters)
-    {
-        if (!TryGetHorizontalDatum(sourceCoordinateSystem, out HorizontalDatum? sourceDatum))
-        {
-            throw new NotSupportedException(
-                $"WKT2 BOUNDCRS source coordinate system type '{GetCoordinateSystemKeyword(sourceCoordinateSystem)}' is not supported.");
-        }
-
-        if (!TryGetHorizontalDatum(targetCoordinateSystem, out HorizontalDatum? targetDatum))
-        {
-            throw new NotSupportedException("WKT2 BOUNDCRS targets other than WGS 84 are not supported.");
-        }
-
-        sourceDatum = ArgumentGuard.ThrowIfNull(sourceDatum, nameof(sourceDatum));
-        targetDatum = ArgumentGuard.ThrowIfNull(targetDatum, nameof(targetDatum));
-
-        if (!targetDatum.EqualParams(HorizontalDatum.WGS84))
-        {
-            throw new NotSupportedException("WKT2 BOUNDCRS targets other than WGS 84 are not supported.");
-        }
-
-        if (sourceDatum.Wgs84Parameters is not null && !sourceDatum.Wgs84Parameters.Equals(wgs84Parameters))
-        {
-            throw new NotSupportedException("WKT2 BOUNDCRS source CRS already defines a conflicting WGS 84 transformation.");
-        }
-
-        sourceDatum.Wgs84Parameters ??= wgs84Parameters;
-        return sourceCoordinateSystem;
-    }
-
-    private static VerticalCoordinateSystem ApplyWkt2VerticalBoundCoordinateSystemToSource(
-        VerticalCoordinateSystem sourceCoordinateSystem,
-        CoordinateSystem targetCoordinateSystem,
-        string methodName,
-        string parameterFileName)
-    {
-        if (targetCoordinateSystem is not CompoundCoordinateSystem hubCoordinateSystem
-            || hubCoordinateSystem.HeadCoordinateSystem is not GeographicCoordinateSystem hubHorizontal
-            || hubCoordinateSystem.TailCoordinateSystem is not VerticalCoordinateSystem hubVertical)
-        {
-            throw new NotSupportedException("WKT2 vertical BOUNDCRS targets must be ellipsoidal 3D geographic CRS definitions.");
-        }
-
-        if (!TryGetHorizontalDatum(hubHorizontal, out HorizontalDatum? targetDatum))
-        {
-            throw new NotSupportedException("WKT2 vertical BOUNDCRS targets other than WGS 84 are not supported.");
-        }
-
-        targetDatum = ArgumentGuard.ThrowIfNull(targetDatum, nameof(targetDatum));
-        if (!targetDatum.EqualParams(HorizontalDatum.WGS84))
-        {
-            throw new NotSupportedException("WKT2 vertical BOUNDCRS targets other than WGS 84 are not supported.");
-        }
-
-        if (hubVertical.VerticalDatum.DatumType != DatumType.VD_Ellipsoidal)
-        {
-            throw new NotSupportedException("WKT2 vertical BOUNDCRS targets must expose an ellipsoidal height axis.");
-        }
-
-        if (!IsWkt2Geographic3DToGravityRelatedHeightMethod(methodName))
-        {
-            throw new NotSupportedException($"WKT2 BOUNDCRS abridged transformation method '{methodName}' is not supported.");
-        }
-
-        if (string.IsNullOrWhiteSpace(parameterFileName))
-        {
-            throw new NotSupportedException("WKT2 vertical BOUNDCRS abridged transformations require a PARAMETERFILE.");
-        }
-
-        // The runtime compound/grid route expects the canonical WGS84 Lon/Lat/Up convention.
-        CompoundCoordinateSystem runtimeHubCoordinateSystem = CreateRuntimeCompatibleVerticalBoundHubCoordinateSystem(hubCoordinateSystem);
-
-        if (sourceCoordinateSystem.BoundGridTransformation is not null
-            && (!AreEquivalentParameterFileReferences(sourceCoordinateSystem.BoundGridTransformation.ParameterFileName, parameterFileName)
-                || !sourceCoordinateSystem.BoundGridTransformation.HubCoordinateSystem.EqualParams(runtimeHubCoordinateSystem)))
-        {
-            throw new NotSupportedException("WKT2 vertical BOUNDCRS source CRS already defines a conflicting grid transformation.");
-        }
-
-        sourceCoordinateSystem.BoundGridTransformation ??= new VerticalBoundGridTransformation(methodName, parameterFileName, runtimeHubCoordinateSystem);
-        return sourceCoordinateSystem;
-    }
-
-    private static Wkt2BoundTransformationDefinition ReadWkt2AbridgedTransformationDefinition(WktTokenizer tokenizer)
+    private static BoundTransformation ReadWkt2AbridgedTransformationDefinition(WktTokenizer tokenizer)
     {
         if (tokenizer.GetStringValue() != "ABRIDGEDTRANSFORMATION")
         {
@@ -1702,7 +1567,7 @@ public static partial class CoordinateSystemWktReader
         _ = tokenizer.ReadDoubleQuotedWord();
 
         string methodName = string.Empty;
-        string parameterFileName = string.Empty;
+        string? parameterFileName = null;
         var parameters = new Wgs84ConversionInfo();
 
         tokenizer.NextToken();
@@ -1755,61 +1620,10 @@ public static partial class CoordinateSystemWktReader
             ArgumentGuard.ThrowArgument("WKT2 ABRIDGEDTRANSFORMATION is missing a METHOD block.");
         }
 
-        if (IsWkt2CoordinateFrameRotationMethod(methodName))
-        {
-            parameters.Ex = -parameters.Ex;
-            parameters.Ey = -parameters.Ey;
-            parameters.Ez = -parameters.Ez;
-            return new Wkt2BoundTransformationDefinition(methodName, parameters, parameterFileName);
-        }
-
-        if (IsWkt2GeocentricTranslationsMethod(methodName) || IsWkt2PositionVectorMethod(methodName))
-        {
-            if (!string.IsNullOrWhiteSpace(parameterFileName))
-            {
-                throw new NotSupportedException("WKT2 BOUNDCRS Bursa-Wolf-style abridged transformations do not support PARAMETERFILE.");
-            }
-
-            return new Wkt2BoundTransformationDefinition(methodName, parameters, parameterFileName);
-        }
-
-        if (IsWkt2Geographic3DToGravityRelatedHeightMethod(methodName))
-        {
-            return new Wkt2BoundTransformationDefinition(methodName, null, parameterFileName);
-        }
-
-        throw new NotSupportedException($"WKT2 BOUNDCRS abridged transformation method '{methodName}' is not supported.");
-    }
-
-    private static bool AreEquivalentParameterFileReferences(string left, string right)
-    {
-        StringComparison comparison = Path.DirectorySeparatorChar == '\\'
-            ? StringComparison.OrdinalIgnoreCase
-            : StringComparison.Ordinal;
-
-        return NormalizeParameterFileReference(left).Equals(NormalizeParameterFileReference(right), comparison);
-    }
-
-    private static string NormalizeParameterFileReference(string parameterFileName)
-    {
-        string normalized = parameterFileName.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
-        if (!Path.IsPathRooted(normalized))
-        {
-            return normalized;
-        }
-
-        try
-        {
-            return Path.GetFullPath(normalized);
-        }
-        catch (ArgumentException)
-        {
-            return normalized;
-        }
-        catch (NotSupportedException)
-        {
-            return normalized;
-        }
+        return BoundCoordinateSystemSupport.CreateBoundTransformation(
+            methodName,
+            string.IsNullOrWhiteSpace(parameterFileName) ? parameters : null,
+            parameterFileName);
     }
 
     private static void ReadWkt2AbridgedTransformationParameter(WktTokenizer tokenizer, Wgs84ConversionInfo parameters)
@@ -2014,79 +1828,7 @@ public static partial class CoordinateSystemWktReader
 
     private static void ApplyWkt2BoundTransformationParameter(Wgs84ConversionInfo parameters, string parameterName, double value)
     {
-        switch (parameterName)
-        {
-            case "dx":
-                parameters.Dx = value;
-                break;
-            case "dy":
-                parameters.Dy = value;
-                break;
-            case "dz":
-                parameters.Dz = value;
-                break;
-            case "ex":
-                parameters.Ex = value;
-                break;
-            case "ey":
-                parameters.Ey = value;
-                break;
-            case "ez":
-                parameters.Ez = value;
-                break;
-            case "ppm":
-                parameters.Ppm = value;
-                break;
-            default:
-                throw new NotSupportedException($"WKT2 BOUNDCRS transformation parameter '{parameterName}' is not supported.");
-        }
-    }
-
-    private static bool IsWkt2GeocentricTranslationsMethod(string methodName)
-        => methodName.StartsWith("Geocentric translations", StringComparison.OrdinalIgnoreCase);
-
-    private static bool IsWkt2PositionVectorMethod(string methodName)
-        => methodName.StartsWith("Position Vector transformation", StringComparison.OrdinalIgnoreCase);
-
-    private static bool IsWkt2Geographic3DToGravityRelatedHeightMethod(string methodName)
-        => methodName.Equals("Geographic3D to GravityRelatedHeight (EGM)", StringComparison.OrdinalIgnoreCase);
-
-    private static bool IsWkt2CoordinateFrameRotationMethod(string methodName)
-        => methodName.StartsWith("Coordinate Frame rotation", StringComparison.OrdinalIgnoreCase);
-
-    private static bool TryGetHorizontalDatum(CoordinateSystem coordinateSystem, out HorizontalDatum? horizontalDatum)
-    {
-        switch (coordinateSystem)
-        {
-            case GeographicCoordinateSystem geographicCoordinateSystem:
-                horizontalDatum = geographicCoordinateSystem.HorizontalDatum;
-                return true;
-            case ProjectedCoordinateSystem projectedCoordinateSystem:
-                horizontalDatum = projectedCoordinateSystem.HorizontalDatum;
-                return true;
-            case GeocentricCoordinateSystem geocentricCoordinateSystem:
-                horizontalDatum = geocentricCoordinateSystem.HorizontalDatum;
-                return true;
-            case CompoundCoordinateSystem compoundCoordinateSystem when compoundCoordinateSystem.TailCoordinateSystem is VerticalCoordinateSystem:
-                return TryGetHorizontalDatum(compoundCoordinateSystem.HeadCoordinateSystem, out horizontalDatum);
-            default:
-                horizontalDatum = null;
-                return false;
-        }
-    }
-
-    private static string GetCoordinateSystemKeyword(CoordinateSystem coordinateSystem)
-    {
-        return coordinateSystem switch
-        {
-            GeographicCoordinateSystem => "GEOGCRS",
-            ProjectedCoordinateSystem => "PROJCRS",
-            GeocentricCoordinateSystem => "GEODCRS",
-            VerticalCoordinateSystem => "VERTCRS",
-            CompoundCoordinateSystem => "COMPOUNDCRS",
-            FittedCoordinateSystem => "FITTED_CS",
-            _ => coordinateSystem.GetType().Name,
-        };
+        BoundCoordinateSystemSupport.AssignTransformationParameter(parameterName, value, parameters);
     }
 
     private static string NormalizeWkt(string wkt)
@@ -2854,21 +2596,5 @@ public static partial class CoordinateSystemWktReader
 
         var fittedCS = new FittedCoordinateSystem(baseCS, toBaseTransform, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
         return fittedCS;
-    }
-
-    private sealed class Wkt2BoundTransformationDefinition
-    {
-        internal Wkt2BoundTransformationDefinition(string methodName, Wgs84ConversionInfo? wgs84Parameters, string parameterFileName)
-        {
-            this.MethodName = methodName;
-            this.Wgs84Parameters = wgs84Parameters;
-            this.ParameterFileName = parameterFileName;
-        }
-
-        internal string MethodName { get; }
-
-        internal string ParameterFileName { get; }
-
-        internal Wgs84ConversionInfo? Wgs84Parameters { get; }
     }
 }

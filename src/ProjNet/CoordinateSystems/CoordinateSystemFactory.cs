@@ -74,6 +74,37 @@ public class CoordinateSystemFactory
     }
 
     /// <summary>
+    /// Creates a <see cref="BoundCoordinateSystem"/>.
+    /// </summary>
+    /// <param name="name">Name of bound coordinate system.</param>
+    /// <param name="sourceCoordinateSystem">Source coordinate system.</param>
+    /// <param name="targetCoordinateSystem">Target or hub coordinate system.</param>
+    /// <param name="transformation">Bound transformation metadata.</param>
+    /// <returns>A new <see cref="BoundCoordinateSystem"/>.</returns>
+    public BoundCoordinateSystem CreateBoundCoordinateSystem(string name, CoordinateSystem sourceCoordinateSystem, CoordinateSystem targetCoordinateSystem, BoundTransformation transformation)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+        {
+            ArgumentGuard.ThrowArgument("Invalid name", nameof(name));
+        }
+
+        sourceCoordinateSystem = ArgumentGuard.ThrowIfNull(sourceCoordinateSystem, nameof(sourceCoordinateSystem));
+        targetCoordinateSystem = ArgumentGuard.ThrowIfNull(targetCoordinateSystem, nameof(targetCoordinateSystem));
+        transformation = ArgumentGuard.ThrowIfNull(transformation, nameof(transformation));
+
+        return new BoundCoordinateSystem(
+            sourceCoordinateSystem,
+            targetCoordinateSystem,
+            transformation,
+            name,
+            string.Empty,
+            -1,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
+    /// <summary>
     /// Creates a <see cref="FittedCoordinateSystem"/>.
     /// </summary>
     /// <remarks>The units of the axes in the fitted coordinate system will be

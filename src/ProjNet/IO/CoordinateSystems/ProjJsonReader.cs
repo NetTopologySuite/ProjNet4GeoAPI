@@ -74,6 +74,11 @@ public static class ProjJsonReader
             return ReadProjectedCoordinateSystem(element);
         }
 
+        if (string.Equals(type, "BoundCRS", StringComparison.OrdinalIgnoreCase))
+        {
+            return ReadBoundCoordinateSystem(element);
+        }
+
         if (string.Equals(type, "VerticalCRS", StringComparison.OrdinalIgnoreCase))
         {
             return ReadVerticalCoordinateSystem(element);
@@ -242,6 +247,26 @@ public static class ProjJsonReader
             string.Empty);
     }
 
+    private static BoundCoordinateSystem ReadBoundCoordinateSystem(JsonElement element)
+    {
+        CoordinateSystem sourceCoordinateSystem = ReadCoordinateSystemElement(GetRequiredProperty(element, "source_crs"), "source_crs");
+        CoordinateSystem targetCoordinateSystem = ReadCoordinateSystemElement(GetRequiredProperty(element, "target_crs"), "target_crs");
+        BoundTransformation transformation = ReadBoundTransformation(GetRequiredProperty(element, "transformation"), sourceCoordinateSystem);
+
+        string name = GetOptionalString(element, "name") ?? sourceCoordinateSystem.Name;
+        ReadIdentifier(element, out string authority, out long authorityCode);
+        return new BoundCoordinateSystem(
+            sourceCoordinateSystem,
+            targetCoordinateSystem,
+            transformation,
+            name,
+            authority,
+            authorityCode,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
     private static VerticalCoordinateSystem ReadVerticalCoordinateSystem(JsonElement element)
     {
         string name = GetRequiredString(element, "name");
@@ -320,6 +345,66 @@ public static class ProjJsonReader
         return combined;
     }
 
+    private static BoundTransformation ReadBoundTransformation(JsonElement element, CoordinateSystem sourceCoordinateSystem)
+    {
+        if (element.TryGetProperty("source_crs", out JsonElement transformationSourceCrsElement))
+        {
+            CoordinateSystem transformationSourceCoordinateSystem = ReadCoordinateSystemElement(transformationSourceCrsElement, "transformation.source_crs");
+            if (!transformationSourceCoordinateSystem.EqualParams(sourceCoordinateSystem))
+            {
+                throw new NotSupportedException("PROJJSON BoundCRS transformations with an overriding source_crs are not supported.");
+            }
+        }
+
+        string methodName = GetRequiredString(GetRequiredProperty(element, "method"), "name");
+        JsonElement parametersElement = GetRequiredProperty(element, "parameters");
+        if (parametersElement.ValueKind != JsonValueKind.Array)
+        {
+            ArgumentGuard.ThrowArgument("PROJJSON BoundCRS transformation parameters must be an array.");
+        }
+
+        var parameters = new Wgs84ConversionInfo();
+        bool hasNumericParameters = false;
+        string? parameterFileName = null;
+
+        foreach (JsonElement parameterElement in parametersElement.EnumerateArray())
+        {
+            string parameterName = GetRequiredString(parameterElement, "name");
+            JsonElement valueElement = GetRequiredProperty(parameterElement, "value");
+
+            if (valueElement.ValueKind == JsonValueKind.Number)
+            {
+                BoundCoordinateSystemSupport.AssignTransformationParameter(parameterName, valueElement.GetDouble(), parameters);
+                hasNumericParameters = true;
+                continue;
+            }
+
+            if (valueElement.ValueKind != JsonValueKind.String)
+            {
+                ArgumentGuard.ThrowArgument("PROJJSON BoundCRS transformation parameter values must be numbers or strings.");
+            }
+
+            string candidateParameterFileName = valueElement.GetString() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(candidateParameterFileName))
+            {
+                ArgumentGuard.ThrowArgument("PROJJSON BoundCRS transformation parameter file references must be non-empty.");
+            }
+
+            if (parameterFileName is not null
+                && !BoundCoordinateSystemSupport.AreEquivalentParameterFileReferences(parameterFileName, candidateParameterFileName))
+            {
+                throw new NotSupportedException("PROJJSON BoundCRS transformations with multiple parameter files are not supported.");
+            }
+
+            parameterFileName = candidateParameterFileName;
+        }
+
+        return BoundCoordinateSystemSupport.CreateBoundTransformation(
+            methodName,
+            hasNumericParameters ? parameters : null,
+            parameterFileName);
+    }
+
     private static Projection ReadConversion(JsonElement element)
     {
         string name = GetRequiredString(element, "name");
@@ -343,6 +428,16 @@ public static class ProjJsonReader
 
         ReadIdentifier(element, out string authority, out long authorityCode);
         return new Projection(className, parameters, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
+
+    private static CoordinateSystem ReadCoordinateSystemElement(JsonElement element, string propertyName)
+    {
+        if (ReadInfo(element) is not CoordinateSystem coordinateSystem)
+        {
+            throw new NotSupportedException($"PROJJSON {propertyName} must be a coordinate reference system.");
+        }
+
+        return coordinateSystem;
     }
 
     private static void ReadCoordinateSystemDefinition(

@@ -307,7 +307,6 @@ public class ProjJsonReaderTests
     {
         return
         [
-            new TheoryDataRow<string>("BoundCRS"),
             new TheoryDataRow<string>("CoordinateMetadata"),
             new TheoryDataRow<string>("EngineeringCRS"),
             new TheoryDataRow<string>("ParametricCRS"),
@@ -375,6 +374,60 @@ public class ProjJsonReaderTests
         Assert.True(parsed.EqualParams(reference), $"PROJJSON remaining CRS parse mismatch for EPSG:{srid}.");
         Assert.Equal("EPSG", parsed.Authority);
         Assert.Equal(srid, parsed.AuthorityCode);
+    }
+
+    /// <summary>
+    /// Verifies supported PROJJSON <c>BoundCRS</c> definitions parse into the first-class bound model.
+    /// </summary>
+    [Fact]
+    public void Parse_ParsesSupportedBoundCrs()
+    {
+        object degreeUnit = "degree";
+        string json = Serialize(
+            BoundCrsObject(
+                4269,
+                "NAD83",
+                GeographicCrsObject(
+                    4269,
+                    "NAD83",
+                    GeodeticDatumObject("North American Datum 1983", EllipsoidObject("GRS 1980", 6378137d, 298.257222101d, "metre", 7019), 6269),
+                    GreenwichPrimeMeridianObject(),
+                    degreeUnit,
+                    ("Geodetic latitude", "Lat", "north"),
+                    ("Geodetic longitude", "Lon", "east")),
+                GeographicCrsObject(
+                    4326,
+                    "WGS 84",
+                    GeodeticDatumObject("World Geodetic System 1984", EllipsoidObject("WGS 84", 6378137d, 298.257223563d, "metre", 7030), 6326),
+                    GreenwichPrimeMeridianObject(),
+                    degreeUnit,
+                    ("Geodetic latitude", "Lat", "north"),
+                    ("Geodetic longitude", "Lon", "east")),
+                AbridgedTransformationObject(
+                    "NAD83 to WGS 84 (1)",
+                    "Geocentric translations",
+                    BoundParameterValueObject("X-axis translation", 0d),
+                    BoundParameterValueObject("Y-axis translation", 0d),
+                    BoundParameterValueObject("Z-axis translation", 0d))));
+
+        BoundCoordinateSystem parsed = Assert.IsType<BoundCoordinateSystem>(ProjJsonReader.Parse(json));
+        GeographicCoordinateSystem source = Assert.IsType<GeographicCoordinateSystem>(parsed.SourceCoordinateSystem);
+        GeographicCoordinateSystem target = Assert.IsType<GeographicCoordinateSystem>(parsed.TargetCoordinateSystem);
+        Wgs84ConversionInfo parameters = Assert.IsType<Wgs84ConversionInfo>(parsed.Transformation.Wgs84Parameters);
+
+        Assert.Equal("NAD83", parsed.Name);
+        Assert.Equal("EPSG", parsed.Authority);
+        Assert.Equal(4269, parsed.AuthorityCode);
+        Assert.Equal("North American Datum 1983", source.HorizontalDatum.Name);
+        Assert.Null(source.HorizontalDatum.Wgs84Parameters);
+        Assert.Equal("WGS 84", target.Name);
+        Assert.True(target.HorizontalDatum.EqualParams(HorizontalDatum.WGS84));
+        Assert.True(target.PrimeMeridian.EqualParams(PrimeMeridian.Greenwich));
+        Assert.True(target.AngularUnit.EqualParams(AngularUnit.Degrees));
+        Assert.Equal(AxisOrientationEnum.North, target.GetAxis(0).Orientation);
+        Assert.Equal(AxisOrientationEnum.East, target.GetAxis(1).Orientation);
+        Assert.Equal("Geocentric translations", parsed.Transformation.MethodName);
+        Assert.Equal(new Wgs84ConversionInfo(0, 0, 0, 0, 0, 0, 0), parameters);
     }
 
     /// <summary>
@@ -678,6 +731,22 @@ public class ProjJsonReaderTests
             ("id", IdObject("EPSG", srid)));
     }
 
+    private static Dictionary<string, object?> BoundCrsObject(
+        int srid,
+        string name,
+        Dictionary<string, object?> sourceCrs,
+        Dictionary<string, object?> targetCrs,
+        Dictionary<string, object?> transformation)
+    {
+        return Obj(
+            ("type", "BoundCRS"),
+            ("name", name),
+            ("source_crs", sourceCrs),
+            ("target_crs", targetCrs),
+            ("transformation", transformation),
+            ("id", IdObject("EPSG", srid)));
+    }
+
     private static Dictionary<string, object?> CompoundCrsObject(int srid, string name, params Dictionary<string, object?>[] components)
     {
         return Obj(
@@ -759,6 +828,15 @@ public class ProjJsonReaderTests
             ("id", IdObject("EPSG", conversionCode)));
     }
 
+    private static Dictionary<string, object?> AbridgedTransformationObject(string name, string methodName, params Dictionary<string, object?>[] parameters)
+    {
+        return Obj(
+            ("type", "AbridgedTransformation"),
+            ("name", name),
+            ("method", Obj(("name", methodName))),
+            ("parameters", parameters.Cast<object>().ToArray()));
+    }
+
     private static Dictionary<string, object?> ProjectionParameterObject(string name, double value, object unit, int code)
     {
         return Obj(
@@ -766,6 +844,13 @@ public class ProjJsonReaderTests
             ("value", value),
             ("unit", unit),
             ("id", IdObject("EPSG", code)));
+    }
+
+    private static Dictionary<string, object?> BoundParameterValueObject(string name, object value)
+    {
+        return Obj(
+            ("name", name),
+            ("value", value));
     }
 
     private static Dictionary<string, object?> AngularUnitObject(string name, double conversionFactor, int code)

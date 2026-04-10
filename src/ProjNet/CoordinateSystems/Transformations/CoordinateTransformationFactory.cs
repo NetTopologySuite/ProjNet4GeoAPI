@@ -136,6 +136,17 @@ public class CoordinateTransformationFactory
 
     private ICoordinateTransformation? CreateFromCoordinateSystemsWithMetadata(CoordinateSystem sourceCS, CoordinateSystem targetCS)
     {
+        if (BoundCoordinateSystemSupport.ContainsBoundCoordinateSystem(sourceCS)
+            || BoundCoordinateSystemSupport.ContainsBoundCoordinateSystem(targetCS))
+        {
+            CoordinateSystem normalizedSource = BoundCoordinateSystemSupport.NormalizeCoordinateSystemForRuntime(sourceCS);
+            CoordinateSystem normalizedTarget = BoundCoordinateSystemSupport.NormalizeCoordinateSystemForRuntime(targetCS);
+            ICoordinateTransformation? normalizedTransformation = this.CreateFromCoordinateSystemsWithMetadata(normalizedSource, normalizedTarget);
+            return normalizedTransformation is null
+                ? null
+                : RebindTransformation(sourceCS, targetCS, normalizedTransformation);
+        }
+
         if (TryCreateVerticalBoundCompoundTransformation(sourceCS, targetCS, out ICoordinateTransformation? verticalBoundTransformation))
         {
             return verticalBoundTransformation;
@@ -1209,6 +1220,23 @@ public class CoordinateTransformationFactory
             operation.OperationCode,
             fallback.AreaOfUse,
             remarks);
+    }
+
+    private static CoordinateTransformation RebindTransformation(
+        CoordinateSystem source,
+        CoordinateSystem target,
+        ICoordinateTransformation transformation)
+    {
+        return new CoordinateTransformation(
+            source,
+            target,
+            transformation.TransformType,
+            transformation.MathTransform,
+            transformation.Name,
+            transformation.Authority,
+            transformation.AuthorityCode,
+            transformation.AreaOfUse,
+            transformation.Remarks);
     }
 
     private static Dictionary<SridPair, IReadOnlyList<CoordinateOperationDefinition>> LoadDirectOperationDefinitions()

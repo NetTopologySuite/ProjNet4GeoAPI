@@ -19,6 +19,7 @@ internal static class ProjJsonCoverageMatrix
     private const string ReaderGeographicReference = Reader + ".ReadGeographicCoordinateSystem";
     private const string ReaderGeodeticReference = Reader + ".ReadGeodeticCoordinateSystem, " + Reader + ".ReadGeocentricCoordinateSystem";
     private const string ReaderProjectedReference = Reader + ".ReadProjectedCoordinateSystem";
+    private const string ReaderBoundReference = Reader + ".ReadBoundCoordinateSystem, " + Reader + ".ReadBoundTransformation, " + Reader + ".ReadCoordinateSystemElement";
     private const string ReaderVerticalReference = Reader + ".ReadVerticalCoordinateSystem";
     private const string ReaderCompoundReference = Reader + ".ReadCompoundCoordinateSystem";
     private const string ReaderConversionReference = Reader + ".ReadConversion, " + Reader + ".NormalizeProjectionParameterName";
@@ -49,11 +50,11 @@ internal static class ProjJsonCoverageMatrix
         {
             Row(
                 "BoundCRS",
-                ProjJsonCoverageStatus.Unsupported,
-                ReaderRootReference,
+                ProjJsonCoverageStatus.Supported,
+                $"{ReaderRootReference}, {ReaderBoundReference}",
                 ProjJsonCoverageStatus.Unsupported,
                 WriterBoundReference,
-                "There is no BoundCRS type dispatch yet and the writer still throws when bound metadata would need preservation."),
+                "Reader dispatches BoundCRS objects into the first-class bound model, while the writer still throws when bound metadata would need preservation."),
             Row(
                 "CompoundCRS",
                 ProjJsonCoverageStatus.Supported,
