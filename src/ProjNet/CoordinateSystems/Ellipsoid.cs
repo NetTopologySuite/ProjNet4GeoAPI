@@ -282,13 +282,7 @@ public class Ellipsoid : Info
     /// <summary>
     /// Gets an XML representation of this object.
     /// </summary>
-    public override string XML
-    {
-        get
-        {
-            return FormattableString.Invariant($"<CS_Ellipsoid SemiMajorAxis=\"{this.SemiMajorAxis}\" SemiMinorAxis=\"{this.SemiMinorAxis}\" InverseFlattening=\"{this.InverseFlattening}\" IvfDefinitive=\"{(this.IsIvfDefinitive ? 1 : 0)}\">{this.InfoXml}{this.AxisUnit.XML}</CS_Ellipsoid>");
-        }
-    }
+    public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
     /// <summary>
     /// Returns an XML representation of this ellipsoid as an <see cref="XElement"/>.

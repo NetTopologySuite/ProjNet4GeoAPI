@@ -125,13 +125,7 @@ public class PrimeMeridian : Info
     /// <summary>
     /// Gets an XML representation of this object.
     /// </summary>
-    public override string XML
-    {
-        get
-        {
-            return FormattableString.Invariant($"<CS_PrimeMeridian Longitude=\"{this.Longitude}\" >{this.InfoXml}{this.AngularUnit.XML}</CS_PrimeMeridian>");
-        }
-    }
+    public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
     /// <summary>
     /// Returns an XML representation of this prime meridian as an <see cref="XElement"/>.
