@@ -188,6 +188,10 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
         {
             innerElement.Add(projection.ToXml());
         }
+        else
+        {
+            innerElement.Add(XElement.Parse(this.Projection.XML));
+        }
 
         return new XElement(
             "CS_CoordinateSystem",
