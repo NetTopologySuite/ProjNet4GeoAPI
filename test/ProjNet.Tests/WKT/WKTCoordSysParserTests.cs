@@ -480,27 +480,30 @@ public class WKTCoordSysParserTests
     {
         var fac = new CoordinateSystemFactory();
         FittedCoordinateSystem fcs = default!;
-        string wkt = "FITTED_CS[\"Local coordinate system MNAU (based on Gauss-Krueger)\"," +
-                            "PARAM_MT[\"Affine\"," +
-                               "PARAMETER[\"num_row\",3],PARAMETER[\"num_col\",3],PARAMETER[\"elt_0_0\", 0.883485346527455],PARAMETER[\"elt_0_1\", -0.468458794848877],PARAMETER[\"elt_0_2\", 3455869.17937689],PARAMETER[\"elt_1_0\", 0.468458794848877],PARAMETER[\"elt_1_1\", 0.883485346527455],PARAMETER[\"elt_1_2\", 5478710.88035753],PARAMETER[\"elt_2_2\", 1]]," +
-                            "PROJCS[\"DHDN / Gauss-Kruger zone 3\"," +
-                               "GEOGCS[\"DHDN\"," +
-                                  "DATUM[\"Deutsches_Hauptdreiecksnetz\"," +
-                                     "SPHEROID[\"Bessel 1841\", 6377397.155, 299.1528128, AUTHORITY[\"EPSG\", \"7004\"]]," +
-                                     "TOWGS84[612.4, 77, 440.2, -0.054, 0.057, -2.797, 0.525975255930096]," +
-                                     "AUTHORITY[\"EPSG\", \"6314\"]]," +
-                                   "PRIMEM[\"Greenwich\", 0, AUTHORITY[\"EPSG\", \"8901\"]]," +
-                                   "UNIT[\"degree\", 0.0174532925199433, AUTHORITY[\"EPSG\", \"9122\"]]," +
-                                   "AUTHORITY[\"EPSG\", \"4314\"]]," +
-                               "PROJECTION[\"Transverse_Mercator\"]," +
-                               "PARAMETER[\"latitude_of_origin\", 0]," +
-                               "PARAMETER[\"central_meridian\", 9]," +
-                               "PARAMETER[\"scale_factor\", 1]," +
-                               "PARAMETER[\"false_easting\", 3500000]," +
-                               "PARAMETER[\"false_northing\", 0]," +
-                               "UNIT[\"metre\", 1, AUTHORITY[\"EPSG\", \"9001\"]]," +
-                               "AUTHORITY[\"EPSG\", \"31467\"]]" +
-                    "]";
+        string wkt =
+            """
+            FITTED_CS["Local coordinate system MNAU (based on Gauss-Krueger)",
+                PARAM_MT["Affine",
+                    PARAMETER["num_row",3],PARAMETER["num_col",3],PARAMETER["elt_0_0", 0.883485346527455],PARAMETER["elt_0_1", -0.468458794848877],PARAMETER["elt_0_2", 3455869.17937689],PARAMETER["elt_1_0", 0.468458794848877],PARAMETER["elt_1_1", 0.883485346527455],PARAMETER["elt_1_2", 5478710.88035753],PARAMETER["elt_2_2", 1]],
+                PROJCS["DHDN / Gauss-Kruger zone 3",
+                    GEOGCS["DHDN",
+                        DATUM["Deutsches_Hauptdreiecksnetz",
+                            SPHEROID["Bessel 1841", 6377397.155, 299.1528128, AUTHORITY["EPSG", "7004"]],
+                            TOWGS84[612.4, 77, 440.2, -0.054, 0.057, -2.797, 0.525975255930096],
+                            AUTHORITY["EPSG", "6314"]],
+                        PRIMEM["Greenwich", 0, AUTHORITY["EPSG", "8901"]],
+                        UNIT["degree", 0.0174532925199433, AUTHORITY["EPSG", "9122"]],
+                        AUTHORITY["EPSG", "4314"]],
+                    PROJECTION["Transverse_Mercator"],
+                    PARAMETER["latitude_of_origin", 0],
+                    PARAMETER["central_meridian", 9],
+                    PARAMETER["scale_factor", 1],
+                    PARAMETER["false_easting", 3500000],
+                    PARAMETER["false_northing", 0],
+                    UNIT["metre", 1, AUTHORITY["EPSG", "9001"]],
+                    AUTHORITY["EPSG", "31467"]]
+            ]
+            """;
 
         try
         {
@@ -532,14 +535,17 @@ public class WKTCoordSysParserTests
         var fac = new CoordinateSystemFactory();
         GeocentricCoordinateSystem fcs = default!;
 
-        const string wkt = "GEOCCS[\"TUREF\", " +
-                        "DATUM[\"Turkish_National_Reference_Frame\", " +
-                                "SPHEROID[\"GRS 1980\", 6378137, 298.257222101, AUTHORITY[\"EPSG\", \"7019\"]], " +
-                                "AUTHORITY[\"EPSG\", \"1057\"]], " +
-                        "PRIMEM[\"Greenwich\", 0, AUTHORITY[\"EPSG\", \"8901\"]], " +
-                        "UNIT[\"metre\", 1, AUTHORITY[\"EPSG\", \"9001\"]], " +
-                        "AXIS[\"Geocentric X\", OTHER], AXIS[\"Geocentric Y\", OTHER], AXIS[\"Geocentric Z\", NORTH], " +
-                        "AUTHORITY[\"EPSG\", \"5250\"]]";
+        const string wkt =
+            """
+            GEOCCS["TUREF",
+                DATUM["Turkish_National_Reference_Frame",
+                    SPHEROID["GRS 1980", 6378137, 298.257222101, AUTHORITY["EPSG", "7019"]],
+                    AUTHORITY["EPSG", "1057"]],
+                PRIMEM["Greenwich", 0, AUTHORITY["EPSG", "8901"]],
+                UNIT["metre", 1, AUTHORITY["EPSG", "9001"]],
+                AXIS["Geocentric X", OTHER], AXIS["Geocentric Y", OTHER], AXIS["Geocentric Z", NORTH],
+                AUTHORITY["EPSG", "5250"]]
+            """;
 
         try
         {
@@ -570,21 +576,23 @@ public class WKTCoordSysParserTests
     {
         // Sample WKT from an external source.
         string sampleWKT =
-            "PROJCS[\"\", " +
-              "GEOGCS[\"\", " +
-                "DATUM[\"\", " +
-                  "SPHEROID[\"GRS_1980\", 6378137, 298.2572221010042] " +
-                "], " +
-              "PRIMEM[\"Greenwich\", 0], " +
-              "UNIT[\"Degree\", 0.017453292519943295]" +
-              "], " +
-              "PROJECTION[\"Transverse_Mercator\"], " +
-              "PARAMETER[\"False_Easting\", 500000], " +
-              "PARAMETER[\"False_Northing\", 0], " +
-              "PARAMETER[\"Central_Meridian\", -75], " +
-              "PARAMETER[\"Scale_Factor\", 0.9996], " +
-              "UNIT[\"Meter\", 1]" +
-              "]";
+            """
+            PROJCS["",
+              GEOGCS["",
+                DATUM["",
+                  SPHEROID["GRS_1980", 6378137, 298.2572221010042]
+                ],
+              PRIMEM["Greenwich", 0],
+              UNIT["Degree", 0.017453292519943295]
+              ],
+              PROJECTION["Transverse_Mercator"],
+              PARAMETER["False_Easting", 500000],
+              PARAMETER["False_Northing", 0],
+              PARAMETER["Central_Meridian", -75],
+              PARAMETER["Scale_Factor", 0.9996],
+              UNIT["Meter", 1]
+              ]
+            """;
 
         var csFromSample = (CoordinateSystem)ProjNet.IO.CoordinateSystems.CoordinateSystemWktReader.Parse(sampleWKT);
         string wktFromProjNetCS = csFromSample.WKT;
