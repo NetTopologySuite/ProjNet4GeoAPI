@@ -18,6 +18,7 @@ using ProjNet.CoordinateSystems.Projections;
 /// </summary>
 internal static class ProjPipelineMathTransformFactory
 {
+    private const int MaxNestedPipelineDepth = 4;
     private static readonly char[] CommaSeparator = [','];
     private static readonly char[] OperationTokenSeparators = [' ', '\t'];
     private static readonly string[] HorizontalGridExtensions = [".gsb", ".tif", ".tiff"];
@@ -32,6 +33,9 @@ internal static class ProjPipelineMathTransformFactory
     /// <param name="skipReason">Reason why transform creation was skipped.</param>
     /// <returns><see langword="true"/> when a transform was created.</returns>
     internal static bool TryCreateMathTransform(string operation, [NotNullWhen(true)] out MathTransform? transform, out string? skipReason)
+        => TryCreateMathTransform(operation, 0, out transform, out skipReason);
+
+    private static bool TryCreateMathTransform(string operation, int pipelineDepth, [NotNullWhen(true)] out MathTransform? transform, out string? skipReason)
     {
         transform = null;
         skipReason = null;
@@ -42,9 +46,23 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
+        if (pipelineDepth > MaxNestedPipelineDepth)
+        {
+            skipReason = $"Nested pipeline depth exceeded the supported maximum of {MaxNestedPipelineDepth.ToString(CultureInfo.InvariantCulture)}.";
+            return false;
+        }
+
         bool hasPipeline = ContainsPipelineProjection(operation);
         IReadOnlyList<Dictionary<string, string>>? pipelineStepArguments = null;
-        if (hasPipeline
+        IReadOnlyList<string>? nestedPipelineStepOperations = null;
+        if (hasPipeline && ContainsNestedPipelineProjection(operation))
+        {
+            if (!TryParseNestedPipelineStepOperations(operation, out nestedPipelineStepOperations, out skipReason))
+            {
+                return false;
+            }
+        }
+        else if (hasPipeline
             && !TryParsePipelineStepArguments(operation, out pipelineStepArguments, out _, out skipReason))
         {
             return false;
@@ -55,7 +73,7 @@ internal static class ProjPipelineMathTransformFactory
             : [];
 
         int stepCount = hasPipeline
-            ? parsedPipelineSteps.Count
+            ? nestedPipelineStepOperations?.Count ?? parsedPipelineSteps.Count
             : 1;
         PipelineExecutionContext? executionContext = hasPipeline
             ? new PipelineExecutionContext()
@@ -67,8 +85,10 @@ internal static class ProjPipelineMathTransformFactory
             MathTransform? stepTransformCandidate;
             string? stepSkipReason;
             bool ok = hasPipeline
-                ? TryCreateStepTransform(parsedPipelineSteps[i], executionContext, out stepTransformCandidate, out stepSkipReason)
-                : TryCreateStepTransform(operation, executionContext, out stepTransformCandidate, out stepSkipReason);
+                ? nestedPipelineStepOperations is not null
+                    ? TryCreateStepTransform(nestedPipelineStepOperations[i], executionContext, pipelineDepth, out stepTransformCandidate, out stepSkipReason)
+                    : TryCreateStepTransform(parsedPipelineSteps[i], executionContext, pipelineDepth, out stepTransformCandidate, out stepSkipReason)
+                : TryCreateStepTransform(operation, executionContext, pipelineDepth, out stepTransformCandidate, out stepSkipReason);
             if (!ok)
             {
                 skipReason = hasPipeline
@@ -108,22 +128,29 @@ internal static class ProjPipelineMathTransformFactory
     private static bool TryCreateStepTransform(
         string operation,
         PipelineExecutionContext? executionContext,
+        int pipelineDepth,
         [NotNullWhen(true)] out MathTransform? transform,
         out string? skipReason)
     {
         transform = null;
+        if (ContainsPipelineProjection(operation))
+        {
+            return TryCreateMathTransform(operation, pipelineDepth + 1, out transform, out skipReason);
+        }
+
         if (!TryParseOperationArguments(operation, out Dictionary<string, string> args))
         {
             skipReason = "Unable to parse operation parameters.";
             return false;
         }
 
-        return TryCreateStepTransform(args, executionContext, out transform, out skipReason);
+        return TryCreateStepTransform(args, executionContext, pipelineDepth, out transform, out skipReason);
     }
 
     private static bool TryCreateStepTransform(
         Dictionary<string, string> args,
         PipelineExecutionContext? executionContext,
+        int pipelineDepth,
         [NotNullWhen(true)] out MathTransform? transform,
         out string? skipReason)
     {
@@ -2580,6 +2607,32 @@ internal static class ProjPipelineMathTransformFactory
         return false;
     }
 
+    private static bool ContainsNestedPipelineProjection(string operation)
+    {
+        if (operation is null)
+        {
+            return false;
+        }
+
+        int pipelineProjectionCount = 0;
+        string[] tokens = operation.Split(OperationTokenSeparators, StringSplitOptions.RemoveEmptyEntries);
+        foreach (string token in tokens)
+        {
+            if (token.Length > 0
+                && token[0] == '+'
+                && token[1..].Equals("proj=pipeline", StringComparison.OrdinalIgnoreCase))
+            {
+                pipelineProjectionCount++;
+                if (pipelineProjectionCount > 1)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     private static bool TryParsePipelineStepArguments(
         string operation,
         [NotNullWhen(true)] out IReadOnlyList<Dictionary<string, string>>? steps,
@@ -2705,6 +2758,128 @@ internal static class ProjPipelineMathTransformFactory
         return true;
     }
 
+    private static bool TryParseNestedPipelineStepOperations(
+        string operation,
+        [NotNullWhen(true)] out IReadOnlyList<string>? steps,
+        out string? skipReason)
+    {
+        steps = null;
+        skipReason = null;
+
+        string[] tokens = operation.Split(OperationTokenSeparators, StringSplitOptions.RemoveEmptyEntries);
+        var globalTokens = new List<string>();
+        var parsedSteps = new List<string>();
+        List<string>? currentStepTokens = null;
+        bool insidePipelineDefinition = false;
+        bool insideStepSection = false;
+        bool previousTokenWasStep = false;
+
+        for (int i = 0; i < tokens.Length; i++)
+        {
+            string token = tokens[i];
+            if (token.Length == 0 || token[0] != '+')
+            {
+                if (insideStepSection && currentStepTokens is not null)
+                {
+                    currentStepTokens.Add(token);
+                }
+
+                continue;
+            }
+
+            string body = token[1..];
+            if (!insidePipelineDefinition)
+            {
+                if (body.Equals("proj=pipeline", StringComparison.OrdinalIgnoreCase))
+                {
+                    insidePipelineDefinition = true;
+                }
+
+                continue;
+            }
+
+            if (body.Equals("step", StringComparison.OrdinalIgnoreCase))
+            {
+                if (!insideStepSection)
+                {
+                    insideStepSection = true;
+                    currentStepTokens = [];
+                }
+                else if (currentStepTokens is null || currentStepTokens.Count == 0)
+                {
+                    skipReason = "Pipeline contains an empty +step.";
+                    return false;
+                }
+                else
+                {
+                    parsedSteps.Add(BuildPipelineStepOperation(globalTokens, currentStepTokens));
+                    currentStepTokens = [];
+                }
+
+                previousTokenWasStep = true;
+                continue;
+            }
+
+            if (!insideStepSection)
+            {
+                globalTokens.Add(token);
+                continue;
+            }
+
+            currentStepTokens ??= [];
+            currentStepTokens.Add(token);
+            previousTokenWasStep = false;
+
+            if (body.Equals("proj=pipeline", StringComparison.OrdinalIgnoreCase))
+            {
+                for (int j = i + 1; j < tokens.Length; j++)
+                {
+                    currentStepTokens.Add(tokens[j]);
+                }
+
+                i = tokens.Length;
+                break;
+            }
+        }
+
+        if (!insidePipelineDefinition)
+        {
+            skipReason = "Operation is missing +proj=pipeline.";
+            return false;
+        }
+
+        if (!insideStepSection)
+        {
+            skipReason = "Pipeline operation did not contain any +step definition.";
+            return false;
+        }
+
+        bool invertPipeline = RemoveGlobalInvToken(globalTokens);
+        if (currentStepTokens is not null && currentStepTokens.Count > 0)
+        {
+            parsedSteps.Add(BuildPipelineStepOperation(globalTokens, currentStepTokens));
+        }
+        else if (previousTokenWasStep)
+        {
+            skipReason = "Pipeline operation ended with +step but no step parameters.";
+            return false;
+        }
+
+        if (parsedSteps.Count == 0)
+        {
+            skipReason = "Pipeline operation did not contain any executable step.";
+            return false;
+        }
+
+        if (invertPipeline)
+        {
+            parsedSteps = BuildInvertedPipelineStepOperations(parsedSteps);
+        }
+
+        steps = parsedSteps;
+        return true;
+    }
+
     private static List<Dictionary<string, string>> BuildInvertedPipelineSteps(List<Dictionary<string, string>> parsedSteps)
     {
         var invertedSteps = new List<Dictionary<string, string>>(parsedSteps.Count);
@@ -2717,6 +2892,32 @@ internal static class ProjPipelineMathTransformFactory
             }
 
             invertedSteps.Add(invertedStep);
+        }
+
+        return invertedSteps;
+    }
+
+    private static List<string> BuildInvertedPipelineStepOperations(List<string> parsedSteps)
+    {
+        var invertedSteps = new List<string>(parsedSteps.Count);
+        for (int i = parsedSteps.Count - 1; i >= 0; i--)
+        {
+            string step = parsedSteps[i];
+#if NET8_0_OR_GREATER || NETSTANDARD2_1_OR_GREATER
+            if (step.Contains("+inv", StringComparison.OrdinalIgnoreCase))
+            {
+                invertedSteps.Add(step.Replace("+inv", string.Empty, StringComparison.OrdinalIgnoreCase).Replace("  ", " ", StringComparison.Ordinal).Trim());
+            }
+#else
+            if (step.IndexOf("+inv", StringComparison.OrdinalIgnoreCase) >= 0)
+            {
+                invertedSteps.Add(step.Replace("+inv", string.Empty).Replace("  ", " ").Trim());
+            }
+#endif
+            else
+            {
+                invertedSteps.Add($"+inv {step}");
+            }
         }
 
         return invertedSteps;
@@ -2750,6 +2951,47 @@ internal static class ProjPipelineMathTransformFactory
         }
 
         return merged;
+    }
+
+    private static string BuildPipelineStepOperation(List<string> globalTokens, List<string> stepTokens)
+    {
+        string globalPrefix = string.Join(" ", globalTokens);
+        string stepOperation = string.Join(" ", stepTokens);
+        if (stepTokens.Count > 0
+            && stepTokens[0].Length > 1
+            && stepTokens[0][0] == '+'
+            && stepTokens[0][1..].Equals("proj=pipeline", StringComparison.OrdinalIgnoreCase))
+        {
+            if (string.IsNullOrEmpty(globalPrefix))
+            {
+                return stepOperation;
+            }
+
+            string nestedStepRemainder = stepTokens.Count > 1
+                ? string.Join(" ", stepTokens.GetRange(1, stepTokens.Count - 1))
+                : string.Empty;
+            return string.IsNullOrEmpty(nestedStepRemainder)
+                ? $"{stepTokens[0]} {globalPrefix}"
+                : $"{stepTokens[0]} {globalPrefix} {nestedStepRemainder}";
+        }
+
+        return string.IsNullOrEmpty(globalPrefix)
+            ? stepOperation
+            : $"{globalPrefix} {stepOperation}";
+    }
+
+    private static bool RemoveGlobalInvToken(List<string> globalTokens)
+    {
+        for (int i = globalTokens.Count - 1; i >= 0; i--)
+        {
+            if (globalTokens[i].Equals("+inv", StringComparison.OrdinalIgnoreCase))
+            {
+                globalTokens.RemoveAt(i);
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static bool TryParseOperationArguments(string operation, out Dictionary<string, string> args)
