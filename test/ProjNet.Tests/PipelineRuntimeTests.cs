@@ -80,6 +80,20 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
+    /// Verifies that the nested pipeline recursion guard rejects overly deep pipeline nesting.
+    /// </summary>
+    [Fact]
+    public void PipelineWithTooManyNestedPipelinesFailsValidation()
+    {
+        string operation = CreateNestedPipelineOperation(6);
+
+        bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string? skipReason);
+
+        Assert.False(ok);
+        Assert.Contains("maximum of 4", Assert.IsType<string>(skipReason), StringComparison.Ordinal);
+    }
+
+    /// <summary>
     /// Verifies that a 4D axis swap step with negated indices correctly reorders and flips all four ordinates.
     /// </summary>
     [Fact]
@@ -935,5 +949,12 @@ public class PipelineRuntimeTests
         bool ok = CoordinateTransformationFactory.TryCreateProjPipelineMathTransform(operation, out _, out string? skipReason);
         Assert.False(ok);
         return Assert.IsType<string>(skipReason);
+    }
+
+    private static string CreateNestedPipelineOperation(int nestedDepth)
+    {
+        return nestedDepth <= 0
+            ? "+proj=noop"
+            : $"+proj=pipeline +step {CreateNestedPipelineOperation(nestedDepth - 1)}";
     }
 }
