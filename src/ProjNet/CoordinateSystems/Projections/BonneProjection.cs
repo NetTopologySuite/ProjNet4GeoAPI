@@ -21,6 +21,9 @@ using ProjNet.CoordinateSystems.Transformations;
 /// 373-7-2, 2019), EPSG method 9827, Bonne. The <c>ρ</c> computation
 /// <c>a * m0 / sin(lat0) + M0 - M</c> and the associated easting and northing equations
 /// using the meridian arc <c>M</c> match the implementation here.
+/// <para>See also John P. Snyder, "Map Projections - A Working Manual",
+/// U.S. Geological Survey Professional Paper 1395, 1987, Ch. 19, pp. 138-140,
+/// for the Bonne development and its meridian-arc-based formulation.</para>
 /// </remarks>
 /// <seealso href="https://epsg.io/9827-method">EPSG method 9827: Bonne.</seealso>
 internal class BonneProjection : MapProjection

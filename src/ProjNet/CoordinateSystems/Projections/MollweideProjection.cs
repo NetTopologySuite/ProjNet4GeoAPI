@@ -21,6 +21,9 @@ using ProjNet.CoordinateSystems.Transformations;
 /// The auxiliary-angle equation <c>2 * θ + sin(2 * θ) = cp * sin(φ)</c> together
 /// with the forward relations <c>x = cx * λ * cos(θ)</c> and
 /// <c>y = cy * sin(θ)</c> match the implementation here.</para>
+/// <para>See also John P. Snyder, "Map Projections - A Working Manual",
+/// U.S. Geological Survey Professional Paper 1395, 1987, Ch. 31, pp. 249-252,
+/// eqs. (31-1) through (31-10), for the Mollweide development.</para>
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Mollweide_projection">Wikipedia: Mollweide projection.</seealso>
 /// <seealso href="https://mathworld.wolfram.com/MollweideProjection.html">MathWorld: Mollweide Projection.</seealso>

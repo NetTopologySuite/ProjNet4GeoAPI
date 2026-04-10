@@ -24,6 +24,10 @@ using ProjNet.CoordinateSystems.Transformations;
 /// (publication 373-7-2, 2019), EPSG method 9802, Lambert Conic Conformal (2SP).
 /// The defining <c>n</c>, <c>F</c>, <c>r</c>, and <c>θ</c> relationships match
 /// the implementation here.</para>
+/// <para>See also John P. Snyder, "Map Projections - A Working Manual",
+/// U.S. Geological Survey Professional Paper 1395, 1987, Ch. 15, pp. 104-110,
+/// eqs. (15-1) through (15-11), for the classic Lambert conformal conic
+/// development.</para>
 /// </remarks>
 /// <seealso href="https://epsg.io/9802-method">EPSG method 9802: Lambert Conic Conformal (2SP).</seealso>
 internal class LambertConformalConic2SP : MapProjection

@@ -18,6 +18,9 @@ using ProjNet.CoordinateSystems.Transformations;
 /// "Miller cylindrical projection". The forward northing
 /// <c>1.25 * ln(tan(π / 4 + 0.4 * φ))</c> and its inverse recovery
 /// <c>2.5 * (atan(exp(0.8 * y)) - π / 4)</c> match the implementation here.</para>
+/// <para>See also John P. Snyder, "Map Projections - A Working Manual",
+/// U.S. Geological Survey Professional Paper 1395, 1987, Ch. 11, pp. 86-89,
+/// eqs. (11-1) through (11-4), for the Miller cylindrical derivation.</para>
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Miller_cylindrical_projection">Wikipedia: Miller cylindrical projection.</seealso>
 internal class MillerCylindricalProjection : MapProjection

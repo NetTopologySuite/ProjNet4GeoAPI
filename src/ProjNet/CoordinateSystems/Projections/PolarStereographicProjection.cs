@@ -20,6 +20,10 @@ using ProjNet.CoordinateSystems.Transformations;
 /// ellipsoidal polar formulation keeps the natural-origin scale factor <c>k0</c>
 /// in the numerator of the <c>ρ</c> expression, matching the published method
 /// and the implementation here.</para>
+/// <para>See also John P. Snyder, "Map Projections - A Working Manual",
+/// U.S. Geological Survey Professional Paper 1395, 1987, Ch. 21, pp. 154-163,
+/// eqs. (21-1) through (21-39), for the stereographic and polar stereographic
+/// development.</para>
 /// </remarks>
 /// <seealso href="https://epsg.io/9810-method">EPSG method 9810: Polar Stereographic (variant A).</seealso>
 internal class PolarStereographicProjection : MapProjection

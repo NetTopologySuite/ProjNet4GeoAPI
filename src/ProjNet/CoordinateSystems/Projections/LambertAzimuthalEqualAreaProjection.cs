@@ -17,6 +17,10 @@ using ProjNet.CoordinateSystems.Transformations;
 /// (publication 373-7-2, 2019), EPSG method 9820, Lambert Azimuthal Equal Area. The
 /// <c>q</c>, <c>qP</c>, <c>β</c>, and <c>Rq</c> relationships match the implementation
 /// here.
+/// <para>See also John P. Snyder, "Map Projections - A Working Manual",
+/// U.S. Geological Survey Professional Paper 1395, 1987, Ch. 24, pp. 182-190,
+/// eqs. (24-1) through (24-18), for the classic Lambert azimuthal equal-area
+/// derivation.</para>
 /// </remarks>
 /// <seealso href="https://epsg.io/9820-method">EPSG method 9820: Lambert Azimuthal Equal Area.</seealso>
 public class LambertAzimuthalEqualAreaProjection : MapProjection

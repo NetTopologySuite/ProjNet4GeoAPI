@@ -33,6 +33,9 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Formulas" (publication 373-7-2, 2019), EPSG method 9805, Mercator (variant B).
 /// The scale factor computation <c>cos(latSP) / sqrt(1 - e² * sin²(latSP))</c> and its
 /// reuse in the forward easting and northing equations match the implementation here.</para>
+/// <para>See also John P. Snyder, "Map Projections - A Working Manual",
+/// U.S. Geological Survey Professional Paper 1395, 1987, Ch. 7, pp. 41-47,
+/// eqs. (7-1) through (7-12), for the classic Mercator development.</para>
 /// </remarks>
 /// <seealso href="https://epsg.io/9804-method">EPSG method 9804: Mercator (variant A).</seealso>
 /// <seealso href="https://epsg.io/9805-method">EPSG method 9805: Mercator (variant B).</seealso>

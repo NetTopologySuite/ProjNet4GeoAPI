@@ -20,6 +20,9 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>y = φ</c> and the ellipsoidal branch that combines the meridian arc
 /// <c>Mlfn(φ)</c> with the longitude scaling
 /// <c>cos(φ) / sqrt(1 - e² * sin²(φ))</c> match the implementation here.</para>
+/// <para>See also John P. Snyder, "Map Projections - A Working Manual",
+/// U.S. Geological Survey Professional Paper 1395, 1987, Ch. 30, pp. 243-248,
+/// for the sinusoidal projection in both its spherical and ellipsoidal forms.</para>
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Sinusoidal_projection">Wikipedia: Sinusoidal projection.</seealso>
 internal class SinusoidalProjection : MapProjection

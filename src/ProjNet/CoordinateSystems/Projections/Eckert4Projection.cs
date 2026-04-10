@@ -19,6 +19,9 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>θ + sin(θ) * (cos(θ) + 2) = (2 + π / 2) * sin(φ)</c> and the resulting
 /// <c>x = Cx * λ * (1 + cos(θ))</c>, <c>y = Cy * sin(θ)</c> equations match the
 /// implementation here.
+/// <para>See also John P. Snyder, "Map Projections - A Working Manual",
+/// U.S. Geological Survey Professional Paper 1395, 1987, Ch. 32, pp. 253-258,
+/// for the Eckert IV and related equal-area pseudocylindrical developments.</para>
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Eckert_IV_projection">Wikipedia: Eckert IV projection.</seealso>
 /// <seealso href="https://mathworld.wolfram.com/EckertIVProjection.html">MathWorld: Eckert IV Projection.</seealso>

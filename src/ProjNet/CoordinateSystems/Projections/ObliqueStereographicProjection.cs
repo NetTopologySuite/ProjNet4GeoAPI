@@ -19,6 +19,9 @@ using ProjNet.CoordinateSystems.Transformations;
 /// 373-7-2, 2019), EPSG method 9809, and Apache SIS projection notes. The
 /// implementation follows the documented Gauss-conformal plus stereographic double
 /// projection, including recovery of conformal latitude and conformal sphere radius.
+/// <para>See also John P. Snyder, "Map Projections - A Working Manual",
+/// U.S. Geological Survey Professional Paper 1395, 1987, Ch. 21, for the
+/// stereographic derivation that underlies the oblique case.</para>
 /// </remarks>
 /// <seealso href="https://epsg.io/9809-method">EPSG method 9809: Oblique Stereographic.</seealso>
 /// <seealso href="https://sis.apache.org/apidocs/org.apache.sis.referencing/org/apache/sis/referencing/operation/projection/ObliqueStereographic.html">Apache SIS: Oblique stereographic projection notes.</seealso>

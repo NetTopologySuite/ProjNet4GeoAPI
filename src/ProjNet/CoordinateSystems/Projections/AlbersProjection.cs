@@ -29,6 +29,10 @@ using ProjNet.CoordinateSystems.Transformations;
 ///     Transformations including Formulas" (publication 373-7-2, 2019), EPSG
 ///     method 9822, Albers Equal Area. The authalic <c>q</c>-function and
 ///     derived <c>ρ</c> relationships match the implementation here.</para>
+///     <para>See also John P. Snyder, "Map Projections - A Working Manual",
+///     U.S. Geological Survey Professional Paper 1395, 1987, Ch. 14,
+///     pp. 98-103, eqs. (14-1) through (14-12), for the classic Albers
+///     equal-area conic derivation.</para>
 /// </remarks>
 /// <seealso href="https://epsg.io/9822-method">EPSG method 9822: Albers Equal Area.</seealso>
 internal class AlbersProjection : MapProjection
