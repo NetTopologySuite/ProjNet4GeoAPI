@@ -70,13 +70,7 @@ public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSys
     /// <summary>
     /// Gets an XML representation of this object.
     /// </summary>
-    public override string XML
-    {
-        get
-        {
-            throw new NotImplementedException();
-        }
-    }
+    public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
     /// <summary>
     /// Returns an XML representation of this fitted coordinate system as an <see cref="XElement"/>.

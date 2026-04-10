@@ -75,29 +75,7 @@ public class VerticalCoordinateSystem : CoordinateSystem
     public override string WKT => this.ToWktNode().ToString();
 
     /// <inheritdoc/>
-    public override string XML
-    {
-        get
-        {
-            var sb = new StringBuilder();
-            sb.AppendFormat(
-                CultureInfo.InvariantCulture.NumberFormat,
-                "<CS_CoordinateSystem Dimension=\"{0}\"><CS_VerticalCoordinateSystem>{1}",
-                this.Dimension,
-                this.InfoXml);
-            foreach (AxisInfo ai in this.AxisInfo)
-            {
-                sb.Append(ai.XML);
-            }
-
-            sb.AppendFormat(
-                CultureInfo.InvariantCulture,
-                "{0}{1}</CS_VerticalCoordinateSystem></CS_CoordinateSystem>",
-                this.VerticalDatum.XML,
-                this.LinearUnit.XML);
-            return sb.ToString();
-        }
-    }
+    public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
     /// <summary>
     /// Gets or sets the retained WKT2 vertical <c>BOUNDCRS</c> grid-binding metadata when available.

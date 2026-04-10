@@ -83,7 +83,7 @@ public class BoundCoordinateSystem : CoordinateSystem
     public override string WKT => this.ToWktNode().ToString();
 
     /// <inheritdoc />
-    public override string XML => this.SourceCoordinateSystem.XML;
+    public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
     /// <inheritdoc />
     public override XElement ToXml() => this.SourceCoordinateSystem.ToXml();

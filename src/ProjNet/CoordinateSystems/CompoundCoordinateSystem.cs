@@ -88,27 +88,7 @@ public class CompoundCoordinateSystem : CoordinateSystem
     }
 
     /// <inheritdoc/>
-    public override string XML
-    {
-        get
-        {
-            var sb = new StringBuilder();
-            sb.AppendFormat(
-                CultureInfo.InvariantCulture.NumberFormat,
-                "<CS_CoordinateSystem Dimension=\"{0}\"><CS_CompoundCoordinateSystem>{1}",
-                this.Dimension,
-                this.InfoXml);
-            foreach (AxisInfo ai in this.AxisInfo)
-            {
-                sb.Append(ai.XML);
-            }
-
-            sb.Append(this.HeadCoordinateSystem.XML);
-            sb.Append(this.TailCoordinateSystem.XML);
-            sb.Append("</CS_CompoundCoordinateSystem></CS_CoordinateSystem>");
-            return sb.ToString();
-        }
-    }
+    public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
     /// <summary>
     /// Returns an XML representation of this compound coordinate system as an <see cref="XElement"/>.

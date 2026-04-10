@@ -111,30 +111,7 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
     /// <summary>
     /// Gets an XML representation of this object.
     /// </summary>
-    public override string XML
-    {
-        get
-        {
-            var sb = new StringBuilder();
-            sb.AppendFormat(
-                CultureInfo.InvariantCulture.NumberFormat,
-                "<CS_CoordinateSystem Dimension=\"{0}\"><CS_GeographicCoordinateSystem>{1}",
-                this.Dimension,
-                this.InfoXml);
-            foreach (AxisInfo ai in this.AxisInfo)
-            {
-                sb.Append(ai.XML);
-            }
-
-            sb.AppendFormat(
-                CultureInfo.InvariantCulture,
-                "{0}{1}{2}</CS_GeographicCoordinateSystem></CS_CoordinateSystem>",
-                this.HorizontalDatum.XML,
-                this.AngularUnit.XML,
-                this.PrimeMeridian.XML);
-            return sb.ToString();
-        }
-    }
+    public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
     /// <summary>
     /// Returns an XML representation of this geographic coordinate system as an <see cref="XElement"/>.

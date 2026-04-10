@@ -122,30 +122,7 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
     /// <summary>
     /// Gets an XML representation of this object.
     /// </summary>
-    public override string XML
-    {
-        get
-        {
-            var sb = new StringBuilder();
-            sb.AppendFormat(
-                CultureInfo.InvariantCulture.NumberFormat,
-                "<CS_CoordinateSystem Dimension=\"{0}\"><CS_ProjectedCoordinateSystem>{1}",
-                this.Dimension,
-                this.InfoXml);
-            foreach (AxisInfo ai in this.AxisInfo)
-            {
-                sb.Append(ai.XML);
-            }
-
-            sb.AppendFormat(
-                CultureInfo.InvariantCulture,
-                "{0}{1}{2}</CS_ProjectedCoordinateSystem></CS_CoordinateSystem>",
-                this.GeographicCoordinateSystem.XML,
-                this.LinearUnit.XML,
-                this.Projection.XML);
-            return sb.ToString();
-        }
-    }
+    public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
     /// <summary>
     /// Universal Transverse Mercator - WGS84.
