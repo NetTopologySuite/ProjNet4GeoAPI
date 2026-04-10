@@ -6,12 +6,15 @@ namespace ProjNet.CoordinateSystems;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using ProjNet.IO.Wkt;
 
 /// <summary>
 /// Shared BoundCRS parsing and runtime-normalization helpers.
 /// </summary>
 internal static class BoundCoordinateSystemSupport
 {
+    private static readonly AngularUnit ArcSecondUnit = new(4.84813681109535993589914102357e-6, "arc-second", "EPSG", 9104, "arcsec", string.Empty, "=pi/648000 radians.");
+
     /// <summary>
     /// Creates normalized bound-transformation metadata for the currently supported BoundCRS subset.
     /// </summary>
@@ -286,6 +289,109 @@ internal static class BoundCoordinateSystemSupport
         }
     }
 
+    /// <summary>
+    /// Creates a synthetic first-class BoundCRS wrapper for legacy CRS metadata when WKT2 serialization requires it.
+    /// </summary>
+    /// <param name="coordinateSystem">The coordinate system to inspect.</param>
+    /// <returns>The synthetic bound coordinate system when legacy metadata is present; otherwise <see langword="null"/>.</returns>
+    internal static BoundCoordinateSystem? CreateLegacyBoundCoordinateSystemForWkt2Writer(CoordinateSystem coordinateSystem)
+    {
+        coordinateSystem = ArgumentGuard.ThrowIfNull(coordinateSystem, nameof(coordinateSystem));
+
+        if (coordinateSystem is GeographicCoordinateSystem geographicCoordinateSystem
+            && TryGetLegacyHorizontalBoundTransformation(geographicCoordinateSystem, out BoundTransformation? geographicTransformation))
+        {
+            return new BoundCoordinateSystem(
+                CreateCoordinateSystemWithoutLegacyBoundMetadata(geographicCoordinateSystem),
+                GeographicCoordinateSystem.WGS84,
+                geographicTransformation!,
+                geographicCoordinateSystem.Name,
+                geographicCoordinateSystem.Authority,
+                geographicCoordinateSystem.AuthorityCode,
+                geographicCoordinateSystem.Alias,
+                geographicCoordinateSystem.Abbreviation,
+                geographicCoordinateSystem.Remarks);
+        }
+
+        if (coordinateSystem is ProjectedCoordinateSystem projectedCoordinateSystem
+            && TryGetLegacyHorizontalBoundTransformation(projectedCoordinateSystem, out BoundTransformation? projectedTransformation))
+        {
+            return new BoundCoordinateSystem(
+                CreateCoordinateSystemWithoutLegacyBoundMetadata(projectedCoordinateSystem),
+                GeographicCoordinateSystem.WGS84,
+                projectedTransformation!,
+                projectedCoordinateSystem.Name,
+                projectedCoordinateSystem.Authority,
+                projectedCoordinateSystem.AuthorityCode,
+                projectedCoordinateSystem.Alias,
+                projectedCoordinateSystem.Abbreviation,
+                projectedCoordinateSystem.Remarks);
+        }
+
+        if (coordinateSystem is VerticalCoordinateSystem verticalCoordinateSystem
+            && verticalCoordinateSystem.BoundGridTransformation is not null)
+        {
+            VerticalBoundGridTransformation boundGridTransformation = verticalCoordinateSystem.BoundGridTransformation;
+            return new BoundCoordinateSystem(
+                CreateCoordinateSystemWithoutLegacyBoundMetadata(verticalCoordinateSystem),
+                CreateCoordinateSystemWithoutLegacyBoundMetadata(boundGridTransformation.HubCoordinateSystem),
+                new BoundTransformation(boundGridTransformation.MethodName, boundGridTransformation.ParameterFileName),
+                verticalCoordinateSystem.Name,
+                verticalCoordinateSystem.Authority,
+                verticalCoordinateSystem.AuthorityCode,
+                verticalCoordinateSystem.Alias,
+                verticalCoordinateSystem.Abbreviation,
+                verticalCoordinateSystem.Remarks);
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Creates a WKT2 <c>BOUNDCRS</c> node for the provided first-class bound coordinate system.
+    /// </summary>
+    /// <param name="boundCoordinateSystem">The bound coordinate system to serialize.</param>
+    /// <returns>A WKT2 <c>BOUNDCRS</c> node.</returns>
+    internal static WktKeywordNode CreateWkt2BoundCoordinateSystemNode(BoundCoordinateSystem boundCoordinateSystem)
+    {
+        boundCoordinateSystem = ArgumentGuard.ThrowIfNull(boundCoordinateSystem, nameof(boundCoordinateSystem));
+
+        var children = new List<WktNode>
+        {
+            new WktKeywordNode("SOURCECRS", CreateWkt2BoundCoordinateSystemComponentNode(boundCoordinateSystem.SourceCoordinateSystem)),
+            new WktKeywordNode("TARGETCRS", CreateWkt2BoundCoordinateSystemComponentNode(boundCoordinateSystem.TargetCoordinateSystem)),
+            CreateWkt2AbridgedTransformationNode(boundCoordinateSystem.SourceCoordinateSystem, boundCoordinateSystem.TargetCoordinateSystem, boundCoordinateSystem.Transformation),
+        };
+
+        WktKeywordNode? idNode = WktVersionSupport.CreateIdNode(boundCoordinateSystem.Authority, boundCoordinateSystem.AuthorityCode);
+        if (idNode is not null)
+        {
+            children.Add(idNode);
+        }
+
+        return new WktKeywordNode("BOUNDCRS", children);
+    }
+
+    /// <summary>
+    /// Creates a clone that removes legacy bound metadata so the underlying CRS can be emitted as a WKT2 source or target component.
+    /// </summary>
+    /// <param name="coordinateSystem">The coordinate system to sanitize.</param>
+    /// <returns>A clone without legacy bound metadata.</returns>
+    internal static CoordinateSystem CreateCoordinateSystemWithoutLegacyBoundMetadata(CoordinateSystem coordinateSystem)
+    {
+        coordinateSystem = ArgumentGuard.ThrowIfNull(coordinateSystem, nameof(coordinateSystem));
+
+        return coordinateSystem switch
+        {
+            GeographicCoordinateSystem geographicCoordinateSystem => CloneGeographicCoordinateSystemWithoutLegacyBoundMetadata(geographicCoordinateSystem),
+            ProjectedCoordinateSystem projectedCoordinateSystem => CloneProjectedCoordinateSystemWithoutLegacyBoundMetadata(projectedCoordinateSystem),
+            GeocentricCoordinateSystem geocentricCoordinateSystem => CloneGeocentricCoordinateSystemWithoutLegacyBoundMetadata(geocentricCoordinateSystem),
+            VerticalCoordinateSystem verticalCoordinateSystem => CloneVerticalCoordinateSystemWithoutLegacyBoundMetadata(verticalCoordinateSystem),
+            CompoundCoordinateSystem compoundCoordinateSystem => CloneCompoundCoordinateSystemWithoutLegacyBoundMetadata(compoundCoordinateSystem),
+            _ => CloneCoordinateSystem(coordinateSystem),
+        };
+    }
+
     private static CoordinateSystem NormalizeBoundCoordinateSystemForRuntime(BoundCoordinateSystem boundCoordinateSystem)
     {
         CoordinateSystem runtimeSource = CloneCoordinateSystem(NormalizeCoordinateSystemForRuntime(boundCoordinateSystem.SourceCoordinateSystem));
@@ -423,6 +529,135 @@ internal static class BoundCoordinateSystemSupport
         return sourceCoordinateSystem;
     }
 
+    private static bool TryGetLegacyHorizontalBoundTransformation(CoordinateSystem coordinateSystem, out BoundTransformation? transformation)
+    {
+        Wgs84ConversionInfo? parameters = coordinateSystem switch
+        {
+            GeographicCoordinateSystem geographicCoordinateSystem => TryGetLegacyHorizontalBoundParameters(geographicCoordinateSystem),
+            ProjectedCoordinateSystem projectedCoordinateSystem => TryGetLegacyHorizontalBoundParameters(projectedCoordinateSystem.GeographicCoordinateSystem),
+            _ => null,
+        };
+
+        transformation = parameters is null
+            ? null
+            : new BoundTransformation(GetLegacyHorizontalBoundMethodName(parameters), parameters);
+        return transformation is not null;
+    }
+
+    private static Wgs84ConversionInfo? TryGetLegacyHorizontalBoundParameters(GeographicCoordinateSystem geographicCoordinateSystem)
+    {
+        Wgs84ConversionInfo? datumParameters = geographicCoordinateSystem.HorizontalDatum.Wgs84Parameters is null
+            ? null
+            : CloneWgs84Parameters(geographicCoordinateSystem.HorizontalDatum.Wgs84Parameters);
+
+        if (geographicCoordinateSystem.WGS84ConversionInfo.Count == 0)
+        {
+            return datumParameters;
+        }
+
+        if (geographicCoordinateSystem.WGS84ConversionInfo.Count > 1)
+        {
+            throw new NotSupportedException("WKT2 BOUNDCRS output currently supports only a single WGS84 conversion definition.");
+        }
+
+        Wgs84ConversionInfo conversionParameters = CloneWgs84Parameters(geographicCoordinateSystem.WGS84ConversionInfo[0]);
+        if (datumParameters is not null && !datumParameters.Equals(conversionParameters))
+        {
+            throw new NotSupportedException("WKT2 BOUNDCRS output does not support conflicting legacy WGS84 conversion definitions on the same geographic coordinate system.");
+        }
+
+        return datumParameters ?? conversionParameters;
+    }
+
+    private static string GetLegacyHorizontalBoundMethodName(Wgs84ConversionInfo parameters)
+    {
+        return parameters.Ex == 0d && parameters.Ey == 0d && parameters.Ez == 0d && parameters.Ppm == 0d
+            ? "Geocentric translations (geog2D domain)"
+            : "Position Vector transformation (geog2D domain)";
+    }
+
+    private static WktNode CreateWkt2BoundCoordinateSystemComponentNode(CoordinateSystem coordinateSystem)
+    {
+        if (coordinateSystem is BoundCoordinateSystem boundCoordinateSystem)
+        {
+            return CreateWkt2BoundCoordinateSystemNode(boundCoordinateSystem);
+        }
+
+        return CreateCoordinateSystemWithoutLegacyBoundMetadata(coordinateSystem).ToWktNode(WktVersion.Wkt22019);
+    }
+
+    private static WktKeywordNode CreateWkt2AbridgedTransformationNode(
+        CoordinateSystem sourceCoordinateSystem,
+        CoordinateSystem targetCoordinateSystem,
+        BoundTransformation transformation)
+    {
+        var children = new List<WktNode>
+        {
+            new WktQuotedString($"{sourceCoordinateSystem.Name} to {targetCoordinateSystem.Name}"),
+            new WktKeywordNode(
+                "METHOD",
+                new WktQuotedString(transformation.MethodName)),
+        };
+
+        if (transformation.UsesParameterFile)
+        {
+            children.Add(new WktKeywordNode(
+                "PARAMETERFILE",
+                new WktQuotedString("Geoid (height correction) model file"),
+                new WktQuotedString(ArgumentGuard.ThrowIfNull(transformation.ParameterFileName, nameof(transformation.ParameterFileName)))));
+        }
+        else if (transformation.Wgs84Parameters is not null)
+        {
+            AppendWkt2AbridgedTransformationParameters(children, transformation.MethodName, transformation.Wgs84Parameters);
+        }
+        else
+        {
+            throw new NotSupportedException("BOUNDCRS transformations must define either numeric parameters or a parameter file.");
+        }
+
+        return new WktKeywordNode("ABRIDGEDTRANSFORMATION", children);
+    }
+
+    private static void AppendWkt2AbridgedTransformationParameters(List<WktNode> children, string methodName, Wgs84ConversionInfo parameters)
+    {
+        if (IsGeocentricTranslationsMethod(methodName))
+        {
+            children.Add(CreateWkt2BoundParameterNode("X-axis translation", parameters.Dx, LinearUnit.Metre.ToWktNode(WktVersion.Wkt22019)));
+            children.Add(CreateWkt2BoundParameterNode("Y-axis translation", parameters.Dy, LinearUnit.Metre.ToWktNode(WktVersion.Wkt22019)));
+            children.Add(CreateWkt2BoundParameterNode("Z-axis translation", parameters.Dz, LinearUnit.Metre.ToWktNode(WktVersion.Wkt22019)));
+            return;
+        }
+
+        if (IsPositionVectorMethod(methodName) || IsCoordinateFrameRotationMethod(methodName))
+        {
+            children.Add(CreateWkt2BoundParameterNode("X-axis translation", parameters.Dx, LinearUnit.Metre.ToWktNode(WktVersion.Wkt22019)));
+            children.Add(CreateWkt2BoundParameterNode("Y-axis translation", parameters.Dy, LinearUnit.Metre.ToWktNode(WktVersion.Wkt22019)));
+            children.Add(CreateWkt2BoundParameterNode("Z-axis translation", parameters.Dz, LinearUnit.Metre.ToWktNode(WktVersion.Wkt22019)));
+            children.Add(CreateWkt2BoundParameterNode("X-axis rotation", parameters.Ex, ArcSecondUnit.ToWktNode(WktVersion.Wkt22019)));
+            children.Add(CreateWkt2BoundParameterNode("Y-axis rotation", parameters.Ey, ArcSecondUnit.ToWktNode(WktVersion.Wkt22019)));
+            children.Add(CreateWkt2BoundParameterNode("Z-axis rotation", parameters.Ez, ArcSecondUnit.ToWktNode(WktVersion.Wkt22019)));
+            children.Add(CreateWkt2BoundParameterNode(
+                "Scale difference",
+                parameters.Ppm,
+                new WktKeywordNode(
+                    "SCALEUNIT",
+                    new WktQuotedString("parts per million"),
+                    new WktNumber(1e-6))));
+            return;
+        }
+
+        throw new NotSupportedException($"BOUNDCRS abridged transformation method '{methodName}' is not supported.");
+    }
+
+    private static WktKeywordNode CreateWkt2BoundParameterNode(string parameterName, double value, WktNode unitNode)
+    {
+        return new WktKeywordNode(
+            "PARAMETER",
+            new WktQuotedString(parameterName),
+            new WktNumber(value),
+            unitNode);
+    }
+
     private static CoordinateSystem CloneCoordinateSystem(CoordinateSystem coordinateSystem)
     {
         return coordinateSystem switch
@@ -435,6 +670,76 @@ internal static class BoundCoordinateSystemSupport
             _ => throw new NotSupportedException(
                 $"BOUNDCRS source coordinate system type '{GetCoordinateSystemKeyword(coordinateSystem)}' is not supported."),
         };
+    }
+
+    private static GeographicCoordinateSystem CloneGeographicCoordinateSystemWithoutLegacyBoundMetadata(GeographicCoordinateSystem geographicCoordinateSystem)
+    {
+        GeographicCoordinateSystem clone = CloneGeographicCoordinateSystem(geographicCoordinateSystem, CloneHorizontalDatum(geographicCoordinateSystem.HorizontalDatum));
+        clone.HorizontalDatum.Wgs84Parameters = null;
+        clone.WGS84ConversionInfo = [];
+        return clone;
+    }
+
+    private static ProjectedCoordinateSystem CloneProjectedCoordinateSystemWithoutLegacyBoundMetadata(ProjectedCoordinateSystem projectedCoordinateSystem)
+    {
+        ProjectedCoordinateSystem clone = CloneProjectedCoordinateSystem(projectedCoordinateSystem);
+        clone.HorizontalDatum.Wgs84Parameters = null;
+        clone.GeographicCoordinateSystem.HorizontalDatum.Wgs84Parameters = null;
+        clone.GeographicCoordinateSystem.WGS84ConversionInfo = [];
+        return clone;
+    }
+
+    private static GeocentricCoordinateSystem CloneGeocentricCoordinateSystemWithoutLegacyBoundMetadata(GeocentricCoordinateSystem geocentricCoordinateSystem)
+    {
+        GeocentricCoordinateSystem clone = CloneGeocentricCoordinateSystem(geocentricCoordinateSystem);
+        clone.HorizontalDatum.Wgs84Parameters = null;
+        return clone;
+    }
+
+    private static VerticalCoordinateSystem CloneVerticalCoordinateSystemWithoutLegacyBoundMetadata(VerticalCoordinateSystem verticalCoordinateSystem)
+    {
+        VerticalCoordinateSystem clone = CloneVerticalCoordinateSystem(verticalCoordinateSystem);
+        clone.BoundGridTransformation = null;
+        return clone;
+    }
+
+    private static CompoundCoordinateSystem CloneCompoundCoordinateSystemWithoutLegacyBoundMetadata(CompoundCoordinateSystem compoundCoordinateSystem)
+    {
+        CoordinateSystem headCoordinateSystem = compoundCoordinateSystem.HeadCoordinateSystem is BoundCoordinateSystem headBound
+            ? CreateBoundCoordinateSystemWithoutLegacyBoundMetadata(headBound)
+            : CreateCoordinateSystemWithoutLegacyBoundMetadata(compoundCoordinateSystem.HeadCoordinateSystem);
+
+        CoordinateSystem tailCoordinateSystem = compoundCoordinateSystem.TailCoordinateSystem is BoundCoordinateSystem tailBound
+            ? CreateBoundCoordinateSystemWithoutLegacyBoundMetadata(tailBound)
+            : CreateCoordinateSystemWithoutLegacyBoundMetadata(compoundCoordinateSystem.TailCoordinateSystem);
+
+        var clone = new CompoundCoordinateSystem(
+            headCoordinateSystem,
+            tailCoordinateSystem,
+            compoundCoordinateSystem.Name,
+            compoundCoordinateSystem.Authority,
+            compoundCoordinateSystem.AuthorityCode,
+            compoundCoordinateSystem.Alias,
+            compoundCoordinateSystem.Abbreviation,
+            compoundCoordinateSystem.Remarks);
+        CopyDefaultEnvelope(compoundCoordinateSystem, clone);
+        return clone;
+    }
+
+    private static BoundCoordinateSystem CreateBoundCoordinateSystemWithoutLegacyBoundMetadata(BoundCoordinateSystem boundCoordinateSystem)
+    {
+        var clone = new BoundCoordinateSystem(
+            CreateCoordinateSystemWithoutLegacyBoundMetadata(boundCoordinateSystem.SourceCoordinateSystem),
+            CreateCoordinateSystemWithoutLegacyBoundMetadata(boundCoordinateSystem.TargetCoordinateSystem),
+            boundCoordinateSystem.Transformation,
+            boundCoordinateSystem.Name,
+            boundCoordinateSystem.Authority,
+            boundCoordinateSystem.AuthorityCode,
+            boundCoordinateSystem.Alias,
+            boundCoordinateSystem.Abbreviation,
+            boundCoordinateSystem.Remarks);
+        CopyDefaultEnvelope(boundCoordinateSystem, clone);
+        return clone;
     }
 
     private static GeographicCoordinateSystem CloneGeographicCoordinateSystem(GeographicCoordinateSystem geographicCoordinateSystem)

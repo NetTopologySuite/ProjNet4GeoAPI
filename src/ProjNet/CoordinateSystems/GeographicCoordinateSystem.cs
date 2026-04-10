@@ -237,7 +237,9 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
 
         if (this.WGS84ConversionInfo.Count > 0 || this.HorizontalDatum.Wgs84Parameters is not null)
         {
-            throw new NotSupportedException("WKT2 GEOGCRS output for coordinate systems with WGS84 conversion parameters is not implemented. A BOUNDCRS writer is required to preserve those transformations.");
+            BoundCoordinateSystem boundCoordinateSystem = BoundCoordinateSystemSupport.CreateLegacyBoundCoordinateSystemForWkt2Writer(this)
+                ?? throw new NotSupportedException("WKT2 GEOGCRS output for coordinate systems with WGS84 conversion parameters could not be normalized to BOUNDCRS.");
+            return BoundCoordinateSystemSupport.CreateWkt2BoundCoordinateSystemNode(boundCoordinateSystem);
         }
 
         var children = new List<WktNode>
@@ -291,7 +293,7 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
 
         if (this.WGS84ConversionInfo.Count > 0 || this.HorizontalDatum.Wgs84Parameters is not null)
         {
-            throw new NotSupportedException("WKT2 geographic base output for coordinate systems with WGS84 conversion parameters is not implemented. A BOUNDCRS writer is required to preserve those transformations.");
+            throw new NotSupportedException("WKT2 geographic base output for coordinate systems with WGS84 conversion parameters is not supported inside BASEGEOGCRS. Serialize the top-level CRS as BOUNDCRS instead.");
         }
 
         var children = new List<WktNode>

@@ -169,16 +169,18 @@ public class BoundCoordinateSystemTests
     }
 
     /// <summary>
-    /// Verifies that WKT2 output remains an explicit unsupported boundary for now.
+    /// Verifies that WKT2 output emits a <c>BOUNDCRS</c> node and roundtrips through the native reader.
     /// </summary>
     [Fact]
-    public void ToWktNode_WithWkt22019_ThrowsNotSupportedException()
+    public void ToWktNode_WithWkt22019_RoundTripsAsBoundCrs()
     {
+        CoordinateSystemFactory factory = new();
         BoundCoordinateSystem system = CreateSystem();
+        string wkt = system.ToWktNode(WktVersion.Wkt22019).ToString();
+        BoundCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<BoundCoordinateSystem>(factory, wkt);
 
-        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => system.ToWktNode(WktVersion.Wkt22019));
-
-        Assert.Contains("BoundCRS writer", exception.Message, StringComparison.Ordinal);
+        Assert.StartsWith("BOUNDCRS[", wkt, StringComparison.Ordinal);
+        Assert.True(system.EqualParams(parsed));
     }
 
     /// <summary>
@@ -441,7 +443,7 @@ public class BoundCoordinateSystemTests
         return [new AxisInfo("Northing", AxisOrientationEnum.North), new AxisInfo("Easting", AxisOrientationEnum.East)];
     }
 
-    private static BoundTransformation CreateWgs84Transformation() => new("Geocentric translations", CreateWgs84Parameters());
+    private static BoundTransformation CreateWgs84Transformation() => new("Position Vector transformation (geog2D domain)", CreateWgs84Parameters());
 
     private static HorizontalDatum CreateHorizontalDatum(Wgs84ConversionInfo? wgs84Parameters = null)
         => new(Ellipsoid.GRS80, wgs84Parameters, DatumType.HD_Geocentric, "Custom datum", string.Empty, -1, string.Empty, string.Empty, string.Empty);

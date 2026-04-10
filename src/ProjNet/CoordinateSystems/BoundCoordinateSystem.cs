@@ -97,7 +97,7 @@ public class BoundCoordinateSystem : CoordinateSystem
         WktVersionSupport.ThrowIfUnknown(version);
         return version == WktVersion.Wkt1
             ? this.SourceCoordinateSystem.ToWktNode(version)
-            : throw new NotSupportedException("WKT2 output for bound coordinate systems is not implemented because the current model does not yet expose a BoundCRS writer.");
+            : BoundCoordinateSystemSupport.CreateWkt2BoundCoordinateSystemNode(this);
     }
 
     /// <inheritdoc />

@@ -324,6 +324,12 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
             ArgumentGuard.ThrowArgument($"Projected coordinate system '{this.Name}' declared dimension {this.Dimension}, but provides {this.AxisInfo.Count} axes.");
         }
 
+        BoundCoordinateSystem? boundCoordinateSystem = BoundCoordinateSystemSupport.CreateLegacyBoundCoordinateSystemForWkt2Writer(this);
+        if (boundCoordinateSystem is not null)
+        {
+            return BoundCoordinateSystemSupport.CreateWkt2BoundCoordinateSystemNode(boundCoordinateSystem);
+        }
+
         var children = new List<WktNode>
         {
             new WktQuotedString(this.Name),

@@ -612,10 +612,10 @@ public class WktNodeTests
     }
 
     /// <summary>
-    /// Verifies that datum shifts encoded as WGS84 conversion parameters are rejected until a dedicated WKT2 <c>BOUNDCRS</c> writer exists.
+    /// Verifies that datum shifts encoded as WGS84 conversion parameters serialize as WKT2 <c>BOUNDCRS</c>.
     /// </summary>
     [Fact]
-    public void GeographicCoordinateSystem_ToWktNode_WithWkt22019AndWgs84Parameters_ThrowsNotSupportedException()
+    public void GeographicCoordinateSystem_ToWktNode_WithWkt22019AndWgs84Parameters_EmitsBoundCrs()
     {
         CoordinateSystemFactory factory = new();
         GeographicCoordinateSystem original = factory.CreateGeographicCoordinateSystem(
@@ -625,10 +625,20 @@ public class WktNodeTests
             PrimeMeridian.Greenwich,
             new AxisInfo("Lon", AxisOrientationEnum.East),
             new AxisInfo("Lat", AxisOrientationEnum.North));
+        Wgs84ConversionInfo expectedParameters = Assert.IsType<Wgs84ConversionInfo>(original.HorizontalDatum.Wgs84Parameters);
 
-        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => original.ToWktNode(WktVersion.Wkt22019));
+        string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
+        BoundCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<BoundCoordinateSystem>(factory, wkt);
+        GeographicCoordinateSystem source = Assert.IsType<GeographicCoordinateSystem>(parsed.SourceCoordinateSystem);
+        GeographicCoordinateSystem target = Assert.IsType<GeographicCoordinateSystem>(parsed.TargetCoordinateSystem);
 
-        Assert.Contains("BOUNDCRS", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.StartsWith("BOUNDCRS[", wkt, StringComparison.Ordinal);
+        Assert.Contains("ABRIDGEDTRANSFORMATION[", wkt, StringComparison.Ordinal);
+        Assert.Equal(original.Name, parsed.Name);
+        Assert.Equal(original.HorizontalDatum.Name, source.HorizontalDatum.Name);
+        Assert.Null(source.HorizontalDatum.Wgs84Parameters);
+        Assert.Equal(expectedParameters, parsed.Transformation.Wgs84Parameters);
+        Assert.Equal("WGS 84", target.Name);
     }
 
     /// <summary>
@@ -761,10 +771,10 @@ public class WktNodeTests
     }
 
     /// <summary>
-    /// Verifies that WKT2 <c>PROJCRS</c> output rejects projected CRSs whose base datum would require a dedicated <c>BOUNDCRS</c> writer.
+    /// Verifies that projected CRSs whose base datum carries WGS84 parameters serialize as WKT2 <c>BOUNDCRS</c>.
     /// </summary>
     [Fact]
-    public void ProjectedCoordinateSystem_ToWktNode_WithWkt22019AndWgs84Parameters_ThrowsNotSupportedException()
+    public void ProjectedCoordinateSystem_ToWktNode_WithWkt22019AndWgs84Parameters_EmitsBoundCrs()
     {
         CoordinateSystemFactory factory = new();
         GeographicCoordinateSystem geographic = factory.CreateGeographicCoordinateSystem(
@@ -792,10 +802,23 @@ public class WktNodeTests
             LinearUnit.Metre,
             new AxisInfo("Easting", AxisOrientationEnum.East),
             new AxisInfo("Northing", AxisOrientationEnum.North));
+        Wgs84ConversionInfo expectedParameters = Assert.IsType<Wgs84ConversionInfo>(original.GeographicCoordinateSystem.HorizontalDatum.Wgs84Parameters);
 
-        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => original.ToWktNode(WktVersion.Wkt22019));
+        string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
+        BoundCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<BoundCoordinateSystem>(factory, wkt);
+        ProjectedCoordinateSystem source = Assert.IsType<ProjectedCoordinateSystem>(parsed.SourceCoordinateSystem);
+        GeographicCoordinateSystem target = Assert.IsType<GeographicCoordinateSystem>(parsed.TargetCoordinateSystem);
 
-        Assert.Contains("BOUNDCRS", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.StartsWith("BOUNDCRS[", wkt, StringComparison.Ordinal);
+        Assert.Contains("SOURCECRS[PROJCRS[", wkt, StringComparison.Ordinal);
+        Assert.Equal(original.Name, parsed.Name);
+        Assert.Equal("Transverse Mercator", source.Projection.ClassName);
+        Assert.Equal(9d, source.Projection.GetParameter("central_meridian")?.Value);
+        Assert.Equal(0.9996d, source.Projection.GetParameter("scale_factor")?.Value);
+        Assert.Equal(original.GeographicCoordinateSystem.HorizontalDatum.Name, source.GeographicCoordinateSystem.HorizontalDatum.Name);
+        Assert.Null(source.GeographicCoordinateSystem.HorizontalDatum.Wgs84Parameters);
+        Assert.Equal(expectedParameters, parsed.Transformation.Wgs84Parameters);
+        Assert.Equal("WGS 84", target.Name);
     }
 
     /// <summary>
@@ -839,16 +862,25 @@ public class WktNodeTests
     }
 
     /// <summary>
-    /// Verifies that WKT2 <c>VERTCRS</c> output rejects retained bound-grid metadata until a dedicated <c>BOUNDCRS</c> writer exists.
+    /// Verifies that retained vertical bound-grid metadata serializes as WKT2 <c>BOUNDCRS</c>.
     /// </summary>
     [Fact]
-    public void VerticalCoordinateSystem_ToWktNode_WithWkt22019AndBoundGridTransformation_ThrowsNotSupportedException()
+    public void VerticalCoordinateSystem_ToWktNode_WithWkt22019AndBoundGridTransformation_EmitsBoundCrs()
     {
+        CoordinateSystemFactory factory = new();
         VerticalCoordinateSystem original = CreateBoundVerticalCoordinateSystem();
+        string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
+        BoundCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<BoundCoordinateSystem>(factory, wkt);
+        VerticalCoordinateSystem source = Assert.IsType<VerticalCoordinateSystem>(parsed.SourceCoordinateSystem);
+        CompoundCoordinateSystem target = Assert.IsType<CompoundCoordinateSystem>(parsed.TargetCoordinateSystem);
 
-        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => original.ToWktNode(WktVersion.Wkt22019));
-
-        Assert.Contains("BOUNDCRS", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.StartsWith("BOUNDCRS[", wkt, StringComparison.Ordinal);
+        Assert.Contains("PARAMETERFILE[", wkt, StringComparison.Ordinal);
+        Assert.Equal(original.Name, parsed.Name);
+        Assert.Equal(original.VerticalDatum.Name, source.VerticalDatum.Name);
+        Assert.Null(source.BoundGridTransformation);
+        Assert.Equal("egm96_15.gtx", parsed.Transformation.ParameterFileName);
+        Assert.Equal(3, target.Dimension);
     }
 
     /// <summary>
