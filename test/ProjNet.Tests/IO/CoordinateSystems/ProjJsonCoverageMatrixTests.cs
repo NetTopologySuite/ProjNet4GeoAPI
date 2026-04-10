@@ -91,7 +91,7 @@ public class ProjJsonCoverageMatrixTests
         Assert.Equal(ProjJsonCoverageStatus.Supported, lookup["GeographicCRS"].ReaderStatus);
         Assert.Equal(ProjJsonCoverageStatus.Supported, lookup["GeographicCRS"].WriterStatus);
         Assert.Equal(ProjJsonCoverageStatus.Supported, lookup["BoundCRS"].ReaderStatus);
-        Assert.Equal(ProjJsonCoverageStatus.Unsupported, lookup["BoundCRS"].WriterStatus);
+        Assert.Equal(ProjJsonCoverageStatus.Supported, lookup["BoundCRS"].WriterStatus);
         Assert.Equal(ProjJsonCoverageStatus.Unsupported, lookup["datum_ensemble"].ReaderStatus);
         Assert.Equal(ProjJsonCoverageStatus.Unsupported, lookup["datum_ensemble"].WriterStatus);
         Assert.Equal(ProjJsonCoverageStatus.Ignored, lookup["usage metadata"].ReaderStatus);

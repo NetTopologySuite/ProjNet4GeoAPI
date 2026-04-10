@@ -223,7 +223,7 @@ public class VerticalCoordinateSystem : CoordinateSystem
 
         if (this.BoundGridTransformation is not null)
         {
-            BoundCoordinateSystem boundCoordinateSystem = BoundCoordinateSystemSupport.CreateLegacyBoundCoordinateSystemForWkt2Writer(this)
+            BoundCoordinateSystem boundCoordinateSystem = BoundCoordinateSystemSupport.CreateLegacyBoundCoordinateSystemForSerialization(this)
                 ?? throw new NotSupportedException("WKT2 VERTCRS output for retained bound-grid metadata could not be normalized to BOUNDCRS.");
             return BoundCoordinateSystemSupport.CreateWkt2BoundCoordinateSystemNode(boundCoordinateSystem);
         }

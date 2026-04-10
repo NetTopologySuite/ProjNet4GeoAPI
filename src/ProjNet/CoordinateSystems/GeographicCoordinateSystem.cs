@@ -237,7 +237,7 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
 
         if (this.WGS84ConversionInfo.Count > 0 || this.HorizontalDatum.Wgs84Parameters is not null)
         {
-            BoundCoordinateSystem boundCoordinateSystem = BoundCoordinateSystemSupport.CreateLegacyBoundCoordinateSystemForWkt2Writer(this)
+            BoundCoordinateSystem boundCoordinateSystem = BoundCoordinateSystemSupport.CreateLegacyBoundCoordinateSystemForSerialization(this)
                 ?? throw new NotSupportedException("WKT2 GEOGCRS output for coordinate systems with WGS84 conversion parameters could not be normalized to BOUNDCRS.");
             return BoundCoordinateSystemSupport.CreateWkt2BoundCoordinateSystemNode(boundCoordinateSystem);
         }

@@ -15,6 +15,8 @@ using ProjNet.CoordinateSystems;
 /// </summary>
 public static class ProjJsonWriter
 {
+    private static readonly AngularUnit ArcSecondUnit = new(4.84813681109535993589914102357e-6, "arc-second", "EPSG", 9104, "arcsec", string.Empty, "=pi/648000 radians.");
+
     /// <summary>
     /// Writes a coordinate system to an existing <see cref="Utf8JsonWriter"/>.
     /// </summary>
@@ -51,6 +53,9 @@ public static class ProjJsonWriter
     {
         switch (coordinateSystem)
         {
+            case BoundCoordinateSystem boundCoordinateSystem:
+                WriteBoundCoordinateSystem(writer, boundCoordinateSystem);
+                break;
             case GeographicCoordinateSystem geographicCoordinateSystem:
                 WriteGeographicCoordinateSystem(writer, geographicCoordinateSystem);
                 break;
@@ -73,7 +78,10 @@ public static class ProjJsonWriter
 
     private static void WriteGeographicCoordinateSystem(Utf8JsonWriter writer, GeographicCoordinateSystem coordinateSystem)
     {
-        ThrowIfBoundHorizontalDatumRequiresBoundCrs(coordinateSystem.HorizontalDatum, nameof(GeographicCoordinateSystem));
+        if (TryWriteLegacyBoundCoordinateSystem(writer, coordinateSystem))
+        {
+            return;
+        }
 
         writer.WriteStartObject();
         writer.WriteString("type", "GeographicCRS");
@@ -94,7 +102,10 @@ public static class ProjJsonWriter
 
     private static void WriteGeocentricCoordinateSystem(Utf8JsonWriter writer, GeocentricCoordinateSystem coordinateSystem)
     {
-        ThrowIfBoundHorizontalDatumRequiresBoundCrs(coordinateSystem.HorizontalDatum, nameof(GeocentricCoordinateSystem));
+        if (TryWriteLegacyBoundCoordinateSystem(writer, coordinateSystem))
+        {
+            return;
+        }
 
         writer.WriteStartObject();
         writer.WriteString("type", "GeodeticCRS");
@@ -115,7 +126,10 @@ public static class ProjJsonWriter
 
     private static void WriteProjectedCoordinateSystem(Utf8JsonWriter writer, ProjectedCoordinateSystem coordinateSystem)
     {
-        ThrowIfBoundHorizontalDatumRequiresBoundCrs(coordinateSystem.GeographicCoordinateSystem.HorizontalDatum, nameof(ProjectedCoordinateSystem));
+        if (TryWriteLegacyBoundCoordinateSystem(writer, coordinateSystem))
+        {
+            return;
+        }
 
         writer.WriteStartObject();
         writer.WriteString("type", "ProjectedCRS");
@@ -140,7 +154,10 @@ public static class ProjJsonWriter
 
     private static void WriteVerticalCoordinateSystem(Utf8JsonWriter writer, VerticalCoordinateSystem coordinateSystem)
     {
-        ThrowIfBoundVerticalMetadataRequiresBoundCrs(coordinateSystem);
+        if (TryWriteLegacyBoundCoordinateSystem(writer, coordinateSystem))
+        {
+            return;
+        }
 
         writer.WriteStartObject();
         writer.WriteString("type", "VerticalCRS");
@@ -153,6 +170,146 @@ public static class ProjJsonWriter
         WriteCoordinateSystemDefinition(writer, "vertical", coordinateSystem);
 
         WriteIdentifier(writer, coordinateSystem);
+        writer.WriteEndObject();
+    }
+
+    private static bool TryWriteLegacyBoundCoordinateSystem(Utf8JsonWriter writer, CoordinateSystem coordinateSystem)
+    {
+        BoundCoordinateSystem? boundCoordinateSystem = BoundCoordinateSystemSupport.CreateLegacyBoundCoordinateSystemForSerialization(coordinateSystem);
+        if (boundCoordinateSystem is null)
+        {
+            return false;
+        }
+
+        WriteBoundCoordinateSystem(writer, boundCoordinateSystem);
+        return true;
+    }
+
+    private static void WriteBoundCoordinateSystem(Utf8JsonWriter writer, BoundCoordinateSystem coordinateSystem)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("type", "BoundCRS");
+        writer.WriteString("name", coordinateSystem.Name);
+
+        writer.WritePropertyName("source_crs");
+        WriteBoundCoordinateSystemComponent(writer, coordinateSystem.SourceCoordinateSystem);
+
+        writer.WritePropertyName("target_crs");
+        WriteBoundCoordinateSystemComponent(writer, coordinateSystem.TargetCoordinateSystem);
+
+        writer.WritePropertyName("transformation");
+        WriteBoundTransformation(writer, coordinateSystem.SourceCoordinateSystem, coordinateSystem.TargetCoordinateSystem, coordinateSystem.Transformation);
+
+        WriteIdentifier(writer, coordinateSystem);
+        writer.WriteEndObject();
+    }
+
+    private static void WriteBoundCoordinateSystemComponent(Utf8JsonWriter writer, CoordinateSystem coordinateSystem)
+    {
+        if (coordinateSystem is BoundCoordinateSystem boundCoordinateSystem)
+        {
+            WriteBoundCoordinateSystem(writer, boundCoordinateSystem);
+            return;
+        }
+
+        WriteCoordinateSystem(writer, BoundCoordinateSystemSupport.CreateCoordinateSystemWithoutLegacyBoundMetadata(coordinateSystem));
+    }
+
+    private static void WriteBoundTransformation(
+        Utf8JsonWriter writer,
+        CoordinateSystem sourceCoordinateSystem,
+        CoordinateSystem targetCoordinateSystem,
+        BoundTransformation transformation)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("type", "AbridgedTransformation");
+        writer.WriteString("name", $"{sourceCoordinateSystem.Name} to {targetCoordinateSystem.Name}");
+
+        writer.WritePropertyName("method");
+        WriteMethod(writer, transformation.MethodName);
+
+        writer.WritePropertyName("parameters");
+        writer.WriteStartArray();
+        if (transformation.UsesParameterFile)
+        {
+            WriteBoundFileParameter(
+                writer,
+                "Geoid (height correction) model file",
+                ArgumentGuard.ThrowIfNull(transformation.ParameterFileName, nameof(transformation.ParameterFileName)));
+        }
+        else if (transformation.Wgs84Parameters is not null)
+        {
+            WriteBoundTransformationParameters(writer, transformation.MethodName, transformation.Wgs84Parameters);
+        }
+        else
+        {
+            throw new NotSupportedException("BoundCRS transformations must define either numeric parameters or a parameter file.");
+        }
+
+        writer.WriteEndArray();
+        writer.WriteEndObject();
+    }
+
+    private static void WriteBoundTransformationParameters(Utf8JsonWriter writer, string methodName, Wgs84ConversionInfo parameters)
+    {
+        if (IsGeocentricTranslationsMethod(methodName))
+        {
+            WriteBoundLinearParameter(writer, "X-axis translation", parameters.Dx);
+            WriteBoundLinearParameter(writer, "Y-axis translation", parameters.Dy);
+            WriteBoundLinearParameter(writer, "Z-axis translation", parameters.Dz);
+            return;
+        }
+
+        if (IsPositionVectorMethod(methodName) || IsCoordinateFrameRotationMethod(methodName))
+        {
+            WriteBoundLinearParameter(writer, "X-axis translation", parameters.Dx);
+            WriteBoundLinearParameter(writer, "Y-axis translation", parameters.Dy);
+            WriteBoundLinearParameter(writer, "Z-axis translation", parameters.Dz);
+            WriteBoundAngularParameter(writer, "X-axis rotation", parameters.Ex);
+            WriteBoundAngularParameter(writer, "Y-axis rotation", parameters.Ey);
+            WriteBoundAngularParameter(writer, "Z-axis rotation", parameters.Ez);
+            WriteBoundScaleParameter(writer, "Scale difference", parameters.Ppm);
+            return;
+        }
+
+        throw new NotSupportedException($"BoundCRS transformation method '{methodName}' is not supported.");
+    }
+
+    private static void WriteBoundLinearParameter(Utf8JsonWriter writer, string name, double value)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("name", name);
+        writer.WriteNumber("value", value);
+        writer.WritePropertyName("unit");
+        WriteLinearUnit(writer, LinearUnit.Metre);
+        writer.WriteEndObject();
+    }
+
+    private static void WriteBoundAngularParameter(Utf8JsonWriter writer, string name, double value)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("name", name);
+        writer.WriteNumber("value", value);
+        writer.WritePropertyName("unit");
+        WriteAngularUnit(writer, ArcSecondUnit);
+        writer.WriteEndObject();
+    }
+
+    private static void WriteBoundScaleParameter(Utf8JsonWriter writer, string name, double value)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("name", name);
+        writer.WriteNumber("value", value);
+        writer.WritePropertyName("unit");
+        WriteScaleUnit(writer, "parts per million", 1e-6);
+        writer.WriteEndObject();
+    }
+
+    private static void WriteBoundFileParameter(Utf8JsonWriter writer, string name, string value)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("name", name);
+        writer.WriteString("value", value);
         writer.WriteEndObject();
     }
 
@@ -301,7 +458,7 @@ public static class ProjJsonWriter
         else if (ProjectionSerializationSupport.ParameterUsesScaleUnit(parameter.Name))
         {
             writer.WritePropertyName("unit");
-            WriteScaleUnit(writer);
+            WriteScaleUnit(writer, "unity", 1d, "EPSG", 9201);
         }
 
         writer.WriteEndObject();
@@ -342,17 +499,21 @@ public static class ProjJsonWriter
         writer.WriteEndObject();
     }
 
-    private static void WriteScaleUnit(Utf8JsonWriter writer)
+    private static void WriteScaleUnit(Utf8JsonWriter writer, string name, double conversionFactor, string? authority = null, long authorityCode = -1)
     {
         writer.WriteStartObject();
         writer.WriteString("type", "ScaleUnit");
-        writer.WriteString("name", "unity");
-        writer.WriteNumber("conversion_factor", 1);
-        writer.WritePropertyName("id");
-        writer.WriteStartObject();
-        writer.WriteString("authority", "EPSG");
-        writer.WriteNumber("code", 9201);
-        writer.WriteEndObject();
+        writer.WriteString("name", name);
+        writer.WriteNumber("conversion_factor", conversionFactor);
+        if (!string.IsNullOrWhiteSpace(authority) && authorityCode > 0)
+        {
+            writer.WritePropertyName("id");
+            writer.WriteStartObject();
+            writer.WriteString("authority", authority);
+            writer.WriteNumber("code", authorityCode);
+            writer.WriteEndObject();
+        }
+
         writer.WriteEndObject();
     }
 
@@ -373,20 +534,19 @@ public static class ProjJsonWriter
         WriteCoordinateSystem(writer, coordinateSystem);
     }
 
-    private static void ThrowIfBoundHorizontalDatumRequiresBoundCrs(HorizontalDatum horizontalDatum, string coordinateSystemTypeName)
+    private static bool IsGeocentricTranslationsMethod(string methodName)
     {
-        if (horizontalDatum.Wgs84Parameters is not null)
-        {
-            throw new NotSupportedException($"PROJJSON writing for '{coordinateSystemTypeName}' with retained WGS84 conversion metadata is not implemented. A BoundCRS writer is required to preserve that transformation.");
-        }
+        return methodName.StartsWith("Geocentric translations", StringComparison.Ordinal);
     }
 
-    private static void ThrowIfBoundVerticalMetadataRequiresBoundCrs(VerticalCoordinateSystem coordinateSystem)
+    private static bool IsPositionVectorMethod(string methodName)
     {
-        if (coordinateSystem.BoundGridTransformation is not null)
-        {
-            throw new NotSupportedException("PROJJSON writing for vertical coordinate systems with retained bound-grid metadata is not implemented. A BoundCRS writer is required to preserve that transformation.");
-        }
+        return methodName.StartsWith("Position Vector transformation", StringComparison.Ordinal);
+    }
+
+    private static bool IsCoordinateFrameRotationMethod(string methodName)
+    {
+        return methodName.StartsWith("Coordinate Frame rotation", StringComparison.Ordinal);
     }
 
     private static void WriteIdentifier(Utf8JsonWriter writer, IInfo info)

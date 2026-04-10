@@ -431,6 +431,60 @@ public class ProjJsonReaderTests
     }
 
     /// <summary>
+    /// Verifies supported PROJJSON vertical <c>BoundCRS</c> definitions parse into the first-class bound model.
+    /// </summary>
+    [Fact]
+    public void Parse_ParsesSupportedVerticalBoundCrs()
+    {
+        string json = Serialize(
+            BoundCrsObject(
+                3855,
+                "EGM2008 height",
+                VerticalCrsObject(
+                    3855,
+                    "EGM2008 height",
+                    VerticalDatumObject("EGM2008 geoid", 1027),
+                    "metre",
+                    "Gravity-related height",
+                    "up"),
+                CompoundCrsObject(
+                    9518,
+                    "WGS 84 + ODN height",
+                    GeographicCrsObject(
+                        4326,
+                        "WGS 84",
+                        GeodeticDatumObject("World Geodetic System 1984", EllipsoidObject("WGS 84", 6378137d, 298.257223563d, "metre", 7030), 6326),
+                        GreenwichPrimeMeridianObject(),
+                        "degree",
+                        ("Geodetic latitude", "Lat", "north"),
+                        ("Geodetic longitude", "Lon", "east")),
+                    VerticalCrsObject(
+                        5701,
+                        "ODN height",
+                        VerticalDatumObject("Ordnance Datum Newlyn", 5101),
+                        "metre",
+                        "Gravity-related height",
+                        "up")),
+                AbridgedTransformationObject(
+                    "WGS 84 to EGM2008 height",
+                    "Geographic3D to GravityRelatedHeight (EGM)",
+                    BoundParameterValueObject("Geoid (height correction) model file", "egm96_15.gtx"))));
+
+        BoundCoordinateSystem parsed = Assert.IsType<BoundCoordinateSystem>(ProjJsonReader.Parse(json));
+        VerticalCoordinateSystem source = Assert.IsType<VerticalCoordinateSystem>(parsed.SourceCoordinateSystem);
+        CompoundCoordinateSystem target = Assert.IsType<CompoundCoordinateSystem>(parsed.TargetCoordinateSystem);
+
+        Assert.Equal("EGM2008 height", parsed.Name);
+        Assert.Equal("EPSG", parsed.Authority);
+        Assert.Equal(3855, parsed.AuthorityCode);
+        Assert.Equal("EGM2008 geoid", source.VerticalDatum.Name);
+        Assert.Null(source.BoundGridTransformation);
+        Assert.Equal("Geographic3D to GravityRelatedHeight (EGM)", parsed.Transformation.MethodName);
+        Assert.Equal("egm96_15.gtx", parsed.Transformation.ParameterFileName);
+        Assert.Equal(3, target.Dimension);
+    }
+
+    /// <summary>
     /// Verifies projected PROJJSON parsing preserves base CRS prime meridian and angular unit semantics.
     /// </summary>
     [Fact]

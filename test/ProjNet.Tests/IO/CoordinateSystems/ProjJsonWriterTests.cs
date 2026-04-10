@@ -13,6 +13,7 @@ using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 using ProjNet.Data;
 using ProjNet.IO.CoordinateSystems;
+using ProjNet.IO.Wkt;
 using Xunit;
 
 /// <summary>
@@ -310,10 +311,10 @@ public class ProjJsonWriterTests
     }
 
     /// <summary>
-    /// Verifies geographic CRS with retained WGS84 conversion metadata still report the current <c>BoundCRS</c> writer boundary explicitly.
+    /// Verifies geographic CRS with retained WGS84 conversion metadata serialize as PROJJSON <c>BoundCRS</c>.
     /// </summary>
     [Fact]
-    public void ToJson_WithGeographicCoordinateSystemUsingBoundMetadata_ThrowsNotSupportedException()
+    public void ToJson_WithGeographicCoordinateSystemUsingBoundMetadata_EmitsBoundCrs()
     {
         GeographicCoordinateSystem geographic = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "ED50 test",
@@ -322,17 +323,33 @@ public class ProjJsonWriterTests
             PrimeMeridian.Greenwich,
             new AxisInfo("Lon", AxisOrientationEnum.East),
             new AxisInfo("Lat", AxisOrientationEnum.North));
+        Wgs84ConversionInfo expectedParameters = Assert.IsType<Wgs84ConversionInfo>(geographic.HorizontalDatum.Wgs84Parameters);
 
-        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => ProjJsonWriter.ToJson(geographic));
+        string json = ProjJsonWriter.ToJson(geographic);
+        BoundCoordinateSystem parsed = Assert.IsType<BoundCoordinateSystem>(ProjJsonReader.Parse(json));
+        GeographicCoordinateSystem source = Assert.IsType<GeographicCoordinateSystem>(parsed.SourceCoordinateSystem);
+        GeographicCoordinateSystem target = Assert.IsType<GeographicCoordinateSystem>(parsed.TargetCoordinateSystem);
 
-        Assert.Contains("BoundCRS", exception.Message, StringComparison.OrdinalIgnoreCase);
+        using var document = JsonDocument.Parse(json);
+        JsonElement root = document.RootElement;
+
+        Assert.Equal("BoundCRS", root.GetProperty("type").GetString());
+        Assert.Equal("GeographicCRS", root.GetProperty("source_crs").GetProperty("type").GetString());
+        Assert.Equal("GeographicCRS", root.GetProperty("target_crs").GetProperty("type").GetString());
+        Assert.Equal("AbridgedTransformation", root.GetProperty("transformation").GetProperty("type").GetString());
+        Assert.Equal(parsed.Transformation.MethodName, root.GetProperty("transformation").GetProperty("method").GetProperty("name").GetString());
+        Assert.Equal(geographic.Name, parsed.Name);
+        Assert.Equal(geographic.HorizontalDatum.Name, source.HorizontalDatum.Name);
+        Assert.Null(source.HorizontalDatum.Wgs84Parameters);
+        Assert.Equal(expectedParameters, parsed.Transformation.Wgs84Parameters);
+        Assert.Equal("WGS 84", target.Name);
     }
 
     /// <summary>
-    /// Verifies projected CRS whose base datum retains WGS84 conversion metadata still report the current <c>BoundCRS</c> writer boundary explicitly.
+    /// Verifies projected CRS whose base datum retains WGS84 conversion metadata serialize as PROJJSON <c>BoundCRS</c>.
     /// </summary>
     [Fact]
-    public void ToJson_WithProjectedCoordinateSystemUsingBoundMetadata_ThrowsNotSupportedException()
+    public void ToJson_WithProjectedCoordinateSystemUsingBoundMetadata_EmitsBoundCrs()
     {
         GeographicCoordinateSystem geographic = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "ED50 test",
@@ -359,24 +376,94 @@ public class ProjJsonWriterTests
             LinearUnit.Metre,
             new AxisInfo("Easting", AxisOrientationEnum.East),
             new AxisInfo("Northing", AxisOrientationEnum.North));
+        Wgs84ConversionInfo expectedParameters = Assert.IsType<Wgs84ConversionInfo>(projected.GeographicCoordinateSystem.HorizontalDatum.Wgs84Parameters);
 
-        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => ProjJsonWriter.ToJson(projected));
+        string json = ProjJsonWriter.ToJson(projected);
+        BoundCoordinateSystem parsed = Assert.IsType<BoundCoordinateSystem>(ProjJsonReader.Parse(json));
+        ProjectedCoordinateSystem source = Assert.IsType<ProjectedCoordinateSystem>(parsed.SourceCoordinateSystem);
+        GeographicCoordinateSystem target = Assert.IsType<GeographicCoordinateSystem>(parsed.TargetCoordinateSystem);
 
-        Assert.Contains("BoundCRS", exception.Message, StringComparison.OrdinalIgnoreCase);
+        using var document = JsonDocument.Parse(json);
+        JsonElement root = document.RootElement;
+
+        Assert.Equal("BoundCRS", root.GetProperty("type").GetString());
+        Assert.Equal("ProjectedCRS", root.GetProperty("source_crs").GetProperty("type").GetString());
+        Assert.Equal("GeographicCRS", root.GetProperty("target_crs").GetProperty("type").GetString());
+        Assert.Equal(projected.Name, parsed.Name);
+        Assert.Equal("Transverse Mercator", source.Projection.ClassName);
+        Assert.Equal(expectedParameters, parsed.Transformation.Wgs84Parameters);
+        Assert.Equal("WGS 84", target.Name);
     }
 
     /// <summary>
-    /// Verifies vertical CRS with retained bound-grid metadata still report the current <c>BoundCRS</c> writer boundary explicitly.
+    /// Verifies vertical CRS with retained bound-grid metadata serialize as PROJJSON <c>BoundCRS</c>.
     /// </summary>
     [Fact]
-    public void ToJson_WithVerticalCoordinateSystemUsingBoundGridMetadata_ThrowsNotSupportedException()
+    public void ToJson_WithVerticalCoordinateSystemUsingBoundGridMetadata_EmitsBoundCrs()
     {
         VerticalCoordinateSystem vertical = CreateBoundVerticalCoordinateSystem();
 
-        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => ProjJsonWriter.ToJson(vertical));
+        string json = ProjJsonWriter.ToJson(vertical);
+        BoundCoordinateSystem parsed = Assert.IsType<BoundCoordinateSystem>(ProjJsonReader.Parse(json));
+        VerticalCoordinateSystem source = Assert.IsType<VerticalCoordinateSystem>(parsed.SourceCoordinateSystem);
+        CompoundCoordinateSystem target = Assert.IsType<CompoundCoordinateSystem>(parsed.TargetCoordinateSystem);
 
-        Assert.Contains("bound-grid", exception.Message, StringComparison.OrdinalIgnoreCase);
-        Assert.Contains("BoundCRS", exception.Message, StringComparison.OrdinalIgnoreCase);
+        using var document = JsonDocument.Parse(json);
+        JsonElement root = document.RootElement;
+        JsonElement parameters = root.GetProperty("transformation").GetProperty("parameters");
+
+        Assert.Equal("BoundCRS", root.GetProperty("type").GetString());
+        Assert.Equal("VerticalCRS", root.GetProperty("source_crs").GetProperty("type").GetString());
+        Assert.Equal("CompoundCRS", root.GetProperty("target_crs").GetProperty("type").GetString());
+        Assert.Equal("AbridgedTransformation", root.GetProperty("transformation").GetProperty("type").GetString());
+        Assert.Equal("Geographic3D to GravityRelatedHeight (EGM)", root.GetProperty("transformation").GetProperty("method").GetProperty("name").GetString());
+        Assert.Equal(1, parameters.GetArrayLength());
+        Assert.Equal("egm96_15.gtx", parameters[0].GetProperty("value").GetString());
+        Assert.Equal(vertical.Name, parsed.Name);
+        Assert.Equal(vertical.VerticalDatum.Name, source.VerticalDatum.Name);
+        Assert.Null(source.BoundGridTransformation);
+        Assert.Equal("egm96_15.gtx", parsed.Transformation.ParameterFileName);
+        Assert.Equal(3, target.Dimension);
+        Assert.True(GeographicCoordinateSystem.WGS84.EqualParams(Assert.IsType<GeographicCoordinateSystem>(target.HeadCoordinateSystem)));
+        Assert.Equal("Ellipsoidal height datum", Assert.IsType<VerticalCoordinateSystem>(target.TailCoordinateSystem).VerticalDatum.Name);
+    }
+
+    /// <summary>
+    /// Verifies WKT2 horizontal <c>BOUNDCRS</c> definitions survive a PROJJSON BoundCRS roundtrip without semantic drift.
+    /// </summary>
+    [Fact]
+    public void ToJson_RoundtripsHorizontalBoundCrsAcrossWkt2AndProjJson()
+    {
+        GeographicCoordinateSystem original = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+            "ED50 test",
+            AngularUnit.Degrees,
+            HorizontalDatum.ED50,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("Lon", AxisOrientationEnum.East),
+            new AxisInfo("Lat", AxisOrientationEnum.North));
+        string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
+        BoundCoordinateSystem fromWkt2 = CoordinateSystemTestHelpers.RequireCoordinateSystem<BoundCoordinateSystem>(CoordinateSystemFactory, wkt);
+
+        string json = ProjJsonWriter.ToJson(fromWkt2);
+        BoundCoordinateSystem fromProjJson = Assert.IsType<BoundCoordinateSystem>(ProjJsonReader.Parse(json));
+
+        Assert.True(fromProjJson.EqualParams(fromWkt2));
+    }
+
+    /// <summary>
+    /// Verifies WKT2 vertical <c>BOUNDCRS</c> definitions survive a PROJJSON BoundCRS roundtrip without semantic drift.
+    /// </summary>
+    [Fact]
+    public void ToJson_RoundtripsVerticalBoundCrsAcrossWkt2AndProjJson()
+    {
+        VerticalCoordinateSystem original = CreateBoundVerticalCoordinateSystem();
+        string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
+        BoundCoordinateSystem fromWkt2 = CoordinateSystemTestHelpers.RequireCoordinateSystem<BoundCoordinateSystem>(CoordinateSystemFactory, wkt);
+
+        string json = ProjJsonWriter.ToJson(fromWkt2);
+        BoundCoordinateSystem fromProjJson = Assert.IsType<BoundCoordinateSystem>(ProjJsonReader.Parse(json));
+
+        Assert.True(fromProjJson.EqualParams(fromWkt2));
     }
 
     private static string GetCatalogWkt(int srid)

@@ -290,11 +290,11 @@ internal static class BoundCoordinateSystemSupport
     }
 
     /// <summary>
-    /// Creates a synthetic first-class BoundCRS wrapper for legacy CRS metadata when WKT2 serialization requires it.
+    /// Creates a synthetic first-class BoundCRS wrapper for legacy CRS metadata when BoundCRS serialization requires it.
     /// </summary>
     /// <param name="coordinateSystem">The coordinate system to inspect.</param>
     /// <returns>The synthetic bound coordinate system when legacy metadata is present; otherwise <see langword="null"/>.</returns>
-    internal static BoundCoordinateSystem? CreateLegacyBoundCoordinateSystemForWkt2Writer(CoordinateSystem coordinateSystem)
+    internal static BoundCoordinateSystem? CreateLegacyBoundCoordinateSystemForSerialization(CoordinateSystem coordinateSystem)
     {
         coordinateSystem = ArgumentGuard.ThrowIfNull(coordinateSystem, nameof(coordinateSystem));
 
@@ -326,6 +326,21 @@ internal static class BoundCoordinateSystemSupport
                 projectedCoordinateSystem.Alias,
                 projectedCoordinateSystem.Abbreviation,
                 projectedCoordinateSystem.Remarks);
+        }
+
+        if (coordinateSystem is GeocentricCoordinateSystem geocentricCoordinateSystem
+            && TryGetLegacyHorizontalBoundTransformation(geocentricCoordinateSystem, out BoundTransformation? geocentricTransformation))
+        {
+            return new BoundCoordinateSystem(
+                CreateCoordinateSystemWithoutLegacyBoundMetadata(geocentricCoordinateSystem),
+                GeocentricCoordinateSystem.WGS84,
+                geocentricTransformation!,
+                geocentricCoordinateSystem.Name,
+                geocentricCoordinateSystem.Authority,
+                geocentricCoordinateSystem.AuthorityCode,
+                geocentricCoordinateSystem.Alias,
+                geocentricCoordinateSystem.Abbreviation,
+                geocentricCoordinateSystem.Remarks);
         }
 
         if (coordinateSystem is VerticalCoordinateSystem verticalCoordinateSystem
@@ -535,20 +550,26 @@ internal static class BoundCoordinateSystemSupport
         {
             GeographicCoordinateSystem geographicCoordinateSystem => TryGetLegacyHorizontalBoundParameters(geographicCoordinateSystem),
             ProjectedCoordinateSystem projectedCoordinateSystem => TryGetLegacyHorizontalBoundParameters(projectedCoordinateSystem.GeographicCoordinateSystem),
+            GeocentricCoordinateSystem geocentricCoordinateSystem => TryGetLegacyHorizontalBoundParameters(geocentricCoordinateSystem.HorizontalDatum),
             _ => null,
         };
 
         transformation = parameters is null
             ? null
-            : new BoundTransformation(GetLegacyHorizontalBoundMethodName(parameters), parameters);
+            : new BoundTransformation(GetLegacyHorizontalBoundMethodName(coordinateSystem, parameters), parameters);
         return transformation is not null;
+    }
+
+    private static Wgs84ConversionInfo? TryGetLegacyHorizontalBoundParameters(HorizontalDatum horizontalDatum)
+    {
+        return horizontalDatum.Wgs84Parameters is null
+            ? null
+            : CloneWgs84Parameters(horizontalDatum.Wgs84Parameters);
     }
 
     private static Wgs84ConversionInfo? TryGetLegacyHorizontalBoundParameters(GeographicCoordinateSystem geographicCoordinateSystem)
     {
-        Wgs84ConversionInfo? datumParameters = geographicCoordinateSystem.HorizontalDatum.Wgs84Parameters is null
-            ? null
-            : CloneWgs84Parameters(geographicCoordinateSystem.HorizontalDatum.Wgs84Parameters);
+        Wgs84ConversionInfo? datumParameters = TryGetLegacyHorizontalBoundParameters(geographicCoordinateSystem.HorizontalDatum);
 
         if (geographicCoordinateSystem.WGS84ConversionInfo.Count == 0)
         {
@@ -557,23 +578,31 @@ internal static class BoundCoordinateSystemSupport
 
         if (geographicCoordinateSystem.WGS84ConversionInfo.Count > 1)
         {
-            throw new NotSupportedException("WKT2 BOUNDCRS output currently supports only a single WGS84 conversion definition.");
+            throw new NotSupportedException("BoundCRS output currently supports only a single WGS84 conversion definition.");
         }
 
         Wgs84ConversionInfo conversionParameters = CloneWgs84Parameters(geographicCoordinateSystem.WGS84ConversionInfo[0]);
         if (datumParameters is not null && !datumParameters.Equals(conversionParameters))
         {
-            throw new NotSupportedException("WKT2 BOUNDCRS output does not support conflicting legacy WGS84 conversion definitions on the same geographic coordinate system.");
+            throw new NotSupportedException("BoundCRS output does not support conflicting legacy WGS84 conversion definitions on the same geographic coordinate system.");
         }
 
         return datumParameters ?? conversionParameters;
     }
 
-    private static string GetLegacyHorizontalBoundMethodName(Wgs84ConversionInfo parameters)
+    private static string GetLegacyHorizontalBoundMethodName(CoordinateSystem coordinateSystem, Wgs84ConversionInfo parameters)
     {
-        return parameters.Ex == 0d && parameters.Ey == 0d && parameters.Ez == 0d && parameters.Ppm == 0d
-            ? "Geocentric translations (geog2D domain)"
-            : "Position Vector transformation (geog2D domain)";
+        bool usesGeographic2dDomain = coordinateSystem is GeographicCoordinateSystem or ProjectedCoordinateSystem;
+        if (parameters.Ex == 0d && parameters.Ey == 0d && parameters.Ez == 0d && parameters.Ppm == 0d)
+        {
+            return usesGeographic2dDomain
+                ? "Geocentric translations (geog2D domain)"
+                : "Geocentric translations";
+        }
+
+        return usesGeographic2dDomain
+            ? "Position Vector transformation (geog2D domain)"
+            : "Position Vector transformation";
     }
 
     private static WktNode CreateWkt2BoundCoordinateSystemComponentNode(CoordinateSystem coordinateSystem)

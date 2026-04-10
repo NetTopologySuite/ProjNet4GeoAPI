@@ -37,7 +37,7 @@ internal static class ProjJsonCoverageMatrix
     private const string WriterAxisReference = Writer + ".WriteCoordinateSystemDefinition, " + Writer + ".WriteAxis, " + Writer + ".GetAxisDirection";
     private const string WriterDatumReference = Writer + ".WriteHorizontalDatum, " + Writer + ".WriteEllipsoid, " + Writer + ".WritePrimeMeridian, " + Writer + ".WriteVerticalDatum";
     private const string WriterConversionReference = Writer + ".WriteConversion, " + Writer + ".WriteMethod, " + Writer + ".WriteProjectionParameter, " + Writer + ".WriteUnit, " + Writer + ".WriteAngularUnit, " + Writer + ".WriteLinearUnit, " + Writer + ".WriteScaleUnit";
-    private const string WriterBoundReference = Writer + ".ThrowIfBoundHorizontalDatumRequiresBoundCrs, " + Writer + ".ThrowIfBoundVerticalMetadataRequiresBoundCrs";
+    private const string WriterBoundReference = Writer + ".WriteBoundCoordinateSystem, " + Writer + ".WriteBoundCoordinateSystemComponent, " + Writer + ".WriteBoundTransformation, " + Writer + ".WriteBoundTransformationParameters, " + Writer + ".TryWriteLegacyBoundCoordinateSystem";
     private const string WriterIdentifierReference = Writer + ".WriteIdentifier";
 
     /// <summary>
@@ -52,9 +52,9 @@ internal static class ProjJsonCoverageMatrix
                 "BoundCRS",
                 ProjJsonCoverageStatus.Supported,
                 $"{ReaderRootReference}, {ReaderBoundReference}",
-                ProjJsonCoverageStatus.Unsupported,
+                ProjJsonCoverageStatus.Supported,
                 WriterBoundReference,
-                "Reader dispatches BoundCRS objects into the first-class bound model, while the writer still throws when bound metadata would need preservation."),
+                "Reader and writer both dispatch BoundCRS objects into the first-class bound model, and the writer also bridges retained legacy bound metadata through the same BoundCRS path."),
             Row(
                 "CompoundCRS",
                 ProjJsonCoverageStatus.Supported,
