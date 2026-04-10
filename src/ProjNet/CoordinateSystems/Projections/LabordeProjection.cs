@@ -17,7 +17,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// the Laborde polynomial correction terms that distinguish this projection from standard
 /// oblique Mercator forms.
 /// </remarks>
-internal class LabordeProjection : MapProjection
+internal sealed class LabordeProjection : MapProjection
 {
     private const int MaximumIterations = 20;
     private const double IterationTolerance = 1e-10;

@@ -26,7 +26,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://proj.org/en/stable/operations/projections/igh.html">PROJ documentation: Interrupted Goode Homolosine.</seealso>
 /// <seealso href="https://doi.org/10.2307/2560812">Goode, J.P. (1925): The Homolosine projection.</seealso>
 /// <seealso href="https://en.wikipedia.org/wiki/Goode_homolosine_projection">Wikipedia: Goode homolosine projection.</seealso>
-internal class IghProjection : MapProjection
+internal sealed class IghProjection : MapProjection
 {
     private const double EpsLn = 1e-10;
     private const int MollweideIterations = 12;

@@ -21,7 +21,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// coordinate display and raster indexing rather than for distortion control.</para>
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Equirectangular_projection">Wikipedia: Equirectangular projection.</seealso>
-internal class LatLongProjection : MapProjection
+internal sealed class LatLongProjection : MapProjection
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="LatLongProjection"/> class.

@@ -16,7 +16,7 @@ using System.Collections.Generic;
 /// base formulation.
 /// </remarks>
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 2, Sect. 2.2.3, pp. 77-79.</seealso>
-internal class Kavrayskiy7Projection : Eckert3Projection
+internal sealed class Kavrayskiy7Projection : Eckert3Projection
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Kavrayskiy7Projection"/> class.

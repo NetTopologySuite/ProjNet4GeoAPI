@@ -24,7 +24,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// implementation here.</para>
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/HEALPix">Wikipedia: HEALPix.</seealso>
-internal class HealpixProjection : MapProjection
+internal sealed class HealpixProjection : MapProjection
 {
     private static readonly double Phi0Limit = Math.Asin(2d / 3d);
     private const double QuarterPi = PI / 4d;

@@ -24,7 +24,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 /// <seealso href="https://proj.org/en/stable/operations/projections/imoll_o.html">PROJ documentation: Interrupted Mollweide Oceanic View.</seealso>
 /// <seealso href="https://en.wikipedia.org/wiki/Mollweide_projection">Wikipedia: Mollweide projection.</seealso>
-internal class InterruptedMollweideOceanicProjection : InterruptedMollweideBaseProjection
+internal sealed class InterruptedMollweideOceanicProjection : InterruptedMollweideBaseProjection
 {
     private const double SeamSlack = 1e-10;
 
