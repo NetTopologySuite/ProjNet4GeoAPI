@@ -7,7 +7,6 @@ namespace ProjNet.CoordinateSystems;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 using System.Xml.Linq;
 using ProjNet.IO.Wkt;
 
@@ -177,26 +176,7 @@ public class HorizontalDatum : Datum
     /// Gets the Well-known text for this object
     /// as defined in the simple features specification.
     /// </summary>
-    public override string WKT
-    {
-        get
-        {
-            var sb = new StringBuilder();
-            sb.AppendFormat(CultureInfo.InvariantCulture, "DATUM[\"{0}\", {1}", this.Name, this.Ellipsoid.WKT);
-            if (this.Wgs84Parameters is not null)
-            {
-                sb.AppendFormat(CultureInfo.InvariantCulture, ", {0}", this.Wgs84Parameters.WKT);
-            }
-
-            if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
-            {
-                sb.AppendFormat(CultureInfo.InvariantCulture, ", AUTHORITY[\"{0}\", \"{1}\"]", this.Authority, this.AuthorityCode);
-            }
-
-            sb.Append(']');
-            return sb.ToString();
-        }
-    }
+    public override string WKT => this.ToWktNode().ToString();
 
     /// <summary>
     /// Gets an XML representation of this object.

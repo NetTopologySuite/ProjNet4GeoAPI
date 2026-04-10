@@ -7,7 +7,6 @@ namespace ProjNet.CoordinateSystems;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 using System.Xml.Linq;
 using ProjNet.IO.Wkt;
 
@@ -43,21 +42,7 @@ public class VerticalDatum : Datum
     }
 
     /// <inheritdoc/>
-    public override string WKT
-    {
-        get
-        {
-            var sb = new StringBuilder();
-            sb.AppendFormat(CultureInfo.InvariantCulture, "VERT_DATUM[\"{0}\", {1}", this.Name, (int)this.DatumType);
-            if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
-            {
-                sb.AppendFormat(CultureInfo.InvariantCulture, ", AUTHORITY[\"{0}\", \"{1}\"]", this.Authority, this.AuthorityCode);
-            }
-
-            sb.Append(']');
-            return sb.ToString();
-        }
-    }
+    public override string WKT => this.ToWktNode().ToString();
 
     /// <inheritdoc/>
     public override string XML
