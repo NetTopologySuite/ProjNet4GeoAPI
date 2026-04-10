@@ -22,7 +22,6 @@ internal class NicolosiProjection : MapProjection
 {
     private const double Epsilon = 1e-10d;
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="NicolosiProjection"/> class.
     /// </summary>

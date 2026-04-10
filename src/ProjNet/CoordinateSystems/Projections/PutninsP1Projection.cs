@@ -23,7 +23,6 @@ internal class PutninsP1Projection : MapProjection
     private const double A = -0.5d;
     private const double B = 0.30396355092701331433d;
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="PutninsP1Projection"/> class.
     /// </summary>

@@ -28,7 +28,6 @@ internal class TimesProjection : MapProjection
     private const double X1 = 0.34588d;
     private const double Y0 = 1.70711d;
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="TimesProjection"/> class.
     /// </summary>

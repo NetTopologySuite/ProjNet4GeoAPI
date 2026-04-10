@@ -33,7 +33,6 @@ internal class HatanoProjection : MapProjection
     private const double Fxc = 0.85d;
     private const double Rxc = 1.17647058823529411764d;
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="HatanoProjection"/> class.
     /// </summary>

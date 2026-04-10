@@ -21,7 +21,6 @@ internal class VanDerGrinten2Projection : MapProjection
 {
     private const double Tolerance = 1e-10d;
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="VanDerGrinten2Projection"/> class.
     /// </summary>

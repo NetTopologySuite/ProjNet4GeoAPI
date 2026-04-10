@@ -25,7 +25,6 @@ internal class PutninsP2Projection : MapProjection
     private const int Iterations = 10;
     private const double PiDiv3 = 1.0471975511965977d;
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="PutninsP2Projection"/> class.
     /// </summary>

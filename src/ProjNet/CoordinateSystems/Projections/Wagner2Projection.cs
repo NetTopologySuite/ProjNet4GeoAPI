@@ -23,7 +23,6 @@ internal class Wagner2Projection : MapProjection
     private const double Cp1 = 0.88022d;
     private const double Cp2 = 0.88550d;
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="Wagner2Projection"/> class.
     /// </summary>

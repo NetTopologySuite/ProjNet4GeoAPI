@@ -22,7 +22,6 @@ internal class LarriveeProjection : MapProjection
 {
     private const double Sixth = 0.16666666666666666d;
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="LarriveeProjection"/> class.
     /// </summary>

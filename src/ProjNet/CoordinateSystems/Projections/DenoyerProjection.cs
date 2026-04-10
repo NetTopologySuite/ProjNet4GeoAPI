@@ -27,7 +27,6 @@ internal class DenoyerProjection : MapProjection
     private const double D1 = 0.9d;
     private const double D5 = 0.03d;
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="DenoyerProjection"/> class.
     /// </summary>

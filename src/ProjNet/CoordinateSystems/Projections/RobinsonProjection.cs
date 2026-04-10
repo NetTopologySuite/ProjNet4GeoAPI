@@ -79,7 +79,6 @@ internal class RobinsonProjection : MapProjection
         new(1.0f, 0.00328947f, -0.000319159f, -4.2106e-06f),
     ];
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="RobinsonProjection"/> class.
     /// </summary>

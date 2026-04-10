@@ -23,7 +23,6 @@ internal class NellHammerProjection : MapProjection
     private const int Iterations = 9;
     private const double Epsilon = 1e-7d;
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="NellHammerProjection"/> class.
     /// </summary>

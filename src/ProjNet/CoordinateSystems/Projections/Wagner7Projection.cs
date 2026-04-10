@@ -25,7 +25,6 @@ internal class Wagner7Projection : MapProjection
     private const double XFactor = 2.66723d;
     private const double YFactor = 1.24104d;
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="Wagner7Projection"/> class.
     /// </summary>

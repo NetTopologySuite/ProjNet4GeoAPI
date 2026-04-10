@@ -21,7 +21,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 internal class TransverseCentralCylindricalProjection : MapProjection
 {
-
     /// <summary>
     /// Initializes a new instance of the <see cref="TransverseCentralCylindricalProjection"/> class.
     /// </summary>

@@ -30,7 +30,6 @@ internal class LaskowskiProjection : MapProjection
     private const double B23 = -0.02855d;
     private const double B05 = -0.0491032d;
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="LaskowskiProjection"/> class.
     /// </summary>

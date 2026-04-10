@@ -23,7 +23,6 @@ internal class GallProjection : MapProjection
     private const double Ryf = 0.58578643762690495119d;
     private const double Rxf = 1.41421356237309504880d;
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="GallProjection"/> class.
     /// </summary>

@@ -25,7 +25,6 @@ internal class NaturalEarth2Projection : MapProjection
 {
     private const int Iterations = 12;
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="NaturalEarth2Projection"/> class.
     /// </summary>

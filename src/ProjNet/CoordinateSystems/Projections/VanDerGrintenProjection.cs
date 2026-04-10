@@ -32,7 +32,6 @@ internal class VanDerGrintenProjection : MapProjection
     private const double HalfPiSquared = 0.5d * PiSquared;
     private const double InverseDomainEpsilon = 1e-16;
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="VanDerGrintenProjection"/> class.
     /// </summary>

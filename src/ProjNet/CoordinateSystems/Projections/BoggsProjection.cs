@@ -28,7 +28,6 @@ internal class BoggsProjection : MapProjection
     private const double Fxc2 = 1.11072d;
     private const double Fyc = 0.49931d;
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="BoggsProjection"/> class.
     /// </summary>

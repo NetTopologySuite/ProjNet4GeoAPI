@@ -18,7 +18,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 internal class ToblerMercatorProjection : MapProjection
 {
-
     /// <summary>
     /// Initializes a new instance of the <see cref="ToblerMercatorProjection"/> class.
     /// </summary>

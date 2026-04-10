@@ -26,7 +26,6 @@ internal class Eckert2Projection : MapProjection
     private const double C13 = ProjectionConstants.OneThird;
     private const double OneEps = ProjectionConstants.OnePlusEps7;
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="Eckert2Projection"/> class.
     /// </summary>

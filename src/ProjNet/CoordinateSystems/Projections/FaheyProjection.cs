@@ -23,7 +23,6 @@ internal class FaheyProjection : MapProjection
     private const double XFactor = 0.819152d;
     private const double YFactor = 1.819152d;
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="FaheyProjection"/> class.
     /// </summary>

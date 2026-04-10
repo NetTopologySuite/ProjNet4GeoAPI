@@ -27,7 +27,6 @@ internal class Eckert5Projection : MapProjection
     private const double Yf = 0.88202554344910296438d;
     private const double Ryf = 1.13375401361911319568d;
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="Eckert5Projection"/> class.
     /// </summary>

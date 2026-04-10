@@ -29,7 +29,6 @@ internal class McBrydeThomasFlatPolarQuarticProjection : MapProjection
     private const double Fxc = 0.31245971410378249250d;
     private const double Rxc = 3.20041258076506210122d;
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="McBrydeThomasFlatPolarQuarticProjection"/> class.
     /// </summary>

@@ -24,7 +24,6 @@ internal class Ginsburg8Projection : MapProjection
     private const double Cp = 0.162388d;
     private const double C12 = 0.08333333333333333d;
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="Ginsburg8Projection"/> class.
     /// </summary>

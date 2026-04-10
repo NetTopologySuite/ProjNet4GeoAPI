@@ -37,7 +37,6 @@ internal class Eckert4Projection : MapProjection
     private const int Iterations = 6;
     private const double Epsilon = 1e-7;
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="Eckert4Projection"/> class.
     /// </summary>

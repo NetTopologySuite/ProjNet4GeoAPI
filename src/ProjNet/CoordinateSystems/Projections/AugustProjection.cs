@@ -28,7 +28,6 @@ internal class AugustProjection : MapProjection
 {
     private const double M = 1.333333333333333d;
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="AugustProjection"/> class.
     /// </summary>

@@ -28,7 +28,6 @@ internal sealed class McBrydeThomasFlatPoleSineProjection : MapProjection
     private const double CY = 1.44492d;
     private const double C1Over2 = 0.33333333333333333333333333d;
 
-
     /// <summary>
     /// Initializes a new instance of the <see cref="McBrydeThomasFlatPoleSineProjection"/> class.
     /// </summary>
