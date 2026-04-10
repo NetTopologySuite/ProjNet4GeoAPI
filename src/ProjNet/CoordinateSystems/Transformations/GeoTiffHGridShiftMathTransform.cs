@@ -270,8 +270,8 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
             NormalizeBiquadraticWindow(grid.Width, ref indexX, ref fractionX);
             NormalizeBiquadraticWindow(grid.Height, ref indexY, ref fractionY);
 
-            double[] latitudeShiftByRow = new double[3];
-            double[] longitudeShiftByRow = new double[3];
+            Span<double> latitudeShiftByRow = stackalloc double[3];
+            Span<double> longitudeShiftByRow = stackalloc double[3];
             for (int rowOffset = 0; rowOffset < 3; rowOffset++)
             {
                 int sampleY = indexY + rowOffset;

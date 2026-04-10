@@ -602,18 +602,32 @@ internal sealed class ObTranMathTransform : MathTransform
         double phi = ToRadians(y);
         RotateForward(ref lam, ref phi, this.lamp, this.sphip, this.cphip, this.isOblique);
 
-        double[] childInput = this.childIsAngular
-            ? [lam, phi]
-            : [ToDegrees(lam), ToDegrees(phi)];
-        double[] childOutput = this.childForward.Transform(childInput);
+        Span<double> childInput = stackalloc double[2];
+        if (this.childIsAngular)
+        {
+            childInput[0] = lam;
+            childInput[1] = phi;
+        }
+        else
+        {
+            childInput[0] = ToDegrees(lam);
+            childInput[1] = ToDegrees(phi);
+        }
+
+        Span<double> childOutput = stackalloc double[3];
+        this.childForward.Transform((ReadOnlySpan<double>)childInput, childOutput);
         x = childOutput[0];
         y = childOutput[1];
     }
 
     private void TransformInverse(ref double x, ref double y)
     {
-        double[] childInput = [x, y];
-        double[] rotated = this.childInverse.Transform(childInput);
+        Span<double> childInput = stackalloc double[2];
+        childInput[0] = x;
+        childInput[1] = y;
+
+        Span<double> rotated = stackalloc double[3];
+        this.childInverse.Transform((ReadOnlySpan<double>)childInput, rotated);
         double lam = this.childIsAngular ? rotated[0] : ToRadians(rotated[0]);
         double phi = this.childIsAngular ? rotated[1] : ToRadians(rotated[1]);
         RotateInverse(ref lam, ref phi, this.lamp, this.sphip, this.cphip, this.isOblique);

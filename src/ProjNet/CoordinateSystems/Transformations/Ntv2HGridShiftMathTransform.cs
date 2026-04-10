@@ -5,11 +5,13 @@
 namespace ProjNet.CoordinateSystems.Transformations;
 
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 
 /// <summary>
@@ -446,26 +448,22 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
 
         private static double ReadDouble(byte[] bytes, int offset, bool littleEndian)
         {
-            byte[] buffer = new byte[8];
-            Buffer.BlockCopy(bytes, offset, buffer, 0, 8);
-            if (littleEndian != BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(buffer);
-            }
-
-            return BitConverter.ToDouble(buffer, 0);
+            long rawBits = littleEndian
+                ? BinaryPrimitives.ReadInt64LittleEndian(bytes.AsSpan(offset, sizeof(long)))
+                : BinaryPrimitives.ReadInt64BigEndian(bytes.AsSpan(offset, sizeof(long)));
+            Span<long> bitStorage = stackalloc long[1];
+            bitStorage[0] = rawBits;
+            return MemoryMarshal.Cast<long, double>(bitStorage)[0];
         }
 
         private static float ReadSingle(byte[] bytes, int offset, bool littleEndian)
         {
-            byte[] buffer = new byte[4];
-            Buffer.BlockCopy(bytes, offset, buffer, 0, 4);
-            if (littleEndian != BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(buffer);
-            }
-
-            return BitConverter.ToSingle(buffer, 0);
+            int rawBits = littleEndian
+                ? BinaryPrimitives.ReadInt32LittleEndian(bytes.AsSpan(offset, sizeof(int)))
+                : BinaryPrimitives.ReadInt32BigEndian(bytes.AsSpan(offset, sizeof(int)));
+            Span<int> bitStorage = stackalloc int[1];
+            bitStorage[0] = rawBits;
+            return MemoryMarshal.Cast<int, float>(bitStorage)[0];
         }
 
         private static string ReadAscii(byte[] bytes, int offset, int length)

@@ -5,10 +5,12 @@
 namespace ProjNet.CoordinateSystems.Transformations;
 
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Runtime.InteropServices;
 
 /// <summary>
 /// Applies vertical datum shifts using one or more GTX grid files.
@@ -413,14 +415,10 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
 
         private static double ReadDoubleBigEndian(byte[] bytes, int offset)
         {
-            byte[] buffer = new byte[8];
-            Buffer.BlockCopy(bytes, offset, buffer, 0, 8);
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(buffer);
-            }
-
-            return BitConverter.ToDouble(buffer, 0);
+            long rawBits = BinaryPrimitives.ReadInt64BigEndian(bytes.AsSpan(offset, sizeof(long)));
+            Span<long> bitStorage = stackalloc long[1];
+            bitStorage[0] = rawBits;
+            return MemoryMarshal.Cast<long, double>(bitStorage)[0];
         }
 
         private static int ReadInt32BigEndian(byte[] bytes, int offset)
@@ -433,14 +431,10 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
 
         private static float ReadSingleBigEndian(byte[] bytes, int offset)
         {
-            byte[] buffer = new byte[4];
-            Buffer.BlockCopy(bytes, offset, buffer, 0, 4);
-            if (BitConverter.IsLittleEndian)
-            {
-                Array.Reverse(buffer);
-            }
-
-            return BitConverter.ToSingle(buffer, 0);
+            int rawBits = BinaryPrimitives.ReadInt32BigEndian(bytes.AsSpan(offset, sizeof(int)));
+            Span<int> bitStorage = stackalloc int[1];
+            bitStorage[0] = rawBits;
+            return MemoryMarshal.Cast<int, float>(bitStorage)[0];
         }
     }
 }
