@@ -28,7 +28,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://epsg.io/1029-method">EPSG method 1029: Equidistant Cylindrical (spherical).</seealso>
 /// <seealso href="https://epsg.io/1028-method">EPSG method 1028: Equidistant Cylindrical (ellipsoidal).</seealso>
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 2, Sect. 2.1.4, pp. 53-55.</seealso>
-internal class EquidistantCylindricalProjection : MapProjection
+internal sealed class EquidistantCylindricalProjection : MapProjection
 {
     private readonly double longitudeScale;
     private readonly double meridionalDistanceAtOrigin;

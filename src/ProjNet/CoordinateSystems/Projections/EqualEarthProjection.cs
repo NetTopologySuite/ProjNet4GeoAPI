@@ -23,7 +23,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Equal_Earth_projection">Wikipedia: Equal Earth projection.</seealso>
 /// <seealso href="https://doi.org/10.1080/13658816.2018.1504949">Savric, Patterson, Jenny (2018): The Equal Earth map projection.</seealso>
-internal class EqualEarthProjection : MapProjection
+internal sealed class EqualEarthProjection : MapProjection
 {
     private const double A1 = 1.340264;
     private const double A2 = -0.081106;

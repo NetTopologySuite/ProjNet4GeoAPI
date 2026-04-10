@@ -19,7 +19,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// recovery of <c>φ</c> matches the implementation here.
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Eckert_II_projection">Wikipedia: Eckert II projection.</seealso>
-internal class Eckert2Projection : MapProjection
+internal sealed class Eckert2Projection : MapProjection
 {
     private const double Fxc = 0.46065886596178063902d;
     private const double Fyc = 1.44720250911653531871d;

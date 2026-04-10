@@ -16,7 +16,7 @@ using System.Collections.Generic;
 /// generalized sinusoidal formulation used by the base class.
 /// </remarks>
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 2, Sect. 2.2.2, pp. 69-71.</seealso>
-internal class Eckert6Projection : GeneralSinusoidalProjection
+internal sealed class Eckert6Projection : GeneralSinusoidalProjection
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Eckert6Projection"/> class.

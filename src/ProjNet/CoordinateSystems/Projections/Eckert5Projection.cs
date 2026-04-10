@@ -20,7 +20,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// match the implementation here.
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Eckert_projection">Wikipedia: Eckert projection family.</seealso>
-internal class Eckert5Projection : MapProjection
+internal sealed class Eckert5Projection : MapProjection
 {
     private const double Xf = 0.44101277172455148219d;
     private const double Rxf = 2.26750802723822639137d;

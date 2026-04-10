@@ -19,7 +19,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// semi-elliptical equation. The implementation matches the cosine longitude scaling with
 /// the published polynomial-in-<c>|λ|</c> and latitude modulation terms.</para>
 /// </remarks>
-internal class DenoyerProjection : MapProjection
+internal sealed class DenoyerProjection : MapProjection
 {
     private const double C0 = 0.95d;
     private const double C1 = -0.08333333333333333333d;

@@ -17,7 +17,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>x = Xm * λ * (2 * cos(2 * φ / 3) - 1)</c> and
 /// <c>y = Ym * sin(φ / 3)</c>.
 /// </remarks>
-internal class CrasterProjection : MapProjection
+internal sealed class CrasterProjection : MapProjection
 {
     private const double Xm = 0.97720502380583984317d;
     private const double Rxm = 1.02332670794648848847d;

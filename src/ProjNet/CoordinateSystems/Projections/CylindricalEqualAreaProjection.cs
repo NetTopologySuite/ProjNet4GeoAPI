@@ -26,7 +26,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://pubs.usgs.gov/publication/pp1395">USGS Professional Paper 1395: Map Projections - A Working Manual.</seealso>
 /// <seealso href="https://en.wikipedia.org/wiki/Cylindrical_equal-area_projection">Wikipedia: Cylindrical equal-area projection.</seealso>
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 2, Sect. 2.1.3, pp. 51-53.</seealso>
-internal class CylindricalEqualAreaProjection : MapProjection
+internal sealed class CylindricalEqualAreaProjection : MapProjection
 {
     private const double Epsilon = 1e-10d;
 

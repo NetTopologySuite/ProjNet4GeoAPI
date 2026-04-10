@@ -20,7 +20,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>y = 0.9213177319 * φ</c> matches the implementation here.
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Eckert_projection">Wikipedia: Eckert projection family.</seealso>
-internal class Eckert1Projection : MapProjection
+internal sealed class Eckert1Projection : MapProjection
 {
     private const double Fc = 0.92131773192356127802d;
     private const double Rp = 0.31830988618379067154d;
