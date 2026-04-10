@@ -47,6 +47,36 @@ internal static class EpsgCoordinateSystemFactory
         }
     }
 
+    /// <summary>
+    /// Tries to resolve a coordinate system by SRID from the generated EPSG catalog.
+    /// </summary>
+    /// <param name="srid">The EPSG SRID to resolve.</param>
+    /// <param name="coordinateSystem">The resolved coordinate system when available.</param>
+    /// <returns><see langword="true"/> when the coordinate system could be created; otherwise <see langword="false"/>.</returns>
+    internal static bool TryResolveCoordinateSystem(int srid, [NotNullWhen(true)] out CoordinateSystem? coordinateSystem)
+    {
+        coordinateSystem = TryCreateCoordinateSystem(srid);
+        return coordinateSystem is not null;
+    }
+
+    /// <summary>
+    /// Tries to resolve a horizontal datum by EPSG code from the generated catalog.
+    /// </summary>
+    /// <param name="datumCode">The EPSG datum code.</param>
+    /// <param name="datum">The resolved datum when available.</param>
+    /// <returns><see langword="true"/> when the datum could be created; otherwise <see langword="false"/>.</returns>
+    internal static bool TryResolveHorizontalDatum(int datumCode, [NotNullWhen(true)] out HorizontalDatum? datum)
+        => TryCreateHorizontalDatum(datumCode, out datum);
+
+    /// <summary>
+    /// Tries to resolve an ellipsoid by EPSG code from the generated catalog.
+    /// </summary>
+    /// <param name="ellipsoidCode">The EPSG ellipsoid code.</param>
+    /// <param name="ellipsoid">The resolved ellipsoid when available.</param>
+    /// <returns><see langword="true"/> when the ellipsoid could be created; otherwise <see langword="false"/>.</returns>
+    internal static bool TryResolveEllipsoid(int ellipsoidCode, [NotNullWhen(true)] out Ellipsoid? ellipsoid)
+        => TryCreateEllipsoid(ellipsoidCode, out ellipsoid);
+
     private static CoordinateSystem? TryCreateCoordinateSystem(int srid)
     {
         if (!EpsgGeneratedCatalog.TryGetCoordinateReference(srid, out EpsgCoordinateReferenceRecord reference, out int cacheIndex))
