@@ -365,7 +365,7 @@ public class OperationResolutionEngineTests
 
         ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
         double[] output = transformation.MathTransform.Transform(GeographicOffsetSamplePoint);
-        IReadOnlyDictionary<string, double> parameters = GetOperationParameters(operation.OperationCode);
+        Dictionary<string, double> parameters = GetOperationParameters(operation.OperationCode);
 
         Assert.Equal("EPSG", transformation.Authority);
         Assert.Equal(operation.OperationCode, transformation.AuthorityCode);
@@ -579,7 +579,7 @@ public class OperationResolutionEngineTests
             .ThenBy(definition => definition.OperationCode);
     }
 
-    private static IReadOnlyDictionary<string, double> GetOperationParameters(int operationCode)
+    private static Dictionary<string, double> GetOperationParameters(int operationCode)
     {
         return EpsgGeneratedCatalog.OperationParameters
             .Where(parameter => parameter.OperationCode == operationCode)
