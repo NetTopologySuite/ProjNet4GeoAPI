@@ -78,21 +78,7 @@ public class Projection : Info, IProjection
     /// <summary>
     /// Gets an XML representation of this object.
     /// </summary>
-    public override string XML
-    {
-        get
-        {
-            var sb = new StringBuilder();
-            sb.AppendFormat(CultureInfo.InvariantCulture.NumberFormat, "<CS_Projection Classname=\"{0}\">{1}", this.ClassName, this.InfoXml);
-            foreach (ProjectionParameter param in this.Parameters)
-            {
-                sb.Append(param.XML);
-            }
-
-            sb.Append("</CS_Projection>");
-            return sb.ToString();
-        }
-    }
+    public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
     /// <summary>
     /// Returns an XML representation of this projection as an <see cref="XElement"/>.
