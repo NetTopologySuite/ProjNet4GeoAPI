@@ -94,6 +94,25 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
+    /// Verifies that a nested datum-shift-and-projection pipeline produces the same result as the equivalent flattened pipeline.
+    /// </summary>
+    [Fact]
+    public void PipelineWithNestedDatumShiftAndProjectionMatchesFlattenedPipeline()
+    {
+        const string nestedOperation = "+proj=pipeline +step +proj=pipeline +step +proj=longlat +datum=GGRS87 +inv +step +proj=longlat +datum=WGS84 +step +proj=utm +zone=34 +datum=WGS84";
+        const string flattenedOperation = "+proj=pipeline +step +proj=longlat +datum=GGRS87 +inv +step +proj=longlat +datum=WGS84 +step +proj=utm +zone=34 +datum=WGS84";
+
+        MathTransform nestedTransform = RequirePipelineMathTransform(nestedOperation);
+        MathTransform flattenedTransform = RequirePipelineMathTransform(flattenedOperation);
+        double[] input = [23.7275d, 37.9838d];
+        double[] nestedOutput = nestedTransform.Transform(input);
+        double[] flattenedOutput = flattenedTransform.Transform(input);
+
+        Assert.Equal(flattenedOutput[0], nestedOutput[0], 6);
+        Assert.Equal(flattenedOutput[1], nestedOutput[1], 6);
+    }
+
+    /// <summary>
     /// Verifies that a 4D axis swap step with negated indices correctly reorders and flips all four ordinates.
     /// </summary>
     [Fact]
