@@ -24,7 +24,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://proj.org/en/stable/operations/projections/urm5.html">PROJ documentation: Urmaev V.</seealso>
 internal class Urmaev5Projection : MapProjection
 {
-    private readonly double radius;
     private readonly double n;
     private readonly double m;
     private readonly double rmn;
@@ -48,7 +47,6 @@ internal class Urmaev5Projection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Urmaev_V";
-        this.radius = this.semiMajor * this.scaleFactor;
         this.n = this.Parameters.GetParameterValue("n");
         if (this.n <= 0d || this.n > 1d)
         {
@@ -85,8 +83,8 @@ internal class Urmaev5Projection : MapProjection
         double lambda = Adjust_lon(lon - this.centralMeridian);
         double phi = Asinz(this.n * Math.Sin(lat));
         double t = phi * phi;
-        lon = this.radius * this.m * lambda * Math.Cos(phi);
-        lat = this.radius * phi * (1d + (t * this.q3)) * this.rmn;
+        lon = this.SphericalRadius * this.m * lambda * Math.Cos(phi);
+        lat = this.SphericalRadius * phi * (1d + (t * this.q3)) * this.rmn;
     }
 
     /// <inheritdoc />

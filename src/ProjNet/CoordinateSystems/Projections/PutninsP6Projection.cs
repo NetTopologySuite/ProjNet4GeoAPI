@@ -27,8 +27,6 @@ internal class PutninsP6Projection : MapProjection
     private const int Iterations = 10;
     private const double PoleValue = 1.732050807568877d;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double cx;
     private readonly double cy;
     private readonly double a;
@@ -53,8 +51,6 @@ internal class PutninsP6Projection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Putnins_P6";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
         this.cx = this.Parameters.GetOptionalParameterValue("putp6_cx", DefaultCx);
         this.cy = this.Parameters.GetOptionalParameterValue("putp6_cy", DefaultCy);
         this.a = this.Parameters.GetOptionalParameterValue("putp6_a", DefaultA);
@@ -104,15 +100,15 @@ internal class PutninsP6Projection : MapProjection
         double x = this.cx * lambda * (this.d - sqrtOnePlusPhiSquared);
         double y = this.cy * phi;
 
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
         double phi = yy / this.cy;
         double r = Math.Sqrt(1d + (phi * phi));
         double denominator = this.cx * (this.d - r);

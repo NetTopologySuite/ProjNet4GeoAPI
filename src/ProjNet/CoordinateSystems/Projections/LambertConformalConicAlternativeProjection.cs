@@ -33,8 +33,6 @@ internal sealed class LambertConformalConicAlternativeProjection : MapProjection
     private const int MaximumIterations = 10;
     private const double DeltaTolerance = ProjectionConstants.Tolerance1E12;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double l;
     private readonly double m0;
     private readonly double r0;
@@ -58,8 +56,6 @@ internal sealed class LambertConformalConicAlternativeProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Lambert_Conformal_Conic_Alternative";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
 
         if (Math.Abs(this.latOrigin) < Eps10)
         {
@@ -95,15 +91,15 @@ internal sealed class LambertConformalConicAlternativeProjection : MapProjection
         double r = this.r0 - dr;
         double theta = lambda * this.l;
 
-        lon = this.radius * (r * Math.Sin(theta));
-        lat = this.radius * (this.r0 - (r * Math.Cos(theta)));
+        lon = this.SphericalRadius * (r * Math.Sin(theta));
+        lat = this.SphericalRadius * (this.r0 - (r * Math.Cos(theta)));
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xUnit = x * this.inverseRadius;
-        double yUnit = y * this.inverseRadius;
+        double xUnit = x * this.InverseSphericalRadius;
+        double yUnit = y * this.InverseSphericalRadius;
         double theta = Math.Atan2(xUnit, this.r0 - yUnit);
         double dr = yUnit - (xUnit * Math.Tan(0.5d * theta));
         double lambda = theta / this.l;

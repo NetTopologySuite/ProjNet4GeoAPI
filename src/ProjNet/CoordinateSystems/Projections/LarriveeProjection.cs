@@ -22,7 +22,6 @@ internal class LarriveeProjection : MapProjection
 {
     private const double Sixth = 0.16666666666666666d;
 
-    private readonly double radius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LarriveeProjection"/> class.
@@ -42,7 +41,6 @@ internal class LarriveeProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Larrivee";
-        this.radius = this.semiMajor * this.scaleFactor;
     }
 
     /// <inheritdoc />
@@ -66,8 +64,8 @@ internal class LarriveeProjection : MapProjection
 
         double x = 0.5d * lambda * (1d + Math.Sqrt(Math.Cos(lat)));
         double y = lat / denominator;
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />

@@ -31,7 +31,6 @@ internal class Winkel2Projection : MapProjection
     private const double FiniteDifferenceStep = 1e-8d;
     private const double MaximumCorrection = 0.3d;
 
-    private readonly double radius;
     private readonly double cosphi1;
 
     /// <summary>
@@ -52,7 +51,6 @@ internal class Winkel2Projection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Winkel_II";
-        this.radius = this.semiMajor * this.scaleFactor;
         double lat1Degrees = this.Parameters.GetOptionalParameterValue("lat_1", RadiansToDegrees(this.latOrigin), "standard_parallel_1");
         this.cosphi1 = Math.Cos(DegreesToRadians(lat1Degrees));
     }
@@ -86,15 +84,15 @@ internal class Winkel2Projection : MapProjection
         double x = 0.5d * lambda * (Math.Cos(phi) + this.cosphi1);
         double y = FortPi * (Math.Sin(phi) + yPrime);
 
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double targetX = x / this.radius;
-        double targetY = y / this.radius;
+        double targetX = x / this.SphericalRadius;
+        double targetY = y / this.SphericalRadius;
 
         double lambda = targetX;
         double phi = targetY;

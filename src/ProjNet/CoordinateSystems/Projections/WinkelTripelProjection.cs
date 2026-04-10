@@ -26,8 +26,6 @@ internal class WinkelTripelProjection : MapProjection
     /// </summary>
     private const double DefaultCosphi1 = 0.636619772367581343d;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double cosphi1;
 
     /// <summary>
@@ -48,8 +46,6 @@ internal class WinkelTripelProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Winkel_Tripel";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
 
         bool hasLat1 = this.Parameters.ContainsKey("lat_1") || this.Parameters.ContainsKey("standard_parallel_1");
         if (hasLat1)
@@ -80,15 +76,15 @@ internal class WinkelTripelProjection : MapProjection
     {
         double lambda = Adjust_lon(lon - this.centralMeridian);
         AitoffMath.Forward(lambda, lat, true, this.cosphi1, out double x, out double y);
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
 
         AitoffMath.Inverse(xx, yy, true, this.cosphi1, out double lambda, out double phi);
         x = Adjust_lon(this.centralMeridian + lambda);

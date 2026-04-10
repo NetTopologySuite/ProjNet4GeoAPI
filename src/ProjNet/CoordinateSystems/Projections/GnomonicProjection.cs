@@ -35,8 +35,6 @@ internal class GnomonicProjection : MapProjection
     private const double InverseDistanceTolerance = 1.4901161193847656e-10d;
 
     private readonly bool ellipsoidal;
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double sinPhi0;
     private readonly double cosPhi0;
     private readonly double flattening;
@@ -62,8 +60,6 @@ internal class GnomonicProjection : MapProjection
     {
         this.Name = "Gnomonic";
         this.ellipsoidal = this.es > 0d;
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1.0 / this.radius;
         Sincos(this.latOrigin, out this.sinPhi0, out this.cosPhi0);
         this.flattening = (this.semiMajor - this.semiMinor) / this.semiMajor;
         this.eccentricityPrimeSquared = ((this.semiMajor * this.semiMajor) - (this.semiMinor * this.semiMinor)) / (this.semiMinor * this.semiMinor);
@@ -101,8 +97,8 @@ internal class GnomonicProjection : MapProjection
         }
 
         double k = 1d / cosC;
-        lon = this.radius * k * cosPhi * Math.Sin(lambda);
-        lat = this.radius * k * ((this.cosPhi0 * sinPhi) - (this.sinPhi0 * cosPhi * cosLambda));
+        lon = this.SphericalRadius * k * cosPhi * Math.Sin(lambda);
+        lat = this.SphericalRadius * k * ((this.cosPhi0 * sinPhi) - (this.sinPhi0 * cosPhi * cosLambda));
     }
 
     /// <inheritdoc />
@@ -122,7 +118,7 @@ internal class GnomonicProjection : MapProjection
             return;
         }
 
-        double c = Math.Atan(rho * this.inverseRadius);
+        double c = Math.Atan(rho * this.InverseSphericalRadius);
         double sinC = Math.Sin(c);
         double cosC = Math.Cos(c);
 
@@ -237,7 +233,7 @@ internal class GnomonicProjection : MapProjection
         double rho = rhoProjected / this.scaleFactor;
         bool little = rho <= this.semiMajor;
         double iterationRho = little ? rho : 1d / rho;
-        double distance = this.semiMajor * Math.Atan(rho * this.inverseRadius);
+        double distance = this.semiMajor * Math.Atan(rho * this.InverseSphericalRadius);
         double tolerance = InverseDistanceTolerance * this.semiMajor;
 
         for (int iteration = 0; iteration < MaxInverseIterations; iteration++)

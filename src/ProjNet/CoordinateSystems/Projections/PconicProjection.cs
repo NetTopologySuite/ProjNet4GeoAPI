@@ -22,8 +22,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 internal class PconicProjection : MapProjection
 {
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double n;
     private readonly double sig;
     private readonly double c1;
@@ -48,8 +46,6 @@ internal class PconicProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Perspective_Conic";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
 
         double standardParallel1 = DegreesToRadians(this.Parameters.GetParameterValue("standard_parallel_1", "lat_1"));
         double standardParallel2 = DegreesToRadians(this.Parameters.GetParameterValue("standard_parallel_2", "lat_2"));
@@ -87,15 +83,15 @@ internal class PconicProjection : MapProjection
         double rho = this.c2 * (this.c1 - Math.Tan(lat - this.sig));
         double theta = this.n * Adjust_lon(lon - this.centralMeridian);
 
-        lon = this.radius * rho * Math.Sin(theta);
-        lat = this.radius * (this.rho0 - (rho * Math.Cos(theta)));
+        lon = this.SphericalRadius * rho * Math.Sin(theta);
+        lat = this.SphericalRadius * (this.rho0 - (rho * Math.Cos(theta)));
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xUnit = x * this.inverseRadius;
-        double yUnit = this.rho0 - (y * this.inverseRadius);
+        double xUnit = x * this.InverseSphericalRadius;
+        double yUnit = this.rho0 - (y * this.InverseSphericalRadius);
         double rho = Hypot(xUnit, yUnit);
 
         if (this.n < 0d)

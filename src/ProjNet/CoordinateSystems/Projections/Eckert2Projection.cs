@@ -26,8 +26,6 @@ internal class Eckert2Projection : MapProjection
     private const double C13 = ProjectionConstants.OneThird;
     private const double OneEps = ProjectionConstants.OnePlusEps7;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Eckert2Projection"/> class.
@@ -47,8 +45,6 @@ internal class Eckert2Projection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Eckert_II";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
     }
 
     /// <inheritdoc />
@@ -71,15 +67,15 @@ internal class Eckert2Projection : MapProjection
             y = -y;
         }
 
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
 
         double phiTmp = 2d - (Math.Abs(yy) / Fyc);
         double denominator = Fxc * phiTmp;

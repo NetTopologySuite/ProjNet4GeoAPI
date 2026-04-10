@@ -22,8 +22,6 @@ internal class UrmaevFlatPolarSinusoidalProjection : MapProjection
     private const double Cx = 0.8773826753d;
     private const double Cy = 1.139753528477d;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double n;
     private readonly double cY;
 
@@ -45,8 +43,6 @@ internal class UrmaevFlatPolarSinusoidalProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Urmaev_Flat_Polar_Sinusoidal";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
         this.n = this.Parameters.GetParameterValue("n");
         if (this.n <= 0d || this.n > 1d)
         {
@@ -69,15 +65,15 @@ internal class UrmaevFlatPolarSinusoidalProjection : MapProjection
     {
         double lambda = Adjust_lon(lon - this.centralMeridian);
         double phi = Asinz(this.n * Math.Sin(lat));
-        lon = this.radius * Cx * lambda * Math.Cos(phi);
-        lat = this.radius * this.cY * phi;
+        lon = this.SphericalRadius * Cx * lambda * Math.Cos(phi);
+        lat = this.SphericalRadius * this.cY * phi;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
         double phiNormalized = yy / this.cY;
         double phi = Asinz(Math.Sin(phiNormalized) / this.n);
         double denominator = Cx * Math.Cos(phiNormalized);

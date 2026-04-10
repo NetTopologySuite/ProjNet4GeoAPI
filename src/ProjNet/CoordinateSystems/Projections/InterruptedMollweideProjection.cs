@@ -37,8 +37,6 @@ internal class InterruptedMollweideProjection : InterruptedMollweideBaseProjecti
     private static readonly double D160 = DegreesToRadians(160d);
     private static readonly double D180 = DegreesToRadians(180d);
 
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly MollweideZoneDefinition[] zones;
     private readonly double boundary12;
     private readonly double boundary34;
@@ -63,8 +61,6 @@ internal class InterruptedMollweideProjection : InterruptedMollweideBaseProjecti
         : base(parameters, inverse)
     {
         this.Name = "Interrupted_Mollweide";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
 
         this.zones =
         [
@@ -103,15 +99,15 @@ internal class InterruptedMollweideProjection : InterruptedMollweideBaseProjecti
         int zone = DetermineForwardZone(lat, lambda);
         MollweideZoneDefinition def = this.zones[zone - 1];
         MollweideForwardUnit(lambda - def.Lambda0, lat, out double xUnit, out double yUnit);
-        lon = this.radius * (xUnit + def.X0);
-        lat = this.radius * (yUnit + def.Y0);
+        lon = this.SphericalRadius * (xUnit + def.X0);
+        lat = this.SphericalRadius * (yUnit + def.Y0);
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xUnit = x * this.inverseRadius;
-        double yUnit = y * this.inverseRadius;
+        double xUnit = x * this.InverseSphericalRadius;
+        double yUnit = y * this.InverseSphericalRadius;
         int zone = DetermineInverseZone(xUnit, yUnit, this.boundary12, this.boundary34, this.boundary45, this.boundary56);
         if (zone == 0)
         {

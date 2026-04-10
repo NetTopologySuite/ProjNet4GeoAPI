@@ -38,8 +38,6 @@ internal class AzimuthalEquidistantProjection : MapProjection
     private readonly bool ellipsoidal;
     private readonly bool guam;
     private readonly ProjectionMode mode;
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double sinPhi0;
     private readonly double cosPhi0;
     private readonly double meridionalOriginDistance;
@@ -68,8 +66,6 @@ internal class AzimuthalEquidistantProjection : MapProjection
         this.ellipsoidal = this.es > 0d;
         this.guam = this.ellipsoidal && Math.Abs(this.Parameters.GetOptionalParameterValue("guam", 0d)) > 0d;
         this.mode = DetermineMode(this.latOrigin);
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1.0 / this.radius;
         Sincos(this.latOrigin, out this.sinPhi0, out this.cosPhi0);
         this.flattening = (this.semiMajor - this.semiMinor) / this.semiMajor;
         this.eccentricityPrimeSquared = ((this.semiMajor * this.semiMajor) - (this.semiMinor * this.semiMinor)) / (this.semiMinor * this.semiMinor);
@@ -183,7 +179,7 @@ internal class AzimuthalEquidistantProjection : MapProjection
                 ArgumentGuard.ThrowArgumentOutOfRange(nameof(phi), "Coordinate is outside the valid Azimuthal Equidistant domain.");
             }
 
-            double rho = this.radius * (HalfPi + phi);
+            double rho = this.SphericalRadius * (HalfPi + phi);
             x = rho * Math.Sin(lambda);
             y = rho * cosineLambda;
             return;
@@ -210,8 +206,8 @@ internal class AzimuthalEquidistantProjection : MapProjection
 
             double c = Math.Acos(cosC);
             double k = c / Math.Sin(c);
-            x = this.radius * k * cosPhi * sinLambda;
-            y = this.radius * k * sinPhi;
+            x = this.SphericalRadius * k * cosPhi * sinLambda;
+            y = this.SphericalRadius * k * sinPhi;
             return;
         }
 
@@ -230,14 +226,14 @@ internal class AzimuthalEquidistantProjection : MapProjection
 
         double cOblique = Math.Acos(cosCOblique);
         double kOblique = cOblique / Math.Sin(cOblique);
-        x = this.radius * kOblique * cosPhi * sinLambda;
-        y = this.radius * kOblique * ((this.cosPhi0 * sinPhi) - (this.sinPhi0 * cosPhiCosLambda));
+        x = this.SphericalRadius * kOblique * cosPhi * sinLambda;
+        y = this.SphericalRadius * kOblique * ((this.cosPhi0 * sinPhi) - (this.sinPhi0 * cosPhiCosLambda));
     }
 
     private void InverseSpherical(double xMeter, double yMeter, out double lon, out double lat)
     {
-        double x = xMeter * this.inverseRadius;
-        double y = yMeter * this.inverseRadius;
+        double x = xMeter * this.InverseSphericalRadius;
+        double y = yMeter * this.InverseSphericalRadius;
 
         double rho = Hypot(x, y);
         if (rho > PI)
@@ -298,8 +294,8 @@ internal class AzimuthalEquidistantProjection : MapProjection
             cosineLambda = -cosineLambda;
         }
 
-        x = this.radius * rho * Math.Sin(lambda);
-        y = this.radius * rho * cosineLambda;
+        x = this.SphericalRadius * rho * Math.Sin(lambda);
+        y = this.SphericalRadius * rho * cosineLambda;
     }
 
     private void ForwardEllipsoidalGuam(double lambda, double phi, out double x, out double y)
@@ -307,14 +303,14 @@ internal class AzimuthalEquidistantProjection : MapProjection
         double cosPhi = Math.Cos(phi);
         double sinPhi = Math.Sin(phi);
         double t = 1d / Math.Sqrt(1d - (this.es * sinPhi * sinPhi));
-        x = this.radius * lambda * cosPhi * t;
-        y = this.radius * ((this.Mlfn(phi, sinPhi, cosPhi) - this.meridionalOriginDistance) + (0.5d * lambda * lambda * cosPhi * sinPhi * t));
+        x = this.SphericalRadius * lambda * cosPhi * t;
+        y = this.SphericalRadius * ((this.Mlfn(phi, sinPhi, cosPhi) - this.meridionalOriginDistance) + (0.5d * lambda * lambda * cosPhi * sinPhi * t));
     }
 
     private void InverseEllipsoidalPolar(ProjectionMode polarMode, double xMeter, double yMeter, out double lon, out double lat)
     {
-        double x = xMeter * this.inverseRadius;
-        double y = yMeter * this.inverseRadius;
+        double x = xMeter * this.InverseSphericalRadius;
+        double y = yMeter * this.InverseSphericalRadius;
         double rho = Hypot(x, y);
 
         lat = this.Inv_mlfn(
@@ -332,8 +328,8 @@ internal class AzimuthalEquidistantProjection : MapProjection
             ArgumentGuard.ThrowArgument("Scale factor must be non-zero for Guam Azimuthal Equidistant inverse.");
         }
 
-        double x = xMeter * this.inverseRadius;
-        double y = yMeter * this.inverseRadius;
+        double x = xMeter * this.InverseSphericalRadius;
+        double y = yMeter * this.InverseSphericalRadius;
         double xSquaredHalf = 0.5d * x * x;
         lat = this.latOrigin;
         double t = 0d;

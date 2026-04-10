@@ -19,8 +19,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 7, Sect. 7.9, pp. 215-217.</seealso>
 internal sealed class TwoPointEquidistantProjection : MapProjection
 {
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double cp1;
     private readonly double sp1;
     private readonly double cp2;
@@ -57,8 +55,6 @@ internal sealed class TwoPointEquidistantProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Two_Point_Equidistant";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
 
         double phi1 = DegreesToRadians(this.Parameters.GetParameterValue("lat_1", "standard_parallel_1"));
         double lam1 = DegreesToRadians(this.Parameters.GetParameterValue("lon_1"));
@@ -141,15 +137,15 @@ internal sealed class TwoPointEquidistantProjection : MapProjection
             yUnit = -yUnit;
         }
 
-        lon = this.radius * xUnit;
-        lat = this.radius * yUnit;
+        lon = this.SphericalRadius * xUnit;
+        lat = this.SphericalRadius * yUnit;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xUnit = x * this.inverseRadius;
-        double yUnit = y * this.inverseRadius;
+        double xUnit = x * this.InverseSphericalRadius;
+        double yUnit = y * this.InverseSphericalRadius;
 
         double cz1 = Math.Cos(Hypot(yUnit, xUnit + this.hz0));
         double cz2 = Math.Cos(Hypot(yUnit, xUnit - this.hz0));

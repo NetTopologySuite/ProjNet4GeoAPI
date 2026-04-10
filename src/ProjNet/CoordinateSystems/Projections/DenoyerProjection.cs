@@ -27,7 +27,6 @@ internal class DenoyerProjection : MapProjection
     private const double D1 = 0.9d;
     private const double D5 = 0.03d;
 
-    private readonly double radius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DenoyerProjection"/> class.
@@ -47,7 +46,6 @@ internal class DenoyerProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Denoyer_Semi_Elliptical";
-        this.radius = this.semiMajor * this.scaleFactor;
     }
 
     /// <inheritdoc />
@@ -69,8 +67,8 @@ internal class DenoyerProjection : MapProjection
             (C0 + (absLambda * (C1 + ((absLambda * absLambda) * C3))))
             * (lat * (D1 + (D5 * (lat * lat * lat * lat)))));
 
-        lon = this.radius * x;
-        lat = this.radius * lat;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * lat;
     }
 
     /// <inheritdoc />

@@ -28,8 +28,6 @@ internal sealed class McBrydeThomasFlatPoleSineProjection : MapProjection
     private const double CY = 1.44492d;
     private const double C1Over2 = 0.33333333333333333333333333d;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="McBrydeThomasFlatPoleSineProjection"/> class.
@@ -49,8 +47,6 @@ internal sealed class McBrydeThomasFlatPoleSineProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "McBryde_Thomas_Flat_Pole_Sine";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
     }
 
     /// <inheritdoc />
@@ -85,15 +81,15 @@ internal sealed class McBrydeThomasFlatPoleSineProjection : MapProjection
         }
 
         double tt = phi / C2;
-        lon = this.radius * (CX * lambda * (1d + ((3d * Math.Cos(phi)) / Math.Cos(tt))));
-        lat = this.radius * (CY * Math.Sin(tt));
+        lon = this.SphericalRadius * (CX * lambda * (1d + ((3d * Math.Cos(phi)) / Math.Cos(tt))));
+        lat = this.SphericalRadius * (CY * Math.Sin(tt));
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xUnit = x * this.inverseRadius;
-        double yUnit = y * this.inverseRadius;
+        double xUnit = x * this.InverseSphericalRadius;
+        double yUnit = y * this.InverseSphericalRadius;
         double t = Asinz(yUnit / CY);
         double phi = C2 * t;
         double denominator = CX * (1d + ((3d * Math.Cos(phi)) / Math.Cos(t)));

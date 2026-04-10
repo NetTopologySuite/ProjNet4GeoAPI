@@ -21,8 +21,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 internal class LoximuthalProjection : MapProjection
 {
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double referenceLatitude;
     private readonly double referenceMercatorTerm;
     private readonly double cosReferenceLatitude;
@@ -45,8 +43,6 @@ internal class LoximuthalProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Loximuthal";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
 
         this.referenceLatitude = DegreesToRadians(this.Parameters.GetOptionalParameterValue("lat_1", RadiansToDegrees(this.latOrigin), "latitude_of_origin"));
         this.cosReferenceLatitude = Math.Cos(this.referenceLatitude);
@@ -72,11 +68,11 @@ internal class LoximuthalProjection : MapProjection
         double lambda = Adjust_lon(lon - this.centralMeridian);
         double phi = lat;
         double deltaPhi = phi - this.referenceLatitude;
-        lat = this.radius * deltaPhi;
+        lat = this.SphericalRadius * deltaPhi;
 
         if (Math.Abs(deltaPhi) <= Eps10)
         {
-            lon = this.radius * lambda * this.cosReferenceLatitude;
+            lon = this.SphericalRadius * lambda * this.cosReferenceLatitude;
             return;
         }
 
@@ -84,27 +80,27 @@ internal class LoximuthalProjection : MapProjection
         double denominator = mercatorTerm - this.referenceMercatorTerm;
         if (Math.Abs(denominator) <= Eps10)
         {
-            lon = this.radius * lambda * this.cosReferenceLatitude;
+            lon = this.SphericalRadius * lambda * this.cosReferenceLatitude;
             return;
         }
 
-        lon = this.radius * lambda * deltaPhi / denominator;
+        lon = this.SphericalRadius * lambda * deltaPhi / denominator;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double lat = this.referenceLatitude + (y * this.inverseRadius);
+        double lat = this.referenceLatitude + (y * this.InverseSphericalRadius);
         double deltaPhi = lat - this.referenceLatitude;
 
-        double lambda = x * this.inverseRadius / this.cosReferenceLatitude;
+        double lambda = x * this.InverseSphericalRadius / this.cosReferenceLatitude;
         if (Math.Abs(deltaPhi) > Eps10)
         {
             double mercatorTerm = Math.Log(Math.Tan(FortPi + (0.5d * lat)));
             double numerator = mercatorTerm - this.referenceMercatorTerm;
             if (Math.Abs(numerator) > Eps10)
             {
-                lambda = (x * this.inverseRadius) * numerator / deltaPhi;
+                lambda = (x * this.InverseSphericalRadius) * numerator / deltaPhi;
             }
         }
 

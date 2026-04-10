@@ -26,8 +26,6 @@ internal class GeostationarySatelliteProjection : MapProjection
 {
     private const double MaximumHeightRatio = 1e10;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly bool flipAxis;
     private readonly double radiusP;
     private readonly double radiusP2;
@@ -55,8 +53,6 @@ internal class GeostationarySatelliteProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Geostationary_Satellite";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
 
         double h = this.Parameters.GetParameterValue("h", "satellite_height");
         this.radiusG1 = h / this.semiMajor;
@@ -101,21 +97,21 @@ internal class GeostationarySatelliteProjection : MapProjection
         if (this.ellipsoidal)
         {
             this.ForwardEllipsoidal(lambda, phi, out double xEllps, out double yEllps);
-            lon = this.radius * xEllps;
-            lat = this.radius * yEllps;
+            lon = this.SphericalRadius * xEllps;
+            lat = this.SphericalRadius * yEllps;
             return;
         }
 
         this.ForwardSpherical(lambda, phi, out double xSphere, out double ySphere);
-        lon = this.radius * xSphere;
-        lat = this.radius * ySphere;
+        lon = this.SphericalRadius * xSphere;
+        lat = this.SphericalRadius * ySphere;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
 
         if (this.ellipsoidal)
         {

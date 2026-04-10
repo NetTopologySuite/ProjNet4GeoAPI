@@ -25,8 +25,6 @@ internal class Eckert1Projection : MapProjection
     private const double Fc = 0.92131773192356127802d;
     private const double Rp = 0.31830988618379067154d;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Eckert1Projection"/> class.
@@ -46,8 +44,6 @@ internal class Eckert1Projection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Eckert_I";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
     }
 
     /// <inheritdoc />
@@ -65,15 +61,15 @@ internal class Eckert1Projection : MapProjection
         double x = Fc * lambda * (1d - (Rp * Math.Abs(lat)));
         double y = Fc * lat;
 
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
         double phi = yy / Fc;
         double denominator = Fc * (1d - (Rp * Math.Abs(phi)));
         if (Math.Abs(denominator) <= Eps10)

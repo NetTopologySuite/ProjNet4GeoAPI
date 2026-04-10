@@ -24,8 +24,6 @@ internal class FoucautSinusoidalProjection : MapProjection
     private const int MaximumIterations = 10;
     private const double LoopTolerance = 1e-7d;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double n;
     private readonly double n1;
 
@@ -47,8 +45,6 @@ internal class FoucautSinusoidalProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Foucaut_Sinusoidal";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
         this.n = this.Parameters.GetOptionalParameterValue("n", 0d);
         if (this.n < 0d || this.n > 1d)
         {
@@ -77,15 +73,15 @@ internal class FoucautSinusoidalProjection : MapProjection
             ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
-        lon = this.radius * (lambda * t / denominator);
-        lat = this.radius * ((this.n * lat) + (this.n1 * Math.Sin(lat)));
+        lon = this.SphericalRadius * (lambda * t / denominator);
+        lat = this.SphericalRadius * ((this.n * lat) + (this.n1 * Math.Sin(lat)));
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
         double phi = Asinz(yy);
         if (this.n != 0d)
         {

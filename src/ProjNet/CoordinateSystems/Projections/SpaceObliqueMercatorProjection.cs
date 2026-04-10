@@ -45,8 +45,6 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
     private readonly double rlm2;
     private readonly double oneEs;
     private readonly double roneEs;
-    private readonly double radius;
-    private readonly double inverseRadius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SpaceObliqueMercatorProjection"/> class.
@@ -87,8 +85,6 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
         }
 
         this.roneEs = 1d / this.oneEs;
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
 
         double esc = this.es * this.ca * this.ca;
         double ess = this.es * this.sa * this.sa;
@@ -191,15 +187,15 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
             + (this.c3 * Math.Sin(3d * lamdp))
             + ((tanph * this.xj) / d);
 
-        lon *= this.radius;
-        lat *= this.radius;
+        lon *= this.SphericalRadius;
+        lat *= this.SphericalRadius;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        x *= this.inverseRadius;
-        y *= this.inverseRadius;
+        x *= this.InverseSphericalRadius;
+        y *= this.InverseSphericalRadius;
 
         double lamdp = x / this.b;
         int nn = 50;

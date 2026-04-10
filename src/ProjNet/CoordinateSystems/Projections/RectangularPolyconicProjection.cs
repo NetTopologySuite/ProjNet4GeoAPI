@@ -20,7 +20,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 internal sealed class RectangularPolyconicProjection : MapProjection
 {
-    private readonly double radius;
     private readonly double modeFxa;
     private readonly double modeFxb;
     private readonly bool mode;
@@ -43,7 +42,6 @@ internal sealed class RectangularPolyconicProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Rectangular_Polyconic";
-        this.radius = this.semiMajor * this.scaleFactor;
 
         double phi1 = Math.Abs(DegreesToRadians(this.Parameters.GetOptionalParameterValue("lat_ts", 0d)));
         this.mode = phi1 > Eps10;
@@ -80,8 +78,8 @@ internal sealed class RectangularPolyconicProjection : MapProjection
             yUnit = (phi - this.latOrigin) + ((1d - Math.Cos(fa)) * yUnit);
         }
 
-        lon = this.radius * xUnit;
-        lat = this.radius * yUnit;
+        lon = this.SphericalRadius * xUnit;
+        lat = this.SphericalRadius * yUnit;
     }
 
     /// <inheritdoc />

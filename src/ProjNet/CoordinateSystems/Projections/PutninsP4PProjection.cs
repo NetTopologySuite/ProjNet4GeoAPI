@@ -23,8 +23,6 @@ internal class PutninsP4PProjection : MapProjection
     private const double DefaultCx = 0.874038744d;
     private const double DefaultCy = 3.883251825d;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double cx;
     private readonly double cy;
 
@@ -46,8 +44,6 @@ internal class PutninsP4PProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Putnins_P4P";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
         this.cx = this.Parameters.GetOptionalParameterValue("putp4p_cx", DefaultCx);
         this.cy = this.Parameters.GetOptionalParameterValue("putp4p_cy", DefaultCy);
     }
@@ -76,15 +72,15 @@ internal class PutninsP4PProjection : MapProjection
         x /= cosPhiThird;
         double y = this.cy * Math.Sin(phiThird);
 
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
 
         double phiThird = Asinz(yy / this.cy);
         double cosPhiThird = Math.Cos(phiThird);

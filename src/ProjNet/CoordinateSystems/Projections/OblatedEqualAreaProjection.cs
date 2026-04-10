@@ -18,8 +18,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 internal sealed class OblatedEqualAreaProjection : MapProjection
 {
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double theta;
     private readonly double m;
     private readonly double n;
@@ -50,8 +48,6 @@ internal sealed class OblatedEqualAreaProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Oblated_Equal_Area";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
 
         this.n = this.Parameters.GetParameterValue("n");
         if (this.n <= 0d)
@@ -112,15 +108,15 @@ internal sealed class OblatedEqualAreaProjection : MapProjection
         double yUnit = this.n * Math.Sin(nAngle * this.twoRN);
         double xUnit = this.m * Math.Sin(mAngle * this.twoRM) * Math.Cos(nAngle) / cosNScaled;
 
-        lon = this.radius * xUnit;
-        lat = this.radius * yUnit;
+        lon = this.SphericalRadius * xUnit;
+        lat = this.SphericalRadius * yUnit;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xUnit = x * this.inverseRadius;
-        double yUnit = y * this.inverseRadius;
+        double xUnit = x * this.InverseSphericalRadius;
+        double yUnit = y * this.InverseSphericalRadius;
 
         double nArg = ProjectionConstants.Clamp(yUnit * this.rn, -1d, 1d);
         double nAngle = this.hn * Math.Asin(nArg);

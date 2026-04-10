@@ -24,7 +24,6 @@ internal class Ginsburg8Projection : MapProjection
     private const double Cp = 0.162388d;
     private const double C12 = 0.08333333333333333d;
 
-    private readonly double radius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Ginsburg8Projection"/> class.
@@ -44,7 +43,6 @@ internal class Ginsburg8Projection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Ginsburg_VIII";
-        this.radius = this.semiMajor * this.scaleFactor;
     }
 
     /// <inheritdoc />
@@ -66,8 +64,8 @@ internal class Ginsburg8Projection : MapProjection
         t = lambda * lambda;
         x *= 0.87d - (Cl * t * t);
 
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />

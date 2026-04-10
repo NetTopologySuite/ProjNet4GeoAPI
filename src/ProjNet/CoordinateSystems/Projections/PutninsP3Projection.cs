@@ -21,8 +21,6 @@ internal class PutninsP3Projection : MapProjection
     private const double C = 0.79788456d;
     private const double DefaultA = 4d * 0.1013211836d;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double a;
 
     /// <summary>
@@ -43,8 +41,6 @@ internal class PutninsP3Projection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Putnins_P3";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
         this.a = this.Parameters.GetOptionalParameterValue("putp3_a", DefaultA);
     }
 
@@ -63,15 +59,15 @@ internal class PutninsP3Projection : MapProjection
         double x = C * lambda * (1d - (this.a * lat * lat));
         double y = C * lat;
 
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
 
         double phi = yy / C;
         double denominator = C * (1d - (this.a * phi * phi));

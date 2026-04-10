@@ -28,8 +28,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 2, Sect. 2.2.2, pp. 67-68.</seealso>
 internal class SinusoidalProjection : MapProjection
 {
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly bool isEllipsoidal;
 
     /// <summary>
@@ -50,8 +48,6 @@ internal class SinusoidalProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Sinusoidal";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
         this.isEllipsoidal = this.es > 0d;
     }
 
@@ -73,20 +69,20 @@ internal class SinusoidalProjection : MapProjection
         {
             double sinPhi = Math.Sin(phi);
             double cosPhi = Math.Cos(phi);
-            lat = this.radius * this.Mlfn(phi, sinPhi, cosPhi);
-            lon = this.radius * lambda * cosPhi / Math.Sqrt(1d - (this.es * sinPhi * sinPhi));
+            lat = this.SphericalRadius * this.Mlfn(phi, sinPhi, cosPhi);
+            lon = this.SphericalRadius * lambda * cosPhi / Math.Sqrt(1d - (this.es * sinPhi * sinPhi));
             return;
         }
 
-        lon = this.radius * lambda * Math.Cos(phi);
-        lat = this.radius * phi;
+        lon = this.SphericalRadius * lambda * Math.Cos(phi);
+        lat = this.SphericalRadius * phi;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xUnit = x * this.inverseRadius;
-        double yUnit = y * this.inverseRadius;
+        double xUnit = x * this.InverseSphericalRadius;
+        double yUnit = y * this.InverseSphericalRadius;
 
         if (this.isEllipsoidal)
         {

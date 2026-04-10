@@ -21,7 +21,6 @@ internal class VanDerGrinten3Projection : MapProjection
 {
     private const double Tolerance = 1e-10d;
 
-    private readonly double radius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="VanDerGrinten3Projection"/> class.
@@ -41,7 +40,6 @@ internal class VanDerGrinten3Projection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Van_der_Grinten_III";
-        this.radius = this.semiMajor * this.scaleFactor;
     }
 
     /// <inheritdoc />
@@ -88,8 +86,8 @@ internal class VanDerGrinten3Projection : MapProjection
             }
         }
 
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />

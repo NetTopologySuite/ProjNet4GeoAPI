@@ -22,7 +22,6 @@ internal class ChamberlinTrimetricProjection : MapProjection
     private const double Third = 0.333333333333333333d;
     private const double Tolerance = 1e-9d;
 
-    private readonly double radius;
     private readonly ControlPoint[] control = [new(), new(), new()];
     private readonly Point meanPoint = new();
     private readonly double beta1;
@@ -46,7 +45,6 @@ internal class ChamberlinTrimetricProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Chamberlin_Trimetric";
-        this.radius = this.semiMajor * this.scaleFactor;
 
         for (int i = 0; i < 3; i++)
         {
@@ -166,8 +164,8 @@ internal class ChamberlinTrimetricProjection : MapProjection
             y *= Third;
         }
 
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />

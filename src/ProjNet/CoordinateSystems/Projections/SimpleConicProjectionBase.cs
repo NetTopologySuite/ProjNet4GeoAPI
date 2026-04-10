@@ -23,8 +23,6 @@ using System.Collections.Generic;
 /// </remarks>
 internal abstract class SimpleConicProjectionBase : MapProjection
 {
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly SimpleConicType type;
     private readonly double n;
     private readonly double rhoC;
@@ -47,8 +45,6 @@ internal abstract class SimpleConicProjectionBase : MapProjection
     {
         this.type = type;
         this.Name = name;
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
 
         double phi1 = DegreesToRadians(this.Parameters.GetParameterValue("lat_1", "standard_parallel_1"));
         double phi2 = DegreesToRadians(this.Parameters.GetParameterValue("lat_2", "standard_parallel_2"));
@@ -135,15 +131,15 @@ internal abstract class SimpleConicProjectionBase : MapProjection
             : this.rhoC - lat;
         double theta = lambda * this.n;
 
-        lon = this.radius * rho * Math.Sin(theta);
-        lat = this.radius * (this.rho0 - (rho * Math.Cos(theta)));
+        lon = this.SphericalRadius * rho * Math.Sin(theta);
+        lat = this.SphericalRadius * (this.rho0 - (rho * Math.Cos(theta)));
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xUnit = x * this.inverseRadius;
-        double yUnit = this.rho0 - (y * this.inverseRadius);
+        double xUnit = x * this.InverseSphericalRadius;
+        double yUnit = this.rho0 - (y * this.InverseSphericalRadius);
         double rho = Hypot(xUnit, yUnit);
         if (this.n < 0d)
         {

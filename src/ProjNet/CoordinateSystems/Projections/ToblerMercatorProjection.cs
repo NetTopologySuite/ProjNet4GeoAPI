@@ -18,8 +18,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 internal class ToblerMercatorProjection : MapProjection
 {
-    private readonly double radius;
-    private readonly double inverseRadius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ToblerMercatorProjection"/> class.
@@ -39,8 +37,6 @@ internal class ToblerMercatorProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Tobler_Mercator";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
     }
 
     /// <inheritdoc />
@@ -61,15 +57,15 @@ internal class ToblerMercatorProjection : MapProjection
 
         double lambda = Adjust_lon(lon - this.centralMeridian);
         double cosPhi = Math.Cos(lat);
-        lon = this.radius * lambda * cosPhi * cosPhi;
-        lat = this.radius * Math.Log(Math.Tan(FortPi + (0.5d * lat)));
+        lon = this.SphericalRadius * lambda * cosPhi * cosPhi;
+        lat = this.SphericalRadius * Math.Log(Math.Tan(FortPi + (0.5d * lat)));
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        y = Math.Atan(Math.Sinh(y * this.inverseRadius));
+        y = Math.Atan(Math.Sinh(y * this.InverseSphericalRadius));
         double cosPhi = Math.Cos(y);
-        x = Adjust_lon(this.centralMeridian + ((x * this.inverseRadius) / (cosPhi * cosPhi)));
+        x = Adjust_lon(this.centralMeridian + ((x * this.InverseSphericalRadius) / (cosPhi * cosPhi)));
     }
 }

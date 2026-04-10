@@ -30,8 +30,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 2, Sect. 2.1.4, pp. 53-55.</seealso>
 internal class EquidistantCylindricalProjection : MapProjection
 {
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double longitudeScale;
     private readonly double meridionalDistanceAtOrigin;
     private readonly bool isEllipsoidal;
@@ -55,8 +53,6 @@ internal class EquidistantCylindricalProjection : MapProjection
     {
         this.Name = "Equidistant_Cylindrical";
         this.isEllipsoidal = this.es > 0d;
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
 
         double standardParallel = DegreesToRadians(this.Parameters.GetOptionalParameterValue("standard_parallel_1", 0d, "lat_ts", "latitude_true_scale", "latitude_of_true_scale"));
         double cosStandardParallel = Math.Cos(standardParallel);
@@ -90,28 +86,28 @@ internal class EquidistantCylindricalProjection : MapProjection
     protected override void RadiansToMeters(ref double lon, ref double lat)
     {
         double lambda = Adjust_lon(lon - this.centralMeridian);
-        lon = this.radius * lambda * this.longitudeScale;
+        lon = this.SphericalRadius * lambda * this.longitudeScale;
 
         if (this.isEllipsoidal)
         {
-            lat = this.radius * (this.Mlfn(lat, Math.Sin(lat), Math.Cos(lat)) - this.meridionalDistanceAtOrigin);
+            lat = this.SphericalRadius * (this.Mlfn(lat, Math.Sin(lat), Math.Cos(lat)) - this.meridionalDistanceAtOrigin);
             return;
         }
 
-        lat = this.radius * (lat - this.latOrigin);
+        lat = this.SphericalRadius * (lat - this.latOrigin);
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        x = Adjust_lon(this.centralMeridian + ((x * this.inverseRadius) / this.longitudeScale));
+        x = Adjust_lon(this.centralMeridian + ((x * this.InverseSphericalRadius) / this.longitudeScale));
 
         if (this.isEllipsoidal)
         {
-            y = this.Inv_mlfn((y * this.inverseRadius) + this.meridionalDistanceAtOrigin);
+            y = this.Inv_mlfn((y * this.InverseSphericalRadius) + this.meridionalDistanceAtOrigin);
             return;
         }
 
-        y = this.latOrigin + (y * this.inverseRadius);
+        y = this.latOrigin + (y * this.InverseSphericalRadius);
     }
 }

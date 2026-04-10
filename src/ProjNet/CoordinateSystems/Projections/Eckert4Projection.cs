@@ -37,8 +37,6 @@ internal class Eckert4Projection : MapProjection
     private const int Iterations = 6;
     private const double Epsilon = 1e-7;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Eckert4Projection"/> class.
@@ -58,8 +56,6 @@ internal class Eckert4Projection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Eckert_IV";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
     }
 
     /// <inheritdoc />
@@ -98,15 +94,15 @@ internal class Eckert4Projection : MapProjection
             ? (theta < 0d ? -Cy : Cy)
             : Cy * Math.Sin(theta);
 
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
         double sinTheta = yy * RCy;
         double absSinTheta = Math.Abs(sinTheta);
         if (absSinTheta > OneTol)

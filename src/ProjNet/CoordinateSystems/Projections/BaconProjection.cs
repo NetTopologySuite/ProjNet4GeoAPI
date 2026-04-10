@@ -23,7 +23,6 @@ internal class BaconProjection : MapProjection
     private const double HalfPiSquared = 2.46740110027233965467d;
     private const double Epsilon = 1e-10d;
 
-    private readonly double radius;
     private readonly bool bacon;
     private readonly bool ortelius;
 
@@ -63,7 +62,6 @@ internal class BaconProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = name;
-        this.radius = this.semiMajor * this.scaleFactor;
         this.bacon = bacon;
         this.ortelius = ortelius;
     }
@@ -103,8 +101,8 @@ internal class BaconProjection : MapProjection
             }
         }
 
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />

@@ -79,8 +79,6 @@ internal class RobinsonProjection : MapProjection
         new(1.0f, 0.00328947f, -0.000319159f, -4.2106e-06f),
     ];
 
-    private readonly double radius;
-    private readonly double inverseRadius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="RobinsonProjection"/> class.
@@ -100,8 +98,6 @@ internal class RobinsonProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Robinson";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1.0 / this.radius;
     }
 
     /// <inheritdoc />
@@ -128,15 +124,15 @@ internal class RobinsonProjection : MapProjection
         double xCoeff = Evaluate(CoeffX[index], dphi);
         double yCoeff = Evaluate(CoeffY[index], dphi);
 
-        lon = this.radius * XScale * lambda * xCoeff;
-        lat = this.radius * YScale * yCoeff * Sign(lat);
+        lon = this.SphericalRadius * XScale * lambda * xCoeff;
+        lat = this.SphericalRadius * YScale * yCoeff * Sign(lat);
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double normalizedY = Math.Abs(y) * this.inverseRadius / YScale;
-        double lambda = x * this.inverseRadius / XScale;
+        double normalizedY = Math.Abs(y) * this.InverseSphericalRadius / YScale;
+        double lambda = x * this.InverseSphericalRadius / XScale;
 
         if (normalizedY >= 1d)
         {

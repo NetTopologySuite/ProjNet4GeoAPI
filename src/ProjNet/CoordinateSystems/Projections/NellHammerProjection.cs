@@ -23,8 +23,6 @@ internal class NellHammerProjection : MapProjection
     private const int Iterations = 9;
     private const double Epsilon = 1e-7d;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NellHammerProjection"/> class.
@@ -44,8 +42,6 @@ internal class NellHammerProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Nell_Hammer";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
     }
 
     /// <inheritdoc />
@@ -62,15 +58,15 @@ internal class NellHammerProjection : MapProjection
         double lambda = Adjust_lon(lon - this.centralMeridian);
         double x = 0.5d * lambda * (1d + Math.Cos(lat));
         double y = 2d * (lat - Math.Tan(0.5d * lat));
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
 
         double p = 0.5d * yy;
         double phi = 0d;

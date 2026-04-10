@@ -97,8 +97,6 @@ internal sealed class IseaProjection : MapProjection
         new GeoPoint(-ERad, 180d * DegToRad),
     ];
 
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly IseaOutputMode outputMode;
     private readonly int aperture;
     private readonly int resolution;
@@ -129,8 +127,6 @@ internal sealed class IseaProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Icosahedral_Snyder_Equal_Area";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
 
         int orientationCode = ReadDiscreteCode(
             this.Parameters.GetOptionalParameterValue("isea_orient", OrientIsea, "orient"),
@@ -212,8 +208,8 @@ internal sealed class IseaProjection : MapProjection
 
         IseaTriPlane(triangle, ref projected);
 
-        lon = projected.X * this.radius;
-        lat = projected.Y * this.radius;
+        lon = projected.X * this.SphericalRadius;
+        lat = projected.Y * this.SphericalRadius;
     }
 
     /// <inheritdoc />
@@ -224,8 +220,8 @@ internal sealed class IseaProjection : MapProjection
             throw new InvalidOperationException("ISEA does not support inverse projection for this parameter set in this wave.");
         }
 
-        double normalizedX = x * this.inverseRadius;
-        double normalizedY = y * this.inverseRadius;
+        double normalizedX = x * this.InverseSphericalRadius;
+        double normalizedY = y * this.InverseSphericalRadius;
 
         double shiftedX = normalizedX + this.planarState.XOffset;
         double shiftedY = normalizedY + this.planarState.YOffset;

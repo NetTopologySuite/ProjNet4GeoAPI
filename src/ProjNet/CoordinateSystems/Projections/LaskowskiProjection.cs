@@ -30,7 +30,6 @@ internal class LaskowskiProjection : MapProjection
     private const double B23 = -0.02855d;
     private const double B05 = -0.0491032d;
 
-    private readonly double radius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="LaskowskiProjection"/> class.
@@ -50,7 +49,6 @@ internal class LaskowskiProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Laskowski";
-        this.radius = this.semiMajor * this.scaleFactor;
     }
 
     /// <inheritdoc />
@@ -70,8 +68,8 @@ internal class LaskowskiProjection : MapProjection
         double p2 = lat * lat;
         double x = lambda * (A10 + (p2 * (A12 + (l2 * A32) + (p2 * A14))));
         double y = lat * (B01 + (l2 * (B21 + (p2 * B23) + (l2 * B41))) + (p2 * (B03 + (p2 * B05))));
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />

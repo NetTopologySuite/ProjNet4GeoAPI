@@ -20,8 +20,6 @@ internal class LagrangeProjection : MapProjection
 {
     private const double Tolerance = 1e-10d;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double a1;
     private readonly double a2;
     private readonly double hrw;
@@ -47,8 +45,6 @@ internal class LagrangeProjection : MapProjection
         : base(MergeDefaults(parameters), inverse)
     {
         this.Name = "Lagrange";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
 
         this.w = this.Parameters.GetOptionalParameterValue("W", 2d);
         if (this.w <= 0d)
@@ -98,15 +94,15 @@ internal class LagrangeProjection : MapProjection
             y = (v - (1d / v)) / c;
         }
 
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
         double phi = yy < 0d ? -HalfPi : HalfPi;
         double lambda = 0d;
         if (Math.Abs(Math.Abs(yy) - 2d) >= Tolerance)

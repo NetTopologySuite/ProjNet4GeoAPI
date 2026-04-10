@@ -27,8 +27,6 @@ internal class Eckert5Projection : MapProjection
     private const double Yf = 0.88202554344910296438d;
     private const double Ryf = 1.13375401361911319568d;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Eckert5Projection"/> class.
@@ -48,8 +46,6 @@ internal class Eckert5Projection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Eckert_V";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
     }
 
     /// <inheritdoc />
@@ -66,15 +62,15 @@ internal class Eckert5Projection : MapProjection
         double lambda = Adjust_lon(lon - this.centralMeridian);
         double x = Xf * (1d + Math.Cos(lat)) * lambda;
         double y = Yf * lat;
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
         double phi = Ryf * yy;
         double denominator = 1d + Math.Cos(phi);
         if (Math.Abs(denominator) <= Eps10)

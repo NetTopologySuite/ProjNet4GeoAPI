@@ -28,7 +28,6 @@ internal class BoggsProjection : MapProjection
     private const double Fxc2 = 1.11072d;
     private const double Fyc = 0.49931d;
 
-    private readonly double radius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="BoggsProjection"/> class.
@@ -48,7 +47,6 @@ internal class BoggsProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Boggs";
-        this.radius = this.semiMajor * this.scaleFactor;
     }
 
     /// <inheritdoc />
@@ -90,8 +88,8 @@ internal class BoggsProjection : MapProjection
         }
 
         double y = Fyc * (lat + (Math.Sqrt(2d) * Math.Sin(theta)));
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />

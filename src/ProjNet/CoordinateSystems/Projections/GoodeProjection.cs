@@ -35,8 +35,6 @@ internal class GoodeProjection : MapProjection
     private const double PhiLim = 0.71093078197902358062;
     private static readonly double Sqrt2 = Math.Sqrt(2d);
 
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly bool isEllipsoidal;
     private readonly double oneEs;
     private readonly double qp;
@@ -60,8 +58,6 @@ internal class GoodeProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Goode_Homolosine";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
         this.isEllipsoidal = this.es > 0d;
         if (this.isEllipsoidal)
         {
@@ -99,15 +95,15 @@ internal class GoodeProjection : MapProjection
             yUnit -= phi >= 0d ? YCor : -YCor;
         }
 
-        lon = this.radius * xUnit;
-        lat = this.radius * yUnit;
+        lon = this.SphericalRadius * xUnit;
+        lat = this.SphericalRadius * yUnit;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xUnit = x * this.inverseRadius;
-        double yUnit = y * this.inverseRadius;
+        double xUnit = x * this.InverseSphericalRadius;
+        double yUnit = y * this.InverseSphericalRadius;
 
         double phi = yUnit;
         double cosPhi = Math.Cos(phi);

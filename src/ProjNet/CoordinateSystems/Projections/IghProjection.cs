@@ -45,8 +45,6 @@ internal class IghProjection : MapProjection
     private static readonly double D160 = DegreesToRadians(160d);
     private static readonly double D180 = DegreesToRadians(180d);
 
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double dy0;
     private readonly ZoneDefinition[] zones;
 
@@ -68,8 +66,6 @@ internal class IghProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Interrupted_Goode_Homolosine";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
 
         MollweideForwardUnit(0d, PhiBoundary, out _, out double mollweideBoundaryY);
         this.dy0 = PhiBoundary - mollweideBoundaryY;
@@ -99,15 +95,15 @@ internal class IghProjection : MapProjection
             MollweideForwardUnit(localLambda, lat, out xUnit, out yUnit);
         }
 
-        lon = this.radius * (zone.X0 + xUnit);
-        lat = this.radius * (zone.Y0 + yUnit);
+        lon = this.SphericalRadius * (zone.X0 + xUnit);
+        lat = this.SphericalRadius * (zone.Y0 + yUnit);
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xUnit = x * this.inverseRadius;
-        double yUnit = y * this.inverseRadius;
+        double xUnit = x * this.InverseSphericalRadius;
+        double yUnit = y * this.InverseSphericalRadius;
         int zoneIndex = DetermineInverseZone(xUnit, yUnit, this.dy0);
         if (zoneIndex < 0)
         {

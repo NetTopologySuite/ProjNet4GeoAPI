@@ -28,7 +28,6 @@ internal class AugustProjection : MapProjection
 {
     private const double M = 1.333333333333333d;
 
-    private readonly double radius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AugustProjection"/> class.
@@ -48,7 +47,6 @@ internal class AugustProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "August_Epicycloidal";
-        this.radius = this.semiMajor * this.scaleFactor;
     }
 
     /// <inheritdoc />
@@ -78,8 +76,8 @@ internal class AugustProjection : MapProjection
         double x12 = x1 * x1;
         double y12 = y1 * y1;
 
-        lon = this.radius * (M * x1 * (3d + x12 - (3d * y12)));
-        lat = this.radius * (M * y1 * (3d + (3d * x12) - y12));
+        lon = this.SphericalRadius * (M * x1 * (3d + x12 - (3d * y12)));
+        lat = this.SphericalRadius * (M * y1 * (3d + (3d * x12) - y12));
     }
 
     /// <inheritdoc />

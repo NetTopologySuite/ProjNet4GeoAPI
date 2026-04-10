@@ -33,8 +33,6 @@ internal class HatanoProjection : MapProjection
     private const double Fxc = 0.85d;
     private const double Rxc = 1.17647058823529411764d;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="HatanoProjection"/> class.
@@ -54,8 +52,6 @@ internal class HatanoProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Hatano";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
     }
 
     /// <inheritdoc />
@@ -92,15 +88,15 @@ internal class HatanoProjection : MapProjection
         double x = Fxc * lambda * Math.Cos(phi);
         double y = Math.Sin(phi) * (phi < 0d ? Fycs : Fycn);
 
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
         double th = yy * (yy < 0d ? Rycs : Rycn);
         double absTh = Math.Abs(th);
         if (absTh > 1d)

@@ -22,7 +22,6 @@ internal class NicolosiProjection : MapProjection
 {
     private const double Epsilon = 1e-10d;
 
-    private readonly double radius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NicolosiProjection"/> class.
@@ -42,7 +41,6 @@ internal class NicolosiProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Nicolosi";
-        this.radius = this.semiMajor * this.scaleFactor;
     }
 
     /// <inheritdoc />
@@ -96,8 +94,8 @@ internal class NicolosiProjection : MapProjection
             y = HalfPi * (n + (lat < 0d ? yTerm : -yTerm));
         }
 
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />

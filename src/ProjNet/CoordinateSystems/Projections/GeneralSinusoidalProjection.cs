@@ -24,8 +24,6 @@ internal class GeneralSinusoidalProjection : MapProjection
     private const int MaximumIterations = 8;
     private const double LoopTolerance = 1e-7;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double m;
     private readonly double n;
     private readonly double cX;
@@ -49,8 +47,6 @@ internal class GeneralSinusoidalProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "General_Sinusoidal";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
         this.n = this.Parameters.GetParameterValue("n");
         this.m = this.Parameters.GetParameterValue("m");
 
@@ -111,15 +107,15 @@ internal class GeneralSinusoidalProjection : MapProjection
             }
         }
 
-        lon = this.radius * this.cX * lambda * (this.m + Math.Cos(phi));
-        lat = this.radius * this.cY * phi;
+        lon = this.SphericalRadius * this.cX * lambda * (this.m + Math.Cos(phi));
+        lat = this.SphericalRadius * this.cY * phi;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
         double phiNormalized = yy / this.cY;
         double phi = this.m != 0d
             ? Asinz(((this.m * phiNormalized) + Math.Sin(phiNormalized)) / this.n)

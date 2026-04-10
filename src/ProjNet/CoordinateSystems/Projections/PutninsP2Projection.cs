@@ -25,8 +25,6 @@ internal class PutninsP2Projection : MapProjection
     private const int Iterations = 10;
     private const double PiDiv3 = 1.0471975511965977d;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PutninsP2Projection"/> class.
@@ -46,8 +44,6 @@ internal class PutninsP2Projection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Putnins_P2";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
     }
 
     /// <inheritdoc />
@@ -93,15 +89,15 @@ internal class PutninsP2Projection : MapProjection
         double x = Cx * lambda * (Math.Cos(phi) - 0.5d);
         double y = Cy * Math.Sin(phi);
 
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
 
         double phi = Asinz(yy / Cy);
         double cosPhi = Math.Cos(phi);

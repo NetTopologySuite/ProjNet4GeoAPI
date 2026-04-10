@@ -26,8 +26,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 6, Sect. 6.3.8, pp. 182-184.</seealso>
 internal class MillerCylindricalProjection : MapProjection
 {
-    private readonly double radius;
-    private readonly double inverseRadius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MillerCylindricalProjection"/> class.
@@ -47,8 +45,6 @@ internal class MillerCylindricalProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Miller_Cylindrical";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
     }
 
     /// <inheritdoc />
@@ -75,14 +71,14 @@ internal class MillerCylindricalProjection : MapProjection
         }
 
         double lambda = Adjust_lon(lon - this.centralMeridian);
-        lon = this.radius * lambda;
-        lat = this.radius * 1.25d * Math.Log(Math.Tan(FortPi + (0.4d * lat)));
+        lon = this.SphericalRadius * lambda;
+        lat = this.SphericalRadius * 1.25d * Math.Log(Math.Tan(FortPi + (0.4d * lat)));
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        x = Adjust_lon(this.centralMeridian + (x * this.inverseRadius));
-        y = 2.5d * (Math.Atan(Math.Exp((0.8d * y) * this.inverseRadius)) - FortPi);
+        x = Adjust_lon(this.centralMeridian + (x * this.InverseSphericalRadius));
+        y = 2.5d * (Math.Atan(Math.Exp((0.8d * y) * this.InverseSphericalRadius)) - FortPi);
     }
 }

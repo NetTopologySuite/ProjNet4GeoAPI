@@ -24,8 +24,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://mathworld.wolfram.com/Hammer-AitoffEqual-AreaProjection.html">MathWorld: Hammer-Aitoff Equal-Area Projection.</seealso>
 internal class HammerProjection : MapProjection
 {
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double w;
     private readonly double m;
     private readonly double inverseM;
@@ -48,8 +46,6 @@ internal class HammerProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Hammer";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
 
         this.w = Math.Abs(this.Parameters.GetOptionalParameterValue("W", 0.5d, "w"));
         if (this.w <= 0d)
@@ -86,15 +82,15 @@ internal class HammerProjection : MapProjection
         }
 
         double d = Math.Sqrt(2d / denominator);
-        lon = this.radius * ((this.m / this.w) * d * cosPhi * Math.Sin(lambda));
-        lat = this.radius * (this.inverseM * d * Math.Sin(lat));
+        lon = this.SphericalRadius * ((this.m / this.w) * d * cosPhi * Math.Sin(lambda));
+        lat = this.SphericalRadius * (this.inverseM * d * Math.Sin(lat));
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xUnit = x * this.inverseRadius;
-        double yUnit = y * this.inverseRadius;
+        double xUnit = x * this.InverseSphericalRadius;
+        double yUnit = y * this.InverseSphericalRadius;
 
         double z = 1d - (0.25d * this.w * this.w * xUnit * xUnit) - (0.25d * yUnit * yUnit);
         if (z < 0d)

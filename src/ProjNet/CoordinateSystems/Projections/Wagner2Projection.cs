@@ -23,8 +23,6 @@ internal class Wagner2Projection : MapProjection
     private const double Cp1 = 0.88022d;
     private const double Cp2 = 0.88550d;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Wagner2Projection"/> class.
@@ -44,8 +42,6 @@ internal class Wagner2Projection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Wagner_II";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
     }
 
     /// <inheritdoc />
@@ -64,15 +60,15 @@ internal class Wagner2Projection : MapProjection
         double x = Cx * lambda * Math.Cos(phi);
         double y = Cy * phi;
 
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
 
         double phi = yy / Cy;
         double denominator = Cx * Math.Cos(phi);

@@ -27,8 +27,6 @@ internal class PattersonProjection : MapProjection
     private const double K4 = 0.02406d;
     private const int Iterations = 12;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double maxY;
 
     /// <summary>
@@ -49,8 +47,6 @@ internal class PattersonProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Patterson";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
         this.maxY = ForwardPolynomial(HalfPi);
     }
 
@@ -66,16 +62,16 @@ internal class PattersonProjection : MapProjection
     protected override void RadiansToMeters(ref double lon, ref double lat)
     {
         double lambda = Adjust_lon(lon - this.centralMeridian);
-        lon = this.radius * lambda;
-        lat = this.radius * ForwardPolynomial(lat);
+        lon = this.SphericalRadius * lambda;
+        lat = this.SphericalRadius * ForwardPolynomial(lat);
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        x = Adjust_lon(this.centralMeridian + (x * this.inverseRadius));
+        x = Adjust_lon(this.centralMeridian + (x * this.InverseSphericalRadius));
 
-        double targetY = ProjectionConstants.Clamp(y * this.inverseRadius, -this.maxY, this.maxY);
+        double targetY = ProjectionConstants.Clamp(y * this.InverseSphericalRadius, -this.maxY, this.maxY);
         double phi = targetY / K1;
 
         for (int i = 0; i < Iterations; i++)

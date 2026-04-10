@@ -21,7 +21,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 internal class TransverseCentralCylindricalProjection : MapProjection
 {
-    private readonly double radius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TransverseCentralCylindricalProjection"/> class.
@@ -41,7 +40,6 @@ internal class TransverseCentralCylindricalProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Transverse_Central_Cylindrical";
-        this.radius = this.semiMajor * this.scaleFactor;
     }
 
     /// <inheritdoc />
@@ -66,8 +64,8 @@ internal class TransverseCentralCylindricalProjection : MapProjection
 
         double x = b / Math.Sqrt(bt);
         double y = Math.Atan2(Math.Tan(lat), Math.Cos(lambda));
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />

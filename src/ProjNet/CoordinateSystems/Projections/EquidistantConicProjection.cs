@@ -32,8 +32,6 @@ internal class EquidistantConicProjection : MapProjection
 {
     private const double Epsilon = 1e-10d;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly bool ellipsoidal;
     private readonly double n;
     private readonly double g;
@@ -57,8 +55,6 @@ internal class EquidistantConicProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Equidistant_Conic";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
         this.ellipsoidal = this.es > 0d;
 
         double standardParallel1 = DegreesToRadians(this.Parameters.GetParameterValue("standard_parallel_1", "lat_1"));
@@ -127,15 +123,15 @@ internal class EquidistantConicProjection : MapProjection
                 ? this.Mlfn(lat, Math.Sin(lat), Math.Cos(lat))
                 : lat);
 
-        lon = this.radius * rho * Math.Sin(theta);
-        lat = this.radius * (this.rho0 - (rho * Math.Cos(theta)));
+        lon = this.SphericalRadius * rho * Math.Sin(theta);
+        lat = this.SphericalRadius * (this.rho0 - (rho * Math.Cos(theta)));
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xUnit = x * this.inverseRadius;
-        double yUnit = y * this.inverseRadius;
+        double xUnit = x * this.InverseSphericalRadius;
+        double yUnit = y * this.InverseSphericalRadius;
         double rhoPrime = this.rho0 - yUnit;
         double rho = Sign(this.n) * Math.Sqrt((xUnit * xUnit) + (rhoPrime * rhoPrime));
 

@@ -23,8 +23,6 @@ internal class FaheyProjection : MapProjection
     private const double XFactor = 0.819152d;
     private const double YFactor = 1.819152d;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FaheyProjection"/> class.
@@ -44,8 +42,6 @@ internal class FaheyProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Fahey";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
     }
 
     /// <inheritdoc />
@@ -64,15 +60,15 @@ internal class FaheyProjection : MapProjection
         double y = YFactor * t;
         double x = XFactor * lambda * Math.Sqrt(Math.Max(0d, 1d - (t * t)));
 
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
         double t = yy / YFactor;
         double phi = 2d * Math.Atan(t);
         double oneMinusTSquared = 1d - (t * t);

@@ -25,8 +25,6 @@ internal class Wagner7Projection : MapProjection
     private const double XFactor = 2.66723d;
     private const double YFactor = 1.24104d;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Wagner7Projection"/> class.
@@ -46,8 +44,6 @@ internal class Wagner7Projection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Wagner_VII";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
     }
 
     /// <inheritdoc />
@@ -79,8 +75,8 @@ internal class Wagner7Projection : MapProjection
         x *= scale;
         double y = yTemp * YFactor * scale;
 
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />

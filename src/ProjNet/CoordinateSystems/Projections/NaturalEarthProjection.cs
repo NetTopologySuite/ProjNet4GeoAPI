@@ -26,8 +26,6 @@ internal class NaturalEarthProjection : MapProjection
 {
     private const int Iterations = 12;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NaturalEarthProjection"/> class.
@@ -47,8 +45,6 @@ internal class NaturalEarthProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Natural_Earth";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1.0 / this.radius;
     }
 
     /// <inheritdoc />
@@ -74,14 +70,14 @@ internal class NaturalEarthProjection : MapProjection
         double xScale = 0.8707 - (0.131979 * phi2) - (0.013791 * phi4) + (0.003971 * phi10) - (0.001529 * phi12);
         double yScale = 1.007226 + (0.015085 * phi2) - (0.044475 * phi6) + (0.028874 * phi8) - (0.005916 * phi10);
 
-        lon = this.radius * lambda * xScale;
-        lat = this.radius * phi * yScale;
+        lon = this.SphericalRadius * lambda * xScale;
+        lat = this.SphericalRadius * phi * yScale;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double yy = y * this.inverseRadius;
+        double yy = y * this.InverseSphericalRadius;
         double phi = yy;
 
         for (int i = 0; i < Iterations; i++)
@@ -109,7 +105,7 @@ internal class NaturalEarthProjection : MapProjection
         double phi12Final = phi10Final * phi2Final;
         double xScaleFinal = 0.8707 - (0.131979 * phi2Final) - (0.013791 * phi4Final) + (0.003971 * phi10Final) - (0.001529 * phi12Final);
 
-        x = Adjust_lon(this.centralMeridian + ((x * this.inverseRadius) / xScaleFinal));
+        x = Adjust_lon(this.centralMeridian + ((x * this.InverseSphericalRadius) / xScaleFinal));
         y = phi;
     }
 }

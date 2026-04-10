@@ -25,8 +25,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://desktop.arcgis.com/en/arcmap/latest/map/projections/winkel-i.htm">ArcGIS projection reference: Winkel I.</seealso>
 internal class Winkel1Projection : MapProjection
 {
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double cosphi1;
 
     /// <summary>
@@ -47,8 +45,6 @@ internal class Winkel1Projection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Winkel_I";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
 
         double latTs = DegreesToRadians(this.Parameters.GetOptionalParameterValue("lat_ts", RadiansToDegrees(this.latOrigin), "latitude_true_scale"));
         this.cosphi1 = Math.Cos(latTs);
@@ -69,15 +65,15 @@ internal class Winkel1Projection : MapProjection
         double x = 0.5d * lambda * (this.cosphi1 + Math.Cos(lat));
         double y = lat;
 
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
         double denominator = this.cosphi1 + Math.Cos(yy);
         if (Math.Abs(denominator) <= Eps10)
         {

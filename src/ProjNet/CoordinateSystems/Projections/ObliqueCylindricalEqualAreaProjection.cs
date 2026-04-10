@@ -22,8 +22,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 internal sealed class ObliqueCylindricalEqualAreaProjection : MapProjection
 {
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double rok;
     private readonly double rtk;
     private readonly double sinPhiP;
@@ -47,8 +45,6 @@ internal sealed class ObliqueCylindricalEqualAreaProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Oblique_Cylindrical_Equal_Area";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
         this.rtk = this.scaleFactor;
         this.rok = 1d / this.scaleFactor;
 
@@ -113,15 +109,15 @@ internal sealed class ObliqueCylindricalEqualAreaProjection : MapProjection
         xUnit *= this.rtk;
         double yUnit = this.rok * ((this.sinPhiP * Math.Sin(lat)) - (this.cosPhiP * Math.Cos(lat) * sinLam));
 
-        lon = this.radius * xUnit;
-        lat = this.radius * yUnit;
+        lon = this.SphericalRadius * xUnit;
+        lat = this.SphericalRadius * yUnit;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xUnit = (x * this.inverseRadius) / this.rtk;
-        double yUnit = (y * this.inverseRadius) / this.rok;
+        double xUnit = (x * this.InverseSphericalRadius) / this.rtk;
+        double yUnit = (y * this.InverseSphericalRadius) / this.rok;
         double t = Math.Sqrt(Math.Max(0d, 1d - (yUnit * yUnit)));
         double s = Math.Sin(xUnit);
         double phi = Asinz((yUnit * this.sinPhiP) + (t * this.cosPhiP * s));

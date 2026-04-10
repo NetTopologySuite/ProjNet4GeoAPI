@@ -32,8 +32,6 @@ internal class VanDerGrintenProjection : MapProjection
     private const double HalfPiSquared = 0.5d * PiSquared;
     private const double InverseDomainEpsilon = 1e-16;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="VanDerGrintenProjection"/> class.
@@ -53,8 +51,6 @@ internal class VanDerGrintenProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "VanDerGrinten";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
     }
 
     /// <inheritdoc />
@@ -137,15 +133,15 @@ internal class VanDerGrintenProjection : MapProjection
             }
         }
 
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
         double x2 = xx * xx;
 
         if (Math.Abs(yy) < Tolerance)

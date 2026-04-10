@@ -23,8 +23,6 @@ internal class GallProjection : MapProjection
     private const double Ryf = 0.58578643762690495119d;
     private const double Rxf = 1.41421356237309504880d;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GallProjection"/> class.
@@ -44,8 +42,6 @@ internal class GallProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Gall";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
     }
 
     /// <inheritdoc />
@@ -62,15 +58,15 @@ internal class GallProjection : MapProjection
         double lambda = Adjust_lon(lon - this.centralMeridian);
         double x = Xf * lambda;
         double y = Yf * Math.Tan(0.5d * lat);
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
         double lambda = Rxf * xx;
         double phi = 2d * Math.Atan(yy * Ryf);
         x = Adjust_lon(this.centralMeridian + lambda);

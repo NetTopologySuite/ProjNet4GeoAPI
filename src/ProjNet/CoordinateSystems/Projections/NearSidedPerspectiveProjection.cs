@@ -19,8 +19,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 3, Sect. 3.3.2, pp. 116-121.</seealso>
 internal class NearSidedPerspectiveProjection : MapProjection
 {
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double sinph0;
     private readonly double cosph0;
     private readonly double p;
@@ -59,8 +57,6 @@ internal class NearSidedPerspectiveProjection : MapProjection
             ArgumentGuard.ThrowArgument("Invalid value for h.");
         }
 
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
         this.p = 1d + this.pn1;
         this.rp = 1d / this.p;
         this.h = 1d / this.pn1;
@@ -156,15 +152,15 @@ internal class NearSidedPerspectiveProjection : MapProjection
             yValue = yt * ba;
         }
 
-        lon = this.radius * xValue;
-        lat = this.radius * yValue;
+        lon = this.SphericalRadius * xValue;
+        lat = this.SphericalRadius * yValue;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xValue = x * this.inverseRadius;
-        double yValue = y * this.inverseRadius;
+        double xValue = x * this.InverseSphericalRadius;
+        double yValue = y * this.InverseSphericalRadius;
 
         if (this.tilt)
         {

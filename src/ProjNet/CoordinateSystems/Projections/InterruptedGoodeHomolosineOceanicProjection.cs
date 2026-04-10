@@ -46,8 +46,6 @@ internal class InterruptedGoodeHomolosineOceanicProjection : MapProjection
     private static readonly double D160 = DegreesToRadians(160d);
     private static readonly double D180 = DegreesToRadians(180d);
 
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double dy0;
     private readonly ZoneDefinition[] zones;
 
@@ -69,8 +67,6 @@ internal class InterruptedGoodeHomolosineOceanicProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Interrupted_Goode_Homolosine_Oceanic_View";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
 
         MollweideForwardUnit(0d, PhiBoundary, out _, out double mollweideBoundaryY);
         this.dy0 = PhiBoundary - mollweideBoundaryY;
@@ -115,15 +111,15 @@ internal class InterruptedGoodeHomolosineOceanicProjection : MapProjection
             MollweideForwardUnit(localLambda, lat, out xUnit, out yUnit);
         }
 
-        lon = this.radius * (xUnit + def.X0);
-        lat = this.radius * (yUnit + def.Y0);
+        lon = this.SphericalRadius * (xUnit + def.X0);
+        lat = this.SphericalRadius * (yUnit + def.Y0);
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xUnit = x * this.inverseRadius;
-        double yUnit = y * this.inverseRadius;
+        double xUnit = x * this.InverseSphericalRadius;
+        double yUnit = y * this.InverseSphericalRadius;
         int zone = DetermineInverseZone(xUnit, yUnit, this.dy0);
         if (zone == 0)
         {

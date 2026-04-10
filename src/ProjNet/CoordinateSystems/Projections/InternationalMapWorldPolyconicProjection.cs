@@ -30,8 +30,6 @@ internal sealed class InternationalMapWorldPolyconicProjection : MapProjection
     private const int MaximumIterations = 1000;
     private const double Tolerance = 1e-10;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double phi1;
     private readonly double phi2;
     private readonly double sinPhi1;
@@ -62,8 +60,6 @@ internal sealed class InternationalMapWorldPolyconicProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "International_Map_of_the_World_Polyconic";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
 
         this.phi1 = DegreesToRadians(this.Parameters.GetParameterValue("lat_1", "standard_parallel_1"));
         this.phi2 = DegreesToRadians(this.Parameters.GetParameterValue("lat_2", "standard_parallel_2"));
@@ -112,15 +108,15 @@ internal sealed class InternationalMapWorldPolyconicProjection : MapProjection
     protected override void RadiansToMeters(ref double lon, ref double lat)
     {
         this.ComputeLocalForward(lon, lat, out double xUnit, out double yUnit, out _);
-        lon = this.radius * xUnit;
-        lat = this.radius * yUnit;
+        lon = this.SphericalRadius * xUnit;
+        lat = this.SphericalRadius * yUnit;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xUnit = x * this.inverseRadius;
-        double yUnit = y * this.inverseRadius;
+        double xUnit = x * this.InverseSphericalRadius;
+        double yUnit = y * this.InverseSphericalRadius;
 
         double phi = this.phi2;
         double lambda = xUnit / Math.Cos(phi);

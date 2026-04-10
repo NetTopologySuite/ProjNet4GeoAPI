@@ -29,8 +29,6 @@ internal class McBrydeThomasFlatPolarQuarticProjection : MapProjection
     private const double Fxc = 0.31245971410378249250d;
     private const double Rxc = 3.20041258076506210122d;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="McBrydeThomasFlatPolarQuarticProjection"/> class.
@@ -50,8 +48,6 @@ internal class McBrydeThomasFlatPolarQuarticProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "McBryde_Thomas_Flat_Polar_Quartic";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
     }
 
     /// <inheritdoc />
@@ -82,15 +78,15 @@ internal class McBrydeThomasFlatPolarQuarticProjection : MapProjection
 
         double x = Fxc * lambda * (1d + ((2d * Math.Cos(phi)) / Math.Cos(0.5d * phi)));
         double y = Fyc * Math.Sin(0.5d * phi);
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
 
         double phi = Ryc * yy;
         double t = phi;

@@ -19,8 +19,6 @@ using System.Collections.Generic;
 /// </remarks>
 internal abstract class StsProjectionBase : MapProjection
 {
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double cX;
     private readonly double cY;
     private readonly double cP;
@@ -45,8 +43,6 @@ internal abstract class StsProjectionBase : MapProjection
         : base(parameters, inverse)
     {
         this.Name = name;
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
         this.cX = q / p;
         this.cY = p;
         this.cP = 1d / q;
@@ -79,15 +75,15 @@ internal abstract class StsProjectionBase : MapProjection
             yUnit *= Math.Sin(phi);
         }
 
-        lon = this.radius * xUnit;
-        lat = this.radius * yUnit;
+        lon = this.SphericalRadius * xUnit;
+        lat = this.SphericalRadius * yUnit;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xUnit = x * this.inverseRadius;
-        double yUnit = (y * this.inverseRadius) / this.cY;
+        double xUnit = x * this.InverseSphericalRadius;
+        double yUnit = (y * this.InverseSphericalRadius) / this.cY;
 
         double phi = this.tanMode ? Math.Atan(yUnit) : Asinz(yUnit);
         double c = Math.Cos(phi);

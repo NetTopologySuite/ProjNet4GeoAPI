@@ -27,8 +27,6 @@ internal class Eckert3Projection : MapProjection
     private const double DefaultA = 1d;
     private const double DefaultB = 0.4052847345693510857755d;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double cx;
     private readonly double cy;
     private readonly double a;
@@ -52,8 +50,6 @@ internal class Eckert3Projection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Eckert_III";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
         this.a = this.Parameters.GetOptionalParameterValue("eck3_a", DefaultA);
         this.b = this.Parameters.GetOptionalParameterValue("eck3_b", DefaultB);
         this.cx = this.Parameters.GetOptionalParameterValue("eck3_cx", DefaultCx);
@@ -80,15 +76,15 @@ internal class Eckert3Projection : MapProjection
         }
 
         double x = this.cx * lambda * (this.a + Math.Sqrt(underRoot));
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
         double phi = yy / this.cy;
 
         double underRoot = 1d - (this.b * phi * phi);

@@ -28,8 +28,6 @@ internal class TimesProjection : MapProjection
     private const double X1 = 0.34588d;
     private const double Y0 = 1.70711d;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="TimesProjection"/> class.
@@ -49,8 +47,6 @@ internal class TimesProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Times";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
     }
 
     /// <inheritdoc />
@@ -71,15 +67,15 @@ internal class TimesProjection : MapProjection
         double x = lambda * (X0 - (X1 * s2));
         double y = Y0 * t;
 
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
 
         double t = yy / Y0;
         double s = Math.Sin(FortPi * t);

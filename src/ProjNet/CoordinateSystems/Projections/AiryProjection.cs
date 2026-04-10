@@ -28,7 +28,6 @@ internal class AiryProjection : MapProjection
 {
     private const double Epsilon = 1e-10d;
 
-    private readonly double radius;
     private readonly double cb;
     private readonly double sinPhi0;
     private readonly double cosPhi0;
@@ -54,7 +53,6 @@ internal class AiryProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Airy";
-        this.radius = this.semiMajor * this.scaleFactor;
         this.noCut = this.Parameters.ContainsKey("no_cut");
 
         double beta = 0.5d * (HalfPi - DegreesToRadians(this.Parameters.GetOptionalParameterValue("lat_b", 0d)));
@@ -150,8 +148,8 @@ internal class AiryProjection : MapProjection
                 double y = this.mode == Mode.Oblique
                     ? kRho * ((this.cosPhi0 * sinPhi) - (this.sinPhi0 * cosPhi * cosLam))
                     : kRho * sinPhi;
-                lon = this.radius * x;
-                lat = this.radius * y;
+                lon = this.SphericalRadius * x;
+                lat = this.SphericalRadius * y;
                 break;
             }
 
@@ -177,8 +175,8 @@ internal class AiryProjection : MapProjection
                         y = -y;
                     }
 
-                    lon = this.radius * x;
-                    lat = this.radius * y;
+                    lon = this.SphericalRadius * x;
+                    lat = this.SphericalRadius * y;
                 }
                 else
                 {

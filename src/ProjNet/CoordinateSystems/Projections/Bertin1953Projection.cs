@@ -31,7 +31,6 @@ internal sealed class Bertin1953Projection : MapProjection
     private const double DeltaGamma = 0d;
     private const double LambdaOffset = -16.5d * PI / 180d;
 
-    private readonly double radius;
     private readonly double cosDeltaPhi;
     private readonly double sinDeltaPhi;
     private readonly double cosDeltaGamma;
@@ -55,7 +54,6 @@ internal sealed class Bertin1953Projection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Bertin_1953";
-        this.radius = this.semiMajor * this.scaleFactor;
         this.cosDeltaPhi = Math.Cos(DeltaPhi);
         this.sinDeltaPhi = Math.Sin(DeltaPhi);
         this.cosDeltaGamma = Math.Cos(DeltaGamma);
@@ -119,8 +117,8 @@ internal sealed class Bertin1953Projection : MapProjection
             yOut *= 1d + ((post / 1.5d) * xOut * xOut);
         }
 
-        lon = this.radius * xOut;
-        lat = this.radius * yOut;
+        lon = this.SphericalRadius * xOut;
+        lat = this.SphericalRadius * yOut;
     }
 
     /// <inheritdoc />

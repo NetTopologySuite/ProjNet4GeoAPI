@@ -34,8 +34,6 @@ internal class MollweideProjection : MapProjection
     private const double LoopTolerance = 1e-7d;
     private const double DefaultP = 90d;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double cx;
     private readonly double cy;
     private readonly double cp;
@@ -58,8 +56,6 @@ internal class MollweideProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Mollweide";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
 
         double p = DegreesToRadians(this.Parameters.GetOptionalParameterValue("moll_p", DefaultP));
         double sp = Math.Sin(p);
@@ -110,15 +106,15 @@ internal class MollweideProjection : MapProjection
             phi *= 0.5d;
         }
 
-        lon = this.radius * this.cx * lambda * Math.Cos(phi);
-        lat = this.radius * this.cy * Math.Sin(phi);
+        lon = this.SphericalRadius * this.cx * lambda * Math.Cos(phi);
+        lat = this.SphericalRadius * this.cy * Math.Sin(phi);
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
         double phi = Asinz(yy / this.cy);
         double cosPhi = Math.Cos(phi);
         if (Math.Abs(cosPhi) <= Eps10)
