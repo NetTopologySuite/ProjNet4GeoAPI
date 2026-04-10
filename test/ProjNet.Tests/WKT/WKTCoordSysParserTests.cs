@@ -480,7 +480,7 @@ public class WKTCoordSysParserTests
     {
         var fac = new CoordinateSystemFactory();
         FittedCoordinateSystem fcs = default!;
-        string wkt =
+        const string wkt =
             """
             FITTED_CS["Local coordinate system MNAU (based on Gauss-Krueger)",
                 PARAM_MT["Affine",
@@ -575,7 +575,7 @@ public class WKTCoordSysParserTests
     public void ParseWktCreatedByCoordinateSystem()
     {
         // Sample WKT from an external source.
-        string sampleWKT =
+        const string sampleWKT =
             """
             PROJCS["",
               GEOGCS["",
