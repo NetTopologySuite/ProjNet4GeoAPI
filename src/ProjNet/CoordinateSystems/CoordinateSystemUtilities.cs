@@ -17,7 +17,12 @@ public static class CoordinateSystemUtilities
     /// </summary>
     /// <param name="lon">The longitude in decimal degrees.</param>
     /// <returns>The UTM zone number (1-60).</returns>
-    public static long CalcUtmZone(double lon) => (long)(((lon + 180.0) / 6.0) + 1.0);
+    public static long CalcUtmZone(double lon)
+    {
+        return lon >= 180d
+            ? 60L
+            : (long)(((lon + 180.0) / 6.0) + 1.0);
+    }
 
     /// <summary>
     /// Converts a longitude value in degrees to radians.

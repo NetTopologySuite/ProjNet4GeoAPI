@@ -25,6 +25,7 @@ public class CoordinateSystemUtilitiesTests
     [InlineData(0d, 31L)]
     [InlineData(6d, 32L)]
     [InlineData(179d, 60L)]
+    [InlineData(180d, 60L)]
     public void CalcUtmZone_ReturnsExpectedZone(double longitude, long expectedZone)
     {
         long zone = CoordinateSystemUtilities.CalcUtmZone(longitude);
