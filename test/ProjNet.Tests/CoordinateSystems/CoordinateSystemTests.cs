@@ -48,7 +48,7 @@ public class CoordinateSystemTests
 
         coordinateSystem.DefaultEnvelope = expectedEnvelope;
 
-        Assert.Same(expectedEnvelope, coordinateSystem.DefaultEnvelope);
+        Assert.Equal(expectedEnvelope, coordinateSystem.DefaultEnvelope);
     }
 
     /// <summary>

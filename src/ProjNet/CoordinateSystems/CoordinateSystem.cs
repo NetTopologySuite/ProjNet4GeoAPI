@@ -82,8 +82,16 @@ public abstract class CoordinateSystem : Info
     /// </remarks>
     public double[] DefaultEnvelope
     {
-        get { return this.defaultEnvelope; }
-        set { this.defaultEnvelope = value; }
+        get
+        {
+            return this.defaultEnvelope.Length == 0 ? Array.Empty<double>() : (double[])this.defaultEnvelope.Clone();
+        }
+
+        set
+        {
+            double[] envelope = ArgumentGuard.ThrowIfNull(value, nameof(value));
+            this.defaultEnvelope = envelope.Length == 0 ? Array.Empty<double>() : (double[])envelope.Clone();
+        }
     }
 
     /// <summary>
