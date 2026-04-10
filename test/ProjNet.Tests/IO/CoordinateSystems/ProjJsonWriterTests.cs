@@ -342,6 +342,62 @@ public class ProjJsonWriterTests
     }
 
     /// <summary>
+    /// Verifies legacy WKT1 <c>FITTED_CS</c> geographic definitions survive the WKT2 derived-CRS and PROJJSON derived-CRS pipeline without semantic drift.
+    /// </summary>
+    [Fact]
+    public void ToJson_RoundtripsDerivedGeographicCrsAcrossWkt1Wkt2AndProjJson()
+    {
+        FittedCoordinateSystem original = CreateWkt1CompatibleDerivedGeographicCoordinateSystem();
+        string wkt1 = original.WKT;
+        FittedCoordinateSystem fromWkt1 = CoordinateSystemTestHelpers.RequireCoordinateSystem<FittedCoordinateSystem>(CoordinateSystemFactory, wkt1);
+
+        string wkt2 = fromWkt1.ToWktNode(WktVersion.Wkt22019).ToString();
+        FittedCoordinateSystem fromWkt2 = CoordinateSystemTestHelpers.RequireCoordinateSystem<FittedCoordinateSystem>(CoordinateSystemFactory, wkt2);
+
+        string json = ProjJsonWriter.ToJson(fromWkt2);
+        FittedCoordinateSystem fromProjJson = Assert.IsType<FittedCoordinateSystem>(ProjJsonReader.Parse(json));
+
+        using var document = JsonDocument.Parse(json);
+
+        Assert.StartsWith("FITTED_CS[", wkt1, StringComparison.Ordinal);
+        Assert.StartsWith("GEOGCRS[", wkt2, StringComparison.Ordinal);
+        Assert.Equal("DerivedGeographicCRS", document.RootElement.GetProperty("type").GetString());
+        Assert.True(fromProjJson.EqualParams(fromWkt2));
+        AssertFittedCoordinateSystemSemanticsEqual(fromWkt1, fromProjJson);
+        AssertDerivedGeographicBaseSemanticsEqual(
+            Assert.IsType<GeographicCoordinateSystem>(fromWkt1.BaseCoordinateSystem),
+            Assert.IsType<GeographicCoordinateSystem>(fromProjJson.BaseCoordinateSystem));
+    }
+
+    /// <summary>
+    /// Verifies legacy WKT1 <c>FITTED_CS</c> projected definitions survive the WKT2 derived-CRS and PROJJSON derived-CRS pipeline without semantic drift.
+    /// </summary>
+    [Fact]
+    public void ToJson_RoundtripsDerivedProjectedCrsAcrossWkt1Wkt2AndProjJson()
+    {
+        FittedCoordinateSystem original = CreateWkt1CompatibleDerivedProjectedCoordinateSystem();
+        string wkt1 = original.WKT;
+        FittedCoordinateSystem fromWkt1 = CoordinateSystemTestHelpers.RequireCoordinateSystem<FittedCoordinateSystem>(CoordinateSystemFactory, wkt1);
+
+        string wkt2 = fromWkt1.ToWktNode(WktVersion.Wkt22019).ToString();
+        FittedCoordinateSystem fromWkt2 = CoordinateSystemTestHelpers.RequireCoordinateSystem<FittedCoordinateSystem>(CoordinateSystemFactory, wkt2);
+
+        string json = ProjJsonWriter.ToJson(fromWkt2);
+        FittedCoordinateSystem fromProjJson = Assert.IsType<FittedCoordinateSystem>(ProjJsonReader.Parse(json));
+
+        using var document = JsonDocument.Parse(json);
+
+        Assert.StartsWith("FITTED_CS[", wkt1, StringComparison.Ordinal);
+        Assert.StartsWith("DERIVEDPROJCRS[", wkt2, StringComparison.Ordinal);
+        Assert.Equal("DerivedProjectedCRS", document.RootElement.GetProperty("type").GetString());
+        Assert.True(fromProjJson.EqualParams(fromWkt2));
+        AssertFittedCoordinateSystemSemanticsEqual(fromWkt1, fromProjJson);
+        AssertDerivedProjectedBaseSemanticsEqual(
+            Assert.IsType<ProjectedCoordinateSystem>(fromWkt1.BaseCoordinateSystem),
+            Assert.IsType<ProjectedCoordinateSystem>(fromProjJson.BaseCoordinateSystem));
+    }
+
+    /// <summary>
     /// Verifies geographic CRS with retained WGS84 conversion metadata serialize as PROJJSON <c>BoundCRS</c>.
     /// </summary>
     [Fact]
@@ -625,6 +681,19 @@ public class ProjJsonWriterTests
             ]);
     }
 
+    private static FittedCoordinateSystem CreateWkt1CompatibleDerivedGeographicCoordinateSystem()
+    {
+        GeographicCoordinateSystem baseCoordinateSystem = GeographicCoordinateSystem.WGS84;
+        return CoordinateSystemFactory.CreateFittedCoordinateSystem(
+            "WGS 84 fitted",
+            baseCoordinateSystem,
+            new AffineTransform(1, 0, 0.5, 0, 1, 1.5),
+            [
+                new AxisInfo(baseCoordinateSystem.GetAxis(0).Name, baseCoordinateSystem.GetAxis(0).Orientation),
+                new AxisInfo(baseCoordinateSystem.GetAxis(1).Name, baseCoordinateSystem.GetAxis(1).Orientation),
+            ]);
+    }
+
     private static FittedCoordinateSystem CreateDerivedProjectedCoordinateSystem()
     {
         var baseCoordinateSystem = ProjectedCoordinateSystem.WGS84_UTM(32, true);
@@ -636,6 +705,55 @@ public class ProjJsonWriterTests
                 new AxisInfo("Local easting", AxisOrientationEnum.East),
                 new AxisInfo("Local northing", AxisOrientationEnum.North),
             ]);
+    }
+
+    private static FittedCoordinateSystem CreateWkt1CompatibleDerivedProjectedCoordinateSystem()
+    {
+        var baseCoordinateSystem = ProjectedCoordinateSystem.WGS84_UTM(32, true);
+        return CoordinateSystemFactory.CreateFittedCoordinateSystem(
+            "UTM 32N fitted",
+            baseCoordinateSystem,
+            new AffineTransform(1, 0, 100, 0, 1, -50),
+            [
+                new AxisInfo(baseCoordinateSystem.GetAxis(0).Name, baseCoordinateSystem.GetAxis(0).Orientation),
+                new AxisInfo(baseCoordinateSystem.GetAxis(1).Name, baseCoordinateSystem.GetAxis(1).Orientation),
+            ]);
+    }
+
+    private static void AssertFittedCoordinateSystemSemanticsEqual(FittedCoordinateSystem expected, FittedCoordinateSystem actual)
+    {
+        Assert.Equal(expected.Name, actual.Name);
+        Assert.Equal(expected.ToBase(), actual.ToBase());
+        AssertCoordinateSystemAxisMetadataEqual(expected, actual);
+    }
+
+    private static void AssertDerivedGeographicBaseSemanticsEqual(GeographicCoordinateSystem expected, GeographicCoordinateSystem actual)
+    {
+        Assert.Equal(expected.Name, actual.Name);
+        Assert.True(actual.HorizontalDatum.EqualParams(expected.HorizontalDatum));
+        Assert.True(actual.PrimeMeridian.EqualParams(expected.PrimeMeridian));
+        Assert.True(actual.AngularUnit.EqualParams(expected.AngularUnit));
+    }
+
+    private static void AssertDerivedProjectedBaseSemanticsEqual(ProjectedCoordinateSystem expected, ProjectedCoordinateSystem actual)
+    {
+        Assert.Equal(expected.Name, actual.Name);
+        AssertCoordinateSystemAxisMetadataEqual(expected, actual);
+        Assert.True(actual.HorizontalDatum.EqualParams(expected.HorizontalDatum));
+        Assert.True(actual.LinearUnit.EqualParams(expected.LinearUnit));
+        Assert.True(actual.Projection.EqualParams(expected.Projection));
+        AssertDerivedGeographicBaseSemanticsEqual(expected.GeographicCoordinateSystem, actual.GeographicCoordinateSystem);
+    }
+
+    private static void AssertCoordinateSystemAxisMetadataEqual(CoordinateSystem expected, CoordinateSystem actual)
+    {
+        Assert.Equal(expected.Dimension, actual.Dimension);
+        for (int dimension = 0; dimension < expected.Dimension; dimension++)
+        {
+            Assert.Equal(expected.GetAxis(dimension).Name, actual.GetAxis(dimension).Name);
+            Assert.Equal(expected.GetAxis(dimension).Orientation, actual.GetAxis(dimension).Orientation);
+            Assert.True(actual.GetUnits(dimension).EqualParams(expected.GetUnits(dimension)));
+        }
     }
 
     private static VerticalCoordinateSystem CreateBoundVerticalCoordinateSystem()
