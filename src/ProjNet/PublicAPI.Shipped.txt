@@ -449,7 +449,7 @@ namespace ProjNet.CoordinateSystems
 }
 namespace ProjNet.CoordinateSystems.Projections
 {
-    public class LambertAzimuthalEqualAreaProjection : ProjNet.CoordinateSystems.Projections.MapProjection
+    public sealed class LambertAzimuthalEqualAreaProjection : ProjNet.CoordinateSystems.Projections.MapProjection
     {
         public LambertAzimuthalEqualAreaProjection(System.Collections.Generic.IEnumerable<ProjNet.CoordinateSystems.ProjectionParameter> parameters) { }
         public LambertAzimuthalEqualAreaProjection(System.Collections.Generic.IEnumerable<ProjNet.CoordinateSystems.ProjectionParameter> parameters, ProjNet.CoordinateSystems.Projections.MapProjection? inverse) { }
@@ -613,7 +613,7 @@ namespace ProjNet.CoordinateSystems.Projections
 }
 namespace ProjNet.CoordinateSystems.Transformations
 {
-    public class AffineTransform : ProjNet.CoordinateSystems.Transformations.MathTransform
+    public sealed class AffineTransform : ProjNet.CoordinateSystems.Transformations.MathTransform
     {
         public AffineTransform(double[] matrix) { }
         public AffineTransform(double m00, double m01, double m02, double m10, double m11, double m12) { }
@@ -651,7 +651,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         Outside = 2,
         Discontinuous = 4,
     }
-    public class GeographicTransform : ProjNet.CoordinateSystems.Transformations.MathTransform
+    public sealed class GeographicTransform : ProjNet.CoordinateSystems.Transformations.MathTransform
     {
         public override int DimSource { get; }
         public override int DimTarget { get; }

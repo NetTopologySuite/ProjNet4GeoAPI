@@ -19,7 +19,7 @@ using System.Text;
 /// LUP decomposition with partial pivoting to solve for the inverse matrix.
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Affine_transformation">Affine transformation.</seealso>
-public class AffineTransform : MathTransform
+public sealed class AffineTransform : MathTransform
 {
     /// <summary>
     /// Dimension of source points - it's related to number of transformation matrix rows.

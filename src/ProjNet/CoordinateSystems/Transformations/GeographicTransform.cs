@@ -18,7 +18,7 @@ using System;
 /// while leaving latitude and height unchanged.
 /// </remarks>
 /// <seealso href="https://proj.org/en/stable/glossary.html">PROJ glossary: ballpark transformation.</seealso>
-public class GeographicTransform : MathTransform
+public sealed class GeographicTransform : MathTransform
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="GeographicTransform"/> class.
