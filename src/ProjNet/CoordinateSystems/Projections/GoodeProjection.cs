@@ -28,7 +28,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://proj.org/en/stable/operations/projections/goode.html">PROJ documentation: Goode Homolosine.</seealso>
 /// <seealso href="https://doi.org/10.2307/2560812">Goode, J.P. (1925): The Homolosine projection.</seealso>
 /// <seealso href="https://en.wikipedia.org/wiki/Goode_homolosine_projection">Wikipedia: Goode homolosine projection.</seealso>
-internal class GoodeProjection : MapProjection
+internal sealed class GoodeProjection : MapProjection
 {
     private const int MollweideIterations = 12;
     private const double YCor = 0.05280;

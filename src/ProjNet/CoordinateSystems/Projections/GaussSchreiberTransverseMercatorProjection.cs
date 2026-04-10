@@ -20,7 +20,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Mercator mapping performed on the conformal sphere.</para>
 /// </remarks>
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 5, Sect. 5.1.5, p. 163.</seealso>
-internal class GaussSchreiberTransverseMercatorProjection : MapProjection
+internal sealed class GaussSchreiberTransverseMercatorProjection : MapProjection
 {
     private readonly double n1;
     private readonly double c;

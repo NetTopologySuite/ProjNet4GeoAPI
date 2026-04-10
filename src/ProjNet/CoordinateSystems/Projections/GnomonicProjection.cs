@@ -29,7 +29,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://mathworld.wolfram.com/GnomonicProjection.html">MathWorld: Gnomonic Projection.</seealso>
 /// <seealso href="https://proj.org/en/stable/operations/projections/gnom.html">PROJ documentation: Gnomonic.</seealso>
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 3, Sect. 3.3.1, pp. 109-115.</seealso>
-internal class GnomonicProjection : MapProjection
+internal sealed class GnomonicProjection : MapProjection
 {
     private const int MaxInverseIterations = 10;
     private const double InverseDistanceTolerance = 1.4901161193847656e-10d;

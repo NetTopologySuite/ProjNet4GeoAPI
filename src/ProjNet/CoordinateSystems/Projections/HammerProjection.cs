@@ -22,7 +22,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Hammer_projection">Wikipedia: Hammer projection.</seealso>
 /// <seealso href="https://mathworld.wolfram.com/Hammer-AitoffEqual-AreaProjection.html">MathWorld: Hammer-Aitoff Equal-Area Projection.</seealso>
-internal class HammerProjection : MapProjection
+internal sealed class HammerProjection : MapProjection
 {
     private readonly double w;
     private readonly double m;

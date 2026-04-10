@@ -19,7 +19,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>y = n * φ + (1 - n) * sin(φ)</c>, with an iterative inverse when
 /// <c>n != 0</c>.
 /// </remarks>
-internal class FoucautSinusoidalProjection : MapProjection
+internal sealed class FoucautSinusoidalProjection : MapProjection
 {
     private const int MaximumIterations = 10;
     private const double LoopTolerance = 1e-7d;

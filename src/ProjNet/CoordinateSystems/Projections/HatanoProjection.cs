@@ -17,7 +17,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// distinct constants, and the implementation solves <c>φ + sin(φ) = c * sin(lat)</c>
 /// iteratively before applying the final half-angle scaling.
 /// </remarks>
-internal class HatanoProjection : MapProjection
+internal sealed class HatanoProjection : MapProjection
 {
     private const int Iterations = 20;
     private const double Epsilon = 1e-7d;

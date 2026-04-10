@@ -22,7 +22,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// ellipsoidal geocentric-radius path match the implementation here.</para>
 /// </remarks>
 /// <seealso href="https://proj.org/en/stable/operations/projections/geos.html">PROJ documentation: Geostationary Satellite View.</seealso>
-internal class GeostationarySatelliteProjection : MapProjection
+internal sealed class GeostationarySatelliteProjection : MapProjection
 {
     private const double MaximumHeightRatio = 1e10;
 

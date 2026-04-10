@@ -17,7 +17,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>t = tan(φ / 2)</c>, followed by the compact relations
 /// <c>x = XFactor * λ * sqrt(1 - t²)</c> and <c>y = YFactor * t</c>.
 /// </remarks>
-internal class FaheyProjection : MapProjection
+internal sealed class FaheyProjection : MapProjection
 {
     private const double Tolerance = 1e-6d;
     private const double XFactor = 0.819152d;

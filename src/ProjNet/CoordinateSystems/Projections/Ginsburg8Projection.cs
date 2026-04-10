@@ -18,7 +18,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>y = φ * (1 + φ² / 12)</c> and the longitude scaling that combines latitude and
 /// quartic longitude damping.</para>
 /// </remarks>
-internal class Ginsburg8Projection : MapProjection
+internal sealed class Ginsburg8Projection : MapProjection
 {
     private const double Cl = 0.000952426d;
     private const double Cp = 0.162388d;
