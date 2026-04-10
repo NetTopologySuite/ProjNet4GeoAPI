@@ -12,10 +12,23 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </summary>
 internal static class DerivedCoordinateSystemSupport
 {
+    /// <summary>
+    /// Gets the WKT2/PROJJSON method name used for affine deriving conversions.
+    /// </summary>
     internal const string AffineParametricTransformationMethodName = "Affine parametric transformation";
+
+    /// <summary>
+    /// Gets the fallback deriving-conversion name emitted when no explicit name is available.
+    /// </summary>
     internal const string DefaultDerivingConversionName = "unnamed";
     private const double AffineMatrixTolerance = 1e-12;
 
+    /// <summary>
+    /// Creates an affine deriving conversion from a fitted-system math transform.
+    /// </summary>
+    /// <param name="transform">The fitted-system transform to serialize.</param>
+    /// <param name="conversionName">The deriving-conversion name to emit.</param>
+    /// <returns>The affine deriving conversion.</returns>
     internal static Projection CreateAffineConversion(MathTransform transform, string conversionName)
     {
         if (!TryGetAffineParameters(transform, out DerivedAffineParameters parameters))
@@ -43,7 +56,12 @@ internal static class DerivedCoordinateSystemSupport
             string.Empty);
     }
 
-    internal static AffineTransform CreateAffineTransform(IProjection conversion)
+    /// <summary>
+    /// Reconstructs an affine math transform from a parsed deriving conversion.
+    /// </summary>
+    /// <param name="conversion">The parsed deriving conversion.</param>
+    /// <returns>The affine math transform represented by the conversion.</returns>
+    internal static AffineTransform CreateAffineTransform(Projection conversion)
     {
         ArgumentGuard.ThrowIfNull(conversion, nameof(conversion));
         if (!string.Equals(conversion.ClassName, AffineParametricTransformationMethodName, StringComparison.OrdinalIgnoreCase))
@@ -89,7 +107,7 @@ internal static class DerivedCoordinateSystemSupport
         return true;
     }
 
-    private static double GetRequiredParameter(IProjection conversion, string name)
+    private static double GetRequiredParameter(Projection conversion, string name)
     {
         ProjectionParameter? parameter = conversion.GetParameter(name);
         if (parameter is null)
@@ -103,15 +121,15 @@ internal static class DerivedCoordinateSystemSupport
     private static bool ApproximatelyZero(double value) => Math.Abs(value) <= AffineMatrixTolerance;
 
     private static bool ApproximatelyEqual(double left, double right) => Math.Abs(left - right) <= AffineMatrixTolerance;
-}
 
-/// <summary>
-/// Captures the 2D affine coefficients used by WKT2/PROJJSON derived conversions.
-/// </summary>
-/// <param name="A0">Translation term for the first target axis.</param>
-/// <param name="A1">Source X scale/shear term for the first target axis.</param>
-/// <param name="A2">Source Y scale/shear term for the first target axis.</param>
-/// <param name="B0">Translation term for the second target axis.</param>
-/// <param name="B1">Source X scale/shear term for the second target axis.</param>
-/// <param name="B2">Source Y scale/shear term for the second target axis.</param>
-internal readonly record struct DerivedAffineParameters(double A0, double A1, double A2, double B0, double B1, double B2);
+    /// <summary>
+    /// Captures the 2D affine coefficients used by WKT2/PROJJSON derived conversions.
+    /// </summary>
+    /// <param name="A0">Translation term for the first target axis.</param>
+    /// <param name="A1">Source X scale/shear term for the first target axis.</param>
+    /// <param name="A2">Source Y scale/shear term for the first target axis.</param>
+    /// <param name="B0">Translation term for the second target axis.</param>
+    /// <param name="B1">Source X scale/shear term for the second target axis.</param>
+    /// <param name="B2">Source Y scale/shear term for the second target axis.</param>
+    private readonly record struct DerivedAffineParameters(double A0, double A1, double A2, double B0, double B1, double B2);
+}

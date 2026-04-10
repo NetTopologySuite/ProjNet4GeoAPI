@@ -169,6 +169,50 @@ public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSys
     /// <inheritdoc />
     public override IUnit GetUnits(int dimension) => this.BaseCoordinateSystem.GetUnits(dimension);
 
+    private static WktKeywordNode CreateWkt2DerivingConversionNode(IProjection derivingConversion, WktNode translationUnitNode)
+    {
+        static WktKeywordNode CreateWkt2DerivingParameterNode(ProjectionParameter parameter, WktNode translationUnitNode)
+        {
+            var children = new List<WktNode>
+            {
+                new WktQuotedString(parameter.Name),
+                new WktNumber(parameter.Value),
+            };
+
+            if (parameter.Name is "A0" or "B0")
+            {
+                children.Add(translationUnitNode);
+            }
+            else
+            {
+                children.Add(new WktKeywordNode(
+                    "SCALEUNIT",
+                    new WktQuotedString("unity"),
+                    new WktNumber(1)));
+            }
+
+            return new WktKeywordNode("PARAMETER", children);
+        }
+
+        string conversionName = string.IsNullOrWhiteSpace(derivingConversion.Name)
+            ? DerivedCoordinateSystemSupport.DefaultDerivingConversionName
+            : derivingConversion.Name;
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(conversionName),
+            new WktKeywordNode(
+                "METHOD",
+                new WktQuotedString(derivingConversion.ClassName)),
+        };
+
+        for (int i = 0; i < derivingConversion.NumParameters; i++)
+        {
+            children.Add(CreateWkt2DerivingParameterNode(derivingConversion.GetParameter(i), translationUnitNode));
+        }
+
+        return new WktKeywordNode("DERIVINGCONVERSION", children);
+    }
+
     private WktKeywordNode CreateWkt2Node()
     {
         Projection derivingConversion = DerivedCoordinateSystemSupport.CreateAffineConversion(this.ToBaseTransform, DerivedCoordinateSystemSupport.DefaultDerivingConversionName);
@@ -246,49 +290,5 @@ public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSys
         }
 
         return new WktKeywordNode("DERIVEDPROJCRS", children);
-    }
-
-    private static WktKeywordNode CreateWkt2DerivingConversionNode(IProjection derivingConversion, WktNode translationUnitNode)
-    {
-        string conversionName = string.IsNullOrWhiteSpace(derivingConversion.Name)
-            ? DerivedCoordinateSystemSupport.DefaultDerivingConversionName
-            : derivingConversion.Name;
-        var children = new List<WktNode>
-        {
-            new WktQuotedString(conversionName),
-            new WktKeywordNode(
-                "METHOD",
-                new WktQuotedString(derivingConversion.ClassName)),
-        };
-
-        for (int i = 0; i < derivingConversion.NumParameters; i++)
-        {
-            children.Add(CreateWkt2DerivingParameterNode(derivingConversion.GetParameter(i), translationUnitNode));
-        }
-
-        return new WktKeywordNode("DERIVINGCONVERSION", children);
-    }
-
-    private static WktKeywordNode CreateWkt2DerivingParameterNode(ProjectionParameter parameter, WktNode translationUnitNode)
-    {
-        var children = new List<WktNode>
-        {
-            new WktQuotedString(parameter.Name),
-            new WktNumber(parameter.Value),
-        };
-
-        if (parameter.Name is "A0" or "B0")
-        {
-            children.Add(translationUnitNode);
-        }
-        else
-        {
-            children.Add(new WktKeywordNode(
-                "SCALEUNIT",
-                new WktQuotedString("unity"),
-                new WktNumber(1)));
-        }
-
-        return new WktKeywordNode("PARAMETER", children);
     }
 }

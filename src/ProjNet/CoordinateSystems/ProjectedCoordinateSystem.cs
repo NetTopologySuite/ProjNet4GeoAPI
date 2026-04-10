@@ -389,6 +389,11 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
                 pcs.Projection.EqualParams(this.Projection);
     }
 
+    /// <summary>
+    /// Creates a WKT2 base projected CRS node for use inside derived WKT2 coordinate-system constructs.
+    /// </summary>
+    /// <param name="keyword">The WKT2 keyword to emit, for example <c>BASEPROJCRS</c>.</param>
+    /// <returns>A WKT2 projected base node without the surrounding top-level derived-CRS wrapper.</returns>
     internal WktKeywordNode CreateWkt2BaseNode(string keyword)
     {
         if (string.IsNullOrWhiteSpace(keyword))

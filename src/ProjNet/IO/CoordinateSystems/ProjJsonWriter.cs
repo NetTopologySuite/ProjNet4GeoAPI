@@ -542,7 +542,7 @@ public static class ProjJsonWriter
         writer.WriteEndObject();
     }
 
-    private static void WriteDerivedAffineConversion(Utf8JsonWriter writer, IProjection conversion, AngularUnit? angularUnit, LinearUnit? linearUnit)
+    private static void WriteDerivedAffineConversion(Utf8JsonWriter writer, Projection conversion, AngularUnit? angularUnit, LinearUnit? linearUnit)
     {
         writer.WriteStartObject();
         writer.WriteString("type", "Conversion");

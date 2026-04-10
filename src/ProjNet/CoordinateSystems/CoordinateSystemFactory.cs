@@ -154,23 +154,6 @@ public class CoordinateSystemFactory
         return fittedCoordinateSystem;
     }
 
-    private static void ApplyFittedAxisInfo(FittedCoordinateSystem fittedCoordinateSystem, List<AxisInfo> axisInfo)
-    {
-        ArgumentGuard.ThrowIfNull(fittedCoordinateSystem, nameof(fittedCoordinateSystem));
-        axisInfo = ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo));
-        if (axisInfo.Count == 0)
-        {
-            return;
-        }
-
-        if (axisInfo.Count != fittedCoordinateSystem.Dimension)
-        {
-            ArgumentGuard.ThrowArgument($"Fitted coordinate system '{fittedCoordinateSystem.Name}' expects {fittedCoordinateSystem.Dimension} axes but received {axisInfo.Count}.");
-        }
-
-        fittedCoordinateSystem.AxisInfo = new List<AxisInfo>(axisInfo);
-    }
-
     /// <summary>
     /// Creates an <see cref="Ellipsoid"/> from radius values.
     /// </summary>
@@ -398,5 +381,22 @@ public class CoordinateSystemFactory
             new("Z", AxisOrientationEnum.Other),
         };
         return new GeocentricCoordinateSystem(datum, linearUnit, primeMeridian, info, name, string.Empty, -1, string.Empty, string.Empty, string.Empty);
+    }
+
+    private static void ApplyFittedAxisInfo(FittedCoordinateSystem fittedCoordinateSystem, List<AxisInfo> axisInfo)
+    {
+        ArgumentGuard.ThrowIfNull(fittedCoordinateSystem, nameof(fittedCoordinateSystem));
+        axisInfo = ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo));
+        if (axisInfo.Count == 0)
+        {
+            return;
+        }
+
+        if (axisInfo.Count != fittedCoordinateSystem.Dimension)
+        {
+            ArgumentGuard.ThrowArgument($"Fitted coordinate system '{fittedCoordinateSystem.Name}' expects {fittedCoordinateSystem.Dimension} axes but received {axisInfo.Count}.");
+        }
+
+        fittedCoordinateSystem.AxisInfo = new List<AxisInfo>(axisInfo);
     }
 }
