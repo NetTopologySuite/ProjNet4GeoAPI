@@ -52,6 +52,38 @@ public class CoordinateSystemTests
     }
 
     /// <summary>
+    /// Verifies that <see cref="CoordinateSystem.DefaultEnvelope"/> returns a defensive copy.
+    /// </summary>
+    [Fact]
+    public void DefaultEnvelope_GetterReturnsDefensiveCopy()
+    {
+        TestCoordinateSystem coordinateSystem = CreateCoordinateSystem();
+        coordinateSystem.DefaultEnvelope = [-180d, -90d, 180d, 90d];
+
+        double[] firstRead = coordinateSystem.DefaultEnvelope;
+        double[] secondRead = coordinateSystem.DefaultEnvelope;
+        firstRead[0] = 0d;
+
+        Assert.NotSame(firstRead, secondRead);
+        Assert.Equal(-180d, secondRead[0]);
+    }
+
+    /// <summary>
+    /// Verifies that <see cref="CoordinateSystem.DefaultEnvelope"/> clones the assigned array.
+    /// </summary>
+    [Fact]
+    public void DefaultEnvelope_SetterClonesAssignedArray()
+    {
+        TestCoordinateSystem coordinateSystem = CreateCoordinateSystem();
+        double[] sourceEnvelope = [-180d, -90d, 180d, 90d];
+
+        coordinateSystem.DefaultEnvelope = sourceEnvelope;
+        sourceEnvelope[0] = 0d;
+
+        Assert.Equal(-180d, coordinateSystem.DefaultEnvelope[0]);
+    }
+
+    /// <summary>
     /// Verifies that <see cref="CoordinateSystem.ToWktNode()"/> uses the WKT string by default.
     /// </summary>
     [Fact]
