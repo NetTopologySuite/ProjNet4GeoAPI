@@ -133,6 +133,12 @@ namespace ProjNet.CoordinateSystems
         public ProjNet.CoordinateSystems.VerticalCoordinateSystem CreateVerticalCoordinateSystem(string name, ProjNet.CoordinateSystems.VerticalDatum datum, ProjNet.CoordinateSystems.LinearUnit verticalUnit, ProjNet.CoordinateSystems.AxisInfo axis) { }
         public ProjNet.CoordinateSystems.VerticalDatum CreateVerticalDatum(string name, ProjNet.CoordinateSystems.DatumType datumType) { }
     }
+    public static class CoordinateSystemUtilities
+    {
+        public static long CalcUtmZone(double lon) { }
+        public static double LatitudeToRadians(double y, bool edge) { }
+        public static double LongitudeToRadians(double x, bool edge) { }
+    }
     public abstract class Datum : ProjNet.CoordinateSystems.Info
     {
         public ProjNet.CoordinateSystems.DatumType DatumType { get; set; }
@@ -577,10 +583,15 @@ namespace ProjNet.CoordinateSystems.Projections
         protected static double Asinz(double con) { }
         protected static double Authlat(double beta, double[] apa) { }
         protected static double[] Authset(double es) { }
+        [System.Obsolete("Use ProjNet.CoordinateSystems.CoordinateSystemUtilities.CalcUtmZone instead.")]
         public static long CalcUtmZone(double lon) { }
         protected static System.Collections.Generic.List<ProjNet.CoordinateSystems.ProjectionParameter> CloneParametersList(System.Collections.Generic.IEnumerable<ProjNet.CoordinateSystems.ProjectionParameter> projectionParameters) { }
         protected static double Hypot(double x, double y) { }
+        [System.Obsolete("Use ProjNet.CoordinateSystems.CoordinateSystemUtilities.LatitudeToRadians instead" +
+            ".")]
         protected static double LatitudeToRadians(double y, bool edge) { }
+        [System.Obsolete("Use ProjNet.CoordinateSystems.CoordinateSystemUtilities.LongitudeToRadians instea" +
+            "d.")]
         protected static double LongitudeToRadians(double x, bool edge) { }
         protected static double Mlfn(double e0, double e1, double e2, double e3, double phi) { }
         protected static double Msfnz(double eccent, double sinphi, double cosphi) { }
