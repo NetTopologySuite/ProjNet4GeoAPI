@@ -20,7 +20,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <c>ρ = c2 * (c1 - tan(φ - sig))</c> together with the conic angle
 /// <c>θ = n * λ</c>.</para>
 /// </remarks>
-internal class PconicProjection : MapProjection
+internal sealed class PconicProjection : MapProjection
 {
     private readonly double n;
     private readonly double sig;

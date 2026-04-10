@@ -26,7 +26,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 4, Sect. 4.3.1, pp. 149-151.</seealso>
 /// <seealso href="https://epsg.io/9818-method">EPSG method 9818: American Polyconic.</seealso>
-internal class PolyconicProjection : MapProjection
+internal sealed class PolyconicProjection : MapProjection
 {
     /// <summary>
     /// Maximum difference allowed when comparing real numbers.
@@ -65,7 +65,7 @@ internal class PolyconicProjection : MapProjection
     /// </summary>
     /// <param name="parameters">The parameter values in standard units.</param>
     /// <param name="inverse">The inverse projection instance, or <see langword="null"/> for a forward projection.</param>
-    protected PolyconicProjection(IEnumerable<ProjectionParameter> parameters, PolyconicProjection? inverse)
+    private PolyconicProjection(IEnumerable<ProjectionParameter> parameters, PolyconicProjection? inverse)
         : base(parameters, inverse)
     {
         this.Name = "Polyconic";

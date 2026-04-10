@@ -16,7 +16,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// It uses an Eckert-III-like square-root longitude scale with the fixed parameter
 /// <c>A = -0.5</c>.
 /// </remarks>
-internal class PutninsP1Projection : MapProjection
+internal sealed class PutninsP1Projection : MapProjection
 {
     private const double Cx = 1.89490d;
     private const double Cy = 0.94745d;

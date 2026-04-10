@@ -16,7 +16,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// the sphere radius and forcing the scale factor to 1. Geodetic latitude is projected
 /// without ellipsoidal correction, producing the projection used by most web mapping services.
 /// </remarks>
-internal class PseudoMercator : Mercator
+internal sealed class PseudoMercator : Mercator
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="PseudoMercator"/> class.
@@ -32,7 +32,7 @@ internal class PseudoMercator : Mercator
     /// </summary>
     /// <param name="parameters">Projection parameters.</param>
     /// <param name="inverse">Inverse transform instance when cloning.</param>
-    protected PseudoMercator(IEnumerable<ProjectionParameter> parameters, Mercator? inverse)
+    private PseudoMercator(IEnumerable<ProjectionParameter> parameters, Mercator? inverse)
         : base(VerifyParameters(parameters), inverse)
     {
         this.Name = "Pseudo-Mercator";

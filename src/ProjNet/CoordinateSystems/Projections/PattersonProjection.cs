@@ -19,7 +19,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// coefficient set. The implementation matches the forward polynomial in odd powers of
 /// <c>φ</c> and the Newton iteration driven by its analytical derivative.</para>
 /// </remarks>
-internal class PattersonProjection : MapProjection
+internal sealed class PattersonProjection : MapProjection
 {
     private const double K1 = 1.0148d;
     private const double K2 = 0.23185d;

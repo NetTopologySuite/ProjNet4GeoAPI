@@ -23,7 +23,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 /// <seealso href="https://www.swisstopo.admin.ch/en/swiss-map-projections">Swisstopo: Swiss map projections.</seealso>
 /// <seealso href="https://proj.org/en/stable/operations/projections/somerc.html">PROJ documentation: Swiss Oblique Mercator.</seealso>
-internal class SwissObliqueMercatorProjection : MapProjection
+internal sealed class SwissObliqueMercatorProjection : MapProjection
 {
     private const int MaximumIterations = 6;
     private const double IterationTolerance = 1e-10;

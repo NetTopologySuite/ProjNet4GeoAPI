@@ -16,7 +16,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// The implementation iteratively solves the auxiliary latitude used by the original
 /// formulation and then applies the characteristic Putnins P2 cosine-shifted x scaling.
 /// </remarks>
-internal class PutninsP2Projection : MapProjection
+internal sealed class PutninsP2Projection : MapProjection
 {
     private const double Cx = 1.89490d;
     private const double Cy = 1.71848d;

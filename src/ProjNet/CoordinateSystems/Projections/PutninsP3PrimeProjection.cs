@@ -14,7 +14,7 @@ using System.Collections.Generic;
 /// This projection specializes <see cref="PutninsP3Projection"/> with the Putnins P3'
 /// parameter set, so its numerical behavior follows the same verified base formulation.
 /// </remarks>
-internal class PutninsP3PrimeProjection : PutninsP3Projection
+internal sealed class PutninsP3PrimeProjection : PutninsP3Projection
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="PutninsP3PrimeProjection"/> class.

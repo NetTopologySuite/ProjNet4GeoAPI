@@ -26,7 +26,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Sinusoidal_projection">Wikipedia: Sinusoidal projection.</seealso>
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 2, Sect. 2.2.2, pp. 67-68.</seealso>
-internal class SinusoidalProjection : MapProjection
+internal sealed class SinusoidalProjection : MapProjection
 {
     private readonly bool isEllipsoidal;
 
