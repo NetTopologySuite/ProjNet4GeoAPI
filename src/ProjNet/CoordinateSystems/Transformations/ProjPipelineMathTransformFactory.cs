@@ -68,7 +68,7 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
-        IReadOnlyList<Dictionary<string, string>> parsedPipelineSteps = hasPipeline
+        IReadOnlyList<Dictionary<string, string>> parsedPipelineSteps = hasPipeline && nestedPipelineStepOperations is null
             ? ArgumentGuard.ThrowIfNull(pipelineStepArguments, nameof(pipelineStepArguments))
             : [];
 
