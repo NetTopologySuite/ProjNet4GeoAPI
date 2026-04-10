@@ -65,16 +65,20 @@ public class Ellipsoid : Info
     /// Gets the WGS 84 ellipsoid.
     /// </summary>
     /// <remarks>
-    /// Inverse flattening derived from four defining parameters
+    /// <para>Inverse flattening derived from four defining parameters
     /// (semi-major axis;
     /// C20 = -484.16685*10e-6;
     /// earth's angular velocity w = 7292115e11 rad/sec;
-    /// gravitational constant GM = 3986005e8 m*m*m/s/s).
+    /// gravitational constant GM = 3986005e8 m*m*m/s/s).</para>
+    /// <para>This convenience accessor intentionally retains the legacy runtime alias and remarks metadata instead of
+    /// exposing the generated EPSG catalog entry verbatim, so existing callers keep the established public representation
+    /// while the higher-level WGS84 CRS statics resolve through the catalog.</para>
     /// </remarks>
     public static Ellipsoid WGS84
     {
         get
         {
+            // Keep the legacy public representation stable even though the generated catalog can resolve EPSG:7030.
             return new Ellipsoid(
                 6378137,
                 0,

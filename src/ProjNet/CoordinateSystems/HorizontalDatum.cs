@@ -53,11 +53,15 @@ public class HorizontalDatum : Datum
     /// <para>Origin description: Defined through a consistent set of station coordinates. These have changed with time: by 0.7m
     /// on 29/6/1994 [WGS 84 (G730)], a further 0.2m on 29/1/1997 [WGS 84 (G873)] and a further 0.06m on
     /// 20/1/2002 [WGS 84 (G1150)].</para>
+    /// <para>This convenience accessor intentionally keeps the historical non-ensemble runtime metadata instead of
+    /// surfacing the generated EPSG ensemble record verbatim, because changing the public datum identity here would
+    /// alter established application behavior even though the catalog-backed WGS84 CRS statics now consume EPSG data.</para>
     /// </remarks>
     public static HorizontalDatum WGS84
     {
         get
         {
+            // Keep the legacy public datum identity stable instead of switching this accessor to the EPSG ensemble record.
             return new HorizontalDatum(
                 CoordinateSystems.Ellipsoid.WGS84,
                 null,
