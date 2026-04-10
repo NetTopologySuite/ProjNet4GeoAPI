@@ -24,10 +24,10 @@ internal static class ProjJsonCoverageMatrix
     private const string ReaderCompoundReference = Reader + ".ReadCompoundCoordinateSystem";
     private const string ReaderConversionReference = Reader + ".ReadConversion, " + Reader + ".NormalizeProjectionParameterName";
     private const string ReaderCoordinateSystemReference = Reader + ".ReadCoordinateSystemDefinition, " + Reader + ".ReadAxis, " + Reader + ".ParseAxisOrientation";
-    private const string ReaderDatumReference = Reader + ".ReadHorizontalDatum, " + Reader + ".ReadVerticalDatum, " + Reader + ".ReadEllipsoid";
+    private const string ReaderDatumReference = Reader + ".ReadHorizontalDatumOrEnsemble, " + Reader + ".ReadVerticalDatumOrEnsemble, " + Reader + ".ReadHorizontalDatum, " + Reader + ".ReadVerticalDatum, " + Reader + ".ReadHorizontalDatumEnsemble, " + Reader + ".ReadVerticalDatumEnsemble, " + Reader + ".ReadDatumEnsemble, " + Reader + ".ReadDatumEnsembleMember, " + Reader + ".ReadEllipsoid";
     private const string ReaderUnitReference = Reader + ".ReadAngularUnit, " + Reader + ".ReadLinearUnit, " + Reader + ".IsAngularUnit, " + Reader + ".IsLinearUnit";
     private const string ReaderIdentifierReference = Reader + ".ReadIdentifier, " + Reader + ".ReadSingleIdentifier";
-    private const string ReaderEnsembleReference = Reader + ".EnsureNoDatumEnsemble";
+    private const string ReaderEnsembleReference = Reader + ".ReadHorizontalDatumOrEnsemble, " + Reader + ".ReadVerticalDatumOrEnsemble, " + Reader + ".ReadHorizontalDatumEnsemble, " + Reader + ".ReadVerticalDatumEnsemble, " + Reader + ".ReadDatumEnsemble, " + Reader + ".ReadDatumEnsembleMember";
     private const string WriterRootReference = Writer + ".ToJson, " + Writer + ".WriteTo, " + Writer + ".WriteCoordinateSystem";
     private const string WriterGeographicReference = Writer + ".WriteGeographicCoordinateSystem";
     private const string WriterGeocentricReference = Writer + ".WriteGeocentricCoordinateSystem";
@@ -35,7 +35,7 @@ internal static class ProjJsonCoverageMatrix
     private const string WriterVerticalReference = Writer + ".WriteVerticalCoordinateSystem";
     private const string WriterCompoundReference = Writer + ".WriteCompoundCoordinateSystem, " + Writer + ".WriteCompoundComponents, " + Writer + ".WriteCompoundComponent";
     private const string WriterAxisReference = Writer + ".WriteCoordinateSystemDefinition, " + Writer + ".WriteAxis, " + Writer + ".GetAxisDirection";
-    private const string WriterDatumReference = Writer + ".WriteHorizontalDatum, " + Writer + ".WriteEllipsoid, " + Writer + ".WritePrimeMeridian, " + Writer + ".WriteVerticalDatum";
+    private const string WriterDatumReference = Writer + ".WriteHorizontalDatumProperty, " + Writer + ".WriteVerticalDatumProperty, " + Writer + ".WriteHorizontalDatum, " + Writer + ".WriteDatumEnsemble, " + Writer + ".WriteDatumEnsembleMember, " + Writer + ".WriteEllipsoid, " + Writer + ".WritePrimeMeridian, " + Writer + ".WriteVerticalDatum";
     private const string WriterConversionReference = Writer + ".WriteConversion, " + Writer + ".WriteMethod, " + Writer + ".WriteProjectionParameter, " + Writer + ".WriteUnit, " + Writer + ".WriteAngularUnit, " + Writer + ".WriteLinearUnit, " + Writer + ".WriteScaleUnit";
     private const string WriterBoundReference = Writer + ".WriteBoundCoordinateSystem, " + Writer + ".WriteBoundCoordinateSystemComponent, " + Writer + ".WriteBoundTransformation, " + Writer + ".WriteBoundTransformationParameters, " + Writer + ".TryWriteLegacyBoundCoordinateSystem";
     private const string WriterIdentifierReference = Writer + ".WriteIdentifier";
@@ -134,11 +134,11 @@ internal static class ProjJsonCoverageMatrix
                 "Static vertical reference frames are fully supported."),
             Row(
                 "datum_ensemble",
-                ProjJsonCoverageStatus.Unsupported,
+                ProjJsonCoverageStatus.Supported,
                 ReaderEnsembleReference,
-                ProjJsonCoverageStatus.Unsupported,
-                WriterRootReference,
-                "Reader rejects datum_ensemble and the writer has no ensemble-capable model to emit."),
+                ProjJsonCoverageStatus.Supported,
+                WriterDatumReference,
+                "Reader and writer retain datum_ensemble metadata for supported geodetic and vertical CRS definitions."),
             Row(
                 "DerivedCRS/FittedCoordinateSystem",
                 ProjJsonCoverageStatus.Unsupported,

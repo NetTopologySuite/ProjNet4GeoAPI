@@ -274,6 +274,11 @@ public class HorizontalDatum : Datum
             throw new NotSupportedException("WKT2 DATUM output for horizontal datums with WGS84 conversion parameters is not implemented. A BOUNDCRS writer is required to preserve those transformations.");
         }
 
+        if (this.Ensemble is not null)
+        {
+            return this.Ensemble.ToWktNode(version);
+        }
+
         var children = new List<WktNode>
         {
             new WktQuotedString(this.Name),

@@ -429,6 +429,74 @@ public class ProjJsonWriterTests
     }
 
     /// <summary>
+    /// Verifies geographic CRS with retained datum-ensemble metadata serialize as PROJJSON <c>datum_ensemble</c>.
+    /// </summary>
+    [Fact]
+    public void ToJson_WithGeographicCoordinateSystemUsingDatumEnsemble_EmitsDatumEnsemble()
+    {
+        GeographicCoordinateSystem geographic = CreateEnsembleBackedGeographicCoordinateSystem();
+        DatumEnsemble expectedEnsemble = Assert.IsType<DatumEnsemble>(geographic.HorizontalDatum.Ensemble);
+
+        string json = ProjJsonWriter.ToJson(geographic);
+        GeographicCoordinateSystem parsed = Assert.IsType<GeographicCoordinateSystem>(ProjJsonReader.Parse(json));
+
+        using var document = JsonDocument.Parse(json);
+        JsonElement root = document.RootElement;
+
+        Assert.Equal("GeographicCRS", root.GetProperty("type").GetString());
+        Assert.True(root.TryGetProperty("datum_ensemble", out JsonElement datumEnsemble));
+        Assert.False(root.TryGetProperty("datum", out _));
+        Assert.Equal(expectedEnsemble.Name, datumEnsemble.GetProperty("name").GetString());
+        Assert.Equal(expectedEnsemble.Members.Count, datumEnsemble.GetProperty("members").GetArrayLength());
+        AssertDatumEnsembleEqual(expectedEnsemble, Assert.IsType<DatumEnsemble>(parsed.HorizontalDatum.Ensemble));
+    }
+
+    /// <summary>
+    /// Verifies projected CRS with ensemble-backed base datums emit <c>datum_ensemble</c> on the nested base CRS.
+    /// </summary>
+    [Fact]
+    public void ToJson_WithProjectedCoordinateSystemUsingDatumEnsemble_EmitsDatumEnsembleOnBaseCrs()
+    {
+        ProjectedCoordinateSystem projected = CreateEnsembleBackedProjectedCoordinateSystem();
+        DatumEnsemble expectedEnsemble = Assert.IsType<DatumEnsemble>(projected.GeographicCoordinateSystem.HorizontalDatum.Ensemble);
+
+        string json = ProjJsonWriter.ToJson(projected);
+        ProjectedCoordinateSystem parsed = Assert.IsType<ProjectedCoordinateSystem>(ProjJsonReader.Parse(json));
+
+        using var document = JsonDocument.Parse(json);
+        JsonElement root = document.RootElement;
+        JsonElement baseCrs = root.GetProperty("base_crs");
+
+        Assert.Equal("ProjectedCRS", root.GetProperty("type").GetString());
+        Assert.True(baseCrs.TryGetProperty("datum_ensemble", out JsonElement datumEnsemble));
+        Assert.False(baseCrs.TryGetProperty("datum", out _));
+        Assert.Equal(expectedEnsemble.Name, datumEnsemble.GetProperty("name").GetString());
+        AssertDatumEnsembleEqual(expectedEnsemble, Assert.IsType<DatumEnsemble>(parsed.GeographicCoordinateSystem.HorizontalDatum.Ensemble));
+    }
+
+    /// <summary>
+    /// Verifies vertical CRS with retained datum-ensemble metadata serialize as PROJJSON <c>datum_ensemble</c>.
+    /// </summary>
+    [Fact]
+    public void ToJson_WithVerticalCoordinateSystemUsingDatumEnsemble_EmitsDatumEnsemble()
+    {
+        VerticalCoordinateSystem vertical = CreateEnsembleBackedVerticalCoordinateSystem();
+        DatumEnsemble expectedEnsemble = Assert.IsType<DatumEnsemble>(vertical.VerticalDatum.Ensemble);
+
+        string json = ProjJsonWriter.ToJson(vertical);
+        VerticalCoordinateSystem parsed = Assert.IsType<VerticalCoordinateSystem>(ProjJsonReader.Parse(json));
+
+        using var document = JsonDocument.Parse(json);
+        JsonElement root = document.RootElement;
+
+        Assert.Equal("VerticalCRS", root.GetProperty("type").GetString());
+        Assert.True(root.TryGetProperty("datum_ensemble", out JsonElement datumEnsemble));
+        Assert.False(root.TryGetProperty("datum", out _));
+        Assert.Equal(expectedEnsemble.Name, datumEnsemble.GetProperty("name").GetString());
+        AssertDatumEnsembleEqual(expectedEnsemble, Assert.IsType<DatumEnsemble>(parsed.VerticalDatum.Ensemble));
+    }
+
+    /// <summary>
     /// Verifies WKT2 horizontal <c>BOUNDCRS</c> definitions survive a PROJJSON BoundCRS roundtrip without semantic drift.
     /// </summary>
     [Fact]
@@ -464,6 +532,44 @@ public class ProjJsonWriterTests
         BoundCoordinateSystem fromProjJson = Assert.IsType<BoundCoordinateSystem>(ProjJsonReader.Parse(json));
 
         Assert.True(fromProjJson.EqualParams(fromWkt2));
+    }
+
+    /// <summary>
+    /// Verifies ensemble-backed geographic CRS survive a WKT2 -> PROJJSON roundtrip without losing ensemble metadata.
+    /// </summary>
+    [Fact]
+    public void ToJson_RoundtripsGeographicDatumEnsembleAcrossWkt2AndProjJson()
+    {
+        GeographicCoordinateSystem original = CreateEnsembleBackedGeographicCoordinateSystem();
+        string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
+        GeographicCoordinateSystem fromWkt2 = CoordinateSystemTestHelpers.RequireCoordinateSystem<GeographicCoordinateSystem>(CoordinateSystemFactory, wkt);
+
+        string json = ProjJsonWriter.ToJson(fromWkt2);
+        GeographicCoordinateSystem fromProjJson = Assert.IsType<GeographicCoordinateSystem>(ProjJsonReader.Parse(json));
+
+        Assert.True(fromProjJson.EqualParams(fromWkt2));
+        AssertDatumEnsembleEqual(
+            Assert.IsType<DatumEnsemble>(fromWkt2.HorizontalDatum.Ensemble),
+            Assert.IsType<DatumEnsemble>(fromProjJson.HorizontalDatum.Ensemble));
+    }
+
+    /// <summary>
+    /// Verifies ensemble-backed vertical CRS survive a WKT2 -> PROJJSON roundtrip without losing ensemble metadata.
+    /// </summary>
+    [Fact]
+    public void ToJson_RoundtripsVerticalDatumEnsembleAcrossWkt2AndProjJson()
+    {
+        VerticalCoordinateSystem original = CreateEnsembleBackedVerticalCoordinateSystem();
+        string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
+        VerticalCoordinateSystem fromWkt2 = CoordinateSystemTestHelpers.RequireCoordinateSystem<VerticalCoordinateSystem>(CoordinateSystemFactory, wkt);
+
+        string json = ProjJsonWriter.ToJson(fromWkt2);
+        VerticalCoordinateSystem fromProjJson = Assert.IsType<VerticalCoordinateSystem>(ProjJsonReader.Parse(json));
+
+        Assert.True(fromProjJson.EqualParams(fromWkt2));
+        AssertDatumEnsembleEqual(
+            Assert.IsType<DatumEnsemble>(fromWkt2.VerticalDatum.Ensemble),
+            Assert.IsType<DatumEnsemble>(fromProjJson.VerticalDatum.Ensemble));
     }
 
     private static string GetCatalogWkt(int srid)
@@ -503,5 +609,90 @@ public class ProjJsonWriterTests
             CoordinateSystemFactory.CreateVerticalDatum("Ellipsoidal height datum", DatumType.VD_Ellipsoidal),
             LinearUnit.Metre,
             new AxisInfo("Ellipsoidal height", AxisOrientationEnum.Up));
+    }
+
+    private static GeographicCoordinateSystem CreateEnsembleBackedGeographicCoordinateSystem()
+    {
+        HorizontalDatum datum = HorizontalDatum.WGS84;
+        datum.Name = "World Geodetic System 1984 ensemble";
+        datum.Authority = "EPSG";
+        datum.AuthorityCode = 6326;
+        datum.Ensemble = new DatumEnsemble(
+            "World Geodetic System 1984 ensemble",
+            [
+                new DatumEnsembleMember("World Geodetic System 1984 (Transit)", "EPSG", 1166),
+                new DatumEnsembleMember("World Geodetic System 1984 (G730)", "EPSG", 1152),
+            ],
+            2d,
+            datum.Ellipsoid,
+            "EPSG",
+            6326);
+
+        GeographicCoordinateSystem geographic = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
+            "WGS 84",
+            AngularUnit.Degrees,
+            datum,
+            PrimeMeridian.Greenwich,
+            new AxisInfo("Geodetic latitude", AxisOrientationEnum.North),
+            new AxisInfo("Geodetic longitude", AxisOrientationEnum.East));
+        geographic.Authority = "EPSG";
+        geographic.AuthorityCode = 4326;
+        return geographic;
+    }
+
+    private static ProjectedCoordinateSystem CreateEnsembleBackedProjectedCoordinateSystem()
+    {
+        GeographicCoordinateSystem geographic = CreateEnsembleBackedGeographicCoordinateSystem();
+        IProjection projection = CoordinateSystemFactory.CreateProjection(
+            "UTM zone 32N",
+            "Transverse_Mercator",
+            new List<ProjectionParameter>
+            {
+                new("latitude_of_origin", 0),
+                new("central_meridian", 9),
+                new("scale_factor", 0.9996),
+                new("false_easting", 500000),
+                new("false_northing", 0),
+            });
+
+        return CoordinateSystemFactory.CreateProjectedCoordinateSystem(
+            "WGS 84 / UTM zone 32N",
+            geographic,
+            projection,
+            LinearUnit.Metre,
+            new AxisInfo("Easting", AxisOrientationEnum.East),
+            new AxisInfo("Northing", AxisOrientationEnum.North));
+    }
+
+    private static VerticalCoordinateSystem CreateEnsembleBackedVerticalCoordinateSystem()
+    {
+        VerticalDatum datum = CoordinateSystemFactory.CreateVerticalDatum("Example vertical ensemble", DatumType.VD_GeoidModelDerived);
+        datum.Authority = "TEST";
+        datum.AuthorityCode = 1001;
+        datum.Ensemble = new DatumEnsemble(
+            "Example vertical ensemble",
+            [
+                new DatumEnsembleMember("Datum A", "TEST", 1),
+                new DatumEnsembleMember("Datum B", "TEST", 2),
+            ],
+            0.05d,
+            null,
+            "TEST",
+            1001);
+
+        return CoordinateSystemFactory.CreateVerticalCoordinateSystem(
+            "Example ensemble height",
+            datum,
+            LinearUnit.Metre,
+            new AxisInfo("Gravity-related height", AxisOrientationEnum.Up));
+    }
+
+    private static void AssertDatumEnsembleEqual(DatumEnsemble expected, DatumEnsemble actual)
+    {
+        Assert.True(expected.Equals(actual));
+        Assert.Equal(expected.Name, actual.Name);
+        Assert.Equal(expected.Authority, actual.Authority);
+        Assert.Equal(expected.AuthorityCode, actual.AuthorityCode);
+        Assert.Equal(expected.Members.Count, actual.Members.Count);
     }
 }

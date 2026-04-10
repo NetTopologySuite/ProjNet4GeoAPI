@@ -136,7 +136,35 @@ namespace ProjNet.CoordinateSystems
     public abstract class Datum : ProjNet.CoordinateSystems.Info
     {
         public ProjNet.CoordinateSystems.DatumType DatumType { get; set; }
+        public ProjNet.CoordinateSystems.DatumEnsemble? Ensemble { get; set; }
         public override bool EqualParams(object obj) { }
+    }
+    public sealed class DatumEnsemble : System.IEquatable<ProjNet.CoordinateSystems.DatumEnsemble>
+    {
+        public DatumEnsemble(string name, System.Collections.Generic.IReadOnlyList<ProjNet.CoordinateSystems.DatumEnsembleMember> members, double accuracy) { }
+        public DatumEnsemble(string name, System.Collections.Generic.IReadOnlyList<ProjNet.CoordinateSystems.DatumEnsembleMember> members, double accuracy, ProjNet.CoordinateSystems.Ellipsoid? ellipsoid, string authority, long authorityCode) { }
+        public double Accuracy { get; }
+        public string Authority { get; }
+        public long AuthorityCode { get; }
+        public ProjNet.CoordinateSystems.Ellipsoid? Ellipsoid { get; }
+        public System.Collections.Generic.IReadOnlyList<ProjNet.CoordinateSystems.DatumEnsembleMember> Members { get; }
+        public string Name { get; }
+        public bool Equals(ProjNet.CoordinateSystems.DatumEnsemble? other) { }
+        public override bool Equals(object? obj) { }
+        public override int GetHashCode() { }
+        public override string ToString() { }
+    }
+    public sealed class DatumEnsembleMember : System.IEquatable<ProjNet.CoordinateSystems.DatumEnsembleMember>
+    {
+        public DatumEnsembleMember(string name) { }
+        public DatumEnsembleMember(string name, string authority, long authorityCode) { }
+        public string Authority { get; }
+        public long AuthorityCode { get; }
+        public string Name { get; }
+        public bool Equals(ProjNet.CoordinateSystems.DatumEnsembleMember? other) { }
+        public override bool Equals(object? obj) { }
+        public override int GetHashCode() { }
+        public override string ToString() { }
     }
     public enum DatumType
     {

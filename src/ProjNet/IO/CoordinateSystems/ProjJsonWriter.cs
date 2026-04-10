@@ -4,6 +4,7 @@
 namespace ProjNet.IO.CoordinateSystems;
 
 using System;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Text.Json;
@@ -87,8 +88,7 @@ public static class ProjJsonWriter
         writer.WriteString("type", "GeographicCRS");
         writer.WriteString("name", coordinateSystem.Name);
 
-        writer.WritePropertyName("datum");
-        WriteHorizontalDatum(writer, coordinateSystem.HorizontalDatum);
+        WriteHorizontalDatumProperty(writer, coordinateSystem.HorizontalDatum);
 
         writer.WritePropertyName("prime_meridian");
         WritePrimeMeridian(writer, coordinateSystem.PrimeMeridian);
@@ -111,8 +111,7 @@ public static class ProjJsonWriter
         writer.WriteString("type", "GeodeticCRS");
         writer.WriteString("name", coordinateSystem.Name);
 
-        writer.WritePropertyName("datum");
-        WriteHorizontalDatum(writer, coordinateSystem.HorizontalDatum);
+        WriteHorizontalDatumProperty(writer, coordinateSystem.HorizontalDatum);
 
         writer.WritePropertyName("prime_meridian");
         WritePrimeMeridian(writer, coordinateSystem.PrimeMeridian);
@@ -163,8 +162,7 @@ public static class ProjJsonWriter
         writer.WriteString("type", "VerticalCRS");
         writer.WriteString("name", coordinateSystem.Name);
 
-        writer.WritePropertyName("datum");
-        WriteVerticalDatum(writer, coordinateSystem.VerticalDatum);
+        WriteVerticalDatumProperty(writer, coordinateSystem.VerticalDatum);
 
         writer.WritePropertyName("coordinate_system");
         WriteCoordinateSystemDefinition(writer, "vertical", coordinateSystem);
@@ -364,6 +362,66 @@ public static class ProjJsonWriter
         writer.WriteEndObject();
     }
 
+    private static void WriteHorizontalDatumProperty(Utf8JsonWriter writer, HorizontalDatum horizontalDatum)
+    {
+        if (horizontalDatum.Ensemble is not null)
+        {
+            writer.WritePropertyName("datum_ensemble");
+            WriteDatumEnsemble(writer, horizontalDatum.Ensemble);
+            return;
+        }
+
+        writer.WritePropertyName("datum");
+        WriteHorizontalDatum(writer, horizontalDatum);
+    }
+
+    private static void WriteVerticalDatumProperty(Utf8JsonWriter writer, VerticalDatum verticalDatum)
+    {
+        if (verticalDatum.Ensemble is not null)
+        {
+            writer.WritePropertyName("datum_ensemble");
+            WriteDatumEnsemble(writer, verticalDatum.Ensemble);
+            return;
+        }
+
+        writer.WritePropertyName("datum");
+        WriteVerticalDatum(writer, verticalDatum);
+    }
+
+    private static void WriteDatumEnsemble(Utf8JsonWriter writer, DatumEnsemble datumEnsemble)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("type", "DatumEnsemble");
+        writer.WriteString("name", datumEnsemble.Name);
+
+        writer.WritePropertyName("members");
+        writer.WriteStartArray();
+        for (int i = 0; i < datumEnsemble.Members.Count; i++)
+        {
+            WriteDatumEnsembleMember(writer, datumEnsemble.Members[i]);
+        }
+
+        writer.WriteEndArray();
+
+        if (datumEnsemble.Ellipsoid is not null)
+        {
+            writer.WritePropertyName("ellipsoid");
+            WriteEllipsoid(writer, datumEnsemble.Ellipsoid);
+        }
+
+        writer.WriteString("accuracy", datumEnsemble.Accuracy.ToString("G17", CultureInfo.InvariantCulture));
+        WriteIdentifier(writer, datumEnsemble.Authority, datumEnsemble.AuthorityCode);
+        writer.WriteEndObject();
+    }
+
+    private static void WriteDatumEnsembleMember(Utf8JsonWriter writer, DatumEnsembleMember member)
+    {
+        writer.WriteStartObject();
+        writer.WriteString("name", member.Name);
+        WriteIdentifier(writer, member.Authority, member.AuthorityCode);
+        writer.WriteEndObject();
+    }
+
     private static void WriteEllipsoid(Utf8JsonWriter writer, Ellipsoid ellipsoid)
     {
         writer.WriteStartObject();
@@ -551,15 +609,20 @@ public static class ProjJsonWriter
 
     private static void WriteIdentifier(Utf8JsonWriter writer, IInfo info)
     {
-        if (string.IsNullOrWhiteSpace(info.Authority) || info.AuthorityCode <= 0)
+        WriteIdentifier(writer, info.Authority, info.AuthorityCode);
+    }
+
+    private static void WriteIdentifier(Utf8JsonWriter writer, string authority, long authorityCode)
+    {
+        if (string.IsNullOrWhiteSpace(authority) || authorityCode <= 0)
         {
             return;
         }
 
         writer.WritePropertyName("id");
         writer.WriteStartObject();
-        writer.WriteString("authority", info.Authority);
-        writer.WriteNumber("code", info.AuthorityCode);
+        writer.WriteString("authority", authority);
+        writer.WriteNumber("code", authorityCode);
         writer.WriteEndObject();
     }
 

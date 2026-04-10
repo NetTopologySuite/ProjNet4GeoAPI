@@ -472,29 +472,62 @@ public class CoordinateSystemWktReaderWkt2Tests
     }
 
     /// <summary>
-    /// Verifies ensemble-backed WKT2 geographic CRS still report the current unsupported boundary explicitly.
+    /// Verifies ensemble-backed WKT2 geographic CRS now retain ensemble metadata on the parsed datum.
     /// </summary>
     [Fact]
-    public void CreateFromWkt_WithDatumEnsemble_ThrowsNotSupportedException()
+    public void CreateFromWkt_WithDatumEnsemble_ParsesGeographicCrsAndRetainsEnsembleMetadata()
     {
         const string wkt = """GEOGCRS["WGS 84",ENSEMBLE["World Geodetic System 1984 ensemble",MEMBER["World Geodetic System 1984 (Transit)",ID["EPSG",1166]],MEMBER["World Geodetic System 1984 (G730)",ID["EPSG",1152]],MEMBER["World Geodetic System 1984 (G873)",ID["EPSG",1153]],MEMBER["World Geodetic System 1984 (G1150)",ID["EPSG",1154]],MEMBER["World Geodetic System 1984 (G1674)",ID["EPSG",1155]],MEMBER["World Geodetic System 1984 (G1762)",ID["EPSG",1156]],MEMBER["World Geodetic System 1984 (G2139)",ID["EPSG",1309]],MEMBER["World Geodetic System 1984 (G2296)",ID["EPSG",1383]],ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7030]],ENSEMBLEACCURACY[2],ID["EPSG",6326]],CS[ellipsoidal,3,ID["EPSG",6423]],AXIS["Geodetic latitude (Lat)",north,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]]],AXIS["Geodetic longitude (Lon)",east,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]]],AXIS["Ellipsoidal height (h)",up,LENGTHUNIT["metre",1,ID["EPSG",9001]]],ID["EPSG",4979]]""";
 
-        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => CoordinateSystemFactory.CreateFromWkt(wkt));
+        CompoundCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<CompoundCoordinateSystem>(CoordinateSystemFactory, wkt);
+        GeographicCoordinateSystem horizontal = Assert.IsType<GeographicCoordinateSystem>(parsed.HeadCoordinateSystem);
+        DatumEnsemble ensemble = Assert.IsType<DatumEnsemble>(horizontal.HorizontalDatum.Ensemble);
 
-        Assert.Contains("ensembles", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal("World Geodetic System 1984 ensemble", horizontal.HorizontalDatum.Name);
+        Assert.Equal("EPSG", horizontal.HorizontalDatum.Authority);
+        Assert.Equal(6326, horizontal.HorizontalDatum.AuthorityCode);
+        Assert.Equal(8, ensemble.Members.Count);
+        Assert.Equal(2d, ensemble.Accuracy);
+        Assert.NotNull(ensemble.Ellipsoid);
+        Assert.Equal("WGS 84", Assert.IsType<Ellipsoid>(ensemble.Ellipsoid).Name);
     }
 
     /// <summary>
-    /// Verifies ensemble-backed projected WKT2 CRS still report the current unsupported boundary explicitly.
+    /// Verifies ensemble-backed projected WKT2 CRS now retain ensemble metadata on the base datum.
     /// </summary>
     [Fact]
-    public void CreateFromWkt_WithEnsembleBasedProjCrs_ThrowsNotSupportedException()
+    public void CreateFromWkt_WithEnsembleBasedProjCrs_ParsesProjectedCoordinateSystemAndRetainsBaseEnsembleMetadata()
     {
         const string wkt = """PROJCRS["WGS 84 / UTM zone 32N",BASEGEOGCRS["WGS 84",ENSEMBLE["World Geodetic System 1984 ensemble",MEMBER["World Geodetic System 1984 (Transit)",ID["EPSG",1166]],MEMBER["World Geodetic System 1984 (G730)",ID["EPSG",1152]],MEMBER["World Geodetic System 1984 (G873)",ID["EPSG",1153]],MEMBER["World Geodetic System 1984 (G1150)",ID["EPSG",1154]],MEMBER["World Geodetic System 1984 (G1674)",ID["EPSG",1155]],MEMBER["World Geodetic System 1984 (G1762)",ID["EPSG",1156]],MEMBER["World Geodetic System 1984 (G2139)",ID["EPSG",1309]],MEMBER["World Geodetic System 1984 (G2296)",ID["EPSG",1383]],ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",7030]],ENSEMBLEACCURACY[2],ID["EPSG",6326]],ID["EPSG",4326]],CONVERSION["UTM zone 32N",METHOD["Transverse Mercator",ID["EPSG",9807]],PARAMETER["Latitude of natural origin",0,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8801]],PARAMETER["Longitude of natural origin",9,ANGLEUNIT["degree",0.0174532925199433,ID["EPSG",9102]],ID["EPSG",8802]],PARAMETER["Scale factor at natural origin",0.9996,SCALEUNIT["unity",1,ID["EPSG",9201]],ID["EPSG",8805]],PARAMETER["False easting",500000,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8806]],PARAMETER["False northing",0,LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",8807]],ID["EPSG",16032]],CS[Cartesian,2,ID["EPSG",4400]],AXIS["Easting (E)",east],AXIS["Northing (N)",north],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["EPSG",32632]]""";
 
-        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => CoordinateSystemFactory.CreateFromWkt(wkt));
+        ProjectedCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(CoordinateSystemFactory, wkt);
+        DatumEnsemble ensemble = Assert.IsType<DatumEnsemble>(parsed.GeographicCoordinateSystem.HorizontalDatum.Ensemble);
 
-        Assert.Contains("ensembles", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal("World Geodetic System 1984 ensemble", parsed.GeographicCoordinateSystem.HorizontalDatum.Name);
+        Assert.Equal("EPSG", parsed.GeographicCoordinateSystem.HorizontalDatum.Authority);
+        Assert.Equal(6326, parsed.GeographicCoordinateSystem.HorizontalDatum.AuthorityCode);
+        Assert.Equal(8, ensemble.Members.Count);
+        Assert.Equal(2d, ensemble.Accuracy);
+        Assert.NotNull(ensemble.Ellipsoid);
+    }
+
+    /// <summary>
+    /// Verifies vertical ensemble-backed WKT2 CRS retain ensemble metadata on the parsed datum.
+    /// </summary>
+    [Fact]
+    public void CreateFromWkt_WithVerticalDatumEnsemble_ParsesVerticalCoordinateSystemAndRetainsEnsembleMetadata()
+    {
+        const string wkt = """VERTCRS["Example ensemble height",ENSEMBLE["Example vertical ensemble",MEMBER["Datum A",ID["TEST",1]],MEMBER["Datum B",ID["TEST",2]],ENSEMBLEACCURACY[0.05],ID["TEST",1001]],CS[vertical,1],AXIS["Gravity-related height (H)",up],LENGTHUNIT["metre",1],ID["TEST",2001]]""";
+
+        VerticalCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<VerticalCoordinateSystem>(CoordinateSystemFactory, wkt);
+        DatumEnsemble ensemble = Assert.IsType<DatumEnsemble>(parsed.VerticalDatum.Ensemble);
+
+        Assert.Equal("Example vertical ensemble", parsed.VerticalDatum.Name);
+        Assert.Equal("TEST", parsed.VerticalDatum.Authority);
+        Assert.Equal(1001, parsed.VerticalDatum.AuthorityCode);
+        Assert.Equal(2, ensemble.Members.Count);
+        Assert.Equal(0.05d, ensemble.Accuracy);
+        Assert.Null(ensemble.Ellipsoid);
     }
 
     /// <summary>

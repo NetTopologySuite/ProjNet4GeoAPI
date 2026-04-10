@@ -103,7 +103,7 @@ public static partial class CoordinateSystemWktReader
                 info = ReadWkt2ProjectedCoordinateSystem(tokenizer);
                 return true;
             case "VERTCRS":
-                if (!ContainsKeywordBlock(wkt, "VDATUM") || !ContainsKeywordBlock(wkt, "CS"))
+                if ((!ContainsKeywordBlock(wkt, "VDATUM") && !ContainsKeywordBlock(wkt, "ENSEMBLE")) || !ContainsKeywordBlock(wkt, "CS"))
                 {
                     info = null;
                     return false;
@@ -194,6 +194,9 @@ public static partial class CoordinateSystemWktReader
                 case "DATUM":
                     horizontalDatum = ReadWkt2HorizontalDatum(tokenizer);
                     break;
+                case "ENSEMBLE":
+                    horizontalDatum = ReadWkt2HorizontalDatumEnsemble(tokenizer);
+                    break;
                 case "PRIMEM":
                     primeMeridian = ReadWkt2PrimeMeridian(tokenizer);
                     break;
@@ -214,8 +217,6 @@ public static partial class CoordinateSystemWktReader
                 case "ID":
                     ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
                     break;
-                case "ENSEMBLE":
-                    throw new NotSupportedException("WKT2 datum ensembles are not supported.");
                 default:
                     if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
                     {
@@ -540,6 +541,155 @@ public static partial class CoordinateSystemWktReader
         }
 
         return new HorizontalDatum(ellipsoid, null, DatumType.HD_Geocentric, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
+
+    private static HorizontalDatum ReadWkt2HorizontalDatumEnsemble(WktTokenizer tokenizer)
+    {
+        DatumEnsemble ensemble = ReadWkt2DatumEnsemble(tokenizer, requireEllipsoid: true);
+        Ellipsoid ellipsoid = ArgumentGuard.ThrowIfNull(ensemble.Ellipsoid, nameof(ensemble));
+        return new HorizontalDatum(ellipsoid, null, DatumType.HD_Geocentric, ensemble.Name, ensemble.Authority, ensemble.AuthorityCode, string.Empty, string.Empty, string.Empty)
+        {
+            Ensemble = ensemble,
+        };
+    }
+
+    private static DatumEnsemble ReadWkt2DatumEnsemble(WktTokenizer tokenizer, bool requireEllipsoid)
+    {
+        if (tokenizer.GetStringValue() != "ENSEMBLE")
+        {
+            tokenizer.ReadToken("ENSEMBLE");
+        }
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        string name = tokenizer.ReadDoubleQuotedWord();
+        var members = new List<DatumEnsembleMember>();
+        Ellipsoid? ellipsoid = null;
+        double? accuracy = null;
+        string authority = string.Empty;
+        long authorityCode = -1;
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            switch (tokenizer.GetStringValue())
+            {
+                case "MEMBER":
+                    members.Add(ReadWkt2DatumEnsembleMember(tokenizer));
+                    break;
+                case "ELLIPSOID":
+                    ellipsoid = ReadWkt2Ellipsoid(tokenizer);
+                    break;
+                case "ENSEMBLEACCURACY":
+                    accuracy = ReadWkt2DatumEnsembleAccuracy(tokenizer);
+                    break;
+                case "ID":
+                    ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+                    break;
+                default:
+                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    {
+                        SkipKeywordNode(tokenizer);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"WKT2 ENSEMBLE keyword '{tokenizer.GetStringValue()}' is not supported.");
+                    }
+
+                    break;
+            }
+
+            tokenizer.NextToken();
+        }
+
+        if (members.Count == 0)
+        {
+            ArgumentGuard.ThrowArgument("WKT2 ENSEMBLE is missing MEMBER blocks.");
+        }
+
+        if (requireEllipsoid && ellipsoid is null)
+        {
+            ArgumentGuard.ThrowArgument("WKT2 ENSEMBLE is missing an ELLIPSOID block.");
+        }
+
+        if (accuracy is null)
+        {
+            ArgumentGuard.ThrowArgument("WKT2 ENSEMBLE is missing an ENSEMBLEACCURACY block.");
+        }
+
+        return new DatumEnsemble(name, members, accuracy.Value, ellipsoid, authority, authorityCode);
+    }
+
+    private static DatumEnsembleMember ReadWkt2DatumEnsembleMember(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "MEMBER")
+        {
+            tokenizer.ReadToken("MEMBER");
+        }
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        string name = tokenizer.ReadDoubleQuotedWord();
+        string authority = string.Empty;
+        long authorityCode = -1;
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            if (tokenizer.GetStringValue() == "ID")
+            {
+                ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+            }
+            else if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+            {
+                SkipKeywordNode(tokenizer);
+            }
+            else
+            {
+                throw new NotSupportedException($"WKT2 MEMBER keyword '{tokenizer.GetStringValue()}' is not supported.");
+            }
+
+            tokenizer.NextToken();
+        }
+
+        return new DatumEnsembleMember(name, authority, authorityCode);
+    }
+
+    private static double ReadWkt2DatumEnsembleAccuracy(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "ENSEMBLEACCURACY")
+        {
+            tokenizer.ReadToken("ENSEMBLEACCURACY");
+        }
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        tokenizer.NextToken();
+        double accuracy = tokenizer.GetNumericValue();
+        tokenizer.NextToken();
+        tokenizer.CheckCloser(bracket);
+        return accuracy;
     }
 
     private static Ellipsoid ReadWkt2Ellipsoid(WktTokenizer tokenizer)
@@ -1032,14 +1182,15 @@ public static partial class CoordinateSystemWktReader
                 case "DATUM":
                     horizontalDatum = ReadWkt2HorizontalDatum(tokenizer);
                     break;
+                case "ENSEMBLE":
+                    horizontalDatum = ReadWkt2HorizontalDatumEnsemble(tokenizer);
+                    break;
                 case "PRIMEM":
                     primeMeridian = ReadWkt2PrimeMeridian(tokenizer);
                     break;
                 case "ID":
                     ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
                     break;
-                case "ENSEMBLE":
-                    throw new NotSupportedException("WKT2 datum ensembles are not supported.");
                 default:
                     if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
                     {
@@ -1282,6 +1433,9 @@ public static partial class CoordinateSystemWktReader
                 case "VDATUM":
                     verticalDatum = ReadWkt2VerticalDatum(tokenizer);
                     break;
+                case "ENSEMBLE":
+                    verticalDatum = ReadWkt2VerticalDatumEnsemble(tokenizer);
+                    break;
                 case "CS":
                     (coordinateSystemType, coordinateSystemDimension) = ReadWkt2CoordinateSystemDefinition(tokenizer);
                     break;
@@ -1313,7 +1467,7 @@ public static partial class CoordinateSystemWktReader
 
         if (verticalDatum is null)
         {
-            ArgumentGuard.ThrowArgument("WKT2 vertical CRS is missing a VDATUM block.");
+            ArgumentGuard.ThrowArgument("WKT2 vertical CRS is missing a VDATUM or ENSEMBLE block.");
         }
 
         if (string.IsNullOrWhiteSpace(coordinateSystemType))
@@ -1399,6 +1553,15 @@ public static partial class CoordinateSystemWktReader
         }
 
         return new VerticalDatum(DatumType.VD_GeoidModelDerived, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
+
+    private static VerticalDatum ReadWkt2VerticalDatumEnsemble(WktTokenizer tokenizer)
+    {
+        DatumEnsemble ensemble = ReadWkt2DatumEnsemble(tokenizer, requireEllipsoid: false);
+        return new VerticalDatum(DatumType.VD_GeoidModelDerived, ensemble.Name, ensemble.Authority, ensemble.AuthorityCode, string.Empty, string.Empty, string.Empty)
+        {
+            Ensemble = ensemble,
+        };
     }
 
     private static CompoundCoordinateSystem ReadWkt2CompoundCoordinateSystem(WktTokenizer tokenizer)

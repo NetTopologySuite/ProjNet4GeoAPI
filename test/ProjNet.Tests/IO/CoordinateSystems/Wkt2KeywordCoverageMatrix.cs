@@ -19,6 +19,7 @@ internal static class Wkt2KeywordCoverageMatrix
     private const string CoordinateSystemReference = WktReader + ".ReadWkt2CoordinateSystemDefinition";
     private const string AxisReference = WktReader + ".ReadWkt2Axis, " + WktReader + ".ParseWkt2AxisOrientation";
     private const string HorizontalDatumReference = WktReader + ".ReadWkt2HorizontalDatum";
+    private const string EnsembleReference = WktReader + ".ReadWkt2HorizontalDatumEnsemble, " + WktReader + ".ReadWkt2VerticalDatumEnsemble, " + WktReader + ".ReadWkt2DatumEnsemble, " + WktReader + ".ReadWkt2DatumEnsembleMember, " + WktReader + ".ReadWkt2DatumEnsembleAccuracy";
     private const string EllipsoidReference = WktReader + ".ReadWkt2Ellipsoid";
     private const string PrimeMeridianReference = WktReader + ".ReadWkt2PrimeMeridian";
     private const string AngularUnitReference = WktReader + ".ReadWkt2AngularUnit";
@@ -30,7 +31,7 @@ internal static class Wkt2KeywordCoverageMatrix
     private const string VerticalReference = WktReader + ".ReadWkt2VerticalCoordinateSystem, " + WktReader + ".ReadWkt2VerticalDatum";
     private const string CompoundReference = WktReader + ".ReadWkt2CompoundCoordinateSystem";
     private const string BoundReference = WktReader + ".ReadWkt2BoundCoordinateSystem, " + WktReader + ".ReadWkt2AbridgedTransformationDefinition, " + WktReader + ".ReadWkt2AbridgedTransformationParameter, " + WktReader + ".ReadWkt2AbridgedTransformationParameterFile, BoundCoordinateSystemSupport.CreateBoundTransformation, BoundCoordinateSystemSupport.AssignTransformationParameter";
-    private const string IdentifierReference = WktReader + ".ReadWkt2Axis, " + WktReader + ".ReadWkt2HorizontalDatum, " + WktReader + ".ReadWkt2Ellipsoid, " + WktReader + ".ReadWkt2PrimeMeridian, " + WktReader + ".ReadWkt2ProjectedCoordinateSystem, " + WktReader + ".ReadWkt2VerticalCoordinateSystem, " + WktReader + ".ReadWkt2CompoundCoordinateSystem, " + WktReader + ".ReadWkt2AbridgedTransformationDefinition, " + WktReader + ".ReadIdentifierWithUnknownCode";
+    private const string IdentifierReference = WktReader + ".ReadWkt2Axis, " + WktReader + ".ReadWkt2HorizontalDatum, " + WktReader + ".ReadWkt2HorizontalDatumEnsemble, " + WktReader + ".ReadWkt2DatumEnsemble, " + WktReader + ".ReadWkt2DatumEnsembleMember, " + WktReader + ".ReadWkt2Ellipsoid, " + WktReader + ".ReadWkt2PrimeMeridian, " + WktReader + ".ReadWkt2ProjectedCoordinateSystem, " + WktReader + ".ReadWkt2VerticalCoordinateSystem, " + WktReader + ".ReadWkt2VerticalDatumEnsemble, " + WktReader + ".ReadWkt2CompoundCoordinateSystem, " + WktReader + ".ReadWkt2AbridgedTransformationDefinition, " + WktReader + ".ReadIdentifierWithUnknownCode";
     private const string DefaultUnsupportedReference = WktReader + ".ReadWkt2GeodeticCoordinateReferenceSystem, " + WktReader + ".ReadWkt2ProjectedCoordinateSystem, " + WktReader + ".ReadWkt2VerticalCoordinateSystem, " + WktReader + ".ReadWkt2BoundCoordinateSystemComponent, " + WktReader + ".ParseNormalizedWkt";
     private const string UnsupportedTopLevelReference = WktReader + ".Parse, " + WktReader + ".TryParseNativeWkt2, " + WktReader + ".ParseNormalizedWkt";
     private const string NormalizationReference = WktReader + ".NormalizeWkt, " + WktReader + ".ParseNormalizedWkt";
@@ -80,8 +81,8 @@ internal static class Wkt2KeywordCoverageMatrix
         Unsupported("ENGCRS", UnsupportedTopLevelReference, "No engineering CRS root reader path exists yet."),
         Unsupported("ENGINEERINGCRS", UnsupportedTopLevelReference, "No engineering CRS root reader path exists yet."),
         Unsupported("ENGINEERINGDATUM", UnsupportedTopLevelReference, "No engineering datum reader path exists yet."),
-        Unsupported("ENSEMBLE", GeodeticReference, "Encountering ENSEMBLE triggers an explicit NotSupportedException."),
-        Unsupported("ENSEMBLEACCURACY", GeodeticReference, "Blocked behind the unsupported ENSEMBLE path."),
+        Native("ENSEMBLE", EnsembleReference, "Parsed directly for supported geodetic and vertical datum ensemble definitions."),
+        Native("ENSEMBLEACCURACY", EnsembleReference, "Parsed directly as part of supported datum ensemble definitions."),
         Unsupported("EPOCH", UnsupportedTopLevelReference, "Coordinate metadata parsing is not implemented."),
         Ignored("FRAMEEPOCH", MetadataSkipReference, "Tolerated transitively inside skipped DYNAMIC metadata."),
         Native("GEODCRS", $"{RootDispatchReference}, {GeodeticReference}", "Handled natively through the geodetic CRS reader."),
@@ -93,7 +94,7 @@ internal static class Wkt2KeywordCoverageMatrix
         Native("ID", IdentifierReference, "Parsed directly at CRS, unit, datum, vertical datum, and BoundCRS operation sites."),
         Unsupported("INTERPOLATIONCRS", DefaultUnsupportedReference, "No coordinate-operation reader path consumes interpolation CRS blocks yet."),
         Native("LENGTHUNIT", LinearUnitReference, "Parsed directly at CRS, axis, parameter, and vertical sites."),
-        Unsupported("MEMBER", GeodeticReference, "Blocked behind the unsupported ENSEMBLE path."),
+        Native("MEMBER", EnsembleReference, "Parsed directly as part of supported datum ensemble definitions."),
         Ignored("MERIDIAN", MetadataSkipReference, "Currently tolerated as skippable metadata instead of being retained."),
         Native("METHOD", ConversionReference, "Parsed directly in conversion and abridged-transformation blocks."),
         Ignored("MODEL", MetadataSkipReference, "Tolerated transitively inside skipped DYNAMIC metadata."),

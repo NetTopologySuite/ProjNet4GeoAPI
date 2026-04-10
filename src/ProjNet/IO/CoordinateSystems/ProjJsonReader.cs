@@ -94,10 +94,8 @@ public static class ProjJsonReader
 
     private static GeographicCoordinateSystem ReadGeographicCoordinateSystem(JsonElement element)
     {
-        EnsureNoDatumEnsemble(element);
-
         string name = GetRequiredString(element, "name");
-        HorizontalDatum horizontalDatum = ReadHorizontalDatum(GetRequiredProperty(element, "datum"));
+        HorizontalDatum horizontalDatum = ReadHorizontalDatumOrEnsemble(element);
         PrimeMeridian primeMeridian = element.TryGetProperty("prime_meridian", out JsonElement primeMeridianElement)
             ? ReadPrimeMeridian(primeMeridianElement)
             : PrimeMeridian.Greenwich;
@@ -158,10 +156,8 @@ public static class ProjJsonReader
 
     private static GeocentricCoordinateSystem ReadGeocentricCoordinateSystem(JsonElement element)
     {
-        EnsureNoDatumEnsemble(element);
-
         string name = GetRequiredString(element, "name");
-        HorizontalDatum horizontalDatum = ReadHorizontalDatum(GetRequiredProperty(element, "datum"));
+        HorizontalDatum horizontalDatum = ReadHorizontalDatumOrEnsemble(element);
         PrimeMeridian primeMeridian = element.TryGetProperty("prime_meridian", out JsonElement primeMeridianElement)
             ? ReadPrimeMeridian(primeMeridianElement)
             : PrimeMeridian.Greenwich;
@@ -270,7 +266,7 @@ public static class ProjJsonReader
     private static VerticalCoordinateSystem ReadVerticalCoordinateSystem(JsonElement element)
     {
         string name = GetRequiredString(element, "name");
-        VerticalDatum verticalDatum = ReadVerticalDatum(GetRequiredProperty(element, "datum"));
+        VerticalDatum verticalDatum = ReadVerticalDatumOrEnsemble(element);
 
         ReadCoordinateSystemDefinition(
             GetRequiredProperty(element, "coordinate_system"),
@@ -491,6 +487,34 @@ public static class ProjJsonReader
         return new AxisInfo(axisName, orientation);
     }
 
+    private static HorizontalDatum ReadHorizontalDatumOrEnsemble(JsonElement element)
+    {
+        bool hasDatum = element.TryGetProperty("datum", out JsonElement datumElement);
+        bool hasDatumEnsemble = element.TryGetProperty("datum_ensemble", out JsonElement datumEnsembleElement);
+        if (hasDatum == hasDatumEnsemble)
+        {
+            ArgumentGuard.ThrowArgument("PROJJSON geodetic CRS must contain exactly one of datum or datum_ensemble.");
+        }
+
+        return hasDatum
+            ? ReadHorizontalDatum(datumElement)
+            : ReadHorizontalDatumEnsemble(datumEnsembleElement);
+    }
+
+    private static VerticalDatum ReadVerticalDatumOrEnsemble(JsonElement element)
+    {
+        bool hasDatum = element.TryGetProperty("datum", out JsonElement datumElement);
+        bool hasDatumEnsemble = element.TryGetProperty("datum_ensemble", out JsonElement datumEnsembleElement);
+        if (hasDatum == hasDatumEnsemble)
+        {
+            ArgumentGuard.ThrowArgument("PROJJSON vertical CRS must contain exactly one of datum or datum_ensemble.");
+        }
+
+        return hasDatum
+            ? ReadVerticalDatum(datumElement)
+            : ReadVerticalDatumEnsemble(datumEnsembleElement);
+    }
+
     private static HorizontalDatum ReadHorizontalDatum(JsonElement element)
     {
         string datumType = GetOptionalString(element, "type") ?? "GeodeticReferenceFrame";
@@ -506,6 +530,16 @@ public static class ProjJsonReader
         return new HorizontalDatum(ellipsoid, null, DatumType.HD_Geocentric, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
     }
 
+    private static HorizontalDatum ReadHorizontalDatumEnsemble(JsonElement element)
+    {
+        DatumEnsemble ensemble = ReadDatumEnsemble(element, requireEllipsoid: true, "geodetic CRS");
+        Ellipsoid ellipsoid = ArgumentGuard.ThrowIfNull(ensemble.Ellipsoid, nameof(ensemble));
+        return new HorizontalDatum(ellipsoid, null, DatumType.HD_Geocentric, ensemble.Name, ensemble.Authority, ensemble.AuthorityCode, string.Empty, string.Empty, string.Empty)
+        {
+            Ensemble = ensemble,
+        };
+    }
+
     private static VerticalDatum ReadVerticalDatum(JsonElement element)
     {
         string datumType = GetOptionalString(element, "type") ?? "VerticalReferenceFrame";
@@ -518,6 +552,62 @@ public static class ProjJsonReader
         string name = GetRequiredString(element, "name");
         ReadIdentifier(element, out string authority, out long authorityCode);
         return new VerticalDatum(DatumType.VD_GeoidModelDerived, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
+
+    private static VerticalDatum ReadVerticalDatumEnsemble(JsonElement element)
+    {
+        DatumEnsemble ensemble = ReadDatumEnsemble(element, requireEllipsoid: false, "vertical CRS");
+        return new VerticalDatum(DatumType.VD_GeoidModelDerived, ensemble.Name, ensemble.Authority, ensemble.AuthorityCode, string.Empty, string.Empty, string.Empty)
+        {
+            Ensemble = ensemble,
+        };
+    }
+
+    private static DatumEnsemble ReadDatumEnsemble(JsonElement element, bool requireEllipsoid, string context)
+    {
+        string datumType = GetOptionalString(element, "type") ?? "DatumEnsemble";
+        if (!string.Equals(datumType, "DatumEnsemble", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new NotSupportedException($"PROJJSON datum ensemble type '{datumType}' is not supported for {context}.");
+        }
+
+        string name = GetRequiredString(element, "name");
+        JsonElement membersElement = GetRequiredProperty(element, "members");
+        if (membersElement.ValueKind != JsonValueKind.Array)
+        {
+            ArgumentGuard.ThrowArgument("PROJJSON datum_ensemble members must be an array.");
+        }
+
+        var members = new List<DatumEnsembleMember>();
+        foreach (JsonElement memberElement in membersElement.EnumerateArray())
+        {
+            members.Add(ReadDatumEnsembleMember(memberElement));
+        }
+
+        Ellipsoid? ellipsoid = element.TryGetProperty("ellipsoid", out JsonElement ellipsoidElement)
+            ? ReadEllipsoid(ellipsoidElement)
+            : null;
+        if (requireEllipsoid && ellipsoid is null)
+        {
+            ArgumentGuard.ThrowArgument("PROJJSON datum_ensemble for geodetic CRS is missing an ellipsoid.");
+        }
+
+        string accuracyToken = GetRequiredString(element, "accuracy");
+        if (!double.TryParse(accuracyToken, NumberStyles.Any, CultureInfo.InvariantCulture, out double accuracy))
+        {
+            ArgumentGuard.ThrowArgument($"Invalid PROJJSON datum_ensemble accuracy '{accuracyToken}'.");
+        }
+
+        ArgumentGuard.ThrowIfNotFinite(accuracy, nameof(element), "PROJJSON datum_ensemble accuracy must be finite.");
+        ReadIdentifier(element, out string authority, out long authorityCode);
+        return new DatumEnsemble(name, members, accuracy, ellipsoid, authority, authorityCode);
+    }
+
+    private static DatumEnsembleMember ReadDatumEnsembleMember(JsonElement element)
+    {
+        string name = GetRequiredString(element, "name");
+        ReadIdentifier(element, out string authority, out long authorityCode);
+        return new DatumEnsembleMember(name, authority, authorityCode);
     }
 
     private static Ellipsoid ReadEllipsoid(JsonElement element)
@@ -720,14 +810,6 @@ public static class ProjJsonReader
         }
 
         return current;
-    }
-
-    private static void EnsureNoDatumEnsemble(JsonElement element)
-    {
-        if (element.TryGetProperty("datum_ensemble", out _))
-        {
-            throw new NotSupportedException("PROJJSON datum ensembles are not supported.");
-        }
     }
 
     private static bool IsAngularUnit(JsonElement element)

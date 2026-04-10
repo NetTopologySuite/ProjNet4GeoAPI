@@ -71,6 +71,26 @@ public class DatumTests
         Assert.False(datum.EqualParams("not a datum"));
     }
 
+    /// <summary>
+    /// Verifies ensemble metadata can be retained without affecting datum parameter equality.
+    /// </summary>
+    [Fact]
+    public void EqualParams_WithDifferentEnsembleMetadata_IgnoresEnsemble()
+    {
+        var first = new TestDatum(DatumType.VD_Orthometric, "First datum")
+        {
+            Ensemble = new DatumEnsemble("Vertical ensemble", [new DatumEnsembleMember("Member A")], 0.1d),
+        };
+        var second = new TestDatum(DatumType.VD_Orthometric, "Second datum")
+        {
+            Ensemble = new DatumEnsemble("Other ensemble", [new DatumEnsembleMember("Member B")], 0.2d),
+        };
+
+        Assert.True(first.EqualParams(second));
+        Assert.NotNull(first.Ensemble);
+        Assert.NotNull(second.Ensemble);
+    }
+
     private sealed class TestDatum : Datum
     {
         public TestDatum(

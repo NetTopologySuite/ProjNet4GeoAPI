@@ -117,6 +117,11 @@ public class VerticalDatum : Datum
             return this.ToWktNode();
         }
 
+        if (this.Ensemble is not null)
+        {
+            return this.Ensemble.ToWktNode(version);
+        }
+
         var children = new List<WktNode>
         {
             new WktQuotedString(this.Name),

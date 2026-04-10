@@ -61,7 +61,7 @@ public class Wkt2KeywordCoverageMatrixTests
         Assert.Equal(Wkt2KeywordSupportStatus.Native, lookup["PROJCRS"]);
         Assert.Equal(Wkt2KeywordSupportStatus.LegacyNormalized, lookup["PROJECTEDCRS"]);
         Assert.Equal(Wkt2KeywordSupportStatus.Ignored, lookup["USAGE"]);
-        Assert.Equal(Wkt2KeywordSupportStatus.Unsupported, lookup["ENSEMBLE"]);
+        Assert.Equal(Wkt2KeywordSupportStatus.Native, lookup["ENSEMBLE"]);
         Assert.Equal(Wkt2KeywordSupportStatus.Unsupported, lookup["PARAMETRICCRS"]);
         Assert.Equal(Wkt2KeywordSupportStatus.Unsupported, lookup["TIMECRS"]);
     }

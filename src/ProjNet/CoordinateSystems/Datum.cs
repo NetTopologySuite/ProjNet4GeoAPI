@@ -49,6 +49,11 @@ public abstract class Datum : Info
     /// </summary>
     public DatumType DatumType { get; set; }
 
+    /// <summary>
+    /// Gets or sets retained datum-ensemble metadata when this datum represents an ensemble-backed CRS definition.
+    /// </summary>
+    public DatumEnsemble? Ensemble { get; set; }
+
     /// <inheritdoc />
     public override bool EqualParams(object obj)
     {

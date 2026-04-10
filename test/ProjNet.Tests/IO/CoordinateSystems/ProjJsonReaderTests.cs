@@ -625,35 +625,96 @@ public class ProjJsonReaderTests
     }
 
     /// <summary>
-    /// Verifies datum-ensemble backed PROJJSON remains an explicit unsupported boundary.
+    /// Verifies geographic PROJJSON <c>datum_ensemble</c> objects retain ensemble metadata on the parsed datum.
     /// </summary>
     [Fact]
-    public void Parse_WithDatumEnsemble_ThrowsNotSupportedException()
+    public void Parse_WithGeographicDatumEnsemble_RetainsEnsembleMetadata()
     {
         object[] members =
         [
-            Obj(("name", "World Geodetic System 1984 (Transit)"), ("id", IdObject("EPSG", 1166))),
+            DatumEnsembleMemberObject("World Geodetic System 1984 (Transit)", "EPSG", 1166),
+            DatumEnsembleMemberObject("World Geodetic System 1984 (G730)", "EPSG", 1152),
         ];
-
-        Dictionary<string, object?> datumEnsemble = Obj(
-            ("type", "DatumEnsemble"),
-            ("name", "World Geodetic System 1984 ensemble"),
-            ("members", members),
-            ("ellipsoid", EllipsoidObject("WGS 84", 6378137d, 298.257223563d, "metre", 7030)),
-            ("accuracy", "2.0"),
-            ("id", IdObject("EPSG", 6326)));
 
         string json = Serialize(
             Obj(
                 ("type", "GeographicCRS"),
                 ("name", "WGS 84"),
-                ("datum_ensemble", datumEnsemble),
+                ("datum_ensemble", DatumEnsembleObject("World Geodetic System 1984 ensemble", members, "2", EllipsoidObject("WGS 84", 6378137d, 298.257223563d, "metre", 7030), IdObject("EPSG", 6326))),
                 ("coordinate_system", CoordinateSystemObject("ellipsoidal", AxisObject("Geodetic latitude", "Lat", "north", "degree"), AxisObject("Geodetic longitude", "Lon", "east", "degree"))),
                 ("id", IdObject("EPSG", 4326))));
 
-        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => ProjJsonReader.Parse(json));
+        GeographicCoordinateSystem parsed = Assert.IsType<GeographicCoordinateSystem>(ProjJsonReader.Parse(json));
+        DatumEnsemble ensemble = Assert.IsType<DatumEnsemble>(parsed.HorizontalDatum.Ensemble);
 
-        Assert.Contains("ensembles", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal("World Geodetic System 1984 ensemble", parsed.HorizontalDatum.Name);
+        Assert.Equal("EPSG", parsed.HorizontalDatum.Authority);
+        Assert.Equal(6326, parsed.HorizontalDatum.AuthorityCode);
+        Assert.Equal(2, ensemble.Members.Count);
+        Assert.Equal(2d, ensemble.Accuracy);
+        Assert.NotNull(ensemble.Ellipsoid);
+        Assert.True(parsed.HorizontalDatum.EqualParams(HorizontalDatum.WGS84));
+    }
+
+    /// <summary>
+    /// Verifies ETRS89-style PROJJSON <c>datum_ensemble</c> objects retain their identifier and ellipsoid metadata.
+    /// </summary>
+    [Fact]
+    public void Parse_WithEtrs89DatumEnsemble_RetainsIdentifierAndEllipsoid()
+    {
+        object[] members =
+        [
+            DatumEnsembleMemberObject("European Terrestrial Reference Frame 1989", "EPSG", 1178),
+            DatumEnsembleMemberObject("European Terrestrial Reference Frame 1990", "EPSG", 1179),
+        ];
+
+        string json = Serialize(
+            Obj(
+                ("type", "GeographicCRS"),
+                ("name", "ETRS89"),
+                ("datum_ensemble", DatumEnsembleObject("European Terrestrial Reference System 1989 ensemble", members, "0.1", EllipsoidObject("GRS 1980", 6378137d, 298.257222101d, "metre", 7019), IdObject("EPSG", 6258))),
+                ("coordinate_system", CoordinateSystemObject("ellipsoidal", AxisObject("Geodetic latitude", "Lat", "north", "degree"), AxisObject("Geodetic longitude", "Lon", "east", "degree"))),
+                ("id", IdObject("EPSG", 4258))));
+
+        GeographicCoordinateSystem parsed = Assert.IsType<GeographicCoordinateSystem>(ProjJsonReader.Parse(json));
+        DatumEnsemble ensemble = Assert.IsType<DatumEnsemble>(parsed.HorizontalDatum.Ensemble);
+
+        Assert.Equal("European Terrestrial Reference System 1989 ensemble", parsed.HorizontalDatum.Name);
+        Assert.Equal(6258, parsed.HorizontalDatum.AuthorityCode);
+        Assert.Equal(0.1d, ensemble.Accuracy);
+        Assert.NotNull(ensemble.Ellipsoid);
+        Assert.Equal("GRS 1980", Assert.IsType<Ellipsoid>(ensemble.Ellipsoid).Name);
+    }
+
+    /// <summary>
+    /// Verifies vertical PROJJSON <c>datum_ensemble</c> objects retain ensemble metadata without requiring an ellipsoid.
+    /// </summary>
+    [Fact]
+    public void Parse_WithVerticalDatumEnsemble_RetainsEnsembleMetadata()
+    {
+        object[] members =
+        [
+            DatumEnsembleMemberObject("Datum A", "TEST", 1),
+            DatumEnsembleMemberObject("Datum B", "TEST", 2),
+        ];
+
+        string json = Serialize(
+            Obj(
+                ("type", "VerticalCRS"),
+                ("name", "Example ensemble height"),
+                ("datum_ensemble", DatumEnsembleObject("Example vertical ensemble", members, "0.05", null, IdObject("TEST", 1001))),
+                ("coordinate_system", CoordinateSystemObject("vertical", AxisObject("Gravity-related height", "H", "up", "metre"))),
+                ("id", IdObject("TEST", 2001))));
+
+        VerticalCoordinateSystem parsed = Assert.IsType<VerticalCoordinateSystem>(ProjJsonReader.Parse(json));
+        DatumEnsemble ensemble = Assert.IsType<DatumEnsemble>(parsed.VerticalDatum.Ensemble);
+
+        Assert.Equal("Example vertical ensemble", parsed.VerticalDatum.Name);
+        Assert.Equal("TEST", parsed.VerticalDatum.Authority);
+        Assert.Equal(1001, parsed.VerticalDatum.AuthorityCode);
+        Assert.Equal(2, ensemble.Members.Count);
+        Assert.Equal(0.05d, ensemble.Accuracy);
+        Assert.Null(ensemble.Ellipsoid);
     }
 
     /// <summary>
@@ -783,6 +844,37 @@ public class ProjJsonReaderTests
             ("datum", datum),
             ("coordinate_system", CoordinateSystemObject("vertical", AxisObject(axisName, "H", axisDirection, linearUnit))),
             ("id", IdObject("EPSG", srid)));
+    }
+
+    private static Dictionary<string, object?> DatumEnsembleObject(
+        string name,
+        object[] members,
+        string accuracy,
+        Dictionary<string, object?>? ellipsoid,
+        Dictionary<string, object?>? id)
+    {
+        Dictionary<string, object?> datumEnsemble = Obj(
+            ("type", "DatumEnsemble"),
+            ("name", name),
+            ("members", members),
+            ("accuracy", accuracy));
+
+        if (ellipsoid is not null)
+        {
+            datumEnsemble["ellipsoid"] = ellipsoid;
+        }
+
+        if (id is not null)
+        {
+            datumEnsemble["id"] = id;
+        }
+
+        return datumEnsemble;
+    }
+
+    private static Dictionary<string, object?> DatumEnsembleMemberObject(string name, string authority, int code)
+    {
+        return Obj(("name", name), ("id", IdObject(authority, code)));
     }
 
     private static Dictionary<string, object?> BoundCrsObject(
