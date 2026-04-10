@@ -21,6 +21,9 @@ using ProjNet.IO.Wkt;
 /// </remarks>
 public class GeographicCoordinateSystem : HorizontalCoordinateSystem
 {
+    private static readonly Lazy<string> Wgs84CoordinateSystemWkt =
+        new(() => ResolveRuntimeCompatibleWgs84CoordinateSystem().WKT, true);
+
     /// <summary>
     /// Initializes a new instance of the <see cref="GeographicCoordinateSystem"/> class.
     /// </summary>
@@ -57,25 +60,7 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
     /// </summary>
     public static GeographicCoordinateSystem WGS84
     {
-        get
-        {
-            var axes = new List<AxisInfo>(2)
-            {
-                new("Lon", AxisOrientationEnum.East),
-                new("Lat", AxisOrientationEnum.North),
-            };
-            return new GeographicCoordinateSystem(
-                CoordinateSystems.AngularUnit.Degrees,
-                CoordinateSystems.HorizontalDatum.WGS84,
-                CoordinateSystems.PrimeMeridian.Greenwich,
-                axes,
-                "WGS 84",
-                "EPSG",
-                4326,
-                string.Empty,
-                string.Empty,
-                string.Empty);
-        }
+        get { return CreateWgs84CoordinateSystem(); }
     }
 
     /// <summary>
@@ -315,5 +300,60 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
         return gcs.AngularUnit.EqualParams(this.AngularUnit) &&
                 gcs.HorizontalDatum.EqualParams(this.HorizontalDatum) &&
                 gcs.PrimeMeridian.EqualParams(this.PrimeMeridian);
+    }
+
+    private static GeographicCoordinateSystem CreateWgs84CoordinateSystem()
+    {
+        CoordinateSystem? coordinateSystem = new CoordinateSystemFactory().CreateFromWkt(Wgs84CoordinateSystemWkt.Value);
+        return coordinateSystem as GeographicCoordinateSystem
+            ?? throw new InvalidOperationException("The WGS84 geographic catalog entry did not resolve to a geographic coordinate system.");
+    }
+
+    private static GeographicCoordinateSystem ResolveRuntimeCompatibleWgs84CoordinateSystem()
+    {
+        return Wgs84CatalogBootstrap.TryGetCoordinateSystem(
+            Wgs84CatalogBootstrap.Wgs84GeographicSrid,
+            out GeographicCoordinateSystem? coordinateSystem)
+            ? NormalizeToLegacyRuntimeAxisOrder(coordinateSystem)
+            : CreateLegacyWgs84CoordinateSystem();
+    }
+
+    private static GeographicCoordinateSystem NormalizeToLegacyRuntimeAxisOrder(GeographicCoordinateSystem coordinateSystem)
+    {
+        if (coordinateSystem.AxisInfo.Count == 2 &&
+            coordinateSystem.AxisInfo[0].Name == "Lon" &&
+            coordinateSystem.AxisInfo[0].Orientation == AxisOrientationEnum.East &&
+            coordinateSystem.AxisInfo[1].Name == "Lat" &&
+            coordinateSystem.AxisInfo[1].Orientation == AxisOrientationEnum.North)
+        {
+            return coordinateSystem;
+        }
+
+        return new GeographicCoordinateSystem(
+            coordinateSystem.AngularUnit,
+            coordinateSystem.HorizontalDatum,
+            coordinateSystem.PrimeMeridian,
+            [new AxisInfo("Lon", AxisOrientationEnum.East), new AxisInfo("Lat", AxisOrientationEnum.North)],
+            coordinateSystem.Name,
+            coordinateSystem.Authority,
+            coordinateSystem.AuthorityCode,
+            coordinateSystem.Alias,
+            coordinateSystem.Abbreviation,
+            coordinateSystem.Remarks);
+    }
+
+    private static GeographicCoordinateSystem CreateLegacyWgs84CoordinateSystem()
+    {
+        return new GeographicCoordinateSystem(
+            CoordinateSystems.AngularUnit.Degrees,
+            CoordinateSystems.HorizontalDatum.WGS84,
+            CoordinateSystems.PrimeMeridian.Greenwich,
+            [new AxisInfo("Lon", AxisOrientationEnum.East), new AxisInfo("Lat", AxisOrientationEnum.North)],
+            "WGS 84",
+            "EPSG",
+            4326,
+            string.Empty,
+            string.Empty,
+            string.Empty);
     }
 }
