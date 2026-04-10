@@ -68,24 +68,27 @@ public class WKTCoordSysParserTests
     [Fact]
     public void TestProjectedCoordinateSystemEPSG2918()
     {
-        const string wkt = "PROJCS[\"NAD83(HARN) / Texas Central (ftUS)\", " +
-                                    "GEOGCS[\"NAD83(HARN)\", " +
-                                             "DATUM[\"NAD83_High_Accuracy_Regional_Network\", " +
-                                                     "SPHEROID[\"GRS 1980\", 6378137, 298.257222101, AUTHORITY[\"EPSG\", \"7019\"]], " +
-                                                     "TOWGS84[725, 685, 536, 0, 0, 0, 0], " +
-                                                     "AUTHORITY[\"EPSG\", \"6152\"]], " +
-                                             "PRIMEM[\"Greenwich\", 0, AUTHORITY[\"EPSG\", \"8901\"]], " +
-                                             "UNIT[\"degree\", 0.0174532925199433, AUTHORITY[\"EPSG\", \"9122\"]], " +
-                                             "AUTHORITY[\"EPSG\", \"4152\"]], " +
-                                    "PROJECTION[\"Lambert_Conformal_Conic_2SP\"], " +
-                                    "PARAMETER[\"standard_parallel_1\", 31.883333333333], " +
-                                    "PARAMETER[\"standard_parallel_2\", 30.1166666667], " +
-                                    "PARAMETER[\"latitude_of_origin\", 29.6666666667], " +
-                                    "PARAMETER[\"central_meridian\", -100.333333333333], " +
-                                    "PARAMETER[\"false_easting\", 2296583.333], " +
-                                    "PARAMETER[\"false_northing\", 9842500], " +
-                                    "UNIT[\"US survey foot\", 0.304800609601219, AUTHORITY[\"EPSG\", \"9003\"]], " +
-                                    "AUTHORITY[\"EPSG\", \"2918\"]]";
+        const string wkt =
+            """
+            PROJCS["NAD83(HARN) / Texas Central (ftUS)",
+                GEOGCS["NAD83(HARN)",
+                    DATUM["NAD83_High_Accuracy_Regional_Network",
+                        SPHEROID["GRS 1980", 6378137, 298.257222101, AUTHORITY["EPSG", "7019"]],
+                        TOWGS84[725, 685, 536, 0, 0, 0, 0],
+                        AUTHORITY["EPSG", "6152"]],
+                    PRIMEM["Greenwich", 0, AUTHORITY["EPSG", "8901"]],
+                    UNIT["degree", 0.0174532925199433, AUTHORITY["EPSG", "9122"]],
+                    AUTHORITY["EPSG", "4152"]],
+                PROJECTION["Lambert_Conformal_Conic_2SP"],
+                PARAMETER["standard_parallel_1", 31.883333333333],
+                PARAMETER["standard_parallel_2", 30.1166666667],
+                PARAMETER["latitude_of_origin", 29.6666666667],
+                PARAMETER["central_meridian", -100.333333333333],
+                PARAMETER["false_easting", 2296583.333],
+                PARAMETER["false_northing", 9842500],
+                UNIT["US survey foot", 0.304800609601219, AUTHORITY["EPSG", "9003"]],
+                AUTHORITY["EPSG", "2918"]]
+            """;
 
         ProjectedCoordinateSystem pcs = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(this.coordinateSystemFactory, wkt);
 
