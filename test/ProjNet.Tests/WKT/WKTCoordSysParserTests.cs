@@ -232,11 +232,11 @@ public class WKTCoordSysParserTests
     public void CreateFromWktParsesWkt2RootKeywordAliases()
     {
         const string projectedWkt =
-            "PROJCRS[\"Custom Projected\",GEOGCS[\"Custom GCS\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"Mercator_1SP\"],UNIT[\"metre\",1]]";
+            """PROJCRS["Custom Projected",GEOGCS["Custom GCS",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]],PROJECTION["Mercator_1SP"],UNIT["metre",1]]""";
         const string verticalWkt =
-            "VERTCRS[\"Custom Height\",VERT_DATUM[\"Custom Vertical Datum\",2005],UNIT[\"metre\",1],AXIS[\"Up\",UP]]";
+            """VERTCRS["Custom Height",VERT_DATUM["Custom Vertical Datum",2005],UNIT["metre",1],AXIS["Up",UP]]""";
         const string compoundWkt =
-            "COMPOUNDCRS[\"Compound\",GEOGCS[\"Custom GCS\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],VERT_CS[\"Custom Height\",VERT_DATUM[\"Custom Vertical Datum\",2005],UNIT[\"metre\",1],AXIS[\"Up\",UP]]]";
+            """COMPOUNDCRS["Compound",GEOGCS["Custom GCS",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]],VERT_CS["Custom Height",VERT_DATUM["Custom Vertical Datum",2005],UNIT["metre",1],AXIS["Up",UP]]]""";
 
         ProjectedCoordinateSystem projected = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(this.coordinateSystemFactory, projectedWkt);
         VerticalCoordinateSystem vertical = CoordinateSystemTestHelpers.RequireCoordinateSystem<VerticalCoordinateSystem>(this.coordinateSystemFactory, verticalWkt);
