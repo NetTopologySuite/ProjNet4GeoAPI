@@ -61,6 +61,25 @@ public class PipelineRuntimeTests
     }
 
     /// <summary>
+    /// Verifies that an outer pipeline can execute a nested inner pipeline step and still round-trip through the inverse path.
+    /// </summary>
+    [Fact]
+    public void PipelineWithNestedPipelineStepExecutesForwardAndInverse()
+    {
+        const string operation = "+proj=pipeline +step +proj=pipeline +step +proj=affine +xoff=1 +step +proj=affine +yoff=-2";
+
+        MathTransform transform = RequirePipelineMathTransform(operation);
+        double[] input = [10d, 20d];
+        double[] forward = transform.Transform(input);
+        double[] inverse = transform.Inverse().Transform(forward);
+
+        Assert.Equal(11d, forward[0], 12);
+        Assert.Equal(18d, forward[1], 12);
+        Assert.Equal(input[0], inverse[0], 12);
+        Assert.Equal(input[1], inverse[1], 12);
+    }
+
+    /// <summary>
     /// Verifies that a 4D axis swap step with negated indices correctly reorders and flips all four ordinates.
     /// </summary>
     [Fact]
