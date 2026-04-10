@@ -39,7 +39,8 @@ internal static class CoordinateOperationResolver
         ICoordinateTransformation? directCandidate = directResolver(source, target);
         if (directCandidate is not null)
         {
-            bestCandidate = SelectHigherScore(bestCandidate, new OperationCandidate(directCandidate, 0));
+            int directScore = GetDirectCandidateScore(source, target, directCandidate);
+            bestCandidate = SelectHigherScore(bestCandidate, new OperationCandidate(directCandidate, directScore));
         }
 
         return bestCandidate?.Transformation;
@@ -74,6 +75,37 @@ internal static class CoordinateOperationResolver
         }
 
         return left is null ? right : right.Score > left.Score ? right : left;
+    }
+
+    private static int GetDirectCandidateScore(
+        CoordinateSystem source,
+        CoordinateSystem target,
+        ICoordinateTransformation directCandidate)
+    {
+        return !ReferenceEquals(source, target)
+            && source.EqualParams(target)
+            && HasDistinctAuthorityIdentity(source, target)
+            && HasAuthorityMetadata(directCandidate)
+            && directCandidate.MathTransform is not IdentityMathTransform
+            ? 1001
+            : 0;
+    }
+
+    private static bool HasAuthorityMetadata(ICoordinateTransformation transformation)
+    {
+        return transformation is not null
+            && !string.IsNullOrWhiteSpace(transformation.Authority)
+            && transformation.AuthorityCode >= 0;
+    }
+
+    private static bool HasDistinctAuthorityIdentity(CoordinateSystem source, CoordinateSystem target)
+    {
+        return !string.IsNullOrWhiteSpace(source.Authority)
+            && !string.IsNullOrWhiteSpace(target.Authority)
+            && source.AuthorityCode > 0
+            && target.AuthorityCode > 0
+            && (!source.Authority.Equals(target.Authority, StringComparison.OrdinalIgnoreCase)
+                || source.AuthorityCode != target.AuthorityCode);
     }
 
     private sealed class OperationCandidate(ICoordinateTransformation transformation, int score)

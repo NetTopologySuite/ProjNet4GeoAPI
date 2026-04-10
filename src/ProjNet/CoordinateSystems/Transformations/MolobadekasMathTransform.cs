@@ -252,6 +252,65 @@ internal sealed class MolobadekasMathTransform : MathTransform
         return true;
     }
 
+    /// <summary>
+    /// Creates a Molodensky-Badekas transform from resolved numeric parameters.
+    /// </summary>
+    /// <param name="translationX">X translation in metres.</param>
+    /// <param name="translationY">Y translation in metres.</param>
+    /// <param name="translationZ">Z translation in metres.</param>
+    /// <param name="rotationXArcSeconds">X rotation in arc-seconds.</param>
+    /// <param name="rotationYArcSeconds">Y rotation in arc-seconds.</param>
+    /// <param name="rotationZArcSeconds">Z rotation in arc-seconds.</param>
+    /// <param name="scalePpm">Scale difference in ppm.</param>
+    /// <param name="pivotX">Pivot X ordinate in metres.</param>
+    /// <param name="pivotY">Pivot Y ordinate in metres.</param>
+    /// <param name="pivotZ">Pivot Z ordinate in metres.</param>
+    /// <param name="isPositionVector"><see langword="true"/> for the position-vector convention.</param>
+    /// <param name="isInverted"><see langword="true"/> to create the inverse direction.</param>
+    /// <returns>The created transform.</returns>
+    internal static MathTransform Create(
+        double translationX,
+        double translationY,
+        double translationZ,
+        double rotationXArcSeconds,
+        double rotationYArcSeconds,
+        double rotationZArcSeconds,
+        double scalePpm,
+        double pivotX,
+        double pivotY,
+        double pivotZ,
+        bool isPositionVector,
+        bool isInverted = false)
+    {
+        bool hasAnyParameters = translationX != 0d
+            || translationY != 0d
+            || translationZ != 0d
+            || scalePpm != 0d
+            || rotationXArcSeconds != 0d
+            || rotationYArcSeconds != 0d
+            || rotationZArcSeconds != 0d
+            || pivotX != 0d
+            || pivotY != 0d
+            || pivotZ != 0d;
+
+        MathTransform transform = hasAnyParameters
+            ? new MolobadekasMathTransform(
+                translationX,
+                translationY,
+                translationZ,
+                rotationXArcSeconds,
+                rotationYArcSeconds,
+                rotationZArcSeconds,
+                scalePpm,
+                pivotX,
+                pivotY,
+                pivotZ,
+                isPositionVector,
+                false)
+            : new IdentityMathTransform(3);
+        return isInverted ? transform.Inverse() : transform;
+    }
+
     private static bool TryGetOptionalDouble(
         Dictionary<string, string> args,
         string key,

@@ -22,6 +22,8 @@ using Xunit;
 public class OperationResolutionEngineTests
 {
     private static readonly double[] GeographicSamplePoint = [13.1234d, 52.9876d];
+    private static readonly double[] GeographicOffsetSamplePoint = [10d, 20d];
+    private static readonly double[] TimeDependentGeocentricSamplePoint = [3657660.66d, 255768.55d, 5201382.11d, 2017d];
     private static readonly double[] UtmSamplePoint = [500000d, 4649776.22482d];
 
     private readonly CoordinateTransformationFactory coordinateTransformationFactory = new();
@@ -251,6 +253,10 @@ public class OperationResolutionEngineTests
 
         GeographicCoordinateSystem source = Assert.IsType<GeographicCoordinateSystem>(services.GetCoordinateSystem(operation.SourceSrid));
         GeographicCoordinateSystem target = Assert.IsType<GeographicCoordinateSystem>(services.GetCoordinateSystem(operation.TargetSrid));
+        source.Authority = "EPSG";
+        source.AuthorityCode = operation.SourceSrid;
+        target.Authority = "EPSG";
+        target.AuthorityCode = operation.TargetSrid;
 
         ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
 
@@ -314,6 +320,105 @@ public class OperationResolutionEngineTests
         }
 
         Assert.Fail("No projected candidate produced an explicit EPSG datum transformation from base geographic metadata.");
+    }
+
+    /// <summary>
+    /// Verifies that geocentric-domain EPSG translations route directly to a datum transform instead of legacy fallback composition.
+    /// </summary>
+    [Fact]
+    public void CreateFromCoordinateSystemsWithGeocentricTranslationOperationUsesExplicitGeocentricDatumTransform()
+    {
+        var provider = new ManagedCoordinateOperationDefinitionProvider();
+        var services = new CoordinateSystemServices();
+        CoordinateOperationDefinition operation = provider.GetDefinitions().First(definition => definition.OperationCode == 7817);
+
+        GeocentricCoordinateSystem source = Assert.IsType<GeocentricCoordinateSystem>(services.GetCoordinateSystem(operation.SourceSrid));
+        GeocentricCoordinateSystem target = Assert.IsType<GeocentricCoordinateSystem>(services.GetCoordinateSystem(operation.TargetSrid));
+        source.Authority = "EPSG";
+        source.AuthorityCode = operation.SourceSrid;
+        target.Authority = "EPSG";
+        target.AuthorityCode = operation.TargetSrid;
+
+        ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
+
+        Assert.Equal("EPSG", transformation.Authority);
+        Assert.Equal(operation.OperationCode, transformation.AuthorityCode);
+        Assert.IsType<DatumTransform>(transformation.MathTransform);
+    }
+
+    /// <summary>
+    /// Verifies that EPSG Geographic2D offsets route directly to the managed geographic offset runtime.
+    /// </summary>
+    [Fact]
+    public void CreateFromCoordinateSystemsWithGeographicOffsetOperationUsesGeogOffsetMathTransform()
+    {
+        var provider = new ManagedCoordinateOperationDefinitionProvider();
+        var services = new CoordinateSystemServices();
+        CoordinateOperationDefinition operation = provider.GetDefinitions().First(definition => definition.OperationCode == 1447);
+
+        GeographicCoordinateSystem source = Assert.IsType<GeographicCoordinateSystem>(services.GetCoordinateSystem(operation.SourceSrid));
+        GeographicCoordinateSystem target = Assert.IsType<GeographicCoordinateSystem>(services.GetCoordinateSystem(operation.TargetSrid));
+        source.Authority = "EPSG";
+        source.AuthorityCode = operation.SourceSrid;
+        target.Authority = "EPSG";
+        target.AuthorityCode = operation.TargetSrid;
+
+        ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
+        double[] output = transformation.MathTransform.Transform(GeographicOffsetSamplePoint);
+        IReadOnlyDictionary<string, double> parameters = GetOperationParameters(operation.OperationCode);
+
+        Assert.Equal("EPSG", transformation.Authority);
+        Assert.Equal(operation.OperationCode, transformation.AuthorityCode);
+        Assert.True(ContainsMathTransform<GeogOffsetMathTransform>(transformation.MathTransform));
+        Assert.InRange(Math.Abs(output[0] - (10d + (parameters["Longitude offset"] / 3600d))), 0d, 1e-12d);
+        Assert.InRange(Math.Abs(output[1] - (20d + (parameters["Latitude offset"] / 3600d))), 0d, 1e-12d);
+    }
+
+    /// <summary>
+    /// Verifies that time-dependent geocentric EPSG operations route directly to the Helmert runtime and preserve the observation epoch ordinate.
+    /// </summary>
+    [Fact]
+    public void CreateFromCoordinateSystemsWithTimeDependentGeocentricOperationUsesHelmertMathTransform()
+    {
+        var provider = new ManagedCoordinateOperationDefinitionProvider();
+        var services = new CoordinateSystemServices();
+        CoordinateOperationDefinition operation = provider.GetDefinitions().First(definition => definition.OperationCode == 5900);
+
+        GeocentricCoordinateSystem source = Assert.IsType<GeocentricCoordinateSystem>(services.GetCoordinateSystem(operation.SourceSrid));
+        GeocentricCoordinateSystem target = Assert.IsType<GeocentricCoordinateSystem>(services.GetCoordinateSystem(operation.TargetSrid));
+        source.Authority = "EPSG";
+        source.AuthorityCode = operation.SourceSrid;
+        target.Authority = "EPSG";
+        target.AuthorityCode = operation.TargetSrid;
+
+        ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
+        double[] output = transformation.MathTransform.Transform(TimeDependentGeocentricSamplePoint);
+
+        Assert.Equal("EPSG", transformation.Authority);
+        Assert.Equal(operation.OperationCode, transformation.AuthorityCode);
+        Assert.IsType<HelmertMathTransform>(transformation.MathTransform);
+        Assert.Equal(4, output.Length);
+        Assert.InRange(Math.Abs(output[3] - 2017d), 0d, 1e-12d);
+    }
+
+    /// <summary>
+    /// Verifies that Molodensky-Badekas EPSG operations route directly to the managed Molodensky-Badekas runtime.
+    /// </summary>
+    [Fact]
+    public void CreateFromCoordinateSystemsWithMolodenskyBadekasOperationUsesMolobadekasMathTransform()
+    {
+        var provider = new ManagedCoordinateOperationDefinitionProvider();
+        var services = new CoordinateSystemServices();
+        CoordinateOperationDefinition operation = provider.GetDefinitions().First(definition => definition.OperationCode == 1066);
+
+        GeographicCoordinateSystem source = Assert.IsType<GeographicCoordinateSystem>(services.GetCoordinateSystem(operation.SourceSrid));
+        GeographicCoordinateSystem target = Assert.IsType<GeographicCoordinateSystem>(services.GetCoordinateSystem(operation.TargetSrid));
+
+        ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
+
+        Assert.Equal("EPSG", transformation.Authority);
+        Assert.Equal(operation.OperationCode, transformation.AuthorityCode);
+        Assert.True(ContainsMathTransform<MolobadekasMathTransform>(transformation.MathTransform));
     }
 
     /// <summary>
@@ -416,24 +521,36 @@ public class OperationResolutionEngineTests
         return false;
     }
 
-    private static bool ContainsDatumTransform(MathTransform mathTransform)
+    private static bool ContainsMathTransform<TMathTransform>(MathTransform mathTransform)
+        where TMathTransform : MathTransform
     {
-        if (mathTransform is DatumTransform)
+        if (mathTransform is TMathTransform)
         {
             return true;
         }
 
-        return mathTransform is ConcatenatedTransform concatenated && concatenated.CoordinateTransformationList.Any(ContainsDatumTransform);
+        return mathTransform is ConcatenatedTransform concatenated && concatenated.CoordinateTransformationList.Any(ContainsMathTransform<TMathTransform>);
+    }
+
+    private static bool ContainsMathTransform<TMathTransform>(ICoordinateTransformationCore transformation)
+        where TMathTransform : MathTransform
+    {
+        if (transformation is CoordinateTransformation coordinateTransformation)
+        {
+            return ContainsMathTransform<TMathTransform>(coordinateTransformation.MathTransform);
+        }
+
+        return transformation is ConcatenatedTransform concatenated && concatenated.CoordinateTransformationList.Any(ContainsMathTransform<TMathTransform>);
+    }
+
+    private static bool ContainsDatumTransform(MathTransform mathTransform)
+    {
+        return ContainsMathTransform<DatumTransform>(mathTransform);
     }
 
     private static bool ContainsDatumTransform(ICoordinateTransformationCore transformation)
     {
-        if (transformation is CoordinateTransformation coordinateTransformation)
-        {
-            return ContainsDatumTransform(coordinateTransformation.MathTransform);
-        }
-
-        return transformation is ConcatenatedTransform concatenated && concatenated.CoordinateTransformationList.Any(ContainsDatumTransform);
+        return ContainsMathTransform<DatumTransform>(transformation);
     }
 
     private static bool IsExplicitMethodSupported(string methodName)
@@ -460,5 +577,12 @@ public class OperationResolutionEngineTests
             .ThenBy(definition => string.IsNullOrWhiteSpace(definition.ParameterFileName) ? 0 : 1)
             .ThenBy(definition => string.IsNullOrWhiteSpace(definition.MethodName) ? 1 : 0)
             .ThenBy(definition => definition.OperationCode);
+    }
+
+    private static IReadOnlyDictionary<string, double> GetOperationParameters(int operationCode)
+    {
+        return EpsgGeneratedCatalog.OperationParameters
+            .Where(parameter => parameter.OperationCode == operationCode)
+            .ToDictionary(parameter => parameter.Name, parameter => parameter.Value, StringComparer.Ordinal);
     }
 }

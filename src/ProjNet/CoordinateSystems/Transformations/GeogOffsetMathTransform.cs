@@ -142,16 +142,28 @@ internal sealed class GeogOffsetMathTransform : MathTransform
             return false;
         }
 
-        transform = dlonArcSeconds == 0d && dlatArcSeconds == 0d && dhMeters == 0d
-            ? new IdentityMathTransform(3)
-            : new GeogOffsetMathTransform(dlonArcSeconds, dlatArcSeconds, dhMeters, false);
-
-        if (args.ContainsKey("inv"))
-        {
-            transform = transform.Inverse();
-        }
-
+        transform = Create(dlonArcSeconds, dlatArcSeconds, dhMeters, args.ContainsKey("inv"));
         return true;
+    }
+
+    /// <summary>
+    /// Creates a geographic offset transform from resolved numeric parameters.
+    /// </summary>
+    /// <param name="longitudeOffsetArcSeconds">Longitude offset in arc-seconds.</param>
+    /// <param name="latitudeOffsetArcSeconds">Latitude offset in arc-seconds.</param>
+    /// <param name="heightOffsetMeters">Height offset in metres.</param>
+    /// <param name="isInverted"><see langword="true"/> to create the inverse direction.</param>
+    /// <returns>The created transform.</returns>
+    internal static MathTransform Create(
+        double longitudeOffsetArcSeconds,
+        double latitudeOffsetArcSeconds,
+        double heightOffsetMeters,
+        bool isInverted = false)
+    {
+        MathTransform transform = longitudeOffsetArcSeconds == 0d && latitudeOffsetArcSeconds == 0d && heightOffsetMeters == 0d
+            ? new IdentityMathTransform(3)
+            : new GeogOffsetMathTransform(longitudeOffsetArcSeconds, latitudeOffsetArcSeconds, heightOffsetMeters, false);
+        return isInverted ? transform.Inverse() : transform;
     }
 
     private static bool TryGetOptionalDouble(

@@ -26,9 +26,13 @@ public class CoordinateTransformationFactory
     private const string GridModeEnvironmentVariable = "PROJNET_GRID_MODE";
     private const string GridPathEnvironmentVariable = "PROJNET_GRID_PATHS";
     private const string GridRequiredEnvironmentVariable = "PROJNET_GRID_REQUIRED";
+    private const double ArcSecondsToRadians = Math.PI / (180d * 3600d);
 
     private static readonly Lazy<Dictionary<SridPair, IReadOnlyList<CoordinateOperationDefinition>>> DirectOperationDefinitions =
         new(LoadDirectOperationDefinitions, true);
+
+    private static readonly Lazy<Dictionary<int, IReadOnlyDictionary<string, double>>> DirectOperationParameters =
+        new(LoadDirectOperationParameters, true);
 
     private static readonly object GridResolverSync = new();
     private static GridResourceResolver gridResolverInstance = CreateGridResolver();
@@ -154,9 +158,9 @@ public class CoordinateTransformationFactory
 
         if (TryGetDirectProjectedOperation(sourceCS, targetCS, out CoordinateOperationDefinition? operation, out string? resolvedGridPath))
         {
-            if (TryCreateExplicitOperationTransformation(sourceCS, targetCS, operation, resolvedGridPath, out ICoordinateTransformation? explicitTransformation))
+            if (TryCreateExplicitOperationTransformation(sourceCS, targetCS, operation, resolvedGridPath, out ICoordinateTransformation? directExplicitTransformation))
             {
-                return explicitTransformation;
+                return directExplicitTransformation;
             }
 
             if (TryCreateDirectProjectedTransformation(sourceCS, targetCS, operation, resolvedGridPath, out ICoordinateTransformation? directTransformation))
@@ -170,22 +174,20 @@ public class CoordinateTransformationFactory
                 : (ICoordinateTransformation)CreateMetadataBackedTransformation(sourceCS, targetCS, fallbackWithMetadata, operation, resolvedGridPath);
         }
 
-        if (TryGetDirectOperation(sourceCS, targetCS, out operation, out resolvedGridPath))
+        if (TryGetEpsgCode(sourceCS, out int sourceSrid)
+            && TryGetEpsgCode(targetCS, out int targetSrid)
+            && TryCreateExplicitOperationTransformationBySridPair(sourceCS, targetCS, sourceSrid, targetSrid, out ICoordinateTransformation? directMetadataTransformation))
         {
-            if (TryCreateExplicitOperationTransformation(sourceCS, targetCS, operation, resolvedGridPath, out ICoordinateTransformation? explicitTransformation))
-            {
-                return explicitTransformation;
-            }
+            return directMetadataTransformation;
         }
 
         if (sourceCS is ProjectedCoordinateSystem sourceProjected
             && targetCS is ProjectedCoordinateSystem targetProjected
-            && TryGetDirectOperation(sourceProjected.GeographicCoordinateSystem, targetProjected.GeographicCoordinateSystem, out operation, out resolvedGridPath))
+            && TryGetEpsgCode(sourceProjected.GeographicCoordinateSystem, out sourceSrid)
+            && TryGetEpsgCode(targetProjected.GeographicCoordinateSystem, out targetSrid)
+            && TryCreateExplicitOperationTransformationBySridPair(sourceCS, targetCS, sourceSrid, targetSrid, out ICoordinateTransformation? baseMetadataTransformation))
         {
-            if (TryCreateExplicitOperationTransformation(sourceCS, targetCS, operation, resolvedGridPath, out ICoordinateTransformation? explicitTransformation))
-            {
-                return explicitTransformation;
-            }
+            return baseMetadataTransformation;
         }
 
         return this.CreateFromCoordinateSystemsCore(sourceCS, targetCS);
@@ -222,6 +224,17 @@ public class CoordinateTransformationFactory
             return true;
         }
 
+        if (source is GeocentricCoordinateSystem sourceGeocentric && target is GeocentricCoordinateSystem targetGeocentric)
+        {
+            if (!TryCreateExplicitGeocentricTransformation(sourceGeocentric, targetGeocentric, operation, out CoordinateTransformation? geocentricTransformation))
+            {
+                return false;
+            }
+
+            transformation = CreateMetadataBackedTransformation(source, target, geocentricTransformation, operation, resolvedGridPath);
+            return true;
+        }
+
         return false;
     }
 
@@ -252,7 +265,23 @@ public class CoordinateTransformationFactory
     {
         transformation = null;
 
-        if (!TryCreateBursaWolfParameters(operation, out Wgs84ConversionInfo? helmert))
+        if (operation.OperationKind != CoordinateOperationKind.Transformation)
+        {
+            return false;
+        }
+
+        if (TryCreateDirectGeographicMathTransform(operation, out MathTransform? directMathTransform))
+        {
+            transformation = CreateTransform(source, target, TransformType.Transformation, directMathTransform);
+            return true;
+        }
+
+        MathTransform? geocentricMathTransform = TryCreateExplicitGeocentricMathTransform(operation, out MathTransform? explicitGeocentricMathTransform)
+            ? explicitGeocentricMathTransform
+            : TryCreateBursaWolfParameters(operation, out Wgs84ConversionInfo? helmert)
+                ? new DatumTransform(helmert)
+                : null;
+        if (geocentricMathTransform is null)
         {
             return false;
         }
@@ -273,31 +302,10 @@ public class CoordinateTransformationFactory
             target.PrimeMeridian);
 
         AddIfNotNull(ct, Geog2Geoc(source, sourceCentric));
-        AddIfNotNull(
-            ct,
-            new CoordinateTransformation(
-                sourceCentric,
-                targetCentric,
-                TransformType.Transformation,
-                new DatumTransform(helmert),
-                string.Empty,
-                string.Empty,
-                -1,
-                string.Empty,
-                string.Empty));
+        AddIfNotNull(ct, CreateTransform(sourceCentric, targetCentric, TransformType.Transformation, geocentricMathTransform));
         AddIfNotNull(ct, Geoc2Geog(targetCentric, target));
 
-        transformation = new CoordinateTransformation(
-            source,
-            target,
-            TransformType.Transformation,
-            ct,
-            string.Empty,
-            string.Empty,
-            -1,
-            string.Empty,
-            string.Empty);
-
+        transformation = CreateTransform(source, target, TransformType.Transformation, ct);
         return true;
     }
 
@@ -323,16 +331,200 @@ public class CoordinateTransformationFactory
         AddIfNotNull(ct, geographicTransformation);
         AddIfNotNull(ct, Geog2Proj(target.GeographicCoordinateSystem, target));
 
-        transformation = new CoordinateTransformation(
-            source,
-            target,
-            TransformType.Transformation,
-            ct,
-            string.Empty,
-            string.Empty,
-            -1,
-            string.Empty,
-            string.Empty);
+        transformation = CreateTransform(source, target, TransformType.Transformation, ct);
+        return true;
+    }
+
+    private static bool TryCreateExplicitGeocentricTransformation(
+        GeocentricCoordinateSystem source,
+        GeocentricCoordinateSystem target,
+        CoordinateOperationDefinition operation,
+        [NotNullWhen(true)] out CoordinateTransformation? transformation)
+    {
+        transformation = null;
+
+        if (operation.OperationKind != CoordinateOperationKind.Transformation)
+        {
+            return false;
+        }
+
+        MathTransform? mathTransform = TryCreateExplicitGeocentricMathTransform(operation, out MathTransform? explicitMathTransform)
+            ? explicitMathTransform
+            : TryCreateBursaWolfParameters(operation, out Wgs84ConversionInfo? helmert)
+                ? new DatumTransform(helmert)
+                : null;
+        if (mathTransform is null)
+        {
+            return false;
+        }
+
+        transformation = CreateTransform(source, target, TransformType.Transformation, mathTransform);
+        return true;
+    }
+
+    private static bool TryCreateDirectGeographicMathTransform(
+        CoordinateOperationDefinition operation,
+        [NotNullWhen(true)] out MathTransform? transform)
+    {
+        transform = null;
+
+        string normalizedMethodName = NormalizeOperationMethodName(operation.MethodName);
+        if (!IsGeographicOffsetMethod(normalizedMethodName)
+            || !TryGetDirectOperationParameters(operation, out IReadOnlyDictionary<string, double>? parameters))
+        {
+            return false;
+        }
+
+        double longitudeOffset = GetOperationParameterOrDefault(parameters, "Longitude offset");
+        double latitudeOffset = GetOperationParameterOrDefault(parameters, "Latitude offset");
+        transform = GeogOffsetMathTransform.Create(longitudeOffset, latitudeOffset, 0d);
+        return true;
+    }
+
+    private static bool TryCreateExplicitGeocentricMathTransform(
+        CoordinateOperationDefinition operation,
+        [NotNullWhen(true)] out MathTransform? transform)
+    {
+        transform = null;
+
+        string normalizedMethodName = NormalizeOperationMethodName(operation.MethodName);
+        return IsTimeDependentHelmertMethod(normalizedMethodName)
+            ? TryCreateTimeDependentHelmertMathTransform(operation, normalizedMethodName, out transform)
+            : IsMolodenskyBadekasMethod(normalizedMethodName)
+                && TryCreateMolodenskyBadekasMathTransform(operation, normalizedMethodName, out transform);
+    }
+
+    private static bool TryCreateTimeDependentHelmertMathTransform(
+        CoordinateOperationDefinition operation,
+        string normalizedMethodName,
+        [NotNullWhen(true)] out MathTransform? transform)
+    {
+        transform = null;
+
+        if (!TryGetDirectOperationParameters(operation, out IReadOnlyDictionary<string, double>? parameters))
+        {
+            return false;
+        }
+
+        bool isPositionVector = IsPositionVectorMethod(normalizedMethodName);
+        bool isCoordinateFrame = IsCoordinateFrameMethod(normalizedMethodName);
+        if (!isPositionVector && !isCoordinateFrame)
+        {
+            return false;
+        }
+
+        double translationX = GetOperationParameterOrDefault(parameters, "X-axis translation");
+        double translationY = GetOperationParameterOrDefault(parameters, "Y-axis translation");
+        double translationZ = GetOperationParameterOrDefault(parameters, "Z-axis translation");
+        double rotationX = GetOperationParameterOrDefault(parameters, "X-axis rotation") * ArcSecondsToRadians;
+        double rotationY = GetOperationParameterOrDefault(parameters, "Y-axis rotation") * ArcSecondsToRadians;
+        double rotationZ = GetOperationParameterOrDefault(parameters, "Z-axis rotation") * ArcSecondsToRadians;
+        double scale = GetOperationParameterOrDefault(parameters, "Scale difference");
+        double translationRateX = GetOperationParameterOrDefault(parameters, "Rate of change of X-axis translation");
+        double translationRateY = GetOperationParameterOrDefault(parameters, "Rate of change of Y-axis translation");
+        double translationRateZ = GetOperationParameterOrDefault(parameters, "Rate of change of Z-axis translation");
+        double rotationRateX = GetOperationParameterOrDefault(parameters, "Rate of change of X-axis rotation") * ArcSecondsToRadians;
+        double rotationRateY = GetOperationParameterOrDefault(parameters, "Rate of change of Y-axis rotation") * ArcSecondsToRadians;
+        double rotationRateZ = GetOperationParameterOrDefault(parameters, "Rate of change of Z-axis rotation") * ArcSecondsToRadians;
+        double scaleRate = GetOperationParameterOrDefault(parameters, "Rate of change of scale difference");
+        double epochReference = GetOperationParameterOrDefault(parameters, "Parameter reference epoch");
+
+        if (scale <= -1e6d)
+        {
+            return false;
+        }
+
+        bool hasKinematicRates = translationRateX != 0d
+            || translationRateY != 0d
+            || translationRateZ != 0d
+            || rotationRateX != 0d
+            || rotationRateY != 0d
+            || rotationRateZ != 0d
+            || scaleRate != 0d;
+        bool noRotation = rotationX == 0d
+            && rotationY == 0d
+            && rotationZ == 0d
+            && rotationRateX == 0d
+            && rotationRateY == 0d
+            && rotationRateZ == 0d;
+
+        transform = HelmertMathTransform.Create(
+            translationX,
+            translationY,
+            translationZ,
+            rotationX,
+            rotationY,
+            rotationZ,
+            scale,
+            0d,
+            translationRateX,
+            translationRateY,
+            translationRateZ,
+            rotationRateX,
+            rotationRateY,
+            rotationRateZ,
+            scaleRate,
+            0d,
+            hasKinematicRates,
+            epochReference,
+            false,
+            noRotation,
+            false,
+            isPositionVector);
+        return true;
+    }
+
+    private static bool TryCreateMolodenskyBadekasMathTransform(
+        CoordinateOperationDefinition operation,
+        string normalizedMethodName,
+        [NotNullWhen(true)] out MathTransform? transform)
+    {
+        transform = null;
+
+        if (!TryGetDirectOperationParameters(operation, out IReadOnlyDictionary<string, double>? parameters))
+        {
+            return false;
+        }
+
+        bool isPositionVector = ContainsOrdinal(normalizedMethodName, "badekaspv");
+        bool isCoordinateFrame = ContainsOrdinal(normalizedMethodName, "badekascf");
+        if (!isPositionVector && !isCoordinateFrame)
+        {
+            return false;
+        }
+
+        if (!TryGetRequiredOperationParameter(parameters, "Ordinate 1 of evaluation point", out double pivotX)
+            || !TryGetRequiredOperationParameter(parameters, "Ordinate 2 of evaluation point", out double pivotY)
+            || !TryGetRequiredOperationParameter(parameters, "Ordinate 3 of evaluation point", out double pivotZ))
+        {
+            return false;
+        }
+
+        double translationX = GetOperationParameterOrDefault(parameters, "X-axis translation");
+        double translationY = GetOperationParameterOrDefault(parameters, "Y-axis translation");
+        double translationZ = GetOperationParameterOrDefault(parameters, "Z-axis translation");
+        double rotationX = GetOperationParameterOrDefault(parameters, "X-axis rotation");
+        double rotationY = GetOperationParameterOrDefault(parameters, "Y-axis rotation");
+        double rotationZ = GetOperationParameterOrDefault(parameters, "Z-axis rotation");
+        double scale = GetOperationParameterOrDefault(parameters, "Scale difference");
+
+        if (scale <= -1e6d)
+        {
+            return false;
+        }
+
+        transform = MolobadekasMathTransform.Create(
+            translationX,
+            translationY,
+            translationZ,
+            rotationX,
+            rotationY,
+            rotationZ,
+            scale,
+            pivotX,
+            pivotY,
+            pivotZ,
+            isPositionVector);
         return true;
     }
 
@@ -1281,6 +1473,100 @@ public class CoordinateTransformationFactory
         return result;
     }
 
+    private static Dictionary<int, IReadOnlyDictionary<string, double>> LoadDirectOperationParameters()
+    {
+        var parametersByOperation = new Dictionary<int, Dictionary<string, double>>();
+
+        foreach (EpsgOperationParameterRecord parameter in EpsgGeneratedCatalog.OperationParameters)
+        {
+            if (!parametersByOperation.TryGetValue(parameter.OperationCode, out Dictionary<string, double>? parameters))
+            {
+                parameters = new Dictionary<string, double>(StringComparer.Ordinal);
+                parametersByOperation[parameter.OperationCode] = parameters;
+            }
+
+            parameters[parameter.Name] = parameter.Value;
+        }
+
+        var result = new Dictionary<int, IReadOnlyDictionary<string, double>>(parametersByOperation.Count);
+        foreach (KeyValuePair<int, Dictionary<string, double>> pair in parametersByOperation)
+        {
+            result[pair.Key] = pair.Value;
+        }
+
+        return result;
+    }
+
+    private static bool TryGetDirectOperationParameters(
+        CoordinateOperationDefinition operation,
+        [NotNullWhen(true)] out IReadOnlyDictionary<string, double>? parameters)
+    {
+        parameters = null;
+        return operation is not null
+            && DirectOperationParameters.Value.TryGetValue(operation.OperationCode, out parameters);
+    }
+
+    private static bool TryGetRequiredOperationParameter(
+        IReadOnlyDictionary<string, double> parameters,
+        string name,
+        out double value)
+    {
+        value = 0d;
+        return parameters is not null && parameters.TryGetValue(name, out value);
+    }
+
+    private static double GetOperationParameterOrDefault(
+        IReadOnlyDictionary<string, double> parameters,
+        string name,
+        double defaultValue = 0d)
+    {
+        return parameters is not null && parameters.TryGetValue(name, out double value)
+            ? value
+            : defaultValue;
+    }
+
+    private static string NormalizeOperationMethodName(string value)
+    {
+        return string.IsNullOrWhiteSpace(value)
+            ? string.Empty
+            : new string([.. value.Where(char.IsLetterOrDigit).Select(char.ToLowerInvariant)]);
+    }
+
+    private static bool IsCoordinateFrameMethod(string normalizedMethodName)
+    {
+        return ContainsOrdinal(normalizedMethodName, "coordinateframe");
+    }
+
+    private static bool IsGeographicOffsetMethod(string normalizedMethodName)
+    {
+        return ContainsOrdinal(normalizedMethodName, "geographic2doffsets");
+    }
+
+    private static bool IsMolodenskyBadekasMethod(string normalizedMethodName)
+    {
+        return ContainsOrdinal(normalizedMethodName, "molodenskybadekas");
+    }
+
+    private static bool IsPositionVectorMethod(string normalizedMethodName)
+    {
+        return ContainsOrdinal(normalizedMethodName, "positionvector");
+    }
+
+    private static bool IsTimeDependentHelmertMethod(string normalizedMethodName)
+    {
+        return ContainsOrdinal(normalizedMethodName, "timedependent")
+            && (IsPositionVectorMethod(normalizedMethodName) || IsCoordinateFrameMethod(normalizedMethodName));
+    }
+
+    private static bool ContainsOrdinal(string value, string substring)
+    {
+#if NETSTANDARD2_0
+        return value.IndexOf(substring, StringComparison.Ordinal) >= 0;
+#else
+        return value.Contains(substring, StringComparison.Ordinal);
+#endif
+    }
+
     private static GridResourceResolver GetGridResolver()
     {
         lock (GridResolverSync)
@@ -1390,6 +1676,49 @@ public class CoordinateTransformationFactory
             }
 
             missingGridFile ??= candidate.ParameterFileName;
+        }
+
+        if (!string.IsNullOrWhiteSpace(missingGridFile))
+        {
+            return IsGridRequiredModeEnabled()
+                ? throw new InvalidOperationException($"DataUnavailable: Required grid resource '{missingGridFile}' was not found.")
+                : false;
+        }
+
+        return false;
+    }
+
+    private static bool TryCreateExplicitOperationTransformationBySridPair(
+        CoordinateSystem source,
+        CoordinateSystem target,
+        int sourceSrid,
+        int targetSrid,
+        [NotNullWhen(true)] out ICoordinateTransformation? transformation)
+    {
+        transformation = null;
+
+        if (!DirectOperationDefinitions.Value.TryGetValue(new SridPair(sourceSrid, targetSrid), out IReadOnlyList<CoordinateOperationDefinition>? operations))
+        {
+            return false;
+        }
+
+        string? missingGridFile = null;
+        foreach (CoordinateOperationDefinition candidate in operations)
+        {
+            string? resolvedGridPath = null;
+            if (!string.IsNullOrWhiteSpace(candidate.ParameterFileName))
+            {
+                if (!GetGridResolver().TryResolve(candidate.ParameterFileName, out resolvedGridPath))
+                {
+                    missingGridFile ??= candidate.ParameterFileName;
+                    continue;
+                }
+            }
+
+            if (TryCreateExplicitOperationTransformation(source, target, candidate, resolvedGridPath, out transformation))
+            {
+                return true;
+            }
         }
 
         if (!string.IsNullOrWhiteSpace(missingGridFile))

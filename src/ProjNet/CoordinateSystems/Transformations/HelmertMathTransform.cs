@@ -333,6 +333,85 @@ internal sealed class HelmertMathTransform : MathTransform
         }
 
         bool exact = args.ContainsKey("exact");
+        transform = Create(
+            translationX,
+            translationY,
+            translationZ,
+            rotationX,
+            rotationY,
+            rotationZ,
+            scale,
+            theta,
+            translationRateX,
+            translationRateY,
+            translationRateZ,
+            rotationRateX,
+            rotationRateY,
+            rotationRateZ,
+            scaleRate,
+            thetaRate,
+            hasKinematicRates,
+            epochReference,
+            fourParameter,
+            noRotation,
+            exact,
+            isPositionVector,
+            args.ContainsKey("inv"));
+        return true;
+    }
+
+    /// <summary>
+    /// Creates a Helmert transform from resolved numeric parameters.
+    /// </summary>
+    /// <param name="translationX">X translation in metres.</param>
+    /// <param name="translationY">Y translation in metres.</param>
+    /// <param name="translationZ">Z translation in metres.</param>
+    /// <param name="rotationX">X rotation in radians.</param>
+    /// <param name="rotationY">Y rotation in radians.</param>
+    /// <param name="rotationZ">Z rotation in radians.</param>
+    /// <param name="scale">Scale difference in ppm.</param>
+    /// <param name="theta">2D rotation in radians.</param>
+    /// <param name="translationRateX">Rate of change of X translation in metres/year.</param>
+    /// <param name="translationRateY">Rate of change of Y translation in metres/year.</param>
+    /// <param name="translationRateZ">Rate of change of Z translation in metres/year.</param>
+    /// <param name="rotationRateX">Rate of change of X rotation in radians/year.</param>
+    /// <param name="rotationRateY">Rate of change of Y rotation in radians/year.</param>
+    /// <param name="rotationRateZ">Rate of change of Z rotation in radians/year.</param>
+    /// <param name="scaleRate">Rate of change of scale difference in ppm/year.</param>
+    /// <param name="thetaRate">Rate of change of 2D rotation in radians/year.</param>
+    /// <param name="hasKinematicRates"><see langword="true"/> when any time-dependent rates are present.</param>
+    /// <param name="epochReference">Reference epoch for kinematic parameters.</param>
+    /// <param name="fourParameter"><see langword="true"/> for the 4-parameter variant.</param>
+    /// <param name="noRotation"><see langword="true"/> when all rotation terms are zero.</param>
+    /// <param name="exact"><see langword="true"/> to use the exact rotation formulation.</param>
+    /// <param name="isPositionVector"><see langword="true"/> for position-vector convention.</param>
+    /// <param name="isInverted"><see langword="true"/> to create the inverse direction.</param>
+    /// <returns>The created transform.</returns>
+    internal static MathTransform Create(
+        double translationX,
+        double translationY,
+        double translationZ,
+        double rotationX,
+        double rotationY,
+        double rotationZ,
+        double scale,
+        double theta,
+        double translationRateX,
+        double translationRateY,
+        double translationRateZ,
+        double rotationRateX,
+        double rotationRateY,
+        double rotationRateZ,
+        double scaleRate,
+        double thetaRate,
+        bool hasKinematicRates,
+        double epochReference,
+        bool fourParameter,
+        bool noRotation,
+        bool exact,
+        bool isPositionVector,
+        bool isInverted = false)
+    {
         var baseState = new HelmertParameterState(
             translationX,
             translationY,
@@ -366,7 +445,8 @@ internal sealed class HelmertMathTransform : MathTransform
             staticState.Theta,
             rotationMatrix,
             hasKinematicRates ? MissingObservationEpoch : epochReference);
-        transform = new HelmertMathTransform(
+
+        MathTransform transform = new HelmertMathTransform(
             baseState,
             rateState,
             hasKinematicRates,
@@ -378,12 +458,7 @@ internal sealed class HelmertMathTransform : MathTransform
             runtimeState,
             staticState,
             false);
-        if (args.ContainsKey("inv"))
-        {
-            transform = transform.Inverse();
-        }
-
-        return true;
+        return isInverted ? transform.Inverse() : transform;
     }
 
     /// <inheritdoc />
