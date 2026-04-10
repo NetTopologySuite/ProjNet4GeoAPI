@@ -16,12 +16,20 @@ using ProjNet.IO.Wkt;
 public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
 {
     private const string LegacyWebMercatorAlias = "WGS 84 / Popular Visualisation Pseudo-Mercator";
+
     private const string LegacyWebMercatorAbbreviation = "WebMercator";
+
     private const string LegacyWebMercatorRemarks = "Certain Web mapping and visualisation applications. " +
                                                     "Uses spherical development of ellipsoidal coordinates. Relative to an ellipsoidal development errors of up to 800 metres in position and 0.7 percent in scale may arise. It is not a recognised geodetic system: see WGS 84 / World Mercator (CRS code 3395).";
 
+    private const string LegacyWgs84UtmRemarks = "Large and medium scale topographic mapping and engineering survey.";
+
     private static readonly Lazy<ProjectedCoordinateSystem> WebMercatorCoordinateSystem =
         new(ResolveRuntimeCompatibleWebMercatorCoordinateSystem, true);
+
+    private static readonly Dictionary<int, ProjectedCoordinateSystem> Wgs84UtmCoordinateSystems = [];
+
+    private static readonly object Wgs84UtmCoordinateSystemsSync = new();
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ProjectedCoordinateSystem"/> class.
@@ -98,42 +106,7 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
     /// <returns>UTM/WGS84 coordsys.</returns>
     public static ProjectedCoordinateSystem WGS84_UTM(int zone, bool zoneIsNorth)
     {
-        var pInfo = new List<ProjectionParameter>
-        {
-            new("latitude_of_origin", 0),
-            new("central_meridian", (zone * 6) - 183),
-            new("scale_factor", 0.9996),
-            new("false_easting", 500000),
-            new("false_northing", zoneIsNorth ? 0 : 10000000),
-        };
-
-        // IProjection projection = cFac.CreateProjection("UTM" + Zone.ToString() + (ZoneIsNorth ? "N" : "S"), "Transverse_Mercator", parameters);
-        var proj = new Projection(
-            "Transverse_Mercator",
-            pInfo,
-            $"UTM{zone.ToString(CultureInfo.InvariantCulture)}{(zoneIsNorth ? "N" : "S")}",
-            "EPSG",
-            32600 + zone + (zoneIsNorth ? 0 : 100),
-            string.Empty,
-            string.Empty,
-            string.Empty);
-        var axes = new List<AxisInfo>
-            {
-                new("East", AxisOrientationEnum.East),
-                new("North", AxisOrientationEnum.North),
-            };
-        return new ProjectedCoordinateSystem(
-            CoordinateSystems.HorizontalDatum.WGS84,
-            CoordinateSystems.GeographicCoordinateSystem.WGS84,
-            CoordinateSystems.LinearUnit.Metre,
-            proj,
-            axes,
-            $"WGS 84 / UTM zone {zone.ToString(CultureInfo.InvariantCulture)}{(zoneIsNorth ? "N" : "S")}",
-            "EPSG",
-            32600 + zone + (zoneIsNorth ? 0 : 100),
-            string.Empty,
-            "Large and medium scale topographic mapping and engineering survey.",
-            string.Empty);
+        return CreateWgs84UtmCoordinateSystem(zone, zoneIsNorth);
     }
 
     /// <summary>
@@ -496,6 +469,99 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
         }
 
         return parameters;
+    }
+
+    private static ProjectedCoordinateSystem CreateWgs84UtmCoordinateSystem(int zone, bool zoneIsNorth)
+    {
+        int srid = GetWgs84UtmSrid(zone, zoneIsNorth);
+        ProjectedCoordinateSystem template;
+
+        lock (Wgs84UtmCoordinateSystemsSync)
+        {
+            if (!Wgs84UtmCoordinateSystems.TryGetValue(srid, out template!))
+            {
+                template = ResolveRuntimeCompatibleWgs84UtmCoordinateSystem(zone, zoneIsNorth, srid);
+                Wgs84UtmCoordinateSystems[srid] = template;
+            }
+        }
+
+        return CloneProjectedCoordinateSystem(template);
+    }
+
+    private static ProjectedCoordinateSystem ResolveRuntimeCompatibleWgs84UtmCoordinateSystem(int zone, bool zoneIsNorth, int srid)
+    {
+        return Wgs84CatalogBootstrap.TryGetCoordinateSystem(
+            srid,
+            out ProjectedCoordinateSystem? coordinateSystem)
+            ? NormalizeToLegacyWgs84UtmShape(coordinateSystem, zone, zoneIsNorth, srid)
+            : CreateLegacyWgs84UtmCoordinateSystem(zone, zoneIsNorth, srid);
+    }
+
+    private static ProjectedCoordinateSystem NormalizeToLegacyWgs84UtmShape(ProjectedCoordinateSystem coordinateSystem, int zone, bool zoneIsNorth, int srid)
+    {
+        GeographicCoordinateSystem geographicCoordinateSystem = GeographicCoordinateSystem.WGS84;
+        return new ProjectedCoordinateSystem(
+            geographicCoordinateSystem.HorizontalDatum,
+            geographicCoordinateSystem,
+            coordinateSystem.LinearUnit,
+            new Projection(
+                "Transverse_Mercator",
+                CopyProjectionParameters(coordinateSystem.Projection),
+                CreateLegacyUtmProjectionName(zone, zoneIsNorth),
+                "EPSG",
+                srid,
+                string.Empty,
+                string.Empty,
+                string.Empty),
+            [new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North)],
+            coordinateSystem.Name,
+            coordinateSystem.Authority,
+            coordinateSystem.AuthorityCode,
+            string.Empty,
+            LegacyWgs84UtmRemarks,
+            string.Empty);
+    }
+
+    private static ProjectedCoordinateSystem CreateLegacyWgs84UtmCoordinateSystem(int zone, bool zoneIsNorth, int srid)
+    {
+        GeographicCoordinateSystem geographicCoordinateSystem = CoordinateSystems.GeographicCoordinateSystem.WGS84;
+        return new ProjectedCoordinateSystem(
+            geographicCoordinateSystem.HorizontalDatum,
+            geographicCoordinateSystem,
+            CoordinateSystems.LinearUnit.Metre,
+            new Projection(
+                "Transverse_Mercator",
+                new List<ProjectionParameter>
+                {
+                    new("latitude_of_origin", 0),
+                    new("central_meridian", (zone * 6) - 183),
+                    new("scale_factor", 0.9996),
+                    new("false_easting", 500000),
+                    new("false_northing", zoneIsNorth ? 0 : 10000000),
+                },
+                CreateLegacyUtmProjectionName(zone, zoneIsNorth),
+                "EPSG",
+                srid,
+                string.Empty,
+                string.Empty,
+                string.Empty),
+            [new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North)],
+            $"WGS 84 / UTM zone {zone.ToString(CultureInfo.InvariantCulture)}{(zoneIsNorth ? "N" : "S")}",
+            "EPSG",
+            srid,
+            string.Empty,
+            LegacyWgs84UtmRemarks,
+            string.Empty);
+    }
+
+    private static int GetWgs84UtmSrid(int zone, bool zoneIsNorth)
+    {
+        return 32600 + zone + (zoneIsNorth ? 0 : 100);
+    }
+
+    private static string CreateLegacyUtmProjectionName(int zone, bool zoneIsNorth)
+    {
+        return $"UTM{zone.ToString(CultureInfo.InvariantCulture)}{(zoneIsNorth ? "N" : "S")}";
     }
 
     private static ProjectedCoordinateSystem CloneProjectedCoordinateSystem(ProjectedCoordinateSystem projectedCoordinateSystem)
