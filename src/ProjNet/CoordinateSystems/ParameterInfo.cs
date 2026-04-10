@@ -11,7 +11,7 @@ using System.Collections.Generic;
 /// Simple class that implements the IParameterInfo interface for providing general set of the parameters.
 /// It allows discovering the names, and for setting and getting parameter values.
 /// </summary>
-internal class ParameterInfo
+internal sealed class ParameterInfo
 {
     /// <summary>
     /// Gets the number of parameters expected.

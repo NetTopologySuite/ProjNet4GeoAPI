@@ -41,7 +41,7 @@ using System.Collections.Generic;
 /// </remarks>
 /// <seealso href="https://epsg.io/9602-method">EPSG method 9602: Geographic/geocentric conversions.</seealso>
 /// <seealso href="https://www.researchgate.net/publication/233681872">Research comparison of Bowring-style geocentric to geodetic conversion methods.</seealso>
-internal class GeocentricTransform : MathTransform
+internal sealed class GeocentricTransform : MathTransform
 {
     /// <summary>
     /// Cosine threshold used to switch to the polar height approximation near the poles.

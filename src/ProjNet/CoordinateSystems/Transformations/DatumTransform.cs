@@ -23,7 +23,7 @@ using System;
 /// </remarks>
 /// <seealso href="https://epsg.io/1033-method">EPSG method 1033: Position Vector transformation (geocentric domain).</seealso>
 /// <seealso href="https://epsg.io/1032-method">EPSG method 1032: Coordinate Frame rotation (geocentric domain).</seealso>
-internal class DatumTransform : MathTransform
+internal sealed class DatumTransform : MathTransform
 {
     private readonly Wgs84ConversionInfo toWgs94;
     private readonly double[] v;

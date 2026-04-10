@@ -16,7 +16,7 @@ using System;
 /// same difference with reversed sign.
 /// </remarks>
 /// <seealso href="https://proj.org/en/stable/usage/projections.html">PROJ usage: prime meridian and axis orientation.</seealso>
-internal class PrimeMeridianTransform : MathTransform
+internal sealed class PrimeMeridianTransform : MathTransform
 {
     private readonly PrimeMeridian source;
     private readonly PrimeMeridian target;

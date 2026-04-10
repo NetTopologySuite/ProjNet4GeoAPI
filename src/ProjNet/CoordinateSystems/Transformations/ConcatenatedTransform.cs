@@ -17,7 +17,7 @@ using System.Collections.Generic;
 /// transforms are rebuilt from the updated traversal order.
 /// </remarks>
 /// <seealso href="https://proj.org/en/stable/operations/operations_computation.html">PROJ: computation of coordinate operations between two CRS.</seealso>
-internal class ConcatenatedTransform : MathTransform, ICoordinateTransformationCore
+internal sealed class ConcatenatedTransform : MathTransform, ICoordinateTransformationCore
 {
     private static readonly CoordinateTransformationFactory CoordinateTransformationFactory =
             new();
