@@ -181,13 +181,7 @@ public class HorizontalDatum : Datum
     /// <summary>
     /// Gets an XML representation of this object.
     /// </summary>
-    public override string XML
-    {
-        get
-        {
-            return FormattableString.Invariant($"<CS_HorizontalDatum DatumType=\"{(int)this.DatumType}\">{this.InfoXml}{this.Ellipsoid.XML}{this.Wgs84Parameters?.XML ?? string.Empty}</CS_HorizontalDatum>");
-        }
-    }
+    public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
     /// <summary>
     /// Returns an XML representation of this horizontal datum as an <see cref="XElement"/>.

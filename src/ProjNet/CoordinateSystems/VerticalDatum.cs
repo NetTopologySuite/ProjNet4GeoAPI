@@ -45,13 +45,7 @@ public class VerticalDatum : Datum
     public override string WKT => this.ToWktNode().ToString();
 
     /// <inheritdoc/>
-    public override string XML
-    {
-        get
-        {
-            return FormattableString.Invariant($"<CS_VerticalDatum DatumType=\"{(int)this.DatumType}\">{this.InfoXml}</CS_VerticalDatum>");
-        }
-    }
+    public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
     /// <summary>
     /// Returns an XML representation of this vertical datum as an <see cref="XElement"/>.
