@@ -145,7 +145,7 @@ public class WKTCoordSysParserTests
     [Fact]
     public void CreateFromWktReturnsNullForNonCoordinateSystemWkt()
     {
-        const string wkt = "UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]]";
+        const string wkt = """UNIT["metre",1,AUTHORITY["EPSG","9001"]]""";
 
         CoordinateSystem? coordinateSystem = this.coordinateSystemFactory.CreateFromWkt(wkt);
 
@@ -188,7 +188,7 @@ public class WKTCoordSysParserTests
     [Fact]
     public void ParseSpheroidWithoutAuthorityRejectsMismatchedBrackets()
     {
-        const string malformedWkt = "SPHEROID(\"WGS 84\",6378137,298.257223563]";
+        const string malformedWkt = """SPHEROID("WGS 84",6378137,298.257223563]""";
 
         Assert.Throws<ArgumentException>(() => ProjNet.IO.CoordinateSystems.CoordinateSystemWktReader.Parse(malformedWkt));
     }
