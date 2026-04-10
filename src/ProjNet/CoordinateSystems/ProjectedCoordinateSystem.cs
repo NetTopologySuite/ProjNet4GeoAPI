@@ -15,6 +15,14 @@ using ProjNet.IO.Wkt;
 /// </summary>
 public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
 {
+    private const string LegacyWebMercatorAlias = "WGS 84 / Popular Visualisation Pseudo-Mercator";
+    private const string LegacyWebMercatorAbbreviation = "WebMercator";
+    private const string LegacyWebMercatorRemarks = "Certain Web mapping and visualisation applications. " +
+                                                    "Uses spherical development of ellipsoidal coordinates. Relative to an ellipsoidal development errors of up to 800 metres in position and 0.7 percent in scale may arise. It is not a recognised geodetic system: see WGS 84 / World Mercator (CRS code 3395).";
+
+    private static readonly Lazy<ProjectedCoordinateSystem> WebMercatorCoordinateSystem =
+        new(ResolveRuntimeCompatibleWebMercatorCoordinateSystem, true);
+
     /// <summary>
     /// Initializes a new instance of the <see cref="ProjectedCoordinateSystem"/> class.
     /// </summary>
@@ -53,48 +61,7 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
     /// </summary>
     public static ProjectedCoordinateSystem WebMercator
     {
-        get
-        {
-            var pInfo = new List<ProjectionParameter>
-                {
-                    new("latitude_of_origin", 0.0),
-                    new("central_meridian", 0.0),
-                    new("false_easting", 0.0),
-                    new("false_northing", 0.0),
-                };
-
-            var proj = new Projection(
-                "Popular Visualisation Pseudo-Mercator",
-                pInfo,
-                "Popular Visualisation Pseudo-Mercator",
-                "EPSG",
-                3856,
-                "Pseudo-Mercator",
-                string.Empty,
-                string.Empty);
-
-            var axes = new List<AxisInfo>
-            {
-                new("East", AxisOrientationEnum.East),
-                new("North", AxisOrientationEnum.North),
-            };
-
-            const string remarks = "Certain Web mapping and visualisation applications. " +
-                                   "Uses spherical development of ellipsoidal coordinates. Relative to an ellipsoidal development errors of up to 800 metres in position and 0.7 percent in scale may arise. It is not a recognised geodetic system: see WGS 84 / World Mercator (CRS code 3395).";
-
-            return new ProjectedCoordinateSystem(
-                CoordinateSystems.HorizontalDatum.WGS84,
-                CoordinateSystems.GeographicCoordinateSystem.WGS84,
-                CoordinateSystems.LinearUnit.Metre,
-                proj,
-                axes,
-                "WGS 84 / Pseudo-Mercator",
-                "EPSG",
-                3857,
-                "WGS 84 / Popular Visualisation Pseudo-Mercator",
-                remarks,
-                "WebMercator");
-        }
+        get { return CreateWebMercatorCoordinateSystem(); }
     }
 
     /// <summary>
@@ -447,5 +414,224 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
                 new WktQuotedString("unity"),
                 new WktNumber(1))
             : null;
+    }
+
+    private static ProjectedCoordinateSystem CreateWebMercatorCoordinateSystem()
+    {
+        return CloneProjectedCoordinateSystem(WebMercatorCoordinateSystem.Value);
+    }
+
+    private static ProjectedCoordinateSystem ResolveRuntimeCompatibleWebMercatorCoordinateSystem()
+    {
+        return Wgs84CatalogBootstrap.TryGetCoordinateSystem(
+            Wgs84CatalogBootstrap.WebMercatorSrid,
+            out ProjectedCoordinateSystem? coordinateSystem)
+            ? NormalizeToLegacyWebMercatorShape(coordinateSystem)
+            : CreateLegacyWebMercatorCoordinateSystem();
+    }
+
+    private static ProjectedCoordinateSystem NormalizeToLegacyWebMercatorShape(ProjectedCoordinateSystem coordinateSystem)
+    {
+        GeographicCoordinateSystem geographicCoordinateSystem = GeographicCoordinateSystem.WGS84;
+        return new ProjectedCoordinateSystem(
+            geographicCoordinateSystem.HorizontalDatum,
+            geographicCoordinateSystem,
+            coordinateSystem.LinearUnit,
+            new Projection(
+                "Popular Visualisation Pseudo-Mercator",
+                CopyProjectionParameters(coordinateSystem.Projection),
+                "Popular Visualisation Pseudo-Mercator",
+                "EPSG",
+                3856,
+                "Pseudo-Mercator",
+                string.Empty,
+                string.Empty),
+            [new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North)],
+            coordinateSystem.Name,
+            coordinateSystem.Authority,
+            coordinateSystem.AuthorityCode,
+            LegacyWebMercatorAlias,
+            LegacyWebMercatorRemarks,
+            LegacyWebMercatorAbbreviation);
+    }
+
+    private static ProjectedCoordinateSystem CreateLegacyWebMercatorCoordinateSystem()
+    {
+        GeographicCoordinateSystem geographicCoordinateSystem = CoordinateSystems.GeographicCoordinateSystem.WGS84;
+        return new ProjectedCoordinateSystem(
+            geographicCoordinateSystem.HorizontalDatum,
+            geographicCoordinateSystem,
+            CoordinateSystems.LinearUnit.Metre,
+            new Projection(
+                "Popular Visualisation Pseudo-Mercator",
+                new List<ProjectionParameter>
+                {
+                    new("latitude_of_origin", 0.0),
+                    new("central_meridian", 0.0),
+                    new("false_easting", 0.0),
+                    new("false_northing", 0.0),
+                },
+                "Popular Visualisation Pseudo-Mercator",
+                "EPSG",
+                3856,
+                "Pseudo-Mercator",
+                string.Empty,
+                string.Empty),
+            [new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North)],
+            "WGS 84 / Pseudo-Mercator",
+            "EPSG",
+            3857,
+            LegacyWebMercatorAlias,
+            LegacyWebMercatorRemarks,
+            LegacyWebMercatorAbbreviation);
+    }
+
+    private static List<ProjectionParameter> CopyProjectionParameters(IProjection projection)
+    {
+        var parameters = new List<ProjectionParameter>(projection.NumParameters);
+        for (int i = 0; i < projection.NumParameters; i++)
+        {
+            ProjectionParameter parameter = projection.GetParameter(i);
+            parameters.Add(new ProjectionParameter(parameter.Name, parameter.Value));
+        }
+
+        return parameters;
+    }
+
+    private static ProjectedCoordinateSystem CloneProjectedCoordinateSystem(ProjectedCoordinateSystem projectedCoordinateSystem)
+    {
+        HorizontalDatum horizontalDatum = CloneHorizontalDatum(projectedCoordinateSystem.HorizontalDatum);
+        GeographicCoordinateSystem geographicCoordinateSystem = CloneGeographicCoordinateSystem(projectedCoordinateSystem.GeographicCoordinateSystem, horizontalDatum);
+
+        return new ProjectedCoordinateSystem(
+            horizontalDatum,
+            geographicCoordinateSystem,
+            CloneLinearUnit(projectedCoordinateSystem.LinearUnit),
+            CloneProjection(projectedCoordinateSystem.Projection),
+            CloneAxisInfo(projectedCoordinateSystem),
+            projectedCoordinateSystem.Name,
+            projectedCoordinateSystem.Authority,
+            projectedCoordinateSystem.AuthorityCode,
+            projectedCoordinateSystem.Alias,
+            projectedCoordinateSystem.Remarks,
+            projectedCoordinateSystem.Abbreviation);
+    }
+
+    private static GeographicCoordinateSystem CloneGeographicCoordinateSystem(GeographicCoordinateSystem geographicCoordinateSystem, HorizontalDatum horizontalDatum)
+    {
+        return new GeographicCoordinateSystem(
+            CloneAngularUnit(geographicCoordinateSystem.AngularUnit),
+            horizontalDatum,
+            ClonePrimeMeridian(geographicCoordinateSystem.PrimeMeridian),
+            CloneAxisInfo(geographicCoordinateSystem),
+            geographicCoordinateSystem.Name,
+            geographicCoordinateSystem.Authority,
+            geographicCoordinateSystem.AuthorityCode,
+            geographicCoordinateSystem.Alias,
+            geographicCoordinateSystem.Abbreviation,
+            geographicCoordinateSystem.Remarks);
+    }
+
+    private static HorizontalDatum CloneHorizontalDatum(HorizontalDatum horizontalDatum)
+    {
+        Wgs84ConversionInfo? wgs84Parameters = horizontalDatum.Wgs84Parameters is null
+            ? null
+            : new Wgs84ConversionInfo(
+                horizontalDatum.Wgs84Parameters.Dx,
+                horizontalDatum.Wgs84Parameters.Dy,
+                horizontalDatum.Wgs84Parameters.Dz,
+                horizontalDatum.Wgs84Parameters.Ex,
+                horizontalDatum.Wgs84Parameters.Ey,
+                horizontalDatum.Wgs84Parameters.Ez,
+                horizontalDatum.Wgs84Parameters.Ppm,
+                horizontalDatum.Wgs84Parameters.AreaOfUse);
+
+        return new HorizontalDatum(
+            CloneEllipsoid(horizontalDatum.Ellipsoid),
+            wgs84Parameters,
+            horizontalDatum.DatumType,
+            horizontalDatum.Name,
+            horizontalDatum.Authority,
+            horizontalDatum.AuthorityCode,
+            horizontalDatum.Alias,
+            horizontalDatum.Remarks,
+            horizontalDatum.Abbreviation);
+    }
+
+    private static Ellipsoid CloneEllipsoid(Ellipsoid ellipsoid)
+    {
+        return new Ellipsoid(
+            ellipsoid.SemiMajorAxis,
+            ellipsoid.SemiMinorAxis,
+            ellipsoid.InverseFlattening,
+            ellipsoid.IsIvfDefinitive,
+            CloneLinearUnit(ellipsoid.AxisUnit),
+            ellipsoid.Name,
+            ellipsoid.Authority,
+            ellipsoid.AuthorityCode,
+            ellipsoid.Alias,
+            ellipsoid.Abbreviation,
+            ellipsoid.Remarks);
+    }
+
+    private static PrimeMeridian ClonePrimeMeridian(PrimeMeridian primeMeridian)
+    {
+        return new PrimeMeridian(
+            primeMeridian.Longitude,
+            CloneAngularUnit(primeMeridian.AngularUnit),
+            primeMeridian.Name,
+            primeMeridian.Authority,
+            primeMeridian.AuthorityCode,
+            primeMeridian.Alias,
+            primeMeridian.Abbreviation,
+            primeMeridian.Remarks);
+    }
+
+    private static AngularUnit CloneAngularUnit(AngularUnit angularUnit)
+    {
+        return new AngularUnit(
+            angularUnit.RadiansPerUnit,
+            angularUnit.Name,
+            angularUnit.Authority,
+            angularUnit.AuthorityCode,
+            angularUnit.Alias,
+            angularUnit.Abbreviation,
+            angularUnit.Remarks);
+    }
+
+    private static LinearUnit CloneLinearUnit(LinearUnit linearUnit)
+    {
+        return new LinearUnit(
+            linearUnit.MetersPerUnit,
+            linearUnit.Name,
+            linearUnit.Authority,
+            linearUnit.AuthorityCode,
+            linearUnit.Alias,
+            linearUnit.Abbreviation,
+            linearUnit.Remarks);
+    }
+
+    private static Projection CloneProjection(IProjection projection)
+    {
+        return new Projection(
+            projection.ClassName,
+            CopyProjectionParameters(projection),
+            projection.Name,
+            projection.Authority,
+            projection.AuthorityCode,
+            projection.Alias,
+            projection.Remarks,
+            projection.Abbreviation);
+    }
+
+    private static List<AxisInfo> CloneAxisInfo(CoordinateSystem coordinateSystem)
+    {
+        var axisInfo = new List<AxisInfo>(coordinateSystem.Dimension);
+        for (int i = 0; i < coordinateSystem.Dimension; i++)
+        {
+            axisInfo.Add(new AxisInfo(coordinateSystem.GetAxis(i)));
+        }
+
+        return axisInfo;
     }
 }
