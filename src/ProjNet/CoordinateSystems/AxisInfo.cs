@@ -12,7 +12,7 @@ using ProjNet.IO.Wkt;
 /// <summary>
 /// Details of axis. This is used to label axes, and indicate the orientation.
 /// </summary>
-public class AxisInfo
+public sealed class AxisInfo
 {
     private string name = string.Empty;
     private AxisOrientationEnum orientation;

@@ -19,7 +19,7 @@ using System;
 /// for any given instance.
 /// </para>
 /// </remarks>
-public class BoundTransformation : IEquatable<BoundTransformation>
+public sealed class BoundTransformation : IEquatable<BoundTransformation>
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="BoundTransformation"/> class for a Bursa-Wolf-style transformation.

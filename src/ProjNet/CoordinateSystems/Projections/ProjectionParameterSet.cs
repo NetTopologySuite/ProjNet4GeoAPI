@@ -12,7 +12,7 @@ using System.Text;
 /// <summary>
 /// A named collection of projection parameters, supporting case-insensitive key lookup and insertion-order enumeration.
 /// </summary>
-public class ProjectionParameterSet : Dictionary<string, double>, IEquatable<ProjectionParameterSet>
+public sealed class ProjectionParameterSet : Dictionary<string, double>, IEquatable<ProjectionParameterSet>
 {
     private readonly Dictionary<string, string> originalNames = [];
     private readonly Dictionary<int, string> originalIndex = [];

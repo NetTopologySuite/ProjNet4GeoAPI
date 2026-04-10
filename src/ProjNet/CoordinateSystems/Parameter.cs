@@ -9,7 +9,7 @@ using System;
 /// <summary>
 /// A named parameter value.
 /// </summary>
-public class Parameter
+public sealed class Parameter
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="Parameter"/> class.

@@ -19,7 +19,7 @@ using ProjNet.IO.Wkt;
 /// system is based on. (Notice that this is different from <see cref="Parameter"/>,
 /// where the units are always meters and degrees.)
 /// </remarks>
-public class ProjectionParameter
+public sealed class ProjectionParameter
 {
     private string name = string.Empty;
     private double val;

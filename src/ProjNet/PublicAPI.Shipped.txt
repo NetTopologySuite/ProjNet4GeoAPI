@@ -41,7 +41,7 @@ namespace ProjNet.CoordinateSystems
         public ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public System.Xml.Linq.XElement ToXml() { }
     }
-    public class AxisInfo
+    public sealed class AxisInfo
     {
         public AxisInfo(ProjNet.CoordinateSystems.AxisInfo axisInfo) { }
         public AxisInfo(string name, ProjNet.CoordinateSystems.AxisOrientationEnum orientation) { }
@@ -77,7 +77,7 @@ namespace ProjNet.CoordinateSystems
         public override ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public override System.Xml.Linq.XElement ToXml() { }
     }
-    public class BoundTransformation : System.IEquatable<ProjNet.CoordinateSystems.BoundTransformation>
+    public sealed class BoundTransformation : System.IEquatable<ProjNet.CoordinateSystems.BoundTransformation>
     {
         public BoundTransformation(string methodName, ProjNet.CoordinateSystems.Wgs84ConversionInfo wgs84Parameters) { }
         public BoundTransformation(string methodName, string parameterFileName) { }
@@ -317,7 +317,7 @@ namespace ProjNet.CoordinateSystems
         public ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public System.Xml.Linq.XElement ToXml() { }
     }
-    public class Parameter
+    public sealed class Parameter
     {
         public Parameter(string name, double value) { }
         public string Name { get; set; }
@@ -375,7 +375,7 @@ namespace ProjNet.CoordinateSystems
         public ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public System.Xml.Linq.XElement ToXml() { }
     }
-    public class ProjectionParameter
+    public sealed class ProjectionParameter
     {
         public ProjectionParameter(string name, double value) { }
         public string Name { get; set; }
@@ -420,7 +420,7 @@ namespace ProjNet.CoordinateSystems
         public ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public System.Xml.Linq.XElement ToXml() { }
     }
-    public class Wgs84ConversionInfo : System.IEquatable<ProjNet.CoordinateSystems.Wgs84ConversionInfo>
+    public sealed class Wgs84ConversionInfo : System.IEquatable<ProjNet.CoordinateSystems.Wgs84ConversionInfo>
     {
         public string AreaOfUse;
         public double Dx;
@@ -592,7 +592,7 @@ namespace ProjNet.CoordinateSystems.Projections
         protected static void Sincos(double val, out double sin_val, out double cos_val) { }
         protected static double Tsfnz(double eccent, double phi, double sinphi) { }
     }
-    public class ProjectionParameterSet : System.Collections.Generic.Dictionary<string, double>, System.IEquatable<ProjNet.CoordinateSystems.Projections.ProjectionParameterSet>
+    public sealed class ProjectionParameterSet : System.Collections.Generic.Dictionary<string, double>, System.IEquatable<ProjNet.CoordinateSystems.Projections.ProjectionParameterSet>
     {
         public ProjectionParameterSet(System.Collections.Generic.IEnumerable<ProjNet.CoordinateSystems.ProjectionParameter> parameters) { }
         public bool Equals(ProjNet.CoordinateSystems.Projections.ProjectionParameterSet? other) { }
@@ -626,7 +626,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         public override void Invert() { }
         public override void Transform(ref double x, ref double y, ref double z) { }
     }
-    public class CoordinateTransformation : ProjNet.CoordinateSystems.Transformations.ICoordinateTransformation, ProjNet.CoordinateSystems.Transformations.ICoordinateTransformationCore
+    public sealed class CoordinateTransformation : ProjNet.CoordinateSystems.Transformations.ICoordinateTransformation, ProjNet.CoordinateSystems.Transformations.ICoordinateTransformationCore
     {
         public string AreaOfUse { get; }
         public string Authority { get; }
