@@ -158,7 +158,7 @@ public class WKTCoordSysParserTests
     [Fact]
     public void CreateFromWktParsesMixedCaseGeodeticCrsAndEllipsoid()
     {
-        const string wkt = "geodeticcrs[\"WGS 84\",DATUM[\"WGS_1984\",Ellipsoid[\"WGS 84\",6378137,298.257223563],id[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,id[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,id[\"EPSG\",\"9122\"]],id[\"EPSG\",\"4326\"]]";
+        const string wkt = """geodeticcrs["WGS 84",DATUM["WGS_1984",Ellipsoid["WGS 84",6378137,298.257223563],id["EPSG","6326"]],PRIMEM["Greenwich",0,id["EPSG","8901"]],UNIT["degree",0.0174532925199433,id["EPSG","9122"]],id["EPSG","4326"]]""";
 
         GeographicCoordinateSystem coordinateSystem = CoordinateSystemTestHelpers.RequireCoordinateSystem<GeographicCoordinateSystem>(this.coordinateSystemFactory, wkt);
 
@@ -173,7 +173,7 @@ public class WKTCoordSysParserTests
     [Fact]
     public void CreateFromWktParsesSpheroidWithoutAuthority()
     {
-        const string wkt = "GEOGCS[\"Custom\",DATUM[\"Custom_Datum\",SPHEROID[\"Custom Spheroid\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]]";
+        const string wkt = """GEOGCS["Custom",DATUM["Custom_Datum",SPHEROID["Custom Spheroid",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]]""";
 
         GeographicCoordinateSystem coordinateSystem = CoordinateSystemTestHelpers.RequireCoordinateSystem<GeographicCoordinateSystem>(this.coordinateSystemFactory, wkt);
 
@@ -200,7 +200,7 @@ public class WKTCoordSysParserTests
     public void CreateFromWktUsesMinusOneForNonNumericAuthorityCodes()
     {
         const string wkt =
-            "GEOGCS[\"Custom\",DATUM[\"Custom_Datum\",SPHEROID[\"Custom Spheroid\",6378137,298.257223563,AUTHORITY[\"LOCAL\",\"abc\"]],AUTHORITY[\"LOCAL\",\"abc\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"LOCAL\",\"abc\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"LOCAL\",\"abc\"]],AUTHORITY[\"LOCAL\",\"abc\"]]";
+            """GEOGCS["Custom",DATUM["Custom_Datum",SPHEROID["Custom Spheroid",6378137,298.257223563,AUTHORITY["LOCAL","abc"]],AUTHORITY["LOCAL","abc"]],PRIMEM["Greenwich",0,AUTHORITY["LOCAL","abc"]],UNIT["degree",0.0174532925199433,AUTHORITY["LOCAL","abc"]],AUTHORITY["LOCAL","abc"]]""";
 
         GeographicCoordinateSystem coordinateSystem = CoordinateSystemTestHelpers.RequireCoordinateSystem<GeographicCoordinateSystem>(this.coordinateSystemFactory, wkt);
 
@@ -218,7 +218,7 @@ public class WKTCoordSysParserTests
     public void CreateFromWktParsesProjectedCoordinateSystemWithoutParameters()
     {
         const string wkt =
-            "PROJCS[\"Custom\",GEOGCS[\"Custom GCS\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563]],PRIMEM[\"Greenwich\",0],UNIT[\"degree\",0.0174532925199433]],PROJECTION[\"Mercator_1SP\"],UNIT[\"metre\",1]]";
+            """PROJCS["Custom",GEOGCS["Custom GCS",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["degree",0.0174532925199433]],PROJECTION["Mercator_1SP"],UNIT["metre",1]]""";
 
         ProjectedCoordinateSystem coordinateSystem = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(this.coordinateSystemFactory, wkt);
         Assert.Equal("Mercator_1SP", coordinateSystem.Projection.ClassName);
