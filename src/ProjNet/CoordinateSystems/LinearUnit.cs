@@ -75,13 +75,7 @@ public class LinearUnit : Info, IUnit
     /// <summary>
     /// Gets an XML representation of this object.
     /// </summary>
-    public override string XML
-    {
-        get
-        {
-            return FormattableString.Invariant($"<CS_LinearUnit MetersPerUnit=\"{this.MetersPerUnit}\">{this.InfoXml}</CS_LinearUnit>");
-        }
-    }
+    public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
     /// <summary>
     /// Returns an XML representation of this linear unit as an <see cref="XElement"/>.

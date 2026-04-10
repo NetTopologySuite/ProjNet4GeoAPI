@@ -85,13 +85,7 @@ public class AngularUnit : Info, IUnit
     /// <summary>
     /// Gets an XML representation of this object.
     /// </summary>
-    public override string XML
-    {
-        get
-        {
-            return FormattableString.Invariant($"<CS_AngularUnit RadiansPerUnit=\"{this.RadiansPerUnit}\">{this.InfoXml}</CS_AngularUnit>");
-        }
-    }
+    public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
     /// <summary>
     /// Returns an XML representation of this angular unit as an <see cref="XElement"/>.
