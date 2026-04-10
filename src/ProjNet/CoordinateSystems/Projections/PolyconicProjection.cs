@@ -24,6 +24,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// section 18. The forward easting and northing equations using the meridian arc
 /// through <c>Mlfn</c>/<c>Inv_mlfn</c> match the implementation here.</para>
 /// </remarks>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 4, Sect. 4.3.1, pp. 149-151.</seealso>
 /// <seealso href="https://epsg.io/9818-method">EPSG method 9818: American Polyconic.</seealso>
 internal class PolyconicProjection : MapProjection
 {

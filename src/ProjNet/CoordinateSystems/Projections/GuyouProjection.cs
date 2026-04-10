@@ -23,6 +23,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// conformal square construction used for the Guyou and related Adams-family variants.
 /// Inverse projection is not supported in this implementation.</para>
 /// </remarks>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 7, Sect. 7.4.2, pp. 206-208.</seealso>
 /// <seealso href="https://proj.org/en/stable/operations/projections/guyou.html">PROJ documentation: Guyou.</seealso>
 /// <seealso href="https://en.wikipedia.org/wiki/Guyou_projection">Wikipedia: Guyou hemisphere-in-a-square projection.</seealso>
 internal sealed class GuyouProjection : AdamsProjectionBase

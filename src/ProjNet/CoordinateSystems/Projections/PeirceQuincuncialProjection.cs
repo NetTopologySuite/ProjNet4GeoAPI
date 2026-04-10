@@ -18,6 +18,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// supported for the square and diamond shapes, but not for the hemisphere, horizontal,
 /// or vertical shape variants.
 /// </remarks>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 7, Sect. 7.4.1, pp. 206-208.</seealso>
 internal sealed class PeirceQuincuncialProjection : AdamsProjectionBase
 {
     /// <summary>

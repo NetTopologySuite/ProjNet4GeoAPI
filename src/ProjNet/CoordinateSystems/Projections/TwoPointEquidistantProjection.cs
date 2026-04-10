@@ -16,6 +16,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// control points. The implementation precomputes the geometry of the control-point pair and
 /// then solves the forward and inverse forms from the two geodesic distances.
 /// </remarks>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 7, Sect. 7.9, pp. 215-217.</seealso>
 internal sealed class TwoPointEquidistantProjection : MapProjection
 {
     private readonly double radius;

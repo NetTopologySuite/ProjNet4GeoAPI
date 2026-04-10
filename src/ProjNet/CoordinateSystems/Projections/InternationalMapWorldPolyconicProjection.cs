@@ -23,6 +23,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// at ±2, ±4, or ±8 degrees, while the forward and inverse paths use meridian-arc
 /// evaluation with iterative longitude and latitude recovery.</para>
 /// </remarks>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 4, Sect. 4.3.2, pp. 151-153; see also Ch. 5, Sect. 5.2.1, p. 165.</seealso>
 /// <seealso href="https://proj.org/en/stable/operations/projections/imw_p.html">PROJ documentation: International Map of the World Polyconic.</seealso>
 internal sealed class InternationalMapWorldPolyconicProjection : MapProjection
 {

@@ -17,6 +17,7 @@ using System.Collections.Generic;
 /// square construction, and then arranges the result into a hemisphere, world-in-a-square,
 /// or quincuncial layout.
 /// </remarks>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 7, Sect. 7.4, pp. 206-208.</seealso>
 internal abstract class AdamsProjectionBase : MapProjection
 {
     private const double Tolerance = 1e-9d;
