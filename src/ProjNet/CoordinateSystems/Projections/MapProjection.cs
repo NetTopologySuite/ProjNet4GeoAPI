@@ -495,6 +495,16 @@ public abstract class MapProjection : MathTransform, IProjection
     /// </summary>
     protected virtual bool HasInverseSupport => true;
 
+    /// <summary>
+    /// Gets the inverse of <see cref="SphericalRadius"/>.
+    /// </summary>
+    protected double InverseSphericalRadius => 1d / this.SphericalRadius;
+
+    /// <summary>
+    /// Gets the spherical radius scaled by the projection scale factor.
+    /// </summary>
+    protected double SphericalRadius => this.semiMajor * this.scaleFactor;
+
     /// <inheritdoc />
     protected sealed override void TransformCore(Span<double> xs, Span<double> ys, Span<double> zs, int strideX, int strideY, int strideZ)
     {

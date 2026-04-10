@@ -29,8 +29,6 @@ internal class CompactMillerProjection : MapProjection
     private const double MaxYFactor = 0.6000207669862655d;
     private const int MaxIterations = 100;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double maxY;
 
     /// <summary>
@@ -51,8 +49,6 @@ internal class CompactMillerProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Compact_Miller";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
         this.maxY = MaxYFactor * PI;
     }
 
@@ -70,15 +66,15 @@ internal class CompactMillerProjection : MapProjection
         double lambda = Adjust_lon(lon - this.centralMeridian);
         double latSquared = lat * lat;
         double y = lat * (K1 + (latSquared * (K2 + (K3 * latSquared))));
-        lon = this.radius * lambda;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * lambda;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
         if (yy > this.maxY)
         {
             yy = this.maxY;

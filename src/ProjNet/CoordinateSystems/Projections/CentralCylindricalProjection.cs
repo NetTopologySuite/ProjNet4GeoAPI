@@ -25,9 +25,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://en.wikipedia.org/wiki/Central_cylindrical_projection">Wikipedia: Central cylindrical projection.</seealso>
 internal class CentralCylindricalProjection : MapProjection
 {
-    private readonly double radius;
-    private readonly double inverseRadius;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="CentralCylindricalProjection"/> class.
     /// </summary>
@@ -46,8 +43,6 @@ internal class CentralCylindricalProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Central_Cylindrical";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
     }
 
     /// <inheritdoc />
@@ -67,15 +62,15 @@ internal class CentralCylindricalProjection : MapProjection
             ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
 
-        lon = this.radius * lambda;
-        lat = this.radius * Math.Tan(lat);
+        lon = this.SphericalRadius * lambda;
+        lat = this.SphericalRadius * Math.Tan(lat);
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
         x = Adjust_lon(this.centralMeridian + xx);
         y = Math.Atan(yy);
     }

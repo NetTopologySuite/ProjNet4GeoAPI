@@ -527,12 +527,14 @@ namespace ProjNet.CoordinateSystems.Projections
         public override sealed int DimSource { get; }
         public override sealed int DimTarget { get; }
         protected virtual bool HasInverseSupport { get; }
+        protected double InverseSphericalRadius { get; }
         protected bool IsInverse { get; }
         protected double Lon_origin { get; set; }
         public string Name { get; set; }
         public int NumParameters { get; }
         protected double Phi0 { get; }
         public string Remarks { get; set; }
+        protected double SphericalRadius { get; }
         public override string WKT { get; }
         public override string XML { get; }
         [System.Obsolete("Use centralMeridian instead.")]

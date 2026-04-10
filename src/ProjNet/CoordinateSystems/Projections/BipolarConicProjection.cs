@@ -39,8 +39,6 @@ internal class BipolarConicProjection : MapProjection
     private const double R110 = 1.91986217719376253360d;
     private const double R104 = 1.81514242207410275904d;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly bool noSkew;
 
     /// <summary>
@@ -61,8 +59,6 @@ internal class BipolarConicProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Bipolar_Conic";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
         this.noSkew = this.Parameters.ContainsKey("ns") || this.Parameters.ContainsKey("noskew");
     }
 
@@ -186,15 +182,15 @@ internal class BipolarConicProjection : MapProjection
             y = (-y * CosAzc) + (xt * SinAzc);
         }
 
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
 
         if (this.noSkew)
         {

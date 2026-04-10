@@ -22,9 +22,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://en.wikipedia.org/wiki/Aitoff_projection">Wikipedia: Aitoff projection.</seealso>
 internal class AitoffProjection : MapProjection
 {
-    private readonly double radius;
-    private readonly double inverseRadius;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="AitoffProjection"/> class.
     /// </summary>
@@ -43,8 +40,6 @@ internal class AitoffProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Aitoff";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
     }
 
     /// <inheritdoc />
@@ -60,15 +55,15 @@ internal class AitoffProjection : MapProjection
     {
         double lambda = Adjust_lon(lon - this.centralMeridian);
         AitoffMath.Forward(lambda, lat, false, 0d, out double x, out double y);
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
 
         AitoffMath.Inverse(xx, yy, false, 0d, out double lambda, out double phi);
         x = Adjust_lon(this.centralMeridian + lambda);

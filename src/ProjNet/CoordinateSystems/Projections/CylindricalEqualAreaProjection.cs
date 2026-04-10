@@ -25,12 +25,11 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://epsg.io/9835-method">EPSG method 9835: Lambert Cylindrical Equal Area.</seealso>
 /// <seealso href="https://pubs.usgs.gov/publication/pp1395">USGS Professional Paper 1395: Map Projections - A Working Manual.</seealso>
 /// <seealso href="https://en.wikipedia.org/wiki/Cylindrical_equal-area_projection">Wikipedia: Cylindrical equal-area projection.</seealso>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 2, Sect. 2.1.3, pp. 51-53.</seealso>
 internal class CylindricalEqualAreaProjection : MapProjection
 {
     private const double Epsilon = 1e-10d;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double cosStandardParallel;
     private readonly bool isEllipsoidal;
     private readonly double oneEs;
@@ -75,9 +74,6 @@ internal class CylindricalEqualAreaProjection : MapProjection
             this.oneEs = 0d;
             this.qp = 0d;
         }
-
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
     }
 
     /// <inheritdoc />
@@ -92,24 +88,24 @@ internal class CylindricalEqualAreaProjection : MapProjection
     protected override void RadiansToMeters(ref double lon, ref double lat)
     {
         double lambda = Adjust_lon(lon - this.centralMeridian);
-        lon = this.radius * lambda * this.cosStandardParallel;
+        lon = this.SphericalRadius * lambda * this.cosStandardParallel;
 
         if (this.isEllipsoidal)
         {
-            lat = this.radius * (0.5d * Qsfn(Math.Sin(lat), this.e, this.oneEs)) / this.cosStandardParallel;
+            lat = this.SphericalRadius * (0.5d * Qsfn(Math.Sin(lat), this.e, this.oneEs)) / this.cosStandardParallel;
         }
         else
         {
-            lat = this.radius * Math.Sin(lat) / this.cosStandardParallel;
+            lat = this.SphericalRadius * Math.Sin(lat) / this.cosStandardParallel;
         }
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        x = Adjust_lon(this.centralMeridian + ((x * this.inverseRadius) / this.cosStandardParallel));
+        x = Adjust_lon(this.centralMeridian + ((x * this.InverseSphericalRadius) / this.cosStandardParallel));
 
-        double normalized = (y * this.cosStandardParallel) * this.inverseRadius;
+        double normalized = (y * this.cosStandardParallel) * this.InverseSphericalRadius;
         if (this.isEllipsoidal)
         {
             double q = ProjectionConstants.Clamp(2d * normalized, -this.qp, this.qp);

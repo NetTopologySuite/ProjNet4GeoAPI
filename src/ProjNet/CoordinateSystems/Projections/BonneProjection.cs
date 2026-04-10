@@ -26,10 +26,9 @@ using ProjNet.CoordinateSystems.Transformations;
 /// for the Bonne development and its meridian-arc-based formulation.</para>
 /// </remarks>
 /// <seealso href="https://epsg.io/9827-method">EPSG method 9827: Bonne.</seealso>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 3, Sect. 3.4.2, pp. 126-127.</seealso>
 internal class BonneProjection : MapProjection
 {
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double standardParallel;
     private readonly double sineStandardParallel;
     private readonly double cotStandardParallel;
@@ -55,8 +54,6 @@ internal class BonneProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Bonne";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
         this.standardParallel = DegreesToRadians(this.Parameters.GetOptionalParameterValue("lat_1", RadiansToDegrees(this.latOrigin), "standard_parallel_1"));
 
         if (Math.Abs(this.standardParallel) <= Eps10)
@@ -107,8 +104,8 @@ internal class BonneProjection : MapProjection
             }
 
             double angularTermSphere = lambda * Math.Cos(phi) / rhoSphere;
-            lon = this.radius * rhoSphere * Math.Sin(angularTermSphere);
-            lat = this.radius * (this.cotStandardParallel - (rhoSphere * Math.Cos(angularTermSphere)));
+            lon = this.SphericalRadius * rhoSphere * Math.Sin(angularTermSphere);
+            lat = this.SphericalRadius * (this.cotStandardParallel - (rhoSphere * Math.Cos(angularTermSphere)));
             return;
         }
 
@@ -124,15 +121,15 @@ internal class BonneProjection : MapProjection
 
         double angularDenominatorEllipsoid = rho * Math.Sqrt(1d - (this.es * sinPhi * sinPhi));
         double angularTermEllipsoid = (cosPhi * lambda) / angularDenominatorEllipsoid;
-        lon = this.radius * rho * Math.Sin(angularTermEllipsoid);
-        lat = this.radius * (this.reducedCosphiOverSinphiAtStandardParallel - (rho * Math.Cos(angularTermEllipsoid)));
+        lon = this.SphericalRadius * rho * Math.Sin(angularTermEllipsoid);
+        lat = this.SphericalRadius * (this.reducedCosphiOverSinphiAtStandardParallel - (rho * Math.Cos(angularTermEllipsoid)));
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xUnit = x * this.inverseRadius;
-        double yUnit = y * this.inverseRadius;
+        double xUnit = x * this.InverseSphericalRadius;
+        double yUnit = y * this.InverseSphericalRadius;
 
         if (!this.isEllipsoidal)
         {

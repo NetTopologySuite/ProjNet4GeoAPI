@@ -33,8 +33,6 @@ internal sealed class AiroceanProjection : MapProjection
     private const int OrientationVertical = 0;
     private const int OrientationHorizontal = 1;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly bool horizontalOrientation;
     private readonly double oneMinusF;
     private readonly double oneMinusFSquared;
@@ -58,8 +56,6 @@ internal sealed class AiroceanProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Airocean";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
         this.oneMinusF = this.semiMajor == 0d ? 1d : this.semiMinor / this.semiMajor;
         this.oneMinusFSquared = this.oneMinusF * this.oneMinusF;
         this.semiMajorSquared = this.semiMajor * this.semiMajor;
@@ -111,14 +107,14 @@ internal sealed class AiroceanProjection : MapProjection
             projectedPoint = HorizontalTransform.Transform(projectedPoint);
         }
 
-        lon = projectedPoint.X * this.radius;
-        lat = projectedPoint.Y * this.radius;
+        lon = projectedPoint.X * this.SphericalRadius;
+        lat = projectedPoint.Y * this.SphericalRadius;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        var projectedPoint = new Vector2(x * this.inverseRadius, y * this.inverseRadius);
+        var projectedPoint = new Vector2(x * this.InverseSphericalRadius, y * this.InverseSphericalRadius);
         if (this.horizontalOrientation)
         {
             projectedPoint = HorizontalInverseTransform.Transform(projectedPoint);

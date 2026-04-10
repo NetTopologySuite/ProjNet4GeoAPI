@@ -25,9 +25,6 @@ internal class CrasterProjection : MapProjection
     private const double Rym = 0.32573500793527994772d;
     private const double Third = ProjectionConstants.OneThird;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="CrasterProjection"/> class.
     /// </summary>
@@ -46,8 +43,6 @@ internal class CrasterProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Craster";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
     }
 
     /// <inheritdoc />
@@ -65,15 +60,15 @@ internal class CrasterProjection : MapProjection
         double phiThird = lat * Third;
         double x = Xm * lambda * ((2d * Math.Cos(phiThird + phiThird)) - 1d);
         double y = Ym * Math.Sin(phiThird);
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
         double phi = 3d * Asinz(yy * Rym);
         double denominator = (2d * Math.Cos((phi + phi) * Third)) - 1d;
         if (Math.Abs(denominator) <= Eps10)

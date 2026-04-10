@@ -23,8 +23,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://proj.org/en/stable/operations/projections/ccon.html">PROJ documentation: Central Conic.</seealso>
 internal sealed class CentralConicProjection : MapProjection
 {
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly double phi1;
     private readonly double sinPhi1;
     private readonly double ctgPhi1;
@@ -47,8 +45,6 @@ internal sealed class CentralConicProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Central_Conic";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
         this.phi1 = DegreesToRadians(this.Parameters.GetParameterValue("lat_1", "standard_parallel_1"));
         if (Math.Abs(this.phi1) < Eps10)
         {
@@ -75,15 +71,15 @@ internal sealed class CentralConicProjection : MapProjection
         double xUnit = r * Math.Sin(lambda * this.sinPhi1);
         double yUnit = this.ctgPhi1 - (r * Math.Cos(lambda * this.sinPhi1));
 
-        lon = this.radius * xUnit;
-        lat = this.radius * yUnit;
+        lon = this.SphericalRadius * xUnit;
+        lat = this.SphericalRadius * yUnit;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xUnit = x * this.inverseRadius;
-        double yUnit = this.ctgPhi1 - (y * this.inverseRadius);
+        double xUnit = x * this.InverseSphericalRadius;
+        double yUnit = this.ctgPhi1 - (y * this.InverseSphericalRadius);
         double lambda = Math.Atan2(xUnit, yUnit) / this.sinPhi1;
         double phi = this.phi1 - Math.Atan(Hypot(xUnit, yUnit) - this.ctgPhi1);
 

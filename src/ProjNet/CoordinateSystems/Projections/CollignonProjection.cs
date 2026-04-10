@@ -24,9 +24,6 @@ internal class CollignonProjection : MapProjection
     private const double Fyc = 1.77245385090551602729d;
     private const double OneEps = ProjectionConstants.OnePlusEps7;
 
-    private readonly double radius;
-    private readonly double inverseRadius;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="CollignonProjection"/> class.
     /// </summary>
@@ -45,8 +42,6 @@ internal class CollignonProjection : MapProjection
         : base(parameters, inverse)
     {
         this.Name = "Collignon";
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
     }
 
     /// <inheritdoc />
@@ -74,15 +69,15 @@ internal class CollignonProjection : MapProjection
         double x = Fxc * lambda * yRoot;
         double y = Fyc * (1d - yRoot);
 
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
 
         double phi = (yy / Fyc) - 1d;
         phi = 1d - (phi * phi);

@@ -28,8 +28,6 @@ internal class ColombiaUrbanProjection : MapProjection
     private readonly double b;
     private readonly double c;
     private readonly double d;
-    private readonly double radius;
-    private readonly double inverseRadius;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ColombiaUrbanProjection"/> class.
@@ -51,8 +49,6 @@ internal class ColombiaUrbanProjection : MapProjection
         this.Name = "Colombia_Urban";
         double unscaledH0 = this.Parameters.GetParameterValue("h_0");
         this.h0 = unscaledH0 / this.semiMajor;
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
 
         double sinPhi0 = Math.Sin(this.latOrigin);
         double nu0 = 1d / Math.Sqrt(1d - (this.es * sinPhi0 * sinPhi0));
@@ -84,15 +80,15 @@ internal class ColombiaUrbanProjection : MapProjection
         double rhoM = (1d - this.es) / Math.Pow(1d - (this.es * sinPhiM * sinPhiM), 1.5d);
         double g = 1d + (this.h0 / rhoM);
         double y = g * this.rho0 * ((lat - this.latOrigin) + (this.b * lambdaNuCosPhi * lambdaNuCosPhi));
-        lon = this.radius * x;
-        lat = this.radius * y;
+        lon = this.SphericalRadius * x;
+        lat = this.SphericalRadius * y;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xx = x * this.inverseRadius;
-        double yy = y * this.inverseRadius;
+        double xx = x * this.InverseSphericalRadius;
+        double yy = y * this.InverseSphericalRadius;
 
         double phi = this.latOrigin + (yy / this.d) - (this.b * (xx / this.c) * (xx / this.c));
         double sinPhi = Math.Sin(phi);

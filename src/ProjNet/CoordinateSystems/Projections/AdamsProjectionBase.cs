@@ -41,8 +41,6 @@ internal abstract class AdamsProjectionBase : MapProjection
     ];
 
     private readonly AdamsMode mode;
-    private readonly double radius;
-    private readonly double inverseRadius;
     private readonly PeirceShape peirceShape;
     private readonly double scrollX;
     private readonly double scrollY;
@@ -59,8 +57,6 @@ internal abstract class AdamsProjectionBase : MapProjection
     {
         this.Name = name;
         this.mode = mode;
-        this.radius = this.semiMajor * this.scaleFactor;
-        this.inverseRadius = 1d / this.radius;
 
         if (mode == AdamsMode.PeirceQ)
         {
@@ -141,15 +137,15 @@ internal abstract class AdamsProjectionBase : MapProjection
 
         this.ForwardNormalized(lambda, phi, out double xUnit, out double yUnit);
 
-        lon = this.radius * xUnit;
-        lat = this.radius * yUnit;
+        lon = this.SphericalRadius * xUnit;
+        lat = this.SphericalRadius * yUnit;
     }
 
     /// <inheritdoc />
     protected override void MetersToRadians(ref double x, ref double y)
     {
-        double xUnit = x * this.inverseRadius;
-        double yUnit = y * this.inverseRadius;
+        double xUnit = x * this.InverseSphericalRadius;
+        double yUnit = y * this.InverseSphericalRadius;
 
         bool canInvert = this.mode == AdamsMode.AdamsWs2
             || (this.mode == AdamsMode.PeirceQ
