@@ -19,6 +19,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// normalizing the pole and standard-parallel parameters, so its behavior is covered by
 /// the independently verified Albers equal-area formulation implemented there.
 /// </remarks>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 3, Sect. 3.1.3, pp. 93-95.</seealso>
 internal sealed class LambertEqualAreaConicProjection : AlbersProjection
 {
     /// <summary>

@@ -25,6 +25,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Eckert_IV_projection">Wikipedia: Eckert IV projection.</seealso>
 /// <seealso href="https://mathworld.wolfram.com/EckertIVProjection.html">MathWorld: Eckert IV Projection.</seealso>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 2, Sect. 2.2.2, pp. 75-76.</seealso>
 internal class Eckert4Projection : MapProjection
 {
     private const double OneTol = 1.00000000000001d;

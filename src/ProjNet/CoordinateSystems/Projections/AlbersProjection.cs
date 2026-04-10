@@ -35,6 +35,7 @@ using ProjNet.CoordinateSystems.Transformations;
 ///     equal-area conic derivation.</para>
 /// </remarks>
 /// <seealso href="https://epsg.io/9822-method">EPSG method 9822: Albers Equal Area.</seealso>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 3, Sect. 3.1.3, pp. 93-95.</seealso>
 internal class AlbersProjection : MapProjection
 {
     /// <summary>

@@ -26,6 +26,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// development.</para>
 /// </remarks>
 /// <seealso href="https://epsg.io/9810-method">EPSG method 9810: Polar Stereographic (variant A).</seealso>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 3, Sect. 3.2.2, pp. 102-104.</seealso>
 internal class PolarStereographicProjection : MapProjection
 {
     private const int MaximumIterations = 15;

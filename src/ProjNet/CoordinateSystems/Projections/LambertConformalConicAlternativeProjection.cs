@@ -27,6 +27,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 /// <seealso href="https://proj.org/en/stable/operations/projections/lcca.html">PROJ documentation: Lambert Conformal Conic Alternative.</seealso>
 /// <seealso href="https://pubs.usgs.gov/publication/pp1395">USGS Professional Paper 1395: Map Projections - A Working Manual.</seealso>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 3, Sect. 3.1.2, pp. 90-93.</seealso>
 internal sealed class LambertConformalConicAlternativeProjection : MapProjection
 {
     private const int MaximumIterations = 10;

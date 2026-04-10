@@ -23,6 +23,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// eqs. (11-1) through (11-4), for the Miller cylindrical derivation.</para>
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Miller_cylindrical_projection">Wikipedia: Miller cylindrical projection.</seealso>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 6, Sect. 6.3.8, pp. 182-184.</seealso>
 internal class MillerCylindricalProjection : MapProjection
 {
     private readonly double radius;

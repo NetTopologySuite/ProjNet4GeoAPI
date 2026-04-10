@@ -27,6 +27,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 /// <seealso href="https://en.wikipedia.org/wiki/Mollweide_projection">Wikipedia: Mollweide projection.</seealso>
 /// <seealso href="https://mathworld.wolfram.com/MollweideProjection.html">MathWorld: Mollweide Projection.</seealso>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 2, Sect. 2.2.2, pp. 71-74.</seealso>
 internal class MollweideProjection : MapProjection
 {
     private const int Iterations = 30;

@@ -16,6 +16,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// shared code supports polar, equatorial, and oblique viewpoints and optionally applies
 /// the additional tilt rotation used by the tilted-perspective variant.
 /// </remarks>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 3, Sect. 3.3.2, pp. 116-121.</seealso>
 internal class NearSidedPerspectiveProjection : MapProjection
 {
     private readonly double radius;

@@ -27,6 +27,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://pubs.usgs.gov/publication/pp1395">USGS Professional Paper 1395: Map Projections - A Working Manual.</seealso>
 /// <seealso href="https://proj.org/en/stable/operations/projections/eqdc.html">PROJ documentation: Equidistant Conic.</seealso>
 /// <seealso href="https://en.wikipedia.org/wiki/Equidistant_conic_projection">Wikipedia: Equidistant conic projection.</seealso>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 3, Sect. 3.1.4, pp. 95-98.</seealso>
 internal class EquidistantConicProjection : MapProjection
 {
     private const double Epsilon = 1e-10d;

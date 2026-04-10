@@ -30,6 +30,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <para>Reference: John P. Snyder, Map Projections — A Working Manual,
 /// U.S. Geological Survey Professional Paper 1395, 1987.</para>
 /// </remarks>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 5, Sect. 5.1.3, pp. 159-162.</seealso>
 internal class TransverseMercator : MapProjection
 {
     // Maximum difference allowed when comparing real numbers.

@@ -15,6 +15,7 @@ using System.Collections.Generic;
 /// coefficient set, so its numerical behavior follows the same verified Eckert III style
 /// base formulation.
 /// </remarks>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 2, Sect. 2.2.3, pp. 77-79.</seealso>
 internal class Kavrayskiy7Projection : Eckert3Projection
 {
     /// <summary>

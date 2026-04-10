@@ -28,6 +28,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://en.wikipedia.org/wiki/Gnomonic_projection">Wikipedia: Gnomonic projection.</seealso>
 /// <seealso href="https://mathworld.wolfram.com/GnomonicProjection.html">MathWorld: Gnomonic Projection.</seealso>
 /// <seealso href="https://proj.org/en/stable/operations/projections/gnom.html">PROJ documentation: Gnomonic.</seealso>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 3, Sect. 3.3.1, pp. 109-115.</seealso>
 internal class GnomonicProjection : MapProjection
 {
     private const int MaxInverseIterations = 10;

@@ -23,6 +23,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// derivation.</para>
 /// </remarks>
 /// <seealso href="https://epsg.io/9820-method">EPSG method 9820: Lambert Azimuthal Equal Area.</seealso>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 3, Sect. 3.2.3, pp. 103-105.</seealso>
 public class LambertAzimuthalEqualAreaProjection : MapProjection
 {
     /// <summary>

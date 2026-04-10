@@ -19,6 +19,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// conformal latitude, the <c>n1</c>/<c>n2</c> scale terms, and the final transverse
 /// Mercator mapping performed on the conformal sphere.</para>
 /// </remarks>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 5, Sect. 5.1.5, p. 163.</seealso>
 internal class GaussSchreiberTransverseMercatorProjection : MapProjection
 {
     private readonly double n1;

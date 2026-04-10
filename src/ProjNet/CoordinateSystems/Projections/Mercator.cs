@@ -39,6 +39,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 /// <seealso href="https://epsg.io/9804-method">EPSG method 9804: Mercator (variant A).</seealso>
 /// <seealso href="https://epsg.io/9805-method">EPSG method 9805: Mercator (variant B).</seealso>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 2, Sect. 2.1.2, pp. 49-51.</seealso>
 internal class Mercator : MapProjection
 {
     /// <summary>

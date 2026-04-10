@@ -25,6 +25,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 /// <seealso href="https://epsg.io/9809-method">EPSG method 9809: Oblique Stereographic.</seealso>
 /// <seealso href="https://sis.apache.org/apidocs/org.apache.sis.referencing/org/apache/sis/referencing/operation/projection/ObliqueStereographic.html">Apache SIS: Oblique stereographic projection notes.</seealso>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 3, Sect. 3.2.2, pp. 102-104.</seealso>
 internal class ObliqueStereographicProjection : MapProjection
 {
     private const double IterationTolerance = 1E-14;

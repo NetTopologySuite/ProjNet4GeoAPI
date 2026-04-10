@@ -15,6 +15,7 @@ using System.Collections.Generic;
 /// the Wagner I parameter set, so its numerical behavior follows the verified flat-polar
 /// sinusoidal base formulation.
 /// </remarks>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 2, Sect. 2.2.2, pp. 71-72.</seealso>
 internal class Wagner1Projection : UrmaevFlatPolarSinusoidalProjection
 {
     /// <summary>

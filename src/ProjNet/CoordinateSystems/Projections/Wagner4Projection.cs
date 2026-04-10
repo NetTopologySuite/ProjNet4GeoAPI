@@ -15,6 +15,7 @@ using System.Collections.Generic;
 /// auxiliary-angle parameter set, so its numerical behavior follows the verified
 /// Mollweide base formulation.
 /// </remarks>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 2, Sect. 2.2.2, pp. 76-77.</seealso>
 internal class Wagner4Projection : MollweideProjection
 {
     /// <summary>

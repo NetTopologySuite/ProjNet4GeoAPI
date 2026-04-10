@@ -16,6 +16,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// distance. Only the hemisphere facing the projection center is visible. Both spherical
 /// and ellipsoidal models are supported.
 /// </remarks>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 3, Sect. 3.3.1, pp. 109-115.</seealso>
 internal class OrthographicProjection : MapProjection
 {
     private readonly double sinph0;
