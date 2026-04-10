@@ -369,6 +369,10 @@ public abstract class MapProjection : MathTransform, IProjection
     {
         get
         {
+            // Keep the MathTransform WKT/XML implementations local to MapProjection for now:
+            // unlike the coordinate-system model types in Milestone 60, this hierarchy has no
+            // reusable WktNode/XElement builders, so adding them here would broaden the API
+            // surface instead of merely removing existing duplication.
             var sb = new StringBuilder();
             if (this.IsInverse)
             {

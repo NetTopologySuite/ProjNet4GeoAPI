@@ -53,6 +53,9 @@ public class Unit : Info, IUnit
     {
         get
         {
+            // Keep the generic Unit serializer manual for now because the base type still lacks
+            // a reusable WktNode/XElement representation and only the concrete Angular/Linear
+            // specializations participate in the milestone's duplication removal.
             var sb = new StringBuilder();
             sb.AppendFormat(CultureInfo.InvariantCulture.NumberFormat, "UNIT[\"{0}\", {1}", this.Name, this.ConversionFactor);
             if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
