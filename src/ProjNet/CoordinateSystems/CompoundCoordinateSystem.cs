@@ -63,6 +63,9 @@ public class CompoundCoordinateSystem : CoordinateSystem
     {
         get
         {
+            // Keep the legacy compact COMPD_CS formatting here because WktKeywordNode emits
+            // a canonical ", " separator, while the long-standing WKT contract for this type
+            // omits those spaces and existing byte-for-byte tests depend on that exact output.
             var sb = new StringBuilder();
             sb.Append("COMPD_CS[\"");
             sb.Append(this.Name);
