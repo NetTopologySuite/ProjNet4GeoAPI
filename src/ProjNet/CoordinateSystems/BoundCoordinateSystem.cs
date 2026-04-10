@@ -80,7 +80,7 @@ public class BoundCoordinateSystem : CoordinateSystem
     public BoundTransformation Transformation { get; }
 
     /// <inheritdoc />
-    public override string WKT => this.SourceCoordinateSystem.WKT;
+    public override string WKT => this.ToWktNode().ToString();
 
     /// <inheritdoc />
     public override string XML => this.SourceCoordinateSystem.XML;

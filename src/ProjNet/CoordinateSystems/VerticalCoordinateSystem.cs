@@ -72,29 +72,7 @@ public class VerticalCoordinateSystem : CoordinateSystem
             string.Empty);
 
     /// <inheritdoc/>
-    public override string WKT
-    {
-        get
-        {
-            var sb = new StringBuilder();
-            sb.AppendFormat(CultureInfo.InvariantCulture, "VERT_CS[\"{0}\", {1}, {2}", this.Name, this.VerticalDatum.WKT, this.LinearUnit.WKT);
-
-            // Skip axis info if they contain default values
-            if (this.AxisInfo.Count != 1 ||
-                this.AxisInfo[0].Name != "Up" || this.AxisInfo[0].Orientation != AxisOrientationEnum.Up)
-            {
-                sb.AppendFormat(CultureInfo.InvariantCulture, ", {0}", this.GetAxis(0).WKT);
-            }
-
-            if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
-            {
-                sb.AppendFormat(CultureInfo.InvariantCulture, ", AUTHORITY[\"{0}\", \"{1}\"]", this.Authority, this.AuthorityCode);
-            }
-
-            sb.Append(']');
-            return sb.ToString();
-        }
-    }
+    public override string WKT => this.ToWktNode().ToString();
 
     /// <inheritdoc/>
     public override string XML

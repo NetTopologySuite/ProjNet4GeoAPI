@@ -117,40 +117,7 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
     /// Gets the Well-known text for this object
     /// as defined in the simple features specification.
     /// </summary>
-    public override string WKT
-    {
-        get
-        {
-            var sb = new StringBuilder();
-            sb.AppendFormat(CultureInfo.InvariantCulture, "PROJCS[\"{0}\", {1}, {2}", this.Name, this.GeographicCoordinateSystem.WKT, this.Projection.WKT);
-            for (int i = 0; i < this.Projection.NumParameters; i++)
-            {
-                sb.AppendFormat(CultureInfo.InvariantCulture.NumberFormat, ", {0}", this.Projection.GetParameter(i).WKT);
-            }
-
-            sb.AppendFormat(CultureInfo.InvariantCulture, ", {0}", this.LinearUnit.WKT);
-
-            // Skip axis info if they contain default values
-            if (this.AxisInfo.Count != 2 ||
-                this.AxisInfo[0].Name != "X" || this.AxisInfo[0].Orientation != AxisOrientationEnum.East ||
-                this.AxisInfo[1].Name != "Y" || this.AxisInfo[1].Orientation != AxisOrientationEnum.North)
-            {
-                for (int i = 0; i < this.AxisInfo.Count; i++)
-                {
-                    sb.AppendFormat(CultureInfo.InvariantCulture, ", {0}", this.GetAxis(i).WKT);
-                }
-            }
-
-            // Skip authority and code if not defined
-            if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
-            {
-                sb.AppendFormat(CultureInfo.InvariantCulture, ", AUTHORITY[\"{0}\", \"{1}\"]", this.Authority, this.AuthorityCode);
-            }
-
-            sb.Append(']');
-            return sb.ToString();
-        }
-    }
+    public override string WKT => this.ToWktNode().ToString();
 
     /// <summary>
     /// Gets an XML representation of this object.
