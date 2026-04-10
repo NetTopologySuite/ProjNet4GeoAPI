@@ -359,7 +359,8 @@ public abstract class MapProjection : MathTransform, IProjection
     /// </summary>
     /// <param name="lon">The longitude in decimal degrees.</param>
     /// <returns>The UTM zone number (1-60).</returns>
-    public static long CalcUtmZone(double lon) => (long)(((lon + 180.0) / 6.0) + 1.0);
+    [Obsolete("Use ProjNet.CoordinateSystems.CoordinateSystemUtilities.CalcUtmZone instead.")]
+    public static long CalcUtmZone(double lon) => CoordinateSystemUtilities.CalcUtmZone(lon);
 
     /// <summary>
     /// Gets the Well-known text for this object
@@ -1123,17 +1124,8 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <param name="x">The value in degrees to convert to radians.</param>
     /// <param name="edge">If true, -180 and +180 are valid, otherwise they are considered out of range.</param>
     /// <returns>The longitude converted to radians.</returns>
-    protected static double LongitudeToRadians(double x, bool edge)
-    {
-        if (edge ? (x >= -180 && x <= 180) : (x > -180 && x < 180))
-        {
-            return DegreesToRadians(x);
-        }
-
-        string longitudeMessage = $"{x.ToString(CultureInfo.InvariantCulture)} not a valid longitude in degrees.";
-        ArgumentGuard.ThrowArgumentOutOfRange(nameof(x), longitudeMessage);
-        return 0d;
-    }
+    [Obsolete("Use ProjNet.CoordinateSystems.CoordinateSystemUtilities.LongitudeToRadians instead.")]
+    protected static double LongitudeToRadians(double x, bool edge) => CoordinateSystemUtilities.LongitudeToRadians(x, edge);
 
     /// <summary>
     /// Converts a latitude value in degrees to radians.
@@ -1141,17 +1133,8 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <param name="y">The value in degrees to convert to radians.</param>
     /// <param name="edge">If true, -90 and +90 are valid, otherwise they are considered out of range.</param>
     /// <returns>The latitude converted to radians.</returns>
-    protected static double LatitudeToRadians(double y, bool edge)
-    {
-        if (edge ? (y >= -90 && y <= 90) : (y > -90 && y < 90))
-        {
-            return DegreesToRadians(y);
-        }
-
-        string latitudeMessage = $"{y.ToString(CultureInfo.InvariantCulture)} not a valid latitude in degrees.";
-        ArgumentGuard.ThrowArgumentOutOfRange(nameof(y), latitudeMessage);
-        return 0d;
-    }
+    [Obsolete("Use ProjNet.CoordinateSystems.CoordinateSystemUtilities.LatitudeToRadians instead.")]
+    protected static double LatitudeToRadians(double y, bool edge) => CoordinateSystemUtilities.LatitudeToRadians(y, edge);
 
     /// <summary>
     /// Computes the series coefficients used by <see cref="Authlat"/> for authalic latitude conversion.
