@@ -87,7 +87,7 @@ internal class PolyconicProjection : MapProjection
         {
             double sp = Math.Sin(phi);
             double cp = Math.Cos(phi);
-            double ms = Math.Abs(cp) > Epsilon ? this.Msfn(sp, cp) / sp : 0.0;
+            double ms = Math.Abs(cp) > Epsilon ? Msfnz(this.e, sp, cp) / sp : 0.0;
 
             // lam =
             delta_lam *= sp;
@@ -164,15 +164,5 @@ internal class PolyconicProjection : MapProjection
         this.inverse ??= new PolyconicProjection(this.Parameters.ToProjectionParameter(), this);
 
         return this.inverse;
-    }
-
-    /// <summary>
-    /// Computes function. <code>f(s,c,e²) = c/sqrt(1 - s²*e²)</code> needed for the true scale
-    /// latitude (Snyder 14-15), where <var>s</var> and <var>c</var> are the sine and cosine of
-    /// the true scale latitude, and <var>e²</var> is the eccentricity squared.
-    /// </summary>
-    private double Msfn(double s, double c)
-    {
-        return c / Math.Sqrt(1.0 - ((s * s) * this.es));
     }
 }

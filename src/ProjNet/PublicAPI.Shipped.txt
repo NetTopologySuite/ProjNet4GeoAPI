@@ -493,7 +493,6 @@ namespace ProjNet.CoordinateSystems.Projections
         protected const double MaxVal = 4D;
         protected const double PI = 3.141592653589793D;
         protected readonly ProjNet.CoordinateSystems.Projections.ProjectionParameterSet Parameters;
-        protected const double S2R = 4.848136811095359E-06D;
         [System.Obsolete("Use TwoPi instead.")]
         protected const double TWOPI = 6.283185307179586D;
         [System.Obsolete("Use TwoPi instead.")]
@@ -576,25 +575,15 @@ namespace ProjNet.CoordinateSystems.Projections
         protected static double Asinz(double con) { }
         protected static double Authlat(double beta, double[] apa) { }
         protected static double[] Authset(double es) { }
-        protected static double CUBE(double x) { }
         public static long CalcUtmZone(double lon) { }
         protected static System.Collections.Generic.List<ProjNet.CoordinateSystems.ProjectionParameter> CloneParametersList(System.Collections.Generic.IEnumerable<ProjNet.CoordinateSystems.ProjectionParameter> projectionParameters) { }
-        protected static double E0fn(double x) { }
-        protected static double E1fn(double x) { }
-        protected static double E2fn(double x) { }
-        protected static double E3fn(double x) { }
-        protected static double E4fn(double x) { }
-        protected static double GMAX(ref double a, ref double b) { }
-        protected static double GMIN(ref double a, ref double b) { }
         protected static double Hypot(double x, double y) { }
-        protected static double IMOD(double a, double b) { }
         protected static double LatitudeToRadians(double y, bool edge) { }
         protected static double LongitudeToRadians(double x, bool edge) { }
         protected static double Mlfn(double e0, double e1, double e2, double e3, double phi) { }
         protected static double Msfnz(double eccent, double sinphi, double cosphi) { }
         protected static double Phi1z(double eccent, double qs, out long flag) { }
         protected static double Phi2z(double eccent, double ts, out long flag) { }
-        protected static double QUAD(double x) { }
         protected static double Qsfn(double sinphi, double eccent, double one_es) { }
         protected static double Qsfnz(double sinphi, double eccent) { }
         protected static double Sign(double x) { }

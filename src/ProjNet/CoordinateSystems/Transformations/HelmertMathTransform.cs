@@ -90,13 +90,6 @@ internal sealed class HelmertMathTransform : MathTransform
         this.isInverted = isInverted;
     }
 
-    private enum CsvParseStatus
-    {
-        Success,
-        TooManyValues,
-        InvalidValue,
-    }
-
     /// <inheritdoc />
     public override int DimSource => 3;
 
@@ -428,7 +421,7 @@ internal sealed class HelmertMathTransform : MathTransform
         }
 
         Span<double> values = stackalloc double[7];
-        CsvParseStatus parseStatus = TryParseCsvValues(towgs84Token.AsSpan(), values, out int valueCount);
+        CsvParseStatus parseStatus = SpanParseUtility.TryParseCsvValues(towgs84Token.AsSpan(), values, out int valueCount);
         if (parseStatus != CsvParseStatus.Success || (valueCount != 3 && valueCount != 6 && valueCount != 7))
         {
             skipReason = "Invalid value for +towgs84.";
@@ -452,40 +445,6 @@ internal sealed class HelmertMathTransform : MathTransform
 
         hasTowgs84 = true;
         return true;
-    }
-
-    private static CsvParseStatus TryParseCsvValues(ReadOnlySpan<char> token, Span<double> destination, out int parsedCount)
-    {
-        parsedCount = 0;
-        int segmentStart = 0;
-        for (int i = 0; i <= token.Length; i++)
-        {
-            bool atDelimiter = i < token.Length && token[i] == ',';
-            if (i != token.Length && !atDelimiter)
-            {
-                continue;
-            }
-
-            ReadOnlySpan<char> segment = TrimWhitespace(token[segmentStart..i]);
-            if (!segment.IsEmpty)
-            {
-                if (parsedCount >= destination.Length)
-                {
-                    return CsvParseStatus.TooManyValues;
-                }
-
-                if (!TryParseFiniteDouble(segment, out destination[parsedCount]))
-                {
-                    return CsvParseStatus.InvalidValue;
-                }
-
-                parsedCount++;
-            }
-
-            segmentStart = i + 1;
-        }
-
-        return CsvParseStatus.Success;
     }
 
     private static bool TryAssignOptionalDouble(
@@ -547,23 +506,6 @@ internal sealed class HelmertMathTransform : MathTransform
 #endif
 
         return parsed && !double.IsNaN(value) && !double.IsInfinity(value);
-    }
-
-    private static ReadOnlySpan<char> TrimWhitespace(ReadOnlySpan<char> value)
-    {
-        int start = 0;
-        while (start < value.Length && char.IsWhiteSpace(value[start]))
-        {
-            start++;
-        }
-
-        int end = value.Length - 1;
-        while (end >= start && char.IsWhiteSpace(value[end]))
-        {
-            end--;
-        }
-
-        return end < start ? [] : value.Slice(start, (end - start) + 1);
     }
 
     private static HelmertParameterState EvaluateKinematicState(

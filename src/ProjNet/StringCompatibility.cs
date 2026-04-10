@@ -23,9 +23,7 @@ internal static class StringCompatibility
 #if NETSTANDARD2_1_OR_GREATER
         return value.Replace(oldValue, newValue, StringComparison.Ordinal);
 #else
-        return value.Split([oldValue], StringSplitOptions.None).Length > 1
-            ? string.Join(newValue, value.Split([oldValue], StringSplitOptions.None))
-            : value;
+        return ReplaceCore(value, oldValue, newValue, StringComparison.Ordinal);
 #endif
     }
 
@@ -41,7 +39,18 @@ internal static class StringCompatibility
 #if NETSTANDARD2_1_OR_GREATER
         return value.Replace(oldValue, newValue, StringComparison.OrdinalIgnoreCase);
 #else
-        int matchIndex = value.IndexOf(oldValue, StringComparison.OrdinalIgnoreCase);
+        return ReplaceCore(value, oldValue, newValue, StringComparison.OrdinalIgnoreCase);
+#endif
+    }
+
+#if !NETSTANDARD2_1_OR_GREATER
+    private static string ReplaceCore(string value, string oldValue, string newValue, StringComparison comparison)
+    {
+        ArgumentGuard.ThrowIfNull(value, nameof(value));
+        oldValue = ArgumentGuard.ThrowIfNullOrEmpty(oldValue, nameof(oldValue));
+        ArgumentGuard.ThrowIfNull(newValue, nameof(newValue));
+
+        int matchIndex = value.IndexOf(oldValue, comparison);
         if (matchIndex < 0)
         {
             return value;
@@ -54,11 +63,11 @@ internal static class StringCompatibility
             builder.Append(value, startIndex, matchIndex - startIndex);
             builder.Append(newValue);
             startIndex = matchIndex + oldValue.Length;
-            matchIndex = value.IndexOf(oldValue, startIndex, StringComparison.OrdinalIgnoreCase);
+            matchIndex = value.IndexOf(oldValue, startIndex, comparison);
         }
 
         builder.Append(value, startIndex, value.Length - startIndex);
         return builder.ToString();
-#endif
     }
+#endif
 }

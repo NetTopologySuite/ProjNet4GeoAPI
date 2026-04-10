@@ -62,11 +62,6 @@ public abstract class MapProjection : MathTransform, IProjection
     protected const double Epsln = Eps10;
 
     /// <summary>
-    /// Conversion factor from arc-seconds to radians (π / 648000 ~= 4.848e-6).
-    /// </summary>
-    protected const double S2R = 4.848136811095359e-6;
-
-    /// <summary>
     /// Maximum iteration count used in longitude normalisation loops.
     /// </summary>
     protected const double MaxVal = 4;
@@ -828,60 +823,6 @@ public abstract class MapProjection : MathTransform, IProjection
     }
 
     /// <summary>
-    /// Returns the cube of a number.
-    /// </summary>
-    /// <param name="x">The value to cube.</param>
-    /// <returns>The cube of <paramref name="x"/> (x^3).</returns>
-    protected static double CUBE(double x)
-    {
-        return x * x * x; // x^3
-    }
-
-    /// <summary>
-    /// Returns the fourth power of a number.
-    /// </summary>
-    /// <param name="x">The value to raise to the fourth power.</param>
-    /// <returns>The fourth power of <paramref name="x"/> (x^4).</returns>
-    protected static double QUAD(double x)
-    {
-        double squared = x * x;
-        return squared * squared; // x^4
-    }
-
-    /// <summary>
-    /// Returns the greater value of two inputs.
-    /// </summary>
-    /// <param name="a">The first value.</param>
-    /// <param name="b">The second value.</param>
-    /// <returns>The greater of <paramref name="a"/> and <paramref name="b"/>.</returns>
-    protected static double GMAX(ref double a, ref double b)
-    {
-        return Math.Max(a, b); // assign maximum of a and b
-    }
-
-    /// <summary>
-    /// Returns the smaller value of two inputs.
-    /// </summary>
-    /// <param name="a">The first value.</param>
-    /// <param name="b">The second value.</param>
-    /// <returns>The lesser of <paramref name="a"/> and <paramref name="b"/>.</returns>
-    protected static double GMIN(ref double a, ref double b)
-    {
-        return a < b ? a : b; // assign minimum of a and b
-    }
-
-    /// <summary>
-    /// Computes the floating-point integer modulus of <paramref name="a"/> divided by <paramref name="b"/>.
-    /// </summary>
-    /// <param name="a">The dividend.</param>
-    /// <param name="b">The divisor.</param>
-    /// <returns>The remainder of the integer division of <paramref name="a"/> by <paramref name="b"/>.</returns>
-    protected static double IMOD(double a, double b)
-    {
-        return a - ((a / b) * b); // Integer mod function
-    }
-
-    /// <summary>
     /// Returns the sign of an argument.
     /// </summary>
     /// <param name="x">The value to evaluate.</param>
@@ -1101,46 +1042,6 @@ public abstract class MapProjection : MathTransform, IProjection
 
         ArgumentGuard.ThrowArgument("Convergence error - phi2z-conv");
         return 0d;
-    }
-
-    /// <summary>
-    /// Computes the zeroth meridional arc series coefficient e0 from the squared eccentricity.
-    /// </summary>
-    /// <param name="x">The squared eccentricity (e^2) of the ellipsoid.</param>
-    /// <returns>The coefficient e0.</returns>
-    protected static double E0fn(double x) => 1.0 - (0.25 * x * (1.0 + (x / 16.0 * (3.0 + (1.25 * x)))));
-
-    /// <summary>
-    /// Computes the first meridional distance series coefficient e1 from the squared eccentricity.
-    /// </summary>
-    /// <param name="x">The squared eccentricity (e^2) of the ellipsoid.</param>
-    /// <returns>The coefficient e1.</returns>
-    protected static double E1fn(double x) => 0.375 * x * (1.0 + (0.25 * x * (1.0 + (0.46875 * x))));
-
-    /// <summary>
-    /// Computes the second meridional distance series coefficient e2 from the squared eccentricity.
-    /// </summary>
-    /// <param name="x">The squared eccentricity (e^2) of the ellipsoid.</param>
-    /// <returns>The coefficient e2.</returns>
-    protected static double E2fn(double x) => 0.05859375 * x * x * (1.0 + (0.75 * x));
-
-    /// <summary>
-    /// Computes the third meridional distance series coefficient e3 from the squared eccentricity.
-    /// </summary>
-    /// <param name="x">The squared eccentricity (e^2) of the ellipsoid.</param>
-    /// <returns>The coefficient e3.</returns>
-    protected static double E3fn(double x) => x * x * x * (35.0 / 3072.0);
-
-    /// <summary>
-    /// Computes the coefficient e4 used in the Polar Stereographic projection from the ellipsoid eccentricity.
-    /// </summary>
-    /// <param name="x">The eccentricity of the ellipsoid.</param>
-    /// <returns>The coefficient e4.</returns>
-    protected static double E4fn(double x)
-    {
-        double con = 1.0 + x;
-        double com = 1.0 - x;
-        return Math.Sqrt(Math.Pow(con, con) * Math.Pow(com, com));
     }
 
     /// <summary>

@@ -121,13 +121,6 @@ internal sealed class HornerMathTransform : MathTransform
         this.isInverted = isInverted;
     }
 
-    private enum CsvParseStatus
-    {
-        Success,
-        TooManyValues,
-        InvalidValue,
-    }
-
     /// <inheritdoc />
     public override int DimSource => 3;
 
@@ -410,7 +403,7 @@ internal sealed class HornerMathTransform : MathTransform
         }
 
         double[] values = new double[expectedCount];
-        CsvParseStatus parseStatus = TryParseCsvValues(token.AsSpan(), values, out int parsedCount);
+        CsvParseStatus parseStatus = SpanParseUtility.TryParseCsvValues(token.AsSpan(), values, out int parsedCount);
         if (parseStatus != CsvParseStatus.Success || parsedCount != expectedCount)
         {
             skipReason = $"Malformed polynomium set {key}. need {expectedCount.ToString(CultureInfo.InvariantCulture)} coefs";
@@ -456,7 +449,7 @@ internal sealed class HornerMathTransform : MathTransform
         }
 
         Span<double> parsed = stackalloc double[1];
-        CsvParseStatus parseStatus = TryParseCsvValues(token.AsSpan(), parsed, out int parsedCount);
+        CsvParseStatus parseStatus = SpanParseUtility.TryParseCsvValues(token.AsSpan(), parsed, out int parsedCount);
         if (parseStatus != CsvParseStatus.Success || parsedCount != 1)
         {
             skipReason = $"Invalid value for +{key}.";
@@ -483,57 +476,6 @@ internal sealed class HornerMathTransform : MathTransform
 #endif
 
         return parsed && !double.IsNaN(value) && !double.IsInfinity(value);
-    }
-
-    private static CsvParseStatus TryParseCsvValues(ReadOnlySpan<char> token, Span<double> destination, out int parsedCount)
-    {
-        parsedCount = 0;
-        int segmentStart = 0;
-        for (int i = 0; i <= token.Length; i++)
-        {
-            bool atDelimiter = i < token.Length && token[i] == ',';
-            if (i != token.Length && !atDelimiter)
-            {
-                continue;
-            }
-
-            ReadOnlySpan<char> segment = TrimWhitespace(token[segmentStart..i]);
-            if (!segment.IsEmpty)
-            {
-                if (parsedCount >= destination.Length)
-                {
-                    return CsvParseStatus.TooManyValues;
-                }
-
-                if (!TryParseFiniteDouble(segment, out destination[parsedCount]))
-                {
-                    return CsvParseStatus.InvalidValue;
-                }
-
-                parsedCount++;
-            }
-
-            segmentStart = i + 1;
-        }
-
-        return CsvParseStatus.Success;
-    }
-
-    private static ReadOnlySpan<char> TrimWhitespace(ReadOnlySpan<char> value)
-    {
-        int start = 0;
-        while (start < value.Length && char.IsWhiteSpace(value[start]))
-        {
-            start++;
-        }
-
-        int end = value.Length - 1;
-        while (end >= start && char.IsWhiteSpace(value[end]))
-        {
-            end--;
-        }
-
-        return end < start ? [] : value.Slice(start, (end - start) + 1);
     }
 
     private static (double E, double N) EvaluateReal(
