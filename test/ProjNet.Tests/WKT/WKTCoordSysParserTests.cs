@@ -408,15 +408,19 @@ public class WKTCoordSysParserTests
     [Fact]
     public void TestParseSrOrg()
     {
-        Assert.Null(Record.Exception(() => this.coordinateSystemFactory.CreateFromWkt(
-            "PROJCS[\"WGS 84 / Pseudo-Mercator\",GEOGCS[\"Popular Visualisation CRS\"," +
-            "DATUM[\"Popular_Visualisation_Datum\",SPHEROID[\"Popular Visualisation Sphere\"," +
-            "6378137,0,AUTHORITY[\"EPSG\",\"7059\"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY[\"EPSG\"," +
-            "\"6055\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\"," +
-            "0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4055\"]]," +
-            "PROJECTION[\"Mercator_1SP\"]," +
-            "PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[" +
-            "\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"X\",EAST],AXIS[\"Y\",NORTH]],AUTHORITY[\"EPSG\",\"3785\"]")));
+        const string wkt =
+            """
+            PROJCS["WGS 84 / Pseudo-Mercator",GEOGCS["Popular Visualisation CRS",
+            DATUM["Popular_Visualisation_Datum",SPHEROID["Popular Visualisation Sphere",
+            6378137,0,AUTHORITY["EPSG","7059"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY["EPSG",
+            "6055"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",
+            0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4055"]],
+            PROJECTION["Mercator_1SP"],
+            PARAMETER["central_meridian",0],PARAMETER["scale_factor",1],PARAMETER[
+            "false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["X",EAST],AXIS["Y",NORTH]],AUTHORITY["EPSG","3785"]]
+            """;
+
+        Assert.Null(Record.Exception(() => this.coordinateSystemFactory.CreateFromWkt(wkt)));
     }
 
     /// <summary>
@@ -425,41 +429,47 @@ public class WKTCoordSysParserTests
     [Fact]
     public void TestProjNetIssues()
     {
-        Assert.Null(Record.Exception(() => this.coordinateSystemFactory.CreateFromWkt(
-            "PROJCS[\"International_Terrestrial_Reference_Frame_1992Lambert_Conformal_Conic_2SP\"," +
-            "GEOGCS[\"GCS_International_Terrestrial_Reference_Frame_1992\"," +
-            "DATUM[\"International_Terrestrial_Reference_Frame_1992\"," +
-            "SPHEROID[\"GRS_1980\",6378137,298.257222101]," +
-            "TOWGS84[0,0,0,0,0,0,0]]," +
-            "PRIMEM[\"Greenwich\",0]," +
-            "UNIT[\"Degree\",0.0174532925199433]]," +
-            "PROJECTION[\"Lambert_Conformal_Conic_2SP\",AUTHORITY[\"EPSG\",\"9802\"]]," +
-            "PARAMETER[\"Central_Meridian\",-102]," +
-            "PARAMETER[\"Latitude_Of_Origin\",12]," +
-            "PARAMETER[\"False_Easting\",2500000]," +
-            "PARAMETER[\"False_Northing\",0]," +
-            "PARAMETER[\"Standard_Parallel_1\",17.5]," +
-            "PARAMETER[\"Standard_Parallel_2\",29.5]," +
-            "PARAMETER[\"Scale_Factor\",1]," +
-            "UNIT[\"Meter\",1,AUTHORITY[\"EPSG\",\"9001\"]]]")));
+        const string firstIssueWkt =
+            """
+            PROJCS["International_Terrestrial_Reference_Frame_1992Lambert_Conformal_Conic_2SP",
+            GEOGCS["GCS_International_Terrestrial_Reference_Frame_1992",
+            DATUM["International_Terrestrial_Reference_Frame_1992",
+            SPHEROID["GRS_1980",6378137,298.257222101],
+            TOWGS84[0,0,0,0,0,0,0]],
+            PRIMEM["Greenwich",0],
+            UNIT["Degree",0.0174532925199433]],
+            PROJECTION["Lambert_Conformal_Conic_2SP",AUTHORITY["EPSG","9802"]],
+            PARAMETER["Central_Meridian",-102],
+            PARAMETER["Latitude_Of_Origin",12],
+            PARAMETER["False_Easting",2500000],
+            PARAMETER["False_Northing",0],
+            PARAMETER["Standard_Parallel_1",17.5],
+            PARAMETER["Standard_Parallel_2",29.5],
+            PARAMETER["Scale_Factor",1],
+            UNIT["Meter",1,AUTHORITY["EPSG","9001"]]]
+            """;
+        const string secondIssueWkt =
+            """
+            PROJCS["Google Maps Global Mercator",
+            GEOGCS["WGS 84",
+            DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],
+            AUTHORITY["EPSG","6326"]],
+            PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],
+            UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],
+            AUTHORITY["EPSG","4326"]],
+            PROJECTION["Mercator_2SP"],
+            PARAMETER["standard_parallel_1",0],
+            PARAMETER["latitude_of_origin",0],
+            PARAMETER["central_meridian",0],
+            PARAMETER["false_easting",0],
+            PARAMETER["false_northing",0],
+            UNIT["Meter",1],
+            EXTENSION["PROJ4","+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs"],
+            AUTHORITY["EPSG","900913"]]
+            """;
 
-        Assert.Null(Record.Exception(() => this.coordinateSystemFactory.CreateFromWkt(
-            "PROJCS[\"Google Maps Global Mercator\"," +
-            "GEOGCS[\"WGS 84\"," +
-            "DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]]," +
-            "AUTHORITY[\"EPSG\",\"6326\"]]," +
-            "PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]]," +
-            "UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]]," +
-            "AUTHORITY[\"EPSG\",\"4326\"]]," +
-            "PROJECTION[\"Mercator_2SP\"]," +
-            "PARAMETER[\"standard_parallel_1\",0]," +
-            "PARAMETER[\"latitude_of_origin\",0]," +
-            "PARAMETER[\"central_meridian\",0]," +
-            "PARAMETER[\"false_easting\",0]," +
-            "PARAMETER[\"false_northing\",0]," +
-            "UNIT[\"Meter\",1]," +
-            "EXTENSION[\"PROJ4\",\"+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext  +no_defs\"]," +
-            "AUTHORITY[\"EPSG\",\"900913\"]]")));
+        Assert.Null(Record.Exception(() => this.coordinateSystemFactory.CreateFromWkt(firstIssueWkt)));
+        Assert.Null(Record.Exception(() => this.coordinateSystemFactory.CreateFromWkt(secondIssueWkt)));
     }
 
     /// <summary>
