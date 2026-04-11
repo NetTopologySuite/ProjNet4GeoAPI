@@ -28,6 +28,24 @@ public class CoordinateOperationTests
     }
 
     /// <summary>
+    /// Verifies that <see cref="Info.WithAuthority"/> returns a coordinate-operation clone with updated authority metadata.
+    /// </summary>
+    [Fact]
+    public void CoordinateOperation_WithAuthority_ReturnsUpdatedClone()
+    {
+        CoordinateOperation original = CreateCoordinateOperation("Axis swap");
+        CoordinateOperation clone = Assert.IsType<CoordinateOperation>(original.WithAuthority("EPSG", 9603));
+
+        Assert.Equal("EPSG", clone.Authority);
+        Assert.Equal(9603, clone.AuthorityCode);
+        Assert.Equal("TEST", original.Authority);
+        Assert.Equal(1, original.AuthorityCode);
+        Assert.NotSame(original, clone);
+        Assert.NotSame(original.SourceCoordinateSystem, clone.SourceCoordinateSystem);
+        Assert.True(original.SourceCoordinateSystem.EqualParams(clone.SourceCoordinateSystem));
+    }
+
+    /// <summary>
     /// Verifies that coordinate operation WKT output contains the expected keywords.
     /// </summary>
     [Fact]
@@ -53,6 +71,25 @@ public class CoordinateOperationTests
         Assert.Equal(2, operation.Steps.Count);
         Assert.Equal("Step 1", operation.Steps[0].Name);
         Assert.Equal("Step 2", operation.Steps[1].Name);
+    }
+
+    /// <summary>
+    /// Verifies that <see cref="Info.WithAuthority"/> returns a concatenated-operation clone with updated authority metadata.
+    /// </summary>
+    [Fact]
+    public void ConcatenatedOperation_WithAuthority_ReturnsUpdatedClone()
+    {
+        ConcatenatedOperation original = CreateConcatenatedOperation();
+        ConcatenatedOperation clone = Assert.IsType<ConcatenatedOperation>(original.WithAuthority("EPSG", 9604));
+
+        Assert.Equal("EPSG", clone.Authority);
+        Assert.Equal(9604, clone.AuthorityCode);
+        Assert.Equal("TEST", original.Authority);
+        Assert.Equal(2, original.AuthorityCode);
+        Assert.NotSame(original, clone);
+        Assert.Equal(original.Steps.Count, clone.Steps.Count);
+        Assert.NotSame(original.Steps[0], clone.Steps[0]);
+        Assert.True(original.Steps[0].EqualParams(clone.Steps[0]));
     }
 
     /// <summary>

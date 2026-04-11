@@ -1,0 +1,630 @@
+// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
+
+namespace ProjNet.CoordinateSystems;
+
+using System;
+using System.Collections.Generic;
+using ProjNet.CoordinateSystems.Transformations;
+
+/// <summary>
+/// Rebuilds immutable info-backed model objects while replacing their top-level authority metadata.
+/// </summary>
+internal static class InfoAuthorityCloneHelper
+{
+    /// <summary>
+    /// Creates a deep clone of the supplied info-backed model object with replacement authority metadata.
+    /// </summary>
+    /// <param name="info">Object to clone.</param>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="authorityCode">Replacement authority code.</param>
+    /// <returns>A cloned object of the same runtime type.</returns>
+    internal static Info CloneWithAuthority(Info info, string authority, long authorityCode)
+    {
+        info = ArgumentGuard.ThrowIfNull(info, nameof(info));
+        authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
+
+        return info switch
+        {
+            AngularUnit angularUnit => CloneAngularUnit(angularUnit, authority, authorityCode),
+            LinearUnit linearUnit => CloneLinearUnit(linearUnit, authority, authorityCode),
+            Unit unit => CloneUnit(unit, authority, authorityCode),
+            ParametricUnit parametricUnit => CloneParametricUnit(parametricUnit, authority, authorityCode),
+            TimeUnit timeUnit => CloneTimeUnit(timeUnit, authority, authorityCode),
+            Ellipsoid ellipsoid => CloneEllipsoid(ellipsoid, authority, authorityCode),
+            PrimeMeridian primeMeridian => ClonePrimeMeridian(primeMeridian, authority, authorityCode),
+            Projection projection => CloneProjection(projection, authority, authorityCode),
+            HorizontalDatum horizontalDatum => CloneHorizontalDatum(horizontalDatum, authority, authorityCode),
+            VerticalDatum verticalDatum => CloneVerticalDatum(verticalDatum, authority, authorityCode),
+            EngineeringDatum engineeringDatum => CloneEngineeringDatum(engineeringDatum, authority, authorityCode),
+            ParametricDatum parametricDatum => CloneParametricDatum(parametricDatum, authority, authorityCode),
+            TemporalDatum temporalDatum => CloneTemporalDatum(temporalDatum, authority, authorityCode),
+            GeographicCoordinateSystem geographicCoordinateSystem => CloneGeographicCoordinateSystem(geographicCoordinateSystem, authority, authorityCode),
+            ProjectedCoordinateSystem projectedCoordinateSystem => CloneProjectedCoordinateSystem(projectedCoordinateSystem, authority, authorityCode),
+            GeocentricCoordinateSystem geocentricCoordinateSystem => CloneGeocentricCoordinateSystem(geocentricCoordinateSystem, authority, authorityCode),
+            VerticalCoordinateSystem verticalCoordinateSystem => CloneVerticalCoordinateSystem(verticalCoordinateSystem, authority, authorityCode),
+            CompoundCoordinateSystem compoundCoordinateSystem => CloneCompoundCoordinateSystem(compoundCoordinateSystem, authority, authorityCode),
+            BoundCoordinateSystem boundCoordinateSystem => CloneBoundCoordinateSystem(boundCoordinateSystem, authority, authorityCode),
+            FittedCoordinateSystem fittedCoordinateSystem => CloneFittedCoordinateSystem(fittedCoordinateSystem, authority, authorityCode),
+            EngineeringCoordinateSystem engineeringCoordinateSystem => CloneEngineeringCoordinateSystem(engineeringCoordinateSystem, authority, authorityCode),
+            ParametricCoordinateSystem parametricCoordinateSystem => CloneParametricCoordinateSystem(parametricCoordinateSystem, authority, authorityCode),
+            TemporalCoordinateSystem temporalCoordinateSystem => CloneTemporalCoordinateSystem(temporalCoordinateSystem, authority, authorityCode),
+            CoordinateOperation coordinateOperation => CloneCoordinateOperation(coordinateOperation, authority, authorityCode),
+            ConcatenatedOperation concatenatedOperation => CloneConcatenatedOperation(concatenatedOperation, authority, authorityCode),
+            _ => throw new NotSupportedException($"WithAuthority is not supported for info type '{info.GetType().FullName}'."),
+        };
+    }
+
+    private static AngularUnit CloneAngularUnit(AngularUnit angularUnit, string? authority = null, long? authorityCode = null)
+    {
+        return new AngularUnit(
+            angularUnit.RadiansPerUnit,
+            angularUnit.Name,
+            authority ?? angularUnit.Authority,
+            authorityCode ?? angularUnit.AuthorityCode,
+            angularUnit.Alias,
+            angularUnit.Abbreviation,
+            angularUnit.Remarks);
+    }
+
+    private static LinearUnit CloneLinearUnit(LinearUnit linearUnit, string? authority = null, long? authorityCode = null)
+    {
+        return new LinearUnit(
+            linearUnit.MetersPerUnit,
+            linearUnit.Name,
+            authority ?? linearUnit.Authority,
+            authorityCode ?? linearUnit.AuthorityCode,
+            linearUnit.Alias,
+            linearUnit.Abbreviation,
+            linearUnit.Remarks);
+    }
+
+    private static Unit CloneUnit(Unit unit, string? authority = null, long? authorityCode = null)
+    {
+        return new Unit(
+            unit.ConversionFactor,
+            unit.Name,
+            authority ?? unit.Authority,
+            authorityCode ?? unit.AuthorityCode,
+            unit.Alias,
+            unit.Abbreviation,
+            unit.Remarks);
+    }
+
+    private static ParametricUnit CloneParametricUnit(ParametricUnit parametricUnit, string? authority = null, long? authorityCode = null)
+    {
+        return new ParametricUnit(
+            parametricUnit.ConversionFactor,
+            parametricUnit.Name,
+            authority ?? parametricUnit.Authority,
+            authorityCode ?? parametricUnit.AuthorityCode,
+            parametricUnit.Alias,
+            parametricUnit.Abbreviation,
+            parametricUnit.Remarks);
+    }
+
+    private static TimeUnit CloneTimeUnit(TimeUnit timeUnit, string? authority = null, long? authorityCode = null)
+    {
+        return new TimeUnit(
+            timeUnit.ConversionFactor,
+            timeUnit.Name,
+            authority ?? timeUnit.Authority,
+            authorityCode ?? timeUnit.AuthorityCode,
+            timeUnit.Alias,
+            timeUnit.Abbreviation,
+            timeUnit.Remarks);
+    }
+
+    private static Ellipsoid CloneEllipsoid(Ellipsoid ellipsoid, string? authority = null, long? authorityCode = null)
+    {
+        return new Ellipsoid(
+            ellipsoid.SemiMajorAxis,
+            ellipsoid.SemiMinorAxis,
+            ellipsoid.InverseFlattening,
+            ellipsoid.IsIvfDefinitive,
+            CloneLinearUnit(ellipsoid.AxisUnit),
+            ellipsoid.Name,
+            authority ?? ellipsoid.Authority,
+            authorityCode ?? ellipsoid.AuthorityCode,
+            ellipsoid.Alias,
+            ellipsoid.Abbreviation,
+            ellipsoid.Remarks);
+    }
+
+    private static PrimeMeridian ClonePrimeMeridian(PrimeMeridian primeMeridian, string? authority = null, long? authorityCode = null)
+    {
+        return new PrimeMeridian(
+            primeMeridian.Longitude,
+            CloneAngularUnit(primeMeridian.AngularUnit),
+            primeMeridian.Name,
+            authority ?? primeMeridian.Authority,
+            authorityCode ?? primeMeridian.AuthorityCode,
+            primeMeridian.Alias,
+            primeMeridian.Abbreviation,
+            primeMeridian.Remarks);
+    }
+
+    private static Projection CloneProjection(IProjection projection, string? authority = null, long? authorityCode = null)
+    {
+        return new Projection(
+            projection.ClassName,
+            CloneProjectionParameters(projection),
+            projection.Name,
+            authority ?? projection.Authority,
+            authorityCode ?? projection.AuthorityCode,
+            projection.Alias,
+            projection.Remarks,
+            projection.Abbreviation);
+    }
+
+    private static HorizontalDatum CloneHorizontalDatum(HorizontalDatum horizontalDatum, string? authority = null, long? authorityCode = null)
+    {
+        Ellipsoid ellipsoid = CloneEllipsoid(horizontalDatum.Ellipsoid);
+        return new HorizontalDatum(
+            ellipsoid,
+            CloneOptionalWgs84ConversionInfo(horizontalDatum.Wgs84Parameters),
+            horizontalDatum.DatumType,
+            horizontalDatum.Name,
+            authority ?? horizontalDatum.Authority,
+            authorityCode ?? horizontalDatum.AuthorityCode,
+            horizontalDatum.Alias,
+            horizontalDatum.Remarks,
+            horizontalDatum.Abbreviation,
+            CloneDatumEnsemble(horizontalDatum.Ensemble, ellipsoid));
+    }
+
+    private static VerticalDatum CloneVerticalDatum(VerticalDatum verticalDatum, string? authority = null, long? authorityCode = null)
+    {
+        return new VerticalDatum(
+            verticalDatum.DatumType,
+            verticalDatum.Name,
+            authority ?? verticalDatum.Authority,
+            authorityCode ?? verticalDatum.AuthorityCode,
+            verticalDatum.Alias,
+            verticalDatum.Remarks,
+            verticalDatum.Abbreviation,
+            CloneDatumEnsemble(verticalDatum.Ensemble));
+    }
+
+    private static EngineeringDatum CloneEngineeringDatum(EngineeringDatum engineeringDatum, string? authority = null, long? authorityCode = null)
+    {
+        return new EngineeringDatum(
+            engineeringDatum.Name,
+            authority ?? engineeringDatum.Authority,
+            authorityCode ?? engineeringDatum.AuthorityCode,
+            engineeringDatum.Alias,
+            engineeringDatum.Remarks,
+            engineeringDatum.Abbreviation);
+    }
+
+    private static ParametricDatum CloneParametricDatum(ParametricDatum parametricDatum, string? authority = null, long? authorityCode = null)
+    {
+        return new ParametricDatum(
+            parametricDatum.Name,
+            authority ?? parametricDatum.Authority,
+            authorityCode ?? parametricDatum.AuthorityCode,
+            parametricDatum.Alias,
+            parametricDatum.Remarks,
+            parametricDatum.Abbreviation);
+    }
+
+    private static TemporalDatum CloneTemporalDatum(TemporalDatum temporalDatum, string? authority = null, long? authorityCode = null)
+    {
+        return new TemporalDatum(
+            temporalDatum.TimeOrigin,
+            temporalDatum.Name,
+            authority ?? temporalDatum.Authority,
+            authorityCode ?? temporalDatum.AuthorityCode,
+            temporalDatum.Alias,
+            temporalDatum.Remarks,
+            temporalDatum.Abbreviation);
+    }
+
+    private static GeographicCoordinateSystem CloneGeographicCoordinateSystem(
+        GeographicCoordinateSystem geographicCoordinateSystem,
+        string? authority = null,
+        long? authorityCode = null)
+    {
+        HorizontalDatum horizontalDatum = CloneHorizontalDatum(geographicCoordinateSystem.HorizontalDatum);
+        return CloneGeographicCoordinateSystem(geographicCoordinateSystem, horizontalDatum, authority, authorityCode);
+    }
+
+    private static GeographicCoordinateSystem CloneGeographicCoordinateSystem(
+        GeographicCoordinateSystem geographicCoordinateSystem,
+        HorizontalDatum horizontalDatum,
+        string? authority = null,
+        long? authorityCode = null)
+    {
+        var clone = new GeographicCoordinateSystem(
+            CloneAngularUnit(geographicCoordinateSystem.AngularUnit),
+            horizontalDatum,
+            ClonePrimeMeridian(geographicCoordinateSystem.PrimeMeridian),
+            CloneAxisInfo(geographicCoordinateSystem),
+            geographicCoordinateSystem.Name,
+            authority ?? geographicCoordinateSystem.Authority,
+            authorityCode ?? geographicCoordinateSystem.AuthorityCode,
+            geographicCoordinateSystem.Alias,
+            geographicCoordinateSystem.Abbreviation,
+            geographicCoordinateSystem.Remarks,
+            geographicCoordinateSystem.DefaultEnvelope)
+        {
+            WGS84ConversionInfo = CloneWgs84ConversionInfoList(geographicCoordinateSystem.WGS84ConversionInfo),
+        };
+
+        return clone;
+    }
+
+    private static ProjectedCoordinateSystem CloneProjectedCoordinateSystem(
+        ProjectedCoordinateSystem projectedCoordinateSystem,
+        string? authority = null,
+        long? authorityCode = null)
+    {
+        HorizontalDatum horizontalDatum = CloneHorizontalDatum(projectedCoordinateSystem.HorizontalDatum);
+        GeographicCoordinateSystem geographicCoordinateSystem = CloneGeographicCoordinateSystem(projectedCoordinateSystem.GeographicCoordinateSystem, horizontalDatum);
+
+        return new ProjectedCoordinateSystem(
+            horizontalDatum,
+            geographicCoordinateSystem,
+            CloneLinearUnit(projectedCoordinateSystem.LinearUnit),
+            CloneProjection(projectedCoordinateSystem.Projection),
+            CloneAxisInfo(projectedCoordinateSystem),
+            projectedCoordinateSystem.Name,
+            authority ?? projectedCoordinateSystem.Authority,
+            authorityCode ?? projectedCoordinateSystem.AuthorityCode,
+            projectedCoordinateSystem.Alias,
+            projectedCoordinateSystem.Remarks,
+            projectedCoordinateSystem.Abbreviation,
+            projectedCoordinateSystem.DefaultEnvelope);
+    }
+
+    private static GeocentricCoordinateSystem CloneGeocentricCoordinateSystem(
+        GeocentricCoordinateSystem geocentricCoordinateSystem,
+        string? authority = null,
+        long? authorityCode = null)
+    {
+        HorizontalDatum horizontalDatum = CloneHorizontalDatum(geocentricCoordinateSystem.HorizontalDatum);
+        return new GeocentricCoordinateSystem(
+            horizontalDatum,
+            CloneLinearUnit(geocentricCoordinateSystem.LinearUnit),
+            ClonePrimeMeridian(geocentricCoordinateSystem.PrimeMeridian),
+            CloneAxisInfo(geocentricCoordinateSystem),
+            geocentricCoordinateSystem.Name,
+            authority ?? geocentricCoordinateSystem.Authority,
+            authorityCode ?? geocentricCoordinateSystem.AuthorityCode,
+            geocentricCoordinateSystem.Alias,
+            geocentricCoordinateSystem.Remarks,
+            geocentricCoordinateSystem.Abbreviation,
+            geocentricCoordinateSystem.DefaultEnvelope);
+    }
+
+    private static VerticalCoordinateSystem CloneVerticalCoordinateSystem(
+        VerticalCoordinateSystem verticalCoordinateSystem,
+        string? authority = null,
+        long? authorityCode = null)
+    {
+        var clone = new VerticalCoordinateSystem(
+            CloneLinearUnit(verticalCoordinateSystem.LinearUnit),
+            CloneVerticalDatum(verticalCoordinateSystem.VerticalDatum),
+            CloneAxisInfo(verticalCoordinateSystem),
+            verticalCoordinateSystem.Name,
+            authority ?? verticalCoordinateSystem.Authority,
+            authorityCode ?? verticalCoordinateSystem.AuthorityCode,
+            verticalCoordinateSystem.Alias,
+            verticalCoordinateSystem.Abbreviation,
+            verticalCoordinateSystem.Remarks,
+            verticalCoordinateSystem.DefaultEnvelope)
+        {
+            BoundGridTransformation = CloneVerticalBoundGridTransformation(verticalCoordinateSystem.BoundGridTransformation),
+        };
+
+        return clone;
+    }
+
+    private static CompoundCoordinateSystem CloneCompoundCoordinateSystem(
+        CompoundCoordinateSystem compoundCoordinateSystem,
+        string? authority = null,
+        long? authorityCode = null)
+    {
+        return new CompoundCoordinateSystem(
+            CloneCoordinateSystem(compoundCoordinateSystem.HeadCoordinateSystem),
+            CloneCoordinateSystem(compoundCoordinateSystem.TailCoordinateSystem),
+            compoundCoordinateSystem.Name,
+            authority ?? compoundCoordinateSystem.Authority,
+            authorityCode ?? compoundCoordinateSystem.AuthorityCode,
+            compoundCoordinateSystem.Alias,
+            compoundCoordinateSystem.Abbreviation,
+            compoundCoordinateSystem.Remarks,
+            CloneAxisInfo(compoundCoordinateSystem),
+            compoundCoordinateSystem.DefaultEnvelope);
+    }
+
+    private static BoundCoordinateSystem CloneBoundCoordinateSystem(
+        BoundCoordinateSystem boundCoordinateSystem,
+        string? authority = null,
+        long? authorityCode = null)
+    {
+        return new BoundCoordinateSystem(
+            CloneCoordinateSystem(boundCoordinateSystem.SourceCoordinateSystem),
+            CloneCoordinateSystem(boundCoordinateSystem.TargetCoordinateSystem),
+            CloneBoundTransformation(boundCoordinateSystem.Transformation),
+            boundCoordinateSystem.Name,
+            authority ?? boundCoordinateSystem.Authority,
+            authorityCode ?? boundCoordinateSystem.AuthorityCode,
+            boundCoordinateSystem.Alias,
+            boundCoordinateSystem.Abbreviation,
+            boundCoordinateSystem.Remarks);
+    }
+
+    private static FittedCoordinateSystem CloneFittedCoordinateSystem(
+        FittedCoordinateSystem fittedCoordinateSystem,
+        string? authority = null,
+        long? authorityCode = null)
+    {
+        return new FittedCoordinateSystem(
+            CloneCoordinateSystem(fittedCoordinateSystem.BaseCoordinateSystem),
+            fittedCoordinateSystem.ToBaseTransform,
+            fittedCoordinateSystem.Name,
+            authority ?? fittedCoordinateSystem.Authority,
+            authorityCode ?? fittedCoordinateSystem.AuthorityCode,
+            fittedCoordinateSystem.Alias,
+            fittedCoordinateSystem.Remarks,
+            fittedCoordinateSystem.Abbreviation,
+            CloneAxisInfo(fittedCoordinateSystem));
+    }
+
+    private static EngineeringCoordinateSystem CloneEngineeringCoordinateSystem(
+        EngineeringCoordinateSystem engineeringCoordinateSystem,
+        string? authority = null,
+        long? authorityCode = null)
+    {
+        return new EngineeringCoordinateSystem(
+            CloneEngineeringDatum(engineeringCoordinateSystem.EngineeringDatum),
+            engineeringCoordinateSystem.CoordinateSystemType,
+            CloneAxisInfo(engineeringCoordinateSystem),
+            CloneUnits(engineeringCoordinateSystem.AxisUnits),
+            engineeringCoordinateSystem.Name,
+            authority ?? engineeringCoordinateSystem.Authority,
+            authorityCode ?? engineeringCoordinateSystem.AuthorityCode,
+            engineeringCoordinateSystem.Alias,
+            engineeringCoordinateSystem.Abbreviation,
+            engineeringCoordinateSystem.Remarks);
+    }
+
+    private static ParametricCoordinateSystem CloneParametricCoordinateSystem(
+        ParametricCoordinateSystem parametricCoordinateSystem,
+        string? authority = null,
+        long? authorityCode = null)
+    {
+        return new ParametricCoordinateSystem(
+            CloneParametricUnit(parametricCoordinateSystem.ParametricUnit),
+            CloneParametricDatum(parametricCoordinateSystem.ParametricDatum),
+            new AxisInfo(parametricCoordinateSystem.GetAxis(0)),
+            parametricCoordinateSystem.Name,
+            authority ?? parametricCoordinateSystem.Authority,
+            authorityCode ?? parametricCoordinateSystem.AuthorityCode,
+            parametricCoordinateSystem.Alias,
+            parametricCoordinateSystem.Abbreviation,
+            parametricCoordinateSystem.Remarks);
+    }
+
+    private static TemporalCoordinateSystem CloneTemporalCoordinateSystem(
+        TemporalCoordinateSystem temporalCoordinateSystem,
+        string? authority = null,
+        long? authorityCode = null)
+    {
+        return new TemporalCoordinateSystem(
+            CloneTimeUnit(temporalCoordinateSystem.TimeUnit),
+            CloneTemporalDatum(temporalCoordinateSystem.TemporalDatum),
+            new AxisInfo(temporalCoordinateSystem.GetAxis(0)),
+            temporalCoordinateSystem.Name,
+            authority ?? temporalCoordinateSystem.Authority,
+            authorityCode ?? temporalCoordinateSystem.AuthorityCode,
+            temporalCoordinateSystem.Alias,
+            temporalCoordinateSystem.Abbreviation,
+            temporalCoordinateSystem.Remarks);
+    }
+
+    private static CoordinateOperation CloneCoordinateOperation(
+        CoordinateOperation coordinateOperation,
+        string? authority = null,
+        long? authorityCode = null)
+    {
+        return new CoordinateOperation(
+            coordinateOperation.MethodName,
+            CloneParameters(coordinateOperation.Parameters),
+            CloneCoordinateSystem(coordinateOperation.SourceCoordinateSystem),
+            CloneCoordinateSystem(coordinateOperation.TargetCoordinateSystem),
+            coordinateOperation.Name,
+            authority ?? coordinateOperation.Authority,
+            authorityCode ?? coordinateOperation.AuthorityCode,
+            coordinateOperation.Alias,
+            coordinateOperation.Abbreviation,
+            coordinateOperation.Remarks);
+    }
+
+    private static ConcatenatedOperation CloneConcatenatedOperation(
+        ConcatenatedOperation concatenatedOperation,
+        string? authority = null,
+        long? authorityCode = null)
+    {
+        return new ConcatenatedOperation(
+            CloneCoordinateOperations(concatenatedOperation.Steps),
+            CloneCoordinateSystem(concatenatedOperation.SourceCoordinateSystem),
+            CloneCoordinateSystem(concatenatedOperation.TargetCoordinateSystem),
+            concatenatedOperation.Name,
+            authority ?? concatenatedOperation.Authority,
+            authorityCode ?? concatenatedOperation.AuthorityCode,
+            concatenatedOperation.Alias,
+            concatenatedOperation.Abbreviation,
+            concatenatedOperation.Remarks);
+    }
+
+    private static CoordinateSystem CloneCoordinateSystem(CoordinateSystem coordinateSystem)
+    {
+        return coordinateSystem switch
+        {
+            GeographicCoordinateSystem geographicCoordinateSystem => CloneGeographicCoordinateSystem(geographicCoordinateSystem),
+            ProjectedCoordinateSystem projectedCoordinateSystem => CloneProjectedCoordinateSystem(projectedCoordinateSystem),
+            GeocentricCoordinateSystem geocentricCoordinateSystem => CloneGeocentricCoordinateSystem(geocentricCoordinateSystem),
+            VerticalCoordinateSystem verticalCoordinateSystem => CloneVerticalCoordinateSystem(verticalCoordinateSystem),
+            CompoundCoordinateSystem compoundCoordinateSystem => CloneCompoundCoordinateSystem(compoundCoordinateSystem),
+            BoundCoordinateSystem boundCoordinateSystem => CloneBoundCoordinateSystem(boundCoordinateSystem),
+            FittedCoordinateSystem fittedCoordinateSystem => CloneFittedCoordinateSystem(fittedCoordinateSystem),
+            EngineeringCoordinateSystem engineeringCoordinateSystem => CloneEngineeringCoordinateSystem(engineeringCoordinateSystem),
+            ParametricCoordinateSystem parametricCoordinateSystem => CloneParametricCoordinateSystem(parametricCoordinateSystem),
+            TemporalCoordinateSystem temporalCoordinateSystem => CloneTemporalCoordinateSystem(temporalCoordinateSystem),
+            _ => throw new NotSupportedException($"Coordinate system cloning is not supported for type '{coordinateSystem.GetType().FullName}'."),
+        };
+    }
+
+    private static IUnit CloneUnit(IUnit unit)
+    {
+        return unit switch
+        {
+            AngularUnit angularUnit => CloneAngularUnit(angularUnit),
+            LinearUnit linearUnit => CloneLinearUnit(linearUnit),
+            Unit genericUnit => CloneUnit(genericUnit),
+            ParametricUnit parametricUnit => CloneParametricUnit(parametricUnit),
+            TimeUnit timeUnit => CloneTimeUnit(timeUnit),
+            _ => throw new NotSupportedException($"Unit cloning is not supported for type '{unit.GetType().FullName}'."),
+        };
+    }
+
+    private static List<IUnit> CloneUnits(IReadOnlyList<IUnit> units)
+    {
+        var clone = new List<IUnit>(units.Count);
+        for (int i = 0; i < units.Count; i++)
+        {
+            clone.Add(CloneUnit(units[i]));
+        }
+
+        return clone;
+    }
+
+    private static List<AxisInfo> CloneAxisInfo(CoordinateSystem coordinateSystem)
+    {
+        var clone = new List<AxisInfo>(coordinateSystem.Dimension);
+        for (int i = 0; i < coordinateSystem.Dimension; i++)
+        {
+            clone.Add(new AxisInfo(coordinateSystem.GetAxis(i)));
+        }
+
+        return clone;
+    }
+
+    private static List<ProjectionParameter> CloneProjectionParameters(IProjection projection)
+    {
+        var clone = new List<ProjectionParameter>(projection.NumParameters);
+        for (int i = 0; i < projection.NumParameters; i++)
+        {
+            ProjectionParameter parameter = projection.GetParameter(i);
+            clone.Add(new ProjectionParameter(parameter.Name, parameter.Value));
+        }
+
+        return clone;
+    }
+
+    private static List<Parameter> CloneParameters(IReadOnlyList<Parameter> parameters)
+    {
+        var clone = new List<Parameter>(parameters.Count);
+        for (int i = 0; i < parameters.Count; i++)
+        {
+            clone.Add(new Parameter(parameters[i].Name, parameters[i].Value));
+        }
+
+        return clone;
+    }
+
+    private static List<CoordinateOperation> CloneCoordinateOperations(IReadOnlyList<CoordinateOperation> steps)
+    {
+        var clone = new List<CoordinateOperation>(steps.Count);
+        for (int i = 0; i < steps.Count; i++)
+        {
+            clone.Add(CloneCoordinateOperation(steps[i]));
+        }
+
+        return clone;
+    }
+
+    private static DatumEnsemble? CloneDatumEnsemble(DatumEnsemble? ensemble, Ellipsoid? ellipsoidOverride = null)
+    {
+        if (ensemble is null)
+        {
+            return null;
+        }
+
+        return new DatumEnsemble(
+            ensemble.Name,
+            CloneDatumEnsembleMembers(ensemble.Members),
+            ensemble.Accuracy,
+            ellipsoidOverride ?? (ensemble.Ellipsoid is null ? null : CloneEllipsoid(ensemble.Ellipsoid)),
+            ensemble.Authority,
+            ensemble.AuthorityCode);
+    }
+
+    private static List<DatumEnsembleMember> CloneDatumEnsembleMembers(IReadOnlyList<DatumEnsembleMember> members)
+    {
+        var clone = new List<DatumEnsembleMember>(members.Count);
+        for (int i = 0; i < members.Count; i++)
+        {
+            DatumEnsembleMember member = members[i];
+            clone.Add(new DatumEnsembleMember(member.Name, member.Authority, member.AuthorityCode));
+        }
+
+        return clone;
+    }
+
+    private static BoundTransformation CloneBoundTransformation(BoundTransformation transformation)
+    {
+        if (transformation.Wgs84Parameters is not null)
+        {
+            return new BoundTransformation(
+                transformation.MethodName,
+                CloneWgs84ConversionInfo(transformation.Wgs84Parameters));
+        }
+
+        return new BoundTransformation(
+            transformation.MethodName,
+            ArgumentGuard.ThrowIfNull(transformation.ParameterFileName, nameof(transformation.ParameterFileName)));
+    }
+
+    private static VerticalBoundGridTransformation? CloneVerticalBoundGridTransformation(VerticalBoundGridTransformation? transformation)
+    {
+        if (transformation is null)
+        {
+            return null;
+        }
+
+        return new VerticalBoundGridTransformation(
+            transformation.MethodName,
+            transformation.ParameterFileName,
+            CloneCompoundCoordinateSystem(transformation.HubCoordinateSystem));
+    }
+
+    private static List<Wgs84ConversionInfo> CloneWgs84ConversionInfoList(List<Wgs84ConversionInfo> conversions)
+    {
+        var clone = new List<Wgs84ConversionInfo>(conversions.Count);
+        for (int i = 0; i < conversions.Count; i++)
+        {
+            clone.Add(CloneWgs84ConversionInfo(conversions[i]));
+        }
+
+        return clone;
+    }
+
+    private static Wgs84ConversionInfo CloneWgs84ConversionInfo(Wgs84ConversionInfo conversionInfo)
+    {
+        return new Wgs84ConversionInfo(
+            conversionInfo.Dx,
+            conversionInfo.Dy,
+            conversionInfo.Dz,
+            conversionInfo.Ex,
+            conversionInfo.Ey,
+            conversionInfo.Ez,
+            conversionInfo.Ppm,
+            conversionInfo.AreaOfUse);
+    }
+
+    private static Wgs84ConversionInfo? CloneOptionalWgs84ConversionInfo(Wgs84ConversionInfo? conversionInfo)
+        => conversionInfo is null ? null : CloneWgs84ConversionInfo(conversionInfo);
+}

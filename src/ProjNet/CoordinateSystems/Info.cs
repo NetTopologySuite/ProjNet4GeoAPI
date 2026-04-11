@@ -162,6 +162,18 @@ public abstract class Info : IInfo
     }
 
     /// <summary>
+    /// Creates a copy of this object with updated authority metadata.
+    /// </summary>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="code">Replacement authority-specific identification code.</param>
+    /// <returns>A new instance of the same runtime type with updated authority metadata.</returns>
+    public Info WithAuthority(string authority, long code)
+    {
+        authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
+        return InfoAuthorityCloneHelper.CloneWithAuthority(this, authority, code);
+    }
+
+    /// <summary>
     /// Returns the Well-known text for this object
     /// as defined in the simple features specification.
     /// </summary>

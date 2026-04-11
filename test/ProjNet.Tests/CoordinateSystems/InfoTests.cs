@@ -38,6 +38,23 @@ public class InfoTests
     }
 
     /// <summary>
+    /// Verifies that <see cref="Info.WithAuthority"/> returns a new instance with updated authority metadata.
+    /// </summary>
+    [Fact]
+    public void WithAuthority_ReturnsCloneWithUpdatedAuthorityMetadata()
+    {
+        LinearUnit original = LinearUnit.Metre;
+        LinearUnit clone = Assert.IsType<LinearUnit>(original.WithAuthority("TEST", 1234));
+
+        Assert.Equal("TEST", clone.Authority);
+        Assert.Equal(1234, clone.AuthorityCode);
+        Assert.Equal(original.Name, clone.Name);
+        Assert.Equal("EPSG", original.Authority);
+        Assert.Equal(9001, original.AuthorityCode);
+        Assert.NotSame(original, clone);
+    }
+
+    /// <summary>
     /// Verifies that <see cref="Info.InfoXml"/> includes the supported metadata attributes in the expected order.
     /// </summary>
     [Fact]

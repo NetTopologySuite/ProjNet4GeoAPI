@@ -154,6 +154,26 @@ public class ProjectedCoordinateSystemTests
     }
 
     /// <summary>
+    /// Verifies that <see cref="Info.WithAuthority"/> preserves the projected CRS shape while replacing authority metadata.
+    /// </summary>
+    [Fact]
+    public void WithAuthority_ReturnsProjectedCloneWithUpdatedAuthorityMetadata()
+    {
+        ProjectedCoordinateSystem original = CreateSystem(authority: "TEST", authorityCode: 7);
+        ProjectedCoordinateSystem clone = Assert.IsType<ProjectedCoordinateSystem>(original.WithAuthority("EPSG", 32632));
+
+        Assert.Equal("EPSG", clone.Authority);
+        Assert.Equal(32632, clone.AuthorityCode);
+        Assert.Equal("TEST", original.Authority);
+        Assert.Equal(7, original.AuthorityCode);
+        Assert.NotSame(original, clone);
+        Assert.NotSame(original.GeographicCoordinateSystem, clone.GeographicCoordinateSystem);
+        Assert.True(original.GeographicCoordinateSystem.EqualParams(clone.GeographicCoordinateSystem));
+        Assert.NotSame(original.HorizontalDatum, clone.HorizontalDatum);
+        Assert.True(original.HorizontalDatum.EqualParams(clone.HorizontalDatum));
+    }
+
+    /// <summary>
     /// Verifies that WKT omits axis clauses when the default projected axes are used.
     /// </summary>
     [Fact]
