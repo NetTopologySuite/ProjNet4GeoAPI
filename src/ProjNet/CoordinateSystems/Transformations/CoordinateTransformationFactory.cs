@@ -19,6 +19,14 @@ using ProjNet.Resources;
 /// <summary>
 /// Creates coordinate transformations.
 /// </summary>
+/// <remarks>
+/// <para>
+/// Thread safety: Instances are stateless and may be reused across threads. Shared direct-operation
+/// caches initialize once through <see cref="Lazy{T}"/>. Grid resolution uses a process-wide resolver
+/// protected by an internal lock, so grid-backed resolution and resolver reconfiguration may briefly
+/// serialize on that shared state.
+/// </para>
+/// </remarks>
 public class CoordinateTransformationFactory
 {
     private const string GridCacheEnvironmentVariable = "PROJNET_GRID_CACHE";

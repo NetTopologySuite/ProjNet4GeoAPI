@@ -20,6 +20,10 @@ using ProjNet.IO.CoordinateSystems;
 /// using the NAD83 datum, but these coordinate systems always use meters. EPSG does not
 /// have codes for NAD83 state plane coordinate systems that use feet units. This factory
 /// lets an application create such a hybrid coordinate system.</para>
+/// <para>
+/// Thread safety: Instances are stateless and may be reused across threads. Factory methods
+/// create new coordinate-system model objects and do not mutate shared process-wide state.
+/// </para>
 /// </remarks>
 public class CoordinateSystemFactory
 {

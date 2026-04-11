@@ -16,6 +16,15 @@ using ProjNet.Data;
 /// <summary>
 /// Provides coordinate system lookup and transformation creation backed by a registry of SRID-keyed systems.
 /// </summary>
+/// <remarks>
+/// <para>
+/// Thread safety: Public lookup and transformation-creation methods wait for the one-time initialization
+/// load to finish and are safe to call concurrently after the registry has become stable. The protected
+/// registration path serializes <c>AddCoordinateSystem</c> updates with internal locks, but derived types
+/// should complete further registry mutation before exposing an instance for concurrent reads or enumeration
+/// because the backing dictionaries are not concurrent collections.
+/// </para>
+/// </remarks>
 public class CoordinateSystemServices // : ICoordinateSystemServices
 {
     private readonly Dictionary<int, CoordinateSystem> csBySrid;
