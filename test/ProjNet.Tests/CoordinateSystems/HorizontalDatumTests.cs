@@ -108,6 +108,40 @@ public class HorizontalDatumTests
     }
 
     /// <summary>
+    /// Verifies that <see cref="HorizontalDatum.WithWgs84Parameters"/> clones the datum with replacement Bursa-Wolf parameters.
+    /// </summary>
+    [Fact]
+    public void WithWgs84Parameters_ReturnsCloneWithUpdatedParameters()
+    {
+        HorizontalDatum original = HorizontalDatum.WGS84;
+        Wgs84ConversionInfo replacement = new(1d, 2d, 3d, 4d, 5d, 6d, 7d);
+        HorizontalDatum clone = original.WithWgs84Parameters(replacement);
+        Wgs84ConversionInfo cloneParameters = Assert.IsType<Wgs84ConversionInfo>(clone.Wgs84Parameters);
+
+        Assert.NotSame(original, clone);
+        Assert.Null(original.Wgs84Parameters);
+        Assert.NotSame(replacement, cloneParameters);
+        Assert.Equal(replacement, cloneParameters);
+        Assert.NotSame(original.Ellipsoid, clone.Ellipsoid);
+        Assert.True(original.Ellipsoid.EqualParams(clone.Ellipsoid));
+    }
+
+    /// <summary>
+    /// Verifies that <see cref="HorizontalDatum.WithWgs84Parameters"/> can clear existing Bursa-Wolf parameters.
+    /// </summary>
+    [Fact]
+    public void WithWgs84Parameters_WithNull_ClearsParameters()
+    {
+        HorizontalDatum original = HorizontalDatum.ED50;
+        HorizontalDatum clone = original.WithWgs84Parameters(null);
+
+        Assert.NotSame(original, clone);
+        Assert.NotNull(original.Wgs84Parameters);
+        Assert.Null(clone.Wgs84Parameters);
+        Assert.True(original.Ellipsoid.EqualParams(clone.Ellipsoid));
+    }
+
+    /// <summary>
     /// Verifies that WKT omits both optional clauses when neither WGS84 parameters nor authority metadata are present.
     /// </summary>
     [Fact]

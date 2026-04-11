@@ -55,6 +55,18 @@ internal static class InfoAuthorityCloneHelper
         };
     }
 
+    /// <summary>
+    /// Creates a deep clone of the supplied horizontal datum with replacement WGS84 conversion parameters.
+    /// </summary>
+    /// <param name="horizontalDatum">Datum to clone.</param>
+    /// <param name="wgs84Parameters">Replacement WGS84 conversion parameters, or <see langword="null"/> to clear them.</param>
+    /// <returns>A cloned datum with the requested WGS84 conversion parameters.</returns>
+    internal static HorizontalDatum CloneWithWgs84Parameters(HorizontalDatum horizontalDatum, Wgs84ConversionInfo? wgs84Parameters)
+    {
+        horizontalDatum = ArgumentGuard.ThrowIfNull(horizontalDatum, nameof(horizontalDatum));
+        return CloneHorizontalDatum(horizontalDatum, wgs84Parameters);
+    }
+
     private static AngularUnit CloneAngularUnit(AngularUnit angularUnit, string? authority = null, long? authorityCode = null)
     {
         return new AngularUnit(
@@ -167,6 +179,22 @@ internal static class InfoAuthorityCloneHelper
             horizontalDatum.Name,
             authority ?? horizontalDatum.Authority,
             authorityCode ?? horizontalDatum.AuthorityCode,
+            horizontalDatum.Alias,
+            horizontalDatum.Remarks,
+            horizontalDatum.Abbreviation,
+            CloneDatumEnsemble(horizontalDatum.Ensemble, ellipsoid));
+    }
+
+    private static HorizontalDatum CloneHorizontalDatum(HorizontalDatum horizontalDatum, Wgs84ConversionInfo? wgs84Parameters)
+    {
+        Ellipsoid ellipsoid = CloneEllipsoid(horizontalDatum.Ellipsoid);
+        return new HorizontalDatum(
+            ellipsoid,
+            CloneOptionalWgs84ConversionInfo(wgs84Parameters),
+            horizontalDatum.DatumType,
+            horizontalDatum.Name,
+            horizontalDatum.Authority,
+            horizontalDatum.AuthorityCode,
             horizontalDatum.Alias,
             horizontalDatum.Remarks,
             horizontalDatum.Abbreviation,

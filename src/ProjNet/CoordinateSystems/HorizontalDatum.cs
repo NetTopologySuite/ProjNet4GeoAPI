@@ -185,6 +185,16 @@ public class HorizontalDatum : Datum
     public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
     /// <summary>
+    /// Creates a copy of this datum with updated Bursa-Wolf parameters for transformations into WGS84.
+    /// </summary>
+    /// <param name="toWgs84">Replacement WGS84 conversion parameters, or <see langword="null"/> to clear them.</param>
+    /// <returns>A new datum instance with updated WGS84 conversion parameters.</returns>
+    public HorizontalDatum WithWgs84Parameters(Wgs84ConversionInfo? toWgs84)
+    {
+        return InfoAuthorityCloneHelper.CloneWithWgs84Parameters(this, toWgs84);
+    }
+
+    /// <summary>
     /// Returns an XML representation of this horizontal datum as an <see cref="XElement"/>.
     /// </summary>
     /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
