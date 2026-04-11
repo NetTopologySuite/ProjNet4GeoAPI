@@ -133,6 +133,9 @@ public static partial class CoordinateSystemWktReader
             case "COORDINATEOPERATION":
                 info = ReadWkt2CoordinateOperation(tokenizer);
                 return true;
+            case "CONCATENATEDOPERATION":
+                info = ReadWkt2ConcatenatedOperation(tokenizer);
+                return true;
             case "COMPOUNDCRS":
                 info = ReadWkt2CompoundCoordinateSystem(tokenizer);
                 return true;
@@ -1835,6 +1838,106 @@ public static partial class CoordinateSystemWktReader
         }
 
         return new Parameter(parameterName, value);
+    }
+
+    private static ConcatenatedOperation ReadWkt2ConcatenatedOperation(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "CONCATENATEDOPERATION")
+        {
+            tokenizer.ReadToken("CONCATENATEDOPERATION");
+        }
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        string name = tokenizer.ReadDoubleQuotedWord();
+
+        CoordinateSystem? sourceCoordinateSystem = null;
+        CoordinateSystem? targetCoordinateSystem = null;
+        string authority = string.Empty;
+        long authorityCode = -1;
+        var steps = new List<CoordinateOperation>();
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            switch (tokenizer.GetStringValue())
+            {
+                case "SOURCECRS":
+                    sourceCoordinateSystem = ReadWkt2BoundCoordinateSystemComponent(tokenizer);
+                    break;
+                case "TARGETCRS":
+                    targetCoordinateSystem = ReadWkt2BoundCoordinateSystemComponent(tokenizer);
+                    break;
+                case "STEP":
+                    steps.Add(ReadWkt2ConcatenatedOperationStep(tokenizer));
+                    break;
+                case "ID":
+                    ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+                    break;
+                default:
+                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    {
+                        SkipKeywordNode(tokenizer);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"WKT2 CONCATENATEDOPERATION keyword '{tokenizer.GetStringValue()}' is not supported.");
+                    }
+
+                    break;
+            }
+
+            tokenizer.NextToken();
+        }
+
+        if (sourceCoordinateSystem is null)
+        {
+            ArgumentGuard.ThrowArgument("WKT2 concatenated operation is missing a SOURCECRS block.");
+        }
+
+        if (targetCoordinateSystem is null)
+        {
+            ArgumentGuard.ThrowArgument("WKT2 concatenated operation is missing a TARGETCRS block.");
+        }
+
+        return new ConcatenatedOperation(
+            steps,
+            sourceCoordinateSystem,
+            targetCoordinateSystem,
+            name,
+            authority,
+            authorityCode,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
+    private static CoordinateOperation ReadWkt2ConcatenatedOperationStep(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "STEP")
+        {
+            tokenizer.ReadToken("STEP");
+        }
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        tokenizer.NextToken();
+        CoordinateOperation step = tokenizer.GetStringValue() == "COORDINATEOPERATION"
+            ? ReadWkt2CoordinateOperation(tokenizer)
+            : throw new NotSupportedException($"WKT2 STEP keyword '{tokenizer.GetStringValue()}' is not supported.");
+        tokenizer.NextToken();
+        tokenizer.CheckCloser(bracket);
+        return step;
     }
 
     private static void ReadIdentifierWithUnknownCode(WktTokenizer tokenizer, out string authority, out long authorityCode)
