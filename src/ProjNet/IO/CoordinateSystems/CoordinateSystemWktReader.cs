@@ -3941,6 +3941,11 @@ public static partial class CoordinateSystemWktReader
                 ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
                 tokenizer.ReadCloser(bracket);
             }
+            else
+            {
+                SkipKeywordNode(tokenizer);
+                tokenizer.NextToken();
+            }
         }
 
         // make an assumption about the datum type.
