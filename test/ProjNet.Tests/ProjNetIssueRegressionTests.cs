@@ -265,8 +265,8 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     /// Verifies that GitHub issue #53 is fixed: a WGS84 to UTM zone 35N forward transformation
     /// followed by the inverse round-trips back to the original coordinates within tolerance.
     /// </summary>
-    [Fact(DisplayName = "transformation somehow is wrong")]
-    [Trait("Category", "Question")]
+    [GitHubIssue(53)]
+    [Fact(DisplayName = "Issue #53, transformation somehow is wrong")]
     public void TestGitHubIssue53()
     {
         GeographicCoordinateSystem csWgs84 = GeographicCoordinateSystem.WGS84;
@@ -287,8 +287,8 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     /// projected CRS and a vertical CRS can be parsed from WKT and exposes the correct
     /// authority, dimension, and component systems.
     /// </summary>
-    [Fact(DisplayName = "Coordinate system isn't supported")]
-    [Trait("Category", "Issue")]
+    [GitHubIssue(98)]
+    [Fact(DisplayName = "Issue #98, Coordinate system isn't supported")]
     public void TestGitHubIssue98()
     {
         CoordinateSystem? cs = this.CoordinateSystemFactory.CreateFromWkt(

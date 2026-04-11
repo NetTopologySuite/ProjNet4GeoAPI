@@ -14,7 +14,6 @@ using Xunit;
 /// <summary>
 /// Regression tests for issues reported on the GitHub issue tracker.
 /// </summary>
-[Trait("Category", "GitHub Issue")]
 public class GitHubIssueRegressionTests
 {
     private static readonly CoordinateSystemServices Css = new(CoordinateSystemServicesTests.LoadCsv());
@@ -23,6 +22,7 @@ public class GitHubIssueRegressionTests
     /// Verifies that GitHub issue #10 is fixed: <see cref="ConcatenatedTransform.Inverse"/> creates a new
     /// child transformation list and does not mutate the forward transform's state.
     /// </summary>
+    [GitHubIssue(10)]
     [Fact(DisplayName = "Issue #10, ConcatenatedTransform.Inverse() method destroys the state of child transformations")]
     public void TestConcatenatedTransformInvert()
     {
@@ -47,6 +47,7 @@ public class GitHubIssueRegressionTests
     /// Verifies that GitHub issue #10 is fixed: repeated calls to <see cref="ConcatenatedTransform.Inverse"/>
     /// return the same cached instance and produce consistent round-trip results.
     /// </summary>
+    [GitHubIssue(10)]
     [Fact(DisplayName = "Issue #10, Repeated Inverse() calls keep ConcatenatedTransform stable")]
     public void TestConcatenatedTransformInverseIsStableAcrossRepeatedCalls()
     {
@@ -159,6 +160,7 @@ public class GitHubIssueRegressionTests
     /// Verifies that GitHub issue #20 is fixed: calling <see cref="MathTransform.Inverse"/> does not corrupt
     /// subsequent results of the forward transform.
     /// </summary>
+    [GitHubIssue(20)]
     [Fact(DisplayName = "Issue #20, Math transform bug")]
     public void TestMathTransformBug()
     {
@@ -263,6 +265,7 @@ public class GitHubIssueRegressionTests
     /// <see cref="ProjectedCoordinateSystem"/> correctly store abbreviation and remarks
     /// passed to their constructors.
     /// </summary>
+    [GitHubIssue(64)]
     [Fact(DisplayName = "Issue #64, Wrong parameter order when calling base constructor (in systems extending HorizontalCoordinateSystem)")]
     public void TestHorizontalCoordinateSystemImplementationsAbbreviationAndRemarks()
     {
