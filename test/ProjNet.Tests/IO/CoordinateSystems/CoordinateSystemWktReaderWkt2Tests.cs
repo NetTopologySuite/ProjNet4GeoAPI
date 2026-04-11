@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ProjNet.CoordinateSystems;
 using ProjNet.Data;
+using ProjNet.IO.Wkt;
 using Xunit;
 
 /// <summary>
@@ -217,6 +218,42 @@ public class CoordinateSystemWktReaderWkt2Tests
     }
 
     /// <summary>
+    /// Provides representative supported engineering CRS examples.
+    /// </summary>
+    /// <returns>WKT2 engineering CRS strings that should parse successfully and roundtrip semantically.</returns>
+    public static IEnumerable<TheoryDataRow<string>> SupportedEngineeringWkt2Rows()
+    {
+        return
+        [
+            new TheoryDataRow<string>("""ENGCRS["Engineering example",EDATUM["Local engineering datum",ID["TEST",1001]],CS[Cartesian,2],AXIS["x",east],AXIS["y",north],LENGTHUNIT["metre",1,ID["EPSG",9001]],ID["TEST",5800]]"""),
+        ];
+    }
+
+    /// <summary>
+    /// Provides representative supported temporal CRS examples.
+    /// </summary>
+    /// <returns>WKT2 temporal CRS strings that should parse successfully and roundtrip semantically.</returns>
+    public static IEnumerable<TheoryDataRow<string>> SupportedTemporalWkt2Rows()
+    {
+        return
+        [
+            new TheoryDataRow<string>("""TIMECRS["Temporal example",TDATUM["Unix epoch",TIMEORIGIN["1970-01-01T00:00:00Z"],ID["TEST",1040]],CS[temporal,1],AXIS["time",north],TIMEUNIT["second",1,ID["EPSG",1040]],ID["TEST",1041]]"""),
+        ];
+    }
+
+    /// <summary>
+    /// Provides representative supported parametric CRS examples.
+    /// </summary>
+    /// <returns>WKT2 parametric CRS strings that should parse successfully and roundtrip semantically.</returns>
+    public static IEnumerable<TheoryDataRow<string>> SupportedParametricWkt2Rows()
+    {
+        return
+        [
+            new TheoryDataRow<string>("""PARAMETRICCRS["Reservoir pressure",PDATUM["Reservoir datum",ID["TEST",2001]],CS[parametric,1],AXIS["pressure",up],PARAMETRICUNIT["bar",100000,ID["TEST",2002]],ID["TEST",2003]]"""),
+        ];
+    }
+
+    /// <summary>
     /// Provides representative unsupported top-level WKT2 roots that are intentionally outside the current native or normalized reader surface.
     /// </summary>
     /// <returns>Keyword/WKT pairs that should still be rejected explicitly.</returns>
@@ -224,9 +261,6 @@ public class CoordinateSystemWktReaderWkt2Tests
     {
         return
         [
-            new TheoryDataRow<string, string, string>("ENGCRS", """ENGCRS["Engineering example"]""", "ENGCRS"),
-            new TheoryDataRow<string, string, string>("PARAMETRICCRS", """PARAMETRICCRS["Parametric example"]""", "PARAMETRICCRS"),
-            new TheoryDataRow<string, string, string>("TIMECRS", """TIMECRS["Temporal example"]""", "TIMECRS"),
             new TheoryDataRow<string, string, string>("COORDINATEMETADATA", """COORDINATEMETADATA["Metadata example"]""", "COORDINATEMETADATA"),
             new TheoryDataRow<string, string, string>("COORDINATEOPERATION", """COORDINATEOPERATION["Operation example"]""", "COORDINATEOPERATION"),
         ];
@@ -569,6 +603,62 @@ public class CoordinateSystemWktReaderWkt2Tests
         Assert.Equal(2, ensemble.Members.Count);
         Assert.Equal(0.05d, ensemble.Accuracy);
         Assert.Null(ensemble.Ellipsoid);
+    }
+
+    /// <summary>
+    /// Verifies supported engineering CRS examples parse and roundtrip through the engineering model.
+    /// </summary>
+    /// <param name="wkt">The engineering CRS WKT2 input.</param>
+    [Theory]
+    [MemberData(nameof(SupportedEngineeringWkt2Rows))]
+    public void CreateFromWkt_WithSupportedEngineeringCrs_ParsesEngineeringCoordinateSystem(string wkt)
+    {
+        EngineeringCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<EngineeringCoordinateSystem>(CoordinateSystemFactory, wkt);
+        EngineeringCoordinateSystem roundTripped = CoordinateSystemTestHelpers.RequireCoordinateSystem<EngineeringCoordinateSystem>(
+            CoordinateSystemFactory,
+            parsed.ToWktNode(WktVersion.Wkt22019).ToString());
+
+        Assert.Equal("Engineering example", parsed.Name);
+        Assert.Equal("Local engineering datum", parsed.EngineeringDatum.Name);
+        Assert.Equal("Cartesian", parsed.CoordinateSystemType);
+        Assert.True(parsed.EqualParams(roundTripped));
+    }
+
+    /// <summary>
+    /// Verifies supported temporal CRS examples parse and roundtrip through the temporal model.
+    /// </summary>
+    /// <param name="wkt">The temporal CRS WKT2 input.</param>
+    [Theory]
+    [MemberData(nameof(SupportedTemporalWkt2Rows))]
+    public void CreateFromWkt_WithSupportedTemporalCrs_ParsesTemporalCoordinateSystem(string wkt)
+    {
+        TemporalCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<TemporalCoordinateSystem>(CoordinateSystemFactory, wkt);
+        TemporalCoordinateSystem roundTripped = CoordinateSystemTestHelpers.RequireCoordinateSystem<TemporalCoordinateSystem>(
+            CoordinateSystemFactory,
+            parsed.ToWktNode(WktVersion.Wkt22019).ToString());
+
+        Assert.Equal("Temporal example", parsed.Name);
+        Assert.Equal("Unix epoch", parsed.TemporalDatum.Name);
+        Assert.Equal("1970-01-01T00:00:00Z", parsed.TemporalDatum.TimeOrigin);
+        Assert.True(parsed.EqualParams(roundTripped));
+    }
+
+    /// <summary>
+    /// Verifies supported parametric CRS examples parse and roundtrip through the parametric model.
+    /// </summary>
+    /// <param name="wkt">The parametric CRS WKT2 input.</param>
+    [Theory]
+    [MemberData(nameof(SupportedParametricWkt2Rows))]
+    public void CreateFromWkt_WithSupportedParametricCrs_ParsesParametricCoordinateSystem(string wkt)
+    {
+        ParametricCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<ParametricCoordinateSystem>(CoordinateSystemFactory, wkt);
+        ParametricCoordinateSystem roundTripped = CoordinateSystemTestHelpers.RequireCoordinateSystem<ParametricCoordinateSystem>(
+            CoordinateSystemFactory,
+            parsed.ToWktNode(WktVersion.Wkt22019).ToString());
+
+        Assert.Equal("Reservoir pressure", parsed.Name);
+        Assert.Equal("Reservoir datum", parsed.ParametricDatum.Name);
+        Assert.True(parsed.EqualParams(roundTripped));
     }
 
     /// <summary>
