@@ -142,6 +142,34 @@ public class HorizontalDatumTests
     }
 
     /// <summary>
+    /// Verifies that <see cref="Datum.WithEnsemble"/> clones horizontal datums with replacement ensemble metadata.
+    /// </summary>
+    [Fact]
+    public void WithEnsemble_ReturnsCloneWithUpdatedEnsemble()
+    {
+        HorizontalDatum original = HorizontalDatum.WGS84;
+        DatumEnsemble ensemble = new(
+            "World Geodetic System 1984 ensemble",
+            [
+                new DatumEnsembleMember("World Geodetic System 1984 (Transit)", "EPSG", 1166),
+                new DatumEnsembleMember("World Geodetic System 1984 (G730)", "EPSG", 1152),
+            ],
+            2d,
+            original.Ellipsoid,
+            "EPSG",
+            6326);
+        HorizontalDatum clone = Assert.IsType<HorizontalDatum>(original.WithEnsemble(ensemble));
+        DatumEnsemble cloneEnsemble = Assert.IsType<DatumEnsemble>(clone.Ensemble);
+
+        Assert.NotSame(original, clone);
+        Assert.Null(original.Ensemble);
+        Assert.NotSame(ensemble, cloneEnsemble);
+        Assert.Equal(ensemble, cloneEnsemble);
+        Assert.NotSame(original.Ellipsoid, clone.Ellipsoid);
+        Assert.Same(clone.Ellipsoid, cloneEnsemble.Ellipsoid);
+    }
+
+    /// <summary>
     /// Verifies that WKT omits both optional clauses when neither WGS84 parameters nor authority metadata are present.
     /// </summary>
     [Fact]

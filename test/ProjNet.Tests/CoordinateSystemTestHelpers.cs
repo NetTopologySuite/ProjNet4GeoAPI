@@ -103,19 +103,11 @@ internal static class CoordinateSystemTestHelpers
         ArgumentNullException.ThrowIfNull(name);
         ArgumentNullException.ThrowIfNull(authority);
 
-        var clone = new HorizontalDatum(
-            datum.Ellipsoid,
-            CloneOptionalWgs84ConversionInfo(datum.Wgs84Parameters),
-            datum.DatumType,
-            name,
-            authority,
-            authorityCode,
-            datum.Alias,
-            datum.Remarks,
-            datum.Abbreviation,
-            ensemble ?? datum.Ensemble);
-
-        return clone;
+        HorizontalDatum clone = Assert.IsType<HorizontalDatum>(datum.WithName(name));
+        clone = Assert.IsType<HorizontalDatum>(clone.WithAuthority(authority, authorityCode));
+        return ensemble is null
+            ? clone
+            : Assert.IsType<HorizontalDatum>(clone.WithEnsemble(ensemble));
     }
 
     /// <summary>
@@ -131,17 +123,10 @@ internal static class CoordinateSystemTestHelpers
         ArgumentNullException.ThrowIfNull(datum);
         ArgumentNullException.ThrowIfNull(authority);
 
-        var clone = new VerticalDatum(
-            datum.DatumType,
-            datum.Name,
-            authority,
-            authorityCode,
-            datum.Alias,
-            datum.Remarks,
-            datum.Abbreviation,
-            ensemble ?? datum.Ensemble);
-
-        return clone;
+        VerticalDatum clone = Assert.IsType<VerticalDatum>(datum.WithAuthority(authority, authorityCode));
+        return ensemble is null
+            ? clone
+            : Assert.IsType<VerticalDatum>(clone.WithEnsemble(ensemble));
     }
 
     private static GeographicCoordinateSystem CloneGeographicCoordinateSystem(
@@ -254,7 +239,4 @@ internal static class CoordinateSystemTestHelpers
             conversion.Ppm,
             conversion.AreaOfUse);
     }
-
-    private static Wgs84ConversionInfo? CloneOptionalWgs84ConversionInfo(Wgs84ConversionInfo? conversion)
-        => conversion is null ? null : CloneWgs84ConversionInfo(conversion);
 }

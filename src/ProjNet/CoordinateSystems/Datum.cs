@@ -57,6 +57,16 @@ public abstract class Datum : Info
     /// </summary>
     public DatumEnsemble? Ensemble { get; }
 
+    /// <summary>
+    /// Creates a copy of this datum with updated retained datum-ensemble metadata.
+    /// </summary>
+    /// <param name="ensemble">Replacement ensemble metadata, or <see langword="null"/> to clear it.</param>
+    /// <returns>A new datum instance with updated ensemble metadata.</returns>
+    public Datum WithEnsemble(DatumEnsemble? ensemble)
+    {
+        return InfoAuthorityCloneHelper.CloneWithEnsemble(this, ensemble);
+    }
+
     /// <inheritdoc />
     public override bool EqualParams(object obj)
     {

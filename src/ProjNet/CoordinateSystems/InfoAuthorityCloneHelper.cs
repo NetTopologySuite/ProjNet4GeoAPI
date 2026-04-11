@@ -109,6 +109,27 @@ internal static class InfoAuthorityCloneHelper
         };
     }
 
+    /// <summary>
+    /// Creates a deep clone of the supplied datum with replacement retained datum-ensemble metadata.
+    /// </summary>
+    /// <param name="datum">Datum to clone.</param>
+    /// <param name="ensemble">Replacement ensemble metadata, or <see langword="null"/> to clear it.</param>
+    /// <returns>A cloned datum of the same runtime type when supported.</returns>
+    internal static Datum CloneWithEnsemble(Datum datum, DatumEnsemble? ensemble)
+    {
+        datum = ArgumentGuard.ThrowIfNull(datum, nameof(datum));
+
+        return datum switch
+        {
+            HorizontalDatum horizontalDatum => CloneHorizontalDatum(horizontalDatum, ensemble),
+            VerticalDatum verticalDatum => CloneVerticalDatum(verticalDatum, ensemble),
+            EngineeringDatum engineeringDatum when ensemble is null => CloneEngineeringDatum(engineeringDatum),
+            ParametricDatum parametricDatum when ensemble is null => CloneParametricDatum(parametricDatum),
+            TemporalDatum temporalDatum when ensemble is null => CloneTemporalDatum(temporalDatum),
+            _ => throw new NotSupportedException($"Datum ensembles are not supported for datum type '{datum.GetType().FullName}'."),
+        };
+    }
+
     private static AngularUnit CloneAngularUnit(AngularUnit angularUnit, string? authority = null, long? authorityCode = null, string? name = null)
     {
         return new AngularUnit(
@@ -243,6 +264,22 @@ internal static class InfoAuthorityCloneHelper
             CloneDatumEnsemble(horizontalDatum.Ensemble, ellipsoid));
     }
 
+    private static HorizontalDatum CloneHorizontalDatum(HorizontalDatum horizontalDatum, DatumEnsemble? ensemble)
+    {
+        Ellipsoid ellipsoid = CloneEllipsoid(horizontalDatum.Ellipsoid);
+        return new HorizontalDatum(
+            ellipsoid,
+            CloneOptionalWgs84ConversionInfo(horizontalDatum.Wgs84Parameters),
+            horizontalDatum.DatumType,
+            horizontalDatum.Name,
+            horizontalDatum.Authority,
+            horizontalDatum.AuthorityCode,
+            horizontalDatum.Alias,
+            horizontalDatum.Remarks,
+            horizontalDatum.Abbreviation,
+            CloneDatumEnsemble(ensemble, ellipsoid));
+    }
+
     private static VerticalDatum CloneVerticalDatum(VerticalDatum verticalDatum, string? authority = null, long? authorityCode = null, string? name = null)
     {
         return new VerticalDatum(
@@ -254,6 +291,19 @@ internal static class InfoAuthorityCloneHelper
             verticalDatum.Remarks,
             verticalDatum.Abbreviation,
             CloneDatumEnsemble(verticalDatum.Ensemble));
+    }
+
+    private static VerticalDatum CloneVerticalDatum(VerticalDatum verticalDatum, DatumEnsemble? ensemble)
+    {
+        return new VerticalDatum(
+            verticalDatum.DatumType,
+            verticalDatum.Name,
+            verticalDatum.Authority,
+            verticalDatum.AuthorityCode,
+            verticalDatum.Alias,
+            verticalDatum.Remarks,
+            verticalDatum.Abbreviation,
+            CloneDatumEnsemble(ensemble));
     }
 
     private static EngineeringDatum CloneEngineeringDatum(EngineeringDatum engineeringDatum, string? authority = null, long? authorityCode = null, string? name = null)

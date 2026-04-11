@@ -209,6 +209,38 @@ public class VerticalDatumTests
     }
 
     /// <summary>
+    /// Verifies that <see cref="Datum.WithEnsemble"/> can clear retained vertical ensemble metadata.
+    /// </summary>
+    [Fact]
+    public void WithEnsemble_WithNull_ClearsRetainedEnsemble()
+    {
+        DatumEnsemble ensemble = new(
+            "Example vertical ensemble",
+            [
+                new DatumEnsembleMember("Datum A"),
+                new DatumEnsembleMember("Datum B"),
+            ],
+            0.05d);
+        var original = new VerticalDatum(
+            DatumType.VD_Orthometric,
+            "Custom datum",
+            "TEST",
+            42,
+            "alias",
+            "remarks",
+            "abbr",
+            ensemble);
+        VerticalDatum clone = Assert.IsType<VerticalDatum>(original.WithEnsemble(null));
+
+        Assert.NotSame(original, clone);
+        Assert.NotNull(original.Ensemble);
+        Assert.Null(clone.Ensemble);
+        Assert.Equal(original.Name, clone.Name);
+        Assert.Equal(original.Authority, clone.Authority);
+        Assert.Equal(original.AuthorityCode, clone.AuthorityCode);
+    }
+
+    /// <summary>
     /// Verifies that different object types compare unequal.
     /// </summary>
     [Fact]
