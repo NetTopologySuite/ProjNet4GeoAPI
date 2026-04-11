@@ -248,34 +248,34 @@ public class Ellipsoid : Info
     }
 
     /// <summary>
-    /// Gets or sets the value of the semi-major axis.
+    /// Gets the value of the semi-major axis.
     /// </summary>
-    public double SemiMajorAxis { get; set; }
+    public double SemiMajorAxis { get; }
 
     /// <summary>
-    /// Gets or sets the value of the semi-minor axis.
+    /// Gets the value of the semi-minor axis.
     /// </summary>
-    public double SemiMinorAxis { get; set; }
+    public double SemiMinorAxis { get; }
 
     /// <summary>
-    /// Gets or sets the value of the inverse of the flattening constant of the ellipsoid.
+    /// Gets the value of the inverse of the flattening constant of the ellipsoid.
     /// </summary>
-    public double InverseFlattening { get; set; }
+    public double InverseFlattening { get; }
 
     /// <summary>
-    /// Gets or sets the value of the axis unit.
+    /// Gets the value of the axis unit.
     /// </summary>
-    public LinearUnit AxisUnit { get; set; }
+    public LinearUnit AxisUnit { get; }
 
     /// <summary>
-    /// Gets or sets a value indicating whether the inverse flattening value is the defining parameter for this ellipsoid.
+    /// Gets a value indicating whether the inverse flattening value is the defining parameter for this ellipsoid.
     /// </summary>
     /// <remarks>
     /// When <see langword="true"/>, the semi-minor axis is derived from the inverse flattening value.
     /// When <see langword="false"/>, the inverse flattening is derived from the semi-minor axis.
     /// This distinction can be important to avoid floating-point rounding errors.
     /// </remarks>
-    public bool IsIvfDefinitive { get; set; }
+    public bool IsIvfDefinitive { get; }
 
     /// <summary>
     /// Gets the Well-known text for this object
