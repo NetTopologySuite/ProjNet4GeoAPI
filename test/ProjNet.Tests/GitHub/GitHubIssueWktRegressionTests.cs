@@ -22,6 +22,11 @@ public class GitHubIssueWktRegressionTests
         PROJCS["NAD27/BLM60N(ftUS)",GEOGCS["NAD27",DATUM["North_American_Datum_1927",SPHEROID["Clarke1866",6378206.4,294.978698213898],EXTENSION["PROJ4_GRIDS","NTv2_0.gsb"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4267"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",177],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",1640416.67],PARAMETER["false_northing",0],UNIT["USsurveyfoot",0.304800609601219],AXIS["Easting",EAST],AXIS["Northing",NORTH],AUTHORITY["EPSG","4400"]]
         """;
 
+    private const string ExtensionWkt3 =
+        """
+        PROJCS["WGS84/Pseudo-Mercator",GEOGCS["WGS84",DATUM["WGS_1984",SPHEROID["WGS84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]],PROJECTION["Mercator_1SP"],PARAMETER["central_meridian",0],PARAMETER["scale_factor",1],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH],EXTENSION["PROJ4","+proj=merc+a=6378137+b=6378137+lat_ts=0+lon_0=0+x_0=0+y_0=0+k=1+units=m+nadgrids=@null+wktext+no_defs"],AUTHORITY["EPSG","3857"]]
+        """;
+
     private readonly CoordinateSystemFactory coordinateSystemFactory = new();
 
     /// <summary>
@@ -51,5 +56,19 @@ public class GitHubIssueWktRegressionTests
         Assert.Equal(expectedAuthorityCode, projected.AuthorityCode);
         Assert.Equal("Transverse_Mercator", projected.Projection.ClassName);
         Assert.Equal(4267, projected.GeographicCoordinateSystem.AuthorityCode);
+    }
+
+    /// <summary>
+    /// Verifies that GitHub issue #106 is fixed for the PROJCS-level EXTENSION sample from PR #111.
+    /// </summary>
+    [GitHubIssue(106)]
+    [Fact(DisplayName = "Issue #106, PROJCS-level EXTENSION WKT parses successfully")]
+    public void ProjcsLevelExtensionParsesAsProjectedCoordinateSystem()
+    {
+        ProjectedCoordinateSystem projected = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(this.coordinateSystemFactory, ExtensionWkt3);
+
+        Assert.Equal(3857, projected.AuthorityCode);
+        Assert.Equal("Mercator_1SP", projected.Projection.ClassName);
+        Assert.Equal(4326, projected.GeographicCoordinateSystem.AuthorityCode);
     }
 }
