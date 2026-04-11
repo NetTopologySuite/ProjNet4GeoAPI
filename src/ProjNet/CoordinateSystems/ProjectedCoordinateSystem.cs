@@ -73,19 +73,19 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
     }
 
     /// <summary>
-    /// Gets or sets the geographic coordinate system on which this projection is based.
+    /// Gets the geographic coordinate system on which this projection is based.
     /// </summary>
-    public GeographicCoordinateSystem GeographicCoordinateSystem { get; set; }
+    public GeographicCoordinateSystem GeographicCoordinateSystem { get; }
 
     /// <summary>
-    /// Gets or sets the <see cref="LinearUnit">LinearUnits</see>. The linear unit must be the same as the <see cref="CoordinateSystem"/> units.
+    /// Gets the <see cref="LinearUnit">LinearUnits</see>. The linear unit must be the same as the <see cref="CoordinateSystem"/> units.
     /// </summary>
-    public LinearUnit LinearUnit { get; set; }
+    public LinearUnit LinearUnit { get; }
 
     /// <summary>
-    /// Gets or sets the projection.
+    /// Gets the projection.
     /// </summary>
-    public IProjection Projection { get; set; }
+    public IProjection Projection { get; }
 
     /// <summary>
     /// Gets the Well-known text for this object

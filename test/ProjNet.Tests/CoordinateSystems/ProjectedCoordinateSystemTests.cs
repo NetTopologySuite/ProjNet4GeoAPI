@@ -134,18 +134,18 @@ public class ProjectedCoordinateSystemTests
     }
 
     /// <summary>
-    /// Verifies that property setters update the projected coordinate system.
+    /// Verifies that the projected coordinate system exposes the members supplied at construction time.
     /// </summary>
     [Fact]
-    public void PropertySetters_UpdateValues()
+    public void ConstructorConfiguredValues_AreExposed()
     {
-        ProjectedCoordinateSystem system = CreateSystem(horizontalDatum: HorizontalDatum.ED50);
         GeographicCoordinateSystem geographicCoordinateSystem = CreateParisGeographicCoordinateSystem();
         Projection projection = CreateProjection("Lambert_Conformal_Conic_2SP");
-
-        system.GeographicCoordinateSystem = geographicCoordinateSystem;
-        system.LinearUnit = LinearUnit.Foot;
-        system.Projection = projection;
+        ProjectedCoordinateSystem system = CreateSystem(
+            horizontalDatum: HorizontalDatum.ED50,
+            geographicCoordinateSystem: geographicCoordinateSystem,
+            linearUnit: LinearUnit.Foot,
+            projection: projection);
 
         Assert.True(system.HorizontalDatum.EqualParams(HorizontalDatum.ED50));
         Assert.Same(geographicCoordinateSystem, system.GeographicCoordinateSystem);
