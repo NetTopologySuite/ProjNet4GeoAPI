@@ -703,26 +703,19 @@ internal static class BoundCoordinateSystemSupport
 
     private static GeographicCoordinateSystem CloneGeographicCoordinateSystemWithoutLegacyBoundMetadata(GeographicCoordinateSystem geographicCoordinateSystem)
     {
-        GeographicCoordinateSystem clone = CloneGeographicCoordinateSystem(geographicCoordinateSystem, CloneHorizontalDatum(geographicCoordinateSystem.HorizontalDatum));
-        clone.HorizontalDatum.Wgs84Parameters = null;
-        clone.WGS84ConversionInfo = [];
-        return clone;
+        return CloneGeographicCoordinateSystem(
+            geographicCoordinateSystem,
+            CloneHorizontalDatum(geographicCoordinateSystem.HorizontalDatum, includeWgs84Parameters: false));
     }
 
     private static ProjectedCoordinateSystem CloneProjectedCoordinateSystemWithoutLegacyBoundMetadata(ProjectedCoordinateSystem projectedCoordinateSystem)
     {
-        ProjectedCoordinateSystem clone = CloneProjectedCoordinateSystem(projectedCoordinateSystem);
-        clone.HorizontalDatum.Wgs84Parameters = null;
-        clone.GeographicCoordinateSystem.HorizontalDatum.Wgs84Parameters = null;
-        clone.GeographicCoordinateSystem.WGS84ConversionInfo = [];
-        return clone;
+        return CloneProjectedCoordinateSystem(projectedCoordinateSystem, includeWgs84Parameters: false);
     }
 
     private static GeocentricCoordinateSystem CloneGeocentricCoordinateSystemWithoutLegacyBoundMetadata(GeocentricCoordinateSystem geocentricCoordinateSystem)
     {
-        GeocentricCoordinateSystem clone = CloneGeocentricCoordinateSystem(geocentricCoordinateSystem);
-        clone.HorizontalDatum.Wgs84Parameters = null;
-        return clone;
+        return CloneGeocentricCoordinateSystem(geocentricCoordinateSystem, includeWgs84Parameters: false);
     }
 
     private static VerticalCoordinateSystem CloneVerticalCoordinateSystemWithoutLegacyBoundMetadata(VerticalCoordinateSystem verticalCoordinateSystem)
@@ -802,8 +795,11 @@ internal static class BoundCoordinateSystemSupport
     }
 
     private static ProjectedCoordinateSystem CloneProjectedCoordinateSystem(ProjectedCoordinateSystem projectedCoordinateSystem)
+        => CloneProjectedCoordinateSystem(projectedCoordinateSystem, includeWgs84Parameters: true);
+
+    private static ProjectedCoordinateSystem CloneProjectedCoordinateSystem(ProjectedCoordinateSystem projectedCoordinateSystem, bool includeWgs84Parameters)
     {
-        HorizontalDatum horizontalDatum = CloneHorizontalDatum(projectedCoordinateSystem.HorizontalDatum);
+        HorizontalDatum horizontalDatum = CloneHorizontalDatum(projectedCoordinateSystem.HorizontalDatum, includeWgs84Parameters);
         GeographicCoordinateSystem geographicCoordinateSystem = CloneGeographicCoordinateSystem(projectedCoordinateSystem.GeographicCoordinateSystem, horizontalDatum);
 
         var clone = new ProjectedCoordinateSystem(
@@ -823,9 +819,12 @@ internal static class BoundCoordinateSystemSupport
     }
 
     private static GeocentricCoordinateSystem CloneGeocentricCoordinateSystem(GeocentricCoordinateSystem geocentricCoordinateSystem)
+        => CloneGeocentricCoordinateSystem(geocentricCoordinateSystem, includeWgs84Parameters: true);
+
+    private static GeocentricCoordinateSystem CloneGeocentricCoordinateSystem(GeocentricCoordinateSystem geocentricCoordinateSystem, bool includeWgs84Parameters)
     {
         var clone = new GeocentricCoordinateSystem(
-            CloneHorizontalDatum(geocentricCoordinateSystem.HorizontalDatum),
+            CloneHorizontalDatum(geocentricCoordinateSystem.HorizontalDatum, includeWgs84Parameters),
             CloneLinearUnit(geocentricCoordinateSystem.LinearUnit),
             ClonePrimeMeridian(geocentricCoordinateSystem.PrimeMeridian),
             CloneAxisInfo(geocentricCoordinateSystem),
@@ -880,10 +879,17 @@ internal static class BoundCoordinateSystemSupport
     }
 
     private static HorizontalDatum CloneHorizontalDatum(HorizontalDatum horizontalDatum)
+        => CloneHorizontalDatum(horizontalDatum, includeWgs84Parameters: true);
+
+    private static HorizontalDatum CloneHorizontalDatum(HorizontalDatum horizontalDatum, bool includeWgs84Parameters)
     {
+        Wgs84ConversionInfo? wgs84Parameters = includeWgs84Parameters && horizontalDatum.Wgs84Parameters is not null
+            ? CloneWgs84Parameters(horizontalDatum.Wgs84Parameters)
+            : null;
+
         return new HorizontalDatum(
             CloneEllipsoid(horizontalDatum.Ellipsoid),
-            horizontalDatum.Wgs84Parameters is null ? null : CloneWgs84Parameters(horizontalDatum.Wgs84Parameters),
+            wgs84Parameters,
             horizontalDatum.DatumType,
             horizontalDatum.Name,
             horizontalDatum.Authority,
