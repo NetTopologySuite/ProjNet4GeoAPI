@@ -50,9 +50,13 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     public void TestIssue23773()
     {
         var csUtm18N = ProjectedCoordinateSystem.WGS84_UTM(18, true);
+        const string wgs84Utm18NWkt =
+            """
+            PROJCS["WGS 84 / UTM zone 18N",GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",-75],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH],AUTHORITY["EPSG","32618"]]
+            """;
         CoordinateSystem csUtm18NWkt = CoordinateSystemTestHelpers.RequireCoordinateSystem(
             this.CoordinateSystemFactory,
-            "PROJCS[\"WGS 84 / UTM zone 18N\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",-75],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],AUTHORITY[\"EPSG\",\"32618\"]]");
+            wgs84Utm18NWkt);
         GeographicCoordinateSystem csWgs84 = GeographicCoordinateSystem.WGS84;
 
         ICoordinateTransformation ct = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csUtm18N, csWgs84);
@@ -78,12 +82,20 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     [Fact(DisplayName = "Proj.net reprojection problem, Discussion http://projnet.codeplex.com/discussions/351733")]
     public void TestDiscussion351733()
     {
+        const string pulkovoProjectedWkt =
+            """
+            PROJCS["Pulkovo 1942 / Gauss-Kruger zone 14",GEOGCS["Pulkovo 1942",DATUM["Pulkovo_1942",SPHEROID["Krassowsky 1940",6378245,298.3,AUTHORITY["EPSG","7024"]],TOWGS84[23.92,-141.27,-80.9,-0,0.35,0.82,-0.12],AUTHORITY["EPSG","6284"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4284"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",81],PARAMETER["scale_factor",1],PARAMETER["false_easting",14500000],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["X",NORTH],AXIS["Y",EAST],AUTHORITY["EPSG","28414"]]"
+            """;
+        const string pulkovoGeographicWkt =
+            """
+            GEOGCS["Pulkovo 1942",DATUM["Pulkovo_1942",SPHEROID["Krassowsky 1940",6378245,298.3,AUTHORITY["EPSG","7024"]],TOWGS84[23.92,-141.27,-80.9,-0,0.35,0.82,-0.12],AUTHORITY["EPSG","6284"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4284"]]"
+            """;
         CoordinateSystem csSource = CoordinateSystemTestHelpers.RequireCoordinateSystem(
             this.CoordinateSystemFactory,
-            "PROJCS[\"Pulkovo 1942 / Gauss-Kruger zone 14\",GEOGCS[\"Pulkovo 1942\",DATUM[\"Pulkovo_1942\",SPHEROID[\"Krassowsky 1940\",6378245,298.3,AUTHORITY[\"EPSG\",\"7024\"]],TOWGS84[23.92,-141.27,-80.9,-0,0.35,0.82,-0.12],AUTHORITY[\"EPSG\",\"6284\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4284\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",81],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",14500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"X\",NORTH],AXIS[\"Y\",EAST],AUTHORITY[\"EPSG\",\"28414\"]]\"");
+            pulkovoProjectedWkt);
         CoordinateSystem csTarget = CoordinateSystemTestHelpers.RequireCoordinateSystem(
             this.CoordinateSystemFactory,
-            "GEOGCS[\"Pulkovo 1942\",DATUM[\"Pulkovo_1942\",SPHEROID[\"Krassowsky 1940\",6378245,298.3,AUTHORITY[\"EPSG\",\"7024\"]],TOWGS84[23.92,-141.27,-80.9,-0,0.35,0.82,-0.12],AUTHORITY[\"EPSG\",\"6284\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4284\"]]\"");
+            pulkovoGeographicWkt);
 
         ICoordinateTransformation ct = this.CoordinateTransformationFactory.CreateFromCoordinateSystems(csSource, csTarget);
 
@@ -166,13 +178,17 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     [Fact(DisplayName = "Concerned about the accuracy, Discussion http://projnet.codeplex.com/discussions/361248")]
     public void TestDiscussion3612481()
     {
+        const string gda94MgaZone50Wkt =
+            """
+            PROJCS["GDA94 / MGA zone 50",GEOGCS["GDA94",DATUM["Geocentric_Datum_of_Australia_1994",SPHEROID["GRS 1980",6378137,298.257222101,AUTHORITY["EPSG","7019"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY["EPSG","6283"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4283"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",117],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",10000000],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH],AUTHORITY["EPSG","28350"]]
+            """;
         CoordinateSystem csSource = CoordinateSystemTestHelpers.RequireCoordinateSystem(
             this.CoordinateSystemFactory,
             Discussion361248Wgs84Wkt);
 
         CoordinateSystem csTarget = CoordinateSystemTestHelpers.RequireCoordinateSystem(
             this.CoordinateSystemFactory,
-            "PROJCS[\"GDA94 / MGA zone 50\",GEOGCS[\"GDA94\",DATUM[\"Geocentric_Datum_of_Australia_1994\",SPHEROID[\"GRS 1980\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"7019\"]],TOWGS84[0,0,0,0,0,0,0],AUTHORITY[\"EPSG\",\"6283\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4283\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",117],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",10000000],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],AUTHORITY[\"EPSG\",\"28350\"]]");
+            gda94MgaZone50Wkt);
 
         // Chose PostGis values
         this.Test("WGS 84 -> GDA94 / MGA zone 50", csSource, csTarget, TestDiscussion3612481Input, TestDiscussion3612481Expected, 0.05, 1.0e-4);
@@ -241,7 +257,10 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     public void TestAngularUnitsEqualParamsIssue()
     {
         // string sourceWkt = " UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]";
-        string wkt = "PROJCS[\"DHDN / Gauss-Kruger zone 3\",GEOGCS[\"DHDN\",DATUM[\"Deutsches_Hauptdreiecksnetz\",SPHEROID[\"Bessel 1841\",6377397.155,299.1528128,AUTHORITY[\"EPSG\",\"7004\"]],AUTHORITY[\"EPSG\",\"6314\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.01745329251994328,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4314\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",9],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",3500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AUTHORITY[\"EPSG\",\"31467\"]]";
+        string wkt =
+            """
+            PROJCS["DHDN / Gauss-Kruger zone 3",GEOGCS["DHDN",DATUM["Deutsches_Hauptdreiecksnetz",SPHEROID["Bessel 1841",6377397.155,299.1528128,AUTHORITY["EPSG","7004"]],AUTHORITY["EPSG","6314"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4314"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",9],PARAMETER["scale_factor",1],PARAMETER["false_easting",3500000],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AUTHORITY["EPSG","31467"]]
+            """;
 
         var pcs1 = this.CoordinateSystemFactory.CreateFromWkt(wkt) as ProjectedCoordinateSystem;
 
@@ -294,58 +313,62 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     [Fact(DisplayName = "Issue #98, Coordinate system isn't supported")]
     public void TestGitHubIssue98()
     {
-        CoordinateSystem? cs = this.CoordinateSystemFactory.CreateFromWkt(
-                @"COMPD_CS[
-	                    ""SWEREF99 18 00 + RH2000 height"",
-	                    PROJCS[
-		                    ""SWEREF99 18 00"",
-		                    GEOGCS[
-			                    ""SWEREF99"",
-			                    DATUM[
-				                    ""SWEREF99"",
-				                    SPHEROID[
-					                    ""GRS 1980"",
-					                    6378137,
-					                    298.257222101,
-					                    AUTHORITY[
-						                    ""EPSG"",
-						                    ""7019""
-					                    ]
-				                    ],
-				                    TOWGS84[0,0,0,0,0,0,0],
-				                    AUTHORITY[""EPSG"",""6619""]
-			                    ],
-			                    PRIMEM
-			                    [
-				                    ""Greenwich"",
-				                    0,
-				                    AUTHORITY[""EPSG"",""8901""]
-			                    ],
-			                    UNIT[""degree"",0.0174532925199433, AUTHORITY[""EPSG"",""9122""]],
-		                        AUTHORITY[""EPSG"",""4619""]
-	                        ], 
-	                        PROJECTION[""Transverse_Mercator""],
-	                        PARAMETER[""latitude_of_origin"",0],
-	                        PARAMETER[""central_meridian"",18],
-	                        PARAMETER[""scale_factor"",1],
-	                        PARAMETER[""false_easting"",150000],
-	                        PARAMETER[""false_northing"",0],
-	                        UNIT[""metre"",1, AUTHORITY[""EPSG"",""9001""]],
-	                        AUTHORITY[""EPSG"",""3011""]
+        const string compoundWkt =
+            """
+            COMPD_CS[
+                "SWEREF99 18 00 + RH2000 height",
+                PROJCS[
+                    "SWEREF99 18 00",
+                    GEOGCS[
+                        "SWEREF99",
+                        DATUM[
+                            "SWEREF99",
+                            SPHEROID[
+                                "GRS 1980",
+                                6378137,
+                                298.257222101,
+                                AUTHORITY[
+                                    "EPSG",
+                                    "7019"
+                                ]
+                            ],
+                            TOWGS84[0,0,0,0,0,0,0],
+                            AUTHORITY["EPSG","6619"]
                         ],
-	                    VERT_CS[
-		                    ""RH2000 height"",
-		                    VERT_DATUM[
-			                    ""Rikets hojdsystem 2000"",
-			                    2005,
-			                    AUTHORITY[""EPSG"",""5208""]
-		                    ],
-		                    UNIT[""metre"",1, AUTHORITY[""EPSG"",""9001""]],
-		                    AXIS[""Up"",UP],
-		                    AUTHORITY[""EPSG"",""5613""]
-	                    ],
-	                    AUTHORITY[""EPSG"",""5850""]
-                    ]");
+                        PRIMEM
+                        [
+                            "Greenwich",
+                            0,
+                            AUTHORITY["EPSG","8901"]
+                        ],
+                        UNIT["degree",0.0174532925199433, AUTHORITY["EPSG","9122"]],
+                        AUTHORITY["EPSG","4619"]
+                    ],
+                    PROJECTION["Transverse_Mercator"],
+                    PARAMETER["latitude_of_origin",0],
+                    PARAMETER["central_meridian",18],
+                    PARAMETER["scale_factor",1],
+                    PARAMETER["false_easting",150000],
+                    PARAMETER["false_northing",0],
+                    UNIT["metre",1, AUTHORITY["EPSG","9001"]],
+                    AUTHORITY["EPSG","3011"]
+                ],
+                VERT_CS[
+                    "RH2000 height",
+                    VERT_DATUM[
+                        "Rikets hojdsystem 2000",
+                        2005,
+                        AUTHORITY["EPSG","5208"]
+                    ],
+                    UNIT["metre",1, AUTHORITY["EPSG","9001"]],
+                    AXIS["Up",UP],
+                    AUTHORITY["EPSG","5613"]
+                ],
+                AUTHORITY["EPSG","5850"]
+            ]
+            """;
+        CoordinateSystem? cs = this.CoordinateSystemFactory.CreateFromWkt(
+                compoundWkt);
         var cmpdCs = cs as CompoundCoordinateSystem;
         Assert.NotNull(cmpdCs);
         Assert.Equal("EPSG", cmpdCs.Authority);
@@ -366,7 +389,10 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
     [Fact]
     public void TestAuthorityNotLoadedIssue()
     {
-        string wkt = "PROJCS[\"WGS 84 / Pseudo-Mercator\",GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4326\"]],PROJECTION[\"Mercator_1SP\"],PARAMETER[\"central_meridian\",0],PARAMETER[\"scale_factor\",1],PARAMETER[\"false_easting\",0],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"X\",EAST],AXIS[\"Y\",NORTH],EXTENSION[\"PROJ4\",\"+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs\"],AUTHORITY[\"EPSG\",\"3857\"]]";
+        string wkt =
+            """
+            PROJCS["WGS 84 / Pseudo-Mercator",GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]],PROJECTION["Mercator_1SP"],PARAMETER["central_meridian",0],PARAMETER["scale_factor",1],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["X",EAST],AXIS["Y",NORTH],EXTENSION["PROJ4","+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs"],AUTHORITY["EPSG","3857"]]
+            """;
         CoordinateSystem? coordinateSystem = this.CoordinateSystemFactory.CreateFromWkt(wkt);
         Assert.NotNull(coordinateSystem);
         Assert.Equal(3857, coordinateSystem.AuthorityCode);
