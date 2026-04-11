@@ -103,6 +103,33 @@ namespace ProjNet.CoordinateSystems
         public override ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public override System.Xml.Linq.XElement ToXml() { }
     }
+    public sealed class ConcatenatedOperation : ProjNet.CoordinateSystems.Info
+    {
+        public ConcatenatedOperation(System.Collections.Generic.IReadOnlyList<ProjNet.CoordinateSystems.CoordinateOperation> steps, ProjNet.CoordinateSystems.CoordinateSystem sourceCoordinateSystem, ProjNet.CoordinateSystems.CoordinateSystem targetCoordinateSystem, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks) { }
+        public ProjNet.CoordinateSystems.CoordinateSystem SourceCoordinateSystem { get; set; }
+        public System.Collections.Generic.IReadOnlyList<ProjNet.CoordinateSystems.CoordinateOperation> Steps { get; }
+        public ProjNet.CoordinateSystems.CoordinateSystem TargetCoordinateSystem { get; set; }
+        public override string WKT { get; }
+        public override string XML { get; }
+        public override bool EqualParams(object obj) { }
+        public ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
+        public System.Xml.Linq.XElement ToXml() { }
+    }
+    public sealed class CoordinateOperation : ProjNet.CoordinateSystems.Info
+    {
+        public CoordinateOperation(string methodName, System.Collections.Generic.IReadOnlyList<ProjNet.CoordinateSystems.Parameter> parameters, ProjNet.CoordinateSystems.CoordinateSystem sourceCoordinateSystem, ProjNet.CoordinateSystems.CoordinateSystem targetCoordinateSystem, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks) { }
+        public string MethodName { get; set; }
+        public System.Collections.Generic.IReadOnlyList<ProjNet.CoordinateSystems.Parameter> Parameters { get; }
+        public ProjNet.CoordinateSystems.CoordinateSystem SourceCoordinateSystem { get; set; }
+        public ProjNet.CoordinateSystems.CoordinateSystem TargetCoordinateSystem { get; set; }
+        public override string WKT { get; }
+        public override string XML { get; }
+        public override bool EqualParams(object obj) { }
+        public ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
+        public System.Xml.Linq.XElement ToXml() { }
+    }
     public abstract class CoordinateSystem : ProjNet.CoordinateSystems.Info
     {
         public double[] DefaultEnvelope { get; set; }
