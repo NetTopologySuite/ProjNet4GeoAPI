@@ -301,6 +301,25 @@ public class GitHubIssueRegressionTests
     }
 
     /// <summary>
+    /// Verifies that EPSG 28992 coordinates can be transformed to WGS 84 and remain within the Netherlands.
+    /// </summary>
+    [GitHubIssue(126)]
+    [Fact(DisplayName = "Issue #126, Amersfoort / RD New transforms to a plausible WGS84 coordinate")]
+    public void AmersfoortToWgs84TransformationProducesCoordinateInTheNetherlands()
+    {
+        CoordinateSystem source = Assert.IsType<CoordinateSystem>(Css.GetCoordinateSystem("EPSG", 28992), exactMatch: false);
+        CoordinateSystem target = Assert.IsType<CoordinateSystem>(Css.GetCoordinateSystem("EPSG", 4326), exactMatch: false);
+
+        ICoordinateTransformation transformation = Assert.IsType<ICoordinateTransformation>(Css.CreateTransformation(source, target), exactMatch: false);
+        (double longitude, double latitude) = transformation.MathTransform.Transform(155000d, 463000d);
+
+        Assert.False(double.IsNaN(longitude));
+        Assert.False(double.IsNaN(latitude));
+        Assert.InRange(longitude, 3d, 8d);
+        Assert.InRange(latitude, 50d, 54d);
+    }
+
+    /// <summary>
     /// Verifies that GitHub issue #64 is fixed: <see cref="GeographicCoordinateSystem"/> and
     /// <see cref="ProjectedCoordinateSystem"/> correctly store abbreviation and remarks
     /// passed to their constructors.
