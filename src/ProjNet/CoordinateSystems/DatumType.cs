@@ -134,4 +134,19 @@ public enum DatumType : int
     /// Highest possible value for temporal datum types.
     /// </summary>
     TD_Max = 40999,
+
+    /// <summary>
+    /// Lowest possible value for parametric datum types.
+    /// </summary>
+    PD_Min = 50000,
+
+    /// <summary>
+    /// Unspecified parametric datum type.
+    /// </summary>
+    PD_Other = PD_Min,
+
+    /// <summary>
+    /// Highest possible value for parametric datum types.
+    /// </summary>
+    PD_Max = 50999,
 }
