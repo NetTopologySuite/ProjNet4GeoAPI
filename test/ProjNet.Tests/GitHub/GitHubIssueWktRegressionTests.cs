@@ -32,6 +32,11 @@ public class GitHubIssueWktRegressionTests
         COMPD_CS["WGS84/Pseudo-Mercator+EGM2008geoidheight",PROJCS["WGS84/Pseudo-Mercator",GEOGCS["WGS84",DATUM["WGS_1984",SPHEROID["WGS84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]],PROJECTION["Mercator_1SP"],PARAMETER["central_meridian",0],PARAMETER["scale_factor",1],PARAMETER["false_easting",0],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH],EXTENSION["PROJ4","+proj=merc+a=6378137+b=6378137+lat_ts=0+lon_0=0+x_0=0+y_0=0+k=1+units=m+nadgrids=@null+wktext+no_defs"],AUTHORITY["EPSG","3857"]],VERT_CS["EGM2008height",VERT_DATUM["EGM2008geoid",2005,AUTHORITY["EPSG","1027"]],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Gravity-relatedheight",UP],AUTHORITY["EPSG","3855"]],AUTHORITY["EPSG","6871"]]
         """;
 
+    private const string Xian1980Wkt =
+        """
+        PROJCS["Xian_1980_GK_CM_105E",GEOGCS["GCS_Xian_1980",DATUM["Xian_1980",SPHEROID["Xian_1980",6332140,398.257,AUTHORITY["EPSG","7049"]],AUTHORITY["EPSG","6610"]],PRIMEM["Greenwich",0],UNIT["degree",0.0171234925199433]],UNIT["metre",1,AUTHORITY["EPSG","9001"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",105],PARAMETER["scale_factor",1],PARAMETER["false_easting",500000],PARAMETER["false_northing",0]]
+        """;
+
     private readonly CoordinateSystemFactory coordinateSystemFactory = new();
 
     /// <summary>
@@ -89,5 +94,18 @@ public class GitHubIssueWktRegressionTests
         Assert.Equal(6871, compound.AuthorityCode);
         Assert.IsType<ProjectedCoordinateSystem>(compound.HeadCoordinateSystem);
         Assert.IsType<VerticalCoordinateSystem>(compound.TailCoordinateSystem);
+    }
+
+    /// <summary>
+    /// Verifies that the Xian 1980 WKT from GitHub issue #65 parses as a projected coordinate system.
+    /// </summary>
+    [GitHubIssue(65)]
+    [Fact(DisplayName = "Issue #65, Xian_1980 projected WKT parses successfully")]
+    public void Xian1980ProjectedCoordinateSystemParsesSuccessfully()
+    {
+        ProjectedCoordinateSystem projected = CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(this.coordinateSystemFactory, Xian1980Wkt);
+
+        Assert.Equal("Transverse_Mercator", projected.Projection.ClassName);
+        Assert.Equal(6332140d, projected.GeographicCoordinateSystem.HorizontalDatum.Ellipsoid.SemiMajorAxis);
     }
 }
