@@ -32,14 +32,14 @@ public sealed class GeographicTransform : MathTransform
     }
 
     /// <summary>
-    /// Gets or sets the source geographic coordinate system for the transformation.
+    /// Gets the source geographic coordinate system for the transformation.
     /// </summary>
-    public GeographicCoordinateSystem SourceGCS { get; set; }
+    public GeographicCoordinateSystem SourceGCS { get; }
 
     /// <summary>
-    /// Gets or sets the target geographic coordinate system for the transformation.
+    /// Gets the target geographic coordinate system for the transformation.
     /// </summary>
-    public GeographicCoordinateSystem TargetGCS { get; set; }
+    public GeographicCoordinateSystem TargetGCS { get; }
 
     /// <summary>
     /// Gets the Well-known text for this object
