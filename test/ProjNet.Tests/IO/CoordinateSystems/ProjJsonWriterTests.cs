@@ -797,12 +797,9 @@ public class ProjJsonWriterTests
             HorizontalDatum.WGS84.Ellipsoid,
             "EPSG",
             6326);
-        HorizontalDatum datum = CoordinateSystemTestHelpers.CloneHorizontalDatumWithMetadata(
-            HorizontalDatum.WGS84,
-            "World Geodetic System 1984 ensemble",
-            "EPSG",
-            6326,
-            ensemble);
+        HorizontalDatum datum = Assert.IsType<HorizontalDatum>(
+            Assert.IsType<HorizontalDatum>(HorizontalDatum.WGS84.WithName("World Geodetic System 1984 ensemble"))
+                .WithEnsemble(ensemble));
 
         GeographicCoordinateSystem geographic = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "WGS 84",
@@ -811,7 +808,7 @@ public class ProjJsonWriterTests
             PrimeMeridian.Greenwich,
             new AxisInfo("Geodetic latitude", AxisOrientationEnum.North),
             new AxisInfo("Geodetic longitude", AxisOrientationEnum.East));
-        return CoordinateSystemTestHelpers.WithAuthority(geographic, "EPSG", 4326);
+        return Assert.IsType<GeographicCoordinateSystem>(geographic.WithAuthority("EPSG", 4326));
     }
 
     private static ProjectedCoordinateSystem CreateEnsembleBackedProjectedCoordinateSystem()
@@ -850,11 +847,11 @@ public class ProjJsonWriterTests
             null,
             "TEST",
             1001);
-        VerticalDatum datum = CoordinateSystemTestHelpers.CloneVerticalDatumWithMetadata(
-            CoordinateSystemFactory.CreateVerticalDatum("Example vertical ensemble", DatumType.VD_GeoidModelDerived),
-            "TEST",
-            1001,
-            ensemble);
+        VerticalDatum datum = Assert.IsType<VerticalDatum>(
+            Assert.IsType<VerticalDatum>(
+                CoordinateSystemFactory.CreateVerticalDatum("Example vertical ensemble", DatumType.VD_GeoidModelDerived)
+                    .WithAuthority("TEST", 1001))
+                .WithEnsemble(ensemble));
 
         return CoordinateSystemFactory.CreateVerticalCoordinateSystem(
             "Example ensemble height",

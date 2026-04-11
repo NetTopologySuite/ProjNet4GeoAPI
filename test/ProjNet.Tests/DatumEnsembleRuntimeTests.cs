@@ -69,12 +69,9 @@ public class DatumEnsembleRuntimeTests
             HorizontalDatum.WGS84.Ellipsoid,
             "EPSG",
             6326);
-        HorizontalDatum datum = CoordinateSystemTestHelpers.CloneHorizontalDatumWithMetadata(
-            HorizontalDatum.WGS84,
-            "World Geodetic System 1984 ensemble",
-            "EPSG",
-            6326,
-            ensemble);
+        HorizontalDatum datum = Assert.IsType<HorizontalDatum>(
+            Assert.IsType<HorizontalDatum>(HorizontalDatum.WGS84.WithName("World Geodetic System 1984 ensemble"))
+                .WithEnsemble(ensemble));
 
         return CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "WGS 84",
@@ -94,15 +91,9 @@ public class DatumEnsembleRuntimeTests
                 new DatumEnsembleMember("Datum B"),
             ],
             0.05d);
-        VerticalDatum datum = new(
-            DatumType.VD_GeoidModelDerived,
-            "Example vertical ensemble",
-            string.Empty,
-            -1,
-            string.Empty,
-            string.Empty,
-            string.Empty,
-            ensemble);
+        VerticalDatum datum = Assert.IsType<VerticalDatum>(
+            CoordinateSystemFactory.CreateVerticalDatum("Example vertical ensemble", DatumType.VD_GeoidModelDerived)
+                .WithEnsemble(ensemble));
 
         return CoordinateSystemFactory.CreateVerticalCoordinateSystem(
             "Example ensemble height",
