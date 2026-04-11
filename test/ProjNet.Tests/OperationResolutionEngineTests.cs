@@ -66,22 +66,14 @@ public class OperationResolutionEngineTests
     [Fact]
     public void CreateFromCoordinateSystemsWithProjectedPairHavingDirectMetadataPrefersMetadataCandidate()
     {
-        var source = ProjectedCoordinateSystem.WGS84_UTM(32, true);
-        var target = ProjectedCoordinateSystem.WGS84_UTM(33, true);
-        source.Authority = "EPSG";
-        source.AuthorityCode = 28992;
-        target.Authority = "EPSG";
-        target.AuthorityCode = 23031;
+        ProjectedCoordinateSystem source = CoordinateSystemTestHelpers.WithAuthority(ProjectedCoordinateSystem.WGS84_UTM(32, true), "EPSG", 28992);
+        ProjectedCoordinateSystem target = CoordinateSystemTestHelpers.WithAuthority(ProjectedCoordinateSystem.WGS84_UTM(33, true), "EPSG", 23031);
 
         ICoordinateTransformation metadataTransformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
         double[] metadataOutput = metadataTransformation.MathTransform.Transform(UtmSamplePoint);
 
-        var fallbackSource = ProjectedCoordinateSystem.WGS84_UTM(32, true);
-        var fallbackTarget = ProjectedCoordinateSystem.WGS84_UTM(33, true);
-        fallbackSource.Authority = string.Empty;
-        fallbackSource.AuthorityCode = -1;
-        fallbackTarget.Authority = string.Empty;
-        fallbackTarget.AuthorityCode = -1;
+        ProjectedCoordinateSystem fallbackSource = CoordinateSystemTestHelpers.WithAuthority(ProjectedCoordinateSystem.WGS84_UTM(32, true), string.Empty, -1);
+        ProjectedCoordinateSystem fallbackTarget = CoordinateSystemTestHelpers.WithAuthority(ProjectedCoordinateSystem.WGS84_UTM(33, true), string.Empty, -1);
         ICoordinateTransformation fallbackTransformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(fallbackSource, fallbackTarget);
         double[] fallbackOutput = fallbackTransformation.MathTransform.Transform(UtmSamplePoint);
 
@@ -101,12 +93,8 @@ public class OperationResolutionEngineTests
     [Fact]
     public void CreateFromCoordinateSystemsWithProjectedFallbackPairUsesDirectProj2ProjCorePath()
     {
-        var source = ProjectedCoordinateSystem.WGS84_UTM(32, true);
-        var target = ProjectedCoordinateSystem.WGS84_UTM(33, true);
-        source.Authority = string.Empty;
-        source.AuthorityCode = -1;
-        target.Authority = string.Empty;
-        target.AuthorityCode = -1;
+        ProjectedCoordinateSystem source = CoordinateSystemTestHelpers.WithAuthority(ProjectedCoordinateSystem.WGS84_UTM(32, true), string.Empty, -1);
+        ProjectedCoordinateSystem target = CoordinateSystemTestHelpers.WithAuthority(ProjectedCoordinateSystem.WGS84_UTM(33, true), string.Empty, -1);
 
         ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
 
@@ -121,12 +109,8 @@ public class OperationResolutionEngineTests
     [Fact]
     public void CreateFromCoordinateSystemsWithProjectedPairWithoutEpsgAuthorityUsesLegacyFallback()
     {
-        var source = ProjectedCoordinateSystem.WGS84_UTM(32, true);
-        var target = ProjectedCoordinateSystem.WGS84_UTM(33, true);
-        source.Authority = string.Empty;
-        source.AuthorityCode = -1;
-        target.Authority = string.Empty;
-        target.AuthorityCode = -1;
+        ProjectedCoordinateSystem source = CoordinateSystemTestHelpers.WithAuthority(ProjectedCoordinateSystem.WGS84_UTM(32, true), string.Empty, -1);
+        ProjectedCoordinateSystem target = CoordinateSystemTestHelpers.WithAuthority(ProjectedCoordinateSystem.WGS84_UTM(33, true), string.Empty, -1);
 
         ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
 
@@ -186,12 +170,14 @@ public class OperationResolutionEngineTests
 
         Assert.NotNull(gridOnlyPair);
 
-        var source = ProjectedCoordinateSystem.WGS84_UTM(32, true);
-        var target = ProjectedCoordinateSystem.WGS84_UTM(33, true);
-        source.Authority = "EPSG";
-        source.AuthorityCode = Assert.IsType<List<CoordinateOperationDefinition>>(gridOnlyPair)[0].SourceSrid;
-        target.Authority = "EPSG";
-        target.AuthorityCode = Assert.IsType<List<CoordinateOperationDefinition>>(gridOnlyPair)[0].TargetSrid;
+        ProjectedCoordinateSystem source = CoordinateSystemTestHelpers.WithAuthority(
+            ProjectedCoordinateSystem.WGS84_UTM(32, true),
+            "EPSG",
+            Assert.IsType<List<CoordinateOperationDefinition>>(gridOnlyPair)[0].SourceSrid);
+        ProjectedCoordinateSystem target = CoordinateSystemTestHelpers.WithAuthority(
+            ProjectedCoordinateSystem.WGS84_UTM(33, true),
+            "EPSG",
+            Assert.IsType<List<CoordinateOperationDefinition>>(gridOnlyPair)[0].TargetSrid);
 
         string? originalRequiredMode = Environment.GetEnvironmentVariable("PROJNET_GRID_REQUIRED");
         try
@@ -223,12 +209,8 @@ public class OperationResolutionEngineTests
 
         Assert.NotNull(mixedPair);
 
-        var source = ProjectedCoordinateSystem.WGS84_UTM(32, true);
-        var target = ProjectedCoordinateSystem.WGS84_UTM(33, true);
-        source.Authority = "EPSG";
-        source.AuthorityCode = mixedPair[0].SourceSrid;
-        target.Authority = "EPSG";
-        target.AuthorityCode = mixedPair[0].TargetSrid;
+        ProjectedCoordinateSystem source = CoordinateSystemTestHelpers.WithAuthority(ProjectedCoordinateSystem.WGS84_UTM(32, true), "EPSG", mixedPair[0].SourceSrid);
+        ProjectedCoordinateSystem target = CoordinateSystemTestHelpers.WithAuthority(ProjectedCoordinateSystem.WGS84_UTM(33, true), "EPSG", mixedPair[0].TargetSrid);
 
         ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
 
@@ -251,12 +233,14 @@ public class OperationResolutionEngineTests
                 && services.GetCoordinateSystem(definition.SourceSrid) is GeographicCoordinateSystem
                 && services.GetCoordinateSystem(definition.TargetSrid) is GeographicCoordinateSystem);
 
-        GeographicCoordinateSystem source = Assert.IsType<GeographicCoordinateSystem>(services.GetCoordinateSystem(operation.SourceSrid));
-        GeographicCoordinateSystem target = Assert.IsType<GeographicCoordinateSystem>(services.GetCoordinateSystem(operation.TargetSrid));
-        source.Authority = "EPSG";
-        source.AuthorityCode = operation.SourceSrid;
-        target.Authority = "EPSG";
-        target.AuthorityCode = operation.TargetSrid;
+        GeographicCoordinateSystem source = CoordinateSystemTestHelpers.WithAuthority(
+            Assert.IsType<GeographicCoordinateSystem>(services.GetCoordinateSystem(operation.SourceSrid)),
+            "EPSG",
+            operation.SourceSrid);
+        GeographicCoordinateSystem target = CoordinateSystemTestHelpers.WithAuthority(
+            Assert.IsType<GeographicCoordinateSystem>(services.GetCoordinateSystem(operation.TargetSrid)),
+            "EPSG",
+            operation.TargetSrid);
 
         ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
 
@@ -292,17 +276,20 @@ public class OperationResolutionEngineTests
         {
             ProjectedCoordinateSystem sourceTemplate = Assert.IsType<ProjectedCoordinateSystem>(services.GetCoordinateSystem(candidate.SourceProjectedSrid));
             ProjectedCoordinateSystem targetTemplate = Assert.IsType<ProjectedCoordinateSystem>(services.GetCoordinateSystem(candidate.TargetProjectedSrid));
-            ProjectedCoordinateSystem source = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(this.coordinateSystemFactory, sourceTemplate.WKT);
-            ProjectedCoordinateSystem target = ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(this.coordinateSystemFactory, targetTemplate.WKT);
-
-            source.Authority = string.Empty;
-            source.AuthorityCode = -1;
-            target.Authority = string.Empty;
-            target.AuthorityCode = -1;
-            source.GeographicCoordinateSystem.Authority = "EPSG";
-            source.GeographicCoordinateSystem.AuthorityCode = candidate.operation.SourceSrid;
-            target.GeographicCoordinateSystem.Authority = "EPSG";
-            target.GeographicCoordinateSystem.AuthorityCode = candidate.operation.TargetSrid;
+            ProjectedCoordinateSystem source = CoordinateSystemTestHelpers.WithBaseGeographicAuthority(
+                CoordinateSystemTestHelpers.WithAuthority(
+                    ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(this.coordinateSystemFactory, sourceTemplate.WKT),
+                    string.Empty,
+                    -1),
+                "EPSG",
+                candidate.operation.SourceSrid);
+            ProjectedCoordinateSystem target = CoordinateSystemTestHelpers.WithBaseGeographicAuthority(
+                CoordinateSystemTestHelpers.WithAuthority(
+                    ProjNet.Tests.CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(this.coordinateSystemFactory, targetTemplate.WKT),
+                    string.Empty,
+                    -1),
+                "EPSG",
+                candidate.operation.TargetSrid);
 
             ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
             if (!"EPSG".Equals(transformation.Authority, StringComparison.Ordinal))
@@ -332,12 +319,14 @@ public class OperationResolutionEngineTests
         var services = new CoordinateSystemServices();
         CoordinateOperationDefinition operation = provider.GetDefinitions().First(definition => definition.OperationCode == 7817);
 
-        GeocentricCoordinateSystem source = Assert.IsType<GeocentricCoordinateSystem>(services.GetCoordinateSystem(operation.SourceSrid));
-        GeocentricCoordinateSystem target = Assert.IsType<GeocentricCoordinateSystem>(services.GetCoordinateSystem(operation.TargetSrid));
-        source.Authority = "EPSG";
-        source.AuthorityCode = operation.SourceSrid;
-        target.Authority = "EPSG";
-        target.AuthorityCode = operation.TargetSrid;
+        GeocentricCoordinateSystem source = CoordinateSystemTestHelpers.WithAuthority(
+            Assert.IsType<GeocentricCoordinateSystem>(services.GetCoordinateSystem(operation.SourceSrid)),
+            "EPSG",
+            operation.SourceSrid);
+        GeocentricCoordinateSystem target = CoordinateSystemTestHelpers.WithAuthority(
+            Assert.IsType<GeocentricCoordinateSystem>(services.GetCoordinateSystem(operation.TargetSrid)),
+            "EPSG",
+            operation.TargetSrid);
 
         ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
 
@@ -356,12 +345,14 @@ public class OperationResolutionEngineTests
         var services = new CoordinateSystemServices();
         CoordinateOperationDefinition operation = provider.GetDefinitions().First(definition => definition.OperationCode == 1447);
 
-        GeographicCoordinateSystem source = Assert.IsType<GeographicCoordinateSystem>(services.GetCoordinateSystem(operation.SourceSrid));
-        GeographicCoordinateSystem target = Assert.IsType<GeographicCoordinateSystem>(services.GetCoordinateSystem(operation.TargetSrid));
-        source.Authority = "EPSG";
-        source.AuthorityCode = operation.SourceSrid;
-        target.Authority = "EPSG";
-        target.AuthorityCode = operation.TargetSrid;
+        GeographicCoordinateSystem source = CoordinateSystemTestHelpers.WithAuthority(
+            Assert.IsType<GeographicCoordinateSystem>(services.GetCoordinateSystem(operation.SourceSrid)),
+            "EPSG",
+            operation.SourceSrid);
+        GeographicCoordinateSystem target = CoordinateSystemTestHelpers.WithAuthority(
+            Assert.IsType<GeographicCoordinateSystem>(services.GetCoordinateSystem(operation.TargetSrid)),
+            "EPSG",
+            operation.TargetSrid);
 
         ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
         double[] output = transformation.MathTransform.Transform(GeographicOffsetSamplePoint);
@@ -384,12 +375,14 @@ public class OperationResolutionEngineTests
         var services = new CoordinateSystemServices();
         CoordinateOperationDefinition operation = provider.GetDefinitions().First(definition => definition.OperationCode == 5900);
 
-        GeocentricCoordinateSystem source = Assert.IsType<GeocentricCoordinateSystem>(services.GetCoordinateSystem(operation.SourceSrid));
-        GeocentricCoordinateSystem target = Assert.IsType<GeocentricCoordinateSystem>(services.GetCoordinateSystem(operation.TargetSrid));
-        source.Authority = "EPSG";
-        source.AuthorityCode = operation.SourceSrid;
-        target.Authority = "EPSG";
-        target.AuthorityCode = operation.TargetSrid;
+        GeocentricCoordinateSystem source = CoordinateSystemTestHelpers.WithAuthority(
+            Assert.IsType<GeocentricCoordinateSystem>(services.GetCoordinateSystem(operation.SourceSrid)),
+            "EPSG",
+            operation.SourceSrid);
+        GeocentricCoordinateSystem target = CoordinateSystemTestHelpers.WithAuthority(
+            Assert.IsType<GeocentricCoordinateSystem>(services.GetCoordinateSystem(operation.TargetSrid)),
+            "EPSG",
+            operation.TargetSrid);
 
         ICoordinateTransformation transformation = this.coordinateTransformationFactory.CreateFromCoordinateSystems(source, target);
         double[] output = transformation.MathTransform.Transform(TimeDependentGeocentricSamplePoint);

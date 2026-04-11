@@ -787,10 +787,11 @@ public class ProjJsonWriterTests
 
     private static GeographicCoordinateSystem CreateEnsembleBackedGeographicCoordinateSystem()
     {
-        HorizontalDatum datum = HorizontalDatum.WGS84;
-        datum.Name = "World Geodetic System 1984 ensemble";
-        datum.Authority = "EPSG";
-        datum.AuthorityCode = 6326;
+        HorizontalDatum datum = CoordinateSystemTestHelpers.CloneHorizontalDatumWithMetadata(
+            HorizontalDatum.WGS84,
+            "World Geodetic System 1984 ensemble",
+            "EPSG",
+            6326);
         datum.Ensemble = new DatumEnsemble(
             "World Geodetic System 1984 ensemble",
             [
@@ -809,9 +810,7 @@ public class ProjJsonWriterTests
             PrimeMeridian.Greenwich,
             new AxisInfo("Geodetic latitude", AxisOrientationEnum.North),
             new AxisInfo("Geodetic longitude", AxisOrientationEnum.East));
-        geographic.Authority = "EPSG";
-        geographic.AuthorityCode = 4326;
-        return geographic;
+        return CoordinateSystemTestHelpers.WithAuthority(geographic, "EPSG", 4326);
     }
 
     private static ProjectedCoordinateSystem CreateEnsembleBackedProjectedCoordinateSystem()
@@ -840,9 +839,10 @@ public class ProjJsonWriterTests
 
     private static VerticalCoordinateSystem CreateEnsembleBackedVerticalCoordinateSystem()
     {
-        VerticalDatum datum = CoordinateSystemFactory.CreateVerticalDatum("Example vertical ensemble", DatumType.VD_GeoidModelDerived);
-        datum.Authority = "TEST";
-        datum.AuthorityCode = 1001;
+        VerticalDatum datum = CoordinateSystemTestHelpers.CloneVerticalDatumWithMetadata(
+            CoordinateSystemFactory.CreateVerticalDatum("Example vertical ensemble", DatumType.VD_GeoidModelDerived),
+            "TEST",
+            1001);
         datum.Ensemble = new DatumEnsemble(
             "Example vertical ensemble",
             [

@@ -44,45 +44,45 @@ public abstract class Info : IInfo
                     string abbreviation,
                     string remarks)
     {
-        this.Name = name;
-        this.Authority = authority;
+        this.Name = name ?? string.Empty;
+        this.Authority = authority ?? string.Empty;
         this.AuthorityCode = code;
-        this.Alias = alias;
-        this.Abbreviation = abbreviation;
-        this.Remarks = remarks;
+        this.Alias = alias ?? string.Empty;
+        this.Abbreviation = abbreviation ?? string.Empty;
+        this.Remarks = remarks ?? string.Empty;
     }
 
     /// <summary>
-    /// Gets or sets the name of the object.
+    /// Gets the name of the object.
     /// </summary>
-    public string Name { get; set; }
+    public string Name { get; }
 
     /// <summary>
-    /// Gets or sets the authority name for this object, e.g., "EPSG",
+    /// Gets the authority name for this object, e.g., "EPSG",
     /// is this is a standard object with an authority specific
     /// identity code. Returns "CUSTOM" if this is a custom object.
     /// </summary>
-    public string Authority { get; set; }
+    public string Authority { get; }
 
     /// <summary>
-    /// Gets or sets the authority specific identification code of the object.
+    /// Gets the authority specific identification code of the object.
     /// </summary>
-    public long AuthorityCode { get; set; }
+    public long AuthorityCode { get; }
 
     /// <summary>
-    /// Gets or sets the alias of the object.
+    /// Gets the alias of the object.
     /// </summary>
-    public string Alias { get; set; }
+    public string Alias { get; }
 
     /// <summary>
-    /// Gets or sets the abbreviation of the object.
+    /// Gets the abbreviation of the object.
     /// </summary>
-    public string Abbreviation { get; set; }
+    public string Abbreviation { get; }
 
     /// <summary>
-    /// Gets or sets the provider-supplied remarks for the object.
+    /// Gets the provider-supplied remarks for the object.
     /// </summary>
-    public string Remarks { get; set; }
+    public string Remarks { get; }
 
     /// <summary>
     /// Gets the Well-known text for this object

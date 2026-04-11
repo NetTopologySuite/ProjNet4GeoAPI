@@ -59,10 +59,11 @@ public class DatumEnsembleRuntimeTests
 
     private static GeographicCoordinateSystem CreateEnsembleBackedGeographicCoordinateSystem()
     {
-        HorizontalDatum datum = HorizontalDatum.WGS84;
-        datum.Name = "World Geodetic System 1984 ensemble";
-        datum.Authority = "EPSG";
-        datum.AuthorityCode = 6326;
+        HorizontalDatum datum = CoordinateSystemTestHelpers.CloneHorizontalDatumWithMetadata(
+            HorizontalDatum.WGS84,
+            "World Geodetic System 1984 ensemble",
+            "EPSG",
+            6326);
         datum.Ensemble = new DatumEnsemble(
             "World Geodetic System 1984 ensemble",
             [

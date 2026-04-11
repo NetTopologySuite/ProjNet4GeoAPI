@@ -38,38 +38,6 @@ public class InfoTests
     }
 
     /// <summary>
-    /// Verifies that the mutable metadata properties can be updated after construction.
-    /// </summary>
-    [Fact]
-    public void Properties_CanBeUpdated()
-    {
-        var info = new TestInfo(
-            "Initial",
-            "AUTH",
-            1,
-            "alias",
-            "abbr",
-            "remarks",
-            "WKT",
-            "XML")
-        {
-            Name = "Updated",
-            Authority = "EPSG",
-            AuthorityCode = 3857,
-            Alias = "webmerc",
-            Abbreviation = "wm",
-            Remarks = "updated remarks",
-        };
-
-        Assert.Equal("Updated", info.Name);
-        Assert.Equal("EPSG", info.Authority);
-        Assert.Equal(3857, info.AuthorityCode);
-        Assert.Equal("webmerc", info.Alias);
-        Assert.Equal("wm", info.Abbreviation);
-        Assert.Equal("updated remarks", info.Remarks);
-    }
-
-    /// <summary>
     /// Verifies that <see cref="Info.InfoXml"/> includes the supported metadata attributes in the expected order.
     /// </summary>
     [Fact]
