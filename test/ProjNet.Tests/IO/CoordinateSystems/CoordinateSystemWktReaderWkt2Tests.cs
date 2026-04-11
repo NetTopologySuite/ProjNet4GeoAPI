@@ -662,6 +662,52 @@ public class CoordinateSystemWktReaderWkt2Tests
     }
 
     /// <summary>
+    /// Verifies the new CRS readers reject missing datum blocks explicitly.
+    /// </summary>
+    /// <param name="wkt">The malformed WKT2 input.</param>
+    /// <param name="expectedMessageFragment">The expected diagnostic fragment.</param>
+    [Theory]
+    [InlineData("""ENGCRS["Broken engineering",CS[Cartesian,2],AXIS["x",east],AXIS["y",north],LENGTHUNIT["metre",1]]""", "EDATUM")]
+    [InlineData("""TIMECRS["Broken temporal",CS[temporal,1],AXIS["time",north],TIMEUNIT["second",1]]""", "TDATUM")]
+    [InlineData("""PARAMETRICCRS["Broken parametric",CS[parametric,1],AXIS["pressure",up],PARAMETRICUNIT["bar",100000]]""", "PDATUM")]
+    public void CreateFromWkt_WithMissingDatumBlock_ThrowsArgumentException(string wkt, string expectedMessageFragment)
+    {
+        Exception exception = Assert.ThrowsAny<Exception>(() => CoordinateSystemFactory.CreateFromWkt(wkt));
+
+        Assert.Contains(expectedMessageFragment, exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Verifies temporal and parametric CRS reject invalid coordinate-system types.
+    /// </summary>
+    /// <param name="wkt">The malformed WKT2 input.</param>
+    /// <param name="expectedMessageFragment">The expected diagnostic fragment.</param>
+    [Theory]
+    [InlineData("""TIMECRS["Temporal example",TDATUM["Unix epoch",TIMEORIGIN["1970-01-01T00:00:00Z"]],CS[Cartesian,1],AXIS["time",north],TIMEUNIT["second",1]]""", "coordinate system type")]
+    [InlineData("""PARAMETRICCRS["Reservoir pressure",PDATUM["Reservoir datum"],CS[Cartesian,1],AXIS["pressure",up],PARAMETRICUNIT["bar",100000]]""", "coordinate system type")]
+    public void CreateFromWkt_WithInvalidTemporalOrParametricCsType_ThrowsNotSupportedException(string wkt, string expectedMessageFragment)
+    {
+        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => CoordinateSystemFactory.CreateFromWkt(wkt));
+
+        Assert.Contains(expectedMessageFragment, exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Verifies higher-dimensional engineering CRS definitions are retained.
+    /// </summary>
+    [Fact]
+    public void CreateFromWkt_WithThreeDimensionalEngineeringCrs_ParsesEngineeringCoordinateSystem()
+    {
+        const string wkt = """ENGCRS["Engineering 3D",EDATUM["Local engineering datum"],CS[Cartesian,3],AXIS["x",east],AXIS["y",north],AXIS["z",up],LENGTHUNIT["metre",1]]""";
+
+        EngineeringCoordinateSystem parsed = CoordinateSystemTestHelpers.RequireCoordinateSystem<EngineeringCoordinateSystem>(CoordinateSystemFactory, wkt);
+
+        Assert.Equal(3, parsed.Dimension);
+        Assert.True(parsed.GetUnits(2).EqualParams(LinearUnit.Metre));
+        Assert.Equal(AxisOrientationEnum.Up, parsed.GetAxis(2).Orientation);
+    }
+
+    /// <summary>
     /// Verifies representative unsupported WKT2 root keywords remain rejected instead of silently normalizing to an unrelated WKT1 path.
     /// </summary>
     /// <param name="keyword">The unsupported top-level WKT2 keyword.</param>
