@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Text;
+using System.Threading;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
@@ -255,6 +256,15 @@ public abstract class MapProjection : MathTransform, IProjection
     /// </summary>
     private const double P20 = 0.01677689594356261023;
 
+    private static readonly AsyncLocal<ProjectionIdentityOverride?> CurrentProjectionIdentityOverride = new();
+
+    private string abbreviation = string.Empty;
+    private string alias = string.Empty;
+    private string authority = string.Empty;
+    private long authorityCode;
+    private string name = string.Empty;
+    private string remarks = string.Empty;
+
     /// <summary>
     /// Initializes a new instance of the <see cref="MapProjection"/> class with a paired inverse projection.
     /// </summary>
@@ -325,34 +335,77 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <summary>
     /// Gets or sets the abbreviation of the object.
     /// </summary>
-    public string Abbreviation { get; set; } = string.Empty;
+    public string Abbreviation
+    {
+        get => this.abbreviation;
+        set => this.abbreviation = value ?? string.Empty;
+    }
 
     /// <summary>
     /// Gets or sets the alias of the object.
     /// </summary>
-    public string Alias { get; set; } = string.Empty;
+    public string Alias
+    {
+        get => this.alias;
+        set => this.alias = value ?? string.Empty;
+    }
 
     /// <summary>
     /// Gets or sets the authority name for this object, e.g., "EPSG",
     /// is this is a standard object with an authority specific
     /// identity code. Returns "CUSTOM" if this is a custom object.
     /// </summary>
-    public string Authority { get; set; } = string.Empty;
+    public string Authority
+    {
+        get => this.authority;
+        set => this.authority = value ?? string.Empty;
+    }
 
     /// <summary>
     /// Gets or sets the authority specific identification code of the object.
     /// </summary>
-    public long AuthorityCode { get; set; }
+    public long AuthorityCode
+    {
+        get => this.authorityCode;
+        set => this.authorityCode = value;
+    }
 
     /// <summary>
     /// Gets or sets the name of the object.
     /// </summary>
-    public string Name { get; set; } = string.Empty;
+    public string Name
+    {
+        get => this.name;
+        set
+        {
+            string assignedName = value ?? string.Empty;
+            ProjectionIdentityOverride? identityOverride = CurrentProjectionIdentityOverride.Value;
+            if (identityOverride is not null && identityOverride.AppliesTo(this.GetType()))
+            {
+                if (string.Equals(assignedName, identityOverride.RequestedName, StringComparison.OrdinalIgnoreCase))
+                {
+                    this.alias = string.Empty;
+                    this.name = assignedName;
+                    return;
+                }
+
+                this.alias = assignedName;
+                this.name = identityOverride.RequestedName;
+                return;
+            }
+
+            this.name = assignedName;
+        }
+    }
 
     /// <summary>
     /// Gets or sets the provider-supplied remarks for the object.
     /// </summary>
-    public string Remarks { get; set; } = string.Empty;
+    public string Remarks
+    {
+        get => this.remarks;
+        set => this.remarks = value ?? string.Empty;
+    }
 
     /// <summary>
     /// Calculates the UTM zone number for the given longitude.
@@ -484,6 +537,22 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <param name="name">Name of parameter.</param>
     /// <returns>The named <see cref="ProjectionParameter"/>, or <see langword="null"/> if not found.</returns>
     public ProjectionParameter? GetParameter(string name) => this.Parameters.Find(name);
+
+    /// <summary>
+    /// Begins a scoped projection-identity override so registry aliases can be applied during projection construction.
+    /// </summary>
+    /// <param name="projectionType">The concrete projection type being instantiated.</param>
+    /// <param name="requestedName">The projection name requested from the registry.</param>
+    /// <returns>An <see cref="IDisposable"/> that restores the previous override when disposed.</returns>
+    internal static IDisposable BeginProjectionIdentityOverride(Type projectionType, string requestedName)
+    {
+        projectionType = ArgumentGuard.ThrowIfNull(projectionType, nameof(projectionType));
+        requestedName = ArgumentGuard.ThrowIfNull(requestedName, nameof(requestedName));
+
+        ProjectionIdentityOverride? previous = CurrentProjectionIdentityOverride.Value;
+        CurrentProjectionIdentityOverride.Value = new ProjectionIdentityOverride(projectionType, requestedName);
+        return new ProjectionIdentityOverrideScope(previous);
+    }
 
     /// <summary>
     /// Gets a value indicating whether this projection operates in the inverse direction.
@@ -1177,6 +1246,43 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <param name="y">The length of the other orthogonal leg of the triangle.</param>
     /// <returns>The length of the diagonal.</returns>
     protected static double Hypot(double x, double y) => Math.Sqrt((x * x) + (y * y));
+
+    private sealed class ProjectionIdentityOverride
+    {
+        internal ProjectionIdentityOverride(Type projectionType, string requestedName)
+        {
+            this.ProjectionType = projectionType;
+            this.RequestedName = requestedName;
+        }
+
+        internal Type ProjectionType { get; }
+
+        internal string RequestedName { get; }
+
+        internal bool AppliesTo(Type projectionType) => projectionType == this.ProjectionType;
+    }
+
+    private sealed class ProjectionIdentityOverrideScope : IDisposable
+    {
+        private readonly ProjectionIdentityOverride? previous;
+        private bool disposed;
+
+        internal ProjectionIdentityOverrideScope(ProjectionIdentityOverride? previous)
+        {
+            this.previous = previous;
+        }
+
+        public void Dispose()
+        {
+            if (this.disposed)
+            {
+                return;
+            }
+
+            CurrentProjectionIdentityOverride.Value = this.previous;
+            this.disposed = true;
+        }
+    }
 
     /// <summary>
     /// Calculates the flattening factor, (<paramref name="equatorialRadius"/> - <paramref name="polarRadius"/>) / <paramref name="equatorialRadius"/>.

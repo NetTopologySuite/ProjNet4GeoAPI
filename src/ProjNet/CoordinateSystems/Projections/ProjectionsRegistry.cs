@@ -483,14 +483,9 @@ public class ProjectionsRegistry
             parameters = new List<ProjectionParameter>(parameters);
         }
 
+        using IDisposable projectionIdentityOverride = MapProjection.BeginProjectionIdentityOverride(projectionType, className);
         var res = Activator.CreateInstance(projectionType, parameters) as MathTransform;
         res = ArgumentGuard.ThrowIfNull(res, nameof(projectionType));
-
-        if (res is MapProjection mapProjection && !string.Equals(mapProjection.Name, className, StringComparison.OrdinalIgnoreCase))
-        {
-            mapProjection.Alias = mapProjection.Name;
-            mapProjection.Name = className;
-        }
 
         return res;
     }
