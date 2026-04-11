@@ -139,6 +139,15 @@ public static partial class CoordinateSystemWktReader
 
                 info = ReadWkt2TemporalCoordinateSystem(tokenizer);
                 return true;
+            case "PARAMETRICCRS":
+                if ((!ContainsKeywordBlock(wkt, "PDATUM") && !ContainsKeywordBlock(wkt, "PARAMETRICDATUM")) || !ContainsKeywordBlock(wkt, "CS"))
+                {
+                    info = null;
+                    return false;
+                }
+
+                info = ReadWkt2ParametricCoordinateSystem(tokenizer);
+                return true;
             case "COMPOUNDCRS":
                 info = ReadWkt2CompoundCoordinateSystem(tokenizer);
                 return true;
@@ -1556,6 +1565,144 @@ public static partial class CoordinateSystemWktReader
         return new TemporalCoordinateSystem(
             timeUnit,
             temporalDatum,
+            axisInfo[0],
+            name,
+            authority,
+            authorityCode,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
+    private static ParametricDatum ReadWkt2ParametricDatum(WktTokenizer tokenizer)
+    {
+        string rootKeyword = tokenizer.GetStringValue();
+        WktBracket bracket = tokenizer.ReadOpener();
+        string name = tokenizer.ReadDoubleQuotedWord();
+
+        string authority = string.Empty;
+        long authorityCode = -1;
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            if (tokenizer.GetStringValue() == "ID")
+            {
+                ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+            }
+            else if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+            {
+                SkipKeywordNode(tokenizer);
+            }
+            else
+            {
+                throw new NotSupportedException($"WKT2 {rootKeyword} keyword '{tokenizer.GetStringValue()}' is not supported.");
+            }
+
+            tokenizer.NextToken();
+        }
+
+        return new ParametricDatum(name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
+
+    private static ParametricCoordinateSystem ReadWkt2ParametricCoordinateSystem(WktTokenizer tokenizer)
+    {
+        const string rootKeyword = "PARAMETRICCRS";
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        string name = tokenizer.ReadDoubleQuotedWord();
+
+        ParametricDatum? parametricDatum = null;
+        string? coordinateSystemType = null;
+        int coordinateSystemDimension = 0;
+        IUnit? rootUnit = null;
+        string authority = string.Empty;
+        long authorityCode = -1;
+        var axisInfo = new List<AxisInfo>();
+        var axisUnits = new List<IUnit?>();
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            switch (tokenizer.GetStringValue())
+            {
+                case "PDATUM":
+                case "PARAMETRICDATUM":
+                    parametricDatum = ReadWkt2ParametricDatum(tokenizer);
+                    break;
+                case "CS":
+                    (coordinateSystemType, coordinateSystemDimension) = ReadWkt2CoordinateSystemDefinition(tokenizer);
+                    break;
+                case "AXIS":
+                    (AxisInfo axis, IUnit? unit) = ReadWkt2AxisDefinition(tokenizer);
+                    axisInfo.Add(axis);
+                    axisUnits.Add(unit);
+                    break;
+                case "PARAMETRICUNIT":
+                    rootUnit = ReadWkt2ParametricUnit(tokenizer);
+                    break;
+                case "ID":
+                    ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+                    break;
+                default:
+                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    {
+                        SkipKeywordNode(tokenizer);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"WKT2 keyword '{tokenizer.GetStringValue()}' is not supported in {rootKeyword}.");
+                    }
+
+                    break;
+            }
+
+            tokenizer.NextToken();
+        }
+
+        if (parametricDatum is null)
+        {
+            ArgumentGuard.ThrowArgument("WKT2 parametric CRS is missing a PDATUM or PARAMETRICDATUM block.");
+        }
+
+        if (!string.Equals(coordinateSystemType, "parametric", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new NotSupportedException($"WKT2 parametric coordinate system type '{coordinateSystemType}' is not supported.");
+        }
+
+        List<IUnit> resolvedUnits = ResolveWkt2CoordinateSystemUnits(rootUnit, axisUnits, coordinateSystemDimension, "WKT2 parametric CRS", allowMixedUnits: false);
+        if (resolvedUnits.Count != 1 || resolvedUnits[0] is not ParametricUnit parametricUnit)
+        {
+            throw new NotSupportedException("WKT2 parametric CRS requires PARAMETRICUNIT metadata.");
+        }
+
+        return new ParametricCoordinateSystem(
+            parametricUnit,
+            parametricDatum,
             axisInfo[0],
             name,
             authority,
