@@ -19,6 +19,11 @@ internal enum Wkt2KeywordSupportStatus
     LegacyNormalized,
 
     /// <summary>
+    /// The keyword is partially supported through reusable native reader components but not yet as a complete standalone construct.
+    /// </summary>
+    Partial,
+
+    /// <summary>
     /// The keyword is accepted but skipped as non-operational metadata.
     /// </summary>
     Ignored,

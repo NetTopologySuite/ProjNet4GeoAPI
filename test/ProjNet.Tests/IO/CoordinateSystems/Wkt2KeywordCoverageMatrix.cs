@@ -17,14 +17,17 @@ internal static class Wkt2KeywordCoverageMatrix
     private const string RootDispatchReference = WktReader + ".Parse, " + WktReader + ".TryParseNativeWkt2";
     private const string GeodeticReference = WktReader + ".ReadWkt2GeodeticCoordinateReferenceSystem";
     private const string CoordinateSystemReference = WktReader + ".ReadWkt2CoordinateSystemDefinition";
-    private const string AxisReference = WktReader + ".ReadWkt2Axis, " + WktReader + ".ParseWkt2AxisOrientation";
+    private const string AxisReference = WktReader + ".ReadWkt2Axis, " + WktReader + ".ReadWkt2AxisDefinition, " + WktReader + ".ParseWkt2AxisOrientation";
     private const string HorizontalDatumReference = WktReader + ".ReadWkt2HorizontalDatum";
+    private const string EngineeringReference = WktReader + ".ReadWkt2EngineeringCoordinateSystem, " + WktReader + ".ReadWkt2EngineeringDatum, " + WktReader + ".ReadWkt2AxisDefinition, " + WktReader + ".ReadWkt2Unit";
     private const string EnsembleReference = WktReader + ".ReadWkt2HorizontalDatumEnsemble, " + WktReader + ".ReadWkt2VerticalDatumEnsemble, " + WktReader + ".ReadWkt2DatumEnsemble, " + WktReader + ".ReadWkt2DatumEnsembleMember, " + WktReader + ".ReadWkt2DatumEnsembleAccuracy";
     private const string EllipsoidReference = WktReader + ".ReadWkt2Ellipsoid";
     private const string PrimeMeridianReference = WktReader + ".ReadWkt2PrimeMeridian";
-    private const string AngularUnitReference = WktReader + ".ReadWkt2AngularUnit";
-    private const string LinearUnitReference = WktReader + ".ReadWkt2LinearUnit";
+    private const string AngularUnitReference = WktReader + ".ReadWkt2AngularUnit, " + WktReader + ".ReadWkt2Unit";
+    private const string LinearUnitReference = WktReader + ".ReadWkt2LinearUnit, " + WktReader + ".ReadWkt2Unit";
     private const string MetadataSkipReference = WktReader + ".ShouldSkipWkt2MetadataNode, " + WktReader + ".SkipKeywordNode";
+    private const string TemporalReference = WktReader + ".ReadWkt2TemporalCoordinateSystem, " + WktReader + ".ReadWkt2TemporalDatum, " + WktReader + ".ReadWkt2TimeUnit, " + WktReader + ".ReadWkt2Unit";
+    private const string ParametricReference = WktReader + ".ReadWkt2ParametricCoordinateSystem, " + WktReader + ".ReadWkt2ParametricDatum, " + WktReader + ".ReadWkt2ParametricUnit, " + WktReader + ".ReadWkt2Unit";
     private const string ProjectedReference = WktReader + ".ReadWkt2ProjectedCoordinateSystem";
     private const string DerivedProjectedReference = WktReader + ".ReadWkt2DerivedProjectedCoordinateSystem";
     private const string BaseGeographicReference = WktReader + ".ReadWkt2BaseGeographicCoordinateSystem";
@@ -55,17 +58,17 @@ internal static class Wkt2KeywordCoverageMatrix
         Native("AXIS", AxisReference, "Parsed directly by the native axis reader."),
         Unsupported("AXISMAXVALUE", AxisReference, "No native axis-range branch exists."),
         Unsupported("AXISMINVALUE", AxisReference, "No native axis-range branch exists."),
-        Unsupported("BASEENGCRS", UnsupportedTopLevelReference, "No engineering CRS reader path exists yet."),
+        Partial("BASEENGCRS", EngineeringReference, "Engineering CRS components are now parsed natively, but no derived reader consumes BASEENGCRS yet."),
         Native("BASEGEODCRS", $"{GeodeticReference}, {ProjectedReference}, {BaseGeographicReference}", "Handled natively for supported derived geodetic and projected CRS definitions."),
         Native("BASEGEOGCRS", $"{GeodeticReference}, {ProjectedReference}, {BaseGeographicReference}", "Handled natively for supported derived geodetic and projected CRS definitions."),
-        Unsupported("BASEPARAMCRS", UnsupportedTopLevelReference, "No parametric CRS reader path exists yet."),
+        Partial("BASEPARAMCRS", ParametricReference, "Parametric CRS components are now parsed natively, but no derived reader consumes BASEPARAMCRS yet."),
         Native("BASEPROJCRS", $"{DerivedProjectedReference}, {BaseProjectedReference}", "Handled natively inside the supported affine derived projected CRS slice."),
-        Unsupported("BASETIMECRS", UnsupportedTopLevelReference, "No temporal CRS reader path exists yet."),
+        Partial("BASETIMECRS", TemporalReference, "Temporal CRS components are now parsed natively, but no derived reader consumes BASETIMECRS yet."),
         Unsupported("BASEVERTCRS", UnsupportedTopLevelReference, "No derived vertical CRS reader path exists yet."),
         Ignored("BBOX", MetadataSkipReference, "Accepted as non-operational metadata and skipped."),
         Unsupported("BEARING", PrimeMeridianReference, "The prime-meridian reader has no BEARING branch."),
         Native("BOUNDCRS", $"{RootDispatchReference}, {BoundReference}", "Handled natively and retained as a first-class bound coordinate system for the currently supported subset."),
-        Unsupported("CALENDAR", UnsupportedTopLevelReference, "Temporal datum and temporal CRS parsing are not implemented."),
+        Unsupported("CALENDAR", TemporalReference, "Temporal datum parsing still does not consume CALENDAR metadata."),
         Unsupported("CITATION", DefaultUnsupportedReference, "The native reader does not classify CITATION as skippable metadata."),
         Native("COMPOUNDCRS", $"{RootDispatchReference}, {CompoundReference}", "Handled natively by the compound CRS reader."),
         Unsupported("CONCATENATEDOPERATION", UnsupportedTopLevelReference, "No standalone coordinate-operation reader path exists yet."),
@@ -79,11 +82,11 @@ internal static class Wkt2KeywordCoverageMatrix
         Native("DERIVEDPROJCRS", $"{RootDispatchReference}, {DerivedProjectedReference}", "Handled natively for the supported affine derived projected CRS slice."),
         Native("DERIVINGCONVERSION", $"{GeodeticReference}, {DerivedProjectedReference}, {DerivingConversionReference}", "Handled natively for supported affine derived geographic and projected CRS definitions."),
         Ignored("DYNAMIC", MetadataSkipReference, "Accepted as non-operational metadata and skipped."),
-        Unsupported("EDATUM", UnsupportedTopLevelReference, "No engineering datum reader path exists yet."),
+        Native("EDATUM", EngineeringReference, "Parsed directly by the engineering datum reader."),
         Native("ELLIPSOID", EllipsoidReference, "Parsed directly by the native ellipsoid reader."),
-        Unsupported("ENGCRS", UnsupportedTopLevelReference, "No engineering CRS root reader path exists yet."),
-        Unsupported("ENGINEERINGCRS", UnsupportedTopLevelReference, "No engineering CRS root reader path exists yet."),
-        Unsupported("ENGINEERINGDATUM", UnsupportedTopLevelReference, "No engineering datum reader path exists yet."),
+        Native("ENGCRS", $"{RootDispatchReference}, {EngineeringReference}", "Handled natively through the engineering CRS reader."),
+        Native("ENGINEERINGCRS", $"{RootDispatchReference}, {EngineeringReference}", "Handled natively through the engineering CRS reader alias."),
+        Native("ENGINEERINGDATUM", EngineeringReference, "Parsed directly by the engineering datum reader alias."),
         Native("ENSEMBLE", EnsembleReference, "Parsed directly for supported geodetic and vertical datum ensemble definitions."),
         Native("ENSEMBLEACCURACY", EnsembleReference, "Parsed directly as part of supported datum ensemble definitions."),
         Unsupported("EPOCH", UnsupportedTopLevelReference, "Coordinate metadata parsing is not implemented."),
@@ -105,10 +108,10 @@ internal static class Wkt2KeywordCoverageMatrix
         Ignored("ORDER", MetadataSkipReference, "Accepted as non-operational metadata and skipped."),
         Native("PARAMETER", ConversionReference, "Parsed directly in projection and abridged-transformation blocks."),
         Native("PARAMETERFILE", BoundReference, "Parsed directly for supported BoundCRS parameter-file transformations."),
-        Unsupported("PARAMETRICCRS", UnsupportedTopLevelReference, "No parametric CRS root reader path exists yet."),
-        Unsupported("PARAMETRICDATUM", UnsupportedTopLevelReference, "No parametric datum reader path exists yet."),
-        Unsupported("PARAMETRICUNIT", UnsupportedTopLevelReference, "No parametric unit reader path exists yet."),
-        Unsupported("PDATUM", UnsupportedTopLevelReference, "No parametric datum reader path exists yet."),
+        Native("PARAMETRICCRS", $"{RootDispatchReference}, {ParametricReference}", "Handled natively through the parametric CRS reader."),
+        Native("PARAMETRICDATUM", ParametricReference, "Parsed directly by the parametric datum reader alias."),
+        Native("PARAMETRICUNIT", ParametricReference, "Parsed directly by the parametric unit reader."),
+        Native("PDATUM", ParametricReference, "Parsed directly by the parametric datum reader."),
         Unsupported("POINTMOTIONOPERATION", UnsupportedTopLevelReference, "No point-motion operation reader path exists yet."),
         Native("PRIMEM", PrimeMeridianReference, "Parsed directly by the native prime-meridian reader."),
         Unsupported("PRIMEMERIDIAN", DefaultUnsupportedReference, "The native reader expects PRIMEM rather than PRIMEMERIDIAN."),
@@ -116,18 +119,18 @@ internal static class Wkt2KeywordCoverageMatrix
         LegacyNormalized("PROJECTEDCRS", NormalizationReference, "Only handled through NormalizeWkt -> PROJCS fallback."),
         Unsupported("RANGEMEANING", AxisReference, "The native axis reader has no range-meaning branch."),
         Ignored("REMARK", MetadataSkipReference, "Accepted as non-operational metadata and skipped."),
-        Native("SCALEUNIT", ConversionReference, "Parsed directly for WKT2 projection and BoundCRS parameter units."),
+        Native("SCALEUNIT", $"{ConversionReference}, {EngineeringReference}", "Parsed directly for WKT2 projection, BoundCRS parameter, and engineering CRS units."),
         Ignored("SCOPE", MetadataSkipReference, "Accepted as non-operational metadata and skipped."),
         Native("SOURCECRS", BoundReference, "Parsed directly inside supported BoundCRS definitions."),
         Unsupported("STEP", UnsupportedTopLevelReference, "No standalone concatenated-operation reader path exists yet."),
         Native("TARGETCRS", BoundReference, "Parsed directly inside supported BoundCRS definitions."),
-        Unsupported("TDATUM", UnsupportedTopLevelReference, "No temporal datum reader path exists yet."),
-        Unsupported("TEMPORALQUANTITY", UnsupportedTopLevelReference, "No temporal CRS reader path exists yet."),
-        Unsupported("TIMECRS", UnsupportedTopLevelReference, "No temporal CRS root reader path exists yet."),
-        Unsupported("TIMEDATUM", UnsupportedTopLevelReference, "No temporal datum reader path exists yet."),
+        Native("TDATUM", TemporalReference, "Parsed directly by the temporal datum reader."),
+        Unsupported("TEMPORALQUANTITY", TemporalReference, "Temporal CRS parsing still expects TIMEUNIT rather than TEMPORALQUANTITY."),
+        Native("TIMECRS", $"{RootDispatchReference}, {TemporalReference}", "Handled natively through the temporal CRS reader."),
+        Native("TIMEDATUM", TemporalReference, "Parsed directly by the temporal datum reader alias."),
         Ignored("TIMEEXTENT", MetadataSkipReference, "Tolerated transitively inside skipped USAGE metadata."),
-        Unsupported("TIMEORIGIN", UnsupportedTopLevelReference, "No temporal datum reader path exists yet."),
-        Unsupported("TIMEUNIT", UnsupportedTopLevelReference, "No temporal unit reader path exists yet."),
+        Native("TIMEORIGIN", TemporalReference, "Parsed directly as part of temporal datum definitions."),
+        Native("TIMEUNIT", TemporalReference, "Parsed directly by the temporal unit reader."),
         Unsupported("TRF", UnsupportedTopLevelReference, "No dedicated terrestrial reference-frame reader path exists yet."),
         Unsupported("URI", DefaultUnsupportedReference, "The native reader does not classify URI as skippable metadata."),
         Ignored("USAGE", MetadataSkipReference, "Accepted as non-operational metadata and skipped."),
@@ -148,6 +151,9 @@ internal static class Wkt2KeywordCoverageMatrix
 
     private static Wkt2KeywordCoverageRow LegacyNormalized(string keyword, string reference, string notes) =>
         new(keyword, Wkt2KeywordSupportStatus.LegacyNormalized, reference, notes);
+
+    private static Wkt2KeywordCoverageRow Partial(string keyword, string reference, string notes) =>
+        new(keyword, Wkt2KeywordSupportStatus.Partial, reference, notes);
 
     private static Wkt2KeywordCoverageRow Ignored(string keyword, string reference, string notes) =>
         new(keyword, Wkt2KeywordSupportStatus.Ignored, reference, notes);
