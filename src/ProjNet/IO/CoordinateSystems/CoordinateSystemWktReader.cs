@@ -120,6 +120,16 @@ public static partial class CoordinateSystemWktReader
 
                 info = ReadWkt2VerticalCoordinateSystem(tokenizer);
                 return true;
+            case "ENGCRS":
+            case "ENGINEERINGCRS":
+                if ((!ContainsKeywordBlock(wkt, "EDATUM") && !ContainsKeywordBlock(wkt, "ENGINEERINGDATUM")) || !ContainsKeywordBlock(wkt, "CS"))
+                {
+                    info = null;
+                    return false;
+                }
+
+                info = ReadWkt2EngineeringCoordinateSystem(tokenizer);
+                return true;
             case "COMPOUNDCRS":
                 info = ReadWkt2CompoundCoordinateSystem(tokenizer);
                 return true;
@@ -559,6 +569,67 @@ public static partial class CoordinateSystemWktReader
         };
     }
 
+    private static (AxisInfo Axis, IUnit? Unit) ReadWkt2AxisDefinition(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "AXIS")
+        {
+            tokenizer.ReadToken("AXIS");
+        }
+
+        IUnit? unit = null;
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        string axisName = tokenizer.ReadDoubleQuotedWord();
+        tokenizer.ReadToken(",");
+        tokenizer.NextToken();
+        AxisOrientationEnum orientation = ParseWkt2AxisOrientation(tokenizer.GetStringValue());
+        tokenizer.NextToken();
+
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            switch (tokenizer.GetStringValue())
+            {
+                case "ANGLEUNIT":
+                case "LENGTHUNIT":
+                case "SCALEUNIT":
+                case "TIMEUNIT":
+                case "PARAMETRICUNIT":
+                    unit = ReadWkt2Unit(tokenizer);
+                    break;
+                case "ID":
+                    SkipKeywordNode(tokenizer);
+                    break;
+                default:
+                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    {
+                        SkipKeywordNode(tokenizer);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"WKT2 AXIS keyword '{tokenizer.GetStringValue()}' is not supported.");
+                    }
+
+                    break;
+            }
+
+            tokenizer.NextToken();
+        }
+
+        return (new AxisInfo(axisName, orientation), unit);
+    }
+
     private static HorizontalDatum ReadWkt2HorizontalDatum(WktTokenizer tokenizer)
     {
         if (tokenizer.GetStringValue() != "DATUM")
@@ -992,6 +1063,343 @@ public static partial class CoordinateSystemWktReader
         }
 
         return new LinearUnit(metersPerUnit, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
+
+    private static Unit ReadWkt2ScaleUnit(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "SCALEUNIT")
+        {
+            tokenizer.ReadToken("SCALEUNIT");
+        }
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        string name = tokenizer.ReadDoubleQuotedWord();
+        tokenizer.ReadToken(",");
+        tokenizer.NextToken();
+        double conversionFactor = tokenizer.GetNumericValue();
+
+        string authority = string.Empty;
+        long authorityCode = -1;
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            if (tokenizer.GetStringValue() == "ID")
+            {
+                ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+            }
+            else if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+            {
+                SkipKeywordNode(tokenizer);
+            }
+            else
+            {
+                throw new NotSupportedException($"WKT2 SCALEUNIT keyword '{tokenizer.GetStringValue()}' is not supported.");
+            }
+
+            tokenizer.NextToken();
+        }
+
+        return new Unit(conversionFactor, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
+
+    private static TimeUnit ReadWkt2TimeUnit(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "TIMEUNIT")
+        {
+            tokenizer.ReadToken("TIMEUNIT");
+        }
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        string name = tokenizer.ReadDoubleQuotedWord();
+        tokenizer.ReadToken(",");
+        tokenizer.NextToken();
+        double conversionFactor = tokenizer.GetNumericValue();
+
+        string authority = string.Empty;
+        long authorityCode = -1;
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            if (tokenizer.GetStringValue() == "ID")
+            {
+                ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+            }
+            else if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+            {
+                SkipKeywordNode(tokenizer);
+            }
+            else
+            {
+                throw new NotSupportedException($"WKT2 TIMEUNIT keyword '{tokenizer.GetStringValue()}' is not supported.");
+            }
+
+            tokenizer.NextToken();
+        }
+
+        return new TimeUnit(conversionFactor, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
+
+    private static ParametricUnit ReadWkt2ParametricUnit(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "PARAMETRICUNIT")
+        {
+            tokenizer.ReadToken("PARAMETRICUNIT");
+        }
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        string name = tokenizer.ReadDoubleQuotedWord();
+        tokenizer.ReadToken(",");
+        tokenizer.NextToken();
+        double conversionFactor = tokenizer.GetNumericValue();
+
+        string authority = string.Empty;
+        long authorityCode = -1;
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            if (tokenizer.GetStringValue() == "ID")
+            {
+                ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+            }
+            else if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+            {
+                SkipKeywordNode(tokenizer);
+            }
+            else
+            {
+                throw new NotSupportedException($"WKT2 PARAMETRICUNIT keyword '{tokenizer.GetStringValue()}' is not supported.");
+            }
+
+            tokenizer.NextToken();
+        }
+
+        return new ParametricUnit(conversionFactor, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
+
+    private static IUnit ReadWkt2Unit(WktTokenizer tokenizer)
+    {
+        return tokenizer.GetStringValue() switch
+        {
+            "ANGLEUNIT" => ReadWkt2AngularUnit(tokenizer),
+            "LENGTHUNIT" => ReadWkt2LinearUnit(tokenizer),
+            "SCALEUNIT" => ReadWkt2ScaleUnit(tokenizer),
+            "TIMEUNIT" => ReadWkt2TimeUnit(tokenizer),
+            "PARAMETRICUNIT" => ReadWkt2ParametricUnit(tokenizer),
+            _ => throw new NotSupportedException($"WKT2 unit keyword '{tokenizer.GetStringValue()}' is not supported."),
+        };
+    }
+
+    private static bool Wkt2UnitsEqual(IUnit left, IUnit right)
+    {
+        return left.GetType() == right.GetType() && left.EqualParams(right);
+    }
+
+    private static List<IUnit> ResolveWkt2CoordinateSystemUnits(IUnit? rootUnit, List<IUnit?> axisUnits, int dimension, string context, bool allowMixedUnits)
+    {
+        if (axisUnits.Count != dimension)
+        {
+            ArgumentGuard.ThrowArgument($"{context} declared dimension {dimension}, but provided {axisUnits.Count} AXIS blocks.");
+        }
+
+        var resolvedUnits = new List<IUnit>(dimension);
+        for (int i = 0; i < axisUnits.Count; i++)
+        {
+            IUnit? axisUnit = axisUnits[i];
+            if (axisUnit is null)
+            {
+                if (rootUnit is null)
+                {
+                    ArgumentGuard.ThrowArgument($"{context} axis {i.ToString(CultureInfo.InvariantCulture)} is missing a unit definition.");
+                }
+
+                axisUnit = rootUnit;
+            }
+            else if (rootUnit is not null && !Wkt2UnitsEqual(rootUnit, axisUnit) && !allowMixedUnits)
+            {
+                throw new NotSupportedException($"{context} axis-specific units must match the root unit.");
+            }
+
+            resolvedUnits.Add(ArgumentGuard.ThrowIfNull(axisUnit, nameof(axisUnit)));
+        }
+
+        return resolvedUnits;
+    }
+
+    private static EngineeringDatum ReadWkt2EngineeringDatum(WktTokenizer tokenizer)
+    {
+        string rootKeyword = tokenizer.GetStringValue();
+        WktBracket bracket = tokenizer.ReadOpener();
+        string name = tokenizer.ReadDoubleQuotedWord();
+
+        string authority = string.Empty;
+        long authorityCode = -1;
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            if (tokenizer.GetStringValue() == "ID")
+            {
+                ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+            }
+            else if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+            {
+                SkipKeywordNode(tokenizer);
+            }
+            else
+            {
+                throw new NotSupportedException($"WKT2 {rootKeyword} keyword '{tokenizer.GetStringValue()}' is not supported.");
+            }
+
+            tokenizer.NextToken();
+        }
+
+        return new EngineeringDatum(name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
+
+    private static EngineeringCoordinateSystem ReadWkt2EngineeringCoordinateSystem(WktTokenizer tokenizer)
+    {
+        string rootKeyword = tokenizer.GetStringValue();
+        WktBracket bracket = tokenizer.ReadOpener();
+        string name = tokenizer.ReadDoubleQuotedWord();
+
+        EngineeringDatum? engineeringDatum = null;
+        string? coordinateSystemType = null;
+        int coordinateSystemDimension = 0;
+        IUnit? rootUnit = null;
+        string authority = string.Empty;
+        long authorityCode = -1;
+        var axisInfo = new List<AxisInfo>();
+        var axisUnits = new List<IUnit?>();
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            switch (tokenizer.GetStringValue())
+            {
+                case "EDATUM":
+                case "ENGINEERINGDATUM":
+                    engineeringDatum = ReadWkt2EngineeringDatum(tokenizer);
+                    break;
+                case "CS":
+                    (coordinateSystemType, coordinateSystemDimension) = ReadWkt2CoordinateSystemDefinition(tokenizer);
+                    break;
+                case "AXIS":
+                    (AxisInfo axis, IUnit? unit) = ReadWkt2AxisDefinition(tokenizer);
+                    axisInfo.Add(axis);
+                    axisUnits.Add(unit);
+                    break;
+                case "ANGLEUNIT":
+                case "LENGTHUNIT":
+                case "SCALEUNIT":
+                case "TIMEUNIT":
+                case "PARAMETRICUNIT":
+                    rootUnit = ReadWkt2Unit(tokenizer);
+                    break;
+                case "ID":
+                    ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+                    break;
+                default:
+                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    {
+                        SkipKeywordNode(tokenizer);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"WKT2 keyword '{tokenizer.GetStringValue()}' is not supported in {rootKeyword}.");
+                    }
+
+                    break;
+            }
+
+            tokenizer.NextToken();
+        }
+
+        if (engineeringDatum is null)
+        {
+            ArgumentGuard.ThrowArgument("WKT2 engineering CRS is missing an EDATUM or ENGINEERINGDATUM block.");
+        }
+
+        if (string.IsNullOrWhiteSpace(coordinateSystemType))
+        {
+            ArgumentGuard.ThrowArgument("WKT2 engineering CRS is missing a CS block.");
+        }
+
+        List<IUnit> resolvedUnits = ResolveWkt2CoordinateSystemUnits(rootUnit, axisUnits, coordinateSystemDimension, "WKT2 engineering CRS", allowMixedUnits: true);
+
+        return new EngineeringCoordinateSystem(
+            engineeringDatum,
+            ArgumentGuard.ThrowIfNull(coordinateSystemType, nameof(coordinateSystemType)),
+            axisInfo,
+            resolvedUnits,
+            name,
+            authority,
+            authorityCode,
+            string.Empty,
+            string.Empty,
+            string.Empty);
     }
 
     private static void ReadIdentifierWithUnknownCode(WktTokenizer tokenizer, out string authority, out long authorityCode)
