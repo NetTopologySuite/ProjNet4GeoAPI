@@ -29,7 +29,7 @@ namespace ProjNet.CoordinateSystems
     public class AngularUnit : ProjNet.CoordinateSystems.Info, ProjNet.CoordinateSystems.IInfo, ProjNet.CoordinateSystems.IUnit
     {
         public AngularUnit(double radiansPerUnit) { }
-        public double RadiansPerUnit { get; set; }
+        public double RadiansPerUnit { get; }
         public override string WKT { get; }
         public override string XML { get; }
         public static ProjNet.CoordinateSystems.AngularUnit Degrees { get; }
@@ -45,8 +45,8 @@ namespace ProjNet.CoordinateSystems
     {
         public AxisInfo(ProjNet.CoordinateSystems.AxisInfo axisInfo) { }
         public AxisInfo(string name, ProjNet.CoordinateSystems.AxisOrientationEnum orientation) { }
-        public string Name { get; set; }
-        public ProjNet.CoordinateSystems.AxisOrientationEnum Orientation { get; set; }
+        public string Name { get; }
+        public ProjNet.CoordinateSystems.AxisOrientationEnum Orientation { get; }
         public string WKT { get; }
         public string XML { get; }
         public ProjNet.IO.Wkt.WktNode ToWktNode() { }
@@ -93,8 +93,8 @@ namespace ProjNet.CoordinateSystems
     public class CompoundCoordinateSystem : ProjNet.CoordinateSystems.CoordinateSystem
     {
         public CompoundCoordinateSystem(ProjNet.CoordinateSystems.CoordinateSystem headcs, ProjNet.CoordinateSystems.CoordinateSystem tailcs, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks) { }
-        public ProjNet.CoordinateSystems.CoordinateSystem HeadCoordinateSystem { get; set; }
-        public ProjNet.CoordinateSystems.CoordinateSystem TailCoordinateSystem { get; set; }
+        public ProjNet.CoordinateSystems.CoordinateSystem HeadCoordinateSystem { get; }
+        public ProjNet.CoordinateSystems.CoordinateSystem TailCoordinateSystem { get; }
         public override string WKT { get; }
         public override string XML { get; }
         public override bool EqualParams(object obj) { }
@@ -106,9 +106,9 @@ namespace ProjNet.CoordinateSystems
     public sealed class ConcatenatedOperation : ProjNet.CoordinateSystems.Info
     {
         public ConcatenatedOperation(System.Collections.Generic.IReadOnlyList<ProjNet.CoordinateSystems.CoordinateOperation> steps, ProjNet.CoordinateSystems.CoordinateSystem sourceCoordinateSystem, ProjNet.CoordinateSystems.CoordinateSystem targetCoordinateSystem, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks) { }
-        public ProjNet.CoordinateSystems.CoordinateSystem SourceCoordinateSystem { get; set; }
+        public ProjNet.CoordinateSystems.CoordinateSystem SourceCoordinateSystem { get; }
         public System.Collections.Generic.IReadOnlyList<ProjNet.CoordinateSystems.CoordinateOperation> Steps { get; }
-        public ProjNet.CoordinateSystems.CoordinateSystem TargetCoordinateSystem { get; set; }
+        public ProjNet.CoordinateSystems.CoordinateSystem TargetCoordinateSystem { get; }
         public override string WKT { get; }
         public override string XML { get; }
         public override bool EqualParams(object obj) { }
@@ -119,10 +119,10 @@ namespace ProjNet.CoordinateSystems
     public sealed class CoordinateOperation : ProjNet.CoordinateSystems.Info
     {
         public CoordinateOperation(string methodName, System.Collections.Generic.IReadOnlyList<ProjNet.CoordinateSystems.Parameter> parameters, ProjNet.CoordinateSystems.CoordinateSystem sourceCoordinateSystem, ProjNet.CoordinateSystems.CoordinateSystem targetCoordinateSystem, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks) { }
-        public string MethodName { get; set; }
+        public string MethodName { get; }
         public System.Collections.Generic.IReadOnlyList<ProjNet.CoordinateSystems.Parameter> Parameters { get; }
-        public ProjNet.CoordinateSystems.CoordinateSystem SourceCoordinateSystem { get; set; }
-        public ProjNet.CoordinateSystems.CoordinateSystem TargetCoordinateSystem { get; set; }
+        public ProjNet.CoordinateSystems.CoordinateSystem SourceCoordinateSystem { get; }
+        public ProjNet.CoordinateSystems.CoordinateSystem TargetCoordinateSystem { get; }
         public override string WKT { get; }
         public override string XML { get; }
         public override bool EqualParams(object obj) { }
@@ -132,7 +132,7 @@ namespace ProjNet.CoordinateSystems
     }
     public abstract class CoordinateSystem : ProjNet.CoordinateSystems.Info
     {
-        public double[] DefaultEnvelope { get; set; }
+        public double[] DefaultEnvelope { get; }
         public int Dimension { get; }
         public ProjNet.CoordinateSystems.AxisInfo GetAxis(int dimension) { }
         public abstract ProjNet.CoordinateSystems.IUnit GetUnits(int dimension);
@@ -168,9 +168,10 @@ namespace ProjNet.CoordinateSystems
     }
     public abstract class Datum : ProjNet.CoordinateSystems.Info
     {
-        public ProjNet.CoordinateSystems.DatumType DatumType { get; set; }
-        public ProjNet.CoordinateSystems.DatumEnsemble? Ensemble { get; set; }
+        public ProjNet.CoordinateSystems.DatumType DatumType { get; }
+        public ProjNet.CoordinateSystems.DatumEnsemble? Ensemble { get; }
         public override bool EqualParams(object obj) { }
+        public ProjNet.CoordinateSystems.Datum WithEnsemble(ProjNet.CoordinateSystems.DatumEnsemble? ensemble) { }
     }
     public sealed class DatumEnsemble : System.IEquatable<ProjNet.CoordinateSystems.DatumEnsemble>
     {
@@ -228,11 +229,11 @@ namespace ProjNet.CoordinateSystems
     }
     public class Ellipsoid : ProjNet.CoordinateSystems.Info
     {
-        public ProjNet.CoordinateSystems.LinearUnit AxisUnit { get; set; }
-        public double InverseFlattening { get; set; }
-        public bool IsIvfDefinitive { get; set; }
-        public double SemiMajorAxis { get; set; }
-        public double SemiMinorAxis { get; set; }
+        public ProjNet.CoordinateSystems.LinearUnit AxisUnit { get; }
+        public double InverseFlattening { get; }
+        public bool IsIvfDefinitive { get; }
+        public double SemiMajorAxis { get; }
+        public double SemiMinorAxis { get; }
         public override string WKT { get; }
         public override string XML { get; }
         public static ProjNet.CoordinateSystems.Ellipsoid Clarke1866 { get; }
@@ -251,8 +252,8 @@ namespace ProjNet.CoordinateSystems
     {
         public EngineeringCoordinateSystem(ProjNet.CoordinateSystems.EngineeringDatum engineeringDatum, string coordinateSystemType, System.Collections.Generic.IReadOnlyList<ProjNet.CoordinateSystems.AxisInfo> axisInfo, System.Collections.Generic.IReadOnlyList<ProjNet.CoordinateSystems.IUnit> units, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks) { }
         public System.Collections.Generic.IReadOnlyList<ProjNet.CoordinateSystems.IUnit> AxisUnits { get; }
-        public string CoordinateSystemType { get; set; }
-        public ProjNet.CoordinateSystems.EngineeringDatum EngineeringDatum { get; set; }
+        public string CoordinateSystemType { get; }
+        public ProjNet.CoordinateSystems.EngineeringDatum EngineeringDatum { get; }
         public override string WKT { get; }
         public override string XML { get; }
         public override bool EqualParams(object obj) { }
@@ -273,7 +274,7 @@ namespace ProjNet.CoordinateSystems
     }
     public class FittedCoordinateSystem : ProjNet.CoordinateSystems.CoordinateSystem
     {
-        protected FittedCoordinateSystem(ProjNet.CoordinateSystems.CoordinateSystem baseSystem, ProjNet.CoordinateSystems.Transformations.MathTransform transform, string name, string authority, long code, string alias, string remarks, string abbreviation) { }
+        protected FittedCoordinateSystem(ProjNet.CoordinateSystems.CoordinateSystem baseSystem, ProjNet.CoordinateSystems.Transformations.MathTransform transform, string name, string authority, long code, string alias, string remarks, string abbreviation, System.Collections.Generic.IReadOnlyList<ProjNet.CoordinateSystems.AxisInfo>? axisInfo = null) { }
         public ProjNet.CoordinateSystems.CoordinateSystem BaseCoordinateSystem { get; }
         public ProjNet.CoordinateSystems.Transformations.MathTransform ToBaseTransform { get; }
         public override string WKT { get; }
@@ -287,9 +288,9 @@ namespace ProjNet.CoordinateSystems
     }
     public class GeocentricCoordinateSystem : ProjNet.CoordinateSystems.CoordinateSystem
     {
-        public ProjNet.CoordinateSystems.HorizontalDatum HorizontalDatum { get; set; }
-        public ProjNet.CoordinateSystems.LinearUnit LinearUnit { get; set; }
-        public ProjNet.CoordinateSystems.PrimeMeridian PrimeMeridian { get; set; }
+        public ProjNet.CoordinateSystems.HorizontalDatum HorizontalDatum { get; }
+        public ProjNet.CoordinateSystems.LinearUnit LinearUnit { get; }
+        public ProjNet.CoordinateSystems.PrimeMeridian PrimeMeridian { get; }
         public override string WKT { get; }
         public override string XML { get; }
         public static ProjNet.CoordinateSystems.GeocentricCoordinateSystem WGS84 { get; }
@@ -301,9 +302,9 @@ namespace ProjNet.CoordinateSystems
     }
     public class GeographicCoordinateSystem : ProjNet.CoordinateSystems.HorizontalCoordinateSystem
     {
-        public ProjNet.CoordinateSystems.AngularUnit AngularUnit { get; set; }
+        public ProjNet.CoordinateSystems.AngularUnit AngularUnit { get; }
         public int NumConversionToWGS84 { get; }
-        public ProjNet.CoordinateSystems.PrimeMeridian PrimeMeridian { get; set; }
+        public ProjNet.CoordinateSystems.PrimeMeridian PrimeMeridian { get; }
         public override string WKT { get; }
         public override string XML { get; }
         public static ProjNet.CoordinateSystems.GeographicCoordinateSystem WGS84 { get; }
@@ -316,13 +317,13 @@ namespace ProjNet.CoordinateSystems
     }
     public abstract class HorizontalCoordinateSystem : ProjNet.CoordinateSystems.CoordinateSystem
     {
-        public ProjNet.CoordinateSystems.HorizontalDatum HorizontalDatum { get; set; }
+        public ProjNet.CoordinateSystems.HorizontalDatum HorizontalDatum { get; }
     }
     public class HorizontalDatum : ProjNet.CoordinateSystems.Datum
     {
-        public ProjNet.CoordinateSystems.Ellipsoid Ellipsoid { get; set; }
+        public ProjNet.CoordinateSystems.Ellipsoid Ellipsoid { get; }
         public override string WKT { get; }
-        public ProjNet.CoordinateSystems.Wgs84ConversionInfo? Wgs84Parameters { get; set; }
+        public ProjNet.CoordinateSystems.Wgs84ConversionInfo? Wgs84Parameters { get; }
         public override string XML { get; }
         public static ProjNet.CoordinateSystems.HorizontalDatum ED50 { get; }
         public static ProjNet.CoordinateSystems.HorizontalDatum ETRF89 { get; }
@@ -332,6 +333,7 @@ namespace ProjNet.CoordinateSystems
         public ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public System.Xml.Linq.XElement ToXml() { }
+        public ProjNet.CoordinateSystems.HorizontalDatum WithWgs84Parameters(ProjNet.CoordinateSystems.Wgs84ConversionInfo? toWgs84) { }
     }
     public interface IInfo
     {
@@ -355,21 +357,23 @@ namespace ProjNet.CoordinateSystems
     public interface IUnit : ProjNet.CoordinateSystems.IInfo { }
     public abstract class Info : ProjNet.CoordinateSystems.IInfo
     {
-        public string Abbreviation { get; set; }
-        public string Alias { get; set; }
-        public string Authority { get; set; }
-        public long AuthorityCode { get; set; }
-        public string Name { get; set; }
-        public string Remarks { get; set; }
+        public string Abbreviation { get; }
+        public string Alias { get; }
+        public string Authority { get; }
+        public long AuthorityCode { get; }
+        public string Name { get; }
+        public string Remarks { get; }
         public abstract string WKT { get; }
         public abstract string XML { get; }
         public abstract bool EqualParams(object obj);
         public override string ToString() { }
+        public ProjNet.CoordinateSystems.Info WithAuthority(string authority, long code) { }
+        public ProjNet.CoordinateSystems.Info WithName(string name) { }
     }
     public class LinearUnit : ProjNet.CoordinateSystems.Info, ProjNet.CoordinateSystems.IInfo, ProjNet.CoordinateSystems.IUnit
     {
         public LinearUnit(double metersPerUnit, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks) { }
-        public double MetersPerUnit { get; set; }
+        public double MetersPerUnit { get; }
         public override string WKT { get; }
         public override string XML { get; }
         public static ProjNet.CoordinateSystems.LinearUnit ClarkesFoot { get; }
@@ -385,14 +389,14 @@ namespace ProjNet.CoordinateSystems
     public sealed class Parameter
     {
         public Parameter(string name, double value) { }
-        public string Name { get; set; }
-        public double Value { get; set; }
+        public string Name { get; }
+        public double Value { get; }
     }
     public sealed class ParametricCoordinateSystem : ProjNet.CoordinateSystems.CoordinateSystem
     {
         public ParametricCoordinateSystem(ProjNet.CoordinateSystems.ParametricUnit parametricUnit, ProjNet.CoordinateSystems.ParametricDatum parametricDatum, ProjNet.CoordinateSystems.AxisInfo axisInfo, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks) { }
-        public ProjNet.CoordinateSystems.ParametricDatum ParametricDatum { get; set; }
-        public ProjNet.CoordinateSystems.ParametricUnit ParametricUnit { get; set; }
+        public ProjNet.CoordinateSystems.ParametricDatum ParametricDatum { get; }
+        public ProjNet.CoordinateSystems.ParametricUnit ParametricUnit { get; }
         public override string WKT { get; }
         public override string XML { get; }
         public override bool EqualParams(object obj) { }
@@ -414,7 +418,7 @@ namespace ProjNet.CoordinateSystems
     public sealed class ParametricUnit : ProjNet.CoordinateSystems.Info, ProjNet.CoordinateSystems.IInfo, ProjNet.CoordinateSystems.IUnit
     {
         public ParametricUnit(double conversionFactor, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks) { }
-        public double ConversionFactor { get; set; }
+        public double ConversionFactor { get; }
         public override string WKT { get; }
         public override string XML { get; }
         public override bool EqualParams(object obj) { }
@@ -424,8 +428,8 @@ namespace ProjNet.CoordinateSystems
     }
     public class PrimeMeridian : ProjNet.CoordinateSystems.Info
     {
-        public ProjNet.CoordinateSystems.AngularUnit AngularUnit { get; set; }
-        public double Longitude { get; set; }
+        public ProjNet.CoordinateSystems.AngularUnit AngularUnit { get; }
+        public double Longitude { get; }
         public override string WKT { get; }
         public override string XML { get; }
         public static ProjNet.CoordinateSystems.PrimeMeridian Athens { get; }
@@ -448,9 +452,9 @@ namespace ProjNet.CoordinateSystems
     }
     public class ProjectedCoordinateSystem : ProjNet.CoordinateSystems.HorizontalCoordinateSystem
     {
-        public ProjNet.CoordinateSystems.GeographicCoordinateSystem GeographicCoordinateSystem { get; set; }
-        public ProjNet.CoordinateSystems.LinearUnit LinearUnit { get; set; }
-        public ProjNet.CoordinateSystems.IProjection Projection { get; set; }
+        public ProjNet.CoordinateSystems.GeographicCoordinateSystem GeographicCoordinateSystem { get; }
+        public ProjNet.CoordinateSystems.LinearUnit LinearUnit { get; }
+        public ProjNet.CoordinateSystems.IProjection Projection { get; }
         public override string WKT { get; }
         public override string XML { get; }
         public static ProjNet.CoordinateSystems.ProjectedCoordinateSystem WebMercator { get; }
@@ -477,8 +481,8 @@ namespace ProjNet.CoordinateSystems
     public sealed class ProjectionParameter
     {
         public ProjectionParameter(string name, double value) { }
-        public string Name { get; set; }
-        public double Value { get; set; }
+        public string Name { get; }
+        public double Value { get; }
         public string WKT { get; }
         public string XML { get; }
         public override string ToString() { }
@@ -489,8 +493,8 @@ namespace ProjNet.CoordinateSystems
     public sealed class TemporalCoordinateSystem : ProjNet.CoordinateSystems.CoordinateSystem
     {
         public TemporalCoordinateSystem(ProjNet.CoordinateSystems.TimeUnit timeUnit, ProjNet.CoordinateSystems.TemporalDatum temporalDatum, ProjNet.CoordinateSystems.AxisInfo axisInfo, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks) { }
-        public ProjNet.CoordinateSystems.TemporalDatum TemporalDatum { get; set; }
-        public ProjNet.CoordinateSystems.TimeUnit TimeUnit { get; set; }
+        public ProjNet.CoordinateSystems.TemporalDatum TemporalDatum { get; }
+        public ProjNet.CoordinateSystems.TimeUnit TimeUnit { get; }
         public override string WKT { get; }
         public override string XML { get; }
         public override bool EqualParams(object obj) { }
@@ -502,7 +506,7 @@ namespace ProjNet.CoordinateSystems
     public sealed class TemporalDatum : ProjNet.CoordinateSystems.Datum
     {
         public TemporalDatum(string timeOrigin, string name, string authority, long authorityCode, string alias, string remarks, string abbreviation) { }
-        public string TimeOrigin { get; set; }
+        public string TimeOrigin { get; }
         public override string WKT { get; }
         public override string XML { get; }
         public override bool EqualParams(object obj) { }
@@ -513,7 +517,7 @@ namespace ProjNet.CoordinateSystems
     public sealed class TimeUnit : ProjNet.CoordinateSystems.Info, ProjNet.CoordinateSystems.IInfo, ProjNet.CoordinateSystems.IUnit
     {
         public TimeUnit(double conversionFactor, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks) { }
-        public double ConversionFactor { get; set; }
+        public double ConversionFactor { get; }
         public override string WKT { get; }
         public override string XML { get; }
         public override bool EqualParams(object obj) { }
@@ -523,7 +527,7 @@ namespace ProjNet.CoordinateSystems
     }
     public class Unit : ProjNet.CoordinateSystems.Info, ProjNet.CoordinateSystems.IInfo, ProjNet.CoordinateSystems.IUnit
     {
-        public double ConversionFactor { get; set; }
+        public double ConversionFactor { get; }
         public override string WKT { get; }
         public override string XML { get; }
         public override bool EqualParams(object obj) { }
@@ -532,8 +536,8 @@ namespace ProjNet.CoordinateSystems
     public class VerticalCoordinateSystem : ProjNet.CoordinateSystems.CoordinateSystem
     {
         public VerticalCoordinateSystem(ProjNet.CoordinateSystems.LinearUnit linearUnit, ProjNet.CoordinateSystems.VerticalDatum verticalDatum, ProjNet.CoordinateSystems.AxisInfo axisInfo, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks) { }
-        public ProjNet.CoordinateSystems.LinearUnit LinearUnit { get; set; }
-        public ProjNet.CoordinateSystems.VerticalDatum VerticalDatum { get; set; }
+        public ProjNet.CoordinateSystems.LinearUnit LinearUnit { get; }
+        public ProjNet.CoordinateSystems.VerticalDatum VerticalDatum { get; }
         public override string WKT { get; }
         public override string XML { get; }
         public static ProjNet.CoordinateSystems.VerticalCoordinateSystem ODN { get; }
@@ -652,10 +656,10 @@ namespace ProjNet.CoordinateSystems.Projections
         protected readonly double semiMinor;
         protected MapProjection(System.Collections.Generic.IEnumerable<ProjNet.CoordinateSystems.ProjectionParameter> parameters) { }
         protected MapProjection(System.Collections.Generic.IEnumerable<ProjNet.CoordinateSystems.ProjectionParameter> parameters, ProjNet.CoordinateSystems.Projections.MapProjection? inverse) { }
-        public string Abbreviation { get; set; }
-        public string Alias { get; set; }
-        public string Authority { get; set; }
-        public long AuthorityCode { get; set; }
+        public string Abbreviation { get; }
+        public string Alias { get; }
+        public string Authority { get; }
+        public long AuthorityCode { get; }
         protected double Central_parallel { get; }
         public string ClassName { get; }
         public override sealed int DimSource { get; }
@@ -664,10 +668,10 @@ namespace ProjNet.CoordinateSystems.Projections
         protected double InverseSphericalRadius { get; }
         protected bool IsInverse { get; }
         protected double Lon_origin { get; set; }
-        public string Name { get; set; }
+        public string Name { get; }
         public int NumParameters { get; }
         protected double Phi0 { get; }
-        public string Remarks { get; set; }
+        public string Remarks { get; }
         protected double SphericalRadius { get; }
         public override string WKT { get; }
         public override string XML { get; }
@@ -794,8 +798,8 @@ namespace ProjNet.CoordinateSystems.Transformations
     {
         public override int DimSource { get; }
         public override int DimTarget { get; }
-        public ProjNet.CoordinateSystems.GeographicCoordinateSystem SourceGCS { get; set; }
-        public ProjNet.CoordinateSystems.GeographicCoordinateSystem TargetGCS { get; set; }
+        public ProjNet.CoordinateSystems.GeographicCoordinateSystem SourceGCS { get; }
+        public ProjNet.CoordinateSystems.GeographicCoordinateSystem TargetGCS { get; }
         public override string WKT { get; }
         public override string XML { get; }
         public override ProjNet.CoordinateSystems.Transformations.MathTransform Inverse() { }

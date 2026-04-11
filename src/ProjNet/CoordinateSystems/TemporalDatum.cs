@@ -32,9 +32,9 @@ public sealed class TemporalDatum : Datum
     }
 
     /// <summary>
-    /// Gets or sets the declared time origin.
+    /// Gets the declared time origin.
     /// </summary>
-    public string TimeOrigin { get; set; }
+    public string TimeOrigin { get; }
 
     /// <inheritdoc />
     public override string WKT => this.ToWktNode().ToString();
