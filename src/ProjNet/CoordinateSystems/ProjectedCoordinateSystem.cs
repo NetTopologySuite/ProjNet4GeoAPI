@@ -27,10 +27,6 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
     private static readonly Lazy<ProjectedCoordinateSystem> WebMercatorCoordinateSystem =
         new(CreateWebMercatorCoordinateSystem, true);
 
-    private static readonly Dictionary<int, ProjectedCoordinateSystem> Wgs84UtmCoordinateSystems = [];
-
-    private static readonly object Wgs84UtmCoordinateSystemsSync = new();
-
     /// <summary>
     /// Initializes a new instance of the <see cref="ProjectedCoordinateSystem"/> class.
     /// </summary>
@@ -440,27 +436,11 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
     private static ProjectedCoordinateSystem CreateWgs84UtmCoordinateSystem(int zone, bool zoneIsNorth)
     {
         int srid = GetWgs84UtmSrid(zone, zoneIsNorth);
-        ProjectedCoordinateSystem template;
-
-        lock (Wgs84UtmCoordinateSystemsSync)
-        {
-            if (!Wgs84UtmCoordinateSystems.TryGetValue(srid, out template!))
-            {
-                template = ResolveRuntimeCompatibleWgs84UtmCoordinateSystem(zone, zoneIsNorth, srid);
-                Wgs84UtmCoordinateSystems[srid] = template;
-            }
-        }
-
-        return CloneProjectedCoordinateSystem(template);
-    }
-
-    private static ProjectedCoordinateSystem ResolveRuntimeCompatibleWgs84UtmCoordinateSystem(int zone, bool zoneIsNorth, int srid)
-    {
         return Wgs84CatalogBootstrap.TryGetCoordinateSystem(
             srid,
             out ProjectedCoordinateSystem? coordinateSystem)
             ? NormalizeToLegacyWgs84UtmShape(coordinateSystem, zone, zoneIsNorth, srid)
-            : CreateLegacyWgs84UtmCoordinateSystem(zone, zoneIsNorth, srid);
+            : throw new InvalidOperationException($"The generated EPSG catalog could not resolve the WGS 84 / UTM zone {zone.ToString(CultureInfo.InvariantCulture)}{(zoneIsNorth ? "N" : "S")} projected coordinate system.");
     }
 
     private static ProjectedCoordinateSystem NormalizeToLegacyWgs84UtmShape(ProjectedCoordinateSystem coordinateSystem, int zone, bool zoneIsNorth, int srid)
@@ -483,38 +463,6 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
             coordinateSystem.Name,
             coordinateSystem.Authority,
             coordinateSystem.AuthorityCode,
-            string.Empty,
-            LegacyWgs84UtmRemarks,
-            string.Empty);
-    }
-
-    private static ProjectedCoordinateSystem CreateLegacyWgs84UtmCoordinateSystem(int zone, bool zoneIsNorth, int srid)
-    {
-        GeographicCoordinateSystem geographicCoordinateSystem = CoordinateSystems.GeographicCoordinateSystem.WGS84;
-        return new ProjectedCoordinateSystem(
-            geographicCoordinateSystem.HorizontalDatum,
-            geographicCoordinateSystem,
-            CoordinateSystems.LinearUnit.Metre,
-            new Projection(
-                "Transverse_Mercator",
-                new List<ProjectionParameter>
-                {
-                    new("latitude_of_origin", 0),
-                    new("central_meridian", (zone * 6) - 183),
-                    new("scale_factor", 0.9996),
-                    new("false_easting", 500000),
-                    new("false_northing", zoneIsNorth ? 0 : 10000000),
-                },
-                CreateLegacyUtmProjectionName(zone, zoneIsNorth),
-                "EPSG",
-                srid,
-                string.Empty,
-                string.Empty,
-                string.Empty),
-            [new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North)],
-            $"WGS 84 / UTM zone {zone.ToString(CultureInfo.InvariantCulture)}{(zoneIsNorth ? "N" : "S")}",
-            "EPSG",
-            srid,
             string.Empty,
             LegacyWgs84UtmRemarks,
             string.Empty);

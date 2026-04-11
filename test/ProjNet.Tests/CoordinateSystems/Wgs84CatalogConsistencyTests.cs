@@ -135,6 +135,7 @@ public class Wgs84CatalogConsistencyTests
             new AxisInfo("North", AxisOrientationEnum.North));
 
         Assert.True(runtime.EqualParams(normalizedCatalog));
+        Assert.Same(GeographicCoordinateSystem.WGS84, runtime.GeographicCoordinateSystem);
         Assert.Equal(catalog.Authority, runtime.Authority);
         Assert.Equal(catalog.AuthorityCode, runtime.AuthorityCode);
     }
