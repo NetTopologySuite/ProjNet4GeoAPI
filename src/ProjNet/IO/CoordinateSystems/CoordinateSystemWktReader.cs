@@ -2027,6 +2027,40 @@ public static partial class CoordinateSystemWktReader
         throw new NotSupportedException("WKT2 axis-specific ANGLEUNIT values must match within the same CRS.");
     }
 
+    private static GeographicCoordinateSystem OverrideGeographicAngularUnit(GeographicCoordinateSystem geographicCoordinateSystem, AngularUnit? angularUnit)
+    {
+        geographicCoordinateSystem = ArgumentGuard.ThrowIfNull(geographicCoordinateSystem, nameof(geographicCoordinateSystem));
+        if (angularUnit is null || geographicCoordinateSystem.AngularUnit.EqualParams(angularUnit))
+        {
+            return geographicCoordinateSystem;
+        }
+
+        return new GeographicCoordinateSystem(
+            angularUnit,
+            geographicCoordinateSystem.HorizontalDatum,
+            geographicCoordinateSystem.PrimeMeridian,
+            CloneAxisInfoList(geographicCoordinateSystem.AxisInfo),
+            geographicCoordinateSystem.Name,
+            geographicCoordinateSystem.Authority,
+            geographicCoordinateSystem.AuthorityCode,
+            geographicCoordinateSystem.Alias,
+            geographicCoordinateSystem.Abbreviation,
+            geographicCoordinateSystem.Remarks);
+    }
+
+    private static List<AxisInfo> CloneAxisInfoList(List<AxisInfo> axisInfo)
+    {
+        axisInfo = ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo));
+
+        var clone = new List<AxisInfo>(axisInfo.Count);
+        for (int i = 0; i < axisInfo.Count; i++)
+        {
+            clone.Add(new AxisInfo(axisInfo[i]));
+        }
+
+        return clone;
+    }
+
     private static LinearUnit? MergeAxisLinearUnit(LinearUnit? current, LinearUnit? candidate)
     {
         if (candidate is null)
@@ -2153,11 +2187,7 @@ public static partial class CoordinateSystemWktReader
         geographicCS = ArgumentGuard.ThrowIfNull(geographicCS, nameof(geographicCS));
         projection = ArgumentGuard.ThrowIfNull(projection, nameof(projection));
         linearUnit = ArgumentGuard.ThrowIfNull(linearUnit, nameof(linearUnit));
-
-        if (baseAngularUnit is not null)
-        {
-            geographicCS.AngularUnit = baseAngularUnit;
-        }
+        geographicCS = OverrideGeographicAngularUnit(geographicCS, baseAngularUnit);
 
         return new ProjectedCoordinateSystem(
             geographicCS.HorizontalDatum,
@@ -2399,11 +2429,7 @@ public static partial class CoordinateSystemWktReader
         geographicCS = ArgumentGuard.ThrowIfNull(geographicCS, nameof(geographicCS));
         projection = ArgumentGuard.ThrowIfNull(projection, nameof(projection));
         linearUnit = ArgumentGuard.ThrowIfNull(linearUnit, nameof(linearUnit));
-
-        if (baseAngularUnit is not null)
-        {
-            geographicCS.AngularUnit = baseAngularUnit;
-        }
+        geographicCS = OverrideGeographicAngularUnit(geographicCS, baseAngularUnit);
 
         return new ProjectedCoordinateSystem(
             geographicCS.HorizontalDatum,
