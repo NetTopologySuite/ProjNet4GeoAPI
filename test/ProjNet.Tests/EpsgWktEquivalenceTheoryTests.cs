@@ -39,7 +39,10 @@ public class EpsgWktEquivalenceTheoryTests
     /// <returns>SRID/WKT row pairs.</returns>
     public static IEnumerable<TheoryDataRow<int, string>> EpsgFixtureRows()
     {
-        return [.. FixtureRows.Value.Select(row => new TheoryDataRow<int, string>(row.Srid, row.Wkt))];
+        foreach (EpsgFixtureRow row in FixtureRows.Value)
+        {
+            yield return new TheoryDataRow<int, string>(row.Srid, row.Wkt);
+        }
     }
 
     /// <summary>
