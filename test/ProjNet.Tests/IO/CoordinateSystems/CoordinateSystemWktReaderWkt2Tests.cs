@@ -768,6 +768,48 @@ public class CoordinateSystemWktReaderWkt2Tests
     }
 
     /// <summary>
+    /// Verifies concatenated operations reject empty step wrappers.
+    /// </summary>
+    [Fact]
+    public void Parse_WithEmptyStepBlock_ThrowsNotSupportedException()
+    {
+        const string wkt = """CONCATENATEDOPERATION["Broken chain",SOURCECRS[GEOGCRS["Source CRS",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],CS[ellipsoidal,2],AXIS["Latitude",north],AXIS["Longitude",east],ANGLEUNIT["degree",0.0174532925199433]]],TARGETCRS[GEOGCRS["Target CRS",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],CS[ellipsoidal,2],AXIS["Longitude",east],AXIS["Latitude",north],ANGLEUNIT["degree",0.0174532925199433]]],STEP[]]""";
+
+        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => CoordinateSystemWktReader.Parse(wkt));
+
+        Assert.Contains("STEP", exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Verifies coordinate operations and concatenated operations reject missing endpoint blocks explicitly.
+    /// </summary>
+    /// <param name="wkt">The malformed WKT2 input.</param>
+    /// <param name="expectedMessageFragment">The expected diagnostic fragment.</param>
+    [Theory]
+    [InlineData("""COORDINATEOPERATION["Broken op",TARGETCRS[GEOGCRS["Target CRS",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],CS[ellipsoidal,2],AXIS["Longitude",east],AXIS["Latitude",north],ANGLEUNIT["degree",0.0174532925199433]]],METHOD["Axis swap"]]""", "SOURCECRS")]
+    [InlineData("""CONCATENATEDOPERATION["Broken chain",SOURCECRS[GEOGCRS["Source CRS",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],CS[ellipsoidal,2],AXIS["Latitude",north],AXIS["Longitude",east],ANGLEUNIT["degree",0.0174532925199433]]],STEP[COORDINATEOPERATION["Step 1",SOURCECRS[GEOGCRS["Source CRS",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],CS[ellipsoidal,2],AXIS["Latitude",north],AXIS["Longitude",east],ANGLEUNIT["degree",0.0174532925199433]]],TARGETCRS[GEOGCRS["Target CRS",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],CS[ellipsoidal,2],AXIS["Longitude",east],AXIS["Latitude",north],ANGLEUNIT["degree",0.0174532925199433]]],METHOD["Axis swap"]]]]""", "TARGETCRS")]
+    public void Parse_WithMissingSourceOrTargetBlock_ThrowsArgumentException(string wkt, string expectedMessageFragment)
+    {
+        Exception exception = Assert.ThrowsAny<Exception>(() => CoordinateSystemWktReader.Parse(wkt));
+
+        Assert.Contains(expectedMessageFragment, exception.Message, StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Verifies concatenated operations with a single step remain valid.
+    /// </summary>
+    [Fact]
+    public void Parse_WithSingleStepConcatenatedOperation_ReturnsConcatenatedOperation()
+    {
+        const string wkt = """CONCATENATEDOPERATION["Single-step chain",SOURCECRS[GEOGCRS["Source CRS",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],CS[ellipsoidal,2],AXIS["Latitude",north],AXIS["Longitude",east],ANGLEUNIT["degree",0.0174532925199433]]],TARGETCRS[GEOGCRS["Target CRS",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],CS[ellipsoidal,2],AXIS["Longitude",east],AXIS["Latitude",north],ANGLEUNIT["degree",0.0174532925199433]]],STEP[COORDINATEOPERATION["Step 1",SOURCECRS[GEOGCRS["Source CRS",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],CS[ellipsoidal,2],AXIS["Latitude",north],AXIS["Longitude",east],ANGLEUNIT["degree",0.0174532925199433]]],TARGETCRS[GEOGCRS["Target CRS",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],CS[ellipsoidal,2],AXIS["Longitude",east],AXIS["Latitude",north],ANGLEUNIT["degree",0.0174532925199433]]],METHOD["Axis swap"]]]]""";
+
+        ConcatenatedOperation parsed = Assert.IsType<ConcatenatedOperation>(CoordinateSystemWktReader.Parse(wkt));
+
+        Assert.Single(parsed.Steps);
+        Assert.Equal("Step 1", parsed.Steps[0].Name);
+    }
+
+    /// <summary>
     /// Verifies representative unsupported WKT2 root keywords remain rejected instead of silently normalizing to an unrelated WKT1 path.
     /// </summary>
     /// <param name="keyword">The unsupported top-level WKT2 keyword.</param>
