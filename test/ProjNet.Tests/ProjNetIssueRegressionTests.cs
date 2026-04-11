@@ -234,17 +234,14 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
             PROJCS["DHDN / Gauss-Kruger zone 3",GEOGCS["DHDN",DATUM["Deutsches_Hauptdreiecksnetz",SPHEROID["Bessel 1841",6377397.155,299.1528128,AUTHORITY["EPSG","7004"]],AUTHORITY["EPSG","6314"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.01745329251994328,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4314"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",9],PARAMETER["scale_factor",1],PARAMETER["false_easting",3500000],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AUTHORITY["EPSG","31467"]]
             """;
 
-        var pcs1 = this.CoordinateSystemFactory.CreateFromWkt(wkt) as ProjectedCoordinateSystem;
-
-        Assert.NotNull(pcs1);
+        ProjectedCoordinateSystem pcs1 = Assert.IsType<ProjectedCoordinateSystem>(this.CoordinateSystemFactory.CreateFromWkt(wkt));
         Assert.NotNull(pcs1.GeographicCoordinateSystem);
         Assert.NotNull(pcs1.GeographicCoordinateSystem.AngularUnit);
 
         string savedWkt = pcs1.WKT;
-        var pcs2 = this.CoordinateSystemFactory.CreateFromWkt(savedWkt) as ProjectedCoordinateSystem;
+        ProjectedCoordinateSystem pcs2 = Assert.IsType<ProjectedCoordinateSystem>(this.CoordinateSystemFactory.CreateFromWkt(savedWkt));
 
         // test AngularUnit parsing via ProjectedCoordinateSystem
-        Assert.NotNull(pcs2);
         Assert.NotNull(pcs2.GeographicCoordinateSystem);
         Assert.NotNull(pcs2.GeographicCoordinateSystem.AngularUnit);
 
@@ -339,10 +336,8 @@ public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
                 AUTHORITY["EPSG","5850"]
             ]
             """;
-        CoordinateSystem? cs = this.CoordinateSystemFactory.CreateFromWkt(
-                compoundWkt);
-        var cmpdCs = cs as CompoundCoordinateSystem;
-        Assert.NotNull(cmpdCs);
+        CompoundCoordinateSystem cmpdCs = Assert.IsType<CompoundCoordinateSystem>(
+            this.CoordinateSystemFactory.CreateFromWkt(compoundWkt));
         Assert.Equal("EPSG", cmpdCs.Authority);
         Assert.Equal(5850, cmpdCs.AuthorityCode);
         Assert.Equal(3, cmpdCs.Dimension);
