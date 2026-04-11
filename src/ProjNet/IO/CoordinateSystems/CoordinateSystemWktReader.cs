@@ -122,30 +122,12 @@ public static partial class CoordinateSystemWktReader
                 return true;
             case "ENGCRS":
             case "ENGINEERINGCRS":
-                if ((!ContainsKeywordBlock(wkt, "EDATUM") && !ContainsKeywordBlock(wkt, "ENGINEERINGDATUM")) || !ContainsKeywordBlock(wkt, "CS"))
-                {
-                    info = null;
-                    return false;
-                }
-
                 info = ReadWkt2EngineeringCoordinateSystem(tokenizer);
                 return true;
             case "TIMECRS":
-                if ((!ContainsKeywordBlock(wkt, "TDATUM") && !ContainsKeywordBlock(wkt, "TIMEDATUM")) || !ContainsKeywordBlock(wkt, "CS"))
-                {
-                    info = null;
-                    return false;
-                }
-
                 info = ReadWkt2TemporalCoordinateSystem(tokenizer);
                 return true;
             case "PARAMETRICCRS":
-                if ((!ContainsKeywordBlock(wkt, "PDATUM") && !ContainsKeywordBlock(wkt, "PARAMETRICDATUM")) || !ContainsKeywordBlock(wkt, "CS"))
-                {
-                    info = null;
-                    return false;
-                }
-
                 info = ReadWkt2ParametricCoordinateSystem(tokenizer);
                 return true;
             case "COMPOUNDCRS":
