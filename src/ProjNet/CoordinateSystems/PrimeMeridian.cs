@@ -107,14 +107,14 @@ public class PrimeMeridian : Info
     public static PrimeMeridian Oslo => new(10.43225, CoordinateSystems.AngularUnit.Degrees, "Oslo", "EPSG", 8913, string.Empty, string.Empty, "Formerly known as Kristiania or Christiania.");
 
     /// <summary>
-    /// Gets or sets the longitude of the prime meridian (relative to the Greenwich prime meridian).
+    /// Gets the longitude of the prime meridian (relative to the Greenwich prime meridian).
     /// </summary>
-    public double Longitude { get; set; }
+    public double Longitude { get; }
 
     /// <summary>
-    /// Gets or sets the angular unit used to express the longitude of this prime meridian.
+    /// Gets the angular unit used to express the longitude of this prime meridian.
     /// </summary>
-    public AngularUnit AngularUnit { get; set; }
+    public AngularUnit AngularUnit { get; }
 
     /// <summary>
     /// Gets the Well-known text for this object

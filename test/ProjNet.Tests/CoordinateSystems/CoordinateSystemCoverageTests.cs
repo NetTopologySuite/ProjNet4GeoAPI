@@ -878,30 +878,6 @@ public class CoordinateSystemCoverageTests
     }
 
     /// <summary>
-    /// Verifies that Longitude setter updates the value.
-    /// </summary>
-    [Fact]
-    public void PrimeMeridian_LongitudeSetter_UpdatesValue()
-    {
-        PrimeMeridian pm = Factory.CreatePrimeMeridian("Test", AngularUnit.Degrees, 0.0);
-        pm.Longitude = 42.5;
-
-        Assert.Equal(42.5, pm.Longitude);
-    }
-
-    /// <summary>
-    /// Verifies that AngularUnit setter updates the value.
-    /// </summary>
-    [Fact]
-    public void PrimeMeridian_AngularUnitSetter_UpdatesValue()
-    {
-        PrimeMeridian pm = Factory.CreatePrimeMeridian("Test", AngularUnit.Degrees, 0.0);
-        pm.AngularUnit = AngularUnit.Radian;
-
-        Assert.True(pm.AngularUnit.EqualParams(AngularUnit.Radian));
-    }
-
-    /// <summary>
     /// Verifies WKT round-trip for Paris prime meridian.
     /// </summary>
     [Fact]

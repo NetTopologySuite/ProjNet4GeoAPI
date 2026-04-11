@@ -69,22 +69,6 @@ public class PrimeMeridianTests
     }
 
     /// <summary>
-    /// Verifies that longitude and angular unit can be updated after construction.
-    /// </summary>
-    [Fact]
-    public void Properties_CanBeUpdated()
-    {
-        var meridian = new PrimeMeridian(1.25, AngularUnit.Grad, "Custom", "AUTH", 42, string.Empty, string.Empty, string.Empty)
-        {
-            Longitude = 2.5,
-            AngularUnit = AngularUnit.Radian,
-        };
-
-        Assert.Equal(2.5, meridian.Longitude, 12);
-        Assert.True(meridian.AngularUnit.EqualParams(AngularUnit.Radian));
-    }
-
-    /// <summary>
     /// Verifies that WKT includes the authority clause when authority information is available.
     /// </summary>
     [Fact]
