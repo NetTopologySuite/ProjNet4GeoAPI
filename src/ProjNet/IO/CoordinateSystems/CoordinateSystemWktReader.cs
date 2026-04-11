@@ -130,6 +130,9 @@ public static partial class CoordinateSystemWktReader
             case "PARAMETRICCRS":
                 info = ReadWkt2ParametricCoordinateSystem(tokenizer);
                 return true;
+            case "COORDINATEOPERATION":
+                info = ReadWkt2CoordinateOperation(tokenizer);
+                return true;
             case "COMPOUNDCRS":
                 info = ReadWkt2CompoundCoordinateSystem(tokenizer);
                 return true;
@@ -1692,6 +1695,146 @@ public static partial class CoordinateSystemWktReader
             string.Empty,
             string.Empty,
             string.Empty);
+    }
+
+    private static CoordinateOperation ReadWkt2CoordinateOperation(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "COORDINATEOPERATION")
+        {
+            tokenizer.ReadToken("COORDINATEOPERATION");
+        }
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        string name = tokenizer.ReadDoubleQuotedWord();
+
+        CoordinateSystem? sourceCoordinateSystem = null;
+        CoordinateSystem? targetCoordinateSystem = null;
+        string methodName = string.Empty;
+        string authority = string.Empty;
+        long authorityCode = -1;
+        var parameters = new List<Parameter>();
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            switch (tokenizer.GetStringValue())
+            {
+                case "SOURCECRS":
+                    sourceCoordinateSystem = ReadWkt2BoundCoordinateSystemComponent(tokenizer);
+                    break;
+                case "TARGETCRS":
+                    targetCoordinateSystem = ReadWkt2BoundCoordinateSystemComponent(tokenizer);
+                    break;
+                case "METHOD":
+                    methodName = ReadWkt2ProjectionMethod(tokenizer);
+                    break;
+                case "PARAMETER":
+                    parameters.Add(ReadWkt2CoordinateOperationParameter(tokenizer));
+                    break;
+                case "ID":
+                    ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+                    break;
+                default:
+                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    {
+                        SkipKeywordNode(tokenizer);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"WKT2 COORDINATEOPERATION keyword '{tokenizer.GetStringValue()}' is not supported.");
+                    }
+
+                    break;
+            }
+
+            tokenizer.NextToken();
+        }
+
+        if (sourceCoordinateSystem is null)
+        {
+            ArgumentGuard.ThrowArgument("WKT2 coordinate operation is missing a SOURCECRS block.");
+        }
+
+        if (targetCoordinateSystem is null)
+        {
+            ArgumentGuard.ThrowArgument("WKT2 coordinate operation is missing a TARGETCRS block.");
+        }
+
+        if (string.IsNullOrWhiteSpace(methodName))
+        {
+            ArgumentGuard.ThrowArgument("WKT2 coordinate operation is missing a METHOD block.");
+        }
+
+        return new CoordinateOperation(
+            methodName,
+            parameters,
+            sourceCoordinateSystem,
+            targetCoordinateSystem,
+            name,
+            authority,
+            authorityCode,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
+    private static Parameter ReadWkt2CoordinateOperationParameter(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetStringValue() != "PARAMETER")
+        {
+            tokenizer.ReadToken("PARAMETER");
+        }
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        string parameterName = tokenizer.ReadDoubleQuotedWord();
+        tokenizer.ReadToken(",");
+        tokenizer.NextToken();
+        double value = tokenizer.GetNumericValue();
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            if (tokenizer.GetStringValue() is "ANGLEUNIT" or "LENGTHUNIT" or "SCALEUNIT" or "TIMEUNIT" or "PARAMETRICUNIT" or "ID")
+            {
+                SkipKeywordNode(tokenizer);
+            }
+            else if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+            {
+                SkipKeywordNode(tokenizer);
+            }
+            else
+            {
+                throw new NotSupportedException($"WKT2 COORDINATEOPERATION PARAMETER keyword '{tokenizer.GetStringValue()}' is not supported.");
+            }
+
+            tokenizer.NextToken();
+        }
+
+        return new Parameter(parameterName, value);
     }
 
     private static void ReadIdentifierWithUnknownCode(WktTokenizer tokenizer, out string authority, out long authorityCode)
