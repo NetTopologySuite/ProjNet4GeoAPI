@@ -35,6 +35,18 @@ public class GeocentricCoordinateSystemTests
     }
 
     /// <summary>
+    /// Verifies that the predefined WGS84 system now reuses the same immutable catalog-backed instance.
+    /// </summary>
+    [Fact]
+    public void WGS84_ReturnsSameInstance()
+    {
+        GeocentricCoordinateSystem first = GeocentricCoordinateSystem.WGS84;
+        GeocentricCoordinateSystem second = GeocentricCoordinateSystem.WGS84;
+
+        Assert.Same(first, second);
+    }
+
+    /// <summary>
     /// Verifies that the internal constructor stores the supplied values.
     /// </summary>
     [Fact]

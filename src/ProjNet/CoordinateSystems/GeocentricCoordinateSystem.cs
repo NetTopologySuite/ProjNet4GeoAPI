@@ -15,8 +15,8 @@ using ProjNet.IO.Wkt;
 /// </summary>
 public class GeocentricCoordinateSystem : CoordinateSystem
 {
-    private static readonly Lazy<string> Wgs84CoordinateSystemWkt =
-        new(() => ResolveWgs84CoordinateSystem().WKT, true);
+    private static readonly Lazy<GeocentricCoordinateSystem> Wgs84CoordinateSystem =
+        new(CreateWgs84CoordinateSystem, true);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GeocentricCoordinateSystem"/> class.
@@ -54,10 +54,7 @@ public class GeocentricCoordinateSystem : CoordinateSystem
     /// <summary>
     /// Gets a geocentric coordinate system based on the WGS84 ellipsoid, suitable for GPS measurements.
     /// </summary>
-    public static GeocentricCoordinateSystem WGS84
-    {
-        get { return CreateWgs84CoordinateSystem(); }
-    }
+    public static GeocentricCoordinateSystem WGS84 => Wgs84CoordinateSystem.Value;
 
     /// <summary>
     /// Gets the HorizontalDatum. The horizontal datum is used to determine where
@@ -217,22 +214,11 @@ public class GeocentricCoordinateSystem : CoordinateSystem
 
     private static GeocentricCoordinateSystem CreateWgs84CoordinateSystem()
     {
-        CoordinateSystem? coordinateSystem = new CoordinateSystemFactory().CreateFromWkt(Wgs84CoordinateSystemWkt.Value);
-        return coordinateSystem as GeocentricCoordinateSystem
-            ?? throw new InvalidOperationException("The WGS84 geocentric catalog entry did not resolve to a geocentric coordinate system.");
-    }
-
-    private static GeocentricCoordinateSystem ResolveWgs84CoordinateSystem()
-    {
         return Wgs84CatalogBootstrap.TryGetCoordinateSystem(
             Wgs84CatalogBootstrap.Wgs84GeocentricSrid,
             out GeocentricCoordinateSystem? coordinateSystem)
             ? coordinateSystem
-            : new CoordinateSystemFactory().CreateGeocentricCoordinateSystem(
-                "WGS84 Geocentric",
-                HorizontalDatum.WGS84,
-                LinearUnit.Metre,
-                PrimeMeridian.Greenwich);
+            : throw new InvalidOperationException("The generated EPSG catalog could not resolve the WGS 84 geocentric coordinate system.");
     }
 
     private static List<AxisInfo> ValidateAxisInfo(List<AxisInfo> axisInfo)
