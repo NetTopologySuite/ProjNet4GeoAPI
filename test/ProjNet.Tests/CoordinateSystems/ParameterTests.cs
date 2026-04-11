@@ -27,34 +27,6 @@ public class ParameterTests
     }
 
     /// <summary>
-    /// Verifies that the name can be updated after construction.
-    /// </summary>
-    [Fact]
-    public void Parameter_Name_CanBeUpdated()
-    {
-        var parameter = new Parameter("scale_factor", 1.0)
-        {
-            Name = "central_meridian",
-        };
-
-        Assert.Equal("central_meridian", parameter.Name);
-    }
-
-    /// <summary>
-    /// Verifies that the value can be updated after construction.
-    /// </summary>
-    [Fact]
-    public void Parameter_Value_CanBeUpdated()
-    {
-        var parameter = new Parameter("scale_factor", 1.0)
-        {
-            Value = 0.9996,
-        };
-
-        Assert.Equal(0.9996, parameter.Value);
-    }
-
-    /// <summary>
     /// Verifies that the constructor assigns the name and value.
     /// </summary>
     [Fact]
@@ -64,22 +36,6 @@ public class ParameterTests
 
         Assert.Equal("central_meridian", parameter.Name);
         Assert.Equal(15.0, parameter.Value);
-    }
-
-    /// <summary>
-    /// Verifies that the name and value can be updated after construction.
-    /// </summary>
-    [Fact]
-    public void ProjectionParameter_Properties_CanBeUpdated()
-    {
-        var parameter = new ProjectionParameter("scale_factor", 1.0)
-        {
-            Name = "latitude_of_origin",
-            Value = 52.5,
-        };
-
-        Assert.Equal("latitude_of_origin", parameter.Name);
-        Assert.Equal(52.5, parameter.Value);
     }
 
     /// <summary>

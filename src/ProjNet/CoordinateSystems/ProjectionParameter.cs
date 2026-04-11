@@ -21,9 +21,6 @@ using ProjNet.IO.Wkt;
 /// </remarks>
 public sealed class ProjectionParameter
 {
-    private string name = string.Empty;
-    private double val;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="ProjectionParameter"/> class.
     /// </summary>
@@ -36,27 +33,19 @@ public sealed class ProjectionParameter
     }
 
     /// <summary>
-    /// Gets or sets parameter name.
+    /// Gets parameter name.
     /// </summary>
-    public string Name
-    {
-        get { return this.name; }
-        set { this.name = value; }
-    }
+    public string Name { get; }
 
     /// <summary>
-    /// Gets or sets the parameter value.
+    /// Gets the parameter value.
     /// </summary>
     /// <remarks>
     /// The linear units of parameter values match the linear units of the containing
     /// projected coordinate system. The angular units of parameter values match the
     /// angular units of the underlying geographic coordinate system.
     /// </remarks>
-    public double Value
-    {
-        get { return this.val; }
-        set { this.val = value; }
-    }
+    public double Value { get; }
 
     /// <summary>
     /// Gets the Well-known text for this object

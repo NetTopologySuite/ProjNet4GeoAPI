@@ -24,12 +24,12 @@ public sealed class Parameter
     }
 
     /// <summary>
-    /// Gets or sets parameter name.
+    /// Gets parameter name.
     /// </summary>
-    public string Name { get; set; }
+    public string Name { get; }
 
     /// <summary>
-    /// Gets or sets parameter value.
+    /// Gets parameter value.
     /// </summary>
-    public double Value { get; set; }
+    public double Value { get; }
 }

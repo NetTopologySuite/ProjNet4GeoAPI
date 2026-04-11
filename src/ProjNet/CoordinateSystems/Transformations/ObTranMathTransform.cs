@@ -384,7 +384,7 @@ internal sealed class ObTranMathTransform : MathTransform
     }
 
     private static void AddOptionalParameter(
-        ICollection<ProjectionParameter> parameters,
+        List<ProjectionParameter> parameters,
         Dictionary<string, string> args,
         string sourceName,
         string targetName)
@@ -402,28 +402,13 @@ internal sealed class ObTranMathTransform : MathTransform
         ReplaceOrAdd(parameters, targetName, value);
     }
 
-    private static void ReplaceOrAdd(ICollection<ProjectionParameter> parameters, string name, double value)
+    private static void ReplaceOrAdd(List<ProjectionParameter> parameters, string name, double value)
     {
-        if (parameters is List<ProjectionParameter> list)
+        for (int i = 0; i < parameters.Count; i++)
         {
-            for (int i = 0; i < list.Count; i++)
+            if (parameters[i].Name.Equals(name, StringComparison.OrdinalIgnoreCase))
             {
-                if (list[i].Name.Equals(name, StringComparison.OrdinalIgnoreCase))
-                {
-                    list[i] = new ProjectionParameter(name, value);
-                    return;
-                }
-            }
-
-            list.Add(new ProjectionParameter(name, value));
-            return;
-        }
-
-        foreach (ProjectionParameter parameter in parameters)
-        {
-            if (parameter.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
-            {
-                parameter.Value = value;
+                parameters[i] = new ProjectionParameter(name, value);
                 return;
             }
         }
