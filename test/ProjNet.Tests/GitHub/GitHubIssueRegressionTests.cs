@@ -261,6 +261,23 @@ public class GitHubIssueRegressionTests
     }
 
     /// <summary>
+    /// Verifies that transforming EPSG 27700 coordinates to WGS 84 stays within the expected tolerance.
+    /// </summary>
+    [GitHubIssue(67)]
+    [Fact(DisplayName = "Issue #67, OSGB36 to WGS84 stays within expected accuracy tolerance")]
+    public void Osgb36ToWgs84TransformationMatchesExpectedCoordinate()
+    {
+        CoordinateSystem source = Assert.IsType<CoordinateSystem>(Css.GetCoordinateSystem("EPSG", 27700), exactMatch: false);
+        CoordinateSystem target = Assert.IsType<CoordinateSystem>(Css.GetCoordinateSystem("EPSG", 4326), exactMatch: false);
+
+        ICoordinateTransformation transformation = Assert.IsType<ICoordinateTransformation>(Css.CreateTransformation(source, target), exactMatch: false);
+        (double longitude, double latitude) = transformation.MathTransform.Transform(362895d, 155602d);
+
+        Assert.InRange(longitude, -2.5335813d - 0.0005d, -2.5335813d + 0.0005d);
+        Assert.InRange(latitude, 51.2983258d - 0.0005d, 51.2983258d + 0.0005d);
+    }
+
+    /// <summary>
     /// Verifies that GitHub issue #64 is fixed: <see cref="GeographicCoordinateSystem"/> and
     /// <see cref="ProjectedCoordinateSystem"/> correctly store abbreviation and remarks
     /// passed to their constructors.
