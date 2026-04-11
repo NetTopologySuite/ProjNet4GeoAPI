@@ -333,50 +333,50 @@ public abstract class MapProjection : MathTransform, IProjection
     public int NumParameters => this.Parameters.Count;
 
     /// <summary>
-    /// Gets or sets the abbreviation of the object.
+    /// Gets the abbreviation of the object.
     /// </summary>
     public string Abbreviation
     {
         get => this.abbreviation;
-        set => this.abbreviation = value ?? string.Empty;
+        internal init => this.abbreviation = value ?? string.Empty;
     }
 
     /// <summary>
-    /// Gets or sets the alias of the object.
+    /// Gets the alias of the object.
     /// </summary>
     public string Alias
     {
         get => this.alias;
-        set => this.alias = value ?? string.Empty;
+        internal init => this.alias = value ?? string.Empty;
     }
 
     /// <summary>
-    /// Gets or sets the authority name for this object, e.g., "EPSG",
+    /// Gets the authority name for this object, e.g., "EPSG",
     /// is this is a standard object with an authority specific
     /// identity code. Returns "CUSTOM" if this is a custom object.
     /// </summary>
     public string Authority
     {
         get => this.authority;
-        set => this.authority = value ?? string.Empty;
+        internal init => this.authority = value ?? string.Empty;
     }
 
     /// <summary>
-    /// Gets or sets the authority specific identification code of the object.
+    /// Gets the authority specific identification code of the object.
     /// </summary>
     public long AuthorityCode
     {
         get => this.authorityCode;
-        set => this.authorityCode = value;
+        internal init => this.authorityCode = value;
     }
 
     /// <summary>
-    /// Gets or sets the name of the object.
+    /// Gets the name of the object.
     /// </summary>
     public string Name
     {
         get => this.name;
-        set
+        internal init
         {
             string assignedName = value ?? string.Empty;
             ProjectionIdentityOverride? identityOverride = CurrentProjectionIdentityOverride.Value;
@@ -399,12 +399,12 @@ public abstract class MapProjection : MathTransform, IProjection
     }
 
     /// <summary>
-    /// Gets or sets the provider-supplied remarks for the object.
+    /// Gets the provider-supplied remarks for the object.
     /// </summary>
     public string Remarks
     {
         get => this.remarks;
-        set => this.remarks = value ?? string.Empty;
+        internal init => this.remarks = value ?? string.Empty;
     }
 
     /// <summary>
