@@ -13,6 +13,11 @@ using ProjNet.IO.Wkt;
 /// <summary>
 /// A 1D coordinate system suitable vertical coordinates.
 /// </summary>
+/// <remarks>
+/// <para>
+/// Thread safety: Instances are immutable after construction and may be shared across threads.
+/// </para>
+/// </remarks>
 public class VerticalCoordinateSystem : CoordinateSystem
 {
     /// <summary>

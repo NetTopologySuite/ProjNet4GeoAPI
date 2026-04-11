@@ -15,6 +15,11 @@ using ProjNet.IO.Wkt;
 /// coordinate system can be rotated and shifted, or use any other math transform
 /// to inject itself into the base coordinate system.
 /// </summary>
+/// <remarks>
+/// <para>
+/// Thread safety: Instances are immutable after construction and may be shared across threads.
+/// </para>
+/// </remarks>
 public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSystem
 {
     /// <summary>

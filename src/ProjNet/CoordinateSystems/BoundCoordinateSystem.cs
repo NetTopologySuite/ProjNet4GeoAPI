@@ -21,6 +21,9 @@ using ProjNet.IO.Wkt;
 /// Until dedicated BoundCRS serializers are implemented, legacy WKT1 and XML output intentionally
 /// fall back to the source coordinate system representation.
 /// </para>
+/// <para>
+/// Thread safety: Instances are immutable after construction and may be shared across threads.
+/// </para>
 /// </remarks>
 public class BoundCoordinateSystem : CoordinateSystem
 {

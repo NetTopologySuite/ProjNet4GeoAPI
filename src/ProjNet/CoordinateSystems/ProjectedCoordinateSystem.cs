@@ -13,6 +13,15 @@ using ProjNet.IO.Wkt;
 /// <summary>
 /// A 2D cartographic coordinate system.
 /// </summary>
+/// <remarks>
+/// <para>
+/// Thread safety: Instances are immutable after construction and may be shared across threads.
+/// <see cref="WebMercator"/> is initialized once and then reused safely. The
+/// <c>WGS84_UTM(int, bool)</c> helper is also thread-safe for concurrent callers; the generated
+/// EPSG cache may synchronize the first materialization of a requested UTM SRID, but steady-state
+/// access remains lock-free.
+/// </para>
+/// </remarks>
 public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
 {
     private const string LegacyWebMercatorAlias = "WGS 84 / Popular Visualisation Pseudo-Mercator";

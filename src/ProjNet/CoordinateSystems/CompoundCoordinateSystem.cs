@@ -15,6 +15,11 @@ using ProjNet.IO.Wkt;
 /// For example, a compound 3D coordinate system could be made up of a
 /// horizontal coordinate system and a vertical coordinate system.
 /// </summary>
+/// <remarks>
+/// <para>
+/// Thread safety: Instances are immutable after construction and may be shared across threads.
+/// </para>
+/// </remarks>
 public class CompoundCoordinateSystem : CoordinateSystem
 {
     /// <summary>

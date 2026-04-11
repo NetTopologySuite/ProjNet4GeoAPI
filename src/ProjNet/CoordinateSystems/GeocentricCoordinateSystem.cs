@@ -13,6 +13,13 @@ using ProjNet.IO.Wkt;
 /// <summary>
 /// A 3D coordinate system, with its origin at the center of the Earth.
 /// </summary>
+/// <remarks>
+/// <para>
+/// Thread safety: Instances are immutable after construction and may be shared across threads.
+/// <see cref="WGS84"/> is initialized once and then reused safely; after that one-time path,
+/// callers do not contend on additional locks when reading the property.
+/// </para>
+/// </remarks>
 public class GeocentricCoordinateSystem : CoordinateSystem
 {
     private static readonly Lazy<GeocentricCoordinateSystem> Wgs84CoordinateSystem =

@@ -14,10 +14,17 @@ using ProjNet.IO.Wkt;
 /// A coordinate system based on latitude and longitude.
 /// </summary>
 /// <remarks>
+/// <para>
 /// Some geographic coordinate systems are Lat/Lon, and some are Lon/Lat.
 /// You can find out which this is by examining the axes. You should also
 /// check the angular units, since not all geographic coordinate systems
 /// use degrees.
+/// </para>
+/// <para>
+/// Thread safety: Instances are immutable after construction and may be shared across threads.
+/// <see cref="WGS84"/> is initialized once and then reused safely; after that one-time path,
+/// callers do not contend on additional locks when reading the property.
+/// </para>
 /// </remarks>
 public class GeographicCoordinateSystem : HorizontalCoordinateSystem
 {
