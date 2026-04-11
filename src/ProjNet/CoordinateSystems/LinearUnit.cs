@@ -13,6 +13,12 @@ using ProjNet.IO.Wkt;
 /// <summary>
 /// Definition of linear units.
 /// </summary>
+/// <remarks>
+/// <para>
+/// Thread safety: Instances are immutable after construction and may be shared across threads.
+/// The predefined linear-unit accessors are thread-safe because they only expose immutable value objects.
+/// </para>
+/// </remarks>
 public class LinearUnit : Info, IUnit
 {
     /// <summary>

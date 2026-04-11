@@ -13,6 +13,12 @@ using ProjNet.IO.Wkt;
 /// <summary>
 /// A vertical datum defining the standard datum information.
 /// </summary>
+/// <remarks>
+/// <para>
+/// Thread safety: Instances are immutable after construction and may be shared across threads.
+/// The predefined datum accessors are thread-safe because they only expose immutable value objects.
+/// </para>
+/// </remarks>
 public class VerticalDatum : Datum
 {
     /// <summary>

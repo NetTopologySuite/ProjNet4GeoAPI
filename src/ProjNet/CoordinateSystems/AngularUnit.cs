@@ -13,6 +13,12 @@ using ProjNet.IO.Wkt;
 /// <summary>
 /// Definition of angular units.
 /// </summary>
+/// <remarks>
+/// <para>
+/// Thread safety: Instances are immutable after construction and may be shared across threads.
+/// The predefined angular-unit accessors are thread-safe because they only expose immutable value objects.
+/// </para>
+/// </remarks>
 public class AngularUnit : Info, IUnit
 {
     /// <summary>

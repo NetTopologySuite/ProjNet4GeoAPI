@@ -13,6 +13,12 @@ using ProjNet.IO.Wkt;
 /// <summary>
 /// A meridian used to take longitude measurements from.
 /// </summary>
+/// <remarks>
+/// <para>
+/// Thread safety: Instances are immutable after construction and may be shared across threads.
+/// The predefined prime-meridian accessors are thread-safe because they only expose immutable value objects.
+/// </para>
+/// </remarks>
 public class PrimeMeridian : Info
 {
     /// <summary>

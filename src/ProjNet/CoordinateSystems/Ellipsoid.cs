@@ -13,6 +13,12 @@ using ProjNet.IO.Wkt;
 /// <summary>
 /// Defines the standard information stored with an ellipsoid used as the reference surface for a geodetic datum.
 /// </summary>
+/// <remarks>
+/// <para>
+/// Thread safety: Instances are immutable after construction and may be shared across threads.
+/// The predefined ellipsoid accessors are thread-safe because they only expose immutable value objects.
+/// </para>
+/// </remarks>
 public class Ellipsoid : Info
 {
     /// <summary>

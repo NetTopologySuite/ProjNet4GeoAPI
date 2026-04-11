@@ -12,6 +12,12 @@ using System.Xml.Linq;
 /// <summary>
 /// Class for defining units.
 /// </summary>
+/// <remarks>
+/// <para>
+/// Thread safety: Instances are immutable after construction and may be shared across threads.
+/// Derived predefined unit accessors are thread-safe because they only expose immutable value objects.
+/// </para>
+/// </remarks>
 public class Unit : Info, IUnit
 {
     /// <summary>
