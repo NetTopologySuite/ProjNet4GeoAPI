@@ -130,6 +130,15 @@ public static partial class CoordinateSystemWktReader
 
                 info = ReadWkt2EngineeringCoordinateSystem(tokenizer);
                 return true;
+            case "TIMECRS":
+                if ((!ContainsKeywordBlock(wkt, "TDATUM") && !ContainsKeywordBlock(wkt, "TIMEDATUM")) || !ContainsKeywordBlock(wkt, "CS"))
+                {
+                    info = null;
+                    return false;
+                }
+
+                info = ReadWkt2TemporalCoordinateSystem(tokenizer);
+                return true;
             case "COMPOUNDCRS":
                 info = ReadWkt2CompoundCoordinateSystem(tokenizer);
                 return true;
@@ -1394,6 +1403,160 @@ public static partial class CoordinateSystemWktReader
             ArgumentGuard.ThrowIfNull(coordinateSystemType, nameof(coordinateSystemType)),
             axisInfo,
             resolvedUnits,
+            name,
+            authority,
+            authorityCode,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
+    private static TemporalDatum ReadWkt2TemporalDatum(WktTokenizer tokenizer)
+    {
+        string rootKeyword = tokenizer.GetStringValue();
+        WktBracket bracket = tokenizer.ReadOpener();
+        string name = tokenizer.ReadDoubleQuotedWord();
+
+        string timeOrigin = string.Empty;
+        string authority = string.Empty;
+        long authorityCode = -1;
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            switch (tokenizer.GetStringValue())
+            {
+                case "TIMEORIGIN":
+                    WktBracket timeOriginBracket = tokenizer.ReadOpener();
+                    timeOrigin = tokenizer.ReadDoubleQuotedWord();
+                    tokenizer.ReadCloser(timeOriginBracket);
+                    break;
+                case "ID":
+                    ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+                    break;
+                default:
+                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    {
+                        SkipKeywordNode(tokenizer);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"WKT2 {rootKeyword} keyword '{tokenizer.GetStringValue()}' is not supported.");
+                    }
+
+                    break;
+            }
+
+            tokenizer.NextToken();
+        }
+
+        if (string.IsNullOrWhiteSpace(timeOrigin))
+        {
+            ArgumentGuard.ThrowArgument("WKT2 temporal datum is missing a TIMEORIGIN block.");
+        }
+
+        return new TemporalDatum(timeOrigin, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
+    }
+
+    private static TemporalCoordinateSystem ReadWkt2TemporalCoordinateSystem(WktTokenizer tokenizer)
+    {
+        const string rootKeyword = "TIMECRS";
+
+        WktBracket bracket = tokenizer.ReadOpener();
+        string name = tokenizer.ReadDoubleQuotedWord();
+
+        TemporalDatum? temporalDatum = null;
+        string? coordinateSystemType = null;
+        int coordinateSystemDimension = 0;
+        IUnit? rootUnit = null;
+        string authority = string.Empty;
+        long authorityCode = -1;
+        var axisInfo = new List<AxisInfo>();
+        var axisUnits = new List<IUnit?>();
+
+        tokenizer.NextToken();
+        while (true)
+        {
+            if (tokenizer.GetStringValue() == ",")
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            if (tokenizer.GetStringValue() is "]" or ")")
+            {
+                tokenizer.CheckCloser(bracket);
+                break;
+            }
+
+            switch (tokenizer.GetStringValue())
+            {
+                case "TDATUM":
+                case "TIMEDATUM":
+                    temporalDatum = ReadWkt2TemporalDatum(tokenizer);
+                    break;
+                case "CS":
+                    (coordinateSystemType, coordinateSystemDimension) = ReadWkt2CoordinateSystemDefinition(tokenizer);
+                    break;
+                case "AXIS":
+                    (AxisInfo axis, IUnit? unit) = ReadWkt2AxisDefinition(tokenizer);
+                    axisInfo.Add(axis);
+                    axisUnits.Add(unit);
+                    break;
+                case "TIMEUNIT":
+                    rootUnit = ReadWkt2TimeUnit(tokenizer);
+                    break;
+                case "ID":
+                    ReadIdentifierWithUnknownCode(tokenizer, out authority, out authorityCode);
+                    break;
+                default:
+                    if (ShouldSkipWkt2MetadataNode(tokenizer.GetStringValue()))
+                    {
+                        SkipKeywordNode(tokenizer);
+                    }
+                    else
+                    {
+                        throw new NotSupportedException($"WKT2 keyword '{tokenizer.GetStringValue()}' is not supported in {rootKeyword}.");
+                    }
+
+                    break;
+            }
+
+            tokenizer.NextToken();
+        }
+
+        if (temporalDatum is null)
+        {
+            ArgumentGuard.ThrowArgument("WKT2 temporal CRS is missing a TDATUM or TIMEDATUM block.");
+        }
+
+        if (!string.Equals(coordinateSystemType, "temporal", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new NotSupportedException($"WKT2 temporal coordinate system type '{coordinateSystemType}' is not supported.");
+        }
+
+        List<IUnit> resolvedUnits = ResolveWkt2CoordinateSystemUnits(rootUnit, axisUnits, coordinateSystemDimension, "WKT2 temporal CRS", allowMixedUnits: false);
+        if (resolvedUnits.Count != 1 || resolvedUnits[0] is not TimeUnit timeUnit)
+        {
+            throw new NotSupportedException("WKT2 temporal CRS requires TIMEUNIT metadata.");
+        }
+
+        return new TemporalCoordinateSystem(
+            timeUnit,
+            temporalDatum,
+            axisInfo[0],
             name,
             authority,
             authorityCode,
