@@ -46,14 +46,14 @@ public class VerticalCoordinateSystem : CoordinateSystem
     }
 
     /// <summary>
-    /// Gets or sets the VerticalDatum.
+    /// Gets the VerticalDatum.
     /// </summary>
-    public VerticalDatum VerticalDatum { get; set; }
+    public VerticalDatum VerticalDatum { get; }
 
     /// <summary>
-    /// Gets or sets the LinearUnit.
+    /// Gets the LinearUnit.
     /// </summary>
-    public LinearUnit LinearUnit { get; set; }
+    public LinearUnit LinearUnit { get; }
 
     /// <summary>
     /// Gets creates a meter unit coordinate system with <see cref="VerticalDatum.ODN"/>.

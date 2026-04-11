@@ -43,14 +43,14 @@ public sealed class ParametricCoordinateSystem : CoordinateSystem
     }
 
     /// <summary>
-    /// Gets or sets the parametric datum.
+    /// Gets the parametric datum.
     /// </summary>
-    public ParametricDatum ParametricDatum { get; set; }
+    public ParametricDatum ParametricDatum { get; }
 
     /// <summary>
-    /// Gets or sets the parametric unit.
+    /// Gets the parametric unit.
     /// </summary>
-    public ParametricUnit ParametricUnit { get; set; }
+    public ParametricUnit ParametricUnit { get; }
 
     /// <inheritdoc />
     public override string WKT => this.ToWktNode(WktVersion.Wkt22019).ToString();

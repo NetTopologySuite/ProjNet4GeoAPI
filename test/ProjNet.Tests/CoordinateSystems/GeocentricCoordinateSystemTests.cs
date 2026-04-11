@@ -171,27 +171,6 @@ public class GeocentricCoordinateSystemTests
     }
 
     /// <summary>
-    /// Verifies that property setters update the coordinate system.
-    /// </summary>
-    [Fact]
-    public void PropertySetters_UpdateValues()
-    {
-        GeocentricCoordinateSystem system = CreateSystem(
-            "Custom geocentric",
-            HorizontalDatum.ED50,
-            LinearUnit.Metre,
-            PrimeMeridian.Greenwich,
-            CreateDefaultAxisInfo());
-
-        system.LinearUnit = LinearUnit.Foot;
-        system.PrimeMeridian = PrimeMeridian.Paris;
-
-        Assert.True(system.HorizontalDatum.EqualParams(HorizontalDatum.ED50));
-        Assert.True(system.LinearUnit.EqualParams(LinearUnit.Foot));
-        Assert.True(system.PrimeMeridian.EqualParams(PrimeMeridian.Paris));
-    }
-
-    /// <summary>
     /// Verifies that WKT omits axis clauses when the default geocentric axes are used.
     /// </summary>
     [Fact]

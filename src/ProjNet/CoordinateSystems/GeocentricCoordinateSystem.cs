@@ -65,21 +65,21 @@ public class GeocentricCoordinateSystem : CoordinateSystem
     }
 
     /// <summary>
-    /// Gets or sets the HorizontalDatum. The horizontal datum is used to determine where
+    /// Gets the HorizontalDatum. The horizontal datum is used to determine where
     /// the centre of the Earth is considered to be. All coordinate points will be
     /// measured from the centre of the Earth, and not the surface.
     /// </summary>
-    public HorizontalDatum HorizontalDatum { get; set; }
+    public HorizontalDatum HorizontalDatum { get; }
 
     /// <summary>
-    /// Gets or sets the units used along all the axes.
+    /// Gets the units used along all the axes.
     /// </summary>
-    public LinearUnit LinearUnit { get; set; }
+    public LinearUnit LinearUnit { get; }
 
     /// <summary>
-    /// Gets or sets the prime meridian used as the longitude reference for this coordinate system.
+    /// Gets the prime meridian used as the longitude reference for this coordinate system.
     /// </summary>
-    public PrimeMeridian PrimeMeridian { get; set; }
+    public PrimeMeridian PrimeMeridian { get; }
 
     /// <summary>
     /// Gets the Well-known text for this object

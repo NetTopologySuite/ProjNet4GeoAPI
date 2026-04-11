@@ -39,23 +39,6 @@ public class CompoundCoordinateSystemTests
     }
 
     /// <summary>
-    /// Verifies that the head and tail component systems can be replaced after construction.
-    /// </summary>
-    [Fact]
-    public void PropertySetters_UpdateHeadAndTailCoordinateSystems()
-    {
-        CompoundCoordinateSystem system = CreateSystem();
-        GeocentricCoordinateSystem newHead = GeocentricCoordinateSystem.WGS84;
-        VerticalCoordinateSystem newTail = CreateFootVerticalCoordinateSystem();
-
-        system.HeadCoordinateSystem = newHead;
-        system.TailCoordinateSystem = newTail;
-
-        Assert.Same(newHead, system.HeadCoordinateSystem);
-        Assert.Same(newTail, system.TailCoordinateSystem);
-    }
-
-    /// <summary>
     /// Verifies that WKT omits the authority clause when no authority metadata is available.
     /// </summary>
     [Fact]

@@ -387,40 +387,6 @@ public class VerticalCoordinateSystemTests
         Assert.False(VerticalCoordinateSystem.ODN.EqualParams("not a VCS"));
     }
 
-    // ---- Property setters ----
-
-    /// <summary>
-    /// Verifies that <see cref="VerticalCoordinateSystem.LinearUnit"/> can be replaced.
-    /// </summary>
-    [Fact]
-    public void LinearUnit_Setter_UpdatesUnit()
-    {
-        VerticalCoordinateSystem vcs = VerticalCoordinateSystem.ODN;
-        vcs.LinearUnit = LinearUnit.Foot;
-
-        Assert.Equal(0.3048, vcs.LinearUnit.MetersPerUnit, 12);
-    }
-
-    /// <summary>
-    /// Verifies that <see cref="VerticalCoordinateSystem.VerticalDatum"/> can be replaced.
-    /// </summary>
-    [Fact]
-    public void VerticalDatum_Setter_UpdatesDatum()
-    {
-        VerticalCoordinateSystem vcs = VerticalCoordinateSystem.ODN;
-        var newDatum = new VerticalDatum(
-            DatumType.VD_GeoidModelDerived,
-            "Custom",
-            "TEST",
-            9999,
-            string.Empty,
-            string.Empty,
-            string.Empty);
-        vcs.VerticalDatum = newDatum;
-
-        Assert.Same(newDatum, vcs.VerticalDatum);
-    }
-
     private static VerticalCoordinateSystem CreateVerticalCoordinateSystem(AxisInfo axisInfo, string authority = "TEST", long authorityCode = 1234)
     {
         return new VerticalCoordinateSystem(

@@ -17,9 +17,6 @@ using ProjNet.IO.Wkt;
 /// </summary>
 public class CompoundCoordinateSystem : CoordinateSystem
 {
-    private CoordinateSystem headCoordinateSystem;
-    private CoordinateSystem tailCoordinateSystem;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="CompoundCoordinateSystem"/> class.
     /// A compound coordinate system.
@@ -35,28 +32,22 @@ public class CompoundCoordinateSystem : CoordinateSystem
     public CompoundCoordinateSystem(CoordinateSystem headcs, CoordinateSystem tailcs, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks)
         : base(name, authority, authorityCode, alias, abbreviation, remarks)
     {
-        this.headCoordinateSystem = headcs;
-        this.tailCoordinateSystem = tailcs;
+        this.HeadCoordinateSystem = headcs;
+        this.TailCoordinateSystem = tailcs;
         this.AxisInfo = [];
         this.AxisInfo.AddRange(this.HeadCoordinateSystem.AxisInfo);
         this.AxisInfo.AddRange(this.TailCoordinateSystem.AxisInfo);
     }
 
     /// <summary>
-    /// Gets or sets the head coordinate system.
+    /// Gets the head coordinate system.
     /// </summary>
-    public CoordinateSystem HeadCoordinateSystem
-    {
-        get => this.headCoordinateSystem; set { this.headCoordinateSystem = value; }
-    }
+    public CoordinateSystem HeadCoordinateSystem { get; }
 
     /// <summary>
-    /// Gets or sets the tail coordinate system.
+    /// Gets the tail coordinate system.
     /// </summary>
-    public CoordinateSystem TailCoordinateSystem
-    {
-        get => this.tailCoordinateSystem; set { this.tailCoordinateSystem = value; }
-    }
+    public CoordinateSystem TailCoordinateSystem { get; }
 
     /// <inheritdoc/>
     public override string WKT

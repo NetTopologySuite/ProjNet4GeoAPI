@@ -65,14 +65,14 @@ public sealed class EngineeringCoordinateSystem : CoordinateSystem
     }
 
     /// <summary>
-    /// Gets or sets the engineering datum.
+    /// Gets the engineering datum.
     /// </summary>
-    public EngineeringDatum EngineeringDatum { get; set; }
+    public EngineeringDatum EngineeringDatum { get; }
 
     /// <summary>
-    /// Gets or sets the WKT2 coordinate system type from the <c>CS</c> block.
+    /// Gets the WKT2 coordinate system type from the <c>CS</c> block.
     /// </summary>
-    public string CoordinateSystemType { get; set; }
+    public string CoordinateSystemType { get; }
 
     /// <summary>
     /// Gets the units for each engineering axis.

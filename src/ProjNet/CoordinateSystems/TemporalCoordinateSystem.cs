@@ -44,14 +44,14 @@ public sealed class TemporalCoordinateSystem : CoordinateSystem
     }
 
     /// <summary>
-    /// Gets or sets the temporal datum.
+    /// Gets the temporal datum.
     /// </summary>
-    public TemporalDatum TemporalDatum { get; set; }
+    public TemporalDatum TemporalDatum { get; }
 
     /// <summary>
-    /// Gets or sets the time unit.
+    /// Gets the time unit.
     /// </summary>
-    public TimeUnit TimeUnit { get; set; }
+    public TimeUnit TimeUnit { get; }
 
     /// <inheritdoc />
     public override string WKT => this.ToWktNode(WktVersion.Wkt22019).ToString();

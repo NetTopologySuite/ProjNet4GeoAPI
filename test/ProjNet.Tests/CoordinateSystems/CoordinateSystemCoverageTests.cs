@@ -218,22 +218,6 @@ public class CoordinateSystemCoverageTests
     }
 
     /// <summary>
-    /// Verifies that property setters update the values.
-    /// </summary>
-    [Fact]
-    public void GeocentricCS_PropertySetters_UpdateValues()
-    {
-        GeocentricCoordinateSystem gcs = Factory.CreateGeocentricCoordinateSystem(
-            "WGS84 Geocentric", HorizontalDatum.WGS84, LinearUnit.Metre, PrimeMeridian.Greenwich);
-
-        gcs.LinearUnit = LinearUnit.Foot;
-        gcs.PrimeMeridian = PrimeMeridian.Paris;
-
-        Assert.True(gcs.LinearUnit.EqualParams(LinearUnit.Foot));
-        Assert.True(gcs.PrimeMeridian.EqualParams(PrimeMeridian.Paris));
-    }
-
-    /// <summary>
     /// Verifies that DefaultEnvelope can be set and retrieved.
     /// </summary>
     [Fact]
@@ -414,31 +398,6 @@ public class CoordinateSystemCoverageTests
             "WGS84+ODN", GeographicCoordinateSystem.WGS84, VerticalCoordinateSystem.ODN);
 
         Assert.False(compound.EqualParams("not a CS"));
-    }
-
-    /// <summary>
-    /// Verifies that property setters update head and tail.
-    /// </summary>
-    [Fact]
-    public void CompoundCS_PropertySetters_UpdateValues()
-    {
-        CompoundCoordinateSystem compound = Factory.CreateCompoundCoordinateSystem(
-            "WGS84+ODN", GeographicCoordinateSystem.WGS84, VerticalCoordinateSystem.ODN);
-
-        var newTail = new VerticalCoordinateSystem(
-            LinearUnit.Foot,
-            VerticalDatum.ODN,
-            new AxisInfo("Up", AxisOrientationEnum.Up),
-            "Foot",
-            string.Empty,
-            -1,
-            string.Empty,
-            string.Empty,
-            string.Empty);
-
-        compound.TailCoordinateSystem = newTail;
-
-        Assert.Same(newTail, compound.TailCoordinateSystem);
     }
 
     /// <summary>
