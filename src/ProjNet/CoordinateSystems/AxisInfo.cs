@@ -14,9 +14,6 @@ using ProjNet.IO.Wkt;
 /// </summary>
 public sealed class AxisInfo
 {
-    private string name = string.Empty;
-    private AxisOrientationEnum orientation;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="AxisInfo"/> class.
     /// </summary>
@@ -40,22 +37,14 @@ public sealed class AxisInfo
     }
 
     /// <summary>
-    /// Gets or sets human readable name for axis. Possible values are X, Y, Long, Lat or any other short string.
+    /// Gets human readable name for axis. Possible values are X, Y, Long, Lat or any other short string.
     /// </summary>
-    public string Name
-    {
-        get => this.name;
-        set => this.name = value;
-    }
+    public string Name { get; }
 
     /// <summary>
-    /// Gets or sets enumerated value for orientation.
+    /// Gets enumerated value for orientation.
     /// </summary>
-    public AxisOrientationEnum Orientation
-    {
-        get => this.orientation;
-        set => this.orientation = value;
-    }
+    public AxisOrientationEnum Orientation { get; }
 
     /// <summary>
     /// Gets the Well-known text for this object

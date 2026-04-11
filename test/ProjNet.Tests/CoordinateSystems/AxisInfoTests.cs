@@ -41,22 +41,6 @@ public class AxisInfoTests
     }
 
     /// <summary>
-    /// Verifies that both properties can be updated after construction.
-    /// </summary>
-    [Fact]
-    public void Properties_CanBeUpdated()
-    {
-        var axis = new AxisInfo("X", AxisOrientationEnum.Other)
-        {
-            Name = "Latitude",
-            Orientation = AxisOrientationEnum.North,
-        };
-
-        Assert.Equal("Latitude", axis.Name);
-        Assert.Equal(AxisOrientationEnum.North, axis.Orientation);
-    }
-
-    /// <summary>
     /// Verifies that WKT uses the expected keyword, axis name, and upper-cased orientation.
     /// </summary>
     [Fact]
