@@ -15,16 +15,19 @@ using Xunit;
 /// </summary>
 public class ProjNetIssueRegressionTests : CoordinateTransformTestsBase
 {
-    private const string Discussion361248Wgs84Wkt = @"GEOGCS[""WGS 84"",
-    DATUM[""WGS_1984"",
-        SPHEROID[""WGS 84"",6378137,298.257223563,
-            AUTHORITY[""EPSG"",""7030""]],
-        AUTHORITY[""EPSG"",""6326""]],
-    PRIMEM[""Greenwich"",0,
-        AUTHORITY[""EPSG"",""8901""]],
-    UNIT[""degree"",0.01745329251994328,
-        AUTHORITY[""EPSG"",""9122""]],
-    AUTHORITY[""EPSG"",""4326""]]";
+    private const string Discussion361248Wgs84Wkt =
+        """
+        GEOGCS["WGS 84",
+        DATUM["WGS_1984",
+            SPHEROID["WGS 84",6378137,298.257223563,
+                AUTHORITY["EPSG","7030"]],
+            AUTHORITY["EPSG","6326"]],
+        PRIMEM["Greenwich",0,
+            AUTHORITY["EPSG","8901"]],
+        UNIT["degree",0.01745329251994328,
+            AUTHORITY["EPSG","9122"]],
+        AUTHORITY["EPSG","4326"]]
+        """;
 
     private static readonly double[] TestDiscussion3612481Expected = [2349315.05731837, 6524249.91789138];
     private static readonly double[] TestDiscussion3612481Input = [136d, -30d];
