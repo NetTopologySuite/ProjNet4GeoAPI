@@ -82,6 +82,21 @@ public class Wgs84CatalogConsistencyTests
     }
 
     /// <summary>
+    /// Verifies that the public Web Mercator accessor reuses the same immutable normalized runtime instance.
+    /// </summary>
+    [Fact]
+    public void WebMercator_StaticReturnsSameNormalizedInstance()
+    {
+        ProjectedCoordinateSystem first = ProjectedCoordinateSystem.WebMercator;
+        ProjectedCoordinateSystem second = ProjectedCoordinateSystem.WebMercator;
+
+        Assert.Same(first, second);
+        Assert.Same(GeographicCoordinateSystem.WGS84, first.GeographicCoordinateSystem);
+        Assert.Equal(AxisOrientationEnum.East, first.GetAxis(0).Orientation);
+        Assert.Equal(AxisOrientationEnum.North, first.GetAxis(1).Orientation);
+    }
+
+    /// <summary>
     /// Verifies that the public WGS84 UTM accessor matches EPSG catalog entries after legacy base-CRS normalization.
     /// </summary>
     /// <param name="zone">The UTM zone.</param>

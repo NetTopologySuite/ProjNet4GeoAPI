@@ -25,7 +25,7 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
     private const string LegacyWgs84UtmRemarks = "Large and medium scale topographic mapping and engineering survey.";
 
     private static readonly Lazy<ProjectedCoordinateSystem> WebMercatorCoordinateSystem =
-        new(ResolveRuntimeCompatibleWebMercatorCoordinateSystem, true);
+        new(CreateWebMercatorCoordinateSystem, true);
 
     private static readonly Dictionary<int, ProjectedCoordinateSystem> Wgs84UtmCoordinateSystems = [];
 
@@ -71,7 +71,7 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
     /// </summary>
     public static ProjectedCoordinateSystem WebMercator
     {
-        get { return CreateWebMercatorCoordinateSystem(); }
+        get { return WebMercatorCoordinateSystem.Value; }
     }
 
     /// <summary>
@@ -393,16 +393,11 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
 
     private static ProjectedCoordinateSystem CreateWebMercatorCoordinateSystem()
     {
-        return CloneProjectedCoordinateSystem(WebMercatorCoordinateSystem.Value);
-    }
-
-    private static ProjectedCoordinateSystem ResolveRuntimeCompatibleWebMercatorCoordinateSystem()
-    {
         return Wgs84CatalogBootstrap.TryGetCoordinateSystem(
             Wgs84CatalogBootstrap.WebMercatorSrid,
             out ProjectedCoordinateSystem? coordinateSystem)
             ? NormalizeToLegacyWebMercatorShape(coordinateSystem)
-            : CreateLegacyWebMercatorCoordinateSystem();
+            : throw new InvalidOperationException("The generated EPSG catalog could not resolve the WGS 84 / Pseudo-Mercator projected coordinate system.");
     }
 
     private static ProjectedCoordinateSystem NormalizeToLegacyWebMercatorShape(ProjectedCoordinateSystem coordinateSystem)
@@ -425,37 +420,6 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
             coordinateSystem.Name,
             coordinateSystem.Authority,
             coordinateSystem.AuthorityCode,
-            LegacyWebMercatorAlias,
-            LegacyWebMercatorRemarks,
-            LegacyWebMercatorAbbreviation);
-    }
-
-    private static ProjectedCoordinateSystem CreateLegacyWebMercatorCoordinateSystem()
-    {
-        GeographicCoordinateSystem geographicCoordinateSystem = CoordinateSystems.GeographicCoordinateSystem.WGS84;
-        return new ProjectedCoordinateSystem(
-            geographicCoordinateSystem.HorizontalDatum,
-            geographicCoordinateSystem,
-            CoordinateSystems.LinearUnit.Metre,
-            new Projection(
-                "Popular Visualisation Pseudo-Mercator",
-                new List<ProjectionParameter>
-                {
-                    new("latitude_of_origin", 0.0),
-                    new("central_meridian", 0.0),
-                    new("false_easting", 0.0),
-                    new("false_northing", 0.0),
-                },
-                "Popular Visualisation Pseudo-Mercator",
-                "EPSG",
-                3856,
-                "Pseudo-Mercator",
-                string.Empty,
-                string.Empty),
-            [new AxisInfo("East", AxisOrientationEnum.East), new AxisInfo("North", AxisOrientationEnum.North)],
-            "WGS 84 / Pseudo-Mercator",
-            "EPSG",
-            3857,
             LegacyWebMercatorAlias,
             LegacyWebMercatorRemarks,
             LegacyWebMercatorAbbreviation);
