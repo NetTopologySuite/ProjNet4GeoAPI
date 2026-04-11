@@ -174,6 +174,17 @@ public abstract class Info : IInfo
     }
 
     /// <summary>
+    /// Creates a copy of this object with an updated name.
+    /// </summary>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A new instance of the same runtime type with the updated name.</returns>
+    public Info WithName(string name)
+    {
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
+        return InfoAuthorityCloneHelper.CloneWithName(this, name);
+    }
+
+    /// <summary>
     /// Returns the Well-known text for this object
     /// as defined in the simple features specification.
     /// </summary>

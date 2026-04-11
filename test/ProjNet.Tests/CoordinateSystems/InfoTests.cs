@@ -55,6 +55,22 @@ public class InfoTests
     }
 
     /// <summary>
+    /// Verifies that <see cref="Info.WithName"/> returns a new instance with updated naming metadata.
+    /// </summary>
+    [Fact]
+    public void WithName_ReturnsCloneWithUpdatedName()
+    {
+        LinearUnit original = LinearUnit.Metre;
+        LinearUnit clone = Assert.IsType<LinearUnit>(original.WithName("Meter"));
+
+        Assert.Equal("Meter", clone.Name);
+        Assert.Equal("metre", original.Name);
+        Assert.Equal(original.Authority, clone.Authority);
+        Assert.Equal(original.AuthorityCode, clone.AuthorityCode);
+        Assert.NotSame(original, clone);
+    }
+
+    /// <summary>
     /// Verifies that <see cref="Info.InfoXml"/> includes the supported metadata attributes in the expected order.
     /// </summary>
     [Fact]

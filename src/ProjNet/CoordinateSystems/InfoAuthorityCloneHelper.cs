@@ -67,11 +67,53 @@ internal static class InfoAuthorityCloneHelper
         return CloneHorizontalDatum(horizontalDatum, wgs84Parameters);
     }
 
-    private static AngularUnit CloneAngularUnit(AngularUnit angularUnit, string? authority = null, long? authorityCode = null)
+    /// <summary>
+    /// Creates a deep clone of the supplied info-backed model object with a replacement name.
+    /// </summary>
+    /// <param name="info">Object to clone.</param>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A cloned object of the same runtime type.</returns>
+    internal static Info CloneWithName(Info info, string name)
+    {
+        info = ArgumentGuard.ThrowIfNull(info, nameof(info));
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
+
+        return info switch
+        {
+            AngularUnit angularUnit => CloneAngularUnit(angularUnit, name: name),
+            LinearUnit linearUnit => CloneLinearUnit(linearUnit, name: name),
+            Unit unit => CloneUnit(unit, name: name),
+            ParametricUnit parametricUnit => CloneParametricUnit(parametricUnit, name: name),
+            TimeUnit timeUnit => CloneTimeUnit(timeUnit, name: name),
+            Ellipsoid ellipsoid => CloneEllipsoid(ellipsoid, name: name),
+            PrimeMeridian primeMeridian => ClonePrimeMeridian(primeMeridian, name: name),
+            Projection projection => CloneProjection(projection, name: name),
+            HorizontalDatum horizontalDatum => CloneHorizontalDatum(horizontalDatum, name: name),
+            VerticalDatum verticalDatum => CloneVerticalDatum(verticalDatum, name: name),
+            EngineeringDatum engineeringDatum => CloneEngineeringDatum(engineeringDatum, name: name),
+            ParametricDatum parametricDatum => CloneParametricDatum(parametricDatum, name: name),
+            TemporalDatum temporalDatum => CloneTemporalDatum(temporalDatum, name: name),
+            GeographicCoordinateSystem geographicCoordinateSystem => CloneGeographicCoordinateSystem(geographicCoordinateSystem, name: name),
+            ProjectedCoordinateSystem projectedCoordinateSystem => CloneProjectedCoordinateSystem(projectedCoordinateSystem, name: name),
+            GeocentricCoordinateSystem geocentricCoordinateSystem => CloneGeocentricCoordinateSystem(geocentricCoordinateSystem, name: name),
+            VerticalCoordinateSystem verticalCoordinateSystem => CloneVerticalCoordinateSystem(verticalCoordinateSystem, name: name),
+            CompoundCoordinateSystem compoundCoordinateSystem => CloneCompoundCoordinateSystem(compoundCoordinateSystem, name: name),
+            BoundCoordinateSystem boundCoordinateSystem => CloneBoundCoordinateSystem(boundCoordinateSystem, name: name),
+            FittedCoordinateSystem fittedCoordinateSystem => CloneFittedCoordinateSystem(fittedCoordinateSystem, name: name),
+            EngineeringCoordinateSystem engineeringCoordinateSystem => CloneEngineeringCoordinateSystem(engineeringCoordinateSystem, name: name),
+            ParametricCoordinateSystem parametricCoordinateSystem => CloneParametricCoordinateSystem(parametricCoordinateSystem, name: name),
+            TemporalCoordinateSystem temporalCoordinateSystem => CloneTemporalCoordinateSystem(temporalCoordinateSystem, name: name),
+            CoordinateOperation coordinateOperation => CloneCoordinateOperation(coordinateOperation, name: name),
+            ConcatenatedOperation concatenatedOperation => CloneConcatenatedOperation(concatenatedOperation, name: name),
+            _ => throw new NotSupportedException($"WithName is not supported for info type '{info.GetType().FullName}'."),
+        };
+    }
+
+    private static AngularUnit CloneAngularUnit(AngularUnit angularUnit, string? authority = null, long? authorityCode = null, string? name = null)
     {
         return new AngularUnit(
             angularUnit.RadiansPerUnit,
-            angularUnit.Name,
+            name ?? angularUnit.Name,
             authority ?? angularUnit.Authority,
             authorityCode ?? angularUnit.AuthorityCode,
             angularUnit.Alias,
@@ -79,11 +121,11 @@ internal static class InfoAuthorityCloneHelper
             angularUnit.Remarks);
     }
 
-    private static LinearUnit CloneLinearUnit(LinearUnit linearUnit, string? authority = null, long? authorityCode = null)
+    private static LinearUnit CloneLinearUnit(LinearUnit linearUnit, string? authority = null, long? authorityCode = null, string? name = null)
     {
         return new LinearUnit(
             linearUnit.MetersPerUnit,
-            linearUnit.Name,
+            name ?? linearUnit.Name,
             authority ?? linearUnit.Authority,
             authorityCode ?? linearUnit.AuthorityCode,
             linearUnit.Alias,
@@ -91,11 +133,11 @@ internal static class InfoAuthorityCloneHelper
             linearUnit.Remarks);
     }
 
-    private static Unit CloneUnit(Unit unit, string? authority = null, long? authorityCode = null)
+    private static Unit CloneUnit(Unit unit, string? authority = null, long? authorityCode = null, string? name = null)
     {
         return new Unit(
             unit.ConversionFactor,
-            unit.Name,
+            name ?? unit.Name,
             authority ?? unit.Authority,
             authorityCode ?? unit.AuthorityCode,
             unit.Alias,
@@ -103,11 +145,11 @@ internal static class InfoAuthorityCloneHelper
             unit.Remarks);
     }
 
-    private static ParametricUnit CloneParametricUnit(ParametricUnit parametricUnit, string? authority = null, long? authorityCode = null)
+    private static ParametricUnit CloneParametricUnit(ParametricUnit parametricUnit, string? authority = null, long? authorityCode = null, string? name = null)
     {
         return new ParametricUnit(
             parametricUnit.ConversionFactor,
-            parametricUnit.Name,
+            name ?? parametricUnit.Name,
             authority ?? parametricUnit.Authority,
             authorityCode ?? parametricUnit.AuthorityCode,
             parametricUnit.Alias,
@@ -115,11 +157,11 @@ internal static class InfoAuthorityCloneHelper
             parametricUnit.Remarks);
     }
 
-    private static TimeUnit CloneTimeUnit(TimeUnit timeUnit, string? authority = null, long? authorityCode = null)
+    private static TimeUnit CloneTimeUnit(TimeUnit timeUnit, string? authority = null, long? authorityCode = null, string? name = null)
     {
         return new TimeUnit(
             timeUnit.ConversionFactor,
-            timeUnit.Name,
+            name ?? timeUnit.Name,
             authority ?? timeUnit.Authority,
             authorityCode ?? timeUnit.AuthorityCode,
             timeUnit.Alias,
@@ -127,7 +169,7 @@ internal static class InfoAuthorityCloneHelper
             timeUnit.Remarks);
     }
 
-    private static Ellipsoid CloneEllipsoid(Ellipsoid ellipsoid, string? authority = null, long? authorityCode = null)
+    private static Ellipsoid CloneEllipsoid(Ellipsoid ellipsoid, string? authority = null, long? authorityCode = null, string? name = null)
     {
         return new Ellipsoid(
             ellipsoid.SemiMajorAxis,
@@ -135,7 +177,7 @@ internal static class InfoAuthorityCloneHelper
             ellipsoid.InverseFlattening,
             ellipsoid.IsIvfDefinitive,
             CloneLinearUnit(ellipsoid.AxisUnit),
-            ellipsoid.Name,
+            name ?? ellipsoid.Name,
             authority ?? ellipsoid.Authority,
             authorityCode ?? ellipsoid.AuthorityCode,
             ellipsoid.Alias,
@@ -143,12 +185,12 @@ internal static class InfoAuthorityCloneHelper
             ellipsoid.Remarks);
     }
 
-    private static PrimeMeridian ClonePrimeMeridian(PrimeMeridian primeMeridian, string? authority = null, long? authorityCode = null)
+    private static PrimeMeridian ClonePrimeMeridian(PrimeMeridian primeMeridian, string? authority = null, long? authorityCode = null, string? name = null)
     {
         return new PrimeMeridian(
             primeMeridian.Longitude,
             CloneAngularUnit(primeMeridian.AngularUnit),
-            primeMeridian.Name,
+            name ?? primeMeridian.Name,
             authority ?? primeMeridian.Authority,
             authorityCode ?? primeMeridian.AuthorityCode,
             primeMeridian.Alias,
@@ -156,12 +198,12 @@ internal static class InfoAuthorityCloneHelper
             primeMeridian.Remarks);
     }
 
-    private static Projection CloneProjection(IProjection projection, string? authority = null, long? authorityCode = null)
+    private static Projection CloneProjection(IProjection projection, string? authority = null, long? authorityCode = null, string? name = null)
     {
         return new Projection(
             projection.ClassName,
             CloneProjectionParameters(projection),
-            projection.Name,
+            name ?? projection.Name,
             authority ?? projection.Authority,
             authorityCode ?? projection.AuthorityCode,
             projection.Alias,
@@ -169,14 +211,14 @@ internal static class InfoAuthorityCloneHelper
             projection.Abbreviation);
     }
 
-    private static HorizontalDatum CloneHorizontalDatum(HorizontalDatum horizontalDatum, string? authority = null, long? authorityCode = null)
+    private static HorizontalDatum CloneHorizontalDatum(HorizontalDatum horizontalDatum, string? authority = null, long? authorityCode = null, string? name = null)
     {
         Ellipsoid ellipsoid = CloneEllipsoid(horizontalDatum.Ellipsoid);
         return new HorizontalDatum(
             ellipsoid,
             CloneOptionalWgs84ConversionInfo(horizontalDatum.Wgs84Parameters),
             horizontalDatum.DatumType,
-            horizontalDatum.Name,
+            name ?? horizontalDatum.Name,
             authority ?? horizontalDatum.Authority,
             authorityCode ?? horizontalDatum.AuthorityCode,
             horizontalDatum.Alias,
@@ -201,11 +243,11 @@ internal static class InfoAuthorityCloneHelper
             CloneDatumEnsemble(horizontalDatum.Ensemble, ellipsoid));
     }
 
-    private static VerticalDatum CloneVerticalDatum(VerticalDatum verticalDatum, string? authority = null, long? authorityCode = null)
+    private static VerticalDatum CloneVerticalDatum(VerticalDatum verticalDatum, string? authority = null, long? authorityCode = null, string? name = null)
     {
         return new VerticalDatum(
             verticalDatum.DatumType,
-            verticalDatum.Name,
+            name ?? verticalDatum.Name,
             authority ?? verticalDatum.Authority,
             authorityCode ?? verticalDatum.AuthorityCode,
             verticalDatum.Alias,
@@ -214,10 +256,10 @@ internal static class InfoAuthorityCloneHelper
             CloneDatumEnsemble(verticalDatum.Ensemble));
     }
 
-    private static EngineeringDatum CloneEngineeringDatum(EngineeringDatum engineeringDatum, string? authority = null, long? authorityCode = null)
+    private static EngineeringDatum CloneEngineeringDatum(EngineeringDatum engineeringDatum, string? authority = null, long? authorityCode = null, string? name = null)
     {
         return new EngineeringDatum(
-            engineeringDatum.Name,
+            name ?? engineeringDatum.Name,
             authority ?? engineeringDatum.Authority,
             authorityCode ?? engineeringDatum.AuthorityCode,
             engineeringDatum.Alias,
@@ -225,10 +267,10 @@ internal static class InfoAuthorityCloneHelper
             engineeringDatum.Abbreviation);
     }
 
-    private static ParametricDatum CloneParametricDatum(ParametricDatum parametricDatum, string? authority = null, long? authorityCode = null)
+    private static ParametricDatum CloneParametricDatum(ParametricDatum parametricDatum, string? authority = null, long? authorityCode = null, string? name = null)
     {
         return new ParametricDatum(
-            parametricDatum.Name,
+            name ?? parametricDatum.Name,
             authority ?? parametricDatum.Authority,
             authorityCode ?? parametricDatum.AuthorityCode,
             parametricDatum.Alias,
@@ -236,11 +278,11 @@ internal static class InfoAuthorityCloneHelper
             parametricDatum.Abbreviation);
     }
 
-    private static TemporalDatum CloneTemporalDatum(TemporalDatum temporalDatum, string? authority = null, long? authorityCode = null)
+    private static TemporalDatum CloneTemporalDatum(TemporalDatum temporalDatum, string? authority = null, long? authorityCode = null, string? name = null)
     {
         return new TemporalDatum(
             temporalDatum.TimeOrigin,
-            temporalDatum.Name,
+            name ?? temporalDatum.Name,
             authority ?? temporalDatum.Authority,
             authorityCode ?? temporalDatum.AuthorityCode,
             temporalDatum.Alias,
@@ -251,24 +293,26 @@ internal static class InfoAuthorityCloneHelper
     private static GeographicCoordinateSystem CloneGeographicCoordinateSystem(
         GeographicCoordinateSystem geographicCoordinateSystem,
         string? authority = null,
-        long? authorityCode = null)
+        long? authorityCode = null,
+        string? name = null)
     {
         HorizontalDatum horizontalDatum = CloneHorizontalDatum(geographicCoordinateSystem.HorizontalDatum);
-        return CloneGeographicCoordinateSystem(geographicCoordinateSystem, horizontalDatum, authority, authorityCode);
+        return CloneGeographicCoordinateSystem(geographicCoordinateSystem, horizontalDatum, authority, authorityCode, name);
     }
 
     private static GeographicCoordinateSystem CloneGeographicCoordinateSystem(
         GeographicCoordinateSystem geographicCoordinateSystem,
         HorizontalDatum horizontalDatum,
         string? authority = null,
-        long? authorityCode = null)
+        long? authorityCode = null,
+        string? name = null)
     {
         var clone = new GeographicCoordinateSystem(
             CloneAngularUnit(geographicCoordinateSystem.AngularUnit),
             horizontalDatum,
             ClonePrimeMeridian(geographicCoordinateSystem.PrimeMeridian),
             CloneAxisInfo(geographicCoordinateSystem),
-            geographicCoordinateSystem.Name,
+            name ?? geographicCoordinateSystem.Name,
             authority ?? geographicCoordinateSystem.Authority,
             authorityCode ?? geographicCoordinateSystem.AuthorityCode,
             geographicCoordinateSystem.Alias,
@@ -285,7 +329,8 @@ internal static class InfoAuthorityCloneHelper
     private static ProjectedCoordinateSystem CloneProjectedCoordinateSystem(
         ProjectedCoordinateSystem projectedCoordinateSystem,
         string? authority = null,
-        long? authorityCode = null)
+        long? authorityCode = null,
+        string? name = null)
     {
         HorizontalDatum horizontalDatum = CloneHorizontalDatum(projectedCoordinateSystem.HorizontalDatum);
         GeographicCoordinateSystem geographicCoordinateSystem = CloneGeographicCoordinateSystem(projectedCoordinateSystem.GeographicCoordinateSystem, horizontalDatum);
@@ -296,7 +341,7 @@ internal static class InfoAuthorityCloneHelper
             CloneLinearUnit(projectedCoordinateSystem.LinearUnit),
             CloneProjection(projectedCoordinateSystem.Projection),
             CloneAxisInfo(projectedCoordinateSystem),
-            projectedCoordinateSystem.Name,
+            name ?? projectedCoordinateSystem.Name,
             authority ?? projectedCoordinateSystem.Authority,
             authorityCode ?? projectedCoordinateSystem.AuthorityCode,
             projectedCoordinateSystem.Alias,
@@ -308,7 +353,8 @@ internal static class InfoAuthorityCloneHelper
     private static GeocentricCoordinateSystem CloneGeocentricCoordinateSystem(
         GeocentricCoordinateSystem geocentricCoordinateSystem,
         string? authority = null,
-        long? authorityCode = null)
+        long? authorityCode = null,
+        string? name = null)
     {
         HorizontalDatum horizontalDatum = CloneHorizontalDatum(geocentricCoordinateSystem.HorizontalDatum);
         return new GeocentricCoordinateSystem(
@@ -316,7 +362,7 @@ internal static class InfoAuthorityCloneHelper
             CloneLinearUnit(geocentricCoordinateSystem.LinearUnit),
             ClonePrimeMeridian(geocentricCoordinateSystem.PrimeMeridian),
             CloneAxisInfo(geocentricCoordinateSystem),
-            geocentricCoordinateSystem.Name,
+            name ?? geocentricCoordinateSystem.Name,
             authority ?? geocentricCoordinateSystem.Authority,
             authorityCode ?? geocentricCoordinateSystem.AuthorityCode,
             geocentricCoordinateSystem.Alias,
@@ -328,13 +374,14 @@ internal static class InfoAuthorityCloneHelper
     private static VerticalCoordinateSystem CloneVerticalCoordinateSystem(
         VerticalCoordinateSystem verticalCoordinateSystem,
         string? authority = null,
-        long? authorityCode = null)
+        long? authorityCode = null,
+        string? name = null)
     {
         var clone = new VerticalCoordinateSystem(
             CloneLinearUnit(verticalCoordinateSystem.LinearUnit),
             CloneVerticalDatum(verticalCoordinateSystem.VerticalDatum),
             CloneAxisInfo(verticalCoordinateSystem),
-            verticalCoordinateSystem.Name,
+            name ?? verticalCoordinateSystem.Name,
             authority ?? verticalCoordinateSystem.Authority,
             authorityCode ?? verticalCoordinateSystem.AuthorityCode,
             verticalCoordinateSystem.Alias,
@@ -351,12 +398,13 @@ internal static class InfoAuthorityCloneHelper
     private static CompoundCoordinateSystem CloneCompoundCoordinateSystem(
         CompoundCoordinateSystem compoundCoordinateSystem,
         string? authority = null,
-        long? authorityCode = null)
+        long? authorityCode = null,
+        string? name = null)
     {
         return new CompoundCoordinateSystem(
             CloneCoordinateSystem(compoundCoordinateSystem.HeadCoordinateSystem),
             CloneCoordinateSystem(compoundCoordinateSystem.TailCoordinateSystem),
-            compoundCoordinateSystem.Name,
+            name ?? compoundCoordinateSystem.Name,
             authority ?? compoundCoordinateSystem.Authority,
             authorityCode ?? compoundCoordinateSystem.AuthorityCode,
             compoundCoordinateSystem.Alias,
@@ -369,13 +417,14 @@ internal static class InfoAuthorityCloneHelper
     private static BoundCoordinateSystem CloneBoundCoordinateSystem(
         BoundCoordinateSystem boundCoordinateSystem,
         string? authority = null,
-        long? authorityCode = null)
+        long? authorityCode = null,
+        string? name = null)
     {
         return new BoundCoordinateSystem(
             CloneCoordinateSystem(boundCoordinateSystem.SourceCoordinateSystem),
             CloneCoordinateSystem(boundCoordinateSystem.TargetCoordinateSystem),
             CloneBoundTransformation(boundCoordinateSystem.Transformation),
-            boundCoordinateSystem.Name,
+            name ?? boundCoordinateSystem.Name,
             authority ?? boundCoordinateSystem.Authority,
             authorityCode ?? boundCoordinateSystem.AuthorityCode,
             boundCoordinateSystem.Alias,
@@ -386,12 +435,13 @@ internal static class InfoAuthorityCloneHelper
     private static FittedCoordinateSystem CloneFittedCoordinateSystem(
         FittedCoordinateSystem fittedCoordinateSystem,
         string? authority = null,
-        long? authorityCode = null)
+        long? authorityCode = null,
+        string? name = null)
     {
         return new FittedCoordinateSystem(
             CloneCoordinateSystem(fittedCoordinateSystem.BaseCoordinateSystem),
             fittedCoordinateSystem.ToBaseTransform,
-            fittedCoordinateSystem.Name,
+            name ?? fittedCoordinateSystem.Name,
             authority ?? fittedCoordinateSystem.Authority,
             authorityCode ?? fittedCoordinateSystem.AuthorityCode,
             fittedCoordinateSystem.Alias,
@@ -403,14 +453,15 @@ internal static class InfoAuthorityCloneHelper
     private static EngineeringCoordinateSystem CloneEngineeringCoordinateSystem(
         EngineeringCoordinateSystem engineeringCoordinateSystem,
         string? authority = null,
-        long? authorityCode = null)
+        long? authorityCode = null,
+        string? name = null)
     {
         return new EngineeringCoordinateSystem(
             CloneEngineeringDatum(engineeringCoordinateSystem.EngineeringDatum),
             engineeringCoordinateSystem.CoordinateSystemType,
             CloneAxisInfo(engineeringCoordinateSystem),
             CloneUnits(engineeringCoordinateSystem.AxisUnits),
-            engineeringCoordinateSystem.Name,
+            name ?? engineeringCoordinateSystem.Name,
             authority ?? engineeringCoordinateSystem.Authority,
             authorityCode ?? engineeringCoordinateSystem.AuthorityCode,
             engineeringCoordinateSystem.Alias,
@@ -421,13 +472,14 @@ internal static class InfoAuthorityCloneHelper
     private static ParametricCoordinateSystem CloneParametricCoordinateSystem(
         ParametricCoordinateSystem parametricCoordinateSystem,
         string? authority = null,
-        long? authorityCode = null)
+        long? authorityCode = null,
+        string? name = null)
     {
         return new ParametricCoordinateSystem(
             CloneParametricUnit(parametricCoordinateSystem.ParametricUnit),
             CloneParametricDatum(parametricCoordinateSystem.ParametricDatum),
             new AxisInfo(parametricCoordinateSystem.GetAxis(0)),
-            parametricCoordinateSystem.Name,
+            name ?? parametricCoordinateSystem.Name,
             authority ?? parametricCoordinateSystem.Authority,
             authorityCode ?? parametricCoordinateSystem.AuthorityCode,
             parametricCoordinateSystem.Alias,
@@ -438,13 +490,14 @@ internal static class InfoAuthorityCloneHelper
     private static TemporalCoordinateSystem CloneTemporalCoordinateSystem(
         TemporalCoordinateSystem temporalCoordinateSystem,
         string? authority = null,
-        long? authorityCode = null)
+        long? authorityCode = null,
+        string? name = null)
     {
         return new TemporalCoordinateSystem(
             CloneTimeUnit(temporalCoordinateSystem.TimeUnit),
             CloneTemporalDatum(temporalCoordinateSystem.TemporalDatum),
             new AxisInfo(temporalCoordinateSystem.GetAxis(0)),
-            temporalCoordinateSystem.Name,
+            name ?? temporalCoordinateSystem.Name,
             authority ?? temporalCoordinateSystem.Authority,
             authorityCode ?? temporalCoordinateSystem.AuthorityCode,
             temporalCoordinateSystem.Alias,
@@ -455,14 +508,15 @@ internal static class InfoAuthorityCloneHelper
     private static CoordinateOperation CloneCoordinateOperation(
         CoordinateOperation coordinateOperation,
         string? authority = null,
-        long? authorityCode = null)
+        long? authorityCode = null,
+        string? name = null)
     {
         return new CoordinateOperation(
             coordinateOperation.MethodName,
             CloneParameters(coordinateOperation.Parameters),
             CloneCoordinateSystem(coordinateOperation.SourceCoordinateSystem),
             CloneCoordinateSystem(coordinateOperation.TargetCoordinateSystem),
-            coordinateOperation.Name,
+            name ?? coordinateOperation.Name,
             authority ?? coordinateOperation.Authority,
             authorityCode ?? coordinateOperation.AuthorityCode,
             coordinateOperation.Alias,
@@ -473,13 +527,14 @@ internal static class InfoAuthorityCloneHelper
     private static ConcatenatedOperation CloneConcatenatedOperation(
         ConcatenatedOperation concatenatedOperation,
         string? authority = null,
-        long? authorityCode = null)
+        long? authorityCode = null,
+        string? name = null)
     {
         return new ConcatenatedOperation(
             CloneCoordinateOperations(concatenatedOperation.Steps),
             CloneCoordinateSystem(concatenatedOperation.SourceCoordinateSystem),
             CloneCoordinateSystem(concatenatedOperation.TargetCoordinateSystem),
-            concatenatedOperation.Name,
+            name ?? concatenatedOperation.Name,
             authority ?? concatenatedOperation.Authority,
             authorityCode ?? concatenatedOperation.AuthorityCode,
             concatenatedOperation.Alias,

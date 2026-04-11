@@ -174,6 +174,24 @@ public class ProjectedCoordinateSystemTests
     }
 
     /// <summary>
+    /// Verifies that <see cref="Info.WithName"/> preserves the projected CRS structure while replacing its name.
+    /// </summary>
+    [Fact]
+    public void WithName_ReturnsProjectedCloneWithUpdatedName()
+    {
+        ProjectedCoordinateSystem original = CreateSystem(name: "Custom projected");
+        ProjectedCoordinateSystem clone = Assert.IsType<ProjectedCoordinateSystem>(original.WithName("Renamed projected"));
+
+        Assert.Equal("Renamed projected", clone.Name);
+        Assert.Equal("Custom projected", original.Name);
+        Assert.Equal(original.Authority, clone.Authority);
+        Assert.Equal(original.AuthorityCode, clone.AuthorityCode);
+        Assert.NotSame(original, clone);
+        Assert.NotSame(original.GeographicCoordinateSystem, clone.GeographicCoordinateSystem);
+        Assert.True(original.GeographicCoordinateSystem.EqualParams(clone.GeographicCoordinateSystem));
+    }
+
+    /// <summary>
     /// Verifies that WKT omits axis clauses when the default projected axes are used.
     /// </summary>
     [Fact]
