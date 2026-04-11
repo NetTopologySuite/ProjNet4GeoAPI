@@ -119,4 +119,19 @@ public enum DatumType : int
     /// Highest possible value for local datum types.
     /// </summary>
     LD_Max = 32767,
+
+    /// <summary>
+    /// Lowest possible value for temporal datum types.
+    /// </summary>
+    TD_Min = 40000,
+
+    /// <summary>
+    /// Unspecified temporal datum type.
+    /// </summary>
+    TD_Other = TD_Min,
+
+    /// <summary>
+    /// Highest possible value for temporal datum types.
+    /// </summary>
+    TD_Max = 40999,
 }
