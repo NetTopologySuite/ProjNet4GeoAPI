@@ -189,7 +189,15 @@ namespace ProjNet.CoordinateSystems
         VD_Depth = 2006,
         VD_Max = 2999,
         LD_Min = 10000,
+        LdOther = 10000,
+        LdEngineering = 10001,
         LD_Max = 32767,
+        TdMin = 40000,
+        TdOther = 40000,
+        TdMax = 40999,
+        PdMin = 50000,
+        PdOther = 50000,
+        PdMax = 50999,
     }
     public class Ellipsoid : ProjNet.CoordinateSystems.Info
     {
@@ -207,6 +215,30 @@ namespace ProjNet.CoordinateSystems
         public static ProjNet.CoordinateSystems.Ellipsoid Sphere { get; }
         public static ProjNet.CoordinateSystems.Ellipsoid WGS72 { get; }
         public static ProjNet.CoordinateSystems.Ellipsoid WGS84 { get; }
+        public override bool EqualParams(object obj) { }
+        public ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
+        public System.Xml.Linq.XElement ToXml() { }
+    }
+    public class EngineeringCoordinateSystem : ProjNet.CoordinateSystems.CoordinateSystem
+    {
+        public EngineeringCoordinateSystem(ProjNet.CoordinateSystems.EngineeringDatum engineeringDatum, string coordinateSystemType, System.Collections.Generic.IReadOnlyList<ProjNet.CoordinateSystems.AxisInfo> axisInfo, System.Collections.Generic.IReadOnlyList<ProjNet.CoordinateSystems.IUnit> units, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks) { }
+        public System.Collections.Generic.IReadOnlyList<ProjNet.CoordinateSystems.IUnit> AxisUnits { get; }
+        public string CoordinateSystemType { get; set; }
+        public ProjNet.CoordinateSystems.EngineeringDatum EngineeringDatum { get; set; }
+        public override string WKT { get; }
+        public override string XML { get; }
+        public override bool EqualParams(object obj) { }
+        public override ProjNet.CoordinateSystems.IUnit GetUnits(int dimension) { }
+        public override ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public override ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
+        public override System.Xml.Linq.XElement ToXml() { }
+    }
+    public class EngineeringDatum : ProjNet.CoordinateSystems.Datum
+    {
+        public EngineeringDatum(string name, string authority, long authorityCode, string alias, string remarks, string abbreviation) { }
+        public override string WKT { get; }
+        public override string XML { get; }
         public override bool EqualParams(object obj) { }
         public ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
@@ -399,6 +431,75 @@ namespace ProjNet.CoordinateSystems
         public override string WKT { get; }
         public override string XML { get; }
         public override bool EqualParams(object obj) { }
+        public System.Xml.Linq.XElement ToXml() { }
+    }
+    public class ParametricCoordinateSystem : ProjNet.CoordinateSystems.CoordinateSystem
+    {
+        public ParametricCoordinateSystem(ProjNet.CoordinateSystems.ParametricUnit parametricUnit, ProjNet.CoordinateSystems.ParametricDatum parametricDatum, ProjNet.CoordinateSystems.AxisInfo axisInfo, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks) { }
+        public ProjNet.CoordinateSystems.ParametricDatum ParametricDatum { get; set; }
+        public ProjNet.CoordinateSystems.ParametricUnit ParametricUnit { get; set; }
+        public override string WKT { get; }
+        public override string XML { get; }
+        public override bool EqualParams(object obj) { }
+        public override ProjNet.CoordinateSystems.IUnit GetUnits(int dimension) { }
+        public override ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public override ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
+        public override System.Xml.Linq.XElement ToXml() { }
+    }
+    public class ParametricDatum : ProjNet.CoordinateSystems.Datum
+    {
+        public ParametricDatum(string name, string authority, long authorityCode, string alias, string remarks, string abbreviation) { }
+        public override string WKT { get; }
+        public override string XML { get; }
+        public override bool EqualParams(object obj) { }
+        public ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
+        public System.Xml.Linq.XElement ToXml() { }
+    }
+    public class ParametricUnit : ProjNet.CoordinateSystems.Info, ProjNet.CoordinateSystems.IInfo, ProjNet.CoordinateSystems.IUnit
+    {
+        public ParametricUnit(double conversionFactor, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks) { }
+        public double ConversionFactor { get; set; }
+        public override string WKT { get; }
+        public override string XML { get; }
+        public override bool EqualParams(object obj) { }
+        public ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
+        public System.Xml.Linq.XElement ToXml() { }
+    }
+    public class TemporalCoordinateSystem : ProjNet.CoordinateSystems.CoordinateSystem
+    {
+        public TemporalCoordinateSystem(ProjNet.CoordinateSystems.TimeUnit timeUnit, ProjNet.CoordinateSystems.TemporalDatum temporalDatum, ProjNet.CoordinateSystems.AxisInfo axisInfo, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks) { }
+        public ProjNet.CoordinateSystems.TemporalDatum TemporalDatum { get; set; }
+        public ProjNet.CoordinateSystems.TimeUnit TimeUnit { get; set; }
+        public override string WKT { get; }
+        public override string XML { get; }
+        public override bool EqualParams(object obj) { }
+        public override ProjNet.CoordinateSystems.IUnit GetUnits(int dimension) { }
+        public override ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public override ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
+        public override System.Xml.Linq.XElement ToXml() { }
+    }
+    public class TemporalDatum : ProjNet.CoordinateSystems.Datum
+    {
+        public TemporalDatum(string timeOrigin, string name, string authority, long authorityCode, string alias, string remarks, string abbreviation) { }
+        public string TimeOrigin { get; set; }
+        public override string WKT { get; }
+        public override string XML { get; }
+        public override bool EqualParams(object obj) { }
+        public ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
+        public System.Xml.Linq.XElement ToXml() { }
+    }
+    public class TimeUnit : ProjNet.CoordinateSystems.Info, ProjNet.CoordinateSystems.IInfo, ProjNet.CoordinateSystems.IUnit
+    {
+        public TimeUnit(double conversionFactor, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks) { }
+        public double ConversionFactor { get; set; }
+        public override string WKT { get; }
+        public override string XML { get; }
+        public override bool EqualParams(object obj) { }
+        public ProjNet.IO.Wkt.WktNode ToWktNode() { }
+        public ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public System.Xml.Linq.XElement ToXml() { }
     }
     public class VerticalCoordinateSystem : ProjNet.CoordinateSystems.CoordinateSystem
