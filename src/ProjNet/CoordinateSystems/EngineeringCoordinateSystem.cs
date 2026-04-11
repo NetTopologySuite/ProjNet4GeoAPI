@@ -77,7 +77,7 @@ public class EngineeringCoordinateSystem : CoordinateSystem
     /// <summary>
     /// Gets the units for each engineering axis.
     /// </summary>
-    public IReadOnlyList<IUnit> Units => this.units;
+    public IReadOnlyList<IUnit> AxisUnits => this.units;
 
     /// <inheritdoc />
     public override string WKT => this.ToWktNode(WktVersion.Wkt22019).ToString();
@@ -252,7 +252,26 @@ public class EngineeringCoordinateSystem : CoordinateSystem
         };
     }
 
-    private WktNode CreateLegacyWktNode()
+    private static WktKeywordNode CreateLegacyUnitNode(Unit unit)
+    {
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(unit.Name),
+            new WktNumber(unit.ConversionFactor),
+        };
+
+        if (!string.IsNullOrWhiteSpace(unit.Authority) && unit.AuthorityCode > 0)
+        {
+            children.Add(new WktKeywordNode(
+                "AUTHORITY",
+                new WktQuotedString(unit.Authority),
+                new WktQuotedString(unit.AuthorityCode.ToString(CultureInfo.InvariantCulture))));
+        }
+
+        return new WktKeywordNode("UNIT", children);
+    }
+
+    private WktKeywordNode CreateLegacyWktNode()
     {
         var children = new List<WktNode>
         {
@@ -264,7 +283,7 @@ public class EngineeringCoordinateSystem : CoordinateSystem
                 LinearUnit linearUnit => linearUnit.ToWktNode(),
                 TimeUnit timeUnit => timeUnit.ToWktNode(),
                 ParametricUnit parametricUnit => parametricUnit.ToWktNode(),
-                Unit genericUnit => genericUnit.ToWktNode(),
+                Unit genericUnit => CreateLegacyUnitNode(genericUnit),
                 _ => throw new NotSupportedException($"Engineering coordinate system legacy WKT output does not support unit type '{this.units[0].GetType().Name}'."),
             },
         };

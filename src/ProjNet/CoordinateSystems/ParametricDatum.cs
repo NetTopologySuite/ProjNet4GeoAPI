@@ -22,7 +22,7 @@ public class ParametricDatum : Datum
     /// <param name="remarks">Provider-supplied remarks.</param>
     /// <param name="abbreviation">Abbreviation.</param>
     public ParametricDatum(string name, string authority, long authorityCode, string alias, string remarks, string abbreviation)
-        : base(DatumType.PD_Other, name, authority, authorityCode, alias, remarks, abbreviation)
+        : base(DatumType.PdOther, name, authority, authorityCode, alias, remarks, abbreviation)
     {
     }
 

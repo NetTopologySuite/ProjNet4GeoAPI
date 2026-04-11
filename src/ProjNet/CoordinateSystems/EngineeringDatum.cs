@@ -23,7 +23,7 @@ public class EngineeringDatum : Datum
     /// <param name="remarks">Provider-supplied remarks.</param>
     /// <param name="abbreviation">Abbreviation.</param>
     public EngineeringDatum(string name, string authority, long authorityCode, string alias, string remarks, string abbreviation)
-        : base(DatumType.LD_Engineering, name, authority, authorityCode, alias, remarks, abbreviation)
+        : base(DatumType.LdEngineering, name, authority, authorityCode, alias, remarks, abbreviation)
     {
     }
 

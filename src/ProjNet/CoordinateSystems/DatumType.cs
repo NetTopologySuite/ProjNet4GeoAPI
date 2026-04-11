@@ -108,12 +108,12 @@ public enum DatumType : int
     /// <summary>
     /// Unspecified local or engineering datum type.
     /// </summary>
-    LD_Other = LD_Min,
+    LdOther = LD_Min,
 
     /// <summary>
     /// A local engineering datum that defines coordinates in a local operational frame.
     /// </summary>
-    LD_Engineering = 10001,
+    LdEngineering = 10001,
 
     /// <summary>
     /// Highest possible value for local datum types.
@@ -123,30 +123,30 @@ public enum DatumType : int
     /// <summary>
     /// Lowest possible value for temporal datum types.
     /// </summary>
-    TD_Min = 40000,
+    TdMin = 40000,
 
     /// <summary>
     /// Unspecified temporal datum type.
     /// </summary>
-    TD_Other = TD_Min,
+    TdOther = TdMin,
 
     /// <summary>
     /// Highest possible value for temporal datum types.
     /// </summary>
-    TD_Max = 40999,
+    TdMax = 40999,
 
     /// <summary>
     /// Lowest possible value for parametric datum types.
     /// </summary>
-    PD_Min = 50000,
+    PdMin = 50000,
 
     /// <summary>
     /// Unspecified parametric datum type.
     /// </summary>
-    PD_Other = PD_Min,
+    PdOther = PdMin,
 
     /// <summary>
     /// Highest possible value for parametric datum types.
     /// </summary>
-    PD_Max = 50999,
+    PdMax = 50999,
 }
