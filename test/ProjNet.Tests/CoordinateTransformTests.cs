@@ -525,8 +525,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     {
         // Define datums, set parameters
         HorizontalDatum wgs72 = HorizontalDatum.WGS72;
-        HorizontalDatum ed50 = new(
-            HorizontalDatum.ED50.Ellipsoid,
+        HorizontalDatum ed50 = HorizontalDatum.ED50.WithWgs84Parameters(
             new Wgs84ConversionInfo(
                 -81.0703,
                 -89.3603,
@@ -534,14 +533,7 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
                 -0.48488,
                 -0.02436,
                 -0.41321,
-                -0.540645),
-            HorizontalDatum.ED50.DatumType,
-            HorizontalDatum.ED50.Name,
-            HorizontalDatum.ED50.Authority,
-            HorizontalDatum.ED50.AuthorityCode,
-            HorizontalDatum.ED50.Alias,
-            HorizontalDatum.ED50.Remarks,
-            HorizontalDatum.ED50.Abbreviation);
+                -0.540645));
 
         // Define geographic coordinate systems
         _ = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
