@@ -225,14 +225,14 @@ internal static class BoundCoordinateSystemSupport
                 parsedVerticalCoordinateSystem.Alias,
                 parsedVerticalCoordinateSystem.Remarks,
                 parsedVerticalCoordinateSystem.Abbreviation),
-            new AxisInfo(parsedVerticalCoordinateSystem.GetAxis(0)),
+            [new AxisInfo(parsedVerticalCoordinateSystem.GetAxis(0))],
             parsedVerticalCoordinateSystem.Name,
             parsedVerticalCoordinateSystem.Authority,
             parsedVerticalCoordinateSystem.AuthorityCode,
             parsedVerticalCoordinateSystem.Alias,
             parsedVerticalCoordinateSystem.Abbreviation,
-            parsedVerticalCoordinateSystem.Remarks);
-        CopyDefaultEnvelope(parsedVerticalCoordinateSystem, runtimeVerticalCoordinateSystem);
+            parsedVerticalCoordinateSystem.Remarks,
+            parsedVerticalCoordinateSystem.DefaultEnvelope);
 
         var runtimeHubCoordinateSystem = new CompoundCoordinateSystem(
             GeographicCoordinateSystem.WGS84,
@@ -242,8 +242,8 @@ internal static class BoundCoordinateSystemSupport
             parsedHubCoordinateSystem.AuthorityCode,
             parsedHubCoordinateSystem.Alias,
             parsedHubCoordinateSystem.Abbreviation,
-            parsedHubCoordinateSystem.Remarks);
-        CopyDefaultEnvelope(parsedHubCoordinateSystem, runtimeHubCoordinateSystem);
+            parsedHubCoordinateSystem.Remarks,
+            parsedHubCoordinateSystem.DefaultEnvelope);
         return runtimeHubCoordinateSystem;
     }
 
@@ -433,8 +433,8 @@ internal static class BoundCoordinateSystemSupport
             compoundCoordinateSystem.AuthorityCode,
             compoundCoordinateSystem.Alias,
             compoundCoordinateSystem.Abbreviation,
-            compoundCoordinateSystem.Remarks);
-        CopyDefaultEnvelope(compoundCoordinateSystem, normalizedCompound);
+            compoundCoordinateSystem.Remarks,
+            compoundCoordinateSystem.DefaultEnvelope);
         return normalizedCompound;
     }
 
@@ -765,8 +765,8 @@ internal static class BoundCoordinateSystemSupport
             compoundCoordinateSystem.AuthorityCode,
             compoundCoordinateSystem.Alias,
             compoundCoordinateSystem.Abbreviation,
-            compoundCoordinateSystem.Remarks);
-        CopyDefaultEnvelope(compoundCoordinateSystem, clone);
+            compoundCoordinateSystem.Remarks,
+            compoundCoordinateSystem.DefaultEnvelope);
         return clone;
     }
 
@@ -782,7 +782,6 @@ internal static class BoundCoordinateSystemSupport
             boundCoordinateSystem.Alias,
             boundCoordinateSystem.Abbreviation,
             boundCoordinateSystem.Remarks);
-        CopyDefaultEnvelope(boundCoordinateSystem, clone);
         return clone;
     }
 
@@ -811,8 +810,8 @@ internal static class BoundCoordinateSystemSupport
             geographicCoordinateSystem.AuthorityCode,
             geographicCoordinateSystem.Alias,
             geographicCoordinateSystem.Abbreviation,
-            geographicCoordinateSystem.Remarks);
-        CopyDefaultEnvelope(geographicCoordinateSystem, clone);
+            geographicCoordinateSystem.Remarks,
+            geographicCoordinateSystem.DefaultEnvelope);
         return clone;
     }
 
@@ -834,8 +833,8 @@ internal static class BoundCoordinateSystemSupport
             projectedCoordinateSystem.AuthorityCode,
             projectedCoordinateSystem.Alias,
             projectedCoordinateSystem.Remarks,
-            projectedCoordinateSystem.Abbreviation);
-        CopyDefaultEnvelope(projectedCoordinateSystem, clone);
+            projectedCoordinateSystem.Abbreviation,
+            projectedCoordinateSystem.DefaultEnvelope);
         return clone;
     }
 
@@ -860,8 +859,8 @@ internal static class BoundCoordinateSystemSupport
             geocentricCoordinateSystem.AuthorityCode,
             geocentricCoordinateSystem.Alias,
             geocentricCoordinateSystem.Remarks,
-            geocentricCoordinateSystem.Abbreviation);
-        CopyDefaultEnvelope(geocentricCoordinateSystem, clone);
+            geocentricCoordinateSystem.Abbreviation,
+            geocentricCoordinateSystem.DefaultEnvelope);
         return clone;
     }
 
@@ -876,14 +875,14 @@ internal static class BoundCoordinateSystemSupport
         var clone = new VerticalCoordinateSystem(
             CloneLinearUnit(verticalCoordinateSystem.LinearUnit),
             CloneVerticalDatum(verticalCoordinateSystem.VerticalDatum),
-            new AxisInfo(verticalCoordinateSystem.GetAxis(0)),
+            [new AxisInfo(verticalCoordinateSystem.GetAxis(0))],
             verticalCoordinateSystem.Name,
             verticalCoordinateSystem.Authority,
             verticalCoordinateSystem.AuthorityCode,
             verticalCoordinateSystem.Alias,
             verticalCoordinateSystem.Abbreviation,
-            verticalCoordinateSystem.Remarks);
-        CopyDefaultEnvelope(verticalCoordinateSystem, clone);
+            verticalCoordinateSystem.Remarks,
+            verticalCoordinateSystem.DefaultEnvelope);
 
         if (verticalCoordinateSystem.BoundGridTransformation is not null)
         {
@@ -915,8 +914,8 @@ internal static class BoundCoordinateSystemSupport
             compoundCoordinateSystem.AuthorityCode,
             compoundCoordinateSystem.Alias,
             compoundCoordinateSystem.Abbreviation,
-            compoundCoordinateSystem.Remarks);
-        CopyDefaultEnvelope(compoundCoordinateSystem, clone);
+            compoundCoordinateSystem.Remarks,
+            compoundCoordinateSystem.DefaultEnvelope);
         return clone;
     }
 
@@ -1042,14 +1041,6 @@ internal static class BoundCoordinateSystemSupport
         }
 
         return axisInfo;
-    }
-
-    private static void CopyDefaultEnvelope(CoordinateSystem source, CoordinateSystem target)
-    {
-        if (source.DefaultEnvelope.Length > 0)
-        {
-            target.DefaultEnvelope = (double[])source.DefaultEnvelope.Clone();
-        }
     }
 
     private static Wgs84ConversionInfo CloneWgs84Parameters(Wgs84ConversionInfo parameters)

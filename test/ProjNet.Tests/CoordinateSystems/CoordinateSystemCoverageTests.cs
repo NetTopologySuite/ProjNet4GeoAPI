@@ -217,21 +217,6 @@ public class CoordinateSystemCoverageTests
         Assert.Equal(gcs.WKT, gcs.ToString());
     }
 
-    /// <summary>
-    /// Verifies that DefaultEnvelope can be set and retrieved.
-    /// </summary>
-    [Fact]
-    public void GeocentricCS_DefaultEnvelope_CanBeSetAndRetrieved()
-    {
-        GeocentricCoordinateSystem gcs = Factory.CreateGeocentricCoordinateSystem(
-            "WGS84 Geocentric", HorizontalDatum.WGS84, LinearUnit.Metre, PrimeMeridian.Greenwich);
-        double[] envelope = new double[] { -180, -90, 180, 90 };
-
-        gcs.DefaultEnvelope = envelope;
-
-        Assert.Equal(envelope, gcs.DefaultEnvelope);
-    }
-
     // ========================================================================
     // CompoundCoordinateSystem
     // ========================================================================

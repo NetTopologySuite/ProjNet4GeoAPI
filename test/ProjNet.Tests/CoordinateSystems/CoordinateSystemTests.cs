@@ -27,26 +27,22 @@ public class CoordinateSystemTests
     }
 
     /// <summary>
-    /// Verifies that <see cref="CoordinateSystem.AxisInfo"/> rejects <see langword="null"/>.
+    /// Verifies that the constructor rejects <see langword="null"/> axis definitions.
     /// </summary>
     [Fact]
-    public void AxisInfo_SetToNull_ThrowsArgumentNullException()
+    public void Constructor_NullAxisInfo_ThrowsArgumentNullException()
     {
-        TestCoordinateSystem coordinateSystem = CreateCoordinateSystem();
-
-        Assert.Throws<ArgumentNullException>(() => coordinateSystem.SetAxisInfo(null!));
+        Assert.Throws<ArgumentNullException>(() => new TestCoordinateSystem(null!, null));
     }
 
     /// <summary>
-    /// Verifies that <see cref="CoordinateSystem.DefaultEnvelope"/> can be updated and retrieved.
+    /// Verifies that <see cref="CoordinateSystem.DefaultEnvelope"/> exposes the configured envelope.
     /// </summary>
     [Fact]
-    public void DefaultEnvelope_CanBeUpdated()
+    public void DefaultEnvelope_ReturnsConfiguredEnvelope()
     {
-        TestCoordinateSystem coordinateSystem = CreateCoordinateSystem();
         double[] expectedEnvelope = [-180d, -90d, 180d, 90d];
-
-        coordinateSystem.DefaultEnvelope = expectedEnvelope;
+        TestCoordinateSystem coordinateSystem = CreateCoordinateSystem(defaultEnvelope: expectedEnvelope);
 
         Assert.Equal(expectedEnvelope, coordinateSystem.DefaultEnvelope);
     }
@@ -57,8 +53,7 @@ public class CoordinateSystemTests
     [Fact]
     public void DefaultEnvelope_GetterReturnsDefensiveCopy()
     {
-        TestCoordinateSystem coordinateSystem = CreateCoordinateSystem();
-        coordinateSystem.DefaultEnvelope = [-180d, -90d, 180d, 90d];
+        TestCoordinateSystem coordinateSystem = CreateCoordinateSystem(defaultEnvelope: [-180d, -90d, 180d, 90d]);
 
         double[] firstRead = coordinateSystem.DefaultEnvelope;
         double[] secondRead = coordinateSystem.DefaultEnvelope;
@@ -69,15 +64,13 @@ public class CoordinateSystemTests
     }
 
     /// <summary>
-    /// Verifies that <see cref="CoordinateSystem.DefaultEnvelope"/> clones the assigned array.
+    /// Verifies that the constructor clones the assigned default envelope array.
     /// </summary>
     [Fact]
-    public void DefaultEnvelope_SetterClonesAssignedArray()
+    public void Constructor_ClonesAssignedDefaultEnvelope()
     {
-        TestCoordinateSystem coordinateSystem = CreateCoordinateSystem();
         double[] sourceEnvelope = [-180d, -90d, 180d, 90d];
-
-        coordinateSystem.DefaultEnvelope = sourceEnvelope;
+        TestCoordinateSystem coordinateSystem = CreateCoordinateSystem(defaultEnvelope: sourceEnvelope);
         sourceEnvelope[0] = 0d;
 
         Assert.Equal(-180d, coordinateSystem.DefaultEnvelope[0]);
@@ -145,21 +138,22 @@ public class CoordinateSystemTests
         Assert.Contains("AxisInfo not available for dimension 2", exception.Message, StringComparison.Ordinal);
     }
 
-    private static TestCoordinateSystem CreateCoordinateSystem()
+    private static TestCoordinateSystem CreateCoordinateSystem(List<AxisInfo>? axisInfo = null, double[]? defaultEnvelope = null)
     {
         return new TestCoordinateSystem(
+            axisInfo ??
             [
                 new AxisInfo("Longitude", AxisOrientationEnum.East),
                 new AxisInfo("Latitude", AxisOrientationEnum.North),
-            ]);
+            ],
+            defaultEnvelope);
     }
 
     private sealed class TestCoordinateSystem : CoordinateSystem
     {
-        internal TestCoordinateSystem(List<AxisInfo> axisInfo)
-            : base("Test CS", "AUTH", 1, "alias", "abbr", "remarks")
+        internal TestCoordinateSystem(List<AxisInfo> axisInfo, double[]? defaultEnvelope)
+            : base("Test CS", "AUTH", 1, "alias", "abbr", "remarks", axisInfo, defaultEnvelope)
         {
-            this.AxisInfo = axisInfo;
         }
 
         public override string WKT => "CS_WKT";
@@ -169,10 +163,5 @@ public class CoordinateSystemTests
         public override IUnit GetUnits(int dimension) => LinearUnit.Metre;
 
         public override bool EqualParams(object obj) => obj is TestCoordinateSystem;
-
-        internal void SetAxisInfo(List<AxisInfo> axisInfo)
-        {
-            this.AxisInfo = axisInfo;
-        }
     }
 }

@@ -38,10 +38,37 @@ public class VerticalCoordinateSystem : CoordinateSystem
         string alias,
         string abbreviation,
         string remarks)
-        : base(name, authority, authorityCode, alias, abbreviation, remarks)
+        : this(linearUnit, verticalDatum, CreateSingleAxisInfo(axisInfo), name, authority, authorityCode, alias, abbreviation, remarks)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VerticalCoordinateSystem"/> class with explicit axis metadata.
+    /// </summary>
+    /// <param name="linearUnit">The linear unit.</param>
+    /// <param name="verticalDatum">The vertical datum.</param>
+    /// <param name="axisInfo">Axis information.</param>
+    /// <param name="name">Name.</param>
+    /// <param name="authority">Authority name.</param>
+    /// <param name="authorityCode">Authority-specific identification code.</param>
+    /// <param name="alias">Alias.</param>
+    /// <param name="abbreviation">Abbreviation.</param>
+    /// <param name="remarks">Provider-supplied remarks.</param>
+    /// <param name="defaultEnvelope">Default envelope for the coordinate system domain.</param>
+    internal VerticalCoordinateSystem(
+        LinearUnit linearUnit,
+        VerticalDatum verticalDatum,
+        List<AxisInfo> axisInfo,
+        string name,
+        string authority,
+        long authorityCode,
+        string alias,
+        string abbreviation,
+        string remarks,
+        double[]? defaultEnvelope = null)
+        : base(name, authority, authorityCode, alias, abbreviation, remarks, ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo)), defaultEnvelope)
     {
         this.VerticalDatum = ArgumentGuard.ThrowIfNull(verticalDatum, nameof(verticalDatum));
-        this.AxisInfo = [ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo))];
         this.LinearUnit = ArgumentGuard.ThrowIfNull(linearUnit, nameof(linearUnit));
     }
 
@@ -208,4 +235,7 @@ public class VerticalCoordinateSystem : CoordinateSystem
 
         return new WktKeywordNode("VERTCRS", children);
     }
+
+    private static List<AxisInfo> CreateSingleAxisInfo(AxisInfo axisInfo)
+        => [ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo))];
 }

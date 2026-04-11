@@ -31,6 +31,7 @@ public class GeocentricCoordinateSystem : CoordinateSystem
     /// <param name="alias">Alias name.</param>
     /// <param name="remarks">Additional remarks.</param>
     /// <param name="abbreviation">Abbreviation.</param>
+    /// <param name="defaultEnvelope">Default envelope for the coordinate system domain.</param>
     internal GeocentricCoordinateSystem(
         HorizontalDatum datum,
         LinearUnit linearUnit,
@@ -41,19 +42,13 @@ public class GeocentricCoordinateSystem : CoordinateSystem
         long code,
         string alias,
         string remarks,
-        string abbreviation)
-        : base(name, authority, code, alias, abbreviation, remarks)
+        string abbreviation,
+        double[]? defaultEnvelope = null)
+        : base(name, authority, code, alias, abbreviation, remarks, ValidateAxisInfo(axisInfo), defaultEnvelope)
     {
         this.HorizontalDatum = ArgumentGuard.ThrowIfNull(datum, nameof(datum));
         this.LinearUnit = ArgumentGuard.ThrowIfNull(linearUnit, nameof(linearUnit));
         this.PrimeMeridian = ArgumentGuard.ThrowIfNull(primeMeridian, nameof(primeMeridian));
-        axisInfo = ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo));
-        if (axisInfo.Count != 3)
-        {
-            ArgumentGuard.ThrowArgument("Axis info should contain three axes for geocentric coordinate systems");
-        }
-
-        this.AxisInfo = axisInfo;
     }
 
     /// <summary>
@@ -238,5 +233,16 @@ public class GeocentricCoordinateSystem : CoordinateSystem
                 HorizontalDatum.WGS84,
                 LinearUnit.Metre,
                 PrimeMeridian.Greenwich);
+    }
+
+    private static List<AxisInfo> ValidateAxisInfo(List<AxisInfo> axisInfo)
+    {
+        axisInfo = ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo));
+        if (axisInfo.Count != 3)
+        {
+            ArgumentGuard.ThrowArgument("Axis info should contain three axes for geocentric coordinate systems");
+        }
+
+        return axisInfo;
     }
 }

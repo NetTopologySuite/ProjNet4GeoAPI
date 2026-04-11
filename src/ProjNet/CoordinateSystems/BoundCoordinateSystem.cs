@@ -46,22 +46,19 @@ public class BoundCoordinateSystem : CoordinateSystem
         string alias,
         string abbreviation,
         string remarks)
-        : base(name, authority, authorityCode, alias, abbreviation, remarks)
+        : base(
+            name,
+            authority,
+            authorityCode,
+            alias,
+            abbreviation,
+            remarks,
+            CreateAxisInfo(sourceCoordinateSystem),
+            sourceCoordinateSystem?.DefaultEnvelope)
     {
         this.SourceCoordinateSystem = ArgumentGuard.ThrowIfNull(sourceCoordinateSystem, nameof(sourceCoordinateSystem));
         this.TargetCoordinateSystem = ArgumentGuard.ThrowIfNull(targetCoordinateSystem, nameof(targetCoordinateSystem));
         this.Transformation = ArgumentGuard.ThrowIfNull(transformation, nameof(transformation));
-
-        this.AxisInfo = new List<AxisInfo>(this.SourceCoordinateSystem.Dimension);
-        for (int dimension = 0; dimension < this.SourceCoordinateSystem.Dimension; dimension++)
-        {
-            this.AxisInfo.Add(new AxisInfo(this.SourceCoordinateSystem.GetAxis(dimension)));
-        }
-
-        if (this.SourceCoordinateSystem.DefaultEnvelope.Length > 0)
-        {
-            this.DefaultEnvelope = (double[])this.SourceCoordinateSystem.DefaultEnvelope.Clone();
-        }
     }
 
     /// <summary>
@@ -111,4 +108,16 @@ public class BoundCoordinateSystem : CoordinateSystem
 
     /// <inheritdoc />
     public override IUnit GetUnits(int dimension) => this.SourceCoordinateSystem.GetUnits(dimension);
+
+    private static List<AxisInfo> CreateAxisInfo(CoordinateSystem sourceCoordinateSystem)
+    {
+        sourceCoordinateSystem = ArgumentGuard.ThrowIfNull(sourceCoordinateSystem, nameof(sourceCoordinateSystem));
+        var axisInfo = new List<AxisInfo>(sourceCoordinateSystem.Dimension);
+        for (int dimension = 0; dimension < sourceCoordinateSystem.Dimension; dimension++)
+        {
+            axisInfo.Add(new AxisInfo(sourceCoordinateSystem.GetAxis(dimension)));
+        }
+
+        return axisInfo;
+    }
 }

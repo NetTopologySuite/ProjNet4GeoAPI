@@ -36,11 +36,10 @@ public sealed class TemporalCoordinateSystem : CoordinateSystem
         string alias,
         string abbreviation,
         string remarks)
-        : base(name, authority, authorityCode, alias, abbreviation, remarks)
+        : base(name, authority, authorityCode, alias, abbreviation, remarks, CreateAxisInfo(axisInfo), null)
     {
         this.TimeUnit = ArgumentGuard.ThrowIfNull(timeUnit, nameof(timeUnit));
         this.TemporalDatum = ArgumentGuard.ThrowIfNull(temporalDatum, nameof(temporalDatum));
-        this.AxisInfo = [ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo))];
     }
 
     /// <summary>
@@ -133,4 +132,7 @@ public sealed class TemporalCoordinateSystem : CoordinateSystem
             && temporalCoordinateSystem.TimeUnit.EqualParams(this.TimeUnit)
             && temporalCoordinateSystem.GetAxis(0).Orientation == this.GetAxis(0).Orientation;
     }
+
+    private static List<AxisInfo> CreateAxisInfo(AxisInfo axisInfo)
+        => [ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo))];
 }

@@ -43,8 +43,9 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
     /// <param name="authority">Authority name.</param>
     /// <param name="code">Authority-specific identification code.</param>
     /// <param name="alias">Alias.</param>
-    /// <param name="abbreviation">Abbreviation.</param>
     /// <param name="remarks">Provider-supplied remarks.</param>
+    /// <param name="abbreviation">Abbreviation.</param>
+    /// <param name="defaultEnvelope">Default envelope for the coordinate system domain.</param>
     internal ProjectedCoordinateSystem(
         HorizontalDatum datum,
         GeographicCoordinateSystem geographicCoordinateSystem,
@@ -56,8 +57,9 @@ public class ProjectedCoordinateSystem : HorizontalCoordinateSystem
         long code,
         string alias,
         string remarks,
-        string abbreviation)
-        : base(datum, axisInfo, name, authority, code, alias, remarks, abbreviation)
+        string abbreviation,
+        double[]? defaultEnvelope = null)
+        : base(datum, axisInfo, name, authority, code, alias, remarks, abbreviation, defaultEnvelope)
     {
         this.GeographicCoordinateSystem = geographicCoordinateSystem;
         this.LinearUnit = linearUnit;

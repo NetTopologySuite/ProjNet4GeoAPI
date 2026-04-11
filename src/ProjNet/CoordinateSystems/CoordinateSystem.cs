@@ -29,8 +29,8 @@ using ProjNet.IO.Wkt;
 /// </remarks>
 public abstract class CoordinateSystem : Info
 {
-    private List<AxisInfo> axisInfo = [];
-    private double[] defaultEnvelope = [];
+    private readonly List<AxisInfo> axisInfo;
+    private readonly double[] defaultEnvelope;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CoordinateSystem"/> class.
@@ -42,8 +42,34 @@ public abstract class CoordinateSystem : Info
     /// <param name="abbreviation">Abbreviation.</param>
     /// <param name="remarks">Provider-supplied remarks.</param>
     internal CoordinateSystem(string name, string authority, long authorityCode, string alias, string abbreviation, string remarks)
+        : this(name, authority, authorityCode, alias, abbreviation, remarks, [], null)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CoordinateSystem"/> class with axis metadata.
+    /// </summary>
+    /// <param name="name">Name.</param>
+    /// <param name="authority">Authority name.</param>
+    /// <param name="authorityCode">Authority-specific identification code.</param>
+    /// <param name="alias">Alias.</param>
+    /// <param name="abbreviation">Abbreviation.</param>
+    /// <param name="remarks">Provider-supplied remarks.</param>
+    /// <param name="axisInfo">Axis definitions.</param>
+    /// <param name="defaultEnvelope">Default envelope.</param>
+    internal CoordinateSystem(
+        string name,
+        string authority,
+        long authorityCode,
+        string alias,
+        string abbreviation,
+        string remarks,
+        List<AxisInfo> axisInfo,
+        double[]? defaultEnvelope)
         : base(name, authority, authorityCode, alias, abbreviation, remarks)
     {
+        this.axisInfo = ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo));
+        this.defaultEnvelope = CloneDefaultEnvelope(defaultEnvelope);
     }
 
     /// <summary>
@@ -55,23 +81,12 @@ public abstract class CoordinateSystem : Info
     }
 
     /// <summary>
-    /// Gets or sets the axis definitions for this coordinate system.
+    /// Gets the axis definitions for this coordinate system.
     /// </summary>
-    internal List<AxisInfo> AxisInfo
-    {
-        get
-        {
-            return this.axisInfo;
-        }
-
-        set
-        {
-            this.axisInfo = ArgumentGuard.ThrowIfNull(value, nameof(value));
-        }
-    }
+    internal List<AxisInfo> AxisInfo => this.axisInfo;
 
     /// <summary>
-    /// Gets or sets default envelope of coordinate system.
+    /// Gets default envelope of coordinate system.
     /// </summary>
     /// <remarks>
     /// Coordinate systems which are bounded should return the minimum bounding box of their domain.
@@ -80,19 +95,7 @@ public abstract class CoordinateSystem : Info
     /// (-180,-90) to (180,90), and a geocentric coordinate system could return a box from (-r,-r,-r)
     /// to (+r,+r,+r) where r is the approximate radius of the Earth.
     /// </remarks>
-    public double[] DefaultEnvelope
-    {
-        get
-        {
-            return this.defaultEnvelope.Length == 0 ? Array.Empty<double>() : (double[])this.defaultEnvelope.Clone();
-        }
-
-        set
-        {
-            double[] envelope = ArgumentGuard.ThrowIfNull(value, nameof(value));
-            this.defaultEnvelope = envelope.Length == 0 ? Array.Empty<double>() : (double[])envelope.Clone();
-        }
-    }
+    public double[] DefaultEnvelope => this.defaultEnvelope.Length == 0 ? Array.Empty<double>() : (double[])this.defaultEnvelope.Clone();
 
     /// <summary>
     /// Gets the units for the dimension within coordinate system.
@@ -140,5 +143,20 @@ public abstract class CoordinateSystem : Info
         }
 
         return this.AxisInfo[dimension];
+    }
+
+    /// <summary>
+    /// Clones a coordinate-system default envelope for constructor-time storage.
+    /// </summary>
+    /// <param name="envelope">Envelope values to clone.</param>
+    /// <returns>A cloned envelope array, or <see cref="Array.Empty{T}"/> when no envelope is provided.</returns>
+    internal static double[] CloneDefaultEnvelope(double[]? envelope)
+    {
+        if (envelope is null || envelope.Length == 0)
+        {
+            return Array.Empty<double>();
+        }
+
+        return (double[])envelope.Clone();
     }
 }

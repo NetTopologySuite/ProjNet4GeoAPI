@@ -22,8 +22,9 @@ public abstract class HorizontalCoordinateSystem : CoordinateSystem
     /// <param name="authority">Authority name.</param>
     /// <param name="code">Authority-specific identification code.</param>
     /// <param name="alias">Alias.</param>
-    /// <param name="abbreviation">Abbreviation.</param>
     /// <param name="remarks">Provider-supplied remarks.</param>
+    /// <param name="abbreviation">Abbreviation.</param>
+    /// <param name="defaultEnvelope">Default envelope for the coordinate system domain.</param>
     internal HorizontalCoordinateSystem(
         HorizontalDatum datum,
         List<AxisInfo> axisInfo,
@@ -32,21 +33,26 @@ public abstract class HorizontalCoordinateSystem : CoordinateSystem
         long code,
         string alias,
         string remarks,
-        string abbreviation)
-        : base(name, authority, code, alias, abbreviation, remarks)
+        string abbreviation,
+        double[]? defaultEnvelope = null)
+        : base(name, authority, code, alias, abbreviation, remarks, ValidateAxisInfo(axisInfo), defaultEnvelope)
     {
         this.HorizontalDatum = ArgumentGuard.ThrowIfNull(datum, nameof(datum));
-        axisInfo = ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo));
-        if (axisInfo.Count != 2)
-        {
-            ArgumentGuard.ThrowArgument("Axis info should contain two axes for horizontal coordinate systems");
-        }
-
-        this.AxisInfo = axisInfo;
     }
 
     /// <summary>
     /// Gets the horizontal datum.
     /// </summary>
     public HorizontalDatum HorizontalDatum { get; }
+
+    private static List<AxisInfo> ValidateAxisInfo(List<AxisInfo> axisInfo)
+    {
+        axisInfo = ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo));
+        if (axisInfo.Count != 2)
+        {
+            ArgumentGuard.ThrowArgument("Axis info should contain two axes for horizontal coordinate systems");
+        }
+
+        return axisInfo;
+    }
 }

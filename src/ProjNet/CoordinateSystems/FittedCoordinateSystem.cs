@@ -28,6 +28,7 @@ public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSys
     /// <param name="alias">Alias.</param>
     /// <param name="abbreviation">Abbreviation.</param>
     /// <param name="remarks">Provider-supplied remarks.</param>
+    /// <param name="axisInfo">Optional axis definitions for the fitted system.</param>
     protected internal FittedCoordinateSystem(
         CoordinateSystem baseSystem,
         MathTransform transform,
@@ -36,18 +37,12 @@ public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSys
         long code,
         string alias,
         string remarks,
-        string abbreviation)
-        : base(name, authority, code, alias, abbreviation, remarks)
+        string abbreviation,
+        IReadOnlyList<AxisInfo>? axisInfo = null)
+        : base(name, authority, code, alias, abbreviation, remarks, CreateAxisInfo(baseSystem, axisInfo, name), null)
     {
         this.BaseCoordinateSystem = ArgumentGuard.ThrowIfNull(baseSystem, nameof(baseSystem));
         this.ToBaseTransform = ArgumentGuard.ThrowIfNull(transform, nameof(transform));
-
-        // get axis infos from the source
-        this.AxisInfo = new List<AxisInfo>(baseSystem.Dimension);
-        for (int dim = 0; dim < baseSystem.Dimension; dim++)
-        {
-            this.AxisInfo.Add(baseSystem.GetAxis(dim));
-        }
     }
 
     /// <summary>
@@ -151,6 +146,34 @@ public class FittedCoordinateSystem : CoordinateSystem // , IFittedCoordinateSys
 
     /// <inheritdoc />
     public override IUnit GetUnits(int dimension) => this.BaseCoordinateSystem.GetUnits(dimension);
+
+    private static List<AxisInfo> CreateAxisInfo(CoordinateSystem baseSystem, IReadOnlyList<AxisInfo>? axisInfo, string name)
+    {
+        baseSystem = ArgumentGuard.ThrowIfNull(baseSystem, nameof(baseSystem));
+        if (axisInfo is null || axisInfo.Count == 0)
+        {
+            var clonedAxisInfo = new List<AxisInfo>(baseSystem.Dimension);
+            for (int dim = 0; dim < baseSystem.Dimension; dim++)
+            {
+                clonedAxisInfo.Add(baseSystem.GetAxis(dim));
+            }
+
+            return clonedAxisInfo;
+        }
+
+        if (axisInfo.Count != baseSystem.Dimension)
+        {
+            ArgumentGuard.ThrowArgument($"Fitted coordinate system '{name}' expects {baseSystem.Dimension} axes but received {axisInfo.Count}.");
+        }
+
+        var explicitAxisInfo = new List<AxisInfo>(axisInfo.Count);
+        foreach (AxisInfo axis in axisInfo)
+        {
+            explicitAxisInfo.Add(new AxisInfo(axis));
+        }
+
+        return explicitAxisInfo;
+    }
 
     private static WktKeywordNode CreateWkt2DerivingConversionNode(IProjection derivingConversion, WktNode translationUnitNode)
     {

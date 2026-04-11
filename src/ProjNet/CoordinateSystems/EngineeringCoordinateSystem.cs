@@ -41,7 +41,7 @@ public sealed class EngineeringCoordinateSystem : CoordinateSystem
         string alias,
         string abbreviation,
         string remarks)
-        : base(name, authority, authorityCode, alias, abbreviation, remarks)
+        : base(name, authority, authorityCode, alias, abbreviation, remarks, CreateAxisInfo(axisInfo), null)
     {
         this.EngineeringDatum = ArgumentGuard.ThrowIfNull(engineeringDatum, nameof(engineeringDatum));
         this.CoordinateSystemType = string.IsNullOrWhiteSpace(coordinateSystemType)
@@ -60,7 +60,6 @@ public sealed class EngineeringCoordinateSystem : CoordinateSystem
             ArgumentGuard.ThrowArgument("Engineering coordinate system axes and units must have the same length.");
         }
 
-        this.AxisInfo = axisInfo.Select(axis => new AxisInfo(axis)).ToList();
         this.units = units.Select(unit => ArgumentGuard.ThrowIfNull(unit, nameof(units))).ToList();
     }
 
@@ -198,6 +197,17 @@ public sealed class EngineeringCoordinateSystem : CoordinateSystem
     private static bool UnitsEqual(IUnit left, IUnit right)
     {
         return left.GetType() == right.GetType() && left.EqualParams(right);
+    }
+
+    private static List<AxisInfo> CreateAxisInfo(IReadOnlyList<AxisInfo> axisInfo)
+    {
+        axisInfo = ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo));
+        if (axisInfo.Count == 0)
+        {
+            ArgumentGuard.ThrowArgument("Engineering coordinate systems require at least one axis.", nameof(axisInfo));
+        }
+
+        return axisInfo.Select(axis => new AxisInfo(axis)).ToList();
     }
 
     private static XElement CreateUnitXml(IUnit unit)

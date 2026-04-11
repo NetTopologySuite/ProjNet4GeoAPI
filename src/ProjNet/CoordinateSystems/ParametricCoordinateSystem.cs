@@ -35,11 +35,10 @@ public sealed class ParametricCoordinateSystem : CoordinateSystem
         string alias,
         string abbreviation,
         string remarks)
-        : base(name, authority, authorityCode, alias, abbreviation, remarks)
+        : base(name, authority, authorityCode, alias, abbreviation, remarks, CreateAxisInfo(axisInfo), null)
     {
         this.ParametricUnit = ArgumentGuard.ThrowIfNull(parametricUnit, nameof(parametricUnit));
         this.ParametricDatum = ArgumentGuard.ThrowIfNull(parametricDatum, nameof(parametricDatum));
-        this.AxisInfo = [ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo))];
     }
 
     /// <summary>
@@ -132,4 +131,7 @@ public sealed class ParametricCoordinateSystem : CoordinateSystem
             && parametricCoordinateSystem.ParametricUnit.EqualParams(this.ParametricUnit)
             && parametricCoordinateSystem.GetAxis(0).Orientation == this.GetAxis(0).Orientation;
     }
+
+    private static List<AxisInfo> CreateAxisInfo(AxisInfo axisInfo)
+        => [ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo))];
 }

@@ -162,9 +162,9 @@ internal static class CoordinateSystemTestHelpers
             authorityCode ?? coordinateSystem.AuthorityCode,
             coordinateSystem.Alias,
             coordinateSystem.Abbreviation,
-            coordinateSystem.Remarks)
+            coordinateSystem.Remarks,
+            coordinateSystem.DefaultEnvelope)
         {
-            DefaultEnvelope = coordinateSystem.DefaultEnvelope,
             WGS84ConversionInfo = CloneWgs84ConversionInfoList(coordinateSystem.WGS84ConversionInfo),
         };
 
@@ -190,10 +190,8 @@ internal static class CoordinateSystemTestHelpers
             authorityCode ?? coordinateSystem.AuthorityCode,
             coordinateSystem.Alias,
             coordinateSystem.Remarks,
-            coordinateSystem.Abbreviation)
-        {
-            DefaultEnvelope = coordinateSystem.DefaultEnvelope,
-        };
+            coordinateSystem.Abbreviation,
+            coordinateSystem.DefaultEnvelope);
 
         return clone;
     }
@@ -215,10 +213,8 @@ internal static class CoordinateSystemTestHelpers
             authorityCode ?? coordinateSystem.AuthorityCode,
             coordinateSystem.Alias,
             coordinateSystem.Remarks,
-            coordinateSystem.Abbreviation)
-        {
-            DefaultEnvelope = coordinateSystem.DefaultEnvelope,
-        };
+            coordinateSystem.Abbreviation,
+            coordinateSystem.DefaultEnvelope);
 
         return clone;
     }

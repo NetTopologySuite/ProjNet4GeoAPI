@@ -320,8 +320,8 @@ public static partial class CoordinateSystemWktReader
                 authorityCode,
                 string.Empty,
                 string.Empty,
-                string.Empty);
-            fittedCoordinateSystem.AxisInfo = axisInfo;
+                string.Empty,
+                axisInfo);
             return fittedCoordinateSystem;
         }
 
@@ -2312,8 +2312,8 @@ public static partial class CoordinateSystemWktReader
             authorityCode,
             string.Empty,
             string.Empty,
-            string.Empty);
-        fittedCoordinateSystem.AxisInfo = axisInfo;
+            string.Empty,
+            axisInfo);
         return fittedCoordinateSystem;
     }
 

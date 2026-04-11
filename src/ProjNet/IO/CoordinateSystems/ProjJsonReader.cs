@@ -543,8 +543,8 @@ public static class ProjJsonReader
             authorityCode,
             string.Empty,
             string.Empty,
-            string.Empty);
-        fittedCoordinateSystem.AxisInfo = new List<AxisInfo>(axisInfo);
+            string.Empty,
+            new List<AxisInfo>(axisInfo));
         return fittedCoordinateSystem;
     }
 

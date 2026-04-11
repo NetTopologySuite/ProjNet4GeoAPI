@@ -275,13 +275,13 @@ public class VerticalCoordinateSystemTests
     [Fact]
     public void ToWktNode_WithMultipleAxes_IncludesFirstAxisNode()
     {
-        VerticalCoordinateSystem vcs = CreateVerticalCoordinateSystem(new AxisInfo("Up", AxisOrientationEnum.Up), string.Empty, -1);
-        vcs.AxisInfo =
-        [
-            new AxisInfo("Primary", AxisOrientationEnum.Up),
-            new AxisInfo("Secondary", AxisOrientationEnum.Down),
-        ];
-
+        VerticalCoordinateSystem vcs = CreateVerticalCoordinateSystem(
+            [
+                new AxisInfo("Primary", AxisOrientationEnum.Up),
+                new AxisInfo("Secondary", AxisOrientationEnum.Down),
+            ],
+            string.Empty,
+            -1);
         WktKeywordNode node = Assert.IsType<WktKeywordNode>(vcs.ToWktNode());
 
         Assert.Equal(4, node.Children.Count);
@@ -356,12 +356,11 @@ public class VerticalCoordinateSystemTests
     public void EqualParams_DifferentDimension_ReturnsFalse()
     {
         VerticalCoordinateSystem first = CreateVerticalCoordinateSystem(new AxisInfo("Up", AxisOrientationEnum.Up));
-        VerticalCoordinateSystem second = CreateVerticalCoordinateSystem(new AxisInfo("Up", AxisOrientationEnum.Up));
-        second.AxisInfo =
-        [
-            new AxisInfo("Up", AxisOrientationEnum.Up),
-            new AxisInfo("Down", AxisOrientationEnum.Down),
-        ];
+        VerticalCoordinateSystem second = CreateVerticalCoordinateSystem(
+            [
+                new AxisInfo("Up", AxisOrientationEnum.Up),
+                new AxisInfo("Down", AxisOrientationEnum.Down),
+            ]);
 
         Assert.False(first.EqualParams(second));
     }
@@ -388,6 +387,20 @@ public class VerticalCoordinateSystemTests
     }
 
     private static VerticalCoordinateSystem CreateVerticalCoordinateSystem(AxisInfo axisInfo, string authority = "TEST", long authorityCode = 1234)
+    {
+        return new VerticalCoordinateSystem(
+            LinearUnit.Metre,
+            VerticalDatum.ODN,
+            axisInfo,
+            "Custom",
+            authority,
+            authorityCode,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
+    private static VerticalCoordinateSystem CreateVerticalCoordinateSystem(List<AxisInfo> axisInfo, string authority = "TEST", long authorityCode = 1234)
     {
         return new VerticalCoordinateSystem(
             LinearUnit.Metre,

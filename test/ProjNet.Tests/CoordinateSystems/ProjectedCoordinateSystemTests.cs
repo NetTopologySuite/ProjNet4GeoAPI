@@ -354,17 +354,12 @@ public class ProjectedCoordinateSystemTests
     }
 
     /// <summary>
-    /// Verifies that a different dimension causes equality to fail.
+    /// Verifies that projected coordinate systems reject invalid axis counts.
     /// </summary>
     [Fact]
-    public void EqualParams_DifferentDimension_ReturnsFalse()
+    public void Constructor_InvalidAxisCount_ThrowsArgumentException()
     {
-        ProjectedCoordinateSystem first = CreateSystem();
-        ProjectedCoordinateSystem second = CreateSystem();
-
-        second.AxisInfo = [new AxisInfo("Only", AxisOrientationEnum.East)];
-
-        Assert.False(first.EqualParams(second));
+        Assert.Throws<ArgumentException>(() => CreateSystem(axisInfo: [new AxisInfo("Only", AxisOrientationEnum.East)]));
     }
 
     /// <summary>

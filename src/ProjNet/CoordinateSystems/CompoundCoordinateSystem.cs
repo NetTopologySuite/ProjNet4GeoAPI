@@ -30,13 +30,64 @@ public class CompoundCoordinateSystem : CoordinateSystem
     /// <param name="abbreviation">Abbreviation.</param>
     /// <param name="remarks">Optional information.</param>
     public CompoundCoordinateSystem(CoordinateSystem headcs, CoordinateSystem tailcs, string name, string authority, long authorityCode, string alias, string abbreviation, string remarks)
-        : base(name, authority, authorityCode, alias, abbreviation, remarks)
+        : this(headcs, tailcs, name, authority, authorityCode, alias, abbreviation, remarks, CreateAxisInfo(headcs, tailcs), null)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CompoundCoordinateSystem"/> class with an explicit default envelope.
+    /// </summary>
+    /// <param name="headcs">The head (first) coordinate system.</param>
+    /// <param name="tailcs">The tail (second) coordinate system.</param>
+    /// <param name="name">Name.</param>
+    /// <param name="authority">Authority name.</param>
+    /// <param name="authorityCode">Authority-specific identification code.</param>
+    /// <param name="alias">Alias.</param>
+    /// <param name="abbreviation">Abbreviation.</param>
+    /// <param name="remarks">Optional information.</param>
+    /// <param name="defaultEnvelope">Default envelope for the compound domain.</param>
+    internal CompoundCoordinateSystem(
+        CoordinateSystem headcs,
+        CoordinateSystem tailcs,
+        string name,
+        string authority,
+        long authorityCode,
+        string alias,
+        string abbreviation,
+        string remarks,
+        double[]? defaultEnvelope)
+        : this(headcs, tailcs, name, authority, authorityCode, alias, abbreviation, remarks, CreateAxisInfo(headcs, tailcs), defaultEnvelope)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CompoundCoordinateSystem"/> class with explicit axis metadata.
+    /// </summary>
+    /// <param name="headcs">The head (first) coordinate system.</param>
+    /// <param name="tailcs">The tail (second) coordinate system.</param>
+    /// <param name="name">Name.</param>
+    /// <param name="authority">Authority name.</param>
+    /// <param name="authorityCode">Authority-specific identification code.</param>
+    /// <param name="alias">Alias.</param>
+    /// <param name="abbreviation">Abbreviation.</param>
+    /// <param name="remarks">Optional information.</param>
+    /// <param name="axisInfo">Axis definitions.</param>
+    /// <param name="defaultEnvelope">Default envelope for the compound domain.</param>
+    internal CompoundCoordinateSystem(
+        CoordinateSystem headcs,
+        CoordinateSystem tailcs,
+        string name,
+        string authority,
+        long authorityCode,
+        string alias,
+        string abbreviation,
+        string remarks,
+        List<AxisInfo> axisInfo,
+        double[]? defaultEnvelope = null)
+        : base(name, authority, authorityCode, alias, abbreviation, remarks, axisInfo, defaultEnvelope)
     {
         this.HeadCoordinateSystem = headcs;
         this.TailCoordinateSystem = tailcs;
-        this.AxisInfo = [];
-        this.AxisInfo.AddRange(this.HeadCoordinateSystem.AxisInfo);
-        this.AxisInfo.AddRange(this.TailCoordinateSystem.AxisInfo);
     }
 
     /// <summary>
@@ -166,5 +217,16 @@ public class CompoundCoordinateSystem : CoordinateSystem
         return dimension < this.HeadCoordinateSystem.Dimension
             ? this.HeadCoordinateSystem.GetUnits(dimension)
             : this.TailCoordinateSystem.GetUnits(dimension - this.HeadCoordinateSystem.Dimension);
+    }
+
+    private static List<AxisInfo> CreateAxisInfo(CoordinateSystem headcs, CoordinateSystem tailcs)
+    {
+        headcs = ArgumentGuard.ThrowIfNull(headcs, nameof(headcs));
+        tailcs = ArgumentGuard.ThrowIfNull(tailcs, nameof(tailcs));
+
+        var axisInfo = new List<AxisInfo>(headcs.Dimension + tailcs.Dimension);
+        axisInfo.AddRange(headcs.AxisInfo);
+        axisInfo.AddRange(tailcs.AxisInfo);
+        return axisInfo;
     }
 }

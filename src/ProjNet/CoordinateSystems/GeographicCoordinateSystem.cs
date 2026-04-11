@@ -37,6 +37,7 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
     /// <param name="alias">Alias.</param>
     /// <param name="abbreviation">Abbreviation.</param>
     /// <param name="remarks">Provider-supplied remarks.</param>
+    /// <param name="defaultEnvelope">Default envelope for the coordinate system domain.</param>
     internal GeographicCoordinateSystem(
         AngularUnit angularUnit,
         HorizontalDatum horizontalDatum,
@@ -47,8 +48,9 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
         long authorityCode,
         string alias,
         string abbreviation,
-        string remarks)
-        : base(horizontalDatum, axisInfo, name, authority, authorityCode, alias, remarks, abbreviation)
+        string remarks,
+        double[]? defaultEnvelope = null)
+        : base(horizontalDatum, axisInfo, name, authority, authorityCode, alias, remarks, abbreviation, defaultEnvelope)
     {
         this.AngularUnit = angularUnit;
         this.PrimeMeridian = primeMeridian;
