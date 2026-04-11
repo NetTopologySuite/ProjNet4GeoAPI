@@ -19,7 +19,6 @@ public class AngularUnit : Info, IUnit
     /// Equality tolerance value. Values with a difference less than this are considered equal.
     /// </summary>
     private const double EqualityTolerance = 2.0e-17;
-    private double radiansPerUnit;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AngularUnit"/> class.
@@ -68,13 +67,9 @@ public class AngularUnit : Info, IUnit
     public static AngularUnit Gon => new(0.015707963267948966192313216916398, "gon", "EPSG", 9106, "g", string.Empty, "=pi/200 radians.");
 
     /// <summary>
-    /// Gets or sets the number of radians per <see cref="AngularUnit"/>.
+    /// Gets the number of radians per <see cref="AngularUnit"/>.
     /// </summary>
-    public double RadiansPerUnit
-    {
-        get => this.radiansPerUnit;
-        set => this.radiansPerUnit = value;
-    }
+    public double RadiansPerUnit { get; }
 
     /// <summary>
     /// Gets the Well-known text for this object

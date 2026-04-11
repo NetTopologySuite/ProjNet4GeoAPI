@@ -30,9 +30,9 @@ public sealed class ParametricUnit : Info, IUnit
     }
 
     /// <summary>
-    /// Gets or sets the conversion factor to the underlying parametric reference unit.
+    /// Gets the conversion factor to the underlying parametric reference unit.
     /// </summary>
-    public double ConversionFactor { get; set; }
+    public double ConversionFactor { get; }
 
     /// <summary>
     /// Gets the Well-known text for this object.

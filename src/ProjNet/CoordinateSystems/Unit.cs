@@ -41,9 +41,9 @@ public class Unit : Info, IUnit
     }
 
     /// <summary>
-    /// Gets or sets the number of units per base-unit.
+    /// Gets the number of units per base-unit.
     /// </summary>
-    public double ConversionFactor { get; set; }
+    public double ConversionFactor { get; }
 
     /// <summary>
     /// Gets the Well-known text for this object

@@ -62,9 +62,9 @@ public class LinearUnit : Info, IUnit
     public static LinearUnit ClarkesFoot => new(0.3047972654, "Clarke's foot", "EPSG", 9005, "Clarke's foot", string.Empty, "Assumes Clarke's 1865 ratio of 1 British foot = 0.3047972654 French legal metres applies to the international metre. Used in older Australian, southern African & British West Indian mapping.");
 
     /// <summary>
-    /// Gets or sets the number of meters per <see cref="LinearUnit"/>.
+    /// Gets the number of meters per <see cref="LinearUnit"/>.
     /// </summary>
-    public double MetersPerUnit { get; set; }
+    public double MetersPerUnit { get; }
 
     /// <summary>
     /// Gets the Well-known text for this object

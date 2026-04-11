@@ -30,9 +30,9 @@ public sealed class TimeUnit : Info, IUnit
     }
 
     /// <summary>
-    /// Gets or sets the number of seconds per time unit.
+    /// Gets the number of seconds per time unit.
     /// </summary>
-    public double ConversionFactor { get; set; }
+    public double ConversionFactor { get; }
 
     /// <summary>
     /// Gets the Well-known text for this object.

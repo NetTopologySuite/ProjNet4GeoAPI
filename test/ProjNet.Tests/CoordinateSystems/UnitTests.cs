@@ -74,18 +74,6 @@ public class UnitTests
         Assert.Equal(0.9144, unit.MetersPerUnit, 12);
     }
 
-    /// <summary>
-    /// Verifies that MetersPerUnit can be updated via its setter.
-    /// </summary>
-    [Fact]
-    public void LinearUnit_MetersPerUnit_CanBeSet()
-    {
-        var unit = new LinearUnit(1.0, "test", string.Empty, -1, string.Empty, string.Empty, string.Empty);
-        unit.MetersPerUnit = 2.5;
-
-        Assert.Equal(2.5, unit.MetersPerUnit);
-    }
-
     // ---- LinearUnit WKT ----
 
     /// <summary>
@@ -259,18 +247,6 @@ public class UnitTests
         Assert.Equal(0.5, unit.RadiansPerUnit);
     }
 
-    /// <summary>
-    /// Verifies that RadiansPerUnit can be updated via its setter.
-    /// </summary>
-    [Fact]
-    public void AngularUnit_RadiansPerUnit_CanBeSet()
-    {
-        var unit = new AngularUnit(1.0);
-        unit.RadiansPerUnit = 2.0;
-
-        Assert.Equal(2.0, unit.RadiansPerUnit);
-    }
-
     // ---- AngularUnit WKT ----
 
     /// <summary>
@@ -429,18 +405,6 @@ public class UnitTests
 
         Assert.Equal("fathom", unit.Name);
         Assert.Equal(1.8288, unit.ConversionFactor, 12);
-    }
-
-    /// <summary>
-    /// Verifies that the conversion factor can be updated via the setter.
-    /// </summary>
-    [Fact]
-    public void Unit_ConversionFactor_CanBeSet()
-    {
-        var unit = new Unit("custom", 1d);
-        unit.ConversionFactor = 3.5d;
-
-        Assert.Equal(3.5d, unit.ConversionFactor);
     }
 
     /// <summary>
