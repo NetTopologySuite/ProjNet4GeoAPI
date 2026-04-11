@@ -11,7 +11,7 @@ using ProjNet.IO.Wkt;
 /// <summary>
 /// Definition of temporal units.
 /// </summary>
-public class TimeUnit : Info, IUnit
+public sealed class TimeUnit : Info, IUnit
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="TimeUnit"/> class.

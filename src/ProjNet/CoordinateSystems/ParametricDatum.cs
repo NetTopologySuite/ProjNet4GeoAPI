@@ -10,7 +10,7 @@ using ProjNet.IO.Wkt;
 /// <summary>
 /// A parametric datum used by parametric coordinate reference systems.
 /// </summary>
-public class ParametricDatum : Datum
+public sealed class ParametricDatum : Datum
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="ParametricDatum"/> class.

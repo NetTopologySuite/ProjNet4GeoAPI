@@ -11,7 +11,7 @@ using ProjNet.IO.Wkt;
 /// <summary>
 /// A temporal datum used by temporal coordinate reference systems.
 /// </summary>
-public class TemporalDatum : Datum
+public sealed class TemporalDatum : Datum
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="TemporalDatum"/> class.

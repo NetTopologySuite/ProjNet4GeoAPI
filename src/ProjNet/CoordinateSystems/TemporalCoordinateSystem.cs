@@ -12,7 +12,7 @@ using ProjNet.IO.Wkt;
 /// <summary>
 /// A one-dimensional temporal coordinate system.
 /// </summary>
-public class TemporalCoordinateSystem : CoordinateSystem
+public sealed class TemporalCoordinateSystem : CoordinateSystem
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="TemporalCoordinateSystem"/> class.

@@ -11,7 +11,7 @@ using ProjNet.IO.Wkt;
 /// <summary>
 /// A local engineering datum used by engineering coordinate reference systems.
 /// </summary>
-public class EngineeringDatum : Datum
+public sealed class EngineeringDatum : Datum
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="EngineeringDatum"/> class.

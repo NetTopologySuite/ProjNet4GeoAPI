@@ -13,7 +13,7 @@ using ProjNet.IO.Wkt;
 /// <summary>
 /// A coordinate system for local engineering reference frames.
 /// </summary>
-public class EngineeringCoordinateSystem : CoordinateSystem
+public sealed class EngineeringCoordinateSystem : CoordinateSystem
 {
     private readonly List<IUnit> units;
 

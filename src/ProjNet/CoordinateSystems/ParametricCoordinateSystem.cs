@@ -11,7 +11,7 @@ using ProjNet.IO.Wkt;
 /// <summary>
 /// A one-dimensional parametric coordinate system.
 /// </summary>
-public class ParametricCoordinateSystem : CoordinateSystem
+public sealed class ParametricCoordinateSystem : CoordinateSystem
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="ParametricCoordinateSystem"/> class.

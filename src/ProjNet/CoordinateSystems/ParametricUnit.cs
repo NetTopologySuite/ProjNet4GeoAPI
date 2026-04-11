@@ -11,7 +11,7 @@ using ProjNet.IO.Wkt;
 /// <summary>
 /// Definition of parametric units.
 /// </summary>
-public class ParametricUnit : Info, IUnit
+public sealed class ParametricUnit : Info, IUnit
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="ParametricUnit"/> class.
