@@ -106,6 +106,16 @@ public enum DatumType : int
     LD_Min = 10000,
 
     /// <summary>
+    /// Unspecified local or engineering datum type.
+    /// </summary>
+    LD_Other = LD_Min,
+
+    /// <summary>
+    /// A local engineering datum that defines coordinates in a local operational frame.
+    /// </summary>
+    LD_Engineering = 10001,
+
+    /// <summary>
     /// Highest possible value for local datum types.
     /// </summary>
     LD_Max = 32767,
