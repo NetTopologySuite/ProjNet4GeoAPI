@@ -51,14 +51,14 @@ public sealed class ConcatenatedOperation : Info
     }
 
     /// <summary>
-    /// Gets or sets the source coordinate system.
+    /// Gets the source coordinate system.
     /// </summary>
-    public CoordinateSystem SourceCoordinateSystem { get; set; }
+    public CoordinateSystem SourceCoordinateSystem { get; }
 
     /// <summary>
-    /// Gets or sets the target coordinate system.
+    /// Gets the target coordinate system.
     /// </summary>
-    public CoordinateSystem TargetCoordinateSystem { get; set; }
+    public CoordinateSystem TargetCoordinateSystem { get; }
 
     /// <summary>
     /// Gets the concatenated operation steps.

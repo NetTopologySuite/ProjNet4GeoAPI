@@ -53,19 +53,19 @@ public sealed class CoordinateOperation : Info
     }
 
     /// <summary>
-    /// Gets or sets the source coordinate system.
+    /// Gets the source coordinate system.
     /// </summary>
-    public CoordinateSystem SourceCoordinateSystem { get; set; }
+    public CoordinateSystem SourceCoordinateSystem { get; }
 
     /// <summary>
-    /// Gets or sets the target coordinate system.
+    /// Gets the target coordinate system.
     /// </summary>
-    public CoordinateSystem TargetCoordinateSystem { get; set; }
+    public CoordinateSystem TargetCoordinateSystem { get; }
 
     /// <summary>
-    /// Gets or sets the operation method name.
+    /// Gets the operation method name.
     /// </summary>
-    public string MethodName { get; set; }
+    public string MethodName { get; }
 
     /// <summary>
     /// Gets the operation parameters.
