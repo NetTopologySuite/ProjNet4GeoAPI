@@ -18,6 +18,13 @@ using ProjNet.Geometries;
 /// systems of a transformation, then it should keep hold of the
 /// <see cref="CoordinateTransformation"/> object, and use the contained
 /// math transform object whenever it wishes to perform a transform.
+/// <para>
+/// Thread safety: Implementations that keep immutable transformation state are safe to share across
+/// threads for concurrent read-only transform operations, and the built-in pure transforms follow
+/// that model. Grid-backed transforms additionally depend on the shared grid-resolution behavior
+/// configured through <see cref="CoordinateTransformationFactory"/>, so grid resolution or
+/// reconfiguration may still serialize on that shared infrastructure.
+/// </para>
 /// </remarks>
 public abstract class MathTransform
 {

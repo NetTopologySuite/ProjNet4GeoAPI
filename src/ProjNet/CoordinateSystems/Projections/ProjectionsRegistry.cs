@@ -13,6 +13,13 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <summary>
 /// Registry that maps projection names and aliases to their corresponding <see cref="MapProjection"/> implementation types.
 /// </summary>
+/// <remarks>
+/// <para>
+/// Thread safety: The registry is process-wide and protected by an internal lock for registration,
+/// alias lookup, and projection creation. Concurrent callers are safe, but <c>CreateProjection</c>,
+/// <c>Register</c>, and <c>RegisterAlias</c> briefly serialize on that shared lock.
+/// </para>
+/// </remarks>
 public class ProjectionsRegistry
 {
     private static readonly Dictionary<string, ProjectionRegistration> TypeRegistry = [];
