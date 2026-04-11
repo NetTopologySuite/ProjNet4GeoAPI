@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ProjNet.CoordinateSystems;
 using ProjNet.Data;
+using ProjNet.IO.CoordinateSystems;
 using ProjNet.IO.Wkt;
 using Xunit;
 
@@ -254,6 +255,30 @@ public class CoordinateSystemWktReaderWkt2Tests
     }
 
     /// <summary>
+    /// Provides representative supported coordinate-operation examples.
+    /// </summary>
+    /// <returns>WKT2 coordinate operation strings that should parse successfully and roundtrip semantically.</returns>
+    public static IEnumerable<TheoryDataRow<string>> SupportedCoordinateOperationWkt2Rows()
+    {
+        return
+        [
+            new TheoryDataRow<string>("""COORDINATEOPERATION["Axis swap",SOURCECRS[GEOGCRS["Source CRS",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],CS[ellipsoidal,2],AXIS["Latitude",north],AXIS["Longitude",east],ANGLEUNIT["degree",0.0174532925199433]]],TARGETCRS[GEOGCRS["Target CRS",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],CS[ellipsoidal,2],AXIS["Longitude",east],AXIS["Latitude",north],ANGLEUNIT["degree",0.0174532925199433]]],METHOD["Axis Order Reversal"],PARAMETER["Order reversal",1],ID["TEST",3001]]"""),
+        ];
+    }
+
+    /// <summary>
+    /// Provides representative supported concatenated-operation examples.
+    /// </summary>
+    /// <returns>WKT2 concatenated operation strings that should parse successfully and roundtrip semantically.</returns>
+    public static IEnumerable<TheoryDataRow<string>> SupportedConcatenatedOperationWkt2Rows()
+    {
+        return
+        [
+            new TheoryDataRow<string>("""CONCATENATEDOPERATION["Two-step chain",SOURCECRS[GEOGCRS["Source CRS",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],CS[ellipsoidal,2],AXIS["Latitude",north],AXIS["Longitude",east],ANGLEUNIT["degree",0.0174532925199433]]],TARGETCRS[GEOGCRS["Target CRS",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],CS[ellipsoidal,2],AXIS["Longitude",east],AXIS["Latitude",north],ANGLEUNIT["degree",0.0174532925199433]]],STEP[COORDINATEOPERATION["Step 1",SOURCECRS[GEOGCRS["Source CRS",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],CS[ellipsoidal,2],AXIS["Latitude",north],AXIS["Longitude",east],ANGLEUNIT["degree",0.0174532925199433]]],TARGETCRS[GEOGCRS["Intermediate CRS",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],CS[ellipsoidal,2],AXIS["Longitude",east],AXIS["Latitude",north],ANGLEUNIT["degree",0.0174532925199433]]],METHOD["Axis swap"],PARAMETER["Order reversal",1]]],STEP[COORDINATEOPERATION["Step 2",SOURCECRS[GEOGCRS["Intermediate CRS",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],CS[ellipsoidal,2],AXIS["Longitude",east],AXIS["Latitude",north],ANGLEUNIT["degree",0.0174532925199433]]],TARGETCRS[GEOGCRS["Target CRS",DATUM["World Geodetic System 1984",ELLIPSOID["WGS 84",6378137,298.257223563,LENGTHUNIT["metre",1]]],CS[ellipsoidal,2],AXIS["Longitude",east],AXIS["Latitude",north],ANGLEUNIT["degree",0.0174532925199433]]],METHOD["Unit scale"],PARAMETER["Scale difference",1]]],ID["TEST",3002]]"""),
+        ];
+    }
+
+    /// <summary>
     /// Provides representative unsupported top-level WKT2 roots that are intentionally outside the current native or normalized reader surface.
     /// </summary>
     /// <returns>Keyword/WKT pairs that should still be rejected explicitly.</returns>
@@ -262,7 +287,6 @@ public class CoordinateSystemWktReaderWkt2Tests
         return
         [
             new TheoryDataRow<string, string, string>("COORDINATEMETADATA", """COORDINATEMETADATA["Metadata example"]""", "COORDINATEMETADATA"),
-            new TheoryDataRow<string, string, string>("COORDINATEOPERATION", """COORDINATEOPERATION["Operation example"]""", "COORDINATEOPERATION"),
         ];
     }
 
@@ -658,6 +682,42 @@ public class CoordinateSystemWktReaderWkt2Tests
 
         Assert.Equal("Reservoir pressure", parsed.Name);
         Assert.Equal("Reservoir datum", parsed.ParametricDatum.Name);
+        Assert.True(parsed.EqualParams(roundTripped));
+    }
+
+    /// <summary>
+    /// Verifies supported coordinate operation examples parse and roundtrip through the operation model.
+    /// </summary>
+    /// <param name="wkt">The coordinate operation WKT2 input.</param>
+    [Theory]
+    [MemberData(nameof(SupportedCoordinateOperationWkt2Rows))]
+    public void CreateFromWkt_WithSupportedCoordinateOperation_ParsesCoordinateOperation(string wkt)
+    {
+        IInfo parsedInfo = CoordinateSystemWktReader.Parse(wkt);
+        CoordinateOperation parsed = Assert.IsType<CoordinateOperation>(parsedInfo);
+        CoordinateOperation roundTripped = Assert.IsType<CoordinateOperation>(CoordinateSystemWktReader.Parse(parsed.WKT));
+
+        Assert.Equal("Axis swap", parsed.Name);
+        Assert.Equal("Axis Order Reversal", parsed.MethodName);
+        Assert.Single(parsed.Parameters);
+        Assert.True(parsed.EqualParams(roundTripped));
+    }
+
+    /// <summary>
+    /// Verifies supported concatenated operation examples parse and roundtrip through the operation-chain model.
+    /// </summary>
+    /// <param name="wkt">The concatenated operation WKT2 input.</param>
+    [Theory]
+    [MemberData(nameof(SupportedConcatenatedOperationWkt2Rows))]
+    public void CreateFromWkt_WithSupportedConcatenatedOperation_ParsesConcatenatedOperation(string wkt)
+    {
+        IInfo parsedInfo = CoordinateSystemWktReader.Parse(wkt);
+        ConcatenatedOperation parsed = Assert.IsType<ConcatenatedOperation>(parsedInfo);
+        ConcatenatedOperation roundTripped = Assert.IsType<ConcatenatedOperation>(CoordinateSystemWktReader.Parse(parsed.WKT));
+
+        Assert.Equal("Two-step chain", parsed.Name);
+        Assert.Equal(2, parsed.Steps.Count);
+        Assert.Equal("Step 1", parsed.Steps[0].Name);
         Assert.True(parsed.EqualParams(roundTripped));
     }
 
