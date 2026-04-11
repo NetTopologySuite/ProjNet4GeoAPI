@@ -874,6 +874,42 @@ public class CoordinateSystemCoverageTests
     }
 
     /// <summary>
+    /// Verifies that <see cref="Info.WithName(string)"/> preserves the concrete runtime type.
+    /// </summary>
+    [Fact]
+    public void Info_WithName_OnPrimeMeridian_ReturnsUpdatedClone()
+    {
+        PrimeMeridian renamed = Assert.IsType<PrimeMeridian>(PrimeMeridian.Greenwich.WithName("Custom Greenwich"));
+
+        Assert.Equal("Custom Greenwich", renamed.Name);
+        Assert.Equal("EPSG", renamed.Authority);
+        Assert.Equal(8901, renamed.AuthorityCode);
+        Assert.True(PrimeMeridian.Greenwich.EqualParams(renamed));
+    }
+
+    /// <summary>
+    /// Verifies that <see cref="Info.WithAuthority(string, long)"/> rebuilds composed coordinate systems correctly.
+    /// </summary>
+    [Fact]
+    public void Info_WithAuthority_OnGeocentricCoordinateSystem_ReturnsUpdatedClone()
+    {
+        GeocentricCoordinateSystem source = Factory.CreateGeocentricCoordinateSystem(
+            "WGS84 Geocentric",
+            HorizontalDatum.WGS84,
+            LinearUnit.Metre,
+            PrimeMeridian.Greenwich);
+
+        GeocentricCoordinateSystem updated = Assert.IsType<GeocentricCoordinateSystem>(source.WithAuthority("TEST", 1001));
+
+        Assert.Equal("TEST", updated.Authority);
+        Assert.Equal(1001, updated.AuthorityCode);
+        Assert.Equal(source.Name, updated.Name);
+        Assert.True(updated.HorizontalDatum.EqualParams(source.HorizontalDatum));
+        Assert.True(updated.LinearUnit.EqualParams(source.LinearUnit));
+        Assert.True(updated.PrimeMeridian.EqualParams(source.PrimeMeridian));
+    }
+
+    /// <summary>
     /// Verifies that EqualParams ignores Name differences (name is excluded from comparison).
     /// </summary>
     [Fact]
