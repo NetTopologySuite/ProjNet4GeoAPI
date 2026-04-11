@@ -35,14 +35,12 @@ public class Proj2ProjParityTheoryTests
         var coordinateSystemFactory = new CoordinateSystemFactory();
         var transformationFactory = new CoordinateTransformationFactory();
 
-        ProjectedCoordinateSystem source = CoordinateSystemTestHelpers.WithAuthority(
-            CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(coordinateSystemFactory, testCase.SourceWkt),
-            "EPSG",
-            testCase.SourceSrid);
-        ProjectedCoordinateSystem target = CoordinateSystemTestHelpers.WithAuthority(
-            CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(coordinateSystemFactory, testCase.TargetWkt),
-            "EPSG",
-            testCase.TargetSrid);
+        ProjectedCoordinateSystem source = Assert.IsType<ProjectedCoordinateSystem>(
+            CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(coordinateSystemFactory, testCase.SourceWkt)
+                .WithAuthority("EPSG", testCase.SourceSrid));
+        ProjectedCoordinateSystem target = Assert.IsType<ProjectedCoordinateSystem>(
+            CoordinateSystemTestHelpers.RequireCoordinateSystem<ProjectedCoordinateSystem>(coordinateSystemFactory, testCase.TargetWkt)
+                .WithAuthority("EPSG", testCase.TargetSrid));
 
         ICoordinateTransformation transformation = transformationFactory.CreateFromCoordinateSystems(source, target);
         double[] output = transformation.MathTransform.Transform([testCase.InputX, testCase.InputY]);
