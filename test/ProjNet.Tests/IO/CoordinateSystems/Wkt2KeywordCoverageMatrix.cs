@@ -34,6 +34,7 @@ internal static class Wkt2KeywordCoverageMatrix
     private const string BaseProjectedReference = WktReader + ".ReadWkt2BaseProjectedCoordinateSystem";
     private const string ConversionReference = WktReader + ".ReadWkt2Conversion, " + WktReader + ".ReadWkt2ProjectionMethod, " + WktReader + ".ReadWkt2ProjectionParameter, " + WktReader + ".NormalizeWkt2ProjectionParameterName";
     private const string DerivingConversionReference = WktReader + ".ReadWkt2DerivingConversion, " + WktReader + ".ReadWkt2ProjectionMethod, " + WktReader + ".ReadWkt2ProjectionParameter, " + WktReader + ".NormalizeWkt2ProjectionParameterName";
+    private const string OperationReference = WktReader + ".ReadWkt2CoordinateOperation, " + WktReader + ".ReadWkt2CoordinateOperationParameter, " + WktReader + ".ReadWkt2ConcatenatedOperation, " + WktReader + ".ReadWkt2ConcatenatedOperationStep";
     private const string VerticalReference = WktReader + ".ReadWkt2VerticalCoordinateSystem, " + WktReader + ".ReadWkt2VerticalDatum";
     private const string CompoundReference = WktReader + ".ReadWkt2CompoundCoordinateSystem";
     private const string BoundReference = WktReader + ".ReadWkt2BoundCoordinateSystem, " + WktReader + ".ReadWkt2AbridgedTransformationDefinition, " + WktReader + ".ReadWkt2AbridgedTransformationParameter, " + WktReader + ".ReadWkt2AbridgedTransformationParameterFile, BoundCoordinateSystemSupport.CreateBoundTransformation, BoundCoordinateSystemSupport.AssignTransformationParameter";
@@ -71,11 +72,11 @@ internal static class Wkt2KeywordCoverageMatrix
         Unsupported("CALENDAR", TemporalReference, "Temporal datum parsing still does not consume CALENDAR metadata."),
         Unsupported("CITATION", DefaultUnsupportedReference, "The native reader does not classify CITATION as skippable metadata."),
         Native("COMPOUNDCRS", $"{RootDispatchReference}, {CompoundReference}", "Handled natively by the compound CRS reader."),
-        Unsupported("CONCATENATEDOPERATION", UnsupportedTopLevelReference, "No standalone coordinate-operation reader path exists yet."),
+        Native("CONCATENATEDOPERATION", $"{RootDispatchReference}, {OperationReference}", "Handled natively by the concatenated operation reader."),
         Native("CONVERSION", ConversionReference, "Handled natively inside projected CRS definitions."),
         Unsupported("COORDEPOCH", UnsupportedTopLevelReference, "Coordinate metadata parsing is not implemented."),
         Unsupported("COORDINATEMETADATA", UnsupportedTopLevelReference, "No coordinate metadata root reader path exists yet."),
-        Unsupported("COORDINATEOPERATION", UnsupportedTopLevelReference, "No standalone coordinate-operation reader path exists yet."),
+        Native("COORDINATEOPERATION", $"{RootDispatchReference}, {OperationReference}", "Handled natively by the standalone coordinate operation reader."),
         Native("CS", CoordinateSystemReference, "Parsed directly by the native coordinate-system definition reader."),
         Native("DATUM", HorizontalDatumReference, "Parsed directly by the native horizontal-datum reader."),
         Ignored("DEFININGTRANSFORMATION", MetadataSkipReference, "Accepted as non-operational metadata and skipped."),
@@ -106,7 +107,7 @@ internal static class Wkt2KeywordCoverageMatrix
         Ignored("MODEL", MetadataSkipReference, "Tolerated transitively inside skipped DYNAMIC metadata."),
         Unsupported("OPERATIONACCURACY", BoundReference, "The abridged transformation reader does not consume operation-accuracy nodes."),
         Ignored("ORDER", MetadataSkipReference, "Accepted as non-operational metadata and skipped."),
-        Native("PARAMETER", ConversionReference, "Parsed directly in projection and abridged-transformation blocks."),
+        Native("PARAMETER", $"{ConversionReference}, {OperationReference}", "Parsed directly in projection, abridged-transformation, and coordinate-operation blocks."),
         Native("PARAMETERFILE", BoundReference, "Parsed directly for supported BoundCRS parameter-file transformations."),
         Native("PARAMETRICCRS", $"{RootDispatchReference}, {ParametricReference}", "Handled natively through the parametric CRS reader."),
         Native("PARAMETRICDATUM", ParametricReference, "Parsed directly by the parametric datum reader alias."),
@@ -121,9 +122,9 @@ internal static class Wkt2KeywordCoverageMatrix
         Ignored("REMARK", MetadataSkipReference, "Accepted as non-operational metadata and skipped."),
         Native("SCALEUNIT", $"{ConversionReference}, {EngineeringReference}", "Parsed directly for WKT2 projection, BoundCRS parameter, and engineering CRS units."),
         Ignored("SCOPE", MetadataSkipReference, "Accepted as non-operational metadata and skipped."),
-        Native("SOURCECRS", BoundReference, "Parsed directly inside supported BoundCRS definitions."),
-        Unsupported("STEP", UnsupportedTopLevelReference, "No standalone concatenated-operation reader path exists yet."),
-        Native("TARGETCRS", BoundReference, "Parsed directly inside supported BoundCRS definitions."),
+        Native("SOURCECRS", $"{BoundReference}, {OperationReference}", "Parsed directly inside supported BoundCRS and coordinate-operation definitions."),
+        Native("STEP", OperationReference, "Parsed directly inside supported concatenated operation definitions."),
+        Native("TARGETCRS", $"{BoundReference}, {OperationReference}", "Parsed directly inside supported BoundCRS and coordinate-operation definitions."),
         Native("TDATUM", TemporalReference, "Parsed directly by the temporal datum reader."),
         Unsupported("TEMPORALQUANTITY", TemporalReference, "Temporal CRS parsing still expects TIMEUNIT rather than TEMPORALQUANTITY."),
         Native("TIMECRS", $"{RootDispatchReference}, {TemporalReference}", "Handled natively through the temporal CRS reader."),
