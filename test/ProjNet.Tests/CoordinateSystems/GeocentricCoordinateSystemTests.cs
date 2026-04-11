@@ -176,9 +176,13 @@ public class GeocentricCoordinateSystemTests
     [Fact]
     public void PropertySetters_UpdateValues()
     {
-        GeocentricCoordinateSystem system = GeocentricCoordinateSystem.WGS84;
+        GeocentricCoordinateSystem system = CreateSystem(
+            "Custom geocentric",
+            HorizontalDatum.ED50,
+            LinearUnit.Metre,
+            PrimeMeridian.Greenwich,
+            CreateDefaultAxisInfo());
 
-        system.HorizontalDatum = HorizontalDatum.ED50;
         system.LinearUnit = LinearUnit.Foot;
         system.PrimeMeridian = PrimeMeridian.Paris;
 

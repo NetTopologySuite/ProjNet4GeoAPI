@@ -46,7 +46,7 @@ public abstract class HorizontalCoordinateSystem : CoordinateSystem
     }
 
     /// <summary>
-    /// Gets or sets the HorizontalDatum.
+    /// Gets the horizontal datum.
     /// </summary>
-    public HorizontalDatum HorizontalDatum { get; set; }
+    public HorizontalDatum HorizontalDatum { get; }
 }

@@ -64,14 +64,14 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
     }
 
     /// <summary>
-    /// Gets or sets the angular units of the geographic coordinate system.
+    /// Gets the angular units of the geographic coordinate system.
     /// </summary>
-    public AngularUnit AngularUnit { get; set; }
+    public AngularUnit AngularUnit { get; }
 
     /// <summary>
-    /// Gets or sets the prime meridian of the geographic coordinate system.
+    /// Gets the prime meridian of the geographic coordinate system.
     /// </summary>
-    public PrimeMeridian PrimeMeridian { get; set; }
+    public PrimeMeridian PrimeMeridian { get; }
 
     /// <summary>
     /// Gets the number of available conversions to WGS84 coordinates.

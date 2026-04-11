@@ -720,10 +720,9 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
             "Bessel 1840",
             AngularUnit.Degrees,
             datum,
-            PrimeMeridian.Greenwich,
+            PrimeMeridian.Ferro,
             new AxisInfo("Lon", AxisOrientationEnum.East),
             new AxisInfo("Lat", AxisOrientationEnum.North));
-        gcsKrovak.PrimeMeridian = PrimeMeridian.Ferro;
 
         var parameters = new List<ProjectionParameter>(5)
                              {

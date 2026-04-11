@@ -139,11 +139,10 @@ public class ProjectedCoordinateSystemTests
     [Fact]
     public void PropertySetters_UpdateValues()
     {
-        ProjectedCoordinateSystem system = CreateSystem();
+        ProjectedCoordinateSystem system = CreateSystem(horizontalDatum: HorizontalDatum.ED50);
         GeographicCoordinateSystem geographicCoordinateSystem = CreateParisGeographicCoordinateSystem();
         Projection projection = CreateProjection("Lambert_Conformal_Conic_2SP");
 
-        system.HorizontalDatum = HorizontalDatum.ED50;
         system.GeographicCoordinateSystem = geographicCoordinateSystem;
         system.LinearUnit = LinearUnit.Foot;
         system.Projection = projection;
