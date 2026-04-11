@@ -278,6 +278,29 @@ public class GitHubIssueRegressionTests
     }
 
     /// <summary>
+    /// Verifies that the NAD83 WKT from GitHub issue #51 transforms to WGS 84 with the expected offset.
+    /// </summary>
+    [GitHubIssue(51)]
+    [Fact(DisplayName = "Issue #51, NAD83 WKT transforms to WGS84 within expected tolerance")]
+    public void Nad83WktToWgs84MatchesExpectedCoordinate()
+    {
+        const string nad83Wkt =
+            """
+            GEOGCS["GCS_North_American_1983",DATUM["D_North_American_1983",SPHEROID["GRS_1980",6378137,298.257222101]],PRIMEM["Greenwich",0],UNIT["Degree",0.017453292519943295]]
+            """;
+
+        var coordinateSystemFactory = new CoordinateSystemFactory();
+        var transformationFactory = new CoordinateTransformationFactory();
+        CoordinateSystem source = Assert.IsType<CoordinateSystem>(coordinateSystemFactory.CreateFromWkt(nad83Wkt), exactMatch: false);
+
+        ICoordinateTransformation transformation = transformationFactory.CreateFromCoordinateSystems(source, GeographicCoordinateSystem.WGS84);
+        (double longitude, double latitude) = transformation.MathTransform.Transform(-120.5757999d, 47.4073238d);
+
+        Assert.InRange(longitude, -120.575814456652d - 0.001d, -120.575814456652d + 0.001d);
+        Assert.InRange(latitude, 47.4073295963295d - 0.001d, 47.4073295963295d + 0.001d);
+    }
+
+    /// <summary>
     /// Verifies that GitHub issue #64 is fixed: <see cref="GeographicCoordinateSystem"/> and
     /// <see cref="ProjectedCoordinateSystem"/> correctly store abbreviation and remarks
     /// passed to their constructors.
