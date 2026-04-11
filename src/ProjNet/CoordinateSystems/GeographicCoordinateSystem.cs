@@ -21,8 +21,8 @@ using ProjNet.IO.Wkt;
 /// </remarks>
 public class GeographicCoordinateSystem : HorizontalCoordinateSystem
 {
-    private static readonly Lazy<string> Wgs84CoordinateSystemWkt =
-        new(() => ResolveRuntimeCompatibleWgs84CoordinateSystem().WKT, true);
+    private static readonly Lazy<GeographicCoordinateSystem> Wgs84CoordinateSystem =
+        new(CreateWgs84CoordinateSystem, true);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GeographicCoordinateSystem"/> class.
@@ -60,10 +60,7 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
     /// <summary>
     /// Gets a decimal degrees geographic coordinate system based on the WGS84 ellipsoid, suitable for GPS measurements.
     /// </summary>
-    public static GeographicCoordinateSystem WGS84
-    {
-        get { return CreateWgs84CoordinateSystem(); }
-    }
+    public static GeographicCoordinateSystem WGS84 => Wgs84CoordinateSystem.Value;
 
     /// <summary>
     /// Gets the angular units of the geographic coordinate system.
@@ -306,18 +303,11 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
 
     private static GeographicCoordinateSystem CreateWgs84CoordinateSystem()
     {
-        CoordinateSystem? coordinateSystem = new CoordinateSystemFactory().CreateFromWkt(Wgs84CoordinateSystemWkt.Value);
-        return coordinateSystem as GeographicCoordinateSystem
-            ?? throw new InvalidOperationException("The WGS84 geographic catalog entry did not resolve to a geographic coordinate system.");
-    }
-
-    private static GeographicCoordinateSystem ResolveRuntimeCompatibleWgs84CoordinateSystem()
-    {
         return Wgs84CatalogBootstrap.TryGetCoordinateSystem(
             Wgs84CatalogBootstrap.Wgs84GeographicSrid,
             out GeographicCoordinateSystem? coordinateSystem)
             ? NormalizeToLegacyRuntimeAxisOrder(coordinateSystem)
-            : CreateLegacyWgs84CoordinateSystem();
+            : throw new InvalidOperationException("The generated EPSG catalog could not resolve the WGS 84 geographic coordinate system.");
     }
 
     private static GeographicCoordinateSystem NormalizeToLegacyRuntimeAxisOrder(GeographicCoordinateSystem coordinateSystem)
@@ -342,20 +332,5 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
             coordinateSystem.Alias,
             coordinateSystem.Abbreviation,
             coordinateSystem.Remarks);
-    }
-
-    private static GeographicCoordinateSystem CreateLegacyWgs84CoordinateSystem()
-    {
-        return new GeographicCoordinateSystem(
-            CoordinateSystems.AngularUnit.Degrees,
-            CoordinateSystems.HorizontalDatum.WGS84,
-            CoordinateSystems.PrimeMeridian.Greenwich,
-            [new AxisInfo("Lon", AxisOrientationEnum.East), new AxisInfo("Lat", AxisOrientationEnum.North)],
-            "WGS 84",
-            "EPSG",
-            4326,
-            string.Empty,
-            string.Empty,
-            string.Empty);
     }
 }

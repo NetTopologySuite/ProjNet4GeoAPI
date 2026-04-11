@@ -56,6 +56,20 @@ public class Wgs84CatalogConsistencyTests
     }
 
     /// <summary>
+    /// Verifies that the normalized public WGS84 geographic accessor reuses the same immutable runtime instance.
+    /// </summary>
+    [Fact]
+    public void GeographicWgs84_StaticReturnsSameNormalizedInstance()
+    {
+        GeographicCoordinateSystem first = GeographicCoordinateSystem.WGS84;
+        GeographicCoordinateSystem second = GeographicCoordinateSystem.WGS84;
+
+        Assert.Same(first, second);
+        Assert.Equal(AxisOrientationEnum.East, first.GetAxis(0).Orientation);
+        Assert.Equal(AxisOrientationEnum.North, first.GetAxis(1).Orientation);
+    }
+
+    /// <summary>
     /// Verifies that the public Web Mercator accessor matches the EPSG catalog entry after legacy base-CRS normalization.
     /// </summary>
     [Fact]
