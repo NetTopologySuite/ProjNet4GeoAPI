@@ -88,19 +88,16 @@ public class HorizontalDatum : Datum
     {
         get
         {
-            var datum =
-                new HorizontalDatum(
-                    CoordinateSystems.Ellipsoid.WGS72,
-                    null,
-                    DatumType.HD_Geocentric,
-                    "World Geodetic System 1972",
-                    "EPSG",
-                    6322,
-                    string.Empty,
-                    "Used by GPS before 1987. For Transit satellite positioning see also WGS 72BE. Datum code 6323 reserved for southern hemisphere ProjCS's.",
-                    string.Empty);
-            datum.Wgs84Parameters = new Wgs84ConversionInfo(0, 0, 4.5, 0, 0, 0.554, 0.219);
-            return datum;
+            return new HorizontalDatum(
+                CoordinateSystems.Ellipsoid.WGS72,
+                new Wgs84ConversionInfo(0, 0, 4.5, 0, 0, 0.554, 0.219),
+                DatumType.HD_Geocentric,
+                "World Geodetic System 1972",
+                "EPSG",
+                6322,
+                string.Empty,
+                "Used by GPS before 1987. For Transit satellite positioning see also WGS 72BE. Datum code 6323 reserved for southern hemisphere ProjCS's.",
+                string.Empty);
         }
     }
 
@@ -122,9 +119,9 @@ public class HorizontalDatum : Datum
     {
         get
         {
-            var datum = new HorizontalDatum(
+            return new HorizontalDatum(
                 CoordinateSystems.Ellipsoid.GRS80,
-                null,
+                new Wgs84ConversionInfo(),
                 DatumType.HD_Geocentric,
                 "European Terrestrial Reference System 1989",
                 "EPSG",
@@ -132,8 +129,6 @@ public class HorizontalDatum : Datum
                 "ETRF89",
                 "The distinction in usage between ETRF89 and ETRS89 is confused: although in principle conceptually different in practice both are used for the realisation.",
                 string.Empty);
-            datum.Wgs84Parameters = new Wgs84ConversionInfo();
-            return datum;
         }
     }
 
