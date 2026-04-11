@@ -3342,6 +3342,28 @@ public static partial class CoordinateSystemWktReader
         }
     }
 
+    private static void ReadOptionalAuthoritySkippingUnknownNodes(WktTokenizer tokenizer, WktBracket bracket, out string authority, out long authorityCode)
+    {
+        authority = string.Empty;
+        authorityCode = -1;
+
+        while (tokenizer.GetStringValue() == ",")
+        {
+            tokenizer.NextToken();
+            if (tokenizer.GetStringValue() == "AUTHORITY")
+            {
+                ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
+                tokenizer.ReadCloser(bracket);
+                return;
+            }
+
+            SkipKeywordNode(tokenizer);
+            tokenizer.NextToken();
+        }
+
+        tokenizer.CheckCloser(bracket);
+    }
+
     /// <summary>
     /// Returns a IUnit given a piece of WKT.
     /// </summary>
@@ -3354,18 +3376,8 @@ public static partial class CoordinateSystemWktReader
         tokenizer.ReadToken(",");
         tokenizer.NextToken();
         double unitsPerUnit = tokenizer.GetNumericValue();
-        string authority = string.Empty;
-        long authorityCode = -1;
         tokenizer.NextToken();
-        if (tokenizer.GetStringValue() == ",")
-        {
-            ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
-            tokenizer.ReadCloser(bracket);
-        }
-        else
-        {
-            tokenizer.CheckCloser(bracket);
-        }
+        ReadOptionalAuthoritySkippingUnknownNodes(tokenizer, bracket, out string authority, out long authorityCode);
 
         return new Unit(unitsPerUnit, unitName, authority, authorityCode, string.Empty, string.Empty, string.Empty);
     }
@@ -3383,18 +3395,8 @@ public static partial class CoordinateSystemWktReader
         tokenizer.ReadToken(",");
         tokenizer.NextToken();
         double unitsPerUnit = tokenizer.GetNumericValue();
-        string authority = string.Empty;
-        long authorityCode = -1;
         tokenizer.NextToken();
-        if (tokenizer.GetStringValue() == ",")
-        {
-            ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
-            tokenizer.ReadCloser(bracket);
-        }
-        else
-        {
-            tokenizer.CheckCloser(bracket);
-        }
+        ReadOptionalAuthoritySkippingUnknownNodes(tokenizer, bracket, out string authority, out long authorityCode);
 
         return new LinearUnit(unitsPerUnit, unitName, authority, authorityCode, string.Empty, string.Empty, string.Empty);
     }
@@ -3412,18 +3414,8 @@ public static partial class CoordinateSystemWktReader
         tokenizer.ReadToken(",");
         tokenizer.NextToken();
         double unitsPerUnit = tokenizer.GetNumericValue();
-        string authority = string.Empty;
-        long authorityCode = -1;
         tokenizer.NextToken();
-        if (tokenizer.GetStringValue() == ",")
-        {
-            ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
-            tokenizer.ReadCloser(bracket);
-        }
-        else
-        {
-            tokenizer.CheckCloser(bracket);
-        }
+        ReadOptionalAuthoritySkippingUnknownNodes(tokenizer, bracket, out string authority, out long authorityCode);
 
         return new AngularUnit(unitsPerUnit, unitName, authority, authorityCode, string.Empty, string.Empty, string.Empty);
     }
@@ -3539,19 +3531,7 @@ public static partial class CoordinateSystemWktReader
         tokenizer.NextToken();
         double e = tokenizer.GetNumericValue();
         tokenizer.NextToken();
-        string authority = string.Empty;
-        long authorityCode = -1;
-
-        // Read authority.
-        if (tokenizer.GetStringValue() == ",")
-        {
-            ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
-            tokenizer.ReadCloser(bracket);
-        }
-        else
-        {
-            tokenizer.CheckCloser(bracket);
-        }
+        ReadOptionalAuthoritySkippingUnknownNodes(tokenizer, bracket, out string authority, out long authorityCode);
 
         var ellipsoid = new Ellipsoid(majorAxis, 0.0, e, true, LinearUnit.Metre, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
         return ellipsoid;
@@ -3566,27 +3546,9 @@ public static partial class CoordinateSystemWktReader
 
         WktBracket bracket = tokenizer.ReadOpener();
         string projectionName = tokenizer.ReadDoubleQuotedWord();
-        string authority = string.Empty;
-        long authorityCode = -1L;
 
         tokenizer.NextToken(true);
-        if (tokenizer.GetStringValue() == ",")
-        {
-            tokenizer.NextToken();
-            if (tokenizer.GetStringValue() == "AUTHORITY")
-            {
-                ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
-                tokenizer.ReadCloser(bracket);
-            }
-            else
-            {
-                tokenizer.CheckCloser(bracket);
-            }
-        }
-        else
-        {
-            tokenizer.CheckCloser(bracket);
-        }
+        ReadOptionalAuthoritySkippingUnknownNodes(tokenizer, bracket, out string authority, out long authorityCode);
 
         tokenizer.ReadToken(",");
         var paramList = new List<ProjectionParameter>();
@@ -3717,7 +3679,7 @@ public static partial class CoordinateSystemWktReader
         long authorityCode = -1;
         tokenizer.NextToken();
         AxisInfo? info = null;
-        if (tokenizer.GetStringValue() == ",")
+        while (tokenizer.GetStringValue() == ",")
         {
             tokenizer.NextToken();
             if (tokenizer.GetStringValue() == "AXIS")
@@ -3725,16 +3687,16 @@ public static partial class CoordinateSystemWktReader
                 info = ReadAxis(tokenizer);
                 tokenizer.NextToken();
             }
-
-            if (tokenizer.GetStringValue() == ",")
-            {
-                tokenizer.NextToken();
-            }
-
-            if (tokenizer.GetStringValue() == "AUTHORITY")
+            else if (tokenizer.GetStringValue() == "AUTHORITY")
             {
                 ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
                 tokenizer.ReadCloser(bracket);
+                break;
+            }
+            else
+            {
+                SkipKeywordNode(tokenizer);
+                tokenizer.NextToken();
             }
         }
 
@@ -3798,28 +3760,24 @@ public static partial class CoordinateSystemWktReader
         tokenizer.NextToken();
 
         var info = new List<AxisInfo>(3);
-        if (tokenizer.GetStringValue() == ",")
+        while (tokenizer.GetStringValue() == ",")
         {
             tokenizer.NextToken();
-            while (tokenizer.GetStringValue() == "AXIS")
+            if (tokenizer.GetStringValue() == "AXIS")
             {
                 info.Add(ReadAxis(tokenizer));
                 tokenizer.NextToken();
-                if (tokenizer.GetStringValue() == ",")
-                {
-                    tokenizer.NextToken();
-                }
             }
-
-            if (tokenizer.GetStringValue() == ",")
-            {
-                tokenizer.NextToken();
-            }
-
-            if (tokenizer.GetStringValue() == "AUTHORITY")
+            else if (tokenizer.GetStringValue() == "AUTHORITY")
             {
                 ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
                 tokenizer.ReadCloser(bracket);
+                break;
+            }
+            else
+            {
+                SkipKeywordNode(tokenizer);
+                tokenizer.NextToken();
             }
         }
 
@@ -3869,28 +3827,24 @@ public static partial class CoordinateSystemWktReader
         long authorityCode = -1;
         tokenizer.NextToken();
         var info = new List<AxisInfo>(2);
-        if (tokenizer.GetStringValue() == ",")
+        while (tokenizer.GetStringValue() == ",")
         {
             tokenizer.NextToken();
-            while (tokenizer.GetStringValue() == "AXIS")
+            if (tokenizer.GetStringValue() == "AXIS")
             {
                 info.Add(ReadAxis(tokenizer));
                 tokenizer.NextToken();
-                if (tokenizer.GetStringValue() == ",")
-                {
-                    tokenizer.NextToken();
-                }
             }
-
-            if (tokenizer.GetStringValue() == ",")
-            {
-                tokenizer.NextToken();
-            }
-
-            if (tokenizer.GetStringValue() == "AUTHORITY")
+            else if (tokenizer.GetStringValue() == "AUTHORITY")
             {
                 ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
                 tokenizer.ReadCloser(bracket);
+                break;
+            }
+            else
+            {
+                SkipKeywordNode(tokenizer);
+                tokenizer.NextToken();
             }
         }
 
@@ -3966,15 +3920,7 @@ public static partial class CoordinateSystemWktReader
         tokenizer.NextToken();
         var datumType = (DatumType)tokenizer.GetNumericValue();
         tokenizer.NextToken();
-        if (tokenizer.GetStringValue() == ",")
-        {
-            tokenizer.NextToken();
-            if (tokenizer.GetStringValue() == "AUTHORITY")
-            {
-                ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
-                tokenizer.ReadCloser(bracket);
-            }
-        }
+        ReadOptionalAuthoritySkippingUnknownNodes(tokenizer, bracket, out authority, out authorityCode);
 
         var verticalDatum = new VerticalDatum(datumType, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
 
@@ -3991,17 +3937,7 @@ public static partial class CoordinateSystemWktReader
         double longitude = tokenizer.GetNumericValue();
 
         tokenizer.NextToken();
-        string authority = string.Empty;
-        long authorityCode = -1;
-        if (tokenizer.GetStringValue() == ",")
-        {
-            ReadAuthorityWithUnknownCode(tokenizer, out authority, out authorityCode);
-            tokenizer.ReadCloser(bracket);
-        }
-        else
-        {
-            tokenizer.CheckCloser(bracket);
-        }
+        ReadOptionalAuthoritySkippingUnknownNodes(tokenizer, bracket, out string authority, out long authorityCode);
 
         // make an assumption about the Angular units - degrees.
         var primeMeridian = new PrimeMeridian(longitude, AngularUnit.Degrees, name, authority, authorityCode, string.Empty, string.Empty, string.Empty);
