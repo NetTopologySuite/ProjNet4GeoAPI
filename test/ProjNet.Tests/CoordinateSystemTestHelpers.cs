@@ -95,8 +95,9 @@ internal static class CoordinateSystemTestHelpers
     /// <param name="name">Replacement name.</param>
     /// <param name="authority">Replacement authority.</param>
     /// <param name="authorityCode">Replacement authority code.</param>
+    /// <param name="ensemble">Replacement ensemble metadata, or <see langword="null"/> to preserve the source ensemble.</param>
     /// <returns>A cloned horizontal datum with the requested metadata.</returns>
-    internal static HorizontalDatum CloneHorizontalDatumWithMetadata(HorizontalDatum datum, string name, string authority, long authorityCode)
+    internal static HorizontalDatum CloneHorizontalDatumWithMetadata(HorizontalDatum datum, string name, string authority, long authorityCode, DatumEnsemble? ensemble = null)
     {
         ArgumentNullException.ThrowIfNull(datum);
         ArgumentNullException.ThrowIfNull(name);
@@ -111,10 +112,8 @@ internal static class CoordinateSystemTestHelpers
             authorityCode,
             datum.Alias,
             datum.Remarks,
-            datum.Abbreviation)
-        {
-            Ensemble = datum.Ensemble,
-        };
+            datum.Abbreviation,
+            ensemble ?? datum.Ensemble);
 
         return clone;
     }
@@ -125,8 +124,9 @@ internal static class CoordinateSystemTestHelpers
     /// <param name="datum">Datum to clone.</param>
     /// <param name="authority">Replacement authority.</param>
     /// <param name="authorityCode">Replacement authority code.</param>
+    /// <param name="ensemble">Replacement ensemble metadata, or <see langword="null"/> to preserve the source ensemble.</param>
     /// <returns>A cloned vertical datum with the requested authority metadata.</returns>
-    internal static VerticalDatum CloneVerticalDatumWithMetadata(VerticalDatum datum, string authority, long authorityCode)
+    internal static VerticalDatum CloneVerticalDatumWithMetadata(VerticalDatum datum, string authority, long authorityCode, DatumEnsemble? ensemble = null)
     {
         ArgumentNullException.ThrowIfNull(datum);
         ArgumentNullException.ThrowIfNull(authority);
@@ -138,10 +138,8 @@ internal static class CoordinateSystemTestHelpers
             authorityCode,
             datum.Alias,
             datum.Remarks,
-            datum.Abbreviation)
-        {
-            Ensemble = datum.Ensemble,
-        };
+            datum.Abbreviation,
+            ensemble ?? datum.Ensemble);
 
         return clone;
     }

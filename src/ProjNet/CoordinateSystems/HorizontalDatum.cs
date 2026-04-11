@@ -27,6 +27,7 @@ public class HorizontalDatum : Datum
     /// <param name="alias">Alias.</param>
     /// <param name="abbreviation">Abbreviation.</param>
     /// <param name="remarks">Provider-supplied remarks.</param>
+    /// <param name="ensemble">Retained datum-ensemble metadata.</param>
     internal HorizontalDatum(
         Ellipsoid ellipsoid,
         Wgs84ConversionInfo? toWgs84,
@@ -36,8 +37,9 @@ public class HorizontalDatum : Datum
         long code,
         string alias,
         string remarks,
-        string abbreviation)
-        : base(type, name, authority, code, alias, remarks, abbreviation)
+        string abbreviation,
+        DatumEnsemble? ensemble = null)
+        : base(type, name, authority, code, alias, remarks, abbreviation, ensemble)
     {
         this.Ellipsoid = ellipsoid;
         this.Wgs84Parameters = toWgs84;
@@ -162,14 +164,14 @@ public class HorizontalDatum : Datum
     }
 
     /// <summary>
-    /// Gets or sets the ellipsoid of the datum.
+    /// Gets the ellipsoid of the datum.
     /// </summary>
-    public Ellipsoid Ellipsoid { get; set; }
+    public Ellipsoid Ellipsoid { get; }
 
     /// <summary>
-    /// Gets or sets preferred parameters for a Bursa Wolf transformation into WGS84.
+    /// Gets preferred parameters for a Bursa Wolf transformation into WGS84.
     /// </summary>
-    public Wgs84ConversionInfo? Wgs84Parameters { get; set; }
+    public Wgs84ConversionInfo? Wgs84Parameters { get; }
 
     /// <summary>
     /// Gets the Well-known text for this object

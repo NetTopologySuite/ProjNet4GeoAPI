@@ -26,7 +26,31 @@ public class VerticalDatum : Datum
     /// <param name="abbreviation">Abbreviation.</param>
     /// <param name="remarks">Provider-supplied remarks.</param>
     public VerticalDatum(DatumType type, string name, string authority, long code, string alias, string remarks, string abbreviation)
-        : base(type, name, authority, code, alias, remarks, abbreviation)
+        : this(type, name, authority, code, alias, remarks, abbreviation, null)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="VerticalDatum"/> class with retained ensemble metadata.
+    /// </summary>
+    /// <param name="type">Datum type.</param>
+    /// <param name="name">Name.</param>
+    /// <param name="authority">Authority name.</param>
+    /// <param name="code">Authority-specific identification code.</param>
+    /// <param name="alias">Alias.</param>
+    /// <param name="remarks">Provider-supplied remarks.</param>
+    /// <param name="abbreviation">Abbreviation.</param>
+    /// <param name="ensemble">Retained datum-ensemble metadata.</param>
+    internal VerticalDatum(
+        DatumType type,
+        string name,
+        string authority,
+        long code,
+        string alias,
+        string remarks,
+        string abbreviation,
+        DatumEnsemble? ensemble)
+        : base(type, name, authority, code, alias, remarks, abbreviation, ensemble)
     {
     }
 

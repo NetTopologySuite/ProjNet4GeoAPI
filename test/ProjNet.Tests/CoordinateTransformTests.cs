@@ -525,16 +525,23 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
     {
         // Define datums, set parameters
         HorizontalDatum wgs72 = HorizontalDatum.WGS72;
-        wgs72.Wgs84Parameters = new Wgs84ConversionInfo(0, 0, 4.5, 0, 0, 0.554, 0.219);
-        HorizontalDatum ed50 = HorizontalDatum.ED50;
-        ed50.Wgs84Parameters = new Wgs84ConversionInfo(
-            -81.0703,
-            -89.3603,
-            -115.7526,
-            -0.48488,
-            -0.02436,
-            -0.41321,
-            -0.540645); // Parameters for Denmark
+        HorizontalDatum ed50 = new(
+            HorizontalDatum.ED50.Ellipsoid,
+            new Wgs84ConversionInfo(
+                -81.0703,
+                -89.3603,
+                -115.7526,
+                -0.48488,
+                -0.02436,
+                -0.41321,
+                -0.540645),
+            HorizontalDatum.ED50.DatumType,
+            HorizontalDatum.ED50.Name,
+            HorizontalDatum.ED50.Authority,
+            HorizontalDatum.ED50.AuthorityCode,
+            HorizontalDatum.ED50.Alias,
+            HorizontalDatum.ED50.Remarks,
+            HorizontalDatum.ED50.Abbreviation);
 
         // Define geographic coordinate systems
         _ = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
@@ -613,7 +620,6 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
 
         // Assert.True(Math.Abs((pUTMWGS84 as Point3D).Z - 36.35) < 0.5);
         // Point pExpected = Point.FromDMS(2, 7, 46.38, 53, 48, 33.82);
-        // ED50_to_WGS84_Denmark: datum.Wgs84Parameters = new Wgs84ConversionInfo(-89.5, -93.8, 127.6, 0, 0, 4.5, 1.2);
     }
 
     /// <summary>
@@ -633,8 +639,11 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
 
         Ellipsoid ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Bessel 1840", 6377397.155, 299.15281, LinearUnit.Metre);
 
-        HorizontalDatum datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Bessel 1840", DatumType.HD_Geocentric, ellipsoid, null);
-        datum.Wgs84Parameters = new Wgs84ConversionInfo(570.8, 85.7, 462.8, 4.998, 1.587, 5.261, 3.56);
+        HorizontalDatum datum = this.CoordinateSystemFactory.CreateHorizontalDatum(
+            "Bessel 1840",
+            DatumType.HD_Geocentric,
+            ellipsoid,
+            new Wgs84ConversionInfo(570.8, 85.7, 462.8, 4.998, 1.587, 5.261, 3.56));
 
         GeographicCoordinateSystem gcsKrovak = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "Bessel 1840",
@@ -701,8 +710,11 @@ public class CoordinateTransformTests : CoordinateTransformTestsBase
 
         Ellipsoid ellipsoid = this.CoordinateSystemFactory.CreateFlattenedSphere("Bessel 1840", 6377397.155, 299.15281, LinearUnit.Metre);
 
-        HorizontalDatum datum = this.CoordinateSystemFactory.CreateHorizontalDatum("Bessel 1840", DatumType.HD_Geocentric, ellipsoid, null);
-        datum.Wgs84Parameters = new Wgs84ConversionInfo(570.8, 85.7, 462.8, 4.998, 1.587, 5.261, 3.56);
+        HorizontalDatum datum = this.CoordinateSystemFactory.CreateHorizontalDatum(
+            "Bessel 1840",
+            DatumType.HD_Geocentric,
+            ellipsoid,
+            new Wgs84ConversionInfo(570.8, 85.7, 462.8, 4.998, 1.587, 5.261, 3.56));
 
         GeographicCoordinateSystem gcsKrovak = this.CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "Bessel 1840",

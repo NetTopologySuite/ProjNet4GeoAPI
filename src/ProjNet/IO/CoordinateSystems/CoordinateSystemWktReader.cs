@@ -700,10 +700,7 @@ public static partial class CoordinateSystemWktReader
     {
         DatumEnsemble ensemble = ReadWkt2DatumEnsemble(tokenizer, requireEllipsoid: true);
         Ellipsoid ellipsoid = ArgumentGuard.ThrowIfNull(ensemble.Ellipsoid, nameof(ensemble));
-        return new HorizontalDatum(ellipsoid, null, DatumType.HD_Geocentric, ensemble.Name, ensemble.Authority, ensemble.AuthorityCode, string.Empty, string.Empty, string.Empty)
-        {
-            Ensemble = ensemble,
-        };
+        return new HorizontalDatum(ellipsoid, null, DatumType.HD_Geocentric, ensemble.Name, ensemble.Authority, ensemble.AuthorityCode, string.Empty, string.Empty, string.Empty, ensemble);
     }
 
     private static DatumEnsemble ReadWkt2DatumEnsemble(WktTokenizer tokenizer, bool requireEllipsoid)
@@ -2858,10 +2855,7 @@ public static partial class CoordinateSystemWktReader
     private static VerticalDatum ReadWkt2VerticalDatumEnsemble(WktTokenizer tokenizer)
     {
         DatumEnsemble ensemble = ReadWkt2DatumEnsemble(tokenizer, requireEllipsoid: false);
-        return new VerticalDatum(DatumType.VD_GeoidModelDerived, ensemble.Name, ensemble.Authority, ensemble.AuthorityCode, string.Empty, string.Empty, string.Empty)
-        {
-            Ensemble = ensemble,
-        };
+        return new VerticalDatum(DatumType.VD_GeoidModelDerived, ensemble.Name, ensemble.Authority, ensemble.AuthorityCode, string.Empty, string.Empty, string.Empty, ensemble);
     }
 
     private static VerticalDatum ApplyVerticalDatumTypeForAxis(VerticalDatum verticalDatum, AxisInfo axisInfo)
@@ -2883,10 +2877,8 @@ public static partial class CoordinateSystemWktReader
             verticalDatum.AuthorityCode,
             verticalDatum.Alias,
             verticalDatum.Remarks,
-            verticalDatum.Abbreviation)
-        {
-            Ensemble = verticalDatum.Ensemble,
-        };
+            verticalDatum.Abbreviation,
+            verticalDatum.Ensemble);
     }
 
     private static CompoundCoordinateSystem ReadWkt2CompoundCoordinateSystem(WktTokenizer tokenizer)

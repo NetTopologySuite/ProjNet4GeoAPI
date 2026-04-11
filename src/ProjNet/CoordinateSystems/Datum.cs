@@ -31,6 +31,7 @@ public abstract class Datum : Info
     /// <param name="alias">Alias.</param>
     /// <param name="abbreviation">Abbreviation.</param>
     /// <param name="remarks">Provider-supplied remarks.</param>
+    /// <param name="ensemble">Retained datum-ensemble metadata.</param>
     internal Datum(
         DatumType type,
         string name,
@@ -38,21 +39,23 @@ public abstract class Datum : Info
         long code,
         string alias,
         string remarks,
-        string abbreviation)
+        string abbreviation,
+        DatumEnsemble? ensemble = null)
         : base(name, authority, code, alias, abbreviation, remarks)
     {
         this.DatumType = type;
+        this.Ensemble = ensemble;
     }
 
     /// <summary>
-    /// Gets or sets the type of the datum as an enumerated code.
+    /// Gets the type of the datum as an enumerated code.
     /// </summary>
-    public DatumType DatumType { get; set; }
+    public DatumType DatumType { get; }
 
     /// <summary>
-    /// Gets or sets retained datum-ensemble metadata when this datum represents an ensemble-backed CRS definition.
+    /// Gets retained datum-ensemble metadata when this datum represents an ensemble-backed CRS definition.
     /// </summary>
-    public DatumEnsemble? Ensemble { get; set; }
+    public DatumEnsemble? Ensemble { get; }
 
     /// <inheritdoc />
     public override bool EqualParams(object obj)

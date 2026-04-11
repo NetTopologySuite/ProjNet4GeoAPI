@@ -23,20 +23,6 @@ public class DatumTests
     }
 
     /// <summary>
-    /// Verifies that the datum type can be updated after construction.
-    /// </summary>
-    [Fact]
-    public void DatumType_CanBeUpdated()
-    {
-        var datum = new TestDatum(DatumType.VD_Orthometric, "Test datum")
-        {
-            DatumType = DatumType.VD_Depth,
-        };
-
-        Assert.Equal(DatumType.VD_Depth, datum.DatumType);
-    }
-
-    /// <summary>
     /// Verifies that equality is based on datum type and ignores metadata.
     /// </summary>
     [Fact]
@@ -77,14 +63,14 @@ public class DatumTests
     [Fact]
     public void EqualParams_WithDifferentEnsembleMetadata_IgnoresEnsemble()
     {
-        var first = new TestDatum(DatumType.VD_Orthometric, "First datum")
-        {
-            Ensemble = new DatumEnsemble("Vertical ensemble", [new DatumEnsembleMember("Member A")], 0.1d),
-        };
-        var second = new TestDatum(DatumType.VD_Orthometric, "Second datum")
-        {
-            Ensemble = new DatumEnsemble("Other ensemble", [new DatumEnsembleMember("Member B")], 0.2d),
-        };
+        var first = new TestDatum(
+            DatumType.VD_Orthometric,
+            "First datum",
+            ensemble: new DatumEnsemble("Vertical ensemble", [new DatumEnsembleMember("Member A")], 0.1d));
+        var second = new TestDatum(
+            DatumType.VD_Orthometric,
+            "Second datum",
+            ensemble: new DatumEnsemble("Other ensemble", [new DatumEnsembleMember("Member B")], 0.2d));
 
         Assert.True(first.EqualParams(second));
         Assert.NotNull(first.Ensemble);
@@ -100,8 +86,9 @@ public class DatumTests
             long code = 1,
             string alias = "",
             string remarks = "",
-            string abbreviation = "")
-            : base(type, name, authority, code, alias, remarks, abbreviation)
+            string abbreviation = "",
+            DatumEnsemble? ensemble = null)
+            : base(type, name, authority, code, alias, remarks, abbreviation, ensemble)
         {
         }
 

@@ -787,21 +787,22 @@ public class ProjJsonWriterTests
 
     private static GeographicCoordinateSystem CreateEnsembleBackedGeographicCoordinateSystem()
     {
-        HorizontalDatum datum = CoordinateSystemTestHelpers.CloneHorizontalDatumWithMetadata(
-            HorizontalDatum.WGS84,
-            "World Geodetic System 1984 ensemble",
-            "EPSG",
-            6326);
-        datum.Ensemble = new DatumEnsemble(
+        DatumEnsemble ensemble = new(
             "World Geodetic System 1984 ensemble",
             [
                 new DatumEnsembleMember("World Geodetic System 1984 (Transit)", "EPSG", 1166),
                 new DatumEnsembleMember("World Geodetic System 1984 (G730)", "EPSG", 1152),
             ],
             2d,
-            datum.Ellipsoid,
+            HorizontalDatum.WGS84.Ellipsoid,
             "EPSG",
             6326);
+        HorizontalDatum datum = CoordinateSystemTestHelpers.CloneHorizontalDatumWithMetadata(
+            HorizontalDatum.WGS84,
+            "World Geodetic System 1984 ensemble",
+            "EPSG",
+            6326,
+            ensemble);
 
         GeographicCoordinateSystem geographic = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "WGS 84",
@@ -839,11 +840,7 @@ public class ProjJsonWriterTests
 
     private static VerticalCoordinateSystem CreateEnsembleBackedVerticalCoordinateSystem()
     {
-        VerticalDatum datum = CoordinateSystemTestHelpers.CloneVerticalDatumWithMetadata(
-            CoordinateSystemFactory.CreateVerticalDatum("Example vertical ensemble", DatumType.VD_GeoidModelDerived),
-            "TEST",
-            1001);
-        datum.Ensemble = new DatumEnsemble(
+        DatumEnsemble ensemble = new(
             "Example vertical ensemble",
             [
                 new DatumEnsembleMember("Datum A", "TEST", 1),
@@ -853,6 +850,11 @@ public class ProjJsonWriterTests
             null,
             "TEST",
             1001);
+        VerticalDatum datum = CoordinateSystemTestHelpers.CloneVerticalDatumWithMetadata(
+            CoordinateSystemFactory.CreateVerticalDatum("Example vertical ensemble", DatumType.VD_GeoidModelDerived),
+            "TEST",
+            1001,
+            ensemble);
 
         return CoordinateSystemFactory.CreateVerticalCoordinateSystem(
             "Example ensemble height",

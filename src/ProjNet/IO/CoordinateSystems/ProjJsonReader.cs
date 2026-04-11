@@ -646,10 +646,7 @@ public static class ProjJsonReader
     {
         DatumEnsemble ensemble = ReadDatumEnsemble(element, requireEllipsoid: true, "geodetic CRS");
         Ellipsoid ellipsoid = ArgumentGuard.ThrowIfNull(ensemble.Ellipsoid, nameof(ensemble));
-        return new HorizontalDatum(ellipsoid, null, DatumType.HD_Geocentric, ensemble.Name, ensemble.Authority, ensemble.AuthorityCode, string.Empty, string.Empty, string.Empty)
-        {
-            Ensemble = ensemble,
-        };
+        return new HorizontalDatum(ellipsoid, null, DatumType.HD_Geocentric, ensemble.Name, ensemble.Authority, ensemble.AuthorityCode, string.Empty, string.Empty, string.Empty, ensemble);
     }
 
     private static VerticalDatum ReadVerticalDatum(JsonElement element)
@@ -669,10 +666,7 @@ public static class ProjJsonReader
     private static VerticalDatum ReadVerticalDatumEnsemble(JsonElement element)
     {
         DatumEnsemble ensemble = ReadDatumEnsemble(element, requireEllipsoid: false, "vertical CRS");
-        return new VerticalDatum(DatumType.VD_GeoidModelDerived, ensemble.Name, ensemble.Authority, ensemble.AuthorityCode, string.Empty, string.Empty, string.Empty)
-        {
-            Ensemble = ensemble,
-        };
+        return new VerticalDatum(DatumType.VD_GeoidModelDerived, ensemble.Name, ensemble.Authority, ensemble.AuthorityCode, string.Empty, string.Empty, string.Empty, ensemble);
     }
 
     private static VerticalDatum ApplyVerticalDatumTypeForAxis(VerticalDatum verticalDatum, AxisInfo axisInfo)
@@ -694,10 +688,8 @@ public static class ProjJsonReader
             verticalDatum.AuthorityCode,
             verticalDatum.Alias,
             verticalDatum.Remarks,
-            verticalDatum.Abbreviation)
-        {
-            Ensemble = verticalDatum.Ensemble,
-        };
+            verticalDatum.Abbreviation,
+            verticalDatum.Ensemble);
     }
 
     private static DatumEnsemble ReadDatumEnsemble(JsonElement element, bool requireEllipsoid, string context)

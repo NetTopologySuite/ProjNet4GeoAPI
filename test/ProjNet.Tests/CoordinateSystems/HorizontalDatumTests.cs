@@ -328,10 +328,8 @@ public class HorizontalDatumTests
     [Fact]
     public void EqualParams_BothEllipsoidsNull_ReturnsTrue()
     {
-        HorizontalDatum first = CreateDatum("A", DatumType.HD_Classic, Ellipsoid.GRS80, null);
-        HorizontalDatum second = CreateDatum("B", DatumType.HD_Classic, Ellipsoid.Clarke1866, null);
-        first.Ellipsoid = null!;
-        second.Ellipsoid = null!;
+        HorizontalDatum first = new(null!, null, DatumType.HD_Classic, "A", string.Empty, -1, string.Empty, string.Empty, string.Empty);
+        HorizontalDatum second = new(null!, null, DatumType.HD_Classic, "B", string.Empty, -1, string.Empty, string.Empty, string.Empty);
 
         Assert.True(first.EqualParams(second));
     }
@@ -342,9 +340,8 @@ public class HorizontalDatumTests
     [Fact]
     public void EqualParams_LeftEllipsoidNull_ReturnsFalse()
     {
-        HorizontalDatum first = CreateDatum("A", DatumType.HD_Classic, Ellipsoid.GRS80, null);
+        HorizontalDatum first = new(null!, null, DatumType.HD_Classic, "A", string.Empty, -1, string.Empty, string.Empty, string.Empty);
         HorizontalDatum second = CreateDatum("B", DatumType.HD_Classic, Ellipsoid.GRS80, null);
-        first.Ellipsoid = null!;
 
         Assert.False(first.EqualParams(second));
     }
@@ -356,8 +353,7 @@ public class HorizontalDatumTests
     public void EqualParams_RightEllipsoidNull_ReturnsFalse()
     {
         HorizontalDatum first = CreateDatum("A", DatumType.HD_Classic, Ellipsoid.GRS80, null);
-        HorizontalDatum second = CreateDatum("B", DatumType.HD_Classic, Ellipsoid.GRS80, null);
-        second.Ellipsoid = null!;
+        HorizontalDatum second = new(null!, null, DatumType.HD_Classic, "B", string.Empty, -1, string.Empty, string.Empty, string.Empty);
 
         Assert.False(first.EqualParams(second));
     }

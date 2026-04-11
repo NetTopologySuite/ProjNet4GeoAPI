@@ -53,27 +53,6 @@ public class VerticalDatumTests
     }
 
     /// <summary>
-    /// Verifies that the datum type can be updated after construction.
-    /// </summary>
-    [Fact]
-    public void DatumType_CanBeUpdated()
-    {
-        var datum = new VerticalDatum(
-            DatumType.VD_Orthometric,
-            "Custom datum",
-            "TEST",
-            42,
-            string.Empty,
-            string.Empty,
-            string.Empty)
-        {
-            DatumType = DatumType.VD_Depth,
-        };
-
-        Assert.Equal(DatumType.VD_Depth, datum.DatumType);
-    }
-
-    /// <summary>
     /// Verifies that WKT includes authority information when it is available.
     /// </summary>
     [Fact]

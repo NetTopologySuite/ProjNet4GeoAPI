@@ -493,8 +493,13 @@ internal static class BoundCoordinateSystemSupport
             throw new NotSupportedException("BOUNDCRS source CRS already defines a conflicting WGS 84 transformation.");
         }
 
-        sourceDatum.Wgs84Parameters ??= CloneWgs84Parameters(wgs84Parameters);
-        return sourceCoordinateSystem;
+        if (sourceDatum.Wgs84Parameters is not null)
+        {
+            return sourceCoordinateSystem;
+        }
+
+        HorizontalDatum updatedSourceDatum = CloneHorizontalDatum(sourceDatum, CloneWgs84Parameters(wgs84Parameters));
+        return CloneCoordinateSystemWithHorizontalDatum(sourceCoordinateSystem, updatedSourceDatum);
     }
 
     private static VerticalCoordinateSystem ApplyVerticalBoundCoordinateSystemToSource(
@@ -701,6 +706,23 @@ internal static class BoundCoordinateSystemSupport
         };
     }
 
+    private static CoordinateSystem CloneCoordinateSystemWithHorizontalDatum(CoordinateSystem coordinateSystem, HorizontalDatum horizontalDatum)
+    {
+        return coordinateSystem switch
+        {
+            GeographicCoordinateSystem geographicCoordinateSystem => CloneGeographicCoordinateSystem(geographicCoordinateSystem, horizontalDatum),
+            ProjectedCoordinateSystem projectedCoordinateSystem => CloneProjectedCoordinateSystem(projectedCoordinateSystem, horizontalDatum),
+            GeocentricCoordinateSystem geocentricCoordinateSystem => CloneGeocentricCoordinateSystem(geocentricCoordinateSystem, horizontalDatum),
+            CompoundCoordinateSystem compoundCoordinateSystem when compoundCoordinateSystem.TailCoordinateSystem is VerticalCoordinateSystem
+                => CloneCompoundCoordinateSystem(
+                    compoundCoordinateSystem,
+                    CloneCoordinateSystemWithHorizontalDatum(compoundCoordinateSystem.HeadCoordinateSystem, horizontalDatum),
+                    CloneCoordinateSystem(compoundCoordinateSystem.TailCoordinateSystem)),
+            _ => throw new NotSupportedException(
+                $"BOUNDCRS source coordinate system type '{GetCoordinateSystemKeyword(coordinateSystem)}' is not supported."),
+        };
+    }
+
     private static GeographicCoordinateSystem CloneGeographicCoordinateSystemWithoutLegacyBoundMetadata(GeographicCoordinateSystem geographicCoordinateSystem)
     {
         return CloneGeographicCoordinateSystem(
@@ -797,9 +819,8 @@ internal static class BoundCoordinateSystemSupport
     private static ProjectedCoordinateSystem CloneProjectedCoordinateSystem(ProjectedCoordinateSystem projectedCoordinateSystem)
         => CloneProjectedCoordinateSystem(projectedCoordinateSystem, includeWgs84Parameters: true);
 
-    private static ProjectedCoordinateSystem CloneProjectedCoordinateSystem(ProjectedCoordinateSystem projectedCoordinateSystem, bool includeWgs84Parameters)
+    private static ProjectedCoordinateSystem CloneProjectedCoordinateSystem(ProjectedCoordinateSystem projectedCoordinateSystem, HorizontalDatum horizontalDatum)
     {
-        HorizontalDatum horizontalDatum = CloneHorizontalDatum(projectedCoordinateSystem.HorizontalDatum, includeWgs84Parameters);
         GeographicCoordinateSystem geographicCoordinateSystem = CloneGeographicCoordinateSystem(projectedCoordinateSystem.GeographicCoordinateSystem, horizontalDatum);
 
         var clone = new ProjectedCoordinateSystem(
@@ -818,13 +839,19 @@ internal static class BoundCoordinateSystemSupport
         return clone;
     }
 
+    private static ProjectedCoordinateSystem CloneProjectedCoordinateSystem(ProjectedCoordinateSystem projectedCoordinateSystem, bool includeWgs84Parameters)
+    {
+        HorizontalDatum horizontalDatum = CloneHorizontalDatum(projectedCoordinateSystem.HorizontalDatum, includeWgs84Parameters);
+        return CloneProjectedCoordinateSystem(projectedCoordinateSystem, horizontalDatum);
+    }
+
     private static GeocentricCoordinateSystem CloneGeocentricCoordinateSystem(GeocentricCoordinateSystem geocentricCoordinateSystem)
         => CloneGeocentricCoordinateSystem(geocentricCoordinateSystem, includeWgs84Parameters: true);
 
-    private static GeocentricCoordinateSystem CloneGeocentricCoordinateSystem(GeocentricCoordinateSystem geocentricCoordinateSystem, bool includeWgs84Parameters)
+    private static GeocentricCoordinateSystem CloneGeocentricCoordinateSystem(GeocentricCoordinateSystem geocentricCoordinateSystem, HorizontalDatum horizontalDatum)
     {
         var clone = new GeocentricCoordinateSystem(
-            CloneHorizontalDatum(geocentricCoordinateSystem.HorizontalDatum, includeWgs84Parameters),
+            horizontalDatum,
             CloneLinearUnit(geocentricCoordinateSystem.LinearUnit),
             ClonePrimeMeridian(geocentricCoordinateSystem.PrimeMeridian),
             CloneAxisInfo(geocentricCoordinateSystem),
@@ -836,6 +863,12 @@ internal static class BoundCoordinateSystemSupport
             geocentricCoordinateSystem.Abbreviation);
         CopyDefaultEnvelope(geocentricCoordinateSystem, clone);
         return clone;
+    }
+
+    private static GeocentricCoordinateSystem CloneGeocentricCoordinateSystem(GeocentricCoordinateSystem geocentricCoordinateSystem, bool includeWgs84Parameters)
+    {
+        HorizontalDatum horizontalDatum = CloneHorizontalDatum(geocentricCoordinateSystem.HorizontalDatum, includeWgs84Parameters);
+        return CloneGeocentricCoordinateSystem(geocentricCoordinateSystem, horizontalDatum);
     }
 
     private static VerticalCoordinateSystem CloneVerticalCoordinateSystem(VerticalCoordinateSystem verticalCoordinateSystem)
@@ -864,10 +897,19 @@ internal static class BoundCoordinateSystemSupport
     }
 
     private static CompoundCoordinateSystem CloneCompoundCoordinateSystem(CompoundCoordinateSystem compoundCoordinateSystem)
+        => CloneCompoundCoordinateSystem(
+            compoundCoordinateSystem,
+            CloneCoordinateSystem(compoundCoordinateSystem.HeadCoordinateSystem),
+            CloneCoordinateSystem(compoundCoordinateSystem.TailCoordinateSystem));
+
+    private static CompoundCoordinateSystem CloneCompoundCoordinateSystem(
+        CompoundCoordinateSystem compoundCoordinateSystem,
+        CoordinateSystem headCoordinateSystem,
+        CoordinateSystem tailCoordinateSystem)
     {
         var clone = new CompoundCoordinateSystem(
-            CloneCoordinateSystem(compoundCoordinateSystem.HeadCoordinateSystem),
-            CloneCoordinateSystem(compoundCoordinateSystem.TailCoordinateSystem),
+            headCoordinateSystem,
+            tailCoordinateSystem,
             compoundCoordinateSystem.Name,
             compoundCoordinateSystem.Authority,
             compoundCoordinateSystem.AuthorityCode,
@@ -881,12 +923,8 @@ internal static class BoundCoordinateSystemSupport
     private static HorizontalDatum CloneHorizontalDatum(HorizontalDatum horizontalDatum)
         => CloneHorizontalDatum(horizontalDatum, includeWgs84Parameters: true);
 
-    private static HorizontalDatum CloneHorizontalDatum(HorizontalDatum horizontalDatum, bool includeWgs84Parameters)
+    private static HorizontalDatum CloneHorizontalDatum(HorizontalDatum horizontalDatum, Wgs84ConversionInfo? wgs84Parameters)
     {
-        Wgs84ConversionInfo? wgs84Parameters = includeWgs84Parameters && horizontalDatum.Wgs84Parameters is not null
-            ? CloneWgs84Parameters(horizontalDatum.Wgs84Parameters)
-            : null;
-
         return new HorizontalDatum(
             CloneEllipsoid(horizontalDatum.Ellipsoid),
             wgs84Parameters,
@@ -896,7 +934,17 @@ internal static class BoundCoordinateSystemSupport
             horizontalDatum.AuthorityCode,
             horizontalDatum.Alias,
             horizontalDatum.Remarks,
-            horizontalDatum.Abbreviation);
+            horizontalDatum.Abbreviation,
+            horizontalDatum.Ensemble);
+    }
+
+    private static HorizontalDatum CloneHorizontalDatum(HorizontalDatum horizontalDatum, bool includeWgs84Parameters)
+    {
+        Wgs84ConversionInfo? wgs84Parameters = includeWgs84Parameters && horizontalDatum.Wgs84Parameters is not null
+            ? CloneWgs84Parameters(horizontalDatum.Wgs84Parameters)
+            : null;
+
+        return CloneHorizontalDatum(horizontalDatum, wgs84Parameters);
     }
 
     private static VerticalDatum CloneVerticalDatum(VerticalDatum verticalDatum)
@@ -908,7 +956,8 @@ internal static class BoundCoordinateSystemSupport
             verticalDatum.AuthorityCode,
             verticalDatum.Alias,
             verticalDatum.Remarks,
-            verticalDatum.Abbreviation);
+            verticalDatum.Abbreviation,
+            verticalDatum.Ensemble);
     }
 
     private static Ellipsoid CloneEllipsoid(Ellipsoid ellipsoid)
