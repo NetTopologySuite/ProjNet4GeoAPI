@@ -148,10 +148,8 @@ internal static class CoordinateSystemTestHelpers
             coordinateSystem.Alias,
             coordinateSystem.Abbreviation,
             coordinateSystem.Remarks,
-            coordinateSystem.DefaultEnvelope)
-        {
-            WGS84ConversionInfo = CloneWgs84ConversionInfoList(coordinateSystem.WGS84ConversionInfo),
-        };
+            coordinateSystem.DefaultEnvelope,
+            CloneWgs84ConversionInfoList(coordinateSystem.WGS84ConversionInfo));
 
         return clone;
     }

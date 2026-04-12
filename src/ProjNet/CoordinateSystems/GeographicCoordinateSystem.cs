@@ -45,6 +45,7 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
     /// <param name="abbreviation">Abbreviation.</param>
     /// <param name="remarks">Provider-supplied remarks.</param>
     /// <param name="defaultEnvelope">Default envelope for the coordinate system domain.</param>
+    /// <param name="wgs84ConversionInfo">Conversion definitions to WGS84 carried by this coordinate system.</param>
     internal GeographicCoordinateSystem(
         AngularUnit angularUnit,
         HorizontalDatum horizontalDatum,
@@ -56,12 +57,13 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
         string alias,
         string abbreviation,
         string remarks,
-        double[]? defaultEnvelope = null)
+        double[]? defaultEnvelope = null,
+        List<Wgs84ConversionInfo>? wgs84ConversionInfo = null)
         : base(horizontalDatum, axisInfo, name, authority, authorityCode, alias, remarks, abbreviation, defaultEnvelope)
     {
         this.AngularUnit = angularUnit;
         this.PrimeMeridian = primeMeridian;
-        this.WGS84ConversionInfo = [];
+        this.WGS84ConversionInfo = CloneWgs84ConversionInfoList(wgs84ConversionInfo);
     }
 
     /// <summary>
@@ -88,9 +90,9 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
     }
 
     /// <summary>
-    /// Gets or sets the WGS84 conversion definitions.
+    /// Gets the WGS84 conversion definitions.
     /// </summary>
-    internal List<Wgs84ConversionInfo> WGS84ConversionInfo { get; set; }
+    internal List<Wgs84ConversionInfo> WGS84ConversionInfo { get; }
 
     /// <summary>
     /// Gets the Well-known text for this object
@@ -338,6 +340,32 @@ public class GeographicCoordinateSystem : HorizontalCoordinateSystem
             coordinateSystem.AuthorityCode,
             coordinateSystem.Alias,
             coordinateSystem.Abbreviation,
-            coordinateSystem.Remarks);
+            coordinateSystem.Remarks,
+            wgs84ConversionInfo: coordinateSystem.WGS84ConversionInfo);
+    }
+
+    private static List<Wgs84ConversionInfo> CloneWgs84ConversionInfoList(List<Wgs84ConversionInfo>? conversionInfo)
+    {
+        if (conversionInfo is null || conversionInfo.Count == 0)
+        {
+            return [];
+        }
+
+        var clone = new List<Wgs84ConversionInfo>(conversionInfo.Count);
+        for (int i = 0; i < conversionInfo.Count; i++)
+        {
+            Wgs84ConversionInfo parameters = conversionInfo[i];
+            clone.Add(new Wgs84ConversionInfo(
+                parameters.Dx,
+                parameters.Dy,
+                parameters.Dz,
+                parameters.Ex,
+                parameters.Ey,
+                parameters.Ez,
+                parameters.Ppm,
+                parameters.AreaOfUse));
+        }
+
+        return clone;
     }
 }

@@ -368,10 +368,8 @@ internal static class InfoAuthorityCloneHelper
             geographicCoordinateSystem.Alias,
             geographicCoordinateSystem.Abbreviation,
             geographicCoordinateSystem.Remarks,
-            geographicCoordinateSystem.DefaultEnvelope)
-        {
-            WGS84ConversionInfo = CloneWgs84ConversionInfoList(geographicCoordinateSystem.WGS84ConversionInfo),
-        };
+            geographicCoordinateSystem.DefaultEnvelope,
+            CloneWgs84ConversionInfoList(geographicCoordinateSystem.WGS84ConversionInfo));
 
         return clone;
     }

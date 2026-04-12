@@ -788,14 +788,7 @@ internal static class BoundCoordinateSystemSupport
     private static GeographicCoordinateSystem CloneGeographicCoordinateSystem(GeographicCoordinateSystem geographicCoordinateSystem)
     {
         HorizontalDatum horizontalDatum = CloneHorizontalDatum(geographicCoordinateSystem.HorizontalDatum);
-        GeographicCoordinateSystem clone = CloneGeographicCoordinateSystem(geographicCoordinateSystem, horizontalDatum);
-        clone.WGS84ConversionInfo = [];
-        foreach (Wgs84ConversionInfo conversionInfo in geographicCoordinateSystem.WGS84ConversionInfo)
-        {
-            clone.WGS84ConversionInfo.Add(CloneWgs84Parameters(conversionInfo));
-        }
-
-        return clone;
+        return CloneGeographicCoordinateSystem(geographicCoordinateSystem, horizontalDatum);
     }
 
     private static GeographicCoordinateSystem CloneGeographicCoordinateSystem(GeographicCoordinateSystem geographicCoordinateSystem, HorizontalDatum horizontalDatum)
@@ -811,7 +804,8 @@ internal static class BoundCoordinateSystemSupport
             geographicCoordinateSystem.Alias,
             geographicCoordinateSystem.Abbreviation,
             geographicCoordinateSystem.Remarks,
-            geographicCoordinateSystem.DefaultEnvelope);
+            geographicCoordinateSystem.DefaultEnvelope,
+            CloneWgs84ConversionInfoList(geographicCoordinateSystem.WGS84ConversionInfo));
         return clone;
     }
 
@@ -1045,6 +1039,17 @@ internal static class BoundCoordinateSystemSupport
 
     private static Wgs84ConversionInfo CloneWgs84Parameters(Wgs84ConversionInfo parameters)
         => new(parameters.Dx, parameters.Dy, parameters.Dz, parameters.Ex, parameters.Ey, parameters.Ez, parameters.Ppm, parameters.AreaOfUse);
+
+    private static List<Wgs84ConversionInfo> CloneWgs84ConversionInfoList(List<Wgs84ConversionInfo> conversions)
+    {
+        var clone = new List<Wgs84ConversionInfo>(conversions.Count);
+        for (int i = 0; i < conversions.Count; i++)
+        {
+            clone.Add(CloneWgs84Parameters(conversions[i]));
+        }
+
+        return clone;
+    }
 
     private static bool IsGeocentricTranslationsMethod(string methodName)
         => methodName.StartsWith("Geocentric translations", StringComparison.OrdinalIgnoreCase);
