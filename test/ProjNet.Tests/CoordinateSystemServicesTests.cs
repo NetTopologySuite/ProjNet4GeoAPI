@@ -10,7 +10,6 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Threading;
 
 using ProjNet;
 using ProjNet.CoordinateSystems;
@@ -170,7 +169,6 @@ public class CoordinateSystemServicesTests
         Assert.NotNull(css.GetCoordinateSystem(4326));
         Assert.NotNull(css.GetCoordinateSystem("EPSG", 4326));
         Assert.True(ReferenceEquals(css.GetCoordinateSystem("EPSG", 4326), css.GetCoordinateSystem(4326)));
-        Thread.Sleep(1000);
     }
 
     /// <summary>
