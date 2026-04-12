@@ -668,8 +668,31 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
-        parameters = new List<ProjectionParameter>(10)
+        List<ProjectionParameter> projectionParameters = CreateDefaultProjectionStepParameters(semiMajor, semiMinor, unitFactor);
+        if (!TryApplyDefaultProjectionStepParameters(args, projectionParameters, out skipReason)
+            || !TryApplyProjectionScaleFactor(args, projectionParameters, out skipReason))
         {
+            return false;
+        }
+
+        if (args.ContainsKey("south"))
+        {
+            SetOrAddProjectionParameter(projectionParameters, "south", 1d);
+        }
+
+        if (!TryApplyProjectionSpecificParameters(args, projCode, unitFactor, projectionParameters, out skipReason))
+        {
+            return false;
+        }
+
+        parameters = projectionParameters;
+        return true;
+    }
+
+    private static List<ProjectionParameter> CreateDefaultProjectionStepParameters(double semiMajor, double semiMinor, double unitFactor)
+    {
+        return
+        [
             new("latitude_of_origin", 0d),
             new("central_meridian", 0d),
             new("scale_factor", 1d),
@@ -678,8 +701,14 @@ internal static class ProjPipelineMathTransformFactory
             new("semi_major", semiMajor),
             new("semi_minor", semiMinor),
             new("unit", unitFactor),
-        };
+        ];
+    }
 
+    private static bool TryApplyDefaultProjectionStepParameters(
+        Dictionary<string, string> args,
+        List<ProjectionParameter> parameters,
+        out string? skipReason)
+    {
         if (!TryApplyOptionalProjectionParameter(args, "lat_0", "latitude_of_origin", parameters, out skipReason)
             || !TryApplyOptionalProjectionParameter(args, "lon_0", "central_meridian", parameters, out skipReason)
             || !TryApplyOptionalProjectionParameter(args, "x_0", "false_easting", parameters, out skipReason)
@@ -692,11 +721,15 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
-        if (!TryApplyPrimeMeridianOffset(args, parameters, out skipReason))
-        {
-            return false;
-        }
+        return TryApplyPrimeMeridianOffset(args, parameters, out skipReason);
+    }
 
+    private static bool TryApplyProjectionScaleFactor(
+        Dictionary<string, string> args,
+        List<ProjectionParameter> parameters,
+        out string? skipReason)
+    {
+        skipReason = null;
         if (args.TryGetValue("k_0", out string? k0Token) && !string.IsNullOrWhiteSpace(k0Token))
         {
             if (!SpanParseUtility.TryParseFiniteDouble(k0Token, out double k0))
@@ -706,8 +739,10 @@ internal static class ProjPipelineMathTransformFactory
             }
 
             SetOrAddProjectionParameter(parameters, "scale_factor", k0);
+            return true;
         }
-        else if (args.TryGetValue("k", out string? kToken) && !string.IsNullOrWhiteSpace(kToken))
+
+        if (args.TryGetValue("k", out string? kToken) && !string.IsNullOrWhiteSpace(kToken))
         {
             if (!SpanParseUtility.TryParseFiniteDouble(kToken, out double k))
             {
@@ -718,142 +753,215 @@ internal static class ProjPipelineMathTransformFactory
             SetOrAddProjectionParameter(parameters, "scale_factor", k);
         }
 
-        if (args.ContainsKey("south"))
-        {
-            SetOrAddProjectionParameter(parameters, "south", 1d);
-        }
+        return true;
+    }
 
-        if (projCode.Equals("cass", StringComparison.OrdinalIgnoreCase) && args.ContainsKey("hyperbolic"))
+    private static bool TryApplyProjectionSpecificParameters(
+        Dictionary<string, string> args,
+        string projCode,
+        double unitFactor,
+        List<ProjectionParameter> parameters,
+        out string? skipReason)
+    {
+        switch (projCode.ToUpperInvariant())
+        {
+            case "CASS":
+                skipReason = null;
+                return TryApplyCassProjectionParameters(args, parameters, out skipReason);
+            case "AEQD":
+                skipReason = null;
+                return TryApplyAeqdProjectionParameters(args, parameters, out skipReason);
+            case "AIROCEAN":
+                return TryApplyAiroceanProjectionParameters(args, parameters, out skipReason);
+            case "PEIRCE_Q":
+                return TryApplyPeirceProjectionParameters(args, parameters, out skipReason);
+            case "KROVAK":
+            case "MOD_KROVAK":
+                return TryApplyKrovakProjectionParameters(args, parameters, out skipReason);
+            case "SPILHAUS":
+                return TryApplySpilhausProjectionParameters(args, parameters, out skipReason);
+            case "AIRY":
+                return TryApplyAiryProjectionParameters(args, parameters, out skipReason);
+            case "URM5":
+                return TryApplyUrm5ProjectionParameters(args, parameters, out skipReason);
+            case "UTM":
+                return TryApplyUtmProjectionParameters(args, unitFactor, parameters, out skipReason);
+            default:
+                skipReason = null;
+                return true;
+        }
+    }
+
+    private static bool TryApplyCassProjectionParameters(
+        Dictionary<string, string> args,
+        List<ProjectionParameter> parameters,
+        out string? skipReason)
+    {
+        if (args.ContainsKey("hyperbolic"))
         {
             SetOrAddProjectionParameter(parameters, "hyperbolic", 1d);
         }
 
-        if (projCode.Equals("aeqd", StringComparison.OrdinalIgnoreCase) && args.ContainsKey("guam"))
+        skipReason = null;
+        return true;
+    }
+
+    private static bool TryApplyAeqdProjectionParameters(
+        Dictionary<string, string> args,
+        List<ProjectionParameter> parameters,
+        out string? skipReason)
+    {
+        if (args.ContainsKey("guam"))
         {
             SetOrAddProjectionParameter(parameters, "guam", 1d);
         }
 
-        if (projCode.Equals("airocean", StringComparison.OrdinalIgnoreCase) && args.TryGetValue("orient", out string? airoceanOrientation))
-        {
-            if (!TryResolveAiroceanOrientationCode(airoceanOrientation, out double orientationCode))
-            {
-                skipReason = "Invalid value for +orient on airocean step.";
-                return false;
-            }
+        skipReason = null;
+        return true;
+    }
 
-            SetOrAddProjectionParameter(parameters, "airocean_orient", orientationCode);
-        }
-
-        if (projCode.Equals("peirce_q", StringComparison.OrdinalIgnoreCase))
-        {
-            if (args.TryGetValue("shape", out string? peirceShapeToken) && !string.IsNullOrWhiteSpace(peirceShapeToken))
-            {
-                if (!TryResolvePeirceShapeCode(peirceShapeToken, out double peirceShapeCode))
-                {
-                    skipReason = "Invalid value for +shape on peirce_q step.";
-                    return false;
-                }
-
-                SetOrAddProjectionParameter(parameters, "shape", peirceShapeCode);
-            }
-
-            if (!TryApplyOptionalProjectionParameter(args, "scrollx", "scrollx", parameters, out skipReason)
-                || !TryApplyOptionalProjectionParameter(args, "scrolly", "scrolly", parameters, out skipReason))
-            {
-                return false;
-            }
-        }
-
-        if (projCode.Equals("krovak", StringComparison.OrdinalIgnoreCase)
-            || projCode.Equals("mod_krovak", StringComparison.OrdinalIgnoreCase))
-        {
-            if (args.TryGetValue("lat_1", out string? pseudoStandardParallelToken) && !string.IsNullOrWhiteSpace(pseudoStandardParallelToken))
-            {
-                if (!SpanParseUtility.TryParseFiniteDouble(pseudoStandardParallelToken, out double pseudoStandardParallel))
-                {
-                    skipReason = "Invalid value for +lat_1 on krovak step.";
-                    return false;
-                }
-
-                SetOrAddProjectionParameter(parameters, "pseudo_standard_parallel_1", pseudoStandardParallel);
-            }
-            else
-            {
-                SetOrAddProjectionParameter(parameters, "pseudo_standard_parallel_1", 78.5d);
-            }
-
-            if (!TryApplyOptionalProjectionParameter(args, "alpha", "azimuth", parameters, out skipReason))
-            {
-                return false;
-            }
-
-            if (args.ContainsKey("czech"))
-            {
-                SetOrAddProjectionParameter(parameters, "czech", 1d);
-            }
-        }
-
-        if (projCode.Equals("spilhaus", StringComparison.OrdinalIgnoreCase))
-        {
-            if (!args.ContainsKey("lat_0"))
-            {
-                SetOrAddProjectionParameter(parameters, "latitude_of_origin", -49.56371678d);
-            }
-
-            if (!args.ContainsKey("lon_0"))
-            {
-                SetOrAddProjectionParameter(parameters, "central_meridian", 66.94970198d);
-            }
-
-            if (!TryApplyOptionalProjectionParameter(args, "azi", "azi", parameters, out skipReason)
-                || !TryApplyOptionalProjectionParameter(args, "rot", "rot", parameters, out skipReason))
-            {
-                return false;
-            }
-        }
-
-        if (projCode.Equals("airy", StringComparison.OrdinalIgnoreCase))
-        {
-            if (!TryApplyOptionalProjectionParameter(args, "lat_b", "lat_b", parameters, out skipReason))
-            {
-                return false;
-            }
-
-            if (args.ContainsKey("no_cut"))
-            {
-                SetOrAddProjectionParameter(parameters, "no_cut", 1d);
-            }
-        }
-
-        if (projCode.Equals("urm5", StringComparison.OrdinalIgnoreCase))
-        {
-            if (!args.TryGetValue("n", out string? nToken) || string.IsNullOrWhiteSpace(nToken))
-            {
-                skipReason = "urm5 step requires +n parameter.";
-                return false;
-            }
-
-            if (!SpanParseUtility.TryParseFiniteDouble(nToken, out double n))
-            {
-                skipReason = "Invalid value for +n.";
-                return false;
-            }
-
-            SetOrAddProjectionParameter(parameters, "n", n);
-            if (!TryApplyOptionalProjectionParameter(args, "q", "q", parameters, out skipReason)
-                || !TryApplyOptionalProjectionParameter(args, "alpha", "alpha", parameters, out skipReason))
-            {
-                return false;
-            }
-
-            return true;
-        }
-
-        if (!projCode.Equals("utm", StringComparison.OrdinalIgnoreCase))
+    private static bool TryApplyAiroceanProjectionParameters(
+        Dictionary<string, string> args,
+        List<ProjectionParameter> parameters,
+        out string? skipReason)
+    {
+        skipReason = null;
+        if (!args.TryGetValue("orient", out string? orientationToken) || string.IsNullOrWhiteSpace(orientationToken))
         {
             return true;
         }
 
+        if (!TryResolveAiroceanOrientationCode(orientationToken, out double orientationCode))
+        {
+            skipReason = "Invalid value for +orient on airocean step.";
+            return false;
+        }
+
+        SetOrAddProjectionParameter(parameters, "airocean_orient", orientationCode);
+        return true;
+    }
+
+    private static bool TryApplyPeirceProjectionParameters(
+        Dictionary<string, string> args,
+        List<ProjectionParameter> parameters,
+        out string? skipReason)
+    {
+        skipReason = null;
+        if (args.TryGetValue("shape", out string? shapeToken) && !string.IsNullOrWhiteSpace(shapeToken))
+        {
+            if (!TryResolvePeirceShapeCode(shapeToken, out double shapeCode))
+            {
+                skipReason = "Invalid value for +shape on peirce_q step.";
+                return false;
+            }
+
+            SetOrAddProjectionParameter(parameters, "shape", shapeCode);
+        }
+
+        return TryApplyOptionalProjectionParameter(args, "scrollx", "scrollx", parameters, out skipReason)
+            && TryApplyOptionalProjectionParameter(args, "scrolly", "scrolly", parameters, out skipReason);
+    }
+
+    private static bool TryApplyKrovakProjectionParameters(
+        Dictionary<string, string> args,
+        List<ProjectionParameter> parameters,
+        out string? skipReason)
+    {
+        skipReason = null;
+        if (args.TryGetValue("lat_1", out string? pseudoStandardParallelToken) && !string.IsNullOrWhiteSpace(pseudoStandardParallelToken))
+        {
+            if (!SpanParseUtility.TryParseFiniteDouble(pseudoStandardParallelToken, out double pseudoStandardParallel))
+            {
+                skipReason = "Invalid value for +lat_1 on krovak step.";
+                return false;
+            }
+
+            SetOrAddProjectionParameter(parameters, "pseudo_standard_parallel_1", pseudoStandardParallel);
+        }
+        else
+        {
+            SetOrAddProjectionParameter(parameters, "pseudo_standard_parallel_1", 78.5d);
+        }
+
+        if (!TryApplyOptionalProjectionParameter(args, "alpha", "azimuth", parameters, out skipReason))
+        {
+            return false;
+        }
+
+        if (args.ContainsKey("czech"))
+        {
+            SetOrAddProjectionParameter(parameters, "czech", 1d);
+        }
+
+        return true;
+    }
+
+    private static bool TryApplySpilhausProjectionParameters(
+        Dictionary<string, string> args,
+        List<ProjectionParameter> parameters,
+        out string? skipReason)
+    {
+        skipReason = null;
+        if (!args.ContainsKey("lat_0"))
+        {
+            SetOrAddProjectionParameter(parameters, "latitude_of_origin", -49.56371678d);
+        }
+
+        if (!args.ContainsKey("lon_0"))
+        {
+            SetOrAddProjectionParameter(parameters, "central_meridian", 66.94970198d);
+        }
+
+        return TryApplyOptionalProjectionParameter(args, "azi", "azi", parameters, out skipReason)
+            && TryApplyOptionalProjectionParameter(args, "rot", "rot", parameters, out skipReason);
+    }
+
+    private static bool TryApplyAiryProjectionParameters(
+        Dictionary<string, string> args,
+        List<ProjectionParameter> parameters,
+        out string? skipReason)
+    {
+        if (!TryApplyOptionalProjectionParameter(args, "lat_b", "lat_b", parameters, out skipReason))
+        {
+            return false;
+        }
+
+        if (args.ContainsKey("no_cut"))
+        {
+            SetOrAddProjectionParameter(parameters, "no_cut", 1d);
+        }
+
+        return true;
+    }
+
+    private static bool TryApplyUrm5ProjectionParameters(
+        Dictionary<string, string> args,
+        List<ProjectionParameter> parameters,
+        out string? skipReason)
+    {
+        if (!args.TryGetValue("n", out string? nToken) || string.IsNullOrWhiteSpace(nToken))
+        {
+            skipReason = "urm5 step requires +n parameter.";
+            return false;
+        }
+
+        if (!SpanParseUtility.TryParseFiniteDouble(nToken, out double n))
+        {
+            skipReason = "Invalid value for +n.";
+            return false;
+        }
+
+        SetOrAddProjectionParameter(parameters, "n", n);
+        return TryApplyOptionalProjectionParameter(args, "q", "q", parameters, out skipReason)
+            && TryApplyOptionalProjectionParameter(args, "alpha", "alpha", parameters, out skipReason);
+    }
+
+    private static bool TryApplyUtmProjectionParameters(
+        Dictionary<string, string> args,
+        double unitFactor,
+        List<ProjectionParameter> parameters,
+        out string? skipReason)
+    {
         if (!TryGetZoneCentralMeridian(args, out double centralMeridian))
         {
             skipReason = "utm step requires a valid +zone parameter.";
@@ -866,6 +974,7 @@ internal static class ProjPipelineMathTransformFactory
         SetOrAddProjectionParameter(parameters, "false_easting", 500000d / unitFactor);
         SetOrAddProjectionParameter(parameters, "false_northing", (args.ContainsKey("south") ? 10000000d : 0d) / unitFactor);
 
+        skipReason = null;
         return true;
     }
 
