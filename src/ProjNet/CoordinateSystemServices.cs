@@ -326,6 +326,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     protected void Clear()
     {
         this.csBySrid.Clear();
+        this.sridByCs.Clear();
     }
 
     private static CoordinateSystem? CreateCoordinateSystem(CoordinateSystemFactory coordinateSystemFactory, string wkt)
