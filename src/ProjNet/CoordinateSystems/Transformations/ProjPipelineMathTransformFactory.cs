@@ -24,6 +24,51 @@ internal static class ProjPipelineMathTransformFactory
     private static readonly string[] HorizontalGridExtensions = [".gsb", ".tif", ".tiff"];
     private static readonly string[] VerticalGridExtensions = [".gtx", ".tif", ".tiff"];
     private static readonly string[] XyzGridExtensions = [".tif", ".tiff"];
+    private static readonly Dictionary<string, TryCreateDispatchedStepTransform> StepTransformDispatch = new(StringComparer.OrdinalIgnoreCase)
+    {
+        ["latlong"] = WrapDirect(TryCreateGeographicIdentityTransform),
+        ["longlat"] = WrapDirect(TryCreateGeographicIdentityTransform),
+        ["latlon"] = WrapDirect(TryCreateGeographicIdentityTransform),
+        ["lonlat"] = WrapDirect(TryCreateGeographicIdentityTransform),
+        ["noop"] = TryCreateNoOpStepTransform,
+        ["geocent"] = WrapDirect(TryCreateGeocentricCartesianTransform),
+        ["cart"] = WrapDirect(TryCreateGeocentricCartesianTransform),
+        ["geoc"] = WrapDirect(TryCreateGeocentricLatitudeTransform),
+        ["geogoffset"] = WrapDirect(GeogOffsetMathTransform.TryCreate),
+        ["affine"] = WrapDirect(AffineRuntimeMathTransform.TryCreate),
+        ["push"] = TryCreatePushStepTransform,
+        ["pop"] = TryCreatePopStepTransform,
+        ["set"] = WrapDirect(SetMathTransform.TryCreate),
+        ["axisswap"] = WrapDirect(TryCreateAxisSwapTransform),
+        ["unitconvert"] = WrapDirect(TryCreateUnitConvertTransform),
+        ["hgridshift"] = TryCreateHGridShiftStepTransform,
+        ["gridshift"] = TryCreateGridShiftStepTransform,
+        ["vgridshift"] = WrapDirect(TryCreateVerticalGridShiftTransform),
+        ["xyzgridshift"] = WrapDirect(TryCreateXyzGridShiftTransform),
+        ["defmodel"] = WrapDirect(DefModelMathTransform.TryCreate),
+        ["deformation"] = WrapDirect(DeformationMathTransform.TryCreate),
+        ["tinshift"] = WrapDirect(TinShiftMathTransform.TryCreate),
+        ["topocentric"] = WrapDirect(TopocentricMathTransform.TryCreate),
+        ["vertoffset"] = WrapDirect(VertOffsetMathTransform.TryCreate),
+        ["helmert"] = WrapDirect(HelmertMathTransform.TryCreate),
+        ["molobadekas"] = WrapDirect(MolobadekasMathTransform.TryCreate),
+        ["molodensky"] = WrapDirect(MolodenskyMathTransform.TryCreate),
+        ["horner"] = WrapDirect(HornerMathTransform.TryCreate),
+        ["ob_tran"] = WrapDirect(ObTranMathTransform.TryCreate),
+        ["sch"] = WrapDirect(SchMathTransform.TryCreate),
+        ["spherical_cross_track_height"] = WrapDirect(SchMathTransform.TryCreate),
+    };
+
+    private delegate bool TryCreateDirectStepTransform(
+        Dictionary<string, string> args,
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason);
+
+    private delegate bool TryCreateDispatchedStepTransform(
+        Dictionary<string, string> args,
+        PipelineExecutionContext? executionContext,
+        out MathTransform? transform,
+        out string? skipReason);
 
     /// <summary>
     /// Tries to create an executable transform from a full operation or pipeline definition.
@@ -87,7 +132,7 @@ internal static class ProjPipelineMathTransformFactory
             bool ok = hasPipeline
                 ? nestedPipelineStepOperations is not null
                     ? TryCreateStepTransform(nestedPipelineStepOperations[i], executionContext, pipelineDepth, out stepTransformCandidate, out stepSkipReason)
-                    : TryCreateStepTransform(parsedPipelineSteps[i], executionContext, pipelineDepth, out stepTransformCandidate, out stepSkipReason)
+                    : TryCreateStepTransform(parsedPipelineSteps[i], executionContext, out stepTransformCandidate, out stepSkipReason)
                 : TryCreateStepTransform(operation, executionContext, pipelineDepth, out stepTransformCandidate, out stepSkipReason);
             if (!ok)
             {
@@ -144,13 +189,12 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
-        return TryCreateStepTransform(args, executionContext, pipelineDepth, out transform, out skipReason);
+        return TryCreateStepTransform(args, executionContext, out transform, out skipReason);
     }
 
     private static bool TryCreateStepTransform(
         Dictionary<string, string> args,
         PipelineExecutionContext? executionContext,
-        int pipelineDepth,
         [NotNullWhen(true)] out MathTransform? transform,
         out string? skipReason)
     {
@@ -166,324 +210,14 @@ internal static class ProjPipelineMathTransformFactory
         bool omitForward = executionContext is not null && args.ContainsKey("omit_fwd");
         bool omitInverse = executionContext is not null && args.ContainsKey("omit_inv");
 
-        if (projCode.Equals("latlong", StringComparison.OrdinalIgnoreCase)
-            || projCode.Equals("longlat", StringComparison.OrdinalIgnoreCase)
-            || projCode.Equals("latlon", StringComparison.OrdinalIgnoreCase)
-            || projCode.Equals("lonlat", StringComparison.OrdinalIgnoreCase))
+        if (StepTransformDispatch.TryGetValue(projCode, out TryCreateDispatchedStepTransform? stepFactory))
         {
-            if (!TryCreateGeographicIdentityTransform(args, out transform, out skipReason))
+            if (!stepFactory(args, executionContext, out transform, out skipReason))
             {
                 return false;
             }
 
-            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
-            return true;
-        }
-
-        if (projCode.Equals("noop", StringComparison.OrdinalIgnoreCase))
-        {
-            transform = new IdentityMathTransform(3);
-            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
-            return true;
-        }
-
-        if (projCode.Equals("geocent", StringComparison.OrdinalIgnoreCase)
-            || projCode.Equals("cart", StringComparison.OrdinalIgnoreCase))
-        {
-            if (!TryCreateGeocentricCartesianTransform(args, out transform, out skipReason))
-            {
-                return false;
-            }
-
-            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
-            return true;
-        }
-
-        if (projCode.Equals("geoc", StringComparison.OrdinalIgnoreCase))
-        {
-            if (!TryCreateGeocentricLatitudeTransform(args, out transform, out skipReason))
-            {
-                return false;
-            }
-
-            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
-            return true;
-        }
-
-        if (projCode.Equals("geogoffset", StringComparison.OrdinalIgnoreCase))
-        {
-            if (!GeogOffsetMathTransform.TryCreate(args, out transform, out skipReason))
-            {
-                return false;
-            }
-
-            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
-            return true;
-        }
-
-        if (projCode.Equals("affine", StringComparison.OrdinalIgnoreCase))
-        {
-            if (!AffineRuntimeMathTransform.TryCreate(args, out transform, out skipReason))
-            {
-                return false;
-            }
-
-            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
-            return true;
-        }
-
-        if (projCode.Equals("push", StringComparison.OrdinalIgnoreCase))
-        {
-            PipelineExecutionContext? pushExecutionContext = executionContext;
-            if (pushExecutionContext is null)
-            {
-                skipReason = "push operation requires a pipeline execution context.";
-                return false;
-            }
-
-            if (!PipelineStackTransferMathTransform.TryCreatePush(args, pushExecutionContext, out transform, out skipReason))
-            {
-                return false;
-            }
-
-            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
-            return true;
-        }
-
-        if (projCode.Equals("pop", StringComparison.OrdinalIgnoreCase))
-        {
-            PipelineExecutionContext? popExecutionContext = executionContext;
-            if (popExecutionContext is null)
-            {
-                skipReason = "pop operation requires a pipeline execution context.";
-                return false;
-            }
-
-            if (!PipelineStackTransferMathTransform.TryCreatePop(args, popExecutionContext, out transform, out skipReason))
-            {
-                return false;
-            }
-
-            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
-            return true;
-        }
-
-        if (projCode.Equals("set", StringComparison.OrdinalIgnoreCase))
-        {
-            if (!SetMathTransform.TryCreate(args, out transform, out skipReason))
-            {
-                return false;
-            }
-
-            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
-            return true;
-        }
-
-        if (projCode.Equals("axisswap", StringComparison.OrdinalIgnoreCase))
-        {
-            if (!TryCreateAxisSwapTransform(args, out transform, out skipReason))
-            {
-                return false;
-            }
-
-            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
-            return true;
-        }
-
-        if (projCode.Equals("unitconvert", StringComparison.OrdinalIgnoreCase))
-        {
-            if (!TryCreateUnitConvertTransform(args, out transform, out skipReason))
-            {
-                return false;
-            }
-
-            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
-            return true;
-        }
-
-        if (projCode.Equals("hgridshift", StringComparison.OrdinalIgnoreCase))
-        {
-            if (!TryCreateHorizontalGridShiftTransform(
-                args,
-                useGridMetadataInterpolation: false,
-                allowBiquadraticInterpolation: false,
-                out transform,
-                out skipReason))
-            {
-                return false;
-            }
-
-            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
-            return true;
-        }
-
-        if (projCode.Equals("gridshift", StringComparison.OrdinalIgnoreCase))
-        {
-            if (!TryCreateHorizontalGridShiftTransform(
-                args,
-                useGridMetadataInterpolation: true,
-                allowBiquadraticInterpolation: true,
-                out transform,
-                out skipReason))
-            {
-                return false;
-            }
-
-            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
-            return true;
-        }
-
-        if (projCode.Equals("vgridshift", StringComparison.OrdinalIgnoreCase))
-        {
-            if (!TryCreateVerticalGridShiftTransform(args, out transform, out skipReason))
-            {
-                return false;
-            }
-
-            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
-            return true;
-        }
-
-        if (projCode.Equals("xyzgridshift", StringComparison.OrdinalIgnoreCase))
-        {
-            if (!TryCreateXyzGridShiftTransform(args, out transform, out skipReason))
-            {
-                return false;
-            }
-
-            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
-            return true;
-        }
-
-        if (projCode.Equals("defmodel", StringComparison.OrdinalIgnoreCase))
-        {
-            if (!DefModelMathTransform.TryCreate(args, out transform, out skipReason))
-            {
-                return false;
-            }
-
-            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
-            return true;
-        }
-
-        if (projCode.Equals("deformation", StringComparison.OrdinalIgnoreCase))
-        {
-            if (!DeformationMathTransform.TryCreate(args, out transform, out skipReason))
-            {
-                return false;
-            }
-
-            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
-            return true;
-        }
-
-        if (projCode.Equals("tinshift", StringComparison.OrdinalIgnoreCase))
-        {
-            if (!TinShiftMathTransform.TryCreate(args, out transform, out skipReason))
-            {
-                return false;
-            }
-
-            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
-            return true;
-        }
-
-        if (projCode.Equals("topocentric", StringComparison.OrdinalIgnoreCase))
-        {
-            if (!TopocentricMathTransform.TryCreate(args, out transform, out skipReason))
-            {
-                return false;
-            }
-
-            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
-            return true;
-        }
-
-        if (projCode.Equals("vertoffset", StringComparison.OrdinalIgnoreCase))
-        {
-            if (!VertOffsetMathTransform.TryCreate(args, out transform, out skipReason))
-            {
-                return false;
-            }
-
-            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
-            return true;
-        }
-
-        if (projCode.Equals("helmert", StringComparison.OrdinalIgnoreCase))
-        {
-            if (!HelmertMathTransform.TryCreate(args, out transform, out skipReason))
-            {
-                return false;
-            }
-
-            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
-            return true;
-        }
-
-        if (projCode.Equals("molobadekas", StringComparison.OrdinalIgnoreCase))
-        {
-            if (!MolobadekasMathTransform.TryCreate(args, out transform, out skipReason))
-            {
-                return false;
-            }
-
-            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
-            return true;
-        }
-
-        if (projCode.Equals("molodensky", StringComparison.OrdinalIgnoreCase))
-        {
-            if (!MolodenskyMathTransform.TryCreate(args, out transform, out skipReason))
-            {
-                return false;
-            }
-
-            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
-            return true;
-        }
-
-        if (projCode.Equals("horner", StringComparison.OrdinalIgnoreCase))
-        {
-            if (!HornerMathTransform.TryCreate(args, out transform, out skipReason))
-            {
-                return false;
-            }
-
-            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
-            return true;
-        }
-
-        if (projCode.Equals("ob_tran", StringComparison.OrdinalIgnoreCase))
-        {
-            if (!ObTranMathTransform.TryCreate(args, out transform, out skipReason))
-            {
-                return false;
-            }
-
-            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
-            return true;
-        }
-
-        if (projCode.Equals("sch", StringComparison.OrdinalIgnoreCase))
-        {
-            if (!SchMathTransform.TryCreate(args, out transform, out skipReason))
-            {
-                return false;
-            }
-
-            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
-            return true;
-        }
-
-        if (projCode.Equals("spherical_cross_track_height", StringComparison.OrdinalIgnoreCase))
-        {
-            if (!SchMathTransform.TryCreate(args, out transform, out skipReason))
-            {
-                return false;
-            }
-
-            transform = WrapWithOmitFlags(transform, omitForward, omitInverse);
+            transform = WrapWithOmitFlags(ArgumentGuard.ThrowIfNull(transform, nameof(transform)), omitForward, omitInverse);
             return true;
         }
 
@@ -507,6 +241,83 @@ internal static class ProjPipelineMathTransformFactory
         return omitForward || omitInverse
             ? new PipelineOmitMathTransform(stepTransform, omitForward, omitInverse)
             : stepTransform;
+    }
+
+    private static TryCreateDispatchedStepTransform WrapDirect(TryCreateDirectStepTransform factory)
+    {
+        return (Dictionary<string, string> args, PipelineExecutionContext? _, out MathTransform? transform, out string? skipReason) =>
+            factory(args, out transform, out skipReason);
+    }
+
+    private static bool TryCreateNoOpStepTransform(
+        Dictionary<string, string> args,
+        PipelineExecutionContext? executionContext,
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
+    {
+        transform = new IdentityMathTransform(3);
+        skipReason = null;
+        return true;
+    }
+
+    private static bool TryCreatePushStepTransform(
+        Dictionary<string, string> args,
+        PipelineExecutionContext? executionContext,
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
+    {
+        transform = null;
+        if (executionContext is null)
+        {
+            skipReason = "push operation requires a pipeline execution context.";
+            return false;
+        }
+
+        return PipelineStackTransferMathTransform.TryCreatePush(args, executionContext, out transform, out skipReason);
+    }
+
+    private static bool TryCreatePopStepTransform(
+        Dictionary<string, string> args,
+        PipelineExecutionContext? executionContext,
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
+    {
+        transform = null;
+        if (executionContext is null)
+        {
+            skipReason = "pop operation requires a pipeline execution context.";
+            return false;
+        }
+
+        return PipelineStackTransferMathTransform.TryCreatePop(args, executionContext, out transform, out skipReason);
+    }
+
+    private static bool TryCreateHGridShiftStepTransform(
+        Dictionary<string, string> args,
+        PipelineExecutionContext? executionContext,
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
+    {
+        return TryCreateHorizontalGridShiftTransform(
+            args,
+            useGridMetadataInterpolation: false,
+            allowBiquadraticInterpolation: false,
+            out transform,
+            out skipReason);
+    }
+
+    private static bool TryCreateGridShiftStepTransform(
+        Dictionary<string, string> args,
+        PipelineExecutionContext? executionContext,
+        [NotNullWhen(true)] out MathTransform? transform,
+        out string? skipReason)
+    {
+        return TryCreateHorizontalGridShiftTransform(
+            args,
+            useGridMetadataInterpolation: true,
+            allowBiquadraticInterpolation: true,
+            out transform,
+            out skipReason);
     }
 
     private static bool TryCreateAxisSwapTransform(
