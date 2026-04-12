@@ -26,6 +26,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// the conformal sphere and the resulting parameter usage match the implementation here.</para>
 /// </remarks>
 /// <seealso href="https://epsg.io/9819-method">EPSG method 9819: Krovak.</seealso>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 5, Sect. 5.1.6, pp. 163-164.</seealso>
 internal class KrovakProjection : MapProjection
 {
     // Maximum number of iterations for iterative computations.
