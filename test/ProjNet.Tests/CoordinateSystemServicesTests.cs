@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 
 using ProjNet;
 using ProjNet.CoordinateSystems;
@@ -34,6 +35,45 @@ public class CoordinateSystemServicesTests
 
         Assert.NotNull(css.GetCoordinateSystem(4326));
         Assert.NotNull(css.GetCoordinateSystem(3857));
+    }
+
+    /// <summary>
+    /// Verifies that the SRID-based transformation overload reuses the cached transformation instance for repeated requests.
+    /// </summary>
+    [Fact]
+    public void CreateTransformationBySrid_ReusesCachedTransformationInstance()
+    {
+        var css = new CoordinateSystemServices(
+            new CoordinateSystemFactory(),
+            new CoordinateTransformationFactory());
+
+        ICoordinateTransformation first = Assert.IsAssignableFrom<ICoordinateTransformation>(css.CreateTransformation(4326, 3857));
+        ICoordinateTransformation second = Assert.IsAssignableFrom<ICoordinateTransformation>(css.CreateTransformation(4326, 3857));
+
+        Assert.Same(first, second);
+    }
+
+    /// <summary>
+    /// Verifies that concurrent SRID-based requests converge on the same cached transformation instance.
+    /// </summary>
+    /// <returns>A task that completes after the concurrent cache assertions finish.</returns>
+    [Fact]
+    public async Task CreateTransformationBySrid_ConcurrentCallsReturnSameCachedTransformation()
+    {
+        var css = new CoordinateSystemServices(
+            new CoordinateSystemFactory(),
+            new CoordinateTransformationFactory());
+
+        Task<ICoordinateTransformation?>[] tasks = Enumerable.Range(0, 8)
+            .Select(_ => Task.Run(() => css.CreateTransformation(4326, 3857), TestContext.Current.CancellationToken))
+            .ToArray();
+        ICoordinateTransformation?[] transformations = await Task.WhenAll(tasks).ConfigureAwait(true);
+        ICoordinateTransformation first = Assert.IsAssignableFrom<ICoordinateTransformation>(transformations[0]);
+
+        for (int i = 1; i < transformations.Length; i++)
+        {
+            Assert.Same(first, Assert.IsAssignableFrom<ICoordinateTransformation>(transformations[i]));
+        }
     }
 
     /// <summary>

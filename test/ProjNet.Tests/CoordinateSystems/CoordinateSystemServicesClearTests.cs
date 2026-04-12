@@ -62,6 +62,55 @@ public class CoordinateSystemServicesClearTests
     }
 
     /// <summary>
+    /// Verifies that clearing the registry also removes cached SRID-pair transformations.
+    /// </summary>
+    [Fact]
+    public void Clear_RemovesCachedTransformationInstances()
+    {
+        var services = new TestCoordinateSystemServices();
+
+        services.Register(4326, GeographicCoordinateSystem.WGS84);
+        services.Register(3857, ProjectedCoordinateSystem.WebMercator);
+
+        ICoordinateTransformation first = Assert.IsAssignableFrom<ICoordinateTransformation>(services.CreateTransformation(4326, 3857));
+        Assert.Same(first, Assert.IsAssignableFrom<ICoordinateTransformation>(services.CreateTransformation(4326, 3857)));
+
+        services.ClearRegistry();
+        services.Register(4326, GeographicCoordinateSystem.WGS84);
+        services.Register(3857, ProjectedCoordinateSystem.WebMercator);
+
+        ICoordinateTransformation second = Assert.IsAssignableFrom<ICoordinateTransformation>(services.CreateTransformation(4326, 3857));
+
+        Assert.NotSame(first, second);
+        Assert.Same(second, Assert.IsAssignableFrom<ICoordinateTransformation>(services.CreateTransformation(4326, 3857)));
+    }
+
+    /// <summary>
+    /// Verifies that replacing a registered coordinate system invalidates affected cached transformations.
+    /// </summary>
+    [Fact]
+    public void Register_ReplacementCoordinateSystem_InvalidatesAffectedTransformationCache()
+    {
+        var services = new TestCoordinateSystemServices();
+        ProjectedCoordinateSystem replacement = ProjectedCoordinateSystem.WebMercator
+            .WithName("Replacement Web Mercator")
+            .WithAuthority("TEST", 93857);
+
+        services.Register(4326, GeographicCoordinateSystem.WGS84);
+        services.Register(3857, ProjectedCoordinateSystem.WebMercator);
+
+        ICoordinateTransformation first = Assert.IsAssignableFrom<ICoordinateTransformation>(services.CreateTransformation(4326, 3857));
+
+        services.Register(3857, replacement);
+        Assert.Same(replacement, services.GetCoordinateSystem(3857));
+
+        ICoordinateTransformation second = Assert.IsAssignableFrom<ICoordinateTransformation>(services.CreateTransformation(4326, 3857));
+
+        Assert.NotSame(first, second);
+        Assert.Same(second, Assert.IsAssignableFrom<ICoordinateTransformation>(services.CreateTransformation(4326, 3857)));
+    }
+
+    /// <summary>
     /// Verifies that clearing the registry uses the same lock as registration updates.
     /// </summary>
     /// <returns>A task that completes after the lock-observation assertion finishes.</returns>

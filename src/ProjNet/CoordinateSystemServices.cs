@@ -6,6 +6,7 @@ namespace ProjNet;
 
 using System;
 using System.Collections;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
@@ -29,6 +30,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
 {
     private readonly Dictionary<int, CoordinateSystem> csBySrid;
     private readonly Dictionary<IInfo, int> sridByCs;
+    private readonly ConcurrentDictionary<(int SourceSrid, int TargetSrid), ICoordinateTransformation> transformationCache;
 
     private readonly CoordinateSystemFactory coordinateSystemFactory;
     private readonly CoordinateTransformationFactory ctFactory;
@@ -113,6 +115,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
 
         this.csBySrid = [];
         this.sridByCs = new(new CsEqualityComparer());
+        this.transformationCache = [];
 
         object enumObj;
         if (enumeration is not null)
@@ -229,11 +232,25 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     /// <param name="sourceSrid">The SRID of the source spatial reference system.</param>
     /// <param name="targetSrid">The SRID of the target spatial reference system.</param>
     /// <returns>A coordinate transformation, or <see langword="null"/> if no transformation could be created.</returns>
+    /// <remarks>Transformation instances created through this overload are cached by SRID pair until the registry changes or is cleared.</remarks>
     public ICoordinateTransformation? CreateTransformation(int sourceSrid, int targetSrid)
     {
-        return this.CreateTransformation(
-            this.GetCoordinateSystem(sourceSrid),
-            this.GetCoordinateSystem(targetSrid));
+        this.WaitForInitialization();
+
+        (int SourceSrid, int TargetSrid) key = (sourceSrid, targetSrid);
+        if (this.transformationCache.TryGetValue(key, out ICoordinateTransformation? transformation))
+        {
+            return transformation;
+        }
+
+        if (!this.csBySrid.TryGetValue(sourceSrid, out CoordinateSystem? source) ||
+            !this.csBySrid.TryGetValue(targetSrid, out CoordinateSystem? target))
+        {
+            return null;
+        }
+
+        transformation = this.ctFactory.CreateFromCoordinateSystems(source, target);
+        return this.transformationCache.GetOrAdd(key, transformation);
     }
 
     /// <summary>
@@ -302,6 +319,8 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
                     this.csBySrid.Add(srid, coordinateSystem);
                     this.sridByCs.Add(coordinateSystem, srid);
                 }
+
+                this.InvalidateTransformationCache(srid);
             }
         }
     }
@@ -331,6 +350,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
             {
                 this.csBySrid.Clear();
                 this.sridByCs.Clear();
+                this.transformationCache.Clear();
             }
         }
     }
@@ -411,6 +431,18 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
         catch (Exception exception)
         {
             throw new InvalidOperationException("Coordinate system initialization failed.", exception);
+        }
+    }
+
+    private void InvalidateTransformationCache(int srid)
+    {
+        foreach (KeyValuePair<(int SourceSrid, int TargetSrid), ICoordinateTransformation> entry in this.transformationCache)
+        {
+            (int SourceSrid, int TargetSrid) key = entry.Key;
+            if (key.SourceSrid == srid || key.TargetSrid == srid)
+            {
+                this.transformationCache.TryRemove(key, out _);
+            }
         }
     }
 
