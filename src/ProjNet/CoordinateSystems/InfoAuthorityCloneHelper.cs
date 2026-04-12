@@ -56,6 +56,90 @@ internal static class InfoAuthorityCloneHelper
     }
 
     /// <summary>
+    /// Creates a deep clone of the supplied angular unit with replacement authority metadata.
+    /// </summary>
+    /// <param name="angularUnit">Unit to clone.</param>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="authorityCode">Replacement authority code.</param>
+    /// <returns>A cloned angular unit with the requested authority metadata.</returns>
+    internal static AngularUnit CloneWithAuthority(AngularUnit angularUnit, string authority, long authorityCode)
+    {
+        angularUnit = ArgumentGuard.ThrowIfNull(angularUnit, nameof(angularUnit));
+        authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
+        return CloneAngularUnit(angularUnit, authority, authorityCode);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied linear unit with replacement authority metadata.
+    /// </summary>
+    /// <param name="linearUnit">Unit to clone.</param>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="authorityCode">Replacement authority code.</param>
+    /// <returns>A cloned linear unit with the requested authority metadata.</returns>
+    internal static LinearUnit CloneWithAuthority(LinearUnit linearUnit, string authority, long authorityCode)
+    {
+        linearUnit = ArgumentGuard.ThrowIfNull(linearUnit, nameof(linearUnit));
+        authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
+        return CloneLinearUnit(linearUnit, authority, authorityCode);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied parametric unit with replacement authority metadata.
+    /// </summary>
+    /// <param name="parametricUnit">Unit to clone.</param>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="authorityCode">Replacement authority code.</param>
+    /// <returns>A cloned parametric unit with the requested authority metadata.</returns>
+    internal static ParametricUnit CloneWithAuthority(ParametricUnit parametricUnit, string authority, long authorityCode)
+    {
+        parametricUnit = ArgumentGuard.ThrowIfNull(parametricUnit, nameof(parametricUnit));
+        authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
+        return CloneParametricUnit(parametricUnit, authority, authorityCode);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied time unit with replacement authority metadata.
+    /// </summary>
+    /// <param name="timeUnit">Unit to clone.</param>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="authorityCode">Replacement authority code.</param>
+    /// <returns>A cloned time unit with the requested authority metadata.</returns>
+    internal static TimeUnit CloneWithAuthority(TimeUnit timeUnit, string authority, long authorityCode)
+    {
+        timeUnit = ArgumentGuard.ThrowIfNull(timeUnit, nameof(timeUnit));
+        authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
+        return CloneTimeUnit(timeUnit, authority, authorityCode);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied ellipsoid with replacement authority metadata.
+    /// </summary>
+    /// <param name="ellipsoid">Ellipsoid to clone.</param>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="authorityCode">Replacement authority code.</param>
+    /// <returns>A cloned ellipsoid with the requested authority metadata.</returns>
+    internal static Ellipsoid CloneWithAuthority(Ellipsoid ellipsoid, string authority, long authorityCode)
+    {
+        ellipsoid = ArgumentGuard.ThrowIfNull(ellipsoid, nameof(ellipsoid));
+        authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
+        return CloneEllipsoid(ellipsoid, authority, authorityCode);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied prime meridian with replacement authority metadata.
+    /// </summary>
+    /// <param name="primeMeridian">Prime meridian to clone.</param>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="authorityCode">Replacement authority code.</param>
+    /// <returns>A cloned prime meridian with the requested authority metadata.</returns>
+    internal static PrimeMeridian CloneWithAuthority(PrimeMeridian primeMeridian, string authority, long authorityCode)
+    {
+        primeMeridian = ArgumentGuard.ThrowIfNull(primeMeridian, nameof(primeMeridian));
+        authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
+        return ClonePrimeMeridian(primeMeridian, authority, authorityCode);
+    }
+
+    /// <summary>
     /// Creates a deep clone of the supplied horizontal datum with replacement WGS84 conversion parameters.
     /// </summary>
     /// <param name="horizontalDatum">Datum to clone.</param>
@@ -107,6 +191,84 @@ internal static class InfoAuthorityCloneHelper
             ConcatenatedOperation concatenatedOperation => CloneConcatenatedOperation(concatenatedOperation, name: name),
             _ => throw new NotSupportedException($"WithName is not supported for info type '{info.GetType().FullName}'."),
         };
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied angular unit with a replacement name.
+    /// </summary>
+    /// <param name="angularUnit">Unit to clone.</param>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A cloned angular unit with the requested name.</returns>
+    internal static AngularUnit CloneWithName(AngularUnit angularUnit, string name)
+    {
+        angularUnit = ArgumentGuard.ThrowIfNull(angularUnit, nameof(angularUnit));
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
+        return CloneAngularUnit(angularUnit, name: name);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied linear unit with a replacement name.
+    /// </summary>
+    /// <param name="linearUnit">Unit to clone.</param>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A cloned linear unit with the requested name.</returns>
+    internal static LinearUnit CloneWithName(LinearUnit linearUnit, string name)
+    {
+        linearUnit = ArgumentGuard.ThrowIfNull(linearUnit, nameof(linearUnit));
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
+        return CloneLinearUnit(linearUnit, name: name);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied parametric unit with a replacement name.
+    /// </summary>
+    /// <param name="parametricUnit">Unit to clone.</param>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A cloned parametric unit with the requested name.</returns>
+    internal static ParametricUnit CloneWithName(ParametricUnit parametricUnit, string name)
+    {
+        parametricUnit = ArgumentGuard.ThrowIfNull(parametricUnit, nameof(parametricUnit));
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
+        return CloneParametricUnit(parametricUnit, name: name);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied time unit with a replacement name.
+    /// </summary>
+    /// <param name="timeUnit">Unit to clone.</param>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A cloned time unit with the requested name.</returns>
+    internal static TimeUnit CloneWithName(TimeUnit timeUnit, string name)
+    {
+        timeUnit = ArgumentGuard.ThrowIfNull(timeUnit, nameof(timeUnit));
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
+        return CloneTimeUnit(timeUnit, name: name);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied ellipsoid with a replacement name.
+    /// </summary>
+    /// <param name="ellipsoid">Ellipsoid to clone.</param>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A cloned ellipsoid with the requested name.</returns>
+    internal static Ellipsoid CloneWithName(Ellipsoid ellipsoid, string name)
+    {
+        ellipsoid = ArgumentGuard.ThrowIfNull(ellipsoid, nameof(ellipsoid));
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
+        return CloneEllipsoid(ellipsoid, name: name);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied prime meridian with a replacement name.
+    /// </summary>
+    /// <param name="primeMeridian">Prime meridian to clone.</param>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A cloned prime meridian with the requested name.</returns>
+    internal static PrimeMeridian CloneWithName(PrimeMeridian primeMeridian, string name)
+    {
+        primeMeridian = ArgumentGuard.ThrowIfNull(primeMeridian, nameof(primeMeridian));
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
+        return ClonePrimeMeridian(primeMeridian, name: name);
     }
 
     /// <summary>

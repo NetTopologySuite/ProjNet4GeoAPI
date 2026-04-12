@@ -295,6 +295,21 @@ public class Ellipsoid : Info
     public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
     /// <summary>
+    /// Creates a copy of this ellipsoid with updated authority metadata.
+    /// </summary>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="code">Replacement authority-specific identification code.</param>
+    /// <returns>A new <see cref="Ellipsoid"/> with updated authority metadata.</returns>
+    public new Ellipsoid WithAuthority(string authority, long code) => InfoAuthorityCloneHelper.CloneWithAuthority(this, authority, code);
+
+    /// <summary>
+    /// Creates a copy of this ellipsoid with an updated name.
+    /// </summary>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A new <see cref="Ellipsoid"/> with the updated name.</returns>
+    public new Ellipsoid WithName(string name) => InfoAuthorityCloneHelper.CloneWithName(this, name);
+
+    /// <summary>
     /// Returns an XML representation of this ellipsoid as an <see cref="XElement"/>.
     /// </summary>
     /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>

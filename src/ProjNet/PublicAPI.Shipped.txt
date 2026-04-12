@@ -40,6 +40,8 @@ namespace ProjNet.CoordinateSystems
         public ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public System.Xml.Linq.XElement ToXml() { }
+        public new ProjNet.CoordinateSystems.AngularUnit WithAuthority(string authority, long code) { }
+        public new ProjNet.CoordinateSystems.AngularUnit WithName(string name) { }
     }
     public sealed class AxisInfo
     {
@@ -247,6 +249,8 @@ namespace ProjNet.CoordinateSystems
         public ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public System.Xml.Linq.XElement ToXml() { }
+        public new ProjNet.CoordinateSystems.Ellipsoid WithAuthority(string authority, long code) { }
+        public new ProjNet.CoordinateSystems.Ellipsoid WithName(string name) { }
     }
     public sealed class EngineeringCoordinateSystem : ProjNet.CoordinateSystems.CoordinateSystem
     {
@@ -385,6 +389,8 @@ namespace ProjNet.CoordinateSystems
         public ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public System.Xml.Linq.XElement ToXml() { }
+        public new ProjNet.CoordinateSystems.LinearUnit WithAuthority(string authority, long code) { }
+        public new ProjNet.CoordinateSystems.LinearUnit WithName(string name) { }
     }
     public sealed class Parameter
     {
@@ -425,6 +431,8 @@ namespace ProjNet.CoordinateSystems
         public ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public System.Xml.Linq.XElement ToXml() { }
+        public new ProjNet.CoordinateSystems.ParametricUnit WithAuthority(string authority, long code) { }
+        public new ProjNet.CoordinateSystems.ParametricUnit WithName(string name) { }
     }
     public class PrimeMeridian : ProjNet.CoordinateSystems.Info
     {
@@ -449,6 +457,8 @@ namespace ProjNet.CoordinateSystems
         public ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public System.Xml.Linq.XElement ToXml() { }
+        public new ProjNet.CoordinateSystems.PrimeMeridian WithAuthority(string authority, long code) { }
+        public new ProjNet.CoordinateSystems.PrimeMeridian WithName(string name) { }
     }
     public class ProjectedCoordinateSystem : ProjNet.CoordinateSystems.HorizontalCoordinateSystem
     {
@@ -524,6 +534,8 @@ namespace ProjNet.CoordinateSystems
         public ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public System.Xml.Linq.XElement ToXml() { }
+        public new ProjNet.CoordinateSystems.TimeUnit WithAuthority(string authority, long code) { }
+        public new ProjNet.CoordinateSystems.TimeUnit WithName(string name) { }
     }
     public class Unit : ProjNet.CoordinateSystems.Info, ProjNet.CoordinateSystems.IInfo, ProjNet.CoordinateSystems.IUnit
     {

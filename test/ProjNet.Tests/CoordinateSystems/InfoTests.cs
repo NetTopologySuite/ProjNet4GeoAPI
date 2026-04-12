@@ -71,6 +71,48 @@ public class InfoTests
     }
 
     /// <summary>
+    /// Verifies that the typed <c>WithAuthority</c> overloads on unit-like types and ellipsoid/prime-meridian types return concrete clones without casts.
+    /// </summary>
+    [Fact]
+    public void TypedWithAuthority_ReturnsConcreteClonesWithoutCasts()
+    {
+        AngularUnit angularClone = AngularUnit.Degrees.WithAuthority("TEST", 1001);
+        LinearUnit linearClone = LinearUnit.Metre.WithAuthority("TEST", 1002);
+        ParametricUnit parametricClone = new ParametricUnit(0.1d, "pressure", "EPSG", 1024, string.Empty, string.Empty, string.Empty).WithAuthority("TEST", 1003);
+        TimeUnit timeClone = new TimeUnit(1d, "second", "EPSG", 1040, string.Empty, string.Empty, string.Empty).WithAuthority("TEST", 1004);
+        Ellipsoid ellipsoidClone = Ellipsoid.WGS84.WithAuthority("TEST", 1005);
+        PrimeMeridian primeMeridianClone = PrimeMeridian.Greenwich.WithAuthority("TEST", 1006);
+
+        Assert.Equal("TEST", angularClone.Authority);
+        Assert.Equal(1002, linearClone.AuthorityCode);
+        Assert.Equal("TEST", parametricClone.Authority);
+        Assert.Equal(1004, timeClone.AuthorityCode);
+        Assert.Equal("TEST", ellipsoidClone.Authority);
+        Assert.Equal(1006, primeMeridianClone.AuthorityCode);
+    }
+
+    /// <summary>
+    /// Verifies that the typed <c>WithName</c> overloads on unit-like types and ellipsoid/prime-meridian types return concrete clones without casts.
+    /// </summary>
+    [Fact]
+    public void TypedWithName_ReturnsConcreteClonesWithoutCasts()
+    {
+        AngularUnit angularClone = AngularUnit.Degrees.WithName("Degree");
+        LinearUnit linearClone = LinearUnit.Metre.WithName("Meter");
+        ParametricUnit parametricClone = new ParametricUnit(0.1d, "pressure", "EPSG", 1024, string.Empty, string.Empty, string.Empty).WithName("Pressure unit");
+        TimeUnit timeClone = new TimeUnit(1d, "second", "EPSG", 1040, string.Empty, string.Empty, string.Empty).WithName("Second unit");
+        Ellipsoid ellipsoidClone = Ellipsoid.WGS84.WithName("Custom WGS 84");
+        PrimeMeridian primeMeridianClone = PrimeMeridian.Greenwich.WithName("Custom Greenwich");
+
+        Assert.Equal("Degree", angularClone.Name);
+        Assert.Equal("Meter", linearClone.Name);
+        Assert.Equal("Pressure unit", parametricClone.Name);
+        Assert.Equal("Second unit", timeClone.Name);
+        Assert.Equal("Custom WGS 84", ellipsoidClone.Name);
+        Assert.Equal("Custom Greenwich", primeMeridianClone.Name);
+    }
+
+    /// <summary>
     /// Verifies that <see cref="Info.InfoXml"/> includes the supported metadata attributes in the expected order.
     /// </summary>
     [Fact]

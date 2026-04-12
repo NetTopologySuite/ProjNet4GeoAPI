@@ -134,6 +134,21 @@ public class PrimeMeridian : Info
     public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
     /// <summary>
+    /// Creates a copy of this prime meridian with updated authority metadata.
+    /// </summary>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="code">Replacement authority-specific identification code.</param>
+    /// <returns>A new <see cref="PrimeMeridian"/> with updated authority metadata.</returns>
+    public new PrimeMeridian WithAuthority(string authority, long code) => InfoAuthorityCloneHelper.CloneWithAuthority(this, authority, code);
+
+    /// <summary>
+    /// Creates a copy of this prime meridian with an updated name.
+    /// </summary>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A new <see cref="PrimeMeridian"/> with the updated name.</returns>
+    public new PrimeMeridian WithName(string name) => InfoAuthorityCloneHelper.CloneWithName(this, name);
+
+    /// <summary>
     /// Returns an XML representation of this prime meridian as an <see cref="XElement"/>.
     /// </summary>
     /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
