@@ -19,8 +19,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 internal sealed class BipolarConicProjection : MapProjection
 {
-    private const double Epsilon = 1e-10d;
-    private const double Epsilon10 = 1e-10d;
     private const double OneEpsilon = 1.000000001d;
     private const int Iterations = 10;
     private const double LamB = -0.34894976726250681539d;
@@ -80,7 +78,7 @@ internal sealed class BipolarConicProjection : MapProjection
         double cdlam = Math.Cos(sdlam);
         sdlam = Math.Sin(sdlam);
 
-        bool atPole = Math.Abs(Math.Abs(lat) - HalfPi) < Epsilon10;
+        bool atPole = Math.Abs(Math.Abs(lat) - HalfPi) < Eps10;
         double az = atPole
             ? (lat < 0d ? PI : 0d)
             : Math.Atan2(sdlam, Cos45 * ((sphi / cphi) - cdlam));
@@ -231,7 +229,7 @@ internal sealed class BipolarConicProjection : MapProjection
                 r = rp * Math.Cos(al + (neg ? az : -az));
             }
 
-            if (Math.Abs(rl - r) < Epsilon)
+            if (Math.Abs(rl - r) < Eps10)
             {
                 break;
             }

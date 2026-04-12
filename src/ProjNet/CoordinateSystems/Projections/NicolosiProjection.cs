@@ -20,8 +20,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 internal sealed class NicolosiProjection : MapProjection
 {
-    private const double Epsilon = 1e-10d;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="NicolosiProjection"/> class.
     /// </summary>
@@ -58,20 +56,20 @@ internal sealed class NicolosiProjection : MapProjection
         double x = 0d;
         double y = lat;
 
-        if (Math.Abs(lambda) < Epsilon)
+        if (Math.Abs(lambda) < Eps10)
         {
         }
-        else if (Math.Abs(lat) < Epsilon)
+        else if (Math.Abs(lat) < Eps10)
         {
             x = lambda;
             y = 0d;
         }
-        else if (Math.Abs(Math.Abs(lambda) - HalfPi) < Epsilon)
+        else if (Math.Abs(Math.Abs(lambda) - HalfPi) < Eps10)
         {
             x = lambda * Math.Cos(lat);
             y = HalfPi * Math.Sin(lat);
         }
-        else if (Math.Abs(Math.Abs(lat) - HalfPi) < Epsilon)
+        else if (Math.Abs(Math.Abs(lat) - HalfPi) < Eps10)
         {
             x = 0d;
             y = lat;

@@ -21,7 +21,6 @@ internal sealed class PutninsP2Projection : MapProjection
     private const double Cx = 1.89490d;
     private const double Cy = 1.71848d;
     private const double Cp = 0.6141848493043784d;
-    private const double Epsilon = 1e-10d;
     private const int Iterations = 10;
     private const double PiDiv3 = 1.0471975511965977d;
 
@@ -74,7 +73,7 @@ internal sealed class PutninsP2Projection : MapProjection
 
             double v = (phi + (s * (c - 1d)) - p) / denominator;
             phi -= v;
-            if (Math.Abs(v) < Epsilon)
+            if (Math.Abs(v) < Eps10)
             {
                 break;
             }

@@ -30,8 +30,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 3, Sect. 3.1.4, pp. 95-98.</seealso>
 internal sealed class EquidistantConicProjection : MapProjection
 {
-    private const double Epsilon = 1e-10d;
-
     private readonly bool ellipsoidal;
     private readonly double n;
     private readonly double g;
@@ -60,7 +58,7 @@ internal sealed class EquidistantConicProjection : MapProjection
         double standardParallel1 = DegreesToRadians(this.Parameters.GetParameterValue("standard_parallel_1", "lat_1"));
         double standardParallel2 = DegreesToRadians(this.Parameters.GetOptionalParameterValue("standard_parallel_2", RadiansToDegrees(standardParallel1), "lat_2"));
 
-        bool secant = Math.Abs(standardParallel1 - standardParallel2) >= Epsilon;
+        bool secant = Math.Abs(standardParallel1 - standardParallel2) >= Eps10;
         double sinParallel1 = Math.Sin(standardParallel1);
         this.n = sinParallel1;
         if (this.ellipsoidal)

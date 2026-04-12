@@ -25,7 +25,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://grokipedia.com/page/quadrilateralized_spherical_cube">Background overview of the quadrilateralized spherical cube projection.</seealso>
 internal sealed class QuadrilateralizedSphericalCubeProjection : MapProjection
 {
-    private const double Epsilon = 1e-10d;
     private const double QuarterPi = PI * 0.25d;
     private const double HalfPiPlusQuarterPi = HalfPi + QuarterPi;
     private const double HalfPiMinusQuarterPiHalf = HalfPi - (QuarterPi * 0.5d);
@@ -384,7 +383,7 @@ internal sealed class QuadrilateralizedSphericalCubeProjection : MapProjection
 
     private static double ForwardEquatorialFaceTheta(double phi, double y, double x, out Area area)
     {
-        if (phi < Epsilon)
+        if (phi < Eps10)
         {
             area = Area.Zero;
             return 0d;

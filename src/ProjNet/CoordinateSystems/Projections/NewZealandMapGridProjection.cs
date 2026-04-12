@@ -29,7 +29,6 @@ internal sealed class NewZealandMapGridProjection : MapProjection
     private const int Ntpsi = 9;
     private const int Ntphi = 8;
     private const int NewtonIterations = 20;
-    private const double Epsilon = 1e-10;
     private const double Sec5ToRad = 0.4848136811095359935899141023d;
     private const double RadToSec5 = 2.062648062470963551564733573d;
 
@@ -152,7 +151,7 @@ internal sealed class NewZealandMapGridProjection : MapProjection
             p.Real += delta.Real;
             p.Imaginary += delta.Imaginary;
 
-            if (Math.Abs(delta.Real) + Math.Abs(delta.Imaginary) <= Epsilon)
+            if (Math.Abs(delta.Real) + Math.Abs(delta.Imaginary) <= Eps10)
             {
                 converged = true;
                 break;

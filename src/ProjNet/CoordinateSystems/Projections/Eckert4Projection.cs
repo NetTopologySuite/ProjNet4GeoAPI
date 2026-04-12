@@ -130,7 +130,7 @@ internal sealed class Eckert4Projection : MapProjection
         double absLamMinusPi = Math.Abs(lambda) - PI;
         if (absLamMinusPi > 0d)
         {
-            if (absLamMinusPi > 1e-10d)
+            if (absLamMinusPi > Eps10)
             {
                 ArgumentGuard.ThrowArgument("Input data outside projection domain.");
             }

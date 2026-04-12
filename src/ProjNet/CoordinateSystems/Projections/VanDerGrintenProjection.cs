@@ -23,7 +23,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://en.wikipedia.org/wiki/Van_der_Grinten_projection">Wikipedia: Van der Grinten projection.</seealso>
 internal sealed class VanDerGrintenProjection : MapProjection
 {
-    private const double Tolerance = 1e-10;
     private const double Third = 1d / 3d;
     private const double TwoTwentySevenths = 2d / 27d;
     private const double FourPiOverThree = 4.18879020478639098458d;
@@ -65,7 +64,7 @@ internal sealed class VanDerGrintenProjection : MapProjection
     {
         double lambda = Adjust_lon(lon - this.centralMeridian);
         double p2 = Math.Abs(lat / HalfPi);
-        if ((p2 - Tolerance) > 1d)
+        if ((p2 - Eps10) > 1d)
         {
             ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
@@ -77,7 +76,7 @@ internal sealed class VanDerGrintenProjection : MapProjection
 
         double x = lambda;
         double y = 0d;
-        if (Math.Abs(lat) > Tolerance && (Math.Abs(lambda) <= Tolerance || Math.Abs(p2 - 1d) < Tolerance))
+        if (Math.Abs(lat) > Eps10 && (Math.Abs(lambda) <= Eps10 || Math.Abs(p2 - 1d) < Eps10))
         {
             x = 0d;
             y = PI * Math.Tan(0.5d * Math.Asin(p2));
@@ -86,7 +85,7 @@ internal sealed class VanDerGrintenProjection : MapProjection
                 y = -y;
             }
         }
-        else if (Math.Abs(lat) > Tolerance)
+        else if (Math.Abs(lat) > Eps10)
         {
             double al = 0.5d * Math.Abs((PI / lambda) - (lambda / PI));
             double al2 = al * al;
@@ -99,7 +98,7 @@ internal sealed class VanDerGrintenProjection : MapProjection
             double diff = g - pSquared;
             double sum = pSquared + al2;
             double radicand = (al2 * diff * diff) - (sum * (g2 - pSquared));
-            if (radicand < -Tolerance)
+            if (radicand < -Eps10)
             {
                 ArgumentGuard.ThrowArgument("Input data outside projection domain.");
             }
@@ -117,7 +116,7 @@ internal sealed class VanDerGrintenProjection : MapProjection
 
             y = Math.Abs(x / PI);
             y = 1d - (y * (y + (2d * al)));
-            if (y < -Tolerance)
+            if (y < -Eps10)
             {
                 ArgumentGuard.ThrowArgument("Input data outside projection domain.");
             }
@@ -143,11 +142,11 @@ internal sealed class VanDerGrintenProjection : MapProjection
         double yy = y * this.InverseSphericalRadius;
         double x2 = xx * xx;
 
-        if (Math.Abs(yy) < Tolerance)
+        if (Math.Abs(yy) < Eps10)
         {
             y = 0d;
             double t = (x2 * x2) + (TwoPiSquared * (x2 + HalfPiSquared));
-            double lambdaEquator = Math.Abs(xx) <= Tolerance ? 0d : (0.5d * ((x2 - PiSquared) + Math.Sqrt(t)) / xx);
+            double lambdaEquator = Math.Abs(xx) <= Eps10 ? 0d : (0.5d * ((x2 - PiSquared) + Math.Sqrt(t)) / xx);
             x = Adjust_lon(this.centralMeridian + lambdaEquator);
             return;
         }
@@ -176,7 +175,7 @@ internal sealed class VanDerGrintenProjection : MapProjection
 
         d = 3d * d / alMulM;
         double ad = Math.Abs(d);
-        if ((ad - Tolerance) > 1d)
+        if ((ad - Eps10) > 1d)
         {
             ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }
@@ -194,8 +193,8 @@ internal sealed class VanDerGrintenProjection : MapProjection
         }
 
         double t2 = r2 + (TwoPiSquared * (x2 - y2 + HalfPiSquared));
-        double lambdaDenominator = Math.Abs(xx) <= Tolerance ? 0d : xx;
-        double lambda = Math.Abs(lambdaDenominator) <= Tolerance
+        double lambdaDenominator = Math.Abs(xx) <= Eps10 ? 0d : xx;
+        double lambda = Math.Abs(lambdaDenominator) <= Eps10
             ? 0d
             : (0.5d * (r - PiSquared + (t2 <= 0d ? 0d : Math.Sqrt(t2))) / lambdaDenominator);
 

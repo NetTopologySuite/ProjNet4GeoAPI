@@ -23,7 +23,6 @@ internal class PutninsP6Projection : MapProjection
     private const double DefaultA = 4d;
     private const double DefaultB = 2.1471437182129378784d;
     private const double DefaultD = 2d;
-    private const double Epsilon = 1e-10d;
     private const int Iterations = 10;
     private const double PoleValue = 1.732050807568877d;
 
@@ -85,7 +84,7 @@ internal class PutninsP6Projection : MapProjection
 
             double v = (((this.a - r) * phi) - Math.Log(phi + r) - p) / denominator;
             phi -= v;
-            if (Math.Abs(v) < Epsilon)
+            if (Math.Abs(v) < Eps10)
             {
                 break;
             }

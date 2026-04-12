@@ -28,7 +28,6 @@ using ProjNet.CoordinateSystems.Transformations;
 internal sealed class InternationalMapWorldPolyconicProjection : MapProjection
 {
     private const int MaximumIterations = 1000;
-    private const double Tolerance = 1e-10;
 
     private readonly double phi1;
     private readonly double phi2;
@@ -125,12 +124,12 @@ internal sealed class InternationalMapWorldPolyconicProjection : MapProjection
             this.ComputeLocalForward(lambda, phi, out double tx, out double ty, out double yc);
 
             double denominator = ty - yc;
-            if (denominator == 0d && Math.Abs(ty - yUnit) > Tolerance)
+            if (denominator == 0d && Math.Abs(ty - yUnit) > Eps10)
             {
                 ArgumentGuard.ThrowArgument("Input data outside projection domain.");
             }
 
-            if (denominator != 0d || Math.Abs(ty - yUnit) <= Tolerance)
+            if (denominator != 0d || Math.Abs(ty - yUnit) <= Eps10)
             {
                 if (denominator != 0d)
                 {
@@ -138,12 +137,12 @@ internal sealed class InternationalMapWorldPolyconicProjection : MapProjection
                 }
             }
 
-            if (tx != 0d && Math.Abs(tx - xUnit) > Tolerance)
+            if (tx != 0d && Math.Abs(tx - xUnit) > Eps10)
             {
                 lambda = lambda * xUnit / tx;
             }
 
-            if (Math.Abs(tx - xUnit) <= Tolerance && Math.Abs(ty - yUnit) <= Tolerance)
+            if (Math.Abs(tx - xUnit) <= Eps10 && Math.Abs(ty - yUnit) <= Eps10)
             {
                 x = Adjust_lon(this.centralMeridian + lambda);
                 y = phi;

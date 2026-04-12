@@ -18,8 +18,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 internal sealed class LagrangeProjection : MapProjection
 {
-    private const double Tolerance = 1e-10d;
-
     private readonly double a1;
     private readonly double a2;
     private readonly double hrw;
@@ -56,7 +54,7 @@ internal sealed class LagrangeProjection : MapProjection
         this.rw = 1d / this.w;
         this.hrw = 0.5d * this.rw;
         double sinPhi1 = Math.Sin(DegreesToRadians(this.Parameters.GetParameterValue("lat_1")));
-        if (Math.Abs(Math.Abs(sinPhi1) - 1d) < Tolerance)
+        if (Math.Abs(Math.Abs(sinPhi1) - 1d) < Eps10)
         {
             ArgumentGuard.ThrowArgument("Invalid value for lat_1: |lat_1| should be < 90°");
         }
@@ -80,12 +78,12 @@ internal sealed class LagrangeProjection : MapProjection
         double sinPhi = Math.Sin(lat);
         double x = 0d;
         double y = lat < 0d ? -2d : 2d;
-        if (Math.Abs(Math.Abs(sinPhi) - 1d) >= Tolerance)
+        if (Math.Abs(Math.Abs(sinPhi) - 1d) >= Eps10)
         {
             double v = this.a1 * Math.Pow((1d + sinPhi) / (1d - sinPhi), this.hrw);
             double lambdaScaled = lambda * this.rw;
             double c = (0.5d * (v + (1d / v))) + Math.Cos(lambdaScaled);
-            if (c < Tolerance)
+            if (c < Eps10)
             {
                 ArgumentGuard.ThrowArgument("Input data outside projection domain.");
             }
@@ -105,13 +103,13 @@ internal sealed class LagrangeProjection : MapProjection
         double yy = y * this.InverseSphericalRadius;
         double phi = yy < 0d ? -HalfPi : HalfPi;
         double lambda = 0d;
-        if (Math.Abs(Math.Abs(yy) - 2d) >= Tolerance)
+        if (Math.Abs(Math.Abs(yy) - 2d) >= Eps10)
         {
             double x2 = xx * xx;
             double y2p = 2d + yy;
             double y2m = 2d - yy;
             double c = (y2p * y2m) - x2;
-            if (Math.Abs(c) < Tolerance)
+            if (Math.Abs(c) < Eps10)
             {
                 ArgumentGuard.ThrowArgument("Input data outside projection domain.");
             }

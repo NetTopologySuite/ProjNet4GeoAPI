@@ -28,8 +28,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 2, Sect. 2.1.3, pp. 51-53.</seealso>
 internal sealed class CylindricalEqualAreaProjection : MapProjection
 {
-    private const double Epsilon = 1e-10d;
-
     private readonly double cosStandardParallel;
     private readonly bool isEllipsoidal;
     private readonly double oneEs;
@@ -113,7 +111,7 @@ internal sealed class CylindricalEqualAreaProjection : MapProjection
             return;
         }
 
-        if (Math.Abs(normalized) - Epsilon <= 1d)
+        if (Math.Abs(normalized) - Eps10 <= 1d)
         {
             if (Math.Abs(normalized) >= 1d)
             {

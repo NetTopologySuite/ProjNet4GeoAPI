@@ -26,8 +26,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://mathworld.wolfram.com/AiryProjection.html">MathWorld: Airy Projection.</seealso>
 internal sealed class AiryProjection : MapProjection
 {
-    private const double Epsilon = 1e-10d;
-
     private readonly double cb;
     private readonly double sinPhi0;
     private readonly double cosPhi0;
@@ -56,7 +54,7 @@ internal sealed class AiryProjection : MapProjection
         this.noCut = this.Parameters.ContainsKey("no_cut");
 
         double beta = 0.5d * (HalfPi - DegreesToRadians(this.Parameters.GetOptionalParameterValue("lat_b", 0d)));
-        if (Math.Abs(beta) < Epsilon)
+        if (Math.Abs(beta) < Eps10)
         {
             this.cb = -0.5d;
         }
@@ -66,12 +64,12 @@ internal sealed class AiryProjection : MapProjection
             this.cb = (cotBeta * cotBeta) * Math.Log(Math.Cos(beta));
         }
 
-        if (Math.Abs(Math.Abs(this.latOrigin) - HalfPi) < Epsilon)
+        if (Math.Abs(Math.Abs(this.latOrigin) - HalfPi) < Eps10)
         {
             this.mode = this.latOrigin < 0d ? Mode.SouthPole : Mode.NorthPole;
             this.pHalfPi = this.latOrigin < 0d ? -HalfPi : HalfPi;
         }
-        else if (Math.Abs(this.latOrigin) < Epsilon)
+        else if (Math.Abs(this.latOrigin) < Eps10)
         {
             this.mode = Mode.Equatorial;
             this.pHalfPi = 0d;
@@ -122,14 +120,14 @@ internal sealed class AiryProjection : MapProjection
                     cosz = (this.sinPhi0 * sinPhi) + (this.cosPhi0 * cosz);
                 }
 
-                if (!this.noCut && cosz < -Epsilon)
+                if (!this.noCut && cosz < -Eps10)
                 {
                     ArgumentGuard.ThrowArgument("Input data outside projection domain.");
                 }
 
                 double s = 1d - cosz;
                 double kRho;
-                if (Math.Abs(s) > Epsilon)
+                if (Math.Abs(s) > Eps10)
                 {
                     double t = 0.5d * (1d + cosz);
                     if (Math.Abs(t) <= Eps10)
@@ -158,13 +156,13 @@ internal sealed class AiryProjection : MapProjection
             default:
             {
                 double phi = Math.Abs(this.pHalfPi - lat);
-                if (!this.noCut && (phi - Epsilon) > HalfPi)
+                if (!this.noCut && (phi - Eps10) > HalfPi)
                 {
                     ArgumentGuard.ThrowArgument("Input data outside projection domain.");
                 }
 
                 phi *= 0.5d;
-                if (phi > Epsilon)
+                if (phi > Eps10)
                 {
                     double t = Math.Tan(phi);
                     double kRho = -2d * ((Math.Log(Math.Cos(phi)) / t) + (t * this.cb));

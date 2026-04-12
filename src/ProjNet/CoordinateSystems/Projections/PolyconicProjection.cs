@@ -31,7 +31,6 @@ internal sealed class PolyconicProjection : MapProjection
     /// <summary>
     /// Maximum difference allowed when comparing real numbers.
     /// </summary>
-    private const double Epsilon = 1E-10;
 
     /// <summary>
     /// Maximum number of iterations for iterative computations.
@@ -84,11 +83,11 @@ internal sealed class PolyconicProjection : MapProjection
 
         double x = delta_lam; // lam;
         double y = -this.ml0;
-        if (Math.Abs(phi) > Epsilon)
+        if (Math.Abs(phi) > Eps10)
         {
             double sp = Math.Sin(phi);
             double cp = Math.Cos(phi);
-            double ms = Math.Abs(cp) > Epsilon ? Msfnz(this.e, sp, cp) / sp : 0.0;
+            double ms = Math.Abs(cp) > Eps10 ? Msfnz(this.e, sp, cp) / sp : 0.0;
 
             // lam =
             delta_lam *= sp;
@@ -109,7 +108,7 @@ internal sealed class PolyconicProjection : MapProjection
         y += this.ml0;
         double lam = x;
         double phi = 0.0;
-        if (Math.Abs(y) <= Epsilon)
+        if (Math.Abs(y) <= Eps10)
         {
         }
         else

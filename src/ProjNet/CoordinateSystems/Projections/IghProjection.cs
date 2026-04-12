@@ -28,7 +28,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://en.wikipedia.org/wiki/Goode_homolosine_projection">Wikipedia: Goode homolosine projection.</seealso>
 internal sealed class IghProjection : MapProjection
 {
-    private const double EpsLn = 1e-10;
     private const int MollweideIterations = 12;
 
     private static readonly double Sqrt2 = Math.Sqrt(2d);
@@ -184,7 +183,7 @@ internal sealed class IghProjection : MapProjection
     private static int DetermineInverseZone(double x, double y, double dy0)
     {
         double y90 = dy0 + Sqrt2;
-        if (y > (y90 + EpsLn) || y < (-y90 - EpsLn))
+        if (y > (y90 + Eps10) || y < (-y90 - Eps10))
         {
             return -1;
         }
@@ -221,20 +220,20 @@ internal sealed class IghProjection : MapProjection
     {
         return zoneIndex switch
         {
-            0 => ((lambda >= -D180 - EpsLn) && (lambda <= -D40 + EpsLn))
-                                || (((lambda >= -D40 - EpsLn) && (lambda <= -DegreesToRadians(10d) + EpsLn))
-                                    && ((phi >= D60 - EpsLn) && (phi <= HalfPi + EpsLn))),
-            1 => ((lambda >= -D40 - EpsLn) && (lambda <= D180 + EpsLn))
-                                || (((lambda >= -D180 - EpsLn) && (lambda <= -D160 + EpsLn))
-                                    && ((phi >= D50 - EpsLn) && (phi <= HalfPi + EpsLn)))
-                                || (((lambda >= -DegreesToRadians(50d) - EpsLn) && (lambda <= -D40 + EpsLn))
-                                    && ((phi >= D60 - EpsLn) && (phi <= HalfPi + EpsLn))),
-            2 => (lambda >= -D180 - EpsLn) && (lambda <= -D40 + EpsLn),
-            3 => (lambda >= -D40 - EpsLn) && (lambda <= D180 + EpsLn),
-            4 or 8 => (lambda >= -D180 - EpsLn) && (lambda <= -D100 + EpsLn),
-            5 or 9 => (lambda >= -D100 - EpsLn) && (lambda <= -D20 + EpsLn),
-            6 or 10 => (lambda >= -D20 - EpsLn) && (lambda <= D80 + EpsLn),
-            7 or 11 => (lambda >= D80 - EpsLn) && (lambda <= D180 + EpsLn),
+            0 => ((lambda >= -D180 - Eps10) && (lambda <= -D40 + Eps10))
+                                || (((lambda >= -D40 - Eps10) && (lambda <= -DegreesToRadians(10d) + Eps10))
+                                    && ((phi >= D60 - Eps10) && (phi <= HalfPi + Eps10))),
+            1 => ((lambda >= -D40 - Eps10) && (lambda <= D180 + Eps10))
+                                || (((lambda >= -D180 - Eps10) && (lambda <= -D160 + Eps10))
+                                    && ((phi >= D50 - Eps10) && (phi <= HalfPi + Eps10)))
+                                || (((lambda >= -DegreesToRadians(50d) - Eps10) && (lambda <= -D40 + Eps10))
+                                    && ((phi >= D60 - Eps10) && (phi <= HalfPi + Eps10))),
+            2 => (lambda >= -D180 - Eps10) && (lambda <= -D40 + Eps10),
+            3 => (lambda >= -D40 - Eps10) && (lambda <= D180 + Eps10),
+            4 or 8 => (lambda >= -D180 - Eps10) && (lambda <= -D100 + Eps10),
+            5 or 9 => (lambda >= -D100 - Eps10) && (lambda <= -D20 + Eps10),
+            6 or 10 => (lambda >= -D20 - Eps10) && (lambda <= D80 + Eps10),
+            7 or 11 => (lambda >= D80 - Eps10) && (lambda <= D180 + Eps10),
             _ => false,
         };
     }

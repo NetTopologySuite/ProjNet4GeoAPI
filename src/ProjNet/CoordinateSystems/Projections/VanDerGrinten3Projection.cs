@@ -19,8 +19,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 internal sealed class VanDerGrinten3Projection : MapProjection
 {
-    private const double Tolerance = 1e-10d;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="VanDerGrinten3Projection"/> class.
     /// </summary>
@@ -67,7 +65,7 @@ internal sealed class VanDerGrinten3Projection : MapProjection
 
         double x = 0d;
         double y = PI * (lat < 0d ? -bt : bt) / (1d + ct);
-        if (Math.Abs(lambda) >= Tolerance)
+        if (Math.Abs(lambda) >= Eps10)
         {
             double at = 0.5d * Math.Abs((PI / lambda) - (lambda / PI));
             double x1 = bt / (1d + ct);
