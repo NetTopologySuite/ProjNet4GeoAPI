@@ -19,10 +19,8 @@ using ProjNet.CoordinateSystems;
 internal sealed class DefModelMathTransform : MathTransform
 {
     private const int MaximumModelSizeInBytes = 10 * 1024 * 1024;
-    private const int MaxInverseIterations = 10;
     private const double InverseHorizontalTolerance = 1e-12d;
     private const double InverseVerticalTolerance = 1e-3d;
-    private const double MissingObservationEpoch = double.MaxValue;
 
     private readonly string modelPath;
     private readonly double semiMajor;
@@ -259,7 +257,7 @@ internal sealed class DefModelMathTransform : MathTransform
     /// <inheritdoc />
     internal override void Transform(ref double x, ref double y, ref double z, ref double t)
     {
-        if (!TransformationMath.IsValidObservationEpoch(t, MissingObservationEpoch))
+        if (!TransformationMath.IsValidObservationEpoch(t, TransformationMath.MissingObservationEpoch))
         {
             ArgumentGuard.ThrowArgument("defmodel requires a valid observation epoch.");
         }
@@ -1524,7 +1522,7 @@ internal sealed class DefModelMathTransform : MathTransform
         xOut = x;
         yOut = y;
         zOut = z;
-        for (int i = 0; i < MaxInverseIterations; i++)
+        for (int i = 0; i < TransformationMath.MaxInverseIterations; i++)
         {
             if (!this.TryForward(xOut, yOut, zOut, observationEpoch, true, out double xNew, out double yNew, out double zNew))
             {

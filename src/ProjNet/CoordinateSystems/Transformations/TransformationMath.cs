@@ -16,6 +16,21 @@ internal static class TransformationMath
     internal const double ArcSecondToRadians = Math.PI / (180d * 3600d);
 
     /// <summary>
+    /// Sentinel value used when an observation epoch was not supplied.
+    /// </summary>
+    internal const double MissingObservationEpoch = double.MaxValue;
+
+    /// <summary>
+    /// Sentinel value used by GTX grids for nodata samples.
+    /// </summary>
+    internal const float GtxNoDataSentinel = -88.88880f;
+
+    /// <summary>
+    /// Default iteration cap for inverse grid or deformation refinement loops.
+    /// </summary>
+    internal const int MaxInverseIterations = 10;
+
+    /// <summary>
     /// Determines whether a floating-point value is finite.
     /// </summary>
     /// <param name="value">Value to validate.</param>

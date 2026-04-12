@@ -29,8 +29,6 @@ using ProjNet.CoordinateSystems.Transformations.Numerics;
 /// <seealso href="https://epsg.io/1032-method">EPSG method 1032: Coordinate Frame rotation (geocentric domain).</seealso>
 internal sealed class HelmertMathTransform : MathTransform
 {
-    private const double MissingObservationEpoch = double.MaxValue;
-
     private readonly HelmertParameterState baseState;
     private readonly HelmertRateState rateState;
     private readonly bool hasKinematicRates;
@@ -442,7 +440,7 @@ internal sealed class HelmertMathTransform : MathTransform
             staticState.Scale,
             staticState.Theta,
             rotationMatrix,
-            hasKinematicRates ? MissingObservationEpoch : epochReference);
+            hasKinematicRates ? TransformationMath.MissingObservationEpoch : epochReference);
 
         MathTransform transform = new HelmertMathTransform(
             baseState,
@@ -634,7 +632,7 @@ internal sealed class HelmertMathTransform : MathTransform
         }
 
         double normalizedEpoch = observationEpoch;
-        if (double.IsNaN(normalizedEpoch) || double.IsInfinity(normalizedEpoch) || normalizedEpoch == MissingObservationEpoch)
+        if (double.IsNaN(normalizedEpoch) || double.IsInfinity(normalizedEpoch) || normalizedEpoch == TransformationMath.MissingObservationEpoch)
         {
             normalizedEpoch = this.epochReference;
         }

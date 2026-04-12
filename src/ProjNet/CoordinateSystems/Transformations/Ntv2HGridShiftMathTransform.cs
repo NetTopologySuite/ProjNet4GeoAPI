@@ -38,8 +38,6 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
     private const double ArcSecondToDegree = 1d / 3600d;
     private const double RelativeTolerance = 1e-5d;
     private const double InverseTolerance = 1e-12d;
-    private const int MaxInverseIterations = 10;
-
     private readonly ReadOnlyCollection<Ntv2GridSet> gridSets;
     private readonly bool isInverted;
     private MathTransform? inverse;
@@ -141,7 +139,7 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
 
         double tLon = tbLon - firstLongShift;
         double tLat = tbLat - firstLatShift;
-        int iterations = MaxInverseIterations;
+        int iterations = TransformationMath.MaxInverseIterations;
 
         while (iterations-- > 0)
         {

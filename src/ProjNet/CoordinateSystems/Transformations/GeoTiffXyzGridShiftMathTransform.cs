@@ -33,8 +33,6 @@ using ProjNet.CoordinateSystems;
 internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
 {
     private const double RelativeTolerance = 1e-5d;
-    private const int MaxInverseIterations = 10;
-
     private readonly ReadOnlyCollection<XyzGrid> grids;
     private readonly GeocentricTransform geocentricInverse;
     private readonly double semiMajor;
@@ -284,7 +282,7 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
         double candidateZ = z;
 
         bool converged = false;
-        for (int i = 0; i < MaxInverseIterations; i++)
+        for (int i = 0; i < TransformationMath.MaxInverseIterations; i++)
         {
             if (!this.TryGetShift(candidateX, candidateY, candidateZ, out double dx, out double dy, out double dz))
             {

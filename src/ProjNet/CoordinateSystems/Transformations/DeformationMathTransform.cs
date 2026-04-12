@@ -38,13 +38,7 @@ internal sealed class DeformationMathTransform : MathTransform
 {
     private const double RelativeTolerance = 1e-5d;
 
-    /// <summary>
-    /// Sentinel value used by GTX grids for nodata samples (matches PROJ <c>gtx.cpp</c> behavior).
-    /// </summary>
-    private const float GtxNoDataSentinel = -88.88880f;
-    private const double MissingObservationEpoch = double.MaxValue;
     private const double InverseTolerance = 1e-8d;
-    private const int MaxInverseIterations = 10;
     private const double TwoPi = 2d * Math.PI;
 
     private readonly ReadOnlyCollection<GeoTiffXyzGridShiftMathTransform.XyzGrid> velocityGrids;
@@ -137,7 +131,7 @@ internal sealed class DeformationMathTransform : MathTransform
     /// <inheritdoc />
     public override void Transform(ref double x, ref double y, ref double z)
     {
-        if (!this.TryResolveDeltaTime(MissingObservationEpoch, out double deltaTime, out bool missingTime))
+        if (!this.TryResolveDeltaTime(TransformationMath.MissingObservationEpoch, out double deltaTime, out bool missingTime))
         {
             if (missingTime)
             {
@@ -699,7 +693,7 @@ internal sealed class DeformationMathTransform : MathTransform
             return true;
         }
 
-        if (!TransformationMath.IsValidObservationEpoch(observationEpoch, MissingObservationEpoch))
+        if (!TransformationMath.IsValidObservationEpoch(observationEpoch, TransformationMath.MissingObservationEpoch))
         {
             missingTime = true;
             deltaTime = 0d;
@@ -879,7 +873,7 @@ internal sealed class DeformationMathTransform : MathTransform
         outputY = inputY - (deltaTime * firstDeltaY);
         outputZ = inputZ - (deltaTime * firstDeltaZ);
 
-        for (int i = 0; i < MaxInverseIterations; i++)
+        for (int i = 0; i < TransformationMath.MaxInverseIterations; i++)
         {
             if (!this.TryGetGridShift(outputX, outputY, outputZ, out double deltaX, out double deltaY, out double deltaZ))
             {
@@ -1385,7 +1379,7 @@ internal sealed class DeformationMathTransform : MathTransform
         private static bool IsNoData(float value, double multiplier)
         {
             double scaled = value * multiplier;
-            return scaled > 1000d || scaled < -1000d || value == GtxNoDataSentinel;
+            return scaled > 1000d || scaled < -1000d || value == TransformationMath.GtxNoDataSentinel;
         }
 
         private static double PositiveModulo(double value, int modulus)

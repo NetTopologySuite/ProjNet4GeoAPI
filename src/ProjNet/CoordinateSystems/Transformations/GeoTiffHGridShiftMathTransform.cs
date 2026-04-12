@@ -34,7 +34,6 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
 {
     private const double RelativeTolerance = 1e-5d;
     private const double InverseTolerance = 1e-12d;
-    private const int MaxInverseIterations = 10;
     private readonly ReadOnlyCollection<HorizontalGrid> grids;
     private readonly bool? biquadraticInterpolationOverride;
     private readonly bool isInverted;
@@ -151,7 +150,7 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
             return;
         }
 
-        int iterations = MaxInverseIterations;
+        int iterations = TransformationMath.MaxInverseIterations;
         while (iterations-- > 0)
         {
             (double iterLonShift, double iterLatShift) = this.InterpolateShift(initialGrid, candidateLongitude, candidateLatitude);
