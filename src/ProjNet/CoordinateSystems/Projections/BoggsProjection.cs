@@ -85,7 +85,7 @@ internal sealed class BoggsProjection : MapProjection
             x = Fxc * lambda / denominator;
         }
 
-        double y = Fyc * (lat + (Math.Sqrt(2d) * Math.Sin(theta)));
+        double y = Fyc * (lat + (ProjectionConstants.Sqrt2 * Math.Sin(theta)));
         lon = this.SphericalRadius * x;
         lat = this.SphericalRadius * y;
     }

@@ -30,7 +30,6 @@ internal sealed class IghProjection : MapProjection
 {
     private const int MollweideIterations = 12;
 
-    private static readonly double Sqrt2 = Math.Sqrt(2d);
     private static readonly double PhiBoundary = DegreesToRadians(40d + (44d / 60d) + (11.8d / 3600d));
 
     private static readonly double D20 = DegreesToRadians(20d);
@@ -182,7 +181,7 @@ internal sealed class IghProjection : MapProjection
 
     private static int DetermineInverseZone(double x, double y, double dy0)
     {
-        double y90 = dy0 + Sqrt2;
+        double y90 = dy0 + ProjectionConstants.Sqrt2;
         if (y > (y90 + Eps10) || y < (-y90 - Eps10))
         {
             return -1;
@@ -257,13 +256,13 @@ internal sealed class IghProjection : MapProjection
             }
         }
 
-        x = (2d * Sqrt2 / PI) * lambda * Math.Cos(theta);
-        y = Sqrt2 * Math.Sin(theta);
+        x = (2d * ProjectionConstants.Sqrt2 / PI) * lambda * Math.Cos(theta);
+        y = ProjectionConstants.Sqrt2 * Math.Sin(theta);
     }
 
     private static void MollweideInverseUnit(double x, double y, out double lambda, out double phi)
     {
-        double theta = Math.Asin(ProjectionConstants.Clamp(y / Sqrt2, -1d, 1d));
+        double theta = Math.Asin(ProjectionConstants.Clamp(y / ProjectionConstants.Sqrt2, -1d, 1d));
         double cosTheta = Math.Cos(theta);
         if (Math.Abs(cosTheta) <= Eps10)
         {
@@ -271,7 +270,7 @@ internal sealed class IghProjection : MapProjection
         }
         else
         {
-            lambda = x * PI / (2d * Sqrt2 * cosTheta);
+            lambda = x * PI / (2d * ProjectionConstants.Sqrt2 * cosTheta);
         }
 
         phi = Math.Asin(ProjectionConstants.Clamp(((2d * theta) + Math.Sin(2d * theta)) / PI, -1d, 1d));

@@ -30,8 +30,6 @@ internal sealed class BipolarConicProjection : MapProjection
     private const double Rhoc = 1.20709121521568721927d;
     private const double CosAzc = 0.69691523038678375519d;
     private const double SinAzc = 0.71715351331143607555d;
-    private const double Cos45 = 0.70710678118654752469d;
-    private const double Sin45 = 0.70710678118654752410d;
     private const double Cos20 = 0.93969262078590838411d;
     private const double Sin20 = -0.34202014332566873287d;
     private const double R110 = 1.91986217719376253360d;
@@ -81,7 +79,7 @@ internal sealed class BipolarConicProjection : MapProjection
         bool atPole = Math.Abs(Math.Abs(lat) - HalfPi) < Eps10;
         double az = atPole
             ? (lat < 0d ? PI : 0d)
-            : Math.Atan2(sdlam, Cos45 * ((sphi / cphi) - cdlam));
+            : Math.Atan2(sdlam, ProjectionConstants.OneOverSqrt2 * ((sphi / cphi) - cdlam));
 
         bool tag = az > Azba;
         double y = tag ? Rhoc : -Rhoc;
@@ -115,7 +113,7 @@ internal sealed class BipolarConicProjection : MapProjection
         }
         else
         {
-            z = Sin45 * (sphi + (cphi * cdlam));
+            z = ProjectionConstants.OneOverSqrt2 * (sphi + (cphi * cdlam));
             if (Math.Abs(z) > 1d)
             {
                 if (Math.Abs(z) > OneEpsilon)
@@ -198,8 +196,8 @@ internal sealed class BipolarConicProjection : MapProjection
         }
 
         bool neg = xx < 0d;
-        double s = neg ? Sin20 : Sin45;
-        double c = neg ? Cos20 : Cos45;
+        double s = neg ? Sin20 : ProjectionConstants.OneOverSqrt2;
+        double c = neg ? Cos20 : ProjectionConstants.OneOverSqrt2;
         double av = neg ? Azab : Azba;
         if (neg)
         {

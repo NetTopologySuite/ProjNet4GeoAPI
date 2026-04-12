@@ -59,8 +59,6 @@ internal abstract class InterruptedMollweideBaseProjection : MapProjection
     protected static void MollweideForwardUnit(double lambda, double phi, out double x, out double y)
     {
         const int mollweideIterations = 12;
-        double sqrt2 = Math.Sqrt(2d);
-
         double theta = Sign(phi) * HalfPi;
         if (Math.Abs(Math.Abs(phi) - HalfPi) >= ProjectionConstants.Tolerance1E12)
         {
@@ -78,8 +76,8 @@ internal abstract class InterruptedMollweideBaseProjection : MapProjection
             }
         }
 
-        x = (2d * sqrt2 / PI) * lambda * Math.Cos(theta);
-        y = sqrt2 * Math.Sin(theta);
+        x = (2d * ProjectionConstants.Sqrt2 / PI) * lambda * Math.Cos(theta);
+        y = ProjectionConstants.Sqrt2 * Math.Sin(theta);
     }
 
     /// <summary>
@@ -91,10 +89,9 @@ internal abstract class InterruptedMollweideBaseProjection : MapProjection
     /// <param name="phi">Recovered latitude in radians.</param>
     protected static void MollweideInverseUnit(double x, double y, out double lambda, out double phi)
     {
-        double sqrt2 = Math.Sqrt(2d);
-        double theta = Math.Asin(ProjectionConstants.Clamp(y / sqrt2, -1d, 1d));
+        double theta = Math.Asin(ProjectionConstants.Clamp(y / ProjectionConstants.Sqrt2, -1d, 1d));
         double cosTheta = Math.Cos(theta);
-        lambda = Math.Abs(cosTheta) <= Eps10 ? 0d : (x * PI / (2d * sqrt2 * cosTheta));
+        lambda = Math.Abs(cosTheta) <= Eps10 ? 0d : (x * PI / (2d * ProjectionConstants.Sqrt2 * cosTheta));
         phi = Math.Asin(ProjectionConstants.Clamp(((2d * theta) + Math.Sin(2d * theta)) / PI, -1d, 1d));
     }
 

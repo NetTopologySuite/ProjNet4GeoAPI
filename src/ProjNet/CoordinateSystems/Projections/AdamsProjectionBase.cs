@@ -24,7 +24,6 @@ internal abstract class AdamsProjectionBase : MapProjection
     private const double InverseTolerance = 1e-10d;
     private const double FiniteDifferenceStep = 1e-6d;
     private const double StepClamp = 0.3d;
-    private const double Rsqrt2 = 0.7071067811865475244008443620d;
     private const double CompleteEllipticHalf = 1.8540746773013719d;
     private const double ShapeShiftDistance = CompleteEllipticHalf * 2d;
 
@@ -199,8 +198,8 @@ internal abstract class AdamsProjectionBase : MapProjection
     private static void RotateFortyFive(ref double x, ref double y)
     {
         double temp = x;
-        x = Rsqrt2 * (x - y);
-        y = Rsqrt2 * (temp + y);
+        x = ProjectionConstants.OneOverSqrt2 * (x - y);
+        y = ProjectionConstants.OneOverSqrt2 * (temp + y);
     }
 
     private static double EllipticIntegralHalf(double phi)
@@ -252,8 +251,8 @@ internal abstract class AdamsProjectionBase : MapProjection
                     double sl = Math.Sin(lambda);
                     double sp = Math.Sin(phi);
                     double cp = Math.Cos(phi);
-                    a = Math.Acos(ProjectionConstants.Clamp(((cp * sl) - sp) * Rsqrt2, -1d, 1d));
-                    b = Math.Acos(ProjectionConstants.Clamp(((cp * sl) + sp) * Rsqrt2, -1d, 1d));
+                    a = Math.Acos(ProjectionConstants.Clamp(((cp * sl) - sp) * ProjectionConstants.OneOverSqrt2, -1d, 1d));
+                    b = Math.Acos(ProjectionConstants.Clamp(((cp * sl) + sp) * ProjectionConstants.OneOverSqrt2, -1d, 1d));
                     sm = lambda < 0d;
                     sn = phi < 0d;
                 }
@@ -275,8 +274,8 @@ internal abstract class AdamsProjectionBase : MapProjection
                     double sl = Math.Sin(lambda);
                     double cl = Math.Cos(lambda);
                     double cp = Math.Cos(phi);
-                    a = Math.Acos(ProjectionConstants.Clamp(cp * (sl + cl) * Rsqrt2, -1d, 1d));
-                    b = Math.Acos(ProjectionConstants.Clamp(cp * (sl - cl) * Rsqrt2, -1d, 1d));
+                    a = Math.Acos(ProjectionConstants.Clamp(cp * (sl + cl) * ProjectionConstants.OneOverSqrt2, -1d, 1d));
+                    b = Math.Acos(ProjectionConstants.Clamp(cp * (sl - cl) * ProjectionConstants.OneOverSqrt2, -1d, 1d));
                     sm = sl < 0d;
                     sn = cl > 0d;
                 }
@@ -304,8 +303,8 @@ internal abstract class AdamsProjectionBase : MapProjection
                 {
                     double sp = Math.Tan(0.5d * phi);
                     b = Math.Cos(Asinz(sp)) * Math.Sin(0.5d * lambda);
-                    a = Math.Acos(ProjectionConstants.Clamp((b - sp) * Rsqrt2, -1d, 1d));
-                    b = Math.Acos(ProjectionConstants.Clamp((b + sp) * Rsqrt2, -1d, 1d));
+                    a = Math.Acos(ProjectionConstants.Clamp((b - sp) * ProjectionConstants.OneOverSqrt2, -1d, 1d));
+                    b = Math.Acos(ProjectionConstants.Clamp((b + sp) * ProjectionConstants.OneOverSqrt2, -1d, 1d));
                     sm = lambda < 0d;
                     sn = phi < 0d;
                 }

@@ -28,8 +28,6 @@ internal sealed class QuadrilateralizedSphericalCubeProjection : MapProjection
     private const double QuarterPi = PI * 0.25d;
     private const double HalfPiPlusQuarterPi = HalfPi + QuarterPi;
     private const double HalfPiMinusQuarterPiHalf = HalfPi - (QuarterPi * 0.5d);
-    private const double OneOverSqrt2 = 0.7071067811865475244008443621d;
-
     private readonly Face face;
     private readonly double aSquared;
     private readonly double sphereB;
@@ -246,7 +244,7 @@ internal sealed class QuadrilateralizedSphericalCubeProjection : MapProjection
         }
 
         double t = (PI / 12d) * Math.Tan(mu);
-        double tanTheta = Math.Sin(t) / (Math.Cos(t) - OneOverSqrt2);
+        double tanTheta = Math.Sin(t) / (Math.Cos(t) - ProjectionConstants.OneOverSqrt2);
         double theta = Math.Atan(tanTheta);
         double cosMu = Math.Cos(mu);
         double tanNu = Math.Tan(nu);

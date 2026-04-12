@@ -33,8 +33,6 @@ internal sealed class GoodeProjection : MapProjection
     private const int MollweideIterations = 12;
     private const double YCor = 0.05280;
     private const double PhiLim = 0.71093078197902358062;
-    private static readonly double Sqrt2 = Math.Sqrt(2d);
-
     private readonly bool isEllipsoidal;
     private readonly double oneEs;
     private readonly double qp;
@@ -137,13 +135,13 @@ internal sealed class GoodeProjection : MapProjection
             }
         }
 
-        x = (2d * Sqrt2 / PI) * lambda * Math.Cos(theta);
-        y = Sqrt2 * Math.Sin(theta);
+        x = (2d * ProjectionConstants.Sqrt2 / PI) * lambda * Math.Cos(theta);
+        y = ProjectionConstants.Sqrt2 * Math.Sin(theta);
     }
 
     private static void MollweideInverseUnit(double x, double y, out double lambda, out double phi)
     {
-        double theta = Math.Asin(ProjectionConstants.Clamp(y / Sqrt2, -1d, 1d));
+        double theta = Math.Asin(ProjectionConstants.Clamp(y / ProjectionConstants.Sqrt2, -1d, 1d));
         double cosTheta = Math.Cos(theta);
 
         if (Math.Abs(cosTheta) <= Eps10)
@@ -152,7 +150,7 @@ internal sealed class GoodeProjection : MapProjection
         }
         else
         {
-            lambda = x * PI / (2d * Sqrt2 * cosTheta);
+            lambda = x * PI / (2d * ProjectionConstants.Sqrt2 * cosTheta);
         }
 
         phi = Math.Asin(ProjectionConstants.Clamp(((2d * theta) + Math.Sin(2d * theta)) / PI, -1d, 1d));

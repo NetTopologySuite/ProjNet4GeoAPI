@@ -35,6 +35,16 @@ internal static class ProjectionConstants
     internal const double Tolerance1E12 = 1e-12d;
 
     /// <summary>
+    /// Square root of 2.
+    /// </summary>
+    internal const double Sqrt2 = 1.41421356237309504880d;
+
+    /// <summary>
+    /// Reciprocal square root of 2.
+    /// </summary>
+    internal const double OneOverSqrt2 = 0.70710678118654752440d;
+
+    /// <summary>
     /// Shared 1e-18 tolerance used for Jacobian and determinant singularity checks.
     /// </summary>
     internal const double JacobianTolerance = 1e-18d;

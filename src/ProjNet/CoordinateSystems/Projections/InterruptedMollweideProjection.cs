@@ -160,7 +160,7 @@ internal sealed class InterruptedMollweideProjection : InterruptedMollweideBaseP
         double seam45,
         double seam56)
     {
-        double y90 = Math.Sqrt(2d);
+        double y90 = ProjectionConstants.Sqrt2;
         if (y > y90 + SeamSlack || y < -y90 - SeamSlack)
         {
             return 0;

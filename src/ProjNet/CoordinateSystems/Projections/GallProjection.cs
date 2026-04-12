@@ -19,9 +19,7 @@ using ProjNet.CoordinateSystems.Transformations;
 internal sealed class GallProjection : MapProjection
 {
     private const double Yf = 1.70710678118654752440d;
-    private const double Xf = 0.70710678118654752440d;
     private const double Ryf = 0.58578643762690495119d;
-    private const double Rxf = 1.41421356237309504880d;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="GallProjection"/> class.
@@ -55,7 +53,7 @@ internal sealed class GallProjection : MapProjection
     protected override void RadiansToMeters(ref double lon, ref double lat)
     {
         double lambda = Adjust_lon(lon - this.centralMeridian);
-        double x = Xf * lambda;
+        double x = ProjectionConstants.OneOverSqrt2 * lambda;
         double y = Yf * Math.Tan(0.5d * lat);
         lon = this.SphericalRadius * x;
         lat = this.SphericalRadius * y;
@@ -66,7 +64,7 @@ internal sealed class GallProjection : MapProjection
     {
         double xx = x * this.InverseSphericalRadius;
         double yy = y * this.InverseSphericalRadius;
-        double lambda = Rxf * xx;
+        double lambda = ProjectionConstants.Sqrt2 * xx;
         double phi = 2d * Math.Atan(yy * Ryf);
         x = Adjust_lon(this.centralMeridian + lambda);
         y = phi;
