@@ -21,7 +21,7 @@ internal static class DerivedCoordinateSystemSupport
     /// Gets the fallback deriving-conversion name emitted when no explicit name is available.
     /// </summary>
     internal const string DefaultDerivingConversionName = "unnamed";
-    private const double AffineMatrixTolerance = 1e-12;
+    private const double AffineMatrixTolerance = 1e-12d;
 
     /// <summary>
     /// Creates an affine deriving conversion from a fitted-system math transform.

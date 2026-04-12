@@ -13,7 +13,7 @@ using ProjNet.IO.Wkt;
 /// </summary>
 internal static class BoundCoordinateSystemSupport
 {
-    private static readonly AngularUnit ArcSecondUnit = new(4.84813681109535993589914102357e-6, "arc-second", "EPSG", 9104, "arcsec", string.Empty, "=pi/648000 radians.");
+    private static readonly AngularUnit ArcSecondUnit = new(4.84813681109535993589914102357e-6d, "arc-second", "EPSG", 9104, "arcsec", string.Empty, "=pi/648000 radians.");
 
     /// <summary>
     /// Creates normalized bound-transformation metadata for the currently supported BoundCRS subset.
@@ -677,7 +677,7 @@ internal static class BoundCoordinateSystemSupport
                 new WktKeywordNode(
                     "SCALEUNIT",
                     new WktQuotedString("parts per million"),
-                    new WktNumber(1e-6))));
+                    new WktNumber(1e-6d))));
             return;
         }
 

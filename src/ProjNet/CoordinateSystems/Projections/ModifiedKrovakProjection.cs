@@ -13,16 +13,16 @@ internal sealed class ModifiedKrovakProjection : KrovakProjection
 {
     private const double X0 = 1089000.0;
     private const double Y0 = 654000.0;
-    private const double C1 = 2.946529277E-02;
-    private const double C2 = 2.515965696E-02;
-    private const double C3 = 1.193845912E-07;
-    private const double C4 = -4.668270147E-07;
-    private const double C5 = 9.233980362E-12;
-    private const double C6 = 1.523735715E-12;
-    private const double C7 = 1.696780024E-18;
-    private const double C8 = 4.408314235E-18;
-    private const double C9 = -8.331083518E-24;
-    private const double C10 = -3.689471323E-24;
+    private const double C1 = 2.946529277E-02d;
+    private const double C2 = 2.515965696E-02d;
+    private const double C3 = 1.193845912E-07d;
+    private const double C4 = -4.668270147E-07d;
+    private const double C5 = 9.233980362E-12d;
+    private const double C6 = 1.523735715E-12d;
+    private const double C7 = 1.696780024E-18d;
+    private const double C8 = 4.408314235E-18d;
+    private const double C9 = -8.331083518E-24d;
+    private const double C10 = -3.689471323E-24d;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="ModifiedKrovakProjection"/> class.

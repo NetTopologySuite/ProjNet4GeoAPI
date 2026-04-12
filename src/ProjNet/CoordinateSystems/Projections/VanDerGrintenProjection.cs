@@ -28,7 +28,7 @@ internal sealed class VanDerGrintenProjection : MapProjection
     private const double PiSquared = PI * PI;
     private const double TwoPiSquared = 2d * PiSquared;
     private const double HalfPiSquared = 0.5d * PiSquared;
-    private const double InverseDomainEpsilon = 1e-16;
+    private const double InverseDomainEpsilon = 1e-16d;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="VanDerGrintenProjection"/> class.

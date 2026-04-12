@@ -26,7 +26,7 @@ using ProjNet.CoordinateSystems.Transformations;
 internal sealed class SwissObliqueMercatorProjection : MapProjection
 {
     private const int MaximumIterations = 6;
-    private const double IterationTolerance = 1e-10;
+    private const double IterationTolerance = 1e-10d;
 
     private readonly double c;
     private readonly double reciprocalC;

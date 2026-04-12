@@ -1,4 +1,4 @@
-﻿// SPDX-License-Identifier: LGPL-2.1-or-later
+// SPDX-License-Identifier: LGPL-2.1-or-later
 // SPDX-FileCopyrightText: 2005-2009 Morten Nielsen <www.sharpgis.net>
 // SPDX-FileCopyrightText: 2026 Martin Karing / TKI mbH, Chemnitz, Germany
 
@@ -147,7 +147,7 @@ internal sealed class CassiniSoldnerProjection : MapProjection
     private double Phi1(double arg)
     {
         const int maxIter = 10;
-        const double eps = 1e-11;
+        const double eps = 1e-11d;
 
         double k = 1.0d / (1.0d - this.es);
 

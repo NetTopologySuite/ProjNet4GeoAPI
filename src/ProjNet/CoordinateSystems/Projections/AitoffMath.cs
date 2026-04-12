@@ -11,7 +11,7 @@ using System;
 /// </summary>
 internal static class AitoffMath
 {
-    private const double Tolerance = 1e-12;
+    private const double Tolerance = 1e-12d;
     private const int MaxIterations = 10;
     private const int MaxRounds = 20;
     private const double Pi = Math.PI;

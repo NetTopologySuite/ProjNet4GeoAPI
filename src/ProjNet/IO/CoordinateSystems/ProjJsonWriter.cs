@@ -16,7 +16,7 @@ using ProjNet.CoordinateSystems;
 /// </summary>
 public static class ProjJsonWriter
 {
-    private static readonly AngularUnit ArcSecondUnit = new(4.84813681109535993589914102357e-6, "arc-second", "EPSG", 9104, "arcsec", string.Empty, "=pi/648000 radians.");
+    private static readonly AngularUnit ArcSecondUnit = new(4.84813681109535993589914102357e-6d, "arc-second", "EPSG", 9104, "arcsec", string.Empty, "=pi/648000 radians.");
 
     /// <summary>
     /// Writes a coordinate system to an existing <see cref="Utf8JsonWriter"/>.
@@ -351,7 +351,7 @@ public static class ProjJsonWriter
         writer.WriteString("name", name);
         writer.WriteNumber("value", value);
         writer.WritePropertyName("unit");
-        WriteScaleUnit(writer, "parts per million", 1e-6);
+        WriteScaleUnit(writer, "parts per million", 1e-6d);
         writer.WriteEndObject();
     }
 

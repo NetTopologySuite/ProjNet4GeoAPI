@@ -30,8 +30,8 @@ using ProjNet.CoordinateSystems.Transformations;
 internal class PolarStereographicProjection : MapProjection
 {
     private const int MaximumIterations = 15;
-    private const double IterationTolerance = 1E-14;
-    private const double Eps15 = 1E-15;
+    private const double IterationTolerance = 1E-14d;
+    private const double Eps15 = 1E-15d;
 
     private readonly double globalScale;
     private readonly double reciprocGlobalScale;

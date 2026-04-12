@@ -26,7 +26,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://en.wikipedia.org/wiki/Mollweide_projection">Wikipedia: Mollweide projection.</seealso>
 internal sealed class InterruptedMollweideOceanicProjection : InterruptedMollweideBaseProjection
 {
-    private const double SeamSlack = 1e-10;
+    private const double SeamSlack = 1e-10d;
 
     private static readonly double D10 = DegreesToRadians(10d);
     private static readonly double D20 = DegreesToRadians(20d);

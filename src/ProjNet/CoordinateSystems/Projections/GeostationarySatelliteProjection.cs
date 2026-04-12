@@ -24,7 +24,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://proj.org/en/stable/operations/projections/geos.html">PROJ documentation: Geostationary Satellite View.</seealso>
 internal sealed class GeostationarySatelliteProjection : MapProjection
 {
-    private const double MaximumHeightRatio = 1e10;
+    private const double MaximumHeightRatio = 1e10d;
 
     private readonly bool flipAxis;
     private readonly double radiusP;

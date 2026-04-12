@@ -28,9 +28,9 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 3, Sect. 3.2.2, pp. 102-104.</seealso>
 internal sealed class ObliqueStereographicProjection : MapProjection
 {
-    private const double IterationTolerance = 1E-14;
+    private const double IterationTolerance = 1E-14d;
     private const int MaximumIterations = 15;
-    private const double Epsilon = 1E-6;
+    private const double Epsilon = 1E-6d;
 
     private readonly double globalScale;
     private readonly double reciprocGlobalScale;

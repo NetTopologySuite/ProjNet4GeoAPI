@@ -33,7 +33,7 @@ internal class KrovakProjection : MapProjection
     private const int MaximumIterations = 15;
 
     // When to stop the iteration.
-    private const double IterationTolerance = 1E-11;
+    private const double IterationTolerance = 1E-11d;
 
     private const double DefaultAzimuthDegrees = 30.2881397527778d;
     private const double DefaultPseudoStandardParallelDegrees = 78.5d;

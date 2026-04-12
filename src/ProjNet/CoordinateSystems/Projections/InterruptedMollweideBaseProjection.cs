@@ -32,7 +32,7 @@ internal abstract class InterruptedMollweideBaseProjection : MapProjection
     /// <returns><see langword="true"/> when the coordinate is inside the zone envelope; otherwise <see langword="false"/>.</returns>
     protected static bool IsInZone(int zone, double lambda, double phi, (double MinLambda, double MaxLambda, bool IsNorthernHemisphere)[] zoneEnvelopes)
     {
-        const double seamSlack = 1e-10;
+        const double seamSlack = 1e-10d;
 
         if (zone < 1 || zone > zoneEnvelopes.Length)
         {
@@ -122,7 +122,7 @@ internal abstract class InterruptedMollweideBaseProjection : MapProjection
     /// <returns>Average x-position across both seam sides.</returns>
     protected static double ComputeZoneBoundaryX(IReadOnlyList<MollweideZoneDefinition> zones, Func<double, double, int> determineForwardZone, double lambda, double phi)
     {
-        const double seamSlack = 1e-10;
+        const double seamSlack = 1e-10d;
 
         MollweideForward(zones, determineForwardZone(phi, lambda - seamSlack), lambda - seamSlack, phi, out double x1, out _);
         MollweideForward(zones, determineForwardZone(phi, lambda + seamSlack), lambda + seamSlack, phi, out double x2, out _);

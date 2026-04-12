@@ -34,7 +34,7 @@ using ProjNet.CoordinateSystems.Transformations;
 internal sealed class TransverseMercator : MapProjection
 {
     // Maximum difference allowed when comparing real numbers.
-    private const double EPSILON = 1E-6;
+    private const double EPSILON = 1E-6d;
 
     // A derived quantity of eccentricity, computed by <c>e'² = (a²-b²)/b² = es/(1-es)</c>
     // where <c>a</c> is the semi-major axis length and <c>b</c> is the semi-minor axis

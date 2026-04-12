@@ -26,12 +26,12 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <summary>
     /// Tolerance constant equal to 1e-10, used for near-zero comparisons in projection formulas.
     /// </summary>
-    protected const double Eps10 = 1e-10;
+    protected const double Eps10 = 1e-10d;
 
     /// <summary>
     /// Tolerance constant equal to 1e-7, used for near-zero comparisons in projection formulas.
     /// </summary>
-    protected const double Eps7 = 1e-7;
+    protected const double Eps7 = 1e-7d;
 
     /// <summary>
     /// Sentinel value equal to <see cref="double.NaN"/>, used to signal an undefined or out-of-range projection result.
@@ -76,7 +76,7 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <summary>
     /// Large double constant used as an upper-bound threshold in longitude normalisation.
     /// </summary>
-    protected const double DblLong = 4.61168601e18;
+    protected const double DblLong = 4.61168601e18d;
 
     // Backward-compatible aliases for legacy public API names.
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
@@ -992,7 +992,7 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <returns>The value of the small q function for latitude φ.</returns>
     protected static double Qsfnz(double sinphi, double eccent)
     {
-        if (eccent > 1.0e-7)
+        if (eccent > 1.0e-7d)
         {
             double eccentricitySquared = eccent * eccent;
             double con = eccent * sinphi;
@@ -1175,7 +1175,7 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <returns>The latitude in radians corresponding to meridian distance <paramref name="arg"/>.</returns>
     protected double Inv_mlfn(double arg)
     {
-        const double MLFN_TOL = 1E-11;
+        const double MLFN_TOL = 1E-11d;
         const int MAXIMUM_ITERATIONS = 20;
         double k = 1.0 / (1.0 - this.es);
         double phi = arg;

@@ -19,7 +19,7 @@ internal static class EllipsoidalGeodesic
     /// <summary>
     /// Gets the convergence tolerance used by the shared geodesic helpers.
     /// </summary>
-    internal const double Tolerance = 1e-12;
+    internal const double Tolerance = 1e-12d;
 
     private const int MinJacobiSteps = 512;
     private const int MaxJacobiSteps = 16384;

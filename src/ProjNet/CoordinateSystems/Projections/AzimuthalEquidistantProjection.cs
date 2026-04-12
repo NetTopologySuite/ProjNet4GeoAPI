@@ -33,7 +33,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 3, Sect. 3.2.4, pp. 105-107.</seealso>
 internal sealed class AzimuthalEquidistantProjection : MapProjection
 {
-    private const double PathologicalTolerance = 1e-14;
+    private const double PathologicalTolerance = 1e-14d;
 
     private readonly bool ellipsoidal;
     private readonly bool guam;

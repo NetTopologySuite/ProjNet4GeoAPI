@@ -38,7 +38,7 @@ public sealed class Wgs84ConversionInfo : IEquatable<Wgs84ConversionInfo>
     /// <summary>
     /// Conversion factor from arc-seconds to radians: <c>(π / 180) / 3600</c>.
     /// </summary>
-    private const double SecondsToRadians = 4.84813681109535993589914102357e-6;
+    private const double SecondsToRadians = 4.84813681109535993589914102357e-6d;
 
     /// <summary>
     /// Bursa Wolf shift in meters.

@@ -25,7 +25,7 @@ internal sealed class RobinsonProjection : MapProjection
 {
     private const int Nodes = 18;
     private const int MaxIterations = 100;
-    private const double InverseTolerance = 1e-10;
+    private const double InverseTolerance = 1e-10d;
     private const double OneEps = 1.000001;
     private const double LatitudeBandScale = 11.45915590261646417544;
     private const double FiveDegreesInRadians = 0.08726646259971647884;

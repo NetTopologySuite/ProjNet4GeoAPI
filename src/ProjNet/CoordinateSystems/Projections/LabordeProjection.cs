@@ -20,7 +20,7 @@ using ProjNet.CoordinateSystems.Transformations;
 internal sealed class LabordeProjection : MapProjection
 {
     private const int MaximumIterations = 20;
-    private const double IterationTolerance = 1e-10;
+    private const double IterationTolerance = 1e-10d;
 
     private readonly double kRg;
     private readonly double p0s;

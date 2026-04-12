@@ -52,7 +52,7 @@ internal sealed class NearSidedPerspectiveProjection : MapProjection
     {
         double height = this.Parameters.GetParameterValue("h", "satellite_height");
         this.pn1 = height / this.semiMajor;
-        if (this.pn1 <= 0d || this.pn1 > 1e10)
+        if (this.pn1 <= 0d || this.pn1 > 1e10d)
         {
             ArgumentGuard.ThrowArgument("Invalid value for h.");
         }

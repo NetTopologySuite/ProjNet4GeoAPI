@@ -46,7 +46,7 @@ internal sealed class GeocentricTransform : MathTransform
     /// <summary>
     /// Cosine threshold used to switch to the polar height approximation near the poles.
     /// </summary>
-    private const double PolarCosphiThreshold = 1e-6;
+    private const double PolarCosphiThreshold = 1e-6d;
 
     /// <summary>
     /// Eccentricity squared : (a² - b²)/a².
@@ -274,7 +274,7 @@ internal sealed class GeocentricTransform : MathTransform
 
         if (Math.Abs(height) > 50000d && xPhi > 0d)
         {
-            const double convergenceTolerance = 1e-12;
+            const double convergenceTolerance = 1e-12d;
             for (int i = 0; i < 10; i++)
             {
                 sinPhi = Math.Sin(lat);

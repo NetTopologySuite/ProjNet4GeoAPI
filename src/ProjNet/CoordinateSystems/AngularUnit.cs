@@ -24,7 +24,7 @@ public class AngularUnit : Info, IUnit
     /// <summary>
     /// Equality tolerance value. Values with a difference less than this are considered equal.
     /// </summary>
-    private const double EqualityTolerance = 2.0e-17;
+    private const double EqualityTolerance = 2.0e-17d;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="AngularUnit"/> class.

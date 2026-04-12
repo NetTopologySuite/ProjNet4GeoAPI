@@ -215,7 +215,7 @@ internal sealed class OrthographicProjection : MapProjection
             lam = Math.Atan2(x, -y * Sign(this.latOrigin));
 
             double rh2 = sQ(x_scaled) + sQ(y_scaled);
-            if (rh2 >= 1.0 - 1e-15)
+            if (rh2 >= 1.0 - 1e-15d)
             {
                 if ((rh2 - 1.0) > Eps10)
                 {
@@ -238,13 +238,13 @@ internal sealed class OrthographicProjection : MapProjection
             // (y/a)^2 / ((1 - es)^2 + (y/a)^2 * es) = sinphi^2
 
             // Equation of the ellipse
-            if (sQ(x_scaled) + sQ(y_scaled * (this.semiMajor / this.semiMinor)) > 1 + 1e-11)
+            if (sQ(x_scaled) + sQ(y_scaled * (this.semiMajor / this.semiMinor)) > 1 + 1e-11d)
             {
                 ArgumentGuard.ThrowArgumentOutOfRange($"Point ({x:F3}, {y:F3}) is outside of the projection boundary");
             }
 
             double sinphi2 = sQ(y_scaled) / (sQ(1 - this.es) + (sQ(y_scaled) * this.es));
-            if (sinphi2 > 1 - 1e-11)
+            if (sinphi2 > 1 - 1e-11d)
             {
                 phi = HalfPi * Sign(y_scaled);
                 lam = 0.0;
@@ -253,7 +253,7 @@ internal sealed class OrthographicProjection : MapProjection
             {
                 phi = Math.Asin(Math.Sqrt(sinphi2)) * Sign(y_scaled);
                 double sinlam = x_scaled * Math.Sqrt((1 - (this.es * sinphi2)) / (1 - sinphi2));
-                if (Math.Abs(sinlam) - 1 > -1e-15)
+                if (Math.Abs(sinlam) - 1 > -1e-15d)
                 {
                     lam = HalfPi * Sign(x_scaled);
                 }
@@ -270,7 +270,7 @@ internal sealed class OrthographicProjection : MapProjection
             // substitution games...
             double x_recentered = x;
             double y_recentered = (y - this.yShift) / this.yScale;
-            if (sQ(x_scaled) + sQ(y_scaled) > 1 + 1e-11)
+            if (sQ(x_scaled) + sQ(y_scaled) > 1 + 1e-11d)
             {
                 ArgumentGuard.ThrowArgumentOutOfRange($"Point ({x_scaled:F3}, {y_scaled:F3}) is outside of the projection boundary");
             }

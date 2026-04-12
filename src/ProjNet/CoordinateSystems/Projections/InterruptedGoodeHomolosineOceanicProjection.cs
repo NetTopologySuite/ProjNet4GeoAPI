@@ -27,7 +27,7 @@ using ProjNet.CoordinateSystems.Transformations;
 internal sealed class InterruptedGoodeHomolosineOceanicProjection : MapProjection
 {
     private const int MollweideIterations = 12;
-    private const double SeamSlack = 1e-10;
+    private const double SeamSlack = 1e-10d;
 
     private static readonly double PhiBoundary = DegreesToRadians(40d + (44d / 60d) + (11.8d / 3600d));
 

@@ -13,7 +13,7 @@ using ProjNet.IO.Wkt;
 /// </summary>
 public sealed class DatumEnsemble : IEquatable<DatumEnsemble>
 {
-    private const double EqualityTolerance = 1e-12;
+    private const double EqualityTolerance = 1e-12d;
     private readonly ReadOnlyCollection<DatumEnsembleMember> members;
 
     /// <summary>

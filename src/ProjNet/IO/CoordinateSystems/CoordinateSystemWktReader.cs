@@ -21,7 +21,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </summary>
 public static partial class CoordinateSystemWktReader
 {
-    private const double RadiansPerArcSecond = 4.84813681109535993589914102357e-6;
+    private const double RadiansPerArcSecond = 4.84813681109535993589914102357e-6d;
     private static readonly string[] CompoundCoordinateSystemDelimiters = [",", "]"];
 #if !NET8_0_OR_GREATER
     private static readonly Regex Wkt2IdRegex = new(@"\bID\s*\[(?=\s*"")", RegexOptions.CultureInvariant | RegexOptions.IgnoreCase | RegexOptions.Compiled);
