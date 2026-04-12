@@ -350,6 +350,48 @@ internal static class InfoAuthorityCloneHelper
     }
 
     /// <summary>
+    /// Creates a deep clone of the supplied projection with replacement authority metadata.
+    /// </summary>
+    /// <param name="projection">Projection to clone.</param>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="authorityCode">Replacement authority code.</param>
+    /// <returns>A cloned projection with the requested authority metadata.</returns>
+    internal static Projection CloneWithAuthority(Projection projection, string authority, long authorityCode)
+    {
+        projection = ArgumentGuard.ThrowIfNull(projection, nameof(projection));
+        authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
+        return CloneProjection(projection, authority: authority, authorityCode: authorityCode);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied coordinate operation with replacement authority metadata.
+    /// </summary>
+    /// <param name="coordinateOperation">Coordinate operation to clone.</param>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="authorityCode">Replacement authority code.</param>
+    /// <returns>A cloned coordinate operation with the requested authority metadata.</returns>
+    internal static CoordinateOperation CloneWithAuthority(CoordinateOperation coordinateOperation, string authority, long authorityCode)
+    {
+        coordinateOperation = ArgumentGuard.ThrowIfNull(coordinateOperation, nameof(coordinateOperation));
+        authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
+        return CloneCoordinateOperation(coordinateOperation, authority: authority, authorityCode: authorityCode);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied concatenated operation with replacement authority metadata.
+    /// </summary>
+    /// <param name="concatenatedOperation">Concatenated operation to clone.</param>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="authorityCode">Replacement authority code.</param>
+    /// <returns>A cloned concatenated operation with the requested authority metadata.</returns>
+    internal static ConcatenatedOperation CloneWithAuthority(ConcatenatedOperation concatenatedOperation, string authority, long authorityCode)
+    {
+        concatenatedOperation = ArgumentGuard.ThrowIfNull(concatenatedOperation, nameof(concatenatedOperation));
+        authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
+        return CloneConcatenatedOperation(concatenatedOperation, authority: authority, authorityCode: authorityCode);
+    }
+
+    /// <summary>
     /// Creates a deep clone of the supplied horizontal datum with replacement WGS84 conversion parameters.
     /// </summary>
     /// <param name="horizontalDatum">Datum to clone.</param>
@@ -674,6 +716,45 @@ internal static class InfoAuthorityCloneHelper
         temporalCoordinateSystem = ArgumentGuard.ThrowIfNull(temporalCoordinateSystem, nameof(temporalCoordinateSystem));
         name = ArgumentGuard.ThrowIfNull(name, nameof(name));
         return CloneTemporalCoordinateSystem(temporalCoordinateSystem, name: name);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied projection with a replacement name.
+    /// </summary>
+    /// <param name="projection">Projection to clone.</param>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A cloned projection with the requested name.</returns>
+    internal static Projection CloneWithName(Projection projection, string name)
+    {
+        projection = ArgumentGuard.ThrowIfNull(projection, nameof(projection));
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
+        return CloneProjection(projection, name: name);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied coordinate operation with a replacement name.
+    /// </summary>
+    /// <param name="coordinateOperation">Coordinate operation to clone.</param>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A cloned coordinate operation with the requested name.</returns>
+    internal static CoordinateOperation CloneWithName(CoordinateOperation coordinateOperation, string name)
+    {
+        coordinateOperation = ArgumentGuard.ThrowIfNull(coordinateOperation, nameof(coordinateOperation));
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
+        return CloneCoordinateOperation(coordinateOperation, name: name);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied concatenated operation with a replacement name.
+    /// </summary>
+    /// <param name="concatenatedOperation">Concatenated operation to clone.</param>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A cloned concatenated operation with the requested name.</returns>
+    internal static ConcatenatedOperation CloneWithName(ConcatenatedOperation concatenatedOperation, string name)
+    {
+        concatenatedOperation = ArgumentGuard.ThrowIfNull(concatenatedOperation, nameof(concatenatedOperation));
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
+        return CloneConcatenatedOperation(concatenatedOperation, name: name);
     }
 
     /// <summary>

@@ -72,6 +72,21 @@ public sealed class ConcatenatedOperation : Info
     public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
     /// <summary>
+    /// Creates a copy of this concatenated operation with updated authority metadata.
+    /// </summary>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="code">Replacement authority-specific identification code.</param>
+    /// <returns>A new <see cref="ConcatenatedOperation"/> with updated authority metadata.</returns>
+    public new ConcatenatedOperation WithAuthority(string authority, long code) => InfoAuthorityCloneHelper.CloneWithAuthority(this, authority, code);
+
+    /// <summary>
+    /// Creates a copy of this concatenated operation with an updated name.
+    /// </summary>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A new <see cref="ConcatenatedOperation"/> with the updated name.</returns>
+    public new ConcatenatedOperation WithName(string name) => InfoAuthorityCloneHelper.CloneWithName(this, name);
+
+    /// <summary>
     /// Converts this concatenated operation to a WKT syntax tree node.
     /// </summary>
     /// <returns>A <see cref="WktNode"/> representing this concatenated operation.</returns>

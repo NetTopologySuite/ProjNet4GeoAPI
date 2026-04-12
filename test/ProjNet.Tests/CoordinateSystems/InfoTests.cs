@@ -252,6 +252,36 @@ public class InfoTests
     }
 
     /// <summary>
+    /// Verifies that the typed operation-model <c>WithAuthority</c> overloads return concrete clones without casts.
+    /// </summary>
+    [Fact]
+    public void TypedOperationWithAuthority_ReturnsConcreteClonesWithoutCasts()
+    {
+        Projection projectionClone = CreateTestProjection().WithAuthority("TEST", 4001);
+        CoordinateOperation coordinateOperationClone = CreateTestCoordinateOperation().WithAuthority("TEST", 4002);
+        ConcatenatedOperation concatenatedOperationClone = CreateTestConcatenatedOperation().WithAuthority("TEST", 4003);
+
+        Assert.Equal("TEST", projectionClone.Authority);
+        Assert.Equal(4002, coordinateOperationClone.AuthorityCode);
+        Assert.Equal("TEST", concatenatedOperationClone.Authority);
+    }
+
+    /// <summary>
+    /// Verifies that the typed operation-model <c>WithName</c> overloads return concrete clones without casts.
+    /// </summary>
+    [Fact]
+    public void TypedOperationWithName_ReturnsConcreteClonesWithoutCasts()
+    {
+        Projection projectionClone = CreateTestProjection().WithName("Projection clone");
+        CoordinateOperation coordinateOperationClone = CreateTestCoordinateOperation().WithName("Coordinate operation clone");
+        ConcatenatedOperation concatenatedOperationClone = CreateTestConcatenatedOperation().WithName("Concatenated operation clone");
+
+        Assert.Equal("Projection clone", projectionClone.Name);
+        Assert.Equal("Coordinate operation clone", coordinateOperationClone.Name);
+        Assert.Equal("Concatenated operation clone", concatenatedOperationClone.Name);
+    }
+
+    /// <summary>
     /// Verifies that <see cref="Info.InfoXml"/> includes the supported metadata attributes in the expected order.
     /// </summary>
     [Fact]
@@ -429,6 +459,48 @@ public class InfoTests
             "Temporal axis",
             "EPSG",
             1041,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
+    private static Projection CreateTestProjection()
+    {
+        return new Projection(
+            "Transverse_Mercator",
+            [new ProjectionParameter("latitude_of_origin", 0d)],
+            "Transverse Mercator",
+            "EPSG",
+            9807,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
+    private static CoordinateOperation CreateTestCoordinateOperation(string name = "Test operation")
+    {
+        return new CoordinateOperation(
+            "Axis order reversal",
+            [new Parameter("Order", 1d)],
+            CreateTestGeographicCoordinateSystem("Operation source"),
+            CreateTestGeographicCoordinateSystem("Operation target"),
+            name,
+            "EPSG",
+            9603,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
+    private static ConcatenatedOperation CreateTestConcatenatedOperation()
+    {
+        return new ConcatenatedOperation(
+            [CreateTestCoordinateOperation("Step 1"), CreateTestCoordinateOperation("Step 2")],
+            CreateTestGeographicCoordinateSystem("Concatenated source"),
+            CreateTestGeographicCoordinateSystem("Concatenated target"),
+            "Test concatenated operation",
+            "EPSG",
+            9610,
             string.Empty,
             string.Empty,
             string.Empty);

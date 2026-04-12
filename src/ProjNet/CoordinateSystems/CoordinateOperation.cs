@@ -79,6 +79,21 @@ public sealed class CoordinateOperation : Info
     public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
     /// <summary>
+    /// Creates a copy of this coordinate operation with updated authority metadata.
+    /// </summary>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="code">Replacement authority-specific identification code.</param>
+    /// <returns>A new <see cref="CoordinateOperation"/> with updated authority metadata.</returns>
+    public new CoordinateOperation WithAuthority(string authority, long code) => InfoAuthorityCloneHelper.CloneWithAuthority(this, authority, code);
+
+    /// <summary>
+    /// Creates a copy of this coordinate operation with an updated name.
+    /// </summary>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A new <see cref="CoordinateOperation"/> with the updated name.</returns>
+    public new CoordinateOperation WithName(string name) => InfoAuthorityCloneHelper.CloneWithName(this, name);
+
+    /// <summary>
     /// Converts this coordinate operation to a WKT syntax tree node.
     /// </summary>
     /// <returns>A <see cref="WktNode"/> representing this coordinate operation.</returns>

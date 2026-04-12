@@ -121,6 +121,8 @@ namespace ProjNet.CoordinateSystems
         public ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public System.Xml.Linq.XElement ToXml() { }
+        public new ProjNet.CoordinateSystems.ConcatenatedOperation WithAuthority(string authority, long code) { }
+        public new ProjNet.CoordinateSystems.ConcatenatedOperation WithName(string name) { }
     }
     public sealed class CoordinateOperation : ProjNet.CoordinateSystems.Info
     {
@@ -135,6 +137,8 @@ namespace ProjNet.CoordinateSystems
         public ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public System.Xml.Linq.XElement ToXml() { }
+        public new ProjNet.CoordinateSystems.CoordinateOperation WithAuthority(string authority, long code) { }
+        public new ProjNet.CoordinateSystems.CoordinateOperation WithName(string name) { }
     }
     public abstract class CoordinateSystem : ProjNet.CoordinateSystems.Info
     {
@@ -512,6 +516,8 @@ namespace ProjNet.CoordinateSystems
         public ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public System.Xml.Linq.XElement ToXml() { }
+        public new ProjNet.CoordinateSystems.Projection WithAuthority(string authority, long code) { }
+        public new ProjNet.CoordinateSystems.Projection WithName(string name) { }
     }
     public sealed class ProjectionParameter
     {

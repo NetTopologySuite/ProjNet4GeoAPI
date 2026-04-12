@@ -76,6 +76,21 @@ public class Projection : Info, IProjection
     public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
     /// <summary>
+    /// Creates a copy of this projection with updated authority metadata.
+    /// </summary>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="code">Replacement authority-specific identification code.</param>
+    /// <returns>A new <see cref="Projection"/> with updated authority metadata.</returns>
+    public new Projection WithAuthority(string authority, long code) => InfoAuthorityCloneHelper.CloneWithAuthority(this, authority, code);
+
+    /// <summary>
+    /// Creates a copy of this projection with an updated name.
+    /// </summary>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A new <see cref="Projection"/> with the updated name.</returns>
+    public new Projection WithName(string name) => InfoAuthorityCloneHelper.CloneWithName(this, name);
+
+    /// <summary>
     /// Returns an XML representation of this projection as an <see cref="XElement"/>.
     /// </summary>
     /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
