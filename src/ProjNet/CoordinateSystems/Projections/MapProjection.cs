@@ -434,10 +434,13 @@ public abstract class MapProjection : MathTransform, IProjection
                 sb.Append("INVERSE_MT[");
             }
 
-            sb.AppendFormat(CultureInfo.InvariantCulture, "PARAM_MT[\"{0}\"", this.Name);
+            sb.Append("PARAM_MT[\"");
+            sb.Append(this.Name);
+            sb.Append('"');
             for (int i = 0; i < this.NumParameters; i++)
             {
-                sb.AppendFormat(CultureInfo.InvariantCulture, ", {0}", this.GetParameter(i).WKT);
+                sb.Append(", ");
+                sb.Append(this.GetParameter(i).WKT);
             }
 
             sb.Append(']');

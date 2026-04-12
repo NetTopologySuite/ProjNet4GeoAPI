@@ -6,6 +6,7 @@ namespace ProjNet.Tests;
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Projections;
 using ProjNet.CoordinateSystems.Transformations;
@@ -27,6 +28,21 @@ public class MathTransformInvertibilityTests
 
         Assert.True(projection.IsInvertible);
         Assert.IsAssignableFrom<MathTransform>(projection.Inverse());
+    }
+
+    /// <summary>
+    /// Verifies that Mercator WKT formatting preserves the expected separators while emitting the projection parameters.
+    /// </summary>
+    [Fact]
+    public void MercatorProjectionWkt_FormatsParametersWithExpectedSeparators()
+    {
+        MapProjection projection = Assert.IsAssignableFrom<MapProjection>(
+            ProjectionsRegistry.CreateProjection("mercator", CreateMercatorParameters()));
+        string expected = "PARAM_MT[\"" + projection.Name + "\"" +
+            string.Concat(Enumerable.Range(0, projection.NumParameters).Select(i => ", " + projection.GetParameter(i).WKT)) +
+            "]";
+
+        Assert.Equal(expected, projection.WKT);
     }
 
     /// <summary>
