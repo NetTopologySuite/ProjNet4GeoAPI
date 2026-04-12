@@ -154,11 +154,11 @@ internal sealed class VertOffsetMathTransform : MathTransform
             return false;
         }
 
-        if (!TryGetOptionalDouble(args, "lat_0", 0d, out double lat0, out skipReason)
-            || !TryGetOptionalDouble(args, "lon_0", 0d, out double lon0, out skipReason)
-            || !TryGetOptionalDouble(args, "dh", 0d, out double dh, out skipReason)
-            || !TryGetOptionalDouble(args, "slope_lat", 0d, out double slopeLat, out skipReason)
-            || !TryGetOptionalDouble(args, "slope_lon", 0d, out double slopeLon, out skipReason))
+        if (!SpanParseUtility.TryGetOptionalDouble(args, "lat_0", 0d, out double lat0, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "lon_0", 0d, out double lon0, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "dh", 0d, out double dh, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "slope_lat", 0d, out double slopeLat, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "slope_lon", 0d, out double slopeLon, out skipReason))
         {
             return false;
         }
@@ -196,29 +196,6 @@ internal sealed class VertOffsetMathTransform : MathTransform
         if (args.ContainsKey("inv"))
         {
             transform = transform.Inverse();
-        }
-
-        return true;
-    }
-
-    private static bool TryGetOptionalDouble(
-        Dictionary<string, string> args,
-        string key,
-        double defaultValue,
-        out double value,
-        out string? skipReason)
-    {
-        value = defaultValue;
-        skipReason = null;
-        if (!args.TryGetValue(key, out string? token))
-        {
-            return true;
-        }
-
-        if (!SpanParseUtility.TryParseFiniteDouble(token, out value))
-        {
-            skipReason = $"Invalid value for +{key}.";
-            return false;
         }
 
         return true;

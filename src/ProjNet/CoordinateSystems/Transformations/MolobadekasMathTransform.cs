@@ -196,16 +196,16 @@ internal sealed class MolobadekasMathTransform : MathTransform
             return false;
         }
 
-        if (!TryGetOptionalDouble(args, "x", out double translationX, out skipReason)
-            || !TryGetOptionalDouble(args, "y", out double translationY, out skipReason)
-            || !TryGetOptionalDouble(args, "z", out double translationZ, out skipReason)
-            || !TryGetOptionalDouble(args, "s", out double scalePpm, out skipReason)
-            || !TryGetOptionalDouble(args, "rx", out double rotationXArcSeconds, out skipReason)
-            || !TryGetOptionalDouble(args, "ry", out double rotationYArcSeconds, out skipReason)
-            || !TryGetOptionalDouble(args, "rz", out double rotationZArcSeconds, out skipReason)
-            || !TryGetOptionalDouble(args, "px", out double pivotX, out skipReason)
-            || !TryGetOptionalDouble(args, "py", out double pivotY, out skipReason)
-            || !TryGetOptionalDouble(args, "pz", out double pivotZ, out skipReason))
+        if (!SpanParseUtility.TryGetOptionalDouble(args, "x", out double translationX, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "y", out double translationY, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "z", out double translationZ, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "s", out double scalePpm, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "rx", out double rotationXArcSeconds, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "ry", out double rotationYArcSeconds, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "rz", out double rotationZArcSeconds, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "px", out double pivotX, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "py", out double pivotY, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "pz", out double pivotZ, out skipReason))
         {
             return false;
         }
@@ -308,28 +308,6 @@ internal sealed class MolobadekasMathTransform : MathTransform
                 false)
             : new IdentityMathTransform(3);
         return isInverted ? transform.Inverse() : transform;
-    }
-
-    private static bool TryGetOptionalDouble(
-        Dictionary<string, string> args,
-        string key,
-        out double value,
-        out string? skipReason)
-    {
-        value = 0d;
-        skipReason = null;
-        if (!args.TryGetValue(key, out string? token))
-        {
-            return true;
-        }
-
-        if (!SpanParseUtility.TryParseFiniteDouble(token, out value))
-        {
-            skipReason = $"Invalid value for +{key}.";
-            return false;
-        }
-
-        return true;
     }
 
     private static Matrix3x3 BuildRotationMatrix(Vector3D rotation, bool isPositionVector)

@@ -255,13 +255,6 @@ internal sealed class TopocentricMathTransform : MathTransform
             && SpanParseUtility.TryParseFiniteDouble(token, out value);
     }
 
-    private static bool TryGetOptionalDouble(Dictionary<string, string> args, string key, out double value)
-    {
-        value = 0d;
-        return args.TryGetValue(key, out string? token)
-            && SpanParseUtility.TryParseFiniteDouble(token, out value);
-    }
-
     private void TransformForward(ref double x, ref double y, ref double z)
     {
         double dX = x - this.originX;

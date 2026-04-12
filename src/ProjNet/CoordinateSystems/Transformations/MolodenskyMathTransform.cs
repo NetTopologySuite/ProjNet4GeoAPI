@@ -238,13 +238,6 @@ internal sealed class MolodenskyMathTransform : MathTransform
             && SpanParseUtility.TryParseFiniteDouble(token, out value);
     }
 
-    private static bool TryGetOptionalDouble(Dictionary<string, string> args, string key, out double value)
-    {
-        value = 0d;
-        return args.TryGetValue(key, out string? token)
-            && SpanParseUtility.TryParseFiniteDouble(token, out value);
-    }
-
     private (double DeltaLam, double DeltaPhi, double DeltaH) CalculateStandardDelta(double lam, double phi, double h)
     {
         double sinLam = Math.Sin(lam);

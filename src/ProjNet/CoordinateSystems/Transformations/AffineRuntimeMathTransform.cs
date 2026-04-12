@@ -113,20 +113,20 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
             return false;
         }
 
-        if (!TryGetOptionalDouble(args, "xoff", 0d, out double xOffset, out skipReason)
-            || !TryGetOptionalDouble(args, "yoff", 0d, out double yOffset, out skipReason)
-            || !TryGetOptionalDouble(args, "zoff", 0d, out double zOffset, out skipReason)
-            || !TryGetOptionalDouble(args, "toff", 0d, out double tOffset, out skipReason)
-            || !TryGetOptionalDouble(args, "s11", 1d, out double s11, out skipReason)
-            || !TryGetOptionalDouble(args, "s12", 0d, out double s12, out skipReason)
-            || !TryGetOptionalDouble(args, "s13", 0d, out double s13, out skipReason)
-            || !TryGetOptionalDouble(args, "s21", 0d, out double s21, out skipReason)
-            || !TryGetOptionalDouble(args, "s22", 1d, out double s22, out skipReason)
-            || !TryGetOptionalDouble(args, "s23", 0d, out double s23, out skipReason)
-            || !TryGetOptionalDouble(args, "s31", 0d, out double s31, out skipReason)
-            || !TryGetOptionalDouble(args, "s32", 0d, out double s32, out skipReason)
-            || !TryGetOptionalDouble(args, "s33", 1d, out double s33, out skipReason)
-            || !TryGetOptionalDouble(args, "tscale", 1d, out double tScale, out skipReason))
+        if (!SpanParseUtility.TryGetOptionalDouble(args, "xoff", 0d, out double xOffset, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "yoff", 0d, out double yOffset, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "zoff", 0d, out double zOffset, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "toff", 0d, out double tOffset, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "s11", 1d, out double s11, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "s12", 0d, out double s12, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "s13", 0d, out double s13, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "s21", 0d, out double s21, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "s22", 1d, out double s22, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "s23", 0d, out double s23, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "s31", 0d, out double s31, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "s32", 0d, out double s32, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "s33", 1d, out double s33, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "tscale", 1d, out double tScale, out skipReason))
         {
             return false;
         }
@@ -161,38 +161,6 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
             }
 
             transform = ArgumentGuard.ThrowIfNull(inverseTransformCandidate, nameof(inverseTransformCandidate));
-        }
-
-        return true;
-    }
-
-    /// <summary>
-    /// Tries to read a finite optional double argument.
-    /// </summary>
-    /// <param name="args">Parsed argument dictionary.</param>
-    /// <param name="key">Argument key without leading plus sign.</param>
-    /// <param name="defaultValue">Fallback value when key does not exist.</param>
-    /// <param name="value">Parsed numeric value on success.</param>
-    /// <param name="skipReason">Failure reason when creation is not possible.</param>
-    /// <returns><see langword="true"/> when parsing succeeded or the key is absent.</returns>
-    private static bool TryGetOptionalDouble(
-        Dictionary<string, string> args,
-        string key,
-        double defaultValue,
-        out double value,
-        out string? skipReason)
-    {
-        skipReason = null;
-        value = defaultValue;
-        if (!args.TryGetValue(key, out string? token))
-        {
-            return true;
-        }
-
-        if (!SpanParseUtility.TryParseFiniteDouble(token, out value))
-        {
-            skipReason = $"Invalid value for +{key}.";
-            return false;
         }
 
         return true;

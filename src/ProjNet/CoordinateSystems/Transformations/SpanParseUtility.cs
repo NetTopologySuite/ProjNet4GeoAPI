@@ -4,6 +4,7 @@
 namespace ProjNet.CoordinateSystems.Transformations;
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 
 /// <summary>
@@ -85,6 +86,70 @@ internal static class SpanParseUtility
         value = 0d;
         return !string.IsNullOrWhiteSpace(token)
             && TryParseFiniteDouble(token.AsSpan(), out value);
+    }
+
+    /// <summary>
+    /// Tries to read an optional finite double argument that only matters when present.
+    /// Missing or invalid values both return <see langword="false"/>.
+    /// </summary>
+    /// <param name="args">Parsed argument dictionary.</param>
+    /// <param name="key">Argument key without leading plus sign.</param>
+    /// <param name="value">Receives the parsed numeric value when present and valid.</param>
+    /// <returns><see langword="true"/> when the key exists and contains a finite numeric value.</returns>
+    internal static bool TryGetOptionalDouble(IReadOnlyDictionary<string, string> args, string key, out double value)
+    {
+        value = 0d;
+        return args.TryGetValue(key, out string? token)
+            && TryParseFiniteDouble(token, out value);
+    }
+
+    /// <summary>
+    /// Tries to read an optional finite double argument, defaulting to zero when absent and reporting invalid tokens.
+    /// </summary>
+    /// <param name="args">Parsed argument dictionary.</param>
+    /// <param name="key">Argument key without leading plus sign.</param>
+    /// <param name="value">Parsed numeric value on success.</param>
+    /// <param name="skipReason">Failure reason when parsing is not possible.</param>
+    /// <returns><see langword="true"/> when parsing succeeded or the key is absent.</returns>
+    internal static bool TryGetOptionalDouble(
+        IReadOnlyDictionary<string, string> args,
+        string key,
+        out double value,
+        out string? skipReason)
+    {
+        return TryGetOptionalDouble(args, key, 0d, out value, out skipReason);
+    }
+
+    /// <summary>
+    /// Tries to read an optional finite double argument, using the provided default when the key is absent and reporting invalid tokens.
+    /// </summary>
+    /// <param name="args">Parsed argument dictionary.</param>
+    /// <param name="key">Argument key without leading plus sign.</param>
+    /// <param name="defaultValue">Fallback value when the key does not exist.</param>
+    /// <param name="value">Parsed numeric value on success.</param>
+    /// <param name="skipReason">Failure reason when parsing is not possible.</param>
+    /// <returns><see langword="true"/> when parsing succeeded or the key is absent.</returns>
+    internal static bool TryGetOptionalDouble(
+        IReadOnlyDictionary<string, string> args,
+        string key,
+        double defaultValue,
+        out double value,
+        out string? skipReason)
+    {
+        skipReason = null;
+        value = defaultValue;
+        if (!args.TryGetValue(key, out string? token))
+        {
+            return true;
+        }
+
+        if (!TryParseFiniteDouble(token, out value))
+        {
+            skipReason = $"Invalid value for +{key}.";
+            return false;
+        }
+
+        return true;
     }
 
     private static bool TryParseFiniteDouble(ReadOnlySpan<char> token, out double value)

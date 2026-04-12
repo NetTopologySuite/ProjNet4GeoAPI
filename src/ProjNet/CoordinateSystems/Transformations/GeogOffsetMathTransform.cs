@@ -134,9 +134,9 @@ internal sealed class GeogOffsetMathTransform : MathTransform
             return false;
         }
 
-        if (!TryGetOptionalDouble(args, "dlon", out double dlonArcSeconds, out skipReason)
-            || !TryGetOptionalDouble(args, "dlat", out double dlatArcSeconds, out skipReason)
-            || !TryGetOptionalDouble(args, "dh", out double dhMeters, out skipReason))
+        if (!SpanParseUtility.TryGetOptionalDouble(args, "dlon", out double dlonArcSeconds, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "dlat", out double dlatArcSeconds, out skipReason)
+            || !SpanParseUtility.TryGetOptionalDouble(args, "dh", out double dhMeters, out skipReason))
         {
             return false;
         }
@@ -163,27 +163,5 @@ internal sealed class GeogOffsetMathTransform : MathTransform
             ? new IdentityMathTransform(3)
             : new GeogOffsetMathTransform(longitudeOffsetArcSeconds, latitudeOffsetArcSeconds, heightOffsetMeters, false);
         return isInverted ? transform.Inverse() : transform;
-    }
-
-    private static bool TryGetOptionalDouble(
-        Dictionary<string, string> args,
-        string key,
-        out double value,
-        out string? skipReason)
-    {
-        value = 0d;
-        skipReason = null;
-        if (!args.TryGetValue(key, out string? token))
-        {
-            return true;
-        }
-
-        if (!SpanParseUtility.TryParseFiniteDouble(token, out value))
-        {
-            skipReason = $"Invalid value for +{key}.";
-            return false;
-        }
-
-        return true;
     }
 }
