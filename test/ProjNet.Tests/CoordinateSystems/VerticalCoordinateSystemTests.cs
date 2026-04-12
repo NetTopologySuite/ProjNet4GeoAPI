@@ -85,7 +85,10 @@ public class VerticalCoordinateSystemTests
     {
         VerticalCoordinateSystem odn = VerticalCoordinateSystem.ODN;
 
+        Assert.Equal("m", odn.LinearUnit.Alias);
+        Assert.Equal(string.Empty, odn.LinearUnit.Abbreviation);
         Assert.Equal(1.0, odn.LinearUnit.MetersPerUnit);
+        Assert.True(odn.LinearUnit.EqualParams(LinearUnit.Metre));
     }
 
     /// <summary>

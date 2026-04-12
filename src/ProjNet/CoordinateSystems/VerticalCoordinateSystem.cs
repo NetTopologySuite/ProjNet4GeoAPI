@@ -95,7 +95,7 @@ public class VerticalCoordinateSystem : CoordinateSystem
     /// </summary>
     public static VerticalCoordinateSystem ODN =>
         new(
-            new LinearUnit(1, "metre", "EPSG", 9001, string.Empty, "m", string.Empty),
+            LinearUnit.Metre,
             VerticalDatum.ODN,
             new AxisInfo("Up", AxisOrientationEnum.Up),
             "Newlyn",
