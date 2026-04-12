@@ -933,8 +933,7 @@ public abstract class MapProjection : MathTransform, IProjection
     /// <returns>The normalised longitude in radians, within [-π, π].</returns>
     protected static double Adjust_lon(double x)
     {
-        long count = 0;
-        while (true)
+        for (long count = 0; count <= MaxVal; count++)
         {
             if (Math.Abs(x) <= PI)
             {
@@ -959,12 +958,6 @@ public abstract class MapProjection : MathTransform, IProjection
             else
             {
                 x -= Sign(x) * TwoPi;
-            }
-
-            count++;
-            if (count > MaxVal)
-            {
-                break;
             }
         }
 

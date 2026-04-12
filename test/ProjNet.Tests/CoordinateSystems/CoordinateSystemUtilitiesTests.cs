@@ -124,6 +124,26 @@ public class CoordinateSystemUtilitiesTests
             12);
     }
 
+    /// <summary>
+    /// Verifies that the obsolete <see cref="MapProjection.Adjust_lon"/> helper still normalizes longitudes to [-π, π].
+    /// </summary>
+    [Theory]
+    [InlineData(0d, 0d)]
+    [InlineData(Math.PI, Math.PI)]
+    [InlineData(-Math.PI, -Math.PI)]
+    [InlineData(1.5d * Math.PI, -0.5d * Math.PI)]
+    [InlineData(-1.5d * Math.PI, 0.5d * Math.PI)]
+    [InlineData(2d * Math.PI, 0d)]
+    [InlineData(-2d * Math.PI, 0d)]
+    [InlineData(5d * Math.PI, Math.PI)]
+    [InlineData(-5d * Math.PI, -Math.PI)]
+    [InlineData((20d * Math.PI) + 0.25d, 0.25d)]
+    [InlineData((-20d * Math.PI) - 0.25d, -0.25d)]
+    public void ObsoleteAdjustLon_NormalizesToCanonicalInterval(double longitude, double expected)
+    {
+        Assert.Equal(expected, CompatibilityProjection.ForwardAdjustLon(longitude), 12);
+    }
+
     private sealed class CompatibilityProjection : MapProjection
     {
         internal CompatibilityProjection()
@@ -157,6 +177,13 @@ public class CoordinateSystemUtilitiesTests
         {
 #pragma warning disable CS0618
             return LatitudeToRadians(latitude, edge);
+#pragma warning restore CS0618
+        }
+
+        internal static double ForwardAdjustLon(double longitude)
+        {
+#pragma warning disable CS0618
+            return Adjust_lon(longitude);
 #pragma warning restore CS0618
         }
 
