@@ -54,7 +54,6 @@ internal sealed class CassiniSoldnerProjection : MapProjection
 
     private const int InverseRefinementIterations = 15;
     private const double InverseRefinementTolerance = 1e-12d;
-    private const double InverseJacobianTolerance = 1e-18d;
     private const double InverseFiniteDifferenceStep = 1e-6d;
     private const double InverseStepClamp = 0.3d;
     private const double InversePoleClamp = HalfPi - 1e-10d;
@@ -268,7 +267,7 @@ internal sealed class CassiniSoldnerProjection : MapProjection
         double derivXPhi = (xPhi - approxX) / dPhi;
         double derivYPhi = (yPhi - approxY) / dPhi;
         double det = (derivXLam * derivYPhi) - (derivXPhi * derivYLam);
-        if (Math.Abs(det) <= InverseJacobianTolerance)
+        if (Math.Abs(det) <= ProjectionConstants.JacobianTolerance)
         {
             return false;
         }

@@ -14,7 +14,6 @@ internal static class AitoffMath
     private const double Tolerance = 1e-12;
     private const int MaxIterations = 10;
     private const int MaxRounds = 20;
-    private const double JacobianTolerance = 1e-18;
     private const double Pi = Math.PI;
     private const double HalfPi = 0.5d * Pi;
 
@@ -89,7 +88,7 @@ internal static class AitoffMath
                 }
 
                 double denominator = Math.Pow(c, 1.5d);
-                if (Math.Abs(denominator) <= JacobianTolerance)
+                if (Math.Abs(denominator) <= ProjectionConstants.JacobianTolerance)
                 {
                     ArgumentGuard.ThrowArgument("Input data outside projection domain.");
                 }
@@ -116,7 +115,7 @@ internal static class AitoffMath
                 f2 -= y;
 
                 double determinant = (f1p * f2l) - (f2p * f1l);
-                if (Math.Abs(determinant) <= JacobianTolerance)
+                if (Math.Abs(determinant) <= ProjectionConstants.JacobianTolerance)
                 {
                     ArgumentGuard.ThrowArgument("Input data outside projection domain.");
                 }

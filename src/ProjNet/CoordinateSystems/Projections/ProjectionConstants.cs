@@ -35,6 +35,11 @@ internal static class ProjectionConstants
     internal const double Tolerance1E12 = 1e-12d;
 
     /// <summary>
+    /// Shared 1e-18 tolerance used for Jacobian and determinant singularity checks.
+    /// </summary>
+    internal const double JacobianTolerance = 1e-18d;
+
+    /// <summary>
     /// Clamps <paramref name="value"/> to the inclusive range [<paramref name="minimum"/>, <paramref name="maximum"/>].
     /// </summary>
     /// <param name="value">Input value.</param>

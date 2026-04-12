@@ -22,7 +22,6 @@ internal abstract class AdamsProjectionBase : MapProjection
 {
     private const double Tolerance = 1e-9d;
     private const double InverseTolerance = 1e-10d;
-    private const double JacobianTolerance = 1e-18d;
     private const double FiniteDifferenceStep = 1e-6d;
     private const double StepClamp = 0.3d;
     private const double Rsqrt2 = 0.7071067811865475244008443620d;
@@ -655,7 +654,7 @@ internal abstract class AdamsProjectionBase : MapProjection
         double derivXPhi = (xPhi - approxX) / dPhi;
         double derivYPhi = (yPhi - approxY) / dPhi;
         double det = (derivXLam * derivYPhi) - (derivXPhi * derivYLam);
-        if (Math.Abs(det) <= JacobianTolerance)
+        if (Math.Abs(det) <= ProjectionConstants.JacobianTolerance)
         {
             return false;
         }
