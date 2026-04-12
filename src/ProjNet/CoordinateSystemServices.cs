@@ -325,8 +325,14 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
     /// </summary>
     protected void Clear()
     {
-        this.csBySrid.Clear();
-        this.sridByCs.Clear();
+        lock (((IDictionary)this.csBySrid).SyncRoot)
+        {
+            lock (((IDictionary)this.sridByCs).SyncRoot)
+            {
+                this.csBySrid.Clear();
+                this.sridByCs.Clear();
+            }
+        }
     }
 
     private static CoordinateSystem? CreateCoordinateSystem(CoordinateSystemFactory coordinateSystemFactory, string wkt)
