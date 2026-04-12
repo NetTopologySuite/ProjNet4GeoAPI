@@ -115,10 +115,49 @@ public class CoordinateSystemKeyTests
         Assert.Null(srid);
     }
 
+    /// <summary>
+    /// Verifies that registering and looking up a coordinate system with an authority code larger than <see cref="int.MaxValue"/> does not overflow the lookup hash.
+    /// </summary>
+    [Fact]
+    public void GetSrid_LargeAuthorityCode_DoesNotOverflowHashing()
+    {
+        const long LargeAuthorityCode = (long)int.MaxValue + 12345L;
+        TestCoordinateSystemServices css = CreateMutableServices();
+        GeographicCoordinateSystem coordinateSystem = GeographicCoordinateSystem.WGS84
+            .WithAuthority("TEST", LargeAuthorityCode)
+            .WithName("Large code WGS84");
+
+        css.Register(4326, coordinateSystem);
+
+        Assert.Equal(4326, css.GetSRID("TEST", LargeAuthorityCode));
+        Assert.Same(coordinateSystem, css.GetCoordinateSystem("TEST", LargeAuthorityCode));
+    }
+
     private static CoordinateSystemServices CreateServices()
     {
         return new CoordinateSystemServices(
             new CoordinateSystemFactory(),
             new CoordinateTransformationFactory());
+    }
+
+    private static TestCoordinateSystemServices CreateMutableServices()
+    {
+        return new TestCoordinateSystemServices();
+    }
+
+    private sealed class TestCoordinateSystemServices : CoordinateSystemServices
+    {
+        public TestCoordinateSystemServices()
+            : base(
+                new CoordinateSystemFactory(),
+                new CoordinateTransformationFactory(),
+                [])
+        {
+        }
+
+        public void Register(int srid, CoordinateSystem coordinateSystem)
+        {
+            this.AddCoordinateSystem(srid, coordinateSystem);
+        }
     }
 }

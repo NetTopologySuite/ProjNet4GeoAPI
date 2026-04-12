@@ -465,7 +465,7 @@ public class CoordinateSystemServices // : ICoordinateSystemServices
         {
             return obj is null
                 ? 0
-                : Convert.ToInt32(obj.AuthorityCode) + (obj.Authority is not null ? StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Authority) : 0);
+                : obj.AuthorityCode.GetHashCode() + (obj.Authority is not null ? StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Authority) : 0);
         }
     }
 
