@@ -73,8 +73,7 @@ internal sealed class NearSidedPerspectiveProjection : MapProjection
         else
         {
             this.mode = Mode.Obliq;
-            this.sinph0 = Math.Sin(this.latOrigin);
-            this.cosph0 = Math.Cos(this.latOrigin);
+            Sincos(this.latOrigin, out this.sinph0, out this.cosph0);
         }
 
         bool hasTilt = this.Parameters.ContainsKey("tilt");

@@ -117,7 +117,8 @@ internal sealed class TransverseMercator : MapProjection
         this.AuthorityCode = 9807;
 
         this.esp = this.es / (1.0 - this.es);
-        this.ml0 = this.Mlfn(this.latOrigin, Math.Sin(this.latOrigin), Math.Cos(this.latOrigin));
+        Sincos(this.latOrigin, out double sinLatitudeOrigin, out double cosLatitudeOrigin);
+        this.ml0 = this.Mlfn(this.latOrigin, sinLatitudeOrigin, cosLatitudeOrigin);
 
         this.reciprocSemiMajor = 1 / this.semiMajor;
     }

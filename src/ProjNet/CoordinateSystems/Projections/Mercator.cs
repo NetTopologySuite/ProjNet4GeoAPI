@@ -81,7 +81,8 @@ internal class Mercator : MapProjection
         // This is a two standard parallel Mercator projection (2SP).
         if (scaleFactor is null)
         {
-            this.k0 = Math.Cos(this.latOrigin) / Math.Sqrt(1.0 - (this.es * Math.Sin(this.latOrigin) * Math.Sin(this.latOrigin)));
+            Sincos(this.latOrigin, out double sinLatitudeOrigin, out double cosLatitudeOrigin);
+            this.k0 = cosLatitudeOrigin / Math.Sqrt(1.0 - (this.es * sinLatitudeOrigin * sinLatitudeOrigin));
             this.AuthorityCode = 9805;
             this.Name = "Mercator_2SP";
         }

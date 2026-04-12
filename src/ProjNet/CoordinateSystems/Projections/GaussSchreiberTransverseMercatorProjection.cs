@@ -46,8 +46,7 @@ internal sealed class GaussSchreiberTransverseMercatorProjection : MapProjection
     {
         this.Name = "Gauss_Schreiber_Transverse_Mercator";
 
-        double cosPhi0 = Math.Cos(this.latOrigin);
-        double sinPhi0 = Math.Sin(this.latOrigin);
+        Sincos(this.latOrigin, out double sinPhi0, out double cosPhi0);
         double cosPhi0Pow4 = cosPhi0 * cosPhi0;
         cosPhi0Pow4 *= cosPhi0Pow4;
 

@@ -62,8 +62,8 @@ internal sealed class LambertConformalConicAlternativeProjection : MapProjection
             ArgumentGuard.ThrowArgument("Invalid value for lat_0: it should be different from 0.");
         }
 
-        this.l = Math.Sin(this.latOrigin);
-        this.m0 = this.Mlfn(this.latOrigin, Math.Sin(this.latOrigin), Math.Cos(this.latOrigin));
+        Sincos(this.latOrigin, out this.l, out double cosLatitudeOrigin);
+        this.m0 = this.Mlfn(this.latOrigin, this.l, cosLatitudeOrigin);
 
         double s2p0 = this.l * this.l;
         double r = 1d / (1d - (this.es * s2p0));

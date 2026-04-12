@@ -75,8 +75,7 @@ internal sealed class ObliqueStereographicProjection : MapProjection
         this.globalScale = this.scaleFactor * this.semiMajor;
         this.reciprocGlobalScale = 1 / this.globalScale;
 
-        double sinLatitudeOrigin = Math.Sin(this.latOrigin);
-        double cosLatitudeOrigin = Math.Cos(this.latOrigin);
+        Sincos(this.latOrigin, out double sinLatitudeOrigin, out double cosLatitudeOrigin);
         double cosLatitudeOriginSquared = cosLatitudeOrigin * cosLatitudeOrigin;
         this.r2 = 2.0 * Math.Sqrt(1 - this.es) / (1 - (this.es * sinLatitudeOrigin * sinLatitudeOrigin));
         this.c = Math.Sqrt(1.0 + (this.es * cosLatitudeOriginSquared * cosLatitudeOriginSquared / (1.0 - this.es)));

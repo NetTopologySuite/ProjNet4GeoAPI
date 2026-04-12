@@ -85,7 +85,8 @@ internal sealed class EquidistantConicProjection : MapProjection
             }
 
             this.g = ml1 + (m1 / this.n);
-            this.rho0 = this.g - this.Mlfn(this.latOrigin, Math.Sin(this.latOrigin), Math.Cos(this.latOrigin));
+            Sincos(this.latOrigin, out double sinLatitudeOrigin, out double cosLatitudeOrigin);
+            this.rho0 = this.g - this.Mlfn(this.latOrigin, sinLatitudeOrigin, cosLatitudeOrigin);
         }
         else
         {

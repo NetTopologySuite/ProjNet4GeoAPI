@@ -90,7 +90,8 @@ internal sealed class CassiniSoldnerProjection : MapProjection
         this.Name = "Cassini_Soldner";
 
         this.cFactor = this.es / (1 - this.es);
-        this.m0 = this.Mlfn(this.latOrigin, Math.Sin(this.latOrigin), Math.Cos(this.latOrigin));
+        Sincos(this.latOrigin, out double sinLatitudeOrigin, out double cosLatitudeOrigin);
+        this.m0 = this.Mlfn(this.latOrigin, sinLatitudeOrigin, cosLatitudeOrigin);
         this.reciprocalSemiMajor = 1d / this.semiMajor;
         this.hyperbolic = Math.Abs(this.Parameters.GetOptionalParameterValue("hyperbolic", 0d)) > 0d;
     }

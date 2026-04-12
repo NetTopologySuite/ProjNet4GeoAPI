@@ -66,7 +66,8 @@ internal sealed class EquidistantCylindricalProjection : MapProjection
             double sinStandardParallel = Math.Sin(standardParallel);
             double nu1 = 1d / Math.Sqrt(1d - (this.es * sinStandardParallel * sinStandardParallel));
             this.longitudeScale = nu1 * cosStandardParallel;
-            this.meridionalDistanceAtOrigin = this.Mlfn(this.latOrigin, Math.Sin(this.latOrigin), Math.Cos(this.latOrigin));
+            Sincos(this.latOrigin, out double sinLatitudeOrigin, out double cosLatitudeOrigin);
+            this.meridionalDistanceAtOrigin = this.Mlfn(this.latOrigin, sinLatitudeOrigin, cosLatitudeOrigin);
             return;
         }
 

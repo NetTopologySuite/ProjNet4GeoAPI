@@ -62,8 +62,7 @@ internal sealed class OblatedEqualAreaProjection : MapProjection
         }
 
         this.theta = DegreesToRadians(this.Parameters.GetOptionalParameterValue("theta", 0d));
-        this.sp0 = Math.Sin(this.latOrigin);
-        this.cp0 = Math.Cos(this.latOrigin);
+        Sincos(this.latOrigin, out this.sp0, out this.cp0);
         this.rn = 1d / this.n;
         this.rm = 1d / this.m;
         this.twoRN = 2d * this.rn;

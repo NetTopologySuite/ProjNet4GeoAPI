@@ -54,8 +54,9 @@ internal sealed class ObliqueCylindricalEqualAreaProjection : MapProjection
         {
             double alpha = PI + DegreesToRadians(this.Parameters.GetOptionalParameterValue("alpha", this.Parameters.GetOptionalParameterValue("azimuth", 0d)));
             double lonc = DegreesToRadians(this.Parameters.GetParameterValue("lonc", "longitude_of_center"));
-            lamP = Math.Atan2(-Math.Cos(alpha), -Math.Sin(this.latOrigin) * Math.Sin(alpha)) + lonc;
-            phiP = Asinz(Math.Cos(this.latOrigin) * Math.Sin(alpha));
+            Sincos(this.latOrigin, out double sinLatitudeOrigin, out double cosLatitudeOrigin);
+            lamP = Math.Atan2(-Math.Cos(alpha), -sinLatitudeOrigin * Math.Sin(alpha)) + lonc;
+            phiP = Asinz(cosLatitudeOrigin * Math.Sin(alpha));
         }
         else
         {

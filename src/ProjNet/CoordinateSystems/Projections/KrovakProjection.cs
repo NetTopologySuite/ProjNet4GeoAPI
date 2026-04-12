@@ -106,8 +106,7 @@ internal class KrovakProjection : MapProjection
         this.n = Math.Sin(this.pseudoStandardParallel);
         this.tanS2 = Math.Tan((this.pseudoStandardParallel / 2) + FortPi);
 
-        double sinLatitudeOrigin = Math.Sin(this.latOrigin);
-        double cosLatitudeOrigin = Math.Cos(this.latOrigin);
+        Sincos(this.latOrigin, out double sinLatitudeOrigin, out double cosLatitudeOrigin);
         double cosLatitudeOriginSquared = cosLatitudeOrigin * cosLatitudeOrigin;
         this.alfa = Math.Sqrt(1 + ((this.es * (cosLatitudeOriginSquared * cosLatitudeOriginSquared)) / (1 - this.es))); // parameter B
         this.hae = this.alfa * this.e / 2;

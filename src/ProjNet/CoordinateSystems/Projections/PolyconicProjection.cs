@@ -69,7 +69,8 @@ internal sealed class PolyconicProjection : MapProjection
     {
         this.Name = "Polyconic";
 
-        this.ml0 = this.Mlfn(this.latOrigin, Math.Sin(this.latOrigin), Math.Cos(this.latOrigin));
+        Sincos(this.latOrigin, out double sinLatitudeOrigin, out double cosLatitudeOrigin);
+        this.ml0 = this.Mlfn(this.latOrigin, sinLatitudeOrigin, cosLatitudeOrigin);
         this.reciprocSemiMajorTimesScaleFactor = 1 / (this.semiMajor * this.scaleFactor);
     }
 

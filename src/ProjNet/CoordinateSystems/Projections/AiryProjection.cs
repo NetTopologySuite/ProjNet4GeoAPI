@@ -77,8 +77,7 @@ internal sealed class AiryProjection : MapProjection
         else
         {
             this.mode = Mode.Oblique;
-            this.sinPhi0 = Math.Sin(this.latOrigin);
-            this.cosPhi0 = Math.Cos(this.latOrigin);
+            Sincos(this.latOrigin, out this.sinPhi0, out this.cosPhi0);
             this.pHalfPi = 0d;
         }
     }

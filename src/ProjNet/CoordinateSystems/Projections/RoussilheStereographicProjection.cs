@@ -80,8 +80,8 @@ internal sealed class RoussilheStereographicProjection : MapProjection
     {
         this.Name = "Roussilhe_Stereographic";
 
-        double sinPhi0 = Math.Sin(this.latOrigin);
-        this.s0 = this.Mlfn(this.latOrigin, sinPhi0, Math.Cos(this.latOrigin));
+        Sincos(this.latOrigin, out double sinPhi0, out double cosPhi0);
+        this.s0 = this.Mlfn(this.latOrigin, sinPhi0, cosPhi0);
         double es2 = this.es * sinPhi0 * sinPhi0;
         double t = 1d - es2;
         double n0 = 1d / Math.Sqrt(t);

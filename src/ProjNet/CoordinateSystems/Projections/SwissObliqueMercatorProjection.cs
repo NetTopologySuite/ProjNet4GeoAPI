@@ -66,12 +66,11 @@ internal sealed class SwissObliqueMercatorProjection : MapProjection
         this.reciprocalOneMinusEs = 1d / oneMinusEs;
         this.halfE = 0.5d * this.e;
 
-        double cosPhi0 = Math.Cos(this.latOrigin);
+        Sincos(this.latOrigin, out double sinPhi0, out double cosPhi0);
         double cosPhi0Squared = cosPhi0 * cosPhi0;
         this.c = Math.Sqrt(1d + ((this.es * cosPhi0Squared * cosPhi0Squared) * this.reciprocalOneMinusEs));
         this.reciprocalC = 1d / this.c;
 
-        double sinPhi0 = Math.Sin(this.latOrigin);
         this.sinP0 = sinPhi0 / this.c;
         double phiPrime0 = Asinz(this.sinP0);
         this.cosP0 = Math.Cos(phiPrime0);
