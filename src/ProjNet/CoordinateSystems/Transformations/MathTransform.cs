@@ -59,6 +59,11 @@ public abstract class MathTransform
     public abstract string XML { get; }
 
     /// <summary>
+    /// Gets a value indicating whether <see cref="Inverse"/> can return a usable inverse transform.
+    /// </summary>
+    public virtual bool IsInvertible => true;
+
+    /// <summary>
     /// Tests whether this transform does not move any points.
     /// </summary>
     /// <returns><see langword="true"/> when the transform is an identity; otherwise <see langword="false"/>.</returns>
