@@ -117,6 +117,21 @@ public class VerticalCoordinateSystem : CoordinateSystem
     internal VerticalBoundGridTransformation? BoundGridTransformation { get; }
 
     /// <summary>
+    /// Creates a copy of this coordinate system with updated authority metadata.
+    /// </summary>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="code">Replacement authority-specific identification code.</param>
+    /// <returns>A new <see cref="VerticalCoordinateSystem"/> with updated authority metadata.</returns>
+    public new VerticalCoordinateSystem WithAuthority(string authority, long code) => InfoAuthorityCloneHelper.CloneWithAuthority(this, authority, code);
+
+    /// <summary>
+    /// Creates a copy of this coordinate system with an updated name.
+    /// </summary>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A new <see cref="VerticalCoordinateSystem"/> with the updated name.</returns>
+    public new VerticalCoordinateSystem WithName(string name) => InfoAuthorityCloneHelper.CloneWithName(this, name);
+
+    /// <summary>
     /// Returns an XML representation of this vertical coordinate system as an <see cref="XElement"/>.
     /// </summary>
     /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>

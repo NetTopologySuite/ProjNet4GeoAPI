@@ -85,6 +85,21 @@ public class BoundCoordinateSystem : CoordinateSystem
     /// <inheritdoc />
     public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
+    /// <summary>
+    /// Creates a copy of this coordinate system with updated authority metadata.
+    /// </summary>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="code">Replacement authority-specific identification code.</param>
+    /// <returns>A new <see cref="BoundCoordinateSystem"/> with updated authority metadata.</returns>
+    public new BoundCoordinateSystem WithAuthority(string authority, long code) => InfoAuthorityCloneHelper.CloneWithAuthority(this, authority, code);
+
+    /// <summary>
+    /// Creates a copy of this coordinate system with an updated name.
+    /// </summary>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A new <see cref="BoundCoordinateSystem"/> with the updated name.</returns>
+    public new BoundCoordinateSystem WithName(string name) => InfoAuthorityCloneHelper.CloneWithName(this, name);
+
     /// <inheritdoc />
     public override XElement ToXml() => this.SourceCoordinateSystem.ToXml();
 

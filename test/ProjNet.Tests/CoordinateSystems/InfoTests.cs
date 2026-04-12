@@ -6,6 +6,7 @@ namespace ProjNet.Tests;
 using System;
 using System.Xml.Linq;
 using ProjNet.CoordinateSystems;
+using ProjNet.CoordinateSystems.Transformations;
 using Xunit;
 
 /// <summary>
@@ -193,6 +194,64 @@ public class InfoTests
     }
 
     /// <summary>
+    /// Verifies that the typed coordinate-system <c>WithAuthority</c> overloads return concrete clones without casts.
+    /// </summary>
+    [Fact]
+    public void TypedCoordinateSystemWithAuthority_ReturnsConcreteClonesWithoutCasts()
+    {
+        GeographicCoordinateSystem geographicClone = GeographicCoordinateSystem.WGS84.WithAuthority("TEST", 3001);
+        ProjectedCoordinateSystem projectedClone = ProjectedCoordinateSystem.WebMercator.WithAuthority("TEST", 3002);
+        GeocentricCoordinateSystem geocentricClone = GeocentricCoordinateSystem.WGS84.WithAuthority("TEST", 3003);
+        VerticalCoordinateSystem verticalClone = VerticalCoordinateSystem.ODN.WithAuthority("TEST", 3004);
+        CompoundCoordinateSystem compoundClone = CreateTestCompoundCoordinateSystem().WithAuthority("TEST", 3005);
+        BoundCoordinateSystem boundClone = CreateTestBoundCoordinateSystem().WithAuthority("TEST", 3006);
+        FittedCoordinateSystem fittedClone = CreateTestFittedCoordinateSystem().WithAuthority("TEST", 3007);
+        EngineeringCoordinateSystem engineeringClone = CreateTestEngineeringCoordinateSystem().WithAuthority("TEST", 3008);
+        ParametricCoordinateSystem parametricClone = CreateTestParametricCoordinateSystem().WithAuthority("TEST", 3009);
+        TemporalCoordinateSystem temporalClone = CreateTestTemporalCoordinateSystem().WithAuthority("TEST", 3010);
+
+        Assert.Equal("TEST", geographicClone.Authority);
+        Assert.Equal(3002, projectedClone.AuthorityCode);
+        Assert.Equal("TEST", geocentricClone.Authority);
+        Assert.Equal(3004, verticalClone.AuthorityCode);
+        Assert.Equal("TEST", compoundClone.Authority);
+        Assert.Equal(3006, boundClone.AuthorityCode);
+        Assert.Equal("TEST", fittedClone.Authority);
+        Assert.Equal(3008, engineeringClone.AuthorityCode);
+        Assert.Equal("TEST", parametricClone.Authority);
+        Assert.Equal(3010, temporalClone.AuthorityCode);
+    }
+
+    /// <summary>
+    /// Verifies that the typed coordinate-system <c>WithName</c> overloads return concrete clones without casts.
+    /// </summary>
+    [Fact]
+    public void TypedCoordinateSystemWithName_ReturnsConcreteClonesWithoutCasts()
+    {
+        GeographicCoordinateSystem geographicClone = GeographicCoordinateSystem.WGS84.WithName("Geographic clone");
+        ProjectedCoordinateSystem projectedClone = ProjectedCoordinateSystem.WebMercator.WithName("Projected clone");
+        GeocentricCoordinateSystem geocentricClone = GeocentricCoordinateSystem.WGS84.WithName("Geocentric clone");
+        VerticalCoordinateSystem verticalClone = VerticalCoordinateSystem.ODN.WithName("Vertical clone");
+        CompoundCoordinateSystem compoundClone = CreateTestCompoundCoordinateSystem().WithName("Compound clone");
+        BoundCoordinateSystem boundClone = CreateTestBoundCoordinateSystem().WithName("Bound clone");
+        FittedCoordinateSystem fittedClone = CreateTestFittedCoordinateSystem().WithName("Fitted clone");
+        EngineeringCoordinateSystem engineeringClone = CreateTestEngineeringCoordinateSystem().WithName("Engineering clone");
+        ParametricCoordinateSystem parametricClone = CreateTestParametricCoordinateSystem().WithName("Parametric clone");
+        TemporalCoordinateSystem temporalClone = CreateTestTemporalCoordinateSystem().WithName("Temporal clone");
+
+        Assert.Equal("Geographic clone", geographicClone.Name);
+        Assert.Equal("Projected clone", projectedClone.Name);
+        Assert.Equal("Geocentric clone", geocentricClone.Name);
+        Assert.Equal("Vertical clone", verticalClone.Name);
+        Assert.Equal("Compound clone", compoundClone.Name);
+        Assert.Equal("Bound clone", boundClone.Name);
+        Assert.Equal("Fitted clone", fittedClone.Name);
+        Assert.Equal("Engineering clone", engineeringClone.Name);
+        Assert.Equal("Parametric clone", parametricClone.Name);
+        Assert.Equal("Temporal clone", temporalClone.Name);
+    }
+
+    /// <summary>
     /// Verifies that <see cref="Info.InfoXml"/> includes the supported metadata attributes in the expected order.
     /// </summary>
     [Fact]
@@ -290,6 +349,104 @@ public class InfoTests
             ellipsoid,
             "TEST",
             1);
+    }
+
+    private static CompoundCoordinateSystem CreateTestCompoundCoordinateSystem()
+    {
+        return new CompoundCoordinateSystem(
+            GeographicCoordinateSystem.WGS84,
+            VerticalCoordinateSystem.ODN,
+            "Custom compound",
+            "EPSG",
+            9900,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
+    private static BoundCoordinateSystem CreateTestBoundCoordinateSystem()
+    {
+        return new BoundCoordinateSystem(
+            CreateTestGeographicCoordinateSystem("Source"),
+            GeographicCoordinateSystem.WGS84,
+            new BoundTransformation("Geocentric translations", new Wgs84ConversionInfo(1, 2, 3, 0, 0, 0, 0)),
+            "Bound source",
+            "EPSG",
+            9901,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
+    private static FittedCoordinateSystem CreateTestFittedCoordinateSystem()
+    {
+        return new FittedCoordinateSystem(
+            CreateTestGeographicCoordinateSystem("Base geographic"),
+            new AffineTransform(1, 0, 10, 0, 1, 20),
+            "Custom fitted",
+            "EPSG",
+            9902,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
+    private static EngineeringCoordinateSystem CreateTestEngineeringCoordinateSystem()
+    {
+        return new EngineeringCoordinateSystem(
+            new EngineeringDatum("Local plant", "EPSG", 1098, string.Empty, string.Empty, string.Empty),
+            "Cartesian",
+            [new AxisInfo("x", AxisOrientationEnum.East), new AxisInfo("y", AxisOrientationEnum.North)],
+            [LinearUnit.Metre, LinearUnit.Metre],
+            "Plant grid",
+            "EPSG",
+            5800,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
+    private static ParametricCoordinateSystem CreateTestParametricCoordinateSystem()
+    {
+        return new ParametricCoordinateSystem(
+            new ParametricUnit(0.1d, "pressure", "EPSG", 0, string.Empty, string.Empty, string.Empty),
+            new ParametricDatum("Reservoir datum", "EPSG", 0, string.Empty, string.Empty, string.Empty),
+            new AxisInfo("pressure", AxisOrientationEnum.Up),
+            "Reservoir pressure",
+            "EPSG",
+            0,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
+    private static TemporalCoordinateSystem CreateTestTemporalCoordinateSystem()
+    {
+        return new TemporalCoordinateSystem(
+            new TimeUnit(1d, "second", "EPSG", 1040, string.Empty, string.Empty, string.Empty),
+            new TemporalDatum("1950-01-01T00:00:00Z", "Unix epoch", "EPSG", 1040, string.Empty, string.Empty, string.Empty),
+            new AxisInfo("time", AxisOrientationEnum.Other),
+            "Temporal axis",
+            "EPSG",
+            1041,
+            string.Empty,
+            string.Empty,
+            string.Empty);
+    }
+
+    private static GeographicCoordinateSystem CreateTestGeographicCoordinateSystem(string name)
+    {
+        return new GeographicCoordinateSystem(
+            AngularUnit.Degrees,
+            HorizontalDatum.WGS84,
+            PrimeMeridian.Greenwich,
+            [new AxisInfo("Lon", AxisOrientationEnum.East), new AxisInfo("Lat", AxisOrientationEnum.North)],
+            name,
+            "EPSG",
+            4326,
+            string.Empty,
+            string.Empty,
+            string.Empty);
     }
 
     private sealed class TestInfo : Info

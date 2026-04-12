@@ -210,6 +210,146 @@ internal static class InfoAuthorityCloneHelper
     }
 
     /// <summary>
+    /// Creates a deep clone of the supplied geographic coordinate system with replacement authority metadata.
+    /// </summary>
+    /// <param name="geographicCoordinateSystem">Coordinate system to clone.</param>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="authorityCode">Replacement authority code.</param>
+    /// <returns>A cloned geographic coordinate system with the requested authority metadata.</returns>
+    internal static GeographicCoordinateSystem CloneWithAuthority(GeographicCoordinateSystem geographicCoordinateSystem, string authority, long authorityCode)
+    {
+        geographicCoordinateSystem = ArgumentGuard.ThrowIfNull(geographicCoordinateSystem, nameof(geographicCoordinateSystem));
+        authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
+        return CloneGeographicCoordinateSystem(geographicCoordinateSystem, authority: authority, authorityCode: authorityCode);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied projected coordinate system with replacement authority metadata.
+    /// </summary>
+    /// <param name="projectedCoordinateSystem">Coordinate system to clone.</param>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="authorityCode">Replacement authority code.</param>
+    /// <returns>A cloned projected coordinate system with the requested authority metadata.</returns>
+    internal static ProjectedCoordinateSystem CloneWithAuthority(ProjectedCoordinateSystem projectedCoordinateSystem, string authority, long authorityCode)
+    {
+        projectedCoordinateSystem = ArgumentGuard.ThrowIfNull(projectedCoordinateSystem, nameof(projectedCoordinateSystem));
+        authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
+        return CloneProjectedCoordinateSystem(projectedCoordinateSystem, authority: authority, authorityCode: authorityCode);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied geocentric coordinate system with replacement authority metadata.
+    /// </summary>
+    /// <param name="geocentricCoordinateSystem">Coordinate system to clone.</param>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="authorityCode">Replacement authority code.</param>
+    /// <returns>A cloned geocentric coordinate system with the requested authority metadata.</returns>
+    internal static GeocentricCoordinateSystem CloneWithAuthority(GeocentricCoordinateSystem geocentricCoordinateSystem, string authority, long authorityCode)
+    {
+        geocentricCoordinateSystem = ArgumentGuard.ThrowIfNull(geocentricCoordinateSystem, nameof(geocentricCoordinateSystem));
+        authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
+        return CloneGeocentricCoordinateSystem(geocentricCoordinateSystem, authority: authority, authorityCode: authorityCode);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied vertical coordinate system with replacement authority metadata.
+    /// </summary>
+    /// <param name="verticalCoordinateSystem">Coordinate system to clone.</param>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="authorityCode">Replacement authority code.</param>
+    /// <returns>A cloned vertical coordinate system with the requested authority metadata.</returns>
+    internal static VerticalCoordinateSystem CloneWithAuthority(VerticalCoordinateSystem verticalCoordinateSystem, string authority, long authorityCode)
+    {
+        verticalCoordinateSystem = ArgumentGuard.ThrowIfNull(verticalCoordinateSystem, nameof(verticalCoordinateSystem));
+        authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
+        return CloneVerticalCoordinateSystem(verticalCoordinateSystem, authority: authority, authorityCode: authorityCode);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied compound coordinate system with replacement authority metadata.
+    /// </summary>
+    /// <param name="compoundCoordinateSystem">Coordinate system to clone.</param>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="authorityCode">Replacement authority code.</param>
+    /// <returns>A cloned compound coordinate system with the requested authority metadata.</returns>
+    internal static CompoundCoordinateSystem CloneWithAuthority(CompoundCoordinateSystem compoundCoordinateSystem, string authority, long authorityCode)
+    {
+        compoundCoordinateSystem = ArgumentGuard.ThrowIfNull(compoundCoordinateSystem, nameof(compoundCoordinateSystem));
+        authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
+        return CloneCompoundCoordinateSystem(compoundCoordinateSystem, authority: authority, authorityCode: authorityCode);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied bound coordinate system with replacement authority metadata.
+    /// </summary>
+    /// <param name="boundCoordinateSystem">Coordinate system to clone.</param>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="authorityCode">Replacement authority code.</param>
+    /// <returns>A cloned bound coordinate system with the requested authority metadata.</returns>
+    internal static BoundCoordinateSystem CloneWithAuthority(BoundCoordinateSystem boundCoordinateSystem, string authority, long authorityCode)
+    {
+        boundCoordinateSystem = ArgumentGuard.ThrowIfNull(boundCoordinateSystem, nameof(boundCoordinateSystem));
+        authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
+        return CloneBoundCoordinateSystem(boundCoordinateSystem, authority: authority, authorityCode: authorityCode);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied fitted coordinate system with replacement authority metadata.
+    /// </summary>
+    /// <param name="fittedCoordinateSystem">Coordinate system to clone.</param>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="authorityCode">Replacement authority code.</param>
+    /// <returns>A cloned fitted coordinate system with the requested authority metadata.</returns>
+    internal static FittedCoordinateSystem CloneWithAuthority(FittedCoordinateSystem fittedCoordinateSystem, string authority, long authorityCode)
+    {
+        fittedCoordinateSystem = ArgumentGuard.ThrowIfNull(fittedCoordinateSystem, nameof(fittedCoordinateSystem));
+        authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
+        return CloneFittedCoordinateSystem(fittedCoordinateSystem, authority: authority, authorityCode: authorityCode);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied engineering coordinate system with replacement authority metadata.
+    /// </summary>
+    /// <param name="engineeringCoordinateSystem">Coordinate system to clone.</param>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="authorityCode">Replacement authority code.</param>
+    /// <returns>A cloned engineering coordinate system with the requested authority metadata.</returns>
+    internal static EngineeringCoordinateSystem CloneWithAuthority(EngineeringCoordinateSystem engineeringCoordinateSystem, string authority, long authorityCode)
+    {
+        engineeringCoordinateSystem = ArgumentGuard.ThrowIfNull(engineeringCoordinateSystem, nameof(engineeringCoordinateSystem));
+        authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
+        return CloneEngineeringCoordinateSystem(engineeringCoordinateSystem, authority: authority, authorityCode: authorityCode);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied parametric coordinate system with replacement authority metadata.
+    /// </summary>
+    /// <param name="parametricCoordinateSystem">Coordinate system to clone.</param>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="authorityCode">Replacement authority code.</param>
+    /// <returns>A cloned parametric coordinate system with the requested authority metadata.</returns>
+    internal static ParametricCoordinateSystem CloneWithAuthority(ParametricCoordinateSystem parametricCoordinateSystem, string authority, long authorityCode)
+    {
+        parametricCoordinateSystem = ArgumentGuard.ThrowIfNull(parametricCoordinateSystem, nameof(parametricCoordinateSystem));
+        authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
+        return CloneParametricCoordinateSystem(parametricCoordinateSystem, authority: authority, authorityCode: authorityCode);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied temporal coordinate system with replacement authority metadata.
+    /// </summary>
+    /// <param name="temporalCoordinateSystem">Coordinate system to clone.</param>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="authorityCode">Replacement authority code.</param>
+    /// <returns>A cloned temporal coordinate system with the requested authority metadata.</returns>
+    internal static TemporalCoordinateSystem CloneWithAuthority(TemporalCoordinateSystem temporalCoordinateSystem, string authority, long authorityCode)
+    {
+        temporalCoordinateSystem = ArgumentGuard.ThrowIfNull(temporalCoordinateSystem, nameof(temporalCoordinateSystem));
+        authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
+        return CloneTemporalCoordinateSystem(temporalCoordinateSystem, authority: authority, authorityCode: authorityCode);
+    }
+
+    /// <summary>
     /// Creates a deep clone of the supplied horizontal datum with replacement WGS84 conversion parameters.
     /// </summary>
     /// <param name="horizontalDatum">Datum to clone.</param>
@@ -404,6 +544,136 @@ internal static class InfoAuthorityCloneHelper
         temporalDatum = ArgumentGuard.ThrowIfNull(temporalDatum, nameof(temporalDatum));
         name = ArgumentGuard.ThrowIfNull(name, nameof(name));
         return CloneTemporalDatum(temporalDatum, name: name);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied geographic coordinate system with a replacement name.
+    /// </summary>
+    /// <param name="geographicCoordinateSystem">Coordinate system to clone.</param>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A cloned geographic coordinate system with the requested name.</returns>
+    internal static GeographicCoordinateSystem CloneWithName(GeographicCoordinateSystem geographicCoordinateSystem, string name)
+    {
+        geographicCoordinateSystem = ArgumentGuard.ThrowIfNull(geographicCoordinateSystem, nameof(geographicCoordinateSystem));
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
+        return CloneGeographicCoordinateSystem(geographicCoordinateSystem, name: name);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied projected coordinate system with a replacement name.
+    /// </summary>
+    /// <param name="projectedCoordinateSystem">Coordinate system to clone.</param>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A cloned projected coordinate system with the requested name.</returns>
+    internal static ProjectedCoordinateSystem CloneWithName(ProjectedCoordinateSystem projectedCoordinateSystem, string name)
+    {
+        projectedCoordinateSystem = ArgumentGuard.ThrowIfNull(projectedCoordinateSystem, nameof(projectedCoordinateSystem));
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
+        return CloneProjectedCoordinateSystem(projectedCoordinateSystem, name: name);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied geocentric coordinate system with a replacement name.
+    /// </summary>
+    /// <param name="geocentricCoordinateSystem">Coordinate system to clone.</param>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A cloned geocentric coordinate system with the requested name.</returns>
+    internal static GeocentricCoordinateSystem CloneWithName(GeocentricCoordinateSystem geocentricCoordinateSystem, string name)
+    {
+        geocentricCoordinateSystem = ArgumentGuard.ThrowIfNull(geocentricCoordinateSystem, nameof(geocentricCoordinateSystem));
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
+        return CloneGeocentricCoordinateSystem(geocentricCoordinateSystem, name: name);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied vertical coordinate system with a replacement name.
+    /// </summary>
+    /// <param name="verticalCoordinateSystem">Coordinate system to clone.</param>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A cloned vertical coordinate system with the requested name.</returns>
+    internal static VerticalCoordinateSystem CloneWithName(VerticalCoordinateSystem verticalCoordinateSystem, string name)
+    {
+        verticalCoordinateSystem = ArgumentGuard.ThrowIfNull(verticalCoordinateSystem, nameof(verticalCoordinateSystem));
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
+        return CloneVerticalCoordinateSystem(verticalCoordinateSystem, name: name);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied compound coordinate system with a replacement name.
+    /// </summary>
+    /// <param name="compoundCoordinateSystem">Coordinate system to clone.</param>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A cloned compound coordinate system with the requested name.</returns>
+    internal static CompoundCoordinateSystem CloneWithName(CompoundCoordinateSystem compoundCoordinateSystem, string name)
+    {
+        compoundCoordinateSystem = ArgumentGuard.ThrowIfNull(compoundCoordinateSystem, nameof(compoundCoordinateSystem));
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
+        return CloneCompoundCoordinateSystem(compoundCoordinateSystem, name: name);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied bound coordinate system with a replacement name.
+    /// </summary>
+    /// <param name="boundCoordinateSystem">Coordinate system to clone.</param>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A cloned bound coordinate system with the requested name.</returns>
+    internal static BoundCoordinateSystem CloneWithName(BoundCoordinateSystem boundCoordinateSystem, string name)
+    {
+        boundCoordinateSystem = ArgumentGuard.ThrowIfNull(boundCoordinateSystem, nameof(boundCoordinateSystem));
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
+        return CloneBoundCoordinateSystem(boundCoordinateSystem, name: name);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied fitted coordinate system with a replacement name.
+    /// </summary>
+    /// <param name="fittedCoordinateSystem">Coordinate system to clone.</param>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A cloned fitted coordinate system with the requested name.</returns>
+    internal static FittedCoordinateSystem CloneWithName(FittedCoordinateSystem fittedCoordinateSystem, string name)
+    {
+        fittedCoordinateSystem = ArgumentGuard.ThrowIfNull(fittedCoordinateSystem, nameof(fittedCoordinateSystem));
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
+        return CloneFittedCoordinateSystem(fittedCoordinateSystem, name: name);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied engineering coordinate system with a replacement name.
+    /// </summary>
+    /// <param name="engineeringCoordinateSystem">Coordinate system to clone.</param>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A cloned engineering coordinate system with the requested name.</returns>
+    internal static EngineeringCoordinateSystem CloneWithName(EngineeringCoordinateSystem engineeringCoordinateSystem, string name)
+    {
+        engineeringCoordinateSystem = ArgumentGuard.ThrowIfNull(engineeringCoordinateSystem, nameof(engineeringCoordinateSystem));
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
+        return CloneEngineeringCoordinateSystem(engineeringCoordinateSystem, name: name);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied parametric coordinate system with a replacement name.
+    /// </summary>
+    /// <param name="parametricCoordinateSystem">Coordinate system to clone.</param>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A cloned parametric coordinate system with the requested name.</returns>
+    internal static ParametricCoordinateSystem CloneWithName(ParametricCoordinateSystem parametricCoordinateSystem, string name)
+    {
+        parametricCoordinateSystem = ArgumentGuard.ThrowIfNull(parametricCoordinateSystem, nameof(parametricCoordinateSystem));
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
+        return CloneParametricCoordinateSystem(parametricCoordinateSystem, name: name);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied temporal coordinate system with a replacement name.
+    /// </summary>
+    /// <param name="temporalCoordinateSystem">Coordinate system to clone.</param>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A cloned temporal coordinate system with the requested name.</returns>
+    internal static TemporalCoordinateSystem CloneWithName(TemporalCoordinateSystem temporalCoordinateSystem, string name)
+    {
+        temporalCoordinateSystem = ArgumentGuard.ThrowIfNull(temporalCoordinateSystem, nameof(temporalCoordinateSystem));
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
+        return CloneTemporalCoordinateSystem(temporalCoordinateSystem, name: name);
     }
 
     /// <summary>

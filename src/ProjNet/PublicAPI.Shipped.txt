@@ -78,6 +78,8 @@ namespace ProjNet.CoordinateSystems
         public override ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public override ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public override System.Xml.Linq.XElement ToXml() { }
+        public new ProjNet.CoordinateSystems.BoundCoordinateSystem WithAuthority(string authority, long code) { }
+        public new ProjNet.CoordinateSystems.BoundCoordinateSystem WithName(string name) { }
     }
     public sealed class BoundTransformation : System.IEquatable<ProjNet.CoordinateSystems.BoundTransformation>
     {
@@ -104,6 +106,8 @@ namespace ProjNet.CoordinateSystems
         public override ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public override ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public override System.Xml.Linq.XElement ToXml() { }
+        public new ProjNet.CoordinateSystems.CompoundCoordinateSystem WithAuthority(string authority, long code) { }
+        public new ProjNet.CoordinateSystems.CompoundCoordinateSystem WithName(string name) { }
     }
     public sealed class ConcatenatedOperation : ProjNet.CoordinateSystems.Info
     {
@@ -265,6 +269,8 @@ namespace ProjNet.CoordinateSystems
         public override ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public override ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public override System.Xml.Linq.XElement ToXml() { }
+        public new ProjNet.CoordinateSystems.EngineeringCoordinateSystem WithAuthority(string authority, long code) { }
+        public new ProjNet.CoordinateSystems.EngineeringCoordinateSystem WithName(string name) { }
     }
     public sealed class EngineeringDatum : ProjNet.CoordinateSystems.Datum
     {
@@ -292,6 +298,8 @@ namespace ProjNet.CoordinateSystems
         public override ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public override ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public override System.Xml.Linq.XElement ToXml() { }
+        public new ProjNet.CoordinateSystems.FittedCoordinateSystem WithAuthority(string authority, long code) { }
+        public new ProjNet.CoordinateSystems.FittedCoordinateSystem WithName(string name) { }
     }
     public class GeocentricCoordinateSystem : ProjNet.CoordinateSystems.CoordinateSystem
     {
@@ -306,6 +314,8 @@ namespace ProjNet.CoordinateSystems
         public override ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public override ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public override System.Xml.Linq.XElement ToXml() { }
+        public new ProjNet.CoordinateSystems.GeocentricCoordinateSystem WithAuthority(string authority, long code) { }
+        public new ProjNet.CoordinateSystems.GeocentricCoordinateSystem WithName(string name) { }
     }
     public class GeographicCoordinateSystem : ProjNet.CoordinateSystems.HorizontalCoordinateSystem
     {
@@ -321,6 +331,8 @@ namespace ProjNet.CoordinateSystems
         public override ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public override ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public override System.Xml.Linq.XElement ToXml() { }
+        public new ProjNet.CoordinateSystems.GeographicCoordinateSystem WithAuthority(string authority, long code) { }
+        public new ProjNet.CoordinateSystems.GeographicCoordinateSystem WithName(string name) { }
     }
     public abstract class HorizontalCoordinateSystem : ProjNet.CoordinateSystems.CoordinateSystem
     {
@@ -416,6 +428,8 @@ namespace ProjNet.CoordinateSystems
         public override ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public override ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public override System.Xml.Linq.XElement ToXml() { }
+        public new ProjNet.CoordinateSystems.ParametricCoordinateSystem WithAuthority(string authority, long code) { }
+        public new ProjNet.CoordinateSystems.ParametricCoordinateSystem WithName(string name) { }
     }
     public sealed class ParametricDatum : ProjNet.CoordinateSystems.Datum
     {
@@ -482,6 +496,8 @@ namespace ProjNet.CoordinateSystems
         public override ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public override ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public override System.Xml.Linq.XElement ToXml() { }
+        public new ProjNet.CoordinateSystems.ProjectedCoordinateSystem WithAuthority(string authority, long code) { }
+        public new ProjNet.CoordinateSystems.ProjectedCoordinateSystem WithName(string name) { }
         public static ProjNet.CoordinateSystems.ProjectedCoordinateSystem WGS84_UTM(int zone, bool zoneIsNorth) { }
     }
     public class Projection : ProjNet.CoordinateSystems.Info, ProjNet.CoordinateSystems.IInfo, ProjNet.CoordinateSystems.IProjection
@@ -521,6 +537,8 @@ namespace ProjNet.CoordinateSystems
         public override ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public override ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public override System.Xml.Linq.XElement ToXml() { }
+        public new ProjNet.CoordinateSystems.TemporalCoordinateSystem WithAuthority(string authority, long code) { }
+        public new ProjNet.CoordinateSystems.TemporalCoordinateSystem WithName(string name) { }
     }
     public sealed class TemporalDatum : ProjNet.CoordinateSystems.Datum
     {
@@ -571,6 +589,8 @@ namespace ProjNet.CoordinateSystems
         public override ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public override ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public override System.Xml.Linq.XElement ToXml() { }
+        public new ProjNet.CoordinateSystems.VerticalCoordinateSystem WithAuthority(string authority, long code) { }
+        public new ProjNet.CoordinateSystems.VerticalCoordinateSystem WithName(string name) { }
     }
     public class VerticalDatum : ProjNet.CoordinateSystems.Datum
     {
