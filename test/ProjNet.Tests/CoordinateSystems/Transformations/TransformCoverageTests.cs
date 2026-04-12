@@ -246,11 +246,11 @@ public class TransformCoverageTests
     /// Prime meridian transforms reject mixed angular units.
     /// </summary>
     [Fact]
-    public void PrimeMeridianTransformWithDifferentAngularUnitsThrowsNotImplementedException()
+    public void PrimeMeridianTransformWithDifferentAngularUnitsThrowsNotSupportedException()
     {
         var gradMeridian = new PrimeMeridian(2.5969213, AngularUnit.Grad, "Paris grad", "TEST", 1, string.Empty, string.Empty, string.Empty);
 
-        Assert.Throws<NotImplementedException>(() => new PrimeMeridianTransform(PrimeMeridian.Greenwich, gradMeridian));
+        Assert.Throws<NotSupportedException>(() => new PrimeMeridianTransform(PrimeMeridian.Greenwich, gradMeridian));
     }
 
     /// <summary>

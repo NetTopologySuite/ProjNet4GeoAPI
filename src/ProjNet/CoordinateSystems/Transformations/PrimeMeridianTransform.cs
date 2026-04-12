@@ -36,7 +36,7 @@ internal sealed class PrimeMeridianTransform : MathTransform
     {
         if (!source.AngularUnit.EqualParams(target.AngularUnit))
         {
-            throw new NotImplementedException("The method or operation is not implemented.");
+            throw new NotSupportedException("Prime meridian transformation requires matching angular units.");
         }
 
         this.source = source;
@@ -47,10 +47,7 @@ internal sealed class PrimeMeridianTransform : MathTransform
     /// <summary>
     /// Gets a Well-Known Text representation of this prime meridian transformation.
     /// </summary>
-    public override string WKT
-    {
-        get { throw new NotImplementedException("The method or operation is not implemented."); }
-    }
+    public override string WKT => throw new NotImplementedException("The method or operation is not implemented.");
 
     /// <summary>
     /// Gets an XML representation of this prime meridian transformation.

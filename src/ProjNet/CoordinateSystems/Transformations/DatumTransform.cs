@@ -51,10 +51,7 @@ internal sealed class DatumTransform : MathTransform
     /// <summary>
     /// Gets a Well-Known Text representation of this object.
     /// </summary>
-    public override string WKT
-    {
-        get { throw new NotImplementedException(); }
-    }
+    public override string WKT => throw new NotImplementedException();
 
     /// <summary>
     /// Gets an XML representation of this object.

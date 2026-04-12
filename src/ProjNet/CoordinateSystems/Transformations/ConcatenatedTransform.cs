@@ -74,19 +74,13 @@ internal sealed class ConcatenatedTransform : MathTransform, ICoordinateTransfor
     /// Gets a Well-Known Text representation of this object.
     /// </summary>
     /// <value>The value.</value>
-    public override string WKT
-    {
-        get { throw new NotImplementedException(); }
-    }
+    public override string WKT => throw new NotImplementedException();
 
     /// <summary>
     /// Gets an XML representation of this object.
     /// </summary>
     /// <value>The value.</value>
-    public override string XML
-    {
-        get { throw new NotImplementedException(); }
-    }
+    public override string XML => throw new NotImplementedException();
 
     /// <inheritdoc />
     public override void Transform(ref double x, ref double y, ref double z)
