@@ -41,6 +41,27 @@ public class CoordinateSystemServicesClearTests
     }
 
     /// <summary>
+    /// Verifies that clearing the registry allows the same SRID and authority code to be registered again without stale lookup state.
+    /// </summary>
+    [Fact]
+    public void Clear_AllowsReRegisteringCoordinateSystemWithSameAuthorityCode()
+    {
+        var services = new TestCoordinateSystemServices();
+        GeographicCoordinateSystem replacement = GeographicCoordinateSystem.WGS84
+            .WithName("Replacement WGS84")
+            .WithAuthority("EPSG", 4326);
+
+        services.Register(4326, GeographicCoordinateSystem.WGS84);
+        services.ClearRegistry();
+        services.Register(4326, replacement);
+
+        Assert.Same(replacement, services.GetCoordinateSystem(4326));
+        Assert.Same(replacement, services.GetCoordinateSystem("EPSG", 4326));
+        Assert.Equal(4326, services.GetSRID("EPSG", 4326));
+        Assert.Equal(1, services.RegisteredCount);
+    }
+
+    /// <summary>
     /// Verifies that clearing the registry uses the same lock as registration updates.
     /// </summary>
     /// <returns>A task that completes after the lock-observation assertion finishes.</returns>
