@@ -176,6 +176,37 @@ Several legacy `protected static` helpers that older custom projections sometime
 
 If you own custom projections, the safest migration is usually to rename direct PascalCase replacements first (`Phi2z`, `Sign`, `Msfnz`), then do a small manual rewrite for the removed coefficient/cube helpers.
 
+### 9. Updating manual `CoordinateSystemServices` enumeration
+
+`CoordinateSystemServices.GetEnumerator()` now returns `IEnumerator<CoordinateSystemEntry>` instead of
+`IEnumerator<KeyValuePair<int, CoordinateSystem>>`.
+
+This only affects code that explicitly stores or types the enumerator/current item. Plain `foreach`
+usage continues to work, but the item type is now `CoordinateSystemEntry` with named `Srid` and
+`CoordinateSystem` properties.
+
+**Before**
+
+```csharp
+IEnumerator<KeyValuePair<int, CoordinateSystem>> enumerator = services.GetEnumerator();
+while (enumerator.MoveNext())
+{
+    KeyValuePair<int, CoordinateSystem> current = enumerator.Current;
+    Console.WriteLine($"{current.Key}: {current.Value.Name}");
+}
+```
+
+**After**
+
+```csharp
+IEnumerator<CoordinateSystemEntry> enumerator = services.GetEnumerator();
+while (enumerator.MoveNext())
+{
+    CoordinateSystemEntry current = enumerator.Current;
+    Console.WriteLine($"{current.Srid}: {current.CoordinateSystem.Name}");
+}
+```
+
 ## Important note about return types
 
 `WithAuthority(...)` and `WithName(...)` are declared on `Info`, and `WithEnsemble(...)` is declared on `Datum`. They preserve the **concrete runtime type**, but their declared return types are the base types:
