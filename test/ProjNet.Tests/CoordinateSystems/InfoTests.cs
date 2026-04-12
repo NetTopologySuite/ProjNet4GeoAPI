@@ -282,6 +282,34 @@ public class InfoTests
     }
 
     /// <summary>
+    /// Verifies that base-typed <see cref="Info.WithAuthority"/> callers still use the generic fallback dispatch.
+    /// </summary>
+    [Fact]
+    public void InfoWithAuthority_OnBaseTypedReference_UsesFallbackDispatch()
+    {
+        Info info = CreateTestBoundCoordinateSystem();
+
+        Info clone = info.WithAuthority("TEST", 5001);
+
+        BoundCoordinateSystem typedClone = Assert.IsType<BoundCoordinateSystem>(clone);
+        Assert.Equal("TEST", typedClone.Authority);
+        Assert.Equal(5001, typedClone.AuthorityCode);
+    }
+
+    /// <summary>
+    /// Verifies that base-typed <see cref="Info.WithName"/> callers still use the generic fallback dispatch.
+    /// </summary>
+    [Fact]
+    public void InfoWithName_OnBaseTypedReference_UsesFallbackDispatch()
+    {
+        Info info = CreateTestConcatenatedOperation();
+
+        Info clone = info.WithName("Fallback clone");
+
+        Assert.Equal("Fallback clone", Assert.IsType<ConcatenatedOperation>(clone).Name);
+    }
+
+    /// <summary>
     /// Verifies that <see cref="Info.InfoXml"/> includes the supported metadata attributes in the expected order.
     /// </summary>
     [Fact]

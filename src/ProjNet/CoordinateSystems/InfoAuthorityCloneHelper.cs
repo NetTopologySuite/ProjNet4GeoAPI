@@ -9,11 +9,14 @@ using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
 /// Rebuilds immutable info-backed model objects while replacing their top-level authority metadata.
+/// Typed overloads back the concrete <c>With*</c> APIs, while the generic <see cref="Info"/> overloads remain
+/// the fallback for callers that only hold a base-typed reference.
 /// </summary>
 internal static class InfoAuthorityCloneHelper
 {
     /// <summary>
     /// Creates a deep clone of the supplied info-backed model object with replacement authority metadata.
+    /// This generic entry point remains the fallback for base-typed <see cref="Info"/> callers.
     /// </summary>
     /// <param name="info">Object to clone.</param>
     /// <param name="authority">Replacement authority name.</param>
@@ -405,6 +408,7 @@ internal static class InfoAuthorityCloneHelper
 
     /// <summary>
     /// Creates a deep clone of the supplied info-backed model object with a replacement name.
+    /// This generic entry point remains the fallback for base-typed <see cref="Info"/> callers.
     /// </summary>
     /// <param name="info">Object to clone.</param>
     /// <param name="name">Replacement name.</param>
