@@ -166,6 +166,27 @@ public class CompositeMathTransformTests
     }
 
     /// <summary>
+    /// Verifies that in-place inversion can reverse immutable child transforms by using <see cref="MathTransform.Inverse"/>.
+    /// </summary>
+    [Fact]
+    public void Invert_UsesInverseForImmutableChildren()
+    {
+        var composite = new CompositeMathTransform(
+        [
+            new ImmutableOffsetMathTransform(10.0),
+            new ImmutableOffsetMathTransform(5.0),
+        ]);
+
+        composite.Invert();
+
+        double x = 15.0, y = 15.0, z = 0.0;
+        composite.Transform(ref x, ref y, ref z);
+
+        Assert.Equal(0.0, x, 12);
+        Assert.Equal(0.0, y, 12);
+    }
+
+    /// <summary>
     /// Verifies that WKT throws <see cref="NotImplementedException"/>.
     /// </summary>
     [Fact]
@@ -219,6 +240,47 @@ public class CompositeMathTransformTests
 
         /// <inheritdoc/>
         public override void Invert() => this.offset = -this.offset;
+
+        /// <inheritdoc/>
+        public override void Transform(ref double x, ref double y, ref double z)
+        {
+            x += this.offset;
+            y += this.offset;
+        }
+    }
+
+    /// <summary>
+    /// A simple immutable test double that offsets X and Y by a fixed amount.
+    /// </summary>
+    private sealed class ImmutableOffsetMathTransform : MathTransform
+    {
+        private readonly double offset;
+
+        public ImmutableOffsetMathTransform(double offset)
+        {
+            this.offset = offset;
+        }
+
+        /// <inheritdoc/>
+        public override int DimSource => 2;
+
+        /// <inheritdoc/>
+        public override int DimTarget => 2;
+
+        /// <inheritdoc/>
+        public override string WKT => throw new NotImplementedException();
+
+        /// <inheritdoc/>
+        public override string XML => throw new NotImplementedException();
+
+        /// <inheritdoc/>
+        public override bool Identity() => this.offset == 0d;
+
+        /// <inheritdoc/>
+        public override MathTransform Inverse() => new ImmutableOffsetMathTransform(-this.offset);
+
+        /// <inheritdoc/>
+        public override void Invert() => throw new NotSupportedException();
 
         /// <inheritdoc/>
         public override void Transform(ref double x, ref double y, ref double z)

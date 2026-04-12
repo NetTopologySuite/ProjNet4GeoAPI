@@ -96,7 +96,7 @@ internal sealed class CompositeMathTransform : MathTransform
         Array.Reverse(this.transforms);
         for (int i = 0; i < this.transforms.Length; i++)
         {
-            this.transforms[i].Invert();
+            this.transforms[i] = this.transforms[i].Inverse();
         }
 
         this.inverse = null;
