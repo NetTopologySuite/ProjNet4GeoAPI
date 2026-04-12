@@ -162,6 +162,20 @@ If you previously inherited from them, switch to composition instead:
 
 The practical v3 rule is: **treat these runtime/container types as finished building blocks, not inheritance extension points**.
 
+### 8. Replacing removed `MapProjection` protected helpers
+
+Several legacy `protected static` helpers that older custom projections sometimes called directly are no longer part of the v3 surface.
+
+| Removed helper | v3 replacement |
+| --- | --- |
+| `phi2z(...)` | use `Phi2z(...)` |
+| `sign(...)` | use `Sign(...)` |
+| `msfnz(...)` | use `Msfnz(...)` |
+| `e0fn(...)` / `e1fn(...)` / `e2fn(...)` / `e3fn(...)` / `e4fn(...)` | use the precomputed meridional-series fields already maintained by `MapProjection` (`en0` … `en4`) together with `Mlfn(...)`, or copy the coefficient math locally if you were computing them outside a projection instance |
+| `CUBE(x)` | replace with the direct expression `x * x * x` or a local helper in your own derived type |
+
+If you own custom projections, the safest migration is usually to rename direct PascalCase replacements first (`Phi2z`, `Sign`, `Msfnz`), then do a small manual rewrite for the removed coefficient/cube helpers.
+
 ## Important note about return types
 
 `WithAuthority(...)` and `WithName(...)` are declared on `Info`, and `WithEnsemble(...)` is declared on `Datum`. They preserve the **concrete runtime type**, but their declared return types are the base types:
