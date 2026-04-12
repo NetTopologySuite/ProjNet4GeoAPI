@@ -46,7 +46,7 @@ public class InfoTests
     public void WithAuthority_ReturnsCloneWithUpdatedAuthorityMetadata()
     {
         LinearUnit original = LinearUnit.Metre;
-        LinearUnit clone = Assert.IsType<LinearUnit>(original.WithAuthority("TEST", 1234));
+        LinearUnit clone = original.WithAuthority("TEST", 1234);
 
         Assert.Equal("TEST", clone.Authority);
         Assert.Equal(1234, clone.AuthorityCode);
@@ -63,7 +63,7 @@ public class InfoTests
     public void WithName_ReturnsCloneWithUpdatedName()
     {
         LinearUnit original = LinearUnit.Metre;
-        LinearUnit clone = Assert.IsType<LinearUnit>(original.WithName("Meter"));
+        LinearUnit clone = original.WithName("Meter");
 
         Assert.Equal("Meter", clone.Name);
         Assert.Equal("metre", original.Name);

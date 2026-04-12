@@ -34,7 +34,7 @@ public class CoordinateOperationTests
     public void CoordinateOperation_WithAuthority_ReturnsUpdatedClone()
     {
         CoordinateOperation original = CreateCoordinateOperation("Axis swap");
-        CoordinateOperation clone = Assert.IsType<CoordinateOperation>(original.WithAuthority("EPSG", 9603));
+        CoordinateOperation clone = original.WithAuthority("EPSG", 9603);
 
         Assert.Equal("EPSG", clone.Authority);
         Assert.Equal(9603, clone.AuthorityCode);
@@ -80,7 +80,7 @@ public class CoordinateOperationTests
     public void ConcatenatedOperation_WithAuthority_ReturnsUpdatedClone()
     {
         ConcatenatedOperation original = CreateConcatenatedOperation();
-        ConcatenatedOperation clone = Assert.IsType<ConcatenatedOperation>(original.WithAuthority("EPSG", 9604));
+        ConcatenatedOperation clone = original.WithAuthority("EPSG", 9604);
 
         Assert.Equal("EPSG", clone.Authority);
         Assert.Equal(9604, clone.AuthorityCode);

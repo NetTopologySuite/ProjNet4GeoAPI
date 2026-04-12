@@ -160,7 +160,7 @@ public class ProjectedCoordinateSystemTests
     public void WithAuthority_ReturnsProjectedCloneWithUpdatedAuthorityMetadata()
     {
         ProjectedCoordinateSystem original = CreateSystem(authority: "TEST", authorityCode: 7);
-        ProjectedCoordinateSystem clone = Assert.IsType<ProjectedCoordinateSystem>(original.WithAuthority("EPSG", 32632));
+        ProjectedCoordinateSystem clone = original.WithAuthority("EPSG", 32632);
 
         Assert.Equal("EPSG", clone.Authority);
         Assert.Equal(32632, clone.AuthorityCode);
@@ -180,7 +180,7 @@ public class ProjectedCoordinateSystemTests
     public void WithName_ReturnsProjectedCloneWithUpdatedName()
     {
         ProjectedCoordinateSystem original = CreateSystem(name: "Custom projected");
-        ProjectedCoordinateSystem clone = Assert.IsType<ProjectedCoordinateSystem>(original.WithName("Renamed projected"));
+        ProjectedCoordinateSystem clone = original.WithName("Renamed projected");
 
         Assert.Equal("Renamed projected", clone.Name);
         Assert.Equal("Custom projected", original.Name);

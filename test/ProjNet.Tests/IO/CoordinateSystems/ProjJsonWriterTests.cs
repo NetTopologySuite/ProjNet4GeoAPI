@@ -795,9 +795,9 @@ public class ProjJsonWriterTests
             HorizontalDatum.WGS84.Ellipsoid,
             "EPSG",
             6326);
-        HorizontalDatum datum = Assert.IsType<HorizontalDatum>(
-            Assert.IsType<HorizontalDatum>(HorizontalDatum.WGS84.WithName("World Geodetic System 1984 ensemble"))
-                .WithEnsemble(ensemble));
+        HorizontalDatum datum = HorizontalDatum.WGS84
+            .WithName("World Geodetic System 1984 ensemble")
+            .WithEnsemble(ensemble);
 
         GeographicCoordinateSystem geographic = CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "WGS 84",
@@ -806,7 +806,7 @@ public class ProjJsonWriterTests
             PrimeMeridian.Greenwich,
             new AxisInfo("Geodetic latitude", AxisOrientationEnum.North),
             new AxisInfo("Geodetic longitude", AxisOrientationEnum.East));
-        return Assert.IsType<GeographicCoordinateSystem>(geographic.WithAuthority("EPSG", 4326));
+        return geographic.WithAuthority("EPSG", 4326);
     }
 
     private static ProjectedCoordinateSystem CreateEnsembleBackedProjectedCoordinateSystem()

@@ -464,17 +464,17 @@ public class OperationResolutionEngineTests
 
     private static ProjectedCoordinateSystem WithAuthority(ProjectedCoordinateSystem coordinateSystem, string authority, long authorityCode)
     {
-        return Assert.IsType<ProjectedCoordinateSystem>(coordinateSystem.WithAuthority(authority, authorityCode));
+        return coordinateSystem.WithAuthority(authority, authorityCode);
     }
 
     private static GeographicCoordinateSystem WithAuthority(GeographicCoordinateSystem coordinateSystem, string authority, long authorityCode)
     {
-        return Assert.IsType<GeographicCoordinateSystem>(coordinateSystem.WithAuthority(authority, authorityCode));
+        return coordinateSystem.WithAuthority(authority, authorityCode);
     }
 
     private static GeocentricCoordinateSystem WithAuthority(GeocentricCoordinateSystem coordinateSystem, string authority, long authorityCode)
     {
-        return Assert.IsType<GeocentricCoordinateSystem>(coordinateSystem.WithAuthority(authority, authorityCode));
+        return coordinateSystem.WithAuthority(authority, authorityCode);
     }
 
     private static IEnumerable<EpsgProjectedCrsRecord> EnumerateProjectedCrsRecords()

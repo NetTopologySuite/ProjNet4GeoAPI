@@ -53,7 +53,7 @@ internal static class CoordinateSystemTestHelpers
     /// <param name="authorityCode">Replacement authority code.</param>
     /// <returns>A cloned geographic coordinate system with the requested authority metadata.</returns>
     internal static GeographicCoordinateSystem WithAuthority(GeographicCoordinateSystem coordinateSystem, string authority, long authorityCode)
-        => Assert.IsType<GeographicCoordinateSystem>(coordinateSystem.WithAuthority(authority, authorityCode));
+        => coordinateSystem.WithAuthority(authority, authorityCode);
 
     /// <summary>
     /// Clones a projected coordinate system while replacing its authority metadata.
@@ -63,7 +63,7 @@ internal static class CoordinateSystemTestHelpers
     /// <param name="authorityCode">Replacement authority code.</param>
     /// <returns>A cloned projected coordinate system with the requested authority metadata.</returns>
     internal static ProjectedCoordinateSystem WithAuthority(ProjectedCoordinateSystem coordinateSystem, string authority, long authorityCode)
-        => Assert.IsType<ProjectedCoordinateSystem>(coordinateSystem.WithAuthority(authority, authorityCode));
+        => coordinateSystem.WithAuthority(authority, authorityCode);
 
     /// <summary>
     /// Clones a geocentric coordinate system while replacing its authority metadata.
@@ -73,7 +73,7 @@ internal static class CoordinateSystemTestHelpers
     /// <param name="authorityCode">Replacement authority code.</param>
     /// <returns>A cloned geocentric coordinate system with the requested authority metadata.</returns>
     internal static GeocentricCoordinateSystem WithAuthority(GeocentricCoordinateSystem coordinateSystem, string authority, long authorityCode)
-        => Assert.IsType<GeocentricCoordinateSystem>(coordinateSystem.WithAuthority(authority, authorityCode));
+        => coordinateSystem.WithAuthority(authority, authorityCode);
 
     /// <summary>
     /// Clones a projected coordinate system while replacing the authority metadata on its base geographic coordinate system.
@@ -103,11 +103,11 @@ internal static class CoordinateSystemTestHelpers
         ArgumentNullException.ThrowIfNull(name);
         ArgumentNullException.ThrowIfNull(authority);
 
-        HorizontalDatum clone = Assert.IsType<HorizontalDatum>(datum.WithName(name));
-        clone = Assert.IsType<HorizontalDatum>(clone.WithAuthority(authority, authorityCode));
+        HorizontalDatum clone = datum.WithName(name);
+        clone = clone.WithAuthority(authority, authorityCode);
         return ensemble is null
             ? clone
-            : Assert.IsType<HorizontalDatum>(clone.WithEnsemble(ensemble));
+            : clone.WithEnsemble(ensemble);
     }
 
     /// <summary>
@@ -123,10 +123,10 @@ internal static class CoordinateSystemTestHelpers
         ArgumentNullException.ThrowIfNull(datum);
         ArgumentNullException.ThrowIfNull(authority);
 
-        VerticalDatum clone = Assert.IsType<VerticalDatum>(datum.WithAuthority(authority, authorityCode));
+        VerticalDatum clone = datum.WithAuthority(authority, authorityCode);
         return ensemble is null
             ? clone
-            : Assert.IsType<VerticalDatum>(clone.WithEnsemble(ensemble));
+            : clone.WithEnsemble(ensemble);
     }
 
     private static GeographicCoordinateSystem CloneGeographicCoordinateSystem(

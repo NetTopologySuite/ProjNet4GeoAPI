@@ -879,7 +879,7 @@ public class CoordinateSystemCoverageTests
     [Fact]
     public void Info_WithName_OnPrimeMeridian_ReturnsUpdatedClone()
     {
-        PrimeMeridian renamed = Assert.IsType<PrimeMeridian>(PrimeMeridian.Greenwich.WithName("Custom Greenwich"));
+        PrimeMeridian renamed = PrimeMeridian.Greenwich.WithName("Custom Greenwich");
 
         Assert.Equal("Custom Greenwich", renamed.Name);
         Assert.Equal("EPSG", renamed.Authority);
@@ -899,7 +899,7 @@ public class CoordinateSystemCoverageTests
             LinearUnit.Metre,
             PrimeMeridian.Greenwich);
 
-        GeocentricCoordinateSystem updated = Assert.IsType<GeocentricCoordinateSystem>(source.WithAuthority("TEST", 1001));
+        GeocentricCoordinateSystem updated = source.WithAuthority("TEST", 1001);
 
         Assert.Equal("TEST", updated.Authority);
         Assert.Equal(1001, updated.AuthorityCode);

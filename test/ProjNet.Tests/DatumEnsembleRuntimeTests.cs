@@ -69,9 +69,9 @@ public class DatumEnsembleRuntimeTests
             HorizontalDatum.WGS84.Ellipsoid,
             "EPSG",
             6326);
-        HorizontalDatum datum = Assert.IsType<HorizontalDatum>(
-            Assert.IsType<HorizontalDatum>(HorizontalDatum.WGS84.WithName("World Geodetic System 1984 ensemble"))
-                .WithEnsemble(ensemble));
+        HorizontalDatum datum = HorizontalDatum.WGS84
+            .WithName("World Geodetic System 1984 ensemble")
+            .WithEnsemble(ensemble);
 
         return CoordinateSystemFactory.CreateGeographicCoordinateSystem(
             "WGS 84",
