@@ -145,7 +145,7 @@ internal sealed class DefModelMathTransform : MathTransform
     /// <inheritdoc />
     public override void Transform(ref double x, ref double y, ref double z)
     {
-        ArgumentGuard.ThrowArgument("defmodel requires observation time (4D input).");
+        throw new NotSupportedException("defmodel requires observation time (4D input).");
     }
 
     /// <summary>

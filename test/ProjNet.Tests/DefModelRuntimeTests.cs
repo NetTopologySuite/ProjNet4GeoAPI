@@ -156,6 +156,21 @@ public class DefModelRuntimeTests
     }
 
     /// <summary>
+    /// Verifies that the 3D transform overload reports missing observation time as unsupported.
+    /// </summary>
+    [Fact]
+    public void DefModelThreeDimensionalTransformRequiresObservationTime()
+    {
+        MathTransform transform = CreateTransform(BuildDefModelOperation("simple_model_degree_horizontal.json"));
+        double x = 2d;
+        double y = 49d;
+        double z = 30d;
+
+        NotSupportedException exception = Assert.Throws<NotSupportedException>(() => transform.Transform(ref x, ref y, ref z));
+        Assert.Equal("defmodel requires observation time (4D input).", exception.Message);
+    }
+
+    /// <summary>
     /// Verifies forward vectors from <c>defmodel.gie</c>.
     /// </summary>
     /// <param name="operation">Operation text.</param>
