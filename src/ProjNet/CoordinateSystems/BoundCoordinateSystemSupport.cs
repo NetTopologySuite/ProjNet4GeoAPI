@@ -545,8 +545,9 @@ internal static class BoundCoordinateSystemSupport
             throw new NotSupportedException("BOUNDCRS source CRS already defines a conflicting grid transformation.");
         }
 
-        sourceCoordinateSystem.BoundGridTransformation ??= new VerticalBoundGridTransformation(methodName, parameterFileName, runtimeHubCoordinateSystem);
-        return sourceCoordinateSystem;
+        return sourceCoordinateSystem.BoundGridTransformation is null
+            ? sourceCoordinateSystem.WithBoundGridTransformation(new VerticalBoundGridTransformation(methodName, parameterFileName, runtimeHubCoordinateSystem))
+            : sourceCoordinateSystem;
     }
 
     private static bool TryGetLegacyHorizontalBoundTransformation(CoordinateSystem coordinateSystem, out BoundTransformation? transformation)
@@ -742,9 +743,7 @@ internal static class BoundCoordinateSystemSupport
 
     private static VerticalCoordinateSystem CloneVerticalCoordinateSystemWithoutLegacyBoundMetadata(VerticalCoordinateSystem verticalCoordinateSystem)
     {
-        VerticalCoordinateSystem clone = CloneVerticalCoordinateSystem(verticalCoordinateSystem);
-        clone.BoundGridTransformation = null;
-        return clone;
+        return CloneVerticalCoordinateSystem(verticalCoordinateSystem, boundGridTransformation: null);
     }
 
     private static CompoundCoordinateSystem CloneCompoundCoordinateSystemWithoutLegacyBoundMetadata(CompoundCoordinateSystem compoundCoordinateSystem)
@@ -866,7 +865,20 @@ internal static class BoundCoordinateSystemSupport
 
     private static VerticalCoordinateSystem CloneVerticalCoordinateSystem(VerticalCoordinateSystem verticalCoordinateSystem)
     {
-        var clone = new VerticalCoordinateSystem(
+        VerticalBoundGridTransformation? boundGridTransformation = verticalCoordinateSystem.BoundGridTransformation is null
+            ? null
+            : new VerticalBoundGridTransformation(
+                verticalCoordinateSystem.BoundGridTransformation.MethodName,
+                verticalCoordinateSystem.BoundGridTransformation.ParameterFileName,
+                CloneCompoundCoordinateSystem(verticalCoordinateSystem.BoundGridTransformation.HubCoordinateSystem));
+        return CloneVerticalCoordinateSystem(verticalCoordinateSystem, boundGridTransformation);
+    }
+
+    private static VerticalCoordinateSystem CloneVerticalCoordinateSystem(
+        VerticalCoordinateSystem verticalCoordinateSystem,
+        VerticalBoundGridTransformation? boundGridTransformation)
+    {
+        return new VerticalCoordinateSystem(
             CloneLinearUnit(verticalCoordinateSystem.LinearUnit),
             CloneVerticalDatum(verticalCoordinateSystem.VerticalDatum),
             [new AxisInfo(verticalCoordinateSystem.GetAxis(0))],
@@ -876,17 +888,8 @@ internal static class BoundCoordinateSystemSupport
             verticalCoordinateSystem.Alias,
             verticalCoordinateSystem.Abbreviation,
             verticalCoordinateSystem.Remarks,
-            verticalCoordinateSystem.DefaultEnvelope);
-
-        if (verticalCoordinateSystem.BoundGridTransformation is not null)
-        {
-            clone.BoundGridTransformation = new VerticalBoundGridTransformation(
-                verticalCoordinateSystem.BoundGridTransformation.MethodName,
-                verticalCoordinateSystem.BoundGridTransformation.ParameterFileName,
-                CloneCompoundCoordinateSystem(verticalCoordinateSystem.BoundGridTransformation.HubCoordinateSystem));
-        }
-
-        return clone;
+            verticalCoordinateSystem.DefaultEnvelope,
+            boundGridTransformation);
     }
 
     private static CompoundCoordinateSystem CloneCompoundCoordinateSystem(CompoundCoordinateSystem compoundCoordinateSystem)

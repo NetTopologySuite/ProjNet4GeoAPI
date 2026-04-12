@@ -60,6 +60,7 @@ public class VerticalCoordinateSystem : CoordinateSystem
     /// <param name="abbreviation">Abbreviation.</param>
     /// <param name="remarks">Provider-supplied remarks.</param>
     /// <param name="defaultEnvelope">Default envelope for the coordinate system domain.</param>
+    /// <param name="boundGridTransformation">Retained WKT2 vertical bound-grid metadata for this coordinate system.</param>
     internal VerticalCoordinateSystem(
         LinearUnit linearUnit,
         VerticalDatum verticalDatum,
@@ -70,11 +71,13 @@ public class VerticalCoordinateSystem : CoordinateSystem
         string alias,
         string abbreviation,
         string remarks,
-        double[]? defaultEnvelope = null)
+        double[]? defaultEnvelope = null,
+        VerticalBoundGridTransformation? boundGridTransformation = null)
         : base(name, authority, authorityCode, alias, abbreviation, remarks, ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo)), defaultEnvelope)
     {
         this.VerticalDatum = ArgumentGuard.ThrowIfNull(verticalDatum, nameof(verticalDatum));
         this.LinearUnit = ArgumentGuard.ThrowIfNull(linearUnit, nameof(linearUnit));
+        this.BoundGridTransformation = boundGridTransformation;
     }
 
     /// <summary>
@@ -109,9 +112,9 @@ public class VerticalCoordinateSystem : CoordinateSystem
     public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
     /// <summary>
-    /// Gets or sets the retained WKT2 vertical <c>BOUNDCRS</c> grid-binding metadata when available.
+    /// Gets the retained WKT2 vertical <c>BOUNDCRS</c> grid-binding metadata when available.
     /// </summary>
-    internal VerticalBoundGridTransformation? BoundGridTransformation { get; set; }
+    internal VerticalBoundGridTransformation? BoundGridTransformation { get; }
 
     /// <summary>
     /// Returns an XML representation of this vertical coordinate system as an <see cref="XElement"/>.
@@ -241,6 +244,39 @@ public class VerticalCoordinateSystem : CoordinateSystem
         return new WktKeywordNode("VERTCRS", children);
     }
 
+    /// <summary>
+    /// Creates a copy of this vertical coordinate system with retained WKT2 bound-grid metadata.
+    /// </summary>
+    /// <param name="boundGridTransformation">The bound-grid metadata to attach to the clone.</param>
+    /// <returns>A cloned coordinate system carrying the supplied bound-grid metadata.</returns>
+    internal VerticalCoordinateSystem WithBoundGridTransformation(VerticalBoundGridTransformation boundGridTransformation)
+    {
+        boundGridTransformation = ArgumentGuard.ThrowIfNull(boundGridTransformation, nameof(boundGridTransformation));
+        return new VerticalCoordinateSystem(
+            this.LinearUnit,
+            this.VerticalDatum,
+            CloneAxisInfo(this.AxisInfo),
+            this.Name,
+            this.Authority,
+            this.AuthorityCode,
+            this.Alias,
+            this.Abbreviation,
+            this.Remarks,
+            this.DefaultEnvelope,
+            boundGridTransformation);
+    }
+
     private static List<AxisInfo> CreateSingleAxisInfo(AxisInfo axisInfo)
         => [ArgumentGuard.ThrowIfNull(axisInfo, nameof(axisInfo))];
+
+    private static List<AxisInfo> CloneAxisInfo(List<AxisInfo> axisInfo)
+    {
+        var clone = new List<AxisInfo>(axisInfo.Count);
+        for (int i = 0; i < axisInfo.Count; i++)
+        {
+            clone.Add(new AxisInfo(axisInfo[i]));
+        }
+
+        return clone;
+    }
 }

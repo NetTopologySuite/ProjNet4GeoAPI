@@ -1146,12 +1146,10 @@ public class WktNodeTests
             GeographicCoordinateSystem.WGS84,
             CreateEllipsoidalHeightVerticalCoordinateSystem(factory));
 
-        vertical.BoundGridTransformation = new VerticalBoundGridTransformation(
+        return vertical.WithBoundGridTransformation(new VerticalBoundGridTransformation(
             "Geographic3D to GravityRelatedHeight (EGM)",
             "egm96_15.gtx",
-            hub);
-
-        return vertical;
+            hub));
     }
 
     private static VerticalCoordinateSystem CreateEllipsoidalHeightVerticalCoordinateSystem(CoordinateSystemFactory factory)

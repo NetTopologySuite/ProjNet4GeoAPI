@@ -435,10 +435,8 @@ internal static class InfoAuthorityCloneHelper
             verticalCoordinateSystem.Alias,
             verticalCoordinateSystem.Abbreviation,
             verticalCoordinateSystem.Remarks,
-            verticalCoordinateSystem.DefaultEnvelope)
-        {
-            BoundGridTransformation = CloneVerticalBoundGridTransformation(verticalCoordinateSystem.BoundGridTransformation),
-        };
+            verticalCoordinateSystem.DefaultEnvelope,
+            CloneVerticalBoundGridTransformation(verticalCoordinateSystem.BoundGridTransformation));
 
         return clone;
     }
