@@ -5,6 +5,7 @@ namespace ProjNet.Tests;
 
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Xml.Linq;
 using ProjNet.CoordinateSystems;
 using ProjNet.IO.Wkt;
@@ -44,22 +45,17 @@ public class ProjectionTests
     }
 
     /// <summary>
-    /// Verifies that replacing the parameter list updates lookup and parameter count.
+    /// Verifies that the internal parameter collection is exposed as a get-only property.
     /// </summary>
     [Fact]
-    public void Parameters_Setter_ReplacesCollection()
+    public void Parameters_Property_IsGetOnly()
     {
-        Projection projection = CreateProjection();
-        List<ProjectionParameter> replacement =
-        [
-            new ProjectionParameter("false_easting", 500000.0),
-        ];
+        PropertyInfo parametersProperty = typeof(Projection).GetProperty(
+            "Parameters",
+            BindingFlags.Instance | BindingFlags.NonPublic)!;
 
-        projection.Parameters = replacement;
-
-        Assert.Equal(1, projection.NumParameters);
-        Assert.Same(replacement[0], projection.GetParameter(0));
-        Assert.Null(projection.GetParameter("scale_factor"));
+        Assert.True(parametersProperty.CanRead);
+        Assert.False(parametersProperty.CanWrite);
     }
 
     /// <summary>

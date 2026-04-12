@@ -21,7 +21,7 @@ using ProjNet.IO.Wkt;
 public class Projection : Info, IProjection
 {
     private readonly string className;
-    private List<ProjectionParameter> parameters;
+    private readonly List<ProjectionParameter> parameters;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Projection"/> class.
@@ -55,13 +55,9 @@ public class Projection : Info, IProjection
     public int NumParameters => this.parameters.Count;
 
     /// <summary>
-    /// Gets or sets the parameters of the projection.
+    /// Gets the parameters of the projection.
     /// </summary>
-    internal List<ProjectionParameter> Parameters
-    {
-        get => this.parameters;
-        set => this.parameters = value;
-    }
+    internal List<ProjectionParameter> Parameters => this.parameters;
 
     /// <summary>
     /// Gets the projection classification name (e.g. "Transverse_Mercator").
