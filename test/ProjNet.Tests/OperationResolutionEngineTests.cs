@@ -61,6 +61,30 @@ public class OperationResolutionEngineTests
     }
 
     /// <summary>
+    /// Verifies that creating a transformation rejects a null source coordinate system.
+    /// </summary>
+    [Fact]
+    public void CreateFromCoordinateSystemsWithNullSourceThrowsArgumentNullException()
+    {
+        ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
+            () => this.coordinateTransformationFactory.CreateFromCoordinateSystems(null!, GeographicCoordinateSystem.WGS84));
+
+        Assert.Equal("source", exception.ParamName);
+    }
+
+    /// <summary>
+    /// Verifies that creating a transformation rejects a null target coordinate system.
+    /// </summary>
+    [Fact]
+    public void CreateFromCoordinateSystemsWithNullTargetThrowsArgumentNullException()
+    {
+        ArgumentNullException exception = Assert.Throws<ArgumentNullException>(
+            () => this.coordinateTransformationFactory.CreateFromCoordinateSystems(GeographicCoordinateSystem.WGS84, null!));
+
+        Assert.Equal("target", exception.ParamName);
+    }
+
+    /// <summary>
     /// Verifies that when projected coordinate systems carry EPSG authority codes, the engine selects the highest-ranked catalogued operation over the fallback path.
     /// </summary>
     [Fact]
