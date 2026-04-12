@@ -7,7 +7,6 @@ namespace ProjNet.CoordinateSystems.Transformations;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using ProjNet.CoordinateSystems.Transformations.Numerics;
 
 /// <summary>
@@ -214,7 +213,7 @@ internal sealed class HelmertMathTransform : MathTransform
 
         if (args.TryGetValue("theta", out string? thetaToken))
         {
-            if (!TryParseFiniteDouble(thetaToken, out double thetaArcSeconds))
+            if (!SpanParseUtility.TryParseFiniteDouble(thetaToken, out double thetaArcSeconds))
             {
                 skipReason = "Invalid value for +theta.";
                 return false;
@@ -227,7 +226,7 @@ internal sealed class HelmertMathTransform : MathTransform
 
         if (args.TryGetValue("dtheta", out string? thetaRateToken))
         {
-            if (!TryParseFiniteDouble(thetaRateToken, out double thetaRateArcSeconds))
+            if (!SpanParseUtility.TryParseFiniteDouble(thetaRateToken, out double thetaRateArcSeconds))
             {
                 skipReason = "Invalid value for +dtheta.";
                 return false;
@@ -239,7 +238,7 @@ internal sealed class HelmertMathTransform : MathTransform
 
         if (args.TryGetValue("s", out string? scaleToken))
         {
-            if (!TryParseFiniteDouble(scaleToken, out scale))
+            if (!SpanParseUtility.TryParseFiniteDouble(scaleToken, out scale))
             {
                 skipReason = "helmert: invalid value for s.";
                 return false;
@@ -248,7 +247,7 @@ internal sealed class HelmertMathTransform : MathTransform
 
         if (args.TryGetValue("ds", out string? scaleRateToken))
         {
-            if (!TryParseFiniteDouble(scaleRateToken, out scaleRate))
+            if (!SpanParseUtility.TryParseFiniteDouble(scaleRateToken, out scaleRate))
             {
                 skipReason = "Invalid value for +ds.";
                 return false;
@@ -283,7 +282,7 @@ internal sealed class HelmertMathTransform : MathTransform
 
         if (args.TryGetValue("t_epoch", out string? epochToken))
         {
-            if (!TryParseFiniteDouble(epochToken, out epochReference))
+            if (!SpanParseUtility.TryParseFiniteDouble(epochToken, out epochReference))
             {
                 skipReason = "Invalid value for +t_epoch.";
                 return false;
@@ -534,7 +533,7 @@ internal sealed class HelmertMathTransform : MathTransform
             return true;
         }
 
-        if (!TryParseFiniteDouble(token, out target))
+        if (!SpanParseUtility.TryParseFiniteDouble(token, out target))
         {
             skipReason = $"Invalid value for +{key}.";
             return false;
@@ -555,7 +554,7 @@ internal sealed class HelmertMathTransform : MathTransform
             return true;
         }
 
-        if (!TryParseFiniteDouble(token, out double value))
+        if (!SpanParseUtility.TryParseFiniteDouble(token, out double value))
         {
             skipReason = $"Invalid value for +{key}.";
             return false;
@@ -563,24 +562,6 @@ internal sealed class HelmertMathTransform : MathTransform
 
         target = value * ArcSecondToRadians;
         return true;
-    }
-
-    private static bool TryParseFiniteDouble(string token, out double value)
-    {
-        value = 0d;
-        return !string.IsNullOrWhiteSpace(token)
-            && TryParseFiniteDouble(token.AsSpan(), out value);
-    }
-
-    private static bool TryParseFiniteDouble(ReadOnlySpan<char> token, out double value)
-    {
-#if NETSTANDARD2_0
-        bool parsed = double.TryParse(token.ToString(), NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value);
-#else
-        bool parsed = double.TryParse(token, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value);
-#endif
-
-        return parsed && !double.IsNaN(value) && !double.IsInfinity(value);
     }
 
     private static HelmertParameterState EvaluateKinematicState(

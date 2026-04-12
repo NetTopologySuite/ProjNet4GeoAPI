@@ -74,6 +74,19 @@ internal static class SpanParseUtility
         return CsvParseStatus.Success;
     }
 
+    /// <summary>
+    /// Parses a string token as a finite double using invariant culture.
+    /// </summary>
+    /// <param name="token">Token to parse.</param>
+    /// <param name="value">Receives the parsed value.</param>
+    /// <returns><see langword="true"/> when a finite number was parsed; otherwise <see langword="false"/>.</returns>
+    internal static bool TryParseFiniteDouble(string token, out double value)
+    {
+        value = 0d;
+        return !string.IsNullOrWhiteSpace(token)
+            && TryParseFiniteDouble(token.AsSpan(), out value);
+    }
+
     private static bool TryParseFiniteDouble(ReadOnlySpan<char> token, out double value)
     {
 #if NETSTANDARD2_0

@@ -7,7 +7,6 @@ namespace ProjNet.CoordinateSystems.Transformations;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using ProjNet.CoordinateSystems.Transformations.Numerics;
 
 /// <summary>
@@ -190,22 +189,13 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
             return true;
         }
 
-        if (!TryParseFiniteDouble(token, out value))
+        if (!SpanParseUtility.TryParseFiniteDouble(token, out value))
         {
             skipReason = $"Invalid value for +{key}.";
             return false;
         }
 
         return true;
-    }
-
-    private static bool TryParseFiniteDouble(string token, out double value)
-    {
-        value = 0d;
-        return !string.IsNullOrWhiteSpace(token)
-            && double.TryParse(token, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value)
-            && !double.IsNaN(value)
-            && !double.IsInfinity(value);
     }
 
     private static bool TryInvertSpatialMatrix(in Matrix3x3 matrix, out Matrix3x3 inverseMatrix)

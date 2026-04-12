@@ -7,7 +7,6 @@ namespace ProjNet.CoordinateSystems.Transformations;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using ProjNet.CoordinateSystems;
 
 /// <summary>
@@ -210,7 +209,7 @@ internal sealed class VertOffsetMathTransform : MathTransform
             return true;
         }
 
-        if (!TryParseFiniteDouble(token, out value))
+        if (!SpanParseUtility.TryParseFiniteDouble(token, out value))
         {
             skipReason = $"Invalid value for +{key}.";
             return false;
@@ -225,7 +224,7 @@ internal sealed class VertOffsetMathTransform : MathTransform
         out double semiMinor)
     {
         if (args.TryGetValue("r", out string? radiusToken)
-            && TryParseFiniteDouble(radiusToken, out double radius)
+            && SpanParseUtility.TryParseFiniteDouble(radiusToken, out double radius)
             && radius > 0d)
         {
             semiMajor = radius;
@@ -234,12 +233,12 @@ internal sealed class VertOffsetMathTransform : MathTransform
         }
 
         if (args.TryGetValue("a", out string? majorToken)
-            && TryParseFiniteDouble(majorToken, out double major)
+            && SpanParseUtility.TryParseFiniteDouble(majorToken, out double major)
             && major > 0d)
         {
             semiMajor = major;
             if (args.TryGetValue("b", out string? minorToken)
-                && TryParseFiniteDouble(minorToken, out double minor)
+                && SpanParseUtility.TryParseFiniteDouble(minorToken, out double minor)
                 && minor > 0d)
             {
                 semiMinor = minor;
@@ -247,7 +246,7 @@ internal sealed class VertOffsetMathTransform : MathTransform
             }
 
             if (args.TryGetValue("rf", out string? inverseFlatteningToken)
-                && TryParseFiniteDouble(inverseFlatteningToken, out double inverseFlattening)
+                && SpanParseUtility.TryParseFiniteDouble(inverseFlatteningToken, out double inverseFlattening)
                 && inverseFlattening > 0d)
             {
                 semiMinor = (1d - (1d / inverseFlattening)) * major;
@@ -281,14 +280,5 @@ internal sealed class VertOffsetMathTransform : MathTransform
             allowBessel: false,
             out semiMajor,
             out semiMinor);
-    }
-
-    private static bool TryParseFiniteDouble(string token, out double value)
-    {
-        value = 0d;
-        return !string.IsNullOrWhiteSpace(token)
-            && double.TryParse(token, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value)
-            && !double.IsNaN(value)
-            && !double.IsInfinity(value);
     }
 }

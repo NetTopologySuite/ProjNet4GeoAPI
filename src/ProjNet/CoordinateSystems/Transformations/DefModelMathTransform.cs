@@ -367,7 +367,7 @@ internal sealed class DefModelMathTransform : MathTransform
         skipReason = null;
 
         if (args.TryGetValue("r", out string? radiusToken)
-            && TryParseFiniteDouble(radiusToken, out double radius))
+            && SpanParseUtility.TryParseFiniteDouble(radiusToken, out double radius))
         {
             if (radius <= 0d)
             {
@@ -380,7 +380,7 @@ internal sealed class DefModelMathTransform : MathTransform
             return true;
         }
 
-        if (args.TryGetValue("a", out string? majorToken) && TryParseFiniteDouble(majorToken, out double major))
+        if (args.TryGetValue("a", out string? majorToken) && SpanParseUtility.TryParseFiniteDouble(majorToken, out double major))
         {
             if (major <= 0d)
             {
@@ -389,7 +389,7 @@ internal sealed class DefModelMathTransform : MathTransform
             }
 
             semiMajor = major;
-            if (args.TryGetValue("b", out string? minorToken) && TryParseFiniteDouble(minorToken, out double minor))
+            if (args.TryGetValue("b", out string? minorToken) && SpanParseUtility.TryParseFiniteDouble(minorToken, out double minor))
             {
                 if (minor <= 0d)
                 {
@@ -402,7 +402,7 @@ internal sealed class DefModelMathTransform : MathTransform
             }
 
             if (args.TryGetValue("rf", out string? inverseFlatteningToken)
-                && TryParseFiniteDouble(inverseFlatteningToken, out double inverseFlattening))
+                && SpanParseUtility.TryParseFiniteDouble(inverseFlatteningToken, out double inverseFlattening))
             {
                 if (inverseFlattening <= 0d)
                 {
@@ -453,15 +453,6 @@ internal sealed class DefModelMathTransform : MathTransform
             allowBessel: false,
             out semiMajor,
             out semiMinor);
-    }
-
-    private static bool TryParseFiniteDouble(string token, out double value)
-    {
-        value = 0d;
-        return !string.IsNullOrWhiteSpace(token)
-            && double.TryParse(token, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value)
-            && !double.IsNaN(value)
-            && !double.IsInfinity(value);
     }
 
     private static bool IsDefinitionCrsGeographic(string definitionCrs)

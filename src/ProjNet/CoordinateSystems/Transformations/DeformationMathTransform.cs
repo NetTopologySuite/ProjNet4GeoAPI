@@ -9,7 +9,6 @@ using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
@@ -212,7 +211,7 @@ internal sealed class DeformationMathTransform : MathTransform
         if (hasDt)
         {
             string dtValue = dtToken ?? string.Empty;
-            if (!TryParseFiniteDouble(dtValue, out fixedDt))
+            if (!SpanParseUtility.TryParseFiniteDouble(dtValue, out fixedDt))
             {
                 skipReason = "Unable to parse +dt parameter for deformation.";
                 return false;
@@ -223,7 +222,7 @@ internal sealed class DeformationMathTransform : MathTransform
         else
         {
             string epochValue = epochToken ?? string.Empty;
-            if (!TryParseFiniteDouble(epochValue, out tEpoch))
+            if (!SpanParseUtility.TryParseFiniteDouble(epochValue, out tEpoch))
             {
                 skipReason = "Unable to parse +t_epoch parameter for deformation.";
                 return false;
@@ -517,7 +516,7 @@ internal sealed class DeformationMathTransform : MathTransform
         skipReason = null;
 
         if (args.TryGetValue("r", out string? radiusToken)
-            && TryParseFiniteDouble(radiusToken, out double radius))
+            && SpanParseUtility.TryParseFiniteDouble(radiusToken, out double radius))
         {
             if (radius <= 0d)
             {
@@ -531,7 +530,7 @@ internal sealed class DeformationMathTransform : MathTransform
         }
 
         if (args.TryGetValue("a", out string? majorToken)
-            && TryParseFiniteDouble(majorToken, out double major))
+            && SpanParseUtility.TryParseFiniteDouble(majorToken, out double major))
         {
             if (major <= 0d)
             {
@@ -541,7 +540,7 @@ internal sealed class DeformationMathTransform : MathTransform
 
             semiMajor = major;
             if (args.TryGetValue("b", out string? minorToken)
-                && TryParseFiniteDouble(minorToken, out double minor))
+                && SpanParseUtility.TryParseFiniteDouble(minorToken, out double minor))
             {
                 if (minor <= 0d)
                 {
@@ -554,7 +553,7 @@ internal sealed class DeformationMathTransform : MathTransform
             }
 
             if (args.TryGetValue("rf", out string? inverseFlatteningToken)
-                && TryParseFiniteDouble(inverseFlatteningToken, out double inverseFlattening))
+                && SpanParseUtility.TryParseFiniteDouble(inverseFlatteningToken, out double inverseFlattening))
             {
                 if (inverseFlattening <= 0d)
                 {
@@ -605,15 +604,6 @@ internal sealed class DeformationMathTransform : MathTransform
             allowBessel: false,
             out semiMajor,
             out semiMinor);
-    }
-
-    private static bool TryParseFiniteDouble(string token, out double value)
-    {
-        value = 0d;
-        return !string.IsNullOrWhiteSpace(token)
-            && double.TryParse(token, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value)
-            && !double.IsNaN(value)
-            && !double.IsInfinity(value);
     }
 
     private static bool TryNormalizeInterpolationCell(int size, ref int index, ref double fraction)

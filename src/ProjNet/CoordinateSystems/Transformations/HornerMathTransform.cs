@@ -459,24 +459,6 @@ internal sealed class HornerMathTransform : MathTransform
         return true;
     }
 
-    private static bool TryParseFiniteDouble(string token, out double value)
-    {
-        value = 0d;
-        return !string.IsNullOrWhiteSpace(token)
-            && TryParseFiniteDouble(token.AsSpan(), out value);
-    }
-
-    private static bool TryParseFiniteDouble(ReadOnlySpan<char> token, out double value)
-    {
-#if NETSTANDARD2_0
-        bool parsed = double.TryParse(token.ToString(), NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value);
-#else
-        bool parsed = double.TryParse(token, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value);
-#endif
-
-        return parsed && !double.IsNaN(value) && !double.IsInfinity(value);
-    }
-
     private static (double E, double N) EvaluateReal(
         int degree,
         double[] cx,

@@ -6,7 +6,6 @@ namespace ProjNet.CoordinateSystems.Transformations;
 
 using System;
 using System.Collections.Generic;
-using System.Globalization;
 using ProjNet.CoordinateSystems;
 
 /// <summary>
@@ -176,7 +175,7 @@ internal static class ProjEllipsoidResolver
             return true;
         }
 
-        if (!TryParseFiniteDouble(majorToken, out double explicitSemiMajor) || explicitSemiMajor <= 0d)
+        if (!SpanParseUtility.TryParseFiniteDouble(majorToken, out double explicitSemiMajor) || explicitSemiMajor <= 0d)
         {
             errorMessage = "Ellipsoid +a override must be finite and positive.";
             return false;
@@ -209,7 +208,7 @@ internal static class ProjEllipsoidResolver
 
         if (TryGetNonEmptyToken(args, "rf", out string inverseFlatteningToken))
         {
-            if (!TryParseFiniteDouble(inverseFlatteningToken, out double inverseFlattening) || inverseFlattening <= 0d)
+            if (!SpanParseUtility.TryParseFiniteDouble(inverseFlatteningToken, out double inverseFlattening) || inverseFlattening <= 0d)
             {
                 errorMessage = "Ellipsoid +rf override must be finite and positive.";
                 return false;
@@ -221,7 +220,7 @@ internal static class ProjEllipsoidResolver
 
         if (TryGetNonEmptyToken(args, "f", out string flatteningToken))
         {
-            if (!TryParseFiniteDouble(flatteningToken, out double flattening) || flattening < 0d || flattening >= 1d)
+            if (!SpanParseUtility.TryParseFiniteDouble(flatteningToken, out double flattening) || flattening < 0d || flattening >= 1d)
             {
                 errorMessage = "Ellipsoid +f override must be finite and satisfy 0 <= f < 1.";
                 return false;
@@ -233,7 +232,7 @@ internal static class ProjEllipsoidResolver
 
         if (TryGetNonEmptyToken(args, "es", out string eccentricitySquaredToken))
         {
-            if (!TryParseFiniteDouble(eccentricitySquaredToken, out double eccentricitySquared) || eccentricitySquared < 0d || eccentricitySquared >= 1d)
+            if (!SpanParseUtility.TryParseFiniteDouble(eccentricitySquaredToken, out double eccentricitySquared) || eccentricitySquared < 0d || eccentricitySquared >= 1d)
             {
                 errorMessage = "Ellipsoid +es override must be finite and satisfy 0 <= es < 1.";
                 return false;
@@ -245,7 +244,7 @@ internal static class ProjEllipsoidResolver
 
         if (TryGetNonEmptyToken(args, "e", out string eccentricityToken))
         {
-            if (!TryParseFiniteDouble(eccentricityToken, out double eccentricity) || eccentricity < 0d || eccentricity >= 1d)
+            if (!SpanParseUtility.TryParseFiniteDouble(eccentricityToken, out double eccentricity) || eccentricity < 0d || eccentricity >= 1d)
             {
                 errorMessage = "Ellipsoid +e override must be finite and satisfy 0 <= e < 1.";
                 return false;
@@ -257,7 +256,7 @@ internal static class ProjEllipsoidResolver
 
         if (TryGetNonEmptyToken(args, "b", out string minorToken))
         {
-            if (!TryParseFiniteDouble(minorToken, out double explicitMinor) || explicitMinor <= 0d)
+            if (!SpanParseUtility.TryParseFiniteDouble(minorToken, out double explicitMinor) || explicitMinor <= 0d)
             {
                 errorMessage = "Ellipsoid +b override must be finite and positive.";
                 return false;
@@ -592,7 +591,7 @@ internal static class ProjEllipsoidResolver
     private static bool TryParseNumericToken(string token, out double value)
     {
         value = 0d;
-        if (!TryParseFiniteDouble(token, out value))
+        if (!SpanParseUtility.TryParseFiniteDouble(token, out value))
         {
             int slashIndex = IndexOfOrdinal(token, '/');
             if (slashIndex <= 0 || slashIndex >= token.Length - 1)
@@ -602,8 +601,8 @@ internal static class ProjEllipsoidResolver
 
             string numeratorToken = token[..slashIndex].Trim();
             string denominatorToken = token[(slashIndex + 1)..].Trim();
-            if (!TryParseFiniteDouble(numeratorToken, out double numerator)
-                || !TryParseFiniteDouble(denominatorToken, out double denominator)
+            if (!SpanParseUtility.TryParseFiniteDouble(numeratorToken, out double numerator)
+                || !SpanParseUtility.TryParseFiniteDouble(denominatorToken, out double denominator)
                 || denominator == 0d)
             {
                 return false;
@@ -663,8 +662,8 @@ internal static class ProjEllipsoidResolver
 
         string degreesToken = text[..dIndex];
         string minutesToken = text.Substring(dIndex + 1, mIndex - dIndex - 1);
-        if (!TryParseFiniteDouble(degreesToken, out double degrees)
-            || !TryParseFiniteDouble(minutesToken, out double minutes))
+        if (!SpanParseUtility.TryParseFiniteDouble(degreesToken, out double degrees)
+            || !SpanParseUtility.TryParseFiniteDouble(minutesToken, out double minutes))
         {
             return false;
         }
@@ -674,7 +673,7 @@ internal static class ProjEllipsoidResolver
         if (secondsMarker > mIndex + 1)
         {
             string secondsToken = text.Substring(mIndex + 1, secondsMarker - mIndex - 1);
-            if (!TryParseFiniteDouble(secondsToken, out seconds))
+            if (!SpanParseUtility.TryParseFiniteDouble(secondsToken, out seconds))
             {
                 return false;
             }
@@ -691,14 +690,5 @@ internal static class ProjEllipsoidResolver
 #else
         return text.IndexOf(value, StringComparison.Ordinal);
 #endif
-    }
-
-    private static bool TryParseFiniteDouble(string token, out double value)
-    {
-        value = 0d;
-        return !string.IsNullOrWhiteSpace(token)
-            && double.TryParse(token, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value)
-            && !double.IsNaN(value)
-            && !double.IsInfinity(value);
     }
 }

@@ -7,7 +7,6 @@ namespace ProjNet.CoordinateSystems.Transformations;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
 using ProjNet.CoordinateSystems;
 
 /// <summary>
@@ -286,23 +285,14 @@ internal sealed class MolodenskyMathTransform : MathTransform
     {
         value = 0d;
         return args.TryGetValue(key, out string? token)
-            && TryParseFiniteDouble(token, out value);
+            && SpanParseUtility.TryParseFiniteDouble(token, out value);
     }
 
     private static bool TryGetOptionalDouble(Dictionary<string, string> args, string key, out double value)
     {
         value = 0d;
         return args.TryGetValue(key, out string? token)
-            && TryParseFiniteDouble(token, out value);
-    }
-
-    private static bool TryParseFiniteDouble(string token, out double value)
-    {
-        value = 0d;
-        return !string.IsNullOrWhiteSpace(token)
-            && double.TryParse(token, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value)
-            && !double.IsNaN(value)
-            && !double.IsInfinity(value);
+            && SpanParseUtility.TryParseFiniteDouble(token, out value);
     }
 
     private (double DeltaLam, double DeltaPhi, double DeltaH) CalculateStandardDelta(double lam, double phi, double h)

@@ -886,7 +886,7 @@ internal static class ProjPipelineMathTransformFactory
 
         if (args.TryGetValue("k_0", out string? k0Token) && !string.IsNullOrWhiteSpace(k0Token))
         {
-            if (!TryParseFiniteDouble(k0Token, out double k0))
+            if (!SpanParseUtility.TryParseFiniteDouble(k0Token, out double k0))
             {
                 skipReason = "Invalid value for +k_0.";
                 return false;
@@ -896,7 +896,7 @@ internal static class ProjPipelineMathTransformFactory
         }
         else if (args.TryGetValue("k", out string? kToken) && !string.IsNullOrWhiteSpace(kToken))
         {
-            if (!TryParseFiniteDouble(kToken, out double k))
+            if (!SpanParseUtility.TryParseFiniteDouble(kToken, out double k))
             {
                 skipReason = "Invalid value for +k.";
                 return false;
@@ -956,7 +956,7 @@ internal static class ProjPipelineMathTransformFactory
         {
             if (args.TryGetValue("lat_1", out string? pseudoStandardParallelToken) && !string.IsNullOrWhiteSpace(pseudoStandardParallelToken))
             {
-                if (!TryParseFiniteDouble(pseudoStandardParallelToken, out double pseudoStandardParallel))
+                if (!SpanParseUtility.TryParseFiniteDouble(pseudoStandardParallelToken, out double pseudoStandardParallel))
                 {
                     skipReason = "Invalid value for +lat_1 on krovak step.";
                     return false;
@@ -1020,7 +1020,7 @@ internal static class ProjPipelineMathTransformFactory
                 return false;
             }
 
-            if (!TryParseFiniteDouble(nToken, out double n))
+            if (!SpanParseUtility.TryParseFiniteDouble(nToken, out double n))
             {
                 skipReason = "Invalid value for +n.";
                 return false;
@@ -1065,7 +1065,7 @@ internal static class ProjPipelineMathTransformFactory
         }
 
         string normalized = token.Trim();
-        if (TryParseFiniteDouble(normalized, out shapeCode))
+        if (SpanParseUtility.TryParseFiniteDouble(normalized, out shapeCode))
         {
             return true;
         }
@@ -1143,7 +1143,7 @@ internal static class ProjPipelineMathTransformFactory
 
         if (args.TryGetValue("lon_wrap", out string? lonWrapToken) && !string.IsNullOrWhiteSpace(lonWrapToken))
         {
-            if (!TryParseFiniteDouble(lonWrapToken, out double wrapCenterDegrees))
+            if (!SpanParseUtility.TryParseFiniteDouble(lonWrapToken, out double wrapCenterDegrees))
             {
                 skipReason = "Unable to parse +lon_wrap value for geographic identity step.";
                 transform = null;
@@ -1291,9 +1291,9 @@ internal static class ProjPipelineMathTransformFactory
                 return false;
             }
 
-            if (!TryParseFiniteDouble(values[0], out double dx)
-                || !TryParseFiniteDouble(values[1], out double dy)
-                || !TryParseFiniteDouble(values[2], out double dz))
+            if (!SpanParseUtility.TryParseFiniteDouble(values[0], out double dx)
+                || !SpanParseUtility.TryParseFiniteDouble(values[1], out double dy)
+                || !SpanParseUtility.TryParseFiniteDouble(values[2], out double dz))
             {
                 skipReason = "Invalid value for +towgs84.";
                 return false;
@@ -1306,16 +1306,16 @@ internal static class ProjPipelineMathTransformFactory
 
             if (values.Length >= 6)
             {
-                if (!TryParseFiniteDouble(values[3], out rx)
-                    || !TryParseFiniteDouble(values[4], out ry)
-                    || !TryParseFiniteDouble(values[5], out rz))
+                if (!SpanParseUtility.TryParseFiniteDouble(values[3], out rx)
+                    || !SpanParseUtility.TryParseFiniteDouble(values[4], out ry)
+                    || !SpanParseUtility.TryParseFiniteDouble(values[5], out rz))
                 {
                     skipReason = "Invalid value for +towgs84.";
                     return false;
                 }
             }
 
-            if (values.Length == 7 && !TryParseFiniteDouble(values[6], out ppm))
+            if (values.Length == 7 && !SpanParseUtility.TryParseFiniteDouble(values[6], out ppm))
             {
                 skipReason = "Invalid value for +towgs84.";
                 return false;
@@ -1434,7 +1434,7 @@ internal static class ProjPipelineMathTransformFactory
             return true;
         }
 
-        if (!TryParseFiniteDouble(token, out double value))
+        if (!SpanParseUtility.TryParseFiniteDouble(token, out double value))
         {
             skipReason = $"Invalid value for +{sourceKey}.";
             return false;
@@ -1509,7 +1509,7 @@ internal static class ProjPipelineMathTransformFactory
         skipReason = null;
 
         if (args.TryGetValue("r", out string? radiusToken)
-            && TryParseFiniteDouble(radiusToken, out double radius)
+            && SpanParseUtility.TryParseFiniteDouble(radiusToken, out double radius)
             && radius > 0d)
         {
             semiMajor = radius;
@@ -1550,7 +1550,7 @@ internal static class ProjPipelineMathTransformFactory
         }
 
         if (args.TryGetValue("a", out string? majorToken)
-            && TryParseFiniteDouble(majorToken, out double major)
+            && SpanParseUtility.TryParseFiniteDouble(majorToken, out double major)
             && major > 0d)
         {
             semiMajor = major;
@@ -2100,7 +2100,7 @@ internal static class ProjPipelineMathTransformFactory
         skipReason = null;
 
         if (args.TryGetValue("r", out string? radiusToken)
-            && TryParseFiniteDouble(radiusToken, out double radius)
+            && SpanParseUtility.TryParseFiniteDouble(radiusToken, out double radius)
             && radius > 0d)
         {
             semiMajor = radius;
@@ -2141,7 +2141,7 @@ internal static class ProjPipelineMathTransformFactory
         }
 
         if (args.TryGetValue("a", out string? majorToken)
-            && TryParseFiniteDouble(majorToken, out double major)
+            && SpanParseUtility.TryParseFiniteDouble(majorToken, out double major)
             && major > 0d)
         {
             semiMajor = major;
@@ -2163,15 +2163,6 @@ internal static class ProjPipelineMathTransformFactory
             out semiMinor);
     }
 
-    private static bool TryParseFiniteDouble(string token, out double value)
-    {
-        value = 0d;
-        return !string.IsNullOrWhiteSpace(token)
-            && double.TryParse(token, NumberStyles.Float | NumberStyles.AllowThousands, CultureInfo.InvariantCulture, out value)
-            && !double.IsNaN(value)
-            && !double.IsInfinity(value);
-    }
-
     private static bool TryResolveAiroceanOrientationCode(string token, out double orientationCode)
     {
         orientationCode = 0d;
@@ -2181,7 +2172,7 @@ internal static class ProjPipelineMathTransformFactory
         }
 
         string normalized = token.Trim();
-        if (TryParseFiniteDouble(normalized, out orientationCode))
+        if (SpanParseUtility.TryParseFiniteDouble(normalized, out orientationCode))
         {
             return orientationCode == 0d || orientationCode == 1d;
         }
@@ -2211,7 +2202,7 @@ internal static class ProjPipelineMathTransformFactory
             normalized = normalized[..^1];
         }
 
-        if (TryParseFiniteDouble(normalized, out longitudeDegrees))
+        if (SpanParseUtility.TryParseFiniteDouble(normalized, out longitudeDegrees))
         {
             if (radiansSuffix)
             {
