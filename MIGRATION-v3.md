@@ -207,6 +207,45 @@ while (enumerator.MoveNext())
 }
 ```
 
+### 10. Updating constructor, parsing, and serialization assumptions
+
+Several smaller API and output changes can require targeted source updates:
+
+| Area | v2-style assumption | v3 behavior | Migration path |
+| --- | --- | --- | --- |
+| `CoordinateSystemServices` seeded definitions | constructors accepted `IEnumerable<KeyValuePair<int, string>>` | constructors now accept `IEnumerable<CoordinateSystemDefinition>` | wrap each SRID/WKT pair in `new CoordinateSystemDefinition(srid, wkt)` |
+| `CoordinateSystemFactory.CreateFromWkt(...)` | return value was treated as always non-null | return type is `CoordinateSystem?` | null-check or use `?? throw` when your input must be a coordinate system |
+| `[Serializable]` on model/runtime types | legacy binary serialization attributes were available | `[Serializable]` was removed from the public surface | switch persistence/integration code to WKT/WKT2/XML or your own DTOs |
+| `VerticalDatum.WKT` | emitted `DATUM[...]` in vertical coordinate system output | emits `VERT_DATUM[...]` | update string comparisons, snapshots, and custom parsers to the vertical-specific keyword |
+
+**Before**
+
+```csharp
+var definitions = new[]
+{
+    new KeyValuePair<int, string>(4326, GeographicCoordinateSystem.WGS84.WKT),
+};
+
+var services = new CoordinateSystemServices(definitions);
+CoordinateSystem parsed = factory.CreateFromWkt(wkt);
+```
+
+**After**
+
+```csharp
+var definitions = new[]
+{
+    new CoordinateSystemDefinition(4326, GeographicCoordinateSystem.WGS84.WKT),
+};
+
+var services = new CoordinateSystemServices(definitions);
+CoordinateSystem parsed = factory.CreateFromWkt(wkt)
+    ?? throw new InvalidOperationException("Expected a coordinate system WKT.");
+```
+
+If you previously depended on `[Serializable]`, treat that as a required migration off legacy binary
+serialization rather than a drop-in attribute rename.
+
 ## Important note about return types
 
 `WithAuthority(...)` and `WithName(...)` are declared on `Info`, and `WithEnsemble(...)` is declared on `Datum`. They preserve the **concrete runtime type**, but their declared return types are the base types:
