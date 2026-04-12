@@ -68,6 +68,28 @@ public class Ellipsoid : Info
     }
 
     /// <summary>
+    /// Gets the Airy 1830 ellipsoid.
+    /// </summary>
+    public static Ellipsoid Airy1830
+    {
+        get
+        {
+            return new Ellipsoid(
+                6377563.396d,
+                0d,
+                299.3249646d,
+                true,
+                LinearUnit.Metre,
+                "Airy 1830",
+                "EPSG",
+                7001,
+                string.Empty,
+                string.Empty,
+                string.Empty);
+        }
+    }
+
+    /// <summary>
     /// Gets the WGS 84 ellipsoid.
     /// </summary>
     /// <remarks>
@@ -174,6 +196,28 @@ public class Ellipsoid : Info
                 "Hayford 1909",
                 string.Empty,
                 "Described as a=6378388 m. and b=6356909 m. from which 1/f derived to be 296.95926. The figure was adopted as the International ellipsoid in 1924 but with 1/f taken as 297 exactly from which b is derived as 6356911.946m.");
+        }
+    }
+
+    /// <summary>
+    /// Gets the Bessel 1841 ellipsoid.
+    /// </summary>
+    public static Ellipsoid Bessel1841
+    {
+        get
+        {
+            return new Ellipsoid(
+                6377397.155d,
+                0d,
+                299.1528128d,
+                true,
+                LinearUnit.Metre,
+                "Bessel 1841",
+                "EPSG",
+                7004,
+                string.Empty,
+                string.Empty,
+                string.Empty);
         }
     }
 

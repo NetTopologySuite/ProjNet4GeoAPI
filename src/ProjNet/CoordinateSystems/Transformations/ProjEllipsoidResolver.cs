@@ -17,12 +17,8 @@ internal static class ProjEllipsoidResolver
     private const double Clarke1880InverseFlattening = 293.4663d;
     private const double Clarke1880IgnSemiMajorAxis = 6378249.2d;
     private const double Clarke1880IgnInverseFlattening = 293.4660212936269d;
-    private const double Airy1830SemiMajorAxis = 6377563.396d;
-    private const double Airy1830InverseFlattening = 299.3249646d;
     private const double ModifiedAirySemiMajorAxis = 6377340.189d;
     private const double ModifiedAiryInverseFlattening = 299.3249646d;
-    private const double BesselSemiMajorAxis = 6377397.155d;
-    private const double BesselSemiMinorAxis = 6356078.962818189d;
     private const double Sixth = 1d / 6d;
     private const double Ra4 = 17d / 360d;
     private const double Ra6 = 67d / 3024d;
@@ -104,8 +100,8 @@ internal static class ProjEllipsoidResolver
         if (token.Equals("airy", StringComparison.OrdinalIgnoreCase)
             || token.Equals("osgb36", StringComparison.OrdinalIgnoreCase))
         {
-            semiMajor = Airy1830SemiMajorAxis;
-            semiMinor = ComputeSemiMinorAxis(Airy1830SemiMajorAxis, Airy1830InverseFlattening);
+            semiMajor = Ellipsoid.Airy1830.SemiMajorAxis;
+            semiMinor = Ellipsoid.Airy1830.SemiMinorAxis;
             return true;
         }
 
@@ -121,8 +117,8 @@ internal static class ProjEllipsoidResolver
             && (token.Equals("bessel", StringComparison.OrdinalIgnoreCase)
                 || token.Equals("potsdam", StringComparison.OrdinalIgnoreCase)))
         {
-            semiMajor = BesselSemiMajorAxis;
-            semiMinor = BesselSemiMinorAxis;
+            semiMajor = Ellipsoid.Bessel1841.SemiMajorAxis;
+            semiMinor = Ellipsoid.Bessel1841.SemiMinorAxis;
             return true;
         }
 

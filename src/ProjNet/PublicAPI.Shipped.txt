@@ -246,6 +246,8 @@ namespace ProjNet.CoordinateSystems
         public double SemiMinorAxis { get; }
         public override string WKT { get; }
         public override string XML { get; }
+        public static ProjNet.CoordinateSystems.Ellipsoid Airy1830 { get; }
+        public static ProjNet.CoordinateSystems.Ellipsoid Bessel1841 { get; }
         public static ProjNet.CoordinateSystems.Ellipsoid Clarke1866 { get; }
         public static ProjNet.CoordinateSystems.Ellipsoid Clarke1880 { get; }
         public static ProjNet.CoordinateSystems.Ellipsoid GRS80 { get; }

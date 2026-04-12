@@ -51,6 +51,8 @@ public class StaticAccessorConsistencyTests
 
     private static readonly EllipsoidExpectation[] EllipsoidExpectations =
     [
+        new(nameof(Ellipsoid.Airy1830), new InfoExpectation("Airy 1830", "EPSG", 7001, string.Empty, string.Empty, string.Empty), 6377563.396d, 299.3249646d, true, LinearUnit.Metre),
+        new(nameof(Ellipsoid.Bessel1841), new InfoExpectation("Bessel 1841", "EPSG", 7004, string.Empty, string.Empty, string.Empty), 6377397.155d, 299.1528128d, true, LinearUnit.Metre),
         new(nameof(Ellipsoid.WGS84), new InfoExpectation("WGS 84", "EPSG", 7030, "WGS84", string.Empty, "Inverse flattening derived from four defining parameters"), 6378137d, 298.257223563d, true, LinearUnit.Metre),
         new(nameof(Ellipsoid.WGS72), new InfoExpectation("WGS 72", "EPSG", 7043, "WGS 72", string.Empty, string.Empty), 6378135d, 298.26d, true, LinearUnit.Metre),
         new(nameof(Ellipsoid.GRS80), new InfoExpectation("GRS 1980", "EPSG", 7019, "International 1979", string.Empty, "Adopted by IUGG 1979 Canberra"), 6378137d, 298.257222101d, true, LinearUnit.Metre),
@@ -616,6 +618,16 @@ public class StaticAccessorConsistencyTests
         if (ellipsoid.EqualParams(Ellipsoid.GRS80))
         {
             return nameof(Ellipsoid.GRS80);
+        }
+
+        if (ellipsoid.EqualParams(Ellipsoid.Airy1830))
+        {
+            return nameof(Ellipsoid.Airy1830);
+        }
+
+        if (ellipsoid.EqualParams(Ellipsoid.Bessel1841))
+        {
+            return nameof(Ellipsoid.Bessel1841);
         }
 
         if (ellipsoid.EqualParams(Ellipsoid.International1924))

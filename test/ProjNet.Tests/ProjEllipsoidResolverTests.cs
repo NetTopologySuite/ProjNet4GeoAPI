@@ -3,6 +3,7 @@
 
 namespace ProjNet.Tests;
 
+using System;
 using System.Collections.Generic;
 using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
@@ -76,6 +77,41 @@ public class ProjEllipsoidResolverTests
             out _);
 
         Assert.False(resolved);
+    }
+
+    /// <summary>
+    /// Verifies known Airy and Bessel tokens resolve through the shared ellipsoid accessors.
+    /// </summary>
+    /// <param name="token">The PROJ ellipsoid token.</param>
+    /// <param name="allowBessel"><see langword="true"/> when the resolver should accept Bessel tokens.</param>
+    /// <param name="expectedAccessorName">The expected <see cref="Ellipsoid"/> accessor name.</param>
+    [Theory]
+    [InlineData("airy", false, nameof(Ellipsoid.Airy1830))]
+    [InlineData("osgb36", false, nameof(Ellipsoid.Airy1830))]
+    [InlineData("bessel", true, nameof(Ellipsoid.Bessel1841))]
+    [InlineData("potsdam", true, nameof(Ellipsoid.Bessel1841))]
+    public void TryResolveKnownEllipsoid_KnownAccessorBackedTokens_UseEllipsoidStatics(
+        string token,
+        bool allowBessel,
+        string expectedAccessorName)
+    {
+        bool resolved = ProjEllipsoidResolver.TryResolveKnownEllipsoid(
+            token,
+            allowClarke1880Ign: false,
+            allowBessel,
+            out double semiMajor,
+            out double semiMinor);
+
+        Ellipsoid expectedEllipsoid = expectedAccessorName switch
+        {
+            nameof(Ellipsoid.Airy1830) => Ellipsoid.Airy1830,
+            nameof(Ellipsoid.Bessel1841) => Ellipsoid.Bessel1841,
+            _ => throw new InvalidOperationException($"Unexpected ellipsoid accessor '{expectedAccessorName}'."),
+        };
+
+        Assert.True(resolved);
+        Assert.Equal(expectedEllipsoid.SemiMajorAxis, semiMajor, 12);
+        Assert.Equal(expectedEllipsoid.SemiMinorAxis, semiMinor, 12);
     }
 
     /// <summary>
