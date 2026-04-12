@@ -52,24 +52,11 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
             ArgumentGuard.ThrowArgument("Forward multiplier must be finite.", nameof(forwardMultiplier));
         }
 
-        var loadedGrids = new List<GtxGrid>(gridPaths.Count);
-        for (int i = 0; i < gridPaths.Count; i++)
-        {
-            string path = gridPaths[i];
-            if (string.IsNullOrWhiteSpace(path))
-            {
-                continue;
-            }
-
-            loadedGrids.Add(GtxGrid.Load(path));
-        }
-
-        if (loadedGrids.Count == 0)
-        {
-            ArgumentGuard.ThrowArgument("At least one GTX grid file must be provided.", nameof(gridPaths));
-        }
-
-        this.grids = new ReadOnlyCollection<GtxGrid>(loadedGrids);
+        this.grids = GridLoaderHelper.LoadMulti(
+            gridPaths,
+            nameof(gridPaths),
+            "At least one GTX grid file must be provided.",
+            static path => new[] { GtxGrid.Load(path) });
         this.forwardMultiplier = forwardMultiplier;
     }
 

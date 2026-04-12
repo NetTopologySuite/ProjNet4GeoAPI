@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 
 /// <summary>
 /// Applies horizontal grid-shift corrections loaded from GeoTIFF grids.
@@ -52,25 +51,12 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
         gridPaths = ArgumentGuard.ThrowIfNull(gridPaths, nameof(gridPaths));
         this.biquadraticInterpolationOverride = biquadraticInterpolationOverride;
 
-        var loadedGrids = new List<HorizontalGrid>(gridPaths.Count);
-        for (int i = 0; i < gridPaths.Count; i++)
-        {
-            string path = gridPaths[i];
-            if (string.IsNullOrWhiteSpace(path))
-            {
-                continue;
-            }
-
-            loadedGrids.AddRange(GeoTiffGridLoader.LoadHorizontal(path));
-        }
-
-        if (loadedGrids.Count == 0)
-        {
-            ArgumentGuard.ThrowArgument("No horizontal grid could be loaded from GeoTIFF input.", nameof(gridPaths));
-        }
-
-        this.grids = new ReadOnlyCollection<HorizontalGrid>(
-            [.. loadedGrids.OrderBy(grid => grid.Area, Comparer<double>.Default)]);
+        this.grids = GridLoaderHelper.LoadMulti(
+            gridPaths,
+            nameof(gridPaths),
+            "No horizontal grid could be loaded from GeoTIFF input.",
+            static path => GeoTiffGridLoader.LoadHorizontal(path),
+            static (left, right) => left.Area.CompareTo(right.Area));
     }
 
     private GeoTiffHGridShiftMathTransform(GeoTiffHGridShiftMathTransform source, bool isInverted)

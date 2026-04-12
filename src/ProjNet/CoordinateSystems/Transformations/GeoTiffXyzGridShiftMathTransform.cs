@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 using ProjNet.CoordinateSystems;
 
 /// <summary>
@@ -78,25 +77,12 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
             ArgumentGuard.ThrowArgument("Multiplier must be finite.", nameof(multiplier));
         }
 
-        var loadedGrids = new List<XyzGrid>(gridPaths.Count);
-        for (int i = 0; i < gridPaths.Count; i++)
-        {
-            string path = gridPaths[i];
-            if (string.IsNullOrWhiteSpace(path))
-            {
-                continue;
-            }
-
-            loadedGrids.AddRange(GeoTiffGridLoader.LoadXyz(path));
-        }
-
-        if (loadedGrids.Count == 0)
-        {
-            ArgumentGuard.ThrowArgument("No XYZ grid could be loaded from GeoTIFF input.", nameof(gridPaths));
-        }
-
-        this.grids = new ReadOnlyCollection<XyzGrid>(
-            [.. loadedGrids.OrderBy(grid => grid.Area, Comparer<double>.Default)]);
+        this.grids = GridLoaderHelper.LoadMulti(
+            gridPaths,
+            nameof(gridPaths),
+            "No XYZ grid could be loaded from GeoTIFF input.",
+            static path => GeoTiffGridLoader.LoadXyz(path),
+            static (left, right) => left.Area.CompareTo(right.Area));
         this.semiMajor = semiMajor;
         this.semiMinor = semiMinor;
         this.multiplier = multiplier;

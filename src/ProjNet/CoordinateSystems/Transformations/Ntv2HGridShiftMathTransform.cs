@@ -50,24 +50,11 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
     {
         gridPaths = ArgumentGuard.ThrowIfNull(gridPaths, nameof(gridPaths));
 
-        var sets = new List<Ntv2GridSet>(gridPaths.Count);
-        for (int i = 0; i < gridPaths.Count; i++)
-        {
-            string path = gridPaths[i];
-            if (string.IsNullOrWhiteSpace(path))
-            {
-                continue;
-            }
-
-            sets.Add(Ntv2GridSet.Load(path));
-        }
-
-        if (sets.Count == 0)
-        {
-            ArgumentGuard.ThrowArgument("At least one NTv2 grid file must be provided.", nameof(gridPaths));
-        }
-
-        this.gridSets = new ReadOnlyCollection<Ntv2GridSet>(sets);
+        this.gridSets = GridLoaderHelper.LoadMulti(
+            gridPaths,
+            nameof(gridPaths),
+            "At least one NTv2 grid file must be provided.",
+            static path => new[] { Ntv2GridSet.Load(path) });
     }
 
     private Ntv2HGridShiftMathTransform(Ntv2HGridShiftMathTransform source, bool isInverted)

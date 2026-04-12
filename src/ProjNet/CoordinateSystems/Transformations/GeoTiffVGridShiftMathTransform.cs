@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Linq;
 
 /// <summary>
 /// Applies vertical datum shifts loaded from GeoTIFF grid files.
@@ -50,25 +49,12 @@ internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
             ArgumentGuard.ThrowArgument("Forward multiplier must be finite.", nameof(forwardMultiplier));
         }
 
-        var loadedGrids = new List<VerticalGrid>(gridPaths.Count);
-        for (int i = 0; i < gridPaths.Count; i++)
-        {
-            string path = gridPaths[i];
-            if (string.IsNullOrWhiteSpace(path))
-            {
-                continue;
-            }
-
-            loadedGrids.AddRange(GeoTiffGridLoader.LoadVertical(path));
-        }
-
-        if (loadedGrids.Count == 0)
-        {
-            ArgumentGuard.ThrowArgument("No vertical grid could be loaded from GeoTIFF input.", nameof(gridPaths));
-        }
-
-        this.grids = new ReadOnlyCollection<VerticalGrid>(
-            [.. loadedGrids.OrderBy(grid => grid.Area, Comparer<double>.Default)]);
+        this.grids = GridLoaderHelper.LoadMulti(
+            gridPaths,
+            nameof(gridPaths),
+            "No vertical grid could be loaded from GeoTIFF input.",
+            static path => GeoTiffGridLoader.LoadVertical(path),
+            static (left, right) => left.Area.CompareTo(right.Area));
         this.forwardMultiplier = forwardMultiplier;
     }
 
