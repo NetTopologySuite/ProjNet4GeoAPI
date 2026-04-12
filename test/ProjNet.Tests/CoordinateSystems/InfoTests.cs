@@ -3,6 +3,7 @@
 
 namespace ProjNet.Tests;
 
+using System;
 using System.Xml.Linq;
 using ProjNet.CoordinateSystems;
 using Xunit;
@@ -113,6 +114,85 @@ public class InfoTests
     }
 
     /// <summary>
+    /// Verifies that the typed datum <c>WithAuthority</c> overloads return concrete clones without casts.
+    /// </summary>
+    [Fact]
+    public void TypedDatumWithAuthority_ReturnsConcreteClonesWithoutCasts()
+    {
+        HorizontalDatum horizontalClone = HorizontalDatum.WGS84.WithAuthority("TEST", 2001);
+        VerticalDatum verticalClone = VerticalDatum.ODN.WithAuthority("TEST", 2002);
+        EngineeringDatum engineeringClone = new EngineeringDatum("Engineering datum", "EPSG", 9300, string.Empty, string.Empty, string.Empty).WithAuthority("TEST", 2003);
+        ParametricDatum parametricClone = new ParametricDatum("Parametric datum", "EPSG", 9301, string.Empty, string.Empty, string.Empty).WithAuthority("TEST", 2004);
+        TemporalDatum temporalClone = new TemporalDatum("2024-01-01T00:00:00Z", "Temporal datum", "EPSG", 9302, string.Empty, string.Empty, string.Empty).WithAuthority("TEST", 2005);
+
+        Assert.Equal("TEST", horizontalClone.Authority);
+        Assert.Equal(2002, verticalClone.AuthorityCode);
+        Assert.Equal("TEST", engineeringClone.Authority);
+        Assert.Equal(2004, parametricClone.AuthorityCode);
+        Assert.Equal("TEST", temporalClone.Authority);
+    }
+
+    /// <summary>
+    /// Verifies that the typed datum <c>WithName</c> overloads return concrete clones without casts.
+    /// </summary>
+    [Fact]
+    public void TypedDatumWithName_ReturnsConcreteClonesWithoutCasts()
+    {
+        HorizontalDatum horizontalClone = HorizontalDatum.WGS84.WithName("Horizontal datum");
+        VerticalDatum verticalClone = VerticalDatum.ODN.WithName("Vertical datum");
+        EngineeringDatum engineeringClone = new EngineeringDatum("Engineering datum", "EPSG", 9300, string.Empty, string.Empty, string.Empty).WithName("Engineering datum clone");
+        ParametricDatum parametricClone = new ParametricDatum("Parametric datum", "EPSG", 9301, string.Empty, string.Empty, string.Empty).WithName("Parametric datum clone");
+        TemporalDatum temporalClone = new TemporalDatum("2024-01-01T00:00:00Z", "Temporal datum", "EPSG", 9302, string.Empty, string.Empty, string.Empty).WithName("Temporal datum clone");
+
+        Assert.Equal("Horizontal datum", horizontalClone.Name);
+        Assert.Equal("Vertical datum", verticalClone.Name);
+        Assert.Equal("Engineering datum clone", engineeringClone.Name);
+        Assert.Equal("Parametric datum clone", parametricClone.Name);
+        Assert.Equal("Temporal datum clone", temporalClone.Name);
+    }
+
+    /// <summary>
+    /// Verifies that the typed datum <c>WithEnsemble</c> overloads return concrete clones without casts when ensembles are supported.
+    /// </summary>
+    [Fact]
+    public void TypedDatumWithEnsemble_ReturnsConcreteClonesForSupportedDatums()
+    {
+        DatumEnsemble horizontalEnsemble = CreateTestEnsemble("Horizontal ensemble", HorizontalDatum.WGS84.Ellipsoid);
+        DatumEnsemble verticalEnsemble = CreateTestEnsemble("Vertical ensemble");
+
+        HorizontalDatum horizontalClone = HorizontalDatum.WGS84.WithEnsemble(horizontalEnsemble);
+        VerticalDatum verticalClone = VerticalDatum.ODN.WithEnsemble(verticalEnsemble);
+
+        Assert.Equal("Horizontal ensemble", Assert.IsType<DatumEnsemble>(horizontalClone.Ensemble).Name);
+        Assert.Equal("Vertical ensemble", Assert.IsType<DatumEnsemble>(verticalClone.Ensemble).Name);
+    }
+
+    /// <summary>
+    /// Verifies that the typed datum <c>WithEnsemble</c> overloads keep unsupported datum types typed and reject non-null ensemble metadata.
+    /// </summary>
+    [Fact]
+    public void TypedDatumWithEnsemble_OnUnsupportedDatumsRejectsNonNullMetadata()
+    {
+        DatumEnsemble ensemble = CreateTestEnsemble("Unsupported ensemble");
+
+        var engineeringDatum = new EngineeringDatum("Engineering datum", "EPSG", 9300, string.Empty, string.Empty, string.Empty);
+        var parametricDatum = new ParametricDatum("Parametric datum", "EPSG", 9301, string.Empty, string.Empty, string.Empty);
+        var temporalDatum = new TemporalDatum("2024-01-01T00:00:00Z", "Temporal datum", "EPSG", 9302, string.Empty, string.Empty, string.Empty);
+
+        EngineeringDatum engineeringClone = engineeringDatum.WithEnsemble(null);
+        ParametricDatum parametricClone = parametricDatum.WithEnsemble(null);
+        TemporalDatum temporalClone = temporalDatum.WithEnsemble(null);
+
+        Assert.NotSame(engineeringDatum, engineeringClone);
+        Assert.NotSame(parametricDatum, parametricClone);
+        Assert.NotSame(temporalDatum, temporalClone);
+
+        Assert.Throws<NotSupportedException>(() => engineeringDatum.WithEnsemble(ensemble));
+        Assert.Throws<NotSupportedException>(() => parametricDatum.WithEnsemble(ensemble));
+        Assert.Throws<NotSupportedException>(() => temporalDatum.WithEnsemble(ensemble));
+    }
+
+    /// <summary>
     /// Verifies that <see cref="Info.InfoXml"/> includes the supported metadata attributes in the expected order.
     /// </summary>
     [Fact]
@@ -196,6 +276,20 @@ public class InfoTests
         XElement xml = info.InfoXmlElement;
 
         Assert.Empty(xml.Attributes());
+    }
+
+    private static DatumEnsemble CreateTestEnsemble(string name, Ellipsoid? ellipsoid = null)
+    {
+        return new DatumEnsemble(
+            name,
+            [
+                new DatumEnsembleMember("Member A"),
+                new DatumEnsembleMember("Member B"),
+            ],
+            0.25d,
+            ellipsoid,
+            "TEST",
+            1);
     }
 
     private sealed class TestInfo : Info

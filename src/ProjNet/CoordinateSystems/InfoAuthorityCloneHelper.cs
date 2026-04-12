@@ -140,6 +140,76 @@ internal static class InfoAuthorityCloneHelper
     }
 
     /// <summary>
+    /// Creates a deep clone of the supplied horizontal datum with replacement authority metadata.
+    /// </summary>
+    /// <param name="horizontalDatum">Datum to clone.</param>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="authorityCode">Replacement authority code.</param>
+    /// <returns>A cloned horizontal datum with the requested authority metadata.</returns>
+    internal static HorizontalDatum CloneWithAuthority(HorizontalDatum horizontalDatum, string authority, long authorityCode)
+    {
+        horizontalDatum = ArgumentGuard.ThrowIfNull(horizontalDatum, nameof(horizontalDatum));
+        authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
+        return CloneHorizontalDatum(horizontalDatum, authority, authorityCode);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied vertical datum with replacement authority metadata.
+    /// </summary>
+    /// <param name="verticalDatum">Datum to clone.</param>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="authorityCode">Replacement authority code.</param>
+    /// <returns>A cloned vertical datum with the requested authority metadata.</returns>
+    internal static VerticalDatum CloneWithAuthority(VerticalDatum verticalDatum, string authority, long authorityCode)
+    {
+        verticalDatum = ArgumentGuard.ThrowIfNull(verticalDatum, nameof(verticalDatum));
+        authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
+        return CloneVerticalDatum(verticalDatum, authority, authorityCode);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied engineering datum with replacement authority metadata.
+    /// </summary>
+    /// <param name="engineeringDatum">Datum to clone.</param>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="authorityCode">Replacement authority code.</param>
+    /// <returns>A cloned engineering datum with the requested authority metadata.</returns>
+    internal static EngineeringDatum CloneWithAuthority(EngineeringDatum engineeringDatum, string authority, long authorityCode)
+    {
+        engineeringDatum = ArgumentGuard.ThrowIfNull(engineeringDatum, nameof(engineeringDatum));
+        authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
+        return CloneEngineeringDatum(engineeringDatum, authority, authorityCode);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied parametric datum with replacement authority metadata.
+    /// </summary>
+    /// <param name="parametricDatum">Datum to clone.</param>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="authorityCode">Replacement authority code.</param>
+    /// <returns>A cloned parametric datum with the requested authority metadata.</returns>
+    internal static ParametricDatum CloneWithAuthority(ParametricDatum parametricDatum, string authority, long authorityCode)
+    {
+        parametricDatum = ArgumentGuard.ThrowIfNull(parametricDatum, nameof(parametricDatum));
+        authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
+        return CloneParametricDatum(parametricDatum, authority, authorityCode);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied temporal datum with replacement authority metadata.
+    /// </summary>
+    /// <param name="temporalDatum">Datum to clone.</param>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="authorityCode">Replacement authority code.</param>
+    /// <returns>A cloned temporal datum with the requested authority metadata.</returns>
+    internal static TemporalDatum CloneWithAuthority(TemporalDatum temporalDatum, string authority, long authorityCode)
+    {
+        temporalDatum = ArgumentGuard.ThrowIfNull(temporalDatum, nameof(temporalDatum));
+        authority = ArgumentGuard.ThrowIfNull(authority, nameof(authority));
+        return CloneTemporalDatum(temporalDatum, authority, authorityCode);
+    }
+
+    /// <summary>
     /// Creates a deep clone of the supplied horizontal datum with replacement WGS84 conversion parameters.
     /// </summary>
     /// <param name="horizontalDatum">Datum to clone.</param>
@@ -272,6 +342,71 @@ internal static class InfoAuthorityCloneHelper
     }
 
     /// <summary>
+    /// Creates a deep clone of the supplied horizontal datum with a replacement name.
+    /// </summary>
+    /// <param name="horizontalDatum">Datum to clone.</param>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A cloned horizontal datum with the requested name.</returns>
+    internal static HorizontalDatum CloneWithName(HorizontalDatum horizontalDatum, string name)
+    {
+        horizontalDatum = ArgumentGuard.ThrowIfNull(horizontalDatum, nameof(horizontalDatum));
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
+        return CloneHorizontalDatum(horizontalDatum, name: name);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied vertical datum with a replacement name.
+    /// </summary>
+    /// <param name="verticalDatum">Datum to clone.</param>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A cloned vertical datum with the requested name.</returns>
+    internal static VerticalDatum CloneWithName(VerticalDatum verticalDatum, string name)
+    {
+        verticalDatum = ArgumentGuard.ThrowIfNull(verticalDatum, nameof(verticalDatum));
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
+        return CloneVerticalDatum(verticalDatum, name: name);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied engineering datum with a replacement name.
+    /// </summary>
+    /// <param name="engineeringDatum">Datum to clone.</param>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A cloned engineering datum with the requested name.</returns>
+    internal static EngineeringDatum CloneWithName(EngineeringDatum engineeringDatum, string name)
+    {
+        engineeringDatum = ArgumentGuard.ThrowIfNull(engineeringDatum, nameof(engineeringDatum));
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
+        return CloneEngineeringDatum(engineeringDatum, name: name);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied parametric datum with a replacement name.
+    /// </summary>
+    /// <param name="parametricDatum">Datum to clone.</param>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A cloned parametric datum with the requested name.</returns>
+    internal static ParametricDatum CloneWithName(ParametricDatum parametricDatum, string name)
+    {
+        parametricDatum = ArgumentGuard.ThrowIfNull(parametricDatum, nameof(parametricDatum));
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
+        return CloneParametricDatum(parametricDatum, name: name);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied temporal datum with a replacement name.
+    /// </summary>
+    /// <param name="temporalDatum">Datum to clone.</param>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A cloned temporal datum with the requested name.</returns>
+    internal static TemporalDatum CloneWithName(TemporalDatum temporalDatum, string name)
+    {
+        temporalDatum = ArgumentGuard.ThrowIfNull(temporalDatum, nameof(temporalDatum));
+        name = ArgumentGuard.ThrowIfNull(name, nameof(name));
+        return CloneTemporalDatum(temporalDatum, name: name);
+    }
+
+    /// <summary>
     /// Creates a deep clone of the supplied datum with replacement retained datum-ensemble metadata.
     /// </summary>
     /// <param name="datum">Datum to clone.</param>
@@ -290,6 +425,84 @@ internal static class InfoAuthorityCloneHelper
             TemporalDatum temporalDatum when ensemble is null => CloneTemporalDatum(temporalDatum),
             _ => throw new NotSupportedException($"Datum ensembles are not supported for datum type '{datum.GetType().FullName}'."),
         };
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied horizontal datum with replacement retained datum-ensemble metadata.
+    /// </summary>
+    /// <param name="horizontalDatum">Datum to clone.</param>
+    /// <param name="ensemble">Replacement ensemble metadata, or <see langword="null"/> to clear it.</param>
+    /// <returns>A cloned horizontal datum with the requested ensemble metadata.</returns>
+    internal static HorizontalDatum CloneWithEnsemble(HorizontalDatum horizontalDatum, DatumEnsemble? ensemble)
+    {
+        horizontalDatum = ArgumentGuard.ThrowIfNull(horizontalDatum, nameof(horizontalDatum));
+        return CloneHorizontalDatum(horizontalDatum, ensemble);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied vertical datum with replacement retained datum-ensemble metadata.
+    /// </summary>
+    /// <param name="verticalDatum">Datum to clone.</param>
+    /// <param name="ensemble">Replacement ensemble metadata, or <see langword="null"/> to clear it.</param>
+    /// <returns>A cloned vertical datum with the requested ensemble metadata.</returns>
+    internal static VerticalDatum CloneWithEnsemble(VerticalDatum verticalDatum, DatumEnsemble? ensemble)
+    {
+        verticalDatum = ArgumentGuard.ThrowIfNull(verticalDatum, nameof(verticalDatum));
+        return CloneVerticalDatum(verticalDatum, ensemble);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied engineering datum with replacement retained datum-ensemble metadata.
+    /// </summary>
+    /// <param name="engineeringDatum">Datum to clone.</param>
+    /// <param name="ensemble">Replacement ensemble metadata, or <see langword="null"/> to keep the datum non-ensemble-backed.</param>
+    /// <returns>A cloned engineering datum with the requested ensemble metadata.</returns>
+    /// <exception cref="NotSupportedException">Thrown when <paramref name="ensemble"/> is not <see langword="null"/>.</exception>
+    internal static EngineeringDatum CloneWithEnsemble(EngineeringDatum engineeringDatum, DatumEnsemble? ensemble)
+    {
+        engineeringDatum = ArgumentGuard.ThrowIfNull(engineeringDatum, nameof(engineeringDatum));
+        if (ensemble is not null)
+        {
+            throw new NotSupportedException($"Datum ensembles are not supported for datum type '{engineeringDatum.GetType().FullName}'.");
+        }
+
+        return CloneEngineeringDatum(engineeringDatum);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied parametric datum with replacement retained datum-ensemble metadata.
+    /// </summary>
+    /// <param name="parametricDatum">Datum to clone.</param>
+    /// <param name="ensemble">Replacement ensemble metadata, or <see langword="null"/> to keep the datum non-ensemble-backed.</param>
+    /// <returns>A cloned parametric datum with the requested ensemble metadata.</returns>
+    /// <exception cref="NotSupportedException">Thrown when <paramref name="ensemble"/> is not <see langword="null"/>.</exception>
+    internal static ParametricDatum CloneWithEnsemble(ParametricDatum parametricDatum, DatumEnsemble? ensemble)
+    {
+        parametricDatum = ArgumentGuard.ThrowIfNull(parametricDatum, nameof(parametricDatum));
+        if (ensemble is not null)
+        {
+            throw new NotSupportedException($"Datum ensembles are not supported for datum type '{parametricDatum.GetType().FullName}'.");
+        }
+
+        return CloneParametricDatum(parametricDatum);
+    }
+
+    /// <summary>
+    /// Creates a deep clone of the supplied temporal datum with replacement retained datum-ensemble metadata.
+    /// </summary>
+    /// <param name="temporalDatum">Datum to clone.</param>
+    /// <param name="ensemble">Replacement ensemble metadata, or <see langword="null"/> to keep the datum non-ensemble-backed.</param>
+    /// <returns>A cloned temporal datum with the requested ensemble metadata.</returns>
+    /// <exception cref="NotSupportedException">Thrown when <paramref name="ensemble"/> is not <see langword="null"/>.</exception>
+    internal static TemporalDatum CloneWithEnsemble(TemporalDatum temporalDatum, DatumEnsemble? ensemble)
+    {
+        temporalDatum = ArgumentGuard.ThrowIfNull(temporalDatum, nameof(temporalDatum));
+        if (ensemble is not null)
+        {
+            throw new NotSupportedException($"Datum ensembles are not supported for datum type '{temporalDatum.GetType().FullName}'.");
+        }
+
+        return CloneTemporalDatum(temporalDatum);
     }
 
     private static AngularUnit CloneAngularUnit(AngularUnit angularUnit, string? authority = null, long? authorityCode = null, string? name = null)

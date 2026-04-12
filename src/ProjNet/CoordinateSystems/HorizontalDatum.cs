@@ -191,6 +191,28 @@ public class HorizontalDatum : Datum
     public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
     /// <summary>
+    /// Creates a copy of this datum with updated authority metadata.
+    /// </summary>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="code">Replacement authority-specific identification code.</param>
+    /// <returns>A new <see cref="HorizontalDatum"/> with updated authority metadata.</returns>
+    public new HorizontalDatum WithAuthority(string authority, long code) => InfoAuthorityCloneHelper.CloneWithAuthority(this, authority, code);
+
+    /// <summary>
+    /// Creates a copy of this datum with an updated name.
+    /// </summary>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A new <see cref="HorizontalDatum"/> with the updated name.</returns>
+    public new HorizontalDatum WithName(string name) => InfoAuthorityCloneHelper.CloneWithName(this, name);
+
+    /// <summary>
+    /// Creates a copy of this datum with updated retained datum-ensemble metadata.
+    /// </summary>
+    /// <param name="ensemble">Replacement ensemble metadata, or <see langword="null"/> to clear it.</param>
+    /// <returns>A new <see cref="HorizontalDatum"/> with updated ensemble metadata.</returns>
+    public new HorizontalDatum WithEnsemble(DatumEnsemble? ensemble) => InfoAuthorityCloneHelper.CloneWithEnsemble(this, ensemble);
+
+    /// <summary>
     /// Creates a copy of this datum with updated Bursa-Wolf parameters for transformations into WGS84.
     /// </summary>
     /// <param name="toWgs84">Replacement WGS84 conversion parameters, or <see langword="null"/> to clear them.</param>

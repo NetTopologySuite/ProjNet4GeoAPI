@@ -275,6 +275,9 @@ namespace ProjNet.CoordinateSystems
         public ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public System.Xml.Linq.XElement ToXml() { }
+        public new ProjNet.CoordinateSystems.EngineeringDatum WithAuthority(string authority, long code) { }
+        public new ProjNet.CoordinateSystems.EngineeringDatum WithEnsemble(ProjNet.CoordinateSystems.DatumEnsemble? ensemble) { }
+        public new ProjNet.CoordinateSystems.EngineeringDatum WithName(string name) { }
     }
     public class FittedCoordinateSystem : ProjNet.CoordinateSystems.CoordinateSystem
     {
@@ -337,6 +340,9 @@ namespace ProjNet.CoordinateSystems
         public ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public System.Xml.Linq.XElement ToXml() { }
+        public new ProjNet.CoordinateSystems.HorizontalDatum WithAuthority(string authority, long code) { }
+        public new ProjNet.CoordinateSystems.HorizontalDatum WithEnsemble(ProjNet.CoordinateSystems.DatumEnsemble? ensemble) { }
+        public new ProjNet.CoordinateSystems.HorizontalDatum WithName(string name) { }
         public ProjNet.CoordinateSystems.HorizontalDatum WithWgs84Parameters(ProjNet.CoordinateSystems.Wgs84ConversionInfo? toWgs84) { }
     }
     public interface IInfo
@@ -420,6 +426,9 @@ namespace ProjNet.CoordinateSystems
         public ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public System.Xml.Linq.XElement ToXml() { }
+        public new ProjNet.CoordinateSystems.ParametricDatum WithAuthority(string authority, long code) { }
+        public new ProjNet.CoordinateSystems.ParametricDatum WithEnsemble(ProjNet.CoordinateSystems.DatumEnsemble? ensemble) { }
+        public new ProjNet.CoordinateSystems.ParametricDatum WithName(string name) { }
     }
     public sealed class ParametricUnit : ProjNet.CoordinateSystems.Info, ProjNet.CoordinateSystems.IInfo, ProjNet.CoordinateSystems.IUnit
     {
@@ -523,6 +532,9 @@ namespace ProjNet.CoordinateSystems
         public ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public System.Xml.Linq.XElement ToXml() { }
+        public new ProjNet.CoordinateSystems.TemporalDatum WithAuthority(string authority, long code) { }
+        public new ProjNet.CoordinateSystems.TemporalDatum WithEnsemble(ProjNet.CoordinateSystems.DatumEnsemble? ensemble) { }
+        public new ProjNet.CoordinateSystems.TemporalDatum WithName(string name) { }
     }
     public sealed class TimeUnit : ProjNet.CoordinateSystems.Info, ProjNet.CoordinateSystems.IInfo, ProjNet.CoordinateSystems.IUnit
     {
@@ -570,6 +582,9 @@ namespace ProjNet.CoordinateSystems
         public ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public ProjNet.IO.Wkt.WktNode ToWktNode(ProjNet.IO.Wkt.WktVersion version) { }
         public System.Xml.Linq.XElement ToXml() { }
+        public new ProjNet.CoordinateSystems.VerticalDatum WithAuthority(string authority, long code) { }
+        public new ProjNet.CoordinateSystems.VerticalDatum WithEnsemble(ProjNet.CoordinateSystems.DatumEnsemble? ensemble) { }
+        public new ProjNet.CoordinateSystems.VerticalDatum WithName(string name) { }
     }
     public sealed class Wgs84ConversionInfo : System.IEquatable<ProjNet.CoordinateSystems.Wgs84ConversionInfo>
     {

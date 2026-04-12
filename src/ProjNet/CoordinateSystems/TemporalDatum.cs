@@ -43,6 +43,29 @@ public sealed class TemporalDatum : Datum
     public override string XML => this.ToXml().ToString(SaveOptions.DisableFormatting);
 
     /// <summary>
+    /// Creates a copy of this datum with updated authority metadata.
+    /// </summary>
+    /// <param name="authority">Replacement authority name.</param>
+    /// <param name="code">Replacement authority-specific identification code.</param>
+    /// <returns>A new <see cref="TemporalDatum"/> with updated authority metadata.</returns>
+    public new TemporalDatum WithAuthority(string authority, long code) => InfoAuthorityCloneHelper.CloneWithAuthority(this, authority, code);
+
+    /// <summary>
+    /// Creates a copy of this datum with an updated name.
+    /// </summary>
+    /// <param name="name">Replacement name.</param>
+    /// <returns>A new <see cref="TemporalDatum"/> with the updated name.</returns>
+    public new TemporalDatum WithName(string name) => InfoAuthorityCloneHelper.CloneWithName(this, name);
+
+    /// <summary>
+    /// Creates a copy of this datum with updated retained datum-ensemble metadata.
+    /// </summary>
+    /// <param name="ensemble">Replacement ensemble metadata, or <see langword="null"/> to keep this datum non-ensemble-backed.</param>
+    /// <returns>A new <see cref="TemporalDatum"/> with updated ensemble metadata.</returns>
+    /// <exception cref="System.NotSupportedException">Thrown when <paramref name="ensemble"/> is not <see langword="null"/>.</exception>
+    public new TemporalDatum WithEnsemble(DatumEnsemble? ensemble) => InfoAuthorityCloneHelper.CloneWithEnsemble(this, ensemble);
+
+    /// <summary>
     /// Returns an XML representation of this temporal datum as an <see cref="XElement"/>.
     /// </summary>
     /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
