@@ -80,7 +80,7 @@ internal sealed class PattersonProjection : MapProjection
             double df = ForwardPolynomialDerivative(phi);
             double delta = f / df;
             phi -= delta;
-            if (Math.Abs(delta) <= 1e-12d)
+            if (Math.Abs(delta) <= ProjectionConstants.Tolerance1E12)
             {
                 break;
             }

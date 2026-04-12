@@ -126,7 +126,7 @@ internal sealed class TwoPointEquidistantProjection : MapProjection
         double xUnit = this.r2z0 * t;
         t = this.z02 - t;
         double yRadicand = (4d * this.z02 * z2Squared) - (t * t);
-        if (yRadicand < -1e-12d)
+        if (yRadicand < -ProjectionConstants.Tolerance1E12)
         {
             ArgumentGuard.ThrowArgument("Input data outside projection domain.");
         }

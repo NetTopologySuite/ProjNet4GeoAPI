@@ -179,7 +179,7 @@ internal sealed class AiroceanProjection : MapProjection
         }
 
         int rounded = (int)Math.Round(value, MidpointRounding.AwayFromZero);
-        if (Math.Abs(value - rounded) > 1e-12d)
+        if (Math.Abs(value - rounded) > ProjectionConstants.Tolerance1E12)
         {
             ArgumentGuard.ThrowArgument($"Invalid value for {parameterName}.");
         }

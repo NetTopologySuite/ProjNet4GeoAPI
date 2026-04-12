@@ -180,7 +180,7 @@ internal abstract class AdamsProjectionBase : MapProjection
     private static PeirceShape ParsePeirceShape(double shapeCode)
     {
         int code = (int)Math.Round(shapeCode, MidpointRounding.AwayFromZero);
-        if (Math.Abs(shapeCode - code) > 1e-12d)
+        if (Math.Abs(shapeCode - code) > ProjectionConstants.Tolerance1E12)
         {
             ArgumentGuard.ThrowArgument("Invalid value for shape parameter.");
         }
@@ -224,7 +224,7 @@ internal abstract class AdamsProjectionBase : MapProjection
 
     private static bool IsApproximatelyZero(double value)
     {
-        return Math.Abs(value) <= 1e-12d;
+        return Math.Abs(value) <= ProjectionConstants.Tolerance1E12;
     }
 
     private void ForwardNormalized(double lambda, double phi, out double x, out double y)

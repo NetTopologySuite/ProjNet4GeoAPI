@@ -248,7 +248,7 @@ internal sealed class IseaProjection : MapProjection
         }
 
         int rounded = (int)Math.Round(value, MidpointRounding.AwayFromZero);
-        if (Math.Abs(value - rounded) > 1e-12d)
+        if (Math.Abs(value - rounded) > ProjectionConstants.Tolerance1E12)
         {
             ArgumentGuard.ThrowArgument($"Invalid value for {parameterName}.");
         }
@@ -258,7 +258,7 @@ internal sealed class IseaProjection : MapProjection
 
     private static bool IsNearlyEqual(double x, double y)
     {
-        return Math.Abs(x - y) <= 1e-12d;
+        return Math.Abs(x - y) <= ProjectionConstants.Tolerance1E12;
     }
 
     private static GeoPoint SnyderCtran(in GeoPoint np, in GeoPoint point)
@@ -409,7 +409,7 @@ internal sealed class IseaProjection : MapProjection
             return null;
         }
 
-        if (this.aperture != 3 || this.resolution != 4 || Math.Abs(this.orientationAzimuth) > 1e-12d)
+        if (this.aperture != 3 || this.resolution != 4 || Math.Abs(this.orientationAzimuth) > ProjectionConstants.Tolerance1E12)
         {
             return null;
         }

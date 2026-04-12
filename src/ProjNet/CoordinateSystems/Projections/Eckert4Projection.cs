@@ -111,7 +111,7 @@ internal sealed class Eckert4Projection : MapProjection
         double oneMinusAbs = 1d - Math.Abs(sinTheta);
         double lambda = xx / Cx;
         double phi = sinTheta > 0d ? HalfPi : -HalfPi;
-        if (oneMinusAbs < 0d || oneMinusAbs > 1e-12d)
+        if (oneMinusAbs < 0d || oneMinusAbs > ProjectionConstants.Tolerance1E12)
         {
             double theta = Asinz(sinTheta);
             double cosTheta = Math.Cos(theta);

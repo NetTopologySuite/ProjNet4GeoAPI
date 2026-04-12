@@ -220,7 +220,7 @@ internal sealed class InterruptedGoodeHomolosineOceanicProjection : MapProjectio
     private static void MollweideForwardUnit(double lambda, double phi, out double x, out double y)
     {
         double theta = Sign(phi) * HalfPi;
-        if (Math.Abs(Math.Abs(phi) - HalfPi) >= 1e-12)
+        if (Math.Abs(Math.Abs(phi) - HalfPi) >= ProjectionConstants.Tolerance1E12)
         {
             theta = phi;
             double target = PI * Math.Sin(phi);
@@ -229,7 +229,7 @@ internal sealed class InterruptedGoodeHomolosineOceanicProjection : MapProjectio
                 double twoTheta = 2d * theta;
                 double delta = ((twoTheta + Math.Sin(twoTheta)) - target) / (2d + (2d * Math.Cos(twoTheta)));
                 theta -= delta;
-                if (Math.Abs(delta) < 1e-12)
+                if (Math.Abs(delta) < ProjectionConstants.Tolerance1E12)
                 {
                     break;
                 }

@@ -129,7 +129,7 @@ internal sealed class EqualEarthProjection : MapProjection
             double derivative = A1 + (3d * A2 * theta2) + (theta6 * ((7d * A3) + (9d * A4 * theta2)));
             double delta = value / derivative;
             theta -= delta;
-            if (Math.Abs(delta) < 1e-12)
+            if (Math.Abs(delta) < ProjectionConstants.Tolerance1E12)
             {
                 converged = true;
                 break;

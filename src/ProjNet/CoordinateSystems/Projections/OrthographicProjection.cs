@@ -317,7 +317,7 @@ internal sealed class OrthographicProjection : MapProjection
                 }
 
                 lam += dlam;
-                if (Math.Abs(dphi) < 1e-12 && Math.Abs(dlam) < 1e-12)
+                if (Math.Abs(dphi) < ProjectionConstants.Tolerance1E12 && Math.Abs(dlam) < ProjectionConstants.Tolerance1E12)
                 {
                     break;
                 }

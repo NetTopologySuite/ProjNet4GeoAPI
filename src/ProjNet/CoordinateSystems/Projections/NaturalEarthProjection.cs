@@ -92,7 +92,7 @@ internal sealed class NaturalEarthProjection : MapProjection
 
             double delta = fy / fpy;
             phi -= delta;
-            if (Math.Abs(delta) < 1e-12)
+            if (Math.Abs(delta) < ProjectionConstants.Tolerance1E12)
             {
                 break;
             }
