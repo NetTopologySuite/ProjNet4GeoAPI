@@ -1535,9 +1535,24 @@ public class CoordinateTransformationFactory
 
     private static string NormalizeOperationMethodName(string value)
     {
-        return string.IsNullOrWhiteSpace(value)
-            ? string.Empty
-            : new string([.. value.Where(char.IsLetterOrDigit).Select(char.ToLowerInvariant)]);
+        if (string.IsNullOrWhiteSpace(value))
+        {
+            return string.Empty;
+        }
+
+        char[] buffer = new char[value.Length];
+        int length = 0;
+        for (int i = 0; i < value.Length; i++)
+        {
+            char character = value[i];
+            if (char.IsLetterOrDigit(character))
+            {
+                buffer[length] = char.ToLowerInvariant(character);
+                length++;
+            }
+        }
+
+        return length == 0 ? string.Empty : new string(buffer, 0, length);
     }
 
     private static bool IsCoordinateFrameMethod(string normalizedMethodName)
