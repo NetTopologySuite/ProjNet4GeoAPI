@@ -25,9 +25,8 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://grokipedia.com/page/quadrilateralized_spherical_cube">Background overview of the quadrilateralized spherical cube projection.</seealso>
 internal sealed class QuadrilateralizedSphericalCubeProjection : MapProjection
 {
-    private const double QuarterPi = PI * 0.25d;
-    private const double HalfPiPlusQuarterPi = HalfPi + QuarterPi;
-    private const double HalfPiMinusQuarterPiHalf = HalfPi - (QuarterPi * 0.5d);
+    private const double HalfPiPlusQuarterPi = HalfPi + FortPi;
+    private const double HalfPiMinusQuarterPiHalf = HalfPi - (FortPi * 0.5d);
     private readonly Face face;
     private readonly double aSquared;
     private readonly double sphereB;
@@ -104,7 +103,7 @@ internal sealed class QuadrilateralizedSphericalCubeProjection : MapProjection
         if (this.face == Face.Top)
         {
             phi = HalfPi - latitude;
-            if (longitude >= QuarterPi && longitude <= HalfPiPlusQuarterPi)
+            if (longitude >= FortPi && longitude <= HalfPiPlusQuarterPi)
             {
                 area = Area.Zero;
                 theta = longitude - HalfPi;
@@ -114,7 +113,7 @@ internal sealed class QuadrilateralizedSphericalCubeProjection : MapProjection
                 area = Area.One;
                 theta = longitude > 0d ? longitude - PI : longitude + PI;
             }
-            else if (longitude > -HalfPiPlusQuarterPi && longitude <= -QuarterPi)
+            else if (longitude > -HalfPiPlusQuarterPi && longitude <= -FortPi)
             {
                 area = Area.Two;
                 theta = longitude + HalfPi;
@@ -128,17 +127,17 @@ internal sealed class QuadrilateralizedSphericalCubeProjection : MapProjection
         else if (this.face == Face.Bottom)
         {
             phi = HalfPi + latitude;
-            if (longitude >= QuarterPi && longitude <= HalfPiPlusQuarterPi)
+            if (longitude >= FortPi && longitude <= HalfPiPlusQuarterPi)
             {
                 area = Area.Zero;
                 theta = -longitude + HalfPi;
             }
-            else if (longitude < QuarterPi && longitude >= -QuarterPi)
+            else if (longitude < FortPi && longitude >= -FortPi)
             {
                 area = Area.One;
                 theta = -longitude;
             }
-            else if (longitude < -QuarterPi && longitude >= -HalfPiPlusQuarterPi)
+            else if (longitude < -FortPi && longitude >= -HalfPiPlusQuarterPi)
             {
                 area = Area.Two;
                 theta = -longitude - HalfPi;
@@ -194,7 +193,7 @@ internal sealed class QuadrilateralizedSphericalCubeProjection : MapProjection
             }
         }
 
-        double mu = Math.Atan((12d / PI) * (theta + Math.Acos(Math.Sin(theta) * Math.Cos(QuarterPi)) - HalfPi));
+        double mu = Math.Atan((12d / PI) * (theta + Math.Acos(Math.Sin(theta) * Math.Cos(FortPi)) - HalfPi));
         double t = Math.Sqrt((1d - Math.Cos(phi)) / (Math.Cos(mu) * Math.Cos(mu)) / (1d - Math.Cos(Math.Atan(1d / Math.Cos(theta)))));
 
         if (area == Area.One)
@@ -388,11 +387,11 @@ internal sealed class QuadrilateralizedSphericalCubeProjection : MapProjection
         }
 
         double theta = Math.Atan2(y, x);
-        if (Math.Abs(theta) <= QuarterPi)
+        if (Math.Abs(theta) <= FortPi)
         {
             area = Area.Zero;
         }
-        else if (theta > QuarterPi && theta <= HalfPiPlusQuarterPi)
+        else if (theta > FortPi && theta <= HalfPiPlusQuarterPi)
         {
             area = Area.One;
             theta -= HalfPi;
@@ -438,7 +437,7 @@ internal sealed class QuadrilateralizedSphericalCubeProjection : MapProjection
             return Face.Bottom;
         }
 
-        if (Math.Abs(lam0) <= QuarterPi)
+        if (Math.Abs(lam0) <= FortPi)
         {
             return Face.Front;
         }

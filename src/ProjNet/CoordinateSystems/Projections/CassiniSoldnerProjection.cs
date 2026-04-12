@@ -28,11 +28,6 @@ using ProjNet.CoordinateSystems.Transformations;
 internal sealed class CassiniSoldnerProjection : MapProjection
 {
     /// <summary>
-    /// Fraction constant 1/6 used in polynomial terms.
-    /// </summary>
-    private const double One6th = 0.16666666666666666666d;
-
-    /// <summary>
     /// Fraction constant 1/120 used in polynomial terms.
     /// </summary>
     private const double One120th = 0.00833333333333333333d;
@@ -41,11 +36,6 @@ internal sealed class CassiniSoldnerProjection : MapProjection
     /// Fraction constant 1/24 used in polynomial terms.
     /// </summary>
     private const double One24th = 0.04166666666666666666d;
-
-    /// <summary>
-    /// Fraction constant 1/3 used in polynomial terms.
-    /// </summary>
-    private const double One3rd = 0.33333333333333333333d;
 
     /// <summary>
     /// Fraction constant 1/15 used in polynomial terms.
@@ -142,7 +132,7 @@ internal sealed class CassiniSoldnerProjection : MapProjection
         double d2 = dd * dd;
 
         double phi = phi1 - ((n * tn / r) * d2 * (.5 - ((1.0 + (3.0 * t)) * d2 * One24th)));
-        double lambda = dd * (1.0 + (t * d2 * (-One3rd + ((1.0 + (3.0 * t)) * d2 * One15th)))) / Math.Cos(phi1);
+        double lambda = dd * (1.0 + (t * d2 * (-ProjectionConstants.OneThird + ((1.0 + (3.0 * t)) * d2 * One15th)))) / Math.Cos(phi1);
 
         if (this.hyperbolic && !this.TryRefineInverseNormalized(targetX, targetY, ref lambda, ref phi))
         {
@@ -189,7 +179,7 @@ internal sealed class CassiniSoldnerProjection : MapProjection
         double a2 = a1 * a1;
         double c = this.cFactor * Math.Pow(cosPhi, 2.0d);
 
-        x = n * a1 * (1.0d - (a2 * t * (One6th + ((8.0d - t + (8.0d * c)) * a2 * One120th))));
+        x = n * a1 * (1.0d - (a2 * t * (ProjectionConstants.OneSixth + ((8.0d - t + (8.0d * c)) * a2 * One120th))));
         y -= this.m0 - (n * tn * a2 * (0.5d + ((5.0d - t + (6.0d * c)) * a2 * One24th)));
 
         if (this.hyperbolic)

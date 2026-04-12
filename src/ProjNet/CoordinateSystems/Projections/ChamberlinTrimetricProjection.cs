@@ -19,7 +19,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 internal sealed class ChamberlinTrimetricProjection : MapProjection
 {
-    private const double Third = 0.333333333333333333d;
     private const double Tolerance = 1e-9d;
 
     private readonly ControlPoint[] control = [new(), new(), new()];
@@ -160,8 +159,8 @@ internal sealed class ChamberlinTrimetricProjection : MapProjection
                 }
             }
 
-            x *= Third;
-            y *= Third;
+            x *= ProjectionConstants.OneThird;
+            y *= ProjectionConstants.OneThird;
         }
 
         lon = this.SphericalRadius * x;

@@ -19,8 +19,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 internal sealed class Wagner3Projection : MapProjection
 {
-    private const double TwoThird = 0.6666666666666666666667d;
-
     private readonly double cx;
 
     /// <summary>
@@ -65,7 +63,7 @@ internal sealed class Wagner3Projection : MapProjection
     protected override void RadiansToMeters(ref double lon, ref double lat)
     {
         double lambda = Adjust_lon(lon - this.centralMeridian);
-        double x = this.cx * lambda * Math.Cos(TwoThird * lat);
+        double x = this.cx * lambda * Math.Cos(ProjectionConstants.TwoThirds * lat);
         double y = lat;
 
         lon = this.SphericalRadius * x;
@@ -79,7 +77,7 @@ internal sealed class Wagner3Projection : MapProjection
         double yy = y * this.InverseSphericalRadius;
 
         double phi = yy;
-        double denominator = this.cx * Math.Cos(TwoThird * phi);
+        double denominator = this.cx * Math.Cos(ProjectionConstants.TwoThirds * phi);
         if (Math.Abs(denominator) <= Eps10)
         {
             ArgumentGuard.ThrowArgument("Input data outside projection domain.");

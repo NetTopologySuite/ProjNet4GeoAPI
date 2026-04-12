@@ -23,7 +23,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://en.wikipedia.org/wiki/Van_der_Grinten_projection">Wikipedia: Van der Grinten projection.</seealso>
 internal sealed class VanDerGrintenProjection : MapProjection
 {
-    private const double Third = 1d / 3d;
     private const double TwoTwentySevenths = 2d / 27d;
     private const double FourPiOverThree = 4.18879020478639098458d;
     private const double PiSquared = PI * PI;
@@ -163,10 +162,10 @@ internal sealed class VanDerGrintenProjection : MapProjection
         double c0 = PI * ay;
 
         c2 /= c3;
-        double al = (c1 / c3) - (Third * c2 * c2);
-        double m = 2d * Math.Sqrt(-Third * al);
+        double al = (c1 / c3) - (ProjectionConstants.OneThird * c2 * c2);
+        double m = 2d * Math.Sqrt(-ProjectionConstants.OneThird * al);
         double c2Cubed = c2 * c2 * c2;
-        double d = (TwoTwentySevenths * c2Cubed) + (((c0 * c0) - (Third * c2 * c1)) / c3);
+        double d = (TwoTwentySevenths * c2Cubed) + (((c0 * c0) - (ProjectionConstants.OneThird * c2 * c1)) / c3);
         double alMulM = al * m;
         if (Math.Abs(alMulM) < InverseDomainEpsilon)
         {
@@ -186,7 +185,7 @@ internal sealed class VanDerGrintenProjection : MapProjection
             d = TwoPi - d;
         }
 
-        double phi = PI * ((m * Math.Cos((d * Third) + FourPiOverThree)) - (Third * c2));
+        double phi = PI * ((m * Math.Cos((d * ProjectionConstants.OneThird) + FourPiOverThree)) - (ProjectionConstants.OneThird * c2));
         if (yy < 0d)
         {
             phi = -phi;

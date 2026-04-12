@@ -20,8 +20,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// </remarks>
 internal sealed class LarriveeProjection : MapProjection
 {
-    private const double Sixth = 0.16666666666666666d;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="LarriveeProjection"/> class.
     /// </summary>
@@ -55,7 +53,7 @@ internal sealed class LarriveeProjection : MapProjection
     protected override void RadiansToMeters(ref double lon, ref double lat)
     {
         double lambda = Adjust_lon(lon - this.centralMeridian);
-        double denominator = Math.Cos(0.5d * lat) * Math.Cos(Sixth * lambda);
+        double denominator = Math.Cos(0.5d * lat) * Math.Cos(ProjectionConstants.OneSixth * lambda);
         if (Math.Abs(denominator) <= Eps10)
         {
             ArgumentGuard.ThrowArgument("Input data outside projection domain.");

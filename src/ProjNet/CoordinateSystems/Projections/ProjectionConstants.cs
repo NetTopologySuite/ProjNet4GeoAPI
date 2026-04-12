@@ -20,6 +20,11 @@ internal static class ProjectionConstants
     internal const double TwoThirds = 0.66666666666666666666d;
 
     /// <summary>
+    /// One sixth.
+    /// </summary>
+    internal const double OneSixth = 0.16666666666666666666d;
+
+    /// <summary>
     /// One plus a 1e-7 tolerance margin.
     /// </summary>
     internal const double OnePlusEps7 = 1.0000001d;

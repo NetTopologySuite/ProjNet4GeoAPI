@@ -26,9 +26,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://en.wikipedia.org/wiki/HEALPix">Wikipedia: HEALPix.</seealso>
 internal sealed class HealpixProjection : MapProjection
 {
-    private static readonly double Phi0Limit = Math.Asin(2d / 3d);
-    private const double QuarterPi = PI / 4d;
-    private const double HalfPiLocal = PI / 2d;
+    private static readonly double Phi0Limit = Math.Asin(ProjectionConstants.TwoThirds);
 
     private readonly double radius;
     private readonly double inverseRadius;
@@ -131,21 +129,21 @@ internal sealed class HealpixProjection : MapProjection
             capNumber = 3;
         }
 
-        double lambdaCenter = (-3d * QuarterPi) + (HalfPiLocal * capNumber);
+        double lambdaCenter = (-3d * FortPi) + (HalfPi * capNumber);
         x = lambdaCenter + ((lambda - lambdaCenter) * sigma);
-        y = Sign(phi) * QuarterPi * (2d - sigma);
+        y = Sign(phi) * FortPi * (2d - sigma);
     }
 
     private static void FromHealpixSphere(double x, double y, out double lambda, out double phi)
     {
-        if (Math.Abs(y) <= QuarterPi)
+        if (Math.Abs(y) <= FortPi)
         {
             lambda = x;
             phi = Math.Asin(ProjectionConstants.Clamp((8d * y) / (3d * PI), -1d, 1d));
             return;
         }
 
-        if (Math.Abs(y) < HalfPiLocal)
+        if (Math.Abs(y) < HalfPi)
         {
             int capNumber = (int)Math.Floor((2d * x / PI) + 2d);
             if (capNumber < 0)
@@ -157,12 +155,12 @@ internal sealed class HealpixProjection : MapProjection
                 capNumber = 3;
             }
 
-            double xCenter = (-3d * QuarterPi) + (HalfPiLocal * capNumber);
+            double xCenter = (-3d * FortPi) + (HalfPi * capNumber);
             double tau = 2d - ((4d * Math.Abs(y)) / PI);
             if (Math.Abs(tau) <= Eps10)
             {
                 lambda = xCenter;
-                phi = Sign(y) * HalfPiLocal;
+                phi = Sign(y) * HalfPi;
                 return;
             }
 
@@ -172,7 +170,7 @@ internal sealed class HealpixProjection : MapProjection
         }
 
         lambda = -PI;
-        phi = Sign(y) * HalfPiLocal;
+        phi = Sign(y) * HalfPi;
     }
 
     private static void Rotate(ref double x, ref double y, double angle)

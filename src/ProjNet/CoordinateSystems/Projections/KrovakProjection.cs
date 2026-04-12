@@ -61,9 +61,6 @@ internal class KrovakProjection : MapProjection
     private readonly double reciprocSemiMajor;
     private readonly bool eastingNorthing;
 
-    // Useful constant - 45° in radians.
-    private const double S45 = 0.785398163397448;
-
     /// <summary>
     /// Initializes a new instance of the <see cref="KrovakProjection"/> class.
     /// </summary>
@@ -107,7 +104,7 @@ internal class KrovakProjection : MapProjection
         this.sinAzim = Math.Sin(this.azimuth);
         this.cosAzim = Math.Cos(this.azimuth);
         this.n = Math.Sin(this.pseudoStandardParallel);
-        this.tanS2 = Math.Tan((this.pseudoStandardParallel / 2) + S45);
+        this.tanS2 = Math.Tan((this.pseudoStandardParallel / 2) + FortPi);
 
         double sinLatitudeOrigin = Math.Sin(this.latOrigin);
         double cosLatitudeOrigin = Math.Cos(this.latOrigin);
@@ -118,7 +115,7 @@ internal class KrovakProjection : MapProjection
 
         double eccentricityLatitude = this.e * sinLatitudeOrigin;
         double g = Math.Pow((1 - eccentricityLatitude) / (1 + eccentricityLatitude), (this.alfa * this.e) / 2);
-        this.k1 = Math.Pow(Math.Tan((this.latOrigin / 2) + S45), this.alfa) * g / Math.Tan((u0 / 2) + S45);
+        this.k1 = Math.Pow(Math.Tan((this.latOrigin / 2) + FortPi), this.alfa) * g / Math.Tan((u0 / 2) + FortPi);
         this.ka = Math.Pow(1 / this.k1, -1 / this.alfa);
 
         double meridionalRadius = Math.Sqrt(1 - this.es) / (1 - (this.es * (sinLatitudeOrigin * sinLatitudeOrigin)));
@@ -176,13 +173,13 @@ internal class KrovakProjection : MapProjection
 
         double eccentricitySinPhi = this.e * Math.Sin(phi);
         double conformalScale = Math.Pow((1.0 - eccentricitySinPhi) / (1.0 + eccentricitySinPhi), this.hae);
-        double conformalLatitude = 2 * (Math.Atan(Math.Pow(Math.Tan((phi / 2) + S45), this.alfa) / this.k1 * conformalScale) - S45);
+        double conformalLatitude = 2 * (Math.Atan(Math.Pow(Math.Tan((phi / 2) + FortPi), this.alfa) / this.k1 * conformalScale) - FortPi);
         double deltaV = -lambda * this.alfa;
         double cosConformalLatitude = Math.Cos(conformalLatitude);
         double pseudoLatitude = Math.Asin((this.cosAzim * Math.Sin(conformalLatitude)) + (this.sinAzim * cosConformalLatitude * Math.Cos(deltaV)));
         double pseudoLongitude = Math.Asin(cosConformalLatitude * Math.Sin(deltaV) / Math.Cos(pseudoLatitude));
         double eps = this.n * pseudoLongitude;
-        double radialDistance = this.rop / Math.Pow(Math.Tan((pseudoLatitude / 2) + S45), this.n);
+        double radialDistance = this.rop / Math.Pow(Math.Tan((pseudoLatitude / 2) + FortPi), this.n);
 
         // x and y are reverted
         lat = -(radialDistance * Math.Cos(eps)) * this.semiMajor;
@@ -203,10 +200,10 @@ internal class KrovakProjection : MapProjection
         double radialDistance = Math.Sqrt((x * x) + (y * y));
         double eps = Math.Atan2(-x, -y);
         double pseudoLongitude = eps / this.n;
-        double pseudoLatitude = 2 * (Math.Atan(Math.Pow(this.ro0 / radialDistance, 1 / this.n) * this.tanS2) - S45);
+        double pseudoLatitude = 2 * (Math.Atan(Math.Pow(this.ro0 / radialDistance, 1 / this.n) * this.tanS2) - FortPi);
         double cosPseudoLatitude = Math.Cos(pseudoLatitude);
         double conformalLatitude = Math.Asin((this.cosAzim * Math.Sin(pseudoLatitude)) - (this.sinAzim * cosPseudoLatitude * Math.Cos(pseudoLongitude)));
-        double inverseConformalScale = this.ka * Math.Pow(Math.Tan((conformalLatitude / 2.0) + S45), 1 / this.alfa);
+        double inverseConformalScale = this.ka * Math.Pow(Math.Tan((conformalLatitude / 2.0) + FortPi), 1 / this.alfa);
         double deltaV = Math.Asin((cosPseudoLatitude * Math.Sin(pseudoLongitude)) / Math.Cos(conformalLatitude));
         double lambda = -deltaV / this.alfa;
         double phi = 0d;
@@ -216,7 +213,7 @@ internal class KrovakProjection : MapProjection
         {
             double fi1 = phi;
             double esf = this.e * Math.Sin(fi1);
-            phi = 2.0 * (Math.Atan(inverseConformalScale * Math.Pow((1.0 + esf) / (1.0 - esf), this.e / 2.0)) - S45);
+            phi = 2.0 * (Math.Atan(inverseConformalScale * Math.Pow((1.0 + esf) / (1.0 - esf), this.e / 2.0)) - FortPi);
             if (Math.Abs(fi1 - phi) <= IterationTolerance)
             {
                 break;

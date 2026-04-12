@@ -58,11 +58,6 @@ internal sealed class TransverseMercator : MapProjection
     private const double FC2 = 0.50000000000000000000000;
 
     /// <summary>
-    /// Fraction constant 1/6 used in series expansion terms.
-    /// </summary>
-    private const double FC3 = 0.16666666666666666666666;
-
-    /// <summary>
     /// Fraction constant 1/12 used in series expansion terms.
     /// </summary>
     private const double FC4 = 0.08333333333333333333333;
@@ -156,7 +151,7 @@ internal sealed class TransverseMercator : MapProjection
             (FC6 * als * (61.0 + (t * (t - 58.0)) + (n * (270.0 - (330.0 * t))) +
             (FC8 * als * (1385.0 + (t * ((t * (543.0 - t)) - 3111.0))))))))));
 
-        x = al * (FC1 + (FC3 * als * (1.0 - t + n +
+        x = al * (FC1 + (ProjectionConstants.OneSixth * als * (1.0 - t + n +
             (FC5 * als * (5.0 + (t * (t - 18.0)) + (n * (14.0 - (58.0 * t))) +
             (FC7 * als * (61.0 + (t * ((t * (179.0 - t)) - 479.0)))))))));
 
@@ -199,7 +194,7 @@ internal sealed class TransverseMercator : MapProjection
                 FC6 * (61.0 + (t * (90.0 - (252.0 * n) + (45.0 * t))) + (46.0 * n) - (ds *
                 FC8 * (1385.0 + (t * (3633.0 + (t * (4095.0 + (1575.0 * t)))))))))))));
 
-            x = Adjust_lon(this.centralMeridian + (d * (FC1 - (ds * FC3 * (1.0 + (2.0 * t) + n -
+            x = Adjust_lon(this.centralMeridian + (d * (FC1 - (ds * ProjectionConstants.OneSixth * (1.0 + (2.0 * t) + n -
                 (ds * FC5 * (5.0 + (t * (28.0 + (24 * t) + (8.0 * n))) + (6.0 * n) -
                 (ds * FC7 * (61.0 + (t * (662.0 + (t * (1320.0 + (720.0 * t)))))))))))) / cosphi));
         }
