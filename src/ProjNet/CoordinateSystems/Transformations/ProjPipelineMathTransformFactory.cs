@@ -799,7 +799,7 @@ internal static class ProjPipelineMathTransformFactory
             new AxisInfo("East", AxisOrientationEnum.East),
             new AxisInfo("North", AxisOrientationEnum.North));
 
-        GeographicCoordinateSystem wgs84Geographic = CreateWgs84GeographicCoordinateSystem(csFactory);
+        GeographicCoordinateSystem wgs84Geographic = GeographicCoordinateSystem.WGS84;
 
         try
         {
@@ -835,18 +835,6 @@ internal static class ProjPipelineMathTransformFactory
             "PROJ pipeline geographic",
             AngularUnit.Degrees,
             localDatum,
-            PrimeMeridian.Greenwich,
-            new AxisInfo("Lon", AxisOrientationEnum.East),
-            new AxisInfo("Lat", AxisOrientationEnum.North));
-    }
-
-    private static GeographicCoordinateSystem CreateWgs84GeographicCoordinateSystem(CoordinateSystemFactory csFactory)
-    {
-        HorizontalDatum wgs84Datum = csFactory.CreateHorizontalDatum("WGS84", DatumType.HD_Geocentric, Ellipsoid.WGS84, null);
-        return csFactory.CreateGeographicCoordinateSystem(
-            "WGS84 GCS",
-            AngularUnit.Degrees,
-            wgs84Datum,
             PrimeMeridian.Greenwich,
             new AxisInfo("Lon", AxisOrientationEnum.East),
             new AxisInfo("Lat", AxisOrientationEnum.North));
@@ -1218,7 +1206,7 @@ internal static class ProjPipelineMathTransformFactory
 
         var csFactory = new CoordinateSystemFactory();
         GeographicCoordinateSystem localGeographic = CreatePipelineGeographicCoordinateSystem(csFactory, semiMajor, semiMinor, toWgs84);
-        GeographicCoordinateSystem wgs84Geographic = CreateWgs84GeographicCoordinateSystem(csFactory);
+        GeographicCoordinateSystem wgs84Geographic = GeographicCoordinateSystem.WGS84;
 
         try
         {

@@ -88,6 +88,39 @@ public class Wgs84StaticUsageRegressionTests
         Assert.Equal(staticOutput[1], pipelineOutput[1], 5);
     }
 
+    /// <summary>
+    /// Verifies that datum-aware geographic pipeline steps use the same public WGS84 runtime source as direct factory calls.
+    /// </summary>
+    [Fact]
+    public void ProjPipelineFactory_WithDatumAwareGeographicStep_MatchesStaticCoordinateSystems()
+    {
+        const string operation = "+proj=pipeline +step +proj=longlat +datum=GGRS87";
+        MathTransform pipelineTransform = RequirePipelineMathTransform(operation);
+        GeographicCoordinateSystem targetCoordinateSystem = CreateGeographicCoordinateSystem(
+            "GGRS87",
+            new HorizontalDatum(
+                Ellipsoid.GRS80,
+                new Wgs84ConversionInfo(-199.87d, 74.79d, 246.02d, 0d, 0d, 0d, 0d),
+                DatumType.HD_Geocentric,
+                "GGRS87",
+                string.Empty,
+                -1,
+                string.Empty,
+                string.Empty,
+                string.Empty));
+        CoordinateTransformationFactory factory = new();
+        ICoordinateTransformation staticTransformation = factory.CreateFromCoordinateSystems(
+            GeographicCoordinateSystem.WGS84,
+            targetCoordinateSystem);
+
+        double[] source = [23.72d, 37.98d];
+        double[] pipelineOutput = pipelineTransform.Transform(source);
+        double[] staticOutput = staticTransformation.MathTransform.Transform(source);
+
+        Assert.Equal(staticOutput[0], pipelineOutput[0], 9);
+        Assert.Equal(staticOutput[1], pipelineOutput[1], 9);
+    }
+
     private static GeographicCoordinateSystem CreateGeographicCoordinateSystem(string name, HorizontalDatum horizontalDatum)
     {
         return new GeographicCoordinateSystem(
