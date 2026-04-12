@@ -556,6 +556,11 @@ public abstract class MapProjection : MathTransform, IProjection
     }
 
     /// <summary>
+    /// Gets a value indicating whether this projection can create a usable inverse transform.
+    /// </summary>
+    public override bool IsInvertible => this.HasInverseSupport;
+
+    /// <summary>
     /// Gets a value indicating whether this projection operates in the inverse direction.
     /// </summary>
     /// <remarks>
