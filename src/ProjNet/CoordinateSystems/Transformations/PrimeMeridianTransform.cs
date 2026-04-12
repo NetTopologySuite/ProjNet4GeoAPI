@@ -20,7 +20,7 @@ internal sealed class PrimeMeridianTransform : MathTransform
 {
     private readonly PrimeMeridian source;
     private readonly PrimeMeridian target;
-    private bool isInverted;
+    private readonly bool isInverted;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PrimeMeridianTransform"/> class.
@@ -28,6 +28,11 @@ internal sealed class PrimeMeridianTransform : MathTransform
     /// <param name="source">Source prime meridian.</param>
     /// <param name="target">Target prime meridian.</param>
     public PrimeMeridianTransform(PrimeMeridian source, PrimeMeridian target)
+        : this(source, target, false)
+    {
+    }
+
+    private PrimeMeridianTransform(PrimeMeridian source, PrimeMeridian target, bool isInverted)
     {
         if (!source.AngularUnit.EqualParams(target.AngularUnit))
         {
@@ -36,6 +41,7 @@ internal sealed class PrimeMeridianTransform : MathTransform
 
         this.source = source;
         this.target = target;
+        this.isInverted = isInverted;
     }
 
     /// <summary>
@@ -64,7 +70,7 @@ internal sealed class PrimeMeridianTransform : MathTransform
     /// <inheritdoc />
     public override MathTransform Inverse()
     {
-        return new PrimeMeridianTransform(this.target, this.source);
+        return new PrimeMeridianTransform(this.source, this.target, !this.isInverted);
     }
 
     /// <inheritdoc />
@@ -98,6 +104,6 @@ internal sealed class PrimeMeridianTransform : MathTransform
     /// <inheritdoc />
     public override void Invert()
     {
-        this.isInverted = !this.isInverted;
+        throw new NotSupportedException("PrimeMeridianTransform is immutable. Use Inverse() to obtain inverted transform.");
     }
 }

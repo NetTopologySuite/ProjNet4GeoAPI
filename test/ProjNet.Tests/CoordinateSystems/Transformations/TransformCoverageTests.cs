@@ -220,19 +220,14 @@ public class TransformCoverageTests
     }
 
     /// <summary>
-    /// Invert method toggles the transform direction.
+    /// Prime meridian transforms reject in-place inversion because they are immutable.
     /// </summary>
     [Fact]
-    public void PrimeMeridianInvertTogglesBehavior()
+    public void PrimeMeridianInvertThrowsNotSupportedException()
     {
         var transform = new PrimeMeridianTransform(PrimeMeridian.Greenwich, PrimeMeridian.Paris);
-        double[] original = transform.Transform([0d, 0d, 0d]);
 
-        transform.Invert();
-        double[] inverted = transform.Transform([0d, 0d, 0d]);
-
-        Assert.NotEqual(original[0], inverted[0]);
-        Assert.Equal(-original[0], inverted[0], 10);
+        Assert.Throws<NotSupportedException>(() => transform.Invert());
     }
 
     /// <summary>
@@ -303,17 +298,16 @@ public class TransformCoverageTests
     }
 
     /// <summary>
-    /// Batch transform via span-based API respects inverted direction.
+    /// Batch transform via span-based API respects the inverse transform direction.
     /// </summary>
     [Fact]
-    public void PrimeMeridianSpanBatchTransformAfterInvertUsesReverseShift()
+    public void PrimeMeridianSpanBatchTransformWithInverseUsesReverseShift()
     {
-        var transform = new PrimeMeridianTransform(PrimeMeridian.Greenwich, PrimeMeridian.Paris);
+        MathTransform transform = new PrimeMeridianTransform(PrimeMeridian.Greenwich, PrimeMeridian.Paris).Inverse();
         double[] xs = [0d, 10d, 20d];
         double[] ys = [50d, 51d, 52d];
         double[] zs = [0d, 0d, 0d];
 
-        transform.Invert();
         transform.Transform(xs.AsSpan(), ys.AsSpan(), zs.AsSpan());
 
         double expectedShift = PrimeMeridian.Paris.Longitude - PrimeMeridian.Greenwich.Longitude;
@@ -706,20 +700,15 @@ public class TransformCoverageTests
     }
 
     /// <summary>
-    /// Invert method toggles between forward and inverse behavior.
+    /// VertOffset rejects in-place inversion because the transform is immutable.
     /// </summary>
     [Fact]
-    public void VertOffsetInvertTogglesBehavior()
+    public void VertOffsetInvertThrowsNotSupportedException()
     {
         const string operation = "+proj=vertoffset +dh=10 +ellps=GRS80";
         MathTransform transform = CreatePipelineTransform(operation);
 
-        double[] forward = transform.Transform([0d, 0d, 100d]);
-        transform.Invert();
-        double[] inverted = transform.Transform([0d, 0d, 100d]);
-
-        Assert.True(forward[2] > 100d);
-        Assert.True(inverted[2] < 100d);
+        Assert.Throws<NotSupportedException>(() => transform.Invert());
     }
 
     /// <summary>

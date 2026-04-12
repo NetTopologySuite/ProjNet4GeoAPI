@@ -26,7 +26,7 @@ internal sealed class GeogOffsetMathTransform : MathTransform
     private readonly double latitudeOffsetDegrees;
     private readonly double heightOffsetMeters;
 
-    private bool isInverted;
+    private readonly bool isInverted;
     private MathTransform? inverse;
 
     /// <summary>
@@ -99,7 +99,7 @@ internal sealed class GeogOffsetMathTransform : MathTransform
     /// <inheritdoc />
     public override void Invert()
     {
-        this.isInverted = !this.isInverted;
+        throw new NotSupportedException("GeogOffsetMathTransform is immutable. Use Inverse() to obtain inverted transform.");
     }
 
     /// <inheritdoc />

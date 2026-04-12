@@ -31,7 +31,7 @@ internal sealed class VertOffsetMathTransform : MathTransform
     private readonly double rho0;
     private readonly double nu0;
 
-    private bool isInverted;
+    private readonly bool isInverted;
     private MathTransform? inverse;
 
     private VertOffsetMathTransform(
@@ -109,7 +109,7 @@ internal sealed class VertOffsetMathTransform : MathTransform
     /// <inheritdoc />
     public override void Invert()
     {
-        this.isInverted = !this.isInverted;
+        throw new NotSupportedException("VertOffsetMathTransform is immutable. Use Inverse() to obtain inverted transform.");
     }
 
     /// <inheritdoc />
