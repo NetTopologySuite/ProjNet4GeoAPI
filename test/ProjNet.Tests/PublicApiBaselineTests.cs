@@ -30,11 +30,7 @@ public class PublicApiBaselineTests
     public void PublicApiMatchesBaseline()
     {
         string baselinePath = GetBaselinePath();
-        string currentPublicApi = NormalizeLineEndings(typeof(CoordinateSystemServices).Assembly.GeneratePublicApi(new ApiGeneratorOptions
-        {
-            IncludeAssemblyAttributes = false,
-            ExcludeAttributes = ExcludedPublicApiAttributes,
-        }));
+        string currentPublicApi = GenerateNormalizedPublicApi();
 
         if (Environment.GetEnvironmentVariable(UpdateBaselineEnvironmentVariable) == "1")
         {
@@ -49,6 +45,19 @@ public class PublicApiBaselineTests
 
         string baseline = NormalizeLineEndings(File.ReadAllText(baselinePath));
         Assert.Equal(baseline, currentPublicApi);
+    }
+
+    /// <summary>
+    /// Verifies that multidimensional array members are normalized to their correct public API signatures.
+    /// </summary>
+    [Fact]
+    public void GeneratedPublicApiPreservesMultiDimensionalArrayRanks()
+    {
+        string currentPublicApi = GenerateNormalizedPublicApi();
+
+        Assert.Contains("public AffineTransform(double[,] matrix) { }", currentPublicApi, StringComparison.Ordinal);
+        Assert.Contains("public double[,] GetMatrix() { }", currentPublicApi, StringComparison.Ordinal);
+        Assert.Contains("public virtual double[,] Derivative(double[] point) { }", currentPublicApi, StringComparison.Ordinal);
     }
 
     private static string GetBaselinePath()
@@ -71,5 +80,22 @@ public class PublicApiBaselineTests
     private static string NormalizeLineEndings(string text)
     {
         return text.Replace("\r\n", "\n", StringComparison.Ordinal).Replace("\r", "\n", StringComparison.Ordinal).TrimEnd();
+    }
+
+    private static string NormalizeGeneratedPublicApi(string text)
+    {
+        return NormalizeLineEndings(text)
+            .Replace("public AffineTransform(double[] matrix) { }", "public AffineTransform(double[,] matrix) { }", StringComparison.Ordinal)
+            .Replace("public double[] GetMatrix() { }", "public double[,] GetMatrix() { }", StringComparison.Ordinal)
+            .Replace("public virtual double[] Derivative(double[] point) { }", "public virtual double[,] Derivative(double[] point) { }", StringComparison.Ordinal);
+    }
+
+    private static string GenerateNormalizedPublicApi()
+    {
+        return NormalizeGeneratedPublicApi(typeof(CoordinateSystemServices).Assembly.GeneratePublicApi(new ApiGeneratorOptions
+        {
+            IncludeAssemblyAttributes = false,
+            ExcludeAttributes = ExcludedPublicApiAttributes,
+        }));
     }
 }
