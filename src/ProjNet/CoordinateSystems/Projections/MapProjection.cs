@@ -17,6 +17,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// Abstract base class for all map projections, providing shared mathematical utilities and
 /// coordinate transformation infrastructure.
 /// </summary>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 1, pp. 7-38.</seealso>
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "CA1051:Do not declare visible instance fields", Justification = "Legacy PROJ-compatible API surface is preserved for compatibility.")]
 [System.Diagnostics.CodeAnalysis.SuppressMessage("StyleCop.CSharp.MaintainabilityRules", "SA1401:FieldsMustBePrivate", Justification = "Legacy PROJ-compatible API surface is preserved for compatibility.")]
 [System.Diagnostics.CodeAnalysis.SuppressMessage("Naming", "CA1708:Identifiers should differ by more than case", Justification = "Obsolete compatibility aliases intentionally preserve legacy all-caps names alongside PascalCase names.")]
