@@ -142,6 +142,26 @@ var updated = new TemporalDatum(
     original.Abbreviation);
 ```
 
+### 7. Replacing subclasses of newly sealed types
+
+The following public types are now sealed in v3:
+
+- `AffineTransform`
+- `CoordinateTransformation`
+- `GeographicTransform`
+- `ProjectionParameterSet`
+
+If you previously inherited from them, switch to composition instead:
+
+| Sealed type | Typical reason for subclassing | Migration path |
+| --- | --- | --- |
+| `AffineTransform` | custom affine runtime behavior | derive from `MathTransform` for a custom transform, or wrap an `AffineTransform` instance and delegate to it |
+| `CoordinateTransformation` | attach custom metadata or behavior to a resolved transformation | create your own wrapper around `ICoordinateTransformation` / `ICoordinateTransformationCore` instead of inheriting |
+| `GeographicTransform` | specialize datum-shift runtime behavior | implement a custom `MathTransform` and plug it into your own transformation pipeline |
+| `ProjectionParameterSet` | attach helper methods or validation to the parameter dictionary | keep a separate helper/wrapper type and construct or copy a `ProjectionParameterSet` where the ProjNET APIs require one |
+
+The practical v3 rule is: **treat these runtime/container types as finished building blocks, not inheritance extension points**.
+
 ## Important note about return types
 
 `WithAuthority(...)` and `WithName(...)` are declared on `Info`, and `WithEnsemble(...)` is declared on `Datum`. They preserve the **concrete runtime type**, but their declared return types are the base types:
