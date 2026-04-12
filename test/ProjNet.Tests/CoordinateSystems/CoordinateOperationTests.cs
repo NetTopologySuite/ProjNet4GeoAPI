@@ -5,6 +5,7 @@ namespace ProjNet.Tests;
 
 using System.Collections.Generic;
 using ProjNet.CoordinateSystems;
+using ProjNet.IO.CoordinateSystems;
 using ProjNet.IO.Wkt;
 using Xunit;
 
@@ -102,6 +103,23 @@ public class CoordinateOperationTests
 
         Assert.StartsWith("CONCATENATEDOPERATION[", wkt, System.StringComparison.Ordinal);
         Assert.Contains("STEP[COORDINATEOPERATION[", wkt, System.StringComparison.Ordinal);
+    }
+
+    /// <summary>
+    /// Verifies that concatenated operation WKT2 serialization round-trips through the reader without losing step metadata.
+    /// </summary>
+    [Fact]
+    public void ConcatenatedOperation_Wkt2_RoundTripsThroughReader()
+    {
+        ConcatenatedOperation original = CreateConcatenatedOperation();
+        string wkt = original.ToWktNode(WktVersion.Wkt22019).ToString();
+        ConcatenatedOperation parsed = Assert.IsType<ConcatenatedOperation>(CoordinateSystemWktReader.Parse(wkt));
+
+        Assert.True(original.EqualParams(parsed));
+        Assert.Equal(original.Name, parsed.Name);
+        Assert.Equal(original.Steps.Count, parsed.Steps.Count);
+        Assert.Equal(original.Steps[0].MethodName, parsed.Steps[0].MethodName);
+        Assert.Equal(original.Steps[1].Parameters[0].Value, parsed.Steps[1].Parameters[0].Value);
     }
 
     private static CoordinateOperation CreateCoordinateOperation(string name)
