@@ -667,6 +667,7 @@ namespace ProjNet.CoordinateSystems.Projections
         protected virtual bool HasInverseSupport { get; }
         protected double InverseSphericalRadius { get; }
         protected bool IsInverse { get; }
+        public override bool IsInvertible { get; }
         protected double Lon_origin { get; set; }
         public string Name { get; }
         public int NumParameters { get; }
@@ -828,6 +829,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         protected MathTransform() { }
         public abstract int DimSource { get; }
         public abstract int DimTarget { get; }
+        public virtual bool IsInvertible { get; }
         public abstract string WKT { get; }
         public abstract string XML { get; }
         public virtual double[,] Derivative(double[] point) { }
