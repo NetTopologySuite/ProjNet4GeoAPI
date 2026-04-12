@@ -24,6 +24,7 @@ using ProjNet.CoordinateSystems.Transformations;
 /// and the rectified-skew rotation by <c>γ</c> match the implementation here.</para>
 /// </remarks>
 /// <seealso href="https://epsg.io/9812-method">EPSG method 9812: Hotine Oblique Mercator (variant A).</seealso>
+/// <seealso>Bugayevskiy &amp; Snyder (1995), "Map Projections: A Reference Manual", Ch. 2, Sect. 2.1.7, pp. 63-66.</seealso>
 internal class HotineObliqueMercatorProjection : MapProjection
 {
     private readonly double azimuth;
