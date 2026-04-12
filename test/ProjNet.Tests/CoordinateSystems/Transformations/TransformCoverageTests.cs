@@ -864,20 +864,15 @@ public class TransformCoverageTests
     }
 
     /// <summary>
-    /// Molodensky Invert method toggles direction.
+    /// Molodensky rejects in-place inversion because the transform is immutable.
     /// </summary>
     [Fact]
-    public void MolodenskyInvertTogglesBehavior()
+    public void MolodenskyInvertThrowsNotSupportedException()
     {
         MathTransform transform = CreatePipelineTransform(
             "+proj=molodensky +a=6378160 +rf=298.25 +da=-23 +df=-8.120449e-8 +dx=-134 +dy=-48 +dz=149");
 
-        double[] forward = transform.Transform([144.9667d, -37.8d, 50d]);
-        transform.Invert();
-        double[] inverted = transform.Transform(forward);
-
-        Assert.Equal(144.9667d, inverted[0], 3);
-        Assert.Equal(-37.8d, inverted[1], 3);
+        Assert.Throws<NotSupportedException>(() => transform.Invert());
     }
 
     /// <summary>

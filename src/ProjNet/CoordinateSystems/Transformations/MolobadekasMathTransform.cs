@@ -35,7 +35,7 @@ internal sealed class MolobadekasMathTransform : MathTransform
     private readonly Vector3D rotationRadians;
     private readonly Matrix3x3 rotationMatrix;
 
-    private bool isInverted;
+    private readonly bool isInverted;
     private MathTransform? inverse;
 
     /// <summary>
@@ -141,7 +141,7 @@ internal sealed class MolobadekasMathTransform : MathTransform
     /// <inheritdoc />
     public override void Invert()
     {
-        this.isInverted = !this.isInverted;
+        throw new NotSupportedException("MolobadekasMathTransform is immutable. Use Inverse() to obtain inverted transform.");
     }
 
     /// <inheritdoc />

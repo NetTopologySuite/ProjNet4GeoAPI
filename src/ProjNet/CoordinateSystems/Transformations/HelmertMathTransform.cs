@@ -46,7 +46,7 @@ internal sealed class HelmertMathTransform : MathTransform
     private readonly HelmertParameterState staticState;
     private readonly HelmertRuntimeState staticRuntimeState;
 
-    private bool isInverted;
+    private readonly bool isInverted;
     private MathTransform? inverse;
 
     private HelmertMathTransform(
@@ -129,7 +129,7 @@ internal sealed class HelmertMathTransform : MathTransform
     /// <inheritdoc />
     public override void Invert()
     {
-        this.isInverted = !this.isInverted;
+        throw new NotSupportedException("HelmertMathTransform is immutable. Use Inverse() to obtain inverted transform.");
     }
 
     /// <inheritdoc />

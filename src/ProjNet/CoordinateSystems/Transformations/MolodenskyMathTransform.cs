@@ -33,7 +33,7 @@ internal sealed class MolodenskyMathTransform : MathTransform
     private readonly double df;
     private readonly bool abridged;
 
-    private bool isInverted;
+    private readonly bool isInverted;
     private MathTransform? inverse;
 
     private MolodenskyMathTransform(
@@ -106,7 +106,7 @@ internal sealed class MolodenskyMathTransform : MathTransform
     /// <inheritdoc />
     public override void Invert()
     {
-        this.isInverted = !this.isInverted;
+        throw new NotSupportedException("MolodenskyMathTransform is immutable. Use Inverse() to obtain inverted transform.");
     }
 
     /// <inheritdoc />
