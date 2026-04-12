@@ -434,6 +434,32 @@ public class UnitTests
     }
 
     /// <summary>
+    /// Verifies that the generic unit WKT node includes authority information when it is available.
+    /// </summary>
+    [Fact]
+    public void Unit_ToWktNode_WithAuthority_IncludesAuthorityNode()
+    {
+        Unit unit = new(2.5, "custom", "TEST", 42, string.Empty, string.Empty, string.Empty);
+        WktKeywordNode node = Assert.IsType<WktKeywordNode>(unit.ToWktNode());
+
+        Assert.Equal("UNIT", node.Keyword);
+        Assert.Equal(3, node.Children.Count);
+        Assert.Equal("AUTHORITY", Assert.IsType<WktKeywordNode>(node.Children[2]).Keyword);
+    }
+
+    /// <summary>
+    /// Verifies that the generic unit WKT node omits authority information when it is unavailable.
+    /// </summary>
+    [Fact]
+    public void Unit_ToWktNode_WithoutAuthority_OmitsAuthorityNode()
+    {
+        Unit unit = new("custom", 2.5);
+        WktKeywordNode node = Assert.IsType<WktKeywordNode>(unit.ToWktNode());
+
+        Assert.Equal(2, node.Children.Count);
+    }
+
+    /// <summary>
     /// Verifies that XML serialization is not implemented for generic units.
     /// </summary>
     [Fact]

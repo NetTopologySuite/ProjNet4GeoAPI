@@ -531,6 +531,7 @@ namespace ProjNet.CoordinateSystems
         public override string WKT { get; }
         public override string XML { get; }
         public override bool EqualParams(object obj) { }
+        public ProjNet.IO.Wkt.WktNode ToWktNode() { }
         public System.Xml.Linq.XElement ToXml() { }
     }
     public class VerticalCoordinateSystem : ProjNet.CoordinateSystems.CoordinateSystem

@@ -5,9 +5,10 @@
 namespace ProjNet.CoordinateSystems;
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
-using System.Text;
 using System.Xml.Linq;
+using ProjNet.IO.Wkt;
 
 /// <summary>
 /// Class for defining units.
@@ -55,24 +56,7 @@ public class Unit : Info, IUnit
     /// Gets the Well-known text for this object
     /// as defined in the simple features specification.
     /// </summary>
-    public override string WKT
-    {
-        get
-        {
-            // Keep the generic Unit serializer manual for now because the base type still lacks
-            // a reusable WktNode/XElement representation and only the concrete Angular/Linear
-            // specializations participate in the milestone's duplication removal.
-            var sb = new StringBuilder();
-            sb.AppendFormat(CultureInfo.InvariantCulture.NumberFormat, "UNIT[\"{0}\", {1}", this.Name, this.ConversionFactor);
-            if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
-            {
-                sb.AppendFormat(CultureInfo.InvariantCulture, ", AUTHORITY[\"{0}\", \"{1}\"]", this.Authority, this.AuthorityCode);
-            }
-
-            sb.Append(']');
-            return sb.ToString();
-        }
-    }
+    public override string WKT => this.ToWktNode().ToString();
 
     /// <summary>
     /// Gets an XML representation of this object [NOT IMPLEMENTED].
@@ -93,6 +77,29 @@ public class Unit : Info, IUnit
     public XElement ToXml()
     {
         throw new NotImplementedException();
+    }
+
+    /// <summary>
+    /// Converts this generic unit to a WKT syntax tree node.
+    /// </summary>
+    /// <returns>A <see cref="WktNode"/> representing this unit.</returns>
+    public WktNode ToWktNode()
+    {
+        var children = new List<WktNode>
+        {
+            new WktQuotedString(this.Name),
+            new WktNumber(this.ConversionFactor),
+        };
+
+        if (!string.IsNullOrWhiteSpace(this.Authority) && this.AuthorityCode > 0)
+        {
+            children.Add(new WktKeywordNode(
+                "AUTHORITY",
+                new WktQuotedString(this.Authority),
+                new WktQuotedString(this.AuthorityCode.ToString(CultureInfo.InvariantCulture))));
+        }
+
+        return new WktKeywordNode("UNIT", children);
     }
 
     /// <inheritdoc />

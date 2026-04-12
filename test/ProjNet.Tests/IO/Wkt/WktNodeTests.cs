@@ -360,6 +360,18 @@ public class WktNodeTests
     }
 
     /// <summary>
+    /// Verifies that <c>Unit.ToWktNode()</c> produces a node whose compact string representation
+    /// matches the <c>WKT</c> property of the unit.
+    /// </summary>
+    [Fact]
+    public void Unit_ToWktNode_MatchesWkt()
+    {
+        Unit unit = new("custom", 2.5);
+        var node = unit.ToWktNode();
+        Assert.Equal(unit.WKT, node.ToString());
+    }
+
+    /// <summary>
     /// Verifies that <c>Ellipsoid.ToWktNode()</c> produces a node whose compact string representation
     /// matches the <c>WKT</c> property of the ellipsoid.
     /// </summary>
