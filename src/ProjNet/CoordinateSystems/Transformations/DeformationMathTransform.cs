@@ -59,7 +59,7 @@ internal sealed class DeformationMathTransform : MathTransform
     private readonly GeocentricTransform geocentricForward;
     private readonly GeocentricTransform geocentricInverse;
 
-    private bool isInverted;
+    private readonly bool isInverted;
     private MathTransform? inverse;
 
     private DeformationMathTransform(
@@ -132,7 +132,7 @@ internal sealed class DeformationMathTransform : MathTransform
     /// <inheritdoc />
     public override void Invert()
     {
-        this.isInverted = !this.isInverted;
+        throw new NotSupportedException("DeformationMathTransform is immutable. Use Inverse() to obtain inverted transform.");
     }
 
     /// <inheritdoc />

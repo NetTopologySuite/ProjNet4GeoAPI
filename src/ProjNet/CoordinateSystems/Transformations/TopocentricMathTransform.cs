@@ -40,7 +40,7 @@ internal sealed class TopocentricMathTransform : MathTransform
     private readonly double sinLam0;
     private readonly double cosLam0;
 
-    private bool isInverted;
+    private readonly bool isInverted;
     private MathTransform? inverse;
 
     private TopocentricMathTransform(
@@ -96,7 +96,7 @@ internal sealed class TopocentricMathTransform : MathTransform
     /// <inheritdoc />
     public override void Invert()
     {
-        this.isInverted = !this.isInverted;
+        throw new NotSupportedException("TopocentricMathTransform is immutable. Use Inverse() to obtain inverted transform.");
     }
 
     /// <inheritdoc />

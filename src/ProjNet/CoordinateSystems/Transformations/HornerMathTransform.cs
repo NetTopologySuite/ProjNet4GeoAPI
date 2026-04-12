@@ -56,7 +56,7 @@ internal sealed class HornerMathTransform : MathTransform
     private readonly double invOriginX;
     private readonly double invOriginY;
 
-    private bool isInverted;
+    private readonly bool isInverted;
     private MathTransform? inverse;
 
     private HornerMathTransform(
@@ -150,8 +150,7 @@ internal sealed class HornerMathTransform : MathTransform
     /// <inheritdoc />
     public override void Invert()
     {
-        this.isInverted = !this.isInverted;
-        this.inverse = null;
+        throw new NotSupportedException("HornerMathTransform is immutable. Use Inverse() to obtain inverted transform.");
     }
 
     /// <inheritdoc />

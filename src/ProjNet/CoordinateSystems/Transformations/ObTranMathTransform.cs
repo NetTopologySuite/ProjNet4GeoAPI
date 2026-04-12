@@ -43,7 +43,7 @@ internal sealed class ObTranMathTransform : MathTransform
     private readonly double sphip;
     private readonly double cphip;
     private readonly bool isOblique;
-    private bool isInverted;
+    private readonly bool isInverted;
     private MathTransform? inverse;
 
     private ObTranMathTransform(
@@ -97,7 +97,7 @@ internal sealed class ObTranMathTransform : MathTransform
     /// <inheritdoc />
     public override void Invert()
     {
-        this.isInverted = !this.isInverted;
+        throw new NotSupportedException("ObTranMathTransform is immutable. Use Inverse() to obtain inverted transform.");
     }
 
     /// <inheritdoc />

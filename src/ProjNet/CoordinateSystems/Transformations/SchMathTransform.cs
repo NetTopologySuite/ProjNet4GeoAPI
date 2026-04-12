@@ -46,7 +46,7 @@ internal sealed class SchMathTransform : MathTransform
 
     private readonly Matrix3x3 rotationMatrix;
 
-    private bool isInverted;
+    private readonly bool isInverted;
     private MathTransform? inverse;
 
     /// <summary>
@@ -189,7 +189,7 @@ internal sealed class SchMathTransform : MathTransform
     /// <inheritdoc />
     public override void Invert()
     {
-        this.isInverted = !this.isInverted;
+        throw new NotSupportedException("SchMathTransform is immutable. Use Inverse() to obtain inverted transform.");
     }
 
     /// <inheritdoc />

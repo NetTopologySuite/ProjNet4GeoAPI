@@ -37,7 +37,7 @@ internal sealed class DefModelMathTransform : MathTransform
     private readonly GeocentricTransform geocentricForward;
     private readonly GeocentricTransform geocentricInverse;
 
-    private bool isInverted;
+    private readonly bool isInverted;
     private MathTransform? inverse;
 
     private DefModelMathTransform(
@@ -139,7 +139,7 @@ internal sealed class DefModelMathTransform : MathTransform
     /// <inheritdoc />
     public override void Invert()
     {
-        this.isInverted = !this.isInverted;
+        throw new NotSupportedException("DefModelMathTransform is immutable. Use Inverse() to obtain inverted transform.");
     }
 
     /// <inheritdoc />
