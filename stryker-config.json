@@ -21,7 +21,7 @@
       "low": 70,
       "break": 60
     },
-    "concurrency": 4,
+    "concurrency": 1,
     "verbosity": "info"
   }
 }
