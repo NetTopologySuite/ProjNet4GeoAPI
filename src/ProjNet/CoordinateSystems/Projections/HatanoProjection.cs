@@ -20,7 +20,6 @@ using ProjNet.CoordinateSystems.Transformations;
 internal sealed class HatanoProjection : MapProjection
 {
     private const int Iterations = 20;
-    private const double Epsilon = 1e-7d;
     private const double OneTol = ProjectionConstants.OnePlusEps6;
     private const double Cn = 2.67595d;
     private const double Csz = 2.43763d;
@@ -77,7 +76,7 @@ internal sealed class HatanoProjection : MapProjection
 
             double th1 = (phi + Math.Sin(phi) - c) / denominator;
             phi -= th1;
-            if (Math.Abs(th1) < Epsilon)
+            if (Math.Abs(th1) < Eps7)
             {
                 break;
             }

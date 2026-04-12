@@ -25,7 +25,6 @@ using ProjNet.CoordinateSystems.Transformations;
 internal sealed class Winkel2Projection : MapProjection
 {
     private const int MaximumIterations = 10;
-    private const double LoopTolerance = 1e-7;
     private const int InverseMaximumIterations = 15;
     private const double InverseTolerance = 1e-10d;
     private const double FiniteDifferenceStep = 1e-8d;
@@ -74,7 +73,7 @@ internal sealed class Winkel2Projection : MapProjection
         {
             double v = (phi + Math.Sin(phi) - k) / (1d + Math.Cos(phi));
             phi -= v;
-            if (Math.Abs(v) < LoopTolerance)
+            if (Math.Abs(v) < Eps7)
             {
                 break;
             }
@@ -182,7 +181,7 @@ internal sealed class Winkel2Projection : MapProjection
 
             double v = (phiWorking + Math.Sin(phiWorking) - k) / denominator;
             phiWorking -= v;
-            if (Math.Abs(v) < LoopTolerance)
+            if (Math.Abs(v) < Eps7)
             {
                 break;
             }

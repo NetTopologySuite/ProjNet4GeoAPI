@@ -1077,7 +1077,7 @@ public abstract class MapProjection : MathTransform, IProjection
             double dphi = .5 * com * com / cospi * ((qs / (1.0 - eccnts)) - (sinpi / com) +
                                      (.5 / eccent * Math.Log((1.0 - con) / (1.0 + con))));
             phi += dphi;
-            if (Math.Abs(dphi) <= 1e-7)
+            if (Math.Abs(dphi) <= Eps7)
             {
                 return phi;
             }

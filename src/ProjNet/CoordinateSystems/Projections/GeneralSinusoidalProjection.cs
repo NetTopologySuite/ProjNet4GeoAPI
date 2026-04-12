@@ -22,7 +22,6 @@ using ProjNet.CoordinateSystems.Transformations;
 internal class GeneralSinusoidalProjection : MapProjection
 {
     private const int MaximumIterations = 8;
-    private const double LoopTolerance = 1e-7;
 
     private readonly double m;
     private readonly double n;
@@ -95,7 +94,7 @@ internal class GeneralSinusoidalProjection : MapProjection
 
                 double v = ((this.m * phi) + Math.Sin(phi) - k) / denominator;
                 phi -= v;
-                if (Math.Abs(v) < LoopTolerance)
+                if (Math.Abs(v) < Eps7)
                 {
                     break;
                 }

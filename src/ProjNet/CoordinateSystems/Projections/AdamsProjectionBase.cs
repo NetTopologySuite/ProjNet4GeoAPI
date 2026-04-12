@@ -22,7 +22,6 @@ internal abstract class AdamsProjectionBase : MapProjection
 {
     private const double Tolerance = 1e-9d;
     private const double InverseTolerance = 1e-10d;
-    private const double InitialGuessEpsilon = 1e-7d;
     private const double JacobianTolerance = 1e-18d;
     private const double FiniteDifferenceStep = 1e-6d;
     private const double StepClamp = 0.3d;
@@ -610,12 +609,12 @@ internal abstract class AdamsProjectionBase : MapProjection
             phi = ProjectionConstants.Clamp(phi, -HalfPi, HalfPi);
         }
 
-        if (Math.Abs(lambda) < InitialGuessEpsilon)
+        if (Math.Abs(lambda) < Eps7)
         {
             lambda = 0d;
         }
 
-        if (Math.Abs(phi) < InitialGuessEpsilon)
+        if (Math.Abs(phi) < Eps7)
         {
             phi = 0d;
         }

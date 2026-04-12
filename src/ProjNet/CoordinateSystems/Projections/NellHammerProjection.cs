@@ -21,7 +21,6 @@ using ProjNet.CoordinateSystems.Transformations;
 internal sealed class NellHammerProjection : MapProjection
 {
     private const int Iterations = 9;
-    private const double Epsilon = 1e-7d;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NellHammerProjection"/> class.
@@ -81,7 +80,7 @@ internal sealed class NellHammerProjection : MapProjection
 
             double v = (phi - Math.Tan(phi / 2d) - p) / denominator;
             phi -= v;
-            if (Math.Abs(v) < Epsilon)
+            if (Math.Abs(v) < Eps7)
             {
                 break;
             }

@@ -23,7 +23,6 @@ using ProjNet.CoordinateSystems.Transformations;
 internal sealed class BoggsProjection : MapProjection
 {
     private const int Iterations = 20;
-    private const double Epsilon = 1e-7d;
     private const double Fxc = 2.00276d;
     private const double Fxc2 = 1.11072d;
     private const double Fyc = 0.49931d;
@@ -63,14 +62,14 @@ internal sealed class BoggsProjection : MapProjection
         double lambda = Adjust_lon(lon - this.centralMeridian);
         double theta = lat;
         double x = 0d;
-        if (Math.Abs(Math.Abs(lat) - HalfPi) >= Epsilon)
+        if (Math.Abs(Math.Abs(lat) - HalfPi) >= Eps7)
         {
             double c = Math.Sin(theta) * PI;
             for (int i = Iterations; i > 0; i--)
             {
                 double th1 = (theta + Math.Sin(theta) - c) / (1d + Math.Cos(theta));
                 theta -= th1;
-                if (Math.Abs(th1) < Epsilon)
+                if (Math.Abs(th1) < Eps7)
                 {
                     break;
                 }

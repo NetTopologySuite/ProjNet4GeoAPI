@@ -20,7 +20,6 @@ using ProjNet.CoordinateSystems.Transformations;
 internal sealed class McBrydeThomasFlatPoleSineProjection : MapProjection
 {
     private const int MaximumIterations = 10;
-    private const double LoopTolerance = 1e-7;
     private const double C1 = 0.45503d;
     private const double C2 = 1.36509d;
     private const double C3 = 1.41546d;
@@ -73,7 +72,7 @@ internal sealed class McBrydeThomasFlatPoleSineProjection : MapProjection
 
             double v = ((C1 * Math.Sin(t)) + Math.Sin(phi) - k) / denominator;
             phi -= v;
-            if (Math.Abs(v) < LoopTolerance)
+            if (Math.Abs(v) < Eps7)
             {
                 break;
             }

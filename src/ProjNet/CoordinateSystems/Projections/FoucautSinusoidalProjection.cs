@@ -22,7 +22,6 @@ using ProjNet.CoordinateSystems.Transformations;
 internal sealed class FoucautSinusoidalProjection : MapProjection
 {
     private const int MaximumIterations = 10;
-    private const double LoopTolerance = 1e-7d;
 
     private readonly double n;
     private readonly double n1;
@@ -99,7 +98,7 @@ internal sealed class FoucautSinusoidalProjection : MapProjection
 
                 double v = ((this.n * phi) + (this.n1 * sinPhi) - yy) / denominator;
                 phi -= v;
-                if (Math.Abs(v) < LoopTolerance)
+                if (Math.Abs(v) < Eps7)
                 {
                     break;
                 }

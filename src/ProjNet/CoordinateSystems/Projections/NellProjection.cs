@@ -20,7 +20,6 @@ using ProjNet.CoordinateSystems.Transformations;
 internal sealed class NellProjection : MapProjection
 {
     private const int Iterations = 10;
-    private const double LoopTolerance = 1e-7d;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NellProjection"/> class.
@@ -67,7 +66,7 @@ internal sealed class NellProjection : MapProjection
 
             double v = (phi + Math.Sin(phi) - k) / denominator;
             phi -= v;
-            if (Math.Abs(v) < LoopTolerance)
+            if (Math.Abs(v) < Eps7)
             {
                 break;
             }

@@ -35,7 +35,6 @@ internal sealed class Eckert4Projection : MapProjection
     private const double Cp = 3.57079632679489661922d;
     private const double RCp = 0.28004957675577868795d;
     private const int Iterations = 6;
-    private const double Epsilon = 1e-7;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Eckert4Projection"/> class.
@@ -80,7 +79,7 @@ internal sealed class Eckert4Projection : MapProjection
             double s = Math.Sin(theta);
             v = (theta + (s * (c + 2d)) - p) / (1d + (c * (c + 2d)) - (s * s));
             theta -= v;
-            if (Math.Abs(v) < Epsilon)
+            if (Math.Abs(v) < Eps7)
             {
                 break;
             }

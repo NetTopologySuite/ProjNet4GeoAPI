@@ -31,7 +31,6 @@ using ProjNet.CoordinateSystems.Transformations;
 internal class MollweideProjection : MapProjection
 {
     private const int Iterations = 30;
-    private const double LoopTolerance = 1e-7d;
     private const double DefaultP = 90d;
 
     private readonly double cx;
@@ -91,7 +90,7 @@ internal class MollweideProjection : MapProjection
         {
             double v = (phi + Math.Sin(phi) - k) / (1d + Math.Cos(phi));
             phi -= v;
-            if (Math.Abs(v) < LoopTolerance)
+            if (Math.Abs(v) < Eps7)
             {
                 break;
             }

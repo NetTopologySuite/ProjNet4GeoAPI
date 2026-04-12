@@ -20,7 +20,6 @@ using ProjNet.CoordinateSystems.Transformations;
 internal sealed class McBrydeThomasFlatPolarQuarticProjection : MapProjection
 {
     private const int Iterations = 20;
-    private const double IterationTolerance = 1e-7d;
     private const double OneTol = ProjectionConstants.OnePlusEps6;
     private const double C = 1.70710678118654752440d;
     private const double Rc = 0.58578643762690495119d;
@@ -69,7 +68,7 @@ internal sealed class McBrydeThomasFlatPolarQuarticProjection : MapProjection
             double deltaDenominator = (0.5d * Math.Cos(0.5d * phi)) + Math.Cos(phi);
             double delta = deltaNumerator / deltaDenominator;
             phi -= delta;
-            if (Math.Abs(delta) < IterationTolerance)
+            if (Math.Abs(delta) < Eps7)
             {
                 break;
             }

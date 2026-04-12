@@ -26,8 +26,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://landsat.gsfc.nasa.gov/about/space-oblique-mercator-projection/">NASA Landsat: Space Oblique Mercator projection overview.</seealso>
 internal sealed class SpaceObliqueMercatorProjection : MapProjection
 {
-    private const double Tolerance = 1e-7d;
-
     private readonly double a2;
     private readonly double a4;
     private readonly double b;
@@ -132,14 +130,14 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
             {
                 lamt = lambda + (this.p22 * sav);
                 double c = Math.Cos(lamt);
-                if (Math.Abs(c) < Tolerance)
+                if (Math.Abs(c) < Eps7)
                 {
-                    lamt -= Tolerance;
+                    lamt -= Eps7;
                 }
 
                 double xlam = ((this.oneEs * tanphi * this.sa) + (Math.Sin(lamt) * this.ca)) / c;
                 lamdp = Math.Atan(xlam) + fac;
-                if (Math.Abs(Math.Abs(sav) - Math.Abs(lamdp)) < Tolerance)
+                if (Math.Abs(Math.Abs(sav) - Math.Abs(lamdp)) < Eps7)
                 {
                     break;
                 }
@@ -215,7 +213,7 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
                 - ((s / this.xj) * ((this.c1 * Math.Sin(lamdp)) + (this.c3 * Math.Sin(3d * lamdp))));
             lamdp /= this.b;
 
-            if (Math.Abs(lamdp - sav) < Tolerance)
+            if (Math.Abs(lamdp - sav) < Eps7)
             {
                 break;
             }
@@ -228,9 +226,9 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
         double phidp = 2d * (Math.Atan(fac) - FortPi);
 
         double dd = sl * sl;
-        if (Math.Abs(Math.Cos(lamdp)) < Tolerance)
+        if (Math.Abs(Math.Cos(lamdp)) < Eps7)
         {
-            lamdp -= Tolerance;
+            lamdp -= Eps7;
         }
 
         double spp = Math.Sin(phidp);
@@ -253,7 +251,7 @@ internal sealed class SpaceObliqueMercatorProjection : MapProjection
         double lambda = lamt - (this.p22 * lamdp);
         double phiNumerator = (Math.Tan(lamdp) * Math.Cos(lamt)) - (this.ca * Math.Sin(lamt));
         double phiDenominator = this.oneEs * this.sa;
-        double phi = Math.Abs(this.sa) < Tolerance
+        double phi = Math.Abs(this.sa) < Eps7
             ? Asinz(spp / Math.Sqrt((this.oneEs * this.oneEs) + (this.es * sppsq)))
             : Math.Atan(phiNumerator / phiDenominator);
 
