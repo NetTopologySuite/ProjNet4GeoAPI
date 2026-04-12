@@ -3,11 +3,18 @@
 
 namespace ProjNet.CoordinateSystems.Transformations;
 
+using System;
+
 /// <summary>
 /// Shared numeric helper methods used by transformation runtime implementations.
 /// </summary>
 internal static class TransformationMath
 {
+    /// <summary>
+    /// Conversion factor from arc-seconds to radians.
+    /// </summary>
+    internal const double ArcSecondToRadians = Math.PI / (180d * 3600d);
+
     /// <summary>
     /// Determines whether a floating-point value is finite.
     /// </summary>

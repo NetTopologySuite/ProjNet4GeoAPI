@@ -26,8 +26,6 @@ using ProjNet.CoordinateSystems.Transformations.Numerics;
 /// <seealso href="https://epsg.io/1061-method">EPSG method 1061: Molodensky-Badekas (geographic domain).</seealso>
 internal sealed class MolobadekasMathTransform : MathTransform
 {
-    private const double ArcSecondToRadians = Math.PI / (180d * 3600d);
-
     private readonly Vector3D translation;
     private readonly double scalePpm;
     private readonly Vector3D pivot;
@@ -81,9 +79,9 @@ internal sealed class MolobadekasMathTransform : MathTransform
         this.scalePpm = scalePpm;
         this.pivot = new Vector3D(pivotX, pivotY, pivotZ);
         this.rotationRadians = new Vector3D(
-            rotationXArcSeconds * ArcSecondToRadians,
-            rotationYArcSeconds * ArcSecondToRadians,
-            rotationZArcSeconds * ArcSecondToRadians);
+            rotationXArcSeconds * TransformationMath.ArcSecondToRadians,
+            rotationYArcSeconds * TransformationMath.ArcSecondToRadians,
+            rotationZArcSeconds * TransformationMath.ArcSecondToRadians);
         this.isInverted = isInverted;
 
         this.rotationMatrix = BuildRotationMatrix(this.rotationRadians, isPositionVector);

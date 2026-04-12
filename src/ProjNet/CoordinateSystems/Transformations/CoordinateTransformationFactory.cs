@@ -34,8 +34,6 @@ public class CoordinateTransformationFactory
     private const string GridModeEnvironmentVariable = "PROJNET_GRID_MODE";
     private const string GridPathEnvironmentVariable = "PROJNET_GRID_PATHS";
     private const string GridRequiredEnvironmentVariable = "PROJNET_GRID_REQUIRED";
-    private const double ArcSecondsToRadians = Math.PI / (180d * 3600d);
-
     private static readonly Lazy<Dictionary<SridPair, IReadOnlyList<CoordinateOperationDefinition>>> DirectOperationDefinitions =
         new(LoadDirectOperationDefinitions, true);
 
@@ -424,16 +422,16 @@ public class CoordinateTransformationFactory
         double translationX = GetOperationParameterOrDefault(parameters, "X-axis translation");
         double translationY = GetOperationParameterOrDefault(parameters, "Y-axis translation");
         double translationZ = GetOperationParameterOrDefault(parameters, "Z-axis translation");
-        double rotationX = GetOperationParameterOrDefault(parameters, "X-axis rotation") * ArcSecondsToRadians;
-        double rotationY = GetOperationParameterOrDefault(parameters, "Y-axis rotation") * ArcSecondsToRadians;
-        double rotationZ = GetOperationParameterOrDefault(parameters, "Z-axis rotation") * ArcSecondsToRadians;
+        double rotationX = GetOperationParameterOrDefault(parameters, "X-axis rotation") * TransformationMath.ArcSecondToRadians;
+        double rotationY = GetOperationParameterOrDefault(parameters, "Y-axis rotation") * TransformationMath.ArcSecondToRadians;
+        double rotationZ = GetOperationParameterOrDefault(parameters, "Z-axis rotation") * TransformationMath.ArcSecondToRadians;
         double scale = GetOperationParameterOrDefault(parameters, "Scale difference");
         double translationRateX = GetOperationParameterOrDefault(parameters, "Rate of change of X-axis translation");
         double translationRateY = GetOperationParameterOrDefault(parameters, "Rate of change of Y-axis translation");
         double translationRateZ = GetOperationParameterOrDefault(parameters, "Rate of change of Z-axis translation");
-        double rotationRateX = GetOperationParameterOrDefault(parameters, "Rate of change of X-axis rotation") * ArcSecondsToRadians;
-        double rotationRateY = GetOperationParameterOrDefault(parameters, "Rate of change of Y-axis rotation") * ArcSecondsToRadians;
-        double rotationRateZ = GetOperationParameterOrDefault(parameters, "Rate of change of Z-axis rotation") * ArcSecondsToRadians;
+        double rotationRateX = GetOperationParameterOrDefault(parameters, "Rate of change of X-axis rotation") * TransformationMath.ArcSecondToRadians;
+        double rotationRateY = GetOperationParameterOrDefault(parameters, "Rate of change of Y-axis rotation") * TransformationMath.ArcSecondToRadians;
+        double rotationRateZ = GetOperationParameterOrDefault(parameters, "Rate of change of Z-axis rotation") * TransformationMath.ArcSecondToRadians;
         double scaleRate = GetOperationParameterOrDefault(parameters, "Rate of change of scale difference");
         double epochReference = GetOperationParameterOrDefault(parameters, "Parameter reference epoch");
 

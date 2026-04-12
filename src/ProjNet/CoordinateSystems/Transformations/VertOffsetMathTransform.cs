@@ -20,8 +20,6 @@ using ProjNet.CoordinateSystems;
 /// <seealso href="https://epsg.io/9657-method">EPSG method 9657: Vertical Offset and Slope.</seealso>
 internal sealed class VertOffsetMathTransform : MathTransform
 {
-    private const double ArcSecondToRadians = Math.PI / (180d * 3600d);
-
     private readonly double latOriginRadians;
     private readonly double lonOriginDegrees;
     private readonly double verticalOffset;
@@ -56,8 +54,8 @@ internal sealed class VertOffsetMathTransform : MathTransform
         this.latOriginRadians = DegreesToRadians(latOriginDegrees);
         this.lonOriginDegrees = lonOriginDegrees;
         this.verticalOffset = verticalOffset;
-        this.slopeLatRadians = slopeLatArcSeconds * ArcSecondToRadians;
-        this.slopeLonRadians = slopeLonArcSeconds * ArcSecondToRadians;
+        this.slopeLatRadians = slopeLatArcSeconds * TransformationMath.ArcSecondToRadians;
+        this.slopeLonRadians = slopeLonArcSeconds * TransformationMath.ArcSecondToRadians;
 
         double eccentricitySquared = 1d - ((semiMinor * semiMinor) / (semiMajor * semiMajor));
         double sinLat0 = Math.Sin(this.latOriginRadians);

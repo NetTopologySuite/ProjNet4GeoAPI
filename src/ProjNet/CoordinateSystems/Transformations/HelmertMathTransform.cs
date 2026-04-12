@@ -29,7 +29,6 @@ using ProjNet.CoordinateSystems.Transformations.Numerics;
 /// <seealso href="https://epsg.io/1032-method">EPSG method 1032: Coordinate Frame rotation (geocentric domain).</seealso>
 internal sealed class HelmertMathTransform : MathTransform
 {
-    private const double ArcSecondToRadians = Math.PI / (180d * 3600d);
     private const double MissingObservationEpoch = double.MaxValue;
 
     private readonly HelmertParameterState baseState;
@@ -220,7 +219,7 @@ internal sealed class HelmertMathTransform : MathTransform
             }
 
             fourParameter = true;
-            theta = thetaArcSeconds * ArcSecondToRadians;
+            theta = thetaArcSeconds * TransformationMath.ArcSecondToRadians;
             scale = 1d;
         }
 
@@ -232,7 +231,7 @@ internal sealed class HelmertMathTransform : MathTransform
                 return false;
             }
 
-            thetaRate = thetaRateArcSeconds * ArcSecondToRadians;
+            thetaRate = thetaRateArcSeconds * TransformationMath.ArcSecondToRadians;
             hasKinematicRates = true;
         }
 
@@ -507,9 +506,9 @@ internal sealed class HelmertMathTransform : MathTransform
         translationZ = values[2];
         if (valueCount >= 6)
         {
-            rotationX = values[3] * ArcSecondToRadians;
-            rotationY = values[4] * ArcSecondToRadians;
-            rotationZ = values[5] * ArcSecondToRadians;
+            rotationX = values[3] * TransformationMath.ArcSecondToRadians;
+            rotationY = values[4] * TransformationMath.ArcSecondToRadians;
+            rotationZ = values[5] * TransformationMath.ArcSecondToRadians;
         }
 
         if (valueCount == 7)
@@ -560,7 +559,7 @@ internal sealed class HelmertMathTransform : MathTransform
             return false;
         }
 
-        target = value * ArcSecondToRadians;
+        target = value * TransformationMath.ArcSecondToRadians;
         return true;
     }
 
