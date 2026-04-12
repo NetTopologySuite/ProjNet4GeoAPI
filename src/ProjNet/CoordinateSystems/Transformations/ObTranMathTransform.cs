@@ -306,7 +306,13 @@ internal sealed class ObTranMathTransform : MathTransform
         }
 
         List<ProjectionParameter> parameters = BuildProjectionParameters(args);
-        if (!TryResolveEllipsoid(args, out double semiMajor, out double semiMinor))
+        if (!ProjEllipsoidResolver.TryResolveEllipsoidOrDefault(
+            args,
+            includeDatumToken: false,
+            allowClarke1880Ign: false,
+            allowBessel: false,
+            out double semiMajor,
+            out double semiMinor))
         {
             skipReason = "Unable to resolve ellipsoid for ob_tran child projection.";
             return false;
@@ -414,56 +420,6 @@ internal sealed class ObTranMathTransform : MathTransform
         }
 
         parameters.Add(new ProjectionParameter(name, value));
-    }
-
-    private static bool TryResolveEllipsoid(
-        Dictionary<string, string> args,
-        out double semiMajor,
-        out double semiMinor)
-    {
-        if (TryGetFromArgs(args, "r", out double radius) && radius > 0d)
-        {
-            semiMajor = radius;
-            semiMinor = radius;
-            return true;
-        }
-
-        if (TryGetFromArgs(args, "a", out double a) && a > 0d)
-        {
-            semiMajor = a;
-
-            if (TryGetFromArgs(args, "b", out double b) && b > 0d)
-            {
-                semiMinor = b;
-                return true;
-            }
-
-            if (TryGetFromArgs(args, "rf", out double inverseFlattening) && inverseFlattening > 0d)
-            {
-                semiMinor = (1d - (1d / inverseFlattening)) * a;
-                return true;
-            }
-
-            semiMinor = a;
-            return true;
-        }
-
-        if (args.TryGetValue("ellps", out string? ellps) && !string.IsNullOrWhiteSpace(ellps))
-        {
-            if (ProjEllipsoidResolver.TryResolveKnownEllipsoid(
-                ellps,
-                allowClarke1880Ign: false,
-                allowBessel: false,
-                out semiMajor,
-                out semiMinor))
-            {
-                return true;
-            }
-        }
-
-        semiMajor = Ellipsoid.WGS84.SemiMajorAxis;
-        semiMinor = Ellipsoid.WGS84.SemiMinorAxis;
-        return true;
     }
 
     private static bool TryGetRequiredDegrees(

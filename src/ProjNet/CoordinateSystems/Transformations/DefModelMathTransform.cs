@@ -181,7 +181,14 @@ internal sealed class DefModelMathTransform : MathTransform
 
         string resolvedModelPath = ArgumentGuard.ThrowIfNull(resolvedModelPathCandidate, nameof(resolvedModelPathCandidate));
 
-        if (!TryResolveEllipsoid(args, out double semiMajor, out double semiMinor, out skipReason))
+        if (!ProjEllipsoidResolver.TryResolveEllipsoidOrDefault(
+            args,
+            operationName: "defmodel",
+            allowClarke1880Ign: true,
+            allowBessel: false,
+            out double semiMajor,
+            out double semiMinor,
+            out skipReason))
         {
             return false;
         }
@@ -354,105 +361,6 @@ internal sealed class DefModelMathTransform : MathTransform
     private static string NormalizePathToken(string token)
     {
         return token.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
-    }
-
-    private static bool TryResolveEllipsoid(
-        Dictionary<string, string> args,
-        out double semiMajor,
-        out double semiMinor,
-        out string? skipReason)
-    {
-        semiMajor = 0d;
-        semiMinor = 0d;
-        skipReason = null;
-
-        if (args.TryGetValue("r", out string? radiusToken)
-            && SpanParseUtility.TryParseFiniteDouble(radiusToken, out double radius))
-        {
-            if (radius <= 0d)
-            {
-                skipReason = "defmodel +r must be positive.";
-                return false;
-            }
-
-            semiMajor = radius;
-            semiMinor = radius;
-            return true;
-        }
-
-        if (args.TryGetValue("a", out string? majorToken) && SpanParseUtility.TryParseFiniteDouble(majorToken, out double major))
-        {
-            if (major <= 0d)
-            {
-                skipReason = "defmodel +a must be positive.";
-                return false;
-            }
-
-            semiMajor = major;
-            if (args.TryGetValue("b", out string? minorToken) && SpanParseUtility.TryParseFiniteDouble(minorToken, out double minor))
-            {
-                if (minor <= 0d)
-                {
-                    skipReason = "defmodel +b must be positive.";
-                    return false;
-                }
-
-                semiMinor = minor;
-                return true;
-            }
-
-            if (args.TryGetValue("rf", out string? inverseFlatteningToken)
-                && SpanParseUtility.TryParseFiniteDouble(inverseFlatteningToken, out double inverseFlattening))
-            {
-                if (inverseFlattening <= 0d)
-                {
-                    skipReason = "defmodel +rf must be positive.";
-                    return false;
-                }
-
-                semiMinor = (1d - (1d / inverseFlattening)) * major;
-                return true;
-            }
-
-            semiMinor = major;
-            return true;
-        }
-
-        if (args.TryGetValue("ellps", out string? ellipsoidToken) && !string.IsNullOrWhiteSpace(ellipsoidToken))
-        {
-            if (TryResolveKnownEllipsoid(ellipsoidToken, out semiMajor, out semiMinor))
-            {
-                return true;
-            }
-
-            skipReason = "defmodel received unsupported +ellps value.";
-            return false;
-        }
-
-        if (args.TryGetValue("datum", out string? datumToken) && !string.IsNullOrWhiteSpace(datumToken))
-        {
-            if (TryResolveKnownEllipsoid(datumToken, out semiMajor, out semiMinor))
-            {
-                return true;
-            }
-
-            skipReason = "defmodel received unsupported +datum value.";
-            return false;
-        }
-
-        semiMajor = Ellipsoid.WGS84.SemiMajorAxis;
-        semiMinor = Ellipsoid.WGS84.SemiMinorAxis;
-        return true;
-    }
-
-    private static bool TryResolveKnownEllipsoid(string token, out double semiMajor, out double semiMinor)
-    {
-        return ProjEllipsoidResolver.TryResolveKnownEllipsoid(
-            token,
-            allowClarke1880Ign: true,
-            allowBessel: false,
-            out semiMajor,
-            out semiMinor);
     }
 
     private static bool IsDefinitionCrsGeographic(string definitionCrs)

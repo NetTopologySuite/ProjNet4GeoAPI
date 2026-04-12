@@ -193,9 +193,337 @@ internal static class ProjEllipsoidResolver
         return TryValidateResolvedAxes(semiMajor, semiMinor, "+a", out errorMessage);
     }
 
+    /// <summary>
+    /// Resolves an optional ellipsoid definition from PROJ-style arguments, defaulting to WGS84 when none is supplied.
+    /// Unsupported named ellipsoids still fail the resolution.
+    /// </summary>
+    /// <param name="args">The PROJ argument dictionary.</param>
+    /// <param name="includeDatumToken">Whether <c>+datum</c> should be considered in addition to <c>+ellps</c>.</param>
+    /// <param name="allowClarke1880Ign">Whether the <c>clrk80ign</c> token is supported by the caller.</param>
+    /// <param name="allowBessel">Whether the <c>bessel</c> token is supported by the caller.</param>
+    /// <param name="semiMajor">The resolved semi-major axis in metres.</param>
+    /// <param name="semiMinor">The resolved semi-minor axis in metres.</param>
+    /// <returns><see langword="true"/> when the ellipsoid was resolved or defaulted; otherwise <see langword="false"/>.</returns>
+    internal static bool TryResolveEllipsoidOrDefault(
+        IReadOnlyDictionary<string, string> args,
+        bool includeDatumToken,
+        bool allowClarke1880Ign,
+        bool allowBessel,
+        out double semiMajor,
+        out double semiMinor)
+    {
+        if (TryResolveLenientExplicitAxes(args, out semiMajor, out semiMinor))
+        {
+            return true;
+        }
+
+        if (TryResolveNamedEllipsoid(args, "ellps", allowClarke1880Ign, allowBessel, out semiMajor, out semiMinor, out bool hadEllps))
+        {
+            return true;
+        }
+
+        if (hadEllps)
+        {
+            return false;
+        }
+
+        bool hadDatum = false;
+        if (includeDatumToken
+            && TryResolveNamedEllipsoid(args, "datum", allowClarke1880Ign, allowBessel, out semiMajor, out semiMinor, out hadDatum))
+        {
+            return true;
+        }
+
+        if (includeDatumToken && hadDatum)
+        {
+            return false;
+        }
+
+        semiMajor = Ellipsoid.WGS84.SemiMajorAxis;
+        semiMinor = Ellipsoid.WGS84.SemiMinorAxis;
+        return true;
+    }
+
+    /// <summary>
+    /// Resolves an optional ellipsoid definition from PROJ-style arguments, defaulting to WGS84 when none is supplied and producing operation-specific diagnostics when a supported token is malformed or unsupported.
+    /// </summary>
+    /// <param name="args">The PROJ argument dictionary.</param>
+    /// <param name="operationName">The operation name used in skip-reason messages.</param>
+    /// <param name="allowClarke1880Ign">Whether the <c>clrk80ign</c> token is supported by the caller.</param>
+    /// <param name="allowBessel">Whether the <c>bessel</c> token is supported by the caller.</param>
+    /// <param name="semiMajor">The resolved semi-major axis in metres.</param>
+    /// <param name="semiMinor">The resolved semi-minor axis in metres.</param>
+    /// <param name="skipReason">Receives the diagnostic message on failure.</param>
+    /// <returns><see langword="true"/> when the ellipsoid was resolved or defaulted.</returns>
+    internal static bool TryResolveEllipsoidOrDefault(
+        IReadOnlyDictionary<string, string> args,
+        string operationName,
+        bool allowClarke1880Ign,
+        bool allowBessel,
+        out double semiMajor,
+        out double semiMinor,
+        out string? skipReason)
+    {
+        if (!TryResolveStrictExplicitAxes(args, operationName, out semiMajor, out semiMinor, out skipReason, out bool resolvedExplicitly))
+        {
+            return false;
+        }
+
+        if (resolvedExplicitly)
+        {
+            return true;
+        }
+
+        if (TryResolveNamedEllipsoid(args, "ellps", allowClarke1880Ign, allowBessel, out semiMajor, out semiMinor, out bool hadEllps))
+        {
+            skipReason = null;
+            return true;
+        }
+
+        if (hadEllps)
+        {
+            skipReason = $"{operationName} received unsupported +ellps value.";
+            return false;
+        }
+
+        if (TryResolveNamedEllipsoid(args, "datum", allowClarke1880Ign, allowBessel, out semiMajor, out semiMinor, out bool hadDatum))
+        {
+            skipReason = null;
+            return true;
+        }
+
+        if (hadDatum)
+        {
+            skipReason = $"{operationName} received unsupported +datum value.";
+            return false;
+        }
+
+        semiMajor = Ellipsoid.WGS84.SemiMajorAxis;
+        semiMinor = Ellipsoid.WGS84.SemiMinorAxis;
+        skipReason = null;
+        return true;
+    }
+
+    /// <summary>
+    /// Resolves a required ellipsoid definition from PROJ-style arguments while honoring shape overrides used by grid-shift style operations.
+    /// </summary>
+    /// <param name="args">The PROJ argument dictionary.</param>
+    /// <param name="operationName">The operation name used in skip-reason messages.</param>
+    /// <param name="allowClarke1880Ign">Whether the <c>clrk80ign</c> token is supported by the caller.</param>
+    /// <param name="allowBessel">Whether the <c>bessel</c> token is supported by the caller.</param>
+    /// <param name="semiMajor">The resolved semi-major axis in metres.</param>
+    /// <param name="semiMinor">The resolved semi-minor axis in metres.</param>
+    /// <param name="skipReason">Receives the diagnostic message on failure.</param>
+    /// <returns><see langword="true"/> when the ellipsoid was resolved.</returns>
+    internal static bool TryResolveRequiredEllipsoidWithOverrides(
+        IReadOnlyDictionary<string, string> args,
+        string operationName,
+        bool allowClarke1880Ign,
+        bool allowBessel,
+        out double semiMajor,
+        out double semiMinor,
+        out string? skipReason)
+    {
+        semiMajor = 0d;
+        semiMinor = 0d;
+        skipReason = null;
+
+        if (args.TryGetValue("r", out string? radiusToken)
+            && SpanParseUtility.TryParseFiniteDouble(radiusToken, out double radius)
+            && radius > 0d)
+        {
+            semiMajor = radius;
+            semiMinor = radius;
+            return true;
+        }
+
+        if (TryResolveNamedEllipsoid(args, "ellps", allowClarke1880Ign, allowBessel, out semiMajor, out semiMinor, out bool hadEllps))
+        {
+            if (!TryApplySemiMajorOverride(args, ref semiMajor, ref semiMinor, out skipReason))
+            {
+                return false;
+            }
+
+            return TryApplyExplicitShapeOverrides(args, ref semiMajor, ref semiMinor, out skipReason);
+        }
+
+        if (hadEllps)
+        {
+            skipReason = $"{operationName} received unsupported +ellps value.";
+            return false;
+        }
+
+        if (TryResolveNamedEllipsoid(args, "datum", allowClarke1880Ign, allowBessel, out semiMajor, out semiMinor, out bool hadDatum))
+        {
+            if (!TryApplySemiMajorOverride(args, ref semiMajor, ref semiMinor, out skipReason))
+            {
+                return false;
+            }
+
+            return TryApplyExplicitShapeOverrides(args, ref semiMajor, ref semiMinor, out skipReason);
+        }
+
+        if (hadDatum)
+        {
+            skipReason = $"{operationName} received unsupported +datum value.";
+            return false;
+        }
+
+        if (args.TryGetValue("a", out string? majorToken)
+            && SpanParseUtility.TryParseFiniteDouble(majorToken, out double major)
+            && major > 0d)
+        {
+            semiMajor = major;
+            semiMinor = major;
+            return TryApplyExplicitShapeOverrides(args, ref semiMajor, ref semiMinor, out skipReason);
+        }
+
+        skipReason = $"{operationName} requires ellipsoid definition (+ellps, +datum, +r, or +a with optional +b/+rf/+f/+es).";
+        return false;
+    }
+
     private static double ComputeSemiMinorAxis(double semiMajor, double inverseFlattening)
     {
         return (1d - (1d / inverseFlattening)) * semiMajor;
+    }
+
+    private static bool TryResolveLenientExplicitAxes(
+        IReadOnlyDictionary<string, string> args,
+        out double semiMajor,
+        out double semiMinor)
+    {
+        semiMajor = 0d;
+        semiMinor = 0d;
+
+        if (args.TryGetValue("r", out string? radiusToken)
+            && SpanParseUtility.TryParseFiniteDouble(radiusToken, out double radius)
+            && radius > 0d)
+        {
+            semiMajor = radius;
+            semiMinor = radius;
+            return true;
+        }
+
+        if (args.TryGetValue("a", out string? majorToken)
+            && SpanParseUtility.TryParseFiniteDouble(majorToken, out double major)
+            && major > 0d)
+        {
+            semiMajor = major;
+            if (args.TryGetValue("b", out string? minorToken)
+                && SpanParseUtility.TryParseFiniteDouble(minorToken, out double minor)
+                && minor > 0d)
+            {
+                semiMinor = minor;
+                return true;
+            }
+
+            if (args.TryGetValue("rf", out string? inverseFlatteningToken)
+                && SpanParseUtility.TryParseFiniteDouble(inverseFlatteningToken, out double inverseFlattening)
+                && inverseFlattening > 0d)
+            {
+                semiMinor = ComputeSemiMinorAxis(major, inverseFlattening);
+                return true;
+            }
+
+            semiMinor = major;
+            return true;
+        }
+
+        return false;
+    }
+
+    private static bool TryResolveStrictExplicitAxes(
+        IReadOnlyDictionary<string, string> args,
+        string operationName,
+        out double semiMajor,
+        out double semiMinor,
+        out string? skipReason,
+        out bool resolved)
+    {
+        semiMajor = 0d;
+        semiMinor = 0d;
+        skipReason = null;
+        resolved = false;
+
+        if (args.TryGetValue("r", out string? radiusToken)
+            && SpanParseUtility.TryParseFiniteDouble(radiusToken, out double radius))
+        {
+            if (radius <= 0d)
+            {
+                skipReason = $"{operationName} +r must be positive.";
+                return false;
+            }
+
+            semiMajor = radius;
+            semiMinor = radius;
+            resolved = true;
+            return true;
+        }
+
+        if (args.TryGetValue("a", out string? majorToken)
+            && SpanParseUtility.TryParseFiniteDouble(majorToken, out double major))
+        {
+            if (major <= 0d)
+            {
+                skipReason = $"{operationName} +a must be positive.";
+                return false;
+            }
+
+            semiMajor = major;
+            if (args.TryGetValue("b", out string? minorToken)
+                && SpanParseUtility.TryParseFiniteDouble(minorToken, out double minor))
+            {
+                if (minor <= 0d)
+                {
+                    skipReason = $"{operationName} +b must be positive.";
+                    return false;
+                }
+
+                semiMinor = minor;
+                resolved = true;
+                return true;
+            }
+
+            if (args.TryGetValue("rf", out string? inverseFlatteningToken)
+                && SpanParseUtility.TryParseFiniteDouble(inverseFlatteningToken, out double inverseFlattening))
+            {
+                if (inverseFlattening <= 0d)
+                {
+                    skipReason = $"{operationName} +rf must be positive.";
+                    return false;
+                }
+
+                semiMinor = ComputeSemiMinorAxis(major, inverseFlattening);
+                resolved = true;
+                return true;
+            }
+
+            semiMinor = major;
+            resolved = true;
+            return true;
+        }
+
+        return true;
+    }
+
+    private static bool TryResolveNamedEllipsoid(
+        IReadOnlyDictionary<string, string> args,
+        string key,
+        bool allowClarke1880Ign,
+        bool allowBessel,
+        out double semiMajor,
+        out double semiMinor,
+        out bool hadToken)
+    {
+        hadToken = TryGetNonEmptyToken(args, key, out string token);
+        if (!hadToken)
+        {
+            semiMajor = 0d;
+            semiMinor = 0d;
+            return false;
+        }
+
+        return TryResolveKnownEllipsoid(token, allowClarke1880Ign, allowBessel, out semiMajor, out semiMinor);
     }
 
     private static bool TryApplyExplicitShapeParameters(

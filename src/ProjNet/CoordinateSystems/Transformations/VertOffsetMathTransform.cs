@@ -163,7 +163,13 @@ internal sealed class VertOffsetMathTransform : MathTransform
             return false;
         }
 
-        if (!TryResolveEllipsoid(args, out double semiMajor, out double semiMinor))
+        if (!ProjEllipsoidResolver.TryResolveEllipsoidOrDefault(
+            args,
+            includeDatumToken: true,
+            allowClarke1880Ign: false,
+            allowBessel: false,
+            out double semiMajor,
+            out double semiMinor))
         {
             skipReason = "Unable to resolve ellipsoid for vertoffset.";
             return false;
@@ -216,69 +222,5 @@ internal sealed class VertOffsetMathTransform : MathTransform
         }
 
         return true;
-    }
-
-    private static bool TryResolveEllipsoid(
-        Dictionary<string, string> args,
-        out double semiMajor,
-        out double semiMinor)
-    {
-        if (args.TryGetValue("r", out string? radiusToken)
-            && SpanParseUtility.TryParseFiniteDouble(radiusToken, out double radius)
-            && radius > 0d)
-        {
-            semiMajor = radius;
-            semiMinor = radius;
-            return true;
-        }
-
-        if (args.TryGetValue("a", out string? majorToken)
-            && SpanParseUtility.TryParseFiniteDouble(majorToken, out double major)
-            && major > 0d)
-        {
-            semiMajor = major;
-            if (args.TryGetValue("b", out string? minorToken)
-                && SpanParseUtility.TryParseFiniteDouble(minorToken, out double minor)
-                && minor > 0d)
-            {
-                semiMinor = minor;
-                return true;
-            }
-
-            if (args.TryGetValue("rf", out string? inverseFlatteningToken)
-                && SpanParseUtility.TryParseFiniteDouble(inverseFlatteningToken, out double inverseFlattening)
-                && inverseFlattening > 0d)
-            {
-                semiMinor = (1d - (1d / inverseFlattening)) * major;
-                return true;
-            }
-
-            semiMinor = major;
-            return true;
-        }
-
-        if (args.TryGetValue("ellps", out string? ellps) && !string.IsNullOrWhiteSpace(ellps))
-        {
-            return TryResolveKnownEllipsoid(ellps, out semiMajor, out semiMinor);
-        }
-
-        if (args.TryGetValue("datum", out string? datum) && !string.IsNullOrWhiteSpace(datum))
-        {
-            return TryResolveKnownEllipsoid(datum, out semiMajor, out semiMinor);
-        }
-
-        semiMajor = Ellipsoid.WGS84.SemiMajorAxis;
-        semiMinor = Ellipsoid.WGS84.SemiMinorAxis;
-        return true;
-    }
-
-    private static bool TryResolveKnownEllipsoid(string token, out double semiMajor, out double semiMinor)
-    {
-        return ProjEllipsoidResolver.TryResolveKnownEllipsoid(
-            token,
-            allowClarke1880Ign: false,
-            allowBessel: false,
-            out semiMajor,
-            out semiMinor);
     }
 }

@@ -612,7 +612,14 @@ internal static class ProjPipelineMathTransformFactory
         out string? skipReason)
     {
         transform = null;
-        if (!TryResolveEllipsoid(args, out double semiMajor, out double semiMinor, out skipReason))
+        if (!ProjEllipsoidResolver.TryResolveRequiredEllipsoidWithOverrides(
+            args,
+            operationName: "geocent/cart",
+            allowClarke1880Ign: true,
+            allowBessel: true,
+            out double semiMajor,
+            out double semiMinor,
+            out skipReason))
         {
             return false;
         }
@@ -653,7 +660,14 @@ internal static class ProjPipelineMathTransformFactory
         out string? skipReason)
     {
         transform = null;
-        if (!TryResolveEllipsoid(args, out double semiMajor, out double semiMinor, out skipReason))
+        if (!ProjEllipsoidResolver.TryResolveRequiredEllipsoidWithOverrides(
+            args,
+            operationName: "geoc",
+            allowClarke1880Ign: true,
+            allowBessel: true,
+            out double semiMajor,
+            out double semiMinor,
+            out skipReason))
         {
             return false;
         }
@@ -1109,7 +1123,14 @@ internal static class ProjPipelineMathTransformFactory
 
         if (args.ContainsKey("geoc"))
         {
-            if (!TryResolveEllipsoid(args, out double semiMajor, out double semiMinor, out skipReason))
+            if (!ProjEllipsoidResolver.TryResolveRequiredEllipsoidWithOverrides(
+                args,
+                operationName: "geoc",
+                allowClarke1880Ign: true,
+                allowBessel: true,
+                out double semiMajor,
+                out double semiMinor,
+                out skipReason))
             {
                 transform = null;
                 return false;
@@ -1519,7 +1540,12 @@ internal static class ProjPipelineMathTransformFactory
 
         if (args.TryGetValue("ellps", out string? ellps) && !string.IsNullOrWhiteSpace(ellps))
         {
-            if (TryResolveKnownEllipsoid(ellps, out semiMajor, out semiMinor))
+            if (ProjEllipsoidResolver.TryResolveKnownEllipsoid(
+                ellps,
+                allowClarke1880Ign: true,
+                allowBessel: true,
+                out semiMajor,
+                out semiMinor))
             {
                 if (!ProjEllipsoidResolver.TryApplySemiMajorOverride(args, ref semiMajor, ref semiMinor, out skipReason))
                 {
@@ -1535,7 +1561,12 @@ internal static class ProjPipelineMathTransformFactory
 
         if (args.TryGetValue("datum", out string? datum) && !string.IsNullOrWhiteSpace(datum))
         {
-            if (TryResolveKnownEllipsoid(datum, out semiMajor, out semiMinor))
+            if (ProjEllipsoidResolver.TryResolveKnownEllipsoid(
+                datum,
+                allowClarke1880Ign: true,
+                allowBessel: true,
+                out semiMajor,
+                out semiMinor))
             {
                 if (!ProjEllipsoidResolver.TryApplySemiMajorOverride(args, ref semiMajor, ref semiMinor, out skipReason))
                 {
@@ -1949,7 +1980,14 @@ internal static class ProjPipelineMathTransformFactory
             return false;
         }
 
-        if (!TryResolveEllipsoid(args, out double semiMajor, out double semiMinor, out skipReason))
+        if (!ProjEllipsoidResolver.TryResolveRequiredEllipsoidWithOverrides(
+            args,
+            operationName: "xyzgridshift",
+            allowClarke1880Ign: true,
+            allowBessel: true,
+            out double semiMajor,
+            out double semiMinor,
+            out skipReason))
         {
             return false;
         }
@@ -2087,80 +2125,6 @@ internal static class ProjPipelineMathTransformFactory
 
         resolvedPaths = resolved;
         return true;
-    }
-
-    private static bool TryResolveEllipsoid(
-        Dictionary<string, string> args,
-        out double semiMajor,
-        out double semiMinor,
-        out string? skipReason)
-    {
-        semiMajor = 0d;
-        semiMinor = 0d;
-        skipReason = null;
-
-        if (args.TryGetValue("r", out string? radiusToken)
-            && SpanParseUtility.TryParseFiniteDouble(radiusToken, out double radius)
-            && radius > 0d)
-        {
-            semiMajor = radius;
-            semiMinor = radius;
-            return true;
-        }
-
-        if (args.TryGetValue("ellps", out string? ellps) && !string.IsNullOrWhiteSpace(ellps))
-        {
-            if (TryResolveKnownEllipsoid(ellps, out semiMajor, out semiMinor))
-            {
-                if (!ProjEllipsoidResolver.TryApplySemiMajorOverride(args, ref semiMajor, ref semiMinor, out skipReason))
-                {
-                    return false;
-                }
-
-                return ProjEllipsoidResolver.TryApplyExplicitShapeOverrides(args, ref semiMajor, ref semiMinor, out skipReason);
-            }
-
-            skipReason = "xyzgridshift received unsupported +ellps value.";
-            return false;
-        }
-
-        if (args.TryGetValue("datum", out string? datum) && !string.IsNullOrWhiteSpace(datum))
-        {
-            if (TryResolveKnownEllipsoid(datum, out semiMajor, out semiMinor))
-            {
-                if (!ProjEllipsoidResolver.TryApplySemiMajorOverride(args, ref semiMajor, ref semiMinor, out skipReason))
-                {
-                    return false;
-                }
-
-                return ProjEllipsoidResolver.TryApplyExplicitShapeOverrides(args, ref semiMajor, ref semiMinor, out skipReason);
-            }
-
-            skipReason = "xyzgridshift received unsupported +datum value.";
-            return false;
-        }
-
-        if (args.TryGetValue("a", out string? majorToken)
-            && SpanParseUtility.TryParseFiniteDouble(majorToken, out double major)
-            && major > 0d)
-        {
-            semiMajor = major;
-            semiMinor = major;
-            return ProjEllipsoidResolver.TryApplyExplicitShapeOverrides(args, ref semiMajor, ref semiMinor, out skipReason);
-        }
-
-        skipReason = "xyzgridshift requires ellipsoid definition (+ellps, +datum, +r, or +a with optional +b/+rf/+f/+es).";
-        return false;
-    }
-
-    private static bool TryResolveKnownEllipsoid(string token, out double semiMajor, out double semiMinor)
-    {
-        return ProjEllipsoidResolver.TryResolveKnownEllipsoid(
-            token,
-            allowClarke1880Ign: true,
-            allowBessel: true,
-            out semiMajor,
-            out semiMinor);
     }
 
     private static bool TryResolveAiroceanOrientationCode(string token, out double orientationCode)
