@@ -101,6 +101,38 @@ public class GitHubIssueRegressionTests
     }
 
     /// <summary>
+    /// Verifies that concatenated transforms can invert child math transforms that only support <see cref="MathTransform.Inverse"/>.
+    /// </summary>
+    [Fact(DisplayName = "ConcatenatedTransform uses child Inverse() for immutable math transforms")]
+    public void ConcatenatedTransformSupportsImmutableChildMathTransforms()
+    {
+        var child = new CoordinateTransformation(
+            GeographicCoordinateSystem.WGS84,
+            GeographicCoordinateSystem.WGS84,
+            TransformType.Conversion,
+            new ImmutableOffsetMathTransform(5d),
+            "immutable",
+            string.Empty,
+            -1,
+            string.Empty,
+            string.Empty);
+        var concatenated = new ConcatenatedTransform([child]);
+
+        MathTransform inverse = concatenated.Inverse();
+        double[] projected = concatenated.Transform([10d, 20d, 0d]);
+        double[] roundtrip = inverse.Transform(projected);
+
+        Assert.Equal(10d, roundtrip[0], 12);
+        Assert.Equal(20d, roundtrip[1], 12);
+
+        concatenated.Invert();
+        (double x, double y, double z) = concatenated.Transform(15d, 25d, 0d);
+        Assert.Equal(10d, x, 12);
+        Assert.Equal(20d, y, 12);
+        Assert.Equal(0d, z, 12);
+    }
+
+    /// <summary>
     /// Verifies that empty concatenated transforms fail with a clear exception instead of index errors.
     /// </summary>
     [Fact(DisplayName = "ConcatenatedTransform empty chain throws clear exception on metadata access")]
@@ -395,5 +427,35 @@ public class GitHubIssueRegressionTests
 
         Assert.Equal(abbreviation, projectedCoordinateSystem.Abbreviation);
         Assert.Equal(remarks, projectedCoordinateSystem.Remarks);
+    }
+
+    private sealed class ImmutableOffsetMathTransform : MathTransform
+    {
+        private readonly double offset;
+
+        public ImmutableOffsetMathTransform(double offset)
+        {
+            this.offset = offset;
+        }
+
+        public override int DimSource => 2;
+
+        public override int DimTarget => 2;
+
+        public override string WKT => throw new NotImplementedException();
+
+        public override string XML => throw new NotImplementedException();
+
+        public override bool Identity() => this.offset == 0d;
+
+        public override MathTransform Inverse() => new ImmutableOffsetMathTransform(-this.offset);
+
+        public override void Invert() => throw new NotSupportedException();
+
+        public override void Transform(ref double x, ref double y, ref double z)
+        {
+            x += this.offset;
+            y += this.offset;
+        }
     }
 }
