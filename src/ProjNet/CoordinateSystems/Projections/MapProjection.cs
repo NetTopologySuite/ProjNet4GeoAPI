@@ -309,7 +309,8 @@ public abstract class MapProjection : MathTransform, IProjection
         this.falseEasting = this.Parameters.GetOptionalParameterValue("false_easting", 0) * this.metersPerUnit;
         this.falseNorthing = this.Parameters.GetOptionalParameterValue("false_northing", 0) * this.metersPerUnit;
 
-        // TODO: Should really convert to the correct linear units??
+        // Store the false offsets in metres so projection implementations can work in a
+        // consistent SI domain internally regardless of the declared projection unit.
 
         // Compute constants for the mlfn
         double t;
@@ -993,9 +994,11 @@ public abstract class MapProjection : MathTransform, IProjection
     {
         if (eccent > 1.0e-7)
         {
+            double eccentricitySquared = eccent * eccent;
             double con = eccent * sinphi;
-            return (1.0 - (eccent * eccent)) * ((sinphi / (1.0 - (con * con))) - ((.5 / eccent) *
-                                           Math.Log((1.0 - con) / (1.0 + con))));
+            double inverseConSquared = 1.0 - (con * con);
+            double logTerm = Math.Log((1.0 - con) / (1.0 + con));
+            return (1.0 - eccentricitySquared) * ((sinphi / inverseConSquared) - ((.5 / eccent) * logTerm));
         }
 
         return 2.0 * sinphi;

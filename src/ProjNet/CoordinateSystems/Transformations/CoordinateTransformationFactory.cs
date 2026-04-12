@@ -671,6 +671,8 @@ public class CoordinateTransformationFactory
             return Any2Fitt(sourceCS, (FittedCoordinateSystem)targetCS);
         }
 
+        // Encode the fixed source/target runtime-kind pair as XY so the switch can stay dense
+        // without needing a larger tuple-based dispatch structure.
         int route = ((int)sourceKind * 10) + (int)targetKind;
         return route switch
         {
@@ -1171,6 +1173,9 @@ public class CoordinateTransformationFactory
             source.HorizontalDatum,
             LinearUnit.Metre,
             source.PrimeMeridian);
+
+        // Keep the intermediate geocentric pair on the source prime meridian; the surrounding
+        // geographic legs handle prime-meridian normalization before and after the datum shift.
         GeocentricCoordinateSystem targetCentric = cFac.CreateGeocentricCoordinateSystem(
             $"{target.HorizontalDatum.Name} Geocentric",
             target.HorizontalDatum,
