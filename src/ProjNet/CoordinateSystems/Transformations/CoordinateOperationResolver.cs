@@ -17,6 +17,10 @@ using System;
 /// <seealso href="https://proj.org/en/stable/operations/operations_computation.html">PROJ: computation of coordinate operations between two CRS.</seealso>
 internal static class CoordinateOperationResolver
 {
+    private const int BaselineDirectCandidateScore = 0;
+    private const int IdentityCandidateScore = 1000;
+    private const int DistinctAuthorityDirectCandidateScore = IdentityCandidateScore + 1;
+
     /// <summary>
     /// Resolves the preferred transformation from identity and direct-operation candidates.
     /// </summary>
@@ -64,7 +68,7 @@ internal static class CoordinateOperationResolver
             -1,
             string.Empty,
             string.Empty);
-        return new OperationCandidate(transformation, 1000);
+        return new OperationCandidate(transformation, IdentityCandidateScore);
     }
 
     private static OperationCandidate? SelectHigherScore(OperationCandidate? left, OperationCandidate? right)
@@ -87,8 +91,8 @@ internal static class CoordinateOperationResolver
             && HasDistinctAuthorityIdentity(source, target)
             && HasAuthorityMetadata(directCandidate)
             && directCandidate.MathTransform is not IdentityMathTransform
-            ? 1001
-            : 0;
+            ? DistinctAuthorityDirectCandidateScore
+            : BaselineDirectCandidateScore;
     }
 
     private static bool HasAuthorityMetadata(ICoordinateTransformation transformation)

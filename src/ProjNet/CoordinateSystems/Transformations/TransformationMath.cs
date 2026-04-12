@@ -21,9 +21,19 @@ internal static class TransformationMath
     internal const double MissingObservationEpoch = double.MaxValue;
 
     /// <summary>
+    /// Lowest valid scale-difference value expressed in parts per million.
+    /// </summary>
+    internal const double MinValidPpmScale = -1e6d;
+
+    /// <summary>
     /// Sentinel value used by GTX grids for nodata samples.
     /// </summary>
     internal const float GtxNoDataSentinel = -88.88880f;
+
+    /// <summary>
+    /// Conversion factor from U.S. survey feet to metres.
+    /// </summary>
+    internal const double MetresPerUsSurveyFoot = 1200d / 3937d;
 
     /// <summary>
     /// Default iteration cap for inverse grid or deformation refinement loops.

@@ -2287,7 +2287,7 @@ internal static class ProjPipelineMathTransformFactory
 
         if (token.Equals("us-ft", StringComparison.OrdinalIgnoreCase))
         {
-            factor = 0.3048006096012192d;
+            factor = TransformationMath.MetresPerUsSurveyFoot;
             return true;
         }
 

@@ -435,7 +435,7 @@ public class CoordinateTransformationFactory
         double scaleRate = GetOperationParameterOrDefault(parameters, "Rate of change of scale difference");
         double epochReference = GetOperationParameterOrDefault(parameters, "Parameter reference epoch");
 
-        if (scale <= -1e6d)
+        if (scale <= TransformationMath.MinValidPpmScale)
         {
             return false;
         }
@@ -514,7 +514,7 @@ public class CoordinateTransformationFactory
         double rotationZ = GetOperationParameterOrDefault(parameters, "Z-axis rotation");
         double scale = GetOperationParameterOrDefault(parameters, "Scale difference");
 
-        if (scale <= -1e6d)
+        if (scale <= TransformationMath.MinValidPpmScale)
         {
             return false;
         }

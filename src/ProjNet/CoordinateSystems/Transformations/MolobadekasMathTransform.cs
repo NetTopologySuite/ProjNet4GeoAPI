@@ -208,7 +208,7 @@ internal sealed class MolobadekasMathTransform : MathTransform
             return false;
         }
 
-        if (scalePpm <= -1e6d)
+        if (scalePpm <= TransformationMath.MinValidPpmScale)
         {
             skipReason = "molobadekas: invalid value for s.";
             return false;

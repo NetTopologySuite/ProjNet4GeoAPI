@@ -286,7 +286,7 @@ internal sealed class HelmertMathTransform : MathTransform
             }
         }
 
-        if (scale <= -1e6d || (fourParameter && scale == 0d))
+        if (scale <= TransformationMath.MinValidPpmScale || (fourParameter && scale == 0d))
         {
             skipReason = "helmert: invalid value for s.";
             return false;
