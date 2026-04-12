@@ -37,7 +37,7 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
     private const int MaxInverseIterations = 10;
     private readonly ReadOnlyCollection<HorizontalGrid> grids;
     private readonly bool? biquadraticInterpolationOverride;
-    private bool isInverted;
+    private readonly bool isInverted;
     private MathTransform? inverse;
 
     /// <summary>
@@ -112,8 +112,7 @@ internal sealed class GeoTiffHGridShiftMathTransform : MathTransform
     /// <inheritdoc />
     public override void Invert()
     {
-        this.isInverted = !this.isInverted;
-        this.inverse = null;
+        throw new NotSupportedException("GeoTiffHGridShiftMathTransform is immutable. Use Inverse() to obtain inverted transform.");
     }
 
     /// <inheritdoc />

@@ -41,7 +41,7 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
     private readonly double semiMinor;
     private readonly double multiplier;
     private readonly bool gridReferenceIsInput;
-    private bool isInverted;
+    private readonly bool isInverted;
     private MathTransform? inverse;
 
     /// <summary>
@@ -156,8 +156,7 @@ internal sealed class GeoTiffXyzGridShiftMathTransform : MathTransform
     /// <inheritdoc />
     public override void Invert()
     {
-        this.isInverted = !this.isInverted;
-        this.inverse = null;
+        throw new NotSupportedException("GeoTiffXyzGridShiftMathTransform is immutable. Use Inverse() to obtain inverted transform.");
     }
 
     /// <inheritdoc />

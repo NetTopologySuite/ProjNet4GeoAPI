@@ -41,7 +41,7 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
     private const int MaxInverseIterations = 10;
 
     private readonly ReadOnlyCollection<Ntv2GridSet> gridSets;
-    private bool isInverted;
+    private readonly bool isInverted;
     private MathTransform? inverse;
 
     /// <summary>
@@ -108,8 +108,7 @@ internal sealed class Ntv2HGridShiftMathTransform : MathTransform
     /// <inheritdoc />
     public override void Invert()
     {
-        this.isInverted = !this.isInverted;
-        this.inverse = null;
+        throw new NotSupportedException("Ntv2HGridShiftMathTransform is immutable. Use Inverse() to obtain inverted transform.");
     }
 
     /// <inheritdoc />

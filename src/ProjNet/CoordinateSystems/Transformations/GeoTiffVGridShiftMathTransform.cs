@@ -33,7 +33,7 @@ internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
     private const double RelativeTolerance = 1e-5d;
     private readonly ReadOnlyCollection<VerticalGrid> grids;
     private readonly double forwardMultiplier;
-    private bool isInverted;
+    private readonly bool isInverted;
     private MathTransform? inverse;
 
     /// <summary>
@@ -110,8 +110,7 @@ internal sealed class GeoTiffVGridShiftMathTransform : MathTransform
     /// <inheritdoc />
     public override void Invert()
     {
-        this.isInverted = !this.isInverted;
-        this.inverse = null;
+        throw new NotSupportedException("GeoTiffVGridShiftMathTransform is immutable. Use Inverse() to obtain inverted transform.");
     }
 
     /// <inheritdoc />

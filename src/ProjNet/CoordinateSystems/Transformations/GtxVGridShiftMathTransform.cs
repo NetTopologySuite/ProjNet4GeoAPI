@@ -39,7 +39,7 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
     private const float GtxNoDataSentinel = -88.88880f;
     private readonly ReadOnlyCollection<GtxGrid> grids;
     private readonly double forwardMultiplier;
-    private bool isInverted;
+    private readonly bool isInverted;
     private MathTransform? inverse;
 
     /// <summary>
@@ -115,8 +115,7 @@ internal sealed class GtxVGridShiftMathTransform : MathTransform
     /// <inheritdoc />
     public override void Invert()
     {
-        this.isInverted = !this.isInverted;
-        this.inverse = null;
+        throw new NotSupportedException("GtxVGridShiftMathTransform is immutable. Use Inverse() to obtain inverted transform.");
     }
 
     /// <inheritdoc />
