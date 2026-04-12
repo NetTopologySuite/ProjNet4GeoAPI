@@ -758,13 +758,13 @@ namespace ProjNet.CoordinateSystems.Transformations
 {
     public sealed class AffineTransform : ProjNet.CoordinateSystems.Transformations.MathTransform
     {
-        public AffineTransform(double[] matrix) { }
+        public AffineTransform(double[,] matrix) { }
         public AffineTransform(double m00, double m01, double m02, double m10, double m11, double m12) { }
         public override int DimSource { get; }
         public override int DimTarget { get; }
         public override string WKT { get; }
         public override string XML { get; }
-        public double[] GetMatrix() { }
+        public double[,] GetMatrix() { }
         public override ProjNet.CoordinateSystems.Transformations.MathTransform Inverse() { }
         public override void Invert() { }
         public override void Transform(ref double x, ref double y, ref double z) { }
@@ -830,7 +830,7 @@ namespace ProjNet.CoordinateSystems.Transformations
         public abstract int DimTarget { get; }
         public abstract string WKT { get; }
         public abstract string XML { get; }
-        public virtual double[] Derivative(double[] point) { }
+        public virtual double[,] Derivative(double[] point) { }
         public virtual System.Collections.Generic.List<double> GetCodomainConvexHull(System.Collections.Generic.List<double> points) { }
         public virtual System.Collections.Generic.List<double> GetCodomainConvexHull(System.ReadOnlySpan<double> points) { }
         public virtual ProjNet.CoordinateSystems.Transformations.DomainFlags GetDomainFlags(System.Collections.Generic.List<double> points) { }
