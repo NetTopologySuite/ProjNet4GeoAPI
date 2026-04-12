@@ -24,7 +24,7 @@ public sealed class TemporalDatum : Datum
     /// <param name="remarks">Provider-supplied remarks.</param>
     /// <param name="abbreviation">Abbreviation.</param>
     public TemporalDatum(string timeOrigin, string name, string authority, long authorityCode, string alias, string remarks, string abbreviation)
-        : base(DatumType.TdOther, name, authority, authorityCode, alias, remarks, abbreviation)
+        : base(DatumType.TD_Other, name, authority, authorityCode, alias, remarks, abbreviation)
     {
         this.TimeOrigin = string.IsNullOrWhiteSpace(timeOrigin)
             ? ArgumentGuard.ThrowArgument<string>("Temporal datums require a time origin.", nameof(timeOrigin))

@@ -217,15 +217,15 @@ namespace ProjNet.CoordinateSystems
         VD_Depth = 2006,
         VD_Max = 2999,
         LD_Min = 10000,
-        LdOther = 10000,
-        LdEngineering = 10001,
+        LD_Other = 10000,
+        LD_Engineering = 10001,
         LD_Max = 32767,
-        TdMin = 40000,
-        TdOther = 40000,
-        TdMax = 40999,
-        PdMin = 50000,
-        PdOther = 50000,
-        PdMax = 50999,
+        TD_Min = 40000,
+        TD_Other = 40000,
+        TD_Max = 40999,
+        PD_Min = 50000,
+        PD_Other = 50000,
+        PD_Max = 50999,
     }
     public class Ellipsoid : ProjNet.CoordinateSystems.Info
     {
