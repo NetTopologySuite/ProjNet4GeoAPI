@@ -88,7 +88,38 @@ public abstract class MathTransform
     /// <returns>An [N][M] matrix of partial derivatives where N is the output dimension and M is the input dimension.</returns>
     public virtual double[,] Derivative(double[] point)
     {
-        throw new NotImplementedException();
+        point = ArgumentGuard.ThrowIfNull(point, nameof(point));
+        if (point.Length < 2)
+        {
+            ArgumentGuard.ThrowArgument("At least two ordinate values are required.", nameof(point));
+        }
+
+        int sourceDimensions = point.Length;
+        int targetDimensions = this.GetResultDimensions(sourceDimensions);
+        double[,] derivative = new double[targetDimensions, sourceDimensions];
+        double[] forwardPoint = new double[sourceDimensions];
+        double[] backwardPoint = new double[sourceDimensions];
+
+        for (int sourceIndex = 0; sourceIndex < sourceDimensions; sourceIndex++)
+        {
+            point.AsSpan().CopyTo(forwardPoint);
+            point.AsSpan().CopyTo(backwardPoint);
+
+            double step = GetDerivativeStepSize(point[sourceIndex]);
+            forwardPoint[sourceIndex] += step;
+            backwardPoint[sourceIndex] -= step;
+
+            double[] forwardValue = this.Transform(forwardPoint);
+            double[] backwardValue = this.Transform(backwardPoint);
+            double scale = 1d / (2d * step);
+
+            for (int targetIndex = 0; targetIndex < targetDimensions; targetIndex++)
+            {
+                derivative[targetIndex, sourceIndex] = (forwardValue[targetIndex] - backwardValue[targetIndex]) * scale;
+            }
+        }
+
+        return derivative;
     }
 
     /// <summary>
@@ -731,5 +762,10 @@ public abstract class MathTransform
         return pointLength <= 3
             ? minimumDimensions
             : Math.Max(minimumDimensions, pointLength);
+    }
+
+    private static double GetDerivativeStepSize(double coordinate)
+    {
+        return Math.Max(Math.Abs(coordinate) * 1e-8d, 1e-6d);
     }
 }
