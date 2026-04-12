@@ -6,6 +6,7 @@ namespace ProjNet.CoordinateSystems.Projections;
 
 using System;
 using System.Collections.Generic;
+using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
@@ -60,7 +61,7 @@ internal sealed class ModifiedStereographicAlaskaProjection : ModifiedStereograp
 
         if (this.es != 0d)
         {
-            semiMajor = 6378206.4d;
+            semiMajor = Ellipsoid.Clarke1866.SemiMajorAxis;
             es = 0.00676866d;
             coefficients = GetAlskEllipsoidalCoefficients();
         }

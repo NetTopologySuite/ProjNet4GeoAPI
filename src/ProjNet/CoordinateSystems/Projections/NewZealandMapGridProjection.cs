@@ -6,6 +6,7 @@ namespace ProjNet.CoordinateSystems.Projections;
 
 using System;
 using System.Collections.Generic;
+using ProjNet.CoordinateSystems;
 using ProjNet.CoordinateSystems.Transformations;
 
 /// <summary>
@@ -24,7 +25,6 @@ using ProjNet.CoordinateSystems.Transformations;
 /// <seealso href="https://www.linz.govt.nz/sites/default/files/cust/tr04-conversion-between-latitude-longitude-nzmg-2003.pdf">LINZ TR04: Conversion between latitude/longitude and NZMG.</seealso>
 internal sealed class NewZealandMapGridProjection : MapProjection
 {
-    private const double ProjectionSemiMajor = 6378388d;
     private const int Nbf = 5;
     private const int Ntpsi = 9;
     private const int Ntphi = 8;
@@ -32,6 +32,7 @@ internal sealed class NewZealandMapGridProjection : MapProjection
     private const double Sec5ToRad = 0.4848136811095359935899141023d;
     private const double RadToSec5 = 2.062648062470963551564733573d;
 
+    private static readonly double ProjectionSemiMajor = Ellipsoid.International1924.SemiMajorAxis;
     private static readonly ComplexNumber[] Bf =
     [
         new ComplexNumber(0.7557853228d, 0d),
