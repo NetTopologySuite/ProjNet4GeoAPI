@@ -117,7 +117,7 @@ public static partial class CoordinateSystemWktReader
         return info is not null;
     }
 
-    private static T ParseWkt2NodeWithTokenizer<T>(WktKeywordNode rootNode, Func<WktTokenizer, T> reader)
+    private static T ParseNodeWithTokenizer<T>(WktKeywordNode rootNode, Func<WktTokenizer, T> reader)
     {
         ArgumentGuard.ThrowIfNull(rootNode, nameof(rootNode));
         ArgumentGuard.ThrowIfNull(reader, nameof(reader));
@@ -2597,7 +2597,7 @@ public static partial class CoordinateSystemWktReader
             "PARAMETRICCRS" => ReadWkt2ParametricCoordinateSystem(node),
             "COMPOUNDCRS" => ReadWkt2CompoundCoordinateSystem(node),
             "BOUNDCRS" => ReadWkt2BoundCoordinateSystem(node),
-            _ => ParseWkt2NodeWithTokenizer(node, tokenizer => ReadCoordinateSystem(null, tokenizer)),
+            _ => ParseNodeWithTokenizer(node, tokenizer => ReadCoordinateSystem(null, tokenizer)),
         };
     }
 
@@ -2875,17 +2875,17 @@ public static partial class CoordinateSystemWktReader
     {
         var tokenizer = new WktTokenizer(normalizedWkt);
         tokenizer.NextToken();
-        string objectName = tokenizer.GetStringValue();
-        return objectName switch
+        var rootNode = WktKeywordNode.ParseSubtree(tokenizer);
+        return rootNode.Keyword switch
         {
-            "UNIT" => ReadUnit(tokenizer),
-            "SPHEROID" => ReadEllipsoid(tokenizer),
-            "DATUM" => ReadHorizontalDatum(tokenizer),
-            "PRIMEM" => ReadPrimeMeridian(tokenizer),
+            "UNIT" => ParseNodeWithTokenizer(rootNode, ReadUnit),
+            "SPHEROID" => ParseNodeWithTokenizer(rootNode, ReadEllipsoid),
+            "DATUM" => ParseNodeWithTokenizer(rootNode, ReadHorizontalDatum),
+            "PRIMEM" => ParseNodeWithTokenizer(rootNode, ReadPrimeMeridian),
             "VERT_CS" or "GEOGCS" or "PROJCS" or "COMPD_CS" or "GEOCCS" or "FITTED_CS" or "LOCAL_CS"
-                => ReadCoordinateSystem(normalizedWkt, tokenizer),
+                => ParseNodeWithTokenizer(rootNode, currentTokenizer => ReadCoordinateSystem(normalizedWkt, currentTokenizer)),
             "BOUNDCRS" => throw new NotSupportedException("BOUNDCRS coordinate system is not supported."),
-            _ => ArgumentGuard.ThrowArgument<IInfo>($"'{objectName}' is not recognized."),
+            _ => ArgumentGuard.ThrowArgument<IInfo>($"'{rootNode.Keyword}' is not recognized."),
         };
     }
 
