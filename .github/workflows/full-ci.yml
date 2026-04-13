@@ -7,53 +7,45 @@ on:
 
 jobs:
   pack:
-    name: Build (${{ matrix.os }}, .NET ${{ matrix.dotnet }})
-    runs-on: ${{ matrix.os }}
-
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ ubuntu-latest, windows-latest, macOS-latest ]
-        dotnet: [ '8.0.x' ]
+    name: Build, test, and pack (.NET 8)
+    runs-on: ubuntu-latest
 
     steps:
     - name: Get source
       uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
 
-    - name: Setup .NET 
+    - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
-        dotnet-version: ${{ matrix.dotnet }}
+        dotnet-version: 8.0.x
+
+    - name: Register .NET problem matcher
+      run: echo "::add-matcher::.github/problem-matchers/dotnet.json"
 
     - name: Build
-      run: dotnet build -c Release -v minimal
+      run: dotnet build ProjNet4GeoAPI.sln -c Release --tl:off -v minimal
 
     - name: Test
-      run: dotnet test -c Release --no-build
-      shell: bash # defaults disagree on how to quote the filter string
+      run: dotnet test --project test/ProjNet.Tests/ProjNET.Tests.csproj -c Release --no-build
 
     - name: API compatibility gate
-      if: matrix.os == 'ubuntu-latest'
-      run: dotnet test test/ProjNet.Tests/ProjNET.Tests.csproj -c Release --no-build --framework net8 --filter "FullyQualifiedName~PublicApiBaselineTests"
-      shell: bash
+      run: dotnet test --project test/ProjNet.Tests/ProjNET.Tests.csproj -c Release --no-build --framework net8.0 --filter "FullyQualifiedName~PublicApiBaselineTests"
 
     - name: GIE/GIGS parity smoke gate
-      if: matrix.os == 'ubuntu-latest'
-      run: dotnet test test/ProjNet.Tests/ProjNET.Tests.csproj -c Release --no-build --framework net8 --filter "FullyQualifiedName~GieBuiltinsTheoryTests|FullyQualifiedName~Gigs5101TheoryTests"
-      shell: bash
+      run: dotnet test --project test/ProjNet.Tests/ProjNET.Tests.csproj -c Release --no-build --framework net8.0 --filter "FullyQualifiedName~GieBuiltinsTheoryTests|FullyQualifiedName~Gigs5101TheoryTests"
 
     - name: Benchmark catalog gate
-      if: matrix.os == 'ubuntu-latest'
       run: dotnet run -c Release --project src/ProjNet.Benchmark/ProjNet.Benchmark.csproj -- --list flat
-      shell: bash
 
     - name: Pack
-      run: dotnet pack -c Release --no-build -o artifacts
+      run: dotnet pack ProjNet4GeoAPI.sln -c Release --no-build -o artifacts -p:NoWarn=NU5105
 
     - name: Upload
       uses: actions/upload-artifact@v4
       with:
-        name: NuGet Package Files (${{ matrix.os }})
+        name: NuGet Package Files
         path: artifacts
 
   deployToMyGet:
@@ -70,9 +62,9 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Download Package Files
-      uses: actions/download-artifact@v4.1.7
+      uses: actions/download-artifact@v4
       with:
-        name: NuGet Package Files (ubuntu-latest)
+        name: NuGet Package Files
         path: artifacts
 
     - name: Publish Package Files to MyGet
@@ -95,9 +87,9 @@ jobs:
         dotnet-version: 8.0.x
 
     - name: Download Package Files
-      uses: actions/download-artifact@v4.1.7
+      uses: actions/download-artifact@v4
       with:
-        name: NuGet Package Files (ubuntu-latest)
+        name: NuGet Package Files
         path: artifacts
 
     - name: Publish Package Files to NuGet
