@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Xml.Linq;
+using ProjNet.IO.CoordinateSystems;
 using ProjNet.IO.Wkt;
 
 /// <summary>
@@ -129,6 +130,13 @@ public abstract class CoordinateSystem : Info
     /// </summary>
     /// <returns>An <see cref="XElement"/> containing the XML representation.</returns>
     public virtual XElement ToXml() => throw new NotSupportedException("XML serialization is not supported for this coordinate system type.");
+
+    /// <summary>
+    /// Serializes this coordinate system to PROJJSON.
+    /// </summary>
+    /// <returns>The serialized PROJJSON text.</returns>
+    /// <exception cref="NotSupportedException">Thrown when PROJJSON serialization is not supported for this coordinate system type.</exception>
+    public string ToProjJson() => ProjJsonWriter.ToJson(this);
 
     /// <summary>
     /// Gets axis details for dimension within coordinate system.
