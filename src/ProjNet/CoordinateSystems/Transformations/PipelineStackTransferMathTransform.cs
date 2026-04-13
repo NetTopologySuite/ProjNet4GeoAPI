@@ -39,9 +39,6 @@ internal sealed class PipelineStackTransferMathTransform : MathTransform
     public override int DimTarget => 3;
 
     /// <inheritdoc />
-    public override string XML => throw new NotImplementedException();
-
-    /// <inheritdoc />
     public override bool Identity()
     {
         return false;

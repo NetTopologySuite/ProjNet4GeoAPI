@@ -45,11 +45,6 @@ internal sealed class PrimeMeridianTransform : MathTransform
     }
 
     /// <summary>
-    /// Gets an XML representation of this prime meridian transformation.
-    /// </summary>
-    public override string XML => throw new NotImplementedException("The method or operation is not implemented.");
-
-    /// <summary>
     /// Gets the dimension of input points.
     /// </summary>
     public override int DimSource => 3;

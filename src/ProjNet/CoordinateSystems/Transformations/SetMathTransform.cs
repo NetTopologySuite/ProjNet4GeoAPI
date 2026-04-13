@@ -59,9 +59,6 @@ internal sealed class SetMathTransform : MathTransform
     public override int DimTarget => 3;
 
     /// <inheritdoc />
-    public override string XML => throw new NotImplementedException();
-
-    /// <inheritdoc />
     public override bool Identity()
     {
         return !this.hasV1 && !this.hasV2 && !this.hasV3 && !this.hasV4;

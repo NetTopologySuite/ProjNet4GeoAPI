@@ -90,9 +90,6 @@ internal sealed class VertOffsetMathTransform : MathTransform
     public override int DimTarget => 3;
 
     /// <inheritdoc />
-    public override string XML => throw new NotImplementedException();
-
-    /// <inheritdoc />
     public override MathTransform Inverse()
     {
         this.inverse ??= new VertOffsetMathTransform(this, !this.isInverted);

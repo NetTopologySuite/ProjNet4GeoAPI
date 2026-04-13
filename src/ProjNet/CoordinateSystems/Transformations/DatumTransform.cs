@@ -48,11 +48,6 @@ internal sealed class DatumTransform : MathTransform
         this.isInverse = isInverse;
     }
 
-    /// <summary>
-    /// Gets an XML representation of this object.
-    /// </summary>
-    public override string XML => throw new NotImplementedException();
-
     /// <inheritdoc/>
     public override int DimSource => 3;
 

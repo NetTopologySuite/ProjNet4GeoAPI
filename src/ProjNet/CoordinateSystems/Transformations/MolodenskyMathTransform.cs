@@ -89,9 +89,6 @@ internal sealed class MolodenskyMathTransform : MathTransform
     public override int DimTarget => 3;
 
     /// <inheritdoc />
-    public override string XML => throw new NotImplementedException();
-
-    /// <inheritdoc />
     public override MathTransform Inverse()
     {
         this.inverse ??= new MolodenskyMathTransform(this, !this.isInverted);

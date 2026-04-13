@@ -43,9 +43,6 @@ internal sealed class PipelineOmitMathTransform : MathTransform
     public override int DimTarget => this.inner.DimTarget;
 
     /// <inheritdoc />
-    public override string XML => throw new NotImplementedException();
-
-    /// <inheritdoc />
     public override bool Identity()
     {
         return this.skipForward || this.inner.Identity();

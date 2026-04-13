@@ -70,12 +70,6 @@ internal sealed class ConcatenatedTransform : MathTransform, ICoordinateTransfor
     /// <inheritdoc/>
     public CoordinateSystem TargetCS { get => this.GetLastTransform().TargetCS; }
 
-    /// <summary>
-    /// Gets an XML representation of this object.
-    /// </summary>
-    /// <value>The value.</value>
-    public override string XML => throw new NotImplementedException();
-
     /// <inheritdoc />
     public override void Transform(ref double x, ref double y, ref double z)
     {

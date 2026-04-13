@@ -70,9 +70,6 @@ internal sealed class AxisSwapMathTransform : MathTransform
     public override int DimTarget => this.dimension;
 
     /// <inheritdoc />
-    public override string XML => throw new NotImplementedException();
-
-    /// <inheritdoc />
     public override bool Identity()
     {
         bool xyIdentity = this.xSourceIndex == 0

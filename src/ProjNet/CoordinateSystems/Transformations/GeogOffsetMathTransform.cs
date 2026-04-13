@@ -74,9 +74,6 @@ internal sealed class GeogOffsetMathTransform : MathTransform
     public override int DimTarget => 3;
 
     /// <inheritdoc />
-    public override string XML => throw new NotImplementedException();
-
-    /// <inheritdoc />
     public override bool Identity()
     {
         return this.longitudeOffsetDegrees == 0d

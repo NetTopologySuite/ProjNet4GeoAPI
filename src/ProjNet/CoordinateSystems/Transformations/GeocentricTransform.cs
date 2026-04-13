@@ -125,11 +125,6 @@ internal sealed class GeocentricTransform : MathTransform
     public override int DimTarget => 3;
 
     /// <summary>
-    /// Gets an XML representation of this object.
-    /// </summary>
-    public override string XML => throw new NotImplementedException("The method or operation is not implemented.");
-
-    /// <summary>
     /// Returns the inverse of this conversion.
     /// </summary>
     /// <returns>A <see cref="MathTransform"/> that reverses this geocentric conversion.</returns>

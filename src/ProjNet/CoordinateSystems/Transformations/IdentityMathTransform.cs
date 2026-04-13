@@ -37,9 +37,6 @@ internal sealed class IdentityMathTransform : MathTransform
     public override string WKT => $"PARAM_MT[\"Identity\",PARAMETER[\"dimension\",{this.dimension}]]";
 
     /// <inheritdoc/>
-    public override string XML => throw new NotImplementedException();
-
-    /// <inheritdoc/>
     public override bool Identity() => true;
 
     /// <inheritdoc/>

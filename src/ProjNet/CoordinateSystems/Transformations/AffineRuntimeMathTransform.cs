@@ -88,9 +88,6 @@ internal sealed class AffineRuntimeMathTransform : MathTransform
     /// <inheritdoc />
     public override int DimTarget => 3;
 
-    /// <inheritdoc />
-    public override string XML => throw new NotImplementedException();
-
     /// <summary>
     /// Creates an <see cref="AffineRuntimeMathTransform"/> from parsed PROJ arguments.
     /// </summary>

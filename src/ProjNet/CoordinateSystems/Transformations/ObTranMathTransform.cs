@@ -74,9 +74,6 @@ internal sealed class ObTranMathTransform : MathTransform
     public override int DimTarget => 2;
 
     /// <inheritdoc />
-    public override string XML => throw new NotImplementedException();
-
-    /// <inheritdoc />
     public override MathTransform Inverse()
     {
         this.inverse ??= new ObTranMathTransform(
