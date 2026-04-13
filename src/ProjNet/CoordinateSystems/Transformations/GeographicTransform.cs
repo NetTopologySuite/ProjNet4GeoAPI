@@ -41,22 +41,11 @@ public sealed class GeographicTransform : MathTransform
     /// </summary>
     public GeographicCoordinateSystem TargetGCS { get; }
 
-    /// <summary>
-    /// Gets the Well-known text for this object
-    /// as defined in the simple features specification. [NOT IMPLEMENTED].
-    /// </summary>
-    public override string WKT
-    {
-        get
-        {
-            throw new NotImplementedException();
-        }
-    }
+    /// <inheritdoc />
+    public override string WKT => base.WKT;
 
-    /// <summary>
-    /// Gets an XML representation of this object [NOT IMPLEMENTED].
-    /// </summary>
-    public override string XML => throw new NotImplementedException();
+    /// <inheritdoc />
+    public override string XML => base.XML;
 
     /// <summary>
     /// Gets the dimension of input points.
@@ -79,10 +68,7 @@ public sealed class GeographicTransform : MathTransform
     /// meridian longitude, while unit conversion itself remains the caller's
     /// responsibility in the broader transformation chain.
     /// </remarks>
-    public override MathTransform Inverse()
-    {
-        throw new NotImplementedException();
-    }
+    public override MathTransform Inverse() => new GeographicTransform(this.TargetGCS, this.SourceGCS);
 
     /// <inheritdoc />
     public sealed override void Transform(ref double x, ref double y, ref double z)
@@ -96,8 +82,5 @@ public sealed class GeographicTransform : MathTransform
     /// <summary>
     /// Reverses the transformation.
     /// </summary>
-    public override void Invert()
-    {
-        throw new NotImplementedException();
-    }
+    public override void Invert() => throw new NotSupportedException("GeographicTransform is immutable. Use Inverse() to obtain inverted transform.");
 }

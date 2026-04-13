@@ -1181,19 +1181,29 @@ public class TransformCoverageTests
     }
 
     /// <summary>
-    /// The unimplemented WKT/XML and inversion APIs throw as documented.
+    /// Geographic transform serialization follows the math-transform defaults and the inverse reverses the longitude shift.
     /// </summary>
     [Fact]
-    public void GeographicTransformUnimplementedMembersThrowNotImplementedException()
+    public void GeographicTransformSerializationDefaultsAndInverseAreConsistent()
     {
         GeographicCoordinateSystem source = CreateGeographicCoordinateSystem(PrimeMeridian.Greenwich);
         GeographicCoordinateSystem target = CreateGeographicCoordinateSystem(PrimeMeridian.Paris);
         var transform = new GeographicTransform(source, target);
+        MathTransform inverse = transform.Inverse();
+        double x = 10d;
+        double y = 1d;
+        double z = 2d;
 
-        Assert.Throws<NotImplementedException>(() => _ = transform.WKT);
-        Assert.Throws<NotImplementedException>(() => _ = transform.XML);
-        Assert.Throws<NotImplementedException>(() => transform.Inverse());
-        Assert.Throws<NotImplementedException>(() => transform.Invert());
+        Assert.Throws<NotSupportedException>(() => _ = transform.WKT);
+        Assert.Throws<NotSupportedException>(() => _ = transform.XML);
+
+        transform.Transform(ref x, ref y, ref z);
+        inverse.Transform(ref x, ref y, ref z);
+
+        Assert.Equal(10d, x, 12);
+        Assert.Equal(1d, y, 12);
+        Assert.Equal(2d, z, 12);
+        Assert.Throws<NotSupportedException>(() => transform.Invert());
     }
 
     // ──────────────────────────────────────────────────────────────────────
