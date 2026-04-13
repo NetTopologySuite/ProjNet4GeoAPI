@@ -3,9 +3,13 @@
 
 namespace ProjNet.IO.Wkt;
 
+using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
+using ProjNet;
+using ProjNet.IO.CoordinateSystems;
 
 /// <summary>
 /// Represents a WKT keyword node with children, e.g. <c>GEOGCS["WGS 84", ...]</c>.
@@ -115,5 +119,157 @@ public sealed class WktKeywordNode : WktNode
 
         sb.Append(']');
         return sb.ToString();
+    }
+
+    /// <summary>
+    /// Parses a complete WKT string into a keyword-node tree.
+    /// </summary>
+    /// <param name="source">The WKT source text.</param>
+    /// <returns>The parsed root keyword node.</returns>
+    internal static WktKeywordNode ParseTree(string source)
+    {
+        return ParseTree(new WktTokenizer(source));
+    }
+
+    /// <summary>
+    /// Parses the tokenizer stream into a keyword-node tree.
+    /// </summary>
+    /// <param name="tokenizer">The tokenizer positioned at the start of a WKT expression.</param>
+    /// <returns>The parsed root keyword node.</returns>
+    internal static WktKeywordNode ParseTree(WktTokenizer tokenizer)
+    {
+        ArgumentGuard.ThrowIfNull(tokenizer, nameof(tokenizer));
+
+        tokenizer.NextToken();
+        WktKeywordNode root = ParseKeywordNode(tokenizer);
+        if (!tokenizer.IsEndOfInput)
+        {
+            throw new ArgumentException(
+                $"Unexpected token '{tokenizer.GetTokenString()}' at line {tokenizer.LineNumber} column {tokenizer.Column} after the root WKT node.",
+                nameof(tokenizer));
+        }
+
+        return root;
+    }
+
+    private static WktKeywordNode ParseKeywordNode(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetTokenType() != TokenType.Word)
+        {
+            throw new ArgumentException(
+                $"Expected a WKT keyword at line {tokenizer.LineNumber} column {tokenizer.Column}, but found '{tokenizer.GetTokenString()}'.",
+                nameof(tokenizer));
+        }
+
+        string keyword = tokenizer.GetStringValue();
+        tokenizer.NextToken();
+        return ParseKeywordNodeAfterKeyword(tokenizer, keyword);
+    }
+
+    private static WktKeywordNode ParseKeywordNodeAfterKeyword(WktTokenizer tokenizer, string keyword)
+    {
+        WktBracket bracket = GetCurrentOpener(tokenizer);
+        var children = new List<WktNode>();
+        tokenizer.NextToken();
+
+        while (!IsCloser(tokenizer, bracket))
+        {
+            if (tokenizer.IsEndOfInput)
+            {
+                throw new ArgumentException(
+                    $"Unexpected end of input while parsing '{keyword}' at line {tokenizer.LineNumber} column {tokenizer.Column}.",
+                    nameof(tokenizer));
+            }
+
+            children.Add(ParseNodeAndAdvance(tokenizer));
+            if (IsComma(tokenizer))
+            {
+                tokenizer.NextToken();
+                continue;
+            }
+
+            tokenizer.CheckCloser(bracket);
+        }
+
+        var node = new WktKeywordNode(keyword, children);
+        tokenizer.NextToken();
+        return node;
+    }
+
+    private static WktNode ParseNodeAndAdvance(WktTokenizer tokenizer)
+    {
+        switch (tokenizer.GetTokenType())
+        {
+            case TokenType.Symbol when tokenizer.GetTokenString() == "\"":
+                string quotedValue = tokenizer.ReadDoubleQuotedWord();
+                tokenizer.NextToken();
+                return new WktQuotedString(quotedValue);
+
+            case TokenType.Number:
+                WktNode numericNode = CreateNumericNode(tokenizer);
+                tokenizer.NextToken();
+                return numericNode;
+
+            case TokenType.Word:
+                string word = tokenizer.GetStringValue();
+                tokenizer.NextToken();
+                return IsOpener(tokenizer)
+                    ? ParseKeywordNodeAfterKeyword(tokenizer, word)
+                    : new WktIdentifier(word);
+
+            default:
+                throw new ArgumentException(
+                    $"Unexpected token '{tokenizer.GetTokenString()}' at line {tokenizer.LineNumber} column {tokenizer.Column} while parsing WKT.",
+                    nameof(tokenizer));
+        }
+    }
+
+    private static WktNode CreateNumericNode(WktTokenizer tokenizer)
+    {
+        string token = tokenizer.GetTokenString();
+        if (token.IndexOfAny(['.', 'e', 'E']) < 0 &&
+            int.TryParse(token, NumberStyles.Integer, CultureInfo.InvariantCulture, out int integerValue))
+        {
+            return new WktInteger(integerValue);
+        }
+
+        return new WktNumber(tokenizer.GetNumericValue());
+    }
+
+    private static bool IsComma(WktTokenizer tokenizer)
+    {
+        return tokenizer.GetTokenType() == TokenType.Symbol && tokenizer.GetTokenString() == ",";
+    }
+
+    private static bool IsOpener(WktTokenizer tokenizer)
+    {
+        return tokenizer.GetTokenType() == TokenType.Symbol &&
+            (tokenizer.GetTokenString() == "[" || tokenizer.GetTokenString() == "(");
+    }
+
+    private static bool IsCloser(WktTokenizer tokenizer, WktBracket bracket)
+    {
+        return tokenizer.GetTokenType() == TokenType.Symbol &&
+            ((bracket == WktBracket.Square && tokenizer.GetTokenString() == "]") ||
+             (bracket == WktBracket.Round && tokenizer.GetTokenString() == ")"));
+    }
+
+    private static WktBracket GetCurrentOpener(WktTokenizer tokenizer)
+    {
+        if (tokenizer.GetTokenType() != TokenType.Symbol)
+        {
+            throw new ArgumentException(
+                $"Expected an opening bracket after a WKT keyword at line {tokenizer.LineNumber} column {tokenizer.Column}, but found '{tokenizer.GetTokenString()}'.",
+                nameof(tokenizer));
+        }
+
+        return tokenizer.GetTokenString() switch
+        {
+            "[" => WktBracket.Square,
+            "(" => WktBracket.Round,
+            _ => throw new ArgumentException(
+                $"Expected an opening bracket after a WKT keyword at line {tokenizer.LineNumber} column {tokenizer.Column}, but found '{tokenizer.GetTokenString()}'.",
+                nameof(tokenizer)),
+        };
     }
 }
